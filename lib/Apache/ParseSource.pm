@@ -300,9 +300,12 @@ sub get_functions {
         my($rtype, $name, $args) = @$entry;
         next unless $name =~ $wanted;
         next if $seen{$name}++;
+        my @attr;
 
         for (qw(static __inline__)) {
-            $rtype =~ s/^$_\s+//;
+            if ($rtype =~ s/^($_)\s+//) {
+                push @attr, $1;
+            }
         }
 
         #XXX: working around C::Scan confusion here
@@ -320,6 +323,8 @@ sub get_functions {
                { type => $_->[0], name => $_->[1] }
            } @$args],
         };
+
+        $func->{attr} = \@attr if @attr;
 
         push @functions, $func;
     }
