@@ -5,11 +5,6 @@
 -- see also todo/api_status
 -- see also todo/release-checklist
 
-Apparently <Perl> still silently ignores bogus perl code.
-See: http://marc.theaimsgroup.com/?t=110986532900001&r=1&w=2
-
--------------
-
 When running as root and A-T figures it can't run the test suite
 (perms) it'll ask users if she wants to skip the test suite, if this
 happens:
