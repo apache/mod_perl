@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+die when Apache->request returns nothing ('PerlOptions -GlobalRequest'
+or 'SetHandler modperl' [Stas]
+
 New Apache::Directive methods: as_hash(), lookup() + tests + docs
 [Philippe M. Chiasson <gozer@cpan.org>]
 
