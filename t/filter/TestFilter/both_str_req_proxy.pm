@@ -59,14 +59,7 @@ __DATA__
 <NoAutoConfig>
     <IfModule mod_proxy.c>
         <Proxy http://@servername@:@port@/*>
-            # 2.0
-            <IfModule mod_access.c>
-                Order Deny,Allow
-                Deny from all
-                Allow from @servername@
-            </IfModule>
-            # 2.1
-            <IfModule mod_authz_host.c>
+            <IfModule @ACCESS_MODULE@>
                 Order Deny,Allow
                 Deny from all
                 Allow from @servername@
