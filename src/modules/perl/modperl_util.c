@@ -162,7 +162,7 @@ apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
     return handles;
 }
 
-void modperl_xs_dl_handles_close(apr_array_header_t *handles)
+void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles)
 {
     int i;
 
@@ -171,10 +171,13 @@ void modperl_xs_dl_handles_close(apr_array_header_t *handles)
     }
 
     for (i=0; i < handles->nelts; i++) {
-	void *handle = ((void **)handles->elts)[i];
-	MP_TRACE_g(MP_FUNC, "close 0x%lx\n",
-                   (unsigned long)handle);
-	dlclose(handle); /*XXX*/
+        apr_dso_handle_t *dso = NULL;
+        void *handle = ((void **)handles->elts)[i];
+
+        MP_TRACE_g(MP_FUNC, "close 0x%lx\n", (unsigned long)handle);
+
+        apr_os_dso_handle_put(&dso, (apr_os_dso_handle_t )handle, p);
+        apr_dso_unload(dso);
     }
 }
 

@@ -98,7 +98,7 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     perl_free(interp->perl);
 
     if (handles) {
-        modperl_xs_dl_handles_close(handles);
+        modperl_xs_dl_handles_close(p, handles);
     }
 
     apr_pool_destroy(p);

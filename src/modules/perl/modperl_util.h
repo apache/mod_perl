@@ -35,7 +35,7 @@ void modperl_xs_dl_handles_clear(pTHXo);
 
 apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p);
 
-void modperl_xs_dl_handles_close(apr_array_header_t *handles);
+void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles);
 
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data);
 
