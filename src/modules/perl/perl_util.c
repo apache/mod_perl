@@ -112,7 +112,7 @@ static request_rec *r_magic_get(SV *sv)
     return mg ? (request_rec *)mg->mg_ptr : NULL;
 }
 
-request_rec *sv2request_rec(SV *in, char *class, CV *cv)
+request_rec *sv2request_rec(SV *in, char *pclass, CV *cv)
 {
     request_rec *r = NULL;
     SV *sv = Nullsv;
@@ -135,7 +135,7 @@ request_rec *sv2request_rec(SV *in, char *class, CV *cv)
 
     if(!sv) sv = in;
     if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
-	if(sv_derived_from(sv, class)) {
+	if(sv_derived_from(sv, pclass)) {
 	    if((r = r_magic_get(SvRV(sv)))) {
 		/* ~ magic */
 	    }
@@ -254,7 +254,7 @@ SV *perl_hvrv_magic_obj(SV *rv)
 }
 
 
-void perl_tie_hash(HV *hv, char *class, SV *sv)
+void perl_tie_hash(HV *hv, char *pclass, SV *sv)
 {
     dSP;
     SV *obj, *varsv = (SV*)hv;
@@ -263,7 +263,7 @@ void perl_tie_hash(HV *hv, char *class, SV *sv)
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
-    XPUSHs(sv_2mortal(newSVpv(class,0)));
+    XPUSHs(sv_2mortal(newSVpv(pclass,0)));
     if(sv) XPUSHs(sv);
     PUTBACK;
     perl_call_method(methname, G_EVAL | G_SCALAR);

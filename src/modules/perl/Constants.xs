@@ -12,19 +12,19 @@
 #ifdef XS_IMPORT
 #include "Exports.c"
 
-static void export_cv(SV *class, SV *caller, char *sub)
+static void export_cv(SV *pclass, SV *caller, char *sub)
 {
     GV *gv;
 #if 0
     fprintf(stderr, "*%s::%s = \\&%s::%s\n",
-	    SvPVX(caller), sub, SvPVX(class), sub);
+	    SvPVX(caller), sub, SvPVX(pclass), sub);
 #endif
     gv = gv_fetchpv(form("%_::%s", caller, sub), TRUE, SVt_PVCV);
-    GvCV(gv) = perl_get_cv(form("%_::%s", class, sub), TRUE);
+    GvCV(gv) = perl_get_cv(form("%_::%s", pclass, sub), TRUE);
     GvIMPORTED_CV_on(gv);
 }
 
-static void my_import(SV *class, SV *caller, SV *sv)
+static void my_import(SV *pclass, SV *caller, SV *sv)
 {
     char *sym = SvPV(sv,na), **tags;
     int i;
@@ -34,7 +34,7 @@ static void my_import(SV *class, SV *caller, SV *sv)
 	++sym;
 	tags = export_tags(sym);
 	for(i=0; tags[i]; i++) {
-	    export_cv(class, caller, tags[i]);
+	    export_cv(pclass, caller, tags[i]);
 	}
 	break;
     case '$':
@@ -46,7 +46,7 @@ static void my_import(SV *class, SV *caller, SV *sv)
 	++sym;
     default:
 	if(isALPHA(sym[0])) {
-	    export_cv(class, caller, sym);
+	    export_cv(pclass, caller, sym);
 	    break;
 	}
 	else {
@@ -905,8 +905,8 @@ BOOT:
 #ifdef XS_IMPORT
 
 void
-import(class, ...)
-    SV *class
+import(pclass, ...)
+    SV *pclass
 
     PREINIT:
     I32 i = 0;
@@ -914,7 +914,7 @@ import(class, ...)
 
     CODE:
     for(i=1; i<items; i++) {
-	my_import(class, caller, ST(i));
+	my_import(pclass, caller, ST(i));
     }
 
 #endif
