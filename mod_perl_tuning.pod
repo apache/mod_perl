@@ -376,6 +376,11 @@ This will cause every request to have its C<remote_ip> address
 overridden by the value set in the C<X-Forwarded-For> header added by
 Squid.
 
+If you use apache with mod_proxy at your frontend, you can use Ask
+Bjørn Hansen's mod_proxy_add_forward module from
+ftp://ftp.netcetera.dk/pub/apache/ to make it insert the
+C<X-Forwarded-For> header.
+
 =head1 SUMMARY
 
 To gain maximal performance of mod_perl on a busy site, one must
