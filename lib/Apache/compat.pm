@@ -213,11 +213,13 @@ sub get_remote_host {
     $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
+#XXX: should port 1.x's Apache::unescape_url_info
 sub parse_args {
     my($r, $string) = @_;
     return () unless defined $string and $string;
 
     return map {
+        tr/+/ /;
         s/%([0-9a-fA-F]{2})/pack("C",hex($1))/ge;
         $_;
     } split /[=&;]/, $string, -1;
