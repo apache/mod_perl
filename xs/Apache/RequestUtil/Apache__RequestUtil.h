@@ -309,6 +309,21 @@ void mpxs_Apache__RequestRec_add_config(pTHX_ request_rec *r, SV *lines, int ove
     }
 }
 
+/* in order to ensure that s->document_root doesn't get corrupted by
+ * modperl users setting its value, restore the original value at the
+ * end of each request */
+struct mp_docroot_info {
+    const char **docroot;
+    const char *original;
+};
+
+static apr_status_t restore_docroot(void *data)
+{
+    struct mp_docroot_info *di = (struct mp_docroot_info *)data;
+    *di->docroot  = di->original;
+    return APR_SUCCESS;
+}
+
 static MP_INLINE
 const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
                                                   SV *new_root)
@@ -316,10 +331,17 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
     const char *retval = ap_document_root(r);
 
     if (new_root) {
+        struct mp_docroot_info *di;
         core_server_config *conf;
         MP_CROAK_IF_THREADS_STARTED("setting $r->document_root");
         conf = ap_get_module_config(r->server->module_config, 
                                     &core_module);
+        di = apr_palloc(r->pool, sizeof *di);
+        di->docroot = &conf->ap_document_root;
+        di->original = conf->ap_document_root;
+        apr_pool_cleanup_register(r->pool, di, restore_docroot,
+                                  restore_docroot);
+
         conf->ap_document_root = apr_pstrdup(r->pool, SvPV_nolen(new_root));
     }
 
