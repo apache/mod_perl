@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+PerlInitHandler is now aliased to PerlPostReadRequestHandler when
+configured a the "top-level", that is, not within any Location,
+Directory or Files, where it is still aliased to
+PerlHeaderParserHandler
+ 
 PerlCleanupHandler is now run by a register_cleanup(), rather than an
 alias for PerlLogHandler 
 
