@@ -25,7 +25,7 @@ if (IS_MOD_PERL_BUILD) {
     unshift @INC, "$FindBin::Bin/../lib";
 }
 else {
-    eval { require Apache2 };
+    eval { require mod_perl2 };
     if ($@) {
         die "This script requires mod_perl 2.0\n", "$@";
     }
