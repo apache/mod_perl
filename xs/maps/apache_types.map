@@ -43,7 +43,7 @@ ap_input_mode_t         | IV
 ##########  Standard types  ##########
 
 int             | IV
-int *           | UNDEFINED
+int *           | PTR
 unsigned int    | UV
 signed int      | IV
 long            | IV
