@@ -680,7 +680,7 @@ EOF
     $file;
 }
 
-my $constant_prefixes = join '|', qw{APR};
+my $constant_prefixes = join '|', qw{APR?};
 
 sub generate_constants {
     my($self, $h_fh, $c_fh) = @_;
@@ -789,7 +789,8 @@ sub constants_group_lookup_code {
 	push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
 	print $c_fh "\nstatic const char *$name [] = { \n",
-          (map { s/^APR_//; qq(   "$_",\n) } @$constants), "   NULL,\n};\n";
+          (map { s/^($constant_prefixes)_//o;
+                 qq(   "$_",\n) } @$constants), "   NULL,\n};\n";
     }
 
     my %switch;
