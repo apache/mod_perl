@@ -52,7 +52,7 @@ static SV *my_escape_html(char *s)
 	    j += 5;
 
     if (j == 0)
-	return newSVpv(s,0);
+	return newSVpv(s,i);
     x = newSV(i + j + 1);
 
     for (i = 0, j = 0; s[i] != '\0'; i++, j++)

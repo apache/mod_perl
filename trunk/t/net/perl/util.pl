@@ -2,7 +2,7 @@ use strict;
 use Apache::test;
 $|++;
 my $i = 0;
-my $tests = 6;
+my $tests = 7;
 
 my $r = shift;
 $r->send_http_header('text/plain');
@@ -61,6 +61,10 @@ my $html = <<EOF;
 </body>
 </html>
 EOF
+
+my $txt = "No html tags in here at all";
+my $etxt = Apache::Util::escape_html($txt);
+test ++$i, $txt eq $etxt;
 
 my $esc = Apache::Util::escape_html($html);
 #print $esc;
