@@ -52,6 +52,16 @@ int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
     return modperl_config_is_perl_option_enabled(aTHX_ NULL, s, name);
 }
 
+
+static MP_INLINE
+void mpxs_Apache__Server_add_config(pTHX_ server_rec *s, SV *lines)
+{
+    const char *errmsg = modperl_config_insert_server(aTHX_ s, lines);
+    if (errmsg) {
+        Perl_croak(aTHX_ "\$s->add_config() has failed: %s", errmsg);
+    }
+}
+
 static void mpxs_Apache__ServerUtil_BOOT(pTHX)
 {
     newCONSTSUB(PL_defstash, "Apache::Server::server_root",

@@ -5506,9 +5506,9 @@ $ModPerl::FunctionTable = [
         'name' => 'type'
       }
     ]
-  },  
+  },
   {
-    'return_type' => 'const char *',
+    'return_type' => 'void',
     'name' => 'mpxs_Apache__RequestRec_add_config',
     'args' => [
       {
@@ -5531,6 +5531,24 @@ $ModPerl::FunctionTable = [
         'type' => 'int',
         'name' => 'override'
       }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__Server_add_config',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'server_rec *',
+        'name' => 's'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'lines'
+      },
     ]
   },
   {
