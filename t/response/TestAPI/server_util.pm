@@ -46,7 +46,7 @@ sub handler {
     );
 
     plan $r, tests => (scalar keys %pools) +
-                      (scalar keys %objects) + 8;
+                      (scalar keys %objects) + 9;
 
     # syntax - an object or pool is required
     t_debug("Apache::server_root_relative() died");
@@ -109,6 +109,11 @@ sub handler {
         ok t_cmp($r->server_root_relative($dir),
                  $dir,
                  "\$r->server_root_relative($dir)");
+    }
+
+    {
+        t_debug('registering method FOO');
+        ok Apache::Server::method_register($r->server->process->pconf, 'FOO');
     }
 
     Apache::OK;
