@@ -117,3 +117,12 @@ PerlModule Apache::TestHandler
     PerlOptions +ParseHeaders
 </Location>
 
+### the 404 test ###
+
+Alias /error_document/ @ServerRoot@/cgi-bin/
+<Location /error_document>
+    ErrorDocument 404 /error_document/404.pl
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+</Location>

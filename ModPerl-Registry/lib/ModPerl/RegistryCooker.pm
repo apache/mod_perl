@@ -157,9 +157,9 @@ sub default_handler {
     # handlers shouldn't set $r->status but return it
     my $old_status = $self->[REQ]->status;
     my $rc = $self->run;
-    my $new_status = $self->[REQ]->status($old_status);
+    $self->[REQ]->status($old_status);
 
-    return ($rc != Apache::OK) ? $rc : $new_status;
+    return ($rc != Apache::OK) ? $rc : $self->[STATUS];
 }
 
 #########################################################################
