@@ -4,8 +4,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
+use Apache::TestConfig;
 
 use File::Spec::Functions qw(catfile catdir);
+
+use constant SIZE => Apache::TestConfig::WIN32 ? 14 : 10;
+use constant TRIES => 20;
 
 my $vars = Apache::Test::config->{vars};
 my $dir  = catdir $vars->{documentroot}, "hooks";
@@ -35,7 +39,7 @@ plan tests => 2;
     # and remove in the file. (wait 0.25 .. 5 sec)
     my $t = 0;
     select undef, undef, undef, 0.25
-        while -e $file && -s _ == 10 || $t++ == 20;
+        while -e $file && -s _ == SIZE || $t++ == TRIES;
 
     if (-e $file) {
         t_debug("$file wasn't removed by the cleanup phase");
