@@ -640,6 +640,18 @@ sub export_file_format_def {
     "   $val\n";
 }
 
+#C::Scan doesnt always pickup static __inline__ of mpxs_ functions
+#certain functions are only defined #ifdef USE_ITHREADS
+#XXX might need a modperl_ithreads.{def,exp} if any xs modules reference
+#these functions
+
+my $skip_exports = join '|', qw{
+mpxs_
+modperl_cmd_interp_
+modperl_interp_ modperl_list_ modperl_tipool_
+modperl_mgv_
+};
+
 sub write_export_file {
     my($self, $ext) = @_;
 
@@ -661,9 +673,11 @@ sub write_export_file {
 
         for my $entry (@$table) {
             next if $self->func_is_static($entry);
+            my $name = $entry->{name};
+            next if $name =~ /^($skip_exports)/o;
             my $fh = $self->func_is_inline($entry) ?
               $exp_inline_fh : $exp_fh;
-            print $fh $self->$format($entry->{name});
+            print $fh $self->$format($name);
         }
 
         for my $fh ($exp_fh, $exp_inline_fh) {
