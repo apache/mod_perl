@@ -78,6 +78,7 @@ ModPerl::MM::WriteMakefile(
     },
     dist => {
         DIST_DEFAULT => 'mydist',
+	COMPRESS=> 'gzip -9f', SUFFIX=>'gz',
     },
 );
 
