@@ -16,6 +16,9 @@
 #define mpxs_Apache__ServerRec_method_register(s, methname)    \
     ap_method_register(s->process->pconf, methname);
 
+#define mpxs_Apache__ServerRec_add_version_component(s, component)    \
+    ap_add_version_component(s->process->pconf, component);
+
 static MP_INLINE
 int mpxs_Apache__ServerRec_push_handlers(pTHX_ server_rec *s,
                                       const char *name,
