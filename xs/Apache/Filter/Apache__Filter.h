@@ -1,16 +1,13 @@
-#define mpxs_Apache__OutputFilter_f(filter) filter->f
-
 #define mpxs_Apache__RequestRec_add_output_filter(r, name, ctx) \
 ap_add_output_filter(name, ctx, r, NULL)
 
-/* XXX: this should be generated like the others in modperl_xs_sv_convert.h */
 #define mp_xs_sv2_modperl_filter(sv) \
 ((SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) \
 || (Perl_croak(aTHX_ "argument is not a blessed reference"),0) ? \
-(modperl_filter_t *)SvIV((SV*)SvRV(sv)) : (modperl_filter_t *)NULL)
+modperl_filter_mg_get(aTHX_ sv) : NULL)
 
-static MP_INLINE apr_size_t mpxs_Apache__OutputFilter_print(pTHX_ I32 items,
-                                                            SV **MARK, SV **SP)
+static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
+                                                      SV **MARK, SV **SP)
 {
     modperl_filter_t *modperl_filter;
     apr_size_t bytes = 0;
@@ -30,8 +27,8 @@ static MP_INLINE apr_size_t mpxs_Apache__OutputFilter_print(pTHX_ I32 items,
     return bytes;
 }
 
-static MP_INLINE apr_size_t mpxs_Apache__OutputFilter_read(pTHX_ I32 items,
-                                                           SV **MARK, SV **SP)
+static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
+                                                     SV **MARK, SV **SP)
 {
     modperl_filter_t *modperl_filter;
     apr_size_t wanted, len=0;

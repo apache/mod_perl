@@ -26,7 +26,7 @@ sub handler {
 
     my $tests = Apache::TestToString->finish;
 
-    my $brigade = APR::Brigade->new($filter->f->r->pool);
+    my $brigade = APR::Brigade->new($filter->r->pool);
     my $bucket = APR::Bucket->new($tests);
 
     $brigade->insert_tail($bucket);
@@ -34,7 +34,7 @@ sub handler {
     my $ok = $brigade->first->type->name =~ /mod_perl/ ? 4 : 0;
     $brigade->insert_tail(APR::Bucket->new("ok $ok\n"));
 
-    $filter->f->next->pass_brigade($brigade);
+    $filter->next->pass_brigade($brigade);
 
     Apache::OK;
 }
