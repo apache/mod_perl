@@ -5,11 +5,13 @@ use warnings FATAL => 'all';
 
 BEGIN {
     # perl 5.8.0 (only) croaks on eval {} block at compile time when
-    # it thinks the application is setgid. workaround: that's why we
-    # need to shutdown compile time errors for this function
+    # it thinks the application is setgid. workaround: shutdown
+    # compile time errors for this function
     local $SIG{__DIE__} = sub { };
+    # perl 5.6.x only triggers taint protection on strings which are
+    # at least one char long
     sub is_tainted {
-        return ! eval { eval join '', map { substr $_, 0, 0 } @_; 1};
+        return ! eval { eval join '', '#', map substr($_, 0, 0), @_; 1};
     }
 }
 
