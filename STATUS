@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/01/01 23:22:19 $]
+   Last modified at [$Date: 2003/01/11 02:09:30 $]
 
 Release:
 --------
@@ -98,10 +98,6 @@ Needs Patch or Further Investigation:
 
   - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
     what Apache::Directive->as_string does, but one char or line at a time
-
-* xs/APR/APR/Makefile.PL
-  - linking against -lapr and -lapr-util to support new goofy apr version
-    scheme and the old one and windows
 
 * Quite a few people reported problems with TestHooks during 'make test'
   - http://marc.theaimsgroup.com/?t=102985405500008&r=1&w=2
