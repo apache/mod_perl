@@ -8,9 +8,27 @@ inaccurate at times. Feel free to contribute.
 Download the httpd-2.0 and modperl-2.0 tarballs, and extract them
 in the same directory.
 
-[XXX: anon cvs for httpd-2.0, apr, apr-util, modperl-2.0]
+Or use anoncvs (password is "anoncvs"):
 
-[XXX: rsync for perl-current]
+ % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic login
+ % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co modperl-2.0
+ % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co httpd-2.0
+ % cd httpd-2.0/srclib
+ % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr
+ % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr-util
+ % cd ..
+ % buildconf
+ % ./configure --prefix=$HOME/apache-2.0 \
+   --with-mpm=mpmt_pthread --enable-so
+ % make && make install
+
+For bleeding edge Perl:
+
+ % rsync -auvz rsync://ftp.linux.activestate.com/perl-current/ perl-current
+ % cd perl-current
+ % ./Configure -des -Dprefix=$HOME/bleedperl \
+   -Dusethreads -Doptimize='-g' -Dusedevel
+ % make && make test && make install
 
 =head1 Compiling
 
