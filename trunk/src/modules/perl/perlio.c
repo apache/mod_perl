@@ -51,25 +51,22 @@
 
 #define dHANDLE(name) GV *handle = gv_fetchpv(name, TRUE, SVt_PVIO)
 
-#if (PERL_REVISION == 5 && PERL_VERSION < 7)
+#ifdef PERL_REVISION
+#   if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
+#      define TIEHANDLE_SV(handle) (SV*)GvIOp((SV*)handle)
+#   endif
+#endif
+
+#ifndef TIEHANDLE_SV
+#   define TIEHANDLE_SV(handle) (SV*)handle
+#endif
 
 #define TIEHANDLE(name,obj) \
 { \
       dHANDLE(name); \
-      sv_unmagic((SV*)handle, 'q'); \
-      sv_magic((SV*)handle, obj, 'q', Nullch, 0); \
+      sv_unmagic(TIEHANDLE_SV(handle), 'q'); \
+      sv_magic(TIEHANDLE_SV(handle), obj, 'q', Nullch, 0); \
 }
-
-#else
-
-#define TIEHANDLE(name,obj) \
-{ \
-      dHANDLE(name); \
-      sv_unmagic((SV*)GvIOp((SV*)handle), 'q'); \
-      sv_magic((SV*)GvIOp((SV*)handle), obj, 'q', Nullch, 0); \
-}
-
-#endif 
 
 #if 0
 #define TIED tied_handle
