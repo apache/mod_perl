@@ -252,7 +252,8 @@ sub perl_ccopts {
         $fixup->(\$cflags);
     }
 
-    if ($self->{MP_DEBUG}) {
+    if (WIN32 and $self->{MP_DEBUG}) {
+        #only win32 has -DDEBUGGING in both optimize and ccflags
         my $optim = $Config{optimize};
 
         unless ($optim =~ /-DDEBUGGING/) {
