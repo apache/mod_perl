@@ -126,3 +126,42 @@ static MP_INLINE const char *mpxs_APR__Table_FIRSTKEY(SV *tsv)
 
     return mpxs_APR__Table_NEXTKEY(tsv, Nullsv);
 }
+
+static XS(MPXS_apr_table_get)
+{
+    dXSARGS;
+
+    if (items != 2) {
+        Perl_croak(aTHX_ "Usage: $table->get($key)");
+    }
+
+    mpxs_PPCODE({
+        APR__Table t = modperl_hash_tied_object(aTHX_ "APR::Table", ST(0));
+        const char *key = (const char *)SvPV_nolen(ST(1));
+    
+        if (!t) {
+            XSRETURN_UNDEF;
+        }
+        
+        if(GIMME_V == G_SCALAR) {
+            const char *val = apr_table_get(t, key);
+
+            if (val) {
+                XPUSHs(sv_2mortal(newSVpv((char*)val, 0)));
+            }
+        }
+        else {
+            apr_array_header_t *arr = apr_table_elts(t);
+            apr_table_entry_t *elts  = (apr_table_entry_t *)arr->elts;
+            int i;
+            
+            for (i = 0; i < arr->nelts; i++) {
+                if (!elts[i].key || strcasecmp(elts[i].key, key)) {
+                    continue;
+                }
+                XPUSHs(sv_2mortal(newSVpv(elts[i].val,0)));
+            }
+        }
+    });
+    
+}
