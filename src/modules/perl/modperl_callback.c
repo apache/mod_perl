@@ -268,9 +268,7 @@ int modperl_callback_run_handlers(int idx, int type,
     SvREFCNT_dec((SV*)av_args);
 
     /* PerlInterpScope handler */
-#ifdef USE_ITHREADS
-    MP_dINTERP_PUTBACK(interp);
-#endif
+    MP_INTERP_PUTBACK(interp);
 
     return status;
 }

@@ -50,7 +50,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp = modperl_interp_select(r, c, s); \
     aTHX = interp->perl
 
-#define MP_dINTERP_PUTBACK(interp) \
+#define MP_INTERP_PUTBACK(interp) \
     if (interp && MpInterpPUTBACK(interp)) { \
         modperl_interp_unselect(interp); \
     }
@@ -77,7 +77,7 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 
 #define MP_dINTERP_SELECT(r, c, s) dNOOP
 
-#define MP_dINTERP_PUTBACK(interp) dNOOP
+#define MP_INTERP_PUTBACK(interp) NOOP
 
 #define MP_aTHX 0
 
