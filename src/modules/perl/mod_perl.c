@@ -541,7 +541,10 @@ int modperl_perl_destruct_level(void)
 static apr_status_t modperl_child_exit(void *data)
 {
     char *level = NULL;
-
+    server_rec *s = (server_rec *)data;
+    
+    modperl_callback_process(MP_CHILD_EXIT_HANDLER, server_pool, s);
+    
     if ((level = getenv("PERL_DESTRUCT_LEVEL"))) {
         modperl_destruct_level = atoi(level);
     }
@@ -563,7 +566,7 @@ static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 {
     modperl_perl_init_ids_server(s);
 
-    apr_pool_cleanup_register(p, NULL, modperl_child_exit,
+    apr_pool_cleanup_register(p, (void *)s, modperl_child_exit,
                               apr_pool_cleanup_null);
 }
 

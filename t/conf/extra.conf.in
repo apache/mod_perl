@@ -1,6 +1,8 @@
 # make sure that we test under Taint mode
 PerlSwitches -T
 
+PerlChildExitHandler ModPerl::Test::exit_handler
+
 #for t/modules/include.t
 <Directory @ServerRoot@/htdocs/includes>
     AddOutputFilter INCLUDES .shtml

@@ -76,6 +76,12 @@ sub ModPerl::Test::add_config {
     Apache::OK;
 }
 
+sub ModPerl::Test::exit_handler {
+    my($p, $s) = @_;
+
+    $s->log->info("Child process pid=$$ is exiting");
+}
+
 END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }

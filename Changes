@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+add PerlChildExitHandler implementation [Stas]
+
 add PerlCleanupHandler implementation + test [Stas]
 
 Apache::Test now can run 'make test' under 'root', without permission
