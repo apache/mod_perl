@@ -21,3 +21,41 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
 
     return sv;
 }
+
+char *modperl_apr_strerror(apr_status_t rv)
+{
+    dTHX;
+    char buf[256];
+    apr_strerror(rv, buf, sizeof(buf));
+    return Perl_form(aTHX_ "%d:%s", rv, buf);
+}
+
+int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
+{
+    SV *sv = ERRSV;
+    STRLEN n_a;
+
+    if (SvTRUE(sv)) {
+        if (SvMAGICAL(sv) && (SvCUR(sv) > 4) &&
+            strnEQ(SvPVX(sv), " at ", 4))
+        {
+            /* Apache::exit was called */
+            return DECLINED;
+        }
+#if 0
+        if (modperl_sv_is_http_code(ERRSV, &status)) {
+            return status;
+        }
+#endif
+        if (r) {
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, SvPV(sv, n_a));
+        }
+        else {
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, SvPV(sv, n_a));
+        }
+
+        return status;
+    }
+
+    return status;
+}

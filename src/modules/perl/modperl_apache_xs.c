@@ -1,84 +1,102 @@
 #include "mod_perl.h"
 #include "modperl_apache_xs.h"
 
+#define mpxs_write_loop(func,obj) \
+    while (MARK <= SP) { \
+        apr_ssize_t wlen; \
+        char *buf = SvPV(*MARK, wlen); \
+        apr_status_t rv = func(obj, buf, &wlen); \
+        if (rv != APR_SUCCESS) { \
+            croak(modperl_apr_strerror(rv)); \
+        } \
+        bytes += wlen; \
+        MARK++; \
+    }
+
 /*
  * it is not optimal to create an ap_bucket for each element of @_
  * so we use our own mini-buffer to build up a decent size buffer
  * before creating an ap_bucket
+ * this buffer is flushed when full or after PerlResponseHandlers are run
  */
 
-/*
- * XXX: should make the modperl_wbucket_t hang off of
- * r->per_request_config to avoid "setaside" copies of small buffers
- * that may happen during ap_pass_brigade()
- */
+/* XXX: maybe we should just let xsubpp do its job */
+#define modperl_sv2r modperl_sv2request_rec
 
-#ifndef MODPERL_WBUCKET_SIZE
-#define MODPERL_WBUCKET_SIZE IOBUFSIZE
-#endif
+#define mpxs_sv2obj(obj) \
+(obj = modperl_sv2##obj(aTHX_ *MARK++))
 
-typedef struct {
-    int outcnt;
-    char outbuf[MODPERL_WBUCKET_SIZE];
+#define mpxs_usage(i, obj, msg) \
+if ((items < i) || !(mpxs_sv2obj(obj))) \
+croak("usage: %s", msg)
+
+#define mpxs_usage_1(obj, msg) mpxs_usage(1, obj, msg)
+
+#define mpxs_usage_2(obj, arg, msg) \
+mpxs_usage(2, obj, msg); \
+arg = *MARK++
+
+MP_INLINE apr_size_t modperl_apache_xs_write(pTHX_ I32 items,
+                                             SV **MARK, SV **SP)
+{
+    modperl_request_config_t *rcfg;
+    apr_size_t bytes = 0;
     request_rec *r;
-} modperl_wbucket_t;
 
-static MP_INLINE void modperl_wbucket_pass(modperl_wbucket_t *b,
-                                           void *buf, int len)
-{
-    ap_bucket_brigade *bb = ap_brigade_create(b->r->pool);
-    ap_bucket *bucket = ap_bucket_create_transient(buf, len);
-    ap_brigade_append_buckets(bb, bucket);
-    ap_pass_brigade(b->r->filters, bb);
+    mpxs_usage_1(r, "$r->write(...)");
+
+    rcfg = modperl_request_config_get(r);
+
+    mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
+
+    /* XXX: flush if $| */
+
+    return bytes;
 }
 
-static MP_INLINE void modperl_wbucket_flush(modperl_wbucket_t *b)
+MP_INLINE apr_size_t modperl_filter_xs_write(pTHX_ I32 items,
+                                             SV **MARK, SV **SP)
 {
-    modperl_wbucket_pass(b, b->outbuf, b->outcnt);
-    b->outcnt = 0;
-}
-
-static MP_INLINE void modperl_wbucket_write(modperl_wbucket_t *b,
-                                            void *buf, int len)
-{
-    if ((len + b->outcnt) > MODPERL_WBUCKET_SIZE) {
-        modperl_wbucket_flush(b);
-    }
-
-    if (len >= MODPERL_WBUCKET_SIZE) {
-        modperl_wbucket_pass(b, buf, len);
-    }
-    else {
-        memcpy(&b->outbuf[b->outcnt], buf, len);
-        b->outcnt += len;
-    }
-}
-
-MP_INLINE apr_size_t modperl_apache_xs_write(pTHX_ SV **mark_ptr, SV **sp_ptr)
-{
-    modperl_wbucket_t wbucket;
+    modperl_filter_t *filter;
     apr_size_t bytes = 0;
 
-    mark_ptr++;
+    mpxs_usage_1(filter, "$filter->write(...)");
 
-    wbucket.r = modperl_sv2request_rec(aTHX_ *mark_ptr++);
-    wbucket.outcnt = 0;
-
-    if (wbucket.r->connection->aborted) {
-        return EOF;
+    if (filter->mode == MP_OUTPUT_FILTER_MODE) {
+        mpxs_write_loop(modperl_output_filter_write, filter);
+        modperl_output_filter_flush(filter);
     }
-
-    while (mark_ptr <= sp_ptr) {
-        STRLEN len;
-        char *buf = SvPV(*mark_ptr, len);
-        modperl_wbucket_write(&wbucket, buf, len);
-        bytes += len;
-        mark_ptr++;
+    else {
+        croak("input filters not yet supported");
     }
-
-    modperl_wbucket_flush(&wbucket);
 
     /* XXX: ap_rflush if $| */
 
     return bytes;
+}
+
+MP_INLINE apr_size_t modperl_filter_xs_read(pTHX_ I32 items,
+                                            SV **MARK, SV **SP)
+{
+    modperl_filter_t *filter;
+    apr_size_t wanted, len=0;
+    SV *buffer;
+
+    mpxs_usage_2(filter, buffer, "$filter->read(buf, [len])");
+
+    if (items > 2) {
+        wanted = SvIV(*MARK);
+    }
+    else {
+        wanted = IOBUFSIZE;
+    }
+
+    if (filter->mode == MP_OUTPUT_FILTER_MODE) {
+        len = modperl_output_filter_read(aTHX_ filter, buffer, wanted);
+    }
+    else {
+        croak("input filters not yet supported");
+    }
+
+    return len;
 }

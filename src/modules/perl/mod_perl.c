@@ -121,16 +121,40 @@ void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
 void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
                                 apr_pool_t *ptemp)
 {
+    /* XXX: htf can we have PerlPreConfigHandler
+     * without first configuring mod_perl ?
+     */
+}
+
+static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
+                                     apr_pool_t *ptemp, server_rec *s)
+{
+#ifdef USE_ITHREADS
+    MP_dSCFG(s);
+    dTHXa(scfg->mip->parent->perl);
+#endif
+    ap_add_version_component(pconf, MP_VERSION_STRING);
+    ap_add_version_component(pconf,
+                             Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
 }
 
 void modperl_register_hooks(void)
 {
-    /* XXX: should be pre_config hook or 1.xx logic */
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_MIDDLE);
+
+    ap_hook_insert_filter(modperl_output_filter_register,
+                          NULL, NULL, AP_HOOK_LAST);
+
+    ap_register_output_filter(MODPERL_OUTPUT_FILTER_NAME,
+                              modperl_output_filter_handler,
+                              AP_FTYPE_CONTENT);
+
+    ap_hook_post_config(modperl_hook_post_config, NULL, NULL, AP_HOOK_MIDDLE);
+
     modperl_register_handler_hooks();
 }
 
-static command_rec modperl_cmds[] = {  
+static const command_rec modperl_cmds[] = {  
     MP_SRV_CMD_ITERATE("PerlSwitches", switches, "Perl Switches"),
     MP_SRV_CMD_ITERATE("PerlOptions", options, "Perl Options"),
 #ifdef MP_TRACE
@@ -152,7 +176,40 @@ static command_rec modperl_cmds[] = {
     { NULL }, 
 }; 
 
-static handler_rec modperl_handlers[] = {
+static void modperl_response_init(request_rec *r)
+{
+    MP_dRCFG;
+
+    modperl_request_config_init(r, rcfg);
+
+    /* setup buffer for output */
+    rcfg->wbucket.pool = r->pool;
+    rcfg->wbucket.filters = r->output_filters;
+    rcfg->wbucket.outcnt = 0;
+}
+
+static void modperl_response_finish(request_rec *r)
+{
+    MP_dRCFG;
+
+    /* flush output buffer */
+    modperl_wbucket_flush(&rcfg->wbucket);
+}
+
+static int modperl_response_handler(request_rec *r)
+{
+    int retval;
+
+    modperl_response_init(r);
+
+    retval = modperl_per_dir_callback(MP_RESPONSE_HANDLER, r);
+
+    modperl_response_finish(r);
+
+    return retval;
+}
+
+static const handler_rec modperl_handlers[] = {
 #if 0
     { "perl-script", modperl_1xx_response_handler },
 #endif    

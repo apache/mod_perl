@@ -85,10 +85,9 @@ sub ldopts {
 my $Wall = 
   "-Wall -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations";
 
-sub ccopts {
+sub ap_ccopts {
     my($self) = @_;
-
-    my $ccopts = ExtUtils::Embed::ccopts();
+    my $ccopts = "";
 
     if ($self->{MP_USE_GTOP}) {
         $ccopts .= " -DMP_USE_GTOP";
@@ -116,6 +115,12 @@ sub ccopts {
     }
 
     $ccopts;
+}
+
+sub ccopts {
+    my($self) = @_;
+
+    ExtUtils::Embed::ccopts() . $self->ap_ccopts;
 }
 
 sub perl_config {
@@ -382,9 +387,7 @@ sub find {
 
     for my $src_dir ($self->dir,
                      $self->default_dir,
-                     <../apache*/src>,
-                     <../stronghold*/src>,
-                     '../src', './src')
+                     '../httpd-2.0')
       {
           next unless (-d $src_dir || -l $src_dir);
           next if $seen{$src_dir}++;
@@ -575,7 +578,7 @@ EOF
 }
 
 my @perl_config_pm =
-  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags
+  qw(cc cpprun ld ar rm ranlib lib_ext dlext cccdlflags lddlflags
      perlpath privlibexp);
 
 sub make_tools {
@@ -674,6 +677,12 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 .c.o:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $<
 
+.c.cpp:
+	$(MODPERL_CPPRUN) $(MODPERL_CCFLAGS) -c $< > $*.cpp
+
+.c.s:
+	$(MODPERL_CC) -O -S $(MODPERL_CCFLAGS) -c $<
+
 .xs.c:
 	$(MODPERL_XSUBPP) $*.xs >$@
 
@@ -686,7 +695,7 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && mv $*.o $*.lo
 
 clean:
-	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo \
+	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo *.cpp *.s \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
@@ -738,7 +747,9 @@ sub inc {
     my @inc = ();
 
     for ("$src/modules/perl", "$src/include",
-         "$src/lib/apr/include", "$src/os/$os",
+         "$src/srclib/apr/include",
+         "$src/srclib/apr-util/include",
+         "$src/os/$os",
          $self->file_path("src/modules/perl"))
       {
           push @inc, "-I$_" if -d $_;
