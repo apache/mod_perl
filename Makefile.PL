@@ -12,11 +12,6 @@ our $VERSION;
 my $build = Apache::Build->new;
 my $code  = ModPerl::Code->new;
 
-if ($build->{MP_CPP}) {
-    make();
-    exit;
-}
-
 configure();
 
 ModPerl::MM::WriteMakefile(
@@ -84,22 +79,6 @@ sub echo_cmd {
     my $cmd = shift;
     print "$cmd\n";
     system($cmd) == 0 or exit(1);
-}
-
-sub make {
-    my $ccopts = $build->ccopts;
-    my @inc = $build->inc;
-    my $cc = $build->perl_config('cc');
-
-    chdir $code->path;
-
-    $ccopts .= " -E" if $build->{MP_CPP};
-
-    for (sort { (stat $b)[9] <=> (stat $a)[9] } @{ $code->c_files }) {
-        echo_cmd "$cc $ccopts @inc -c $_";
-    }
-
-    chdir $build->cwd;
 }
 
 sub clean_files {
