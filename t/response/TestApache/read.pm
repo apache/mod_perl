@@ -6,6 +6,8 @@ use warnings FATAL => 'all';
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 
+use TestCommon::Utils;
+
 use Apache::Const -compile => 'OK';
 
 use constant BUFSIZ => 512; #small for testing
@@ -29,7 +31,10 @@ sub handler {
         $offset += $read;
     }
 
-    #make sure we dont block after all data is read
+    die "read() has returned untainted data:"
+        unless TestCommon::Utils::is_tainted($buffer);
+
+    # make sure we dont block after all data is read
     my $n = $r->read(my $x, BUFSIZ);
     die unless $n == 0;
 

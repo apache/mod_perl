@@ -20,7 +20,9 @@ TestCommon::Utils - Common Test Utils
 
   use TestCommon::Utils;
   
+  # test whether some SV is tainted
   $b->read(my $data);
+  ok TestCommon::Utils::is_tainted($data);
 
 
 

@@ -5,12 +5,19 @@ use warnings FATAL => 'all';
 
 use Apache::Filter ();
 
+use TestCommon::Utils;
+
 use Apache::Const -compile => 'OK';
 
 sub handler {
     my $filter = shift;
 
     while ($filter->read(my $buffer, 1024)) {
+
+        # test that read() returns tainted data
+        die "read() has returned untainted data"
+            unless TestCommon::Utils::is_tainted($buffer);
+
         $filter->print(lc $buffer);
     }
 

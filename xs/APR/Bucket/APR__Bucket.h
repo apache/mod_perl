@@ -52,10 +52,17 @@ apr_size_t mpxs_APR__Bucket_read(pTHX_
         modperl_croak(aTHX_ rc, "APR::Bucket::read");
     }
 
-    sv_setpvn(buffer, (len ? str : ""), len);
+    if (len) {
+        sv_setpvn(buffer, str, len);
+    }
+    else {
+        sv_setpvn(buffer, "", 0);
+    }
 
     /* must run any set magic */
     SvSETMAGIC(buffer);
+
+    SvTAINTED_on(buffer);
     
     return len;
 }

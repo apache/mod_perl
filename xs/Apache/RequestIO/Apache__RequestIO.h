@@ -251,7 +251,6 @@ static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
 
     if (total > 0) {
         mpxs_sv_cur_set(buffer, offset+total);
-        SvTAINTED_on(buffer);
     } 
     else {
         sv_setpvn(buffer, "", 0);
@@ -259,6 +258,8 @@ static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
 
     /* must run any set magic */
     SvSETMAGIC(buffer);
+
+    SvTAINTED_on(buffer);
 
     return newSViv(total);
 }

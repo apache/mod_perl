@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+make sure that Apache::Filter::read, APR::Socket::recv,
+Apache::RequestIO::read, APR::Brigade::flatten, and APR::Bucket::read
+all return tainted data under -T [Stas]
+
 tag the custom pools created by mod_perl for easier pools debug [Joe
 Orton]
 
