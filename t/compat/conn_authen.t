@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 1, (\&have_lwp && \&have_auth);
+plan tests => 1, have_lwp && have_auth;
 
 my $location = "/TestCompat__conn_authen";
 
