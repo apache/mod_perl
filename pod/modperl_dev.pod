@@ -19,7 +19,7 @@ Or use anoncvs (password is "anoncvs"):
  % cd ..
  % buildconf
  % ./configure --prefix=$HOME/apache-2.0 \
-   --with-mpm=mpmt_pthread --enable-so
+   --with-mpm=threaded --enable-so
  % make && make install
 
 For bleeding edge Perl:
@@ -100,7 +100,7 @@ and those from MP_OPTIONS_FILE.
 =head2 Configure and compile Apache
 
   % cd ../httpd-2.0
-  % ./configure --with-mpm=mpmt_pthread
+  % ./configure --with-mpm=threaded
   % make
 
 
