@@ -785,7 +785,7 @@ int perl_sv_is_http_code(SV *errsv, int *status)
 #define PERLLIB_SEP ':'
 #endif
 
-void perl_incpush(char *p)
+void perl_inc_unshift(char *p)
 {
     if(!p) return;
 
@@ -803,7 +803,8 @@ void perl_incpush(char *p)
 	    sv_setpv(libdir, p);
 	    p = Nullch;
 	}
-	av_push(GvAV(incgv), libdir);
+       av_unshift(GvAV(incgv), 1);
+       av_store(GvAV(incgv), 0, libdir);
     }
 }
 

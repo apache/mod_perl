@@ -1179,7 +1179,7 @@ void mp_magic_setenv(char *key, char *val, int is_tainted);
 void mod_perl_init_ids(void);
 int perl_eval_ok(server_rec *s);
 int perl_sv_is_http_code(SV *sv, int *status);
-void perl_incpush(char *s);
+void perl_inc_unshift(char *s);
 SV *mod_perl_sv_name(SV *svp);
 void mod_perl_mark_where(char *where, SV *sub);
 
