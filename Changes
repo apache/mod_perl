@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+implement a new helper module ModPerl::MethodLookup to help figure out
+which module should be loaded when a certain method is reported to be
+missing. [Stas]
+
 fix a bug for apr < 0.9.3, where it segfaults in apr_uri_unparse, if
 hostname is set, but not the scheme. [Stas]
 
