@@ -10,9 +10,6 @@ $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
 haven't looked close enough yet)
 
-$r->pnotes:
-not yet implemented
-
 $r->subprocess_env:
 in void context should populate %ENV as 1.x does
 
