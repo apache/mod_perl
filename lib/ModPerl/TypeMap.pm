@@ -205,7 +205,7 @@ sub map_function {
     my $mf = {
        name        => $func->{name},
        return_type => $self->map_type($map->{return_type} ||
-                                      $func->{return_type}),
+                                      $func->{return_type} || 'void'),
        args        => $self->map_args($func),
        perl_name   => $map->{name},
     };
