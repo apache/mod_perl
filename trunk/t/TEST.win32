@@ -1,5 +1,6 @@
 #AUTHOR: Peter Tillemans <pti@MAIL.NET4ALL.BE>
 
+use strict;
 use Cwd;
 use File::Copy;
 use File::Find;
@@ -39,7 +40,7 @@ my $conf = 't/conf/httpd.conf';
 my $win32_conf = $conf . '-win32';
 my $bak = $conf . '.bak';
 copy($win32_conf, $conf)
-  or die "Copy of $win32_conf to $conf failed: $!";
+    or die "Copy of $win32_conf to $conf failed: $!";
 
 #
 #source or binary distribution
@@ -59,11 +60,9 @@ for (qw(src/modules/win32/Release
 #
 
 mkdir("/tmp","755") unless -d "/tmp";
-
 for my $d (qw(logs conf)) {
     mkdir("t/$d","755") unless -d "t/$d";
 }
-
 for my $f (qw(srm.conf access.conf mime.types)) {
     local *FH;
     open FH, ">t/conf/$f"; close FH;
@@ -71,7 +70,7 @@ for my $f (qw(srm.conf access.conf mime.types)) {
 
 # change the paths so everybody agrees on which files to use
 #
-$pwd = cwd();
+my $pwd = cwd();
 # this is to make sure apache knows which files to take 
 #   : apparently apache uner Win32
 
@@ -116,7 +115,9 @@ print "done\n";
 #
 system "$fullperl t/TEST @ARGV";
 
+#
 # stop server again
+#
 $HttpdObj->Kill(0);
 
 #
@@ -131,60 +132,60 @@ unlink $bak;
 unlink "$pwd/t/logs/mod_perl_httpd.pid";
 
 sub find_apache {
-  my $apache;
-  my $exe = 'Apache.exe';
- SEARCH: {
-    my $candidate;
-    for (File::Spec->path) {
-      $candidate = File::Spec->catfile($_, $exe);
-      if (-e $candidate and check_win32_apache($candidate)) {
-        $apache = $candidate;
-        last SEARCH;
-      }
-    }
-    my @drives = drives();
-    last SEARCH unless (@drives > 0);
-    for my $drive (@drives) {
-      for ('Apache', 'Program Files/Apache', 
-           'Program Files/Apache Group/Apache') {
-        $candidate = File::Spec->catfile($drive, $_, $exe);
-        if (-e $candidate and check_win32_apache($candidate)) {
-          $apache = $candidate;
-          last SEARCH;
+    my $apache;
+    my $exe = 'Apache.exe';
+  SEARCH: {
+        my $candidate;
+        for (File::Spec->path) {
+            $candidate = File::Spec->catfile($_, $exe);
+            if (-e $candidate and check_win32_apache($candidate)) {
+                $apache = $candidate;
+                last SEARCH;
+            }
         }
-      }
+        my @drives = drives();
+        last SEARCH unless (@drives > 0);
+        for my $drive (@drives) {
+            for ('Apache', 'Program Files/Apache', 
+                 'Program Files/Apache Group/Apache') {
+                $candidate = File::Spec->catfile($drive, $_, $exe);
+                if (-e $candidate and check_win32_apache($candidate)) {
+                    $apache = $candidate;
+                    last SEARCH;
+                }
+            }
+        }
     }
-  }
-  unless (-e $apache) {
-    $apache = prompt("Please supply the full path to Apache.exe:", 
-                     $apache);
-    if (-d $apache) {
-      $apache = File::Spec->catfile($apache, $exe);
+    unless (-e $apache) {
+        $apache = prompt("Please supply the full path to Apache.exe:", 
+                         $apache);
+        if (-d $apache) {
+            $apache = File::Spec->catfile($apache, $exe);
+        }
     }
-  }
-  die "Can't find $exe!" 
-    unless (-e $apache and check_win32_apache($apache));
-  
-  $apache = Win32::GetShortPathName($apache);
-  $apache =~ s!\\!/!g;
-  return $apache;
+    die "Can't find $exe!" 
+        unless (-e $apache and check_win32_apache($apache));
+    
+    $apache = Win32::GetShortPathName($apache);
+    $apache =~ s!\\!/!g;
+    return $apache;
 }
 
 sub check_win32_apache {
-  my $apache = shift;
-  my $vers = qx{"$apache" -v};
-  return ($vers =~ m!Apache/1.3!) ? 1 : 0;
+    my $apache = shift;
+    my $vers = qx{"$apache" -v};
+    return ($vers =~ m!Apache/1.3!) ? 1 : 0;
 }
 
 sub drives {
-  my @drives = ();
-  eval{require Win32API::File;};
-  return map {"$_:\\"} ('C' .. 'Z') if $@;
-  my @r = Win32API::File::getLogicalDrives();
-  return unless @r > 0;
-  for (@r) {
-    my $t = Win32API::File::GetDriveType($_);
-    push @drives, $_ if ($t == 3 or $t == 4);
-  }
-  return @drives > 0 ? @drives : undef;
+    my @drives = ();
+    eval{require Win32API::File;};
+    return map {"$_:\\"} ('C' .. 'Z') if $@;
+    my @r = Win32API::File::getLogicalDrives();
+    return unless @r > 0;
+    for (@r) {
+        my $t = Win32API::File::GetDriveType($_);
+        push @drives, $_ if ($t == 3 or $t == 4);
+    }
+    return @drives > 0 ? @drives : undef;
 }
