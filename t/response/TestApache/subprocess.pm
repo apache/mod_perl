@@ -8,7 +8,6 @@ use Apache::TestUtil;
 
 use File::Spec::Functions qw(catfile catdir);
 
-eval { require Apache::SubProcess };
 use Apache::Const -compile => 'OK';
 
 my %scripts = (
@@ -41,6 +40,8 @@ sub handler {
     plan $r, tests => 4,
         have {"perl < 5.7.3" => sub { $] >= 5.007003 } },
              'Apache::SubProcess';
+
+    eval { require Apache::SubProcess };
 
     my $target_dir = catfile $vars->{documentroot}, "util";
 
