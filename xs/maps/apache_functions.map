@@ -139,7 +139,6 @@ MODULE=Apache::Access   PACKAGE=Apache::RequestRec
 
 MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
  ap_add_version_component
- ap_construct_server
  ap_error_log2stderr
 
 #MODULE=Apache::ServerConfig
@@ -263,7 +262,9 @@ MODULE=Apache::Util
 MODULE=Apache::URI   PACKAGE=guess
  ap_unescape_url | mpxs_ | SV *:url
  ap_parse_uri
- ap_construct_url | | r,uri=r->uri,p=r->pool
+ ap_construct_url    | | r, uri=r->uri, p=r->pool
+ ap_construct_server | | r, hostname=ap_get_server_name(r), \
+                         port=ap_get_server_port(r), p=r->pool
 
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_parsed_uri
