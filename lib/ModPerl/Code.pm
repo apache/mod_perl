@@ -461,6 +461,7 @@ my %trace = (
     'i' => 'interpreter pool management',
     'g' => 'Perl runtime interaction',
     'f' => 'filters',
+    'o' => 'I/O',
 );
 
 sub generate_trace {
