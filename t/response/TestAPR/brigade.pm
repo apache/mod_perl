@@ -3,7 +3,7 @@ package TestAPR::brigade;
 # testing APR::Brigade in this tests.
 # Other tests do that too:
 # TestAPR::flatten : flatten()
-# TestAPR::bucket  : empty(), first(), last()
+# TestAPR::bucket  : is_empty(), first(), last()
 
 use strict;
 use warnings FATAL => 'all';
@@ -20,7 +20,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 9;
+    plan $r, tests => 10;
 
     # basic + pool + destroy
     {
@@ -60,6 +60,8 @@ sub handler {
         # bb1: 11, 12, 21, 22
         ok t_cmp(8, $bb1->length, "total data length in bb");
         ok t_cmp("11122122", $bb1->flatten, "bb flatten");
+        t_debug('$bb2 is empty');
+        ok $bb2->is_empty;
 
         # split
         my $b = $bb1->first; # 11
