@@ -83,14 +83,14 @@ performance, try only setting up the the exit handler inside CGIs
 (with the C<setmax> function), and see if the CHECK_EVERY_N_REQUESTS
 option is of benefit.
 
-=item solaris 2.6
+=item solaris 2.6 and above
 
 For solaris we simply retrieve the size of /proc/self/as, which
 contains the address-space image of the process, and convert to KB.
 
-NOTE: This is only known to work for solaris 2.6. Evidently the /proc
-filesystem has changed between 2.5.1 and 2.6. Can anyone confirm or
-deny?
+NOTE: This is only known to work for solaris 2.6 and above. Evidently
+the /proc filesystem has changed between 2.5.1 and 2.6. Can anyone
+confirm or deny?
 
 =item *bsd*
 
@@ -130,7 +130,7 @@ $REQUEST_COUNT = 1;
 BEGIN {
     # decide at compile time how to check for a process' memory size.
     if (($Config{'osname'} eq 'solaris') &&
-	 ($Config{'osvers'} eq '2.6')) {
+	 ($Config{'osvers'} >= '2.6')) {
 	$HOW_BIG_IS_IT = \&solaris_2_6_size_check;
     } elsif ($Config{'osname'} eq 'linux') {
 	$HOW_BIG_IS_IT = \&linux_size_check;
