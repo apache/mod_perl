@@ -72,43 +72,6 @@ sub ModPerl::Test::add_config {
     Apache::OK;
 }
 
-#<Perl handler=ModPerl::Test::perl_section>
-# ...
-#</Perl>
-sub ModPerl::Test::perl_section {
-    my($parms, $args) = @_;
-
-    require Apache::CmdParms;
-    require Apache::Directive;
-
-    my $code = $parms->directive->as_string;
-    my $package = $args->{package} || 'Apache::ReadConfig';
-
-##   a real handler would do something like:
-#    eval "package $package; $code";
-#    die $@ if $@;
-##   feed %Apache::ReadConfig:: to Apache::Server->add_config
-
-    my $htdocs = Apache::server_root_relative($parms->pool, 'htdocs');
-
-    my @cfg = (
-       "Alias /perl_sections $htdocs",
-       "<Location /perl_sections>",
-#       "   require valid-user",
-       "   PerlInitHandler ModPerl::Test::add_config",
-       "   AuthType Basic",
-       "   AuthName PerlSection",
-       "   PerlAuthenHandler TestHooks::authen",
-       "</Location>",
-    );
-
-    my $errmsg = $parms->server->add_config(\@cfg);
-
-    die $errmsg if $errmsg;
-
-    Apache::OK;
-}
-
 END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }

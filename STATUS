@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/09/17 02:46:20 $]
+   Last modified at [$Date: 2002/10/07 02:35:18 $]
 
 Release:
 --------
@@ -53,10 +53,6 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
-
-* pluggable <Perl> sections have been implemented but need a default
-  handler to actually convert the Perl code into apache config
-  [Philippe M. Chiasson <gozer@cpan.org> is working on one]
 
 * Apache->httpd_conf compat method mapping to Apache::Server->add_config
 

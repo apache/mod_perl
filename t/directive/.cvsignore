@@ -1,3 +1,4 @@
 env.t
 loadmodule.t
 pod.t
+perldo.t

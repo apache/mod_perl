@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add default <Perl> handler Apache::PerlSection.
+make <Perl> blocks to be EXEC_ON_READ so apache does not parse the contents.
+add "Perl" directive for general use and for which <Perl> sections are
+stuffed into.
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 rename overloaded LoadModule directive to PerlLoadModule
 
 =item 1.99_07 - September 25, 2002
