@@ -9,6 +9,11 @@
 
 #ifdef WIN32
 #   define MP_FUNC_T(name) (_stdcall *name)
+/* XXX: not all functions get inlined
+ * so its unclear what to and not to include in the .def files
+ */
+#   undef MP_INLINE
+#   define MP_INLINE
 #else
 #   define MP_FUNC_T(name)          (*name)
 #endif
