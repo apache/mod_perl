@@ -3,13 +3,13 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- make Apache->server->register_cleanup work
+
 - <Perl> should report failed config
 
 - $ENV{PATH}
 
 - Apache::SubRequest->bytes_sent
-
-- deal with mod_ssl.c/Stronghold test configuration
 
 - Apache::SizeLimit (Brian Moseley)
 
@@ -130,8 +130,6 @@ NEW STUFF
 ---------------------------------------------------------------------------
 
 - PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
-
-- make Apache->server->register_cleanup work
 
 - mod_perl C code symbols, should look at cleaning up names with a
   common prefix, e.g. mp_, mod_perl_, mperl_ ?
