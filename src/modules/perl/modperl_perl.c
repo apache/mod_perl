@@ -82,3 +82,22 @@ void modperl_perl_init_ids_server(server_rec *s)
     modperl_perl_init_ids(aTHX_ &ids);
 #endif
 }
+
+void modperl_perl_destruct(PerlInterpreter *perl)
+{
+    dTHXa(perl);
+
+    PERL_SET_CONTEXT(perl);
+
+    PL_perl_destruct_level = 2;
+
+    perl_destruct(perl);
+
+    /* XXX: big bug in 5.6.1 fixed in 5.7.2+
+     * XXX: see CLONEf_CLONE_HOST perl_clone() flag
+     * XXX: try to find a workaround for 5.6.1
+     */
+#ifndef WIN32
+    perl_free(perl);
+#endif
+}

@@ -9,12 +9,10 @@ static apr_status_t modperl_shutdown(void *data)
 
     handles = modperl_xs_dl_handles_get(aTHX_ cdata->pool);
 
-    PL_perl_destruct_level = 2;
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
                (unsigned long)perl);
 
-    perl_destruct(perl);
-    perl_free(perl);
+    modperl_perl_destruct(perl);
 
     if (handles) {
         modperl_xs_dl_handles_close(cdata->pool, handles);

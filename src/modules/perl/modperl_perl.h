@@ -11,4 +11,6 @@ void modperl_perl_core_global_init(pTHX);
 
 void modperl_perl_init_ids_server(server_rec *s);
 
+void modperl_perl_destruct(PerlInterpreter *perl);
+
 #endif /* MODPERL_PERL_H */

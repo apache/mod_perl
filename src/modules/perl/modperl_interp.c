@@ -83,9 +83,6 @@ void modperl_interp_destroy(modperl_interp_t *interp)
         MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
     }
 
-    PERL_SET_CONTEXT(interp->perl);
-    PL_perl_destruct_level = 2;
-
     /* we cant use interp->mip->ap_pool without locking
      * apr_pool_create() will mutex lock for us
      * XXX: could roll something without using apr_pool_t
@@ -94,15 +91,7 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     (void)apr_pool_create(&p, NULL);
     handles = modperl_xs_dl_handles_get(aTHX_ p);
 
-    perl_destruct(interp->perl);
-
-    /* XXX: big bug in 5.6.1 fixed in 5.7.2+
-     * XXX: see CLONEf_CLONE_HOST perl_clone() flag
-     * XXX: try to find a workaround for 5.6.1
-     */
-#ifndef WIN32
-    perl_free(interp->perl);
-#endif
+    modperl_perl_destruct(interp->perl);
 
     if (handles) {
         modperl_xs_dl_handles_close(p, handles);
