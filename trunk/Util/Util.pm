@@ -1,6 +1,7 @@
 package Apache::Util;
 
 use strict;
+use mod_perl ();
 use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 
 use Exporter ();

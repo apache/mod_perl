@@ -1,6 +1,6 @@
 package Apache::URI;
 
-use Apache ();
+use mod_perl ();
 
 $VERSION = '1.00';
 __PACKAGE__->mod_perl::boot($VERSION);
