@@ -6,7 +6,7 @@
  * libapr.lib and libaprutil.lib
  * will figure out why later, no rush since
  * this module is only needed for use APR functions outside of httpd
- * /
+ */
 #   define apr_initialize()
 #   define apr_terminate()
 #endif
