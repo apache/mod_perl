@@ -28,4 +28,8 @@
 
 #include "util_script.h"
 
+#if !APR_HAS_THREADS
+typedef unsigned long apr_os_thread_t;
+#endif
+
 #endif /* MODPERL_APACHE_INCLUDES_H */
