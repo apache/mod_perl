@@ -63,7 +63,7 @@ my $apr_mods = scalar grep { /^APR/    } keys %INC;
 # changed only before threads are started) so here we test whether we
 # can still set it after restart
 {
-    use Apache::Const -compile => 'Apache::LOG_INFO';
+    use Apache::Const -compile => 'LOG_INFO';
     my $s = Apache->server;
     my $oldloglevel = $s->loglevel(Apache::LOG_INFO);
     # restore
