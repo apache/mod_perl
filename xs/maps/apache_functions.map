@@ -102,7 +102,7 @@ MODULE=Apache::Response   PACKAGE=guess
  ap_custom_response
 
 MODULE=Apache::Access   PACKAGE=guess
- ap_allow_methods
+ ap_allow_methods | mpxs_ | ...
  ap_allow_options
  ap_allow_overrides
  ap_get_remote_logname

@@ -57,3 +57,29 @@ static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
 
     return newRV_noinc((SV*)av); 
 }
+
+/* XXX: should be part of generation */
+#undef mp_xs_sv2_r
+#define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
+
+static MP_INLINE
+void mpxs_ap_allow_methods(pTHX_ I32 items, SV **MARK, SV **SP)
+{
+    request_rec *r;
+    SV *reset;
+
+    mpxs_usage_va_2(r, reset, "$r->allow_methods(reset, ...)");
+
+    if (SvIV(reset)) {
+        ap_clear_method_list(r->allowed_methods);
+    }
+
+    while (MARK <= SP) {
+        STRLEN n_a;
+        char *method = SvPV(*MARK, n_a);
+        ap_method_list_add(r->allowed_methods, method);
+        MARK++;
+    }
+}
+
+                                            
