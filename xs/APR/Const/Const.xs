@@ -3,5 +3,7 @@
 
 MODULE = APR::Const    PACKAGE = APR::Const
 
+PROTOTYPES: disable        
+
 BOOT:
-    newXS("APR::Const::compile", XS_modperl_const_compile, file);
+    newXS("APR::Const::compile", XS_modperl_const_compile, __FILE__);
