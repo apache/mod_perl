@@ -79,6 +79,8 @@ static command_rec modperl_cmds[] = {
                      "Max number of spare Perl interpreters"),
     MP_SRV_CMD_TAKE1("PerlInterpMinSpare", interp_min_spare,
                      "Min number of spare Perl interpreters"),
+    MP_SRV_CMD_TAKE1("PerlInterpMaxRequests", interp_max_requests,
+                     "Max number of requests per Perl interpreters"),
 #endif
     MP_CMD_ENTRIES,
     { NULL }, 

@@ -34,32 +34,55 @@ struct modperl_list_t {
 
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
-
-typedef struct {
-    int start; /* number of Perl intepreters to start (clone) */
-    int min_spare; /* minimum number of spare Perl interpreters */
-    int max_spare; /* maximum number of spare Perl interpreters */
-    int max; /* maximum number of Perl interpreters */
-} modperl_interp_pool_config_t;
+typedef struct modperl_tipool_t modperl_tipool_t;
 
 struct modperl_interp_t {
     modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
-    modperl_list_t *listp;
     int num_requests;
     int flags;
+};
+
+typedef struct {
+    /* s == startup grow
+     * r == runtime grow
+     */
+    void * (*tipool_sgrow)(modperl_tipool_t *tipool, void *data);
+    void * (*tipool_rgrow)(modperl_tipool_t *tipool, void *data);
+    void (*tipool_shrink)(modperl_tipool_t *tipool, void *data,
+                          void *item);
+    void (*tipool_destroy)(modperl_tipool_t *tipool, void *data,
+                           void *item);
+    void (*tipool_dump)(modperl_tipool_t *tipool, void *data,
+                        modperl_list_t *listp);
+} modperl_tipool_vtbl_t;
+
+typedef struct {
+    int start; /* number of items to create at startup */
+    int min_spare; /* minimum number of spare items */
+    int max_spare; /* maximum number of spare items */
+    int max; /* maximum number of items */
+    int max_requests; /* maximum number of requests per item */
+} modperl_tipool_config_t;
+
+struct modperl_tipool_t {
+    perl_mutex tiplock;
+    perl_cond available;
+    ap_pool_t *ap_pool;
+    modperl_list_t *idle, *busy;
+    int in_use; /* number of items currrently in use */
+    int size; /* current number of items */
+    void *data; /* user data */
+    modperl_tipool_config_t *cfg;
+    modperl_tipool_vtbl_t *func;
 };
 
 struct modperl_interp_pool_t {
     ap_pool_t *ap_pool;
     server_rec *server;
-    perl_mutex mip_lock;
-    perl_cond available;
-    modperl_interp_pool_config_t *cfg;
-    int in_use; /* number of Perl interpreters currrently in use */
-    int size; /* current number of Perl interpreters */
+    modperl_tipool_t *tipool;
+    modperl_tipool_config_t *tipool_cfg;
     modperl_interp_t *parent; /* from which to perl_clone() */
-    modperl_list_t *idle, *busy;
 };
 
 #endif /* USE_ITHREADS */
@@ -86,7 +109,7 @@ typedef struct {
     modperl_connection_config_t *connection_cfg;
 #ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
-    modperl_interp_pool_config_t *interp_pool_cfg;
+    modperl_tipool_config_t *interp_pool_cfg;
 #else
     PerlInterpreter *perl;
 #endif
@@ -117,7 +140,7 @@ typedef struct {
     int cvgen; /* XXX: for caching */
     AV *args; /* XXX: switch to something lighter */
     int flags;
-    PerlInterpreter *perl; /* yuk: for cleanups */
+    PerlInterpreter *perl;
 } modperl_handler_t;
 
 #define MP_HANDLER_TYPE_CHAR 1
