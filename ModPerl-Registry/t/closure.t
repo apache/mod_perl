@@ -119,7 +119,10 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
 sub sleep_and_touch_file {
     my $file = shift;
-    sleep 2; # so -M will be different, res: 1 sec, granularity > 1sec
+    # need to wait at least 1 whole sec, so -M will notice the
+    # difference. select() has better resolution than 1 sec as in
+    # sleep()
+    select undef, undef, undef, 1.00; # sure 1 sec
     my $now = time;
     utime $now, $now, $file;
 }
