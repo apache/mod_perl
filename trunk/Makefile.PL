@@ -1101,6 +1101,8 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
 
 $TARGET ||= (is_ssl() ? "httpsd" : "httpd");
 
+system_sanity_check();
+
 WriteMakefile(
     #DIR => \@DIR,
     NAME    => "mod_perl",
@@ -1922,4 +1924,48 @@ EOF
     print $apaci_cfg "PERL_THREADS = $yes_no\n";
 
     return $apaci_cfg;
+}
+
+sub phat_warn {
+    my $msg = shift;
+	    warn <<EOF;
+************* WARNING *************
+
+  $msg
+
+************* WARNING *************
+EOF
+  sleep 5;
+}
+
+sub system_sanity_check {
+    return if $Is_Win32;
+
+    my $ccflags = $Config{'ccflags'};
+    for (split /\s+/, $ccflags) {
+	next unless s/^-I//;
+	my $header = "$_/ap_mmn.h";
+	if (-e $header) {
+	    phat_warn(<<EOF);
+Apache headers found in unexpected location: ``$_'', suggestions:
+   *) Remove via ``rpm -e apache''
+   *) Remove by hand
+   *) Complain to your os vendor about their poor layout choice
+   *) Complain to your sysadmin about their poor layout choice
+EOF
+	}
+    }
+
+
+    if ($USE_DSO and $] < 5.005_56 and 
+	$^O eq 'solaris' and $Config{'usemymalloc'} eq 'y') 
+      {
+	  phat_warn(<<EOF);
+Your current configuration will most likely trigger core dumps, suggestions:
+   *) Do not configure mod_perl as a DSO
+   *) Upgrade your Perl version to 5.005_56 or higher
+   *) Configure Perl with -Uusemymalloc
+   *) Switch to an os other than $^O
+EOF
+      }
 }

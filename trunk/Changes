@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+Makefile.PL will now do a handful of sanity checks looking for
+possible broken configurations and offer suggestions for those it
+finds
+
 rework PerlFreshRestart to avoid core dump triggered w/ 5.005_03
 
 fix $Apache::Server::Starting under dso
