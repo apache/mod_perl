@@ -22,7 +22,7 @@ sub new {
 }
 
 #
-# - even though the error id is not useful most of the time to the end
+# - even though most of the time the error id is not useful to the end
 #   users, developers may need to know it. For example in case of a
 #   non-english user locale setting, the error string could be
 #   incomprehensible to a developer, but by having the error id it's
@@ -41,7 +41,7 @@ sub num { $_[0]->{rc} }
 $Carp::CarpInternal{+__PACKAGE__}++;
 
 # XXX: Carp::(confess|cluck) see no calls stack when Perl_croak is
-# called with Nullch (which is the way execption objects are
+# called with Nullch (which is the way exception objects are
 # returned), so we fixup it here (doesn't quite work for croak
 # caller).
 sub cluck {
