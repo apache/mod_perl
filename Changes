@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+perl 5.8.1 randomizes the hash seed, because we precalculate the hash
+values of mgv elements the hash seed has to be the same across all
+perl interpreters. So mod_perl now intercepts cases where perl would
+have randomize it, do the seed randomization by itself and tell perl
+to use that value. [Stas]
+
 fix APR::PerlIO layer to pop itself if open() has failed. [Stas]
 
 move the definition of DEFINE='-DMP_HAVE_APR_LIBS' to the top level
