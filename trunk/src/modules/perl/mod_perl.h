@@ -265,6 +265,16 @@ if(arg) \
     my_setenv(key, val); \
 }
 
+#define mp_SetEnv(key, val) \
+    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE); \
+    my_setenv(key, val)
+
+#define mp_PassEnv(key) \
+{ \
+    char *val = getenv(key); \
+    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val?val:"",0), FALSE); \
+}
+
 #define mp_debug mod_perl_debug_flags
 
 extern U32	mp_debug;

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_03-dev
 
+fix so "top-level" Perl{Set,Pass}Env works if Perl is started early
+
 new $r->pnotes method
 
 $ENV{MOD_PERL} is not inherited by subprocesses
