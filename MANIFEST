@@ -59,6 +59,7 @@ lib/Apache/Resource.pm
 lib/Apache/SIG.pm
 lib/Apache/SizeLimit.pm
 lib/Apache/StatINC.pm
+lib/Apache/Symdump.pm
 lib/Apache/Constants/Exports.pm
 Apache/Apache.pm
 Apache/typemap
