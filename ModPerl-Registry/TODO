@@ -1,3 +1,7 @@
+RegistryLoader:
+
+- chdir() needs to be adjusted when RegistryCooker implements it
+
 RegistryCooker:
 
 ### bugs ###
@@ -12,8 +16,6 @@ RegistryCooker:
 - need to port $Apache::__T, to test against when user supplies -T flag.
 
 - port Apache::PerlRunXS
-
-- implement RegistryLoader (per module or a single one?)
 
 - implement slurp_filename and remove Apache::compat
 
@@ -40,6 +42,8 @@ RegistryCooker:
 
 - in namespace_from_filename() should test whether a file is a symlink
   and if so use readlink() to get the real filename.
+
+- documentation
 
 ### optimizations ###
 
