@@ -14,7 +14,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 20 + keys(%ENV);
+    plan $r, tests => 22 + keys(%ENV);
 
     my $env = $r->subprocess_env;
 
@@ -58,8 +58,18 @@ sub handler {
     #skip "r->subprocess_env + local() doesnt fully work yet", 1;
     ok 1; #the skip() message is just annoying
 
-    ok $ENV{SERVER_SOFTWARE};
-    ok $env->get('SERVER_SOFTWARE');
+    {
+        my $key = 'SERVER_SOFTWARE';
+        my $val = $ENV{SERVER_SOFTWARE};
+        ok $val;
+        ok t_cmp $env->get($key), $val, '$r->subprocess_env->get($key)';
+        ok t_cmp $r->subprocess_env($key), $val, '$r->subprocess_env($key)';
+
+        $val = 'BAR';
+        $r->subprocess_env($key => $val);
+        ok t_cmp $r->subprocess_env($key), $val,
+            '$r->subprocess_env($key => $val)';
+    }
 
     #Make sure each key can be deleted
 
