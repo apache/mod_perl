@@ -52,7 +52,6 @@ static struct {
 static void modperl_boot(pTHX_ void *data)
 {
     MP_dBOOT_DATA;
-    MP_dSCFG(s);
     int i;
 
     modperl_env_clear(aTHX);
@@ -70,9 +69,6 @@ static void modperl_boot(pTHX_ void *data)
 
     /* outside mod_perl this is done by ModPerl::Const.xs */
     newXS("ModPerl::Const::compile", XS_modperl_const_compile, __FILE__);
-
-    newCONSTSUB(PL_defstash, "Apache::MPM_IS_THREADED",
-                newSViv(scfg->threaded_mpm));
 
 #ifdef MP_PERL_5_6_x
     /* make sure DynaLoader is loaded before XSLoader
