@@ -1,0 +1,135 @@
+ToDo items carried over from the 1.xx ToDo
+see the todo/ directory for whats really going on here
+
+directives/configuration
+------------------------
+
+- PerlAllowOverride directive to enable/disable hooks 
+  (Jason Riedy <ejr@cise.ufl.edu>)
+
+- PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
+
+- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
+  for the given location
+
+- <Perl> in .htaccess (could also call known bug)
+
+- change configuration during runtime?
+
+- improve the "stacked handlers" implementation, including:
+  + config merging of AV*'s
+
+  + allow push_handlers to have an additional argument, an array ref,
+    which will be passed to the handler as arguments, e.g.
+    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+- allow Perl*Handler's to have arguments in config files, e.g.:
+
+  (calls &FooPackage::handler($r, "One", "Two", "Three");
+
+- allow <Perl></Perl> configuration sections to have read access to internal
+  configuration structures (would be nice if we could tie a %namespace::) 
+
+namespace/globals
+-----------------
+
+- provide namespace protection when 'use Foo' might be two different modules
+  i.e. re-visit Apache::Safe
+
+- provide namespace protection for mod_include #perl's
+
+- @ARGV magic, tie to query string
+
+- overload %ENV magic:
+  + call subprocess_env when a value is set 
+              Doug Bagley <doug@dejanews.com>
+  + so it's not setup unless asked for
+
+- "save stack" mechanism so we can go back to caching CV lookups
+
+---------------------------------------------------------------------------
+OPTIMIZATIONS
+---------------------------------------------------------------------------
+
+- avoid write_client symtab lookup in print()
+
+- preloading of method cache
+
+- replace Apache::PerlRun with Apache::PerlRunXS
+
+- replace Apache::Registry with Apache::RegistryXS
+
+- make Apache::RegistryLoader work with RegistryXS
+
+- avoid a copy in PerlRunXS (use SvPVX instead of safemalloc'd copy)
+
+- XS_IMPORT=1 on by default
+
+- in places where Apache did a pstrdup, don't use newSVpv(), use
+  newSV()->sv_upgrade()->SvPVX/SvCUR_set to avoid another copy 
+
+- Apache::Constants::constant
+
+
+---------------------------------------------------------------------------
+NEW MODULE STUFF
+---------------------------------------------------------------------------
+
+- Apache::Status extensions (ix)
+
+- StatINC doesn't reimport the imported symbols?
+  Stas Bekman <stas@iil.intel.com>, 
+  Message-Id: <Pine.A41.3.96.981007170413.44288Q-100000@ilx374.iil.intel.com>
+- Look at Apache::ASP's handling of exported functions (for implementation
+  in Apache::StatINC) (same thing as above?) [ask]
+
+- Option to StatINC to make it possible to only watch chosen modules
+  [ask]
+
+- Apache::Registry should check return value of the subroutine,
+  e.g. for REDIRECT   
+
+- should Apache::Registry use filename instead of vhost_name+uri?
+              Ben Laurie <ben@algroup.co.uk>
+
+- apache.pm: use apache '1.3b3';
+
+- have Apache::Status hunt for AUTOLOADing 
+
+- Apache::Status should list number of things
+
+- Apache::Include->virtual should update %ENV?
+
+- Apache::Registry should honor __END__ and __DATA__,
+  but how to get it right?
+
+---------------------------------------------------------------------------
+MISC NEW STUFF
+---------------------------------------------------------------------------
+
+- 'make htmldoc' (Brian Moseley)
+
+- make 'make test_report' more useful
+
+- should be able to set PerlSetVar's to an empty string (Eric Cholet)
+
+- perl_clear_env() should skip those found in PerlPassEnv?
+
+- File::copy($file,*STDOUT) doesn't work (pp_syswrite needs tie support)
+	Bill Coffman <coffman@value.net>
+
+- option to set uid/gid before running any Perl code (copy-n-paste
+  from http_main.c) 
+	Doug Bagley <doug@dejanews.com>
+
+- $Apache::ServerStarting in <Perl>
+
+- something with exec()?
+
+- Apache->http_message(501); #rc code returns a string
+
+- PerlFreshRestart, restarts on startup, should we stop that?
+
+- special treatment for nph- scripts?
+
+- fix Thread->new == linux<-SIGUSR1->Apache signal clash
