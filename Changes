@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+removed modules/sandwich test
+
 Apache::RegistryBB returns DECLINED instead of FORBIDDEN if -d $r->finfo
 [Sean Chittenden <sean.chittenden@auctia.com>]
 
