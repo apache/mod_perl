@@ -1,7 +1,7 @@
 package Apache::Status;
 use strict;
 
-$Apache::Status::VERSION = '2.02';
+$Apache::Status::VERSION = '2.03';
 
 my %is_installed = ();
 my $Is_Win32 = ($^O eq "MSWin32");
@@ -180,13 +180,26 @@ sub status_script {
     \@retval;
 }
 
+my $RegistryCache;
+
+sub registry_cache {
+    my($self, $cache) = @_;
+
+    if ($cache) {
+        $RegistryCache = $cache;
+    }
+
+    $RegistryCache || $Apache::Registry;
+}
+
 sub status_rgysubs {
     my($r,$q) = @_;
     my(@retval);
     local $_;
     my $uri = $r->uri;
+    my $cache = __PACKAGE__->registry_cache;
     push @retval, "<b>Click on package name to see its symbol table</b><p>\n";
-    foreach (sort keys %{$Apache::Registry}) {
+    foreach (sort keys %$cache) {
 	push @retval, 
 	qq(<a href="$uri?$_">$_</a>\n),
 	"<br>";
