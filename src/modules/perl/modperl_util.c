@@ -27,18 +27,7 @@ int modperl_require_module(pTHX_ const char *pv, int logfailure)
 
 int modperl_require_file(pTHX_ const char *pv, int logfailure)
 {
-    SV *sv;
-
-    dSP;
-    PUSHSTACKi(PERLSI_REQUIRE);
-    PUTBACK;
-    sv = sv_newmortal();
-    sv_setpv(sv, "require \"");
-    sv_catpv(sv, pv);
-    sv_catpv(sv, "\"");
-    eval_sv(sv, G_DISCARD);
-    SPAGAIN;
-    POPSTACK;
+    require_pv(pv);
 
     if (SvTRUE(ERRSV)) {
         if (logfailure) {

@@ -189,7 +189,9 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     return mrg;
 }
 
-int modperl_config_apply_PerlModule(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p)
+int modperl_config_apply_PerlModule(server_rec *s,
+                                    modperl_config_srv_t *scfg,
+                                    PerlInterpreter *perl, apr_pool_t *p)
 {
     char **entries;
     int i;
@@ -212,7 +214,9 @@ int modperl_config_apply_PerlModule(server_rec *s, modperl_config_srv_t *scfg, P
     return TRUE;
 }
 
-int modperl_config_apply_PerlRequire(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p)
+int modperl_config_apply_PerlRequire(server_rec *s,
+                                     modperl_config_srv_t *scfg,
+                                     PerlInterpreter *perl, apr_pool_t *p)
 {
     char **entries;
     int i;

@@ -47,7 +47,6 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(modules)
 {
     MP_dSCFG(parms->server);
-
     *(const char **)apr_array_push(scfg->PerlModule) = arg;
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
     return NULL;
@@ -56,7 +55,6 @@ MP_CMD_SRV_DECLARE(modules)
 MP_CMD_SRV_DECLARE(requires)
 {
     MP_dSCFG(parms->server);
-
     *(const char **)apr_array_push(scfg->PerlRequire) = arg;
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
     return NULL;
