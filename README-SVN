@@ -23,7 +23,7 @@ modperl/trunk includes the following svn:externals properties:
   % svn propedit svn:externals .
   [vi pops up]
   docs        https://svn.apache.org/repos/asf/perl/modperl/docs/trunk/src/docs/2.0
-  Apache-Test https://svn.apache.org/repos/asf/perl/Apache-Test
+  Apache-Test https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
 
 
 DEVELOPER ACCESS
