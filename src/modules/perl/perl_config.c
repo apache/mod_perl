@@ -587,7 +587,10 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 	    return NULL;
 	}
     }
-    *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
+
+    if (cld->PerlModule) {
+        *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
+    }
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)
@@ -618,7 +621,9 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 	}
     }
 
-    *(char **)push_array(cls->PerlRequire) = pstrdup(parms->pool, arg);
+    if (cls->PerlRequire) {
+        *(char **)push_array(cls->PerlRequire) = pstrdup(parms->pool, arg);
+    }
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)
