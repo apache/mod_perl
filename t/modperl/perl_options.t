@@ -6,8 +6,11 @@ use Apache::TestUtil;
 use Apache::TestRequest;
 
 my $module = "TestModperl::perl_options";
+my $path = Apache::TestRequest::module2path($module);
+
 Apache::TestRequest::module($module);
 my $hostport = Apache::TestRequest::hostport(Apache::Test::config());
-my $location = "http://$hostport/$module";
+my $location = "http://$hostport/$path";
 
-print GET_BODY_ASSERT "http://$hostport/$module";
+t_debug "connecting to $hostport";
+print GET_BODY_ASSERT $location;
