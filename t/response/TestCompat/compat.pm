@@ -1,7 +1,7 @@
-package TestApache::compat;
+package TestCompat::compat;
 
 # these Apache::compat tests are all run on the server
-# side and validated on the client side. See also TestApache::compat2.
+# side and validated on the client side. See also TestCompat::compat2.
 
 use strict;
 use warnings FATAL => 'all';

@@ -8,7 +8,7 @@ use Apache::TestRequest;
 
 plan tests => 3;
 
-my $location = "/TestApache::compat";
+my $location = "/TestCompat::compat";
 
 # $r->send_http_header('text/plain');
 {
