@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fix segfault in send_http_header when it's called before the response
+phase [Stas]
+
 input stream filtering support was added + tests (plus renaming filter
 tests so we can know from the test name what kind of filter is tested)
 [Stas]
