@@ -1143,6 +1143,7 @@ Set to true when the server is running in configuration test mode
    
    </Perl>
 
+This variable is not available under Win32.
 
 =back
 
