@@ -10,9 +10,21 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_05-dev
 
-=item 1.99_04 - June 21, 2002
+compat tests were split into groups by functionality.  [Stas Bekman]
 
-added $r->get_remote_host to compat.pm + test [Stas Bekman]
+added $c->get_remote_host and a compat wrapper $r->get_remote_host +
+tests [Stas Bekman]
+
+adjust the build system to support mod_perl build from the source
+tree. [Stas Bekman]
+
+ModPerl::RegistryCooker syncs with mod_perl 1.0's registry:
+ - prototypes defined checks in flush_namespace 
+                            [Yair Lenga <yair.lenga@citigroup.com>]
+ - set error-notes on error [Geoff Young <geoff@modperlcookbook.org>]
+
+
+=item 1.99_04 - June 21, 2002
 
 various APR PerlIO updates [Stas Bekman]
 
