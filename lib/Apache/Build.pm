@@ -362,7 +362,7 @@ sub new {
 
     my $self = bless {
         cwd => Cwd::fastcwd(),
-        MP_LIBNAME => 'libmodperl',
+        MP_LIBNAME => 'mod_perl',
         @_,
     }, $class;
 
@@ -810,7 +810,7 @@ sub apache_libs {
 sub modperl_libs_MSWin32 {
     my $self = shift;
     #XXX: install/use libmodperl.lib for 3rd party xs modules
-    "$self->{cwd}/src/modules/perl/libmodperl.lib";
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
 sub modperl_libs {
