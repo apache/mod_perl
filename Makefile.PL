@@ -115,7 +115,7 @@ sub generate_xs {
 
     $xs->generate;
 
-    shift @INC;
+    #shift @INC; #ModPerl::Code needs this path too
 }
 
 sub generate_script {

@@ -680,12 +680,12 @@ EOF
     $file;
 }
 
-use Apache::ConstantsTable ();
-
 my $constant_prefixes = join '|', qw{APR};
 
 sub generate_constants {
     my($self, $h_fh, $c_fh) = @_;
+
+    require Apache::ConstantsTable;
 
     print $c_fh qq{\#include "modperl_const.h"\n};
     print $h_fh "#define MP_ENOCONST -3\n\n";
