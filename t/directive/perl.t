@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 8, have_auth;
+plan tests => 8, need_auth;
 
 #so we don't have to require lwp
 my @auth = (Authorization => 'Basic ZG91Z206Zm9v'); #dougm:foo

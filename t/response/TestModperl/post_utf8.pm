@@ -31,7 +31,7 @@ sub handler {
     # XXX: currently binmode is only available with perlio (used on the
     # server side on the tied/perlio STDOUT)
     plan $r, tests => 2, 
-        have have_min_perl_version(5.008), have_perl('perlio');
+        need need_min_perl_version(5.008), need_perl('perlio');
 
     my $received = ModPerl::Test::read_post($r) || "";
     # assume that we know that it's utf8

@@ -20,7 +20,7 @@ use Apache::Build ();
 # my $has_apr_config = $build->{apr_config_path} && 
 #    !$build->httpd_is_source_tree;
 # plan tests => TestAPRlib::uuid::num_of_tests(),
-#    have {"the build couldn't find apr-config" => $has_apr_config};
+#    need {"the build couldn't find apr-config" => $has_apr_config};
 ######
 # that is called from some TestAPRlib::common.
 

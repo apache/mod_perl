@@ -17,7 +17,7 @@ sub handler {
     my $r = shift;
 
     plan $r, tests => 2,
-        have { "getppid() is not implemented on Win32" 
+        need { "getppid() is not implemented on Win32" 
                    => !Apache::Build::WIN32() };
 
     {

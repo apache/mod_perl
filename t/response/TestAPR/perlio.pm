@@ -34,7 +34,7 @@ sub handler {
 
     require APR::PerlIO;
     plan $r, tests => $tests,
-        have  { "This Perl build doesn't support PerlIO layers" =>
+        need  { "This Perl build doesn't support PerlIO layers" =>
                     APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED() };
 
     my $vars = Apache::Test::config()->{vars};

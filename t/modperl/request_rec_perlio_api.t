@@ -9,7 +9,7 @@ use Config;
 
 my $uri = "/TestModperl__request_rec_perlio_api";
 
-plan tests => 2, have { "perl $]: TIEd IO is used instead of PerlIO"
+plan tests => 2, need { "perl $]: TIEd IO is used instead of PerlIO"
                             => ($] >= 5.008 && $Config{useperlio}) };
 
 

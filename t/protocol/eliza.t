@@ -11,7 +11,7 @@ my @test_strings = ('Hello Eliza',
                     'I feel like writing some tests today, what about you?',
                     'Good bye, Eliza');
 
-plan tests => 2 + @test_strings, have_module 'Chatbot::Eliza';
+plan tests => 2 + @test_strings, need_module 'Chatbot::Eliza';
 
 my $socket = Apache::TestRequest::vhost_socket('TestProtocol::eliza');
 

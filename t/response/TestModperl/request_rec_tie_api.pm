@@ -25,7 +25,7 @@ sub handler {
     my @todo;
     push @todo, 1 if Apache::Build::AIX();
     plan $r, tests => 3, todo => \@todo,
-        have { "perl $]: PerlIO is used instead of TIEd IO"
+        need { "perl $]: PerlIO is used instead of TIEd IO"
                    => !($] >= 5.008 && $Config{useperlio}) };
 
     # XXX: on AIX 4.3.3 we get:

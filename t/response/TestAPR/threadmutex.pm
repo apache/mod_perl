@@ -14,7 +14,7 @@ sub handler {
     my $r = shift;
 
     my $tests = TestAPRlib::threadmutex::num_of_tests();
-    plan $r, tests => $tests, have_threads;
+    plan $r, tests => $tests, need_threads;
 
     TestAPRlib::threadmutex::test();
 

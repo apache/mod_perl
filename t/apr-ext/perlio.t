@@ -43,7 +43,7 @@ my $lfs_tests = 3;
 $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 require APR; require APR::PerlIO;
 plan tests => $tests,
-    have {"this build couldn't find apr-config"      => $has_apr_config,
+    need {"this build couldn't find apr-config"      => $has_apr_config,
           "this build doesn't support PerlIO layers" => $has_perlio_layers,
     };
 
