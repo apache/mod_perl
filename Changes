@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 1.99_19-dev
+
 =item 1.99_18 - December 12, 2004
 
 Fix x86_64 warnings in modperl_restart_count_*, due to casting between
