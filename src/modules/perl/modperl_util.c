@@ -90,6 +90,10 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         (void)modperl_tls_get_request_rec(&r);
 
         if (!r) {
+            if (classname && SvPOK(in) && !strEQ(classname, SvPVX(in))) {
+                /* might be Apache::{Server,RequestRec}-> dual method */
+                return NULL;
+            }
             Perl_croak(aTHX_
                        "Apache->%s called without setting Apache->request!",
                        cv ? GvNAME(CvGV(cv)) : "unknown");
