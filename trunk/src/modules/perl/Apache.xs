@@ -991,18 +991,16 @@ write_client(r, ...)
 	buffer = SvPV(sv, len);
 #ifdef APACHE_SSL
         while(len > 0) {
-            sent = 0;
-	    if(len < HUGE_STRING_LEN) {
-	        sent = rwrite(buffer, len, r);
-	    }
-	    else {
-	        sent = rwrite(buffer, HUGE_STRING_LEN, r);
-	        buffer += HUGE_STRING_LEN;
-	    }
+	    sent = rwrite(buffer,
+	        	  len < HUGE_STRING_LEN ? len : HUGE_STRING_LEN,
+	        	  r);
 	    if(sent < 0) {
 		rwrite_neg_trace(r);
+		/* break out of outer loop too */
+		i = items;
 		break;
 	    }
+	    buffer += sent;
 	    len -= sent;
 	    RETVAL += sent;
         }
