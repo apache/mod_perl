@@ -13,4 +13,4 @@ my $expected = join '', $content, "init 1\n", "run [12]\n";
 
 my $location = '/TestFilter__in_init_basic';
 my $response = POST_BODY $location, content => $content;
-ok t_cmp(qr/$expected/, qr/$response/, "test filter init functionality");
+ok t_cmp($response, qr/$expected/, "test filter init functionality");
