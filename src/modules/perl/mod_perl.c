@@ -25,7 +25,7 @@ static apr_status_t modperl_shutdown(void *data)
 #endif
 
 static const char *MP_xs_loaders[] = {
-    "ModPerl", "APR", NULL,
+    "Apache", "APR", NULL,
 };
 
 #define MP_xs_loader_name "%s::XSLoader::BOOTSTRAP"
