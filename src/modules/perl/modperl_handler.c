@@ -220,7 +220,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
         MpHandlerAUTOLOAD_On(handler);
 
         MP_TRACE_h(MP_FUNC,
-                   "[%s %s] handler %s was not compiled at startup, "
+                   "[%s %s] handler %s hasn't yet been resolved, "
                    "attempting to resolve using %s pool 0x%lx\n",
                    modperl_pid_tid(p),
                    modperl_server_desc(s, p),
