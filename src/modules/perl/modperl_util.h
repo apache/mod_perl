@@ -188,6 +188,31 @@ void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
 /* dump the contents of PL_modglobal */
 void modperl_perl_modglobal_dump(pTHX);
 
+#if APR_HAS_THREADS
+#define MP_TRACEf_TID   "/tid 0x%lx"
+#define MP_TRACEv_TID   (unsigned long)apr_os_thread_current()
+#define MP_TRACEv_TID_  MP_TRACEv_TID,
+#define MP_TRACEv__TID  ,MP_TRACEv_TID
+#else
+#define MP_TRACEf_TID
+#define MP_TRACEv_TID
+#define MP_TRACEv_TID_
+#define MP_TRACEv__TID
+#endif /* APR_HAS_THREADS */
+
+#ifdef USE_ITHREADS
+#define MP_TRACEf_PERLID   "/perl id 0x%lx"
+#define MP_TRACEv_PERLID   (unsigned long)my_perl
+#define MP_TRACEv_PERLID_  MP_TRACEv_PERLID,
+#define MP_TRACEv__PERLID  ,MP_TRACEv_PERLID
+#else
+#define MP_TRACEf_PERLID
+#define MP_TRACEv_PERLID
+#define MP_TRACEv_PERLID_
+#define MP_TRACEv__PERLID
+#endif /* USE_ITHREADS */
+
 #endif
+
 
 #endif /* MODPERL_UTIL_H */
