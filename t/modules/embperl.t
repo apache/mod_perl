@@ -1,5 +1,5 @@
 use Apache::src ();
-use Apache::test;
+use Apache::testold;
 
 skip_test unless have_module "HTML::Embperl";
 

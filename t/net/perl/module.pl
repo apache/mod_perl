@@ -1,5 +1,5 @@
 #!perl
-use Apache::test;
+use Apache::testold;
 
 my $r = shift;
 $r->send_http_header('text/plain');
