@@ -29,14 +29,8 @@ sub handler {
     while (1) {
         my $rc = $c->input_filters->get_brigade($bb_in,
                                                 Apache::MODE_GETLINE);
-        if ($rc != APR::SUCCESS && $rc != APR::EOF) {
-            my $error = APR::Error::strerror($rc);
-            warn __PACKAGE__ . ": get_brigade: $error\n";
-            last;
-        }
-
-        last if $bb_in->is_empty;
         last if $rc == APR::EOF;
+        die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
         while (!$bb_in->is_empty) {
             my $bucket = $bb_in->first;

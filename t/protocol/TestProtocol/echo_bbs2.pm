@@ -30,12 +30,8 @@ sub handler {
         my $bb_in  = APR::Brigade->new($c->pool, $c->bucket_alloc);
         my $rc = $c->input_filters->get_brigade($bb_in,
                                                 Apache::MODE_GETLINE);
-        if ($rc != APR::SUCCESS && $rc != APR::EOF) {
-            my $error = APR::Error::strerror($rc);
-            warn __PACKAGE__ . ": get_brigade: $error\n";
-            last;
-        }
         last if $rc == APR::EOF;
+        die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
         next unless $bb_in->flatten(my $data);
         $bb->cleanup;
