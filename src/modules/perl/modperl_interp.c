@@ -226,6 +226,9 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     pTHX;
     MP_dSCFG(s);
 
+    MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
+               modperl_server_desc(s, p));
+    
     modperl_interp_pool_t *mip = 
         (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 

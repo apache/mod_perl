@@ -346,7 +346,12 @@ MP_CMD_SRV_DECLARE(perldo)
     if (modperl_init_vhost(s, p, NULL) != OK) {
         return "init mod_perl vhost failed";
     }
-
+    
+    {
+        modperl_config_srv_t *base_scfg = modperl_config_srv_get(modperl_global_get_server_rec());
+    }
+    
+    
 #ifdef USE_ITHREADS
     /* XXX: .htaccess support cannot use this perl with threaded MPMs */
     aTHX = scfg->mip->parent->perl;

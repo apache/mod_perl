@@ -193,8 +193,6 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
          * virtual host gets its own mip
          */
         if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
-            MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
-                       modperl_server_desc(s, p));
             modperl_interp_init(s, p, perl);
         }
 
