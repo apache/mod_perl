@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+$r->connection->remote_addr can now be changed
+
 upgrade perl_PL.h to work with Perl 5.005_53+
 
 use absolute path for StrongholdLicenseFile

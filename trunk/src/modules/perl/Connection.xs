@@ -54,12 +54,23 @@ local_addr(conn)
     RETVAL
 
 SV *
-remote_addr(conn)
+remote_addr(conn, sv_addr=Nullsv)
     Apache::Connection        conn
+    SV *sv_addr
 
     CODE:
     RETVAL = newSVpv((char *)&conn->remote_addr,
                       sizeof conn->remote_addr);
+    if(sv_addr) {
+        struct sockaddr_in addr; 
+        STRLEN sockaddrlen; 
+        char * new_addr = SvPV(sv_addr,sockaddrlen); 
+        if (sockaddrlen != sizeof(addr)) { 
+            croak("Bad arg length for remote_addr, length is %d, should be %d", 		  sockaddrlen, sizeof(addr)); 
+        } 
+        Copy(new_addr, &addr, sizeof addr, char); 
+        conn->remote_addr = addr;
+    }
 
     OUTPUT:
     RETVAL
