@@ -37,6 +37,7 @@ use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
 use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant PERL_HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
+use constant BUILD_APREXT => WIN32();
 
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
@@ -1392,17 +1393,29 @@ sub modperl_libs {
     $libs->($self);
 }
 
-sub mp_apr_lib_MSWin32 {
+# returns the directory and name of the aprext lib built under blib/ 
+sub mp_apr_blib {
     my $self = shift;
-    # MP_APR_LIB.lib will be installed into MP_AP_PREFIX/lib
-    # for use by 3rd party xs modules
-    my $mp_apr_lib = $self->{MP_APR_LIB};
+    return unless (my $mp_apr_lib = $self->{MP_APR_LIB});
+    my $lib_mp_apr_lib = 'lib' . $mp_apr_lib;
     my @dirs = $self->{MP_INST_APACHE2} ?
         qw(blib arch Apache2 auto) : qw(blib arch auto);
-    return catdir $self->{cwd}, @dirs, $mp_apr_lib, "$mp_apr_lib.lib";
+    my $apr_blib = catdir $self->{cwd}, @dirs, $lib_mp_apr_lib;
+    my $full_libname = $lib_mp_apr_lib . $Config{lib_ext};
+    return ($apr_blib, $full_libname);
 }
 
-# name of lib used to build APR/APR::*
+sub mp_apr_lib_MSWin32 {
+    my $self = shift;
+    # The MP_APR_LIB will be installed into MP_AP_PREFIX/lib
+    # for use by 3rd party xs modules
+    my ($dir, $lib) = $self->mp_apr_blib();
+    $lib =~ s[^lib(\w+)$Config{lib_ext}$][$1];
+    $dir = Win32::GetShortPathName($dir);
+    return qq{ -L$dir -l$lib };
+}
+
+# linking used for the aprext lib used to build APR/APR::*
 sub mp_apr_lib {
     my $self = shift;
     my $libs = \&{"mp_apr_lib_$^O"};

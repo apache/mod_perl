@@ -20,9 +20,10 @@ for (@names) {
 }
 
 my @skip = qw(dynamic test);
-push @skip, q{static} unless Apache::Build::WIN32;
+push @skip, q{static}
+    unless (Apache::Build::BUILD_APREXT);
 
-my %args = (NAME          => $build->{MP_APR_LIB},
+my %args = (NAME          => 'lib' . $build->{MP_APR_LIB},
             VERSION_FROM  => '../APR/APR.pm',
             SKIP          =>  [ @skip ] ,
             LINKTYPE      =>  'static',

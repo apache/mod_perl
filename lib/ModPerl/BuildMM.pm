@@ -79,7 +79,7 @@ sub WriteMakefile {
 
     my $libs;
     my @libs = ();
-    if (Apache::Build::WIN32) {
+    if (Apache::Build::BUILD_APREXT) {
         # in order to decouple APR/APR::* from mod_perl.so,
         # link these modules against the static MP_APR_LIB lib,
         # rather than the mod_perl lib (which would demand mod_perl.so

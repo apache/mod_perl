@@ -39,6 +39,7 @@ use ModPerl::Code ();
 use ModPerl::BuildMM ();
 
 use constant WIN32 => Apache::Build::WIN32;
+use constant BUILD_APREXT => Apache::Build::BUILD_APREXT;
 
 our $VERSION;
 
@@ -165,17 +166,17 @@ sub configure {
     # (see the aprext target in the MY::top_targets sub below), as 
     # symbols must get resolved at link time.
 
-    if (WIN32()) {
-        require File::Basename;
+    if (BUILD_APREXT()) {
         require File::Path;
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
         # this must also be done for aprext.lib, build in xs/APR/aprext/;
         # we must create a dummy aprext.lib to pass the -e test.
-        my $lib1 = "src/modules/perl/$build->{MP_LIBNAME}.lib";
-        my $lib2 = $build->mp_apr_lib;
-        my $apr_blib = File::Basename::dirname($lib2);
+        my $lib1 = catfile qw(src modules perl), 
+            $build->{MP_LIBNAME} . $Config{lib_ext};
+        my ($apr_blib, $full_libname) = $build->mp_apr_blib();
+        my $lib2 = catfile $apr_blib, $full_libname;
         unless (-d $apr_blib) {
             File::Path::mkpath($apr_blib) or die "mkdir $apr_blib failed: $!";
         }
@@ -484,10 +485,12 @@ sub win32_fetch_apxs {
     system(@args) == 0 or die "system @args failed: $?";
 }
 
+
 package MY;
 
 use Config;
 use constant WIN32 => $^O eq 'MSWin32';
+use constant BUILD_APREXT => Apache::Build::BUILD_APREXT;
 
 my $apache_test_install;
 BEGIN {
@@ -500,24 +503,24 @@ sub MY::top_targets {
     my $self = shift;
     my $string = $self->ModPerl::BuildMM::MY::top_targets;
 
-    if (WIN32) {
+    if (BUILD_APREXT) {
         ModPerl::MM::add_dep(\$string, pure_all => 'aprext');
 
         # must not import File::Spec functions inside MY, it breaks
         # 5.6.x builds
-        my $from = $build->mp_apr_lib;
-        my $apr_lib = $build->{MP_APR_LIB} . $Config{lib_ext};
+        my ($apr_blib, $full_libname) = $build->mp_apr_blib();
+        my $from = File::Spec->catfile($apr_blib, $full_libname);
         (my $ap_lib = $build->ap_includedir()) =~ s{include$}{lib};
-        my $to = File::Spec->catfile($ap_lib, $apr_lib);
-        my $src_dir = File::Spec->catdir(qw(xs APR aprext));
+        my $to = File::Spec->catfile($ap_lib, $full_libname);
+        my $src_dir = File::Spec->catdir(qw(xs APR), 'aprext');
         $string .= <<"EOF";
 
 aprext:
-        cd "$src_dir" && \$(MAKE) all \$(PASTHRU)
+	cd "$src_dir" && \$(MAKE) all \$(PASTHRU) LINKTYPE="static"
 
 aprext_install:
-        \@\$(MKPATH) "$ap_lib"
-        \$(CP) "$from" "$to"
+	\@\$(MKPATH) "$ap_lib"
+	\$(CP) "$from" "$to"
 
 EOF
     }
@@ -595,7 +598,7 @@ sub MY::install {
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
     # ModPerl::MM::add_dep(\$string, pure_install => 'aprext_install')
-    #    if WIN32;
+    #    if BUILD_APREXT;
 
     ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
           if $apache_test_install;
