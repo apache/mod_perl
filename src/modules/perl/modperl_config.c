@@ -71,7 +71,7 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
 
     merge_item(location);
     
-    merge_table_overlap_item(SetVar);
+    merge_table_overlap_item(vars);
     
     merge_table_overlap_item(SetEnv);
 
@@ -107,7 +107,7 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
-    scfg->SetVar = apr_table_make(p, 2);
+    scfg->vars = apr_table_make(p, 2);
 
     scfg->PassEnv = apr_table_make(p, 2);
     scfg->SetEnv = apr_table_make(p, 2);
@@ -126,7 +126,7 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p)
 
     dcfg->flags = modperl_options_new(p, MpDirType);
 
-    dcfg->SetVar = apr_table_make(p, 2);
+    dcfg->vars = apr_table_make(p, 2);
 
     dcfg->SetEnv = apr_table_make(p, 2);
     
@@ -198,7 +198,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(PerlModule);
     merge_item(PerlRequire);
 
-    merge_table_overlap_item(SetVar);
+    merge_table_overlap_item(vars);
 
     merge_table_overlap_item(SetEnv);
     merge_table_overlap_item(PassEnv);
