@@ -191,7 +191,7 @@ my %enums_wanted = (
 );
 
 my $defines_unwanted = join '|', qw{
-HTTP_VERSION APR_EOL_STR APLOG_MARK
+HTTP_VERSION APR_EOL_STR APLOG_MARK APLOG_NOERRNO
 };
 
 sub get_constants {
