@@ -1,5 +1,6 @@
 base64.t
 brigade.t
+bucket.t
 constants.t
 date.t
 finfo.t
