@@ -10,8 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
-add $r->server->loglevel() and relevant constants
-[Eric Cholet <cholet@logilune.com>]
+add $r->server->loglevel() and relevant constants. Suggested
+by Geoffrey Young [Eric Cholet <cholet@logilune.com>]
 
 $Apache::Server::AddPerlVersion uses $^V for Perl/v5.6.0+
 
