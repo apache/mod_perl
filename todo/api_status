@@ -129,17 +129,6 @@ VV src/docs/2.0/api/ModPerl/MethodLookup.pod
 ### Other API related things ###
 ################################
 
-Q: APR::BucketAlloc object returned by $r->connection->bucket_alloc
-   doesn't have a real package. It's OK for now, but when used outside
-   httpd, where that allocation should come from?
-
-A: Add glue for function: apr_bucket_alloc_create(pool);
-   not urgent for 2.0
-
-* why APR::OS::thread_current returns an object and to get the tid,
-  you need to dereference it? that doesn't sounds too
-  intuitive. Should we change it to return the id right away?
-
 * the following accessors might be turned into read/write (they are
   readonly at the moment). if you think that should be the case,
   please document the change and hopefully add a new sub-test.
