@@ -401,6 +401,11 @@ int modperl_run(apr_pool_t *p, server_rec *s)
     return modperl_hook_init(p, NULL, NULL, s);
 }
 
+int modperl_is_running(void)
+{
+    return MP_init_done;
+}
+
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp)
 {
