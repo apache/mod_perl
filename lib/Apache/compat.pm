@@ -144,7 +144,7 @@ EOI
     require Apache::Server;
     require Apache::ServerUtil;
 
-    my $orig_sub = *Apache::server_root_relative{CODE};
+    my $orig_sub = *Apache::Server::server_root_relative{CODE};
     *Apache::server_root_relative = sub {
         my $class = shift;
         return Apache->server->server_root_relative(@_);
