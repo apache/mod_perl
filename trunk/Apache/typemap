@@ -9,6 +9,7 @@ Apache::Table		T_PTROBJ
 Apache::TieHashTable	T_TABLEOBJ
 pid_t			T_IV
 Apache::Scoreboard      O_HvRV
+Apache::URI		T_PTROBJ    
 
 # "perlobject.map"  Dean Roehrich, version 19960302
 #

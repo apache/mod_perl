@@ -149,6 +149,7 @@ $ADD_MODULE = "";
 $PERL_DIRECTIVE_HANDLERS = 0;
 $PERL_TIE_TABLES = 0;
 $PERL_LOG_API = 0;
+$PERL_URI_API = 0;
 my %experimental = map { $_,1 } qw{
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
@@ -191,6 +192,7 @@ sub is_mp_arg {
    PERL_DIRECTIVE_HANDLERS
    PERL_TIE_TABLES
    PERL_LOG_API
+   PERL_URI_API
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -267,7 +269,7 @@ for (keys %callback_alias) {
 
 if($EVERYTHING) {
     @callback_hooks{qw(PERL_STACKED_HANDLERS PERL_METHOD_HANDLERS)} = (1) x 2;
-    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS PERL_LOG_API)) {
+    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS PERL_LOG_API PERL_URI_API)) {
        $$_ = 1;
     }
 }
@@ -281,7 +283,8 @@ if($ALL_HOOKS) {
 }
 
 if($DYNAMIC) {
-    $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = $PERL_LOG_API = 1;
+    $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = 
+	$PERL_LOG_API = $PERL_URI_API = 1;
 }
 
 my @xs_modules = qw(Apache Apache::Constants);
@@ -355,9 +358,11 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $USE_APACI = $USE_DSO = 0;
 	    
 	}
-	if(($mmn < MMN_130) and $PERL_LOG_API) { #1.3.0
-	    $PERL_LOG_API = 0;
-	    $cant_hook{PERL_LOG_API} = "(need 1.3.0 or higher)";
+	for (qw(PERL_LOG_API PERL_URI_API)) {
+	    if(($mmn < MMN_130) and $$_) { #1.3.0
+		$$_ = 0;
+		$cant_hook{$_} = "(need 1.3.0 or higher)";
+	    }
 	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
@@ -497,9 +502,13 @@ if($PERL_TIE_TABLES) {
     push @xs_modules, "Apache::Tie";
     $callback_hooks{PERL_TIE_TABLES} = 1;
 }
-if($PERL_LOG_API) {
-    push @xs_modules, "Apache::Log";
-    $callback_hooks{PERL_LOG_API} = 1;
+
+for (qw(Log URI)) {
+    my $s = "PERL_".uc($_)."_API";
+    if($$s) {
+	push @xs_modules, "Apache::$_";
+	$callback_hooks{$s} = 1;
+    }
 }
 
 my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;

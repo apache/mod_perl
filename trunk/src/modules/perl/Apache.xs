@@ -1032,7 +1032,8 @@ write_client(r, ...)
 	    }
 	    if(sent < 0) {
 	        mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
-	        break;
+                if(r->connection->aborted) break;
+                else continue;   
 	    }
 	    len -= sent;
 	    RETVAL += sent;
@@ -1040,7 +1041,8 @@ write_client(r, ...)
 #else
         if((sent = rwrite(buffer, len, r)) < 0) {
 	    mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
-	    break;
+	    if(r->connection->aborted) break;
+	    else continue;
         }
         RETVAL += sent;
 #endif
