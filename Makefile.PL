@@ -137,7 +137,11 @@ sub configure {
     my $httpd_version = $build->httpd_version;
     unless ($httpd_version) {
         error 'Unable to determine server version, aborting.';
-        unless ($build->{MP_APXS} || $build->{MP_AP_PREFIX}) {
+        if ($build->{MP_APXS} || $build->{MP_AP_PREFIX}) {
+            my $what = $build->{MP_APXS} ? 'MP_APXS' : 'MP_AP_PREFIX';
+            error "Invalid $what specified?";
+        }
+        else {
             error 'Please specify MP_APXS or MP_AP_PREFIX.';
         }
         exit(1);
