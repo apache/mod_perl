@@ -1170,6 +1170,11 @@ WriteMakefile(
     #DIR => \@DIR,
     NAME    => "mod_perl",
     VERSION => $VERSION,
+    ($] < 5.005 ? () :
+      (
+        ABSTRACT => 'Embed a Perl interpreter in the Apache HTTP server',
+        AUTHOR   => 'Doug MacEachern <dougm@pobox.com>',
+      )),
     #should override `CCFLAGS', can't with older perls
     #CCDLFLAGS => "$Config{ccdlflags} $EXTRA_CFLAGS", 
     DEFINE => $EXTRA_CFLAGS, 
