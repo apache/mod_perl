@@ -180,6 +180,7 @@ MODULE=Apache::Module
 >ap_show_directives
 >ap_show_modules
 >ap_register_hooks
+ mpxs_Apache__Module_loaded
 
 MODULE=Apache::Directive
  ap_directive_t *:DEFINE_conftree | | SV *:CLASS

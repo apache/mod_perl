@@ -28,9 +28,6 @@ instead.
 $r->log_reason:
 should be simple, see modperl_log.h
 
-Apache->module:
-not yet implemented
-
 Apache->server_root_relative:
 needs to default to current pool (pconf at startup, r->pool at request
 time)
