@@ -255,7 +255,7 @@ $callback_hooks{PERL_HANDLER} = 1; #PerlHandler always on
 my @mm_args;
 {
     my($fh,$file);
-    for (qw(./ ../), "$ENV{HOME}/.") {
+    for (qw(./ ../ ./. ../.), "$ENV{HOME}/.") {
 	last if $fh = FileHandle->new($file = $_."makepl_args.mod_perl");
     }
     if($fh) {
