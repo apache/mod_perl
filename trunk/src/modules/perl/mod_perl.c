@@ -1068,7 +1068,7 @@ void mod_perl_end_cleanup(void *data)
 
 void mod_perl_cleanup_handler(void *data)
 {
-    request_rec *r = perl_request_rec(NULL);
+    request_rec *r = (request_rec *)data;
     SV *cv;
     I32 i;
     dPPDIR;
