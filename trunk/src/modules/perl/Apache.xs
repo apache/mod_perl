@@ -2084,7 +2084,7 @@ dir_config(r, key=NULL, ...)
 						 &perl_module);
 	TABLE_GET_SET(c->vars, FALSE);
     }
-    if (!SvOK(RETVAL)) {
+    if (!(RETVAL && SvOK(RETVAL))) {
 	s = r && r->server ? r->server : perl_get_startup_server();
 	if (s && s->module_config) {
 	    SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
