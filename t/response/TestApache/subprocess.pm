@@ -39,7 +39,7 @@ sub handler {
     # XXX: these tests randomly fail under 5.6.1
     plan $r, tests => 4,
         have {"perl < 5.7.3" => sub { $] >= 5.007003 } },
-             'Apache::SubProcess';
+             qw(APR::PerlIO Apache::SubProcess);
 
     eval { require Apache::SubProcess };
 
