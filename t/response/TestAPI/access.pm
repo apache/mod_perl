@@ -57,3 +57,4 @@ Options None
 Options Indexes FollowSymLinks
 AuthName modperl
 AuthType none
+IdentityCheck On
