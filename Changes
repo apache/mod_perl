@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+add missing dependencies to Apache::PerlSections
+[Geoffrey Young]
+
 $r->get_client_block is bogus in httpd-2.0.45 (and ealier), as it
 can't handle EOS buckets arriving in the same bucket brigade with
 data. so rewrite ModPerl::Test::read_post to use an explicit read
@@ -24,6 +27,9 @@ PerlIOAPR_seek API when APR_HAS_LARGE_FILES=0 [Stas]
 perl 5.8.0 forgets to export PerlIOBase_noop_fail, causing problems on
 win32 and aix. reimplement this function locally to solve the
 problem. APR::PerlIO should now be useful on win32 and aix [Stas]
+
+implement DECLINE_CMD and DIR_MAGIC_TYPE constants
+[Geoffrey Young]
 
 allow init filter handlers to call other methods than just $f->ctx [Stas]
 
