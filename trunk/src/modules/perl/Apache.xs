@@ -968,7 +968,7 @@ read_client_block(r, buffer, bufsiz)
 #endif
         SvCUR_set(buffer, nrd);
         *SvEND(buffer) = '\0';
-        SvPOK_on(buffer);
+        SvPOK_only(buffer);
         SvTAINTED_on(buffer);
     } 
     else {
@@ -1001,7 +1001,7 @@ get_client_block(r, buffer, bufsiz)
         XPUSHs(sv_2mortal(newSViv((long)nrd)));
         SvCUR_set(buffer, nrd);
         *SvEND(buffer) = '\0';
-        SvPOK_on(buffer);
+        SvPOK_only(buffer);
         SvTAINTED_on(buffer);
     } 
     else {
