@@ -74,10 +74,10 @@ script called 'start_httpd' to start apache, and include a line like this:
 When you have problems with modules not being reloaded, please refer
 to the following lines in 'perlmodlib':
 
-"Always use -w. Try to use strict; (or use strict qw(...);).  Remember
-that you can add no strict qw(...); to individual blocks of code that
-need less strictness. Always use -w. Always use -w!  Follow the
-guidelines in the perlstyle(1) manual."
+"Always use B<-w>. Try to C<use strict;> (or C<use strict qw(...);>). 
+Remember that you can add C<no strict qw(...);> to individual blocks 
+of code that need less strictness. Always use B<-w>. Always use B<-w>! 
+Follow the guidelines in the perlstyle(1) manual." 
 
 Warnings when running under mod_perl is enabled with 'PerlWarn On' in
 your httpd.conf.
