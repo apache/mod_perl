@@ -60,23 +60,6 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
     return len;
 }
 
-static apr_status_t mpxs_ap_get_brigade(pTHX_ ap_filter_t *filter,
-                                        apr_bucket_brigade *brigade,
-                                        ap_input_mode_t mode,
-                                        apr_read_type_e block,
-                                        SV *svreadbytes)
-{
-    apr_off_t readbytes = svreadbytes ? SvIV(svreadbytes) : 0;
-    apr_status_t status = ap_get_brigade(filter, brigade,
-                                         mode, block, &readbytes);
-
-    if (svreadbytes) {
-        sv_setiv(svreadbytes, readbytes);
-    }
-
-    return status;
-}
-
 static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
 {
     return (U32 *)&MP_CODE_ATTRS(SvRV(cvrv));
