@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+APR::Pool now has destroy() and clear() available [Stas]
+
 now logging the errors happening in pool cleanup callbacks [Stas]
 
 use the new Apache-Test attribute -minclient in the test suites. Now
