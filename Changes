@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+Apache::Reload: add a new config variable:
+ReloadConstantRedefineWarnings to optionally shut off the constant sub
+redefine warnings [Stas]
+
 implement $parms->info.  directive handlers should now be complete.
 [Geoffrey Young]
 
