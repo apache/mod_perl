@@ -19,7 +19,10 @@ our $VERSION = '0.01';
 my(@xs_includes) = ('mod_perl.h',
                     map "modperl_xs_$_.h", qw(sv_convert util typedefs));
 
-my @global_structs = qw(perl_module MP_debug_level);
+my @global_structs = qw(perl_module);
+
+my $build = Apache::Build->build_config;
+push @global_structs, 'MP_debug_level' if $build->{MP_DEBUG};
 
 sub new {
     my $class = shift;
