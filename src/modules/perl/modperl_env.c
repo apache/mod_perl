@@ -31,7 +31,7 @@ typedef struct {
 #define MP_ENV_ENT(k,v) \
 { k, sizeof(k)-1, v, sizeof(v)-1, 0 }
 
-static modperl_env_ent_t modperl_env_const_vars[] = {
+static modperl_env_ent_t MP_env_const_vars[] = {
 #ifdef MP_COMPAT_1X
     MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
 #endif
@@ -41,7 +41,7 @@ static modperl_env_ent_t modperl_env_const_vars[] = {
 
 void modperl_env_hash_keys(void)
 {
-    modperl_env_ent_t *ent = modperl_env_const_vars;
+    modperl_env_ent_t *ent = MP_env_const_vars;
 
     while (ent->key) {
         PERL_HASH(ent->hash, ent->key, ent->klen);
@@ -69,8 +69,8 @@ void modperl_env_default_populate(pTHX)
 
     modperl_env_untie(mg_flags);
 
-    for (i = 0; modperl_env_const_vars[i].key; i++) {
-        const modperl_env_ent_t *ent = &modperl_env_const_vars[i];
+    for (i = 0; MP_env_const_vars[i].key; i++) {
+        const modperl_env_ent_t *ent = &MP_env_const_vars[i];
 
         hv_store(hv, ent->key, ent->klen,
                  newSVpvn(ent->val, ent->vlen), ent->hash);
