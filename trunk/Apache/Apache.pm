@@ -656,7 +656,7 @@ Then during the authentication stage the server uses the current
 authentication realm, from C<$r-E<gt>auth_name>, to determine which set of
 credentials to authenticate.
 
-=item $r-E<gt>document_root ( [$docroot] )
+=item $r-E<gt>document_root( [$docroot] )
 
 When called with no argument, returns a reference to the current value
 of the per server configuration directive B<DocumentRoot>. To quote the
@@ -678,6 +678,33 @@ example dynamically sets the document root based on the request's
      }
     
    PerlTransHandler trans_handler
+
+=item $r-E<gt>server_root_relative( [$relative_path] )
+
+If called without any arguments, this method returns the value of the
+currently-configured C<ServerRoot> directory.
+
+If a single argument is passed, it concatenates it with the value of
+C<ServerRoot>. For example here is how to get the path to the
+I<error_log> file under the server root:
+
+ my $error_log = $r->server_root_relative("logs/error_log");
+
+See also the next item.
+
+=item Apache-E<gt>server_root_relative( [$relative_path] )
+
+Same as the previous item, but this time it's used without a request
+object. This method is usually needed in a startup file. For example
+the following startup file modifies C<@INC> to add a local directory
+with perl modules located under the server root and after that loads a
+module from that directory.
+
+  BEGIN {
+      use Apache():
+      use lib Apache->server_root_relative("lib/my_project");
+  }
+  use MyProject::Config ();
 
 =item $r-E<gt>allow_options
 
