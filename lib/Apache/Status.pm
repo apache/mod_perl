@@ -31,10 +31,28 @@ use constant IS_WIN32 => ($^O eq "MSWin32");
 
 our $newQ;
 
-if (eval {require Apache::Request}) {
-    $newQ ||= sub { Apache::Request->new(@_) };
+if (eval { require Apache::Request }) {
+    if ($Apache::Request::VERSION >= 2) {
+        $newQ ||= sub { Apache::Request->new(@_) };
+    }
 }
-elsif (eval {require CGI}) {
+else {
+    if ($@ !~ m|^Can't locate Apache/Request.pm|) {
+        # we hit Apache::Request from mp1 which has failed to load
+        # because it couldn't load other things, but it left all kind
+        # of things behind, that will affect other code (e.g. magical
+        # Apache::Table in %INC), so try to undo the damage
+        # otherwise loading Apache::compat which calls:
+        # $INC{'Apache/Table.pm'} = __FILE__;
+        # crashes
+        delete $INC{"Apache/Table.pm"};
+        delete $INC{"Apache/Request.pm"};
+    }
+    else {
+        # user has no Apache::Request installed
+    }
+}
+if (!$newQ && eval { require CGI }) {
     if ($CGI::VERSION >= 2.93) {
         $newQ ||= sub { CGI->new(@_) };
     }
