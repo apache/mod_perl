@@ -21,6 +21,14 @@ overloaded by modperl [Stas]
 
 Add PerlMapToStorageHandler [Geoffrey Young]
 
+callbacks are now expected to return a meaningful value 
+(OK, SERVER_ERROR, etc) or return via an official API 
+(exit, die, etc).  relying on implicit returns from the 
+last call evaluated by a subroutine may result in server 
+errors.  [Stas, Geoffrey Young]
+
+removed undefined warnings for ModPerl::Util::exit() [Stas]
+
 in the MP_MAINTAINER mode add the -Werror compilation flag when perl
 v5.6.2 or higher is used, so that we don't miss compilation
 warnings. [Stas]
