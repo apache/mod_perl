@@ -35,6 +35,14 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
                 seemingly because of the problems with threads on
                 FreeBSD (not sure what version).
 
+HPUX11i     DSO
+                PA-RISC2.0-thread-multi-LP64
+                hp-ux loire b.11.11 u 9000800 1756907651 unlimited-user license 
+                Cannot load .../modules/mod_perl.so into server: Error 0
+                http://marc.theaimsgroup.com/?t=108325310800002&r=1&w=2
+                Bill Rowe gives some hints here
+                http://marc.theaimsgroup.com/?l=apache-modperl&m=108334017416318&w=2
+                Static works OK!
 
 * we should stop generating xs/apache_*, at least for a reason that
   it's incomplete and will be never complete as we don't keep up with
