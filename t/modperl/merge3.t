@@ -19,6 +19,6 @@ my $base = "http://$hostport";
 #   PerlSetVar
 #   PerlAddVar
 
-my $uri = "$base/merge2/merge3.html";
+my $uri = "$base/merge3/";
 t_debug("connecting to $uri");
 print GET_BODY_ASSERT $uri;
