@@ -3,6 +3,7 @@
 
 #include "modperl_apache_includes.h"
 #include "modperl_perl_includes.h"
+#include "modperl_apache_compat.h"
 
 #ifdef WIN32
 #define MP_THREADED 1
