@@ -76,7 +76,7 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
 static MP_INLINE
 SV *mpxs_Apache__RequestRec_print(pTHX_ I32 items,
-                                 SV **MARK, SV **SP)
+                                  SV **MARK, SV **SP)
 {
     modperl_config_req_t *rcfg;
     request_rec *r;
