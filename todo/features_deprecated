@@ -26,4 +26,3 @@ d) split off into something standalone on cpan
   + Apache::Symdump: unknown
   + Apache::Opcode: was experimental, needs much attention to be
     useful
-
