@@ -4,7 +4,6 @@ command.t
 conn_rec.t
 conn_util.t
 lookup_uri2.t
-lookup_uri.t
 module.t
 process.t
 query.t
