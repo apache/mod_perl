@@ -13,6 +13,8 @@ RegistryCooker:
 
 ### missing features ###
 
+- need to properly handle HEAD requests 
+
 - need to port $Apache::__T, to test against when user supplies -T flag.
 
 - port Apache::PerlRunXS
