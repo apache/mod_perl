@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+$Apache::Server::StrictPerlSections added. When set to a true
+value, will abort server startup if there are syntax errors
+in <Perl > sections [Philippe M. Chiasson <gozer@cpan.org]
+
 Use Win32::GetShortPathName for Win32 to handle cases when
 the supplied MP_AP_PREFIX contains spaces. [Randy Kobes]
 
