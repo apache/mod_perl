@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.16_01-dev
+=item 1.16_01 - November 24, 1998
 
 $r->connection->remote_addr can now be changed
 
