@@ -58,7 +58,6 @@ PerlModule ModPerl::RegistryBB
 
 PerlModule ModPerl::Registry
 <Location /registry>
-  #  PerlOptions +GlobalRequest
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry
@@ -66,7 +65,6 @@ PerlModule ModPerl::Registry
 </Location>
 
 <Location /registry_oo_conf>
-    PerlOptions +GlobalRequest
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry->handler
@@ -81,7 +79,6 @@ PerlModule ModPerl::Registry
 
 PerlModule ModPerl::PerlRun
 <Location /perlrun>
-    PerlOptions +GlobalRequest
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::PerlRun
