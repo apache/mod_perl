@@ -326,6 +326,10 @@ Perl uses perforce for its source revision control, see
 I<Porting/repository.pod> manpage coming with Perl for more
 information.
 
+mailing list subscription: perl5-changes-subscribe@perl.org
+
+archive: http://archive.develooper.com/perl5-changes@perl.org/
+
 =back
 
 
