@@ -101,7 +101,10 @@ sub handler {
         }
     }
 
+    my $ReloadDirs = ref($r) && $r->dir_config("ReloadDirectories");
+    my @watch_dirs = split(/\s+/, $ReloadDirs||'');
     while (my($key, $file) = each %Apache::Reload::INCS) {
+        next if @watch_dirs && !grep { $file =~ /^$_/ } @watch_dirs;
         warn "Apache::Reload: Checking mtime of $key\n" if $DEBUG;
 
         my $mtime = (stat $file)[9];
