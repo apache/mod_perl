@@ -21,7 +21,7 @@ APR::Finfo::stat() [Geoffrey Young]
 
 add :filetype import tag to APR::Const [Geoffrey Young]
 
-<Perl> sections now proprely set $0 to the name of the configuration
+<Perl> sections now properly set $0 to the name of the configuration
 file they are in. [Philippe M. Chiasson]
 
 Apache::Status: provide a workaround for Config::myconfig() which
@@ -31,7 +31,7 @@ fails under threads with (5.8.0 < perl < 5.8.3) [Elizabeth Mattijsen
 Fix Apache::Status::handler to return 'Apache::OK' [Juanma Barranquero
 <lektu@terra.es>]
 
-<Perl> sections now proprely set filename and line number information,
+<Perl> sections now properly set filename and line number information,
 making error messages report the correct location. [Philippe M. Chiasson]
 
 =item 1.99_11 - November 10, 2003
@@ -75,11 +75,11 @@ perl 5.8.1 w/ ithreads has a bug where it reports the wrong parent pid
 (as if the process was never forked), provide a local workaround (+ new
 test). [Rafael Garcia-Suarez <rgarciasuarez@free.fr>]
 
-overriden STD* streams now can be further overriden and will be
+overridden STD* streams now can be further overridden and will be
 properly restored, which allows functions like $r->internal_redirect
 work (+add tests) [Stas]
 
-implement perlio's getarg hook, which now allows dupping STD* streams
+implement perlio's getarg hook, which now allows duping STD* streams
 overloaded by modperl [Stas]
 
 Add PerlMapToStorageHandler [Geoffrey Young]
@@ -104,7 +104,7 @@ make sure that connection filters won't be inserted as request filters
 Prevent the 'Use of uninitialized value.' warning when
 ModPerl::Util::exit is used. [Stas]
 
-To make the test-sute sandbox-friendly, which break when things try to
+To make the test-suite sandbox-friendly, which break when things try to
 run off /tmp, use t/logs as the location of the mod_cgid socket and
 TMPDIR env var [Haroon Rafique <haroon.rafique@utoronto.ca>]
 
@@ -135,7 +135,7 @@ subprocess_env. Improve and extend the tests to cover this bug. [Stas]
 
 it is invalid to return HTTP_INTERNAL_SERVER_ERROR or any other HTTP
 response code from modperl_wbucket_pass, therefore set the error code
-into r->status and return APR_SUCCESS. Untill now response handler
+into r->status and return APR_SUCCESS. Until now response handler
 with messed up response headers, were causing no response what so ever
 to the client.  LWP was assuming 500, and it was all fine, testing
 without LWP has immediately revealed that there was a problem in the
@@ -147,8 +147,8 @@ found.  at the same time improve the tracing to include the pid/tid of
 the server that has encountered this problem, to make it easier to
 debug. [Stas]
 
-mod_perl handler must be dupped for any mpm which runs within
-USE_ITHREAD.  Untill now there was a big problem with prefork mpm if
+mod_perl handler must be duped for any mpm which runs within
+USE_ITHREAD.  Until now there was a big problem with prefork mpm if
 any of its vhosts was using PerlOptions +(Parent|Clone) and happened
 to load handlers before the main server. When that was happening the
 main server will see that the handler was resolved (since it sees the
@@ -242,7 +242,7 @@ ap_get_brigade(), from 0 to 8192. other than being useless, 0 always
 triggers an assert in httpd internal filters and 8192 is a good
 default. [Stas]
 
-Fix DynaLoader breakeage when using DL_GLOBAL on OpenBSD
+Fix DynaLoader breakage when using DL_GLOBAL on OpenBSD
 [Philippe M. Chiasson <gozer@cpan.org>]
 
 renamed the private modperl_module_config_get_obj function to 
