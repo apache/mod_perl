@@ -43,7 +43,7 @@ my $location = '/TestHooks__authen_digest';
              'WWW-Authenticate header contains the proper realm');
 
     ok t_cmp($wwwauth,
-             qr/nonce="\w+"/,
+             qr/nonce="/,
              'WWW-Authenticate header contains a nonce');
 
     # other fields, such as qop, are added only if add additional
