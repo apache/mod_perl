@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Add Apache::Reload->unregister_module() to explicitely remove a
+module from Apache::Reload's monitoring list [Gozer]
+
 introduce a custom modperl error message for failing filter handlers
 (previously 'unknown error' coming from rc=500 was logged) [Stas]
 

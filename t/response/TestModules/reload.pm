@@ -5,10 +5,18 @@ use warnings FATAL => 'all';
 
 use Apache::Const -compile => qw(OK);
 
+my $package = 'Apache::Reload::Test';
+
 sub handler {
     my $r = shift;
+    
+    if ($r->args eq 'last') {
+        Apache::Reload->unregister_module($package);
+        $r->print("unregistered OK");
+        return Apache::OK;
+    }
 
-    eval "use Apache::Reload::Test";
+    eval "use $package";
 
     Apache::Reload::Test::run($r);
 
