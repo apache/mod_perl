@@ -17,6 +17,10 @@
 
 typedef struct {
     SV *sv;
+#ifdef USE_ITHREADS
+    PerlInterpreter *perl;
+    modperl_interp_t *interp;
+#endif
 } mpxs_pool_account_t;
 
 /* XXX: this implementation has a problem with perl ithreads. if a
@@ -32,6 +36,73 @@ typedef struct {
  * - it needs to reinstall any registered cleanup callbacks (can we do
  *   that?) may be we can skip those?
  */
+
+#ifndef MP_SOURCE_SCAN
+#include "apr_optional.h"
+static
+APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
+#endif
+
+#define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) (mg_find(sv, PERL_MAGIC_ext) != NULL)
+
+#ifdef USE_ITHREADS
+
+#define MP_APR_POOL_SV_DROPS_OWNERSHIP(acct) STMT_START {               \
+    dTHXa(acct->perl);                                                  \
+    mg_free(acct->sv);                                                  \
+    SvIVX(acct->sv) = 0;                                                \
+    if (modperl_opt_interp_unselect && acct->interp) {                  \
+        /* this will decrement the interp refcnt until                  \
+         * there are no more references, in which case                  \
+         * the interpreter will be putback into the mip                 \
+         */                                                             \
+        (void)modperl_opt_interp_unselect(acct->interp);                \
+    }                                                                   \
+} STMT_END
+
+#define MP_APR_POOL_SV_TAKES_OWNERSHIP(acct_sv, pool) STMT_START {      \
+    mpxs_pool_account_t *acct = apr_palloc(pool, sizeof *acct);         \
+    acct->sv = acct_sv;                                                 \
+    acct->perl = aTHX;                                                  \
+    SvIVX(acct_sv) = PTR2IV(pool);                                      \
+                                                                        \
+    sv_magic(acct_sv, Nullsv, PERL_MAGIC_ext,                           \
+             MP_APR_POOL_NEW, sizeof(MP_APR_POOL_NEW));                 \
+                                                                        \
+    apr_pool_cleanup_register(pool, (void *)acct,                       \
+                              mpxs_apr_pool_cleanup,                    \
+                              apr_pool_cleanup_null);                   \
+                                                                        \
+    /* make sure interpreter is not putback into the mip                \
+     * until this cleanup has run.                                      \
+     */                                                                 \
+    if ((acct->interp = MP_THX_INTERP_GET(aTHX))) {                     \
+        acct->interp->refcnt++;                                         \
+    }                                                                   \
+} STMT_END
+
+#else /* !USE_ITHREADS */
+
+#define MP_APR_POOL_SV_DROPS_OWNERSHIP(acct) STMT_START {               \
+    mg_free(acct->sv);                                                  \
+    SvIVX(acct->sv) = 0;                                                \
+} STMT_END
+
+#define MP_APR_POOL_SV_TAKES_OWNERSHIP(acct_sv, pool) STMT_START {      \
+    mpxs_pool_account_t *acct = apr_palloc(pool, sizeof *acct);         \
+    acct->sv = acct_sv;                                                 \
+    SvIVX(acct_sv) = PTR2IV(pool);                                      \
+                                                                        \
+    sv_magic(acct_sv, Nullsv, PERL_MAGIC_ext,                           \
+              MP_APR_POOL_NEW, sizeof(MP_APR_POOL_NEW));                \
+                                                                        \
+    apr_pool_cleanup_register(pool, (void *)acct,                       \
+                              mpxs_apr_pool_cleanup,                    \
+                              apr_pool_cleanup_null);                   \
+} STMT_END
+
+#endif /* USE_ITHREADS */
+
 
 /* XXX: should we make it a new global tracing category
  * MOD_PERL_TRACE=p for tracing pool management? */
@@ -50,26 +121,8 @@ typedef struct {
 static MP_INLINE apr_status_t
 mpxs_apr_pool_cleanup(void *cleanup_data)
 {
-    mpxs_pool_account_t *data;
-    apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW,
-                          (apr_pool_t *)cleanup_data);
-    if (!(data && data->sv)) {
-        /* if there is no data, there is nothing to unset */
-        MP_POOL_TRACE(MP_FUNC, "this pool seems to be destroyed already");
-    }
-    else {
-        MP_POOL_TRACE(MP_FUNC,
-                      "pool 0x%lx contains a valid sv 0x%lx, invalidating it",
-                      (unsigned long)data->sv, (unsigned long)cleanup_data);
-
-        /* invalidate all Perl objects referencing this sv */
-        SvIVX(data->sv) = 0;
-
-        /* invalidate the reference stored in the pool */
-        data->sv = NULL;
-        /* data->sv will go away by itself when all objects will go away */
-    }
-
+    mpxs_pool_account_t *acct = cleanup_data;
+    MP_APR_POOL_SV_DROPS_OWNERSHIP(acct);
     return APR_SUCCESS;
 }
 
@@ -100,25 +153,6 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
                    (unsigned long)child_pool, (unsigned long)parent_pool);
     }
 
-    /* Each newly created pool must be destroyed only once. Calling
-     * apr_pool_destroy will destroy the pool and its children pools,
-     * however a perl object for a sub-pool will still keep a pointer
-     * to the pool which was already destroyed. When this object is
-     * DESTROYed, apr_pool_destroy will be called again. In the best
-     * case it'll try to destroy a non-existing pool, but in the worst
-     * case it'll destroy a different valid pool which has been given
-     * the same memory allocation wrecking havoc. Therefore we must
-     * ensure that when sub-pools are destroyed via the parent pool,
-     * their cleanup callbacks will destroy the guts of their perl
-     * objects, so when those perl objects, pointing to memory
-     * previously allocated by destroyed sub-pools or re-used already
-     * by new pools, will get their time to DESTROY, they won't make a
-     * mess, trying to destroy an already destroyed pool or even worse
-     * a pool allocate in the place of the old one.
-     */
-    apr_pool_cleanup_register(child_pool, (void *)child_pool,
-                              mpxs_apr_pool_cleanup,
-                              apr_pool_cleanup_null);
 #if APR_POOL_DEBUG
     /* child <-> parent <-> ... <-> top ancestry traversal */
     {
@@ -139,17 +173,30 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
 #endif
 
     {
-        mpxs_pool_account_t *data =
-            (mpxs_pool_account_t *)apr_pcalloc(child_pool, sizeof(*data));
-
         SV *rv = sv_setref_pv(NEWSV(0, 0), "APR::Pool", (void*)child_pool);
+        SV *sv = SvRV(rv);
 
-        data->sv = SvRV(rv);
+        /* Each newly created pool must be destroyed only once. Calling
+         * apr_pool_destroy will destroy the pool and its children pools,
+         * however a perl object for a sub-pool will still keep a pointer
+         * to the pool which was already destroyed. When this object is
+         * DESTROYed, apr_pool_destroy will be called again. In the best
+         * case it'll try to destroy a non-existing pool, but in the worst
+         * case it'll destroy a different valid pool which has been given
+         * the same memory allocation wrecking havoc. Therefore we must
+         * ensure that when sub-pools are destroyed via the parent pool,
+         * their cleanup callbacks will destroy the guts of their perl
+         * objects, so when those perl objects, pointing to memory
+         * previously allocated by destroyed sub-pools or re-used already
+         * by new pools, will get their time to DESTROY, they won't make a
+         * mess, trying to destroy an already destroyed pool or even worse
+         * a pool allocate in the place of the old one.
+         */
+
+        MP_APR_POOL_SV_TAKES_OWNERSHIP(sv, child_pool);
 
         MP_POOL_TRACE(MP_FUNC, "sub-pool p: 0x%lx, sv: 0x%lx, rv: 0x%lx",
-                      (unsigned long)child_pool, data->sv, rv);
-
-        apr_pool_userdata_set(data, MP_APR_POOL_NEW, NULL, child_pool);
+                      (unsigned long)child_pool, sv, rv);
 
         return rv;
     }
@@ -158,10 +205,9 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
 static MP_INLINE void mpxs_APR__Pool_clear(pTHX_ SV *obj)
 {
     apr_pool_t *p = mp_xs_sv2_APR__Pool(obj);
-    mpxs_pool_account_t *data;
+    SV *sv = SvRV(obj);
 
-    apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW, p);
-    if (!(data && data->sv)) {
+    if (!MP_APR_POOL_SV_HAS_OWNERSHIP(sv)) {
         MP_POOL_TRACE(MP_FUNC, "parent pool (0x%lx) is a core pool",
                       (unsigned long)p);
         apr_pool_clear(p);
@@ -171,20 +217,15 @@ static MP_INLINE void mpxs_APR__Pool_clear(pTHX_ SV *obj)
     MP_POOL_TRACE(MP_FUNC,
                   "parent pool (0x%lx) is a custom pool, sv 0x%lx",
                   (unsigned long)p,
-                  (unsigned long)data->sv);
+                  (unsigned long)sv);
 
     apr_pool_clear(p);
 
-    /* apr_pool_clear removes all the user data, so we need to restore
+    /* apr_pool_clear runs & removes the cleanup, so we need to restore
      * it. Since clear triggers mpxs_apr_pool_cleanup call, our
      * object's guts get nuked too, so we need to restore them too */
 
-    /* this is sv_setref_pv, but for an existing object */
-    sv_setiv(newSVrv(obj, "APR::Pool"), PTR2IV((void*)p));
-    data->sv = SvRV(obj);
-
-    /* reinstall the user data */
-    apr_pool_userdata_set(data, MP_APR_POOL_NEW, NULL, p);
+    MP_APR_POOL_SV_TAKES_OWNERSHIP(sv, p);
 }
 
 
@@ -203,11 +244,6 @@ typedef struct {
  * @param data   internal storage
  */
 
-#ifndef MP_SOURCE_SCAN
-#include "apr_optional.h"
-static
-APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
-#endif
 
 static apr_status_t mpxs_cleanup_run(void *data)
 {
@@ -294,35 +330,12 @@ mpxs_apr_pool_parent_get(pTHX_ apr_pool_t *child_pool)
     apr_pool_t *parent_pool = apr_pool_parent_get(child_pool);
 
     if (parent_pool) {
-        /* ideally this should be done by mp_xs_APR__Pool_2obj. Though
-         * since most of the time we don't use custom pools, we don't
-         * want the overhead of reading and writing pool's userdata in
-         * the general case. therefore we do it here and in
-         * mpxs_apr_pool_create. Though if there are any other
-         * functions, that return perl objects whose guts include a
-         * reference to a custom pool, they must do the ref-counting
-         * as well.
-         */
-        mpxs_pool_account_t *data;
-        apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW, parent_pool);
-        if (data && data->sv) {
-            MP_POOL_TRACE(MP_FUNC,
-                          "parent pool (0x%lx) is a custom pool, sv 0x%lx",
-                          (unsigned long)parent_pool,
-                          (unsigned long)data->sv);
-
-            return newRV_inc(data->sv);
-        }
-        else {
-            MP_POOL_TRACE(MP_FUNC, "parent pool (0x%lx) is a core pool",
-                          (unsigned long)parent_pool);
-            return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
-        }
+        return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
     }
     else {
         MP_POOL_TRACE(MP_FUNC, "pool (0x%lx) has no parents",
                       (unsigned long)child_pool);
-                      return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
+        return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
     }
 }
 
@@ -332,40 +345,11 @@ mpxs_apr_pool_parent_get(pTHX_ apr_pool_t *child_pool)
  */
 static MP_INLINE void mpxs_apr_pool_DESTROY(pTHX_ SV *obj)
 {
-    apr_pool_t *p;
     SV *sv = SvRV(obj);
 
-    /* MP_POOL_TRACE(MP_FUNC, "DESTROY 0x%lx-0x%lx",       */
-    /*              (unsigned long)obj,(unsigned long)sv); */
-    /* do_sv_dump(0, Perl_debug_log, obj, 0, 4, FALSE, 0); */
-
-    p = mpxs_sv_object_deref(obj, apr_pool_t);
-    if (!p) {
-        /* non-custom pool */
-        MP_POOL_TRACE(MP_FUNC, "skip apr_pool_destroy: not a custom pool");
-        return;
-    }
-
-    if (sv && SvOK(sv)) {
-        mpxs_pool_account_t *data;
-
-        apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW, p);
-        if (!(data && data->sv)) {
-            MP_POOL_TRACE(MP_FUNC, "skip apr_pool_destroy: no sv found");
-            return;
-        }
-
-        if (SvREFCNT(sv) == 1) {
-            MP_POOL_TRACE(MP_FUNC, "call apr_pool_destroy: last reference");
-            apr_pool_destroy(p);
-        }
-        else {
-            /* when the pool object dies, sv's ref count decrements
-             * itself automatically */
-            MP_POOL_TRACE(MP_FUNC,
-                          "skip apr_pool_destroy: refcount > 1 (%d)",
-                          SvREFCNT(sv));
-        }
+    if (MP_APR_POOL_SV_HAS_OWNERSHIP(sv)) {
+        apr_pool_t *p = mpxs_sv_object_deref(obj, apr_pool_t);
+        apr_pool_destroy(p);
     }
 }
 
