@@ -189,6 +189,7 @@ apr_status_t modperl_interp_unselect(void *data)
     modperl_interp_pool_t *mip = interp->mip;
 
     MpInterpIN_USE_Off(interp);
+    MpInterpPUTBACK_Off(interp);
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
@@ -237,6 +238,9 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
     MP_TRACE_i(MP_FUNC, "lifetime is per-%s\n",
                modperl_interp_lifetime_desc(lifetime));
 
+    /*
+     * XXX: goto modperl_interp_get() if lifetime == handler ?
+     */
     if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
         /* share 1 interpreter across sub-requests */
         r = r->main;
@@ -282,26 +286,33 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
         p = r->pool;
     }
 
-    if (!p) {
-        /* should never happen */
-        MP_TRACE_i(MP_FUNC, "no pool\n");
-        return NULL;
-    }
-
     interp = modperl_interp_get(s ? s : r->server);
     ++interp->num_requests; /* should only get here once per request */
 
-    (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
-                                modperl_interp_unselect,
-                                p);
+    if (lifetime == MP_INTERP_LIFETIME_HANDLER) {
+        /* caller is responsible for calling modperl_interp_unselect() */
+        MpInterpPUTBACK_On(interp);
+    }
+    else {
+        if (!p) {
+            /* should never happen */
+            MP_TRACE_i(MP_FUNC, "no pool\n");
+            return NULL;
+        }
+
+        (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
+                                    modperl_interp_unselect,
+                                    p);
+
+        MP_TRACE_i(MP_FUNC,
+                   "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
+                   (unsigned long)interp, desc, (unsigned long)p,
+                   (r ? (is_subrequest ? "sub" : "main") : "conn"),
+                   (r ? rr->uri : c->remote_ip));
+    }
 
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
-
-    MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
-               (unsigned long)interp, desc, (unsigned long)p,
-               (r ? (is_subrequest ? "sub" : "main") : "conn"),
-               (r ? rr->uri : c->remote_ip));
 
     return interp;
 }

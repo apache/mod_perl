@@ -282,11 +282,9 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     SvREFCNT_dec((SV*)av_args);
 
 #ifdef USE_ITHREADS
-    if (interp && MpInterpPUTBACK_On(interp)) {
-        /* XXX: might want to put interp back into available pool
-         * rather than have it marked as in_use for the lifetime of
-         * a request
-         */
+    if (interp && MpInterpPUTBACK(interp)) {
+        /* PerlInterpLifetime handler */
+        modperl_interp_unselect(interp);
     }
 #endif
 

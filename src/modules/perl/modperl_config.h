@@ -40,6 +40,9 @@ const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime);
 #define modperl_interp_lifetime_undef(dcfg) \
 (dcfg->interp_lifetime == MP_INTERP_LIFETIME_UNDEF)
 
+#define modperl_interp_lifetime_handler(dcfg) \
+(dcfg->interp_lifetime == MP_INTERP_LIFETIME_HANDLER)
+
 #define modperl_interp_lifetime_subrequest(dcfg) \
 (dcfg->interp_lifetime == MP_INTERP_LIFETIME_SUBREQUEST)
 
