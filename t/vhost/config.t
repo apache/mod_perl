@@ -1,11 +1,9 @@
 # the handler is configured in modperl_extra.pl via
 # Apache->server->add_config
 
+use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest 'GET';
-
-my $config = Apache::Test::config();
-my $vars = $config->{vars};
 
 my $module = 'TestVhost::config';
 my $url    = Apache::TestRequest::module2url($module);
@@ -18,9 +16,9 @@ if ($res->is_success) {
 }
 else {
     if ($res->code == 404) {
-        my $documentroot = $vars->{documentroot};
+        my $docroot = Apache::Test::vars('documentroot');
         die "this test gets its <Location> configuration added via " .
-            "$documentroot/vhost/startup.pl, this could be the cause " .
+            "$docroot/vhost/startup.pl, this could be the cause " .
             "of the failure";
     }
     else {
