@@ -3,6 +3,35 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- %'s in log_error are formatted by ap_log_error(), triggers
+  unexpected results in logging methods (Pouneh)  
+
+- -e and setuid problem (Steve Neilsen)
+
+- method handler called when it shouldn't be? (Ken)
+
+- strike t/TEST reference to t/logs/mod_perl_httpd.pid
+
+- $ENV{MOD_PERL} is inherited by subprocesses, must stop this
+
+- Apache::Status extensions (ix)
+
+- <perl> sections and DirectoryIndex (Eric Cholet)
+
+- APACHE_LAYOUT (or similar) to provide a default for --layout
+
+- Apache::ExtUtils error checking
+
+- Perl{Set,Pass}Env tainted, should they not be? (Vivek)
+
+- Perl{Set,Pass}Env needs to happen asap for "top-level" config (Todd E.)
+
+- dso + register_cleanup via startup pool
+
+- $r->finfo flaky? (Ken)
+
+- at .../perl/Apache/SIG.pm line 30 (Mark Downing, Ron Hawkins)
+
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
