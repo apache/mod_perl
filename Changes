@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+if $r->bytes_sent has not been calculated, then do so before returning
+the value.  thanks to Dirk Melchers for the spot
+
 ensure that all -I directories printed by Apache::src actually exist
 
 don't assume $uri =~ /$path_info$/ in Apache::Registry/PerlRun
