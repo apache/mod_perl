@@ -21,8 +21,13 @@ sub namespace_from {
 }
 
 sub handler ($$) {
-    my($class, $r) = (shift,shift);
-
+    my($class, $r);
+    if (@_ >= 2) {
+	($class, $r) = (shift, shift);
+    }
+    else {
+	($class, $r) = (__PACKAGE__, shift);
+    }
     my $pr = $class->new($r);
 
     my $rc = $pr->can_compile;
