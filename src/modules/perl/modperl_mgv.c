@@ -205,7 +205,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     else {
         if ((cv = get_cv(name, FALSE))) {
             handler->mgv_cv =
-                modperl_mgv_compile(aTHX, p, HvNAME(GvSTASH(CvGV(cv))));
+                modperl_mgv_compile(aTHX_ p, HvNAME(GvSTASH(CvGV(cv))));
             modperl_mgv_append(aTHX_ p, handler->mgv_cv, GvNAME(CvGV(cv)));
             MpHandlerPARSED_On(handler);
             return 1;
@@ -312,8 +312,10 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
 static int modperl_dw_hash_handlers(apr_pool_t *p, server_rec *s,
                                     void *cfg, char *d, void *data)
 {
+#ifdef USE_ITHREADS
     MP_dSCFG(s);
     MP_dSCFG_dTHX;
+#endif
     int i;
     modperl_dir_config_t *dir_cfg = (modperl_dir_config_t *)cfg;
 

@@ -39,4 +39,8 @@
 #undef dNOOP
 #define dNOOP extern int __attribute__ ((unused)) Perl___notused
 
+#ifndef G_METHOD
+#   define G_METHOD 64
+#endif
+
 #endif /* MODPERL_PERL_INCLUDES_H */
