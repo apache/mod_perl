@@ -13,6 +13,9 @@ all changes without author attribution are by Doug MacEachern
 new Apache::test::static_modules() method
 [Ken Williams <ken@forum.swarthmore.edu>]
 
+Improved Apache->send_http_header documentation
+[Ken Williams <ken@forum.swarthmore.edu>]
+
 =item 1.24_01 - October 10, 2000
 
 fix bug in $r->args that treats ?0 as the empty string instead of zero,
