@@ -216,6 +216,14 @@ SV *mod_perl_tie_table(table *t)
 {
     HV *hv = newHV();
     SV *sv = sv_newmortal();
+
+    /*try to make this quick as possible*/  
+    if(!hv_exists(GvHV(incgv), "Apache/Table.pm", 15)) {
+	fprintf(stderr, "WARNING: autoloading Apache::Table\n");
+	utilize(TRUE, start_subparse(FALSE, 0), Nullop, 
+		newSVOP(OP_CONST, 0, newSVpv("Apache/Table.pm",15)), Nullop);
+    }
+
     sv_setref_pv(sv, "Apache::table", (void*)t);
     perl_tie_hash(hv, "Apache::Table", sv);
     return sv_bless(sv_2mortal(newRV_noinc((SV*)hv)), 

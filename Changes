@@ -14,7 +14,8 @@ already running to cure dso problem [Daniel Jacobowitz <drow+@cs.cmu.edu>]
 plugged leak in mod_perl_tie_table()
 
 methods that return an Apache::Table object no longer attempt to
-'require Apache::Table' for you
+'require Apache::Table' for you (well, maybe not next release, for now, you
+get a big: `WARNING: autoloading Apache::Table')
 
 rename PERL_VERSION macro to PERLV to avoid possibl future conflict
 
