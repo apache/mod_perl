@@ -2,6 +2,7 @@ package ModPerl::Code;
 
 use strict;
 use warnings FATAL => 'all';
+use Config;
 use mod_perl ();
 use Apache::Build ();
 
@@ -346,6 +347,10 @@ sub generate_flags {
 
     my $n = 1;
 
+    (my $dlsrc = uc $Config{dlsrc}) =~ s/\.xs$//i;
+
+    print $h_fh "\n#define MP_SYS_$dlsrc 1\n";
+
     while (my($class, $opts) = each %{ $self->{flags} }) {
         my $i = 0;
         my @lookup = ();
@@ -563,7 +568,7 @@ my %sources = (
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
                      gtop util io filter bucket mgv pcw global env cgi
-                     perl perl_global perl_pp);
+                     perl perl_global perl_pp sys);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
