@@ -2,6 +2,9 @@ important parts of the api that are missing
 in no particular order
 ------------------------------------------
 
+missing apr_buckets api:
+destroy, delete
+
 tied filehandle interface:
  -EOF, TELL, SEEK
  -READLINE - proper implementation (see comment in Apache::compat)
@@ -80,10 +83,6 @@ Apache::compat)
 
 Apache->unescape_url{_info}:
 not yet implemented.  should be moved to Apache::Util
-
-Apache::perl_hook:
-should have this or something check if PerlOptions allows the given
-handler/feature to be used.
 
 mod_perl::import():
 not yet implemented
