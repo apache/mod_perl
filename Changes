@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+flush r->finfo cache if r->filename fails
+[Roger Espel Llima <espel@iagora.net>]
+
 fix per-dir merging of PerlSetupEnv [Eric Cholet <cholet@logilune.com>]
 
 INSTALL.raven update [Adam Qualset <adam@covalent.net>]

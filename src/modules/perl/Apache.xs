@@ -1870,7 +1870,9 @@ filename(r, ...)
     get_set_PVp(r->filename,r->pool);
 #ifndef WIN32
     if(items > 1)
-	stat(r->filename, &r->finfo);
+	if ((laststatval = stat(r->filename, &r->finfo)) < 0) {
+            r->finfo.st_mode = 0;
+	}
 #endif
 
     OUTPUT:
