@@ -129,6 +129,8 @@ void *modperl_create_srv_config(apr_pool_t *p, server_rec *s)
     modperl_srv_config_t *scfg = modperl_srv_config_new(p);
 
 #ifdef USE_ITHREADS
+    ap_mpm_query(AP_MPMQ_IS_THREADED, &scfg->threaded_mpm);
+
     scfg->interp_pool_cfg = 
         (modperl_tipool_config_t *)
         apr_pcalloc(p, sizeof(*scfg->interp_pool_cfg));

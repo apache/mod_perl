@@ -128,6 +128,7 @@ typedef struct {
     modperl_interp_pool_t *mip;
     modperl_tipool_config_t *interp_pool_cfg;
     modperl_interp_lifetime_e interp_lifetime;
+    int threaded_mpm;
 #else
     PerlInterpreter *perl;
 #endif

@@ -212,14 +212,21 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
     apr_pool_t *p = NULL;
     request_rec *r = rr;
     int is_subrequest = (rr && rr->main) ? 1 : 0;
+    modperl_interp_lifetime_e lifetime;
+
+    if (!scfg->threaded_mpm) {
+        MP_TRACE_i(MP_FUNC, "using parent 0x%lx for non-threaded mpm\n",
+                   (unsigned long)scfg->mip->parent);
+        return scfg->mip->parent;
+    }
 
     /*
      * if a per-dir PerlInterpLifetime is specified, use it.
      * else if r != NULL use per-server PerlInterpLifetime
      * else lifetime must be per-connection
      */
-    modperl_interp_lifetime_e lifetime = 
-        (dcfg && !modperl_interp_lifetime_undef(dcfg)) ? 
+
+    lifetime = (dcfg && !modperl_interp_lifetime_undef(dcfg)) ? 
         dcfg->interp_lifetime :
         (r ? scfg->interp_lifetime : MP_INTERP_LIFETIME_CONNECTION);
 
