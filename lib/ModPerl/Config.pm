@@ -18,6 +18,9 @@ use strict;
 
 use Apache::Build ();
 use Apache::TestConfig ();
+use File::Spec ();
+
+use constant WIN32 => Apache::Build::WIN32;
 
 sub as_string {
     my $build_config = Apache::Build->build_config;
@@ -26,7 +29,8 @@ sub as_string {
 
     $cfg .= "*** mod_perl version $mod_perl::VERSION\n\n";;
 
-    $cfg .= "*** using $INC{'Apache/BuildConfig.pm'}\n";
+    my $file = File::Spec->rel2abs($INC{'Apache/BuildConfig.pm'});
+    $cfg .= "*** using $file\n\n";
 
     # the widest key length
     my $max_len = 0;
@@ -50,6 +54,20 @@ sub as_string {
         $cfg .= qx{$command};
     } else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
+    }
+
+    # apr
+    $cfg .= "\n\n*** (apr|apu)-config linking info\n\n";
+    if (my $apr_bindir = $build_config->apr_bindir()) {
+        my $ext = WIN32 ? '.bat' : '';
+        my @libs = grep $_, map { -x $_ && qx{$_ --link-ld --libs} }
+            map { qq{$apr_bindir/$_-config$ext} } qw(apr apu);
+        chomp @libs;
+        my $libs = join "\n", @libs;
+        $cfg .= "$libs\n\n";
+    }
+    else {
+        $cfg .= "config script were not found\n\n";
     }
 
     # perl opts

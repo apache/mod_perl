@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+bug reports generating code: [Stas]
+- add (apr|apu)-config linking info
+- show the full path to the config file used to get the data for the
+  report
+
 The APR and APR::* family of modules can now be used without having
 to load mod_perl.so. On *nix, this is done by compiling the needed
 functions from the appropriate sources used to build mod_perl.so
