@@ -1,0 +1,33 @@
+#######################
+# New features in mp2 #
+#######################
+
+
+* filters tie handle/perlio interface
+
+  both input/output filters should provide a tiehandle and/or perlio
+  interface.
+
+  Perl tiehandle methods include the following, '+' indicates must have, '-'
+  indicates not possible / doesn't make sense (though might require noop
+  stubs), '~' indicates would be nice if possible, '?' indicates unsure:
+  
+  + TIEHANDLE
+  + PRINT
+  + PRINTF
+  + WRITE
+  + READLINE
+  + GETC
+  + READ
+  + CLOSE
+  ? UNTIE
+  ? DESTROY
+  + BINMODE (noop)
+  ? OPEN
+  ~ EOF
+  - FILENO
+  ~ SEEK
+  ~ TELL
+
+* maybe functions in xs/maps/(apache|apr)_functions.map
+

@@ -1,0 +1,56 @@
+#######################
+# Build/Startup Issue #
+#######################
+
+
+OS      Ver Mod Comments
+----------------------------------------------------------------------
+OpenBSD 2.9 DSO Builds but won't start, with segfaults in the
+                Perl lexer. I wasn't even able to start mp1-dso with
+                the customly built perl (tried 5.6.1 .. 5.9.0)
+                -- the segfault is again in lexer. It seems that
+                the standard OpenBSD perl package has been heavily
+                patched, when the core system perl 5.6.0 package was
+                built, since I can run 'make test' on mp1-dso, but not
+                with a customly built 5.6.0 with the same
+                options. Since 2.9 is no longer supported by OpenBSD,
+                there is no 5.6.1 or higher to try, so at this moment
+                we simply give up on 2.9. We think that the static mp2
+                build should work just fine (once it's available).
+
+AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
+                resolution).  Should replace -berok with a proper
+                symbol resolution at linking time, but I had not much
+                success with using this approach (dlopen fails).
+
+FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
+                5.1-RELEASE)
+                http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
+                It doesn't work with threaded perl/worker mpm,
+                seemingly because of the problems with threads on
+                FreeBSD (not sure what version).
+
+
+* we should stop generating xs/apache_*, at least for a reason that
+  it's incomplete and will be never complete as we don't keep up with
+  changes with ap_/apr_ namespace. Also we don't have the logic to
+  handle cases where functions aren't available on certain
+  platforms. Importing these unavailable functions may cause loading
+  problems on some platforms (aix?). If developers need to import
+  symbols from ap_/apr_ namespace they should use .exp files installed
+  by httpd/apr/aprutil.
+
+* gcc 3.3 (from cvs 2003-07-28) supports a new option:
+  -Wdeclaration-after-statement, which we need to enable in the
+  maintainer mode, to catch any declarations after statements, since
+  by default gcc doesn't complain about them. Probably need to wait
+  till gcc-3.3.2 and enable it then.
+  http://gcc.gnu.org/cgi-bin/cvsweb.cgi/gcc/gcc/ChangeLog.diff?r1=2.639&r2=2.640&f=h
+
+
+* Testing:
+  Need to put Philippe's smoking test into the core
+  -- shouldn't forget to test with perlio enabled and disabled
+
+* mp2bug -- add the output of 'ldd httpd' to the report
+

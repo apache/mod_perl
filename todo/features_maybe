@@ -1,0 +1,12 @@
+#########################
+# Nice to have features #
+#########################
+
+* PerlPreConnectionHandler is implemented, but the 'void *csd' arg in
+  the callback is ignored. will require a modification of
+  modperl_callback_run_handlers to pass yet another optional argument.
+
+  Status: most likely nobody will ever want to use this option, so
+  don't waste time working on it.
+
+
