@@ -8,7 +8,7 @@ our $VERSION = '0.01';
 #XXX Init, PreConfig
 my %handlers = (
     Process    => [qw(ChildInit ChildExit Restart)],
-    Files      => [qw(OpenLog PostConfig)],
+    Files      => [qw(OpenLogs PostConfig)],
     PerSrv     => [qw(PostReadRequest Trans)],
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
@@ -30,6 +30,8 @@ my %hooks = (
     Log => 'log_transaction',
     PreConnection => 'pre_connection',
     ProcessConnection => 'process_connection',
+    OpenLogs => 'open_logs',
+    ChildInit => 'child_init',
 );
 
 my %hook_proto = (
@@ -60,13 +62,14 @@ $hook_proto{PerDir} = $hook_proto{PerSrv};
 my $dcfg_get = 
   'modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy';
 
+my $scfg_get = 'MP_dSCFG(parms->server)';
+
 my %directive_proto = (
     PerSrv     => {
         args => [{type => 'cmd_parms', name => 'parms'},
                  {type => 'void', name => 'dummy'},
                  {type => 'char', name => 'arg'}],
-        cfg  => {get => 'MP_dSCFG(parms->server)',
-                 name => 'scfg'},
+        cfg  => {get => $scfg_get, name => 'scfg'},
         scope => 'RSRC_CONF',
     },
     PerDir     => {
@@ -78,12 +81,18 @@ my %directive_proto = (
     },
 );
 
-while (my($k,$v) = each %directive_proto) {
-    $directive_proto{$k}->{ret} = 'const char *';
+for my $class (qw(Process Connection Files)) {
+    my $lc_class = lc $class;
+    $directive_proto{$class}->{cfg}->{name} = "scfg->${lc_class}_cfg";
+    $directive_proto{$class}->{cfg}->{get} = $scfg_get;
+
+    for (qw(args scope)) {
+        $directive_proto{$class}->{$_} = $directive_proto{PerSrv}->{$_};
+    }
 }
 
-for (qw(Process Connection Files)) {
-    $directive_proto{$_} = $directive_proto{PerSrv};
+while (my($k,$v) = each %directive_proto) {
+    $directive_proto{$k}->{ret} = 'const char *';
 }
 
 my %flags = (

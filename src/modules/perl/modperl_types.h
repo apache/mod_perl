@@ -73,6 +73,7 @@ typedef struct {
     MpAV *PassEnv;
     MpAV *PerlRequire, *PerlModule;
     MpAV *handlers[MP_PER_SRV_NUM_HANDLERS];
+    modperl_files_config_t *files_cfg;
     modperl_process_config_t *process_cfg;
     modperl_connection_config_t *connection_cfg;
 #ifdef USE_ITHREADS
@@ -98,9 +99,6 @@ typedef struct {
 } modperl_dir_config_t;
 
 typedef struct {
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp;
-#endif
     HV *pnotes;
 } modperl_request_config_t;
 

@@ -110,7 +110,6 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
                        (unsigned long)pthread_self());
 #endif
             MpInterpIN_USE_On(interp);
-            MpInterpPUTBACK_On(interp);
             mip->in_use++;
             break;
         }
@@ -119,6 +118,13 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
                        (unsigned long)head);
             head = head->next;
         }
+    }
+
+    /* XXX: this should never happen */
+    if (!interp) {
+        MP_TRACE_i(MP_FUNC, "PANIC: no interpreter found, %d of %d in use\n", 
+                   mip->in_use, mip->size);
+        abort();
     }
 
     MUTEX_UNLOCK(&mip->mip_lock);
@@ -283,12 +289,73 @@ ap_status_t modperl_interp_unselect(void *data)
     return APR_SUCCESS;
 }
 
-modperl_interp_t *modperl_interp_select(request_rec *r)
-{
-    modperl_interp_t *interp = modperl_interp_get(r->server);
+/* XXX:
+ * interp is marked as in_use for the lifetime of the pool it is
+ * stashed in.  this is done to avoid the mip->mip_lock whenever
+ * possible.  neither approach is ideal.
+ */
+#define MP_INTERP_KEY "MODPERL_INTERP"
 
-    ap_register_cleanup(r->pool, (void*)interp,
-                        modperl_interp_unselect, ap_null_cleanup);
+modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
+                                        server_rec *s)
+{
+    modperl_interp_t *interp;
+    ap_pool_t *p = NULL;
+    const char *desc = NULL;
+
+    if (c) {
+        desc = "conn_rec pool";
+        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY, c->pool);
+
+        if (interp) {
+            MP_TRACE_i(MP_FUNC,
+                       "found interp 0x%lx in %s 0x%lx\n",
+                       (unsigned long)interp, desc, (unsigned long)c->pool);
+            return interp;
+        }
+
+        p = c->pool;
+    }
+    else if (r) {
+        desc = "request_rec pool";
+        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY, r->pool);
+
+        if (interp) {
+            MP_TRACE_i(MP_FUNC,
+                       "found interp 0x%lx in %s 0x%lx\n",
+                       (unsigned long)interp, desc, (unsigned long)r->pool);
+            return interp;
+        }
+
+        /* might have already been set by a ConnectionHandler */
+        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY,
+                              r->connection->pool);
+        if (interp) {
+            desc = "r->connection pool";
+            MP_TRACE_i(MP_FUNC,
+                       "found interp 0x%lx in %s 0x%lx\n",
+                       (unsigned long)interp, desc,
+                       (unsigned long)r->connection->pool);
+            return interp;
+        }
+
+        p = r->pool;
+    }
+
+    if (!p) {
+        /* should never happen */
+        MP_TRACE_i(MP_FUNC, "no pool\n");
+        return NULL;
+    }
+
+    interp = modperl_interp_get(s ? s : r->server);
+
+    (void)ap_set_userdata((void *)interp, MP_INTERP_KEY,
+                          modperl_interp_unselect,
+                          p);
+
+    MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx\n",
+               (unsigned long)interp, desc, (unsigned long)p);
 
     return interp;
 }

@@ -39,8 +39,7 @@ modperl_handler_t *modperl_handler_new(ap_pool_t *p, void *h, int type)
 ap_status_t modperl_handler_cleanup(void *data)
 {
     modperl_handler_t *handler = (modperl_handler_t *)data;
-    dTHXa(handler->perl);
-    modperl_handler_unparse(aTHX_ handler);
+    modperl_handler_unparse(handler);
     return APR_SUCCESS;
 }
 
@@ -112,8 +111,9 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
     return 0;
 }
 
-void modperl_handler_unparse(pTHX_ modperl_handler_t *handler)
+void modperl_handler_unparse(modperl_handler_t *handler)
 {
+    dTHXa(handler->perl);
     int was_parsed = handler->args || handler->cv || handler->obj;
 
     if (!MpHandlerPARSED(handler)) {
@@ -152,6 +152,10 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
     char *name = handler->name;
     char *tmp;
     CV *cv;
+
+#ifdef USE_ITHREADS
+    handler->perl = aTHX;
+#endif
 
     if (strnEQ(name, "sub ", 4)) {
         handler->cv = eval_pv(name, FALSE);
@@ -279,27 +283,46 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
 
 #define MP_HANDLER_TYPE_DIR 1
 #define MP_HANDLER_TYPE_SRV 2
+#define MP_HANDLER_TYPE_CONN 3
+#define MP_HANDLER_TYPE_PROC 4
+#define MP_HANDLER_TYPE_FILE 5
 
-int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
+int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
+                         server_rec *s, int type)
 {
 #ifdef USE_ITHREADS
     pTHX;
 #endif
     MP_dSCFG(s);
+    MP_dDCFG;
     modperl_handler_t **handlers;
-    MpAV *av;
+    modperl_interp_t *interp = NULL;
+    MpAV *av = NULL;
     int i, status = OK;
     const char *desc = NULL;
 
-    if (type == MP_HANDLER_TYPE_DIR) {
-        MP_dDCFG;
+    switch (type) {
+      case MP_HANDLER_TYPE_DIR:
         av = dcfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_per_dir_handler_desc(idx));
-    }
-    else {
+        break;
+      case MP_HANDLER_TYPE_SRV:
         av = scfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_per_srv_handler_desc(idx));
-    }
+        break;
+      case MP_HANDLER_TYPE_CONN:
+        av = scfg->connection_cfg->handlers[idx];
+        MP_TRACE_a_do(desc = modperl_connection_handler_desc(idx));
+        break;
+      case MP_HANDLER_TYPE_FILE:
+        av = scfg->files_cfg->handlers[idx];
+        MP_TRACE_a_do(desc = modperl_files_handler_desc(idx));
+        break;
+      case MP_HANDLER_TYPE_PROC:
+        av = scfg->process_cfg->handlers[idx];
+        MP_TRACE_a_do(desc = modperl_process_handler_desc(idx));
+        break;
+    };
 
     if (!av) {
         MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
@@ -307,19 +330,13 @@ int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
         return DECLINED;
     }
 
-    if (r) {
-        MP_dRCFG;
-        if (!rcfg) {
-            rcfg = modperl_request_config_new(r);
-            ap_set_module_config(r->request_config, &perl_module, rcfg);
-        }
 #ifdef USE_ITHREADS
-        aTHX = rcfg->interp->perl;
-#endif
+    if (r || c) {
+        interp = modperl_interp_select(r, c, s);
+        aTHX = interp->perl;
     }
-#ifdef USE_ITHREADS
     else {
-        /* Child{Init,Exit} */
+        /* Child{Init,Exit}, OpenLogs */
         aTHX = scfg->mip->parent->perl;
     }
 #endif
@@ -334,31 +351,42 @@ int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
                    handlers[i]->name, status);
     }
 
+#ifdef USE_ITHREADS
+    if (interp && MpInterpPUTBACK_On(interp)) {
+        /* XXX: might want to put interp back into available pool
+         * rather than have it marked as in_use for the lifetime of
+         * a request
+         */
+    }
+#endif
+
     return status;
 }
 
 int modperl_per_dir_callback(int idx, request_rec *r)
 {
-    return modperl_run_handlers(idx, r, r->server, MP_HANDLER_TYPE_DIR);
+    return modperl_run_handlers(idx, r, NULL, r->server, MP_HANDLER_TYPE_DIR);
 }
 
 int modperl_per_srv_callback(int idx, request_rec *r)
 {
-    return modperl_run_handlers(idx, r, r->server, MP_HANDLER_TYPE_SRV);
+    return modperl_run_handlers(idx, r, NULL, r->server, MP_HANDLER_TYPE_SRV);
 }
 
 int modperl_connection_callback(int idx, conn_rec *c)
 {
-    return modperl_run_handlers(idx, NULL, c->base_server,
-                                MP_HANDLER_TYPE_SRV);
+    return modperl_run_handlers(idx, NULL, c, c->base_server,
+                                MP_HANDLER_TYPE_CONN);
 }
 
 void modperl_process_callback(int idx, ap_pool_t *p, server_rec *s)
 {
+    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_PROC);
 }
 
 void modperl_files_callback(int idx,
                             ap_pool_t *pconf, ap_pool_t *plog,
                             ap_pool_t *ptemp, server_rec *s)
 {
+    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_FILE);
 }

@@ -43,11 +43,6 @@ modperl_request_config_t *modperl_request_config_new(request_rec *r)
     modperl_request_config_t *rcfg = 
         (modperl_request_config_t *)ap_pcalloc(r->pool, sizeof(*rcfg));
 
-#ifdef USE_ITHREADS
-    rcfg->interp = modperl_interp_select(r);
-    PERL_SET_INTERP(rcfg->interp->perl);
-#endif
-
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)rcfg);
 
     return rcfg;
@@ -59,11 +54,26 @@ modperl_request_config_t *modperl_request_config_new(request_rec *r)
 modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 {
     modperl_srv_config_t *scfg = (modperl_srv_config_t *)
-        ap_pcalloc(p, sizeof(modperl_srv_config_t));
+        ap_pcalloc(p, sizeof(*scfg));
 
     scfg->argv = ap_make_array(p, 2, sizeof(char *));
 
     scfg_push_argv((char *)ap_server_argv0);
+
+#ifdef MP_CONNECTION_NUM_HANDLERS
+    scfg->connection_cfg = (modperl_connection_config_t *)
+        ap_pcalloc(p, sizeof(*scfg->connection_cfg));
+#endif
+
+#ifdef MP_FILES_NUM_HANDLERS
+    scfg->files_cfg = (modperl_files_config_t *)
+        ap_pcalloc(p, sizeof(*scfg->files_cfg));
+#endif
+
+#ifdef MP_PROCESS_NUM_HANDLERS
+    scfg->process_cfg = (modperl_process_config_t *)
+        ap_pcalloc(p, sizeof(*scfg->process_cfg));
+#endif
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
 
