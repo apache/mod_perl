@@ -8,7 +8,7 @@ use lib qw(Apache-Test/lib);
 
 use Config;
 use Cwd ();
-use File::Spec ();
+use File::Spec::Functions qw(catfile);
 use File::Basename;
 use ExtUtils::Embed ();
 use ModPerl::Code ();
@@ -684,6 +684,72 @@ sub ap_includedir  {
     $self->{ap_includedir} = $d;
 }
 
+sub apr_config_path {
+    my ($self) = @_;
+
+    return $self->{apr_config_path}
+        if $self->{apr_config_path} and -x $self->{apr_config_path};
+
+    if (exists $self->{MP_APR_CONFIG} and -x $self->{MP_APR_CONFIG}) {
+        $self->{apr_config_path} = $self->{MP_APR_CONFIG};
+    }
+
+    if (!$self->{apr_config_path} and 
+        exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX}) {
+        my $try = catfile $self->{MP_AP_PREFIX}, "bin", "apr-config";
+        $self->{apr_config_path} = $try if -x $try;
+    }
+
+    $self->{apr_config_path} ||= Apache::TestConfig::which('apr-config');
+
+    $self->{apr_config_path};
+}
+
+sub apr_includedir {
+    my ($self) = @_;
+
+    return $self->{apr_includedir}
+        if $self->{apr_includedir} and -d $self->{apr_includedir};
+
+    my $incdir;
+    my $apr_config_path = $self->apr_config_path;
+
+    if ($apr_config_path) {
+        # --includedir is available since apr-0.9.3 (Apache 2.0.45),
+        # for older versions we attempt to parse 'apr-config --includes'
+        my $httpd_version = $self->httpd_version;
+        if ($httpd_version lt '2.0.45') {
+            chomp(my $paths = `$apr_config_path --includes`);
+            for (split /\s+/, $paths || '') {
+                s/-I//;
+                if (-e catfile $_, "apr.h") {
+                    $incdir = $_;
+                    last;
+                }
+            }
+        }
+        else {
+            chomp($incdir = `$apr_config_path --includedir`);
+        }
+    }
+
+    unless ($incdir and -d $incdir) {
+        # falling back to the default when apr header files are in the
+        # same location as the httpd header files
+        $incdir = $self->ap_includedir;
+    }
+
+    if ($incdir && -e catfile $incdir, "apr.h") {
+        $self->{apr_includedir} = $incdir;
+    }
+    else {
+        die "Can't find apr include/ directory,\n",
+            "use MP_APR_CONFIG=/path/to/apr-config";
+    }
+
+    $self->{apr_includedir};
+}
+
 #--- parsing apache *.h files ---
 
 sub mmn_eq {
@@ -816,7 +882,7 @@ sub get_apr_config {
 
     return $self->{apr_config} if $self->{apr_config};
 
-    my $dir = $self->ap_includedir;
+    my $dir = $self->apr_includedir;
 
     my $header;
     for my $d ($dir, "$dir/../srclib/apr/include") {
