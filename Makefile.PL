@@ -936,7 +936,8 @@ sub init_tests_and_config {
 	}
 
 	$cmd .= "./configure " .
-		  "--activate-module=src/modules/perl/libperl.a";
+		  "--activate-module=src/modules/perl/libperl.a" .
+                    " --disable-rule=EXPAT";
 
 	if($USE_DSO) {
 	    $cmd .= " --enable-shared=perl";
