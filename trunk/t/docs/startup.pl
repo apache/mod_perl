@@ -52,7 +52,7 @@ $ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
     
     local $^W = 0; #shutup line 164 Cwd.pm 
 
-    my $cwd = Cwd::fastcwd;
+    my $cwd = Cwd::getcwd;
     my $rl = Apache::RegistryLoader->new(trans => sub {
 	my $uri = shift; 
 	$cwd."/t/net${uri}";
@@ -151,7 +151,7 @@ sub Apache::AuthenTest::handler {
 sub My::ProxyTest::handler {
     my $r = shift;
     unless ($r->proxyreq and $r->uri =~ /proxytest/) {
-	warn sprintf "ProxyTest: proxyreq=%d, uri=%s\n",
+	#warn sprintf "ProxyTest: proxyreq=%d, uri=%s\n",
 	$r->proxyreq, $r->uri;
     }
     return -1 unless $r->proxyreq;
