@@ -122,6 +122,7 @@ sub menu_item {
     my($self, $key, $val, $sub) = @_;
     $status{$key} = $val;
     no strict;
+    no warnings 'redefine';
     *{"status_${key}"} = $sub if $sub and ref $sub eq 'CODE';
 }
 
