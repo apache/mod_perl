@@ -43,25 +43,28 @@ EOF
 
 1;
 __END__
-PerlSwitches -Mlib=@documentroot@/testdirective/main
-PerlRequire "PerlRequireTest.pm"
+<Base>
+    PerlSwitches -Mlib=@documentroot@/testdirective/main
+    PerlRequire "PerlRequireTest.pm"
+</Base>
 
 <VirtualHost TestDirective::perlrequire>
 
-<IfDefine PERL_USEITHREADS>
-  # a new interpreter pool
-  PerlOptions +Parent
-</IfDefine>
+    <IfDefine PERL_USEITHREADS>
+        # a new interpreter pool
+        PerlOptions +Parent
+    </IfDefine>
 
-  # use test system's @INC
-  PerlSwitches -Mlib=@serverroot@
-  PerlRequire "conf/modperl_startup.pl"
+    # use test system's @INC
+    PerlSwitches -Mlib=@serverroot@
+    PerlRequire "conf/modperl_startup.pl"
 
-  PerlSwitches -Mlib=@documentroot@/testdirective/vh
-  PerlRequire "PerlRequireTest.pm"
+    PerlSwitches -Mlib=@documentroot@/testdirective/vh
+    PerlRequire "PerlRequireTest.pm"
 
-  <Location /TestDirective::perlrequire>
-     SetHandler modperl
-     PerlResponseHandler TestDirective::perlrequire
-  </Location>
+    <Location /TestDirective::perlrequire>
+        SetHandler modperl
+        PerlResponseHandler TestDirective::perlrequire
+    </Location>
+
 </VirtualHost>
