@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+fix get_set_PVp in mod_perl_xs.h
+[Michal Jaegermann <michal@ellpspace.math.ualberta.ca>]
+
 tweaks to compile/run with 5.5.670 + -Dusethreads
 
 $r->hostname now documented [Eric Cholet <cholet@logilune.com>]
