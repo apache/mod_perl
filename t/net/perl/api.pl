@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 64;
+my $tests = 65;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -165,6 +165,7 @@ test ++$i, $s;
 test ++$i, $s->server_admin;
 test ++$i, $s->server_hostname;
 test ++$i, $s->port;
+test ++$i, $s->timeout;
 
 for (my $srv = $r->server; $srv; $srv = $srv->next) {
     my $name = $srv->server_hostname;
