@@ -107,10 +107,10 @@ PerlHandler Apache::Status
 
 #end mod_perl stuff
 
-ErrorLog /tmp/mod_perl_error_log
-PidFile /tmp/mod_perl_httpd.pid
+ErrorLog logs/mod_perl_error_log
+PidFile logs/mod_perl_httpd.pid
 AccessConfig /dev/null
-ResourceConfig /tmp/mod_perl_srm.conf
+ResourceConfig conf/srm.conf
 TypesConfig /dev/null
 TransferLog /dev/null
 ScoreBoardFile /dev/null
