@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+Apache::FakeRequest now supports Apache::Constants and is documented
+[Andrew Ford <A.Ford@ford-mason.co.uk>]
+
 new Apache->define method works like IfDefine 
 
 PerlRequire/PerlModule will start Perl if it is not already running
