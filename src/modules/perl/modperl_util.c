@@ -276,7 +276,7 @@ apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
 	return NULL;
     }
 
-    if (!AvFILL(librefs) >= 0) {
+    if (!(AvFILL(librefs) >= 0)) {
         /* dl_librefs and dl_modules are empty */
         return NULL;
     }
