@@ -19,6 +19,7 @@
 #include "http_vhost.h"
 #include "ap_mpm.h"
 
+#include "apr_version.h"
 #ifndef APR_POLLIN
 /*
  * apr_poll.h introduced around 2.0.40
