@@ -182,6 +182,10 @@ sub register_cleanup {
     shift->pool->cleanup_register(@_);
 }
 
+sub post_connection {
+    shift->connection->pool->cleanup_register(@_);
+}
+
 sub parse_args {
     my($r, $string) = @_;
     return () unless defined $string and $string;
