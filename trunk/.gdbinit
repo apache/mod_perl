@@ -186,3 +186,8 @@ define shortmess
    set $sv = perl_eval_pv("Carp::shortmess()", 1)
    printf "%s\n", ((XPV*) ($sv)->sv_any )->xpv_pv
 end
+
+define perl_get_sv
+    set $sv = perl_get_sv($arg0, 0)
+    printf "%s\n", $sv ? ((XPV*) ((SV*)$sv)->sv_any)->xpv_pv : "undef"
+end
