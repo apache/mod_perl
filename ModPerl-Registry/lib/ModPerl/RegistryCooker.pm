@@ -10,9 +10,6 @@ require 5.006;
 use strict;
 use warnings FATAL => 'all';
 
-# we try to develop so we reload ourselves without die'ing on the warning
-no warnings qw(redefine); # XXX, this should go away in production!
-
 our $VERSION = '1.99';
 
 use Apache::Response ();
