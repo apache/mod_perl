@@ -16,12 +16,12 @@ sub handler {
     $ENV{FOO} = 2;
 
     if ($r->method_number == Apache::M_POST) {
-        my $ct = $r->headers_in->get('content-length');
+        my $cl = $r->headers_in->get('content-length');
         my $buff;
 #XXX: working around a bug in ithreads Perl
 #that would cause modules/cgi #3 to fail
-#        read STDIN, $buff, $ct;
-        read 'STDIN', $buff, $ct;
+#        read STDIN, $buff, $cl;
+        read 'STDIN', $buff, $cl;
         print $buff;
     }
     else {
