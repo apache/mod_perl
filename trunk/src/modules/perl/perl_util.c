@@ -462,7 +462,7 @@ void perl_clear_env(void)
 	    continue;
 	else if((*key == 'T') && strnEQ(key, "TZ", 2))
 	    continue;
-	else if((*key == 'P') && strnEQ(key, "PATH", 4))
+	else if((*key == 'P') && strEQ(key, "PATH"))
 	    continue;
 	(void)hv_delete(hv, key, klen, G_DISCARD);
     }
