@@ -9,9 +9,9 @@ use Apache2::Const -compile => qw(OK);
 
 sub exit_handler {
     my($p, $s) = @_;
-                                                                                                                             
+
     $s->log->info("Child process pid=$$ is exiting - server push");
-                                                                                                                             
+
     Apache2::OK;
 }
 
