@@ -222,6 +222,22 @@ or
 
 This problem is only known to be caused by installing gnu ld under Solaris.
 
+Other known causes of this problem:
+
+OS distributions that ship with a (broken) binary Perl installation.
+
+The `perl' program and `libperl.a' library are somehow built with
+different binary compatiblity flags.  
+
+The solution to these problems is to rebuild Perl and extension
+modules from a fresh source tree.  Tip for running Perl's Configure
+script, use the `-des' flags to accepts defaults and `-D' flag to
+override certain attributes:
+ 
+ % ./Configure -des -Dcc=gcc ... && make test && make install
+
+Read Perl's INSTALL doc for more details.
+
 =back
 
 =head2 Clashes with other Apache C modules
