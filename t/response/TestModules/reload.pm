@@ -11,7 +11,7 @@ my $package = 'Apache::Reload::Test';
 
 sub handler {
     my $r = shift;
-    
+
     if ($r->args eq 'last') {
         Apache::Reload->unregister_module($package);
         ModPerl::Util::unload_package($package);
