@@ -410,7 +410,8 @@ sub write_xs {
     my($self, $module, $functions) = @_;
 
     my $fh = $self->open_class_file($module, '.xs');
-    print $fh "$self->{noedit_warning_c}\n";
+    print $fh "$self->{noedit_warning_c}\n",
+              "\n#define MP_IN_XS\n\n";
 
     my @includes = @{ $self->includes };
 
@@ -652,7 +653,7 @@ sub export_file_format_exp {
 
 sub export_file_header_def {
     my $self = shift;
-    "LIBRARY\n\nEXPORTS\n\nperl_module\n";
+    "LIBRARY\n\nEXPORTS\n\n";
 }
 
 sub export_file_format_def {

@@ -20,33 +20,50 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
 #define modperl_config_srv_argv_push(arg) \
     *(const char **)apr_array_push(scfg->argv) = arg
 
+void *modperl_get_perl_module_config(ap_conf_vector_t *cv);
+void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
+
+#if defined(MP_IN_XS) && defined(WIN32)
+#   define modperl_get_module_config(v) \
+       modperl_get_perl_module_config(v)
+
+#   define modperl_set_module_config(v, c) \
+       modperl_set_perl_module_config(v, c)
+#else
+#   define modperl_get_module_config(v) \
+       ap_get_module_config(v, &perl_module)
+
+#   define modperl_set_module_config(v, c) \
+       ap_set_module_config(v, &perl_module, c)
+#endif
+
 #define modperl_config_req_init(r, rcfg) \
     if (!rcfg) { \
         rcfg = modperl_config_req_new(r); \
-        ap_set_module_config(r->request_config, &perl_module, rcfg); \
+        modperl_set_module_config(r->request_config, rcfg); \
     }
 
 #define modperl_config_req_get(r) \
- (r ? (modperl_config_req_t *) \
-          ap_get_module_config(r->request_config, &perl_module) : NULL)
+    (r ? (modperl_config_req_t *) \
+          modperl_get_module_config(r->request_config) : NULL)
 
 #define MP_dRCFG \
-   modperl_config_req_t *rcfg = modperl_config_req_get(r)
+    modperl_config_req_t *rcfg = modperl_config_req_get(r)
 
 #define modperl_config_dir_get(r) \
-      (r ? (modperl_config_dir_t *) \
-              ap_get_module_config(r->per_dir_config, &perl_module) : NULL)
+    (r ? (modperl_config_dir_t *) \
+          modperl_get_module_config(r->per_dir_config) : NULL)
 
 #define modperl_config_dir_get_defaults(s) \
-      (modperl_config_dir_t *) \
-          ap_get_module_config(s->lookup_defaults, &perl_module)
+    (modperl_config_dir_t *) \
+        modperl_get_module_config(s->lookup_defaults)
 
 #define MP_dDCFG \
-   modperl_config_dir_t *dcfg = modperl_config_dir_get(r)
+    modperl_config_dir_t *dcfg = modperl_config_dir_get(r)
 
 #define modperl_config_srv_get(s) \
- (modperl_config_srv_t *) \
-          ap_get_module_config(s->module_config, &perl_module)
+    (modperl_config_srv_t *) \
+        modperl_get_module_config(s->module_config)
 
 #define MP_dSCFG(s) \
    modperl_config_srv_t *scfg = modperl_config_srv_get(s)
