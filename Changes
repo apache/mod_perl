@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.26_01-dev
+
 =item 1.26 - July 11, 2001
 
 fix 'make test' problem seen with Perl 5.005_03
