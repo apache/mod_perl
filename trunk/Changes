@@ -18,11 +18,13 @@ added :override :args_how tags to Apache::Constants
 add DIR_MAGIC_TYPE to perl_handlers[] table for directory indexing
 modules
 
-Apache::Log optimizations:
+Apache::Log optimizations/enhancements:
+  $r->log now invokes ap_log_rerror (w/ 1.3.2-dev+)
   ${r,s}->log->$method() will now accept a CODE ref as it's first
   argument, which is only called when LogLevel >= $method
   caller() file/line info determined only if LogLevel >= debug
   avoid copy of message SV 
+  log() method and aliases now in xs
 
 tweak Apache->module so it can test for configured .c modules
 
