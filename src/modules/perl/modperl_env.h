@@ -29,4 +29,6 @@ void modperl_env_request_untie(pTHX_ request_rec *r);
 
 void modperl_env_init(void);
 
+void modperl_env_unload(void);
+
 #endif /* MODPERL_ENV_H */
