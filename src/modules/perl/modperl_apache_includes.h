@@ -24,4 +24,6 @@
 #include "apr_buckets.h"
 #include "util_filter.h"
 
+#include "util_script.h"
+
 #endif /* MODPERL_APACHE_INCLUDES_H */
