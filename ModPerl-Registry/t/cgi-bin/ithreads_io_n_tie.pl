@@ -79,6 +79,6 @@ $r->print("Content-type: text/plain\n\n");
     # $thr->join; # XXX: leaks scalar
 }
 
-print "parent";
+print "parent\n";
 
 untie *STDOUT; # don't affect other tests
