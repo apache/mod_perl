@@ -23,6 +23,12 @@ MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE(options);
 
+#ifdef MP_COMPAT_1X
+
+MP_CMD_SRV_DECLARE_FLAG(taint_check);
+
+#endif /* MP_COMPAT_1X */
+
 #ifdef USE_ITHREADS
 MP_CMD_SRV_DECLARE(interp_start);
 MP_CMD_SRV_DECLARE(interp_max);
