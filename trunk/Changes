@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+make sure file to be reloaded can be found in @INC, adjusting based on
+%INC value if needed
+[Ilya Konstantinov <modperl@future.galanet.net>]
+
 croak if the filehandle passed to $r->send_fd is NULL, otherwise
 apache will segfault
 
