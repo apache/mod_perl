@@ -113,7 +113,7 @@ timethese(10000, {
     {
         my $str = undef;
         my $expected = "";
-        no warnings;
+        local $^W = 0;
         my $received = Apache::unescape_url($str);
         test ++$i, $received eq $expected;
         print "expected: $expected\n";
