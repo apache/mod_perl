@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+Fix t/net/perl/sym.pl (called by modules/symbol) not to affect other
+tests (internal/http-get and internal/http-post, which were failing to
+call exit) [Stas]
+
 Fix Apache::ExtUtils to work with blead perl (it was breaking the
 build) http://rt.perl.org/rt2/Ticket/Display.html?id=23803 [Stas]
 
