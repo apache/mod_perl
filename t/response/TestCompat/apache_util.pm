@@ -22,10 +22,16 @@ my %string_size = (
     42_000_000_000  => "40054M",
 );
 
+# list of platforms on which C (not Perl) crypt() is supported
+# XXX: add other platforms that are known to have crypt
+my %crypt_supported = map {$_ => 1} qw(linux);
+
+my $crypt_ok = $crypt_supported{lc $^O} ? 1 : 0;
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 13;
+    plan $r, tests => 13 + $crypt_ok*2;
 
     $r->send_http_header('text/plain');
 
@@ -73,13 +79,12 @@ sub handler {
 
     ok t_cmp($time, $ptime, "Apache::Util::parsedate");
 
-    # note these are not actually part of the tests since i think on
-    # platforms where crypt is not supported, these tests will fail.
-    # but at least we can look with t/TEST -v
-    my $hash = "aX9eP53k4DGfU";
-    t_cmp(1, Apache::Util::validate_password("dougm", $hash));
-    t_cmp(0, Apache::Util::validate_password("mguod", $hash));
-
+    if ($crypt_ok) {
+        # not all platforms support C-level crypt
+        my $hash = "aX9eP53k4DGfU";
+        ok t_cmp(1, Apache::Util::validate_password("dougm", $hash));
+        ok t_cmp(0, Apache::Util::validate_password("mguod", $hash));
+    }
 
     OK;
 }
