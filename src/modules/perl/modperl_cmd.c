@@ -8,7 +8,7 @@ static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
 
 static char *modperl_cmd_too_late(cmd_parms *parms)
 {
-    return apr_pstrcat(parms->pool, "mod_perl already running, "
+    return apr_pstrcat(parms->pool, "mod_perl is already running, "
                        "too late for ", parms->cmd->name, NULL);
 }
 
@@ -69,7 +69,9 @@ MP_CMD_SRV_DECLARE(switches)
 {
     server_rec *s = parms->server;
     MP_dSCFG(s);
-    if (modperl_is_running() && modperl_vhost_is_running(s)) {
+    if (s->is_virtual
+        ? modperl_vhost_is_running(s)
+        : modperl_is_running() ) {
         return modperl_cmd_too_late(parms);
     }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
