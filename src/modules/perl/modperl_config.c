@@ -184,6 +184,9 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
         modperl_init_globals(s, p);
     }
     
+    MP_TRACE_d(MP_FUNC, "p=0x%lx, s=0x%lx, virtual=%d\n",
+               p, s, s->is_virtual);
+
 #ifdef USE_ITHREADS
 
     scfg->interp_pool_cfg = 
