@@ -247,7 +247,7 @@ sub handler {
 
     $r->post_connection(sub { OK });
 
-    Apache::log_error("testing Apache::log_error");
+    Apache::log_error("Apache::log_error test ok");
     ok 1;
 
     OK;

@@ -62,6 +62,9 @@ sub handler {
     $s->loglevel(Apache::LOG_DEBUG);
     $slog->debug(sub { ok 1; "$package test done" });
 
+    Apache->warn("Apache->warn test ok");
+    $s->warn('$s->warn test ok');
+
     Apache::OK;
 }
 
