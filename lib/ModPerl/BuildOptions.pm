@@ -63,16 +63,16 @@ sub parse {
                 my $usage = usage();
                 die "Unknown Option: $key\nUsage:\n$usage";
             }
-			
+
             if($key eq 'MP_APXS') {
                 $val = File::Spec->canonpath(File::Spec->rel2abs($val));
             }
 
-	    # MP_AP_PREFIX may not contain spaces
-	    if ($key eq 'MP_AP_PREFIX' && Apache::Build::WIN32()) {
+            # MP_AP_PREFIX may not contain spaces
+            if ($key eq 'MP_AP_PREFIX' && Apache::Build::WIN32()) {
                 require Win32;
-		$val = Win32::GetShortPathName($val);
-	    }
+                $val = Win32::GetShortPathName($val);
+            }
 
             if ($self->{$key}) {
                 $self->{$key} .= ' ';
