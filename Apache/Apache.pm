@@ -650,14 +650,28 @@ Then during the authentication stage the server uses the current
 authentication realm, from C<$r-E<gt>auth_name>, to determine which set of
 credentials to authenticate.
 
-=item $r->document_root
+=item $r->document_root ( [$docroot] )
 
-Returns a reference to the current value of the per server
-configuration directive B<DocumentRoot>. To quote the Apache server
-documentation, "Unless matched by a directive like Alias, the server
-appends the path from the requested URL to the document root to make
-the path to the document."  This same value is passed to CGI
+When called with no argument, returns a reference to the current value
+of the per server configuration directive B<DocumentRoot>. To quote the
+Apache server documentation, "Unless matched by a directive like Alias,
+the server appends the path from the requested URL to the document root
+to make the path to the document."  This same value is passed to CGI
 scripts in the C<DOCUMENT_ROOT> environment variable.
+
+You can also set this value by providing an argument to it. The following
+example dynamically sets the document root based on the request's
+"Host:" header:
+
+   sub trans_handler
+     {
+        my $r = shift;
+        my ($user) = ($r->header_in('Host') =~ /^[^\.]+/);
+        $r->document_root("/home/$user/www");
+        return DECLINED;
+     }
+    
+   PerlTransHandler trans_handler
 
 =item $r->allow_options
 
@@ -960,7 +974,9 @@ These headers are used if the status indicates an error.
 =item $r->no_cache( $boolean )
 
 This is a flag that indicates that the data being returned is volatile
-and the client should be told not to cache it.
+and the client should be told not to cache it. C<$r-E<gt>no_cache(1)>
+adds the headers "Pragma: no-cache" and "Cache-control: no-cache" to
+the reponse, therefore it must be called before C<$r-E<gt>send_http_header>.
 
 =item $r->print( @list )
 
