@@ -3,15 +3,20 @@ use strict;
 use warnings FATAL => 'all';
 
 use lib qw(lib);
+use Config;
 use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::MM ();
+
+use lib qw(Apache-Test/lib);
+use Apache::TestMM qw(test);
 
 our $VERSION;
 
 my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
+my @scripts = qw(t/TEST);
 configure();
 
 ModPerl::MM::WriteMakefile(
@@ -58,6 +63,10 @@ sub configure {
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
+    for (@scripts) {
+        generate_script($_);
+    }
+
     generate_xs($httpd_version) if $build->{MP_GENERATE_XS};
 }
 
@@ -103,6 +112,19 @@ sub generate_xs {
     shift @INC;
 }
 
+sub generate_script {
+    my $file = shift;
+    open my $in, "$file.PL" or die "Couldn't open $file.PL: $!";
+    open my $out, '>', $file or die "Couldn't open $file: $!";
+    print "generating script...$file\n";
+    print $out "#!$Config{perlpath}\n",
+               "# WARNING: this file is generated, edit $file.PL instead\n",
+               join '', <$in>;
+    close $out or die "close $file: $!";
+    close $in;
+    chmod 0544, $file;
+}
+
 sub echo_cmd {
     my $cmd = shift;
     print "$cmd\n";
@@ -112,7 +134,7 @@ sub echo_cmd {
 sub clean_files {
     my $path = $code->path;
 
-    return [@{ $build->clean_files },
+    return [@{ $build->clean_files }, @scripts,
       map { "$path/$_"} @{ $code->clean_files }];
 }
 
