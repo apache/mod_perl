@@ -38,6 +38,7 @@ void modperl_trace(const char *func, const char *fmt, ...)
     va_end(args);
 
     apr_file_write(logfile, vstr, &vstr_len);
+    apr_file_printf(logfile, "\n");
 }
 
 void modperl_trace_level_set(server_rec *s, const char *level)
