@@ -26,6 +26,16 @@ static modperl_modglobal_key_t MP_modglobal_keys[] = {
     { NULL },
 };
 
+void modperl_modglobal_hash_keys(void)
+{
+    modperl_modglobal_key_t *gkey = MP_modglobal_keys;
+
+    while (gkey->name) {
+        PERL_HASH(gkey->hash, gkey->val, gkey->len);
+        gkey++;
+    }
+}
+
 modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
 {
     int i;
