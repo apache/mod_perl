@@ -5,12 +5,16 @@ use warnings FATAL => 'all';
 
 use Apache::Connection ();
 
+use Apache::TestTrace;
+
 use Apache::Const -compile => qw(OK);
 
 sub handler {
     my Apache::Connection $c = shift;
 
     my $ip = $c->remote_ip;
+
+    debug "ip: $ip";
 
     $c->notes->set(preconnection => $ip);
 
