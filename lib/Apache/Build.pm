@@ -940,11 +940,15 @@ sub write_src_makefile {
         print $fh $self->canon_make_attr("lib_$type", $libs{$type});
     }
 
-    print $fh $self->canon_make_attr('libperl',
-                                     join '/',
-                                     $self->perl_config('archlibexp'),
-                                     'CORE',
-                                     $self->perl_config('libperl'));
+    my $libperl = join '/',
+      $self->perl_config('archlibexp'), 'CORE', $self->perl_config('libperl');
+
+    #this is only used for deps, if libperl has changed, relink mod_perl.so
+    #not all perl dists put libperl where it should be, so just leave this
+    #out if it isn't in the proper place
+    if (-e $libperl) {
+        print $fh $self->canon_make_attr('libperl', $libperl);
+    }
 
     for my $method (qw(ccopts ldopts inc)) {
         print $fh $self->canon_make_attr($method, $self->$method());
