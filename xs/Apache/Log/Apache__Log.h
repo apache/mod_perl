@@ -15,15 +15,15 @@
 
 static void mpxs_Apache__Log_BOOT(pTHX)
 {
-    av_push(get_av("Apache::Log::Request::ISA",TRUE), 
-            newSVpv("Apache::Log",11));
-    av_push(get_av("Apache::Log::Server::ISA",TRUE), 
-            newSVpv("Apache::Log",11));
+    av_push(get_av("Apache::Log::Request::ISA", TRUE), 
+            newSVpv("Apache::Log", 11));
+    av_push(get_av("Apache::Log::Server::ISA", TRUE), 
+            newSVpv("Apache::Log", 11));
 }
 
-#define croak_inval_obj() \
-Perl_croak(aTHX_ "Argument is not an Apache::RequestRec " \
-                 "or Apache::Server object")
+#define croak_inval_obj()                                       \
+    Perl_croak(aTHX_ "Argument is not an Apache::RequestRec "   \
+               "or Apache::Server object")
 
 static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
 {
@@ -54,8 +54,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     }
 
     if ((s->loglevel >= lmask) && 
-        SvROK(msg) && (SvTYPE(SvRV(msg)) == SVt_PVCV))
-    {
+        SvROK(msg) && (SvTYPE(SvRV(msg)) == SVt_PVCV)) {
         dSP;
         ENTER;SAVETMPS;
         PUSHMARK(sp);
@@ -111,11 +110,11 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
     return svretval;
 }
 
-#define mpxs_Apache__RequestRec_log(sv) \
-mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_REQUEST)
+#define mpxs_Apache__RequestRec_log(sv)                 \
+    mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_REQUEST)
 
-#define mpxs_Apache__ServerRec_log(sv) \
-mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_SERVER)
+#define mpxs_Apache__ServerRec_log(sv)                  \
+    mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_SERVER)
 
 static MP_INLINE SV *modperl_perl_do_join(pTHX_ SV **mark, SV **sp)
 {
@@ -135,8 +134,8 @@ static MP_INLINE SV *modperl_perl_do_join(pTHX_ SV **mark, SV **sp)
     return sv;
 }
 
-#define my_do_join(m, s) \
-   modperl_perl_do_join(aTHX_ (m), (s))
+#define my_do_join(m, s)                        \
+    modperl_perl_do_join(aTHX_ (m), (s))
 
 static XS(MPXS_Apache__Log_dispatch)
 {
@@ -283,11 +282,11 @@ static XS(MPXS_Apache__Log_log_error)
      * we support the following:
      * Apache::warn
      * Apache->warn
-     * $r->warn
-     * $r->log_error
      * Apache::Server->log_error
-     * $s->log_error
      * Apache::Server->warn
+     * $r->log_error
+     * $r->warn
+     * $s->log_error
      * $s->warn
      */
 
