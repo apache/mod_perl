@@ -720,6 +720,7 @@ int perl_handler(request_rec *r)
 {
     dSTATUS;
     dPPDIR;
+    dPPREQ;
     dTHR;
     SV *nwvh = Nullsv;
 
@@ -759,10 +760,9 @@ int perl_handler(request_rec *r)
     perl_stdout2client(r);
     perl_stdin2client(r);
 
-    if(MP_ENV(cld)) 
-	perl_setup_env(r);
-
+    cfg->setup_env = 1;
     PERL_CALLBACK("PerlHandler", cld->PerlHandler);
+    cfg->setup_env = 0;
 
     FREETMPS;
     LEAVE;
@@ -1194,7 +1194,8 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 void perl_per_request_init(request_rec *r)
 {
     dPPDIR;
-
+    dPPREQ;
+    
     /* PerlSetEnv */
     mod_perl_dir_env(cld);
 
@@ -1216,10 +1217,12 @@ void perl_per_request_init(request_rec *r)
 	}
     }
 
-    if(!get_module_config(r->request_config, &perl_module)) {
-	perl_request_config *cfg = 
-	    perl_create_request_config(r->pool, r->server);
+    if(!cfg) {
+	cfg = perl_create_request_config(r->pool, r->server);
 	set_module_config(r->request_config, &perl_module, cfg);
+    }
+    else if (cfg->setup_env && MP_ENV(cld)) { 
+	perl_setup_env(r);
     }
 
     if(callbacks_this_request++ > 0) return;

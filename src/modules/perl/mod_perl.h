@@ -991,6 +991,7 @@ typedef struct {
 
 typedef struct {
     HV *pnotes;
+    int setup_env;
 } perl_request_config;
 
 typedef struct {
