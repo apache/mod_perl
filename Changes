@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+use SvOK(sv) instead of sv == &PL_sv_undef to detect undef values in xs
+[Stephen Clouse <stephenc@theiqgroup.com>]
+
 complete Apache::Util 1.x compat
 
 added Apache::MPM_IS_THREADED constant

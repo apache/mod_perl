@@ -156,8 +156,8 @@ sub get_value {
     if ($e->{class} eq 'PV') {
         if (my $pool = $e->{pool}) {
             $pool .= '(obj)';
-            $val = "((ST(1) == &PL_sv_undef) ? NULL :
-                    apr_pstrndup($pool, val, val_len))"
+            $val = "(SvOK(ST(1)) ?
+                    apr_pstrndup($pool, val, val_len) : NULL)"
         }
     }
 
