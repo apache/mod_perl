@@ -23,10 +23,6 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
                                        const char *name,
                                        apr_pool_t *p);
 
-char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
-                                             const char *name,
-                                             apr_pool_t *p);
-
 #define MP_CMD_SRV_DECLARE(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
                                const char *arg)

@@ -116,9 +116,9 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
     return NULL;
 }
 
-char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
-                                             const char *name,
-                                             apr_pool_t *p)
+static char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
+                                                    const char *name,
+                                                    apr_pool_t *p)
 {
     modperl_handler_t *h = modperl_handler_new(p, name);
 
