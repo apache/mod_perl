@@ -17,14 +17,6 @@ Available Patches:
             Patch available at 
             http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=104185397922327&w=2
 
-    * Apache::Status allows standard keys to be overridden
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101559176217056&w=2
-	Status: 
-          I'm not sure I understand this one, since the patch seems to do
-          the opposite of what the user is asking for --Geoff
-          patch available at
-          http://marc.theaimsgroup.com/?l=apache-modperl&m=101559176217056&w=2
-     
     * $r->print() ignores $\
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=102874705105904&w=2
         Status: 
