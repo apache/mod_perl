@@ -126,4 +126,6 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name);
 
 SV *modperl_perl_gensym(pTHX_ char *pack);
 
+void modperl_clear_symtab(pTHX_ HV *symtab);
+
 #endif /* MODPERL_UTIL_H */

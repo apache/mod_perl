@@ -3635,6 +3635,20 @@ $ModPerl::FunctionTable = [
       }
     ]
   },
+    {
+    'return_type' => 'void',
+    'name' => 'modperl_clear_symtab',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'HV *',
+        'name' => 'symtab'
+      },
+    ],
+  },
   {
     'return_type' => 'HE *',
     'name' => 'modperl_perl_hv_fetch_he',
