@@ -30,9 +30,9 @@ use File::Copy 'cp';
 use File::Basename 'basename';
 
 use Apache::Build ();
-use Apache::TestReportPerl ();
 use Apache::TestSmokePerl ();
 use Apache::TestTrace;
+use ModPerl::TestReport ();
 use ModPerl::TestRun ();
 use ModPerl::Code ();
 use ModPerl::BuildMM ();
@@ -210,8 +210,8 @@ sub configure {
     $build->save;
 
     ModPerl::TestRun->generate_script;
+    ModPerl::TestReport->generate_script;
     Apache::TestSmokePerl->generate_script;
-    Apache::TestReportPerl->generate_script;
 
     my $tables_dir = tables_dir($httpd_version);
 
