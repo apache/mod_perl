@@ -148,7 +148,6 @@ tree:
      EVERYTHING=1 \
      [...]
  $ make
- $ make test
  $ make install
  $ cd ..
 
