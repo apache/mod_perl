@@ -12,9 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
-Moved namespace from Apache:: to Apache::ServerUtil:: (to make it
-easier to find the container of the function): [Stas]
+A few functions moved namespace from Apache:: to Apache::ServerUtil::
+(to make it easier to find the container of the function): [Stas]
   - exists_config_define
+  - server_root
+  - get_server_built
+  - get_server_version
 
 fix an old outstanding bug in the APR::Table's TIE interface with
 each()/values() over tables with multi-values keys. Now the produced
