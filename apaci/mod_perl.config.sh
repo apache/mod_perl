@@ -111,6 +111,14 @@ cat >$tmpfile2 <<'EOT'
 use Config;
 my $ldopts = `$^X -MExtUtils::Embed -e ldopts -- -std @ARGV`;
 $ldopts =~ s,(-bE:)(perl\.exp),$1$Config{archlibexp}/CORE/$2, if($^O eq "aix");
+#replace -Wl args meant for gcc with args for ld
+if($^O eq "hpux") {
+    while ($ldopts =~ s/-Wl,(\S+)/$1/) {
+	my $cp = $1;
+	(my $repl = $cp) =~ s/,/ /g;
+	$ldopts =~ s/$cp/$repl/;
+    }
+}
 print $ldopts;
 EOT
 perl_libs="`$perl_interp $tmpfile2`"

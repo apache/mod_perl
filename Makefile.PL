@@ -921,10 +921,14 @@ cleanup_for_static();
 sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean;
-    return $string if $NO_HTTPD;
-    my $asrc = asrc($APACHE_SRC, "http_main.c");
-    return $string unless $APACHE_SRC and -e "$asrc/http_main.c";
-    $string .= "\t-cd \$(APACHE_SRC) && \$(MAKE) clean\n";
+    unless($NO_HTTPD) {
+	my $asrc = asrc($APACHE_SRC, "http_main.c");
+	return $string unless $APACHE_SRC and -e "$asrc/http_main.c";
+	$string .= "\t-cd \$(APACHE_SRC) && \$(MAKE) clean\n";
+    }
+    if($USE_APXS) {
+	$string .= "\t-cd ./apaci && \$(MAKE) clean\n";
+    }
     $string;
 }
 
