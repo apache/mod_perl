@@ -50,6 +50,12 @@ sub DESTROY {
     }
 }
 
+my @c_scan_defines = (
+    'CORE_PRIVATE',   #so we get all of apache
+    'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
+    '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
+);
+
 sub scan {
     require C::Scan;
     C::Scan->VERSION(0.75);
@@ -61,11 +67,16 @@ sub scan {
 
     $c->set(includeDirs => $self->includes);
 
-    my $defines = '-DCORE_PRIVATE -DMP_SOURCE_SCAN';
+    my @defines = @c_scan_defines;
+
     unless ($Config{useithreads} and $Config{useithreads} eq 'define') {
-        $defines .= ' -DMP_SOURCE_SCAN_NEED_ITHREADS';
+        #fake -DITHREADS so function tables are the same for
+        #vanilla and ithread perls, that is,
+        #make sure THX and friends are always expanded
+        push @defines, 'MP_SOURCE_SCAN_NEED_ITHREADS';
     }
-    $c->set(Defines => $defines);
+
+    $c->set(Defines => join ' ', map "-D$_", @defines);
 
     bless $c, 'Apache::ParseSource::Scan';
 }
