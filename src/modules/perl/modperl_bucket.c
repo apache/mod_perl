@@ -49,6 +49,7 @@ static void modperl_bucket_sv_destroy(void *data)
 
 static void modperl_bucket_sv_free(void *e)
 {
+    Safefree(e);
 }
 
 static const apr_bucket_type_t modperl_bucket_sv_type = {
