@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+When installing the mod_perl shared object, first need to check
+whether the directory 'modules' already exists, and create it if not.
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 Add a capability to tune the test configuration sections ordering
 in Apache::TestConfigPerl [Stas Bekman]
 

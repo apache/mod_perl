@@ -1057,6 +1057,9 @@ all: lib
 lib: $(MODPERL_LIB)
 
 install:
+	$(MODPERL_PERLPATH) -e "exit ! -d qq{$(MODPERL_AP_LIBEXECDIR)}" || \
+	$(MODPERL_PERLPATH) -MExtUtils::Command  \
+	-e mkpath $(MODPERL_AP_LIBEXECDIR)
 	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
 	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
 
