@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 1.99_13-dev
+
 =item 1.99_12 - Decemeber 22, 2003
 
 Restore a proper behavior of all Registry handlers, but PerlRun, not
