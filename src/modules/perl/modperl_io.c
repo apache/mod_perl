@@ -8,9 +8,15 @@ modperl_io_handle_tie(aTHX_ handle, "Apache::RequestRec", (void *)r)
 #define TIED(handle) \
 modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
 
+/*
+ * XXX: bleedperl change #11639 switch tied handle magic
+ * from living in the gv to the GvIOp(gv), so we have to deal
+ * with both to support 5.6.x
+ */
 MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
     sv_unmagic((SV*)handle, 'q');
+    sv_unmagic((SV*)GvIOp(handle), 'q');
 
     MP_TRACE_g(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
                GvNAME(handle), (unsigned long)handle,
@@ -27,6 +33,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
     }
 
     sv_magic((SV*)handle, obj, 'q', Nullch, 0);
+    sv_magic((SV*)GvIOp(handle), obj, 'q', Nullch, 0);
 
     MP_TRACE_g(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
                GvNAME(handle), (unsigned long)handle, classname,
@@ -36,8 +43,9 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
 {
     MAGIC *mg;
+    SV *sv = SvMAGICAL(GvIOp(handle)) ? (SV*)GvIOp(handle) : (SV*)handle;
 
-    if (SvMAGICAL(handle) && (mg = mg_find((SV*)handle, 'q'))) {
+    if (SvMAGICAL(sv) && (mg = mg_find(sv, 'q'))) {
 	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
 
 	if (!strEQ(package, classname)) {
