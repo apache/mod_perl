@@ -230,12 +230,12 @@ child_terminate(request_rec *r)
 }
 #endif
 
-#if MODULE_MAGIC_NUMBER < MMN_132
-void ap_custom_response(request_rec *r, int status, char *string)
+static char *custom_response(request_rec *r, int status, char *string)
 {
     core_dir_config *conf = 
 	get_module_config(r->per_dir_config, &core_module);
     int idx;
+    char *retval = NULL;
 
     if(conf->response_code_strings == NULL) {
         conf->response_code_strings = 
@@ -245,16 +245,15 @@ void ap_custom_response(request_rec *r, int status, char *string)
     }
 
     idx = index_of_response(status);
+    retval = conf->response_code_strings[idx];
+    if (string) {
+	conf->response_code_strings[idx] = 
+	    ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
+		pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
+    }
 
-    conf->response_code_strings[idx] = 
-       ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
-       pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
+    return retval;
 }
-#endif
-
-#ifndef custom_response
-#define custom_response ap_custom_response
-#endif
 
 static void Apache_terminate_if_done(request_rec *r, int sts)
 {
@@ -674,8 +673,8 @@ translate_name(r)
 
 #functions from http_core.c
 
-void
-custom_response(r, status, string)
+char *
+custom_response(r, status, string=NULL)
     Apache     r
     int status
     char *string
