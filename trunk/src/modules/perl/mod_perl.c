@@ -1152,7 +1152,12 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
       /* XXX: bizarre, 
 	 I only see this with httpd.conf.pl and PerlAccessHandler */
 	if(SvTYPE((SV*)handlers) != SVt_PVAV) {
-	    fprintf(stderr, "[warning] %s stack is not an ARRAY!\n", hook);
+#if MODULE_MAGIC_NUMBER > 19970909 
+	    aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_DEBUG, r->server,
+#else
+	    fprintf(stderr, 
+#endif
+		    "[warning] %s stack is not an ARRAY!\n", hook);
 	    sv_dump((SV*)handlers);
 	    return DECLINED;
 	}
