@@ -112,6 +112,16 @@ sub get_DEFINE {
 }
 
 sub configure {
+
+    # mod_perl test suite relies on having Apache-Test bundled with
+    # the mod_perl source, since any pre-installed version may not do
+    # the right thing
+    unless (-d "Apache-Test") {
+        error "Can't find a sub-directory Apache-Test. " .
+            "Make sure that you are using a complete source distribution";
+        exit 1;
+    }
+
     set_modperl_version();
 
     if ($old_modperl_version) {
