@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+fix $r->log->debug when running under -T
+
 new Apache::Leak module
 
 new Apache::Symdump module
