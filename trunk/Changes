@@ -10,8 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+localize $_ in Apache::send_cgi_header
+[Roderick Schertler <roderick@argon.org>]
+
 fix precedence problem in StatINC.pm
-[Daniel Jacobowitz <drow@false.org>]
+[Roderick Schertler <roderick@argon.org>]
 
 if hash value has magicalness in <Perl>, invoke FETCH
 thanks to Kevin Ruscoe for the spot
