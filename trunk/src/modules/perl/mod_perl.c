@@ -665,7 +665,7 @@ void perl_startup (server_rec *s, pool *p)
     }
 
     if(PERL_STARTUP_DONE_CHECK)	{
- 	int psd = getenv("PERL_STARTUP_DONE");
+ 	char *psd = getenv("PERL_STARTUP_DONE");
  	if (!psd) {
  	    MP_TRACE_g(fprintf(stderr, 
  			       "mod_perl: PerlModule,PerlRequire postponed\n"));
