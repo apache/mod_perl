@@ -1,0 +1,72 @@
+#################
+# mod_perl bugs #
+#################
+
+* PassEnv/SetEnv propogation in <Perl> section 
+  http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
+
+
+* we have a dependency check problem when xs/*/*.h use code from
+  xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
+  dependant files
+
+
+* most of the xs wrappers print no "Usage: " when wrong args/wrong
+  number of args are passed, would be nice to add the usage message
+  whenever incorrect arguments error is logged. e.g., when
+  APR::URI->parse() gets the wrong first arg (non-pool) it prints:
+
+    p is not of type APR::Pool at ...
+
+  whereas it's not so obvious that the function expected the pool
+  object, neither it specifies which ("arg number") of the arguments
+  is wrong.
+
+  possible solution: add a new field to the map files, which will be
+  used as a usage message whenever an argument error occurs.
+
+
+* 'SetHandler modperl' doesn't reset $|, so if anything turns it on
+  anywhere, it's going to stay that way. Meaning excessive flushing
+  probably causing a performance hit. I've tried to add the code to
+  reset it, but this requires getting a perl interpreter at the early
+  stage and it breaks several filter tests, which has relied before on
+  the coincidence that both the response handler and the filter were
+  run by the same interpreter (in particular this breaks the code
+  where push_handlers() uses a string as a handler, rather a CODE
+  reference, see t/filter/TestFilter/both_str_rec_add.pm, to
+  reproduce the problem, simply s/modperl/perl-script/)
+
+* $r->rflush doesn't work. see:
+  http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
+  I also see a weird behavior where it does sends FLUSH buckets but
+  they all seem to fall through the data, thus not really flushing
+  anything. this can be easily reproduced with MyApache::FilterSnoop.
+
+* Apache::Log compat issues:
+
+  Apache->warn, Apache::warn, Apache::Server->warn and
+  Apache->Apache::Server->log_error are all doing:
+     s = modperl_global_get_server_rec();
+  and this function is thread safe only during the startup.
+
+  possible solutions:
+
+  1) enforce that these functions are used only at the server startup
+
+  2) require +GlobalRequest, which gives us r->server, now thread
+     safe (though slow).
+
+  3) drop them all from the API and move to compat. 
+     [remember that Apache::warn is needed for registry scripts to
+     override warn()]
+
+  For Apache::warn and registry, the solution is to supply
+  GLOBAL::CORE::warn for the current request and get $r inside of it
+  and]
+
+  Report: Message-ID: <Pine.LNX.4.33.0206201011070.2590-100000@mako.covalent.net>
+  Status: <img alt="Doug, contemplating">
+
+* see if we can avoid touching environ[] until a fork() from Perl
+  happens

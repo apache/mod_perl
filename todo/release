@@ -1,0 +1,122 @@
+##################################################
+# Things to be resolved for mod_perl 2.0 release #
+##################################################
+
+* static build - if we make it working on OpenBSD, AIX and FreeBSD,
+  then it's not important to fix the DSO issues, otherwise make the
+  DSO issues a release issue.
+
+* perl Makefile.PL PREFIX=/foo/bar works fine, however Makefile.PL'll
+  still refuse to build unless MP_INST_APACHE2=1 is passed. It should
+  refuse to do so only if it finds mod_perl 1.0 installed under that
+  PREFIX, which can be a tricky check, since the exact logic to figure
+  out the paths is deep inside EU::MM. Probably it's better to run
+  'File::Find' and search for 'mod_perl.pm' under PREFIX, if found
+  check its version and assert only if it's 1.xx
+
+* META.yml. Generate META.yml (make dist does that), add Apache-Test
+  as a private resource, so it won't be attempted to be indexed by
+  PAUSE, add NO_META=>1 to WriteMakefile() which tells EU::MM not to
+  overwrite META.yml.
+
+* <Perl> sections:
+  A few issues with <Perl> sections:
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
+
+* Recursive <Perl> sections:
+  http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_-_BUG_%5D_Issue_handing_Apache_config._error_messages_P70501/
+  and
+  http://mathforum.org/epigone/modperl/dartrimpcil
+
+* Fixing Apache->warn("foo")
+
+  Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
+  Thread: http://mathforum.org/epigone/modperl-dev/noxtramcay
+  Status: pending Apache::Log compat issues, this and other methods
+          might be dropped.
+
+* per-server cleanups core dump or are otherwise ineffective
+    Apache->server->process->pconf->cleanup_register(sub { ...  });
+  Report: geoff
+
+
+* Looks like there is an issue with filter configuration, I've noticed that:
+
+   PerlInputFilterHandler MyApache::InputFilterGET2HEAD
+
+  silently ignores the filter, whereas:
+  ^^^^^^^^^^^^^^^^
+   PerlInputFilterHandler +MyApache::InputFilterGET2HEAD
+
+  calls the filter. figure out:
+
+  - why the loading doesn't happen
+  - why the error doesn't happen (probably both connected)
+
+* Currently modperl_filter_add_{connection|request} check the filter
+  handler function attrs before accepting the filter. If the module
+  wasn't preloaded the check fails and filter handler is skipped. We
+  could have this issue documented (which is OK, but might raise too
+  many questions), but we could also always preload the filter
+  handlers. To test see TestFilter::input_msg
+
+* child processes never run END blocks. a good example is
+  Apache::TestUtil, which doesn't cleanup files and dirs it has
+  created, because the END block is not run.
+  also: see the next item
+
+* ModPerl::Registry END {} block woes , described in details at the
+  forwarded message from Jim Schueler
+  http://marc.theaimsgroup.com/?l=apache-modperl&m=103720834717981&w=2
+  the whole thread is here:
+  http://marc.theaimsgroup.com/?t=103713532800003&r=1&w=2
+
+
+* we still have a problem with mod_perl starting from a
+  vhost. consider the following config:
+
+  PerlSwitches -I/foo/bar
+  <VirtualHost TestDirective::perlloadmodule6>
+     PerlLoadModule TestDirective::perlloadmodule6
+     ...
+  </VirtualHost>
+
+  The value set by PerlSwitches in the main server is ignored, because
+  it's not seen by mod_perl starting from vhost.
+  
+  overall, currently the early startup in vhost is a bunch of ugly
+  workaround, which I've added everytime I came up with a config that
+  wasn't working. Need to come up with a better design decisions.
+
+  once this is fixed. I want the perlloadmodule6 to be loaded before
+  all other perlloadmodule configs, because it tests an important
+  segfault when perlloadmodule happens to start mod_perl from within a
+  vhost. but because PerlSwitches from other tests are ignored, it
+  can't trigger the mod_perl startup in the test suite.
+
+
+- anonymous handler (for push_handlers, add_input_filter, etc), see
+  modperl_mgv.c: modperl_mgv_name_from_sv
+
+- PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
+  Owner: geoff
+
+- cgi emulation: %ENV management:
+
+   - %ENV is currently only saved/restored for the perl-script
+     handler, i.e. changes to %ENV outside of a perl-script handler
+     are not cleared.  of course, "clean" modules would use local() to
+     modify %ENV, but there should be an option to save/restore
+     globals outside of the perl-script handler
+
+  STATUS: do the cleanup for all handlers, but provide a new config
+  option so users can disable it if they know what they are doing.
+
+* Apache::SizeLimit and Apache::Resource
+
+* It'd be nice to have PAUSE and the clients support packages with
+  several versions, like mod_perl 1.0 and mod_perl 2.0, since once we
+  release it any dependency on mod_perl will be resolved as mod_perl
+  2.0, when mod_perl 1.0 may be required instead.
+
+

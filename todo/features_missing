@@ -1,0 +1,35 @@
+########################
+# mp1 missing features #
+########################
+
+* Apache::PerlSections->dump 
+  It does exist, but it's a completely internal function, not dumping existing configuration
+  as it used to be in 1.x. (needed by Apache::Status, for instance). Need to be implemented
+  and the existing dump method must be moved out of the way
+ 
+
+* directive handlers are supported but need some work for 1.x compat
+  - Apache::ModuleConfig->get needs a compat method mapping to
+    Apache::Module->get_config
+
+  - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
+    what Apache::Directive->as_string does, but one char or line at a time
+
+* Apache::PerlSections missing features for backwards compatibility:
+ - $Apache::ReadConfig::DocumentRoot
+ - Apache::PerlSections->store(filename)
+
+  Report: Philippe M. Chiasson <gozer@cpan.org>
+  Status: Philippe M. Chiasson <gozer@cpan.org> is working on it
+
+* PerlOpCodeMask (experimental in 1.xx)
+
+* die 404 (consider deprecating it)
+
+* mod_perl.pm::import
+
+- Apache::test: tobe a compat stub around new test framework
+
+- Apache::src: tobe a compat stub around new build framework
+
+
