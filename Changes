@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+adjust the generated Makefile's to properly build on aix (tested on
+powerpc-ibm-aix5.1.0.0) [Stas]
+
 the build now automatically glues the .pod files to the respective .pm
 files, so one can use perldoc on .pm files to read the
 documentation. [Stas]

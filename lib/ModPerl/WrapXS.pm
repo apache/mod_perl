@@ -19,6 +19,8 @@ our $VERSION = '0.01';
 my(@xs_includes) = ('mod_perl.h',
                     map "modperl_xs_$_.h", qw(sv_convert util typedefs));
 
+my @global_structs = qw(perl_module MP_debug_level);
+
 sub new {
     my $class = shift;
 
@@ -812,13 +814,21 @@ sub write_export_file {
     my $header = \&{"export_file_header_$ext"};
     my $format = \&{"export_file_format_$ext"};
 
-    while (my($name, $table) = each %files) {
-        my $handles = $self->open_export_files($name, $ext);
+    while (my($key, $table) = each %files) {
+        my $handles = $self->open_export_files($key, $ext);
 
 	my %seen; #only write header once if this is a single file
         for my $fh (values %$handles) {
             next if $seen{$fh}++;
             print $fh $self->$header();
+        }
+
+        # add the symbols which aren't the function table
+        if ($key eq 'modperl') {
+            my $fh = $handles->{global};
+            for my $name (@global_structs) {
+                print $fh $self->$format($name);
+            }
         }
 
         for my $entry (@$table) {

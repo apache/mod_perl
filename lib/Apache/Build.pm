@@ -20,9 +20,12 @@ use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
 
+use constant AIX    => $^O eq 'aix';
 use constant DARWIN => $^O eq 'darwin';
-use constant WIN32 => $^O eq 'MSWin32';
-use constant MSVC  => WIN32() && ($Config{cc} eq 'cl');
+use constant HPUX   => $^O eq 'hpux';
+use constant WIN32  => $^O eq 'MSWin32';
+
+use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
 
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
@@ -104,6 +107,7 @@ sub apxs {
         #if we are building mod_perl via apxs, apxs should already be known
         #these extra tries are for things built outside of mod_perl
         #e.g. libapreq
+        # XXX: this may pick a wrong apxs version!
         push @trys,
         Apache::TestConfig::which('apxs'),
         '/usr/local/apache/bin/apxs';
@@ -187,7 +191,7 @@ sub ldopts {
 
     my $ld = $self->perl_config('ld');
 
-    if ($^O eq 'hpux' and $ld eq 'ld') {
+    if (HPUX && $ld eq 'ld') {
         while ($ldopts =~ s/-Wl,(\S+)/$1/) {
             my $cp = $1;
             (my $repl = $cp) =~ s/,/ /g;
@@ -281,6 +285,11 @@ sub ccopts {
     $cflags;
 }
 
+sub ldopts_prefix {
+    my $self = shift;
+    $self->perl_config('ld') eq 'ld' ? '' : "-Wl,";
+}
+
 sub perl_config_optimize {
     my($self, $val) = @_;
 
@@ -308,6 +317,33 @@ sub perl_config_lddlflags {
         if (MSVC) {
             $val =~ s/-release/-debug/;
         }
+    }
+
+    if (AIX) {
+        my $Wl = $self->ldopts_prefix;
+
+        # it's useless to import symbols from libperl.so this way,
+        # because perl.exp is incomplete. a better way is to link
+        # against -lperl which has all the symbols
+        $val =~ s|${Wl}-bI:\$\(PERL_INC\)/perl\.exp||;
+        # also in the case of Makefile.modperl PERL_INC is defined
+
+        # this works with at least ld(1) on powerpc-ibm-aix5.1.0.0:
+        # -berok ignores symbols resolution problems (they will be
+        #        resolved at run-time
+        # -brtl prepares the object for run-time loading
+        # LDFLAGS already inserts -brtl
+        $val .= " ${Wl}-berok";
+        # XXX: instead of -berok, could make sure that we have:
+        #   -Lpath/to/CORE -lperl
+        #   -bI:$path/apr.exp -bI:$path/aprutil.exp -bI:$path/httpd.exp
+        #   -bI:$path/modperl_*.exp 
+        # - don't import modperl_*.exp in Makefile.modperl which
+        #   exports -bE:$path/modperl_*.exp
+        # - can't rely on -bI:$path/perl.exp, because it's incomplete,
+        #   use -lperl instead
+        # - the issue with using apr/aprutil/httpd.exp is to pick the
+        #   right path if httpd wasn't yet installed
     }
 
     $val;
@@ -913,7 +949,18 @@ sub make_tools {
 
 sub export_files_MSWin32 {
     my $self = shift;
-    "-def:$self->{cwd}/xs/modperl.def";
+    my $xs_dir = $self->file_path("xs");
+    "-def:$xs_dir/modperl.def";
+}
+
+sub export_files_aix {
+    my $self = shift;
+
+    my $Wl = $self->ldopts_prefix;
+    # there are several modperl_*.exp, not just $(BASEEXT).exp
+    # $(BASEEXT).exp resolves to modperl_global.exp
+    my $xs_dir = $self->file_path("xs");
+    join " ", map "${Wl}-bE:$xs_dir/modperl_$_.exp", qw(inline ithreads);
 }
 
 sub dynamic_link_header_default {
@@ -943,6 +990,14 @@ sub dynamic_link_MSWin32 {
     my $defs = $self->export_files_MSWin32;
     return $self->dynamic_link_header_default .
            "\t$defs" . ' -out:$@';
+}
+
+sub dynamic_link_aix {
+    my $self = shift;
+    my $link = $self->dynamic_link_header_default .
+        "\t" . $self->export_files_aix . " \\\n" .
+        "\t" . '-o $@' . " \n" .
+        "\t" . '$(MODPERL_RANLIB) $@';
 }
 
 sub dynamic_link {
@@ -998,6 +1053,11 @@ sub write_src_makefile {
 
     print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
     print $fh $self->canon_make_attr('dlext', 'so'); #always use .so
+
+    if (AIX) {
+        my $xs_dir = $self->file_path("xs");
+        print $fh "BASEEXT = $xs_dir/modperl_global\n\n";
+    }
 
     my %libs = (
         dso    => "$self->{MP_LIBNAME}.$self->{MODPERL_DLEXT}",
@@ -1121,16 +1181,17 @@ EOF
 
 #--- generate MakeMaker parameter values ---
 
+sub otherldflags_default {
+    my $self = shift;
+    # e.g. aix's V:ldflags feeds -brtl and other flags
+    $self->perl_config('ldflags');
+}
+
 sub otherldflags {
     my $self = shift;
     my $flags = \&{"otherldflags_$^O"};
-    return "" unless defined &$flags;
+    return $self->otherldflags_default unless defined &$flags;
     $flags->($self);
-}
-
-#XXX: install *.exp / search @INC
-sub otherldflags_aix {
-    ""; #XXX: -bI:*.exp files
 }
 
 sub typemaps {
