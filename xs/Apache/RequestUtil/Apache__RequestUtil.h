@@ -1,3 +1,41 @@
+static MP_INLINE
+int mpxs_Apache__RequestRec_push_handlers(request_rec *r,
+                                          const char *name,
+                                          SV *sv)
+{
+    dTHX; /*XXX*/
+    return modperl_handler_perl_add_handlers(aTHX_
+                                             r, NULL, r->server, r->pool,
+                                             name, sv,
+                                             MP_HANDLER_ACTION_PUSH);
+
+}
+
+static MP_INLINE
+int mpxs_Apache__RequestRec_set_handlers(request_rec *r,
+                                         const char *name,
+                                         SV *sv)
+{
+    dTHX; /*XXX*/
+    return modperl_handler_perl_add_handlers(aTHX_
+                                             r, NULL, r->server, r->pool,
+                                             name, sv,
+                                             MP_HANDLER_ACTION_SET);
+}
+
+static MP_INLINE
+SV *mpxs_Apache__RequestRec_get_handlers(request_rec *r,
+                                         const char *name)
+{
+    dTHX; /*XXX*/
+    MpAV **handp =
+        modperl_handler_get_handlers(r, NULL, r->server,
+                                     r->pool, name,
+                                     MP_HANDLER_ACTION_GET);
+
+    return modperl_handler_perl_get_handlers(aTHX_ handp, r->pool);
+}
+
 /*
  * XXX: these three should be part of the apache api
  * for protocol module helpers

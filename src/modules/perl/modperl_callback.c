@@ -9,7 +9,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     int count, status;
 
 #ifdef USE_ITHREADS
-    if (p && !MpHandlerPARSED(handler)) {
+    if (p && !MpHandlerPARSED(handler) && !MpHandlerDYNAMIC(handler)) {
         MP_dSCFG(s);
         if (scfg->threaded_mpm) {
             /*
@@ -103,6 +103,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #endif
     MP_dSCFG(s);
     MP_dDCFG;
+    MP_dRCFG;
     modperl_handler_t **handlers;
     apr_pool_t *p = NULL;
     MpAV *av, **avp;
@@ -123,7 +124,7 @@ int modperl_callback_run_handlers(int idx, int type,
         p = pconf;
     }
 
-    avp = modperl_handler_lookup_handlers(dcfg, scfg, NULL, p,
+    avp = modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
                                           type, idx, FALSE, &desc);
 
     if (!(avp && (av = *avp))) {
@@ -171,6 +172,7 @@ int modperl_callback_run_handlers(int idx, int type,
         break;
     };
 
+    /* XXX: deal with {push,set}_handler of the phase we're currently in */
     MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
                av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;

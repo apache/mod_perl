@@ -96,6 +96,31 @@ modperl_mgv_t *modperl_mgv_compile(pTHX_ apr_pool_t *p,
     return symbol;
 }
 
+char *modperl_mgv_name_from_sv(pTHX_ apr_pool_t *p, SV *sv)
+{
+    char *name = NULL;
+    GV *gv;
+
+    if (SvROK(sv)) {
+        sv = SvRV(sv);
+    }
+
+    switch (SvTYPE(sv)) {
+      case SVt_PV:
+        name = SvPVX(sv);
+        break;
+      case SVt_PVCV:
+        if (CvANON((CV*)sv)) {
+            Perl_croak(aTHX_ "anonymous handlers not (yet) supported");
+        }
+        gv = CvGV((CV*)sv);
+        name = apr_pstrcat(p, HvNAME(GvSTASH(gv)), "::", GvNAME(gv), NULL);
+        break;
+    };
+
+    return name;
+}
+
 void modperl_mgv_append(pTHX_ apr_pool_t *p, modperl_mgv_t *symbol,
                         const char *name)
 {
