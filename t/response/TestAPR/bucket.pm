@@ -62,22 +62,14 @@ sub handler {
         ### create a chain of buckets
         my $bb = APR::Brigade->new($r->pool, $ba);
 
-        $bb->insert_head($d1);
-
-        # d1->d2
-        $d1->insert_after($d2);
-
-        # d1->f1->d2
-        $d2->insert_before($f1);
-
-        # d1->f1->d2->f2
-        $d2->insert_after($f2);
-
-        # d1->f1->d2->f2->e1
-        $bb->insert_tail($e1);
+                                 # head->tail
+        $bb->insert_head(  $d1); # head->d1->tail
+        $d1->insert_after( $d2); # head->d1->d2->tail
+        $d2->insert_before($f1); # head->d1->f1->d2->tail
+        $d2->insert_after( $f2); # head->d1->f1->d2->f2->tail
+        $bb->insert_tail(  $e1); # head->d1->f1->d2->f2->e1->tail
 
         ### now test
-
         my $b = $bb->first;
         $b->read(my $read);
         ok t_cmp($read, "d1", "d1 bucket");
