@@ -165,6 +165,7 @@ apaci/configure
 apaci/libperl.module
 apaci/mod_perl.config
 apaci/mod_perl.config.sh
+apaci/load_modules.pl.PL
 .gdbinit
 INSTALL.simple
 INSTALL.simple.ssl

@@ -112,7 +112,9 @@ my(@adirs, %seen, %mft_map, %vers_map, $src_dir, $vers, $conf, $ans);
     NONE => "", 
 );	     
 
-$USE_APACI = 0;
+$USE_APACI = $USE_DSO = $USE_APXS = 0;
+$WITH_APXS = "";
+$APACI_ARGS = "";
 $EVERYTHING = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
@@ -147,7 +149,8 @@ PERL_TIE_SCRIPTNAME
 };
 
 my @mp_args = 
-    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE USE_APACI
+    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE 
+       USE_APACI USE_DSO USE_APXS APACI_ARGS
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
 
 sub is_mp_arg {
@@ -215,8 +218,22 @@ while($_ = shift) {
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
 }
 
-if($USE_APACI) {
-    print "Will configure via APACI\n";
+$USE_APACI = 1 if $USE_DSO;
+
+if($USE_APXS) {
+    $WITH_APXS = $USE_APXS if -e $USE_APXS;
+    print "Will configure via APXS";
+    print " (apxs=$WITH_APXS)" if $WITH_APXS;
+    print "\n";
+    ++$NO_HTTPD;
+}
+elsif($USE_APACI) {
+    print "Will configure via APACI";
+    if($USE_DSO) {
+        gen_script("apaci/load_modules.pl");
+        print " (dso enabled)";
+    }
+    print "\n";
 }
 
 @ARGV = @mm_args;
@@ -263,6 +280,12 @@ if($Is_Win32) {
     $NO_HTTPD = 1;
     win32_setup();
 } 
+
+if($USE_APXS) {
+    my $cmd = "./configure --with-perl=$^X";
+    $cmd .= " --with-apxs=$WITH_APXS" if $WITH_APXS;
+    system "(cd apaci && $cmd)";
+}
 
 unless ($NO_HTTPD) {
 for $src_dir ($APACHE_SRC, <../apache*/src>, 
@@ -316,7 +339,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $IsBenSSL = -e "$adir/apache_ssl.c";
 	    last unless(-e $conf || -e "$conf.tmpl"); #building from 'make offsite-tar' 
 	}
-	++$NO_HTTPD if $USE_APACI;
+	#++$NO_HTTPD if $USE_APACI;
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
 	    ++$NO_HTTPD unless $ans =~ /^y$/i;
@@ -368,7 +391,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    }
 	}
 
-	last if $NO_HTTPD or $USE_APACI;
+	last if $NO_HTTPD; # or $USE_APACI;
 
 	if($PERL_EXTRA_CFLAGS) {
 	    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
@@ -406,8 +429,20 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	}
     }
 
+    ($APACHE_ROOT = $APACHE_SRC) =~ s,/src/?$,,;
+
     if ($NO_HTTPD) {
 
+    }
+    elsif($USE_APACI) {
+	my $cmd = "./configure --activate-module=src/modules/perl/libperl.a";
+	if($USE_DSO) {
+	    $cmd .= " --enable-shared=perl";
+	}
+	if($APACI_ARGS) {
+	    $cmd .= " " . join " ", split(',', $APACI_ARGS);
+	}
+	system "(cd $APACHE_ROOT && $cmd)";
     }
     else {
 	$conf = "src/Configuration";
@@ -644,8 +679,11 @@ EOF
 unless (-e "t/net/config.pl") {
     cp "t/net/config.pl.dist", "t/net/config.pl";
 }
+unless($Is_Win32 or -e "t/conf/httpd.conf" or $NO_HTTPD) {
+    init_tests_and_config();
+}
 
-unless($Is_Win32 or -e "t/conf/httpd.conf") {
+sub init_tests_and_config {
     cp "t/conf/httpd.conf-dist", "t/conf/httpd.conf";
     chmod 0644, "t/conf/httpd.conf";
 
@@ -890,15 +928,36 @@ sub MY::clean {
     $string;
 }
 
+sub MY::install {
+    my $self = shift;
+    my $string = $self->MM::install;
+    return $string unless $USE_APXS;
+    $string =~ s/(pure_install\s+)(.*)/$1 apxs_install $2/;
+    return $string;
+}
+
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
-    return $string unless $APACHE_SRC and -f "$APACHE_SRC/$Configuration";
-    my $asrc = asrc($APACHE_SRC, "http_main.c");
-    if(-e "$asrc/http_main.c" and !$NO_HTTPD) {
-        $string =~ s/(pure_all\s+::\s+)(.*)/$1 apache_httpd $2/;
+    return $string unless $USE_APXS or $APACHE_SRC;
+
+    if($APACHE_SRC) {
+	return $string unless -f "$APACHE_SRC/$Configuration";
+	my $asrc = asrc($APACHE_SRC, "http_main.c");
+	if(-e "$asrc/http_main.c" and !$NO_HTTPD) {
+	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apache_httpd $2/;
+	}
+    }
+    if($USE_APXS) {
+	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apxs_libperl $2/;
     }
     $string .= <<'EOF';
+
+apxs_libperl:
+	(cd ./apaci && $(MAKE) CC="$(CC)";)
+
+apxs_install: apxs_libperl
+	(cd ./apaci && $(MAKE) install;)
 
 apache_httpd: $(APACHE_SRC)/Makefile.tmpl
 	(cd $(APACHE_SRC) && $(MAKE) CC="$(CC)";)
@@ -934,6 +993,13 @@ sub MY::pasthru {
 }
 
 sub MY::test {
+    my $self = shift;
+    my $test = $self->MM::test;
+    return <<'EOF' if $USE_APXS;
+test:
+	@echo can't make test with apxs (yet)
+EOF
+
     my $script = "t/TEST";
     $script .= ".win32" if $Is_Win32;
     my $my_test = $Is_Win32 ? q(
@@ -947,7 +1013,9 @@ q(
 test:	pure_all start_httpd run_tests kill_httpd
 
 );
-
+    push @test_pre_init, "\t", 
+    './apaci/load_modules.pl $(APACHE_SRC)', "\n" if $USE_DSO;
+ 
     join '', @test_pre_init,
     qq(
 MP_TEST_SCRIPT=$script
@@ -1324,6 +1392,8 @@ sub edit_extra_cflags {
 
 sub conf_fixup {
     my($mf, $cfg) = @_;
+    return if $USE_APACI;
+
     my $mmn    = magic_number($APACHE_SRC);
     #source re-org
     my $sro = 1 if $mmn >= 19970825;
@@ -1518,7 +1588,7 @@ sub APACI::init {
     return undef unless $USE_APACI;
     unless (File::Compare::compare($lib_cfg,"apaci/mod_perl.config") == 0) {
 	#warn "mod_perl.config already edited\n";
-	return undef;
+	#return undef;
     }
 
     my $apaci_cfg = FileHandle->new(">$lib_cfg") or 
