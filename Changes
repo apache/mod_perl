@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+perl_destruct_level must always be 2 for DSO builds to prevent
+leaking on restarts, thanks to Paul G. Weiss for the spot
+
 make sure file to be reloaded can be found in @INC, adjusting based on
 %INC value if needed
 [Ilya Konstantinov <modperl@future.galanet.net>]
