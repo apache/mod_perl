@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 
 #XXX: skip input_body filter test until filter changes dust settles
-plan tests => 2, sub {0}; #\&have_lwp;
+plan tests => 2, \&have_lwp;
 
 my $location = '/TestFilter::input_body';
 
