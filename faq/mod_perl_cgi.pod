@@ -40,6 +40,48 @@ but
 says it is OK, you have probably used __END__ or __DATA__.  Sorry.
 Mod_perl's Apache::Registry can't deal with that.
 
+=head1 The script runs but the headers are mangled
+
+You have a script that works fine under mod_cgi but the browser
+displays "Content-Type: text/html" or similar headers at the top of
+the page when it is run under mod_perl.  There are two possible
+causes.
+
+Something, either your script or mod_perl or CGI.pm (if you are using
+it) has to trigger Apache to send the response header.  This happens
+when you call the CGI.pm $q->header method or mod_perl's
+$r->send_http_header.  But if your script just prints out one or more
+header lines followed by a blank line and the page content, you need
+to set "PerlSendHeader On" in the configuration for the location of
+the script.  This tells mod_perl to parse the stuff that the script
+prints and call $r->send_http_header for you when it sees the blank
+line.
+
+This parsing only happens if PerlSendHeader is on and the header has
+not been sent yet.  Even so, it is costly and mod_perl makes the
+assumption that individual headers are not split across print
+statements, to simplify the parser and avoid having to retain
+fragments of headers between calls to print().  So the following does
+not work:
+
+   print "Content-type: text/html\n";
+   print "Set-Cookie: iscookietext\; ";
+   print "expires=Wednesday, 09-Nov-1999 00:00:00 GMT\; ";
+   print "path=\/\; domain=\.mmyserver.com\; \n\n";
+   print "hello";
+
+because the Set-Cookie header is split across multiple print's.
+
+You need to print each header (or group of headers) in one go,
+possibly after building it up in a temporary variable.
+
+   print "Content-type: text/html\n";
+   my $cookie = "Set-Cookie: iscookietext; ";
+   $cookie .= "expires=Wednesday, 09-Nov-1999 00:00:00 GMT; ";
+   $cookie .= "path=/; domain=.mmyserver.com; \n\n";
+   print $cookie;
+   print "hello";
+
 =head1 My CGI script behaves strangely under mod_perl.  Why?
 
 Remember that a conventional CGI script always starts up a fresh perl
@@ -57,11 +99,24 @@ The command
 
   # ./httpd -X
 
-will start a single-process server with its default configuration.  You
-can specify a different configuration with the -f flag (and thus use a
-different port number for testing, for instance).
+will start a single-process server with its default configuration.
+You can specify a different configuration with the C<-f> flag (and
+thus use a different port number for testing, for instance).
 
-Now try executing your script from a browser or with a tool such a wget.
+Now try executing your script from a browser.  A non-graphical browser
+is often much better for diagnosing low-level problems.  Install lynx
+(http://lynx.browser.org/) if you haven't already got it and use
+
+  lynx -mime_header http://localhost/perl/myscript
+
+to see the response that the web server produces when it GETs your 
+script, and
+
+  lynx -head -dump http://localhost/perl/myscript
+
+to see the response to a HEAD request.  The GET and HEAD commands that 
+come with libwww-perl are similar but slower.
+
 Here are some of the effects that you might see.
 
 =head2 The server terminates after processing the first request
@@ -132,9 +187,9 @@ its value between calls to ..."  the subroutine.  You will see classic
       print($q->end_html());
   }
 
-Because you remembered to put the -w switch on the first line, the error
-log will tell you that "Variable $q will not stay shared" (provided you
-are using perl5.004 or higher).
+Because you remembered to put the C<-w> switch on the first line, the
+error log will tell you that "Variable $q will not stay shared"
+(provided you are using perl5.004 or higher).
 
 You must either pass the variable to the subroutine as a parameter,
 
