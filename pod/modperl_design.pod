@@ -89,13 +89,14 @@ The number of intepreters to clone at startup time.
 
 If all running interpreters are in use, mod_perl will clone new
 interpreters to handle the request, up until this number of
-interpreters is reached. when Max is reached, mod_perl will block (via
-COND_WAIT()) until one becomes available (signaled via COND_SIGNAL())
+interpreters is reached. when PerlInterpMax is reached, mod_perl will
+block (via COND_WAIT()) until one becomes available (signaled via
+COND_SIGNAL())
 
 =item PerlInterpMinSpare
 
 The minimum number of available interpreters this parameter will clone
-interpreters up to Max, before a request comes in.
+interpreters up to PerlInterpMax, before a request comes in.
 
 =item PerlInterpMaxSpare
 
@@ -187,7 +188,7 @@ were found to be useful or new features were added to the Apache API,
 the xs code was written for them here and there.
 
 The goal for 2.0 is to generate the majority of xs code and provide
-thin wrappers were needed to make the API more Perlish.  As part of
+thin wrappers where needed to make the API more Perlish.  As part of
 this goal, nearly the entire APR and Apache API, along with their
 public data structures will covered from the get-go.  Certain
 functions and structures which are considered "private" to Apache or

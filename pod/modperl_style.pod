@@ -44,7 +44,8 @@ C code inside xs modules also follows the Apache style guide.
 =head1 Perl code
 
 Perl code also follows the Apache style guide, in terms of
-indentation, braces, etc.
+indentation, braces, etc. Style issues not covered by Apache style of
+guide should be looked up in the I<perlstyle> manpage.
 
 =head2 Global Variables
 
@@ -127,6 +128,6 @@ use this:
 
 =item %main::
 
-stay away from main:: to avoid namespace clashes
+stay away from C<main::> to avoid namespace clashes
 
 =back
