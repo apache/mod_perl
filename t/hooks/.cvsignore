@@ -4,3 +4,4 @@ authen.t
 authz.t
 fixup.t
 trans.t
+init.t
