@@ -539,18 +539,16 @@ sub write_typemap {
     my $max_key_len = 0;
     while (my($type, $class) = each %$map) {
         $class ||= $type;
-        my $val;
         next if $seen{$type}++ || $typemap->special($class);
 
         if ($class =~ /::/) {
-            $val = $typemap{$class} || 'T_PTROBJ';
+            $entries{$class} = $typemap{$class} || 'T_PTROBJ';
+            $max_key_len = length $class if length $class > $max_key_len;
         }
         else {
-            $val = $typemap{$type} || "T_$class";
+            $entries{$type} = $typemap{$type} || "T_$class";
+            $max_key_len = length $type if length $type > $max_key_len;
         }
-
-        $entries{$type} = $val;
-        $max_key_len = length $type if length $type > $max_key_len;
     }
 
     for (sort keys %entries) {
