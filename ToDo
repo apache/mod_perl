@@ -3,6 +3,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- -- post 1.25 --
+
 - From: Andy Wardley <abw@cre.canon.co.uk>
   Subject: Problems with SERVER_MERGE and DIR_MERGE
 
@@ -11,8 +13,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - From: Wenzhong Tang <Tang@appliant.com>
   Subject: RE: Prototype mismatch in Apache::PerlRun line 343
-
-- -- post 1.25 --
 
 - hooking up PL_check (-c) to ap_configtest_only
 
@@ -49,6 +49,7 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
   1.21_03 cures
 
 - disable PERL_SSI unless mod_include is listed in httpd -l
+  and Action unless mod_action, etc.
 
 ---------------------------------------------------------------------------
 POSSIBLE NEW FEATURES
