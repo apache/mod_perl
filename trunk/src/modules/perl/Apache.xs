@@ -374,6 +374,13 @@ PROTOTYPES: DISABLE
 BOOT:
     items = items; /*avoid warning*/ 
 
+void
+add_version_component(name)
+    const char *name
+
+    CODE:
+    ap_add_version_component(name);
+
 const char *
 current_callback(r)
     Apache     r
