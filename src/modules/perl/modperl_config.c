@@ -168,8 +168,15 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(perl);
 #endif
 
-    /* argv always initialized to 1 with ap_server_argv0 */
-    mrg->argv = add->argv->nelts > 1 ? add->argv : base->argv;
+    if (add->argv->nelts == 2 &&
+        strEQ(((char **)add->argv->elts)[1], "+inherit"))
+    {
+        /* only inherit base PerlSwitches if explicitly told to */
+        mrg->argv = base->argv;
+    }
+    else {
+        mrg->argv = add->argv;
+    }
 
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
 
