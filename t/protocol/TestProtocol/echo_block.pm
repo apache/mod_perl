@@ -12,7 +12,7 @@ use Apache::Connection ();
 use APR::Socket ();
 
 use Apache::Const -compile => 'OK';
-use APR::Const    -compile => qw(SO_NONBLOCK TIMEUP EOF);
+use APR::Const    -compile => qw(SO_NONBLOCK);
 
 use constant BUFF_LEN => 1024;
 
