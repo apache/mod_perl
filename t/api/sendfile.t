@@ -20,6 +20,9 @@ plan tests => 5;
 
     open my $fh, $file or die "can't open $file: $!";
     local $/;
+    # need binmode on Win32 so as not to strip \r, which
+    # are included when sending with sendfile().
+    binmode $fh;
     my $expected = join '', $header, <$fh>, $footer;
     close $fh;
 
