@@ -21,7 +21,7 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
     globals->inc.gv    = PL_incgv;
     globals->defout.gv = PL_defoutgv;
     globals->rs.sv     = &PL_rs;
-    globals->end.av    = PL_endav;
+    globals->end.av    = &PL_endav;
     globals->end.key   = MP_MODGLOBAL_END;
 }
 
@@ -233,13 +233,17 @@ static void modperl_perl_global_avcv_untie(pTHX_ AV *av)
 static void
 modperl_perl_global_avcv_save(pTHX_ modperl_perl_global_avcv_t *avcv)
 {
-    modperl_perl_global_avcv_tie(aTHX_ avcv->key, avcv->av);
+    if (!*avcv->av) {
+        *avcv->av = newAV();
+    }
+
+    modperl_perl_global_avcv_tie(aTHX_ avcv->key, *avcv->av);
 }
 
 static void
 modperl_perl_global_avcv_restore(pTHX_ modperl_perl_global_avcv_t *avcv)
 {
-    modperl_perl_global_avcv_untie(aTHX_ avcv->av);
+    modperl_perl_global_avcv_untie(aTHX_ *avcv->av);
 }
 
 /*
