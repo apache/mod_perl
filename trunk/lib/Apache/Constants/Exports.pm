@@ -37,6 +37,29 @@ my(@http)       = qw(HTTP_METHOD_NOT_ALLOWED
 		     HTTP_VARIANT_ALSO_VARIES);
 my(@config)     = qw(DECLINE_CMD);
 my(@types)      = qw(DIR_MAGIC_TYPE);
+my(@override)    = qw(
+		      OR_NONE
+		      OR_LIMIT
+		      OR_OPTIONS
+		      OR_FILEINFO
+		      OR_AUTHCFG
+		      OR_INDEXES
+		      OR_UNSET
+		      OR_ALL
+		      ACCESS_CONF
+		      RSRC_CONF);
+my(@args_how)    = qw(
+		      RAW_ARGS
+		      TAKE1
+		      TAKE2
+		      ITERATE
+		      ITERATE2
+		      FLAG
+		      NO_ARGS
+		      TAKE12
+		      TAKE3
+		      TAKE23
+		      TAKE123);
 
 my $rc = [@common, @response];
 
@@ -51,6 +74,8 @@ my $rc = [@common, @response];
     satisfy    => \@satisfy,
     server     => \@server,				   
     types      => \@types, 
+    args_how   => \@args_how,
+    override   => \@override,
     #depreciated
     response_codes => $rc,
 );
@@ -65,6 +90,8 @@ my $rc = [@common, @response];
     @server,
     @config,
     @types,
+    @args_how,
+    @override,
 ); 
    
 *Apache::Constants::EXPORT = \@common;
