@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.25_01-dev
+
 =item 1.25 - January 29, 2001
 
 avoid 'prototype mismatch' warnings in Apache::PerlRun::flush_namespace
