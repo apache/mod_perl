@@ -57,7 +57,7 @@ Port $args{port}
 User $args{user}
 Group $args{group}
 ServerName localhost
-DocumentRoot $DIR/t/eg
+DocumentRoot $DIR/t
 
 $args{modules}
 
@@ -73,7 +73,10 @@ ScoreBoardFile /dev/null
 AddType text/html .html
 
 # Look in ./blib/lib
-PerlModule ExtUtils::testlib
+#PerlModule ExtUtils::testlib
+<Perl>
+ use lib "$DIR/blib/lib", "$DIR/t/lib";
+</Perl>
 
 $args{include}
 EOF
@@ -82,6 +85,7 @@ EOF
 }
 
 sub _ask {
+    # Just a function for asking the user questions
     my ($prompt, $default, $mustfind) = @_;
 
     my $response;
@@ -193,8 +197,8 @@ sub which {
     }
 }
 
-
 sub test { 
+    shift() if UNIVERSAL::isa($_[0], __PACKAGE__);
     my $s = $_[1] ? "ok $_[0]\n" : "not ok $_[0]\n";
     if($ENV{MOD_PERL}) {
 	Apache->request->print($s);
@@ -205,21 +209,26 @@ sub test {
 }
 
 sub fetch {
-    my($ua, $url);
-    if(@_ == 1) {
-	$url = shift;
-	$ua = $UA;
-    }
-    else {
-	($ua, $url) = @_;
-    }
-    unless ($url =~ /^http/) {
-	$url = "http://$net::httpserver${url}";
-    }
+    # Old code calls fetch() as a function, new code as a method
+    shift() if UNIVERSAL::isa($_[0], __PACKAGE__);
+    my ($ua, $url) = (@_ == 1 ? ($UA, shift()) : @_);
+    my $request = ref $url ? $url : {uri=>$url};
 
-    my $request = new HTTP::Request('GET', $url);
-    my $response = $ua->request($request, undef, undef);
-    $response->content;
+    # Set some defaults
+    $ENV{PORT} ||= 8529;  # For mod_perl's own tests
+    $request->{method} ||= 'GET';
+    $request->{content} = '' unless exists $request->{content};
+    $request->{uri} = "http://localhost:$ENV{PORT}$request->{uri}"    
+	unless $request->{uri} =~ /^http/;
+    $request->{headers}{Content_Type} = 'application/x-www-form-urlencoded'
+	if (!$request->{headers} and $request->{method} eq 'POST');  # Is this necessary?
+
+    # Create & send the request
+    $request->{headers} = new HTTP::Headers(%{$request->{headers}||{}});
+    my $req = new HTTP::Request(@{$request}{'method','uri','headers','content'});
+    my $response = $ua->request($req);
+
+    return wantarray ? ($response->content, $response) : $response->content;
 }
 
 sub simple_fetch {
@@ -340,6 +349,7 @@ sub run {
 }
 
 sub MM_test {
+    # Writes the test section for the Makefile
     shift();  # Don't need package name
     my %conf = @_;
 
@@ -569,9 +579,58 @@ you'll do the following in your Makefile.PL:
 
   *MY::test = sub { Apache::test->MM_test(%params) };
 
+=head2 fetch
+
+  Apache::test->fetch($request);
+  Apache::test->fetch($user_agent, $request);
+
+Call this method in a test script in order to fetch a page from the
+running web server.  If you pass two arguments, the first should be an
+LWP::UserAgent object, and the second should specify the request to
+make of the server.  If you only pass one argument, it specifies the
+request to make.
+
+The request can be specified either by a simple string indicating the
+URI to fetch, or by a hash reference, which gives you more control
+over the request.  The following keys are recognized in the hash:
+
+=over 4
+
+=item * uri
+
+The URI to fetch from the server.  If the URI does not begin with
+"http", we prepend "http://localhost:$PORT" so that we make requests
+of the test server.
+
+=item * method
+
+The request method to use.  Default is 'GET'.
+
+=item * content
+
+The request content body.  Typically used to simulate HTML fill-out
+form submission for POST requests.  Default is null.
+
+=item * headers
+
+A hash of headers you want sent with the request.  You might use this
+to send cookies or provide some application-specific header.
+
+=back
+
+If you don't provide a 'headers' parameter and you set the 'method'
+to 'POST', then we assume that you're trying to simulate HTML form
+submission and we add a 'Content_Type' header with a value of
+'application/x-www-form-urlencoded'.
+
+In a scalar context, fetch() returns the content of the web server's
+response.  In a list context, fetch() returns the content and the
+HTTP::Response object itself.  This can be handy if you need to check
+the response headers, or the HTTP return code, or whatever.
+
 =head1 EXAMPLES
 
-No good examples yet.  Examples are welcome.  In the meantime, see
+No good examples yet.  Example submissions are welcome.  In the meantime, see
 L<http://forum.swarthmore.edu/~ken/modules/Apache-AuthCookie/> , which
 I'm retrofitting to use Apache::test.
 
