@@ -80,6 +80,11 @@ Available Patches:
 	Status:
          patch available
 
+    * PERL5LIB should unshift @INC instead of push
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100434522809036&w=2
+        Status:
+         patch available
+
 
 Needs Patch or Further Investigation
 
