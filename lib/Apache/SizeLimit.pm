@@ -68,14 +68,15 @@ BEGIN {
                 "to work on your platform.";
         }
 
-    } elsif (WIN32) {
-
-        if ( eval { require Win32::API } ) {
-            $HOW_BIG_IS_IT = \&win32_size_check;
-        } else {
-            die "you must install Win32::API for Apache::SizeLimit " .
-                "to work on your platform.";
-        }
+#  Currently unsupported for mp2 because of threads...
+#     } elsif (WIN32) {
+# 
+#         if ( eval { require Win32::API } ) {
+#             $HOW_BIG_IS_IT = \&win32_size_check;
+#         } else {
+#             die "you must install Win32::API for Apache::SizeLimit " .
+#                 "to work on your platform.";
+#         }
 
     } else {
 
