@@ -1,6 +1,6 @@
-#ifdef USE_ITHREADS
-
 #include "mod_perl.h"
+
+#ifdef USE_ITHREADS
 
 /*
  * tipool == "thread item pool"

@@ -1,4 +1,5 @@
 #ifndef MODPERL_TIPOOL_H
+#define MODPERL_TIPOOL_H
 
 #ifdef USE_ITHREADS
 
