@@ -1389,7 +1389,7 @@ cvs_export :
 
 cvs_tag :
 	cvs -d $(CVSROOT) tag v$(VERSION_SYM) modperl
-	@echo update mod_perl.pm's VERSION now
+	@echo update mod_perl.pm VERSION now
 
 EOF
 }

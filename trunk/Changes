@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.19_01-dev
+=item 1.20 - June 11, 1999
 
 turn off warnings in Apache::Status::as_HTML symdump code
 [Geoffrey Young <younggs@acwilm.com>, Tim Bunce <Tim.Bunce@ig.co.uk>]
