@@ -6,11 +6,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::Const -compile => 'OK';
+use Apache::PerlSections;
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 11;
+    plan $r, tests => 14;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
     
@@ -38,6 +39,14 @@ sub handler {
     ok t_cmp("-e", $0, '$0');
 
     ok t_cmp(1, $TestDirective::perl::Included, "Include");
+
+    my $dump = Apache::PerlSections->dump;
+    ok t_cmp(qr/__END__/, $dump, "Apache::PerlSections->dump");
+    
+    eval "package TestDirective::perldo::test;\nno strict;\n$dump";
+    ok t_cmp("", $@, "PerlSections dump syntax check");
+
+    ok t_cmp(qr/perlsection.conf/, $TestDirective::perldo::test::Include);
 
     Apache::OK;
 }

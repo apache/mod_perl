@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Apache::PerlSections->dump() and store(filename) [Gozer]
+
 expose $c->keepalive related constants [Stas]
 
 Perl handlers are now guaranteed to run before core C handlers for
