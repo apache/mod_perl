@@ -45,9 +45,9 @@ sub handler {
         delete $INC{"Apache/compat.pm"};
         require Apache::compat;
 
-         # test the segfault in apr < 0.9.2 (fixed on mod_perl side)
+        # test the segfault in apr < 0.9.2 (fixed on mod_perl side)
         # passing only the /path
-        my $parsed = APR::URI->parse($r->pool, $r->uri);
+        my $parsed = $r->parsed_uri;
         # set hostname, but not the scheme
         $parsed->hostname($r->get_server_name);
         $parsed->port($r->get_server_port);
