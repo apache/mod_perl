@@ -19,7 +19,6 @@ sub handler {
     print "output\n";
     print "\n";
 
-    plan $r, tests => 1;
     print "ok 1\n";
 
     Apache::OK;
