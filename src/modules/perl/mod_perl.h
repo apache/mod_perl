@@ -1,41 +1,8 @@
 #ifndef MOD_PERL_H
 #define MOD_PERL_H
 
-#ifndef PERL_NO_GET_CONTEXT
-#   define PERL_NO_GET_CONTEXT
-#endif
-
-#define PERL_CORE
-
-#include "EXTERN.h"
-#include "perl.h"
-#include "XSUB.h"
-
-#ifdef PERL_CORE
-#   ifndef croak
-#      define croak Perl_croak_nocontext
-#   endif
-#endif
-
-#undef dNOOP
-#define dNOOP extern int __attribute__ ((unused)) Perl___notused
-
-#define CORE_PRIVATE
-#include "ap_mmn.h"
-#include "httpd.h"
-#include "http_config.h"
-#include "http_log.h"
-#include "http_protocol.h"
-#include "http_main.h"
-#include "http_request.h"
-#include "http_connection.h"
-#include "http_core.h"
-
-#include "apr_lock.h"
-#include "apr_strings.h"
-
-#include "ap_buckets.h"
-#include "util_filter.h"
+#include "modperl_apache_includes.h"
+#include "modperl_perl_includes.h"
 
 extern module MODULE_VAR_EXPORT perl_module;
 
