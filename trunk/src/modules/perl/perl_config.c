@@ -437,6 +437,13 @@ static void mp_preload_module(char **name)
 }
 #endif
 
+#define STARTUP_PERL_IF_NOT_RUNNING \
+if(!PERL_RUNNING()) { \
+    perl_startup(parms->server, parms->pool); \
+    require_Apache(parms->server); \
+    MP_TRACE_g(fprintf(stderr, "mod_perl: calling perl_startup()\n")); \
+}
+
 #ifdef PERL_STACKED_HANDLERS
 
 CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *p)
@@ -456,16 +463,13 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
 }
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
-if(!PERL_RUNNING()) { \
-    perl_startup(parms->server, parms->pool); \
-    require_Apache(parms->server); \
-    MP_TRACE_g(fprintf(stderr, "mod_perl: calling perl_startup()\n")); \
-} \
+STARTUP_PERL_IF_NOT_RUNNING \
 return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
 
 #else
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
+STARTUP_PERL_IF_NOT_RUNNING \
 mp_preload_module(&arg); \
 cmd = arg; \
 return NULL
