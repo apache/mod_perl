@@ -9,3 +9,5 @@ smoke-report-*.txt
 MANIFEST
 glue_pods
 .mypacklist
+META.yml
+
