@@ -517,6 +517,7 @@ void modperl_perl_exit(pTHX_ int status)
     ENTER;
     SAVESPTR(PL_diehook);
     PL_diehook = Nullsv; 
+    sv_setpv(ERRSV, "");
     Perl_croak(aTHX_ NULL);
 }
 
