@@ -390,6 +390,12 @@ The $r-E<gt>filename method will return the result of the I<URI --E<gt>
 filename> translation, optionally changing it with the first argument
 if you happen to be doing the translation.
 
+=item $r-E<gt>location
+
+The $r-E<gt>location method will return the path of the
+E<lt>LocationE<gt> section from which the current C<Perl*Handler> is
+being called.
+
 =item $r-E<gt>path_info( [$path_info] )
 
 The $r-E<gt>path_info method will return what is left in the path after the
