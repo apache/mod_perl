@@ -30,6 +30,14 @@ sub num_of_tests {
 sub test {
 
     my $file = __FILE__;
+
+    # On Win32, touch the file to ensure it is in the same Daylight Saving
+    # Time season as the current time to workaround a bug in Win32's stat()
+    # which APR::Finfo allows for, otherwise the two disagree.
+    if (WIN32) {
+        utime undef, undef, $file;
+    }
+
     my $pool = APR::Pool->new();
     # populate the finfo struct first
     my $finfo = APR::Finfo::stat($file, APR::FINFO_NORM, $pool);
