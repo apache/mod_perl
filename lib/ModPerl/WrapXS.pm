@@ -575,6 +575,7 @@ sub write_lookup_method_file {
             $last_prefix = $prefix if $prefix;
 
             my $name = $func->{name};
+
             if ($name =~ /^mpxs_/) {
                 #e.g. mpxs_Apache__RequestRec_
                 my $class_prefix = class_c_prefix($class);
@@ -582,6 +583,10 @@ sub write_lookup_method_file {
                     $prefix = class_mpxs_prefix($class);
                 }
             }
+            elsif ($name =~ /^ap_sub_req/) {
+                $prefix = 'ap_sub_req_';
+            }
+
             $name =~ s/^$prefix// if $prefix;
 
             push @{ $map{$name} }, [$module, $class];
