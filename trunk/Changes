@@ -22,6 +22,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+if $r->subprocess_env is called in a void context just call
+(void)perl_cgi_env_init(r)
+
 $ENV{PATH}: don't let perl_clear_env() clear it's value
 
 prevent $r->dir_config SEGV if called during ChildInit, 

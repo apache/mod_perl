@@ -14,6 +14,7 @@ else {
 }
 
 %ENV = $r->cgi_env;
+$r->subprocess_env; #test void context
 
 my $tests = 44;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
