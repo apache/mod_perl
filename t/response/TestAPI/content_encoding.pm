@@ -3,7 +3,7 @@ package TestAPI::content_encoding;
 # tests: $r->content_encoding("gzip");
 
 use strict;
-use warnings;# FATAL => 'all';
+use warnings FATAL => 'all';
 
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
