@@ -28,6 +28,8 @@ listed in deprecated_features.txt
 
 - die 404;
 
+- env MOD_PERL_TRACE support
+
 - ... others ...
 
 core modules:
