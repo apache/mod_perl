@@ -1,5 +1,8 @@
 package TestFilter::context_stream;
 
+# this is the same test as TestFilter::context, but uses the streaming
+# API
+
 use strict;
 use warnings;# FATAL => 'all';
 
@@ -40,15 +43,15 @@ sub handler {
         }
     }
 
-    # flush the remaining data and add a statistics signature
     if ($filter->seen_eos) {
+        # flush the remaining data and add a statistics signature
         $filter->print("$data\n") if $data;
         my $sig = join "\n", "received $ctx->{blocks} complete blocks",
             "filter invoked $ctx->{invoked} times\n";
         $filter->print($sig);
     }
     else {
-        # no need to store context, since it was the last invocation
+        # store context for all but the last invocation
         $ctx->{data} = $data;
         $filter->ctx($ctx);
     }

@@ -1,5 +1,8 @@
 package TestFilter::context;
 
+# this is the same test as TestFilter::context_stream, but uses the
+# bucket brigade API
+
 use strict;
 use warnings;# FATAL => 'all';
 
