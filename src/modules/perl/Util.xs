@@ -4,6 +4,8 @@
 #include "modules/perl/mod_perl.h"
 #endif 
 
+#include "util_date.h"
+
 #define TIME_NOW time(NULL)
 #define DEFAULT_TIME_FORMAT "%a, %d %b %Y %H:%M:%S %Z"
 
