@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/05/26 04:29:53 $]
+   Last modified at [$Date: 2003/07/28 14:55:44 $]
 
 Release:
 --------
@@ -270,6 +270,12 @@ Open Issues or Core Enhancements:
 
 ----
 
+APR as external Perl glue
+-------------------------
+
+APR::Table now depends on modperl_hash_tie, so it can't be used
+outside mod_perl. should probably abstract this function into a new
+utils.c object that can be linked by APR.so.
 
 Documentation:
 --------------
