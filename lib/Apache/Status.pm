@@ -875,7 +875,7 @@ sub parse_version {
             next unless /([\$*])(([\w\:\']*)\bVERSION)\b.*\=/;
             { local($1, $2); ($_ = $_) = /(.*)/; } # untaint
             my $eval = qq{
-                package ModPerl::Util::_version;
+                package Apache::Status::_version;
                 no strict;
 
                 local $1$2;
