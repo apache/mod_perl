@@ -22,9 +22,9 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    # set timeout to 1 usec (microsec!) which makes sure that any
-    # socket read call will fail
-    $socket->timeout_set(1);
+    # set timeout to 0 to make sure that any socket read call will
+    # fail
+    $socket->timeout_set(0);
 
     no strict 'refs';
     $args->($r, $socket);
