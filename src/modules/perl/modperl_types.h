@@ -112,7 +112,7 @@ typedef enum {
 } modperl_interp_scope_e;
 
 typedef struct {
-    MpHV *SetVar;
+    MpHV *vars;
     MpHV *SetEnv;
     MpHV *PassEnv;
     MpAV *PerlRequire, *PerlModule;
@@ -141,7 +141,7 @@ typedef struct {
     char *PerlDispatchHandler;
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpHV *SetEnv;
-    MpHV *SetVar;
+    MpHV *vars;
     modperl_options_t *flags;
 #ifdef USE_ITHREADS
     modperl_interp_scope_e interp_scope;
