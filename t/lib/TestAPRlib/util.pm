@@ -22,7 +22,7 @@ my %hashes = (
 );
 
 # BACK_COMPAT_MARKER (sha1 support added in 2.0.50)
-delete $hashes{sha1} unless have_apache_version('2.0.50');
+delete $hashes{sha1} unless have_min_apache_version('2.0.50');
 
 sub num_of_tests {
     return 1 + scalar keys %hashes;
