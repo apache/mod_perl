@@ -4,28 +4,30 @@
 PerlSwitches -T
 
 PerlSwitches -Mlib=@ServerRoot@/../lib
+PerlSwitches -Mlib=@ServerRoot@/../../Apache-Test/lib
 PerlSwitches -Mlib=@ServerRoot@/../../lib
 PerlSwitches -Mlib=@ServerRoot@/../../blib/lib
 PerlSwitches -Mlib=@ServerRoot@/../../blib/arch
 
-Alias /registry/         @ServerRoot@/cgi-bin/
-Alias /registry_ng/      @ServerRoot@/cgi-bin/
-Alias /registry_bb/      @ServerRoot@/cgi-bin/
-Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
-Alias /perlrun/          @ServerRoot@/cgi-bin/
-
-#PerlModule TestDebugMy
-
-PerlSetVar ModPerl::RegistryCooker::DEBUG 0
-
-### DEVMODE: Remove in production ###
+#### DEVMODE: Remove in production ###
 PerlModule Apache::Reload
 PerlInitHandler Apache::Reload
 PerlSetVar ReloadAll Off
 PerlSetVar ReloadModules "ModPerl::*"
 
+PerlSetVar ModPerl::RegistryCooker::DEBUG 2
+
 PerlModule ModPerl::RegistryCooker
 PerlModule ModPerl::Util
+
+#############################
+### Normal registry setup ###
+#############################
+Alias /registry/         @ServerRoot@/cgi-bin/
+Alias /registry_ng/      @ServerRoot@/cgi-bin/
+Alias /registry_bb/      @ServerRoot@/cgi-bin/
+Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
+Alias /perlrun/          @ServerRoot@/cgi-bin/
 
 PerlModule ModPerl::RegistryNG
 <Location /registry_ng>
@@ -45,18 +47,9 @@ PerlModule ModPerl::RegistryBB
     PerlOptions +ParseHeaders
 </Location>
 
-PerlModule ModPerl::PerlRun
-<Location /perlrun>
-    PerlOptions +GlobalRequest
-    SetHandler perl-script
-    Options +ExecCGI
-    PerlResponseHandler ModPerl::PerlRun
-    PerlOptions +ParseHeaders
-</Location>
-
 PerlModule ModPerl::Registry
 <Location /registry>
-    PerlOptions +GlobalRequest
+  #  PerlOptions +GlobalRequest
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry
@@ -69,6 +62,71 @@ PerlModule ModPerl::Registry
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry->handler
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::PerlRun
+<Location /perlrun>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::PerlRun
+    PerlOptions +ParseHeaders
+</Location>
+
+#######################################
+### Same interpreter registry setup ###
+#######################################
+
+Alias /same_interp/registry/         @ServerRoot@/cgi-bin/
+Alias /same_interp/registry_ng/      @ServerRoot@/cgi-bin/
+Alias /same_interp/registry_bb/      @ServerRoot@/cgi-bin/
+Alias /same_interp/registry_oo_conf/ @ServerRoot@/cgi-bin/
+Alias /same_interp/perlrun/          @ServerRoot@/cgi-bin/
+
+PerlModule Apache::TestHandler
+<Location /same_interp/registry_ng>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::RegistryNG
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/registry_bb>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/registry>
+  #  PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/registry_oo_conf>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::Registry->handler
+    PerlOptions +ParseHeaders
+</Location>
+
+<Location /same_interp/perlrun>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlFixupHandler Apache::TestHandler::same_interp_fixup
+    PerlResponseHandler ModPerl::PerlRun
     PerlOptions +ParseHeaders
 </Location>
 
