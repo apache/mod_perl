@@ -41,3 +41,6 @@ SV *mpxs_Apache__Server_get_handlers(server_rec *s,
 
 #define mpxs_Apache__Server_dir_config(s, key, sv_val) \
     modperl_dir_config(aTHX_ NULL, s, key, sv_val)
+
+#define mpxs_Apache_server(classname) \
+modperl_global_get_server_rec()

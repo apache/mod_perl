@@ -43,8 +43,11 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_set_handlers
  mpxs_Apache__Server_get_handlers
 
-MODULE=Apache::ServerUtil PACKAGE=Apache::Server
+PACKAGE=Apache::Server
  SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=&PL_sv_no
+
+PACKAGE=Apache
+ server_rec *:DEFINE_server | | SV *:classname=Nullsv
 
 MODULE=Apache::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
