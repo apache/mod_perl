@@ -75,8 +75,8 @@ sub handler {
             close $fh;
         }
         else {
-            ok t_cmp($errno_string,
-                     "$!",
+            ok t_cmp("$!",
+                     $errno_string,
                      "expected failure");
         }
     }
@@ -94,8 +94,8 @@ sub handler {
         my $pos = 3; # rewinds after reading 6 chars above
         seek $fh, $pos, Fcntl::SEEK_SET();
         my $got = tell($fh);
-        ok t_cmp($pos,
-                 $got,
+        ok t_cmp($got,
+                 $pos,
                  "seek/tell the file Fcntl::SEEK_SET");
 
         # Fcntl::SEEK_CUR()
@@ -103,16 +103,16 @@ sub handler {
         $pos = tell($fh) + $step;
         seek $fh, $step, Fcntl::SEEK_CUR();
         $got = tell($fh);
-        ok t_cmp($pos,
-                 $got,
+        ok t_cmp($got,
+                 $pos,
                  "seek/tell the file Fcntl::SEEK_CUR");
 
         # Fcntl::SEEK_END()
         $pos = -s $file;
         seek $fh, 0, Fcntl::SEEK_END();
         $got = tell($fh);
-        ok t_cmp($pos,
-                 $got,
+        ok t_cmp($got,
+                 $pos,
                  "seek/tell the file Fcntl::SEEK_END");
 
         close $fh;
@@ -127,16 +127,16 @@ sub handler {
         ok ref($fh) eq 'GLOB';
 
         # basic single line read
-        ok t_cmp($expected,
-                 scalar(<$fh>),
+        ok t_cmp(scalar(<$fh>),
+                 $expected,
                  "single line read");
 
         # slurp mode
         seek $fh, 0, Fcntl::SEEK_SET(); # rewind to the start
         local $/;
 
-        ok t_cmp($expected_all,
-                 scalar(<$fh>),
+        ok t_cmp(scalar(<$fh>),
+                 $expected_all,
                  "slurp file");
 
         # test ungetc (a long sep requires read ahead)
@@ -144,8 +144,8 @@ sub handler {
         local $/ = $sep;
         my @got_lines = <$fh>;
         my @expect = ($lines[0] . $sep, $lines[1]);
-        ok t_cmp(\@expect,
-                 \@got_lines,
+        ok t_cmp(\@got_lines,
+                 \@expect,
                  "custom complex input record sep read");
 
         close $fh;
@@ -166,8 +166,8 @@ sub handler {
 
         t_debug($received);
 
-        ok t_cmp(1,
-                 eof($fh),
+        ok t_cmp(eof($fh),
+                 1,
                  "end of file");
         close $fh;
     }
@@ -186,8 +186,8 @@ sub handler {
 
         close $dup_fh;
         unless (APR_WIN32_FILE_DUP_BUG) {
-            ok t_cmp($expected,
-                     $received,
+            ok t_cmp($received,
+                     $expected,
                      "read/write a dupped file");
         }
     }
@@ -204,16 +204,16 @@ sub handler {
         my $oldfh = select($wfh); $| = 1; select($oldfh);
         print $wfh $expected; # must be flushed to disk immediately
 
-        ok t_cmp($expected,
-                 scalar(<$rfh>),
+        ok t_cmp(scalar(<$rfh>),
+                 $expected,
                  "file unbuffered write");
 
         # buffer up
         $oldfh = select($wfh); $| = 0; select($oldfh);
         print $wfh $expected; # should be buffered up and not flushed
 
-        ok t_cmp(undef,
-                 scalar(<$rfh>),
+        ok t_cmp(scalar(<$rfh>),
+                 undef,
                  "file buffered write");
 
         close $wfh;
@@ -242,16 +242,16 @@ sub handler {
                 $perl_content = <$pfh>;
             }
             close $pfh;
-            ok t_cmp(length $perl_content,
-                     length $apr_content,
+            ok t_cmp(length $apr_content,
+                     length $perl_content,
                      "testing data size of $file");
         
             open my $wfh, ">:APR", $out, $r->pool
                 or die "Cannot open $out for writing: $!";
             print $wfh $apr_content;
             close $wfh;
-            ok t_cmp(-s $in,
-                     -s $out,
+            ok t_cmp(-s $out,
+                     -s $in,
                      "testing file size of $file");
             unlink $out;
         }
@@ -273,11 +273,11 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp($count,
-                 count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache::CRLF),
+                 $count,
                  'testing for presence of \015\012');
-        ok t_cmp($count,
-                 count_chars($text, "\n"),
+        ok t_cmp(count_chars($text, "\n"),
+                 $count,
                  'testing for presence of \n');
 
         open $wfh, ">:APR", $scratch, $r->pool
@@ -291,11 +291,11 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp($count,
-                 count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache::CRLF),
+                 $count,
                  'testing for presence of \015\012');
-        ok t_cmp($count,
-                 count_chars($text, "\n"),
+        ok t_cmp(count_chars($text, "\n"),
+                 $count,
                  'testing for presence of \n');
         open $rfh, "<:crlf", $scratch
             or die "Cannot open $scratch for reading: $!";
@@ -304,11 +304,11 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(0,
-                 count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache::CRLF),
+                 0,
                  'testing for presence of \015\012');
-        ok t_cmp($count,
-                 count_chars($text, "\n"),
+        ok t_cmp(count_chars($text, "\n"),
+                 $count,
                  'testing for presence of \n');
 
         my $utf8 = "\x{042F} \x{0432}\x{0430}\x{0441} \x{043B}\x{044E}";
@@ -325,8 +325,8 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp($utf8,
-                 $text,
+        ok t_cmp($text,
+                 $utf8,
                  'utf8 binmode test');
         unlink $scratch;
     }

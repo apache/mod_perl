@@ -77,8 +77,8 @@ sub handler {
                     skip "different file semantics", 0;
                 }
                 else {
-                    ok t_cmp(${$method},
-                             $finfo->$method(),
+                    ok t_cmp($finfo->$method(),
+                             ${$method},
                              "\$finfo->$method()");
                 }
             }
@@ -86,20 +86,20 @@ sub handler {
 
         # match world bits
 
-        ok t_cmp($protection & S_IROTH,
-                 $finfo->protection & APR::WREAD,
+        ok t_cmp($finfo->protection & APR::WREAD,
+                 $protection & S_IROTH,
                  '$finfo->protection() & APR::WREAD');
 
-        ok t_cmp($protection & S_IWOTH,
-                 $finfo->protection & APR::WWRITE,
+        ok t_cmp($finfo->protection & APR::WWRITE,
+                 $protection & S_IWOTH,
                  '$finfo->protection() & APR::WWRITE');
 
         if (WIN32) {
             skip "different file semantics", 0;
         }
         else {
-            ok t_cmp($protection & S_IXOTH,
-                     $finfo->protection & APR::WEXECUTE,
+            ok t_cmp($finfo->protection & APR::WEXECUTE,
+                     $protection & S_IXOTH,
                      '$finfo->protection() & APR::WEXECUTE');
         }
     }
@@ -111,13 +111,13 @@ sub handler {
             skip "finfo.fname requires Apache 2.0.49 or later", 0;
         }
         else {
-            ok t_cmp($file,
-                     $finfo->fname,
+            ok t_cmp($finfo->fname,
+                     $file,
                      '$finfo->fname()');
         }
 
-        ok t_cmp(APR::REG,
-                 $finfo->filetype,
+        ok t_cmp($finfo->filetype,
+                 APR::REG,
                  '$finfo->filetype()');
     }
 

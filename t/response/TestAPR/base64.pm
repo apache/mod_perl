@@ -21,11 +21,11 @@ sub handler {
     t_debug("encoded string: $encoded");
     ok $encoded;
 
-    ok t_cmp(length $encoded,
-             APR::Base64::encode_len(length $str),
+    ok t_cmp(APR::Base64::encode_len(length $str),
+             length $encoded,
              "encoded length");
 
-    ok t_cmp($str, APR::Base64::decode($encoded), "decode");
+    ok t_cmp(APR::Base64::decode($encoded), $str, "decode");
 
     Apache::OK;
 }

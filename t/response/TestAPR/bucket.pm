@@ -36,9 +36,9 @@ sub handler {
         ok $b->isa('APR::Bucket');
 
         my $type = $b->type;
-        ok t_cmp('mod_perl SV bucket', $type->name, "type");
+        ok t_cmp($type->name, 'mod_perl SV bucket', "type");
 
-        ok t_cmp(length($data), $b->length, "modperl b->length");
+        ok t_cmp($b->length, length($data), "modperl b->length");
     }
 
     # new: offset
@@ -48,9 +48,9 @@ sub handler {
         my $real = substr $data, $offset;
         my $b = APR::Bucket->new($data, $offset);
         my $rlen = $b->read(my $read);
-        ok t_cmp($real, $read, 'new($data, $offset)/buffer');
-        ok t_cmp(length($read), $rlen, 'new($data, $offset)/len');
-        ok t_cmp($offset, $b->start, 'offset');
+        ok t_cmp($read, $real, 'new($data, $offset)/buffer');
+        ok t_cmp($rlen, length($read), 'new($data, $offset)/len');
+        ok t_cmp($b->start, $offset, 'offset');
 
     }
 
@@ -62,8 +62,8 @@ sub handler {
         my $real = substr $data, $offset, $len;
         my $b = APR::Bucket->new($data, $offset, $len);
         my $rlen = $b->read(my $read);
-        ok t_cmp($real, $read, 'new($data, $offset, $len)/buffer');
-        ok t_cmp(length($read), $rlen, 'new($data, $offse, $lent)/len');
+        ok t_cmp($read, $real, 'new($data, $offset, $len)/buffer');
+        ok t_cmp($rlen, length($read), 'new($data, $offse, $lent)/len');
     }
 
     # new: offset+ too big len
@@ -94,23 +94,23 @@ sub handler {
     {
         my $b = APR::Bucket::eos_create($ba);
         my $type = $b->type;
-        ok t_cmp('EOS', $type->name, "eos_create");
+        ok t_cmp($type->name, 'EOS', "eos_create");
 
-        ok t_cmp(0, $b->length, "eos b->length");
+        ok t_cmp($b->length, 0, "eos b->length");
 
         # buckets with no data to read should return an empty string
         my $rlen = $b->read(my $read);
-        ok t_cmp("", $read, 'eos b->read/buffer');
-        ok t_cmp(0, $rlen, 'eos b->read/len');
+        ok t_cmp($read, "", 'eos b->read/buffer');
+        ok t_cmp($rlen, 0, 'eos b->read/len');
     }
 
     # flush_create
     {
         my $b = APR::Bucket::flush_create($ba);
         my $type = $b->type;
-        ok t_cmp('FLUSH', $type->name, "flush_create");
+        ok t_cmp($type->name, 'FLUSH', "flush_create");
 
-        ok t_cmp(0, $b->length, "flush b->length");
+        ok t_cmp($b->length, 0, "flush b->length");
     }
 
     # insert_after / insert_before / is_eos / is_flush
@@ -142,7 +142,7 @@ sub handler {
 
         my $b = $bb->first;
         $b->read(my $read);
-        ok t_cmp("d1", $read, "d1 bucket");
+        ok t_cmp($read, "d1", "d1 bucket");
 
         $b = $bb->next($b);
         t_debug("is_flush");
@@ -150,7 +150,7 @@ sub handler {
 
         $b = $bb->next($b);
         $b->read($read);
-        ok t_cmp("d2", $read, "d2 bucket");
+        ok t_cmp($read, "d2", "d2 bucket");
 
         $b = $bb->last();
         t_debug("is_eos");
@@ -175,21 +175,21 @@ sub handler {
     {
         my $bb = APR::Brigade->new($r->pool, $ba);
 
-        ok t_cmp(undef, $bb->first, "no first bucket");
-        ok t_cmp(undef, $bb->last,  "no last bucket");
+        ok t_cmp($bb->first, undef, "no first bucket");
+        ok t_cmp($bb->last,  undef, "no last bucket");
 
         ## now there is first
         my $b = APR::Bucket->new("bbb");
         $bb->insert_head($b);
         my $b_first = $bb->first;
         $b->read(my $read);
-        ok t_cmp("bbb", $read, "first bucket");
+        ok t_cmp($read, "bbb", "first bucket");
 
         # but there is no prev
-        ok t_cmp(undef, $bb->prev($b_first),  "no prev bucket");
+        ok t_cmp($bb->prev($b_first), undef, "no prev bucket");
 
         # and no next
-        ok t_cmp(undef, $bb->next($b_first),  "no next bucket");
+        ok t_cmp($bb->next($b_first), undef, "no next bucket");
     }
 
     return Apache::OK;

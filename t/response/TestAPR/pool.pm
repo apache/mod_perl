@@ -34,7 +34,7 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
 
-        ok t_cmp(0, scalar(@notes), "should be 0 notes");
+        ok t_cmp(scalar(@notes), 0, "should be 0 notes");
 
         $r->notes->clear;
     }
@@ -54,7 +54,7 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
 
-        ok t_cmp(0, scalar(@notes), "should be 0 notes");
+        ok t_cmp(scalar(@notes), 0, "should be 0 notes");
 
         $r->notes->clear;
     }
@@ -69,7 +69,7 @@ sub handler {
 
         $p->cleanup_register(\&set_cleanup, [$r, 'new destroy']);
 
-        ok t_cmp(1, ancestry_count($p),
+        ok t_cmp(ancestry_count($p), 1,
                  "a new pool has one ancestor: the global pool");
 
         # explicity destroy the object
@@ -77,9 +77,9 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
 
-        ok t_cmp(1, scalar(@notes), "should be 1 note");
+        ok t_cmp(scalar(@notes), 1, "should be 1 note");
 
-        ok t_cmp('new destroy', $notes[0]);
+        ok t_cmp($notes[0], 'new destroy');
 
         $r->notes->clear;
     }
@@ -93,7 +93,7 @@ sub handler {
         {
             my $p = APR::Pool->new;
 
-            ok t_cmp(1, ancestry_count($p),
+            ok t_cmp(ancestry_count($p), 1,
                  "a new pool has one ancestor: the global pool");
 
             $p->cleanup_register(\&set_cleanup, [$r, 'new scoped']);
@@ -101,9 +101,9 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
 
-        ok t_cmp(1, scalar(@notes), "should be 1 note");
+        ok t_cmp(scalar(@notes), 1, "should be 1 note");
 
-        ok t_cmp('new scoped', $notes[0]);
+        ok t_cmp($notes[0], 'new scoped');
 
         $r->notes->clear;
     }
@@ -187,7 +187,7 @@ sub handler {
         # use the global top level pool for it), so the resulting pool
         # should have an ancestry length of exactly 1
         my $ssp = $sp->new;
-        ok t_cmp(1, ancestry_count($ssp),
+        ok t_cmp(ancestry_count($ssp), 1,
                  "a new pool has one ancestor: the global pool");
 
 
@@ -230,8 +230,8 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
 
-        ok t_cmp(1, scalar(@notes), "should be 1 note");
-        ok t_cmp('overtake', $notes[0]);
+        ok t_cmp(scalar(@notes), 1, "should be 1 note");
+        ok t_cmp($notes[0], 'overtake');
 
         $r->notes->clear;
 
@@ -268,7 +268,7 @@ sub handler {
 
         # $pp and $sp shouldn't have triggered any cleanups
         my @notes = $r->notes->get('cleanup');
-        ok t_cmp(0, scalar(@notes), "should be 0 notes");
+        ok t_cmp(scalar(@notes), 0, "should be 0 notes");
         $r->notes->clear;
 
         # parent pool destroys child pool
@@ -296,15 +296,15 @@ sub handler {
         }
 
         my @notes = $r->notes->get('cleanup');
-        ok t_cmp(0, scalar(@notes), "should be 0 notes");
+        ok t_cmp(scalar(@notes), 0, "should be 0 notes");
         $r->notes->clear;
 
         # now the last copy is gone and the cleanup hooks will be called
         $cp->destroy;
 
         @notes = $r->notes->get('cleanup');
-        ok t_cmp(1, scalar(@notes), "should be 1 note");
-        ok t_cmp('several references', $notes[0]);
+        ok t_cmp(scalar(@notes), 1, "should be 1 note");
+        ok t_cmp($notes[0], 'several references');
 
         $r->notes->clear;
     }
@@ -337,7 +337,7 @@ sub handler {
         }
 
         my @notes = $r->notes->get('cleanup');
-        ok t_cmp('function name', $notes[0], "function name callback");
+        ok t_cmp($notes[0], 'function name', "function name callback");
 
         $r->notes->clear;
     }
@@ -351,7 +351,7 @@ sub handler {
         }
 
         my @notes = $r->notes->get('cleanup');
-        ok t_cmp('anon sub', $notes[0], "anon callback");
+        ok t_cmp($notes[0], 'anon sub', "anon callback");
 
         $r->notes->clear;
     }
@@ -366,8 +366,8 @@ sub handler {
         }
 
         my @notes = $r->notes->get('cleanup');
-        ok t_cmp('second', $notes[0], "two cleanup functions");
-        ok t_cmp('first',  $notes[1], "two cleanup functions");
+        ok t_cmp($notes[0], 'second', "two cleanup functions");
+        ok t_cmp($notes[1], 'first',  "two cleanup functions");
 
         $r->notes->clear;
     }
@@ -494,9 +494,9 @@ sub both_pools_create_ok {
 
     my $sp = $pp->new;
 
-    ok t_cmp(1, $sp->isa('APR::Pool'), "isa('APR::Pool')");
+    ok t_cmp($sp->isa('APR::Pool'), 1, "isa('APR::Pool')");
 
-    ok t_cmp(2, ancestry_count($sp),
+    ok t_cmp(ancestry_count($sp), 2,
              "a subpool has 2 ancestors: the parent and global pools");
 
     $pp->cleanup_register(\&add_cleanup, [$r, 'parent']);
@@ -511,9 +511,9 @@ sub both_pools_destroy_ok {
     my $r = shift;
     my @notes = $r->notes->get('cleanup');
 
-    ok t_cmp(2, scalar(@notes), "should be 2 notes");
-    ok t_cmp('child', $notes[0]);
-    ok t_cmp('parent', $notes[1]);
+    ok t_cmp(scalar(@notes), 2, "should be 2 notes");
+    ok t_cmp($notes[0], 'child');
+    ok t_cmp($notes[1], 'parent');
 }
 
 1;

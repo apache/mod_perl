@@ -58,10 +58,10 @@ sub handler {
         # concat
         $bb1->concat($bb2);
         # bb1: 11, 12, 21, 22
-        ok t_cmp(8, $bb1->length, "total data length in bb");
+        ok t_cmp($bb1->length, 8, "total data length in bb");
         my $len = $bb1->flatten(my $data);
-        ok t_cmp(8, $len, "bb flatten/len");
-        ok t_cmp("11122122", $data, "bb flatten/data");
+        ok t_cmp($len, 8, "bb flatten/len");
+        ok t_cmp($data, "11122122", "bb flatten/data");
         t_debug('$bb2 is empty');
         ok $bb2->is_empty;
 
@@ -72,11 +72,11 @@ sub handler {
 
         # bb1: 11, bb3: 12, 21, 22
         $len = $bb1->flatten($data);
-        ok t_cmp(2, $len, "bb1 flatten/len");
-        ok t_cmp("11", $data, "bb1 flatten/data");
+        ok t_cmp($len, 2, "bb1 flatten/len");
+        ok t_cmp($data, "11", "bb1 flatten/data");
         $len = $bb3->flatten($data);
-        ok t_cmp(6, $len, "bb3 flatten/len");
-        ok t_cmp("122122", $data, "bb3 flatten/data");
+        ok t_cmp($len, 6, "bb3 flatten/len");
+        ok t_cmp($data, "122122", "bb3 flatten/data");
     }
 
     Apache::OK;
