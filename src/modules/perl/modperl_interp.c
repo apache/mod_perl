@@ -95,7 +95,14 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     handles = modperl_xs_dl_handles_get(aTHX_ p);
 
     perl_destruct(interp->perl);
+
+    /* XXX: big bug in 5.6.1 fixed in 5.7.2+
+     * XXX: see CLONEf_CLONE_HOST perl_clone() flag
+     * XXX: try to find a workaround for 5.6.1
+     */
+#ifndef WIN32
     perl_free(interp->perl);
+#endif
 
     if (handles) {
         modperl_xs_dl_handles_close(p, handles);
