@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+APR::OS::thread_current renamed APR::OS::current_thread_id and
+now returns the actual thread_id instead of an object that
+needed to be dereferenced to get at the thread_id [Gozer]
+
 change a bunch of the APR:: constants to have a better prefix
 (APR::FILETYPE_* and APR::FILEPROT_). libapr will be changed soon too
 [Stas]

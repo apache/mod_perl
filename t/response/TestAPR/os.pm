@@ -14,16 +14,14 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 2;
+    plan $r, tests => 1;
 
     if (Apache::MPM->is_threaded) {
-        my $id = APR::OS::thread_current();
-        ok t_cmp("$id", "$id", "current thread");
-        ok t_cmp($$id, $$id, "current thread");
+        my $tid = APR::OS::current_thread_id();
+        ok t_cmp($tid, $tid, "current thread id: $tid / pid: $$");
     }
     else {
         ok t_cmp($$, $$, "current process id");
-        ok 1;
     }
 
     Apache::OK;

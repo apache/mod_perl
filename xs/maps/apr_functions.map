@@ -613,6 +613,7 @@ MODULE=APR::URI
  apr_xlate_open
 
 MODULE=APR::OS
+ mpxs_APR__OS_current_thread_id
 -apr_os_dir_get
 -apr_os_exp_time_get
 -apr_os_file_get
@@ -630,7 +631,7 @@ MODULE=APR::OS
 -apr_os_threadkey_put
 -apr_os_dso_handle_get
 -apr_os_dso_handle_put
- apr_os_thread_current | mpxs_
+~apr_os_thread_current
 -apr_os_thread_equal
 -apr_os_global_mutex_get
 -apr_os_proc_mutex_get
