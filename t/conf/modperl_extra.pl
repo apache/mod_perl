@@ -1,5 +1,6 @@
 use Apache::RequestRec ();
 use Apache::RequestIO ();
+use Apache::RequestUtil ();
 
 use Apache::Server ();
 use Apache::Connection ();

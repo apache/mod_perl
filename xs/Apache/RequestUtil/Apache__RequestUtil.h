@@ -80,7 +80,27 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     r->err_headers_out = apr_table_make(p, 1);
     r->notes = apr_table_make(p, 1);
 
+    ap_run_create_request(r);
+
     return r;
+}
+
+static MP_INLINE
+request_rec *mpxs_Apache_request(SV *classname, SV *svr)
+{
+    request_rec *cur;
+    apr_status_t status = modperl_tls_get_request_rec(&cur);
+
+    if (status != APR_SUCCESS) {
+        /* XXX: croak */
+    }
+
+    if (svr) {
+        dTHX; /*XXX*/
+        modperl_global_request_obj_set(aTHX_ svr);
+    }
+
+    return cur;
 }
 
 static MP_INLINE
