@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+disable r->proxyreq checking unless PerlTransHandler is enabled and
+configured
+
 fix 'make tar_Apache' [Jesse Erlbaum <jesse@VM.COM>]
 
 fix for Perl{Module,Require} in .htaccess,
