@@ -413,7 +413,22 @@ static void mod_perl_tie_scriptname(void)
 
 static void mp_dso_unload(void *data) 
 { 
-    perl_is_running = 0; 
+    module *modp;
+
+    if(!PERL_DSO_UNLOAD)
+	return;
+
+    if(strEQ(top_module->name, "mod_perl.c"))
+	return;
+
+    for(modp = top_module; modp; modp = modp->next) {
+	if(modp->dynamic_load_handle) {
+	    MP_TRACE_g(fprintf(stderr, 
+			       "mod_perl: cancel dlclose for %s\n", 
+			       modp->name));
+	    modp->dynamic_load_handle = NULL;
+	}
+    }
 } 
 
 void perl_startup (server_rec *s, pool *p)

@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+USE_DSO=1 may be fixed on some platforms w/ current 1.3.2-dev
+for those who are not, e.g. linux, can try a workaround by giving
+PERL_DSO_UNLOAD to Makefile.PL or by setting the PERL_DSO_UNLOAD
+environment variable
+
 fix bug in Apache::Registry if $r->uri eq "/", thanks to Mike Wertheim
 for the spot
 
