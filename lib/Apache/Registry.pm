@@ -62,7 +62,7 @@ sub handler {
 	$r->log_error(sprintf "Apache::Registry::handler examining %s",
 		      $uri) if $Debug && $Debug & 4;
 	my $path_info = $r->path_info;
-	my $script_name = $path_info && $uri =~ /$path_info$/ ?
+	my $script_name = $path_info && $uri =~ /\Q$path_info\E$/ ?
 	    substr($uri, 0, length($uri)-length($path_info)) :
 	    $uri;
 
