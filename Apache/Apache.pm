@@ -826,8 +826,9 @@ indicates an error).
 
 =item $r-E<gt>get_basic_auth_pw
 
-If the current request is protected by Basic authentication, 
-this method will return 0, otherwise -1.  
+If the current request is protected by Basic authentication, this
+method will return OK.  Otherwise, it will return a value that
+ought to be propagated back to the client (typically AUTH_REQUIRED).
 The second return value will be the decoded password sent by the client.
 
    ($ret, $sent_pw) = $r->get_basic_auth_pw;
