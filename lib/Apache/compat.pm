@@ -92,6 +92,8 @@ sub import {
 #no need to support in 2.0
 sub export {}
 
+sub SERVER_VERSION { Apache::get_server_version() }
+
 package Apache::RequestRec;
 
 #no longer exist in 2.0
