@@ -54,13 +54,13 @@
 /* This ensures that a given directive is either in Server context
  * or in a .htaccess file, usefull for things like PerlRequire
  */
-#define MP_CHECK_SERVER_OR_HTACCESS_CONTEXT \
-    if (parms->path && (parms->override & ACCESS_CONF)) { \
-        ap_directive_t *d = parms->directive; \
-        return apr_psprintf(parms->pool, \
+#define MP_CHECK_SERVER_OR_HTACCESS_CONTEXT                            \
+    if (parms->path && (parms->override & ACCESS_CONF)) {              \
+        ap_directive_t *d = parms->directive;                          \
+        return apr_psprintf(parms->pool,                               \
                             "%s directive not allowed in a %s> block", \
-                            d->directive, \
-                            d->parent->directive); \
+                            d->directive,                              \
+                            d->parent->directive);                     \
     }
 
 static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
