@@ -53,13 +53,6 @@ sub override_eu_mm_mv_all_methods {
     };
 }
 
-#to override MakeMaker MOD_INSTALL macro
-sub mod_install {
-    # adding -MApache2 here so 3rd party modules could use this macro,
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB)  -MApache2 -MModPerl::MM \\}."\n" .
-    q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
-}
-
 sub add_dep {
     my($string, $targ, $add) = @_;
     $$string =~ s/($targ\s+::)/$1 $add/;
@@ -102,7 +95,7 @@ sub my_import {
 
 my @default_opts = qw(CCFLAGS LIBS INC OPTIMIZE LDDLFLAGS TYPEMAPS);
 my @default_dlib_opts = qw(OTHERLDFLAGS);
-my @default_macro_opts = qw(MOD_INSTALL);
+my @default_macro_opts = ();
 my $b = build_config();
 my %opts = (
     CCFLAGS      => sub { $b->{MODPERL_CCOPTS}                        },
@@ -112,7 +105,6 @@ my %opts = (
     LDDLFLAGS    => sub { $b->perl_config('lddlflags');               },
     TYPEMAPS     => sub { $b->typemaps;                               },
     OTHERLDFLAGS => sub { $b->otherldflags;                           },
-    MOD_INSTALL  => \&ModPerl::MM::mod_install,
 );
 
 sub get_def_opt {
