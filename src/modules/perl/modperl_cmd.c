@@ -251,23 +251,15 @@ MP_CMD_SRV_DECLARE(post_config_requires)
 {
     apr_pool_t *p = parms->temp_pool;
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
-    apr_finfo_t finfo;
     MP_dSCFG(parms->server);
 
-    if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
-        if (finfo.filetype != APR_NOFILE) {
-            modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
-            MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
-            require->file = arg;
-            require->dcfg = dcfg;
-            
-            *(modperl_require_file_t **)
-                apr_array_push(scfg->PerlPostConfigRequire) = require;
-        }
-    }
-    else {
-        return apr_pstrcat(p, "No such file : ", arg, NULL);   
-    }   
+    modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
+    MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
+    require->file = arg;
+    require->dcfg = dcfg;
+
+    *(modperl_require_file_t **)
+        apr_array_push(scfg->PerlPostConfigRequire) = require;
 
     return NULL;
 }

@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_21-dev
 
+PerlPostConfigRequire was trying to detect missing files early on,
+but without searching thru @INC, causing false negatives. Better off
+skipping that check and leave it to modperl_require_file() to report
+problems with finding the file.  [Patrick LeBoutillier
+<patrick.leboutillier@gmail.com>, Gozer]
+
 add a perl bug workaround: with USE_ITHREADS perl leaks pthread_key_t
 on every reload of libperl.{a,so} (it's allocated on the very first
 perl_alloc() and never freed). This becomes a problem on apache
