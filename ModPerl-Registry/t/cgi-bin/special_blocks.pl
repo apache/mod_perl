@@ -27,7 +27,7 @@ elsif ($test eq 'begin') {
 }
 
 END {
-    if ($test eq 'end') {
+    if (defined $test && $test eq 'end') {
         print "end ok";
     }
 }
