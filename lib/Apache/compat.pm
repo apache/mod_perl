@@ -200,6 +200,10 @@ sub post_connection {
     shift->connection->pool->cleanup_register(@_);
 }
 
+sub get_remote_host {
+    shift->connection->remote_host(@_);
+}
+
 sub parse_args {
     my($r, $string) = @_;
     return () unless defined $string and $string;

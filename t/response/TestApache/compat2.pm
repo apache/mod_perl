@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 50;
+    plan $r, tests => 51;
 
     $r->send_http_header('text/plain');
 
@@ -192,6 +192,9 @@ sub handler {
         ok t_cmp($time, $r->mtime, "\$r->set_last_modified(\$time)");
 
     }
+
+    # $r->get_remote_host
+    ok $r->get_remote_host() || 1;
 
     # Apache::Util::size_string
     {
