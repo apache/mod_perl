@@ -5,6 +5,7 @@
 
 MODULE=ModPerl::Util
  mpxs_ModPerl__Util_untaint | | ...
+ SV *:DEFINE_current_perl_id
  DEFINE_exit | | int:status=0
  char *:DEFINE_current_callback 
  DEFINE_unload_package | | const char *:package

@@ -13,6 +13,14 @@
  * limitations under the License.
  */
 
+#ifdef USE_ITHREADS
+#define mpxs_ModPerl__Util_current_perl_id() \
+    newSVpvf("0x%lx", (unsigned long)aTHX)
+#else
+#define mpxs_ModPerl__Util_current_perl_id() \
+    newSVpvf("0x%lx", 0)
+#endif
+
 static MP_INLINE void mpxs_ModPerl__Util_untaint(pTHX_ I32 items,
                                                  SV **MARK, SV **SP)
 {
