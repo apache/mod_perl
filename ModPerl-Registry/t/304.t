@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 4;
+plan tests => 10;
 
 my $url = "/registry/304.pl";
 
@@ -29,23 +29,34 @@ my $url = "/registry/304.pl";
     #t_debug $res->as_string;
 }
 
-
 {
-    # modified
-    my $if_modified_since = 'Sun, 29 Oct 2000 15:43:28 GMT';
-    my $res = GET($url, 'If-Modified-Since' => $if_modified_since);
-
-    ok t_cmp(
-        200,
-        $res->code,
-        "test !HTTP_NOT_MODIFIED (200 status)",
+    # full response cases:
+    # 1) the resource has been modified since the If-Modified-Since date
+    # 2) bogus If-Modified-Since date => is considered as a 
+    #    non-If-Modified-Since require
+    # 
+    my %dates = (
+        'Sun, 29 Oct 2000 15:43:28 GMT' => "the resource was modified since #1",
+        'Sun, 28 Oct 2000 15:43:29 GMT' => "the resource was modified since #2",
+        'Thu, 32 Jun 1999 24:59:59 MIT' => "bogus If-Modified-Since #1",
+        'Thu Juk 99 00:00:00 9999 FUK'  => "bogus If-Modified-Since #2",
     );
+    my $received = '<html><head></head><body>Test</body></html>';
+    while ( my($if_modified_since, $debug) = each %dates) {
+        my $res = GET($url, 'If-Modified-Since' => $if_modified_since);
+        t_debug "If-Modified-Since $if_modified_since";
+        ok t_cmp(
+            200,
+            $res->code,
+            "$debug (code)"
+        );
 
-    ok t_cmp(
-        '<html><head></head><body>Test</body></html>',
-        $res->content,
-        "test !HTTP_NOT_MODIFIED (normal body)",
-    );
+        ok t_cmp(
+            $received,
+            $res->content,
+            "$debug (body)"
+        );
 
-    #t_debug $res->as_string;
+        #t_debug $res->as_string;
+    }
 }
