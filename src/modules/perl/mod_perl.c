@@ -753,7 +753,7 @@ int modperl_response_handler_cgi(request_rec *r)
     MP_dDCFG;
     GV *h_stdin, *h_stdout;
     apr_status_t retval, rc;
- MP_dRCFG;
+    MP_dRCFG;
 #ifdef USE_ITHREADS
     pTHX;
     modperl_interp_t *interp;
