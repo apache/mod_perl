@@ -6,7 +6,7 @@ use Apache::TestRequest;
 
 use File::Spec::Functions qw(catfile);
 
-plan tests => 3;
+plan tests => 3, need 'HTML::HeadParser';
 
 my $config = Apache::Test::config();
 

@@ -20,7 +20,7 @@ binmode $fh;
 { local $/; $contents = <$fh>; }
 close $fh;
 
-plan tests => 7;
+plan tests => 7, need 'HTML::HeadParser';
 
 {
     my $header = "This is a header\n";

@@ -22,7 +22,7 @@ use Apache::TestRequest;
 
 use TestCommon::SameInterp;
 
-plan tests => 3;
+plan tests => 3, need 'HTML::HeadParser';
 
 my $module   = 'TestModperl::cookie';
 my $location = '/' . Apache::TestRequest::module2path($module);
