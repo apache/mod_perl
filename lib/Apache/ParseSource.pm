@@ -125,35 +125,84 @@ sub find_includes {
 
     require File::Find;
 
-    my(@dirs) = $self->include_dirs;
+    my @includes = ();
+    # don't pick preinstalled mod_perl headers if any, but pick the rest
+    {
+        my @dirs = $self->include_dirs;
+        die "could not find include directory" unless -d $dirs[0];
 
-    unless (-d $dirs[0]) {
-        die "could not find include directory";
+        my $unwanted = join '|', qw(ap_listen internal version
+                                    apr_optional mod_include mod_cgi
+                                    mod_proxy mod_ssl ssl_ apr_anylock
+                                    apr_rmm ap_config mod_log_config
+                                    mod_perl modperl_);
+        my $unwanted = qr|^$unwanted|;
+        my $wanted = '';
+
+        push @includes, find_includes_wanted($wanted, $unwanted, @dirs);
     }
 
-    my @includes;
-    my $unwanted = join '|', qw(ap_listen internal version
-                                apr_optional mod_include mod_cgi mod_proxy
-                                mod_ssl ssl_ apr_anylock apr_rmm
-                                ap_config mod_log_config);
+    # now add the live mod_perl headers (to make sure that we always
+    # work against the latest source)
+    {
+        my @dirs = map { catdir $self->config->{cwd}, $_ }
+            catdir(qw(src modules perl)), 'xs';
 
+        my $unwanted = '';
+        my $wanted = join '|', qw(mod_perl modperl_);
+        $wanted = qr|^$wanted|;
+
+        push @includes, find_includes_wanted($wanted, $unwanted, @dirs);
+    }
+
+    # now reorg the header files list, so the fragile scan won't choke
+    my @apr = ();
+    my @mp = ();
+    my @rest = ();
+    for (@includes) {
+        if (/mod_perl.h$/) {
+            # mod_perl.h needs to be included before other mod_perl
+            # headers
+            unshift @mp, $_;
+        }
+        elsif (/modperl_\w+.h$/) {
+            push @mp, $_;
+        }
+        elsif (/apr_\w+\.h$/ ) {
+            # apr headers need to be included first
+            push @apr, $_;
+        }
+        else {
+            push @rest, $_;
+        }
+    }
+    @includes = (@apr, @rest, @mp);
+
+    return $self->{includes} = \@includes;
+}
+
+sub find_includes_wanted {
+    my($wanted, $unwanted, @dirs) = @_;
+    my @includes = ();
     for my $dir (@dirs) {
         File::Find::finddepth({
                                wanted => sub {
                                    return unless /\.h$/;
-                                   return if /^($unwanted)/o;
+
+                                   if ($wanted) {
+                                       return unless /$wanted/;
+                                   }
+                                   else {
+                                       return if /$unwanted/;
+                                   }
+
                                    my $dir = $File::Find::dir;
                                    push @includes, "$dir/$_";
                                },
                                follow => 1,
                               }, $dir);
     }
-
-    #include apr_*.h before the others
-    my @wanted = grep { /apr_\w+\.h$/ } @includes;
-    push @wanted, grep { !/apr_\w+\.h$/ } @includes;
-
-    return $self->{includes} = \@wanted;
+    return @includes;
 }
 
 sub generate_cscan_file {
@@ -166,7 +215,6 @@ sub generate_cscan_file {
 
     for my $path (@$includes) {
         my $filename = basename $path;
-        next if $filename =~ /^modperl_/; # no modperl_ headers
         print $fh qq(\#include "$path"\n);
     }
 
