@@ -42,15 +42,15 @@ MODULE=APR::Date
  apr_array_push
 
 MODULE=APR::Socket
- apr_bind
-!apr_accept
- apr_listen
- apr_connect
- apr_recv | mpxs_ | sock, SV *:buf, SV *:len
- apr_recvfrom
- apr_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
- apr_sendto
-!apr_shutdown
+ apr_socket_bind
+!apr_socket_accept
+ apr_socket_listen
+ apr_socket_connect
+ apr_socket_recv | mpxs_ | sock, SV *:buf, SV *:len
+ apr_socket_recvfrom
+ apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
+ apr_socket_sendto
+!apr_socket_shutdown
 -apr_socket_inherit_set
 -apr_socket_inherit_unset
 
@@ -64,8 +64,8 @@ MODULE=APR::Socket
  apr_socket_opt_set
  apr_socket_timeout_get | mpxs_ | ...
  apr_socket_timeout_set
--apr_sendfile
--apr_sendv
+-apr_socket_sendfile
+-apr_socket_sendv
 !apr_socket_from_file
 
 MODULE=APR::SockAddr
@@ -176,10 +176,10 @@ MODULE=APR::Pool
 -apr_pcalloc
 -apr_pmemdup
 !apr_pool_child_cleanup_set
-!apr_pool_get_abort
- apr_pool_get_parent
+!apr_pool_abort_get
+ apr_pool_parent_get
  apr_pool_is_ancestor
--apr_pool_set_abort
+-apr_pool_abort_set
 >apr_pool_initialize
 >apr_pool_terminate
  apr_pool_tag
@@ -189,11 +189,10 @@ MODULE=APR::Pool
  apr_allocator_create
  apr_allocator_destroy
  apr_allocator_free
- apr_allocator_get_mutex
- apr_allocator_get_mutex
- apr_allocator_get_owner
- apr_allocator_set_mutex
- apr_allocator_set_owner
+ apr_allocator_mutex_get
+ apr_allocator_owner_get
+ apr_allocator_mutex_set
+ apr_allocator_owner_set
 
 -MODULE=APR::Atomic
  apr_atomic_add

@@ -5460,7 +5460,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_accept',
+    'name' => 'apr_socket_accept',
     'args' => [
       {
         'type' => 'apr_socket_t **',
@@ -5525,26 +5525,6 @@ $Apache::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_thread_mutex_t *',
-    'name' => 'apr_allocator_get_mutex',
-    'args' => [
-      {
-        'type' => 'apr_allocator_t *',
-        'name' => 'allocator'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_pool_t *',
-    'name' => 'apr_allocator_get_owner',
-    'args' => [
-      {
-        'type' => 'apr_allocator_t *',
-        'name' => 'allocator'
-      }
-    ]
-  },
-  {
     'return_type' => 'void',
     'name' => 'apr_allocator_max_free_set',
     'args' => [
@@ -5595,48 +5575,6 @@ $Apache::FunctionTable = [
   {
     'return_type' => 'void',
     'name' => 'apr_allocator_owner_set',
-    'args' => [
-      {
-        'type' => 'apr_allocator_t *',
-        'name' => 'allocator'
-      },
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'pool'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'apr_allocator_set_max_free',
-    'args' => [
-      {
-        'type' => 'apr_allocator_t *',
-        'name' => 'allocator'
-      },
-      {
-        'type' => 'apr_size_t',
-        'name' => 'size'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'apr_allocator_set_mutex',
-    'args' => [
-      {
-        'type' => 'apr_allocator_t *',
-        'name' => 'allocator'
-      },
-      {
-        'type' => 'apr_thread_mutex_t *',
-        'name' => 'mutex'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'apr_allocator_set_owner',
     'args' => [
       {
         'type' => 'apr_allocator_t *',
@@ -5944,7 +5882,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_bind',
+    'name' => 'apr_socket_bind',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -6866,7 +6804,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_connect',
+    'name' => 'apr_socket_connect',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -8468,24 +8406,6 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_getsocketopt',
-    'args' => [
-      {
-        'type' => 'apr_socket_t *',
-        'name' => 'sock'
-      },
-      {
-        'type' => 'apr_int32_t',
-        'name' => 'opt'
-      },
-      {
-        'type' => 'apr_int32_t *',
-        'name' => 'on'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
     'name' => 'apr_global_mutex_child_init',
     'args' => [
       {
@@ -8914,7 +8834,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_listen',
+    'name' => 'apr_socket_listen',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -10193,26 +10113,6 @@ $Apache::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_abortfunc_t',
-    'name' => 'apr_pool_get_abort',
-    'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'pool'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_pool_t *',
-    'name' => 'apr_pool_get_parent',
-    'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'pool'
-      }
-    ]
-  },
-  {
     'return_type' => 'apr_status_t',
     'name' => 'apr_pool_initialize',
     'args' => []
@@ -10253,20 +10153,6 @@ $Apache::FunctionTable = [
     'return_type' => 'apr_pool_t *',
     'name' => 'apr_pool_parent_get',
     'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'pool'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'apr_pool_set_abort',
-    'args' => [
-      {
-        'type' => 'apr_abortfunc_t',
-        'name' => 'abortfunc'
-      },
       {
         'type' => 'apr_pool_t *',
         'name' => 'pool'
@@ -11010,7 +10896,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_recv',
+    'name' => 'apr_socket_recv',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11028,7 +10914,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_recvfrom',
+    'name' => 'apr_socket_recvfrom',
     'args' => [
       {
         'type' => 'apr_sockaddr_t *',
@@ -11300,7 +11186,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_send',
+    'name' => 'apr_socket_send',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11318,7 +11204,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_sendfile',
+    'name' => 'apr_socket_sendfile',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11348,7 +11234,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_sendto',
+    'name' => 'apr_socket_sendto',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11374,7 +11260,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_sendv',
+    'name' => 'apr_socket_sendv',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11391,24 +11277,6 @@ $Apache::FunctionTable = [
       {
         'type' => 'apr_size_t *',
         'name' => 'len'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
-    'name' => 'apr_setsocketopt',
-    'args' => [
-      {
-        'type' => 'apr_socket_t *',
-        'name' => 'sock'
-      },
-      {
-        'type' => 'apr_int32_t',
-        'name' => 'opt'
-      },
-      {
-        'type' => 'apr_int32_t',
-        'name' => 'on'
       }
     ]
   },
@@ -11605,7 +11473,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_shutdown',
+    'name' => 'apr_socket_shutdown',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -11964,16 +11832,6 @@ $Apache::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'void',
-    'name' => 'apr_socket_set_inherit',
-    'args' => [
-      {
-        'type' => 'apr_socket_t *',
-        'name' => 'skt'
-      }
-    ]
-  },
-  {
     'return_type' => 'apr_status_t',
     'name' => 'apr_socket_timeout_get',
     'args' => [
@@ -11998,16 +11856,6 @@ $Apache::FunctionTable = [
       {
         'type' => 'apr_interval_time_t',
         'name' => 't'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'apr_socket_unset_inherit',
-    'args' => [
-      {
-        'type' => 'apr_socket_t *',
-        'name' => 'skt'
       }
     ]
   },
