@@ -497,17 +497,17 @@ the MP_TRACE option. C<level> is either:
 
 which sets maximum logging and debugging levels;
 
-a combination of one or more option letters from the following list:
+a combination of one or more option letters (or option numerical
+equivalents) from the following list:
 
-  d  directive processing
-  f  filters
-  g  Perl runtime interaction
-  h  handlers
-  i  interpreter pool management
-  m  memory allocations
-  s  perl sections
-
-or a numeric value.
+  d (  1) directive processing
+  f (  2) filters
+  g (  4) Perl runtime interaction
+  h (  8) handlers
+  i ( 16) interpreter pool management
+  m ( 32) memory allocations
+  s ( 64) perl sections
+  t (128) benchmark-ish timings
 
 When C<level> is not specified, the tracing level will be set to the
 value of the MOD_PERL_TRACE environment variable.
