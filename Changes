@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Adjust the list of mod_perl header files installed into the Apache2
+include/ directory, made necessary from the renaming and refactoring
+arising from the decoupling of APR and APR::* from mod_perl.so.
+Also include modperl_apr_perlio.h under xs/APR/PerlIO/ in
+the list of such files installed [Stas, Randy Kobes]
+
 $r->read()/READ now throw exceptions [Stas]
 
 $r->rflush now returns nothing (was always returning APR::SUCCESS
