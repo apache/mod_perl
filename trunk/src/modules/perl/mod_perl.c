@@ -913,6 +913,13 @@ int perl_handler(request_rec *r)
     MP_TRACE_g(fprintf(stderr, "perl_handler LEAVE: SVs = %5d, OBJs = %5d\n", 
 		     (int)sv_count, (int)sv_objcount));
 
+    if (r->prev && (r->prev->status != HTTP_OK) &&
+        mod_perl_sent_header(r, 0))
+    {
+        /* avoid recursive error for ErrorDocuments */
+        status = OK;
+    }
+
     (void)release_mutex(mod_perl_mutex);
     return status;
 }
