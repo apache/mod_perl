@@ -106,6 +106,7 @@ remote_ip(conn, ...)
 #else
         conn->remote_ip = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
 #endif
+        conn->remote_addr.sin_addr.s_addr = inet_addr(conn->remote_ip);
     }
 
     OUTPUT:
