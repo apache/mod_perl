@@ -130,6 +130,9 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
                                   ap_conf_vector_t *conf,
                                   SV *lines);
 
+const char *modperl_config_insert_parms(pTHX_ cmd_parms *parms, 
+                                        SV *lines);
+
 const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines);
 
 const char *modperl_config_insert_request(pTHX_

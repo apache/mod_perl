@@ -26,3 +26,12 @@ SV *mpxs_Apache__CmdParms_info(pTHX_ cmd_parms *parms)
 
     return &PL_sv_undef;    
 }
+
+static MP_INLINE
+void mpxs_Apache__CmdParms_add_config(pTHX_ cmd_parms *parms, SV *lines)
+{
+    const char *errmsg = modperl_config_insert_parms(aTHX_ parms, lines);
+    if (errmsg) {
+        Perl_croak(aTHX_ "$parms->add_config() has failed: %s", errmsg);
+    }
+}

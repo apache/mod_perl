@@ -146,6 +146,7 @@ MODULE=Apache::CmdParms
  ap_check_cmd_context
  ap_method_is_limited
  mpxs_Apache__CmdParms_info
+ mpxs_Apache__CmdParms_add_config
 
 MODULE=Apache::MPM    PACKAGE=Apache::MPM   BOOT=1
  mpxs_Apache__MPM_query
