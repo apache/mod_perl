@@ -167,7 +167,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 
 #ifdef MP_TRACE
     {
-        const char *trace_buf = (char *)apr_pcalloc(st->pool,
+        char *trace_buf = (char *)apr_pcalloc(st->pool,
                                                    sizeof(char*)*count);
         memcpy((void*)trace_buf, vbuf, count);
         trace_buf[count] = '\0';
