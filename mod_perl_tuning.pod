@@ -86,7 +86,7 @@ Additions to F<httpd.conf>:
    allow from 204.117.82.
  </Location>
 
-Now, you'll notice that I use a C<Perlrequire> directive to load in the
+Now, you'll notice that I use a C<PerlRequire> directive to load in the
 file F<startup.perl>.  In that file, I include all of the C<use>
 statements that occur in any of my mod_perl programs (either from the
 programs directory, or the *.perl files).  Here is an example:
@@ -105,13 +105,14 @@ programs directory, or the *.perl files).  Here is an example:
  # make sure we are in a sane environment.
  $ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not Perl!";
  
- use Apache::Registry;		# for things in the "/programs" URL
+ use Apache::Registry ();	# for things in the "/programs" URL
  
  # pull in things we will use in most requests so it is read and compiled
  # exactly once
- use CGI ();
+ use CGI (); CGI->compile(':all');
  use CGI::Carp ();
- use Mysql ();
+ use DBI ();
+ use DBD::mysql ();
 
  1;
 
@@ -119,7 +120,7 @@ What this does is pull in all of the code used by the programs (but
 does not C<import> any of the module methods) into the main HTTPD
 process, which then creates the child processes with the code already
 in place.  You can also put any new modules you like into the
-F</var/www/perllib> directory and simpley C<use> them in your
+F</var/www/perllib> directory and simply C<use> them in your
 programs.  There is no need to put C<use lib "/var/www/perllib";> in
 all of your programs.  You do, however, still need to C<use> the
 modules in your programs.  Perl is smart enough to know it doesn't
@@ -323,11 +324,15 @@ primed.  This reduces the number of HTTPD processes and thus reduces
 the amount of memory used.
 
 To set this up, just install the current version of Squid (at this
-writing, this is version 1.1.20) and use the RunAccel script to start
+writing, this is version 1.1.22) and use the RunAccel script to start
 it.  You will need to reconfigure your HTTPD to use an alternate port,
-such as 8042, rather than its default port 80.  To do this, just change
-the F<httpd.conf> line C<Port> to match the port specified in
-the F<squid.conf> file.  Your URLs do not need to change.
+such as 8042, rather than its default port 80.  To do this, you can
+either change the F<httpd.conf> line C<Port> or add a C<Listen>
+directive to match the port specified in the F<squid.conf> file.
+Your URLs do not need to change.  The benefit of using the C<Listen>
+directive is that redirected URLs will still use the default port 80
+rather than your alternate port, which might reveal your real server
+location to the outside world and bypass the accelerator.
 
 In the F<squid.conf> file, you will probably want to add C<programs>
 and C<perl> to the C<cache_stoplist> parameter so that these are
@@ -338,6 +343,38 @@ This is very similar to the two port, ProxyPass version above, but the
 Squid cache may be more flexible to fine tune for dynamic documents
 that do not change on every view.  The Squid proxy server also seems
 to be more stable and robust than the Apache 1.2.4 proxy module.
+
+One drawback to using this accelerator is that the logfiles will
+always report access from IP address 127.0.0.1, which is the local
+host loopback address.  Also, any access permissions or other user
+tracking that requires the remote IP address will always see the local
+address.  The following code uses a feature of recent mod_perl
+versions (tested with mod_perl 1.16 and Apache 1.3.3) to trick Apache
+into logging the real client address and giving that information to
+mod_perl programs for their purposes.
+
+First, in your F<startup.perl> file add the following code:
+
+ use Apache::Constants qw(OK);
+ 
+ sub My::SquidRemoteAddr ($) {
+   my $r = shift;
+ 
+   my @ip = split(/,\s*/, $r->header_in('X-Forwarded-For'));
+   if (my $ip = pop(@ip)) {
+     $r->connection->remote_ip($ip);
+   }
+ 
+   return OK;
+ }
+
+Next, add this to your F<httpd.conf> file:
+
+ PerlPostReadRequestHandler My::SquidRemoteAddr
+
+This will cause every request to have its C<remote_ip> address
+overridden by the value set in the C<X-Forwarded-For> header added by
+Squid.
 
 =head1 SUMMARY
 
