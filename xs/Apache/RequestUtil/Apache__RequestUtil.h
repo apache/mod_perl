@@ -62,6 +62,8 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     request_rec *r;
     server_rec *s = c->base_server;
 
+    /* see: httpd-2.0/server/protocol.c:ap_read_request */
+    
     if (!base_pool) {
         base_pool = c->pool;
     }
