@@ -56,7 +56,6 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
 
 MODULE=Apache::Response   PACKAGE=Apache::RequestRec
 DEFINE_send_cgi_header | | request_rec *:r, SV *:buffer
- mpxs_Apache__RequestRec_send_http_header | | r, type=NULL
  mpxs_Apache__RequestRec_set_last_modified | | r, mtime=0
 
 

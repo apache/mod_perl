@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+move $r->send_http_header implementation to Apache::compat.  This
+allows the 1.0 code to run unmodified if $r->send_http_header is
+called before the response change. we already handle the check whether
+content_type was set, when deciding whether the headers are to be
+parsed inside modperl_wbucket_pass(). [Stas]
+
 fixes to Apache::compat. make $r->connection->auth_type interface
 with r->ap_auth_type. make both $r->connection->auth_type and
 $r->connection->user writable. [Geoffrey Young]

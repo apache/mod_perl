@@ -154,6 +154,11 @@ sub current_callback {
     return Apache::current_callback();
 }
 
+sub send_http_header {
+    my ($r, $type) = @_;
+    $r->content_type($type) if defined $type;
+}
+
 #to support $r->server_root_relative
 *server_root_relative = \&Apache::server_root_relative;
 

@@ -55,3 +55,6 @@ sub handler {
 
 1;
 
+__END__
+# so we can test whether send_httpd_header() works fine
+PerlOptions +ParseHeaders
