@@ -13,7 +13,7 @@ use constant DL_GLOBAL =>
 sub dl_load_flags { DL_GLOBAL }
 
 #only bootstrap for use outside of mod_perl
-unless (defined &Modperl::Const::compile) {
+unless (defined &ModPerl::Const::compile) {
     __PACKAGE__->bootstrap($VERSION);
 }
 
