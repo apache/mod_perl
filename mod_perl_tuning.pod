@@ -363,7 +363,7 @@ and to share the virtual memory pages by pre-loading the code.
 This document is written by Vivek Khera.  If you need to contact me,
 just send email to the mod_perl mailing list.
 
-This document is copyright E<copy> 1997-1998 by Vivek Khera.
+This document is copyright (c) 1997-1998 by Vivek Khera.
 
 If you have contributions for this document, please post them to the
 mailing list.  Perl POD format is best, but plain text will do, too.
