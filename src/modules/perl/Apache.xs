@@ -269,6 +269,32 @@ child_terminate(request_rec *r)
 }
 #endif
 
+#if MODULE_MAGIC_NUMBER < MMN_132
+void ap_custom_response(request_rec *r, int status, char *string)
+{
+    core_dir_config *conf = 
+	ap_get_module_config(r->per_dir_config, &core_module);
+    int idx;
+
+    if(conf->response_code_strings == NULL) {
+        conf->response_code_strings = 
+	    ap_pcalloc(r->pool,
+		    sizeof(*conf->response_code_strings) * 
+		    RESPONSE_CODES);
+    }
+
+    idx = ap_index_of_response(status);
+
+    conf->response_code_strings[idx] = 
+       ((ap_is_url(string) || (*string == '/')) && (*string != '"')) ? 
+       ap_pstrdup(r->pool, string) : ap_pstrcat(r->pool, "\"", string, NULL);
+}
+#endif
+
+#ifndef custom_response
+#define custom_response ap_custom_response
+#endif
+
 static void Apache_terminate_if_done(request_rec *r, int sts)
 {
 #ifndef WIN32
@@ -649,31 +675,6 @@ custom_response(r, status, string)
     int status
     char *string
     
-    PREINIT:
-    core_dir_config *conf;
-    int type, idx500;
-
-    CODE:
-#if defined(WIN32) && (MODULE_MAGIC_NUMBER < 19980324)
-    croak("Need 1.3b6+ for Apache->custom_response under win32!");
-#else
-    idx500 = index_of_response(HTTP_INTERNAL_SERVER_ERROR);
-    conf = get_module_config(r->per_dir_config, &core_module);
-
-    if(conf->response_code_strings == NULL) {
-        conf->response_code_strings = 
-	    pcalloc(r->pool,
-		    sizeof(*conf->response_code_strings) * 
-		    RESPONSE_CODES);
-    }
-
-    type = index_of_response(status);
-
-    conf->response_code_strings[type] = 
-       ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
-       pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
-#endif
-
 int
 satisfies(r)
     Apache     r
