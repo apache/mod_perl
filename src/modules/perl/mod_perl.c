@@ -466,9 +466,29 @@ static int modperl_hook_header_parser(request_rec *r)
     return OK;
 }
 
+static int modperl_destruct_level = 2; /* default is full tear down */
+
+int modperl_perl_destruct_level(void)
+{
+    return modperl_destruct_level;
+}
+
 static apr_status_t modperl_child_exit(void *data)
 {
-    apr_pool_clear(server_pool);
+    char *level = NULL;
+
+    if ((level = getenv("PERL_DESTRUCT_LEVEL"))) {
+        modperl_destruct_level = atoi(level);
+    }
+    else {
+        /* default to no teardown in the children */
+        modperl_destruct_level = 0;
+    }
+
+    if (modperl_destruct_level) {
+        apr_pool_clear(server_pool);
+    }
+
     server_pool = NULL;
 
     return APR_SUCCESS;

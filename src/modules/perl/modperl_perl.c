@@ -90,7 +90,7 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 
     PERL_SET_CONTEXT(perl);
 
-    PL_perl_destruct_level = 2;
+    PL_perl_destruct_level = modperl_perl_destruct_level();
 
 #ifdef USE_ENVIRON_ARRAY
     /* XXX: otherwise Perl may try to free() environ multiple times
