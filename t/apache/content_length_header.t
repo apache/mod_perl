@@ -5,14 +5,23 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 12 * 2 + 3, todo => [2,5];
+plan tests => 12 * 2 + 3;
 
 my $location = "/TestApache__content_length_header";
 
 # 1. because Apache proclaims itself governor of the C-L header via
 # the C-L filter (ap_content_length_filter at
 # httpd-2.0/server/protocol.c), test whether GET and HEAD behave the
-# same wrt C-L under varying circumstances.  for more discussion on
+# same wrt C-L under varying circumstances.  for the most part GET
+# and HEAD should behave exactly the same.  however, when Apache
+# sees a HEAD request with a C-L header of zero it takes special
+# action and removes the C-L header.  this is done to protect against
+# handlers that called r->header_only (which was ok in 1.3 but is
+# not in 2.0).  So, GET and HEAD behave the same except when the
+# content handler (plus filters) end up sending no content.  see
+# the lengthy comments in ap_http_header_filter in http_protocol.c.
+#
+# for more discussion on
 # why it is important to get HEAD requests right, see these threads
 # from the mod_perl list
 #   http://marc.theaimsgroup.com/?l=apache-modperl&m=108647669726915&w=2
@@ -27,29 +36,33 @@ foreach my $method qw(GET HEAD) {
 
     {
         # if the response handler sends no data, and sets no C-L header,
-        # the client doesn't get C-L header
+        # the client doesn't get C-L header for HEAD requests due to 
+        # special processing.  GET requests get a C-L of zero.
         my $uri = $location;
         my $res = $method->($uri);
         ok t_cmp $res->code, 200, "$method $uri code";
-        ok t_cmp $res->header('Content-Length'), undef,
-            "$method $uri C-L header";
+        ok t_cmp ($res->header('Content-Length'),
+                  $method eq 'GET' ? 0 : undef,
+                  "$method $uri C-L header");
         ok t_cmp $res->content, "", "$method $uri content";
     }
 
     {
         # if the response handler sends no data, and sets C-L header,
-        # the client doesn't get C-L header
+        # the client doesn't get C-L header for HEAD requests due to 
+        # special processing.  GET requests get a C-L of zero.
         my $uri = "$location?set_content_length";
         my $res = $method->($uri);
         ok t_cmp $res->code, 200, "$method $uri code";
-        ok t_cmp $res->header('Content-Length'), undef,
-            "$method $uri C-L header";
+        ok t_cmp ($res->header('Content-Length'),
+                  $method eq 'GET' ? 0 : undef,
+                  "$method $uri C-L header");
         ok t_cmp $res->content, "", "$method $uri content";
     }
 
     {
         # if the response handler sends data, and sets no C-L header,
-        # the client doesn't get C-L header
+        # the client doesn't get C-L header.
         my $uri = "$location?send_body";
         my $res = $method->($uri);
         ok t_cmp $res->code, 200, "$method $uri code";
