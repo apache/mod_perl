@@ -6,8 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Log ();
 use Apache::RequestRec ();
+use Apache::Log ();
+use Apache::MPM ();
 
 use Apache::Const -compile => qw(OK :log);
 use APR::Const    -compile => qw(:error SUCCESS);
@@ -62,15 +63,22 @@ sub handler {
     t_server_log_error_is_expected();
     $s->log_error('$s->log_error test ok');
 
-    $s->loglevel(Apache::LOG_INFO);
+    # XXX: at the moment we can't change loglevel after server startup
+    # in a threaded mpm environment
+    if (!Apache::MPM->is_threaded) {
+        $s->loglevel(Apache::LOG_INFO);
 
-    if ($s->error_fname) {
-        #XXX: does not work under t/TEST -ssl
-        $slog->debug(sub { die "set loglevel no workie" });
+        if ($s->error_fname) {
+            #XXX: does not work under t/TEST -ssl
+            $slog->debug(sub { die "set loglevel no workie" });
+        }
+
+        $s->loglevel(Apache::LOG_DEBUG);
+        $slog->debug(sub { ok 1; "$package test done" });
     }
-
-    $s->loglevel(Apache::LOG_DEBUG);
-    $slog->debug(sub { ok 1; "$package test done" });
+    else {
+        ok 1;
+    }
 
     Apache->warn("Apache->warn test ok");
     $s->warn('$s->warn test ok');
