@@ -79,3 +79,18 @@ SV *modperl_perl_gensym(pTHX_ char *pack)
                     GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
     return rv;
 }
+
+/* XXX: sv_setref_uv does not exist in 5.6.x */
+MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
+                                        const char *classname, UV uv)
+{
+    sv_setuv(newSVrv(rv, classname), uv);
+    return rv;
+}
+
+MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
+{
+    modperl_uri_t *uri = (modperl_uri_t *)apr_pcalloc(p, sizeof(*uri));
+    uri->pool = p;
+    return uri;
+}

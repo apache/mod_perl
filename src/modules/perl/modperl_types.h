@@ -260,13 +260,6 @@ typedef struct {
     void *data;
 } modperl_cleanup_data_t;
 
-/* subclass apr_uri_t */
-typedef struct {
-    apr_uri_t uri;
-    apr_pool_t *pool;
-    char *path_info;
-} modperl_uri_t;
-
 typedef struct {
     module *modp;
     const char *cmd_data;
