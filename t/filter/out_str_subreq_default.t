@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
+use Apache::TestConfig ();
 
 plan tests => 1;
 
@@ -16,6 +17,8 @@ my $subrequest  = "default-handler subrequest\n";
 
 my $expected = join '', $content1, $subrequest, $content2, $filter;
 my $received = GET_BODY $location;
+# Win32 fix for line endings
+$received =~ s{\r}{}g if Apache::TestConfig::WIN32;
 
 ok t_cmp($expected, $received, 
     "testing filter-originated lookup_uri() call to core served URI");
