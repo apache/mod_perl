@@ -1544,5 +1544,9 @@ EOF
 	print $apaci_cfg "$_ = $yes_no\n";
     }
 
+    $yes_no = 'no';
+    $yes_no = 'yes' if ($Config{usethreads} eq "define");
+    print $apaci_cfg "PERL_THREADS = $yes_no\n";
+
     return $apaci_cfg;
 }
