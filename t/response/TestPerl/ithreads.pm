@@ -38,10 +38,10 @@ sub handler {
 
     {
         my $thr = threads->new(sub {
-                                   my $tid = threads->self->tid;
-                                   debug "2nd TID is $tid" if defined $tid;
-                                   return 2;
-                               });
+            my $tid = threads->self->tid;
+            debug "2nd TID is $tid" if defined $tid;
+            return 2;
+        });
         ok t_cmp($thr->join, 2, "thread callback returned value");
     }
 
@@ -49,18 +49,23 @@ sub handler {
         require threads::shared;
         my $counter_priv          = 1;
         my $counter_shar : shared = 1;
+
         my $thr = threads->new(sub {
-                                   my $tid = threads->self->tid;
-                                   debug "2nd TID is $tid" if defined $tid;
-                                   $counter_priv += $counter_priv for 1..10;
-                                   lock $counter_shar;
-                                   $counter_shar += $counter_shar for 1..10;
-                               });
+            my $tid = threads->self->tid;
+            debug "2nd TID is $tid" if defined $tid;
+            $counter_priv += $counter_priv for 1..10;
+            {
+                lock $counter_shar;
+                $counter_shar += $counter_shar for 1..10;
+            }
+        });
+
         $counter_priv += $counter_priv for 1..10;
         {
 	    lock $counter_shar;
 	    $counter_shar += $counter_shar for 1..10;
 	}
+
         $thr->join;
         ok t_cmp($counter_shar, 2**20, "shared counter");
         ok t_cmp($counter_priv, 2**10, "private counter");
