@@ -26,14 +26,28 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             /* XXX: bodytext == NULL here */
             return status;
         }
-        else if (!bodytext) {
+
+        if (!bodytext) {
             return APR_SUCCESS;
         }
-
-        if (bodytext) {
+        else {
             len -= (bodytext - buf);
             buf = bodytext;
+            /*
+             * since wb->outbuf is persistent between requests, if the
+             * current response is shorter than the size of wb->outbuf
+             * it may include data from the previous request at the
+             * end. When this function receives a pointer to
+             * wb->outbuf as 'buf', modperl_cgi_header_parse may
+             * return that irrelevant data as part of 'bodytext'. So
+             * to avoid this risk, we check whether there is any real
+             * data to send and if not return.
+             */
+            if (!len) {
+                return APR_SUCCESS;
+            }
         }
+        
     }
 
     bb = apr_brigade_create(wb->pool, ba);
