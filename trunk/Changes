@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+Removed and added a few modules from the Bundle file. <ask@netcetera.dk>
+
 Renamed the Apache::StatINC parameters to StatINC_<something>. Changed
 StatINC_Debug to take a number as parameter instead of "on" to support
 "debug levels" <ask@netcetera.dk>

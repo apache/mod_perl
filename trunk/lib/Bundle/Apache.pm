@@ -36,13 +36,15 @@ CGI - CGI.pm
 
 Tie::IxHash - For order in <Perl> sections
 
-Apache::ePerl - mod_perl adaptation of 'ePerl'
-
 Apache::DBI   - Wrapper around DBI->connect to transparently maintain persistent connections
+
+Apache::DB - Run the interactive Perl debugger under mod_perl
 
 Apache::Stage - Management of document staging directories
 
 Apache::Sandwich - Layered document maker
+
+Apache::Request - Effective methods for dealing with client request data
 
 =head1 DESCRIPTION
 
