@@ -34,6 +34,8 @@ static apr_status_t mpxs_cleanup_run(void *data)
 
     count = call_sv(cdata->cv, G_SCALAR|G_EVAL);
 
+    SPAGAIN;
+
     if (count == 1) {
         status = POPi;
     }
