@@ -172,7 +172,7 @@ sub mpm_name {
         my $config_vars_file = catfile $self->{dir},
             "build", "config_vars.mk";
         if (open my $fh, $config_vars_file) {
-            while(<$fh>) {
+            while ((<$fh>) {
                 if(/MPM_NAME = (\w+)/) {
                     $mpm_name = $1;
                     last;

@@ -311,7 +311,7 @@ sub set_modperl_version {
     $VERSION =~ s/(\d\d)(\d\d)$/$1_$2/;
 
     open my $fh, 'Changes';
-    while(<$fh>) {
+    while (<$fh>) {
 	if(/^=item.*-dev/) {
 	    $VERSION .= '-dev';
 	    last;
