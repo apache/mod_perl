@@ -98,6 +98,7 @@ typedef struct {
     modperl_opts_t opts_add;
     modperl_opts_t opts_remove;
     modperl_opts_t opts_override;
+    modperl_opts_t opts_seen;
     int unset;
 } modperl_options_t;
 

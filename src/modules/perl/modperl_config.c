@@ -9,8 +9,6 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
     dcfg->interp_scope = MP_INTERP_SCOPE_UNDEF;
 #endif
 
-    MpDirSETUP_ENV_On(dcfg); /* %ENV setup on by default */
-
     return dcfg;
 }
 
