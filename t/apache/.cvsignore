@@ -6,3 +6,4 @@ post.t
 read.t
 scanhdrs.t
 write.t
+subprocess.t

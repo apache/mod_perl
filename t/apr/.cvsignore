@@ -5,3 +5,4 @@ netlib.t
 pool.t
 table.t
 uuid.t
+perlio.t
