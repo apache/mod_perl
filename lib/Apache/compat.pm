@@ -64,10 +64,6 @@ sub request {
     untie *STDOUT;
     tie *STDOUT, 'Apache::RequestRec', $r;
 
-    unless (defined &PRINT) {
-        *PRINT = \&puts;
-    }
-
     $Request;
 }
 

@@ -348,6 +348,7 @@ sub needs_prefix {
 sub make_prefix {
     my($name, $class) = @_;
     my $class_prefix = class_mpxs_prefix($class);
+    return $name if $name =~ /^$class_prefix/;
     $class_prefix . $name;
 }
 
