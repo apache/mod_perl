@@ -15,5 +15,5 @@
 % Configure mod_perl with ../apache_x.xx/src ? [y] y
 % Shall I build httpd in ../apache_x.xx/src for you? [y] y
      (... see make stuff here ...)
-% cp ../apache_x.xx/src/httpd <to wherever your httpd lives>
+% cp ../apache_x.xx/src/httpsd <to wherever your httpsd lives>
 
