@@ -20,7 +20,8 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
     }
 
     handler->name = name;
-    MP_TRACE_h(MP_FUNC, "new handler %s\n", handler->name);
+    MP_TRACE_h(MP_FUNC, "[%s] new handler %s\n",
+               modperl_pid_tid(p), handler->name);
 
     return handler;
 }
@@ -52,8 +53,10 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
         MpHandlerAUTOLOAD_On(handler);
 
         MP_TRACE_h(MP_FUNC,
-                   "handler %s was not compiled at startup, "
+                   "[%s %s] handler %s was not compiled at startup, "
                    "attempting to resolve using %s pool 0x%lx\n",
+                   modperl_pid_tid(p),
+                   modperl_server_desc(s, p),
                    handler->name,
                    duped ? "current" : "server conf",
                    (unsigned long)rp);
