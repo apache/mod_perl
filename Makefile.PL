@@ -238,7 +238,7 @@ elsif($USE_APACI) {
     print "Will configure via APACI";
     if($USE_DSO) {
         gen_script("apaci/load_modules.pl");
-        print " (dso enabled)";
+        print " (DSO enabled)";
     }
     $NO_HTTPD = 1 if $PREP_HTTPD;
     print "\n";
