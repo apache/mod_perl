@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+include mod_perl hook/feature config in Apache::MyConfig
+[Geoffrey Young <gyoung@laserlink.net>]
+
 rewrite of Apache::WRITE() in c/xs
 [Soheil Seyfaie <sseyfaie@cryptologic.com>]
 

@@ -1955,12 +1955,19 @@ EOS
 #
 # Configuration for mod_perl and Apache::...
 #
-package Apache::MyConfig ;
+package Apache::MyConfig;
 
 %Setup = (
    'Apache_Src' => \'$APACHE_SRC\',
    'SSL_BASE' => \'$SSL_BASE\',
    'APXS' => \'$WITH_APXS\',
+EOT
+
+  foreach my $key (sort @callback_hooks) {
+    print FH "   \'$key\' => \'$callback_hooks{$key}\',\n";
+  }
+
+  print FH <<EOT;
    $string
 );
 
