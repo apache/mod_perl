@@ -5,7 +5,7 @@ use Test;
 use Apache::TestUtil;
 use Apache::TestRequest ();
 
-my @test_strings = qw(hello world);
+my @test_strings = qw(hello wonderful world);
 
 plan tests => 1 + @test_strings;
 
