@@ -11,7 +11,7 @@ use Apache::RequestUtil ();
 use Apache::Connection ();
 
 use Apache::Const -compile => qw(OK REMOTE_HOST REMOTE_NAME
-    REMOTE_NOLOOKUP REMOTE_DOUBLE_REV);
+    REMOTE_NOLOOKUP REMOTE_DOUBLE_REV CONN_CLOSE);
 
 #this test module is only for testing fields in the conn_rec
 #listed in apache_structures.map
@@ -43,7 +43,9 @@ sub handler {
 
     ok $c->aborted || 1;
 
-    ok $c->keepalive || 1;
+    ok t_cmp(Apache::CONN_CLOSE,
+             $c->keepalive,
+             "the client has issued a non-keepalive request");
 
     ok $c->local_ip;
 
