@@ -53,6 +53,8 @@ sub handler {
         # $bb->insert_tail($b);
         # $c->output_filters->pass_brigade($bb);
         $c->output_filters->fflush($bb);
+
+        last if $rc == APR::EOF;
     }
 
     $bb->destroy;

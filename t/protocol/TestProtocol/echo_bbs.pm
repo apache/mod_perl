@@ -36,6 +36,7 @@ sub handler {
         }
 
         last if $bb_in->is_empty;
+        last if $rc == APR::EOF;
 
         while (!$bb_in->is_empty) {
             my $bucket = $bb_in->first;
