@@ -16,16 +16,16 @@ no warnings qw(redefine); # XXX, this should go away in production!
 our $VERSION = '1.99';
 
 use Apache::compat ();
-# Should not use Apache::compat, the following methods need to be implemented
+# META: Should not use Apache::compat, the following methods need to
+# be implemented:
 # $r->slurp_filename
-# $r->clear_rgy_endav
-# $r->stash_rgy_endav
 
 use Apache::Response;
 use Apache::Log;
 use Apache::Const -compile => qw(:common &OPT_EXECCGI);
 use File::Spec::Functions ();
 use ModPerl::Util ();
+use ModPerl::Global ();
 
 #########################################################################
 # issues
@@ -214,6 +214,7 @@ sub run {
         no warnings;
         eval { $rc = &{$cv}($r, @_) } if $r->seqno;
         $o->[STATUS] = $rc;
+        ModPerl::Global::special_list_call(END => $package);
     }
 
     $o->flush_namespace;
@@ -420,7 +421,36 @@ sub convert_script_to_compiled_handler {
 sub cache_it {
     my $o = shift;
     no strict 'refs';
-    ${$o->[CLASS]}->{ $o->[PACKAGE] }{mtime} = $o->[MTIME];
+    ${ $o->[CLASS] }->{ $o->[PACKAGE] }{mtime} = $o->[MTIME];
+}
+
+#########################################################################
+# func: uncache_myself
+# dflt: uncache_myself
+# desc: unmark the package as cached by forgetting its modification time
+# args: none
+# rtrn: nothing
+# note: this is a function and not a method, it should be called from
+#       the registry script, and using the caller() method we figure
+#       out the package the script was compiled into
+
+#########################################################################
+
+sub uncache_myself {
+    my $package = scalar caller;
+    # guess the registry class from the first two package segments
+    # XXX: this will break if someone creates a registry class which
+    # is not X::Y, but this function was written for the tests.
+    my($class) = $package =~ /([^:]+::[^:]+)/;
+    warn "cannot figure out class name from $package", 
+        return unless defined $class;
+    no strict 'refs';
+    if (exists ${$class}->{$package} && exists ${$class}->{$package}{mtime}) {
+        delete ${$class}->{$package}{mtime};
+    }
+    else {
+        warn "cannot find ${class}->{$package}{mtime}";
+    }
 }
 
 #########################################################################
@@ -652,7 +682,8 @@ sub compile {
 
     $o->debug("compiling $o->[FILENAME]") if DEBUG && D_COMPILE;
 
-    $r->clear_rgy_endav;
+    ModPerl::Global::special_list_clear(END => $o->[PACKAGE]);
+
     ModPerl::Util::untaint($$eval);
     {
         # let the code define its own warn and strict level 
@@ -661,7 +692,6 @@ sub compile {
         eval $$eval;
     }
 
-    $r->stash_rgy_endav;
     return $o->error_check;
 }
 
