@@ -26,6 +26,7 @@ use lib qw(lib Apache-Test/lib);
 
 use Config;
 use File::Spec::Functions;
+use File::Spec;
 use DirHandle ();
 use File::Copy 'cp';
 use File::Basename 'basename';
@@ -227,6 +228,13 @@ EOI
         debug "Using Apache prefix => $build->{MP_AP_PREFIX}";
     }
     else {
+        unless ($build->{MP_USE_STATIC}) {
+            # may populate $build->{MP_APXS}
+            prompt_for_apxs($build);
+        }
+    }
+
+    unless ($build->{MP_APXS} or $build->{MP_AP_PREFIX}) {
         my $ok = 0;
         for my $path ($build->find) {
             $build->dir($path);
@@ -310,6 +318,50 @@ EOI
     }
 
     install_typemap();
+}
+
+sub prompt_for_apxs {
+    my $build = shift;
+
+    print <<EOI;
+
+Next we need to know where the 'apxs' script is located. This script
+provides a lot of information about the Apache installation, and makes
+it easier to find things on your system. Normally it's located in the
+same directory as the 'httpd' executable.
+
+If you don't yet have Apache installed you can build Apache against
+the Apache source code, but you won't be able to run the test suite (a
+very important step). Therefore you may want to install Apache before
+proceeding.
+
+EOI
+
+    my $prompt = "\nPlease provide a full path to 'apxs' executable\n" .
+        "(press Enter if you don't have it installed):";
+    while (1) {
+        my $ans = $build->prompt($prompt);
+
+        print "\n\n";
+
+        # strip leading/closing spaces
+        $ans =~ s/^\s*|\s*$//g;
+
+        last unless length $ans; # skip
+
+        unless (File::Spec->file_name_is_absolute($ans)) {
+            warn "The path '$ans' is not an absolute path. " .
+                "Please specify an absolute path.\n";
+            next;
+        }
+
+        warn("'$ans' doesn't exist.\n"),     next unless -e $ans;
+        warn("'$ans' is not a file.\n"),     next unless -f _;
+        warn("'$ans' is not executable.\n"), next unless -x _;
+
+        $build->{MP_APXS} = $ans;
+        last;
+    }
 }
 
 sub post_configure {
