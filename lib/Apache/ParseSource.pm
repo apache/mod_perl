@@ -60,7 +60,7 @@ sub scan {
     my $c = C::Scan->new(filename => $self->{scan_filename});
 
     $c->set(includeDirs => $self->includes);
-    $c->set(Defines => '-DCORE_PRIVATE');
+    $c->set(Defines => '-DCORE_PRIVATE -DMP_SOURCE_SCAN');
 
     bless $c, 'Apache::ParseSource::Scan';
 }
