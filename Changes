@@ -93,7 +93,7 @@ win32 fixes [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 
 fix double-loading bug of Perl{Require,Module}s at startup time
 
-improve Apache::MyConfig [Stas Bekman <sbekman@stason.org>]
+improve Apache::MyConfig [Stas Bekman <stas@stason.org>]
 
 back out 'stop win32 crash when bringing down service' change, no
 longer needed with 1.3.19
@@ -170,7 +170,7 @@ INSTALL.win32 updates, obsolete INSTALL.activeperl removed
 
 Solving an 'uninitialized value' warn in Apache::SizeLimit.
 post_connection() expects a return status from the callback function.
-[Stas Bekman <sbekman@stason.org>]
+[Stas Bekman <stas@stason.org>]
 
 include mod_perl hook/feature config and pod in Apache::MyConfig
 [Geoffrey Young <gyoung@laserlink.net>]
@@ -197,7 +197,7 @@ various Apache::test enhancements and fixes
 [Ken Williams <ken@forum.swarthmore.edu>, Dave Rolsky <autarch@urth.org>]
 
 Documenting the new PerlAddVar httpd.conf directive
-[Stas Bekman <sbekman@stason.org>]
+[Stas Bekman <stas@stason.org>]
 
 new Apache::test::static_modules() method
 [Ken Williams <ken@forum.swarthmore.edu>]
@@ -451,7 +451,7 @@ by Geoffrey Young [Eric Cholet <cholet@logilune.com>]
 $Apache::Server::AddPerlVersion uses $^V for Perl/v5.6.0+
 
 update mod_ssl config for 'make test'
-[Stas Bekman <sbekman@stason.org>]
+[Stas Bekman <stas@stason.org>]
 
 reset the stack pointer after calling perl_require_module() in
 perl_call_handler().  this fix will most likely cure the reports of
@@ -711,11 +711,11 @@ document the fact that $r->uri sets/gets the URI minus the query string,
 not the complete URI [Andrei A. Voropaev <andrei@securities.com>]
 
 fixed the failure of t/modules/file test in 'make test' suit by untainting
-the $ENV{PATH} in ./t/net/perl/file.pl [Stas Bekman <sbekman@iname.com>]
+the $ENV{PATH} in ./t/net/perl/file.pl [Stas Bekman <stas@stason.org>]
 
 Apache::RegistryLoader::handler was rewritten to allow a better
 diagnostics of scripts preloading problems. [Stas Bekman 
-<sbekman@iname.com>]
+<stas@stason.org>]
 
 document the fact that $r->args can be used to set the query string
 as well as get it [Andrei A. Voropaev <andrei@securities.com>]
@@ -1619,7 +1619,7 @@ Jens Heunemann <heunemann2@janet.de>]
 
 have ldopts yank ExtUtils::Liblist message:
  Note (probably harmless): No library found for ...
-from stdout to stderr [Stas Bekman <sbekman@iil.intel.com>]
+from stdout to stderr [Stas Bekman <stas@stason.org>]
 
 change Apache.xs/typemap so classes who inherit from the Apache class
 can invoke methods with a hash object, provided $hash->{_r} contains a
