@@ -197,6 +197,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
         if(val != NULL) {
 	    MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
 	    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE);
+	    my_setenv(key, val);
         }
     }
 }    
