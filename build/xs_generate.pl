@@ -1,4 +1,4 @@
-use lib qw(lib);
+use lib qw(lib Apache-Test/lib);
 
 use ModPerl::WrapXS ();
 
