@@ -550,6 +550,7 @@ static apr_status_t modperl_sys_init(void)
 static apr_status_t modperl_sys_term(void *data)
 {
     MP_init_status = 0;
+    MP_threads_started = 0;
 
     MP_TRACE_i(MP_FUNC, "mod_perl sys term\n");
 

@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+modperl_threads_started() wasn't working under static worker build,
+due to MP_threads_started static variable not being reset on
+restart. Now resetting it. [Stas]
+
 @INC shrinking efforts: [Stas]
 1) when adding $ServerRoot don't add the trailing / (as it ends up
 twice when added by A-T w/o trailing /)
