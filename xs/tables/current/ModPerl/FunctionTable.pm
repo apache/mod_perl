@@ -6151,10 +6151,6 @@ $ModPerl::FunctionTable = [
         'name' => 'lines'
       },
       {
-        'type' => 'char *',
-        'name' => 'path'
-      },
-      {
         'type' => 'int',
         'name' => 'override'
       }
