@@ -4,3 +4,4 @@ modperl_xs_typedefs.h
 modperl_xs_sv_convert.h
 apache.exp
 modperl.exp
+*.def
