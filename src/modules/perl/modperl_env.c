@@ -578,7 +578,7 @@ static MGVTBL MP_vtbl_env = {
     0
 };
 
-static MGVTBL MP_vtbl_envelem =	{
+static MGVTBL MP_vtbl_envelem = {
     0,
     MEMBER_TO_FPTR(modperl_env_magic_set),
     0,
