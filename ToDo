@@ -3,6 +3,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- consider using $r->filename instead of $r->uri for generated namespaces
+
 - $r->set_handlers(PerlAuthenHandler => undef) stomps other config!?
 
 - don't call Apache::SIG->set if 1.3.5
