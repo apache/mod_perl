@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/08 00:03:27 $]
+   Last modified at [$Date: 2003/08/19 17:42:37 $]
 
 Release:
 --------
@@ -47,6 +47,10 @@ Available Patches:
   Report: 
   Status: 
 
+
+
+
+
 Platforms on which mod_perl won't build/load
 --------------------------------------------
 
@@ -72,6 +76,18 @@ AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* <Perl> sections:
+  A few issues with <Perl> sections:
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
+
+* Recursive <Perl> sections:
+  http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_-_BUG_%5D_Issue_handing_Apache_config._error_messages_P70501/
+  and
+  http://mathforum.org/epigone/modperl/dartrimpcil
+ 
+* PassEnv/SetEnv propogation 
+  http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
 
 * perl Makefile.PL PREFIX=/foo/bar works fine, however Makefile.PL'll
   still refuse to build unless MP_INST_APACHE2=1 is passed. It should
@@ -214,6 +230,10 @@ Needs Patch or Further Investigation:
 
 Open Issues or Core Enhancements:
 ---------------------------------
+
+* Testing:
+  Need to put Philippe's smoking test into the core
+  -- shouldn't forget to test with perlio enabled and disabled
 
 * Apache::Log compat issues:
 
