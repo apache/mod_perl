@@ -15,7 +15,6 @@ typedef server_rec  *  Apache__Server;
 
 typedef cmd_parms   *  Apache__CmdParms;
 typedef module      *  Apache__Module;
-typedef handler_rec *  Apache__Handler;
 typedef command_rec *  Apache__Command;
 
 typedef apr_table_t   * Apache__table;

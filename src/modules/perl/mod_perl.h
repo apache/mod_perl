@@ -32,4 +32,8 @@ void modperl_register_hooks(void);
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p);
 void xs_init(pTHXo);
 
+void modperl_response_init(request_rec *r);
+void modperl_response_finish(request_rec *r);
+int modperl_response_handler(request_rec *r);
+
 #endif /*  MOD_PERL_H */

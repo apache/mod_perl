@@ -142,6 +142,8 @@ void modperl_register_hooks(void)
 {
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_MIDDLE);
 
+    ap_hook_handler(modperl_response_handler, NULL, NULL, AP_HOOK_MIDDLE);
+
     ap_hook_insert_filter(modperl_output_filter_register,
                           NULL, NULL, AP_HOOK_LAST);
 
@@ -176,7 +178,7 @@ static const command_rec modperl_cmds[] = {
     { NULL }, 
 }; 
 
-static void modperl_response_init(request_rec *r)
+void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
 
@@ -188,7 +190,7 @@ static void modperl_response_init(request_rec *r)
     rcfg->wbucket.outcnt = 0;
 }
 
-static void modperl_response_finish(request_rec *r)
+void modperl_response_finish(request_rec *r)
 {
     MP_dRCFG;
 
@@ -196,27 +198,26 @@ static void modperl_response_finish(request_rec *r)
     modperl_wbucket_flush(&rcfg->wbucket);
 }
 
-static int modperl_response_handler(request_rec *r)
+int modperl_response_handler(request_rec *r)
 {
     int retval;
+
+    if (!strEQ(r->handler, "modperl")) {
+        return DECLINED;
+    }
 
     modperl_response_init(r);
 
     retval = modperl_per_dir_callback(MP_RESPONSE_HANDLER, r);
 
+    if (retval == DECLINED) {
+        r->handler = "*/*"; /* let http_core or whatever try */
+    }
+
     modperl_response_finish(r);
 
     return retval;
 }
-
-static const handler_rec modperl_handlers[] = {
-#if 0
-    { "perl-script", modperl_1xx_response_handler },
-#endif    
-    /* this response handler does not do any extra crap */
-    { "modperl", modperl_response_handler },
-    { NULL },
-};
 
 module MODULE_VAR_EXPORT perl_module = {
     STANDARD20_MODULE_STUFF, 
@@ -225,6 +226,5 @@ module MODULE_VAR_EXPORT perl_module = {
     modperl_create_srv_config, /* server config */
     modperl_merge_srv_config,  /* merge server config */
     modperl_cmds,              /* table of config file commands       */
-    modperl_handlers,          /* handlers */
     modperl_register_hooks,    /* register hooks */
 };
