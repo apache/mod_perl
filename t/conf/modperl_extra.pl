@@ -179,8 +179,7 @@ sub ModPerl::Test::add_config {
     my $r = shift;
 
     #test adding config at request time
-    my $errmsg = $r->add_config(['require valid-user']);
-    die $errmsg if $errmsg;
+    $r->add_config(['require valid-user']);
 
     Apache::OK;
 }
