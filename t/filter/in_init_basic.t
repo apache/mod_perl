@@ -8,7 +8,7 @@ use Apache::TestUtil;
 plan tests => 1;
 
 my $content = "content ok\n";
-my $expected = join '', $content, "init 1\n", "run 2\n";
+my $expected = join '', $content, "init 1\n", "run 1\n";
 
 my $location = '/TestFilter__in_init_basic';
 my $response = POST_BODY $location, content => $content;
