@@ -200,20 +200,25 @@ extern U32 MP_debug_level;
 
 #ifdef MP_TRACE
 #define MP_TRACE_a if (MP_debug_level) modperl_trace
+#define MP_TRACE_a_do(exp) if (MP_debug_level) exp
 #else
 #define MP_TRACE_a if (0) modperl_trace
+#define MP_TRACE_a_do(exp)
 #endif
 
 EOF
 
     for my $type (@trace) {
         my $define = "#define MP_TRACE_$type";
+        my $define_do = join '_', $define, 'do';
 
         print $h_fh <<EOF;
 #ifdef MP_TRACE
 $define if (MP_debug_level & $i) modperl_trace
+$define_do(exp) if (MP_debug_level & $i) exp
 #else
 $define if (0) modperl_trace
+$define_do(exp)
 #endif
 EOF
         $i += $i;
