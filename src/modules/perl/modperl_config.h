@@ -122,11 +122,6 @@ int modperl_config_apply_PerlRequire(server_rec *s,
                                      modperl_config_srv_t *scfg,
                                      PerlInterpreter *perl, apr_pool_t *p);
 
-int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
-                                                 modperl_config_srv_t *scfg,
-                                                 PerlInterpreter *perl,
-                                                 apr_pool_t *p);
-
 int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
                                                modperl_config_srv_t *scfg,
                                                apr_pool_t *p);

@@ -327,10 +327,6 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
-    if (!modperl_config_prepare_PerlPostConfigRequire(s, scfg, perl, p)) {
-        exit(1);   
-    }
-
 #ifndef USE_ITHREADS
     cdata = modperl_cleanup_data_new(server_pool, (void*)perl);
     apr_pool_cleanup_register(server_pool, cdata,
@@ -416,10 +412,6 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         }
 
         if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
-            return HTTP_INTERNAL_SERVER_ERROR;
-        }
-
-        if (!modperl_config_prepare_PerlPostConfigRequire(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }
