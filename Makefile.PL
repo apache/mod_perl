@@ -341,7 +341,7 @@ while($_ = shift) {
 	
 	if($k eq 'PREFIX')
 		{
-		use File::Spec;
+		require File::Spec;
 		$MOD_PERL_PREFIX = File::Spec->catfile($v,'lib','site_perl',$Config{'version'},$Config{'archname'});
 		}
 		
@@ -2043,7 +2043,9 @@ sub write_my_config {
                          PERL_STATIC_EXTS PERL_SSI PERL_SECTIONS USE_APXS WITH_APXS);
     {
         no strict 'refs';
-        $my_config{$_} = ${$_} for @other_hooks;
+        for (@other_hooks) {
+            $my_config{$_} = ${$_};
+        }
     }
     if ($win32_auto) {
         for (qw(APACHE_INC APACHE_LIB MODPERL_INC MODPERL_LIB)) {
