@@ -35,13 +35,15 @@
 # for details see: %ModPerl::MapUtil::disabled_map
 # in lib/ModPerl/MapUtil.pm
 
+MODULE=Apache::RequestUtil
+ ap_get_status_line
+
 MODULE=Apache::RequestUtil   PACKAGE=guess
 >ap_finalize_request_protocol
  ap_default_type
  ap_get_server_name
  ap_get_server_port
 !ap_content_type_tolower
- ap_get_status_line
  ap_is_initial_req
  ap_method_register
 >ap_method_registry_init

@@ -10,10 +10,16 @@ use Apache::RequestUtil ();
 
 use Apache::Const -compile => 'OK';
 
+my %status_lines = (
+   200 => '200 OK',
+   400 => '400 Bad Request',
+   500 => '500 Internal Server Error',
+);
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 7;
+    plan $r, tests => (scalar keys %status_lines) + 7;
 
     ok $r->default_type;
 
@@ -33,6 +39,12 @@ sub handler {
              $pattern,
              "test for the request_line, host, status, and few " .
              " headers that should always be there");
+
+    while (my($code, $line) = each %status_lines) {
+        ok t_cmp($line,
+                 Apache::RequestUtil::get_status_line($code),
+                 "Apache::RequestUtil::get_status_line($code)");
+    }
 
     Apache::OK;
 }

@@ -45,15 +45,9 @@ sub handler {
         '__PACKAGE__->new($r)' => __PACKAGE__->new($r),
     );
 
-    my %status_lines = (
-       200 => '200 OK',
-       400 => '400 Bad Request',
-       500 => '500 Internal Server Error',
-    );
-
-    plan $r, tests => (scalar keys %pools) +
-                      (scalar keys %objects) +
-                      (scalar keys %status_lines) + 12;
+    plan $r, tests => 12     +
+        (scalar keys %pools) +
+        (scalar keys %objects);
 
     {
         my $s = $r->server;
@@ -133,12 +127,6 @@ sub handler {
     t_debug('Apache::exists_config_define');
     ok Apache::exists_config_define('MODPERL2');
     ok ! Apache::exists_config_define('FOO');
-
-    while (my($code, $line) = each %status_lines) {
-        ok t_cmp($line,
-                 Apache::get_status_line($code),
-                 "Apache::get_status_line($code)");
-    }
 
     Apache::OK;
 }
