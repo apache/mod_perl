@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Make it possible to disable mod_perl for the base server, but enable
+it for the virtual hosts [Stas]
+
 Removed the deprecated path argument to $r->add_config() [Gozer]
 
 Created a META.yml for CPAN and friends, including Apache-Test as
