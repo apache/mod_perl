@@ -18,7 +18,7 @@ sub handler {
 
     my $cfg = Apache::Test::config();
 
-    my $top_module = Apache::Module->top_module;
+    my $top_module = Apache::Module::top_module();
 
     my $module_count = 0;
     for (my $modp = $top_module; $modp; $modp = $modp->next) {

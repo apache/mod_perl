@@ -198,7 +198,7 @@ PACKAGE=Apache::Log    PREFIX=ap_
  ap_log_pid
 
 MODULE=Apache::Module
- module *:DEFINE_top_module | | SV *:CLASS
+ module *:DEFINE_top_module
 -ap_add_loaded_module
 -ap_add_module
 -ap_add_named_module
@@ -213,7 +213,7 @@ ap_remove_loaded_module
 >ap_register_hooks
  mpxs_Apache__Module_loaded
  #ap_get_module_config
- mpxs_Apache__Module_get_config | | self, pmodule, s, v=NULL
+ mpxs_Apache__Module_get_config | | pmodule, s, v=NULL
 
 MODULE=Apache::Directive
  ap_directive_t *:DEFINE_conftree | | SV *:CLASS

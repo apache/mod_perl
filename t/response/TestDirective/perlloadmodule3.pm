@@ -35,7 +35,7 @@ sub set_val {
     my($key, $self, $parms, $arg) = @_;
     $self->{$key} = $arg;
     unless ($parms->path) {
-        my $srv_cfg = Apache::Module->get_config($self, $parms->server);
+        my $srv_cfg = Apache::Module::get_config($self, $parms->server);
         $srv_cfg->{$key} = $arg;
     }
 }
@@ -44,7 +44,7 @@ sub push_val {
     my($key, $self, $parms, $arg) = @_;
     push @{ $self->{$key} }, $arg;
     unless ($parms->path) {
-        my $srv_cfg = Apache::Module->get_config($self, $parms->server);
+        my $srv_cfg = Apache::Module::get_config($self, $parms->server);
         push @{ $srv_cfg->{$key} }, $arg;
     }
 }
@@ -87,7 +87,7 @@ use Apache::Module ();
 use Apache::Const -compile => qw(OK);
 
 sub get_config {
-    Apache::Module->get_config(__PACKAGE__, @_);
+    Apache::Module::get_config(__PACKAGE__, @_);
 }
 
 sub handler {
