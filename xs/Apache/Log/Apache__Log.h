@@ -182,3 +182,59 @@ static XS(MPXS_Apache_LOG_MARK)
         PUSHs_mortal_iv(CopLINE(cop));
     });
 }
+
+static XS(MPXS_Apache__Log_log_error)
+{
+    dXSARGS;
+    SV *msgsv = Nullsv;
+    STRLEN n_a;
+    request_rec *r = NULL;
+    server_rec *s = NULL;
+    char *msgstr;
+    const char *file;
+    int line, level;
+    apr_status_t status;
+
+    if (items < 6) {
+        Perl_croak(aTHX_ "usage %s::%s(file, line, level, status, ...)",
+                   mpxs_cv_name());
+    }
+
+    switch (*(GvNAME(CvGV(cv)) + 4)) { /* 4 == log_ */
+      case 'r':
+        r = modperl_xs_sv2request_rec(aTHX_ ST(0), NULL, cv);
+        break;
+      case 's':
+        s = (server_rec *)SvObjIV(ST(0));
+        break;
+      default:
+        croak_inval_obj();
+    };
+
+    file   = (const char *)SvPV(ST(1), n_a);
+    line   = (int)SvIV(ST(2));
+    level  = (int)SvIV(ST(3));
+    status = (apr_status_t)SvIV(ST(4));
+
+    if (items > 6) {
+        msgsv = newSV(0);
+        do_join(msgsv, &PL_sv_no, MARK+5, SP);
+    }
+    else {
+        msgsv = ST(5);
+        (void)SvREFCNT_inc(msgsv);
+    }
+
+    msgstr = SvPV(msgsv, n_a);
+
+    if (r) {
+        ap_log_rerror(file, line, level, status, r, "%s", msgstr);
+    }
+    else {
+        ap_log_error(file, line, level, status, s, "%s", msgstr);
+    }
+
+    SvREFCNT_dec(msgsv);
+
+    XSRETURN_EMPTY;
+}
