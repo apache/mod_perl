@@ -166,6 +166,7 @@ void *modperl_merge_srv_config(apr_pool_t *p, void *basev, void *addv)
     merge_item(mip);
     merge_item(interp_pool_cfg);
     merge_item(interp_lifetime);
+    merge_item(threaded_mpm);
 #else
     merge_item(perl);
 #endif
