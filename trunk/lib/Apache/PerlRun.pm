@@ -169,7 +169,7 @@ sub namespace_from {
 	substr($uri, 0, length($uri)-length($path_info)) :
 	$uri;
 
-    if($Apache::Registry::NameWithVirtualHost) {
+    if ($Apache::Registry::NameWithVirtualHost && $pr->server->is_virtual) {
 	my $name = $pr->get_server_name;
 	$script_name = join "", $name, $script_name if $name;
     }

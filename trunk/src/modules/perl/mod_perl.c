@@ -856,7 +856,6 @@ int perl_handler(request_rec *r)
     dPPDIR;
     dPPREQ;
     dTHR;
-    SV *nwvh = Nullsv;
     GV *gv = gv_fetchpv("SIG", TRUE, SVt_PVHV);
 
     (void)acquire_mutex(mod_perl_mutex);
@@ -878,11 +877,6 @@ int perl_handler(request_rec *r)
 		     (int)sv_count, (int)sv_objcount));
     ENTER;
     SAVETMPS;
-
-    if((nwvh = ApachePerlRun_name_with_virtualhost())) {
-	SAVESPTR(nwvh);
-	sv_setiv(nwvh, r->server->is_virtual);
-    }
 
     if (gv) {
 	save_hptr(&GvHV(gv)); 
