@@ -99,8 +99,8 @@ sub handler {
 
     ok $r->handler;
 
-    #content_encoding
-    #content_language
+    # content_encoding is tested in TestAPI::content_encoding
+
     #content_languages
 
     #user
