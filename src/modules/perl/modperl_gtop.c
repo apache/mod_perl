@@ -74,7 +74,7 @@ void modperl_gtop_get_proc_mem_after(modperl_gtop_t *gtop)
 void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
 {
     int is_diff = (type == SS_TYPE_DIFF);
-    glibtop_proc_mem *pm;
+    glibtop_proc_mem *pm = NULL;
 
     if (!is_diff) {
         pm = (type == SS_TYPE_BEFORE) ?
