@@ -38,14 +38,10 @@ sub test_STDIN {
         # lose any chars when we restore it to the POST stream
         open my $stdin, "<&STDIN" or die "Can't dup STDIN: $!";
 
-        # at this occasion, let's test in memory files feature
-        # (new in 5.8.0)
-        my $in_mem_file = "<samba>";
-        close STDIN;
-        open STDIN, "<", \$in_mem_file
+        open STDIN, "<", __FILE__
             or die "failed to open STDIN as 'in memory' file : $!";
         my $data;
-        read STDIN, $data, length $in_mem_file;
+        read STDIN, $data, length("package");
         print STDOUT $data;
         close STDIN;
 
