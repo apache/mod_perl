@@ -291,11 +291,21 @@ etags:
 modperl_lib:
 	cd "$(MODPERL_SRC)" && $(MAKE)
 
+modperl_lib_install:
+	cd "$(MODPERL_SRC)" && $(MAKE) install
+
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MAKE) clean
 
 EOF
 
+    $string;
+}
+
+sub MY::install {
+    my $self = shift;
+    my $string = $self->MM::install(@_);
+    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
     $string;
 }
 
@@ -317,17 +327,6 @@ sub MY::tool_autosplit {
 
 sub MY::post_initialize {
     my $self = shift;
-
-    #XXX: MakeMaker will try to unlink $(APACHE_LIBDIR)/$MODPERL_LIB
-    #during 'make' and probably 'make clean' as well
-    #need to find another way to install libmodperl.so
-
-    # install libmodperl.so
-#    if ($build->{MP_USE_DSO}) {
-#        my $MODPERL_LIB = join '.', $build->{MP_LIBNAME}, 'so';
-#        $self->{PM}->{"src/modules/perl/$MODPERL_LIB"} =
-#            "\$(APACHE_LIBDIR)/$MODPERL_LIB";
-#    }
 
     #up one from the Apache2/ subdir
     #so it can be found for 'use Apache2 ()'
