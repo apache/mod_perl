@@ -89,6 +89,7 @@ sub handler {
 
     ok $r->headers_out;
 
+    # tested in TestAPI::err_headers_out
     ok $r->err_headers_out;
 
     ok $r->subprocess_env;
