@@ -154,7 +154,7 @@ perl_static_objs_pic="`echo $param_PERL_STATIC_SRCS | sed -e 's:\.c:.lo:g'`"
 perl_defs=''
 perl_defs="$perl_defs -DMOD_PERL_VERSION=\\\"$param_MOD_PERL_VERSION\\\""
 perl_defs="$perl_defs -DMOD_PERL_STRING_VERSION=\\\"mod_perl/$param_MOD_PERL_VERSION\\\""
-perl_defs="$perl_defs -DPERL_VERSION=$param_PERL_VERSION"
+perl_defs="$perl_defs -DPERLV=$param_PERLV"
 OIFS="$IFS" IFS="$DIFS"
 for hook in \
     DISPATCH CHILD_INIT CHILD_EXIT POST_READ_REQUEST TRANS HEADER_PARSER \
