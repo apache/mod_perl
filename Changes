@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+re-use the workaround for glibc/Perl-5.8.0 crypt() bug for the
+main/vhost base perl interpreters as well. This solves the problem for
+the buggy glibc on RH8.0. [Stas]
+
 send_cgi_header now turns the header parsing off and can send any data
 attached after the response headers as a response body. [Stas]
 

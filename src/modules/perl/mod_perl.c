@@ -172,6 +172,11 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     endav = PL_endav;
     PL_endav = Nullav;
 
+#if defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
+    /* workaround perl5.8.0/glibc bug */
+    PL_reentrant_buffer->_crypt_struct.current_saltbits = 0;
+#endif
+    
     perl_run(perl);
 
     PL_endav = endav;
