@@ -64,8 +64,11 @@ package TestFilter::both_str_req_mix;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::TestTrace;
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
+
+use Apache::TestTrace;
 
 use Apache::Const -compile => qw(OK M_POST);
 

@@ -6,6 +6,8 @@ package TestFilter::out_str_req_eos;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
 
 use Apache::Const -compile => qw(OK M_POST);
