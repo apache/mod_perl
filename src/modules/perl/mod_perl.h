@@ -93,6 +93,14 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_module.h"
 #include "modperl_debug.h"
 
+int modperl_threads_started(void);
+
+#define MP_CROAK_IF_THREADS_STARTED(what)                       \
+    if (modperl_threads_started()) {                            \
+        Perl_croak(aTHX_ "Can't run '%s' in the threaded "      \
+                   "environment after server startup", what);   \
+    }
+    
 int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                        server_rec *base_server);
 void modperl_init(server_rec *s, apr_pool_t *p);
