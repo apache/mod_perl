@@ -1631,7 +1631,7 @@ fix source_scan to run with current httpd/apr
 
 add Apache::Server->add_config method to add dynamic configuration at
 server startup time
-  
+
 add Apache::Directive->to_string method
 
 add support for pluggable <Perl> sections
