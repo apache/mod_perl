@@ -1132,6 +1132,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls);
 
 /* Apache.xs */
 
+pool *perl_get_util_pool(void);
 pool *perl_get_startup_pool(void);
 server_rec *perl_get_startup_server(void);
 request_rec *sv2request_rec(SV *in, char *class, CV *cv);
