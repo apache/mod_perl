@@ -32,6 +32,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_mgv.h"
 #include "modperl_global.h"
 #include "modperl_env.h"
+#include "modperl_cgi.h"
 
 void modperl_init(server_rec *s, apr_pool_t *p);
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 

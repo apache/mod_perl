@@ -14,9 +14,9 @@ sub handler {
     my $param = $cgi->param('PARAM');
     my $httpupload = $cgi->param('HTTPUPLOAD');
 
-#    $cgi->print( $cgi->header(-type => "text/plain",
-#                              "-X-Perl-Script" => "cgi.pl") );
-
+    print $cgi->header('-type' => 'text/plain',
+                       '-X-Perl-Script' => 'cgi.pm');
+    $r->send_cgi_header("X-Foo-Bar: baz\r\n\r\nthis is text\n");
     print "ok $param\n" if $param;
 
     if ($httpupload) {

@@ -1,5 +1,4 @@
 #include "mod_perl.h"
-#include "util_script.h"
 
 #define EnvMgObj SvMAGIC((SV*)GvHV(PL_envgv))->mg_ptr
 
