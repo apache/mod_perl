@@ -23,10 +23,15 @@ my %hashes = (
     sha1  => '{SHA}A5NpTRa4TethLkfOYlK9NfDYbAY=',
 );
 
+# BACK_COMPAT_MARKER (sha1 support added in 2.0.50)
+delete $hashes{sha1} unless have_apache_version('2.0.50');
+
+my $password_validate_tests = 1 + scalar keys %hashes;
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 4;
+    plan $r, tests => $password_validate_tests;
 
     # password_validate
     {
