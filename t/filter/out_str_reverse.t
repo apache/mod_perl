@@ -10,9 +10,10 @@ plan tests => 2;
 my @data = (join('', 'a'..'z'), join('', 0..9));
 
 my $reversed_data = join '', map { scalar(reverse $_) . "\n" } @data;
+my $normal_data   = join '', map { $_                 . "\n" } @data;
 #t_debug($reversed_data);
 my $sig = "Reversed by mod_perl 2.0\n";
-my $expected = join "\n", @data, $sig;
+my $expected = $normal_data . $sig;
 
 {
     # test the filtering of the mod_perl response handler
