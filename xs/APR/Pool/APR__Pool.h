@@ -43,7 +43,7 @@ static
 APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
 #endif
 
-#define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) (mg_find(sv, PERL_MAGIC_ext) != NULL)
+#define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) mpxs_pool_is_custom(sv)
 
 #ifdef USE_ITHREADS
 
