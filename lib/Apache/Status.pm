@@ -99,7 +99,7 @@ sub has {
     # if !$opt we skip the testing for the option
     return 0 if $opt && !status_config($r, $opt);
     return 0 unless eval { require $file };
-    return 0 unless $module->VERSION >= $version;
+    return 0 unless $module->VERSION && $module->VERSION >= $version;
 
     return 1;
 }
@@ -362,7 +362,8 @@ sub status_env {
             qq{<b>Under the "perl-script" handler, the environment is</b>:};
     }
     push @retval, "\n</p>\n";
-    push @retval, "<pre>", (map "$_ = $ENV{$_}\n", sort keys %ENV), "</pre>";
+    push @retval, "<pre>",
+        (map "$_ = " . ($ENV{$_}||'') . "\n", sort keys %ENV), "</pre>";
 
     \@retval;
 }
