@@ -4,9 +4,12 @@ installdirs:  site
 distribution_type: module
 no_index:
     directory:
+          # A-T has its own CPAN distro
         - Apache-Test
     package:
+          # Internally redefined module
         - C::Preprocessed   
+          # Apache::compat redefines
         - Apache
         - Apache::Constants
         - Apache::File
