@@ -175,7 +175,7 @@ sub ldopts {
     }
     elsif (DARWIN) {
         #not sure how this can happen, but it shouldn't
-        my @bogus_flags = 'flat_namespace', 'bundle', 'undefined suppress';
+        my @bogus_flags = ('flat_namespace', 'bundle', 'undefined suppress');
         for my $flag (@bogus_flags) {
             $config->{ldflags} =~ s/-$flag\s*//;
         }
