@@ -1,7 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
 
-use ModPerl::Registry;
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
