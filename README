@@ -7,6 +7,9 @@ Perl version 5.6.0 or higher is required.
 Perl with ithreads enabled is required to use mod_perl-2.0 with a
 threaded MPM.
 
+Only DSO build of mod_perl-2.0 is currently supported, static builds
+will be support in the future.
+
 mod_perl-2.0 is not 100% feature complete with the 1.xx version.
 See the todo/ directory for what remains to be done.
 
