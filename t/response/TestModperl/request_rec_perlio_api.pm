@@ -10,13 +10,10 @@ use Apache::RequestIO ();
 use Apache::RequestRec ();
 
 use Apache::Test;
-use Apache::TestConfig;
 
 use File::Spec::Functions qw(catfile catdir);
 
 use Apache::Const -compile => 'OK';
-
-use Config;
 
 sub handler {
     my $r = shift;
