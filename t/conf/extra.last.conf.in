@@ -33,7 +33,7 @@ $TestDirective::perl::line =  __LINE__;
 <Perl >
     use File::Spec;
     my $file = File::Spec->catfile('@ServerRoot@', 'conf', 'perlsection.conf');
-    open my $fh, ">$file" || die $!;
+    open my $fh, ">$file" or die "Can't open $file: $!";
     print $fh join "\n", qw(<Perl> $TestDirective::perl::Included++; </Perl>);
     close $fh;
     $Include = $file;
