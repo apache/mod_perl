@@ -69,7 +69,7 @@ PTR_TBL_t *modperl_module_config_table_get(pTHX_ int create)
 
     sv = *svp;
     if (!SvIOK(sv) && create) {
-        table = ptr_table_new();
+        table = modperl_svptr_table_new(aTHX);
         sv_setiv(sv, (IV)table);
     }
     else {
@@ -144,8 +144,8 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
     SV *mrg_obj = Nullsv,
-        *base_obj = ptr_table_fetch(table, base),
-        *add_obj  = ptr_table_fetch(table, add);
+        *base_obj = modperl_svptr_table_fetch(aTHX_ table, base),
+        *add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
     HV *stash;
 
@@ -193,7 +193,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         mrg_obj = newSVsv(base_obj);
     }
 
-    ptr_table_store(table, mrg, mrg_obj);
+    modperl_svptr_table_store(aTHX_ table, mrg, mrg_obj);
 
     if (!is_startup) {
         modperl_module_config_obj_cleanup_register(aTHX_ p, table, mrg);
@@ -236,7 +236,7 @@ modperl_module_config_get_obj(pTHX_
      * modperl_module_cfg_t * directly and avoid the ptr_table
      * altogether.
      */
-    if ((*obj = (SV*)ptr_table_fetch(table, cfg))) {
+    if ((*obj = (SV*)modperl_svptr_table_fetch(aTHX_ table, cfg))) {
         /* object already exists */
         return NULL;
     }
@@ -289,7 +289,7 @@ modperl_module_config_get_obj(pTHX_
         modperl_module_config_obj_cleanup_register(aTHX_ p, table, cfg);
     }
 
-    ptr_table_store(table, cfg, *obj);
+    modperl_svptr_table_store(aTHX_ table, cfg, *obj);
 
     return NULL;
 }

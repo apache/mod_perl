@@ -75,7 +75,7 @@ static MP_INLINE SV *mpxs_Apache__Module_get_config(pTHX_
         return Nullsv;
     }
 
-    if (!(obj = ptr_table_fetch(table, ptr))) {
+    if (!(obj = modperl_svptr_table_fetch(aTHX_ table, ptr))) {
         return Nullsv;
     }
 
