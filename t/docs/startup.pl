@@ -2,7 +2,7 @@ BEGIN {
     #./blib/lib:./blib/arch
     use ExtUtils::testlib;
 
-    use lib './t/docs';
+    use lib map { "$Apache::Server::CWD/$_" } qw(t/docs blib/lib blib/arch);
     require "blib.pl" if -e "./t/docs/blib.pl";
     $Apache::Server::Starting or warn "Server is not starting !?\n";
     \$Apache::Server::Starting == \$Apache::ServerStarting or 
