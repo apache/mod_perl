@@ -53,7 +53,7 @@ $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
     close FH;
 }
 
-use subs qw(_prompt iedit asrc);
+use subs qw(iedit asrc);
 
 gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
@@ -67,10 +67,6 @@ It is strongly recommended that you upgrade to 5.004_04 or higher,
 as there are memory leaks present in lower versions or Perl.
 EOF
 sleep(1);
-}
-
-unless ($Is_Win32) {
-    readline_setup();        
 }
 
 %Apache::MyConfig::Setup = ();
@@ -362,7 +358,7 @@ unless (@adirs) {
     print "Enter `q' to stop search\n";
     while(1) {
        print "Please tell me where I can find your apache src\n" ; 
-       $src_dir = _prompt("", $APACHE_SRC_DEFAULT);
+       $src_dir = prompt("", $APACHE_SRC_DEFAULT);
        last if $src_dir eq "q";
 	if(-d $src_dir) {
 	    push(@adirs, $src_dir);
@@ -384,7 +380,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
     if (-e $httpd_h) {
 	unless($NO_HTTPD and not $DYNAMIC and not $PREP_HTTPD) {
 	    unless($DO_HTTPD) {
-		$ans = _prompt("Configure mod_perl with $adir ?", "y");
+		$ans = prompt("Configure mod_perl with $adir ?", "y");
 		next unless $ans =~ /^y$/i;
 	    }
 	    $APACHE_SRC = $adir;
@@ -409,7 +405,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $cant_hook{PERL_SSI} = "(doesn't work w/ USE_DSO=1)";
 	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
-	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
+	    $ans = prompt("Shall I build httpd in $adir for you?", "y");
 	    ++$NO_HTTPD, ++$PREP_HTTPD unless $ans =~ /^y$/i;
 	}
 
@@ -778,8 +774,8 @@ sub init_tests_and_config {
     } 
     if($User eq "root") {
 	print "Cannot run tests as User `$User'\n";
-        $User = _prompt("Which User?", "nobody");
-	$Group = _prompt("Which Group?", $Group); 
+        $User = prompt("Which User?", "nobody");
+	$Group = prompt("Which Group?", $Group); 
     }
     print STDERR "Will run tests as User: '$User' Group: '$Group'\n";
 
@@ -1464,45 +1460,6 @@ sub module_name_from_xs {
 	warn "$module name guess might be incorrect";
     }
     return (keys %seen)[0];
-}
-
-sub readline_setup {
-    local $^W = 0;
-    eval 'use Term::ReadLine' ;
-
-    if ($@ eq '') {
-	$::term = new Term::ReadLine 'mod_perl install';
-	
-	eval {
-	    sub main::_prompt {
-		my ($prompt, $default) = @_ ;
-		
-		$_ = $::term -> readline ("$prompt [$default] ") ;
-		if (!/^\s*$/) {
-		    s/\s+$//;
-		    return $_ ;
-		}
-		else {
-		    if ($_ eq "") {
-			return $default ;
-		    }
-		    else {
-			return "" ; 
-		    }
-		}
-	    }
-        };
-	die $@ if $@;
-	print "ReadLine support enabled\n" ;
-    }
-    else { 
-	eval <<'EOT' ;
-    
-	sub main::_prompt {
-	    prompt($_[0], $_[1]);
-	}
-EOT
-    }
 }
 
 sub asrc {

@@ -10,8 +10,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - sfio/solaris problem
 Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
 
-- get rid of Term::ReadLine in Makefile.PL
-
 - ap_log_error -> ap_log_rerror
 
 - Apache::Constants :override :args_how
