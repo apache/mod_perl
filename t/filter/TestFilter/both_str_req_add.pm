@@ -1,4 +1,4 @@
-package TestFilter::both_str_rec_add;
+package TestFilter::both_str_req_add;
 
 # insert an input filter which lowers the case of the data
 # insert an output filter which strips spaces
@@ -58,11 +58,11 @@ sub handler {
 1;
 __DATA__
 <NoAutoConfig>
-    PerlModule TestFilter::both_str_rec_add
-    <Location /TestFilter::both_str_rec_add>
+    PerlModule TestFilter::both_str_req_add
+    <Location /TestFilter::both_str_req_add>
         SetHandler modperl
-        PerlHeaderParserHandler TestFilter::both_str_rec_add::header_parser
-        PerlResponseHandler     TestFilter::both_str_rec_add
+        PerlHeaderParserHandler TestFilter::both_str_req_add::header_parser
+        PerlResponseHandler     TestFilter::both_str_req_add
     </Location>
 </NoAutoConfig>
 
