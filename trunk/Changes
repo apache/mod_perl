@@ -6,6 +6,8 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+=item 1.15_02-dev
+
 =item 1.15_01 - September 19, 1998
 
 USE_DSO=1 may be fixed on some platforms w/ current 1.3.2-dev
