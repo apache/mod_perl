@@ -9,13 +9,17 @@ RegistryCooker:
 - consider not to use $$ in debug tracing. Not all platforms give out
   a different pid for different threads.
 
+- some problems with setting the DEBUG() constant based on the value of 
+  Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+
 ### missing features ###
 
 - need to port $Apache::__T, to test against when user supplies -T flag.
 
 - port Apache::PerlRunXS
 
-- implement slurp_filename and remove Apache::compat
+- replace the local implementation of slurp_filename() and finfo(),
+  when these will be ported to mod_perl 2.0
 
 - $r->chdir_file is not handled/implemented, see todo/api.txt unsafe!
 

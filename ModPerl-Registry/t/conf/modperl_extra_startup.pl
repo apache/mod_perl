@@ -1,21 +1,18 @@
-# 
 use strict;
 use warnings FATAL => 'all';
 
-# XXX: this should go
-use Apache::compat;
-
-use Apache::ServerUtil;
-use Apache::Process;
-use APR::Pool;
-
 use ModPerl::RegistryLoader ();
-my $rl = ModPerl::RegistryLoader->create(package => "ModPerl::Registry");
+use Apache::ServerUtil ();
+use APR::Pool ();
 
-my $pool = Apache->server->process->pool;
+use DirHandle ();
+
+my $pool = APR::Pool->new();
 my $base_dir = Apache::server_root_relative($pool, "cgi-bin");
 
+
 # test the scripts pre-loading by explicitly specifying uri => filename
+my $rl = ModPerl::RegistryLoader->create(package => "ModPerl::Registry");
 my $base_uri = "/cgi-bin";
 for my $file (qw(basic.pl env.pl)) {
     my $file_path = "$base_dir/$file";
@@ -23,11 +20,9 @@ for my $file (qw(basic.pl env.pl)) {
     $rl->handler($uri, $file_path);
 }
 
-{
-    # test the scripts pre-loading by using trans sub
-    use DirHandle ();
-    use strict;
 
+# test the scripts pre-loading by using trans sub
+{
     sub trans {
         my $uri = shift; 
         $uri =~ s|^/registry_bb/|cgi-bin/|;
