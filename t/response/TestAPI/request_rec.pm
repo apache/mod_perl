@@ -1,7 +1,7 @@
 package TestAPI::request_rec;
 
 use strict;
-use warnings FATAL => 'all';
+use warnings;# FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -68,22 +68,12 @@ sub handler {
 
     ok $r->status || 1;
 
-    ok $r->method;
+    ok t_cmp $r->method, 'GET', "method";
 
     ok t_cmp $r->method_number, Apache::M_GET, "method number";
 
     #allowed_xmethods
     #allow_methods
-
-    {
-        $r->rflush;
-        my $sent = $r->bytes_sent;
-        t_debug "sent so far: $sent bytes";
-        # at least 100 chars were sent already
-        ok $sent > 100;
-    }
-
-    ok $r->mtime || 1;
 
     ok $r->headers_in;
 
@@ -118,7 +108,7 @@ sub handler {
         ok 15 == $r->print('#',' ','n','o','t',' ','b','u','f','f','e','r','e','d',"\n");
     }
 
-    #no_local_copy
+    ok !$r->no_local_copy;
 
     ok $r->unparsed_uri;
 
@@ -129,14 +119,25 @@ sub handler {
     my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
     ok t_cmp($r->location, $location, "location");
 
-    my $mtime = (stat __FILE__)[9];
-    $r->mtime($mtime);
-
-    ok $r->mtime == $mtime;
-
     ok $r->path_info || 1;
 
     ok $r->args || 1;
+
+    # bytes_sent
+    {
+        $r->rflush;
+        my $sent = $r->bytes_sent;
+        t_debug "sent so far: $sent bytes";
+        # at least 100 chars were sent already
+        ok $sent > 100;
+    }
+
+    # mtime
+    {
+        my $mtime = (stat __FILE__)[9];
+        $r->mtime($mtime);
+        ok t_cmp $r->mtime, $mtime, "mtime";
+    }
 
     # finfo
     {
@@ -149,16 +150,7 @@ sub handler {
                  '$r->finfo');
     }
 
-    #parsed_uri
-
-    #per_dir_config
-    #request_config
-
-    # input_filters and output_filters are tested in
-    # TestAPI::in_out_filters;
-
-    #eos_sent
-
+    # allowed
     {
         $r->allowed(1 << Apache::M_GET);
 
@@ -168,6 +160,16 @@ sub handler {
         $r->allowed($r->allowed | (1 << Apache::M_PUT));
         ok $r->allowed & (1 << Apache::M_PUT);
     }
+
+    #parsed_uri
+
+    #per_dir_config
+    #request_config
+
+    # input_filters and output_filters are tested in
+    # TestAPI::in_out_filters;
+
+    #eos_sent
 
     Apache::OK;
 }
