@@ -76,8 +76,9 @@ sub handler {
 
     # ht_time(), parsedate()
     my $time = time;
-    
+    Apache::compat::override_mp2_api('Apache::Util::ht_time');
     my $fmtdate = Apache::Util::ht_time($time);
+    Apache::compat::restore_mp2_api('Apache::Util::ht_time');
 
     ok t_cmp($fmtdate, $fmtdate, "Apache::Util::ht_time");
 

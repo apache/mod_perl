@@ -151,6 +151,20 @@ EOI
     };
     $orig_sub;
 }
+
+EOI
+
+    'Apache::Util::ht_time' => <<'EOI',
+{
+    require Apache::Util;
+    my $orig_sub = *Apache::Util::ht_time{CODE};
+    *Apache::Util::ht_time = sub {
+        my $r = Apache::compat::request('Apache::Util::ht_time');
+        return $orig_sub->($r->pool, @_);
+    };
+    $orig_sub;
+}
+
 EOI
 
 );
@@ -676,18 +690,6 @@ sub escape_html {
     my $html = shift;
     $html =~ s/($html_escape)/$html_escapes{$1}/go;
     $html;
-}
-
-sub ht_time {
-    my($t, $fmt, $gmt) = @_;
-
-    $t   ||= time;
-    $fmt ||= '%a, %d %b %Y %H:%M:%S %Z';
-    $gmt = 1 unless @_ == 3;
-
-    my $r = Apache::compat::request('Apache::Util::ht_time');
-
-    return Apache::Util::format_time($t, $fmt, $gmt, $r->pool);
 }
 
 *parsedate = \&APR::Date::parse_http;
