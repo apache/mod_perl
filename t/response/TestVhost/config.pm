@@ -27,7 +27,7 @@ sub my_handler {
     {
         my $expected = $r->document_root;
         my $received = $r->dir_config->get('DocumentRootCheck');
-        ok t_cmp(canonpath($expected), canonpath($received), "DocumentRoot");
+        ok t_cmp(canonpath($received), canonpath($expected), "DocumentRoot");
     }
 
     Apache::OK;
