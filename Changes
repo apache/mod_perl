@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+fix bug triggered when siggv is not initialized, spotted by Preston Brown
+
 new Apache::PerlRun::flush_namespace method to undef() each [SAHC]V
 entry, rather than a blind clear (which triggered cores, e.g. sort)
 
