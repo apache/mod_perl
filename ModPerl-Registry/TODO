@@ -4,6 +4,11 @@ RegistryCooker:
 
 - prototyping sub handler($$) segfaults on request
 
+- consider not to use $$ in debug tracing. Not all platforms give out
+  a different pid for different threads.
+
+
+
 ### missing features ###
 
 - need to port $Apache::__T, to test against when user supplies -T flag.
