@@ -235,6 +235,15 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 #endif
 }
 
+static int modperl_hook_create_request(request_rec *r)
+{
+    MP_dRCFG;
+
+    modperl_config_req_init(r, rcfg);
+
+    return OK;
+}
+
 void modperl_register_hooks(apr_pool_t *p)
 {
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, APR_HOOK_MIDDLE);
@@ -248,7 +257,11 @@ void modperl_register_hooks(apr_pool_t *p)
                               modperl_output_filter_handler,
                               AP_FTYPE_CONTENT);
 
-    ap_hook_post_config(modperl_hook_post_config, NULL, NULL, APR_HOOK_MIDDLE);
+    ap_hook_create_request(modperl_hook_create_request, NULL, NULL,
+                           APR_HOOK_MIDDLE);
+
+    ap_hook_post_config(modperl_hook_post_config, NULL, NULL,
+                        APR_HOOK_MIDDLE);
 
     modperl_register_handler_hooks();
 }
@@ -280,8 +293,6 @@ static const command_rec modperl_cmds[] = {
 void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
-
-    modperl_config_req_init(r, rcfg);
 
     /* setup buffer for output */
     rcfg->wbucket.pool = r->pool;
