@@ -48,7 +48,7 @@ sub parse {
 
         if ($type =~ s/^struct\s+(.*)/$1/) {
             push @aliases,
-              $type, "$type *", "const $type *",
+              $type, "const $type", "$type *", "const $type *",
               "struct $type *", "const struct $type *",
               "$type **";
 
