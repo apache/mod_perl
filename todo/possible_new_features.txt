@@ -90,8 +90,6 @@ modules:
 
 - should Apache::Registry use filename instead of vhost_name+uri?
 
-- Apache::Registry should honor __END__ and __DATA__,
-
 - core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
 
 - Apache::compat has to be loaded before CGI.pm, other than
