@@ -568,7 +568,7 @@ MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
 
     if (r && r->per_dir_config) {				   
         MP_dDCFG;
-        retval = modperl_table_get_set(aTHX_ dcfg->vars,
+        retval = modperl_table_get_set(aTHX_ dcfg->configvars,
                                        key, sv_val, FALSE);
     }
 
@@ -576,7 +576,7 @@ MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
         if (s && s->module_config) {
             MP_dSCFG(s);
             SvREFCNT_dec(retval); /* in case above did newSV(0) */
-            retval = modperl_table_get_set(aTHX_ scfg->vars,
+            retval = modperl_table_get_set(aTHX_ scfg->configvars,
                                            key, sv_val, FALSE);
         }
         else {

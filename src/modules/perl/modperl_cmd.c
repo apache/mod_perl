@@ -241,17 +241,42 @@ static MP_CMD_SRV_DECLARE2(handle_vars)
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     const char *name = parms->cmd->name;
 
+    /* PerlSetVar and PerlAddVar logic.  here's the deal...
+     *
+     * cfg->configvars holds the final PerlSetVar/PerlAddVar configuration
+     * for a given server or directory.  however, getting to that point
+     * is kind of tricky, due to the add-style nature of PerlAddVar.
+     *
+     * the solution is to use cfg->setvars to hold PerlSetVar entries
+     * and cfg->addvars to hold PerlAddVar entries, each serving as a
+     * placeholder for when we need to know what's what in the merge routines.
+     *
+     * however, for the initial pass, apr_table_setn and apr_table_addn
+     * will properly build the configvars table, which will be visible to
+     * startup scripts trying to access per-server configurations.
+     *
+     * the end result is that we need to populate all three tables in order
+     * to keep things straight later on see merge_table_config_vars in
+     * modperl_config.c
+     */
     modperl_table_modify_t func =
         strEQ(name, "PerlSetVar") ? apr_table_setn : apr_table_addn;
 
-    func(dcfg->vars, arg1, arg2);
+    apr_table_t *table =
+        strEQ(name, "PerlSetVar") ? dcfg->setvars : dcfg->addvars;
+
+    func(table, arg1, arg2);
+    func(dcfg->configvars, arg1, arg2);
 
     MP_TRACE_d(MP_FUNC, "%s DIR: arg1 = %s, arg2 = %s\n",
                name, arg1, arg2);
 
     /* make available via Apache->server->dir_config */
     if (!parms->path) {
-        func(scfg->vars, arg1, arg2);
+        table = strEQ(name, "PerlSetVar") ? scfg->setvars : scfg->addvars;
+
+        func(table, arg1, arg2);
+        func(scfg->configvars, arg1, arg2);
 
         MP_TRACE_d(MP_FUNC, "%s SRV: arg1 = %s, arg2 = %s\n",
                    name, arg1, arg2);
