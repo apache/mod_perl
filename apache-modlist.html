@@ -228,6 +228,12 @@ PATCH		bdpf	HTTP PATCH method handler		MPB
 PUT		cdpf	HTTP PUT method handler 		SORTIZ
 Roaming		bdpO	PUT/GET/MOVE/DELETE (Netscape Roaming)	JWEID
 
+* Watchdog and Monitoring tools
+SizeLimit         Smpf    Graceful exit for large children        APML
+Status            Smpf    Embedded interpreter runtime status     APML
+VMonitor          Rdpn    Visual System and Processes Monitor     STAS
+Watchdog::RunAway Rdpn    RunAway processes watchdog/terminator   STAS
+
 * Development and Debug tools
 DB		amcO	Hook Perl interactive DB into mod_perl	DOUGM
 Debug		Rmpf	mod_perl debugging utilities		APML
@@ -236,13 +242,10 @@ FakeRequest	ampO	Implement Apache methods off-line	APML
 Leak		bmcf	Memory leak tracking routines		APML
 Peek		amcf	Devel::Peek for mod_perl		APML
 SawAmpersand	bmpf	Make sure noone is using $&, $' or $`	APML
-SizeLimit	Smpf	Graceful exit for large children	APML
 SmallProf	bmpf	Hook Devel::SmallProf into mod_perl	DOUGM
 StatINC		Smpf	Reload require'd files when updated	APML
-Status		Smpf	Embedded interpreter runtime status	APML
 Symbol		bmcO	Things for symbol things		APML
 Symdump		bmpf	Symbol table snapshots to disk		APML
-VMonitor        Rdpn    Visual System and Processes Monitor     STAS
 test		Smpf	Handy routines for 'make test' scripts	APML
 
 * Misc
@@ -341,6 +344,7 @@ RSE       Ralf S. Engelschall &lt;rse@engelschall.com&gt;
 SAM	  Simon Matthews &lt;sam@peritas.com&gt;
 SKANE     Stephen E Kane &lt;sek112@elvis.arl.psu.edu&gt;
 SORTIZ	  Salvador Ortiz &lt;sortiz@msg.com.mx&gt;
+STAS      Stas Bekman &lt;stas@stason.org&gt;
 SVINTO	  Svante Sörmark &lt;svinto@ita.chalmers.se&gt;
 TOMHUGHES Tom Hughes &lt;tom@compton.demon.co.uk&gt;
 VALERIE	  Valerie Delane &lt;valerie@savina.com&gt;
