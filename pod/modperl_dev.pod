@@ -66,7 +66,7 @@ with CPAN.pm shell:
 =head2 Create the build environment
 
   % cd modperl-2.0
-  % perl Makefile.PL MP_GENERATE_XS=1 MP_USE_DSO=1 \
+  % perl Makefile.PL MP_GENERATE_XS=1 \
     MP_APXS=$apache_prefix/bin/apxs && make
 
 I<options> an optional list of (key,value) pairs.
@@ -85,7 +85,11 @@ Generate xs code from parsed source headers in I<xs/tables/$httpd_version>.
 
 =item MP_USE_DSO
 
-Build mod_perl as a DSO
+Build mod_perl as a DSO (default)
+
+=item MP_USE_STATIC
+
+Build mod_perl static
 
 =item MP_STATIC_EXTS
 
