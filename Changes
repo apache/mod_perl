@@ -10,12 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
-temporarily disable APR.pm attempt to link against -lapr and -lapr-util
+enable APR.pm's linking for apr 0.9.2 and higher, which uses a new lib
+naming scheme, such as libapr-0.so.0.9.2, only if apr-config and
+apu-config scripts exist. [Stas Bekman]
+
+temporarily disable APR.pm's attempt to link against -lapr and -lapr-util
 
 define IoTYPE_RDONLY/IoTYPE_WRONLY for perl-5.6.0 so the project
 compiles again under 5.6.0 [Stas Bekman]
 
-Allow output streaming filters to append data to the end of the stream
+allow output streaming filters to append data to the end of the stream
 [Stas Bekman]
 
 fixes to compile with ActivePerl 5.8 beta
