@@ -466,7 +466,7 @@ sub b_lexinfo_link {
 
     return unless has($r, "lexinfo");
 
-    my $script = $q->location;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_lexinfo">Lexical Info</a>\n);
 }
 
