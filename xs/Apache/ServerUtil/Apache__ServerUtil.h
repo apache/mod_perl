@@ -38,3 +38,6 @@ SV *mpxs_Apache__Server_get_handlers(server_rec *s,
     return modperl_handler_perl_get_handlers(aTHX_ handp,
                                              s->process->pconf);
 }
+
+#define mpxs_Apache__Server_dir_config(s, key, sv_val) \
+    modperl_dir_config(aTHX_ NULL, s, key, sv_val)
