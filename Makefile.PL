@@ -2,6 +2,8 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
+my $min_httpd_version = '2.0.36';
+
 my($old_modperl_version, $old_modperl_pm);
 
 BEGIN {
@@ -131,6 +133,7 @@ sub configure {
             my $mmn = $build->module_magic_number;
             my $v   = $build->httpd_version;
             next unless $v;
+            next if $v lt $min_httpd_version;
             last if $build->prompt_y("Configure mod_perl with $path?");
         }
     }
@@ -145,6 +148,12 @@ sub configure {
         else {
             error 'Please specify MP_APXS or MP_AP_PREFIX.';
         }
+        exit(1);
+    }
+
+    if ($httpd_version lt $min_httpd_version) {
+        error "Apache/$httpd_version not supported, " .
+              "$min_httpd_version or higher is required";
         exit(1);
     }
 
