@@ -181,7 +181,15 @@ eval {
 test ++$i, not $uri;
 print $@ if $@;
 
-$r->exit;
+use Apache::test qw($USE_THREAD);
+if ($USE_THREAD) {
+    #under Solaris at least, according to Brian P Millett <bpm@ec-group.com>
+    warn "XXX: need to fix \$r->exit in t/net/api w/ threads\n";
+}
+else {
+    $r->exit;
+}
+
 
 
 
