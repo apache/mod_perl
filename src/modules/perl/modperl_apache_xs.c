@@ -63,17 +63,23 @@ MP_INLINE apr_size_t modperl_apache_xs_write(pTHX_ I32 items,
     modperl_request_config_t *rcfg;
     apr_size_t bytes = 0;
     request_rec *r;
+    dMP_TIMES;
 
     mpxs_usage_1(r, "$r->write(...)");
 
     rcfg = modperl_request_config_get(r);
     scfg = modperl_srv_config_get(r->server);
 
+    MP_START_TIMES();
+
 #ifdef MP_USE_AP_RWRITE
     mpxs_rwrite_loop(mpxs_ap_rwrite, r);
 #else
     mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
 #endif
+
+    MP_END_TIMES();
+    MP_PRINT_TIMES("r->write");
 
     /* XXX: flush if $| */
 

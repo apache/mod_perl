@@ -326,6 +326,7 @@ my %trace = (
     's' => 'perl sections',
     'h' => 'handlers',
     'm' => 'memory allocations',
+    't' => 'benchmark-ish timings',
     'i' => 'interpreter pool management',
     'g' => 'Perl runtime interaction',
     'f' => 'filters',
@@ -460,7 +461,7 @@ sub o_pic_files { [map { "$_.lo" } @c_names, @g_c_names] }
 
 my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
 my @h_names = (@c_names, map { "modperl_$_" }
-               qw(types apache_includes perl_includes));
+               qw(types time apache_includes perl_includes));
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
 sub clean_files {
