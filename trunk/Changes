@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fix broken Win32 build (unresolved external symbol _ap_configtestonly)
+[Eric Cholet <cholet@logilune.com>]
+
 =item 1.24 - May 16, 2000
 
 'sub handler : method {}' is now treated as a method handler
