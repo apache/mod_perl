@@ -131,8 +131,11 @@ sub run {
 
     my $rc = OK;
     my $cv = \&{"$package\::handler"};
+
+    my $oldwarn = $^W;
     eval { $rc = &{$cv}($pr, @_) } if $pr->seqno;
     $pr->{status} = $rc;
+    $^W = $oldwarn;
 
     my $errsv = "";
     if($@) {
