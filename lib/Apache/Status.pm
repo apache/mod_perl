@@ -304,9 +304,27 @@ sub status_rgysubs {
 }
 
 sub status_env {
-    ["<pre>",
-     (map { "$_ = $ENV{$_}\n" } sort keys %ENV),
-     "</pre>"];
+    my ($r) = shift;
+
+    my @retval = ();
+
+    if ($r->handler eq 'modperl') {
+        # the handler can be executed under the "modperl" handler
+        push @retval,
+            qq{<b>Under the "modperl" handler, the environment is:</b>};
+        # XXX: I guess we could call $r->subprocess_env; and show how
+        # would it look like under the 'perl-script' environment, but
+        # under the 'modperl' handler %ENV doesn't get reset,
+        # therefore on the first reload it'll see the bloated %ENV in
+        # first place.
+    } else {
+        # the handler can be executed under the "perl-script" handler
+        push @retval,
+            qq{<b>Under the "perl-script" handler, the environment is</b>:};
+    }
+    push @retval, "<pre>", (map "$_ = $ENV{$_}\n", sort keys %ENV), "</pre>";
+
+    \@retval;
 }
 
 sub status_sig {
@@ -779,14 +797,14 @@ __END__
 
 Apache::Status - Embedded interpreter status information 
 
-=head1 SYNOPSIS
+=head1 Synopsis
 
   <Location /perl-status>
       SetHandler modperl
       PerlResponseHandler Apache::Status
   </Location>
 
-=head1 DESCRIPTION
+=head1 Description
 
 The B<Apache::Status> module provides some information
 about the status of the Perl interpreter embedded in the server.
@@ -795,6 +813,16 @@ Configure like so:
 
   <Location /perl-status>
        SetHandler modperl
+       PerlResponseHandler Apache::Status
+  </Location>
+
+Notice that under the "modperl" core handler the I<Environment> menu
+option will show only the environment under that handler. To see the
+environment seen by handlers running under the "perl-script" core
+handler, configure C<Apache::Status> as:
+
+  <Location /perl-status>
+       SetHandler perl-script
        PerlResponseHandler Apache::Status
   </Location>
 
