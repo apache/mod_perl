@@ -10,9 +10,6 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
-make sure that the non-tied STDOUT is buffered before calling the perl
-response handler. [Stas]
-
 fix the input filters handling of DECLINED handlers (consume the data,
 on behalf of the handler) + tests [Stas]
 
