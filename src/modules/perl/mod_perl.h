@@ -45,6 +45,7 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
 void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
                                 apr_pool_t *ptemp);
 void modperl_register_hooks(apr_pool_t *p);
+apr_pool_t *modperl_server_pool(void);
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p);
 void xs_init(pTHXo);
 

@@ -128,6 +128,20 @@ static void modperl_xs_init(pTHX)
     SAVEDESTRUCTOR_X(modperl_boot, 0);
 }
 
+/*
+ * the "server_pool" is a subpool of the parent pool (aka "pconf")
+ * this is where we register the cleanups that teardown the interpreter.
+ * the parent process will run the cleanups since server_pool is a subpool
+ * of pconf.  we manually clear the server_pool to run cleanups in the
+ * child processes
+ */
+static apr_pool_t *server_pool = NULL;
+
+apr_pool_t *modperl_server_pool(void)
+{
+    return server_pool;
+}
+
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
     AV *endav;
@@ -198,8 +212,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     }
 
 #ifndef USE_ITHREADS
-    cdata = modperl_cleanup_data_new(p, (void*)perl);
-    apr_pool_cleanup_register(p, cdata,
+    cdata = modperl_cleanup_data_new(server_pool, (void*)perl);
+    apr_pool_cleanup_register(server_pool, cdata,
                               modperl_shutdown, apr_pool_cleanup_null);
 #endif
     
@@ -380,8 +394,10 @@ static apr_status_t modperl_sys_term(void *data)
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s)
 {
+    apr_pool_create(&server_pool, pconf);
+
     modperl_sys_init();
-    apr_pool_cleanup_register(pconf, NULL,
+    apr_pool_cleanup_register(server_pool, NULL,
                               modperl_sys_term, apr_pool_cleanup_null);
     modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
@@ -461,9 +477,20 @@ static int modperl_hook_header_parser(request_rec *r)
     return OK;
 }
 
+static apr_status_t modperl_child_exit(void *data)
+{
+    apr_pool_clear(server_pool);
+    server_pool = NULL;
+
+    return APR_SUCCESS;
+}
+
 static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 {
     modperl_perl_init_ids_server(s);
+
+    apr_pool_cleanup_register(p, NULL, modperl_child_exit,
+                              apr_pool_cleanup_null);
 }
 
 void modperl_register_hooks(apr_pool_t *p)
