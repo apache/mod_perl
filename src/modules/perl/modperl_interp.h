@@ -7,7 +7,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
 apr_status_t modperl_interp_cleanup(void *data);
 
 #ifdef USE_ITHREADS
-const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime);
+const char *modperl_interp_scope_desc(modperl_interp_scope_e scope);
 
 modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,

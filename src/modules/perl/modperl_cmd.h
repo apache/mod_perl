@@ -18,22 +18,22 @@ MP_CMD_SRV_DECLARE(interp_max);
 MP_CMD_SRV_DECLARE(interp_max_spare);
 MP_CMD_SRV_DECLARE(interp_min_spare);
 MP_CMD_SRV_DECLARE(interp_max_requests);
-MP_CMD_SRV_DECLARE(interp_lifetime);
+MP_CMD_SRV_DECLARE(interp_scope);
 
-#define modperl_interp_lifetime_undef(dcfg) \
-(dcfg->interp_lifetime == MP_INTERP_LIFETIME_UNDEF)
+#define modperl_interp_scope_undef(dcfg) \
+(dcfg->interp_scope == MP_INTERP_SCOPE_UNDEF)
 
-#define modperl_interp_lifetime_handler(dcfg) \
-(dcfg->interp_lifetime == MP_INTERP_LIFETIME_HANDLER)
+#define modperl_interp_scope_handler(dcfg) \
+(dcfg->interp_scope == MP_INTERP_SCOPE_HANDLER)
 
-#define modperl_interp_lifetime_subrequest(dcfg) \
-(dcfg->interp_lifetime == MP_INTERP_LIFETIME_SUBREQUEST)
+#define modperl_interp_scope_subrequest(dcfg) \
+(dcfg->interp_scope == MP_INTERP_SCOPE_SUBREQUEST)
 
-#define modperl_interp_lifetime_request(scfg) \
-(scfg->interp_lifetime == MP_INTERP_LIFETIME_REQUEST)
+#define modperl_interp_scope_request(scfg) \
+(scfg->interp_scope == MP_INTERP_SCOPE_REQUEST)
 
-#define modperl_interp_lifetime_connection(scfg) \
-(scfg->interp_lifetime == MP_INTERP_LIFETIME_CONNECTION)
+#define modperl_interp_scope_connection(scfg) \
+(scfg->interp_scope == MP_INTERP_SCOPE_CONNECTION)
 
 #endif
 
