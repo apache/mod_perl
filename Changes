@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+modperl_mgv_resolve now croaks when a module scheduled for autoloading
+fails to load.  AutoLoaded modules shouldn't silently fail.[Stas]
+
 Perl(Input|Output)FilterHandler handlers are now always AutoLoaded, as
 if '+' prefix was used. This must be performed to get the access to
 filter attributes long before the filter itself is executed. [Stas]
