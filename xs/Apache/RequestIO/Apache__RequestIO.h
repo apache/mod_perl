@@ -189,6 +189,22 @@ static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
 }
 
 static MP_INLINE
+SV *mpxs_Apache__RequestRec_GETC(pTHX_ request_rec *r)
+{
+    char c[1] = "\0";
+
+    if (mpxs_setup_client_block(r) == APR_SUCCESS) {
+        if (mpxs_should_client_block(r)) {
+            if (ap_get_client_block(r, c, 1) == 1) {
+                return newSVpvn((char *)&c, 1);
+            }
+        }
+    }
+
+    return &PL_sv_undef;
+}
+
+static MP_INLINE
 apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
                                               const char *filename,
                                               apr_off_t offset,
