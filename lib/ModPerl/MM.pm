@@ -90,7 +90,7 @@ sub install {
     if (build_config('MP_INST_APACHE2')) {
         while (my($k,$v) = each %$hash) {
             delete $hash->{$k};
-            $k =~ s:/Apache2$::;
+            $k =~ s{[/\\:]Apache2$}{};
             $hash->{$k} = $v;
         }
     }
