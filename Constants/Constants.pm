@@ -102,12 +102,12 @@ response codes:
  NOT_AUTHORITATIVE
 
 B<CONTINUE> and B<NOT_AUTHORITATIVE> are aliases for B<DECLINED>.
- 
+
 =item methods
 
 This are the method numbers, commonly used with
 the Apache B<method_number> method.
-   
+
  METHODS
  M_CONNECT
  M_DELETE

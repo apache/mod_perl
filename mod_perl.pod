@@ -441,7 +441,7 @@ request.
 
 Perl*Handler directives can define any number of subroutines,
 e.g. (in config files)
- 
+
  PerlTransHandler OneTrans TwoTrans RedTrans BlueTrans
 
 With the method, Apache->push_handlers, callbacks can be added to
@@ -630,7 +630,7 @@ C<%Hash>, e.g.:
  #will be shifted off the @List
  #or use array reference to handle any number greater than
  #the minimum for that directive
-  
+
  push @Redirect, "/foo", "http://www.foo.com/";
 
  push @Redirect, "/imdb", "http://www.imdb.com/";
@@ -648,7 +648,7 @@ A tip for syntax checking outside of httpd:
 
  <Perl>
  #!perl
- 
+
  #... code here ...
 
  __END__

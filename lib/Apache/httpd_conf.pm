@@ -244,7 +244,7 @@ Apache::httpd_conf - Generate an httpd.conf file
 =head1 SYNOPSIS
 
   use Apache::httpd_conf ();
- 
+
   Apache::httpd_conf->write(Port => 8888);
 
 =head1 DESCRIPTION

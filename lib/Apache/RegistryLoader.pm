@@ -122,7 +122,7 @@ B<ServerRoot>.  Example:
  #in httpd.conf
  ServerRoot /opt/www/apache
  Alias /perl/ /opt/www/apache/perl
- 
+
  #in PerlScript
  use Apache::RegistryLoader ();
 

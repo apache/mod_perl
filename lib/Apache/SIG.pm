@@ -85,5 +85,5 @@ Doug MacEachern and Doug Bagley
 =head1 SEE ALSO
 
 perlvar(1)
-    
+
 =cut

@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+pod fixups to avoid WARNING from newer pod2*
+
 Apache::RedirectLogFix now uses $r->last
 [David D. Kilzer <ddkilzer@e-markets.com>]
 
