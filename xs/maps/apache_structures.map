@@ -105,8 +105,8 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    remote_host
    remote_logname
    aborted
+   keepalive
 ?  double_reverse
-   keepalives
    local_ip
    local_host
    id
