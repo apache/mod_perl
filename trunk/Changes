@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_02-dev
 
+removed PERLV define, just use patchlevel.h's defines
+
 fix bug w/ push_handlers(PerlCleanupHandler => ...) spotted by 
 Jan-Pieter Cornet and Philp Gwyn
 
