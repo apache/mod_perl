@@ -16,6 +16,70 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.09 - March 19, 1998
+
+rid of stupid "can't bootstrap Apache::Constants outside of httpd" message
+
+added r->content_languages method
+
+added htdocs/manual/mod/mod_perl.html (generated from Apache::ModuleDoc)
+
+now support <Perl> under win32 (requires 1.3b6-dev+)
+
+PerlChildExitHandler is now implemented via register_cleanup() rather
+than the module child_exit hook (which might go away!)
+
+support Apache::Constants tags `override' and `args_how', for Apache::Module
+
+'make test' will now work again under win32
+
+applied Apache::Symbol/Apache::StatINC patches from Chris Dean
+
+fixed bug in Makefile.PL that would tack `aix' onto INCDIR w/ apache
+1.2.x, spotted by Mike Klein
+
+removed uneeded check for HTTP_AUTHORIZATION from perl_setup_env()
+
+fixup perl_section_self_boot so it doesn't try to read config
+if keys %Apache::ReadConfig:: < 1
+
+perl_section_self_boot thang will now work w/ PerlRequire'd files too
+
+compile @Apache::Constants::EXPORT subroutines at boot time (rather
+than AUTOLOAD in each process)
+
+added internal/error.t test to test the new feature below
+
+ErrorDocument's can now access the $@ that threw SERVER_ERROR via
+$@{ $r->prev->uri }
+
+added internal/rwrite.t test to test printing of HUGE strings
+
+1.3b6 compat:
+- tmp fix for new r->server->names type
+- adapt to SERVER_BUILT change to apapi_get_server_built() 
+  for Constants.xs
+
+fixed print $HUGE_buffer bug w/ ApacheSSL spotted by Jirka Hejsek 
+
+added WRITE method for tied filehandles
+
+fix so threaded Perl can have <Perl> sections
+
+Perl 5.004_61 dropped -DUSE_THREADS from $Config{ccflags}, Makefile.PL
+will now test $Config{usethreads} and add the flag itself
+
+fixed eg/registry.pl sytax erros thanks to David Landgren
+
+fix #ifdefs so we build under win32 again
+
+config files now support =pod/=cut and __END__ in the same fashion Perl does
+
+fix Makefile.PL so it can handle \'ed lines with help from Tom Hukins
+
+Apache::Symbol::handler will skip all Devel::Symdump undef's so
+make_universal will work properly
+
 =item 1.08 - February 20, 1998
 
 Apache::Registry will now fold multiple /'s to fix possible bug

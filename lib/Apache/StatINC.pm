@@ -2,13 +2,13 @@ package Apache::StatINC;
 
 use strict;
 
-$Apache::StatINC::VERSION = "1.03";
+$Apache::StatINC::VERSION = "1.04";
 
 my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 
 sub handler {
     my $r = shift;
-    my $do_undef = lc($r->dir_config("UndefOnReload")) eq "on";
+    my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload")) eq "on");
 
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
@@ -20,7 +20,7 @@ sub handler {
 	    if($do_undef and $key =~ /\.pm$/) {
 		require Apache::Symbol;
 		my $class = Apache::Symbol::file2class($key);
-	        $class->Apache::Symbol::undef_functions;
+               $class->Apache::Symbol::undef_functions( undef, 1 );
 	    }
 	    delete $INC{$key};
 	    require $key;

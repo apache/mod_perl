@@ -77,6 +77,7 @@ ePerl		Rdpr  	Fast emulated Embedded Perl (ePerl)	RSE
 FTP		i	Full-fledged FTP proxy			PMKANE
 GzipChain	bmpf	Compress files on the fly		ANDK
 JavaScript	bdpf	Generate JavaScript code		ABH
+ModuleDoc	bdpf	Self documentation for Apache C modules	DOUGM
 OutputChain     bmpO	Chain output of stacked handlers	JANPAZ
 PassFile	bdpf	Send file via OutputChain		ANDK
 Registry	Rmpf	Run unaltered CGI scripts 		APML
@@ -85,12 +86,14 @@ Sandwich	bmpf	Layered document (sandwich) maker	DOUGM
 VhostSandwich	bdpf	Virtual host layered document maker	MARKC
 SSI		bmpO	Implement server-side includes in Perl	KWILLIAM
 Stage		bdpf	Manage a document staging directory	ANDK
+TarGzip		c						ZENIN
 WDB		bdpf	Database query/edit tool using DBI	JROWE
 
 * PerlHeaderParserHandler's
 AgentDeny	bdpf	Deny abusive User-Agents		ROBH
 
 * PerlAuthenHandler's
+AuthAny		bdpf	Authenticate with any username/password	DOUGM
 Authen		bmpf	Perl Apache authentication utilities	SKANE
 AuthCookie	bdpO	Authen + Authz via cookies		EBARTLEY
 AuthenDBI	bmpO	Authenticate via Perl's DBI		MERGL
@@ -98,10 +101,10 @@ AuthExpire	cmpO	Expire Basic auth credentials		DOUGM
 AuthenGSS	cdpf    Generic Security Service (RFC 2078)	DOUGM
 AuthenLDAP	i	LDAP authentication module		MARKK
 AuthNIS		bdpf	NIS authentication and authorization	DOUGM
+AuthenNT	bdpf	Authenticate against NT server		PARKER
 BasicCookieAuth	cdpf	Accept cookie or basic auth creds	PMKANE
 DBILogin	bdpf	Authenticate to backend database 	JGROENVEL
 DCELogin	bdpf	Obtain a DCE login context		DOUGM
-AuthAny		bdpf	Authenticate with any username/password	DOUGM
 
 * PerlAuthzHandler's
 AuthCookie	cdpf	Authen + Authz via cookies		EBARTLEY
@@ -124,6 +127,7 @@ DynaRPC		i	Dynamically translate URIs into RPCs	DOUGM
 Junction	i	Mount remote webserver namespace	DOUGM
 LowerCaseGETs	bdpf	Lowercase URI's when needed		PLISTER
 MsqlProxy	bmpf	Translate URI's into mSQL queries	APML
+ProxyPass	bdpf	Perl implementation of ProxyPass	MJS
 ProxyPassThru	bdpO	Skeleton for vanilla proxy		RMANGI
 ProxyCache	i	Caching proxy				DOUGM
 
@@ -132,8 +136,9 @@ HttpEquiv	bdpf	HTML HTTP-EQUIV tags to HTTP headers	ROBH
 Timeit		bmpf	Benchmark PerlHandlers			APML
 
 * PerlLogHandler's
+DBILogger	bdpf	Logging via DBI				ABH
 DumpHeaders	bdpf	Watch HTTP transaction via headers	DOUGM
-Traffic		bdpf	Logs bytes transferred, per-user basis 	
+Traffic		bdpf	Logs bytes transferred, per-user basis 	MAURICE
 WatchDog	c	Look for problematic URIs		DOUGM
 
 * PerlChildInitHandler's
@@ -205,7 +210,7 @@ how you can go about getting your hands on a copy.
 <a name="contacts">
 <h3>Contacts</h3>
 <pre>
-ABH  	 Ask Hansen &lt;ask@netcetera.dk&gt;
+ABH  	 Ask Bjørn Hansen &lt;ask@netcetera.dk&gt;
 ANDK	 Andreas König &lt;a.koenig@franz.ww.TU-Berlin.DE&gt;
 APML	 The Apache/Perl Mailing List &lt;modperl@listproc.itribe.net&gt;
 BMILLETT Brian Millett &lt;bpm@techapp.com&gt;
@@ -226,6 +231,7 @@ MARKK	 Mark Kennedy &lt;mtk@ny.ubs.com&gt;
 MAURICE	 Maurice Aubrey &lt;maurice@HEVANET.COM&gt
 MDORMAN	 Michael Alan Dorman  &lt;mdorman@calder.med.miami.edu&gt;
 MERGL	 Edmund Mergl &lt;E.Mergl@bawue.de&gt;
+MJS      Michael Smith &lt;mjs@iii.co.uk&gt;
 NJENSEN	 Neil Jensen &lt;njensen@habaneros.com&gt;
 PARKER	 Michael Parker &lt;parker@austx.tandem.com&gt;
 PLISTER  Peter Lister &lt;p.lister@cranfield.ac.uk&gt;
@@ -235,6 +241,7 @@ ROBH	 Rob Hartill &lt;robh@imdb.com&gt;
 RSE      Ralf S. Engelschall &lt;rse@engelschall.com&gt;
 SKANE    Stephen E Kane &lt;sek112@elvis.arl.psu.edu&gt;
 SORTIZ	 Salvador Ortiz Garcia &lt;sortiz@cfe.gob.mx&gt;
+ZENIN	 Byron Brummer &lt;zenin@archive.rhps.org&gt;
 </pre>
 
 <a name="info">

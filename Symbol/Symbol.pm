@@ -17,14 +17,37 @@ sub file2class {
 }
 
 sub undef_functions {
-    my $package = shift;
-    my $skip = shift || "";
+    my( $package, $skip, $only_undef_exports ) = @_;
+
     my $stab = Devel::Symdump->rnew($package);
-    for my $cv ($stab->functions) {
-	no strict 'refs';
-	next if $skip and $cv =~ /$skip/;
-	#warn "$cv=", *{$cv}{CODE}, "\n";
-	Apache::Symbol::undef(*{$cv}{CODE});
+    my @functions = $stab->functions;
+
+    if( $only_undef_exports ) {
+        no strict 'refs';
+        my $any_export_var;
+        $any_export_var = 1 if defined @{$package . "::EXPORT"};
+        $any_export_var = 1 if defined @{$package . "::EXPORT_OK"};
+        $any_export_var = 1 if defined %{$package . "::EXPORT_TAGS"};
+        $any_export_var = 1 if defined @{$package . "::EXPORT_EXTRAS"};
+
+        if( $any_export_var ) {
+            my @names = (@{$package . "::EXPORT"},
+                         @{$package . "::EXPORT_OK"},
+                         @{$package . "::EXPORT_EXTRAS"});
+            foreach my $tagdata (values %{$package . "::EXPORT_TAGS"}) {
+                push @names, @$tagdata;
+            }
+            my %exported = map { $package . "::" . $_ => 1 } @names;
+            @functions = grep( $exported{$_}, @functions );
+        }
+    }
+
+    for my $cv (@functions) {
+        no strict 'refs';
+	next if substr($cv, 0, 14) eq "Devel::Symdump";
+        next if $skip and $cv =~ /$skip/;
+        #warn "$cv=", *{$cv}{CODE}, "\n";
+        Apache::Symbol::undef(*{$cv}{CODE});
     }
 
 }
@@ -93,6 +116,36 @@ Apache::StatINC pulls in a module that has changed on disk.
 
 You can, however, pull some tricks with XS to avoid this warning,
 B<Apache::Symbol::undef> does just that.
+
+=head1 ARGUMENTS
+
+C<undef_functions> takes two arguments: C<skip> and C<only_undef_exports>.
+
+C<skip> is a regular expression indicating the function names to skip.
+
+Use the C<only_undef_exports> flag to undef only those functions
+which are listed in C<@EXPORT>, C<@EXPORT_OK>, C<%EXPORT_TAGS>, or
+C<@EXPORT_EXTRAS>.  C<@EXPORT_EXTRAS> is not used by the Exporter, it
+is only exists to communicate with C<undef_functions>.
+
+As a special case, if none of the EXPORT variables are defined ignore
+C<only_undef_exports>.  This takes care of trivial modules that don't
+use the Exporter.
+
+=head1 ARGUMENTS
+
+C<undef_functions> takes two arguments: C<skip> and C<only_undef_exports>.
+
+C<skip> is a regular expression indicating the function names to skip.
+
+Use the C<only_undef_exports> flag to undef only those functions
+which are listed in C<@EXPORT>, C<@EXPORT_OK>, C<%EXPORT_TAGS>, or
+C<@EXPORT_EXTRAS>.  C<@EXPORT_EXTRAS> is not used by the Exporter, it
+is only exists to communicate with C<undef_functions>.
+
+As a special case, if none of the EXPORT variables are defined ignore
+C<only_undef_exports>.  This takes care of trivial modules that don't
+use the Exporter.
 
 =head1 PLAYERS
 

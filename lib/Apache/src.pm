@@ -5,6 +5,7 @@ use vars qw($VERSION $AUTOLOAD);
 use File::Path ();
 use IO::File ();
 use Cwd ();
+use Config;
 
 #this is stuff ripped out of mod_perl's Makefile.PL
 #there's still commented out crap
@@ -148,6 +149,14 @@ sub inc {
 	push @inc, "-I$_" if -d $_;
     }
     return "@inc";
+}
+
+sub define {
+    my $self = shift;
+    if($Config{usethreads}) {
+	return "-DPERL_THREADS";
+    }
+    return "";
 }
 
 =pod

@@ -1,3 +1,16 @@
+
+=pod
+
+=head1 NAME
+
+mod_perl test configuration file
+
+=head1 DESCRIPTION
+
+umm, we use this to test mod_perl
+
+=cut
+
 #make sure all regex stuff works
 #BrowserMatch Mozilla/2 nokeepalive
 
@@ -34,8 +47,9 @@ Alias /perl/ ./t/net/perl/
 Alias /cgi-bin/ ./t/net/perl/
 
 <Location /perl>
+ErrorDocument 500 /perl/server_error.pl
 SetHandler perl-script
-PerlHandler Apache::Registry
+PerlHandler Apache::Registry::handler
 Options +ExecCGI
 </Location>
 
@@ -46,7 +60,7 @@ Options +ExecCGI
 
 <Location /perl/io>
 SetHandler perl-script
-PerlHandler Apache::Registry
+PerlHandler Apache::Registry::handler
 Options +ExecCGI
 PerlSendHeader On
 PerlSetupEnv   On
@@ -156,3 +170,10 @@ SetHandler server-status
 <Location /info>
 SetHandler server-info
 </Location>
+
+<Location /manual/mod>
+SetHandler perl-script
+PerlHandler Apache::ModuleDoc
+</Location>
+
+

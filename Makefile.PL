@@ -26,7 +26,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-$VERSION = "1.08";
+$VERSION = "1.09";
 
 use subs qw(_prompt iedit asrc);
 
@@ -129,7 +129,7 @@ $NO_HTTPD = $ENV{NO_HTTPD} || 0;
 $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
-$APACHE_INCLUDE_INSTALL = 1;
+$APACHE_HEADER_INSTALL = 1;
 $PERL_SECTIONS = 0;
 $PERL_SSI = 0;
 $ADD_VERSION = 1;
@@ -417,7 +417,7 @@ if($DYNAMIC) {
 }
 
 if($APACHE_SRC) {
-    ++$STATIC if $Config{osname} =~ /^(aix|svr4|unixware)$/i;
+    ++$STATIC if grep { $_ eq lc($Config{osname}) } qw(aix svr4 unixware);
 
     my $mmn    = magic_number($APACHE_SRC);
     my $httpdv = httpd_version($APACHE_SRC,1);
@@ -767,6 +767,7 @@ WriteMakefile(
 	HTTPD => (is_ssl() ? "httpsd" : "httpd"),
 	PORT => $PORT,
 	PWD => $PWD,
+	CVSROOT => 'perl.apache.org:/export/home/cvs',
     },
     'dist'    => {
 	COMPRESS=> 'gzip -9f', SUFFIX=>'gz',
@@ -776,10 +777,6 @@ WriteMakefile(
 	FILES	=> "@do_clean",
     }
 );
-
-unless (-l "mod_perl.pm") {
-#    system "$Config{lns} lib/mod_perl.pm mod_perl.pm";
-}
 
 print "*** BSDI users: be sure to read the INSTALL `Notes' section ***\n"
     if $Config{osname} =~ /bsdos/i;
@@ -913,13 +910,34 @@ sub wanted {
 sub MY::post_initialize {
     my($self) = shift;
 
-    return unless $APACHE_SRC and $APACHE_INCLUDE_INSTALL;
+    return unless $APACHE_SRC and $APACHE_HEADER_INSTALL;
 
     $My::self = $self;
 
     finddepth(\&wanted, $APACHE_SRC);
 
     '';
+}
+
+sub MY::postamble {
+
+    return <<'EOF';
+cvs_export :
+	cvs -d $(CVSROOT) export -rv$(VERSION_SYM) -d$(DISTVNAME) .
+
+cvs_rtag :
+	cvs -d $(CVSROOT) rtag -rv$(VERSION_SYM) .
+	@echo update Makefile.PL's VERSION now
+
+EOF
+}
+
+sub MY::manifypods {
+    my $self = shift;
+    my $ver = $self->{VERSION} || "";
+    local($_) = $self->MM::manifypods(@_);
+    s/pod2man\s*$/pod2man --release mod_perl-$ver/m;
+    $_;
 }
 
 sub fold_dots {
@@ -1127,27 +1145,69 @@ sub conf_append {
     close CFG;
 }
 
-sub conf_fixup {
-    my($mf, $cfg) = @_;
-    my $mmn    = magic_number($APACHE_SRC);
-    #source re-org
-    my $sro = 1 if $mmn >= 19970825;
-    my $inc;
+sub edit_extra_cflags {
+    my($cfg) = @_;
+    my $fh = IO::File->new($cfg) or die "open $cfg $!";
+    my $repl = "";
+    my @file = ();
     my $ccopts = ccopts();
     my $dssv = "-DSERVER_SUBVERSION";
-    my $ssv = qq{$dssv=\\"mod_perl/$VERSION\\" };
-    $inc = " $ccopts -I. -I../.. -DUSE_PERL_SSI" if $PERL_SSI;
+    my $ssv = qq($dssv=\\"mod_perl/$VERSION\\" );
+
+    my $inc = " $ccopts -I. -I../.. -DUSE_PERL_SSI" if $PERL_SSI;
     $inc .= " -DAPACHE_SSL" if is_ssl() and $PERL_SSI;
     $inc .= $SSL_INCLUDE if $SSL_INCLUDE;
     $inc .= " -DSTRONGHOLD" if is_ssl() =~ /stronghold/i;
     $inc .= " $PERL_EXTRA_CFLAGS" if $PERL_EXTRA_CFLAGS;
     $inc .= " -DMOD_PERL";
 
-    iedit $cfg,
-    q{next unless /EXTRA_CFLAGS\s*=/;}.
-	q{next if /mod_perl/; chomp; }.
-           ($ADD_VERSION ? qq{if (/${dssv}=/) { s^${dssv}=\\\\"(.*?)\\\\"^${dssv}="\\\\"\\1 mod_perl/$VERSION\\\\""^; } else { \$_ .= q| $ssv|;}} : "") .
-	    qq{\$_ .= q| $inc\n|;};
+    while (<$fh>) {
+	push @file, $_;
+	next unless /EXTRA_CFLAGS\s*=/;
+	next if /mod_perl/; 
+	next if /^#/;
+	chomp;
+
+	$repl = $_;
+	    
+	my $backwhack = "";
+	if($repl =~ s/(\\)\s*$//) {
+	    $backwhack = $1;
+	}
+
+	if($ADD_VERSION) {
+	    if(/$dssv=/) {
+		$repl =~ 
+		    s{
+			$dssv\s*=\s*(.?)['"](.*?)(.?)["']
+		     }[
+		        qq($dssv="$1"$2 mod_perl/$VERSION$3"")
+		      ]ex;
+	    } 
+	    else {
+		$repl .= " $ssv";
+	    }
+	}
+
+	$file[-1] = "$repl $inc $backwhack\n";
+
+    }
+    close $fh;
+
+    if($repl) {
+	$fh = IO::File->new(">$cfg") or die "open $cfg $!";
+	print $fh @file;
+	close $fh;
+    }
+}
+
+sub conf_fixup {
+    my($mf, $cfg) = @_;
+    my $mmn    = magic_number($APACHE_SRC);
+    #source re-org
+    my $sro = 1 if $mmn >= 19970825;
+
+    edit_extra_cflags($cfg);
 
     my $ldopts = "`$^X $PWD/src/modules/perl/ldopts $PERL_STATIC_EXTS $libperl`";
     iedit $cfg,
@@ -1166,7 +1226,7 @@ sub conf_fixup {
 	    iedit $mf, "s:\Q\$(LIBS) \$(REGLIB)\E:$repl:;";
 
             #XXX hack
-            my $repl = quotemeta('CFLAGS=$(CFLAGS)');
+            $repl = quotemeta('CFLAGS=$(CFLAGS)');
             iedit $mf, qq(s:\Q\"CFLAGS=\$(CFLAGS)"\E:'$repl':;);
 	}
 	my $repl = q{AUX_CFLAGS='\$(CFLAGS)'};
@@ -1298,11 +1358,17 @@ EOT
 
 }
 
-#in version 1.2505 of Embed.pm would could just import these instead of using ``,
+#in version 1.2505 of Embed.pm we could just import these instead of using ``,
 #but it might require lots of people to upgrade
 
 sub ccopts {
-    $Embed::ccopts ||= `$^X -MExtUtils::Embed -e ccopts`;
+    unless ($Embed::ccopts) {
+	$Embed::ccopts = `$^X -MExtUtils::Embed -e ccopts`;
+
+	if($Config{usethreads} eq "define") {
+	    $Embed::ccopts .= " -DPERL_THREADS";
+	}
+    }
     $Embed::ccopts;
 }
 

@@ -1,11 +1,13 @@
 #ifdef WIN32
-#define NO_PERL_SECTIONS
 #define NO_PERL_CHILD_INIT
 #define NO_PERL_CHILD_EXIT
 #include "dirent.h"
 #endif
 
-#ifdef USE_THREADS
+#define IS_MODULE
+#define SHARED_MODULE
+
+#ifdef PERL_THREADS
 #define _INCLUDE_APACHE_FIRST
 #endif
 
@@ -71,11 +73,22 @@
 #define ERRHV GvHV(errgv)
 #endif
 
+#define MP_EXISTS_ERROR(k) \
+ERRHV && hv_exists(ERRHV, k, strlen(k))
+
+#define MP_STORE_ERROR(k,v) \
+hv_store(ERRHV, k, strlen(k), v, FALSE)
+
+#define MP_FETCH_ERROR(k) \
+*hv_fetch(ERRHV, k, strlen(k), FALSE)
+
+#define MP_CLEAR_ERROR(k) \
+(void)hv_delete(ERRHV, k, strlen(k), G_DISCARD)
+
+
 #ifndef ERRSV_CAN_BE_HTTP
 #define ERRSV_CAN_BE_HTTP perl_get_sv("Apache::ERRSV_CAN_BE_HTTP", FALSE)
 #endif
-
-#define __RGY_ERRHV ERRHV, "Apache::Registry", 16
 
 #ifndef PERL_DESTRUCT_LEVEL
 #define PERL_DESTRUCT_LEVEL 0
@@ -293,13 +306,20 @@ if((add->flags & f) || (base->flags & f)) \
 #define MODULE_VAR_EXPORT
 #endif
 
-#ifdef MULTITHREAD
+#ifndef API_VAR_EXPORT
+#define API_VAR_EXPORT
+#endif
+
+#ifdef WIN32
+#if MODULE_MAGIC_NUMBER < 19980317
+#undef PERL_SECTIONS
+#define NO_PERL_SECTIONS
+#endif
 #include "multithread.h"
 extern void *mod_perl_mutex;
 #else
 #define mod_perl_mutex NULL 
 extern void *mod_perl_dummy_mutex;
-#endif
 
 #ifndef MULTITHREAD_H
 typedef void mutex;
@@ -307,11 +327,18 @@ typedef void mutex;
 #define create_mutex(name)	((mutex *)mod_perl_dummy_mutex)
 #define acquire_mutex(mutex_id)	((int)MULTI_OK)
 #define release_mutex(mutex_id)	((int)MULTI_OK)
+#endif /* MULTITHREAD_H */
 
-#endif
+#endif /* WIN32 */
 
 #if MODULE_MAGIC_NUMBER < 19971226
 char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
+#endif
+
+#if MODULE_MAGIC_NUMBER >= 19980304
+#ifndef SERVER_BUILT
+#define SERVER_BUILT apapi_get_server_built()
+#endif
 #endif
 
 #define PERL_SET_CUR_HOOK(h) \
@@ -416,22 +443,6 @@ nrd = read_client_block(r, buffer, bufsiz);
 #define PERL_READ_FROM_CLIENT \
 PERL_READ_SETUP; \
 PERL_READ_CLIENT
-
-#if MODULE_MAGIC_NUMBER >= 19961211
-#define SENDN_TO_CLIENT rwrite(buffer, n, r) 
-
-#else
-
-/* this was private in http_protocol.c */
-#define SET_BYTES_SENT(r) \
-  do { if (r->sent_bodyct) \
-	  bgetopt (r->connection->client, BO_BYTECT, &r->bytes_sent); \
-  } while (0)
-
-#define SENDN_TO_CLIENT \
-    bwrite(r->connection->client, buffer, n); \
-    SET_BYTES_SENT(r)
-#endif
 
 #define PUSHelt(key,val,klen) \
 { \
@@ -742,7 +753,6 @@ typedef struct {
 extern module MODULE_VAR_EXPORT perl_module;
 
 /* a couple for -Wall sanity sake */
-int basic_http_header(request_rec *r);
 int translate_name (request_rec *);
 int log_transaction (request_rec *r);
 
@@ -798,6 +808,8 @@ void mod_perl_destroy_handler(void *data);
 
 /* perl_util.c */
 
+SV *array_header2avrv(array_header *arr);
+array_header *avrv2array_header(SV *avrv, pool *p);
 void perl_tie_hash(HV *hv, char *class);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
@@ -836,6 +848,9 @@ void *perl_create_server_config(pool *p, server_rec *s);
 void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg);
 CHAR_P perl_section (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_end_section (cmd_parms *cmd, void *dummy);
+CHAR_P perl_pod_section (cmd_parms *cmd, void *dummy, CHAR_P arg);
+CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy);
+CHAR_P perl_config_END (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv);

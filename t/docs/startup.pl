@@ -4,7 +4,7 @@ BEGIN {
 
     use lib './t/docs';
     require "blib.pl" if -e "./t/docs/blib.pl";
-    $Apache::ServerStarting or die "Server is not starting !?\n";
+    $Apache::ServerStarting or warn "Server is not starting !?\n";
 }
 
 {

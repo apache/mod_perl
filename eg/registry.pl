@@ -8,8 +8,8 @@ $r->send_http_header();
 %ENV = $r->cgi_env;
 
 $r->print(
-  <b>Date: ", scalar localtime, "</b><br>\n",
+  "<b>Date: ", scalar localtime, "</b><br>\n",
 
-  "%ENV: <br>\n", map { "$_ = $ENV{$_} <br>\n" } keys %ENV;
+  "%ENV: <br>\n", map { "$_ = $ENV{$_} <br>\n" } keys %ENV,
 );
 

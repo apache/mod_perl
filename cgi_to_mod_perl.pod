@@ -1,6 +1,6 @@
 =head1 NAME
 
-mod_perl_to_cgi - First steps needed to use mod_perl as a CGI replacement
+cgi_to_mod_perl - First steps needed to use mod_perl as a CGI replacement
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ be executable, in addition,  'Options ExecCGI' must be turned on.
 If you wish to have mod_perl execute scripts in any location based on
 file extension, use a configuration like so:
 
- <Files *.pl>
+ <Files ~ "\.pl$">
  SetHandler perl-script
  PerlHandler Apache::Registry
  Options ExecCGI
