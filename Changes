@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+fix APR::Error::str to return a lexical variable, rather than a
+string. This function is called by SvTRUE in modperl_errsv() via
+overload and on win32 (and randomly on linux) causes crashes via:
+"Attempt to free temp prematurely" warning, where this 'temp' is the
+string returned by this function. Making it a lexical variable before
+returning it, resolves the problem. [Steve Hay]
+
 fix META.yaml s/private/no_index/ (to hide the bundled Apache-Test
 from PAUSE indexer) [Randy Kobes]
 
