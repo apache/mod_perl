@@ -907,6 +907,8 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 			 line, 
 			 (errmsg ? errmsg : "OK"),
 			 (cmd->limited > 0 ? "yes" : "no") ));
+	if(errmsg)
+	    log_printf(cmd->server, "<Perl>: %s", errmsg);
     }
 } 
 
@@ -1199,6 +1201,8 @@ void perl_handle_command(cmd_parms *cmd, void *dummy, char *line)
     MP_TRACE_s(fprintf(stderr, "handle_command (%s): ", line));
     errmsg = handle_command(cmd, dummy, line);
     MP_TRACE_s(fprintf(stderr, "%s\n", errmsg ? errmsg : "OK"));
+    if(errmsg)
+	log_printf(cmd->server, "<Perl>: %s", errmsg);
 }
 
 void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *dummy)
