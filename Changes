@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+$r->hostname is now writable [Gozer]
+
 Static build with a Perl without ithreads and a non-threaded MPM
 would segfault on startup. Caused by a bug in perl's perl_shutdown()
 code. Fixed in Perl 5.8.2, so it's now a build requirement [Gozer]
