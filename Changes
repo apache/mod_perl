@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Added ModPerl::Util::unload_package() to remove a loaded package
+as thoroughly as possible by clearing it's stash. [Gozer]
+
 fix Apache->request($r) to be set-able even w/: PerlOptions
 -GlobalRequest [Stas]
 

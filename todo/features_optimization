@@ -15,3 +15,6 @@
 * currently when ithreads-enabled perl is used anon-sub handlers are
   always deparsed and non-cached. there are several cases when this
   can be optimized. See modperl_handler_new_anon in modperl_handler.c
+
+* modperl_package_unload() and modperl_xs_dl_*() share some duplicated
+  logic. The managment of DynaLoaded modules could be somewhat cleaner. 
