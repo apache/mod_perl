@@ -21,7 +21,7 @@ use constant WIN32  => $^O eq 'MSWin32';
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
 
 use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
-use constant HAS_ITHREADS =>
+use constant PERL_HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
 
 use ModPerl::Code ();
@@ -147,6 +147,27 @@ sub apxs_cflags {
     my $cflags = __PACKAGE__->apxs('-q' => 'CFLAGS');
     $cflags =~ s/\"/\\\"/g;
     $cflags;
+}
+
+my %threaded_mpms = map { $_ => 1}
+        qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
+sub mpm_is_threaded {
+    my $self = shift;
+    my $mpm_name = $self->mpm_name();
+    return $threaded_mpms{$mpm_name};
+}
+
+sub mpm_name {
+    my $self = shift;
+
+    return $self->{mpm_name} if $self->{mpm_name};
+
+    # XXX: hopefully apxs will work on win32 one day
+    return $self->{mpm_name} = 'winnt' if WIN32;
+
+    my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+    die "Failed to obtain the MPM name" unless $mpm_name;
+    return $self->{mpm_name} = $mpm_name;
 }
 
 #--- Perl Config stuff ---
