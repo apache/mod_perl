@@ -151,7 +151,7 @@ $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
 $SSL_BASE = ""; 
-$Port = 8529;
+$Port = $Is_dougm ? 8530 : 8529;
 #so Doug can 'make test' different-builds@sametime/samebox
 if(!$Is_Win32 and $ENV{RANDOM_PORT} and $$ > 8000 and $$ < 30000) {
     $PORT ||= $$;
@@ -444,7 +444,8 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $USE_APACI = $USE_DSO = 0;
 	    
 	}
-	for (qw(PERL_LOG_API PERL_URI_API PERL_UTIL_API PERL_FILE_API)) {
+	for my $api (qw(LOG URI UTIL FILE TABLE)) {
+	    local $_ = join "_", "PERL", $api, "API";
 	    if(($mmn < MMN_130) and $$_) { #1.3.0
 		$$_ = 0;
 		$cant_hook{$_} = "(need 1.3.0 or higher)";
@@ -591,10 +592,7 @@ if($PERL_DIRECTIVE_HANDLERS) {
     push @xs_modules, "Apache::ModuleConfig";
     $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
 }
-if($PERL_TABLE_API) {
-    push @xs_modules, "Apache::Table";
-    $callback_hooks{PERL_TABLE_API} = 1;
-}
+
 if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
     my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
     if($mmn >= MMN_130) {
@@ -606,7 +604,7 @@ if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
 	print "Sorry, need 1.3.0+ for Apache::PerlRunXS\n";
     }
 }
-for (qw(Log URI Util Connection Server File)) {
+for (qw(Log URI Util Connection Server File Table)) {
     my $s = "PERL_".uc($_)."_API";
     if($$s) {
 	push @xs_modules, "Apache::$_";

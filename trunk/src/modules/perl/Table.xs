@@ -1,23 +1,22 @@
 #include "mod_perl.h"
 
 typedef struct {
-    SV *sv;
     SV *cv;
-    HV *hv;
+    table *only;
 } TableDo;
+
+#define table_pool(t) ((array_header *)(t))->pool
 
 static int Apache_table_do(TableDo *td, const char *key, const char *val)
 {
     int count=0, rv=1;
     dSP;
 
-    if(td->hv && !hv_exists(td->hv, (char*)key, strlen(key))) 
+    if(td->only && !table_get(td->only, key))
        return 1;
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
-    if(td->sv && (td->sv != &sv_undef))
-	XPUSHs(td->sv);
     XPUSHs(sv_2mortal(newSVpv((char *)key,0)));
     XPUSHs(sv_2mortal(newSVpv((char *)val,0)));
     PUTBACK;
@@ -52,6 +51,16 @@ static void table_modify(TiedTable *self, const char *key, SV *sv,
 
 }
 
+static Apache__Table ApacheTable_new(table *table)
+{
+    Apache__Table RETVAL = (Apache__Table)safemalloc(sizeof(TiedTable));
+    RETVAL->table = table;
+    RETVAL->ix = 0;
+    RETVAL->elts = NULL;
+    RETVAL->arr = NULL;
+    return RETVAL;
+}
+
 MODULE = Apache::Table		PACKAGE = Apache::Table
 
 PROTOTYPES: DISABLE
@@ -66,21 +75,35 @@ TIEHASH(class, table)
 
     CODE:
     if(!class) XSRETURN_UNDEF;
-    RETVAL = (Apache__Table)safemalloc(sizeof(TiedTable));
-    RETVAL->table = table;
-    RETVAL->ix = 0;
-    RETVAL->elts = NULL;
-    RETVAL->arr = NULL;
+    RETVAL = ApacheTable_new(table);
+
+    OUTPUT:
+    RETVAL
+
+Apache::Table
+new(class, r, nalloc=10)
+    SV *class
+    Apache r
+    int nalloc
+
+    CODE:
+    if(!class) XSRETURN_UNDEF;
+    RETVAL = ApacheTable_new(make_table(r->pool, nalloc));
 
     OUTPUT:
     RETVAL
 
 void
-destroy(self)
-    Apache::Table self
+DESTROY(self)
+    SV *self
+
+    PREINIT:
+    Apache__Table tab;
 
     CODE:
-    safefree(self);
+    tab = (Apache__Table)hvrv2table(self);
+    if(SvROK(self) && SvTYPE(SvRV(self)) == SVt_PVHV) 
+        safefree(tab);
 
 void
 FETCH(self, key)
@@ -215,31 +238,26 @@ merge(self, key, sv)
     table_modify(self, key, sv, table_merge);
 
 void
-do(self, cv, sv=Nullsv, ...)
+do(self, cv, ...)
     Apache::Table self
     SV *cv
-    SV *sv
 
     PREINIT:
     TableDo td;
-    HV *hv = Nullhv;
+    td.only = (table *)NULL;
 
     CODE:
-    if(items > 3) {
+    if(items > 2) {
 	int i;
 	STRLEN len;
-	hv = newHV();
-	for(i=3; ; i++) {
+        td.only = make_table(table_pool(self->table), items-2);
+	for(i=2; ; i++) {
 	    char *key = SvPV(ST(i),len);
-	    hv_store(hv, key, len, newSViv(1), FALSE);
+	    table_set(td.only, key, "1");
 	    if(i == (items - 1)) break; 
 	}
     }
-    td.sv = sv;
     td.cv = cv;
-    td.hv = hv;
 
     table_do((int (*) (void *, const char *, const char *)) Apache_table_do,
 	    (void *) &td, self->table, NULL);
-
-    if(hv) SvREFCNT_dec(hv);
