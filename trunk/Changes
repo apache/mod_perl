@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+PerlRestartHandler is now enabled w/ ALL_HOOKS=1 (or EVERYTHING=1)
+
 $r->no_cache(1) will now set the r->headers_out "Pragma" and
 "Cache-control" to "no-cache"
 

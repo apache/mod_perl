@@ -165,10 +165,6 @@ hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 #define DO_INTERNAL_REDIRECT perl_get_sv("Apache::DoInternalRedirect", FALSE)
 #endif
 
-#ifdef PERL_RESTART_HANDLER
-#undef NO_PERL_RESTART
-#endif
-
 typedef struct {
     table *utable;
     array_header *arr;
