@@ -49,8 +49,6 @@ addon modules:
 
 - mod_perl.pm::import
 
-- Apache::PerlRun, Apache::{Registry, RegistryNG}, Apache::RegistryLoader
-
 - Apache::Status
 
 - Apache::test: tobe a compat stub around new test framework
