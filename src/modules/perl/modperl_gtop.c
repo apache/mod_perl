@@ -42,8 +42,8 @@ modperl_gtop_t *modperl_gtop_new(apr_pool_t *p)
 
     gtop->pid = getpid();
     glibtop_init();
-    apr_register_cleanup(p, NULL,
-                         modperl_gtop_exit, apr_null_cleanup);
+    apr_pool_cleanup_register(p, NULL,
+                              modperl_gtop_exit, apr_pool_cleanup_null);
 
     return gtop;
 }

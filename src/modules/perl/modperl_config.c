@@ -6,13 +6,13 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
     modperl_handler_t *h = modperl_handler_new(p, (void*)name,
                                                MP_HANDLER_TYPE_CHAR);
     if (!*handlers) {
-        *handlers = apr_make_array(p, 1, sizeof(modperl_handler_t *));
+        *handlers = apr_array_make(p, 1, sizeof(modperl_handler_t *));
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
     }
 
     /* XXX parse_handler if Perl is running */
 
-    *(modperl_handler_t **)apr_push_array(*handlers) = h;
+    *(modperl_handler_t **)apr_array_push(*handlers) = h;
     MP_TRACE_d(MP_FUNC, "pushed handler: %s\n", h->name);
 
     return NULL;
@@ -50,7 +50,7 @@ modperl_request_config_t *modperl_request_config_new(request_rec *r)
 }
 
 #define scfg_push_argv(arg) \
-    *(const char **)apr_push_array(scfg->argv) = arg
+    *(const char **)apr_array_push(scfg->argv) = arg
 
 modperl_srv_config_t *modperl_srv_config_new(apr_pool_t *p)
 {
@@ -61,7 +61,7 @@ modperl_srv_config_t *modperl_srv_config_new(apr_pool_t *p)
     MpSrvENABLED_On(scfg); /* mod_perl enabled by default */
     MpSrvHOOKS_ALL_On(scfg); /* all hooks enabled by default */
 
-    scfg->argv = apr_make_array(p, 2, sizeof(char *));
+    scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
     scfg_push_argv((char *)ap_server_argv0);
 
