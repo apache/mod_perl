@@ -16,11 +16,11 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 62;
+    plan $r, tests => 64;
 
     ### native pools ###
 
-    # explicit and implicit DESTROY shouldn't destroy native pools
+    # explicit DESTROY shouldn't destroy native pools
     {
         my $p = $r->pool;
 
@@ -305,6 +305,8 @@ sub handler {
         @notes = $r->notes->get('cleanup');
         ok t_cmp(1, scalar(@notes), "should be 1 note");
         ok t_cmp('several references', $notes[0]);
+
+        $r->notes->clear;
     }
 
     {
@@ -326,6 +328,49 @@ sub handler {
         $sp->DESTROY;
 
         ok 1;
+    }
+
+    # cleanup_register using a function name as a callback
+    {
+        {
+            my $p = APR::Pool->new;
+            $p->cleanup_register('set_cleanup', [$r, 'function name']);
+        }
+
+        my @notes = $r->notes->get('cleanup');
+        ok t_cmp('function name', $notes[0], "function name callback");
+
+        $r->notes->clear;
+    }
+
+    # cleanup_register using a anon sub callback
+    {
+        {
+            my $p = APR::Pool->new;
+
+            $p->cleanup_register(sub { &set_cleanup }, [$r, 'anon sub']);
+        }
+
+        my @notes = $r->notes->get('cleanup');
+        ok t_cmp('anon sub', $notes[0], "anon callback");
+
+        $r->notes->clear;
+    }
+
+    # bogus callbacks unfortunately will fail only when the pool is
+    # destroyed, and we have no way to propogate (and thus trap) those
+    # errors. They are logged though. So as usual, one has to always
+    # watch error_log (things like CGI::Carp's fatalsToBrowser) won't
+    # quite be able to catch those.
+    {
+        my $p = APR::Pool->new;
+        t_server_log_error_is_expected();
+        $p->cleanup_register('some_bogus_non_existing', 1);
+    }
+    {
+        my $p = APR::Pool->new;
+        t_server_log_error_is_expected();
+        $p->cleanup_register(\&non_existing1, 1);
     }
 
     # other stuff
@@ -363,14 +408,14 @@ sub ancestry_count {
 
 sub add_cleanup {
     my $arg = shift;
-    debug "adding cleanup note";
+    debug "adding cleanup note: $arg->[1]";
     $arg->[0]->notes->add(cleanup => $arg->[1]);
     1;
 }
 
 sub set_cleanup {
     my $arg = shift;
-    debug "setting cleanup note";
+    debug "setting cleanup note: $arg->[1]";
     $arg->[0]->notes->set(cleanup => $arg->[1]);
     1;
 }

@@ -172,7 +172,6 @@ typedef struct {
 static apr_status_t mpxs_cleanup_run(void *data)
 {
     int count;
-    apr_status_t status = APR_SUCCESS;
     mpxs_cleanup_t *cdata = (mpxs_cleanup_t *)data;
     dTHXa(cdata->perl);
     dSP;
@@ -189,15 +188,11 @@ static apr_status_t mpxs_cleanup_run(void *data)
     SPAGAIN;
 
     if (count == 1) {
-        status = POPi;
+        POPs; /* the return value is ignored */
     }
 
     PUTBACK;
     FREETMPS;LEAVE;
-
-    if (SvTRUE(ERRSV)) {
-        /*XXX*/
-    }
 
     SvREFCNT_dec(cdata->cv);
     if (cdata->arg) {
@@ -214,7 +209,12 @@ static apr_status_t mpxs_cleanup_run(void *data)
     }
 #endif
 
-    return status;
+    if (SvTRUE(ERRSV)) {
+        Perl_croak(aTHX_ SvPV_nolen(ERRSV));
+    }
+    
+    /* the return value is ignored by apr_pool_destroy anyway */
+    return APR_SUCCESS;
 }
 
 /**
