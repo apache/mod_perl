@@ -3,6 +3,7 @@ package ModPerl::WrapXS;
 use strict;
 use warnings FATAL => 'all';
 
+use constant GvSHARED => $^V gt v5.7.0;
 use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::TypeMap ();
@@ -401,7 +402,7 @@ sub attrs {
     my($self, $name) = @_;
     my $str = "";
     return $str if $name =~ /$notshared$/o;
-    $str = "    ATTRS: shared\n" if $^V gt v5.7.0;
+    $str = "    ATTRS: shared\n" if GvSHARED;
     $str;
 }
 
@@ -460,7 +461,8 @@ EOF
 
     if (my $newxs = $self->{newXS}->{$module}) {
         for my $xs (@$newxs) {
-            print $fh qq{   (void)newXS("$xs->[0]", $xs->[1], __FILE__);\n};
+            print $fh qq{   cv = newXS("$xs->[0]", $xs->[1], __FILE__);\n};
+            print $fh qq{   GvSHARED_on(CvGV(cv));\n} if GvSHARED;
         }
     }
 
