@@ -649,6 +649,16 @@ Alias for Apache::warn.
 
 Alias for Apache::log_error.
 
+=item $s->uid
+
+Returns the numeric user id under which the server answers requests.
+This is the value of the User directive.
+
+=item $s->gid
+
+Returns the numeric group id under which the server answers requests.
+This is the value of the Group directive.
+
 =back
 
 =head1 SETTING UP THE RESPONSE
