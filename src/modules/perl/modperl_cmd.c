@@ -223,7 +223,15 @@ MP_CMD_SRV_DECLARE(pass_env)
 {
     MP_dSCFG(parms->server);
     char *val = getenv(arg);
- 
+    
+#ifdef ENV_IS_CASELESS /* i.e. WIN32 */
+    /* we turn off env magic during hv_store later, so do this now,
+     * else lookups on keys with lowercase characters will fails
+     * because Perl will uppercase them prior to lookup.
+     */
+    modperl_str_toupper((char *)arg);
+#endif
+    
     if (val) {
         apr_table_setn(scfg->PassEnv, arg, apr_pstrdup(parms->pool, val));
         MP_TRACE_d(MP_FUNC, "arg = %s, val = %s\n", arg, val);
