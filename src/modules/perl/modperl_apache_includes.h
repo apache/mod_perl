@@ -18,6 +18,7 @@
 #include "http_core.h"
 #include "ap_mpm.h"
 
+#include "apr_lib.h"
 #include "apr_strings.h"
 #include "apr_uri.h"
 #include "apr_date.h"
