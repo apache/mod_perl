@@ -18,22 +18,31 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
     mrg->item = add->item ? add->item : base->item
 
 /* take the 'base' values, and override with 'add' values if any */
-#define merge_table_overlap_item(item) \
-    { \
-        const apr_array_header_t *arr = apr_table_elts(base->item); \
-        apr_table_entry_t *entries  = (apr_table_entry_t *)arr->elts; \
-        int i; \
-        mrg->item = apr_table_copy(p, add->item); \
-        for (i = 0; i < arr->nelts; i++) { \
-            char *val; \
-            if ((val = (char *)apr_table_get(add->item, entries[i].key))){ \
-                continue; \
-            } \
-            else if ((val = (char *)apr_table_get(base->item, entries[i].key))){ \
-                apr_table_set(mrg->item, entries[i].key, val); \
-            } \
-        } \
+static apr_table_t *modperl_table_overlap(apr_pool_t *p,
+                                          apr_table_t *base,
+                                          apr_table_t *add)
+{
+    int i;
+    const apr_array_header_t *arr = apr_table_elts(base);
+    apr_table_entry_t *entries  = (apr_table_entry_t *)arr->elts;
+    apr_table_t *merge = apr_table_copy(p, add);
+
+    for (i = 0; i < arr->nelts; i++) {
+        char *val;
+
+        if ((val = (char *)apr_table_get(add, entries[i].key))) {
+            continue;
+        }
+        else if ((val = (char *)apr_table_get(base, entries[i].key))){
+            apr_table_set(merge, entries[i].key, val);
+        }
     }
+
+    return merge;
+}
+
+#define merge_table_overlap_item(item) \
+    mrg->item = modperl_table_overlap(p, base->item, add->item)
 
 #define merge_handlers(merge_flag, array) \
     if (merge_flag(mrg)) { \
