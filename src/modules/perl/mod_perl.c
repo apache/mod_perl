@@ -147,7 +147,6 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
 #ifdef MP_USE_GTOP
     MP_TRACE_m_do(
-        scfg->gtop = modperl_gtop_new(p);
         modperl_gtop_do_proc_mem_before(MP_FUNC ": perl_parse");
     );
 #endif
