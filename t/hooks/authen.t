@@ -8,14 +8,22 @@ plan tests => 4, \&have_lwp;
 
 my $location = "/TestHooks::authen";
 
-ok ! GET_OK $location;
+sok {
+    ! GET_OK $location;
+};
 
-my $rc = GET_RC $location;
+sok {
+    my $rc = GET_RC $location;
+    $rc == 401;
+};
 
-ok $rc == 401;
+sok {
+    GET_OK $location, username => 'dougm', password => 'foo';
+};
 
-ok GET_OK $location, username => 'dougm', password => 'foo';
+sok {
+    ! GET_OK $location, username => 'dougm', password => 'wrong';
+};
 
-ok ! GET_OK $location, username => 'dougm', password => 'wrong';
 
 
