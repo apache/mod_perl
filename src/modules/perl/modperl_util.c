@@ -705,16 +705,36 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
     dSP;
     int count;
     SV *bdeparse;
+    SV *use;
     char *text;
+    int tainted_orig;
     
     /* B::Deparse >= 0.61 needed for blessed code references.
      * 0.6 works fine for non-blessed code refs.
      * notice that B::Deparse is not CPAN-updatable.
      * 0.61 is available starting from 5.8.0
      */
-    Perl_load_module(aTHX_ PERL_LOADMOD_NOIMPORT,
-                     newSVpvn("B::Deparse", 10),
-                     newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
+    
+     /*
+      Perl_load_module(aTHX_ PERL_LOADMOD_NOIMPORT,
+                      newSVpvn("B::Deparse", 10),
+                      newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));   
+     * Perl_load_module() was causing segfaults in the worker MPM.
+     * this is a work around until we can find the problem with
+     * Perl_load_module() 
+     * See: http://marc.theaimsgroup.com/?t=109684579900001&r=1&w=2
+     */ 
+    use = newSVpv("use B::Deparse ", 15);
+    if (SvOBJECT((SV*)cv)) {
+        sv_catpvn(use, "0.61", 3);
+    }
+    sv_catpvn(use, " ();", 4);
+    
+    tainted_orig = PL_tainted;
+    TAINT_NOT;
+    eval_sv(use, G_DISCARD);
+    PL_tainted = tainted_orig;
+    sv_free(use);
 
     ENTER;
     SAVETMPS;
