@@ -60,6 +60,11 @@ RegistryCooker:
 
 ### nice to have ###
 
+- Geoffrey Young has developed Apache::HEADRegistry is just a subclass
+  of Apache::Registry that is HEAD request aware:
+  http://mathforum.org/epigone/modperl/starfaxbi/3C583A7B.5C187266@modperlcookbook.org
+  consider integrating in the core as the default behavior or a subclass.
+
 - Bjarni R. Einarsson <bre@klaki.net> has suggested this Registry hack
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98961929702745&w=2
   Message-ID: <20010511221101.A20868@diskordiah.mmedia.is>
