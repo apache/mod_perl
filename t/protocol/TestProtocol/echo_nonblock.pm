@@ -8,6 +8,7 @@ use warnings FATAL => 'all';
 use Apache::Connection ();
 use APR::Socket ();
 use APR::Error ();
+
 use Apache::TestTrace;
 
 use Apache::Const -compile => 'OK';
@@ -20,7 +21,7 @@ sub handler {
     my $c = shift;
     my $socket = $c->client_socket;
 
-    $socket->opt_set(APR::SO_NONBLOCK => 1);
+    $socket->opt_set(APR::SO_NONBLOCK, 1);
 
     my $counter = 0;
     my $timeout = 0;
