@@ -17,7 +17,7 @@ use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 16;
+    plan $r, tests => 17;
 
     $r->send_http_header('text/plain');
 
@@ -86,6 +86,11 @@ sub handler {
         ok t_filepath_cmp(canonpath(Apache->server_root_relative),
                           canonpath($server_root),
                           'Apache->server_root_relative()');
+
+        my $path = catfile(Apache::ServerUtil::server_root, 'logs');
+        ok t_filepath_cmp(canonpath(Apache->server_root_relative($path)),
+                          canonpath($path),
+                          "Apache->server_root_relative('$path')");
     }
 
     OK;
