@@ -208,6 +208,22 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
     return status;
 }
 
+/* prepends the passed sprintf-like arguments to ERRSV, which also
+ * gets stringified on the way */
+void modperl_errsv_prepend(pTHX_ const char *pat, ...)
+{
+    SV *sv;
+    va_list args;
+
+    va_start(args, pat);
+    sv = vnewSVpvf(pat, &args);
+    va_end(args);
+
+    sv_catsv(sv, ERRSV);
+    sv_copypv(ERRSV, sv);
+    sv_free(sv);
+}
+
 #define dl_librefs "DynaLoader::dl_librefs"
 #define dl_modules "DynaLoader::dl_modules"
 
