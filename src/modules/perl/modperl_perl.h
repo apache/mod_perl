@@ -14,4 +14,6 @@ void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids);
 apr_status_t modperl_perl_init_ids_mip(pTHX_ modperl_interp_pool_t *mip,
                                        void *data);
 
+void modperl_perl_init_ids_server(server_rec *s);
+
 #endif /* MODPERL_PERL_H */
