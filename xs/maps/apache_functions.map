@@ -42,7 +42,6 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 !ap_content_type_tolower
  ap_get_status_line
  ap_is_initial_req
- mpxs_Apache__RequestRec_no_cache
  ap_method_register
 >ap_method_registry_init
 >ap_process_request_internal
