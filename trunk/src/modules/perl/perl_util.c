@@ -462,22 +462,56 @@ void perl_call_halt(int status)
     }
 }
 
-void perl_reload_inc(void)
+/*
+ * reload %INC: cannot do so while iterating over %INC incase
+ * reloaded modules modify %INC at the file-scope
+ * this approach also preserves order for modules loaded via PerlModule
+ */
+void perl_reload_inc(server_rec *s, pool *sp)
 {
+    dPSRV(s);
     HV *hash = GvHV(incgv);
     HE *entry;
     I32 old_warn = dowarn;
-    
+    pool *p = ap_make_sub_pool(sp);
+    table *reload = ap_make_table(p, HvKEYS(hash));
+    char **entries;
+    int i = 0;
+
     dowarn = FALSE;
+    entries = (char **)cls->PerlModule->elts;
+    for (i=0; i < cls->PerlModule->nelts; i++) {
+	SV *file = perl_module2file(entries[i]);
+	ap_table_set(reload, SvPVX(file), "1");
+	SvREFCNT_dec(file);
+    }
+
     hv_iterinit(hash);
     while ((entry = hv_iternext(hash))) {
-	char *key = HeKEY(entry);
-	SvREFCNT_dec(HeVAL(entry));
-	HeVAL(entry) = &sv_undef;
-	MP_TRACE_g(fprintf(stderr, "reloading %s\n", key);)
-	perl_require_pv(key);
+	ap_table_setn(reload, HeKEY(entry), "1");
     }
+
+    {
+	array_header *arr = ap_table_elts(reload);
+	table_entry *elts = (table_entry *)arr->elts;
+	SV *keysv = newSV(0);
+	for (i=0; i < arr->nelts; i++) {
+	    sv_setpv(keysv, elts[i].key);
+	    if (!(entry = hv_fetch_ent(hash, keysv, FALSE, 0))) {
+		MP_TRACE_g(fprintf(stderr, 
+				   "%s not found in %%INC\n", elts[i].key));
+		continue;
+	    }
+	    SvREFCNT_dec(HeVAL(entry));
+	    HeVAL(entry) = &sv_undef;
+	    MP_TRACE_g(fprintf(stderr, "reloading %s\n", HeKEY(entry)));
+	    perl_require_pv(HeKEY(entry));
+	}
+	SvREFCNT_dec(keysv);
+    }
+
     dowarn = old_warn;
+    ap_destroy_pool(p);
 }
 
 I32 perl_module_is_loaded(char *name)

@@ -570,23 +570,21 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     dPSRV(parms->server);
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
     require_Apache(parms->server);
+
+    MP_TRACE_d(fprintf(stderr, "PerlModule: arg='%s'\n", arg));
+
     if(PERL_RUNNING()) {
 	if (PERL_STARTUP_IS_DONE) {
 	    if (perl_require_module(arg, NULL) != OK) {
-		dTHR;
-		return SvPV(ERRSV,na);
+		STRLEN n_a;
+		return SvPV(ERRSV,n_a);
 	    }
 	}
 	else {
 	    return NULL;
 	}
     }
-    else {
-	char **entry;
-	MP_TRACE_d(fprintf(stderr, "push_perl_modules: arg='%s'\n", arg));
-	entry = (char **)push_array(cls->PerlModule);
-	*entry = pstrdup(parms->pool, arg);
-    }
+    *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)
@@ -600,23 +598,22 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
-    MP_TRACE_d(fprintf(stderr, "perl_cmd_require: %s\n", arg));
+
+    MP_TRACE_d(fprintf(stderr, "PerlRequire: arg=`%s'\n", arg));
+
     if(PERL_RUNNING()) {
 	if (PERL_STARTUP_IS_DONE) {
 	    if (perl_load_startup_script(NULL, parms->pool, arg, TRUE) != OK) {
-		dTHR;
-		return SvPV(ERRSV,na);
+		STRLEN n_a;
+		return SvPV(ERRSV,n_a);
 	    }
 	    else {
 		return NULL;
 	    }
 	}
     }
-    else {
-	char **entry;
-	entry = (char **)push_array(cls->PerlRequire);
-	*entry = pstrdup(parms->pool, arg);
-    }
+
+    *(char **)push_array(cls->PerlRequire) = pstrdup(parms->pool, arg);
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+PerlFreshRestart semantics changed to preserve order of PerlModule's
+and not to reload modules while actually iterating over %INC
+
 $r->current_callback now works properly when PerlHandler invokes
 subrequests, thanks to James Smith for the spot
 
