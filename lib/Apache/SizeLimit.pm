@@ -92,8 +92,6 @@ NOTE: This is only known to work for solaris 2.6. Evidently the /proc
 filesystem has changed between 2.5.1 and 2.6. Can anyone confirm or
 deny?
 
-(ix@maz.org)
-
 =item *bsd*
 
 Uses BSD::Resource::getrusage() to determine process size.  This is pretty
@@ -114,7 +112,8 @@ The more portable/efficient the solution, the better, of course.
 Possibly provide a perl make/install so that the SizeLimit.pm is created at
 build time with only the code you need on your platform.
 
-Make it work in non-forking mode (ix@maz.org)
+If Apache was started in non-forking mode, should hitting the size limit
+cause the process to exit?
 
 =cut
 
@@ -213,5 +212,7 @@ sub error_log {
 =head1 AUTHOR
 
 Doug Bagley <doug+modperl@bagley.org>, channeling Procrustes.
+
+Brian Moseley <ix@maz.org>: Solaris 2.6 support
 
 =cut

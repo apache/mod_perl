@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+Added Doug Bagley's Apache::SizeLimit [Brian Moseley, <ix@maz.org>]
+
 a Perl syntax error may corrupt the Perl stack, rendering the
 process useless, so we now child_terminate() if this is the case  
 (thanks to Ken Williams for the Apache::Death bug illustration)
