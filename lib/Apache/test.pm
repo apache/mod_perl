@@ -20,7 +20,7 @@ BEGIN {
 $PERL_DIR = $ENV{PERL_DIR} if exists $ENV{PERL_DIR};
 
 $USE_THREAD = ($Config{extensions} =~ /Thread/) || $Config{usethreads};
-$USE_SFIO = ($Config{'usesfio'} eq 'true');
+$USE_SFIO = (($Config{'usesfio'} || '') eq 'true');
 
 my $Is_Win32 = ($^O eq "MSWin32");
 sub WIN32 () { $Is_Win32 };
