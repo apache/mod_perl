@@ -1,4 +1,4 @@
-package TestModperl::interp1;
+package TestModperl::interp;
 
 use warnings FATAL => 'all';
 use strict;
