@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::FilterRec: [Stas]
+  - remove the next() accessor since it's not used by Apache at the
+    moment
+  - name() is made read-only
+
 APR::URI: [Stas]
   - removed accessors
     o is_initialized() (internal apr_uri flag)

@@ -165,10 +165,10 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 </command_rec>
 
 <ap_filter_rec_t>
-   name
+<  name
 -  filter_func
 !  ftype
-   next
+-  next
 </ap_filter_rec_t>
 
 <ap_filter_t>
