@@ -3,15 +3,15 @@ package TestModperl::merge;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::RequestUtil ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 # this is the configuration and handler for t/modperl/merge.t,
 # t/modperl/merge2.t, and t/modperl/merge3.t.  see any of those
@@ -123,7 +123,7 @@ sub handler {
         }
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

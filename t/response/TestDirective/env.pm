@@ -6,10 +6,10 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -52,7 +52,7 @@ sub handler {
              'test.host.name',
              '$r->subprocess_env PerlPassEnv');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub env_get {

@@ -3,26 +3,26 @@ package TestCommon::Handlers;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use TestCommon::Utils ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(M_POST OK);
+use Apache2::Const -compile => qw(M_POST OK);
 
 # read the posted body and send it back to the client as is
 sub pass_through_response_handler {
     my $r = shift;
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         debug "pass_through_handler read: $data\n";
         $r->print($data);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

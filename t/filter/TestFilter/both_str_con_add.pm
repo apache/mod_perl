@@ -8,24 +8,24 @@ package TestFilter::both_str_con_add;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Error ();
 use APR::Socket;
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
 use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
-use Apache::Const -compile => qw(OK MODE_GETLINE);
+use Apache2::Const -compile => qw(OK MODE_GETLINE);
 
 sub pre_connection {
-    my Apache::Connection $c = shift;
+    my Apache2::Connection $c = shift;
 
     $c->add_input_filter(\&in_filter);
     $c->add_output_filter(\&out_filter);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub in_filter : FilterConnectionHandler {
@@ -38,7 +38,7 @@ sub in_filter : FilterConnectionHandler {
     # test that $filter->ctx works here
     $filter->ctx(1);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub out_filter : FilterConnectionHandler {
@@ -49,11 +49,11 @@ sub out_filter : FilterConnectionHandler {
         $filter->print($buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
-    my Apache::Connection $c = shift;
+    my Apache2::Connection $c = shift;
 
     # starting from Apache 2.0.49 several platforms require you to set
     # the socket to a blocking IO mode
@@ -62,7 +62,7 @@ sub handler {
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     for (;;) {
-        $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
+        $c->input_filters->get_brigade($bb, Apache2::MODE_GETLINE);
         last if $bb->is_empty;
 
         my $b = APR::Bucket::flush_create($c->bucket_alloc);
@@ -75,7 +75,7 @@ sub handler {
 
     $bb->destroy;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

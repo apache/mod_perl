@@ -5,8 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-use Apache2 ();
-use Apache::Const ':common';
+use Apache2::Const ':common';
 
 my $module = 'TestHooks::trans';
 Apache::TestRequest::module($module);

@@ -10,7 +10,7 @@ use Apache::TestUtil;
 
 use ModPerl::Util ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -20,7 +20,7 @@ sub handler {
     ok t_cmp ModPerl::Util::current_perl_id(), qr/0x\w+/,
         "perl interpreter id";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -5,9 +5,9 @@ use warnings FATAL => 'all';
 
 use APR::Brigade ();
 use APR::Bucket ();
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(MODE_READBYTES);
+use Apache2::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
 use constant IOBUFSIZE => 8192;
@@ -35,7 +35,7 @@ sub read_post {
     my $seen_eos = 0;
     my $count = 0;
     do {
-        $r->input_filters->get_brigade($bb, Apache::MODE_READBYTES,
+        $r->input_filters->get_brigade($bb, Apache2::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;

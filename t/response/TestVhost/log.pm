@@ -10,9 +10,9 @@ use warnings;
 # here as it breaks the $SIG{__WARN__} sub test for perl 5.6, though
 # it works fine with perl 5.8+
 
-use Apache::RequestUtil ();
-use Apache::Log ();
-use Apache::ServerRec qw(warn); # override warn locally
+use Apache2::RequestUtil ();
+use Apache2::Log ();
+use Apache2::ServerRec qw(warn); # override warn locally
 
 use File::Spec::Functions qw(catfile);
 
@@ -20,7 +20,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use TestCommon::LogDiff;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my @methods1 = (
     '$r->log->warn',
@@ -32,7 +32,7 @@ my @methods1 = (
 );
 
 my @methods2 = (
-    'Apache::ServerRec::warn',
+    'Apache2::ServerRec::warn',
     'warn',
 );
 
@@ -54,11 +54,11 @@ sub handler {
     }
 
     ### object-less logging
-    # set Apache->request($r) instead of using
+    # set Apache2->request($r) instead of using
     #   PerlOptions +GlobalRequest
     # in order to make sure that the above tests work fine,
     # w/o having the global request set
-    Apache->request($r);
+    Apache2->request($r);
     for my $m (@methods2) {
         eval "$m(q[$m])";
         ok t_cmp $logdiff->diff, qr/\Q$m/, $m;
@@ -68,7 +68,7 @@ sub handler {
     {
         no warnings; # avoid FATAL warnings
         use warnings;
-        local $SIG{__WARN__} = \&Apache::ServerRec::warn;
+        local $SIG{__WARN__} = \&Apache2::ServerRec::warn;
         eval q[my $x = "aaa" + 1;];
         ok t_cmp
             $logdiff->diff,
@@ -79,7 +79,7 @@ sub handler {
     # die logs into the vhost log just fine
     #die "horrible death!";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

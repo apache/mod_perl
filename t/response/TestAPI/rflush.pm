@@ -8,12 +8,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use constant READ_SIZE  => 1024;
 
@@ -28,7 +28,7 @@ sub bracket {
 
       $filter->print("[$data]") if $data;
 
-      return Apache::OK;
+      return Apache2::OK;
 }
 
 sub response {
@@ -68,7 +68,7 @@ sub response {
         print "6"; # send the data in the buffer (end of handler)
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

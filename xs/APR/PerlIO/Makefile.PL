@@ -2,9 +2,9 @@ use lib qw(../lib);
 use ModPerl::BuildMM ();
 
 use Config;
-use Apache::Build;
+use Apache2::Build;
 use Apache::TestTrace;
-my $build = Apache::Build->build_config();
+my $build = Apache2::Build->build_config();
 
 my $ccopts = $build->ccopts;
 

@@ -24,9 +24,9 @@
 #define mp_xs_sv2_APR__Table(sv)                                        \
     (apr_table_t *)modperl_hash_tied_object(aTHX_ "APR::Table", sv)
 
-#define mpxs_Apache__RequestRec_pool(r) r->pool
-#define mpxs_Apache__Connection_pool(c) c->pool
-#define mpxs_Apache__URI_pool(u)        ((modperl_uri_t *)u)->pool
+#define mpxs_Apache2__RequestRec_pool(r) r->pool
+#define mpxs_Apache2__Connection_pool(c) c->pool
+#define mpxs_Apache2__URI_pool(u)        ((modperl_uri_t *)u)->pool
 #define mpxs_APR__URI_pool(u)           ((modperl_uri_t *)u)->pool
 
 #ifndef dAX

@@ -594,7 +594,7 @@ MODULE=APR::URI
  mpxs_APR__URI_rpath
  apr_uri_port_of_scheme
 
-!MODULE=Apache::XML
+!MODULE=Apache2::XML
  apr_text_append
  apr_xml_parser_create
  apr_xml_parser_feed

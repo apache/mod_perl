@@ -7,13 +7,13 @@ package TestFilter::out_str_reverse;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 use constant BUFF_LEN => 2;
 
@@ -40,7 +40,7 @@ sub handler {
         $f->ctx($leftover) if defined $leftover;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -50,12 +50,12 @@ sub response {
 
     # unbuffer stdout, so we get the data split across several bbs
     local $_ = 1; 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r); 
         $r->print($_) for grep length $_, split /(.{5})/, $data;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

@@ -6,14 +6,14 @@ package TestFilter::both_str_req_add;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 sub header_parser {
     my $r = shift;
@@ -31,10 +31,10 @@ sub header_parser {
             $filter->print($buffer);
         }
 
-        return Apache::OK;
+        return Apache2::OK;
     });
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub in_filter {
@@ -44,7 +44,7 @@ sub in_filter {
         $filter->print(lc $buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub out_filter {
@@ -55,7 +55,7 @@ sub out_filter {
         $filter->print($buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
@@ -63,11 +63,11 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 

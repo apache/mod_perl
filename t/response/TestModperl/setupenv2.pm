@@ -7,24 +7,24 @@ package TestModperl::setupenv2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => qw(OK OR_ALL NO_ARGS);
+use Apache2::Const -compile => qw(OK OR_ALL NO_ARGS);
 
-use Apache::CmdParms ();
-use Apache::Module ();
-use Apache::RequestIO ();
-use Apache::RequestRec ();
+use Apache2::CmdParms ();
+use Apache2::Module ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
 
 my @directives = (
     {
      name         => 'MyEnvRegister',
      func         => __PACKAGE__ . '::MyEnvRegister',
-     req_override => Apache::OR_ALL,
-     args_how     => Apache::NO_ARGS,
+     req_override => Apache2::OR_ALL,
+     args_how     => Apache2::NO_ARGS,
      errmsg       => 'cannot fail :)',
     },
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 # testing PerlLoadModule
 $ENV{EnvChangeMixedTest} = 'loadmodule';
@@ -46,7 +46,7 @@ sub register_perl {
 
 sub get_config {
     my($self, $s) = (shift, shift);
-    Apache::Module::get_config($self, $s, @_);
+    Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler {
@@ -70,7 +70,7 @@ sub handler {
         die "no such case";
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

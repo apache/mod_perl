@@ -5,20 +5,20 @@
 #see pod/modperl_sizeof.pod
 
 use strict;
-use Apache::FunctionTable ();
-use Apache::StructureTable ();
+use Apache2::FunctionTable ();
+use Apache2::StructureTable ();
 
 use constant sizeofCV => 254;
 
 my $size = 0;
 my $subs = 0;
 
-for my $entry (@$Apache::FunctionTable) {
+for my $entry (@$Apache2::FunctionTable) {
     $size += sizeofCV + ((length($entry->{name}) + 1) * 2);
     $subs++;
 }
 
-for my $entry (@$Apache::StructureTable) {
+for my $entry (@$Apache2::StructureTable) {
     my $elts = $entry->{elts} || [];
     next unless @$elts;
 

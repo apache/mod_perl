@@ -1,6 +1,6 @@
 package TestCompat::apache_module;
 
-# Apache::Module compat layer tests
+# Apache2::Module compat layer tests
 
 use strict;
 use warnings FATAL => 'all';
@@ -8,7 +8,7 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(OK);
 
 my @directives = (
@@ -17,11 +17,11 @@ my @directives = (
     },
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub TestCompatApacheModuleParms {
     my($self, $parms, $args) = @_;
-    my $config = Apache::Module->get_config($self, $parms->server);
+    my $config = Apache2::Module->get_config($self, $parms->server);
     $config->{data} = $args;
 }
 
@@ -30,10 +30,10 @@ sub handler : method {
 
     plan $r, tests => 2;
 
-    my $top_module = Apache::Module->top_module();
-    ok t_cmp (ref($top_module), 'Apache::Module');
+    my $top_module = Apache2::Module->top_module();
+    ok t_cmp (ref($top_module), 'Apache2::Module');
 
-    my $config = Apache::Module->get_config($self, $r->server);
+    my $config = Apache2::Module->get_config($self, $r->server);
     ok t_cmp ($config->{data}, 'Test');
 
     OK;

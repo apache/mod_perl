@@ -6,7 +6,7 @@ package TestFilter::in_bbs_inject_header;
 #
 # the first task is simple for non-keepalive connections -- as soon as
 # a bucket which matches /^[\r\n]+$/ is read we can store that event
-# in the filter context and simply 'return Apache::DECLINED on the
+# in the filter context and simply 'return Apache2::DECLINED on the
 # future invocation, so not to slow things.
 #
 # it becomes much trickier with keepalive connection, since Apache
@@ -27,11 +27,11 @@ package TestFilter::in_bbs_inject_header;
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Connection ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Connection ();
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::Table ();
@@ -40,7 +40,7 @@ use Apache::TestTrace;
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED CONN_KEEPALIVE);
+use Apache2::Const -compile => qw(OK DECLINED CONN_KEEPALIVE);
 use APR::Const    -compile => ':common';
 
 my $header1_key = 'X-My-Protocol';
@@ -102,7 +102,7 @@ sub context {
         return $ctx;
     }
 
-    if ($c->keepalive == Apache::CONN_KEEPALIVE &&
+    if ($c->keepalive == Apache2::CONN_KEEPALIVE &&
         $ctx->{done_with_headers} &&
         $c->keepalives > $ctx->{keepalives}) {
 
@@ -127,7 +127,7 @@ sub handler : FilterConnectionHandler {
     my $c = $filter->c;
 
     # reset the filter state, we start a new request
-    if ($c->keepalive == Apache::CONN_KEEPALIVE &&
+    if ($c->keepalive == Apache2::CONN_KEEPALIVE &&
         $ctx->{done_with_headers} && $c->notes->get('reset_request')) {
         debug "a new request resetting the input filter state";
         $c->notes->set('reset_request' => 0);
@@ -141,16 +141,16 @@ sub handler : FilterConnectionHandler {
         # XXX: when the bug in httpd filter will be fixed all the
         # code in this branch will be replaced with:
         #   $filter->remove;
-        #   return Apache::DECLINED;
+        #   return Apache2::DECLINED;
         # at the moment (2.0.48) it doesn't work
         # so meanwhile tell the mod_perl filter core to pass-through
         # the brigade unmodified
         debug "passing the body through unmodified";
-        return Apache::DECLINED;
+        return Apache2::DECLINED;
     }
 
     # any custom HTTP header buckets to inject?
-    return Apache::OK if inject_header_bucket($bb, $ctx);
+    return Apache2::OK if inject_header_bucket($bb, $ctx);
 
     # normal HTTP headers processing
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
@@ -224,7 +224,7 @@ sub handler : FilterConnectionHandler {
         $bb->insert_tail($b);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -242,7 +242,7 @@ sub response {
     my $data = TestCommon::Utils::read_post($r);
     $r->print($data);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

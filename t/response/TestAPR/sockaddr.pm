@@ -8,11 +8,11 @@ use warnings  FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Connection ();
-use Apache::RequestRec ();
+use Apache2::Connection ();
+use Apache2::RequestRec ();
 use APR::SockAddr ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -30,7 +30,7 @@ sub handler {
     ok t_cmp($local->port,  $ENV{SERVER_PORT}, "local port");
     ok t_cmp($remote->port, $ENV{REMOTE_PORT}, "remote port");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -25,7 +25,7 @@ use warnings FATAL => 'all';
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -54,7 +54,7 @@ sub handler {
         die "something is wrong, didn't get path_info";
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

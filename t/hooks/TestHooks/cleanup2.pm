@@ -11,12 +11,12 @@ use Apache::TestTrace;
 
 use File::Spec::Functions qw(catfile);
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 use APR::Pool ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Const    -compile => 'SUCCESS';
 
 my $file = catfile Apache::Test::config->{vars}->{documentroot}, 
@@ -34,7 +34,7 @@ sub handler {
 
     $r->pool->cleanup_register(\&cleanup, $file);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub cleanup {
@@ -44,7 +44,7 @@ sub cleanup {
     die "Can't find file: $file_arg" unless -e $file_arg;
     unlink $file_arg or die "failed to unlink $file_arg";
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

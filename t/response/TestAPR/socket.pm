@@ -8,11 +8,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::Connection ();
+use Apache2::RequestRec ();
+use Apache2::Connection ();
 use APR::Socket ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 use APR::Const -compile => 'EMISMATCH';
 
 sub handler {
@@ -40,7 +40,7 @@ sub handler {
     $socket->timeout_set($orig_val);
     ok t_cmp($socket->timeout_get(), $orig_val, "timeout_get()");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

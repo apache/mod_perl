@@ -90,8 +90,8 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
 }
 
 
-/* notice that if sv is not an Apache::ServerRec object and
- * Apache->request is not available, the returned global object might
+/* notice that if sv is not an Apache2::ServerRec object and
+ * Apache2->request is not available, the returned global object might
  * be not thread-safe under threaded mpms, so use with care
  */
 
@@ -101,7 +101,7 @@ MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
         return INT2PTR(server_rec *, SvObjIV(sv));
     }
 
-    /* next see if we have Apache->request available */
+    /* next see if we have Apache2->request available */
     {
         request_rec *r = NULL;
         (void)modperl_tls_get_request_rec(&r);
@@ -140,14 +140,14 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         }
     }
 
-    /* might be Apache::ServerRec::warn method */
+    /* might be Apache2::ServerRec::warn method */
     if (!sv && !(classname && SvPOK(in) && !strEQ(classname, SvPVX(in)))) {
         request_rec *r = NULL;
         (void)modperl_tls_get_request_rec(&r);
 
         if (!r) {
             Perl_croak(aTHX_
-                       "Apache->%s called without setting Apache->request!",
+                       "Apache2->%s called without setting Apache2->request!",
                        cv ? GvNAME(CvGV(cv)) : "unknown");
         }
 

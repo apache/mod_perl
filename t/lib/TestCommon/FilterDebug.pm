@@ -3,12 +3,12 @@ package ModPerl::TestFilterDebug;
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::BucketType ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Const -compile => ':common';
 
 # to use these functions add any or all of these filter handlers
@@ -45,7 +45,7 @@ sub snoop {
     #    return -1;
     #}
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub bb_dump {

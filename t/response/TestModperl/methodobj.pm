@@ -3,7 +3,7 @@ package TestModperl::methodobj;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestModperl::method ();
 

@@ -3,29 +3,29 @@ package TestHooks::authen_basic;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Access ();
+use Apache2::Access ();
 
-use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR);
+use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR);
 
 sub handler {
     my $r = shift;
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
-    return $rc if $rc != Apache::OK;
+    return $rc if $rc != Apache2::OK;
 
     my $user = $r->user;
 
     my $requirement = $r->requires->[0]->{requirement};
 
-    return Apache::SERVER_ERROR unless $requirement eq 'valid-user';
+    return Apache2::SERVER_ERROR unless $requirement eq 'valid-user';
 
     unless ($user eq 'dougm' and $sent_pw eq 'foo') {
         $r->note_basic_auth_failure;
-        return Apache::HTTP_UNAUTHORIZED;
+        return Apache2::HTTP_UNAUTHORIZED;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

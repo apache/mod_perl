@@ -7,13 +7,13 @@ package TestProtocol::echo_bbs2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 use APR::Socket ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Error ();
 
-use Apache::Const -compile => qw(OK MODE_GETLINE);
+use Apache2::Const -compile => qw(OK MODE_GETLINE);
 use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
 
 sub handler {
@@ -29,7 +29,7 @@ sub handler {
     my $last = 0;
     while (1) {
         my $rc = $c->input_filters->get_brigade($bb_in,
-                                                Apache::MODE_GETLINE);
+                                                Apache2::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
@@ -51,7 +51,7 @@ sub handler {
     $bb_in->destroy;
     $bb_out->destroy;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

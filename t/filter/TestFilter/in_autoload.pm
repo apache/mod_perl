@@ -9,11 +9,11 @@ package TestFilter::in_autoload;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
     my $filter = shift;
@@ -23,7 +23,7 @@ sub handler {
         $filter->print(lc $buffer);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

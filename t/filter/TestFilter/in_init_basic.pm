@@ -6,14 +6,14 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 use constant READ_SIZE  => 1024;
 
@@ -27,7 +27,7 @@ sub transparent_init : FilterInitHandler {
     $filter->r->notes->set(init => $ctx->{init});
     $filter->ctx($ctx);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 # this filter passes the data through unmodified and sets a note
@@ -44,14 +44,14 @@ sub transparent : FilterRequestHandler
 
     $filter->next->get_brigade($bb, $mode, $block, $readbytes);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 
 
 # this filter is not supposed to get a chance to run, since its init
 # handler immediately removes it
-sub suicide_init : FilterInitHandler { shift->remove(); Apache::OK }
+sub suicide_init : FilterInitHandler { shift->remove(); Apache2::OK }
 sub suicide      : FilterHasInitHandler(\&suicide_init) {
     die "this filter is not supposed to have a chance to run";
 }
@@ -61,7 +61,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
@@ -69,7 +69,7 @@ sub response {
     my %times = map { $_ => $r->notes->get($_)||0 } @keys;
     $r->print("$_ $times{$_}\n") for @keys;
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

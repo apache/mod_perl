@@ -6,22 +6,22 @@ package TestDirective::perlloadmodule2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => qw(OK OR_ALL ITERATE);
+use Apache2::Const -compile => qw(OK OR_ALL ITERATE);
 
-use Apache::CmdParms ();
-use Apache::Module ();
+use Apache2::CmdParms ();
+use Apache2::Module ();
 
 my @directives = (
     {
      name         => 'MyMergeTest',
      func         => __PACKAGE__ . '::MyMergeTest',
-     req_override => Apache::OR_ALL,
-     args_how     => Apache::ITERATE,
+     req_override => Apache2::OR_ALL,
+     args_how     => Apache2::ITERATE,
      errmsg       => 'Values that get merged',
     },
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub merge {
     my($base, $add) = @_;
@@ -72,7 +72,7 @@ sub MyMergeTest {
 
 sub get_config {
     my($self, $s) = (shift, shift);
-    Apache::Module::get_config($self, $s, @_);
+    Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler : method {
@@ -91,7 +91,7 @@ sub handler : method {
         $r->print("dir: @{ $dir_cfg->{MyMergeTest}||[] }");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

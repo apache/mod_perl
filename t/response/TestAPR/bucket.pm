@@ -11,10 +11,10 @@ use Apache::TestUtil;
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::BucketType ();
-use Apache::Connection ();
-use Apache::RequestRec ();
+use Apache2::Connection ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::bucket;
 
@@ -141,7 +141,7 @@ sub handler {
         ok 1;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

@@ -3,12 +3,12 @@
 use lib qw(lib);
 
 use strict;
-use Apache::FunctionTable ();
-use Apache::StructureTable ();
+use Apache2::FunctionTable ();
+use Apache2::StructureTable ();
 
 my %stats;
 
-for my $entry (@$Apache::FunctionTable) {
+for my $entry (@$Apache2::FunctionTable) {
     unless ($entry->{name} =~ /^(ap|apr)_/) {
         #print "found alien function $entry->{name}\n";
         next;
@@ -17,7 +17,7 @@ for my $entry (@$Apache::FunctionTable) {
     $stats{functions}->{$1}++;
 }
 
-for my $entry (@$Apache::StructureTable) {
+for my $entry (@$Apache2::StructureTable) {
     my $elts = $entry->{elts};
     my $type = $entry->{type};
 

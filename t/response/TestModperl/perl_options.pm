@@ -5,15 +5,15 @@ package TestModperl::perl_options;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
-use Apache::ServerUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
+use Apache2::ServerUtil ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 my @srv_plus  = qw(ChildInit ChildExit Fixup);
 my @srv_minus = qw(PreConnection ProcessConnection Autoload
@@ -39,7 +39,7 @@ sub handler {
     ok t_cmp($r->is_perl_option_enabled($_), 0,
              "PerlOptions -$_") for @dir_minus;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

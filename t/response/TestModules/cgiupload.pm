@@ -3,10 +3,10 @@ package TestModules::cgiupload;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::compat ();
+use Apache2::compat ();
 use CGI ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -19,7 +19,7 @@ sub handler {
         print;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

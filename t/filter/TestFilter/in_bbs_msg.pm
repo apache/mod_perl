@@ -3,14 +3,14 @@ package TestFilter::in_bbs_msg;
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
 use Apache::TestTrace;
@@ -45,7 +45,7 @@ sub handler : FilterConnectionHandler {
         # $filter->remove; # this filter is no longer needed
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {
@@ -55,7 +55,7 @@ sub response {
 
     $r->puts("1..1\nok 1\n");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

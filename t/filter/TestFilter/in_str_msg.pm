@@ -12,10 +12,10 @@ package TestFilter::in_str_msg;
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
 
@@ -24,7 +24,7 @@ use Apache::TestUtil;
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
 my $from_url = '/input_filter.html';
@@ -46,7 +46,7 @@ sub con : FilterConnectionHandler {
     }
     $filter->ctx($ctx) if $ctx;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub req : FilterRequestHandler {
@@ -58,7 +58,7 @@ sub req : FilterRequestHandler {
         $filter->print($buffer);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub con_skip : FilterConnectionHandler {
@@ -69,7 +69,7 @@ sub con_skip : FilterConnectionHandler {
         $filter->print("I'm a bogus filter. Don't run me\n");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 my $expected = "UPCASED";
@@ -83,7 +83,7 @@ sub response {
     ok t_cmp($received, $expected,
              "request filter must have upcased the data");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

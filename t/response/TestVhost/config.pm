@@ -10,12 +10,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestUtil ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
 use File::Spec::Functions qw(canonpath catdir);
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 # initialized in t/htdocs/vhost/post_config.pl
 our $restart_count;
@@ -37,7 +37,7 @@ sub my_handler {
         ok t_cmp($restart_count, 2, "PerlPostConfigRequire");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

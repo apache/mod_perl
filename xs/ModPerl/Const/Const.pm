@@ -16,7 +16,7 @@ package ModPerl::Const;
 
 use DynaLoader ();
 
-our $VERSION = do { require mod_perl; $mod_perl::VERSION };
+our $VERSION = do { require mod_perl2; $mod_perl2::VERSION };
 our @ISA = qw(DynaLoader);
 
 #dlopen("Const.so", RTDL_GLOBAL);

@@ -9,10 +9,10 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestUtil ();
+use Apache2::RequestUtil ();
 use ModPerl::Util;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $expected = <<EOI;
 English: Internet
@@ -54,7 +54,7 @@ sub handler {
         ok t_cmp($received, $expected, "slurp filename (perl) untainted");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub slurp_filename_perl {

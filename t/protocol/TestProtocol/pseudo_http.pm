@@ -11,15 +11,15 @@ package TestProtocol::pseudo_http;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
-use Apache::RequestUtil ();
-use Apache::HookRun ();
-use Apache::Access ();
+use Apache2::Connection ();
+use Apache2::RequestUtil ();
+use Apache2::HookRun ();
+use Apache2::Access ();
 use APR::Socket ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK DONE DECLINED);
+use Apache2::Const -compile => qw(OK DONE DECLINED);
 use APR::Const -compile => qw(SO_NONBLOCK);
 
 my @cmds = qw(date quit);
@@ -33,12 +33,12 @@ sub handler {
         $socket->opt_set(APR::SO_NONBLOCK => 0);
     }
 
-    if ((my $rc = greet($c)) != Apache::OK) {
+    if ((my $rc = greet($c)) != Apache2::OK) {
         $socket->send("Say HELO first\n");
         return $rc;
     }
 
-    if ((my $rc = login($c)) != Apache::OK) {
+    if ((my $rc = login($c)) != Apache2::OK) {
         $socket->send("Access Denied\n");
         return $rc;
     }
@@ -51,14 +51,14 @@ sub handler {
         next unless $cmd = getline($socket);
 
         if (my $sub = $commands{$cmd}) {
-            last unless $sub->($socket) == Apache::OK;
+            last unless $sub->($socket) == Apache2::OK;
         }
         else {
             $socket->send("Commands: @cmds\n");
         }
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub greet {
@@ -68,13 +68,13 @@ sub greet {
     $socket->send("HELO\n");
     my $reply = getline($socket) || '';
 
-    return $reply eq 'HELO' ?  Apache::OK : Apache::DECLINED;
+    return $reply eq 'HELO' ?  Apache2::OK : Apache2::DECLINED;
 }
 
 sub login {
     my $c = shift;
 
-    my $r = Apache::RequestRec->new($c);
+    my $r = Apache2::RequestRec->new($c);
 
     # test whether we can invoke modperl HTTP handlers on the fake $r
     $r->push_handlers(PerlAccessHandler => \&my_access);
@@ -86,7 +86,7 @@ sub login {
 
         my $rc = $r->$method();
 
-        if ($rc != Apache::OK and $rc != Apache::DECLINED) {
+        if ($rc != Apache2::OK and $rc != Apache2::DECLINED) {
             return $rc;
         }
 
@@ -102,13 +102,13 @@ sub login {
         }
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub my_access {
     # just test that we can invoke a mod_perl HTTP handler
     debug "running my_access";
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub getline {
@@ -134,7 +134,7 @@ sub date {
 
     $socket->send("The time is: " . scalar(localtime) . "\n");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub quit {
@@ -142,7 +142,7 @@ sub quit {
 
     $socket->send("Goodbye\n");
 
-    return Apache::DONE
+    return Apache2::DONE
 }
 
 1;

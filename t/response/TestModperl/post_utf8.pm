@@ -7,13 +7,13 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use APR::Table ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $expected_ascii = "I love you, (why lying?), but I belong to another";
 my $expected_utf8  = "\x{042F} \x{0432}\x{0430}\x{0441} \x{043B}\x{044E}" .
@@ -59,7 +59,7 @@ sub handler {
     debug "expected: $expected_utf8";
     debug "received: $received_utf8";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

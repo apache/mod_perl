@@ -10,7 +10,7 @@ use warnings FATAL => 'all';
 
 use ModPerl::Util ();
 
-use Apache::Const  -compile => 'OK';
+use Apache2::Const  -compile => 'OK';
 use ModPerl::Const -compile => 'EXIT';
 
 sub handler {
@@ -36,7 +36,7 @@ sub handler {
     # must not be reached
     $r->print("must not be reached");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

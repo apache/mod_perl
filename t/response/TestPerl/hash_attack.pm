@@ -23,7 +23,7 @@ use warnings FATAL => 'all';
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use Math::BigInt;
 
@@ -43,18 +43,18 @@ sub init {
     # define a new symbol (sub) after the attack has caused a re-hash
     # check that mod_perl finds that symbol (fixup2) in the stash
     no warnings 'redefine';
-    eval qq[sub fixup2 { return Apache::OK; }];
+    eval qq[sub fixup2 { return Apache2::OK; }];
     $r->push_handlers(PerlFixupHandler => \&fixup2);
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
-sub fixup { return Apache::OK; }
+sub fixup { return Apache2::OK; }
 
 sub handler {
     my $r = shift;
     $r->print("ok");
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub attack {

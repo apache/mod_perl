@@ -1,18 +1,17 @@
 use warnings;
 use strict;
 
-use Apache2;
-use Apache::ServerUtil ();
-use Apache::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::ServerRec ();
 
 use File::Spec::Functions qw(catdir);
 
 # base server
 # XXX: at the moment this is wrong, since it return the base server $s
 # and not the vhost's one. needs to be fixed.
-my $s = Apache->server;
+my $s = Apache2->server;
 
-my $vhost_doc_root = catdir Apache::ServerUtil::server_root, qw(htdocs vhost);
+my $vhost_doc_root = catdir Apache2::ServerUtil::server_root, qw(htdocs vhost);
 
 # testing $s->add_config() in vhost
 my $conf = <<"EOC";

@@ -11,7 +11,7 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use ModPerl::Util ();
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 
 use File::Spec::Functions qw(catfile canonpath);
@@ -28,13 +28,12 @@ sub handler {
     ok t_cmp(ref($fh), 'GLOB', "Apache->gensym");
 
     ok t_cmp(Apache->module('mod_perl.c'), 1,
-             "Apache::module('mod_perl.c')");
+             "Apache2::module('mod_perl.c')");
     ok t_cmp(Apache->module('mod_ne_exists.c'), 0,
-             "Apache::module('mod_ne_exists.c')");
-
+             "Apache2::module('mod_ne_exists.c')");
 
     ok t_cmp(Apache->define('MODPERL2'),
-             Apache::ServerUtil::exists_config_define('MODPERL2'),
+             Apache2::ServerUtil::exists_config_define('MODPERL2'),
              'Apache->define');
 
     ok t_cmp($r->current_callback,
@@ -99,13 +98,13 @@ sub handler {
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative('conf')),
                           catfile($server_root, 'conf'),
-                          "Apache->server_root_relative('conf')");
+                          "Apache2->server_root_relative('conf')");
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative),
                           canonpath($server_root),
-                          'Apache->server_root_relative()');
+                          'Apache2->server_root_relative()');
 
-        my $path = catfile(Apache::ServerUtil::server_root, 'logs');
+        my $path = catfile(Apache2::ServerUtil::server_root, 'logs');
         ok t_filepath_cmp(canonpath(Apache->server_root_relative($path)),
                           canonpath($path),
                           "Apache->server_root_relative('$path')");

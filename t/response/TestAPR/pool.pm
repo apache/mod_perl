@@ -7,11 +7,11 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Pool ();
 use APR::Table ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::pool;
 
@@ -63,7 +63,7 @@ sub handler {
 
     TestAPRlib::pool::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub set_cleanup {

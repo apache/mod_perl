@@ -8,15 +8,15 @@ package TestHooks::push_handlers_same_phase;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub handler {
     my $r = shift;
@@ -26,7 +26,7 @@ sub handler {
 
     $r->push_handlers(PerlResponseHandler => \&real_response);
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub real_response {
@@ -53,7 +53,7 @@ sub real_response {
              "can't switch from 'perl-script' to 'modperl' inside " .
              "the response phase");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

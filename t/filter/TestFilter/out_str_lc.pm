@@ -3,11 +3,11 @@ package TestFilter::out_str_lc;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
 use TestCommon::Utils;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $filter = shift;
@@ -21,7 +21,7 @@ sub handler {
         $filter->print(lc $buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

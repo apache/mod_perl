@@ -3,19 +3,19 @@ use warnings FATAL => 'all';
 
 #
 # there is a problem when STDOUT is internally opened to an
-# Apache::PerlIO layer is cloned on a new thread start. PerlIO_clone
+# Apache2::PerlIO layer is cloned on a new thread start. PerlIO_clone
 # in perl_clone() is called too early, before PL_defstash is
 # cloned. As PerlIO_clone calls PerlIOApache_getarg, which calls
 # gv_fetchpv via sv_setref_pv and boom the segfault happens.
 #
 # at the moment we should either not use an internally opened to
-# :Apache streams, so the config must be:
+# :Apache2 streams, so the config must be:
 #
 # SetHandler modperl
 #
 # and then either use $r->print("foo") or tie *STDOUT, $r + print "foo"
 #
-# or close and re-open STDOUT to :Apache *after* the thread was spawned
+# or close and re-open STDOUT to :Apache2 *after* the thread was spawned
 #
 # the above discussion equally applies to STDIN
 #
@@ -39,14 +39,14 @@ $r->print("Content-type: text/plain\n\n");
 }
 
 {
-    # close and re-open STDOUT to :Apache *after* the thread was
+    # close and re-open STDOUT to :Apache2 *after* the thread was
     # spawned
     my $thr = threads->new(
         sub {
             my $id = shift;
             close STDOUT;
-            open STDOUT, ">:Apache", $r
-                or die "can't open STDOUT via :Apache layer : $!";
+            open STDOUT, ">:Apache2", $r
+                or die "can't open STDOUT via :Apache2 layer : $!";
             print "thread $id\n";
             return 1;
         }, 2);

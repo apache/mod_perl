@@ -6,13 +6,13 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
-use Apache::Build ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
+use Apache2::Build ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
-my $build = Apache::Build->build_config;
+my $build = Apache2::Build->build_config;
 
 sub handler {
     my $r = shift;
@@ -27,13 +27,13 @@ sub handler {
     ok t_cmp($@, qr/read-only/, "\${^TAINT} is read-only");
 
     if ($build->{MP_COMPAT_1X}) {
-        ok t_cmp($Apache::__T, 1, "\$Apache::__T");
+        ok t_cmp($Apache2::__T, 1, "\$Apache2::__T");
 
-        eval { $Apache::__T = 0 };
-        ok t_cmp($@, qr/read-only/, "\$Apache::__T is read-only");
+        eval { $Apache2::__T = 0 };
+        ok t_cmp($@, qr/read-only/, "\$Apache2::__T is read-only");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

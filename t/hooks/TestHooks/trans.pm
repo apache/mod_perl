@@ -5,21 +5,21 @@ use warnings FATAL => 'all';
 
 use Apache::TestConfig ();
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 my %trans = (
     '/TestHooks/trans.pm' => sub {
         my $r = shift;
         $r->filename(__FILE__);
-        Apache::OK;
+        Apache2::OK;
     },
     '/phooey' => sub {
         my $r = shift;
         $r->filename(__FILE__); #filename is currently required
         $r->uri('/TestHooks::trans');
-        Apache::OK;
+        Apache2::OK;
     },
 );
 
@@ -30,7 +30,7 @@ sub handler {
 
     my $handler = $trans{ $uri };
 
-    return Apache::DECLINED unless $handler;
+    return Apache2::DECLINED unless $handler;
 
     $handler->($r);
 }

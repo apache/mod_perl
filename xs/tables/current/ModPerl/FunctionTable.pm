@@ -1574,7 +1574,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char **',
-    'name' => 'modperl_constants_group_lookup_apache',
+    'name' => 'modperl_constants_group_lookup_apache2',
     'args' => [
       {
         'type' => 'const char *',
@@ -1604,7 +1604,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'modperl_constants_lookup_apache',
+    'name' => 'modperl_constants_lookup_apache2',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6074,7 +6074,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__CmdParms_add_config',
+    'name' => 'mpxs_Apache2__CmdParms_add_config',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6092,7 +6092,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__CmdParms_info',
+    'name' => 'mpxs_Apache2__CmdParms_info',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6106,7 +6106,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__Connection_add_input_filter',
+    'name' => 'mpxs_Apache2__Connection_add_input_filter',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6124,7 +6124,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__Connection_add_output_filter',
+    'name' => 'mpxs_Apache2__Connection_add_output_filter',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6142,7 +6142,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_socket_t *',
-    'name' => 'mpxs_Apache__Connection_client_socket',
+    'name' => 'mpxs_Apache2__Connection_client_socket',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6160,7 +6160,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__Connection_get_remote_host',
+    'name' => 'mpxs_Apache2__Connection_get_remote_host',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6182,7 +6182,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Directive_as_hash',
+    'name' => 'mpxs_Apache2__Directive_as_hash',
     'attr' => [
       'static',
       '__inline__'
@@ -6200,7 +6200,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Directive_as_string',
+    'name' => 'mpxs_Apache2__Directive_as_string',
     'attr' => [
       'static',
       '__inline__'
@@ -6218,7 +6218,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Filter_ctx',
+    'name' => 'mpxs_Apache2__Filter_ctx',
     'attr' => [
       'static',
       '__inline__'
@@ -6240,7 +6240,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_Apache__Filter_fflush',
+    'name' => 'mpxs_Apache2__Filter_fflush',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6258,7 +6258,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_Apache__Filter_get_brigade',
+    'name' => 'mpxs_Apache2__Filter_get_brigade',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6288,7 +6288,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_Apache__Filter_pass_brigade',
+    'name' => 'mpxs_Apache2__Filter_pass_brigade',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6306,7 +6306,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_size_t',
-    'name' => 'mpxs_Apache__Filter_print',
+    'name' => 'mpxs_Apache2__Filter_print',
     'attr' => [
       'static',
       '__inline__'
@@ -6332,7 +6332,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_size_t',
-    'name' => 'mpxs_Apache__Filter_read',
+    'name' => 'mpxs_Apache2__Filter_read',
     'attr' => [
       'static',
       '__inline__'
@@ -6358,7 +6358,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__Filter_remove',
+    'name' => 'mpxs_Apache2__Filter_remove',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6380,7 +6380,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Filter_seen_eos',
+    'name' => 'mpxs_Apache2__Filter_seen_eos',
     'attr' => [
       'static',
       '__inline__'
@@ -6406,7 +6406,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__Log_BOOT',
+    'name' => 'mpxs_Apache2__Log_BOOT',
     'attr' => [
       'static'
     ],
@@ -6419,7 +6419,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Log_log',
+    'name' => 'mpxs_Apache2__Log_log',
     'attr' => [
       'static'
     ],
@@ -6440,7 +6440,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__MPM_BOOT',
+    'name' => 'mpxs_Apache2__MPM_BOOT',
     'attr' => [
       'static'
     ],
@@ -6453,7 +6453,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__MPM_query',
+    'name' => 'mpxs_Apache2__MPM_query',
     'attr' => [
       'static',
       '__inline__'
@@ -6475,7 +6475,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__Module_add',
+    'name' => 'mpxs_Apache2__Module_add',
     'attr' => [
       'static',
       '__inline__'
@@ -6497,7 +6497,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__Module_ap_api_major_version',
+    'name' => 'mpxs_Apache2__Module_ap_api_major_version',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6511,7 +6511,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__Module_ap_api_minor_version',
+    'name' => 'mpxs_Apache2__Module_ap_api_minor_version',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6525,7 +6525,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Module_get_config',
+    'name' => 'mpxs_Apache2__Module_get_config',
     'attr' => [
       'static',
       '__inline__'
@@ -6551,7 +6551,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__Module_loaded',
+    'name' => 'mpxs_Apache2__Module_loaded',
     'attr' => [
       'static',
       '__inline__'
@@ -6569,7 +6569,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_FILENO',
+    'name' => 'mpxs_Apache2__RequestRec_FILENO',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6583,7 +6583,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_GETC',
+    'name' => 'mpxs_Apache2__RequestRec_GETC',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6597,7 +6597,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_OPEN',
+    'name' => 'mpxs_Apache2__RequestRec_OPEN',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6619,7 +6619,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_add_config',
+    'name' => 'mpxs_Apache2__RequestRec_add_config',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6641,7 +6641,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_add_input_filter',
+    'name' => 'mpxs_Apache2__RequestRec_add_input_filter',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6659,7 +6659,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_add_output_filter',
+    'name' => 'mpxs_Apache2__RequestRec_add_output_filter',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6677,7 +6677,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_as_string',
+    'name' => 'mpxs_Apache2__RequestRec_as_string',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6691,7 +6691,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__RequestRec_auth_name',
+    'name' => 'mpxs_Apache2__RequestRec_auth_name',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6709,7 +6709,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__RequestRec_auth_type',
+    'name' => 'mpxs_Apache2__RequestRec_auth_type',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6727,7 +6727,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_child_terminate',
+    'name' => 'mpxs_Apache2__RequestRec_child_terminate',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6741,7 +6741,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_content_languages',
+    'name' => 'mpxs_Apache2__RequestRec_content_languages',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6759,7 +6759,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__RequestRec_content_type',
+    'name' => 'mpxs_Apache2__RequestRec_content_type',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6777,7 +6777,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__RequestRec_document_root',
+    'name' => 'mpxs_Apache2__RequestRec_document_root',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6795,7 +6795,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_finfo_t *',
-    'name' => 'mpxs_Apache__RequestRec_finfo',
+    'name' => 'mpxs_Apache2__RequestRec_finfo',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6813,7 +6813,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_get_handlers',
+    'name' => 'mpxs_Apache2__RequestRec_get_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6831,7 +6831,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'mpxs_Apache__RequestRec_handler',
+    'name' => 'mpxs_Apache2__RequestRec_handler',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6853,7 +6853,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_is_perl_option_enabled',
+    'name' => 'mpxs_Apache2__RequestRec_is_perl_option_enabled',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6871,7 +6871,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'char *',
-    'name' => 'mpxs_Apache__RequestRec_location',
+    'name' => 'mpxs_Apache2__RequestRec_location',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -6881,7 +6881,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_location_merge',
+    'name' => 'mpxs_Apache2__RequestRec_location_merge',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -6895,7 +6895,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_new',
+    'name' => 'mpxs_Apache2__RequestRec_new',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6917,7 +6917,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_no_cache',
+    'name' => 'mpxs_Apache2__RequestRec_no_cache',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6935,7 +6935,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_uri_t *',
-    'name' => 'mpxs_Apache__RequestRec_parsed_uri',
+    'name' => 'mpxs_Apache2__RequestRec_parsed_uri',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -6945,7 +6945,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_pnotes',
+    'name' => 'mpxs_Apache2__RequestRec_pnotes',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6967,7 +6967,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_print',
+    'name' => 'mpxs_Apache2__RequestRec_print',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6989,7 +6989,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_proxyreq',
+    'name' => 'mpxs_Apache2__RequestRec_proxyreq',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7007,7 +7007,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_push_handlers',
+    'name' => 'mpxs_Apache2__RequestRec_push_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7029,7 +7029,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_read',
+    'name' => 'mpxs_Apache2__RequestRec_read',
     'attr' => [
       'static'
     ],
@@ -7058,7 +7058,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_rflush',
+    'name' => 'mpxs_Apache2__RequestRec_rflush',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7080,7 +7080,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_Apache__RequestRec_sendfile',
+    'name' => 'mpxs_Apache2__RequestRec_sendfile',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7106,7 +7106,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__RequestRec_set_basic_credentials',
+    'name' => 'mpxs_Apache2__RequestRec_set_basic_credentials',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -7124,7 +7124,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__RequestRec_set_handlers',
+    'name' => 'mpxs_Apache2__RequestRec_set_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7146,7 +7146,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => '',
-    'name' => 'mpxs_Apache__RequestRec_set_last_modified',
+    'name' => 'mpxs_Apache2__RequestRec_set_last_modified',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -7160,7 +7160,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__RequestRec_subprocess_env',
+    'name' => 'mpxs_Apache2__RequestRec_subprocess_env',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7182,7 +7182,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_size_t',
-    'name' => 'mpxs_Apache__RequestRec_write',
+    'name' => 'mpxs_Apache2__RequestRec_write',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7208,7 +7208,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__ServerRec_add_config',
+    'name' => 'mpxs_Apache2__ServerRec_add_config',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7226,7 +7226,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__ServerRec_get_handlers',
+    'name' => 'mpxs_Apache2__ServerRec_get_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7244,7 +7244,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__ServerRec_is_perl_option_enabled',
+    'name' => 'mpxs_Apache2__ServerRec_is_perl_option_enabled',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7262,7 +7262,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__ServerRec_push_handlers',
+    'name' => 'mpxs_Apache2__ServerRec_push_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7284,7 +7284,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_Apache__ServerRec_set_handlers',
+    'name' => 'mpxs_Apache2__ServerRec_set_handlers',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7306,7 +7306,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__ServerUtil_BOOT',
+    'name' => 'mpxs_Apache2__ServerUtil_BOOT',
     'attr' => [
       'static'
     ],
@@ -7319,7 +7319,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'mpxs_Apache__ServerUtil_server_shutdown_cleanup_register',
+    'name' => 'mpxs_Apache2__ServerUtil_server_shutdown_cleanup_register',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -7337,7 +7337,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'request_rec *',
-    'name' => 'mpxs_Apache_request',
+    'name' => 'mpxs_Apache2_request',
     'args' => [
       {
         'type' => 'PerlInterpreter *',

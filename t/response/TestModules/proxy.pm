@@ -5,19 +5,19 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::ServerRec ();
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::ServerRec ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 my $uri_real = "/TestModules__proxy_real";
 
-use Apache::Const -compile => qw(DECLINED OK);
+use Apache2::Const -compile => qw(DECLINED OK);
 
 sub proxy {
     my $r = shift;
 
-    return Apache::DECLINED if $r->proxyreq;
-    return Apache::DECLINED unless $r->uri eq '/TestModules__proxy';
+    return Apache2::DECLINED if $r->proxyreq;
+    return Apache2::DECLINED unless $r->uri eq '/TestModules__proxy';
 
     my $s = $r->server;
     my $real_url = sprintf "http://%s:%d%s",
@@ -28,7 +28,7 @@ sub proxy {
     $r->filename("proxy:$real_url");
     $r->handler('proxy-server');
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -37,7 +37,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print("ok");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

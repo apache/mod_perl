@@ -332,7 +332,7 @@ sub first_class {
         return $e->{type};
     }
 
-    return $func->{name} =~ /^apr_/ ? 'APR' : 'Apache';
+    return $func->{name} =~ /^apr_/ ? 'APR' : 'Apache2';
 }
 
 sub check {
@@ -340,12 +340,12 @@ sub check {
 
     my(@types, @missing, %seen);
 
-    require Apache::StructureTable;
-    for my $entry (@$Apache::StructureTable) {
+    require Apache2::StructureTable;
+    for my $entry (@$Apache2::StructureTable) {
         push @types, map $_->{type}, @{ $entry->{elts} };
     }
 
-    for my $entry (@$Apache::FunctionTable) {
+    for my $entry (@$Apache2::FunctionTable) {
         push @types, grep { not $seen{$_}++ }
           ($entry->{return_type},
            map $_->{type}, @{ $entry->{args} })
@@ -392,7 +392,7 @@ my %class_pools = map {
     (my $f = "mpxs_${_}_pool") =~ s/:/_/g;
     $_, $f;
 } qw{
-     Apache::RequestRec Apache::Connection Apache::URI APR::URI
+     Apache2::RequestRec Apache2::Connection Apache2::URI APR::URI
 };
 
 sub class_pool : lvalue {
@@ -454,9 +454,9 @@ sub typedefs_code {
 }
 
 my %convert_alias = (
-    Apache__RequestRec => 'r',
-    Apache__Server => 'server',
-    Apache__Connection => 'connection',
+    Apache2__RequestRec => 'r',
+    Apache2__Server => 'server',
+    Apache2__Connection => 'connection',
     APR__Table => 'table',
     APR__UUID => 'uuid',
     apr_status_t => 'status',

@@ -3,13 +3,13 @@ package TestDirective::cmdparms;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::CmdParms ();
-use base qw(Apache::Module);
+use Apache2::CmdParms ();
+use base qw(Apache2::Module);
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(
+use Apache2::Const -compile => qw(
     ACCESS_CONF
     M_GET
     M_POST
@@ -35,7 +35,7 @@ my @directives = (
     },
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 my @methods = qw(cmd context directive info override path
                  pool server temp_pool);
@@ -47,7 +47,7 @@ sub TestCmdParms {
         $srv_cfg->{$args}{$method} = $parms->$method();
     }
     $srv_cfg->{$args}{check_ctx} = 
-        $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
+        $parms->check_cmd_context(Apache2::NOT_IN_LOCATION);
 
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
 }
@@ -61,12 +61,12 @@ sub handler : method {
     plan $r, tests => 9 + ( 7 * keys(%$srv_cfg) );
 
     foreach my $cfg (values %$srv_cfg) {
-        ok t_cmp(ref($cfg->{cmd}), 'Apache::Command', 'cmd');
-        ok t_cmp(ref($cfg->{context}), 'Apache::ConfVector', 'context');
-        ok t_cmp(ref($cfg->{directive}), 'Apache::Directive', 'directive');
+        ok t_cmp(ref($cfg->{cmd}), 'Apache2::Command', 'cmd');
+        ok t_cmp(ref($cfg->{context}), 'Apache2::ConfVector', 'context');
+        ok t_cmp(ref($cfg->{directive}), 'Apache2::Directive', 'directive');
         ok t_cmp(ref($cfg->{pool}), 'APR::Pool', 'pool');
         ok t_cmp(ref($cfg->{temp_pool}), 'APR::Pool', 'temp_pool');
-        ok t_cmp(ref($cfg->{server}), 'Apache::ServerRec', 'server');
+        ok t_cmp(ref($cfg->{server}), 'Apache2::ServerRec', 'server');
         ok t_cmp($cfg->{info}, 'cmd_data', 'cmd_data');
     }
 
@@ -74,10 +74,10 @@ sub handler : method {
     {
         my $vhost = $srv_cfg->{Vhost};
 
-        my $wanted = Apache::RSRC_CONF   |
-                     Apache::OR_INDEXES  |
-                     Apache::OR_FILEINFO |
-                     Apache::OR_OPTIONS;
+        my $wanted = Apache2::RSRC_CONF   |
+                     Apache2::OR_INDEXES  |
+                     Apache2::OR_FILEINFO |
+                     Apache2::OR_OPTIONS;
         my $masked = $vhost->{override} & $wanted;
 
         ok t_cmp($masked, $wanted, 'override bitmask');
@@ -90,12 +90,12 @@ sub handler : method {
     {
         my $loc = $srv_cfg->{Location};
 
-        my $wanted = Apache::ACCESS_CONF |
-                     Apache::OR_INDEXES  |
-                     Apache::OR_AUTHCFG  |
-                     Apache::OR_FILEINFO |
-                     Apache::OR_OPTIONS  |
-                     Apache::OR_LIMIT;
+        my $wanted = Apache2::ACCESS_CONF |
+                     Apache2::OR_INDEXES  |
+                     Apache2::OR_AUTHCFG  |
+                     Apache2::OR_FILEINFO |
+                     Apache2::OR_OPTIONS  |
+                     Apache2::OR_LIMIT;
         my $masked = $loc->{override} & $wanted;
 
         ok t_cmp($masked, $wanted, 'override bitmask');
@@ -111,7 +111,7 @@ sub handler : method {
         ok !$limit->{limited};
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

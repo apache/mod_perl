@@ -9,11 +9,11 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::Connection ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::Connection ();
 
-use Apache::Const -compile => qw(OK CONN_CLOSE);
+use Apache2::Const -compile => qw(OK CONN_CLOSE);
 
 sub handler {
     my $r = shift;
@@ -26,7 +26,7 @@ sub handler {
 
     ok $c->pool->isa('APR::Pool');
 
-    ok $c->base_server->isa('Apache::ServerRec');
+    ok $c->base_server->isa('Apache2::ServerRec');
 
     ok $c->client_socket->isa('APR::Socket');
 
@@ -53,7 +53,7 @@ sub handler {
     ok !$c->aborted;
 
     ok t_cmp($c->keepalive,
-             Apache::CONN_CLOSE,
+             Apache2::CONN_CLOSE,
              "the client has issued a non-keepalive request");
 
     ok $c->local_ip;
@@ -68,7 +68,7 @@ sub handler {
     # XXX: missing tests
     # conn_config
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

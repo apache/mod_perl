@@ -10,11 +10,11 @@ use Apache::TestUtil;
 
 use File::Spec::Functions qw(catfile);
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub get_file {
     catfile Apache::Test::vars("documentroot"), "hooks", "cleanup";
@@ -28,7 +28,7 @@ sub handler {
     $r->pnotes(items => ["cleanup"," ok"]);
     $r->push_handlers(PerlCleanupHandler => \&cleanup2);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub cleanup1 {
@@ -40,7 +40,7 @@ sub cleanup1 {
     #warn "cleanup CALLED\n";
     t_write_file(get_file(), $item);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub cleanup2 {
@@ -51,7 +51,7 @@ sub cleanup2 {
     #warn "cleanup2 CALLED\n";
     t_append_file(get_file(), $item);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

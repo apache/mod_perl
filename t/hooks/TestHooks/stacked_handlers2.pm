@@ -7,42 +7,42 @@ package TestHooks::stacked_handlers2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use ModPerl::Util ();
 
 use APR::Table;
 
-use Apache::Const -compile => qw(OK DECLINED AUTH_REQUIRED SERVER_ERROR);
+use Apache2::Const -compile => qw(OK DECLINED AUTH_REQUIRED SERVER_ERROR);
 
 sub ok { 
 
     callback(shift);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub declined { 
 
     callback(shift);
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub auth_required { 
 
     callback(shift);
 
-    return Apache::AUTH_REQUIRED;
+    return Apache2::AUTH_REQUIRED;
 }
 
 sub server_error { 
 
     callback(shift);
 
-    return Apache::SERVER_ERROR;
+    return Apache2::SERVER_ERROR;
 }
 
 sub callback {
@@ -51,7 +51,7 @@ sub callback {
 
     my ($r, $callback);
 
-    if ($obj->isa('Apache::Filter')) {
+    if ($obj->isa('Apache2::Filter')) {
         $r = $obj->r;
         $callback = 'PerlOutputFilterHandler';
     }
@@ -90,7 +90,7 @@ sub handler {
         $r->print("ran $count $callback handlers\n");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub passthru {
@@ -106,7 +106,7 @@ sub passthru {
     }
 
     # this should be ignored?
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub filter {
@@ -128,7 +128,7 @@ sub filter {
     }
 
     # this should be ignored?
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -6,7 +6,7 @@ package TestModperl::request_rec_tie_api;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
+use Apache2::RequestIO ();
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -14,16 +14,16 @@ use Apache::TestConfig;
 
 use File::Spec::Functions qw(catfile catdir);
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use Config;
 
 sub handler {
     my $r = shift;
 
-    require Apache::Build;
+    require Apache2::Build;
     my @todo;
-    push @todo, 1 if Apache::Build::AIX();
+    push @todo, 1 if Apache2::Build::AIX();
     plan $r, tests => 3, todo => \@todo,
         need { "perl $]: PerlIO is used instead of TIEd IO"
                    => !($] >= 5.008 && $Config{useperlio}) };
@@ -61,7 +61,7 @@ sub handler {
         unlink $file;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

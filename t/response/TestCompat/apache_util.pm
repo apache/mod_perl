@@ -10,7 +10,7 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(OK);
 
 my %string_size = (
@@ -59,26 +59,26 @@ sub handler {
     ok t_cmp($uri2, $esc_uri, "Apache::Util::escape_path");
 
     ok t_cmp(Apache::Util::unescape_uri($uri2),
-             Apache::URI::unescape_url($uri),
-             "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
+             Apache2::URI::unescape_url($uri),
+             "Apache2::URI::unescape_uri vs Apache::Util::unescape_uri");
 
     ok t_cmp($uri2,
              $uri,
-             "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
+             "Apache2::URI::unescape_uri vs Apache::Util::unescape_uri");
 
     # escape_html()
     my $html = '<p>"hi"&foo</p>';
     my $esc_html = '&lt;p&gt;&quot;hi&quot;&amp;foo&lt;/p&gt;';
 
     ok t_cmp(Apache::Util::escape_html($html), $esc_html,
-             "Apache::Util::escape_html");
+             "Apache2::Util::escape_html");
 
 
     # ht_time(), parsedate()
     my $time = time;
-    Apache::compat::override_mp2_api('Apache::Util::ht_time');
-    my $fmtdate = Apache::Util::ht_time($time);
-    Apache::compat::restore_mp2_api('Apache::Util::ht_time');
+    Apache2::compat::override_mp2_api('Apache2::Util::ht_time');
+    my $fmtdate = Apache2::Util::ht_time($time);
+    Apache2::compat::restore_mp2_api('Apache2::Util::ht_time');
 
     ok t_cmp($fmtdate, $fmtdate, "Apache::Util::ht_time");
 

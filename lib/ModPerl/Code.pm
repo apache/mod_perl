@@ -20,14 +20,14 @@ use warnings FATAL => 'all';
 use Config;
 use File::Spec::Functions qw(catfile catdir);
 
-use mod_perl ();
-use Apache::Build ();
+use mod_perl2 ();
+use Apache2::Build ();
 
 use Apache::TestConfig ();
 use Apache::TestTrace;
 
 our $VERSION = '0.01';
-our @ISA = qw(Apache::Build);
+our @ISA = qw(Apache2::Build);
 
 my %handlers = (
     Process    => [qw(ChildInit ChildExit)], #Restart PreConfig
@@ -789,7 +789,7 @@ my $constant_prefixes = join '|', qw{APR? MODPERL_RC};
 sub generate_constants {
     my($self, $h_fh, $c_fh) = @_;
 
-    require Apache::ConstantsTable;
+    require Apache2::ConstantsTable;
 
     print $c_fh qq{\#include "modperl_const.h"\n};
     print $h_fh "#define MP_ENOCONST -3\n\n";
@@ -907,7 +907,7 @@ EOF
 sub generate_constants_lookup {
     my($h_fh, $c_fh) = @_;
 
-    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
         my $constants = [map { @$_ } values %$groups];
 
         constants_lookup_code($h_fh, $c_fh, $constants, $class);
@@ -917,7 +917,7 @@ sub generate_constants_lookup {
 sub generate_constants_group_lookup {
     my($h_fh, $c_fh) = @_;
 
-    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
         constants_group_lookup_code($h_fh, $c_fh, $class, $groups);
     }
 }
@@ -971,7 +971,7 @@ EOF
 }
 
 my %seen_const = ();
-# generates APR::Const and Apache::Const manpages in ./tmp/
+# generates APR::Const and Apache2::Const manpages in ./tmp/
 sub generate_constants_pod {
     my($self) = @_;
 
@@ -1027,7 +1027,7 @@ EOF
 sub generate_constants_lookup_doc {
     my($data) = @_;
 
-    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
         my $constants = [map { @$_ } values %$groups];
 
         constants_lookup_code_doc($constants, $class, $data);
@@ -1037,7 +1037,7 @@ sub generate_constants_lookup_doc {
 sub generate_constants_group_lookup_doc {
     my($data) = @_;
 
-    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
         constants_group_lookup_code_doc($class, $groups, $data);
     }
 }

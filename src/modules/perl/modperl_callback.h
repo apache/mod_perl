@@ -26,7 +26,7 @@
 #define ap_hook_log    ap_hook_log_transaction
 
 #define modperl_callback_current_callback_sv \
-    get_sv("Apache::__CurrentCallback", TRUE)
+    get_sv("Apache2::__CurrentCallback", TRUE)
 
 #define modperl_callback_current_callback_set(desc) \
     sv_setpv(modperl_callback_current_callback_sv, desc)

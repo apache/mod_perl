@@ -7,10 +7,10 @@ package TestModperl::print_utf8_2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
-use Apache::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -20,7 +20,7 @@ sub handler {
     # \x{263A} == :-)
     $r->print("\$r->print() just works \x{263A}");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

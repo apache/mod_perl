@@ -21,7 +21,7 @@
  * The PerlIO Apache layer *
  ***************************/
 
-/* PerlIO ":Apache" layer is used to use the Apache callbacks to read
+/* PerlIO ":Apache2" layer is used to use the Apache callbacks to read
  * from STDIN and write to STDOUT. The PerlIO API is documented in
  * perliol.pod */
 
@@ -62,9 +62,9 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
         MP_TRACE_o(MP_FUNC, "stored request_rec obj: 0x%lx", st->r);
     }
     else {
-        Perl_croak(aTHX_"failed to insert the :Apache layer. "
-                   "Apache::RequestRec object argument is required");
-        /* XXX: try to get Apache->request? */
+        Perl_croak(aTHX_"failed to insert the :Apache2 layer. "
+                   "Apache2::RequestRec object argument is required");
+        /* XXX: try to get Apache2->request? */
     }
 
     /* this method also sets the right flags according to the
@@ -85,7 +85,7 @@ PerlIOApache_getarg(pTHX_ PerlIO *f, CLONE_PARAMS *param, int flags)
     }
 
     sv = newSV(0);
-    sv_setref_pv(sv, "Apache::RequestRec", (void*)(st->r));
+    sv_setref_pv(sv, "Apache2::RequestRec", (void*)(st->r));
 
     MP_TRACE_o(MP_FUNC, "retrieved request_rec obj: 0x%lx", st->r);
 
@@ -171,7 +171,7 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
                                   rcfg->wbucket->outcnt));
 
     MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE),
-                 ":Apache IO flush");
+                 ":Apache2 IO flush");
 
     return 0;
 }
@@ -207,7 +207,7 @@ PerlIOApache_popped(pTHX_ PerlIO *f)
 
 static PerlIO_funcs PerlIO_Apache = {
     sizeof(PerlIO_funcs),
-    "Apache",
+    "Apache2",
     sizeof(PerlIOApache),
     PERLIO_K_MULTIARG | PERLIO_K_RAW,
     PerlIOApache_pushed,
@@ -279,7 +279,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
              */
             r->connection->keepalive = AP_CONN_CLOSE;
             apr_brigade_destroy(bb);
-            modperl_croak(aTHX_ rc, "Apache::RequestIO::read");
+            modperl_croak(aTHX_ rc, "Apache2::RequestIO::read");
         }
 
         /* If this fails, it means that a filter is written
@@ -291,7 +291,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
             apr_brigade_destroy(bb);
             /* we can't tell which filter is broken, since others may
              * just pass data through */
-            Perl_croak(aTHX_ "Apache::RequestIO::read: "
+            Perl_croak(aTHX_ "Apache2::RequestIO::read: "
                        "Aborting read from client. "
                        "One of the input filters is broken. "
                        "It returned an empty bucket brigade for "
@@ -306,7 +306,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
         rc = apr_brigade_flatten(bb, tmp, &read);
         if (rc != APR_SUCCESS) {
             apr_brigade_destroy(bb);
-            modperl_croak(aTHX_ rc, "Apache::RequestIO::read");
+            modperl_croak(aTHX_ rc, "Apache2::RequestIO::read");
         }
 
         total += read;

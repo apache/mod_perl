@@ -4,12 +4,12 @@ use warnings FATAL => 'all';
 # manually handle 'If-Modified-Since' requests
 
 use APR::Date ();
-use Apache::Util ();
-use Apache::RequestRec ();
+use Apache2::Util ();
+use Apache2::RequestRec ();
 
 use constant FMT => '%a, %d %b %Y %H:%M:%S %Z';
 use constant GMT => 1;
-use Apache::Const -compile => qw(HTTP_NOT_MODIFIED);
+use Apache2::Const -compile => qw(HTTP_NOT_MODIFIED);
 
 my $last_modified = "Sun, 29 Oct 2000 15:43:29 GMT";
 
@@ -30,11 +30,11 @@ my $last_modified_secs = APR::Date::parse_http($last_modified);
 #warn "if_modified_since_secs $if_modified_since_secs\n\n";
 
 if ($last_modified_secs < $if_modified_since_secs) {
-    $status = Apache::HTTP_NOT_MODIFIED;
+    $status = Apache2::HTTP_NOT_MODIFIED;
     $body   = '';
 }
 
-my $date = Apache::Util::ht_time($r->pool, $r->request_time, FMT, GMT);
+my $date = Apache2::Util::ht_time($r->pool, $r->request_time, FMT, GMT);
 
 print <<HEADERS;
 Status: $status

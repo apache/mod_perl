@@ -12,13 +12,9 @@
 # make sure that we test under Taint and warnings mode enabled
 PerlSwitches -wT
 
-PerlModule Apache2
-
 PerlSwitches -I@ServerRoot@/../lib                  \
              -I@ServerRoot@/../../Apache-Test/lib   \
              -I@ServerRoot@/../../lib               \
-             -I@ServerRoot@/../../blib/lib/Apache2  \
-             -I@ServerRoot@/../../blib/arch/Apache2 \
              -I@ServerRoot@/../../blib/lib          \
              -I@ServerRoot@/../../blib/arch
 
@@ -26,8 +22,8 @@ PerlSwitches -I@ServerRoot@/../lib                  \
 PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
 
 #### DEVMODE: Remove in production ###
-PerlModule Apache::Reload
-PerlInitHandler Apache::Reload
+PerlModule Apache2::Reload
+PerlInitHandler Apache2::Reload
 PerlSetVar ReloadAll Off
 PerlSetVar ReloadModules "ModPerl::*"
 

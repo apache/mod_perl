@@ -3,13 +3,13 @@
 use lib qw(lib);
 
 use strict;
-use Apache::FunctionTable ();
+use Apache2::FunctionTable ();
 
 #utility for checking apr_ argument conventions
 
 my $tx = '_t\s*\*+';
 
-for my $entry (@$Apache::FunctionTable) {
+for my $entry (@$Apache2::FunctionTable) {
     my $name = $entry->{name};
     my $args = $entry->{args};
     next unless @$args and $name =~ /^apr_/;

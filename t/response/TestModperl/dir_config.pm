@@ -3,22 +3,22 @@ package TestModperl::dir_config;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::RequestUtil ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     plan $r, tests => 14;
 
-    #Apache::RequestRec::dir_config tests
+    #Apache2::RequestRec::dir_config tests
 
     # this test doesn't test all $r->dir_config->*(), since
     # dir_config() returns a generic APR::Table which is tested in
@@ -113,7 +113,7 @@ sub handler {
     }
 
 
-    #Apache::ServerUtil::dir_config tests
+    #Apache2::ServerUtil::dir_config tests
 
     my $s = $r->server;
 
@@ -137,9 +137,9 @@ sub handler {
 
     {
         # base server test
-        my $bs = Apache->server;
+        my $bs = Apache2->server;
         ok t_cmp(($bs && ref($bs)),
-                 'Apache::ServerRec',
+                 'Apache2::ServerRec',
                  "base server's object retrieval");
 
         my $key = 'TestModperl__server_rec_Key_set_in_Base';
@@ -148,7 +148,7 @@ sub handler {
                  "read dir_config of the base server");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 my $key_base = "TestModperl__request_rec_Key";

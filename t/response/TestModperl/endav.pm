@@ -7,7 +7,7 @@ use ModPerl::Global ();
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -50,7 +50,7 @@ sub handler {
     # one plain ok 1 (4)
     ok 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

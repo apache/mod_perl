@@ -7,7 +7,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::date;
 
@@ -19,7 +19,7 @@ sub handler {
 
     TestAPRlib::date::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

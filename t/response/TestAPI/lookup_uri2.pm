@@ -3,11 +3,11 @@ package TestAPI::lookup_uri2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::SubRequest ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::SubRequest ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub myplan {
     my $r = shift;
@@ -16,7 +16,7 @@ sub myplan {
 
     die "must indicate a sub-request" if $r->is_initial_req();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub ok3 {
@@ -24,7 +24,7 @@ sub ok3 {
 
     $r->puts("ok 3\n");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub subrequest {
@@ -42,7 +42,7 @@ sub handler {
 
     subrequest($r, 'ok3');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

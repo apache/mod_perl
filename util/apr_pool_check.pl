@@ -5,7 +5,7 @@
 use lib qw(lib);
 
 use strict;
-use Apache::SourceTables ();
+use Apache2::SourceTables ();
 
 my($functions, @nopool);
 
@@ -16,7 +16,7 @@ apr_socket_t apr_pollfd_t apr_threadattr_t apr_thread_t apr_threadkey_t
 apr_procattr_t apr_xlate_t apr_dbm_t apr_xml_parser
 };
 
-for my $entry (@$Apache::FunctionTable) {
+for my $entry (@$Apache2::FunctionTable) {
     next unless $entry->{name} =~ /^apr_/;
 
     $functions++;
@@ -44,7 +44,7 @@ sub find_pool {
     $type =~ s/\s+\*+$//;
     $type =~ s/^(const|struct)\s+//g;
 
-    if (my $elts = $Apache::StructureTable{$type}) {
+    if (my $elts = $Apache2::StructureTable{$type}) {
         return 1 if $private{$type};
 
         for my $e (@$elts) {

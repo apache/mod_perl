@@ -5,13 +5,13 @@ package TestProtocol::echo_nonblock;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 use APR::Socket ();
 use APR::Error ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 use APR::Const    -compile => qw(SO_NONBLOCK TIMEUP SUCCESS POLLIN
                                  ECONNABORTED);
 
@@ -69,7 +69,7 @@ sub handler {
         }
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

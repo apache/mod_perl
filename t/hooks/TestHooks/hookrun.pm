@@ -11,9 +11,9 @@ package TestHooks::hookrun;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::HookRun ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::HookRun ();
 use APR::Table ();
 use ModPerl::Util ();
 
@@ -21,7 +21,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK DECLINED DONE SERVER_ERROR);
+use Apache2::Const -compile => qw(OK DECLINED DONE SERVER_ERROR);
 
 my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
@@ -60,50 +60,50 @@ sub post_read_request {
     # ap_process_request_internal in httpd-2.0/server/request.c
 
     $rc = $r->run_translate_name;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_map_to_storage;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     # this must be run all a big havoc will happen in the following
     # phases
     $r->location_merge($path);
 
     $rc = $r->run_header_parser;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     my $args = $r->args || '';
     if ($args eq 'die') {
-        $r->die(Apache::SERVER_ERROR);
-        return Apache::DONE;
+        $r->die(Apache2::SERVER_ERROR);
+        return Apache2::DONE;
     }
 
     $rc = $r->run_access_checker;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_auth_checker;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_check_user_id;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_type_checker;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_fixups;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     # $r->run_handler is called internally by $r->invoke_handler,
     # invoke_handler sets all kind of filters, and does a few other
     # things but it's possible to call $r->run_handler, bypassing
     # invoke_handler
     $rc = $r->invoke_handler;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
     $rc = $r->run_log_transaction;
-    return $rc unless $rc == Apache::OK or $rc == Apache::DECLINED;
+    return $rc unless $rc == Apache2::OK or $rc == Apache2::DECLINED;
 
-    return Apache::DONE;
+    return Apache2::DONE;
 
     # Apache runs ap_finalize_request_protocol on return of this
     # handler
@@ -120,7 +120,7 @@ sub any {
     # unset the callback that was already run
     $r->set_handlers($callback => []);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {
@@ -134,7 +134,7 @@ sub response {
         $r->print("$phase:$note\n");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -3,12 +3,12 @@ package TestModperl::pnotes;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestUtil ();
+use Apache2::RequestUtil ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -44,7 +44,7 @@ sub handler {
              q{deleted entry contents});
     ok !exists $r->pnotes->{'pnotes_foo'};
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;
