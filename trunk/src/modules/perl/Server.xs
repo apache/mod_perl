@@ -135,6 +135,16 @@ port(server, ...)
 #  char *names;			/* Wildcarded names for HostAlias servers */
 #  char *virthost;		/* The name given in <VirtualHost> */
 
+char *
+error_fname(server)
+    Apache::Server	server
+
+    CODE:
+    RETVAL = server->error_fname;
+
+    OUTPUT:
+    RETVAL
+
 int
 timeout(server, set=0)
     Apache::Server	server
