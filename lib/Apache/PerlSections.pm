@@ -39,7 +39,7 @@ sub directives { return shift->{'directives'} ||= [] }
 sub package    { return shift->{'args'}->{'package'} }
 
 my @saved;
-sub save       { return $Apache::Server::SaveConfig }
+sub save       { return $Apache::PerlSections::Save }
 sub saved      { return @saved }
 
 sub handler : method {

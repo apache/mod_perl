@@ -482,7 +482,7 @@ MP_CMD_SRV_DECLARE(perl)
 #define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSections"
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
 #define MP_PERLSECTIONS_SAVECONFIG_SV \
-    get_sv("Apache::Server::SaveConfig", FALSE)
+    get_sv("Apache::PerlSections::Save", FALSE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {

@@ -17,7 +17,7 @@ $Location{'/perl_sections'} = {
 tie %Location, 'ModPerl::TestTiePerlSection';
 $Location{'/tied'} = 'test_tied';
 
-$Apache::Server::SaveConfig = 1;
+$Apache::PerlSections::Save = 1;
 $Location{'/perl_sections_saved'} = {
     'AuthName' => 'PerlSection',
     };
@@ -27,7 +27,7 @@ $TestDirective::perl::PACKAGE = __PACKAGE__;
 </Perl>
 
 <Perl >
-$Apache::Server::SaveConfig = 1;
+$Apache::PerlSections::Save = 1;
 $TestDirective::perl::filename = __FILE__;
 $TestDirective::perl::dollar_zero = $0;
 $TestDirective::perl::line =  __LINE__;
