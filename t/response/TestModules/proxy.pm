@@ -44,39 +44,27 @@ sub response {
 __END__
 <NoAutoConfig>
     <IfModule mod_proxy.c>
-        # 2.0
-        <IfModule mod_access.c>
-            <Proxy http://@servername@:@port@/*>
+        <Proxy http://@servername@:@port@/*>
+            # 2.0
+            <IfModule mod_access.c>
                 Order Deny,Allow
                 Deny from all
                 Allow from @servername@
-            </Proxy>
-            ProxyRequests On
-
-            PerlModule TestModules::proxy
-            PerlTransHandler TestModules::proxy::proxy
-            <Location /TestModules__proxy_real>
-                SetHandler modperl
-                PerlResponseHandler TestModules::proxy::response
-            </Location>
-        </IfModule>
-
-        # 2.1
-        <IfModule mod_authz_host.c>
-            <Proxy http://@servername@:@port@/*>
+            </IfModule>
+            # 2.1
+            <IfModule mod_authz_host.c>
                 Order Deny,Allow
                 Deny from all
                 Allow from @servername@
-            </Proxy>
-            ProxyRequests On
+            </IfModule>
+        </Proxy>
 
-            PerlModule TestModules::proxy
-            PerlTransHandler TestModules::proxy::proxy
-            <Location /TestModules__proxy_real>
-                SetHandler modperl
-                PerlResponseHandler TestModules::proxy::response
-            </Location>
-        </IfModule>
+        PerlModule TestModules::proxy
+        PerlTransHandler TestModules::proxy::proxy
+        <Location /TestModules__proxy_real>
+            SetHandler modperl
+            PerlResponseHandler TestModules::proxy::response
+        </Location>
     </IfModule>
 </NoAutoConfig>
 
