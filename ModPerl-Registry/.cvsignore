@@ -1,4 +1,5 @@
 Makefile
 pm_to_blib
 blib
+blibdirs
 glue_pods
