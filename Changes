@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fix a segfault caused by PerlModule in $s->add_config, due to setting
+the MP_init_done flag before init was done + add test [Stas]
+
 adjust the generated Makefile's to properly build on aix (tested on
 powerpc-ibm-aix5.1.0.0) [Stas]
 

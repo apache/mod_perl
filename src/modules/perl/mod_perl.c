@@ -306,6 +306,8 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     return OK;
 }
 
+static int MP_init_done = 0;
+
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
@@ -346,6 +348,8 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 
     base_perl = modperl_startup(base_server, p);
 
+    MP_init_done++;
+    
 #ifdef USE_ITHREADS
     modperl_interp_init(base_server, p, base_perl);
     MpInterpBASE_On(base_scfg->mip->parent);
@@ -446,8 +450,6 @@ static apr_status_t modperl_sys_init(void)
     return APR_SUCCESS;
 }
 
-static int MP_init_done = 0;
-
 static apr_status_t modperl_sys_term(void *data)
 {
     MP_init_done = 0;
@@ -465,7 +467,7 @@ static apr_status_t modperl_sys_term(void *data)
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s)
 {
-    if (MP_init_done++ > 0) {
+    if (MP_init_done > 0) {
         return OK;
     }
 
