@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+/D "_WINSOCK2API_" for 1.3.9/win32 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix segfault when using Limit in <Perl> sections
 [Müller Joachim <Joachim.Mueller@arbeitsamt.de>]
 
