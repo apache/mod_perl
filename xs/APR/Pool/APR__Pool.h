@@ -233,8 +233,8 @@ typedef struct {
     SV *cv;
     SV *arg;
     apr_pool_t *p;
-    PerlInterpreter *perl;
 #ifdef USE_ITHREADS
+    PerlInterpreter *perl;
     modperl_interp_t *interp;
 #endif
 } mpxs_cleanup_t;
@@ -249,7 +249,9 @@ static apr_status_t mpxs_cleanup_run(void *data)
 {
     int count;
     mpxs_cleanup_t *cdata = (mpxs_cleanup_t *)data;
+#ifdef USE_ITHREADS
     dTHXa(cdata->perl);
+#endif
     dSP;
 
     ENTER;SAVETMPS;
