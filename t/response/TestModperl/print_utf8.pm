@@ -10,10 +10,10 @@ package TestModperl::print_utf8;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
-use Apache::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -21,13 +21,13 @@ sub handler {
     $r->content_type('text/plain; charset=UTF-8');
 
     # prevent warning: "Wide character in print"
-    binmode(STDOUT, ':utf8'); # Apache::RequestRec::BINMODE()
+    binmode(STDOUT, ':utf8'); # Apache2::RequestRec::BINMODE()
 
     # must be non-$r->print(), so we go through the tied STDOUT
     # \x{263A} == :-)
     print "Hello Ayhan \x{263A} perlio rules!";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

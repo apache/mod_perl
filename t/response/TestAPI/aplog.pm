@@ -3,11 +3,11 @@ package TestAPI::aplog;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::ServerRec qw(warn); # override warn locally
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::Log ();
-use Apache::MPM ();
+use Apache2::ServerRec qw(warn); # override warn locally
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::Log ();
+use Apache2::MPM ();
 
 use File::Spec::Functions qw(catfile);
 
@@ -15,7 +15,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use TestCommon::LogDiff;
 
-use Apache::Const -compile => qw(OK :log);
+use Apache2::Const -compile => qw(OK :log);
 use APR::Const    -compile => qw(:error SUCCESS);
 
 my @LogLevels = qw(emerg alert crit error warn notice info debug);
@@ -34,11 +34,11 @@ sub handler {
 
     my $rlog = $r->log;
 
-    ok $rlog->isa('Apache::Log::Request');
+    ok $rlog->isa('Apache2::Log::Request');
 
     my $slog = $s->log;
 
-    ok $slog->isa('Apache::Log::Server');
+    ok $slog->isa('Apache2::Log::Server');
 
     t_server_log_warn_is_expected();
     $rlog->info($package, " test in progress");
@@ -46,7 +46,7 @@ sub handler {
         qr/... TestAPI::aplog test in progress/,
         '$r->log->info';
 
-    my($file, $line) = Apache::Log::LOG_MARK;
+    my($file, $line) = Apache2::Log::LOG_MARK;
     ok $file eq __FILE__;
     ok $line == __LINE__ - 2;
 
@@ -60,15 +60,15 @@ sub handler {
     # log_serror
     {
         t_server_log_warn_is_expected();
-        $s->log_serror(Apache::Log::LOG_MARK,
-                       Apache::LOG_INFO|Apache::LOG_STARTUP,
+        $s->log_serror(Apache2::Log::LOG_MARK,
+                       Apache2::LOG_INFO|Apache::LOG_STARTUP,
                        APR::SUCCESS, "This log message comes with no header");
         ok t_cmp $logdiff->diff,
             qr/^This log message comes with no header$/m,
             '$s->log_serror(LOG_MARK, LOG_INFO|LOG_STARTUP...)';
 
         t_server_log_warn_is_expected();
-        $s->log_serror(__FILE__, __LINE__, Apache::LOG_DEBUG,
+        $s->log_serror(__FILE__, __LINE__, Apache2::LOG_DEBUG,
                        APR::SUCCESS, "log_serror test 1");
         ok t_cmp $logdiff->diff,
             qr/: log_serror test 1$/m,
@@ -80,7 +80,7 @@ sub handler {
            : "Error string not specified yet";
 
         t_server_log_warn_is_expected();
-        $s->log_serror(Apache::Log::LOG_MARK, Apache::LOG_DEBUG,
+        $s->log_serror(Apache2::Log::LOG_MARK, Apache::LOG_DEBUG,
                        APR::EGENERAL, "log_serror test 2");
         ok t_cmp $logdiff->diff,
             qr/$egeneral: log_serror test 2/,
@@ -89,7 +89,7 @@ sub handler {
 
     # log_rerror
     t_server_log_error_is_expected();
-    $r->log_rerror(Apache::Log::LOG_MARK, Apache::LOG_CRIT,
+    $r->log_rerror(Apache2::Log::LOG_MARK, Apache::LOG_CRIT,
                    APR::ENOTIME, "log_rerror test");
     # can't match against the error string, since a locale may kick in
     ok t_cmp $logdiff->diff,
@@ -128,10 +128,10 @@ sub handler {
 
     # XXX: at the moment we can't change loglevel after server startup
     # in a threaded mpm environment
-    if (!Apache::MPM->is_threaded) {
+    if (!Apache2::MPM->is_threaded) {
         my $orig_log_level = $s->loglevel;
 
-        $s->loglevel(Apache::LOG_INFO);
+        $s->loglevel(Apache2::LOG_INFO);
 
         if ($s->error_fname) {
             #XXX: does not work under t/TEST -ssl
@@ -140,7 +140,7 @@ sub handler {
         }
 
         t_server_log_warn_is_expected();
-        $s->loglevel(Apache::LOG_DEBUG);
+        $s->loglevel(Apache2::LOG_DEBUG);
         $slog->debug(sub { ok 1; "$package test done" });
         ok t_cmp $logdiff->diff,
             qr/TestAPI::aplog test done/,
@@ -155,10 +155,10 @@ sub handler {
 
     # notice() messages ignore the LogLevel value and always get
     # logged by Apache design (unless error log is set to syslog)
-    if (!Apache::MPM->is_threaded) {
+    if (!Apache2::MPM->is_threaded) {
         my $orig_log_level = $s->loglevel;
 
-        $r->server->loglevel(Apache::LOG_ERR);
+        $r->server->loglevel(Apache2::LOG_ERR);
         my $ignore = $logdiff->diff; # reset fh
         # notice < error
         my $msg = "This message should appear with LogLevel=error!";
@@ -183,18 +183,18 @@ sub handler {
     {
         t_server_log_warn_is_expected();
         # this uses global server to get $s internally
-        Apache::ServerRec::warn("Apache::ServerRec::warn test");
+        Apache2::ServerRec::warn("Apache::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
-            qr/\[warn\] Apache::ServerRec::warn test/,
-            'Apache::ServerRec::warn() w/o Apache->request ';
+            qr/\[warn\] Apache2::ServerRec::warn test/,
+            'Apache2::ServerRec::warn() w/o Apache->request ';
 
         Apache->request($r);
         t_server_log_warn_is_expected();
         # this uses the global $r to get $s internally
-        Apache::ServerRec::warn("Apache::ServerRec::warn test");
+        Apache2::ServerRec::warn("Apache::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
-            qr/\[warn\] Apache::ServerRec::warn test/,
-            'Apache::ServerRec::warn() w/ Apache->request ';
+            qr/\[warn\] Apache2::ServerRec::warn test/,
+            'Apache2::ServerRec::warn() w/ Apache->request ';
     }
 
     t_server_log_warn_is_expected();
@@ -203,7 +203,7 @@ sub handler {
         qr/\[warn\] warn test/,
         'overriden via export warn()';
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

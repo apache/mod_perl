@@ -9,11 +9,11 @@ use strict;
 use warnings FATAL => 'all';
 
 use APR::Table ();
-use Apache::Access ();
-use Apache::RequestRec ();
+use Apache2::Access ();
+use Apache2::RequestRec ();
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK FORBIDDEN);
+use Apache2::Const -compile => qw(OK FORBIDDEN);
 
 my $allowed_ips = qr{^(10|127)\.};
 
@@ -24,13 +24,13 @@ sub handler {
 
     debug "access: " . ($fake_ip =~ $allowed_ips ? "OK\n" : "FORBIDDEN\n");
 
-    return Apache::FORBIDDEN unless $fake_ip =~ $allowed_ips;
+    return Apache2::FORBIDDEN unless $fake_ip =~ $allowed_ips;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
-sub fixup { debug "fixup\n"; Apache::OK }
-sub init  { debug "init\n";  Apache::OK }
+sub fixup { debug "fixup\n"; Apache2::OK }
+sub init  { debug "init\n";  Apache2::OK }
 
 1;
 __DATA__

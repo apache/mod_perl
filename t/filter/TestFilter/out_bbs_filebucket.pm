@@ -5,17 +5,17 @@ package TestFilter::out_bbs_filebucket;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter;
-use Apache::URI ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter;
+use Apache2::URI ();
 
 use APR::Brigade ();
 use APR::Bucket ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 use APR::Const    -compile => qw(SUCCESS);
 
 use constant BLOCK_SIZE => 5003;
@@ -52,10 +52,10 @@ sub response {
     $r->content_type('text/plain');
 
     my $file = $r->args;
-    Apache::URI::unescape_url($file);
+    Apache2::URI::unescape_url($file);
     $r->sendfile($file);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

@@ -7,9 +7,9 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::MPM ();
+use Apache2::MPM ();
 
-use Apache::Const -compile => qw(OK :mpmq);
+use Apache2::Const -compile => qw(OK :mpmq);
 
 sub handler {
 
@@ -23,33 +23,33 @@ sub handler {
     # so if, say, leader all of a sudden changes its properties,
     # these tests will fail
 
-    my $mpm = lc Apache::MPM->show;
+    my $mpm = lc Apache2::MPM->show;
 
     if ($mpm eq 'prefork') {
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_NOT_SUPPORTED,
+                     Apache2::MPMQ_NOT_SUPPORTED,
                      "MPMQ_IS_THREADED ($mpm)");
 
             # is_threaded() is just a constsub set to the result from
             # ap_mpm_query(AP_MPMQ_IS_THREADED)
 
             ok t_cmp($query,
-                     Apache::MPM->is_threaded,
-                     "Apache::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
+                     Apache2::MPM->is_threaded,
+                     "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
-            ok (! Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            ok (! Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_DYNAMIC,
+                     Apache2::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
 
@@ -57,95 +57,95 @@ sub handler {
     elsif ($mpm eq 'worker') {
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_STATIC,
+                     Apache2::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
-                     Apache::MPM->is_threaded,
-                     "Apache::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
+                     Apache2::MPM->is_threaded,
+                     "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
-            ok (Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_DYNAMIC,
+                     Apache2::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
     elsif ($mpm eq 'leader') {
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_STATIC,
+                     Apache2::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
-                     Apache::MPM->is_threaded,
-                     "Apache::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
+                     Apache2::MPM->is_threaded,
+                     "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
-            ok (Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_DYNAMIC,
+                     Apache2::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
     elsif ($mpm eq 'winnt') {
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_STATIC,
+                     Apache2::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
-                     Apache::MPM->is_threaded,
-                     "Apache::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
+                     Apache2::MPM->is_threaded,
+                     "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
-            ok (Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
-                     Apache::MPMQ_NOT_SUPPORTED,
+                     Apache2::MPMQ_NOT_SUPPORTED,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
     else {
         skip "skipping MPMQ_IS_THREADED test for $mpm MPM", 0;
-        skip "skipping Apache::MPM->is_threaded equivalence test for $mpm MPM", 0;
+        skip "skipping Apache2::MPM->is_threaded equivalence test for $mpm MPM", 0;
         skip "skipping MPMQ_IS_FORKED test for $mpm MPM", 0;
-        skip "skipping Apache::MPM->is_threaded test for $mpm MPM", 0;
+        skip "skipping Apache2::MPM->is_threaded test for $mpm MPM", 0;
     }
 
     # make sure that an undefined MPMQ constant yields undef
     {
-        my $query = Apache::MPM->query(72);
+        my $query = Apache2::MPM->query(72);
 
         ok t_cmp($query,
                  undef,
                  "unknown MPMQ value returns undef");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -7,7 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub new {
     my $class = shift;
@@ -48,7 +48,7 @@ sub handler : method {
                  'object handler data');
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -3,10 +3,10 @@ package TestHooks::authen_digest;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Access ();
-use Apache::RequestRec ();
+use Apache2::Access ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED);
+use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED);
 
 sub handler {
 
@@ -18,10 +18,10 @@ sub handler {
     # header checks
     if ($r->args) {
         $r->note_digest_auth_failure;
-        return Apache::HTTP_UNAUTHORIZED;
+        return Apache2::HTTP_UNAUTHORIZED;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

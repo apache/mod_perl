@@ -7,7 +7,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::uri;
 
@@ -19,7 +19,7 @@ sub handler {
 
     TestAPRlib::uri::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 

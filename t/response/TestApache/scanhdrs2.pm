@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -14,7 +14,7 @@ sub handler {
 
     print "Location: $location\n\n";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

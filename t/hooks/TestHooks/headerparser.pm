@@ -6,16 +6,16 @@ use warnings FATAL => 'all';
 use Apache::Test;
 
 use APR::Table ();
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     $r->notes->set(headerparser => 'set');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {
@@ -25,7 +25,7 @@ sub response {
 
     ok $r->notes->get('headerparser') eq 'set';
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

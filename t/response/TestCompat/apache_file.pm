@@ -1,6 +1,6 @@
 package TestCompat::apache_file;
 
-# Apache::File compat layer tests
+# Apache2::File compat layer tests
 
 # these tests are all run and validated on the server side.
 
@@ -10,8 +10,8 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::compat ();
-use Apache::Constants qw(OK);
+use Apache2::compat ();
+use Apache2::Constants qw(OK);
 
 sub handler {
     my $r = shift;
@@ -23,11 +23,11 @@ sub handler {
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
-    require Apache::File;
+    require Apache2::File;
     my $file = $vars->{t_conf_file};
 
-    t_debug "new Apache::File file object";
-    ok my $fh = Apache::File->new;
+    t_debug "new Apache2::File file object";
+    ok my $fh = Apache2::File->new;
 
     t_debug "open itself";
     if ($fh->open($file)) {
@@ -51,7 +51,7 @@ sub handler {
     ok !$fh->open("$file.nochance");
 
     t_debug "new+open";
-    if (my $fh = Apache::File->new($file)) {
+    if (my $fh = Apache2::File->new($file)) {
         ok 1;
         $fh->close;
     }
@@ -60,10 +60,10 @@ sub handler {
     }
 
     t_debug "new+open non-exists";
-    ok !Apache::File->new("$file.yeahright");
+    ok !Apache2::File->new("$file.yeahright");
 
     # tmpfile
-    my ($tmpfile, $tmpfh) = Apache::File->tmpfile;
+    my ($tmpfile, $tmpfh) = Apache2::File->tmpfile;
 
     t_debug "open tmpfile fh";
     ok $tmpfh;
@@ -77,11 +77,11 @@ sub handler {
     ok t_cmp(<$tmpfh>, $write, "write/read from tmpfile");
 
     ok t_cmp($r->discard_request_body,
-             Apache::OK,
+             Apache2::OK,
              "\$r->discard_request_body");
 
     ok t_cmp($r->meets_conditions,
-             Apache::OK,
+             Apache2::OK,
              "\$r->meets_conditions");
 
     my $csize = 10;

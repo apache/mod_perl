@@ -7,11 +7,11 @@ package TestHooks::stacked_handlers;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => qw(OK DECLINED DONE);
+use Apache2::Const -compile => qw(OK DECLINED DONE);
 
 sub handler {
     my $r = shift;
@@ -19,7 +19,7 @@ sub handler {
     $r->handler("modperl");
     $r->push_handlers(PerlResponseHandler => [\&one, \&two, \&three, \&four]);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub one {
@@ -28,7 +28,7 @@ sub one {
     $r->content_type('text/plain');
     $r->print("one\n");
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub two {
@@ -36,7 +36,7 @@ sub two {
 
     $r->print("two\n");
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub three {
@@ -44,7 +44,7 @@ sub three {
 
     $r->print("three\n");
 
-    return Apache::DONE;
+    return Apache2::DONE;
 }
 
 # this one shouldn't get called, because the handler 'three' has
@@ -54,7 +54,7 @@ sub four {
 
     $r->print("four\n");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 

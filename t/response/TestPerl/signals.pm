@@ -5,18 +5,18 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::BuildConfig;
+use Apache2::BuildConfig;
 use Apache::TestConfig;
 
-use Apache::MPM ();
+use Apache2::MPM ();
 
 use POSIX qw(SIGALRM);
 
 use constant OSX => Apache::TestConfig::OSX;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
-my $mpm = lc Apache::MPM->show;
+my $mpm = lc Apache2::MPM->show;
 
 # signal handlers don't work anywhere but with prefork, since signals
 # and threads don't mix
@@ -25,7 +25,7 @@ my $mpm = lc Apache::MPM->show;
 sub handler {
     my $r = shift;
 
-    my $build = Apache::BuildConfig->new;
+    my $build = Apache2::BuildConfig->new;
     my $static = $build->should_build_apache ? 1 : 0;
 
     my $tests = $static ? 1 : 2;
@@ -70,7 +70,7 @@ sub handler {
         skip "POSIX::sigaction doesn't work under 5.6.x", 0;
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub run_for_5_sec {

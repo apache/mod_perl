@@ -7,9 +7,9 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestConfig ();
 
-use Apache::Directive ();
+use Apache2::Directive ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -26,7 +26,7 @@ sub handler {
 
     ok $vars;
 
-    my $tree = Apache::Directive::conftree();
+    my $tree = Apache2::Directive::conftree();
 
     ok $tree;
 
@@ -66,7 +66,7 @@ sub handler {
 
     traverse_tree ( \&test_node );
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub test_node {
@@ -82,7 +82,7 @@ sub test_node {
 
 sub traverse_tree {
     my ($sub, $data) = @_;
-    my $node = Apache::Directive::conftree();
+    my $node = Apache2::Directive::conftree();
     while ($node) {
         $sub->($data, $node);
         if (my $kid = $node->first_child) {

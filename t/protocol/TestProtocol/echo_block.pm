@@ -8,18 +8,18 @@ package TestProtocol::echo_block;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 use APR::Socket ();
 
 use TestCommon::Utils;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 use APR::Const    -compile => qw(SO_NONBLOCK);
 
 use constant BUFF_LEN => 1024;
 
 sub handler {
-    my Apache::Connection $c = shift;
+    my Apache2::Connection $c = shift;
     my APR::Socket $socket = $c->client_socket;
 
     # starting from Apache 2.0.49 several platforms require you to set
@@ -41,7 +41,7 @@ sub handler {
         $socket->send($buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -7,13 +7,13 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 
 use APR::Finfo ();
 use APR::Pool ();
 
-use Apache::Const -compile => qw(OK M_GET M_PUT);
+use Apache2::Const -compile => qw(OK M_GET M_PUT);
 use APR::Const    -compile => qw(FINFO_NORM);
 
 #this test module is only for testing fields in the request_rec
@@ -31,7 +31,7 @@ sub handler {
 
     ok $$gr == $$r;
 
-    my $newr = Apache::RequestRec->new($r->connection, $r->pool);
+    my $newr = Apache2::RequestRec->new($r->connection, $r->pool);
     Apache->request($newr);
     $gr = Apache->request;
 
@@ -41,12 +41,12 @@ sub handler {
 
     ok $r->pool->isa('APR::Pool');
 
-    ok $r->connection->isa('Apache::Connection');
+    ok $r->connection->isa('Apache2::Connection');
 
-    ok $r->server->isa('Apache::ServerRec');
+    ok $r->server->isa('Apache2::ServerRec');
 
     for (qw(next prev main)) {
-        ok (! $r->$_()) || $r->$_()->isa('Apache::RequestRec');
+        ok (! $r->$_()) || $r->$_()->isa('Apache2::RequestRec');
     }
 
     ok !$r->assbackwards;
@@ -76,7 +76,7 @@ sub handler {
 
     ok t_cmp $r->method, 'GET', '$r->method';
 
-    ok t_cmp $r->method_number, Apache::M_GET, '$r->method_number';
+    ok t_cmp $r->method_number, Apache2::M_GET, '$r->method_number';
 
     ok $r->headers_in;
 
@@ -162,13 +162,13 @@ sub handler {
 
     # allowed
     {
-        $r->allowed(1 << Apache::M_GET);
+        $r->allowed(1 << Apache2::M_GET);
 
-        ok $r->allowed & (1 << Apache::M_GET);
-        ok ! ($r->allowed & (1 << Apache::M_PUT));
+        ok $r->allowed & (1 << Apache2::M_GET);
+        ok ! ($r->allowed & (1 << Apache2::M_PUT));
 
-        $r->allowed($r->allowed | (1 << Apache::M_PUT));
-        ok $r->allowed & (1 << Apache::M_PUT);
+        $r->allowed($r->allowed | (1 << Apache2::M_PUT));
+        ok $r->allowed & (1 << Apache2::M_PUT);
     }
 
     # content_languages
@@ -187,8 +187,8 @@ sub handler {
 
     ### invalid $r
     {
-        my $r = bless {}, "Apache::RequestRec";
-        my $err = q[method `uri' invoked by a `Apache::RequestRec' ] .
+        my $r = bless {}, "Apache2::RequestRec";
+        my $err = q[method `uri' invoked by a `Apache2::RequestRec' ] .
             q[object with no `r' key!];
         eval { $r->uri };
         ok t_cmp $@, qr/$err/, "invalid $r object";
@@ -197,20 +197,20 @@ sub handler {
         my $r = bless {}, "NonExisting";
         my $err = q[method `uri' invoked by a `NonExisting' ] .
             q[object with no `r' key!];
-        eval { Apache::RequestRec::uri($r) };
+        eval { Apache2::RequestRec::uri($r) };
         ok t_cmp $@, qr/$err/, "invalid $r object";
     }
     {
         my $r = {};
         my $err = q[method `uri' invoked by a `unknown' ] .
             q[object with no `r' key!];
-        eval { Apache::RequestRec::uri($r) };
+        eval { Apache2::RequestRec::uri($r) };
         ok t_cmp $@, qr/$err/, "invalid $r object";
     }
 
     # out-of-scope pools
     {
-        my $newr = Apache::RequestRec->new($r->connection, APR::Pool->new);
+        my $newr = Apache2::RequestRec->new($r->connection, APR::Pool->new);
         {
             require APR::Table;
             # try to overwrite the pool
@@ -218,7 +218,7 @@ sub handler {
             $table->set($_ => $_) for 'aa'..'za';
         }
         # check if $newr is still OK
-        ok $newr->connection->isa('Apache::Connection');
+        ok $newr->connection->isa('Apache2::Connection');
     }
 
     # tested in other tests
@@ -233,7 +233,7 @@ sub handler {
     # - allowed_xmethods
     # - allowed_methods
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

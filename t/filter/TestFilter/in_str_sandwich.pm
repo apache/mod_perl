@@ -6,13 +6,13 @@ package TestFilter::in_str_sandwich;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 sub handler {
     my $filter = shift;
@@ -33,7 +33,7 @@ sub handler {
         $filter->print("TAIL\n");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -41,13 +41,13 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         $r->print($data);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 1;
 __DATA__

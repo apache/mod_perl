@@ -3,12 +3,12 @@ package TestApache::post;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -18,7 +18,7 @@ sub handler {
 
     $r->puts(join ':', length($data), $data);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

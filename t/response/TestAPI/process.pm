@@ -6,11 +6,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::ServerRec ();
-use Apache::Process ();
+use Apache2::RequestRec ();
+use Apache2::ServerRec ();
+use Apache2::Process ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -19,7 +19,7 @@ sub handler {
 
     my $s = $r->server;
     my $proc = $s->process;
-    ok t_cmp(1, $proc->isa('Apache::Process'), "isa('Apache::Process')");
+    ok t_cmp(1, $proc->isa('Apache2::Process'), "isa('Apache::Process')");
 
     my $global_pool = $proc->pool;
     ok t_cmp(1, $global_pool->isa('APR::Pool'), "pglob isa('APR::Pool')");
@@ -31,7 +31,7 @@ sub handler {
     t_debug($proc_name);
     ok $proc_name;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

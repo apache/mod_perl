@@ -64,15 +64,15 @@ package TestFilter::both_str_req_mix;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use Apache::TestTrace;
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 use constant DEBUG => 1;
 
@@ -87,7 +87,7 @@ sub transparent {
 
     $filter->print("");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub in_adjust              { adjust("INPUT",  @_)}
@@ -105,7 +105,7 @@ sub adjust {
         $filter->print($buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
@@ -113,11 +113,11 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 

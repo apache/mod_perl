@@ -7,18 +7,18 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK OR_ALL RSRC_CONF TAKE1 TAKE23);
+use Apache2::Const -compile => qw(OK OR_ALL RSRC_CONF TAKE1 TAKE23);
 
-use Apache::CmdParms ();
-use Apache::Module ();
+use Apache2::CmdParms ();
+use Apache2::Module ();
 
 my @directives = (
     {
      name => 'MyTest',
      func => __PACKAGE__ . '::MyTest',
-     req_override => Apache::RSRC_CONF,
+     req_override => Apache2::RSRC_CONF,
 #     req_override => 'RSRC_CONF', #test 1.x compat for strings
-#     args_how => Apache::TAKE23,
+#     args_how => Apache2::TAKE23,
      args_how => 'TAKE23', #test 1.x compat for strings
      errmsg => 'A test',
     },
@@ -28,11 +28,11 @@ my @directives = (
     },
     {
      name => 'ServerTest',
-     req_override => Apache::RSRC_CONF,
+     req_override => Apache2::RSRC_CONF,
     }
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub DIR_CREATE {
     my($class, $parms) = @_;
@@ -93,7 +93,7 @@ sub ServerTest {
 
 sub get_config {
     my($self, $s) = (shift, shift);
-    Apache::Module::get_config($self, $s, @_);
+    Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler : method {
@@ -132,7 +132,7 @@ sub handler : method {
 
     ok t_cmp($srv_cfg->{ServerTest}, 'per-server');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

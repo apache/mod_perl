@@ -7,18 +7,18 @@ use Apache::Test;
 use Apache::TestUtil;
 use File::Spec::Functions qw(canonpath catfile);
 
-use Apache::RequestRec ();
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::Process ();
+use Apache2::RequestRec ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::Process ();
 
 use APR::Pool ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $serverroot = Apache::Test::config()->{vars}->{serverroot};
 
-our @ISA = qw(Apache::RequestRec);
+our @ISA = qw(Apache2::RequestRec);
 
 sub new {
     my $class = shift;
@@ -39,26 +39,26 @@ sub handler {
         ok t_cmp(scalar(@handlers), scalar(@expected), "get_handlers");
     }
 
-    t_debug('Apache::ServerUtil::exists_config_define');
-    ok Apache::ServerUtil::exists_config_define('MODPERL2');
-    ok ! Apache::ServerUtil::exists_config_define('FOO');
+    t_debug('Apache2::ServerUtil::exists_config_define');
+    ok Apache2::ServerUtil::exists_config_define('MODPERL2');
+    ok ! Apache2::ServerUtil::exists_config_define('FOO');
 
     t_debug('registering method FOO');
     ok $r->server->method_register('FOO');
 
     server_root_relative_tests($r);
 
-    eval { Apache::ServerUtil::server_shutdown_cleanup_register(
-        sub { Apache::OK });
+    eval { Apache2::ServerUtil::server_shutdown_cleanup_register(
+        sub { Apache2::OK });
        };
     my $sub = "server_shutdown_cleanup_register";
     ok t_cmp $@, qr/Can't run '$sub' after server startup/,
         "can't register server_shutdown cleanup after server startup";
 
     # on start we get 1, and immediate restart gives 2
-    ok t_cmp Apache::ServerUtil::restart_count, 2, "restart count";
+    ok t_cmp Apache2::ServerUtil::restart_count, 2, "restart count";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 
@@ -76,8 +76,8 @@ sub server_root_relative_tests {
     );
 
     # syntax - an object or pool is required
-    t_debug("Apache::ServerUtil::server_root_relative() died");
-    eval { my $dir = Apache::ServerUtil::server_root_relative() };
+    t_debug("Apache2::ServerUtil::server_root_relative() died");
+    eval { my $dir = Apache2::ServerUtil::server_root_relative() };
     t_debug("\$\@: $@");
     ok $@;
 
@@ -86,42 +86,42 @@ sub server_root_relative_tests {
         # pool whose life is longer than of $r, but it doesn't matter
         # for the test
         ok t_filepath_cmp(
-            canonpath(Apache::ServerUtil::server_root_relative($pools{$p},
+            canonpath(Apache2::ServerUtil::server_root_relative($pools{$p},
                                                                'conf')),
             catfile($serverroot, 'conf'),
-            "Apache::ServerUtil:::server_root_relative($p, 'conf')");
+            "Apache2::ServerUtil:::server_root_relative($p, 'conf')");
     }
 
     # syntax - unrecognized objects don't segfault
     {
-        my $obj = bless {}, 'Apache::Foo';
-        eval { Apache::ServerUtil::server_root_relative($obj, 'conf') };
+        my $obj = bless {}, 'Apache2::Foo';
+        eval { Apache2::ServerUtil::server_root_relative($obj, 'conf') };
 
         ok t_cmp($@,
                  qr/p is not of type APR::Pool/,
-                 "Apache::ServerUtil::server_root_relative(\$obj, 'conf')");
+                 "Apache2::ServerUtil::server_root_relative(\$obj, 'conf')");
     }
 
     # no file argument gives ServerRoot
     {
         my $server_root_relative = 
-            Apache::ServerUtil::server_root_relative($r->pool);
+            Apache2::ServerUtil::server_root_relative($r->pool);
 
         ok t_filepath_cmp(canonpath($server_root_relative),
                           canonpath($serverroot),
                           'server_root_relative($pool)');
 
-        # Apache::ServerUtil::server_root is also the ServerRoot constant
-        ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
+        # Apache2::ServerUtil::server_root is also the ServerRoot constant
+        ok t_filepath_cmp(canonpath(Apache2::ServerUtil::server_root),
                           canonpath($server_root_relative),
-                          'Apache::ServerUtil::server_root');
+                          'Apache2::ServerUtil::server_root');
 
     }
 
     {
         # absolute paths should resolve to themselves
-        my $dir1 = Apache::ServerUtil::server_root_relative($r->pool, 'logs');
-        my $dir2 = Apache::ServerUtil::server_root_relative($r->pool, $dir1);
+        my $dir1 = Apache2::ServerUtil::server_root_relative($r->pool, 'logs');
+        my $dir2 = Apache2::ServerUtil::server_root_relative($r->pool, $dir1);
 
         ok t_filepath_cmp($dir1, $dir2, "absolute path");
     }

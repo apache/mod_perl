@@ -8,9 +8,9 @@ use Apache::TestUtil;
 use ModPerl::Util;
 
 use APR::Table ();
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub handler {
     my $r = shift;
@@ -23,7 +23,7 @@ sub handler {
 
     #warn "in callback: $callback\n";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub log          { check('Log')          }
@@ -36,7 +36,7 @@ sub check {
     die "expecting $expected callback, instead got $callback" 
         unless $callback eq $expected;
     #warn "in callback: $callback\n";
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

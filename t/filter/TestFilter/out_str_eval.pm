@@ -8,18 +8,18 @@ package TestFilter::out_str_eval;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 # dummy pass_through filter was good enough to trigger the problem
 sub handler {
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub response {
@@ -33,7 +33,7 @@ sub response {
     $r->rflush;
     ok t_cmp($@, qr/Undefined subroutine/, "some croak");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

@@ -6,16 +6,16 @@ use warnings FATAL => 'all';
 use Apache::Test;
 
 use APR::Table ();
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub first {
     my $r = shift;
 
     $r->notes->set(ok1 => 1);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub second {
@@ -25,7 +25,7 @@ sub second {
 
     $r->notes->set(ok2 => $ok + 1);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
@@ -35,7 +35,7 @@ sub handler {
 
     $r->notes->set(ok3 => $ok + 1);
 
-    Apache::DECLINED;
+    Apache2::DECLINED;
 }
 
 sub response {
@@ -49,7 +49,7 @@ sub response {
         ok $val == $x;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

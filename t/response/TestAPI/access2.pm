@@ -27,12 +27,12 @@ package TestAPI::access2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Access ();
-use Apache::RequestRec ();
+use Apache2::Access ();
+use Apache2::RequestRec ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR
+use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR
                                  M_POST :satisfy);
 
 my $users  = "goo bar";
@@ -48,11 +48,11 @@ sub handler {
     die '$r->some_auth_required failed' unless $r->some_auth_required;
 
     my $satisfies = $r->satisfies;
-    die "wanted satisfies=" . Apache::SATISFY_ALL . ", got $satisfies"
-        unless $r->satisfies() == Apache::SATISFY_ALL;
+    die "wanted satisfies=" . Apache2::SATISFY_ALL . ", got $satisfies"
+        unless $r->satisfies() == Apache2::SATISFY_ALL;
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
-    return $rc if $rc != Apache::OK;
+    return $rc if $rc != Apache2::OK;
 
     # extract just the requirement entries
     my %require = 
@@ -62,30 +62,30 @@ sub handler {
 
     # silly (we don't check user/pass here), just checking when
     # the Limit options are getting through
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         if (exists $require{"valid-user"}) {
-            return Apache::OK;
+            return Apache2::OK;
         }
         else {
-            return Apache::SERVER_ERROR;
+            return Apache2::SERVER_ERROR;
         }
     }
     else {
         # non-POST requests shouldn't see the Limit enclosed entry
-        return Apache::SERVER_ERROR if exists $require{"valid-user"};
+        return Apache2::SERVER_ERROR if exists $require{"valid-user"};
     }
 
-    return Apache::SERVER_ERROR unless $require{user}  eq $users;
-    return Apache::SERVER_ERROR unless $require{group} eq $groups;
+    return Apache2::SERVER_ERROR unless $require{user}  eq $users;
+    return Apache2::SERVER_ERROR unless $require{group} eq $groups;
 
     my $user = $r->user;
     my $pass = $users{$user} || '';
     unless (defined $pass and $sent_pw eq $pass) {
         $r->note_basic_auth_failure;
-        return Apache::HTTP_UNAUTHORIZED;
+        return Apache2::HTTP_UNAUTHORIZED;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -1,6 +1,6 @@
 package TestApache::util;
 
-# Apache::Util tests
+# Apache2::Util tests
 
 use strict;
 use warnings FATAL => 'all';
@@ -18,15 +18,15 @@ use warnings FATAL => 'all';
 # regex matching (LC_CTYPE) of strftime-like (LC_TIME) strings
 use locale;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Util ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Util ();
 use APR::Date ();
 
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 # those are passed via PerlPassEnv
 my $locale = $ENV{LC_TIME} || '';
@@ -45,22 +45,22 @@ sub handler {
         my $fmt = "%a, %d %b %Y %H:%M:%S %Z";
         my $fmtdate;
 
-        $fmtdate = Apache::Util::ht_time($r->pool);
+        $fmtdate = Apache2::Util::ht_time($r->pool);
         time_cmp($fmtdate, $time,
-                 'Apache::Util::ht_time($pool)', 0);
+                 'Apache2::Util::ht_time($pool)', 0);
 
-        $fmtdate = Apache::Util::ht_time($r->pool, $time);
+        $fmtdate = Apache2::Util::ht_time($r->pool, $time);
         time_cmp($fmtdate, $time,
-                 'Apache::Util::ht_time($pool, $time)', 1);
+                 'Apache2::Util::ht_time($pool, $time)', 1);
 
-        $fmtdate = Apache::Util::ht_time($r->pool, $time, $fmt);
+        $fmtdate = Apache2::Util::ht_time($r->pool, $time, $fmt);
         time_cmp($fmtdate, $time,
-                 'Apache::Util::ht_time($pool, $time, $fmt)', 1);
+                 'Apache2::Util::ht_time($pool, $time, $fmt)', 1);
 
         my $gmt = 0;
-        $fmtdate = Apache::Util::ht_time($r->pool, $time, $fmt, $gmt);
+        $fmtdate = Apache2::Util::ht_time($r->pool, $time, $fmt, $gmt);
         time_cmp($fmtdate, $time,
-                 'Apache::Util::ht_time($pool, $time, $fmt, $gmt)', 0);
+                 'Apache2::Util::ht_time($pool, $time, $fmt, $gmt)', 0);
     }
 
     # escape_path
@@ -70,30 +70,30 @@ sub handler {
         $uri = "a 'long' file?.html";
         ($expected = $uri) =~ s/([\s?;])/sprintf "%%%x", ord $1/ge;
 
-        $received = Apache::Util::escape_path($uri, $r->pool);
+        $received = Apache2::Util::escape_path($uri, $r->pool);
         ok t_cmp $received, $expected,
-            "Apache::Util::escape_path / partial=1 / default";
+            "Apache2::Util::escape_path / partial=1 / default";
 
-        $received = Apache::Util::escape_path($uri, $r->pool, 1);
+        $received = Apache2::Util::escape_path($uri, $r->pool, 1);
         ok t_cmp $received, $expected,
-            "Apache::Util::escape_path / partial=1 / explicit";
+            "Apache2::Util::escape_path / partial=1 / explicit";
 
-        $received = Apache::Util::escape_path($uri, $r->pool, 0);
+        $received = Apache2::Util::escape_path($uri, $r->pool, 0);
         ok t_cmp $received, $expected,
-            "Apache::Util::escape_path / partial=0";
+            "Apache2::Util::escape_path / partial=0";
 
         $uri = "a 'long' file?.html:";
         ($expected = $uri) =~ s/([\s?;])/sprintf "%%%x", ord $1/ge;
         # XXX: why does it prepend ./ only if it sees : or :/?
         $expected = "./$expected";
 
-        $received = Apache::Util::escape_path($uri, $r->pool, 0);
+        $received = Apache2::Util::escape_path($uri, $r->pool, 0);
         ok t_cmp $received, $expected,
-            "Apache::Util::escape_path / partial=0 / ./ prefix ";
+            "Apache2::Util::escape_path / partial=0 / ./ prefix ";
 
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 my $fmtdate_re = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;

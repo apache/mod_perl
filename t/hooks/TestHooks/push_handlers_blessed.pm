@@ -6,15 +6,15 @@ package TestHooks::push_handlers_blessed;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub handler {
     my $r = shift;
@@ -24,14 +24,14 @@ sub handler {
     my $sub = sub {
         ok 1;
 
-        return Apache::OK;
+        return Apache2::OK;
     };
 
     my $handler = bless $sub, __PACKAGE__;
 
     $r->push_handlers(PerlResponseHandler => $handler);
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 1;

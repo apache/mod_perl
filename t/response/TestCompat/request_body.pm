@@ -8,8 +8,8 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test ();
 
-use Apache::compat ();
-use Apache::Constants qw(OK M_POST DECLINED);
+use Apache2::compat ();
+use Apache2::Constants qw(OK M_POST DECLINED);
 
 use subs qw(ok debug);
 my $gr;
@@ -28,7 +28,7 @@ sub handler {
         %data = $r->content;
     }
     else {
-        %data = $r->Apache::args;
+        %data = $r->Apache2::args;
     }
 
     return DECLINED unless exists $data{test};

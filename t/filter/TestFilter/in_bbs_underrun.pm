@@ -43,15 +43,15 @@ package TestFilter::in_bbs_underrun;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 
 use Apache::TestTrace;
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 use constant SIZE => 1024*16 + 5; # ~16k
 
@@ -99,7 +99,7 @@ sub handler {
         debug "storing the remainder: " . length($ctx) . " bytes";
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 # split in words of SIZE chars and a remainder
@@ -135,14 +135,14 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         my $length = length $data;
         $r->print("read $length chars");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 1;
 __DATA__

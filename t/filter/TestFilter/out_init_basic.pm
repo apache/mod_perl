@@ -6,14 +6,14 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 use constant READ_SIZE  => 1024;
 
@@ -31,7 +31,7 @@ sub init : FilterInitHandler {
 
     #warn "**** init is exiting\n";
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 # testing whether we can get the pre handler callback in evolved way
@@ -56,7 +56,7 @@ sub transparent : FilterRequestHandler
 
     #warn "**** filter is exiting\n";
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -67,7 +67,7 @@ sub response {
     $r->content_type('text/plain');
 
     my $data;
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $data = TestCommon::Utils::read_post($r);
     }
 
@@ -76,7 +76,7 @@ sub response {
 
     #warn "**** content is exiting\n";
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

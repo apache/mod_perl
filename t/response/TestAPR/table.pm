@@ -6,7 +6,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::table;
 
@@ -18,7 +18,7 @@ sub handler {
 
     TestAPRlib::table::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

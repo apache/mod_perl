@@ -3,14 +3,14 @@ package TestPreConnection::note;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
-    my Apache::Connection $c = shift;
+    my Apache2::Connection $c = shift;
 
     my $ip = $c->remote_ip;
 
@@ -18,7 +18,7 @@ sub handler {
 
     $c->notes->set(preconnection => $ip);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -27,7 +27,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print($r->connection->notes->get('preconnection') || '');
 
-    return Apache::OK
+    return Apache2::OK
 }
 
 1;

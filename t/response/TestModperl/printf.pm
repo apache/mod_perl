@@ -3,11 +3,11 @@ package TestModperl::printf;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
-use Apache::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
     my $r = shift;
@@ -42,7 +42,7 @@ sub handler {
         $r->notes->clear;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub fixup {
@@ -53,7 +53,7 @@ sub fixup {
     eval { $r->printf("whatever") };
     $r->notes->set(fixup => "$@") if $@;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -1,4 +1,4 @@
-use Apache::compat ();
+use Apache2::compat ();
 use CGI ();
 
 my $cgi = CGI->new;

@@ -3,12 +3,12 @@ package TestApache::read;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use TestCommon::Utils;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use constant BUFSIZ => 512; #small for testing
 
@@ -40,7 +40,7 @@ sub handler {
 
     $r->puts($buffer);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

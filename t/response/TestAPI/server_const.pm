@@ -7,12 +7,12 @@ use Apache::Test;
 use Apache::TestUtil;
 use File::Spec::Functions qw(canonpath);
 
-use Apache::ServerUtil ();
-use Apache::Process ();
+use Apache2::ServerUtil ();
+use Apache2::Process ();
 
 use APR::Pool ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $cfg = Apache::Test::config;
 
@@ -26,21 +26,21 @@ sub handler {
 
     plan $r, tests => 3;
 
-    # test Apache::ServerUtil constant subroutines
+    # test Apache2::ServerUtil constant subroutines
 
-    ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
+    ok t_filepath_cmp(canonpath(Apache2::ServerUtil::server_root),
                       canonpath($root),
-                      'Apache::ServerUtil::server_root()');
+                      'Apache2::ServerUtil::server_root()');
 
-    ok t_cmp(Apache::ServerUtil::get_server_built,
+    ok t_cmp(Apache2::ServerUtil::get_server_built,
              $built,
-             'Apache::ServerUtil::get_server_built()');
+             'Apache2::ServerUtil::get_server_built()');
 
-    ok t_cmp(Apache::ServerUtil::get_server_version,
+    ok t_cmp(Apache2::ServerUtil::get_server_version,
              $version,
-             'Apache::ServerUtil::get_server_version()');
+             'Apache2::ServerUtil::get_server_version()');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

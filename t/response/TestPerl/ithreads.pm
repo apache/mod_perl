@@ -7,7 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 # XXX: at this moment ithreads can be used only with 5.8.1. However
 # once ithreads will be available on CPAN, we will need to change the
@@ -71,7 +71,7 @@ sub handler {
         ok t_cmp($counter_priv, 2**10, "private counter");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

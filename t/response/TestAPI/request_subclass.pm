@@ -3,13 +3,13 @@ package TestAPI::request_subclass;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-our @ISA = qw(Apache::RequestRec);
+use Apache2::RequestRec ();
+our @ISA = qw(Apache2::RequestRec);
 
 use Apache::Test;
 use Apache::TestRequest;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub new {
     my $class = shift;
@@ -39,7 +39,7 @@ sub handler {
 
     ok $@ =~ /unsupported/;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

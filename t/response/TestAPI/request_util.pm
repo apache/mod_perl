@@ -6,12 +6,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestUtil ();
-use Apache::MPM ();
-use Apache::Log ();
+use Apache2::RequestUtil ();
+use Apache2::MPM ();
+use Apache2::Log ();
 use APR::Pool ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my %status_lines = (
    200 => '200 OK',
@@ -30,7 +30,7 @@ sub handler {
 
     ok $document_root;
 
-    if (!Apache::MPM->is_threaded) {
+    if (!Apache2::MPM->is_threaded) {
         my $path_orig = my $path = '/tmp/foo';
         ok t_cmp($document_root, $r->document_root($path));
         # make sure that the new docroot string is copied internally,
@@ -66,12 +66,12 @@ sub handler {
              "headers that should always be there");
 
     while (my($code, $line) = each %status_lines) {
-        ok t_cmp(Apache::RequestUtil::get_status_line($code),
+        ok t_cmp(Apache2::RequestUtil::get_status_line($code),
                  $line,
-                 "Apache::RequestUtil::get_status_line($code)");
+                 "Apache2::RequestUtil::get_status_line($code)");
     }
 
-    if (Apache::MPM->is_threaded) {
+    if (Apache2::MPM->is_threaded) {
         eval { $r->child_terminate() };
         ok t_cmp($@, qr/Can't run.*in a threaded mpm/, "child_terminate");
     }
@@ -85,7 +85,7 @@ sub handler {
             }, $r);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

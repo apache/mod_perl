@@ -14,8 +14,8 @@ use APR::Finfo ();
 
 use File::Spec::Functions qw(catfile);
 
-use Apache::compat ();
-use Apache::Constants qw(OK REMOTE_HOST);
+use Apache2::compat ();
+use Apache2::Constants qw(OK REMOTE_HOST);
 
 sub handler {
     my $r = shift;
@@ -78,7 +78,7 @@ sub handler {
 
     # $r->filename
     {
-        Apache::compat::override_mp2_api('Apache::RequestRec::filename');
+        Apache2::compat::override_mp2_api('Apache::RequestRec::filename');
         my $orig = $r->filename;
         my $new  = catfile Apache::Test::vars("serverroot"),
             "conf", "httpd.conf";
@@ -94,12 +94,12 @@ sub handler {
 
         # restore the real 2.0 filename() method, now that we are done
         # with the compat one
-        Apache::compat::restore_mp2_api('Apache::RequestRec::filename');
+        Apache2::compat::restore_mp2_api('Apache::RequestRec::filename');
     }
 
     # $r->notes
     {
-        Apache::compat::override_mp2_api('Apache::RequestRec::notes');
+        Apache2::compat::override_mp2_api('Apache::RequestRec::notes');
 
         my $key = 'notes-test';
         # get/set scalar context
@@ -127,12 +127,12 @@ sub handler {
 
         # restore the real 2.0 notes() method, now that we are done
         # with the compat one
-        Apache::compat::restore_mp2_api('Apache::RequestRec::notes');
+        Apache2::compat::restore_mp2_api('Apache::RequestRec::notes');
     }
 
     # get_remote_host()
     ok $r->get_remote_host() || 1;
-    ok $r->get_remote_host(Apache::REMOTE_HOST) || 1;
+    ok $r->get_remote_host(Apache2::REMOTE_HOST) || 1;
 
     # post_connection()
     $r->post_connection(sub { OK });

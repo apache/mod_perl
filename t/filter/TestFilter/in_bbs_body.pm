@@ -3,16 +3,16 @@ package TestFilter::in_bbs_body;
 use strict;
 use warnings FATAL => 'all';
 
-use base qw(Apache::Filter); #so we inherit MODIFY_CODE_ATTRIBUTES
+use base qw(Apache2::Filter); #so we inherit MODIFY_CODE_ATTRIBUTES
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 use APR::Const -compile => ':common';
 
 sub handler : FilterRequestHandler {
@@ -33,7 +33,7 @@ sub handler : FilterRequestHandler {
         }
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {
@@ -41,7 +41,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         $r->puts($data);
     }
@@ -49,7 +49,7 @@ sub response {
         $r->puts("1..1\nok 1\n");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

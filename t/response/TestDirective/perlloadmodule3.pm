@@ -9,11 +9,11 @@ package TestDirective::perlloadmodule3;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::CmdParms ();
-use Apache::Module ();
-use Apache::ServerUtil ();
+use Apache2::CmdParms ();
+use Apache2::Module ();
+use Apache2::ServerUtil ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 
 my @directives = (
@@ -23,7 +23,7 @@ my @directives = (
     { name => 'MyOverride' },
 );
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub MyPlus     { set_val('MyPlus',     @_) }
 sub MyAppend   { set_val('MyAppend',   @_) }
@@ -37,7 +37,7 @@ sub set_val {
     my($key, $self, $parms, $arg) = @_;
     $self->{$key} = $arg;
     unless ($parms->path) {
-        my $srv_cfg = Apache::Module::get_config($self, $parms->server);
+        my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
         $srv_cfg->{$key} = $arg;
     }
 }
@@ -46,7 +46,7 @@ sub push_val {
     my($key, $self, $parms, $arg) = @_;
     push @{ $self->{$key} }, $arg;
     unless ($parms->path) {
-        my $srv_cfg = Apache::Module::get_config($self, $parms->server);
+        my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
         push @{ $srv_cfg->{$key} }, $arg;
     }
 }
@@ -80,16 +80,16 @@ sub merge {
 ### response handler ###
 
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::Module ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::Module ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub get_config {
-    Apache::Module::get_config(__PACKAGE__, @_);
+    Apache2::Module::get_config(__PACKAGE__, @_);
 }
 
 sub handler {
@@ -125,7 +125,7 @@ sub handler {
         }
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 

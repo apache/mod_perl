@@ -5,16 +5,16 @@ package TestProtocol::echo_filter;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Connection ();
+use Apache2::Connection ();
 use APR::Socket ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Error ();
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
 use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
-use Apache::Const -compile => qw(OK MODE_GETLINE);
+use Apache2::Const -compile => qw(OK MODE_GETLINE);
 
 use constant BUFF_LEN => 1024;
 
@@ -25,7 +25,7 @@ sub uc_filter : FilterConnectionHandler {
         $filter->print(uc $buffer);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub handler {
@@ -38,7 +38,7 @@ sub handler {
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     while (1) {
-        my $rc = $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
+        my $rc = $c->input_filters->get_brigade($bb, Apache2::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
@@ -52,7 +52,7 @@ sub handler {
 
     $bb->destroy;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

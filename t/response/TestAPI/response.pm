@@ -1,6 +1,6 @@
 package TestAPI::response;
 
-# testing Apache::Response methods
+# testing Apache2::Response methods
 #
 # XXX: a proper test is needed (at the moment just test that methods
 # can be invoked as documented)
@@ -8,13 +8,13 @@ package TestAPI::response;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::Response ();
+use Apache2::RequestRec ();
+use Apache2::Response ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -47,7 +47,7 @@ sub handler {
 
     ok 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

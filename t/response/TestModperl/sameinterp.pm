@@ -3,11 +3,11 @@ package TestModperl::sameinterp;
 use warnings FATAL => 'all';
 use strict;
 
-use Apache::RequestIO ();
+use Apache2::RequestIO ();
 
 use Apache::TestHandler ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 my $value = '';
 
@@ -18,7 +18,7 @@ sub handler {
     $value = Apache::TestHandler::same_interp_counter();
     $r->puts($value);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

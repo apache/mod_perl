@@ -36,11 +36,11 @@ package TestFilter::out_str_req_mix;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 sub adjust {
     my $filter = shift;
@@ -52,7 +52,7 @@ sub adjust {
         $filter->print($buffer);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
@@ -60,11 +60,11 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

@@ -3,13 +3,13 @@ package TestModperl::setupenv;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache2::Const -compile => qw(OK DECLINED);
 
 sub handler {
 
@@ -21,7 +21,7 @@ sub handler {
     # $requests locations with 7 tests each
     plan $r, tests => $requests * 7;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub env {
@@ -61,7 +61,7 @@ sub env {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub noenv {
@@ -101,7 +101,7 @@ sub noenv {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub someenv {
@@ -142,21 +142,21 @@ sub someenv {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub subenv_void {
 
     shift->subprocess_env;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub subenv_one {
 
     shift->subprocess_env->set(SRV_SUBPROCESS => 'server');
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub subenv_two {
@@ -167,7 +167,7 @@ sub subenv_two {
 
     $r->subprocess_env->set(DIR_SUBPROCESS => $value);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

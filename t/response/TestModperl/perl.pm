@@ -9,7 +9,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -20,7 +20,7 @@ sub handler {
              crypt("testing", "SNXJvM5I.PJrE"),
              "crypt");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

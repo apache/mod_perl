@@ -1,4 +1,4 @@
-PerlModule Apache::Module
+PerlModule Apache2::Module
 
 PerlPostConfigRequire @ServerRoot@/conf/post_config_startup.pl
 

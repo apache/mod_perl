@@ -3,9 +3,9 @@ package TestApache::send_cgi_header;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Response ();
+use Apache2::Response ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
     my $r = shift;
@@ -23,7 +23,7 @@ EOF
     # don't tell anybody
     $r->send_cgi_header($response);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -6,16 +6,16 @@ use warnings FATAL => 'all';
 use Apache::Test;
 
 use APR::Table ();
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     $r->notes->set(ok => 1);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {
@@ -25,7 +25,7 @@ sub response {
 
     ok $r->notes->get('ok');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

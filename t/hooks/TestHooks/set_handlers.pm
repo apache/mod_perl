@@ -5,11 +5,11 @@ package TestHooks::set_handlers;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
     my $r = shift;
@@ -28,7 +28,7 @@ sub handler {
     $r->set_handlers(PerlResponseHandler => [\&Apache::TestHandler::ok1]);
     $r->handler("modperl");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub fixup {

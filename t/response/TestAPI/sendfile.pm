@@ -3,11 +3,11 @@ package TestAPI::sendfile;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use APR::Const -compile => 'SUCCESS';
-use Apache::Const -compile => ':common';
+use Apache2::Const -compile => ':common';
 
 sub handler {
     my $r = shift;
@@ -42,7 +42,7 @@ sub handler {
     # XXX: can't quite test bogus offset and/or len, since ap_send_fd
     # doesn't provide any error indications
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

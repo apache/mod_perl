@@ -6,16 +6,16 @@ package TestApache::discard_rbody;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Connection ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Connection ();
+use Apache2::Filter ();
 use APR::Brigade ();
 use APR::Error ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK MODE_READBYTES);
+use Apache2::Const -compile => qw(OK MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
 use constant IOBUFSIZE => 8192;
@@ -35,7 +35,7 @@ sub handler {
         my $filters = $r->input_filters();
         my $ba = $r->connection->bucket_alloc;
         my $bb = APR::Brigade->new($r->pool, $ba);
-        $filters->get_brigade($bb, Apache::MODE_READBYTES,
+        $filters->get_brigade($bb, Apache2::MODE_READBYTES,
                               APR::BLOCK_READ, IOBUFSIZE);
     }
     elsif ($test eq 'all') {
@@ -47,11 +47,11 @@ sub handler {
     # now get rid of the rest of the input data should work, no matter
     # how little or how much of the body was read
     my $rc = $r->discard_request_body;
-    die APR::Error::strerror($rc) unless $rc == Apache::OK;
+    die APR::Error::strerror($rc) unless $rc == Apache2::OK;
 
     $r->print($test);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

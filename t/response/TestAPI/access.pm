@@ -6,9 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Access ();
+use Apache2::Access ();
 
-use Apache::Const -compile => qw(OK :options :override :satisfy);
+use Apache2::Const -compile => qw(OK :options :override :satisfy);
 
 sub handler {
     my $r = shift;
@@ -19,13 +19,13 @@ sub handler {
 
     ok 1;
 
-    ok $r->allow_options & Apache::OPT_INDEXES;
+    ok $r->allow_options & Apache2::OPT_INDEXES;
 
-    ok !($r->allow_options & Apache::OPT_EXECCGI);
+    ok !($r->allow_options & Apache2::OPT_EXECCGI);
 
-    ok !($r->allow_overrides & Apache::OR_LIMIT);
+    ok !($r->allow_overrides & Apache2::OR_LIMIT);
 
-    ok t_cmp $r->satisfies, Apache::SATISFY_NOSPEC, "satisfies";
+    ok t_cmp $r->satisfies, Apache2::SATISFY_NOSPEC, "satisfies";
 
     ok t_cmp $r->auth_name, 'modperl', "auth_name";
 
@@ -48,7 +48,7 @@ sub handler {
     t_debug "get_remote_logname: $remote_logname";
     ok 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

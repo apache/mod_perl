@@ -9,9 +9,9 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::Build;
+use Apache2::Build;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -27,7 +27,7 @@ sub handler {
     # - win32 is an unrelated issue
     plan $r, tests => 2,
         need { "getppid() is not implemented on Win32"
-                   => !Apache::Build::WIN32(),
+                   => !Apache2::Build::WIN32(),
                "getppid() is having problems with perl 5.6"
                    => !($] < 5.008),
                };
@@ -47,7 +47,7 @@ sub handler {
         ok $ppid != $$;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

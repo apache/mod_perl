@@ -12,14 +12,14 @@ package TestModperl::io_nested_with_closed_stds;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::SubRequest ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::SubRequest ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -54,7 +54,7 @@ sub handler {
         close OLDOUT;
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

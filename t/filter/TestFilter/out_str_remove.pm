@@ -6,12 +6,12 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use constant READ_SIZE  => 1024;
 
@@ -26,7 +26,7 @@ sub upcase_n_remove {
 
       $filter->remove;
 
-      return Apache::OK;
+      return Apache2::OK;
 }
 
 # this filter inserts underscores after each character it receives
@@ -39,7 +39,7 @@ sub insert_underscores {
           $filter->print($buffer);
       }
 
-      return Apache::OK;
+      return Apache2::OK;
 }
 
 
@@ -55,7 +55,7 @@ sub response {
     $r->rflush;     # this sends the data in the buffer + flush bucket
     $r->print("bar");
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

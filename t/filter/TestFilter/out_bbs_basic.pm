@@ -5,14 +5,14 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::BucketType ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 #XXX: Not implemented yet, required by Test.pm
 sub Apache::TestToString::PRINTF {}
@@ -53,7 +53,7 @@ sub handler {
         $filter->ctx(1); # flag that we have run this already
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub response {

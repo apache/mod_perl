@@ -5,14 +5,14 @@ package TestApache::read2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 my $expected = "foobar";
 
@@ -33,7 +33,7 @@ sub handler {
              $expected,
              "reading into an autovivified hash entry");
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 

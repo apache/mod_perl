@@ -3,18 +3,18 @@ package TestModperl::print;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
+use Apache2::RequestIO ();
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     plan $r, tests => 6;
 
-    binmode STDOUT; #Apache::RequestRec::BINMODE (noop)
+    binmode STDOUT; #Apache2::RequestRec::BINMODE (noop)
 
     ok 1;
 
@@ -37,7 +37,7 @@ sub handler {
 
     printf "ok %d\n", 6;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 END {

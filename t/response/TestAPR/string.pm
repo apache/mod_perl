@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 require TestAPRlib::string;
 
@@ -17,7 +17,7 @@ sub handler {
 
     TestAPRlib::string::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

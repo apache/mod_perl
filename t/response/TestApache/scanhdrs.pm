@@ -5,9 +5,9 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::compat ();
+use Apache2::compat ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -21,7 +21,7 @@ sub handler {
 
     print "ok 1\n";
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

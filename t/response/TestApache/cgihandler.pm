@@ -3,10 +3,10 @@ package TestApache::cgihandler;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 #test the 1.x style perl-script handler
 
@@ -15,7 +15,7 @@ sub handler {
 
     $ENV{FOO} = 2;
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $cl = $r->headers_in->get('content-length');
         my $buff;
 #XXX: working around a bug in ithreads Perl
@@ -35,7 +35,7 @@ sub handler {
         print "ok $foo\n";
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

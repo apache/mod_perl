@@ -8,14 +8,14 @@ package TestAPI::in_out_filters;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 
 use APR::Brigade ();
 use APR::Bucket ();
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(OK M_POST DECLINED MODE_READBYTES);
+use Apache2::Const -compile => qw(OK M_POST DECLINED MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
 use constant IOBUFSIZE => 8192;
@@ -23,14 +23,14 @@ use constant IOBUFSIZE => 8192;
 sub handler {
     my $r = shift;
 
-    return Apache::DECLINED unless $r->method_number == Apache::M_POST;
+    return Apache2::DECLINED unless $r->method_number == Apache::M_POST;
 
     $r->content_type("text/plain");
 
     my $data = read_request_body($r);
     send_response_body($r, lc($data));
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub send_response_body {
@@ -55,7 +55,7 @@ sub read_request_body {
     my $seen_eos = 0;
     my $count = 0;
     do {
-        $r->input_filters->get_brigade($bb, Apache::MODE_READBYTES,
+        $r->input_filters->get_brigade($bb, Apache2::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;

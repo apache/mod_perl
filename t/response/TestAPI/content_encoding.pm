@@ -5,17 +5,17 @@ package TestAPI::content_encoding;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED M_POST);
+use Apache2::Const -compile => qw(OK DECLINED M_POST);
 
 sub handler {
     my $r = shift;
 
-    return Apache::DECLINED unless $r->method_number == Apache::M_POST;
+    return Apache2::DECLINED unless $r->method_number == Apache::M_POST;
 
     my $data = TestCommon::Utils::read_post($r);
 
@@ -26,7 +26,7 @@ sub handler {
 
     $r->print(Compress::Zlib::memGzip($data));
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

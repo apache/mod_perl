@@ -5,11 +5,11 @@ package TestHooks::push_handlers;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => qw(OK DECLINED DONE);
+use Apache2::Const -compile => qw(OK DECLINED DONE);
 
 sub handler {
     my $r = shift;
@@ -34,11 +34,11 @@ sub handler {
 
     $r->push_handlers(PerlResponseHandler => \&end);
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
-sub end { return Apache::DONE }
-sub say { shift->print(shift,"\n"); return Apache::DECLINED }
+sub end { return Apache2::DONE }
+sub say { shift->print(shift,"\n"); return Apache2::DECLINED }
 
 sub conf {
     # this one is configured from httpd.conf

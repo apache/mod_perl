@@ -11,15 +11,15 @@ use Apache::Test;
 use Apache::TestTrace;
 
 use APR::Table;
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use File::Spec::Functions qw(catfile catdir);
 use File::Path qw(mkpath);
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $dir = catdir Apache::Test::vars("documentroot"), 'hooks', 'startup';
 
@@ -37,7 +37,7 @@ sub open_logs {
         run("open_logs", $vhost_s);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub post_config {
@@ -54,7 +54,7 @@ sub post_config {
         run("post_config", $vhost_s);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub run {
@@ -102,7 +102,7 @@ sub handler {
             warn "received: $received\n";
         }
     }
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;
