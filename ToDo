@@ -25,7 +25,23 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - rand() broken under win32!
            Jeff Baker <jeff@godzilla.tamu.edu>
 
-- Ralf's APACI Makefile.tmpl
+- APACI stuff:
+
+  o Support for the APXS variant of the new APACI stuff. Best would
+    be a USE_APXS=1 similar to USE_APACI=1. The difference is that instead of
+    copying the apaci/ stuff into APACHE_SRC/src/modules/perl/ it is copied
+    into ./src/modules/perl/ and instead of running APACHE_SRC/configure
+    ./src/modules/perl/configure is run.
+
+  o Support for deciding to build Apache even when USE_APACI=1 is used.  One
+    possible way would be this: "USE_APACI=1" usses the apaci/* stuff and runs
+    "cd APACHE_SRC; ./configure --activate-module=src/modules/perl/libperl.a;
+    make" while "USE_APACI=1 NO_HTTPD=1" does what the current behaviour is.
+    And the ADD_MODULE feature should be used here too: But not by editing a
+    Configuration file, instead --enable-module options should be used.
+    Support for enabling the DSO feature when Apache is built automatically
+    would be friendly, perhaps USE_DSO=1, which adds an --enable-shared=perl
+    option, too.
 
 - $ENV{PATH}: don't let perl_clear_env() change it's value
 
