@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+remove CGI.pm and Apache::Request dependencies from Apache2::Status
+since they weren't used at all [Geoffrey Young]
+
 s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
 APIs, breaking both MP_INST_APACHE2 and the test suite [joes].
 

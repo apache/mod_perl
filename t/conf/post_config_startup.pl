@@ -81,7 +81,7 @@ sub test_apache_status {
     Apache2::Status->menu_item(
        'test_menu' => "Test Menu Entry",
        sub {
-           my($r, $q) = @_; #request and CGI objects
+           my($r) = @_;
            return ["This is just a test entry"];
        }
     ) if Apache2::Module::loaded('Apache2::Status');

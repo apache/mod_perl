@@ -32,24 +32,6 @@ $Apache2::Status::VERSION = '3.00'; # mod_perl 2.0
 
 use constant IS_WIN32 => ($^O eq "MSWin32");
 
-our $newQ;
-
-if (parse_version("Apache2::Request") > 2 &&
-    eval { require Apache2::Request }) {
-    $newQ ||= sub { Apache2::Request->new(@_) };
-}
-elsif (eval { require CGI }) {
-    if ($CGI::VERSION >= 2.93) {
-        $newQ ||= sub { CGI->new(@_) };
-    }
-    else {
-        $newQ ||= sub { CGI->new };
-    }
-}
-else {
-    die "Need CGI.pm or Apache2::Request to operate";
-}
-
 my %status = (
     script    => "PerlRequire'd Files",
     inc       => "Loaded Modules",
@@ -129,22 +111,21 @@ sub menu_item {
 
 sub handler {
     my($r) = @_;
-    #Apache2->request($r); #for Apache2::CGI
     my $qs = $r->args || "";
     my $sub = "status_$qs";
     no strict 'refs';
 
     if ($qs =~ s/^(noh_\w+).*/$1/) {
-        &{$qs}($r, $newQ->($r));
+        &{$qs}($r);
         return Apache2::OK;
     }
 
     header($r);
     if (defined &$sub) {
-        $r->print(@{ &{$sub}($r, $newQ->($r)) });
+        $r->print(@{ &{$sub}($r) });
     }
     elsif ($qs and %{$qs."::"}) {
-        $r->print(symdump($r, $newQ->($r), $qs));
+        $r->print(symdump($r, $qs));
     }
     else {
         my $uri = $r->uri;
@@ -193,29 +174,29 @@ EOF
 }
 
 sub symdump {
-    my($r, $q, $package) = @_;
+    my($r, $package) = @_;
 
     return install_hint("Devel::Symdump") unless has($r, "symdump");
 
     my $meth = lc($r->dir_config("StatusRdump")) eq "on"
         ? "rnew" : "new";
     my $sob = Devel::Symdump->$meth($package);
-    return $sob->Apache2::Status::as_HTML($package, $r, $q);
+    return $sob->Apache2::Status::as_HTML($package, $r);
 }
 
 sub status_symdump {
-    my($r, $q) = @_;
-    [symdump($r, $q, 'main')];
+    my($r) = @_;
+    [symdump($r, 'main')];
 }
 
 sub status_section_config {
-    my($r, $q) = @_;
+    my($r) = @_;
     require Apache2::PerlSections;
     ["<pre>", Apache2::PerlSections->dump, "</pre>"];
 }
 
 sub status_hooks {
-    my($r, $q) = @_;
+    my($r) = @_;
     # XXX: hooks list access doesn't exist yet in 2.0
     require mod_perl;
     require mod_perl_hooks;
@@ -231,7 +212,7 @@ sub status_hooks {
 }
 
 sub status_inc {
-    my($r, $q) = @_;
+    my($r) = @_;
 
     my $uri = $r->uri;
     my @retval = (
@@ -265,7 +246,7 @@ sub status_inc {
 }
 
 sub status_script {
-    my($r, $q) = @_;
+    my($r) = @_;
 
     my @retval = (
         '<table border="1">',
@@ -317,7 +298,7 @@ sub get_packages {
 }
 
 sub status_rgysubs {
-    my($r, $q) = @_;
+    my($r) = @_;
 
     local $_;
     my $uri = $r->uri;
@@ -402,7 +383,7 @@ sub status_isa_tree {
 }
 
 sub status_data_dump {
-    my($r, $q) = @_;
+    my($r) = @_;
 
     return install_hint('Data::Dumper') unless has($r, "dumper");
 
@@ -414,8 +395,8 @@ sub status_data_dump {
     $str = escape_html($str);
     $str =~ s/= \\/= /; #whack backwack
     push @retval, $str, "\n";
-    push @retval, peek_link($r, $q, $name, $type);
-    push @retval, b_graph_link($r, $q, $name);
+    push @retval, peek_link($r, $name, $type);
+    push @retval, b_graph_link($r, $name);
     push @retval, "</pre>";
     \@retval;
 }
@@ -426,7 +407,7 @@ sub cv_file {
 }
 
 sub status_cv_dump { 
-    my($r, $q) = @_;
+    my($r) = @_;
     return [] unless has($r, "b");
 
     no strict 'refs';
@@ -450,20 +431,20 @@ sub status_cv_dump {
     push @retval, "Line: ",      $obj->GV->LINE, "\n";
     push @retval, "Prototype: ", $proto || "none", "\n";
     push @retval, "XSUB: ",      $obj->XSUB ? "yes" : "no", "\n";
-    push @retval, peek_link($r, $q, $name, $type);
-    #push @retval, xref_link($r, $q, $name);
-    push @retval, b_graph_link($r, $q, $name);
-    push @retval, b_lexinfo_link($r, $q, $name);
-    push @retval, b_terse_link($r, $q, $name);
-    push @retval, b_terse_size_link($r, $q, $name);
-    push @retval, b_deparse_link($r, $q, $name);
-    push @retval, b_fathom_link($r, $q, $name);
+    push @retval, peek_link($r, $name, $type);
+    #push @retval, xref_link($r, $name);
+    push @retval, b_graph_link($r, $name);
+    push @retval, b_lexinfo_link($r, $name);
+    push @retval, b_terse_link($r, $name);
+    push @retval, b_terse_size_link($r, $name);
+    push @retval, b_deparse_link($r, $name);
+    push @retval, b_fathom_link($r, $name);
     push @retval, "</pre>";
     \@retval;
 }
 
 sub b_lexinfo_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "lexinfo");
 
@@ -488,7 +469,7 @@ sub noh_b_lexinfo {
 my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
 
 sub b_terse_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "terse");
 
@@ -518,7 +499,7 @@ sub noh_b_terse {
 }
 
 sub b_terse_size_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "tersesize");
 
@@ -547,7 +528,7 @@ sub noh_b_terse_size {
 }
 
 sub b_package_size_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "packagesize");
 
@@ -556,7 +537,7 @@ sub b_package_size_link {
 }
 
 sub noh_b_package_size {
-    my($r, $q) = @_;
+    my($r) = @_;
 
     $r->content_type("text/html");
     return unless has($r, "packagesize");
@@ -599,7 +580,7 @@ sub noh_b_package_size {
 }
 
 sub b_deparse_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "deparse");
 
@@ -622,7 +603,7 @@ sub noh_b_deparse {
 }
 
 sub b_fathom_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "fathom");
 
@@ -644,7 +625,7 @@ sub noh_b_fathom {
 }
 
 sub peek_link {
-    my($r, $q, $name, $type) = @_;
+    my($r, $name, $type) = @_;
 
     return unless has($r, "peek");
 
@@ -666,7 +647,7 @@ sub noh_peek {
 }
 
 sub xref_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "xref");
 
@@ -693,7 +674,7 @@ if ($Apache2::Status::BGraphCache) {
 }
 
 sub b_graph_link {
-    my($r, $q, $name) = @_;
+    my($r, $name) = @_;
 
     return unless has($r, "graph");
 
@@ -775,7 +756,7 @@ sub B::Graph::PRINT {
 my %can_dump = map {$_,1} qw(scalars arrays hashes);
 
 sub as_HTML {
-    my($self, $package, $r, $q) = @_;
+    my($self, $package, $r) = @_;
 
     my @m = qw(<table>);
     my $uri = $r->uri;
@@ -826,7 +807,7 @@ sub as_HTML {
     }
     push @m, "</table>";
 
-    return join "\n", @m, "<hr>", b_package_size_link($r, $q, $package);
+    return join "\n", @m, "<hr>", b_package_size_link($r, $package);
 }
 
 sub escape_html {
