@@ -81,13 +81,9 @@ our %merge3 = (
 );
 
 sub handler {
-
     my $r = shift;
 
     plan $r, tests => 10;
-
-    # need to insert PerlPassEnv entries
-    $r->subprocess_env;
 
     my $uri = $r->uri;
     my $hash;
@@ -136,6 +132,9 @@ __END__
     PerlModule TestModperl::merge
 
     <VirtualHost TestModperl::merge>
+        # XXX: temp workaround
+        PerlPostReadRequestHandler Apache::OK
+
         # these should pass through all merges untouched
         PerlPassEnv  APACHE_TEST_HOSTTYPE
         PerlSetEnv   MergeSetEnv1  SetEnv1Val
