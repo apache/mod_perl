@@ -74,7 +74,14 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             status = OK;
         }
         else {
-            status = POPi;
+            SV* status_sv = POPs;
+            if (SvIOK(status_sv)) {
+                status = (IV)SvIVx(status_sv);
+            }
+            else {
+                /* ModPerl::Util::exit doesn't return an integer value */
+                status = OK; 
+            }
             /* assume OK for non-http status codes and for 200 (HTTP_OK) */
             if (((status > 0) && (status < 100)) ||
                 (status == 200) || (status > 600)) {
