@@ -4,3 +4,5 @@ Makefile
 *.bs
 APR.exp
 glue_pods
+blibdirs
+

@@ -5,3 +5,5 @@ modperl_xs_sv_convert.h
 *.exp
 *.def
 glue_pods
+blibdirs
+
