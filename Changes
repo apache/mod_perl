@@ -6,7 +6,11 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+
 =item 1.17_01-dev
+
+Fixed "broken" $VERSION's so CPAN won't be confused
+[ Ask Bjoern Hansen <ask@netcetera.dk> ]
 
 add some insurance so HTTP_* env variables should always be wiped
 

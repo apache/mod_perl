@@ -1,7 +1,7 @@
 package Apache::PerlSections;
 
 use strict;
-$Apache::PerlSections::VERSION = (qw$Revision$)[1];
+$Apache::PerlSections::VERSION = '1.61';
 
 use Devel::Symdump ();
 use Data::Dumper ();

@@ -4,7 +4,7 @@ use strict;
 use DynaLoader ();
 
 @Apache::Symbol::ISA = qw(DynaLoader);
-$Apache::Symbol::VERSION = (qw$Revision$)[1];
+$Apache::Symbol::VERSION = '1.31';
 $Apache::Symbol::DEBUG ||= 0;
 
 use Devel::Symdump ();
