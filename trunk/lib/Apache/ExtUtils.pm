@@ -69,9 +69,10 @@ sub xs_cmd_table {
 	    }
 	}
 	my $sub = join '::', $class, $name;
+	my $meth = $class->can($name);
 	my $take = "TAKE123";
-	if(defined &$sub) {
-	    if(defined($proto = prototype(\&{$sub}))) {
+	if($meth || defined(&$sub)) {
+	    if(defined($proto = prototype($meth || \&{$sub}))) {
 		#extra $ is for config data
 		$take = $proto_perl2c->{$proto};
 	    }
