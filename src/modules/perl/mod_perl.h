@@ -1,7 +1,9 @@
 #ifndef MOD_PERL_H
 #define MOD_PERL_H
 
+#ifndef PERL_NO_GET_CONTEXT
 #define PERL_NO_GET_CONTEXT
+#endif
 
 #include "EXTERN.h"
 #include "perl.h"
