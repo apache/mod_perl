@@ -220,6 +220,11 @@ MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
         }
         set_desc(per_srv);
         break;
+      case MP_HANDLER_TYPE_PRE_CONNECTION:
+        avp = &scfg->handlers_pre_connection[idx];
+        check_modify(connection);
+        set_desc(connection);
+        break;
       case MP_HANDLER_TYPE_CONNECTION:
         avp = &scfg->handlers_connection[idx];
         check_modify(connection);

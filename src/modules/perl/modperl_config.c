@@ -254,6 +254,9 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     for (i=0; i < MP_HANDLER_NUM_PROCESS; i++) {
         merge_handlers(MpSrvMERGE_HANDLERS, handlers_process[i]);
     }
+    for (i=0; i < MP_HANDLER_NUM_PRE_CONNECTION; i++) {
+        merge_handlers(MpSrvMERGE_HANDLERS, handlers_pre_connection[i]);
+    }
     for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
         merge_handlers(MpSrvMERGE_HANDLERS, handlers_connection[i]);
     }
