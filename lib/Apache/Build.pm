@@ -520,7 +520,7 @@ sub xsubpp {
     my $typemap = $self->file_path('src/modules/perl/typemap');
     if (-e $typemap) {
         $xsubpp .= join ' ',
-          '-typemap', $typemap;
+          ' -typemap', $typemap;
     }
 
     $xsubpp;
@@ -564,7 +564,7 @@ EOF
 }
 
 my @perl_config_pm =
-  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags optimize
+  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags
      perlpath privlibexp);
 
 sub make_tools {
@@ -574,6 +574,11 @@ sub make_tools {
 
     for (@perl_config_pm) {
         print $fh $self->canon_make_attr($_, $self->perl_config($_));
+    }
+    unless ($self->{MP_DEBUG}) {
+        for (qw(optimize)) {
+            print $fh $self->canon_make_attr($_, $self->perl_config($_));
+        }
     }
 
     print $fh $self->canon_make_attr('RM_F' => #XXX

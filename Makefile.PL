@@ -52,7 +52,7 @@ sub configure {
       $httpd_version, $VERSION, $^V;
 
     for (@{ clean_files() }) {
-        unlink;
+        print "unlink...$_\n" if -e $_ && unlink;
     }
 
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
@@ -61,10 +61,8 @@ sub configure {
 
 sub post_configure {
 
-    #didn't exist until configure()
-    require Apache::BuildConfig;
     #now have any data subdir/Makefile.PL's save, e.g. XS
-    $build = Apache::BuildConfig->new;
+    $build = Apache::Build->build_config;
 
     $build->write_src_makefile;
     $build->save_ldopts;
