@@ -1,4 +1,4 @@
-package TestHooks::authen;
+package TestHooks::authen_basic;
 
 use strict;
 use warnings FATAL => 'all';
@@ -30,8 +30,13 @@ sub handler {
 
 1;
 __DATA__
-require valid-user
-AuthType Basic
-AuthName simple
-PerlResponseHandler Apache::TestHandler::ok1
-SetHandler modperl
+<NoAutoConfig>
+<Location /TestHooks__authen_basic>
+    require valid-user
+    AuthType Basic
+    AuthName simple
+    PerlAuthenHandler TestHooks::authen_basic
+    PerlResponseHandler Apache::TestHandler::ok1
+    SetHandler modperl
+</Location>
+</NoAutoConfig>
