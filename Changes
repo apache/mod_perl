@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+fix compile problem under aix [Ed Hill <ed-hill@uiowa.edu>]
+
 fix 'make test' @INC problem under NT, thanks to Dale Couch
 
 =item 1.15_01 - September 19, 1998
