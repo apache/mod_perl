@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 6;
+plan tests => 7;
 
 {
     # the script changes the status before the run-time error happens,
@@ -29,7 +29,18 @@ plan tests => 6;
     ok t_cmp(
         500,
         $res->code,
-        "500 error on syntax error",
+        "500 compile time error (syntax error)",
+       );
+}
+
+{
+    my $url = "/registry/use_error.pl";
+    my $res = GET($url);
+    #t_debug($res->content);
+    ok t_cmp(
+        500,
+        $res->code,
+        "500 compile error on use() failure",
        );
 }
 
