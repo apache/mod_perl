@@ -103,6 +103,21 @@ if ($] >= 5.008001 && $Config{useithreads}) {
     eval { require threads; "threads"->import() };
 }
 
+use Apache::TestTrace;
+use Apache::Const -compile => qw(M_POST);
+
+# read the posted body and send it back to the client as is
+sub ModPerl::Test::pass_through_response_handler {
+    my $r = shift;
+
+    if ($r->method_number == Apache::M_POST) {
+        my $data = ModPerl::Test::read_post($r);
+        debug "pass_through_handler read: $data\n";
+        $r->print($data);
+    }
+
+    Apache::OK;
+}
 
 use constant IOBUFSIZE => 8192;
 
