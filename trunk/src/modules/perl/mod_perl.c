@@ -1099,6 +1099,7 @@ static void per_request_cleanup(request_rec *r)
 	cfg->pnotes = Nullhv;
     }
 
+#ifndef WIN32
     sigs = (perl_request_sigsave **)cfg->sigsave->elts;
     for (i=0; i < cfg->sigsave->nelts; i++) {
 	MP_TRACE_g(fprintf(stderr, 
@@ -1108,6 +1109,7 @@ static void per_request_cleanup(request_rec *r)
 			   (unsigned long)sigs[i]->h));
 	rsignal(sigs[i]->signo, sigs[i]->h);
     }
+#endif
 }
 
 void mod_perl_end_cleanup(void *data)
