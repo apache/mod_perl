@@ -91,6 +91,8 @@ modules:
 - should Apache::Registry use filename instead of vhost_name+uri?
 
 - core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
+  + currently works only with $] >= 5.007003 (see the
+    apache/subprocess test)
 
 - Apache::compat has to be loaded before CGI.pm, other than
   documenting this issue, it's possible that we will add:
