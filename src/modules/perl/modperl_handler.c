@@ -48,7 +48,7 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
     
     {
         STRLEN n_a;
-        text = POPpx;
+        text = apr_pstrcat(p, "sub ", POPpx, NULL);
     }
     
     PUTBACK;
@@ -56,7 +56,7 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
     FREETMPS;
     LEAVE;
 
-    return apr_pstrcat(p, "sub ", text, NULL);
+    return text;
 }
 
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
