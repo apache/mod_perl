@@ -83,8 +83,8 @@ apr_status_t modperl_bucket_sv_setaside(apr_bucket *bucket, apr_pool_t *pool)
         return APR_ENOMEM;
     }
 
-    bucket = apr_bucket_pool_make(bucket, pv, bucket->length, pool);
-    if (bucket == NULL) {
+    /* changes bucket guts by reference */
+    if (apr_bucket_pool_make(bucket, pv, bucket->length, pool) == NULL) {
         return APR_ENOMEM;
     }
 
