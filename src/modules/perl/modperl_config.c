@@ -338,7 +338,7 @@ int modperl_config_apply_PerlModule(server_rec *s,
         }
         else {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
-                         "Can't load Perl module %s for server %s, exiting...\n",
+                         "Can't load Perl module %s for server %s, exiting...",
                          entries[i], modperl_server_desc(s,p));
             return FALSE;
         }
@@ -363,7 +363,7 @@ int modperl_config_apply_PerlRequire(server_rec *s,
         }
         else {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
-                         "Can't load Perl file: %s for server %s, exiting...\n",
+                         "Can't load Perl file: %s for server %s, exiting...",
                          entries[i], modperl_server_desc(s,p));
             return FALSE;
         }

@@ -60,7 +60,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed\n",
                          modperl_pid_tid(p), modperl_server_desc(s, p), name);
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
-                         "lookup of '%s' failed\n", name);
+                         "lookup of '%s' failed", name);
             status = HTTP_INTERNAL_SERVER_ERROR;
         }
     }
