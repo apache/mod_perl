@@ -7,10 +7,6 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 use Apache::TestConfig;
-use constant WIN32 => Apache::TestConfig::WIN32;
-use constant OSX   => Apache::TestConfig::OSX;
-
-use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
 
 use File::Spec::Functions qw(catfile);
 use Fcntl qw(:mode);
@@ -18,8 +14,14 @@ use Fcntl qw(:mode);
 use APR::Finfo ();
 use APR::Pool ();
 
-use APR::Const -compile => qw(SUCCESS FINFO_NORM REG
-                              WREAD WWRITE WEXECUTE);
+use constant WIN32 => Apache::TestConfig::WIN32;
+use constant OSX   => Apache::TestConfig::OSX;
+
+use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
+
+use APR::Const -compile => qw(SUCCESS FINFO_NORM FILETYPE_REG
+                              FILEPROT_WREAD FILEPROT_WWRITE
+                              FILEPROT_WEXECUTE);
 
 sub num_of_tests {
     return 15;
@@ -69,6 +71,9 @@ sub test {
             }
         }
 
+        # XXX: untested
+        # ->name
+
         # XXX: are there any platforms csize is available at all?
         # We don't want to see the skipped message all the time if
         # it's not really used anywhere
@@ -84,21 +89,21 @@ sub test {
 
         # match world bits
 
-        ok t_cmp($finfo->protection & APR::WREAD,
+        ok t_cmp($finfo->protection & APR::FILEPROT_WREAD,
                  $protection & S_IROTH,
-                 '$finfo->protection() & APR::WREAD');
+                 '$finfo->protection() & APR::FILEPROT_WREAD');
 
-        ok t_cmp($finfo->protection & APR::WWRITE,
+        ok t_cmp($finfo->protection & APR::FILEPROT_WWRITE,
                  $protection & S_IWOTH,
-                 '$finfo->protection() & APR::WWRITE');
+                 '$finfo->protection() & APR::FILEPROT_WWRITE');
 
         if (WIN32) {
             skip "different file semantics", 0;
         }
         else {
-            ok t_cmp($finfo->protection & APR::WEXECUTE,
+            ok t_cmp($finfo->protection & APR::FILEPROT_WEXECUTE,
                      $protection & S_IXOTH,
-                     '$finfo->protection() & APR::WEXECUTE');
+                     '$finfo->protection() & APR::FILEPROT_WEXECUTE');
         }
     }
 
@@ -115,7 +120,7 @@ sub test {
         }
 
         ok t_cmp($finfo->filetype,
-                 APR::REG,
+                 APR::FILETYPE_REG,
                  '$finfo->filetype()');
     }
 }

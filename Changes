@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+change a bunch of the APR:: constants to have a better prefix
+(APR::FILETYPE_* and APR::FILEPROT_). libapr will be changed soon too
+[Stas]
+
 Generate modperl_exports.c for static builds to prevent the
 linker from stripping needed but unused symbols [Gozer]
 
