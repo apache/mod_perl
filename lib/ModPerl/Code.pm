@@ -87,10 +87,10 @@ while (my($k,$v) = each %directive_proto) {
 #XXX: allow disabling of PerDir hooks on a PerDir basis
 my @hook_flags = (map { canon_uc($_) } keys %hooks);
 my %flags = (
-    Srv => [qw(NONE CLONE PARENT ENABLED), @hook_flags, 'UNSET'],
+    Srv => [qw(NONE CLONE PARENT ENABLED AUTOLOAD), @hook_flags, 'UNSET'],
     Dir => [qw(NONE SEND_HEADER SETUP_ENV UNSET)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
-    Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
+    Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD)],
 );
 
 my %flags_lookup = map { $_,1 } qw(Srv Dir);
@@ -453,7 +453,7 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp tipool log config options callback gtop
-                     util filter);
+                     util filter mgv pcw);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }

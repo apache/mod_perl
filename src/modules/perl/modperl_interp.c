@@ -173,7 +173,8 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     mip->parent = modperl_interp_new(p, mip, NULL);
     aTHX = mip->parent->perl = perl;
     
-    modperl_tipool_init(tipool);
+    /* this happens post-config in mod_perl.c:modperl_init_clones() */
+    /* modperl_tipool_init(tipool); */
 
     apr_pool_cleanup_register(p, (void*)mip,
                               modperl_interp_pool_destroy,

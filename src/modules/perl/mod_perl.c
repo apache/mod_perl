@@ -115,6 +115,24 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     }
 }
 
+#ifdef USE_ITHREADS
+static void modperl_init_clones(server_rec *s, apr_pool_t *p)
+{
+    for (; s; s=s->next) {
+        MP_dSCFG(s);
+        if (scfg->mip->tipool->idle) {
+            MP_TRACE_i(MP_FUNC, "%s interp already cloned\n",
+                       s->server_hostname);
+        }
+        else {
+            MP_TRACE_i(MP_FUNC, "cloning interp for %s\n",
+                       s->server_hostname);
+            modperl_tipool_init(scfg->mip->tipool);
+        }
+    }
+}
+#endif
+
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                        apr_pool_t *ptemp, server_rec *s)
 {
@@ -139,6 +157,10 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     ap_add_version_component(pconf, MP_VERSION_STRING);
     ap_add_version_component(pconf,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
+    modperl_mgv_hash_handlers(pconf, s);
+#ifdef USE_ITHREADS
+    modperl_init_clones(s, pconf);
+#endif
 }
 
 void modperl_register_hooks(apr_pool_t *p)

@@ -70,4 +70,10 @@ MP_DECLARE_SRV_CMD(interp_max_requests);
 #define MP_dSCFG(s) \
    modperl_srv_config_t *scfg = modperl_srv_config_get(s)
 
+#ifdef USE_ITHREADS
+#   define MP_dSCFG_dTHX dTHXa(scfg->mip->parent->perl)
+#else
+#   define MP_dSCFG_dTHX dTHXa(scfg->perl)
+#endif
+
 #endif /* MODPERL_CONFIG_H */

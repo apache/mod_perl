@@ -1,5 +1,22 @@
 #include "mod_perl.h"
 
+int modperl_require_module(pTHX_ const char *pv)
+{
+    SV *sv;
+
+    dSP;
+    PUSHSTACKi(PERLSI_REQUIRE);
+    PUTBACK;
+    sv = sv_newmortal();
+    sv_setpv(sv, "require ");
+    sv_catpv(sv, pv);
+    eval_sv(sv, G_DISCARD);
+    SPAGAIN;
+    POPSTACK;
+
+    return SvTRUE(ERRSV) ? FALSE : TRUE;
+}
+
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
 {
     request_rec *r = NULL;

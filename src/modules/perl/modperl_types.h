@@ -37,7 +37,7 @@ struct modperl_interp_t {
     modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
     int num_requests;
-    int flags;
+    U8 flags;
 #ifdef MP_TRACE
     unsigned long tid;
 #endif
@@ -136,17 +136,23 @@ typedef struct {
     MpAV *handlers[MP_PER_DIR_NUM_HANDLERS];
     MpHV *SetEnv;
     MpHV *SetVars;
-    int flags;
+    U8 flags;
 } modperl_dir_config_t;
 
+typedef struct modperl_mgv_t modperl_mgv_t;
+
+struct modperl_mgv_t {
+    char *name;
+    int len;
+    UV hash;
+    modperl_mgv_t *next;
+};
+
 typedef struct {
-    SV *obj; /* object or classname if cv is a method */
-    SV *cv; /* subroutine reference or name */
-    char *name; /* orignal name from .conf if any */
-    int cvgen; /* XXX: for caching */
-    AV *args; /* XXX: switch to something lighter */
-    int flags;
-    PerlInterpreter *perl;
+    modperl_mgv_t *mgv_obj;
+    modperl_mgv_t *mgv_cv;
+    const char *name; /* orignal name from .conf if any */
+    U8 flags;
 } modperl_handler_t;
 
 #define MP_HANDLER_TYPE_CHAR 1
