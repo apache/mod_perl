@@ -2,6 +2,9 @@
 # mp1 missing features #
 ########################
 
+* $r->last is missing (it was provided explicitly by modperl, it's not
+  an apache thing) see modperl/src/modules/perl/Apache.xs
+
 * automate generation of xs/tables/current/apr/FunctionTable.pm
   via Apache::ParseSource. This file contains a subset of
   functions appearing in ModPerl::FunctionTable that are
