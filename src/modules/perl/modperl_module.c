@@ -1,9 +1,17 @@
 #include "mod_perl.h"
 
 typedef struct {
+    modperl_mgv_t *dir_create;
+    modperl_mgv_t *dir_merge;
+    modperl_mgv_t *srv_create;
+    modperl_mgv_t *srv_merge;
+} modperl_module_info_t;
+
+typedef struct {
     server_rec *server;
     const char *name;
     int namelen;
+    modperl_module_info_t *minfo;
 } modperl_module_cfg_t;
 
 typedef struct {
@@ -11,6 +19,12 @@ typedef struct {
     const char *cmd_data;
     const char *func_name;
 } modperl_module_cmd_data_t;
+
+#define MP_MODULE_INFO(modp) \
+    (modperl_module_info_t *)modp->dynamic_load_handle
+
+#define MP_MODULE_CFG_MINFO(ptr) \
+    ((modperl_module_cfg_t *)ptr)->minfo
 
 static modperl_module_cfg_t *modperl_module_cfg_new(apr_pool_t *p)
 {
@@ -125,7 +139,7 @@ static void modperl_module_config_obj_cleanup_register(pTHX_
 
 static void *modperl_module_config_merge(apr_pool_t *p,
                                          void *basev, void *addv,
-                                         const char *method)
+                                         modperl_mgv_t *method)
 {
     GV *gv;
 
@@ -147,26 +161,20 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         *base_obj = modperl_svptr_table_fetch(aTHX_ table, base),
         *add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
-    HV *stash;
-
     if (!base_obj || (base_obj == add_obj)) {
         return add_obj;
     }
 
-    stash = SvSTASH(SvRV(base_obj));
+    mrg = modperl_module_cfg_new(p);
+    memcpy(mrg, tmp, sizeof(*mrg));
 
-    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'\n", 
-               method, SvCLASS(base_obj));
-
-    /* XXX: should do this lookup at startup time */
-    if ((gv = gv_fetchmethod_autoload(stash, method, FALSE)) && isGV(gv)) {
+    /* XXX: should croak if gv is NULL; wasnt at startup */
+    if (method && (gv = modperl_mgv_lookup(aTHX_ method))) {
         int count;
         dSP;
 
-        mrg = modperl_module_cfg_new(p);
-        memcpy(mrg, tmp, sizeof(*mrg));
-
-        MP_TRACE_c(MP_FUNC, "calling %s->%s\n", SvCLASS(base_obj), method);
+        MP_TRACE_c(MP_FUNC, "calling %s->%s\n",
+                   SvCLASS(base_obj), modperl_mgv_last_name(method));
 
         ENTER;SAVETMPS;
         PUSHMARK(sp);
@@ -190,7 +198,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         }
     }
     else {
-        mrg_obj = newSVsv(base_obj);
+        mrg_obj = SvREFCNT_inc(add_obj);
     }
 
     modperl_svptr_table_store(aTHX_ table, mrg, mrg_obj);
@@ -205,13 +213,15 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 static void *modperl_module_config_dir_merge(apr_pool_t *p,
                                              void *basev, void *addv)
 {
-    return modperl_module_config_merge(p, basev, addv, "DIR_MERGE");
+    return modperl_module_config_merge(p, basev, addv,
+                                       MP_MODULE_CFG_MINFO(basev)->dir_merge);
 }
 
 static void *modperl_module_config_srv_merge(apr_pool_t *p,
                                              void *basev, void *addv)
 {
-    return modperl_module_config_merge(p, basev, addv, "SERVER_MERGE");
+    return modperl_module_config_merge(p, basev, addv,
+                                       MP_MODULE_CFG_MINFO(basev)->srv_merge);
 }
 
 #define modperl_bless_cmd_parms(parms) \
@@ -250,6 +260,7 @@ modperl_module_config_get_obj(pTHX_
     cfg->namelen = strlen(cfg->name);
     /* used by merge functions to get a Perl interp */
     cfg->server = parms->server;
+    cfg->minfo = MP_MODULE_INFO(info->modp);
 
     stash = gv_stashpvn(cfg->name, cfg->namelen, TRUE);
 
@@ -660,12 +671,44 @@ static void modperl_module_insert(module *modp)
     }
 }
 
+#define MP_isGV(gv) (gv && isGV(gv))
+
+static modperl_mgv_t *modperl_module_fetch_method(pTHX_
+                                                  apr_pool_t *p,
+                                                  module *modp,
+                                                  const char *method)
+{
+    modperl_mgv_t *mgv;
+
+    HV *stash = gv_stashpv(modp->name, FALSE);
+    GV *gv = gv_fetchmethod_autoload(stash, method, FALSE);
+
+    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'...%sfound\n", 
+               method, modp->name,
+               MP_isGV(gv) ? "" : "not ");
+
+    if (!MP_isGV(gv)) {
+        return NULL;
+    }
+
+    mgv = modperl_mgv_compile(aTHX_ p,
+                              apr_pstrcat(p,
+                                          modp->name, "::", method, NULL));
+
+    return mgv;
+}
+
 const char *modperl_module_add(apr_pool_t *p, server_rec *s,
                                const char *name)
 {
     MP_dSCFG(s);
+#ifdef USE_ITHREADS
+    dTHXa(scfg->mip->parent->perl);
+#endif
     const char *errmsg;
     module *modp = (module *)apr_pcalloc(p, sizeof(*modp));
+    modperl_module_info_t *minfo =
+        (modperl_module_info_t *)apr_pcalloc(p, sizeof(*minfo));
 
     /* STANDARD20_MODULE_STUFF */
     modp->version       = MODULE_MAGIC_NUMBER_MAJOR;
@@ -673,6 +716,9 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     modp->module_index  = -1;
     modp->name          = apr_pstrdup(p, name);
     modp->magic         = MODULE_MAGIC_COOKIE;
+
+    /* use this slot for our context */
+    modp->dynamic_load_handle = minfo;
 
     /* 
      * XXX: we should lookup here if the Perl methods exist,
@@ -682,6 +728,12 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     modp->merge_dir_config     = modperl_module_config_dir_merge;
     modp->create_server_config = modperl_module_config_srv_create;
     modp->merge_server_config  = modperl_module_config_srv_merge;
+
+    minfo->dir_merge =
+        modperl_module_fetch_method(aTHX_ p, modp, "DIR_MERGE");
+
+    minfo->srv_merge =
+        modperl_module_fetch_method(aTHX_ p, modp, "SERVER_MERGE");
 
     modp->cmds = NULL;
 

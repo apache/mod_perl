@@ -55,11 +55,11 @@ sub DIR_MERGE {
     merge(@_);
 }
 
-sub SERVER_MERGE {
-    my $class = ref $_[0];
+#sub SERVER_MERGE {
+#    my $class = ref $_[0];
 #    warn "$class->SERVER_MERGE\n";
-    merge(@_);
-}
+#    merge(@_);
+#}
 
 sub SERVER_CREATE {
     my($class, $parms) = @_;
