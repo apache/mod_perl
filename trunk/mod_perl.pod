@@ -112,6 +112,9 @@ assumes it is a package name which implements a 'handler' subroutine.
 Only ChildInit, ChildExit, PostReadRequest and Trans handlers are not
 allowed in .htaccess files.
 
+Modules can check if the code is being run in the parent server during
+startup by checking the $Apache::Server::Starting variable.
+
 =head1 RESTARTING
 
 =over 4
