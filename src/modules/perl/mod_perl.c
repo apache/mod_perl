@@ -190,25 +190,11 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     perl_run(perl);
 
 #ifdef USE_ITHREADS
-    if (s->is_virtual) {
-        /* if alloc flags is On or clone flag is On,
-         * virtual host gets its own mip
-         */
-        if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
-            modperl_interp_init(s, p, perl);
-        }
+    /* base server / virtual host w/ +Parent gets its own mip */
+    modperl_interp_init(s, p, perl);
 
-        /* if we allocated a parent perl, mark it to be destroyed */
-        if (MpSrvPARENT(scfg)) {
-            MpInterpBASE_On(scfg->mip->parent);
-        }
-    }
-    else {
-        /* base server */
-        modperl_interp_init(s, p, perl);
-        MpInterpBASE_On(scfg->mip->parent);
-    }
-    
+    /* if we allocated a parent perl, mark it to be destroyed */
+    MpInterpBASE_On(scfg->mip->parent);
 #endif
 
     PL_endav = endav;
@@ -300,6 +286,11 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                    modperl_server_desc(s, p));
     }
     else {
+        /* virtual host w/ +Clone gets its own mip */
+        if (MpSrvCLONE(scfg)) {
+            modperl_interp_init(s, p, perl);
+        }   
+        
         if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
