@@ -6,6 +6,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
+use Apache::MPM ();
 use APR::OS ();
 
 use Apache::Const -compile => 'OK';
@@ -15,7 +16,7 @@ sub handler {
 
     plan $r, tests => 2;
 
-    if (Apache::MPM_IS_THREADED) {
+    if (Apache::MPM->is_threaded) {
         my $id = APR::OS::thread_current();
         ok t_cmp("$id", "$id", "current thread");
         ok t_cmp($$id, $$id, "current thread");
