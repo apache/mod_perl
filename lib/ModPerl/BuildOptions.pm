@@ -75,7 +75,13 @@ sub parse {
     my @unknown;
     my $continue = "";
 
+    my @data = ();
     for (@$lines) {
+        # more than one entry on the same line
+        push @data, split /(?=MP_)/, $_;
+    }
+
+    for (@data) {
         #XXX: this "parser" should be more robust
         chomp;
         s/^\s+//; s/\s+$//;
