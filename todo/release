@@ -2,6 +2,10 @@
 # Things to be resolved for mod_perl 2.0 release #
 ##################################################
 
+* PerlSetVar/PerlAddVar still do not merge properly.  geoff knows
+  the issues and thinks he knows how to fix it, he just needs the time.
+  owner: geoff
+
 * it looks like glue_pod is not working anymore, consider dropping it
   completely and simply install .pod files along with .pm ones. In
   which case we need to arrange for Makefile.PL to traverse into
