@@ -12,13 +12,13 @@ my $res = GET($url);
 my $body = '<?xml versi';
 
 ok t_cmp(
-    206,
     $res->code,
+    206,
     "test partial_content: response code",
 );
 
 ok t_cmp(
-    $body,
     $res->content,
+    $body,
     "test partial_content: response body",
 );

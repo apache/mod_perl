@@ -21,7 +21,7 @@ plan tests => 2;
 
     #t_debug "$received";
 
-    ok t_cmp(length($expected), length($received), "image size");
+    ok t_cmp(length($received), length($expected), "image size");
 
     t_debug "comparing the binary contents";
     ok $expected eq $received;

@@ -26,8 +26,8 @@ for my $alias (@aliases) {
     my $url = "/$alias/basic.pl";
 
     ok t_cmp(
-        "ok $script_file",
         GET_BODY($url),
+        "ok $script_file",
         "$modules{$alias} basic cgi test",
     );
 }
@@ -42,8 +42,8 @@ for my $alias (@aliases) {
 
     t_client_log_error_is_expected();
     ok t_cmp(
-        "403 Forbidden",
         HEAD($url)->status_line(),
+        "403 Forbidden",
         "$modules{$alias} non-executable file",
     );
 }
@@ -53,8 +53,8 @@ for my $alias (@aliases) {
     my $url = "/$alias/env.pl?foo=bar";
 
     ok t_cmp(
-        "foo=bar",
         GET_BODY($url),
+        "foo=bar",
         "$modules{$alias} mod_cgi-like environment pre-set",
     );
 }
@@ -64,8 +64,8 @@ for my $alias (@aliases) {
     my $url = "/$alias/require.pl";
 
     ok t_cmp(
-        "it works",
         GET_BODY($url),
+        "it works",
         "$modules{$alias} mod_cgi-like environment pre-set",
     );
 }
@@ -76,8 +76,8 @@ for my $alias (@aliases) {
     my $url = "/$alias/exit.pl";
 
     ok t_cmp(
-        "before exit",
         GET_BODY_ASSERT($url),
+        "before exit",
         "$modules{$alias} mod_cgi-like environment pre-set",
     );
 }
@@ -88,8 +88,8 @@ for my $alias (@aliases) {
 {
     my $url = "/registry_oo_conf/env.pl?foo=bar";
     ok t_cmp(
-        "foo=bar",
         GET_BODY($url),
+        "foo=bar",
         "ModPerl::Registry->handler mod_cgi-like environment pre-set",
     );
 }
@@ -98,8 +98,8 @@ for my $alias (@aliases) {
 {
     my $url = "/registry/content_type.pl";
     ok t_cmp(
-        "ok",
         GET_BODY($url),
+        "ok",
         "\$r->content_type('text/plain')",
     );
 }
@@ -114,8 +114,8 @@ for my $alias (@aliases) {
     my $url = "/registry/send_headers.html";
     my $res = GET $url;
     ok t_cmp(
-        "text/plain",
         $res->content_type,
+        "text/plain",
         "script's content-type",
     );
 }

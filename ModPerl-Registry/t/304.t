@@ -15,14 +15,14 @@ my $url = "/registry/304.pl";
     my $res = GET($url, 'If-Modified-Since' => $if_modified_since);
 
     ok t_cmp(
-        304,
         $res->code,
+        304,
         "test HTTP_NOT_MODIFIED (304 status)",
     );
 
     ok t_cmp(
-        '',
         $res->content,
+        '',
         "test HTTP_NOT_MODIFIED (null body)",
     );
 
@@ -46,14 +46,14 @@ my $url = "/registry/304.pl";
         my $res = GET($url, 'If-Modified-Since' => $if_modified_since);
         t_debug "If-Modified-Since $if_modified_since";
         ok t_cmp(
-            200,
             $res->code,
+            200,
             "$debug (code)"
         );
 
         ok t_cmp(
-            $received,
             $res->content,
+            $received,
             "$debug (body)"
         );
 

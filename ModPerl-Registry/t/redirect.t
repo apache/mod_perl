@@ -19,8 +19,8 @@ my $base_url = "/registry/redirect.pl";
     my $script_file = t_catfile_apache $vars->{serverroot}, 'cgi-bin', 'basic.pl';
 
     ok t_cmp(
-        "ok $script_file",
         GET_BODY($url),
+        "ok $script_file",
         "test redirect: existing target",
        );
 }
@@ -30,8 +30,8 @@ my $base_url = "/registry/redirect.pl";
     my $url = "$base_url?$redirect_path";
     t_client_log_error_is_expected();
     ok t_cmp(
-        404,
         HEAD($url)->code,
+        404,
         "test redirect: non-existing target",
        );
 }
@@ -46,14 +46,14 @@ my $base_url = "/registry/redirect.pl";
     my $response = HEAD $url;
 
     ok t_cmp(
-        302,
         $response->code,
+        302,
         "test Registry style redirect: status",
        );
 
     ok t_cmp(
-        "mod_perl=ubercool; path=/",
         $response->header('Set-Cookie'),
+        "mod_perl=ubercool; path=/",
         "test Registry style redirect: cookie",
        );
 }

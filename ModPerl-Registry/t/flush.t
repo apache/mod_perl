@@ -20,8 +20,8 @@ my $received = GET_BODY $url, 'Accept-encoding' => 'gzip';
 my $decompressed = Compress::Zlib::memGunzip($received);
 
 ok t_cmp(
-    $expected,
     $decompressed,
+    $expected,
     "test flush body"
    );
 

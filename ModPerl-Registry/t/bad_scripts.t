@@ -12,8 +12,8 @@ plan tests => 1;
     my $url = "/perlrun/r_inherited.pl";
     my $res = GET($url);
     ok t_cmp(
-        500,
         $res->code,
+        500,
         "the script hasn't declared its private \$r",
        );
 }
