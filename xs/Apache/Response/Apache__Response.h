@@ -6,7 +6,9 @@
  */
 #define mpxs_Apache__RequestRec_send_cgi_header(r, sv) \
 { \
+    MP_dRCFG; \
     STRLEN len; \
     const char *bodytext; \
     modperl_cgi_header_parse(r, SvPV(sv,len), &bodytext); \
+    rcfg->wbucket.header_parse = 0; \
 }

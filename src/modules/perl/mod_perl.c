@@ -390,6 +390,8 @@ int modperl_response_handler(request_rec *r)
 
 int modperl_response_handler_cgi(request_rec *r)
 {
+    MP_dDCFG;
+    MP_dRCFG;
     GV *h_stdin, *h_stdout;
     int retval;
 #ifdef USE_ITHREADS
@@ -405,6 +407,10 @@ int modperl_response_handler_cgi(request_rec *r)
     interp = modperl_interp_select(r, r->connection, r->server);
     aTHX = interp->perl;
 #endif
+
+    if (MpDirPARSE_HEADERS(dcfg)) {
+        rcfg->wbucket.header_parse = 1;
+    }
 
     h_stdout = modperl_io_tie_stdout(aTHX_ r);
     h_stdin  = modperl_io_tie_stdin(aTHX_ r);

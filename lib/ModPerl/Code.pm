@@ -93,7 +93,7 @@ my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLED AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET'],
-    Dir => [qw(NONE SEND_HEADER SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
+    Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
     Req => [qw(NONE SET_GLOBAL_REQUEST)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
