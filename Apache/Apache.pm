@@ -358,8 +358,8 @@ that the client speaks.  Typical values will be "HTTP/1.0" or
 
 =item $r->uri( [$uri] )
 
-The $r->uri method will return the requested URI, optionally changing
-it with the first argument.
+The $r->uri method will return the requested URI minus optional query
+string, optionally changing it with the first argument.
 
 =item $r->filename( [$filename] )
 

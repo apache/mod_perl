@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document the fact that $r->uri sets/gets the URI minus the query string,
+not the complete URI [Andrei A. Voropaev <andrei@securities.com>]
+
 fixed the failure of t/modules/file test in 'make test' suit by untainting
 the $ENV{PATH} in ./t/net/perl/file.pl [Stas Bekman <sbekman@iname.com>]
 
