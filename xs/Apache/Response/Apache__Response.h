@@ -20,7 +20,7 @@ mpxs_Apache__RequestRec_send_http_header(request_rec *r, const char *type)
     MP_dRCFG;
 
     if (type) {
-        r->content_type = apr_pstrdup(r->pool, type);
+        ap_set_content_type(r, apr_pstrdup(r->pool, type));
     }
 
     rcfg->wbucket->header_parse = 0; /* turn off PerlOptions +ParseHeaders */
