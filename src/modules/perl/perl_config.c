@@ -721,15 +721,26 @@ static SV *perl_bless_cmd_parms(cmd_parms *parms)
     return sv;
 }
 
-static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
+module *perl_get_module_ptr(char *name, int len)
+{
+    HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
+    SV **mod_ptr = hv_fetch(xs_config, name, len, FALSE);
+    if(mod_ptr && *mod_ptr)
+	return (module *)SvIV((SV*)SvRV(*mod_ptr));
+    else
+	return NULL;
+}
+
+static SV *
+perl_perl_create_cfg(SV **sv, HV *class, cmd_parms *parms, char *type)
 {
     GV *gv;
 
     if(*sv && SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
 	return *sv;
 
-    /* return $class->DIR_CREATE if $class->can("DIR_CREATE") */
-    if((gv = gv_fetchmethod_autoload(class, PERL_DIR_CREATE, FALSE)) && isGV(gv)) {
+    /* return $class->type if $class->can(type) */
+    if((gv = gv_fetchmethod_autoload(class, type, FALSE)) && isGV(gv)) {
 	int count;
 	dSP;
 
@@ -761,7 +772,17 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
     }
 }
 
-void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
+static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
+{
+    return perl_perl_create_cfg(sv, class, parms, PERL_DIR_CREATE);
+}
+
+static SV *perl_perl_create_srv_config(SV **sv, HV *class, cmd_parms *parms)
+{
+    return perl_perl_create_cfg(sv, class, parms, PERL_SERVER_CREATE);
+}
+
+static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
 {
     GV *gv;
     mod_perl_perl_dir_config *new = NULL,
@@ -777,16 +798,16 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	return basesv;
 
     MP_TRACE_c(fprintf(stderr, "looking for method %s in package `%s'\n", 
-		       PERL_DIR_MERGE, SvCLASS(basesv)));
+		       meth, SvCLASS(basesv)));
 
-    if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), PERL_DIR_MERGE, FALSE)) && isGV(gv)) {
+    if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), meth, FALSE)) && isGV(gv)) {
 	int count;
 	dSP;
 	new = (mod_perl_perl_dir_config *)
 	    palloc(p, sizeof(mod_perl_perl_dir_config));
 
 	MP_TRACE_c(fprintf(stderr, "calling %s->%s\n", 
-			   SvCLASS(basesv), PERL_DIR_MERGE));
+			   SvCLASS(basesv), meth));
 
 	ENTER;SAVETMPS;
 	PUSHMARK(sp);
@@ -808,6 +829,16 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	new->class = basevp->class;
     }
     return (void *)new;
+}
+
+void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
+{
+    return perl_perl_merge_cfg(p, basev, addv, PERL_DIR_MERGE);
+}
+
+void *perl_perl_merge_srv_config(pool *p, void *basev, void *addv)
+{
+    return perl_perl_merge_cfg(p, basev, addv, PERL_SERVER_MERGE);
 }
 
 void perl_perl_cmd_cleanup(void *data)
@@ -832,8 +863,16 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
     CV *cv = perl_get_cv(subname, TRUE);
     SV *obj;
     bool has_empty_proto = (SvPOK(cv) && (SvLEN(cv) == 1));
-
+    module *xsmod = perl_get_module_ptr(data->class, strlen(data->class));
+    mod_perl_perl_dir_config *sdata = NULL;
     obj = perl_perl_create_dir_config(&data->obj, CvSTASH(cv), cmd);
+
+    if(xsmod && 
+       (sdata = get_module_config(cmd->server->module_config, xsmod))) {
+	void *sobj = 
+	    perl_perl_create_srv_config(&sdata->obj, CvSTASH(cv), cmd);
+	set_module_config(cmd->server->module_config, xsmod, sdata);
+    }
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);

@@ -96,21 +96,19 @@ get(self=Nullsv, obj, svkey=Nullsv)
         caller = svkey;
 
     if((svkey == Nullsv) || caller) {
-	HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
-	SV **mod_ptr = (SV**)NULL;
+	module *mod = NULL;
 
 	if(!caller)
 	    caller = perl_eval_pv("scalar caller", TRUE);
 
 	if(caller) 
-	    mod_ptr = hv_fetch(xs_config, SvPVX(caller), SvCUR(caller), FALSE);
+	    mod = perl_get_module_ptr(SvPVX(caller), SvCUR(caller));
 
-	if(mod_ptr && *mod_ptr) {
-	    IV tmp = SvIV((SV*)SvRV(*mod_ptr));
+	if(mod) {
 	    int type = 0;
 	    void *ptr = vector_from_sv(obj, &type);
 	    mod_perl_perl_dir_config *data = 
-		get_module_config(ptr, (module *)tmp);
+		get_module_config(ptr, mod);
 	    if(data->obj) {
 		++SvREFCNT(data->obj);
 		RETVAL = data->obj;

@@ -21,7 +21,7 @@ my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
-my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
+my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 9);
 
 my $i;
 
@@ -178,10 +178,19 @@ if($test_get_set) {
 }
 
 if($test_dir_config) {
+    require Data::Dumper;
     require Apache::ModuleConfig;
     my $dc = Apache::ModuleConfig->get($r);
     test ++$i, not $dc;
 
+    {
+	package Apache::TestDirectives;
+	use Apache::test 'test';
+	my $scfg = Apache::ModuleConfig->get($r->server);
+	test ++$i, $scfg;
+	test ++$i,  __PACKAGE__->isa($scfg->{ServerClass});
+	print Data::Dumper::Dumper($scfg);
+    }
     for my $cv (
 		sub {
 		    package Apache::TestDirectives;
@@ -192,7 +201,6 @@ if($test_dir_config) {
 		})
     {
         my $cfg = $cv->();
-        require Data::Dumper;
         $r->print(Data::Dumper::Dumper($cfg));
         test ++$i, "$cfg" =~ /HASH/;
         test ++$i, keys(%$cfg) >= 3;

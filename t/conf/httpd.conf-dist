@@ -43,6 +43,14 @@ PerlSetVar KeyForPerlSetVar OK
 PerlRequire docs/startup.pl
 PerlRequire docs/stacked.pl
 
+=pod
+<Perl>
+    push @INC, map { "t/TestDirectives/blib/$_" } qw(arch lib);
+    require Apache::TestDirectives;
+</Perl>
+TestCmd one two
+=cut
+
 #we do this to test that `PerlSendHeader Off' will work
 <Files ~ "\.pl$">
    PerlHandler          Apache::Registry
