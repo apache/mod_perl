@@ -57,7 +57,7 @@ EOF
 1;
 __END__
 <Base>
-    PerlSwitches -Mlib=@documentroot@/testdirective/main
+    PerlSwitches -I@documentroot@/testdirective/main
     PerlRequire "ApacheTest/PerlRequireTest.pm"
 </Base>
 
@@ -69,10 +69,10 @@ __END__
     </IfDefine>
 
     # use test system's @INC
-    PerlSwitches -Mlib=@serverroot@
+    PerlSwitches -I@serverroot@
     PerlRequire "conf/modperl_startup.pl"
 
-    PerlSwitches -Mlib=@documentroot@/testdirective/vh
+    PerlSwitches -I@documentroot@/testdirective/vh
     PerlRequire "ApacheTest/PerlRequireTest.pm"
 
     <Location /TestDirective::perlrequire>
