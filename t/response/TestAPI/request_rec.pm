@@ -176,7 +176,7 @@ sub handler {
     # - request_config
     # - content_languages
     # - allowed_xmethods
-    # - allow_methods
+    # - allowed_methods
 
     Apache::OK;
 }
