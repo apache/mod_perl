@@ -97,11 +97,11 @@ arg = *MARK++
 /* XXX: we probably shouldn't croak here */
 #define mpxs_write_loop(func, obj) \
     while (MARK <= SP) { \
-        apr_ssize_t wlen; \
+        STRLEN wlen; \
         apr_status_t rv; \
-        char *buf = SvPV(*MARK, wlen); \
+        char *buf = SvPV(*MARK, wlen);        \
         MP_TRACE_o(MP_FUNC, "%d bytes [%s]", wlen, buf); \
-        rv = func(aTHX_ obj, buf, &wlen); \
+        rv = func(aTHX_ obj, buf, &(apr_size_t)wlen);    \
         if (rv != APR_SUCCESS) { \
             Perl_croak(aTHX_ modperl_apr_strerror(rv)); \
         } \
