@@ -1,16 +1,18 @@
-use lib qw(../lib);
-use ModPerl::MM ();
+use strict;
+use warnings FATAL => 'all';
+no warnings 'redefine';
 
-use lib qw(lib ../Apache-Test/lib);
+use lib qw(../lib ../Apache-Test/lib);
+
+use ModPerl::MM ();
 
 # enable 'make test|clean'
 use Apache::TestMM qw(test clean);
 
 # prerequisites
-my %require =
-  (
-   "Apache::Test" => "", # any version will do?
-  );
+my %require = (
+    "Apache::Test" => "", # any version will do?
+);
 
 my @scripts = qw(t/TEST);
 
