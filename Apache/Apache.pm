@@ -1213,7 +1213,8 @@ send to the error_log if B<LogLevel> is set to B<warn> or higher.
 
 Handy function for unescapes.  Use this one for
 filenames/paths. Notice that the original C<$string> is mangled in the
-process (because it shrinks).
+process (because the string part of PV shrinks, but the variable is
+not updated, to speed things up).
 
 Use unescape_url_info for the result of submitted form data.
 
