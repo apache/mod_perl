@@ -22,6 +22,7 @@ INSTALL.apaci
 SUPPORT
 INSTALL.win32
 INSTALL.activeperl
+INSTALL.raven
 MANIFEST
 ToDo
 Makefile.PL
