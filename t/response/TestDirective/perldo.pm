@@ -27,11 +27,11 @@ sub handler {
 
     ok not exists $Location{'/perl_sections'};
     ok exists $Location{'/perl_sections_saved'};
-    ok t_cmp('PerlSection', $Location{'/perl_sections_saved'}{'AuthName'});
+    ok t_cmp($Location{'/perl_sections_saved'}{'AuthName'}, 'PerlSection');
 
-    ok t_cmp('TIED', $Location{'/tied'}, 'Tied %Location');
+    ok t_cmp($Location{'/tied'}, 'TIED', 'Tied %Location');
 
-    ok t_cmp('yes', $TestDirective::perl::comments);
+    ok t_cmp($TestDirective::perl::comments, 'yes', );
 
     ok t_cmp($TestDirective::perl::dollar_zero, qr/extra.last.conf/, '$0');
     ok t_cmp($TestDirective::perl::filename, qr/extra.last.conf/, '__FILE__');
@@ -39,15 +39,15 @@ sub handler {
     # 3 would mean we are still counting lines from the context of the eval
     ok $TestDirective::perl::line > 3;
 
-    ok t_cmp("-e", $0, '$0');
+    ok t_cmp($0, "-e", '$0');
 
-    ok t_cmp(1, $TestDirective::perl::Included, "Include");
+    ok t_cmp($TestDirective::perl::Included, 1, "Include");
 
     my $dump = Apache::PerlSections->dump;
     ok t_cmp($dump, qr/__END__/, "Apache::PerlSections->dump");
 
     eval "package TestDirective::perldo::test;\nno strict;\n$dump";
-    ok t_cmp("", $@, "PerlSections dump syntax check");
+    ok t_cmp($@, "", "PerlSections dump syntax check");
 
     ok t_cmp($TestDirective::perldo::test::Include, qr/perlsection.conf/);
 

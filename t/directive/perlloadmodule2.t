@@ -13,19 +13,19 @@ plan tests => 3;
     my $location = "$url?srv";
     my $expected = "srv: one two";
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "access server settings");
+    ok t_cmp($received, $expected, "access server settings");
 }
 
 {
     my $location = "$url?";
     my $expected = "dir: one two three four";
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "server/dir merge");
+    ok t_cmp($received, $expected, "server/dir merge");
 }
 
 {
     my $location = "$url/subdir";
     my $expected = "dir: one two three four five six";
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "server/dir/subdir merge");
+    ok t_cmp($received, $expected, "server/dir/subdir merge");
 }

@@ -12,8 +12,8 @@ sub handler {
 
     plan $r, tests => 3;
 
-    ok t_cmp('yes', $r->dir_config->get('TestDirective__pod_over_worked'));
-    ok t_cmp('yes', $r->dir_config->get('TestDirective__pod_cut_worked'));
+    ok t_cmp($r->dir_config->get('TestDirective__pod_over_worked'), 'yes');
+    ok t_cmp($r->dir_config->get('TestDirective__pod_cut_worked'), 'yes');
 
     #XXX: How to test that __END__ works proprely without cloberring all the other tests?
     ok t_cmp('__END__', '__END__');

@@ -66,7 +66,7 @@ MyPlus     : 10
 EOI
     my $location = "http://$hostport/$path";
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "server/dir merge");
+    ok t_cmp($received, $expected, "server/dir merge");
 }
 
 {
@@ -94,5 +94,5 @@ EOI
 
     my $location = "http://$hostport/$path/subdir";
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "server/dir/subdir merge");
+    ok t_cmp($received, $expected, "server/dir/subdir merge");
 }
