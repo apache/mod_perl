@@ -488,8 +488,9 @@ MODULE=Apache::HookRun   PACKAGE=guess
 !MODULE=Apache::XML
  ap_xml_parse_input
 
-MODULE=Apache::MPM
- ap_mpm_query
+MODULE=Apache::MPM   PACKAGE=Apache::MPM   BOOT=1
+~ap_mpm_query
+~ap_show_mpm
 >ap_mpm_run
 ?ap_os_create_privileged_process
 ?ap_wait_or_timeout
@@ -511,5 +512,4 @@ MODULE=Apache::MPM
 ?ap_mpm_set_max_requests
 ?ap_mpm_set_pidfile
 ?ap_mpm_set_scoreboard
- ap_show_mpm
 ?ap_listen_pre_config

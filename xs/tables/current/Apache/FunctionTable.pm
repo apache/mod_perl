@@ -3104,6 +3104,20 @@ $Apache::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_status_t',
+    'name' => 'ap_mpm_query',
+    'args' => [
+      {
+        'type' => 'int',
+        'name' => 'query_code'
+      },
+      {
+        'type' => 'int',
+        'name' => 'result'
+      }
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'ap_mpm_rewrite_args',
     'args' => [

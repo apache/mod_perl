@@ -1,4 +1,4 @@
-package TestAPI::mpm_query;
+package TestAPI::query;
 
 use strict;
 use warnings FATAL => 'all';
@@ -12,6 +12,7 @@ use Apache::MPM ();
 use Apache::Const -compile => qw(OK :mpmq);
 
 sub handler {
+
     my $r = shift;
 
     plan $r, tests => 3;
@@ -19,13 +20,15 @@ sub handler {
     # ok, this isn't particularly pretty, but I can't think
     # of a better way to do it
     # all of these attributes I pulled right from the C sources
+    # so if, say, leader all of a sudden changes its properties,
+    # these tests will fail
 
-    my $mpm = lc Apache::MPM::show_mpm;
+    my $mpm = lc Apache::MPM->show;
 
     if ($mpm eq 'prefork') {
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp(Apache::MPMQ_NOT_SUPPORTED,
                      $query,
@@ -33,24 +36,18 @@ sub handler {
         }
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp(Apache::MPMQ_DYNAMIC,
                      $query,
                      "MPMQ_IS_FORKED ($mpm)");
         }
-
-        # the underlying call for Apache::MPM_IS_THREADED is ap_mpm_query
-        # so might as well test is here...
-
-        t_debug('Apache::MPM_IS_THREADED returned ' . Apache::MPM_IS_THREADED);
-        ok (! Apache::MPM_IS_THREADED);
 
     }
     elsif ($mpm eq 'worker') {
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp(Apache::MPMQ_STATIC,
                      $query,
@@ -58,21 +55,17 @@ sub handler {
         }
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp(Apache::MPMQ_DYNAMIC,
                      $query,
                      "MPMQ_IS_FORKED ($mpm)");
         }
-
-        t_debug('Apache::MPM_IS_THREADED returned ' . Apache::MPM_IS_THREADED);
-        ok (Apache::MPM_IS_THREADED);
-
     }
     elsif ($mpm eq 'leader') {
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp(Apache::MPMQ_STATIC,
                      $query,
@@ -80,21 +73,17 @@ sub handler {
         }
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp(Apache::MPMQ_DYNAMIC,
                      $query,
                      "MPMQ_IS_FORKED ($mpm)");
         }
-
-        t_debug('Apache::MPM_IS_THREADED returned ' . Apache::MPM_IS_THREADED);
-        ok (Apache::MPM_IS_THREADED);
-
     }
     elsif ($mpm eq 'winnt') {
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp(Apache::MPMQ_STATIC,
                      $query,
@@ -102,21 +91,25 @@ sub handler {
         }
 
         {
-            my $query = Apache::MPM::mpm_query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
             ok t_cmp(Apache::MPMQ_NOT_SUPPORTED,
                      $query,
                      "MPMQ_IS_FORKED ($mpm)");
         }
-
-        t_debug('Apache::MPM_IS_THREADED returned ' . Apache::MPM_IS_THREADED);
-        ok (Apache::MPM_IS_THREADED);
-
     }
     else {
         skip "skipping MPMQ_IS_THREADED test for $mpm MPM", 0;
         skip "skipping MPMQ_IS_FORKED test for $mpm MPM", 0;
-        skip "skipping Apache::MPM_IS_THREADED test for $mpm MPM", 0;
+    }
+
+    # make sure that an undefined MPMQ constant yields undef
+    {
+        my $query = Apache::MPM->query(72);
+
+        ok t_cmp(undef,
+                 $query,
+                 "unknown MPMQ value returns undef");
     }
 
     Apache::OK;

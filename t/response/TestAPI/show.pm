@@ -1,4 +1,4 @@
-package TestAPI::show_mpm;
+package TestAPI::show;
 
 use strict;
 use warnings FATAL => 'all';
@@ -7,7 +7,6 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use Apache::MPM ();
-
 use Apache::Const -compile => 'OK';
 
 sub handler {
@@ -17,9 +16,11 @@ sub handler {
 
     my $mpm = Apache::Test::config->{server}->{mpm};
 
+    warn "**** trying now***";
+
     ok t_cmp(qr!$mpm!i,
-             Apache::MPM::show_mpm,
-             'Apache::MPM::show_mpm()');
+             Apache::MPM->show(),
+             'Apache::MPM->show()');
 
     Apache::OK;
 }
