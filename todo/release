@@ -4,13 +4,6 @@
 
 -- see also todo/api_status
 
-* someone needs to test:
-
-  prefork-2.0.47
-  prefork-2.0.48
-  worker-2.0.47
-  worker-2.0.48
-
 * pools that go out of scope:
 
   perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 
