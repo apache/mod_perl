@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+($r|$c)->add_(input|output)_filter(\&handler) now verify that the
+filter of the right kind is passed and will refuse to add a request
+filter as a connection filter and vice versa. The request filter
+handler is not required to have the FilterRequestHandler attribute as
+long as it doesn't have any other attributes. The connection filter
+handler is required to have the FilterConnectionHandler
+attribute. [Stas]
+
 fix tracing with (PerlTrace/MOD_PERL_TRACE) on win32 (the error_log
 filehandle was invalid after the open_logs phase) [Stas]
 

@@ -7,15 +7,14 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Connection ();
-use Apache::Filter ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Util ();
 
-use APR::Const -compile => qw(SUCCESS EOF);
-use Apache::Const -compile => qw(OK MODE_GETLINE);
+use base qw(Apache::Filter);
 
-use Apache::Const -compile => qw(OK);
+use APR::Const    -compile => qw(SUCCESS EOF);
+use Apache::Const -compile => qw(OK MODE_GETLINE);
 
 sub pre_connection {
     my Apache::Connection $c = shift;
@@ -25,7 +24,7 @@ sub pre_connection {
 
     return Apache::OK;
 }
-sub in_filter {
+sub in_filter : FilterConnectionHandler {
     my $filter = shift;
 
     while ($filter->read(my $buffer, 1024)) {
@@ -38,7 +37,7 @@ sub in_filter {
     Apache::OK;
 }
 
-sub out_filter {
+sub out_filter : FilterConnectionHandler {
     my $filter = shift;
 
     while ($filter->read(my $buffer, 1024)) {
