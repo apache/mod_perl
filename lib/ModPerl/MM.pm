@@ -98,7 +98,7 @@ sub ModPerl::MM::MY::constants {
     #they are, unlike 1.xx where *.xs live in src/modules/perl
     #and are copied to subdir/ if DYNAMIC=1
 
-    unless ($build->{MP_DYNAMIC}) {
+    if ($build->{MP_STATIC_EXTS}) {
         #skip .xs -> .so if we are linking static
         my $name = $self->{NAME};
         unless ($always_dynamic{$name}) {
