@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+$r->print/print will dereference \$scalar refs to strings so scripts
+can avoid string copies when sending data to the client, 
+e.g. print \$large_string 
+
 set $0 to .conf file name when inside <Perl> sections
 
 fixed $r->subprocess_env bug introduced in 1.12, spotted by Ken Williams
