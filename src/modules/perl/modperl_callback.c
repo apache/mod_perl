@@ -191,8 +191,8 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     else {
         /* Child{Init,Exit}, OpenLogs */
         aTHX = scfg->mip->parent->perl;
+        PERL_SET_CONTEXT(aTHX);
     }
-    PERL_SET_CONTEXT(aTHX);
 #endif
 
     MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
