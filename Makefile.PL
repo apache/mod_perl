@@ -2096,25 +2096,66 @@ not be able load any xs modules.
 EOF
 
     warn <<EOF;
---- perl5.005_03/ext/DynaLoader/dl_aix.xs.orig  Fri Mar  3 17:00:58 2000
-+++ perl5.005_03/ext/DynaLoader/dl_aix.xs       Fri Mar  3 17:06:51 2000
-@@ -222,7 +222,16 @@
-        mp->refCnt = 1;
-        mp->next = modList;
-        modList = mp;
--       if (loadbind(0, mainModule, mp->entry) == -1) {
-+       /*
-+        * Assume anonymous exports come from the module this dlopen
-+        * is linked into, that holds true as long as dlopen and all
-+        * of the perl core are in the same shared object. Also bind
-+        * against the main part, in the case a perl is not the main
-+        * part, e.g mod_perl as DSO in Apache so perl modules can
-+        * also reference Apache symbols.
-+        */
-+       if (loadbind(0, (void *)dlopen, mp->entry) == -1 ||
-+           loadbind(0, mainModule, mp->entry) == -1) {
-                dlclose(mp);
-                errvalid++;
-                strcpy(errbuf, "loadbind: ");
+--- perl5.005_03/ext/DynaLoader/dl_aix.xs.orig	Fri Mar  3 17:00:58 2000
++++ perl5.005_03/ext/DynaLoader/dl_aix.xs	Sun Apr  2 13:37:05 2000
+@@ -74,8 +74,8 @@
+ } Module, *ModulePtr;
+ 
+ /*
+- * We keep a list of all loaded modules to be able to call the fini
+- * handlers at atexit() time.
++ * We keep a list of all loaded modules to be able to reference count
++ * duplicate dlopen's.
+  */
+ static ModulePtr modList;
+ 
+@@ -88,7 +88,6 @@
+ 
+ static void caterr(char *);
+ static int readExports(ModulePtr);
+-static void terminate(void);
+ static void *findMain(void);
+ 
+ static char *strerror_failed   = "(strerror failed)";
+@@ -165,7 +164,6 @@
+	if (!mainModule) {
+		if ((mainModule = findMain()) == NULL)
+			return NULL;
+-		atexit(terminate);
+	}
+	/*
+	 * Scan the list of modules if have the module already loaded.
+@@ -222,7 +220,16 @@
+	mp->refCnt = 1;
+	mp->next = modList;
+	modList = mp;
+-	if (loadbind(0, mainModule, mp->entry) == -1) {
++	/*
++	 * Assume anonymous exports come from the module this dlopen
++	 * is linked into, that holds true as long as dlopen and all
++	 * of the perl core are in the same shared object. Also bind
++	 * against the main part, in the case a perl is not the main
++	 * part, e.g mod_perl as DSO in Apache so perl modules can
++	 * also reference Apache symbols.
++	 */
++	if (loadbind(0, (void *)dlopen, mp->entry) == -1 ||
++	    loadbind(0, mainModule, mp->entry) == -1) {
+		dlclose(mp);
+		errvalid++;
+		strcpy(errbuf, "loadbind: ");
+@@ -336,12 +343,6 @@
+	safefree(mp->name);
+	safefree(mp);
+	return result;
+-}
+-
+-static void terminate(void)
+-{
+-	while (modList)
+-		dlclose(modList);
+ }
+ 
+ /* Added by Wayne Scott 
+
 EOF
 }
