@@ -707,6 +707,11 @@ my @perl_config_pm =
   (qw(cc cpprun rm ranlib lib_ext obj_ext cccdlflags lddlflags),
    values %perl_config_pm_alias);
 
+sub mm_replace {
+    my $val = shift;
+    $$val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
+}
+
 sub make_tools {
     my($self, $fh) = @_;
 
@@ -725,8 +730,13 @@ sub make_tools {
 
     for (qw(rm_f mv ld ar)) {
         my $val = $mm->{"\U$_"};
-        $val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
-        print $fh $self->canon_make_attr($_ => $val || $Config{$_});
+        if ($val) {
+            mm_replace(\$val);
+        }
+        else {
+            $val = $Config{$_};
+        }
+        print $fh $self->canon_make_attr($_ => $val);
     }
 }
 
