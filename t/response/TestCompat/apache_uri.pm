@@ -16,24 +16,28 @@ use Apache::Constants qw(OK);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 1;
+    plan $r, tests => 19;
 
-    # XXX: need to test ->parse
-    #    {
-    #        my @methods = qw(scheme hostinfo user password hostname path rpath
-    #                         query fragment port unparse);
-    #        my $test_uri = "http://foo:bar@perl.apache.org:80/docs/index.html";
-    # 
-    #        for my $uri ($r->parsed_uri, Apache::URI->parse($r, $test_uri)) {
-    #            t_debug("URI=" . $uri->unparse);
-    #            no strict 'refs';
-    #            for my $meth (@methods) {
-    #                my $val = $uri->$meth();
-    #                t_debug("$meth: $val");
-    #                ok $val || 1;
-    #            }
-    #        }
-    #    }
+    {
+        # XXX: rpath is not implemented and not in compat
+        my @methods = qw(scheme hostinfo user password hostname path
+                         query fragment port);
+        my $test_uri = 'http://foo:bar@perl.apache.org:80/docs?args#frag';
+
+        # Apache::URI->parse internally returns an object blessed into
+        # APR::URI and all the methods are called on that object
+        for my $uri ($r->parsed_uri, Apache::URI->parse($r, $test_uri)) {
+            t_debug("URI=" . $uri->unparse);
+            no strict 'refs';
+            # just check that methods are call-able, the actual
+            # testing happens in TestAPR::uri test
+            for my $meth (@methods) {
+                my $val = $uri->$meth();
+                t_debug("$meth: " . ($val||''));
+                ok $val || 1;
+            }
+        }
+    }
 
     {
         Apache::compat::override_mp2_api('APR::URI::unparse');
