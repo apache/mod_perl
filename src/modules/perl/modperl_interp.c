@@ -39,6 +39,7 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
 {
+    UV clone_flags = 0;
     modperl_interp_t *interp = 
         (modperl_interp_t *)apr_pcalloc(p, sizeof(*interp));
     
@@ -52,7 +53,11 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
         );
 #endif
 
-        interp->perl = perl_clone(perl, FALSE);
+#if defined(WIN32) && defined(CLONEf_CLONE_HOST)
+        clone_flags |= CLONEf_CLONE_HOST;
+#endif
+
+        interp->perl = perl_clone(perl, clone_flags);
 
         modperl_interp_clone_init(interp);
 
