@@ -1,0 +1,56 @@
+
+in no particular order:
+
+port to threaded 5.004_5x (5.005-tobe)
+
+win32:
+- integrate with Perl 5.005's threading
+- Apache and Apache::Constants should be built as dlls
+- look at providing ASP (Active Server Plugin) support for NT users
+
+special treatment for nph- scripts?
+
+overload %ENV magic so it's not setup unless asked for
+
+"save stack" mechanism so we can go back to caching CV lookups
+
+cleanup Makefile.PL!!!
+
+extend $r->notes method so we can store arbitrary Perl structures
+
+think about re-introducing perl_alloc..perl_free option for each
+request now that embedding bugs are fixed in Perl 5.004  
+
+Apache::Registry should honor __END__ and __DATA__,
+but how to get it right?
+
+improve the "stacked handlers" implementation, including:
+- config merging of AV*'s
+
+-allowing all array-like operations besides push_handlers,
+pop_handlers, shift_handlers, unshift_handlers, splice_handlers, etc.
+
+-allow push_handlers to have an additional argument, an array ref,
+which will be passed to the handler as arguments, e.g.
+ $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+-allow Perl*Handler's to have arguments in config files, e.g.:
+
+ PerlHandler FooPackage [One Two Three]
+ (calls &FooPackage::handler($r, "One", "Two", "Three");
+
+allow <Perl></Perl> configuration sections to have read access to internal
+configuration structures (would be nice if we could tie a %namespace::) 
+ 
+explore mechanisms for sharing database connections amoung server children
+
+figure out good way to route request to specific child to maintain state
+
+find a good way to make Apache::exit override CORE::exit no matter where we are
+
+find more ways to decrease size of httpd (perl-runtime!)
+
+more tests for the test suite
+
+add more examples
+

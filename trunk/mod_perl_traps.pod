@@ -1,0 +1,214 @@
+=head1 NAME
+
+mod_perl_traps - common/known mod_perl traps
+
+=head1 DESCRIPTION
+
+In the CGI environment, the server starts a single external process
+(Perl interpreter) per HTTP request which runs single script in that
+process space.  When the request is over, the process goes away
+everything is cleaned up and a fresh script is started for the next
+request.  mod_perl brings Perl inside of the HTTP server not only for
+speedup of CGI scripts, but also for access to server functionality
+that CGI scripts do not and/or cannot have.  Now that we're inside the
+server, each process will likely handle more than one Perl script and
+keep it "compiled" in memory for longer than a single HTTP request.
+This new location and longer lifetime of Perl execution brings with it
+some common traps.  This document is here to tell you what they are
+and how to prevent them.  The descriptions here are short, please
+consult the mod_perl FAQ for more detail.  If you trip over something
+not documented here, please send a message to the mod_perl list.
+
+=head2 Migrating from CGI
+
+=over 4
+
+=item *
+
+Be sure to have read L<cgi_to_mod_perl>
+
+=item *
+
+Scripts under Apache::Registry are not run in package B<main>, they
+are run in a unique namespace based on the requested uri.
+
+=item *
+
+Apache::Registry scripts cannot contain  __END__ or __DATA__ tokens
+
+=item *
+
+Output of C<system>, C<exec> and C<open PIPE, "|program"> calls will
+not be sent to the browser unless you Perl was configured with sfio.
+
+=item *
+
+Perl's exit() built-in function cannot be used in mod_perl scripts.
+The Apache::exit() function should be used instead.  Apache::exit()
+automatically overrides the built-in exit() for Apache::Registry
+scripts. 
+
+=item *
+
+Your scripts *will not* run from the command line (yet) unless you use
+CGI::Switch or CGI.pm and 5.004+ and do not make any direct calls to
+Apache->methods. 
+
+=back
+
+
+=head2 Using CGI.pm and CGI::*
+
+=over 4
+
+=item *
+
+CGI.pm users B<must> have version B<2.36> of the package or higher,
+earlier versions will not work under mod_perl.  If you have Perl
+version 5.004 or higher, scripts may 'use CGI'.  Otherwise, scripts
+need to 'use CGI::Switch ()' so i/o goes through the Apache class
+methods. 
+
+=item *
+
+The CGI::* modules (CGI::Request etal.) can be used only with Perl
+version 5.004 or higher.
+
+If you use the C<SendHeaders()> function, be sure to call
+$req_obj->cgi->done when you are done with a request, just as you
+would under I<CGI::MiniSrv>. 
+
+=back
+
+
+=head2 Perl Modules and Extensions
+
+=over 4
+
+=item *
+
+Files pulled in via C<use> or C<require> statements are not
+automatically reloaded when changed on disk.  See the Apache::StatINC 
+module to add this functionality.
+
+=item Undefined subroutines
+
+A common trap with required files may result in an error message
+similar to this in the error_log: 
+
+ [Thu Sep 11 11:03:06 1997] Undefined subroutine
+ &Apache::ROOT::perl::test_2epl::some_function called at
+ /opt/www/apache/perl/test.pl line 79.
+
+As the above items explains, a file pulled in via C<require> will only
+happen once per-process (unless %INC is modified).  If the file does
+not contain a C<package> declaration, the file's subroutines and
+variables will be created in the current package.  Under CGI, this is
+commonly package C<main>.  However, B<Apache::Registry> scripts are
+compiled into a unique package name (base on the uri).  So, if
+multiple scripts in the same process try to require the same file,
+which does not declare a package, only one script will actually be
+able to see the subroutines.  The solution is to read L<perlmodlib>,
+L<perlmod> and related perl documentation and re-work your required
+file into a module which exports functions or defines a method
+interface.  
+Or something more simple, along these lines:
+
+ #required_file.pl
+ package Test;
+
+ sub some_function {...}
+
+ ...
+ 
+ __END__
+
+Now, have your scripts say:
+
+ require "required_file.pl";
+
+ Test::some_function();
+
+
+=item "Out of memory!"
+
+If something goes really wrong with your code, Perl may die with an
+"Out of memory!" message.  A common cause of this are never-ending
+loops, deep recursion or calling an undefined subroutine.  Here's one
+way to catch the problem:
+See Perl's INSTALL document for this item:
+
+ =item -DPERL_EMERGENCY_SBRK
+
+ If PERL_EMERGENCY_SBRK is defined, running out of memory need not be a
+ fatal error: a memory pool can allocated by assigning to the special
+ variable $^M.  See perlvar(1) for more details.
+
+If you compile with that option and add 'use Apache::Debug level => 4;'
+to your PerlScript, it will allocate the $^M emergency pool and the
+$SIG{__DIE__} handler will call Carp::confess, giving you a stack
+trace which should reveal where the problem is.
+                                                                         
+=item *
+
+If you wish to use a module that is normally linked static with your
+Perl, it must be listed in static_ext in Perl's Config.pm to be linked
+with httpd during the mod_perl build.
+
+=back
+
+
+=head2 I/O 
+
+Unless you have perl version 5.004 or higher, by default, you cannot
+print() to STDOUT from your script, use $r->print() instead.  Nor can
+you read() from STDIN, use $r->read() or the $r->content() methods to
+read POST data. 
+
+=head2 Clashes with other Apache C modules
+
+=over 4
+
+=item mod_auth_dbm
+
+If you are a user of B<mod_auth_dbm> or B<mod_auth_db>, you may need
+to edit Perl's C<Config> module.  When Perl is configured it attempts
+to find libraries for ndbm, gdbm, db, etc., for the *DBM*_File
+modules.  By default, these libraries are linked with Perl and
+remembered by the B<Config> module.  When mod_perl is configured with
+apache, the B<ExtUtils::Embed> module returns these libraries to be
+linked with httpd so Perl extensions will work under mod_perl.
+However, the order in which these libraries are stored in
+B<Config.pm>, may confuse C<mod_auth_db*>.  If C<mod_auth_db*> does
+not work with mod_perl, take a look at this order with the following
+command:
+
+ % perl -V:libs
+
+If C<-lgdbm> or C<-ldb> is before C<-lndbm>, example:
+
+ libs='-lnet -lnsl_s -lgdbm -lndbm -ldb -ldld -lm -lc -lndir -lcrypt';
+
+Edit B<Config.pm> and move C<-lgdbm> and C<-ldb> to the end of the
+list.  Here's how to find B<Config.pm>:
+
+ % perl -MConfig -e 'print "$Config{archlibexp}/Config.pm\n"'
+
+Another solution for building Apache/mod_perl+mod_auth_dbm under Solaris
+is to remove the DBM and NDBM "emulation" from libgdbm.a.  Seems
+Solaris already provides its own DBM and NDBM, and there's no reason
+to build GDBM with them (for us anyway).
+
+In our Makefile for GDBM, we changed
+
+  OBJS = $(DBM_OF) $(NDBM_OF) $(GDBM_OF)
+
+to
+
+  OBJS = $(GDBM_OF)
+
+Rebuild libgdbm, then Apache/mod_perl.  
+
+=back
+
+
