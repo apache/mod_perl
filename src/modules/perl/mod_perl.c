@@ -849,26 +849,24 @@ int modperl_response_handler(request_rec *r)
         return DECLINED;
     }
 
-    /* default is -SetupEnv, add if PerlOption +SetupEnv */
-    if (MpDirSETUP_ENV(dcfg)) {
 #ifdef USE_ITHREADS
-        interp = modperl_interp_select(r, r->connection, r->server);
-        aTHX = interp->perl;
+    interp = modperl_interp_select(r, r->connection, r->server);
+    aTHX = interp->perl;
 #endif
 
+    /* default is -SetupEnv, add if PerlOption +SetupEnv */
+    if (MpDirSETUP_ENV(dcfg)) {
         modperl_env_request_populate(aTHX_ r);
     }
 
     retval = modperl_response_handler_run(r, TRUE);
 
-    if (MpDirSETUP_ENV(dcfg)) {
 #ifdef USE_ITHREADS
-        if (MpInterpPUTBACK(interp)) {
-            /* PerlInterpScope handler */
-            modperl_interp_unselect(interp);
-        }
-#endif
+    if (MpInterpPUTBACK(interp)) {
+        /* PerlInterpScope handler */
+        modperl_interp_unselect(interp);
     }
+#endif
 
     return retval;
 }
