@@ -42,29 +42,18 @@ sub reset_scalar {
 
 $r->post_connection(sub {
     my $r = shift;
-    $r->warn("post connection handler called for ", $r->uri);
+    $r->uri =~ /test/ or die "post_connection can't see \$r->uri!\n";
+    #$r->warn("post connection handler called for ", $r->uri);
+    return 0;
 });
 
-use mod_perl ();
+$r->post_connection(\&reset_scalar);
 
-if(Apache->can_stack_handlers) {
-    die "can_stack_handlers is broken\n" 
-	unless mod_perl::hook("PerlStackedHandlers");
-
-    Apache->push_handlers("PerlCleanupHandler", \&reset_scalar);
-
-    $r->push_handlers("PerlCleanupHandler", sub {
-	#print STDERR "__ANON__ called\n";
-	%Hash = ();
-	return 0;
-    });
-}
-else {
-    die "can_stack_handlers is broken\n" 
-	if mod_perl::hook("PerlStackedHandlers");
-    $Scalar = 0;
+$r->post_connection(sub {
+    #print STDERR "__ANON__ called\n";
     %Hash = ();
-}
+    return 0;
+});
 
 #$r->warn("sequence number: " . $r->seqno);
 
@@ -73,9 +62,9 @@ if($Apache::TestSIG) {
     Apache::SIG->set;
 }
 
-$r->content_type("text/plain");
+#$r->content_type("text/plain");
 $r->header_out("X-Perl-Script" => "test");
-$r->send_http_header;
+$r->send_http_header("text/plain");
 
 my(@args);
 $r->print("KeyForPerlSetVar = ", $r->dir_config('KeyForPerlSetVar'), "\n");
@@ -100,6 +89,8 @@ my($key,$val);
 while (($key,$val) = each %ENV) {
    $r->print("$key=$val\n");
 }
+
+$r->print("TOTAL: ", scalar keys %ENV);
 
 if ($ENV{CONTENT_LENGTH}) {
     #$len = $ENV{CONTENT_LENGTH};

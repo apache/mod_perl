@@ -43,6 +43,10 @@ sub fetch {
     else {
 	($ua, $url) = @_;
     }
+    unless ($url =~ /^http/) {
+	$url = "http://$net::httpserver${url}";
+    }
+
     my $request = new HTTP::Request('GET', $url);
     my $response = $ua->request($request, undef, undef);
     $response->content;

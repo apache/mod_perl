@@ -15,8 +15,13 @@ $VERSION = '0.01';
 
 sub new {
     my $class = shift;
+    my $dir;
+    for (@INC) {
+	last if -d ($dir = "$_/auto/Apache/include");
+    }
+
     bless {
-	dir => undef,
+	dir => $dir,
 	@_,
     }, $class;
 }
@@ -34,7 +39,8 @@ sub find {
     my %seen = ();
     my @dirs = ();
 
-    for my $src_dir ($self->default_dir, 
+    for my $src_dir ($self->dir,
+		    $self->default_dir, 
 		    <../apache*/src>, 
 		    <../stronghold*/src>,
 		    "../src", "./src")
@@ -62,16 +68,22 @@ sub dir {
     return $self->{dir};
 }
 
+sub main {
+    my $self = shift;
+    asrc(shift || $self->dir);
+}
+
 sub asrc {
     my $d = shift;
     return $d if -e "$d/httpd.h";
     return "$d/main" if -e "$d/main/httpd.h";
+    return "$d/include" if -e "$d/include/httpd.h";
     return undef;
 }
 
 sub module_magic_number {
     my $self = shift;
-    my $d = asrc(shift) || $self->dir;
+    my $d = asrc(shift || $self->dir);
 
     #return $mcache{$d} if $mcache{$d};
     my $fh = IO::File->new("$d/http_config.h") or return undef;
@@ -124,10 +136,18 @@ sub httpd_version {
     return $version;
 }
 
+my $Is_Win32 = ($^O eq "MSWin32");
+
 sub inc {
     my $self = shift;
-    my $src = $self->dir;
-    return "-I$src/main -I$src/regex -I$src -I$src/os/unix";
+    my $src  = $self->dir;
+    my $main = $self->main;
+    my $os = $Is_Win32 ? "win32" : "unix";
+    my @inc = ("-I$src", "-I$main");
+    for ("src/regex", "$src/os/$os") {
+	push @inc, "-I$_" if -d $_;
+    }
+    return "@inc";
 }
 
 =pod
@@ -147,4 +167,98 @@ for my $path ($src->find) {
 1;
 
 __END__
+
+=head1 NAME
+
+Apache::src - Methods for locating and parsing bits of Apache source code
+
+=head1 SYNOPSIS
+
+ use Apache::src ();
+ my $src = Apache::src->new;
+
+=head1 DESCRIPTION
+
+This module provides methods for locating and parsing bits of Apache
+source code.
+
+=head1 METHODS
+
+=over 4
+
+=item new
+
+Create an object blessed into the B<Apache::src> class.
+
+ my $src = Apache::src->new;
+ 
+=item dir
+
+Top level directory where source files are located.
+
+ my $dir = $src->dir;
+ -d $dir or die "can't stat $dir $!\n";
+
+=item main
+
+Apache's source tree was reorganized during development of version 1.3.
+So, common header files such as C<httpd.h> are in different directories
+between versions less than 1.3 and those equal to or greater.  This
+method will return the right directory.
+
+Example:
+
+ -e join "/", $src->main, "httpd.h" or die "can't stat httpd.h\n";
+
+=item find
+
+Searches for apache source directories, return a list of those found.
+
+Example:
+
+ for my $dir ($src->find) {
+    my $yn = prompt "Configure with $dir ?", "y";
+    ...
+ }
+
+=item inc
+
+Print include paths for MakeMaker's B<INC> argument to
+C<WriteMakefile>.
+
+Example:
+
+ use ExtUtils::MakeMaker;
+
+ use Apache::src ();
+
+ WriteMakefile(
+     'NAME'    => 'Apache::Module',
+     'VERSION' => '0.01', 
+     'INC'     => Apache::src->new->inc,	      
+ );
+
+
+=item module_magic_number
+
+Return the B<MODULE_MAGIC_NUMBER> defined in the apache source.
+
+Example:
+
+ my $mmn = $src->module_magic_number;
+
+=item httpd_version
+
+Return the server version.
+
+Example:
+
+ my $v = $src->httpd_version;
+
+=back
+
+
+=head1 AUTHOR
+
+Doug MacEachern
 

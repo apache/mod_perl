@@ -16,6 +16,203 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.07_04 - February 10, 1998
+
+fix "building mod_perl by hand" bug w/ 1.3bx spotted by Brian Mosley
+
+no longer force 'PerlSendHeader On' for sub-requests which triggered a
+bug spotted by Doug Bagley and Gerald Richter
+
+Fix "Attempt to free unreferenced scalar." during kill -HUP w/
+PerlFreshRestart On and <Perl> in httpd.conf spotted by Brian Mosley
+
+clear endav and stacked_handlers on FreshRestart
+
+fix bug spotted by Gerald Richter where Apache->register_cleanup would
+cause a core dump
+
+Apache->module will no longer eval "require $module", it will now
+return true if the module is in %INC, false otherwise
+
+fix so END blocks encountered at startup are run at shutdown
+(I think one of the 1.07_xx version broke it)
+
+If exists, Makefile.PL will add /usr/local/stronghold/conf/httpd.conf's
+StrongholdKey to t/conf/httpd.conf for 'make test' for you
+
+Makefile.PL will edit Stronghold's Makefile to replace:
+"CFLAGS=$(CFLAGS)" with 'CFLAGS=$(CFLAGS)' so the SUBVERSION thang works
+
+fix $r->custom_response problem spotted by Brian Mosley so it works
+with SERVER_ERROR
+
+added new method child_terminate
+
+fix $r->current_callback so it can be called during startup
+
+perl Makefile.PL PERL_DEBUG=1 will:
+-add `-g' to EXTRA_CFLAGS
+-turn on PERL_TRACE
+-set PERL_DESTRUCT_LEVEL=2
+-link against libperld if -e $Config{archlibexp}/CORE/libperld$Config{lib_ext}
+
+Apache::Constants :common export tag no longer includes
+OPT_EXECCGI (was held off from 1.07_01's Changes Apache::Constants
+cleanup waiting to make sure HTML::Embperl and Apache::ePerl didn't
+rely on OPT_EXECCGI to be exported by default.  both look fine now)
+
+added workaround Apache::RedirectLogFix module to work around the
+re-introduced log bug below
+
+to fix a double-header send bug spotted by Doug Bagley, backed out
+this Change from 1.06: 
+ Apache::Registry will return REDIRECT if $r->header_out("Location")
+ so the request is logged properly, thanks to spot by Jon Drukman
+
+added experimental PerlRestartHandler 
+(enabled with PERL_RESTART_HANDLER=1, note: _not_ enabled with EVERYTHING=1)
+
+moved Apache::sv_name function to the new Apache::Symbol package
+
+Apache::StatINC will call Apache::Symbol's undef_functions method for
+.pm classes if PerlSetVar UndefOnReload is On
+
+before re-compiling, Apache::Registry will now check if 
+$package->can('undef_functions'), if so, invoke that method
+
+added Apache::Symbol module with an undef_functions method
+
+Apache->server_root_relative now defaults to "" when no
+filename/directory name argument is given (ie returns ServerRoot)
+
+made PERL_TRACE more useful with levels set via environment variable
+MOD_PERL_TRACE:
+d - trace directive handling during config read
+s - trace processing of perl sections
+h - trace Perl*Handler callbacks
+g - trace global variable handling, intepreter allocation, END blocks, etc.
+all - all of the above
+
+will add -DSTRONGHOLD to CFLAGS if build against stronghold, thanks to
+Todd R. Eigenschink
+
+fix Makefile.PL's parsing of SERVER_SUBVERSION, spotted by Paul Sutton
+
+$r->send_http_header can now accept an optional second argument, if
+present will set $r->content_type
+
+PerlPassEnv, PerlRequire and PerlModule now use an array_header
+structure for internal storage
+
+1.3b4 compat:
+- adapt to new table api changes (with help from Rob Hartill and Dean Gaudet)
+- adapt to *.h move to the new src/include directory
+
+Apache::Status enhancements:
+- "Loaded Modules" will now report last modified time
+- "packages" are now links, click, symbol table dump
+- now that packages are links, no longer do recursive dump
+  (recurse yourself via hyperlinks, much easier to read!!!)
+- hashes, scalars and arrays are now links, 
+  click, Data::Dumper Dump (only if PerlSetVar StatusDumper is On)
+- functions are now links, click, subroutine info (requires the B module)
+- dump of any type also has a link "Peek Dump"
+  (only if PerlSetVar StatusPeek is On and Apache::Peek is installed)
+- dump of any type also has a link "OP Tree Graph" 
+  (only if PerlSetVar StatusGraph is On)
+  (requires the B and B::Graph modules and the dot program)
+- added t/modules/status test
+
+with the -DPERL_MARK_WHERE experimental feature enabled, there's a
+chance you'll never see "Use of uninitialized value." again without
+some more useful information, nor will you see '-e' reported outside
+of Apache::Registry
+
+perl_destruct_level can now be set via the environment variable
+PERL_DESTRUCT_LEVEL or -DPERL_DESTRUCT_LEVEL
+
+turn default perl_destruct_level down from 2 to Perl's default of 0
+
+use a copy of apache's ap_cpystrn against versions < 1.3b4-dev
+
+got rid of "Use of uninitialized value." warning in perl_util.c seen
+when running HTML::Embperl, hunted down by Todd Eigenschink and Gerald
+Richter 
+
+added modules/src test for Apache::src
+
+documented Apache::src
+
+the Apache::src->new method will now default to the first
+auto/Apache/include directory found relative to @INC
+
+the apache header files (*.h) will now be installed in 
+$(INST_ARCHLIB)/auto/Apache/include
+
+fix $Apache::ServerStarting bug that broke 'make test' w/ ApacheSSL
+and Stronghold spotted by Vivek Khera
+
+remove the need for File::Copy's mv() function, since it can't seem to
+decide if it has one or not
+
+_03's new tests assumed PerlCleanupHandler was enabled, fixed now
+thanks to spot by Rob Hartill
+
+Makefile.PL will now chmod a+x t/net/perl/* t/net/perl/io/*
+thanks to Rob Hartill 
+
+experimental features can be enabled with -DDEFINEs instead of
+$variables or %ENV, changes to Makefile.PL make them simple to add,
+see eg/makepl_args.mod_perl for even simpler
+
+added eg/makepl_args.mod_perl
+
+the makepl_args.mod_perl can now have multiple lines, space, #comments
+and empty newlines are ignored, stops reading if it hits __END__
+
+Makefile.PL will now also look for $ENV{HOME}/.makepl_args.mod_perl
+and read in if exists
+
+before clearing handlers stacked via Apache->push_handlers at the end
+of each request, save the PerlChildExitHandler stack and putback after
+the clear.   this way, modules pulled in at server startup can say:
+Apache->push_handlers(PerlChildExitHandler => sub {})
+
+a "top-level" mod_perl per-directory directive would cause core dump
+inside <Perl> sections.  now trap that and exit with message that the
+directive should be inside a containter e.g. %Location, %VirtualHost
+(not sure what the real problem is here)
+
+re-work PERL_SECTIONS_SELF_BOOT stuff so it calls perl_section() directly,
+rather than perl_eat_config_string("<Perl>\n</Perl>"), because:
+- it no longer core dumps when a "top-level" per-server directive is found
+- it no longer requires 1.3b3+ (1.2.x will work)
+- it is faster
+
+PerlModule/PERL_SECTIONS_SELF_BOOT will delete $INC{$PerlModule} on
+the first config read pass, so it's re-read on the second pass
+
+if ($] < 5.004_04) Makefile.PL will warn that users should upgrade to
+5.004_04 or higher 
+
+removed Apache::PerlSections' self test now that we have
+modules/psections.t and it won't work without the =pod line.
+
+remove =pod line from Apache:: modules (SIG, fork, Resource,
+PerlSections) to stop 5.004's pod2man's bogus warnings spotted by  
+Eric Cholet 
+
+fixed but in $r->get_remote_host, which was forcing the default type
+REMOTE_NAME even if another type was passed as the optional second argument
+
+renamed eg/perlio.pl to eg/test.pl
+
+moved SUPPORT section from INSTALL doc to it's own file
+
+fixed auto-set of $ServerRoot bug in Apache::httpd_conf
+
+get rid of -Wall warning in Apache::sv_name
+
 =item 1.07_03 - January 8, 1998
 
 removed "[notice] mod_perl restarted" message since it doesn't go to
@@ -54,7 +251,7 @@ perl Makefile.PL can now accept PERL_EXTRA_CFLAGS, Makefile.PL will
  e.g.:
  PERL_EXTRA_CFLAGS=-DFOO=1,-DBAR=2
 
-if the file `makepl_args' is present in . or .. it will be read into
+if the file `makepl_args.modperl' is present in . or .. it will be read into
 @ARGV, e.g. might contain EVERYTHING=1 DO_HTTPD=1
 
 fixes for 1.3b4-dev compat
@@ -2097,6 +2294,7 @@ Added $r->get_remote_host() method, putting $r->connection->remote_host back to 
 =item release 0.50a2 - May 9, 1996
 
 new (faster) approach with mod_perl_fast
+
 Thanks to John Detloff <detloff@arizona.edu> 
 for friendly error checking code.
 

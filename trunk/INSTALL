@@ -10,13 +10,9 @@ How to build, test, configure and install mod_perl
 
 =over 3
 
-Apache version 1.1.x, 1.2.0+ or 1.3a1+
+Apache version 1.2.0+ or 1.3b3+
 
-Perl version 5.003 or higher
-
-If you do not have Perl version 5.003_01 or higher,
-fetch and install ExtUtils::Embed from CPAN 
-<URL:http://www.perl.com/CPAN/modules/by-module/ExtUtils/ExtUtils-Embed-1.12.tar.gz>
+Perl version 5.004 or higher (5.004_04 or higher recommended)
 
 Win32 users, see INSTALL.win32
 
@@ -68,8 +64,10 @@ By default, all callback hooks except for PerlHandler are turned off.
 You may edit src/modules/perl/Makefile, or enable when running Makfile.PL
 Possible arguments are:
 
-  PERL_INIT
+  PERL_POST_READ_REQUEST
   PERL_TRANS
+  PERL_INIT
+
   PERL_HEADER_PARSER
   PERL_AUTHEN
   PERL_AUTHZ
@@ -78,6 +76,9 @@ Possible arguments are:
   PERL_FIXUP
   PERL_LOG
   PERL_CLEANUP
+  PERL_CHILD_INIT
+  PERL_CHILD_EXIT
+  PERL_DISPATCH
   
   PERL_STACKED_HANDLERS
   PERL_METHOD_HANDLERS
@@ -109,12 +110,12 @@ Example:
  % ls -1 .
  apache_1.3b3/
  makepl_args.mod_perl
- mod_perl-1.07_03/
+ mod_perl-1.08/
 
  % cat makepl_args.mod_perl
  EVERYTHING=1 DO_HTTPD=1
 
- % cd mod_perl-1.07_03
+ % cd mod_perl-1.08
  % perl Makefile.PL && make test && make install
 
 You'll see all options enabled and you will not be prompted for apache
@@ -194,17 +195,17 @@ modified to enable options (e.g. ALL_HOOKS=1)
 You may also edit mod_perl-x.xx/src/modules/perl/Makefile before
 or after running Makefile.PL if you wish  
 
-=item Makefile.tmpl
-
-apache_1.1.x users: copy src/Makefile.tmpl to apache_xxx/src/  
-
-apache 1.2.0+ users: no need to modify the Makefile.tmpl for mod_perl
-
 =item Configuration
 
-Edit apache_xxx/src/Configuration, and add: 
+Edit apache_xxx/src/Configuration.
+
+For apache 1.2.x versions add: 
 
 	Module perl_module	   modules/perl/libperl.a
+
+For apache 1.3.x versions add: 
+
+        AddModule	   modules/perl/libperl.a
 
 We suggest you add this entry at the end of the Configuration file if
 you want your callback hooks to have precedence over core handlers. 
@@ -227,7 +228,7 @@ Copy the source files into the apache build directory:
 
 Run:
 
- % perl Makefile.PL DYNAMIC=1 && make install
+ % perl Makefile.PL && make install
 
 When prompted, you must tell Makefile.PL where to find apache sources
 (for header files), answer 'n' when asked 
@@ -318,20 +319,6 @@ pitifully simple.  Either of the following will work:
 before any other directory containing a version of httpd, then
 call it as 'httpd' -- don't use a relative path!
 
-=item Perl Static Extensions
-
-If you wish to use a module that is normally linked static with your
-Perl, it must be listed in static_ext in Perl's Config.pm to be linked
-with httpd during the mod_perl build.
-
-To list your static extensions, run this command:
-
- perl -V:static_ext
-
-If your module is not listed, add it to this line in Config.pm:
-
- static_ext=' '
-
 =item more info
 
 Type 'perldoc mod_perl' for info on configuring, running
@@ -339,96 +326,11 @@ and writing Apache/Perl scripts and modules.
 
 =back
  
-=head1 Using PerlIO
-
-=over 3
-
-See 'perldoc mod_perl' for an explaination
-See the Perl INSTALL document for more information.
-
-Here's how to configure your perl with sfio:
-
- % Configure -des -Duseperlio -Dusesfio 
-
-With Perl version 5.003_93 or higher, there is no need to configure
-with sfio for using Perl's read() and print() functions, STDIN and
-STDOUT are tie'd to the client connection.
-
-=back
-
 =head1 Support
 
-=over 3
+See the SUPPORT file.
 
-For comments, questions, bug-reports, announcements, etc., send mail
-to majordomo@listproc.itribe.net with the string "subscribe modperl"
-in the body.  (Thanks to Mark A. Imbriaco <mark@itribe.net>)
 
-Thanks to James Cooper <pixel@tiger.coe.missouri.edu>,
-there is a hypermail archive for this list at:
- 
-http://www.coe.missouri.edu/~faq/lists/modperl/
- 
-=back
 
-=head1 IF YOU HAVE PROBLEMS
 
-=over 3
 
-Please send mail to modperl@listproc.itribe.net with the output of:
-
-Output of C<perl -v; perl -V>
-
-version of the mod_perl package.
-
-which script from the eg/ directory you are using.
-(please try a script from there first.)
-
-your apache server version details and your server configuration.
-
-the output of 'make test'
-
-a copy of /tmp/mod_perl_error_log
-
-if you get a core dump, please send a backtrace if possible (be sure
-to add '-g' to EXTRA_CFLAGS in the Apache Configuration file).
-
-Here's how to get a backtrace:
-
- % cd mod_perl-x.xx
- % touch /tmp/mod_perl_srm.conf
- % gdb ../apache_x.xx/src/httpd
- (gdb) run -X -d `pwd/t'
- [now make request that causes core dump]
- (gdb) bt
-
-If the dump is happening in libperl a -DDEBUGGING enabled libperl
-would help show us what's really happening. 
-
-Go to your Perl source tree:
-
- % rm *.[oa]
- % make LIBPERL=libperld.a
- % cp libperld.a $Config{archlibexp}/CORE
- % cd $Config{archlibexp}/CORE
- % mv libperl.a libperle.a
- % ln -s libperld.a libperl.a
-
-$Config{archlibexp} is:
-
- % perl -V:archlibexp
-
-Rebuild httpd, let's see a new backtrace.  After we're done debugging,
-ln -s libperle.a libperl.a
-
-if you can compile but not run a mod_perl, send mail to
-modperl@listproc.itribe.net with the output of: 
-
-Output of C<perl -v; perl -V>
-
-version of the mod_perl package.
-
-which script from the eg/ directory you are using.
-(please try a script from there first.)
-
-your apache server version

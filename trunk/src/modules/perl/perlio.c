@@ -123,7 +123,7 @@ static int sfapacheread(f, buffer, bufsiz, disc)
 {
     long nrd;
     request_rec	*r = ((Apache_t*)disc)->r;
-    MP_TRACE(fprintf(stderr, "sfapacheread: want %d bytes\n", bufsiz)); 
+    MP_TRACE_g(fprintf(stderr, "sfapacheread: want %d bytes\n", bufsiz)); 
     PERL_READ_FROM_CLIENT;
     return bufsiz;
 }
@@ -134,7 +134,7 @@ Sfdisc_t * sfdcnewapache(request_rec *r)
     
     if(!(disc = (Apache_t*)malloc(sizeof(Apache_t))) )
 	return (Sfdisc_t *)disc;
-    MP_TRACE(fprintf(stderr, "sfdcnewapache(r)\n"));
+    MP_TRACE_g(fprintf(stderr, "sfdcnewapache(r)\n"));
     disc->disc.readf   = (Sfread_f)sfapacheread; 
     disc->disc.writef  = (Sfwrite_f)sfapachewrite;
     disc->disc.seekf   = (Sfseek_f)NULL;
@@ -175,7 +175,7 @@ API_EXPORT(void) perl_stdout2client(request_rec *r)
     IoFLAGS(GvIOp(defoutgv)) &= ~IOf_FLUSH; /* $|=0 */
 
     if(TIED("STDOUT")) return; 
-    MP_TRACE(fprintf(stderr, "tie *STDOUT => Apache\n"));
+    MP_TRACE_g(fprintf(stderr, "tie *STDOUT => Apache\n"));
     TIEHANDLE("STDOUT", perl_bless_request_rec(r));
 #endif
 }
@@ -188,7 +188,7 @@ void perl_stdin2client(request_rec *r)
     sfsetbuf(PerlIO_stdin(), NULL, 0);
 #else
     if(TIED("STDIN")) return; 
-    MP_TRACE(fprintf(stderr, "tie *STDIN => Apache\n"));
+    MP_TRACE_g(fprintf(stderr, "tie *STDIN => Apache\n"));
     TIEHANDLE("STDIN", perl_bless_request_rec(r));
 #endif
 }

@@ -21,15 +21,11 @@ sub PIPE {
 
 __END__
 
-=pod
-
 =head1 NAME
 
 Apache::SIG - Override apache signal handlers with Perl's
 
 =head1 SYNOPSIS
-
- #PerlScript
 
  use Apache::SIG ();
  Apache::SIG->set;
@@ -43,6 +39,9 @@ it's eval context, causing bizarre errors during subsequent requests
 are handled by that child.  When Apache::SIG is used, it installs a
 different SIGPIPE handler which rewinds the context to make sure Perl
 is back to normal state, preventing these bizarre errors.
+
+As of mod_perl version 1.07_02, the Apache::SIG set method is called 
+by default when the server is started.
 
 =head1 AUTHOR
 

@@ -70,6 +70,8 @@ PAUSE user id and directory.
 Apache::
 
 * PerlHandler's
+CallHandler	cdpf	Map filenames to subroutine calls	GKNOPS
+Dir		i	OO (subclassable) mod_dir replacement 	DOUGM
 Embperl		bdcf	Embed Perl in HTML			GRICHTER
 ePerl		Rdpr  	Fast emulated Embedded Perl (ePerl)	RSE            
 FTP		i	Full-fledged FTP proxy			PMKANE
@@ -79,10 +81,10 @@ OutputChain     bmpO	Chain output of stacked handlers	JANPAZ
 PassFile	bdpf	Send file via OutputChain		ANDK
 Registry	Rmpf	Run unaltered CGI scripts 		APML
 RobotRules	bdpf	Enforce robot rules (robots.txt)	PARKER
-Sandwich	bmpO	Layered document (sandwich) maker	DOUGM
+Sandwich	bmpf	Layered document (sandwich) maker	DOUGM
+VhostSandwich	bdpf	Virtual host layered document maker	MARKC
 SSI		bmpO	Implement server-side includes in Perl	KWILLIAM
 Stage		bdpf	Manage a document staging directory	ANDK
-Status		Rmpf	Embedded interpreter runtime status	APML
 WDB		bdpf	Database query/edit tool using DBI	JROWE
 
 * PerlHeaderParserHandler's
@@ -160,11 +162,20 @@ Scoreboard	cmcO	Interface to scoreboard API		DOUGM
 Servlet		ampO	Interface to the Java Servlet engine	IKLUFT
 Sfio		cmcO	Interface to r->connection->client->sf* DOUGM
 
+* Development and Debug tools
+Debug		Rmpf	mod_perl debugging utilities		APML
+DProf		bmcf	Hook Devel::DProf into mod_perl		DOUGM
+FakeRequest	ampO	Implement Apache methods off-line	APML
+Peek		amcf	Devel::Peek for mod_perl		APML
+SawAmpersand	bmpf	Make sure noone is using $&, $' or $`	APML
+StatINC		bmpf	Reload require'd files when updated	APML
+Status		Rmpf	Embedded interpreter runtime status	APML
+Symbol		bmcO	Things for symbol things		APML
+test		Rmpf	Handy routines for 'make test' scripts	APML
+
 * Misc
 Byterun		i	Run Perl bytecode modules		DOUGM
-Debug		Rmpf	mod_perl debugging utilities		APML
 ErrorLog	c	error_log interfaces			FLETCH
-FakeRequest	ampO	Implement Apache methods off-line	APML
 Mmap		bdcf	Share data via Mmap module		FLETCH
 Persistent	bdpO	Store data via IPC::, DBI, or disk	DOUGM
 PUT		cdpf	HTTP PUT method handler module		SORTIZ
@@ -172,9 +183,7 @@ RegistryLoader	bmpf	Apache::Registry startup script loader 	APML
 Safe		ampO	Adaptation of "safecgiperl"		APML
 Session		cmpf	Maintain client <-> httpd session/state	APML
 SIG		amoO	Signal handlers for mod_perl		APML
-StatINC		bmpf	Reload require'd files when updated	APML
 State		i	Powerful state engine			RSE
-test		Rmpf	Handy routines for 'make test' scripts	APML
 
 </pre>
 <a name="where">
@@ -201,6 +210,7 @@ BMILLETT Brian Millett &lt;bpm@techapp.com&gt;
 DOUGM	 Doug MacEachern &lt;dougm@osf.org&gt;
 EBARTLEY Eric Bartley  &lt;bartley@pdn.cc.purdue.edu&gt;
 FLETCH   Mike Fletcher &lt;lemur1@mindspring.com&gt;
+GKNOPS	 Gerd Knops &lt;gerti@BITart.com&gt;
 GRICHTER Gerald Richter &lt;richter@ecos.de&gt;
 HMUELLER Hanno Mueller &lt;hmueller@mail.kabel.de&gt;
 IKLUFT	 Ian Kluft &lt;ikluft@cisco.com&gt;
@@ -208,6 +218,7 @@ JANPAZ	 Honza Pazdziora &lt;adelton@INFORMATICS.MUNI.CZ&gt;
 JGROV	 John D Groenveld &lt;groenvel@cse.psu.edu&gt;
 JROWE	 Jeff Rowe &lt;beowulf@cscsun4.larc.nasa.gov&gt;
 KWILLIAM Ken Williams  &lt;ken@forum.swarthmore.edu&gt;
+MARKC	 Mark Constable &lt;markc@goldcoast.org&gt;
 MARKIM	 Mark A. Imbriaco &lt;mark@itribe.net&gt;
 MARKK	 Mark Kennedy &lt;mtk@ny.ubs.com&gt;
 MAURICE	 Maurice Aubrey &lt;maurice@HEVANET.COM&gt

@@ -1,7 +1,10 @@
 use Apache ();
+use Apache::Constants ();
 use strict;
 
-my $tests = 29;
+Apache->register_cleanup(sub {0});
+
+my $tests = 32;
 my $i;
 my $r = Apache->request;
 $r->content_type("text/plain");
@@ -85,6 +88,9 @@ test ++$i, $s->server_admin;
 test ++$i, $s->server_hostname;
 test ++$i, $s->port;
 
+test ++$i, $r->module("Apache");
+test ++$i, not Apache->module("Not::A::Chance");
+test ++$i, Apache->module("Apache::Constants");
 
 
 

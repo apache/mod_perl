@@ -115,8 +115,6 @@ if($ENV{MOD_PERL}) {
 
 __END__
 
-=pod
-
 =head1 NAME
 
 Apache::Resource - Limit resources used by httpd children

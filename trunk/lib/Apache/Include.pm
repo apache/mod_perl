@@ -78,6 +78,6 @@ perl(1), mod_perl(3), mod_include
 
 =head1 AUTHOR
 
-Doug MacEachern <dougm@osf.org>
+Doug MacEachern
 
 

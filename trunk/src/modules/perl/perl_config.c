@@ -1,5 +1,5 @@
 /* ====================================================================
- * Copyright (c) 1995-1997 The Apache Group.  All rights reserved.
+ * Copyright (c) 1995-1998 The Apache Group.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,8 @@
 #include "mod_perl.h"
 
 extern module *top_module;
-
+static int perl_sections_self_boot = 0;
+static const char *perl_sections_boot_module = NULL;
 
 #ifdef PERL_SECTIONS
 #if MODULE_MAGIC_NUMBER < 19970719
@@ -67,6 +68,7 @@ const char *limit_section (cmd_parms *cmd, void *dummy, const char *arg);
 void add_per_dir_conf (server_rec *s, void *dir_config);
 void add_per_url_conf (server_rec *s, void *url_config);
 void add_file_conf (core_dir_config *conf, void *url_config);
+const command_rec *find_command (const char *name, const command_rec *cmds);
 const command_rec *find_command_in_modules (const char *cmd_name, module **mod);
 
 #if MODULE_MAGIC_NUMBER > 19970912 
@@ -164,10 +166,12 @@ char *mod_perl_auth_name(request_rec *r, char *val)
 void mod_perl_dir_env(perl_dir_config *cld)
 {
     if(MP_HASENV(cld)) {
-	table_entry *elts = (table_entry *)cld->env->elts;
+	array_header *arr = table_elts(cld->env);
+	table_entry *elts = (table_entry *)arr->elts;
+
 	int i;
-	for (i = 0; i < cld->env->nelts; ++i) {
-	    MP_TRACE(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
+	for (i = 0; i < arr->nelts; ++i) {
+	    MP_TRACE_d(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
 			     elts[i].key, elts[i].val));
 	    mp_setenv(elts[i].key, elts[i].val);
 	}
@@ -177,15 +181,14 @@ void mod_perl_dir_env(perl_dir_config *cld)
 
 void mod_perl_pass_env(pool *p, perl_server_config *cls)
 {
-    char *key, *val;
-    CHAR_P arg;
+    char *key, *val, **keys;
+    int i;
 
-    if(!cls->PerlPassEnv) return;
+    if(!cls->PerlPassEnv->nelts) return;
 
-    arg = pstrdup(p, cls->PerlPassEnv);
-
-    while (*arg) {
-        key = getword(p, &arg, ' ');
+    keys = (char **)cls->PerlPassEnv->elts;
+    for (i = 0; i < cls->PerlPassEnv->nelts; ++i) {
+	key = keys[i];
 
         if(!(val = getenv(key)) && (ind(key, ':') > 0)) {
 	    CHAR_P tmp = pstrdup(p, key);
@@ -194,7 +197,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
 	}
 
         if(val != NULL) {
-	    MP_TRACE(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
+	    MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
 	    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE);
         }
     }
@@ -205,6 +208,16 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
     perl_dir_config *new = (perl_dir_config *)pcalloc (p, sizeof(perl_dir_config));
     perl_dir_config *base = (perl_dir_config *)basev;
     perl_dir_config *add = (perl_dir_config *)addv;
+
+    array_header *vars = (array_header *)base->vars;
+
+    /* XXX: what triggers such a condition ?*/
+    if(vars && (vars->nelts > 100000)) {
+	fprintf(stderr, "[error] PerlSetVar->nelts = %d\n", vars->nelts);
+    }
+    else {
+	new->vars = overlay_tables(p, add->vars, base->vars);
+    }
 
     new->vars = overlay_tables(p, add->vars, base->vars);
     new->env = overlay_tables(p, add->env, base->env);
@@ -270,8 +283,8 @@ void *perl_create_dir_config (pool *p, char *dirname)
     perl_dir_config *cld =
 	(perl_dir_config *)palloc(p, sizeof (perl_dir_config));
 
-    cld->vars = make_table(p, MAX_PERL_CONF_VARS); 
-    cld->env  = make_table(p, MAX_PERL_CONF_VARS); 
+    cld->vars = make_table(p, 5); 
+    cld->env  = make_table(p, 5); 
     cld->flags = MPf_ENV;
     cld->PerlHandler = PERL_CMD_INIT;
     PERL_DISPATCH_CREATE(cld);
@@ -289,16 +302,13 @@ void *perl_create_dir_config (pool *p, char *dirname)
 
 void *perl_create_server_config (pool *p, server_rec *s)
 {
+    char **new;
     perl_server_config *cls =
 	(perl_server_config *)palloc(p, sizeof (perl_server_config));
 
-    cls->PerlPassEnv = NULL;
-    cls->PerlModules = (char **)NULL; 
-    cls->PerlModules = (char **)palloc(p, (MAX_PERL_MODS+1)*sizeof(char *));
-    cls->PerlModules[0] = "Apache";
-    cls->NumPerlModules = 1;
-    cls->PerlScript = (char **)palloc(p, (MAX_PERL_MODS+1)*sizeof(char *));
-    cls->NumPerlScript = 0;
+    cls->PerlPassEnv = make_array(p, 1, sizeof(char *));
+    cls->PerlModule  = make_array(p, 1, sizeof(char *));
+    cls->PerlRequire = make_array(p, 1, sizeof(char *));
     cls->PerlTaintCheck = 0;
     cls->PerlWarn = 0;
     cls->FreshRestart = 0;
@@ -306,6 +316,11 @@ void *perl_create_server_config (pool *p, server_rec *s)
     PERL_TRANS_CREATE(cls);
     PERL_CHILD_INIT_CREATE(cls);
     PERL_CHILD_EXIT_CREATE(cls);
+    PERL_RESTART_CREATE(cls);
+
+    new = (char **)push_array(cls->PerlModule);
+    *new = pstrdup(p, "Apache");
+
     return (void *)cls;
 }
 
@@ -316,7 +331,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
     SV *sva;
 #if !defined(APACHE_SSL) && !defined(WIN32)
     if(!PERL_RUNNING()) { 
-        MP_TRACE(fprintf(stderr, "perl_cmd_push_handlers: perl not running, skipping push\n")); 
+        MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: perl not running, skipping push\n")); 
 	return NULL; 
     } 
 #endif
@@ -324,9 +339,9 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
-	MP_TRACE(fprintf(stderr, "init `%s' stack\n", hook)); 
+	MP_TRACE_d(fprintf(stderr, "init `%s' stack\n", hook)); 
     } 
-    MP_TRACE(fprintf(stderr, "perl_cmd_push_handlers: @%s, '%s'\n", hook, arg)); 
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: @%s, '%s'\n", hook, arg)); 
     mod_perl_push_handlers(&sv_yes, hook, sva, *cmd); 
     SvREFCNT_dec(sva); 
     return NULL; 
@@ -352,7 +367,7 @@ int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)
 CHAR_P perl_cmd_dispatch_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
 {
     rec->PerlDispatchHandler = pstrdup(parms->pool, arg);
-    MP_TRACE(fprintf(stderr, "perl_cmd: PerlDispatchHandler=`%s'\n", arg));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd: PerlDispatchHandler=`%s'\n", arg));
     return NULL;
 }
 
@@ -366,6 +381,12 @@ CHAR_P perl_cmd_child_exit_handlers (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
     PERL_CMD_PUSH_HANDLERS("PerlChildExitHandler", cls->PerlChildExitHandler);
+}
+
+CHAR_P perl_cmd_restart_handlers (cmd_parms *parms, void *dummy, char *arg)
+{
+    dPSRV(parms->server);
+    PERL_CMD_PUSH_HANDLERS("PerlRestartHandler", cls->PerlRestartHandler);
 }
 
 CHAR_P perl_cmd_post_read_request_handlers (cmd_parms *parms, void *dummy, char *arg)
@@ -438,51 +459,30 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     if(PERL_RUNNING()) 
 	perl_require_module(arg, parms->server);
     else {
-	MP_TRACE(fprintf(stderr, "push_perl_modules: arg='%s'\n", arg));
-	if (cls->NumPerlModules >= MAX_PERL_MODS) {
-	    fprintf(stderr, "mod_perl: There's a limit of %d PerlModules, use a PerlScript to pull in as many as you want\n", MAX_PERL_MODS);
-	    exit(-1);
-	}
-	
-	cls->PerlModules[cls->NumPerlModules++] = arg;
+	char **new;
+	MP_TRACE_d(fprintf(stderr, "push_perl_modules: arg='%s'\n", arg));
+	new = (char **)push_array(cls->PerlModule);
+	*new = pstrdup(parms->pool, arg);
     }
 
 #ifdef PERL_SECTIONS
-# if MODULE_MAGIC_NUMBER > 19970912
-    if((parms->path == NULL) && PERL_SECTIONS_SELF_BOOT) {
-	if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
-
-	if(gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE)) {
-	    SV *sv = newSV(0);
-	    sv_setpv(sv, "<Perl>\n</Perl>\n");
-	    MP_TRACE(fprintf(stderr, 
-			     "mod_perl: bootstrapping <Perl> sections\n"));
-	    perl_eat_config_string(parms, dummy, sv);
-	    SvREFCNT_dec(sv);
-	}
-    }
-# endif
+    if((parms->path == NULL) && PERL_SECTIONS_SELF_BOOT)
+	perl_section_self_boot(parms, dummy, arg);
 #endif
 
     return NULL;
 }
 
-#define NO_PERL_SCRIPT (strnEQ(SvPVX(perl_get_sv("0",FALSE)), "-e", 2))  
-
-CHAR_P perl_cmd_script (cmd_parms *parms, void *dummy, char *arg)
+CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
-    MP_TRACE(fprintf(stderr, "perl_cmd_script: %s\n", arg));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_require: %s\n", arg));
     if(PERL_RUNNING()) 
 	perl_load_startup_script(parms->server, parms->pool, arg, TRUE);
     else {
-	if (cls->NumPerlScript >= MAX_PERL_MODS) {
-	    fprintf(stderr, "mod_perl: There's a limit of %d PerlScripts\n",
-		    MAX_PERL_MODS);
-	    exit(-1);
-	}
-	
-	cls->PerlScript[cls->NumPerlScript++] = arg;
+	char **new;
+	new = (char **)push_array(cls->PerlRequire);
+	*new = pstrdup(parms->pool, arg);
     }
     return NULL;
 }
@@ -490,7 +490,7 @@ CHAR_P perl_cmd_script (cmd_parms *parms, void *dummy, char *arg)
 CHAR_P perl_cmd_tainting (cmd_parms *parms, void *dummy, int arg)
 {
     dPSRV(parms->server);
-    MP_TRACE(fprintf(stderr, "perl_cmd_tainting: %d\n", arg));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_tainting: %d\n", arg));
     cls->PerlTaintCheck = arg;
 #ifdef PERL_SECTIONS
     if(arg && PERL_RUNNING()) tainting = TRUE;
@@ -501,7 +501,7 @@ CHAR_P perl_cmd_tainting (cmd_parms *parms, void *dummy, int arg)
 CHAR_P perl_cmd_warn (cmd_parms *parms, void *dummy, int arg)
 {
     dPSRV(parms->server);
-    MP_TRACE(fprintf(stderr, "perl_cmd_warn: %d\n", arg));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_warn: %d\n", arg));
     cls->PerlWarn = arg;
 #ifdef PERL_SECTIONS
     if(arg && PERL_RUNNING()) dowarn = TRUE;
@@ -512,7 +512,7 @@ CHAR_P perl_cmd_warn (cmd_parms *parms, void *dummy, int arg)
 CHAR_P perl_cmd_fresh_restart (cmd_parms *parms, void *dummy, int arg)
 {
     dPSRV(parms->server);
-    MP_TRACE(fprintf(stderr, "perl_cmd_fresh_restart: %d\n", arg));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_fresh_restart: %d\n", arg));
     cls->FreshRestart = arg;
     return NULL;
 }
@@ -529,8 +529,10 @@ CHAR_P perl_cmd_sendheader (cmd_parms *cmd,  perl_dir_config *rec, int arg) {
 CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
-    cls->PerlPassEnv = pstrcat(parms->pool, arg, " ", 
-			       cls->PerlPassEnv, NULL);
+    char **new;
+    new = (char **)push_array(cls->PerlPassEnv);
+    *new = pstrdup(parms->pool, arg);
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_pass_env: arg=`%s'\n", arg));
     arg = NULL;
     return NULL;
 }
@@ -538,14 +540,14 @@ CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
 CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg) {
     if(arg) MP_ENV_on(rec);
     else	   MP_ENV_off(rec);
-    MP_TRACE(fprintf(stderr, "perl_cmd_env: set to `%s'\n", arg ? "On" : "Off"));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_env: set to `%s'\n", arg ? "On" : "Off"));
     return NULL;
 }
 
 CHAR_P perl_cmd_var(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val)
 {
     table_set(rec->vars, key, val);
-    MP_TRACE(fprintf(stderr, "perl_cmd_var: '%s' = '%s'\n", key, val));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_var: '%s' = '%s'\n", key, val));
     return NULL;
 }
 
@@ -553,11 +555,12 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
 {
     table_set(rec->env, key, val);
     MP_HASENV_on(rec);
-    MP_TRACE(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
     if(cmd->path == NULL) {
-       dPSRV(cmd->server);
-       cls->PerlPassEnv = pstrcat(cmd->pool, key, ":", val, " ", 
-                                  cls->PerlPassEnv, NULL);
+	char **new;
+	dPSRV(cmd->server);
+	new = (char **)push_array(cls->PerlPassEnv);
+	*new = pstrcat(cmd->pool, key, ":", val, NULL);
     }
     return NULL;
 }
@@ -630,7 +633,7 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 
 	sprintf(line, "%s %s", tmpkey, value);
 	errmsg = handle_command(cmd, cfg, line); 
-	MP_TRACE(fprintf(stderr, "%s (%s) Limit=%s\n", 
+	MP_TRACE_s(fprintf(stderr, "%s (%s) Limit=%s\n", 
 			 line, 
 			 (errmsg ? errmsg : "OK"),
 			 (cmd->limited > 0 ? "yes" : "no") ));
@@ -638,7 +641,7 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 } 
 
 #define TRACE_SECTION(n,v) \
-    MP_TRACE(fprintf(stderr, "perl_section: <%s %s>\n", n, v))
+    MP_TRACE_s(fprintf(stderr, "perl_section: <%s %s>\n", n, v))
 
 /* XXX, had to copy-n-paste much code from http_core.c for
  * perl_*sections, would be nice if the core config routines 
@@ -856,7 +859,7 @@ CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv)
 
     methods = SvPOK(sv) ? SvPVX(sv) : "";
  
-    MP_TRACE(fprintf(stderr, 
+    MP_TRACE_s(fprintf(stderr, 
 		     "Found Limit section for `%s'\n", 
 		     methods ? methods : "all methods"));
 
@@ -873,11 +876,57 @@ CHAR_P perl_end_section (cmd_parms *cmd, void *dummy) {
     return perl_end_magic;
 }
 
+int perl_handle_self_command(cmd_parms *parms, void *dummy, char *line)
+{
+    const command_rec *cmd;
+    const char *cmd_name, *args;
+
+    if(!perl_sections_self_boot || (parms->path != NULL))
+	return FALSE;
+
+    args = line;
+
+    cmd_name = getword_conf(parms->temp_pool, &args);
+
+    if (*cmd_name == '\0')
+	return FALSE;
+
+    if(!(cmd = find_command(cmd_name, perl_module.cmds))) {
+	/*fprintf(stderr, "%s is not a mod_perl command\n", cmd_name);*/
+	return FALSE;
+    }
+    else {
+	if(cmd->req_override == OR_ALL) {
+	    if(perl_sections_self_boot && perl_sections_boot_module) {
+		fprintf(stderr, "Error in PerlModule %s\n", 
+			perl_sections_boot_module);
+		fprintf(stderr, 
+			"*Apache::ReadConfig::%s must be inside a container\n", 
+			cmd_name);
+	    }
+	    else {
+		fprintf(stderr, "Error in <Perl> section:\n");
+		fprintf(stderr, "*%s must be inside a container\n", 
+		    cmd_name);
+	    }
+
+	    exit(1);
+	    return TRUE;
+	}
+    }
+
+    return FALSE;
+}
+
 void perl_handle_command(cmd_parms *cmd, void *dummy, char *line) 
 {
     CHAR_P errmsg;
+
+    if(perl_handle_self_command(cmd, dummy, line))
+	return;
+
     errmsg = handle_command(cmd, dummy, line);
-    MP_TRACE(fprintf(stderr, "handle_command (%s): %s\n", line, 
+    MP_TRACE_s(fprintf(stderr, "handle_command (%s): %s\n", line, 
 		     (errmsg ? errmsg : "OK")));
 }
 
@@ -974,8 +1023,42 @@ void perl_section_hash_init(char *name, I32 dotie)
     save_hptr(&curstash);
     curstash = gv_stashpv(PERL_SECTIONS_PACKAGE, GV_ADDWARN);
     gv = GvHV_init(name);
-    if(dotie) perl_tie_hash(GvHV(gv), "Tie::IxHash");
+    if(dotie && !perl_sections_self_boot)
+	perl_tie_hash(GvHV(gv), "Tie::IxHash");
     LEAVE;
+}
+
+void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
+{
+    if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
+
+    if(!gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE)) 
+	return;
+
+    MP_TRACE_s(fprintf(stderr, 
+		     "mod_perl: bootstrapping <Perl> sections\n"));
+    
+    perl_sections_boot_module = arg;
+    perl_sections_self_boot = 1;
+    perl_section(parms, dummy, NULL);
+    perl_sections_self_boot = 0;
+    perl_sections_boot_module = NULL;
+
+    /* make sure this module is re-loaded for the second config read */
+    if(PERL_RUNNING() == 1) {
+	SV *file;
+	if(arg)
+	    file = perl_module2file((char *)arg);
+
+	if(file && hv_exists_ent(GvHV(incgv), file, FALSE)) {
+	    MP_TRACE_s(fprintf(stderr,
+			     "mod_perl: delete $INC{'%s'} (klen=%d)\n", 
+			     SvPVX(file), SvCUR(file)));
+	    (void)hv_delete_ent(GvHV(incgv), file, G_DISCARD, FALSE);
+	}
+	if(file)
+	    SvREFCNT_dec(file);
+    }   
 }
 
 CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
@@ -993,10 +1076,11 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
     if(PERL_RUNNING()) {
 	code = newSV(0);
 	sv_setpv(code, "");
-	errmsg = perl_srm_command_loop(cmd, code);
+	if(arg) 
+	    errmsg = perl_srm_command_loop(cmd, code);
     }
     else {
-	MP_TRACE(fprintf(stderr, 
+	MP_TRACE_s(fprintf(stderr, 
 			 "perl_section: Perl not running, returning...\n"));
 	return NULL;
     }
@@ -1033,7 +1117,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 		    perl_eat_config_string(cmd, dummy, sv);
 		}
 		else {
-		    MP_TRACE(fprintf(stderr, "SVt_PV: $%s = `%s'\n", 
+		    MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n", 
 				     key, SvPV(sv,na)));
 		    sprintf(line, "%s %s", key, SvPV(sv,na));
 		    perl_handle_command(cmd, dummy, line);
@@ -1061,7 +1145,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 		continue;
 	    }
 
-	    MP_TRACE(fprintf(stderr, 
+	    MP_TRACE_s(fprintf(stderr, 
 			     "`@%s' directive is %s, (%d elements)\n", 
 			     key, splain_args(c->args_how), AvFILL(av)+1));
 
@@ -1077,7 +1161,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 		break;
 
 	    default:
-		MP_TRACE(fprintf(stderr, 
+		MP_TRACE_s(fprintf(stderr, 
 				 "default: iterating over @%s\n", key));
 		shift = 1;
 		break;
@@ -1088,11 +1172,11 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
     }
     SvREFCNT_dec(code);
     {
-	SV *usv = perl_get_sv("Apache::ReadConfig", FALSE);
+	SV *usv = perl_get_sv(PERL_SECTIONS_PACKAGE, FALSE);
 	if(usv && SvTRUE(usv))
 	    ; /* keep it around */
 	else
-	    hv_undef(symtab);
+	    hv_clear(symtab);
     }
     return NULL;
 }

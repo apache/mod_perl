@@ -21,7 +21,6 @@ PerlSetEnv KeyForPerlSetEnv OK
 
 <Perl>
 #!perl
-#line 16 httpd.conf
 
 $My::config_is_perl = 1;
 

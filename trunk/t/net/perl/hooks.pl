@@ -55,7 +55,6 @@ sub $package\:\:handler {
     my(\$r) = \@_;
     return -1 unless \$r->is_main;
     open FH, ">>$hooks_file" or die "can't open $hooks_file";
-    \$r->warn("$hook ok\n");
     print FH "$hook ok\n";
     close FH;
     return $retval;

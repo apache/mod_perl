@@ -85,9 +85,9 @@ sub handler {
 	chdir File::Basename::dirname($r->filename);
 
 	if (
-	    exists $Apache::Registry->{$package}{mtime}
+	    exists $Apache::Registry->{$package}{'mtime'}
 	    &&
-	    $Apache::Registry->{$package}{mtime} <= $mtime
+	    $Apache::Registry->{$package}{'mtime'} <= $mtime
 	   ){
 	    # we have compiled this subroutine already, nothing left to do
  	} else {
@@ -104,6 +104,9 @@ sub handler {
 	    # compile this subroutine into the uniq package name
             $r->log_error("Apache::Registry::handler eval-ing") if $Debug && $Debug & 4;
  	    undef &{"$package\::handler"} unless $Debug && $Debug & 4; #avoid warnings
+	    if($package->can('undef_functions')) {
+		$package->undef_functions;
+	    }
 	    $r->clear_rgy_endav($script_name);
 
 	    my $eval = join(
@@ -124,7 +127,7 @@ sub handler {
 	    }
             $r->log_error(qq{Compiled package \"$package\" for process $$})
 	       if $Debug && $Debug & 1;
-	    $Apache::Registry->{$package}{mtime} = $mtime;
+	    $Apache::Registry->{$package}{'mtime'} = $mtime;
 	}
 
 	my $cv = \&{"$package\::handler"};
@@ -148,11 +151,14 @@ sub handler {
 	    return Apache::Debug::dump($r, SERVER_ERROR);
 	}
 
+=pod
+	#XXX
 	if(my $loc = $r->header_out("Location")) {
 	    if($r->status == 200 and substr($loc, 0, 1) ne "/") {
 		return REDIRECT;
 	    }
 	}
+=cut
 	return $r->status;
     } else {
 	return NOT_FOUND unless $Debug && $Debug & 2;
@@ -280,15 +286,15 @@ The environment variable B<GATEWAY_INTERFACE> is set to C<CGI-Perl/1.1>.
 Normally when a Perl script is run from the command line or under CGI,
 arguments on the `#!' line are passed to the perl interpreter for processing.
 
-Apache::Registry currently only honors the C<-w> switch and will turn
+Apache::Registry currently only honors the B<-w> switch and will turn
 on warnings using the C<$^W> global variable.  Another common switch
-used with CGI scripts is C<-T> to turn on taint checking.  This can
+used with CGI scripts is B<-T> to turn on taint checking.  This can
 only be enabled when the server starts with the configuration
 directive:
 
  PerlTaintCheck On
 
-However, if taint checking is not enabled, but the C<-T> switch is seen,
+However, if taint checking is not enabled, but the B<-T> switch is seen,
 Apache::Registry will write a warning to the error_log.
 
 =head1 DEBUGGING

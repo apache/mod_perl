@@ -1,14 +1,15 @@
 #see Apache::Registry
 
+#just like test.pl, but using Apache->methods
+
 my $r = Apache->request;
 $r->content_type("text/html");
 $r->send_http_header();
 %ENV = $r->cgi_env;
 
 $r->print(
-   "Hi There!",
-   "<hr><pre>",
-   (map { "$_ = $ENV{$_}\n" } keys %ENV),	  
-   "</pre>",
+  <b>Date: ", scalar localtime, "</b><br>\n",
+
+  "%ENV: <br>\n", map { "$_ = $ENV{$_} <br>\n" } keys %ENV;
 );
 

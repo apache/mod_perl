@@ -38,8 +38,9 @@ which will be passed to the handler as arguments, e.g.
 
 -allow Perl*Handler's to have arguments in config files, e.g.:
 
- PerlHandler FooPackage [One Two Three]
  (calls &FooPackage::handler($r, "One", "Two", "Three");
+
+make <Perl></Perl> configuration sections work in .htaccess files
 
 allow <Perl></Perl> configuration sections to have read access to internal
 configuration structures (would be nice if we could tie a %namespace::) 
@@ -51,8 +52,4 @@ figure out good way to route request to specific child to maintain state
 find a good way to make Apache::exit override CORE::exit no matter where we are
 
 find more ways to decrease size of httpd (perl-runtime!)
-
-more tests for the test suite
-
-add more examples
 
