@@ -940,7 +940,7 @@ rflush(r)
 void
 read_client_block(r, buffer, bufsiz)
     Apache	r
-    char    *buffer
+    SV    *buffer
     int      bufsiz
 
     PREINIT:
@@ -948,29 +948,31 @@ read_client_block(r, buffer, bufsiz)
     int rc;
 
     PPCODE:
-    buffer = (char*)safemalloc(bufsiz);
     if ((rc = setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
 	aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, r->server, 
 		    "mod_perl: setup_client_block failed: %d", rc);
 	XSRETURN_UNDEF;
     }
 
-    if(should_client_block(r)) {
-	nrd = get_client_block(r, buffer, bufsiz);
-	r->read_length = 0;
+    if (should_client_block(r)) {
+        SvUPGRADE(buffer, SVt_PV);
+        SvGROW(buffer, bufsiz+1);
+        nrd = get_client_block(r, SvPVX(buffer), bufsiz);
+        r->read_length = 0;
     } 
 
     if (nrd > 0) {
-	XPUSHs(sv_2mortal(newSViv((long)nrd)));
-	sv_setpvn((SV*)ST(1), buffer, nrd);
+        XPUSHs(sv_2mortal(newSViv((long)nrd)));
 #ifdef PERL_STASH_POST_DATA
-        table_set(r->subprocess_env, "POST_DATA", buffer);
+        table_set(r->subprocess_env, "POST_DATA", SvPVX(buffer));
 #endif
-        safefree(buffer);
-	SvTAINTED_on((SV*)ST(1));
+        SvCUR_set(buffer, nrd);
+        *SvEND(buffer) = '\0';
+        SvPOK_on(buffer);
+        SvTAINTED_on(buffer);
     } 
     else {
-	ST(1) = &sv_undef;
+        sv_setsv(buffer, &sv_undef);
     }
 
 int
@@ -985,22 +987,25 @@ should_client_block(r)
 void
 get_client_block(r, buffer, bufsiz)
     Apache	r
-    char    *buffer
+    SV    *buffer
     int      bufsiz
 
     PREINIT:
     long nrd = 0;
 
     PPCODE:
-    buffer = (char*)palloc(r->pool, bufsiz);
-    nrd = get_client_block(r, buffer, bufsiz);
+    SvUPGRADE(buffer, SVt_PV);
+    SvGROW(buffer, bufsiz+1);
+    nrd = get_client_block(r, SvPVX(buffer), bufsiz);
     if ( nrd > 0 ) {
-	XPUSHs(sv_2mortal(newSViv((long)nrd)));
-	sv_setpvn((SV*)ST(1), buffer, nrd);
-	SvTAINTED_on((SV*)ST(1));
+        XPUSHs(sv_2mortal(newSViv((long)nrd)));
+        SvCUR_set(buffer, nrd);
+        *SvEND(buffer) = '\0';
+        SvPOK_on(buffer);
+        SvTAINTED_on(buffer);
     } 
     else {
-	ST(1) = &sv_undef;
+	sv_setsv(ST(1), &sv_undef);
     }
 
 int
