@@ -276,12 +276,6 @@ $Apache::ConstantsTable = {
       'APR_LOCK_SYSVSEM',
       'APR_LOCK_PROC_PTHREAD',
       'APR_LOCK_POSIXSEM',
-      'APR_LOCK_DEFAULT',
-      'APR_LOCK_FCNTL',
-      'APR_LOCK_FLOCK',
-      'APR_LOCK_SYSVSEM',
-      'APR_LOCK_PROC_PTHREAD',
-      'APR_LOCK_POSIXSEM',
       'APR_LOCK_DEFAULT'
     ],
     'limit' => [
