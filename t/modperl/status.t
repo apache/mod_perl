@@ -20,17 +20,17 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::HTTP_OK, 
+             Apache::HTTP_OK,
              $uri);
 }
 
 {
     my $uri = join '?', $base, Apache::DECLINED;
     my $code = GET_RC $uri;
-    
+
     # no Alias to map us to DocumentRoot
     ok t_cmp($code,
-             Apache::NOT_FOUND, 
+             Apache::NOT_FOUND,
              $uri);
 }
 
@@ -40,7 +40,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::NOT_FOUND, 
+             Apache::NOT_FOUND,
              $uri);
 }
 
@@ -49,7 +49,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::FORBIDDEN, 
+             Apache::FORBIDDEN,
              $uri);
 }
 
@@ -58,7 +58,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::SERVER_ERROR, 
+             Apache::SERVER_ERROR,
              $uri);
 }
 
@@ -69,7 +69,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::SERVER_ERROR, 
+             Apache::SERVER_ERROR,
              $uri);
 }
 
@@ -78,7 +78,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::SERVER_ERROR, 
+             Apache::SERVER_ERROR,
              $uri);
 }
 
@@ -87,7 +87,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::SERVER_ERROR, 
+             Apache::SERVER_ERROR,
              $uri);
 }
 
@@ -115,7 +115,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::HTTP_OK, 
+             Apache::HTTP_OK,
              $uri);
 }
 
@@ -125,7 +125,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::SERVER_ERROR, 
+             Apache::SERVER_ERROR,
              $uri);
 }
 
@@ -134,7 +134,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::HTTP_OK, 
+             Apache::HTTP_OK,
              $uri);
 }
 
@@ -143,7 +143,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::HTTP_OK, 
+             Apache::HTTP_OK,
              $uri);
 }
 
@@ -152,7 +152,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache::HTTP_OK, 
+             Apache::HTTP_OK,
              $uri);
 }
 
