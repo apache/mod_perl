@@ -12,6 +12,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 
 #include "modperl_flags.h"
 #include "modperl_hooks.h"
+#include "modperl_perl_global.h"
 
 #ifdef MP_USE_GTOP
 #include "modperl_gtop.h"
