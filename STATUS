@@ -135,6 +135,9 @@ Needs Patch or Further Investigation
 
 Open Issues or Core Enhancements:
 
+    * we need a script that will generate a bug report, similar to
+      mp2bug in mp2 (mp1bug?)
+
     * method handler cached-CVs
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=99789775715863&w=2
 	Status:
