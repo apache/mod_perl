@@ -260,8 +260,6 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 {
     modperl_config_srv_t *scfg = modperl_config_srv_new(p);
 
-    ap_mpm_query(AP_MPMQ_IS_THREADED, &scfg->threaded_mpm);
-
     if (!s->is_virtual) {
 
         /* give a chance to MOD_PERL_TRACE env var to set
@@ -335,7 +333,6 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     mrg->setvars = add->setvars;
     mrg->addvars = add->addvars;
 
-    merge_item(threaded_mpm);
     merge_item(server);
 
 #ifdef USE_ITHREADS

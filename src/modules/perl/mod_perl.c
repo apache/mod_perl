@@ -35,6 +35,13 @@ int modperl_threads_started(void)
     return MP_threads_started;
 }
 
+static int MP_threaded_mpm = 0;
+
+int modperl_threaded_mpm(void)
+{
+    return MP_threaded_mpm;
+}
+
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -397,7 +404,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
                                    base_server->server_hostname));
 
 #ifndef USE_ITHREADS
-    if (base_scfg->threaded_mpm) {
+    if (modperl_threaded_mpm()) {
         ap_log_error(APLOG_MARK, APLOG_ERR, 0, base_server,
                      "cannot use threaded MPM without ithreads enabled Perl");
         exit(1);
@@ -428,7 +435,7 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
     char *base_name = modperl_server_desc(s, p);
 #endif /* MP_TRACE */
 
-    if (!base_scfg->threaded_mpm) {
+    if (!modperl_threaded_mpm()) {
         MP_TRACE_i(MP_FUNC, "no clones created for non-threaded mpm\n");
         return;
     }
@@ -469,13 +476,11 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 
 void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
 {
-    int threaded_mpm;
-    ap_mpm_query(AP_MPMQ_IS_THREADED, &threaded_mpm);
+    ap_mpm_query(AP_MPMQ_IS_THREADED, &MP_threaded_mpm);
 
     MP_TRACE_g(MP_FUNC, "mod_perl globals are configured\n");
     
     modperl_global_init_pconf(pconf, pconf);
-    modperl_global_init_threaded_mpm(pconf, threaded_mpm);
     modperl_global_init_server_rec(pconf, s);
 
     modperl_tls_create_request_rec(pconf);
@@ -627,11 +632,9 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
                                          apr_pool_t *ptemp, server_rec *s)
 {
-    MP_dSCFG(s);
-
     /* in the threaded environment, no server_rec/process_rec
      * modifications should be done beyond this point */
-    if (scfg->threaded_mpm) {
+    if (modperl_threaded_mpm()) {
         MP_threads_started = 1;
     }
     
