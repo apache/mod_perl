@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/28 01:54:13 $]
+   Last modified at [$Date: 2003/08/30 02:39:45 $]
 
 Release:
 --------
@@ -193,12 +193,6 @@ Needs Patch or Further Investigation:
   segfault when perlloadmodule happens to start mod_perl from within a
   vhost. but because PerlSwitches from other tests are ignored, it
   can't trigger the mod_perl startup in the test suite.
-
-* slurp_filename's C implementation.
-
-  Status: 1.x's like patch posted: doug -1
-  Dependency: Doug promised to detail how it should be different in 2.0.  
-  Thread: http://marc.theaimsgroup.com/?t=100364777500004&r=1&w=2
 
 * ModPerl::Registry END {} block woes , described in details at the
   forwarded message from Jim Schueler

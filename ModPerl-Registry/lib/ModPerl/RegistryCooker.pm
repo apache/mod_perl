@@ -747,8 +747,8 @@ sub uncache_myself {
 }
 
 
-# XXX: these should go away when finfo() and slurp_filename() are
-# ported to 2.0 (don't want to depend on compat.pm)
+# XXX: should go away when finfo() is ported to 2.0 (don't want to
+# depend on compat.pm)
 sub Apache::RequestRec::my_finfo {
     my $r = shift;
     stat $r->filename;

@@ -16,8 +16,7 @@ RegistryCooker:
 
 - port Apache::PerlRunXS
 
-- replace the local implementation of slurp_filename() and finfo(),
-  when these will be ported to mod_perl 2.0
+- replace the local implementation of finfo() when ported to mod_perl 2.0
 
 - $r->chdir_file is not handled/implemented, see todo/api.txt unsafe!
 
