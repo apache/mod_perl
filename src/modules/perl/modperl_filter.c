@@ -103,7 +103,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 static void modperl_filter_mg_set(pTHX_ SV *obj, modperl_filter_t *filter)
 {
-    sv_magic(SvRV(obj), obj, '~', NULL, 0);
+    sv_magic(SvRV(obj), Nullsv, '~', NULL, -1);
     SvMAGIC(SvRV(obj))->mg_ptr = (char *)filter;
 }
 
