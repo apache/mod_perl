@@ -71,11 +71,14 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
 
 #ifdef USE_ITHREADS
     if (p && !MpHandlerPARSED(handler)) {
-        /*
-         * cannot update the handler structure at request time without
-         * locking, so just copy it
-         */
-        handler = modperl_handler_dup(p, handler);
+        MP_dSCFG(s);
+        if (scfg->threaded_mpm) {
+            /*
+             * cannot update the handler structure at request time without
+             * locking, so just copy it
+             */
+            handler = modperl_handler_dup(p, handler);
+        }
     }
 #endif
 
