@@ -1,6 +1,8 @@
 #ifndef MODPERL_XS_H
 #define MODPERL_XS_H
 
+#define MP_CODE_ATTRS(cv) (CvXSUBANY((CV*)cv).any_i32)
+
 #ifndef dAX
 #    define dAX    I32 ax = mark - PL_stack_base + 1
 #endif
@@ -17,6 +19,9 @@
 
 #define PUSHs_mortal_iv(iv) PUSHs(sv_2mortal(newSViv(iv)))
 #define PUSHs_mortal_pv(pv) PUSHs(sv_2mortal(newSVpv((char *)pv,0)))
+
+#define XPUSHs_mortal_iv(iv) EXTEND(SP, 1); PUSHs_mortal_iv(iv)
+#define XPUSHs_mortal_pv(pv) EXTEND(SP, 1); PUSHs_mortal_pv(pv)
 
 #define mpxs_sv_grow(sv, len) \
     (void)SvUPGRADE(sv, SVt_PV); \
