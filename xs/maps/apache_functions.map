@@ -228,11 +228,12 @@ MODULE=Apache::Filter PACKAGE=guess
  ap_pass_brigade
 !ap_register_input_filter
 !ap_register_output_filter
- ap_remove_output_filter
- ap_remove_input_filter
+-ap_remove_output_filter
+-ap_remove_input_filter
 !ap_save_brigade
  ap_filter_flush
- ap_fflush
+-ap_fflush
+ mpxs_Apache__Filter_fflush
 -ap_fputstrs
  int:DEFINE_ap_fputs | | \
      ap_filter_t *:f, apr_bucket_brigade *:bb, const char *:str
