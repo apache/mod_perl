@@ -341,16 +341,19 @@ sub save {
     (my $obj = $self->freeze) =~ s/^/    /;
     open my $fh, '>', $file or die "open $file: $!";
 
+    #work around autosplit braindeadness
+    my $package = 'package Apache::BuildConfig';
+
     print $fh <<EOF;
-package Apache::BuildConfig;
+$package;
 
 use Apache::Build ();
+
 sub new {
 $obj;
 }
 
 1;
-__END__
 EOF
 
     close $fh;
