@@ -286,10 +286,12 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                    modperl_server_desc(s, p));
     }
     else {
+#ifdef USE_ITHREADS
         /* virtual host w/ +Clone gets its own mip */
         if (MpSrvCLONE(scfg)) {
             modperl_interp_init(s, p, perl);
         }   
+#endif
         
         if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
