@@ -57,10 +57,10 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     }
 
     if (r) {
-        ap_log_rerror(file, line, APLOG_NOERRNO|level, 0, r, "%s", str);
+        ap_log_rerror(file, line, level, 0, r, "%s", str);
     }
     else {
-        ap_log_error(file, line, APLOG_NOERRNO|level, 0, s, "%s", str);
+        ap_log_error(file, line, level, 0, s, "%s", str);
     }
 
     if (svstr) {

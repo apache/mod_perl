@@ -18,7 +18,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             return APR_SUCCESS; /* XXX: HTTP_MOVED_TEMPORARILY ? */
         }
         else if (status != OK) {
-            ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO,
+            ap_log_error(APLOG_MARK, APLOG_WARNING,
                          0, r->server, "%s did not send an HTTP header",
                          r->uri);
         }
