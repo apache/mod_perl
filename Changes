@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fix Apache::exit() so it does it does not trigger a warning (maybe)
+
 change Apache::PerlRun's Apache class relationship from is-a to has-a
 [Ken Williams <ken@forum.swarthmore.edu>]
 
