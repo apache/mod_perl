@@ -206,13 +206,13 @@ sub MY::top_targets {
     $string .= <<'EOF';
 
 source_scan:
-	$(PERL) util/source_scan.pl
+	$(PERL) build/source_scan.pl
 
 xs_generate:
-	$(PERL) util/xs_generate.pl
+	$(PERL) build/xs_generate.pl
 
 etags:
-	$(SHELL) util/make_etags
+	$(SHELL) build/make_etags
 
 modperl_lib:
 	@(cd $(MODPERL_SRC) && $(MAKE));

@@ -1,5 +1,5 @@
 #get an idea of how much space the XS interface will eat
-#util/source_scan.pl must be run first
+#build/source_scan.pl must be run first
 #see pod/modperl_sizeof.pod
 
 use strict;

@@ -187,7 +187,7 @@ is a working copy here: http://perl.apache.org/~dougm/Scan.pm
 
 NOTE: source_scan.pl is a HEAVY process, do not be alarmed.
 
-% perl util/source_scan.pl apxs $apache_prefix/bin/apxs
+% perl build/source_scan.pl apxs $apache_prefix/bin/apxs
 
 =head1 Support
 
@@ -206,7 +206,7 @@ archive: http://marc.theaimsgroup.com/?l=apache-modperl-dev&r=1&w=2#apache-modpe
 
 reporting: Be sure to include the output of:
 
- % perl util/config.pl
+ % perl build/config.pl
 
 which generates the output from:
 
@@ -220,7 +220,7 @@ which generates the output from:
 
 =back
 
-You can also use I<util/bugreport.pl>.
+You can also use I<build/bugreport.pl>.
 
 If you get segmentation faults see the I<'make test' Debug> section.
 
