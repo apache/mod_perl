@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+PerlCleanupHandler is now run by a register_cleanup(), rather than an
+alias for PerlLogHandler 
+
 get rid of warning in Apache::RedirectLogFix [Brian Moseley <ix@maz.org>]
 
 added $r->internal_redirect method
