@@ -52,12 +52,6 @@ sub handler {
 
         my $vhost_failed;
         for my $vhost ($tree->lookup("VirtualHost")) {
-
-            # temporary fix for foo.example.com ServerName override
-            if (ref $vhost->{'ServerName'} eq 'ARRAY') {
-                $vhost->{'ServerName'} = $vhost->{'ServerName'}[0]
-            }
-
             unless (exists $vhosts{$vhost->{'ServerName'} 
                 || $vhost->{'PerlProcessConnectionHandler'}}) {
                 $vhost_failed++;
