@@ -371,7 +371,6 @@ MP_CMD_SRV_DECLARE(perldo)
     }
     
     if (handler) {
-        /*XXX: This will return a blessed APR::Table, but not a tied one ;-( */ 
         modperl_handler_make_args(aTHX_ &args,
                                   "Apache::CmdParms", parms,
                                   "APR::Table", options,

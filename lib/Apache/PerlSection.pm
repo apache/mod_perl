@@ -5,7 +5,6 @@ use warnings FATAL => 'all';
 
 our $VERSION = '0.01';
 
-
 use Apache::CmdParms ();
 use Apache::Directive ();
 
@@ -18,7 +17,7 @@ sub new {
 
 sub server     { return shift->{'parms'}->server() }
 sub directives { return shift->{'directives'} ||= [] }
-sub package    { return shift->{'args'}->get('package') }
+sub package    { return shift->{'args'}->{'package'} }
 
 sub handler : method {
     my($self, $parms, $args) = @_;
