@@ -214,9 +214,9 @@ the description of the Apache C API at http://www.apache.org/docs/.
 
 The request object holds all the information that the server needs to
 service a request.  Apache B<Perl*Handler>s will be given a reference to the
-request object as parameter and may choose update or use it in various
+request object as parameter and may choose to update or use it in various
 ways.  Most of the methods described below obtain information from or
-updates the request object.
+update the request object.
 The perl version of the request object will be blessed into the B<Apache> 
 package, it is really a C<request_rec*> in disguise.
 
@@ -337,7 +337,7 @@ The number of bytes sent to the client, handy for logging, etc.
 
 =item $r->the_request
 
-The request line send by the client, handy for logging, etc.
+The request line sent by the client, handy for logging, etc.
 
 =item $r->proxyreq
 
@@ -420,7 +420,7 @@ This method is used to read data from the client,
 looping until it gets all of C<$bytes_to_read> or a timeout happens.
 
 In addition, this method sets a timeout before reading with
-C<$r-E<gt>hard_timeout>
+C<$r-E<gt>hard_timeout>.
 
 =item $r->get_remote_host
 
@@ -470,11 +470,11 @@ this variable.
 =item $c->remote_ip
 
 The dotted decimal representation of the remote client's IP address.
-This is set by then server when the connection record is created so
+This is set by the server when the connection record is created so
 is always defined.
 
 You can also set this value by providing an argument to it. This is
-helpful if your server is behind a squid accelerator proxy which add
+helpful if your server is behind a squid accelerator proxy which adds
 a HTTP_X_FORWARDED_FOR header.
 
 =item $c->local_addr
