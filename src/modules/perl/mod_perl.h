@@ -154,4 +154,46 @@ typedef void MP_FUNC_NONSTD_T(modperl_var_modify_t) (apr_table_t *,
 
 APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
 
+/*
+ * perl context overriding and restoration is required when
+ * PerlOptions +Parent/+Clone is used in vhosts, and perl is used to
+ * at the server startup. So that <Perl> sections, PerlLoadModule,
+ * PerlModule and PerlRequire are all run using the right perl context
+ * and restore to the original context when they are done.
+ *
+ * As of perl-5.8.3 it's unfortunate that it uses PERL_GET_CONTEXT and
+ * doesn't rely on the passed pTHX internally. When and if perl is
+ * fixed to always use pTHX if available, this context switching mess
+ * can be removed.
+ */
+#ifdef USE_ITHREADS
+
+#define MP_PERL_CONTEXT_DECLARE                 \
+    PerlInterpreter *orig_perl;                 \
+    pTHX;
+
+#define MP_PERL_CONTEXT_STORE                   \
+    orig_perl = PERL_GET_CONTEXT;
+
+#define MP_PERL_CONTEXT_OVERRIDE(new_perl)      \
+    aTHX = new_perl;                            \
+    PERL_SET_CONTEXT(aTHX);
+
+#define MP_PERL_CONTEXT_STORE_OVERRIDE(new_perl)        \
+    MP_PERL_CONTEXT_STORE;                              \
+    MP_PERL_CONTEXT_OVERRIDE(new_perl)
+
+#define MP_PERL_CONTEXT_RESTORE                 \
+    PERL_SET_CONTEXT(orig_perl);
+
+#else /* #ifdef USE_ITHREADS */
+
+#define MP_PERL_CONTEXT_DECLARE
+#define MP_PERL_CONTEXT_STORE
+#define MP_PERL_CONTEXT_OVERRIDE(perl)
+#define MP_PERL_CONTEXT_STORE_OVERRIDE(new_perl)
+#define MP_PERL_CONTEXT_RESTORE
+
+#endif /* end of #ifdef USE_ITHREADS */
+
 #endif /*  MOD_PERL_H */
