@@ -26,7 +26,7 @@ sub handler {
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
         chomp $buff;
-        $last++ if $buff eq 'good bye';
+        $last++ if $buff eq 'Good bye, Eliza';
         $buff = $mybot->transform( $buff ) . "\n";
         $socket->send($buff, length $buff);
         last if $last;
