@@ -163,7 +163,7 @@ perl_inc="`$perl_interp -MConfig -e 'print "$Config{archlibexp}/CORE"'`"
 perl_privlibexp="`$perl_interp -MConfig -e 'print $Config{privlibexp}'`"
 perl_archlibexp="`$perl_interp -MConfig -e 'print $Config{archlibexp}'`"
 perl_xsinit="$perl_interp -MExtUtils::Embed -e xsinit"
-perl_xsubpp="$perl_interp ${perl_privlibexp}/ExtUtils/xsubpp -typemap ${perl_privlibexp}/ExtUtils/typemap"
+perl_xsubpp="$perl_interp ${perl_privlibexp}/ExtUtils/xsubpp -nolinenumbers -typemap ${perl_privlibexp}/ExtUtils/typemap"
 perl_ar="`$perl_interp -MConfig -e 'print $Config{ar}'`"
 perl_ranlib=`$perl_interp -MConfig -e 'print $Config{ranlib}'`
 
