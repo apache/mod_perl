@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+change apaci/Makefile.tmpl and src/modules/perl/Makefile so Perl's
+include path comes before /usr/local/include, e.g. to make sure Perl's 
+patchlevel.h is used, thanks to Ryan Morgan for the spot
+
 avoid duplicate buffer copy in {read,get}_client_block by reading
 directly into Perl's SV buffer
 

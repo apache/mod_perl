@@ -13,7 +13,7 @@
 #   Reassemble mod_perl parameters
 #   from Perl and Apache parameters
 MP_CC=$(PERL_CC)
-MP_CFLAGS=$(PERL_OPTIMIZE) $(PERL_CCFLAGS) -I$(PERL_INC) \
+MP_CFLAGS=$(PERL_OPTIMIZE) -I$(PERL_INC) $(PERL_CCFLAGS) \
           $(PERL_DEFS) $(INCLUDES) $(CFLAGS)
 MP_CFLAGS_SHLIB=$(PERL_CCCDLFLAGS) $(MP_CFLAGS)
 MP_LD=$(PERL_LD)
