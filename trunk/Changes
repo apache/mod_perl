@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+Apache::FakeRequest now isa Apache so code that is carefull about
+$r and checks that $r->isa('Apache') will not fail [David Wheeler
+<david@kineticode.com]
+
 Add Mac OS X support to Apache::SizeLimit [David Wheeler
 <david@kineticode.com>]
 
