@@ -159,15 +159,13 @@ sub default_handler {
         return $rc unless $rc == Apache::OK;
     }
 
-    # handlers shouldn't set $r->status but return it
+    # handlers shouldn't set $r->status but return it, so we reset the
+    # status after running it
     my $old_status = $self->[REQ]->status;
     my $rc = $self->run;
-    my $new_status = $self->[REQ]->status;
-
-    # only if the script has changed the status, reset to the old
-    # status and return the new status
-    return $old_status != $new_status 
-        ? $self->[REQ]->status($old_status)
+    my $new_status = $self->[REQ]->status($old_status);
+    return ($rc == Apache::OK && $old_status != $new_status)
+        ? $new_status
         : $rc;
 }
 
