@@ -465,6 +465,13 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
             exit(1); /*XXX*/
         }
     }
+
+#ifdef USE_ITHREADS
+    /* after other parent perls were started in vhosts, make sure that
+     * the context is set to the base_perl */
+    PERL_SET_CONTEXT(base_perl);
+#endif
+
 }
 
 #ifdef USE_ITHREADS
