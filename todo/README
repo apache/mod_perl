@@ -1,14 +1,17 @@
 this directory contains notes on whats left to be done, covering all
 areas including:
 
-o interptreter management
-o Perl interfaces to Apache structures
-o Perl interfaces to Apache API functions
-o I/O + filtering
+o interpreter management
+o hook code and callback mechanism
 o stacked handlers, method handlers
+o Perl interfaces to Apache/APR structures
+o Perl interfaces to Apache/APR API functions
+o I/O + filtering
+o protocol module support
 o <Perl> sections
 o directive handlers
 o cgi emulation, i.e. %ENV/END{}/@INC/exit() management
+o 1.x compat mode
 o pure Perl Apache::* extras (e.g. Apache::Status, etc)
 o build framework
 o test framework
@@ -16,6 +19,8 @@ o examples
 o docs
 
 somewhat prioritized into:
+
+- api.txt
 
 - missing_old_features.txt
 

@@ -2,9 +2,19 @@ this file contains known missing features from 1.3, these are to be
 implemented unless otherwise noted.  there are more missing features
 listed in deprecated_features.txt
 
-- test suite
-
 - DirectiveHandlers
+
+- PerlCleanupHandler
+
+- Perl{Set,Add}Var
+
+- PerlSetupEnv (currently on by default w/ SetHandler perl-script)
+
+- PerlSetEnv, PerlPassEnv
+
+- PerlModule, PerlRequire: not yet implemented
+
+- pod directives (=pod,=back,=cut) and __END__
 
 - <Perl> sections
 
@@ -13,8 +23,6 @@ listed in deprecated_features.txt
 - PerlOpCodeMask (experimental in 1.xx)
 
 - PerlFreshRestart
-
-- PerlSendHeader
 
 - cgi emulation, i.e. %ENV/END{}/@INC/exit() management
 
@@ -27,13 +35,11 @@ listed in deprecated_features.txt
 core modules:
 ------------
 
-- Apache, Apache::Server, Apache::Connection
+- Apache::ModuleConfig
 
-- Apache::Constants, Apache::Constants::Exports 
+- Apache::File, Apache::Util
 
-- Apache::ModuleConfig, Apache::CmdParms
-
-- Apache::File, Apache::Log, Apache::URI, Apache::Util
+- see also: xs/maps/apache_function.map
 
 addon modules:
 -------------
