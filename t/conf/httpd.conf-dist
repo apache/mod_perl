@@ -10,6 +10,20 @@ mod_perl test configuration file
 
 umm, we use this to test mod_perl
 
+=over to apache
+
+ #-Tw
+ PerlTaintCheck On
+ PerlWarn On
+
+=back to pod
+
+=over 4
+
+=item Test that mod_perl skips this
+
+=back
+
 =cut
 
 #make sure all regex stuff works
@@ -32,9 +46,6 @@ DocumentRoot ./t/docs
 
 #mod_perl stuff
 
-#-Tw
-PerlTaintCheck On
-PerlWarn On
 
 PerlPassEnv TERM EDITOR NOCHANCE USER
 PerlSetEnv KeyForPerlSetEnv OK

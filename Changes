@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+pod support '=for apache/=end apache' replaced with:
+ =over to apache
+ #directives for apache
+ =back to pod
+
 Apache::FakeRequest now supports Apache::Constants and is documented
 [Andrew Ford <A.Ford@ford-mason.co.uk>]
 
