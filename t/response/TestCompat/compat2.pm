@@ -10,7 +10,7 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use Apache::compat ();
-use Apache::Constants qw(OK);
+use Apache::Constants qw(OK REMOTE_HOST);
 
 my %string_size = (
     '-1'            => "    -",
@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 51;
+    plan $r, tests => 52;
 
     $r->send_http_header('text/plain');
 
@@ -195,6 +195,7 @@ sub handler {
 
     # $r->get_remote_host
     ok $r->get_remote_host() || 1;
+    ok $r->get_remote_host(Apache::REMOTE_HOST) || 1;
 
     # Apache::Util::size_string
     {
