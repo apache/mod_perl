@@ -2,13 +2,6 @@
 # Registry specific bugs #
 ##########################
 
-* protect registry classes from bad scripts which try to assassinate $r
-  Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106153785129782&w=2
-  Status: (stas) i'm not sure whether we really need this feature,
-          since it's the first time in the last 6 years we had a
-          problem with bad user code of this kind. let's keep it in
-          the patches until we have a real need for it.
-  Priority: very low
 
 * An open issue with chdir, which is process-scoped. Arthur Bergman
   has started the work on ex::threads::safecwd, which is discussed
