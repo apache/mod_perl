@@ -14,8 +14,6 @@ RegistryCooker:
 
 ### missing features ###
 
-- need to port $Apache::__T, to test against when user supplies -T flag.
-
 - port Apache::PerlRunXS
 
 - replace the local implementation of slurp_filename() and finfo(),

@@ -10,10 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
-perl 5.7.3+ has a built-in ${^TAINT} to test whether running under
--(T|t). Backport ${^TAINT} for mod_perl running under 5.6.0-5.7.3,
-(what used to be $Apache::__T.  $Apache::__T is available too, but
-deprecated. [Stas]
+warn on using -T in ModPerl::Registry scripts when mod_perl is not
+running with -T [Stas]
+
+perl 5.7.3+ has a built-in ${^TAINT} to test whether it's running
+under -(T|t). Backport ${^TAINT} for mod_perl running under
+5.6.0-5.7.3, (what used to be $Apache::__T.  $Apache::__T is available
+too, but deprecated. [Stas]
 
 add PerlChildExitHandler implementation [Stas]
 
