@@ -28,7 +28,7 @@ sub handler {
     ok UNIVERSAL::isa($cmd, 'Apache::Command');
     
     while ($cmd) {
-        if ($cmd->name eq 'PerlHandler') {
+        if ($cmd->name eq 'PerlResponseHandler') {
             ok t_cmp($cmd->args_how, Apache::ITERATE, 'args_how');
             ok t_cmp($cmd->errmsg, qr/Subroutine name/, 'errmsg');
             ok t_cmp($cmd->req_override, Apache::OR_ALL, 'req_override');
