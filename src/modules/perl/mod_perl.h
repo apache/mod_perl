@@ -12,10 +12,6 @@
 #undef dNOOP
 #define dNOOP extern int __attribute__ ((unused)) Perl___notused
 
-/*XXX*/
-#undef TRUE
-#undef FALSE
-
 #include "ap_mmn.h"
 #include "httpd.h"
 #include "http_config.h"
