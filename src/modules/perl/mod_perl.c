@@ -139,10 +139,15 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 #ifdef USE_ITHREADS
 static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 {
-#ifdef MP_TRACE
     modperl_srv_config_t *base_scfg = modperl_srv_config_get(s);
+#ifdef MP_TRACE
     char *base_name = modperl_server_desc(s, p);
 #endif /* MP_TRACE */
+
+    if (!base_scfg->threaded_mpm) {
+        MP_TRACE_i(MP_FUNC, "no clones created for non-threaded mpm\n");
+        return;
+    }
 
     for (; s; s=s->next) {
         MP_dSCFG(s);
