@@ -181,6 +181,31 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 }
 #endif
 
+
+static void package2filename(apr_pool_t *p, const char *package,
+                             char **filename, int *len)
+{
+    *filename = apr_palloc(p, (strlen(package)+4)*sizeof(char));
+    const char *s;
+    char *d;
+
+    for (s = package, d = *filename; *s; s++, d++) {
+        if (*s == ':' && s[1] == ':') {
+            *d = '/';
+            s++;
+        }
+        else {
+            *d = *s;
+        }
+    }
+    *d++ = '.';
+    *d++ = 'p';
+    *d++ = 'm';
+    *d   = '\0';
+
+    *len = d - *filename;
+}
+
 /* currently used for complex filters attributes parsing */
 /* XXX: may want to generalize it for any handlers */
 #define MODPERL_MGV_DEEP_RESOLVE(handler, p) \
@@ -259,23 +284,42 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         }
     }
 
-    if (!(stash || (stash = gv_stashpv(name, FALSE))) &&
-        MpHandlerAUTOLOAD(handler)) {
-        MP_TRACE_h(MP_FUNC,
-                   "package %s not defined, attempting to load\n", name);
+    if (!stash && MpHandlerAUTOLOAD(handler)) {
+        int len;
+        char *filename;
+        SV **svp;
 
-        if (modperl_require_module(aTHX_ name, FALSE)) {
-            MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
-            if (!(stash = gv_stashpv(name, FALSE))) {
-                MP_TRACE_h(MP_FUNC, "%s package still does not exist\n",
-                           name);
+        package2filename(p, name, &filename, &len);
+        svp = hv_fetch(GvHVn(PL_incgv), filename, len, 0);
+
+        if (!(svp && *svp != &PL_sv_undef)) { /* not in %INC */
+            MP_TRACE_h(MP_FUNC,
+                       "package %s not in %INC, attempting to load '%s'\n",
+                       name, filename);
+
+            if (modperl_require_module(aTHX_ name, FALSE)) {
+                MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
+            }
+            else {
+                MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
                 return 0;
             }
         }
         else {
-            MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
-            return 0;
+            MP_TRACE_h(MP_FUNC, "package %s seems to be loaded\n"
+                       "  $INC{%s)='%s';\n",
+                       name, filename, SvPV_nolen(*svp));
         }
+    }
+
+    /* try to lookup the stash only after loading the module, to avoid
+     * the case where a stash is autovivified by a user before the
+     * module was loaded, preventing from loading the module
+     */
+    if (!(stash || (stash = gv_stashpv(name, FALSE)))) {
+        MP_TRACE_h(MP_FUNC, "package %s seems to be loaded, "
+                   "but can't find its stash\n", name);
+        return 0;
     }
 
     if ((gv = gv_fetchmethod(stash, handler_name)) && (cv = GvCV(gv))) {
