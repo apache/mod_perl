@@ -98,7 +98,27 @@ sub my_import {
     }
 }
 
+my @default_opts = qw(CCFLAGS LIBS INC OPTIMIZE LDDLFLAGS TYPEMAPS);
+my @default_dlib_opts = qw(OTHERLDFLAGS);
+
+sub opt_CCFLAGS {
+    my $build = build_config();
+    $build->perl_ccopts . $build->ap_ccopts;
+}
+
+sub opt_LIBS {
+    my $build = build_config();
+    join ' ', $build->apache_libs, $build->modperl_libs;
+}
+
+sub opt_INC          { build_config()->inc;                      }
+sub opt_OPTIMIZE     { build_config()->perl_config('optimize');  }
+sub opt_LDDLFLAGS    { build_config()->perl_config('lddlflags'); }
+sub opt_TYPEMAPS     { build_config()->typemaps;                 }
+sub opt_OTHERLDFLAGS { build_config()->otherldflags;             }
+
 sub WriteMakefile {
+    my %args = @_;
 
     # override ExtUtils::MakeMaker::mv_all_methods
     # can't do that on loading since ModPerl::MM is also use()'d
@@ -111,21 +131,24 @@ sub WriteMakefile {
     my $build = build_config();
     my_import(__PACKAGE__);
 
-    my $libs = join ' ', $build->apache_libs, $build->modperl_libs;
-    my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
+    # set top-level WriteMakefile's values if weren't set already
+    for (@default_opts) {
+        no strict 'refs';
+        $args{$_} = "opt_$_"->() unless exists $args{$_}; # already defined
+    }
 
-    my @opts = (
-        INC       => $build->inc,
-        CCFLAGS   => $ccflags,
-        OPTIMIZE  => $build->perl_config('optimize'),
-        LDDLFLAGS => $build->perl_config('lddlflags'),
-        LIBS      => $libs,
-        TYPEMAPS  => $build->typemaps,
-        dynamic_lib => { OTHERLDFLAGS => $build->otherldflags },
-    );
+    # set dynamic_lib-level WriteMakefile's values if weren't set already
+    $args{dynamic_lib} ||= {};
+    my $dlib = $args{dynamic_lib};
+    for (@default_dlib_opts) {
+        no strict 'refs';
+        $dlib->{$_} = "opt_$_"->() unless exists $dlib->{$_};
+    }
 
-    ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
+    ExtUtils::MakeMaker::WriteMakefile(%args);
 }
+
+#### MM overrides ####
 
 sub ModPerl::MM::MY::constants {
     my $self = shift;
