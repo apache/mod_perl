@@ -21,12 +21,18 @@ sub handler {
     $r->print("This is a header\n")
         unless $file eq 'noexist-n-noheader.txt';
 
-    my $rc = $r->sendfile($file);
-    unless ($rc == APR::SUCCESS) {
-        # warn APR::Error::strerror($rc);
-        return $file eq 'noexist-n-noheader.txt'
-            ? Apache::NOT_FOUND
-            : $rc;
+    if ($file eq 'noexist-n-nocheck.txt') {
+        eval { $r->sendfile($file) };
+        return int $@;
+    }
+    else {
+        my $rc = $r->sendfile($file);
+        unless ($rc == APR::SUCCESS) {
+            # warn APR::Error::strerror($rc);
+            return $file eq 'noexist-n-noheader.txt'
+                ? Apache::NOT_FOUND
+                : $rc;
+        }
     }
 
     $r->print("This is a footer\n");
