@@ -471,6 +471,10 @@ The dotted decimal representation of the remote client's IP address.
 This is set by then server when the connection record is created so
 is always defined.
 
+You can also set this value by providing an argument to it. This is
+helpful if your server is behind a squid accelerator proxy which add
+a HTTP_X_FORWARDED_FOR header.
+
 =item $c->local_addr
 
 A packed SOCKADDR_IN in the same format as returned by
