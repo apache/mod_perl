@@ -35,8 +35,6 @@ replace the memory allocation for modperl filter handlers to use a
 temporary subpool of the ap_filter_t object. previously using perl's
 safemalloc had problems on win32 (randomly my_perl == NULL) [Stas]
 
-Apache::Module remove_loaded_module re-added [Gozer]
-
 Disable Apache::HookRun::run_create_request -- it's already run
 internally by Apache::RequestRec->new [Stas]
 
@@ -50,7 +48,7 @@ method [Gozer]
 Apache::Module changes [Gozer]
 - readwrite => readonly:
     cmds, next, name, module_index, minor_version, version
-- removed: remove_loaded_module, remove_module
+- removed: remove_module
 
 ensure that a sub-dir Apache-Test exists in the source distro (this is
 a requirement, since the test suite relies on the particular
