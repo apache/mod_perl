@@ -135,6 +135,27 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
     return nrd;
 }
 
+static MP_INLINE
+apr_status_t modperl_setup_client_block(request_rec *r)
+{
+    if (!r->read_length) {
+        apr_status_t rc;
+
+        /* only do this once per-request */
+        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
+            ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0,
+                         r->server,
+                         "mod_perl: ap_setup_client_block failed: %d", rc);
+            return rc;
+        }
+    }
+
+    return APR_SUCCESS;
+}
+
+#define modperl_should_client_block(r) \
+    (r->read_length || ap_should_client_block(r))
+
 /* alias */
 #define mpxs_Apache__RequestRec_READ mpxs_Apache__RequestRec_read
 
@@ -146,17 +167,11 @@ static long mpxs_Apache__RequestRec_read(request_rec *r,
     long nrd = 0;
     int rc;
 
-    if (!r->read_length) {
-        /* only do this once per-request */
-        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-            ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0,
-                         r->server,
-                         "mod_perl: ap_setup_client_block failed: %d", rc);
-            return 0;
-        }
+    if ((rc = modperl_setup_client_block(r)) != APR_SUCCESS) {
+        return 0;
     }
 
-    if (r->read_length || ap_should_client_block(r)) {
+    if (modperl_should_client_block(r)) {
         /* ap_should_client_block() will return 0 if r->read_length */
         mpxs_sv_grow(buffer, bufsiz+offset);
         nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
