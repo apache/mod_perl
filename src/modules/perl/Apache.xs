@@ -1716,6 +1716,12 @@ finfo(r)
 
     CODE:
     statcache = r->finfo;
+    if (r->finfo.st_mode) {
+	laststatval = 0;
+    }
+    else {
+	laststatval = -1;
+    }
     if(GIMME_V == G_VOID) XSRETURN_UNDEF;
     RETVAL = newRV_noinc((SV*)gv_fetchpv("_", TRUE, SVt_PVIO));
 

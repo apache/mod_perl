@@ -931,8 +931,7 @@ int PERL_LOG_HOOK(request_rec *r)
 
 static void per_request_cleanup(request_rec *r)
 {
-    perl_request_config *cfg = 
-	get_module_config(r->request_config, &perl_module);
+    dPPREQ;
 
     if(!cfg) {
 	return;

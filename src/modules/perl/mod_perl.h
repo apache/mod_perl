@@ -317,6 +317,9 @@ extern U32	mp_debug;
 int dstatus = DECLINED; \
 int status = dstatus
 
+#define dPPREQ \
+   perl_request_config *cfg = get_module_config(r->request_config, &perl_module)
+
 #define dPPDIR \
    perl_dir_config *cld = get_module_config(r->per_dir_config, &perl_module)   
 
