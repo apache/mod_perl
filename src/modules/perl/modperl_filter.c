@@ -22,10 +22,10 @@ static const char* next_filter_name(ap_filter_t *f)
     const char *name = f->frec->name;
 
     /* frec->name is always lowercased */ 
-    if (ap_strcasecmp_match(name, MP_FILTER_CONNECTION_INPUT_NAME)  ||
-        ap_strcasecmp_match(name, MP_FILTER_CONNECTION_OUTPUT_NAME) ||
-        ap_strcasecmp_match(name, MP_FILTER_REQUEST_INPUT_NAME)     ||
-        ap_strcasecmp_match(name, MP_FILTER_REQUEST_OUTPUT_NAME) ) {
+    if (!strcasecmp(name, MP_FILTER_CONNECTION_INPUT_NAME)  ||
+        !strcasecmp(name, MP_FILTER_CONNECTION_OUTPUT_NAME) ||
+        !strcasecmp(name, MP_FILTER_REQUEST_INPUT_NAME)     ||
+        !strcasecmp(name, MP_FILTER_REQUEST_OUTPUT_NAME) ) {
         return ((modperl_filter_ctx_t *)f->ctx)->handler->name;
     }
     else {
