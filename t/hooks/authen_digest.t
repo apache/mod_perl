@@ -24,13 +24,12 @@ my $location = '/TestHooks__authen_digest';
 
 {
     my $response = GET "$location?fail";
-    
+
     ok t_cmp($response->code,
              401,
              'handler returned HTTP_UNAUTHORIZED');
 
     my $wwwauth = $response->header('WWW-Authenticate');
-
 
     t_debug('response had a WWW-Authenticate header');
     ok ($wwwauth);
