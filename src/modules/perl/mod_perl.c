@@ -492,9 +492,10 @@ void perl_startup (server_rec *s, pool *p)
     dPSRV(s);
     SV *pool_rv, *server_rv;
     GV *gv, *shgv;
+    char *ap_v = ap_get_server_version();
 
 #if MODULE_MAGIC_NUMBER >= 19980507
-    if (!strstr(ap_get_server_version(), MOD_PERL_STRING_VERSION)) {
+    if (!strstr(ap_v, MOD_PERL_STRING_VERSION) && strnEQ(ap_v,"Apache/",7)) {
 	ap_add_version_component(MOD_PERL_STRING_VERSION);
 	if(PERL_RUNNING()) {
 	    if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
