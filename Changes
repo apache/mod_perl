@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.29_01-dev
 
+Fix a bug in Makefile.PL for Win32 where it would, in
+certain cases, pick up the wrong Perl include directory
+[Steve Hay]
+
 =item 1.29 - Oct 7, 2003
 
 Add a workaround for the 'rand' bug for perl 5.8.1 (compiled with

@@ -2229,7 +2229,7 @@ sub win32_fix_dsp {
     }
     elsif (/ADD CPP/) {
       my $apache_inc = win32_fix_path_dsp($win32_path{APACHE_INC});
-      s!(/D "WIN32")!/I "$apache_inc"  /I "$apache_inc/../os/win32" /I "$perl_inc" $1!;
+      s!/I "\\Perl\\lib\\CORE"!/I "$apache_inc" /I "$apache_inc/../os/win32" /I "$perl_inc"!;
       s!(/D "WIN32")!$1 /D "EAPI" ! if $win32_args{EAPI}; 
       print NEWDSP $_;
     }
