@@ -41,6 +41,6 @@ sub handler {
 1;
 __END__
 SetHandler perl-script
-<IfDefine PERL_ITHREADS>
+<IfDefine PERL_USEITHREADS>
     PerlInterpScope handler
 </IfDefine>

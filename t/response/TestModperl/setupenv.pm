@@ -181,7 +181,7 @@ __DATA__
 
     KeepAlive On
 
-    <IfDefine PERL_ITHREADS>
+    <IfDefine PERL_USEITHREADS>
         PerlInterpScope connection
     </Ifdefine>
 
