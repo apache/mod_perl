@@ -143,7 +143,7 @@ USE_DSO	 	Build mod_perl as a dso
 INST_APACHE2	Install *.pm relative to Apache2/ directory
 PROMPT_DEFAULT	Accept default value for all would-be prompts
 OPTIONS_FILE	Read options from given file
-DYNAMIC		Build Apache::*.xs as dynamic extensions
+STATIC_EXTS	Build Apache::*.xs as static extensions
 APXS            Path to apxs
 XS_GLUE_DIR     Directories containing extension glue
 INCLUDE_DIR     Add directories to search for header files

@@ -55,9 +55,9 @@ Generate xs code from parsed source headers in I<xs/tables/$httpd_version>.
 
 Build mod_perl as a DSO
 
-=item MP_DYNAMIC
+=item MP_STATIC_EXTS
 
-Build Apache::*.xs as dynamic extensions
+Build Apache::*.xs as static extensions
 
 =item MP_USE_GTOP
 
