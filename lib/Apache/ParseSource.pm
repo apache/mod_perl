@@ -15,6 +15,8 @@
 package Apache::ParseSource;
 
 use strict;
+use warnings FATAL => 'all';
+
 use Apache::Build ();
 use Config;
 use File::Basename;
@@ -112,7 +114,7 @@ sub scan {
 
 sub include_dirs {
     my $self = shift;
-    ($self->config->apxs(-q => 'INCLUDEDIR'),
+    ($self->config->apxs('-q' => 'INCLUDEDIR'),
      $self->config->mp_include_dir);
 }
 
@@ -137,7 +139,7 @@ sub find_includes {
                                     mod_proxy mod_ssl ssl_ apr_anylock
                                     apr_rmm ap_config mod_log_config
                                     mod_perl modperl_);
-        my $unwanted = qr|^$unwanted|;
+        $unwanted = qr|^$unwanted|;
         my $wanted = '';
 
         push @includes, find_includes_wanted($wanted, $unwanted, @dirs);
