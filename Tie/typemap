@@ -1,0 +1,3 @@
+TYPEMAP
+Apache::TieHashTable	T_PTROBJ
+
