@@ -105,7 +105,7 @@ static void perl_restore_av(void *data)
     perl_save_av *save_av = (perl_save_av *)data;
 
     if(save_av->fill != DONE) {
-	AvFILL(*save_av->ptr) = save_av->fill;
+	AvFILLp(*save_av->ptr) = save_av->fill;
     }
     else if(save_av->av != Nullav) {
 	*save_av->ptr = save_av->av;
@@ -142,7 +142,7 @@ static void set_handler_base(void *ptr, perl_handler_table *tab, pool *p, SV *sv
     if((sv == &sv_undef) || (SvIOK(sv) && SvIV(sv) == DONE)) {
 	if(AvTRUE(*av)) {
 	    save_av->fill = AvFILL(*av);
-	    AvFILL(*av) = -1;
+	    AvFILLp(*av) = -1;
 	}
     }
     else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV) {
@@ -894,8 +894,39 @@ read_client_block(r, buffer, bufsiz)
     long nrd = 0;
 
     PPCODE:
+    if(dowarn) warn("Apache->read_client_block is deprecated");
     buffer = (char*)palloc(r->pool, bufsiz);
     PERL_READ_FROM_CLIENT;
+    if ( nrd > 0 ) {
+	XPUSHs(sv_2mortal(newSViv((long)nrd)));
+	sv_setpvn((SV*)ST(1), buffer, nrd);
+	SvTAINTED_on((SV*)ST(1));
+    } 
+    else {
+	ST(1) = &sv_undef;
+    }
+
+int
+setup_client_block(r, policy=REQUEST_CHUNKED_ERROR)
+    Apache	r
+    int policy
+
+int
+should_client_block(r)
+    Apache	r
+
+void
+get_client_block(r, buffer, bufsiz)
+    Apache	r
+    char    *buffer
+    int      bufsiz
+
+    PREINIT:
+    long nrd = 0;
+
+    PPCODE:
+    buffer = (char*)palloc(r->pool, bufsiz);
+    nrd = get_client_block(r, buffer, bufsiz);
     if ( nrd > 0 ) {
 	XPUSHs(sv_2mortal(newSViv((long)nrd)));
 	sv_setpvn((SV*)ST(1), buffer, nrd);
@@ -1372,17 +1403,14 @@ bytes_sent(r, ...)
     RETVAL
 
 long
-read_length(r, ...)
+read_length(r, len=-1)
     Apache	r
+    long len
 
     CODE:
-    {
-#if MODULE_MAGIC_NUMBER >= 19970622
     RETVAL = r->read_length;
-    if(items > 1)
-        r->read_length = (long)SvIV(ST(1));
-#endif
-    }
+    if(len > -1)
+        r->read_length = len;
 
 #    /* MIME header environments, in and out.  Also, an array containing
 #   * environment variables to be passed to subprocesses, so people can

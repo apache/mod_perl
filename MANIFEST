@@ -93,6 +93,7 @@ t/internal/rwrite.t
 t/internal/stacked.t
 #t/internal/resolver.t
 t/internal/taint.t
+t/net/perl/file_upload.cgi
 t/net/perl/qredirect.pl
 t/net/perl/hooks.pl
 t/net/perl/action.pl

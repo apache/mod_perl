@@ -75,6 +75,10 @@
 #define ERRHV GvHV(errgv)
 #endif
 
+#ifndef AvFILLp
+#define AvFILLp(av)	((XPVAV*)  SvANY(av))->xav_fill
+#endif
+
 #define MP_EXISTS_ERROR(k) \
 ERRHV && hv_exists(ERRHV, k, strlen(k))
 
