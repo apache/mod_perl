@@ -11,7 +11,7 @@ sub handler {
 				   $r->dir_config("UndefOnReload")) || '') eq "on");
     my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug") || '') eq "on");
     $DEBUG = $r->dir_config("StatINC_Debug") if ref($r) && $r->dir_config("StatINC_Debug");
-    
+
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
 	my $mtime = (stat $file)[9];
@@ -20,16 +20,38 @@ sub handler {
 	unless(defined $Stat{$file}) { 
 	    $Stat{$file} = $^T;
 	}
+        # if modified, reload the module
 	if($mtime > $Stat{$file}) {
+	    # make sure file's prefix is in @INC
+	    my $found_in_inc;
+	    for (@INC) {
+	       if(index($file,$_) == 0) {
+	          $found_in_inc = 1;
+	          last;
+	       }
+	    }
+
+            if(!$found_in_inc) {
+               my $inc_dir = substr($file, 0, length($file)-length($key)-1);
+               push @INC, $inc_dir;
+	       warn "Apache::StatINC: process $$ adding $inc_dir to \@INC\n"
+                   if $DEBUG > 0;
+            }
+
 	    if($do_undef and $key =~ /\.pm$/) {
 		require Apache::Symbol;
 		my $class = Apache::Symbol::file2class($key);
 		$class->Apache::Symbol::undef_functions( undef, 1 );
 	    }
 	    delete $INC{$key};
-	    require $key;
-	    warn "Apache::StatINC: process $$ reloading $key\n"
-		if $DEBUG > 0;
+	    eval{ require $key };
+	    if ($@) {
+               warn "Apache::StatINC: process $$ failed to reload $key. $@"
+                  if $DEBUG > 0;
+	    } else {
+	       warn "Apache::StatINC: process $$ reloading $key.\n"
+                  if $DEBUG > 0;
+            }
 	}
 	$Stat{$file} = $mtime;
     }

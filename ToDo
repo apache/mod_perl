@@ -51,8 +51,6 @@ revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
 
 - Apache::FakeRequest improvments [Gary Richardson <gary@atdot.org>]
 
-- Apache::StatINC patch [Ilya Konstantinov <modperl@future.galanet.net>]
-
 - From: Dave Rolsky <autarch@urth.org>
   Subject: Apache::test patch
 
