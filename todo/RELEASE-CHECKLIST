@@ -1,0 +1,8 @@
+non-code things to do before 2.0 is officially launched
+
+ - add a mp2 document to the mp1 distribution
+
+ - create a detailed migration document, including
+   supported setups for mp1/mp2 layered installations
+
+ - create a sample, supported Makefile.PL example
