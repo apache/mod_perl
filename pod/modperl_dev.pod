@@ -475,6 +475,53 @@ Examples:
   PerlOptions -Authen -Authz -Access
  </VirtualHost>
 
+=head1 Debug notes
+
+=head2 Setting gdb breakpoints with mod_perl built as DSO
+
+If mod_perl is built as a DSO module, you cannot set the breakpoint in
+the mod_perl source files when the I<httpd> program gets loaded into
+the debugger. The reason is simple: At this moment I<httpd> has no
+idea about mod_perl module yet. After the configuration file is
+processed and the mod_perl DSO module is loaded then the breakpoints
+in the source of mod_perl itself can be set.
+
+The trick is to break at I<apr_dso_load>, let it load
+I<libmodperl.so>, then you can set breakpoints anywhere in the modperl
+code:
+
+  % gdb httpd
+  (gdb) b apr_dso_load
+  (gdb) run -DONE_PROCESS
+  [New Thread 1024 (LWP 1600)]
+  [Switching to Thread 1024 (LWP 1600)]
+
+  Breakpoint 1, apr_dso_load (res_handle=0xbfffb48c, path=0x811adcc
+    "/home/stas/apache.org/modperl-perlmodule/src/modules/perl/libmodperl.so",
+    pool=0x80e1a3c) at dso.c:138
+  141         void *os_handle = dlopen(path, RTLD_NOW | RTLD_GLOBAL);
+  (gdb) finish
+  ...
+  Value returned is $1 = 0
+  (gdb) b modperl_hook_init
+  (gdb) continue
+
+This example shows how to set a breakpoint at I<modperl_hook_init>.
+
+To automate things you can put those in the I<.gdb-jump-to-init> file:
+
+  b apr_dso_load
+  run -DONE_PROCESS -d /home/stas/apache.org/modperl-perlmodule/t \
+  -f /home/stas/apache.org/modperl-perlmodule/t/conf/httpd.conf
+  finish
+  b modperl_hook_init
+  continue
+
+and then start the debugger with:
+
+  % gdb /home/stas/httpd-2.0/bin/httpd -command \
+  /home/stas/apache.org/modperl-perlmodule/t/.gdb-jump-to-init
+
 
 =head1 Notes for Developers
 
