@@ -6,6 +6,128 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
     globals->inc.gv    = PL_incgv;
     globals->defout.gv = PL_defoutgv;
     globals->rs.sv     = &PL_rs;
+    globals->end.av    = &PL_endav;
+    globals->end.key   = MP_MODGLOBAL_END;
+}
+
+/* XXX: PL_modglobal thingers might be useful elsewhere */
+
+#define MP_MODGLOBAL_ENT(key) \
+{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1), 0}
+
+static modperl_modglobal_key_t MP_modglobal_keys[] = {
+    MP_MODGLOBAL_ENT("END"),
+};
+
+static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
+                                          const char *package, I32 packlen)
+{
+    SV **svp = hv_fetch(PL_modglobal, gkey->val, gkey->len, FALSE);
+    HV *hv;
+
+    if (!(svp && (hv = (HV*)*svp))) {
+        return Nullav;
+    }
+
+    if (!(svp = hv_fetch(hv, package, packlen, FALSE))) {
+        return Nullav;
+    }
+
+    return (AV*)*svp;
+}
+
+void modperl_perl_global_avcv_call(pTHX_ modperl_modglobal_key_t *gkey,
+                                   const char *package, I32 packlen)
+{
+    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen);
+
+    if (!av) {
+        return;
+    }
+
+    modperl_perl_call_list(aTHX_ av, gkey->name);
+}
+
+void modperl_perl_global_avcv_clear(pTHX_ modperl_modglobal_key_t *gkey,
+                                    const char *package, I32 packlen)
+{
+    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen);
+
+    if (!av) {
+        return;
+    }
+
+    av_clear(av);
+}
+
+static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
+{
+    HV *hv;
+    AV *mav, *av = (AV*)sv;
+    const char *package = HvNAME(PL_curstash);
+    I32 packlen = strlen(package);
+    modperl_modglobal_key_t *gkey =
+        (modperl_modglobal_key_t *)mg->mg_ptr;
+
+    hv = (HV*)*hv_fetch(PL_modglobal, gkey->val, gkey->len, TRUE);
+    (void)SvUPGRADE((SV*)hv, SVt_PVHV);
+
+    mav = (AV*)*hv_fetch(hv, package, packlen, TRUE);
+    (void)SvUPGRADE((SV*)mav, SVt_PVAV);
+
+    /* $cv = pop @av */
+    sv = AvARRAY(av)[AvFILLp(av)];
+    AvARRAY(av)[AvFILLp(av)--] = &PL_sv_undef;
+
+    /* push @{ $PL_modglobal{$key}{$package} }, $cv */
+    av_store(mav, AvFILLp(av)+1, sv);
+
+    return 1;
+}
+
+static MGVTBL modperl_vtbl_global_avcv_t = {
+    0,
+    MEMBER_TO_FPTR(modperl_perl_global_avcv_set),
+    0, 0, 0,
+};
+
+/* XXX: Apache::RegistryLoader type things need access to this
+ * for compiling scripts at startup
+ */
+static void modperl_perl_global_avcv_tie(pTHX_ modperl_modglobal_key_e key,
+                                         AV *av)
+{
+    if (!SvMAGIC((SV*)av)) {
+        MAGIC *mg;
+        Newz(702, mg, 1, MAGIC);
+        mg->mg_virtual = &modperl_vtbl_global_avcv_t;
+        mg->mg_ptr = (char *)&MP_modglobal_keys[key];
+        mg->mg_len = -1; /* prevent free() of mg->mg_ptr */
+        SvMAGIC((SV*)av) = mg;
+    }
+
+    SvSMAGICAL_on((SV*)av);
+}
+
+static void modperl_perl_global_avcv_untie(pTHX_ AV *av)
+{
+    SvSMAGICAL_off((SV*)av);
+}
+
+static void
+modperl_perl_global_avcv_save(pTHX_ modperl_perl_global_avcv_t *avcv)
+{
+    avcv->origav = *avcv->av;
+    *avcv->av = newAV(); /* XXX: only need 1 of these AVs per-interpreter */
+    modperl_perl_global_avcv_tie(aTHX_ avcv->key, *avcv->av);
+}
+
+static void
+modperl_perl_global_avcv_restore(pTHX_ modperl_perl_global_avcv_t *avcv)
+{
+    modperl_perl_global_avcv_untie(aTHX_ *avcv->av);
+    SvREFCNT_dec(*avcv->av); /* XXX: see XXX above */
+    *avcv->av = avcv->origav;
 }
 
 static void
@@ -93,6 +215,7 @@ modperl_perl_global_svpv_restore(pTHX_ modperl_perl_global_svpv_t *svpv)
 }
 
 typedef enum {
+    MP_GLOBAL_AVCV,
     MP_GLOBAL_GVHV,
     MP_GLOBAL_GVAV,
     MP_GLOBAL_GVIO,
@@ -109,6 +232,7 @@ typedef struct {
     STRUCT_OFFSET(modperl_perl_globals_t, m)
 
 static modperl_perl_global_entry_t modperl_perl_global_entries[] = {
+    {"END",    MP_GLOBAL_OFFSET(end),    MP_GLOBAL_AVCV}, /* END */
     {"ENV",    MP_GLOBAL_OFFSET(env),    MP_GLOBAL_GVHV}, /* %ENV */
     {"INC",    MP_GLOBAL_OFFSET(inc),    MP_GLOBAL_GVAV}, /* @INC */
     {"STDOUT", MP_GLOBAL_OFFSET(defout), MP_GLOBAL_GVIO}, /* $| */
@@ -138,6 +262,9 @@ static void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
         MP_dGLOBAL_PTR(globals, i);
 
         switch (modperl_perl_global_entries[i].type) {
+          case MP_GLOBAL_AVCV:
+            MP_PERL_GLOBAL_SAVE(avcv, ptr);
+            break;
           case MP_GLOBAL_GVHV:
             MP_PERL_GLOBAL_SAVE(gvhv, ptr);
             break;
@@ -162,6 +289,9 @@ static void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
         MP_dGLOBAL_PTR(globals, i);
 
         switch (modperl_perl_global_entries[i].type) {
+          case MP_GLOBAL_AVCV:
+            MP_PERL_GLOBAL_RESTORE(avcv, ptr);
+            break;
           case MP_GLOBAL_GVHV:
             MP_PERL_GLOBAL_RESTORE(gvhv, ptr);
             break;
