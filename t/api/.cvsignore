@@ -9,6 +9,8 @@ query.t
 request_subclass.t
 request_util.t
 response.t
+r_subclass.t
+rutil.t
 sendfile.t
 server_const.t
 server_rec.t
