@@ -25,5 +25,6 @@ my $expected = join "\n", @data, $sig;
     # test the filtering of the non-mod_perl response handler (file)
     my $location = '/filter/reverse.txt';
     my $response = GET_BODY $location;
+    $response =~ s/\r//g;
     ok t_cmp($expected, $response, "reverse filter");
 }
