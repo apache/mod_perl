@@ -61,6 +61,10 @@ fix buglet on Win32 (and potentially other non-Unix platforms)
 where not all files were being installed under a relative Apache2
 subdirectory when MP_INST_APACHE2 was specified [Randy Kobes].
 
+deprecated APR::SockAddr::port_get()/APR::SockAddr::port_set()
+replaced with direct access to the port record via
+APR::SockAddr::port(). [Stas]
+
 remove deprecated APR features: APR::URI::default_port_for_scheme(),
 APR::SockAddr::ip_set(), APR::SockAddr::port_get(),
 APR::SockAddr::port_set(), and APR::NO_TIMEOUT.

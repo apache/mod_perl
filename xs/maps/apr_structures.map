@@ -48,18 +48,18 @@ apr_strmatch_pattern apr_version_t
 -  filehand
 </apr_finfo_t>
 
-!<apr_sockaddr_t>
-   pool
-   hostname
-   servname
+<apr_sockaddr_t>
+-  pool
+-  hostname
+-  servname
    port
-   sa
-   salen
-   ipaddr_len
-   addr_str_len
-   ipaddr_ptr
-   next
-   family
+-  sa
+-  salen
+-  ipaddr_len
+-  addr_str_len
+-  ipaddr_ptr
+-  next
+-  family
 </apr_sockaddr_t>
 
 !<apr_proc_t>
