@@ -13,7 +13,7 @@ all changes without author attribution are by Doug MacEachern
 Apache::test enhancements
 [Ken Williams <ken@forum.swarthmore.edu>]
 
-fix Apache::exit() so it does it does not trigger a warning (maybe)
+fix Apache::exit() so it does it does not trigger a warning
 
 change Apache::PerlRun's Apache class relationship from is-a to has-a
 [Ken Williams <ken@forum.swarthmore.edu>]
