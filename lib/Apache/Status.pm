@@ -368,8 +368,13 @@ sub status_sig {
 }
 
 sub status_myconfig {
-    require Config;
-    ["<pre>", Config::myconfig(), "</pre>"]
+    # XXX: Config::myconfig(); fails under threads with (perl < 5.8.3?)
+    # "Modification of a read-only value attempted"
+    # need API to query the mpm and run it only if the mpm is not threaded
+    # require Config;
+    # my $myconfig = Config::myconfig();
+    my $myconfig = "Under construction";
+    ["<pre>", $myconfig, "</pre>"];
 }
 
 
