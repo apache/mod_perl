@@ -359,6 +359,11 @@ static void rwrite_neg_trace(request_rec *r)
 		 r->connection->client->flags & B_EOUT);
 }
 
+#define check_auth_type(r) \
+    if (!auth_type(r)) { \
+        (void)mod_perl_auth_type(r, "Basic"); \
+    }
+
 MODULE = Apache  PACKAGE = Apache   PREFIX = mod_perl_
 
 PROTOTYPES: DISABLE
@@ -879,6 +884,10 @@ void
 note_basic_auth_failure(r)
     Apache r
 
+    CODE:
+    check_auth_type(r);
+    note_basic_auth_failure(r);
+
 void
 get_basic_auth_pw(r)
     Apache r
@@ -888,9 +897,7 @@ get_basic_auth_pw(r)
     int ret;
 
     PPCODE:
-    if (!auth_type(r)) {
-        (void)mod_perl_auth_type(r, "Basic");
-    }
+    check_auth_type(r);
     ret = get_basic_auth_pw(r, &sent_pw);
     XPUSHs(sv_2mortal((SV*)newSViv(ret)));
     if(ret == OK)

@@ -22,8 +22,8 @@ for sub __AUTOLOAD [Jim Winstead <jimw@trainedmonkey.com>]
 fix %Apache::ReadConfig:: processing for PerlRequire'd files
 [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
-$r->get_basic_auth_pw will default $r->auth_type to "Basic" if not
-already set
+$r->get_basic_auth_pw and $r->note_basic_auth_failure will default
+$r->auth_type to "Basic" if not already set
 
 $r->auth_type is now writeable, e.g. $r->auth_type("Basic")
 
