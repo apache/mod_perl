@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::CmdParms changes [Gozer]
+- readwrite => readonly:
+    override, limited, directive, pool, temp_pool, server, path,
+    cmd, context, err_directive
+
+- removed: limited_xmethods, xlimited, config_file, err_directive
+
 Fix a bug in APR::Bucket->new when a passed argument was of type
 PADTMP [Stas]
 
