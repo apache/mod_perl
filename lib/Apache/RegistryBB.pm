@@ -2,7 +2,7 @@ package Apache::RegistryBB;
 
 use strict;
 use vars qw(@ISA);
-use Apache::Constants qw(FORBIDDEN OK);
+use Apache::Constants qw(NOT_FOUND FORBIDDEN OK);
 use Apache::RegistryNG (); 
 @ISA = qw(Apache::RegistryNG);
 
@@ -17,7 +17,11 @@ use Apache::RegistryNG ();
 #skip -x, OPT_EXEC, etc. checks
 sub can_compile {
     my $r = shift;
-    if(-d $r->finfo) {
+    unless (-r $r->finfo) {
+	$r->log_reason("file does not exist");
+	return NOT_FOUND;
+    }
+    if (-d _) {
 	$r->log_reason("attempt to invoke directory as script");
 	return FORBIDDEN;
     }
