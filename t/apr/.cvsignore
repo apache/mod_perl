@@ -13,3 +13,4 @@ os.t
 socket.t
 threadmutex.t
 finfo.t
+flatten.t
