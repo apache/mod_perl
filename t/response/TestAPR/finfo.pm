@@ -66,7 +66,7 @@ sub handler {
             foreach my $method (qw(device inode nlink user group
                                    size atime mtime ctime)) {
                 if ($skip{$method}) {
-                    skip "different file semantics";
+                    skip "different file semantics", 0;
                 }
                 else {
                     ok t_cmp(${$method},
@@ -87,7 +87,7 @@ sub handler {
                  '$r->finfo->protection() & APR::WWRITE');
 
         if (WIN32) {
-            skip "different file semantics";
+            skip "different file semantics", 0;
         }
         else {
             ok t_cmp($protection & S_IXOTH,
