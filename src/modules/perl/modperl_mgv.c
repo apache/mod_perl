@@ -388,7 +388,10 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
     for (i=0; i < entry->nelts; i++) {
         modperl_handler_t *handler = handlers[i];
 
-        if (MpHandlerPARSED(handler)) {
+        if (MpHandlerFAKE(handler)) {
+            /* do nothing with fake handlers */
+        }
+        else if (MpHandlerPARSED(handler)) {
 #ifdef USE_ITHREADS
             if ((MpSrvPARENT(scfg) && MpSrvAUTOLOAD(scfg))
                 && !modperl_mgv_lookup(aTHX_ handler->mgv_cv)) {

@@ -36,8 +36,10 @@ char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
 {
     modperl_handler_t *h = modperl_handler_new(p, name);
 
-    /* we don't want this special handler to be parsed */
-    MpHandlerPARSED_On(h);
+    /* this is not a real mod_perl handler, we just re-use the
+     * handlers structure to be able to mix mod_perl and non-mod_perl
+     * filters */
+    MpHandlerFAKE_On(h);
     h->attrs = MP_FILTER_HTTPD_HANDLER;
         
     if (!*handlers) {
