@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY HEAD);
 
-plan tests => 2, have_lwp;
+plan tests => 4, have_lwp;
 
 # need LWP to handle redirects
 
@@ -32,3 +32,26 @@ my $base_url = "/registry/redirect.pl";
         "test redirect: non-existing target",
        );
 }
+
+$base_url = "/registry/redirect-cookie.pl";
+{
+    local $Apache::TestRequest::RedirectOK = 0;
+
+    my $redirect_path = "/registry/basic.pl";
+    my $url = "$base_url?$redirect_path";
+
+    my $response = HEAD $url;
+
+    ok t_cmp(
+        302,
+        $response->code,
+        "test Registry style redirect: status",
+       );
+
+    ok t_cmp(
+        "mod_perl=ubercool; path=/",
+        $response->header('Set-Cookie'),
+        "test Registry style redirect: cookie",
+       );
+}
+
