@@ -225,7 +225,7 @@ SV *mpxs_Apache__RequestRec_as_string(pTHX_ request_rec *r)
     apr_table_do((int (*) (void *, const char *, const char *))
                   modperl_sv_str_header, (void *) retval, r->headers_in, NULL);
 
-    sv_catpvf(retval, "\n%s %s\n", r->protocol, r->status_line);
+    Perl_sv_catpvf(aTHX_ retval, "\n%s %s\n", r->protocol, r->status_line);
 
     apr_table_do((int (*) (void *, const char *, const char *))
                   modperl_sv_str_header, (void *) retval, r->headers_out, NULL);
