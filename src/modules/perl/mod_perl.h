@@ -28,6 +28,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_directives.h"
 #include "modperl_io.h"
 #include "modperl_filter.h"
+#include "modperl_bucket.h"
 #include "modperl_pcw.h"
 #include "modperl_mgv.h"
 #include "modperl_global.h"

@@ -1,5 +1,4 @@
 #include "mod_perl.h"
-#include "modperl_bucket.h"
 
 /*
  * modperl_bucket_sv code derived from mod_snake's ModSnakePyBucket
