@@ -270,7 +270,7 @@ while($_ = shift) {
 }
 
 my %very_experimental = map {$_,1} 
-qw(PERL_DEFAULT_OPMASK PERL_SAFE_STARTUP);
+qw(PERL_DEFAULT_OPMASK PERL_SAFE_STARTUP PERL_ORALL_OPMASK);
 
 if($EXPERIMENTAL) {
     for (keys %experimental) {
