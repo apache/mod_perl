@@ -3,7 +3,11 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- Apache::SubRequest->bytes_sent
+
 - deal with mod_ssl.c/Stronghold test configuration
+
+- Apache::SizeLimit (Brian Moseley)
 
 - 'make htmldoc' (Brian Moseley)
 
@@ -49,6 +53,11 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+
+- USE_DSO=1 --> END blocks are run at startup time
+
+- USE_DSO=1 broken on most platforms (core dump in dlclose)
+
 - $r cannot use many api methods during ChildInit/ChildExit -> SEGV
 
 - bytes_sent are not logged if header don't go through send_http_header(), 
@@ -117,6 +126,8 @@ KNOWN BUGS
 ---------------------------------------------------------------------------
 NEW STUFF
 ---------------------------------------------------------------------------
+
+- PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
 
 - make Apache->server->register_cleanup work
 
