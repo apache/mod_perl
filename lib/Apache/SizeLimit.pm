@@ -22,6 +22,7 @@ use mod_perl 1.99;
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 use Apache::Connection ();
+use Apache::MPM ();
 use APR::Pool ();
 use ModPerl::Util ();
 
@@ -215,6 +216,9 @@ sub setmax_unshared {
 
 sub handler {
     my $r = shift;
+
+    die "Apache::SizeLimit at the moment works only with non-threaded MPMs"
+        if Apache::MPM->is_threaded();
 
     if ($r->is_initial_req()) {
         # we want to operate in a cleanup handler
