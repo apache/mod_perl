@@ -66,7 +66,7 @@ VV src/docs/2.0/api/ModPerl/MethodLookup.pod
 -- src/docs/2.0/api/ModPerl/Util.pod
 
 -- src/docs/2.0/api/APR.pod
--- src/docs/2.0/api/APR/Base64.pod
+VV src/docs/2.0/api/APR/Base64.pod
 VV src/docs/2.0/api/APR/Brigade.pod
 VP src/docs/2.0/api/APR/Bucket.pod
         data
@@ -99,9 +99,19 @@ VP src/docs/2.0/api/APR/Socket.pod
         sendto
 
 VV src/docs/2.0/api/APR/Table.pod
--- src/docs/2.0/api/APR/ThreadMutex.pod
+VP src/docs/2.0/api/APR/ThreadMutex.pod
+        DESTROY
+        lock
+        new
+        pool_get
+        trylock
+        unlock
+
 -- src/docs/2.0/api/APR/URI.pod
--- src/docs/2.0/api/APR/Util.pod
+VP src/docs/2.0/api/APR/Util.pod
+        filepath_name_get
+        password_get
+
 
 ################################
 ### Other API related things ###
