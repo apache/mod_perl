@@ -12,10 +12,19 @@ use Apache::Test;
 use Apache::compat ();
 use Apache::Constants qw(OK);
 
+my %string_size = (
+    '-1'            => "    -",
+    0               => "   0k",
+    42              => "   1k",
+    42_000          => "  41k",
+    42_000_000      => "40.1M",
+    42_000_000_000  => "40054.3M",
+);
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 28, todo => [23];
+    plan $r, tests => 34, todo => [23];
 
     $r->send_http_header('text/plain');
 
@@ -144,6 +153,7 @@ sub handler {
                  "\$r->set_content_length($csize) w/ setting explicit size");
 
         $r->set_content_length();
+        # TODO
         ok t_cmp(0, # XXX: $r->finfo->csize is not available yet
                  $r->headers_out->{"Content-length"},
                  "\$r->set_content_length() w/o setting explicit size");
@@ -169,6 +179,13 @@ sub handler {
         $r->set_last_modified($time);
         ok t_cmp($time, $r->mtime, "\$r->set_last_modified(\$time)");
 
+    }
+
+    # Apache::Util::size_string
+    {
+        while (my($k, $v) = each %string_size) {
+            ok t_cmp($v, Apache::Util::size_string($k));
+        }
     }
 
     Apache::OK;
