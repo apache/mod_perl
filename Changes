@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+remove Apache::DESTROY method (was only for avoiding old AutoLoader bug)
+
 Apache::exit fixed under Apache::PerlRun
 
 fix chdir_file() call in Apache::Registry so we go back to the original
