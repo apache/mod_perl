@@ -23,9 +23,6 @@ use constant BLOCK_SIZE => 5003;
 sub handler {
     my($filter, $bb) = @_;
 
-    my $c = $filter->c;
-    my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
-
     debug "FILTER INVOKED";
 
     my $cnt = 0;
@@ -34,22 +31,17 @@ sub handler {
         $cnt++;
         debug "reading bucket #$cnt";
 
-        if ($b->is_eos) {
-            $b->remove;
-            $bb_ctx->insert_tail($b);
-            last;
-        }
+        last if $b->is_eos;
 
         if (my $len = $b->read(my $data)) {
             my $nb = APR::Bucket->new(uc $data);
-            $bb_ctx->insert_tail($nb);
+            $b->insert_before($nb);
+            $b->delete;
+            $b = $nb;
         }
     }
 
-    my $rv = $filter->next->pass_brigade($bb_ctx);
-    return $rv unless $rv == APR::SUCCESS;
-
-    return Apache::OK;
+    return $filter->next->pass_brigade($bb);
 }
 
 sub response {

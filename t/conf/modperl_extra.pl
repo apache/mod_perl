@@ -174,7 +174,9 @@ sub ModPerl::Test::read_post {
 
         warn "read_post: bb $count\n" if $debug;
 
-        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
+        while (!$bb->is_empty) {
+            my $b = $bb->first;
+
             if ($b->is_eos) {
                 warn "read_post: EOS bucket:\n" if $debug;
                 $seen_eos++;
@@ -186,7 +188,7 @@ sub ModPerl::Test::read_post {
                 $data .= $buf;
             }
 
-            $b->remove; # optimization to reuse memory
+            $b->delete;
         }
 
     } while (!$seen_eos);

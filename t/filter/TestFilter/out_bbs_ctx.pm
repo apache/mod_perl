@@ -11,8 +11,11 @@ use Apache::RequestIO ();
 
 use APR::Brigade ();
 use APR::Bucket ();
+use APR::BucketType ();
 
 use base qw(Apache::Filter);
+
+use Apache::TestTrace;
 
 use Apache::Const -compile => qw(OK M_POST);
 use APR::Const -compile => ':common';
@@ -21,6 +24,8 @@ use constant BLOCK_SIZE => 5003;
 
 sub handler {
     my($filter, $bb) = @_;
+
+    debug "filter got called";
 
     my $c = $filter->c;
     my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
@@ -31,19 +36,22 @@ sub handler {
     my $data = exists $ctx->{data} ? $ctx->{data} : '';
 
     while (my $b = $bb->first) {
-        $b->remove;
 
         if ($b->is_eos) {
+            debug "got EOS";
             # flush the remainings and send a stats signature
             $bb_ctx->insert_tail(APR::Bucket->new("$data\n")) if $data;
             my $sig = join "\n", "received $ctx->{blocks} complete blocks",
                 "filter invoked $ctx->{invoked} times\n";
             $bb_ctx->insert_tail(APR::Bucket->new($sig));
+            $b->remove;
             $bb_ctx->insert_tail($b);
             last;
         }
 
         if ($b->read(my $bdata)) {
+            debug "got data";
+            $b->delete;
             $data .= $bdata;
             my $len = length $data;
 
@@ -55,10 +63,16 @@ sub handler {
                 $ctx->{blocks} += $blocks;
             }
             if ($blocks) {
-                $b = APR::Bucket->new("#" x $blocks);
-                $bb_ctx->insert_tail($b);
+                my $nb = APR::Bucket->new("#" x $blocks);
+                $bb_ctx->insert_tail($nb);
             }
         }
+        else {
+            debug "got bucket with no data: type: " . $b->type->name;
+            $b->remove;
+            $bb_ctx->insert_tail($b);
+        }
+
     }
 
     $ctx->{data} = $data;
