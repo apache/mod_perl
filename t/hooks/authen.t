@@ -1,10 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-use Test;
+use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4;
+plan tests => 4, \&have_lwp;
 
 my $location = "/TestHooks::authen";
 
