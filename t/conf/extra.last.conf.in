@@ -19,7 +19,7 @@ use Tie::Hash;
 sub FETCH { 
     my ($hash, $key) = @_;
     if ($key eq '/tied') {
-         return 'TIED';
+        return 'TIED';
     }
     return $hash->{$key};
 }
