@@ -40,6 +40,8 @@ sub handler {
 
     ok !$r->some_auth_required;
 
+    # XXX: $r->get_remote_logname();
+
     Apache::OK;
 }
 
