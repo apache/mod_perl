@@ -447,6 +447,7 @@ int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
     modperl_require_file_t **requires;
     int i;
 #ifdef USE_ITHREADS
+    PerlInterpreter *orig_perl = PERL_GET_CONTEXT;
     pTHX;
 #endif
     
@@ -463,9 +464,15 @@ int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "Can't load Perl file: %s for server %s, exiting...",
                          requires[i]->file, modperl_server_desc(s, p));
+#ifdef USE_ITHREADS
+            PERL_SET_CONTEXT(orig_perl);
+#endif
             return FALSE;
         }
     }
+#ifdef USE_ITHREADS
+    PERL_SET_CONTEXT(orig_perl);
+#endif
 
     return TRUE;
 }
