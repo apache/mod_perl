@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+update Apache::SIG docs, thanks to Bill Moseley for the spot
+
 fix get_set_PVp in mod_perl_xs.h
 [Michal Jaegermann <michal@ellpspace.math.ualberta.ca>]
 

@@ -41,8 +41,7 @@ Apache::SIG - Override apache signal handlers with Perl's
 
 =head1 SYNOPSIS
 
- use Apache::SIG ();
- Apache::SIG->set;
+ PerlFixupHandler Apache::SIG
 
 =head1 DESCRIPTION
 
@@ -65,9 +64,6 @@ LogFormat "%h %l %u %t \"%r\" %s %b %{SIGPIPE}e"
 
 If the server has noticed that the request was cancelled via a SIGPIPE,
 then the log line will end with C<1>, otherwise it will just be a dash.
-
-As of mod_perl version 1.07_02, the Apache::SIG set method is called
-by default when the server is started.
 
 =head1 CAVEATS
 
