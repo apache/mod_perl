@@ -8,8 +8,7 @@ no warnings qw(redefine); # XXX, this should go away in production!
 
 our $VERSION = '1.99';
 
-use ModPerl::RegistryCooker;
-@ModPerl::Registry::ISA = qw(ModPerl::RegistryCooker);
+use base qw(ModPerl::RegistryCooker);
 
 sub handler {
     my $class = (@_ >= 2) ? shift : __PACKAGE__;
