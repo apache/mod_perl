@@ -1,6 +1,8 @@
 use Config;
 
-my $ldopts = `$^X -MExtUtils::Embed -e ldopts -- -std @ARGV`;
+#my $embed_pm = '-MApache::ExtUtils=ldopts';
+my $embed_pm = '-MExtUtils::Embed'
+my $ldopts = `$^X $embed_pm -e ldopts -- -std @ARGV`;
 
 if($^O eq "aix") {
     $ldopts =~ s,(-bE:)(perl\.exp),$1$Config{archlibexp}/CORE/$2,;

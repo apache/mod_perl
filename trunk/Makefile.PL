@@ -14,7 +14,7 @@ BEGIN {
 sub MMN_130 () { 19980527 }
 
 use ExtUtils::MakeMaker;
-use Config;
+use Config ();
 use FileHandle ();
 use DirHandle ();
 use File::Compare ();
@@ -22,6 +22,12 @@ use File::Basename qw(dirname);
 use File::Path qw(mkpath rmtree);
 use Cwd;
 use File::Copy qw(cp);
+
+#use Apache::ExtUtils qw(%Config);
+
+unless (%Config) {
+    *Config = \%Config::Config;
+}
 
 my %vcache = (); #SERVER_VERSION
 my %mcache = (); #MODULE_MAGIC_NUMBER
@@ -40,7 +46,8 @@ if ($] < 5.005_60) {
 		    ($Config{usethreads} eq "define"));
 }
 else {
-    $USE_THREADS = $Config{use5005threads} eq "define";
+    $USE_THREADS = (defined($Config{use5005threads}) && 
+		    ($Config{use5005threads} eq "define"));
 }
    
 require "./lib/mod_perl.pm";
