@@ -314,7 +314,7 @@ our $CWD = Apache2::ServerUtil::server_root;
 our $AddPerlVersion = 1;
 
 sub warn {
-    shift if @_ and $_[0] eq 'Apache2::Server';
+    shift if @_ and $_[0] eq 'Apache::Server';
     Apache2::ServerRec::warn(@_);
 }
 
