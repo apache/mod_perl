@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Fix the error message when the minimal required httpd version is not
+satisfied [Pratik <pratiknaik@gmail.com>]
+
 Fix interactive prompting at perl Makefile.PL, when no APXS or
 MP_AP_PREFIX were provided. now asking for an alternative location if
 the suggested choices weren't selected. [Stas]
