@@ -20,7 +20,7 @@ typedef struct {
 
 #define SET_TIMEOUT(fp) \
     apr_file_pipe_timeout_set(fp, \
-                              (int)(r->server->timeout * APR_USEC_PER_SEC))
+                              (int)(apr_time_from_sec(r->server->timeout)))
 
 static int modperl_spawn_proc_prog(pTHX_
                                    request_rec *r,
