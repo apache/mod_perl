@@ -91,6 +91,12 @@ sub import {
 
 package Apache::RequestRec;
 
+#no longer exist in 2.0
+sub soft_timeout {}
+sub hard_timeout {}
+sub kill_timeout {}
+sub reset_timeout {}
+
 #to support $r->server_root_relative
 *server_root_relative = \&Apache::server_root_relative;
 
