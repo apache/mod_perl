@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/10/21 18:03:31 $]
+   Last modified at [$Date: 2003/10/27 14:12:03 $]
 
 Release:
 --------
@@ -89,6 +89,8 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
 
 Needs Patch or Further Investigation:
 -------------------------------------
+* per-server cleanups core dump or are otherwise ineffective
+    Apache->server->process->pconf->cleanup_register(sub { ...  });
 
 * META.yml. Generate META.yml (make dist does that), add Apache-Test
   as a private resource, so it won't be attempted to be indexed by
