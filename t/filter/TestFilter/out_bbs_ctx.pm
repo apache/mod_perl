@@ -31,7 +31,6 @@ sub handler {
     my $data = exists $ctx->{data} ? $ctx->{data} : '';
 
     while (my $b = $bb->first) {
-        $b->remove;
 
         if ($b->is_eos) {
             # flush the remainings and send a stats signature
@@ -44,6 +43,7 @@ sub handler {
         }
 
         if ($b->read(my $bdata)) {
+            $b->remove;
             $data .= $bdata;
             my $len = length $data;
 
@@ -59,6 +59,12 @@ sub handler {
                 $bb_ctx->insert_tail($b);
             }
         }
+        else {
+            # insert META buckets as is
+            $b->remove;
+            $bb_ctx->insert_tail($b);
+        }
+
     }
 
     $ctx->{data} = $data;
