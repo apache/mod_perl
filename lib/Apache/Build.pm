@@ -166,12 +166,12 @@ sub apxs {
 
     my $devnull = devnull();
     my $val = qx($apxs @_ 2>$devnull);
-    chomp $val if defined $val; # apxs post-2.0.40 adds a new line
+    chomp $val if defined $val;
 
     unless ($val) {
         # do we have an error or is it just an empty value?
         my $error = qx($apxs @_ 2>&1);
-        chomp $error if defined $error; # apxs post-2.0.40 adds a new line
+        chomp $error if defined $error;
         if ($error) {
             error "'$apxs @_' failed:";
             error $error;
@@ -986,7 +986,6 @@ sub apru_config_path {
                 grep defined $_, $self->dir;
         }
         else {
-            # APR_BINDIR was added only at httpd-2.0.46
             push @tries, grep length,
                 map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
             push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
