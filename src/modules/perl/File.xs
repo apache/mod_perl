@@ -86,6 +86,9 @@ MODULE = Apache::File		PACKAGE = Apache::File    PREFIX = ApacheFile_
 
 PROTOTYPES: DISABLE
 
+BOOT:
+    items = items; /*avoid warning*/ 
+
 void
 ApacheFile_new(class, filename=Nullsv)
     char *class
@@ -107,6 +110,8 @@ ApacheFile_open(self, filename)
     SV *self
     SV *filename
 
+#if 0
+
 void
 ApacheFile_tmp(self)
     SV *self
@@ -121,6 +126,8 @@ ApacheFile_tmp(self)
         XSRETURN_UNDEF;
     else
         XPUSHs(RETVAL);
+
+#endif
 
 bool
 ApacheFile_close(self)
@@ -200,13 +207,3 @@ int
 ap_discard_request_body(r)
     Apache r
 
-FILE *
-ap_fopen(r, name, mode="r")
-    Apache r
-    const char *name
-    const char *mode
-
-int
-ap_fclose(r, fd)
-    Apache r
-    FILE *fd
