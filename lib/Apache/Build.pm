@@ -874,7 +874,7 @@ sub httpd_version {
 
 my %wanted_apr_config = map { $_, 1} qw(
     HAS_THREADS HAS_DSO HAS_MMAP HAS_RANDOM HAS_SENDFILE
-    HAS_INLINE HAS_FORK
+    HAS_LARGE_FILES HAS_INLINE HAS_FORK
 );
 
 sub get_apr_config {
@@ -1332,12 +1332,29 @@ sub inc {
     "@includes";
 }
 
-#XXX:
+# there is no conflict if both libraries either have or don't have
+# large files support enabled
+sub has_large_files_conflict {
+    my $self = shift;
+    my $apr_config = $self->get_apr_config();
+
+    my $perl = $Config{uselargefiles} ? 1 : 0;
+    my $apr  = $apr_config->{HAS_LARGE_FILES} ? 1 : 0;
+
+    return $perl ^ $apr;
+}
+
+# if perl is built with uselargefiles, but apr not, the build won't
+# work together as it uses two binary incompatible libraries, so
+# reduce the functionality to the greatest common denominator (C code
+# will have to make sure to prevent any operations that may rely on
+# effects created by uselargefiles, e.g. Off_t=8 instead of Off_t=4)
 sub strip_lfs {
     my($self, $cflags) = @_;
-    return $cflags unless $Config{uselargefiles};
+    return $cflags unless $self->has_large_files_conflict();
+
     my $lf = $Config{ccflags_uselargefiles}
-      || '-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64';
+        || '-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64';
     $cflags =~ s/$lf//;
     $cflags;
 }
