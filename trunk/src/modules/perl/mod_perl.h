@@ -421,6 +421,15 @@ if((add->flags & f) || (base->flags & f)) \
 /* some 1.2.x/1.3.x compat stuff */
 /* once 1.3.0 is here, we can toss most of this junk */
 
+#ifdef MODULE_MAGIC_AT_LEAST
+#undef MODULE_MAGIC_AT_LEAST
+#define MODULE_MAGIC_AT_LEAST(major,minor)              \
+    (MODULE_MAGIC_NUMBER_MAJOR >= (major)                \
+            && MODULE_MAGIC_NUMBER_MINOR >= minor)
+#else
+#define MODULE_MAGIC_AT_LEAST(major,minor) (0 > 1)
+#endif
+
 #define MMN_130 19980527
 #define MMN_131 19980713
 #define MMN_132 19980806
