@@ -164,7 +164,7 @@ sub ModPerl::BuildMM::MY::postamble {
             next unless -r $podpath;
 
             push @target, 
-                "\$(FULLPERLRUN) -I$lib_dir " .
+                "\$(FULLPERL) -I$lib_dir " .
                 "-I$apache_test_dir -MModPerl::BuildMM " .
                 "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
         }
