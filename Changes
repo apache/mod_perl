@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Use Win32::GetShortPathName for Win32 to handle cases when
+the supplied MP_AP_PREFIX contains spaces. [Randy Kobes]
+
+Bump up ThreadsPerChild for mpm_winnt in httpd.conf, which seems 
+to help avoid server startup problems when running the tests.
+[Randy Kobes]
+
 implement a new helper module ModPerl::MethodLookup to help figure out
 which module should be loaded when a certain method is reported to be
 missing. [Stas]
