@@ -47,6 +47,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  apr_ssize_t:DEFINE_WRITE | | \
              request_rec *:r, SV *:buffer, apr_ssize_t:bufsiz=-1, int:offset=0
  mpxs_Apache__RequestRec_GETC
+ mpxs_Apache__RequestRec_FILENO
 
 MODULE=Apache::Response   PACKAGE=Apache::RequestRec
 DEFINE_send_cgi_header | | request_rec *:r, SV *:buffer
