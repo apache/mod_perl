@@ -244,6 +244,47 @@ sub mpm_name {
     return $self->{mpm_name} = $mpm_name;
 }
 
+sub should_build_apache {
+    my ($self) = @_;
+    return $self->{MP_AP_BUILD} ? 1 : 0;
+}
+
+sub configure_apache {
+    my ($self) = @_;
+
+    unless ($self->{MP_AP_CONFIGURE}) {
+        error "You specified MP_AP_BUILD but did not specify the " .
+              "arguments to httpd's ./configure with MP_AP_CONFIGURE";
+        exit 1;
+    }
+    
+    unless ($self->{MP_USE_STATIC}) {
+        error "When building httpd, you must set MP_USE_STATIC=1";
+        exit 1;
+    }
+
+    debug "Configuring httpd in $self->{MP_AP_PREFIX}";
+    
+    my $httpd = File::Spec->catfile($self->{MP_AP_PREFIX}, 'httpd');
+    push @Apache::TestMM::Argv, ('-httpd' => $httpd);
+    
+    my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
+    my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
+    
+    local $ENV{BUILTIN_LIBS} = $mplibpath;
+    local $ENV{AP_LIBS} = $self->ldopts;
+    local $ENV{MODLIST} = 'perl';
+
+    #XXX: -Wall and/or -Werror at httpd configure time breaks things
+    local $ENV{CFLAGS} = join ' ', grep { ! /\-Wall|\-Werror/ } 
+        split /\s+/, $ENV{CFLAGS};
+    
+    my $cd = qq(cd $self->{MP_AP_PREFIX});
+    my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
+    debug "Running $cmd";
+    system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
+}
+
 #--- Perl Config stuff ---
 
 my %gtop_config = ();
