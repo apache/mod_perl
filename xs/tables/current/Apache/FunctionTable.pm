@@ -12372,6 +12372,20 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'void',
+    'name' => 'apr_table_compress',
+    'args' => [
+      {
+        'type' => 'apr_table_t *',
+        'name' => 'a'
+      },
+      {
+        'type' => 'unsigned',
+        'name' => 'flags'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
     'name' => 'apr_table_set',
     'args' => [
       {

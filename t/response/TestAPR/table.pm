@@ -8,14 +8,20 @@ use Apache::Test;
 use APR::Table ();
 
 use Apache::Const -compile => 'OK';
+use APR::Const -compile => 'OVERLAP_TABLES_MERGE';
 
 my $filter_count;
 my $TABLE_SIZE = 20;
 
+use constant HAVE_APACHE_2_0_47 => have_min_apache_version('2.0.47');
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 17;
+    my $tests = 19;
+    $tests += 2 if HAVE_APACHE_2_0_47;
+                                                                                                    
+    plan $r, tests => $tests;
 
     my $table = APR::Table::make($r->pool, $TABLE_SIZE);
 
@@ -96,6 +102,32 @@ sub handler {
             my_filter($key, $table->{$key});
         }
         ok $filter_count == $TABLE_SIZE;
+    }
+
+    # overlay and compress routines
+    my $base = APR::Table::make($r->pool, $TABLE_SIZE);
+    my $add = APR::Table::make($r->pool, $TABLE_SIZE);
+
+    $base->set(foo => 'one');
+    $base->add(foo => 'two');
+
+    $add->add(foo => 'three');
+    $add->add(bar => 'beer');
+
+    my $overlay = $base->overlay($add, $r->pool);
+
+    my @foo = $overlay->get('foo');
+    my @bar = $overlay->get('bar');
+
+    ok @foo == 3;
+    ok $bar[0] eq 'beer';
+
+    if (HAVE_APACHE_2_0_47) {
+        $overlay->compress(APR::OVERLAP_TABLES_MERGE);
+
+        # XXX is insertion order guaranteed on all platforms?
+        ok $overlay->get('foo') =~ m!(\w+, ){2}\w+!;
+        ok $overlay->get('bar') eq 'beer';
     }
 
     Apache::OK;
