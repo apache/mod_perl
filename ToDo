@@ -3,6 +3,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- deal with mod_ssl.c/Stronghold test configuration
+
 - 'make htmldoc' (Brian Moseley)
 
 - make DYNAMIC=1 work again
@@ -186,10 +188,6 @@ NEW STUFF
 
 - "save stack" mechanism so we can go back to caching CV lookups
 
-- cleanup Makefile.PL!!!
-
-- loose dup code in Apache::Registry, use Apache::PerlRun functions
-
 - improve the "stacked handlers" implementation, including:
   + config merging of AV*'s
 
@@ -245,6 +243,12 @@ merge cgi_env/subprocess_env
 
 change cgi_header_out and send_cgi_header to use new
 ap_scan_script_header_err_core function 
+
+cleanup Makefile.PL!!!
+
+loose dup code in Apache::Registry, use Apache::PerlRun functions
+
+use 5.005's newCONSTSUB in Constants.xs
 
 ---------------------------------------------------------------------------
 OPTIMIZATIONS
