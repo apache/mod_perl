@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+Change "setting auth_name" trace message so we don't get it without
+having enabled a MOD_PERL_TRACE level [Ask Bjoern Hansen
+<ask@valueclick.com>]
+
 s/class/pclass/g so we can compile w/ c++
 
 mod_perl will now save/restore SIGALRM
