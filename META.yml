@@ -6,4 +6,11 @@ no_index:
     directory:
         - Apache-Test
     package:
-        - C::Preprocessed
+        - C::Preprocessed   
+        - Apache
+        - Apache::Constants
+        - Apache::File
+        - Apache::SIG
+        - Apache::Server
+        - Apache::Table
+        - Apache::Util
