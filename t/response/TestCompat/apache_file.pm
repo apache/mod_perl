@@ -74,7 +74,7 @@ sub handler {
     my $write = "test $$";
     print $tmpfh $write;
     seek $tmpfh, 0, 0;
-    ok t_cmp($write, scalar(<$tmpfh>), "write/read from tmpfile");
+    ok t_cmp($write, <$tmpfh>, "write/read from tmpfile");
 
     ok t_cmp(Apache::OK,
              $r->discard_request_body,

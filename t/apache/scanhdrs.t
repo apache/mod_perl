@@ -16,8 +16,12 @@ t_debug $res->as_string;
 
 ok t_cmp(qr/^ok 1$/m, $res->content);
 
-ok t_cmp('text/test-output', scalar $res->header('Content-Type'));
+ok t_cmp('text/test-output',
+         $res->header('Content-Type'),
+         "standard header");
 
-ok t_cmp($module, scalar $res->header('X-Perl-Module'));
+ok t_cmp($module,
+         $res->header('X-Perl-Module'),
+         "custom header");
 
 ok t_cmp(qr/beer/, $res->message);
