@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+fix compilation issues in ModPerl::Util::current_perl_id (on some
+builds newSVpvf can't be resolved but Perl_newSVpvf works just
+fine). [Stas, Markus Wichitill <mawic@gmx.de>]
+
 fix APR::Error::str to return a lexical variable, rather than a
 string. This function is called by SvTRUE in modperl_errsv() via
 overload and on win32 (and randomly on linux) causes crashes via:
