@@ -23,7 +23,7 @@ open my $fh, $file or die "Can't open $file: $!";
 my $data = do { local $/; <$fh> };
 close $fh;
 
-plan tests => 4;
+plan tests => 4, need_lwp;
 
 {
     # custom text response
