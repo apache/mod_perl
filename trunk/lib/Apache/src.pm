@@ -16,6 +16,14 @@ $VERSION = '0.01';
 sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
 my $Is_Win32 = ($^O eq "MSWin32");
 
+sub apxs {
+    my $self = shift;
+    require Apache::MyConfig;
+    my $apxs = $Apache::MyConfig::Setup{'APXS'};
+    return "" unless $apxs and -x $apxs;
+    `$apxs @_`;
+}
+
 sub new {
     my $class = shift;
     my $dir;
@@ -124,7 +132,7 @@ sub asrc {
     return $d if -e "$d/httpd.h";
     return "$d/include" if -e "$d/include/httpd.h";
     return "$d/main" if -e "$d/main/httpd.h";
-    return undef;
+    return Apache::src->apxs(-q => 'INCLUDEDIR');
 }
 
 sub module_magic_number {
@@ -203,17 +211,15 @@ sub find_in_inc {
 }
 
 sub otherldflags {
+    my $self = shift;
     my @ldflags = ();
 
     if ($^O eq "aix") {
 	if (my $file = find_in_inc("mod_perl.exp")) {
 	    push @ldflags, "-bI:" . $file;
 	}
-	require Apache::MyConfig;
-	if (my $apxs = $Apache::MyConfig::Setup{'APXS'}) {
-	    my $httpdexp = `$apxs -q LIBEXECDIR` . "/httpd.exp";
-	    push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
-	}
+	my $httpdexp = $self->apxs(-q => 'LIBEXECDIR') . "/httpd.exp";
+	push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
     }
     return join(' ', @ldflags);
 }
@@ -247,12 +253,15 @@ sub inc {
 	$ssl_dir = "$Apache::MyConfig::Setup{SSL_BASE}/include";
     }
     push @inc, "-I$ssl_dir" if -d $ssl_dir;
-    require Apache::MyConfig;
-    if (my $apxs = $Apache::MyConfig::Setup{'APXS'}) {
-	my $ainc = `$apxs -q INCLUDEDIR`;
-	push @inc, "-I$ainc" if -d $ainc;
-    }
+    my $ainc = $self->apxs(-q => 'INCLUDEDIR');
+    push @inc, "-I$ainc" if -d $ainc;
     return "@inc";
+}
+
+sub ccflags {
+    my $self = shift;
+    my $cflags = $Config{'ccflags'};
+    join " ", $cflags, $self->apxs(-q => 'CFLAGS');
 }
 
 sub define {
