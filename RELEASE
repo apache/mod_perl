@@ -68,7 +68,12 @@ Instructions for mod_perl 2.0 Release Manager
   - MD5 sig (as it comes from CPAN upload announce).
   - the latest Changes
 
-7. Tarball signing
+7. Tarball GPG signing
 
-META: Eric can you please complete this item?
-
+  a. sign your local copy of the tarball:
+    % gpg --detach-sign --armor mod_perl-1.99_09.tar.gz
+  b. upload the generated sig file to www.apache.org:
+    % scp mod_perl-1.99_09.tar.gz.asc www.apache.org:/www/perl.apache.org/dist/
+  c. ask one of the other developers to double check the signature file
+     and tarball: download both files and verify the signature:
+    % gpg --verify mod_perl-1.99_09.tar.gz.asc
