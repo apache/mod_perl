@@ -6,6 +6,7 @@ use warnings;
 use ExtUtils::MakeMaker ();
 use Cwd ();
 use File::Spec;
+use File::Basename;
 
 use Apache::Build ();
 use ModPerl::MM;
@@ -254,7 +255,7 @@ sub ModPerl::BuildMM::MY::libscan {
     }
 
     return '' if $path =~ m/\.(pl|cvsignore)$/;
-    return '' if $path =~ m:\bCVS/:;
+    return '' if (basename dirname $path) eq 'CVS';
     return '' if $path =~ m/~$/;
 
     $path;
