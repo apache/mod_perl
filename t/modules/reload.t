@@ -8,6 +8,9 @@ use File::Spec::Functions qw(catfile);
 
 plan tests => 3;
 
+my $test_file = catfile Apache::Test::vars("serverroot"),
+    qw(lib Apache Reload Test.pm);
+
 my $module   = 'TestModules::reload';
 my $location = '/' . Apache::TestRequest::module2path($module);
 
@@ -27,7 +30,7 @@ use constant const => 'CONST';
 sub prototype($$) { 'PROTOTYPE' }
 EOF
 
-t_write_file(test_file(), $header, $initial);
+t_write_file($test_file, $header, $initial);
 
 t_debug "getting the same interp ID for $location";
 my $same_interp = Apache::TestRequest::same_interp_tie($location);
@@ -46,8 +49,8 @@ my $skip = $same_interp ? 0 : 1;
     );
 }
 
-sleep(2);
-t_write_file(test_file(), $header, $modified);
+t_write_file($test_file, $header, $modified);
+touch_mtime($test_file);
 
 {
     my $expected = join '', map { "$_:" . uc($_) . "\n" } sort @tests;
@@ -71,11 +74,6 @@ t_write_file(test_file(), $header, $modified);
         $received,
         "Unregister"
     );
-}
-
-sub test_file {
-    return catfile Apache::Test::vars("serverroot"),
-        qw(lib Apache Reload Test.pm);
 }
 
 # if we fail to find the same interpreter, return undef (this is not
@@ -107,6 +105,14 @@ sub skip_not_same_interp {
     ok &t_cmp;
 EOE
     }
+}
+
+sub touch_mtime {
+    my $file = shift;
+    # push the mtime into the future (at least 2 secs to work on win32)
+    # so Apache::Reload will reload the package
+    my $time = time + 5; # make it 5 to be sure
+    utime $time, $time, $file;
 }
 
 __DATA__
