@@ -401,12 +401,12 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
 static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
                                      void *cfg, char *d, void *data)
 {
+    int i;
+    modperl_config_dir_t *dir_cfg = (modperl_config_dir_t *)cfg;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     MP_dSCFG_dTHX;
 #endif
-    int i;
-    modperl_config_dir_t *dir_cfg = (modperl_config_dir_t *)cfg;
 
     if (!dir_cfg) {
         return 1;
