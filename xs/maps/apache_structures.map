@@ -126,7 +126,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    virthost
 </server_addr_rec>
 
-!<module>
+<module>
    version
    minor_version
    module_index
@@ -151,7 +151,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    short_name
 </process_rec>
 
-!<command_rec>
+<command_rec>
    name
    func
    cmd_data
@@ -180,7 +180,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    method_list
 </ap_method_list_t>
 
-!<ap_directive_t>
+<ap_directive_t>
    directive
    args
    next

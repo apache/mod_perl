@@ -150,7 +150,8 @@ MODULE=Apache::Connection   PACKAGE=guess
 >ap_open_stderr_log
 >ap_open_logs
 
-!MODULE=Apache::Module
+MODULE=Apache::Module
+ module *:DEFINE_top_module | | SV *:CLASS
 -ap_add_loaded_module
 -ap_add_module
 -ap_add_named_module
@@ -164,10 +165,11 @@ MODULE=Apache::Connection   PACKAGE=guess
 >ap_show_modules
 >ap_register_hooks
 
-!MODULE=Apache::Directive
- ap_add_node
- ap_build_config
- ap_build_cont_config
+MODULE=Apache::Directive
+ ap_directive_t *:DEFINE_conftree | | SV *:CLASS
+!ap_add_node
+!ap_build_config
+!ap_build_cont_config
  ap_walk_config
 >ap_process_config_tree
 
@@ -216,7 +218,8 @@ PACKAGE=guess
 >ap_parse_htaccess
 >ap_process_resource_config
 
-!MODULE=Apache::Command
+MODULE=Apache::Command
+ command_rec *:DEFINE_next | | command_rec *:cmd
  ap_check_cmd_context
  ap_soak_end_container
 -ap_set_file_slot
