@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Extend Apache::Test to allow extra configuration files to be included
+at the very end of httpd.conf, when everything was loaded and
+configured [Stas Bekman]
+
 Resolve a segfault in Apache::Module::get_config() for the edge case
 when the package name is bogus. [Stas Bekman]
 
