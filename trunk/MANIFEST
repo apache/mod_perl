@@ -40,7 +40,6 @@ lib/mod_perl_hooks.pm.PL
 lib/mod_perl.pm
 lib/Apache/src.pm
 lib/Apache/httpd_conf.pm
-lib/Apache/fork.pm
 lib/Apache/test.pm
 lib/Apache/Debug.pm
 lib/Apache/ExtUtils.pm
@@ -65,7 +64,6 @@ Symbol/Symbol.xs
 Symbol/test.pl
 src/modules/perl/perl_PL.h
 src/modules/perl/mod_perl_version.h
-src/modules/perl/fork.xs
 src/modules/perl/Exports.c
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
