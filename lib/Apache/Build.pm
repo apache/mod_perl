@@ -274,6 +274,15 @@ sub find_gtop_config {
         # 2.0.0 bugfix
         chomp(my $libdir = qx|pkg-config --variable=libdir libgtop-2.0|);
         $c{ldopts} =~ s|\$\(libdir\)|$libdir|;
+
+        chomp($c{ver} = qx|pkg-config --modversion libgtop-2.0|);
+        ($c{ver_maj}, $c{ver_min}) = split /\./, $c{ver};
+        if ($c{ver_maj} == 2 && $c{ver_min} >= 5) {
+            # some headers were removed in libgtop 2.5.0 so we need to
+            # be able to exclude them at compile time
+            $c{ccopts} .= ' -DGTOP_2_5_PLUS';
+        }
+
     }
     elsif (system('gnome-config --libs libgtop') == 0) {
         chomp($c{ccopts} = qx|gnome-config --cflags libgtop|);
