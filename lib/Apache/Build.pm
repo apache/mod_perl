@@ -258,7 +258,7 @@ sub configure_apache {
               "arguments to httpd's ./configure with MP_AP_CONFIGURE";
         exit 1;
     }
-    
+
     unless ($self->{MP_AP_PREFIX}) {
         error "You specified MP_AP_BUILD but did not speficy the " .
               "location of httpd's source tree with MP_AP_PREFIX"; 
@@ -271,13 +271,13 @@ sub configure_apache {
     }
 
     debug "Configuring httpd in $self->{MP_AP_PREFIX}";
-    
+
     my $httpd = File::Spec->catfile($self->{MP_AP_PREFIX}, 'httpd');
     push @Apache::TestMM::Argv, ('-httpd' => $httpd);
-    
+
     my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
     my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
-    
+
     local $ENV{BUILTIN_LIBS} = $mplibpath;
     local $ENV{AP_LIBS} = $self->ldopts;
     local $ENV{MODLIST} = 'perl';
@@ -285,7 +285,7 @@ sub configure_apache {
     #XXX: -Wall and/or -Werror at httpd configure time breaks things
     local $ENV{CFLAGS} = join ' ', grep { ! /\-Wall|\-Werror/ } 
         split /\s+/, $ENV{CFLAGS} || '';
-    
+
     my $cd = qq(cd $self->{MP_AP_PREFIX});
     my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
     debug "Running $cmd";
