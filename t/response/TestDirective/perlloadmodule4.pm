@@ -22,7 +22,7 @@ use Apache::CmdParms ();
 use Apache::Module ();
 use Apache::ServerUtil ();
 
-use Apache::Const -compile => qw(OK);
+use Apache::Const -compile => qw(OK NOT_IN_LOCATION);
 
 use constant KEY => "MyTest4";
 
@@ -31,6 +31,9 @@ our @APACHE_MODULE_COMMANDS = ({ name => +KEY },);
 sub MyTest4 {
     my($self, $parms, $arg) = @_;
     $self->{+KEY} = $arg;
+    
+    $self->{KEY.'-Error'} = $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
+    
     unless ($parms->path) {
         my $srv_cfg = Apache::Module->get_config($self, $parms->server);
         $srv_cfg->{+KEY} = $arg;
@@ -63,13 +66,16 @@ sub handler {
     my $dir_cfg = get_config($s, $r->per_dir_config);
     my $srv_cfg = get_config($s);
 
-    plan $r, tests => 3;
+    plan $r, tests => 5;
 
     ok $s->is_virtual;
 
     ok t_cmp($dir_cfg->{+KEY}, "Dir", "Section");
 
     ok t_cmp($srv_cfg->{+KEY}, "Vhost", "Section");
+    
+    ok t_cmp($dir_cfg->{KEY.'-Error'}, KEY . " cannot occur within <Location> section", "check_cmd_context");
+    ok t_cmp($srv_cfg->{KEY.'-Error'}, undef, "check_cmd_context");
 
     return Apache::OK;
 }
