@@ -3,6 +3,9 @@
 # make sure that we test under Taint mode
 PerlSwitches -T
 
+# run on startup
+PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
+
 PerlSwitches -Mlib=@ServerRoot@/../lib
 PerlSwitches -Mlib=@ServerRoot@/../../Apache-Test/lib
 PerlSwitches -Mlib=@ServerRoot@/../../lib
