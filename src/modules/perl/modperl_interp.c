@@ -88,10 +88,12 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
     MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)\n",
                (unsigned long)interp,
                (unsigned long)interp->perl);
-#ifdef _PTHREAD_H
-    MP_TRACE_i(MP_FUNC, "pthread_self == 0x%lx\n",
-               (unsigned long)pthread_self());
+
+#ifdef MP_TRACE
+    interp->tid = MP_TIDF;
 #endif
+
+    MP_TRACE_i(MP_FUNC, "thread == 0x%lx\n", interp->tid);
 
     MpInterpIN_USE_On(interp);
 
@@ -117,6 +119,7 @@ ap_status_t modperl_interp_pool_destroy(void *data)
 static void *interp_pool_grow(modperl_tipool_t *tipool, void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
+    MP_TRACE_i(MP_FUNC, "adding new interpreter to the pool\n");
     return (void *)modperl_interp_new(mip->ap_pool, mip, mip->parent->perl);
 }
 

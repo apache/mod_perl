@@ -41,6 +41,9 @@ struct modperl_interp_t {
     PerlInterpreter *perl;
     int num_requests;
     int flags;
+#ifdef MP_TRACE
+    unsigned long tid;
+#endif
 };
 
 typedef struct {
