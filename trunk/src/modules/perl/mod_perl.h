@@ -876,6 +876,7 @@ typedef struct {
     int PerlTaintCheck;
     int PerlWarn;
     int FreshRestart;
+    PERL_CMD_TYPE *PerlInitHandler;
     PERL_CMD_TYPE *PerlPostReadRequestHandler;
     PERL_CMD_TYPE *PerlTransHandler;
     PERL_CMD_TYPE *PerlChildInitHandler;
@@ -1056,7 +1057,7 @@ CHAR_P perl_cmd_warn (cmd_parms *parms, void *dummy, int arg);
 CHAR_P perl_cmd_fresh_restart (cmd_parms *parms, void *dummy, int arg);
 
 CHAR_P perl_cmd_dispatch_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
-CHAR_P perl_cmd_init_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
+CHAR_P perl_cmd_init_handlers (cmd_parms *parms, void *rec, char *arg);
 CHAR_P perl_cmd_cleanup_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_header_parser_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_post_read_request_handlers (cmd_parms *parms, void *dumm, char *arg);

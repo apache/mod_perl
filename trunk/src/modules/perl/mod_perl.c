@@ -743,6 +743,9 @@ int PERL_POST_READ_REQUEST_HOOK(request_rec *r)
 	r->uri = r->unparsed_uri;
     }
 #endif
+#ifdef PERL_INIT
+    PERL_CALLBACK("PerlInitHandler", cls->PerlInitHandler);
+#endif
     PERL_CALLBACK("PerlPostReadRequestHandler", cls->PerlPostReadRequestHandler);
     return status;
 }

@@ -20,8 +20,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - Apache::Constants :override :args_how
 
-- PerlInitHandler - alias to first available
-
 - make 'make test_report' more useful
 
 - change cgi_header_out and send_cgi_header to use new

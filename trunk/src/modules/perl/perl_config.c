@@ -328,7 +328,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
     PERL_CHILD_INIT_CREATE(cls);
     PERL_CHILD_EXIT_CREATE(cls);
     PERL_RESTART_CREATE(cls);
-
+    PERL_INIT_CREATE(cls);
     new = (char **)push_array(cls->PerlModule);
     *new = pstrdup(p, "Apache");
 
@@ -457,9 +457,16 @@ CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
     PERL_CMD_PUSH_HANDLERS("PerlLogHandler", rec->PerlLogHandler);
 }
 
-CHAR_P perl_cmd_init_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
+CHAR_P perl_cmd_init_handlers (cmd_parms *parms, void *rec, char *arg)
 {
-    PERL_CMD_PUSH_HANDLERS("PerlInitHandler", rec->PerlInitHandler);
+    dPSRV(parms->server);
+    if(parms->path) {
+	PERL_CMD_PUSH_HANDLERS("PerlInitHandler", 
+			       ((perl_dir_config *)rec)->PerlInitHandler);
+    }
+    else {
+	PERL_CMD_PUSH_HANDLERS("PerlTransHandler", cls->PerlInitHandler);
+    }
 }
 
 CHAR_P perl_cmd_cleanup_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
