@@ -6,7 +6,7 @@ use APR::Bucket ();
 use APR::Brigade ();
 use APR::Const -compile => qw(SUCCESS EOF);
 use Apache::Const -compile => qw(MODE_GETLINE);
-use APR::Lib ();
+use APR::Util ();
 
 sub handler {
     my Apache::Connection $c = shift;

@@ -407,7 +407,7 @@ MODULE=APR::String
  apr_dso_sym
  apr_dso_unload
 
-MODULE=APR::Lib   PACKAGE=guess
+MODULE=APR::Util   PACKAGE=guess
  apr_filename_of_pathname
  apr_password_get
  apr_password_validate

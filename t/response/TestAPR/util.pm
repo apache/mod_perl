@@ -6,7 +6,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use APR::Lib ();
+use APR::Util ();
 
 sub handler {
     my $r = shift;
