@@ -1,14 +1,21 @@
 =head1 NAME
 
-INSTALL.apaci - Installing with the new mod_perl hybrid build environment for Apache 1.3
+INSTALL.apaci - Installing mod_perl under Unix with the new hybrid build environment for Apache 1.3
 
 =head1 SUMMARY
 
 This document describes how to build and install mod_perl as clean as possible
-under Apache 1.3 by making use of both the Apache 1.3 ConfigStart/End facility
-and the new Autoconf-style Interface (APACI). In addition the Dynamic Shared
-Object (DSO) mechanism can be used to build mod_perl as an Apache module which
-can be loaded on-demand under run-time.
+with Apache 1.3 under Unix platforms by making use of both the Apache 1.3
+ConfigStart/End facility and the new Autoconf-style Interface (APACI). In
+addition the Dynamic Shared Object (DSO) mechanism can be used to build
+mod_perl as an Apache module which can be loaded on-demand under run-time.
+
+=head1 ATTENTION
+
+I<This currently is a pure Unix-based solution because the complete Apache 1.3
+source configuration mechanism currently is only workable under Unix. It
+doesn't work under the Win32 platform, so mod_perl cannot use it, too. For
+Win32 installation instructions please read the INSTALL.win32 document.>
 
 =head1 BACKGROUND
 
