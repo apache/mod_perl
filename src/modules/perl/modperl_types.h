@@ -228,6 +228,7 @@ typedef struct {
     apr_status_t rc;
     modperl_filter_mode_e mode;
     apr_pool_t *pool;
+    apr_pool_t *temp_pool;
 } modperl_filter_t;
 
 typedef struct {
