@@ -1034,6 +1034,17 @@ int modperl_response_handler_cgi(request_rec *r)
     return retval;
 }
 
+/* This ugly hack pulls in any function listed in
+ * modperl_exports.c. Otherwise, the over-zealous
+ * linker would remove unused api functions
+ */
+const void *modperl_suck_in_ugly_hack(void);
+const void *modperl_suck_in_ugly_hack(void)
+{
+    extern const void *modperl_ugly_hack;
+    return modperl_ugly_hack;
+}
+
 module AP_MODULE_DECLARE_DATA perl_module = {
     STANDARD20_MODULE_STUFF, 
     modperl_config_dir_create, /* dir config creater */

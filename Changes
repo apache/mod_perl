@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Generate modperl_exports.c for static builds to prevent the
+linker from stripping needed but unused symbols [Gozer]
+
 Add .libs/ as part of the library search path when building
 against httpd's source tree [Gozer]
 
