@@ -1,3 +1,5 @@
+use ModPerl::Util (); #for CORE::GLOBAL::exit
+
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
