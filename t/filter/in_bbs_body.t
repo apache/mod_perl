@@ -10,5 +10,5 @@ my $location = '/TestFilter__in_bbs_body';
 
 for my $x (1,2) {
     my $data = scalar reverse "ok $x\n";
-    print POST_BODY $location, content => $data;
+    print POST_BODY_ASSERT $location, content => $data;
 }

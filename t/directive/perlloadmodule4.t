@@ -10,4 +10,4 @@ Apache::TestRequest::module($module);
 my $hostport = Apache::TestRequest::hostport($config);
 my $path = Apache::TestRequest::module2path($module);
 
-print GET_BODY "http://$hostport/$path";
+print GET_BODY_ASSERT "http://$hostport/$path";
