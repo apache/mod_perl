@@ -74,8 +74,6 @@ ModPerl::BuildMM::WriteMakefile(
     macro         => {
         MODPERL_SRC        => $code->path,
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
-        MAKE_F             => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
-        MODPERL_LIBMAKE    => '$(MAKE) -f $(MODPERL_MAKEFILE)',
         PERL               => $build->perl_config('perlpath'),
         MOD_INSTALL        => ModPerl::BuildMM::mod_install(),
         MODPERL_AP_INCLUDEDIR  => $build->ap_includedir(),
@@ -562,17 +560,17 @@ etags:
 	$(SHELL) build/make_etags
 
 modperl_lib:
-	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE)
+	cd "$(MODPERL_SRC)" && $(MAKE)
 
 modperl_lib_install:
-	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) install
+	cd "$(MODPERL_SRC)" && $(MAKE) install
 
 modperl_xs_h_install:
 	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
 	$(CP) $(MODPERL_XS_H_FILES) $(MODPERL_AP_INCLUDEDIR)
 
 modperl_src_clean:
-	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
+	cd "$(MODPERL_SRC)" && $(MAKE) clean
 
 EOF
 

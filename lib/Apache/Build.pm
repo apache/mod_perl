@@ -763,7 +763,7 @@ sub DESTROY {}
 my %default_files = (
     'build_config' => 'lib/Apache/BuildConfig.pm',
     'ldopts' => 'src/modules/perl/ldopts',
-    'makefile' => 'src/modules/perl/Makefile.modperl',
+    'makefile' => 'src/modules/perl/Makefile',
 );
 
 sub clean_files {
