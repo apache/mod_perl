@@ -116,6 +116,14 @@ MP_CMD_SRV_DECLARE(options)
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE(init_handlers)
+{
+    if (parms->path) {
+        return modperl_cmd_header_parser_handlers(parms, mconfig, arg);
+    }
+
+    return modperl_cmd_post_read_request_handlers(parms, mconfig, arg);
+}
 
 #ifdef MP_COMPAT_1X
 
