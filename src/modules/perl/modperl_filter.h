@@ -86,7 +86,7 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
                                                   const char *buf,
                                                   apr_size_t *len);
 
-void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c, int idx,
+void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 const char *name,
                                 modperl_filter_add_t addfunc,
                                 SV *callback, const char *type);
