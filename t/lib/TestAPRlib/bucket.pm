@@ -15,6 +15,8 @@ use APR::BucketAlloc ();
 use APR::BucketType ();
 use APR::Table ();
 
+use APR::Const -compile => 'SUCCESS';
+
 sub num_of_tests {
     return 23;
 }
@@ -36,9 +38,9 @@ sub test {
         ok $b->isa('APR::Bucket');
 
         my $type = $b->type;
-        ok t_cmp($type->name, 'mod_perl SV bucket', "type");
+        ok t_cmp $type->name, 'mod_perl SV bucket', "type";
 
-        ok t_cmp($b->length, length($data), "modperl b->length");
+        ok t_cmp $b->length, length($data), "modperl b->length";
     }
 
     # new: offset
@@ -48,9 +50,9 @@ sub test {
         my $real = substr $data, $offset;
         my $b = APR::Bucket->new($ba, $data, $offset);
         my $rlen = $b->read(my $read);
-        ok t_cmp($read, $real, 'new($data, $offset)/buffer');
-        ok t_cmp($rlen, length($read), 'new($data, $offset)/len');
-        ok t_cmp($b->start, $offset, 'offset');
+        ok t_cmp $read, $real, 'new($data, $offset)/buffer';
+        ok t_cmp $rlen, length($read), 'new($data, $offset)/len';
+        ok t_cmp $b->start, $offset, 'offset';
 
     }
 
@@ -62,8 +64,8 @@ sub test {
         my $real = substr $data, $offset, $len;
         my $b = APR::Bucket->new($ba, $data, $offset, $len);
         my $rlen = $b->read(my $read);
-        ok t_cmp($read, $real, 'new($data, $offset, $len)/buffer');
-        ok t_cmp($rlen, length($read), 'new($data, $offse, $lent)/len');
+        ok t_cmp $read, $real, 'new($data, $offset, $len)/buffer';
+        ok t_cmp $rlen, length($read), 'new($data, $offse, $lent)/len';
     }
 
     # new: offset+ too big len
@@ -73,9 +75,9 @@ sub test {
         my $len    = 10;
         my $real = substr $data, $offset, $len;
         my $b = eval { APR::Bucket->new($ba, $data, $offset, $len) };
-        ok t_cmp($@,
-                 qr/the length argument can't be bigger than the total/,
-                 'new($data, $offset, $len_too_big)');
+        ok t_cmp $@,
+            qr/the length argument can't be bigger than the total/,
+            'new($data, $offset, $len_too_big)';
     }
 
     # modification of the source variable, affects the data
@@ -86,9 +88,9 @@ sub test {
         my $b = APR::Bucket->new($ba, $data);
         $data =~ s/^..../BBBB/;
         $b->read(my $read);
-        ok t_cmp($read, $data,
-                 "data inside the bucket should get affected by " .
-                 "the changes to the Perl variable it's created from");
+        ok t_cmp $read, $data,
+            "data inside the bucket should get affected by " .
+            "the changes to the Perl variable it's created from";
     }
 
 
@@ -96,9 +98,9 @@ sub test {
     # some function is re-entered) and the same SV is passed to
     # different buckets, which must be detected and copied away.
     {
-        my @buckets = ();
-        my @data      = qw(ABCD EF);
-        my @received     = ();
+        my @buckets  = ();
+        my @data     = qw(ABCD EF);
+        my @received = ();
         for my $str (@data) {
             my $b = func($ba, $str);
             push @buckets, $b;
@@ -109,7 +111,6 @@ sub test {
         for my $b (@buckets) {
             $b->read(my $out);
             push @received, $out;
-            #Devel::Peek::Dump $out;
         }
 
         # here we used to get: two pv: "ef\0d"\0, "ef"\0, as you can see
@@ -133,7 +134,7 @@ sub test {
         my $data = "xxx";
         my $b = APR::Bucket->new($ba, $data);
         $b->read(my $read);
-        ok t_cmp($read, $data, 'new($data)');
+        ok t_cmp $read, $data, 'new($data)';
         ok TestCommon::Utils::is_tainted($read);
     }
 
@@ -155,15 +156,15 @@ sub test {
     # setaside
     {
         my $data = "A" x 10;
-        my $orig = $data;
+        my $expected = $data;
         my $b = APR::Bucket->new($ba, $data);
         my $status = $b->setaside($pool);
-        ok t_cmp $status, 0, "setaside status";
+        ok t_cmp $status, APR::SUCCESS, "setaside status";
         $data =~ s/^..../BBBB/;
         $b->read(my $read);
-        ok !t_cmp($read, $data,
-                 "data inside the setaside bucket is unaffected by " .
-                 "changes to the Perl variable it's created from");
+        ok t_cmp $read, $expected,
+            "data inside the setaside bucket is unaffected by " .
+            "changes to the Perl variable it's created from";
         $b->destroy;
     }
 
@@ -181,9 +182,9 @@ sub test {
 
         # now test that we are still OK
         my $rlen = $b->read(my $read);
-        ok t_cmp($read, $real, 'new($data, $offset)/buffer');
-        ok t_cmp($rlen, length($read), 'new($data, $offset)/len');
-        ok t_cmp($b->start, $offset, 'offset');
+        ok t_cmp $read, $real, 'new($data, $offset)/buffer';
+        ok t_cmp $rlen, length($read), 'new($data, $offset)/len';
+        ok t_cmp $b->start, $offset, 'offset';
 
     }
 
@@ -193,7 +194,7 @@ sub test {
         my $orig = $data;
         my $b = APR::Bucket->new($ba, $data);
         my $status = $b->setaside(APR::Pool->new);
-        ok t_cmp $status, 0, "setaside status";
+        ok t_cmp $status, APR::SUCCESS, "setaside status";
 
         # try to overwrite the temp pool data
         my $table = APR::Table::make(APR::Pool->new, 50);
@@ -201,8 +202,8 @@ sub test {
 
         # now test that we are still OK
         $b->read(my $read);
-        ok t_cmp($read, $data,
-                 "data inside the setaside bucket is not corrupted");
+        ok t_cmp $read, $data,
+            "data inside the setaside bucket is not corrupted";
         $b->destroy;
     }
 
