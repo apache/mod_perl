@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+$r->finfo now accepts APR::Finfo object as an optional
+argument. [Stas]
+
+APR::Finfo [Stas]
+  - change stat() to return finfo
+  - make all field accessors readonly
+
 ARP::password_validate is now ARP::Util::password_validate [Stas]
 
 APR::IpSubnet::new() now throws APR::Error exception (not returning

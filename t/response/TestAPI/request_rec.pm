@@ -10,7 +10,10 @@ use Apache::TestRequest;
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 
+use APR::Finfo ();
+
 use Apache::Const -compile => 'OK';
+use APR::Const    -compile => qw(FINFO_NORM);
 
 #this test module is only for testing fields in the request_rec
 #listed in apache_structures.map
@@ -20,7 +23,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 42;
+    plan $r, tests => 43;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -130,7 +133,17 @@ sub handler {
 
     ok $r->args || 1;
 
-    #finfo
+    # finfo
+    {
+        my $finfo = APR::Finfo::stat(__FILE__, APR::FINFO_NORM, $r->pool);
+        $r->finfo($finfo);
+        # just one field test, all accessors are fully tested in
+        # TestAPR::finfo
+        ok t_cmp(__FILE__,
+                 $r->finfo->fname,
+                 '$r->finfo');
+    }
+
     #parsed_uri
 
     #per_dir_config
