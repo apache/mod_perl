@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Dynamically prompt and add MP_INST_APACHE2=1 when installing on
+systems with mod_perl 1 preinstalled. [Stas]
+
 fix the logging call in RegistryCooker [Lars Eggert <lars.eggert
 netlab.nec.de>]
 
