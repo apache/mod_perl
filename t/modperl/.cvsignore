@@ -14,4 +14,6 @@ setauth.t
 request_rec_tie_api.t
 perl.t
 taint.t
+io_nested_with_closed_stds.t
+io_with_closed_stds.t
 
