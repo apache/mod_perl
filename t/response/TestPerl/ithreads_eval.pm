@@ -16,7 +16,7 @@ use Apache::TestUtil;
 
 use Devel::Peek;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -44,7 +44,7 @@ EOI
 
     ok 1;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;
