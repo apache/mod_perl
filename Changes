@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+fix APR::PerlIO layer to pop itself if open() has failed. [Stas]
+
 move the definition of DEFINE='-DMP_HAVE_APR_LIBS' to the top level
 Makefile.PL, since it overrides MY::pasthru target which makes it
 impossible to define local DEFINE in subdirs. [Stas]
