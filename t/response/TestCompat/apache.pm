@@ -11,6 +11,7 @@ use Apache::TestUtil;
 use Apache::Test;
 use File::Spec::Functions qw(catfile canonpath);
 
+use ModPerl::Util ();
 use Apache::compat ();
 use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 
@@ -35,7 +36,7 @@ sub handler {
              Apache::ServerUtil::exists_config_define('MODPERL2'),
              'Apache->define');
 
-    ok t_cmp(Apache::current_callback(),
+    ok t_cmp(ModPerl::Util::current_callback(),
              'PerlResponseHandler',
              'inside PerlResponseHandler');
 

@@ -16,7 +16,7 @@ sub handler {
     my $r = shift;
 
     plan $r, tests => 1;
-    my $callback = Apache::current_callback();
+    my $callback = ModPerl::Util::current_callback();
     ok t_cmp($callback,
              'PerlResponseHandler',
              'inside PerlResponseHandler');
@@ -32,7 +32,7 @@ sub headerparser { check('HeaderParser') }
 
 sub check {
     my $expected = 'Perl' . shift() . 'Handler';
-    my $callback = Apache::current_callback();
+    my $callback = ModPerl::Util::current_callback();
     die "expecting $expected callback, instead got $callback" 
         unless $callback eq $expected;
     #warn "in callback: $callback\n";

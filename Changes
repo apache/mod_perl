@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+moved Apache::current_callback() to ModPerl::Util::current_callback
+where it belongs [Gozer]
+
 modperl_perl_module_loaded() fixed to use %INC to determine if a module
 is loaded instead of checking for the existence of a stash [Gozer]
 

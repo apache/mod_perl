@@ -11,6 +11,8 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter ();
 
+use ModPerl::Util ();
+
 use APR::Table;
 
 use Apache::Const -compile => qw(OK DECLINED AUTH_REQUIRED SERVER_ERROR);
@@ -57,7 +59,7 @@ sub callback {
         $r = $obj
     }
 
-    $callback ||= Apache::current_callback;
+    $callback ||= ModPerl::Util::current_callback;
 
     my $count = $r->notes->get($callback) || 0;
 
