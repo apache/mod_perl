@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+$r->document_root can now be modified
+
 upgrade license to apache software license version 1.1
 
 $r->the_request can now be modified
