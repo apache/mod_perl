@@ -22,6 +22,9 @@ static int new_constsub(pTHX_ constants_lookup lookup,
 #endif
 
         newCONSTSUB(stash, (char *)name, newSViv(val));
+#ifdef GvSHARED
+        GvSHARED_on(*gvp);
+#endif
     }
     
     /* export into callers namespace */
