@@ -1,7 +1,14 @@
 use strict;
 use Apache::test;
+use Apache::src ();
+ 
+my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 
 skip_test unless have_module "Apache::Cookie";
+
+unless (Apache::src->mmn_eq) {
+    skip_test if not $Is_dougm;
+}
 
 my $ua = LWP::UserAgent->new;
 

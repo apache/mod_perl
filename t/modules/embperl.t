@@ -1,23 +1,13 @@
 
 use Apache::test;
 
-if(defined $ENV{USER} and $ENV{USER} eq 'dougm' and 
-   $net::callback_hooks{MMN} < 19980413) 
-{
-    skip_test; #1.3b6 broke binary compat
-}
-
 skip_test unless have_module "HTML::Embperl";
+
+unless (Apache::src->mmn_eq) {
+    skip_test;
+}
 
 print "1..1\n";
 
 my $res = simple_fetch "/lists.ehtml";
 test 1, $res;
-$net::callback_hooks{MMN} ||= 19980413;
-unless($res) {
-    if($net::callback_hooks{MMN} >= 19980413) {
-	warn "\n>>> NOTE: Be sure to rebuild HTML::Embperl against Apache 1.3b6+\n";
-	warn ">>> Try 'make test' again after doing so.\n";
-	sleep 2;
-    }
-}
