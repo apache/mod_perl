@@ -17,13 +17,13 @@ use Apache::Const -compile => qw(OK NOT_FOUND);
 sub handler {
     my $r = shift;
 
-    # this header will make it
-    $r->err_headers_out->add('X-Survivor' => "err_headers_out");
+    # this header will always make it to the client
+    $r->err_headers_out->add('X-err_headers_out' => "err_headers_out");
 
-    # this header won't make it
-    $r->headers_out->add('X-Goner' => "headers_out");
+    # this header will make it to the client only on 2xx response
+    $r->headers_out->add('X-headers_out' => "headers_out");
 
-    return Apache::NOT_FOUND;
+    return $r->args eq "404" ? Apache::NOT_FOUND : Apache::OK;
 }
 
 1;

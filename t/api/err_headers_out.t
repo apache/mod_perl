@@ -5,17 +5,40 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 3;
+plan tests => 6;
 
 my $location = '/TestAPI__err_headers_out';
 
-my $res = GET $location;
+{
+    # with 2xx responses any of the err_headers_out and headers_out
+    # headers make it through
 
-#t_debug $res->as_string;
+    my $res = GET "$location?200";
 
-ok t_cmp $res->code, 404, "not found";
+    #t_debug $res->as_string;
 
-ok t_cmp $res->header('X-Survivor'), "err_headers_out",
-    "X-Survivor: made it";
+    ok t_cmp $res->code, 200, "OK";
 
-ok !$res->header('X-Goner');
+    ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
+        "X-err_headers_out: made it";
+
+    ok t_cmp $res->header('X-headers_out'), "headers_out",
+        "X-headers_out: made it";
+}
+
+{
+    # with non-2xx responses only the err_headers_out headers make it
+    # through. the headers_out do not make it.
+
+    my $res = GET "$location?404";
+
+    #t_debug $res->as_string;
+
+    ok t_cmp $res->code, 404, "not found";
+
+    ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
+        "X-err_headers_out: made it";
+
+    ok !$res->header('X-headers_out');
+}
+
