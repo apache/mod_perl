@@ -25,6 +25,17 @@ sub AUTOLOAD {
 
 my %ConstNameCache = ();
 
+sub export {
+    my $class = shift;
+    for my $new (@_) {
+	next if grep { $new eq $_ } @Apache::Constants::EXPORT_OK;
+	push @Apache::Constants::EXPORT_OK, $new;
+	if(defined %Apache::Constants::EXPORT) {
+	    $Apache::Constants::EXPORT{$new} = 1;
+	}
+    }
+}
+
 sub name {
     my($self, $const) = @_;
     require Apache::Constants::Exports;
@@ -156,15 +167,17 @@ This is the full set of HTTP response codes:
 (NOTE: not all implemented here)
 
  HTTP_OK
- HTTP_METHOD_NOT_ALLOWED
- HTTP_NOT_ACCEPTABLE
- HTTP_LENGTH_REQUIRED
- HTTP_PRECONDITION_FAILED
- HTTP_SERVICE_UNAVAILABLE
- HTTP_VARIANT_ALSO_VARIES
- HTTP_NO_CONTENT
+ HTTP_MOVED_TEMPORARILY
+ HTTP_MOVED_PERMANENTLY
+ HTTP_METHOD_NOT_ALLOWED 
  HTTP_NOT_MODIFIED
- HTTP_LENGTH_REQUIRED
+ HTTP_UNAUTHORIZED
+ HTTP_FORBIDDEN
+ HTTP_NOT_FOUND
+ HTTP_BAD_REQUEST
+ HTTP_INTERNAL_SERVER_ERROR
+ HTTP_NOT_ACCEPTABLE 
+ HTTP_NO_CONTENT
  HTTP_PRECONDITION_FAILED
  HTTP_SERVICE_UNAVAILABLE
  HTTP_VARIANT_ALSO_VARIES
@@ -176,6 +189,48 @@ These are constants related to server version:
  MODULE_MAGIC_NUMBER
  SERVER_VERSION
  SERVER_BUILT
+
+=item config
+
+These are constants related to configuration directives:
+
+ DECLINE_CMD
+
+=item types
+
+These are constants related to internal request types:
+
+ DIR_MAGIC_TYPE
+
+=item override
+
+These constants are used to control and test the context of configuration
+directives.
+
+ OR_NONE
+ OR_LIMIT
+ OR_OPTIONS
+ OR_FILEINFO
+ OR_AUTHCFG
+ OR_INDEXES
+ OR_UNSET
+ OR_ALL
+ ACCESS_CONF
+ RSRC_CONF
+
+=item args_how
+
+ RAW_ARGS
+ TAKE1
+ TAKE2
+ TAKE12
+ TAKE3
+ TAKE23
+ TAKE123
+ ITERATE
+ ITERATE2
+ FLAG
+ NO_ARGS
 
 =back
 

@@ -330,8 +330,6 @@ void *perl_create_server_config (pool *p, server_rec *s)
     PERL_CHILD_EXIT_CREATE(cls);
     PERL_RESTART_CREATE(cls);
     PERL_INIT_CREATE(cls);
-    new = (char **)push_array(cls->PerlModule);
-    *new = pstrdup(p, "Apache");
 
     return (void *)cls;
 }
@@ -389,6 +387,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
 if(!PERL_RUNNING()) { \
     perl_startup(parms->server, parms->pool); \
+    perl_require_module("Apache", parms->server); \
     MP_TRACE_g(fprintf(stderr, "mod_perl: %s calling perl_startup()\n", __FUNCTION__)); \
 } \
 return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
@@ -510,7 +509,7 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
-
+    perl_require_module("Apache", parms->server); 
     if(PERL_RUNNING()) 
 	perl_require_module(arg, parms->server);
     else {

@@ -7,7 +7,7 @@
 # (It may become useful if the test is moved to ./t subdirectory.)
 
 eval { require Apache::Constants::Exports };
-
+Apache::Constants->export(qw(HTTP_MULTIPLE_CHOICES));
 use Apache::Constants qw(MODULE_MAGIC_NUMBER);
 use strict qw(vars);
 shift->send_http_header("text/plain");
@@ -28,6 +28,10 @@ while(($key,$val) = each %Apache::Constants::EXPORT_TAGS) {
 }
 
 push @export, grep {!$SEEN{$_}++} @Apache::Constants::EXPORT;
+for my $sym (@Apache::Constants::EXPORT_OK) {
+    next if $SEEN{$sym}++;
+    Apache::Constants->import($sym) unless defined &$sym;
+}
 
 #skip some 1.3 stuff that 1.2 didn't have
 my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV DECLINE_CMD DIR_MAGIC_TYPE
@@ -42,6 +46,8 @@ if(MODULE_MAGIC_NUMBER < 19981108) {
 }
 
 my $tests = (1 + @export) - keys %skip; 
+$tests += 1; #extras
+
 print "1..$tests\n"; 
 #$loaded = 1;
 print "ok 1\n";
@@ -58,9 +64,12 @@ for $sym (sort @export) {
 	$name = Apache::Constants->name($val);
     };
     print defined $val ? "" : "not ", "ok $ix ($name|$sym: $val)\n";
-    last if $ix >= $tests;
     $ix++;
+    last if $ix >= $tests;
 }
+
+my $added = HTTP_MULTIPLE_CHOICES();
+print defined $added ? "" : "not ", "ok $ix\n";
 
 ######################### End of black magic.
 

@@ -436,6 +436,7 @@ static void mp_dso_unload(void *data)
 static void mp_server_notstarting(void *data) 
 {
     saveINC;
+    perl_require_module("Apache", NULL); 
     Apache__ServerStarting(FALSE);
 }
 
@@ -450,6 +451,7 @@ void mp_check_version(void)
     I32 i;
     SV *namesv;
     SV *version = perl_get_sv("Apache::VERSION", FALSE);
+
     if(!version)
 	croak("Apache.pm failed to load!"); /*should never happen*/
     if(SvNV(version) >= MP_APACHE_VERSION) /*no worries*/
@@ -522,6 +524,11 @@ void perl_startup (server_rec *s, pool *p)
     dstr = NULL;
 #endif
 
+    if(PERL_RUNNING()) {
+	saveINC;
+	mp_check_version();
+    }
+    
     if(perl_is_running == 0) {
 	/* we'll boot Perl below */
     }
@@ -685,7 +692,7 @@ void perl_startup (server_rec *s, pool *p)
 	    exit(1);
 	}
     }
-    mp_check_version();
+
     LEAVE_SAFE;
 
     MP_TRACE_g(fprintf(stderr, 

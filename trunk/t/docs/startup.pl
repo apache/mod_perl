@@ -20,6 +20,11 @@ use IO::File ();
 
 use Apache ();
 use Apache::Registry ();
+unless ($INC{'Apache.pm'} =~ /blib/) {
+    die "Wrong Apache.pm loaded: $INC{'Apache.pm'}";
+}
+
+Apache::Constants->export(qw(HTTP_MULTIPLE_CHOICES));
 
 #no mod_perl qw(Connection Server);
 
