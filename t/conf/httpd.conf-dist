@@ -15,6 +15,7 @@ umm, we use this to test mod_perl
  #-Tw
  PerlTaintCheck On
  PerlWarn On
+ PerlFreshRestart On
 
 =back to pod
 

@@ -464,25 +464,20 @@ void perl_call_halt(int status)
 
 void perl_reload_inc(void)
 {
-    SV *val;
-    char *key;
-    I32 klen;
-    HV *orig_inc = GvHV(incgv);
-
-    ENTER;
-
-    save_hptr(&GvHV(incgv));
-    GvHV(incgv) = Nullhv;
-    SAVEI32(dowarn);
+    HV *hash = GvHV(incgv);
+    HE *entry;
+    I32 old_warn = dowarn;
+    
     dowarn = FALSE;
-
-    (void)hv_iterinit(orig_inc);
-    while((val = hv_iternextsv(orig_inc, &key, &klen))) {
+    hv_iterinit(hash);
+    while ((entry = hv_iternext(hash))) {
+	char *key = HeKEY(entry);
+	SvREFCNT_dec(HeVAL(entry));
+	HeVAL(entry) = &sv_undef;
+	MP_TRACE_g(fprintf(stderr, "reloading %s\n", key);)
 	perl_require_pv(key);
-	MP_TRACE_g(fprintf(stderr, "reloading %s\n", key));
     }
-
-    LEAVE;
+    dowarn = old_warn;
 }
 
 I32 perl_module_is_loaded(char *name)
