@@ -13,7 +13,7 @@ use Config;
 #once it is sane, we'll use these methods in Makefile.PL
 
 $VERSION = '0.01';
-sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
+sub IS_MOD_PERL_BUILD () {grep { -e "$_/lib/mod_perl.pm" } qw(. ..)}
 my $Is_Win32 = ($^O eq "MSWin32");
 $Apache::src::APXS ||= "";
 
@@ -21,17 +21,25 @@ sub apxs {
     my $self = shift;
     eval { require Apache::MyConfig };
     my $apxs;
-    for ($Apache::src::APXS,
-	 $Apache::MyConfig::Setup{'APXS'},
-	 `which apxs`,
-	 "/usr/local/apache/bin/apxs")
-      {
-	  next unless ($apxs = $_);
-	  chomp $apxs;
-	  last if -x $apxs;
-      }
+    my @trys = ($Apache::src::APXS,
+		$Apache::MyConfig::Setup{'APXS'});
+
+    unless (IS_MOD_PERL_BUILD) {
+	#if we are building mod_perl via apxs, apxs should already be known
+	#these extra tries are for things built outside of mod_perl
+	#e.g. libapreq
+	push @trys,
+	which("apxs"),
+	"/usr/local/apache/bin/apxs";
+    }
+
+    for (@trys) {
+	next unless ($apxs = $_);
+	chomp $apxs;
+	last if -x $apxs;
+    }
     return "" unless $apxs and -x $apxs;
-    `$apxs @_`;
+    `$apxs @_ 2>/dev/null`;
 }
 
 sub apxs_cflags {
@@ -39,6 +47,17 @@ sub apxs_cflags {
     #$cflags =~ s/-D\w+=\".*\"//g; #get rid of -Ds with quotes
     $cflags =~ s/\"/\\\"/g;
     $cflags;
+}
+
+sub which {
+    my $name = shift;
+
+    for (split ':', $ENV{PATH}) {
+	my $app = "$_/$name";
+	return $app if -x $app;
+    }
+
+    return "";
 }
 
 sub new {
@@ -49,7 +68,7 @@ sub new {
 	eval {
 	    require "../lib/Apache/MyConfig.pm";
 	};
-	print $@ if $@;
+
 	unless ($@) {
 	    $dir = $Apache::MyConfig::Setup{Apache_Src};
 	    for ($dir, "../$dir", "../../$dir") {
