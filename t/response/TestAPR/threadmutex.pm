@@ -7,29 +7,16 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
-use APR::Const -compile => qw(EBUSY SUCCESS);
+
+use TestAPRlib::threadmutex;
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 3, have_threads;
+    my $tests = TestAPRlib::threadmutex::num_of_tests();
+    plan $r, tests => $tests, have_threads;
 
-    require APR::ThreadMutex;
-
-    my $mutex = APR::ThreadMutex->new($r->pool);
-
-    ok $mutex;
-
-    ok t_cmp($mutex->lock, APR::SUCCESS,
-             'lock == APR::SUCCESS');
-
-#XXX: don't get what we expect on win23
-#need to use APR_STATUS_IS_EBUSY ?
-#    ok t_cmp($mutex->trylock, APR::EBUSY,
-#             'trylock == APR::EBUSY');
-
-    ok t_cmp($mutex->unlock, APR::SUCCESS,
-             'unlock == APR::SUCCESS');
+    TestAPRlib::threadmutex::test();
 
     Apache::OK;
 }
