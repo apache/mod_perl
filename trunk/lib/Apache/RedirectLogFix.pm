@@ -3,7 +3,7 @@ package Apache::RedirectLogFix;
 use Apache::Constants qw(OK DECLINED REDIRECT);
 
 sub handler {
-    my $r = shift;
+    my $r = shift->last;
     return DECLINED unless $r->handler && ($r->handler eq "perl-script");
 
     if(my $loc = $r->header_out("Location")) {
