@@ -1,4 +1,4 @@
-package TestAPI::rutil;
+package TestAPI::request_util;
 
 use strict;
 use warnings FATAL => 'all';
@@ -37,12 +37,13 @@ sub handler {
     t_debug $sig;
     ok $sig;
 
-    my $pattern = qr!(?s)GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!;
+    my $pattern = 
+        qr!(?s)GET /TestAPI__request_util.*Host:.*200 OK.*Content-Type:!;
 
     ok t_cmp($r->as_string,
              $pattern,
              "test for the request_line, host, status, and few " .
-             " headers that should always be there");
+             "headers that should always be there");
 
     while (my($code, $line) = each %status_lines) {
         ok t_cmp(Apache::RequestUtil::get_status_line($code),

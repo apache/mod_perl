@@ -6,8 +6,8 @@ lookup_uri2.t
 module.t
 request_rec.t
 response.t
-r_subclass.t
-rutil.t
+request_subclass.t
+request_util.t
 sendfile.t
 server_rec.t
 server_util.t

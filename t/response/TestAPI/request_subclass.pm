@@ -1,4 +1,4 @@
-package TestAPI::r_subclass;
+package TestAPI::request_subclass;
 
 use strict;
 use warnings FATAL => 'all';
