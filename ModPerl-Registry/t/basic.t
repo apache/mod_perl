@@ -3,7 +3,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::TestRequest qw(GET GET_BODY HEAD);
+use Apache::TestRequest;
 use Apache::TestConfig ();
 
 use Apache::TestUtil qw(t_catfile_apache);
@@ -16,7 +16,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 4 + 3;
+plan tests => @aliases * 5 + 3;
 
 my $vars = Apache::Test::config()->{vars};
 my $script_file = t_catfile_apache $vars->{serverroot}, 'cgi-bin', 'basic.pl';
@@ -69,6 +69,20 @@ for my $alias (@aliases) {
         "$modules{$alias} mod_cgi-like environment pre-set",
     );
 }
+
+
+# exit
+for my $alias (@aliases) {
+    my $url = "/$alias/exit.pl";
+
+    ok t_cmp(
+        "before exit",
+        GET_BODY_ASSERT($url),
+        "$modules{$alias} mod_cgi-like environment pre-set",
+    );
+}
+
+
 
 # test method handlers
 {
