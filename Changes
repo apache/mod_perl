@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+escape HTML in dumped variables by Apache::Status [Markus Wichitill
+<mawic@gmx.de>]
+
 $r->document_root can now be changed when safe to do so [Gozer]
 
 APR::Bucket->new now requires an APR::BucketAlloc as its first argument.
