@@ -5,8 +5,8 @@ use Apache::src ();
 my $src = Apache::src->new;
 
 WriteMakefile(
-    'NAME'	=> 'Apache::Tie',
-    'VERSION_FROM' => 'Tie.pm', 
+    'NAME'	=> 'Apache::Table',
+    'VERSION_FROM' => 'Table.pm', 
     'INC'	=> $src->inc,
     'TYPEMAPS'  => $src->typemaps,
 );

@@ -1,15 +1,6 @@
 #include "mod_perl.h"
 
 typedef struct {
-    table *table;
-    array_header *arr;
-    table_entry *elts;
-    int ix;
-} apache_tiehash_table;
-
-typedef apache_tiehash_table * Apache__TieHashTable;
-
-typedef struct {
     SV *sv;
     SV *cv;
     HV *hv;
@@ -39,7 +30,7 @@ static int Apache_table_do(TableDo *td, const char *key, const char *val)
     return rv;
 }
 
-static void table_modify(apache_tiehash_table *self, const char *key, SV *sv, 
+static void table_modify(TiedTable *self, const char *key, SV *sv, 
 			 void (*tabfunc) (table *, const char *, const char *))
 {
     const char *val;
@@ -61,21 +52,21 @@ static void table_modify(apache_tiehash_table *self, const char *key, SV *sv,
 
 }
 
-MODULE = Apache::Tie		PACKAGE = Apache::TieHashTable
+MODULE = Apache::Table		PACKAGE = Apache::Table
 
 PROTOTYPES: DISABLE
 
 BOOT:
     items = items; /*avoid warning*/ 
 
-Apache::TieHashTable
+Apache::Table
 TIEHASH(class, table)
     SV *class
-    Apache::Table table
+    Apache::table table
 
     CODE:
     if(!class) XSRETURN_UNDEF;
-    RETVAL = (Apache__TieHashTable)safemalloc(sizeof(apache_tiehash_table));
+    RETVAL = (Apache__Table)safemalloc(sizeof(TiedTable));
     RETVAL->table = table;
     RETVAL->ix = 0;
     RETVAL->elts = NULL;
@@ -86,14 +77,14 @@ TIEHASH(class, table)
 
 void
 destroy(self)
-    Apache::TieHashTable self
+    Apache::Table self
 
     CODE:
     safefree(self);
 
 void
 FETCH(self, key)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
 
     ALIAS:
@@ -119,7 +110,7 @@ FETCH(self, key)
 
 bool
 EXISTS(self, key)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
 
     CODE:
@@ -131,7 +122,7 @@ EXISTS(self, key)
 
 const char*
 DELETE(self, key)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
 
     ALIAS:
@@ -154,7 +145,7 @@ DELETE(self, key)
 
 void
 STORE(self, key, val)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
     const char *val
 
@@ -168,7 +159,7 @@ STORE(self, key, val)
 
 void
 CLEAR(self)
-    Apache::TieHashTable self
+    Apache::Table self
 
     ALIAS:
     clear = 1
@@ -180,7 +171,7 @@ CLEAR(self)
 
 const char *
 NEXTKEY(self, lastkey=Nullsv)
-    Apache::TieHashTable self
+    Apache::Table self
     SV *lastkey
 
     CODE:
@@ -192,7 +183,7 @@ NEXTKEY(self, lastkey=Nullsv)
 
 const char *
 FIRSTKEY(self)
-    Apache::TieHashTable self
+    Apache::Table self
 
     CODE:
     if(!self->table) XSRETURN_UNDEF;
@@ -207,7 +198,7 @@ FIRSTKEY(self)
 
 void
 add(self, key, sv)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
     SV *sv;
 
@@ -216,7 +207,7 @@ add(self, key, sv)
 
 void
 merge(self, key, sv)
-    Apache::TieHashTable self
+    Apache::Table self
     const char *key
     SV *sv
 
@@ -225,7 +216,7 @@ merge(self, key, sv)
 
 void
 do(self, cv, sv=Nullsv, ...)
-    Apache::TieHashTable self
+    Apache::Table self
     SV *cv
     SV *sv
 

@@ -217,11 +217,11 @@ SV *mod_perl_tie_table(table *t)
     HV *hv;
     SV *sv = sv_newmortal();
     iniHV(hv);
-    sv_setref_pv(sv, "Apache::Table", (void*)t);
-    perl_qrequire_module("Apache::Tie");
-    perl_tie_hash(hv, "Apache::TieHashTable", sv);
+    sv_setref_pv(sv, "Apache::table", (void*)t);
+    perl_qrequire_module("Apache::Table");
+    perl_tie_hash(hv, "Apache::Table", sv);
     return sv_bless(newRV_noinc((SV*)hv), 
-		    gv_stashpv("Apache::TieHashTable", TRUE));
+		    gv_stashpv("Apache::Table", TRUE));
 }
 
 SV *perl_hvrv_magic_obj(SV *rv)

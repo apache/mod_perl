@@ -5,11 +5,11 @@ Apache::SubRequest	T_PTROBJ
 Apache::Connection	T_PTROBJ
 Apache::Server		T_PTROBJ
 Apache::ModuleConfig    T_PTROBJ
-Apache::Table		T_PTROBJ
 Apache::Module		T_PTROBJ
 Apache::Handler		T_PTROBJ
 Apache::Command		T_PTROBJ
-Apache::TieHashTable	T_TABLEOBJ
+Apache::Table		T_TABLEOBJ
+Apache::table		T_PTROBJ
 pid_t			T_IV
 Apache::Scoreboard      O_HvRV
 Apache::URI		T_PTROBJ    

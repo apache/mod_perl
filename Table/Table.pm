@@ -1,4 +1,4 @@
-package Apache::Tie;
+package Apache::Table;
 
 use strict;
 use DynaLoader ();
@@ -17,7 +17,7 @@ __END__
 
 =head1 NAME
 
-Apache::Tie - Tie interfaces to Apache structures
+Apache::Table - Perl interface to the Apache table structure
 
 =head1 SYNOPSIS
 
@@ -29,8 +29,11 @@ Apache::Tie - Tie interfaces to Apache structures
     my $table = $r->headers_out;
     $table->set(From => 'dougm@perl.apache.org');
 
-Mod_perl have to be compiled with 'perl Makefile.PL PERL_TIE_TABLES=1'
-or EVERYTHING=1 for this to work.
+mod_perl needs to be compiled with at least one of the following options:
+
+ DYNAMIC=1
+ PERL_TABLE_API=1
+ EVERYTHING=1
 
 =head1 DESCRIPTION
 
@@ -40,14 +43,14 @@ This module provides tied interfaces to Apache data structures.
 
 =over 4
 
-=item Apache::TieHashTable
+=item Apache::Table
 
-The I<Apache::TieHashTable> class provides methods for interfacing
+The I<Apache::Table> class provides methods for interfacing
 with the Apache C<table> structure.
 The following I<Apache> class methods, when called in a scalar context
 with no "key" argument, will return a I<HASH> reference blessed into the
-I<Apache::TieHashTable> class and where I<HASH> is tied to
-I<Apache::TieHashTable>: 
+I<Apache::Table> class and where I<HASH> is tied to
+I<Apache::Table>: 
 
  headers_in
  headers_out
