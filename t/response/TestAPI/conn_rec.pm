@@ -21,7 +21,7 @@ sub handler {
 
     my $c = $r->connection;
 
-    plan $r, tests => 22;
+    plan $r, tests => 23;
 
     ok $c;
 
@@ -52,6 +52,8 @@ sub handler {
     ok $c->id || 1;
 
     #conn_config
+
+    ok $c->notes;
 
     ok $r->notes;
 
