@@ -52,7 +52,7 @@ static int mpxs_apr_table_do_cb(void *data,
 }
 
 static MP_INLINE 
-void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP) 
+int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP) 
 {
     apr_table_t *table;
     SV *sub;
@@ -88,7 +88,8 @@ void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
     
     /* Free tdata.filter or wait for the pool to go away? */
     
-    return; 
+    /* XXX: return return value of apr_table_do once we require newer httpd */
+    return 1;
 }
 
 static MP_INLINE int mpxs_APR__Table_EXISTS(apr_table_t *t, const char *key)
