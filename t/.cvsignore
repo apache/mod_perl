@@ -1,5 +1,6 @@
 TEST
 SMOKE
+REPORT
 .gdb-test-start
 htdocs
 logs

@@ -3,16 +3,19 @@ use strict;
 use warnings FATAL => 'all';
 
 use lib qw(lib Apache-Test/lib);
-use Config;
-use Apache::Build ();
-use ModPerl::Code ();
-use ModPerl::MM ();
 
+use Config;
 use File::Spec::Functions;
 use DirHandle ();
 
+use Apache::Build ();
+use Apache::TestReportPerl ();
+use Apache::TestSmokePerl ();
+use Apache::TestRunPerl ();
 use Apache::TestTrace;
 use Apache::TestMM qw(test);
+use ModPerl::Code ();
+use ModPerl::MM ();
 
 our $VERSION;
 
@@ -34,7 +37,6 @@ my $code  = ModPerl::Code->new;
 my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
                            qw(docs/api/mod_perl-2.0);
 
-my @scripts = qw(t/TEST t/SMOKE);
 configure();
 
 ModPerl::MM::WriteMakefile(
@@ -103,8 +105,9 @@ sub configure {
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
-    for (@scripts) {
-        Apache::TestMM::generate_script($_);
+    for my $util (qw(Report Smoke Run)) {
+        my $class = "Apache::Test${util}Perl";
+        $class->generate_script;
     }
 
     my $tables_dir = tables_dir($httpd_version);
@@ -167,7 +170,7 @@ sub echo_cmd {
 sub clean_files {
     my $path = $code->path;
 
-    return [@{ $build->clean_files }, @scripts,
+    return [@{ $build->clean_files },
             <xs/*.exp>, <xs/*.def>,
       map { "$path/$_"} @{ $code->clean_files }];
 }
