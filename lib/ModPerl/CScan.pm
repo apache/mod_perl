@@ -3,7 +3,11 @@ package ModPerl::CScan;
 require Exporter;
 use Config '%Config';
 use File::Basename;
+
+# NOTE to distributors: this module is needed only for mp2 developers,
+# it's not a requirement for mod_perl users
 use Data::Flow qw(0.05);
+
 use strict;			# Earlier it catches ISA and EXPORT.
 
 @ModPerl::CScan::ISA = qw(Exporter Data::Flow);
