@@ -171,7 +171,13 @@ sub current_callback {
 
 sub send_http_header {
     my ($r, $type) = @_;
-    $r->content_type($type) if defined $type;
+
+    # since send_http_header() in mp1 was telling mod_perl not to
+    # parse headers and in mp2 one must call $r->content_type($type) to
+    # perform the same, we make sure that this happens
+    $type = $r->content_type || 'text/html' unless defined $type;
+
+    $r->content_type($type);
 }
 
 #to support $r->server_root_relative

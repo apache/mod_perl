@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+When PerlOptions +ParseHeaders is an effect, the CGI headers parsing
+won't be done if any *mod_perl* handler, from the header_parser phase
+and upto and including the response phase, sets $r->content_type.
+(similar behavior to mp1's send_http_header() [Stas]
+
 Registry: make sure that $r is not in the scope when the script is
 compiled [Stas]
 

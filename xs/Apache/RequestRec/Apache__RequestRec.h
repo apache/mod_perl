@@ -5,9 +5,23 @@ const char *mpxs_Apache__RequestRec_content_type(pTHX_ request_rec *r,
     const char *retval = r->content_type;
 
     if (type) {
+        MP_dRCFG;
         STRLEN len;
         const char *val = SvPV(type, len);
         ap_set_content_type(r, apr_pmemdup(r->pool, val, len+1));
+
+        /* turn off cgi header parsing, similar to what
+         * send_http_header did in mp1 */
+        MpReqPARSE_HEADERS_Off(rcfg);
+        if (rcfg->wbucket) {
+            /* in case we are already inside
+             *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r); 
+             * but haven't sent any data yet, it's too late to change
+             * MpReqPARSE_HEADERS, so change the wbucket's private
+             * flag directly
+             */
+            rcfg->wbucket->header_parse = 0;
+        }
     }
 
     return retval;

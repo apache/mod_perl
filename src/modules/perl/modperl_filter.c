@@ -54,8 +54,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     apr_bucket_brigade *bb;
     apr_bucket *bucket;
     const char *work_buf = buf;
-    
-    if (wb->header_parse && !wb->r->content_type) {
+
+    if (wb->header_parse) {
         request_rec *r = wb->r;
         const char *bodytext = NULL;
         int status;
