@@ -215,7 +215,9 @@ MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
 
     if (!avp) {
         /* should never happen */
+#if 0
         fprintf(stderr, "PANIC: no such handler type: %d\n", type);
+#endif
         return NULL;
     }
 

@@ -556,7 +556,7 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
 {
     apr_bucket *bucket;
     int i = 0;
-
+#ifndef WIN32
     if (fp == NULL) {
         fp = stderr;
     }
@@ -572,4 +572,5 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
                 (unsigned long)bucket->data);
         i++;
     }
+#endif
 }
