@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+dso fix fix: modules with END blocks calling xs code (e.g. DBI) would
+core dump because the xs .dso had been unloaded, now dso's are not
+unloaded until after END blocks are called.
+Thanks to Daniel Jacobowitz and others for spotting
+
 =item 1.21_02 - March 6, 2000
 
 fix Makefile.PL if $USE_APXS && $PERL_DEBUG
