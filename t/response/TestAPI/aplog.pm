@@ -4,12 +4,13 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Log ();
 use Apache::RequestRec ();
 
 use Apache::Const -compile => qw(OK :log);
-use APR::Const -compile => ':error';
+use APR::Const -compile    => qw(:error SUCCESS);
 
 my @LogLevels = qw(emerg alert crit error warn notice info debug);
 my $package = __PACKAGE__;
@@ -40,16 +41,22 @@ sub handler {
         ok sub { $slog->can($method) };
     }
 
-    $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG, 0,
-                   "log_serror test ok");
+    t_server_log_warn_is_expected();
+    $s->log_serror(__FILE__, __LINE__, Apache::LOG_DEBUG,
+                   APR::SUCCESS, "log_serror test ok");
 
+    t_server_log_warn_is_expected();
     $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG,
-                   APR::ENOTIME, "log_serror test 2 ok");
+                   APR::EGENERAL, "log_serror test 2 ok");
 
-    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_DEBUG,
+    t_server_log_error_is_expected();
+    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_CRIT,
                    APR::ENOTIME, "log_rerror test ok");
 
+    t_server_log_error_is_expected();
     $r->log_error('$r->log_error test ok');
+
+    t_server_log_error_is_expected();
     $s->log_error('$s->log_error test ok');
 
     $s->loglevel(Apache::LOG_INFO);
