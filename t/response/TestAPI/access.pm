@@ -33,7 +33,7 @@ sub handler {
     $r->auth_name('modperl');
 
     ok $r->auth_type eq 'none';
-    
+
     $r->auth_type('Basic');
     ok $r->auth_type eq 'Basic';
     $r->auth_type('none');
