@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+make sure that ABSPERLRUN and ABSPERLRUN are defined in
+src/modules/perl/Makefile (needed by win32 build) [Stas]
+
 For static builds, mod_perl header files were being installed
 into apache's source tree instead of where apache installed it's
 own headers [Gozer]
