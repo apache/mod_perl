@@ -143,6 +143,11 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
         ptr = va_arg(args, void *);
 
         switch (*classname) {
+          case 'A':
+            if (strEQ(classname, "APR::Table")) {
+                sv = modperl_hash_tie(aTHX_ classname, Nullsv, ptr);
+                break;
+            }  
           case 'I':
             if (strEQ(classname, "IV")) {
                 sv = ptr ? newSViv((IV)ptr) : &PL_sv_undef;
