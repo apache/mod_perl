@@ -422,12 +422,17 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     return OK;
 }
 
-void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
-                                apr_pool_t *ptemp)
+int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
+                            apr_pool_t *ptemp)
 {
+    /* for <IfDefine MODPERL2> and Apache->define("MODPERL2") */
+    *(char **)apr_array_push(ap_server_config_defines) = "MODPERL2";
+
     /* XXX: htf can we have PerlPreConfigHandler
      * without first configuring mod_perl ?
      */
+
+    return OK;
 }
 
 static int modperl_hook_pre_connection(conn_rec *c, void *csd)
@@ -520,6 +525,9 @@ static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 
 void modperl_register_hooks(apr_pool_t *p)
 {
+    ap_hook_pre_config(modperl_hook_pre_config,
+                       NULL, NULL, APR_HOOK_MIDDLE);
+
     ap_hook_open_logs(modperl_hook_init,
                       NULL, NULL, APR_HOOK_MIDDLE);
 
