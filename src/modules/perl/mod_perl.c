@@ -640,10 +640,10 @@ int modperl_response_handler(request_rec *r)
 int modperl_response_handler_cgi(request_rec *r)
 {
     MP_dDCFG;
-    MP_dRCFG;
     GV *h_stdin, *h_stdout;
     int retval;
 #ifdef USE_ITHREADS
+    MP_dRCFG;
     pTHX;
     modperl_interp_t *interp;
 #endif
