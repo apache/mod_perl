@@ -175,7 +175,7 @@ my(%switches) = (
 		    "enable with 'PerlTaintCheck On'\n")
 	   unless $Apache::__T; "";
    },
-   'w' => sub { 'BEGIN {$^W = 1;}' },
+   'w' => sub { 'BEGIN {$^W = 1;}; $^W = 1;' },
 );
 
 sub parse_cmdline {
