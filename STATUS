@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/03/05 07:35:40 $]
+   Last modified at [$Date: 2003/03/06 04:08:02 $]
 
 Release:
 --------
@@ -49,6 +49,16 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* this is probably a documenation issue. Several phases are of type VOID
+  and docs say:
+
+    Handlers of the type C<VOID> will be I<all> executed in the order they
+    have been registered disregarding their return values. Though in
+    mod_perl they are expected to return C<Apache::OK>.
+
+  may be we shouldn't mark them as VOID then, but RUN_ALL? this is in
+  user/handlers/intro.pod
 
 * Looks like there is an issue with filter configuration, I've noticed that:
 
