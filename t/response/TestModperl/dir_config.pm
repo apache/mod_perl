@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 14;
+    plan $r, tests => 13;
 
     #Apache::RequestRec::dir_config tests
 
@@ -40,10 +40,11 @@ sub handler {
 
     # sub-section inherits from super-section if it doesn't override it
     {
-        my $key = 'TestModperl__request_rec_Key_set_in_Base';
-        ok t_cmp('BaseValue', $r->dir_config->get($key),
-                 "sub-section inherits from super-section if" .
-                 "it doesn't override it");
+        my $key = make_key('_set_in_Base');
+        ok t_cmp('BaseValue',
+                 $r->dir_config($key),
+                 "sub-section inherits from super-section " .
+                 "if it doesn't override it");
     }
 
     # sub-section overrides super-section for the same key
@@ -60,13 +61,13 @@ sub handler {
         # PerlSetVar key)
         ok t_cmp('SetValue0',
                  $dir_config->get($key),
-                 qq{\$dir_config->get("$key")});
+                 "table get() in a scalar context");
 
-        #  direct fetch test in a scalar context (for a single
-        #  PerlSetVar)
+        # direct fetch test in a scalar context (for a single
+        # PerlSetVar key)
         ok t_cmp('SetValue0',
                  $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
+                 "direct value fetch in a scalar context");
     }
 
     # test non-existent key
@@ -75,7 +76,7 @@ sub handler {
 
         ok t_cmp(undef,
                  $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
+                 "non-existent key");
     }
 
     # test set interface
@@ -87,7 +88,7 @@ sub handler {
 
         ok t_cmp($val,
                  $r->dir_config($key),
-                 qq{\$r->dir_config($key => "$val")});
+                 "set && get");
     }
 
     # test unset interface
@@ -99,17 +100,9 @@ sub handler {
 
         ok t_cmp(undef,
                  $r->dir_config($key),
-                 qq{\$r->dir_config($key => undef)});
+                 "unset");
     }
 
-    # test PerlSetVar set in base config
-    {
-        my $key = make_key('_set_in_Base');
-
-        ok t_cmp("BaseValue",
-                 $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
-    }
 
     #Apache::Server::dir_config tests
 
