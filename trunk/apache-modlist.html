@@ -113,6 +113,7 @@ AuthenDBI	bmpO	Authenticate via Perl's DBI		MERGL
 AuthExpire	i	Expire Basic auth credentials		DOUGM
 AuthenGSS	cdpf    Generic Security Service (RFC 2078)	DOUGM
 AuthenIMAP	bdpf	Authentication via an IMAP server	MICB
+AuthenPasswdSrv bdpf	External authentication server		JEFFH
 AuthLDAP	bdpf	LDAP authentication module		CDONLEY
 AuthNIS		bdpf	NIS authentication and authorization	DOUGM
 AuthenRaduis	bdpf	Authentication via a Radius server	DANIEL
@@ -148,6 +149,7 @@ ProxyPass	bdpf	Perl implementation of ProxyPass	MJS
 ProxyPassThru	bdpO	Skeleton for vanilla proxy		RMANGI
 ProxyCache	i	Caching proxy				DOUGM
 Throttle        bdpf    Speed-based content negotiation         DONS
+TransLDAP	bdpf	Translate URIs to LDAP queries		CDONLEY
 
 * PerlFixupHandler's
 HttpEquiv	bdpf	HTML HTTP-EQUIV tags to HTTP headers	ROBH
