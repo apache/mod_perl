@@ -78,7 +78,7 @@ sub handler {
 1;
 __END__
 <NoAutoConfig>
-  <VirtualHost TestFilter__both_str_con_add>
+  <VirtualHost TestFilter::both_str_con_add>
       PerlModule                   TestFilter::both_str_con_add
       PerlPreConnectionHandler     TestFilter::both_str_con_add::pre_connection
       PerlProcessConnectionHandler TestFilter::both_str_con_add
