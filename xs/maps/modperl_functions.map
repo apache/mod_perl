@@ -11,6 +11,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_no_cache | | r, flag=Nullsv
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_new | | classname, c, base_pool=NULL
+ SV *:DEFINE_dir_config | | request_rec *:r, char *:key=NULL, SV *:sv_val=&PL_sv_no
 PACKAGE=Apache
  mpxs_Apache_request | | classname, svr=Nullsv
 
@@ -33,6 +34,9 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_push_handlers
  mpxs_Apache__Server_set_handlers
  mpxs_Apache__Server_get_handlers
+
+MODULE=Apache::ServerUtil PACKAGE=Apache::Server
+ SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=&PL_sv_no
 
 MODULE=Apache::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
@@ -66,6 +70,5 @@ DEFINE_log_error  | MPXS_Apache__Log_log_error  | ...
 DEFINE_warn       | MPXS_Apache__Log_log_error  | ...
 
 PACKAGE=Apache
-
 DEFINE_LOG_MARK   | MPXS_Apache_LOG_MARK       | ...
 DEFINE_warn       | MPXS_Apache__Log_log_error | ...

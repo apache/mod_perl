@@ -168,7 +168,7 @@ int mpxs_Apache__RequestRec_no_cache(request_rec *r, SV *flag)
     if (r->no_cache) {
         apr_table_setn(r->headers_out, "Pragma", "no-cache");
         apr_table_setn(r->headers_out, "Cache-control", "no-cache");
-    } 
+    }
     else if (flag) { /* only unset if $r->no_cache(0) */
         apr_table_unset(r->headers_out, "Pragma");
         apr_table_unset(r->headers_out, "Cache-control");
@@ -176,3 +176,6 @@ int mpxs_Apache__RequestRec_no_cache(request_rec *r, SV *flag)
 
     return retval;
 }
+
+#define mpxs_Apache__RequestRec_dir_config(r, key, sv_val) \
+    modperl_dir_config(aTHX_ r, r->server, key, sv_val)
