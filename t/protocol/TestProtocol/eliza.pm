@@ -19,6 +19,7 @@ sub handler {
         my $rlen = BUFF_LEN;
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
+        chomp $buff;
         $last++ if $buff eq 'good bye';
         $buff = $mybot->transform( $buff ) . "\n";
         $socket->send($buff, length $buff);
