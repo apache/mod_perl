@@ -116,8 +116,6 @@ __END__
 
     <Location /TestVhost__log>
         SetHandler modperl
-        # required when $s and $r aren't passed
-        PerlOptions +GlobalRequest
         PerlResponseHandler TestVhost::log
     </Location>
 
