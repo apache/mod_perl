@@ -20,7 +20,9 @@ sub new {
     my $dir;
 
     if(IS_MOD_PERL_BUILD) {
-	eval "require Apache::MyConfig";
+	eval {
+	    require "../lib/Apache/MyConfig.pm";
+	};
 	print $@ if $@;
 	unless ($@) {
 	    $dir = $Apache::MyConfig::Setup{Apache_Src};
