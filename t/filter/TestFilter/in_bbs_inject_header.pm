@@ -58,12 +58,12 @@ sub inject_header_bucket {
 
     return 0 unless @{ $ctx->{buckets} };
 
-    my $bucket = shift @{ $ctx->{buckets} };
-    $bb->insert_tail($bucket);
+    my $b = shift @{ $ctx->{buckets} };
+    $bb->insert_tail($b);
 
     if (1) {
         # extra debug, wasting cycles
-        $bucket->read(my $data);
+        $b->read(my $data);
         debug "injected header: [$data]";
     }
     else {
@@ -156,17 +156,20 @@ sub handler : FilterConnectionHandler {
     return $rv unless $rv == APR::SUCCESS;
 
     while (!$ctx_bb->is_empty) {
-        my $bucket = $ctx_bb->first;
+        my $b = $ctx_bb->first;
 
-        $bucket->remove;
-
-        if ($bucket->is_eos) {
+        if ($b->is_eos) {
             debug "EOS!!!";
-            $bb->insert_tail($bucket);
+            $b->remove;
+            $bb->insert_tail($b);
             last;
         }
 
-        $bucket->read(my $data);
+        $b->read(my $data);
+        # remove must happen after read, since it may cause split and
+        # some new buckets inserted behind - if remove called too
+        # early, those buckets will be lost
+        $b->remove;
         debug "filter read:\n[$data]";
 
         # check that we really work only on the headers
@@ -202,7 +205,7 @@ sub handler : FilterConnectionHandler {
             # the separator header will be sent as a last header
             # so we send one newly added header and push the separator
             # to the end of the queue
-            push @{ $ctx->{buckets} }, $bucket;
+            push @{ $ctx->{buckets} }, $b;
             debug "queued header [$data]";
             inject_header_bucket($bb, $ctx);
             next; # inject_header_bucket already called insert_tail
@@ -214,7 +217,7 @@ sub handler : FilterConnectionHandler {
             # fall through
         }
 
-        $bb->insert_tail($bucket);
+        $bb->insert_tail($b);
     }
 
     return Apache::OK;
