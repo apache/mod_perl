@@ -5,25 +5,18 @@ use warnings;
 
 our $VERSION = '0.01';
 
-#XXX Init, PreConfig
 my %handlers = (
-    Process    => [qw(ChildInit ChildExit Restart)],
+    Process    => [qw(ChildInit)], #ChildExit Restart PreConfig
     Files      => [qw(OpenLogs PostConfig)],
-    PerSrv     => [qw(PostReadRequest Trans)],
+    PerSrv     => [qw(PostReadRequest Trans)], #Init
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
-                      Type Fixup Response
-                      Log Cleanup)],
+                      Type Fixup Log)], #Init Response Cleanup
     Connection => [qw(PreConnection ProcessConnection)],
 );
 
 my %hooks = map { $_, canon_lc($_) }
-    qw{OpenLogs PostConfig ChildInit
-       PreConnection PostConnection
-       PostReadRequest Trans
-       HeaderParser
-       Access Authen Authz
-       Type Fixup Log};
+    map { @{ $handlers{$_} } } keys %handlers;
 
 my %hook_proto = (
     Process    => {
