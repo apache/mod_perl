@@ -72,7 +72,7 @@ static void hash_insert(pTHX_ HV *hash, const char *key,
     }
 }
 
-static MP_INLINE SV* mpxs_Apache__Directive_as_hash(pTHX_
+static MP_INLINE SV *mpxs_Apache__Directive_as_hash(pTHX_
                                                     ap_directive_t *tree)      
 {
     const char *directive;

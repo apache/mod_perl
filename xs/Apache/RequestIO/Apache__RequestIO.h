@@ -222,7 +222,7 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
 #define mpxs_Apache__RequestRec_READ(r, bufsv, len, offset) \
     mpxs_Apache__RequestRec_read(aTHX_ r, bufsv, len, offset)
 
-static SV* mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
+static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
                                          SV *bufsv, int len,
                                          int offset)
 {
