@@ -760,6 +760,11 @@ int perl_handler(request_rec *r)
     perl_stdout2client(r);
     perl_stdin2client(r);
 
+    if(!cfg) {
+        cfg = perl_create_request_config(r->pool, r->server);
+        set_module_config(r->request_config, &perl_module, cfg);
+    }
+
     cfg->setup_env = 1;
     PERL_CALLBACK("PerlHandler", cld->PerlHandler);
     cfg->setup_env = 0;
