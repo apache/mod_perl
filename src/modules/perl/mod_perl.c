@@ -619,11 +619,7 @@ void perl_startup (server_rec *s, pool *p)
     GvSV_setiv(gv, TRUE);
 #endif
 
-    gv = GvSV_init("Apache::__T");
-    if(cls->PerlTaintCheck) 
-	GvSV_setiv(gv, TRUE);
-    SvREADONLY_on(GvSV(gv));
-
+    perl_tainting_set(s, cls->PerlTaintCheck);
     (void)GvSV_init("Apache::__SendHeader");
     (void)GvSV_init("Apache::__CurrentCallback");
     (void)GvHV_init("mod_perl::UNIMPORT");

@@ -1132,6 +1132,7 @@ void perl_handle_command(cmd_parms *cmd, void *dummy, char *line);
 void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *dummy);
 void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *dummy);
 
+void perl_tainting_set(server_rec *s, int arg);
 CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_var(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val);
