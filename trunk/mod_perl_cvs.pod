@@ -64,9 +64,17 @@ Here's a config file for the client (cvsup) to sync modperl sources.
 
 =item anoncvs
 
-See http://dev.apache.org/anoncvs.txt The difference is that you use
-"modperl" instead of "apache-x.x" and perl.apache.org instead of
-dev.apache.org.
+To checkout a fresh copy from anoncvs use
+
+cvs -d "pserver:anoncvs@perl.apache.org:/home/cvspublic" login
+
+with the password "anoncvs". 
+
+cvs -d "pserver:anoncvs@perl.apache.org:/home/cvspublic" co modperl
+
+
+For a basic introduction to anoncvs see http://dev.apache.org/anoncvs.txt 
+
 
 =item from-cvs
 
