@@ -26,7 +26,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
         mpxs_write_loop(modperl_output_filter_write, modperl_filter);
     }
     else {
-        croak("input filters not yet supported");
+        Perl_croak(aTHX_ "input filters not yet supported");
     }
 
     /* XXX: ap_rflush if $| */
@@ -54,7 +54,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
         len = modperl_output_filter_read(aTHX_ modperl_filter, buffer, wanted);
     }
     else {
-        croak("input filters not yet supported");
+        Perl_croak(aTHX_ "input filters not yet supported");
     }
 
     return len;
