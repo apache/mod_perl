@@ -71,7 +71,7 @@ unless ($is_win32) {
 }
 
 my $the_request = $r->the_request;
-$r->the_request(join ' ', map { $r->$_ } qw(method uri protocol));
+$r->the_request(join ' ', map { $r->$_() } qw(method uri protocol));
 test ++$i, $the_request eq $r->the_request;
 printf "old=$the_request, new=%s\n", $r->the_request;
 
