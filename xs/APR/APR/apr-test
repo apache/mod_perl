@@ -11,7 +11,7 @@ use APR ();
 use APR::UUID ();
 use APR::Pool ();
 use APR::Lock ();
-use APR::Lib ();
+use APR::Util ();
 use APR::Base64 ();
 use APR::Signal ();
 
