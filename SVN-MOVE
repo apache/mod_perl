@@ -6,6 +6,11 @@ move of modperl projects to SVN:
 * snapshot http://cvs.apache.org/snapshots/modperl/ => svn
 
 * missing commit template files (à là CVS)
+  PR:
+  Obtained from:
+  Submitted by:
+  Reviewed by: 
+  ...
 
 * recursive diff across externals Apache-Test/ and docs/ doesn't work
 
