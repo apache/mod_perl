@@ -248,6 +248,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
+    MP_dRCFG;
     modperl_config_dir_t *dcfg = modperl_config_dir_get(r);
     const char *desc = NULL;
     modperl_interp_t *interp = NULL;
@@ -263,6 +264,18 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
         PERL_SET_CONTEXT(scfg->mip->parent->perl);
         return scfg->mip->parent;
+    }
+
+    if (rcfg && rcfg->interp) {
+        /* if scope is per-handler and something selected an interpreter
+         * before modperl_callback_run_handlers() and is still holding it,
+         * e.g. modperl_response_handler_cgi(), that interpreter will
+         * be here
+         */
+        MP_TRACE_i(MP_FUNC,
+                   "found interp 0x%lx in request config\n",
+                   (unsigned long)rcfg->interp);
+        return rcfg->interp;
     }
 
     /*

@@ -406,6 +406,9 @@ int modperl_response_handler_cgi(request_rec *r)
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
     aTHX = interp->perl;
+    if (MpInterpPUTBACK(interp)) {
+        rcfg->interp = interp;
+    }
 #endif
 
     if (MpDirPARSE_HEADERS(dcfg)) {
@@ -422,6 +425,14 @@ int modperl_response_handler_cgi(request_rec *r)
     modperl_io_handle_untie(aTHX_ h_stdin);
 
     modperl_env_request_untie(aTHX_ r);
+
+#ifdef USE_ITHREADS
+    if (MpInterpPUTBACK(interp)) {
+        /* PerlInterpScope handler */
+        modperl_interp_unselect(interp);
+        rcfg->interp = NULL;
+    }
+#endif
 
     return retval;
 }
