@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+pod manpages are now glued to all .pm files for which .pod exists
+[Stas]
+
 Apache::RequestIO::sendfile() now indicates which file it has failed
 to open on failure. [Stas]
 
