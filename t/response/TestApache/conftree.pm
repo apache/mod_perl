@@ -32,11 +32,11 @@ sub handler {
 
     ok $port == $vars->{port};
 
-    my $serverroot = find_config_val($tree, 'ServerRoot');
+    my $documentroot = find_config_val($tree, 'DocumentRoot');
 
-    ok $serverroot;
+    ok $documentroot;
 
-    ok $serverroot eq qq("$vars->{serverroot}");
+    ok $documentroot eq qq("$vars->{documentroot}");
 
     Apache::OK;
 }
