@@ -159,10 +159,9 @@ $REQUEST_COUNT = 1;
 $MAX_PROCESS_SIZE  = 0;
 $MIN_SHARE_SIZE    = 0;
 $MAX_UNSHARED_SIZE = 0;
-$WIN32 = 0;
-
 
 BEGIN {
+    $WIN32 = 0;
     # decide at compile time how to check for a process' memory size.
     if (($Config{'osname'} eq 'solaris') &&
 	 ($Config{'osvers'} >= 2.6)) {
