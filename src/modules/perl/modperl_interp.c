@@ -202,12 +202,14 @@ apr_status_t modperl_interp_unselect(void *data)
  */
 #define MP_INTERP_KEY "MODPERL_INTERP"
 
-modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
+modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
     modperl_interp_t *interp;
     apr_pool_t *p = NULL;
+    int is_subrequest = (rr && rr->main) ? 1 : 0;
+    request_rec *r = is_subrequest ? rr->main : rr;
     const char *desc = NULL;
     int lifetime_connection = 
         (modperl_interp_lifetime_connection(scfg) || !r);
@@ -231,8 +233,9 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
-                       "found interp 0x%lx in %s 0x%lx\n",
-                       (unsigned long)interp, desc, (unsigned long)r->pool);
+                       "found interp 0x%lx in %s 0x%lx (%s request for %s)\n",
+                       (unsigned long)interp, desc, (unsigned long)r->pool,
+                       (is_subrequest ? "sub" : "main"), rr->uri);
             return interp;
         }
 
@@ -267,8 +270,10 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
 
-    MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx\n",
-               (unsigned long)interp, desc, (unsigned long)p);
+    MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
+               (unsigned long)interp, desc, (unsigned long)p,
+               (r ? (is_subrequest ? "sub" : "main") : "conn"),
+               (r ? rr->uri : c->remote_ip));
 
     return interp;
 }
