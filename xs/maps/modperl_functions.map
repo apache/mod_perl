@@ -53,6 +53,9 @@ PACKAGE=Apache::Server
 PACKAGE=Apache
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
 
+MODULE=Apache::Connection
+ mpxs_Apache__Connection_client_socket | | c, s=NULL
+
 MODULE=Apache::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
 
