@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.14_01-dev
+=item 1.15 - July 24, 1998
 
 new experimental XS implementation of Apache::PerlRun/Apache::Registry
 handlers in module Apache::PerlRunXS (enable with PERL_RUN_XS=1)
