@@ -297,7 +297,7 @@ MP_CMD_SRV_DECLARE(perl)
         }
         
         /*XXX: Less than optimal */
-        code = apr_pstrcat(p, code, line, NULL);
+        code = apr_pstrcat(p, code, line, "\n", NULL);
     }
     
     /* Here, we have to replace our current config node for the next pass */

@@ -17,6 +17,8 @@ $Apache::Server::SaveConfig = 1;
 $Location{'/perl_sections_saved'} = {
 	'AuthName' => 'PerlSection',
 	};
+#This is a comment
+$TestDirective::perl::comments="yes";
 </Perl>
 
 ### --------------------------------- ###

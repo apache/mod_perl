@@ -10,7 +10,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 4;
+    plan $r, tests => 5;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
     
@@ -19,6 +19,8 @@ sub handler {
     ok exists $Apache::ReadConfig::Location{'/perl_sections_saved'};
   
     ok t_cmp('PerlSection', $Apache::ReadConfig::Location{'/perl_sections_saved'}{'AuthName'});
+
+    ok t_cmp('yes', $TestDirective::perl::comments);
 
     Apache::OK;
 }
