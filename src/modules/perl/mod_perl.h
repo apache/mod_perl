@@ -19,6 +19,7 @@
 #include "http_log.h"
 #include "http_protocol.h"
 #include "http_main.h"
+#include "http_request.h"
 
 #include "apr_lock.h"
 

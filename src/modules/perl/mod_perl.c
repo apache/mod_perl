@@ -15,14 +15,14 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
     );
 #endif
 
+    argv = modperl_srv_config_argv_init(scfg, &argc);
+
     if (!(perl = perl_alloc())) {
         perror("perl_alloc");
         exit(1);
     }
 
     perl_construct(perl);
-
-    argv = modperl_srv_config_argv_init(scfg, &argc);
 
     status = perl_parse(perl, xs_init, argc, argv, NULL);
 
@@ -62,6 +62,7 @@ void modperl_register_hooks(void)
 {
     /* XXX: should be pre_config hook or 1.xx logic */
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, HOOK_MIDDLE);
+    modperl_register_handler_hooks();
 }
 
 static command_rec modperl_cmds[] = {  
@@ -79,7 +80,7 @@ static command_rec modperl_cmds[] = {
     MP_SRV_CMD_TAKE1("PerlInterpMinSpare", interp_min_spare,
                      "Min number of spare Perl interpreters"),
 #endif
-    MP_CMD_POST_READ_REQUEST_ENTRY,
+    MP_CMD_ENTRIES,
     { NULL }, 
 }; 
 

@@ -59,8 +59,8 @@ void modperl_handler_cache_cv(pTHX_ modperl_handler_t *handler, CV *cv)
                                GvNAME(CvGV(cv)));
     }
     MP_TRACE_h(MP_FUNC, "caching %s::%s\n",
-            HvNAME(GvSTASH(CvGV(cv))),
-            GvNAME(CvGV(cv)));
+               HvNAME(GvSTASH(CvGV(cv))),
+               GvNAME(CvGV(cv)));
 }
 
 int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
@@ -72,7 +72,7 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
 
     if (!stash) {
         MP_TRACE_h(MP_FUNC, "class %s not defined, attempting to load\n",
-                class);
+                   class);
         require_module(aTHX_ class);
         if (SvTRUE(ERRSV)) {
             MP_TRACE_h(MP_FUNC, "failed to load %s class\n", class);
@@ -82,7 +82,7 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
             MP_TRACE_h(MP_FUNC, "loaded %s class\n", class);
             if (!(stash = gv_stashpv(class, FALSE))) {
                 MP_TRACE_h(MP_FUNC, "%s package still does not exist\n",
-                        class);
+                           class);
                 return 0;
             }
         }
@@ -100,14 +100,14 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
 
         MpHandlerPARSED_On(handler);
         MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s\n",
-                name, HvNAME(stash),
-                MpHandlerMETHOD(handler) ? "method" : "function");
+                   name, HvNAME(stash),
+                   MpHandlerMETHOD(handler) ? "method" : "function");
 
         return 1;
     }
     
     MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
-            name, HvNAME(stash));
+               name, HvNAME(stash));
 
     return 0;
 }
@@ -119,7 +119,7 @@ void modperl_handler_unparse(pTHX_ modperl_handler_t *handler)
     if (!MpHandlerPARSED(handler)) {
         if (was_parsed) {
             MP_TRACE_h(MP_FUNC, "handler %s was parsed, but not flagged\n",
-                    handler->name);
+                       handler->name);
         }
         else {
             MP_TRACE_h(MP_FUNC, "handler %s was never parsed\n", handler->name);
@@ -170,8 +170,7 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
     if ((tmp = strstr(name, "->"))) {
         char class[256]; /*XXX*/
         int class_len = strlen(name) - strlen(tmp);
-        strncpy(class, name, class_len+1);
-        class[class_len] = '\0';
+        ap_cpystrn(class, name, class_len+1);
 
         MpHandlerMETHOD_On(handler);
         handler->cv = newSVpv(&tmp[2], 0);
@@ -184,11 +183,11 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
                 if (SvROK(obj) && sv_isobject(obj)) {
                     MpHandlerOBJECT_On(handler);
                     MP_TRACE_h(MP_FUNC, "handler object %s isa %s\n",
-                            class, HvNAME(SvSTASH((SV*)SvRV(obj))));
+                               class, HvNAME(SvSTASH((SV*)SvRV(obj))));
                 }
                 else {
                     MP_TRACE_h(MP_FUNC, "%s is not an object, pv=%s\n",
-                            class, SvPV_nolen(obj));
+                               class, SvPV_nolen(obj));
                 }
             }
             else {
@@ -200,7 +199,7 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
         if (!handler->obj) {
             handler->obj = newSVpv(class, class_len);
             MP_TRACE_h(MP_FUNC, "handler method %s isa %s\n",
-                    SvPVX(handler->cv), class);
+                       SvPVX(handler->cv), class);
         }
 
         MpHandlerPARSED_On(handler);
@@ -228,13 +227,13 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
     if (!MpHandlerPARSED(handler)) {
         if (!modperl_handler_parse(aTHX_ handler)) {
             MP_TRACE_h(MP_FUNC, "failed to parse handler `%s'\n",
-                    handler->name);
+                       handler->name);
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }
 
     ENTER;SAVETMPS;
-    PUSHMARK(sp);
+    PUSHMARK(SP);
 
     if (MpHandlerMETHOD(handler)) {
         XPUSHs(handler->obj);
@@ -242,7 +241,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
 
     if (handler->args) {
         I32 i, len = AvFILL(handler->args);
-        EXTEND(sp, len);
+
+        EXTEND(SP, len);
         for (i=0; i<=len; i++) {
             PUSHs(sv_2mortal(*av_fetch(handler->args, i, FALSE)));
         }
@@ -275,4 +275,89 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
     }
 
     return status;
+}
+
+#define MP_HANDLER_TYPE_DIR 1
+#define MP_HANDLER_TYPE_SRV 2
+
+int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
+{
+    pTHX;
+    MP_dSCFG(s);
+    modperl_handler_t **handlers;
+    MpAV *av;
+    int i, status;
+#ifdef MP_TRACE
+    const char *desc;
+#endif
+
+    if (type == MP_HANDLER_TYPE_DIR) {
+        MP_dDCFG;
+        av = dcfg->handlers[idx];
+        MP_TRACE_a_do(desc = modperl_per_dir_handler_desc(idx));
+    }
+    else {
+        av = scfg->handlers[idx];
+        MP_TRACE_a_do(desc = modperl_per_srv_handler_desc(idx));
+    }
+
+    if (!av) {
+        MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
+                   desc, r ? r->uri : "");
+        return DECLINED;
+    }
+
+    if (r) {
+        MP_dRCFG;
+        if (!rcfg) {
+            rcfg = modperl_request_config_new(r);
+            ap_set_module_config(r->request_config, &perl_module, rcfg);
+        }
+#ifdef USE_ITHREADS
+        aTHX = rcfg->interp->perl;
+#endif
+    }
+#ifdef USE_ITHREADS
+    else if (s) {
+        /* Child{Init,Exit} */
+        aTHX = scfg->mip->parent->perl;
+    }
+#endif
+
+    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
+               av->nelts, desc);
+    handlers = (modperl_handler_t **)av->elts;
+
+    for (i=0; i<av->nelts; i++) {
+        status = modperl_callback(aTHX_ handlers[i]);
+        MP_TRACE_h(MP_FUNC, "%s returned %d\n",
+                   handlers[i]->name, status);
+    }
+
+    return status;
+}
+
+int modperl_per_dir_callback(int idx, request_rec *r)
+{
+    return modperl_run_handlers(idx, r, r->server, MP_HANDLER_TYPE_DIR);
+}
+
+int modperl_per_srv_callback(int idx, request_rec *r)
+{
+    return modperl_run_handlers(idx, r, r->server, MP_HANDLER_TYPE_SRV);
+}
+
+int modperl_connection_callback(int idx, conn_rec *c)
+{
+    return DECLINED;
+}
+
+void modperl_process_callback(int idx, ap_pool_t *p, server_rec *s)
+{
+}
+
+void modperl_files_callback(int idx,
+                            ap_pool_t *pconf, ap_pool_t *plog,
+                            ap_pool_t *ptemp, server_rec *s)
+{
 }

@@ -18,7 +18,7 @@ modperl_interp_t *modperl_interp_get(server_rec *s);
 
 ap_status_t modperl_interp_unselect(void *data);
 
-int modperl_interp_select(request_rec *r);
+modperl_interp_t *modperl_interp_select(request_rec *r);
 
 ap_status_t modperl_interp_pool_destroy(void *data);
 

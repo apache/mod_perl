@@ -3,9 +3,13 @@
 
 void *modperl_create_dir_config(ap_pool_t *p, char *dir);
 
-void *modperl_merge_dir_config(ap_pool_t *p, void *base, void *add);
+void *modperl_merge_dir_config(ap_pool_t *p, void *basev, void *addv);
 
 modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p);
+
+modperl_dir_config_t *modperl_dir_config_new(ap_pool_t *p);
+
+modperl_request_config_t *modperl_request_config_new(request_rec *r);
 
 void *modperl_create_srv_config(ap_pool_t *p, server_rec *s);
 

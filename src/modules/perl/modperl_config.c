@@ -19,12 +19,38 @@ char *modperl_cmd_push_handlers(MpAV **handlers, char *name, ap_pool_t *p)
 
 void *modperl_create_dir_config(ap_pool_t *p, char *dir)
 {
-    return NULL;
+    modperl_dir_config_t *dcfg = modperl_dir_config_new(p);
+    return dcfg;
 }
 
-void *modperl_merge_dir_config(ap_pool_t *p, void *base, void *add)
+void *modperl_merge_dir_config(ap_pool_t *p, void *basev, void *addv)
 {
-    return NULL;
+#if 0
+    modperl_dir_config_t
+        *base = (modperl_dir_config_t *)basev,
+        *add  = (modperl_dir_config_t *)addv,
+        *mrg  = modperl_dir_config_new(p);
+#endif
+
+    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
+               (unsigned long)basev, (unsigned long)addv);
+
+    return addv;
+}
+
+modperl_request_config_t *modperl_request_config_new(request_rec *r)
+{
+    modperl_request_config_t *rcfg = 
+        (modperl_request_config_t *)ap_pcalloc(r->pool, sizeof(*rcfg));
+
+#ifdef USE_ITHREADS
+    rcfg->interp = modperl_interp_select(r);
+    PERL_SET_INTERP(rcfg->interp->perl);
+#endif
+
+    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)rcfg);
+
+    return rcfg;
 }
 
 #define scfg_push_argv(arg) \
@@ -39,7 +65,19 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 
     scfg_push_argv((char *)ap_server_argv0);
 
+    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
+
     return scfg;
+}
+
+modperl_dir_config_t *modperl_dir_config_new(ap_pool_t *p)
+{
+    modperl_dir_config_t *dcfg = (modperl_dir_config_t *)
+        ap_pcalloc(p, sizeof(modperl_dir_config_t));
+
+    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)dcfg);
+
+    return dcfg;
 }
 
 #ifdef MP_TRACE
@@ -95,11 +133,12 @@ void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
         *base = (modperl_srv_config_t *)basev,
         *add  = (modperl_srv_config_t *)addv,
         *mrg  = modperl_srv_config_new(p);
-
-    return mrg;
-#else
-    return basev;
 #endif
+
+    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
+               (unsigned long)basev, (unsigned long)addv);
+
+    return addv;
 }
 
 #define MP_CONFIG_BOOTSTRAP(parms) \
