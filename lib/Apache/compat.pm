@@ -150,23 +150,28 @@ sub content {
     return $r->parse_args($buf)
 }
 
-sub rgy_script_name {
-    require ModPerl::Global;
-    'Apache::ROOT' . $_[0];
-}
-
 sub clear_rgy_endav {
     my($r, $script_name) = @_;
-    my $package = rgy_script_name($script_name);
+    require ModPerl::Global;
+    my $package = 'Apache::ROOT' . $script_name;
     ModPerl::Global::special_list_clear(END => $package);
 }
 
 sub stash_rgy_endav {
-    my($r, $script_name) = @_;
-    my $package = rgy_script_name($script_name);
-    $r->pool->cleanup_register(sub {
-        ModPerl::Global::special_list_call(END => $package);
-    });
+    #see run_rgy_endav
+}
+
+#if somebody really wants to have END subroutine support
+#with the 1.x Apache::Registry they will need to configure:
+# PerlHandler Apache::Registry Apache::compat::run_rgy_endav
+sub Apache::compat::run_rgy_endav {
+    my $r = shift;
+
+    require ModPerl::Global;
+    require Apache::PerlRun; #1.x's
+    my $package = Apache::PerlRun->new($r)->namespace;
+
+    ModPerl::Global::special_list_call(END => $package);
 }
 
 sub seqno {
