@@ -570,7 +570,7 @@ Use:
 
 to inherit base PerlSwitches.
 
-=item Enabled
+=item Enable
 
 On by default, used to disable mod_perl for a given VirtualHost.
 
