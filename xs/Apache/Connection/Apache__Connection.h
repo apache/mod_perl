@@ -13,7 +13,7 @@ apr_socket_t *mpxs_Apache__Connection_client_socket(pTHX_ conn_rec *c,
 }
 
 static MP_INLINE
-char *mpxs_Apache__Connection_get_remote_host(pTHX_ conn_rec *c,
+const char *mpxs_Apache__Connection_get_remote_host(pTHX_ conn_rec *c,
                                               int type,
                                               apr_table_t *dir_config)
 {

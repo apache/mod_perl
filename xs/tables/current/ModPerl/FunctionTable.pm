@@ -4305,7 +4305,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
+    'return_type' => 'const char *',
     'name' => 'mpxs_Apache__Connection_get_remote_host',
     'args' => [
       {
