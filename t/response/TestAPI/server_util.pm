@@ -14,17 +14,22 @@ sub handler {
 
     my $s = $r->server;
 
-    plan $r, tests => 3;
+    plan $r, tests => 7;
 
-    my $dir = Apache::server_root_relative('conf', $r->pool);
+    for my $p ($r->pool, $r->connection->pool,
+               $r, $r->connection, $r->server)
+    {
+        my $dir = Apache::server_root_relative($p, 'conf');
+
+        ok -d $dir;
+    }
+
+    my $dir = Apache->server_root_relative('logs'); #1.x ish
 
     ok -d $dir;
 
-    $dir = Apache::server_root_relative('logs');
-
-    ok -d $dir;
-
-    $dir = Apache::server_root_relative();
+    #$r->server_root_relative works with use Apache::compat
+    $dir = Apache->server_root_relative(); #1.x ish
 
     ok -d $dir;
 
