@@ -359,7 +359,7 @@ current_callback(r)
     Apache     r
 
     CODE:
-    RETVAL = perl_get_sv("Apache::__CurrentCallback", TRUE);
+    RETVAL = newSVsv(perl_get_sv("Apache::__CurrentCallback", TRUE));
 
     OUTPUT:
     RETVAL
