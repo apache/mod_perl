@@ -3,7 +3,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::TestRequest qw(GET_BODY);
+use Apache::TestRequest qw(GET_BODY_ASSERT);
 
 plan tests => 2;
 
@@ -19,7 +19,7 @@ my %expected =
 );
 
 for (qw/header env/) {
-    my $received = GET_BODY "$location?$_", Cookie => $cookie;
+    my $received = GET_BODY_ASSERT "$location?$_", Cookie => $cookie;
     ok t_cmp($expected{$_}, $received);
 }
 
