@@ -196,8 +196,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
 
         if(val != NULL) {
 	    MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
-	    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE);
-	    my_setenv(key, val);
+	    mp_SetEnv(key,val);
         }
     }
 }    
@@ -600,9 +599,14 @@ CHAR_P perl_cmd_sendheader (cmd_parms *cmd,  perl_dir_config *rec, int arg) {
 CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
-    char **new;
-    new = (char **)push_array(cls->PerlPassEnv);
-    *new = pstrdup(parms->pool, arg);
+    if(PERL_RUNNING()) {
+	mp_PassEnv(arg);
+    }
+    else {
+	char **new;
+	new = (char **)push_array(cls->PerlPassEnv);
+	*new = pstrdup(parms->pool, arg);
+    }
     MP_TRACE_d(fprintf(stderr, "perl_cmd_pass_env: arg=`%s'\n", arg));
     arg = NULL;
     return NULL;
@@ -628,10 +632,15 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
     MP_HASENV_on(rec);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
     if(cmd->path == NULL) {
-	char **new;
-	dPSRV(cmd->server);
-	new = (char **)push_array(cls->PerlPassEnv);
-	*new = pstrcat(cmd->pool, key, ":", val, NULL);
+	if(PERL_RUNNING()) { 
+	    mp_SetEnv(key,val);
+	} 
+	else { 
+           char **new; 
+           dPSRV(cmd->server); 
+           new = (char **)push_array(cls->PerlPassEnv); 
+           *new = pstrcat(cmd->pool, key, ":", val, NULL); 
+	} 
     }
     return NULL;
 }
