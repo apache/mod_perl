@@ -104,8 +104,6 @@ Other issues
 - Currently there is no way to MIX & MATCH mod-perl FILTERS declared
   via "PerlOutputFilterHandler" with APACHE standard ones.
 
-- currently we have no way to remove the filter 
-
 - we also may need filter_init hook
 
 tie handle interface

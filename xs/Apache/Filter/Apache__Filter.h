@@ -183,3 +183,27 @@ void mpxs_Apache__Connection_add_output_filter(pTHX_ conn_rec *c,
                                callback,
                                "OutputFilter");
 }
+
+static MP_INLINE
+void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
+{
+    modperl_filter_t *modperl_filter;
+    ap_filter_t *f;
+
+    mpxs_usage_va_1(modperl_filter, "$filter->remove()");
+    f = modperl_filter->f;
+
+#ifdef MP_TRACE
+    {
+        modperl_filter_ctx_t *ctx = (modperl_filter_ctx_t *)(f->ctx);
+        MP_TRACE_f(MP_FUNC, "removing filter %s\n", ctx->handler->name);
+    }
+#endif
+    
+    if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
+        ap_remove_input_filter(f);
+    }
+    else {
+        ap_remove_output_filter(f);
+    }
+}
