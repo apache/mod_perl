@@ -31,7 +31,7 @@ sub handler {
 
     $rlog->info($package, " test in progress");
 
-    my($file, $line) = Apache::LOG_MARK;
+    my($file, $line) = Apache::Log::LOG_MARK;
     ok $file eq __FILE__;
     ok $line == __LINE__ - 2;
 
@@ -41,7 +41,7 @@ sub handler {
         ok sub { $slog->can($method) };
     }
 
-    $s->log_serror(Apache::LOG_MARK, Apache::LOG_INFO|Apache::LOG_STARTUP,
+    $s->log_serror(Apache::Log::LOG_MARK, Apache::LOG_INFO|Apache::LOG_STARTUP,
                    APR::SUCCESS, "This log message comes with no header");
 
     t_server_log_warn_is_expected();
@@ -49,11 +49,11 @@ sub handler {
                    APR::SUCCESS, "log_serror test ok");
 
     t_server_log_warn_is_expected();
-    $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG,
+    $s->log_serror(Apache::Log::LOG_MARK, Apache::LOG_DEBUG,
                    APR::EGENERAL, "log_serror test 2 ok");
 
     t_server_log_error_is_expected();
-    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_CRIT,
+    $r->log_rerror(Apache::Log::LOG_MARK, Apache::LOG_CRIT,
                    APR::ENOTIME, "log_rerror test ok");
 
     t_server_log_error_is_expected();
