@@ -144,7 +144,7 @@ int modperl_callback_run_handlers(int idx, int type,
     }
 
 #ifdef USE_ITHREADS
-    if (r && !c && modperl_interp_lifetime_connection(scfg)) {
+    if (r && !c && modperl_interp_scope_connection(scfg)) {
         c = r->connection;
     }
     if (r || c) {
@@ -200,7 +200,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
 #ifdef USE_ITHREADS
     if (interp && MpInterpPUTBACK(interp)) {
-        /* PerlInterpLifetime handler */
+        /* PerlInterpScope handler */
         modperl_interp_unselect(interp);
     }
 #endif

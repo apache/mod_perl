@@ -7,13 +7,13 @@
 
 #ifdef USE_ITHREADS
 
-static const char *MP_interp_lifetime_desc[] = {
+static const char *MP_interp_scope_desc[] = {
     "undef", "handler", "subrequest", "request", "connection",
 };
 
-const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime)
+const char *modperl_interp_scope_desc(modperl_interp_scope_e scope)
 {
-    return MP_interp_lifetime_desc[lifetime];
+    return MP_interp_scope_desc[scope];
 }
 
 modperl_interp_t *modperl_interp_new(apr_pool_t *p,
@@ -206,7 +206,7 @@ apr_status_t modperl_interp_unselect(void *data)
 }
 
 /* XXX:
- * interp is marked as in_use for the lifetime of the pool it is
+ * interp is marked as in_use for the scope of the pool it is
  * stashed in.  this is done to avoid the tipool->tlock whenever
  * possible.  neither approach is ideal.
  */
@@ -224,7 +224,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     modperl_interp_t *interp = NULL;
     apr_pool_t *p = NULL;
     int is_subrequest = (r && r->main) ? 1 : 0;
-    modperl_interp_lifetime_e lifetime;
+    modperl_interp_scope_e scope;
 
     if (!scfg->threaded_mpm) {
         MP_TRACE_i(MP_FUNC,
@@ -237,23 +237,23 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     }
 
     /*
-     * if a per-dir PerlInterpLifetime is specified, use it.
-     * else if r != NULL use per-server PerlInterpLifetime
-     * else lifetime must be per-connection
+     * if a per-dir PerlInterpScope is specified, use it.
+     * else if r != NULL use per-server PerlInterpScope
+     * else scope must be per-connection
      */
 
-    lifetime = (dcfg && !modperl_interp_lifetime_undef(dcfg)) ? 
-        dcfg->interp_lifetime :
-        (r ? scfg->interp_lifetime : MP_INTERP_LIFETIME_CONNECTION);
+    scope = (dcfg && !modperl_interp_scope_undef(dcfg)) ? 
+        dcfg->interp_scope :
+        (r ? scfg->interp_scope : MP_INTERP_SCOPE_CONNECTION);
 
-    MP_TRACE_i(MP_FUNC, "lifetime is per-%s\n",
-               modperl_interp_lifetime_desc(lifetime));
+    MP_TRACE_i(MP_FUNC, "scope is per-%s\n",
+               modperl_interp_scope_desc(scope));
 
     /*
-     * XXX: goto modperl_interp_get() if lifetime == handler ?
+     * XXX: goto modperl_interp_get() if scope == handler ?
      */
 
-    if (c && (lifetime == MP_INTERP_LIFETIME_CONNECTION)) {
+    if (c && (scope == MP_INTERP_SCOPE_CONNECTION)) {
         desc = "conn_rec pool";
         get_interp(c->pool);
 
@@ -267,7 +267,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         p = c->pool;
     }
     else if (r) {
-        if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
+        if (is_subrequest && (scope == MP_INTERP_SCOPE_REQUEST)) {
             /* share 1 interpreter across sub-requests */
             request_rec *main_r = r->main;
 
@@ -311,7 +311,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp = modperl_interp_get(s ? s : r->server);
     ++interp->num_requests; /* should only get here once per request */
 
-    if (lifetime == MP_INTERP_LIFETIME_HANDLER) {
+    if (scope == MP_INTERP_SCOPE_HANDLER) {
         /* caller is responsible for calling modperl_interp_unselect() */
         MpInterpPUTBACK_On(interp);
     }

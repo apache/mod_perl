@@ -99,12 +99,12 @@ typedef struct {
 } modperl_options_t;
 
 typedef enum {
-    MP_INTERP_LIFETIME_UNDEF,
-    MP_INTERP_LIFETIME_HANDLER,
-    MP_INTERP_LIFETIME_SUBREQUEST,
-    MP_INTERP_LIFETIME_REQUEST,
-    MP_INTERP_LIFETIME_CONNECTION,
-} modperl_interp_lifetime_e;
+    MP_INTERP_SCOPE_UNDEF,
+    MP_INTERP_SCOPE_HANDLER,
+    MP_INTERP_SCOPE_SUBREQUEST,
+    MP_INTERP_SCOPE_REQUEST,
+    MP_INTERP_SCOPE_CONNECTION,
+} modperl_interp_scope_e;
 
 typedef struct {
     MpHV *SetVars;
@@ -118,7 +118,7 @@ typedef struct {
 #ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
     modperl_tipool_config_t *interp_pool_cfg;
-    modperl_interp_lifetime_e interp_lifetime;
+    modperl_interp_scope_e interp_scope;
 #else
     PerlInterpreter *perl;
 #endif
@@ -137,7 +137,7 @@ typedef struct {
     MpHV *SetVars;
     modperl_options_t *flags;
 #ifdef USE_ITHREADS
-    modperl_interp_lifetime_e interp_lifetime;
+    modperl_interp_scope_e interp_scope;
 #endif
 } modperl_config_dir_t;
 
