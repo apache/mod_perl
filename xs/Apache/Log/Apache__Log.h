@@ -17,7 +17,7 @@ static void mpxs_Apache__Log_BOOT(pTHX)
 {
     av_push(get_av("Apache::Log::Request::ISA", TRUE), 
             newSVpv("Apache::Log", 11));
-    av_push(get_av("Apache::Log::ServerRec::ISA", TRUE), 
+    av_push(get_av("Apache::Log::Server::ISA", TRUE), 
             newSVpv("Apache::Log", 11));
 }
 
@@ -40,7 +40,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         r = (request_rec *)SvObjIV(sv);
         s = r->server;
     }
-    else if (SvROK(sv) && sv_isa(sv, "Apache::Log::ServerRec")) {
+    else if (SvROK(sv) && sv_isa(sv, "Apache::Log::Server")) {
         s = (server_rec *)SvObjIV(sv);
     }
     else {
@@ -97,7 +97,7 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
         retval = (void *)modperl_sv2request_rec(aTHX_ sv);
         break;
       case MP_LOG_SERVER:
-        pclass = "Apache::Log::ServerRec";
+        pclass = "Apache::Log::Server";
         retval = (void *)modperl_sv2server_rec(aTHX_ sv);
         break;
       default:
