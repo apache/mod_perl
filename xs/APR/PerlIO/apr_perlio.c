@@ -399,7 +399,7 @@ static PerlIO_funcs PerlIO_APR = {
     sizeof(PerlIO_funcs),
     "APR",
     sizeof(PerlIOAPR),
-    PERLIO_K_MULTIARG,
+    PERLIO_K_MULTIARG | PERLIO_K_RAW,
     PerlIOAPR_pushed,
     PerlIOBase_popped,
     PerlIOAPR_open,

@@ -187,7 +187,7 @@ static PerlIO_funcs PerlIO_Apache = {
     sizeof(PerlIO_funcs),
     "Apache",
     sizeof(PerlIOApache),
-    PERLIO_K_MULTIARG,
+    PERLIO_K_MULTIARG | PERLIO_K_RAW,
     PerlIOApache_pushed,
     PerlIOApache_popped,
     PerlIOApache_open,
