@@ -51,6 +51,8 @@ use APR::Table ();
 use APR::Pool ();
 use APR::URI ();
 use APR::Util ();
+use APR::Brigade ();
+use APR::Bucket ();
 use mod_perl ();
 use Symbol ();
 
@@ -471,23 +473,40 @@ sub Apache::args {
     return $r->parse_args($args);
 }
 
+use Apache::Const -compile => qw(MODE_READBYTES);
+use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
+
 use constant IOBUFSIZE => 8192;
 
 sub content {
     my $r = shift;
 
-    $r->setup_client_block;
-
-    return undef unless $r->should_client_block;
+    my $ba = $r->connection->bucket_alloc;
+    my $bb = APR::Brigade->new($r->pool, $ba);
 
     my $data = '';
-    my $buf;
-    while (my $read_len = $r->get_client_block($buf, IOBUFSIZE)) {
-        if ($read_len == -1) {
-            die "some error while reading with get_client_block";
+    my $seen_eos = 0;
+    my $count = 0;
+    do {
+        $r->input_filters->get_brigade($bb,
+            Apache::MODE_READBYTES, APR::BLOCK_READ, IOBUFSIZE);
+
+        while (!$bb->is_empty) {
+            my $b = $bb->first;
+
+            $b->remove;
+
+            if ($b->is_eos) {
+                $seen_eos++;
+                last;
+            }
+
+            my $buf = $b->read;
+            $data .= $buf if length $buf;
         }
-        $data .= $buf;
-    }
+    } while (!$seen_eos);
+
+    $bb->destroy;
 
     return $data unless wantarray;
     return $r->parse_args($data);
