@@ -520,16 +520,11 @@ exit(...)
 #in case you need Apache::fork
 # INCLUDE: fork.xs
 
-#shutup AutoLoader
 void 
-DESTROY(r=Nullsv)
-    SV     *r
-
-    ALIAS:
-    Apache::CLOSE = 1
+CLOSE(...)
 
     CODE:
-    ix = ix; /*-Wall*/
+    items = items;
     /*NOOP*/
 
 #httpd.h
