@@ -104,7 +104,7 @@ sub should_compile {
       $Apache::Registry->{$package}{'mtime'} <= $mtime);
 }
 
-sub update_mtime {
+sub set_mtime {
     my($pr, $mtime, $package) = @_;
     $mtime   ||= $pr->{'mtime'};
     $package ||= $pr->{'namespace'};

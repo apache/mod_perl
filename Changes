@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+rename Apache::{PerlRun,RegistryNG}::update_mtime to set_mtime, so
+Apache::update_mtime is not overridden
+thanks to Michael Blakeley for the spot
+
 constant 'DECLINED' wasn't imported by Apache::RegistryBB, thanks to
 Michael Blakeley for the spot [Eric Cholet <cholet@logilune.com>]
 
