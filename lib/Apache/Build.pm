@@ -285,7 +285,7 @@ sub perl_config_optimize {
     $val ||= $Config{optimize};
 
     if ($self->{MP_DEBUG}) {
-        return ' ' unless $val =~ /-DDEBUGGING/;
+        return ' ' unless $Config{ccflags} =~ /-DDEBUGGING/;
     }
 
     $val;
