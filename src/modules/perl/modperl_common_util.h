@@ -75,6 +75,10 @@ MP_INLINE SV *modperl_hash_tie(pTHX_ const char *classname,
                                SV *tsv, void *p);
 
 /* tied %hash */
+MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_ 
+                                          const char *classname,
+                                          SV *tsv);
+/* tied %hash */
 MP_INLINE void *modperl_hash_tied_object(pTHX_ const char *classname,
                                          SV *tsv);
 

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#define mpxs_APR__Table_FETCH   apr_table_get
 #define mpxs_APR__Table_STORE   apr_table_set
 #define mpxs_APR__Table_DELETE  apr_table_unset
 #define mpxs_APR__Table_CLEAR   apr_table_clear
@@ -122,25 +121,52 @@ SvCUR(SvRV(sv))
 
 static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(pTHX_ SV *tsv, SV *key)
 {
-    apr_table_t *t = mp_xs_sv2_APR__Table(tsv); 
+    apr_table_t *t;
+    SV *rv = modperl_hash_tied_object_rv(aTHX_ "APR::Table", tsv);
+    if (!SvROK(rv)) {
+        Perl_croak(aTHX_ "Usage: $table->NEXTKEY($key): "
+                   "first argument not an APR::Table object");
+    }
+
+    t = (apr_table_t *)SvIVX(SvRV(rv)); 
 
     if (apr_is_empty_table(t)) {
         return NULL;
     }
 
-    if (mpxs_apr_table_iterix(tsv) < apr_table_elts(t)->nelts) {
-        return mpxs_apr_table_nextkey(t, tsv);
+    if (key == NULL) {
+        mpxs_apr_table_iterix(rv) = 0; /* reset iterator index */
+    }
+    
+    if (mpxs_apr_table_iterix(rv) < apr_table_elts(t)->nelts) {
+        return mpxs_apr_table_nextkey(t, rv);
     }
 
+    mpxs_apr_table_iterix(rv) = 0;
+    
     return NULL;
 }
 
-static MP_INLINE const char *mpxs_APR__Table_FIRSTKEY(pTHX_ SV *tsv)
+/* Try to shortcut apr_table_get by fetching the key using the current
+ * iterator (unless it's inactive or points at different key).
+ */
+static MP_INLINE const char *mpxs_APR__Table_FETCH(pTHX_ SV *tsv,
+                                                   const char *key)
 {
-    mpxs_apr_table_iterix(tsv) = 0; /* reset iterator index */
+    SV* rv = modperl_hash_tied_object_rv(aTHX_ "APR::Table", tsv);
+    const int i = mpxs_apr_table_iterix(rv);
+    apr_table_t *t = (apr_table_t *)SvIVX(SvRV(rv));
+    const apr_array_header_t *arr = apr_table_elts(t);
+    apr_table_entry_t *elts = (apr_table_entry_t *)arr->elts;
 
-    return mpxs_APR__Table_NEXTKEY(aTHX_ tsv, Nullsv);
+    if (i > 0 && i <= arr->nelts && !strcasecmp(key, elts[i-1].key)) {
+        return elts[i-1].val;
+    }
+    else {
+        return apr_table_get(t, key);
+    }
 }
+
 
 static XS(MPXS_apr_table_get)
 {
@@ -153,11 +179,11 @@ static XS(MPXS_apr_table_get)
     mpxs_PPCODE({
         APR__Table t = modperl_hash_tied_object(aTHX_ "APR::Table", ST(0));
         const char *key = (const char *)SvPV_nolen(ST(1));
-    
+
         if (!t) {
             XSRETURN_UNDEF;
         }
-        
+
         if (GIMME_V == G_SCALAR) {
             const char *val = apr_table_get(t, key);
 
@@ -167,9 +193,9 @@ static XS(MPXS_apr_table_get)
         }
         else {
             const apr_array_header_t *arr = apr_table_elts(t);
-            apr_table_entry_t *elts  = (apr_table_entry_t *)arr->elts;
+            apr_table_entry_t *elts = (apr_table_entry_t *)arr->elts;
             int i;
-            
+
             for (i = 0; i < arr->nelts; i++) {
                 if (!elts[i].key || strcasecmp(elts[i].key, key)) {
                     continue;

@@ -22,6 +22,41 @@
 
 #include "modperl_common_util.h"
 
+
+/* Prefetch magic requires perl 5.8 */
+#if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
+
+/* A custom MGVTBL with mg_copy slot filled in allows us to FETCH a
+ * table entry immediately during iteration.  For multivalued keys
+ * this is essential in order to get the value corresponding to the
+ * current key, otherwise values() will always report the first value
+ * repeatedly.  With this MGVTBL the keys() list always matches up
+ * with the values() list, even in the multivalued case.  We only
+ * prefetch the value during iteration, because the prefetch adds
+ * overhead (an unnecessary FETCH call) to EXISTS and STORE
+ * operations.  This way they are only "penalized" when the perl
+ * program is iterating via each(), which seems to be a reasonable
+ * tradeoff.
+ */
+
+MP_INLINE static
+int modperl_table_magic_copy(pTHX_ SV *sv, MAGIC *mg, SV *nsv, 
+                             const char *name, int namelen)
+{
+    /* prefetch the value whenever we're iterating over the keys */
+    MAGIC *tie_magic = mg_find(nsv, PERL_MAGIC_tiedelem);
+    SV *obj = SvRV(tie_magic->mg_obj);
+    if (SvCUR(obj)) {
+        SvGETMAGIC(nsv);
+    }
+    return 0;
+}
+
+
+static const MGVTBL modperl_table_magic_prefetch = {0, 0, 0, 0, 0, 
+                                                    modperl_table_magic_copy};
+#endif /* End of prefetch magic */
+
 MP_INLINE SV *modperl_hash_tie(pTHX_ 
                                const char *classname,
                                SV *tsv, void *p)
@@ -30,15 +65,25 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
     SV *rsv = sv_newmortal();
 
     sv_setref_pv(rsv, classname, p);
+
+    /* Prefetch magic requires perl 5.8 */
+#if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
+    
+    sv_magic(hv, NULL, PERL_MAGIC_ext, Nullch, -1);
+    SvMAGIC(hv)->mg_virtual = (MGVTBL *)&modperl_table_magic_prefetch;
+    SvMAGIC(hv)->mg_flags |= MGf_COPY;
+
+#endif /* End of prefetch magic */
+
     sv_magic(hv, rsv, PERL_MAGIC_tied, Nullch, 0);
 
     return SvREFCNT_inc(sv_bless(sv_2mortal(newRV_noinc(hv)),
                                  gv_stashpv(classname, TRUE)));
 }
 
-MP_INLINE void *modperl_hash_tied_object(pTHX_ 
-                                         const char *classname,
-                                         SV *tsv)
+MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_ 
+                                          const char *classname,
+                                          SV *tsv)
 {
     if (sv_derived_from(tsv, classname)) {
         if (SVt_PVHV == SvTYPE(SvRV(tsv))) {
@@ -47,7 +92,7 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
 
             if (SvMAGICAL(hv)) {
                 if ((mg = mg_find(hv, PERL_MAGIC_tied))) {
-                    return (void *)MgObjIV(mg);
+                    return mg->mg_obj;
                 }
                 else {
                     Perl_warn(aTHX_ "Not a tied hash: (magic=%c)", mg);
@@ -58,7 +103,7 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
             }
         }
         else {
-            return (void *)SvObjIV(tsv);
+            return tsv;
         }
     }
     else {
@@ -67,7 +112,20 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
                    "(expecting an %s derived object)", classname);
     }
 
-    return NULL;
+    return &PL_sv_undef;
+}
+
+MP_INLINE void *modperl_hash_tied_object(pTHX_ 
+                                         const char *classname,
+                                         SV *tsv)
+{
+    SV *rv = modperl_hash_tied_object_rv(aTHX_ classname, tsv);
+    if (SvROK(rv)) {
+        return (void *)SvIVX(SvRV(rv));
+    }
+    else {
+        return NULL;
+    }
 }
 
 /* same as Symbol::gensym() */

@@ -253,12 +253,12 @@ MODULE=APR::Table
 -apr_table_setn
  apr_table_unset
 -apr_table_vdo
- const char *:DEFINE_FETCH | | apr_table_t *:t, const char *:key
  void:DEFINE_STORE | | apr_table_t *:t, const char *:key, const char *:value
  void:DEFINE_DELETE | | apr_table_t *:t, const char *:key
  void:DEFINE_CLEAR | | apr_table_t *:t
- mpxs_APR__Table_FIRSTKEY
- mpxs_APR__Table_NEXTKEY
+ const char *:DEFINE_FIRSTKEY | mpxs_APR__Table_NEXTKEY | SV *:tsv, SV *:key=Nullsv
+ mpxs_APR__Table_NEXTKEY | | SV *:tsv, SV *:key=&PL_sv_undef
+ mpxs_APR__Table_FETCH
  mpxs_APR__Table_EXISTS
 
 !MODULE=APR::File
