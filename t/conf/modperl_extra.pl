@@ -62,6 +62,44 @@ sub ModPerl::Test::read_post {
     return $buf;
 }
 
+#<Perl handler=ModPerl::Test::perl_section>
+# ...
+#</Perl>
+sub ModPerl::Test::perl_section {
+    my($parms, $args) = @_;
+
+    require Apache::CmdParms;
+    require Apache::Directive;
+
+    my $code = $parms->directive->to_string;
+    my $package = $args->{package} || 'Apache::ReadConfig';
+
+##   a real handler would do something like:
+#    eval "package $package; $code";
+#    die $@ if $@;
+##   feed %Apache::ReadConfig:: to Apache::Directive->insert
+
+    my $htdocs = Apache::server_root_relative($parms->pool, 'htdocs');
+
+    my @cfg = (
+       "Alias /perl_sections $htdocs",
+       "<Location /perl_sections>",
+       "   require valid-user",
+       "   AuthType Basic",
+       "   AuthName PerlSection",
+       "   PerlAuthenHandler TestHooks::authen",
+       "</Location>",
+    );
+
+    my $errmsg = Apache::Directive->insert($parms->server,
+                                           $parms->pool,
+                                           \@cfg);
+
+    die $errmsg if $errmsg;
+
+    Apache::OK;
+}
+
 END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
