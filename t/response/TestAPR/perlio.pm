@@ -10,7 +10,6 @@ use Fcntl ();
 use File::Spec::Functions qw(catfile);
 
 use Apache::Const -compile => 'OK';
-use constant HAVE_PERLIO => eval { require APR::PerlIO };
 
 #XXX: APR::LARGE_FILES_CONFLICT constant?
 #XXX: you can set to zero if largefile support is not enabled in Perl
@@ -19,19 +18,12 @@ use constant LARGE_FILES_CONFLICT => 1;
 sub handler {
     my $r = shift;
 
-    unless (HAVE_PERLIO) {
-        #XXX dunno why have_module doesn't work here.
-        my $reason = "APR::PerlIO is not available with this Perl";
-        $r->puts("1..0 #Skipped: $reason\n");
-        return Apache::OK;
-    }
-
     my $tests = 11;
     my $lfs_tests = 3;
 
     $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 
-    plan $r, tests => $tests, have_perl 'iolayers';
+    plan $r, tests => $tests, have_perl qw(APR::PerlIO);
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
