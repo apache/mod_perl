@@ -383,24 +383,14 @@ MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
     return modperl_wbucket_write(&filter->wbucket, buf, len);
 }
 
-#define APR_BRIGADE_IS_EOS(bb) \
-APR_BUCKET_IS_EOS(APR_BRIGADE_FIRST(bb))
-
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
                                            apr_bucket_brigade *bb)
 {
     modperl_filter_t *filter;
     int status;
 
-    if (APR_BRIGADE_IS_EOS(bb)) {
-        /* XXX: see about preventing this in the first place */
-        MP_TRACE_f(MP_FUNC, "first bucket is EOS, skipping callback\n");
-        return ap_pass_brigade(f->next, bb);
-    }
-    else {
-        filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, 0, 0, 0);
-    }
+    filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE);
+    status = modperl_run_filter(filter, 0, 0, 0);
 
     switch (status) {
       case OK:
@@ -421,15 +411,8 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     modperl_filter_t *filter;
     int status;
 
-    if (APR_BRIGADE_IS_EOS(bb)) {
-        /* XXX: see about preventing this in the first place */
-        MP_TRACE_f(MP_FUNC, "first bucket is EOS, skipping callback\n");
-        return APR_SUCCESS;
-    }
-    else {
-        filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, mode, block, readbytes);
-    }
+    filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE);
+    status = modperl_run_filter(filter, mode, block, readbytes);
 
     switch (status) {
       case OK:

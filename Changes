@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Request input and output filters are now getting the EOS bucket, which
+wasn't passed through before. Now the context can be flushed on
+EOS. [Stas]
+
 =item 1.99_08 - January 10, 2003
 
 Correct ModPerl::RegistryCooker to reset %INC, after compile for .pl
