@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+fix compilation if apache/apr do not have thread support
+
 =item 1.99_05 - August 20, 2002
 
 fix PerlOptions +ParseHeaders to only parse once per-request
