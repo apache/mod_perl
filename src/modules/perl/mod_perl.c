@@ -63,6 +63,9 @@ static void modperl_boot(pTHX_ void *data)
         newCONSTSUB(PL_defstash, name, newSViv(1));
     }
 
+    /* outside mod_perl this is done by ModPerl::Const.xs */
+    newXS("ModPerl::Const::compile", XS_modperl_const_compile, __FILE__);
+
     newCONSTSUB(PL_defstash, "Apache::MPM_IS_THREADED",
                 newSViv(scfg->threaded_mpm));
 

@@ -19,6 +19,8 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_perl_global.h"
 #include "modperl_perl_pp.h"
 #include "modperl_sys.h"
+#include "modperl_const.h"
+#include "modperl_constants.h"
 
 /* both perl and apr have largefile support enabled */
 #define MP_LARGE_FILES_ENABLED \
