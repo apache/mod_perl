@@ -12,7 +12,8 @@ use Apache::Process ();
 # reorg @INC to have first devel libs, then blib libs, and only then
 # perl core libs
 my $pool = Apache->server->process->pool;
-my $project_root = canonpath Apache::Server::server_root_relative($pool, "..");
+my $project_root = canonpath
+    Apache::Server::server_root_relative($pool, "..");
 my (@a, @b, @c);
 for (@INC) {
     if (m|^\Q$project_root\E|) {
@@ -49,8 +50,8 @@ $TestModperl::MethodObj = TestModperl::methodobj->new;
 #see t/response/TestModperl/env.pm
 $ENV{MODPERL_EXTRA_PL} = __FILE__;
 
-my $ap_mods = scalar grep { /^Apache/ } keys %INC;
-my $apr_mods = scalar grep { /^APR/ } keys %INC;
+my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
+my $apr_mods = scalar grep { /^APR/    } keys %INC;
 
 Apache::Log->info("$ap_mods Apache:: modules loaded");
 Apache::Server->log->info("$apr_mods APR:: modules loaded");
@@ -84,8 +85,7 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 # the test needing these files may run more than once (t/SMOKE)
 {
     require Apache::Test;
-    my $dir = catdir Apache::Test::config()->{vars}->{documentroot}, 'hooks',
-        'startup';
+    my $dir = catdir Apache::Test::vars('documentroot'), qw(hooks startup);
     for (<$dir/*>) {
         my $file = ($_ =~ /(.*(?:open_logs|post_config)-\d+)/);
         unlink $file;
