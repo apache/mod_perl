@@ -11,6 +11,13 @@
   - Automatic setting of cmd_args in @APACHE_MODULE_DIRECTIVE based on
     function prototype
 
+* $r->child_terminate:
+  - Apache has no API for this (used to be ap_child_terminate). The
+    current solution is not ideal. Better trying to get ap_child_terminate
+    back in the httpd API.
+  - future ideas for threaded mpms: might consider knocking
+    off the current PerlInterpreter instead.
+
 * tied filehandle interface:
  -EOF, TELL, SEEK
  -READLINE - proper implementation (see comment in Apache::compat)

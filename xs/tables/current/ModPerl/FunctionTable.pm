@@ -6510,6 +6510,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__RequestRec_child_terminate',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_Apache__RequestRec_content_languages',
     'args' => [

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Apache::RequestUtil : $r->child_terminate() implemented for
+non-threaded MPMs. [Gozer]
+
 new API Apache::ServerUtil::restart_count() which can be used to tell
 whether the server is starting/restarting/gracefully
 restarting/etc. Based on this feature implement

@@ -315,3 +315,25 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
 
     return retval;
 }
+
+static apr_status_t child_terminate(void *data) {
+    apr_pool_t *pool = (apr_pool_t *)data;
+    
+    /* On the first pass, re-register so we end up last */
+    if (data) {
+        apr_pool_cleanup_register(pool, NULL, child_terminate,
+                                  apr_pool_cleanup_null);    
+    }
+    else {
+        exit(0);
+    }
+    return APR_SUCCESS;
+}
+
+static MP_INLINE
+void mpxs_Apache__RequestRec_child_terminate(pTHX_ request_rec *r)
+{
+    MP_CROAK_IF_THREADED_MPM("$r->child_terminate")
+    apr_pool_cleanup_register(r->pool, r->pool, child_terminate,
+                              apr_pool_cleanup_null);
+}

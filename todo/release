@@ -4,22 +4,6 @@
 
 -- see also todo/api_status
 
-* $r->child_terminate:
-  - a must to be able to port Apache::SizeLimit, which is a
-    showstopper for many mp1 users wanting to move to mp2.
-  - since apache has no API implement as a cleanup handler that calls
-    exit(0)
-  - since it's possible that there are other cleanup handlers
-    registered after, see if it's possible to register another
-    function when this cleanup handler is called, which will actually
-    call exit (which hopefully makes sure that this cleanup handler is
-    always running last).
-  - it should die if called within the threaded mpm, after the
-    post_config phase.
-  - future ideas for threaded mpms: might consider knocking
-    off the current PerlInterpreter instead.
-  owner: gozer
-
 * pools that go out of scope:
 
   perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 

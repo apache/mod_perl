@@ -101,7 +101,13 @@ int modperl_threaded_mpm(void);
         Perl_croak(aTHX_ "Can't run '%s' in the threaded "      \
                    "environment after server startup", what);   \
     }
-    
+  
+#define MP_CROAK_IF_THREADED_MPM(what)                          \
+    if (modperl_threaded_mpm()) {                               \
+        Perl_croak(aTHX_ "Can't run '%s' in a threaded mpm",    \
+                   what);                                       \
+    }
+
 int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                        server_rec *base_server);
 void modperl_init(server_rec *s, apr_pool_t *p);
