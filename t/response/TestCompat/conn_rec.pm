@@ -10,7 +10,7 @@ use Apache2::compat ();
 
 use Socket qw(sockaddr_in inet_ntoa);
 
-use Apache2::Constants qw(OK);
+use Apache::Constants qw(OK);
 
 sub handler {
 

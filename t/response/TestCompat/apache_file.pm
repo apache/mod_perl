@@ -1,6 +1,6 @@
 package TestCompat::apache_file;
 
-# Apache2::File compat layer tests
+# Apache::File compat layer tests
 
 # these tests are all run and validated on the server side.
 
@@ -23,11 +23,11 @@ sub handler {
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
-    require Apache2::File;
+    require Apache::File;
     my $file = $vars->{t_conf_file};
 
     t_debug "new Apache2::File file object";
-    ok my $fh = Apache2::File->new;
+    ok my $fh = Apache::File->new;
 
     t_debug "open itself";
     if ($fh->open($file)) {
@@ -51,7 +51,7 @@ sub handler {
     ok !$fh->open("$file.nochance");
 
     t_debug "new+open";
-    if (my $fh = Apache2::File->new($file)) {
+    if (my $fh = Apache::File->new($file)) {
         ok 1;
         $fh->close;
     }
@@ -60,10 +60,10 @@ sub handler {
     }
 
     t_debug "new+open non-exists";
-    ok !Apache2::File->new("$file.yeahright");
+    ok !Apache::File->new("$file.yeahright");
 
     # tmpfile
-    my ($tmpfile, $tmpfh) = Apache2::File->tmpfile;
+    my ($tmpfile, $tmpfh) = Apache::File->tmpfile;
 
     t_debug "open tmpfile fh";
     ok $tmpfh;

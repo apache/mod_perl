@@ -72,7 +72,7 @@ BEGIN {
     $INC{'Apache/Table.pm'} = __FILE__;
 }
 
-($Apache2::Server::Starting, $Apache2::Server::ReStarting) =
+($Apache::Server::Starting, $Apache::Server::ReStarting) =
     Apache2::ServerUtil::restart_count() == 1 ? (1, 0) : (0, 1);
 
 # api => "overriding code"
@@ -320,6 +320,23 @@ sub warn {
 
 package Apache;
 
+sub unescape_url_info {
+    my($class, $string) = @_;
+    Apache2::URI::unescape_url($string);
+    $string =~ tr/+/ /;
+    $string;
+}
+
+#sorry, have to use $r->Apache2::args at the moment
+#for list context splitting
+
+sub args {
+    my $r = shift;
+    my $args = $r->args;
+    return $args unless wantarray;
+    return $r->parse_args($args);
+}
+
 sub server_root_relative {
     my $class = shift;
     if (@_ && defined($_[0]) && File::Spec->file_name_is_absolute($_[0])) {
@@ -538,23 +555,6 @@ sub parse_args {
     } split /[=&;]/, $string, -1;
 }
 
-sub Apache2::unescape_url_info {
-    my($class, $string) = @_;
-    Apache2::URI::unescape_url($string);
-    $string =~ tr/+/ /;
-    $string;
-}
-
-#sorry, have to use $r->Apache2::args at the moment
-#for list context splitting
-
-sub Apache2::args {
-    my $r = shift;
-    my $args = $r->args;
-    return $args unless wantarray;
-    return $r->parse_args($args);
-}
-
 use Apache2::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
@@ -729,7 +729,7 @@ my $Perms = 0600;
 sub tmpfile {
     my $class = shift;
     my $limit = 100;
-    my $r = Apache2::compat::request('Apache2::File->tmpfile');
+    my $r = Apache2::compat::request('Apache::File->tmpfile');
 
     while ($limit--) {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
@@ -787,6 +787,8 @@ sub size_string {
 
 *unescape_uri = \&Apache2::URI::unescape_url;
 
+*escape_path = \&Apache2::Util::escape_path;
+
 sub escape_uri {
     my $path = shift;
     my $r = Apache2::compat::request('Apache2::Util::escape_uri');
@@ -840,7 +842,7 @@ sub handler {
     return Apache2::DECLINED;
 }
 
-package Apache::Connection;
+package Apache2::Connection;
 
 # auth_type and user records don't exist in 2.0 conn_rec struct
 # 'PerlOptions +GlobalRequest' is required

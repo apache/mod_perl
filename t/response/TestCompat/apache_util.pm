@@ -43,7 +43,7 @@ sub handler {
     # size_string()
     {
         while (my($k, $v) = each %string_size) {
-            ok t_cmp($v, Apache2::Util::size_string($k));
+            ok t_cmp($v, Apache::Util::size_string($k));
         }
     }
 
@@ -70,7 +70,7 @@ sub handler {
     my $html = '<p>"hi"&foo</p>';
     my $esc_html = '&lt;p&gt;&quot;hi&quot;&amp;foo&lt;/p&gt;';
 
-    ok t_cmp(Apache2::Util::escape_html($html), $esc_html,
+    ok t_cmp(Apache::Util::escape_html($html), $esc_html,
              "Apache2::Util::escape_html");
 
 
@@ -90,8 +90,8 @@ sub handler {
     if ($crypt_ok) {
         # not all platforms support C-level crypt
         my $hash = "aX9eP53k4DGfU";
-        ok t_cmp(Apache2::Util::validate_password("dougm", $hash), 1);
-        ok t_cmp(Apache2::Util::validate_password("mguod", $hash), 0);
+        ok t_cmp(Apache::Util::validate_password("dougm", $hash), 1);
+        ok t_cmp(Apache::Util::validate_password("mguod", $hash), 0);
     }
 
     OK;
