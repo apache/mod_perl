@@ -386,3 +386,60 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
 
     return NULL;
 }
+
+MP_INLINE
+SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
+                       char *key, SV *sv_val)
+{
+    SV *RETVAL = &PL_sv_undef;
+
+    if (r && r->per_dir_config) {				   
+        MP_dDCFG;
+        RETVAL = modperl_table_get_set(aTHX_ dcfg->SetVar, key, sv_val, FALSE);
+    }
+
+    if (!SvTRUE(RETVAL)) {
+        if (s && s->module_config) {
+            MP_dSCFG(s);
+            SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
+            RETVAL = modperl_table_get_set(aTHX_ scfg->SetVar, key, sv_val, FALSE);
+        } else {
+            RETVAL = &PL_sv_undef;
+        }
+    }
+        
+    return RETVAL;
+}
+
+SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
+                          SV *sv_val, bool do_taint)
+{
+    SV *RETVAL = &PL_sv_undef;
+
+    if (table == NULL) { 
+        /* do nothing */
+    }
+    else if (key == NULL) { 
+        RETVAL = modperl_hash_tie(aTHX_ "APR::Table", Nullsv, (void*)table); 
+    }
+    else if (sv_val == &PL_sv_no) { /* no val was passed */
+        char *val; 
+        if ((val = (char *)apr_table_get(table, key))) { 
+            RETVAL = newSVpv(val, 0); 
+        } 
+        else { 
+            RETVAL = newSV(0); 
+        } 
+        if (do_taint) { 
+            SvTAINTED_on(RETVAL); 
+        } 
+    }
+    else if (sv_val == &PL_sv_undef) { /* val was passed in as undef */
+        apr_table_unset(table, key); 
+    }
+    else { 
+        apr_table_set(table, key, SvPV_nolen(sv_val));
+    } 
+
+    return RETVAL;
+}
