@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Prevent a problem where an autovivified package (stash) prevents from
+modperl_mgv to load the file with that package (until now it was
+checking whether the stash existed already and skipped the loading if
+that was the case). Now checking %INC and attempting to load the
+module. Reporting the failure only if the module has failed to load
+and the stash is not defined (so that it's possible to autovivify
+packages without loading them from an external file). [Stas]
+
 MaxClients is now overridable from the t/TEST -maxclients command line
 option (it was hardcoded before). [Stas]
 
