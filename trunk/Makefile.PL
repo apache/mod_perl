@@ -1202,7 +1202,7 @@ sub MY::dist_basics {
 
 sub MY::clean {
     my $self = shift;
-    my $string = $self->MM::clean;
+    my $string = $self->MM::clean(@_);
     unless($NO_HTTPD) {
 	my $asrc = asrc($APACHE_SRC, "http_main.c");
 	return $string unless $APACHE_SRC and -e "$asrc/http_main.c";
