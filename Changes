@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+ModPerl::MM is now ready to be used in Makefile.PL of 3rd party
+mod_perl modules [Stas and Geoff]
+
 fix a segfault caused by PerlModule in $s->add_config, due to setting
 the MP_init_done flag before init was done + add test [Stas]
 
