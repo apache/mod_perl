@@ -529,7 +529,7 @@ int modperl_response_handler_cgi(request_rec *r)
         rcfg->wbucket.header_parse = 1;
     }
 
-    modperl_perl_global_save(aTHX_ &rcfg->perl_globals);
+    modperl_perl_global_request_save(aTHX_ r);
 
     h_stdout = modperl_io_tie_stdout(aTHX_ r);
     h_stdin  = modperl_io_tie_stdin(aTHX_ r);
@@ -550,7 +550,7 @@ int modperl_response_handler_cgi(request_rec *r)
     modperl_env_request_untie(aTHX_ r);
 #endif
 
-    modperl_perl_global_restore(aTHX_ &rcfg->perl_globals);
+    modperl_perl_global_request_restore(aTHX_ r);
 
 #ifdef USE_ITHREADS
     if (MpInterpPUTBACK(interp)) {

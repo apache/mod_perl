@@ -128,7 +128,7 @@ static modperl_perl_global_entry_t modperl_perl_global_entries[] = {
     apr_uint64_t **ptr = (apr_uint64_t **) \
         ((char *)globals + (int)(long)modperl_perl_global_entries[i].offset)
 
-void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
+static void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
 {
     int i;
 
@@ -154,7 +154,7 @@ void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
     }
 }
 
-void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
+static void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
 {
     int i;
 
@@ -176,4 +176,16 @@ void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
             break;
         }
     }
+}
+
+void modperl_perl_global_request_save(pTHX_ request_rec *r)
+{
+    MP_dRCFG;
+    modperl_perl_global_save(aTHX_ &rcfg->perl_globals);
+}
+
+void modperl_perl_global_request_restore(pTHX_ request_rec *r)
+{
+    MP_dRCFG;
+    modperl_perl_global_restore(aTHX_ &rcfg->perl_globals);
 }
