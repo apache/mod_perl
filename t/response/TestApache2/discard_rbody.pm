@@ -1,4 +1,4 @@
-package TestApache::discard_rbody;
+package TestApache2::discard_rbody;
 
 # test $r->discard_request_body when the input body wasn't read at
 # all, read partially or completely.

@@ -11,7 +11,7 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use Apache2::compat ();
-use Apache2::Constants qw(OK);
+use Apache::Constants qw(OK);
 
 sub handler {
     my $r = shift;

@@ -82,10 +82,10 @@ PerlChildExitHandler ModPerl::Test::exit_handler
 #    PerlSetVar StatusTerseSize On
 #    PerlSetVar StatusTerseSizeMainSummary On
     SetHandler modperl
-    PerlResponseHandler Apache::Status
+    PerlResponseHandler Apache2::Status
 </Location>
 
-# for TestApache::util
+# for TestApache2::util
 PerlPassEnv LC_CTYPE
 PerlPassEnv LC_TIME
 

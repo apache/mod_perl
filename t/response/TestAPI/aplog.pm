@@ -61,7 +61,7 @@ sub handler {
     {
         t_server_log_warn_is_expected();
         $s->log_serror(Apache2::Log::LOG_MARK,
-                       Apache2::LOG_INFO|Apache::LOG_STARTUP,
+                       Apache2::LOG_INFO|Apache2::LOG_STARTUP,
                        APR::SUCCESS, "This log message comes with no header");
         ok t_cmp $logdiff->diff,
             qr/^This log message comes with no header$/m,
@@ -80,7 +80,7 @@ sub handler {
            : "Error string not specified yet";
 
         t_server_log_warn_is_expected();
-        $s->log_serror(Apache2::Log::LOG_MARK, Apache::LOG_DEBUG,
+        $s->log_serror(Apache2::Log::LOG_MARK, Apache2::LOG_DEBUG,
                        APR::EGENERAL, "log_serror test 2");
         ok t_cmp $logdiff->diff,
             qr/$egeneral: log_serror test 2/,
@@ -89,7 +89,7 @@ sub handler {
 
     # log_rerror
     t_server_log_error_is_expected();
-    $r->log_rerror(Apache2::Log::LOG_MARK, Apache::LOG_CRIT,
+    $r->log_rerror(Apache2::Log::LOG_MARK, Apache2::LOG_CRIT,
                    APR::ENOTIME, "log_rerror test");
     # can't match against the error string, since a locale may kick in
     ok t_cmp $logdiff->diff,
@@ -183,18 +183,18 @@ sub handler {
     {
         t_server_log_warn_is_expected();
         # this uses global server to get $s internally
-        Apache2::ServerRec::warn("Apache::ServerRec::warn test");
+        Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
             qr/\[warn\] Apache2::ServerRec::warn test/,
-            'Apache2::ServerRec::warn() w/o Apache->request ';
+            'Apache2::ServerRec::warn() w/o Apache2->request ';
 
-        Apache->request($r);
+        Apache2->request($r);
         t_server_log_warn_is_expected();
         # this uses the global $r to get $s internally
-        Apache2::ServerRec::warn("Apache::ServerRec::warn test");
+        Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
             qr/\[warn\] Apache2::ServerRec::warn test/,
-            'Apache2::ServerRec::warn() w/ Apache->request ';
+            'Apache2::ServerRec::warn() w/ Apache2->request ';
     }
 
     t_server_log_warn_is_expected();

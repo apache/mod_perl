@@ -30,6 +30,6 @@ sub handler {
 __END__
 
 PerlModule Apache2::Reload
-PerlInitHandler Apache::TestHandler::same_interp_fixup Apache::Reload
+PerlInitHandler Apache::TestHandler::same_interp_fixup Apache2::Reload
 PerlSetVar ReloadDebug Off
 PerlSetVar ReloadAll Off

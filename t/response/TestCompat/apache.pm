@@ -12,7 +12,7 @@ use Apache::Test;
 
 use ModPerl::Util ();
 use Apache2::compat ();
-use Apache2::Constants qw(DIR_MAGIC_TYPE :common :response);
+use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 
 use File::Spec::Functions qw(catfile canonpath);
 
@@ -32,7 +32,6 @@ sub handler {
     ok t_cmp(Apache->module('mod_ne_exists.c'), 0,
              "Apache2::module('mod_ne_exists.c')");
 
-
     ok t_cmp(Apache->define('MODPERL2'),
              Apache2::ServerUtil::exists_config_define('MODPERL2'),
              'Apache->define');
@@ -42,7 +41,7 @@ sub handler {
              'inside PerlResponseHandler');
 
     t_server_log_error_is_expected();
-    Apache2::log_error("Apache::log_error test ok");
+    Apache::log_error("Apache::log_error test ok");
     ok 1;
 
     t_server_log_warn_is_expected();
@@ -50,15 +49,15 @@ sub handler {
     ok 1;
 
     t_server_log_warn_is_expected();
-    Apache2::warn('Apache::warn ok');
+    Apache::warn('Apache::warn ok');
     ok 1;
 
     t_server_log_warn_is_expected();
-    Apache2::Server->warn('Apache::Server->warn ok');
+    Apache::Server->warn('Apache::Server->warn ok');
     ok 1;
 
     t_server_log_warn_is_expected();
-    Apache2::Server::warn('Apache::Server::warn ok');
+    Apache::Server::warn('Apache::Server::warn ok');
     ok 1;
 
     # explicitly imported
@@ -85,7 +84,7 @@ sub handler {
     # (Apache||$r)->server_root_relative
     {
         my $server_root = Apache::Test::config()->{vars}->{serverroot};
-        ok t_filepath_cmp(canonpath($Apache2::Server::CWD),
+        ok t_filepath_cmp(canonpath($Apache::Server::CWD),
                           canonpath($server_root),
                           '$server_root');
 
@@ -99,11 +98,11 @@ sub handler {
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative('conf')),
                           catfile($server_root, 'conf'),
-                          "Apache->server_root_relative('conf')");
+                          "Apache2->server_root_relative('conf')");
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative),
                           canonpath($server_root),
-                          'Apache->server_root_relative()');
+                          'Apache2->server_root_relative()');
 
         my $path = catfile(Apache2::ServerUtil::server_root, 'logs');
         ok t_filepath_cmp(canonpath(Apache->server_root_relative($path)),
@@ -115,8 +114,8 @@ sub handler {
              '/foo bar baz',
              'Apache->unescape_url_info');
 
-    ok t_cmp $Apache2::Server::Starting,   0, '$Apache::Server::Starting';
-    ok t_cmp $Apache2::Server::ReStarting, 1, '$Apache::Server::ReStarting';
+    ok t_cmp $Apache::Server::Starting,   0, '$Apache::Server::Starting';
+    ok t_cmp $Apache::Server::ReStarting, 1, '$Apache::Server::ReStarting';
 
     OK;
 }

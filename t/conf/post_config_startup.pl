@@ -84,7 +84,7 @@ sub test_apache_status {
            my($r, $q) = @_; #request and CGI objects
            return ["This is just a test entry"];
        }
-    ) if Apache2::Module::loaded('Apache::Status');
+    ) if Apache2::Module::loaded('Apache2::Status');
 }
 
 # test startup loglevel setting (under threaded mpms loglevel can be

@@ -1,7 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
 
-use Apache2;
 use Apache2::ServerUtil ();
 
 $TestVhost::config::restart_count = Apache2::ServerUtil::restart_count();
@@ -10,7 +9,6 @@ $TestVhost::config::restart_count = Apache2::ServerUtil::restart_count();
 use warnings;
 use strict;
 
-use Apache2;
 use Apache2::ServerUtil ();
 
 $TestVhost::config::Restart_Count = Apache2::ServerUtil::restart_count();

@@ -23,7 +23,7 @@ use constant IOBUFSIZE => 8192;
 sub handler {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->method_number == Apache::M_POST;
+    return Apache2::DECLINED unless $r->method_number == Apache2::M_POST;
 
     $r->content_type("text/plain");
 

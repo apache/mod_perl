@@ -1,4 +1,4 @@
-package TestApache::send_cgi_header;
+package TestApache2::send_cgi_header;
 
 use strict;
 use warnings FATAL => 'all';

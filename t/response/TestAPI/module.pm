@@ -52,8 +52,8 @@ sub handler {
 
     #perl
     {
-        ok t_cmp Apache2::Module::loaded('Apache::Module'), 1,
-            "Apache2::Module::loaded('Apache::Module')";
+        ok t_cmp Apache2::Module::loaded('Apache2::Module'), 1,
+            "Apache2::Module::loaded('Apache2::Module')";
 
         ok t_cmp Apache2::Module::loaded('Apache__Module_foo'), 0,
             "Apache2::Module::loaded('Apache__Module_foo')";

@@ -19,7 +19,7 @@ sub handler {
 
     my $s = $r->server;
     my $proc = $s->process;
-    ok t_cmp(1, $proc->isa('Apache2::Process'), "isa('Apache::Process')");
+    ok t_cmp(1, $proc->isa('Apache2::Process'), "isa('Apache2::Process')");
 
     my $global_pool = $proc->pool;
     ok t_cmp(1, $global_pool->isa('APR::Pool'), "pglob isa('APR::Pool')");

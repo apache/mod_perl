@@ -24,7 +24,7 @@ sub handler {
 
     plan $r, tests => 5;
 
-    eval { my $gr = Apache->request; };
+    eval { my $gr = Apache2->request; };
     ok $@;
 
     ok $r->uri eq $location;

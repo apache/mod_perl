@@ -1,4 +1,4 @@
-package TestApache::post;
+package TestApache2::post;
 
 use strict;
 use warnings FATAL => 'all';

@@ -1,4 +1,4 @@
-package TestApache::conftree;
+package TestApache2::conftree;
 
 use strict;
 use warnings FATAL => 'all';

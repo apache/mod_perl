@@ -22,7 +22,18 @@ die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
 
 use File::Spec::Functions qw(canonpath catdir);
 
-use Apache2 ();
+BEGIN {
+    ## XXX: Block of temporary hacks for Apache::compat and CGI.pm
+    *Apache::request = *Apache2::request;
+    *Apache::server = *Apache2::server;
+
+    for (qw/Response RequestRec RequestUtil/) {
+        eval qq(package Apache::$_;
+                use base "Apache2::$_";
+                \$INC{"Apache/$_.pm"} = ') . __FILE__ . "';";
+        die $@ if $@;
+    }
+}
 
 use Apache2::ServerUtil ();
 use Apache2::ServerRec ();
@@ -73,10 +84,10 @@ sub reorg_INC {
 # run during config phase, so it's logged only once (even though it's
 # run the second time, but STDERR == /dev/null)
 sub startup_info {
-    my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
+    my $ap_mods  = scalar grep { /^Apache2/ } keys %INC;
     my $apr_mods = scalar grep { /^APR/    } keys %INC;
 
-    Apache2::Log->info("$ap_mods Apache:: modules loaded");
+    Apache2::Log->info("$ap_mods Apache2:: modules loaded");
     Apache2::ServerRec->log->info("$apr_mods APR:: modules loaded");
 
     my $server = Apache2->server;
@@ -94,7 +105,7 @@ sub test_add_config {
     my $conf = <<'EOC';
 # must use PerlModule here to check for segfaults
 PerlModule Apache::TestHandler
-<Location /apache/add_config>
+<Location /apache2/add_config>
   SetHandler perl-script
   PerlResponseHandler Apache::TestHandler::ok1
 </Location>

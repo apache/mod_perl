@@ -19,7 +19,7 @@ use TestCommon::TiePerlSection ();
 tie %Location, 'TestCommon::TiePerlSection';
 $Location{'/tied'} = 'test_tied';
 
-$Apache::PerlSections::Save = 1;
+$Apache2::PerlSections::Save = 1;
 $Location{'/perl_sections_saved'} = {
     'AuthName' => 'PerlSection',
     };
@@ -29,7 +29,7 @@ $TestDirective::perl::PACKAGE = __PACKAGE__;
 </Perl>
 
 <Perl >
-$Apache::PerlSections::Save = 1;
+$Apache2::PerlSections::Save = 1;
 $TestDirective::perl::filename = __FILE__;
 $TestDirective::perl::dollar_zero = $0;
 $TestDirective::perl::line =  __LINE__;
@@ -45,11 +45,11 @@ $TestDirective::perl::line =  __LINE__;
     $Include = $file;
 </Perl>
 
-#Deprecated access to Apache::ReadConfig:: still works
+#Deprecated access to Apache2::ReadConfig:: still works
 <Perl >
-push @Apache::ReadConfig::Alias, 
+push @Apache2::ReadConfig::Alias, 
     ['/perl_sections_readconfig', '@DocumentRoot@'];
-$Apache::ReadConfig::Location{'/perl_sections_readconfig'} = {
+$Apache2::ReadConfig::Location{'/perl_sections_readconfig'} = {
     'PerlInitHandler'   => 'ModPerl::Test::add_config',
     'AuthType'          => 'Basic',
     'AuthName'          => 'PerlSection',

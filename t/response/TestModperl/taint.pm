@@ -27,7 +27,7 @@ sub handler {
     ok t_cmp($@, qr/read-only/, "\${^TAINT} is read-only");
 
     if ($build->{MP_COMPAT_1X}) {
-        ok t_cmp($Apache2::__T, 1, "\$Apache::__T");
+        ok t_cmp($Apache2::__T, 1, "\$Apache2::__T");
 
         eval { $Apache2::__T = 0 };
         ok t_cmp($@, qr/read-only/, "\$Apache2::__T is read-only");

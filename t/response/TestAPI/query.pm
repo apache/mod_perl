@@ -28,7 +28,7 @@ sub handler {
     if ($mpm eq 'prefork') {
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_NOT_SUPPORTED,
@@ -41,12 +41,12 @@ sub handler {
                      Apache2::MPM->is_threaded,
                      "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache2::MPM->is_threaded);
             ok (! Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_DYNAMIC,
@@ -57,7 +57,7 @@ sub handler {
     elsif ($mpm eq 'worker') {
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_STATIC,
@@ -67,12 +67,12 @@ sub handler {
                      Apache2::MPM->is_threaded,
                      "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache2::MPM->is_threaded);
             ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_DYNAMIC,
@@ -82,7 +82,7 @@ sub handler {
     elsif ($mpm eq 'leader') {
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_STATIC,
@@ -92,12 +92,12 @@ sub handler {
                      Apache2::MPM->is_threaded,
                      "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache2::MPM->is_threaded);
             ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_DYNAMIC,
@@ -107,7 +107,7 @@ sub handler {
     elsif ($mpm eq 'winnt') {
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_THREADED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_THREADED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_STATIC,
@@ -117,12 +117,12 @@ sub handler {
                      Apache2::MPM->is_threaded,
                      "Apache2::MPM->is_threaded() equivalent to query(MPMQ_IS_THREADED)");
 
-            t_debug('Apache2::MPM->is_threaded returned ' . Apache::MPM->is_threaded);
+            t_debug('Apache2::MPM->is_threaded returned ' . Apache2::MPM->is_threaded);
             ok (Apache2::MPM->is_threaded);
         }
 
         {
-            my $query = Apache2::MPM->query(Apache::MPMQ_IS_FORKED);
+            my $query = Apache2::MPM->query(Apache2::MPMQ_IS_FORKED);
 
             ok t_cmp($query,
                      Apache2::MPMQ_NOT_SUPPORTED,

@@ -15,7 +15,7 @@ use Apache2::Const -compile => qw(OK DECLINED M_POST);
 sub handler {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->method_number == Apache::M_POST;
+    return Apache2::DECLINED unless $r->method_number == Apache2::M_POST;
 
     my $data = TestCommon::Utils::read_post($r);
 

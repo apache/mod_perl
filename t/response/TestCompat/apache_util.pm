@@ -1,6 +1,6 @@
 package TestCompat::apache_util;
 
-# Apache2::Util compat layer tests
+# Apache::Util compat layer tests
 
 # these tests are all run and validated on the server side.
 
@@ -11,7 +11,7 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use Apache2::compat ();
-use Apache2::Constants qw(OK);
+use Apache::Constants qw(OK);
 
 my %string_size = (
     '-1'            => "    -",
@@ -52,13 +52,13 @@ sub handler {
     (my $esc_uri = $uri) =~ s/ /\%20/g;
     my $uri2 = $uri;
 
-    $uri  = Apache2::Util::escape_uri($uri);
-    $uri2 = Apache2::Util::escape_path($uri2, $r->pool);
+    $uri  = Apache::Util::escape_uri($uri);
+    $uri2 = Apache::Util::escape_path($uri2, $r->pool);
 
-    ok t_cmp($uri, $esc_uri, "Apache2::Util::escape_uri");
-    ok t_cmp($uri2, $esc_uri, "Apache2::Util::escape_path");
+    ok t_cmp($uri, $esc_uri, "Apache::Util::escape_uri");
+    ok t_cmp($uri2, $esc_uri, "Apache::Util::escape_path");
 
-    ok t_cmp(Apache2::Util::unescape_uri($uri2),
+    ok t_cmp(Apache::Util::unescape_uri($uri2),
              Apache2::URI::unescape_url($uri),
              "Apache2::URI::unescape_uri vs Apache::Util::unescape_uri");
 
@@ -76,15 +76,15 @@ sub handler {
 
     # ht_time(), parsedate()
     my $time = time;
-    Apache2::compat::override_mp2_api('Apache::Util::ht_time');
+    Apache2::compat::override_mp2_api('Apache2::Util::ht_time');
     my $fmtdate = Apache2::Util::ht_time($time);
-    Apache2::compat::restore_mp2_api('Apache::Util::ht_time');
+    Apache2::compat::restore_mp2_api('Apache2::Util::ht_time');
 
-    ok t_cmp($fmtdate, $fmtdate, "Apache2::Util::ht_time");
+    ok t_cmp($fmtdate, $fmtdate, "Apache::Util::ht_time");
 
     if ($parse_time_ok) {
-        my $ptime = Apache2::Util::parsedate($fmtdate);
-        ok t_cmp($ptime, $time, "Apache2::Util::parsedate");
+        my $ptime = Apache::Util::parsedate($fmtdate);
+        ok t_cmp($ptime, $time, "Apache::Util::parsedate");
     }
 
     if ($crypt_ok) {

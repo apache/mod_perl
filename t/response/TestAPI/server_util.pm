@@ -71,7 +71,7 @@ sub server_root_relative_tests {
         '$r->connection->pool'           => $r->connection->pool,
         '$r->server->process->pool'      => $r->server->process->pool,
         '$r->server->process->pconf'     => $r->server->process->pconf,
-        'Apache->server->process->pconf' => Apache->server->process->pconf,
+        'Apache2->server->process->pconf' => Apache2->server->process->pconf,
         'APR::Pool->new'                 => APR::Pool->new,
     );
 

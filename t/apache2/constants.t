@@ -5,13 +5,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache2 ();
-
-# -compile puts constants into the Apache:: namespace
+# -compile puts constants into the Apache2:: namespace
 use Apache2::Const -compile => qw(:http :common :mpmq
-                                 TAKE23 &OPT_EXECCGI
-                                 DECLINE_CMD DIR_MAGIC_TYPE 
-                                 CRLF);
+                                  TAKE23 &OPT_EXECCGI
+                                  DECLINE_CMD DIR_MAGIC_TYPE 
+                                  CRLF);
 
 # without -compile, constants are in the
 # caller namespace.  also defaults to :common
@@ -25,11 +23,11 @@ ok t_cmp(AUTH_REQUIRED, 401, 'AUTH_REQUIRED');
 
 ok t_cmp(OK, 0, 'OK');
 
-ok t_cmp(Apache2::OK, 0, 'Apache::OK');
+ok t_cmp(Apache2::OK, 0, 'Apache2::OK');
 
-ok t_cmp(Apache2::DECLINED, -1, 'Apache::DECLINED');
+ok t_cmp(Apache2::DECLINED, -1, 'Apache2::DECLINED');
 
-ok t_cmp(Apache2::HTTP_GONE, 410, 'Apache::HTTP_GONE');
+ok t_cmp(Apache2::HTTP_GONE, 410, 'Apache2::HTTP_GONE');
 
 ok t_cmp(Apache2::DIR_MAGIC_TYPE, 
          'httpd/unix-directory',

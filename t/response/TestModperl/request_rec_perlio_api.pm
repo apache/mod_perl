@@ -93,8 +93,8 @@ sub test_STDOUT {
     # now close it completely and restore it, without using any dupped
     # filehandle
     close STDOUT;
-    open STDOUT, ">:Apache", $r 
-        or die "can't open STDOUT via :Apache layer : $!";
+    open STDOUT, ">:Apache2", $r 
+        or die "can't open STDOUT via :Apache2 layer : $!";
     print "next you reincarnate...";
 
 }

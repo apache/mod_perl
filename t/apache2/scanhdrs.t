@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 4;
 
-my $module = 'TestApache::scanhdrs';
+my $module = 'TestApache2::scanhdrs';
 my $location = "/" . Apache::TestRequest::module2path($module);
 
 my $res = GET $location;

@@ -1,6 +1,6 @@
 package TestFilter::out_str_api;
 
-# Test Apache2::FilterRec and Apache::Filter accessors
+# Test Apache2::FilterRec and Apache2::Filter accessors
 
 use strict;
 use warnings FATAL => 'all';
