@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/11/29 08:36:21 $]
+   Last modified at [$Date: 2002/11/29 08:51:03 $]
 
 Release:
 --------
@@ -55,6 +55,12 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* $r->rflush doesn't work. see:
+  http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
+  I also see a weird behavior where it does sends FLUSH buckets but
+  they all seem to fall through the data, thus not really flushing
+  anything. this can be easily reproduced with MyApache::FilterSnoop.
 
 * directive handlers are supported but need some work for 1.x compat
   - Apache::ModuleConfig->get needs a compat method mapping to
