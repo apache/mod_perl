@@ -125,3 +125,11 @@ static MP_INLINE SV *mpxs_Apache__Filter_ctx(pTHX_
 
     return ctx->data ? SvREFCNT_inc(ctx->data) : &PL_sv_undef;
 }
+
+static MP_INLINE SV *mpxs_Apache__Filter_seen_eos(pTHX_ I32 items,
+                                                  SV **MARK, SV **SP)
+{
+    modperl_filter_t *modperl_filter;
+    mpxs_usage_va_1(modperl_filter, "$filter->seen_eos()");
+    return modperl_filter->seen_eos ? &PL_sv_yes : &PL_sv_no;
+}
