@@ -397,9 +397,9 @@ sub open_class_file {
 
 sub module_version {
     local $_ = shift;
-    require mod_perl;
+    require mod_perl2;
     # XXX: for now APR gets its libapr-0.9 version
-    return /^APR/ ? "0.009000" : "$mod_perl::VERSION";
+    return /^APR/ ? "0.009000" : "$mod_perl2::VERSION";
 }
 
 sub write_makefilepl {
@@ -419,7 +419,7 @@ sub write_makefilepl {
     $deps = Dumper $deps;
 
     my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
-    require mod_perl;
+    require mod_perl2;
     my $version = module_version($class);
 
     print $fh <<EOF;
@@ -1133,7 +1133,7 @@ sub write_module_versions_file {
         $len = length $_ if length $_ > $len;
     }
 
-    require mod_perl;
+    require mod_perl2;
     $len += length '$::VERSION';
     for (@modules) {
         my $ver = module_version($_);
