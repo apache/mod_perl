@@ -778,7 +778,7 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 
 .c.lo:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS_SHLIB) \
-	-c $< && mv $*.o $*.lo
+	-c $< && $(MODPERL_MV) $*.o $*.lo
 
 .c.o:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $<
@@ -798,7 +798,7 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 
 .xs.lo:
 	$(MODPERL_XSUBPP) $*.xs >$*.c
-	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && mv $*.o $*.lo
+	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && $(MODPERL_MV) $*.o $*.lo
 
 clean:
 	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo *.i *.s \
