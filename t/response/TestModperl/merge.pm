@@ -160,8 +160,7 @@ __END__
             PerlResponseHandler TestModperl::merge
         </Location>
 
-        AccessFileName htaccess
-        <Directory @DocumentRoot@/merge2>
+        <Location /merge2>
             # overrides "2" values - "1" and "3" values left untouched
             PerlSetEnv   MergeSetEnv2  SetEnv2Merge2Val
             PerlSetVar   MergeSetVar2  SetVar2Merge2Val
@@ -170,11 +169,9 @@ __END__
 
             SetHandler perl-script
             PerlResponseHandler TestModperl::merge
+        </Location>
 
-            # don't trigger htaccess files automatically
-            AllowOverride none
-        </Directory>
-
+        AccessFileName htaccess
         <Directory @DocumentRoot@/merge3>
             # overrides "2" values
             PerlSetEnv   MergeSetEnv2  SetEnv2Merge3Val
