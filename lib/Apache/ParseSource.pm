@@ -161,6 +161,7 @@ my %defines_wanted = (
         override   => [qw{OR_ ACCESS_CONF RSRC_CONF}],
         log        => [qw(APLOG_)],
         platform   => [qw{CRLF CR LF}],
+        mpmq      => [qw{AP_MPMQ_}],
     },
     APR => {
         table     => [qw{APR_OVERLAP_TABLES_}],
@@ -189,11 +190,11 @@ while (my($class, $groups) = each %defines_wanted) {
 
 my %enums_wanted = (
     Apache => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
-    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
+    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech apr_filetype) },
 );
 
 my $defines_unwanted = join '|', qw{
-HTTP_VERSION APR_EOL_STR APLOG_MARK APLOG_NOERRNO
+HTTP_VERSION APR_EOL_STR APLOG_MARK APLOG_NOERRNO APR_SO_TIMEOUT
 };
 
 sub get_constants {
