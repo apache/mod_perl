@@ -20,6 +20,7 @@ use lib qw(lib Apache-Test/lib);
 use Config;
 use File::Spec::Functions;
 use DirHandle ();
+use File::Copy 'cp';
 
 use Apache::Build ();
 use Apache::TestReportPerl ();
@@ -58,7 +59,7 @@ my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
 configure();
 
 local %ModPerl::MM::PM = (
-    'xs/typemap' => 'blib/lib/Apache2/typemap',
+    'lib/typemap' => 'blib/lib/Apache2/typemap',
 );
 
 ModPerl::MM::WriteMakefile(
@@ -161,6 +162,8 @@ sub configure {
         print "generating XS code using $tables_dir...\n";
         xs_generate($httpd_version);
     }
+
+    install_typemap();
 }
 
 sub post_configure {
@@ -205,6 +208,20 @@ sub xs_generate {
     #shift @INC; #ModPerl::Code needs this path too
 }
 
+sub install_typemap {
+    my $to_file = 'lib/typemap';
+
+    open my $to_fh, ">$to_file" or die "open $to_file: $!";
+
+    for my $from_file (qw(WrapXS/typemap xs/typemap)) {
+        open my $from_fh, $from_file or die "open $from_file: $!";
+        cp $from_fh, $to_fh;
+        close $from_fh;
+    }
+
+    close $to_fh or die "close $to_file: $!";
+}
+
 sub echo_cmd {
     my $cmd = shift;
     print "$cmd\n";
@@ -215,6 +232,7 @@ sub clean_files {
     my $path = $code->path;
 
     return [@{ $build->clean_files },
+            qw(lib/typemap),
             <xs/*.exp>, <xs/*.def>,
             map { "$path/$_"} @{ $code->clean_files }];
 }
