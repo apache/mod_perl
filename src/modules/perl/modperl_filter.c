@@ -527,7 +527,7 @@ void modperl_output_filter_register_connection(conn_rec *c)
 {
     modperl_filter_register_connection(c,
                                        MP_OUTPUT_FILTER_HANDLER,
-                                       MODPERL_OUTPUT_FILTER_NAME,
+                                       MP_FILTER_CONNECTION_OUTPUT_NAME,
                                        ap_add_output_filter,
                                        "OutputFilter");
 }
@@ -536,7 +536,7 @@ void modperl_output_filter_register_request(request_rec *r)
 {
     modperl_filter_register_request(r,
                                     MP_OUTPUT_FILTER_HANDLER,
-                                    MODPERL_OUTPUT_FILTER_NAME,
+                                    MP_FILTER_REQUEST_OUTPUT_NAME,
                                     ap_add_output_filter,
                                     "OutputFilter",
                                     r->connection->output_filters);
@@ -546,7 +546,7 @@ void modperl_input_filter_register_connection(conn_rec *c)
 {
     modperl_filter_register_connection(c,
                                        MP_INPUT_FILTER_HANDLER,
-                                       MODPERL_INPUT_FILTER_NAME,
+                                       MP_FILTER_CONNECTION_INPUT_NAME,
                                        ap_add_input_filter,
                                        "InputFilter");
 }
@@ -555,7 +555,7 @@ void modperl_input_filter_register_request(request_rec *r)
 {
     modperl_filter_register_request(r,
                                     MP_INPUT_FILTER_HANDLER,
-                                    MODPERL_INPUT_FILTER_NAME,
+                                    MP_FILTER_REQUEST_INPUT_NAME,
                                     ap_add_input_filter,
                                     "InputFilter",
                                     r->connection->input_filters);
