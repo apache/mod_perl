@@ -783,8 +783,26 @@ auth_type(r)
     Apache    r
 
 const char *
-document_root(r)
+document_root(r, ...)
     Apache    r
+
+    PREINIT:
+    core_server_config *conf;
+
+    CODE:
+    conf = (core_server_config *)
+      get_module_config(r->server->module_config, &core_module);
+
+    RETVAL = conf->ap_document_root;
+
+    if (items > 1) {
+        SV *doc_root = perl_get_sv("Apache::Server::DocumentRoot", TRUE);
+        sv_setsv(doc_root, ST(1));
+        conf->ap_document_root = SvPVX(doc_root);
+    }
+
+    OUTPUT:
+    RETVAL
 
 char *
 server_root_relative(rsv, name="")
