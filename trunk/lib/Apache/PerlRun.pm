@@ -282,18 +282,32 @@ sub handler {
 	$r->child_terminate if lc($opt) eq "on";
     }
 
-    {   #flush the namespace
-	no strict;
-	my $tab = \%{$package.'::'};
-        foreach (keys %$tab) {
-	    if(defined &{$tab->{$_}}) {
-		undef_cv_if_owner($package, \&{$tab->{$_}});
-	    } 
-	}
-	%$tab = ();
-    }
+    $pr->flush_namespace($package);
 
     return $rc;
+}
+
+sub flush_namespace {
+    my($self, $package) = @_;
+    $package ||= $self->namespace;
+
+    no strict;
+    my $tab = \%{$package.'::'};
+
+    for (keys %$tab) {
+	if(defined &{ $tab->{$_} }) {
+	    undef_cv_if_owner($package, \&{ $tab->{$_} });
+	} 
+        if(defined %{ $tab->{$_} }) {
+            %{ $tab->{$_} } = undef;
+        }
+        if(defined @{ $tab->{$_} }) {
+            @{ $tab->{$_} } = undef;
+        }
+        if(defined ${ $tab->{$_} }) {
+	    ${ $tab->{$_} } = undef;
+        }
+     }
 }
 
 sub undef_cv_if_owner {
