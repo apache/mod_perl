@@ -1,0 +1,147 @@
+=head1 SUPPORT
+
+=over 3
+
+=item MAIL LIST
+
+For comments, questions, bug-reports, announcements, etc., send mail
+to I<modperl@apache.org>.
+To subscribe to this list (which you must do to send mail to the
+list), send a mail message to I<majordomo@apache.org> with the body:
+
+ subscribe modperl
+
+Please note that mails on the mailinglist go out with a reply-to
+header, so you have to be subscribed to get the answers.
+
+We also have a mailinglist just for announcements. Subscribe my
+sending a message to I<majordomo@apache.org> with the body:
+
+ subscribe modperl-announce
+
+(Thanks to Brian Behlendorf)
+(Thanks also to Mark A. Imbriaco who maintained the original list for 2 years)
+
+=item MAIL LIST ARCHIVES
+
+There are several modperl list archives, choose your favorite:
+
+Thanks to Ken Williams:
+ 
+ http://forum.swarthmore.edu/epigone/modperl
+
+Thanks to James Cooper:
+
+ http://outside.organic.com/mail-archives/modperl/
+
+Thanks to Hank Leininger:
+
+ http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
+
+Thanks to FindMail:
+
+ http://www.findmail.com/listsaver/modperl/
+
+=back
+
+=head1 REPORTING PROBLEMS
+
+=over 3
+
+=item HOMEWORK
+
+Make sure you've done your homework before reporting a problem.
+Check the mail archive, read cgi_to_mod_perl.pod, the FAQ and other
+pod documents in the distribution.
+
+=item HOW
+
+When debugging, always start httpd with the C<-X> switch so only one
+process is started.
+
+Always check the error_log.
+
+=item WHERE
+
+Please send mail to modperl@apache.org
+
+=item WHAT
+
+Always include this information:
+
+Output of C<perl -v; perl -V>
+
+Version of mod_perl
+
+Version of apache
+
+Server configuration details
+
+relevant sections of your ErrorLog (make test's is: t/logs/error_log)
+
+If 'make test' fails, the output of 'make test TEST_VERBOSE=1'
+
+Depending on the nature of your problem, you may also be asked:
+
+-Does 'make test' pass 100%?
+
+-Does your script still work under CGI?
+
+-Do you have a *small* test script that illustrates the problem?
+
+-Can you get a backtrace (if httpd is dumping core)?
+
+=item CORE DUMPS
+
+If you get a core dump, please send a backtrace if possible.
+Before you try, build mod_perl with perl Makefile.PL PERL_DEBUG=1
+which will:
+ -add `-g' to EXTRA_CFLAGS
+ -turn on PERL_TRACE
+ -set PERL_DESTRUCT_LEVEL=2 (additional checks during Perl cleanup)
+ -link against libperld if it exists
+
+Here's how to get a backtrace:
+
+ % cd mod_perl-x.xx
+ % touch conf/srm.conf
+ % gdb ../apache_x.xx/src/httpd
+ (gdb) run -X -f `pwd`/t/conf/httpd.conf -d `pwd`/t
+ [now make request that causes core dump]
+ (gdb) bt
+
+You can also attach to an already running process like so:
+
+ % gdb httpd <process id number>
+
+This attach approach is helpful when debugging a "spinning" process.
+You can also get a Perl stacktrace of a "spinning" process by install a 
+C<$SIG{USR1}> handler in your code, like so:
+
+ $SIG{USR1} = \&Carp::confess
+
+While the process is spinning, send it a I<USR1> signal:
+
+ % kill -USR1 <process id number>
+
+Sometimes gdb can make heads or tails of the core file, try this:
+ 
+ % gdb -core core
+
+If the dump is happening in libperl a -DDEBUGGING enabled libperl
+would help show us what's really happening. 
+
+Go to your Perl source tree:
+
+ % rm *.[oa]
+ % make LIBPERL=libperld.a
+ % cp libperld.a $Config{archlibexp}/CORE
+
+$Config{archlibexp} is:
+
+ % perl -V:archlibexp
+
+Rebuild httpd/mod_perl with PERL_DEBUG=1, let's see a new backtrace.
+
+=back
+
