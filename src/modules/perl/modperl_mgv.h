@@ -16,7 +16,7 @@ GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
                                 server_rec *s, apr_pool_t *p);
 
 int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
-                        apr_pool_t *p, const char *name);
+                        apr_pool_t *p, const char *name, int logfailure);
 
 void modperl_mgv_append(pTHX_ apr_pool_t *p, modperl_mgv_t *symbol,
                         const char *name);
