@@ -287,9 +287,11 @@ void perl_run_rgy_endav(char *s)
 
     MP_TRACE_g(fprintf(stderr, 
 	     "running %d END blocks for %s\n", rgyendav ? (int)AvFILL(rgyendav)+1 : 0, s));
+    ENTER;
+    save_aptr(&endav); 
     if((endav = rgyendav)) 
 	perl_run_blocks(scopestack_ix, endav);
-    
+    LEAVE;
     sv_setpv(rgystash,"");
 }
 
