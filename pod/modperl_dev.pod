@@ -46,6 +46,10 @@ boolean, set them with MP_XXX=1.
 
 Accept default values for all would-be prompts
 
+=item MP_GENERATE_XS
+
+Generate xs code from parsed source headers in I<xs/tables/$httpd_version>.
+
 =item MP_USE_DSO
 
 Build mod_perl as a DSO
@@ -103,6 +107,19 @@ and those from MP_OPTIONS_FILE.
   % ./configure --with-mpm=threaded
   % make
 
+=head2 Howto generate source tables
+
+All mod_perl-2.0 xs code is generated from parsed header files.  While
+in pre-release mode, a version of these tables will be checked in to
+I<xs/tables/current>.  Should you wish to update these tables, here's
+how:
+
+NOTE: requires C::Scan 0.75, which at the moment is unreleased, there
+is a working copy here: http://perl.apache.org/~dougm/Scan.pm
+
+NOTE: source_scan.pl is a HEAVY process, do not be alarmed.
+
+% perl util/source_scan.pl apxs $apache_prefix/bin/apxs
 
 =head1 mod_perl configuration directives
 

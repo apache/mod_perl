@@ -28,22 +28,9 @@ build httpd with mod_so enabled:
 % make
 % make install
 
-build the parsed structure and function tables:
-
-NOTE: requires C::Scan 0.75, which at the moment is unreleased, there
-is a working copy here: http://perl.apache.org/~dougm/Scan.pm
-
-NOTE: source_scan.pl is a HEAVY process, do not be alarmed
-should be run each time you update your httpd-2.0 tree
-
-% perl util/source_scan.pl apxs $apache_prefix/bin/apxs
-
-generate xs code from the tables:
-
-% perl util/xs_generate.pl
-
 #build libmodperl.so and extension .so's
-% perl Makefile.PL MP_USE_DSO=1 MP_APXS=$apache_prefix/bin/apxs && make
+% perl Makefile.PL MP_GENERATE_XS=1 MP_USE_DSO=1 \
+MP_APXS=$apache_prefix/bin/apxs && make
 
 as for httpd.conf, mine looks something like so at the moment:
 
@@ -66,4 +53,4 @@ it is possible to configure Perl*Handlers and callback into apache,
 much is the same as 1.x, but plenty is different at the moment.
 there will be a compat layer in the future.
 
---dougm 03/04/01
+--dougm 03/26/01
