@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+if -DAPACHE_PERL5LIB is defined, feed the paths to @INC at startup
+
 prevent double mod_perl/x.xx in Server header under DSO
 [Jan Wedekind <jan.wedekind@de.uu.net>]
 
