@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Log the real error message when Foo::Bar::sub_name fails to resolve,
+because of a problem in Foo::Bar, when Foo::Bar *was* found [Stas]
+
 Add PerlPreConnectionHandler support in Apache::Test [Stas]
 
 Enable PerlPreConnectionHandler [Stas]
