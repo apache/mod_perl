@@ -10,6 +10,14 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_05-dev
 
+add external redirects Registry tests [Stas Bekman]
+
+get rid of the compat layer in ModPerl-Registry [Stas Bekman]
+
+ModPerl::RegistryLoader is now fully operational and tested [Stas Bekman]
+
+Registry method handlers are now working [Stas Bekman]
+
 core Registry packages all compile the scripts into
 ModPerl::RegistryROOT:: namespace and cache them in
 %ModPerl::RegistryCache. Both overridable by the sub-classes. [Stas Bekman]
@@ -28,6 +36,9 @@ ModPerl::RegistryCooker syncs with mod_perl 1.0's registry:
                             [Yair Lenga <yair.lenga@citigroup.com>]
  - set error-notes on error [Geoff Young <geoff@modperlcookbook.org>]
  - preserve status in Registry scripts [Geoff Young <geoff@modperlcookbook.org>]
+
+apr_table_t is now an opaque type, use apr_table_elts() to get the array
+record [Stas Bekman]
 
 
 =item 1.99_04 - June 21, 2002
