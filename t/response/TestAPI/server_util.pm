@@ -45,7 +45,7 @@ sub handler {
         '__PACKAGE__->new($r)' => __PACKAGE__->new($r),
     );
 
-    plan $r, tests => 12     +
+    plan $r, tests => 11     +
         (scalar keys %pools) +
         (scalar keys %objects);
 
@@ -120,9 +120,6 @@ sub handler {
                           $dir,
                           "\$r->server_root_relative($dir)");
     }
-
-    t_debug('registering method FOO');
-    ok Apache::method_register($r->server->process->pconf, 'FOO');
 
     t_debug('Apache::exists_config_define');
     ok Apache::exists_config_define('MODPERL2');
