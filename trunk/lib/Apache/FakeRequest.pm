@@ -30,7 +30,7 @@ my @methods = qw{
   module next no_cache
   note_basic_auth_failure notes parse_args
   path_info perl_hook post_connection prev
-  print protocol proxyreq push_handlers
+  protocol proxyreq push_handlers
   query_string read read_client_block
   read_length register_cleanup request
   requires reset_timeout rflush
@@ -58,6 +58,116 @@ sub elem {
     die $@ if $@;
 }
 
+
+package Apache::Constants;
+
+sub OK          		{  0 }
+sub DECLINED    		{ -1 }
+sub DONE        		{ -2 }
+
+sub CONTINUE                    { 100 }
+sub DOCUMENT_FOLLOWS            { 200 }
+sub NOT_AUTHORITATIVE           { 203 }
+sub HTTP_NO_CONTENT             { 204 }
+sub MOVED                       { 301 }
+sub REDIRECT                    { 302 }
+sub USE_LOCAL_COPY              { 304 }
+sub HTTP_NOT_MODIFIED           { 304 }
+sub BAD_REQUEST                 { 400 }
+sub AUTH_REQUIRED               { 401 }
+sub FORBIDDEN                   { 403 }
+sub NOT_FOUND                   { 404 }
+sub HTTP_METHOD_NOT_ALLOWED     { 405 }
+sub HTTP_NOT_ACCEPTABLE         { 406 }
+sub HTTP_LENGTH_REQUIRED        { 411 }
+sub HTTP_PRECONDITION_FAILED    { 412 }
+sub SERVER_ERROR                { 500 }
+sub NOT_IMPLEMENTED             { 501 }
+sub BAD_GATEWAY                 { 502 }
+sub HTTP_SERVICE_UNAVAILABLE    { 503 }
+sub HTTP_VARIANT_ALSO_VARIES    { 506 }
+
+# methods
+
+sub M_GET       { 0 }
+sub M_PUT       { 1 }
+sub M_POST      { 2 }
+sub M_DELETE    { 3 }
+sub M_CONNECT   { 4 }
+sub M_OPTIONS   { 5 }
+sub M_TRACE     { 6 }
+sub M_INVALID   { 7 }
+
+# options
+
+sub OPT_NONE      {   0 }
+sub OPT_INDEXES   {   1 }
+sub OPT_INCLUDES  {   2 }
+sub OPT_SYM_LINKS {   4 }
+sub OPT_EXECCGI   {   8 }
+sub OPT_UNSET     {  16 }
+sub OPT_INCNOEXEC {  32 }
+sub OPT_SYM_OWNER {  64 }
+sub OPT_MULTI     { 128 }
+sub OPT_ALL       {  15 }
+
+# satisfy
+
+sub SATISFY_ALL    { 0 }
+sub SATISFY_ANY    { 1 }
+sub SATISFY_NOSPEC { 2 }
+
+# remotehost
+
+sub REMOTE_HOST       { 0 }
+sub REMOTE_NAME       { 1 }
+sub REMOTE_NOLOOKUP   { 2 }
+sub REMOTE_DOUBLE_REV { 3 }
+
+
+
+sub MODULE_MAGIC_NUMBER { "The answer is 42" }
+sub SERVER_VERSION      { "1.x" }
+sub SERVER_BUILT        { "199908" }
+
+
 1;
 
 __END__
+
+=head1 NAME
+
+Apache::FakeRequest - fake request object for debugging
+
+=head1 SYNOPSIS
+
+    use Apache::FakeRequest;
+    my $request = Apache::FakeRequest->new(method_name => 'value', ...);
+
+
+=head1 DESCRIPTION
+
+B<Apache::FakeRequest> is used to set up an empty Apache request
+object that can be used for debugging.  The B<Apache::FakeRequest>
+methods just set internal variables of the same name as the method and
+return the value of the internal variables.  Initial values for
+methods can be specified when the object is created.  The I<print>
+method prints to STDOUT.
+
+Subroutines for Apache constants are also defined so that using
+B<Apache::Constants> while debugging works, although the values of the
+constants are hard-coded rather than extracted from the Apache source
+code.
+
+    #!/usr/bin/perl
+
+    use Apache::FakeRequest ();
+    use mymodule ();
+
+    my $request = Apache::FakeRequest->new('get_remote_host'=>'foobar.com');
+    mymodule::handler($request);
+
+=head1 AUTHORS
+
+Doug MacEachern, with contributions from Andrew Ford <A.Ford@ford-mason.co.uk>.
+
