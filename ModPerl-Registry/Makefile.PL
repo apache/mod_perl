@@ -17,7 +17,7 @@ my %require = (
     "Apache::Test" => "", # any version will do?
 );
 
-my @scripts = qw(t/TEST);
+my @scripts = qw(t/TEST t/SMOKE);
 
 # accept the configs from comman line
 Apache::TestMM::filter_args();
@@ -40,5 +40,5 @@ ModPerl::BuildMM::WriteMakefile(
     });
 
 sub clean_files {
-    return [@scripts];
+    return [@scripts, 'Makefile.old'];
 }
