@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/19 17:42:37 $]
+   Last modified at [$Date: 2003/08/22 20:04:53 $]
 
 Release:
 --------
@@ -230,6 +230,11 @@ Needs Patch or Further Investigation:
 
 Open Issues or Core Enhancements:
 ---------------------------------
+
+* gcc 3.3 (from cvs 2003-07-28) supports a new option:
+  -Wdeclaration-after-statement, which we need to enable in the
+  maintainer mode, to catch any declarations after statements, since
+  by default gcc doesn't complain about them.
 
 * Testing:
   Need to put Philippe's smoking test into the core
