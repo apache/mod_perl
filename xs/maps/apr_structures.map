@@ -28,7 +28,7 @@ apr_strmatch_pattern apr_version_t
 >  list
 </apr_bucket>
 
-!<apr_finfo_t>
+<apr_finfo_t>
    pool
    valid
    protection
@@ -45,7 +45,7 @@ apr_strmatch_pattern apr_version_t
    ctime
    fname
    name
-   filehand
+-  filehand
 </apr_finfo_t>
 
 !<apr_sockaddr_t>

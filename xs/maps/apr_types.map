@@ -62,9 +62,9 @@ struct apr_dir_t         | UNDEFINED
 struct apr_os_dir_t      | UNDEFINED
 apr_seek_where_t         | UNDEFINED
 struct apr_pollfd_t      | UNDEFINED
-apr_fileperms_t          | UNDEFINED
+apr_fileperms_t          | IV
 struct apr_finfo_t       | APR::Finfo
-apr_filetype_e           | UNDEFINED
+apr_filetype_e           | IV
 apr_dev_t                | NV
 apr_ino_t                | IV
 
