@@ -57,8 +57,17 @@ static void modperl_hash_seed_init(apr_pool_t *p)
 
         MP_init_hash_seed_set = TRUE;
     }
-
-    /* fprintf(stderr, "GOT SEED: %ld\n", MP_init_hash_seed); */
+    
+    rv = apr_env_get(&s, "PERL_HASH_SEED_DEBUG", p);
+    if (rv == APR_SUCCESS) {
+        if (s) {
+            int i = atoi(s);
+            if (i == 1) {
+                fprintf(stderr, "\nmod_perl: using init hash seed: %"UVuf"\n",
+                        MP_init_hash_seed);
+            }
+        }
+    }
 #endif
 }
 
