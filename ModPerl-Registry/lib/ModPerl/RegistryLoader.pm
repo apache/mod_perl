@@ -21,7 +21,7 @@ sub new {
 }
 
 sub handler {
-    my($self, $uri, $filename) = @_;
+    my($self, $uri, $filename, $virthost) = @_;
 
     # set the inheritance rules at run time
     @ISA = $self->{package};
@@ -73,6 +73,8 @@ sub handler {
         package  => $self->{package},
     } => ref($self) || $self;
 
+    $rl->{virthost} = $virthost if defined $virthost;
+
     # can't call SUPER::handler here, because it usually calls new()
     # and then the ModPerlRegistryLoader::new() will get called,
     # instead of the super class' new, so we implement the super
@@ -86,6 +88,7 @@ sub handler {
 # when when finfo() and slurp_filename() are ported to 2.0 and
 # RegistryCooker is starting to use them
 
+sub get_server_name { return $_[0]->{virthost} if exists $_[0]->{virthost} }
 sub filename { shift->{filename} }
 sub status { Apache::HTTP_OK }
 sub my_finfo    { shift->{filename} }
@@ -95,6 +98,7 @@ sub allow_options { Apache::OPT_EXECCGI } #will be checked again at run-time
 sub log_error { shift; die @_ if $@; warn @_; }
 sub run { return Apache::OK } # don't run the script
 sub server { shift }
+sub is_virtual { exists shift->{virthost} }
 
 # the preloaded file needs to be precompiled into the package
 # specified by the 'package' attribute, not RegistryLoader
