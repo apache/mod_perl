@@ -341,7 +341,7 @@ sub flush_namespace {
             no warnings;
             local $^W = 0;
             if (my $p = prototype $fullname) {
-                eval "*{\$fullname} = sub ($p) {}";
+                *{$fullname} = eval "sub ($p) {}";
             }
             else {
                 *{$fullname} = sub {};
