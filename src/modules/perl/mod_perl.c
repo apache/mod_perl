@@ -484,6 +484,15 @@ void mp_check_version(void)
     exit(1);
 }
 
+#if !HAS_MMN(MMN_136)
+static void set_sigpipe(void)
+{
+    char *dargs[] = { NULL };
+    perl_require_module("Apache::SIG", NULL);
+    perl_call_argv("Apache::SIG::set", G_DISCARD, dargs);
+}
+#endif
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -533,6 +542,9 @@ void perl_startup (server_rec *s, pool *p)
     if(PERL_RUNNING() && PERL_STARTUP_IS_DONE) {
 	saveINC;
 	mp_check_version();
+#if !HAS_MMN(MMN_136)
+	set_sigpipe();
+#endif
     }
     
     if(perl_is_running == 0) {

@@ -450,9 +450,11 @@ if((add->flags & f) || (base->flags & f)) \
 #define MODULE_MAGIC_AT_LEAST(major,minor) (0 > 1)
 #endif
 
+#define HAS_MMN(mmn) (MODULE_MAGIC_NUMBER >= mmn)
 #define MMN_130 19980527
 #define MMN_131 19980713
 #define MMN_132 19980806
+#define MMN_136 19990320
 #if MODULE_MAGIC_NUMBER >= MMN_130
 #define HAVE_APACHE_V_130
 #endif
