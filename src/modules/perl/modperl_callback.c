@@ -93,7 +93,7 @@ int modperl_callback_run_handlers(int idx, int type,
     modperl_handler_t **handlers;
     apr_pool_t *p = NULL;
     MpAV *av, **avp;
-    int i, status = OK;
+    int i, nelts, status = OK;
     const char *desc = NULL;
     AV *av_args = Nullav;
 
@@ -173,11 +173,15 @@ int modperl_callback_run_handlers(int idx, int type,
     };
 
     /* XXX: deal with {push,set}_handler of the phase we're currently in */
-    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
-               av->nelts, desc);
+    /* for now avoid the segfault by not letting av->nelts grow if
+     * somebody push_handlers to the phase we are currently in, but
+     * different handler e.g. jumping from 'modperl' to 'perl-script',
+     * before calling push_handler */
+    nelts = av->nelts;
+    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n", nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
-    for (i=0; i<av->nelts; i++) {
+    for (i=0; i<nelts; i++) {
         if ((status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args)) != OK) {
             status = modperl_errsv(aTHX_ status, r, s);
         }
