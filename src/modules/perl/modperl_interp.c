@@ -76,6 +76,8 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     apr_array_header_t *handles;
     dTHXa(interp->perl);
 
+    PERL_SET_CONTEXT(interp->perl);
+
     MP_TRACE_i(MP_FUNC, "interp == 0x%lx\n",
                (unsigned long)interp);
 
