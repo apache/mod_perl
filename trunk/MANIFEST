@@ -53,6 +53,7 @@ lib/Apache/RegistryLoader.pm
 lib/Apache/Resource.pm
 #lib/Apache/Safe.pm
 lib/Apache/SIG.pm
+lib/Apache/SizeLimit.pm
 lib/Apache/StatINC.pm
 lib/Apache/Constants/Exports.pm
 Apache/Apache.pm
