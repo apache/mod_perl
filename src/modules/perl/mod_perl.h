@@ -1,7 +1,18 @@
 #ifdef WIN32
 #define NO_PERL_CHILD_INIT
 #define NO_PERL_CHILD_EXIT
+#ifdef JW_PERL_OBJECT
+#include <winsock2.h>
+#include <malloc.h>
+#include <win32.h>
+#include <win32iop.h>
+#include <fcntl.h>		// For O_BINARY
+#include "EXTERN.h"
+#include "perl.h"
+#include <iperlsys.h>
+#else
 #include "dirent.h"
+#endif
 #endif
 
 #ifndef IS_MODULE
@@ -16,25 +27,7 @@
 #endif
 
 #ifdef _INCLUDE_APACHE_FIRST
-#include "httpd.h" 
-#include "http_config.h" 
-#include "http_protocol.h" 
-#include "http_log.h" 
-#include "http_main.h" 
-#include "http_core.h" 
-#include "http_request.h" 
-#include "util_script.h" 
-#include "http_conf_globals.h"
-#if defined(APACHE_SSL) || defined(MOD_SSL)
-#undef _
-#ifdef _config_h_
-#ifdef CAN_PROTOTYPE
-#define _(args) args
-#else
-#define _(args) ()
-#endif
-#endif
-#endif
+#include "apache_inc.h"
 #endif
 
 #include "EXTERN.h"
@@ -108,32 +101,9 @@
 #undef __attribute__
 
 #ifndef _INCLUDE_APACHE_FIRST
-#ifdef __cplusplus
-extern "C" {
+#include "apache_inc.h"
 #endif
-#include "httpd.h" 
-#include "http_config.h" 
-#include "http_protocol.h" 
-#include "http_log.h" 
-#include "http_main.h" 
-#include "http_core.h" 
-#include "http_request.h" 
-#include "util_script.h" 
-#include "http_conf_globals.h"
-#if defined(APACHE_SSL) || defined(MOD_SSL)
-#undef _
-#ifdef _config_h_
-#ifdef CAN_PROTOTYPE
-#define _(args) args
-#else
-#define _(args) ()
-#endif
-#endif
-#endif
-#ifdef __cplusplus
-}
-#endif
-#endif
+
 
 #ifndef dTHR
 #define dTHR extern int errno
@@ -348,13 +318,13 @@ int dstatus = DECLINED; \
 int status = dstatus
 
 #define dPPREQ \
-   perl_request_config *cfg = get_module_config(r->request_config, &perl_module)
+   perl_request_config *cfg = (perl_request_config *)get_module_config(r->request_config, &perl_module)
 
 #define dPPDIR \
-   perl_dir_config *cld = get_module_config(r->per_dir_config, &perl_module)   
+   perl_dir_config *cld = (perl_dir_config *)get_module_config(r->per_dir_config, &perl_module)   
 
 #define dPSRV(srv) \
-   perl_server_config *cls = get_module_config (srv->module_config, &perl_module)
+   perl_server_config *cls = (perl_server_config *) get_module_config (srv->module_config, &perl_module)
 
 /* per-directory flags */
 
@@ -717,7 +687,7 @@ else { \
 #define PERL_DISPATCH_HOOK perl_dispatch
 
 #define PERL_DISPATCH_CMD_ENTRY \
-"PerlDispatchHandler", perl_cmd_dispatch_handlers, \
+"PerlDispatchHandler", (crft) perl_cmd_dispatch_handlers, \
     NULL, \
     OR_ALL, TAKE1, "the Perl Dispatch handler routine name"
 
@@ -734,7 +704,7 @@ else { \
 #define PERL_CHILD_INIT_HOOK perl_child_init
 
 #define PERL_CHILD_INIT_CMD_ENTRY \
-"PerlChildInitHandler", perl_cmd_child_init_handlers, \
+"PerlChildInitHandler", (crft) perl_cmd_child_init_handlers, \
     NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Child init handler routine name"  
 
@@ -751,7 +721,7 @@ else { \
 #define PERL_CHILD_EXIT_HOOK perl_child_exit
 
 #define PERL_CHILD_EXIT_CMD_ENTRY \
-"PerlChildExitHandler", perl_cmd_child_exit_handlers, \
+"PerlChildExitHandler", (crft) perl_cmd_child_exit_handlers, \
     NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Child exit handler routine name"  
 
@@ -766,7 +736,7 @@ else { \
 #define PERL_RESTART
 
 #define PERL_RESTART_CMD_ENTRY \
-"PerlRestartHandler", perl_cmd_restart_handlers, \
+"PerlRestartHandler", (crft) perl_cmd_restart_handlers, \
     NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Restart handler routine name"  
 
@@ -789,7 +759,7 @@ else { \
 #define PERL_POST_READ_REQUEST_HOOK perl_post_read_request
 
 #define PERL_POST_READ_REQUEST_CMD_ENTRY \
-"PerlPostReadRequestHandler", perl_cmd_post_read_request_handlers, \
+"PerlPostReadRequestHandler", (crft) perl_cmd_post_read_request_handlers, \
     NULL, \
     RSRC_CONF, PERL_TAKE, "the Perl Post Read Request handler routine name" 
 
@@ -806,7 +776,7 @@ else { \
 #define PERL_TRANS_HOOK perl_translate
 
 #define PERL_TRANS_CMD_ENTRY \
-"PerlTransHandler", perl_cmd_trans_handlers, \
+"PerlTransHandler", (crft) perl_cmd_trans_handlers, \
     NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Translation handler routine name"  
 
@@ -824,7 +794,7 @@ else { \
 #define PERL_AUTHEN_HOOK perl_authenticate
 
 #define PERL_AUTHEN_CMD_ENTRY \
-"PerlAuthenHandler", perl_cmd_authen_handlers, \
+"PerlAuthenHandler", (crft) perl_cmd_authen_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Authentication handler routine name"
 
@@ -841,7 +811,7 @@ else { \
 #define PERL_AUTHZ_HOOK perl_authorize
 
 #define PERL_AUTHZ_CMD_ENTRY \
-"PerlAuthzHandler", perl_cmd_authz_handlers, \
+"PerlAuthzHandler", (crft) perl_cmd_authz_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Authorization handler routine name" 
 #define PERL_AUTHZ_CREATE(s) s->PerlAuthzHandler = PERL_CMD_INIT
@@ -857,7 +827,7 @@ else { \
 #define PERL_ACCESS_HOOK perl_access
 
 #define PERL_ACCESS_CMD_ENTRY \
-"PerlAccessHandler", perl_cmd_access_handlers, \
+"PerlAccessHandler", (crft) perl_cmd_access_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Access handler routine name" 
 
@@ -876,7 +846,7 @@ else { \
 #define PERL_TYPE_HOOK perl_type_checker
 
 #define PERL_TYPE_CMD_ENTRY \
-"PerlTypeHandler", perl_cmd_type_handlers, \
+"PerlTypeHandler", (crft) perl_cmd_type_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Type check handler routine name" 
 
@@ -893,7 +863,7 @@ else { \
 #define PERL_FIXUP_HOOK perl_fixup
 
 #define PERL_FIXUP_CMD_ENTRY \
-"PerlFixupHandler", perl_cmd_fixup_handlers, \
+"PerlFixupHandler", (crft) perl_cmd_fixup_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Fixup handler routine name" 
 
@@ -910,7 +880,7 @@ else { \
 #define PERL_LOG_HOOK perl_logger
 
 #define PERL_LOG_CMD_ENTRY \
-"PerlLogHandler", perl_cmd_log_handlers, \
+"PerlLogHandler", (crft) perl_cmd_log_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Log handler routine name" 
 
@@ -927,7 +897,7 @@ else { \
 #define PERL_CLEANUP_HOOK perl_cleanup
 
 #define PERL_CLEANUP_CMD_ENTRY \
-"PerlCleanupHandler", perl_cmd_cleanup_handlers, \
+"PerlCleanupHandler", (crft) perl_cmd_cleanup_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Cleanup handler routine name" 
 
@@ -944,7 +914,7 @@ else { \
 #define PERL_INIT_HOOK perl_init
 
 #define PERL_INIT_CMD_ENTRY \
-"PerlInitHandler", perl_cmd_init_handlers, \
+"PerlInitHandler", (crft) perl_cmd_init_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Init handler routine name" 
 
@@ -961,7 +931,7 @@ else { \
 #define PERL_HEADER_PARSER_HOOK perl_header_parser
 
 #define PERL_HEADER_PARSER_CMD_ENTRY \
-"PerlHeaderParserHandler", perl_cmd_header_parser_handlers, \
+"PerlHeaderParserHandler", (crft) perl_cmd_header_parser_handlers, \
     NULL, \
     OR_ALL, PERL_TAKE, "the Perl Header Parser handler routine name" 
 
@@ -1255,4 +1225,9 @@ else         Zero(op_mask, maxo, char)
 #else
 #define ENTER_SAFE(s,p)
 #define LEAVE_SAFE
+#endif
+
+#ifdef JW_PERL_OBJECT
+#undef stderr
+#define stderr PerlIO_stderr()
 #endif

@@ -82,54 +82,56 @@ static HV *stacked_handlers = Nullhv;
 CPerlObj *pPerl;
 #endif
 
+typedef const char* (*crft)(); /* command_req_func_t */
+
 static command_rec perl_cmds[] = {
 #ifdef PERL_SECTIONS
-    { "<Perl>", perl_section, NULL, SECTION_ALLOWED, RAW_ARGS, "Perl code" },
-    { "</Perl>", perl_end_section, NULL, SECTION_ALLOWED, NO_ARGS, "End Perl code" },
+    { "<Perl>", (crft) perl_section, NULL, SECTION_ALLOWED, RAW_ARGS, "Perl code" },
+    { "</Perl>", (crft) perl_end_section, NULL, SECTION_ALLOWED, NO_ARGS, "End Perl code" },
 #endif
-    { "=pod", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "Start of POD" },
-    { "=back", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "End of =over" },
-    { "=cut", perl_pod_end_section, NULL, OR_ALL, NO_ARGS, "End of POD" },
-    { "__END__", perl_config_END, NULL, OR_ALL, RAW_ARGS, "Stop reading config" },
-    { "PerlFreshRestart", perl_cmd_fresh_restart,
+    { "=pod", (crft) perl_pod_section, NULL, OR_ALL, RAW_ARGS, "Start of POD" },
+    { "=back", (crft) perl_pod_section, NULL, OR_ALL, RAW_ARGS, "End of =over" },
+    { "=cut", (crft) perl_pod_end_section, NULL, OR_ALL, NO_ARGS, "End of POD" },
+    { "__END__", (crft) perl_config_END, NULL, OR_ALL, RAW_ARGS, "Stop reading config" },
+    { "PerlFreshRestart", (crft) perl_cmd_fresh_restart,
       NULL,
       RSRC_CONF, FLAG, "Tell mod_perl to reload modules and flush Apache::Registry cache on restart" },
-    { "PerlTaintCheck", perl_cmd_tainting,
+    { "PerlTaintCheck", (crft) perl_cmd_tainting,
       NULL,
       RSRC_CONF, FLAG, "Turn on -T switch" },
 #ifdef PERL_SAFE_STARTUP
-    { "PerlOpmask", perl_cmd_opmask,
+    { "PerlOpmask", (crft) perl_cmd_opmask,
       NULL,
       RSRC_CONF, TAKE1, "Opmask File" },
 #endif
-    { "PerlWarn", perl_cmd_warn,
+    { "PerlWarn", (crft) perl_cmd_warn,
       NULL,
       RSRC_CONF, FLAG, "Turn on -w switch" },
-    { "PerlScript", perl_cmd_require,
+    { "PerlScript", (crft) perl_cmd_require,
       NULL,
       OR_ALL, ITERATE, "this directive is deprecated, use `PerlRequire'" },
-    { "PerlRequire", perl_cmd_require,
+    { "PerlRequire", (crft) perl_cmd_require,
       NULL,
       OR_ALL, ITERATE, "A Perl script name, pulled in via require" },
-    { "PerlModule", perl_cmd_module,
+    { "PerlModule", (crft) perl_cmd_module,
       NULL,
       OR_ALL, ITERATE, "List of Perl modules" },
-    { "PerlSetVar", perl_cmd_var,
+    { "PerlSetVar", (crft) perl_cmd_var,
       NULL,
       OR_ALL, TAKE2, "Perl config var and value" },
-    { "PerlSetEnv", perl_cmd_setenv,
+    { "PerlSetEnv", (crft) perl_cmd_setenv,
       NULL,
       OR_ALL, TAKE2, "Perl %ENV key and value" },
-    { "PerlPassEnv", perl_cmd_pass_env, 
+    { "PerlPassEnv", (crft) perl_cmd_pass_env, 
       NULL,
       RSRC_CONF, ITERATE, "pass environment variables to %ENV"},  
-    { "PerlSendHeader", perl_cmd_sendheader,
+    { "PerlSendHeader", (crft) perl_cmd_sendheader,
       NULL,
       OR_ALL, FLAG, "Tell mod_perl to parse and send HTTP headers" },
-    { "PerlSetupEnv", perl_cmd_env,
+    { "PerlSetupEnv", (crft) perl_cmd_env,
       NULL,
       OR_ALL, FLAG, "Tell mod_perl to setup %ENV by default" },
-    { "PerlHandler", perl_cmd_handler_handlers,
+    { "PerlHandler", (crft) perl_cmd_handler_handlers,
       NULL,
       OR_ALL, ITERATE, "the Perl handler routine name" },
 #ifdef PERL_TRANS
@@ -509,7 +511,7 @@ void perl_module_init(server_rec *s, pool *p)
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-    char **list, *dstr;
+    char **entries, *dstr;
     int status, i, argc=1;
     dPSRV(s);
     SV *pool_rv, *server_rv;
@@ -697,20 +699,20 @@ void perl_startup (server_rec *s, pool *p)
     ENTER_SAFE(s,p);
     MP_TRACE_g(mod_perl_dump_opmask());
 
-    list = (char **)cls->PerlRequire->elts;
+    entries = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {
-	if(perl_load_startup_script(s, p, list[i], TRUE) != OK) {
+	if(perl_load_startup_script(s, p, entries[i], TRUE) != OK) {
 	    fprintf(stderr, "Require of Perl file `%s' failed, exiting...\n", 
-		    list[i]);
+		    entries[i]);
 	    exit(1);
 	}
     }
 
-    list = (char **)cls->PerlModule->elts;
+    entries = (char **)cls->PerlModule->elts;
     for(i = 0; i < cls->PerlModule->nelts; i++) {
-	if(perl_require_module(list[i], s) != OK) {
+	if(perl_require_module(entries[i], s) != OK) {
 	    fprintf(stderr, "Can't load Perl module `%s', exiting...\n", 
-		    list[i]);
+		    entries[i]);
 	    exit(1);
 	}
     }
@@ -1335,7 +1337,7 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
     char *dispatcher = NULL;
 
     if(r->per_dir_config)
-	cld = get_module_config(r->per_dir_config, &perl_module);
+	cld = (perl_dir_config *) get_module_config(r->per_dir_config, &perl_module);
 
 #ifdef PERL_DISPATCH
     if(cld && (dispatcher = cld->PerlDispatchHandler)) {

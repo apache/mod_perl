@@ -242,16 +242,16 @@ child_terminate(request_rec *r)
 
 static char *custom_response(request_rec *r, int status, char *string)
 {
-    core_dir_config *conf = 
+    core_dir_config *conf = (core_dir_config *)
 	get_module_config(r->per_dir_config, &core_module);
     int idx;
     char *retval = NULL;
 
     if(conf->response_code_strings == NULL) {
-        conf->response_code_strings = 
-	    pcalloc(r->pool,
-		    sizeof(*conf->response_code_strings) * 
-		    RESPONSE_CODES);
+        conf->response_code_strings = (char **)
+	  pcalloc(r->pool,
+		  sizeof(*conf->response_code_strings) * 
+		  RESPONSE_CODES);
     }
 
     idx = index_of_response(status);
@@ -841,7 +841,9 @@ send_http_header(r, type=NULL)
     send_http_header(r);
     mod_perl_sent_header(r, 1);
     r->status = 200; /* XXX, why??? */
- 
+
+#ifndef PERL_OBJECT
+
 int
 send_fd(r, f, length=-1)
     Apache	r
@@ -853,6 +855,8 @@ send_fd(r, f, length=-1)
 
     OUTPUT:
     RETVAL
+
+#endif
 
 int
 rflush(r)
@@ -956,7 +960,11 @@ print(r, ...)
 	CV *cv = GvCV(gv_fetchpv("Apache::write_client", FALSE, SVt_PVCV));
 	hard_timeout("mod_perl: Apache->print", r);
 	PUSHMARK(mark);
+#ifdef PERL_OBJECT
+	(void)(*CvXSUB(cv))(cv, pPerl); /* &Apache::write_client; */
+#else
 	(void)(*CvXSUB(cv))(cv); /* &Apache::write_client; */
+#endif
 
 	if(IoFLAGS(GvIOp(defoutgv)) & IOf_FLUSH) /* if $| != 0; */
 #if MODULE_MAGIC_NUMBER >= 19970103
@@ -1637,7 +1645,7 @@ pnotes(r, k=Nullsv, val=Nullsv)
     if(k) {
 	key = SvPV(k,len);
     }
-    cfg = get_module_config(r->request_config, &perl_module);
+    cfg = (perl_request_config*) get_module_config(r->request_config, &perl_module);
     if(!cfg->pnotes) cfg->pnotes = newHV();
     if(key) {
 	if(hv_exists(cfg->pnotes, key, len)) {
@@ -1836,14 +1844,16 @@ dir_config(r, key=NULL, ...)
 
     CODE:
     if(r && r->per_dir_config) {				   
-	c = get_module_config(r->per_dir_config, &perl_module);
+	c = (perl_dir_config *)get_module_config(r->per_dir_config, 
+						 &perl_module);
 	TABLE_GET_SET(c->vars, FALSE);
     }
     if (!SvTRUE(RETVAL)) {
 	s = r ? r->server : perl_get_startup_server();
 	if (s && s->module_config) {
 	    SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
-	    cs = get_module_config(s->module_config, &perl_module);
+	    cs = (perl_server_config *)get_module_config(s->module_config, 
+							 &perl_module);
 	    TABLE_GET_SET(cs->vars, FALSE);
 	}
 	else XSRETURN_UNDEF;

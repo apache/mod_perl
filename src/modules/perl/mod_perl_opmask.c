@@ -236,5 +236,8 @@ void mod_perl_dump_opmask(void)
 char *mod_perl_set_opmask(request_rec *r, SV *sv)
 {
     croak("Can't override Opmask");
+	return NULL; /* C++ emits an error message otherwise
+				  * because of a missing return value.
+				  */
 }
 #endif /*PERL_SAFE_STARTUP*/

@@ -87,8 +87,8 @@ array_header *avrv2array_header(SV *avrv, pool *p)
 
     for(i=0; i<=AvFILL(av); i++) {
 	SV *sv = *av_fetch(av, i, FALSE);    
-	char **new = (char **) push_array(arr);
-	*new = pstrdup(p, SvPV(sv,na));
+	char **entry = (char **) push_array(arr);
+	*entry = pstrdup(p, SvPV(sv,na));
     }
 
     return arr;
@@ -282,14 +282,14 @@ void perl_tie_hash(HV *hv, char *pclass, SV *sv)
 
 /* execute END blocks */
 
-void perl_run_blocks(I32 oldscope, AV *list)
+void perl_run_blocks(I32 oldscope, AV *subs)
 {
     STRLEN len;
     I32 i;
     dTHR;
 
-    for(i=0; i<=AvFILL(list); i++) {
-	CV *cv = (CV*)*av_fetch(list, i, FALSE);
+    for(i=0; i<=AvFILL(subs); i++) {
+	CV *cv = (CV*)*av_fetch(subs, i, FALSE);
 	SV* atsv = ERRSV;
 
 	MARK_WHERE("END block", (SV*)cv);
@@ -298,7 +298,7 @@ void perl_run_blocks(I32 oldscope, AV *list)
 	UNMARK_WHERE;
 	(void)SvPV(atsv, len);
 	if (len) {
-	    if (list == beginav)
+	    if (subs == beginav)
 		sv_catpv(atsv, "BEGIN failed--compilation aborted");
 	    else
 		sv_catpv(atsv, "END failed--cleanup aborted");
@@ -506,13 +506,13 @@ SV *perl_module2file(char *name)
     return sv;
 }
 
-int perl_require_module(char *mod, server_rec *s)
+int perl_require_module(char *name, server_rec *s)
 {
     dTHR;
     SV *sv = sv_newmortal();
     sv_setpvn(sv, "require ", 8);
-    MP_TRACE_d(fprintf(stderr, "loading perl module '%s'...", mod)); 
-    sv_catpv(sv, mod);
+    MP_TRACE_d(fprintf(stderr, "loading perl module '%s'...", name)); 
+    sv_catpv(sv, name);
     perl_eval_sv(sv, G_DISCARD);
     if(s) {
 	if(perl_eval_ok(s) != OK) {
@@ -534,13 +534,13 @@ int perl_require_module(char *mod, server_rec *s)
  */
 void perl_qrequire_module(char *name) 
 {
-    OP *mod;
+    OP *reqop;
     SV *key = perl_module2file(name);
     if((key && hv_exists_ent(GvHV(incgv), key, FALSE)))
 	return;
-    mod = newSVOP(OP_CONST, 0, key);
-    /*mod->op_private |= OPpCONST_BARE;*/
-    utilize(TRUE, start_subparse(FALSE, 0), Nullop, mod, Nullop);
+    reqop = newSVOP(OP_CONST, 0, key);
+    /*reqop->op_private |= OPpCONST_BARE;*/
+    utilize(TRUE, start_subparse(FALSE, 0), Nullop, reqop, Nullop);
 }
 
 void perl_do_file(char *pv)
