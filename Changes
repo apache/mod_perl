@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+make APR perl functions work outside mod_perl: several libraries
+weren't linked. Also LIBS needs to receive all libs in one
+string. [Stas]
+
 Apache::compat: $r->cgi_env, $r->cgi_var are now aliases to
 $r->subprocess_env [Stas]
 
