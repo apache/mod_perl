@@ -17,39 +17,39 @@ sub handler {
     plan $r, tests => 8;
 
     # %ENV
-    ok t_cmp('env_dir1', 
-             env_get('srv1'),
+    ok t_cmp(env_get('srv1'),
+             'env_dir1', 
              '%ENV per-dir override per-srv');
 
-    ok t_cmp('env_srv2', 
-             env_get('srv2'),
+    ok t_cmp(env_get('srv2'),
+             'env_srv2',
              '%ENV per-srv');
 
-    ok t_cmp('env_dir2', 
-             env_get('dir2'),
+    ok t_cmp(env_get('dir2'),
+             'env_dir2',
              '%ENV per-dir');
 
     # setup by Apache::TestRun
-    ok t_cmp('test.host.name',
-             $ENV{APACHE_TEST_HOSTNAME},
+    ok t_cmp($ENV{APACHE_TEST_HOSTNAME},
+             'test.host.name',
              '%ENV PerlPassEnv');
 
     # $r->subprocess_env
-    ok t_cmp('env_dir1', 
-             env_get('srv1', $r),
+    ok t_cmp(env_get('srv1', $r),
+             'env_dir1',
              '$r->subprocess_env per-dir override per-srv');
 
-    ok t_cmp('env_srv2', 
-             env_get('srv2', $r),
+    ok t_cmp(env_get('srv2', $r),
+             'env_srv2',
              '$r->subprocess_env per-srv');
 
-    ok t_cmp('env_dir2', 
-             env_get('dir2', $r),
+    ok t_cmp(env_get('dir2', $r),
+             'env_dir2',
              '$r->subprocess_env per-dir');
 
     # setup by Apache::TestRun
-    ok t_cmp('test.host.name',
-             $r->subprocess_env->get('APACHE_TEST_HOSTNAME'),
+    ok t_cmp($r->subprocess_env->get('APACHE_TEST_HOSTNAME'),
+             'test.host.name',
              '$r->subprocess_env PerlPassEnv');
 
     Apache::OK;

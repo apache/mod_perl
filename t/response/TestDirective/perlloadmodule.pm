@@ -113,21 +113,21 @@ sub handler : method {
     ok t_cmp($r->uri, qr{^$path},
              'r->uri =~ parms->path');
 
-    ok t_cmp($self, $srv_cfg->{name},
+    ok t_cmp($srv_cfg->{name}, $self,
              '$self eq $srv_cfg->{name}');
 
-    ok t_cmp('value', $dir_cfg->{MyOtherTest},
+    ok t_cmp($dir_cfg->{MyOtherTest}, 'value',
              'MyOtherTest value');
 
-    ok t_cmp('some info', $dir_cfg->{MyOtherTestInfo},
+    ok t_cmp($dir_cfg->{MyOtherTestInfo}, 'some info',
              'MyOtherTest cmd_data');
 
-    ok t_cmp(['one', 'two'], $dir_cfg->{MyTest},
+    ok t_cmp($dir_cfg->{MyTest}, ['one', 'two'],
              'MyTest one two');
 
     ok ! $dir_cfg->{MyTestInfo};
 
-    ok t_cmp('per-server', $srv_cfg->{ServerTest});
+    ok t_cmp($srv_cfg->{ServerTest}, 'per-server');
 
     Apache::OK;
 }

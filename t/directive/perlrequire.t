@@ -26,7 +26,7 @@ for my $module (sort keys %checks) {
     my $hostport = Apache::TestRequest::hostport($config);
     t_debug("connecting to $hostport");
 
-    ok t_cmp($checks{$module},
-             GET_BODY("http://$hostport/$path"),
+    ok t_cmp(GET_BODY("http://$hostport/$path"),
+             $checks{$module},
              "testing PerlRequire in $module");
 }

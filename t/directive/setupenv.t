@@ -21,6 +21,6 @@ for my $line (split /\n/, $env) {
     $env{$key} = $val || '';
 }
 
-ok t_cmp $location, $env{REQUEST_URI}, "testing REQUEST_URI";
+ok t_cmp $env{REQUEST_URI}, $location, "testing REQUEST_URI";
 
 ok not exists $env{HOME};
