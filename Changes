@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_16-dev
+=item 1.99_16 - Aug 22, 2004
 
 Fix a compilation problem breaking 1.99_15 (sv_copypv was added in
 perl 5.7.3) [Jason Woodward <woodwardj@jaos.org>]
