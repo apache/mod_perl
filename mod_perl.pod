@@ -106,8 +106,8 @@ The following configuration directives take one argument, which is the name
 of the subroutine to call.  If the value is not a subroutine name, mod_perl
 assumes it is a package name which implements a 'handler' subroutine.
 
-    PerlChildInitHandler          (requires apache_1.3b3 or higher)
-    PerlPostReadRequestHandler    (requires apache_1.3b3 or higher)
+    PerlChildInitHandler          (requires apache_1.3.0 or higher)
+    PerlPostReadRequestHandler    (requires apache_1.3.0 or higher)
     PerlInitHandler
     PerlTransHandler    
     PerlHeaderParserHandler       
@@ -119,7 +119,7 @@ assumes it is a package name which implements a 'handler' subroutine.
     PerlHandler
     PerlLogHandler
     PerlCleanupHandler
-    PerlChildExitHandler          (requires apache_1.3b3 or higher)
+    PerlChildExitHandler          (requires apache_1.3.0 or higher)
 
 Only ChildInit, ChildExit, PostReadRequest and Trans handlers are not
 allowed in .htaccess files.
@@ -216,7 +216,7 @@ e.g. once per (mod_cgi) CGI scripts.  However, mod_perl only calls
 C<perl_run()> once, during server startup.  Any C<END> blocks
 encountered during main server startup, i.e. those pulled in by the
 B<PerlRequire> or by any B<PerlModule> are suspended and run at server
-shutdown, aka C<child_exit> (requires apache 1.3b3+).  Any C<END>
+shutdown, aka C<child_exit> (requires apache 1.3.0+).  Any C<END>
 blocks that are encountered during compilation of Apache::Registry
 scripts are called after the script done is running, including
 subsequent invocations when the script is cached in memory.   
@@ -768,7 +768,7 @@ Then issue the command line:
 
 It is possible to profile code run under mod_perl with the
 B<Devel::DProf> module available on CPAN.  However, you must have
-apache version 1.3b3 or higher and the C<PerlChildExitHandler>
+apache version 1.3.0 or higher and the C<PerlChildExitHandler>
 enabled.  When the server is started, B<Devel::DProf> installs an
 C<END> block to write the I<tmon.out> file, which will be run when the
 server is shutdown.  Here's how to start and stop a server with the

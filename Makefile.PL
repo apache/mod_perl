@@ -348,6 +348,11 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    last unless(-e $conf || -e "$conf.tmpl"); #building from 'make offsite-tar' 
 	}
 	#++$NO_HTTPD if $USE_APACI;
+	my $mmn = magic_number($APACHE_SRC);
+	if(($mmn < 19980527) and $USE_APACI) { #1.3.0
+	    print "Sorry, need 1.3.0+ for USE_APACI\n";
+	    $USE_APACI = $USE_DSO = 0;
+	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
 	    ++$NO_HTTPD unless $ans =~ /^y$/i;
@@ -503,7 +508,7 @@ if($APACHE_SRC) {
     else {
 	$callback_hooks{PERL_CHILD_INIT} = 0;
 	$cant_hook{PERL_CHILD_INIT} = 
-	    "(need 1.3b2 or higher)";
+	    "(need 1.3.0 or higher)";
     }
 
     if($mmn >= 19970728) {
@@ -513,13 +518,13 @@ if($APACHE_SRC) {
     else {
 	$callback_hooks{PERL_CHILD_EXIT} = 0;
 	$cant_hook{PERL_CHILD_EXIT} = 
-	    "(need 1.3b2 or higher)";
+	    "(need 1.3.0 or higher)";
     }
 
     unless($mmn >= 19970825) {
 	$callback_hooks{PERL_POST_READ_REQUEST} = 0;
 	$cant_hook{PERL_POST_READ_REQUEST} = 
-	    "(need 1.3b2 or higher)";
+	    "(need 1.3.0 or higher)";
     }
 
 #    if($Config{extensions} =~ /Thread/) {
