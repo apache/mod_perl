@@ -339,11 +339,12 @@ while($_ = shift) {
 	push @mm_args, $_;
     }
 	
-	if($k eq 'PREFIX')
-		{
-		require File::Spec;
-		$MOD_PERL_PREFIX = File::Spec->catfile($v,'lib','site_perl',$Config{'version'},$Config{'archname'});
-		}
+    if ($k eq 'PREFIX') {
+        require File::Spec;
+        $MOD_PERL_PREFIX =
+          File::Spec->catfile($v, 'lib', 'site_perl',
+                              $Config{'version'}, $Config{'archname'});
+    }
 		
     $v = 1 unless defined $v;
     if($experimental{$k}) {
