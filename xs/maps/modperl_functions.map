@@ -80,7 +80,7 @@ MODULE=Apache::ServerUtil  PACKAGE=Apache::ServerRec
  SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=Nullsv
 
 MODULE=Apache::ServerUtil PACKAGE=Apache::ServerUtil
- mpxs_Apache__ServerUtil_server_root_relative | | p, fname=NULL
+ mpxs_Apache__ServerUtil_server_root_relative | | p, fname=""
 
 PACKAGE=Apache
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
