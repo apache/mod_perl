@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_09-dev
+=item 1.99_09 - April 28, 2003
 
 $filter->seen_eos() now accepts 1/0 to set/unset the flag so streaming
 filters can control the sending of EOS. [Stas]
