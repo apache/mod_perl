@@ -6444,6 +6444,16 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_pool_t *',
+    'name' => 'mpxs_APR__Brigade_pool',
+    'args' => [
+      {
+        'type' => 'apr_bucket_brigade *',
+        'name' => 'brigade'
+      },
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_APR__Brigade_length',
     'args' => [

@@ -99,6 +99,7 @@ MODULE=APR::Brigade
  mpxs_APR__Brigade_empty        #APR_BRIGADE_EMPTY
  mpxs_APR__Brigade_length | | bb, read_all=1
  mpxs_APR__Brigade_flatten | | bb, pool, sv_len=0
+ mpxs_APR__Brigade_pool
 
 MODULE=APR::Bucket
  mpxs_APR__Bucket_is_flush       #APR_BUCKET_IS_FLUSH
