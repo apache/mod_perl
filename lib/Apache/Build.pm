@@ -933,23 +933,52 @@ sub apr_bindir {
     $self->{apr_bindir};
 }
 
-# XXX: we assume that apr-config and apu-config reside in the same
-# directory
-sub apr_config_path {
-    my ($self) = @_;
+sub apr_generation {
+    my($self) = @_;
+    return $self->httpd_version_as_int =~ m/21\d+/ ? 1 : 0;
+}
 
-    return $self->{apr_config_path}
-        if $self->{apr_config_path} and -x $self->{apr_config_path};
+# returns an array of apr/apu linking flags (--link-ld --libs) if found
+# an empty array otherwise
+my @apru_link_flags = ();
+sub apru_link_flags {
+    my($self) = @_;
 
-    if (exists $self->{MP_APR_CONFIG} and -x $self->{MP_APR_CONFIG}) {
-        $self->{apr_config_path} = $self->{MP_APR_CONFIG};
+    return @apru_link_flags if @apru_link_flags;
+
+    for ($self->apr_config_path, $self->apu_config_path) {
+        if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
+            chomp $link;
+            push @apru_link_flags, $link;
+        }
     }
 
-    my $config = $self->httpd_version_as_int =~ m/21\d+/
-                     ? 'apr-1-config'
-                     : 'apr-config';
+    return @apru_link_flags;
+}
 
-    if (!$self->{apr_config_path}) {
+sub apr_config_path {
+    shift->apru_config_path("apr");
+}
+
+sub apu_config_path {
+    shift->apru_config_path("apu");
+}
+
+sub apru_config_path {
+    my ($self, $what) = @_;
+
+    my $key = "${what}_config_path"; # apr_config_path
+    my $mp_key = "MP_" . uc($what) . "_CONFIG"; # MP_APR_CONFIG
+
+    return $self->{$key} if $self->{$key} and -x $self->{$key};
+
+    if (exists $self->{$mp_key} and -x $self->{$mp_key}) {
+        $self->{$key} = $self->{$mp_key};
+    }
+
+    my $config = $self->apr_generation ? "$what-1-config" : "$what-config";
+
+    if (!$self->{$key}) {
         my @tries = ();
         if ($self->httpd_is_source_tree) {
             push @tries, grep { -d $_ }
@@ -974,22 +1003,22 @@ sub apr_config_path {
 
         for my $try (@tries) {
             next unless -x $try;
-            $self->{apr_config_path} = $try;
+            $self->{$key} = $try;
         }
     }
 
-    $self->{apr_config_path} ||= Apache::TestConfig::which($config);
+    $self->{$key} ||= Apache::TestConfig::which($config);
 
     # apr_bindir makes sense only if httpd/apr is installed, if we are
     # building against the source tree we can't link against
     # apr/aprutil libs
     unless ($self->httpd_is_source_tree) {
-        $self->{apr_bindir} = $self->{apr_config_path}
-            ? dirname $self->{apr_config_path}
+        $self->{apr_bindir} = $self->{$key}
+            ? dirname $self->{$key}
             : '';
         }
 
-    $self->{apr_config_path};
+    $self->{$key};
 }
 
 sub apr_includedir {
