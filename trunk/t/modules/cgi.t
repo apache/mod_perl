@@ -41,7 +41,7 @@ if($test_mod_cgi) {
     print fetch($ua, "http://$net::httpserver/cgi-bin/cgi.pl?PARAM=5");
 }
 
-sub upload ($$$) {
+sub upload {
     my $ua = shift;
     my $url = new URI::URL(shift);
     my $abc = shift;

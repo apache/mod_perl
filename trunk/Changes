@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+get rid of various 5.005_60 warnings
+
 add Status{Terse,Deparse,OptionsAll} options to Apache::Status
 
 adjust mod_perl.h for 5.005_59 perl_eval_{pv,sv} rename

@@ -25,10 +25,10 @@ sub undef_functions {
     if( $only_undef_exports ) {
         no strict 'refs';
         my $any_export_var;
-        $any_export_var = 1 if defined @{$package . "::EXPORT"};
-        $any_export_var = 1 if defined @{$package . "::EXPORT_OK"};
-        $any_export_var = 1 if defined %{$package . "::EXPORT_TAGS"};
-        $any_export_var = 1 if defined @{$package . "::EXPORT_EXTRAS"};
+        $any_export_var = 1 if @{$package . "::EXPORT"};
+        $any_export_var = 1 if @{$package . "::EXPORT_OK"};
+        $any_export_var = 1 if %{$package . "::EXPORT_TAGS"};
+        $any_export_var = 1 if @{$package . "::EXPORT_EXTRAS"};
 
         if( $any_export_var ) {
             my @names = (@{$package . "::EXPORT"},
