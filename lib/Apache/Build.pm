@@ -172,7 +172,9 @@ sub ldopts {
     my $ldopts = ExtUtils::Embed::ldopts();
     chomp $ldopts;
 
-    if ($^O eq 'hpux' and $Config{ld} eq 'ld') {
+    my $ld = $self->perl_config('ld');
+
+    if ($^O eq 'hpux' and $ld eq 'ld') {
         while ($ldopts =~ s/-Wl,(\S+)/$1/) {
             my $cp = $1;
             (my $repl = $cp) =~ s/,/ /g;
@@ -275,6 +277,14 @@ sub perl_config_optimize {
     }
 
     $val;
+}
+
+sub perl_config_ld {
+    my($self, $val) = @_;
+
+    $val ||= $Config{ld};
+
+    basename $val; #bleedperl hpux value is /usr/bin/ld !
 }
 
 sub perl_config_lddlflags {
