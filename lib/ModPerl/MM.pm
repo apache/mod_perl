@@ -175,6 +175,12 @@ sub ModPerl::MM::MY::libscan {
         return ''; #XXX: APR::PerlIO does not link on win32
     }
 
+    my $apr_config = build_config()->get_apr_config();
+
+    if ($path =~ m/(Thread|Global)Mutex/) {
+        return unless $apr_config->{HAS_THREADS};
+    }
+
     return '' if $path =~ m/\.(pl|cvsignore)$/;
     return '' if $path =~ m:\bCVS/:;
     return '' if $path =~ m/~$/;
