@@ -10,7 +10,7 @@ use Apache::RequestUtil ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache::Const -compile => qw(OK DECLINED M_POST);
 
 sub handler {
     my $r = shift;
