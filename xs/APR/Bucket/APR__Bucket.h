@@ -44,6 +44,11 @@ static MP_INLINE int mpxs_APR__Bucket_is_eos(apr_bucket *bucket)
     return APR_BUCKET_IS_EOS(bucket);
 }
 
+static MP_INLINE int mpxs_APR__Bucket_is_flush(apr_bucket *bucket)
+{
+    return APR_BUCKET_IS_FLUSH(bucket);
+}
+
 static MP_INLINE void mpxs_APR__Bucket_insert_before(apr_bucket *a,
                                                      apr_bucket *b)
 {
