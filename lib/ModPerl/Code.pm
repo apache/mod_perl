@@ -17,23 +17,13 @@ my %handlers = (
     Connection => [qw(PreConnection ProcessConnection)],
 );
 
-my %hooks = (
-    ChildInit => 'child_init',
-    PostReadRequest => 'post_read_request',
-    Trans => 'translate_name',
-    HeaderParser => 'header_parser',
-    Access => 'access_checker',
-    Authen => 'check_user_id',
-    Authz => 'auth_checker',
-    Type => 'type_checker',
-    Fixup => 'fixups',
-    Log => 'log_transaction',
-    PreConnection => 'pre_connection',
-    ProcessConnection => 'process_connection',
-    OpenLogs => 'open_logs',
-    ChildInit => 'child_init',
-    PostConfig => 'post_config',
-);
+my %hooks = map { $_, canon_lc($_) }
+    qw{OpenLogs PostConfig ChildInit
+       PreConnection PostConnection
+       PostReadRequest Trans
+       HeaderParser
+       Access Authen Authz
+       Type Fixup Log};
 
 my %hook_proto = (
     Process    => {
