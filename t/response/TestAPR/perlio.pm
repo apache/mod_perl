@@ -8,7 +8,7 @@ use Apache::Const -compile => 'OK';
 use Apache::Test;
 use Apache::TestUtil;
 
-use APR::PerlIO ();
+my $have_perlio = eval { require APR::PerlIO };
 
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
@@ -16,7 +16,14 @@ use File::Spec::Functions qw(catfile);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 9, todo => [5], have_perl 'iolayers';
+    unless ($have_perlio) {
+        #XXX dunno why have_module doesn't work here.
+        my $reason = "APR::PerlIO is not available with this Perl";
+        $r->puts("1..0 #Skipped: $reason\n");
+        return Apache::OK;
+    }
+
+    plan $r, tests => 9, todo => [5];
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
