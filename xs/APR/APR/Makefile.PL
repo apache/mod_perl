@@ -10,6 +10,7 @@ use File::Spec::Functions;
 
 use constant WIN32   => Apache::Build::WIN32;
 use constant SOLARIS => $^O eq 'solaris';
+use constant BUILD_APREXT   => Apache::Build::BUILD_APREXT;
 
 my %args = (
     'NAME'         => 'APR',
@@ -30,14 +31,13 @@ if (my $apr_bindir = $build->apr_bindir()) {
 }
 
 if (WIN32) {
-    require File::Basename;
     $libs =~ s{/libpath:}{-L}g;
     $libs =~ s{(\w+)\.lib}{-l$1}g;
-    # include the static MP_APR_LIB lib
-    my ($lib, $dir, $ext) =
-        File::Basename::fileparse($build->mp_apr_lib, qr{\.lib});
-    $dir =~ s!\\$!!;
-    $libs .= qq{ -L"$dir" -l$lib };
+}
+
+if (BUILD_APREXT) {
+    my $mp_apr_lib = $build->mp_apr_lib;
+    $libs .= qq{ $mp_apr_lib };
 }
 
 if (SOLARIS && $libs) {
@@ -76,7 +76,7 @@ for (@names) {
     $src{$cfile} = "$srcdir/$cfile";
 }
 
-$args{OBJECT} = WIN32 ? "APR.o" : "APR.o @obj";
+$args{OBJECT} = BUILD_APREXT() ? "APR.o" : "APR.o @obj";
 $args{clean}  = { FILES => "@clean" };
 
 ModPerl::BuildMM::WriteMakefile(%args);
