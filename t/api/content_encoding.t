@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, have_min_module_version("Compress::Zlib", "1.09");
+plan tests => 1, need_min_module_version("Compress::Zlib", "1.09");
 
 my $location = '/TestAPI__content_encoding';
 

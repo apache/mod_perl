@@ -7,7 +7,7 @@ use Apache::TestRequest qw(GET_BODY HEAD);
 
 use Apache::TestUtil qw(t_catfile_apache);
 
-plan tests => 4, have_lwp;
+plan tests => 4, need_lwp;
 
 # need LWP to handle redirects
 my $base_url = "/registry/redirect.pl";

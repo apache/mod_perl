@@ -9,7 +9,7 @@ use Apache::Build ();
 use File::Spec::Functions qw(catfile);
 
 my $build = Apache::Build->build_config;
-plan tests => 2, have have_lwp(), have have_min_module_version('CGI', 2.93),
+plan tests => 2, need need_lwp(), need need_min_module_version('CGI', 2.93),
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $location = "/TestModules__cgiupload";

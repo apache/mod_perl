@@ -32,7 +32,7 @@ my @locations = ("${base}_mpdefault",
 # this requires keepalives and a per-connection interpreter
 # to make certain we can plan in one request and test in another
 # which requires LWP
-unless (have_lwp()) {
+unless (need_lwp()) {
     plan tests => 63, 0;
 }
 

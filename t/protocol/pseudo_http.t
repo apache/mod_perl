@@ -18,7 +18,7 @@ my $login    = "stas";
 my $passgood = "foobar";
 my $passbad  = "foObaR";
 
-plan tests => 13, have_auth && have_access;
+plan tests => 13, need_auth && need_access;
 
 {
     # supply correct credential when prompted for such and ask the

@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4, have_lwp && have_auth;
+plan tests => 4, need_lwp && need_auth;
 
 my $location = "/TestHooks__authen";
 

@@ -17,8 +17,8 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 4, have
-        have_threads,
+    plan $r, tests => 4,need 
+        need_threads,
         {"perl >= 5.8.1 is required (this is $])" => ($] >= 5.008001)};
 
     # threads must have been preloaded at the server startup for this

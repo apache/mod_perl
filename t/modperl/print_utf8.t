@@ -8,7 +8,7 @@ use Apache::TestUtil;
 # utf encode/decode was added only in 5.8.0
 # XXX: currently binmode is only available with perlio (used on the
 # server side on the tied/perlio STDOUT)
-plan tests => 1, have have_min_perl_version(5.008), have_perl('perlio');
+plan tests => 1, need need_min_perl_version(5.008), need_perl('perlio');
 
 my $location = "/TestModperl__print_utf8";
 my $expected = "Hello Ayhan \x{263A} perlio rules!";

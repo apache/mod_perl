@@ -9,7 +9,7 @@ use Config;
 
 # utf encode/decode was added only in 5.8.0
 # perlio is needed only for the client side, because it calls binmode(STDOUT, ':utf8');
-plan tests => 1, have_min_perl_version(5.008);
+plan tests => 1, need_min_perl_version(5.008);
 
 my $location = "/TestModperl__print_utf8_2";
 my $expected = "\$r->print() just works \x{263A}";

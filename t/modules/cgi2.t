@@ -13,8 +13,8 @@ use constant HAVE_LWP => have_lwp();
 my $tests = 4;
 $tests += 1 if HAVE_LWP;
 
-plan tests => $tests, have
-    have_min_module_version(CGI => 3.01);
+plan tests => $tests, need
+    need_min_module_version(CGI => 3.01);
 
 my $module = 'TestModules::cgi2';
 my $location = '/' . Apache::TestRequest::module2path($module);
