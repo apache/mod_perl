@@ -223,7 +223,7 @@ add(self, key, sv)
     SV *sv;
 
     CODE:
-    table_modify(self, key, sv, table_add);
+    table_modify(self, key, sv, (void*)table_add);
 
 void
 merge(self, key, sv)
@@ -232,7 +232,7 @@ merge(self, key, sv)
     SV *sv
 
     CODE:
-    table_modify(self, key, sv, table_merge);
+    table_modify(self, key, sv, (void*)table_merge);
 
 void
 do(self, cv, ...)

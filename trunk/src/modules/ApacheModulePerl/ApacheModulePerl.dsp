@@ -104,6 +104,26 @@ SOURCE=..\perl\Connection.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\perl\File.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\perl\Log.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\perl\URI.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\perl\Util.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\perl\Table.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\perl\Server.c
 # End Source File
 # Begin Source File

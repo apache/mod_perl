@@ -1,9 +1,4 @@
-#ifdef MOD_PERL
 #include "mod_perl.h"
-#else
-#include "modules/perl/mod_perl.h"
-#endif 
-
 #include "util_date.h"
 
 #define TIME_NOW time(NULL)
