@@ -151,7 +151,7 @@ PERL_TIE_SCRIPTNAME
 
 my @mp_args = 
     qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE 
-       USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS
+       USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
 
 sub is_mp_arg {
@@ -234,8 +234,7 @@ elsif($USE_APACI) {
         gen_script("apaci/load_modules.pl");
         print " (dso enabled)";
     }
-    $NO_HTTPD = 1 if $PREP_HTTPD; #either one will do
-    $PREP_HTTPD = 1 if $NO_HTTPD;
+    $NO_HTTPD = 1 if $PREP_HTTPD;
     print "\n";
 }
 
