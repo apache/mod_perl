@@ -327,11 +327,15 @@ MODULE=APR::UUID
  apr_get_user_passwd
  apr_get_userid
 
-!MODULE=APR::NetworkIO
+MODULE=APR::NetLib
  apr_gethostname
  apr_getnameinfo
 -apr_getservbyname
  apr_parse_addr_port
+PACKAGE=guess
+ apr_ipsubnet_t *:apr_ipsubnet_create | mpxs_ | \
+                  SV *:CLASS, p, ipstr, mask_or_numbits=NULL | new
+ apr_ipsubnet_test
 
 !MODULE=APR::Getopt
  apr_getopt
