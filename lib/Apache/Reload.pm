@@ -117,8 +117,8 @@ sub handler {
             }
         }
 
-        warn("Apache::Reload: Can't locate $file\n"),next 
-                unless defined $mtime and $mtime;
+        warn("Apache::Reload: Can't locate $file\n"), next
+            unless defined $mtime and $mtime;
 
         unless (defined $Stat{$file}) {
             $Stat{$file} = $^T;
