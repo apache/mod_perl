@@ -1,3 +1,6 @@
+use strict;
+use warnings FATAL => 'all';
+
 use Apache::TestRequest 'GET_BODY_ASSERT';
 
 use Apache::Test;
