@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+use the new Apache-Test attribute -minclient in the test suites. Now
+along with the default maxclients = minclients+1, we no longer should
+get 'server reached MaxClients setting' errors. [Stas]
+
 new API for APR::Socket recv() and send() + updated tests [Stas]
 
 add infrastructure for new ModPerl::Const constants and the first

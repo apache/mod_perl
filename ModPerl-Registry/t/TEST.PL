@@ -16,7 +16,7 @@ package MyTest;
 use base qw(Apache::TestRunPerl);
 
 # redirect tests require 2 servers
-use constant MIN_MAXCLIENTS => 2;
+use constant MIN_CLIENTS => 2;
 
 use File::Spec::Functions qw(catdir);
 use File::Basename qw(dirname);
@@ -42,7 +42,7 @@ sub new_test_config {
         $ENV{APACHE_TEST_STARTUP_TIMEOUT} ||
         DEFAULT_STARTUP_TIMEOUT;
 
-    $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
+    $self->{conf_opts}->{minclients} ||= MIN_CLIENTS;
 
     return $self->SUPER::new_test_config;
 }
