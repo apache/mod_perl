@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+Prevent the 'Use of uninitialized value.' warning when
+ModPerl::Util::exit is used. [Stas]
+
 To make the test-sute sandbox-friendly, which break when things try to
 run off /tmp, use t/logs as the location of the mod_cgid socket and
 TMPDIR env var [Haroon Rafique <haroon.rafique@utoronto.ca>]
