@@ -245,7 +245,7 @@ typedef struct {
 #define MP_GLOBAL_OFFSET(m) \
     STRUCT_OFFSET(modperl_perl_globals_t, m)
 
-static modperl_perl_global_entry_t modperl_perl_global_entries[] = {
+static modperl_perl_global_entry_t MP_perl_global_entries[] = {
     {"END",    MP_GLOBAL_OFFSET(end),    MP_GLOBAL_AVCV}, /* END */
     {"ENV",    MP_GLOBAL_OFFSET(env),    MP_GLOBAL_GVHV}, /* %ENV */
     {"INC",    MP_GLOBAL_OFFSET(inc),    MP_GLOBAL_GVAV}, /* @INC */
@@ -262,20 +262,19 @@ static modperl_perl_global_entry_t modperl_perl_global_entries[] = {
     modperl_perl_global_##type##_restore( \
         aTHX_ (modperl_perl_global_##type##_t *)&(*ptr))
 
-#define MP_dGLOBAL_PTR(globals, i) \
+#define MP_dGLOBAL_PTR(globals, entries) \
     apr_uint64_t **ptr = (apr_uint64_t **) \
-        ((char *)globals + (int)(long)modperl_perl_global_entries[i].offset)
+        ((char *)globals + (int)(long)entries->offset)
 
-static void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
+static void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals,
+                                     modperl_perl_global_entry_t *entries)
 {
-    int i;
-
     modperl_perl_global_init(aTHX_ globals);
 
-    for (i=0; modperl_perl_global_entries[i].name; i++) {
-        MP_dGLOBAL_PTR(globals, i);
+    while (entries->name) {
+        MP_dGLOBAL_PTR(globals, entries);
 
-        switch (modperl_perl_global_entries[i].type) {
+        switch (entries->type) {
           case MP_GLOBAL_AVCV:
             MP_PERL_GLOBAL_SAVE(avcv, ptr);
             break;
@@ -291,18 +290,19 @@ static void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
           case MP_GLOBAL_SVPV:
             MP_PERL_GLOBAL_SAVE(svpv, ptr);
             break;
-        };
+        }
+
+        entries++;
     }
 }
 
-static void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
+static void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals,
+                                        modperl_perl_global_entry_t *entries)
 {
-    int i;
+    while (entries->name) {
+        MP_dGLOBAL_PTR(globals, entries);
 
-    for (i=0; modperl_perl_global_entries[i].name; i++) {
-        MP_dGLOBAL_PTR(globals, i);
-
-        switch (modperl_perl_global_entries[i].type) {
+        switch (entries->type) {
           case MP_GLOBAL_AVCV:
             MP_PERL_GLOBAL_RESTORE(avcv, ptr);
             break;
@@ -319,17 +319,22 @@ static void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
             MP_PERL_GLOBAL_RESTORE(svpv, ptr);
             break;
         }
+
+        entries++;
     }
 }
 
 void modperl_perl_global_request_save(pTHX_ request_rec *r)
 {
     MP_dRCFG;
-    modperl_perl_global_save(aTHX_ &rcfg->perl_globals);
+    modperl_perl_global_save(aTHX_ &rcfg->perl_globals,
+                             MP_perl_global_entries);
 }
 
 void modperl_perl_global_request_restore(pTHX_ request_rec *r)
 {
     MP_dRCFG;
-    modperl_perl_global_restore(aTHX_ &rcfg->perl_globals);
+    modperl_perl_global_restore(aTHX_ &rcfg->perl_globals,
+                                MP_perl_global_entries);
+
 }
