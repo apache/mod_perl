@@ -11575,20 +11575,6 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_sockaddr_ip_set',
-    'args' => [
-      {
-        'type' => 'apr_sockaddr_t *',
-        'name' => 'sockaddr'
-      },
-      {
-        'type' => 'const char *',
-        'name' => 'addr'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
     'name' => 'apr_sockaddr_port_get',
     'args' => [
       {
