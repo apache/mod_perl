@@ -126,6 +126,10 @@ test ++$i, $s->server_admin;
 test ++$i, $s->server_hostname;
 test ++$i, $s->port;
 
+for (my $srv = $r->server; $srv; $srv = $srv->next) {
+    my $name = $srv->server_hostname;
+}
+
 ++$i;
 my $str = "ok $i\n";
 $r->print(\$str);

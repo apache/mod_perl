@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+new $r->server->next method
+
 removed use of Term::ReadLine in Makefile.PL to make it work on
 systems with broken Term::ReadLines installed. 
 [Ask Bjoern Hansen <ask@netcetera.dk>]
