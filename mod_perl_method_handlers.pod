@@ -73,7 +73,7 @@ In httpd.conf:
 
  <Location /obj-handler>
  SetHandler perl-script
- PerlHandler '$My::Obj->method'
+ PerlHandler $My::Obj->method
  </Location>
 
 In startup.pl or another PerlRequire'd file:
