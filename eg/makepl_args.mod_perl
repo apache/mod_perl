@@ -6,7 +6,7 @@
 
 #EVERYTHING=1 will enable:
 #ALL_HOOKS=1 PERL_SSI=1 PERL_SECTIONS=1
-#PERL_STACKED_HANDLERS=1 PERL_METHOD_HANDLERS=1
+#PERL_STACKED_HANDLERS=1 PERL_METHOD_HANDLERS=1 PERL_TIE_TABLES=1
 
 EVERYTHING=1
 
@@ -17,7 +17,7 @@ EVERYTHING=1
 # APACHE_SRC=/tmp/apache_x.xx/src
 
 #this would configure in mod_proxy, mod_unique_id, mod_info and mod_status
-# ADD_MODULE=proxy,unique_id,info,status
+# ADD_MODULE=proxy,usertrack,unique_id,info,status
 
 #if you wish to use a Configuration file other than what's in the
 #apache_x.xx/src directory
@@ -72,9 +72,6 @@ EVERYTHING=1
 #enable the PerlRestartHandler which will be called during restart
 #this happens just before PerlFreshRestart does it's thang
 #PERL_RESTART_HANDLER=1
-
-#Link Tie.o with the server. Required for use of Apache::Tie
-#PERL_TIE_TABLES=1
 
 __END__
 
