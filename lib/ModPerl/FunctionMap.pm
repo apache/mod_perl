@@ -169,6 +169,8 @@ sub prefixes {
         $prefix{ $ent->{prefix} }++;
     }
 
+    $prefix{$_} = 1 for qw(ap_ apr_); #make sure we get these
+
     [keys %prefix]
 }
 
