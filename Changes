@@ -12,6 +12,18 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+APR.xs has been reimplemented.  The problem with the previous
+implementation is that a dead perl pool object could hijack a newly
+created pool, which didn't belong to that object, but which happened
+to be allocated at the same memory location. The problem is that
+apr_pool_user_data_set/get has no mechanism to check whether the pool
+has changed since it was last assigned to (it does but only in the
+debug mode). It really needs some signature mechanism which can be
+verified that the pool is still the same pool. Since apr_pool doesn't
+have this feature, the reference counting has been reimplemented using
+a plain sv reference. Several new (mainly hijacking) tests which badly
+fail with the previous impelementation have been added. [Stas]
+
 fix calling $r->subprocess_env() in a void context so that it only
 populates %ENV if also called with no arguments.  also, make sure it
 can be called more than once and still populate %ENV.

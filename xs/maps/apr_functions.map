@@ -157,7 +157,7 @@ MODULE=APR::Pool
  apr_pool_destroy
  DEFINE_DESTROY | mpxs_apr_pool_DESTROY | SV *:obj
 >apr_pool_destroy_debug
- apr_pool_t *:DEFINE_new | mpxs_apr_pool_create | SV *:parent_pool_obj
+ SV *:DEFINE_new | mpxs_apr_pool_create | SV *:parent_pool_obj
 -apr_pool_create_ex
 >apr_pool_create_ex_debug
 !apr_pool_userdata_get
@@ -175,7 +175,7 @@ MODULE=APR::Pool
 -apr_pmemdup
 !apr_pool_child_cleanup_set
 !apr_pool_abort_get
- apr_pool_parent_get | mpxs_
+ SV *:apr_pool_parent_get | mpxs_
  apr_pool_is_ancestor
 -apr_pool_abort_set
 >apr_pool_initialize

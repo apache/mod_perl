@@ -6586,7 +6586,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_pool_t *',
+    'return_type' => 'SV *',
     'name' => 'mpxs_apr_pool_parent_get',
     'attr' => [
       'static',
@@ -6618,7 +6618,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_pool_t *',
+    'return_type' => 'SV *',
     'name' => 'mpxs_apr_pool_create',
     'attr' => [
       'static',
