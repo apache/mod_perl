@@ -7,7 +7,7 @@ static apr_status_t modperl_shutdown(void *data)
     PerlInterpreter *perl = (PerlInterpreter *)cdata->data;
     apr_array_header_t *handles;
 
-    handles = modperl_xs_dl_handles_get(cdata->pool);
+    handles = modperl_xs_dl_handles_get(aTHX_ cdata->pool);
 
     PL_perl_destruct_level = 2;
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
