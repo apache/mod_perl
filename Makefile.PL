@@ -1385,7 +1385,7 @@ apaci_install:
 
 tar_Apache:
 	(cd $(INSTALLSITELIB)/$(ARCHNAME); \
-	     $(TAR) -cf $(PWD)/Apache.tar mod_perl.pm Apache.pm Apache $(ARCHNAME)/auto/Apache; )
+            $(TAR) -cf $(PWD)/Apache.tar mod_perl.pm Apache.pm Apache auto/Apache; )
 
 offsite-tar:
 	$(CP) MANIFEST MANIFEST.orig

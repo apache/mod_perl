@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+fix 'make tar_Apache' [Geoffrey Young <gyoung@laserlink.net>]
+
 make sure global for Apache->request is reset after configuring %ENV
 [Gerald Richter <richter@ecos.de>]
 
