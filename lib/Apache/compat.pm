@@ -28,6 +28,7 @@ use Apache::Response ();
 use Apache::Log ();
 use APR::Table ();
 use APR::Pool ();
+use APR::URI ();
 use mod_perl ();
 use Symbol ();
 
@@ -380,6 +381,8 @@ sub size_string {
 
     return $size;
 }
+
+*Apache::URI::parse = \&APR::URI::parse;
 
 1;
 __END__
