@@ -63,6 +63,17 @@
         Perl_croak(aTHX_ func "can't be called before the response phase"); \
     }
 
+/* turn off cgi header parsing. in case we are already inside
+ *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r); 
+ * but haven't sent any data yet, it's too late to change
+ * MpReqPARSE_HEADERS, so change the wbucket's private flag directly
+ */
+#define MP_CGI_HEADER_PARSER_OFF(rcfg) \
+    MpReqPARSE_HEADERS_Off(rcfg); \
+    if (rcfg->wbucket) { \
+        rcfg->wbucket->header_parse = 0; \
+    } 
+
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
