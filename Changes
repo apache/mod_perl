@@ -12,6 +12,25 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+new API for APR::Socket recv() and send() + updated tests [Stas]
+
+add infrastructure for new ModPerl::Const constants and the first
+constant ModPerl::EXIT. [Stas]
+
+re-implement ModPerl::Util::exit to use exception objects, so it's
+possible to detect exit called in eval context and call it again
+outside the eval context. [Stas]
+
+add the perl interface for the new exception handling code (mod_perl,
+apache and apr methods will now throw exceptions with $@ being an
+object). New class APR::Error was added, to handle the exception
+objects with overload methods. Also added confess and croak
+equivalents of Carp's methods, since at the moment the Carp's ones
+don't work as is. The following perl and C methods have been renamed:
+  modperl_apr_strerror  => modperl_error_strerror 
+  APR::strerror         => APR::Error::strerr 
+[Stas]
+
 set the 'error-notes' table to the error message on
 HTTP_INTERNAL_SERVER_ERROR [Stas]
 
