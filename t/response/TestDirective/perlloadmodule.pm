@@ -11,7 +11,7 @@ use Apache::Const -compile => qw(OK OR_ALL RSRC_CONF TAKE1 TAKE23);
 use Apache::CmdParms ();
 use Apache::Module ();
 
-our @APACHE_MODULE_COMMANDS = (
+my @directives = (
     {
      name => 'MyTest',
      func => __PACKAGE__ . '::MyTest',
@@ -30,6 +30,8 @@ our @APACHE_MODULE_COMMANDS = (
      req_override => Apache::RSRC_CONF,
     }
 );
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 sub DIR_CREATE {
     my($class, $parms) = @_;
@@ -52,7 +54,7 @@ sub merge {
 
 sub DIR_MERGE {
     my $class = ref $_[0];
-#    warn "$class->DIR_MERGE\n";
+    warn "$class->DIR_MERGE\n";
     merge(@_);
 }
 
@@ -64,7 +66,7 @@ sub DIR_MERGE {
 
 sub SERVER_CREATE {
     my($class, $parms) = @_;
-#    warn "$class->SERVER_CREATE\n";
+    warn "$class->SERVER_CREATE\n";
     return bless {
 	name => __PACKAGE__,
     }, $class;

@@ -11,7 +11,7 @@ use Apache::Const -compile => qw(OK OR_ALL ITERATE);
 use Apache::CmdParms ();
 use Apache::Module ();
 
-our @APACHE_MODULE_COMMANDS = (
+my @directives = (
     {
      name         => 'MyMergeTest',
      func         => __PACKAGE__ . '::MyMergeTest',
@@ -20,6 +20,8 @@ our @APACHE_MODULE_COMMANDS = (
      errmsg       => 'Values that get merged',
     },
 );
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 sub merge {
     my($base, $add) = @_;

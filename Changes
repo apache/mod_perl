@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Remove magicness of PerlLoadModule and implement Apache::Module::add()
+for modules that implement their own configuration directives [Gozer]
+
 Apache::Connection::remote_ip is now settable (needed to set the
 remote_ip record based on proxy's X-Forwarded-For header) [Stas]
 

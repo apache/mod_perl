@@ -26,7 +26,9 @@ use Apache::Const -compile => qw(OK);
 
 use constant KEY => "MyTest4";
 
-our @APACHE_MODULE_COMMANDS = ({ name => +KEY },);
+my @directives = ({ name => +KEY },);
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 sub MyTest4 {
     my($self, $parms, $arg) = @_;
