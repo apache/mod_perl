@@ -5,9 +5,33 @@
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
                                             const char *buf, apr_ssize_t len)
 {
-    apr_bucket_brigade *bb = apr_brigade_create(wb->pool);
-    apr_bucket *bucket = apr_bucket_transient_create(buf, len);
+    apr_bucket_brigade *bb;
+    apr_bucket *bucket;
+
+    if (wb->header_parse) {
+        request_rec *r = wb->r;
+        const char *bodytext = NULL;
+        int status = modperl_cgi_header_parse(r, (char *)buf, &bodytext);
+
+        if (status != OK) {
+            ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO,
+                         0, r->server, "%s did not send an HTTP header",
+                         r->uri);
+        }
+        else if (!bodytext) {
+            return APR_SUCCESS;
+        }
+
+        if (bodytext) {
+            len -= (bodytext - buf);
+            buf = bodytext;
+        }
+    }
+
+    bb = apr_brigade_create(wb->pool);
+    bucket = apr_bucket_transient_create(buf, len);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
+
     return ap_pass_brigade(wb->filters, bb);
 }
 

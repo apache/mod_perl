@@ -14,8 +14,8 @@ sub handler {
     my $param = $cgi->param('PARAM');
     my $httpupload = $cgi->param('HTTPUPLOAD');
 
-    print $cgi->header('-type' => 'text/plain',
-                       '-X-Perl-Script' => 'cgi.pm');
+    print $cgi->header('-type' => 'text/test-output',
+                       '-X-Perl-Module' => __PACKAGE__);
 
     print "ok $param\n" if $param;
 
