@@ -5,18 +5,21 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY HEAD);
 
+use File::Spec::Functions qw(catfile);
+
 plan tests => 4, have_lwp;
 
 # need LWP to handle redirects
-
 my $base_url = "/registry/redirect.pl";
 
 {
     my $redirect_path = "/registry/basic.pl";
     my $url = "$base_url?$redirect_path";
+    my $vars = Apache::Test::config()->{vars};
+    my $script_file = catfile $vars->{serverroot}, 'cgi-bin', 'basic.pl';
 
     ok t_cmp(
-        "ok",
+        "ok $script_file",
         GET_BODY($url),
         "test redirect: existing target",
        );
