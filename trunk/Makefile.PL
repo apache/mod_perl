@@ -105,6 +105,15 @@ unless (-e "t/docs/test.shtml") {
     cp "t/docs/test.html", "t/docs/test.shtml";
 }
 
+for (qw(.htaccess hooks.txt)) {
+    my $file = "t/docs/$_";
+    local *FH;
+    open FH, ">$file" or
+      die "can't write test file: $file: $!";
+    chmod 0666, $file;
+    close FH;
+}
+
 chmod 0644, "t/conf/mod_perl_srm.conf";
 
 mkdir "t/logs", 0777;
