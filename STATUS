@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/11/10 21:11:53 $]
+   Last modified at [$Date: 2003/11/17 02:10:58 $]
 
 Release:
 --------
@@ -106,6 +106,11 @@ Needs Patch or Further Investigation:
   http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_-_BUG_%5D_Issue_handing_Apache_config._error_messages_P70501/
   and
   http://mathforum.org/epigone/modperl/dartrimpcil
+
+* Apache::PerlSections->dump 
+  It does exist, but it's a completely internal function, not dumping existing configuration
+  as it used to be in 1.x. (needed by Apache::Status, for instance). Need to be implemented
+  and the existing dump method must be moved out of the way
  
 * PassEnv/SetEnv propogation 
   http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
