@@ -40,9 +40,9 @@ pool arguments to startup and connection callbacks must be blessed
 into APR::Pool and not Apache::Pool class [joes]
 
 Make PerlSetEnv, PerlPassEnv and %ENV in PerlRequre, PerlModule,
-PerlConfigRequire and PerlPostConfigRequire affect each, so a change
-in one of these immediately seen in the others. [Pratik <pratiknaik
-gmail.com>, Stas]
+PerlConfigRequire and PerlPostConfigRequire affect each other, so a
+change in one of these is immediately seen in the others. [Pratik
+<pratiknaik gmail.com>, Stas]
 
 
 
