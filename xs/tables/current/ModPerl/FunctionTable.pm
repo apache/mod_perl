@@ -2783,6 +2783,40 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'modperl_io_perlio_restore_stdin',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'GV *',
+        'name' => 'handle'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_io_perlio_restore_stdout',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'GV *',
+        'name' => 'handle'
+      }
+    ]
+  },
+  {
     'return_type' => 'GV *',
     'name' => 'modperl_io_tie_stdin',
     'attr' => [
@@ -2814,6 +2848,53 @@ $ModPerl::FunctionTable = [
         'type' => 'request_rec *',
         'name' => 'r'
       }
+    ]
+  },
+  {
+    'return_type' => 'GV *',
+    'name' => 'modperl_io_perlio_override_stdin',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
+    'return_type' => 'GV *',
+    'name' => 'modperl_io_perlio_override_stdout',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_io_apache_init',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
     ]
   },
   {

@@ -238,6 +238,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     modperl_hash_seed_set(aTHX);
 
+    modperl_io_apache_init(aTHX);
+
     PL_perl_destruct_level = 2;
 
     MP_boot_data_set(p, s);
@@ -909,19 +911,19 @@ int modperl_response_handler_cgi(request_rec *r)
         modperl_global_request_set(r);
     }
 
-    h_stdout = modperl_io_tie_stdout(aTHX_ r);
-    h_stdin  = modperl_io_tie_stdin(aTHX_ r);
+    h_stdin  = modperl_io_override_stdin(aTHX_ r);
+    h_stdout = modperl_io_override_stdout(aTHX_ r);
 
     modperl_env_request_tie(aTHX_ r);
 
     retval = modperl_response_handler_run(r, FALSE);
 
-    modperl_io_handle_untie(aTHX_ h_stdout);
-    modperl_io_handle_untie(aTHX_ h_stdin);
-
     modperl_env_request_untie(aTHX_ r);
 
     modperl_perl_global_request_restore(aTHX_ r);
+
+    modperl_io_restore_stdin(aTHX_ h_stdin);
+    modperl_io_restore_stdout(aTHX_ h_stdout);
 
 #ifdef USE_ITHREADS
     if (MpInterpPUTBACK(interp)) {
