@@ -938,6 +938,13 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
 #define test__is_match(conf) conf->d_is_matchexp = is_matchexp( conf->d )
 #endif
 
+/* for some odd reason, of there is no Options directive, we get a core dump.
+ * work-around for now is setting it to something "harmless" 
+ */
+#define ADD_OPTIONS_WA \
+    if(!hv_exists(tab, "Options", 7)) \
+	hv_store(tab, "Options", 7, newSVpv("+MultiViews",0), 0)
+
 CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
 {
     dSEC;
@@ -961,10 +968,7 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     TRACE_SECTION("Location", cmd->path);
 
-    /* XXX, why must we??? */
-    if(!hv_exists(tab, "Options", 7)) 
-	hv_store(tab, "Options", 7, 
-		 newSVpv("Indexes FollowSymLinks",22), 0);
+    ADD_OPTIONS_WA;
 
     perl_section_hash_walk(cmd, new_url_conf, tab);
 
@@ -1013,10 +1017,7 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     TRACE_SECTION("Directory", cmd->path);
 
-    /* XXX, why must we??? */
-    if(!hv_exists(tab, "Options", 7)) 
-	hv_store(tab, "Options", 7, 
-		 newSVpv("Indexes FollowSymLinks",22), 0);
+    ADD_OPTIONS_WA;
 
     perl_section_hash_walk(cmd, new_dir_conf, tab);
 
@@ -1070,10 +1071,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
 
     TRACE_SECTION("Files", cmd->path);
 
-    /* XXX, why must we??? */
-    if(!hv_exists(tab, "Options", 7)) 
-	hv_store(tab, "Options", 7, 
-		 newSVpv("Indexes FollowSymLinks",22), 0);
+    ADD_OPTIONS_WA;
 
     perl_section_hash_walk(cmd, new_file_conf, tab);
 
