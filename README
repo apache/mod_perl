@@ -13,12 +13,16 @@ will be support in the future.
 
 docs are available in /docs. Currently they don't get installed on
 'make install'. Certain API documentation can be found in docs/api/.
+the online version is at http://perl.apache.org/release/.
 
 mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
 See the todo/ directory for what remains to be done.
 
 For comments, questions, bug-reports, etc., join the mod_perl users
 list by sending mail to modperl-subscribe@perl.apache.org.
+
+when reporting bugs please follow the instructions at:
+http://perl.apache.org/release/docs/2.0/user/help/help.html#Reporting_Problems
 
 For announcements join the mod_perl announce list by sending mail to
 announce-subscribe@perl.apache.org.
