@@ -703,7 +703,7 @@ disguise.  The following methods can be used on the server object:
 =item $s = Apache-E<gt>server
 
 Same as above, but only available during server startup for use in
-C<E<lt>PerlE<gt>> sections, B<PerlScript> or B<PerlModule>.
+C<E<lt>PerlE<gt>> sections, B<PerlRequire> or B<PerlModule>.
 
 =item $s-E<gt>server_admin
 
