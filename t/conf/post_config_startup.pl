@@ -62,10 +62,15 @@ sub test_apache_resource {
 }
 
 sub test_apache_size_limit {
-    require Apache::MPM;
     # would be nice to write a real test, but for now just see that we
-    # can load it for non-threaded mpms
-    require Apache::SizeLimit unless Apache::MPM->is_threaded;
+    # can load it for non-threaded mpms on supported platforms
+    require Apache::MPM;
+    return if Apache::MPM->is_threaded;
+    eval { require Apache::SizeLimit };
+    if ($@) {
+        # unsupported platform
+        die $@ unless $@ =~ /Apache::SizeLimit not implemented on/;
+    }
 }
 
 sub test_apache_status {
