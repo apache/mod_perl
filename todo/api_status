@@ -20,12 +20,17 @@ V: done completely
 -- src/docs/2.0/api/Apache/CmdParms.pod
 -- src/docs/2.0/api/Apache/Command.pod
 -- src/docs/2.0/api/Apache/Connection.pod
--- src/docs/2.0/api/Apache/Const.pod
+
++- src/docs/2.0/api/Apache/Const.pod
+
 -- src/docs/2.0/api/Apache/Directive.pod
 -- src/docs/2.0/api/Apache/Filter.pod
 -- src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/HookRun.pod
--- src/docs/2.0/api/Apache/Log.pod
+
++- src/docs/2.0/api/Apache/Log.pod
+        log_pid
+
 -- src/docs/2.0/api/Apache/Module.pod
 -- src/docs/2.0/api/Apache/PerlSections.pod
 -- src/docs/2.0/api/Apache/Process.pod
@@ -59,7 +64,9 @@ VV src/docs/2.0/api/ModPerl/Global.pod
 -- src/docs/2.0/api/APR/Base64.pod
 -- src/docs/2.0/api/APR/Brigade.pod
 -- src/docs/2.0/api/APR/Bucket.pod
--- src/docs/2.0/api/APR/Const.pod
+
++- src/docs/2.0/api/APR/Const.pod
+
 -- src/docs/2.0/api/APR/Date.pod
 -- src/docs/2.0/api/APR/Error.pod
 -- src/docs/2.0/api/APR/Finfo.pod
@@ -80,7 +87,8 @@ VP src/docs/2.0/api/APR/Socket.pod
         recvfrom
         sendto
 
--- src/docs/2.0/api/APR/Table.pod
+VV src/docs/2.0/api/APR/Table.pod
+
 -- src/docs/2.0/api/APR/ThreadMutex.pod
 -- src/docs/2.0/api/APR/URI.pod
 -- src/docs/2.0/api/APR/Util.pod
