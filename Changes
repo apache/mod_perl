@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+add Status{Terse,Deparse,OptionsAll} options to Apache::Status
+
 adjust mod_perl.h for 5.005_59 perl_eval_{pv,sv} rename
 
 fix flush_namespace undef logic in Apache::PerlRun, thanks to Karsten

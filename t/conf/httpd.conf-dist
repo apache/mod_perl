@@ -149,10 +149,7 @@ PerlSetupEnv   On
 </Location>
 
 <Location /perl/perl-status>
-PerlSetVar StatusPeek On
-PerlSetVar StatusGraph On
-PerlSetVar StatusDumper On
-PerlSetVar StatusLexInfo On
+PerlSetVar StatusOptionsAll On
 SetHandler perl-script
 PerlHandler +Apache::Status
 </Location>
