@@ -178,10 +178,25 @@ sub ap_ccopts {
     $ccopts;
 }
 
+sub ccopts_hpux {
+    my $cflags = shift;
+    #return if $Config{cc} eq 'gcc'; #XXX?
+    return if $$cflags =~ /(-Ae|\+e)/;
+    $$cflags .= " -Ae";
+}
+
 sub ccopts {
     my($self) = @_;
 
-    $self->strip_lfs(ExtUtils::Embed::ccopts()) . $self->ap_ccopts;
+    my $cflags = $self->strip_lfs(ExtUtils::Embed::ccopts()) .
+      $self->ap_ccopts;
+
+    my $fixup = \&{"ccopts_$^O"};
+    if (defined &$fixup) {
+        $fixup->(\$cflags);
+    }
+
+    $cflags;
 }
 
 sub perl_config {
