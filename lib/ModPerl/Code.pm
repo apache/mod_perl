@@ -83,11 +83,13 @@ while (my($k,$v) = each %directive_proto) {
 
 my %flags = (
     Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART
-               PERL_CLONE PERL_ALLOC)],
+               PERL_CLONE PERL_ALLOC UNSET)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
 );
+
+my %flags_lookup = map { $_,1 } qw(Srv);
 
 sub new {
     my $class = shift;
@@ -234,10 +236,17 @@ EOF
 }
 
 sub generate_flags {
-    my($self, $h_fh) = @_;
+    my($self, $h_fh, $c_fh) = @_;
 
     while (my($class, $opts) = each %{ $self->{flags} }) {
         my $i = 0;
+        my @lookup = ();
+        my $lookup_proto = "";
+        if ($flags_lookup{$class}) {
+            $lookup_proto = join canon_func('flags', 'lookup', $class),
+              'int ', '(const char *str)';
+            push @lookup, "$lookup_proto {";
+        }
 
         print $h_fh "\n#define Mp${class}FLAGS(p) p->flags\n";
         $class = "Mp$class";
@@ -245,6 +254,10 @@ sub generate_flags {
         for my $f (@$opts) {
             my $flag = "${class}_f_$f";
             my $cmd  = $class . $f;
+            if (@lookup) {
+                my $name = canon_name($f);
+                push @lookup, qq(   if (strEQ(str, "$name")) return $flag;);
+            }
 
             print $h_fh <<EOF;
 
@@ -256,6 +269,10 @@ sub generate_flags {
 
 EOF
             $i += $i || 1;
+        }
+        if (@lookup) {
+            print $c_fh join "\n", @lookup, "   return -1;\n}\n";
+            print $h_fh "$lookup_proto;\n";
         }
     }
 
@@ -346,6 +363,13 @@ sub canon_func {
     join '_', 'modperl', map { canon_lc($_) } @_;
 }
 
+sub canon_name {
+    local $_ = shift;
+    s/([A-Z]+)/ucfirst(lc($1))/ge;
+    s/_//g;
+    $_;
+}
+
 sub canon_define {
     join '_', 'MP', map { canon_uc($_) } @_;
 }
@@ -374,12 +398,13 @@ my %sources = (
                                    c => 'modperl_hooks.c'},
    generate_handler_directives => {h => 'modperl_directives.h',
                                    c => 'modperl_directives.c'},
-   generate_flags              => {h => 'modperl_flags.h'},
+   generate_flags              => {h => 'modperl_flags.h',
+                                   c => 'modperl_flags.c'},
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
 my @c_src_names = qw(interp tipool log config callback gtop);
-my @g_c_names = map { "modperl_$_" } qw(hooks directives xsinit);
+my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
 sub o_files { [map { "$_.o" } @c_names, @g_c_names] }
