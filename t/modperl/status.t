@@ -19,8 +19,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, Apache::OK;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
-             $code,
+    ok t_cmp($code,
+             Apache::HTTP_OK, 
              $uri);
 }
 
@@ -29,8 +29,8 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
     
     # no Alias to map us to DocumentRoot
-    ok t_cmp(Apache::NOT_FOUND, 
-             $code,
+    ok t_cmp($code,
+             Apache::NOT_FOUND, 
              $uri);
 }
 
@@ -39,8 +39,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, Apache::NOT_FOUND;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::NOT_FOUND, 
-             $code,
+    ok t_cmp($code,
+             Apache::NOT_FOUND, 
              $uri);
 }
 
@@ -48,8 +48,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, Apache::FORBIDDEN;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::FORBIDDEN, 
-             $code,
+    ok t_cmp($code,
+             Apache::FORBIDDEN, 
              $uri);
 }
 
@@ -57,8 +57,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, Apache::SERVER_ERROR;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp($code,
+             Apache::SERVER_ERROR, 
              $uri);
 }
 
@@ -68,8 +68,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 601;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp($code,
+             Apache::SERVER_ERROR, 
              $uri);
 }
 
@@ -77,8 +77,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 313;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp($code,
+             Apache::SERVER_ERROR, 
              $uri);
 }
 
@@ -86,8 +86,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 1;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp($code,
+             Apache::SERVER_ERROR, 
              $uri);
 }
 
@@ -99,8 +99,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, Apache::HTTP_OK;
     my $response = GET $uri;
 
-    ok t_cmp(Apache::HTTP_OK,
-             $response->code,
+    ok t_cmp($response->code,
+             Apache::HTTP_OK,
              $uri);
 
     ok t_cmp($response->content,
@@ -114,8 +114,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 'exit';
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
-             $code,
+    ok t_cmp($code,
+             Apache::HTTP_OK, 
              $uri);
 }
 
@@ -124,8 +124,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 'die';
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp($code,
+             Apache::SERVER_ERROR, 
              $uri);
 }
 
@@ -133,8 +133,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 'foobar';
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
-             $code,
+    ok t_cmp($code,
+             Apache::HTTP_OK, 
              $uri);
 }
 
@@ -142,8 +142,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 'foo9bar';
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
-             $code,
+    ok t_cmp($code,
+             Apache::HTTP_OK, 
              $uri);
 }
 
@@ -151,8 +151,8 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 'undef';
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
-             $code,
+    ok t_cmp($code,
+             Apache::HTTP_OK, 
              $uri);
 }
 

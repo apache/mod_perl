@@ -17,8 +17,8 @@ sub handler {
 
     plan $r, tests => 1;
     my $callback = Apache::current_callback();
-    ok t_cmp('PerlResponseHandler',
-             $callback,
+    ok t_cmp($callback,
+             'PerlResponseHandler',
              'inside PerlResponseHandler');
 
     #warn "in callback: $callback\n";

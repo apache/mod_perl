@@ -10,8 +10,8 @@ my $location = "/TestModperl__exit";
 plan tests => 3;
 
 {
-    ok t_cmp('exited',
-             GET_BODY_ASSERT("$location?noneval"),
+    ok t_cmp(GET_BODY_ASSERT("$location?noneval"),
+             'exited',
              "exit in non eval context");
 
 }

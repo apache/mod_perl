@@ -26,8 +26,8 @@ for (1..2) {
         $skip++ unless defined $res;
         skip_not_same_interp(
             $skip,
-            $expected,
             defined $res && $res->content,
+            $expected,
             "GET over the same interp"
         );
     }
@@ -47,8 +47,8 @@ for (1..2) {
         $skip++ unless defined $res;
         skip_not_same_interp(
             $skip,
-            $expected,
             defined $res && $res->content,
+            $expected,
             "POST over the same interp"
         );
     }
@@ -67,8 +67,8 @@ for (1..2) {
         $skip++ unless defined $res;
         skip_not_same_interp(
             $skip,
-            $same_interp,
             defined $res && $res->header(Apache::TestRequest::INTERP_KEY),
+            $same_interp,
             "HEAD over the same interp"
         );
     }

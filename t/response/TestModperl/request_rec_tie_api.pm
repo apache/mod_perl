@@ -43,7 +43,7 @@ sub handler {
 
         # test OPEN
         my $received = open STDOUT, ">", $file or die "Can't open $file: $!";
-        ok t_cmp(1, $received, "OPEN");
+        ok t_cmp($received, 1, "OPEN");
 
         # test CLOSE, which is a noop
         ok $r->CLOSE;

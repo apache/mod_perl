@@ -32,33 +32,33 @@ sub env {
 
     (my $value) = $r->uri =~ /TestModperl__setupenv_(\w+)/;
 
-    ok t_cmp(Apache::Test::vars('remote_addr'),
-             $ENV{REMOTE_ADDR},
+    ok t_cmp($ENV{REMOTE_ADDR},
+             Apache::Test::vars('remote_addr'),
              'found REMOTE_ADDR in %ENV');
 
-    ok t_cmp('server',
-             $ENV{SRV_SUBPROCESS},
+    ok t_cmp($ENV{SRV_SUBPROCESS},
+             'server',
              'found subprocess_env table entry SRV_SUBPROCESS in %ENV');
 
-    ok t_cmp($value,
-             $ENV{DIR_SUBPROCESS},
+    ok t_cmp($ENV{DIR_SUBPROCESS},
+             $value,
              'found subprocess_env table entry DIR_SUBPROCESS in %ENV');
 
-    ok t_cmp($value,
-             $ENV{DIR_SETENV},
+    ok t_cmp($ENV{DIR_SETENV},
+             $value,
              'found per-directory SetEnv entry in %ENV');
 
-    ok t_cmp('server',
-             $ENV{SRV_SETENV},
+    ok t_cmp($ENV{SRV_SETENV},
+             'server',
              'found per-server SetEnv entry in %ENV');
 
     # PerlSetEnv always set
-    ok t_cmp($value,
-             $ENV{DIR_PERLSETENV},
+    ok t_cmp($ENV{DIR_PERLSETENV},
+             $value,
              'found per-directory PerlSetEnv entry in %ENV');
 
-    ok t_cmp('server',
-             $ENV{SRV_PERLSETENV},
+    ok t_cmp($ENV{SRV_PERLSETENV},
+             'server',
              'found per-server PerlSetEnv entry in %ENV');
 
     return Apache::OK;
@@ -72,33 +72,33 @@ sub noenv {
 
     (my $value) = $r->uri =~ /TestModperl__setupenv_(\w+)/;
 
-    ok t_cmp(undef,
-             $ENV{REMOTE_ADDR},
+    ok t_cmp($ENV{REMOTE_ADDR},
+             undef,
              'REMOTE_ADDR not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{SRV_SUBPROCESS},
+    ok t_cmp($ENV{SRV_SUBPROCESS},
+             undef,
              'subprocess_env table entry SRV_SUBPROCESS not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{DIR_SUBPROCESS},
+    ok t_cmp($ENV{DIR_SUBPROCESS},
+             undef,
              'subprocess_env table entry DIR_SUBPROCESS not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{DIR_SETENV},
+    ok t_cmp($ENV{DIR_SETENV},
+             undef,
              'per-directory SetEnv entry not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{SRV_SETENV},
+    ok t_cmp($ENV{SRV_SETENV},
+             undef,
              'per-server SetEnv entry not found in %ENV');
 
     # PerlSetEnv always set
-    ok t_cmp($value,
-             $ENV{DIR_PERLSETENV},
+    ok t_cmp($ENV{DIR_PERLSETENV},
+             $value,
              'found per-directory PerlSetEnv entry in %ENV');
 
-    ok t_cmp('server',
-             $ENV{SRV_PERLSETENV},
+    ok t_cmp($ENV{SRV_PERLSETENV},
+             'server',
              'found per-server PerlSetEnv entry in %ENV');
 
     return Apache::OK;
@@ -112,34 +112,34 @@ sub someenv {
 
     (my $value) = $r->uri =~ /TestModperl__setupenv_(\w+)/;
 
-    ok t_cmp(Apache::Test::vars('remote_addr'),
-             $ENV{REMOTE_ADDR},
+    ok t_cmp($ENV{REMOTE_ADDR},
+             Apache::Test::vars('remote_addr'),
              'found REMOTE_ADDR in %ENV');
 
     # set before void call
-    ok t_cmp('server',
-             $ENV{SRV_SUBPROCESS},
+    ok t_cmp($ENV{SRV_SUBPROCESS},
+             'server',
              'found subprocess_env table entry one in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{DIR_SUBPROCESS},
+    ok t_cmp($ENV{DIR_SUBPROCESS},
+             undef,
              'subprocess_env table entry DIR_SUBPROCESS not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{DIR_SETENV},
+    ok t_cmp($ENV{DIR_SETENV},
+             undef,
              'per-directory SetEnv entry not found in %ENV');
 
-    ok t_cmp(undef,
-             $ENV{SRV_SETENV},
+    ok t_cmp($ENV{SRV_SETENV},
+             undef,
              'per-server SetEnv entry not found in %ENV');
 
     # PerlSetEnv always set
-    ok t_cmp($value,
-             $ENV{DIR_PERLSETENV},
+    ok t_cmp($ENV{DIR_PERLSETENV},
+             $value,
              'found per-directory PerlSetEnv entry in %ENV');
 
-    ok t_cmp('server',
-             $ENV{SRV_PERLSETENV},
+    ok t_cmp($ENV{SRV_PERLSETENV},
+             'server',
              'found per-server PerlSetEnv entry in %ENV');
 
     return Apache::OK;

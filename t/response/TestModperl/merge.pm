@@ -113,15 +113,15 @@ sub handler {
 
             if ($directive =~ m/Env/) {
                 my $received = $ENV{$key};
-                ok t_cmp($expected[0], $received, $comment);
+                ok t_cmp($received, $expected[0], $comment);
             }
             elsif ($directive =~ m/Set/) {
                 my $received = $r->dir_config->get($key);
-                ok t_cmp($expected[0], $received, $comment);
+                ok t_cmp($received, $expected[0], $comment);
             }
             else {
                 my @received = $r->dir_config->get($key);
-                ok t_cmp(\@expected, \@received, $comment);
+                ok t_cmp(\@received, \@expected, $comment);
             }
         }
     }

@@ -27,16 +27,16 @@ sub handler {
     plan $r, tests => @srv_plus + @srv_minus + @dir_plus + @dir_minus;
     my $s = $r->server;
 
-    ok t_cmp(1, $s->is_perl_option_enabled($_),
+    ok t_cmp($s->is_perl_option_enabled($_), 1,
              "PerlOptions +$_") for @srv_plus;
 
-    ok t_cmp(0, $s->is_perl_option_enabled($_),
+    ok t_cmp($s->is_perl_option_enabled($_), 0,
              "PerlOptions -$_") for @srv_minus;
 
-    ok t_cmp(1, $r->is_perl_option_enabled($_),
+    ok t_cmp($r->is_perl_option_enabled($_), 1,
              "PerlOptions +$_") for @dir_plus;
 
-    ok t_cmp(0, $r->is_perl_option_enabled($_),
+    ok t_cmp($r->is_perl_option_enabled($_), 0,
              "PerlOptions -$_") for @dir_minus;
 
     return Apache::OK;

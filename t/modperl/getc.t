@@ -15,5 +15,5 @@ my $str = POST_BODY $location, content => $expect;
 
 ok $str;
 
-ok t_cmp($expect, $str, 'getc');
+ok t_cmp($str, $expect, 'getc');
 

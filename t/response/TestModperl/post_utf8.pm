@@ -40,7 +40,7 @@ sub handler {
     # utf8::decode() doesn't work under -T
     my ($received_ascii, $received_utf8) = split /=/, $received;
 
-    ok t_cmp($expected_ascii, $received_ascii, "ascii");
+    ok t_cmp($received_ascii, $expected_ascii, "ascii");
 
     ok $expected_utf8 eq $received_utf8;
     # if you want to see the utf8 data run with:

@@ -65,7 +65,7 @@ sub handler {
 
     for my $key (sort keys %ENV) {
         eval { delete $ENV{$key}; };
-        ok t_cmp('', $@, $key);
+        ok t_cmp($@, '', $key);
     }
 
     Apache::OK;

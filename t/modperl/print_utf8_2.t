@@ -24,7 +24,7 @@ if ($Config{useperlio}) {
     # needed for debugging print out of utf8 strings
     # but works only if perl is built w/ perlio
     binmode(STDOUT, ':utf8');
-    ok t_cmp($expected, $received, 'UTF8 response via $r->print');
+    ok t_cmp($received, $expected, 'UTF8 response via $r->print');
 }
 else {
     ok $expected eq $received;

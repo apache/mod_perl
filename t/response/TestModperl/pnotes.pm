@@ -17,17 +17,17 @@ sub handler {
 
     ok $r->pnotes;
 
-    ok t_cmp('pnotes_bar',
-             $r->pnotes('pnotes_foo', 'pnotes_bar'),
+    ok t_cmp($r->pnotes('pnotes_foo', 'pnotes_bar'),
+             'pnotes_bar',
              q{$r->pnotes(key,val)});
 
-    ok t_cmp('pnotes_bar',
-             $r->pnotes('pnotes_foo'),
+    ok t_cmp($r->pnotes('pnotes_foo'),
+             'pnotes_bar',
              q{$r->pnotes(key)});
 
-    ok t_cmp('HASH', ref($r->pnotes), q{ref($r->pnotes)});
+    ok t_cmp(ref($r->pnotes), 'HASH', q{ref($r->pnotes)});
 
-    ok t_cmp('pnotes_bar', $r->pnotes()->{'pnotes_foo'},
+    ok t_cmp($r->pnotes()->{'pnotes_foo'}, 'pnotes_bar',
              q{$r->pnotes()->{}});
 
     # unset the entry (but the entry remains with undef value)

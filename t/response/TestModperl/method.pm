@@ -30,7 +30,7 @@ sub handler : method {
 
     plan $r, tests => $tests;
 
-    ok t_cmp(2, scalar @_,
+    ok t_cmp(scalar @_, 2,
              '@_ == 2');
 
     my $class = ref($self) || $self;
@@ -39,12 +39,12 @@ sub handler : method {
              'handler class');
 
     ok t_cmp(
-        '/' . Apache::TestRequest::module2path($class), 
         $r->uri,
+        '/' . Apache::TestRequest::module2path($class), 
         '$r->uri eq $location');
 
     if ($is_obj) {
-        ok t_cmp($], $self->{perl_version},
+        ok t_cmp($self->{perl_version}, $],
                  'object handler data');
     }
 
