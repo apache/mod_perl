@@ -15,6 +15,6 @@ t_debug("connecting to $location");
 plan tests => 1;
 
 ok t_cmp(
-    $remote_addr,
     GET_BODY_ASSERT($location),
+    $remote_addr,
     "connection notes");
