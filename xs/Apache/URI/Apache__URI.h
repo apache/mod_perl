@@ -1,12 +1,12 @@
 static MP_INLINE
-apr_uri_components *mpxs_Apache__RequestRec_parsed_uri(request_rec *r)
+apr_uri_t *mpxs_Apache__RequestRec_parsed_uri(request_rec *r)
 {
     modperl_uri_t *uri = modperl_uri_new(r->pool);
 
     uri->uri = r->parsed_uri;
     uri->path_info = r->path_info;
 
-    return (apr_uri_components *)uri;
+    return (apr_uri_t *)uri;
 }
 
 static MP_INLINE int mpxs_ap_unescape_url(pTHX_ SV *url)

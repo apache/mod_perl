@@ -1,17 +1,17 @@
 static MP_INLINE
-char *mpxs_apr_uri_unparse_components(pTHX_
-                                      apr_uri_components *uptr,
-                                      unsigned flags)
+char *mpxs_apr_uri_unparse(pTHX_
+                           apr_uri_t *uptr,
+                           unsigned flags)
 {
-    return apr_uri_unparse_components(((modperl_uri_t *)uptr)->pool,
-                                      uptr, flags);
+    return apr_uri_unparse(((modperl_uri_t *)uptr)->pool,
+                           uptr, flags);
 }
 
 static MP_INLINE
-apr_uri_components *mpxs_apr_uri_parse_components(pTHX_
-                                                  SV *classname,
-                                                  SV *obj,
-                                                  const char *uri_string)
+apr_uri_t *mpxs_apr_uri_parse(pTHX_
+                              SV *classname,
+                              SV *obj,
+                              const char *uri_string)
 {
     request_rec *r = NULL;
     apr_pool_t *p = modperl_sv2pool(aTHX_ obj);
@@ -26,17 +26,17 @@ apr_uri_components *mpxs_apr_uri_parse_components(pTHX_
         uri_string = ap_construct_url(r->pool, r->uri, r); /*XXX*/
     }
 #endif
-    (void)apr_uri_parse_components(p, uri_string, &uri->uri);
+    (void)apr_uri_parse(p, uri_string, &uri->uri);
 
     if (r) {
         uri->uri.query = r->args;
     }
 
-    return (apr_uri_components *)uri;
+    return (apr_uri_t *)uri;
 }
 
 static MP_INLINE
-char *mpxs_APR__URI_port(apr_uri_components *uri, SV *portsv)
+char *mpxs_APR__URI_port(apr_uri_t *uri, SV *portsv)
 {
     dTHX; /*XXX*/
     char *port_str = uri->port_str;
