@@ -659,6 +659,7 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 	    *sv = POPs;
 	    ++SvREFCNT(*sv);
 	}
+	PUTBACK;
 	FREETMPS;LEAVE;
 
 	return *sv;
@@ -679,7 +680,7 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 {
     GV *gv;
-    mod_perl_perl_dir_config *new,
+    mod_perl_perl_dir_config *new = NULL,
 	*basevp = (mod_perl_perl_dir_config *)basev,
 	*addvp  = (mod_perl_perl_dir_config *)addv;
     SV *sv, *basesv = basevp->obj, *addsv = addvp->obj;
@@ -711,6 +712,7 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	    new->obj = sv;
 	    new->class = SvCLASS(sv);
 	}
+	PUTBACK;
 	FREETMPS;LEAVE;
     }
     else {
@@ -720,12 +722,24 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
     return (void *)new;
 }
 
+void perl_perl_cmd_cleanup(void *data)
+{
+    mod_perl_perl_dir_config *cld = (mod_perl_perl_dir_config *)data;
+
+    if(cld->obj) {
+	MP_TRACE_c(fprintf(stderr, 
+			   "cmd_cleanup: SvREFCNT($%s::$obj) == %d\n",
+			   cld->class, (int)SvREFCNT(cld->obj)));
+	SvREFCNT_dec(cld->obj);
+    }
+}
+
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
 				  char *one, char *two, char *three)
 {
     dSP;
     mod_perl_cmd_info *info = (mod_perl_cmd_info *)cmd->info;
-    char *subname = info->subname;
+    char *subname = info->subname, *retval = NULL;
     int count = 0;
     CV *cv = perl_get_cv(subname, TRUE);
     SV *obj;
@@ -752,16 +766,16 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
     count = perl_call_sv((SV*)cv, G_EVAL | G_SCALAR);
     SPAGAIN;
     if(count == 1) {
-	char *retval = POPp;
-	if(strEQ(retval, DECLINE_CMD))
-	    return DECLINE_CMD;
+	if(strEQ(POPp, DECLINE_CMD))
+	    retval = DECLINE_CMD;
+	PUTBACK;
     }
     FREETMPS;LEAVE;
 
     if(SvTRUE(ERRSV))
-	return SvPVX(ERRSV);
-    else
-	return NULL;
+	retval = SvPVX(ERRSV);
+
+    return retval;
 }
 #endif /* PERL_DIRECTIVE_HANDLERS */
 
