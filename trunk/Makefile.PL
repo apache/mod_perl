@@ -49,7 +49,11 @@ else {
     $USE_THREADS = (defined($Config{use5005threads}) && 
 		    ($Config{use5005threads} eq "define"));
 }
-   
+
+#hmm, seems the #include flip/flop isn't needed anymore
+#so ignore the stuff above for now
+$USE_THREADS = $ENV{PERL_USE_THREADS} || 0;
+
 require "./lib/mod_perl.pm";
 $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
 {

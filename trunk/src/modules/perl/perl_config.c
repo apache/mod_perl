@@ -577,6 +577,7 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     if(PERL_RUNNING()) {
 	if (PERL_STARTUP_IS_DONE) {
 	    if (perl_require_module(arg, NULL) != OK) {
+		dTHR;
 		STRLEN n_a;
 		return SvPV(ERRSV,n_a);
 	    }
@@ -605,6 +606,7 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
     if(PERL_RUNNING()) {
 	if (PERL_STARTUP_IS_DONE) {
 	    if (perl_load_startup_script(NULL, parms->pool, arg, TRUE) != OK) {
+		dTHR;
 		STRLEN n_a;
 		return SvPV(ERRSV,n_a);
 	    }
