@@ -516,12 +516,18 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
                                      type);
 }
 
-#else /* NOT PERLIO_LAYERS (5.6.1) */
+#else /* defined(PERLIO_LAYERS) (5.6.x) */
 
-static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file,
-                                         apr_perlio_hook_e type)
+#ifdef USE_PERLIO /* 5.6.x + -Duseperlio */
+#define MP_IO_TYPE PerlIO
+#else
+#define MP_IO_TYPE FILE
+#endif
+
+static MP_IO_TYPE *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
+                                                 apr_perlio_hook_e type)
 {
-    FILE *retval;
+    MP_IO_TYPE *retval;
     char *mode;
     int fd;
     apr_os_file_t os_file;
@@ -580,12 +586,12 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
     switch (type) {
       case APR_PERLIO_HOOK_WRITE:
         IoIFP(GvIOp(gv)) = IoOFP(GvIOp(gv)) =
-            apr_perlio_apr_file_to_FILE(aTHX_ file, type);
+            apr_perlio_apr_file_to_PerlIO(aTHX_ file, type);
         IoFLAGS(GvIOp(gv)) |= IOf_FLUSH;
         IoTYPE(GvIOp(gv)) = IoTYPE_WRONLY;
         break;
       case APR_PERLIO_HOOK_READ:
-        IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_FILE(aTHX_ file, type);
+        IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_PerlIO(aTHX_ file, type);
         IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
     };
