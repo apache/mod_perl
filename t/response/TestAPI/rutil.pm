@@ -44,7 +44,7 @@ sub handler {
     ok $r->get_limit_req_body || 1;
 
     while(my($scheme, $port) = each %default_ports) {
-        my $apr_port = APR::URI::default_port_for_scheme($scheme);
+        my $apr_port = APR::URI::port_of_scheme($scheme);
         #$r->puts("$scheme => expect: $port, got: $apr_port\n");
         ok $apr_port == $port;
     }

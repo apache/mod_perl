@@ -12903,16 +12903,6 @@ $Apache::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_port_t',
-    'name' => 'apr_uri_default_port_for_scheme',
-    'args' => [
-      {
-        'type' => 'const char *',
-        'name' => 'scheme_str'
-      }
-    ]
-  },
-  {
     'return_type' => 'int',
     'name' => 'apr_uri_parse',
     'args' => [

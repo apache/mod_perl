@@ -242,7 +242,6 @@ $Apache::ConstantsTable = {
       'APR_SO_DEBUG',
       'APR_SO_NONBLOCK',
       'APR_SO_REUSEADDR',
-      'APR_SO_TIMEOUT',
       'APR_SO_SNDBUF',
       'APR_SO_RCVBUF',
       'APR_SO_DISCONNECTED'
