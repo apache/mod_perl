@@ -19,9 +19,21 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
 {
     modperl_srv_config_t *scfg = modperl_srv_config_new(p);
+    scfg->interp_pool_cfg = 
+        (modperl_interp_pool_config_t *)
+        ap_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
+
+    /* XXX: determine reasonable defaults */
+    scfg->interp_pool_cfg->start = 3;
+    scfg->interp_pool_cfg->max_spare = 3;
+    scfg->interp_pool_cfg->min_spare = 3;
+    scfg->interp_pool_cfg->max = 5;
 
     return scfg;
 }
+
+#define merge_item(item) \
+mrg->item = add->item ? add->item : base->item
 
 void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
 {
@@ -30,7 +42,33 @@ void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
         *add  = (modperl_srv_config_t *)addv,
         *mrg  = modperl_srv_config_new(p);
 
-    mrg->mip = add->mip ? add->mip : base->mip;
+    merge_item(mip);
 
     return mrg;
 }
+
+#define MP_CONFIG_BOOTSTRAP(parms) \
+if (!scfg->mip) modperl_init(parms->server, parms->pool)
+
+MP_DECLARE_SRV_CMD(trace)
+{
+    modperl_trace_level_set(arg);
+    return NULL;
+}
+
+
+#define MP_IMP_INTERP_POOL_CFG(item) \
+const char *modperl_cmd_interp_##item(cmd_parms *parms, \
+                                      void *dummy, char *arg) \
+{ \
+    MP_dSCFG(parms->server); \
+    int item = atoi(arg); \
+    scfg->interp_pool_cfg->##item = item; \
+    MP_TRACE_d(MP_FUNC, "%s %d\n", parms->cmd->name, item); \
+    return NULL; \
+}
+
+MP_IMP_INTERP_POOL_CFG(start);
+MP_IMP_INTERP_POOL_CFG(max);
+MP_IMP_INTERP_POOL_CFG(max_spare);
+MP_IMP_INTERP_POOL_CFG(min_spare);
