@@ -67,7 +67,7 @@ TestCmd one two
 <Files ~ "\.pl$">
    PerlHandler          Apache::Registry
    PerlSendHeader       On
-   Options              ExecCGI
+   Options              +ExecCGI
 </Files>
 
 Alias /perl/ ./t/net/perl/

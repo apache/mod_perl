@@ -27,7 +27,7 @@ sub export {
     for my $new (@_) {
 	next if grep { $new eq $_ } @Apache::Constants::EXPORT_OK;
 	push @Apache::Constants::EXPORT_OK, $new;
-	if(defined %Apache::Constants::EXPORT) {
+	if(%Apache::Constants::EXPORT) {
 	    $Apache::Constants::EXPORT{$new} = 1;
 	}
     }

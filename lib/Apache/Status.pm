@@ -66,7 +66,7 @@ sub handler {
     if(defined &$sub) {
 	$r->print(@{ &{$sub}($r, $newQ->($r)) });
     }
-    elsif ($qs and defined %{$qs."::"}) {
+    elsif ($qs and %{$qs."::"}) {
 	$r->print(symdump($r, $qs));
     }
     else {

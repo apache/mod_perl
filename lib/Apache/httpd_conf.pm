@@ -183,7 +183,7 @@ $Port = 8529;
 $DocumentRoot = $dir ? "$dir/docs" : "docs";
 $ServerName = "localhost";
  
-@Alias = () unless defined @Alias;
+@Alias = () unless @Alias;
 
 for (qw(/perl /cgi-bin)) {
     push @Alias, [$_ => $dir ? "$dir/perl" : "perl"];
