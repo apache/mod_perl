@@ -263,12 +263,9 @@ AddType text/html .ehtml
 
 #HTML::Embperl
 
-<Files *.ehtml>
+<Files ~ "\.ehtml$">
+SetHandler perl-script
+PerlHandler HTML::Embperl
+Options +ExecCGI
+</Files>  
 
-    SetHandler perl-script
-
-    PerlHandler HTML::Embperl
-
-    Options ExecCGI
-
-</Files>
