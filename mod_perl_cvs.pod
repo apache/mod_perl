@@ -18,11 +18,11 @@ everyone has access the latest version and can help see to it that
 mod_perl does compile and work on all platforms, with the various
 versions and configurations of Perl and Apache.  Patches are always
 welcome, simply testing the latest snapshots is just as, if not more
-helpful.  When you build mod_perl, running 'make test_report' will
-send a message to the I<modperl-cvs@apache.org> list, which is the
-same place cvs commit logs and diffs are mailed to.  The message sent
-by test_report includes the output of 'make test', plus version and
-configuration information for your Perl and Apache.
+helpful.
+
+It's recommended to subscribe to the I<modperl-cvs@apache.org> list,
+which is the place cvs commit logs and diffs are mailed to; at least
+if you're going to work on the code.
 
 Here are the several ways to access the cvs tree.
 
