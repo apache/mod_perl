@@ -692,7 +692,6 @@ static SV *perl_bless_cmd_parms(cmd_parms *parms)
 static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 {
     GV *gv;
-    int i;
 
     if(*sv && SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
 	return *sv;
@@ -848,7 +847,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
     }
 
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
-	if(instr(l, "</Perl>"))
+	if(strncasecmp(l, "</Perl>", 7) == 0)
 	    break;
 	if(PERL_RUNNING()) {
 	    sv_catpv(sv, l);
