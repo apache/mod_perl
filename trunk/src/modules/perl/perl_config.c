@@ -395,8 +395,8 @@ return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
 #else
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
-cmd = arg; \
 mp_preload_module(&arg); \
+cmd = arg; \
 return NULL
 
 int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)
