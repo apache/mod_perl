@@ -25,6 +25,12 @@
 #define MP_INLINE APR_INLINE
 #endif
 
+#ifdef CYGWIN
+#define MP_STATIC
+#else
+#define MP_STATIC static
+#endif
+
 #ifdef WIN32
 #   define MP_FUNC_T(name)          (_stdcall *name)
 #   define MP_FUNC_NONSTD_T(name)   (*name)

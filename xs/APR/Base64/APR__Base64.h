@@ -33,7 +33,7 @@ static MP_INLINE void mpxs_apr_base64_decode(pTHX_ SV *sv, SV *arg)
     mpxs_sv_cur_set(sv, decoded_len);
 }
 
-static XS(MPXS_apr_base64_encode)
+MP_STATIC XS(MPXS_apr_base64_encode)
 {
     dXSARGS;
 
@@ -42,7 +42,7 @@ static XS(MPXS_apr_base64_encode)
     mpxs_set_targ(mpxs_apr_base64_encode, ST(0));
 }
 
-static XS(MPXS_apr_base64_decode)
+MP_STATIC XS(MPXS_apr_base64_decode)
 {
     dXSARGS;
 

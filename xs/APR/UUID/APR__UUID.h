@@ -38,7 +38,7 @@ static MP_INLINE apr_uuid_t *mpxs_apr_uuid_parse(pTHX_ SV *CLASS, char *buf)
     return uuid;
 }
 
-static XS(MPXS_apr_uuid_format)
+MP_STATIC XS(MPXS_apr_uuid_format)
 {
     dXSARGS;
 
