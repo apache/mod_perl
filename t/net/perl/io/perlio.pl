@@ -15,7 +15,7 @@ use Config;
 my $r = shift;
 my $sub = "test_$ENV{QUERY_STRING}";
 if (defined &{$sub}) {
-    &{$sub};
+    &{$sub}($r);
 }
 else {
     print "Status: 200 Bottles of beer on the wall\n",
@@ -114,18 +114,19 @@ EOF
 }
 
 sub test_syswrite_1 {
-    test_syswrite();
+    test_syswrite(shift);
 }
 
 sub test_syswrite_2 {
-    test_syswrite(160);
+    test_syswrite(shift,160);
 }
 
 sub test_syswrite_3 {
-    test_syswrite(80, 2000);
+    test_syswrite(shift,80, 2000);
 }
 
 sub test_syswrite {
+    my $r = shift;
     my $len = shift;
     my $offset = shift;
     my $msg = "";
