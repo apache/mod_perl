@@ -72,7 +72,8 @@ sub handler {
     foreach my $p (keys %pools) {
 
         ok t_cmp(catfile($serverroot, 'conf'),
-                 Apache::Server::server_root_relative($pools{$p}, 'conf'),
+                 canonpath(Apache::Server::server_root_relative($pools{$p},
+                     'conf')),
                  "Apache::Server::server_root_relative($p, 'conf')");
     }
 
@@ -80,7 +81,7 @@ sub handler {
     foreach my $obj (keys %objects) {
 
         ok t_cmp(catfile($serverroot, 'conf'),
-                 $objects{$obj}->server_root_relative('conf'),
+                 canonpath($objects{$obj}->server_root_relative('conf')),
                  "$obj->server_root_relative('conf')");
     }
 
@@ -90,7 +91,7 @@ sub handler {
         eval { Apache::Server::server_root_relative($obj, 'conf') };
 
         ok t_cmp(qr/server_root_relative.*no .* key/,
-                 $@,
+                 canonpath($@),
                  "Apache::Server::server_root_relative(\$obj, 'conf')");
     }
 
