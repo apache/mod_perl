@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+upgrade perl_PL.h to work with Perl 5.005_53+
+
 use absolute path for StrongholdLicenseFile
 [Todd R. Eigenschink <todd@tekinteractive.com>]
 
