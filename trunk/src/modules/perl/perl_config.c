@@ -142,7 +142,6 @@ void perl_eat_config_string(cmd_parms *cmd, void *config, SV *sv) {
 
 char *mod_perl_auth_name(request_rec *r, char *val)
 {
-#ifndef WIN32 
     core_dir_config *conf = 
       (core_dir_config *)get_module_config(r->per_dir_config, &core_module); 
 
@@ -153,14 +152,10 @@ char *mod_perl_auth_name(request_rec *r, char *val)
     }
 
     return conf->auth_name;
-#else
-    return (char *) auth_name(r);
-#endif
 }
 
 char *mod_perl_auth_type(request_rec *r, char *val)
 {
-#ifndef WIN32 
     core_dir_config *conf = 
       (core_dir_config *)get_module_config(r->per_dir_config, &core_module); 
 
@@ -171,9 +166,6 @@ char *mod_perl_auth_type(request_rec *r, char *val)
     }
 
     return conf->auth_type;
-#else
-    return (char *) auth_type(r);
-#endif
 }
 
 void mod_perl_dir_env(request_rec *r, perl_dir_config *cld)
