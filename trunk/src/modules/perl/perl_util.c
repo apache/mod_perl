@@ -122,8 +122,13 @@ request_rec *sv2request_rec(SV *in, char *pclass, CV *cv)
 	    int klen = strlen(r_keys[i]);
 	    if(hv_exists((HV*)SvRV(in), r_keys[i], klen) &&
 	       (sv = *hv_fetch((HV*)SvRV(in), 
-			       r_keys[i], klen, FALSE)))
+			       r_keys[i], klen, FALSE))) {
+                if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVHV)) {
+                    /* dig deeper */
+                    return sv2request_rec(sv, pclass, cv);
+                }
 		break;
+            }
 	}
 	if(!sv)
 	    croak("method `%s' invoked by a `%s' object with no `r' key!",
