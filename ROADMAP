@@ -7,10 +7,24 @@ features that were implemented but have bugs.
 
 META: there is also the todo/ dir...
 
+### WrapXS ###
+
+  o source_scan won't create Wrap/Foo/Bar.xs if
+    xs/maps/modperl_functions.map defines only a boot section:
+    MODULE=APR::IO PACKAGE=APR::IO BOOT=1 
+    unless there is at least one function added to the .map file
+    http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100702825506778&w=2
+
 ### Installation ###
 
  o Currently only MP_USE_DSO=1 is used, need to test that
    MP_USE_STATIC=1 works too.
+
+### Configuration ###
+
+* Set/Add config overlapping which is not doing the right thing. See:
+  http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
+
 
 
 ### RunTime ###
