@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Disable Apache::HookRun::run_create_request -- it's already run
+internally by Apache::RequestRec->new [Stas]
+
 Update Apache::RequestRec->new() to initialize members of request_rec
 which were added some time ago (without it we were getting segfaults
 in the new pseudo_http test. [Stas]
