@@ -580,7 +580,27 @@ http://docx.webperf.org/
 =back
 
 
+=head1 mod_perl 1.x Compatibility
 
+C<Apache::compat> provides mod_perl 1.x compatibility feature, which
+allows C<Apache::Registry> from mod_perl 1.x to be used:
+
+  startup.pl:
+  -----------
+  use Apache::compat ();
+  use lib ...; #or something to find 1.xx Apache::Registry
+
+then in I<httpd.conf>:
+
+  Alias /perl /path/to/perl/scripts
+  <Location /perl>
+     Options +ExecCGI
+     SetHandler modperl
+     PerlResponseHandler Apache::Registry
+  </Location>
+
+Notice that C<Apache::compat> has to be loaded before C<CGI.pm> if the
+latter module is used.
 
 =head1 Submitting Patches
 
