@@ -24,11 +24,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - problems w/ CGI.pm 2.4x + modules/cgi 6-7
 	Ask Bjorn Hansen <ask@netcetera.dk>
 
-- add directives for ApacheSSL + 'make test'
- SSLCacheServerPort 30123
- SSLCacheServerPath /tmp
-	Adam Laurie <adam@algroup.co.uk>
-
 - Gerald's report of Embperl/sub-request/print breakage
 
 - perl-status?mod_perl_hooks broken under win32?
@@ -37,11 +32,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
            Jeff Baker <jeff@godzilla.tamu.edu>
 
 - APACI stuff:
-
-  o is .xs.c target broken?  {Apache,Constants}.c is not being
-    generated for some folks 
-
-  o building w/ threaded Perl
 
   o Support for the APXS variant of the new APACI stuff. Best would
     be a USE_APXS=1 similar to USE_APACI=1. The difference is that instead of

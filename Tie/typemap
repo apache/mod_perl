@@ -1,3 +1,15 @@
 TYPEMAP
-Apache::TieHashTable	T_PTROBJ
+Apache::TieHashTable	T_TABLEOBJ
+
+OUTPUT
+
+T_TABLEOBJ
+	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+
+INPUT
+
+T_TABLEOBJ
+	$var = ($type)hvrv2table($arg);
+
+
 
