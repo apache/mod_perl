@@ -233,6 +233,7 @@ my %defines_wanted = (
     Apache => {
         common     => [qw{OK DECLINED DONE}],
         config     => [qw{DECLINE_CMD}],
+        context    => [qw(NOT_IN_ GLOBAL_ONLY)],
         http       => [qw{HTTP_}],
         log        => [qw(APLOG_)],
         methods    => [qw{M_ METHODS}],
