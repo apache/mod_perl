@@ -536,10 +536,6 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
     I32 i, oldscope = PL_scopestack_ix;
     SV **ary = AvARRAY(subs);
 
-    /* XXX: why this trace doesn't get printed to error_log when this
-     * method is called from modperl_perl_destruct. Perl_warn works
-     * just fine. may be we need to switch to perl_warn when apache
-     * closes the logging api (when?) */
     MP_TRACE_g(MP_FUNC, "pid %lu running %d %s subs",
                (unsigned long)getpid(), AvFILLp(subs)+1, name);
     
