@@ -31,7 +31,7 @@ sub init : FilterInitHandler {
 
     #warn "**** init is exiting\n";
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 # testing whether we can get the pre handler callback in evolved way
@@ -56,7 +56,7 @@ sub transparent : FilterRequestHandler
 
     #warn "**** filter is exiting\n";
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -67,7 +67,7 @@ sub response {
     $r->content_type('text/plain');
 
     my $data;
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         $data = TestCommon::Utils::read_post($r);
     }
 
@@ -76,7 +76,7 @@ sub response {
 
     #warn "**** content is exiting\n";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

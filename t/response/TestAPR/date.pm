@@ -19,7 +19,7 @@ sub handler {
 
     TestAPRlib::date::test();
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -23,14 +23,14 @@ use constant IOBUFSIZE => 8192;
 sub handler {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->method_number == Apache2::M_POST;
+    return Apache2::Const::DECLINED unless $r->method_number == Apache2::Const::M_POST;
 
     $r->content_type("text/plain");
 
     my $data = read_request_body($r);
     send_response_body($r, lc($data));
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub send_response_body {
@@ -55,7 +55,7 @@ sub read_request_body {
     my $seen_eos = 0;
     my $count = 0;
     do {
-        $r->input_filters->get_brigade($bb, Apache2::MODE_READBYTES,
+        $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;

@@ -19,7 +19,7 @@ sub handler {
     $r->handler("modperl");
     $r->push_handlers(PerlResponseHandler => [\&one, \&two, \&three, \&four]);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub one {
@@ -28,7 +28,7 @@ sub one {
     $r->content_type('text/plain');
     $r->print("one\n");
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub two {
@@ -36,7 +36,7 @@ sub two {
 
     $r->print("two\n");
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub three {
@@ -44,7 +44,7 @@ sub three {
 
     $r->print("three\n");
 
-    return Apache2::DONE;
+    return Apache2::Const::DONE;
 }
 
 # this one shouldn't get called, because the handler 'three' has
@@ -54,7 +54,7 @@ sub four {
 
     $r->print("four\n");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 

@@ -96,7 +96,7 @@ sub handler {
         ok t_cmp($data, "1112", "correct data");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

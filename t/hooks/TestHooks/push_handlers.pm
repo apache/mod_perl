@@ -34,11 +34,11 @@ sub handler {
 
     $r->push_handlers(PerlResponseHandler => \&end);
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
-sub end { return Apache2::DONE }
-sub say { shift->print(shift,"\n"); return Apache2::DECLINED }
+sub end { return Apache2::Const::DONE }
+sub say { shift->print(shift,"\n"); return Apache2::Const::DECLINED }
 
 sub conf {
     # this one is configured from httpd.conf

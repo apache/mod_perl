@@ -54,7 +54,7 @@ sub handler {
         $subr->run;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub prefix_filter {
@@ -64,7 +64,7 @@ sub prefix_filter {
         $filter->print("pre+$buffer");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub suffix_filter {
@@ -74,7 +74,7 @@ sub suffix_filter {
         $filter->print("$buffer+suf");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

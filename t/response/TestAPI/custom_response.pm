@@ -16,9 +16,9 @@ sub handler {
     my $how = $r->args || '';
     # warn "$how";
     # could be text or url
-    $r->custom_response(Apache2::FORBIDDEN, $how);
+    $r->custom_response(Apache2::Const::FORBIDDEN, $how);
 
-    return Apache2::FORBIDDEN;
+    return Apache2::Const::FORBIDDEN;
 }
 
 1;

@@ -13,13 +13,13 @@ my %trans = (
     '/TestHooks/trans.pm' => sub {
         my $r = shift;
         $r->filename(__FILE__);
-        Apache2::OK;
+        Apache2::Const::OK;
     },
     '/phooey' => sub {
         my $r = shift;
         $r->filename(__FILE__); #filename is currently required
         $r->uri('/TestHooks::trans');
-        Apache2::OK;
+        Apache2::Const::OK;
     },
 );
 
@@ -30,7 +30,7 @@ sub handler {
 
     my $handler = $trans{ $uri };
 
-    return Apache2::DECLINED unless $handler;
+    return Apache2::Const::DECLINED unless $handler;
 
     $handler->($r);
 }

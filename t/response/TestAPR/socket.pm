@@ -40,7 +40,7 @@ sub handler {
     $socket->timeout_set($orig_val);
     ok t_cmp($socket->timeout_get(), $orig_val, "timeout_get()");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

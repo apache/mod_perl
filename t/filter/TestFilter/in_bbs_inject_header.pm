@@ -6,7 +6,7 @@ package TestFilter::in_bbs_inject_header;
 #
 # the first task is simple for non-keepalive connections -- as soon as
 # a bucket which matches /^[\r\n]+$/ is read we can store that event
-# in the filter context and simply 'return Apache2::DECLINED on the
+# in the filter context and simply 'return Apache2::Const::DECLINED on the
 # future invocation, so not to slow things.
 #
 # it becomes much trickier with keepalive connection, since Apache
@@ -102,7 +102,7 @@ sub context {
         return $ctx;
     }
 
-    if ($c->keepalive == Apache2::CONN_KEEPALIVE &&
+    if ($c->keepalive == Apache2::Const::CONN_KEEPALIVE &&
         $ctx->{done_with_headers} &&
         $c->keepalives > $ctx->{keepalives}) {
 
@@ -127,7 +127,7 @@ sub handler : FilterConnectionHandler {
     my $c = $filter->c;
 
     # reset the filter state, we start a new request
-    if ($c->keepalive == Apache2::CONN_KEEPALIVE &&
+    if ($c->keepalive == Apache2::Const::CONN_KEEPALIVE &&
         $ctx->{done_with_headers} && $c->notes->get('reset_request')) {
         debug "a new request resetting the input filter state";
         $c->notes->set('reset_request' => 0);
@@ -141,16 +141,16 @@ sub handler : FilterConnectionHandler {
         # XXX: when the bug in httpd filter will be fixed all the
         # code in this branch will be replaced with:
         #   $filter->remove;
-        #   return Apache2::DECLINED;
+        #   return Apache2::Const::DECLINED;
         # at the moment (2.0.48) it doesn't work
         # so meanwhile tell the mod_perl filter core to pass-through
         # the brigade unmodified
         debug "passing the body through unmodified";
-        return Apache2::DECLINED;
+        return Apache2::Const::DECLINED;
     }
 
     # any custom HTTP header buckets to inject?
-    return Apache2::OK if inject_header_bucket($bb, $ctx);
+    return Apache2::Const::OK if inject_header_bucket($bb, $ctx);
 
     # normal HTTP headers processing
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
@@ -224,7 +224,7 @@ sub handler : FilterConnectionHandler {
         $bb->insert_tail($b);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -242,7 +242,7 @@ sub response {
     my $data = TestCommon::Utils::read_post($r);
     $r->print($data);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

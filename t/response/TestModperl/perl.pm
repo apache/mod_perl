@@ -20,7 +20,7 @@ sub handler {
              crypt("testing", "SNXJvM5I.PJrE"),
              "crypt");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

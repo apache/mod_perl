@@ -15,7 +15,7 @@ my $location = "/TestAPI__status";
     # test a valid HTTP/1.1 status code (303). In this test
     # the handler returns OK, but sets a custom status. Apache will
     # lookup the message "See Other" on its own
-    my $code = 303; # Apache2::HTTP_SEE_OTHER
+    my $code = 303; # Apache2::Const::HTTP_SEE_OTHER
     my $message = "See Other";
     my $res = GET "$location?$code=";
     ok t_cmp $res->code, $code, "code";

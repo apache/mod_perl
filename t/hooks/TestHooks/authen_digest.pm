@@ -18,10 +18,10 @@ sub handler {
     # header checks
     if ($r->args) {
         $r->note_digest_auth_failure;
-        return Apache2::HTTP_UNAUTHORIZED;
+        return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

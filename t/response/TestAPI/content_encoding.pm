@@ -15,7 +15,7 @@ use Apache2::Const -compile => qw(OK DECLINED M_POST);
 sub handler {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->method_number == Apache2::M_POST;
+    return Apache2::Const::DECLINED unless $r->method_number == Apache2::Const::M_POST;
 
     my $data = TestCommon::Utils::read_post($r);
 
@@ -26,7 +26,7 @@ sub handler {
 
     $r->print(Compress::Zlib::memGzip($data));
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -16,9 +16,9 @@ my @directives = (
     {
      name => 'MyTest',
      func => __PACKAGE__ . '::MyTest',
-     req_override => Apache2::RSRC_CONF,
+     req_override => Apache2::Const::RSRC_CONF,
 #     req_override => 'RSRC_CONF', #test 1.x compat for strings
-#     args_how => Apache2::TAKE23,
+#     args_how => Apache2::Const::TAKE23,
      args_how => 'TAKE23', #test 1.x compat for strings
      errmsg => 'A test',
     },
@@ -28,7 +28,7 @@ my @directives = (
     },
     {
      name => 'ServerTest',
-     req_override => Apache2::RSRC_CONF,
+     req_override => Apache2::Const::RSRC_CONF,
     }
 );
 
@@ -132,7 +132,7 @@ sub handler : method {
 
     ok t_cmp($srv_cfg->{ServerTest}, 'per-server');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

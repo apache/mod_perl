@@ -18,7 +18,7 @@ sub handler {
 
     $c->notes->set(preconnection => $ip);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -27,7 +27,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print($r->connection->notes->get('preconnection') || '');
 
-    return Apache2::OK
+    return Apache2::Const::OK
 }
 
 1;

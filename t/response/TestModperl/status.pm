@@ -14,7 +14,7 @@ sub handler {
     my $rc = shift->args;
 
     if ($rc eq 'die' ||
-        $rc eq Apache2::DECLINED ||
+        $rc eq Apache2::Const::DECLINED ||
         $rc =~ m/foo/) {
         t_server_log_error_is_expected();
     }

@@ -33,7 +33,7 @@ sub handler {
              $expected,
              "reading into an autovivified hash entry");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 

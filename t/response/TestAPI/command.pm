@@ -29,15 +29,15 @@ sub handler {
 
     while ($cmd) {
         if ($cmd->name eq 'PerlResponseHandler') {
-            ok t_cmp($cmd->args_how, Apache2::ITERATE, 'args_how');
+            ok t_cmp($cmd->args_how, Apache2::Const::ITERATE, 'args_how');
             ok t_cmp($cmd->errmsg, qr/Subroutine name/, 'errmsg');
-            ok t_cmp($cmd->req_override, Apache2::OR_ALL, 'req_override');
+            ok t_cmp($cmd->req_override, Apache2::Const::OR_ALL, 'req_override');
             last;
         }
         $cmd = $cmd->next;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -37,7 +37,7 @@ sub open_logs {
         run("open_logs", $vhost_s);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub post_config {
@@ -54,7 +54,7 @@ sub post_config {
         run("post_config", $vhost_s);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub run {
@@ -102,7 +102,7 @@ sub handler {
             warn "received: $received\n";
         }
     }
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -15,7 +15,7 @@ sub handler {
 
     $r->notes->set(headerparser => 'set');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub response {
@@ -25,7 +25,7 @@ sub response {
 
     ok $r->notes->get('headerparser') eq 'set';
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

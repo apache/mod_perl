@@ -18,7 +18,7 @@ sub handler {
     $value = Apache::TestHandler::same_interp_counter();
     $r->puts($value);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

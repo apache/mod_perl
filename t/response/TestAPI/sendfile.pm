@@ -42,7 +42,7 @@ sub handler {
     # XXX: can't quite test bogus offset and/or len, since ap_send_fd
     # doesn't provide any error indications
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

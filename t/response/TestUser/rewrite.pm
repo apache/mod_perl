@@ -8,7 +8,7 @@ package TestUser::rewrite;
 # skipping the ap_directory_walk's stat() calls which speeds up the
 # whole thing.
 #
-# an alternative solution is to return Apache2::DECLINED from the trans
+# an alternative solution is to return Apache2::Const::DECLINED from the trans
 # handler, in which case map2storage is not required (but it'll do a
 # bunch of stat() calls then, which you may want to avoid)
 
@@ -30,21 +30,21 @@ my $args_real = "foo=bar&boo=tar";
 sub trans {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->uri eq '/TestUser__rewrite';
+    return Apache2::Const::DECLINED unless $r->uri eq '/TestUser__rewrite';
 
     $r->uri($uri_real);
     $r->args($args_real);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub map2storage {
     my $r = shift;
 
-    return Apache2::DECLINED unless $r->uri eq $uri_real;
+    return Apache2::Const::DECLINED unless $r->uri eq $uri_real;
 
     # skip ap_directory_walk stat() calls
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -56,7 +56,7 @@ sub response {
 
     ok t_cmp($args, $args_real, "args");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -18,7 +18,7 @@ sub handler {
 
     $r->puts(join ':', length($data), $data);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

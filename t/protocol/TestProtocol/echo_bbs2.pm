@@ -29,7 +29,7 @@ sub handler {
     my $last = 0;
     while (1) {
         my $rc = $c->input_filters->get_brigade($bb_in,
-                                                Apache2::MODE_GETLINE);
+                                                Apache2::Const::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
@@ -51,7 +51,7 @@ sub handler {
     $bb_in->destroy;
     $bb_out->destroy;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

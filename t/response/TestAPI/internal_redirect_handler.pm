@@ -31,7 +31,7 @@ sub handler {
         $r->internal_redirect_handler("$uri?main=1");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

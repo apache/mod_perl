@@ -70,7 +70,7 @@ sub handler {
         skip "POSIX::sigaction doesn't work under 5.6.x", 0;
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub run_for_5_sec {

@@ -154,7 +154,7 @@ sub exit_if_too_big {
 
     #warn "Apache2::Size::Limit exit sub called";
 
-    return Apache2::DECLINED if $CHECK_EVERY_N_REQUESTS &&
+    return Apache2::Const::DECLINED if $CHECK_EVERY_N_REQUESTS &&
         ($REQUEST_COUNT++ % $CHECK_EVERY_N_REQUESTS);
 
     $START_TIME ||= time;
@@ -182,7 +182,7 @@ sub exit_if_too_big {
         }
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 # setmax can be called from within a CGI/Registry script to tell the httpd
@@ -226,7 +226,7 @@ sub handler {
         }
     }
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub error_log {

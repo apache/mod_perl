@@ -45,7 +45,7 @@ sub handler : FilterConnectionHandler {
         # $filter->remove; # this filter is no longer needed
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub response {
@@ -55,7 +55,7 @@ sub response {
 
     $r->puts("1..1\nok 1\n");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

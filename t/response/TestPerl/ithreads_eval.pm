@@ -44,7 +44,7 @@ EOI
 
     ok 1;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

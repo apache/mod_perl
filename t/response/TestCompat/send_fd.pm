@@ -13,13 +13,13 @@ sub handler {
 
     my $file = $r->args || __FILE__;
 
-    open my $fh, $file or return Apache2::NOT_FOUND;
+    open my $fh, $file or return Apache2::Const::NOT_FOUND;
 
     my $bytes = $r->send_fd($fh);
 
-    return Apache2::SERVER_ERROR unless $bytes == -s $file;
+    return Apache2::Const::SERVER_ERROR unless $bytes == -s $file;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

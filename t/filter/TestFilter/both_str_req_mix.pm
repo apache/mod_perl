@@ -87,7 +87,7 @@ sub transparent {
 
     $filter->print("");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub in_adjust              { adjust("INPUT",  @_)}
@@ -105,7 +105,7 @@ sub adjust {
         $filter->print($buffer);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub handler {
@@ -113,11 +113,11 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 

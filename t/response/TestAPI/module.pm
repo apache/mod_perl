@@ -91,7 +91,7 @@ sub handler {
         ok !defined($cmds) || ref($cmds) eq 'Apache2::Command';
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -15,7 +15,7 @@ sub first {
 
     $r->notes->set(ok1 => 1);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub second {
@@ -25,7 +25,7 @@ sub second {
 
     $r->notes->set(ok2 => $ok + 1);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub handler {
@@ -35,7 +35,7 @@ sub handler {
 
     $r->notes->set(ok3 => $ok + 1);
 
-    Apache2::DECLINED;
+    Apache2::Const::DECLINED;
 }
 
 sub response {
@@ -49,7 +49,7 @@ sub response {
         ok $val == $x;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

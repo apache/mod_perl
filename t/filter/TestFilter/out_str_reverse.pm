@@ -40,7 +40,7 @@ sub handler {
         $f->ctx($leftover) if defined $leftover;
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -50,12 +50,12 @@ sub response {
 
     # unbuffer stdout, so we get the data split across several bbs
     local $_ = 1; 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r); 
         $r->print($_) for grep length $_, split /(.{5})/, $data;
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

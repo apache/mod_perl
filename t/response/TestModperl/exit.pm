@@ -36,7 +36,7 @@ sub handler {
     # must not be reached
     $r->print("must not be reached");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

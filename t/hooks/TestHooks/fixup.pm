@@ -15,7 +15,7 @@ sub handler {
 
     $r->notes->set(ok => 1);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub response {
@@ -25,7 +25,7 @@ sub response {
 
     ok $r->notes->get('ok');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

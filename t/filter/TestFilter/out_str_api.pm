@@ -69,11 +69,11 @@ sub handler {
     # we have done the job
     $filter->remove;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub pass_through {
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub response {
@@ -82,7 +82,7 @@ sub response {
     $r->content_type('text/plain');
     $r->puts($response_data);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -132,7 +132,7 @@ sub handler {
 
     # get_remote_host()
     ok $r->get_remote_host() || 1;
-    ok $r->get_remote_host(Apache2::REMOTE_HOST) || 1;
+    ok $r->get_remote_host(Apache2::Const::REMOTE_HOST) || 1;
 
     # post_connection()
     $r->post_connection(sub { OK });

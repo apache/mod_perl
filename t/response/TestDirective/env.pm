@@ -52,7 +52,7 @@ sub handler {
              'test.host.name',
              '$r->subprocess_env PerlPassEnv');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub env_get {

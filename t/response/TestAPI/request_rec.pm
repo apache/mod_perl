@@ -76,7 +76,7 @@ sub handler {
 
     ok t_cmp $r->method, 'GET', '$r->method';
 
-    ok t_cmp $r->method_number, Apache2::M_GET, '$r->method_number';
+    ok t_cmp $r->method_number, Apache2::Const::M_GET, '$r->method_number';
 
     ok $r->headers_in;
 
@@ -162,13 +162,13 @@ sub handler {
 
     # allowed
     {
-        $r->allowed(1 << Apache2::M_GET);
+        $r->allowed(1 << Apache2::Const::M_GET);
 
-        ok $r->allowed & (1 << Apache2::M_GET);
-        ok ! ($r->allowed & (1 << Apache2::M_PUT));
+        ok $r->allowed & (1 << Apache2::Const::M_GET);
+        ok ! ($r->allowed & (1 << Apache2::Const::M_PUT));
 
-        $r->allowed($r->allowed | (1 << Apache2::M_PUT));
-        ok $r->allowed & (1 << Apache2::M_PUT);
+        $r->allowed($r->allowed | (1 << Apache2::Const::M_PUT));
+        ok $r->allowed & (1 << Apache2::Const::M_PUT);
     }
 
     # content_languages
@@ -233,7 +233,7 @@ sub handler {
     # - allowed_xmethods
     # - allowed_methods
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

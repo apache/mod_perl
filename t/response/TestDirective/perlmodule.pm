@@ -21,7 +21,7 @@ sub handler {
     $r->content_type('text/plain');
     $r->puts($ApacheTest::PerlModuleTest::MAGIC || '');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub APACHE_TEST_CONFIGURE {

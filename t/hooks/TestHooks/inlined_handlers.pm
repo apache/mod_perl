@@ -22,7 +22,7 @@ sub handler {
 
     $r->print('ok');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

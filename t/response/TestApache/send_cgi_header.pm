@@ -23,7 +23,7 @@ EOF
     # don't tell anybody
     $r->send_cgi_header($response);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -46,7 +46,7 @@ sub con : FilterConnectionHandler {
     }
     $filter->ctx($ctx) if $ctx;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub req : FilterRequestHandler {
@@ -58,7 +58,7 @@ sub req : FilterRequestHandler {
         $filter->print($buffer);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub con_skip : FilterConnectionHandler {
@@ -69,7 +69,7 @@ sub con_skip : FilterConnectionHandler {
         $filter->print("I'm a bogus filter. Don't run me\n");
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 my $expected = "UPCASED";
@@ -83,7 +83,7 @@ sub response {
     ok t_cmp($received, $expected,
              "request filter must have upcased the data");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

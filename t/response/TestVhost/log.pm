@@ -79,7 +79,7 @@ sub handler {
     # die logs into the vhost log just fine
     #die "horrible death!";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

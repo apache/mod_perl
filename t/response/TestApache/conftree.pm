@@ -66,7 +66,7 @@ sub handler {
 
     traverse_tree ( \&test_node );
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub test_node {

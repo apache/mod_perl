@@ -33,7 +33,7 @@ sub handler {
         ok t_cmp($@, qr/read-only/, "\$Apache2::__T is read-only");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

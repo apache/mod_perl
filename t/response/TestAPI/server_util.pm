@@ -49,7 +49,7 @@ sub handler {
     server_root_relative_tests($r);
 
     eval { Apache2::ServerUtil::server_shutdown_cleanup_register(
-        sub { Apache2::OK });
+        sub { Apache2::Const::OK });
        };
     my $sub = "server_shutdown_cleanup_register";
     ok t_cmp $@, qr/Can't run '$sub' after server startup/,
@@ -58,7 +58,7 @@ sub handler {
     # on start we get 1, and immediate restart gives 2
     ok t_cmp Apache2::ServerUtil::restart_count, 2, "restart count";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 

@@ -34,7 +34,7 @@ sub handler {
 
     $r->pool->cleanup_register(\&cleanup, $file);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub cleanup {
@@ -44,7 +44,7 @@ sub cleanup {
     die "Can't find file: $file_arg" unless -e $file_arg;
     unlink $file_arg or die "failed to unlink $file_arg";
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

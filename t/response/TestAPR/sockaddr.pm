@@ -30,7 +30,7 @@ sub handler {
     ok t_cmp($local->port,  $ENV{SERVER_PORT}, "local port");
     ok t_cmp($remote->port, $ENV{REMOTE_PORT}, "remote port");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

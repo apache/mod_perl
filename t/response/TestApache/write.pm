@@ -24,7 +24,7 @@ sub handler {
     $ok = "not ok 2\n";
     $r->write($ok, 5, 4);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

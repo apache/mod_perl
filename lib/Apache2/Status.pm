@@ -117,7 +117,7 @@ sub handler {
 
     if ($qs =~ s/^(noh_\w+).*/$1/) {
         &{$qs}($r);
-        return Apache2::OK;
+        return Apache2::Const::OK;
     }
 
     header($r);
@@ -137,7 +137,7 @@ sub handler {
     }
     $r->print("</body></html>");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub header {

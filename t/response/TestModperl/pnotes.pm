@@ -44,7 +44,7 @@ sub handler {
              q{deleted entry contents});
     ok !exists $r->pnotes->{'pnotes_foo'};
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

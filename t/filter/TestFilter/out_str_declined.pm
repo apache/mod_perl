@@ -29,13 +29,13 @@ sub decline {
       $filter->r->notes->set(invoked => $ctx->{invoked});
       #warn "decline    filter was invoked $ctx->{invoked} times\n";
 
-      return Apache2::DECLINED;
+      return Apache2::Const::DECLINED;
 }
 
 # this filter ignores all the data that comes through, though on the
 # last invocation it prints how many times the filter 'decline' was called
 # which it could count by itself, but we want to test that 
-# 'return Apache2::DECLINED' works properly in output filters
+# 'return Apache2::Const::DECLINED' works properly in output filters
 sub black_hole {
     my $filter = shift;
 
@@ -54,7 +54,7 @@ sub black_hole {
         $filter->print($invoked);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -70,7 +70,7 @@ sub response {
         $r->rflush;     # this sends the data in the buffer + flush bucket
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

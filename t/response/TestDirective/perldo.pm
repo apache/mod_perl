@@ -51,7 +51,7 @@ sub handler {
 
     ok t_cmp($TestDirective::perldo::test::Include, qr/perlsection.conf/);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

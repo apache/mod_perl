@@ -19,13 +19,13 @@ sub handler {
 
     ok 1;
 
-    ok $r->allow_options & Apache2::OPT_INDEXES;
+    ok $r->allow_options & Apache2::Const::OPT_INDEXES;
 
-    ok !($r->allow_options & Apache2::OPT_EXECCGI);
+    ok !($r->allow_options & Apache2::Const::OPT_EXECCGI);
 
-    ok !($r->allow_overrides & Apache2::OR_LIMIT);
+    ok !($r->allow_overrides & Apache2::Const::OR_LIMIT);
 
-    ok t_cmp $r->satisfies, Apache2::SATISFY_NOSPEC, "satisfies";
+    ok t_cmp $r->satisfies, Apache2::Const::SATISFY_NOSPEC, "satisfies";
 
     ok t_cmp $r->auth_name, 'modperl', "auth_name";
 
@@ -48,7 +48,7 @@ sub handler {
     t_debug "get_remote_logname: $remote_logname";
     ok 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -48,11 +48,11 @@ sub handler {
     die '$r->some_auth_required failed' unless $r->some_auth_required;
 
     my $satisfies = $r->satisfies;
-    die "wanted satisfies=" . Apache2::SATISFY_ALL . ", got $satisfies"
-        unless $r->satisfies() == Apache2::SATISFY_ALL;
+    die "wanted satisfies=" . Apache2::Const::SATISFY_ALL . ", got $satisfies"
+        unless $r->satisfies() == Apache2::Const::SATISFY_ALL;
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
-    return $rc if $rc != Apache2::OK;
+    return $rc if $rc != Apache2::Const::OK;
 
     # extract just the requirement entries
     my %require = 
@@ -62,30 +62,30 @@ sub handler {
 
     # silly (we don't check user/pass here), just checking when
     # the Limit options are getting through
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         if (exists $require{"valid-user"}) {
-            return Apache2::OK;
+            return Apache2::Const::OK;
         }
         else {
-            return Apache2::SERVER_ERROR;
+            return Apache2::Const::SERVER_ERROR;
         }
     }
     else {
         # non-POST requests shouldn't see the Limit enclosed entry
-        return Apache2::SERVER_ERROR if exists $require{"valid-user"};
+        return Apache2::Const::SERVER_ERROR if exists $require{"valid-user"};
     }
 
-    return Apache2::SERVER_ERROR unless $require{user}  eq $users;
-    return Apache2::SERVER_ERROR unless $require{group} eq $groups;
+    return Apache2::Const::SERVER_ERROR unless $require{user}  eq $users;
+    return Apache2::Const::SERVER_ERROR unless $require{group} eq $groups;
 
     my $user = $r->user;
     my $pass = $users{$user} || '';
     unless (defined $pass and $sent_pw eq $pass) {
         $r->note_basic_auth_failure;
-        return Apache2::HTTP_UNAUTHORIZED;
+        return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -32,7 +32,7 @@ sub handler {
 
     while (1) {
         debug "asking new line";
-        my $rc = $c->input_filters->get_brigade($bb, Apache2::MODE_GETLINE);
+        my $rc = $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
@@ -59,7 +59,7 @@ sub handler {
 
     $bb->destroy;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -72,7 +72,7 @@ sub handler {
 
     ok $s->limit_req_fields;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -93,7 +93,7 @@ sub handler {
 
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 my $fmtdate_re = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;

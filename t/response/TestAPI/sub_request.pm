@@ -20,7 +20,7 @@ sub handler {
     my $r = shift;
 
     my $args = $r->args || '';
-    return Apache2::SERVER_ERROR if $args eq 'subreq';
+    return Apache2::Const::SERVER_ERROR if $args eq 'subreq';
 
     plan $r, tests => 4;
 
@@ -30,14 +30,14 @@ sub handler {
     ok t_cmp $subr->uri, $uri, "uri";
 
     my $rc = $subr->run;
-    ok t_cmp $rc, Apache2::SERVER_ERROR, "rc";
+    ok t_cmp $rc, Apache2::Const::SERVER_ERROR, "rc";
 
     # test an explicit DESTROY (which happens automatically on the
     # scope exit)
     undef $subr;
     ok 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

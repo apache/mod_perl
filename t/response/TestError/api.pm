@@ -24,7 +24,7 @@ sub handler {
              qr/\$r object is not available/,
              "unavailable global $r object");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -25,7 +25,7 @@ sub pre_connection {
     $c->add_input_filter(\&in_filter);
     $c->add_output_filter(\&out_filter);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub in_filter : FilterConnectionHandler {
@@ -38,7 +38,7 @@ sub in_filter : FilterConnectionHandler {
     # test that $filter->ctx works here
     $filter->ctx(1);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub out_filter : FilterConnectionHandler {
@@ -49,7 +49,7 @@ sub out_filter : FilterConnectionHandler {
         $filter->print($buffer);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub handler {
@@ -62,7 +62,7 @@ sub handler {
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     for (;;) {
-        $c->input_filters->get_brigade($bb, Apache2::MODE_GETLINE);
+        $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
         last if $bb->is_empty;
 
         my $b = APR::Bucket::flush_create($c->bucket_alloc);
@@ -75,7 +75,7 @@ sub handler {
 
     $bb->destroy;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -28,7 +28,7 @@ sub handler {
     $r->pnotes(items => ["cleanup"," ok"]);
     $r->push_handlers(PerlCleanupHandler => \&cleanup2);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub cleanup1 {
@@ -40,7 +40,7 @@ sub cleanup1 {
     #warn "cleanup CALLED\n";
     t_write_file(get_file(), $item);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub cleanup2 {
@@ -51,7 +51,7 @@ sub cleanup2 {
     #warn "cleanup2 CALLED\n";
     t_append_file(get_file(), $item);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

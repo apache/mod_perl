@@ -27,7 +27,7 @@ sub handler {
     # get_basic_auth_pw populates $r->user and $r->ap_auth_type
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
-    return $rc if $rc != Apache2::OK;
+    return $rc if $rc != Apache2::Const::OK;
 
     $req_auth_type = $r->connection->auth_type || '';
 

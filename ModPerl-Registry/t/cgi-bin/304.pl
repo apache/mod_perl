@@ -30,7 +30,7 @@ my $last_modified_secs = APR::Date::parse_http($last_modified);
 #warn "if_modified_since_secs $if_modified_since_secs\n\n";
 
 if ($last_modified_secs < $if_modified_since_secs) {
-    $status = Apache2::HTTP_NOT_MODIFIED;
+    $status = Apache2::Const::HTTP_NOT_MODIFIED;
     $body   = '';
 }
 

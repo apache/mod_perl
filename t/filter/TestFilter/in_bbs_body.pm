@@ -33,7 +33,7 @@ sub handler : FilterRequestHandler {
         }
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub response {
@@ -41,7 +41,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         $r->puts($data);
     }
@@ -49,7 +49,7 @@ sub response {
         $r->puts("1..3\nok 1\n");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

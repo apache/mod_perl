@@ -26,7 +26,7 @@ sub upcase_n_remove {
 
       $filter->remove;
 
-      return Apache2::OK;
+      return Apache2::Const::OK;
 }
 
 # this filter inserts underscores after each character it receives
@@ -39,7 +39,7 @@ sub insert_underscores {
           $filter->print($buffer);
       }
 
-      return Apache2::OK;
+      return Apache2::Const::OK;
 }
 
 
@@ -55,7 +55,7 @@ sub response {
     $r->rflush;     # this sends the data in the buffer + flush bucket
     $r->print("bar");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

@@ -99,7 +99,7 @@ sub handler {
         debug "storing the remainder: " . length($ctx) . " bytes";
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 # split in words of SIZE chars and a remainder
@@ -135,14 +135,14 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         my $length = length $data;
         $r->print("read $length chars");
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 1;
 __DATA__

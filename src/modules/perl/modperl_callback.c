@@ -281,7 +281,7 @@ int modperl_callback_run_handlers(int idx, int type,
                 else {
                     ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                                  "Callback '%s' returned %d, whereas "
-                                 "Apache2::OK (%d) is the only valid "
+                                 "Apache2::Const::OK (%d) is the only valid "
                                  "return value for %s handlers",
                                  modperl_handler_name(handlers[i]),
                                  status, OK, desc);

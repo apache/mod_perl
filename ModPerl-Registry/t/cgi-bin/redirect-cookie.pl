@@ -9,10 +9,10 @@ $server = $r->construct_server;
 
 $r->err_headers_out->set('Set-Cookie' => "mod_perl=ubercool; path=/");
 $r->headers_out->set(Location => " http://$server$path");
-$r->status(Apache2::REDIRECT);
+$r->status(Apache2::Const::REDIRECT);
 
 # exit status is completely ignored in Registry
 # due to $r->status hacking
-return Apache2::SERVER_ERROR;
+return Apache2::Const::SERVER_ERROR;
 
 __END__

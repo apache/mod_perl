@@ -117,7 +117,7 @@ XS(XS_modperl_const_compile)
 
     classname = *(stashname + 1) == 'P'
         ? "APR" 
-        : (*stashname == 'A' ? "Apache2" : "ModPerl");
+        : (*stashname == 'A' ? "Apache2::Const" : "ModPerl");
     arg = SvPV(ST(1),n_a);
 
     for (i=2; i<items; i++) {

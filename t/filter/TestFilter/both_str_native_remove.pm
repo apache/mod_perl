@@ -28,7 +28,7 @@ sub remove_includes {
 
     $f->remove;
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 # this filter removes the next filter in chain and itself
@@ -46,7 +46,7 @@ sub remove_deflate {
     }
     $f->remove;
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 # this filter appends the output filter list at eos
@@ -67,7 +67,7 @@ sub print_out_flist {
         $f->print("output2: $flist\n");
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub store_in_flist {
@@ -80,7 +80,7 @@ sub store_in_flist {
         $r->pnotes('INPUT_FILTERS' => $x);
     }
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 
@@ -92,7 +92,7 @@ sub response {
     local $| = 0;
 
     $r->content_type('text/plain');
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         $r->print("content: " . TestCommon::Utils::read_post($r) ."\n");
     }
 
@@ -110,7 +110,7 @@ sub response {
     $r->rflush;     # this sends the data in the buffer + flush bucket
     $r->print('"SSI_TEST" -->x'."\n");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub get_flist {

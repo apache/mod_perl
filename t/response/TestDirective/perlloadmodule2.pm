@@ -15,8 +15,8 @@ my @directives = (
     {
      name         => 'MyMergeTest',
      func         => __PACKAGE__ . '::MyMergeTest',
-     req_override => Apache2::OR_ALL,
-     args_how     => Apache2::ITERATE,
+     req_override => Apache2::Const::OR_ALL,
+     args_how     => Apache2::Const::ITERATE,
      errmsg       => 'Values that get merged',
     },
 );
@@ -91,7 +91,7 @@ sub handler : method {
         $r->print("dir: @{ $dir_cfg->{MyMergeTest}||[] }");
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -18,8 +18,8 @@ my @directives = (
     {
      name         => 'MyEnvRegister',
      func         => __PACKAGE__ . '::MyEnvRegister',
-     req_override => Apache2::OR_ALL,
-     args_how     => Apache2::NO_ARGS,
+     req_override => Apache2::Const::OR_ALL,
+     args_how     => Apache2::Const::NO_ARGS,
      errmsg       => 'cannot fail :)',
     },
 );
@@ -70,7 +70,7 @@ sub handler {
         die "no such case";
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

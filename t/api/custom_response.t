@@ -29,7 +29,7 @@ plan tests => 4, need need_lwp, 'HTML::HeadParser';
     # custom text response
     my $expected = "This_is_a_custom_text_response";
     my $res = GET "$location?$expected";
-    ok t_cmp $res->code, Apache2::FORBIDDEN, "custom text response (code)";
+    ok t_cmp $res->code, Apache2::Const::FORBIDDEN, "custom text response (code)";
     ok t_cmp $res->content, $expected, "custom text response (body)";
 }
 

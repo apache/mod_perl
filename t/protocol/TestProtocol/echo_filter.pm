@@ -25,7 +25,7 @@ sub uc_filter : FilterConnectionHandler {
         $filter->print(uc $buffer);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub handler {
@@ -38,7 +38,7 @@ sub handler {
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     while (1) {
-        my $rc = $c->input_filters->get_brigade($bb, Apache2::MODE_GETLINE);
+        my $rc = $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
@@ -52,7 +52,7 @@ sub handler {
 
     $bb->destroy;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -28,7 +28,7 @@ sub bracket {
 
       $filter->print("[$data]") if $data;
 
-      return Apache2::OK;
+      return Apache2::Const::OK;
 }
 
 sub response {
@@ -68,7 +68,7 @@ sub response {
         print "6"; # send the data in the buffer (end of handler)
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

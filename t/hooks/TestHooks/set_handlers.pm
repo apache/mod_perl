@@ -28,7 +28,7 @@ sub handler {
     $r->set_handlers(PerlResponseHandler => [\&Apache::TestHandler::ok1]);
     $r->handler("modperl");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub fixup {

@@ -12,7 +12,7 @@ sub exit_handler {
 
     $s->log->info("Child process pid=$$ is exiting - server push");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 Apache2->server->push_handlers(PerlChildExitHandler => \&exit_handler);

@@ -62,7 +62,7 @@ sub porting_autoload {
         croak $hint;
     };
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 ### packages ###

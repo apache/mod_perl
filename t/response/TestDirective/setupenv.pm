@@ -18,7 +18,7 @@ sub handler {
         $r->puts("$key=$val\n");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

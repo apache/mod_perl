@@ -42,7 +42,7 @@ sub handler {
         $r->notes->clear;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub fixup {
@@ -53,7 +53,7 @@ sub fixup {
     eval { $r->printf("whatever") };
     $r->notes->set(fixup => "$@") if $@;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

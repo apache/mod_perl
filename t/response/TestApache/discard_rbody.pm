@@ -35,7 +35,7 @@ sub handler {
         my $filters = $r->input_filters();
         my $ba = $r->connection->bucket_alloc;
         my $bb = APR::Brigade->new($r->pool, $ba);
-        $filters->get_brigade($bb, Apache2::MODE_READBYTES,
+        $filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
                               APR::BLOCK_READ, IOBUFSIZE);
     }
     elsif ($test eq 'all') {
@@ -47,11 +47,11 @@ sub handler {
     # now get rid of the rest of the input data should work, no matter
     # how little or how much of the body was read
     my $rc = $r->discard_request_body;
-    die APR::Error::strerror($rc) unless $rc == Apache2::OK;
+    die APR::Error::strerror($rc) unless $rc == Apache2::Const::OK;
 
     $r->print($test);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -33,12 +33,12 @@ sub handler {
         $socket->opt_set(APR::SO_NONBLOCK => 0);
     }
 
-    if ((my $rc = greet($c)) != Apache2::OK) {
+    if ((my $rc = greet($c)) != Apache2::Const::OK) {
         $socket->send("Say HELO first\n");
         return $rc;
     }
 
-    if ((my $rc = login($c)) != Apache2::OK) {
+    if ((my $rc = login($c)) != Apache2::Const::OK) {
         $socket->send("Access Denied\n");
         return $rc;
     }
@@ -51,14 +51,14 @@ sub handler {
         next unless $cmd = getline($socket);
 
         if (my $sub = $commands{$cmd}) {
-            last unless $sub->($socket) == Apache2::OK;
+            last unless $sub->($socket) == Apache2::Const::OK;
         }
         else {
             $socket->send("Commands: @cmds\n");
         }
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub greet {
@@ -68,7 +68,7 @@ sub greet {
     $socket->send("HELO\n");
     my $reply = getline($socket) || '';
 
-    return $reply eq 'HELO' ?  Apache2::OK : Apache2::DECLINED;
+    return $reply eq 'HELO' ?  Apache2::Const::OK : Apache2::Const::DECLINED;
 }
 
 sub login {
@@ -86,7 +86,7 @@ sub login {
 
         my $rc = $r->$method();
 
-        if ($rc != Apache2::OK and $rc != Apache2::DECLINED) {
+        if ($rc != Apache2::Const::OK and $rc != Apache2::Const::DECLINED) {
             return $rc;
         }
 
@@ -102,13 +102,13 @@ sub login {
         }
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub my_access {
     # just test that we can invoke a mod_perl HTTP handler
     debug "running my_access";
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub getline {
@@ -134,7 +134,7 @@ sub date {
 
     $socket->send("The time is: " . scalar(localtime) . "\n");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub quit {
@@ -142,7 +142,7 @@ sub quit {
 
     $socket->send("Goodbye\n");
 
-    return Apache2::DONE
+    return Apache2::Const::DONE
 }
 
 1;

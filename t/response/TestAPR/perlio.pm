@@ -273,7 +273,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache2::CRLF),
+        ok t_cmp(count_chars($text, Apache2::Const::CRLF),
                  $count,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -282,7 +282,7 @@ sub handler {
 
         open $wfh, ">:APR", $scratch, $r->pool
             or die "Cannot open $scratch for writing: $!";
-        print $wfh 'a' . ((('a' x 14) . Apache2::CRLF) x $count);
+        print $wfh 'a' . ((('a' x 14) . Apache2::Const::CRLF) x $count);
         close $wfh;
         open $rfh, "<:APR", $scratch, $r->pool
             or die "Cannot open $scratch for reading: $!";
@@ -291,7 +291,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache2::CRLF),
+        ok t_cmp(count_chars($text, Apache2::Const::CRLF),
                  $count,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -304,7 +304,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache2::CRLF),
+        ok t_cmp(count_chars($text, Apache2::Const::CRLF),
                  0,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -340,7 +340,7 @@ sub handler {
 
     # cleanup: t_mkdir will remove the whole tree including the file
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub count_chars {

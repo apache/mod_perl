@@ -77,11 +77,11 @@ sub handler {
     ok t_cmp(<$tmpfh>, $write, "write/read from tmpfile");
 
     ok t_cmp($r->discard_request_body,
-             Apache2::OK,
+             Apache2::Const::OK,
              "\$r->discard_request_body");
 
     ok t_cmp($r->meets_conditions,
-             Apache2::OK,
+             Apache2::Const::OK,
              "\$r->meets_conditions");
 
     my $csize = 10;
