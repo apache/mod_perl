@@ -1,5 +1,5 @@
-# The following tests require more then 1 interpreters during the same
-# request:
+# The following tests require more than one interpreter during the
+# same request:
 #
 # perls  Test
 # ----------- 
