@@ -261,8 +261,7 @@ sub handler {
     $pr->set_script_name;
     $pr->chdir_file;
     my $line = $pr->mark_line;
-    local %INC = %INC;
-
+    my %orig_inc = %INC;
     my $eval = join '',
 		    'package ',
 		    $package,
@@ -273,6 +272,16 @@ sub handler {
     $rc = $pr->compile(\$eval);
 
     $pr->chdir_file("$Apache::Server::CWD/");
+    #in case .pl files do not declare package ...;
+    for (keys %INC) {
+	next if $orig_inc{$_};
+	next if /\.pm$/;
+	delete $INC{$_};
+    }
+
+    if(my $opt = $r->dir_config("PerlRunOnce")) {
+	$r->child_terminate if lc($opt) eq "on";
+    }
 
     {   #flush the namespace
 	no strict;
@@ -322,6 +331,17 @@ CGI as the fork is still avoided and scripts can use modules which
 have been pre-loaded at server startup time.  This module is meant for
 "Dirty" CGI Perl scripts which relied on the single request lifetime
 of CGI and cannot run under B<Apache::Registry> without cleanup.
+
+=head1 CAVEATS
+
+If your scripts still have problems running under the I<Apache::PerlRun>
+handler, the I<PerlRunOnce> option can be used so that the process running
+the script will be shutdown.  Add this to your httpd.conf:
+
+ <Location ...>
+ PerlSetVar PerlRunOnce On
+ ...
+ </Location>
 
 =head1 SEE ALSO
 
