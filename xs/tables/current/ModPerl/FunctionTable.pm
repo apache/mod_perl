@@ -298,10 +298,6 @@ $ModPerl::FunctionTable = [
         'name' => 'c'
       },
       {
-        'type' => 'int',
-        'name' => 'idx'
-      },
-      {
         'type' => 'const char *',
         'name' => 'name'
       },

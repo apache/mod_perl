@@ -728,7 +728,7 @@ void modperl_input_filter_add_request(request_rec *r)
                                r->connection->input_filters);
 }
 
-void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c, int idx,
+void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 const char *name,
                                 modperl_filter_add_t addfunc,
                                 SV *callback, const char *type)
