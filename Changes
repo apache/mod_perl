@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+similar to SetEnv, upcase the env keys for PassEnv on platforms with
+caseless env (e.g. win32) [steve.sparling@ps.ge.com]
+
 Add a backcompat wrapper for $r->notes (mp2 supports only the
 APR::Table API) [Stas]
 
