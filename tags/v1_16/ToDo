@@ -1,0 +1,276 @@
+---------------------------------------------------------------------------
+SHORT TERM STUFF (this section should always be empty in a release version!)
+                 (well, close to it anyhow)
+---------------------------------------------------------------------------
+
+- forking under Apache::Registry, exit vs CORE::exit 
+
+- files that have been created after the server's (child?) startup are
+  being reported with negative age with -M test under Apache::Registry. 
+  The workaround is to add $^T = time; at the beginning of the scripts. But
+  it would be much better if the Apache::Registry will do that 
+
+- turn of strip of httpd during 'make install'
+
+- 'make htmldoc' (Brian Moseley)
+
+- sfio/solaris problem
+Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
+
+- make 'make test_report' more useful
+
+- Apache::Registry should check return value of the subroutine,
+  e.g. for REDIRECT   
+
+- /perl/perl-status?sig dumps core under hpux 10.20
+   [David-Michael.Lincke@unisg.ch]
+
+- Gerald's report of Embperl/sub-request/print breakage
+
+- perl-status?mod_perl_hooks broken under win32?
+
+- rand() broken under win32!
+           Jeff Baker <jeff@godzilla.tamu.edu>
+
+- -Tw w/o PerlTaintCheck cause SEGV? Dave Hodgkinson <daveh@sift.co.uk>
+
+---------------------------------------------------------------------------
+DOCUMENTATION (areas that *really* need some more or don't have any)
+---------------------------------------------------------------------------
+
+- misc:
+  + DONE
+  + SUID access http://www.courtesan.com/sudo/
+  + $ENV{PATH}/PerlSetEnv and PerlTaintCheck
+
+- PerlRun::handler in cgi_to_mod_perl.pod
+
+- HTTP Headers!!!!
+
+- Apache::exit/child_terminate
+
+- push_handlers/set_handlers
+
+---------------------------------------------------------------------------
+KNOWN BUGS
+---------------------------------------------------------------------------
+
+- USE_DSO=1 --> END blocks are run at startup time
+
+- USE_DSO=1 broken on most platforms (core dump in dlclose)
+
+- $r cannot use many api methods during ChildInit/ChildExit -> SEGV
+
+- bytes_sent are not logged if header don't go through send_http_header(), 
+  e.g CGI->header(-nph => 1, ...)
+              Eric Cholet <cholet@logilune.com>
+
+- SIGALRM/flock, Lincoln Stein <lstein@cshl.org>
+ I often use this type of code to handle possibly blocked flocks():
+
+        local($timed_out) = 0;
+        local($SIG{ALRM}) = sub { $timed_out++; die "timed out"; }
+        alarm(5);
+        eval {
+                flock(FH,LOCK_EX);
+        }
+        alarm(0);
+        if ($timed_out) {
+           print "We timed out.  Sorry.";
+        }
+
+ This has been working in standalone CGI scripts, but no longer works
+ in mod_perl.  The signal handler gets called, but then the flock()
+ call seems to be restarted. It never exit the eval.  So this is no big 
+ deal, I just replace the blocking flock() with a poll.
+
+- find a way to prevent "httpd spinning" (bug in Perl, not mod_perl)
+
+- linkage problem w/ mod_auth_dbm (-ldbm)
+ Config.pm New: libs='-lsocket -lnsl -ldl -lm -lc -lcrypt -ldb'
+ Was:           libs='-lsocket -lnsl -ldb -ldl -lm -lc -lcrypt'
+ SunOS mailhost.cmc.net 5.5 Generic_103093-17 sun4m sparc sun4m
+             brian moore <bem@cmc.net>
+
+- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992, e.g.:
+  $User = "www";
+  $ServerType = "standalone";
+  @ScriptAlias = [('/cgi-bin','/the/path')];
+  @Alias = [('/web/','/usr/home/web')];
+
+- perl_config should not av_shift ARRAY refs from
+  %Apache::ReadConfig::
+
+- die and AUTOLOADed DESTROY == empty $@ (Perl or mod_perl bug?)
+
+
+- ExtUtils::Embed/ExtUtils::Liblist clash sometime w/
+  PERL_STATIC_EXTS, like so: 
+ Unrecognized argument in LIBS ignored:
+ '/opt/oracle/product/7.3.3/lib/libclient.a' 
+
+ Note (probably harmless): No library found for -l:libcma.sl
+
+ -Wl,-E -Wl,-B,deferred -L/usr/local/lib
+ /home/web/perl5/lib/site_perl/portable/auto/DBD/Oracle/Oracle.a 
+ /home/  etc etc ...
+           mark rostron <useny036@IMATION.COM>
+           Brian Slesinsky <bslesins@best.com>
+
+- From: brian moore <bem@CMC.NET>
+  As Apacheweek reported a couple weeks ago, 'some' modules on Solaris have
+  problems with the mutex locking method used by 1.3b5.  One of which is
+  mod_perl.  To make it work I had to -DUSE_FCNTL_SERIALIZED_ACCEPT or
+  the server would never answer a request.
+
+
+---------------------------------------------------------------------------
+NEW STUFF
+---------------------------------------------------------------------------
+
+- PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
+
+- mod_perl C code symbols, should look at cleaning up names with a
+  common prefix, e.g. mp_, mod_perl_, mperl_ ?
+  also static-ize those functions we can 
+
+- remove Apache::Symbol::undef cruft, now that the mandatory const sub
+  redefined warning is downgraded in 5.004_05-tobe
+
+- perl_clear_env() should skip those found in PerlPassEnv?
+
+- File::copy($file,*STDOUT) doesn't work (pp_syswrite needs tie support)
+	Bill Coffman <coffman@value.net>
+
+- option to set uid/gid before running any Perl code (copy-n-paste
+  from http_main.c) 
+	Doug Bagley <doug@dejanews.com>
+
+- provide namespace protection when 'use Foo' might be two different modules
+  i.e. re-visit Apache::Safe
+
+- move away from read_client_block to {setup,should,get}_client_block
+  see Apache.pm/Apache::new_read
+
+- PerlOptions directive?
+           Jason Riedy <ejr@cise.ufl.edu>
+
+- some mod_perlIO type methods for xs modules? (e.g. Apache::Peek)
+
+- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
+  for the given location
+
+- <Perl> in .htaccess (could also call known bug)
+
+- provide namespace protection for mod_include #perl's
+
+- change configuration during runtime?
+
+- have log_error/log_reason give file/line info of caller
+
+- 'make html'?
+
+- $Apache::ServerStarting in <Perl>
+
+- something with exec()?
+
+- Apache->http_message(501); #rc code returns a string
+
+- PerlFreshRestart, restarts on startup, should we stop that?
+
+- special treatment for nph- scripts?
+
+- fix Thread->new == linux<-SIGUSR1->Apache signal clash
+
+- win32:
+  + integrate with Perl 5.005's threading
+  + mod_include #perl support
+  + ability to nmake w/o going into VC++
+  + ability to disable Perl*Handler callback hooks
+  + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
+
+- @ARGV magic, tie to query string
+
+- overload %ENV magic:
+  + call subprocess_env when a value is set 
+              Doug Bagley <doug@dejanews.com>
+  + so it's not setup unless asked for
+
+- "save stack" mechanism so we can go back to caching CV lookups
+
+- improve the "stacked handlers" implementation, including:
+  + config merging of AV*'s
+
+  + allow push_handlers to have an additional argument, an array ref,
+    which will be passed to the handler as arguments, e.g.
+    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+- allow Perl*Handler's to have arguments in config files, e.g.:
+
+  (calls &FooPackage::handler($r, "One", "Two", "Three");
+
+- allow <Perl></Perl> configuration sections to have read access to internal
+  configuration structures (would be nice if we could tie a %namespace::) 
+
+---------------------------------------------------------------------------
+KNOWN MODULE BUGS
+---------------------------------------------------------------------------
+
+- can't multiple Apache::Include->virtual in a single request
+
+---------------------------------------------------------------------------
+NEW MODULE STUFF
+---------------------------------------------------------------------------
+
+- should Apache::Registry use filename instead of vhost_name+uri?
+              Ben Laurie <ben@algroup.co.uk>
+
+- apache.pm: use apache '1.3b3';
+
+- have Apache::Status hunt for AUTOLOADing 
+
+- Apache::SawAmpersand
+
+- Apache::Status should list number of things
+
+- Apache::Constant's import should compile the constant sub
+
+- Apache::DProf as a Fixup
+
+- Apache::Include->virtual should update %ENV?
+
+- Apache->request vs. $_[0]
+
+- Apache::Registry should honor __END__ and __DATA__,
+  but how to get it right?
+
+---------------------------------------------------------------------------
+CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
+            these things at some point
+---------------------------------------------------------------------------
+
+change cgi_header_out and send_cgi_header to use new
+ap_scan_script_header_err_core function 
+
+cleanup Makefile.PL!!!
+
+loose dup code in Apache::Registry, use Apache::PerlRun functions
+
+use 5.005's newCONSTSUB in Constants.xs
+
+---------------------------------------------------------------------------
+OPTIMIZATIONS
+---------------------------------------------------------------------------
+
+- replace Apache::PerlRun with Apache::PerlRunXS
+
+- replace Apache::Registry with Apache::RegistryXS
+
+- make Apache::RegistryLoader work with RegistryXS
+
+- avoid a copy in PerlRunXS (use SvPVX instead of safemalloc'd copy)
+
+- XS_IMPORT=1 on by default
+
+- in places where Apache did a pstrdup, don't use newSVpv(), use
+  newSV()->sv_upgrade()->SvPVX/SvCUR_set to avoid another copy 
