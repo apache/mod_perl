@@ -317,7 +317,7 @@ MP_CMD_SRV_DECLARE(perl)
 #define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSection"
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
 #define MP_STRICT_PERLSECTIONS_SV \
-get_sv("Apache::Server::StrictPerlSections", FALSE)
+    get_sv("Apache::Server::StrictPerlSections", FALSE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
@@ -505,16 +505,16 @@ MP_CMD_SRV_DECLARE_FLAG(setup_env)
 #define MP_INTERP_SCOPE_USAGE "PerlInterpScope must be one of "
 
 #define MP_INTERP_SCOPE_DIR_OPTS \
-"handler, subrequest or request"
+    "handler, subrequest or request"
 
 #define MP_INTERP_SCOPE_DIR_USAGE \
-MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_DIR_OPTS
+    MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_DIR_OPTS
  
 #define MP_INTERP_SCOPE_SRV_OPTS \
-"connection, " MP_INTERP_SCOPE_DIR_OPTS
+    "connection, " MP_INTERP_SCOPE_DIR_OPTS
 
 #define MP_INTERP_SCOPE_SRV_USAGE \
-MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_SRV_OPTS
+    MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_SRV_OPTS
 
 MP_CMD_SRV_DECLARE(interp_scope)
 {
