@@ -1443,11 +1443,11 @@ protocol(r)
     RETVAL
 
 char *
-hostname(r)
+hostname(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->hostname;
+    get_set_PVp(r->hostname,r->pool);
 
     OUTPUT:
     RETVAL
