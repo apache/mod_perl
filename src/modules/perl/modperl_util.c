@@ -473,6 +473,12 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
         return 0;
     }
 
+#ifdef HvREHASH
+    if (HvREHASH(hv)) {
+	PERL_HASH_INTERNAL(hash, key, klen);
+    }
+    else
+#endif
     if (!hash) {
 	PERL_HASH(hash, key, klen);
     }

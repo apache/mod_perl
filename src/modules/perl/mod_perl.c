@@ -68,8 +68,13 @@ static void modperl_hash_seed_set(pTHX)
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
     if (MP_init_hash_seed_set) {
-        PL_hash_seed_set = TRUE;
-        PL_hash_seed = MP_init_hash_seed;
+#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 1
+        PL_hash_seed       = MP_init_hash_seed;
+        PL_hash_seed_set   = MP_init_hash_seed_set;
+#else
+        PL_rehash_seed     = MP_init_hash_seed;
+        PL_rehash_seed_set = MP_init_hash_seed_set;
+#endif
     }
 #endif
 }
