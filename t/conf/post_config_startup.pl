@@ -21,15 +21,13 @@ use APR::Pool ();
 
 use ModPerl::Util (); #for CORE::GLOBAL::exit
 
-# would be nice to write a real test, but for now just see that we can
-# load it:
-use Apache::SizeLimit ();
-
 use Apache::Const -compile => ':common';
 
 END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
+
+test_apache_size_limit();
 
 test_loglevel();
 
@@ -39,8 +37,16 @@ test_perl_ithreads();
 
 test_server_shutdown_cleanup_register();
 
+
+
 ### only subs below this line ###
 
+sub test_apache_size_limit {
+    require Apache::MPM;
+    # would be nice to write a real test, but for now just see that we
+    # can load it for non-threaded mpms
+    require Apache::SizeLimit unless Apache::MPM->is_threaded;
+}
 
 # test startup loglevel setting (under threaded mpms loglevel can be
 # changed only before threads are started) so here we test whether we
