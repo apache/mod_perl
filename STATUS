@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/10/09 05:34:02 $]
+   Last modified at [$Date: 2003/10/20 17:44:48 $]
 
 Release:
 --------
@@ -89,14 +89,6 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
 
 Needs Patch or Further Investigation:
 -------------------------------------
-
-* <Perl> section package name:
-  Looks like the package name is Apache::PerlSection, but inside of it
-  we have Apache::PerlSections. And the docs manpage is
-  Apache/PerlSections.pod (notices the trailing 's'), so it doesn't get
-  its pod glued to Apache/PerlSection.pm on install. Inside the
-  package there are variables whose name is PerlSections. Need to
-  decide on one and stick to it.
 
 * <Perl> sections:
   A few issues with <Perl> sections:
