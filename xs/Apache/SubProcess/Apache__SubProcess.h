@@ -120,7 +120,7 @@ static XS(MPXS_modperl_spawn_proc_prog)
 
         if (items == 3) {
             if (SvROK(ST(2)) && SvTYPE(SvRV(ST(2))) == SVt_PVAV) {
-                av_argv = (AV*)SvRV(ST(2));
+                av_argv = (AV*)SvREFCNT_inc(SvRV(ST(2)));
             }
             else {
                 Perl_croak(aTHX_ usage);
@@ -149,6 +149,8 @@ static XS(MPXS_modperl_spawn_proc_prog)
         rc = modperl_spawn_proc_prog(r, command, &argv,
                                      &script_in, &script_out,
                                      &script_err);
+
+        SvREFCNT_dec(av_argv);
 
         if (rc == APR_SUCCESS) {
             /* XXX: apr_file_to_glob should be set once in the BOOT: section */
