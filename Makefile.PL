@@ -1272,7 +1272,7 @@ WriteMakefile(
 	PWD => $PWD,
         PERL5LIB => "PERL5LIB=$ENV{PERL5LIB}",
 	SHRPENV => $Config{shrpenv},
-	CVSROOT => 'perl.apache.org:/home/cvs',
+	CVSROOT => 'cvs.apache.org:/home/cvs',
     },
     'dist'    => {
 	COMPRESS=> 'gzip -9f', SUFFIX=>'gz',
