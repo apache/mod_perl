@@ -695,15 +695,6 @@ static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 {
     modperl_perl_init_ids_server(s);
 
-#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 1 && \
-    defined(THREADS_HAVE_PIDS) 
-    {
-        MP_dSCFG(s);
-        dTHXa(scfg->mip->parent->perl);
-        PL_ppid = (IV)getppid();
-    }
-#endif     
-    
     apr_pool_cleanup_register(p, (void *)s, modperl_child_exit,
                               apr_pool_cleanup_null);
 }
