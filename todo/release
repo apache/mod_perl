@@ -4,3 +4,17 @@
 
 -- see also todo/api_status
 -- see also todo/release-checklist
+
+* need to review all the API methods that set string values
+ (e.g. server_admin) they all assign a pointer to the PV slot in the
+ perl scalar and if that scalar goes out of scope or changes, the
+ modified data will get corrupted. need to replace 
+   val = (char *)SvPV_nolen(...);
+ with:
+   val = apr_pstrdup(pool, (char *)SvPV_nolen(...));
+but the problem with what pool is used is very delicate, for $s
+methods it must be $s->pool and for $r methods, $r->pool, but some $r
+methods try to modify server strings. like document_root, which I've
+started to fix, but it's still broken (not sure what pool should be
+used, $s->pool will mean a memory leak, $r->pool will still mean a
+corrupted data).
