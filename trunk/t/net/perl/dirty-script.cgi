@@ -1,4 +1,9 @@
 local $^W = 0;
+use lib '.';
+require "dirty-lib";
+unless (defined(&not_ina_package) && not_ina_package()) {
+    die "%INC save/restore broken";
+}
 
 print "Content-type: text/plain\n\n";
 
