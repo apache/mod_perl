@@ -13,15 +13,6 @@ my $response_data = "blah blah blah";
 sub init_test_pm {
     my $filter = shift;
 
-    {
-        package Apache::Filter;
-        #XXX: make part of standard api?
-        unless (defined &PRINT) {
-            *PRINT = \&print;
-            *TIEHANDLE = sub { shift };
-        }
-    }
-
     tie *STDOUT, $filter;
 
     $Test::TESTOUT = \*STDOUT;
