@@ -125,10 +125,6 @@ sub httpd_conf {
     die $err if $err;
 }
 
-sub current_callback {
-    return Apache::current_callback();
-}
-
 package Apache::Constants;
 
 use Apache::Const ();
@@ -153,6 +149,10 @@ sub soft_timeout {}
 sub hard_timeout {}
 sub kill_timeout {}
 sub reset_timeout {}
+
+sub current_callback {
+    return Apache::current_callback();
+}
 
 #to support $r->server_root_relative
 *server_root_relative = \&Apache::server_root_relative;
