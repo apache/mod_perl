@@ -12,3 +12,6 @@ sendfile.t
 server_rec.t
 server_util.t
 uri.t
+query.t
+show.t
+
