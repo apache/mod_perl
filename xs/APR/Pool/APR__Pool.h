@@ -8,13 +8,14 @@ static MP_INLINE apr_pool_t *mpxs_apr_pool_create(pTHX_ SV *obj)
     return retval;
 }
 
-/* XXX: need to properly deal with PerlInterpScope */
-
 typedef struct {
     SV *cv;
     SV *arg;
     apr_pool_t *p;
     PerlInterpreter *perl;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
 } mpxs_cleanup_t;
 
 static apr_status_t mpxs_cleanup_run(void *data)
@@ -52,6 +53,16 @@ static apr_status_t mpxs_cleanup_run(void *data)
         SvREFCNT_dec(cdata->arg);
     }
 
+#ifdef USE_ITHREADS
+    if (cdata->interp) {
+        /* this will decrement the interp refcnt until
+         * there are no more references, in which case
+         * the interpreter will be putback into the mip
+         */
+        (void)modperl_interp_unselect(cdata->interp);
+    }
+#endif
+
     return status;
 }
 
@@ -66,6 +77,12 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
     data->p = p;
 #ifdef USE_ITHREADS
     data->perl = aTHX;
+    /* make sure interpreter is not putback into the mip
+     * until this cleanup has run.
+     */
+    if ((data->interp = MP_THX_INTERP_GET(data->perl))) {
+        data->interp->refcnt++;
+    }
 #endif
 
     apr_pool_cleanup_register(p, data,
