@@ -234,6 +234,7 @@ sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean(@_);
     ModPerl::MM::add_dep(\$string, clean => 'modperl_src_clean');
+    ModPerl::MM::add_dep(\$string, clean => 'test_clean');
     $string;
 }
 
