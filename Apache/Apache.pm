@@ -1068,6 +1068,13 @@ destroyed.
        warn "registered cleanup called for ", $r->uri, "\n";
    });
 
+Cleanup functions registered in the parent process (before forking)
+will run once when the server is shut down:
+
+   #PerlRequire startup.pl
+   warn "parent pid is $$\n";
+   Apache->server->register_cleanup(sub { warn "server cleanup in $$\n"});
+
 The I<post_connection> method is simply an alias for I<register_cleanup>, 
 as this method may be used to run code after the client connection is closed,
 which may not be a I<cleanup>.

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+document Apache->server->register_cleanup
+[Perrin Harkins <perrin@primenet.com>]
+
 Apache::Server->loglevel can now be modified
 [Geoffrey Young <gyoung@laserlink.net>]
 
