@@ -22,6 +22,10 @@ unless ($ENV{MOD_PERL}) {
     die '$ENV{MOD_PERL} not set!';
 }
 
+#see t/modperl/methodobj
+use TestModperl::methodobj ();
+$TestModperl::MethodObj = bless {}, 'TestModperl::methodobj';
+
 #see t/response/TestModperl/env.pm
 $ENV{MODPERL_EXTRA_PL} = __FILE__;
 
