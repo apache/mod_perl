@@ -13,13 +13,15 @@ use APR::Bucket ();
 use Apache::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
+use Apache::TestTrace;
+
 my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter__in_bbs_msg';
 
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
-    #warn "FILTER CALLED\n";
+    debug "FILTER CALLED";
     my $c = $filter->c;
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
@@ -36,19 +38,20 @@ sub handler : FilterConnectionHandler {
         $bucket->remove;
 
         if ($bucket->is_eos) {
-            #warn "EOS!!!!";
+            debug "EOS!!!";
             $bb->insert_tail($bucket);
             last;
         }
 
         my $status = $bucket->read($data);
-        #warn "FILTER READ: $data\n";
+        debug "FILTER READ:\n$data";
 
         if ($status != APR::SUCCESS) {
             return $status;
         }
 
         if ($data and $data =~ s,GET $from_url,GET $to_url,) {
+            debug "GET line rewritten to be:\n$data";
             $bucket = APR::Bucket->new($data);
         }
 
