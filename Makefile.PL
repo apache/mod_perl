@@ -135,6 +135,7 @@ my(@do_clean) = qw{
    t/modules/ssi.t       
    t/logs/error_log
    t/conf/srm.conf
+   t/conf/dev-null
    t/logs/httpd.pid
    src/modules/perl/mod_perl_version.h
    t/net/perl/cgi.pl
@@ -873,6 +874,11 @@ unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
 init_tests_and_config() if $USE_APXS;
 
 sub init_tests_and_config {
+    local *FH;
+    open FH, ">t/conf/dev-null";
+    print FH "#mod_ssl has a problem with /dev/null\n";
+    close FH;
+
     cp "t/conf/httpd.conf-dist", "t/conf/httpd.conf";
     chmod 0644, "t/conf/httpd.conf";
 
