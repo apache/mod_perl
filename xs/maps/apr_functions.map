@@ -166,7 +166,6 @@ MODULE=APR::Pool
 !apr_pool_cleanup_run
 -apr_pool_cleanup_null
  apr_pool_cleanup_register | mpxs_ | p, SV *:cv, SV *:arg=Nullsv
- apr_pool_sub_make
 !apr_pool_note_subprocess
 -apr_palloc
 >apr_palloc_debug
