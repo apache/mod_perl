@@ -205,4 +205,9 @@ typedef struct {
     MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
 } modperl_config_con_t;
 
+typedef struct {
+    apr_pool_t *pool;
+    void *data;
+} modperl_cleanup_data_t;
+
 #endif /* MODPERL_TYPES_H */

@@ -16,6 +16,25 @@ const char *modperl_interp_scope_desc(modperl_interp_scope_e scope)
     return MP_interp_scope_desc[scope];
 }
 
+void modperl_interp_clone_init(modperl_interp_t *interp)
+{
+    dTHXa(interp->perl);
+
+    MpInterpCLONED_On(interp);
+
+    PERL_SET_CONTEXT(aTHX);
+
+    /* XXX: hack for bug fixed in 5.6.1 */
+    if (PL_scopestack_ix == 0) {
+        ENTER;
+    }
+
+    /* clear @DynaLoader::dl_librefs so we only dlclose() those
+     * which are opened by the clone
+     */
+    modperl_xs_dl_handles_clear(aTHX);
+}
+
 modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
@@ -35,15 +54,8 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
 
         interp->perl = perl_clone(perl, FALSE);
 
-        {
-            /* XXX: hack for bug fixed in 5.6.1 */
-            dTHXa(interp->perl);
-            if (PL_scopestack_ix == 0) {
-                ENTER;
-            }
-        }
+        modperl_interp_clone_init(interp);
 
-        MpInterpCLONED_On(interp);
         PERL_SET_CONTEXT(mip->parent->perl);
 
 #ifdef MP_USE_GTOP
@@ -60,6 +72,8 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
 
 void modperl_interp_destroy(modperl_interp_t *interp)
 {
+    apr_pool_t *p = NULL;
+    apr_array_header_t *handles;
     dTHXa(interp->perl);
 
     MP_TRACE_i(MP_FUNC, "interp == 0x%lx\n",
@@ -71,8 +85,23 @@ void modperl_interp_destroy(modperl_interp_t *interp)
 
     PERL_SET_CONTEXT(interp->perl);
     PL_perl_destruct_level = 2;
+
+    /* we cant use interp->mip->ap_pool without locking
+     * apr_pool_create() will mutex lock for us
+     * XXX: could roll something without using apr_pool_t
+     * to avoid locking
+     */
+    (void)apr_pool_create(&p, NULL);
+    handles = modperl_xs_dl_handles_get(aTHX_ p);
+
     perl_destruct(interp->perl);
     perl_free(interp->perl);
+
+    if (handles) {
+        modperl_xs_dl_handles_close(handles);
+    }
+
+    apr_pool_destroy(p);
 }
 
 apr_status_t modperl_interp_cleanup(void *data)

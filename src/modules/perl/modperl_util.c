@@ -86,3 +86,81 @@ char *modperl_server_desc(server_rec *s, apr_pool_t *p)
 {
     return apr_psprintf(p, "%s:%u", s->server_hostname, s->port);
 }
+
+#define dl_librefs "DynaLoader::dl_librefs"
+#define dl_modules "DynaLoader::dl_modules"
+
+void modperl_xs_dl_handles_clear(pTHXo)
+{
+    AV *librefs = get_av(dl_librefs, FALSE);
+    if (librefs) {
+        av_clear(librefs);
+    }
+}
+
+apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
+{
+    I32 i;
+    AV *librefs = get_av(dl_librefs, FALSE);
+    AV *modules = get_av(dl_modules, FALSE);
+    apr_array_header_t *handles;
+
+    if (!librefs) {
+	MP_TRACE_g(MP_FUNC,
+                   "Could not get @%s for unloading.\n",
+                   dl_librefs);
+	return NULL;
+    }
+
+    handles = apr_array_make(p, AvFILL(librefs)-1, sizeof(void *));
+
+    for (i=0; i<=AvFILL(librefs); i++) {
+	void *handle;
+	SV *handle_sv = *av_fetch(librefs, i, FALSE);
+	SV *module_sv = *av_fetch(modules, i, FALSE);
+
+	if(!handle_sv) {
+	    MP_TRACE_g(MP_FUNC,
+                       "Could not fetch $%s[%d]!\n",
+                       dl_librefs, (int)i);
+	    continue;
+	}
+	handle = (void *)SvIV(handle_sv);
+
+	MP_TRACE_g(MP_FUNC, "%s dl handle == 0x%lx\n",
+                   SvPVX(module_sv), (unsigned long)handle);
+	if (handle) {
+	    *(void **)apr_array_push(handles) = handle;
+	}
+    }
+
+    av_clear(modules);
+    av_clear(librefs);
+
+    return handles;
+}
+
+void modperl_xs_dl_handles_close(apr_array_header_t *handles)
+{
+    int i;
+
+    if (!handles) {
+	return;
+    }
+
+    for (i=0; i < handles->nelts; i++) {
+	void *handle = ((void **)handles->elts)[i];
+	MP_TRACE_g(MP_FUNC, "close 0x%lx\n",
+                   (unsigned long)handle);
+	dlclose(handle); /*XXX*/
+    }
+}
+
+modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data)
+{
+    modperl_cleanup_data_t *cdata =
+        (modperl_cleanup_data_t *)apr_pcalloc(p, sizeof(*cdata));
+    cdata->pool = p;
+    cdata->data = data;
+    return cdata;
+}
