@@ -6,6 +6,17 @@ $Apache::PerlSections::VERSION = (qw$Revision$)[1];
 use Devel::Symdump ();
 use Data::Dumper ();
 
+sub store {
+    require IO::File;
+
+    my($self, $file) = @_;
+    my $fh = IO::File->new(">$file") or die "can't open $file $!\n";
+    
+    $fh->print($self->dump);
+    
+    $fh->close;
+}
+
 sub dump {
     my @retval = "package Apache::ReadConfig;";
 
@@ -36,6 +47,7 @@ sub dump {
 }
 
 {
+    no strict;
     my $fh = \*main::DATA;
     $fh = $fh; #avoid -w warnings
     eval join '', <main::DATA> unless caller;
@@ -96,7 +108,10 @@ you with such a task.
 =item dump
 
 This method will dump out all the configuration variables mod_perl
-will be feeding the the apache config gears.  Example:
+will be feeding the the apache config gears.  The output is suitable
+to read back in via C<eval>.
+
+Example:
 
  <Perl>
 
@@ -131,28 +146,29 @@ will be feeding the the apache config gears.  Example:
 
 This will print something like so:
 
- scalars:
+ package Apache::ReadConfig;
+ #scalars:
 
- $Port = \8529;
+ $Port = 8529;
 
- arrays:
+ #arrays:
 
- $DocumentIndex = [
+ @DocumentIndex = (
    'index.htm',
    'index.html'
- ];
+ );
 
- hashes:
+ #hashes:
 
- $Location = {
+ %Location = (
    '/perl' => {
      PerlHandler => 'Apache::Registry',
      SetHandler => 'perl-script',
      Options => 'ExecCGI'
    }
- };
+ );
 
- $VirtualHost = {
+ %VirtualHost = (
    'www.foo.com' => {
      Location => {
        '/' => {
@@ -165,7 +181,21 @@ This will print something like so:
      DocumentRoot => '/tmp/docs',
      ErrorLog => '/dev/null'
    }
- };
+ );
+
+ 1;
+ __END__
+
+=item store
+
+This method will call the C<dump> method, writing the output
+to a file, suitable to be pulled in via C<require>.
+
+Example:
+
+   Apache::PerlSections->store("httpd_config.pl");
+
+   require 'httpd_config.pl';
 
 =back
 

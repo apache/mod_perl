@@ -17,10 +17,13 @@ PerlTaintCheck On
 PerlWarn On
 
 PerlSetVar KeyForPerlSetVar OK
+PerlSetEnv KeyForPerlSetEnv OK
 
 <Perl>
 #!perl
 #line 16 httpd.conf
+
+$My::config_is_perl = 1;
 
 use Apache::Constants qw(MODULE_MAGIC_NUMBER);
 use IO::Handle ();
@@ -59,7 +62,7 @@ $ServerName = "localhost";
 
 push @AddType, ["text/x-server-parsed-html" => ".shtml"];
  
-for (qw(/perl/ /cgi-bin/)) {
+for (qw(/perl /cgi-bin)) {
     push @Alias, [$_ => "$dir/net/perl/"];
 }
 
@@ -109,7 +112,6 @@ for (qw(status info)) {
 
 $ErrorLog = "/tmp/mod_perl_error_log";
 $PidFile  = "/tmp/mod_perl_httpd.pid";
-$ResourceConfig = "/tmp/mod_perl_srm.conf";
 
 $AccessConfig = $TypesConfig = $TransferLog = $ScoreBoardFile = "/dev/null";
 
@@ -131,5 +133,10 @@ $Location{"/stage-redir"} = {
 };
 
 $PerlTransHandler =  "PerlTransHandler::handler";
+
+$Location{"/chain"} = {
+    @mod_perl,
+    PerlHandler => [map { "Stacked::$_" } qw(one two three four)],
+};
 
 </Perl>

@@ -13,7 +13,12 @@ my(%status) = (
    env => "Environment",
    sig => "Signal Handlers",	       
    myconfig => "Perl Configuration",	       
+   hooks => "Enabled mod_perl Hooks",
 );
+
+if($Apache::ReadConfig) {
+    $status{"section_config"} = "Perl Section Configuration";
+}
 
 sub menu_item {
     my($self, $key, $val, $sub) = @_;
@@ -79,6 +84,26 @@ sub symdump {
 
 sub status_symdump { [symdump('main')] }
 
+sub status_section_config {
+    my($r,$q) = @_;
+    require Apache::PerlSections;
+    ["<pre>", Apache::PerlSections->dump, "</pre>"];
+}
+
+sub status_hooks {
+    my($r,$q) = @_;
+    require mod_perl;
+    my @retval = qw(<table>);
+    my @list = mod_perl::hooks();
+    for my $hook (sort @list) {
+	my $on_off = 
+	  mod_perl::hook($hook) ? "<b>Enabled</b>" : "<i>Disabled</i>";
+	push @retval, "<tr><td>$hook</td><td>$on_off</td></tr>";
+    }
+    push @retval, qw(</table>);
+    \@retval;
+}
+
 sub status_inc {
     my($r,$q) = @_;
     my(@retval, $module, $v, $file);
@@ -97,6 +122,7 @@ sub status_inc {
 	qq(<tr><td><a href="$uri?$module">$module</a></td><td>$v</td><td>$INC{$file}</td></tr>);
     }
     push @retval, "</table>";
+    push @retval, "<p><b>\@INC</b> = <br>", join "<br>\n", @INC, "";
     \@retval;
 }
 

@@ -100,6 +100,26 @@ To enable tracing set PERL_TRACE=1
 
   perl Makefile.PL PERL_TRACE=1
 
+If a file name `makepl_args.mod_perl' is found in the same directory
+as the mod_perl build location with any of these options, it will be
+read in by Makefile.PL
+
+Example:
+
+ % ls -1 .
+ apache_1.3b3/
+ makepl_args.mod_perl
+ mod_perl-1.07_03/
+
+ % cat makepl_args.mod_perl
+ EVERYTHING=1 DO_HTTPD=1
+
+ % cd mod_perl-1.07_03
+ % perl Makefile.PL && make test && make install
+
+You'll see all options enabled and you will not be prompted for apache
+source location, it will default to ../apache_1.3b3
+
 =item Linking Perl extensions static with httpd
 
 Normally, if an exension is linked static with Perl it is listed in
@@ -297,40 +317,6 @@ pitifully simple.  Either of the following will work:
 2) Put the httpd you wish to run in a directory in your PATH
 before any other directory containing a version of httpd, then
 call it as 'httpd' -- don't use a relative path!
-
-=item AIX users
-
-The following problem:
-
-> I am having problems 'make'ing mod_perl 0.99.  The 'make' command fails
-> attempting to compile httpd with the message:
-> 
-> 'ld: cannot findexport file: perl.exp'
-> 
-> I am running Perl 5.004_01 on AIX 3.2.5.1.  We currently have Apache
-
-Is answered by Eric Bartley <bartley@cc.purdue.edu>:
-Yes this is something I had run into with perl & mod_perl on AIX. It's a
-nit between AIX's awkward dynamic libraries and perl's configuration and
-installation. The story goes like this: to build a dynamically loaded
-extension you have to provide the linker with a list of symbol names to be
-exported. This is what perl.exp does for perl. Most people only need this
-to build libperl, at which time the linker needs to find this file in the
-current working directory so "-dE:perl.exp" works.  However, Embeded
-application will also need this because the will be exporting these
-symbols (or importing I'm not exactly sure). Now that perl.exp is
-installed in the PERL5LIB directory the linker needs the full path to
-perl.exp (or you could copy it the the cwd of the compile). Edit Config.pm
-and search for the line that reads ccdlflags='-bE:perl.exp'. Add the path
-to the CORE directory for this version of perl. For example in my
-installation of perl 5.004_01 this line now reads:
-
- ccdlflags='-bE:/usr/local/lib/perl5/aix/5.00401/CORE/perl.exp'
-
-This command will tell you where your Config.pm lives and the
-path to the CORE directory:
-
- perl -MConfig -e 'print "$Config{archlibexp}/Config.pm\n"'
 
 =item Perl Static Extensions
 

@@ -11,7 +11,6 @@ my $doc_root = "$pwd/../../docs";
 
 my $ht_access  = "$doc_root/.htaccess";
 my $hooks_file = "$doc_root/hooks.txt";
-warn "hooks_file = $doc_root/hooks.txt ($pwd)\n";
 
 unlink $ht_access;
 unlink $hooks_file;
@@ -21,7 +20,7 @@ if(Apache::perl_hook("Authen")) {
     open FH, ">$ht_access";
     print FH <<EOF;
 AuthType Basic
-AuthName mod_perl tests
+AuthName mod_perl_tests
 
 <Limit GET>
 require valid-user
@@ -72,6 +71,11 @@ PACKAGE
 #    @PerlLogHandler::ISA = qw(PerlFixupHandler);
 #    $r->warn("PerlLogHandler isa PerlFixupHandler");
 #}
+
+if($My::config_is_perl) {
+    $tests--;
+    #warn "XXX: skipping hook test for <Perl> config of \$PerlTransHandler\n";
+}
 
 $r->print($tests);
 

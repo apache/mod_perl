@@ -3,11 +3,20 @@ use 5.003_97;
 use strict;
 
 BEGIN {
-    $mod_perl::VERSION = "1.0702";
+    $mod_perl::VERSION = "1.0703";
 }
 
 sub subversion {
     print qq( -DSERVER_SUBVERSION=\\"mod_perl/$mod_perl::VERSION\\" );
+}
+
+sub hook {
+    my $hook = shift;
+    return 1 if $hook =~ /^PerlHandler$/;
+
+    (my $try = $hook) =~ s/^Perl//;
+    $try =~ s/Handler$//;
+    return Apache::perl_hook($try);
 }
 
 sub import {
@@ -30,7 +39,7 @@ sub import {
 
     for my $hook (@_) {
 	require Apache;
-	my $enabled = Apache::perl_hook($hook); 
+	my $enabled = hook($hook); 
 	next if $enabled > 0;
 	if($enabled < 0) {
 	    die "unknown mod_perl option `$hook'\n";
@@ -42,6 +51,9 @@ sub import {
 	}
     }
 }
+
+
+sub hooks { qw() }
 
 1;
 

@@ -20,13 +20,15 @@ Apache - Perl interface to Apache server API
 
 ExtUtils::Embed - Needed to build httpd
 
-LWP::UserAgent - Web client to run mod_perl tests
+MIME::Base64 - Needed for LWP
+
+LWP - Web client to run mod_perl tests
 
 HTML::TreeBuilder - Used for Apache::SSI
 
-MIME::Base64 - Needed for LWP
-
 Devel::Symdump - Symbol table browsing with Apache::Status
+
+Data::Dumper - Used by Apache::PerlSections->dump
 
 HTTPD::UserAdmin - Apache::Authen stuff
 

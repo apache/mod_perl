@@ -25,7 +25,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-$VERSION = "1.07_02";
+$VERSION = "1.07_03";
 
 use subs qw(_prompt iedit asrc);
 
@@ -36,7 +36,7 @@ unless ($Is_Win32) {
     readline_setup();        
 }
 
-eval 'use Apache::MyConfig' ;
+eval 'require Apache::MyConfig' ;
 
 $APACHE_SRC_DEFAULT = $@ ? 
     '../apache_x.x/src'  :
@@ -84,6 +84,8 @@ my(@do_clean) = qw{
 #t/net/config.pl
 
 for(@do_clean) { unlink $_ }
+mv "t/conf/httpd.conf", "t/conf/httpd.conf.old";
+
 rmtree "t/docs/stacked", 0, 0;
 rmtree "t/docs/subr", 0, 0;
 
@@ -106,6 +108,7 @@ my(@adirs, %seen, %mft_map, %vers_map, $src_dir, $vers, $conf, $ans);
 
 $EVERYTHING = 0;
 $PERL_STATIC_EXTS = "";
+$PERL_EXTRA_CFLAGS = "";
 $Port = $PORT = 8529;
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
 $NO_HTTPD = $ENV{NO_HTTPD} || 0;
@@ -118,9 +121,10 @@ $ADD_VERSION = 1;
 $STATIC = 1;
 $DYNAMIC = 0;
 $CONFIG = "";
+$ADD_MODULE = "";
 
 my @mp_args = 
-    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG
+    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE
        ALL_HOOKS APACHE_SRC ADD_VERSION STATIC DYNAMIC);
 
 sub is_mp_arg {
@@ -151,8 +155,20 @@ $callback_hooks{PERL_HANDLER} = 1; #PerlHandler always on
 %cant_hook = ();
 
 my @mm_args;
+my $file_args = "";
+{
+    my $fh;
+    for (qw(. ..)) {
+	last if $fh = FileHandle->new("$_/makepl_args.mod_perl");
+    }
+    if($fh) {
+	chomp($file_args = <$fh>);
+	unshift @ARGV, split /\s+/, $file_args;
+    }
+}
+
 while($_ = shift) {
-    ($k,$v) = split /=/;
+    ($k,$v) = split /=/, $_, 2;
     unless (/^PERL/ or is_mp_arg($k)) {
 	push @mm_args, $_;
     }
@@ -278,10 +294,15 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $EXTRA_CFLAGS = $1 if /CFLAGS1\s*=\s*(.*)/;
 	}
 	close FH;
+
 	if($SSL_BASE) {
 	    $SSL_INCLUDE = " -I$SSL_BASE/include ";
 	    $EXTRA_CFLAGS .= $SSL_INCLUDE;
 	}
+
+	$EXTRA_CFLAGS .= join(" ", split(",",  " $PERL_EXTRA_CFLAGS"))
+	    if $PERL_EXTRA_CFLAGS;
+
 	print "EXTRA_CFLAGS: $EXTRA_CFLAGS\n" if $EXTRA_CFLAGS;
 
 	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf)) {
@@ -371,6 +392,7 @@ if($APACHE_SRC) {
 	$k =~ s/([A-Z]+)/ucfirst(lc($1))/ge;
 	$k =~ s/_//g;
 	$k .= "Handler" unless $k =~ /Handlers?$/;
+	push @mod_perl_hooks, $k;
 	print $k . '.' x (28 - length($k));
 	print $v ? "enabled\n" : "disabled $why\n";
     }
@@ -381,9 +403,6 @@ if($APACHE_SRC) {
 	    "(need 1.2.0 or higher)";
     }
 
-    iedit "$APACHE_SRC/modules/perl/Makefile", 's/^(PERL_SECTIONS) /#$1 /'
-	if $PERL_SECTIONS;
-
     for (qw(PERL_SECTIONS PERL_SSI)) {
 	$k = $_;
 	$why = ($cant_hook{$_} || "(enable with $k=1)") unless $$_;
@@ -392,6 +411,9 @@ if($APACHE_SRC) {
 	$k =~ s/Ssi$/SSI/; #*shrug*
 	print $k . '.' x (28 - length($k));
 	print $$_ ? "enabled\n" : "disabled $why\n";
+	push @mod_perl_hooks, $k;
+	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^($_) /#\$1 /"
+	    if $$_;
     }
 
     iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#TRACE/TRACE/" if $PERL_TRACE;
@@ -508,11 +530,21 @@ PerlHandler Stacked::one Stacked::two Stacked::three Stacked::four
 EOF
 }
 
-
 write_my_config($APACHE_SRC);
 {
     (my $pmv = $VERSION) =~ s/_//g;
+    $pmv =~ s/-dev$//;
+    my $hooks = "@mod_perl_hooks";
+    my $dummy = "hooks=`$hooks'\n" unless $hooks;
     iedit "lib/mod_perl.pm", qq(s/VERSION .*/VERSION = "$pmv";/);
+
+    iedit "lib/mod_perl.pm", 
+    qq(s/sub hooks.*/sub hooks { qw($hooks) }/);
+
+    require "lib/mod_perl.pm";
+    my @list = mod_perl::hooks();
+    @list == @mod_perl_hooks or die "Edit of lib/mod_perl.pm failed $!\n";
+
     unlink "lib/mod_perl.pm~";
 }
 
@@ -925,7 +957,7 @@ sub conf_fixup {
     my $sro = 1 if $mmn >= 19970825;
     my $inc;
     my $ccopts = ccopts();
-    my $dssv = "-DSERVER_SUBVERSION";
+    my $dssv = "-DMOD_PERL -DSERVER_SUBVERSION";
     my $ssv = qq{$dssv=\\"mod_perl/$VERSION\\" };
     $inc = " $ccopts -I. -I../.. -DUSE_PERL_SSI" if $PERL_SSI;
 #    $inc = qq{$dssv=\\"mod_perl/$VERSION\\" } if $ADD_VERSION;
@@ -943,6 +975,10 @@ sub conf_fixup {
     q{next unless /EXTRA_LIBS\s*=/;}.
     q{next if /perl/; chomp;}.
     qq{\$_ .= q| $ldopts\n|;};
+
+    for (split ",", $ADD_MODULE) {
+	add_module($cfg,$_);
+    }
 
     if(is_ssl() =~ /stronghold/i) {
 	if($do_link_swap) {
@@ -989,15 +1025,20 @@ sub has_module {
     local(*IN);
     open IN, $cfg or die "Can't open $cfg $!\n";
     while(<IN>) {
-	if(/^Module\s+${name}_module/i) {
+	if(/^\\w{0,3}Module\\s+.*$name\.[oa]/i) {
  	    close IN;
-#	    print STDERR "has module_$name\n";
+#	    print STDERR "has module $name\n";
 	    return 1;
 	}
     }
     return 0;
 }
  
+sub add_module {
+    my($cfg, $name) = @_;
+    iedit $cfg, "s/^#\\s+(\\w{0,3}Module\\s+.*$name\.[oa])/\$1/";
+}
+
 sub gen_script {
     my $file = shift;
     local(*IN,*OUT);

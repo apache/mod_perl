@@ -22,7 +22,7 @@ if($version =~ /1\.1\.\d/) {
 
 my(%SEEN, @export, $key, $val);
 while(($key,$val) = each %Apache::Constants::EXPORT_TAGS) {
-    warn "importing tag $key\n";
+    #warn "importing tag $key\n";
     Apache::Constants->import(":$key");
     push @export, grep {!$SEEN{$_}++} @$val;
 }

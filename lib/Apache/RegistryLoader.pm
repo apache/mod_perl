@@ -24,9 +24,11 @@ sub handler {
 
     #warn "RegistryLoader: uri=$uri, filename=$filename\n";
 
+    (my $guess = $uri) =~ s,^/,,;
+
     my $r = bless {
 	uri => $uri,
-	filename => Apache->server_root_relative($filename || $uri),
+	filename => Apache->server_root_relative($filename || $guess),
     } => ref($self) || $self;
 
     $r->SUPER::handler;

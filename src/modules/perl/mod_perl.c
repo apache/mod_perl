@@ -275,10 +275,8 @@ void perl_restart(server_rec *s, pool *p)
     /* restart as best we can */
     SV *rgy_cache = perl_get_sv("Apache::Registry", FALSE);
     HV *rgy_symtab = (HV*)gv_stashpv("Apache::ROOT", FALSE);
-    GV *restarting_gv = GvSV_init("Apache::ServerReStarting");
 
     ENTER;
-    GvSV_setiv(restarting_gv, 1);
 
     SAVESPTR(warnhook);
     warnhook = perl_eval_pv("sub {}", TRUE);
@@ -294,10 +292,9 @@ void perl_restart(server_rec *s, pool *p)
     /* reload modules and PerlScripts */
     perl_reload_inc();
 
-    GvSV_setiv(restarting_gv, 0);
     LEAVE;
 
-    mod_perl_notice(s, "mod_perl restarted"); 
+    /*mod_perl_notice(s, "mod_perl restarted"); */
     MP_TRACE(fprintf(stderr, "perl_restart: ok\n"));
 }
 
@@ -308,7 +305,6 @@ void perl_startup (server_rec *s, pool *p)
     char *dash_e = "BEGIN { $ENV{MOD_PERL} = 1; $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1'; }";
     dPSRV(s);
     SV *pool_rv, *server_rv;
-    GV *starting_gv;
 
 #ifndef WIN32
     argv[0] = server_argv0;
@@ -324,8 +320,13 @@ void perl_startup (server_rec *s, pool *p)
 	return;
     }
     else {
+	Apache__ServerReStarting(TRUE);
+
 	if(cls->FreshRestart)
 	    perl_restart(s, p);
+
+	Apache__ServerReStarting(FALSE);
+
 	return;
     }
     perl_is_running++;
@@ -386,8 +387,12 @@ void perl_startup (server_rec *s, pool *p)
     server_rv = perl_get_sv("Apache::__SERVER", TRUE);
     sv_setref_pv(server_rv, Nullch, (void*)s);
 
-    starting_gv = GvSV_init("Apache::ServerStarting");
-    GvSV_setiv(starting_gv, 1);
+
+    (void)GvSV_init("Apache::__SendHeader");
+    (void)GvSV_init("Apache::ERRSV_CAN_BE_HTTP");
+    
+    Apache__ServerStarting(PERL_RUNNING());
+    Apache__ServerReStarting(FALSE); /* just for -w */
 
 #ifdef PERL_STACKED_HANDLERS
     if(!stacked_handlers)
@@ -403,7 +408,7 @@ void perl_startup (server_rec *s, pool *p)
 
     for(i = 0; i < cls->NumPerlScript; i++) {
 	if(perl_load_startup_script(s, p, cls->PerlScript[i], TRUE) != OK) {
-	    fprintf(stderr, "Can't load PerlScript `%s', exiting...\n", 
+	    fprintf(stderr, "Require of Perl file `%s' failed, exiting...\n", 
 		    cls->PerlScript[i]);
 	    exit(1);
 	}
@@ -443,8 +448,7 @@ void perl_startup (server_rec *s, pool *p)
 	SvREADONLY_on(GvSV(gv));
     }
 
-    (void)gv_fetchpv("Apache::__SendHeader", GV_ADDMULTI, SVt_PV);    
-    GvSV_setiv(starting_gv, 0);
+    Apache__ServerStarting(FALSE);
 }
 
 int mod_perl_sent_header(request_rec *r, int val)
@@ -676,6 +680,7 @@ void mod_perl_cleanup_handler(void *data)
     request_rec *r = perl_request_rec(NULL);
     SV *cv;
     I32 i;
+    dPPDIR;
 
     (void)acquire_mutex(mod_perl_mutex); 
     MP_TRACE(fprintf(stderr, "running registered cleanup handlers...\n")); 
@@ -684,6 +689,7 @@ void mod_perl_cleanup_handler(void *data)
 	perl_call_handler(cv, (request_rec *)r, Nullav);
     }
     av_clear(cleanup_av);
+    MP_RCLEANUP_off(cld);
     (void)release_mutex(mod_perl_mutex); 
 }
 
@@ -698,8 +704,10 @@ int perl_handler_ismethod(HV *class, char *sub)
 
     if(!sub) return 0;
     sv = newSVpv(sub,0);
-    if(!(cv = sv_2cv(sv, &stash, &gv, FALSE)))
-	cv = GvCV(gv_fetchmethod(class, sub));
+    if(!(cv = sv_2cv(sv, &stash, &gv, FALSE))) {
+	GV *gvp = gv_fetchmethod(class, sub);
+	if (gvp) cv = GvCV(gvp);
+    }
 
     if (cv && SvPOK(cv)) 
 	is_method = strnEQ(SvPVX(cv), "$$", 2);
@@ -797,7 +805,7 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
       /* XXX: bizarre, 
 	 I only see this with httpd.conf.pl and PerlAccessHandler */
 	if(SvTYPE((SV*)handlers) != SVt_PVAV) {
-	    fprintf(stderr, "%s stack is not an ARRAY!\n", hook);
+	    fprintf(stderr, "[warning] %s stack is not an ARRAY!\n", hook);
 	    sv_dump((SV*)handlers);
 	    return DECLINED;
 	}
@@ -901,9 +909,11 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 #ifdef PERL_DISPATCH
     if(cld && (dispatcher = cld->PerlDispatchHandler)) {
 	if(!(dispsv = (SV*)perl_get_cv(dispatcher, FALSE))) {
-	    fprintf(stderr, 
-		    "mod_perl: unable to fetch PerlDispatchHandler `%s'\n",
-		    dispatcher); 
+	    if(strlen(dispatcher) > 0) { /* XXX */
+		fprintf(stderr, 
+			"mod_perl: unable to fetch PerlDispatchHandler `%s'\n",
+			dispatcher); 
+	    }
 	    dispatcher = NULL;
 	}
     }
@@ -967,13 +977,15 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 	    defined_sub = (cv = perl_get_cv(imp, FALSE)) ? TRUE : FALSE;
 #ifdef PERL_METHOD_HANDLERS
 	if(!defined_sub && stash) {
+	    GV *gvp;
 	    MP_TRACE(fprintf(stderr, 
 		   "perl_call: trying method lookup on `%s' in class `%s'...", 
 		   method, HvNAME(stash)));
 	    /* XXX Perl caches method lookups internally, 
 	     * should we cache this lookup?
 	     */
-	    if((cv = GvCV(gv_fetchmethod(stash, method)))) {
+	    if((gvp = gv_fetchmethod(stash, method))) {
+		cv = GvCV(gvp);
 		MP_TRACE(fprintf(stderr, "found\n"));
 		is_method = perl_handler_ismethod(stash, method);
 	    }
@@ -1059,18 +1071,27 @@ callback:
     
     SPAGAIN;
 
-    if (perl_eval_ok(r->server) != OK) {
-        status = SERVER_ERROR;
+    if(perl_eval_ok(r->server) != OK) {
+	if(!perl_sv_is_http_code(ERRSV, &status))
+	    status = SERVER_ERROR;
     }
-    else if (count != 1) {
+    else if(count != 1) {
 	mod_perl_error(r->server,
 		       "perl_call did not return a status arg, assuming OK");
 	status = OK;
     }
     else {
 	status = POPi;
+
 	if((status == 1) || (status == 200) || (status > 600)) 
 	    status = OK; 
+
+	if((status == SERVER_ERROR) && ERRSV_CAN_BE_HTTP) {
+	    if(ERRHV && hv_exists(__RGY_ERRHV)) {
+		SV *errsv = hv_delete(__RGY_ERRHV, G_SCALAR);
+		(void)perl_sv_is_http_code(errsv, &status);
+	    }
+	}
     }
 
     PUTBACK;
@@ -1110,7 +1131,7 @@ void perl_setup_env(request_rec *r)
     CGIENVinit; 
 
     if (tz != NULL) 
-	mp_setenv("TZ", tz);
+	hv_store(GvHV(envgv), "TZ", 2, newSVpv(tz,0), FALSE);
     
     for (i = 0; i < env_arr->nelts; ++i) {
 	if (!elts[i].key || !elts[i].val) continue;

@@ -142,18 +142,20 @@ void mod_perl_clear_rgy_endav(request_rec *r, SV *sv)
 
 void perl_run_rgy_endav(char *s) 
 {
-    SV *rgystash = perl_get_sv("Apache::Registry::curstash", TRUE);
+    SV *rgystash = perl_get_sv("Apache::Registry::curstash", FALSE);
     AV *rgyendav = Nullav;
     STRLEN klen;
-    char *key = SvPV(rgystash,klen);
+    char *key;
     dTHR;
 
-    if(!klen) {
+    if(!rgystash) {
 	MP_TRACE(fprintf(stderr, 
         "Apache::Registry::curstash not set, can't run END blocks for %s\n",
 			 s));
 	return;
     }
+
+    key = SvPV(rgystash,klen);
 
     if(mod_perl_endhv == Nullhv)
 	mod_perl_endhv = newHV();
@@ -208,24 +210,31 @@ errgv_empty_set(IV ix, SV* sv)
     return TRUE;
 }
 
-void perl_call_halt()
+void perl_call_halt(int status)
 {
     dTHR;
     struct ufuncs umg;
+    int is_http_code = 
+	((status >= 100) && (status < 600) && ERRSV_CAN_BE_HTTP);
 
     umg.uf_val = errgv_empty_set;
     umg.uf_set = errgv_empty_set;
     umg.uf_index = (IV)0;
-                                                                  
-    sv_magic(ERRSV, Nullsv, 'U', (char*) &umg, sizeof(umg));
+    
+    if(is_http_code) {
+	croak("%d\n", status);
+    }
+    else {
+	sv_magic(ERRSV, Nullsv, 'U', (char*) &umg, sizeof(umg));
 
-    ENTER;
-    SAVESPTR(diehook);
-    diehook = Nullsv; 
-    croak("");
-    LEAVE;
+	ENTER;
+	SAVESPTR(diehook);
+	diehook = Nullsv; 
+	croak("");
+	LEAVE; /* we don't get this far, but croak() will rewind */
 
-    sv_unmagic(ERRSV, 'U');
+	sv_unmagic(ERRSV, 'U');
+    }
 }
 
 void perl_reload_inc(void)
@@ -348,6 +357,77 @@ int perl_eval_ok(server_rec *s)
 	return -1;
     }
     return 0;
+}
+
+int perl_sv_is_http_code(SV *errsv, int *status) 
+{
+    int i=0, http_code=0, retval = FALSE;
+    char *errpv;
+    char cpcode[3];
+
+    if(!SvTRUE(errsv) || !ERRSV_CAN_BE_HTTP)
+	return FALSE;
+
+    errpv = SvPVX(errsv);
+
+    for(i=0;i<=2;i++) {
+	if(i >= SvCUR(errsv)) 
+	    break;
+	if(isDIGIT(SvPVX(errsv)[i])) 
+	    http_code++;
+	else
+	    http_code--;
+    }
+
+    /* we've looked at the first 3 characters of $@
+     * if they're not all digits, $@ is not an HTTP code
+     */
+    if(http_code != 3) {
+	MP_TRACE(fprintf(stderr, 
+			 "mod_perl: $@ doesn't look like an HTTP code `%s'\n", 
+			 errpv));
+	return FALSE;
+    }
+
+    /* nothin but 3 digits */
+    if(SvCUR(errsv) == http_code)
+	return TRUE;
+
+    MP_TRACE(fprintf(stderr, "mod_perl: possible $@ HTTP code `%s'\n", errpv));
+
+    /* XXX, use new ap_strncpy */
+    strncpy((char *)cpcode, errpv, 3);
+
+    if((SvCUR(errsv) == 4) && (*(SvEND(errsv) - 1) == '\n')) {
+	/* nothin but 3 digit code and \n */
+	retval = TRUE;
+    }
+    else {
+	char *tmp = errpv;
+	tmp += 3;
+	if(strNE(SvPVX(GvSV(curcop->cop_filegv)), "-e")) {
+	    SV *fake = newSV(0);
+	    sv_setpv(fake, ""); /* avoid -w warning */
+	    sv_catpvf(fake, " at %_ line ", GvSV(curcop->cop_filegv));
+
+	    if(strnEQ(SvPVX(fake), tmp, SvCUR(fake))) 
+		/* $@ is nothing but 3 digit code and the mess die tacks on */
+		retval = TRUE;
+
+	    SvREFCNT_dec(fake);
+	}
+	else if(strnEQ(tmp, " at ", 4) && instr(errpv, " line "))
+	    /* well, close enough */
+	    retval = TRUE;
+    }
+
+    if(retval == TRUE) {
+    	*status = atoi(cpcode);
+	MP_TRACE(fprintf(stderr, 
+			 "mod_perl: $@ is an HTTP code `%d'\n", *status));
+    }
+
+    return retval;
 }
 
 #ifndef PERLLIB_SEP

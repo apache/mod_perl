@@ -21,15 +21,22 @@ else {
     $/ = "";
 }
 
-$Scalar = 1;
+@Array     == 0 or die "END block was not run for $0\n";
+keys %Hash == 0 or die "__ANON__ registered cleanup failed!\n";
+if(defined $Scalar) {
+    $Scalar == 0 or die "register_cleanup is broken!\n";
+}
+
 @Array  = qw(one two three);
 %Hash   = qw(one 1 two 2 three 3);
+$Scalar = 1;
 
 my $r = Apache->request;
 $ENV{PATH} = "/bin";
 
-sub first_one {
-    print STDERR "first_one called\n";
+sub reset_scalar {
+    $Scalar = 0;
+    #print STDERR "registered cleanup, resetting \$Scalar\n";
     return 0;
 }
 
@@ -38,13 +45,25 @@ $r->post_connection(sub {
     $r->warn("post connection handler called for ", $r->uri);
 });
 
+use mod_perl ();
+
 if(Apache->can_stack_handlers) {
-    Apache->push_handlers("PerlCleanupHandler", \&first_one);
+    die "can_stack_handlers is broken\n" 
+	unless mod_perl::hook("PerlStackedHandlers");
+
+    Apache->push_handlers("PerlCleanupHandler", \&reset_scalar);
 
     $r->push_handlers("PerlCleanupHandler", sub {
-	print STDERR "__ANON__ called\n";
+	#print STDERR "__ANON__ called\n";
+	%Hash = ();
 	return 0;
     });
+}
+else {
+    die "can_stack_handlers is broken\n" 
+	if mod_perl::hook("PerlStackedHandlers");
+    $Scalar = 0;
+    %Hash = ();
 }
 
 #$r->warn("sequence number: " . $r->seqno);
@@ -87,7 +106,7 @@ if ($ENV{CONTENT_LENGTH}) {
     my $content = $r->content;
     eval { system $content }; 
     die "TaintCheck failed, I can `system \$content' ($content:$ENV{CONTENT_LENGTH})" unless $@;
-    warn "TRAPPED: `system \$r->content' '$@'\n";
+    #warn "TRAPPED: `system \$r->content' '$@'\n";
 
     $r->print("\nContent\n-------\n$content");
 }
@@ -101,5 +120,6 @@ sub test_exit {
 }
 
 END {
-    warn "END block called for `test' ($0)\n";
+    #warn "END block called for `test' ($0)\n";
+    @Array = ();
 }

@@ -16,6 +16,106 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.07_03 - January 8, 1998
+
+removed "[notice] mod_perl restarted" message since it doesn't go to
+the error_log as it should, spotted by Vivek Khera and Paul Phillips
+
+fixed corrupted $ENV{TZ} spotted by Michael Parker
+
+cut out 'make test' error_log noise, anything there now should only be
+an error or a non-error [notice]
+
+make Apache::Resource simpler to configure, to use w/ all defaults
+(1.3bx + PerlChildInitHandler required):
+PerlSetEnv PERL_RLIMIT_DEFAULTS On
+PerlModule Apache::Resource
+
+Makefile.PL will now:
+mv "t/conf/httpd.conf", "t/conf/httpd.conf.old" 
+so httpd.conf is re-generated when Makefile.PL is re-run
+
+added new module Apache::src for finding it and picking out bits-n-pieces
+
+get rid of some <Perl> section warnings with help from Doug Bagley
+
+improved register_cleanup tests
+
+applied $r->register_cleanup patch from Doug Bagley to properly call
+MP_RCLEANUP_off after cleanups are run
+
+perl Makefile.PL can now accept ADD_MODULE, Makefile.PL will (s/,/ /g)
+and uncomment the list of modules from src/Configuration
+ e.g.:
+ ADD_MODULE=unique_id,proxy,info
+
+perl Makefile.PL can now accept PERL_EXTRA_CFLAGS, Makefile.PL will 
+(s/,/ /g) which are added to EXTRA_CFLAGS
+ e.g.:
+ PERL_EXTRA_CFLAGS=-DFOO=1,-DBAR=2
+
+if the file `makepl_args' is present in . or .. it will be read into
+@ARGV, e.g. might contain EVERYTHING=1 DO_HTTPD=1
+
+fixes for 1.3b4-dev compat
+- get rid of AuthName space in generated .htaccess file for
+  internal/hooks test
+
+if a PerlModule defines something in %Apache::ReadConfig <Perl>
+sections are run without need to actually have <Perl></Perl> in
+httpd.conf, i.e. httpd.conf could be nothing more than:
+ PerlModule Apache::httpd_conf
+whilst experimental, enable by setting the envrionment variable 
+PERL_SECTIONS_SELF_BOOT to something true
+
+experimental feature, modules can 'exit|die AUTH_REQUIRED;' or with
+any HTTP error code and that response is sent rather than SERVER_ERROR
+to test enable by setting $Apache::ERRSV_CAN_BE_HTTP = 1
+
+take CGI.pm version check out of Apache::Registry, now that we require
+5.004+, they'll have at least 2.36
+
+get rid of "Use of uninitialized value at -e line 65535" warning
+caused by perl_run_rgy_endav() spotted by Doug Bagley
+
+if there is an error inside <Perl>, filename and line number are now
+displayed in the error message, e.g.
+syntax error at t/conf/httpd.conf line 25 
+ instead of
+syntax error at (eval 1) line 2
+
+Apache::RegistryLoader->handler will now strip leading '/' when $uri is
+server_root_relative and no $filename is present
+
+Apache::Status menu item "Perl Section Configuration" 
+(only if $Apache::ReadConfig is true)
+
+added Apache::Status menu item "Enabled mod_perl Hooks"
+
+added mod_perl.pm functions hook() and hooks()
+
+go back to internal <Perl> sections package name ApacheReadConfig
+
+Apache::PerlSections stuff:
+- added handy store method for writing dump() to disk
+- fixed self-test
+- updated docs to reflect new output format
+
+Apache::test stuff:
+- added run method
+- added MM_test method for Makefile.PL's to say:
+  *MY::test = \&Apache::test::MM_test
+
+some httpd_conf.pm stuff:
+- added server_url method
+- added catch_signals method to terminate httpd on __DIE__ or INT
+  ($conf->server_start calls this by default)
+- when httpd.conf is written, set BaseDir in a BEGIN block
+- drop trailing slash from Alias'
+- fix write() method's assignment of %$self to *Apache::ReadConfig:: 
+
+fix possible core dump when calling gv_fetchmethod()
+
 =item 1.07_02 - December 22, 1997
 
 fixed perl.exp thang on aix

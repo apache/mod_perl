@@ -20,26 +20,26 @@ my $tests = {
     args => sub {
 	eval { system $r->args };
 	die "TaintCheck failed, I can `system \$r->args'" unless $@;
-	warn "TRAPPED: `system \$r->args' '$@'\n";
+	#warn "TRAPPED: `system \$r->args' '$@'\n";
     },
     env => sub {
 	eval { system $ENV{SERVER_SOFTWARE} };
 	die "TaintCheck failed, I can `system $ENV{SERVER_SOFTWARE}'" 
 	    unless $@;
-	warn "TRAPPED: `system \$ENV{SERVER_SOFTWARE}' '$@'\n";
+	#warn "TRAPPED: `system \$ENV{SERVER_SOFTWARE}' '$@'\n";
     },
     header_in => sub {
 	eval { system $r->header_in('User-Agent') };
 	die "TaintCheck failed, I can `system \$r->header_in('User-Agent')'"
 	    unless $@;
-	warn "TRAPPED: `system \$r->header_in('User-Agent')' '$@'\n";
+	#warn "TRAPPED: `system \$r->header_in('User-Agent')' '$@'\n";
     },
     content => sub {
 	my $content = $r->content;
 
 	eval { system $content };
 	die "TaintCheck failed, I can `system $content'" unless $@;
-	warn "TRAPPED: `system \$r->content' '$@'\n";
+	#warn "TRAPPED: `system \$r->content' '$@'\n";
     },
 };
 

@@ -131,6 +131,7 @@ Timeit		bmpf	Benchmark PerlHandlers			APML
 
 * PerlLogHandler's
 DumpHeaders	bdpf	Watch HTTP transaction via headers	DOUGM
+Traffic		bdpf	Logs bytes transferred, per-user basis 	
 WatchDog	c	Look for problematic URIs		DOUGM
 
 * PerlChildInitHandler's
@@ -140,8 +141,10 @@ Resource	bmpf	Limit resources used by httpd children	APML
 ConfigLDAP	i	Config via LDAP and &lt;Perl&gt;		MARKK
 ConfigDBI	i	Config via DBI and &lt;Perl&gt;		MARKIM
 ModuleConfig	cmcO	Interface to configuration API		DOUGM
+Module		cmcO	Interface to Apache C module structures	DOUGM
 PerlSections	bmpO	Utilities for &lt;Perl&gt; sections		APML
 httpd_conf	bmpO	Methods to configure and run an httpd	APML
+src		ampO	Finding and reading bits of source	APML
 
 * Database
 DBI		bmpO	Persistent DBI connection mgmt.		MERGL
@@ -207,6 +210,7 @@ JROWE	 Jeff Rowe &lt;beowulf@cscsun4.larc.nasa.gov&gt;
 KWILLIAM Ken Williams  &lt;ken@forum.swarthmore.edu&gt;
 MARKIM	 Mark A. Imbriaco &lt;mark@itribe.net&gt;
 MARKK	 Mark Kennedy &lt;mtk@ny.ubs.com&gt;
+MAURICE	 Maurice Aubrey &lt;maurice@HEVANET.COM&gt
 MDORMAN	 Michael Alan Dorman  &lt;mdorman@calder.med.miami.edu&gt;
 MERGL	 Edmund Mergl &lt;E.Mergl@bawue.de&gt;
 NJENSEN	 Neil Jensen &lt;njensen@habaneros.com&gt;

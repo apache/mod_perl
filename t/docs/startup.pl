@@ -20,8 +20,11 @@ BEGIN {
     $s->warn("report any problems to server_admin $admin");
 }
 
-#$Apache::TestSIG = 1;
 $Apache::DoInternalRedirect = 1;
+$Apache::ERRSV_CAN_BE_HTTP  = 1;
+
+#warn "ServerStarting=$Apache::ServerStarting\n";
+#warn "ServerReStarting=$Apache::ServerReStarting\n";
 
 #use Apache::Debug level => 4;
 
@@ -92,11 +95,11 @@ sub My::child_init {
     my $r = shift;
     my $s = $r->server;
     my $sa = $s->server_admin;
-    $s->warn("child_init for process $$, report any problems to $sa\n");
+    $s->warn("[notice] child_init for process $$, report any problems to $sa\n");
 }
 
 sub My::child_exit {
-    warn "child process $$ terminating\n";
+    warn "[notice] child process $$ terminating\n";
 }
 
 sub Apache::AuthenTest::handler {
@@ -120,14 +123,16 @@ sub Apache::AuthenTest::handler {
 }
 
 END {
-    warn "END block called for startup.pl\n";
+    warn "[notice] END block called for startup.pl\n";
 }
 
 package Destruction;
 
 sub new { bless {} }
 
-sub DESTROY { warn "global object $global_object DESTROYed\n" }
+sub DESTROY { 
+    warn "[notice] Destruction->DESTROY called for \$global_object\n" 
+}
 
 #prior to 1.3b1 (and the child_exit hook), this object's DESTROY method would not be invoked
 $global_object = Destruction->new;

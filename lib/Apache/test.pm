@@ -94,6 +94,81 @@ sub skip_test {
     exit;
 }
 
+sub run {
+    require Test::Harness;
+    my $self = shift;
+    my $args = shift || {};
+    my @tests = ();
+
+    # First we check if we already are within the "t" directory
+    if (-d "t") {
+	# try to move into test directory
+	chdir "t" or die "Can't chdir: $!";
+
+	# fix all relative library locations
+	foreach (@INC) {
+	    $_ = "../$_" unless m,^(/)|([a-f]:),i;
+	}
+    }
+
+    # Pick up the library files from the ../blib directory
+    unshift(@INC, "../blib/lib", "../blib/arch");
+    #print "@INC\n";
+
+    $Test::Harness::verbose = shift(@ARGV)
+	if $ARGV[0] =~ /^\d+$/ || $ARGV[0] eq "-v";
+
+    $Test::Harness::verbose ||= $args->{verbose};
+
+    if (@ARGV) {
+	for (@ARGV) {
+	    if (-d $_) {
+		push(@tests, <$_/*.t>);
+	    } 
+	    else {
+		$_ .= ".t" unless /\.t$/;
+		push(@tests, $_);
+	    }
+	}
+    } 
+    else {
+	push @tests, <*.t>, map { <$_/*.t> } @{ $args->{tdirs} || [] };
+    }
+
+    Test::Harness::runtests(@tests);
+}
+
+sub MM_test {
+    my $script = "t/TEST";
+    my $my_test = q(
+
+test:	run_tests
+
+);
+
+    join '', qq(
+MP_TEST_SCRIPT=$script
+),
+    q(
+TEST_VERBOSE=0
+
+kill_httpd:
+	kill `cat t/logs/httpd.pid`
+
+start_httpd: 
+	./httpd -X -d `pwd`/t &
+
+rehttpd:   kill_httpd start_httpd
+
+run_tests:
+	$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
+
+),
+
+$my_test;
+
+}
+
 1;
 
 __END__
