@@ -18,8 +18,7 @@ sub add_dep {
 
 sub build_config {
     my $key = shift;
-    require Apache::BuildConfig;
-    my $build = Apache::BuildConfig->new;
+    my $build = Apache::Build->build_config;
     return $build unless $key;
     $build->{$key};
 }
@@ -52,8 +51,14 @@ sub my_import {
 }
 
 sub WriteMakefile {
+    my $build = build_config();
     my_import();
-    ExtUtils::MakeMaker::WriteMakefile(@_);
+    my @opts = (INC => $build->inc);
+    my $typemap = $build->file_path('src/modules/perl/typemap');
+    if (-e $typemap) {
+        push @opts, TYPEMAPS => [$typemap];
+    }
+    ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
 }
 
 my %always_dynamic = map { $_, 1 } qw(Apache::Leak);
