@@ -5,9 +5,9 @@ use strict;
 use Apache::Registry ();
 use Apache::Constants qw(OPT_EXECCGI);
 @Apache::RegistryLoader::ISA = qw(Apache::Registry);
-$Apache::RegistryLoader::VERSION = '1.90';
+$Apache::RegistryLoader::VERSION = '1.91';
 
-sub new { 
+sub new {
     my $class = shift;
     bless {@_} => $class;
 }
@@ -15,31 +15,41 @@ sub new {
 sub handler {
     my($self, $uri, $filename) = @_;
 
-    unless($filename) {
-	if(my $func = $self->{trans}) {
-	    no strict 'refs';
-	    $filename = &{$func}($uri);
-        } else {
+    Apache::warn(__PACKAGE__.qq{ failed, reason: uri is a required parameter}),
+	return
+	  unless defined $uri and $uri;
 
-      # warn user if translate process fails,
-          warn "RegistryLoader: Cannot translate the URI 
-	$uri
-	into a real path to the filename. You have to pass URI 
-	and not a filesystem path (e.g. /perl/test.pl vs. 
-	/home/httpd/perl/test.pl). Please refer to the 
-	manpage for more information or use the complete method's 
-	call like: \$r->handler(URI,filename);\n";
-        }
+    if ($filename) {
+      Apache::warn(__PACKAGE__.qq{: Cannot find a filename [$filename]}),
+	  return
+	    unless -e $filename;
+    } else {
+
+      # try to translate URI->filename
+      if (my $func = $self->{trans}) {
+	no strict 'refs';
+	$filename = &{$func}($uri);
+	Apache::warn(__PACKAGE__.
+		     qq{: Translation of uri [$uri] to filename failed [tried: $filename]}),
+		       return
+			 unless -e $filename;
+      } else {
+	# try to guess
+	(my $guess = $uri) =~ s,^/,,;
+	$filename = Apache->server_root_relative($guess);
+	Apache::warn(__PACKAGE__.
+		     qq{: No 'trans' sub was passed: tried to guess the filename [tried: $filename], but failed, for uri [$uri]}),
+		       return
+			 unless -e $filename;
+      }
     }
 
-    #warn "RegistryLoader: uri=$uri, filename=$filename\n";
-
-    (my $guess = $uri) =~ s,^/,,;
+    # warn "*** RegistryLoader: uri=$uri, filename=$filename\n";
 
     my $r = bless {
-	uri => $uri,
-	filename => Apache->server_root_relative($filename || $guess),
-    } => ref($self) || $self;
+		   uri => $uri,
+		   filename => $filename,
+		  } => ref($self) || $self;
 
     $r->SUPER::handler;
 }
@@ -98,9 +108,9 @@ Apache::RegistryLoader - Compile Apache::Registry scripts at server startup
 =head1 DESCRIPTION
 
 This modules allows compilation of B<Apache::Registry> scripts at
-server startup.  The script's handler routine is compiled by the 
-parent server, of which children get a copy.  
-The Apache::RegistryLoader C<handler> method takes arguments of C<uri> 
+server startup.  The script's handler routine is compiled by the
+parent server, of which children get a copy.  The
+B<Apache::RegistryLoader> C<handler> method takes arguments of C<uri>
 and the C<filename>.  URI to filename translation normally doesn't
 happen until HTTP request time, so we're forced to roll our own
 translation.
@@ -151,10 +161,14 @@ this directory.
      }
  }
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Doug MacEachern
+
+Stas Bekman (Rewrote the handler() to report and handle all the possible
+erroneous conditions)
 
 =head1 SEE ALSO
 
 Apache::Registry(3), Apache(3), mod_perl(3)
+
