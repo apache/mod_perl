@@ -286,6 +286,11 @@ our $CWD = Apache::ServerUtil::server_root;
 
 our $AddPerlVersion = 1;
 
+sub warn {
+    shift if @_ and $_[0] eq 'Apache::Server';
+    Apache::ServerRec::warn(@_);
+}
+
 package Apache;
 
 sub server_root_relative {
@@ -341,6 +346,11 @@ sub define {
 
 sub log_error {
     Apache->server->log_error(@_);
+}
+
+sub warn {
+    shift if @_ and $_[0] eq 'Apache';
+    Apache::ServerRec::warn(@_);
 }
 
 sub httpd_conf {
@@ -452,7 +462,7 @@ sub table_get_set {
     }
     else {
         my $name = (caller(1))[3];
-        warn "Usage: \$r->$name([key [,val]])";
+        $r->warn("Usage: \$r->$name([key [,val]])");
     }
 }
 

@@ -9,16 +9,17 @@ use warnings FATAL => 'all';
 
 use Apache::TestUtil;
 use Apache::Test;
-use File::Spec::Functions qw(catfile canonpath);
 
 use ModPerl::Util ();
 use Apache::compat ();
 use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 
+use File::Spec::Functions qw(catfile canonpath);
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 17;
+    plan $r, tests => 21;
 
     $r->send_http_header('text/plain');
 
@@ -42,6 +43,22 @@ sub handler {
 
     t_server_log_error_is_expected();
     Apache::log_error("Apache::log_error test ok");
+    ok 1;
+
+    t_server_log_warn_is_expected();
+    Apache->warn('Apache->warn ok');
+    ok 1;
+
+    t_server_log_warn_is_expected();
+    Apache::warn('Apache::warn ok');
+    ok 1;
+
+    t_server_log_warn_is_expected();
+    Apache::Server->warn('Apache::Server->warn ok');
+    ok 1;
+
+    t_server_log_warn_is_expected();
+    Apache::Server::warn('Apache::Server::warn ok');
     ok 1;
 
     # explicitly imported

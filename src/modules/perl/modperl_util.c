@@ -85,6 +85,12 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
     return SvROK(sv) ? SvRV(sv) : sv;
 }
 
+
+/* notice that if sv is not an Apache::ServerRec object and
+ * Apache->request is not available, the returned global object might
+ * be not thread-safe under threaded mpms, so use with care
+ */
+ 
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
 {
     if (SvOBJECT(sv) || (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))) {
@@ -100,7 +106,6 @@ MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
         }
     }
     
-    MP_CROAK_IF_THREADS_STARTED("using global server object");
     /* modperl_global_get_server_rec is not thread safe w/o locking */
     return modperl_global_get_server_rec();
 }
@@ -131,15 +136,12 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         }
     }
 
-    if (!sv) {
+    /* might be Apache::ServerRec::warn method */
+    if (!sv && !(classname && SvPOK(in) && !strEQ(classname, SvPVX(in)))) {
         request_rec *r = NULL;
         (void)modperl_tls_get_request_rec(&r);
 
         if (!r) {
-            if (classname && SvPOK(in) && !strEQ(classname, SvPVX(in))) {
-                /* might be Apache::{ServerRec,RequestRec}-> dual method */
-                return NULL;
-            }
             Perl_croak(aTHX_
                        "Apache->%s called without setting Apache->request!",
                        cv ? GvNAME(CvGV(cv)) : "unknown");
