@@ -1,6 +1,6 @@
 typedef struct {
     SV *cv;
-    apr_table_t *filter; /*XXX: or maybe a mgv ? */
+    apr_hash_t *filter;
     PerlInterpreter *perl;
 } mpxs_table_do_cb_data_t;
 
@@ -21,7 +21,7 @@ static int mpxs_apr_table_do_cb(void *data,
 
     /* Skip entries if not in our filter list */
     if (tdata->filter) {
-        if (!apr_table_get(tdata->filter, key)) {
+        if (!apr_hash_get(tdata->filter, key, APR_HASH_KEY_STRING)) {
             return 1;
         }
     }
@@ -62,12 +62,14 @@ void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
 #endif
 
     if (items > 2) {
+        char *filter_entry;
         STRLEN len;
-        tdata.filter = apr_table_make(table->a.pool, items-2);
+        
+        tdata.filter = apr_hash_make(table->a.pool);
 
         while (MARK <= SP) {
-            /* XXX: can we use apr_table_setn here? */
-            apr_table_set(tdata.filter, SvPV(*MARK,len), "1");
+            filter_entry = SvPV(*MARK, len);
+            apr_hash_set(tdata.filter, filter_entry, len, "1");
             MARK++;
         }
     }
