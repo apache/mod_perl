@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.10_01-dev
 
+experimental: #ifdef PERL_OBJ_HANDLERS, mod_perl will thaw objects
+from Perl*Handler strings such as `$Global::Object->method'
+
 $r->custom_response will now work under win32 with 1.3b6-dev+
 
 added win32 test enhancements suggested by Gerald Richter

@@ -139,6 +139,7 @@ $CONFIG = "";
 $ADD_MODULE = "";
 
 my %experimental = map { $_,1 } qw{
+PERL_OBJ_HANDLERS
 PERL_MARK_WHERE
 DO_INTERNAL_REDIRECT
 ERRSV_CAN_BE_HTTP
