@@ -1,0 +1,7 @@
+<!--#include virtual="/includes/header.shtml?mod_perl mod_include test" -->
+
+<!--#include virtual="/includes-registry/test.pl" -->
+
+<p align=right>[<a href="../index.html">back</a>]</p>
+
+<!--#include virtual="/includes/footer.shtml" -->
