@@ -7,4 +7,6 @@ struct modperl_filter_t | Apache::OutputFilter
 SV *  | SV
 I32   | IV
 I32 * | IV
+U32   | UV
+U32 * | UV
 

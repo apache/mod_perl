@@ -155,6 +155,7 @@ typedef struct {
     modperl_mgv_t *mgv_cv;
     const char *name; /* orignal name from .conf if any */
     U8 flags;
+    U32 attrs;
 } modperl_handler_t;
 
 #define MP_HANDLER_TYPE_CHAR 1

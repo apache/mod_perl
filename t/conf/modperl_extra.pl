@@ -7,6 +7,8 @@ use Apache::Connection ();
 use Apache::Const -compile => ':common';
 use APR::Const -compile => ':common';
 
+eval { require TestFilter::input_msg };
+
 use APR::Table ();
 
 sub ModPerl::Test::read_post {
