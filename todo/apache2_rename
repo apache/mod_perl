@@ -18,9 +18,9 @@ mark a few milestones to prepare for the trunk merge.
 joes suggests these, s/TODO/DONE/ as each one is achieved:
 
 
-TODO: rename the modules, and bring the build 
+DONE: rename the modules, and bring the build 
       system back to a compilable state.  This
-      effort will leave many of the tests broken.
+      effort will leave all of the tests broken.
 
       joes volunteers to do this.
 
