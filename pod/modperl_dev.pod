@@ -29,6 +29,16 @@ For bleeding edge Perl:
  % ./Configure -des -Dprefix=$HOME/bleedperl \
    -Dusethreads -Doptimize='-g' -Dusedevel
  % make && make test && make install
+ % ln -s $HOME/bleedperl/bin/perl5.x.x $HOME/bleedperl/bin/perl
+
+You'll also want to install (at least) LWP into the bleedperl/lib
+directory if you want to fully test mod_perl, because normally a
+privately installed bleedperl won't find libraries installed in the
+normal places; it only looks in it's own lib tree. You can install LWP
+with CPAN.pm shell:
+
+ % $HOME/bleedperl/bin/perl -MCPAN -e 'install("LWP")'
+
 
 =head1 Compiling
 
