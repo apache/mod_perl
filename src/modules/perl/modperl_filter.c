@@ -466,9 +466,9 @@ static int modperl_filter_register_request(request_rec *r,
             ap_filter_t *f = filters;
 
             while (f) {
-                const char *name = f->frec->name;
+                const char *fname = f->frec->name;
 
-                if (*name == 'M' && strEQ(name, name)) {
+                if (*fname == 'M' && strEQ(fname, name)) {
                     modperl_handler_t *ctx_handler = 
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
 
