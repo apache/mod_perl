@@ -1,5 +1,6 @@
 package ModPerl::Config;
 
+use strict;
 use lib qw(Apache-Test/lib);
 
 use Apache::Build ();
@@ -19,7 +20,7 @@ sub config_as_str{
 
     my $test_config = Apache::TestConfig->new;
     my $httpd = $test_config->{vars}->{httpd};
-    $command = "$httpd -v";
+    my $command = "$httpd -v";
     $cfg .= "\n\n*** $command\n";
     $cfg .= qx{$command};
 
