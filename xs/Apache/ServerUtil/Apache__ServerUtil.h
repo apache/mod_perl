@@ -43,18 +43,10 @@ SV *mpxs_Apache__Server_get_handlers(pTHX_ server_rec *s,
 modperl_global_get_server_rec()
 
 static MP_INLINE char *mpxs_ap_server_root_relative(pTHX_
-                                                    const char *fname,
-                                                    apr_pool_t *p)
+                                                    SV *sv,
+                                                    const char *fname)
 {
-    if (!fname) {
-        fname = "";
-    }
+    apr_pool_t *p = modperl_sv2pool(aTHX_ sv);
 
-    if (!p) {
-        /* XXX: should do something better if called at request time
-         * without a pool
-         */
-        p = modperl_global_get_pconf();
-    }
     return ap_server_root_relative(p, fname);
 }
