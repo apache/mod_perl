@@ -7,6 +7,10 @@ BEGIN {
     $Apache::ServerStarting or warn "Server is not starting !?\n";
 }
 
+eval {
+    require Apache::PerlRunXS;
+}; $@ = '' if $@;
+
 {
     last;
     Apache::warn("use Apache 'warn' is ok\n");

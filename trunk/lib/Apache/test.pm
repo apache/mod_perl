@@ -1,19 +1,23 @@
 package Apache::test;
 
 use strict;
-use vars qw(@EXPORT $USE_THREAD);
+use vars qw(@EXPORT $USE_THREAD $PERL_DIR);
 use Exporter ();
 use Config;
+use FileHandle ();
 *import = \&Exporter::import;
 
 @EXPORT = qw(test fetch simple_fetch have_module skip_test 
-	     $USE_THREAD WIN32 grab); 
+	     $USE_THREAD $PERL_DIR WIN32 grab run_test); 
 
 BEGIN { 
     if(not $ENV{MOD_PERL}) {
 	eval { require "net/config.pl"; }; #for 'make test'
+	$PERL_DIR = $net::perldir;
     } 
 }
+
+$PERL_DIR = $ENV{PERL_DIR} if exists $ENV{PERL_DIR};
 
 $USE_THREAD = ($Config{extensions} =~ /Thread/) || $Config{usethreads};
 
@@ -236,6 +240,52 @@ sub grab {
 	print " *** HTTP response is malformed\n";
     }
     print "-" x 40, "\n", @msg, "-" x 40, "\n";
+}
+
+sub run_test {
+    my($test, $verbose) = @_; 
+    my $cmd = "$^X -w $test|";
+    my $fh = FileHandle->new;
+    $fh->open($cmd) or print "can't run $test. $!\n";
+    my($ok,$next,$max,$files,$totok,$totmax);
+    $ok = $next = $max = 0;
+    my @failed = ();
+    while (<$fh>) {
+	if( $verbose ){
+	    print ">>> $_";
+	}
+	if (/^1\.\.([0-9]+)/) {
+	    $max = $1;
+	    $totmax += $max;
+	    $files++;
+	    $next = 1;
+	}
+	elsif ($max && /^(not\s+)?ok\b/) {
+	    my $this = $next;
+	    if (/^not ok\s*(\d*)/){
+		$this = $1 if $1 > 0;
+		push @failed, $this;
+	    }
+	    elsif (/^ok\s*(\d*)/) {
+		$this = $1 if $1 > 0;
+		$ok++;
+		$totok++;
+	    }
+	    if ($this > $next) {
+		# warn "Test output counter mismatch [test $this]\n";
+		# no need to warn probably
+		push @failed, $next..$this-1;
+	    }
+	    elsif ($this < $next) {
+		#we have seen more "ok" lines than the number suggests
+		warn "Confused test output: test $this answered after test ", $next-1, "\n";
+		$next = $this;
+	    }
+	    $next = $this + 1;
+	}
+    }
+    $fh->close; # must close to reap child resource values
+    return($max, \@failed);
 }
 
 1;

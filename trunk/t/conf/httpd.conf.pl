@@ -98,13 +98,18 @@ if($User eq "root") {
 }
 print "Will run tests as User: '$User' Group: '$Group'\n";
 
-$Port = 8529;
+require 't/net/config.pl';
+my $srv = $net::httpserver;
+($srv = $net::httpserver) =~ s/\D+$//;
+$Port = (split ":", $srv, 2)[1];
+$Port ||= 8529;
+
 $DocumentRoot = "$dir/docs";
 $ServerName = "localhost";
 
 push @AddType, ["text/x-server-parsed-html" => ".shtml"];
  
-for (qw(/perl /cgi-bin /dirty-perl)) {
+for (qw(/perl /cgi-bin /dirty-perl /perl_xs)) {
     push @Alias, [$_ => "$dir/net/perl/"];
 }
 
@@ -121,16 +126,20 @@ $Location{"/dirty-perl"} = {
     PerlSendHeader => "On",
 };
 
-$Location{"/perl"} = { 
-    @mod_perl,
-    PerlSetEnv => [KeyForPerlSetEnv => "OK"],
-#    PerlSetVar => [KeyForPerlSetVar => "OK"],
-};
+for (qw(perl perl_xs)) {
+    $Location{"/$_"} = { 
+	@mod_perl,
+	PerlSetEnv => [KeyForPerlSetEnv => "OK"],
+        #PerlSetVar => [KeyForPerlSetVar => "OK"],
+    };
+}
 
-$Location{"/noenv"} = { 
-    @mod_perl,
-    PerlSetupEnv => "Off",
-};
+for (qw(perl perl_xs)) {
+    $Location{"/$_/noenv"} = { 
+	@mod_perl,
+	PerlSetupEnv => "Off",
+    };
+}
 
 $Location{"/cgi-bin"} = {
     SetHandler => "cgi-script",
@@ -144,6 +153,11 @@ $VirtualHost{"localhost"} = {
 	    PerlSendHeader => "On",
 	    PerlSetupEnv   => "On",
 	},
+	"/perl_xs/io" => {
+	    @mod_perl,
+	    PerlSendHeader => "On",
+	    PerlSetupEnv   => "On",
+	},
     },
 };
 
@@ -153,10 +167,12 @@ $VirtualHost{"localhost"} = {
 #    PerlSetupEnv   => "On",
 #};
 
-$Location{"/perl/perl-status"} = {
-    SetHandler  => "perl-script",
-    PerlHandler => "Apache::Status",
-};
+for (qw(perl perl_xs)) {
+    $Location{"/$_/perl-status"} = {
+	SetHandler  => "perl-script",
+	PerlHandler => "Apache::Status",
+    };
+}
 
 for (qw(status info)) {
     $Location{"/server-$_"} = {
@@ -164,12 +180,12 @@ for (qw(status info)) {
     };
 }
 
-$ErrorLog = "/tmp/mod_perl_error_log";
-$PidFile  = "/tmp/mod_perl_httpd.pid";
+$ErrorLog = "logs/mod_perl_error_log";
+$PidFile  = "logs/mod_perl_httpd.pid";
 
 $AccessConfig = $TypesConfig = $ScoreBoardFile = "$dir/docs/null.txt";
 
-$LockFile = "/tmp/mod_perl.lock";
+$LockFile = "logs/mod_perl.lock";
 
 #push @PerlChildInitHandler, "My::child_init";
 #push @PerlChildExitHandler, "My::child_exit";

@@ -25,7 +25,7 @@ my($request,$response,$str,$form);
 
 foreach $script (@test_scripts) {
     $netloc = $net::httpserver;
-    $script = $net::perldir . "/$script";
+    $script = $PERL_DIR . "/$script";
 
     $ua = new LWP::UserAgent;    # create a useragent to test
 

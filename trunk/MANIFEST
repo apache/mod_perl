@@ -193,4 +193,7 @@ INSTALL.simple
 INSTALL.simple.ssl
 INSTALL.simple.stronghold
 t/docs/subr/.exists
-
+PerlRunXS/Makefile.PL
+PerlRunXS/PerlRunXS.pm
+src/modules/perl/PerlRunXS.xs
+t/modules/perlrunxs.t

@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.14_01-dev
 
+new experimental XS implementation of Apache::PerlRun/Apache::Registry
+handlers in module Apache::PerlRunXS (enable with PERL_RUN_XS=1)
+
 added $r->get_server_name method
 
 move /tmp/mod_perl_* to t/logs, t/conf

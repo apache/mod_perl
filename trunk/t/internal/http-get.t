@@ -23,7 +23,7 @@ my($request,$response,$str);
 
 foreach $s (@test_scripts) {
     $netloc = $net::httpserver;
-    $script = $net::perldir . "/$s";
+    $script = $PERL_DIR . "/$s";
 
     $url = new URI::URL("http://$netloc$script?query");
 
@@ -49,7 +49,7 @@ test ++$i, $response->header("Server") =~ /mod_perl/;
 print "Server: ", $response->header("Server"), "\n";
 
 #test PerlSetupEnv Off
-test ++$i, fetch("/perl/noenv/test.pl") !~ /SERVER_SOFTWARE/m;
+test ++$i, fetch("$PERL_DIR/noenv/test.pl") !~ /SERVER_SOFTWARE/m;
 
 print "pounding a bit...\n";
 for (1..3) {

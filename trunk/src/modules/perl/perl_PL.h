@@ -1,3 +1,6 @@
+#ifndef rs
+#define rs PL_rs
+#endif
 #ifndef beginav
 #define beginav PL_beginav
 #endif
