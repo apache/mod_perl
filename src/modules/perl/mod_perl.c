@@ -7,6 +7,14 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
     char *argv[] = { "httpd", "/dev/null" };
     int argc = 2;
 
+#ifdef MP_USE_GTOP
+    MP_dSCFG(s);
+    MP_TRACE_m_do(
+        scfg->gtop = modperl_gtop_new(p);
+        modperl_gtop_do_proc_mem_before(MP_FUNC ": perl_parse");
+    );
+#endif
+
     if (!(perl = perl_alloc())) {
         perror("perl_alloc");
         exit(1);
@@ -22,6 +30,12 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
     }
 
     perl_run(perl);
+
+#ifdef MP_USE_GTOP
+    MP_TRACE_m_do(
+        modperl_gtop_do_proc_mem_after(MP_FUNC ": perl_parse");
+    );
+#endif
 
     modperl_interp_init(s, p, perl);
 }
