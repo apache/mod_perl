@@ -23,7 +23,7 @@ my $base_url = "/registry/redirect.pl";
 {
     my $redirect_path = "/registry/does_not_exists.pl";
     my $url = "$base_url?$redirect_path";
-
+    t_client_log_error_is_expected();
     ok t_cmp(
         404,
         HEAD($url)->code,
