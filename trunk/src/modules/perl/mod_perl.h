@@ -268,7 +268,12 @@ if((add->flags & f) || (base->flags & f)) \
 #endif
 
 /* some 1.2.x/1.3.x compat stuff */
+/* once 1.3.0 is here, we can toss most of this junk */
 
+#if MODULE_MAGIC_NUMBER >= 19980413
+#include "compat.h"
+#endif
+ 
 #if MODULE_MAGIC_NUMBER > 19970909
 
 #define mod_perl_warn(s,msg) \
@@ -326,6 +331,9 @@ extern void *mod_perl_dummy_mutex;
 #ifndef MULTITHREAD_H
 typedef void mutex;
 #define MULTI_OK (0)
+#undef create_mutex
+#undef acquire_mutex
+#undef release_mutex
 #define create_mutex(name)	((mutex *)mod_perl_dummy_mutex)
 #define acquire_mutex(mutex_id)	((int)MULTI_OK)
 #define release_mutex(mutex_id)	((int)MULTI_OK)
