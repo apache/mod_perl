@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+add support for directive handlers
+
 fix source_scan to run with current httpd/apr
 
 add Apache::Directive->insert method to add dynamic configuration
