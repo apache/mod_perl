@@ -32,12 +32,12 @@ sub handler {
     t_debug "top_module: $top_module_name";
     ok $top_module;
 
-    ok t_cmp($cfg->{httpd_info}->{MODULE_MAGIC_NUMBER_MAJOR},
-             $top_module->version,
+    ok t_cmp($top_module->version,
+             $cfg->{httpd_info}->{MODULE_MAGIC_NUMBER_MAJOR},
              q{$top_module->version});
 
-    ok t_cmp(scalar(keys %{ $cfg->{modules} }),
-             $top_module->module_index,
+    ok t_cmp($top_module->module_index,
+             scalar(keys %{ $cfg->{modules} }),
              q{$top_module->module_index})
         || 1; # the A-T config could be wrong
 
@@ -45,7 +45,7 @@ sub handler {
     #rather than dso.
 
     if ($top_module_name eq 'mod_perl.c') {
-        ok t_cmp('mod_perl.c', $top_module_name, q{$top_module->name}) || 1;
+        ok t_cmp($top_module_name, 'mod_perl.c', q{$top_module->name}) || 1;
 
         my $cmd = $top_module->cmds;
 
@@ -74,39 +74,39 @@ sub handler {
             $modules->{$val} = 1;
         }
 
-        ok t_cmp($cfg->{modules}, $modules, "Modules list");
+        ok t_cmp($modules, $cfg->{modules}, "Modules list");
     }
 
     #.c
-    ok t_cmp(1, Apache::Module::loaded('mod_perl.c'),
+    ok t_cmp(Apache::Module::loaded('mod_perl.c'), 1,
              "Apache::Module::loaded('mod_perl.c')");
 
-    ok t_cmp(0, Apache::Module::loaded('Apache__Module_foo.c'),
+    ok t_cmp(Apache::Module::loaded('Apache__Module_foo.c'), 0,
              "Apache::Module::loaded('Apache__Module_foo.c')");
 
     #.so
     {
         my $build = Apache::BuildConfig->new;
         my $expect = $build->{MODPERL_LIB_SHARED} ? 1 : 0;
-        ok t_cmp($expect, Apache::Module::loaded('mod_perl.so'),
+        ok t_cmp(Apache::Module::loaded('mod_perl.so'), $expect,
                  "Apache::Module::loaded('mod_perl.so')");
     }
 
-    ok t_cmp(0, Apache::Module::loaded('Apache__Module__foo.so'),
+    ok t_cmp(Apache::Module::loaded('Apache__Module__foo.so'), 0,
              "Apache::Module::loaded('Apache__Module_foo.so')");
 
     #perl
-    ok t_cmp(1, Apache::Module::loaded('Apache::Module'),
+    ok t_cmp(Apache::Module::loaded('Apache::Module'), 1,
              "Apache::Module::loaded('Apache::Module')");
 
-    ok t_cmp(0, Apache::Module::loaded('Apache__Module_foo'),
+    ok t_cmp(Apache::Module::loaded('Apache__Module_foo'), 0,
              "Apache::Module::loaded('Apache__Module_foo')");
 
     #bogus
-    ok t_cmp(0, Apache::Module::loaded('Apache__Module_foo.foo'),
+    ok t_cmp(Apache::Module::loaded('Apache__Module_foo.foo'), 0,
              "Apache::Module::loaded('Apache__Module_foo.foo')");
 
-    ok t_cmp(0, Apache::Module::loaded(''),
+    ok t_cmp(Apache::Module::loaded(''), 0,
              "Apache::Module::loaded('')");
 
     Apache::OK;

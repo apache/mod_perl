@@ -43,8 +43,8 @@ sub handler {
 
     ok $c->aborted || 1;
 
-    ok t_cmp(Apache::CONN_CLOSE,
-             $c->keepalive,
+    ok t_cmp($c->keepalive,
+             Apache::CONN_CLOSE,
              "the client has issued a non-keepalive request");
 
     ok $c->local_ip;

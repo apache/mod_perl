@@ -41,8 +41,8 @@ sub handler {
              " headers that should always be there");
 
     while (my($code, $line) = each %status_lines) {
-        ok t_cmp($line,
-                 Apache::RequestUtil::get_status_line($code),
+        ok t_cmp(Apache::RequestUtil::get_status_line($code),
+                 $line,
                  "Apache::RequestUtil::get_status_line($code)");
     }
 

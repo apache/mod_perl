@@ -74,17 +74,17 @@ sub handler {
 
     foreach my $p (keys %pools) {
 
-        ok t_filepath_cmp(catfile($serverroot, 'conf'),
-                          canonpath(Apache::server_root_relative($pools{$p},
+        ok t_filepath_cmp(canonpath(Apache::server_root_relative($pools{$p},
                               'conf')),
+                          catfile($serverroot, 'conf'),
                           "Apache:::server_root_relative($p, 'conf')");
     }
 
     # dig out the pool from valid objects
     foreach my $obj (keys %objects) {
 
-        ok t_filepath_cmp(catfile($serverroot, 'conf'),
-                          canonpath($objects{$obj}->server_root_relative('conf')),
+        ok t_filepath_cmp(canonpath($objects{$obj}->server_root_relative('conf')),
+                          catfile($serverroot, 'conf'),
                           "$obj->server_root_relative('conf')");
     }
 
@@ -99,12 +99,12 @@ sub handler {
     }
 
     # no file argument gives ServerRoot
-    ok t_filepath_cmp(canonpath($serverroot),
-                      canonpath($r->server_root_relative),
+    ok t_filepath_cmp(canonpath($r->server_root_relative),
+                      canonpath($serverroot),
                       '$r->server_root_relative()');
 
-    ok t_filepath_cmp(canonpath($serverroot),
-                      canonpath(Apache::server_root_relative($r->pool)),
+    ok t_filepath_cmp(canonpath(Apache::server_root_relative($r->pool)),
+                      canonpath($serverroot),
                       'Apache::server_root_relative($r->pool)');
 
     # Apache::server_root is also the ServerRoot constant

@@ -23,5 +23,5 @@ plan tests => 4;
 while (my($key, $val) = each %map) {
     my $expected = "internal redirect: $key";
     my $received = GET_BODY_ASSERT $val;
-    ok t_cmp($expected, $received);
+    ok t_cmp($received, $expected);
 }

@@ -39,23 +39,23 @@ sub handler {
     # construct_server
     {
         my $server = $r->construct_server;
-        ok t_cmp($server,
-                 join(':', $r->get_server_name, $r->get_server_port),
+        ok t_cmp(join(':', $r->get_server_name, $r->get_server_port),
+                 $server,
                  "construct_server/get_server_name/get_server_port");
     }
     {
         my $hostname = "example.com";
         my $server = $r->construct_server($hostname);
-        ok t_cmp($server,
-                 join(':', $hostname, $r->get_server_port),
+        ok t_cmp(join(':', $hostname, $r->get_server_port),
+                 $server,
                  "construct_server($hostname)");
     }
     {
         my $hostname = "example.com";
         my $port     = "9097";
         my $server = $r->construct_server($hostname, $port);
-        ok t_cmp($server,
-                 join(':', $hostname, $port),
+        ok t_cmp(join(':', $hostname, $port),
+                 $server,
                  "construct_server($hostname, $port)");
 
     }
@@ -63,8 +63,8 @@ sub handler {
         my $hostname = "example.com";
         my $port     = "9097";
         my $server = $r->construct_server($hostname, $port, $r->pool->new);
-        ok t_cmp($server,
-                 join(':', $hostname, $port),
+        ok t_cmp(join(':', $hostname, $port),
+                 $server,
                  "construct_server($hostname, $port, new_pool)");
 
     }
@@ -87,7 +87,7 @@ sub handler {
 
         $parsed->path($path);
 
-        ok t_cmp($path, $parsed->path, "parsed path");
+        ok t_cmp($parsed->path, $path, "parsed path");
     }
     {
         # this time include args in the constructed url
@@ -100,7 +100,7 @@ sub handler {
 
         my $up = $parsed->unparse;
         ok t_cmp($up, qr/$location/, 'construct_url($uri)');
-        ok t_cmp($r->args,  $parsed->query, "args vs query");
+        ok t_cmp($parsed->query, $r->args, "args vs query");
     }
     {
         # this time include args and a pool object
@@ -131,7 +131,7 @@ sub handler {
         # so in order to test pre-0.9.2 and post-0.9.2-dev we massage it
         $expected =~ s|^http:||;
         $received =~ s|^:||;
-        ok t_cmp($expected, $received,
+        ok t_cmp($received, $expected,
                  "the bogus url is expected when 'hostname' is set " .
                  "but not 'scheme'");
     }
@@ -146,23 +146,24 @@ sub handler {
 
         # new request
         $newr->parse_uri($url_string);
-        ok t_cmp($path, $newr->uri, "uri");
-        ok t_cmp($query, $newr->args, "args");
+        ok t_cmp($newr->uri, $path, "uri");
+        ok t_cmp($newr->args, $query, "args");
 
         my $puri = $newr->parsed_uri;
-        ok t_cmp($path,     $puri->path,     "path");
-        ok t_cmp($query,    $puri->query,    "query");
-        ok t_cmp($fragment, $puri->fragment, "fragment");
+        ok t_cmp($puri->path,     $path,     "path");
+        ok t_cmp($puri->query,    $query,    "query");
+        ok t_cmp($puri->fragment, $fragment, "fragment");
 
         my $port = 6767;
         $puri->port($port);
         $puri->scheme('ftp');
         $puri->hostname('perl.apache.org');
 
-        ok t_cmp($port, $puri->port, "port");
+        ok t_cmp($puri->port, $port, "port");
 
-        ok t_cmp("ftp://perl.apache.org:$port$path?$query#$fragment",
-                 $puri->unparse, "unparse");
+        ok t_cmp($puri->unparse,
+                 "ftp://perl.apache.org:$port$path?$query#$fragment", 
+                 "unparse");
     }
 
     # unescape_url
