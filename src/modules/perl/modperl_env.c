@@ -329,3 +329,10 @@ void modperl_env_init(void)
     StructCopy(&MP_vtbl_env, &PL_vtbl_env, MGVTBL);
     StructCopy(&MP_vtbl_envelem, &PL_vtbl_envelem, MGVTBL);
 }
+
+void modperl_env_unload(void)
+{
+    /* restore originals */
+    StructCopy(&MP_PERL_vtbl_env, &PL_vtbl_env, MGVTBL);
+    StructCopy(&MP_PERL_vtbl_envelem, &PL_vtbl_envelem, MGVTBL);
+}

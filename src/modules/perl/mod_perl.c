@@ -18,6 +18,8 @@ static apr_status_t modperl_shutdown(void *data)
         modperl_xs_dl_handles_close(cdata->pool, handles);
     }
 
+    modperl_env_unload();
+
     return APR_SUCCESS;
 }
 #endif

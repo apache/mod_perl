@@ -159,6 +159,8 @@ apr_status_t modperl_interp_pool_destroy(void *data)
 
     mip->parent->perl = NULL;
 
+    modperl_env_unload();
+
     return APR_SUCCESS;
 }
 
