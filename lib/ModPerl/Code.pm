@@ -407,6 +407,13 @@ EOF
 }
 
 my $noedit_warning = noedit_warning();
+my $noedit_warning_hash = noedit_warning_hash();
+
+sub noedit_warning_hash {
+    return $noedit_warning_hash if $noedit_warning_hash;
+    (my $warning = noedit_warning()) =~ s/^/\# /mg;
+    $warning;
+}
 
 sub init_file {
     my($self, $name) = @_;
@@ -491,6 +498,8 @@ sub generate_apache2_pm {
     open my $fh, '>', $file or die "open $file: $!";
 
     my $package = 'package Apache2';
+
+    print $fh ModPerl::Code::noedit_warning_hash();
 
     print $fh <<EOF;
 $package;

@@ -7,6 +7,7 @@ use Config;
 use Cwd ();
 use ExtUtils::Embed ();
 use ModPerl::Code ();
+use ModPerl::BuildOptions ();
 
 use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
@@ -95,6 +96,10 @@ sub ccopts {
         $ccopts .= " -g -Wall";
     }
 
+    if ($self->{MP_CCOPTS}) {
+        $ccopts .= " $self->{MP_CCOPTS}";
+    }
+
     if ($self->{MP_TRACE}) {
         $ccopts .= " -DMP_TRACE";
     }
@@ -174,41 +179,6 @@ EOF
 
 #--- user interaction ---
 
-sub parse_init_file {
-    my $self = shift;
-
-    my $fh;
-    for (qw(./ ../ ./. ../.), "$ENV{HOME}/.") {
-        my $file = $_ . 'makepl_args.mod_perl2';
-        if (open $fh, $file) {
-            $self->{init_file} = $file;
-            last;
-        }
-        $fh = undef;
-    }
-
-    return unless $fh;
-
-    print "Reading Makefile.PL args from $self->{init_file}\n";
-    while(<$fh>) {
-        chomp;
-        s/^\s+//; s/\s+$//;
-        next if /^\#/ || /^$/;
-        last if /^__END__/;
-
-        if (/^MP_/) {
-            my($key, $val) = split $self->{param_qr}, $_, 2;
-            $self->{$key} = $val;
-            print "   $key = $val\n";
-	}
-        else {
-            push @ARGV, $_;
-        }
-    }
-    close $fh;
-}
-
-
 sub prompt {
     my($self, $q, $default) = @_;
     return $default if $self->{MP_PROMPT_DEFAULT};
@@ -256,42 +226,16 @@ sub build_config {
     return Apache::BuildConfig::->new;
 }
 
-sub parse_argv {
-    my $self = shift;
-    return unless @ARGV;
-
-    my @args = @ARGV;
-    @ARGV = ();
-
-    for (@args) {
-        if (/^MP_/) {
-            my($key, $val) = split $self->{param_qr}, $_, 2;
-            $self->{$key} = $val;
-            print "$key = $val\n";
-        }
-        else {
-            #pass along to MakeMaker
-            push @ARGV, $_;
-        }
-    }
-}
-
 sub new {
     my $class = shift;
 
     my $self = bless {
         cwd => Cwd::fastcwd(),
-        param_qr => qr([\s=]+),
         MP_LIBNAME => 'libmodperl',
         @_,
     }, $class;
 
-    $self->parse_init_file;
-    $self->parse_argv;
-
-    if ($self->{MP_DEBUG} and $self->{MP_USE_GTOP}) {
-        $self->{MP_USE_GTOP} = 0 unless $self->find_dlfile('gtop');
-    }
+    ModPerl::BuildOptions->init($self);
 
     $self;
 }
@@ -353,6 +297,8 @@ sub save {
 
     #work around autosplit braindeadness
     my $package = 'package Apache::BuildConfig';
+
+    print $fh ModPerl::Code::noedit_warning_hash();
 
     print $fh <<EOF;
 $package;
@@ -574,7 +520,7 @@ sub xsubpp {
     my $typemap = $self->file_path('src/modules/perl/typemap');
     if (-e $typemap) {
         $xsubpp .= join ' ',
-          '-typemap', '../src/modules/perl/typemap';
+          '-typemap', $typemap;
     }
 
     $xsubpp;
@@ -644,6 +590,8 @@ sub write_src_makefile {
     my $mf = $self->default_file('makefile');
 
     open my $fh, '>', $mf or die "open $mf: $!";
+
+    print $fh ModPerl::Code::noedit_warning_hash();
 
     $self->make_tools($fh);
 
@@ -774,7 +722,8 @@ sub inc {
     my @inc = ();
 
     for ("$src/modules/perl", "$src/include",
-         "$src/lib/apr/include", "$src/os/$os")
+         "$src/lib/apr/include", "$src/os/$os",
+         $self->file_path("src/modules/perl"))
       {
           push @inc, "-I$_" if -d $_;
       }
