@@ -150,6 +150,7 @@ $PERL_DESTRUCT_LEVEL = "";
 $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
+$SSL_BASE = ""; 
 $Port = 8529;
 #so Doug can 'make test' different-builds@sametime/samebox
 if(!$Is_Win32 and $Is_dougm and $$ > 8000 and $$ < 30000) {
@@ -200,10 +201,12 @@ PERL_DEFAULT_OPMASK
 PERL_ORALL_OPMASK
 };
 
-my @mp_args = 
+my %PassEnv = map { $_,1 } qw(SSL_BASE);
+
+my @mp_args = (keys %PassEnv,
     qw(EXPERIMENTAL EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE APACHE_PREFIX
        USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
-       ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT XS_IMPORT);
+       ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT XS_IMPORT));
 
 sub is_mp_arg {
     my $arg = shift; 
@@ -300,6 +303,10 @@ if($EXPERIMENTAL) {
 if($experimental{PERL_DEFAULT_OPMASK} > 1) {
     $experimental{PERL_SAFE_STARTUP} = 2;
     $PERL_EXTRA_CFLAGS .= " -DPERL_SAFE_STARTUP=1";
+}
+
+for (keys %PassEnv) {
+    $ENV{$_} = $$_ if $$_;
 }
 
 $USE_APACI = 1 if $USE_DSO;
@@ -1762,7 +1769,8 @@ sub write_my_config {
 package Apache::MyConfig ;
 
 %Setup = (
-   'Apache_Src' => \'$APACHE_SRC\'
+   'Apache_Src' => \'$APACHE_SRC\',
+   'SSL_BASE' => \'$SSL_BASE\',
 );
 
 1;
