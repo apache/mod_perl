@@ -4,6 +4,10 @@
 
 -- see also todo/api_status
 
+* docs/install/install.pod:=head2 Configuring mod_perl
+  should be rewritten to clearly explain how to build static and
+  dynamic mod_perl (each separately).
+
 * rewrite the tests/docs not to remove the bucket until it was read
   from
 
