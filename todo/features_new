@@ -2,6 +2,11 @@
 # New features in mp2 #
 #######################
 
+* PerlFooHandler -Bar is a NOOP when 'PerlOptions AutoLoad' is in
+  effect, whereas it should prevent autloading.
+  See:
+  modperl_handler_new in modperl_handler.c
+  modperl_hash_handlers in modperl_mgv.c
 
 * filters tie handle/perlio interface
 
