@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+in the MP_MAINTAINER mode add the -Werror compilation flag when perl
+v5.6.2 or higher is used, so that we don't miss compilation
+warnings. [Stas]
+
 fix the Makefile.PL option parser to support overriding of certain
 build options, in addition to appending to them (.e.g. now MP_LIBNAME
 is overridable) [Andrew Wyllie <wyllie@dilex.net>]
