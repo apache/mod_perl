@@ -193,7 +193,7 @@ typedef struct {
     ap_filter_t *f;
     char *leftover;
     apr_ssize_t remaining;
-    modperl_wbucket_t wbucket;
+    modperl_wbucket_t *wbucket;
     apr_bucket *bucket;
     apr_bucket_brigade *bb_in;
     apr_bucket_brigade *bb_out;
