@@ -89,6 +89,9 @@ sub import {
     Apache::Const->compile($package => @_);
 }
 
+#no need to support in 2.0
+sub export {}
+
 package Apache::RequestRec;
 
 #no longer exist in 2.0
