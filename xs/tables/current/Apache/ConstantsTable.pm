@@ -163,6 +163,11 @@ $Apache::ConstantsTable = {
       'AP_FTYPE_CONNECTION',
       'AP_FTYPE_NETWORK'
     ],
+    'conn_keepalive' => [
+      'AP_CONN_UNKNOWN',
+      'AP_CONN_CLOSE',
+      'AP_CONN_KEEPALIVE'
+    ],
     'common' => [
       'DECLINED',
       'DONE',
