@@ -8,6 +8,8 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
+use TestCommon::SameInterp;
+
 plan tests => 12;
 
 my $url = "/TestModperl__sameinterp";
@@ -22,9 +24,9 @@ for (1..2) {
     # test GET over the same same_interp
     for (1..2) {
         $expected++;
-        my $res = req($same_interp, \&GET, $url, foo => 'bar');
+        my $res = same_interp_req($same_interp, \&GET, $url, foo => 'bar');
         $skip++ unless defined $res;
-        skip_not_same_interp(
+        same_interp_skip_not_found(
             $skip,
             defined $res && $res->content,
             $expected,
@@ -43,9 +45,10 @@ for (1..2) {
     for (1..2) {
         $expected++;
         my $content = join ' ', 'ok', $_ + 3;
-        my $res = req($same_interp, \&POST, $url, content => $content);
+        my $res = same_interp_req($same_interp, \&POST, $url,
+            content => $content);
         $skip++ unless defined $res;
-        skip_not_same_interp(
+        same_interp_skip_not_found(
             $skip,
             defined $res && $res->content,
             $expected,
@@ -63,45 +66,13 @@ for (1..2) {
     my $skip  = 0;
     for (1..2) {
         $expected++;
-        my $res = req($same_interp, \&HEAD, $url);
+        my $res = same_interp_req($same_interp, \&HEAD, $url);
         $skip++ unless defined $res;
-        skip_not_same_interp(
+        same_interp_skip_not_found(
             $skip,
             defined $res && $res->header(Apache::TestRequest::INTERP_KEY),
             $same_interp,
             "HEAD over the same interp"
         );
-    }
-}
-
-# if we fail to find the same interpreter, return undef (this is not
-# an error)
-sub req {
-    my($same_interp, $url) = @_;
-    my $res = eval {
-        Apache::TestRequest::same_interp_do(@_);
-    };
-    return undef if $@ && $@ =~ /unable to find interp/;
-    die $@ if $@;
-    return $res;
-}
-
-# make the tests resistant to a failure of finding the same perl
-# interpreter, which happens randomly and not an error.
-# the first argument is used to decide whether to skip the sub-test,
-# the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_interp {
-    my $skip_cond = shift;
-    if ($skip_cond) {
-        skip "Skip couldn't find the same interpreter", 0;
-    }
-    else {
-        my($package, $filename, $line) = caller;
-        # trick ok() into reporting the caller filename/line when a
-        # sub-test fails in sok()
-        return eval <<EOE;
-#line $line $filename
-    ok &t_cmp;
-EOE
     }
 }
