@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.13_01-dev
 
+added Apache::Util module (enable with PERL_UTIL_API=1 or EVERYTHING=1)
+
 only break out of the write loop if rwrite() returns -1 and
 r->connection->aborted, otherwise continue  
 
