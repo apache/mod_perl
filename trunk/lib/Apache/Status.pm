@@ -1,5 +1,6 @@
 package Apache::Status;
 use strict;
+use mod_perl ();
 
 $Apache::Status::VERSION = '2.03';
 
@@ -37,6 +38,7 @@ my(%status) = (
    hooks => "Enabled mod_perl Hooks",
 );
 
+delete $status{'hooks'} if $mod_perl::VERSION >= 1.9901;
 delete $status{'sig'} if $Is_Win32;
 
 if($Apache::Server::SaveConfig) {
