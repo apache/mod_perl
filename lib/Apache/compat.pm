@@ -487,8 +487,9 @@ sub content {
     do {
         $r->input_filters->get_brigade($bb, Apache::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
+        while (!$bb->is_empty) {
+            my $b = $bb->first;
 
-        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
             if ($b->is_eos) {
                 $seen_eos++;
                 last;
@@ -498,7 +499,7 @@ sub content {
                 $data .= $buf;
             }
 
-            $b->remove; # optimization to reuse memory
+            $b->delete;
         }
     } while (!$seen_eos);
 

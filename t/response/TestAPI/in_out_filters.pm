@@ -46,7 +46,6 @@ sub send_response_body {
 
 sub read_request_body {
     my $r = shift;
-    my $debug = shift || 0;
 
     my $bb = APR::Brigade->new($r->pool,
                                $r->connection->bucket_alloc);
@@ -59,21 +58,18 @@ sub read_request_body {
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;
-        warn "read_post: bb $count\n" if $debug;
 
         for (my $b = $bb->first; $b; $b = $bb->next($b)) {
             if ($b->is_eos) {
-                warn "read_post: EOS bucket:\n" if $debug;
                 $seen_eos++;
                 last;
             }
 
             if ($b->read(my $buf)) {
-                warn "read_post: DATA bucket: [$buf]\n" if $debug;
                 $data .= $buf;
             }
 
-            $b->remove; # optimization to reuse memory
+            $b->delete;
         }
 
     } while (!$seen_eos);

@@ -4,6 +4,9 @@ package TestProtocol::echo_bbs;
 # manipulations on the buckets inside the connection handler, rather
 # then using filter
 
+# it also demonstrates how to use a single bucket bridade to do all
+# the manipulation
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -12,6 +15,8 @@ use APR::Socket ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Error ();
+
+use Apache::TestTrace;
 
 use Apache::Const -compile => qw(OK MODE_GETLINE);
 use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
@@ -23,38 +28,36 @@ sub handler {
     # the socket to a blocking IO mode
     $c->client_socket->opt_set(APR::SO_NONBLOCK, 0);
 
-    my $bb_in  = APR::Brigade->new($c->pool, $c->bucket_alloc);
-    my $bb_out = APR::Brigade->new($c->pool, $c->bucket_alloc);
+    my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     while (1) {
-        my $rc = $c->input_filters->get_brigade($bb_in,
-                                                Apache::MODE_GETLINE);
+        debug "asking new line";
+        my $rc = $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
-        while (!$bb_in->is_empty) {
-            my $bucket = $bb_in->first;
+        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
 
-            $bucket->remove;
+            last if $b->is_eos;
 
-            if ($bucket->is_eos) {
-                $bb_out->insert_tail($bucket);
-                last;
-            }
+            debug "processing new line";
 
-            if ($bucket->read(my $data)) {
+            if ($b->read(my $data)) {
                 last if $data =~ /^[\r\n]+$/;
-                $bucket = APR::Bucket->new(uc $data);
+                my $nb = APR::Bucket->new(uc $data);
+                # head->...->$nb->$b ->...->tail
+                # XXX: the next 3 lines could be replaced with a
+                # wrapper function $b->replace($nb);
+                $b->insert_before($nb);
+                $b->delete;
+                $b = $nb;
             }
-
-            $bb_out->insert_tail($bucket);
         }
 
-        $c->output_filters->fflush($bb_out);
+        $c->output_filters->fflush($bb);
     }
 
-    $bb_in->destroy;
-    $bb_out->destroy;
+    $bb->destroy;
 
     Apache::OK;
 }
