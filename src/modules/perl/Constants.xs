@@ -56,22 +56,28 @@ static void my_import(SV *pclass, SV *caller, SV *sv)
 }
 #endif /*XS_IMPORT*/
 
-static CV *no_warn = Nullcv;
+/* prevent prototype mismatch warnings */
 
-CV *empty_anon_sub(void)
+static void check_proto(HV *stash, char *name)
 {
-    return newSUB(start_subparse(FALSE, 0),
-                  newSVOP(OP_CONST, 0, newSVpv("__ANON__",8)),
-                  Nullop,
-                  block_end(block_start(TRUE), newOP(OP_STUB,0)));
+    GV **gvp = (GV**)hv_fetch(stash, name, strlen(name), FALSE);
+    CV *cv;
+
+    if (!(gvp && *gvp && (cv = GvCVu(*gvp)))) {
+	return;
+    }
+    if (CvROOT(cv)) {
+	return;
+    }
+    if (!SvPOK(cv)) {
+	sv_setsv((SV*)cv, &sv_no);
+    }
 }
 
 #ifdef newCONSTSUB
 
 #define my_newCONSTSUB(stash, name, sv) \
-    if(!no_warn) no_warn = empty_anon_sub(); \
-    SAVESPTR(warnhook); \
-    warnhook = (SV*)no_warn; \
+    check_proto(stash, name); \
     newCONSTSUB(stash, name, sv)
 
 #else   
@@ -94,10 +100,7 @@ static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
 	curstash = curcop->cop_stash = stash;
     }
 
-    /* prevent prototype mismatch warnings */
-    if(!no_warn) no_warn = empty_anon_sub();
-    SAVESPTR(warnhook);
-    warnhook = (SV*)no_warn;
+    check_proto(stash, name);
 
     (void)newSUB(start_subparse(FALSE, 0),
 	   newSVOP(OP_CONST, 0, newSVpv(name,0)),

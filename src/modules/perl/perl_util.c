@@ -226,6 +226,15 @@ SV *mod_perl_slurp_filename(request_rec *r)
     return newRV_noinc(insv);
 }
 
+#ifndef load_module
+#define load_module(flags, name, ver, imp) \
+{ \
+   OP *modname = newSVOP(OP_CONST, 0, name); \
+   modname->op_private |= OPpCONST_BARE; \
+   utilize(TRUE, start_subparse(FALSE,0), Nullop, modname, Nullop); \
+}
+#endif
+
 SV *mod_perl_tie_table(table *t)
 {
     HV *hv = newHV();
@@ -233,8 +242,7 @@ SV *mod_perl_tie_table(table *t)
 
     /*try to make this quick as possible*/  
     if(!hv_exists(GvHV(incgv), "Apache/Table.pm", 15)) {
-	utilize(TRUE, start_subparse(FALSE, 0), Nullop, 
-		newSVOP(OP_CONST, 0, newSVpv("Apache/Table.pm",15)), Nullop);
+	load_module(0, newSVpv("Apache::Table",0), Nullsv, Nullsv);
     }
 
     sv_setref_pv(sv, "Apache::table", (void*)t);
@@ -566,20 +574,6 @@ int perl_require_module(char *name, server_rec *s)
 
     MP_TRACE_d(fprintf(stderr, "ok\n"));
     return 0;
-}
-
-/* faster than require_module, 
- * used when we're already in an eval context
- */
-void perl_qrequire_module(char *name) 
-{
-    OP *reqop;
-    SV *key = perl_module2file(name);
-    if((key && hv_exists_ent(GvHV(incgv), key, FALSE)))
-	return;
-    reqop = newSVOP(OP_CONST, 0, key);
-    /*reqop->op_private |= OPpCONST_BARE;*/
-    utilize(TRUE, start_subparse(FALSE, 0), Nullop, reqop, Nullop);
 }
 
 void perl_do_file(char *pv)
