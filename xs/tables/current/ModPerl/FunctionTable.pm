@@ -6612,20 +6612,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => '',
-    'name' => 'mpxs_apr_sockaddr_port_get',
-    'args' => [
-      {
-        'type' => 'PerlInterpreter *',
-        'name' => 'my_perl'
-      },
-      {
-        'type' => 'apr_sockaddr_t *',
-        'name' => 'sockaddr'
-      }
-    ]
-  },
-  {
     'return_type' => 'void',
     'name' => 'mpxs_apr_strerror',
     'attr' => [
