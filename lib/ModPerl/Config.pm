@@ -13,10 +13,16 @@ sub config_as_str{
 
     $cfg .= "*** using $INC{'Apache/BuildConfig.pm'}\n";
 
+    # the widest key length
+    my $max_len = 0;
+    for (map {length} grep /^MP_/, keys %$build_config) {
+        $max_len = $_ if $_ > $max_len;
+    }
+
     # mod_perl opts
     $cfg .= "*** Makefile.PL options:\n";
     $cfg .= join '',
-        map {sprintf "    %-20s => %s\n", $_, $build_config->{$_}}
+        map {sprintf "  %-${max_len}s => %s\n", $_, $build_config->{$_}}
             grep /^MP_/, sort keys %$build_config;
 
     my $command = '';
