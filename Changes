@@ -12,6 +12,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_04 - June 21, 2002
 
+added $r->get_remote_host to compat.pm + test [Stas Bekman]
+
 various APR PerlIO updates [Stas Bekman]
 
 stop using an apr_pool_t to allocate items for the interpreter pool,
