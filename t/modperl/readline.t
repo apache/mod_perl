@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 2, \&have_lwp;
+plan tests => 2;
 
 my $location = "/TestModperl::readline";
 

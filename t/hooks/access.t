@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4, \&have_lwp;
+plan tests => 4;
 
 my $location = "/TestHooks::access";
 

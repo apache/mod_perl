@@ -3,6 +3,7 @@ use warnings FATAL => 'all';
 
 use Test;
 use Apache::Test ();
+use Apache::TestRequest;
 
 plan tests => 3;
 
@@ -10,7 +11,7 @@ my $config = Apache::Test::config();
 
 my $url = '/TestAPI::sendfile';
 
-my $data = $config->http_raw_get($url);
+my $data = GET_BODY($url);
 
 ok $data;
 
@@ -18,6 +19,6 @@ my $module = 'response/TestAPI/sendfile.pm';
 
 ok length($data) == -s $module;
 
-$data = $config->http_raw_get("$url?noexist.txt");
+$data = GET_BODY("$url?noexist.txt");
 
 ok $data =~ /Not Found/;

@@ -6,7 +6,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::TestRequest ();
+use Apache::TestRequest;
 
 my %checks = (
     'default'                    => 'PerlRequired by Parent',
@@ -25,6 +25,6 @@ for my $module (sort keys %checks) {
     t_debug("connecting to $hostport");
 
     ok t_cmp($checks{$module},
-             $config->http_raw_get("/TestDirective::perlrequire", undef),
+             GET_BODY("/TestDirective::perlrequire"),
              "testing PerlRequire in $module");
 }
