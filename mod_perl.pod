@@ -688,8 +688,8 @@ mod_perl's Makefile.PL script can take care of this for you as well:
  perl Makefile.PL PERL_SSI=1
 
 If you're interested in sprinkling Perl code inside your HTML
-documents, you'll also want to look at the Apache::Embperl,
-Apache::ePerl and Apache::SSI modules. 
+documents, you'll also want to look at the Apache::Embperl
+(http://perl.apache.org/embperl/), Apache::ePerl and Apache::SSI modules. 
 
 =head1 DEBUGGING
 
