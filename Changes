@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+Since Apache2.pm pops /foo/Apache2 dirs to the top of @INC, it now
+also takes care of keeping lib and blib dirs before the system dirs,
+so that previously installed libraries won't get loaded instead of the
+currently uninstalled libraries that are under test. [Stas]
+
 When 'make test' fails we now print the info on what to do next [Stas]
 
 At the end of 'make install' we now print the info how to proceed with
