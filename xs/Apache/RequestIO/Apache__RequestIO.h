@@ -177,7 +177,7 @@ static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
                                          SV *buffer, int bufsiz,
                                          int offset)
 {
-    long nrd = 0;
+    long total = 0;
     int rc;
 
     if ((rc = mpxs_setup_client_block(r)) != APR_SUCCESS) {
@@ -185,20 +185,39 @@ static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
     }
 
     if (mpxs_should_client_block(r)) {
+        long nrd;
         /* ap_should_client_block() will return 0 if r->read_length */
         mpxs_sv_grow(buffer, bufsiz+offset);
-        nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
+        while (bufsiz) {
+            nrd = ap_get_client_block(r, SvPVX(buffer)+offset+total, bufsiz);
+            if (nrd > 0) {
+                total  += nrd;
+                bufsiz -= nrd;
+            }
+            else if (nrd == 0) {
+                break;
+            }
+            else {
+                /*
+                 * XXX: as stated in ap_get_client_block, the real
+                 * error gets lots, so we only know that there was one
+                 */
+                ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
+                         "mod_perl: $r->read failed to read");
+                break;
+            }
+        }
     }
 
-    if (nrd > 0) {
-        mpxs_sv_cur_set(buffer, nrd+offset);
+    if (total > 0) {
+        mpxs_sv_cur_set(buffer, offset+total);
         SvTAINTED_on(buffer);
     } 
     else {
         sv_setpvn(buffer, "", 0);
     }
 
-    return nrd;
+    return total;
 }
 
 static MP_INLINE
