@@ -13,19 +13,6 @@ $Location{'/perl_sections'} = {
 </Perl>
 
 <Perl >
-package Tie::PerlSection;
-use Tie::Hash;
-@ISA = (Tie::StdHash);
-sub FETCH { 
-    my ($hash, $key) = @_;
-    if ($key eq '/tied') {
-        return 'TIED';
-    }
-    return $hash->{$key};
-}
-</Perl>
-
-<Perl >
 #Test tied %Location
 tie %Location, 'Tie::PerlSection';
 $Location{'/tied'} = 'test_tied';

@@ -197,6 +197,17 @@ END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
 
+#For the tied %Location in <Perl > sections
+use Tie::Hash;
+@Tie::PerlSection::ISA = qw(Tie::StdHash);
+sub Tie::PerlSection::FETCH {
+    my ($hash, $key) = @_;
+    if ($key eq '/tied') {
+        return 'TIED';
+    }
+    return $hash->{$key};
+}
+
 package ModPerl::TestFilterDebug;
 
 use base qw(Apache::Filter);
