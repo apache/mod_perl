@@ -44,6 +44,8 @@ our $VERSION;
 my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
+win32_fetch_apxs() if WIN32;
+
 configure();
 perl_version_check($build);
 
@@ -418,6 +420,13 @@ mod_perl is unlikely to link with your libperl, suggestions:
 EOF
         }
     }
+}
+
+sub win32_fetch_apxs {
+    return unless (my $prefix = $build->{MP_AP_PREFIX});
+    my $script = catfile($build->{cwd}, 'build', 'win32_fetch_apxs');
+    my @args = ($^X, $script, "--with-apache2=$prefix");
+    system(@args) == 0 or die "system @args failed: $?";
 }
 
 package MY;
