@@ -25,18 +25,18 @@ sub handler {
 
     ok !($r->allow_overrides & Apache::OR_LIMIT);
 
-    ok $r->satisfies == Apache::SATISFY_NOSPEC;
+    ok t_cmp $r->satisfies, Apache::SATISFY_NOSPEC, "satisfies";
 
-    ok $r->auth_name eq 'modperl';
+    ok t_cmp $r->auth_name, 'modperl', "auth_name";
 
     $r->auth_name('modperl_test');
-    ok $r->auth_name eq 'modperl_test';
+    ok t_cmp $r->auth_name, 'modperl_test', "auth_name";
     $r->auth_name('modperl');
 
-    ok $r->auth_type eq 'none';
+    ok t_cmp $r->auth_type,  'none', "auth_type";
 
     $r->auth_type('Basic');
-    ok $r->auth_type eq 'Basic';
+    ok t_cmp $r->auth_type, 'Basic', "auth_type";
     $r->auth_type('none');
 
     ok !$r->some_auth_required;
