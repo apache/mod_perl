@@ -3,6 +3,8 @@ package TestHooks::trans;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::TestConfig ();
+
 my %trans = (
     '/TestHooks/trans.pm' => sub {
         my $r = shift;
@@ -20,7 +22,17 @@ my %trans = (
 sub handler {
     my $r = shift;
 
-    my $handler = $trans{ $r->uri };
+    my $uri = $r->uri;
+
+    #XXX: temp workaround, core_translate trips on :'s
+    if (Apache::TestConfig::WIN32()) {
+        if ($uri =~ m,^/Test[A-Z]\w+::,) {
+            $r->filename(__FILE__);
+            return Apache::OK;
+        }
+    }
+
+    my $handler = $trans{ $uri };
 
     return Apache::DECLINED unless $handler;
 
