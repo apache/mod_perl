@@ -38,7 +38,7 @@ void modperl_interp_clone_init(modperl_interp_t *interp)
 modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
 {
-    UV clone_flags = 0;
+    UV clone_flags = CLONEf_KEEP_PTR_TABLE;
     modperl_interp_t *interp = 
         (modperl_interp_t *)malloc(sizeof(*interp));
 
@@ -62,6 +62,27 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
         PERL_SET_CONTEXT(perl);
 
         interp->perl = perl_clone(perl, clone_flags);
+
+        {
+            PTR_TBL_t *source = modperl_module_config_table_get(perl, FALSE);
+            if (source) {
+                PTR_TBL_t *table = modperl_svptr_table_clone(interp->perl,
+                                                             perl,
+                                                             source);
+
+                modperl_module_config_table_set(interp->perl, table);
+            }
+        }
+
+        /*
+         * we keep the PL_ptr_table past perl_clone so it can be used
+         * within modperl_svptr_table_clone.
+         */
+        if ((clone_flags & CLONEf_KEEP_PTR_TABLE)) {
+            dTHXa(interp->perl);
+            ptr_table_free(PL_ptr_table);
+            PL_ptr_table = NULL;
+        }
 
         modperl_interp_clone_init(interp);
 
