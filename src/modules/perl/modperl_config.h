@@ -35,12 +35,12 @@ MP_DECLARE_SRV_CMD(interp_max_requests);
 #endif
 
 #define MP_SRV_CMD_TAKE1(name, item, desc) \
-    { name, modperl_cmd_##item, NULL, \
-      RSRC_CONF, TAKE1, desc }
+    AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, desc )
 
 #define MP_SRV_CMD_ITERATE(name, item, desc) \
-    { name, modperl_cmd_##item, NULL, \
-      RSRC_CONF, ITERATE, desc }
+   AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, desc )
 
 #define MP_dRCFG \
    modperl_request_config_t *rcfg = \
