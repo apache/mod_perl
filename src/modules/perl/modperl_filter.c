@@ -360,7 +360,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
     SvREFCNT_dec((SV*)args);
 
-    MP_dINTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", handler->name, status);
@@ -432,7 +432,7 @@ int modperl_run_filter(modperl_filter_t *filter)
         MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
     }
 
-    MP_dINTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", handler->name, status);
