@@ -71,7 +71,7 @@ if [ ".$my_apxs" = . ]; then
     exit 1
 fi
 my_apxs_sourcedir="`$my_apxs -q PREFIX`"
-my_apxs_cflags="`$my_apxs -q CFLAGS`"
+my_apxs_cflags="`$my_apxs -q CFLAGS | sed -e 's,\",\\\\",g'`"
 my_apxs_includes="-I`$my_apxs -q INCLUDEDIR`"
 my_apxs_libexec="`$my_apxs -q LIBEXECDIR`"
 
