@@ -15,6 +15,7 @@ static char *ETAG_override[] = {
    NULL,
 };
 static char *ETAG_http[] = { 
+   "HTTP_OK",
    "HTTP_METHOD_NOT_ALLOWED",
    "HTTP_NOT_ACCEPTABLE",
    "HTTP_LENGTH_REQUIRED",
@@ -22,7 +23,6 @@ static char *ETAG_http[] = {
    "HTTP_SERVICE_UNAVAILABLE",
    "HTTP_VARIANT_ALSO_VARIES",
    "HTTP_NO_CONTENT",
-   "HTTP_METHOD_NOT_ALLOWED",
    "HTTP_NOT_MODIFIED",
    "HTTP_LENGTH_REQUIRED",
    "HTTP_PRECONDITION_FAILED",
