@@ -25,6 +25,7 @@ use File::Find;
 
 use Apache2::Build ();
 use ModPerl::MM;
+use constant WIN32 => Apache2::Build::WIN32;
 
 our %PM; #add files to installation
 
@@ -245,6 +246,9 @@ sub ModPerl::BuildMM::MY::postamble {
                     '$(FULLPERL) -I$(INST_LIB) ' .
                     "-I$apache_test_dir -MModPerl::BuildMM " .
                     "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
+
+                # Win32 doesn't normally install man pages
+                next if WIN32;
 
                 # manify while we're at it
                 my (undef, $man, undef) = $blib =~ m!(blib/lib/)(.*)(\.pm)!;
