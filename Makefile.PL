@@ -19,7 +19,7 @@ use Config ();
 use FileHandle ();
 use DirHandle ();
 use File::Compare ();
-use File::Basename qw(dirname);
+use File::Basename qw(dirname basename);
 use File::Path qw(mkpath rmtree);
 use Cwd;
 use File::Copy qw(cp);
@@ -2398,7 +2398,9 @@ EOF
 	}
     }
 
-    if ($^O eq 'hpux' and ($USE_DSO or $USE_APXS) and $Config{ld} eq 'ld') {
+    my $ld = basename $Config{ld};
+
+    if ($^O eq 'hpux' and ($USE_DSO or $USE_APXS) and $ld eq 'ld') {
         unless ($ccflags =~ /\+z/i) {
             my $switch = $] >= 5.006 ? 'A' : 'D';
             phat_warn(<<EOF);

@@ -4,6 +4,7 @@ use strict;
 use Exporter ();
 use IO::File ();
 use File::Copy ();
+use File::Basename qw(basename);
 
 $Apache::ExtUtils::VERSION = '1.04';
 
@@ -35,6 +36,7 @@ sub import {
 sub Config_pm_fixup {
     eval { require Apache::MyConfig; };
     my %config_fixups = (
+       ld => sub { s/(.*)/basename $1/e },
        ccdlflags => sub { s/-R\s+/-R/; },
        ccflags => sub {
            s/-D_GNU_SOURCE//;
