@@ -34,10 +34,12 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
     MP_TRACE_f(MP_FUNC, "from %s\n",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);    
     if (modperl_filter->mode == MP_OUTPUT_FILTER_MODE) {
-        mpxs_write_loop(modperl_output_filter_write, modperl_filter);
+        mpxs_write_loop(modperl_output_filter_write,
+                        modperl_filter, "Apache::Filter::print");
     }
     else {
-        mpxs_write_loop(modperl_input_filter_write, modperl_filter);
+        mpxs_write_loop(modperl_input_filter_write,
+                        modperl_filter, "Apache::Filter::print");
     }
 
     /* XXX: ap_rflush if $| */
