@@ -110,8 +110,8 @@ t/net/config.pl.dist
 t/modules/actions.t
 t/modules/cgi.t
 t/modules/constants.t
-t/modules/eperl.t
-t/modules/embperl.t
+#t/modules/eperl.t
+#t/modules/embperl.t
 t/modules/file.t
 t/modules/httpdconf.t
 t/modules/log.t
