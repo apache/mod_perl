@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Implement $r->add_input_filter and $r->add_output_filter
+          $c->add_input_filter and $c->add_output_filter
+and add tests  [Stas]
+
 Skip the handler package::func resolving error, only when the error
 message matches "Can't locate .*? in @INC", rather than just "Can't
 locate", since there are many other errors that start with that
