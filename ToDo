@@ -138,9 +138,6 @@ MISC BUGS
 - recursion triggered by internal_redirect() called by a pushed handler
 [Ashish Goyal <ashishg@linux-delhi.org>]
 
-- auth stuff segfaults if AuthType isn't set
-[Matt Sergeant <matt@sergeant.org>]
-
 - Gerald's report of Embperl/sub-request/print breakage
 
 - /perl/perl-status?sig dumps core under hpux 10.20

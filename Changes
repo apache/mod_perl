@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+$r->get_basic_auth_pw will default $r->auth_type to "Basic" if not
+already set
+
+$r->auth_type is now writeable, e.g. $r->auth_type("Basic")
+
 fix $r->read() so it will not block if all data has already been read
 and so that Apache will not hang during ap_discard_request_body() on
 error or redirect after all data has been read

@@ -158,6 +158,24 @@ char *mod_perl_auth_name(request_rec *r, char *val)
 #endif
 }
 
+char *mod_perl_auth_type(request_rec *r, char *val)
+{
+#ifndef WIN32 
+    core_dir_config *conf = 
+      (core_dir_config *)get_module_config(r->per_dir_config, &core_module); 
+
+    if(val) {
+	conf->auth_type = pstrdup(r->pool, val);
+	set_module_config(r->per_dir_config, &core_module, (void*)conf); 
+	MP_TRACE_g(fprintf(stderr, "mod_perl: setting auth_type to %s\n", conf->auth_name));
+    }
+
+    return conf->auth_type;
+#else
+    return (char *) auth_type(r);
+#endif
+}
+
 void mod_perl_dir_env(request_rec *r, perl_dir_config *cld)
 {
     if(MP_HASENV(cld)) {

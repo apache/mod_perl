@@ -1185,6 +1185,7 @@ void perl_stdout2client(request_rec *r);
     perl_require_module("Apache", s)
 
 char *mod_perl_auth_name(request_rec *r, char *val);
+char *mod_perl_auth_type(request_rec *r, char *val);
 
 module *perl_get_module_ptr(char *name, int len);
 void *perl_merge_server_config(pool *p, void *basev, void *addv);
