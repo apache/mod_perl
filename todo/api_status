@@ -112,7 +112,9 @@ VP src/docs/2.0/api/APR/Util.pod
 ### other modules ###
 #####################
 
--- src/docs/2.0/api/Apache/Status.pod
+VV src/docs/2.0/api/Apache/Status.pod
+VV src/docs/2.0/api/Apache/SizeLimit.pod
+VV src/docs/2.0/api/Apache/Resource.pod
 VV src/docs/2.0/api/Apache/compat.pod
 VV src/docs/2.0/api/Apache/porting.pod
 -- src/docs/2.0/api/ModPerl/BuildMM.pod
