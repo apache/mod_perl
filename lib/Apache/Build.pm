@@ -65,9 +65,22 @@ sub which {
 
 #--- Perl Config stuff ---
 
+my @Xlib = qw(/usr/X11/lib /usr/X11R6/lib);
+
 sub gtop_ldopts {
-    my $xlibs = "-L/usr/X11/lib -L/usr/X11R6/lib -lXau";
-    return " -lgtop -lgtop_sysdeps -lgtop_common $xlibs -lintl";
+    my $self = shift;
+    my $xlibs = "";
+
+    my($path) = $self->find_dlfile('Xau', @Xlib);
+    if ($path) {
+        $xlibs = "-L$path -lXau";
+    }
+
+    if ($self->find_dlfile('intl')) {
+        $xlibs .= ' -lintl';
+    }
+
+    return " -lgtop -lgtop_sysdeps -lgtop_common $xlibs";
 }
 
 sub ldopts {
@@ -143,23 +156,27 @@ sub find_in_inc {
 sub libpth {
     my $self = shift;
     $self->{libpth} ||= [split /\s+/, $Config{libpth}];
-    $self->{libpth};
+    return wantarray ? @{ $self->{libpth} } : $self->{libpth};
 }
 
 sub find_dlfile {
-    my($self, $name) = @_;
+    my($self, $name) = (shift, shift);
 
     require DynaLoader;
     require AutoLoader; #eek
 
     my $found = 0;
-    my $path = $self->libpth;
+    my $loc = "";
+    my(@path) = ($self->libpth, @_);
 
-    for (@$path) {
-        last if $found = DynaLoader::dl_findfile($_, "-l$name");
+    for (@path) {
+        if ($found = DynaLoader::dl_findfile($_, "-l$name")) {
+            $loc = $_;
+            last;
+        }
     }
 
-    return $found;
+    return wantarray ? ($loc, $found) : $found;
 }
 
 sub find_dlfile_maybe {
