@@ -3,6 +3,8 @@ package Apache::Reload;
 use strict;
 use warnings FATAL => 'all';
 
+use mod_perl 1.99;
+
 our $VERSION = '0.08';
 
 require Apache::RequestUtil;
@@ -60,9 +62,8 @@ sub handler {
         my $touch_mtime = (stat($TouchFile))[9] || return 1;
         return 1 unless $touch_mtime > $TouchTime;
         $TouchTime = $touch_mtime;
-        my $sym = Apache->gensym;
-        open($sym, $TouchFile) || die "Can't open '$TouchFile': $!";
-        $TouchModules = <$sym>;
+        open my $fh, $TouchFile or die "Can't open '$TouchFile': $!";
+        $TouchModules = <$fh>;
         chomp $TouchModules;
     }
 
