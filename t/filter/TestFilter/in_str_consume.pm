@@ -106,6 +106,12 @@ sub response {
 
     if ($r->method_number == Apache::M_POST) {
         my $data = ModPerl::Test::read_post($r);
+
+        # tell Apache to get rid of the rest of the request body
+        # if we don't a client will get a broken pipe and may fail to
+        # handle this situation gracefully
+        $r->discard_request_body;
+
         my $len = length $data;
         debug "HANDLER READ: $len bytes\n";
         $r->print($len);
