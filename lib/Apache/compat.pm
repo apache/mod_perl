@@ -298,7 +298,7 @@ sub gensym {
 
 sub define {
     shift if @_ == 2;
-    exists_config_define(@_);
+    Apache::ServerUtil::exists_config_define(@_);
 }
 
 sub log_error {

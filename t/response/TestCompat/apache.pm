@@ -32,7 +32,7 @@ sub handler {
 
 
     ok t_cmp(Apache->define('MODPERL2'),
-             Apache::exists_config_define('MODPERL2'),
+             Apache::ServerUtil::exists_config_define('MODPERL2'),
              'Apache->define');
 
     ok t_cmp(Apache::current_callback(),

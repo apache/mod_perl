@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Moved namespace from Apache:: to Apache::ServerUtil:: (to make it
+easier to find the container of the function): [Stas]
+  - exists_config_define
+
 fix an old outstanding bug in the APR::Table's TIE interface with
 each()/values() over tables with multi-values keys. Now the produced
 order is correct and consistent with keys(). Though, values() works

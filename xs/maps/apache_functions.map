@@ -161,13 +161,14 @@ MODULE=Apache::ServerUtil   PACKAGE=Apache::ServerRec BOOT=1
 ~add_version_component
  void:DEFINE_add_version_component | | server_rec *:s, const char *:component
 
+MODULE=Apache::ServerUtil   PACKAGE=Apache::ServerUtil
+ ap_exists_config_define
 
 MODULE=Apache::ServerUtil   PACKAGE=guess
  ap_error_log2stderr
 ?ap_replace_stderr_log
 
 #MODULE=Apache::ServerConfig
- ap_exists_config_define
 #XXX: thought this might be useful
 #however it is not exported on win32
 !ap_get_local_host
