@@ -1,2 +1,7 @@
 print "Content-type: text/plain\n\n";
-print no_such_func();
+
+# the following syntax error is here on purpose!
+
+lkj;\;
+
+print "done";

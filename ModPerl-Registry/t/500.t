@@ -5,13 +5,13 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 2;
+plan tests => 3;
 
 
 {
     my $url = "/registry/syntax_error.pl";
     my $res = GET($url);
-    t_debug($res->content);
+    #t_debug($res->content);
     ok t_cmp(
         500,
         $res->code,
@@ -20,9 +20,20 @@ plan tests => 2;
 }
 
 {
+    my $url = "/registry/runtime_error.pl";
+    my $res = GET($url);
+    #t_debug($res->content);
+    ok t_cmp(
+        500,
+        $res->code,
+        "500 error on runtime error",
+       );
+}
+
+{
     my $url = "/registry/missing_headers.pl";
     my $res = GET($url);
-    t_debug($res->content);
+    #t_debug($res->content);
     ok t_cmp(
         500,
         $res->code,
