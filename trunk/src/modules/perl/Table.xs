@@ -41,27 +41,27 @@ static void table_modify(TiedTable *self, const char *key, SV *sv,
     dTHR;
     const char *val;
 
-    if(!self->table) return;
+    if(!self->utable) return;
 
     if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVAV)) {
 	I32 i;
 	AV *av = (AV*)SvRV(sv);
 	for(i=0; i<=AvFILL(av); i++) {
 	    val = (const char *)SvPV(*av_fetch(av, i, FALSE),na);
-            (*tabfunc)(self->table, key, val);
+            (*tabfunc)(self->utable, key, val);
 	}
     }
     else {
         val = (const char *)SvPV(sv,na);
-	(*tabfunc)(self->table, key, val);
+	(*tabfunc)(self->utable, key, val);
     }
 
 }
 
-static Apache__Table ApacheTable_new(table *table)
+static Apache__Table ApacheTable_new(table *utable)
 {
     Apache__Table RETVAL = (Apache__Table)safemalloc(sizeof(TiedTable));
-    RETVAL->table = table;
+    RETVAL->utable = utable;
     RETVAL->ix = 0;
     RETVAL->elts = NULL;
     RETVAL->arr = NULL;
@@ -119,15 +119,15 @@ FETCH(self, key)
 
     PPCODE:
     ix = ix; /*avoid warning*/
-    if(!self->table) XSRETURN_UNDEF;
+    if(!self->utable) XSRETURN_UNDEF;
     if(GIMME == G_SCALAR) {
-	const char *val = table_get(self->table, key);
+	const char *val = table_get(self->utable, key);
 	if (val) XPUSHs(sv_2mortal(newSVpv((char*)val,0)));
 	else XSRETURN_UNDEF;
     }
     else {
 	int i;
-	array_header *arr  = table_elts(self->table);
+	array_header *arr  = table_elts(self->utable);
 	table_entry *elts = (table_entry *)arr->elts;
 	for (i = 0; i < arr->nelts; ++i) {
 	    if (!elts[i].key || strcasecmp(elts[i].key, key)) continue;
@@ -141,8 +141,8 @@ EXISTS(self, key)
     const char *key
 
     CODE:
-    if(!self->table) XSRETURN_UNDEF;
-    RETVAL = table_get(self->table, key) ? TRUE : FALSE;
+    if(!self->utable) XSRETURN_UNDEF;
+    RETVAL = table_get(self->utable, key) ? TRUE : FALSE;
 
     OUTPUT:
     RETVAL
@@ -160,11 +160,11 @@ DELETE(self, key)
 
     CODE:
     ix = ix;
-    if(!self->table) XSRETURN_UNDEF;
+    if(!self->utable) XSRETURN_UNDEF;
     RETVAL = NULL;
     if(gimme != G_VOID)
-        RETVAL = table_get(self->table, key);
-    table_unset(self->table, key);
+        RETVAL = table_get(self->utable, key);
+    table_unset(self->utable, key);
     if(!RETVAL) XSRETURN_UNDEF;
 
     OUTPUT:
@@ -181,8 +181,8 @@ STORE(self, key, val)
 
     CODE:
     ix = ix; /*avoid warning*/
-    if(!self->table) XSRETURN_UNDEF;
-    table_set(self->table, key, val);
+    if(!self->utable) XSRETURN_UNDEF;
+    table_set(self->utable, key, val);
 
 void
 CLEAR(self)
@@ -193,8 +193,8 @@ CLEAR(self)
 
     CODE:
     ix = ix; /*avoid warning*/
-    if(!self->table) XSRETURN_UNDEF;
-    clear_table(self->table);
+    if(!self->utable) XSRETURN_UNDEF;
+    clear_table(self->utable);
 
 const char *
 NEXTKEY(self, lastkey=Nullsv)
@@ -213,8 +213,8 @@ FIRSTKEY(self)
     Apache::Table self
 
     CODE:
-    if(!self->table) XSRETURN_UNDEF;
-    self->arr = table_elts(self->table);
+    if(!self->utable) XSRETURN_UNDEF;
+    self->arr = table_elts(self->utable);
     if(!self->arr->nelts) XSRETURN_UNDEF;
     self->elts = (table_entry *)self->arr->elts;
     self->ix = 0;
@@ -254,7 +254,7 @@ do(self, cv, ...)
     if(items > 2) {
 	int i;
 	STRLEN len;
-        td.only = make_table(table_pool(self->table), items-2);
+        td.only = make_table(table_pool(self->utable), items-2);
 	for(i=2; ; i++) {
 	    char *key = SvPV(ST(i),len);
 	    table_set(td.only, key, "1");
@@ -264,4 +264,4 @@ do(self, cv, ...)
     td.cv = cv;
 
     table_do((int (*) (void *, const char *, const char *)) Apache_table_do,
-	    (void *) &td, self->table, NULL);
+	    (void *) &td, self->utable, NULL);

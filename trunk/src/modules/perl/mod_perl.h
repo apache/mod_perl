@@ -189,7 +189,7 @@ hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 #endif
 
 typedef struct {
-    table *table;
+    table *utable;
     array_header *arr;
     table_entry *elts;
     int ix;
@@ -565,12 +565,11 @@ extern void *mod_perl_mutex;
 extern void *mod_perl_dummy_mutex;
 
 #ifndef MULTITHREAD_H
-typedef void mutex;
 #define MULTI_OK (0)
 #undef create_mutex
 #undef acquire_mutex
 #undef release_mutex
-#define create_mutex(name)	((mutex *)mod_perl_dummy_mutex)
+#define create_mutex(name)	((void *)mod_perl_dummy_mutex)
 #define acquire_mutex(mutex_id)	((int)MULTI_OK)
 #define release_mutex(mutex_id)	((int)MULTI_OK)
 #endif /* MULTITHREAD_H */
