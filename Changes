@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Fix a glue_pod make target bug, when .pm file doesn't exist,
+e.g. ThreadMutex.pm is not created on unless
+$apr_config->{HAS_THREADS} [Stas]
+
 Introduce APR::Socket::poll to poll a non-blocking socket [Ken Simpson
 <ksimpson@larch.mailchannels.com>]
 
