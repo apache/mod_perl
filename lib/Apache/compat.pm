@@ -322,7 +322,7 @@ sub import {
 #no need to support in 2.0
 sub export {}
 
-sub SERVER_VERSION { Apache::get_server_version() }
+sub SERVER_VERSION { Apache::Server::get_server_version() }
 
 package Apache::RequestRec;
 
