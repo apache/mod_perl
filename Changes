@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+if there is a Perl parse error in <Perl> sections, return $@ so Apache
+can properly report the problem 
+
 Apache::PerlRun subclass-able-ness near complete, see new example
 modules Apache::RegistryNG and Apache::RegistryBB
 
