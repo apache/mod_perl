@@ -2,7 +2,7 @@ use strict;
 use Apache::test;
 $|++;
 my $i = 0;
-my $tests = 7;
+my $tests = 9;
 
 my $r = shift;
 $r->send_http_header('text/plain');
@@ -184,3 +184,7 @@ Benchmark: timing 10000 iterations of C, Perl...
   C:  1 secs ( 0.42 usr  0.00 sys =  0.42 cpu)
   Perl: 17 secs (16.76 usr  0.07 sys = 16.83 cpu)  
 =cut
+
+my $hash = "aX9eP53k4DGfU";
+test ++$i, Apache::Util::validate_password("dougm", $hash);
+test ++$i, ! Apache::Util::validate_password("mguod", $hash);

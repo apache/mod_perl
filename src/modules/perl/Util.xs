@@ -76,7 +76,10 @@ static SV *my_escape_html(char *s)
     return x;
 }
 
-MODULE = Apache::Util		PACKAGE = Apache::Util		
+#define validate_password(passwd, hash) \
+(ap_validate_password(passwd, hash) == NULL)
+
+MODULE = Apache::Util		PACKAGE = Apache::Util
 
 PROTOTYPES: DISABLE
 
@@ -123,4 +126,8 @@ time_t
 parsedate(date)
     const char *date
 
-    
+int
+validate_password(passwd, hash)
+    const char *passwd
+    const char *hash
+
