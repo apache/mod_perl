@@ -325,7 +325,10 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
 
     if (rc != APR_SUCCESS) {
         if (GIMME_V == G_VOID) {
-            modperl_croak(aTHX_ rc, "Apache::RequestIO::sendfile");
+            modperl_croak(aTHX_ rc,
+                          apr_psprintf(r->pool,
+                                       "Apache::RequestIO::sendfile('%s')",
+                                       filename));
         }
         else {
             return rc;

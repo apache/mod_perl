@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::RequestIO::sendfile() now indicates which file it has failed
+to open on failure. [Stas]
+
 fix Apache::SubRequest's methods: lookup_file, lookup_uri,
 lookup_method_uri to default the last argument to
 r->proto_output_filters (no request filters for the subrequest) and
