@@ -818,7 +818,7 @@ sub sep { return '-' x (shift() + 20) . "\n" }
 # what modules contain the passed method.
 # an optional object or a reference to it can be passed to help
 # resolve situations where there is more than one module containing
-# the same method.
+# the same method. Inheritance is supported.
 sub lookup_method {
     my ($method, $object) = @_;
 
@@ -861,7 +861,8 @@ sub lookup_method {
         if (defined $object) {
             my $class = ref $object || $object;
             for my $item (@items) {
-                if ($class eq $item->[OBJECT]) {
+                if ($class eq $item->[OBJECT] or
+                    (ref($object) && $object->isa($class))) { # inheritance
                     my $module = $item->[MODULE];
                     my $hint = "To use method '$method' add:\n" .
                         "\tuse $module ();\n";
