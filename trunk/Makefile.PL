@@ -308,7 +308,8 @@ for (keys %PassEnv) {
 }
 
 $USE_APACI = 1 if $USE_DSO;
-if($USE_DSO or $USE_APXS and !$DO_HTTPD) {
+if(0) {
+#if($USE_DSO or $USE_APXS and !$DO_HTTPD) {
     print "*" x 65, $/;
     print <<EOF;
 * WARNING: mod_perl as a DSO is known to fail on most platforms *
