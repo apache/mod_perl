@@ -5,6 +5,10 @@ package TestModperl::io_nested_with_closed_stds;
 # internal_redirect(), which causes a nested override of already
 # overriden STD streams
 
+# in this test we can't use my $foo as a filehandle, since perl 5.6
+# doesn't know how to dup via: 'open STDIN,  "<&", $oldin'
+# so use the old FOO filehandle style
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -13,6 +17,7 @@ use Apache::RequestIO ();
 use Apache::SubRequest ();
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
 
@@ -36,17 +41,17 @@ sub handler {
         # one of the STD streams is closed.
         # but we must restore the STD streams so not to affect other
         # tests.
-        open my $oldin,  "<&STDIN"  or die "Can't dup STDIN: $!";
-        open my $oldout, ">&STDOUT" or die "Can't dup STDOUT: $!";
+        open OLDIN,  "<&STDIN"  or die "Can't dup STDIN: $!";
+        open OLDOUT, ">&STDOUT" or die "Can't dup STDOUT: $!";
         close STDIN;
         close STDOUT;
 
         $r->internal_redirect($redirect_uri);
 
-        open STDIN,  "<&", $oldin  or die "Can't dup \$oldin: $!";
-        open STDOUT, ">&", $oldout or die "Can't dup \$oldout: $!";
-        close $oldin;
-        close $oldout;
+        open STDIN,  "<&OLDIN"  or die "Can't dup OLDIN: $!";
+        open STDOUT, ">&OLDOUT" or die "Can't dup OLDOUT: $!";
+        close OLDIN;
+        close OLDOUT;
     }
 
     Apache::OK;
