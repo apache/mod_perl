@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+autoset PERL_USELARGEFILES=0 if needed
+
 fix taint issues with bleedperl
 
 fix bug in modules/util test
