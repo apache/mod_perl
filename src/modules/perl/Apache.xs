@@ -763,20 +763,6 @@ server_root_relative(rsv, name="")
 #functions from http_protocol.c
 
 void
-set_last_modified(r, mtime=r->finfo.st_mtime)
-    Apache r
-    time_t mtime
-
-    CODE:
-#if MODULE_MAGIC_NUMBER >= MMN_130
-    ap_update_mtime(r, mtime);
-    ap_set_last_modified(r);
-    ap_set_etag(r);
-#else
-    set_last_modified(r, mtime);
-#endif
-
-void
 note_basic_auth_failure(r)
     Apache r
 
