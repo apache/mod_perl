@@ -16,5 +16,5 @@ my $suffix = '_SUFFIX';
 my $expected = join '', $prefix, $content, $suffix;
 my $received = POST_BODY $location, content => $content;
 
-ok t_cmp($expected, $received, 
+ok t_cmp($received, $expected,
     "testing the EOS bucket forwarding through the mp filters chains");

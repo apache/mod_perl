@@ -13,5 +13,5 @@ $expected =~ s/\s+//g;   # that's what the output filter does
 $expected .= "end";      # that's what the anon output filter does
 my $location = '/TestFilter__both_str_req_add';
 my $response = POST_BODY $location, content => $data;
-ok t_cmp($expected, $response, "lc input and reverse output filters");
+ok t_cmp($response, $expected, "lc input and reverse output filters");
 

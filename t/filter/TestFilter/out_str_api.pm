@@ -35,7 +35,7 @@ sub handler {
 
     plan tests => 8;
 
-    ok t_cmp($response_data, $data, "response data");
+    ok t_cmp($data, $response_data, "response data");
 
     ok $filter->isa('Apache::Filter');
 
@@ -43,11 +43,11 @@ sub handler {
         my $frec = $filter->frec;
 
         ok $frec->isa('Apache::FilterRec');
-        ok t_cmp("modperl_request_output", $frec->name, '$frec->name');
+        ok t_cmp($frec->name, "modperl_request_output", '$frec->name');
 
         my $next = $filter->next;
-        ok t_cmp("modperl_request_output",
-                 $next->frec->name, '$filter->next->frec->name');
+        ok t_cmp($next->frec->name, "modperl_request_output",
+                 '$filter->next->frec->name');
 
         $next = $next->next;
         # since we can't ensure that the next filter will be the same,
@@ -62,7 +62,7 @@ sub handler {
     ok $r->isa('Apache::RequestRec');
 
     my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
-    ok t_cmp($path, $r->uri, "path");
+    ok t_cmp($r->uri, $path, "path");
 
     untie *STDOUT;
 

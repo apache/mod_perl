@@ -18,4 +18,4 @@ t_debug "sent "  . length($data) . "B, expecting ${expected}B to make through";
 
 my $received = POST_BODY $location, content => $data;
 
-ok t_cmp($expected, $received, "input stream filter partial consume")
+ok t_cmp($received, $expected, "input stream filter partial consume")

@@ -19,5 +19,5 @@ for my $str (@test_strings) {
     chomp(my $reply = <$socket>||'');
     $str = lc $str;
     $str =~ s/modperl/mod_perl/;
-    ok t_cmp($str, $reply);
+    ok t_cmp($reply, $str);
 }

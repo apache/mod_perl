@@ -52,15 +52,15 @@ sub validate {
         "request has failed (the response code was: " . $res->code . ")",
         "see t/logs/error_log for more details\n" unless $res->is_success;
 
-    ok t_cmp($content, $res->content, "body");
+    ok t_cmp($res->content, $content, "body");
 
-    ok t_cmp($header1_val,
-             $res->header($header1_key),
+    ok t_cmp($res->header($header1_key),
+             $header1_val,
              "injected header $header1_key");
 
     for my $key (sort keys %headers) {
-        ok t_cmp($headers{$key},
-                 $res->header($key),
+        ok t_cmp($res->header($key),
+                 $headers{$key},
                  "injected header $key");
     }
 }

@@ -10,5 +10,5 @@ plan tests => 1;
 my $location = '/TestFilter__in_error';
 
 my $res = POST $location, content => 'foo';
-ok t_cmp(500, $res->code, "an error in a filter should cause 500");
+ok t_cmp($res->code, 500, "an error in a filter should cause 500");
 

@@ -19,7 +19,7 @@ my $expected = $normal_data . $sig;
     # test the filtering of the mod_perl response handler
     my $location = '/TestFilter__out_str_reverse';
     my $response = POST_BODY $location, content => $reversed_data;
-    ok t_cmp($expected, $response, "reverse filter");
+    ok t_cmp($response, $expected, "reverse filter");
 }
 
 {
@@ -27,5 +27,5 @@ my $expected = $normal_data . $sig;
     my $location = '/filter/reverse.txt';
     my $response = GET_BODY $location;
     $response =~ s/\r//g;
-    ok t_cmp($expected, $response, "reverse filter");
+    ok t_cmp($response, $expected, "reverse filter");
 }

@@ -78,7 +78,7 @@ sub response {
 
     my $received = ModPerl::Test::read_post($r);
 
-    ok t_cmp($expected, $received, 
+    ok t_cmp($received, $expected,
              "request filter must have upcased the data");
 
     Apache::OK;

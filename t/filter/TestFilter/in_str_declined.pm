@@ -40,7 +40,7 @@ sub response {
     if ($r->method_number == Apache::M_POST) {
         # consume the data so the input filter is invoked
         my $data = ModPerl::Test::read_post($r);
-        ok t_cmp(20000, length $data, "the request body received ok");
+        ok t_cmp(length $data, 20000, "the request body received ok");
     }
 
     # ~20k of input makes it four bucket brigades:

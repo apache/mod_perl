@@ -16,4 +16,4 @@ my $expected = join '', 'a'..'z';
 my $data = $expected . "x" x $length;
 my $received = POST_BODY $location, content => $data;
 
-ok t_cmp($expected, $received, "input bbs filter full consume")
+ok t_cmp($received, $expected, "input bbs filter full consume")
