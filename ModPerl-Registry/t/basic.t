@@ -28,6 +28,10 @@ for my $alias (@aliases) {
 
 # test non-executable bit
 for my $alias (@aliases) {
+    if (Apache::TestConfig::WIN32) {
+        skip "non-executable bit test for Win32", 0;
+        next;
+    }
     my $url = "/$alias/not_executable.pl";
 
     ok t_cmp(
