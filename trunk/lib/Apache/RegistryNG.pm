@@ -45,7 +45,7 @@ sub handler ($$) {
 	$pr->sub_wrap;
 	my $rc = $pr->compile;
         return $rc if $rc != OK;
-	$pr->update_mtime;
+	$pr->set_mtime;
     }
 
     $rc = $pr->run(@_);
