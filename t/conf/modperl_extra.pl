@@ -17,6 +17,7 @@ use Apache::Connection ();
 use Apache::Log ();
 
 use APR::Table ();
+use APR::Pool ();
 
 use ModPerl::Util (); #for CORE::GLOBAL::exit
 
