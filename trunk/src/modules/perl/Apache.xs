@@ -368,7 +368,7 @@ PROTOTYPES: DISABLE
 BOOT:
     items = items; /*avoid warning*/ 
 
-char *
+const char *
 current_callback(r)
     Apache     r
 
