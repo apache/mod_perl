@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+the build now automatically glues the .pod files to the respective .pm
+files, so one can use perldoc on .pm files to read the
+documentation. [Stas]
+
 provide a workaround for ExtUtils::MakeMaker::mv_all_methods, so
 ModPerl::BuildMM and ModPerl::MM can override EU::MM methods behind
 the scenes. [Stas]

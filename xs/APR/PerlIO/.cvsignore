@@ -3,3 +3,4 @@ PerlIO.c
 PerlIO.exp
 Makefile
 pm_to_blib
+glue_pods
