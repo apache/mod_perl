@@ -184,18 +184,18 @@ static HV *copyENV(pTHX_ HV *ohv)
 
     hv = newHV();
     while (hv_max && hv_max + 1 >= hv_fill * 2) {
-	hv_max = hv_max / 2;	/* Is always 2^n-1 */
+        hv_max = hv_max / 2;    /* Is always 2^n-1 */
     }
 
     HvMAX(hv) = hv_max;
 
     if (!hv_fill) {
-	return hv;
+        return hv;
     }
 
-    hv_riter = HvRITER(ohv);	/* current root of iterator */
-    hv_eiter = HvEITER(ohv);	/* current entry of iterator */
-	
+    hv_riter = HvRITER(ohv);    /* current root of iterator */
+    hv_eiter = HvEITER(ohv);    /* current entry of iterator */
+        
     hv_iterinit(ohv);
     while ((entry = hv_iternext(ohv))) {
         SV *sv = newSVsv(HeVAL(entry));
