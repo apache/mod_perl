@@ -549,6 +549,8 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
 
     MP_init_status = 1; /* now starting */
 
+    modperl_restart_count_inc(s);
+
     apr_pool_create(&server_pool, pconf);
     apr_pool_tag(server_pool, "mod_perl server pool");
 

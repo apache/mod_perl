@@ -29,7 +29,7 @@ sub new {
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 17;
+    plan $r, tests => 18;
 
     {
         my $s = $r->server;
@@ -55,6 +55,9 @@ sub handler {
     # process
     $base_server_pool->cleanup_register(sub { Apache::OK });
     ok 1;
+
+    # on start we get 1, and immediate restart gives 2
+    ok t_cmp Apache::ServerUtil::restart_count, 2, "restart count";
 
     Apache::OK;
 }
