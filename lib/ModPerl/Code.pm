@@ -376,7 +376,7 @@ sub generate_flags {
 
 EOF
             push @dumper,
-              qq{fprintf(stderr, " $name %s\\n", \\
+              qq{modperl_trace(NULL, " $name %s\\n", \\
                          ($flags(p) & $x) ? "On " : "Off");};
 
             $i += $i || 1;
@@ -389,7 +389,7 @@ EOF
         shift @dumper; #NONE
         print $h_fh join ' \\'."\n", 
           "#define ${class}_dump_flags(p, str)",
-                     qq{fprintf(stderr, "$class flags dump (%s):\\n", str);},
+                     qq{modperl_trace(NULL, "$class flags dump (%s):\\n", str);},
                      @dumper;
     }
 
@@ -428,8 +428,6 @@ sub generate_trace {
     my $tl = "MP_debug_level";
 
     print $h_fh <<EOF;
-extern U32 $tl;
-
 #define MP_TRACE_OPTS "$opts"
 
 #ifdef MP_TRACE
@@ -461,13 +459,13 @@ $define_do(exp)
 #endif
 EOF
         push @dumper,
-          qq{fprintf(stderr, " $type %s ($trace{$type})\\n", ($tl & $i) ? "On " : "Off");};
+          qq{modperl_trace(NULL, " $type %s ($trace{$type})\\n", ($tl & $i) ? "On " : "Off");};
         $i += $i;
     }
 
     print $h_fh join ' \\'."\n", 
                      '#define MP_TRACE_dump_flags()',
-                     qq{fprintf(stderr, "mod_perl trace flags dump:\\n");},
+                     qq{modperl_trace(NULL, "mod_perl trace flags dump:\\n");},
                      @dumper;
 
     ();
