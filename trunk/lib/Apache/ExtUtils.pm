@@ -215,6 +215,8 @@ module MODULE_VAR_EXPORT XS_${modname} = {
 
 MODULE = $class		PACKAGE = $class
 
+PROTOTYPES: DISABLE
+
 BOOT:
     XS_${modname}.name = "$class";
     add_module(&XS_${modname});
