@@ -41,7 +41,8 @@ use ModPerl::Global ();
 use File::Spec::Functions ();
 use File::Basename;
 
-use Apache::Const -compile => qw(:common &OPT_EXECCGI);
+use Apache::Const  -compile => qw(:common &OPT_EXECCGI);
+use ModPerl::Const -compile => 'EXIT';
 
 unless (defined $ModPerl::Registry::MarkLine) {
     $ModPerl::Registry::MarkLine = 1;
@@ -714,10 +715,10 @@ sub compile {
 sub error_check {
     my $self = shift;
 
-    # ModPerl::Util::exit() is implemented as croak with no message
-    # so perl will set $@ to " at /some/path", which is not an error
+    # ModPerl::Util::exit() throws an exception object whose rc is
+    # ModPerl::EXIT
     # (see modperl_perl_exit() and modperl_errsv() C functions)
-    if ($@ and substr($@, 0, 4) ne " at ") {
+    if ($@ && !(ref $@ && $@ == ModPerl::EXIT)) {
         $self->log_error($@);
         return Apache::SERVER_ERROR;
     }
