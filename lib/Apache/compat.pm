@@ -40,9 +40,6 @@ sub import {
 sub untaint {
 }
 
-sub warn {
-}
-
 package Apache::Constants;
 
 use Apache::Const ();

@@ -46,6 +46,9 @@ sub handler {
     $r->log_rerror(Apache::LOG_MARK, Apache::LOG_DEBUG|Apache::LOG_NOERRNO,
                    APR::ENOTIME, "log_rerror test ok");
 
+    $r->log_error('$r->log_error test ok');
+    $s->log_error('$s->log_error test ok');
+
     $s->loglevel(Apache::LOG_INFO);
     $slog->debug(sub { die "set loglevel no workie" });
 

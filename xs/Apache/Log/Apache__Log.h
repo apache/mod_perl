@@ -183,7 +183,7 @@ static XS(MPXS_Apache_LOG_MARK)
     });
 }
 
-static XS(MPXS_Apache__Log_log_error)
+static XS(MPXS_Apache__Log_log_xerror)
 {
     dXSARGS;
     SV *msgsv = Nullsv;
@@ -235,6 +235,68 @@ static XS(MPXS_Apache__Log_log_error)
     }
 
     SvREFCNT_dec(msgsv);
+
+    XSRETURN_EMPTY;
+}
+
+static XS(MPXS_Apache__Log_log_error)
+{
+    dXSARGS;
+    request_rec *r = NULL;
+    server_rec *s = NULL;
+    int i=0;
+    char *errstr = NULL;
+    SV *sv = Nullsv;
+    STRLEN n_a;
+
+    if ((items > 1) &&
+        (r = modperl_xs_sv2request_rec(aTHX_ ST(0),
+                                       "Apache::RequestRec", cv)))
+    {
+        s = r->server;
+        i=1;
+    }
+    else if ((items > 1) && sv_isa(ST(0), "Apache::Server")) {
+        s = (server_rec *)SvObjIV(ST(0));
+        i=1;    
+    }
+    else {
+        if (r) {
+            s = r->server;
+        }
+        else {
+#if 0
+            /*XXX*/
+            s = perl_get_startup_server();
+#endif
+        }
+    }
+
+    if (!s) {
+        Perl_croak(aTHX_ "%s::%s no server_rec!", mpxs_cv_name());
+    }
+
+    if (items > 1+i) {
+        sv = newSV(0);
+        do_join(sv, &PL_sv_no, MARK+i, SP); /* $sv = join '', @_[1..$#_] */
+        errstr = SvPV(sv,n_a);
+    }
+    else {
+        errstr = SvPV(ST(i),n_a);
+    }
+
+    switch (*GvNAME(CvGV(cv))) {
+        case 'w':
+        modperl_log_warn(s, errstr);
+        break;
+        default:
+        modperl_log_error(s, errstr);
+        break;
+    }
+
+    if (sv) {
+        SvREFCNT_dec(sv);
+    }
 
     XSRETURN_EMPTY;
 }
