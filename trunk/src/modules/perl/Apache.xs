@@ -1080,8 +1080,7 @@ write_client(r, ...)
 
     for(i = 1; i <= items - 1; i++) {
 	int sent = 0;
-        SV *sv = SvROK(ST(i)) && (SvTYPE(SvRV(ST(i))) == SVt_PV
-        || SvTYPE(SvRV(ST(i))) == SVt_PVIV) ?
+        SV *sv = SvROK(ST(i)) && (SvTYPE(SvRV(ST(i))) == SVt_PV) ?
                  (SV*)SvRV(ST(i)) : ST(i);
 	buffer = SvPV(sv, len);
 #ifdef APACHE_SSL
