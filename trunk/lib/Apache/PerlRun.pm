@@ -2,7 +2,11 @@ package Apache::PerlRun;
 
 use strict;
 use vars qw($Debug);
-use Apache::Constants qw(:common OPT_EXECCGI);
+use Apache::Constants qw(:common &OPT_EXECCGI);
+
+BEGIN {
+    OPT_EXECCGI(); #preload, :common are alread pre-loaded
+}
 
 unless (defined $Apache::Registry::NameWithVirtualHost) {
     $Apache::Registry::NameWithVirtualHost = 1;
