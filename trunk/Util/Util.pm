@@ -13,9 +13,9 @@ use DynaLoader ();
 *import = \&Exporter::import;
 
 @EXPORT_OK = qw(escape_html escape_uri unescape_uri unescape_uri_info 
-		parsedate ht_time size_string);
+		parsedate ht_time size_string validate_password);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 __PACKAGE__->mod_perl::boot($VERSION);
 
@@ -133,6 +133,21 @@ given in the string will be in units of bytes, kilobytes, or
 megabytes, depending on the size.
 
  my $size = Apache::Util::size_string -s $r->finfo;
+
+=item validate_password
+
+Validate a plaintext password against a smashed one.  Use either
+crypt() (if available), ap_MD5Encode() or ap_SHA1Encode depending 
+upon the format of the smashed input password.
+
+Returns true if they match, false otherwise.
+
+ if (Apache::Util::validate_password("slipknot", "aXYx4GnaCrDQc")) {
+     print "password match\n";
+ }
+ else {
+     print "password mismatch\n";
+ }
 
 =back
 
