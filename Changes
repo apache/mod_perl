@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add a new test TestDirective::perlloadmodule2, which performs a more
+evolved merging.  [Stas Bekman]
+
+fix Apache::TestConfigPerl under mod_perl 1.0, need to require
+mod_perl.pm before using $mod_perl::VERSION [Geoffrey Young
+<GYoung@covad.com>]
+
 add an Apache::SIG backcompat stub to Apache::compat [Stas Bekman]
 
 fix the Apache::TestConfigPerl's run_apache_test_config() function
