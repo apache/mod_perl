@@ -89,7 +89,7 @@ sub apxs {
 
     my $query_key;
     if ($is_query) {
-        $query_key = 'APXS_' . $_[1];
+        $query_key = 'APXS_' . uc $_[1];
         if ($self->{$query_key}) {
             return $self->{$query_key};
         }
