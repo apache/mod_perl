@@ -11,7 +11,7 @@ chomp @libs;
 my $libs = join ' ', @libs;
 
 # fix for broken older apu-config script 0.9.2 (httpd 2.0.43)
-$libs =~ s/-laprutil([^-]*)/-laprutil-0$1/;
+$libs =~ s/-laprutil([^-]*)/-laprutil-0$1/ if $libs =~ /-lapr-0/;
 
 ModPerl::BuildMM::WriteMakefile(
     'NAME'	   => 'APR',
