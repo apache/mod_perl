@@ -1019,7 +1019,9 @@ write_client(r, ...)
 
     for(i = 1; i <= items - 1; i++) {
 	int sent = 0;
-	buffer = SvPV(ST(i), len);
+        SV *sv = SvROK(ST(i)) && (SvTYPE(SvRV(ST(i))) == SVt_PV) ?
+                 (SV*)SvRV(ST(i)) : ST(i);
+	buffer = SvPV(sv, len);
 #ifdef APACHE_SSL
         while(len > 0) {
             sent = 0;
