@@ -55,8 +55,10 @@ sub scan {
     bless $c, 'Apache::ParseSource::Scan';
 }
 
-sub generate_cscan_file {
+sub find_includes {
     my $self = shift;
+
+    return $self->{includes} if $self->{includes};
 
     require File::Find;
 
@@ -78,15 +80,78 @@ sub generate_cscan_file {
                            follow => 1,
                           }, $dir);
 
+    return $self->{includes} = \@includes;
+}
+
+sub generate_cscan_file {
+    my $self = shift;
+
+    my $includes = $self->find_includes;
+
     my $filename = '.apache_includes';
 
     open my $fh, '>', $filename or die "can't open $filename: $!";
-    for (@includes) {
+    for (@$includes) {
         print $fh qq(\#include "$_"\n);
     }
     close $fh;
 
     return $filename;
+}
+
+
+my $defines_wanted = join '|', qw{
+OK DECLINED DONE
+DECLINE_CMD DIR_MAGIC_TYPE
+METHODS
+HTTP_ M_ OPT_ SATISFY_ REMOTE_
+OR_ ACCESS_CONF RSRC_CONF
+};
+
+my $defines_unwanted = join '|', qw{
+HTTP_VERSION
+};
+
+my %enums_wanted = map { $_, 1 } qw(cmd_how);
+
+sub get_constants {
+    my($self) = @_;
+
+    my $includes = $self->find_includes;
+    my @constants;
+
+    for my $file (@$includes) {
+        open my $fh, $file or die "open $file: $!";
+        while (<$fh>) {
+            if (s/^\#define\s+//) {
+                next unless /^($defines_wanted)/o;
+                next if /^($defines_unwanted)/o;
+                push @constants, (split /\s+/)[0];
+            } elsif (m/^\s*enum\s+(\w+)\s+\{/) {
+                my $e = $self->get_enum($1, $fh);
+                push @constants, @$e if $e;
+            }
+        }
+        close $fh;
+    }
+
+    return \@constants;
+}
+
+sub get_enum {
+    my($self, $name, $fh) = @_;
+
+    return unless $enums_wanted{$name};
+    local $_;
+    my @e;
+
+    while (<$fh>) {
+        last if /\};/;
+        next unless /^\s*(\w+)/;
+        push @e, $1;
+    }
+
+    return \@e;
 }
 
 sub get_functions {
@@ -138,9 +203,12 @@ sub get_structs {
     my $other  = join '|', qw(_rec module);
 
     my @structures;
+    my $sx = qr(^struct\s+);
 
     while (my($type, $elts) = each %$typedef_structs) {
         next unless $type =~ /^($prefix)/o or $type =~ /($other)$/o;
+
+        $type =~ s/$sx//;
 
         next if $seen{$type}++;
 
@@ -148,6 +216,7 @@ sub get_structs {
            type => $type,
            elts => [map {
                my $type = $_->[0];
+               $type =~ s/$sx//;
                $type .= $_->[1] if $_->[1];
                { type => $type, name => $_->[2] }
            } @$elts],
