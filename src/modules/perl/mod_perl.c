@@ -291,6 +291,9 @@ void modperl_register_hooks(apr_pool_t *p)
     ap_hook_handler(modperl_response_handler,
                     NULL, NULL, APR_HOOK_MIDDLE);
 
+    ap_hook_handler(modperl_response_handler_cgi,
+                    NULL, NULL, APR_HOOK_MIDDLE);
+
     ap_hook_insert_filter(modperl_output_filter_register,
                           NULL, NULL, APR_HOOK_LAST);
 
@@ -359,13 +362,9 @@ void modperl_response_finish(request_rec *r)
     modperl_wbucket_flush(&rcfg->wbucket);
 }
 
-int modperl_response_handler(request_rec *r)
+static int modperl_response_handler_run(request_rec *r)
 {
     int retval;
-
-    if (!strEQ(r->handler, "modperl")) {
-        return DECLINED;
-    }
 
     modperl_response_init(r);
 
@@ -376,6 +375,44 @@ int modperl_response_handler(request_rec *r)
     }
 
     modperl_response_finish(r);
+
+    return retval;
+}
+
+int modperl_response_handler(request_rec *r)
+{
+    if (!strEQ(r->handler, "modperl")) {
+        return DECLINED;
+    }
+
+    return modperl_response_handler_run(r);
+}
+
+int modperl_response_handler_cgi(request_rec *r)
+{
+    GV *h_stdin, *h_stdout;
+    int retval;
+#ifdef USE_ITHREADS
+    pTHX;
+    modperl_interp_t *interp;
+#endif
+
+    if (!strEQ(r->handler, "perl-script")) {
+        return DECLINED;
+    }
+
+#ifdef USE_ITHREADS
+    interp = modperl_interp_select(r, r->connection, r->server);
+    aTHX = interp->perl;
+#endif
+
+    h_stdout = modperl_io_tie_stdout(aTHX_ r);
+    h_stdin  = modperl_io_tie_stdin(aTHX_ r);
+
+    retval = modperl_response_handler_run(r);
+
+    modperl_io_handle_untie(aTHX_ h_stdout);
+    modperl_io_handle_untie(aTHX_ h_stdin);
 
     return retval;
 }
