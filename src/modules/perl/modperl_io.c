@@ -169,6 +169,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
     /* open STDIN, "<&STDIN_SAVED" or die "Can't dup STDIN_SAVED: $!"; */
     status = Perl_do_open9(aTHX_ handle_orig, "<&", 2, FALSE, O_RDONLY,
                            0, Nullfp, (SV*)handle, 1);
+    Perl_do_close(aTHX_ handle, FALSE);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to restore STDIN: %_", get_sv("!", TRUE));
     }
@@ -190,6 +191,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
     /* open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!"; */
     status = Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE, O_WRONLY,
                            0, Nullfp, (SV*)handle, 1);
+    Perl_do_close(aTHX_ handle, FALSE);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to restore STDOUT: %_", get_sv("!", TRUE));
     }
