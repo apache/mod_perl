@@ -1557,6 +1557,7 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
 	    if(stash) /* check again */
 		is_method = perl_handler_ismethod(stash, method);
 #endif
+	    SPAGAIN; /* reset stack pointer after require() */
 	}
 	
 	if(!is_method && !defined_sub) {
