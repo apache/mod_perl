@@ -1443,15 +1443,25 @@ CHAR_P perl_end_section (cmd_parms *cmd, void *dummy) {
     return perl_end_magic;
 }
 
+#define STRICT_PERL_SECTIONS_SV \
+perl_get_sv("Apache::Server::StrictPerlSections", FALSE)
+
 void perl_handle_command(cmd_parms *cmd, void *config, char *line) 
 {
     CHAR_P errmsg;
+    SV *sv;
 
     MP_TRACE_s(fprintf(stderr, "handle_command (%s): ", line));
-    errmsg = handle_command(cmd, config, line);
+    if ((errmsg = handle_command(cmd, config, line))) {
+	if ((sv = STRICT_PERL_SECTIONS_SV) && SvTRUE(sv)) {
+	    croak("<Perl>: %s", errmsg);
+	}
+	else {
+	    log_printf(cmd->server, "<Perl>: %s", errmsg);
+	}
+    }
+
     MP_TRACE_s(fprintf(stderr, "%s\n", errmsg ? errmsg : "OK"));
-    if(errmsg)
-	log_printf(cmd->server, "<Perl>: %s", errmsg);
 }
 
 void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config)
