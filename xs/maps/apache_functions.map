@@ -247,7 +247,6 @@ MODULE=Apache::URI   PACKAGE=guess
  ap_parse_hostinfo_components
  ap_unescape_url
  ap_unparse_uri_components
->ap_util_uri_init
 
 !MODULE=Apache::StringUtil   PACKAGE=guess
  ap_checkmask
