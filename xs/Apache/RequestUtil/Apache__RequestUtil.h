@@ -261,7 +261,7 @@ void mpxs_Apache__RequestRec_add_config(pTHX_ request_rec *r, SV *lines, char *p
     const char *errmsg = modperl_config_insert_request(aTHX_ r, lines,
                                                        path, override);
     if (errmsg) {
-        Perl_croak(aTHX_ "\$r->add_config() has failed: %s", errmsg);
+        Perl_croak(aTHX_ "$r->add_config() has failed: %s", errmsg);
     }
 }
 
