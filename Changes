@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+skip modules/ssi test if mod_include is not installed
+
 Apache::test enhancements
 [Ken Williams <ken@forum.swarthmore.edu>]
 
