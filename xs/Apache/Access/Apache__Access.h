@@ -22,3 +22,38 @@ static XS(MPXS_ap_get_basic_auth_pw)
         }
     });
 }
+
+static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
+{
+    AV *av;
+    HV *hv;
+    register int x;
+    const apr_array_header_t *reqs_arr = ap_requires(r);
+    require_line *reqs;
+
+    if (!reqs_arr) {
+        return &PL_sv_undef;
+    }
+
+    reqs = (require_line *)reqs_arr->elts;
+    av = newAV();
+
+    for (x=0; x < reqs_arr->nelts; x++) {
+        /* XXX should we do this or let PerlAuthzHandler? */
+        if (! (reqs[x].method_mask & (1 << r->method_number))) {
+            continue;
+        }
+
+        hv = newHV();
+
+        hv_store(hv, "method_mask", 11, 
+                 newSViv((IV)reqs[x].method_mask), 0);
+
+        hv_store(hv, "requirement", 11, 
+                 newSVpv(reqs[x].requirement,0), 0);
+
+        av_push(av, newRV_noinc((SV*)hv));
+    }
+
+    return newRV_noinc((SV*)av); 
+}

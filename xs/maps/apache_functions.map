@@ -106,7 +106,7 @@ MODULE=Apache::Access   PACKAGE=guess
  ap_allow_options
  ap_allow_overrides
  ap_get_remote_logname
-!ap_requires
+ SV *:ap_requires | mpxs_
  ap_satisfies
 
 #MODULE=Apache::Auth
