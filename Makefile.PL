@@ -384,7 +384,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
-	    ++$NO_HTTPD unless $ans =~ /^y$/i;
+	    ++$NO_HTTPD, ++$PREP_HTTPD unless $ans =~ /^y$/i;
 	}
 
 	if($NO_HTTPD) {
