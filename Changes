@@ -10,6 +10,15 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+restore the ModPerl::RegistryLoader::new() method for backwards
+compatibility  [Stas]
+
+port the support for NameWithVirtualHost in ModPerl::RegistryCooker
+and ModPerl::RegistryLoader [Stas]
+
+fix the handling of the return status in ModPerl::RegistryCooker, add
+a test to verify that [Stas]
+
 under non-threaded perl need to check whether mod_perl is running,
 when modperl_vhost_is_running check is done. [Stas]
 
