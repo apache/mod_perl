@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+fix taint issues with bleedperl
+
 fix bug in modules/util test
 [Tatsuhiko Miyagawa <miyagawa@edge.co.jp>]
 
