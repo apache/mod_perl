@@ -44,15 +44,6 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 !ap_content_type_tolower
  ap_get_status_line
  ap_is_initial_req
- mpxs_Apache__RequestRec_push_handlers
- mpxs_Apache__RequestRec_set_handlers
- mpxs_Apache__RequestRec_get_handlers
-
- #protocol module helpers
- mpxs_Apache__RequestRec_location_merge
- mpxs_Apache__RequestRec_set_basic_credentials
-PACKAGE=Apache::RequestRec
- mpxs_Apache__RequestRec_new
 
 #MODULE=Apache::RequestConfig
  ap_document_root
@@ -88,8 +79,6 @@ PREFIX=ap_r
 ~ap_rputs
  ap_rvputs | mpxs_ | ... | puts
 -ap_vrprintf
-
- mpxs_Apache__RequestRec_TIEHANDLE
 
 MODULE=Apache::Response   PACKAGE=guess
  ap_make_etag
@@ -137,9 +126,6 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  ap_construct_server
  ap_construct_url | | r,uri,p
  ap_error_log2stderr
- mpxs_Apache__Server_push_handlers
- mpxs_Apache__Server_set_handlers
- mpxs_Apache__Server_get_handlers
 
 #MODULE=Apache::ServerConfig
  ap_exists_config_define
@@ -188,10 +174,6 @@ MODULE=Apache::Connection   PACKAGE=guess
 MODULE=Apache::Filter PACKAGE=Apache::RequestRec
 ap_filter_t *:DEFINE_add_output_filter | | \
               request_rec *:r, const char *:name, void *:ctx
-
-PACKAGE=Apache::OutputFilter
- mpxs_Apache__OutputFilter_print | | ...
- mpxs_Apache__OutputFilter_read  | | ...
 
 PACKAGE=guess
 ~ap_add_output_filter
