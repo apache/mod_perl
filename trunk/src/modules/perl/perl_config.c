@@ -391,6 +391,7 @@ perl_request_config *perl_create_request_config(pool *p, server_rec *s)
     cfg->pnotes = Nullhv;
     cfg->setup_env = 0;
 
+#ifndef WIN32
     cfg->sigsave = make_array(p, 1, sizeof(perl_request_sigsave *));
 
     for (i=0; sigsave[i]; i++) {
@@ -403,6 +404,8 @@ perl_request_config *perl_create_request_config(pool *p, server_rec *s)
 			   sigsave[i], (int)sig->signo, (unsigned long)sig->h));
 	*(perl_request_sigsave **)push_array(cfg->sigsave) = sig;
     }
+
+#endif
 
     return cfg;
 }
