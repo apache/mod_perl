@@ -5,18 +5,18 @@ PerlModule Apache::Module
 <Perl >
 push @Alias, ['/perl_sections', '@DocumentRoot@'];
 $Location{'/perl_sections'} = {
-	'PerlInitHandler' => 'ModPerl::Test::add_config',
-	'AuthType' => 'Basic',
-	'AuthName' => 'PerlSection',
-	'PerlAuthenHandler' => 'TestHooks::authen',
-	};
+    'PerlInitHandler' => 'ModPerl::Test::add_config',
+    'AuthType' => 'Basic',
+    'AuthName' => 'PerlSection',
+    'PerlAuthenHandler' => 'TestHooks::authen',
+    };
 </Perl>
 
 <Perl >
 $Apache::Server::SaveConfig = 1;
 $Location{'/perl_sections_saved'} = {
-	'AuthName' => 'PerlSection',
-	};
+    'AuthName' => 'PerlSection',
+    };
 #This is a comment
 $TestDirective::perl::comments="yes";
 $TestDirective::perl::PACKAGE = __PACKAGE__;
