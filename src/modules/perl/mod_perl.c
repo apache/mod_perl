@@ -713,6 +713,10 @@ void modperl_register_hooks(apr_pool_t *p)
     ap_hook_create_request(modperl_hook_create_request,
                            NULL, NULL, APR_HOOK_MIDDLE);
 
+    /* both of these hooks need to run really, really first.
+     * otherwise, the global request_rec will be set up _after_ some
+     * Perl handlers run.
+     */
     ap_hook_post_read_request(modperl_hook_post_read_request,
                               NULL, NULL, MODPERL_HOOK_REALLY_REALLY_FIRST);
 
