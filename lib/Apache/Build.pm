@@ -798,10 +798,19 @@ sub apr_includedir {
         $incdir = $self->ap_includedir;
     }
 
-    if ($incdir && -e catfile $incdir, "apr.h") {
-        $self->{apr_includedir} = $incdir;
+    my @tries = ($incdir);
+    if ($self->httpd_is_source_tree) {
+        my $path = catdir $self->dir, "srclib", "apr", "include";
+        push @tries, $path if -d $path;
     }
-    else {
+
+    for (@tries) {
+        next unless $_ && -e catfile $_, "apr.h";
+        $self->{apr_includedir} = $_;
+        last;
+    }
+
+    unless ($self->{apr_includedir}) {
         error "Can't find apr include/ directory,",
             "use MP_APR_CONFIG=/path/to/apr-config";
         exit 1;
@@ -942,14 +951,7 @@ sub get_apr_config {
 
     return $self->{apr_config} if $self->{apr_config};
 
-    my $dir = $self->apr_includedir;
-
-    my $header;
-    for my $d ($dir, "$dir/../srclib/apr/include") {
-        $header = "$d/apr.h";
-        last if -e $header;
-    }
-
+    my $header = catfile $self->apr_includedir, "apr.h";
     open my $fh, $header or do {
         error "Unable to open $header: $!";
         return undef;
