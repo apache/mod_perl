@@ -801,6 +801,19 @@ sub apache_libs {
     $libs->($self);
 }
 
+sub modperl_libs_MSWin32 {
+    my $self = shift;
+    #XXX: install/use libmodperl.lib for 3rd party xs modules
+    "$self->{cwd}/src/modules/perl/libmodperl.lib";
+}
+
+sub modperl_libs {
+    my $self = shift;
+    my $libs = \&{"modperl_libs_$^O"};
+    return "" unless defined &$libs;
+    $libs->($self);
+}
+
 sub write_src_makefile {
     my $self = shift;
     my $code = ModPerl::Code->new;

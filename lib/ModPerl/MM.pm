@@ -63,7 +63,7 @@ sub WriteMakefile {
         }
     }
 
-    my $libs = $build->apache_libs;
+    my $libs = join ' ', $build->apache_libs, $build->modperl_libs;
     my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
 
     my @opts = (
