@@ -64,7 +64,6 @@ use constant URI       => 2;
 use constant MTIME     => 3;
 use constant PACKAGE   => 4;
 use constant CODE      => 5;
-use constant STATUS    => 6;
 
 #########################################################################
 # OS specific constants
@@ -189,15 +188,13 @@ sub run {
     $self->set_script_name;
     $self->chdir_file;
 
-    my $rc = Apache::OK;
     my $cv = \&{"$package\::handler"};
 
     my %orig_inc = %INC;
 
     { # run the code and preserve warnings setup when it's done
         no warnings;
-        eval { $rc = $cv->($r, @_) };
-        $self->[STATUS] = $rc;
+        eval { $cv->($r, @_) };
         ModPerl::Global::special_list_call(END => $package);
     }
 
@@ -212,8 +209,8 @@ sub run {
 
     #XXX: $self->chdir_file("$Apache::Server::CWD/");
 
-    if ( ($rc = $self->error_check) != Apache::OK) {
-        return $rc;
+    if ( (my $err_rc = $self->error_check) != Apache::OK) {
+        return $err_rc;
     }
 
     return Apache::OK;
