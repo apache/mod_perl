@@ -104,7 +104,7 @@ sub is_virtual { exists shift->{virthost} }
 # specified by the 'package' attribute, not RegistryLoader
 sub namespace_root {
     join '::', ModPerl::RegistryCooker::NAMESPACE_ROOT,
-        shift->[ModPerl::RegistryCooker::REQ]->{package};
+        shift->{REQ}->{package};
 }
 
 # override Apache class methods called by Modperl::Registry*. normally

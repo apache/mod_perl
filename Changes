@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+move ModPerl::RegistryCooker to use a hash as object (similar to mp1),
+to make it easier to subclass. [Nathan Byrd <nathan@byrd.net>]
+
 $r->rflush has to flush internal modperl buffer before calling
 ap_rflush, so implement rflush, instead of autogenerating the xs code
 for it. [Stas]
