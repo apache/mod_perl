@@ -1,5 +1,7 @@
 package Apache::compat;
 
+use strict;
+
 #1.xx compat layer
 #some of this will stay as-is
 #some will be implemented proper later on
@@ -252,7 +254,7 @@ sub send_fd_length {
 
     return 0 if $length == 0;
 
-    if (($length > 0) && ($total_bytes_send + IOBUFSIZE) > $length) {
+    if (($length > 0) && ($total_bytes_sent + IOBUFSIZE) > $length) {
         $len = $length - $total_bytes_sent;
     }
     else {
