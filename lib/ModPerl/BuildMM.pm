@@ -3,12 +3,12 @@ package ModPerl::BuildMM;
 use strict;
 use warnings;
 
-use ModPerl::MM;
-
 use ExtUtils::MakeMaker ();
 use Cwd ();
-use Apache::Build ();
 use File::Spec;
+
+use Apache::Build ();
+use ModPerl::MM;
 
 our %PM; #add files to installation
 
