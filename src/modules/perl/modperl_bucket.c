@@ -83,7 +83,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
 
     svbucket = (modperl_bucket_sv_t *)malloc(sizeof(*svbucket));
 
-    bucket = apr_bucket_shared_make(bucket, svbucket, offset, offset+len);
+    bucket = apr_bucket_shared_make(bucket, svbucket, offset, len);
 
     /* XXX: need to deal with PerlInterpScope */
 #ifdef USE_ITHREADS
