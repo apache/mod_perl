@@ -26,10 +26,6 @@ used by directive handler extensions
 properly deal with $r->status codes (e.g. redirect) in
 Apache::RegistryNG [Geoff Young <geoff@modperlcookbook.org>]
 
-properly escape highbit chars in Apache::Utils::escape_html
-[Geoff Young <geoff@modperlcookbook.org>,
-Robin Berjon <robin@knowscape.com>]
-
 allow $r->auth_name and $r->auth_type to be set on win32
 [John Kelly <john_kelly@uk.ibm.com>]
 
