@@ -82,6 +82,7 @@ MODULE=APR::Brigade
  mpxs_APR__Brigade_insert_tail  #APR_BRIGADE_INSERT_TAIL
  mpxs_APR__Brigade_insert_head  #APR_BRIGADE_INSERT_HEAD
  mpxs_APR__Brigade_concat       #APR_BRIGADE_CONCAT
+ mpxs_APR__Brigade_empty        #APR_BRIGADE_EMPTY
 
 MODULE=APR::Bucket
  mpxs_APR__Bucket_is_eos         #APR_BUCKET_IS_EOS
@@ -89,7 +90,8 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
  mpxs_APR__Bucket_remove         #APR_BUCKET_REMOVE
  #apr_bucket_read
- mpxs_APR__Bucket_read | | bucket, wanted=0
+ modperl_bucket_read | mpxs_ | \
+                    bucket, SV *:buffer, block=APR_BLOCK_READ | read
  #modperl_bucket_sv_create
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
  !apr_bucket_copy_notimpl

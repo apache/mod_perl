@@ -1,1 +1,10 @@
+##########  mod_perl types  ##########
+
 struct modperl_filter_t | Apache::OutputFilter
+
+##########  Perl types  ##########
+
+SV *  | SV
+I32   | IV
+I32 * | IV
+

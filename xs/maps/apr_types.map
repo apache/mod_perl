@@ -23,7 +23,7 @@ struct apr_bucket           | APR::Bucket
 struct apr_bucket_brigade   | APR::Brigade
 apr_brigade_flush           | UNDEFINED
 struct apr_bucket_type_t    | APR::BucketType
-apr_read_type_e             | UNDEFINED
+apr_read_type_e             | IV
 apr_bucket_file             | UNDEFINED
 apr_bucket_pool             | UNDEFINED
 apr_bucket_heap             | UNDEFINED
