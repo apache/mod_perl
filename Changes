@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+an attempt to resolve the binary compatibility problem in
+PerlIOAPR_seek API when APR_HAS_LARGE_FILES=0 [Stas]
+
 perl 5.8.0 forgets to export PerlIOBase_noop_fail, causing problems on
 win32 and aix. reimplement this function locally to solve the
 problem. APR::PerlIO should now be useful on win32 and aix [Stas]

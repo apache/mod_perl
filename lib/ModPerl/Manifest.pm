@@ -90,8 +90,6 @@ __DATA__
 patches/
 #very few will have Chatbot::Eliza installed
 eliza
-# fails with blead perl w/o useithreads
-t/response/TestAPR/perlio.pm
 # segfaults with blead perl
 t/filter/TestFilter/out_str_req_mix.pm
 t/filter/out_str_req_mix.t
