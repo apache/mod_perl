@@ -49,13 +49,15 @@ sub content {
     return unless $ct =~ m!^application/x-www-form-urlencoded!;
     my $buff;
     $r->read($buff, $r->header_in("Content-length"));
-    parse_args(wantarray, $buff);
+    return $buff unless wantarray;
+    parse_args(1, $buff);
 }
 
 sub args {
     my($r, $val) = @_;
-    parse_args(wantarray, 
-	       @_ > 1 ? $r->query_string($val) : $r->query_string);
+    my $args = @_ > 1 ? $r->query_string($val) : $r->query_string;
+    return $args unless wantarray;
+    parse_args(1, $args);
 }
 
 *READ = \&read unless defined &READ;

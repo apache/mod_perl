@@ -3,7 +3,7 @@
 # Check GET via HTTP.
 #
 
-my $num_tests = 9;
+my $num_tests = 10;
 my(@test_scripts) = qw(test perl-status);
 %get_only = map { $_,1 } qw(perl-status);
 
@@ -58,6 +58,8 @@ print "pounding a bit...\n";
 for (1..3) {
     test ++$i, ($ua->request($request, undef, undef)->is_success);
 }
+
+test ++$i, fetch("/perl/test?0") =~ /SCALAR_ARGS=0/;
 
 # avoid -w warning
 $dummy = $net::httpserver;
