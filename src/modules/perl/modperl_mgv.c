@@ -307,7 +307,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         }
         else {
             MP_TRACE_h(MP_FUNC, "package %s seems to be loaded\n"
-                       "  $INC{%s)='%s';\n",
+                       "  $INC{'%s')='%s';\n",
                        name, filename, SvPV_nolen(*svp));
         }
     }
