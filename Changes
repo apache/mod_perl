@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+perl 5.8.1 w/ ithreads has a bug where it reports the wrong parent pid
+(as the process was never forked), provide a local workaround (+ new
+test). [Stas]
+
 overriden STD* streams now can be further overriden and will be
 properly restored, which allows functions like $r->internal_redirect
 work (+add tests) [Stas]
