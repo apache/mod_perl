@@ -700,6 +700,7 @@ my %shortcuts = (
      FORBIDDEN => 'HTTP_FORBIDDEN',
      AUTH_REQUIRED => 'HTTP_UNAUTHORIZED',
      SERVER_ERROR => 'HTTP_INTERNAL_SERVER_ERROR',
+     REDIRECT => 'HTTP_MOVED_TEMPORARILY',
 );
 
 sub constants_lookup_code {

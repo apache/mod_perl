@@ -218,7 +218,7 @@ sub get_constants {
     #maintain a few handy shortcuts from 1.xx
     #aliases are defined in ModPerl::Code
     push @{ $constants{'Apache'}->{common} },
-      qw(NOT_FOUND FORBIDDEN AUTH_REQUIRED SERVER_ERROR);
+      qw(NOT_FOUND FORBIDDEN AUTH_REQUIRED SERVER_ERROR REDIRECT);
 
     return \%constants;
 }
