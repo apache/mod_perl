@@ -733,7 +733,7 @@ if($APACHE_SRC or $USE_APXS) {
 		    elsif(s/^StrongholdLicenseFile\s+//) {
 			$lfile = $_;
 			unless ($lfile =~ m:^/:) {
-			    $lfile = "$APACHE_SRC/../$lfile";
+			    $lfile = "$PWD/$APACHE_SRC/../$lfile";
 			}
 		    }
 		}
