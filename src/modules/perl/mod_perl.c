@@ -286,10 +286,23 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 #endif
 
 #ifdef MP_COMPAT_1X
-    av_push(GvAV(PL_incgv),
-            newSVpv(ap_server_root_relative(p, ""), 0));
-    av_push(GvAV(PL_incgv),
-            newSVpv(ap_server_root_relative(p, "lib/perl"), 0));
+    {
+        char *path, *path1;
+        apr_finfo_t finfo;
+        /* 1) push @INC, $ServerRoot */
+        av_push(GvAV(PL_incgv), newSVpv(ap_server_root, 0));
+
+        /* 2) push @INC, $ServerRoot/lib/perl only if it exists */
+        apr_filepath_merge(&path, ap_server_root, "lib",
+                           APR_FILEPATH_NATIVE, p);
+        apr_filepath_merge(&path1, path, "perl",
+                           APR_FILEPATH_NATIVE, p);
+        if (APR_SUCCESS == apr_stat(&finfo, path1, APR_FINFO_TYPE, p)) {
+            if (finfo.filetype == APR_DIR) {
+                av_push(GvAV(PL_incgv), newSVpv(path1, 0));
+            }
+        }
+    }
 #endif /* MP_COMPAT_1X */
 
     /* things to be done only in the main server */
