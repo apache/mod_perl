@@ -123,6 +123,7 @@ sub apxs {
     }
 
     my $val = qx($apxs @_ 2>/dev/null);
+    chomp $val if defined $val; # apxs post-2.0.40 adds a new line
 
     unless ($val) {
         error "'$apxs @_' failed:";
