@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+When 'make test' fails we now print the info on what to do next [Stas]
+
+At the end of 'make install' we now print the info how to proceed with
+mod_perl and what to do in the case of post-install problems [Geoff]
+
 Adjust the source to properly work with 5.8.2's new algorithm of
 dynamic re-hashing of hashes on hash collision attack. [Nicholas Clark
 <nick@ccl4.org>, Stas]. Add a test that mounts such an attack so we
