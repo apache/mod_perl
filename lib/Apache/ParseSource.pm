@@ -4,19 +4,10 @@ use strict;
 use Apache::Build ();
 use Config ();
 
-our $VERSION = '0.01';
-
-BEGIN {
-    unless ($0 eq '-e') {
-        my $filter = join '::', __PACKAGE__, 'cscan_filter';
-        my $cpp = join ' ', $^X, '-M'.__PACKAGE__, '-e', $filter, '--';
-        (tied %Config::Config)->{cppstdin} = $cpp;
-    }
-}
+our $VERSION = '0.02';
 
 sub new {
     my $class = shift;
-    #$C::Scan::Warn = 1;
     bless {
         config => Apache::Build->new,
     }, $class;
@@ -52,6 +43,7 @@ sub DESTROY {
 
 sub scan {
     require C::Scan;
+    C::Scan->VERSION(0.75);
     require Carp;
 
     my $self = shift;
@@ -155,7 +147,9 @@ sub get_structs {
         my $struct = {
            type => $type,
            elts => [map {
-               { type => $_->[0], name => $_->[2] }
+               my $type = $_->[0];
+               $type .= $_->[1] if $_->[1];
+               { type => $type, name => $_->[2] }
            } @$elts],
         };
 
@@ -213,66 +207,6 @@ $dump
 1;
 EOF
     close $pm;
-}
-
-#rewrite some constructs that C::Scan cannot parse
-sub cscan_filter {
-    chomp(my $include = scalar <STDIN>);
-
-    my $command = "echo \'$include\' | $Config::Config{cppstdin} @ARGV|";
-
-    open my $cmd, $command or die;
-
-    my %typedef;
-
-    my $apache_file = 0;
-    my %typedef_aliases =
-      (cmd_parms_struct => 'cmd_parms',
-       command_struct => 'command_rec',
-       module_struct => 'module');
-
-    my $alias_re = join '|', keys %typedef_aliases;
-
-    while (<$cmd>) {
-        #C::Scan cannot parse this
-        s/const\s+char\s*\*\s+const\s*\*/const char **/g;
-
-        s/\b($alias_re)\b/$typedef_aliases{$1}/o;
-
-        if (m(^\s*\#\s*	        # Leading hash
-              (line\s*)?	# 1: Optional line
-              ([0-9]+)\s*	# 2: Line number
-              (.*)		# 3: The rest
-             )x) {
-            my $file = $3;
-            $file = $1 if $file =~ /"(.*)"/;
-            $apache_file = ($file =~ m:apache-2\.0: or $file =~ /\.c$/);
-            #only rewrite forward typedef struct declarations for apache files
-            print;
-        } elsif (s/typedef\s+(const\s+char\s+\*\s*)(\w+)/typedef ($1)$2/) {
-            #C::Scan cannot parse this construct without ()'s
-            print;
-        } elsif ($apache_file and /^\s*typedef\s+struct\s+(\w+)\s+(\w+)\;/ and $1 eq $2) {
-            $typedef{$1} = 1;
-            #rewrite forward typedef struct declaration (done below)
-            print;
-        } elsif (/^\s*struct\s+(\w+)\s+\{/ and $typedef{$1}) {
-            my $name = $1;
-            s/^\s*struct\s+\w+/typedef struct/;
-            print;
-            while (my $line = <$cmd>) {
-                if ($line =~ s/^\s*\}\;\s*$/\} $name\;/) {
-                    print $line;
-                    last;
-                }
-                print $line;
-            }
-        } else {
-            print;
-        }
-    }
-
-    close $cmd;
 }
 
 1;
