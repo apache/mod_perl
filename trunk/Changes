@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+Document the possible misuses of the Apache::Constant constants [Per
+Einar Ellefsen <per.einar@skynet.be>]
+
 =item 1.27 - June 1, 2002
 
 workaround Cwd bug in 5.8.0-RC1 that breaks apache configuration on solaris
