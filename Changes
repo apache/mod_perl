@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+when building mp2 EU::MM looks into Apache-Test/MANIFEST and complains
+about the missing Apache-Test/META.yml (which is indeed not included
+in the modperl package due to the PAUSE problems of dealing with more
+than one META.yml. Solution: Exclude Apache-Test/MANIFEST from
+mod_perl distribution package. [Stas]
+
 ModPerl::Registry no longer checks for -x bit (we don't executed
 scripts anyway), and thus works on acl-based filesystems. Also
 replaced the -r check with a proper error handling when the file is
