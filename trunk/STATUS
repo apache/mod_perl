@@ -1,0 +1,251 @@
+mod_perl 1.3 STATUS:
+   Last modified at [$Date$]
+
+
+Release:
+
+   1.26-dev: In development.
+       1.25: Released July 11, 2001.
+   
+
+Available Patches:
+
+    * $r->args parsing of one=&two=2
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98018719907031&w=2
+	Status: 
+          patch available at
+          http://marc.theaimsgroup.com/?l=apache-modperl&m=98048943129379&w=2
+
+    * two identical directives in <Perl> configuration
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=97449481013350&w=2
+	Status: 
+          doc patch at http://marc.theaimsgroup.com/?l=apache-modperl&m=97450363501652&w=2
+
+    * PerlSetEnv scoping
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99148497206388&w=2
+	Status:
+          may be fixed here
+            http://marc.theaimsgroup.com/?l=apache-modperl&m=99473571809129&w=2
+          but that patch has this issue (I think)
+            http://marc.theaimsgroup.com/?l=apache-modperl&m=99565226811557&w=2
+          --Geoff
+
+    * %LocationMatch <Perl> bug
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98260537428737&w=2
+	Status:
+          may be fixed here
+            http://marc.theaimsgroup.com/?l=apache-modperl&m=101366182205497&w=2
+
+    * PVIV issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99905070209305&w=2
+	Status:
+          patch available
+            http://marc.theaimsgroup.com/?l=apache-modperl&m=99999116330145&w=2
+
+    * mod_perl.h issues for Win32
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101253855721619&w=2
+	Status:
+          patch available
+
+    * Apache::Utils::escape_html issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101180404809059&w=2
+	Status:
+          "patch" available
+             http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101188287032621&w=2
+
+    * Apache::RegistryNG issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101240123609773&w=2
+	Status:
+          patch available 
+
+    * vanishing symbol tables
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=100820262006934&w=2
+	Status:
+          patch available
+        
+    * $r->finfo problem with HTML::Mason::ApacheHandler
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=96854561311519&w=2
+	Status:
+         may be fixed with 
+           http://marc.theaimsgroup.com/?l=apache-modperl&m=96869790426565&w=2
+
+    * get/set handlers issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=95721313917562&w=2
+	Status:
+         patch available
+           http://perl.apache.org/~dougm/set_handlers.pat
+
+    * Apache::test
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98278446807561&w=2
+	Status:
+         patch available
+
+
+Needs Patch or Further Investigation
+
+    * readdir() broken on linux with glibc 2.2
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98824089613574&w=2
+	Status:
+        
+    * SERVER_MERGE and DIR_MERGE
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=97351976714878&w=2
+	Status:
+          The require() part may be legitimate.  personally, I never
+          understood the DIR_CREATE happening before SERVER_CREATE
+          either, but it doesn't seem to affect anything.  the double 
+          DIR_MERGE is just a misunderstanding on Andy's part and is
+          a result of how Apache handles <Location> before and
+          after translation.  --Geoff
+
+    * warn() going to the wrong log
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98190005604037&w=2
+	Status:
+          coincidentially, I've noticed that s->error_fname is not populated
+          in a vhost when the vhost relies on the ErrorLog from the main 
+          server --Geoff 
+
+    * segfaults with DBI->connect (mysql)
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=96392180616185&w=2
+	Status:
+
+    * revisit send_http_header and r->status
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99063926111686&w=2
+	Status:
+
+    * Apache->server->register_cleanup
+        Report: ?
+	Status:
+
+    * bleedperl TIEHANDLE issues?
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=99909095916498&w=2
+        Status:
+
+    * bleedperl AUTOLOAD XSUB issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101477676216889&w=2
+	Status:
+
+    * Apache->request(bless {r => $r}, 'My::Apache')
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98600785703290&w=2
+	Status:
+
+    * recursion triggered by internal_redirect() called by a pushed handler
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=94792974200198&w=2
+	Status:
+
+    * recursion triggered by internal_redirect() called by a pushed handler
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=94792974200198&w=2
+	Status:
+
+    * IPC::Open3 issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98839218229712&w=2
+	Status:
+
+    * Prototype mismatch in Apache::PerlRun
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=97934624332223&w=2
+	Status:
+
+    *  Apache::Status problems?..CGI::Cookie, (dont want no CGI.pm)
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=97913833521354&w=2
+	Status:
+
+    * Gerald's report of Embperl/sub-request/print breakage
+        Report: ?
+	Status:
+
+    * /perl/perl-status?sig dumps core under hpux 10.20 [David-Michael.Lincke@unisg.ch]
+        Report: ?
+	Status:
+
+    * $r cannot use many api methods during ChildInit/ChildExit -> SEGV
+        Report: ?
+	Status:
+
+    * bytes_sent are not logged if header don't go through send_http_header(),
+        e.g CGI->header(-nph => 1, ...) Eric Cholet <cholet@logilune.com>
+        Report: ?
+	Status:
+
+    * SIGALRM/flock, Lincoln Stein <lstein@cshl.org>
+        Report: ?
+	Status:
+
+    * perl_config should not av_shift ARRAY refs from %Apache::ReadConfig::
+        Report: ?
+	Status:
+
+    * die and AUTOLOADed DESTROY == empty $@ (Perl or mod_perl bug?)
+        Report: ?
+	Status:
+
+    * can't multiple Apache::Include->virtual in a single request
+        Report: ?
+	Status:
+
+    * files that have been created after the server's (child?) startup are
+      being reported with negative age with -M test under Apache::Registry.
+      The workaround is to add $^T = time; at the beginning of the scripts. But
+      it would be much better if the Apache::Registry will do that
+        Report: ?
+	Status:
+
+    * Apache::Include->virtual should return run() value, not status()
+        Report: ?
+	Status:
+
+    * libapreq: Apache::Cookie format sync w/ CGI.pm
+        Report: ?
+	Status:
+
+    * PERL5LIB foo
+        Report: ?
+	Status:
+
+
+Open Issues or Core Enhancements:
+
+    * method handler cached-CVs
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=99789775715863&w=2
+	Status:
+          patch available 
+            http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101164617829467&w=2
+
+    * "$ENV{FOO} = 'foo'" is cleared from the %ENV array, but left in the
+      environ[], making it visible to subprocesses.
+      perl_util.c:perl_clear_env() only deletes from %ENV on purpose to
+      prevent other problems.  need to rethink this.
+
+    * option to startup with something other than /dev/null
+
+    * PerlChildInitHandler should not be allowed inside <VirtualHost>
+
+    * rid Apache->can_stack_handlers, make Apache->can('push_handlers') work
+
+    * fileno(STD{IN,OUT}) should be r->connection->client->fd or
+      fileno(std{in,out}), rather than hardcoded fileno(stdout)
+
+    * close STDERR;
+
+    * Apache::FakeRequest improvments [Gary Richardson <gary@atdot.org>]
+
+    * xsubpp -nolinenumbers is not supported with 5.004
+
+    * 'make test' as root permissions problems
+
+    * USE_APXS=1 + DYNAMIC=1 do not work together
+
+    * support SSL_BASE=SYSTEM (i.e. test -d $SSL_BASE in Makefile.PL)
+
+    * disable PERL_SSI unless mod_include is listed in httpd -l
+      and Action unless mod_action, etc.
+
+
+Documentation:
+
+    * remove eg/ directory, it's way out of date and no longer needed now
+      with the guide, the books, and piles of Apache::* modules
+
+    * document Apache::Status Apache::Request preference over CGI.pm
+      and make it more clear that Apache::Status should not be used in a
+      production environment, as it adds quite a bit of bloat
+
+    * docs: update CREDITS, cleanup install docs
