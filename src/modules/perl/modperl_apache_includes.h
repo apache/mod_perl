@@ -19,6 +19,7 @@
 #include "http_vhost.h"
 #include "ap_mpm.h"
 
+#include "apr_poll.h"
 #include "apr_lib.h"
 #include "apr_strings.h"
 #include "apr_uri.h"
