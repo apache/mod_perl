@@ -40,7 +40,9 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  ap_get_server_name
  ap_get_server_port
 !ap_content_type_tolower
+ ap_get_status_line
  ap_is_initial_req
+ ap_method_register
 >ap_method_registry_init
 >ap_process_request_internal
 ?ap_get_mime_headers
@@ -152,25 +154,21 @@ MODULE=Apache::Access   PACKAGE=Apache::RequestRec
 -ap_scan_script_header_err_brigade
 
 MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
+ ap_add_version_component
  ap_error_log2stderr
 ?ap_replace_stderr_log
 
 #MODULE=Apache::ServerConfig
+ ap_exists_config_define
 #XXX: thought this might be useful
 #however it is not exported on win32
 !ap_get_local_host
- ap_psignature | | r,prefix
-~ap_server_root_relative
-
-PACKAGE=Apache::Server
- ap_method_register
- ap_exists_config_define
- ap_add_version_component
- ap_get_status_line
 ~ap_get_server_built
 ~ap_get_server_version
 ~ap_server_root
- 
+ ap_psignature | | r,prefix
+~ap_server_root_relative
+
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules
 #however it is not exported on win32

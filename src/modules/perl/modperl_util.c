@@ -844,10 +844,10 @@ SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname)
     apr_pool_t *p;
 
     if (!sv_isobject(sv)) {
-        Perl_croak(aTHX_ "usage: Apache::Server::server_root_relative(obj, name)");
+        Perl_croak(aTHX_ "usage: Apache::server_root_relative(obj, name)");
     }
 
-    p = modperl_sv2pool(aTHX_ sv, get_cv("Apache::Server::server_root_relative", 0));
+    p = modperl_sv2pool(aTHX_ sv, get_cv("Apache::server_root_relative", 0));
 
     if (p == NULL) {
         MP_TRACE_a(MP_FUNC,

@@ -55,8 +55,8 @@ sub handler {
                       (scalar keys %status_lines) + 11;
 
     # syntax - an object or pool is required
-    t_debug("Apache::Server::server_root_relative() died");
-    eval { my $dir = Apache::Server::server_root_relative() };
+    t_debug("Apache::server_root_relative() died");
+    eval { my $dir = Apache::server_root_relative() };
     t_debug("\$\@: $@");
     ok $@;
 
@@ -72,9 +72,9 @@ sub handler {
     foreach my $p (keys %pools) {
 
         ok t_cmp(catfile($serverroot, 'conf'),
-                 canonpath(Apache::Server::server_root_relative($pools{$p},
+                 canonpath(Apache::server_root_relative($pools{$p},
                      'conf')),
-                 "Apache::Server::server_root_relative($p, 'conf')");
+                 "Apache:::server_root_relative($p, 'conf')");
     }
 
     # dig out the pool from valid objects
@@ -88,11 +88,11 @@ sub handler {
     # syntax - unrecognized objects don't segfault
     {
         my $obj = bless {}, 'Apache::Foo';
-        eval { Apache::Server::server_root_relative($obj, 'conf') };
+        eval { Apache::server_root_relative($obj, 'conf') };
 
         ok t_cmp(qr/server_root_relative.*no .* key/,
                  $@,
-                 "Apache::Server::server_root_relative(\$obj, 'conf')");
+                 "Apache::server_root_relative(\$obj, 'conf')");
     }
 
     # no file argument gives ServerRoot
@@ -101,13 +101,13 @@ sub handler {
              '$r->server_root_relative()');
 
     ok t_cmp(canonpath($serverroot),
-             canonpath(Apache::Server::server_root_relative($r->pool)),
-             'Apache::Server::server_root_relative($r->pool)');
+             canonpath(Apache::server_root_relative($r->pool)),
+             'Apache::server_root_relative($r->pool)');
 
-    # Apache::Server::server_root is also the ServerRoot constant
-    ok t_cmp(canonpath(Apache::Server::server_root),
+    # Apache::server_root is also the ServerRoot constant
+    ok t_cmp(canonpath(Apache::server_root),
              canonpath($r->server_root_relative),
-             'Apache::Server::server_root');
+             'Apache::server_root');
 
     {
         # absolute paths should resolve to themselves
@@ -119,16 +119,16 @@ sub handler {
     }
 
     t_debug('registering method FOO');
-    ok Apache::Server::method_register($r->server->process->pconf, 'FOO');
+    ok Apache::method_register($r->server->process->pconf, 'FOO');
 
-    t_debug('Apache::Server::exists_config_define');
-    ok Apache::Server::exists_config_define('MODPERL2');
-    ok ! Apache::Server::exists_config_define('FOO');
+    t_debug('Apache::exists_config_define');
+    ok Apache::exists_config_define('MODPERL2');
+    ok ! Apache::exists_config_define('FOO');
 
     while (my($code, $line) = each %status_lines) {
         ok t_cmp($line,
-                 Apache::Server::get_status_line($code),
-                 "Apache::Server::get_status_line($code)");
+                 Apache::get_status_line($code),
+                 "Apache::get_status_line($code)");
     }
 
     Apache::OK;

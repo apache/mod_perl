@@ -162,7 +162,7 @@ sub handler {
 sub header {
     my $r = shift;
     my $start = scalar localtime $^T;
-    my $srv = Apache::Server::get_server_version();
+    my $srv = Apache::get_server_version();
     $r->content_type("text/html");
     my $v = $^V ? sprintf "v%vd", $^V : $];
     $r->print(<<"EOF");

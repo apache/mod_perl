@@ -252,7 +252,7 @@ sub request {
 
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
-our $CWD = Apache::Server::server_root;
+our $CWD = Apache::server_root;
 
 our $AddPerlVersion = 1;
 
@@ -296,7 +296,7 @@ sub gensym {
 
 sub define {
     shift if @_ == 2;
-    Apache::Server::exists_config_define(@_);
+    exists_config_define(@_);
 }
 
 sub log_error {
@@ -350,7 +350,7 @@ sub import {
 #no need to support in 2.0
 sub export {}
 
-sub SERVER_VERSION { Apache::Server::get_server_version() }
+sub SERVER_VERSION { Apache::get_server_version() }
 
 package Apache::RequestRec;
 

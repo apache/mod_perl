@@ -128,18 +128,13 @@ fix context problems in <perl> sections and
 PerlModule/PerlLoadModule/PerlRequre under threaded mpms w/
 PerlOptions +Parent/+Clone in Vhosts + TestVhost::config test. [Stas]
 
-moved many functions out of the Apache:: namespace:
-  Apache::unescape_url()          is now Apache::URI::unescape_url()
-  Apache::log_pid()               is now Apache::Log::log_pid()
-  Apache::LOG_MARK()              is now Apache::Log::LOG_MARK()
-  Apache::method_register()       is now Apache::Server::method_register()
-  Apache::get_server_built()      is now Apache::Server::get_server_built()
-  Apache::get_server_version()    is now Apache::Server::get_server_version()
-  Apache::server_root()           is now Apache::Server::server_root()
-  Apache::server_root_relative()  is now Apache::Server::server_root_relative()
-  Apache::exists_config_define()  is now Apache::Server::exists_config_define()
-  Apache::add_version_component() is now Apache::Server::add_version_component()
-  Apache::get_status_line()       is now Apache::Server::get_status_line()
+Implemented Apache::get_server_version and Apache::get_server_built
+as constant subroutines [Geoffrey Young]
+
+Moved some functions out of the Apache:: namespace:
+  Apache::unescape_url()       is now Apache::URI::unescape_url()
+  Apache::log_pid()            is now Apache::Log::log_pid()
+  Apache::LOG_MARK()           is now Apache::Log::LOG_MARK()
 [Geoffrey Young]
 
 if MP_AP_PREFIX is used apxs and apr-config from the apache build tree
