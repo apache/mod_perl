@@ -27,8 +27,8 @@ sub handler {
     if ($nonblocking) {
         $socket->opt_set(APR::SO_NONBLOCK => 0);
 
-        # test that we really are in the non-blocking mode
-        $socket->opt_get(APR::SO_NONBLOCK)
+        # test that we really are in the blocking mode
+        !$socket->opt_get(APR::SO_NONBLOCK)
             or die "failed to set non-blocking mode";
     }
 
