@@ -2,7 +2,6 @@
 
 typedef struct {
     SV *sv;
-    PerlInterpreter *perl;
 } mpxs_pool_account_t;
 
 /* XXX: this implementation has a problem with perl ithreads. if a
@@ -44,7 +43,6 @@ mpxs_apr_pool_cleanup(void *cleanup_data)
         MP_POOL_TRACE(MP_FUNC, "this pool seems to be destroyed already");
     }
     else {
-        dTHXa(data->perl);
         MP_POOL_TRACE(MP_FUNC,
                       "pool 0x%lx contains a valid sv 0x%lx, invalidating it",
                       (unsigned long)data->sv, (unsigned long)cleanup_data);
@@ -132,9 +130,7 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         SV *rv = sv_setref_pv(NEWSV(0, 0), "APR::Pool", (void*)child_pool);
 
         data->sv = SvRV(rv);
-#ifdef USE_ITHREADS
-        data->perl = aTHX;
-#endif
+
         MP_POOL_TRACE(MP_FUNC, "sub-pool p: 0x%lx, sv: 0x%lx, rv: 0x%lx",
                       (unsigned long)child_pool, data->sv, rv);
 
