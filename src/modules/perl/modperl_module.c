@@ -342,6 +342,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         (modperl_module_cmd_data_t *)cmd->cmd_data;
     modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     modperl_module_cfg_t *srv_cfg;
+    int modules_alias = 0;
 
 #ifdef USE_ITHREADS
     modperl_interp_t *interp = modperl_interp_pool_select(p, s);
@@ -384,6 +385,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                 modperl_config_srv_get(modperl_global_get_server_rec());
             if (base_scfg->modules) {
                 scfg->modules = base_scfg->modules;
+                modules_alias = 1;
             }
         }
         
@@ -452,6 +454,12 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
 
     if (SvTRUE(ERRSV)) {
         retval = SvPVX(ERRSV);
+    }
+
+    if (modules_alias) {
+        MP_dSCFG(s);
+        /* unalias the temp aliasing */
+        scfg->modules = NULL;
     }
 
     return retval;
