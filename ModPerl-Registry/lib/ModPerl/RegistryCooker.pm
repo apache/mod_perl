@@ -76,9 +76,9 @@ use constant IS_WIN32 => $^O eq "MSWin32";
 # constant subs
 #
 #########################################################################
-use constant NOP   => sub {   };
-use constant TRUE  => sub { 1 };
-use constant FALSE => sub { 0 };
+use constant NOP   => '';
+use constant TRUE  => 1;
+use constant FALSE => 0;
 
 
 use constant NAMESPACE_ROOT => 'ModPerl::ROOT';
