@@ -14,3 +14,5 @@ Makefile
 *.so
 *.i
 TAGS
+modperl_constants.h
+modperl_constants.c
