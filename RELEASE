@@ -117,7 +117,7 @@ Instructions for mod_perl 2.0 Release Manager
 8. Announce the package
 
   a. post ... to the modperl, announce lists
-  Subject: [ANNOUNCE]: mod_perl 1.99_13 
+  Subject: [ANNOUNCE] mod_perl 1.99_13 
      include 
   - MD5 sig (as it comes from CPAN upload announce).
   - the latest Changes
