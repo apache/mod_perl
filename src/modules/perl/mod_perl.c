@@ -584,8 +584,17 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
      * change, even though it still points to the same physical file
      * (.e.g on win32 the filehandle will be different. Therefore
      * reset the tracing logfile setting here, since this is the
-     * earliest place, happening after the open_logs phase */
-    modperl_trace_logfile_set(s->error_log);
+     * earliest place, happening after the open_logs phase.
+     *
+     * Moreover, we need to dup the filehandle so that when the server
+     * shuts down, we will be able to log to error_log after Apache
+     * has closed it (which happens too early for our likening).
+     */
+    {
+        apr_file_t *dup;
+        MP_FAILURE_CROAK(apr_file_dup(&dup, s->error_log, pconf));
+        modperl_trace_logfile_set(dup);
+    }
 #endif
     
     ap_add_version_component(pconf, MP_VERSION_STRING);
