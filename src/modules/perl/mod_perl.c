@@ -207,6 +207,13 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     );
 #endif
 
+#ifdef MP_COMPAT_1X    
+    av_push(GvAV(PL_incgv),
+            newSVpv(ap_server_root_relative(p, ""), 0));
+    av_push(GvAV(PL_incgv),
+            newSVpv(ap_server_root_relative(p, "lib/perl"), 0));
+#endif /* MP_COMPAT_1X */
+    
     if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
         exit(1);
     }
