@@ -1,10 +1,6 @@
 use strict;
 use warnings FATAL => 'all';
 
-# test internal redirects originating from 'SetHandler modperl' and
-# 'SetHandler perl-script' main handlers, and sub-requests handled by
-# the handlers of the same and the opposite kind
-
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
