@@ -259,6 +259,12 @@ sub configure_apache {
         exit 1;
     }
     
+    unless ($self->{MP_AP_PREFIX}) {
+        error "You specified MP_AP_BUILD but did not speficy the " .
+              "location of httpd's source tree with MP_AP_PREFIX"; 
+        exit 1;
+    }
+
     unless ($self->{MP_USE_STATIC}) {
         error "When building httpd, you must set MP_USE_STATIC=1";
         exit 1;
