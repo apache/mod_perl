@@ -1707,9 +1707,17 @@ no_cache(r, ...)
 #  char *args;			/* QUERY_ARGS, if any */
 #  struct stat finfo;		/* ST_MODE set to zero if no such file */
 
-void
-mod_perl_finfo(r)
+SV *
+finfo(r)
     Apache r
+
+    CODE:
+    statcache = r->finfo;
+    if(GIMME_V == G_VOID) XSRETURN_UNDEF;
+    RETVAL = newRV_noinc((SV*)gv_fetchpv("_", TRUE, SVt_PVIO));
+
+    OUTPUT:
+    RETVAL
 
 char *
 uri(r, ...)
