@@ -49,9 +49,6 @@ script, instead of rewriting the content, which is both faster and
 doesn't mislead the perl debugger [Dominique Quatravaux
 <dom@idealx.com>]
 
-add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
-which mod_perl version is being used at request time.  [Geoffrey Young]
-
 Starting from ExtUtils::MakeMaker 6.26 went back to pm_to_blib target
 from pm_to_blib.ts introduced in 6.22, so needed to fix the glue_pod
 target, so install will work correctly [Stas]
