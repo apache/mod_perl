@@ -422,6 +422,24 @@ sub escape_uri {
     Apache::Util::escape_path($path, $r->pool);
 }
 
+#tmp compat until ap_escape_html is reworked to not require a pool
+my %html_escapes = (
+    '<' => 'lt',
+    '>' => 'gt',
+    '&' => 'amp',
+    '"' => 'quot',
+);
+
+%html_escapes = map { $_, "&$html_escapes{$_};" } keys %html_escapes;
+
+my $html_escape = join '|', keys %html_escapes;
+
+sub escape_html {
+    my $html = shift;
+    $html =~ s/($html_escape)/$html_escapes{$1}/go;
+    $html;
+}
+
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;
 
