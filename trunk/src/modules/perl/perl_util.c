@@ -835,7 +835,7 @@ void mod_perl_mark_where(char *where, SV *sub)
 {
     dTHR;
     SV *name = Nullsv;
-    if(curcop->cop_line) {
+    if(CopLINE(curcop)) {
 #if 0
 	fprintf(stderr, "already know where: %s line %d\n",
 		SvPV(GvSV(CopFILEGV(curcop)),na), CopFILEGV(curcop));
@@ -851,7 +851,7 @@ void mod_perl_mark_where(char *where, SV *sub)
 
     sv_setpv(GvSV(CopFILEGV(curcop)), "");
     sv_catpvf(GvSV(CopFILEGV(curcop)), "%s subroutine `%_'", where, name);
-    curcop->cop_line = 1;
+    CopLINE_set(curcop, 1);
 
     if(name)
 	SvREFCNT_dec(name);
