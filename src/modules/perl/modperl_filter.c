@@ -95,6 +95,7 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     modperl_handler_make_args(aTHX_ &args,
                               filter_classes[filter->mode], filter,
+                              "APR::Brigade", filter->bb,
                               NULL);
 
     if ((status = modperl_callback(aTHX_ handler, p, s, args)) != OK) {
