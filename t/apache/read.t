@@ -13,8 +13,6 @@ my $location = "/TestApache::read";
 
 my $socket = Apache::TestRequest::vhost_socket('default');
 
-$socket->autoflush(1);
-
 my $file = '../Makefile';
 
 open(my $fh, $file) or die "open $file: $!";
@@ -23,9 +21,13 @@ my $data = join '', <$fh>;
 close $fh;
 my $size = length $data;
 
-print $socket "POST $location http/1.0\r\n";
-print $socket "Content-length: $size\r\n";
-print $socket "\r\n";
+for my $string ("POST $location http/1.0",
+                "Content-length: $size",
+                "")
+{
+    my $line = "$string\r\n";
+    syswrite($socket, $line, length $line);
+}
 
 my $written = 0;
 my $bufsiz = 240;
