@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.13_01-dev
 
+Makefile.PL fix for 'make test' and --enable-shared= modules
+
+applied src/modules/perl/Makefile fixup for ApacheSSL
+[Iosif Fettich <ifettich@netsoft.ro>]
+
 experimental optimization for Apache::Constants if XS_IMPORT=1 is
 given to Makefile.PL:  
 drop heavy Exporter::import/@EXPORT/@EXPORT_OK/%EXPORT_TAGS for

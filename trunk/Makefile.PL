@@ -164,7 +164,7 @@ XS_IMPORT
 my @mp_args = 
     qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE APACHE_PREFIX
        USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
-       ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
+       ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT XS_IMPORT);
 
 sub is_mp_arg {
     my $arg = shift; 
@@ -248,8 +248,8 @@ if($USE_APXS) {
 }
 elsif($USE_APACI) {
     print "Will configure via APACI";
+    gen_script("apaci/load_modules.pl");
     if($USE_DSO) {
-        gen_script("apaci/load_modules.pl");
         print " (DSO enabled)";
     }
     $NO_HTTPD = 1 if $PREP_HTTPD;
@@ -1110,8 +1110,9 @@ q(
 test:	pure_all start_httpd run_tests kill_httpd
 
 );
+    my $have_so = $USE_DSO || ($APACI_ARGS =~ /--enable-shared=/); 
     push @test_pre_init, "\t", 
-    './apaci/load_modules.pl $(APACHE_SRC)', "\n" if $USE_DSO;
+    './apaci/load_modules.pl $(APACHE_SRC)', "\n" if $have_so;
  
     join '', @test_pre_init,
     qq(
