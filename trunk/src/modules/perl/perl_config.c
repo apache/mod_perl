@@ -1178,7 +1178,7 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 #define USE_ICASE 0
 #endif
 
-#define SECTION_NAME(n) (cmd->info ? (char *)cmd->info : n)
+#define SECTION_NAME(n) n
 
 #define TRACE_SECTION(n,v) \
     MP_TRACE_s(fprintf(stderr, "perl_section: <%s %s>\n", n, v))
@@ -1748,7 +1748,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 	    }
 	}
 
-	if((hv = GvHV((GV*)val)) && HvKEYS(hv)) {
+	if((hv = GvHV((GV*)val))) {
 	    perl_handle_command_hv(hv, key, parms, config);
 	}
 	else if((av = GvAV((GV*)val))) {	
