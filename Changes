@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+added Apache::SubRequest->bytes_sent method
+
 added Apache::Server->register_cleanup method
 
 DYNAMIC=1 works again
