@@ -80,3 +80,5 @@ $r->print("Content-type: text/plain\n\n");
 }
 
 print "parent";
+
+untie *STDOUT; # don't affect other tests
