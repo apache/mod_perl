@@ -45,12 +45,30 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
 
 #define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) mpxs_pool_is_custom(sv)
 
+/* before the magic is freed, one needs to carefully detach the
+ * dependant pool magic added by mpxs_add_pool_magic (most of the time
+ * it'd be a parent pool), and postpone its destruction, until after
+ * the child pool is destroyed. Since if we don't do that the
+ * destruction of the parent pool will destroy the child pool C guts
+ * and when perl unware of that the rug was pulled under the feet will
+ * continue destructing the child pool, things will crash
+ */
+#define MP_APR_POOL_SV_DROPS_OWNERSHIP_RUN(acct) STMT_START {       \
+    MAGIC *mg = mg_find(acct->sv, PERL_MAGIC_ext);                  \
+    if (mg && mg->mg_obj) {                                         \
+        sv_2mortal(mg->mg_obj);                                     \
+        mg->mg_obj = Nullsv;                                        \
+        mg->mg_flags &= ~MGf_REFCOUNTED;                            \
+    }                                                               \
+    mg_free(acct->sv);                                              \
+    SvIVX(acct->sv) = 0;                                            \
+} STMT_END
+    
 #ifdef USE_ITHREADS
 
 #define MP_APR_POOL_SV_DROPS_OWNERSHIP(acct) STMT_START {               \
     dTHXa(acct->perl);                                                  \
-    mg_free(acct->sv);                                                  \
-    SvIVX(acct->sv) = 0;                                                \
+    MP_APR_POOL_SV_DROPS_OWNERSHIP_RUN(acct);                           \
     if (modperl_opt_interp_unselect && acct->interp) {                  \
         /* this will decrement the interp refcnt until                  \
          * there are no more references, in which case                  \
@@ -83,10 +101,7 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
 
 #else /* !USE_ITHREADS */
 
-#define MP_APR_POOL_SV_DROPS_OWNERSHIP(acct) STMT_START {               \
-    mg_free(acct->sv);                                                  \
-    SvIVX(acct->sv) = 0;                                                \
-} STMT_END
+#define MP_APR_POOL_SV_DROPS_OWNERSHIP MP_APR_POOL_SV_DROPS_OWNERSHIP_RUN
 
 #define MP_APR_POOL_SV_TAKES_OWNERSHIP(acct_sv, pool) STMT_START {      \
     mpxs_pool_account_t *acct = apr_palloc(pool, sizeof *acct);         \
@@ -198,6 +213,10 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         MP_POOL_TRACE(MP_FUNC, "sub-pool p: 0x%lx, sv: 0x%lx, rv: 0x%lx",
                       (unsigned long)child_pool, sv, rv);
 
+        if (parent_pool) {
+            mpxs_add_pool_magic(rv, parent_pool_obj);
+        }
+        
         return rv;
     }
 }

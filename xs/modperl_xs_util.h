@@ -126,10 +126,33 @@
     sv_magic(SvRV(obj), pool_obj, PERL_MAGIC_ext, Nullch, -1)
 #endif
 
-/* add dependency magic only for custom pools */
-#define mpxs_add_pool_magic(obj, pool_obj)                      \
-    if (mpxs_pool_is_custom(SvRV(pool_obj))) {                  \
-        mpxs_add_pool_magic_doit(obj, pool_obj);                \
+/* add dependency magic only for custom pools.  there are all kind of
+ * complications when more than one magic of the same type(in this
+ * case PERL_MAGIC_ext is added), luckily most of the PERL_MAGIC_ext
+ * magic used by modperl-core, uses Nullsv as mg->mg_obj, therefore
+ * the following code tries to workaround the multiple magic issue, by
+ * simply hanging the pool object into the unused slot, incrementing
+ * its refcnt just like sv_magic does internally. In case we ever hit
+ * magic which already has mg->mg_obj taken we will deal with that,
+ * for now we just croak in such a case.
+ */
+#define mpxs_add_pool_magic(obj, pool_obj)                         \
+    if (mpxs_pool_is_custom(SvRV(pool_obj))) {                     \
+        MAGIC *mg = mg_find(SvRV(obj), PERL_MAGIC_ext);            \
+        if (mg) {                                                  \
+            if (mg->mg_obj == Nullsv) {                            \
+                mg->mg_obj = SvREFCNT_inc(SvRV(pool_obj));         \
+                mg->mg_flags |= MGf_REFCOUNTED;                    \
+            }                                                      \
+            else {                                                 \
+                Perl_croak(aTHX_ "Fixme: don't know how to "       \
+                           "handle magic w/ occupied mg->mg_obj"); \
+            }                                                      \
+        }                                                          \
+        else {                                                     \
+            mpxs_add_pool_magic_doit(obj, SvRV(pool_obj));         \
+        }                                                          \
     }
+
 
 #endif /* MODPERL_XS_H */

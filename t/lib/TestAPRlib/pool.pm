@@ -11,7 +11,7 @@ use APR::Pool ();
 use APR::Table ();
 
 sub num_of_tests {
-    return 74;
+    return 75;
 }
 
 sub test {
@@ -387,8 +387,13 @@ sub test {
         ok 1;
     }
 
-
-
+    # out-of-scope pools
+    {
+        my $sp = APR::Pool->new->new;
+        # the parent temp pool must stick around
+        ok t_cmp(2, ancestry_count($sp),
+                 "parent pool is still alive + global pool");
+    }
 
     # other stuff
     {

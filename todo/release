@@ -42,7 +42,3 @@
         problem, but this seems to be a problem in
         modperl_bucket_sv_setaside which loses the newly seta-aside
         bucket)
-  
-  APR::Pool:
-  ? mpxs_apr_pool_create (having problems): APR__Pool.patch
-
