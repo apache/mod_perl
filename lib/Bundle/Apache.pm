@@ -50,6 +50,8 @@ Apache::Request - Effective methods for dealing with client request data
 
 Apache::Module - Interface to Apache C module structures
 
+Apache::Test - Wrapper around the standard "Test.pm" with helpers for testing an Apache server.
+
 =head1 DESCRIPTION
 
 This bundle contains modules used by Apache mod_perl.
