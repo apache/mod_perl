@@ -3992,6 +3992,19 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'int',
+    'name' => 'Apache__Directive_lookup',
+    'attr' => [
+      'static'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+    ]
+  },
+  {
     'return_type' => 'PerlInterpreter *',
     'name' => 'modperl_startup',
     'args' => [
@@ -4991,6 +5004,24 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'SV *',
     'name' => 'mpxs_Apache__Directive_as_string',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'ap_directive_t *',
+        'name' => 'self'
+      }
+    ]
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__Directive_as_hash',
     'attr' => [
       'static',
       '__inline__'
