@@ -988,7 +988,7 @@ void mod_perl_end_cleanup(void *data)
     GvAV(incgv) = av_copy_array(orig_inc);
 
     /* reset $/ */
-    sv_setpvn(GvSV(gv_fetchpv("/", FALSE, SVt_PV)), "\n", 1);
+    sv_setpvn(GvSV(gv_fetchpv("/", TRUE, SVt_PV)), "\n", 1);
 
     {
 	dTHR;
