@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+add Apache::Bundle2 [Stas]
+
 Apache::Reload now supports the PerlPreConnectionHandler invocation
 mode, so connection filter and protocol modules can be automatically
 reloaded on change. [Stas]
