@@ -325,30 +325,28 @@ modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
 int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
                                         apr_pool_t *p)
 {
-    char *init_handler_pv_code;
-    char *package_name;
-    CV *cv;
-    MAGIC *mg;
+    char *init_handler_pv_code = NULL;
     
     if (handler->mgv_cv) {
-        GV *gv;
-        if ((gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv))) {
-            cv = modperl_mgv_cv(gv);
-            package_name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 1);
-            /* fprintf(stderr, "PACKAGE: %s\n", package_name ); */
+        GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv);
+        if (gv) {
+            CV *cv = modperl_mgv_cv(gv);
+            if (cv && SvMAGICAL(cv)) {
+                MAGIC *mg = mg_find((SV*)(cv), '~');
+                init_handler_pv_code = mg ? mg->mg_ptr : NULL;
+            }
+            else {
+                /* XXX: should we complain in such a case? */
+                return 0;
+            }
         }
-    }
-
-    if (cv && SvMAGICAL(cv)) {
-        mg = mg_find((SV*)(cv), '~');
-        init_handler_pv_code = mg ? mg->mg_ptr : NULL;
-    }
-    else {
-        /* XXX: should we complain in such a case? */
-        return 0;
     }
     
     if (init_handler_pv_code) {
+        char *package_name =
+            modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 1);
+        /* fprintf(stderr, "PACKAGE: %s\n", package_name ); */
+
         /* eval the code in the parent handler's package's context */
         char *code = apr_pstrcat(p, "package ", package_name, ";",
                                  init_handler_pv_code, NULL);

@@ -4,17 +4,16 @@
 typedef SV *(*constants_lookup)(pTHX_ const char *);
 typedef const char ** (*constants_group_lookup)(const char *);
 
-static SV *new_constsub(pTHX_ constants_lookup lookup,
+static void new_constsub(pTHX_ constants_lookup lookup,
                         HV *caller_stash, HV *stash,
                         const char *name)
 {
     int name_len = strlen(name);
     GV **gvp = (GV **)hv_fetch(stash, name, name_len, TRUE);
-    SV *val;
 
     /* dont redefine */
     if (!isGV(*gvp) || !GvCV(*gvp)) {
-        val = (*lookup)(aTHX_ name);
+        SV *val = (*lookup)(aTHX_ name);
 
 #if 0
         fprintf(stderr, "newCONSTSUB(%s, %s, %d)\n",
@@ -38,8 +37,6 @@ static SV *new_constsub(pTHX_ constants_lookup lookup,
 
         GvCV(alias) = GvCV(*gvp);
     }
-
-    return val;
 }
 
 int modperl_const_compile(pTHX_ const char *classname,
