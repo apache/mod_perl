@@ -6898,6 +6898,16 @@ $ModPerl::FunctionTable = [
       }
     ]
   },
+  {
+    'return_type' => 'int',
+    'name' => 'mpxs_Apache__MPM_mpm_query',
+    'args' => [
+      {
+        'type' => 'int',
+        'name' => 'query'
+      }
+    ]
+  },
 ];
 
 

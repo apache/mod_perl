@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+add Apache::MPM class, along with show_mpm() and mpm_query() functions
+[Geoffrey Young]
+
 add :mpmq import tag to Apache::Const [Geoffrey Young]
 
 Fix ModPerl::Registry handlers family to modify $0 only for the
