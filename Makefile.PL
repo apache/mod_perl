@@ -26,7 +26,7 @@ my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
 #XXX: dunno why but win32 fails because of this:
-#cd docs/src/api/mod_perl-2.0 && nmake all ...
+#cd docs/api/mod_perl-2.0 && nmake all ...
 #NMAKE : fatal error U1073: don't know how to make 'all'
 #Stop.
 #NMAKE : fatal error U1077: 'cd' : return code '0x2'
