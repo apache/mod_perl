@@ -1,3 +1,4 @@
+#! /usr/local/bin/perl
 use File::Find;
 use strict;
 my $APACHE_SRC = shift;
@@ -23,6 +24,8 @@ my $name_map = {
     actions => "action",
     auth_anon => "anon_auth",
     auth_dbm => "dbm_auth",
+    log_agent => "agent_log",
+    log_referer => "referer_log"
 };
 
 my @sh_mods = ();
