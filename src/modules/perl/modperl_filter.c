@@ -598,8 +598,9 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     
     switch (status) {
       case OK:
-      case DECLINED:
         return APR_SUCCESS;
+      case DECLINED:
+        return ap_get_brigade(f->next, bb, input_mode, block, readbytes);
       default:
         return status; /*XXX*/
     }

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fix the input filters handling of DECLINED handlers (consume the data,
+on behalf of the handler) + tests [Stas]
+
 fix the code that autogenerates modperl_largefiles.h not to define
 macros matching m/^-/ (was a problem on aix-4.3.3) [Stas]
 
