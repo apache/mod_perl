@@ -655,7 +655,7 @@ added new method $r->some_auth_required
 `METHODS' Apache::Constant added to import tag :methods
 
 perl_stdout2client() will now set $| instead of perl_handler(), so
-thanks to Salvador Ortiz Garcia for the tip
+thanks to Salvador Ortiz for the tip
 
 PerlSetEnv will now call my_setenv() underneath thanks to Tim Bunce
 for the tip 
@@ -776,7 +776,7 @@ for internal redirects (spotted by $r->cgi_header_out), don't
 perl_call_halt(), instead, tie STDOUT to the Apache::FakeRequest class
 which just soaks up print() output.
 
-suggestion from Salvador Ortiz Garcia, for table methods, if value is
+suggestion from Salvador Ortiz, for table methods, if value is
 undef, call table_unset underneath, these methods are subprocess_env, 
 header_in, header_out, err_header_out, notes and dir_config. e.g.:
 
@@ -828,7 +828,7 @@ added some 3rd-party tests for Apache::Stage and Apache::Sandwich
 added Apache::test module
 
 back out support for internal redirects, caused big problems with
-sfio-enabled Perl spotted by Lupe Christoph and Salvador Ortiz Garcia 
+sfio-enabled Perl spotted by Lupe Christoph and Salvador Ortiz 
 (can still try by setting $Apache::DoInternalRedirect=1 #ifndef USE_SFIO)
 
 added Apache::SIG module for testing
@@ -972,7 +972,7 @@ added Apache::Include->virtual($uri) method
 -cat apache_x.x.x/src/Makefile.config and src/modules/perl/Makefile
  together so we get $(INCLUDES) (for os/unix, etc)
 
-applied patch from Salvador Ortiz Garcia so calling $r->args in an
+applied patch from Salvador Ortiz so calling $r->args in an
 array context will not produce "Odd number of elements in hash list" 
 
 $r->auth_name can now be modified
@@ -1505,7 +1505,7 @@ fix exit() so we don't need to $r->rflush first and we make Rob happy
 
 fix bug in $r->requires, caught by Eric Bartley
 
-go back to $|=1 #ifdef USE_SFIO, caught by Salvador Garcia
+go back to $|=1 #ifdef USE_SFIO, caught by Salvador Ortiz
 
 =item 0.97_02 - 04/29/97
 
@@ -1820,7 +1820,7 @@ we now passthru httpd's CFLAGS1 via MM's DEFINE
 
 we now define SERVER_SUBVERSION as suggested by Andreas
 
-fixed $$ bug in CGI::XA with fix from Salvador Garcia
+fixed $$ bug in CGI::XA with fix from Salvador Ortiz
 
 added $r->is_initial_req method, now used by these modules:
 Apache::AuthenDBI, Apache::AccessLimitNum, Apache::AuthzAge
@@ -2307,7 +2307,7 @@ minor clean-up
 
 fixed port and query_string related bugs in Apache::Msql example
 
-applied patch from Salvador Garcia <sortiz@cfe.gob.mx> to fix PerlTransHandler bugs
+applied patch from Salvador Ortiz <sog@msg.com.mx> to fix PerlTransHandler bugs
 spotted by Hugues Lafarge <Hugues.Lafarge@afp.com>
 
 applied Apache::Registry patch from Andreas  
@@ -2463,10 +2463,10 @@ seems like a more appropriate name after Salvador's
 'AddHandler' suggestion
 
 added item to the handler_rec so we can say 'AddHandler'
-Thanks to Salvador Garcia <sortiz@cfe.gob.mx>
+Thanks to Salvador Ortiz <sog@msg.com.mx>
 
 fixed bug with storing 'PerlModule's read from srm.conf
-Thanks to Salvador Garcia <sortiz@cfe.gob.mx> for the spot and helping with the fix
+Thanks to Salvador Ortiz <sog@msg.com.mx> for the spot and helping with the fix
 more Makefile.tmpl fixes from Andreas Koenig <andreas.koenig@franz.ww.tu-berlin.de>
 
 =item release 0.70b1 - July 14, 1996

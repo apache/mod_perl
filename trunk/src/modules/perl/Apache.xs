@@ -1782,7 +1782,7 @@ dir_config(r, svkey=Nullsv, ...)
 
 	if(mod_ptr && *mod_ptr) {
 	    IV tmp = SvIV((SV*)SvRV(*mod_ptr));
-	    SV **data = get_module_config(r->per_dir_config, (void*)tmp);
+	    SV **data = get_module_config(r->per_dir_config, (module *)tmp);
 	    RETVAL = data ? SvREFCNT_inc(*data) : Nullsv; 
 	}
 	if(!RETVAL) XSRETURN_UNDEF;
