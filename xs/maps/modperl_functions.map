@@ -134,3 +134,6 @@ MODULE=Apache::Directive
 
 MODULE=Apache::CmdParms
  mpxs_Apache__CmdParms_info
+
+MODULE=Apache::MPM
+ mpxs_Apache__MPM_mpm_query

@@ -488,28 +488,28 @@ MODULE=Apache::HookRun   PACKAGE=guess
 !MODULE=Apache::XML
  ap_xml_parse_input
 
-!MODULE=Apache::MPM
+MODULE=Apache::MPM
  ap_mpm_query
 >ap_mpm_run
- ap_os_create_privileged_process
- ap_wait_or_timeout
- ap_graceful_stop_signalled
- ap_process_child_status
- ap_reclaim_child_processes
- ap_sock_disable_nagle
- ap_gname2id
- ap_uname2id
- ap_lingering_close
- ap_mpm_pod_check
- ap_mpm_pod_close
- ap_mpm_pod_killpg
- ap_mpm_pod_open
- ap_mpm_pod_signal
- ap_mpm_set_accept_lock_mech
- ap_mpm_set_coredumpdir
- ap_mpm_set_lockfile
- ap_mpm_set_max_requests
- ap_mpm_set_pidfile
- ap_mpm_set_scoreboard
-?ap_show_mpm
- ap_listen_pre_config
+?ap_os_create_privileged_process
+?ap_wait_or_timeout
+?ap_graceful_stop_signalled
+?ap_process_child_status
+?ap_reclaim_child_processes
+?ap_sock_disable_nagle
+?ap_gname2id
+?ap_uname2id
+?ap_lingering_close
+?ap_mpm_pod_check
+?ap_mpm_pod_close
+?ap_mpm_pod_killpg
+?ap_mpm_pod_open
+?ap_mpm_pod_signal
+?ap_mpm_set_accept_lock_mech
+?ap_mpm_set_coredumpdir
+?ap_mpm_set_lockfile
+?ap_mpm_set_max_requests
+?ap_mpm_set_pidfile
+?ap_mpm_set_scoreboard
+ ap_show_mpm
+?ap_listen_pre_config
