@@ -143,10 +143,23 @@ sub content {
     return $r->parse_args($buf)
 }
 
+sub rgy_script_name {
+    require ModPerl::Global;
+    'Apache::ROOT' . $_[0];
+}
+
 sub clear_rgy_endav {
+    my($r, $script_name) = @_;
+    my $package = rgy_script_name($script_name);
+    ModPerl::Global::special_list_clear(END => $package);
 }
 
 sub stash_rgy_endav {
+    my($r, $script_name) = @_;
+    my $package = rgy_script_name($script_name);
+    $r->pool->cleanup_register(sub {
+        ModPerl::Global::special_list_call(END => $package);
+    });
 }
 
 sub seqno {
