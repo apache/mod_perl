@@ -28,6 +28,9 @@ Apache->server_root_relative:
 needs to default to current pool (pconf at startup, r->pool at request
 time)
 
+APR::URI
+missing $uri->rpath
+
 Apache::Util::*
 escape_path() - (was escape_uri) can be changed in apache not to require a
 pool
