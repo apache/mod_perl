@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+fix a warning in Apache::Status [John Williams <williams tni.com>]
+
 Ignore Apache-Test/META.yml in distribution tarballs until PAUSE
 is capable of handling multiple META.yml files in one distro [Gozer]
 
