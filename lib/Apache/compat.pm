@@ -26,6 +26,7 @@ use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use Apache::Response ();
+use Apache::Util ();
 use Apache::Log ();
 use Apache::URI ();
 use APR::Table ();
@@ -414,6 +415,12 @@ sub size_string {
 }
 
 *unescape_uri = \&Apache::unescape_url;
+
+sub escape_uri {
+    my $path = shift;
+    my $r = Apache::compat::request('Apache::Util::escape_uri');
+    Apache::Util::escape_path($path, $r->pool);
+}
 
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;

@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 39;
+    plan $r, tests => 41;
 
     $r->send_http_header('text/plain');
 
@@ -192,8 +192,15 @@ sub handler {
         }
     }
 
-    my $uri = "http://foo.com/a%20file.html";
+    my $uri = "http://foo.com/a file.html";
+    (my $esc_uri = $uri) =~ s/ /\%20/g;
     my $uri2 = $uri;
+
+    $uri = Apache::Util::escape_uri($uri);
+    $uri2 = Apache::Util::escape_path($uri2, $r->pool);
+
+    ok t_cmp($esc_uri, $uri, "Apache::Util::escape_uri");
+    ok t_cmp($esc_uri, $uri2, "Apache::Util::escape_path");
 
     ok t_cmp(Apache::unescape_url($uri),
              Apache::Util::unescape_uri($uri2),
