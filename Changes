@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_09-dev
 
+support systems where apr header files are installed separately from
+httpd header files ["Andres Salomon" <dilinger@voxel.net>]
+
 implement init filter handlers + tests [Stas]
 
 improving ModPerl::MethodLookup to:
