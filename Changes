@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+PerlAddVar is now an ITERATE2 directive rather than TAKE2
+
 added Apache::Server::error_fname method
 
 eg/makepl_args.mod_perl updated

@@ -119,7 +119,7 @@ static command_rec perl_cmds[] = {
       OR_ALL, TAKE2, "Perl config var and value" },
     { "PerlAddVar", (crft) perl_cmd_var,
       (void*)1,
-      OR_ALL, TAKE2, "Perl config var and value" },
+      OR_ALL, ITERATE2, "Perl config var and value" },
     { "PerlSetEnv", (crft) perl_cmd_setenv,
       NULL,
       OR_ALL, TAKE2, "Perl %ENV key and value" },
