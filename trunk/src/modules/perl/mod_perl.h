@@ -191,7 +191,7 @@ extern U32	mp_debug;
 #endif
 
 /* cut down on some noise in source */
-#define dSTATUS int status = DECLINED
+#define dSTATUS int status = DECLINED, dstatus
 
 #define dPPDIR \
    perl_dir_config *cld = get_module_config(r->per_dir_config, &perl_module)   
@@ -403,15 +403,20 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
 #define perl_init_ids mod_perl_init_ids()
 #endif
 
+#define NO_HANDLERS -666
+
 #define PERL_CALLBACK(h,name) \
 PERL_SET_CUR_HOOK(h); \
 (void)acquire_mutex(mod_perl_mutex); \
-status = perl_run_stacked_handlers(h, r, Nullav); \
-if((status != OK) && (status != DECLINED)) { \
-    MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
-} \
-else if(AvTRUE(name)) { \
+if(AvTRUE(name)) { \
     status = perl_run_stacked_handlers(h, r, name); \
+} \
+if((status != OK) && (status != DECLINED)) { \
+   MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
+} \
+else { \
+   dstatus = perl_run_stacked_handlers(h, r, Nullav); \
+   if(dstatus != NO_HANDLERS) status = dstatus; \
 } \
 (void)release_mutex(mod_perl_mutex); \
 MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status))
@@ -432,7 +437,7 @@ if(name != NULL) { \
     (void)acquire_mutex(mod_perl_mutex); \
     sv = newSVpv(name,0); \
     MARK_WHERE(h, sv); \
-    status = perl_call_handler(sv, r, Nullav); \
+    dstatus = status = perl_call_handler(sv, r, Nullav); \
     UNMARK_WHERE; \
     SvREFCNT_dec(sv); \
     (void)release_mutex(mod_perl_mutex); \
