@@ -57,7 +57,8 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
         MP_TRACE_o(MP_FUNC, "stored request_rec obj: 0x%lx", st->r);
     }
     else {
-        Perl_croak(aTHX_ "$r wasn't passed");
+        Perl_croak(aTHX_"failed to insert the :Apache layer. "
+                   "Apache::RequestRec object argument is required");
         /* XXX: try to get Apache->request? */
     }
     
