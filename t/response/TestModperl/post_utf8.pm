@@ -34,8 +34,7 @@ sub handler {
         have have_min_perl_version(5.008), have_perl('perlio');
 
     my $received = ModPerl::Test::read_post($r) || "";
-    utf8::decode($received)
-          if ($r->headers_in->{'Accept-Charset'}||'') =~ /utf-8/i;
+    utf8::decode($received); # assume that we know that it's utf8
     my ($received_ascii, $received_utf8) = split /=/, $received;
 
     ok t_cmp($expected_ascii, $received_ascii, "ascii");
