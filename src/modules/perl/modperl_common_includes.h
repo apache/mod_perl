@@ -1,4 +1,4 @@
-/* Copyright 2000-2004 The Apache Software Foundation
+/* Copyright 2001-2004 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,4 +13,12 @@
  * limitations under the License.
  */
 
-#include "modperl_log.h"
+#ifndef MODPERL_COMMON_INCLUDES_H
+#define MODPERL_COMMON_INCLUDES_H
+
+/* header files which are independet of Apache/mod_perl */
+
+#include "modperl_apr_includes.h"
+#include "modperl_perl_includes.h"
+
+#endif /* MODPERL_COMMON_INCLUDES_H */

@@ -268,6 +268,7 @@ sub find_gtop {
 sub find_gtop_config {
     my %c = ();
 
+    my $ver_2_5_plus = 0;
     if (system('pkg-config --exists libgtop-2.0') == 0) {
         # 2.x
         chomp($c{ccopts} = qx|pkg-config --cflags libgtop-2.0|);
@@ -279,7 +280,9 @@ sub find_gtop_config {
 
         chomp($c{ver} = qx|pkg-config --modversion libgtop-2.0|);
         ($c{ver_maj}, $c{ver_min}) = split /\./, $c{ver};
-        if ($c{ver_maj} == 2 && $c{ver_min} >= 5) {
+        $ver_2_5_plus++ if $c{ver_maj} == 2 && $c{ver_min} >= 5;
+
+        if ($ver_2_5_plus) {
             # some headers were removed in libgtop 2.5.0 so we need to
             # be able to exclude them at compile time
             $c{ccopts} .= ' -DGTOP_2_5_PLUS';
@@ -295,7 +298,9 @@ sub find_gtop_config {
         $c{ldopts} =~ s|^/|-L/|;
     }
 
-    if ($c{ccopts}) {
+    # starting from 2.5.0 'pkg-config --cflags libgtop-2.0' already
+    # gives us all the cflags that are needed
+    if ($c{ccopts} && !$ver_2_5_plus) {
         chomp(my $ginc = `glib-config --cflags`);
         $c{ccopts} .= " $ginc";
     }

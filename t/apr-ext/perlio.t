@@ -13,12 +13,6 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::Build ();
 
-# XXX: skip for now until the dependency on mod_perl symbols is resolved
-# see STATUS for more info
-# to see the problems run:
-# env PERL_DL_NONLAZY=1 t/TEST -v apr-ext/perlio'
-plan tests => 1, under_construction;
-
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
 

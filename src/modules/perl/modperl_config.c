@@ -268,7 +268,7 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
          * PerlTrace. This place is the earliest point in mod_perl
          * configuration parsing, when we have the server object
          */
-        modperl_trace_level_set(s, NULL);
+        modperl_trace_level_set_apache(s, NULL);
 
         /* Must store the global server record as early as possible,
          * because if mod_perl happens to be started from within a

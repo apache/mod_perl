@@ -17,7 +17,7 @@
 #define MOD_PERL_H
 
 #include "modperl_apache_includes.h"
-#include "modperl_perl_includes.h"
+#include "modperl_common_includes.h"
 #include "modperl_apache_compat.h"
 
 #ifdef WIN32
@@ -91,6 +91,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_perl.h"
 #include "modperl_svptr_table.h"
 #include "modperl_module.h"
+#include "modperl_debug.h"
 
 int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                        server_rec *base_server);

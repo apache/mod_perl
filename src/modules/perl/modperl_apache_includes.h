@@ -34,18 +34,6 @@
 #include "http_vhost.h"
 #include "ap_mpm.h"
 
-#include "apr_version.h"
-#include "apr_poll.h"
-#include "apr_lib.h"
-#include "apr_strings.h"
-#include "apr_uri.h"
-#include "apr_date.h"
-#include "apr_buckets.h"
-#include "apr_time.h"
-#include "apr_network_io.h"
-#include "apr_general.h"
-#include "apr_uuid.h"
-#include "apr_env.h"
 #include "util_filter.h"
 
 #include "util_script.h"

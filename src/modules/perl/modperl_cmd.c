@@ -153,7 +153,7 @@ MP_CMD_SRV_TRACE; \
 MP_CMD_SRV_DECLARE(trace)
 {
     MP_CMD_SRV_CHECK;
-    modperl_trace_level_set(parms->server, arg);
+    modperl_trace_level_set_apache(parms->server, arg);
     return NULL;
 }
 
