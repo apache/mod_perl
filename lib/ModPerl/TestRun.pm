@@ -24,7 +24,7 @@ use Apache::Build;
 # some mp2 tests require more than one server instance to be available
 # without which the server may hang, waiting for the single server
 # become available
-use constant MIN_MAXCLIENTS => 2;
+use constant MIN_CLIENTS => 2;
 
 sub new_test_config {
     my $self = shift;
@@ -35,7 +35,7 @@ sub new_test_config {
         $ENV{APACHE_TEST_STARTUP_TIMEOUT} ||
         Apache::Build->build_config->mpm_is_threaded() ? 300 : 120;
 
-    $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
+    $self->{conf_opts}->{minclients} ||= MIN_CLIENTS;
 
     ModPerl::TestConfig->new($self->{conf_opts});
 }
