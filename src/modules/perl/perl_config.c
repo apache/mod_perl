@@ -312,9 +312,6 @@ void *perl_create_dir_config (pool *p, char *dirname)
 
 void *perl_merge_server_config (pool *p, void *basev, void *addv)
 {
-    int i, j;
-    char **keys_new, **keys_add;
-
     perl_server_config *new = (perl_server_config *)pcalloc (p, sizeof(perl_server_config));
     perl_server_config *base = (perl_server_config *)basev;
     perl_server_config *add = (perl_server_config *)addv;
