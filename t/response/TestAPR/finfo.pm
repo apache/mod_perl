@@ -6,6 +6,8 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
+use Apache::TestConfig;
+use constant WIN32 => Apache::TestConfig::WIN32;
 
 use Apache::RequestRec ();
 use APR::Finfo ();
@@ -54,15 +56,23 @@ sub handler {
         our ($device, $inode, $protection, $nlink, $user, $group,
              undef, $size, $atime, $mtime, $ctime) = stat $file;
 
+        # skip certain tests on Win32 (and others?)
+        my %skip =  WIN32 ?
+            (map {$_ => 1} qw(device inode user group) ) : ();
+
         # compare stat fields between perl and apr_stat
         {
             no strict qw(refs);
             foreach my $method (qw(device inode nlink user group
                                    size atime mtime ctime)) {
-
-                ok t_cmp(${$method},
-                         $r->finfo->$method(),
-                         "\$r->finfo->$method()");
+                if ($skip{$method}) {
+                    skip "different file semantics";
+                }
+                else {
+                    ok t_cmp(${$method},
+                             $r->finfo->$method(),
+                             "\$r->finfo->$method()");
+                }
             }
         }
 
@@ -76,9 +86,14 @@ sub handler {
                  $r->finfo->protection & APR::WWRITE,
                  '$r->finfo->protection() & APR::WWRITE');
 
-        ok t_cmp($protection & S_IXOTH,
-                 $r->finfo->protection & APR::WEXECUTE,
-                 '$r->finfo->protection() & APR::WEXECUTE');
+        if (WIN32) {
+            skip "different file semantics";
+        }
+        else {
+            ok t_cmp($protection & S_IXOTH,
+                     $r->finfo->protection & APR::WEXECUTE,
+                     '$r->finfo->protection() & APR::WEXECUTE');
+        }
     }
 
     # tests for stuff not in perl's stat
@@ -90,7 +105,7 @@ sub handler {
         ok t_cmp(APR::REG,
                  $r->finfo->filetype,
                  '$r->finfo->filetype()');
-    }        
+    }
 
     Apache::OK;
 }
