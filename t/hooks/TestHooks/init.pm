@@ -58,5 +58,6 @@ PerlInitHandler TestHooks::init::second
 <Base>
     PerlInitHandler TestHooks::init::first
 </Base>
+PerlResponseHandler TestHooks::init
 PerlResponseHandler TestHooks::init::response
 SetHandler modperl
