@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+Documented $r->pnotes [<ask@valueclick.com>]
+
 Change "setting auth_name" trace message so we don't get it without
 having enabled a MOD_PERL_TRACE level [Ask Bjoern Hansen
 <ask@valueclick.com>]

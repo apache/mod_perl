@@ -700,12 +700,23 @@ optionally set the value of a named entry.  This table is used by Apache
 modules to pass messages amongst themselves. Generally if you are
 writing handlers in mod_perl you can use Perl variables for this.
 
-   $r->notes("MY_HANDLER", OK);
+   $r->notes("MY_HANDLER" => OK);
    $val = $r->notes("MY_HANDLER");
 
 Will return a I<HASH> reference blessed into the I<Apache::Table>
 class when called in a scalar context with no "key" argument. This
 requires I<Apache::Table>.
+
+=item $r->pnotes( $key, [$value] )
+
+Like $r->notes, but takes any scalar as an value.
+
+   $r->pnotes("MY_HANDLER" => [qw(one two)]);
+   my $val = $r->pnotes("MY_HANDLER");
+   print $val->[0];     # prints "one"
+
+Advantage over just using a Perl variable is that $r->pnotes gets
+cleaned up after every request.
 
 =item $r->subprocess_env( $key, [$value] )
 
