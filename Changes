@@ -12,7 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
-
+PerlRequire entried should be executed before PerlModule entries in
+VirtualHost containers, just like in the base server [Stas]
 
 =item 1.99_09 - April 28, 2003
 
