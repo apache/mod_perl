@@ -21,11 +21,3 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
   owner: gozer
 
-* It'd be nice to have PAUSE and the clients support packages with
-  several versions, like mod_perl 1.0 and mod_perl 2.0, since once we
-  release it any dependency on mod_perl will be resolved as mod_perl
-  2.0, when mod_perl 1.0 may be required instead.
-  owner: stas: talked to autrijus, he will start working on it, but
-               not sure when. we need to ping him every so often. but
-               it'll probably won't happen by the time we release 2.0.
-
