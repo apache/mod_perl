@@ -900,6 +900,13 @@ static int modperl_filter_add_request(request_rec *r,
                 continue;
             }
 
+            if ((handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
+                MP_TRACE_f(MP_FUNC,
+                           "%s is not a FilterRequest handler\n",
+                           handlers[i]->name);
+                continue;
+            }
+
             /* XXX: I fail to see where this feature is used, since
              * modperl_filter_add_connection doesn't register request
              * filters. may be it'll be still useful when the same

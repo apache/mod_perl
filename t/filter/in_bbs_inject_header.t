@@ -14,6 +14,7 @@ Apache::TestRequest::module($module);
 
 my $config = Apache::Test::config();
 my $hostport = Apache::TestRequest::hostport($config);
+my $content = "This body shouldn't be seen by the filter";
 t_debug("connecting to $hostport");
 
-print POST_BODY_ASSERT $location, content => "whatever";
+print POST_BODY_ASSERT $location, content => $content;
