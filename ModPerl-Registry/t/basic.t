@@ -3,7 +3,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::TestRequest qw(GET_BODY HEAD);
+use Apache::TestRequest qw(GET GET_BODY HEAD);
 
 my %modules = (
     registry    => 'ModPerl::Registry',
@@ -13,7 +13,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 4 + 2;
+plan tests => @aliases * 4 + 3;
 
 # very basic compilation/response test
 for my $alias (@aliases) {
@@ -76,5 +76,21 @@ for my $alias (@aliases) {
         "ok",
         GET_BODY($url),
         "\$r->content_type('text/plain')",
+    );
+}
+
+
+# test that files with .html extension, which are configured to run as
+# scripts get the headerparse stage working: the default mime handler
+# sets $r->content_type for .html files, so we can't rely on
+# content_type not being set in making the decision whether to parse
+# headers or not
+{
+    my $url = "/registry/send_headers.html";
+    my $res = GET $url;
+    ok t_cmp(
+        "text/plain",
+        $res->content_type,
+        "script's content-type",
     );
 }
