@@ -243,7 +243,7 @@ static SV* mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
         return &PL_sv_undef;
     }
 
-    return sv_2mortal(newSViv(total));
+    return newSViv(total);
 }
 
 static MP_INLINE
