@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+fix bug in Apache::ModuleConfig->get [Dave Hayes <dave@jetcafe.org>]
+
 fix rwrite error message [Eric Cholet <cholet@logilune.com>]
 
 Change Apache::SizeLimit so that it supports Solaris 2.6 and above
