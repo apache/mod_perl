@@ -20,4 +20,24 @@ void modperl_trace(char *func, const char *fmt, ...);
 
 void modperl_trace_level_set(const char *level);
 
+#define modperl_log_warn(s,msg) \
+    ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO, 0, s, "%s", msg)
+
+#define modperl_log_error(s,msg) \
+    ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, s, "%s", msg)
+
+#define modperl_log_notice(s,msg) \
+    ap_log_error(APLOG_MARK, APLOG_NOERRNO|APLOG_NOTICE, 0, s, "%s", msg)
+
+#define modperl_log_debug(s,msg) \
+    ap_log_error(APLOG_MARK, APLOG_NOERRNO|APLOG_DEBUG, 0, s, "%s", msg)
+
+#define modperl_log_reason(r,msg,file) \
+    ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r->server, \
+                 "access to %s failed for %s, reason: %s", \
+                 file, \
+                 get_remote_host(r->connection, \
+                 r->per_dir_config, REMOTE_NAME), \
+                 msg)
+
 #endif /* MODPERL_LOG_H */

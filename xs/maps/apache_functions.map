@@ -149,7 +149,7 @@ MODULE=Apache::Connection   PACKAGE=guess
 
 MODULE=Apache::Log   PACKAGE=guess
 ?ap_log_assert
- ap_log_error
+~ap_log_error
 -ap_log_perror
  ap_log_pid
 ~ap_log_rerror
