@@ -1392,6 +1392,7 @@ void perl_per_request_init(request_rec *r)
         /* PerlSetEnv
          * update only if the table changes across a request
          */
+        MP_HASENV_on(cld);
         mod_perl_dir_env(r, cld);
         cfg->dir_env = cld->env;
     }
