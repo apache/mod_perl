@@ -20,4 +20,6 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
 
 int modperl_require_module(pTHX_ const char *pv);
 
+char *modperl_server_desc(server_rec *s, apr_pool_t *p);
+
 #endif /* MODPERL_UTIL_H */
