@@ -149,10 +149,18 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     GV *gv;
     modperl_mgv_t *method;
     modperl_module_cfg_t *mrg = NULL,
+        *tmp,
         *base = (modperl_module_cfg_t *)basev,
-        *add  = (modperl_module_cfg_t *)addv,
-        *tmp = base->server ? base : add;
+        *add  = (modperl_module_cfg_t *)addv;
+    
+    /* if the module is loaded in vhost, base==NULL */
+    tmp = (base && base->server) ? base : add;
 
+    if (tmp && !tmp->server) {
+        /* no directives for this module were encountered so far */
+        return basev;
+    }
+    
     server_rec *s = tmp->server;
     int is_startup = (p == s->process->pconf);
 
@@ -327,6 +335,42 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     modperl_module_cfg_t *srv_cfg;
 
+   if (s->is_virtual) {
+        MP_dSCFG(s);
+
+        /* if the Perl module is loaded in the base server and a vhost
+         * has configuration directives from that module, but no
+         * mod_perl.c directives, scfg == NULL when
+         * modperl_module_cmd_take123 is run. If the directive
+         * callback wants to do something with the mod_perl config
+         * object, it'll segfault, since it doesn't exist yet, because
+         * this happens before server configs are merged. So we create
+         * a temp struct and fill it in with things that might be
+         * needed by the Perl callback.
+         */
+        if (!scfg) {
+            scfg = modperl_config_srv_new(p);
+            modperl_set_module_config(s->module_config, scfg);
+            scfg->server = s;
+        }
+
+        /* if PerlLoadModule Foo is called from the base server, but
+         * Foo's directives are used inside a vhost, we need to
+         * temporary link to the base server config's 'modules'
+         * member. e.g. so Apache::Module->get_config() can be called
+         * from a custom directive's callback, before the server/vhost
+         * config merge is performed */
+
+        if (!scfg->modules) {
+            modperl_config_srv_t *base_scfg =
+                modperl_config_srv_get(modperl_global_get_server_rec());
+            if (base_scfg->modules) {
+                scfg->modules = base_scfg->modules;
+            }
+        }
+        
+    }
+    
 #ifdef USE_ITHREADS
     modperl_interp_t *interp = modperl_interp_pool_select(p, s);
     dTHXa(interp->perl);
