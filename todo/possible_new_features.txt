@@ -1,6 +1,11 @@
 config features:
 ----------------
 
+- tie %ENV to r->subprocess_env so stores are added to
+  r->subprocess_env and fetches are looked up in there and elsewhere
+  (e.g. HTTP_* from r->headers_in).  see modperl_env.c, current
+  implementation is not threadsafe and requires 5.7.2+
+ 
 - make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
   for the given location
 
