@@ -769,7 +769,7 @@ sub constants_lookup_code {
     my $package_len = length $package;
 
     my $func = canon_func(qw(constants lookup), $postfix);
-    my $proto = "int $func(const char *name)";
+    my $proto = "SV \*$func(pTHX_ const char *name)";
 
     print $h_fh "$proto;\n";
 
@@ -804,7 +804,20 @@ EOF
             print $c_fh <<EOF;
 $ifdef[0]
           if (strEQ(name, "$name")) {
-              return $alias{$name};
+EOF
+
+            if ($name eq 'DECLINE_CMD' || $name eq 'DIR_MAGIC_TYPE') {
+                print $c_fh <<EOF;
+              return newSVpv($alias{$name}, 0);
+EOF
+            }
+            else {
+                print $c_fh <<EOF;
+              return newSViv($alias{$name});
+EOF
+            }
+
+            print $c_fh <<EOF;
           }
 $ifdef[1]
 EOF
@@ -815,7 +828,7 @@ EOF
     print $c_fh <<EOF
     };
     Perl_croak_nocontext("unknown constant %s", name);
-    return MP_ENOCONST;
+    return newSViv(MP_ENOCONST);
 }
 EOF
 }
