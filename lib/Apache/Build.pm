@@ -170,7 +170,7 @@ EOF
 
 sub prompt {
     my($self, $q, $default) = @_;
-    return $default if $ENV{MODPERL_PROMPT_DEFAULT};
+    return $default if $self->{prompt_default};
     require ExtUtils::MakeMaker;
     ExtUtils::MakeMaker::prompt($q, $default);
 }
@@ -214,6 +214,26 @@ sub build_config {
     return Apache::BuildConfig::->new;
 }
 
+sub parse_argv {
+    my $self = shift;
+    return unless @ARGV;
+
+    my @args = @ARGV;
+    @ARGV = ();
+
+    for (@args) {
+        if (s/^MP_//) {
+            my($key, $val) = split '=', $_, 2;
+            $self->{lc $key} = $val;
+            print "$key = $val\n";
+        }
+        else {
+            #pass along to MakeMaker
+            push @ARGV, $_;
+        }
+    }
+}
+
 sub new {
     my $class = shift;
 
@@ -222,8 +242,10 @@ sub new {
         @_,
     }, $class;
 
-    if ($self->{debug} and $ENV{MP_USE_GTOP}) {
-        $self->{use_gtop} = 1 if $self->find_dlfile('gtop');
+    $self->parse_argv;
+
+    if ($self->{debug} and $self->{use_gtop}) {
+        $self->{use_gtop} = 0 unless $self->find_dlfile('gtop');
     }
 
     $self;
