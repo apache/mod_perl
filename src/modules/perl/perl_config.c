@@ -588,7 +588,7 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 	}
     }
 
-    if (cld->PerlModule) {
+    if (cls->PerlModule) {
         *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
     }
 
