@@ -114,6 +114,7 @@ sub parse {
 
         if ($name =~ s/^([^:]+)://) {
             $return_type = $1;
+            $return_type =~ s/\s+$//;  # allow: char *    :....
         }
 
         if ($name =~ s/^(\W)// or not $cur{MODULE} or $disabled) {
