@@ -90,16 +90,16 @@ void perl_config_getstr(void *buf, size_t bufsiz, void *param)
     char *tmp = SvPV(sv,len);
 
     if(!SvTRUE(sv)) 
-	return;
+    return;
 
     Move(tmp, buf, bufsiz, char);
 
     if(len < bufsiz) {
-	sv_setpv(sv, "");
+    sv_setpv(sv, "");
     }
     else {
-	tmp += bufsiz;
-	sv_setpv(sv, tmp);
+    tmp += bufsiz;
+    sv_setpv(sv, tmp);
     }
 }
 
@@ -111,14 +111,14 @@ int perl_config_getch(void *param)
     register int retval = *tmp;
 
     if(!SvTRUE(sv)) 
-	return EOF;
+    return EOF;
 
     if(len <= 1) {
-	sv_setpv(sv, "");
+    sv_setpv(sv, "");
     }
     else {
-	++tmp;
-	sv_setpv(sv, tmp);
+    ++tmp;
+    sv_setpv(sv, tmp);
     }
 
     return retval;
@@ -127,8 +127,8 @@ int perl_config_getch(void *param)
 void perl_eat_config_string(cmd_parms *cmd, void *config, SV *sv) {
     CHAR_P errmsg; 
     configfile_t *perl_cfg = 
-	pcfg_open_custom(cmd->pool, "mod_perl", (void*)sv,
-			 perl_config_getch, NULL, NULL);
+    pcfg_open_custom(cmd->pool, "mod_perl", (void*)sv,
+             perl_config_getch, NULL, NULL);
 
     configfile_t *old_cfg = cmd->config_file;
     cmd->config_file = perl_cfg;
@@ -136,7 +136,7 @@ void perl_eat_config_string(cmd_parms *cmd, void *config, SV *sv) {
     cmd->config_file = old_cfg;
 
     if(errmsg)
-	fprintf(stderr, "mod_perl: %s\n", errmsg);
+    fprintf(stderr, "mod_perl: %s\n", errmsg);
 }
 
 #define STRING_MEAL(s) ( (*s == 'P') && strEQ(s,"PerlConfig") )
@@ -156,9 +156,9 @@ char *mod_perl_auth_name(request_rec *r, char *val)
       (core_dir_config *)get_module_config(r->per_dir_config, &core_module); 
 
     if(val) {
-	conf->auth_name = pstrdup(r->pool, val);
-	set_module_config(r->per_dir_config, &core_module, (void*)conf); 
-	MP_TRACE_g(fprintf(stderr, "mod_perl: setting auth_name to %s\n", conf->auth_name));
+    conf->auth_name = pstrdup(r->pool, val);
+    set_module_config(r->per_dir_config, &core_module, (void*)conf); 
+    MP_TRACE_g(fprintf(stderr, "mod_perl: setting auth_name to %s\n", conf->auth_name));
     }
 
     return conf->auth_name;
@@ -170,17 +170,17 @@ char *mod_perl_auth_name(request_rec *r, char *val)
 void mod_perl_dir_env(request_rec *r, perl_dir_config *cld)
 {
     if(MP_HASENV(cld)) {
-	array_header *arr = table_elts(cld->env);
-	table_entry *elts = (table_entry *)arr->elts;
+    array_header *arr = table_elts(cld->env);
+    table_entry *elts = (table_entry *)arr->elts;
 
-	int i;
-	for (i = 0; i < arr->nelts; ++i) {
-	    MP_TRACE_d(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
-			     elts[i].key, elts[i].val));
-	    mp_setenv(elts[i].key, elts[i].val);
-	    ap_table_setn(r->subprocess_env, elts[i].key, elts[i].val);
-	}
-	MP_HASENV_off(cld); /* just doit once per-request */
+    int i;
+    for (i = 0; i < arr->nelts; ++i) {
+        MP_TRACE_d(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
+                 elts[i].key, elts[i].val));
+        mp_setenv(elts[i].key, elts[i].val);
+        ap_table_setn(r->subprocess_env, elts[i].key, elts[i].val);
+    }
+    MP_HASENV_off(cld); /* just doit once per-request */
     }
 }
 
@@ -193,17 +193,17 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
 
     keys = (char **)cls->PerlPassEnv->elts;
     for (i = 0; i < cls->PerlPassEnv->nelts; ++i) {
-	key = keys[i];
+    key = keys[i];
 
         if(!(val = getenv(key)) && (ind(key, ':') > 0)) {
-	    CHAR_P tmp = pstrdup(p, key);
-	    key = getword(p, &tmp, ':');
-	    val = (char *)tmp;
-	}
+        CHAR_P tmp = pstrdup(p, key);
+        key = getword(p, &tmp, ':');
+        val = (char *)tmp;
+    }
 
         if(val != NULL) {
-	    MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
-	    mp_SetEnv(key,pstrdup(p,val));
+        MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
+        mp_SetEnv(key,pstrdup(p,val));
         }
     }
 }    
@@ -221,16 +221,16 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
 
     /* XXX: what triggers such a condition ?*/
     if(vars && (vars->nelts > 100000)) {
-	fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
+    fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
     }
     mrg->vars = overlay_tables(p, add->vars, base->vars);
     mrg->env = overlay_tables(p, add->env, base->env);
 
     mrg->SendHeader = (add->SendHeader != MPf_None) ?
-	add->SendHeader : base->SendHeader;
+    add->SendHeader : base->SendHeader;
 
     mrg->SetupEnv = (add->SetupEnv != MPf_None) ?
-	add->SetupEnv : base->SetupEnv;
+    add->SetupEnv : base->SetupEnv;
 
     /* merge flags */
     MP_FMERGE(mrg,add,base,MPf_INCPUSH);
@@ -291,14 +291,14 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
 void *perl_create_dir_config (pool *p, char *dirname)
 {
     perl_dir_config *cld =
-	(perl_dir_config *)palloc(p, sizeof (perl_dir_config));
+    (perl_dir_config *)palloc(p, sizeof (perl_dir_config));
 
     cld->location = pstrdup(p, dirname);
     cld->vars = make_table(p, 5); 
     cld->env  = make_table(p, 5); 
     cld->flags = MPf_ENV;
     cld->SendHeader = MPf_None;
-    cld->SetupEnv = MPf_On;
+    cld->SetupEnv = MPf_None;
     cld->PerlHandler = PERL_CMD_INIT;
     PERL_DISPATCH_CREATE(cld);
     PERL_AUTHEN_CREATE(cld);
@@ -367,7 +367,7 @@ void *perl_merge_server_config (pool *p, void *basev, void *addv)
 void *perl_create_server_config (pool *p, server_rec *s)
 {
     perl_server_config *cls =
-	(perl_server_config *)palloc(p, sizeof (perl_server_config));
+    (perl_server_config *)palloc(p, sizeof (perl_server_config));
 
     cls->PerlPassEnv = make_array(p, 1, sizeof(char *));
     cls->PerlModule  = make_array(p, 1, sizeof(char *));
@@ -393,7 +393,7 @@ perl_request_config *perl_create_request_config(pool *p, server_rec *s)
 {
     int i;
     perl_request_config *cfg = 
-	(perl_request_config *)pcalloc(p, sizeof(perl_request_config));
+    (perl_request_config *)pcalloc(p, sizeof(perl_request_config));
     cfg->pnotes = Nullhv;
     cfg->setup_env = 0;
 
@@ -401,14 +401,14 @@ perl_request_config *perl_create_request_config(pool *p, server_rec *s)
     cfg->sigsave = make_array(p, 1, sizeof(perl_request_sigsave *));
 
     for (i=0; sigsave[i]; i++) {
-	perl_request_sigsave *sig = 
-	    (perl_request_sigsave *)pcalloc(p, sizeof(perl_request_sigsave));
-	sig->signo = whichsig(sigsave[i]);
-	sig->h = rsignal_state(sig->signo);
-	MP_TRACE_g(fprintf(stderr, 
-			   "mod_perl: saving SIG%s (%d) handler 0x%lx\n",
-			   sigsave[i], (int)sig->signo, (unsigned long)sig->h));
-	*(perl_request_sigsave **)push_array(cfg->sigsave) = sig;
+    perl_request_sigsave *sig = 
+        (perl_request_sigsave *)pcalloc(p, sizeof(perl_request_sigsave));
+    sig->signo = whichsig(sigsave[i]);
+    sig->h = rsignal_state(sig->signo);
+    MP_TRACE_g(fprintf(stderr, 
+               "mod_perl: saving SIG%s (%d) handler 0x%lx\n",
+               sigsave[i], (int)sig->signo, (unsigned long)sig->h));
+    *(perl_request_sigsave **)push_array(cfg->sigsave) = sig;
     }
 
 #endif
@@ -428,10 +428,10 @@ static void mp_preload_module(char **name)
     if(!PERL_RUNNING()) return;
 
     if(!perl_module_is_loaded(*name)) { 
-	MP_TRACE_d(fprintf(stderr, 
-			   "mod_perl: attempting to pre-load module `%s'\n", 
-			   *name));
-	perl_require_module(*name,NULL);
+    MP_TRACE_d(fprintf(stderr, 
+               "mod_perl: attempting to pre-load module `%s'\n", 
+               *name));
+    perl_require_module(*name,NULL);
     }
 }
 #endif
@@ -445,8 +445,8 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
-	register_cleanup(p, (void*)*cmd, mod_perl_cleanup_av, mod_perl_noop);
-	MP_TRACE_d(fprintf(stderr, "init `%s' stack\n", hook)); 
+    register_cleanup(p, (void*)*cmd, mod_perl_cleanup_av, mod_perl_noop);
+    MP_TRACE_d(fprintf(stderr, "init `%s' stack\n", hook)); 
     } 
     MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: @%s, '%s'\n", hook, arg)); 
     mod_perl_push_handlers(&sv_yes, hook, sva, *cmd); 
@@ -562,11 +562,11 @@ CHAR_P perl_cmd_init_handlers (cmd_parms *parms, void *rec, char *arg)
 {
     dPSRV(parms->server);
     if(parms->path) {
-	PERL_CMD_PUSH_HANDLERS("PerlInitHandler", 
-			       ((perl_dir_config *)rec)->PerlInitHandler);
+    PERL_CMD_PUSH_HANDLERS("PerlInitHandler", 
+                   ((perl_dir_config *)rec)->PerlInitHandler);
     }
     else {
-	PERL_CMD_PUSH_HANDLERS("PerlInitHandler", cls->PerlInitHandler);
+    PERL_CMD_PUSH_HANDLERS("PerlInitHandler", cls->PerlInitHandler);
     }
 }
 
@@ -584,23 +584,23 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     MP_TRACE_d(fprintf(stderr, "PerlModule: arg='%s'\n", arg));
 
     if(PERL_RUNNING()) {
-	if (PERL_STARTUP_IS_DONE) {
-	    if (perl_require_module(arg, NULL) != OK) {
-		dTHR;
-		STRLEN n_a;
-		dTHRCTX;
-		return SvPV(ERRSV,n_a);
-	    }
-	}
-	else {
-	    return NULL;
-	}
+    if (PERL_STARTUP_IS_DONE) {
+        if (perl_require_module(arg, NULL) != OK) {
+        dTHR;
+        STRLEN n_a;
+        dTHRCTX;
+        return SvPV(ERRSV,n_a);
+        }
+    }
+    else {
+        return NULL;
+    }
     }
     *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)
-	perl_section_self_boot(parms, dummy, arg);
+    perl_section_self_boot(parms, dummy, arg);
 #endif
 
     return NULL;
@@ -614,24 +614,24 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
     MP_TRACE_d(fprintf(stderr, "PerlRequire: arg=`%s'\n", arg));
 
     if(PERL_RUNNING()) {
-	if (PERL_STARTUP_IS_DONE) {
-	    if (perl_load_startup_script(parms->server, parms->pool, arg, TRUE) != OK) {
-		dTHR;
-		STRLEN n_a;
-		dTHRCTX;
-		return SvPV(ERRSV,n_a);
-	    }
-	    else {
-		return NULL;
-	    }
-	}
+    if (PERL_STARTUP_IS_DONE) {
+        if (perl_load_startup_script(parms->server, parms->pool, arg, TRUE) != OK) {
+        dTHR;
+        STRLEN n_a;
+        dTHRCTX;
+        return SvPV(ERRSV,n_a);
+        }
+        else {
+        return NULL;
+        }
+    }
     }
 
     *(char **)push_array(cls->PerlRequire) = pstrdup(parms->pool, arg);
 
 #ifdef PERL_SECTIONS
     if(CAN_SELF_BOOT_SECTIONS)
-	perl_section_self_boot(parms, dummy, arg);
+    perl_section_self_boot(parms, dummy, arg);
 #endif
 
     return NULL;
@@ -658,13 +658,13 @@ void perl_tainting_set(server_rec *s, int arg)
 
     cls->PerlTaintCheck = arg;
     if(PERL_RUNNING()) {
-	gv = GvSV_init("Apache::__T");
-	if(arg) {
-	    SvREADONLY_off(GvSV(gv));
-	    GvSV_setiv(gv, TRUE);
-	    SvREADONLY_on(GvSV(gv));
-	    tainting = TRUE;
-	}
+    gv = GvSV_init("Apache::__T");
+    if(arg) {
+        SvREADONLY_off(GvSV(gv));
+        GvSV_setiv(gv, TRUE);
+        SvREADONLY_on(GvSV(gv));
+        tainting = TRUE;
+    }
     }
 }
 
@@ -696,9 +696,9 @@ CHAR_P perl_cmd_fresh_restart (cmd_parms *parms, void *dummy, int arg)
 
 CHAR_P perl_cmd_sendheader (cmd_parms *cmd,  perl_dir_config *rec, int arg) {
     if(arg)
-	MP_SENDHDR_on(rec);
+    MP_SENDHDR_on(rec);
     else
-	MP_SENDHDR_off(rec);
+    MP_SENDHDR_off(rec);
     MP_SENTHDR_on(rec);
     return NULL;
 }
@@ -707,7 +707,7 @@ CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
 {
     dPSRV(parms->server);
     if(PERL_RUNNING()) {
-	mp_PassEnv(arg);
+    mp_PassEnv(arg);
     }
 
     *(char **)push_array(cls->PerlPassEnv) = pstrdup(parms->pool, arg);
@@ -719,7 +719,7 @@ CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
   
 CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg) {
     if(arg) MP_ENV_on(rec);
-    else	   MP_ENV_off(rec);
+    else       MP_ENV_off(rec);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_env: set to `%s'\n", arg ? "On" : "Off"));
     return NULL;
 }
@@ -754,12 +754,12 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
     MP_HASENV_on(rec);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
     if(cmd->path == NULL) {
-	dPSRV(cmd->server); 
-	if(PERL_RUNNING()) { 
-	    mp_SetEnv(key,val);
-	} 
-	*(char **)push_array(cls->PerlPassEnv) = 
-	    pstrcat(cmd->pool, key, ":", val, NULL); 
+    dPSRV(cmd->server); 
+    if(PERL_RUNNING()) { 
+        mp_SetEnv(key,val);
+    } 
+    *(char **)push_array(cls->PerlPassEnv) = 
+        pstrcat(cmd->pool, key, ":", val, NULL); 
     }
     return NULL;
 }
@@ -769,7 +769,7 @@ CHAR_P perl_config_END (cmd_parms *parms, void *dummy, const char *arg)
     char l[MAX_STRING_LEN];
 
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
-	/* soak up the of the file */
+    /* soak up the of the file */
     }
 
     return NULL;   
@@ -784,20 +784,20 @@ CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
     char l[MAX_STRING_LEN];
 
     if(arg && strlen(arg) && !APACHE_POD_FORMAT(arg)) 
-	return "Unknown =end format";
+    return "Unknown =end format";
 
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
-	int chop = 4;
-	if(strnEQ(l, "=cut", 4))
-	    break;
-	if(strnEQ(l, "=for", chop) || 
-	   ((chop = 6) && strnEQ(l, "=begin", chop)))
-	{
-	    char *tmp = l;
-	    tmp += chop; while(isspace(*tmp)) tmp++;
-	    if(APACHE_POD_FORMAT(tmp))
-		break;
-	}
+    int chop = 4;
+    if(strnEQ(l, "=cut", 4))
+        break;
+    if(strnEQ(l, "=for", chop) || 
+       ((chop = 6) && strnEQ(l, "=begin", chop)))
+    {
+        char *tmp = l;
+        tmp += chop; while(isspace(*tmp)) tmp++;
+        if(APACHE_POD_FORMAT(tmp))
+        break;
+    }
     }
 
     return NULL;   
@@ -811,15 +811,15 @@ CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
     char line[MAX_STRING_LEN];
 
     if(arg && strlen(arg) && !(APACHE_POD_FORMAT(arg) || strstr(arg, "pod"))) 
-	return "Unknown =back format";
+    return "Unknown =back format";
 
     while (!(cfg_getline (line, sizeof(line), cmd_infile))) {
-	if(strnEQ(line, "=cut", 4))
-	    break;
-	if(strnEQ(line, "=over", 5)) {
-	    if(APACHE_POD_FORMAT(line)) 
-		break;
-	}
+    if(strnEQ(line, "=cut", 4))
+        break;
+    if(strnEQ(line, "=over", 5)) {
+        if(APACHE_POD_FORMAT(line)) 
+        break;
+    }
     }
 
     return NULL;   
@@ -836,9 +836,9 @@ void mod_perl_cleanup_av(void *data)
 {
     AV *av = (AV*)data;
     if(SvREFCNT((SV*)av)) {
-	MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
-			   (unsigned long)av, (int)SvREFCNT((SV*)av)));
-	SvREFCNT_dec((SV*)av);
+    MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
+               (unsigned long)av, (int)SvREFCNT((SV*)av)));
+    SvREFCNT_dec((SV*)av);
     }
 }
 
@@ -866,7 +866,7 @@ static SV *perl_bless_cmd_parms(cmd_parms *parms)
     SV *sv = sv_newmortal();
     sv_setref_pv(sv, "Apache::CmdParms", (void*)parms);
     MP_TRACE_g(fprintf(stderr, "blessing cmd_parms=(0x%lx)\n",
-		     (unsigned long)parms));
+             (unsigned long)parms));
     return sv;
 }
 
@@ -875,9 +875,9 @@ module *perl_get_module_ptr(char *name, int len)
     HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
     SV **mod_ptr = hv_fetch(xs_config, name, len, FALSE);
     if(mod_ptr && *mod_ptr)
-	return (module *)SvIV((SV*)SvRV(*mod_ptr));
+    return (module *)SvIV((SV*)SvRV(*mod_ptr));
     else
-	return NULL;
+    return NULL;
 }
 
 static SV *
@@ -886,38 +886,38 @@ perl_perl_create_cfg(SV **sv, HV *pclass, cmd_parms *parms, char *type)
     GV *gv;
 
     if(*sv && SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
-	return *sv;
+    return *sv;
 
     /* return $class->type if $class->can(type) */
     if((gv = gv_fetchmethod_autoload(pclass, type, FALSE)) && isGV(gv)) {
-	int count;
-	dSP;
+    int count;
+    dSP;
 
-	ENTER;SAVETMPS;
-	PUSHMARK(sp);
-	XPUSHs(sv_2mortal(newSVpv(HvNAME(pclass),0)));
-	if(parms)
-	    XPUSHs(perl_bless_cmd_parms(parms));
-	PUTBACK;
-	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
-	SPAGAIN;
-	if((perl_eval_ok(parms ? parms->server : NULL) == OK) && (count == 1)) {
-	    *sv = POPs;
-	    ++SvREFCNT(*sv);
-	}
-	PUTBACK;
-	FREETMPS;LEAVE;
+    ENTER;SAVETMPS;
+    PUSHMARK(sp);
+    XPUSHs(sv_2mortal(newSVpv(HvNAME(pclass),0)));
+    if(parms)
+        XPUSHs(perl_bless_cmd_parms(parms));
+    PUTBACK;
+    count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
+    SPAGAIN;
+    if((perl_eval_ok(parms ? parms->server : NULL) == OK) && (count == 1)) {
+        *sv = POPs;
+        ++SvREFCNT(*sv);
+    }
+    PUTBACK;
+    FREETMPS;LEAVE;
 
-	return *sv;
+    return *sv;
     }
     else {
-	/* return bless {}, $class */
-	if(!SvTRUE(*sv)) {
-	    *sv = newRV_noinc((SV*)newHV());
-	    return sv_bless(*sv, pclass);
-	}
-	else
-	    return *sv;
+    /* return bless {}, $class */
+    if(!SvTRUE(*sv)) {
+        *sv = newRV_noinc((SV*)newHV());
+        return sv_bless(*sv, pclass);
+    }
+    else
+        return *sv;
     }
 }
 
@@ -935,47 +935,47 @@ static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
 {
     GV *gv;
     mod_perl_perl_dir_config *mrg = NULL,
-	*basevp = (mod_perl_perl_dir_config *)basev,
-	*addvp  = (mod_perl_perl_dir_config *)addv;
+    *basevp = (mod_perl_perl_dir_config *)basev,
+    *addvp  = (mod_perl_perl_dir_config *)addv;
 
     SV *sv, 
-	*basesv = basevp ? basevp->obj : Nullsv,
-	*addsv  = addvp  ? addvp->obj  : Nullsv;
+    *basesv = basevp ? basevp->obj : Nullsv,
+    *addsv  = addvp  ? addvp->obj  : Nullsv;
 
     if(!basesv) basesv = addsv;
     if(!sv_isobject(basesv))
-	return basesv;
+    return basesv;
 
     MP_TRACE_c(fprintf(stderr, "looking for method %s in package `%s'\n", 
-		       meth, SvCLASS(basesv)));
+               meth, SvCLASS(basesv)));
 
     if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), meth, FALSE)) && isGV(gv)) {
-	int count;
-	dSP;
-	mrg = (mod_perl_perl_dir_config *)
-	    palloc(p, sizeof(mod_perl_perl_dir_config));
+    int count;
+    dSP;
+    mrg = (mod_perl_perl_dir_config *)
+        palloc(p, sizeof(mod_perl_perl_dir_config));
 
-	MP_TRACE_c(fprintf(stderr, "calling %s->%s\n", 
-			   SvCLASS(basesv), meth));
+    MP_TRACE_c(fprintf(stderr, "calling %s->%s\n", 
+               SvCLASS(basesv), meth));
 
-	ENTER;SAVETMPS;
-	PUSHMARK(sp);
-	XPUSHs(basesv);XPUSHs(addsv);
-	PUTBACK;
-	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
-	SPAGAIN;
-	if((perl_eval_ok(NULL) == OK) && (count == 1)) {
-	    sv = POPs;
-	    ++SvREFCNT(sv);
-	    mrg->obj = sv;
-	    mrg->pclass = SvCLASS(sv);
-	}
-	PUTBACK;
-	FREETMPS;LEAVE;
+    ENTER;SAVETMPS;
+    PUSHMARK(sp);
+    XPUSHs(basesv);XPUSHs(addsv);
+    PUTBACK;
+    count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
+    SPAGAIN;
+    if((perl_eval_ok(NULL) == OK) && (count == 1)) {
+        sv = POPs;
+        ++SvREFCNT(sv);
+        mrg->obj = sv;
+        mrg->pclass = SvCLASS(sv);
+    }
+    PUTBACK;
+    FREETMPS;LEAVE;
     }
     else {
-	mrg->obj = newSVsv(basesv);
-	mrg->pclass = basevp->pclass;
+    mrg->obj = newSVsv(basesv);
+    mrg->pclass = basevp->pclass;
     }
     return (void *)mrg;
 }
@@ -995,15 +995,15 @@ void perl_perl_cmd_cleanup(void *data)
     mod_perl_perl_dir_config *cld = (mod_perl_perl_dir_config *)data;
 
     if(cld->obj) {
-	MP_TRACE_c(fprintf(stderr, 
-			   "cmd_cleanup: SvREFCNT($%s::$obj) == %d\n",
-			   cld->pclass, (int)SvREFCNT(cld->obj)));
-	SvREFCNT_dec(cld->obj);
+    MP_TRACE_c(fprintf(stderr, 
+               "cmd_cleanup: SvREFCNT($%s::$obj) == %d\n",
+               cld->pclass, (int)SvREFCNT(cld->obj)));
+    SvREFCNT_dec(cld->obj);
     }
 }
 
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
-				  char *one, char *two, char *three)
+                  char *one, char *two, char *three)
 {
     dSP;
     mod_perl_cmd_info *info = (mod_perl_cmd_info *)cmd->info;
@@ -1018,39 +1018,39 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
 
     if(xsmod && 
        (sdata = (mod_perl_perl_dir_config *)get_module_config(cmd->server->module_config, xsmod))) {
-	(void)perl_perl_create_srv_config(&sdata->obj, CvSTASH(cv), cmd);
-	set_module_config(cmd->server->module_config, xsmod, sdata);
+    (void)perl_perl_create_srv_config(&sdata->obj, CvSTASH(cv), cmd);
+    set_module_config(cmd->server->module_config, xsmod, sdata);
     }
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
     if(!has_empty_proto) {
-	SV *cmd_obj = perl_bless_cmd_parms(cmd);
-	XPUSHs(obj);
-	XPUSHs(cmd_obj);
-	if(cmd->cmd->args_how != NO_ARGS) {
-	    PUSHif(one);PUSHif(two);PUSHif(three);
-	}
-	if(SvPOK(cv) && (*(SvEND((SV*)cv)-1) == '*')) {
-	    SV *gp = mod_perl_gensym("Apache::CmdParms");
-	    sv_magic((SV*)SvRV(gp), cmd_obj, 'q', Nullch, 0); 
-	    XPUSHs(gp);
-	}
+    SV *cmd_obj = perl_bless_cmd_parms(cmd);
+    XPUSHs(obj);
+    XPUSHs(cmd_obj);
+    if(cmd->cmd->args_how != NO_ARGS) {
+        PUSHif(one);PUSHif(two);PUSHif(three);
+    }
+    if(SvPOK(cv) && (*(SvEND((SV*)cv)-1) == '*')) {
+        SV *gp = mod_perl_gensym("Apache::CmdParms");
+        sv_magic((SV*)SvRV(gp), cmd_obj, 'q', Nullch, 0); 
+        XPUSHs(gp);
+    }
     }
     PUTBACK;
     count = perl_call_sv((SV*)cv, G_EVAL | G_SCALAR);
     SPAGAIN;
     if(count == 1) {
-	if(strEQ(POPp, DECLINE_CMD))
-	    retval = DECLINE_CMD;
-	PUTBACK;
+    if(strEQ(POPp, DECLINE_CMD))
+        retval = DECLINE_CMD;
+    PUTBACK;
     }
     FREETMPS;LEAVE;
 
     {
-	dTHRCTX;
-	if(SvTRUE(ERRSV))
-	    retval = SvPVX(ERRSV);
+    dTHRCTX;
+    if(SvTRUE(ERRSV))
+        retval = SvPVX(ERRSV);
     }
 
     return retval;
@@ -1059,7 +1059,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
 
 #ifdef PERL_SECTIONS
 #if HAS_CONTEXT
-#define perl_set_config_vectors	ap_set_config_vectors
+#define perl_set_config_vectors ap_set_config_vectors
 #else
 void *perl_set_config_vectors(cmd_parms *parms, void *config, module *mod)
 {
@@ -1085,17 +1085,17 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
     char l[MAX_STRING_LEN];
 
     if(PERL_RUNNING()) {
-	sv_catpvf(sv, "package %s;", PERL_SECTIONS_PACKAGE);
-	sv_catpvf(sv, "\n\n#line %d %s\n", cmd_linenum+1, cmd_filename);
+    sv_catpvf(sv, "package %s;", PERL_SECTIONS_PACKAGE);
+    sv_catpvf(sv, "\n\n#line %d %s\n", cmd_linenum+1, cmd_filename);
     }
 
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
-	if(strncasecmp(l, "</Perl>", 7) == 0)
-	    break;
-	if(PERL_RUNNING()) {
-	    sv_catpv(sv, l);
-	    sv_catpvn(sv, "\n", 1);
-	}
+    if(strncasecmp(l, "</Perl>", 7) == 0)
+        break;
+    if(PERL_RUNNING()) {
+        sv_catpv(sv, l);
+        sv_catpvn(sv, "\n", 1);
+    }
     }
 
     return NULL;
@@ -1111,14 +1111,14 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
     while ((val = hv_iternextsv(hv, (char **) &key, &klen))) { \
         HV *tab = Nullhv; \
         AV *entries = Nullav; \
-	if(SvMAGICAL(val)) mg_get(val); \
-	if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVHV)) \
-	    tab = (HV *)SvRV(val); \
-	else if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVAV)) \
-	    entries = (AV *)SvRV(val); \
-	else \
-	    croak("value of `%s' is not a HASH or ARRAY reference!", key); \
-	if(entries || tab) { \
+    if(SvMAGICAL(val)) mg_get(val); \
+    if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVHV)) \
+        tab = (HV *)SvRV(val); \
+    else if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVAV)) \
+        entries = (AV *)SvRV(val); \
+    else \
+        croak("value of `%s' is not a HASH or ARRAY reference!", key); \
+    if(entries || tab) { \
 
 #define dSECiter_stop \
         } \
@@ -1131,7 +1131,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
         SV *rv = *av_fetch(entries, i, FALSE); \
         HV *nhv; \
         if(!SvROK(rv) || (SvTYPE(SvRV(rv)) != SVt_PVHV)) \
-   	    croak("not a HASH reference!"); \
+        croak("not a HASH reference!"); \
         nhv = newHV(); \
         hv_store(nhv, (char*)key, klen, SvREFCNT_inc(rv), FALSE); \
         tab = nhv; \
@@ -1151,32 +1151,32 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
     SV *tmpval;
     (void)hv_iterinit(hv); 
     while ((tmpval = hv_iternextsv(hv, &tmpkey, &tmpklen))) { 
-	char line[MAX_STRING_LEN]; 
-	char *value = NULL;
-	if (SvMAGICAL(tmpval)) mg_get(tmpval); /* tied hash FETCH */
-	if(SvROK(tmpval)) {
-	    if(SvTYPE(SvRV(tmpval)) == SVt_PVAV) {
-		perl_handle_command_av((AV*)SvRV(tmpval), 
-				       0, tmpkey, cmd, cfg);
-		continue;
-	    }
-	    else if(SvTYPE(SvRV(tmpval)) == SVt_PVHV) {
-		perl_handle_command_hv((HV*)SvRV(tmpval), 
-				       tmpkey, cmd, cfg); 
-		continue;
-	    }
-	}
-	else
-	    value = SvPV(tmpval,na); 
+    char line[MAX_STRING_LEN]; 
+    char *value = NULL;
+    if (SvMAGICAL(tmpval)) mg_get(tmpval); /* tied hash FETCH */
+    if(SvROK(tmpval)) {
+        if(SvTYPE(SvRV(tmpval)) == SVt_PVAV) {
+        perl_handle_command_av((AV*)SvRV(tmpval), 
+                       0, tmpkey, cmd, cfg);
+        continue;
+        }
+        else if(SvTYPE(SvRV(tmpval)) == SVt_PVHV) {
+        perl_handle_command_hv((HV*)SvRV(tmpval), 
+                       tmpkey, cmd, cfg); 
+        continue;
+        }
+    }
+    else
+        value = SvPV(tmpval,na); 
 
-	sprintf(line, "%s %s", tmpkey, value);
-	errmsg = handle_command(cmd, cfg, line); 
-	MP_TRACE_s(fprintf(stderr, "%s (%s) Limit=%s\n", 
-			 line, 
-			 (errmsg ? errmsg : "OK"),
-			 (cmd->limited > 0 ? "yes" : "no") ));
-	if(errmsg)
-	    log_printf(cmd->server, "<Perl>: %s", errmsg);
+    sprintf(line, "%s %s", tmpkey, value);
+    errmsg = handle_command(cmd, cfg, line); 
+    MP_TRACE_s(fprintf(stderr, "%s (%s) Limit=%s\n", 
+             line, 
+             (errmsg ? errmsg : "OK"),
+             (cmd->limited > 0 ? "yes" : "no") ));
+    if(errmsg)
+        log_printf(cmd->server, "<Perl>: %s", errmsg);
     }
     /* Emulate the handling of end token for the section */ 
     perl_set_config_vectors(cmd, cfg, &core_module);
@@ -1211,7 +1211,7 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
     dSECiter_start
 
     if(entries) {
-	SECiter_list(perl_virtualhost_section(cmd, dummy, tab));
+    SECiter_list(perl_virtualhost_section(cmd, dummy, tab));
     }
 
     arg = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
@@ -1223,7 +1223,7 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
 #endif
 
     if (errmsg)
-	return errmsg;   
+    return errmsg;   
 
     s->next = main_server->next;
     main_server->next = s;
@@ -1273,7 +1273,7 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     void *new_url_conf;
 
     if(entries) {
-	SECiter_list(perl_urlsection(cmd, dummy, tab));
+    SECiter_list(perl_urlsection(cmd, dummy, tab));
     }
 
     new_url_conf = create_per_dir_config (cmd->pool);
@@ -1282,11 +1282,11 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     cmd->override = OR_ALL|ACCESS_CONF;
 
     if (cmd->info) { /* <LocationMatch> */
-	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
+    r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
     else if (!strcmp(cmd->path, "~")) {
-	cmd->path = getword_conf (cmd->pool, &key);
-	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
+    cmd->path = getword_conf (cmd->pool, &key);
+    r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
 
     TRACE_SECTION(sname, cmd->path);
@@ -1294,13 +1294,13 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     perl_section_hash_walk(cmd, new_url_conf, tab);
 
     conf = (core_dir_config *)get_module_config(
-	new_url_conf, &core_module);
+    new_url_conf, &core_module);
     conf->d = pstrdup(cmd->pool, cmd->path);
     test__is_match(conf);
     conf->r = r;
 
     add_per_url_conf (cmd->server, new_url_conf);
-	    
+        
     dSECiter_stop
 
     cmd->path = old_path;
@@ -1325,7 +1325,7 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
     regex_t *r = NULL;
 
     if(entries) {
-	SECiter_list(perl_dirsection(cmd, dummy, tab));
+    SECiter_list(perl_dirsection(cmd, dummy, tab));
     }
 
     new_dir_conf = create_per_dir_config (cmd->pool);
@@ -1339,11 +1339,11 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
     cmd->override = OR_ALL|ACCESS_CONF;
 
     if (cmd->info) { /* <DirectoryMatch> */
-	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED|USE_ICASE);
+    r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED|USE_ICASE);
     }
     else if (!strcmp(cmd->path, "~")) {
-	cmd->path = getword_conf (cmd->pool, &key);
-	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
+    cmd->path = getword_conf (cmd->pool, &key);
+    r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
 
     TRACE_SECTION(sname, cmd->path);
@@ -1387,7 +1387,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     regex_t *r = NULL;
 
     if(entries) {
-	SECiter_list(perl_filesection(cmd, dummy, tab));
+    SECiter_list(perl_filesection(cmd, dummy, tab));
     }
 
     new_file_conf = create_per_dir_config (cmd->pool);
@@ -1395,19 +1395,19 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     cmd->path = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
     /* Only if not an .htaccess file */
     if (!old_path)
-	cmd->override = OR_ALL|ACCESS_CONF;
+    cmd->override = OR_ALL|ACCESS_CONF;
 
     if (cmd->info) { /* <FilesMatch> */
         r = ap_pregcomp(cmd->pool, cmd->path, REG_EXTENDED|USE_ICASE);
     }
     else if (!strcmp(cmd->path, "~")) {
-	cmd->path = getword_conf (cmd->pool, &key);
-	if (old_path && cmd->path[0] != '/' && cmd->path[0] != '^')
-	    cmd->path = pstrcat(cmd->pool, "^", old_path, cmd->path, NULL);
-	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
+    cmd->path = getword_conf (cmd->pool, &key);
+    if (old_path && cmd->path[0] != '/' && cmd->path[0] != '^')
+        cmd->path = pstrcat(cmd->pool, "^", old_path, cmd->path, NULL);
+    r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
     else if (old_path && cmd->path[0] != '/')
-	cmd->path = pstrcat(cmd->pool, old_path, cmd->path, NULL);
+    cmd->path = pstrcat(cmd->pool, old_path, cmd->path, NULL);
 
     TRACE_SECTION(sname, cmd->path);
 
@@ -1415,7 +1415,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
 
     conf = (core_dir_config *)get_module_config(new_file_conf, &core_module);
     if(!conf->opts)
-	conf->opts = OPT_NONE;
+    conf->opts = OPT_NONE;
     conf->d = pstrdup(cmd->pool, cmd->path);
     test__is_match(conf);
     conf->r = r;
@@ -1440,18 +1440,18 @@ CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv)
     /*void *ac = (void*)create_default_per_dir_config(cmd->pool);*/
 
     if(nrec)
-	cmd->cmd = nrec;
+    cmd->cmd = nrec;
 
     if(hv_exists(hv,"METHODS", 7))
        sv = hv_delete(hv, "METHODS", 7, G_SCALAR);
     else
-	return NULL;
+    return NULL;
 
     methods = SvPOK(sv) ? SvPVX(sv) : "";
  
     MP_TRACE_s(fprintf(stderr, 
-		     "Found Limit section for `%s'\n", 
-		     methods ? methods : "all methods"));
+             "Found Limit section for `%s'\n", 
+             methods ? methods : "all methods"));
 
     limit_section(cmd, dummy, methods); 
     perl_section_hash_walk(cmd, dummy, hv);
@@ -1477,12 +1477,12 @@ void perl_handle_command(cmd_parms *cmd, void *config, char *line)
 
     MP_TRACE_s(fprintf(stderr, "handle_command (%s): ", line));
     if ((errmsg = handle_command(cmd, config, line))) {
-	if ((sv = STRICT_PERL_SECTIONS_SV) && SvTRUE(sv)) {
-	    croak("<Perl>: %s", errmsg);
-	}
-	else {
-	    log_printf(cmd->server, "<Perl>: %s", errmsg);
-	}
+    if ((sv = STRICT_PERL_SECTIONS_SV) && SvTRUE(sv)) {
+        croak("<Perl>: %s", errmsg);
+    }
+    else {
+        log_printf(cmd->server, "<Perl>: %s", errmsg);
+    }
     }
 
     MP_TRACE_s(fprintf(stderr, "%s\n", errmsg ? errmsg : "OK"));
@@ -1495,19 +1495,19 @@ void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config)
     void *old_info = cmd->info;
 
     if (strstr(key, "Match")) {
-	cmd->info = (void*)key;
+    cmd->info = (void*)key;
     }
 
     if(strnEQ(key, "Location", 8))
-	perl_urlsection(cmd, dummy, hv);
+    perl_urlsection(cmd, dummy, hv);
     else if(strnEQ(key, "Directory", 9)) 
-	perl_dirsection(cmd, dummy, hv);
+    perl_dirsection(cmd, dummy, hv);
     else if(strEQ(key, "VirtualHost")) 
-	perl_virtualhost_section(cmd, dummy, hv);
+    perl_virtualhost_section(cmd, dummy, hv);
     else if(strnEQ(key, "Files", 5)) 
-	perl_filesection(cmd, (core_dir_config *)dummy, hv);
+    perl_filesection(cmd, (core_dir_config *)dummy, hv);
     else if(strEQ(key, "Limit")) 
-	perl_limit_section(cmd, config, hv);
+    perl_limit_section(cmd, config, hv);
 
     cmd->info = old_info;
 }
@@ -1522,44 +1522,44 @@ void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *conf
     if(!n) n = alen+1;
 
     for(i=0; i<=alen; i+=n) {
-	SV *fsv;
-	if(AvFILL(av) < 0)
-	    break;
+    SV *fsv;
+    if(AvFILL(av) < 0)
+        break;
 
-	fsv = *av_fetch(av, 0, FALSE);
+    fsv = *av_fetch(av, 0, FALSE);
 
-	if(SvROK(fsv)) {
-	    i -= n;
-	    perl_handle_command_av((AV*)SvRV(av_shift(av)), 0, 
-				   key, cmd, config);
-	}
-	else {
-	    int do_quote = cmd->cmd->args_how != RAW_ARGS;
-	    SV *sv = newSV(0);
-	    sv_catpv(sv, key);
-	    if (do_quote) {
-		sv_catpvn(sv, " \"", 2);
-	    }
-	    else {
-		sv_catpvn(sv, " ", 1);
-	    }
-	    for(j=1; j<=n; j++) {
-		sv_catsv(sv, av_shift(av));
-		if (j != n) {
-		    if (do_quote) {
-			sv_catpvn(sv, "\" \"", 3);
-		    }
-		    else {
-			sv_catpvn(sv, " ", 1);
-		    }
-		}
-	    }
-	    if (do_quote) {
-		sv_catpvn(sv,"\"", 1);
-	    }
-	    perl_handle_command(cmd, config, SvPVX(sv));
-	    SvREFCNT_dec(sv);
-	}
+    if(SvROK(fsv)) {
+        i -= n;
+        perl_handle_command_av((AV*)SvRV(av_shift(av)), 0, 
+                   key, cmd, config);
+    }
+    else {
+        int do_quote = cmd->cmd->args_how != RAW_ARGS;
+        SV *sv = newSV(0);
+        sv_catpv(sv, key);
+        if (do_quote) {
+        sv_catpvn(sv, " \"", 2);
+        }
+        else {
+        sv_catpvn(sv, " ", 1);
+        }
+        for(j=1; j<=n; j++) {
+        sv_catsv(sv, av_shift(av));
+        if (j != n) {
+            if (do_quote) {
+            sv_catpvn(sv, "\" \"", 3);
+            }
+            else {
+            sv_catpvn(sv, " ", 1);
+            }
+        }
+        }
+        if (do_quote) {
+        sv_catpvn(sv,"\"", 1);
+        }
+        perl_handle_command(cmd, config, SvPVX(sv));
+        SvREFCNT_dec(sv);
+    }
     }
     dowarn = oldwarn; 
 }
@@ -1568,31 +1568,31 @@ void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *conf
 char *splain_args(enum cmd_how args_how) {
     switch(args_how) {
     case RAW_ARGS:
-	return "RAW_ARGS";
+    return "RAW_ARGS";
     case TAKE1:
-	return "TAKE1";
+    return "TAKE1";
     case TAKE2:
-	return "TAKE2";
+    return "TAKE2";
     case ITERATE:
-	return "ITERATE";
+    return "ITERATE";
     case ITERATE2:
-	return "ITERATE2";
+    return "ITERATE2";
     case FLAG:
-	return "FLAG";
+    return "FLAG";
     case NO_ARGS:
-	return "NO_ARGS";
+    return "NO_ARGS";
     case TAKE12:
-	return "TAKE12";
+    return "TAKE12";
     case TAKE3:
-	return "TAKE3";
+    return "TAKE3";
     case TAKE23:
-	return "TAKE23";
+    return "TAKE23";
     case TAKE123:
-	return "TAKE123";
+    return "TAKE123";
     case TAKE13:
-	return "TAKE13";
+    return "TAKE13";
     default:
-	return "__UNKNOWN__";
+    return "__UNKNOWN__";
     };
 }
 #endif
@@ -1606,7 +1606,7 @@ void perl_section_hash_init(char *name, I32 dotie)
     curstash = gv_stashpv(PERL_SECTIONS_PACKAGE, GV_ADDWARN);
     gv = GvHV_init(name);
     if(dotie && !perl_sections_self_boot)
-	perl_tie_hash(GvHV(gv), "Tie::IxHash", Nullsv);
+    perl_tie_hash(GvHV(gv), "Tie::IxHash", Nullsv);
     LEAVE;
 }
 
@@ -1617,15 +1617,15 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
 
     if(!(symtab = gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE))) 
-	return;
+    return;
 
     nk = perl_eval_pv("scalar(keys %ApacheReadConfig::);",TRUE);
     if(!SvIV(nk))
-	return;
+    return;
 
     MP_TRACE_s(fprintf(stderr, 
-		     "bootstrapping <Perl> sections: arg=%s, keys=%d\n", 
-		       arg, (int)SvIV(nk)));
+             "bootstrapping <Perl> sections: arg=%s, keys=%d\n", 
+               arg, (int)SvIV(nk)));
     
     perl_sections_boot_module = arg;
     perl_sections_self_boot = 1;
@@ -1635,22 +1635,22 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
 
     /* make sure this module is re-loaded for the second config read */
     if(PERL_RUNNING() == 1) {
-	SV *file = Nullsv;
-	if(arg) {
-	    if(strrchr(arg, '/') || strrchr(arg, '.'))
-		file = newSVpv((char *)arg,0);
-	    else
-		file = perl_module2file((char *)arg);
-	}
+    SV *file = Nullsv;
+    if(arg) {
+        if(strrchr(arg, '/') || strrchr(arg, '.'))
+        file = newSVpv((char *)arg,0);
+        else
+        file = perl_module2file((char *)arg);
+    }
 
-	if(file && hv_exists_ent(GvHV(incgv), file, FALSE)) {
-	    MP_TRACE_s(fprintf(stderr,
-			     "mod_perl: delete $INC{'%s'} (klen=%d)\n", 
-			     SvPVX(file), SvCUR(file)));
-	    (void)hv_delete_ent(GvHV(incgv), file, G_DISCARD, FALSE);
-	}
-	if(file)
-	    SvREFCNT_dec(file);
+    if(file && hv_exists_ent(GvHV(incgv), file, FALSE)) {
+        MP_TRACE_s(fprintf(stderr,
+                 "mod_perl: delete $INC{'%s'} (klen=%d)\n", 
+                 SvPVX(file), SvCUR(file)));
+        (void)hv_delete_ent(GvHV(incgv), file, G_DISCARD, FALSE);
+    }
+    if(file)
+        SvREFCNT_dec(file);
     }   
 }
 
@@ -1662,19 +1662,19 @@ static void clear_symtab(HV *symtab)
 
     (void)hv_iterinit(symtab);
     while ((val = hv_iternextsv(symtab, &key, &klen))) {
-	SV *sv;
-	HV *hv;
-	AV *av;
-	dTHR;
+    SV *sv;
+    HV *hv;
+    AV *av;
+    dTHR;
 
-	if((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val))
-	    continue;
-	if((sv = GvSV((GV*)val)))
-	    sv_setsv(GvSV((GV*)val), &sv_undef);
-	if((hv = GvHV((GV*)val)))
-	    hv_clear(hv);
-	if((av = GvAV((GV*)val)))
-	    av_clear(av);
+    if((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val))
+        continue;
+    if((sv = GvSV((GV*)val)))
+        sv_setsv(GvSV((GV*)val), &sv_undef);
+    if((hv = GvHV((GV*)val)))
+        hv_clear(hv);
+    if((av = GvAV((GV*)val)))
+        av_clear(av);
     }
 }
 
@@ -1693,19 +1693,19 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
     require_Apache(parms->server);
 
     if(PERL_RUNNING()) {
-	code = newSV(0);
-	sv_setpv(code, "");
-	if(arg) 
-	    errmsg = perl_srm_command_loop(parms, code);
+    code = newSV(0);
+    sv_setpv(code, "");
+    if(arg) 
+        errmsg = perl_srm_command_loop(parms, code);
     }
     else {
-	MP_TRACE_s(fprintf(stderr, 
-			 "perl_section: Perl not running, returning...\n"));
-	return NULL;
+    MP_TRACE_s(fprintf(stderr, 
+             "perl_section: Perl not running, returning...\n"));
+    return NULL;
     }
 
     if((perl_require_module("Tie::IxHash", NULL) == OK))
-	dotie = TRUE;
+    dotie = TRUE;
 
     perl_section_hash_init("Location", dotie);
     perl_section_hash_init("LocationMatch", dotie);
@@ -1724,92 +1724,92 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
     LEAVE_SAFE;
 
     {
-	dTHR;
-	dTHRCTX;
-	if(SvTRUE(ERRSV)) {
-	    MP_TRACE_s(fprintf(stderr, 
-			       "Apache::ReadConfig: %s\n", SvPV(ERRSV,na)));
-	    return SvPV(ERRSV,na);
-	}
+    dTHR;
+    dTHRCTX;
+    if(SvTRUE(ERRSV)) {
+        MP_TRACE_s(fprintf(stderr, 
+                   "Apache::ReadConfig: %s\n", SvPV(ERRSV,na)));
+        return SvPV(ERRSV,na);
+    }
     }
 
     symtab = (HV*)gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE);
     (void)hv_iterinit(symtab);
     while ((val = hv_iternextsv(symtab, &key, &klen))) {
-	SV *sv;
-	HV *hv;
-	AV *av;
+    SV *sv;
+    HV *hv;
+    AV *av;
 
-	if(SvTYPE(val) != SVt_PVGV) 
-	    continue;
+    if(SvTYPE(val) != SVt_PVGV) 
+        continue;
 
-	if((sv = GvSV((GV*)val))) {
-	    if(SvTRUE(sv)) {
-		if(STRING_MEAL(key)) {
-		    perl_eat_config_string(parms, config, sv);
-		}
-		else {
-		    STRLEN junk;
-		    MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n",
-							 key, SvPV(sv,junk)));
-		    sprintf(line, "%s %s", key, SvPV(sv,junk));
-		    perl_handle_command(parms, config, line);
-		}
-	    }
-	}
+    if((sv = GvSV((GV*)val))) {
+        if(SvTRUE(sv)) {
+        if(STRING_MEAL(key)) {
+            perl_eat_config_string(parms, config, sv);
+        }
+        else {
+            STRLEN junk;
+            MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n",
+                             key, SvPV(sv,junk)));
+            sprintf(line, "%s %s", key, SvPV(sv,junk));
+            perl_handle_command(parms, config, line);
+        }
+        }
+    }
 
-	if((hv = GvHV((GV*)val))) {
-	    perl_handle_command_hv(hv, key, parms, config);
-	}
-	else if((av = GvAV((GV*)val))) {	
-	    module *tmod = top_module;
-	    const command_rec *c; 
-	    I32 shift, alen = AvFILL(av);
+    if((hv = GvHV((GV*)val))) {
+        perl_handle_command_hv(hv, key, parms, config);
+    }
+    else if((av = GvAV((GV*)val))) {    
+        module *tmod = top_module;
+        const command_rec *c; 
+        I32 shift, alen = AvFILL(av);
 
-	    if(STRING_MEAL(key)) {
-		SV *tmpsv;
-		while((tmpsv = av_shift(av)) != &sv_undef)
-		    perl_eat_config_string(parms, config, tmpsv);
-		continue;
-	    }
+        if(STRING_MEAL(key)) {
+        SV *tmpsv;
+        while((tmpsv = av_shift(av)) != &sv_undef)
+            perl_eat_config_string(parms, config, tmpsv);
+        continue;
+        }
 
-	    if(!(c = find_command_in_modules((const char *)key, &tmod))) {
-		fprintf(stderr, "command_rec for directive `%s' not found!\n", key);
-		continue;
-	    }
+        if(!(c = find_command_in_modules((const char *)key, &tmod))) {
+        fprintf(stderr, "command_rec for directive `%s' not found!\n", key);
+        continue;
+        }
 
-	    MP_TRACE_s(fprintf(stderr, 
-			     "`@%s' directive is %s, (%d elements)\n", 
-			     key, splain_args(c->args_how), (int)AvFILL(av)+1));
+        MP_TRACE_s(fprintf(stderr, 
+                 "`@%s' directive is %s, (%d elements)\n", 
+                 key, splain_args(c->args_how), (int)AvFILL(av)+1));
 
-	    switch (c->args_how) {
-		
-	    case TAKE23:
-	    case TAKE2:
-		shift = 2;
-		break;
+        switch (c->args_how) {
+        
+        case TAKE23:
+        case TAKE2:
+        shift = 2;
+        break;
 
-	    case TAKE3:
-		shift = 3;
-		break;
+        case TAKE3:
+        shift = 3;
+        break;
 
-	    default:
-		MP_TRACE_s(fprintf(stderr, 
-				 "default: iterating over @%s\n", key));
-		shift = 1;
-		break;
-	    }
-	    if(shift > alen+1) shift = 1; /* elements are refs */ 
-	    perl_handle_command_av(av, shift, key, parms, config);
-	}
+        default:
+        MP_TRACE_s(fprintf(stderr, 
+                 "default: iterating over @%s\n", key));
+        shift = 1;
+        break;
+        }
+        if(shift > alen+1) shift = 1; /* elements are refs */ 
+        perl_handle_command_av(av, shift, key, parms, config);
+    }
     }
     SvREFCNT_dec(code);
     {
-	SV *usv = perl_get_sv("Apache::Server::SaveConfig", FALSE);
-	if(usv && SvTRUE(usv))
-	    ; /* keep it around */
-	else
-	    clear_symtab(symtab);
+    SV *usv = perl_get_sv("Apache::Server::SaveConfig", FALSE);
+    if(usv && SvTRUE(usv))
+        ; /* keep it around */
+    else
+        clear_symtab(symtab);
     }
     return NULL;
 }
@@ -1823,14 +1823,14 @@ static int perl_hook_api(char *string)
 
     ap_cpystrn(name, string, sizeof(name));
     if (!(s = (char *)strstr(name, "Api"))) {
-	return -1;
+    return -1;
     }
     *s = '\0';
 
     if (strEQ(name, "Uri")) {
-	/* s/^Uri$/URI/ */
-	name[1] = toUPPER(name[1]);
-	name[2] = toUPPER(name[2]);
+    /* s/^Uri$/URI/ */
+    name[1] = toUPPER(name[1]);
+    name[2] = toUPPER(name[2]);
     }
 
     /* XXX: assumes .xs is linked static */
@@ -1840,154 +1840,154 @@ static int perl_hook_api(char *string)
 int perl_hook(char *name)
 {
     switch (*name) {
-	case 'A':
-	    if (strEQ(name, "Authen")) 
+    case 'A':
+        if (strEQ(name, "Authen")) 
 #ifdef PERL_AUTHEN
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	if (strEQ(name, "Authz"))
+    if (strEQ(name, "Authz"))
 #ifdef PERL_AUTHZ
-	    return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	if (strEQ(name, "Access"))
+    if (strEQ(name, "Access"))
 #ifdef PERL_ACCESS
-	    return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'C':
-	    if (strEQ(name, "ChildInit")) 
+    break;
+    case 'C':
+        if (strEQ(name, "ChildInit")) 
 #ifdef PERL_CHILD_INIT
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	    if (strEQ(name, "ChildExit")) 
+        if (strEQ(name, "ChildExit")) 
 #ifdef PERL_CHILD_EXIT
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	    if (strEQ(name, "Cleanup")) 
+        if (strEQ(name, "Cleanup")) 
 #ifdef PERL_CLEANUP
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'D':
-	    if (strEQ(name, "Dispatch")) 
+    break;
+    case 'D':
+        if (strEQ(name, "Dispatch")) 
 #ifdef PERL_DISPATCH
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	    if (strEQ(name, "DirectiveHandlers")) 
+        if (strEQ(name, "DirectiveHandlers")) 
 #ifdef PERL_DIRECTIVE_HANDLERS
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
 
-	break;
-	case 'F':
-	    if (strEQ(name, "Fixup")) 
+    break;
+    case 'F':
+        if (strEQ(name, "Fixup")) 
 #ifdef PERL_FIXUP
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
+    break;
 #if MODULE_MAGIC_NUMBER >= 19970103
-	case 'H':
-	    if (strEQ(name, "HeaderParser")) 
+    case 'H':
+        if (strEQ(name, "HeaderParser")) 
 #ifdef PERL_HEADER_PARSER
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
+    break;
 #endif
 #if MODULE_MAGIC_NUMBER >= 19970103
-	case 'I':
-	    if (strEQ(name, "Init")) 
+    case 'I':
+        if (strEQ(name, "Init")) 
 #ifdef PERL_INIT
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
+    break;
 #endif
-	case 'L':
-	    if (strEQ(name, "Log")) 
+    case 'L':
+        if (strEQ(name, "Log")) 
 #ifdef PERL_LOG
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'M':
-	    if (strEQ(name, "MethodHandlers")) 
+    break;
+    case 'M':
+        if (strEQ(name, "MethodHandlers")) 
 #ifdef PERL_METHOD_HANDLERS
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'P':
-	    if (strEQ(name, "PostReadRequest")) 
+    break;
+    case 'P':
+        if (strEQ(name, "PostReadRequest")) 
 #ifdef PERL_POST_READ_REQUEST
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'R':
-	    if (strEQ(name, "Restart")) 
+    break;
+    case 'R':
+        if (strEQ(name, "Restart")) 
 #ifdef PERL_RESTART
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	case 'S':
-	    if (strEQ(name, "SSI")) 
+    case 'S':
+        if (strEQ(name, "SSI")) 
 #ifdef PERL_SSI
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	    if (strEQ(name, "StackedHandlers")) 
+        if (strEQ(name, "StackedHandlers")) 
 #ifdef PERL_STACKED_HANDLERS
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	    if (strEQ(name, "Sections")) 
+        if (strEQ(name, "Sections")) 
 #ifdef PERL_SECTIONS
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
-	case 'T':
-	    if (strEQ(name, "Trans")) 
+    break;
+    case 'T':
+        if (strEQ(name, "Trans")) 
 #ifdef PERL_TRANS
-		return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
         if (strEQ(name, "Type")) 
 #ifdef PERL_TYPE
-	    return 1;
+        return 1;
 #else
-	return 0;    
+    return 0;    
 #endif
-	break;
+    break;
     }
 
     return perl_hook_api(name);
