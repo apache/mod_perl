@@ -215,8 +215,12 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
     modperl_interp_lifetime_e lifetime;
 
     if (!scfg->threaded_mpm) {
-        MP_TRACE_i(MP_FUNC, "using parent 0x%lx for non-threaded mpm\n",
-                   (unsigned long)scfg->mip->parent);
+        MP_TRACE_i(MP_FUNC,
+                   "using parent 0x%lx for non-threaded mpm (%s:%d)\n",
+                   (unsigned long)scfg->mip->parent,
+                   s->server_hostname, s->port);
+        /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
+        PERL_SET_CONTEXT(scfg->mip->parent->perl);
         return scfg->mip->parent;
     }
 

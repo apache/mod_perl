@@ -98,8 +98,9 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
         /* if alloc flags is On, virtual host gets its own parent perl */
         if (MpSrvPARENT(scfg)) {
             perl = modperl_startup(s, p);
-            MP_TRACE_i(MP_FUNC, "modperl_startup() server=%s\n",
-                       s->server_hostname);
+            MP_TRACE_i(MP_FUNC,
+                       "created parent interpreter for VirtualHost %s\n",
+                       modperl_server_desc(s, p));
         }
 
 #ifdef USE_ITHREADS
