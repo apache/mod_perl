@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+Semicolon support in $r->args [ Eric Cholet <cholet@logilune.com> ]
+
 issue with threads in perl_config.c [ Malcolm Beattie
 <mbeattie@sable.ox.ac.uk> / Koichi Nakatani <nakatani@konica.co.jp> ]
 
