@@ -106,7 +106,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     }
 
     /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
-     * have file descriptors, so STDOUT must be closed before it can
+     * have file descriptors, so STDIN must be closed before it can
      * be reopened */
     Perl_do_close(aTHX_ handle, TRUE); 
     status = Perl_do_open9(aTHX_ handle, "<:Apache", 8, FALSE, O_RDONLY,
