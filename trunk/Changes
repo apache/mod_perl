@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added little Apache::system that redirects output to the browser,
+should this be imported into Apache::{Registry,PerlRun} scripts?
+
 new Apache::Tie module, provides Apache::TieHashTable for a proper
 interface to Apache table structures.  The following methods, called
 in a scalar context with no "key" argument, will return a HASH

@@ -11,12 +11,18 @@ typedef apache_tiehash_table * Apache__TieHashTable;
 
 MODULE = Apache::Tie		PACKAGE = Apache::TieHashTable
 
+PROTOTYPES: DISABLE
+
+BOOT:
+    items = items; /*avoid warning*/ 
+
 Apache::TieHashTable
 TIEHASH(class, table)
     SV *class
     Apache::Table table
 
     CODE:
+    if(!class) XSRETURN_UNDEF;
     RETVAL = (Apache__TieHashTable)safemalloc(sizeof(apache_tiehash_table));
     RETVAL->table = table;
     RETVAL->ix = 0;
@@ -42,6 +48,7 @@ FETCH(self, key)
     get = 1
 
     CODE:
+    ix = ix; /*avoid warning*/
     if(!self->table) XSRETURN_UNDEF;
     RETVAL = table_get(self->table, key);
 
@@ -72,10 +79,13 @@ DELETE(self, key)
     I32 gimme = GIMME_V;
 
     CODE:
+    ix = ix;
     if(!self->table) XSRETURN_UNDEF;
+    RETVAL = NULL;
     if(gimme != G_VOID)
         RETVAL = table_get(self->table, key);
     table_unset(self->table, key);
+    if(!RETVAL) XSRETURN_UNDEF;
 
     OUTPUT:
     RETVAL
@@ -90,6 +100,7 @@ STORE(self, key, val)
     set = 1
 
     CODE:
+    ix = ix; /*avoid warning*/
     if(!self->table) XSRETURN_UNDEF;
     table_set(self->table, key, val);
 
@@ -101,11 +112,12 @@ CLEAR(self)
     clear = 1
 
     CODE:
+    ix = ix; /*avoid warning*/
     if(!self->table) XSRETURN_UNDEF;
     clear_table(self->table);
 
 const char *
-NEXTKEY(self, lastkey)
+NEXTKEY(self, lastkey=Nullsv)
     Apache::TieHashTable self
     SV *lastkey
 

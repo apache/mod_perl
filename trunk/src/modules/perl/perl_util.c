@@ -109,7 +109,7 @@ SV *mod_perl_tie_table(table *t)
     SV *sv = sv_newmortal();
     iniHV(hv);
     sv_setref_pv(sv, "Apache::Table", (void*)t);
-    perl_require_module("Apache::Tie", NULL);
+    perl_qrequire_module("Apache::Tie");
     perl_tie_hash(hv, "Apache::TieHashTable", sv);
     return newRV_noinc((SV*)hv);
 }
@@ -363,6 +363,20 @@ int perl_require_module(char *mod, server_rec *s)
 
     MP_TRACE_d(fprintf(stderr, "ok\n"));
     return 0;
+}
+
+/* faster than require_module, 
+ * used when we're already in an eval context
+ */
+void perl_qrequire_module(char *name) 
+{
+    OP *mod;
+    SV *key = perl_module2file(name);
+    if((key && hv_exists_ent(GvHV(incgv), key, FALSE)))
+	return;
+    mod = newSVOP(OP_CONST, 0, key);
+    /*mod->op_private |= OPpCONST_BARE;*/
+    utilize(TRUE, start_subparse(FALSE, 0), Nullop, mod, Nullop);
 }
 
 void perl_do_file(char *pv)

@@ -76,8 +76,13 @@ static void *vector_from_sv (SV *sv, int *type)
 
 MODULE = Apache::ModuleConfig  PACKAGE = Apache::ModuleConfig
 
+PROTOTYPES: DISABLE
+
+BOOT:
+    items = items; /*avoid warning*/ 
+
 SV *
-get(self, obj, svkey=Nullsv)
+get(self=Nullsv, obj, svkey=Nullsv)
     SV *self
     SV *obj
     SV *svkey
@@ -92,7 +97,7 @@ get(self, obj, svkey=Nullsv)
 
     if((svkey == Nullsv) || caller) {
 	HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
-	SV **mod_ptr;
+	SV **mod_ptr = (SV**)NULL;
 
 	if(!caller)
 	    caller = perl_eval_pv("scalar caller", TRUE);
@@ -106,7 +111,12 @@ get(self, obj, svkey=Nullsv)
 	    void *ptr = vector_from_sv(obj, &type);
 	    mod_perl_perl_dir_config *data = 
 		get_module_config(ptr, (module *)tmp);
-	    RETVAL = data->obj ? SvREFCNT_inc(data->obj) : Nullsv; 
+	    if(data->obj) {
+		++SvREFCNT(data->obj);
+		RETVAL = data->obj;
+	    }
+	    else
+		RETVAL = Nullsv;
 	}
     }
     if(!RETVAL) XSRETURN_UNDEF;
