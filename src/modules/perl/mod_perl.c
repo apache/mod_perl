@@ -271,7 +271,8 @@ void perl_shutdown (server_rec *s, pool *p)
     perl_run_endav("perl_shutdown"); 
 
     MP_TRACE_g(fprintf(stderr, 
-		     "destructing and freeing Perl interpreter..."));
+		     "destructing and freeing Perl interpreter (level=%d)...",
+	       perl_destruct_level));
 
     perl_util_cleanup();
 
@@ -414,9 +415,51 @@ static void mod_perl_tie_scriptname(void)
     if(orig_inc) SvREFCNT_dec(orig_inc); \
     orig_inc = av_copy_array(GvAV(incgv))
 
+#define dl_librefs "DynaLoader::dl_librefs"
+#define dl_modules "DynaLoader::dl_modules"
+
+static void unload_xs_so(void)
+{
+    I32 i;
+    AV *librefs = perl_get_av(dl_librefs, FALSE);
+    AV *modules = perl_get_av(dl_modules, FALSE);
+
+    if (!librefs) {
+	MP_TRACE_g(fprintf(stderr, 
+			   "Could not get @%s for unloading.\n",
+			   dl_librefs));
+	return;
+    }
+	
+    for (i=0; i<=AvFILL(librefs); i++) {
+	void *handle;
+	SV *handle_sv = *av_fetch(librefs, i, FALSE);
+	SV *module_sv = *av_fetch(modules, i, FALSE);
+
+	if(!handle_sv) {
+	    MP_TRACE_g(fprintf(stderr, 
+			       "Could not fetch $%s[%d]!\n",
+			       dl_librefs, (int)i));
+	    continue;
+	}
+	handle = (void *)SvIV(handle_sv);
+
+	MP_TRACE_g(fprintf(stderr, "unload_xs_so: %s (0x%lx)\n",
+			   SvPVX(module_sv), (unsigned long)handle));
+	if (handle) {
+	    ap_os_dso_unload(handle);
+	}
+    }
+
+    av_clear(modules);
+    av_clear(librefs);
+}
+
 #if MODULE_MAGIC_NUMBER >= MMN_130
 static void mp_dso_unload(void *data) 
 { 
+#if 0
+
     module *modp;
 
     if(!PERL_DSO_UNLOAD)
@@ -433,6 +476,10 @@ static void mp_dso_unload(void *data)
 	    modp->dynamic_load_handle = NULL;
 	}
     }
+#else
+    unload_xs_so();
+    perl_shutdown(NULL, NULL);
+#endif
 } 
 #endif
 
