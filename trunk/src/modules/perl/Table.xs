@@ -58,6 +58,11 @@ static void table_modify(TiedTable *self, const char *key, SV *sv,
 
 }
 
+static void table_delete(table *tab, const char *key, const char *val)
+{
+    table_unset(tab, val);
+}
+
 static Apache__Table ApacheTable_new(table *utable)
 {
     Apache__Table RETVAL = (Apache__Table)safemalloc(sizeof(TiedTable));
@@ -148,9 +153,9 @@ EXISTS(self, key)
     RETVAL
 
 const char*
-DELETE(self, key)
+DELETE(self, sv)
     Apache::Table self
-    const char *key
+    SV *sv
 
     ALIAS:
     unset = 1
@@ -162,9 +167,12 @@ DELETE(self, key)
     ix = ix;
     if(!self->utable) XSRETURN_UNDEF;
     RETVAL = NULL;
-    if(gimme != G_VOID)
-        RETVAL = table_get(self->utable, key);
-    table_unset(self->utable, key);
+    if((ix == 0) && (gimme != G_VOID)) {
+        STRLEN n_a;
+        RETVAL = table_get(self->utable, SvPV(sv,n_a));
+    }
+
+    table_modify(self, NULL, sv, (TABFUNC)table_delete);
     if(!RETVAL) XSRETURN_UNDEF;
 
     OUTPUT:
