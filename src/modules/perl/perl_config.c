@@ -393,6 +393,10 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
 }
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
+if(!PERL_RUNNING()) { \
+    perl_startup(parms->server, parms->pool); \
+    MP_TRACE_g(fprintf(stderr, "mod_perl: %s calling perl_startup()\n", __FUNCTION__)); \
+} \
 return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
 
 #else

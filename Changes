@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+Perl*Handler commands will now call perl_startup() if Perl is not
+already running to cure dso problem [Daniel Jacobowitz <drow+@cs.cmu.edu>]
+
 plugged leak in mod_perl_tie_table()
 
 methods that return an Apache::Table object no longer attempt to
