@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+APR::IpSubnet::new() now throws APR::Error exception (not returning
+rc) [Stas]
+
 rename package APR::NetLib -> APR::IpSubnet to match the class name
 [Stas]
 
