@@ -5,7 +5,8 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1;
+# XXX: skip untill the LEAVE problem is fixed in 5.8.1 
+plan tests => 1, 0;
 
 my $expected = "[<foo][bar>][<who][ah>]";
 my $location = '/TestAPI__rflush';
