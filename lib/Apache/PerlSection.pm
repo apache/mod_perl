@@ -5,7 +5,6 @@ use warnings FATAL => 'all';
 
 our $VERSION = '0.01';
 
-use ModPerl::Symdump ();
 
 use Apache::CmdParms ();
 use Apache::Directive ();
@@ -19,6 +18,7 @@ sub new {
 
 sub server     { return shift->{'parms'}->server() }
 sub directives { return shift->{'directives'} ||= [] }
+sub package    { return shift->{'args'}->get('package') }
 
 sub handler : method {
     my($self, $parms, $args) = @_;
@@ -27,26 +27,18 @@ sub handler : method {
         $self = $self->new('parms' => $parms, 'args' => $args);
     }
 
-    my $package = $args->get('package');
     my $special = $self->SPECIAL_NAME;
-	
-    my $root = ModPerl::Symdump->new($package);
 
-    my %convert = (
-        'scalars' => sub { no strict 'refs'; return ${ $_[0] } },
-        'arrays'  => sub { no strict 'refs'; return \@{ $_[0] } },
-        'hashes'  => sub { no strict 'refs'; return \%{ $_[0] } },
-    );
-
-    for my $type (sort keys %convert) {
-        for my $entry (grep { !/$special/ } $root->$type()) {
-            (my $name = $entry) =~ s/${package}:://;
-            $self->dump($name, $convert{$type}->($entry));
+    for my $entry ($self->symdump()) {
+        if ($entry->[0] !~ /$special/) {
+            $self->dump(@$entry);
         }
     }
 
     {
         no strict 'refs';
+        my $package = $self->package;
+
         $self->dump_special(${"${package}::$special"},
           @{"${package}::$special"} );
     }
@@ -54,6 +46,34 @@ sub handler : method {
     $self->post_config();
 
     Apache::OK;
+}
+
+sub symdump {
+    my($self) = @_;
+
+    my $pack = $self->package;
+
+    unless ($self->{symbols}) {
+        $self->{symbols} = [];
+
+        no strict;
+
+        #XXX: Shamelessly borrowed from Devel::Symdump;
+        while (my ($key, $val) = each(%{ *{"$pack\::"} })) {
+            local (*ENTRY) = $val;
+            if (defined $val && defined *ENTRY{SCALAR}) {
+                push @{$self->{symbols}}, [$key, $ENTRY];
+            }
+            if (defined $val && defined *ENTRY{ARRAY}) {
+                push @{$self->{symbols}}, [$key, \@ENTRY];
+            }
+            if (defined $val && defined *ENTRY{HASH} && $key !~ /::/) {
+                push @{$self->{symbols}}, [$key, \%ENTRY];
+            }
+        }
+    }
+
+    return @{$self->{symbols}};
 }
 
 sub dump_special {
