@@ -9,4 +9,27 @@
   Status: most likely nobody will ever want to use this option, so
   don't waste time working on it.
 
+* Apache::FakeRequest:
+  since APR can be used outside of httpd, and we can alloc request_rec
+  and similar structures, it should be possible to bootstrap an
+  inside-httpd interface and outside-httpd interface.  its not really
+  worthwhile looking at until APR actually installs its *.so or *.a
+  libraries somewhere apxs can find them.  and, there's a bunch of util
+  functions (e.g. URI stuff) that is supposed to move from httpd into
+  apr-util.
+
+* could add support for embedding apache directives into perl
+  directives values, e.g. interpolating $ServerRoot
+
+  PerlSwitches -I$ServerRoot/lib/perl
+
+* Since now we have protocol modules, it'd be nice to have a similar
+  thing to PerlCleanupHandler, which works only for HTTP requests. 
+  It should probably be called PerlConnectionCleanupHandler.
+
+  If we add it we should probably rename PerlCleanupHadndler to
+  PerlRequestCleanupHandler and keep the old name as a deprecated alias.
+
+  We could also have PerlServerCleanupHandler, but that's exactly what
+  PerlChildExitHandler does. Consider having ServerCleanup as an alias.
 

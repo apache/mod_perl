@@ -31,3 +31,10 @@
 
 * maybe functions in xs/maps/(apache|apr)_functions.map
 
+* missing apr_buckets api: destroy, delete
+
+*  Apache->request:
+  need to deal with subclass objects which are not a request_rec
+  (e.g. HASH ref)
+  Owner: gozer
+
