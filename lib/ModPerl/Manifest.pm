@@ -88,4 +88,7 @@ sub maniskip {
 1;
 __DATA__
 patches/
+#very few will have Chatbot::Eliza installed
 eliza
+#apr_generate_random_bytes does not currently work on all platforms
+TestAPR/util.pm
