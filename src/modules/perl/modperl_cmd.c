@@ -370,7 +370,7 @@ MP_CMD_SRV_DECLARE(perldo)
     }
 
     /* we must init earlier than normal */
-    modperl_run(p, s);
+    modperl_run();
 
     if (modperl_init_vhost(s, p, NULL) != OK) {
         return "init mod_perl vhost failed";
@@ -496,7 +496,7 @@ MP_CMD_SRV_DECLARE(load_module)
     MP_TRACE_d(MP_FUNC, "PerlLoadModule %s\n", arg);
 
     /* we must init earlier than normal */
-    modperl_run(p, s);
+    modperl_run();
 
     if ((errmsg = modperl_cmd_modules(parms, mconfig, arg))) {
         return errmsg;
