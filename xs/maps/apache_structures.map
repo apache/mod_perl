@@ -1,5 +1,8 @@
 ##########  Apache structures  ##########
 
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
 IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 
 <request_rec>
