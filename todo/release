@@ -4,12 +4,6 @@
 
 -- see also todo/api_status
 
-* enclose all occurences of eval_* with ENTER;SAVETMPS;
-  ... FREETMPS;LEAVE; at the moment things just happen to work, due to
-  external scopes which is not very reliable and can change any moment
-  introducing obsure bugs.
-  owner: stas
-
 * APR::Finfo constants: APR::FILETYPE_* and APR::FILEPROT_* will
   probably be APR::FTYPE_* and APR::FPROT_*
   will know exactly once libapr is fixed
