@@ -67,12 +67,12 @@ EOF
 
 $My::config_is_perl = 1;
 
-use Apache::Constants qw(MODULE_MAGIC_NUMBER);
+#use Apache::Constants qw(MODULE_MAGIC_NUMBER);
 use IO::Handle ();
 use Cwd qw(fastcwd);
 my $dir = join "/", fastcwd, "t";
 my $Is_Win32 = ($^O eq "MSWin32");
-my $mmn = MODULE_MAGIC_NUMBER;
+#my $mmn = MODULE_MAGIC_NUMBER;
 
 sub prompt ($;$) {
     my($mess,$def) = @_;
