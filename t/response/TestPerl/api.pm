@@ -16,9 +16,21 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
+    # - XXX: with perl 5.6.1 this test works fine on its own, but if
+    # run in the same interpreter after a test that involves a complex die
+    # call, as in the case of t/filter/in_error, which dies inside a
+    # filter, perl gets messed up here. this can be reproduced by
+    # running:
+    # t/TEST -maxclients 1 t/filter/in_error.t t/perl/api.t
+    # so skip that test for now on 5.6
+    #
+    # - win32 is an unrelated issue
     plan $r, tests => 2,
-        need { "getppid() is not implemented on Win32" 
-                   => !Apache::Build::WIN32() };
+        need { "getppid() is not implemented on Win32"
+                   => !Apache::Build::WIN32(),
+               "getppid() is having problems with perl 5.6"
+                   => !($] < 5.008),
+               };
 
     {
         # 5.8.1 w/ ithreads has a bug where it caches ppid in PL_ppid,
