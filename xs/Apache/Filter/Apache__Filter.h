@@ -63,7 +63,7 @@ static apr_status_t mpxs_ap_get_brigade(pTHX_ ap_filter_t *filter,
                                         ap_input_mode_t mode,
                                         SV *svreadbytes)
 {
-    apr_size_t readbytes = svreadbytes ? SvIV(svreadbytes) : 0;
+    apr_off_t readbytes = svreadbytes ? SvIV(svreadbytes) : 0;
     apr_status_t status = ap_get_brigade(filter, brigade, mode, &readbytes);
 
     if (svreadbytes) {
