@@ -64,7 +64,7 @@
 #include <malloc.h>
 #include <win32.h>
 #include <win32iop.h>
-#include <fcntl.h>      // For O_BINARY
+#include <fcntl.h>		// For O_BINARY
 #include "EXTERN.h"
 #include "perl.h"
 #include <iperlsys.h>
@@ -195,7 +195,7 @@
 #endif
 
 #ifndef AvFILLp
-#define AvFILLp(av) ((XPVAV*)  SvANY(av))->xav_fill
+#define AvFILLp(av)	((XPVAV*)  SvANY(av))->xav_fill
 #endif
 
 #ifdef eval_pv
@@ -300,7 +300,7 @@ if(arg) \
 #define av_copy_array(av) av_make(av_len(av)+1, AvARRAY(av))  
 
 #ifndef newRV_noinc
-#define newRV_noinc(sv) ((Sv = newRV(sv)), --SvREFCNT(SvRV(Sv)), Sv)
+#define newRV_noinc(sv)	((Sv = newRV(sv)), --SvREFCNT(SvRV(Sv)), Sv)
 #endif
 
 #ifndef SvTAINTED_on
@@ -349,14 +349,14 @@ mp_magic_setenv(key, val, 0)
 
 #define mp_debug mod_perl_debug_flags
 
-extern U32  mp_debug;
+extern U32	mp_debug;
 
 #ifdef PERL_TRACE
-#define MP_TRACE(a)   if (mp_debug)  a
-#define MP_TRACE_d(a) if (mp_debug & 1)  a /* directives */
-#define MP_TRACE_s(a) if (mp_debug & 2)  a /* perl sections */
-#define MP_TRACE_h(a) if (mp_debug & 4)  a /* handlers */
-#define MP_TRACE_g(a) if (mp_debug & 8)  a /* globals and allocation */
+#define MP_TRACE(a)   if (mp_debug)	 a
+#define MP_TRACE_d(a) if (mp_debug & 1)	 a /* directives */
+#define MP_TRACE_s(a) if (mp_debug & 2)	 a /* perl sections */
+#define MP_TRACE_h(a) if (mp_debug & 4)	 a /* handlers */
+#define MP_TRACE_g(a) if (mp_debug & 8)	 a /* globals and allocation */
 #define MP_TRACE_c(a) if (mp_debug & 16) a /* directive handlers */
 #ifndef PERL_MARK_WHERE
 #define PERL_MARK_WHERE
@@ -405,14 +405,14 @@ int status = dstatus
 #define MPf_Off -1
 #define MPf_None 0
 
-#define MPf_INCPUSH 0x00000100 /* use lib split ":", $ENV{PERL5LIB} */
-#define MPf_SENDHDR 0x00000200 /* is PerlSendHeader On? */
-#define MPf_SENTHDR 0x00000400 /* has PerlSendHeader sent the headers? */
-#define MPf_ENV     0x00000800 /* PerlSetupEnv */
-#define MPf_HASENV  0x00001000 /* do we have any PerlSetEnv's? */
-#define MPf_DSTDERR 0x00002000 /* redirect stderr to error_log */
-#define MPf_CLEANUP 0x00004000 /* did we register our cleanup ? */
-#define MPf_RCLEANUP    0x00008000 /* for $r->register_cleanup */
+#define MPf_INCPUSH	0x00000100 /* use lib split ":", $ENV{PERL5LIB} */
+#define MPf_SENDHDR	0x00000200 /* is PerlSendHeader On? */
+#define MPf_SENTHDR	0x00000400 /* has PerlSendHeader sent the headers? */
+#define MPf_ENV		0x00000800 /* PerlSetupEnv */
+#define MPf_HASENV	0x00001000 /* do we have any PerlSetEnv's? */
+#define MPf_DSTDERR	0x00002000 /* redirect stderr to error_log */
+#define MPf_CLEANUP	0x00004000 /* did we register our cleanup ? */
+#define MPf_RCLEANUP	0x00008000 /* for $r->register_cleanup */
 
 #define MP_FMERGE(new,add,base,f) \
 if((add->flags & f) || (base->flags & f)) \
@@ -442,7 +442,7 @@ if((add->flags & f) || (base->flags & f)) \
 #define MP_ENV_off(d)    (d->flags  &= ~MPf_ENV)
 #endif
 
-#define MP_ENV(d)       (d->SetupEnv != MPf_Off)
+#define MP_ENV(d)       (d->SetupEnv == MPf_On)
 #define MP_ENV_on(d)    (d->SetupEnv = MPf_On)
 #define MP_ENV_off(d)   (d->SetupEnv = MPf_Off)
 
@@ -535,13 +535,13 @@ if((add->flags & f) || (base->flags & f)) \
 
 #define HAS_CONTEXT MODULE_MAGIC_AT_LEAST(MMN_136,2)
 #if HAS_CONTEXT
-#define CAN_SELF_BOOT_SECTIONS  (PERL_SECTIONS_SELF_BOOT)
-#define SECTION_ALLOWED     OR_ALL
-#define USABLE_CONTEXT      parms->context
+#define CAN_SELF_BOOT_SECTIONS	(PERL_SECTIONS_SELF_BOOT)
+#define SECTION_ALLOWED		OR_ALL
+#define USABLE_CONTEXT		parms->context
 #else
-#define CAN_SELF_BOOT_SECTIONS  ((parms->path==NULL)&&PERL_SECTIONS_SELF_BOOT)
-#define SECTION_ALLOWED     RSRC_CONF
-#define USABLE_CONTEXT      parms->server->lookup_defaults
+#define CAN_SELF_BOOT_SECTIONS	((parms->path==NULL)&&PERL_SECTIONS_SELF_BOOT)
+#define SECTION_ALLOWED		RSRC_CONF
+#define USABLE_CONTEXT		parms->server->lookup_defaults
 #endif
 
 #define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
@@ -598,7 +598,7 @@ if((add->flags & f) || (base->flags & f)) \
                 "access to %s failed for %s, reason: %s", \
                 file, \
                 get_remote_host(r->connection, \
-                r->per_dir_config, REMOTE_NAME), \
+				r->per_dir_config, REMOTE_NAME), \
                 msg)
 
 #else
@@ -642,9 +642,9 @@ extern void *mod_perl_dummy_mutex;
 #undef create_mutex
 #undef acquire_mutex
 #undef release_mutex
-#define create_mutex(name)  ((void *)mod_perl_dummy_mutex)
-#define acquire_mutex(mutex_id) ((int)MULTI_OK)
-#define release_mutex(mutex_id) ((int)MULTI_OK)
+#define create_mutex(name)	((void *)mod_perl_dummy_mutex)
+#define acquire_mutex(mutex_id)	((int)MULTI_OK)
+#define release_mutex(mutex_id)	((int)MULTI_OK)
 #endif /* MULTITHREAD_H */
 
 #endif /* WIN32 */
@@ -784,7 +784,7 @@ else { \
 
 #define PERL_CHILD_INIT_CMD_ENTRY \
 "PerlChildInitHandler", (crft) perl_cmd_child_init_handlers, \
-    NULL,    \
+    NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Child init handler routine name"  
 
 #define PERL_CHILD_INIT_CREATE(s) s->PerlChildInitHandler = PERL_CMD_INIT
@@ -801,7 +801,7 @@ else { \
 
 #define PERL_CHILD_EXIT_CMD_ENTRY \
 "PerlChildExitHandler", (crft) perl_cmd_child_exit_handlers, \
-    NULL,    \
+    NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Child exit handler routine name"  
 
 #define PERL_CHILD_EXIT_CREATE(s) s->PerlChildExitHandler = PERL_CMD_INIT
@@ -816,7 +816,7 @@ else { \
 
 #define PERL_RESTART_CMD_ENTRY \
 "PerlRestartHandler", (crft) perl_cmd_restart_handlers, \
-    NULL,    \
+    NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Restart handler routine name"  
 
 #define PERL_RESTART_CREATE(s) s->PerlRestartHandler = PERL_CMD_INIT
@@ -856,7 +856,7 @@ else { \
 
 #define PERL_TRANS_CMD_ENTRY \
 "PerlTransHandler", (crft) perl_cmd_trans_handlers, \
-    NULL,    \
+    NULL,	 \
     RSRC_CONF, PERL_TAKE, "the Perl Translation handler routine name"  
 
 #define PERL_TRANS_CREATE(s) s->PerlTransHandler = PERL_CMD_INIT
@@ -1250,7 +1250,7 @@ CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
 CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *one);
 CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *one, char *two);
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *d,
-                 char *one, char *two, char *three);
+			     char *one, char *two, char *three);
 CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *d, int flag);
 
 #define perl_cmd_perl_RAW_ARGS perl_cmd_perl_TAKE1
