@@ -3,6 +3,7 @@ use warnings;
 
 use lib qw(../lib);
 use ModPerl::BuildMM ();
+require ModPerl::Code;
 use Apache::Build ();
 use Config;
 use File::Spec::Functions;
@@ -62,8 +63,8 @@ my $srcdir = '../../../src/modules/perl';
 
 # link the following into APR.so so other APR:: modules can be used
 # outside of httpd
-my @names = map { "modperl_$_" } (qw(error bucket),
-                                  map { "common_$_" } qw(util log));
+my @names = ModPerl::Code::src_apr_ext();
+
 my(@obj, @clean, %src);
 for (@names) {
     push @obj, join '.', $_, 'o';
