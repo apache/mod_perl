@@ -1306,7 +1306,7 @@ status_line(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->status_line);
+    get_set_PVp(r->status_line,r->pool);
 
     OUTPUT:
     RETVAL
@@ -1326,7 +1326,7 @@ method(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->method);
+    get_set_PVp(r->method,r->pool);
 
     OUTPUT:
     RETVAL
@@ -1576,7 +1576,7 @@ content_type(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->content_type);
+    get_set_PVp(r->content_type,r->pool);
   
     OUTPUT:
     RETVAL
@@ -1586,7 +1586,7 @@ handler(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->handler);
+    get_set_PVp(r->handler,r->pool);
   
     OUTPUT:
     RETVAL
@@ -1596,7 +1596,7 @@ content_encoding(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->content_encoding);
+    get_set_PVp(r->content_encoding,r->pool);
 
     OUTPUT:
     RETVAL
@@ -1606,7 +1606,7 @@ content_language(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->content_language);
+    get_set_PVp(r->content_language,r->pool);
 
     OUTPUT:
     RETVAL
@@ -1664,7 +1664,7 @@ uri(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->uri);
+    get_set_PVp(r->uri,r->pool);
 
     OUTPUT:
     RETVAL
@@ -1674,7 +1674,7 @@ filename(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->filename);
+    get_set_PVp(r->filename,r->pool);
 #ifndef WIN32
     if(items > 1)
 	stat(r->filename, &r->finfo);
@@ -1688,7 +1688,7 @@ path_info(r, ...)
     Apache	r
 
     CODE:
-    get_set_PV(r->path_info);
+    get_set_PVp(r->path_info,r->pool);
 
     OUTPUT:
     RETVAL
