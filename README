@@ -3,15 +3,14 @@ This is mod_perl version 2.0-tobe
 *** Prerequisites ***
 
 Apache:
-  this version of mod_perl works with Apache versions 2.0.39 -
-  2.0.43. Older Apache versions aren't supported. Newer Apache version
-  may not work with this version of mod_perl, but only with the cvs
-  version which can be obtained from:
+  This version of mod_perl works with Apache versions 2.0.36 -
+  2.0.43. Newer Apache versions may work with this version of mod_perl.
+  If not, the the cvs version likely will, which can be obtained from:
   http://perl.apache.org/download/source.html#2_0_Development_Source_Distribution
 
 Perl: 
-  version 5.6.1 or higher is required. mod_perl builds with 5.6.0,
-  but it's likely that you will have problems using it.
+  Version 5.6.1 or higher is required. mod_perl builds with 5.6.0,
+  but is not supported if you have problems using it.
 
   Perl version 5.8.0 is required for threaded MPMs.
 
@@ -26,22 +25,21 @@ will be support in the future.
 
 *** Documentation ***
 
-Documentation are available in /docs. Currently they don't get
+Documentation are available in docs/. Currently they don't get
 installed on 'make install'. Certain API documentation can be found in
-/docs/api/.  the online version is at
-http://perl.apache.org/release/docs).
+docs/api/.  The online version is at http://perl.apache.org/release/docs.
 
 *** Todo ***
 
 mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
-See the todo/ directory for what remains to be done.
+See the STATUS file and todo/ directory for what remains to be done.
 
 *** Support ***
 
 For comments, questions, bug-reports, etc., join the mod_perl users
 list by sending mail to modperl-subscribe@perl.apache.org.
 
-when reporting bugs please follow the instructions at:
+When reporting bugs please follow the instructions at:
 http://perl.apache.org/release/docs/2.0/user/help/help.html#Reporting_Problems
 
 For announcements join the mod_perl announce list by sending mail to
@@ -49,11 +47,9 @@ announce-subscribe@perl.apache.org.
 
 *** Developers ***
 
+Development discussion takes place on dev@perl.apache.org
+
+*** Authors ***
+
 mod_perl-2.0 was designed and written by Doug MacEachern, with
 contributions from many others (see the CREDITS and Changes files).
-
-Doug's mod_perl-2.0 development time is sponsored by
-Covalent Technologies: http://www.covalent.net/
-
-Stas Bekman's mod_perl-2.0 development time is sponsored by
-TicketMaster: http://www.ticketmaster.com/
