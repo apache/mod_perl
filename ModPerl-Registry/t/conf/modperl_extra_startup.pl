@@ -34,9 +34,11 @@ for my $file (qw(basic.pl env.pl)) {
         trans   => \&trans,
     );
 
+    my %skip = map {$_=>1} qw(lib.pl perlrun_require.pl);
     my $dh = DirHandle->new($base_dir) or die $!;
     for my $file ($dh->read) {
         next unless $file =~ /\.pl$/;
+        next if exists $skip{$file};
 
         # skip these as they are knowlingly generate warnings
         next if $file =~ /^(closure.pl|not_executable.pl)$/;
