@@ -195,6 +195,9 @@ typedef command_rec * Apache__Command;
 
 #define GvSV_setiv(gv,val) sv_setiv(GvSV(gv), val)
 
+#define sv_is_http_code(sv) \
+ ((SvIOK(sv) && (SvIVX(sv) >= 100) && (SvIVX(sv) <= 600)) ? SvIVX(sv) : FALSE)
+
 #define Apache__ServerStarting(val) \
 { \
     GV *sgv = GvSV_init("Apache::ServerStarting"); \
