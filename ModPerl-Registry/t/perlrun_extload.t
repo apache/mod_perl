@@ -15,7 +15,7 @@ for (1..2) {
     my $res = get_body($same_interp, $url);
     skip_not_same_interp(
         !defined($res),
-        "01234",
+        "d1nd1234",
         $res,
         "PerlRun requiring an external lib with subs",
     );

@@ -52,19 +52,6 @@
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
 
-* child processes never run END blocks. a good example is
-  Apache::TestUtil, which doesn't cleanup files and dirs it has
-  created, because the END block is not run.
-  also: see the next item
-  owner: stas
-
-* ModPerl::Registry END {} block woes , described in details at the
-  forwarded message from Jim Schueler
-  http://marc.theaimsgroup.com/?l=apache-modperl&m=103720834717981&w=2
-  the whole thread is here:
-  http://marc.theaimsgroup.com/?t=103713532800003&r=1&w=2
-  owner: stas
-
 - PerlModule, PerlRequire, <Perl> in .htaccess is missing
   http://marc.theaimsgroup.com/?t=105370088700001&r=1&w=2
   Owner: geoff

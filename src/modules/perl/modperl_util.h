@@ -169,12 +169,25 @@ SV *modperl_perl_gensym(pTHX_ char *pack);
 
 void modperl_clear_symtab(pTHX_ HV *symtab);
 
-#ifdef MP_TRACE
-void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
-#endif
-
 char *modperl_file2package(apr_pool_t *p, const char *file);
 
 SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname);
+
+/**
+ * convert a compiled *CV ref to its original source code
+ * @param p       pool object (with a shortest possible life scope)
+ * @param cv      compiled *CV
+ * @return string of original source code
+ */
+char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv);
+
+#ifdef MP_TRACE
+
+void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
+
+/* dump the contents of PL_modglobal */
+void modperl_perl_modglobal_dump(pTHX);
+
+#endif
 
 #endif /* MODPERL_UTIL_H */

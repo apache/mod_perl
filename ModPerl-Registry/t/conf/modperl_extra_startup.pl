@@ -35,7 +35,7 @@ for my $file (qw(basic.pl env.pl)) {
     );
 
     my @preload = qw(basic.pl env.pl require.pl special_blocks.pl
-        redirect.pl 206.pl content_type.pl);
+                     redirect.pl 206.pl content_type.pl);
 
     for my $file (@preload) {
         $rl->handler("/registry_bb/$file");

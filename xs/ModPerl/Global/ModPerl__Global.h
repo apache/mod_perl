@@ -50,3 +50,12 @@ MP_INLINE int mpxs_ModPerl__Global_special_list_clear(pTHX_ const char *name,
     return mpxs_special_list_do(aTHX_ name, package,
                                 modperl_perl_global_avcv_clear);
 }
+
+static
+MP_INLINE int mpxs_ModPerl__Global_special_list_register(pTHX_
+                                                         const char *name,
+                                                         SV *package)
+{
+    return mpxs_special_list_do(aTHX_ name, package,
+                                modperl_perl_global_avcv_register);
+}

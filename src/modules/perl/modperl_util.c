@@ -338,7 +338,7 @@ void **modperl_xs_dl_handles_get(pTHX)
     void **handles;
 
     if (!librefs) {
-	MP_TRACE_g(MP_FUNC,
+	MP_TRACE_r(MP_FUNC,
                    "Could not get @%s for unloading.\n",
                    dl_librefs);
 	return NULL;
@@ -357,14 +357,14 @@ void **modperl_xs_dl_handles_get(pTHX)
 	SV *module_sv = *av_fetch(modules, i, FALSE);
 
 	if(!handle_sv) {
-	    MP_TRACE_g(MP_FUNC,
+	    MP_TRACE_r(MP_FUNC,
                        "Could not fetch $%s[%d]!\n",
                        dl_librefs, (int)i);
 	    continue;
 	}
 	handle = (void *)SvIV(handle_sv);
 
-	MP_TRACE_g(MP_FUNC, "%s dl handle == 0x%lx\n",
+	MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx\n",
                    SvPVX(module_sv), (unsigned long)handle);
 	if (handle) {
 	    handles[i] = handle;
@@ -388,7 +388,7 @@ void modperl_xs_dl_handles_close(void **handles)
     }
 
     for (i=0; handles[i]; i++) {
-        MP_TRACE_g(MP_FUNC, "close 0x%lx\n", (unsigned long)handles[i]);
+        MP_TRACE_r(MP_FUNC, "close 0x%lx\n", (unsigned long)handles[i]);
         modperl_sys_dlclose(handles[i]);
     }
 
@@ -544,6 +544,13 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
 {
     I32 i, oldscope = PL_scopestack_ix;
     SV **ary = AvARRAY(subs);
+
+    /* XXX: why this trace doesn't get printed to error_log when this
+     * method is called from modperl_perl_destruct. Perl_warn works
+     * just fine. may be we need to switch to perl_warn when apache
+     * closes the logging api (when?) */
+    MP_TRACE_g(MP_FUNC, "pid %lu running %d %s subs",
+               (unsigned long)getpid(), AvFILLp(subs)+1, name);
     
     for (i=0; i<=AvFILLp(subs); i++) {
 	CV *cv = (CV*)ary[i];
@@ -764,27 +771,6 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     return newRV_noinc(sv);
 }
 
-#ifdef MP_TRACE
-/* XXX: internal debug function */
-/* any non-false value for MOD_PERL_TRACE/PerlTrace enables this function */
-void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
-{
-    int i;
-    const apr_array_header_t *array;
-    apr_table_entry_t *elts;
-
-    array = apr_table_elts(table);
-    elts  = (apr_table_entry_t *)array->elts;
-    modperl_trace(MP_FUNC, "Contents of table %s", name);
-    for (i = 0; i < array->nelts; i++) {
-        if (!elts[i].key || !elts[i].val) {
-            continue;
-        }
-        modperl_trace(MP_FUNC, "%s => %s", elts[i].key, elts[i].val);
-    }    
-}
-#endif
-
 #define MP_VALID_PKG_CHAR(c) (isalnum(c) ||(c) == '_')
 #define MP_VALID_PATH_DELIM(c) ((c) == '/' || (c) =='\\')
 char *modperl_file2package(apr_pool_t *p, const char *file)
@@ -858,3 +844,108 @@ SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname)
     /* copy the SV in case the pool goes out of scope before the perl scalar */
     return newSVpv(ap_server_root_relative(p, fname), 0);
 }
+
+char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
+{
+    dSP;
+    int count;
+    SV *bdeparse;
+    char *text;
+    
+    /* B::Deparse >= 0.61 needed for blessed code references.
+     * 0.6 works fine for non-blessed code refs.
+     * notice that B::Deparse is not CPAN-updatable.
+     * 0.61 is available starting from 5.8.0
+     */
+    load_module(PERL_LOADMOD_NOIMPORT,
+                newSVpvn("B::Deparse", 10),
+                newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
+
+    ENTER;
+    SAVETMPS;
+
+    /* create the B::Deparse object */
+    PUSHMARK(sp);
+    XPUSHs(sv_2mortal(newSVpvn("B::Deparse", 10)));
+    PUTBACK;
+    count = call_method("new", G_SCALAR);
+    SPAGAIN;
+    if (count != 1) {
+        Perl_croak(aTHX_ "Unexpected return value from B::Deparse::new\n");
+    }
+    if (SvTRUE(ERRSV)) {
+        Perl_croak(aTHX_ "error: %s", SvPVX(ERRSV));
+    }
+    bdeparse = POPs;
+
+    PUSHMARK(sp);
+    XPUSHs(bdeparse);
+    XPUSHs(sv_2mortal(newRV_inc((SV*)cv)));
+    PUTBACK;
+    count = call_method("coderef2text", G_SCALAR);
+    SPAGAIN;
+    if (count != 1) {
+        Perl_croak(aTHX_ "Unexpected return value from "
+                   "B::Deparse::coderef2text\n");
+    }
+    if (SvTRUE(ERRSV)) {
+        Perl_croak(aTHX_ "error: %s", SvPVX(ERRSV));
+    }
+    
+    {
+        STRLEN n_a;
+        text = apr_pstrcat(p, "sub ", POPpx, NULL);
+    }
+    
+    PUTBACK;
+    
+    FREETMPS;
+    LEAVE;
+
+    return text;
+}
+
+#ifdef MP_TRACE
+
+/* XXX: internal debug function, a candidate for modperl_debug.c */
+/* any non-false value for MOD_PERL_TRACE/PerlTrace enables this function */
+void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
+{
+    int i;
+    const apr_array_header_t *array;
+    apr_table_entry_t *elts;
+
+    array = apr_table_elts(table);
+    elts  = (apr_table_entry_t *)array->elts;
+    modperl_trace(MP_FUNC, "Contents of table %s", name);
+    for (i = 0; i < array->nelts; i++) {
+        if (!elts[i].key || !elts[i].val) {
+            continue;
+        }
+        modperl_trace(MP_FUNC, "%s => %s", elts[i].key, elts[i].val);
+    }    
+}
+
+/* XXX: internal debug function, a candidate for modperl_debug.c */
+void modperl_perl_modglobal_dump(pTHX)
+{
+    HV *hv = PL_modglobal;
+    AV *val;
+    char *key;
+    I32 klen;
+    hv_iterinit(hv);
+
+    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------");
+    MP_TRACE_g(MP_FUNC, "| perl 0x%lx PL_modglobal 0x%lx",
+               (unsigned long)aTHX, (unsigned long)PL_modglobal);
+    
+    while ((val = (AV*)hv_iternextsv(hv, &key, &klen))) {
+        MP_TRACE_g(MP_FUNC, "| %s => 0x%lx", key, val);
+    }
+    
+    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------\n");
+        
+}
+
+
+#endif

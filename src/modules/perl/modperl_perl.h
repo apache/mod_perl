@@ -40,6 +40,8 @@ void modperl_perl_init_ids_server(server_rec *s);
 
 void modperl_perl_destruct(PerlInterpreter *perl);
 
+void modperl_perl_call_endav(pTHX);
+
 void modperl_hash_seed_init(apr_pool_t *p);
 
 void modperl_hash_seed_set(pTHX);
