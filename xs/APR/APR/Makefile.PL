@@ -20,10 +20,10 @@ if ($root) {
 ModPerl::MM::WriteMakefile(
     'NAME'	=> 'APR',
     'VERSION_FROM' => 'APR.pm',
-    'LIBS' => \@libs,
+#    'LIBS' => \@libs,
 );
 
-sub MY::const_loadlibs {
+sub XXX::MY::const_loadlibs {
     my $self = shift;
 
     my $string = $self->MM::const_loadlibs;
