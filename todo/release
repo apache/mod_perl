@@ -25,7 +25,7 @@
   above example, we can check that the pool object doesn't have the
   TEMP flag on.
 
-  but that does really solve the problem. So we aren't sure how to
+  but that doesn't really solve the problem. So we aren't sure how to
   deal with that.
 
 * $bb->cleanup segfaults (originally in TestProtocol::echo_bbs2
