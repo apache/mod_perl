@@ -1127,6 +1127,7 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
     while ((tmpval = hv_iternextsv(hv, &tmpkey, &tmpklen))) { 
 	char line[MAX_STRING_LEN]; 
 	char *value = NULL;
+	if (SvMAGICAL(tmpval)) mg_get(tmpval); /* tied hash FETCH */
 	if(SvROK(tmpval)) {
 	    if(SvTYPE(SvRV(tmpval)) == SVt_PVAV) {
 		perl_handle_command_av((AV*)SvRV(tmpval), 
@@ -1201,6 +1202,11 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
     s->next = main_server->next;
     main_server->next = s;
     cmd->server = s;
+
+#if MODULE_MAGIC_AT_LEAST(19990320, 5)
+    s->defn_name = cmd->config_file->name;
+    s->defn_line_number = cmd->config_file->line_number;
+#endif
 
     TRACE_SECTION("VirtualHost", arg);
 
