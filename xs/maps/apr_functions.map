@@ -161,7 +161,7 @@ MODULE=APR::Pool
  apr_pool_is_ancestor
 -apr_pool_set_abort
 
-MODULE=APR::Lock
+!MODULE=APR::Lock
 !apr_lock_child_init
  apr_lock_t *:apr_lock_create | mpxs_ | \
               SV *:CLASS, pool, type=0, mech=APR_LOCK_DEFAULT, scope=1, fname="lock.file" | new
