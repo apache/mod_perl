@@ -1492,17 +1492,29 @@ void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *conf
 				   key, cmd, config);
 	}
 	else {
+	    int do_quote = cmd->cmd->args_how != RAW_ARGS;
 	    SV *sv = newSV(0);
 	    sv_catpv(sv, key);
-	    sv_catpvn(sv, " \"", 2);
-
+	    if (do_quote) {
+		sv_catpvn(sv, " \"", 2);
+	    }
+	    else {
+		sv_catpvn(sv, " ", 1);
+	    }
 	    for(j=1; j<=n; j++) {
 		sv_catsv(sv, av_shift(av));
-		if(j != n)
-		    sv_catpvn(sv, "\" \"", 3);
+		if (j != n) {
+		    if (do_quote) {
+			sv_catpvn(sv, "\" \"", 3);
+		    }
+		    else {
+			sv_catpvn(sv, " ", 1);
+		    }
+		}
 	    }
-	    sv_catpvn(sv,"\"",1);
-
+	    if (do_quote) {
+		sv_catpvn(sv,"\"", 1);
+	    }
 	    perl_handle_command(cmd, config, SvPVX(sv));
 	    SvREFCNT_dec(sv);
 	}
