@@ -12,7 +12,10 @@ process size on every request:
 
     # in your startup.pl:
     use Apache::SizeLimit;
-    $Apache::SizeLimit::MAX_PROCESS_SIZE = 10000; # in KB, so this is 10MB
+    # sizes are in KB
+    $Apache::SizeLimit::MAX_PROCESS_SIZE  = 10000; # 10MB
+    $Apache::SizeLimit::MIN_SHARE_SIZE    = 1000;  # 1MB
+    $Apache::SizeLimit::MAX_UNSHARED_SIZE = 12000; # 12MB
 
     # in your httpd.conf:
     PerlFixupHandler Apache::SizeLimit
@@ -25,7 +28,9 @@ just running CGI.pm/Registry scripts:
 
     # in your CGI:
     use Apache::SizeLimit;
-    &Apache::SizeLimit::setmax(10000);	# Max Process Size in KB
+    &Apache::SizeLimit::setmax(10000);	        # Max size in KB
+    &Apache::SizeLimit::setmin(1000);	        # Min share in KB
+    &Apache::SizeLimit::setmax_unshared(12000); # Max unshared size in KB
 
 Since checking the process size can take a few system calls on some
 platforms (e.g. linux), you may want to only check the process size every
@@ -66,10 +71,29 @@ using both in combination does the job.  Personally, I just use the
 technique shown in this module and set my MaxRequestsPerChild value to
 6000.
 
+=head1 SHARED MEMORY OPTIONS
+
+In addition to simply checking the total size of a process, this
+module can factor in how much of the memory used by the process is
+actually being shared by copy-on-write.  If you don't understand how
+memory is shared in this way, take a look at the mod_perl Guide at
+http://perl.apache.org/guide/.
+
+You can take advantage of the shared memory information by setting a
+minimum shared size and/or a maximum unshared size.  Experience on one
+heavily trafficked mod_perl site showed that setting maximum unshared
+size and leaving the others unset is the most effective policy.  This
+is because it only kills off processes that are truly using too much
+physical RAM, allowing most processes to live longer and reducing the
+process churn rate.
+
 =head1 CAVEATS
 
 This module is platform dependent, since finding the size of a process
-is pretty different from OS to OS, and some platforms may not be supported.
+is pretty different from OS to OS, and some platforms may not be
+supported.  In particular, the limits on minimum shared memory and
+maximum shared memory are currently only supported on Linux and BSD.
+If you can contribute support for another OS, please do.
 
 Currently supported OSes:
 
@@ -87,6 +111,7 @@ option is of benefit.
 
 For solaris we simply retrieve the size of /proc/self/as, which
 contains the address-space image of the process, and convert to KB.
+Shared memory calculations are not supported.
 
 NOTE: This is only known to work for solaris 2.6 and above. Evidently
 the /proc filesystem has changed between 2.5.1 and 2.6. Can anyone
@@ -99,7 +124,8 @@ efficient (a lot more efficient than reading it from the /proc fs anyway).
 
 =item AIX?
 
-Uses BSD::Resource::getrusage() to determine process size.
+Uses BSD::Resource::getrusage() to determine process size.  Not sure if the
+shared memory calculations will work or not.  AIX users?
 
 =back
 
@@ -121,11 +147,16 @@ use Apache::Constants qw(:common);
 use Config;
 use strict;
 use vars qw($VERSION $HOW_BIG_IS_IT $MAX_PROCESS_SIZE
-	    $REQUEST_COUNT $CHECK_EVERY_N_REQUESTS);
+	    $REQUEST_COUNT $CHECK_EVERY_N_REQUESTS
+	    $MIN_SHARE_SIZE $MAX_UNSHARED_SIZE $START_TIME);
 
 $VERSION = '0.03';
 $CHECK_EVERY_N_REQUESTS = 1;
 $REQUEST_COUNT = 1;
+$MAX_PROCESS_SIZE  = 0;
+$MIN_SHARE_SIZE    = 0;
+$MAX_UNSHARED_SIZE = 0;
+
 
 BEGIN {
     # decide at compile time how to check for a process' memory size.
@@ -148,45 +179,58 @@ BEGIN {
 
 # return process size (in KB)
 sub linux_size_check {
-    my $size = 0;
+    my ($size, $resident, $share) = (0,0,0);
     local(*FH);
-    if (open(FH, "</proc/self/status")) {
-	while (<FH>) { last if (($size) = (/^VmRSS:\s+(\d+)/)) }
+    if (open(FH, "</proc/self/statm")) {
+	($size, $resident, $share) = split(/\s/, scalar <FH>);
 	close(FH);
     } else {
 	&error_log("Fatal Error: couldn't access /proc/self/status");
     }
-    return($size);
+    # linux on intel x86 has 4KB page size...
+    return($size*4, $share*4);
 }
 
 sub solaris_2_6_size_check {
     my $size = -s "/proc/self/as" or
 	&error_log("Fatal Error: /proc/self/as doesn't exist or is empty");
     $size = int($size/1024); # to get it into kb
-    return($size);
+    return($size, 0); # return 0 for share, to avoid undef warnings
 }
 
 sub bsd_size_check {
-    return( (&BSD::Resource::getrusage())[2] );
+    return (&BSD::Resource::getrusage())[2,3];
 }
 
 sub exit_if_too_big {
     my $r = shift;
-    return DECLINED if ($REQUEST_COUNT++ < $CHECK_EVERY_N_REQUESTS);
-    $REQUEST_COUNT = 1;
-    if ($MAX_PROCESS_SIZE) {
-	my $size = &$HOW_BIG_IS_IT();
-	if ($size > $MAX_PROCESS_SIZE) {
-	    # I have no idea if this will work on anything but UNIX
-	    if (getppid > 1) {	# this is a  child httpd
-		error_log("httpd process too big, exiting at SIZE=$size KB");
+    return DECLINED if ($CHECK_EVERY_N_REQUESTS &&
+	($REQUEST_COUNT++ % $CHECK_EVERY_N_REQUESTS));
+
+    $START_TIME ||= time;
+
+    my($size, $share) = &$HOW_BIG_IS_IT();
+
+    if (($MAX_PROCESS_SIZE && $size > $MAX_PROCESS_SIZE)
+			   ||
+	($MIN_SHARE_SIZE && $share < $MIN_SHARE_SIZE)
+			   ||
+	($MAX_UNSHARED_SIZE && ($size - $share) > $MAX_UNSHARED_SIZE)) {
+
+	    # wake up! time to die.
+	    if (getppid > 1) {	# this is a child httpd
+		my $e = time - $START_TIME;
+		my $msg = "httpd process too big, exiting at SIZE=$size KB ";
+		$msg .= " SHARE=$share KB " if ($share);
+                $msg .= " REQUESTS=$REQUEST_COUNT  LIFETIME=$e seconds";
+		error_log($msg);
 	        $r->child_terminate;
-	    } else {		# this is the main httpd
-		error_log("main process too big, SIZE=$size KB");
+
+	    } else {	# this is the main httpd, whose parent is init?
+		my $msg = "main process too big, exiting at SIZE=$size KB ";
+		$msg .= " SHARE=$share KB" if ($share);
+		error_log($msg);
 	    }
-	}
-    } else {
-	error_log("you didn't set \$Apache::SizeLimit::MAX_PROCESS_SIZE");
     }
     return OK;
 }
@@ -195,6 +239,16 @@ sub exit_if_too_big {
 # to exit if the CGI causes the process to grow too big.
 sub setmax {
     $MAX_PROCESS_SIZE = shift;
+    Apache->request->post_connection(\&exit_if_too_big);
+}
+
+sub setmin {
+    $MIN_SHARE_SIZE = shift;
+    Apache->request->post_connection(\&exit_if_too_big);
+}
+
+sub setmax_unshared {
+    $MAX_UNSHARED_SIZE = shift;
     Apache->request->post_connection(\&exit_if_too_big);
 }
 
@@ -216,5 +270,8 @@ sub error_log {
 Doug Bagley <doug+modperl@bagley.org>, channeling Procrustes.
 
 Brian Moseley <ix@maz.org>: Solaris 2.6 support
+
+Doug Steinwand and Perrin Harkins <perrin@elem.com>: added support 
+    for shared memory and additional diagnostic info
 
 =cut

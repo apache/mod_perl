@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+Apache::SizeLimit enhancements [Perrin Harkins <perrin@elem.com>]:
+- Added support for minimum shared memory and maximum unshared memory
+settings.
+- Added extra diagnostics to tell how many requests a process served,
+how long it lived, and how much shared memory it was using when
+SizeLimit killed it.
+
 win32 enhancement: APACHE_SRC can be either the build or install tree
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 
