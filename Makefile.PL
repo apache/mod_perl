@@ -113,6 +113,7 @@ my(@do_clean) = qw{
    t/logs/error_log
    t/conf/srm.conf
    t/logs/httpd.pid
+   src/modules/perl/mod_perl_version.h
 };
 #t/conf/httpd.conf
 #t/net/config.pl
@@ -495,6 +496,9 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		#$mani_src{$_}++;
 	    }
 	    close MANI;
+
+	    cp "src/modules/perl/mod_perl_version.h",
+	       "$atopdir/mod_perl_version.h";
 
 	    if($USE_APACI) {
 		open MANI, "MANIFEST" or die "open MANIFEST $!";
