@@ -10,6 +10,15 @@
 #define ap_hook_fixup  ap_hook_fixups
 #define ap_hook_log    ap_hook_log_transaction
 
+#define modperl_callback_current_callback_sv \
+    get_sv("Apache::__CurrentCallback", TRUE)
+
+#define modperl_callback_current_callback_set(desc) \
+    sv_setpv(modperl_callback_current_callback_sv, desc)
+
+#define modperl_callback_current_callback_get() \
+    SvPVX(modperl_callback_current_callback_sv)
+
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      request_rec *r, server_rec *s, AV *args);
 

@@ -60,9 +60,6 @@ require mutex lock for writing
 Apache->import:
 not yet implemented, required for exit/warn overridding
 
-$r->current_callback:
-not yet implemented
-
 $r->{get,set,push}_handlers:
 need to deal properly with modification of the current handler phase
 we're running.
