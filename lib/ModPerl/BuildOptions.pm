@@ -25,6 +25,7 @@ sub init {
     }
 
     $build->{MP_USE_DSO} = 1 unless $build->{MP_USE_STATIC};
+    $build->{MP_GENERATE_XS} = 1 unless exists $build->{MP_GENERATE_XS};
 }
 
 sub parse {
