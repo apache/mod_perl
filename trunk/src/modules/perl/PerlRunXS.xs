@@ -238,7 +238,7 @@ SV *ApachePerlRun_parse_cmdline(request_rec *r, SV *code)
 int ApachePerlRun_error_check(request_rec *r)
 {
     dTHR;
-    if(perl_eval_ok(r->server) != 0) {
+    if((perl_eval_ok(r->server) != 0) && !strnEQ(SvPVX(ERRSV), " at ", 4)) {
 	hv_store(ERRHV, r->uri, strlen(r->uri), ERRSV, FALSE);
 	sv_setpv(ERRSV, "");
 	return SERVER_ERROR;

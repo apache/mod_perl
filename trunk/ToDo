@@ -16,8 +16,6 @@ Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
 
 - make 'make test_report' more useful
 
-- Apache::exit broken under Apache::PerlRun
-
 - Apache::Registry should check return value of the subroutine,
   e.g. for REDIRECT   
 

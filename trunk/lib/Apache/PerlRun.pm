@@ -115,7 +115,7 @@ sub readscript {
 
 sub error_check {
     my $r = shift;
-    if ($@) {
+    if ($@ and substr($@,0,4) ne " at ") {
 	$r->log_error("PerlRun: `$@'");
 	$@{$r->uri} = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
