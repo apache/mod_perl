@@ -26,7 +26,7 @@ WriteMakefile(
     VERSION => $VERSION,
     macro => {
         MODPERL_SRC => $code->path,
-        PERL => $build->perl_config('perl5'),
+        PERL => $build->perl_config('perlpath'),
     },
     clean => {
         FILES => "@{ clean_files() }",
