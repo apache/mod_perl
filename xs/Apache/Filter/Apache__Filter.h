@@ -26,7 +26,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
         mpxs_write_loop(modperl_output_filter_write, modperl_filter);
     }
     else {
-        Perl_croak(aTHX_ "input filters not yet supported");
+        mpxs_write_loop(modperl_input_filter_write, modperl_filter);
     }
 
     /* XXX: ap_rflush if $| */
@@ -38,23 +38,36 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
                                                      SV **MARK, SV **SP)
 {
     modperl_filter_t *modperl_filter;
+    ap_input_mode_t mode = 0;
+    apr_read_type_e block = 0;
+    apr_off_t readbytes = 0;
     apr_size_t wanted, len=0;
     SV *buffer;
-
-    mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
-
-    if (items > 2) {
+    
+    if (items < 4) {
+        mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
+    }
+    else {
+        modperl_filter = mp_xs_sv2_modperl_filter(*MARK); MARK++;
+        mode           = (ap_input_mode_t)SvIV(*MARK); MARK++;
+        block          = (apr_read_type_e)SvIV(*MARK); MARK++;
+        readbytes      = (apr_off_t)SvIV(*MARK); MARK++;
+        buffer         = *MARK++;
+    }
+        
+    if (items == 3 || items == 6) {
         wanted = SvIV(*MARK);
     }
     else {
         wanted = MP_IOBUFSIZE;
     }
 
-    if (modperl_filter->mode == MP_OUTPUT_FILTER_MODE) {
-        len = modperl_output_filter_read(aTHX_ modperl_filter, buffer, wanted);
+    if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
+        len = modperl_input_filter_read(aTHX_ modperl_filter, mode,
+                                        block, readbytes, buffer, wanted);
     }
     else {
-        Perl_croak(aTHX_ "input filters not yet supported");
+        len = modperl_output_filter_read(aTHX_ modperl_filter, buffer, wanted);
     }
 
     return len;
