@@ -24,7 +24,7 @@ sub handler {
     # the socket to a blocking IO mode
     my $nonblocking = $socket->opt_get(APR::SO_NONBLOCK);
     if ($nonblocking) {
-        $socket->opt_set(APR::SO_NONBLOCK => 0);
+        $socket->opt_set(APR::SO_NONBLOCK, 0);
 
         # test that we really *are* in the blocking mode
         !$socket->opt_get(APR::SO_NONBLOCK)
