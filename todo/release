@@ -4,6 +4,15 @@
 
 -- see also todo/api_status
 
+* on restart DSO/static Perl loses STDERR: i.e. this code added to
+  startup.pl:
+
+  my $cnt = Apache::ServerUtil::restart_count();
+  print STDERR "************* $cnt: AAAAAAAAAA *********\n";
+
+  prints 1 but not 2.
+  owner: gozer  
+
 * pools that go out of scope:
 
   perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 
