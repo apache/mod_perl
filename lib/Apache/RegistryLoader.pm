@@ -22,11 +22,13 @@ sub handler {
         } else {
 
       # warn user if translate process fails,
-          warn "RegistryLoader: Cannot translate the URI $uri
-              into a real path to the filename. Please refer to the 
-              manpage for more information
-              or use the complete method's call like:
-              \$rl->handler(uri,filname);\n";
+          warn "RegistryLoader: Cannot translate the URI 
+	$uri
+	into a real path to the filename. You have to pass URI 
+	and not a filesystem path (e.g. /perl/test.pl vs. 
+	/home/httpd/perl/test.pl). Please refer to the 
+	manpage for more information or use the complete method's 
+	call like: \$r->handler(URI,filename);\n";
         }
     }
 
