@@ -11,7 +11,7 @@ use Apache::PerlSections;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 14;
+    plan $r, tests => 15;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
     
@@ -27,6 +27,8 @@ sub handler {
     ok not exists $Location{'/perl_sections'};
     ok exists $Location{'/perl_sections_saved'};
     ok t_cmp('PerlSection', $Location{'/perl_sections_saved'}{'AuthName'});
+
+    ok t_cmp('TIED', $Location{'/tied'}, 'Tied %Location');
 
     ok t_cmp('yes', $TestDirective::perl::comments);
 
