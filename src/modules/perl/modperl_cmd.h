@@ -42,6 +42,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
 
 #endif
 
+#define MP_CMD_SRV_FLAG(name, item, desc) \
+    AP_INIT_FLAG( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, desc )
+
 #define MP_CMD_SRV_TAKE1(name, item, desc) \
     AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
@@ -64,6 +68,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
 
 #define MP_CMD_DIR_ITERATE(name, item, desc) \
     AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
+      OR_ALL, desc )
+
+#define MP_CMD_DIR_FLAG(name, item, desc) \
+    AP_INIT_FLAG( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
 
 #endif /* MODPERL_CMD_H */
