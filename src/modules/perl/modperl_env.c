@@ -44,6 +44,9 @@ static void mp_env_request_populate(pTHX_ request_rec *r)
     apr_array_header_t *array = apr_table_elts(r->subprocess_env);
     apr_table_entry_t *elts = (apr_table_entry_t *)array->elts;
 
+    ap_add_common_vars(r);
+    ap_add_cgi_vars(r);
+
     modperl_env_untie(mg_flags);
 
     for (i = 0; i < array->nelts; i++) {
@@ -101,11 +104,11 @@ static int mp_env_request_get(pTHX_ SV *sv, MAGIC *mg)
 
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
-    ap_add_common_vars(r);
-    ap_add_cgi_vars(r);
+    MP_dDCFG;
 
-    /* XXX: should be options #ifdef MP_PERL_HV_GMAGICAL_AWARE */
-    mp_env_request_populate(aTHX_ r);
+    if (MpDirSETUP_ENV(dcfg)) {
+        mp_env_request_populate(aTHX_ r);
+    }
 
     EnvMgObj = (char *)r;
 
