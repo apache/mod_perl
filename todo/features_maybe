@@ -67,7 +67,10 @@ config features:
 
 -  PerlModule can be made more efficient using Perl_load_module
 
-
+  Status: it's possible to implement, but currently there is no way to
+          prevent from Perl logging the loading error messages to the
+          console
+  http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2003-03/msg00319.html
 
 perl language features:
 ----------------------
