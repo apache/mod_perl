@@ -414,8 +414,8 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     }
 }
 
-typedef ap_filter_t * (*filter_add_t) (const char *, void *,
-                                       request_rec *, conn_rec *);
+typedef ap_filter_t * MP_FUNC_T(filter_add_t) (const char *, void *,
+                                               request_rec *, conn_rec *);
 
 static int modperl_filter_register_connection(conn_rec *c,
                                               int idx,

@@ -7,6 +7,12 @@
 #define MP_INLINE APR_INLINE
 #endif
 
+#ifdef WIN32
+#   define MP_FUNC_T(name) (_stdcall *name)
+#else
+#   define MP_FUNC_T(name)          (*name)
+#endif
+
 #ifndef strcaseEQ
 #   define strcaseEQ(s1,s2) (!strcasecmp(s1,s2))
 #endif
