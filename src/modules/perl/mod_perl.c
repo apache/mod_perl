@@ -530,10 +530,10 @@ void modperl_register_hooks(apr_pool_t *p)
                        NULL, NULL, APR_HOOK_MIDDLE);
 
     ap_hook_open_logs(modperl_hook_init,
-                      NULL, NULL, APR_HOOK_MIDDLE);
+                      NULL, NULL, APR_HOOK_FIRST);
 
     ap_hook_post_config(modperl_hook_post_config,
-                        NULL, NULL, APR_HOOK_MIDDLE);
+                        NULL, NULL, APR_HOOK_FIRST);
 
     ap_hook_handler(modperl_response_handler,
                     NULL, NULL, APR_HOOK_MIDDLE);
@@ -576,7 +576,7 @@ void modperl_register_hooks(apr_pool_t *p)
                           NULL, NULL, APR_HOOK_FIRST);
 
     ap_hook_child_init(modperl_hook_child_init,
-                       NULL, NULL, APR_HOOK_MIDDLE);
+                       NULL, NULL, APR_HOOK_FIRST);
 
     modperl_register_handler_hooks();
 }
