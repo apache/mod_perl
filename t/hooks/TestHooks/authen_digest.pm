@@ -87,11 +87,12 @@ sub calc_digest {
 __DATA__
 <NoAutoConfig>
 <Location /TestHooks__authen_digest>
-    require valid-user
-    AuthType Digest
-    AuthName "Simple Digest"
     PerlAuthenHandler TestHooks::authen_digest
     PerlResponseHandler Apache::TestHandler::ok1
     SetHandler modperl
+
+    require valid-user
+    AuthType Digest
+    AuthName "Simple Digest"
 </Location>
 </NoAutoConfig>
