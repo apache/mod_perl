@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_04-dev
 
+PERL_SET_CONTEXT to the parent interpreter when cloning interpreters at
+request time, else dTHX might be NULL during clone in the given thread,
+which would crash the server.
+
 =item 1.99_03 - June 15, 2002
 
 win32 fix for the global Apache->request object to make sure it uses
