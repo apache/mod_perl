@@ -2,11 +2,11 @@ use strict;
 use warnings FATAL => 'all';
 
 use Test;
-use Apache::TestConfig ();
+use Apache::Test ();
 
 plan tests => 3;
 
-my $config = Apache::TestConfig->thaw;
+my $config = Apache::Test::config();
 
 my $url = '/TestAPI::send_fd';
 

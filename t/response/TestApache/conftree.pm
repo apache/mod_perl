@@ -10,7 +10,7 @@ use Apache::Directive ();
 sub handler {
     my $r = shift;
 
-    my $cfg = Apache::TestConfig->thaw;
+    my $cfg = Apache::Test::config();
     plan $r, tests => 7;
 
     ok $cfg;
