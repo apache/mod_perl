@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Add .libs/ as part of the library search path when building
+against httpd's source tree [Gozer]
+
 In the static build, run make in httpd's srclib/ early to have
 generated files present at mod_perl configure time [Gozer]
 
