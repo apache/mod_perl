@@ -1597,6 +1597,40 @@ notes(r, key=NULL, ...)
     OUTPUT:
     RETVAL
 
+void
+pnotes(r, k=Nullsv, val=Nullsv)
+    Apache r
+    SV *k
+    SV *val
+
+    PREINIT:
+    perl_request_config *cfg;
+    char *key = NULL;
+    STRLEN len;
+
+    CODE:
+    if(k) {
+	key = SvPV(k,len);
+    }
+    cfg = get_module_config(r->request_config, &perl_module);
+    if(!cfg->pnotes) cfg->pnotes = newHV();
+    if(key) {
+	if(hv_exists(cfg->pnotes, key, len)) {
+	    ST(0) = SvREFCNT_inc(*hv_fetch(cfg->pnotes, key, len, FALSE));
+	    sv_2mortal(ST(0));
+	}
+	else {
+	    ST(0) = &sv_undef;
+	}
+	if(val) {
+	    hv_store(cfg->pnotes, key, len, SvREFCNT_inc(val), FALSE);
+	}
+    }
+    else {
+	ST(0) = newRV_inc((SV*)cfg->pnotes);
+	sv_2mortal(ST(0));
+    }
+
 char *
 content_type(r, ...)
     Apache	r

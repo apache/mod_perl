@@ -936,6 +936,21 @@ int PERL_LOG_HOOK(request_rec *r)
 #define CleanupHandler cld->PerlCleanupHandler
 #endif
 
+static void per_request_cleanup(request_rec *r)
+{
+    perl_request_config *cfg = 
+	get_module_config(r->request_config, &perl_module);
+
+    if(!cfg) {
+	return;
+    }
+    if(cfg->pnotes) {
+	hv_clear(cfg->pnotes);
+	SvREFCNT_dec(cfg->pnotes);
+	cfg->pnotes = Nullhv;
+    }
+}
+
 void mod_perl_end_cleanup(void *data)
 {
     request_rec *r = (request_rec *)data;
@@ -948,6 +963,7 @@ void mod_perl_end_cleanup(void *data)
 
     MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
     perl_run_rgy_endav(r->uri);
+    per_request_cleanup(r);
 
     /* clear %ENV */
     perl_clear_env();
@@ -1201,6 +1217,12 @@ void perl_per_request_init(request_rec *r)
 	    perl_incpush(path);
 	    MP_INCPUSH_on(cld);
 	}
+    }
+
+    if(!get_module_config(r->request_config, &perl_module)) {
+	perl_request_config *cfg = 
+	    perl_create_request_config(r->pool, r->server);
+	set_module_config(r->request_config, &perl_module, cfg);
     }
 
     if(callbacks_this_request++ > 0) return;

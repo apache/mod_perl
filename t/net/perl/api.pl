@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 52;
+my $tests = 64;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -107,6 +107,20 @@ test ++$i, keys %err_headers_out;
 #test ++$i, $r->err_header_out("Content-Type");
 $r->err_header_out('X-Die' => "uhoh"); 
 test ++$i, $r->err_header_out("X-Die") eq "uhoh";
+
+for (1..3)  {
+    test ++$i, not $r->pnotes("NO_CHANCE");
+    $r->pnotes(KEY => [qw(one two)]);
+    my $val = $r->pnotes('KEY');
+    test ++$i, $val && (ref($val) eq 'ARRAY');
+    $val = $r->pnotes;
+    test ++$i, $val && (ref($val) eq 'HASH');
+    while(my($kk,$vv) = each %$val) {
+	test ++$i, $kk && $vv;
+    }
+#    use Data::Dumper;
+#    print Dumper $val;
+}
 
 $r->notes("FOO", 1); 
 $r->notes("ANoteKey", "TRUE");

@@ -971,6 +971,10 @@ typedef struct {
 } perl_dir_config;
 
 typedef struct {
+    HV *pnotes;
+} perl_request_config;
+
+typedef struct {
     int is_method;
     int is_anon;
     int in_perl;
@@ -1099,6 +1103,7 @@ module *perl_get_module_ptr(char *name, int len);
 void *perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_create_dir_config(pool *p, char *dirname);
 void *perl_create_server_config(pool *p, server_rec *s);
+perl_request_config *perl_create_request_config(pool *p, server_rec *s);
 void perl_perl_cmd_cleanup(void *data);
 
 void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg);
