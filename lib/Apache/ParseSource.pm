@@ -14,6 +14,9 @@ sub new {
         @_,
     }, $class;
 
+    my $prefixes = join '|', @{ $self->{prefixes} || [qw(ap_ apr_)] };
+    $self->{prefix_re} = qr{^($prefixes)};
+
     $Apache::Build::APXS ||= $self->{apxs};
 
     $self;
@@ -170,9 +173,8 @@ sub get_enum {
     return \@e;
 }
 
-sub wanted_functions {
-    join '|', qw(ap_ apr_ apu_);
-}
+sub wanted_functions  { shift->{prefix_re} }
+sub wanted_structures { shift->{prefix_re} }
 
 sub get_functions {
     my $self = shift;
@@ -191,7 +193,7 @@ sub get_functions {
 
     for my $entry (@$fdecls) {
         my($rtype, $name, $args) = @$entry;
-        next unless $name =~ /^($wanted)/o;
+        next unless $name =~ $wanted;
         next if $seen{$name}++;
 
         for (qw(static __inline__)) {
@@ -223,7 +225,7 @@ sub get_structs {
     my $typedef_structs = $c->get($key);
 
     my %seen;
-    my $prefix = join '|', qw(ap_ apr_ apu_);
+    my $wanted = $self->wanted_structures;
     my $other  = join '|', qw(_rec module
                               piped_log uri_components htaccess_result
                               cmd_parms cmd_func cmd_how);
@@ -232,7 +234,7 @@ sub get_structs {
     my $sx = qr(^struct\s+);
 
     while (my($type, $elts) = each %$typedef_structs) {
-        next unless $type =~ /^($prefix)/o or $type =~ /($other)$/o;
+        next unless $type =~ $wanted or $type =~ /($other)$/o;
 
         $type =~ s/$sx//;
 
