@@ -38,6 +38,7 @@ eg/makepl_args.mod_perl
 eg/README
 lib/mod_perl_hooks.pm.PL
 lib/mod_perl.pm
+lib/Apache/fork.pm
 lib/Apache/src.pm
 lib/Apache/httpd_conf.pm
 lib/Apache/testold.pm
@@ -82,6 +83,7 @@ src/modules/perl/Log.xs
 src/modules/perl/URI.xs
 src/modules/perl/Util.xs
 src/modules/perl/Table.xs
+src/modules/perl/fork.xs
 src/modules/perl/ldopts
 src/modules/perl/mod_perl.c
 src/modules/perl/mod_perl.h
@@ -92,6 +94,9 @@ src/modules/perl/perl_util.c
 src/modules/perl/perlio.c
 src/modules/perl/perl_config.c
 src/modules/perl/Makefile
+src/modules/ApacheModulePerl/ApacheModulePerl.def
+src/modules/ApacheModulePerl/ApacheModulePerl.dsp
+src/modules/ApacheModulePerl/ApacheModulePerl.mak
 src/modules/win32/mod_perl.dsp
 src/modules/win32/mod_perl.def
 src/opcodes.txt
@@ -114,7 +119,9 @@ t/modules/uri.t
 t/modules/util.t
 t/modules/psections.t
 t/modules/perlrun.t
+t/modules/perlrunxs.t
 t/modules/include.t
+t/modules/sandwich.t
 t/modules/ssi.test
 t/modules/src.t
 t/modules/stage.t
