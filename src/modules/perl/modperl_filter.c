@@ -6,7 +6,7 @@
 
 #define MP_FILTER_NAME(f) \
     (is_modperl_filter(f) \
-        ? ((modperl_filter_ctx_t *)(f)->ctx)->handler->name \
+        ? modperl_handler_name(((modperl_filter_ctx_t *)(f)->ctx)->handler) \
         : (f)->frec->name)
 
 #define MP_FILTER_TYPE(filter) \
@@ -393,7 +393,8 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
     MP_dINTERP_SELECT(r, c, s);    
 
-    MP_TRACE_h(MP_FUNC, "running filter init handler %s\n", handler->name);
+    MP_TRACE_h(MP_FUNC, "running filter init handler %s\n",
+               modperl_handler_name(handler));
             
     modperl_handler_make_args(aTHX_ &args,
                               "Apache::Filter", f,
@@ -417,7 +418,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-               "return: %d\n", handler->name, status);
+               "return: %d\n", modperl_handler_name(handler), status);
     
     return status;  
 }
@@ -493,7 +494,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-               "return: %d\n", handler->name, status);
+               "return: %d\n", modperl_handler_name(handler), status);
     
     return status;
 }
@@ -1105,7 +1106,8 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
 
         /* has to resolve early so we can check for init functions */ 
         if (!modperl_mgv_resolve(aTHX_ handler, pool, handler->name, TRUE)) {
-            Perl_croak(aTHX_ "unable to resolve handler %s\n", handler->name);
+            Perl_croak(aTHX_ "unable to resolve handler %s\n",
+                       modperl_handler_name(handler));
         }
 
         /* verify that the filter handler is of the right kind */
@@ -1115,7 +1117,7 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                 Perl_croak(aTHX_ "Can't add connection filter handler '%s' "
                            "since it doesn't have the "
                            "FilterConnectionHandler attribute set",
-                           handler->name);
+                           modperl_handler_name(handler));
             }
         }
         else {
@@ -1129,7 +1131,7 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                 Perl_croak(aTHX_ "Can't add request filter handler '%s' "
                            "since it doesn't have the "
                            "FilterRequestHandler attribute set",
-                           handler->name);
+                           modperl_handler_name(handler));
             }
         }
 
