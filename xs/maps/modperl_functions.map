@@ -130,3 +130,5 @@ MODULE=Apache::Directive
  mpxs_Apache__Directive_as_hash
  Apache__Directive_lookup | MPXS_ | ...
 
+MODULE=Apache::CmdParms
+ mpxs_Apache__CmdParms_info

@@ -13,12 +13,6 @@ typedef struct {
     modperl_module_info_t *minfo;
 } modperl_module_cfg_t;
 
-typedef struct {
-    module *modp;
-    const char *cmd_data;
-    const char *func_name;
-} modperl_module_cmd_data_t;
-
 #define MP_MODULE_INFO(modp) \
     (modperl_module_info_t *)modp->dynamic_load_handle
 
@@ -711,7 +705,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         cmd->cmd_data = info;
 
         /* no default if undefined */
-        if (!(errmsg = modperl_module_cmd_fetch(aTHX_ obj, "data", &val))) {
+        if (!(errmsg = modperl_module_cmd_fetch(aTHX_ obj, "cmd_data", &val))) {
             info->cmd_data = apr_pstrdup(p, SvPV(val, len));
         }
 
