@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+export hvrv2table (needed by Apache::Request) for aix and win32
+[Jens-Uwe Mager <jum@helios.de>, Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix 'make tar_Apache' [Geoffrey Young <gyoung@laserlink.net>]
 
 make sure global for Apache->request is reset after configuring %ENV

@@ -10,5 +10,6 @@ EXPORTS
    perl_cmd_perl_TAKE1
    perl_cmd_perl_TAKE123
    perl_perl_cmd_cleanup
+   hvrv2table
 
 
