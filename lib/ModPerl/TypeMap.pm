@@ -3,8 +3,6 @@ package ModPerl::TypeMap;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::StructureTable ();
-use Apache::FunctionTable ();
 use ModPerl::FunctionMap ();
 use ModPerl::StructureMap ();
 use ModPerl::MapUtil qw(list_first);

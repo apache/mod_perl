@@ -23,6 +23,8 @@ my $function_table = [];
 
 sub function_table {
     return $function_table if @$function_table;
+    require Apache::FunctionTable;
+    require ModPerl::FunctionTable;
     @$function_table = (@$Apache::FunctionTable, @$ModPerl::FunctionTable);
     $function_table;
 }
@@ -31,6 +33,7 @@ my $structure_table = [];
 
 sub structure_table {
     return $structure_table if @$structure_table;
+    require Apache::StructureTable;
     @$structure_table = (@$Apache::StructureTable);
     $structure_table;
 }
