@@ -12,7 +12,7 @@ use Apache::Connection ();
 use APR::Socket ();
 
 use Apache::Const -compile => 'OK';
-use APR::Const    -compile => qw(TIMEUP);
+use APR::Const    -compile => qw(TIMEUP SO_NONBLOCK);
 
 use constant BUFF_LEN => 1024;
 
@@ -20,10 +20,8 @@ sub handler {
     my Apache::Connection $c = shift;
     my APR::Socket $socket = $c->client_socket;
 
-    # XXX: workaround to a problem on some platforms (solaris, bsd,
-    # etc), where Apache 2.0.49+ forgets to set the blocking mode on
-    # the socket
-    BEGIN { use APR::Const -compile => qw(SO_NONBLOCK) }
+    # starting from Apache 2.0.49 several platforms require you to set
+    # the socket to a blocking IO mode
     $c->client_socket->opt_set(APR::SO_NONBLOCK => 0);
 
     # set timeout (20 sec) so later we can do error checking on
