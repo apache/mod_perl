@@ -297,12 +297,13 @@ modperl_module_config_get_obj(pTHX_
 #define PUSH_STR_ARG(arg) \
     if (arg) XPUSHs(sv_2mortal(newSVpv(arg,0)))
 
-static const char *modperl_module_cmd_TAKE123(cmd_parms *parms,
-                                              modperl_module_cfg_t *cfg,
+static const char *modperl_module_cmd_take123(cmd_parms *parms,
+                                              void *mconfig,
                                               const char *one,
                                               const char *two,
                                               const char *three)
 {
+    modperl_module_cfg_t *cfg = (modperl_module_cfg_t *)mconfig;
     const char *retval = NULL, *errmsg;
     const command_rec *cmd = parms->cmd;
     server_rec *s = parms->server;
@@ -388,70 +389,86 @@ static const char *modperl_module_cmd_TAKE123(cmd_parms *parms,
     return retval;
 }
 
-static const char *modperl_module_cmd_TAKE1(cmd_parms *parms,
-                                            modperl_module_cfg_t *cfg,
+static const char *modperl_module_cmd_take1(cmd_parms *parms,
+                                            void *mconfig,
                                             const char *one)
 {
-    return modperl_module_cmd_TAKE123(parms, cfg, one, NULL, NULL);
+    return modperl_module_cmd_take123(parms, mconfig, one, NULL, NULL);
 }
 
-static const char *modperl_module_cmd_TAKE2(cmd_parms *parms,
-                                            modperl_module_cfg_t *cfg,
+static const char *modperl_module_cmd_take2(cmd_parms *parms,
+                                            void *mconfig,
                                             const char *one,
                                             const char *two)
 {
-    return modperl_module_cmd_TAKE123(parms, cfg, one, two, NULL);
+    return modperl_module_cmd_take123(parms, mconfig, one, two, NULL);
 }
 
-static const char *modperl_module_cmd_FLAG(cmd_parms *parms,
-                                           modperl_module_cfg_t *cfg,
+static const char *modperl_module_cmd_flag(cmd_parms *parms,
+                                           void *mconfig,
                                            int flag)
 {
     char buf[2];
 
     apr_snprintf(buf, sizeof(buf), "%d", flag);
 
-    return modperl_module_cmd_TAKE123(parms, cfg, buf, NULL, NULL);
+    return modperl_module_cmd_take123(parms, mconfig, buf, NULL, NULL);
 }
 
-#define modperl_module_cmd_RAW_ARGS modperl_module_cmd_TAKE1
-#define modperl_module_cmd_NO_ARGS  modperl_module_cmd_TAKE1
-#define modperl_module_cmd_ITERATE  modperl_module_cmd_TAKE1
-#define modperl_module_cmd_ITERATE2 modperl_module_cmd_TAKE2
-#define modperl_module_cmd_TAKE12   modperl_module_cmd_TAKE2
-#define modperl_module_cmd_TAKE23   modperl_module_cmd_TAKE123
-#define modperl_module_cmd_TAKE3    modperl_module_cmd_TAKE123
-#define modperl_module_cmd_TAKE13   modperl_module_cmd_TAKE123
+static const char *modperl_module_cmd_no_args(cmd_parms *parms,
+                                              void *mconfig)
+{
+    return modperl_module_cmd_take123(parms, mconfig, NULL, NULL, NULL);
+}
 
-static cmd_func modperl_module_cmd_lookup(enum cmd_how args_how) {
-    switch (args_how) {
-      case RAW_ARGS:
-        return modperl_module_cmd_RAW_ARGS;
+#define modperl_module_cmd_raw_args modperl_module_cmd_take1
+#define modperl_module_cmd_iterate  modperl_module_cmd_take1
+#define modperl_module_cmd_iterate2 modperl_module_cmd_take2
+#define modperl_module_cmd_take12   modperl_module_cmd_take2
+#define modperl_module_cmd_take23   modperl_module_cmd_take123
+#define modperl_module_cmd_take3    modperl_module_cmd_take123
+#define modperl_module_cmd_take13   modperl_module_cmd_take123
+
+#if defined(AP_HAVE_DESIGNATED_INITIALIZER)
+#   define modperl_module_cmd_func_set(cmd, name) \
+    cmd->func.name = modperl_module_cmd_##name
+#else
+#   define modperl_module_cmd_func_set(cmd, name) \
+    cmd->func = modperl_module_cmd_##name
+#endif
+
+static int modperl_module_cmd_lookup(command_rec *cmd)
+{
+    switch (cmd->args_how) {
       case TAKE1:
-        return modperl_module_cmd_TAKE1;
-      case TAKE2:
-        return modperl_module_cmd_TAKE2;
       case ITERATE:
-        return modperl_module_cmd_ITERATE;
+        modperl_module_cmd_func_set(cmd, take1);
+        break;
+      case TAKE2:
       case ITERATE2:
-        return modperl_module_cmd_ITERATE2;
-      case FLAG:
-        return modperl_module_cmd_FLAG;
-      case NO_ARGS:
-        return modperl_module_cmd_NO_ARGS;
       case TAKE12:
-        return modperl_module_cmd_TAKE12;
+        modperl_module_cmd_func_set(cmd, take2);
+        break;
       case TAKE3:
-        return modperl_module_cmd_TAKE3;
       case TAKE23:
-        return modperl_module_cmd_TAKE23;
       case TAKE123:
-        return modperl_module_cmd_TAKE123;
       case TAKE13:
-        return modperl_module_cmd_TAKE13;
+        modperl_module_cmd_func_set(cmd, take3);
+        break;
+      case RAW_ARGS:
+        modperl_module_cmd_func_set(cmd, raw_args);
+        break;
+      case FLAG:
+        modperl_module_cmd_func_set(cmd, flag);
+        break;
+      case NO_ARGS:
+        modperl_module_cmd_func_set(cmd, no_args);
+        break;
+      default:
+        return FALSE;
     }
 
-    return NULL;
+    return TRUE;
 }
 
 static apr_status_t modperl_module_remove(void *data)
@@ -573,7 +590,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             SvREFCNT_dec(val);
         }
 
-        if (!(cmd->func = modperl_module_cmd_lookup(cmd->args_how))) {
+        if (!modperl_module_cmd_lookup(cmd)) {
             return apr_psprintf(p,
                                 "no command function defined for args_how=%d",
                                 cmd->args_how);
@@ -691,7 +708,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     /* 
      * if the Perl module is loaded in the base server and a vhost
      * has configuration directives from that module, but no mod_perl.c
-     * directives, scfg == NULL when modperl_module_cmd_TAKE123 is run.
+     * directives, scfg == NULL when modperl_module_cmd_take123 is run.
      * this happens before server configs are merged, so we stash a pointer
      * to what will be merged as the parent interp later. i.e. "safe hack"
      */
