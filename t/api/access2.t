@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 6, need need_lwp, need_auth;
+plan tests => 6, need need_lwp, need_auth, need_access;
 
 my $location = "/TestAPI__access2";
 
