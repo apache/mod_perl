@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Registry: make sure that $r is not in the scope when the script is
+compiled [Stas]
+
 $Apache::Server::SaveConfig added. When set to a true value,
 will not clear the content of Apache::ReadConfig:: once <Perl >
 sections are processed. [Philippe M. Chiasson <gozer@cpan.org]

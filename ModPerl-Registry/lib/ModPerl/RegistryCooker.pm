@@ -628,12 +628,12 @@ sub strip_end_data_segment {
 # args: $self - registry blessed object
 #       $eval - a ref to a scalar with the code to compile
 # rtrn: success/failure
+# note: $r must not be in scope of compile(), scripts must do
+#       my $r = shift; to get it off the args stack
 #########################################################################
 
 sub compile {
     my($self, $eval) = @_;
-
-    my $r = $self->{REQ};
 
     $self->debug("compiling $self->{FILENAME}") if DEBUG && D_COMPILE;
 
