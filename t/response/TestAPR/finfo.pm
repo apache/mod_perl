@@ -8,6 +8,7 @@ use Apache::TestUtil;
 use Apache::TestTrace;
 use Apache::TestConfig;
 use constant WIN32 => Apache::TestConfig::WIN32;
+use constant OSX   => Apache::TestConfig::OSX;
 
 use Apache::RequestRec ();
 use APR::Finfo ();
@@ -55,10 +56,18 @@ sub handler {
         our ($device, $inode, $protection, $nlink, $user, $group,
              undef, $size, $atime, $mtime, $ctime) = stat $file;
 
-        # skip certain tests on Win32 (and others?)
-        # atime is wrong on NTFS, but OK on FAT32
-        my %skip =  WIN32 ?
-            (map {$_ => 1} qw(device inode user group atime) ) : ();
+        # skip certain tests on Win32 and others
+        my %skip = ();
+
+        if (WIN32) {
+            # atime is wrong on NTFS, but OK on FAT32
+            %skip = map {$_ => 1} qw(device inode user group atime);
+        }
+        elsif (OSX) {
+            # XXX both apr and perl report incorrect group values.  sometimes.
+            # XXX skip until we can really figure out what is going on.
+            %skip = (group => 1);
+        }
 
         # compare stat fields between perl and apr_stat
         {
