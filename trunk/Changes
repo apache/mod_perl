@@ -4,15 +4,18 @@ Changes - Apache mod_perl change logfile
 
 =head1 CHANGES
 
+all changes without author attribution are by Doug MacEachern
+
 =over 3
 
 =item 1.21_01-dev
 
-add per-server configuration merge
+add per-server configuration merge [Eric Cholet <cholet@logilune.com>]
 
 `_' is no longer escaped in Apache::Registry package names
 
-fix $ENV{PATH} corruption
+fix $ENV{PATH} corruption, thanks to help from Chip Turner, 
+Oleg Bartunov and Tomasz Przygoda 
 
 mod_perl_version.h removed from MANIFEST
 
