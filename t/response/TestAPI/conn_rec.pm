@@ -5,6 +5,11 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
+use Apache::Const -compile => 'OK';
+
+#this test module is only for testing fields in the conn_rec
+#listed in apache_structures.map
+
 sub handler {
     my $r = shift;
 
@@ -48,7 +53,7 @@ sub handler {
     #output_filters
     #remain
 
-    0;
+    Apache::OK;
 }
 
 1;

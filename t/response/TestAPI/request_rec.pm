@@ -8,6 +8,11 @@ use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
 
+#this test module is only for testing fields in the request_rec
+#listed in apache_structures.map
+#XXX: GloabalRequest test should be moved elsewhere
+#     as should $| test
+
 sub handler {
     my $r = shift;
 
