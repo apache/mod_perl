@@ -345,7 +345,7 @@ MP_CMD_SRV_DECLARE(perl)
     return NULL;
 }
 
-#define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSection"
+#define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSections"
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
 #define MP_STRICT_PERLSECTIONS_SV \
     get_sv("Apache::Server::StrictPerlSections", FALSE)

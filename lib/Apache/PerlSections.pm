@@ -1,4 +1,4 @@
-package Apache::PerlSection;
+package Apache::PerlSections;
 
 use strict;
 use warnings FATAL => 'all';
