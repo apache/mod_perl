@@ -247,26 +247,21 @@ sub mpm_name {
 
 sub should_build_apache {
     my ($self) = @_;
-    return $self->{MP_AP_BUILD} ? 1 : 0;
+    return $self->{MP_USE_STATIC} ? 1 : 0;
 }
 
 sub configure_apache {
     my ($self) = @_;
 
     unless ($self->{MP_AP_CONFIGURE}) {
-        error "You specified MP_AP_BUILD but did not specify the " .
+        error "You specified MP_USE_STATIC but did not specify the " .
               "arguments to httpd's ./configure with MP_AP_CONFIGURE";
         exit 1;
     }
 
     unless ($self->{MP_AP_PREFIX}) {
-        error "You specified MP_AP_BUILD but did not speficy the " .
+        error "You specified MP_USE_STATIC but did not speficy the " .
               "location of httpd's source tree with MP_AP_PREFIX"; 
-        exit 1;
-    }
-
-    unless ($self->{MP_USE_STATIC}) {
-        error "When building httpd, you must set MP_USE_STATIC=1";
         exit 1;
     }
 
