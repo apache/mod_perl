@@ -79,7 +79,9 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
         Perl_croak(aTHX_
                    "method `%s' invoked by a `%s' object with no `r' key!",
                    cv ? GvNAME(CvGV(cv)) : "unknown",
-                   HvNAME(SvSTASH(SvRV(in))));
+                   (SvRV(in) && SvSTASH(SvRV(in)))
+                       ? HvNAME(SvSTASH(SvRV(in)))
+                       : "unknown");
     }
 
     return SvROK(sv) ? SvRV(sv) : sv;

@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+avoid segfaults when a bogus $r object is used [Stas]
+
 Remove magicness of PerlLoadModule and implement Apache::Module::add()
 for modules that implement their own configuration directives [Gozer]
 
