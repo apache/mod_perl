@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+added INSTALL.simple.mod_ssl and SSL_BASE=... Makefile.PL option
+
 Apache::PerlRun::handler changes:
 
  - PerlRunOnce option

@@ -215,6 +215,7 @@ apaci/find_source.PL
 INSTALL.simple
 INSTALL.simple.ssl
 INSTALL.simple.stronghold
+INSTALL.simple.mod_ssl
 t/docs/subr/.exists
 PerlRunXS/Makefile.PL
 PerlRunXS/PerlRunXS.pm
