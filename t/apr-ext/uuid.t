@@ -1,8 +1,7 @@
+#!perl -T
+
 use strict;
 use warnings FATAL => 'all';
-
-use blib;
-use Apache2;
 
 use Apache::Test;
 use Apache::Build ();
