@@ -56,14 +56,18 @@ MP_DECLARE_SRV_CMD(interp_max_requests);
 #define MP_dRCFG \
    modperl_request_config_t *rcfg = modperl_request_config_get(r)
 
-#define MP_dDCFG \
-   modperl_dir_config_t *dcfg = \
+#define modperl_dir_config_get(r) \
       (r ? (modperl_dir_config_t *) \
               ap_get_module_config(r->per_dir_config, &perl_module) : NULL)
 
-#define MP_dSCFG(s) \
-   modperl_srv_config_t *scfg = \
-      (modperl_srv_config_t *) \
+#define MP_dDCFG \
+   modperl_dir_config_t *dcfg = modperl_dir_config_get(r)
+
+#define modperl_srv_config_get(s) \
+ (modperl_srv_config_t *) \
           ap_get_module_config(s->module_config, &perl_module)
+
+#define MP_dSCFG(s) \
+   modperl_srv_config_t *scfg = modperl_srv_config_get(s)
 
 #endif /* MODPERL_CONFIG_H */
