@@ -9,7 +9,6 @@ typedef struct {
     apr_bucket_refcount refcount;
     SV *sv;
     PerlInterpreter *perl;
-    apr_sms_t *sms;
 } modperl_bucket_sv_t;
 
 static apr_status_t
@@ -45,7 +44,7 @@ static void modperl_bucket_sv_destroy(void *data)
 
     SvREFCNT_dec(svbucket->sv);
 
-    apr_sms_free(svbucket->sms, svbucket);
+    free(svbucket);
 }
 
 static const apr_bucket_type_t modperl_bucket_sv_type = {
@@ -64,10 +63,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
 {
     modperl_bucket_sv_t *svbucket; 
 
-    svbucket = (modperl_bucket_sv_t *)apr_sms_malloc(bucket->sms,
-                                                     sizeof(*svbucket));
-
-    svbucket->sms = bucket->sms;
+    svbucket = (modperl_bucket_sv_t *)malloc(sizeof(*svbucket));
 
     bucket = apr_bucket_shared_make(bucket, svbucket, offset, offset+len);
 
@@ -78,7 +74,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     svbucket->sv = sv;
 
     if (!bucket) {
-        apr_sms_free(svbucket->sms, svbucket);
+        free(svbucket);
         return NULL;
     }
 
@@ -88,23 +84,17 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
                (unsigned long)sv, SvREFCNT(sv));
 
     bucket->type = &modperl_bucket_sv_type;
+    bucket->free = free;
 
     return bucket;
 }
 
 apr_bucket *modperl_bucket_sv_create(pTHX_ SV *sv, int offset, int len)
 {
-    apr_sms_t *sms;
     apr_bucket *bucket;
 
-    if (!apr_bucket_global_sms) {
-        apr_sms_std_create(&apr_bucket_global_sms);
-    }
-
-    sms = apr_bucket_global_sms;
-    bucket = (apr_bucket *)apr_sms_malloc(sms, sizeof(*bucket));
+    bucket = (apr_bucket *)malloc(sizeof(*bucket));
     APR_BUCKET_INIT(bucket);
-    bucket->sms = sms;
 
     return modperl_bucket_sv_make(aTHX_ bucket, sv, offset, len);
 }
