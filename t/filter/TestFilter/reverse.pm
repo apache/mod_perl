@@ -7,7 +7,7 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter ();
 
-use Apache::Const -compile => 'OK';
+use Apache::Const -compile => qw(OK M_POST);
 
 sub handler {
     my $filter = shift;
@@ -18,21 +18,32 @@ sub handler {
             $filter->print("\n");
         }
     }
+    $filter->print("Reversed by mod_perl 2.0\n");
 
-    0;
+    return Apache::OK;
 }
 
 sub response {
     my $r = shift;
 
     $r->content_type('text/plain');
-    $r->puts(scalar reverse "1..1\n");
-    $r->puts(scalar reverse "ok 1\n");
 
-    Apache::OK;
+    if ($r->method_number == Apache::M_POST) {
+        my $data = ModPerl::Test::read_post($r);
+        $r->puts($data);
+    }
+
+    return Apache::OK;
 }
 
 1;
 __DATA__
+<Base>
+    <LocationMatch "/filter/reverse.txt">
+        PerlOutputFilterHandler TestFilter::reverse
+    </LocationMatch>
+</Base>
+
 SetHandler modperl
 PerlResponseHandler TestFilter::reverse::response
+

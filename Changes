@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Allow output streaming filters to append data to the end of the stream
+[Stas Bekman]
+
 fixes to compile with ActivePerl 5.8 beta
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

@@ -184,6 +184,7 @@ typedef enum {
 } modperl_filter_mode_e;
 
 typedef struct {
+    int seen_eos;
     int eos;
     int flush;
     ap_filter_t *f;
