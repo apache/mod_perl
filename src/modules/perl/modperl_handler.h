@@ -4,7 +4,7 @@
 typedef enum {
     MP_HANDLER_ACTION_GET,
     MP_HANDLER_ACTION_PUSH,
-    MP_HANDLER_ACTION_SET,
+    MP_HANDLER_ACTION_SET
 } modperl_handler_action_e;
 
 #define modperl_handler_array_new(p) \

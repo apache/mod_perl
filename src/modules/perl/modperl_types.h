@@ -107,7 +107,7 @@ typedef enum {
     MP_INTERP_SCOPE_HANDLER,
     MP_INTERP_SCOPE_SUBREQUEST,
     MP_INTERP_SCOPE_REQUEST,
-    MP_INTERP_SCOPE_CONNECTION,
+    MP_INTERP_SCOPE_CONNECTION
 } modperl_interp_scope_e;
 
 typedef struct {
@@ -176,7 +176,7 @@ typedef struct {
 
 typedef enum {
     MP_INPUT_FILTER_MODE,
-    MP_OUTPUT_FILTER_MODE,
+    MP_OUTPUT_FILTER_MODE
 } modperl_filter_mode_e;
 
 typedef struct {

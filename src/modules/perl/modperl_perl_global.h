@@ -9,7 +9,7 @@ typedef struct {
 } modperl_modglobal_key_t;
 
 typedef enum {
-    MP_MODGLOBAL_END,
+    MP_MODGLOBAL_END
 } modperl_modglobal_key_e;
 
 typedef struct {
