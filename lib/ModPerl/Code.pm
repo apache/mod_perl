@@ -487,12 +487,13 @@ my %trace = (
     'd' => 'directive processing',
     'e' => 'environment variables',
     'f' => 'filters',
-    'g' => 'Perl runtime interaction',
+    'g' => 'globals management',
     'h' => 'handlers',
     'i' => 'interpreter pool management',
     'm' => 'memory allocations',
     'o' => 'I/O',
-    's' => 'perl sections',
+    'r' => 'Perl runtime interaction',
+    's' => 'Perl sections',
     't' => 'benchmark-ish timings',
 );
 
