@@ -130,7 +130,7 @@ static void perl_handler_merge_avs(char *hook, AV **dest)
     base = (AV*)SvRV(*svp);
     for(i=0; i<=AvFILL(base); i++) { 
 	SV *sv = *av_fetch(base, i, FALSE);
-	av_push(*dest, sv);
+	av_push(*dest, SvREFCNT_inc(sv));
     }
 }
 
