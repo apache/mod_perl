@@ -5,7 +5,8 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 1;
+plan tests => 1,
+    have { "hangs in 2.0.40 " => sub { !have_apache_version("2.0.40"); } };
 
 my $location = '/TestFilter__in_bbs_consume';
 
