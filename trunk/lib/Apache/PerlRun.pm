@@ -209,7 +209,7 @@ sub error_check {
     my $pr = shift;
     if ($@ and substr($@,0,4) ne " at ") {
 	$pr->{r}->log_error("PerlRun: `$@'");
-	$@{$pr->uri} = $@;
+	$@{$pr->{r}->uri} = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return SERVER_ERROR;
     }
