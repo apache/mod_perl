@@ -452,6 +452,31 @@ unless (@adirs) {
 
 }
 
+	if($PERL_EXTRA_CFLAGS) {
+	    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
+	    $PERL_EXTRA_CFLAGS =~ s/\s+/ /g;
+	}
+
+	if($PERL_DEBUG) {
+	    my $lib = "$Config{archlibexp}/CORE/libperld$Config{lib_ext}";
+	    if (-e $lib) {
+		$LIBPERL = "-lperld";
+		$libperl = " -- $LIBPERL";
+	    }
+	    $PERL_EXTRA_CFLAGS .= " -g";
+	    $PERL_TRACE=1;
+	    $PERL_DESTRUCT_LEVEL=2;
+	    print "DEBUG mode...\n";
+	    print "...adding `-g' to EXTRA_CFLAGS\n";
+	    print "...turning on PERL_TRACE\n";
+	    print "...setting PERL_DESTRUCT_LEVEL=2\n";
+	    print "...linking against libperld\n" if $libperl;
+	    sleep(1);
+	}
+
+	$PERL_EXTRA_CFLAGS .= " -DPERL_DESTRUCT_LEVEL=$PERL_DESTRUCT_LEVEL"
+	    if $PERL_DESTRUCT_LEVEL;
+
 for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
     $conf = "$adir/$Configuration";
     $httpd_h = asrc($adir)."/httpd.h";
@@ -541,32 +566,8 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	}
 
 	($APACHE_ROOT = $APACHE_SRC) =~ s,/src/?$,,;
+
 	last if $NO_HTTPD; # or $USE_APACI;
-
-	if($PERL_EXTRA_CFLAGS) {
-	    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
-	    $PERL_EXTRA_CFLAGS =~ s/\s+/ /g;
-	}
-
-	if($PERL_DEBUG) {
-	    my $lib = "$Config{archlibexp}/CORE/libperld$Config{lib_ext}";
-	    if (-e $lib) {
-		$LIBPERL = "-lperld";
-		$libperl = " -- $LIBPERL";
-	    }
-	    $PERL_EXTRA_CFLAGS .= " -g";
-	    $PERL_TRACE=1;
-	    $PERL_DESTRUCT_LEVEL=2;
-	    print "DEBUG mode...\n";
-	    print "...adding `-g' to EXTRA_CFLAGS\n";
-	    print "...turning on PERL_TRACE\n";
-	    print "...setting PERL_DESTRUCT_LEVEL=2\n";
-	    print "...linking against libperld\n" if $libperl;
-	    sleep(1);
-	}
-
-	$PERL_EXTRA_CFLAGS .= " -DPERL_DESTRUCT_LEVEL=$PERL_DESTRUCT_LEVEL"
-	    if $PERL_DESTRUCT_LEVEL;
 
 	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf) and not $USE_APACI) {
 	    unless(-e $conf) {
