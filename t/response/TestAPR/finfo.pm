@@ -40,7 +40,7 @@ sub handler {
         ok $isa;
     }
 
-    my $file = Apache->server_root_relative(catfile qw(htdocs index.html));
+    my $file = $r->server_root_relative(catfile qw(htdocs index.html));
 
     # stat tests
     {

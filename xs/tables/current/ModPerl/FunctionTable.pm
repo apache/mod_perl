@@ -6338,12 +6338,8 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
-    'name' => 'mpxs_ap_server_root_relative',
-    'attr' => [
-      'static',
-      '__inline__'
-    ],
+    'return_type' => 'SV *',
+    'name' => 'modperl_server_root_relative',
     'args' => [
       {
         'type' => 'PerlInterpreter *',

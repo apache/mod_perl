@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+server_root_relative() now requires either a valid pool or an $r, $s, or $c
+object as a first argument.  also, the returned result is a copy, protecting
+against cases where the pool would go out of scope before the result.
+[Geoffrey Young]
+
 Check the success of sysopen in tmpfile() in compat [Geoffrey Young]
 
 make sure DynaLoader is loaded before XSLoader, not only with perl
