@@ -176,7 +176,7 @@ sub run {
 
     { # run the code and preserve warnings setup when it's done
         no warnings;
-        eval { $rc = &{$cv}($r, @_) };
+        eval { $rc = $cv->($r, @_) };
         $self->[STATUS] = $rc;
         ModPerl::Global::special_list_call(END => $package);
     }
