@@ -129,6 +129,8 @@ static void modperl_boot(void *data)
      */
     modperl_require_module(aTHX_ "DynaLoader", FALSE);
 #endif
+
+    IoFLUSH_on(PL_stderrgv); /* unbuffer STDERR */
 }
 
 static void modperl_xs_init(pTHX)
