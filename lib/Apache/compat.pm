@@ -53,6 +53,42 @@ sub import {
 
 package Apache::RequestRec;
 
+sub parse_args {
+    my($r, $string) = @_;
+    return () unless defined $string and $string;
+
+    return map {
+        s/%([0-9a-fA-F]{2})/pack("c",hex($1))/ge;
+        $_;
+    } split /[=&;]/, $string, -1;
+}
+
+#sorry, have to use $r->Apache::args at the moment
+#for list context splitting
+
+sub Apache::args {
+    my $r = shift;
+    my $args = $r->args;
+    return $args unless wantarray;
+    return $r->parse_args($args);
+}
+
+sub content {
+    my $r = shift;
+
+    $r->setup_client_block;
+
+    return undef unless $r->should_client_block;
+
+    my $len = $r->headers_in->get('content-length');
+
+    my $buf;
+    $r->get_client_block($buf, $len);
+
+    return $buf unless wantarray;
+    return $r->parse_args($buf)
+}
+
 our $Request;
 
 sub request {
