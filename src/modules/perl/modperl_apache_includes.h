@@ -3,7 +3,10 @@
 
 /* header files for Apache */
 
+#ifndef CORE_PRIVATE
 #define CORE_PRIVATE
+#endif
+
 #include "ap_mmn.h"
 #include "httpd.h"
 #include "http_config.h"
