@@ -44,6 +44,156 @@ unless (defined &Apache::bootstrap) {
     *Apache::Constants::bootstrap = sub {};
 }
 
+sub write_httpd_conf {
+    my $pkg = shift;
+    my %args = (conf_file => 't/httpd.conf', @_);
+    my $DIR = `pwd`; chomp $DIR;
+
+    local *CONF;
+    open CONF, ">$args{conf_file}" or die "Can't create $args{conf_file}: $!";
+    print CONF <<EOF;
+
+Port $args{port}
+User $args{user}
+Group $args{group}
+ServerName localhost
+DocumentRoot $DIR/t/eg
+
+$args{modules}
+
+ErrorLog $DIR/t/error_log
+PidFile $DIR/t/httpd.pid
+AccessConfig /dev/null
+ResourceConfig /dev/null
+LockFile $DIR/t/httpd.lock
+TypesConfig /dev/null
+TransferLog /dev/null
+ScoreBoardFile /dev/null
+
+AddType text/html .html
+
+# Look in ./blib/lib
+PerlModule ExtUtils::testlib
+
+$args{include}
+EOF
+
+    return 1;
+}
+
+sub _ask {
+    my ($prompt, $default, $mustfind) = @_;
+
+    my $response;
+    do {
+	print "$prompt [$default]: ";
+	chomp($response = <STDIN>);
+	$response ||= $default;
+    } until (!$mustfind || (-e $response || !print("$response not found\n")));
+
+    return $response;
+}
+
+sub get_test_params {
+    my $pkg = shift;
+
+    print("\nFor testing purposes, please give the full path to an httpd\n",
+	  "with mod_perl enabled.  The path defaults to \$ENV{APACHE}, if present.");
+    
+    my %conf;
+    
+    my $httpd = $ENV{'APACHE'} || which('apache') || which('httpd') || '/usr/lib/httpd/httpd';
+
+    $httpd = _ask("\n", $httpd, 1);
+    system "$Config{lns} $httpd t/httpd";
+
+    if (lc _ask("Search existing config file for dynamic module dependencies?", 'n') eq 'y') {
+	my %compiled;
+	for (`t/httpd -V`) {
+	    if (/([\w]+)="(.*)"/) {
+		$compiled{$1} = $2;
+	    }
+	}
+	$compiled{SERVER_CONFIG_FILE} =~ s,^,$compiled{HTTPD_ROOT}/,
+	    unless $compiled{SERVER_CONFIG_FILE} =~ m,^/,;
+	
+	my $file = _ask("  Config file", $compiled{SERVER_CONFIG_FILE}, 1);
+	$conf{modules} = $pkg->_read_existing_conf($file);
+    }
+
+    # Get default user (apache doesn't like to run as root, special-case it)
+    my $defuser = ($< && getpwuid $<) || 'nobody';
+    $conf{user} = _ask("User to run tests under", $defuser);
+
+    my $defgroup = ($defuser eq 'nobody' ? 'nobody' : getgrgid((getpwnam $conf{user})[3]));
+    $conf{group} = _ask("Group to run tests under", $defgroup);
+
+    $conf{port} = _ask("Port to run tests under", 8228);
+
+    return %conf;
+}
+
+sub _read_existing_conf {
+    # Returns some config text 
+    shift;
+    my ($server_conf) = @_;
+    
+    
+    open SERVER_CONF, $server_conf or die "Couldn't open $server_conf: $!";
+    my @lines = grep {!m/^\s*#/} <SERVER_CONF>;
+    close SERVER_CONF;
+    
+    my @modules       =   grep /^\s*(Add|Load)Module/, @lines;
+    my ($server_root) = (map /^\s*ServerRoot\s*(\S+)/, @lines);
+
+    # Rewrite all modules to load from an absolute path.
+    foreach (@modules) {
+	s!(\s)([^/\s]\S+/)!$1$server_root/$2!;
+    }
+    
+    # Directories where apache DSOs live.
+    my (@module_dirs) = map {m,(/\S*/),} @modules;
+    
+    # Have to make sure that dir, autoindex and perl are loaded.
+    my @required  = qw(dir autoindex perl);
+    
+    my @l = `t/httpd -l`;
+    my @compiled_in = map /^\s*(\S+)/, @l[1..@l-2];
+    
+    my @load;
+    foreach my $module (@required) {
+	if (!grep /$module/i, @compiled_in, @modules) {
+	    push @load, $module;
+	}
+    }
+    
+    # Finally compute the directives to load modules that need to be loaded.
+ MODULE:
+    foreach my $module (@load) {
+	foreach my $module_dir (@module_dirs) {
+	    if (-e "$module_dir/mod_$module.so") {
+		push @modules, "LoadModule ${module}_module $module_dir/mod_$module.so\n"; next MODULE;
+	    } elsif (-e "$module_dir/lib$module.so") {
+		push @modules, "LoadModule ${module}_module $module_dir/lib$module.so\n"; next MODULE;
+	    } elsif (-e "$module_dir/ApacheModule\u$module.dll") {
+		push @modules, "LoadModule ${module}_module $module_dir/ApacheModule\u$module.dll\n"; next MODULE;
+	    }
+	}
+    }
+		      
+    print "found the following modules: \n@modules";
+    return join '', @modules;
+}
+
+# Find an executable in the PATH.
+sub which {
+    foreach (map { "$_/$_[0]" } split /:/, $ENV{PATH}) {
+	next unless m,^/,;
+	return $_ if -x;
+    }
+}
+
+
 sub test { 
     my $s = $_[1] ? "ok $_[0]\n" : "not ok $_[0]\n";
     if($ENV{MOD_PERL}) {
@@ -190,34 +340,42 @@ sub run {
 }
 
 sub MM_test {
-    my $script = "t/TEST";
-    my $my_test = q(
+    shift();  # Don't need package name
+    my %conf = @_;
 
-test:	run_tests
-
-);
-
-    join '', qq(
-MP_TEST_SCRIPT=$script
-),
-    q(
+    my $section = <<EOF;
 TEST_VERBOSE=0
+TEST_TYPE=test_\$(LINKTYPE)
+TEST_FILE = test.pl
+TEST_FILES = t/*.t
+TESTDB_SW = -d
+
+#test:	start_httpd run_tests   kill_httpd
+
+test :: pure_all start_httpd run_tests   kill_httpd
+
+testdb:	start_httpd run_testsdb kill_httpd
 
 kill_httpd:
-	kill `cat t/logs/httpd.pid`
+	kill `cat t/httpd.pid`
 
-start_httpd: 
-	./httpd -X -d `pwd`/t &
+start_httpd:
+	t/httpd -f `pwd`/t/httpd.conf
 
-rehttpd:   kill_httpd start_httpd
+run_tests :: pure_all
+	PERL_DL_NONLAZY=1 PORT=$conf{port}
+EOF
+    chomp $section;
 
-run_tests:
-	$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
+    $section .= <<'EOF';
+ $(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) -I$(PERL_ARCHLIB) -I$(PERL_LIB) -e 'use Test::Harness qw(&runtests $$verbose); $$verbose=$(TEST_VERBOSE); runtests @ARGV;' $(TEST_FILES)
 
-),
+run_testsdb :: pure_all
+	PERL_DL_NONLAZY=1 $(FULLPERL) $(TESTDB_SW) -I$(INST_ARCHLIB) -I$(INST_LIB) -I$(PERL_ARCHLIB) -I$(PERL_LIB) $(TEST_FILE)
 
-$my_test;
+EOF
 
+    return $section;
 }
 
 sub grab {
@@ -326,3 +484,132 @@ sub run_test {
 1;
 
 __END__
+
+=head1 NAME
+
+Apache::Test - Facilitates testing of Apache::* modules
+
+=head1 SYNOPSIS
+
+ # In Makefile.PL
+ use Apache::test;
+ my %params = Apache::test->get_test_params();
+ Apache::test->write_httpd_conf(%params, include => $more_directives);
+ *MY::test = sub { Apache::test->MM_test(%params) };
+
+ # In t/*.t script (or test.pl)
+ (Some methods of Doug's that I haven't reviewed or documented yet)
+
+=head1 DESCRIPTION
+
+This module helps authors of Apache::* modules write test suites that
+can query an actual running Apache server with mod_perl and their
+modules loaded into it.  Its functionality is generally separated into
+methods that go in a Makefile.PL to configure, start, and stop the
+server, and methods that go in one of the test scripts to make HTTP
+queries and manage the results.
+
+=head1 METHODS
+
+=head2 get_test_params()
+
+This will ask the user a few questions about where the httpd binary
+is, and what user/group/port should be used when running the server.
+It will return a hash of the information it discovers.  This hash is
+suitable for passing to the C<write_httpd_conf()> method.
+
+=head2 write_httpd_conf(%params)
+
+This will write a basic C<httpd.conf> file suitable for starting a
+HTTP server during the 'make test' stage.  A hash of key/value pairs
+that affect the written file can be passed as arguments.  The
+following keys are recognized:
+
+=over 4
+
+=item * conf_file
+
+The path to the file that will be created.  Default is 't/httpd.conf'.
+
+=item * port
+
+The port that the Apache server will listen on.
+
+=item * user
+
+The user that the Apache server will run as.
+
+=item * group
+
+The group that the Apache server will run as.
+
+=item * include
+
+Any additional text you want added at the end of the config file.
+Typically you'll have some C<PerlModule> and C<Perl*Handler>
+directives to pass control to the module you're testing.  The C<blib/>
+directories will be added to the C<@INC> path when searching for
+modules, so that's nice.
+
+=back
+
+=head2 MM_test(%params)
+
+This method helps write a Makefile that supports running a web server
+during the 'make test' stage.  When you execute 'make test', 'make'
+will run 'make start_httpd', 'make run_tests', and 'make kill_httpd'
+in sequence.  You can also run these commands independently if you
+want.
+
+Pass the hash of parameters returned by C<get_test_params()> as an
+argument to C<MM_test()>.
+
+To patch into the ExtUtils::MakeMaker wizardry (voodoo?), typically
+you'll do the following in your Makefile.PL:
+
+  *MY::test = sub { Apache::test->MM_test(%params) };
+
+=head1 EXAMPLES
+
+No good examples yet.  Examples are welcome.  In the meantime, see
+L<http://forum.swarthmore.edu/~ken/modules/Apache-AuthCookie/> , which
+I'm retrofitting to use Apache::test.
+
+=head1 TO DO
+
+The MM_test method doesn't try to be very smart, it just writes the
+text that seems to work in my configuration.  I am morally against
+using the 'make' command for installing Perl modules (though of course
+I do it anyway), so I haven't looked into this very much.  Send bug
+reports or better (patches).
+
+I've got lots of code in my Apache::AuthCookie module (etc.) that
+assists in actually making the queries of the running server.  I plan
+to add that to this module, but first I need to compare what's already
+here that does the same stuff.
+
+=head1 KUDOS
+
+To Doug MacEachern for writing the first version of this module.
+
+To caelum@debian.org (Rafael Kitover) for contributing the code to
+parse existing httpd.conf files for --enable-shared=max and DSOs.
+
+=head1 CAVEATS
+
+Except for making sure that the mod_perl distribution itself can run
+'make test' okay, I haven't tried very hard to keep compatibility with
+older versions of this module.  In particular MM_test() has changed
+and probably isn't usable in the old ways, since some of its
+assumptions are gone.  But none of this was ever documented, and
+MM_test() doesn't seem to actually be used anywhere in the mod_perl
+disribution, so I don't feel so bad about it.
+
+=head1 AUTHOR
+
+Doug MacEachern (original version)
+
+Ken Williams (latest changes and this documentation)
+
+=cut
+
