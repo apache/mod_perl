@@ -755,7 +755,7 @@ sub httpd_version {
             $version =~ s/\"//g;
             last;
         }
-        elseif (/^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/) {
+        elsif (/^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/) {
             $version = $1;
             last;
         }
