@@ -7,20 +7,6 @@ use Apache2::ServerRec ();
 use Apache2::ServerUtil ();
 use Apache2::Process ();
 
-BEGIN {
-    ## XXX: Block of temporary hacks for CGI.pm
-    *Apache::request = *Apache2::request;
-    *Apache::server = *Apache2::server;
-
-    for (qw/Response RequestRec RequestUtil/) {
-        eval qq(
-                \*Apache::$_\:: = \*Apache2::$_\::;
-                \$INC{"Apache/$_.pm"} = ') . __FILE__ . "';";
-        die $@ if $@;
-    }
-}
-
-
 use DirHandle ();
 
 my $proc = Apache2->server->process;
