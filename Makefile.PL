@@ -599,6 +599,7 @@ sub MY::test {
 
     my $preamble;
     if (Apache::TestConfig::WIN32) {
+    # need to add the location of Apache's dlls to the PATH
         my $ap_bindir = $build->apr_bindir() || '';
         unless ($ap_bindir) {
             $ap_bindir = File::Spec->catdir($build->{MP_AP_PREFIX}, 'bin')
@@ -609,6 +610,7 @@ PATH = \$(PATH);$ap_bindir
 EOF
     }
     else {
+    # PASSENV confuses the Win32 command-line build
         my $env = Apache::TestConfig->passenv_makestr();
         $preamble = <<EOF;
 PASSENV = $env
