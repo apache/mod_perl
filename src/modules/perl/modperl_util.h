@@ -75,9 +75,9 @@ char *modperl_server_desc(server_rec *s, apr_pool_t *p);
 
 void modperl_xs_dl_handles_clear(pTHX);
 
-apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p);
+void **modperl_xs_dl_handles_get(pTHX);
 
-void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles);
+void modperl_xs_dl_handles_close(void **handles);
 
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data);
 
