@@ -10,7 +10,7 @@ Changes - Apache mod_perl change logfile
 
 fixups for building Stronghold 2.4
 
-new Apache::IO module
+new Apache::File module
 
 send_fd() will now accept an optional length argument
 
