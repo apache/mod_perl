@@ -10,8 +10,7 @@ Apache:
   http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
 
 Perl: 
-  Perl version 5.6.1 or higher is required. mod_perl builds with 5.6.0,
-  but is not supported if you have problems using it.
+  Perl version 5.6.1 or higher is required. 
 
   Perl version 5.8.0 or higher is required for threaded MPMs (worker,
   winnt, etc.).
