@@ -68,6 +68,14 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_ const char *classname,
 
 MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src);
 
+HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
+                             register char *key,
+                             register I32 klen,
+                             register U32 hash);
+
+#define hv_fetch_he(hv,k,l,h) \
+    modperl_perl_hv_fetch_he(aTHX_ hv, k, l, h)
+
 void modperl_perl_call_list(pTHX_ AV *subs, const char *name);
 
 void modperl_perl_exit(pTHX_ int status);

@@ -399,6 +399,41 @@ MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)
     }
 }
 
+/*
+ * similar to hv_fetch_ent, but takes string key and key len rather than SV
+ * also skips magic and utf8 fu, since we are only dealing with internal tables
+ */
+HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
+                             register char *key,
+                             register I32 klen,
+                             register U32 hash)
+{
+    register XPVHV *xhv;
+    register HE *entry;
+
+    xhv = (XPVHV *)SvANY(hv);
+    if (!xhv->xhv_array) {
+        return 0;
+    }
+
+    entry = ((HE**)xhv->xhv_array)[hash & (I32)xhv->xhv_max];
+
+    for (; entry; entry = HeNEXT(entry)) {
+        if (HeHASH(entry) != hash) {
+            continue;
+        }
+        if (HeKLEN(entry) != klen) {
+            continue;
+        }
+        if (HeKEY(entry) != key && memNE(HeKEY(entry), key, klen)) {
+            continue;
+        }
+        return entry;
+    }
+
+    return 0;
+}
+
 void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
 {
     I32 i, oldscope = PL_scopestack_ix;
