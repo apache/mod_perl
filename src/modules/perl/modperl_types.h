@@ -1,10 +1,12 @@
 #ifndef MODPERL_TYPES_H
 #define MODPERL_TYPES_H
 
-#ifdef AP_IOBUFSIZE
-#   define MP_IOBUFSIZE AP_IOBUFSIZE
-#else
-#   define MP_IOBUFSIZE 8192
+#ifndef MP_IOBUFSIZE
+#   ifdef AP_IOBUFSIZE
+#      define MP_IOBUFSIZE AP_IOBUFSIZE
+#   else
+#      define MP_IOBUFSIZE 8192
+#   endif
 #endif
 
 /* aliases */
