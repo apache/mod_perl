@@ -605,7 +605,8 @@ if($PERL_DIRECTIVE_HANDLERS) {
     $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
 }
 
-if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
+#if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
+if (0) {
     my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
     if($mmn >= MMN_130) {
 	push @xs_modules, "Apache::PerlRunXS";
