@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+fixup the output of apxs -q CFLAGS to preserve quoting
+[Sheldon Hearn <sheldonh@uunet.co.za>]
+
 dso fix fix: modules with END blocks calling xs code (e.g. DBI) would
 core dump because the xs .dso had been unloaded, now dso's are not
 unloaded until after END blocks are called.

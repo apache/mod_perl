@@ -3,9 +3,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- DEFAULT_PATH quoting fixup
-[Sheldon Hearn <sheldonh@uunet.co.za>]
-
 - PERL_STATIC_EXTS doesnt work with USE_APACI=1
 
 - solaris Perl Configure adds a space before -R in ccdlflags, see
