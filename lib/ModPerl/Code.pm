@@ -828,7 +828,9 @@ $ifdef[0]
           if (strEQ(name, "$name")) {
 EOF
 
-            if ($name eq 'DECLINE_CMD' || $name eq 'DIR_MAGIC_TYPE') {
+            if ($name eq 'DECLINE_CMD' || 
+                $name eq 'DIR_MAGIC_TYPE' ||
+                $name eq 'CRLF') {
                 print $c_fh <<EOF;
               return newSVpv($alias{$name}, 0);
 EOF

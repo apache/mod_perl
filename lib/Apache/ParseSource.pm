@@ -160,6 +160,7 @@ my %defines_wanted = (
         types      => [qw{DIR_MAGIC_TYPE}],
         override   => [qw{OR_ ACCESS_CONF RSRC_CONF}],
         log        => [qw(APLOG_)],
+        platform   => [qw{CRLF CR LF}],
     },
     APR => {
         table     => [qw{APR_OVERLAP_TABLES_}],
