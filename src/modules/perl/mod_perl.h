@@ -311,6 +311,8 @@ extern U32	mp_debug;
 #endif
 
 /* cut down on some noise in source */
+#define PERL_IS_DSO perl_module.dynamic_load_handle
+
 #define dSTATUS \
 int dstatus = DECLINED; \
 int status = dstatus
@@ -449,6 +451,11 @@ if((add->flags & f) || (base->flags & f)) \
 #define HAVE_APACHE_V_130
 #endif
 #define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
+
+#if MODULE_MAGIC_NUMBER < MMN_130
+#undef PERL_IS_DSO
+#define PERL_IS_DSO 0
+#endif
 
 #if MODULE_MAGIC_NUMBER >= 19980627
 #define MP_CONST_CHAR const char

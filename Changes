@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_03-dev
 
+don't register cleanups with the server-pool if we are a dso
+
 updated CREDITS
 
 internal $Apache::__T variable now properly set again, thanks to Stas
