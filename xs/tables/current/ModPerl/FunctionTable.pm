@@ -4305,6 +4305,28 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'char *',
+    'name' => 'mpxs_Apache__Connection_get_remote_host',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      },
+      {
+        'type' => 'int',
+        'name' => 'type'
+      },
+      {
+        'type' => 'apr_table_t *',
+        'name' => 'dir_config'
+      }
+    ]
+  },
+  {
     'return_type' => 'apr_size_t',
     'name' => 'mpxs_Apache__Filter_print',
     'attr' => [
