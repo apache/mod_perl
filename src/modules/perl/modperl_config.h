@@ -1,22 +1,22 @@
 #ifndef MODPERL_CONFIG_H
 #define MODPERL_CONFIG_H
 
-void *modperl_create_dir_config(ap_pool_t *p, char *dir);
+void *modperl_create_dir_config(apr_pool_t *p, char *dir);
 
-void *modperl_merge_dir_config(ap_pool_t *p, void *basev, void *addv);
+void *modperl_merge_dir_config(apr_pool_t *p, void *basev, void *addv);
 
-modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p);
+modperl_srv_config_t *modperl_srv_config_new(apr_pool_t *p);
 
-modperl_dir_config_t *modperl_dir_config_new(ap_pool_t *p);
+modperl_dir_config_t *modperl_dir_config_new(apr_pool_t *p);
 
 modperl_request_config_t *modperl_request_config_new(request_rec *r);
 
-void *modperl_create_srv_config(ap_pool_t *p, server_rec *s);
+void *modperl_create_srv_config(apr_pool_t *p, server_rec *s);
 
-void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv);
+void *modperl_merge_srv_config(apr_pool_t *p, void *basev, void *addv);
 
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
-                                ap_pool_t *p);
+                                apr_pool_t *p);
 
 char **modperl_srv_config_argv_init(modperl_srv_config_t *scfg, int *argc);
 

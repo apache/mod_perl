@@ -1,6 +1,6 @@
 #include "mod_perl.h"
 
-PerlInterpreter *modperl_startup(server_rec *s, ap_pool_t *p)
+PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
     MP_dSCFG(s);
     PerlInterpreter *perl;
@@ -42,7 +42,7 @@ PerlInterpreter *modperl_startup(server_rec *s, ap_pool_t *p)
     return perl;
 }
 
-void modperl_init(server_rec *base_server, ap_pool_t *p)
+void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
     modperl_srv_config_t *base_scfg =
@@ -112,14 +112,14 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
     }
 }
 
-void modperl_hook_init(ap_pool_t *pconf, ap_pool_t *plog, 
-                       ap_pool_t *ptemp, server_rec *s)
+void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
+                       apr_pool_t *ptemp, server_rec *s)
 {
     modperl_init(s, pconf);
 }
 
-void modperl_pre_config_handler(ap_pool_t *p, ap_pool_t *plog,
-                                ap_pool_t *ptemp)
+void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
+                                apr_pool_t *ptemp)
 {
 }
 

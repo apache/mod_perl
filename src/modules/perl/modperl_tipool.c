@@ -10,15 +10,15 @@
  * of PerlInterpreter objects.  it should be quite easy to reuse for
  * other data, such as database connection handles and the like.
  * while it is "generic" it is also tuned for Apache, making use of
- * ap_pool_t and the like, and implementing start/max/{min,max}_spare/
+ * apr_pool_t and the like, and implementing start/max/{min,max}_spare/
  * max_requests configuration.
  * this is another "proof-of-concept", plenty of room for improvement here
  */
 
-modperl_list_t *modperl_list_new(ap_pool_t *p)
+modperl_list_t *modperl_list_new(apr_pool_t *p)
 {
     modperl_list_t *listp = 
-        (modperl_list_t *)ap_pcalloc(p, sizeof(*listp));
+        (modperl_list_t *)apr_pcalloc(p, sizeof(*listp));
     return listp;
 }
 
@@ -143,13 +143,13 @@ modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
     return list;
 }
 
-modperl_tipool_t *modperl_tipool_new(ap_pool_t *p,
+modperl_tipool_t *modperl_tipool_new(apr_pool_t *p,
                                      modperl_tipool_config_t *cfg,
                                      modperl_tipool_vtbl_t *func,
                                      void *data)
 {
     modperl_tipool_t *tipool =
-        (modperl_tipool_t *)ap_pcalloc(p, sizeof(*tipool));
+        (modperl_tipool_t *)apr_pcalloc(p, sizeof(*tipool));
 
     tipool->ap_pool = p;
     tipool->cfg = cfg;

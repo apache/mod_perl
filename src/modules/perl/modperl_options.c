@@ -13,10 +13,10 @@ static modperl_opts_t flags_lookup(modperl_options_t *o,
     };
 }
 
-modperl_options_t *modperl_options_new(ap_pool_t *p, int type)
+modperl_options_t *modperl_options_new(apr_pool_t *p, int type)
 {
     modperl_options_t *options = 
-        (modperl_options_t *)ap_pcalloc(p, sizeof(*options));
+        (modperl_options_t *)apr_pcalloc(p, sizeof(*options));
 
     options->opts = options->unset = 
         (type == MpSrvType ? MpSrv_f_UNSET : MpDir_f_UNSET);
@@ -24,7 +24,7 @@ modperl_options_t *modperl_options_new(ap_pool_t *p, int type)
     return options;
 }
 
-const char *modperl_options_set(ap_pool_t *p, modperl_options_t *o,
+const char *modperl_options_set(apr_pool_t *p, modperl_options_t *o,
                                 const char *str)
 {
     modperl_opts_t opt;
@@ -36,7 +36,7 @@ const char *modperl_options_set(ap_pool_t *p, modperl_options_t *o,
     }
 
     if (!(opt = flags_lookup(o, str))) {
-        error = ap_pstrcat(p, "Unknown PerlOption: ", str, NULL);
+        error = apr_pstrcat(p, "Unknown PerlOption: ", str, NULL);
         return error;
     }
     
@@ -57,7 +57,7 @@ const char *modperl_options_set(ap_pool_t *p, modperl_options_t *o,
     return NULL;
 }
 
-modperl_options_t *modperl_options_merge(ap_pool_t *p,
+modperl_options_t *modperl_options_merge(apr_pool_t *p,
                                          modperl_options_t *base,
                                          modperl_options_t *add)
 {

@@ -3,8 +3,8 @@
 
 /* aliases */
 
-typedef ap_array_header_t MpAV;
-typedef ap_table_t        MpHV;
+typedef apr_array_header_t MpAV;
+typedef apr_table_t        MpHV;
 
 /* xs typemap */
 
@@ -18,8 +18,8 @@ typedef module      *  Apache__Module;
 typedef handler_rec *  Apache__Handler;
 typedef command_rec *  Apache__Command;
 
-typedef ap_table_t   * Apache__table;
-typedef ap_pool_t    * Apache__Pool;
+typedef apr_table_t   * Apache__table;
+typedef apr_pool_t    * Apache__Pool;
 
 /* mod_perl structures */
 
@@ -71,7 +71,7 @@ typedef struct {
 struct modperl_tipool_t {
     perl_mutex tiplock;
     perl_cond available;
-    ap_pool_t *ap_pool;
+    apr_pool_t *ap_pool;
     modperl_list_t *idle, *busy;
     int in_use; /* number of items currrently in use */
     int size; /* current number of items */
@@ -81,7 +81,7 @@ struct modperl_tipool_t {
 };
 
 struct modperl_interp_pool_t {
-    ap_pool_t *ap_pool;
+    apr_pool_t *ap_pool;
     server_rec *server;
     modperl_tipool_t *tipool;
     modperl_tipool_config_t *tipool_cfg;

@@ -7,12 +7,12 @@
 
 #ifdef USE_ITHREADS
 
-modperl_interp_t *modperl_interp_new(ap_pool_t *p,
+modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
 {
     modperl_interp_t *interp = 
-        (modperl_interp_t *)ap_pcalloc(p, sizeof(*interp));
+        (modperl_interp_t *)apr_pcalloc(p, sizeof(*interp));
     
     interp->mip = mip;
 
@@ -66,7 +66,7 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     perl_free(interp->perl);
 }
 
-ap_status_t modperl_interp_cleanup(void *data)
+apr_status_t modperl_interp_cleanup(void *data)
 {
     modperl_interp_destroy((modperl_interp_t *)data);
     return APR_SUCCESS;
@@ -99,7 +99,7 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
     return interp;
 }
 
-ap_status_t modperl_interp_pool_destroy(void *data)
+apr_status_t modperl_interp_pool_destroy(void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
 
@@ -154,14 +154,14 @@ static modperl_tipool_vtbl_t interp_pool_func = {
     interp_pool_dump,
 };
 
-void modperl_interp_init(server_rec *s, ap_pool_t *p,
+void modperl_interp_init(server_rec *s, apr_pool_t *p,
                          PerlInterpreter *perl)
 {
     pTHX;
     MP_dSCFG(s);
 
     modperl_interp_pool_t *mip = 
-        (modperl_interp_pool_t *)ap_pcalloc(p, sizeof(*mip));
+        (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
     modperl_tipool_t *tipool = 
         modperl_tipool_new(p, scfg->interp_pool_cfg,
@@ -175,13 +175,13 @@ void modperl_interp_init(server_rec *s, ap_pool_t *p,
     
     modperl_tipool_init(tipool);
 
-    ap_register_cleanup(p, (void*)mip,
-                        modperl_interp_pool_destroy, ap_null_cleanup);
+    apr_register_cleanup(p, (void*)mip,
+                         modperl_interp_pool_destroy, apr_null_cleanup);
 
     scfg->mip = mip;
 }
 
-ap_status_t modperl_interp_unselect(void *data)
+apr_status_t modperl_interp_unselect(void *data)
 {
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
@@ -204,12 +204,12 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
     modperl_interp_t *interp;
-    ap_pool_t *p = NULL;
+    apr_pool_t *p = NULL;
     const char *desc = NULL;
 
     if (c) {
         desc = "conn_rec pool";
-        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY, c->pool);
+        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY, c->pool);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
@@ -222,7 +222,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     }
     else if (r) {
         desc = "request_rec pool";
-        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY, r->pool);
+        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY, r->pool);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
@@ -232,8 +232,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         }
 
         /* might have already been set by a ConnectionHandler */
-        (void)ap_get_userdata((void **)&interp, MP_INTERP_KEY,
-                              r->connection->pool);
+        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY,
+                               r->connection->pool);
         if (interp) {
             desc = "r->connection pool";
             MP_TRACE_i(MP_FUNC,
@@ -255,9 +255,9 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp = modperl_interp_get(s ? s : r->server);
     ++interp->num_requests; /* should only get here once per request */
 
-    (void)ap_set_userdata((void *)interp, MP_INTERP_KEY,
-                          modperl_interp_unselect,
-                          p);
+    (void)apr_set_userdata((void *)interp, MP_INTERP_KEY,
+                           modperl_interp_unselect,
+                           p);
 
     MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx\n",
                (unsigned long)interp, desc, (unsigned long)p);
@@ -267,14 +267,14 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
 #else
 
-void modperl_interp_init(server_rec *s, ap_pool_t *p,
+void modperl_interp_init(server_rec *s, apr_pool_t *p,
                          PerlInterpreter *perl)
 {
     MP_dSCFG(s);
     scfg->perl = perl;
 }
 
-ap_status_t modperl_interp_cleanup(void *data)
+apr_status_t modperl_interp_cleanup(void *data)
 {
     return APR_SUCCESS;
 }

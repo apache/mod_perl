@@ -1,14 +1,14 @@
 #ifndef MODPERL_INTERP_H
 #define MODPERL_INTERP_H
 
-void modperl_interp_init(server_rec *s, ap_pool_t *p,
+void modperl_interp_init(server_rec *s, apr_pool_t *p,
                          PerlInterpreter *perl);
 
-ap_status_t modperl_interp_cleanup(void *data);
+apr_status_t modperl_interp_cleanup(void *data);
 
 #ifdef USE_ITHREADS
 
-modperl_interp_t *modperl_interp_new(ap_pool_t *p,
+modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl);
 
@@ -16,12 +16,12 @@ void modperl_interp_destroy(modperl_interp_t *interp);
 
 modperl_interp_t *modperl_interp_get(server_rec *s);
 
-ap_status_t modperl_interp_unselect(void *data);
+apr_status_t modperl_interp_unselect(void *data);
 
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s);
 
-ap_status_t modperl_interp_pool_destroy(void *data);
+apr_status_t modperl_interp_pool_destroy(void *data);
 
 void modperl_interp_pool_add(modperl_interp_pool_t *mip,
                              modperl_interp_t *interp);

@@ -3,7 +3,7 @@
 
 #ifdef USE_ITHREADS
 
-modperl_list_t *modperl_list_new(ap_pool_t *p);
+modperl_list_t *modperl_list_new(apr_pool_t *p);
 
 modperl_list_t *modperl_list_last(modperl_list_t *list);
 
@@ -18,7 +18,7 @@ modperl_list_t *modperl_list_prepend(modperl_list_t *list,
 modperl_list_t *modperl_list_remove(modperl_list_t *list,
                                     modperl_list_t *rlist);
 
-modperl_tipool_t *modperl_tipool_new(ap_pool_t *p,
+modperl_tipool_t *modperl_tipool_new(apr_pool_t *p,
                                      modperl_tipool_config_t *cfg,
                                      modperl_tipool_vtbl_t *func,
                                      void *data);

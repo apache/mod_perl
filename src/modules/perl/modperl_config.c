@@ -1,30 +1,30 @@
 #include "mod_perl.h"
 
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
-                                ap_pool_t *p)
+                                apr_pool_t *p)
 {
     modperl_handler_t *h = modperl_handler_new(p, (void*)name,
                                                MP_HANDLER_TYPE_CHAR);
     if (!*handlers) {
-        *handlers = ap_make_array(p, sizeof(modperl_handler_t), 1);
+        *handlers = apr_make_array(p, sizeof(modperl_handler_t), 1);
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
     }
 
     /* XXX parse_handler if Perl is running */
 
-    *(modperl_handler_t **)ap_push_array(*handlers) = h;
+    *(modperl_handler_t **)apr_push_array(*handlers) = h;
     MP_TRACE_d(MP_FUNC, "pushed handler: %s\n", h->name);
 
     return NULL;
 }
 
-void *modperl_create_dir_config(ap_pool_t *p, char *dir)
+void *modperl_create_dir_config(apr_pool_t *p, char *dir)
 {
     modperl_dir_config_t *dcfg = modperl_dir_config_new(p);
     return dcfg;
 }
 
-void *modperl_merge_dir_config(ap_pool_t *p, void *basev, void *addv)
+void *modperl_merge_dir_config(apr_pool_t *p, void *basev, void *addv)
 {
 #if 0
     modperl_dir_config_t
@@ -42,7 +42,7 @@ void *modperl_merge_dir_config(ap_pool_t *p, void *basev, void *addv)
 modperl_request_config_t *modperl_request_config_new(request_rec *r)
 {
     modperl_request_config_t *rcfg = 
-        (modperl_request_config_t *)ap_pcalloc(r->pool, sizeof(*rcfg));
+        (modperl_request_config_t *)apr_pcalloc(r->pool, sizeof(*rcfg));
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)rcfg);
 
@@ -50,34 +50,34 @@ modperl_request_config_t *modperl_request_config_new(request_rec *r)
 }
 
 #define scfg_push_argv(arg) \
-    *(const char **)ap_push_array(scfg->argv) = arg
+    *(const char **)apr_push_array(scfg->argv) = arg
 
-modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
+modperl_srv_config_t *modperl_srv_config_new(apr_pool_t *p)
 {
     modperl_srv_config_t *scfg = (modperl_srv_config_t *)
-        ap_pcalloc(p, sizeof(*scfg));
+        apr_pcalloc(p, sizeof(*scfg));
 
     scfg->flags = modperl_options_new(p, MpSrvType);
     MpSrvENABLED_On(scfg); /* mod_perl enabled by default */
     MpSrvHOOKS_ALL_On(scfg); /* all hooks enabled by default */
 
-    scfg->argv = ap_make_array(p, 2, sizeof(char *));
+    scfg->argv = apr_make_array(p, 2, sizeof(char *));
 
     scfg_push_argv((char *)ap_server_argv0);
 
 #ifdef MP_CONNECTION_NUM_HANDLERS
     scfg->connection_cfg = (modperl_connection_config_t *)
-        ap_pcalloc(p, sizeof(*scfg->connection_cfg));
+        apr_pcalloc(p, sizeof(*scfg->connection_cfg));
 #endif
 
 #ifdef MP_FILES_NUM_HANDLERS
     scfg->files_cfg = (modperl_files_config_t *)
-        ap_pcalloc(p, sizeof(*scfg->files_cfg));
+        apr_pcalloc(p, sizeof(*scfg->files_cfg));
 #endif
 
 #ifdef MP_PROCESS_NUM_HANDLERS
     scfg->process_cfg = (modperl_process_config_t *)
-        ap_pcalloc(p, sizeof(*scfg->process_cfg));
+        apr_pcalloc(p, sizeof(*scfg->process_cfg));
 #endif
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
@@ -85,10 +85,10 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
     return scfg;
 }
 
-modperl_dir_config_t *modperl_dir_config_new(ap_pool_t *p)
+modperl_dir_config_t *modperl_dir_config_new(apr_pool_t *p)
 {
     modperl_dir_config_t *dcfg = (modperl_dir_config_t *)
-        ap_pcalloc(p, sizeof(modperl_dir_config_t));
+        apr_pcalloc(p, sizeof(modperl_dir_config_t));
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)dcfg);
 
@@ -118,14 +118,14 @@ char **modperl_srv_config_argv_init(modperl_srv_config_t *scfg, int *argc)
     return (char **)scfg->argv->elts;
 }
 
-void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
+void *modperl_create_srv_config(apr_pool_t *p, server_rec *s)
 {
     modperl_srv_config_t *scfg = modperl_srv_config_new(p);
 
 #ifdef USE_ITHREADS
     scfg->interp_pool_cfg = 
         (modperl_tipool_config_t *)
-        ap_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
+        apr_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
 
     /* XXX: determine reasonable defaults */
     scfg->interp_pool_cfg->start = 3;
@@ -142,7 +142,7 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
 mrg->item = add->item ? add->item : base->item
 
 /* XXX: this is not complete */
-void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
+void *modperl_merge_srv_config(apr_pool_t *p, void *basev, void *addv)
 {
     modperl_srv_config_t
         *base = (modperl_srv_config_t *)basev,
@@ -207,7 +207,7 @@ MP_DECLARE_SRV_CMD(switches)
 MP_DECLARE_SRV_CMD(options)
 {
     MP_dSCFG(parms->server);
-    ap_pool_t *p = parms->pool;
+    apr_pool_t *p = parms->pool;
     const char *error;
 
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
