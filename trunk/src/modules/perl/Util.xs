@@ -6,6 +6,8 @@
 
 #define TIME_NOW time(NULL)
 #define DEFAULT_TIME_FORMAT "%a, %d %b %Y %H:%M:%S %Z"
+
+#define parsedate ap_parseHTTPdate
  
 static pool *util_pool(void)
 {
@@ -56,3 +58,9 @@ ht_time(t=TIME_NOW, fmt=DEFAULT_TIME_FORMAT, gmt=TRUE)
 
     OUTPUT:
     RETVAL
+
+time_t
+parsedate(date)
+    const char *date
+
+    
