@@ -16,8 +16,6 @@ listed in deprecated_features.txt
 
 - PerlOpCodeMask (experimental in 1.xx)
 
-- PerlFreshRestart
-
 - cgi emulation: %ENV management:
    - %ENV is currently only saved/restored for the perl-script
      handler, i.e. changes to %ENV outside of a perl-script handler
