@@ -24,6 +24,10 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name);
 modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
                                        modperl_handler_t *h);
 
+int modperl_handler_equal(modperl_handler_t *h1, modperl_handler_t *h2);
+
+MpAV *modperl_handler_array_merge(apr_pool_t *p, MpAV *base_a, MpAV *add_a);
+
 void modperl_handler_make_args(pTHX_ AV **avp, ...);
 
 MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,

@@ -50,6 +50,24 @@ static HE *S_hv_fetch_he(pTHX_ HV *hv,
 
 #define hv_fetch_he(hv,k,l,h) S_hv_fetch_he(aTHX_ hv,k,l,h)
 
+int modperl_mgv_equal(modperl_mgv_t *mgv1,
+                      modperl_mgv_t *mgv2)
+{
+    for (; mgv1 && mgv2; mgv1=mgv1->next, mgv2=mgv2->next) {
+        if (mgv1->hash != mgv2->hash) {
+            return FALSE;
+        }
+        if (mgv1->len != mgv2->len) {
+            return FALSE;
+        }
+        if (memNE(mgv1->name, mgv2->name, mgv1->len)) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
 modperl_mgv_t *modperl_mgv_new(apr_pool_t *p)
 {
     return (modperl_mgv_t *)apr_pcalloc(p, sizeof(modperl_mgv_t));

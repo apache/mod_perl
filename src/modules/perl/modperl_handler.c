@@ -18,6 +18,51 @@ modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
     return modperl_handler_new(p, h->name);
 }
 
+int modperl_handler_equal(modperl_handler_t *h1, modperl_handler_t *h2)
+{
+    if (h1->mgv_cv && h2->mgv_cv) {
+        return modperl_mgv_equal(h1->mgv_cv, h2->mgv_cv);
+    }
+    return strEQ(h1->name, h2->name);
+}
+
+MpAV *modperl_handler_array_merge(apr_pool_t *p, MpAV *base_a, MpAV *add_a)
+{
+    int i, j;
+    modperl_handler_t **base_h, **add_h, **mrg_h;
+    MpAV *mrg_a;
+
+    if (!add_a) {
+        return base_a;
+    }
+
+    if (!base_a) {
+        return add_a;
+    }
+
+    mrg_a = apr_array_copy(p, base_a);
+
+    mrg_h  = (modperl_handler_t **)mrg_a->elts;
+    base_h = (modperl_handler_t **)base_a->elts;
+    add_h  = (modperl_handler_t **)add_a->elts;
+
+    for (i=0; i<base_a->nelts; i++) {
+        for (j=0; j<add_a->nelts; j++) {
+            if (modperl_handler_equal(base_h[i], add_h[j])) {
+                MP_TRACE_d(MP_FUNC, "both base and new config contain %s\n",
+                           add_h[j]->name);
+            }
+            else {
+                modperl_handler_array_push(mrg_a, add_h[j]);
+                MP_TRACE_d(MP_FUNC, "base does not contain %s\n",
+                           add_h[j]->name);
+            }
+        }
+    }
+
+    return mrg_a;
+}
+
 void modperl_handler_make_args(pTHX_ AV **avp, ...)
 {
     va_list args;
