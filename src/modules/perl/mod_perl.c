@@ -14,7 +14,7 @@ static apr_status_t modperl_shutdown(void *data)
     perl_destruct(perl);
     perl_free(perl);
 
-    if (handles = modperl_xs_dl_handles_get(cdata->pool)) {
+    if ((handles = modperl_xs_dl_handles_get(cdata->pool))) {
         modperl_xs_dl_handles_close(handles);
     }
 
