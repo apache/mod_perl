@@ -24,6 +24,11 @@
  */
 #   undef __attribute__
 #   define __attribute__(arg)
+
+#   ifdef MP_SOURCE_SCAN_NEED_ITHREADS
+/* just need to have pTHX_ defined for proper prototypes */
+#      define USE_ITHREADS
+#   endif
 #endif
 
 #include "EXTERN.h"

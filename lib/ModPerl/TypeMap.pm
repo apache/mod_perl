@@ -194,11 +194,28 @@ sub map_args {
     return [ map $self->map_arg($_), @$args ]
 }
 
+#this is needed for modperl-only functions
+#unlike apache/apr functions which are remapped to a mpxs_ function
+sub thx_fixup {
+    my($self, $func) = @_;
+
+    my $first = $func->{args}->[0];
+
+    return unless $first;
+
+    if ($first->{type} =~ /^PerlInterpreter/) {
+        shift @{ $func->{args} };
+        $func->{thx} = 1;
+    }
+}
+
 sub map_function {
     my($self, $func) = @_;
 
     my $map = $self->function_map->{ $func->{name} };
     return unless $map;
+
+    $self->thx_fixup($func);
 
     return unless $self->can_map($map, $func->{return_type},
                                  map $_->{type}, @{ $func->{args} });
@@ -208,6 +225,7 @@ sub map_function {
                                       $func->{return_type} || 'void'),
        args        => $self->map_args($func),
        perl_name   => $map->{name},
+       thx         => $func->{thx},
     };
 
     for (qw(dispatch argspec orig_args prefix)) {

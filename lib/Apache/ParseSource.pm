@@ -2,7 +2,7 @@ package Apache::ParseSource;
 
 use strict;
 use Apache::Build ();
-use Config ();
+use Config;
 
 our $VERSION = '0.02';
 
@@ -60,7 +60,12 @@ sub scan {
     my $c = C::Scan->new(filename => $self->{scan_filename});
 
     $c->set(includeDirs => $self->includes);
-    $c->set(Defines => '-DCORE_PRIVATE -DMP_SOURCE_SCAN');
+
+    my $defines = '-DCORE_PRIVATE -DMP_SOURCE_SCAN';
+    unless ($Config{useithreads} and $Config{useithreads} eq 'define') {
+        $defines .= ' -DMP_SOURCE_SCAN_NEED_ITHREADS';
+    }
+    $c->set(Defines => $defines);
 
     bless $c, 'Apache::ParseSource::Scan';
 }
