@@ -55,13 +55,18 @@ MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb)
     return rv;
 }
 
-MP_INLINE apr_status_t modperl_wbucket_write(modperl_wbucket_t *wb,
+MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
                                              const char *buf,
                                              apr_size_t *wlen)
 {
     apr_size_t len = *wlen;
     *wlen = 0;
 
+    if (!wb) {
+        /* the response is not initialized yet */
+        Perl_croak(aTHX_ "can't be called before the response phase");
+    }
+    
     if ((len + wb->outcnt) > sizeof(wb->outbuf)) {
         apr_status_t rv;
         if ((rv = modperl_wbucket_flush(wb)) != APR_SUCCESS) {
@@ -505,7 +510,8 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
     return filter->rc;
 }
 
-MP_INLINE apr_status_t modperl_input_filter_write(modperl_filter_t *filter,
+MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
+                                                  modperl_filter_t *filter,
                                                   const char *buf,
                                                   apr_size_t *len)
 {
@@ -519,11 +525,12 @@ MP_INLINE apr_status_t modperl_input_filter_write(modperl_filter_t *filter,
     return APR_SUCCESS;
 }
 
-MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
+MP_INLINE apr_status_t modperl_output_filter_write(pTHX_
+                                                   modperl_filter_t *filter,
                                                    const char *buf,
                                                    apr_size_t *len)
 {
-    return modperl_wbucket_write(&filter->wbucket, buf, len);
+    return modperl_wbucket_write(aTHX_ &filter->wbucket, buf, len);
 }
 
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,

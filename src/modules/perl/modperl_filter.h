@@ -16,7 +16,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *b,
 
 MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *b);
 
-MP_INLINE apr_status_t modperl_wbucket_write(modperl_wbucket_t *b,
+MP_INLINE apr_status_t modperl_wbucket_write(pTHX_
+                                             modperl_wbucket_t *b,
                                              const char *buf,
                                              apr_size_t *wlen);
 
@@ -50,7 +51,8 @@ MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
                                                 SV *buffer,
                                                 apr_size_t wanted);
 
-MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
+MP_INLINE apr_status_t modperl_output_filter_write(pTHX_
+                                                   modperl_filter_t *filter,
                                                    const char *buf,
                                                    apr_size_t *len);
 
@@ -75,7 +77,8 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
                                                SV *buffer,
                                                apr_size_t wanted);
     
-MP_INLINE apr_status_t modperl_input_filter_write(modperl_filter_t *filter,
+MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
+                                                  modperl_filter_t *filter,
                                                   const char *buf,
                                                   apr_size_t *len);
 

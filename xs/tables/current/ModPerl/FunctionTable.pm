@@ -3253,6 +3253,10 @@ $ModPerl::FunctionTable = [
     ],
     'args' => [
       {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
         'type' => 'modperl_filter_t *',
         'name' => 'filter'
       },
@@ -3273,6 +3277,10 @@ $ModPerl::FunctionTable = [
       '__inline__'
     ],
     'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
       {
         'type' => 'modperl_filter_t *',
         'name' => 'filter'
@@ -4467,6 +4475,10 @@ $ModPerl::FunctionTable = [
       '__inline__'
     ],
     'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
       {
         'type' => 'modperl_wbucket_t *',
         'name' => 'b'
