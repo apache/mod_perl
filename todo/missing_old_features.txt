@@ -21,8 +21,6 @@ listed in deprecated_features.txt
 
 - die 404;
 
-- env MOD_PERL_TRACE support
-
 - ... others ...
 
 - Apache::__T flag which tells whether we run under -T (in 5.8.0 can check
