@@ -279,10 +279,10 @@ MP_CMD_SRV_DECLARE(config_requires)
 
 MP_CMD_SRV_DECLARE(post_config_requires)
 {
-    MP_dSCFG(parms->server);
-    MP_PERL_DECLARE_CONTEXT;
     apr_pool_t *p = parms->pool;
     apr_finfo_t finfo;
+    MP_dSCFG(parms->server);
+    MP_PERL_DECLARE_CONTEXT;
 
     if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
         if (finfo.filetype != APR_NOFILE) {
