@@ -18,6 +18,18 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+remove Cwd::fastcwd usage from Apache::Registry, use
+$Apache::Server::CWD set at server startup instead
+
+new method Apache->chdir_file, use to replace 
+chdir File::Basename::dirname($r->filename) in Apache::Registry
+
+replace Apache::Registry use of IO::File w/ Apache::gensym
+
+new function Apache::gensym (xsub, does same as Symbol::gensym)
+
+add $ServerRoot/lib/perl to @INC at startup
+
 overload the get_basic_auth_pw function so we can change AuthType on
 the fly via $r->connection->auth_type
 

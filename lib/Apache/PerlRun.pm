@@ -3,9 +3,6 @@ package Apache::PerlRun;
 use strict;
 use vars qw($Debug);
 use Apache::Constants qw(:common OPT_EXECCGI);
-use File::Basename ();
-use IO::File ();
-use Cwd ();
 
 unless ($Apache::Registry::{NameWithVirtualHost}) {
     $Apache::Registry::NameWithVirtualHost = 1;
@@ -109,7 +106,8 @@ sub readscript {
     my $filename = $r->filename;
     $r->log_error("Apache::PerlRun->readscript $filename")
 	    if $Debug && $Debug & 4;
-    my $fh = IO::File->new($filename);
+    my $fh = Apache::gensym(__PACKAGE__);
+    open $fh, $filename;
     local $/;
     my $code = <$fh>;
     return \$code;
@@ -124,14 +122,6 @@ sub error_check {
 	return SERVER_ERROR;
     }
     return OK;
-}
-
-sub chdir_file {
-    my $r = shift;
-    my $cwd = Cwd::fastcwd();
-    chdir File::Basename::dirname($r->filename);
-    *0 = \$r->filename;
-    return $cwd;
 }
 
 #XXX not good enough yet
@@ -175,7 +165,8 @@ sub handler {
     my $code = readscript($r);
     parse_cmdline($r, $code);
 
-    my $cwd = chdir_file($r);
+    *0 = \$r->filename;
+    $r->chdir_file;
 
     my $eval = join '',
 		    'package ',
@@ -186,7 +177,7 @@ sub handler {
                     "\n";
     compile($r, \$eval);
 
-    chdir $cwd;
+    chdir $Apache::Server::CWD;
 
     {   #flush the namespace
 	no strict;

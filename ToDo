@@ -16,10 +16,10 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- should Apache::Registry use filename instead of vhost_name+uri?
+              Ben Laurie <ben@algroup.co.uk>
+
 - make sure SERVER_VERSION/SERVER_SUBVERSION, etc. is in sync w/ 1.3b7 changes
-- get rid of Cwd::fastcwd() usage
-- get rid of IO::File usage, replace with Apache::gensym
-- add chdir_file to replace chdir File::Basename::dirname
 
 - perl-status?mod_perl_hooks broken under win32?
 
@@ -60,6 +60,25 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+
+- SIGALRM/flock, Lincoln Stein <lstein@cshl.org>
+ I often use this type of code to handle possibly blocked flocks():
+
+        local($timed_out) = 0;
+        local($SIG{ALRM}) = sub { $timed_out++; die "timed out"; }
+        alarm(5);
+        eval {
+                flock(FH,LOCK_EX);
+        }
+        alarm(0);
+        if ($timed_out) {
+           print "We timed out.  Sorry.";
+        }
+
+ This has been working in standalone CGI scripts, but no longer works
+ in mod_perl.  The signal handler gets called, but then the flock()
+ call seems to be restarted. It never exit the eval.  So this is no big 
+ deal, I just replace the blocking flock() with a poll.
 
 - find a way to prevent "httpd spinning" (bug in Perl, not mod_perl)
 

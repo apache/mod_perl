@@ -50,6 +50,11 @@ sub seqno {0}
 sub server { shift }
 sub is_virtual {0}
 sub header_out {""}
+sub chdir_file {
+    my($r, $file) = @_;
+    $file ||= $r->filename;
+    Apache::chdir_file(undef, $file);
+}
 
 1;
 
