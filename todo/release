@@ -131,10 +131,6 @@
   beginning of child_end it'll raise the flag and lower it at the end
   of child_exit.
 
-* push_handlers has a problem when called to add handlers to the
-  current phase (segfaults, see t/error/push_handlers.t) check that
-  get_handlers sees that added handler.
-
 * Apache::Reload
   - needs to handle properly redefined subs warnings
 

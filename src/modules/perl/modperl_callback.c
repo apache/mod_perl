@@ -132,7 +132,7 @@ int modperl_callback_run_handlers(int idx, int type,
     modperl_handler_t **handlers;
     apr_pool_t *p = NULL;
     MpAV *av, **avp;
-    int i, nelts, status = OK;
+    int i, status = OK;
     const char *desc = NULL;
     AV *av_args = Nullav;
 
@@ -213,17 +213,11 @@ int modperl_callback_run_handlers(int idx, int type,
 
     modperl_callback_current_callback_set(desc);
     
-    /* XXX: deal with {push,set}_handler of the phase we're currently in */
-    /* for now avoid the segfault by not letting av->nelts grow if
-     * somebody push_handlers to the phase we are currently in, but
-     * different handler e.g. jumping from 'modperl' to 'perl-script',
-     * before calling push_handler */
-    nelts = av->nelts;
     MP_TRACE_h(MP_FUNC, "[%s] running %d %s handlers\n",
-               modperl_pid_tid(p), nelts, desc);
+               modperl_pid_tid(p), av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
-    for (i=0; i<nelts; i++) {
+    for (i=0; i<av->nelts; i++) {
         status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
         
         MP_TRACE_h(MP_FUNC, "%s returned %d\n", handlers[i]->name, status);
@@ -242,9 +236,10 @@ int modperl_callback_run_handlers(int idx, int type,
 
                 status = modperl_errsv(aTHX_ status, r, s);
 #ifdef MP_TRACE
-                if (i+1 != nelts) {
-                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d uncalled handlers\n",
-                               status, desc, nelts-i-1);
+                if (i+1 != av->nelts) {
+                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
+                               "uncalled handlers\n",
+                               status, desc, av->nelts-i-1);
                 }
 #endif
                 break;
@@ -258,9 +253,10 @@ int modperl_callback_run_handlers(int idx, int type,
 
             if (status == OK) {
 #ifdef MP_TRACE
-                if (i+1 != nelts) {
-                    MP_TRACE_h(MP_FUNC, "OK ends the %s stack, leaving %d uncalled handlers\n",
-                               desc, nelts-i-1);
+                if (i+1 != av->nelts) {
+                    MP_TRACE_h(MP_FUNC, "OK ends the %s stack, "
+                               "leaving %d uncalled handlers\n",
+                               desc, av->nelts-i-1);
                 }
 #endif
                 break;
@@ -268,9 +264,10 @@ int modperl_callback_run_handlers(int idx, int type,
             if (status != DECLINED) {
                 status = modperl_errsv(aTHX_ status, r, s);
 #ifdef MP_TRACE
-                if (i+1 != nelts) {
-                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d uncalled handlers\n",
-                               status, desc, nelts-i-1);
+                if (i+1 != av->nelts) {
+                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
+                               "uncalled handlers\n",
+                               status, desc, av->nelts-i-1);
                 }
 #endif
                 break;
@@ -282,6 +279,18 @@ int modperl_callback_run_handlers(int idx, int type,
              * Apache should handle whatever mod_perl returns, 
              * so there is no need to mess with the status
              */
+        }
+
+        /* it's possible that during the last callback a new handler
+         * was pushed onto the same phase it's running from. av needs
+         * to be updated.
+         *
+         * XXX: would be nice to somehow optimize that
+         */
+        avp = modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
+                                              type, idx, FALSE, NULL);
+        if (avp && (av = *avp)) {
+            handlers = (modperl_handler_t **)av->elts;
         }
     }
 
