@@ -71,6 +71,19 @@ script called 'start_httpd' to start apache, and include a line like this:
 
         PERL5LIB=/usr/local/foo/myperllibs; export PERL5LIB
 
+When you have problems with modules not being reloaded, please refer
+to the following lines in 'perlmodlib':
+
+"Always use -w. Try to use strict; (or use strict qw(...);).  Remember
+that you can add no strict qw(...); to individual blocks of code that
+need less strictness. Always use -w. Always use -w!  Follow the
+guidelines in the perlstyle(1) manual."
+
+Warnings when running under mod_perl is enabled with 'PerlWarn On' in
+your httpd.conf.
+
+It will most likely help you to find the problem. Really.
+
 =head1 OPTIONS
 
 =over 4
@@ -101,6 +114,7 @@ mod_perl(3)
 
 =head1 AUTHOR
 
-Doug MacEachern
+Currently maintained by Ask Bjoern Hansen.
+Written by Doug MacEachern.
 
 
