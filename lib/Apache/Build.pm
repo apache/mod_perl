@@ -704,7 +704,7 @@ my %perl_config_pm_alias = (
 my $mm_replace = join '|', keys %perl_config_pm_alias;
 
 my @perl_config_pm =
-  (qw(cc cpprun ld ar rm ranlib lib_ext dlext cccdlflags lddlflags),
+  (qw(cc cpprun rm ranlib lib_ext dlext obj_ext cccdlflags lddlflags),
    values %perl_config_pm_alias);
 
 sub make_tools {
@@ -723,7 +723,7 @@ sub make_tools {
     my $mm = bless {}, 'MM';
     $mm->init_others;
 
-    for (qw(RM_F MV)) {
+    for (qw(RM_F MV LD AR)) {
         my $val = $mm->{$_};
         $val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
         print $fh $self->canon_make_attr($_ => $val);
@@ -797,13 +797,13 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS)
 	$(MODPERL_RANLIB) $@
 
-.SUFFIXES: .xs .c .o .lo .i .s
+.SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
 .c.lo:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS_SHLIB) \
-	-c $< && $(MODPERL_MV) $*.o $*.lo
+	-c $< && $(MODPERL_MV) $*$(MODPERL_OBJ_EXT) $*.lo
 
-.c.o:
+.c$(MODPERL_OBJ_EXT):
 	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $<
 
 .c.i:
@@ -815,17 +815,17 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 .xs.c:
 	$(MODPERL_XSUBPP) $*.xs >$@
 
-.xs.o:
+.xs$(MODPERL_OBJ_EXT):
 	$(MODPERL_XSUBPP) $*.xs >$*.c
 	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $*.c
 
 .xs.lo:
 	$(MODPERL_XSUBPP) $*.xs >$*.c
 	$(MODPERL_CC) $(MODPERL_CCFLAGS_SHLIB) \
-	-c $*.c && $(MODPERL_MV) $*.o $*.lo
+	-c $*.c && $(MODPERL_MV) $*$(MODPERL_OBJ_EXT) $*.lo
 
 clean:
-	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo *.i *.s \
+	$(MODPERL_RM_F) *.a *.so *.xsc *$(MODPERL_OBJ_EXT) *.lo *.i *.s \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
