@@ -20,6 +20,29 @@ modperl_interp_t *modperl_interp_new(ap_pool_t *p,
     return interp;
 }
 
+void modperl_interp_destroy(modperl_interp_t *interp)
+{
+    dTHXa(interp->perl);
+
+    MP_TRACE_i(MP_FUNC, "interp == 0x%lx\n",
+               (unsigned long)interp);
+
+    if (MpInterpIN_USE(interp)) {
+        MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
+    }
+
+
+    PL_perl_destruct_level = 2;
+    perl_destruct(interp->perl);
+    perl_free(interp->perl);
+}
+
+ap_status_t modperl_interp_cleanup(void *data)
+{
+    modperl_interp_destroy((modperl_interp_t *)data);
+    return APR_SUCCESS;
+}
+
 modperl_interp_t *modperl_interp_get(server_rec *s)
 {
     MP_dSCFG(s);
@@ -82,18 +105,7 @@ ap_status_t modperl_interp_pool_destroy(void *data)
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
 
     while (mip->head) {
-        dTHXa(mip->head->perl);
-
-        MP_TRACE_i(MP_FUNC, "head == 0x%lx\n",
-                   (unsigned long)mip->head);
-        if (MpInterpIN_USE(mip->head)) {
-            MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
-        }
-
-        PL_perl_destruct_level = 2;
-        perl_destruct(mip->head->perl);
-        perl_free(mip->head->perl);
-
+        modperl_interp_destroy(mip->head);
         mip->head->perl = NULL;
         mip->head = mip->head->next;
     }
@@ -101,8 +113,7 @@ ap_status_t modperl_interp_pool_destroy(void *data)
     MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
                (unsigned long)mip->parent);
 
-    perl_destruct(mip->parent->perl);
-    perl_free(mip->parent->perl);
+    modperl_interp_destroy(mip->parent);
     mip->parent->perl = NULL;
 
     ap_destroy_lock(mip->mip_lock);
@@ -136,6 +147,7 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     for (i=0; i<mip->start; i++) {
         modperl_interp_t *interp = modperl_interp_new(p, mip->parent);
         interp->perl = perl_clone(perl, TRUE);
+        MpInterpCLONED_On(interp);
 
         if (cur_interp) {
             cur_interp->next = interp;

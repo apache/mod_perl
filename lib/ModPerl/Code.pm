@@ -69,7 +69,8 @@ for (qw(Process Connection Files)) {
 my %flags = (
     Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
-    Interp => [qw(NONE IN_USE PUTBACK)],
+    Interp => [qw(NONE IN_USE PUTBACK CLONED)],
+    Handler => [qw(NONE METHOD)],
 );
 
 sub new {
@@ -271,8 +272,9 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
+my @c_src_names = qw(interp log);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives);
-my @c_names   = (qw(mod_perl modperl_interp modperl_log), @g_c_names);
+my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
 sub c_files { map { "$_.c" } @c_names }
 sub o_files { map { "$_.o" } @c_names }
 
