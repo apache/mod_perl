@@ -290,7 +290,6 @@ sub close {
     close $self;
 }
 
-
 my $TMPNAM = 'aaaaaa';
 my $TMPDIR = $ENV{'TMPDIR'} || $ENV{'TEMP'} || '/tmp';
 ($TMPDIR) = $TMPDIR =~ /^([^<>|;*]+)$/; #untaint
@@ -301,15 +300,19 @@ sub tmpfile {
     my $class = shift;
     my $limit = 100;
     my $r = Apache->request;
+
     unless ($r) {
         die "cannot use Apache::File->tmpfile ".
           "without 'SetHandler perl-script' or 'PerlOptions +GlobalRequest'";
     }
+
     while ($limit--) {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
         my $fh = $class->new;
+
         sysopen($fh, $tmpfile, $Mode, $Perms);
         $r->pool->cleanup_register(sub { unlink $tmpfile });
+
         if ($fh) {
 	    return wantarray ? ($tmpfile, $fh) : $fh;
 	}
@@ -317,7 +320,6 @@ sub tmpfile {
 }
 
 # the following functions now live in Apache::Response
-use Apache::Response;
 # * discard_request_body
 # * meets_conditions
 # * set_content_length
@@ -326,7 +328,6 @@ use Apache::Response;
 # * update_mtime
 
 # the following functions now live in Apache::RequestRec
-use Apache::RequestRec;
 # * mtime
 
 
