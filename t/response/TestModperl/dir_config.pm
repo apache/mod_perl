@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 12;
+    plan $r, tests => 13;
 
     #Apache::RequestRec::dir_config tests
 
@@ -36,6 +36,13 @@ sub handler {
 
         ok t_cmp(\@expected, \@received,
                  'testing PerlAddVar ITERATE2');
+    }
+
+    # sub-section overrides parent section for the same key
+    {
+        my $key = 'TestModperl__server_rec_Key_set_in_Base';
+        ok t_cmp('SubSecValue', $r->dir_config->get($key),
+                 "sub-section overrides parent section for the same key");
     }
 
     {
@@ -159,4 +166,4 @@ PerlSetVar TestModperl__request_rec_Key1 1_SetValue
 PerlAddVar TestModperl__request_rec_Key1 2_AddValue
 PerlAddVar TestModperl__request_rec_Key1 3_AddValue 4_AddValue
 
-PerlSetVar TestModperl__server_rec_Key_set_in_Base WhatEver
+PerlSetVar TestModperl__server_rec_Key_set_in_Base SubSecValue
