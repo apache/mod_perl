@@ -63,12 +63,6 @@ sub args {
 	       $val ? $r->query_string($val) : $r->query_string);
 }
 
-sub cgi_var {
-    my($r, $key) = @_;
-    my $val = $r->cgi_env($key);
-    return $val;
-}
-
 *READ = \&read unless defined &READ;
 
 sub read {
@@ -925,34 +919,6 @@ We also provide some methods that make it easier to support the CGI
 type of interface.
 
 =over 4
-
-=item $r->cgi_env
-
-Return a %hash that can be used to set up a standard CGI environment.
-Typical usage would be:
-
-   %ENV = $r->cgi_env
-
-B<NOTE:> The $ENV{GATEWAY_INTERFACE} is set to C<'CGI-Perl/1.1'> so
-you can say:
-
-   if($ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/) {
-       # do mod_perl stuff
-   }
-   else {
-       # do normal CGI stuff
-   }
-
-When given a key => value pair, this will set an environment variable.
-
-   $r->cgi_env(REMOTE_GROUP => "camels");
-
-=item $r->cgi_var($key);
-
-Calls $r->cgi_env($key) in a scalar context to prevent the mistake
-of calling in a list context.
-
-   my $doc_root = $r->cgi_env('DOCUMENT_ROOT');
 
 =item $r->send_cgi_header()
 
