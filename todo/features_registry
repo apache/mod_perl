@@ -30,6 +30,15 @@
 
 - documentation
 
+- acl support via 'filetest qw(access)'. It was decided that having
+  this feature by default will be too expensive, because of the
+  overhead it adds. The solution was to add a sub-class that will
+  provide that functionality. It wasn't decided whether it'll be in
+  the core or should live on CPAN. Also it wasn't decided whether
+  RegistryCooker should provide the necessary implementation
+  callbacks. See:
+  http://marc.theaimsgroup.com/?t=107636627000001&r=1&w=2
+
 ### optimizations ###
 
 - currently the default is to strip __DATA__|__END__ and everything
