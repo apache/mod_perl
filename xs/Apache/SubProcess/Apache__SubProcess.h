@@ -75,7 +75,7 @@ static int modperl_spawn_proc_prog(pTHX_
         return rc;
     }
 
-    apr_pool_note_subprocess(p, procnew, kill_after_timeout);
+    apr_pool_note_subprocess(p, procnew, APR_KILL_AFTER_TIMEOUT);
 
     if (!(*script_in = procnew->in)) {
         Perl_croak(aTHX_ "broken program-in stream");
