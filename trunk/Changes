@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_03-dev
 
+use a "%s" format for ap_log_{r}error, so %'s in the log message
+string are not treated as format strings
+
 INSTALL updates [Tom Hukins <tom@eborcom.com>]
 
 =item 1.16_02 - November 30, 1998

@@ -469,16 +469,16 @@ if((add->flags & f) || (base->flags & f)) \
 #if MODULE_MAGIC_NUMBER > 19970909
 
 #define mod_perl_warn(s,msg) \
-    aplog_error(APLOG_MARK, APLOG_WARNING | APLOG_NOERRNO, s, msg)
+    aplog_error(APLOG_MARK, APLOG_WARNING | APLOG_NOERRNO, s, "%s", msg)
 
 #define mod_perl_error(s,msg) \
-    aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, s, msg)
+    aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, s, "%s", msg)
 
 #define mod_perl_notice(s,msg) \
-    aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_NOTICE, s, msg)
+    aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_NOTICE, s, "%s", msg)
 
 #define mod_perl_debug(s,msg) \
-    aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_DEBUG, s, msg)
+    aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_DEBUG, s, "%s", msg)
 
 #define mod_perl_log_reason(msg, file, r) \
     aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, r->server, \
