@@ -52,6 +52,12 @@ sub configure {
     }
 
     my $httpd_version = $build->httpd_version;
+    unless ($httpd_version) {
+        $build->phat_warn(<<EOF);
+Unable to determine server version, attempting to continue..
+EOF
+        $httpd_version = 'unknown';
+    }
 
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
       $httpd_version, $VERSION, $^V;

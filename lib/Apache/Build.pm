@@ -418,11 +418,13 @@ sub dir {
         }
     }
 
-    unless ($dir and -d $dir) {
-        for (@INC) {
-            last if -d ($dir = "$_/auto/Apache/include");
-        }
-    }
+# we not longer install Apache headers, so dont bother looking in @INC
+# might end up finding 1.x headers anyhow
+#    unless ($dir and -d $dir) {
+#        for (@INC) {
+#            last if -d ($dir = "$_/auto/Apache/include");
+#        }
+#    }
 
     return $self->{dir} = $dir;
 }
@@ -450,16 +452,16 @@ sub find {
 sub ap_includedir  {
     my($self, $d) = @_;
 
-    $d ||= $self->dir;
-
     return $self->{ap_includedir}
       if $self->{ap_includedir} and -d $self->{ap_includedir};
 
-    if (-e "$d/include/httpd.h") {
+    $d ||= $self->apxs('-q' => 'INCLUDEDIR') || $self->dir;
+
+    if (-e "$d/include/ap_release.h") {
         return $self->{ap_includedir} = "$d/include";
     }
 
-    $self->{ap_includedir} = $self->apxs('-q' => 'INCLUDEDIR');
+    $self->{ap_includedir} = $d;
 }
 
 #--- parsing apache *.h files ---
