@@ -1033,7 +1033,7 @@ print(r, ...)
     }
     else {
 	CV *cv = GvCV(gv_fetchpv("Apache::write_client", FALSE, SVt_PVCV));
-	hard_timeout("mod_perl: Apache->print", r);
+	soft_timeout("mod_perl: Apache->print", r);
 	PUSHMARK(mark);
 #ifdef PERL_OBJECT
 	(void)(*CvXSUB(cv))(cv, pPerl); /* &Apache::write_client; */
