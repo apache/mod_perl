@@ -10,7 +10,7 @@ use APR::Util ();
 use APR::Error ();
 use Apache::Filter ();
 
-use APR::Const -compile => qw(SUCCESS EOF);
+use APR::Const    -compile => qw(SUCCESS EOF);
 use Apache::Const -compile => qw(OK MODE_GETLINE);
 
 sub handler {
@@ -27,7 +27,7 @@ sub handler {
 
     for (;;) {
         my $rv = $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
-                if ($rv != APR::SUCCESS && $rv != APR::EOF) {
+        if ($rv != APR::SUCCESS && $rv != APR::EOF) {
             my $error = APR::Error::strerror($rv);
             warn __PACKAGE__ . ": get_brigade: $error\n";
             last;
