@@ -1500,7 +1500,7 @@ static void clear_symtab(HV *symtab)
 	if(SvTYPE(val) != SVt_PVGV) 
 	    continue;
 	if((sv = GvSV((GV*)val)))
-	    sv = &sv_undef;
+	    sv_setsv(GvSV((GV*)val), &sv_undef);
 	if((hv = GvHV((GV*)val)))
 	    hv_clear(hv);
 	if((av = GvAV((GV*)val)))
