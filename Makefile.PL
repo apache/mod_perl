@@ -167,6 +167,8 @@ sub configure {
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
       $httpd_version, $VERSION, $^V;
 
+    my $apr_config = $build->get_apr_config; #cache it
+
     for (@{ clean_files() }) {
         debug "unlink...$_" if -e $_ && unlink;
     }
