@@ -5,10 +5,6 @@ in no particular order
 tied filehandle interface:
  -CLOSE, GETC, PRINTF, READLINE
 
-APR::Table tie mechanism:
-$r->headers_out->{KEY} is not currently supported
-might want to make this optional, disabled by default
-
 $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
 haven't looked close enough yet)

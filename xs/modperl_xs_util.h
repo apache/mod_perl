@@ -5,6 +5,10 @@
 #undef mp_xs_sv2_r /* defined in modperl_xs_sv_convert.h */
 #define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
 
+#undef mp_xs_sv2_APR__Table
+#define mp_xs_sv2_APR__Table(sv) \
+   (apr_table_t *)modperl_hash_tied_object(aTHX_ "APR::Table", sv)
+
 #define mpxs_Apache__RequestRec_pool(r) r->pool
 #define mpxs_Apache__Connection_pool(c) c->pool
 #define mpxs_Apache__URI_pool(u)        ((modperl_uri_t *)u)->pool

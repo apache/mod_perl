@@ -1,3 +1,8 @@
+#define mpxs_APR__Table_FETCH   apr_table_get
+#define mpxs_APR__Table_STORE   apr_table_set
+#define mpxs_APR__Table_DELETE  apr_table_unset
+#define mpxs_APR__Table_CLEAR   apr_table_clear
+
 typedef struct {
     SV *cv;
     apr_hash_t *filter;
@@ -84,4 +89,40 @@ void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
     /* Free tdata.filter or wait for the pool to go away? */
     
     return; 
+}
+
+static MP_INLINE int mpxs_APR__Table_EXISTS(apr_table_t *t, const char *key)
+{
+    return (NULL == apr_table_get(t, key)) ? 0 : 1;
+}
+
+/* Note: SvCUR is used as the iterator state counter, why not ;-? */
+#define mpxs_apr_table_iterix(sv) \
+SvCUR(SvRV(sv))
+
+#define mpxs_apr_table_nextkey(t, sv) \
+   ((apr_table_entry_t *) \
+     apr_table_elts(t)->elts)[mpxs_apr_table_iterix(sv)++].key
+
+static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(SV *tsv, SV *key)
+{
+    dTHX;
+    apr_table_t *t = mp_xs_sv2_APR__Table(tsv); 
+
+    if (apr_is_empty_table(t)) {
+        return NULL;
+    }
+
+    if (mpxs_apr_table_iterix(tsv) < apr_table_elts(t)->nelts) {
+        return mpxs_apr_table_nextkey(t, tsv);
+    }
+
+    return NULL;
+}
+
+static MP_INLINE const char *mpxs_APR__Table_FIRSTKEY(SV *tsv)
+{
+    mpxs_apr_table_iterix(tsv) = 0; /* reset iterator index */
+
+    return mpxs_APR__Table_NEXTKEY(tsv, Nullsv);
 }
