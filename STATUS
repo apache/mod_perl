@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/15 01:49:47 $]
+   Last modified at [$Date: 2003/04/22 00:35:29 $]
 
 Release:
 --------
@@ -49,6 +49,9 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* apr/perlio.t t7 fails with blead perl w/o ithreads
+  http://archive.develooper.com/perl5-porters@perl.org/msg93164.html
 
 * we have shared lib loading problems on the following platforms:
 
