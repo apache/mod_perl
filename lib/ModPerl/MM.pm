@@ -5,6 +5,7 @@ use warnings;
 use ExtUtils::MakeMaker ();
 use ExtUtils::Install ();
 use Cwd ();
+use Apache::Build ();
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
