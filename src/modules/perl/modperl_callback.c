@@ -4,7 +4,6 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      request_rec *r, server_rec *s, AV *args)
 {
     CV *cv=Nullcv;
-    SV *status_sv;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
@@ -76,20 +75,33 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             status = OK;
         }
         else {
-            status_sv = POPs;
+            SV *status_sv = POPs;
 
-            if (status_sv == &PL_sv_undef) {
-                /* ModPerl::Util::exit(), die(), or other croaks
-                 * Perl_croak sets count to 1 but the stack to undef with G_EVAL|G_SCALAR
-                 * if it was an error, it will be caught with ERRSV below */
+            if (SvIOK(status_sv)) {
+                /* normal IV return (e.g., Apache::OK) */
+                status = SvIVX(status_sv);
+            }
+            else if (status_sv == &PL_sv_undef) {
+                /* ModPerl::Util::exit() and Perl_croak internally
+                 * arrange to return PL_sv_undef with G_EVAL|G_SCALAR */
                 status = OK; 
             }
+            else if (SvPOK(status_sv)) {
+                /* PV return that ought to be treated as IV ("0") */
+                status = SvIVx(status_sv);
+                MP_TRACE_h(MP_FUNC,
+                           "coercing handler %s's return value '%s' into %d",
+                           handler->name, SvPVX(status_sv), status);
+            }
             else {
-                /* get the integer return code (or a string coerced into an int) */
-                status = SvIV(status_sv);
+                /* any other return types are considered as errors */
+                status = HTTP_INTERNAL_SERVER_ERROR;
+                ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                             "handler %s didn't return a valid return value!",
+                             handler->name);
             }
 
-            /* assume OK for non-http status codes and for 200 (HTTP_OK) */
+            /* assume OK for non-HTTP status codes and for 200 (HTTP_OK) */
             if (((status > 0) && (status < 100)) ||
                 (status == 200) || (status > 600)) {
                 status = OK;
