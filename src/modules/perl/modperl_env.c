@@ -76,7 +76,7 @@ static void modperl_env_table_populate(pTHX_ apr_table_t *table)
     elts  = (apr_table_entry_t *)array->elts;
 
     for (i = 0; i < array->nelts; i++) {
-	if (!elts[i].key || !elts[i].val) {
+        if (!elts[i].key || !elts[i].val) {
             continue;
         }
         modperl_env_hv_store(aTHX_ hv, &elts[i]);
