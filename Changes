@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Fixes for Apache::Reload's touchfile feature (return Apache::OK
+instead of 1) [Chris Warren <chwarren@cisco.com>]
+
+cygwin fixes: [Nick *** <doink123@abv.bg>]
+- doesn't like XS wrapper starting with 'static'
+- need to compile everything with -DCYGWIN
+
 ModPerl::RegistryCooker API change: s/rewrite_shebang/shebang_to_perl/
 the new API now returns the string to prepend before the rest of the
 script, instead of rewriting the content, which is both faster and
