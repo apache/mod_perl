@@ -51,7 +51,8 @@ http://www.perl.com/CPAN/src/latest.tar.gz
 
 Win32 users note: at the time of writing, ActiveState's Perl cannot be
 used with mod_perl, because it is based on an old version of perl
-(perl-5.003_07, build 316).
+(perl-5.003_07, build 316).  There have been no reports of success
+with mod_perl and newer versions of ActiveState (April 1999).
 
 =item Apache
 
@@ -71,8 +72,8 @@ Read the INSTALL* files in the top-level mod_perl distribution
 directory and then choose one of the INSTALL.simple* recipes that is
 close to your requirements, as a starting point.  When you succeed in
 compiling and linking an httpd, a quick way to check that everything
-is configured according to plan is to run it with the -l (list
-compiled-in modules) and -V (show paths) flags.
+is configured according to plan is to run it with the C<-l> (list
+compiled-in modules) and C<-V> (show paths) flags.
 
 =head2 What documentation should I read?
 
@@ -126,7 +127,7 @@ file.
 You will have to start a new process that runs under a suitable user-id
 (or group-id).  If all requests handled by the script will need the higher
 privileges, you might as well write it as a suid CGI script.  Read the
-documentation about suEXEC in Apache-1.2.
+documentation about suEXEC in the Apache documentation.
 
 Alternatively, pre-process the request with mod_perl and fork a suid
 helper process to handle the privileged part of the task.
@@ -298,7 +299,7 @@ In the html file:
 
   <!--#perl sub="My::ssi" arg="one" arg="two" arg="three" -->
 
-=head2 Why is image-file loading so slow when testing with httpd -X ?
+=head2 Why is image-file loading so slow when testing with httpd C<-X> ?
 
 If you use Netscape while your server is running in single-process
 mode, the "KeepAlive" feature gets in the way.  Netscape tries to open
@@ -387,8 +388,8 @@ engine) and also at
 http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
 (threaded and indexed).
 
-You can subscribe to the list by sending a mail with the line C<subscribe
-modperl> to C<majordomo@apache.org>.
+You can subscribe to the list by sending a mail with the line
+C<subscribe> to C<modperl-request@apache.org>.
 
 Remember: the mailing list is for questions about and discussion of
 mod_perl.  Quetions about perl programming in general should be asked
