@@ -80,6 +80,8 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
     /* must run any set magic */
     SvSETMAGIC(buffer);
     
+    SvTAINTED_on(buffer);
+
     return len;
 }
 

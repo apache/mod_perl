@@ -11,6 +11,8 @@ use warnings FATAL => 'all';
 use Apache::Connection ();
 use APR::Socket ();
 
+use TestCommon::Utils;
+
 use Apache::Const -compile => 'OK';
 use APR::Const    -compile => qw(SO_NONBLOCK);
 
@@ -31,8 +33,12 @@ sub handler {
             or die "failed to set blocking mode";
     }
 
-    while ($socket->recv(my $buff, BUFF_LEN)) {
-        $socket->send($buff);
+    while ($socket->recv(my $buffer, BUFF_LEN)) {
+
+        die "recv() has returned untainted data:"
+            unless TestCommon::Utils::is_tainted($buffer);
+
+        $socket->send($buffer);
     }
 
     Apache::OK;

@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use TestCommon::Utils;
 
 use Apache::RequestRec ();
 use APR::Bucket ();
@@ -16,7 +17,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 20;
+    plan $r, tests => 26;
 
     # first, create a brigade
     my $pool = $r->pool;
@@ -95,6 +96,8 @@ sub handler {
     Apache::OK;
 }
 
+# this sub runs 3 sub-tests with a false $check_content
+# and 4 otherwise
 sub verify {
     my($len, $expected_len, $data, $check_content) = @_;
 
@@ -104,6 +107,8 @@ sub verify {
     ok t_cmp(length($data),
              $len,
              "\$bb->flatten(\$data, $len) returned all expected data");
+
+    ok TestCommon::Utils::is_tainted($data);
 
     if ($check_content) {
         # don't use t_cmp() here, else we get 200,000 characters

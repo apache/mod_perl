@@ -7,12 +7,13 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use TestCommon::Utils;
 
 use APR::Bucket ();
 use APR::BucketType ();
 
 sub num_of_tests {
-    return 14;
+    return 16;
 }
 
 sub test {
@@ -118,6 +119,15 @@ sub test {
             return APR::Bucket->new(lc $data);
         }
 
+    }
+
+    # read data is tainted
+    {
+        my $data = "xxx";
+        my $b = APR::Bucket->new($data);
+        $b->read(my $read);
+        ok t_cmp($read, $data, 'new($data)');
+        ok TestCommon::Utils::is_tainted($read);
     }
 
     # remove/destroy
