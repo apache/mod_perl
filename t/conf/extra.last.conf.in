@@ -8,7 +8,7 @@ $Location{'/perl_sections'} = {
     'PerlInitHandler' => 'ModPerl::Test::add_config',
     'AuthType' => 'Basic',
     'AuthName' => 'PerlSection',
-    'PerlAuthenHandler' => 'TestHooks::authen',
+    'PerlAuthenHandler' => 'TestHooks::authen_basic',
     };
 </Perl>
 
@@ -51,7 +51,7 @@ $Apache::ReadConfig::Location{'/perl_sections_readconfig'} = {
     'PerlInitHandler'   => 'ModPerl::Test::add_config',
     'AuthType'          => 'Basic',
     'AuthName'          => 'PerlSection',
-    'PerlAuthenHandler' => 'TestHooks::authen',
+    'PerlAuthenHandler' => 'TestHooks::authen_basic',
     };
 </Perl>
 
