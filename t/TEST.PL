@@ -5,6 +5,6 @@ use warnings FATAL => 'all';
 
 use lib map { "$_/Apache-Test/lib" } qw(. ..);
 
-use Apache::TestRun ();
+use Apache::TestRunPerl ();
 
-Apache::TestRun->new->run(@ARGV);
+Apache::TestRunPerl->new->run(@ARGV);
