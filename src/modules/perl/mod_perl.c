@@ -39,6 +39,8 @@ static void modperl_boot(void *data)
 
     modperl_env_default_populate(aTHX);
 
+    modperl_perl_core_global_init(aTHX);
+
     for (i=0; MP_xs_loaders[i]; i++) {
         char *name = Perl_form(aTHX_ MP_xs_loader_name, MP_xs_loaders[i]);
         newCONSTSUB(PL_defstash, name, newSViv(1));

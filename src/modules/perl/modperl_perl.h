@@ -7,6 +7,8 @@ typedef struct {
     Gid_t gid, egid;
 } modperl_perl_ids_t;
 
+void modperl_perl_core_global_init(pTHX);
+
 void modperl_perl_ids_get(modperl_perl_ids_t *ids);
 
 void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids);

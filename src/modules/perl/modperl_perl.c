@@ -4,6 +4,32 @@
  * others (larger tweaks) are in their own modules, e.g. modperl_env.c
  */
 
+typedef struct {
+    const char *name;
+    const char *sub_name;
+    const char *core_name;
+} modperl_perl_core_global_t;
+
+#define MP_PERL_CORE_GLOBAL_ENT(name) \
+{ name, "ModPerl::Util::" name, "CORE::GLOBAL::" name }
+
+static modperl_perl_core_global_t MP_perl_core_global_entries[] = {
+    MP_PERL_CORE_GLOBAL_ENT("exit"),
+    { NULL },
+};
+
+void modperl_perl_core_global_init(pTHX)
+{
+    modperl_perl_core_global_t *cglobals = MP_perl_core_global_entries;
+
+    while (cglobals->name) {
+        GV *gv = gv_fetchpv(cglobals->core_name, TRUE, SVt_PVCV);
+        GvCV(gv) = get_cv(cglobals->sub_name, TRUE);
+        GvIMPORTED_CV_on(gv);
+        cglobals++;
+    }
+}
+
 void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 {
     ids->pid  = (I32)getpid();
