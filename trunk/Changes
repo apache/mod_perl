@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+add dTHR for PERL_TIE_SCRIPTNAME=1 [Michael Parker <parker@austx.tandem.com>]
+
 deprecate $r->cgi_{env,var}, $r->subprocess_env can do all that and
 them some
 
