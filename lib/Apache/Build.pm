@@ -1066,13 +1066,6 @@ sub includes {
           push @inc, $_ if -d $_;
       }
 
-    my $ssl_dir = "$src/../ssl/include";
-    unless (-d $ssl_dir) {
-        my $build = $self->build_config;
-        $ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
-    }
-    push @inc, $ssl_dir if -d $ssl_dir;
-
     return \@inc;
 }
 
