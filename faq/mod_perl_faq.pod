@@ -49,6 +49,10 @@ http://www.perl.com/CPAN/modules/by-module/Apache/
 
 http://www.perl.com/CPAN/src/latest.tar.gz
 
+Win32 users note: at the time of writing, ActiveState's Perl cannot be
+used with mod_perl, because it is based on an old version of perl
+(perl-5.003_07, build 316).
+
 =item Apache
 
 http://www.apache.org/dist/
