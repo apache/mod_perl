@@ -27,8 +27,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - need to revisit send_http_header and r->status again, patch to
 revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
 
-- revisit DSO restart leakage (seems ok with USE_DSO=1, USE_APXS leaks)
-
 - Apache->server->register_cleanup
 
 - PerlSetEnv scoping [Roman Maeder <maeder@mathconsult.ch>]
@@ -61,9 +59,6 @@ revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
 
 - From: Dave Rolsky <autarch@urth.org>
   Subject: Apache::test patch
-
-- From: Joshua Chamas <joshua@chamas.com>
-  Subject: Apache::SizeLimit patches
 
 - IPC::Open3 no workie
 
