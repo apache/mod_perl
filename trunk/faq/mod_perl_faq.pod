@@ -114,6 +114,11 @@ to world readable files.  Even so, careless scripts can give away
 information.  You would not want your /etc/passwd file to be readable over
 the net, for instance.
 
+Different mod_perl scripts run successively using the same Perl
+interpreter instance. So, in addition to classical CGI mischiefs, a
+malicious mod_perl script can redefine any Perl object and change the
+behavior of other mod_perl scripts.
+
 If you turn on tainting checks, perl can help you to avoid the pitfalls of
 using data received from the net.  Setting the C<-T> switch on the first line
 of the script is not sufficient to enable tainting checks under mod_perl.
