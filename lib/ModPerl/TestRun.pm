@@ -18,6 +18,16 @@ sub new_test_config {
     ModPerl::TestConfig->new($self->{conf_opts});
 }
 
+sub bug_report {
+    my $self = shift;
+
+    print <<EOI;
++--------------------------------------------------------+
+| Please file a bug report: http://perl.apache.org/bugs/ |
++--------------------------------------------------------+
+EOI
+}
+
 package ModPerl::TestConfig;
 
 use base qw(Apache::TestConfig);

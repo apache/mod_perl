@@ -523,11 +523,11 @@ TEST_FILES =
 test_clean :
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
 	t/TEST -clean
-	
+
 run_tests : test_clean
 	$(PASSENV) \
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
-	t/TEST -verbose=$(TEST_VERBOSE) $(TEST_FILES)
+	t/TEST -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
 	cd ModPerl-Registry && $(MAKE) test
 
 test :: pure_all run_tests test_clean

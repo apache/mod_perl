@@ -36,3 +36,8 @@ sub new_test_config {
 
     return $self->SUPER::new_test_config;
 }
+
+sub bug_report {
+    require ModPerl::TestRun;
+    shift->ModPerl::TestRun::bug_report();
+}
