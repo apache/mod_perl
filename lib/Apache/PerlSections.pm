@@ -79,9 +79,9 @@ sub symdump {
 
     unless ($self->{symbols}) {
         no strict;
-        
+
         $self->{symbols} = [];
-        
+
         #XXX: Here would be a good place to warn about NOT using 
         #     Apache::ReadConfig:: directly in <Perl> sections
         foreach my $pack ($self->package, $self->SPECIAL_PACKAGE) {
