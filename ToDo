@@ -71,6 +71,9 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 
 - Makefile.PL should always push load_modules.pl for 'make test' 
 
+- coderef to $r->custom_response
+[Randal L. Schwartz <merlyn@stonehenge.com>]
+
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
