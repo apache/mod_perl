@@ -704,7 +704,11 @@ sub compile {
 
 sub error_check {
     my $self = shift;
-    if ($@ and substr($@,0,4) ne " at ") {
+
+    # ModPerl::Util::exit() is implemented as croak with no message
+    # so perl will set $@ to " at /some/path", which is not an error
+    # (see modperl_perl_exit() and modperl_errsv() C functions)
+    if ($@ and substr($@, 0, 4) ne " at ") {
         $self->log_error($@);
         return Apache::SERVER_ERROR;
     }
