@@ -12,7 +12,10 @@ move of modperl projects to SVN:
   Reviewed by: 
   ...
 
-* recursive diff across externals Apache-Test/ and docs/ doesn't work
+* svn:externals  Apache-Test/ and docs/ doesn't work breakages:
+
+  - svn diff doesn't work
+  - svn tagging or branching doesn't work
 
 * the details of svn propedit svn:ignore and other propedit features
   don't appear commit messages
