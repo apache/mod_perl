@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+add config for mod_ssl and 'make test' [Lupe Christoph <lupe@alanya.m.isar.de>]
+
 PerlInitHandler is now aliased to PerlPostReadRequestHandler when
 configured a the "top-level", that is, not within any Location,
 Directory or Files, where it is still aliased to
