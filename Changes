@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+change PL_siggv usage to gv_fetchpv("SIG", ...) for Perl 5.6-tobe
+[Andreas J. Koenig <andreas.koenig@anima.de>]
+
 document $r->get_handlers, $r->set_handlers, $r->push_handlers
 [Eric Cholet <cholet@logilune.com>]
 
