@@ -4,7 +4,6 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
-use File::Spec::Functions qw(catfile);
 
 plan tests => 2;
 
