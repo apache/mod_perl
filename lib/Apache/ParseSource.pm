@@ -154,6 +154,7 @@ my %defines_wanted = (
         socket    => [qw{APR_SO_}],
         limit     => [qw{APR_LIMIT}],
         hook      => [qw{APR_HOOK_}],
+        uri       => [qw{APR_URI_}],
     },
 );
 
