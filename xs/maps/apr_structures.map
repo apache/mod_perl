@@ -6,7 +6,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 
 #buckets
 
-!<apr_bucket_type_t>
+<apr_bucket_type_t MODULE=APR::Bucket>
    name
 -  num_func
 -  destroy
@@ -16,7 +16,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 -  copy
 </apr_bucket_type_t>
 
-!<apr_bucket>
+<apr_bucket>
 >  link
    type
    length

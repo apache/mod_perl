@@ -75,38 +75,53 @@ MODULE=APR::Brigade
  apr_brigade_write
  apr_brigade_puts
  apr_brigade_putc
+ mpxs_APR__Brigade_first        #APR_BRIGADE_FIRST
+ mpxs_APR__Brigade_last         #APR_BRIGADE_LAST
+ mpxs_APR__Brigade_prev         #APR_BUCKET_PREV
+ mpxs_APR__Brigade_next         #APR_BUCKET_NEXT
+ mpxs_APR__Brigade_insert_tail  #APR_BRIGADE_INSERT_TAIL
+ mpxs_APR__Brigade_insert_head  #APR_BRIGADE_INSERT_HEAD
+ mpxs_APR__Brigade_concat       #APR_BRIGADE_CONCAT
 
-!MODULE=APR::Bucket
- apr_bucket_copy_notimpl
- apr_bucket_shared_copy
- apr_bucket_eos_create
- apr_bucket_file_create
- apr_bucket_flush_create
- apr_bucket_heap_create
- apr_bucket_immortal_create
- apr_bucket_mmap_create
- apr_bucket_pipe_create
- apr_bucket_pool_create
- apr_bucket_socket_create
- apr_bucket_transient_create
- apr_bucket_destroy_notimpl
- apr_bucket_shared_destroy
- apr_bucket_eos_make
- apr_bucket_file_make
- apr_bucket_flush_make
- apr_bucket_heap_make
- apr_bucket_immortal_make
- apr_bucket_mmap_make
- apr_bucket_pipe_make
- apr_bucket_pool_make
- apr_bucket_shared_make
- apr_bucket_socket_make
- apr_bucket_transient_make
- apr_bucket_setaside_notimpl
- apr_bucket_split_notimpl
- apr_bucket_shared_split
- apr_bucket_simple_split
- apr_bucket_simple_copy
+MODULE=APR::Bucket
+ mpxs_APR__Bucket_is_eos         #APR_BUCKET_IS_EOS
+ mpxs_APR__Bucket_insert_after   #APR_BUCKET_INSERT_AFTER
+ mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
+ mpxs_APR__Bucket_remove         #APR_BUCKET_REMOVE
+ #apr_bucket_read
+ mpxs_APR__Bucket_read | | bucket, wanted=0
+ #modperl_bucket_sv_create
+ mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
+ !apr_bucket_copy_notimpl
+ !apr_bucket_shared_copy
+ !apr_bucket_eos_create
+ !apr_bucket_file_create
+ !apr_bucket_flush_create
+ !apr_bucket_heap_create
+ !apr_bucket_immortal_create
+ !apr_bucket_mmap_create
+ !apr_bucket_pipe_create
+ !apr_bucket_pool_create
+ !apr_bucket_socket_create
+ !apr_bucket_transient_create
+ !apr_bucket_destroy_notimpl
+ !apr_bucket_shared_destroy
+ !apr_bucket_eos_make
+ !apr_bucket_file_make
+ !apr_bucket_flush_make
+ !apr_bucket_heap_make
+ !apr_bucket_immortal_make
+ !apr_bucket_mmap_make
+ !apr_bucket_pipe_make
+ !apr_bucket_pool_make
+ !apr_bucket_shared_make
+ !apr_bucket_socket_make
+ !apr_bucket_transient_make
+ !apr_bucket_setaside_notimpl
+ !apr_bucket_split_notimpl
+ !apr_bucket_shared_split
+ !apr_bucket_simple_split
+ !apr_bucket_simple_copy
 
 MODULE=APR::Pool
 >apr_pool_free_blocks_num_bytes
