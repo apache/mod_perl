@@ -271,11 +271,30 @@ int modperl_callback_run_handlers(int idx, int type,
          */
 
         if (run_mode == MP_HOOK_RUN_ALL) {
+            /* special case */
+            if (type == MP_HANDLER_TYPE_FILES && status != OK) {
+                /* open_logs and post_config require OK return code or
+                 * the server aborts, so we need to log an error in
+                 * case the handler didn't fail but returned something
+                 * different from OK */
+                if (SvTRUE(ERRSV)) {
+                    status = modperl_errsv(aTHX_ status, r, s);
+                }
+                else {
+                    ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                                 "Callback '%s' returned %d, whereas "
+                                 "Apache::OK (%d) is the only valid "
+                                 "return value for %s handlers",
+                                 modperl_handler_name(handlers[i]),
+                                 status, OK, desc);
+                }
+                break;
+            }
             /* the normal case:
              *   OK and DECLINED continue 
              *   errors end the phase
              */
-            if ((status != OK) && (status != DECLINED)) {
+            else if ((status != OK) && (status != DECLINED)) {
 
                 status = modperl_errsv(aTHX_ status, r, s);
 #ifdef MP_TRACE
