@@ -12,6 +12,16 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+renamed the private modperl_module_config_get_obj function to 
+modperl_module_config_create_obj, since the logic creates 
+the object but doesn't dig it out if it already exists.  then,
+moved logic from mpxs_Apache__Module_get_config into a new public
+C function that reused the old name, modperl_module_config_get_obj.
+while Apache::Module->get_config exists as a wrapper to return the
+object to Perl space, now C/XS folks can also access the object
+directly with the public function.
+[Geoffrey Young]
+
 Apache::Reload: add a new config variable:
 ReloadConstantRedefineWarnings to optionally shut off the constant sub
 redefine warnings [Stas]

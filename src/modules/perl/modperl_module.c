@@ -246,14 +246,14 @@ static void *modperl_module_config_srv_merge(apr_pool_t *p,
     sv_2mortal(modperl_ptr2obj(aTHX_ "Apache::CmdParms", (void *)parms))
 
 static const char *
-modperl_module_config_get_obj(pTHX_
-                              apr_pool_t *p,
-                              PTR_TBL_t *table,
-                              modperl_module_cfg_t *cfg,
-                              modperl_module_cmd_data_t *info,
-                              modperl_mgv_t *method,
-                              cmd_parms *parms,
-                              SV **obj)
+modperl_module_config_create_obj(pTHX_
+                                 apr_pool_t *p,
+                                 PTR_TBL_t *table,
+                                 modperl_module_cfg_t *cfg,
+                                 modperl_module_cmd_data_t *info,
+                                 modperl_mgv_t *method,
+                                 cmd_parms *parms,
+                                 SV **obj)
 {
     const char *mname = info->modp->name;
     modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
@@ -385,9 +385,9 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         
     }
     
-    errmsg = modperl_module_config_get_obj(aTHX_ p, table, cfg, info,
-                                           minfo->dir_create,
-                                           parms, &obj);
+    errmsg = modperl_module_config_create_obj(aTHX_ p, table, cfg, info,
+                                              minfo->dir_create,
+                                              parms, &obj);
 
     if (errmsg) {
         return errmsg;
@@ -406,7 +406,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
 
     if (srv_cfg) {
         SV *srv_obj;
-        errmsg = modperl_module_config_get_obj(aTHX_ p, table, srv_cfg, info,
+        errmsg = modperl_module_config_create_obj(aTHX_ p, table, srv_cfg, info,
                                                minfo->srv_create,
                                                parms, &srv_obj);
         if (errmsg) {
@@ -852,4 +852,46 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
 #endif
 
     return NULL;
+}
+
+SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s, 
+                                  ap_conf_vector_t *v)
+{
+    MP_dSCFG(s);
+    module *modp;
+    const char *name;
+    void *ptr;
+    PTR_TBL_t *table;
+    SV *obj;
+
+    if (!v) {
+        v = s->module_config;
+    }
+
+    if (SvROK(pmodule)) {
+        name = SvCLASS(pmodule);
+    }
+    else {
+        STRLEN n_a;
+        name = SvPV(pmodule, n_a);
+    }
+
+    if (!(scfg->modules &&
+          (modp = apr_hash_get(scfg->modules, name, APR_HASH_KEY_STRING)))) {
+        return &PL_sv_undef;
+    }
+
+    if (!(ptr = ap_get_module_config(v, modp))) {
+        return &PL_sv_undef;
+    }
+
+    if (!(table = modperl_module_config_table_get(aTHX_ FALSE))) {
+        return &PL_sv_undef;
+    }
+
+    if (!(obj = modperl_svptr_table_fetch(aTHX_ table, ptr))) {
+        return &PL_sv_undef;
+    }
+
+    return obj;
 }
