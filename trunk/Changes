@@ -10,6 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+define PERL_DIRECTIVE_HANDLERS so that ModuleConfig.c gets
+generated when building on Win32 within Visual Studio
+[John Petrakis <jpetrakis@rcn.com>]
+
+enable PERL_SECTIONS for Win32 [Dirk Maetens <dirk.maetens@chello.be>]
+
+use touch() from ExtUtils::Command, rather than a system touch(),
+for the benefit of platforms without touch(). [Randy Kobes
+<randy@theoryx5.uwinnipeg.ca>]
+ 
 can't let the default typemap rule to convert sv into char* in
 unescape_url, since it doesn't handle correctly undefs (returns an
 unallocated "" string, which then causes a segfault in
