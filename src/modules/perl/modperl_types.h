@@ -110,7 +110,8 @@ typedef struct {
 } modperl_options_t;
 
 typedef enum {
-    MP_INTERP_LIFETIME_NONE,
+    MP_INTERP_LIFETIME_UNDEF,
+    MP_INTERP_LIFETIME_SUBREQUEST,
     MP_INTERP_LIFETIME_REQUEST,
     MP_INTERP_LIFETIME_CONNECTION,
 } modperl_interp_lifetime_e;
@@ -144,6 +145,9 @@ typedef struct {
     MpHV *SetEnv;
     MpHV *SetVars;
     U8 flags;
+#ifdef USE_ITHREADS
+    modperl_interp_lifetime_e interp_lifetime;
+#endif
 } modperl_dir_config_t;
 
 typedef struct modperl_mgv_t modperl_mgv_t;

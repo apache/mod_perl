@@ -129,7 +129,7 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
         char *name = modperl_server_desc(s, p);
 
         MP_TRACE_i(MP_FUNC, "PerlInterpLifetime set to %s for %s\n",
-                   modperl_interp_lifetime_desc(scfg), name);
+                   modperl_interp_lifetime_desc(scfg->interp_lifetime), name);
 #endif /* MP_TRACE */
 
         if (scfg->mip->tipool->idle) {
@@ -220,8 +220,8 @@ static const command_rec modperl_cmds[] = {
                      "Min number of spare Perl interpreters"),
     MP_SRV_CMD_TAKE1("PerlInterpMaxRequests", interp_max_requests,
                      "Max number of requests per Perl interpreters"),
-    MP_SRV_CMD_TAKE1("PerlInterpLifetime", interp_lifetime,
-                     "Lifetime of a Perl interpreter (connection or request)"),
+    MP_DIR_CMD_TAKE1("PerlInterpLifetime", interp_lifetime,
+                     "Lifetime of a Perl interpreter"),
 #endif
     MP_CMD_ENTRIES,
     { NULL }, 

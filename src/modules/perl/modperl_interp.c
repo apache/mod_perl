@@ -206,15 +206,32 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
+    modperl_dir_config_t *dcfg = modperl_dir_config_get(rr);
+    const char *desc = NULL;
     modperl_interp_t *interp;
     apr_pool_t *p = NULL;
+    request_rec *r = rr;
     int is_subrequest = (rr && rr->main) ? 1 : 0;
-    request_rec *r = is_subrequest ? rr->main : rr;
-    const char *desc = NULL;
-    int lifetime_connection = 
-        (modperl_interp_lifetime_connection(scfg) || !r);
 
-    if (c && lifetime_connection) {
+    /*
+     * if a per-dir PerlInterpLifetime is specified, use it.
+     * else if r != NULL use per-server PerlInterpLifetime
+     * else lifetime must be per-connection
+     */
+    modperl_interp_lifetime_e lifetime = 
+        (dcfg && !modperl_interp_lifetime_undef(dcfg)) ? 
+        dcfg->interp_lifetime :
+        (r ? scfg->interp_lifetime : MP_INTERP_LIFETIME_CONNECTION);
+
+    MP_TRACE_i(MP_FUNC, "lifetime is per-%s\n",
+               modperl_interp_lifetime_desc(lifetime));
+
+    if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
+        /* share 1 interpreter across sub-requests */
+        r = r->main;
+    }
+
+    if (c && (lifetime == MP_INTERP_LIFETIME_CONNECTION)) {
         desc = "conn_rec pool";
         (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, c->pool);
 
