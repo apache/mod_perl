@@ -14,7 +14,7 @@
  */
 
 static MP_INLINE
-SV *mpxs_APR__Socket_recv(pTHX_ apr_socket_t *socket, int len)
+SV *mpxs_APR__Socket_recv(pTHX_ apr_socket_t *socket, apr_size_t len)
 {
     SV *buf = NEWSV(0, len);
     apr_status_t rc = apr_socket_recv(socket, SvPVX(buf), &len);
