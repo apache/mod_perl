@@ -234,8 +234,7 @@ Add the following to EXTRA_LIBS:
 
 Add the following to EXTRA_CFLAGS:
 
-  EXTRA_CFLAGS=`perl -MExtUtils::Embed -e ccopts` \ 
-               `perl -Mmod_perl -e subversion`
+  EXTRA_CFLAGS=`perl -MExtUtils::Embed -e ccopts` 
 
 =item mod_perl source files
 
