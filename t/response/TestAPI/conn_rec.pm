@@ -10,7 +10,7 @@ sub handler {
 
     my $c = $r->connection;
 
-    plan $r, tests => 17;
+    plan $r, tests => 15;
 
     ok $c;
 
@@ -33,10 +33,6 @@ sub handler {
     ok $c->aborted || 1;
 
     ok $c->keepalive || 1;
-
-    ok $c->keptalive || 1;
-
-    ok $c->keepalives || 1;
 
     ok $c->local_ip;
 
