@@ -70,3 +70,52 @@ apr_finfo_t *mpxs_Apache__RequestRec_finfo(request_rec *r)
 #define mpxs_Apache__RequestRec_server_root_relative(sv, fname) \
     modperl_server_root_relative(aTHX_ sv, fname)
 
+static MP_INLINE
+const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
+                                            SV **MARK, SV **SP)
+{
+    const char *RETVAL;
+    request_rec *r;
+    mpxs_usage_va_1(r, "$r->handler([$handler])");
+
+    RETVAL = (const char *)r->handler;
+    
+    if (items == 2) {
+        if (SvPOK(*MARK)) {
+            char *new_handler = SvPVX(*MARK);
+            /* once inside a response phase, one should not try to
+             * switch response handler types, since they won't take
+             * any affect */
+            if (strEQ(modperl_callback_current_callback_get(),
+                      "PerlResponseHandler")) {
+                
+                switch (*new_handler) {
+                  case 'm':
+                    if (strEQ(new_handler, "modperl") &&
+                        strEQ(RETVAL, "perl-script")) {
+                        Perl_croak(aTHX_ "Can't switch from 'perl-script' "
+                                   "to 'modperl' response handler");
+                    }
+                    break;
+                  case 'p':
+                    if (strEQ(new_handler, "perl-script") &&
+                        strEQ(RETVAL, "modperl")) {
+                        Perl_croak(aTHX_ "Can't switch from 'modperl' "
+                                   "to 'perl-script' response handler");
+                    }
+                    break;
+                }
+            }
+            
+            r->handler = (const char *)apr_pstrmemdup(
+                mpxs_Apache__RequestRec_pool(r), new_handler, SvLEN(*MARK));
+        }
+        else {
+            Perl_croak(aTHX_ "the new_handler argument must be a string");
+        }
+    }
+
+    return RETVAL;
+}
+
+
