@@ -153,6 +153,7 @@ int modperl_callback_run_handlers(int idx, int type,
             modperl_env_request_populate(aTHX_ r);
         }
         break;
+      case MP_HANDLER_TYPE_PRE_CONNECTION:
       case MP_HANDLER_TYPE_CONNECTION:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::Connection", c, NULL);
@@ -220,7 +221,9 @@ int modperl_callback_connection(int idx, conn_rec *c)
 
 int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd)
 {
-    return DECLINED; /*XXX*/
+    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PRE_CONNECTION,
+                                         NULL, c, c->base_server,
+                                         NULL, NULL, NULL);
 }
 
 void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s)

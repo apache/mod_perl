@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/12/13 09:58:29 $]
+   Last modified at [$Date: 2003/01/01 03:45:54 $]
 
 Release:
 --------
@@ -117,14 +117,6 @@ Needs Patch or Further Investigation:
 Open Issues or Core Enhancements:
 ---------------------------------
 
-* PerlPreConnectionHandler's modperl_callback_pre_connection is not
-  implemented
-
-  Report: 
-  Status: ???
-
-----
-
 * Apache::Log compat issues:
 
   Apache->warn, Apache::warn, Apache::Server->warn and
@@ -166,6 +158,13 @@ Open Issues or Core Enhancements:
 
   Report: Philippe M. Chiasson <gozer@cpan.org>
   Status: Philippe M. Chiasson <gozer@cpan.org> is working on it
+
+----
+
+* PerlPreConnectionHandler is implemented, but the 'void *csd' arg in
+  the callback is ignored
+
+  Status: no hurry
 
 ----
 
