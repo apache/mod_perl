@@ -8,7 +8,8 @@ use Apache::Server ();
 use File::Spec::Functions qw(catdir);
 
 # base server
-# XXX: at the moment this is wrong, since it return the base server $s and not the vhost's one. needs to be fixed.
+# XXX: at the moment this is wrong, since it return the base server $s
+# and not the vhost's one. needs to be fixed.
 my $s = Apache->server;
 
 my $vhost_doc_root = catdir Apache::Server::server_root, qw(htdocs vhost);
