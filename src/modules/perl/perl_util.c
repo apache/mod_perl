@@ -608,7 +608,7 @@ void perl_clear_env(void)
     untie_env;
     if(!hv_exists(hv, "MOD_PERL", 8)) {
         hv_store(hv, "MOD_PERL", 8,
-                 newSVpv("mod_perl/1.17_01-dev",0), FALSE);
+                 newSVpv(MOD_PERL_STRING_VERSION,0), FALSE);
         hv_store(hv, "GATEWAY_INTERFACE", 17,
                  newSVpv("CGI-Perl/1.1",0), FALSE);
     }
