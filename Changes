@@ -8,7 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
-add support for new 1.3.4-dev M_* methods, M_PATCH, M_LOCK, etc
+two experimental options now on by default: 
+PERL_SECTIONS_SELF_BOOT and ERRSV_CAN_BE_HTTP
+
+fix so $Apache::ReadConfig = 1; works again, thanks to Stas Bekman for the spot
+
+add support for new 1.3.4-dev M_* methods, M_PATCH, M_LOCK, etc.
 
 fix $r->log->debug when running under -T
 

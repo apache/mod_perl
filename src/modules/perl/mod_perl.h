@@ -167,7 +167,11 @@ hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 #endif
 
 #ifndef ERRSV_CAN_BE_HTTP
-#define ERRSV_CAN_BE_HTTP perl_get_sv("Apache::ERRSV_CAN_BE_HTTP", FALSE)
+# ifdef WIN32
+#  define ERRSV_CAN_BE_HTTP perl_get_sv("Apache::ERRSV_CAN_BE_HTTP", FALSE)
+# else
+#  define ERRSV_CAN_BE_HTTP 1
+# endif
 #endif
 
 #ifndef PERL_DESTRUCT_LEVEL
@@ -391,9 +395,13 @@ if((add->flags & f) || (base->flags & f)) \
 #endif
 
 #ifdef PERL_SECTIONS
-#ifndef PERL_SECTIONS_SELF_BOOT
-#define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
-#endif
+# ifndef PERL_SECTIONS_SELF_BOOT
+#  ifdef WIN32
+#   define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
+#  else
+#   define PERL_SECTIONS_SELF_BOOT 1
+#  endif
+# endif
 #endif
 
 #ifndef PERL_STARTUP_DONE_CHECK
