@@ -95,7 +95,7 @@ if [ ".$perl_interp" = . ]; then
     IFS="$OIFS"
     perl_interp="`echo $perl_interp | sed -e 's://:/:'`"
 fi
-perl_version="`$perl_interp -e 'print $];'`"
+perl_version="`$perl_interp -e '$^V ? printf("v%vd", $^V) : print($]);'`"
 os_version="`$perl_interp -e 'print $^O;'`"
 
 #

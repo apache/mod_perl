@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+$Apache::Server::AddPerlVersion uses $^V for Perl/v5.6.0+
+
 update mod_ssl config for 'make test'
 [Stas Bekman <sbekman@stason.org>]
 

@@ -539,7 +539,7 @@ void mp_check_version(void)
     if(strEQ(SvPV(version,n_a), MP_APACHE_VERSION)) /*no worries*/
 	return;
 
-    fprintf(stderr, "Apache.pm version %.02f required!\n", 
+    fprintf(stderr, "Apache.pm version %s required!\n", 
 	    MP_APACHE_VERSION);
     fprintf(stderr, "%s", form("%_ is version %_\n", 
 			       *hv_fetch(GvHV(incgv), "Apache.pm", 9, FALSE),
@@ -577,8 +577,13 @@ void perl_module_init(server_rec *s, pool *p)
 #if HAS_MMN_130
     ap_add_version_component(MOD_PERL_STRING_VERSION);
     if(PERL_RUNNING()) {
+#ifdef PERL_IS_5_6
+	char *version = form("Perl/v%vd", PL_patchlevel);
+#else
+	char *version = form("Perl/%_", perl_get_sv("]", TRUE));
+#endif
 	if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
-	    ap_add_version_component(form("Perl/%_", perl_get_sv("]",TRUE)));
+	    ap_add_version_component(version);
 	}
     }
 #endif
