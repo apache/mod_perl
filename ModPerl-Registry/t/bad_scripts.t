@@ -8,7 +8,7 @@ use Apache::TestRequest qw(GET);
 plan tests => 1;
 
 {
-    my $url = "/same_interp/perlrun/r_inherited.pl";
+    my $url = "/perlrun/r_inherited.pl";
     my $res = GET($url);
     ok t_cmp(
         500,
