@@ -15,16 +15,6 @@
 
 #include "mod_perl.h"
 
-/* not too long so it won't wrap when posted in email */
-#define IO_DUMP_LENGTH 35
-/* dumping hundreds of lines in the trace, makes it hard to read. Get
- * a string chunk of IO_DUMP_LENGTH or less */
-#define IO_DUMP_FIRST_CHUNK(p, str, count)       \
-    count < IO_DUMP_LENGTH                       \
-        ? (char *)str                            \
-        : (char *)apr_psprintf(p, "%s...",       \
-                               apr_pstrmemdup(p, str, IO_DUMP_LENGTH))
-
 #ifdef MP_IO_TIE_PERLIO
 
 /***************************
@@ -152,7 +142,7 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     MP_CHECK_WBUCKET_INIT("print");
 
     MP_TRACE_o(MP_FUNC, "%4db [%s]", count,
-               IO_DUMP_FIRST_CHUNK(rcfg->wbucket->pool, vbuf, count));
+               MP_TRACE_STR_TRUNC(rcfg->wbucket->pool, vbuf, count));
         
     rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
     if (rv != APR_SUCCESS) {
@@ -184,11 +174,11 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
     MP_CHECK_WBUCKET_INIT("flush");
 
     MP_TRACE_o(MP_FUNC, "%4db [%s]", rcfg->wbucket->outcnt,
-               IO_DUMP_FIRST_CHUNK(rcfg->wbucket->pool,
-                                   apr_pstrmemdup(rcfg->wbucket->pool,
-                                                  rcfg->wbucket->outbuf,
-                                                  rcfg->wbucket->outcnt),
-                                   rcfg->wbucket->outcnt));
+               MP_TRACE_STR_TRUNC(rcfg->wbucket->pool,
+                                  apr_pstrmemdup(rcfg->wbucket->pool,
+                                                 rcfg->wbucket->outbuf,
+                                                 rcfg->wbucket->outcnt),
+                                  rcfg->wbucket->outcnt));
 
     MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE));
 
@@ -365,7 +355,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
     apr_brigade_destroy(bb);
 
     MP_TRACE_o(MP_FUNC, "wanted %db, read %db [%s]", wanted, total,
-               IO_DUMP_FIRST_CHUNK(r->pool, buffer, total));
+               MP_TRACE_STR_TRUNC(r->pool, buffer, total));
 
     return total;
 }
