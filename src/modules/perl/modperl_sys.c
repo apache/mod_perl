@@ -1,4 +1,21 @@
+#include "modperl_largefiles.h"
 #include "mod_perl.h"
+
+/*
+ * Stat_t needs flags in modperl_largefiles.h
+ */
+int modperl_sys_is_dir(pTHX_ SV *sv)
+{
+    Stat_t statbuf;
+    STRLEN n_a;
+    char *name = SvPV(sv, n_a);
+
+    if (PerlLIO_stat(name, &statbuf) < 0) {
+        return 0;
+    }
+
+    return S_ISDIR(statbuf.st_mode);
+}
 
 /*
  * Perl does not provide this abstraction.
