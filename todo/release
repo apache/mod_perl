@@ -45,6 +45,7 @@
 
 * revamp directive handlers, expose modperl_module_add, fix
   PerlLoadModule, etc.
+  http://marc.theaimsgroup.com/?t=108309295200003
   owner: geoff
 
 * PerlSetVar/PerlAddVar still do not merge properly.  geoff knows
