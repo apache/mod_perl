@@ -20,6 +20,9 @@ package TestAPI::access2;
 #
 # otherwise it returns the same, sans the 'valid-user' entry
 #
+# also test:
+# - $r->some_auth_required when it's required
+# - $r->satisfies when Satisfy is set
 
 use strict;
 use warnings FATAL => 'all';
@@ -30,7 +33,7 @@ use Apache::RequestRec ();
 use Apache::TestTrace;
 
 use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR
-                                 M_POST);
+                                 M_POST :satisfy);
 
 my $users  = "goo bar";
 my $groups = "bar tar";
@@ -42,8 +45,11 @@ my %users = (
 sub handler {
     my $r = shift;
 
-    # test: $r->some_auth_required;
-    return Apache::SERVER_ERROR unless $r->some_auth_required;
+    die '$r->some_auth_required failed' unless $r->some_auth_required;
+
+    my $satisfies = $r->satisfies;
+    die "wanted satisfies=" . Apache::SATISFY_ALL . ", got $satisfies"
+        unless $r->satisfies() == Apache::SATISFY_ALL;
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
     return $rc if $rc != Apache::OK;
@@ -90,6 +96,12 @@ __DATA__
     PerlResponseHandler Apache::TestHandler::ok1
     SetHandler modperl
 
+    <IfModule @ACCESS_MODULE@>
+        # needed to test $r->satisfies
+        Order Deny,Allow
+        Deny from all
+        Allow from @servername@
+    </IfModule>
     AuthType Basic
     AuthName "Access"
     Require user goo bar
@@ -97,12 +109,14 @@ __DATA__
     <Limit POST>
        Require valid-user
     </Limit>
-
-    # htpasswd -mbc auth-users goo foo
-    # htpasswd -mb auth-users bar mar
-    # using md5 password so it'll work on win32 too
-    AuthUserFile @DocumentRoot@/api/auth-users
-    # group: user1 user2 ...
-    AuthGroupFile @DocumentRoot@/api/auth-groups
+    Satisfy All
+    <IfModule @AUTH_MODULE@>
+        # htpasswd -mbc auth-users goo foo
+        # htpasswd -mb auth-users bar mar
+        # using md5 password so it'll work on win32 too
+        AuthUserFile @DocumentRoot@/api/auth-users
+        # group: user1 user2 ...
+        AuthGroupFile @DocumentRoot@/api/auth-groups
+    </IfModule>
 </Location>
 </NoAutoConfig>
