@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+Put Apache's CFLAGS into AP_CFLAGS instead of CFLAGS, so that
+people who like to override CFLAGS from the make line (make
+CFLAGS='-arch ppc -arch i386') can do so without stomping the
+Apache flags.  [ Wilfredo Sanchez <wsanchez@KnowNow.com> ]
+
 =item 1.25 - January 29, 2001
 
 avoid 'prototype mismatch' warnings in Apache::PerlRun::flush_namespace
