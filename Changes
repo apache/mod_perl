@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+provide perl glue for the mod_perl's base_server_pool
+via Apache::ServerUtil::base_server_pool() [Geoff, Stas]
+
 Apache::Resource ported to mp2 [Stas]
 
 If none of MP_APXS, MP_AP_PREFIX and MP_USE_STATIC were specified when
