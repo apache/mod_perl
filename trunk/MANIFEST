@@ -24,7 +24,7 @@ eg/startup.pl
 eg/test.pl
 eg/registry.pl
 eg/README
-lib/mod_perl.pm
+lib/mod_perl.pm.PL
 lib/Apache/src.pm
 lib/Apache/httpd_conf.pm
 lib/Apache/fork.pm
@@ -164,3 +164,8 @@ apaci/configure
 apaci/libperl.module
 apaci/mod_perl.config
 apaci/mod_perl.config.sh
+.gdbinit
+INSTALL.simple
+INSTALL.simple.ssl
+INSTALL.simple.stronghold
+t/docs/subr/.exists

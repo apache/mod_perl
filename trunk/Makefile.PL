@@ -60,14 +60,6 @@ my %SSL = (
     "mod_ssl.h"   => "Stronghold",
 );
 
-unless ($Is_Win32) {
-    # Patch up the Makefiles we are going to use with Apache
-    system $^X, "-pi", "-e", "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!",
-                <src/Makefile.tmpl*>, "src/modules/perl/Makefile";
-
-    mkdir "t/logs", 0755;
-}
-
 unless (-e "t/docs/test.shtml") {
     cp "t/docs/test.html", "t/docs/test.shtml";
 }
@@ -75,6 +67,7 @@ unless (-e "t/docs/test.shtml") {
 chmod 0644, "t/conf/mod_perl_srm.conf";
 
 unless ($Is_Win32) {
+    mkdir "t/logs", 0755;
      system "chmod a+x t/net/perl/* t/net/perl/io/*";
 }
 
@@ -101,7 +94,6 @@ unless ($Is_Win32) {
 }
 
 rmtree "t/docs/stacked", 0, 0;
-rmtree "t/docs/subr", 0, 0;
 
 my(@test_pre_init) = qq(
 test_pre_init:
@@ -501,6 +493,9 @@ if($APACHE_SRC) {
 
     setup_for_static();
 
+    iedit "$APACHE_SRC/modules/perl/Makefile",
+    "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!";
+
     for (@callback_hooks) {
 	($k,$v) = ($_,$callback_hooks{$_});
 
@@ -721,6 +716,7 @@ write_my_config($APACHE_SRC);
     $pmv =~ s/-dev$//;
     my $hooks = "@mod_perl_hooks";
     my $dummy = "hooks=`$hooks'\n" unless $hooks;
+    cp "lib/mod_perl.pm.PL", "lib/mod_perl.pm"; 
     iedit "lib/mod_perl.pm", qq(s/VERSION .*/VERSION = "$pmv";/);
 
     iedit "lib/mod_perl.pm", 
@@ -1435,6 +1431,7 @@ EOF
 
 sub write_version_h {
     my $d = shift;
+    unlink "$d/mod_perl_version.h";
     local *FH;
     open FH, ">$d/mod_perl_version.h" or die "can't write $d/mod_perl_version.h $!";
     print FH <<EOF;
