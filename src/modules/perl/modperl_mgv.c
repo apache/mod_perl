@@ -370,8 +370,8 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
     }
 }
 
-static int modperl_dw_hash_handlers(apr_pool_t *p, server_rec *s,
-                                    void *cfg, char *d, void *data)
+static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
+                                     void *cfg, char *d, void *data)
 {
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
@@ -391,8 +391,8 @@ static int modperl_dw_hash_handlers(apr_pool_t *p, server_rec *s,
     return 1;
 }
 
-static int modperl_sw_hash_handlers(apr_pool_t *p, server_rec *s,
-                                    void *cfg, void *data)
+static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
+                                     void *cfg, void *data)
 {
     int i;
     modperl_srv_config_t *scfg = (modperl_srv_config_t *)cfg;
@@ -424,6 +424,6 @@ static int modperl_sw_hash_handlers(apr_pool_t *p, server_rec *s,
 void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
 {
     ap_pcw_walk_config(p, s, &perl_module, NULL,
-                       modperl_dw_hash_handlers,
-                       modperl_sw_hash_handlers);
+                       modperl_hash_handlers_dir,
+                       modperl_hash_handlers_srv);
 }
