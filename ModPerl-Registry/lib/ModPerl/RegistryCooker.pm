@@ -41,6 +41,7 @@ use ModPerl::Global ();
 use File::Spec::Functions ();
 use File::Basename;
 
+use APR::Const     -compile => qw(EACCES ENOENT);
 use Apache::Const  -compile => qw(:common &OPT_EXECCGI);
 use ModPerl::Const -compile => 'EXIT';
 
@@ -254,20 +255,9 @@ sub can_compile {
     my $self = shift;
     my $r = $self->{REQ};
 
-    unless (-r $r->my_finfo && -s _) {
-        $self->log_error("$self->{FILENAME} not found or unable to stat");
-        return Apache::NOT_FOUND;
-    }
-
-    return Apache::DECLINED if -d _;
+    return Apache::DECLINED if -d $r->my_finfo;
 
     $self->{MTIME} = -M _;
-
-    unless (-x _ or IS_WIN32) {
-        $r->log_error("file permissions deny server execution",
-                       $self->{FILENAME});
-        return Apache::FORBIDDEN;
-    }
 
     if (!($r->allow_options & Apache::OPT_EXECCGI)) {
         $r->log_error("Options ExecCGI is off in this directory",
@@ -372,10 +362,13 @@ sub namespace_from_uri {
 sub convert_script_to_compiled_handler {
     my $self = shift;
 
+    my $rc = Apache::OK;
+
     $self->debug("Adding package $self->{PACKAGE}") if DEBUG & D_NOISE;
 
     # get the script's source
-    $self->read_script;
+    $rc = $self->read_script;
+    return $rc unless $rc == Apache::OK;
 
     # convert the shebang line opts into perl code
     $self->rewrite_shebang;
@@ -408,7 +401,7 @@ sub convert_script_to_compiled_handler {
                     ${ $self->{CODE} },
                     "\n}"; # last line comment without newline?
 
-    my $rc = $self->compile(\$eval);
+    $rc = $self->compile(\$eval);
     return $rc unless $rc == Apache::OK;
     $self->debug(qq{compiled package \"$self->{PACKAGE}\"}) if DEBUG & D_NOISE;
 
@@ -534,7 +527,7 @@ sub flush_namespace_normal {
 # dflt: read_script
 # desc: reads the script in
 # args: $self - registry blessed object
-# rtrn: nothing
+# rtrn: Apache::OK on success, some other code on failure
 # efct: initializes the CODE field with the source script
 #########################################################################
 
@@ -543,7 +536,20 @@ sub read_script {
     my $self = shift;
 
     $self->debug("reading $self->{FILENAME}") if DEBUG & D_NOISE;
-    $self->{CODE} = $self->{REQ}->slurp_filename(0); # untainted
+    $self->{CODE} = eval { $self->{REQ}->slurp_filename(0) }; # untainted
+    if ($@) {
+        $self->log_error("$@");
+
+        if (ref $@ eq 'APR::Error') {
+            return Apache::FORBIDDEN if $@ == APR::EACCES;
+            return Apache::NOT_FOUND if $@ == APR::ENOENT
+        }
+        else {
+            return Apache::SERVER_ERROR;
+        }
+    }
+
+    return Apache::OK;
 }
 
 #########################################################################
