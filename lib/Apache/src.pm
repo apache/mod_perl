@@ -188,6 +188,8 @@ sub inc {
     for ("src/regex", "$src/os/$os") {
 	push @inc, "-I$_" if -d $_;
     }
+    my $ssl_dir = "$src/../ssl/include";
+    push @inc, "-I$ssl_dir" if -d $ssl_dir;
     return "@inc";
 }
 

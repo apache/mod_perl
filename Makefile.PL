@@ -77,10 +77,12 @@ $APACHE_SRC_DEFAULT = $@ ?
     $Apache::MyConfig::Setup{Apache_Src} ; 
 
 my $PWD = cwd;
+
 my %SSL = (
     "modules/ssl/apache_ssl.c" => "Ben-SSL",
     "apache_ssl.c" => "Ben-SSL",
     "mod_ssl.h"   => "Stronghold",
+    "modules/modssl" => "Stronghold",
 );
 
 unless (-e "t/docs/test.shtml") {
@@ -700,25 +702,38 @@ if($APACHE_SRC or $USE_APXS) {
 
 	if($ssl_name =~ /stronghold/i) {
 	    my $skey;
-	    my $conf = "/usr/local/stronghold/conf/httpd.conf";
+	    my $lfile;
+	    my $conf = "$APACHE_SRC/../conf/httpd.conf";
 	    if(-e $conf) {
 		open FH, $conf;
 		while(<FH>) {
+		    chomp;
 		    if(/^StrongholdKey/) {
 			$skey = $_;
 			last;
+		    }
+		    elsif(s/^StrongholdLicenseFile\s+//) {
+			$lfile = $_;
+			unless ($lfile =~ m:^/:) {
+			    $lfile = "$APACHE_SRC/../$lfile";
+			}
 		    }
 		}
 		close FH;
 	    }
 
 	    if($skey) {
-		chomp($StrongholdKey = $skey);
+		$StrongholdKey = $skey;
 		print "Using $skey for 'make test'\n";
+	    }
+	    elsif(-e $lfile) {
+		$StrongholdKey = join " ", 
+		"StrongholdLicenseFile", $lfile;
+		print "Using $StrongholdKey for 'make test'\n";
 	    }
 	    else {
 		print "Before running `make test', ",
-		"you must add your `StrongholdKey' to t/conf/httpd.conf\n"; 
+		"you must add your `StrongholdLicenseFile' to t/conf/httpd.conf\n"; 
 	    }
 	}
 
