@@ -9,7 +9,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(catfile);
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
@@ -19,7 +19,7 @@ use APR::Pool ();
 use Apache::Const -compile => qw(OK DECLINED);
 use APR::Const    -compile => 'SUCCESS';
 
-my $file = catdir Apache::Test::config->{vars}->{documentroot}, 
+my $file = catfile Apache::Test::config->{vars}->{documentroot}, 
     "hooks", "cleanup2";
 
 sub handler {

@@ -1,6 +1,6 @@
 package TestHooks::cleanup;
 
-# test various ways to push handlers
+# test various ways to assign cleanup handlers
 
 use strict;
 use warnings FATAL => 'all';
@@ -8,7 +8,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use File::Spec::Functions qw(catfile catdir);
+use File::Spec::Functions qw(catfile);
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
@@ -17,7 +17,7 @@ use Apache::RequestUtil ();
 use Apache::Const -compile => qw(OK DECLINED);
 
 sub get_file {
-    catdir Apache::Test::config->{vars}->{documentroot}, "hooks", "cleanup";
+    catfile Apache::Test::config->{vars}->{documentroot}, "hooks", "cleanup";
 }
 
 sub handler {
