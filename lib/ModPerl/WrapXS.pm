@@ -855,7 +855,7 @@ sub lookup_method {
     my @items = @{ $methods->{$method} };
     if (@items == 1) {
         my $module = $items[0]->[MODULE];
-        my $hint = "to use method '$method' add:\n" . "\tuse $module ();\n";
+        my $hint = "To use method '$method' add:\n" . "\tuse $module ();\n";
         return ($hint, $module);
     }
     else {
@@ -864,7 +864,7 @@ sub lookup_method {
             for my $item (@items) {
                 if ($class eq $item->[OBJECT]) {
                     my $module = $item->[MODULE];
-                    my $hint = "to use method '$method' add:\n" .
+                    my $hint = "To use method '$method' add:\n" .
                         "\tuse $module ();\n";
                     return ($hint, $module);
                 }
