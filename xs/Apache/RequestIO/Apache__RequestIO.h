@@ -13,7 +13,6 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
                                            SV **MARK, SV **SP)
 {
-    modperl_config_srv_t *scfg;
     modperl_config_req_t *rcfg;
     apr_size_t bytes = 0;
     request_rec *r;
@@ -22,7 +21,6 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
     mpxs_usage_va_1(r, "$r->puts(...)");
 
     rcfg = modperl_config_req_get(r);
-    scfg = modperl_config_srv_get(r->server);
 
     MP_START_TIMES();
 
@@ -42,7 +40,6 @@ static MP_INLINE
 apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
                                          SV **MARK, SV **SP)
 {
-    modperl_config_srv_t *scfg;
     modperl_config_req_t *rcfg;
     request_rec *r;
     
@@ -53,7 +50,6 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     mpxs_usage_va_1(r, "$r->print(...)");
     
     rcfg = modperl_config_req_get(r);
-    scfg = modperl_config_srv_get(r->server);
     
     mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
     
