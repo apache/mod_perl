@@ -64,11 +64,6 @@
   want. Anyway it's something to look at.
   owner: gozer
 
-* META.yml. Generate META.yml (make dist does that), add Apache-Test
-  as a private resource, so it won't be attempted to be indexed by
-  PAUSE, add NO_META=>1 to WriteMakefile() which tells EU::MM not to
-  overwrite META.yml.
-
 * <Perl> sections:
   A few issues with <Perl> sections:
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
