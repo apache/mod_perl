@@ -425,6 +425,10 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_TAKE1("PerlInterpScope", interp_scope,
                      "Scope of a Perl interpreter"),
 #endif
+#ifdef MP_COMPAT_1X
+    MP_CMD_DIR_ITERATE("PerlHandler", response_handlers,
+                       "Subroutine name"),
+#endif
     MP_CMD_ENTRIES,
     { NULL }, 
 }; 

@@ -4,6 +4,8 @@
 #include "modperl_apache_includes.h"
 #include "modperl_perl_includes.h"
 
+#define MP_COMPAT_1X /* backwards compat */
+
 #define MP_THREADED (defined(USE_ITHREADS) && APR_HAS_THREADS)
 
 extern module AP_MODULE_DECLARE_DATA perl_module;
