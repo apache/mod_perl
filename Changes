@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Syntax errors in <Perl> sections were not correctly caught and
+reported. [Gozer]
+
 when building mp2 EU::MM looks into Apache-Test/MANIFEST and complains
 about the missing Apache-Test/META.yml (which is indeed not included
 in the modperl package due to the PAUSE problems of dealing with more
