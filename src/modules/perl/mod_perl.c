@@ -140,18 +140,18 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 
 void modperl_register_hooks(apr_pool_t *p)
 {
-    ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_MIDDLE);
+    ap_hook_open_logs(modperl_hook_init, NULL, NULL, APR_HOOK_MIDDLE);
 
-    ap_hook_handler(modperl_response_handler, NULL, NULL, AP_HOOK_MIDDLE);
+    ap_hook_handler(modperl_response_handler, NULL, NULL, APR_HOOK_MIDDLE);
 
     ap_hook_insert_filter(modperl_output_filter_register,
-                          NULL, NULL, AP_HOOK_LAST);
+                          NULL, NULL, APR_HOOK_LAST);
 
     ap_register_output_filter(MODPERL_OUTPUT_FILTER_NAME,
                               modperl_output_filter_handler,
                               AP_FTYPE_CONTENT);
 
-    ap_hook_post_config(modperl_hook_post_config, NULL, NULL, AP_HOOK_MIDDLE);
+    ap_hook_post_config(modperl_hook_post_config, NULL, NULL, APR_HOOK_MIDDLE);
 
     modperl_register_handler_hooks();
 }
@@ -219,7 +219,7 @@ int modperl_response_handler(request_rec *r)
     return retval;
 }
 
-module MODULE_VAR_EXPORT perl_module = {
+module AP_MODULE_DECLARE_DATA perl_module = {
     STANDARD20_MODULE_STUFF, 
     modperl_create_dir_config, /* dir config creater */
     modperl_merge_dir_config,  /* dir merger --- default is to override */

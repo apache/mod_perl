@@ -4,7 +4,7 @@
 #include "modperl_apache_includes.h"
 #include "modperl_perl_includes.h"
 
-extern module MODULE_VAR_EXPORT perl_module;
+extern module AP_MODULE_DECLARE_DATA perl_module;
 
 #include "modperl_flags.h"
 #include "modperl_hooks.h"
