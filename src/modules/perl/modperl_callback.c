@@ -102,7 +102,7 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
     MP_dDCFG;
     modperl_handler_t **handlers;
     apr_pool_t *p = NULL;
-    MpAV *av = NULL;
+    MpAV *av, **avp;
     int i, status = OK;
     const char *desc = NULL;
     va_list args;
@@ -114,10 +114,10 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
         return DECLINED;
     }
 
-    av = modperl_handler_lookup_handlers(dcfg, scfg, NULL,
-                                         type, idx, &desc);
+    avp = modperl_handler_lookup_handlers(dcfg, scfg, NULL,
+                                          type, idx, &desc);
 
-    if (!av) {
+    if (!(avp && (av = *avp))) {
         MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
                    desc, r ? r->uri : "");
         return DECLINED;

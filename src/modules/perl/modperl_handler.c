@@ -64,11 +64,11 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 #define set_desc(dtype) \
     MP_TRACE_a_do(if (desc) *desc = modperl_handler_desc_##dtype(idx))
 
-MpAV *modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
-                                      modperl_config_srv_t *scfg,
-                                      modperl_config_req_t *rcfg,
-                                      int type, int idx,
-                                      const char **desc)
+MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
+                                       modperl_config_srv_t *scfg,
+                                       modperl_config_req_t *rcfg,
+                                       int type, int idx,
+                                       const char **desc)
 {
     MpAV *av = NULL;
 
@@ -95,5 +95,5 @@ MpAV *modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
         break;
     };
 
-    return av;
+    return av ? &av : NULL;
 }
