@@ -28,7 +28,7 @@ $CGI::VERSION ||= 0;
 
 if(have_module("CGI") && ($CGI::VERSION >= 2.37)) {
     $qredirect = "http://$net::httpserver$net::perldir/qredirect.pl";
-    $tests += 1;
+    $tests += 2;
 }
 
 print "1..$tests\n";
@@ -76,9 +76,6 @@ if ($qredirect) {
     print "ok 4\n";
 
     print "content=`", $response->content, "'\n";
-}
-
-=pod
 
     $ua = LWP::UserAgent->new;
     $request = HTTP::Request->new(GET => $qredirect);
@@ -94,4 +91,3 @@ if ($qredirect) {
 
 
 }
-=cut
