@@ -8,9 +8,15 @@ our $VERSION = '0.02';
 
 sub new {
     my $class = shift;
-    bless {
+
+    my $self = bless {
         config => Apache::Build->new,
+        @_,
     }, $class;
+
+    $Apache::Build::APXS ||= $self->{apxs};
+
+    $self;
 }
 
 sub config {
@@ -75,6 +81,7 @@ sub find_includes {
 
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal);
+
     File::Find::finddepth({
                            wanted => sub {
                                return unless /\.h$/;
@@ -85,7 +92,11 @@ sub find_includes {
                            follow => 1,
                           }, $dir);
 
-    return $self->{includes} = \@includes;
+    #include apr_*.h before the others
+    my @wanted = grep { /apr_\w+\.h$/ } @includes;
+    push @wanted, grep { !/apr_\w+\.h$/ } @includes;
+
+    return $self->{includes} = \@wanted;
 }
 
 sub generate_cscan_file {
