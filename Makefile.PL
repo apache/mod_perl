@@ -25,9 +25,9 @@ use File::Copy 'cp';
 use Apache::Build ();
 use Apache::TestReportPerl ();
 use Apache::TestSmokePerl ();
-use Apache::TestRunPerl ();
 use Apache::TestTrace;
 use Apache::TestMM qw(test);
+use ModPerl::TestRun ();
 use ModPerl::Code ();
 use ModPerl::MM ();
 
@@ -158,8 +158,13 @@ sub configure {
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
-    for my $util (qw(Report Smoke Run)) {
+    for my $util (qw(Report Smoke)) {
         my $class = "Apache::Test${util}Perl";
+        $class->generate_script;
+    }
+
+    for my $util (qw(Run)) {
+        my $class = "ModPerl::Test${util}";
         $class->generate_script;
     }
 
