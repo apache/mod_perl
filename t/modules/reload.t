@@ -62,8 +62,8 @@ t_write_file(test_file(), $header, $modified);
 }
 
 sub test_file {
-    return catfile(Apache::Test::vars()->{"serverroot"}, 'lib','Apache',
-                   'Reload','Test.pm');
+    return catfile Apache::Test::vars("serverroot"),
+        qw(lib Apache Reload Test.pm);
 }
 
 # if we fail to find the same interpreter, return undef (this is not
