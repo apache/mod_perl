@@ -6,7 +6,7 @@ date.t
 finfo.t
 flatten.t
 lib.t
-netlib.t
+ipsubnet.t
 os.t
 perlio.t
 pool.t
