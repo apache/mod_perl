@@ -5,7 +5,12 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 7;
+use constant HAVE_MIN_APACHE_2_0_44 => have_min_apache_version("2.0.44");
+
+my $tests = 5;
+$tests += 2 if HAVE_MIN_APACHE_2_0_44;
+
+plan tests => $tests;
 
 {
     # the script changes the status before the run-time error happens,
@@ -68,7 +73,9 @@ plan tests => 7;
        );
 }
 
-{
+# this behavior is specific for 2.0.44+ I think (at least it's still
+# different with apache < 2.0.41 (haven't tested with 41, 42, 43))
+if (HAVE_MIN_APACHE_2_0_44) {
     # even though we have a runtime error here, the scripts succeeds
     # to send some body before the error happens and since by that
     # time Apache has already sent the headers, they will include 
