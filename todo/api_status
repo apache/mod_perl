@@ -65,7 +65,11 @@ VV src/docs/2.0/api/ModPerl/Global.pod
 -- src/docs/2.0/api/APR/Finfo.pod
 -- src/docs/2.0/api/APR/NetLib.pod
 -- src/docs/2.0/api/APR/PerlIO.pod
--- src/docs/2.0/api/APR/Pool.pod
+
+
+VP src/docs/2.0/api/APR/Pool.pod
+        cleanup_for_exec
+
 -- src/docs/2.0/api/APR/SockAddr.pod
 
 VP src/docs/2.0/api/APR/Socket.pod
