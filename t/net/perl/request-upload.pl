@@ -56,10 +56,21 @@ for my $upload ($apr->upload) {
 	    print "COMPAT: $fh\n";
 	} 
     }
+    use File::Basename;
+    local *OUT;
+    if (my $dir = $apr->header_in("X-Upload-Tmp")) {
+	if (-d $dir) {
+	    Apache->untaint($dir);
+	    my $file = basename $filename;
+	    open OUT, ">$dir/$file" or die $!;
+	}
+    }
     while(<$fh>) {
 	++$lines;
 	$bytes += length;
+	print OUT $_ if fileno OUT;
     }
+    close OUT;
 
     my $info = $upload->info;
     while (my($k,$v) = each %$info) {

@@ -1,5 +1,6 @@
 use strict;
 use Apache::test;
+use Cwd qw(fastcwd);
 
 my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 
@@ -16,9 +17,12 @@ unless ($CGI::VERSION >= 2.39 and
     skip_test;
 } 
 
+my $PWD = fastcwd;
+my @binary = "$PWD/docs/book.gif";
+
 my $test_pods = $ENV{UPLOAD_PODS} || ($Is_dougm ? 20 : 3);
 my $tests = 2;
-$tests += ($test_pods * 2);
+$tests += ($test_pods * 2) + (@binary * 2);
 
 print "1..$tests\n";
 my $i = 0;
@@ -31,6 +35,9 @@ for my $cv (\&post_test, \&get_test) {
 }
 
 if ($Is_dougm) {
+    for (@binary) {
+	upload_test($_);
+    }
     #try various sizes
     my $dir = "";
     for my $path (@INC) {
@@ -45,7 +52,7 @@ if ($Is_dougm) {
     }
 }
 else {
-    for (qw(perlfunc.pod perlpod.pod perlxs.pod)) {
+    for (qw(perlfunc.pod perlpod.pod perlxs.pod), @binary) {
 	upload_test($_);
     }
 }
@@ -95,8 +102,13 @@ sub upload_test {
     my $podfile = shift || "func";
     my $url = "http://$net::httpserver$net::perldir/request-upload.pl";
     my $file = "";
-    for my $path (@INC) {
-	last if -e ($file = "$path/pod/$podfile");
+    if (-e $podfile) {
+	$file = $podfile;
+    }
+    else {
+	for my $path (@INC) {
+	    last if -e ($file = "$path/pod/$podfile");
+	}
     }
 
     $file = $0 unless -e $file;
@@ -105,8 +117,14 @@ sub upload_test {
     open FH, $file or die "open $file $!";
     ++$lines while (<FH>);
     close FH;
-
+    my(@headers);
+    if ($Is_dougm) {
+	my $dir = "$ENV{HOME}/public_html/tmp/uploads";
+	mkdir $dir, 0755;
+	push @headers, "X-Upload-Tmp" => $dir if -d $dir;
+    }
     my $response = $ua->request(HTTP::Request::Common::POST($url,
+                   @headers,
 		   Content_Type => 'multipart/form-data',
 		   Content      => [count => 'count lines',
 				    filename  => [$file],

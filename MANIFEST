@@ -186,6 +186,7 @@ lib/Apache/RedirectLogFix.pm
 lib/Apache/Include.pm
 lib/Apache/Status.pm
 lib/Bundle/Apache.pm
+t/docs/book.gif
 t/docs/auth/.htaccess
 t/docs/dirmagic/cal.txt
 t/docs/null.txt
