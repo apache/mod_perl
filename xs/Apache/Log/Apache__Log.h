@@ -308,7 +308,9 @@ static XS(MPXS_Apache__Log_log_error)
         i = 1;
     }
     else {
-        s = modperl_global_get_server_rec();
+        request_rec *r = NULL;
+        (void)modperl_tls_get_request_rec(&r);
+        s = r ? r->server : modperl_global_get_server_rec();
     }
 
     if (items > 1+i) {
