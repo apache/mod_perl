@@ -65,6 +65,8 @@ sub get_functions {
         my($name, $module, $class, $args) =
           @{ $func } { qw(perl_name module class args) };
 
+        $self->{XS}->{ $module } ||= [];
+
         #eg ap_fputs()
         if ($name =~ s/^DEFINE_//) {
             $func->{name} =~ s/^DEFINE_//;
