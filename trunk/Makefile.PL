@@ -1239,7 +1239,7 @@ EOF
     open FH, ">$dir/.htaccess";
     print FH <<EOF;
     $meth_test
-PerlFixupHandler  Apache::OK Apache::DECLINED MyClass::method
+PerlFixupHandler  Apache::Constants::OK Apache::Constants::DECLINED MyClass::method
 EOF
         close FH;
 }
