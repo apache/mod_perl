@@ -1,12 +1,10 @@
 package TestAPI::slurp_filename;
 
-# test slurp_filename()'s taintness options and the that it works properly with utf8 data
+# test slurp_filename()'s taintness options and that it works properly
+# with utf8 data
 
 use strict;
 use warnings FATAL => 'all';
-no warnings 'redefine';
-
-use diagnostics;
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -36,7 +34,8 @@ sub handler {
         my $data = $r->slurp_filename; # tainted
         my $received;
         eval { $received = eval $$data };
-        ok t_cmp(qr/Insecure dependency in eval/, $@, "slurp filename tainted");
+        ok t_cmp(qr/Insecure dependency in eval/, $@,
+                 "slurp filename tainted");
 
         ModPerl::Util::untaint($$data);
         $received = eval $$data;
@@ -49,7 +48,8 @@ sub handler {
         my $data = slurp_filename_perl($r); # tainted
         my $received;
         eval { $received = eval $$data };
-        ok t_cmp(qr/Insecure dependency in eval/, $@, "slurp filename (perl) tainted");
+        ok t_cmp(qr/Insecure dependency in eval/, $@,
+                 "slurp filename (perl) tainted");
 
         ModPerl::Util::untaint($$data);
         $received = eval $$data;
