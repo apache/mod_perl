@@ -165,4 +165,4 @@ AP_PREFIX	Apache installation prefix
 XS_GLUE_DIR     Directories containing extension glue
 INCLUDE_DIR     Add directories to search for header files
 GENERATE_XS     Generate XS code based on httpd version
-LIBNAME         Name of the modperl dso library (default is libmodperl)
+LIBNAME         Name of the modperl dso library (default is mod_perl)

@@ -809,7 +809,7 @@ sub apache_libs {
 
 sub modperl_libs_MSWin32 {
     my $self = shift;
-    #XXX: install/use libmodperl.lib for 3rd party xs modules
+    #XXX: install/use mod_perl.lib for 3rd party xs modules
     "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
