@@ -5,12 +5,12 @@ inaccurate at times. Feel free to contribute.
 
 =head1 Installing
 
-Download the apache-2.0 and modperl-2.0 tarballs, and extract them
-in the same directory:
+Download the httpd-2.0 and modperl-2.0 tarballs, and extract them
+in the same directory.
 
-  % ls -l
-  drwxr-xr-x   8 eric  eric   512 May 28 03:12 apache-2.0
-  drwxr-xr-x   8 eric  eric   512 May 28 11:59 modperl-2.0
+[XXX: anon cvs for httpd-2.0, apr, apr-util, modperl-2.0]
+
+[XXX: rsync for perl-current]
 
 =head1 Compiling
 
@@ -81,7 +81,7 @@ and those from MP_OPTIONS_FILE.
 
 =head2 Configure and compile Apache
 
-  % cd ../apache-2.0/src
+  % cd ../httpd-2.0
   % ./configure --with-mpm=mpmt_pthread
   % make
 
@@ -149,6 +149,7 @@ which sets maximum logging and debugging levels;
 a combination of one or more option letters from the following list:
 
   d  directive processing
+  f  filters
   g  Perl runtime interaction
   h  handlers
   i  interpreter pool management
