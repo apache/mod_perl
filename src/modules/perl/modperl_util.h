@@ -4,7 +4,7 @@
 #ifdef MP_DEBUG
 #define MP_INLINE
 #else
-#define MP_INLINE apr_inline
+#define MP_INLINE APR_INLINE
 #endif
 
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
