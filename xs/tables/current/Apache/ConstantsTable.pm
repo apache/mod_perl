@@ -257,9 +257,6 @@ $Apache::ConstantsTable = {
       'APR_SHUTDOWN_READ',
       'APR_SHUTDOWN_WRITE',
       'APR_SHUTDOWN_READWRITE',
-      'APR_SHUTDOWN_READ',
-      'APR_SHUTDOWN_WRITE',
-      'APR_SHUTDOWN_READWRITE'
     ],
     'read_type' => [
       'APR_BLOCK_READ',
