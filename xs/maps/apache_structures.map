@@ -131,19 +131,19 @@ $  limit_req_fields
 </server_addr_rec>
 
 <module>
-   version
-   minor_version
-   module_index
-   name
+<  version
+<  minor_version
+<  module_index
+<  name
 !  dynamic_load_handle
-   next
+<  next
 >  magic
 -  rewrite_args
 >  create_dir_config
 >  merge_dir_config
 >  create_server_config
 >  merge_server_config
-   cmds
+<  cmds
 >  register_hooks
 </module>
 
