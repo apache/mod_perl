@@ -3,6 +3,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- Perl{Module,Require} is allowed in .htaccess, but also adds to
+  cls->Perl{Module,Require} arrays, which it should not
+
 - segfaults with DBI->connect (mysql), reported that downgrade to
   1.21_03 cures
 
@@ -20,6 +23,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 ---------------------------------------------------------------------------
 POSSIBLE NEW FEATURES
 ---------------------------------------------------------------------------
+
+- Perl{Eval,Do} directives [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
 - add srand stuff ?
 
@@ -65,6 +70,8 @@ NOTE: im worried this could break apps who need to know content-length
 after data has been read
 
 - syswrite/WRITE
+
+- Jeffrey W. Baker's Apache::Util::escape_html() replacement
 
 ---------------------------------------------------------------------------
 CONFIG STUFF
