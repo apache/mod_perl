@@ -37,9 +37,13 @@ before), and add the corresponding '!=' [Stas]
 if $r->document_root was modified, restore it at the end of request
 [joes]
 
+Starting from ExtUtils::MakeMaker 6.26 went back to pm_to_blib target
+from pm_to_blib.ts introduced in 6.22, so needed to fix the glue_pod
+target, so install will work correctly [Stas]
+
 Syntax errors in <Perl> sections were not correctly caught and
 reported. [Gozer]
-                                                                                                                             
+                             
 when building mp2 EU::MM looks into Apache-Test/MANIFEST and complains
 about the missing Apache-Test/META.yml (which is indeed not included
 in the modperl package due to the PAUSE problems of dealing with more
