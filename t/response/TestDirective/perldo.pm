@@ -10,7 +10,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 7;
+    plan $r, tests => 9;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
     
@@ -22,10 +22,13 @@ sub handler {
 
     ok t_cmp('yes', $TestDirective::perl::comments);
 
+    ok t_cmp(qr/extra.last.conf/, $TestDirective::perl::dollar_zero, '$0');
     ok t_cmp(qr/extra.last.conf/, $TestDirective::perl::filename, '__FILE__');
 
     # 3 would mean we are still counting lines from the context of the eval
     ok $TestDirective::perl::line > 3;
+
+    ok t_cmp("-e", $0, '$0');
 
     Apache::OK;
 }

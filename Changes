@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+<Perl> sections now proprely set $0 to the name of the configuration
+file they are in. [Philippe M. Chiasson]
+
 Apache::Status: provide a workaround for Config::myconfig() which
 fails under threads with (5.8.0 < perl < 5.8.3) [Elizabeth Mattijsen
 <liz@dijkmat.nl>]

@@ -24,6 +24,7 @@ $TestDirective::perl::comments="yes";
 <Perl >
 $Apache::Server::SaveConfig = 1;
 $TestDirective::perl::filename = __FILE__;
+$TestDirective::perl::dollar_zero = $0;
 $TestDirective::perl::line =  __LINE__;
 </Perl>
 
