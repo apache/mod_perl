@@ -668,7 +668,7 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS)
 	$(MODPERL_RANLIB) $@
 
-.SUFFIXES: .xs .c .o .lo
+.SUFFIXES: .xs .c .o .lo .i .s
 
 .c.lo:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS_SHLIB) \
@@ -677,8 +677,8 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 .c.o:
 	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $<
 
-.c.cpp:
-	$(MODPERL_CPPRUN) $(MODPERL_CCFLAGS) -c $< > $*.cpp
+.c.i:
+	$(MODPERL_CPPRUN) $(MODPERL_CCFLAGS) -c $< > $*.i
 
 .c.s:
 	$(MODPERL_CC) -O -S $(MODPERL_CCFLAGS) -c $<
@@ -695,7 +695,7 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && mv $*.o $*.lo
 
 clean:
-	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo *.cpp *.s \
+	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo *.i *.s \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
