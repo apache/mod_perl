@@ -323,8 +323,13 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         return 1;
     }
 
-    MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
-               handler_name, name);
+#ifdef MP_TRACE
+    /* complain only if the class was actually loaded/created */
+    if (stash) {
+        MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
+                   handler_name, name);
+    }
+#endif
 
     return 0;
 }
