@@ -139,6 +139,7 @@ my %defines_wanted = (
 #       config     => [qw{DECLINE_CMD}],
 #       types      => [qw{DIR_MAGIC_TYPE}],
         override   => [qw{OR_ ACCESS_CONF RSRC_CONF}],
+        log        => [qw(APLOG_)],
     },
     APR => {
         poll      => [qw{APR_POLL}],
@@ -169,7 +170,7 @@ my %enums_wanted = (
 );
 
 my $defines_unwanted = join '|', qw{
-HTTP_VERSION APR_EOL_STR
+HTTP_VERSION APR_EOL_STR APLOG_MARK
 };
 
 sub get_constants {

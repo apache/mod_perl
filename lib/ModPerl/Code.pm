@@ -1,7 +1,7 @@
 package ModPerl::Code;
 
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 use mod_perl ();
 use Apache::Build ();
 
@@ -731,8 +731,8 @@ $proto
 EOF
 
     for (@$constants) {
-        if (s/^($constant_prefixes)_//o) {
-            $alias{$_} = join '_', $1, $_;
+        if (s/^($constant_prefixes)(_)?//o) {
+            $alias{$_} = join $2 || "", $1, $_;
         }
         else {
             $alias{$_} ||= $_;
@@ -791,7 +791,7 @@ sub constants_group_lookup_code {
 	push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
 	print $c_fh "\nstatic const char *$name [] = { \n",
-          (map { s/^($constant_prefixes)_//o;
+          (map { s/^($constant_prefixes)_?//o;
                  qq(   "$_",\n) } @$constants), "   NULL,\n};\n";
     }
 
