@@ -146,6 +146,7 @@
 #define MP_PERL_FREE_THREAD_KEY_WORKAROUND      \
     if (PL_curinterp) {                         \
         FREE_THREAD_KEY;                        \
+        PL_curinterp = NULL;                    \
     }
 #else
 #define MP_PERL_FREE_THREAD_KEY_WORKAROUND
