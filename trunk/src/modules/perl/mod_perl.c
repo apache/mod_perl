@@ -259,8 +259,6 @@ void perl_shutdown (server_rec *s, pool *p)
 
     if((pdl = getenv("PERL_DESTRUCT_LEVEL")))
 	perl_destruct_level = atoi(pdl);
-    else
-	perl_destruct_level = PERL_DESTRUCT_LEVEL;
 
     if(perl_destruct_level < 0) {
 	MP_TRACE_g(fprintf(stderr, 
@@ -510,6 +508,7 @@ static void mp_dso_unload(void *data)
     array_header *librefs;
 
     librefs = xs_dl_librefs((pool *)data);
+    perl_destruct_level = 2;
     perl_shutdown(NULL, NULL);
     unload_xs_so(librefs);
 } 
