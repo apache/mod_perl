@@ -35,7 +35,8 @@ For bleeding edge Perl:
 =head2 Create the build environment
 
   % cd modperl-2.0
-  % perl Makefile.PL [options]
+  % perl Makefile.PL MP_GENERATE_XS=1 MP_USE_DSO=1 \
+    MP_APXS=$apache_prefix/bin/apxs && make
 
 I<options>  an optional list of (key,value) pairs. Currently all options are
 boolean, set them with MP_XXX=1.
