@@ -23,6 +23,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             ap_log_error(APLOG_MARK, APLOG_WARNING,
                          0, r->server, "%s did not send an HTTP header",
                          r->uri);
+            /* XXX: bodytext == NULL here */
+            return status;
         }
         else if (!bodytext) {
             return APR_SUCCESS;
@@ -190,17 +192,14 @@ int modperl_run_filter(modperl_filter_t *filter,
              * first modperl_input_filter_read, so it must be
              * destroyed at the end of the filter invocation
              */
-            /* XXX: may be the filter must consume all the data? add a
-             * test to check */
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
         }
-        modperl_input_filter_flush(filter);
+        MP_FAILURE_CROAK(modperl_input_filter_flush(filter));
     }
     else {
-        modperl_output_filter_flush(filter);
+        MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
     }
-    
 
     return status;
 }
@@ -457,7 +456,7 @@ MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
     
     if (filter->flush && len == 0) {
         /* if len > 0 then $filter->write will flush */
-        modperl_output_filter_flush(filter);
+        MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
     }
 
     return len;

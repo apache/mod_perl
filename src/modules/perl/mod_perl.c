@@ -709,12 +709,12 @@ void modperl_response_init(request_rec *r)
     wb->r = r;
 }
 
-void modperl_response_finish(request_rec *r)
+apr_status_t modperl_response_finish(request_rec *r)
 {
     MP_dRCFG;
 
     /* flush output buffer */
-    modperl_wbucket_flush(rcfg->wbucket);
+    return modperl_wbucket_flush(rcfg->wbucket);
 }
 
 static int modperl_response_handler_run(request_rec *r, int finish)
@@ -730,7 +730,10 @@ static int modperl_response_handler_run(request_rec *r, int finish)
     }
 
     if (finish) {
-        modperl_response_finish(r);
+        apr_status_t rc = modperl_response_finish(r);
+        if (rc != APR_SUCCESS) {
+            retval = rc;
+        }
     }
 
     return retval;
@@ -803,7 +806,10 @@ int modperl_response_handler_cgi(request_rec *r)
 #endif
 
     /* flush output buffer after interpreter is putback */
-    modperl_response_finish(r);
+    apr_status_t rc = modperl_response_finish(r);
+    if (rc != APR_SUCCESS) {
+        retval = rc;
+    }
 
     switch (rcfg->status) {
       case HTTP_MOVED_TEMPORARILY:
