@@ -892,7 +892,7 @@ init_config_pl() if $Is_Win32;
 
 my (%win32_path);
 if ($win32_auto) {
-  use File::Spec;
+  require File::Spec;
   win32_inc_and_lib();
   win32_fix_dsp();
 }
