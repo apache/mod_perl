@@ -1,0 +1,17 @@
+package Apache::ROOT::dirty_2dperl::dirty_2dscript_2epl;
+
+use Apache::test;
+
+print "Content-type: text/plain\n\n";
+
+print "1..5\n";
+
+my $i = 0;
+
+test ++$i, not defined &subroutine;
+test ++$i, not defined @array;
+test ++$i, not defined %hash;
+test ++$i, not defined $scalar;
+test ++$i, not defined fileno(FH);
+
+
