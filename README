@@ -55,9 +55,10 @@ Includes just as CGI scripts can, mod_perl's integration with
 mod_include gives an extra speed boost and allows Perl code to be
 directly inside SSI files. 
 
-For comments, questions, bug-reports, announcements, etc., join the
-Apache/Perl mailing list by sending mail to modperl-request@apache.org
-with the string "subscribe modperl" in the body.
+For comments, questions, bug-reports, etc., join the Apache/Perl
+mailing list by sending mail to modperl-request@apache.org with the
+string "subscribe modperl" in the body.  "subscribe modperl-announce"
+will subscribe you to the very low-traffic announcements list.
 
 There is an Epigone archive for this list available from:
 http://forum.swarthmore.edu/epigone/modperl
