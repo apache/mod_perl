@@ -524,9 +524,10 @@ EOF
 
 my %typemap = (
     'Apache::RequestRec' => 'T_APACHEOBJ',
-    'apr_time_t' => 'T_APR_TIME',
-    'APR::Table' => 'T_HASHOBJ',
-    'APR::OS::Thread' => 'T_UVOBJ',
+    'apr_time_t'         => 'T_APR_TIME',
+    'APR::Table'         => 'T_HASHOBJ',
+    'APR::Pool'          => 'T_POOLOBJ',
+    'APR::OS::Thread'    => 'T_UVOBJ',
 );
 
 sub write_typemap {
