@@ -182,12 +182,21 @@ int modperl_callback_run_handlers(int idx, int type,
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<nelts; i++) {
-        if ((status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args)) != OK) {
+        status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
+        
+        MP_TRACE_h(MP_FUNC, "%s returned %d\n", handlers[i]->name, status);
+
+        if ((status != OK) && (status != DECLINED)) {
             status = modperl_errsv(aTHX_ status, r, s);
+#ifdef MP_TRACE
+            if (i+1 != nelts) {
+                MP_TRACE_h(MP_FUNC, "there were %d uncalled handlers\n",
+                           nelts-i-1);
+            }
+#endif
+            break;
         }
 
-        MP_TRACE_h(MP_FUNC, "%s returned %d\n",
-                   handlers[i]->name, status);
     }
 
     SvREFCNT_dec((SV*)av_args);
