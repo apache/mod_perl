@@ -111,6 +111,8 @@ sub configure {
         }
     }
 
+    $build->generate_apache2_pm;
+
     if (WIN32()) {
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
