@@ -3,7 +3,7 @@
 #define EnvMgObj SvMAGIC((SV*)GvHV(PL_envgv))->mg_ptr
 
 static MP_INLINE
-void mp_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
+void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
 {
     I32 klen = strlen(elt->key);
     SV **svp = hv_fetch(hv, elt->key, klen, FALSE);
@@ -26,17 +26,17 @@ typedef struct {
     const char *val;
     I32 vlen;
     U32 hash;
-} mp_env_ent_t;
+} modperl_env_ent_t;
 
 #define MP_ENV_ENT(k,v) \
 { k, sizeof(k)-1, v, sizeof(v)-1, 0 }
 
-static const mp_env_ent_t mp_env_const_vars[] = {
+static const modperl_env_ent_t modperl_env_const_vars[] = {
     MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
     { NULL }
 };
 
-static void mp_env_request_populate(pTHX_ request_rec *r)
+static void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     HV *hv = GvHV(PL_envgv);
     int i;
@@ -53,11 +53,11 @@ static void mp_env_request_populate(pTHX_ request_rec *r)
 	if (!elts[i].key || !elts[i].val) {
             continue;
         }
-        mp_env_hv_store(aTHX_ hv, &elts[i]);
+        modperl_env_hv_store(aTHX_ hv, &elts[i]);
     }    
 
-    for (i = 0; mp_env_const_vars[i].key; i++) {
-        const mp_env_ent_t *ent = &mp_env_const_vars[i];
+    for (i = 0; modperl_env_const_vars[i].key; i++) {
+        const modperl_env_ent_t *ent = &modperl_env_const_vars[i];
 
         hv_store(hv, ent->key, ent->klen,
                  newSVpvn(ent->val, ent->vlen), ent->hash);
@@ -66,7 +66,7 @@ static void mp_env_request_populate(pTHX_ request_rec *r)
     modperl_env_tie(mg_flags);
 }
 
-static int mp_env_request_set(pTHX_ SV *sv, MAGIC *mg)
+static int modperl_env_request_set(pTHX_ SV *sv, MAGIC *mg)
 {
     const char *key, *val;
     STRLEN klen, vlen;
@@ -83,7 +83,7 @@ static int mp_env_request_set(pTHX_ SV *sv, MAGIC *mg)
 }
 
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
-static int mp_env_request_get(pTHX_ SV *sv, MAGIC *mg)
+static int modperl_env_request_get(pTHX_ SV *sv, MAGIC *mg)
 {
     const char *key, *val;
     STRLEN klen;
@@ -107,15 +107,15 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
     MP_dDCFG;
 
     if (MpDirSETUP_ENV(dcfg)) {
-        mp_env_request_populate(aTHX_ r);
+        modperl_env_request_populate(aTHX_ r);
     }
 
     EnvMgObj = (char *)r;
 
-    PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(mp_env_request_set);
+    PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(modperl_env_request_set);
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     SvGMAGICAL_on((SV*)GvHV(PL_envgv));
-    PL_vtbl_envelem.svt_get = MEMBER_TO_FPTR(mp_env_request_get);
+    PL_vtbl_envelem.svt_get = MEMBER_TO_FPTR(modperl_env_request_get);
 #endif
 }
 
