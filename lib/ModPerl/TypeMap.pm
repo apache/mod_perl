@@ -214,7 +214,10 @@ sub map_function {
         $mf->{$_} = $map->{$_};
     }
 
-    $mf->{class}  = $map->{class}  || $self->first_class($mf);
+    unless ($mf->{class}) {
+        $mf->{class} = $map->{class} || $self->first_class($mf);
+        #print "GUESS class=$mf->{class} for $mf->{name}\n";
+    }
 
     $mf->{prefix} ||= ModPerl::FunctionMap::guess_prefix($mf);
 
@@ -263,8 +266,14 @@ sub destructor {
 sub first_class {
     my($self, $func) = @_;
 
+    return $func->{return_type} if $func->{return_type} =~ /::/;
+
     for my $e (@{ $func->{args} }) {
-        return $e->{type} if $e->{type} =~ /::/;
+        next unless $e->{type} =~ /::/;
+        #there are alot of util functions that take an APR::Pool
+        #that do not belong in the APR::Pool class
+        next if $e->{type} eq 'APR::Pool' and $func->{name} !~ /^apr_pool/;
+        return $e->{type};
     }
 
     return $func->{name} =~ /^apr_/ ? 'APR' : 'Apache';
