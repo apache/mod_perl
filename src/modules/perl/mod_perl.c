@@ -24,13 +24,21 @@ static apr_status_t modperl_shutdown(void *data)
 }
 #endif
 
-static void my_xs_init(pTHX)
+static const char *MP_xs_loaders[] = {
+    "ModPerl", "APR", NULL,
+};
+
+#define MP_xs_loader_name "%s::XSLoader::BOOTSTRAP"
+
+static void modperl_xs_init(pTHX)
 {
+    int i;
     xs_init(aTHX); /* see modperl_xsinit.c */
 
-    newCONSTSUB(PL_defstash,
-                "ModPerl::XSLoader::BOOTSTRAP",
-                newSViv(1));
+    for (i=0; MP_xs_loaders[i]; i++) {
+        char *name = Perl_form(aTHX_ MP_xs_loader_name, MP_xs_loaders[i]);
+        newCONSTSUB(PL_defstash, name, newSViv(1));
+    }
 }
 
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
@@ -65,7 +73,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         PL_perl_destruct_level = 2;
     }
 #endif
-    status = perl_parse(perl, my_xs_init, argc, argv, NULL);
+    status = perl_parse(perl, modperl_xs_init, argc, argv, NULL);
 
     if (status) {
         perror("perl_parse");
