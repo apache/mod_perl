@@ -155,6 +155,7 @@ MODULE=APR::Pool
  apr_pool_clear
 >apr_pool_clear_debug
  apr_pool_destroy
+ DEFINE_DESTROY | mpxs_apr_pool_DESTROY | SV *:obj
 >apr_pool_destroy_debug
  apr_pool_t *:DEFINE_new | mpxs_apr_pool_create | SV *:obj
 -apr_pool_create_ex
