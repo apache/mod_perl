@@ -448,7 +448,7 @@ sub postamble {
 }
 
 sub generate {
-    my $self = shift;
+    my($self, $build) = @_;
 
     for my $s (values %sources) {
         for (qw(h c)) {
@@ -474,7 +474,9 @@ sub generate {
     my $xsinit = "$self->{path}/modperl_xsinit.c";
     warn "generating...$xsinit\n";
 
-    ExtUtils::Embed::xsinit($xsinit);
+    #create bootstrap method for static xs modules
+    my $static_xs = [keys %{ $build->{XS} }];
+    ExtUtils::Embed::xsinit($xsinit, 1, $static_xs);
 
     warn "generating...", $self->generate_apache2_pm, "\n";
 }

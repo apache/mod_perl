@@ -32,6 +32,8 @@ ModPerl::MM::WriteMakefile(
     },
 );
 
+post_configure();
+
 sub configure {
     system_sanity_check();
     set_modperl_version();
@@ -49,12 +51,25 @@ sub configure {
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
       $httpd_version, $VERSION, $^V;
 
-    $code->generate;
+    for (@{ clean_files() }) {
+        unlink;
+    }
+
+    #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
+    $build->save;
+}
+
+sub post_configure {
+
+    #didn't exist until configure()
+    require Apache::BuildConfig;
+    #now have any data subdir/Makefile.PL's save, e.g. XS
+    $build = Apache::BuildConfig->new;
 
     $build->write_src_makefile;
-
-    $build->save;
     $build->save_ldopts;
+
+    $code->generate($build);
 
     printf "Will build mod_perl %s as %s\n",
       $build->is_dynamic ? "shared" : "static",
@@ -63,6 +78,8 @@ sub configure {
     if ($build->{MP_INST_APACHE2}) {
         print "Will install Apache Perl modules into Apache2/\n";
     }
+
+    $build->save;
 }
 
 sub echo_cmd {
@@ -190,7 +207,7 @@ sub MY::post_initialize {
     my $self = shift;
     #up one from the Apache2/ subdir
     #so it can be found for 'use Apache2 ()'
-    $self->{PM}->{'lib/Apache2.pm'} =~ s:^\$\(INST_LIB\):blib/lib:;
+    $self->{PM}->{'lib/Apache2.pm'} = "blib/lib/Apache2.pm";
     '';
 }
 

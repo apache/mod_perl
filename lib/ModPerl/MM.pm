@@ -16,14 +16,19 @@ sub add_dep {
     $$string =~ s/($targ\s+::)/$1 $add /;
 }
 
+sub build_config {
+    my $key = shift;
+    require Apache::BuildConfig;
+    my $build = Apache::BuildConfig->new;
+    return $build unless $key;
+    $build->{$key};
+}
+
 #strip the Apache2/ subdir so things are install where they should be
 sub install {
     my $hash = shift;
 
-    require Apache::BuildConfig;
-    my $build = Apache::BuildConfig->new;
-
-    if ($build->{MP_INST_APACHE2}) {
+    if (build_config('MP_INST_APACHE2')) {
         while (my($k,$v) = each %$hash) {
             delete $hash->{$k};
             $k =~ s:/Apache2$::;
@@ -51,13 +56,12 @@ sub WriteMakefile {
     ExtUtils::MakeMaker::WriteMakefile(@_);
 }
 
-package ModPerl::MM::MY;
+my %always_dynamic = map { $_, 1 } qw(Apache::Leak);
 
-sub constants {
+sub ModPerl::MM::MY::constants {
     my $self = shift;
 
-    require Apache::BuildConfig;
-    my $build = Apache::BuildConfig->new;
+    my $build = build_config();
 
     #install everything relative to the Apache2/ subdir
     if ($build->{MP_INST_APACHE2}) {
@@ -65,14 +69,39 @@ sub constants {
         $self->{INST_LIB} .= '/Apache2';
     }
 
+    #"discover" xs modules.  since there is no list hardwired
+    #any module can be unpacked in the mod_perl-2.xx directory
+    #and built static
+
+    #this stunt also make it possible to leave .xs files where
+    #they are, unlike 1.xx where *.xs live in src/modules/perl
+    #and are copied to subdir/ if DYNAMIC=1
+
+    unless ($build->{MP_DYNAMIC}) {
+        #skip .xs -> .so if we are linking static
+        my $name = $self->{NAME};
+        unless ($always_dynamic{$name}) {
+            if (my($xs) = keys %{ $self->{XS} }) {
+                $self->{HAS_LINK_CODE} = 0;
+                print "$name will be linked static\n";
+                #propagate static xs module to src/modules/perl/Makefile
+                $build->{XS}->{$name} = join '/',
+                  $self->{BASEEXT}, $xs;
+                $build->save;
+            }
+        }
+    }
+
     $self->MM::constants;
 }
 
-sub libscan {
+sub ModPerl::MM::MY::libscan {
     my($self, $path) = @_;
+
     return '' if $path =~ m/\.(pl|cvsignore)$/;
     return '' if $path =~ m:\bCVS/:;
     return '' if $path =~ m/~$/;
+
     $path;
 }
 
