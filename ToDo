@@ -49,8 +49,6 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 
 - syswrite/WRITE
 
-- sfio patch [Lupe Christoph <lupe@lupe-christoph.de>]
-
 - libapreq: Apache::Cookie format sync w/ CGI.pm
 
 - think about making 'use Apache::Log ()' automatic

@@ -5,13 +5,44 @@ use Exporter ();
 use IO::File ();
 use File::Copy ();
 
-$Apache::ExtUtils::VERSION = '1.02';
+$Apache::ExtUtils::VERSION = '1.03';
 
-*import = \&Exporter::import;
+my @config_export = qw(%Config ldopts ccopts);
 @Apache::ExtUtils::EXPORT = qw(command_table);
-@Apache::ExtUtils::EXPORT_OK = qw(pm);
+@Apache::ExtUtils::EXPORT_OK = (qw(pm), @config_export);
 
 my $errsv = "";
+
+sub import {
+    my $class = shift;
+    my $config_export = join '|', @config_export;
+    for (@_) {
+	#perl -Mlib=lib -MApache::ExtUtils=%Config -e 'print $Config{cc}'
+	if (/$config_export/o) {
+	    require Config;
+	    *Apache::ExtUtils::Config = \%Config::Config;
+	    Config_pm_fixup();
+	    require ExtUtils::Embed;
+	}
+    }
+    local $Exporter::ExportLevel = 1;
+    $class->Exporter::import(@_);
+}
+
+*ldopts = \&ExtUtils::Embed::ldopts;
+*ccopts = \&ExtUtils::Embed::ccopts;
+
+sub Config_pm_fixup {
+    my %config_fixups = (
+       ccdlflags => sub { s/-R\s+/-R/; },
+    );
+
+    while (my($key, $sub) = each %config_fixups) {
+	local $_ = $Config::Config{$key};
+	$sub->();
+	(tied %Config::Config)->{$key} = $_;
+    }
+}
 
 sub command_table {
     my($class, $cmds);
