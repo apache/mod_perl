@@ -20,6 +20,10 @@ sub init_test_pm {
     $Test::ntest = 1;
 }
 
+#XXX: else pp_untie complains:
+#untie attempted while %d inner references still exist
+sub Apache::Filter::UNTIE {}
+
 sub handler {
     my $filter = shift;
 
@@ -44,6 +48,8 @@ sub handler {
     ok $r->isa('Apache::RequestRec');
 
     ok $r->uri eq '/' . __PACKAGE__;
+
+    untie *STDOUT;
 
     0;
 }
