@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/05/12 06:37:12 $]
+   Last modified at [$Date: 2003/05/26 04:29:53 $]
 
 Release:
 --------
@@ -47,6 +47,29 @@ Available Patches:
   Report: 
   Status: 
 
+Platforms on which mod_perl won't build/load
+--------------------------------------------
+
+OS      Ver Mod Comments
+----------------------------------------------------------------------
+OpenBSD 2.9 DSO Builds but won't start, with segfaults in the
+                Perl lexer. I wasn't even able to start mp1-dso with
+                the customly built perl (tried 5.6.1 .. 5.9.0)
+                -- the segfault is again in lexer. It seems that
+                the standard OpenBSD perl package has been heavily
+                patched, when the core system perl 5.6.0 package was
+                built, since I can run 'make test' on mp1-dso, but not
+                with a customly built 5.6.0 with the same
+                options. Since 2.9 is no longer supported by OpenBSD,
+                there is no 5.6.1 or higher to try, so at this moment
+                we simply give up on 2.9. We think that the static mp2
+                build should work just fine (once it's available).
+
+AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
+                resolution).  Should replace -berok with a proper
+                symbol resolution at linking time, but I had not much
+                success with using this approach (dlopen fails).
+
 Needs Patch or Further Investigation:
 -------------------------------------
 
@@ -57,15 +80,6 @@ Needs Patch or Further Investigation:
   out the paths is deep inside EU::MM. Probably it's better to run
   'File::Find' and search for 'mod_perl.pm' under PREFIX, if found
   check its version and assert only if it's 1.xx
-
-* we have shared lib loading problems on the following platforms:
-
-    OpenBSD - needs investigation
-
-    AIX - works only for some versions with -berok to ignore linking
-    errors (symbol resolution).  Should replace -berok with a proper
-    symbol resolution at linking time, but I had not much success with
-    using this approach (dlopen fails).
 
 * we have a dependency check problem when xs/*/*.h use code from
   xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
