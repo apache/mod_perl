@@ -4,6 +4,7 @@ conn_rec.t
 lookup_uri.t
 lookup_uri2.t
 module.t
+process.t
 request_rec.t
 response.t
 request_subclass.t

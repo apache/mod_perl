@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+The func Apache::SubProcess::spawn_proc_prog is now a method:
+$r->spawn_proc_prog [Stas]
+
 Apache::Process methods (pool, pconf and short_name) are now read-only
 [Stas]
 
