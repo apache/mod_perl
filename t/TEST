@@ -50,7 +50,7 @@ if (@ARGV) {
 	print <<"EOM";
 $@
 I still can't find LWP::UserAgent, try:
-$^X -MCPAN -e install LWP
+$^X -MCPAN -e "install q{LWP}"
 
 		or
 
