@@ -145,16 +145,16 @@ Apache_log_log(sv)
         croak("Argument is not a reference");
 
     if(sv_derived_from(sv, "Apache")) {
-	/*ok*/
+	retval = (void*)sv2request_rec(sv, "Apache", cv);
     }
     else if(sv_derived_from(sv, "Apache::Server")) {
 	class = "Apache::Log::Server";
+	retval = (void *) SvIV((SV*)SvRV(sv));
     }
     else {
         croak("Argument is not an Apache or Apache::Server object");
     }
 
-    retval = (void *) SvIV((SV*)SvRV(sv));
     ST(0) = sv_newmortal();
     sv_setref_pv(ST(0), class, (void*)retval);
 
