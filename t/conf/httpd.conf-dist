@@ -159,6 +159,7 @@ PerlSetupEnv   On
 PerlSetVar StatusOptionsAll On
 SetHandler perl-script
 PerlHandler +Apache::Status
+PerlSetEnv PERL5LIB /home/dougm/lib/perl
 </Location>
 
 <Location /perl_xs/perl-status>

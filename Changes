@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+`PerlSetEnv PERL5LIB ...' now works again, thanks to Stas for the spot
+
 Apache::test fix for Apache::Table
 
 PerlFreshRestart semantics changed to preserve order of PerlModule's

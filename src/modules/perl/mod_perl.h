@@ -1188,7 +1188,7 @@ CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *d, int flag)
 void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_perl_merge_srv_config(pool *p, void *basev, void *addv);
 
-void mod_perl_dir_env(perl_dir_config *cld);
+void mod_perl_dir_env(request_rec *r, perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);
 
 #define PERL_DIR_MERGE     "DIR_MERGE"
