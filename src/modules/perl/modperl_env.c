@@ -173,7 +173,12 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
 
 void modperl_env_request_untie(pTHX_ request_rec *r)
 {
+#if 0
+    /* XXX: not currently in use.  if enabled Perl_magic_setenv
+     * is not available to win32
+     */
     PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(Perl_magic_setenv);
+#endif
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     SvGMAGICAL_off((SV*)ENVHV);
     PL_vtbl_envelem.svt_get = 0;
