@@ -72,18 +72,6 @@
         } \
     } while (0)
 
-
-/* runs a given code and if failed sets $APR::err to the error message
- * and returns &PL_sv_undef */
-#define MP_APR_RETURN_ON_FAILURE(rc_run) do { \
-        apr_status_t rc = (rc_run); \
-        if (rc != APR_SUCCESS) { \
-            GV *gv = gv_fetchpv("APR::err", GV_ADDMULTI, SVt_PV); \
-            sv_setpv(GvSV(gv), modperl_apr_strerror(rc)); \
-            return &PL_sv_undef; \
-        } \
-    } while (0)
-
 /* check whether the response phase has been initialized already */
 #define MP_CHECK_WBUCKET_INIT(func) \
     if (!rcfg->wbucket) { \
