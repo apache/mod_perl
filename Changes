@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.16_02-dev
+=item 1.16_02 - November 30, 1998
 
 removed PERLV define, just use patchlevel.h's defines
 
