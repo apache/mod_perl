@@ -28,9 +28,9 @@ typedef struct {
     apr_pool_t *pool;
 } PerlIOAPR;
 
-static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg)
+static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg, PerlIO_funcs *tab)
 {
-    IV code = PerlIOBase_pushed(aTHX_ f, mode, arg);
+    IV code = PerlIOBase_pushed(aTHX_ f, mode, arg, tab);
     if (*PerlIONext(f)) {
         /* XXX: not sure if we can do anything here, but see
          * PerlIOUnix_pushed for things that it does
@@ -366,6 +366,7 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 }
 
 static PerlIO_funcs PerlIO_APR = {
+    sizeof(PerlIO_funcs),
     "APR",
     sizeof(PerlIOAPR),
     PERLIO_K_MULTIARG,
