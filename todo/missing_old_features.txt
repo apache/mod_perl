@@ -1,0 +1,57 @@
+this file contains known missing features from 1.3, these are to be
+implemented unless otherwise noted.  there are more missing features
+listed in deprecated_features.txt
+
+- test suite
+
+- DirectiveHandlers
+
+- <Perl> sections
+
+- modperl_include #perl
+
+- PerlOpCodeMask (experimental in 1.xx)
+
+- PerlFreshRestart
+
+- PerlSendHeader
+
+- cgi emulation, i.e. %ENV/END{}/@INC/exit() management
+
+- set Perl ids after fork $( $) $< $> (child_init)
+
+- die 404;
+
+- ... others ...
+
+core modules:
+------------
+
+- Apache, Apache::Server, Apache::Connection
+
+- Apache::Constants, Apache::Constants::Exports 
+
+- Apache::ModuleConfig, Apache::CmdParms
+
+- Apache::File, Apache::Log, Apache::URI, Apache::Util
+
+addon modules:
+-------------
+
+- mod_perl.pm::import
+
+- Apache::PerlRun, Apache::{Registry,RegistryNG}, Apache::RegistryLoader
+
+- Apache::Status
+
+- Apache::test: tobe a compat stub around new test framework
+
+- Apache::src: tobe a compat stub around new build framework
+
+- Apache::PerlSections: depends on <Perl>
+
+- Apache::SizeLimit and Apache::Resource
+
+- Apache::ExtUtils
+
+- Bundle::Apache
