@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+INSTALL.apaci: added an explanation of how perl has to be built in
+order to use DSO without problems (copied from the guide) based on
+email from Doug.  [Stas Bekman <stas@stason.org>]
+
 warn if Perl is configured with -Duseshrplib and a libperl.so is found
 in a place where it should not be, example: /lib /usr/lib or /usr/local/lib
 
