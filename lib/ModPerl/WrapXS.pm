@@ -501,6 +501,7 @@ EOF
 
 my %typemap = (
     'Apache::RequestRec' => 'T_APACHEOBJ',
+    'apr_time_t' => 'T_APR_TIME',
 );
 
 sub write_typemap {
@@ -521,7 +522,8 @@ sub write_typemap {
             print $fh "$class\t$typemap\n";
         }
         else {
-            print $fh "$type\tT_$class\n";
+            my $typemap = $typemap{$type} || "T_$class";
+            print $fh "$type\t$typemap\n";
         }
     }
 

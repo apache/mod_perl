@@ -11,6 +11,9 @@ T_APACHEOBJ
 T_VPTR
 	sv_setiv($arg, PTR2IV($var));
 
+T_APR_TIME
+	sv_setnv($arg, (NV)($var / APR_USEC_PER_SEC));
+
 ######################################################################
 INPUT
 T_APACHEOBJ
@@ -21,6 +24,9 @@ T_APACHEREF
 
 T_VPTR
 	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
+
+T_APR_TIME
+	$var = (apr_time_t)(SvNV($arg) * APR_USEC_PER_SEC)
 
 T_CHAR_LEN
         $var = (char *)SvPV($arg, ${var}_len)

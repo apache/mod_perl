@@ -8,7 +8,7 @@ use Apache::Test;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 35;
+    plan $r, tests => 36;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -94,6 +94,11 @@ sub handler {
     ok $r->uri;
 
     ok $r->filename;
+
+    my $mtime = (stat __FILE__)[9];
+    $r->mtime($mtime);
+
+    ok $r->mtime == $mtime;
 
     ok $r->path_info || 1;
 
