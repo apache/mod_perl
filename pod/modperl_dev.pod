@@ -137,7 +137,10 @@ Non-Boolean options: set them with MP_XXX=value.
 
 Add to compiler flags, e.g.
 
- MP_CCOPTS = -Werror
+ MP_CCOPTS=-Werror
+
+(Notice that C<-Werror> will work only with the Perl version 5.007 and
+higher.)
 
 =item MP_OPTIONS_FILE
 
@@ -702,6 +705,108 @@ and then start the debugger with:
   % gdb /home/stas/httpd-2.0/bin/httpd -command \
   /home/stas/apache.org/modperl-perlmodule/t/.gdb-jump-to-init
 
+=head2 Starting the Server Fast under gdb
+
+When the server is started under gdb, it first loads the symbol tables
+of the dynamic libraries that it sees going to be used. Some versions
+of gdb may take ages to complete this task, which makes the debugging
+very irritating if you have to restart the server all the time and it
+doesn't happen immediately.
+
+The trick is to set the C<auto-solib-add> flag to 0:
+
+  set auto-solib-add 0
+
+in I<~/.gdbinit> file.
+
+With this setting in effect, you can load only the needed dynamic
+libraries with I<sharedlibrary> command. Remember that in order to set
+a breakpoint and step through the code inside a certain dynamic
+library you have to load it first. For example consider this gdb
+commands file:
+
+  .gdb-commands
+  ------------
+  file ~/httpd/prefork/bin/httpd
+  handle SIGPIPE pass
+  handle SIGPIPE nostop
+  set auto-solib-add 0
+  b ap_run_pre_config
+  run -DONE_PROCESS -d `pwd`/t -f `pwd`/t/conf/httpd.conf \
+  -DAPACHE2 -DPERL_USEITHREADS
+  sharedlibrary modperl
+  b modperl_hook_init
+  # start: modperl_hook_init
+  continue
+  # restart: ap_run_pre_config
+  continue
+  # restart: modperl_hook_init
+  continue
+  b apr_poll
+  continue
+  
+  # load APR/PerlIO/PerlIO.so
+  sharedlibrary PerlIO
+  b PerlIOAPR_open
+
+which can be used as:
+
+  % gdb -command=.gdb-commands
+
+This script stops in I<modperl_hook_init()>, so you can step through
+the mod_perl startup. We had to use the I<ap_run_pre_config> so we can
+load the I<libmodperl.so> library as explained earlier. Since httpd
+restarts on the start, we have to I<continue> until we hit
+I<modperl_hook_init> second time, where we can set the breakpoint at
+I<apr_poll>, the very point where httpd polls for new request and run
+again I<continue> so it'll stop at I<apr_poll>.
+
+When gdb stops at the function I<apr_poll> it's a time to start the
+client:
+
+  % t/TEST -run
+
+But before that if we want to debug the server response we need to set
+breakpoints in the libraries we want to debug. For example if we want
+to debug the function C<PerlIOAPR_open> which resides in
+I<APR/PerlIO/PerlIO.so> we first load it and then we can set a
+breakpoint in it. Notice that gdb may not be able to load a library if
+it wasn't referenced by any of the code. In this case we have to
+require this library at the server startup. In our example we load:
+
+  PerlModule APR::PerlIO
+
+in I<httpd.conf>. To check which libraries' symbol tables can be
+loaded in gdb, run (when the server has been started):
+
+  gdb> info sharedlibrary
+
+which will also show which libraries were loaded already.
+
+Also notice that you don't have to type the full path of the library
+when trying to load them, even a partial name will suffice. In our
+commands file example we have used C<sharedlibrary modperl> instead of
+saying C<sharedlibrary libmodperl.so>.
+
+If you want to set breakpoints and step through the code in the Perl
+and APR core libraries you should load their appropriate libraries:
+
+  gdb> sharedlibrary libperl
+  gdb> sharedlibrary libapr
+  gdb> sharedlibrary libaprutil
+
+Setting I<auto-solib-add> to 0 makes the debugging process unusual,
+since originally gdb was loading the dynamic libraries automatically,
+whereas now it doesn't. This is the price one has to pay to get the
+debugger starting the program very fast. Hopefully the future versions
+of gdb will improve.
+
+Just remember that if you try to I<step-in> and debugger doesn't do
+anything, that means that the library the function is located in
+wasn't loaded. The solution is to create a commands file as explained
+in the beginning of this section and craft the startup script the way
+you need to avoid extra typing and mistakes when repeating the same
+debugging process again and again.
 
 =head1 Notes for Developers
 
