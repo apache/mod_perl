@@ -34,7 +34,7 @@ apr_strmatch_pattern apr_version_t
 <apr_bucket_brigade>
 ~  pool
 >  list
-   bucket_alloc
+<  bucket_alloc
 </apr_bucket_brigade>
 
 <apr_finfo_t>
