@@ -162,13 +162,13 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
 #XXX: thought this might be useful
 #however it is not exported on win32
 !ap_get_local_host
- ap_get_server_version
  ap_psignature | | r,prefix
 ~ap_server_root_relative
 
 PACKAGE=Apache::Server
  ap_method_register
 ~ap_get_server_built
+~ap_get_server_version
  
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules
