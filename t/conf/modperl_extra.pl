@@ -197,7 +197,7 @@ END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
 
-package Tie::PerlSection;
+package ModPerl::TestTiePerlSection;
 
 # the following is needed for the tied %Location test in <Perl>
 # sections. Unfortunately it can't be defined in the section itself
