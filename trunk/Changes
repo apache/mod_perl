@@ -6,6 +6,8 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+=item 1.16_01-dev
+
 =item 1.16 - October 2, 1998
 
 Apache::Util::escape_html() now handles `"' and `&'. should also be a
