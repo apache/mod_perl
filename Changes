@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Add $filter->seen_eos to the streaming filter api to know when eos has
+been seen, so special signatures can be passed and any data stored in
+the context flushed + tests. [Stas]
+
+Add $filter->ctx to maintain state between filter invocation + tests
+[Stas]
+
 Request input and output filters are now getting the EOS bucket, which
 wasn't passed through before. Now the context can be flushed on
 EOS. [Stas]
