@@ -837,7 +837,7 @@ EOF
     my $v = httpd_version($APACHE_SRC, 1);
     my $mmn = magic_number($APACHE_SRC) || 0;
 
-    conf_append("LockFile /tmp/mod_perl.lock") if $v >= 121;
+    conf_append("LockFile logs/mod_perl.lock") if $v >= 121 or $mmn >= MMN_130;
     conf_append("PerlChildInitHandler My::child_init") if $My::child_init;
     conf_append("PerlChildExitHandler My::child_exit") if $My::child_exit;
     conf_append("PerlTransHandler My::ProxyTest") 
@@ -1175,7 +1175,7 @@ TEST_VERBOSE=0
 kill_httpd:
 	kill `cat t/logs/mod_perl_httpd.pid`
 	@$(RM_F) t/conf/srm.conf
-	@$(RM_F) t/logs/mod_perl.lock.*
+	@$(RM_F) t/logs/mod_perl.lock*
 	$(RM_F) t/logs/mod_perl_httpd.pid
 	$(RM_F) t/logs/mod_perl_error_log
 
