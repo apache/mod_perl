@@ -3232,8 +3232,8 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'void',
-    'name' => 'modperl_pre_config_handler',
+    'return_type' => 'int',
+    'name' => 'modperl_hook_pre_config',
     'args' => [
       {
         'type' => 'apr_pool_t *',
