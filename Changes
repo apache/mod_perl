@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+fix a bug where %ENV vars set via subprocess_env persist across
+requests.  (e.g. a Cookie incoming header which ends up in
+$ENV{HTTP_COOKIE} would persist to the next request which has no
+Cookie header at all). Now we unset all the %ENV vars set from
+subprocess_env. Improve and extend the tests to cover this bug. [Stas]
+
 it is invalid to return HTTP_INTERNAL_SERVER_ERROR or any other HTTP
 response code from modperl_wbucket_pass, therefore set the error code
 into r->status and return APR_SUCCESS. Untill now response handler

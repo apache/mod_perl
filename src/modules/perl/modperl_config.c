@@ -291,7 +291,13 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
     }
 
     retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r, MP_HOOK_RUN_ALL);
-    
+
+    /* undo changes to %ENV caused by +SetupEnv, perl-script, or
+     * $r->subprocess_env, so the values won't persist  */
+    if (MpReqSETUP_ENV(rcfg)) {
+        modperl_env_request_unpopulate(aTHX_ r);
+    }
+
     return retval;
 }
 
