@@ -3,6 +3,15 @@ char *mpxs_apr_uri_unparse(pTHX_
                            apr_uri_t *uptr,
                            unsigned flags)
 {
+
+    /* XXX: check that my patch was actually applied in apr v9.3 */
+#if APR_MINOR_VERSION == 9 && APR_PATCH_VERSION < 3
+    /* apr < 0.9.3 segfaults if hostname is set, but scheme is not */
+    if (uptr->hostname && !uptr->scheme) {
+        uptr->scheme = "http";
+    }
+#endif
+    
     return apr_uri_unparse(((modperl_uri_t *)uptr)->pool,
                            uptr, flags);
 }
