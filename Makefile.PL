@@ -432,7 +432,6 @@ if($APACHE_SRC) {
     if($httpdv >= 130) {
 	if($callback_hooks{PERL_CHILD_INIT}) {
 	    $My::child_init++;
-
 	}
     }
     else {
@@ -442,9 +441,8 @@ if($APACHE_SRC) {
     }
 
     if($mmn >= 19970728) {
-	if($callback_hooks{PERL_CHILD_EXIT}) {
-	    $My::child_exit++
-	}
+	$callback_hooks{PERL_CHILD_EXIT} = $My::child_exit =
+        $callback_hooks{PERL_CHILD_INIT} = $My::child_init = 1;
     }
     else {
 	$callback_hooks{PERL_CHILD_EXIT} = 0;

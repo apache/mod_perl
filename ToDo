@@ -16,10 +16,22 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- swap calling order of .conf handlers and push_handlers?
+
+- documentation:
+  + Ken Williams <ken@forum.swarthmore.edu>
+    list archive  http://forum.swarthmore.edu/epigone/modperl
+  + PerlRun::handler
+  + Frank's FAQ update: http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz
+  + DONE
+
 - rand() broken under win32!
            Jeff Baker <jeff@godzilla.tamu.edu>
 
 - Ralf's APACI Makefile.tmpl
+
+- AIX 3.2.5, mod_perl and sfio97 problem
+  Jeff Drumm <DRUMMJ@MAIL.MMC.ORG>
 
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some)
@@ -41,7 +53,11 @@ KNOWN BUGS
  SunOS mailhost.cmc.net 5.5 Generic_103093-17 sun4m sparc sun4m
              brian moore <bem@cmc.net>
 
-- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992
+- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992, e.g.:
+  $User = "www";
+  $ServerType = "standalone";
+  @ScriptAlias = [('/cgi-bin','/the/path')];
+  @Alias = [('/web/','/usr/home/web')];
 
 - perl_config should not av_shift ARRAY refs from
   %Apache::ReadConfig::
@@ -61,6 +77,13 @@ KNOWN BUGS
  /home/  etc etc ...
            mark rostron <useny036@IMATION.COM>
            Brian Slesinsky <bslesins@best.com>
+
+- From: brian moore <bem@CMC.NET>
+  As Apacheweek reported a couple weeks ago, 'some' modules on Solaris have
+  problems with the mutex locking method used by 1.3b5.  One of which is
+  mod_perl.  To make it work I had to -DUSE_FCNTL_SERIALIZED_ACCEPT or
+  the server would never answer a request.
+
 
 ---------------------------------------------------------------------------
 NEW STUFF
@@ -129,6 +152,16 @@ KNOWN MODULE BUGS
 ---------------------------------------------------------------------------
 
 - can't multiple Apache::Include->virtual in a single request
+
+- (the bug in Apache::fork is that we shouldn't need the damn thing)
+  Apache::fork is an ugly work around for what looks like might be
+  fixed in 1.3b6:
+
+  *) After a SIGHUP the listening sockets in the parent weren't
+     properly marked for closure on fork().
+     [Jürgen Keil <jk@tools.de>] PR#2000
+
+  If anyone can confirm, please let me know!
 
 ---------------------------------------------------------------------------
 NEW MODULE STUFF
