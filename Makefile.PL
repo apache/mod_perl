@@ -389,7 +389,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	open FH, "$APACHE_SRC/Makefile" or 
 	    die "can't open $APACHE_SRC/Makefile $!";
 	while(<FH>) {
-	    $SSL_BASE  = $1 if /SSL_BASE\s*=\s*(.*)/;
+	    $SSL_BASE  ||= $1 if /^\s*SSL_BASE\s*=\s*(.*)/;
 	    $EXTRA_CFLAGS = $1 if /CFLAGS1\s*=\s*(.*)/;
 	    $SSLINCS = $1 if /SSLINCS\s*=\s*(.*)/;
 	}

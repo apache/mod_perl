@@ -142,6 +142,10 @@ typedef server_rec  * Apache__Server;
         Apache__ServerStarting((val == FALSE ? FALSE : PERL_RUNNING())); \
 }
 
+#define PUSHif(arg) \
+if(arg) \
+   XPUSHs(sv_2mortal(newSVpv(arg,0)))
+
 #define iniHV(hv) hv = (HV*)sv_2mortal((SV*)newHV())
 #define iniAV(av) av = (AV*)sv_2mortal((SV*)newAV())
 
@@ -897,6 +901,8 @@ CHAR_P perl_cmd_type_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg
 CHAR_P perl_cmd_fixup_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_handler_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, void *dummy,
+				  char *one, char *two, char *three);
 
 void mod_perl_dir_env(perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);

@@ -7,6 +7,8 @@ sub new {
     bless {@_}, $class;
 }
 
+sub print { shift; CORE::print(@_) }
+
 #dummy method stubs
 my @methods = qw{
   allow_options args
