@@ -13,7 +13,7 @@ use constant HAVE_LWP => have_lwp();
 my $tests = 4;
 $tests += 1 if HAVE_LWP;
 
-plan tests => $tests, need need_min_module_version('CGI', 2.93),
+plan tests => $tests, need need_min_module_version('CGI', 3.07),
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $module = 'TestModules::cgi';

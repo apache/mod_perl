@@ -14,7 +14,7 @@ my $tests = 4;
 $tests += 1 if HAVE_LWP;
 
 plan tests => $tests, need
-    need_min_module_version(CGI => 3.01);
+    need_min_module_version(CGI => 3.07);
 
 my $module = 'TestModules::cgi2';
 my $location = '/' . Apache::TestRequest::module2path($module);

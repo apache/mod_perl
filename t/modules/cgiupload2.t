@@ -10,7 +10,7 @@ use File::Spec::Functions qw(catfile);
 
 my $build = Apache2::Build->build_config;
 plan tests => 2, need need_lwp(),
-    need_min_module_version(CGI => 3.01);
+    need_min_module_version(CGI => 3.07);
 
 my $location = "/TestModules__cgiupload2";
 

@@ -10,7 +10,7 @@ my $url = '/' . Apache::TestRequest::module2path($module);
 
 my @data = (25, 50, 75, 100, 125, 150);
 
-plan tests => scalar(@data), need_min_module_version(CGI => 2.93);
+plan tests => scalar(@data), need_min_module_version(CGI => 3.07);
 
 foreach my $post (@data) {
     my %param = ();
