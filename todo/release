@@ -63,17 +63,6 @@
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
 
-- cgi emulation: %ENV management:
-
-   - %ENV is currently only saved/restored for the perl-script
-     handler, i.e. changes to %ENV outside of a perl-script handler
-     are not cleared.  of course, "clean" modules would use local() to
-     modify %ENV, but there should be an option to save/restore
-     globals outside of the perl-script handler
-
-  STATUS: do the cleanup for all handlers, but provide a new config
-  option so users can disable it if they know what they are doing.
-
 * Apache::SizeLimit
   o Need to port tools that restrict the memory size used by processes
     for prefork mpms and develop new ones for threaded mpms. Need to
