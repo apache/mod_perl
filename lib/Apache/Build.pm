@@ -431,7 +431,7 @@ EOF
     }
 }
 
-#--- constuctors ---
+#--- constructors ---
 
 my $bpm = 'Apache/BuildConfig.pm';
 
