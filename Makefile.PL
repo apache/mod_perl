@@ -1501,8 +1501,11 @@ sub httpd_version {
     my($string, $extra, @vers);
     while(<$fh>) {
 	next unless /^#define/;
-	s/SERVER_PRODUCT \"/\"Apache/; #1.3.13+
-	next unless s/^#define\s+SERVER_(BASE|)VERSION\s+"(.*)\s*".*/$2/;
+	s/SERVER_PRODUCT \"/\"Apache/; #1.3.13
+	next unless s/^#define\s+SERVER_(BASE|)(VERSION|REVISION)\s+"(.*)\s*".*/$3/;
+        unless (m:/:) {
+            $_ = "Apache/$_"; #1.3.14, argh
+        }
 	chomp($string = $_);
 
 	#print STDERR "Examining SERVER_VERSION '$string'...";
