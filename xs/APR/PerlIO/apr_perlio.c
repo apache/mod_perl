@@ -4,7 +4,7 @@
 #include "apr_perlio.h"
 
 /* XXX: prerequisites to have things working
- * pTHX_: perl 5.7.2 patch 13809 is required
+ * PerlIO_flush patch : perl 5.7.2 patch 13978 is required
  * dup() : apr cvs date: 2001/12/06 13:43:45
  *
  * XXX: it's not enough to check for PERLIO_LAYERS, some functionality
@@ -119,34 +119,16 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
     return NULL;
 }
 
-/* currrently read is very not-optimized, since in many cases the read
- * process happens a char by char. Need to find a way to snoop on APR
- * read buffer from PerlIO, or implement our own buffering layer here
- */
-static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
-{
-    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
-    apr_status_t rc;
-
-    /* fprintf(stderr, "in  read: count %d, %s\n", 
-       (int)count, (char*) vbuf); */
-    rc = apr_file_read(st->file, vbuf, &count);
-    /* fprintf(stderr, "out read: count %d, %s\n",
-       (int)count, (char*) vbuf); */
-    if (rc == APR_SUCCESS) {
-        return (SSize_t) count;
-    }
-
-    return (SSize_t) -1;
-}
-
 static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
+
+#if 0    
+     Perl_warn(aTHX_ "in write: count %d, %s\n",
+               (int)count, (char*) vbuf);
+#endif
     
-    /* fprintf(stderr, "in write: count %d, %s\n",
-       (int)count, (char*) vbuf); */
     rc = apr_file_write(st->file, vbuf, &count);
     if (rc == APR_SUCCESS) {
         return (SSize_t) count;
@@ -160,13 +142,14 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_seek_where_t where;
     apr_status_t rc;
+    IV code;
     
-    /* XXX: must flush before seek? */
-    rc = apr_file_flush(st->file);
-    if (rc != APR_SUCCESS) {
-        return -1;
+    /* Flush the fill buffer */
+    code = PerlIOBuf_flush(aTHX_ f);
+    if (code != 0) {
+        return code;
     }
-    
+
     switch(whence) {
       case 0:
         where = APR_SET;
@@ -209,7 +192,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
 
     const char *new_path;
     apr_file_name_get(&new_path, st->file);
-    /* fprintf(stderr, "closing file %s\n", new_path); */
+    /* Perl_warn(aTHX_ "closing file %s\n", new_path); */
 
     rc = apr_file_flush(st->file);
     if (rc != APR_SUCCESS) {
@@ -239,7 +222,46 @@ static IV PerlIOAPR_flush(pTHX_ PerlIO *f)
 
 static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
 {
-    return -1;
+    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
+    apr_status_t rc;
+    SSize_t avail;
+    Size_t count = st->base.bufsiz;
+
+    if (!st->base.buf) {
+        PerlIO_get_base(f);  /* allocate via vtable */
+    }
+        
+#if 0
+     Perl_warn(aTHX_ "ask to fill %d chars\n", count);
+#endif
+
+    rc = apr_file_read(st->file, st->base.ptr, &count);
+    if (rc != APR_SUCCESS) {
+        /* XXX */
+    }
+
+#if 0    
+     Perl_warn(aTHX_ "got to fill %d chars\n", count);
+#endif
+
+    avail = count; /* apr_file_read() sets how many chars were read in count */
+    if (avail <= 0) {
+        if (avail == 0) {
+            PerlIOBase(f)->flags |= PERLIO_F_EOF;
+        }
+        else {
+            PerlIOBase(f)->flags |= PERLIO_F_ERROR;
+        }
+        
+        return -1;
+    }
+    st->base.end = st->base.buf + avail;
+
+    /* indicate that the buffer this layer currently holds unconsumed
+       data read from layer below. */
+    PerlIOBase(f)->flags |= PERLIO_F_RDBUF;
+
+    return 0;
 }
 
 static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
@@ -262,14 +284,14 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 static PerlIO_funcs PerlIO_APR = {
     "APR",
     sizeof(PerlIOAPR),
-    PERLIO_K_BUFFERED | PERLIO_K_MULTIARG, /* XXX: document the flag in perliol.pod */
+    PERLIO_K_BUFFERED | PERLIO_K_FASTGETS | PERLIO_K_MULTIARG,
     PerlIOBase_pushed,
     PerlIOAPR_popped,
     PerlIOAPR_open,
     NULL,  /* no getarg needed */
     PerlIOAPR_fileno,
     PerlIOAPR_dup,
-    PerlIOAPR_read,
+    PerlIOBuf_read,
     PerlIOBuf_unread,
     PerlIOAPR_write,
     PerlIOAPR_seek, 
@@ -308,7 +330,10 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     char *mode;
     const char *layers = ":APR";
     PerlIO *f = PerlIO_allocate(aTHX);
-
+    if (!f) {
+        return NULL;
+    }
+    
     switch (type) {
       case APR_PERLIO_HOOK_WRITE:
         mode = "w";
@@ -317,7 +342,7 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
         mode = "r";
         break;
       default:
-          /* */
+        /* */
     };
     
     PerlIO_apply_layers(aTHX_ f, mode, layers);
@@ -356,7 +381,7 @@ static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, int type)
         IoIFP(GvIOp(gv)) = pio;
         break;
       default:
-          /* */
+        /* */
     };
 
     return sv_2mortal(retval);
@@ -388,21 +413,21 @@ static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
         mode = "r";
         break;
       default:
-          /* */
+        /* */
     };
 
     /* convert to the OS representation of file */
     rc = apr_os_file_get(&os_file, file); 
     if (rc != APR_SUCCESS) {
-	croak("filedes retrieval failed!");
+        croak("filedes retrieval failed!");
     }
     
     fd = PerlLIO_dup(os_file); 
     /* Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd); */
     
     if (!(retval = PerlIO_fdopen(fd, mode))) { 
-	PerlLIO_close(fd);
-	croak("fdopen failed!");
+        PerlLIO_close(fd);
+        croak("fdopen failed!");
     } 
 
     return retval;
@@ -430,9 +455,9 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
         IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_FILE(aTHX_ file, type);
         break;
       default:
-          /* */
+        /* */
     };
-        
+  
     return sv_2mortal(retval);
 }
 
