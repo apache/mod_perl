@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 43;
+    plan $r, tests => 44;
 
     $r->send_http_header('text/plain');
 
@@ -217,9 +217,14 @@ sub handler {
              "Apache::Util::escape_html");
 
 
-    my $fmtdate = Apache::Util::ht_time();
+    my $time = time;
+    my $fmtdate = Apache::Util::ht_time($time);
 
     ok t_cmp($fmtdate, $fmtdate, "Apache::Util::ht_time");
+
+    my $ptime = Apache::Util::parsedate($fmtdate);
+
+    ok t_cmp($time, $ptime, "Apache::Util::parsedate");
 
     OK;
 }
