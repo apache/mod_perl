@@ -17,7 +17,7 @@ use Apache::Const -compile => qw(OK);
 
 use constant READ_SIZE  => 1024;
 
-sub braket {
+sub bracket {
       my $filter = shift;
 
       my $data = '';
@@ -55,4 +55,4 @@ __DATA__
 SetHandler perl-script
 PerlModule              TestAPI::rflush
 PerlResponseHandler     TestAPI::rflush::response
-PerlOutputFilterHandler TestAPI::rflush::braket
+PerlOutputFilterHandler TestAPI::rflush::bracket
