@@ -13,9 +13,10 @@ my @patterns = (
     'footer',
 );
 
-plan tests => 2 + @patterns, ['include'];
+plan tests => 2 + @patterns, ['include', 'CGI'];
 
 my $location = "/includes/test.shtml";
+
 
 my($res, $str);
 
