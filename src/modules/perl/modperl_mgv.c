@@ -239,8 +239,6 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                            name, HvNAME(stash));
             }
         }
-
-        MpHandlerPARSED_On(handler);
     }
     else {
         if ((cv = get_cv(name, FALSE))) {
