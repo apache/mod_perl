@@ -232,6 +232,38 @@ in another shell:
 then the I<-debug> shell will have a (gdb) prompt, type 'where' for
 stacktrace.
 
+You can change the default debugger by supplying the name of the
+debugger as an argument to I<-debug>. E.g. to run the server under
+C<ddd>:
+
+  % ./t/TEST -debug=ddd
+
+=head2 Advanced Debugging
+
+If you debug mod_perl internals you can set the breakpoints using the
+I<-breakpoint> option, which can be repeated as many times as
+needed. When you set at least one breakpoint, the server will start
+running till it meets the I<ap_run_pre_config> breakpoint. At this
+point we can set the breakpoint for the mod_perl code, something we
+cannot do earlier if mod_perl was built as DSO. For example:
+
+  % ./t/TEST -debug -breakpoint=modperl_cmd_switches \
+     -breakpoint=modperl_cmd_options
+
+will set the I<modperl_cmd_switches> and I<modperl_cmd_options>
+breakpoints and run the debugger.
+
+If you want to tell the debugger to jump to the start of the mod_perl
+code you may run:
+
+  % ./t/TEST -debug -breakpoint=modperl_hook_init
+
+In fact I<-breakpoint> automatically turns on the debug mode, so you
+can run:
+
+  % ./t/TEST -breakpoint=modperl_hook_init
+
+
 =head2 Running Individual Tests
 
 Run a single test:
