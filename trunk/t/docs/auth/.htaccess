@@ -2,6 +2,7 @@
 AuthName mod_perl
 AuthType Basic
 PerlAuthenHandler Apache::AuthenTest
+PerlAuthzHandler Apache::OK
 require valid-user
 
 #<Perl>

@@ -57,6 +57,7 @@ Must skip important tests without LWP...
 
 EOM
 	sleep(2);
+        exit;
     }
     else {
        push(@tests, <modules/*.t>, <internal/*.t>);

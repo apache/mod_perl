@@ -35,6 +35,7 @@ finddepth(sub {
 	    $full = "../$full";
 	}
     }
+    return if $name =~ /(auth|autoindex|digest)/; #a few that screw make test
     push @sh_mods, "LoadModule ${name}_module $full";
 }, $APACHE_SRC);
 
