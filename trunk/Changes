@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+documentation type [David Harris <dharris@drh.net>]
+
 add $r->server->uid and $r->server->gid [Eric Cholet <cholet@logilune.com>]
 
 add per-server configuration merge [Eric Cholet <cholet@logilune.com>]
