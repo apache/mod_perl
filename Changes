@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+add Perl glue for functions: APR::Socket::timeout_get
+APR::Socket::timeout_set [Stas]
+
 similar to SetEnv, upcase the env keys for PassEnv on platforms with
 caseless env (e.g. win32) [steve.sparling@ps.ge.com]
 

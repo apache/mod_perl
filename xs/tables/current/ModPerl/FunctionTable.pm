@@ -6341,6 +6341,28 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_interval_time_t',
+    'name' => 'mpxs_apr_socket_timeout_get',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'mark'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'sp'
+      }
+    ]
+  },
+  {
     'return_type' => '',
     'name' => 'mpxs_apr_sockaddr_ip_get',
     'args' => [

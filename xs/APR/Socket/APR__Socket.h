@@ -34,3 +34,18 @@ static MP_INLINE apr_status_t mpxs_apr_send(pTHX_ apr_socket_t *socket,
 
     return status;
 }
+
+static MP_INLINE apr_interval_time_t
+mpxs_apr_socket_timeout_get(pTHX_ I32 items, SV **MARK, SV **SP)
+{
+    apr_interval_time_t	t;
+    APR__Socket APR__Socket;
+
+    /* this also magically assings to APR_Socket ;-) */
+    mpxs_usage_va_1(APR__Socket, "$socket->timeout_get()");
+
+    MP_FAILURE_CROAK(apr_socket_timeout_get(APR__Socket, &t));
+
+    return t;
+}
+
