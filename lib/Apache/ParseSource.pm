@@ -129,7 +129,8 @@ sub find_includes {
     # don't pick preinstalled mod_perl headers if any, but pick the rest
     {
         my @dirs = $self->include_dirs;
-        die "could not find include directory" unless -d $dirs[0];
+        die "could not find include directory (build the project first)"
+            unless -d $dirs[0];
 
         my $unwanted = join '|', qw(ap_listen internal version
                                     apr_optional mod_include mod_cgi
