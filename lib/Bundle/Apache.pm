@@ -30,8 +30,6 @@ Devel::Symdump - Symbol table browsing with Apache::Status
 
 Data::Dumper - Used by Apache::PerlSections->dump
 
-HTTPD::UserAdmin - Apache::Authen stuff
-
 CGI - CGI.pm
 
 Tie::IxHash - For order in <Perl> sections
