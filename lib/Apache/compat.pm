@@ -33,6 +33,7 @@ use APR::Date ();
 use APR::Table ();
 use APR::Pool ();
 use APR::URI ();
+use APR::Util ();
 use mod_perl ();
 use Symbol ();
 
@@ -454,6 +455,8 @@ sub ht_time {
 }
 
 *parsedate = \&APR::Date::parse_http;
+
+*validate_password = \&APR::password_validate;
 
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;

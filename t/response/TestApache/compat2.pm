@@ -226,6 +226,13 @@ sub handler {
 
     ok t_cmp($time, $ptime, "Apache::Util::parsedate");
 
+    #note these are not actually part of the tests
+    #since i think on platforms where crypt is not supported,
+    #these tests will fail.  but at least we can look with t/TEST -v
+    my $hash = "aX9eP53k4DGfU";
+    t_cmp(1, Apache::Util::validate_password("dougm", $hash));
+    t_cmp(0, Apache::Util::validate_password("mguod", $hash));
+
     OK;
 }
 
