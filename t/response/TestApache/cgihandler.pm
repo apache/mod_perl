@@ -15,7 +15,10 @@ sub handler {
     if ($r->method_number == Apache::M_POST) {
         my $ct = $r->headers_in->get('content-length');
         my $buff;
-        read STDIN, $buff, $ct;
+#XXX: working around a bug in ithreads Perl
+#that would cause modules/cgi #3 to fail
+#        read STDIN, $buff, $ct;
+        read 'STDIN', $buff, $ct;
         print $buff;
     }
     else {
