@@ -106,7 +106,7 @@ MODULE=Apache::Access   PACKAGE=guess
 #MODULE=Apache::Auth
  ap_auth_name
  ap_auth_type
- ap_get_basic_auth_pw
+ ap_get_basic_auth_pw | MPXS_ | r
  ap_note_auth_failure
  ap_note_basic_auth_failure
  ap_note_digest_auth_failure
