@@ -105,6 +105,13 @@ sub apxs {
                 $ENV{MP_APXS},
                 catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs');
 
+    if (WIN32) {
+        my $ext = '.bat';
+        for (@trys) {
+            $_ .= $ext if ($_ and $_ !~ /$ext$/);
+        }
+    }
+
     unless (IS_MOD_PERL_BUILD) {
         #if we are building mod_perl via apxs, apxs should already be known
         #these extra tries are for things built outside of mod_perl
@@ -832,8 +839,15 @@ sub apr_config_path {
                 if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
         }
 
-        for (@tries) {
-            my $try = catfile $_, "apr-config";
+        @tries = map { catfile $_, "apr-config" } @tries;
+        if (WIN32) {
+            my $ext = '.bat';
+            for (@tries) {
+                $_ .= $ext if ($_ and $_ !~ /$ext$/);
+            }
+        }
+
+        for my $try (@tries) {
             next unless -x $try;
             $self->{apr_config_path} = $try;
         }
