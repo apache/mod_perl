@@ -86,7 +86,9 @@ static MP_INLINE int mpxs_apr_pool_is_pool_destroyable(apr_pool_t *p)
 
     apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW, p);
     if (!data) {
-        data = (mpxs_pool_account_t *)apr_pcalloc(p, sizeof(*data));
+        /* pools with no special data weren't created by us and
+         * therefore shouldn't be destroyed */
+        return 0;
     }
 
     return data->destroyable && !data->ref_count;
