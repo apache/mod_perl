@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.27_01-dev
+
 =item 1.27 - June 1, 2002
 
 workaround Cwd bug in 5.8.0-RC1 that breaks apache configuration on solaris
