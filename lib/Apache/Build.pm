@@ -907,9 +907,12 @@ sub dir {
     if (IS_MOD_PERL_BUILD) {
         my $build = $self->build_config;
 
-        if ($dir = $build->{'dir'}) {
-            for ($dir, "../$dir", "../../$dir") {
-                last if -d ($dir = $_);
+        if (my $bdir = $build->{'dir'}) {
+            for ($bdir, "../$bdir", "../../$bdir") {
+                if (-d $_) {
+                    $dir = $_;
+                    last;
+                }
             }
         }
     }
