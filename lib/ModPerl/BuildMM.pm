@@ -41,7 +41,7 @@ my $apache_test_dir = catdir Cwd::getcwd(), "Apache-Test", "lib";
 sub mod_install {
     q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) \\}."\n" .
     qq{-I$apache_test_dir -MModPerl::BuildMM \\}."\n" .
-    q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
+    q{-e "ExtUtils::Install::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
 }
 
 my $build;

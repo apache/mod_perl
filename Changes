@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+remove MP_INST_APACHE2 installation option and Apache2.pm - all
+mod_perl related files will now be installed so they are visible
+via standard @INC.  also, refuse to install over mod_perl 2 versions
+less than 1.999_22.  [Geoffrey Young]
+
 remove CGI.pm and Apache::Request dependencies from Apache2::Status
 since they weren't used at all [Geoffrey Young]
 
