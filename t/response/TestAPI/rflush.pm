@@ -36,17 +36,37 @@ sub response {
 
     $r->content_type('text/plain');
 
-    # print is now unbuffered
-    local $| = 1;
-    $r->print("<foo"); # this sends the data in the buffer + flush bucket
+    my $args = $r->args || '';
+    if ($args eq 'nontied') {
+        # print is now unbuffered
+        local $| = 1;
+        $r->print("1"); # send the data in the buffer + flush bucket
+        $r->print("2"); # send the data in the buffer + flush bucket
 
-    # print is now buffered
-    local $| = 0;
-    $r->print("bar>");
-    $r->rflush;     # this sends the data in the buffer + flush bucket
-    $r->print("<who");
-    $r->rflush;     # this sends the data in the buffer + flush bucket
-    $r->print("ah>");
+        # print is now buffered
+        local $| = 0;
+        $r->print("3");
+        $r->rflush;     # send the data in the buffer + flush bucket
+        $r->print("4");
+        $r->rflush;     # send the data in the buffer + flush bucket
+        $r->print("5");
+        $r->print("6"); # send the data in the buffer (end of handler)
+    }
+    elsif ($args eq 'tied') {
+        my $oldfh;
+        # print is now unbuffered ("rflush"-like functionality is
+        # called internally)
+        $oldfh = select(STDOUT); $| = 1; select($oldfh);
+        print "1"; # send the data in the buffer + flush bucket
+        print "2";
+
+        # print is now buffered
+        $oldfh = select(STDOUT); $| = 0; select($oldfh);
+        print "3";
+        print "4";
+        print "5";
+        print "6"; # send the data in the buffer (end of handler)
+    }
 
     Apache::OK;
 }
