@@ -44,7 +44,6 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    content_type
    handler
    content_encoding
-   content_language
    content_languages
 >  vlist_validator
    user
