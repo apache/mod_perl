@@ -56,6 +56,18 @@ ModPerl::MM::WriteMakefile(
 post_configure();
 
 sub configure {
+    if (Apache::Build::is_win32()) {
+        #Makefile.PL's in WrapXS/ just need to pass the -e libmodperl.lib test
+        #the real libmodperl.lib will be in place when WrapXS/ dll's are
+        #actually linked
+        my $lib = "src/modules/perl/$build->{MP_LIBNAME}.lib";
+        unless (-e $lib) {
+            open my $fh, '>', $lib or die "open $lib: $!";
+            print $fh "#this is a dummy file to trick MakeMaker";
+            close $fh;
+        }
+    }
+
     system_sanity_check();
     set_modperl_version();
 
