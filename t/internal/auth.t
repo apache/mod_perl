@@ -1,7 +1,7 @@
 use Apache::test;
 
 my $ua = Apache::UserAgent->new;
-my $url = URI::URL->new("http://$net::httpserver/auth/");
+my $url = URI::URL->new("http://$net::httpserver/auth/.htaccess");
 my $i;
 my $request = HTTP::Request->new(GET => $url); 
 
