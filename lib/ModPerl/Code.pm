@@ -2,7 +2,10 @@ package ModPerl::Code;
 
 use strict;
 use warnings FATAL => 'all';
+
 use Config;
+use File::Spec::Functions qw(catfile catdir);
+
 use mod_perl ();
 use Apache::Build ();
 
@@ -719,6 +722,8 @@ sub generate {
     #create bootstrap method for static xs modules
     my $static_xs = [keys %{ $build->{XS} }];
     ExtUtils::Embed::xsinit($xsinit, 1, $static_xs);
+
+    #$self->generate_constants_pod();
 }
 
 my $constant_prefixes = join '|', qw{APR?};
@@ -897,6 +902,129 @@ sub constants_group_lookup_code {
     return NULL;
 }
 EOF
+}
+
+my %seen_const = ();
+# generates APR::Const and Apache::Const manpages in ./tmp/
+sub generate_constants_pod {
+    my($self) = @_;
+
+    my %data = ();
+    generate_constants_group_lookup_doc(\%data);
+    generate_constants_lookup_doc(\%data);
+
+    # XXX: may be dump %data into ModPerl::MethodLookup and provide an
+    # easy api to map const groups to constants and vice versa
+
+    require File::Path;
+    my $file = "Const.pod";
+    for my $class (keys %data) {
+        my $path = catdir "tmp", $class;
+        File::Path::mkpath($path, 0, 0755);
+        my $filepath = catfile $path, $file;
+        open my $fh, ">$filepath" or die "Can't open $filepath: $!\n";
+
+        print $fh <<"EOF";
+=head1 NAME
+
+$class\::Const - Perl Interface for $class Constants
+
+=head1 SYNOPSIS
+
+=head1 CONSTANTS
+
+EOF
+
+        my $groups = $data{$class};
+        for my $group (sort keys %$groups) {
+            print $fh <<"EOF";
+
+
+
+=head2 C<:$group>
+
+  use $class\::Const -compile qw(:$group);
+
+The C<:$group> group is for XXX constants.
+
+EOF
+
+            for my $const (sort @{ $groups->{$group} }) {
+                print $fh "=head3 C<$class\::$const>\n\n\n";
+            }
+        }
+
+        print $fh "=cut\n";
+    }
+}
+
+sub generate_constants_lookup_doc {
+    my($data) = @_;
+
+    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+        my $constants = [map { @$_ } values %$groups];
+
+        constants_lookup_code_doc($constants, $class, $data);
+    }
+}
+
+sub generate_constants_group_lookup_doc {
+    my($data) = @_;
+
+    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+        constants_group_lookup_code_doc($class, $groups, $data);
+    }
+}
+
+sub constants_group_lookup_code_doc {
+    my($class, $groups, $data) = @_;
+    my @tags;
+    my @code;
+
+    while (my($group, $constants) = each %$groups) {
+        $data->{$class}{$group} = [
+            map {
+                my @ifdef = constants_ifdef($_);
+                s/^($constant_prefixes)_?//o;
+                $seen_const{$class}{$_}++;
+                $_;
+            } @$constants
+        ];
+    }
+}
+
+sub constants_lookup_code_doc {
+    my($constants, $class, $data) = @_;
+
+    my(%switch, %alias);
+
+    %alias = %shortcuts;
+
+    my $postfix = lc $class;
+    my $package = $class . '::';
+    my $package_len = length $package;
+
+    my $func = canon_func(qw(constants lookup), $postfix);
+
+    for (@$constants) {
+        if (s/^($constant_prefixes)(_)?//o) {
+            $alias{$_} = join $2 || "", $1, $_;
+        }
+        else {
+            $alias{$_} ||= $_;
+        }
+        next unless /^([A-Z])/;
+        push @{ $switch{$1} }, $_;
+    }
+
+    for my $key (sort keys %switch) {
+        my $names = $switch{$key};
+        for my $name (@$names) {
+            my @ifdef = constants_ifdef($alias{$name});
+            push @{ $data->{$class}{other} }, $name
+                unless $seen_const{$class}{$name}
+        }
+    }
 }
 
 1;
