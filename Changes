@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Fix a bug in <Perl> sections with multiple aliases in a
+virtualhost container. [Gozer]
+
 PerlModule, PerlRequire, Perl and <Perl> is now supported in
 .htaccess. They will run for each request. [Gozer]
 
