@@ -336,11 +336,6 @@ sub perl_version_check {
             "Upgrade to 5.8.0 or higher";
         exit 1;
     }
-
-    if (WIN32 and $] < 5.008) {
-        error "You are running a Perl version 5.6.x\n" .
-            "We strongly suggest you upgrade to 5.8\n";
-    }
 }
 
 sub system_sanity_check {
