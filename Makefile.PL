@@ -23,6 +23,7 @@ use Config;
 use File::Spec::Functions;
 use DirHandle ();
 use File::Copy 'cp';
+use File::Basename 'basename';
 
 use Apache::Build ();
 use Apache::TestReportPerl ();
@@ -70,11 +71,14 @@ ModPerl::MM::WriteMakefile(
     VERSION => $VERSION,
     DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
     macro => {
-        MODPERL_SRC   => $code->path,
-        PERL          => $build->perl_config('perlpath'),
-        MOD_INSTALL   => ModPerl::MM::mod_install(),
-        APACHE_PREFIX => $build->apxs('-q' => 'prefix'),
-        APACHE_LIBDIR => $build->apxs('-q' => 'libexecdir'),
+        MODPERL_SRC      => $code->path,
+        MODPERL_MAKEFILE => basename($build->default_file('makefile')),
+        MAKE_F           => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
+        MODPERL_LIBMAKE  => '$(MAKE) -f $(MODPERL_MAKEFILE)',
+        PERL             => $build->perl_config('perlpath'),
+        MOD_INSTALL      => ModPerl::MM::mod_install(),
+        APACHE_PREFIX    => $build->apxs('-q' => 'prefix'),
+        APACHE_LIBDIR    => $build->apxs('-q' => 'libexecdir'),
     },
     clean => {
         FILES => "@{ clean_files() }",
@@ -390,13 +394,13 @@ etags:
 	$(SHELL) build/make_etags
 
 modperl_lib:
-	cd "$(MODPERL_SRC)" && $(MAKE)
+	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE)
 
 modperl_lib_install:
-	cd "$(MODPERL_SRC)" && $(MAKE) install
+	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) install
 
 modperl_src_clean:
-	cd "$(MODPERL_SRC)" && $(MAKE) clean
+	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
 
 EOF
 
