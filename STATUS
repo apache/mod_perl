@@ -270,3 +270,12 @@ Known bugs unlikely to be fixed:
           C handlers, this is a documentation enhancement, not a bug.
           the extra DIR_{CREATE,MERGE} is likely related to
           s->lookup_defaults.  -dougm
+
+Known bugs unlikely to be fixed because they aren't under our (mod_perl) control:
+
+    * /perl/perl-status?sig dumps core under hpux 10.20 
+        [David-Michael.Lincke@unisg.ch] and [Silvio.Wanka@alcatel.de]
+    Status:
+        SIGRTMAX is not being picked up by ./Configure under certain circumstances.
+    Patch:
+        http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2002-04/msg01458.html
