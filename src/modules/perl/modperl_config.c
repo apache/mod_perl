@@ -68,7 +68,7 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
         apr_pcalloc(p, sizeof(*scfg));
 
     scfg->flags = modperl_options_new(p, MpSrvType);
-    MpSrvENABLED_On(scfg); /* mod_perl enabled by default */
+    MpSrvENABLE_On(scfg); /* mod_perl enabled by default */
     MpSrvHOOKS_ALL_On(scfg); /* all hooks enabled by default */
 
     scfg->PerlModule  = apr_array_make(p, 2, sizeof(char *));

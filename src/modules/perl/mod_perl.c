@@ -135,7 +135,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     }
 #endif
 
-    if (!MpSrvENABLED(base_scfg)) {
+    if (!MpSrvENABLE(base_scfg)) {
         /* how silly */
         return;
     }
@@ -170,7 +170,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 
 #ifdef USE_ITHREADS
 
-        if (!MpSrvENABLED(scfg)) {
+        if (!MpSrvENABLE(scfg)) {
             scfg->mip = NULL;
             continue;
         }

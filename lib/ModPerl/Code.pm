@@ -91,7 +91,7 @@ while (my($k,$v) = each %directive_proto) {
 my @hook_flags = (map { canon_uc($_) } keys %hooks);
 my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
-    Srv => ['NONE', @ithread_opts, qw(ENABLED AUTOLOAD MERGE_HANDLERS),
+    Srv => ['NONE', @ithread_opts, qw(ENABLE AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET'],
     Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
     Req => [qw(NONE SET_GLOBAL_REQUEST)],
@@ -293,7 +293,7 @@ EOF
 $protostr
 {
     $prototype->{cfg}->{get};
-    if (!MpSrvENABLED(scfg)) {
+    if (!MpSrvENABLE(scfg)) {
         return apr_pstrcat(parms->pool,
                            "Perl is disabled for server ",
                            parms->server->server_hostname, NULL);
