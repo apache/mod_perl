@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+back out 'stop win32 crash when bringing down service' change, no
+longer needed with 1.3.19
+[John Sterling, Will Rowe]
+
 $r->no_cache(0) will unset cache headers
 [Geoffrey Young <gyoung@laserlink.net>]
 
