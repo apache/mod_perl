@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+
+s/PERL_TIE_TABLES/PERL_TABLE_API/g
+
 fix Apache::URI so components can be properly undef-d, thanks to
 Charles C. Fu for the spot
 
