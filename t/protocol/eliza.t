@@ -2,6 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 use Apache::TestRequest ();
 
 my @test_strings = ('Hello Eliza', 
@@ -17,9 +18,9 @@ my $socket = Apache::TestRequest::vhost_socket('TestProtocol::eliza');
 ok $socket;
 
 for (@test_strings) {
-    print "SEND ='$_'\n";
     print $socket "$_\n";
     chomp(my $reply = <$socket>);
-    print "REPLY='$reply'\n";
+    t_debug "send: $_";
+    t_debug "recv: $reply";
     ok $reply;
 }
