@@ -13,12 +13,14 @@ my %handlers = (
     PerSrv     => [qw(PostReadRequest Trans)], #Init
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
-                      Type Fixup Log)], #Init Response Cleanup
+                      Type Fixup Response Log)], #Init Cleanup
     Connection => [qw(PreConnection ProcessConnection)],
 );
 
 my %hooks = map { $_, canon_lc($_) }
     map { @{ $handlers{$_} } } keys %handlers;
+
+my %not_ap_hook = map { $_, 1 } qw(response);
 
 my %hook_proto = (
     Process    => {
@@ -165,7 +167,8 @@ sub generate_handler_hooks {
 
             if (my $hook = $hooks{$handler}) {
                 push @register_hooks,
-                  "    ap_hook_$hook($name, NULL, NULL, AP_HOOK_LAST);";
+                  "    ap_hook_$hook($name, NULL, NULL, AP_HOOK_LAST);"
+                    unless $not_ap_hook{$hook};
             }
 
             my($protostr, $pass) = canon_proto($prototype, $name);
@@ -439,7 +442,8 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
-my @c_src_names = qw(interp tipool log config options callback gtop);
+my @c_src_names = qw(interp tipool log config options callback gtop
+                     util apache_xs);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }

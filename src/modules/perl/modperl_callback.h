@@ -10,7 +10,15 @@
 #define ap_hook_fixup  ap_hook_fixups
 #define ap_hook_log    ap_hook_log_transaction
 
+#define MP_HANDLER_TYPE_DIR 1
+#define MP_HANDLER_TYPE_SRV 2
+#define MP_HANDLER_TYPE_CONN 3
+#define MP_HANDLER_TYPE_PROC 4
+#define MP_HANDLER_TYPE_FILE 5
+
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, void *h, int type);
+
+void modperl_handler_make_args(pTHX_ AV *avp, ...);
 
 apr_status_t modperl_handler_cleanup(void *data);
 
@@ -26,7 +34,7 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler);
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p);
 
 int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
-                         server_rec *s, int type);
+                         server_rec *s, int type, ...);
 
 void modperl_process_callback(int idx, apr_pool_t *p, server_rec *s);
 

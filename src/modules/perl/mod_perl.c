@@ -153,6 +153,11 @@ static command_rec modperl_cmds[] = {
 }; 
 
 static handler_rec modperl_handlers[] = {
+#if 0
+    { "perl-script", modperl_1xx_response_handler },
+#endif    
+    /* this response handler does not do any extra crap */
+    { "modperl", modperl_response_handler },
     { NULL },
 };
 

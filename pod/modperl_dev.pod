@@ -114,6 +114,8 @@ and those from MP_OPTIONS_FILE.
 
 =item PerlFixupHandler
 
+=item PerlResponseHandler
+
 =item PerlLogHandler
 
 =item PerlPostReadRequestHandler

@@ -6,7 +6,7 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
     modperl_handler_t *h = modperl_handler_new(p, (void*)name,
                                                MP_HANDLER_TYPE_CHAR);
     if (!*handlers) {
-        *handlers = apr_make_array(p, sizeof(modperl_handler_t), 1);
+        *handlers = apr_make_array(p, 1, sizeof(modperl_handler_t *));
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
     }
 
