@@ -3,7 +3,7 @@ package ModPerl::WrapXS;
 use strict;
 use warnings FATAL => 'all';
 
-use constant GvSHARED => $^V gt v5.7.0;
+use constant GvSHARED => 0; #$^V gt v5.7.0;
 use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::TypeMap ();
