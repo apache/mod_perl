@@ -449,6 +449,7 @@ sub clean_files {
             @files,
             qw(lib/typemap
                lib/ModPerl/MethodLookup.pm
+               lib/ModPerl/DummyVersions.pm
                t/htdocs/vhost/error_log
                t/SMOKE
                t/TEST
