@@ -19,7 +19,7 @@ to build mod_perl static:
 
 % perl Makefile.PL && make
 
-% cd ../apache-2.0/src
+% cd ../httpd-2.0
 % ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
 % patch -p1 < ../../modperl-2.0/patches/link-hack.pat
 % make
@@ -28,7 +28,7 @@ to build mod_perl dynamic:
 
 % perl Makefile.PL MP_USE_DSO=1 && make
 
-% cd ../apache-2.0/src
+% cd ../httpd-2.0
 % ./configure --with-mpm=mpmt_pthread ...
 % make
 
@@ -58,4 +58,4 @@ sub MyLog::handler {
     warn "hey, it works!";
 }
 
---dougm 04/28
+--dougm 01/02

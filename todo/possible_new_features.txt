@@ -1,0 +1,83 @@
+config features:
+----------------
+
+- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
+  for the given location
+
+- allow Perl*Handler's to have arguments in config files
+
+- allow <Perl></Perl> configuration sections to have read access to internal
+  configuration structures (would be nice if we could tie a %namespace::) 
+
+- setuid/gid before running any Perl code
+
+perl language features:
+----------------------
+
+- @ARGV magic, tie to query string
+
+- overload %ENV magic to call subprocess_env when a value is set 
+
+- sub handler : method ($) {}
+  call $class->new($r) and pass the returned object as the first and
+  only arg to the method handler
+
+- some mod_perlIO/PerlIO type methods for xs modules? (e.g. Apache::Peek)
+
+optimization features:
+---------------------
+
+- copy-on-write SvPVX
+
+- hook Perl malloc into apr_pool
+
+- for "compiled handlers" w/ ithreads manage SV allocation via
+  server-lifetime apr_pool_t
+
+- "garbage collector" thread to walk padlists looking for certain things
+   worth releasing.
+
+- "mip manager" thread to watch # of active interpreters,
+  cloning/destroying when needed (rather than waiting for a request to
+  trigger)
+
+api:
+---
+
+- Apache->http_message(501); #rc code returns a string
+
+- improve the "stacked handlers" implementation, including:
+  + config merging of AV*'s
+
+  + allow push_handlers to have an additional argument, an array ref,
+    which will be passed to the handler as arguments, e.g.
+    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+modules:
+-------
+
+- Apache::Registry should check return value of the subroutine,
+  e.g. for REDIRECT   
+
+- should Apache::Registry use filename instead of vhost_name+uri?
+
+- Apache::Registry should honor __END__ and __DATA__,
+
+- core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
+
+new modules:
+-----------
+
+- apache.pm: use apache '1.3b3';
+
+misc new stuff:
+--------------
+
+- 'make html'
+
+- 'make test_report'
+
+apache features that would be neat for mod_perl:
+-----------------------------------------------
+
+- "autoload" hook for configuration directives
