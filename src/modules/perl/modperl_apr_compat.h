@@ -145,7 +145,10 @@
 #define APR_FOPEN_SENDFILE_ENABLED  APR_SENDFILE_ENABLED
 #endif
 #ifndef APR_FOPEN_LARGEFILE
+/* added in 2.0.50 */
+#ifdef APR_LARGEFILE
 #define APR_FOPEN_LARGEFILE   APR_LARGEFILE
+#endif
 #endif
 
 #endif /* MODPERL_APR_COMPAT_H */
