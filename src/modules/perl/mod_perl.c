@@ -221,6 +221,11 @@ void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
      */
 }
 
+static int modperl_hook_pre_connection(conn_rec *c)
+{
+    return modperl_input_filter_register_connection(c);
+}
+
 static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
                                      apr_pool_t *ptemp, server_rec *s)
 {
@@ -246,9 +251,22 @@ static int modperl_hook_create_request(request_rec *r)
     return OK;
 }
 
+static int modperl_hook_post_read_request(request_rec *r)
+{
+    return modperl_input_filter_register_request(r);
+}
+
+static int modperl_hook_header_parser(request_rec *r)
+{
+    return modperl_input_filter_register_request(r);
+}
+
 void modperl_register_hooks(apr_pool_t *p)
 {
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, APR_HOOK_MIDDLE);
+
+    ap_hook_post_config(modperl_hook_post_config, NULL, NULL,
+                        APR_HOOK_MIDDLE);
 
     ap_hook_handler(modperl_response_handler, NULL, NULL, APR_HOOK_MIDDLE);
 
@@ -259,11 +277,21 @@ void modperl_register_hooks(apr_pool_t *p)
                               modperl_output_filter_handler,
                               AP_FTYPE_CONTENT);
 
+    ap_register_input_filter(MODPERL_INPUT_FILTER_NAME,
+                             modperl_input_filter_handler,
+                             AP_FTYPE_CONTENT);
+
+    ap_hook_pre_connection(modperl_hook_pre_connection,
+                           NULL, NULL, APR_HOOK_FIRST);
+
     ap_hook_create_request(modperl_hook_create_request, NULL, NULL,
                            APR_HOOK_MIDDLE);
 
-    ap_hook_post_config(modperl_hook_post_config, NULL, NULL,
-                        APR_HOOK_MIDDLE);
+    ap_hook_post_read_request(modperl_hook_post_read_request, NULL, NULL,
+                              APR_HOOK_FIRST);
+
+    ap_hook_header_parser(modperl_hook_header_parser, NULL, NULL,
+                          APR_HOOK_FIRST);
 
     modperl_register_handler_hooks();
 }

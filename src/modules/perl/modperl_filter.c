@@ -79,7 +79,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     return filter;
 }
 
-int modperl_run_filter(modperl_filter_t *filter)
+int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode)
 {
     AV *args = Nullav;
     int status;
@@ -88,7 +88,7 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     request_rec *r = filter->f->r;
     conn_rec    *c = filter->f->c;
-    server_rec  *s = r ? r->server : NULL;
+    server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
 
     MP_dINTERP_SELECT(r, c, s);
@@ -97,6 +97,10 @@ int modperl_run_filter(modperl_filter_t *filter)
                               filter_classes[filter->mode], filter,
                               "APR::Brigade", filter->bb,
                               NULL);
+
+    if (filter->mode == MP_INPUT_FILTER_MODE) {
+        av_push(args, newSViv(mode));
+    }
 
     if ((status = modperl_callback(aTHX_ handler, p, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
@@ -319,7 +323,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
     }
     else {
         filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE);
-        status = modperl_run_filter(filter);
+        status = modperl_run_filter(filter, 0);
     }
 
     switch (status) {
@@ -327,6 +331,32 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
         return APR_SUCCESS;
       case DECLINED:
         return ap_pass_brigade(f->next, bb);
+      default:
+        return status; /*XXX*/
+    }
+}
+
+apr_status_t modperl_input_filter_handler(ap_filter_t *f,
+                                          apr_bucket_brigade *bb,
+                                          ap_input_mode_t mode)
+{
+    modperl_filter_t *filter;
+    int status;
+
+    if (APR_BRIGADE_IS_EOS(bb)) {
+        /* XXX: see about preventing this in the first place */
+        MP_TRACE_f(MP_FUNC, "first bucket is EOS, skipping callback\n");
+        return APR_SUCCESS;
+    }
+    else {
+        filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE);
+        status = modperl_run_filter(filter, mode);
+    }
+
+    switch (status) {
+      case OK:
+      case DECLINED:
+        return APR_SUCCESS;
       default:
         return status; /*XXX*/
     }
@@ -348,7 +378,95 @@ void modperl_output_filter_register(request_rec *r)
             ap_add_output_filter(MODPERL_OUTPUT_FILTER_NAME,
                                  (void*)ctx, r, r->connection);
         }
+
+        return;
     }
+
+    MP_TRACE_h(MP_FUNC, "no OutputFilter handlers configured (%s)\n",
+               r->uri);
+}
+
+int modperl_input_filter_register_connection(conn_rec *c)
+{
+    modperl_config_dir_t *dcfg =
+        modperl_config_dir_get_defaults(c->base_server);
+    MpAV *av;
+
+    if ((av = dcfg->handlers_per_dir[MP_INPUT_FILTER_HANDLER])) {
+        modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
+        int i;
+
+        for (i=0; i<av->nelts; i++) {
+            modperl_filter_ctx_t *ctx =
+                (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
+            ctx->handler = handlers[i];
+            ap_add_input_filter(MODPERL_INPUT_FILTER_NAME,
+                                (void*)ctx, NULL, c);
+        }
+
+        return OK;
+    }
+
+    MP_TRACE_h(MP_FUNC, "no InputFilter handlers configured (connection)\n");
+
+    return DECLINED;
+}
+
+int modperl_input_filter_register_request(request_rec *r)
+{
+    MP_dDCFG;
+    MpAV *av;
+
+    if ((av = dcfg->handlers_per_dir[MP_INPUT_FILTER_HANDLER])) {
+        modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
+        int i;
+
+        for (i=0; i<av->nelts; i++) {
+            modperl_filter_ctx_t *ctx;
+            int registered = 0;
+            ap_filter_t *f = r->connection->input_filters;
+
+            while (f) {
+                const char *name = f->frec->name;
+
+                if (*name == 'M' && strEQ(name, MODPERL_INPUT_FILTER_NAME)) {
+                    modperl_handler_t *ctx_handler = 
+                        ((modperl_filter_ctx_t *)f->ctx)->handler;
+
+                    if (modperl_mgv_equal(ctx_handler->mgv_cv,
+                                          handlers[i]->mgv_cv)) {
+                        /* skip if modperl_input_filter_register_connection
+                         * already registered this handler
+                         * XXX: set a flag in the modperl_handler_t instead
+                         */
+                        registered = 1;
+                        break;
+                    }
+                }
+
+                f = f->next;
+            }
+
+            if (registered) {
+                MP_TRACE_f(MP_FUNC,
+                        "%s InputFilter already registered\n",
+                        handlers[i]->name);
+                continue;
+            }
+
+            ctx = (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
+            ctx->handler = handlers[i];
+            ap_add_input_filter(MODPERL_INPUT_FILTER_NAME,
+                                (void*)ctx, r, r->connection);
+        }
+
+        return OK;
+    }
+
+    MP_TRACE_h(MP_FUNC, "no InputFilter handlers configured (%s)\n",
+               r->uri);
+
+    return DECLINED;
 }
 
 void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
