@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+perl_startup() will now check the Apache.pm $VERSION
+
 fixups for building Stronghold 2.4
 
 new Apache::File module
