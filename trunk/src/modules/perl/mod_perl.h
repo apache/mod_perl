@@ -895,6 +895,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_end_section (cmd_parms *cmd, void *dummy);
 CHAR_P perl_pod_section (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy);
+CHAR_P perl_cmd_autoload (cmd_parms *parms, void *dummy, const char *arg);
 CHAR_P perl_config_END (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv);

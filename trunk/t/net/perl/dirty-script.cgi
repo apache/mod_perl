@@ -14,4 +14,6 @@ $hash{key}++;
 
 print __PACKAGE__, " is dirty";
 
+exit;
+
 __END__

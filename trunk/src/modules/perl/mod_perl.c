@@ -355,6 +355,11 @@ void perl_startup (server_rec *s, pool *p)
     SV *pool_rv, *server_rv;
     GV *gv, *shgv;
 
+#if MODULE_MAGIC_NUMBER >= 19980507
+#include "mod_perl_version.h"
+    ap_add_version_component(MOD_PERL_STRING_VERSION);
+#endif
+
 #ifndef WIN32
     argv[0] = server_argv0;
 #endif

@@ -18,10 +18,18 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
-$r->read_client_block is deprecated
+overload the get_basic_auth_pw function so we can change AuthType on
+the fly via $r->connection->auth_type
+
+add code to deal with 1.3b7-dev's SERVER_SUBVERSION replacement
+
+a few doc patches [John D Groenveld <jdg117@elvis.arl.psu.edu>]
 
 re-implemented $r->read to properly use *client_block methods and call
-reset_timeout after each read in the loop
+reset_timeout after each read in the loop.  until this is well tested,
+the method is called new_read. to test on tie'd STDIN reads, a startup
+script can say this:
+*Apache::READ = \&Apache::new_read;
 
 added setup_client_block, should_client_block and get_client_block
 methods

@@ -24,6 +24,7 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
   + Frank's FAQ update: http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz
   + DONE
   + SUID access http://www.courtesan.com/sudo/
+  + $ENV{PATH}/PerlSetEnv and PerlTaintCheck
 
 - rand() broken under win32!
            Jeff Baker <jeff@godzilla.tamu.edu>
@@ -96,6 +97,9 @@ KNOWN BUGS
 ---------------------------------------------------------------------------
 NEW STUFF
 ---------------------------------------------------------------------------
+
+- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
+  for the given location
 
 - PerlInitHandler - alias to first available
   PerlCleanupHandler - register_cleanup
