@@ -12,6 +12,8 @@ use Win32;
 
 use Config;
 
+use File::Basename 'dirname';
+
 #
 
 # Config part
@@ -20,9 +22,24 @@ use Config;
 
 $apache = "apache";
 
-for my $p ("program files\\apache", "apache") { 
-    last if -e ($fullapache = "c:\\$p\\apache.exe");
+SEARCH: {
+    for my $drive ('c'..'g') {
+	for my $p ("program files\\apache", "apache") { 
+	    last SEARCH if -e ($fullapache = "$drive:\\$p\\apache.exe");
+	}
+    }
 }
+
+unless (-e $fullapache) {
+    require ExtUtils::MakeMaker;
+    ExtUtils::MakeMaker->import('prompt');
+    $fullapache = prompt("Where is your apache.exe located ?", $fullapache);
+}
+
+die "Can't find apache.exe!" unless -e $fullapache;
+
+my $ap_path = dirname $fullapache;
+$ENV{PATH} = join ";", $ap_path, $ENV{PATH};
 
 $fullperl = $Config{perlpath};
 
