@@ -367,7 +367,7 @@ sub write_xs {
         print $fh qq{\#include "$_"\n\n};
     }
 
-    my $last_prefix;
+    my $last_prefix = "";
 
     for my $func (@$functions) {
         my $class = $func->{class};
