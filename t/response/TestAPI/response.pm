@@ -33,7 +33,7 @@ sub handler {
 
     $r->set_last_modified;
 
-    $r->custom_response(500, "xxx");
+    # custom_response is tested in TestAPI::custom_response
 
     ok 1;
 
