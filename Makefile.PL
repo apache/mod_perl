@@ -299,9 +299,9 @@ sub MY::tool_autosplit {
 sub MY::post_initialize {
     my $self = shift;
 
-    # install libmodperl.so, MODPERL_LIB is not known here yet
+    # install libmodperl.so
     if (exists $build->{MP_USE_DSO} && $build->{MP_USE_DSO}) {
-        my $MODPERL_LIB = join '.', $build->{MP_LIBNAME}, $Config{dlext};
+        my $MODPERL_LIB = join '.', $build->{MP_LIBNAME}, 'so';
         $self->{PM}->{"src/modules/perl/$MODPERL_LIB"} =
             "\$(APACHE_LIBDIR)/$MODPERL_LIB";
     }
