@@ -6850,7 +6850,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_current_userid',
+    'name' => 'apr_uid_current',
     'args' => [
       {
         'type' => 'apr_uid_t *',
@@ -8078,7 +8078,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'apr_filename_of_pathname',
+    'name' => 'apr_filepath_name_get',
     'args' => [
       {
         'type' => 'const char *',
@@ -8196,7 +8196,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_get_groupid',
+    'name' => 'apr_gid_get',
     'args' => [
       {
         'type' => 'apr_gid_t *',
@@ -8214,7 +8214,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_get_groupname',
+    'name' => 'apr_gid_name_get',
     'args' => [
       {
         'type' => 'char **',
@@ -8232,7 +8232,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_get_home_directory',
+    'name' => 'apr_uid_homepath_get',
     'args' => [
       {
         'type' => 'char **',
@@ -8250,7 +8250,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_get_userid',
+    'name' => 'apr_uid_get',
     'args' => [
       {
         'type' => 'apr_uid_t *',
@@ -8272,7 +8272,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_get_username',
+    'name' => 'apr_uid_name_get',
     'args' => [
       {
         'type' => 'char **',
@@ -8491,24 +8491,6 @@ $Apache::FunctionTable = [
       {
         'type' => 'apr_global_mutex_t *',
         'name' => 'mutex'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
-    'name' => 'apr_group_name_get',
-    'args' => [
-      {
-        'type' => 'char **',
-        'name' => 'groupname'
-      },
-      {
-        'type' => 'apr_gid_t',
-        'name' => 'groupid'
-      },
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'p'
       }
     ]
   },
@@ -8735,7 +8717,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_implode_gmt',
+    'name' => 'apr_time_exp_gmt_get',
     'args' => [
       {
         'type' => 'apr_time_t *',
