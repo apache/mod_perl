@@ -1,7 +1,11 @@
 package Apache::Registry;
 use Apache ();
 #use strict; #eval'd scripts will inherit hints
-use Apache::Constants qw(:common &OPT_EXECCGI &REDIRECT);
+use Apache::Constants qw(:common &OPT_EXECCGI);
+
+BEGIN {
+    OPT_EXECCGI(); #preload, :common are alread pre-loaded
+}
 
 $Apache::Registry::VERSION = '2.01';
 
