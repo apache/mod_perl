@@ -12,11 +12,11 @@ my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::input_msg::response';
 
 sub handler : FilterConnectionHandler {
-    my($filter, $bb, $mode, $readbytes) = @_;
+    my($filter, $bb, $mode, $block, $readbytes) = @_;
 
     my $ctx_bb = APR::Brigade->new($filter->c->pool);
 
-    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $readbytes);
+    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
 
     if ($rv != APR::SUCCESS) {
         return $rv;
