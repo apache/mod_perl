@@ -103,6 +103,9 @@ if ($ENV{CONTENT_LENGTH}) {
     #warn "TRAPPED: `system \$r->content' '$@'\n";
 
     $r->print("\nContent\n-------\n$content");
+    if(my $post = $r->subprocess_env("POST_DATA")) {
+	print "\nPOST_DATA=`$post'\n";
+    }
 }
 
 print "\n";

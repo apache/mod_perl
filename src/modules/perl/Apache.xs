@@ -919,6 +919,9 @@ read_client_block(r, buffer, bufsiz)
     if ( nrd > 0 ) {
 	XPUSHs(sv_2mortal(newSViv((long)nrd)));
 	sv_setpvn((SV*)ST(1), buffer, nrd);
+#ifdef PERL_STASH_POST_DATA
+        table_set(r->subprocess_env, "POST_DATA", buffer);
+#endif
         safefree(buffer);
 	SvTAINTED_on((SV*)ST(1));
     } 
