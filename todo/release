@@ -9,13 +9,6 @@
   will know exactly once libapr is fixed
   owner: stas
 
-* $r->document_root:
-  cannot currently be modified.  requires locking since it is part of
-  the per-server config structure which is shared between threads
-  but even w/o locking one thread is not allowed to affect other
-  threads with this change, so it's out of question to make this
-  method set-able for threaded after the startup item
-
 * $r->child_terminate:
   - a must to be able to port Apache::SizeLimit, which is a
     showstopper for many mp1 users wanting to move to mp2.
