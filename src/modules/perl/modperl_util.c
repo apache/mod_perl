@@ -936,8 +936,11 @@ void modperl_perl_modglobal_dump(pTHX)
     hv_iterinit(hv);
 
     MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------");
-    MP_TRACE_g(MP_FUNC, "| perl 0x%lx PL_modglobal 0x%lx",
-               (unsigned long)aTHX, (unsigned long)PL_modglobal);
+#ifdef USE_ITHREADS
+    MP_TRACE_g(MP_FUNC, "| perl 0x%lx", (unsigned long)aTHX);
+#endif
+    MP_TRACE_g(MP_FUNC, "| PL_modglobal 0x%lx",
+               (unsigned long)PL_modglobal);
     
     while ((val = (AV*)hv_iternextsv(hv, &key, &klen))) {
         MP_TRACE_g(MP_FUNC, "| %s => 0x%lx", key, val);
