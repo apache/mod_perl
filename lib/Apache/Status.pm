@@ -363,7 +363,8 @@ sub status_env {
     }
     push @retval, "\n</p>\n";
     push @retval, "<pre>",
-        (map "$_ = " . ($ENV{$_}||'') . "\n", sort keys %ENV), "</pre>";
+        (map "$_ = " . escape_html($ENV{$_}||'') . "\n",
+            sort keys %ENV), "</pre>";
 
     \@retval;
 }
@@ -409,6 +410,7 @@ sub status_data_dump {
     no strict 'refs';
     my @retval = "<p>\nData Dump of $name $type\n</p>\n<pre>\n";
     my $str = Data::Dumper->Dump([*$name{$type}], ['*'.$name]);
+    $str = escape_html($str);
     $str =~ s/= \\/= /; #whack backwack
     push @retval, $str, "\n";
     push @retval, peek_link($r, $q, $name, $type);
@@ -826,6 +828,16 @@ sub as_HTML {
     push @m, "</table>";
 
     return join "\n", @m, "<hr>", b_package_size_link($r, $q, $package);
+}
+
+sub escape_html {
+    my $str = shift;
+
+    $str =~ s/&/&amp;/g;
+    $str =~ s/</&lt;/g;
+    $str =~ s/>/&gt;/g;
+
+    return $str;
 }
 
 sub myconfig {
