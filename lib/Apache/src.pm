@@ -15,18 +15,20 @@ use Config;
 $VERSION = '0.01';
 sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
 my $Is_Win32 = ($^O eq "MSWin32");
-$Apache::src::APXS = "";
+$Apache::src::APXS ||= "";
 
 sub apxs {
     my $self = shift;
-    require Apache::MyConfig;
+    eval { require Apache::MyConfig };
     my $apxs;
     for ($Apache::src::APXS,
 	 $Apache::MyConfig::Setup{'APXS'},
 	 `which apxs`,
 	 "/usr/local/apache/bin/apxs")
       {
-	  last if -x ($apxs = $_);
+	  next unless $apxs;
+	  chomp $apxs;
+	  last if -x $apxs;
       }
     return "" unless $apxs and -x $apxs;
     `$apxs @_`;
