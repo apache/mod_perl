@@ -19,7 +19,7 @@ V: done completely
 -- src/docs/2.0/api/Apache/Access.pod
 -- src/docs/2.0/api/Apache/CmdParms.pod
 -- src/docs/2.0/api/Apache/Command.pod
--- src/docs/2.0/api/Apache/Connection.pod
++- src/docs/2.0/api/Apache/Connection.pod
 +- src/docs/2.0/api/Apache/Const.pod
 -- src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
@@ -33,7 +33,13 @@ VV src/docs/2.0/api/Apache/PerlSections.pod
 VV src/docs/2.0/api/Apache/Process.pod
 VV src/docs/2.0/api/Apache/Reload.pod
 VV src/docs/2.0/api/Apache/RequestIO.pod
--- src/docs/2.0/api/Apache/RequestRec.pod
+VP src/docs/2.0/api/Apache/RequestRec.pod
+        allowed_methods
+        allowed_xmethods
+        canonical_filename
+        content_languages (was in mp1, need to implement APR::ArrayHeader )
+        request_config
+        used_path_info
 VV src/docs/2.0/api/Apache/RequestUtil.pod
 VP src/docs/2.0/api/Apache/Response.pod
         send_error_response
