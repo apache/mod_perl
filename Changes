@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+For static builds, mod_perl header files were being installed
+into apache's source tree instead of where apache installed it's
+own headers [Gozer]
+
 modperl_threads_started() wasn't working under static worker build,
 due to MP_threads_started static variable not being reset on
 restart. Now resetting it. [Stas]
