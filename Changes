@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+fix calling $r->subprocess_env() in a void context so that it only
+populates %ENV if also called with no arguments.  also, make sure it
+can be called more than once and still populate %ENV.
+[Geoffrey Young]
+
 add APR::Brigade::pool() to allow access to the pool associated with
 the brigade  [Geoffrey Young]
 

@@ -46,8 +46,15 @@ static MP_INLINE
 SV *mpxs_Apache__RequestRec_subprocess_env(pTHX_ request_rec *r,
                                            char *key, SV *val)
 {
-    if (GIMME_V == G_VOID) {
+    /* if called in a void context with no arguments, just
+     * populate %ENV and stop.  resetting SetupEnv off makes
+     * calling in a void context more than once meaningful.
+     */
+    if (key == NULL && GIMME_V == G_VOID) {
+        MP_dRCFG;
+        MpReqSETUP_ENV_Off(rcfg); 
         modperl_env_request_populate(aTHX_ r);
+        return &PL_sv_undef;
     }
 
     return modperl_table_get_set(aTHX_ r->subprocess_env,
