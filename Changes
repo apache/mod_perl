@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+PERL5LIB support now properly unshifts paths into @INC rather than push
+[Tatsuhiko Miyagawa <miyagawa@edge.co.jp>]
+
 do not clear symbol tables within a package in perl_clear_symtab()
 used by directive handler extensions
 [Stephen Clouse <stephenc@theiqgroup.com>]

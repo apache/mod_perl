@@ -747,7 +747,7 @@ void perl_startup (server_rec *s, pool *p)
 #endif
 	
 #ifdef APACHE_PERL5LIB
-    perl_incpush(APACHE_PERL5LIB);
+    perl_inc_unshift(APACHE_PERL5LIB);
 #else
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,"lib/perl"),0));
@@ -1412,7 +1412,7 @@ void perl_per_request_init(request_rec *r)
 	char *path = (char *)table_get(r->subprocess_env, "PERL5LIB");
 
 	if (path) {
-	    perl_incpush(path);
+           perl_inc_unshift(path);
 	    MP_INCPUSH_on(cld);
 	}
     }
