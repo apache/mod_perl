@@ -64,7 +64,7 @@ local %ModPerl::BuildMM::PM = (
 my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
 
-my @exe_files =  map "bin/$_", qw(mp2doc);
+my @exe_files =  map "bin/$_", qw(mp2doc mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
     NAME      => 'mod_perl',
@@ -393,6 +393,9 @@ source_scan:
 
 xs_generate:
 	$(PERL) build/xs_generate.pl
+
+bugreport:
+	$(PERL) bin/mp2bug
 
 etags:
 	$(SHELL) build/make_etags

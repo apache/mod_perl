@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Add a script mp2bug and a target 'make bugreport', so people can use
+bugreporting during the build and after modperl is installed. [Stas]
+
 Add a script mp2doc as a replacement for perldoc (due to 2.0 modules
 living under Apache2, which won't be looked at by perldoc). [Stas]
 

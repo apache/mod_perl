@@ -1,0 +1,21 @@
+#!perl
+
+use strict;
+use warnings FATAL => 'all';
+
+use FindBin;
+
+use constant IS_MOD_PERL_BUILD => -e "$FindBin::Bin/../lib/mod_perl.pm";
+
+if (IS_MOD_PERL_BUILD) {
+    unshift @INC, "$FindBin::Bin/../lib";
+}
+else {
+    eval { require Apache2 };
+    if ($@) {
+        die "This script requires mod_perl 2.0\n", "$@";
+    }
+}
+
+require Apache::TestReportPerl;
+Apache::TestReportPerl->new(@ARGV)->run;
