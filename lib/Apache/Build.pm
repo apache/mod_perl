@@ -102,7 +102,8 @@ sub apxs {
     my $apxs;
     my @trys = ($Apache::Build::APXS,
                 $self->{MP_APXS},
-                $ENV{MP_APXS});
+                $ENV{MP_APXS},
+                catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs');
 
     unless (IS_MOD_PERL_BUILD) {
         #if we are building mod_perl via apxs, apxs should already be known
