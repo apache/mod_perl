@@ -33,6 +33,9 @@ void modperl_perl_core_global_init(pTHX)
 static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 {
     ids->pid  = (I32)getpid();
+#ifdef MP_MAINTAIN_PPID
+    ids->ppid = (I32)getppid();
+#endif
 #ifndef WIN32
     ids->uid  = getuid();
     ids->euid = geteuid(); 
@@ -40,10 +43,18 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
     ids->gid  = getegid(); 
 
     MP_TRACE_g(MP_FUNC, 
+               "pid=%d, "
+#ifdef MP_MAINTAIN_PPID
+               "ppid=%d, "
+#endif
                "uid=%d, euid=%d, gid=%d, egid=%d\n",
+               (int)ids->pid,
+#ifdef MP_MAINTAIN_PPID
+               (int)ids->ppid,
+#endif
                (int)ids->uid, (int)ids->euid,
                (int)ids->gid, (int)ids->egid);
-#endif
+#endif /* #ifndef WIN32 */
 }
 
 static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
@@ -55,6 +66,9 @@ static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
     PL_euid = ids->euid;
     PL_gid  = ids->gid;
     PL_egid = ids->egid;
+#endif
+#ifdef MP_MAINTAIN_PPID
+    PL_ppid = ids->ppid;
 #endif
 }
 
