@@ -748,6 +748,12 @@ sub make_tools {
     }
 }
 
+sub export_files_MSWin32 {
+    my $self = shift;
+    map "-def:$self->{cwd}/xs/modperl$_.def",
+        ("", "_inline", "_ithreads");
+}
+
 sub dynamic_link_header_default {
     return <<'EOF';
 $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
@@ -768,8 +774,7 @@ EOF
 
 sub dynamic_link_MSWin32 {
     my $self = shift;
-    my @defs = map "-def:$self->{cwd}/xs/modperl$_.def",
-        ("", "_inline", "_ithreads");
+    my @defs = $self->export_files_MSWin32;
     return $self->dynamic_link_header_default .
            "@defs" . <<'EOF';
 	-out:$@
@@ -910,16 +915,20 @@ EOF
 
 sub otherldflags {
     my $self = shift;
-    my @ldflags = ();
+    my $flags = \&{"otherldflags_$^O"};
+    return "" unless defined &$flags;
+    $flags->($self);
+}
 
-    if ($^O eq 'aix') {
-        if (my $file = find_in_inc('mod_perl.exp')) {
-            push @ldflags, '-bI:' . $file;
-        }
-        my $httpdexp = $self->apxs('-q' => 'LIBEXECDIR') . '/httpd.exp';
-        push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
-    }
-    return join(' ', @ldflags);
+#XXX: install *.def / search @INC
+sub otherldflags_MSWin32 {
+    my $self = shift;
+    my(@defs) = $self->export_files_MSWin32;
+    return "@defs";
+}
+
+sub otherldflags_aix {
+    ""; #XXX: -bI:*.exp files
 }
 
 sub typemaps {

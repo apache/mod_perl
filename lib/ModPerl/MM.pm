@@ -70,6 +70,7 @@ sub WriteMakefile {
         INC     => $inc,
         CCFLAGS => $ccflags,
         LIBS    => $libs,
+        dynamic_lib => { OTHERLDFLAGS => $build->otherldflags },
     );
 
     my @typemaps;
