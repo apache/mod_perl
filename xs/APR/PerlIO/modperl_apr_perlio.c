@@ -114,7 +114,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     }
     else {
         Perl_croak(aTHX_ "argument is not a blessed reference "
-                   "(expecting an APR::Pool  derived object)");
+                   "(expecting an APR::Pool derived object)");
     }
     
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
