@@ -55,22 +55,22 @@ sub handler {
     $uri = Apache::Util::escape_uri($uri);
     $uri2 = Apache::Util::escape_path($uri2, $r->pool);
 
-    ok t_cmp($esc_uri, $uri, "Apache::Util::escape_uri");
-    ok t_cmp($esc_uri, $uri2, "Apache::Util::escape_path");
+    ok t_cmp($uri, $esc_uri, "Apache::Util::escape_uri");
+    ok t_cmp($uri2, $esc_uri, "Apache::Util::escape_path");
 
-    ok t_cmp(Apache::URI::unescape_url($uri),
-             Apache::Util::unescape_uri($uri2),
+    ok t_cmp(Apache::Util::unescape_uri($uri2),
+             Apache::URI::unescape_url($uri),
              "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
 
-    ok t_cmp($uri,
-             $uri2,
+    ok t_cmp($uri2,
+             $uri,
              "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
 
     # escape_html()
     my $html = '<p>"hi"&foo</p>';
     my $esc_html = '&lt;p&gt;&quot;hi&quot;&amp;foo&lt;/p&gt;';
 
-    ok t_cmp($esc_html, Apache::Util::escape_html($html),
+    ok t_cmp(Apache::Util::escape_html($html), $esc_html,
              "Apache::Util::escape_html");
 
 
@@ -84,14 +84,14 @@ sub handler {
 
     if ($parse_time_ok) {
         my $ptime = Apache::Util::parsedate($fmtdate);
-        ok t_cmp($time, $ptime, "Apache::Util::parsedate");
+        ok t_cmp($ptime, $time, "Apache::Util::parsedate");
     }
 
     if ($crypt_ok) {
         # not all platforms support C-level crypt
         my $hash = "aX9eP53k4DGfU";
-        ok t_cmp(1, Apache::Util::validate_password("dougm", $hash));
-        ok t_cmp(0, Apache::Util::validate_password("mguod", $hash));
+        ok t_cmp(Apache::Util::validate_password("dougm", $hash), 1);
+        ok t_cmp(Apache::Util::validate_password("mguod", $hash), 0);
     }
 
     OK;
