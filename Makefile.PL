@@ -125,6 +125,7 @@ $Port = 8529;
 $PORT ||= $Port;
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
 $NO_HTTPD = $ENV{NO_HTTPD} || 0;
+$PREP_HTTPD = 0;
 $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
@@ -233,6 +234,8 @@ elsif($USE_APACI) {
         gen_script("apaci/load_modules.pl");
         print " (dso enabled)";
     }
+    $NO_HTTPD = 1 if $PREP_HTTPD; #either one will do
+    $PREP_HTTPD = 1 if $NO_HTTPD;
     print "\n";
 }
 
@@ -287,7 +290,7 @@ if($USE_APXS) {
     system "(cd apaci && $cmd)";
 }
 
-unless ($NO_HTTPD) {
+unless ($NO_HTTPD && !$PREP_HTTPD) {
 for $src_dir ($APACHE_SRC, <../apache*/src>, 
     <../stronghold*/src>, </usr/local/stronghold*/src>,
 					"../src", "./src")
@@ -330,7 +333,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
     $httpd_h = asrc($adir)."/httpd.h";
 
     if (-e $httpd_h) {
-	unless($NO_HTTPD and not $DYNAMIC) {
+	unless($NO_HTTPD and not $DYNAMIC and not $PREP_HTTPD) {
 	    unless($DO_HTTPD) {
 		$ans = _prompt("Configure mod_perl with $adir ?", "y");
 		next unless $ans =~ /^y$/i;
@@ -354,7 +357,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	}
 
 	#copy the source files
-	if(!$NO_HTTPD or $USE_APACI) {
+	if(!$NO_HTTPD or $USE_APACI or $PREP_HTTPD) {
 	    mkpath "$adir/modules/perl";
 	    #ignore make's output here
 	    `(cd $adir/modules/perl && make clean 2> /dev/null)`;
@@ -391,6 +394,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    }
 	}
 
+	($APACHE_ROOT = $APACHE_SRC) =~ s,/src/?$,,;
 	last if $NO_HTTPD; # or $USE_APACI;
 
 	if($PERL_EXTRA_CFLAGS) {
@@ -417,7 +421,6 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	$PERL_EXTRA_CFLAGS .= " -DPERL_DESTRUCT_LEVEL=$PERL_DESTRUCT_LEVEL"
 	    if $PERL_DESTRUCT_LEVEL;
 
-
 	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf) and not $USE_APACI) {
 	    unless(-e $conf) {
 		cp "$conf.tmpl", $conf;
@@ -428,8 +431,6 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    conf_fixup("$adir/Makefile.tmpl", $conf);
 	}
     }
-
-    ($APACHE_ROOT = $APACHE_SRC) =~ s,/src/?$,,;
 
     if ($NO_HTTPD) {
 
@@ -672,7 +673,7 @@ EOF
 unless (-e "t/net/config.pl") {
     cp "t/net/config.pl.dist", "t/net/config.pl";
 }
-unless($Is_Win32 or -e "t/conf/httpd.conf" or $NO_HTTPD) {
+unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
     init_tests_and_config();
 }
 
@@ -719,7 +720,7 @@ sub init_tests_and_config {
 	$apaci_cfg->close if $apaci_cfg;
     }
 
-    if($USE_APACI) {
+    if($USE_APACI and not $PREP_HTTPD) {
 	my $cmd = "CC=\"$Config{cc}\" " .
 		  "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
@@ -952,7 +953,7 @@ sub MY::top_targets {
     my $string = $self->MM::top_targets;
     return $string unless $USE_APXS or $APACHE_SRC;
 
-    if($USE_APACI) {
+    if($USE_APACI and !$PREP_HTTPD) {
 	$string =~ s/(pure_all\s+::\s+)(.*)/$1 apaci_httpd $2/;
     }
     elsif($APACHE_SRC) {
@@ -1326,7 +1327,7 @@ sub readline_setup {
 	eval <<'EOT' ;
     
 	sub main::_prompt {
-	    prompt(@_);
+	    prompt($_[0], $_[1]);
 	}
 EOT
     }
