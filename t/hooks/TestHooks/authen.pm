@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Access ();
 
-use Apache::Const -compile => qw(OK AUTH_REQUIRED SERVER_ERROR);
+use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR);
 
 sub handler {
     my $r = shift;
@@ -22,7 +22,7 @@ sub handler {
 
     unless ($user eq 'dougm' and $sent_pw eq 'foo') {
         $r->note_basic_auth_failure;
-        return Apache::AUTH_REQUIRED;
+        return Apache::HTTP_UNAUTHORIZED;
     }
 
     Apache::OK;

@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Access ();
 
-use Apache::Const -compile => qw(OK AUTH_REQUIRED);
+use Apache::Const -compile => qw(OK HTTP_UNAUTHORIZED);
 
 sub auth_any {
     my $r = shift;
@@ -15,7 +15,7 @@ sub auth_any {
 
     unless($r->user and $sent_pw) {
 	$r->note_basic_auth_failure;
-	return Apache::AUTH_REQUIRED;
+	return Apache::HTTP_UNAUTHORIZED;
     }
 
     return Apache::OK;
@@ -26,11 +26,11 @@ sub handler {
 
     my $user = $r->user;
 
-    return Apache::AUTH_REQUIRED unless $user;
+    return Apache::HTTP_UNAUTHORIZED unless $user;
 
     my($u, @allowed) = split /\s+/, $r->requires->[0]->{requirement};
 
-    return Apache::AUTH_REQUIRED unless grep { $_ eq $user } @allowed;
+    return Apache::HTTP_UNAUTHORIZED unless grep { $_ eq $user } @allowed;
 
     Apache::OK;
 }
