@@ -211,6 +211,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     PL_endav = endav;
 
+    set_taint_var(perl);
+    
     MP_TRACE_i(MP_FUNC, "constructed interpreter=0x%lx\n",
                (unsigned long)perl);
 
@@ -234,8 +236,6 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
                               modperl_shutdown, apr_pool_cleanup_null);
 #endif
 
-    set_taint_var(perl);
-    
     return perl;
 }
 
