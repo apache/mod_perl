@@ -3,7 +3,53 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- disable PERL_SSI unless mod_include is listed in httpd -l
+- hpux dso troubles
+
+- Makefile.PL if $PERL_USELARGEFILES == 0, check apxs cflags
+
+- From: Andy Wardley <abw@cre.canon.co.uk>
+  Subject: Problems with SERVER_MERGE and DIR_MERGE
+
+- From: Vivek Khera <khera@kciLink.com>
+  Subject: missing docs
+
+- From: Paul Walmsley <shag@booyaka.com>
+  Subject: BUG: mod_perl >= 1.23 on Perl 5.6 uses stdout fd for STDIN and STDOUT
+
+- From: Perrin Harkins <perrin@primenet.com>
+  Subject: Re: How to recognize server shutdown?
+
+- From: Richard L. Goerwitz <richard@catlin.cis.brown.edu>
+  Subject: Re: Bug (easily fixable) in Apache::Server
+
+- From: Wenzhong Tang <Tang@appliant.com>
+  Subject: RE: Prototype mismatch in Apache::PerlRun line 343
+
+- From: Geoffrey Young <gyoung@laserlink.net>
+  Subject: FW: bug in mod_perl-1.24 & request->args & request->content
+
+- From: Geoffrey Young <gyoung@laserlink.net>
+  Subject: patch for setting loglevel
+
+- -- post 1.25 --
+
+- From: JR Mayberry <jr.mayberry@e-vend.net>
+  Subject: Apache::Status problems?..CGI::Cookie, (dont want no CGI.pm) (?)
+
+- From: Adi Fairbank <adi@certsite.com>
+  Subject: Re: two identical directives in <Perl> configuration
+
+- PerlChildInitHandler should not be allowed inside <VirtualHost>
+
+- close STDERR;
+
+- require +ExecCGI for <Perl> in .htaccess, etc.
+
+- {get,set}_handlers troubles [Geoffrey Young <gyoung@laserlink.net>]
+  see also: http://perl.apache.org/~dougm/set_handlers.pat
+
+- remove eg/ directory, it's way out of date and no longer needed now
+  with the guide, the books, and piles of Apache::* modules
 
 - document Apache::Status Apache::Request preference over CGI.pm
   and make it more clear that Apache::Status should not be used in a
@@ -12,13 +58,7 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - segfaults with DBI->connect (mysql), reported that downgrade to
   1.21_03 cures
 
-- {get,set}_handlers troubles [Geoffrey Young <gyoung@laserlink.net>]
-  see also: http://perl.apache.org/~dougm/set_handlers.pat
-
-- remove eg/ directory, it's way out of date and no longer needed now
-  with the guide, the books, and piles of Apache::* modules
-
-- add $r->set_keepalive method?
+- disable PERL_SSI unless mod_include is listed in httpd -l
 
 ---------------------------------------------------------------------------
 POSSIBLE NEW FEATURES
@@ -29,9 +69,6 @@ POSSIBLE NEW FEATURES
 - PerlEval directive [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
 - add srand stuff ?
-
-- allow $r->server->uid($new_uid) ?
-  [Rob Giseburt <rob@eatech.net>]
 
 - new Apache::FakeRequest [Rafael Kitover <caelum@debian.org>]
 
@@ -57,8 +94,6 @@ POSSIBLE NEW FEATURES
 
 - Apache::PerlRun::flush_namespace should be re-written in c
 
-- syswrite/WRITE
-
 - Jeffrey W. Baker's Apache::Util::escape_html() replacement
 
 - Apache::Connection keepalive methods [Joe Schaefer <joe@sunstarsys.com>]
@@ -69,14 +104,7 @@ CONFIG STUFF
 
 - do something about FreshRestart+dso ? (vivek)
 
-- sort out hpux Config.pm issues when $Config{ld} eq 'ld' but
-  $Config{ldflags} have -Wl arguments
-
 - PERL_STATIC_EXTS doesnt work with USE_APACI=1
-
-- solaris Perl Configure adds a space before -R in ccdlflags, see
-  about removing that
-  [Ken McNamara <conmara@oaktree.net>]
 
 - ldopts() spits out ccdlflags when linker is ld
 
@@ -174,7 +202,5 @@ KNOWN MODULE BUGS
   it would be much better if the Apache::Registry will do that 
 
 - Apache::Include->virtual should return run() value, not status()
-
-- should Apache::Registry use -M or (stat _)[9]?
 
 - libapreq: Apache::Cookie format sync w/ CGI.pm
