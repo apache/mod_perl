@@ -1,6 +1,6 @@
 package APR::PerlIO;
 
-require 5.6.1;
+require 5.006001;
 
 our $VERSION = '0.01';
 
