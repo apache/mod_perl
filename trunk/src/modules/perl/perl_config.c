@@ -611,13 +611,28 @@ CHAR_P perl_config_END (cmd_parms *parms, void *dummy, const char *arg)
     return NULL;   
 }
 
+#define APACHE_POD_FORMAT(s) \
+ (strnEQ(s, "httpd", 5) || strnEQ(s, "apache", 6))
+
 CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
 {
     char l[MAX_STRING_LEN];
 
+    if(arg && strlen(arg) && !APACHE_POD_FORMAT(arg)) 
+	return "Unknown =end format";
+
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
+	int chop = 4;
 	if(strnEQ(l, "=cut", 4))
 	    break;
+	if(strnEQ(l, "=for", chop) || 
+	   ((chop = 6) && strnEQ(l, "=begin", chop)))
+	{
+	    char *tmp = l;
+	    tmp += chop; while(isspace(*tmp)) tmp++;
+	    if(APACHE_POD_FORMAT(tmp))
+		break;
+	}
     }
 
     return NULL;   
@@ -626,7 +641,7 @@ CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
 static const char perl_pod_end_magic[] = "=cut without =pod";
 
 CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
-    return perl_pod_end_magic;
+    return NULL;
 }
 
 void mod_perl_cleanup_av(void *data)

@@ -72,7 +72,7 @@ EOF
 $My::config_is_perl = 1;
 
 my $dir = $Apache::Server::CWD;
-$dir .= "/t" if -d "t";
+$dir .= "/t"; # if -d "t";
 my $Is_Win32 = ($^O eq "MSWin32");
 
 sub prompt ($;$) {
@@ -99,7 +99,7 @@ if($User eq "root") {
 }
 print "Will run tests as User: '$User' Group: '$Group'\n";
 
-require 't/net/config.pl';
+require 'net/config.pl';
 my $srv = $net::httpserver;
 ($srv = $net::httpserver) =~ s/\D+$//;
 $Port = (split ":", $srv, 2)[1];
