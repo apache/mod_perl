@@ -1020,6 +1020,31 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
             Perl_croak(aTHX_ "unable to resolve handler %s\n", handler->name);
         }
 
+        /* verify that the filter handler is of the right kind */
+        if (r == NULL) {
+            /* needs to have the FilterConnectionHandler attribute */
+            if (!(handler->attrs & MP_FILTER_CONNECTION_HANDLER)) {
+                Perl_croak(aTHX_ "Can't add connection filter handler '%s' "
+                           "since it doesn't have the "
+                           "FilterConnectionHandler attribute set",
+                           handler->name);
+            }
+        }
+        else {
+            /* needs to have the FilterRequestHandler attribute, but
+             * since by default request filters are not required to
+             * have the FilterRequestHandler attribute, croak only if
+             * some other attribute is set, but not
+             * FilterRequestHandler */
+            if (handler->attrs &&
+                !(handler->attrs & MP_FILTER_REQUEST_HANDLER)) {
+                Perl_croak(aTHX_ "Can't add request filter handler '%s' "
+                           "since it doesn't have the "
+                           "FilterRequestHandler attribute set",
+                           handler->name);
+            }
+        }
+
         if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER && handler->next) {
             int status = modperl_run_filter_init(f, mode, handler->next);
             if (status != OK) {
