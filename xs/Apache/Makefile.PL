@@ -1,4 +1,5 @@
-use ExtUtils::MakeMaker;
+use lib qw(../lib);
+use ModPerl::MM ();
 
-WriteMakefile(NAME => "Apache",
-              VERSION => '0.01');
+ModPerl::MM::WriteMakefile(NAME => "Apache",
+                           VERSION => '0.01');

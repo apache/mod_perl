@@ -1,6 +1,5 @@
-require 5.6.0;
-
-use ExtUtils::MakeMaker;
+use lib qw(../lib);
+use ModPerl::MM ();
 
 use lib qw(lib ../Apache-Test/lib);
 
@@ -19,15 +18,13 @@ my @scripts = qw(t/TEST);
 Apache::TestMM::filter_args();
 Apache::TestMM::generate_script('t/TEST');
 
-WriteMakefile
-    (
-     NAME         => 'ModPerl::Registry',
-     VERSION_FROM => 'lib/ModPerl/RegistryCooker.pm',
-     PREREQ_PM    => \%require,
-     clean        => {
-                      FILES => "@{ clean_files() }",
-                     },
-    );
+ModPerl::MM::WriteMakefile(
+    NAME         => 'ModPerl::Registry',
+    VERSION_FROM => 'lib/ModPerl/RegistryCooker.pm',
+    PREREQ_PM    => \%require,
+    clean        => {
+        FILES => "@{ clean_files() }",
+    });
 
 sub clean_files {
     return [@scripts];
