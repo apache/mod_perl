@@ -96,9 +96,9 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
  !apr_bucket_copy_notimpl
  !apr_bucket_shared_copy
- !apr_bucket_eos_create
+ apr_bucket_eos_create
  !apr_bucket_file_create
- !apr_bucket_flush_create
+ apr_bucket_flush_create
  !apr_bucket_heap_create
  !apr_bucket_immortal_create
  !apr_bucket_mmap_create
