@@ -586,11 +586,17 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
 #endif
 #endif
 
+#define PERL_CUR_HOOK_SV \
+perl_get_sv("Apache::__CurrentCallback", TRUE)
+
 #define PERL_SET_CUR_HOOK(h) \
-{ \
-   SV *sv = perl_get_sv("Apache::__CurrentCallback", TRUE); \
-   if (sv) sv_setpv(sv, h); \
-}
+if (r->notes) ap_table_setn(r->notes, "PERL_CUR_HOOK", h); \
+else sv_setpv(PERL_CUR_HOOK_SV, h)
+
+#define PERL_GET_CUR_HOOK \
+(r->notes ? \
+ap_table_get(r->notes, "PERL_CUR_HOOK") : \
+SvPVX(PERL_CUR_HOOK_SV))
 
 #ifdef PERL_STACKED_HANDLERS
 

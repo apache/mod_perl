@@ -304,11 +304,12 @@ void perl_shutdown (server_rec *s, pool *p)
 
 request_rec *mp_fake_request_rec(server_rec *s, pool *p, char *hook)
 {
-    request_rec *r = (request_rec *)palloc(p, sizeof(request_rec));
+    request_rec *r = (request_rec *)pcalloc(p, sizeof(request_rec));
     r->pool = p; 
     r->server = s;
     r->per_dir_config = NULL;
     r->uri = hook;
+    r->notes = NULL;
     return r;
 }
 
