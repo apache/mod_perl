@@ -129,6 +129,8 @@ t/docs/LoadClass.pm
 t/docs/content.html
 t/docs/content.shtml
 t/docs/STAGE/u1/nada.txt
+t/TestDirectives/Makefile.PL
+t/TestDirectives/TestDirectives.pm
 benchmark/lwp-simple.pod
 benchmark/stopwatch.pod
 faq/Makefile

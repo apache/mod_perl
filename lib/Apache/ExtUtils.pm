@@ -4,8 +4,7 @@ use strict;
 
 sub xs_cmd_table {
     my($self, $class, $cmds) = @_;
-    (my $xsname = $class) =~ s/::/__/g;
-    my $modname = "XS_$xsname";
+    (my $modname = $class) =~ s/::/__/g;
     my $cmdtab = "";
 
     for my $cmd (@$cmds) {
@@ -25,7 +24,7 @@ static command_rec mod_cmds[] = {
     { NULL }
 };
 
-module MODULE_VAR_EXPORT $modname = {
+module MODULE_VAR_EXPORT XS_${modname} = {
     STANDARD_MODULE_STUFF,
     NULL,               /* module initializer */
     NULL,  /* per-directory config creator */
@@ -50,7 +49,7 @@ module MODULE_VAR_EXPORT $modname = {
 MODULE = $modname		PACKAGE = $modname
 
 BOOT:
-    add_module(&$modname);
+    add_module(&XS_${modname});
 
 EOF
 }
@@ -76,8 +75,8 @@ Just one method at the moment:
 
   my @directives = qw(MyDirective);
   my $fh = IO::File->new(">My/Module/Module.xs") or die $!
-  
-  print $fh Apache::ExtUtils->xs_cmd_table("My::Module", \@directives);
+  my $xs_code = Apache::ExtUtils->xs_cmd_table("My::Module", \@directives);
+  print $fh $xs_code;
 
 This example will generate a .xs file which declares an Apache C module
 for the I<My::Module> class.  It is used simply to allow Perl modules to
@@ -85,6 +84,8 @@ add their own directives to Apache, rather than use B<PerlSetVar>.
 When the directive is encountered in a config file, a Perl subroutine of
 the same name in the I<My::Module> class is called and passed the arguments
 as perl C<TAKE123>.
+
+For an example, see t/TestDirectives in the mod_perl distribution.
 
 =head1 AUTHOR
 

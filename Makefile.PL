@@ -757,7 +757,13 @@ EOF
 
 cp "t/conf/httpd.conf", "t/httpd.conf";
 
+if($ENV{TEST_PERL_DIRECTIVES}) {
+    #push @DIR, 't/TestDirectives';
+    system "(cd t/TestDirectives && $^X Makefile.PL)";
+}
+
 WriteMakefile(
+    #DIR => \@DIR,
     NAME    => "mod_perl",
     VERSION => $VERSION,
     #should override `CCFLAGS', can't with older perls
@@ -896,6 +902,14 @@ test_report:
 }
 
 use File::Find;
+
+sub MY::subdirs {
+    my $self = shift;
+    if($ENV{TEST_PERL_DIRECTIVES}) {
+	push @{$self->{DIR}}, "t/TestDirectives";
+    }
+    $self->MM::subdirs(@_);
+}
 
 sub wanted {
     return unless /\.h$/;
