@@ -6,69 +6,81 @@ INSTALL.win32 - Apache mod_perl installation instructions for Win32
 
 How to build, test, configure and install mod_perl under Win32
 
-=head1 PREREQUSITES
+=head1 PREREQUISITES
 
 =over 3
 
-patience - mod_perl is considered alpha under NT and Windows95.
+patience - mod_perl is considered alpha under NT and Windows9x.
 
 MSVC++ 5.0+, Apache version 1.3-dev or higher and Perl 5.004_02 or higher.
 
-mod_perl will _not_ work with ActiveState's port, only with the "official"
-Perl, available from: http://www.perl.com/CPAN/src/5.0/latest.tar.gz
+As of version 1.24_01, mod_perl will build on Win32 ActivePerls
+based on Perl-5.6.0 (builds 6xx). 
 
 =back
 
+=head1 BINARIES
+
+See http://perl.apache.org/distributions.html for Win32 binaries,
+including ActivePerl ppms of mod_perl and some Apache::* packages.
+
 =head1 BUILDING
+
+There are two ways to build mod_perl - with MS Developer Studio,
+and through command-line arguments to 'perl Makefile.PL'.
+
+=head2 Building with MS Developer Studio
 
 =over 3
 
-=item Binaries
-
-See: http://perl.apache.org/distributions.html
-
 =item Setup the Perl side
 
-run 'perl Makefile.PL'
-run 'nmake install'
+Run 
+
+  perl Makefile.PL
+  nmake install
 
 This will install the Perl side of mod_perl and setup files for the library build.
 
 =item Build ApacheModulePerl.dll
 
 Using MS developer studio, 
-select "File -> Open Workspace ...", 
-select "Files of type [Projects (*.dsp)]"
-browse and open mod_perl-x.xx/src/modules/ApacheModulePerl/ApacheModulePerl.dsp
+
+ select "File -> Open Workspace ...", 
+ select "Files of type [Projects (*.dsp)]"
+ open mod_perl-x.xx/src/modules/ApacheModulePerl/ApacheModulePerl.dsp
 
 =item Settings
 
-select "Tools -> Options -> [Directories]"
+ select "Tools -> Options -> [Directories]"
 
-select "Show directories for: [Include files]"
+ select "Show directories for: [Include files]"
 
 You'll need to add the following paths:
-C:\apache_x.xx\src\include
-.  (should be expanded to C:\...\mod_perl-x.xx\src\modules\perl for you)
-C:\perl\lib\Core
+ 
+ C:\apache_x.xx\src\include
+ .  (should expand to C:\...\mod_perl-x.xx\src\modules\perl)
+ C:\perl\lib\Core
 
 select "Project -> Add to Project -> Files" adding:
-perl.lib       (e.g. C:\perl\lib\Core\perl.lib)
-ApacheCore.lib (e.g. C:\Apache\ApacheCore.lib)
+ 
+ perl.lib (or perl56.lib)   (e.g. C:\perl\lib\Core\perl.lib)
+ ApacheCore.lib (e.g. C:\Apache\ApacheCore.lib)
 
-select "Build -> Set Active Configuration... -> [ApacheModulePerl - Win32 Release]"
+ select "Build -> Set Active Configuration... -> 
+ [ApacheModulePerl - Win32 Release]"
 
-select "Build -> Build ApacheModulePerl.dll"
+ select "Build -> Build ApacheModulePerl.dll"
 
 You may see some harmless warnings, which can be reduced (along with
 the size of the DLL), by setting:
 
-"Project -> Settings -> [C/C++] -> Category: [Code Generation] -> 
+ "Project -> Settings -> [C/C++] -> Category: [Code Generation] -> 
   Use runtime library: [Multithreaded DLL]
 
 =item Testing
 
-Once ApacheModulePerl.dll is built and apache.exe in installed you may
+Once ApacheModulePerl.dll is built and apache.exe is installed you may
 test mod_perl with:
 
  nmake test
@@ -79,6 +91,51 @@ You do not need to rebuild apache, just copy ApacheModulePerl.dll to
 $SERVER_ROOT/modules 
 
 =back
+
+=head2 Building with arguments to 'perl Makefile.PL'
+
+Generating the Makefile as, for example,
+
+ perl Makefile.PL APACHE_SRC=..\apache_1.3.xx INSTALL_DLL=\Apache\modules
+
+will build mod_perl (including ApacheModulePerl.dll) entirely from 
+the command line. The arguments accepted include
+
+=over 3
+
+=item APACHE_SRC
+
+This gives the path to the Apache sources (eg, ..\apache_1.3.xx). It 
+is assumed that Apache has already been built in this directory.
+
+=item INSTALL_DLL
+
+This gives the location of where to install ApacheModulePerl.dll
+(eg, \Apache\modules). No default is assumed - if this argument
+is not given, ApacheModulePerl.dll must be copied manually.
+
+=item DEBUG
+
+If true (DEBUG=1), a Debug version will be built (this assumes
+that a Debug Apache has been built). If false, or not given, 
+a Release version will be built.
+
+=item EAPI
+
+If true (EAPI=1), EAPI (Extended API) will be defined when
+compiling. This is useful when building mod_perl against mod_ssl 
+patched Apache sources. If false, or not given, EAPI will
+not be defined.
+
+=back
+
+After this, running
+
+   nmake
+   nmake test
+   nmake install
+
+will complete the installation.
 
 =head1 CONFIGURATION
 
@@ -106,4 +163,3 @@ is not exported by the ApacheCore.dll  For now, just change:
 
  use CGI ();
  my $q = CGI->new;
-
