@@ -71,9 +71,11 @@ static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
 #ifdef dTHR
     dTHR;
 #endif
-    ENTER;
-    SAVEI32(hints);
-    SAVEI16(curcop->cop_line);
+    I32 oldhints = hints;
+    HV *old_cop_stash = curcop->cop_stash;
+    HV *old_curstash = curstash;
+    line_t oldline = curcop->cop_line;
+
     hints &= ~HINT_BLOCK_SCOPE;
 
     if(stash) {
@@ -92,7 +94,10 @@ static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
 	   newSVOP(OP_CONST, 0, &sv_no),	
 	   newSTATEOP(0, Nullch, newSVOP(OP_CONST, 0, sv)));
 
-    LEAVE;
+    hints = oldhints;
+    curcop->cop_stash = old_cop_stash;
+    curstash = old_curstash;
+    curcop->cop_line = oldline;
 }
 
 static enum cmd_how autoload_args_how(char *name) {
