@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22
 
+Fix broken MP_STATIC_EXTS=1 build. [Gozer]
+
 Perl -Duse64bit fix. Pointers can't just be generically
 casted from/to IVs. Use PTR2IV/INT2PTR instead. [Gozer]
 
