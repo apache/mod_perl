@@ -29,21 +29,21 @@ VV src/docs/2.0/api/Apache/FilterRec.pod
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
 -- src/docs/2.0/api/Apache/Module.pod
--- src/docs/2.0/api/Apache/PerlSections.pod
+VV src/docs/2.0/api/Apache/PerlSections.pod
 -- src/docs/2.0/api/Apache/Process.pod
--- src/docs/2.0/api/Apache/Reload.pod
+VV src/docs/2.0/api/Apache/Reload.pod
 VV src/docs/2.0/api/Apache/RequestIO.pod
 -- src/docs/2.0/api/Apache/RequestRec.pod
 VV src/docs/2.0/api/Apache/RequestUtil.pod
 -- src/docs/2.0/api/Apache/Response.pod
--- src/docs/2.0/api/Apache/Server.pod
 VP src/docs/2.0/api/Apache/ServerRec.pod
         addrs
         lookup_defaults
         module_config
         names
         wild_names
-+- src/docs/2.0/api/Apache/ServerUtil.pod
+VP src/docs/2.0/api/Apache/ServerUtil.pod
+        error_log2stderr
 -- src/docs/2.0/api/Apache/Status.pod
 -- src/docs/2.0/api/Apache/SubProcess.pod
 -- src/docs/2.0/api/Apache/SubRequest.pod
