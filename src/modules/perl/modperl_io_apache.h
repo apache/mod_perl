@@ -26,6 +26,18 @@ MP_INLINE void modperl_io_apache_init(pTHX);
 
 #endif /* #ifdef PERLIO_LAYERS */
 
+/**
+ * read 'len' bytes from the request record 'r' into 'buffer'
+ *
+ * this call will block until all 'len' bytes are read, eof is reached
+ * or will return an error otherwise
+ *
+ * @param r       request record
+ * @param buffer  preallocated buffer of size 'len' to store the data in
+ * @param len     how many bytes to read
+ * @return how many bytes were read,
+ *        -1 on error (in which case ERRSV ($!) is set)
+ */
 MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
                                        char *buffer, Size_t len);
 
