@@ -41,6 +41,8 @@ optimization features:
   cloning/destroying when needed (rather than waiting for a request to
   trigger)
 
+- use subpools per-callback/handler (might trim some memory bloat)
+
 api:
 ---
 
