@@ -2,7 +2,7 @@ package Apache::RegistryBB;
 
 use strict;
 use vars qw(@ISA);
-use Apache::Constants qw(NOT_FOUND FORBIDDEN OK);
+use Apache::Constants qw(NOT_FOUND FORBIDDEN OK DECLINED);
 use Apache::RegistryNG (); 
 @ISA = qw(Apache::RegistryNG);
 
