@@ -24,23 +24,28 @@ typedef ap_pool_t    * Apache__Pool;
 /* mod_perl structures */
 
 typedef struct modperl_interp_t modperl_interp_t;
+typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 
 struct modperl_interp_t {
-    ap_lock_t *mip_lock;
+    modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
     modperl_interp_t *next;
     int flags;
 };
 
-typedef struct {
-    ap_lock_t *mip_lock;
+struct modperl_interp_pool_t {
+    ap_pool_t *ap_pool;
+    perl_mutex mip_lock;
+    perl_cond available;
     int start; /* number of Perl intepreters to start (clone) */
     int min_spare; /* minimum number of spare Perl interpreters */
     int max_spare; /* maximum number of spare Perl interpreters */
     int size; /* current number of Perl interpreters */
+    int max; /* maximum number of Perl interpreters */
+    int in_use; /* number of Perl interpreters currrently in use */
     modperl_interp_t *parent; /* from which to perl_clone() */
-    modperl_interp_t *head;
-} modperl_interp_pool_t;
+    modperl_interp_t *head, *tail;
+};
 
 typedef struct {
     MpAV *handlers[MP_PROCESS_NUM_HANDLERS];
