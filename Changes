@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+backed out $Apache::Server::ConfigTestOnly until proper Apache support
+is in place
+
 fix $r->bytes_sent($bytes)
 
 support version parsing of 1.3.13-dev's httpd.h
