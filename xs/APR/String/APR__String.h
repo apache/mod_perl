@@ -1,5 +1,5 @@
 static MP_INLINE
-SV *mpxs_APR__String_format_size(pTHX_ apr_off_t  size)
+SV *mpxs_APR__String_strfsize(pTHX_ apr_off_t size)
 {
     char buff[5];
 

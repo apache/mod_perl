@@ -247,7 +247,7 @@ MODULE=APR::Table
  apr_lstat
  apr_stat
 
-!MODULE=APR::Strings
+!MODULE=APR::String
  apr_collapse_spaces
 -apr_cpystrn
  apr_fnmatch
@@ -260,11 +260,13 @@ MODULE=APR::Table
  apr_strnatcasecmp
  apr_strnatcmp
 -apr_tokenize_to_argv
--apr_strfsize
 -apr_strtok
 -apr_itoa
 -apr_ltoa
 -apr_off_t_toa
+
+MODULE=APR::String
+ SV *:apr_strfsize | mpxs_APR__String_strfsize | size | format_size
 
 !MODULE=APR::ProcAttr
  apr_procattr_create
