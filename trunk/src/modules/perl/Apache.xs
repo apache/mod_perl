@@ -312,6 +312,38 @@ server_rec *perl_get_startup_server(void)
     return NULL;
 }
 
+#if MODULE_MAGIC_NUMBER >= 19980806
+/*
+ * ap_scan_script_header_err_core(r, buffer, getsfunc_SV, sv)
+ */
+static int getsfunc_SV(char *buf, int bufsiz, void *param)
+{
+    SV *sv = (SV*)param;
+    STRLEN len;
+    char *tmp = SvPV(sv,len);
+    int i;
+
+    if(!SvTRUE(sv)) 
+	return 0;
+
+    for(i=0; i<=len; i++) {
+	if(tmp[i] == LF) break;
+    }
+
+    Move(tmp, buf, i, char);
+    buf[i] = '\0';
+
+    if(len < i) {
+	sv_setpv(sv, "");
+    }
+    else {
+	tmp += i+1;
+	sv_setpv(sv, tmp);
+    }
+    return 1;
+}
+#endif /*MODULE_MAGIC_NUMBER*/
+
 MODULE = Apache  PACKAGE = Apache   PREFIX = mod_perl_
 
 PROTOTYPES: DISABLE
