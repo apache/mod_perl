@@ -15,8 +15,8 @@ print "1..6\n";
 my $i = 0;
 
 test ++$i, not defined &subroutine;
-test ++$i, not defined @array;
-test ++$i, not defined %hash;
+test ++$i, not *{"array"}{ARRAY};
+test ++$i, not *{"hash"}{HASH};
 test ++$i, not defined $scalar;
 test ++$i, not defined fileno(FH);
 test ++$i, Outside::imported() == 4;
