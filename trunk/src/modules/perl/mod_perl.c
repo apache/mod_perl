@@ -1084,7 +1084,7 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 	    }
 	}
 
-#ifdef PERL_OBJ_HANDLERS
+#ifdef PERL_OBJECT_HANDLERS
 	if(*SvPVX(class) == '$') {
 	    SV *obj = perl_eval_pv(SvPVX(class), TRUE);
 	    if(SvROK(obj) && sv_isobject(obj)) {
@@ -1092,6 +1092,7 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 				   SvPVX(class),  HvNAME(SvSTASH((SV*)SvRV(obj)))));
 		SvREFCNT_dec(class);
 		class = obj;
+		++SvREFCNT(class); /* this will _dec later */
 		stash = SvSTASH((SV*)SvRV(class));
 	    }
 	}
