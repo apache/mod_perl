@@ -3,6 +3,8 @@ use Apache::TestRequest 'GET_BODY_ASSERT';
 use Apache::Test;
 use Apache::TestUtil;
 
+use ModPerl::Const -compile => 'EXIT';
+
 my $location = "/TestModperl__exit";
 
 plan tests => 3;
@@ -14,8 +16,9 @@ plan tests => 3;
 
 }
 {
+    my $exit_excpt = ModPerl::EXIT;
     my $body = GET_BODY_ASSERT("$location?eval");
-    ok t_cmp(qr/^ModPerl::Util::exit: exit was called/,
+    ok t_cmp(qr/^ModPerl::Util::exit: ($exit_excpt) exit was called/,
              $body,
              "exit in eval context");
 
