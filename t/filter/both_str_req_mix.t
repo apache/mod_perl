@@ -5,7 +5,8 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, have 'Compress::Zlib', 'deflate', 'include', 
+plan tests => 1, have 'deflate', 'include',
+    have_min_module_version("Compress::Zlib", "1.09"),
     have_min_apache_version("2.0.43");
 
 require Compress::Zlib;
