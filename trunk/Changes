@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+make $c->remote_host writeable [Joshua Chamas <joshua@chamas.com>]
+
 add per-server PerlSetVar variables, accessed using
 Apache->server->dir_config or $r->server->dir_config.
 $r->dir_config merges them with per-directory variables.

@@ -89,11 +89,14 @@ remote_ip(conn, ...)
     RETVAL
 
 char *
-remote_host(conn)
+remote_host(conn, ...)
     Apache::Connection	conn
 
     CODE:
     RETVAL = conn->remote_host;
+
+    if(items > 1)
+         conn->remote_host = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
