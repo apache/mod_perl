@@ -39,7 +39,7 @@ sub mythread {
 }
 EOI
 
-    warn "\n*** The following leak is expected (perl bug 34341) ***\n";
+    warn "\n*** The following leak is expected (perl bug #34341) ***\n";
     mytest();
 
     ok 1;
