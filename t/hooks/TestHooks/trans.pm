@@ -10,7 +10,9 @@ my %trans = (
         Apache::OK;
     },
     '/phooey' => sub {
-        shift->uri('/TestHooks::trans');
+        my $r = shift;
+        $r->filename(__FILE__); #filename is currently required
+        $r->uri('/TestHooks::trans');
         Apache::OK;
     },
 );
