@@ -356,6 +356,10 @@ The $r->protocol method will return a string identifying the protocol
 that the client speaks.  Typical values will be "HTTP/1.0" or
 "HTTP/1.1".
 
+=item $r->hostname
+
+Returns the server host name, as set by full URI or Host: header.
+
 =item $r->request_time
 
 Returns the time that the request was made.  The time is the local unix

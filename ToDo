@@ -28,8 +28,6 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 
 - fix t/httpd symlink logic ["Young, Geoffrey S." <younggs@acwilm.com>]
 
-- document $r->hostname
-
 - rename PerlSendHeader?
 
 - syswrite/WRITE
@@ -37,8 +35,6 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 - sfio patch [Lupe Christoph <lupe@lupe-christoph.de>]
 
 - libapreq: Apache::Cookie format sync w/ CGI.pm
-
-- document Apache::File
 
 - think about making 'use Apache::Log ()' automatic
 
