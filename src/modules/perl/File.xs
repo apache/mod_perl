@@ -210,3 +210,21 @@ int
 ap_discard_request_body(r)
     Apache r
 
+int
+ap_set_byterange(r)
+    Apache r
+
+void
+ap_each_byterange(r)
+    Apache r
+
+    PREINIT:
+    long offset, length;
+
+    PPCODE:
+    if (!ap_each_byterange(r, &offset, &length)) {
+	XSRETURN_EMPTY;
+    }
+    EXTEND(sp, 2);
+    PUSHs(sv_2mortal(newSViv(offset)));
+    PUSHs(sv_2mortal(newSViv(length)));
