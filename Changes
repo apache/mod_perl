@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+xsubpp now run with -nolinenumbers (5.004_04 bombs otherwise)
+
 DSO support for hpux with native cc
 
 document Apache->server->register_cleanup

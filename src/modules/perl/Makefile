@@ -129,7 +129,7 @@ perlxsi.c:
 	$(XS_INIT) 
 
 .xs.c:
-	$(PERL) $(PRIVLIB)/ExtUtils/xsubpp -typemap $(PRIVLIB)/ExtUtils/typemap $*.xs > $@
+	$(PERL) $(PRIVLIB)/ExtUtils/xsubpp -nolinenumbers -typemap $(PRIVLIB)/ExtUtils/typemap $*.xs > $@
 
 PERLSRC=mod_perl_opmask.c mod_perl.c perlxsi.c perl_config.c perl_util.c perlio.c $(STATIC_SRC)
 
