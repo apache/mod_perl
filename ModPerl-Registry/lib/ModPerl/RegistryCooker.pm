@@ -552,10 +552,9 @@ sub read_script {
 
 my %switches = (
    'T' => sub {
-# XXX: need to have $Apache::__T set by the core on PerlSwitches -T
-#       Apache::warn("T switch is ignored, ",
-#                    "enable with 'PerlSwitches -T' in httpd.conf\n")
-#             unless $Apache::__T; 
+       Apache::warn("-T switch is ignored, " .
+                    "enable with 'PerlSwitches -T' in httpd.conf\n")
+             unless ${^TAINT};
        "";
    },
    'w' => sub { "use warnings;\n" },
@@ -574,7 +573,7 @@ sub rewrite_shebang {
 	last if substr($s,0,1) eq "-";
 	for (split //, $s) {
 	    next unless exists $switches{$_};
-	    $prepend .= &{$switches{$_}};
+	    $prepend .= $switches{$_}->();
 	}
     }
     ${ $self->[CODE] } =~ s/^/$prepend/ if $prepend;
