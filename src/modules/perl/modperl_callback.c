@@ -36,8 +36,9 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                    (unsigned long)rp);
 
         if (!modperl_mgv_resolve(aTHX_ handler, rp, handler->name)) {
-            MP_TRACE_h(MP_FUNC, "failed to resolve handler `%s'\n",
-                       handler->name);
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, 
+                         "failed to resolve handler `%s'",
+                         handler->name);
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }
