@@ -94,3 +94,18 @@ sub handler : method {
 
 1;
 __END__
+
+# APACHE_TEST_CONFIG_ORDER 950
+
+<Base>
+    PerlLoadModule TestDirective::perlloadmodule2
+
+    MyMergeTest one two
+</Base>
+<Location /TestDirective::perlloadmodule2>
+    MyMergeTest three four
+</Location>
+<Location /TestDirective::perlloadmodule2/subdir>
+   MyMergeTest five
+   MyMergeTest six
+</Location>

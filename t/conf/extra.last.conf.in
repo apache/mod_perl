@@ -1,26 +1,5 @@
 PerlModule Apache::Module
 
-### --------------------------------- ###
-PerlLoadModule TestDirective::perlloadmodule
-
-MyTest one two
-ServerTest per-server
-
-<Location /TestDirective::perlloadmodule>
-    MyOtherTest value
-</Location>
-
-### --------------------------------- ###
-PerlLoadModule TestDirective::perlloadmodule2
-
-MyMergeTest one two
-<Location /TestDirective::perlloadmodule2>
-    MyMergeTest three four
-</Location>
-<Location /TestDirective::perlloadmodule2/subdir>
-   MyMergeTest five
-   MyMergeTest six
-</Location>
 
 ### --------------------------------- ###
 <Perl >
