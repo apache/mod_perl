@@ -197,6 +197,10 @@
 #define AvFILLp(av)	((XPVAV*)  SvANY(av))->xav_fill
 #endif
 
+#ifndef PERL_MG_UFUNC
+#define PERL_MG_UFUNC(name,ix,sv) I32 name(IV ix, SV *sv)
+#endif
+
 #ifdef eval_pv
 #   ifndef perl_eval_pv
 #      define perl_eval_pv eval_pv

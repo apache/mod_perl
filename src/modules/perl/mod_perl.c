@@ -382,7 +382,7 @@ static void mod_perl_set_cwd(void)
 }
 
 #ifdef PERL_TIE_SCRIPTNAME
-static I32 scriptname_val(IV ix, SV* sv)
+static PERL_MG_UFUNC(scriptname_val, ix, sv)
 { 
     dTHR;
     request_rec *r = perl_request_rec(NULL);
