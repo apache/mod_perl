@@ -598,6 +598,16 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     MP_dSCFG(s);
     dTHXa(scfg->mip->parent->perl);
 #endif
+
+#ifdef MP_TRACE
+    /* httpd core open_logs handler re-opens s->error_log, which might
+     * change, even though it still points to the same physical file
+     * (.e.g on win32 the filehandle will be different. Therefore
+     * reset the tracing logfile setting here, since this is the
+     * earliest place, happening after the open_logs phase */
+    modperl_trace_logfile_set(s->error_log);
+#endif
+    
     ap_add_version_component(pconf, MP_VERSION_STRING);
     ap_add_version_component(pconf,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));

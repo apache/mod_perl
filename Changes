@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+fix tracing with (PerlTrace/MOD_PERL_TRACE) on win32 (the error_log
+filehandle was invalid after the open_logs phase) [Stas]
+
 fix a bug where %ENV vars set via subprocess_env persist across
 requests.  (e.g. a Cookie incoming header which ends up in
 $ENV{HTTP_COOKIE} would persist to the next request which has no
