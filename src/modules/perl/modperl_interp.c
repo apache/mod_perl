@@ -191,6 +191,7 @@ static modperl_tipool_vtbl_t interp_pool_func = {
 void modperl_interp_init(server_rec *s, apr_pool_t *p,
                          PerlInterpreter *perl)
 {
+    apr_pool_t *server_pool = modperl_server_pool();
     pTHX;
     MP_dSCFG(s);
 
@@ -210,7 +211,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     /* this happens post-config in mod_perl.c:modperl_init_clones() */
     /* modperl_tipool_init(tipool); */
 
-    apr_pool_cleanup_register(p, (void*)mip,
+    apr_pool_cleanup_register(server_pool, (void*)mip,
                               modperl_interp_pool_destroy,
                               apr_pool_cleanup_null);
 
