@@ -32,6 +32,8 @@ BEGIN {
     $INC{'Apache.pm'} = __FILE__;
 
     $INC{'Apache/Constants.pm'} = __FILE__;
+
+    $INC{'Apache/File.pm'} = __FILE__;
 }
 
 package Apache;
