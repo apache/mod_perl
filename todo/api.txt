@@ -38,6 +38,8 @@ Apache::Util::*
 escape_path() - (was escape_uri) can be changed in apache not to require a
 pool
 
+$r->cleanup_for_exec needs to be added to Apache::compat as a noop.
+
 size_string() - can we use apr_strfsize ?
 
 escape_html() -  consider jeff baker's more robust implementation of
