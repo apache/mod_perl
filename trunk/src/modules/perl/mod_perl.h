@@ -100,13 +100,15 @@
 #undef die
 #undef __attribute__
 
+#ifdef pTHX_
+#define PERL_IS_5_6
+#endif
+
 #ifndef _INCLUDE_APACHE_FIRST
 #include "apache_inc.h"
 #endif
 
-#ifdef pTHX_
-#define PERL_IS_5_6
-#else
+#ifndef PERL_IS_5_6
 #define pTHX_
 #define aTHXo_
 #define CopFILEGV(cop) cop->cop_filegv
