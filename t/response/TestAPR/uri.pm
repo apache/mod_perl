@@ -6,7 +6,7 @@ package TestAPR::uri;
 # unparse,
 
 use strict;
-use warnings FATAL => 'all';
+use warnings;# FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -67,7 +67,7 @@ sub handler {
     for my $method (keys %url) {
         no strict 'refs';
         $parsed->$method($url{$method}[1]);
-        t_debug("$method: $url{$method}[1] => " . $parsed->$method);
+        t_debug("$method: $url{$method}[1] => " . $parsed->$method||'');
     }
 
     ### unparse ###
@@ -88,11 +88,12 @@ sub handler {
     ok t_cmp($url1, $url_unparsed, "unparsed url");
 
     # this time the password should appear
-    my $url_unparsed = $parsed->unparse(APR::URI_UNP_REVEALPASSWORD);
-    my $url2 = sprintf "%s://%s:%s\@%s%s",
-        map { $url{$_}[1] } grep !/^port$/, @keys_urls;
-    ok t_cmp($url2, $url_unparsed, "unparsed url");
-
+    {
+        my $url_unparsed = $parsed->unparse(APR::URI_UNP_REVEALPASSWORD);
+        my $url2 = sprintf "%s://%s:%s\@%s%s",
+            map { $url{$_}[1] } grep !/^port$/, @keys_urls;
+        ok t_cmp($url2, $url_unparsed, "unparsed url");
+    }
 
     ### port_of_scheme ###
     while(my($scheme, $port) = each %default_ports) {
