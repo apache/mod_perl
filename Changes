@@ -19,8 +19,9 @@ Other contributors are mentioned below.
 =item 1.11_01-dev
 
 additions to experimental Perl directive support:
--  per-directory config can be an arbitrary SV, returned by directive
-   handlers registered via Apache::ExtUtils->xs_cmd_table
+-  a per-directory config object is now passed as the first argument
+   to directive handlers registered via Apache::ExtUtils->xs_cmd_table
+   the object is a hash reference blessed into the same class as the handler
 - $r->dir_config with no args now looks for per-directory config in
   the caller's namespace
 -  xs_cmd_table now looks for a prototype to determine TAKE1,

@@ -21,13 +21,16 @@ if($ENV{MOD_PERL}) {
     bootstrap Apache::TestDirectives $VERSION;
 }
 
+sub attr {
+    my($self,$k,$v) = @_;
+    $self->{$k} = $v;
+}
+
 sub TestCmd ($$$) {
-    my($cfg, $one, $two, $three) = @_;
-    #@_ == 2 or die "prototype check failed!";
-    warn "TestCmd called with args: `$one', `$two', `$three'\n";
-    $cfg->{TestCmd} = [$one,$two];
+    my($cfg, $one, $two) = @_;
+    warn "TestCmd called with args: `$one', `$two'\n";
+    $cfg->attr(TestCmd => [$one,$two]);
     warn Dumper($cfg), $/;
-    return $cfg;
 }
 
 sub AnotherCmd {
@@ -35,7 +38,6 @@ sub AnotherCmd {
     $cfg->{AnotherCmd} = [@data];
     warn Dumper($cfg), $/;
     $cfg->{YAC} = [@data];
-    return $cfg;
 }
 
 sub CmdIterate (@) {
@@ -46,7 +48,6 @@ sub CmdIterate (@) {
 sub YAC {
     my($cfg, @data) = @_;
     warn Dumper($cfg), $/;
-    #return $cfg;
 }
 
 # Preloaded methods go here.

@@ -125,7 +125,7 @@ if($test_dir_config) {
     }
     require Data::Dumper;
     $r->print(Data::Dumper::Dumper($cfg));
-    test ++$i, ref($cfg) eq "HASH";
+    test ++$i, "$cfg" =~ /HASH/;
     test ++$i, keys(%$cfg) >= 3;
     unless ($cfg->{SetFromScript}) {
 	$cfg->{SetFromScript} = [$0,$$];

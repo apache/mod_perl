@@ -635,15 +635,25 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     dSP;
     char *subname = (char *)cmd->info;
     int count = 0;
+    CV *cv = perl_get_cv(subname, TRUE);
+    SV *obj;
+
+    if(!SvTRUE(*data))
+	*data = newRV_noinc((SV*)newHV());
+
+    if(SvROK(*data) && !sv_isobject(*data))
+	obj = sv_bless(*data, CvSTASH(cv));
+    else
+	obj = *data;
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
-    XPUSHs(*data);
+    XPUSHs(obj);
     PUSHif(one);PUSHif(two);PUSHif(three);
     PUTBACK;
     count = perl_call_pv(subname, G_EVAL | G_SCALAR);
     SPAGAIN;
-#if 1
+#if 0
     if(count == 1) {
 	SV *config = POPs;
 	if(config && SvROK(config) && data && *data) {
