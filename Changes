@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+tag the custom pools created by mod_perl for easier pools debug [Joe
+Orton]
+
 fix a bug in non-ithreaded-perl implementation where the cached
 compiled CODE refs of httpd.conf-inlined one-liner handlers like:
 PerlFixupHandler 'sub { use Apache::Const qw(DECLINED); DECLINED }'
