@@ -194,6 +194,10 @@ sub ap_ccopts {
     $ccopts;
 }
 
+sub perl_ccopts {
+    shift->strip_lfs(" $Config{ccflags} ");
+}
+
 sub ccopts_hpux {
     my $cflags = shift;
     #return if $Config{cc} eq 'gcc'; #XXX?
@@ -204,8 +208,8 @@ sub ccopts_hpux {
 sub ccopts {
     my($self) = @_;
 
-    my $cflags = $self->strip_lfs(ExtUtils::Embed::ccopts()) .
-      $self->ap_ccopts;
+    my $cflags = $self->perl_ccopts . ExtUtils::Embed::perl_inc() .
+                 $self->ap_ccopts;
 
     my $fixup = \&{"ccopts_$^O"};
     if (defined &$fixup) {
