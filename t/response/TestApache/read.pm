@@ -18,11 +18,15 @@ sub handler {
     my $buffer = "";
     my $bufsiz = $r->args || BUFSIZ;
 
-    while ((my($offset) = length($buffer)) < $ct) {
-        my $remain = $ct - $offset;
+    my $offset = 0;
+    while (my $remain = $ct - $offset) {
         my $len = $remain >= $bufsiz ? $bufsiz : $remain;
-        last unless $len > 0;
-        $r->read($buffer, $len, $offset);
+        my $read = $r->read($buffer, $len, $offset);
+        if ($read != $len) {
+            die "read only ${read}b, while ${len}b were requested\n";
+        }
+        last unless $read > 0;
+        $offset += $read;
     }
 
     #make sure we dont block after all data is read
