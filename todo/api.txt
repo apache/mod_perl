@@ -10,9 +10,6 @@ $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
 haven't looked close enough yet)
 
-$r->subprocess_env:
-in void context should populate %ENV as 1.x does
-
 $r->chdir_file:
 not safe for threaded environments.  should at least unshift @INC with
 dirname $r->filename.  consider overriding open() to resolve relative
@@ -59,10 +56,6 @@ however, $r->sendfile is a new function that opens the file for you
 and calls ap_send_fd() underneath. ap_send_fd() in APR doesn't work 
 with fd's which aren't files and of unknown length, therefore it cannot 
 be used for implementing 1.x compatible send_fd.
-
-$r->{hard,reset,soft,kill}_timeout:
-do not exist in 2.0.  should be deprecated.  consider adding noops in
-Apache::compat
 
 $r->auth_{name,type}:
  are not yet writable.  will also require locking.
