@@ -65,7 +65,7 @@ VV src/docs/2.0/api/ModPerl/Const.pod
 VV src/docs/2.0/api/ModPerl/Global.pod
 VV src/docs/2.0/api/ModPerl/Util.pod
 
--- src/docs/2.0/api/APR.pod
+VV src/docs/2.0/api/APR.pod
 VV src/docs/2.0/api/APR/Base64.pod
 VV src/docs/2.0/api/APR/Brigade.pod
 VP src/docs/2.0/api/APR/Bucket.pod
@@ -79,6 +79,7 @@ VV src/docs/2.0/api/APR/Date.pod
 VV src/docs/2.0/api/APR/Error.pod
 -- src/docs/2.0/api/APR/Finfo.pod
 VV src/docs/2.0/api/APR/IpSubnet.pod
+VV src/docs/2.0/api/APR/OS.pod
 +V src/docs/2.0/api/APR/PerlIO.pod
         (convert to use exceptions)
 VP src/docs/2.0/api/APR/Pool.pod
@@ -133,6 +134,10 @@ Q: APR::BucketAlloc object returned by $r->connection->bucket_alloc
 
 A: Add glue for function: apr_bucket_alloc_create(pool);
    not urgent for 2.0
+
+* why APR::OS::thread_current returns an object and to get the tid,
+  you need to dereference it? that doesn't sounds too
+  intuitive. Should we change it to return the id right away?
 
 * the following accessors might be turned into read/write (they are
   readonly at the moment). if you think that should be the case,
