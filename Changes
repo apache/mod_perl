@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+As the test suite keeps on growing, it takes longer time to
+startup. Change the main test suite timeout to 180 secs for threaded
+mpms and 120 secs for non-threaded ones. [Stas]
+
 use plain malloc/free to allocate filter structs, since they could be
 invoked hundreds of times during a single request, causing huge memory
 demands if the memory is allocated from the pool, which gets destroyed
