@@ -472,7 +472,6 @@ sub win32_fetch_apxs {
 package MY;
 
 use Config;
-use File::Spec::Functions qw(catdir);
 use constant WIN32 => $^O eq 'MSWin32';
 
 my $apache_test_install;
@@ -489,7 +488,9 @@ sub MY::top_targets {
     if (WIN32) {
         ModPerl::MM::add_dep(\$string, pure_all => 'aprext');
 
-        my $aprext = catdir qw(xs APR aprext);
+        # must not import File::Spec functions inside MY, it breaks
+        # 5.6.x builds
+        my $aprext = File::Spec->catdir(qw(xs APR aprext));
         $string .= <<"EOF";
 
 aprext:
