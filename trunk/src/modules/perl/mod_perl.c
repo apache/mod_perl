@@ -1220,8 +1220,15 @@ int perl_handler_ismethod(HV *pclass, char *sub)
 	if (gvp) cv = GvCV(gvp);
     }
 
-    if (cv && SvPOK(cv)) 
+#ifdef CVf_METHOD
+    if (CvFLAGS(cv) & CVf_METHOD) {
+        is_method = 1;
+    }
+#endif
+    if (!is_method && (cv && SvPOK(cv))) {
 	is_method = strnEQ(SvPVX(cv), "$$", 2);
+    }
+
     MP_TRACE_h(fprintf(stderr, "checking if `%s' is a method...%s\n", 
 	   sub, (is_method ? "yes" : "no")));
     SvREFCNT_dec(sv);
