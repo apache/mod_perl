@@ -34,7 +34,7 @@ if no source trees are found, you will be prompted for a path to one.
 
 When asked:
 
-   "Configure mod_perl with ../apache_xxx ?"
+   "Configure mod_perl with ../apache_xxx/src ?"
 
 answering 'y' just tells Makefile.PL where we can find src/*.h
 
@@ -42,7 +42,7 @@ When asked:
 
    "Shall I build httpd in $adir for you?"
 
-answering 'y' will run ../apache_xxx/Configure 
+answering 'y' will run ../apache_xxx/src/Configure 
 and httpd will be built when running 'make'
 
 To avoid this prompt and default to the first apache source tree found

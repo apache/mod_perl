@@ -1007,7 +1007,7 @@ Apache C API notes at C<http://www.apache.org/docs/>
 
 Perl interface to the Apache C API written by Doug MacEachern
 with contributions from Gisle Aas, Andreas Koenig, Eric Bartley, 
-Rob Hartill, Gerald Richter, Salvador Garcia and others. 
+Rob Hartill, Gerald Richter, Salvador Ortiz and others. 
 
 =cut
 
