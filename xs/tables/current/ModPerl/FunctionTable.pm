@@ -3139,6 +3139,28 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'modperl_module_config_get_obj',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'pmodule'
+      },
+      {
+        'type' => 'server_rec *',
+        'name' => 's'
+      },
+      {
+        'type' => 'ap_conf_vector_t *',
+        'name' => 'v'
+      }
+    ]
+  },
+  {
     'return_type' => 'PTR_TBL_t *',
     'name' => 'modperl_module_config_table_get',
     'args' => [
