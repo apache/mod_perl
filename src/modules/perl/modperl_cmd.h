@@ -28,6 +28,7 @@ MP_CMD_SRV_DECLARE(options);
 MP_CMD_SRV_DECLARE_FLAG(taint_check);
 MP_CMD_SRV_DECLARE_FLAG(warn);
 MP_CMD_SRV_DECLARE_FLAG(send_header);
+MP_CMD_SRV_DECLARE_FLAG(setup_env);
 
 #endif /* MP_COMPAT_1X */
 
