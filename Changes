@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+create a new subpool modperl_server_user_pool (from
+modperl_server_pool), which is handed to users via
+Apache::ServerUtil::base_server_pool(). This ensures that
+user-registered cleanups are run *before* perl's internals cleanups
+are run. (previously there was a problem with non-threaded perls which
+were segfaulting on user cleanups, since perl was already gone by that
+time). [Stas]
+
 Starting from ExtUtils::MakeMaker 6.22 it no longer generates
 pm_to_blib target, but pm_to_blib.ts, so needed to fix the glue_pod
 target, so install will work correctly [Stas]
