@@ -604,6 +604,12 @@ sub write_src_makefile {
                                      $self->perl_config('privlibexp'),
                                     'xsubpp');
 
+    print $fh $self->canon_make_attr('libperl',
+                                     join '/',
+                                     $self->perl_config('archlibexp'),
+                                     'CORE',
+                                     $self->perl_config('libperl'));
+
     for my $method (qw(ccopts ldopts inc)) {
         print $fh $self->canon_make_attr($method, $self->$method());
     }
@@ -666,6 +672,7 @@ clean:
 
 $(MODPERL_O_FILES): $(MODPERL_H_FILES) Makefile
 $(MODPERL_O_PIC_FILES): $(MODPERL_H_FILES) Makefile
+$(MODPERL_LIB): $(MODPERL_LIBPERL)
 EOF
 
     close $fh;
