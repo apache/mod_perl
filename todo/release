@@ -114,9 +114,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100622977803237&w=2
   http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
-* $r->cleanup_for_exec  needs to be added to Apache::compat as a noop.
-  Owner: stas
-
 * ht_time() - now requires a pool, temporarily renamed format_time for
   1.x ht_time compat.  should we just leave as is or see if ht_time can
   be changed to not require a pool?
