@@ -395,6 +395,10 @@ headers.  This can be used to initialize a perl hash, or one could use
 the $r->header_in() method (described below) to retrieve a specific
 header value directly.
 
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. This requires I<Apache::Tie>.
+
 =item $r->header_in( $header_name, [$value] )
 
 Return the value of a client header.  Can be used like this:
@@ -554,6 +558,10 @@ C<PerlSetVar> directive.
 
    my $val = $r->dir_config('Key');
 
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. See I<Apache::Tie>.
+
 =item $r->requires
 
 Returns an array reference of hash references, containing information
@@ -700,6 +708,10 @@ writing handlers in mod_perl you can use Perl variables for this.
    $r->notes("MY_HANDLER", OK);
    $val = $r->notes("MY_HANDLER");
 
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. This requires I<Apache::Tie>.
+
 =item $r->subprocess_env( $key, [$value] )
 
 Return the value of a named entry in the Apache C<subprocess_env>
@@ -719,6 +731,10 @@ you can then write in your .shtml document:
    <!--#else -->
    Sorry
    <!--#endif -->
+
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. This requires I<Apache::Tie>.
 
 =item $r->content_type( [$newval] )
 
@@ -761,6 +777,10 @@ headers.  This can be used to initialize a perl hash, or one could use
 the $r->header_out() method (described below) to retrieve or set a specific
 header value directly.
 
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. This requires I<Apache::Tie>.
+
 =item $r->header_out( $header, $value )
 
 Change the value of a response header, or create a new one.  You
@@ -780,6 +800,10 @@ header value directly.
 The difference between headers_out and err_headers_out is that the
 latter are printed even on error, and persist across internal redirects
 (so the headers printed for ErrorDocument handlers will have them).
+
+Will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class when called in a scalar context with no
+"key" argument. This requires I<Apache::Tie>.
 
 =item $r->err_header_out( $header, [$value] )
 
