@@ -18,6 +18,14 @@
 #   define PERL_CORE
 #endif
 
+#ifdef MP_SOURCE_SCAN
+/* XXX: C::Scan does not properly remove __attribute__ within
+ * function prototypes; so we just rip them all out via cpp
+ */
+#   undef __attribute__
+#   define __attribute__(arg)
+#endif
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
