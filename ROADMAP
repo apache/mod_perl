@@ -22,9 +22,6 @@ META: there is also the todo/ dir...
 
 ### Testing ###
 
-Currently ModPerl::Registry tests aren't run automatically, need to
-figure out how to run 'make test' recursively.
-
 ### Configuration ###
 
 * Set/Add config overlapping which is not doing the right thing. See:
@@ -43,19 +40,6 @@ figure out how to run 'make test' recursively.
 
   o hooks ordering is not implemented yet
 
-- Streaming Filters
-
-  o Input streaming filtering is not implemented. Proposed to
-    prototype in Perl and then port to C.
-
-  o Output filtering basically works, but needs more work:
-
-    * the user filter has no API for storing data away. e.g. if the
-      data comes in several brigades and the filter needs to have more
-      than one brigade's data before it can do things it needs some
-      API to store the data. see the thread:
-      http://marc.theaimsgroup.com/?t=103778902500001&r=1&w=2
-
 - Apache::Request
 
   o everybody wants it. There is a ported C version, but the perl glue
@@ -71,14 +55,6 @@ figure out how to run 'make test' recursively.
 
   o other less critical open issues are listed in
     ModPerl-Registry/TODO
-
-- Misc:
-
-  o Need to be able to test whether we run under -T (and in 5.8.0 -t?)
-    In 1.0 we had Apache::__T (needed at least by the registry). 5.8.0
-    has a new special variable ${^TAINT}: 
-    Solution: create ${^TAINT} for 5.6.x (copy the code from 5.8.0)
-    Once available, adjust the RegistryCooker to use it
 
 - Resource limiting tools:
 
@@ -104,6 +80,9 @@ figure out how to run 'make test' recursively.
 
 - Monitoring tools:
 
-  Apache::VMonitor (depends on Apache::Scoreboard)
-  Apache::Scoreboard (almost ready)
-  Apache::Peek (???)
+  Apache::VMonitor (depends on Apache::Scoreboard, considering to
+  rewrite it using TT2)
+
+  Apache::Scoreboard (ported, awaiting ModPerl::MM support)
+
+  Apache::Peek (ported, awaiting ModPerl::MM support)
