@@ -20,7 +20,8 @@ sub handler {
     for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
         ok $bucket->type->name;
         ok $bucket->length == 2;
-        ok $bucket->read eq 'ok';
+        $bucket->read(my $data);
+        ok $data eq 'ok';
     }
 
     my $tests = Apache::TestToString->finish;
