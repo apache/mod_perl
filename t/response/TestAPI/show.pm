@@ -16,8 +16,6 @@ sub handler {
 
     my $mpm = Apache::Test::config->{server}->{mpm};
 
-    warn "**** trying now***";
-
     ok t_cmp(qr!$mpm!i,
              Apache::MPM->show(),
              'Apache::MPM->show()');
