@@ -398,7 +398,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
       case MP_HANDLER_TYPE_DIR:
       case MP_HANDLER_TYPE_SRV:
         modperl_handler_make_args(aTHX_ av_args,
-                                  "Apache", r, NULL);
+                                  "Apache::RequestRec", r, NULL);
         break;
       case MP_HANDLER_TYPE_CONN:
         modperl_handler_make_args(aTHX_ av_args,
