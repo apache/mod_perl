@@ -154,7 +154,9 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
 
 MODULE=Apache::Connection   PACKAGE=guess
  ap_get_remote_host
- ap_read_request
+#XXX: thought this might be useful for protocol modules
+#however it is not exported on win32
+!ap_read_request
 >ap_update_vhost_given_ip
 
 MODULE=Apache::Log   PACKAGE=guess
