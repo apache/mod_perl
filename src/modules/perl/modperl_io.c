@@ -174,8 +174,6 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
         Perl_croak(aTHX_ "Failed to restore STDIN: %_", get_sv("!", TRUE));
     }
 
-    IoFLUSH_off(handle); /* STDIN's $|=0 */
-
     MP_TRACE_o(MP_FUNC, "end\n");
 }
 
