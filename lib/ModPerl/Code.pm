@@ -13,13 +13,13 @@ our $VERSION = '0.01';
 our @ISA = qw(Apache::Build);
 
 my %handlers = (
-    Process    => [qw(ChildInit)], #ChildExit Restart PreConfig
+    Process    => [qw(ChildInit ChildExit)], #Restart PreConfig
     Files      => [qw(OpenLogs PostConfig)],
-    PerSrv     => [qw(PostReadRequest Trans)], #Init
+    PerSrv     => [qw(PostReadRequest Trans)],
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
-                      Type Fixup Response Log
-                      InputFilter OutputFilter)], #Init Cleanup
+                      Type Fixup Response Log Cleanup
+                      InputFilter OutputFilter)],
     Connection => [qw(ProcessConnection)],
     PreConnection => [qw(PreConnection)],
 );
@@ -27,7 +27,8 @@ my %handlers = (
 my %hooks = map { $_, canon_lc($_) }
     map { @{ $handlers{$_} } } keys %handlers;
 
-my %not_ap_hook = map { $_, 1 } qw(response output_filter input_filter);
+my %not_ap_hook = map { $_, 1 } qw(child_exit response cleanup
+                                   output_filter input_filter);
 
 my %hook_proto = (
     Process    => {
