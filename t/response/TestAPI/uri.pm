@@ -17,7 +17,7 @@ my $location = '/' . __PACKAGE__;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 13;
+    plan $r, tests => 14;
 
     $r->args('query');
 
@@ -29,6 +29,9 @@ sub handler {
 
     my $up = $uri->unparse;
     ok $up =~ m:^$location:;
+
+    my $server = $r->construct_server;
+    ok $server eq join ':', $r->get_server_name, $r->get_server_port;
 
     my $curl = $r->construct_url;
     my $parsed = APR::URI->parse($r, $curl);
