@@ -707,6 +707,13 @@ void perl_startup (server_rec *s, pool *p)
     }
     MP_TRACE_g(fprintf(stderr, "ok\n"));
 
+#if (PERL_REVISION == 5) && (PERL_VERSION == 8) && (PERL_SUBVERSION == 1) && \
+    (defined(USE_HASH_SEED) || defined(USE_HASH_SEED_EXPLICIT))
+    /* bug in 5.8.1, causing all forked procs to produce the same rand
+     * sequence */
+    PL_srand_called = FALSE;
+#endif
+    
     perl_clear_env();
     mod_perl_pass_env(p, cls);
     mod_perl_set_cwd();
