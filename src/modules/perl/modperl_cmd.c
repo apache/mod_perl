@@ -365,6 +365,8 @@ MP_CMD_SRV_DECLARE(perldo)
     const char *line_header = NULL;
     int status = OK;
     AV *args = Nullav;
+    SV *dollar_zero = Nullsv;
+    int dollar_zero_tainted;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     pTHX;
@@ -409,7 +411,23 @@ MP_CMD_SRV_DECLARE(perldo)
                           arg, NULL);
     }
 
+    /* Set $0 to the current configuration file */
+    dollar_zero = get_sv("0", TRUE);
+    dollar_zero_tainted = SvTAINTED(dollar_zero);
+
+    if (dollar_zero_tainted) {
+        SvTAINTED_off(dollar_zero); 
+    }
+
+    ENTER;
+    save_item(dollar_zero);
+    sv_setpv(dollar_zero, parms->directive->filename);
     eval_pv(arg, FALSE);
+    LEAVE;
+
+    if (dollar_zero_tainted) {
+        SvTAINTED_on(dollar_zero);
+    }
 
     if (SvTRUE(ERRSV)) {
         SV *strict;
