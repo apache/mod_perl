@@ -64,20 +64,17 @@ mpxs_apr_socket_timeout_get(pTHX_ I32 items, SV **MARK, SV **SP)
     return t;
 }
 
-static MP_INLINE SV *
-mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket, apr_int32_t opt)
+static MP_INLINE
+apr_int32_t mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket, apr_int32_t opt)
 {
     apr_int32_t val;
-    MP_APR_RETURN_ON_FAILURE(apr_socket_opt_get(socket, opt, &val));
-    return newSViv(val);
+    MP_FAILURE_CROAK(apr_socket_opt_get(socket, opt, &val));
+    return val;
 }
 
-static MP_INLINE SV *
-mpxs_APR__Socket_opt_set(pTHX_ apr_socket_t *socket, apr_int32_t opt,
+static MP_INLINE
+void mpxs_APR__Socket_opt_set(pTHX_ apr_socket_t *socket, apr_int32_t opt,
                          apr_int32_t val)
 {
-    apr_int32_t oldval;
-    MP_APR_RETURN_ON_FAILURE(apr_socket_opt_get(socket, opt, &oldval));
-    MP_APR_RETURN_ON_FAILURE(apr_socket_opt_set(socket, opt, val));
-    return newSViv(oldval);
+    MP_FAILURE_CROAK(apr_socket_opt_set(socket, opt, val));
 }
