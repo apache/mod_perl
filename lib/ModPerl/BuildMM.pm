@@ -220,6 +220,12 @@ sub ModPerl::BuildMM::MY::post_initialize {
         }
     }
 
+    # prefix typemap with Apache/ so when installed in the
+    # perl-lib-tree it won't be picked by non-mod_perl modules
+    if (exists $pm->{'lib/typemap'} ) {
+        $pm->{'lib/typemap'} = '$(INST_ARCHLIB)/auto/Apache/typemap';
+    }
+
     #not everything in MakeMaker uses INST_LIB
     #so we have do fixup a few PMs to make sure *everything*
     #gets installed into Apache2/
