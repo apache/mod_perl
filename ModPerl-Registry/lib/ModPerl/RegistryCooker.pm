@@ -718,7 +718,7 @@ sub error_check {
     # ModPerl::Util::exit() throws an exception object whose rc is
     # ModPerl::EXIT
     # (see modperl_perl_exit() and modperl_errsv() C functions)
-    if ($@ && !(ref $@ && $@ == ModPerl::EXIT)) {
+    if ($@ && !(ref $@ eq 'APR::Error' && $@ == ModPerl::EXIT)) {
         $self->log_error($@);
         return Apache::SERVER_ERROR;
     }
