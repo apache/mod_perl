@@ -65,15 +65,6 @@
 #define MP_magical_tie(sv, mg_flags) \
     SvFLAGS((SV*)sv) |= mg_flags
 
-
-/* XXX: this should be removed */
-#define MP_FAILURE_CROAK(rc_run) do { \
-        apr_status_t rc = rc_run; \
-        if (rc != APR_SUCCESS) { \
-            Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rc)); \
-        } \
-    } while (0)
-
 /* check whether the response phase has been initialized already */
 #define MP_CHECK_WBUCKET_INIT(func) \
     if (!rcfg->wbucket) { \

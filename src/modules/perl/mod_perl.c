@@ -592,7 +592,8 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
      */
     {
         apr_file_t *dup;
-        MP_FAILURE_CROAK(apr_file_dup(&dup, s->error_log, pconf));
+        MP_RUN_CROAK(apr_file_dup(&dup, s->error_log, pconf),
+                     "mod_perl core post_config");
         modperl_trace_logfile_set(dup);
     }
 #endif
