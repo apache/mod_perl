@@ -61,7 +61,7 @@
 
 /* apr file permissions group rename (has no enum) */
 
-#ifndef APR_FILEPROT_USETID
+#if defined(APR_USETID) && !defined(APR_FILEPROT_USETID)
 #define APR_FILEPROT_USETID     APR_USETID
 #endif
 #ifndef APR_FILEPROT_UREAD
@@ -73,7 +73,7 @@
 #ifndef APR_FILEPROT_UEXECUTE
 #define APR_FILEPROT_UEXECUTE   APR_UEXECUTE
 #endif
-#ifndef APR_FILEPROT_GSETID
+#if defined(APR_GSETID) && !defined(APR_FILEPROT_GSETID)
 #define APR_FILEPROT_GSETID     APR_GSETID
 #endif
 #ifndef APR_FILEPROT_GREAD
@@ -85,7 +85,7 @@
 #ifndef APR_FILEPROT_GEXECUTE
 #define APR_FILEPROT_GEXECUTE   APR_GEXECUTE
 #endif
-#ifndef APR_FILEPROT_WSTICKY
+#if defined(APR_WSTICKY) && !defined(APR_FILEPROT_WSTICKY)
 #define APR_FILEPROT_WSTICKY    APR_WSTICKY
 #endif
 #ifndef APR_FILEPROT_WREAD
