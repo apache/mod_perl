@@ -1077,10 +1077,9 @@ void perl_handle_command(cmd_parms *cmd, void *dummy, char *line)
 
     if(perl_handle_self_command(cmd, dummy, line))
 	return;
-
+    MP_TRACE_s(fprintf(stderr, "handle_command (%s): ", line));
     errmsg = handle_command(cmd, dummy, line);
-    MP_TRACE_s(fprintf(stderr, "handle_command (%s): %s\n", line, 
-		     (errmsg ? errmsg : "OK")));
+    MP_TRACE_s(fprintf(stderr, "%s\n", errmsg ? errmsg : "OK"));
 }
 
 void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *dummy)
