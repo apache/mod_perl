@@ -434,7 +434,7 @@ sub parse_struct {
     next if $b == $e;
     $chunk = substr($in, $b, $e - $b);
     $b = $e;
-    if ($chunk =~ /\G\s*(struct|union).*\}/gs) {
+    if ($chunk =~ /\G\s*(struct|union|enum).*\}/gs) {
       my $term = pos $chunk;
       my $name = parse_struct(substr($chunk, 0, $term), $structs);
       $vars = parse_vars(join ' ', $name, substr $chunk, $term);
