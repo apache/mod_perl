@@ -28,8 +28,6 @@ sub handler {
     my $r = shift;
     my $s = $r->server;
 
-    my $orig_log_level = $s->loglevel;
-
     plan $r, tests => (@LogLevels * 2) + 20;
 
     my $logdiff = TestCommon::LogDiff->new($path);
@@ -131,6 +129,8 @@ sub handler {
     # XXX: at the moment we can't change loglevel after server startup
     # in a threaded mpm environment
     if (!Apache::MPM->is_threaded) {
+        my $orig_log_level = $s->loglevel;
+
         $s->loglevel(Apache::LOG_INFO);
 
         if ($s->error_fname) {
@@ -146,6 +146,7 @@ sub handler {
             qr/TestAPI::aplog test done/,
             '$slog->debug(sub { })';
 
+        $s->loglevel($orig_log_level);
     }
     else {
         ok 1;
@@ -155,7 +156,7 @@ sub handler {
     # notice() messages ignore the LogLevel value and always get
     # logged by Apache design (unless error log is set to syslog)
     if (!Apache::MPM->is_threaded) {
-        my $local_log_level = $s->loglevel;
+        my $orig_log_level = $s->loglevel;
 
         $r->server->loglevel(Apache::LOG_ERR);
         my $ignore = $logdiff->diff; # reset fh
@@ -165,7 +166,8 @@ sub handler {
         ok t_cmp $logdiff->diff,
             qr/[notice] .*? $msg/,
             "notice() logs regardless of LogLevel";
-        $s->loglevel($local_log_level);
+
+        $s->loglevel($orig_log_level);
     }
     else {
         ok 1;
@@ -200,9 +202,6 @@ sub handler {
     ok t_cmp $logdiff->diff,
         qr/\[warn\] warn test/,
         'overriden via export warn()';
-
-    # restore the orig LogLevel
-    $s->loglevel($orig_log_level);
 
     Apache::OK;
 }
