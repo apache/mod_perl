@@ -98,22 +98,14 @@ sub httpd_is_source_tree {
         defined $prefix && -d $prefix && -e "$prefix/CHANGES";
 }
 
-sub apxs {
+# try to find the apxs utility, set $apxs to the path if found,
+# otherwise to ''
+my $apxs; # undef so we know we haven't tried to set it yet
+sub find_apxs_util {
     my $self = shift;
 
-    my $is_query = (@_ == 2) && ($_[0] eq '-q');
+    $apxs = ''; # not found
 
-    $self = $self->build_config unless ref $self;
-
-    my $query_key;
-    if ($is_query) {
-        $query_key = 'APXS_' . uc $_[1];
-        if ($self->{$query_key}) {
-            return $self->{$query_key};
-        }
-    }
-
-    my $apxs;
     my @trys = ($Apache::Build::APXS,
                 $self->{MP_APXS},
                 $ENV{MP_APXS},
@@ -136,13 +128,35 @@ sub apxs {
         '/usr/local/apache/bin/apxs';
     }
 
+    my $apxs_try;
     for (@trys) {
-        next unless ($apxs = $_);
-        chomp $apxs;
-        last if -x $apxs;
+        next unless ($apxs_try = $_);
+        chomp $apxs_try;
+        if (-x $apxs_try) {
+            $apxs = $apxs_try;
+            last;
+        }
+    }
+}
+
+sub apxs {
+    my $self = shift;
+
+    $self->find_apxs_util() unless defined $apxs;
+
+    my $is_query = (@_ == 2) && ($_[0] eq '-q');
+
+    $self = $self->build_config unless ref $self;
+
+    my $query_key;
+    if ($is_query) {
+        $query_key = 'APXS_' . uc $_[1];
+        if ($self->{$query_key}) {
+            return $self->{$query_key};
+        }
     }
 
-    unless ($apxs and -x $apxs) {
+    unless ($apxs) {
         my $prefix = $self->{MP_AP_PREFIX} || "";
         return '' unless -d $prefix and $is_query;
         my $val = $apxs_query{$_[1]};
