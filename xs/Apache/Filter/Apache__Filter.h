@@ -21,7 +21,6 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
 
     if (modperl_filter->mode == MP_OUTPUT_FILTER_MODE) {
         mpxs_write_loop(modperl_output_filter_write, modperl_filter);
-        modperl_output_filter_flush(modperl_filter);
     }
     else {
         croak("input filters not yet supported");
