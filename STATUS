@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/03/04 09:42:41 $]
+   Last modified at [$Date: 2003/03/05 07:35:40 $]
 
 Release:
 --------
@@ -49,6 +49,19 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* Looks like there is an issue with filter configuration, I've noticed that:
+
+   PerlInputFilterHandler MyApache::InputFilterGET2HEAD
+
+  silently ignores the filter, whereas:
+
+   PerlInputFilterHandler +MyApache::InputFilterGET2HEAD
+
+  calls the filter. figure out:
+
+  - why the loading doesn't happen
+  - why the error doesn't happen (probably both connected)
 
 * in blead-perl (where ${^TAINT} returns -1 for -t and 1 for -T, 0
   otherwise). in modperl/taint test under worker mpm ${^TAINT} returns
