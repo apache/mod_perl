@@ -93,7 +93,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
          */
         if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
             MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
-                       s->server_hostname);
+                       modperl_server_desc(s, p));
             modperl_interp_init(s, p, perl);
         }
 
@@ -118,20 +118,39 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 #ifdef USE_ITHREADS
 static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 {
+#ifdef MP_TRACE
+    modperl_srv_config_t *base_scfg = modperl_srv_config_get(s);
+    char *base_name = modperl_server_desc(s, p);
+#endif /* MP_TRACE */
+
     for (; s; s=s->next) {
         MP_dSCFG(s);
+#ifdef MP_TRACE
+        char *name = modperl_server_desc(s, p);
+#endif /* MP_TRACE */
+
         if (scfg->mip->tipool->idle) {
-            MP_TRACE_i(MP_FUNC, "%s interp already cloned\n",
-                       s->server_hostname);
+#ifdef MP_TRACE
+            if (scfg->mip == base_scfg->mip) {
+                MP_TRACE_i(MP_FUNC,
+                           "%s interp pool inherited from %s\n",
+                           name, base_name);
+            }
+            else {
+                MP_TRACE_i(MP_FUNC,
+                           "%s interp pool already initialized\n",
+                           name);
+            }
+#endif /* MP_TRACE */
         }
         else {
-            MP_TRACE_i(MP_FUNC, "cloning interp for %s\n",
-                       s->server_hostname);
+            MP_TRACE_i(MP_FUNC, "initializing interp pool for %s\n",
+                       name);
             modperl_tipool_init(scfg->mip->tipool);
         }
     }
 }
-#endif
+#endif /* USE_ITHREADS */
 
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                        apr_pool_t *ptemp, server_rec *s)

@@ -81,3 +81,8 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
 
     return status;
 }
+
+char *modperl_server_desc(server_rec *s, apr_pool_t *p)
+{
+    return apr_psprintf(p, "%s:%u", s->server_hostname, s->port);
+}
