@@ -18,7 +18,7 @@ use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
 
-use constant is_win32 => $^O eq 'MSWin32';
+use constant WIN32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 our $VERSION = '0.01';
@@ -551,7 +551,7 @@ sub ap_includedir  {
 sub mmn_eq {
     my($class, $dir) = @_;
 
-    return 1 if is_win32; #just assume, till Apache::Build works under win32
+    return 1 if WIN32; #just assume, till Apache::Build works under win32
 
     my $instsrc;
     {
@@ -977,7 +977,7 @@ sub typemaps {
 sub includes {
     my $self = shift;
     my $src  = $self->dir;
-    my $os = is_win32 ? 'win32' : 'unix';
+    my $os = WIN32 ? 'win32' : 'unix';
     my @inc = $self->file_path("src/modules/perl", "xs");
 
     push @inc, $self->mp_include_dir;
