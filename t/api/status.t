@@ -17,9 +17,9 @@ my $location = "/TestAPI__status";
     # lookup the message "See Other" on its own
     my $code = 303; # Apache::HTTP_SEE_OTHER
     my $message = "See Other";
-    my $res = HEAD "$location?$code=";
+    my $res = GET "$location?$code=";
     ok t_cmp $res->code, $code, "code";
-    ok t_cmp $res->message, $message, "message";
+    ok t_cmp $res->message, $message, "code message";
     ok t_cmp $res->content, "", "content";
 }
 
@@ -31,9 +31,9 @@ my $location = "/TestAPI__status";
     # override status. the handler also sets a custom code message
     my $code = 499; # not in HTTP/1.1
     my $message = "FooBared";
-    my $res = HEAD "$location?$code=$message";
+    my $res = GET "$location?$code=$message";
     ok t_cmp $res->code, $code, "code";
-    ok t_cmp $res->message, $message, "message";
+    ok t_cmp $res->message, $message, "code message";
     ok t_cmp $res->content, "", "content";
 }
 
