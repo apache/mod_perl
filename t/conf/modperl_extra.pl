@@ -52,7 +52,7 @@ test_apache_resource();
 
 test_perl_ithreads();
 
-test_base_server_pool();
+test_server_shutdown_register_cleanup();
 
 
 
@@ -200,24 +200,21 @@ sub test_perl_ithreads {
     }
 }
 
-sub test_base_server_pool {
+sub test_server_shutdown_register_cleanup {
     # we can't really test the functionality since it happens at
     # server shutdown, when the test suite has finished its run
     # so just check that we can register the cleanup and that it
     # doesn't segfault
-    my $base_server_pool = Apache::ServerUtil::base_server_pool();
-    $base_server_pool->cleanup_register(sub { Apache::OK });
+    Apache::ServerUtil::server_shutdown_register_cleanup(sub { Apache::OK });
+
     # replace the sub with the following to get some visual debug
     # should log cnt:1 on -start, oncand cnt: 2 -stop followed by cnt: 1)
-    #$base_server_pool->cleanup_register( sub {
+    #Apache::ServerUtil::server_shutdown_register( sub {
     #    my $cnt = Apache::ServerUtil::restart_count();
     #    open my $fh, ">>/tmp/out" or die "$!";
     #    print $fh "cnt: $cnt\n";
     #    close $fh;
     #});
-    #
-    # also remember that cleanup_register() called on this pool will
-    # work only when registered at the server startup
 }
 
 

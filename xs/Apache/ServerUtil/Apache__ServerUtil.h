@@ -15,13 +15,94 @@
 
 #define mpxs_Apache__ServerUtil_restart_count modperl_restart_count
 
-#define mpxs_Apache__ServerUtil_base_server_pool modperl_server_user_pool
-
 #define mpxs_Apache__ServerRec_method_register(s, methname)     \
     ap_method_register(s->process->pconf, methname);
 
 #define mpxs_Apache__ServerRec_add_version_component(s, component)    \
     ap_add_version_component(s->process->pconf, component);
+
+/* XXX: the mpxs_cleanup_t and mpxs_cleanup_run are almost dups with
+ * code in APR__Pool.h (minus interpr member which is not used
+ * here. They should be moved to modperl_common_util - the problem is
+ * modperl_interp_t *, which can't live in modperl_common_* since it
+ * creates a dependency on mod_perl. A possible solution is to use
+ * void * for that slot and cast it to modperl_interp_t * when used
+ */
+
+typedef struct {
+    SV *cv;
+    SV *arg;
+    apr_pool_t *p;
+    PerlInterpreter *perl;
+} mpxs_cleanup2_t;
+
+/**
+ * callback wrapper for Perl cleanup subroutines
+ * @param data   internal storage
+ */
+static apr_status_t mpxs_cleanup_run(void *data)
+{
+    int count;
+    mpxs_cleanup2_t *cdata = (mpxs_cleanup2_t *)data;
+    dTHXa(cdata->perl);
+    dSP;
+
+    ENTER;SAVETMPS;
+    PUSHMARK(SP);
+    if (cdata->arg) {
+        XPUSHs(cdata->arg);
+    }
+    PUTBACK;
+
+    count = call_sv(cdata->cv, G_SCALAR|G_EVAL);
+
+    SPAGAIN;
+
+    if (count == 1) {
+        (void)POPs; /* the return value is ignored */
+    }
+
+    PUTBACK;
+    FREETMPS;LEAVE;
+
+    SvREFCNT_dec(cdata->cv);
+    if (cdata->arg) {
+        SvREFCNT_dec(cdata->arg);
+    }
+
+    if (SvTRUE(ERRSV)) {
+        Perl_croak(aTHX_ SvPV_nolen(ERRSV));
+    }
+    
+    /* the return value is ignored by apr_pool_destroy anyway */
+    return APR_SUCCESS;
+}
+
+/* this cleanups registered by this function are run only by the
+ * parent interpreter */
+static MP_INLINE
+void mpxs_Apache__ServerUtil_server_shutdown_register_cleanup(pTHX_ SV *cv,
+                                                              SV *arg)
+{
+    mpxs_cleanup2_t *data;
+    apr_pool_t *p;
+    
+    MP_CROAK_IF_POST_POST_CONFIG_PHASE("server_shutdown_register_cleanup");
+
+    p = modperl_server_user_pool();
+    /* must use modperl_server_user_pool here to make sure that it's run
+     * before parent perl is destroyed */
+    data = (mpxs_cleanup2_t *)apr_pcalloc(p, sizeof(*data));
+    data->cv   = SvREFCNT_inc(cv);
+    data->arg  = arg ? SvREFCNT_inc(arg) : Nullsv;
+    data->p    = p;
+#ifdef USE_ITHREADS
+    data->perl = aTHX;
+#endif /* USE_ITHREADS */
+    
+    apr_pool_cleanup_register(p, data, mpxs_cleanup_run,
+                              apr_pool_cleanup_null);
+}
 
 static MP_INLINE
 int mpxs_Apache__ServerRec_push_handlers(pTHX_ server_rec *s,

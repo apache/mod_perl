@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+a new function Apache::ServerUtil::server_shutdown_register_cleanup to
+register cleanups to be run at server shutdown. [Stas]
+
 $bb->cleanup is no more segfaulting (was segfaulting due to a broken
 prototype in APR, and consequently invalid XS glue code) [Randy Kobes,
 Stas]
@@ -39,8 +42,8 @@ configured before [Gozer]
 Apache::SizeLimit ported [Perrin Harkins <perrin elem.com>]
 
 create a new subpool modperl_server_user_pool (from
-modperl_server_pool), which is handed to users via
-Apache::ServerUtil::base_server_pool(). This ensures that
+modperl_server_pool), which is used internally by
+Apache::ServerUtil::server_restart_register. This ensures that
 user-registered cleanups are run *before* perl's internals cleanups
 are run. (previously there was a problem with non-threaded perls which
 were segfaulting on user cleanups, since perl was already gone by that
@@ -58,9 +61,6 @@ whether the server is starting/restarting/gracefully
 restarting/etc. Based on this feature implement
 $Apache::Server::Starting and $Apache::Server::ReStarting in
 Apache::compat [Stas]
-
-provide perl glue for the mod_perl's base_server_pool
-via Apache::ServerUtil::base_server_pool() [Geoff, Stas]
 
 Apache::Resource ported to mp2 [Stas]
 

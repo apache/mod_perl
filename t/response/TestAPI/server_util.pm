@@ -29,7 +29,7 @@ sub new {
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 18;
+    plan $r, tests => 17;
 
     {
         my $s = $r->server;
@@ -48,13 +48,12 @@ sub handler {
 
     server_root_relative_tests($r);
 
-    my $base_server_pool = Apache::ServerUtil::base_server_pool();
-    ok $base_server_pool->isa('APR::Pool');
-
-    # this will never run since it's not registered in the parent
-    # process
-    $base_server_pool->cleanup_register(sub { Apache::OK });
-    ok 1;
+    eval { Apache::ServerUtil::server_shutdown_register_cleanup(
+        sub { Apache::OK });
+       };
+    my $sub = "server_shutdown_register_cleanup";
+    ok t_cmp $@, qr/Can't run '$sub' after server startup/,
+        "can't register server_shutdown cleanup after server startup";
 
     # on start we get 1, and immediate restart gives 2
     ok t_cmp Apache::ServerUtil::restart_count, 2, "restart count";
