@@ -122,6 +122,9 @@ EOF
 sub xs_cmd_table {
     my($self, $class, $cmds) = @_;
     (my $modname = $class) =~ s/::/__/g;
+    (my $pmname = $class) =~ s,::,/,g;
+    $pmname .= '.pm';
+
     my $cmdtab = "";
     my $infos = "";
 
@@ -252,6 +255,25 @@ module MODULE_VAR_EXPORT XS_${modname} = {
     NULL,   /* [1] post read_request handling */
 };
 
+#define this_module "$pmname"
+
+static void remove_module_cleanup(void *data)
+{
+    if (find_linked_module("$class")) {
+        /* need to remove the module so module index is reset */
+        remove_module(&XS_${modname});
+    }
+    if (data) {
+        /* make sure BOOT section is re-run on restarts */
+        (void)hv_delete(GvHV(incgv), this_module,
+                        strlen(this_module), G_DISCARD);
+         if (dowarn) {
+             /* avoid subroutine redefined warnings */
+             perl_clear_symtab(gv_stashpv("$class", FALSE));
+         }
+    }
+}
+
 MODULE = $class		PACKAGE = $class
 
 PROTOTYPES: DISABLE
@@ -260,14 +282,14 @@ BOOT:
     XS_${modname}.name = "$class";
     add_module(&XS_${modname});
     stash_mod_pointer("$class", &XS_${modname});
+    register_cleanup(perl_get_startup_pool(), (void *)1,
+                     remove_module_cleanup, null_cleanup);
 
 void
 END()
 
     CODE:
-    if (find_linked_module("$class")) {
-        remove_module(&XS_${modname});
-    }
+    remove_module_cleanup(NULL);
 EOF
 }
 
