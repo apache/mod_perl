@@ -10,22 +10,36 @@
  * The PerlIO API is documented in perliol.pod.
  **********************************************************************/
 
+/*
+ * APR::PerlIO implements a PerlIO layer using apr_file_io as the core.
+ */
+
+/*
+ * XXX: Since we cannot snoop on the internal apr_file_io buffer
+ * currently the IO is not buffered on the Perl side so every read
+ * requests a char at a time, which is slow. Consider copying the
+ * relevant code from PerlIOBuf to implement our own buffer, similar
+ * to what PerlIOBuf does or push :perlio layer on top of this layer
+ */
+
 typedef struct {
-    PerlIOBuf base;    /* PerlIOBuf stuff */
+    struct _PerlIO base;
     apr_file_t *file;
     apr_pool_t *pool;
 } PerlIOAPR;
 
-/* clean up any structures linked from PerlIOAPR. a layer can be
- * popped without being closed if the program is dynamically managing
- * layers on the stream.
- */
-static IV PerlIOAPR_popped(pTHX_ PerlIO *f)
-{
-    /* PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR); */
 
-    return 0;
+static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg)
+{
+    IV code = PerlIOBase_pushed(aTHX_ f, mode, arg);
+    if (*PerlIONext(f)) {
+        /* XXX: not sure if we can do anything here, but see
+         * PerlIOUnix_pushed for things that it does
+         */
+    }
+    return code;
 }
+
 
 static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
                               PerlIO_list_t *layers, IV n,
@@ -65,6 +79,14 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
         apr_flag = APR_READ;
         break;
     }
+
+    /* APR_BINARY:   we always do binary read and PerlIO is supposed
+     *               to handle :crlf if any (by pushing this layer at
+     *               open().
+     * APR_BUFFERED: XXX, not sure if it'll be needed if we will push
+     *               :perlio (== PerlIOBuf) layer on top
+     */
+    apr_flag |= APR_BUFFERED | APR_BINARY;
     
     st = PerlIOSelf(f, PerlIOAPR);
 
@@ -91,10 +113,9 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
 
 static IV PerlIOAPR_fileno(pTHX_ PerlIO *f)
 {
-    /* apr_file_t* is an opaque struct, so fileno is not available */
-    /* XXX: this -1 workaround should be documented in perliol.pod */
-    /* see: http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2001-11/thrd21.html#02040 */
-    /* http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/2001-12/threads.html#00217 */
+    /* apr_file_t* is an opaque struct, so fileno is not available
+     * -1 in this case indicates that the layer cannot provide fileno
+     */
     return -1;
 }
 
@@ -126,6 +147,33 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
     return NULL;
 }
 
+
+static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
+{
+    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
+    apr_status_t rc;
+
+    rc = apr_file_read(st->file, vbuf, &count);
+    if (rc == APR_EOF) {
+        PerlIOBase(f)->flags |= PERLIO_F_EOF;
+        return count;
+    }
+    else if (rc != APR_SUCCESS) {
+        char errbuf[120];
+#ifdef PERLIO_APR_DEBUG
+        /* XXX: need to figure way to map APR errno to normal errno,
+         * so we can use SETERRNO to make the apr errors available to
+         * Perl's $!  */
+        Perl_croak(aTHX_ "failed to read from file: %s",
+                   apr_strerror(rc, errbuf, sizeof errbuf));
+#endif
+        PerlIOBase(f)->flags |= PERLIO_F_ERROR;
+        return -1;
+    }
+
+    return count;
+}
+
 static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
@@ -141,7 +189,21 @@ static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
         return (SSize_t) count;
     }
 
+    PerlIOBase(f)->flags |= PERLIO_F_ERROR;
     return (SSize_t) -1;
+}
+
+static IV PerlIOAPR_flush(pTHX_ PerlIO *f)
+{
+    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
+    apr_status_t rc;
+
+    rc = apr_file_flush(st->file);
+    if (rc == APR_SUCCESS) {
+        return 0;
+    }
+
+    return -1;
 }
 
 static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
@@ -149,24 +211,23 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_seek_where_t where;
     apr_status_t rc;
-    IV code;
     apr_off_t seek_offset = 0;
 
-#if MP_LARGE_FILES_PERL_ONLY
+#if MP_LARGE_FILES_CONFLICT
     if (offset != 0) {
         Perl_croak(aTHX_ "PerlIO::APR::seek with non-zero offset"
-                   " not supported with -Duselargefiles");
+                   " not supported with Perl built w/ -Duselargefiles"
+                   " and APR w/o largefiles support");
     }
 #else
     seek_offset = offset;
 #endif
 
     /* Flush the fill buffer */
-    code = PerlIOBuf_flush(aTHX_ f);
-    if (code != 0) {
-        return code;
+    if (PerlIO_flush(f) != 0) {
+	return -1;
     }
-
+        
     switch(whence) {
       case 0:
         where = APR_SET;
@@ -241,18 +302,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
     return code;
 }
 
-static IV PerlIOAPR_flush(pTHX_ PerlIO *f)
-{
-    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
-    apr_status_t rc;
-
-    rc = apr_file_flush(st->file);
-    if (rc == APR_SUCCESS) {
-        return 0;
-    }
-
-    return -1;
-}
+#if 0 /* we may use it if the buffering will be done at this layer */
 
 static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
 {
@@ -271,7 +321,8 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
 
     rc = apr_file_read(st->file, st->base.ptr, &count);
     if (rc != APR_SUCCESS) {
-        /* XXX */
+        PerlIOBase(f)->flags |= PERLIO_F_ERROR;
+        return -1;
     }
 
 #if 0    
@@ -298,6 +349,8 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
     return 0;
 }
 
+#endif
+
 static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
@@ -314,34 +367,36 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
     return -1;
 }
 
+
+
 static PerlIO_funcs PerlIO_APR = {
     "APR",
     sizeof(PerlIOAPR),
-    PERLIO_K_BUFFERED | PERLIO_K_FASTGETS | PERLIO_K_MULTIARG,
-    PerlIOBase_pushed,
-    PerlIOAPR_popped,
+    PERLIO_K_MULTIARG,
+    PerlIOAPR_pushed,
+    PerlIOBase_popped,
     PerlIOAPR_open,
-    NULL,   /* XXX: binmode? */
-    NULL,  /* no getarg needed */
+    PerlIOBase_binmode,         /* binmode() is handled by :crlf */
+    NULL,                       /* no getarg needed */
     PerlIOAPR_fileno,
     PerlIOAPR_dup,
-    PerlIOBuf_read,
-    PerlIOBuf_unread,
+    PerlIOAPR_read,
+    PerlIOBase_unread,
     PerlIOAPR_write,
     PerlIOAPR_seek, 
     PerlIOAPR_tell,
     PerlIOAPR_close,
-    PerlIOAPR_flush,
-    PerlIOAPR_fill,
+    PerlIOAPR_flush,            /* flush */
+    PerlIOBase_noop_fail,       /* fill */
     PerlIOAPR_eof,
     PerlIOBase_error,
     PerlIOBase_clearerr,
     PerlIOBase_setlinebuf,
-    PerlIOBuf_get_base,
-    PerlIOBuf_bufsiz,
-    PerlIOBuf_get_ptr,
-    PerlIOBuf_get_cnt,
-    PerlIOBuf_set_ptrcnt,
+    NULL,                       /* get_base */
+    NULL,                       /* get_bufsiz */
+    NULL,                       /* get_ptr */
+    NULL,                       /* get_cnt */
+    NULL,                       /* set_ptrcnt */
 };
 
 void apr_perlio_init(pTHX)

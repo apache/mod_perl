@@ -9,6 +9,7 @@
 
 #include "apr_portable.h"
 #include "apr_file_io.h"
+#include "apr_errno.h"
 
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"

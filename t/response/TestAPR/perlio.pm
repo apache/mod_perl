@@ -12,6 +12,10 @@ use File::Spec::Functions qw(catfile);
 use Apache::Const -compile => 'OK';
 use constant HAVE_PERLIO => eval { require APR::PerlIO };
 
+#XXX: feel free to enable if largefile support is not enabled in Perl
+#XXX: APR::LARGE_FILES_CONFLICT constant?
+use constant LARGE_FILES_CONFLICT => 1;
+
 sub handler {
     my $r = shift;
 
@@ -22,10 +26,10 @@ sub handler {
         return Apache::OK;
     }
 
-    my $tests = 2; #XXX 11;
+    my $tests = 12;
     my $lfs_tests = 3;
 
-    #$tests += $lfs_tests if USE_LARGE_FILES; #XXX
+    $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 
     plan $r, tests => $tests, have_perl 'iolayers';
 
@@ -36,6 +40,7 @@ sub handler {
 
     my $sep = "-- sep --\n";
     my @lines = ("This is a test: $$\n", "test line --sep two\n");
+
     my $expected = $lines[0];
     my $expected_all = join $sep, @lines;
 
@@ -66,10 +71,9 @@ sub handler {
                      "expected failure");
         }
     }
-    return Apache::OK; #XXX remove when perlio issues are sorted out
+
     # seek/tell() tests
-    #XXX: feel free to enable if largefile support is not enabled in Perl
-    if (0) {
+    unless (LARGE_FILES_CONFLICT) {
         open my $fh, "<:APR", $file, $r 
             or die "Cannot open $file for reading: $!";
 
@@ -132,7 +136,7 @@ sub handler {
         my @expect = ($lines[0] . $sep, $lines[1]);
         ok t_cmp(\@expect,
                  \@got_lines,
-                 "adjusted input record sep read");
+                 "custom complex input record sep read");
 
         close $fh;
     }
@@ -179,17 +183,25 @@ sub handler {
     {
         open my $wfh, ">:APR", $file, $r
             or die "Cannot open $file for writing: $!";
+        open my $rfh,  "<:APR", $file, $r
+            or die "Cannot open $file for reading: $!";
 
         my $expected = "This is an un buffering write test";
         # unbuffer
         my $oldfh = select($wfh); $| = 1; select($oldfh);
         print $wfh $expected; # must be flushed to disk immediately
 
-        open my $rfh,  "<:APR", $file, $r
-            or die "Cannot open $file for reading: $!";
         ok t_cmp($expected,
                  scalar(<$rfh>),
                  "file unbuffered write");
+
+        # buffer up
+        $oldfh = select($wfh); $| = 0; select($oldfh);
+        print $wfh $expected; # must be flushed to disk immediately
+
+        ok t_cmp(undef,
+                 scalar(<$rfh>),
+                 "file buffered write");
 
         close $wfh;
         close $rfh;
