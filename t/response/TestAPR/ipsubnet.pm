@@ -1,4 +1,4 @@
-package TestAPR::netlib;
+package TestAPR::ipsubnet;
 
 use strict;
 use warnings FATAL => 'all';
@@ -9,7 +9,7 @@ use Apache::TestUtil;
 use Apache::Connection ();
 use Apache::RequestRec ();
 
-use APR::NetLib ();
+use APR::IpSubnet ();
 use APR::SockAddr ();
 
 use Apache::Const -compile => 'OK';

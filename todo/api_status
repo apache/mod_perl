@@ -80,8 +80,8 @@ VV src/docs/2.0/api/APR/Date.pod
 VV src/docs/2.0/api/APR/Error.pod
 
 -- src/docs/2.0/api/APR/Finfo.pod
--- src/docs/2.0/api/APR/NetLib.pod
-   XXX: going to be renamed to IpSubNet
+-- src/docs/2.0/api/APR/IpSubnet.pod
+
 +V src/docs/2.0/api/APR/PerlIO.pod
 
 
