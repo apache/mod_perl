@@ -23,17 +23,17 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
                                        const char *name,
                                        apr_pool_t *p);
 
-#define MP_CMD_SRV_DECLARE(item) \
-const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
-                               const char *arg)
+#define MP_CMD_SRV_DECLARE(item)                                        \
+    const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig,     \
+                                   const char *arg)
 
-#define MP_CMD_SRV_DECLARE2(item) \
-const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
-                               const char *arg1, const char *arg2)
+#define MP_CMD_SRV_DECLARE2(item)                                       \
+    const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig,     \
+                                   const char *arg1, const char *arg2)
 
-#define MP_CMD_SRV_DECLARE_FLAG(item) \
-const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *mconfig, int flag_on)
+#define MP_CMD_SRV_DECLARE_FLAG(item)                           \
+    const char *modperl_cmd_##item(cmd_parms *parms,            \
+                                   void *mconfig, int flag_on)
 
 MP_CMD_SRV_DECLARE(trace);
 MP_CMD_SRV_DECLARE(switches);
@@ -86,7 +86,7 @@ MP_CMD_SRV_DECLARE(interp_scope);
 #define modperl_interp_scope_connection(scfg) \
 (scfg->interp_scope == MP_INTERP_SCOPE_CONNECTION)
 
-#endif
+#endif /* USE_ITHREADS */
 
 #define MP_CMD_SRV_RAW_ARGS(name, item, desc) \
     AP_INIT_RAW_ARGS( name, modperl_cmd_##item, NULL, \
