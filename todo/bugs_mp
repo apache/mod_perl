@@ -66,3 +66,27 @@
 
 * see if we can avoid touching environ[] until a fork() from Perl
   happens
+
+* Apache::Status prints a bogus filename via B::CV (e.g. from the test
+  suite)
+
+    http://localhost:8529/status/perl/APR::Brigade::bootstrap/FUNCTION?cv_dump
+    Subroutine info for APR::Brigade::bootstrap
+    File: xYµ
+    Package: APR::Brigade
+    ...
+
+  notice the bogus filename. For some reason this problem doesn't
+  exist with APR::Bucket:
+
+    http://localhost:8529/status/perl/APR::Bucket::bootstrap/FUNCTION?cv_dump
+
+  I have tested that the bogus filename comes from $obj->FILE in
+  Apache::Stats::cv_file, where $obj is blessed into B::CV.
+
+  The problem has been noticed with threaded 5.8.1 perl, didn't test
+  any other builds.
+
+  Report:   
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106893251911930&w=2
+  Priority: Low 
