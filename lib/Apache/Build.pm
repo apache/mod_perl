@@ -268,7 +268,7 @@ sub configure_apache {
     debug "Configuring httpd in $self->{MP_AP_PREFIX}";
 
     my $httpd = File::Spec->catfile($self->{MP_AP_PREFIX}, 'httpd');
-    push @Apache::TestMM::Argv, ('httpd' => $httpd);
+    $self->{'httpd'} ||= $httpd;
 
     my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
     my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
