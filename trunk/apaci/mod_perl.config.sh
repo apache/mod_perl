@@ -116,6 +116,10 @@ perl_lddlflags="`$perl_interp -MConfig -e 'print $Config{lddlflags}'`"
 cat >$tmpfile2 <<'EOT'
 use Config;
 my $ldopts = `$^X -MExtUtils::Embed -e ldopts -- -std @ARGV`;
+# can't pass ccdlflags to ld, which is what happens in this context.  however
+# we still need the libraries themselves.  I think this should be correct for
+# other systems, but it bites us on BSD/OS 4.x
+$ldopts =~ s@$Config{ccdlflags}@@ if ($^O eq 'bsdos');
 $ldopts =~ s,(-bE:)(perl\.exp),$1$Config{archlibexp}/CORE/$2, if($^O eq "aix");
 =pod
 #replace -Wl args meant for gcc with args for ld
