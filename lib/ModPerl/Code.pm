@@ -38,7 +38,7 @@ my %hook_proto = (
         ret  => 'void',
         args => [{type => 'apr_pool_t', name => 'p'},
                  {type => 'server_rec', name => 's'},
-                 {type => 'dummy', name => 'VOID'}],
+                 {type => 'dummy', name => 'MP_HOOK_VOID'}],
     },
     Files      => {
         ret  => 'int',
@@ -46,23 +46,23 @@ my %hook_proto = (
                  {type => 'apr_pool_t', name => 'plog'},
                  {type => 'apr_pool_t', name => 'ptemp'},
                  {type => 'server_rec', name => 's'},
-                 {type => 'dummy', name => 'RUN_ALL'}],
+                 {type => 'dummy', name => 'MP_HOOK_RUN_ALL'}],
     },
     PerSrv     => {
         ret  => 'int',
         args => [{type => 'request_rec', name => 'r'}, 
-                 {type => 'dummy', name => 'RUN_ALL'}],
+                 {type => 'dummy', name => 'MP_HOOK_RUN_ALL'}],
     },
     Connection => {
         ret  => 'int',
         args => [{type => 'conn_rec', name => 'c'},
-                 {type => 'dummy', name => 'RUN_FIRST'}],
+                 {type => 'dummy', name => 'MP_HOOK_RUN_FIRST'}],
     },
     PreConnection => {
         ret  => 'int',
         args => [{type => 'conn_rec', name => 'c'},
                  {type => 'void', name => 'csd'},
-                 {type => 'dummy', name => 'RUN_ALL'}],
+                 {type => 'dummy', name => 'MP_HOOK_RUN_ALL'}],
     },
 );
 
@@ -218,7 +218,7 @@ sub generate_handler_hooks {
 
             if ($callback =~ m/modperl_callback_per_(dir|srv)/) {
                 if ($ix =~ m/AUTH|TYPE|TRANS/) {
-                    $pass =~ s/RUN_ALL/RUN_FIRST/;
+                    $pass =~ s/MP_HOOK_RUN_ALL/MP_HOOK_RUN_FIRST/;
                 }
             }
 

@@ -660,7 +660,7 @@ static apr_status_t modperl_child_exit(void *data)
     char *level = NULL;
     server_rec *s = (server_rec *)data;
     
-    modperl_callback_process(MP_CHILD_EXIT_HANDLER, server_pool, s, VOID);
+    modperl_callback_process(MP_CHILD_EXIT_HANDLER, server_pool, s, MP_HOOK_VOID);
     
     if ((level = getenv("PERL_DESTRUCT_LEVEL"))) {
         modperl_destruct_level = atoi(level);
@@ -849,7 +849,7 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 
     modperl_response_init(r);
 
-    retval = modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, RUN_FIRST);
+    retval = modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, MP_HOOK_RUN_FIRST);
 
     if ((retval == DECLINED) && r->content_type) {
         r->handler = r->content_type; /* let http_core or whatever try */
