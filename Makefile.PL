@@ -93,10 +93,10 @@ sub get_DEFINE {
     # XXX: this define is really needed in xs/APR/APR/Makefile.PL, but this 
     # top-level Makefile.PL overrides MY::pasthru, and defines DEFINE= which
     # overrides any local definition, not sure what's the right fix, for
-    # now just define it here
-    my $bin_prefix = $build->apxs(-q => 'PREFIX');
+    # now just define it here (should it define PASTHRU_DEFINE instead?)
+    my $apr_bindir = $build->apr_bindir();
     my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
-        map { qq{$bin_prefix/bin/$_-config} } qw(apr apu);
+        map { qq{$apr_bindir/$_-config} } qw(apr apu);
     my $opt_define = @apr_libs ? '-DMP_HAVE_APR_LIBS' : '';
 
     # preserve any DEFINE opts from outside and combine them with our
