@@ -52,7 +52,7 @@ sub response {
 }
 
 1;
-__DATA__
+__END__
 <VirtualHost TestFilter::input_msg>
 
   PerlInputFilterHandler TestFilter::input_msg
