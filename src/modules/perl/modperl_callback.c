@@ -35,7 +35,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
      * Insecure dependency in eval while running setgid.
      * Callback called exit.
      */
-    PL_tainted = TAINT_NOT;
+    TAINT_NOT;
     
     if ((status = modperl_handler_resolve(aTHX_ &handler, p, s)) != OK) {
         PL_tainted = tainted_orig;
