@@ -2078,7 +2078,7 @@ Your current configuration will most likely trigger core dumps, suggestions:
    *) Configure Perl with -Uusemymalloc (not recommended for performance)
 EOF
      }
-     else {
+     elsif ($bincompat) {
              phat_warn(<<EOF, $abort);
 Your current configuration will most likely trigger core dumps, suggestions:
    *) Do not configure mod_perl as a DSO
