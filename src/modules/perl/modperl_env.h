@@ -1,12 +1,16 @@
 #ifndef MODPERL_ENV_H
 #define MODPERL_ENV_H
 
+#ifndef ENVHV
+#   define ENVHV GvHV(PL_envgv)
+#endif
+
 #define modperl_env_untie(mg_flags) \
-    mg_flags = SvMAGICAL((SV*)GvHV(PL_envgv)); \
-    SvMAGICAL_off((SV*)GvHV(PL_envgv))
+    mg_flags = SvMAGICAL((SV*)ENVHV); \
+    SvMAGICAL_off((SV*)ENVHV)
 
 #define modperl_env_tie(mg_flags) \
-    SvFLAGS((SV*)GvHV(PL_envgv)) |= mg_flags
+    SvFLAGS((SV*)ENVHV) |= mg_flags
 
 void modperl_env_request_populate(pTHX_ request_rec *r);
 

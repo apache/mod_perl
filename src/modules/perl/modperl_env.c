@@ -1,6 +1,6 @@
 #include "mod_perl.h"
 
-#define EnvMgObj SvMAGIC((SV*)GvHV(PL_envgv))->mg_ptr
+#define EnvMgObj SvMAGIC((SV*)ENVHV)->mg_ptr
 
 static MP_INLINE
 void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
@@ -39,7 +39,7 @@ static const modperl_env_ent_t modperl_env_const_vars[] = {
 void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     MP_dRCFG;
-    HV *hv = GvHV(PL_envgv);
+    HV *hv = ENVHV;
     int i;
     U32 mg_flags;
     apr_array_header_t *array;
@@ -121,7 +121,7 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
 
     PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(modperl_env_request_set);
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
-    SvGMAGICAL_on((SV*)GvHV(PL_envgv));
+    SvGMAGICAL_on((SV*)ENVHV);
     PL_vtbl_envelem.svt_get = MEMBER_TO_FPTR(modperl_env_request_get);
 #endif
 }
@@ -130,7 +130,7 @@ void modperl_env_request_untie(pTHX_ request_rec *r)
 {
     PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(Perl_magic_setenv);
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
-    SvGMAGICAL_off((SV*)GvHV(PL_envgv));
+    SvGMAGICAL_off((SV*)ENVHV);
     PL_vtbl_envelem.svt_get = 0;
 #endif
 }
