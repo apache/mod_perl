@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+MP_AP_BUILD configure option removed. Now implicit when MP_USE_STATIC
+is specified [Gozer]
+
 Apache::Module $mod->version() and $mod->minor_version() renamed
 to $mod->ap_api_major_version() and $mod->ap_api_minor_version
 for clarity [Gozer]
