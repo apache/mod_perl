@@ -928,7 +928,7 @@ sub init_tests_and_config {
     }
 
     #expand ./t to full path
-    iedit "t/conf/httpd.conf", "s: \./t(\S*): $PWD/t\$1:";
+    iedit "t/conf/httpd.conf", "s: \./t(\\S*): $PWD/t\$1:";
 
     for (qw(User Group)) {
 	iedit "t/conf/httpd.conf", "s/^$_ .*/$_ $$_/"; 
@@ -976,9 +976,9 @@ write_my_config($APACHE_SRC);
     require "lib/mod_perl_hooks.pm";
     my @list = mod_perl::hooks();
     if ($Is_Cygwin) {
-    @list == @mod_perl_hooks
-    } else {
-    @list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
+    } 
+    else {
+	@list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
     }
 
     unlink "lib/mod_perl_hooks.pm~";
