@@ -136,12 +136,18 @@ static void modperl_module_config_obj_cleanup_register(pTHX_
                               apr_pool_cleanup_null);
 }
 
+#define MP_CFG_MERGE_DIR 1
+#define MP_CFG_MERGE_SRV 2
+
+/*
+ * XXX: vhosts may have different parent interpreters.
+ */
 static void *modperl_module_config_merge(apr_pool_t *p,
                                          void *basev, void *addv,
-                                         modperl_mgv_t *method)
+                                         int type)
 {
     GV *gv;
-
+    modperl_mgv_t *method;
     modperl_module_cfg_t *mrg = NULL,
         *base = (modperl_module_cfg_t *)basev,
         *add  = (modperl_module_cfg_t *)addv,
@@ -161,13 +167,16 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         *add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
     if (!base_obj || (base_obj == add_obj)) {
-        return add_obj;
+        return addv;
     }
 
     mrg = modperl_module_cfg_new(p);
     memcpy(mrg, tmp, sizeof(*mrg));
 
-    /* XXX: should croak if gv is NULL; wasnt at startup */
+    method = (type == MP_CFG_MERGE_DIR) ?
+        mrg->minfo->dir_merge :
+        mrg->minfo->srv_merge;
+
     if (method && (gv = modperl_mgv_lookup(aTHX_ method))) {
         int count;
         dSP;
@@ -213,14 +222,14 @@ static void *modperl_module_config_dir_merge(apr_pool_t *p,
                                              void *basev, void *addv)
 {
     return modperl_module_config_merge(p, basev, addv,
-                                       MP_MODULE_CFG_MINFO(basev)->dir_merge);
+                                       MP_CFG_MERGE_DIR);
 }
 
 static void *modperl_module_config_srv_merge(apr_pool_t *p,
                                              void *basev, void *addv)
 {
     return modperl_module_config_merge(p, basev, addv,
-                                       MP_MODULE_CFG_MINFO(basev)->srv_merge);
+                                       MP_CFG_MERGE_SRV);
 }
 
 #define modperl_bless_cmd_parms(parms) \
