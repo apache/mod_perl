@@ -20,9 +20,7 @@ listed in deprecated_features.txt
 
 - PerlFreshRestart
 
-- cgi emulation, i.e. END{}/exit() management
-
-- %ENV managment:
+- cgi emulation: exit(), %ENV management:
    - %ENV is currently only saved/restored for the perl-script
      handler, i.e. changes to %ENV outside of a perl-script handler
      are not cleared.  of course, "clean" modules would use local() to
