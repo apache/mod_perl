@@ -1,11 +1,13 @@
-package Apache::test;
+package Apache::testold;
 
 use strict;
-use vars qw(@EXPORT $USE_THREAD $USE_SFIO $PERL_DIR @EXPORT_OK);
+use vars qw(@EXPORT $USE_THREAD $USE_SFIO $PERL_DIR @EXPORT_OK $VERSION);
 use Exporter ();
 use Config;
 use FileHandle ();
 *import = \&Exporter::import;
+
+$VERSION = "0.01";
 
 @EXPORT = qw(test fetch simple_fetch have_module skip_test
 	     $USE_THREAD $USE_SFIO $PERL_DIR WIN32 grab run_test); 
@@ -520,18 +522,18 @@ __END__
 
 =head1 NAME
 
-Apache::test - Facilitates testing of Apache::* modules
+Apache::testold - Facilitates testing of Apache::* modules
 
 =head1 SYNOPSIS
 
  # In Makefile.PL
- use Apache::test;
- my %params = Apache::test->get_test_params();
- Apache::test->write_httpd_conf(%params, include => $more_directives);
- *MY::test = sub { Apache::test->MM_test(%params) };
+ use Apache::testold;
+ my %params = Apache::testold->get_test_params();
+ Apache::testold->write_httpd_conf(%params, include => $more_directives);
+ *MY::test = sub { Apache::testold->MM_test(%params) };
 
  # In t/*.t script (or test.pl)
- use Apache::test qw(skip_test have_httpd);
+ use Apache::testold qw(skip_test have_httpd);
  skip_test unless have_httpd;
  (Some more methods of Doug's that I haven't reviewed or documented yet)
 
@@ -602,12 +604,12 @@ argument to C<MM_test()>.
 To patch into the ExtUtils::MakeMaker wizardry (voodoo?), typically
 you'll do the following in your Makefile.PL:
 
-  *MY::test = sub { Apache::test->MM_test(%params) };
+  *MY::test = sub { Apache::testold->MM_test(%params) };
 
 =head2 fetch
 
-  Apache::test->fetch($request);
-  Apache::test->fetch($user_agent, $request);
+  Apache::testold->fetch($request);
+  Apache::testold->fetch($user_agent, $request);
 
 Call this method in a test script in order to fetch a page from the
 running web server.  If you pass two arguments, the first should be an
@@ -655,7 +657,7 @@ the response headers, or the HTTP return code, or whatever.
 
 =head2 static_modules
 
- Example: $mods = Apache::test->static_modules('/path/to/httpd');
+ Example: $mods = Apache::testold->static_modules('/path/to/httpd');
 
 This method returns a hashref whose keys are all the modules
 statically compiled into the given httpd binary.  The corresponding
@@ -665,7 +667,7 @@ values are all 1.
 
 No good examples yet.  Example submissions are welcome.  In the meantime, see
 L<http://forum.swarthmore.edu/~ken/modules/Apache-AuthCookie/> , which
-I'm retrofitting to use Apache::test.
+I'm retrofitting to use Apache::testold.
 
 =head1 TO DO
 

@@ -1,7 +1,7 @@
 #!perl
 use Apache ();
 use Apache::Constants qw(:server :common :methods);
-use Apache::test;
+use Apache::testold;
 use strict;
 
 Apache->register_cleanup(sub {0});
@@ -264,7 +264,7 @@ if($test_dir_config) {
 
     {
 	package Apache::TestDirectives;
-	use Apache::test 'test';
+	use Apache::testold 'test';
 	my $scfg = Apache::ModuleConfig->get($r->server);
 	test ++$i, $scfg;
 	test ++$i,  __PACKAGE__->isa($scfg->{ServerClass});
@@ -306,7 +306,7 @@ eval {
 test ++$i, not $uri;
 print $@ if $@;
 
-use Apache::test qw($USE_THREAD);
+use Apache::testold qw($USE_THREAD);
 if ($USE_THREAD) {
     #under Solaris at least, according to Brian P Millett <bpm@ec-group.com>
     warn "XXX: need to fix \$r->exit in t/net/api w/ threads\n";
