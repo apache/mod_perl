@@ -30,6 +30,9 @@ static HE *S_hv_fetch_he(pTHX_ HV *hv,
     register HE *entry;
 
     xhv = (XPVHV *)SvANY(hv);
+    if (!xhv->xhv_array) {
+        return 0;
+    }
     entry = ((HE**)xhv->xhv_array)[hash & (I32) xhv->xhv_max];
 
     for (; entry; entry = HeNEXT(entry)) {
