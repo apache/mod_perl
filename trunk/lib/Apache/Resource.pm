@@ -16,46 +16,52 @@ sub MB ($) {
 }
 
 sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size
-sub DEFAULT_RLIMIT_CPU   () { 60 } #cpu time in milliseconds
+sub DEFAULT_RLIMIT_CPU   () { 60*3 } #cpu time in milliseconds
 sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size
 sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size
 sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size 
-sub DEFAULT_RLIMIT_STACK () { 10 } #stack size
+sub DEFAULT_RLIMIT_STACK () { 20 } #stack size
 
 my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE};
 
+sub debug { print STDERR @_ if $Debug }
+
 sub install_rlimit ($$$) {
     my($res, $soft, $hard) = @_;
+
+    my $name = $res;
 
     my $cv = \&{"BSD::Resource::RLIMIT_${res}"};
     eval { $res = $cv->() };
     return if $@;
 
     unless ($soft) { 
-	my $defval = \&{"DEFAULT_RLIMIT_${res}"};
-	$soft = $defval->() if defined &$defval;
+	my $defval = \&{"DEFAULT_RLIMIT_${name}"};
+	if(defined &$defval) {
+	    $soft = $defval->();
+	}
+	else {
+	    warn "can't find default for `$defval'\n";
+	}
     }
 
     $hard ||= $soft;
 
+    debug "Apache::Resource: attempting to set `$name'=$soft:$hard ...";
+
+    ($soft, $hard) = (MB $soft, MB $hard) if $is_mb{$name};
+
     return setrlimit $res, $soft, $hard;
 }
-
-#limit memory hogging by default
-$ENV{PERL_RLIMIT_DATA} ||= DEFAULT_RLIMIT_DATA;
-
-sub debug { print STDERR @_ if $Debug }
 
 sub handler {
     while(my($k,$v) = each %ENV) {
 	next unless $k =~ /^PERL_RLIMIT_(\w+)$/;
 	$k = $1;
+	next if $k eq "DEFAULTS";
 	my($soft, $hard) = split ":", $v, 2; 
 	$hard ||= $soft;
- 
-	($soft, $hard) = (MB $soft, MB $hard) if $is_mb{$k};
 
-	debug "Apache::Resource: attempting to set `$k'=$soft:$hard ...";
 	my $set = install_rlimit $k, $soft, $hard;
 	debug "not " unless $set;
 	debug "ok\n";
@@ -63,6 +69,14 @@ sub handler {
     }
 
     0;
+}
+
+sub default_handler {
+    while(my($k,$v) = each %Apache::Resource::) {
+	next unless $k =~ s/^DEFAULT_/PERL_/;
+	$ENV{$k} = "";
+    }
+    handler();
 }
 
 sub status_rlimit {
@@ -84,12 +98,18 @@ sub status_rlimit {
     return \@retval;
 }
 
-Apache::Status->menu_item(rlimit => "Resource Limits", 
-			  \&status_rlimit)
-    if Apache->module("Apache::Status");
+if($ENV{MOD_PERL}) {
+    if($ENV{PERL_RLIMIT_DEFAULTS}) {
+	Apache->push_handlers(PerlChildInitHandler => \&default_handler);
+    }
+
+    Apache::Status->menu_item(rlimit => "Resource Limits", 
+			    \&status_rlimit)
+      if Apache->module("Apache::Status");
+}
 
 #perl Apache/Resource.pm
-++$Debug, handler unless caller();
+++$Debug, default_handler unless caller();
 
 1;
 

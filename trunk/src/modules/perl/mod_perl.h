@@ -66,6 +66,20 @@
 #define ERRSV GvSV(errgv) 
 #endif
 
+#ifndef ERRHV
+#define ERRHV GvHV(errgv)
+#endif
+
+#ifndef ERRSV_CAN_BE_HTTP
+#define ERRSV_CAN_BE_HTTP perl_get_sv("Apache::ERRSV_CAN_BE_HTTP", FALSE)
+#endif
+
+#define __RGY_ERRHV ERRHV, "Apache::Registry", 16
+
+#ifndef PERL_SECTIONS_SELF_BOOT
+#define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
+#endif
+
 typedef request_rec * Apache;
 typedef request_rec * Apache__SubRequest;
 typedef conn_rec    * Apache__Connection;
@@ -75,6 +89,20 @@ typedef server_rec  * Apache__Server;
 #define GvSV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PV)
 
 #define GvSV_setiv(gv,val) sv_setiv(GvSV(gv), val)
+
+#define Apache__ServerStarting(val) \
+{ \
+    GV *sgv = GvSV_init("Apache::ServerStarting"); \
+    GvSV_setiv(sgv, val); \
+}
+
+#define Apache__ServerReStarting(val) \
+{ \
+    GV *sgv = GvSV_init("Apache::ServerReStarting"); \
+    GvSV_setiv(sgv, val); \
+    if(perl_is_running == PERL_DONE_STARTUP) \
+        Apache__ServerStarting((val == FALSE ? FALSE : PERL_RUNNING())); \
+}
 
 #define iniHV(hv) hv = (HV*)sv_2mortal((SV*)newHV())
 #define iniAV(av) av = (AV*)sv_2mortal((SV*)newAV())
@@ -180,6 +208,10 @@ if((add->flags & f) || (base->flags & f)) \
 #endif
 #ifndef NO_PERL_SECTIONS
 #define PERL_SECTIONS
+#endif
+#ifndef NO_PERL_SSI
+#undef  PERL_SSI
+#define PERL_SSI
 #endif
 
 #ifdef APACHE_SSL
@@ -735,22 +767,23 @@ void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
 void perl_run_rgy_endav(char *s);
 void perl_run_endav(char *s);
-void perl_call_halt(void);
+void perl_call_halt(int status);
 CV *empty_anon_sub(void);
 void perl_reload_inc(void);
-int perl_require_module(char *, server_rec *);
+int perl_require_module(char *module, server_rec *s);
 int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn);
 void newCONSTSUB(HV *stash, char *name, SV *sv);
 void perl_clear_env(void);
 void mod_perl_init_ids(void);
-int perl_eval_ok(server_rec *);
+int perl_eval_ok(server_rec *s);
+int perl_sv_is_http_code(SV *sv, int *status);
 void perl_incpush(char *s);
 
 /* perlio.c */
 
 void perl_soak_script_output(request_rec *r);
-void perl_stdin2client(request_rec *);
-API_EXPORT(void) perl_stdout2client(request_rec *); 
+void perl_stdin2client(request_rec *r);
+API_EXPORT(void) perl_stdout2client(request_rec *r); 
 
 /* perl_config.c */
 
@@ -800,3 +833,8 @@ CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg)
 
 void mod_perl_dir_env(perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);
+
+/* Apache.xs */
+
+pool *perl_get_startup_pool(void);
+server_rec *perl_get_startup_server(void);

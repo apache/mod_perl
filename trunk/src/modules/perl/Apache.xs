@@ -74,7 +74,7 @@ child_terminate(request_rec *r)
 #define DONE -2
 #endif
 
-static pool *perl_get_startup_pool(void)
+pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);
     if(sv) {
@@ -84,7 +84,7 @@ static pool *perl_get_startup_pool(void)
     return NULL;
 }
 
-static server_rec *perl_get_startup_server(void)
+server_rec *perl_get_startup_server(void)
 {
     SV *sv = perl_get_sv("Apache::__SERVER", FALSE);
     if(sv) {
@@ -277,7 +277,7 @@ exit(...)
        ((mod_perl_weareaforkedchild) && (mod_perl_socketexitoption > 1)))  
         child_terminate(r); /* only 1.3b1+ does this right */
 #endif
-    perl_call_halt();
+    perl_call_halt(sts);
 
 # toggle closing of the http socket on fork...
 void 

@@ -28,7 +28,7 @@ if($@) {
 }
 
 if($ENV{MOD_PERL} && perl_hook("Sections")) {
-    *ApacheReadConfig:: = \%Apache::ReadConfig::;
+    *Apache::ReadConfig:: = \%ApacheReadConfig::;
 
     if(Apache::Constants::MODULE_MAGIC_NUMBER() >= 19971026) {
 	*Apache::httpd_conf = sub {

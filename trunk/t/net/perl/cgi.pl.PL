@@ -11,7 +11,7 @@ my $class = $] >= 5.004 ? "CGI" : "CGI::Switch";
 
 my $r = $class->new;
 
-warn "Running cgi.pl with $CGI::VERSION";
+#warn "Running cgi.pl with $CGI::VERSION";
 
 my($param) = $r->param('PARAM');
 my($httpupload) = $r->param('HTTPUPLOAD');

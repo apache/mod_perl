@@ -26,7 +26,7 @@ is as follows:
  <Location /perl>
  SetHandler  perl-script
  PerlHandler Apache::Registry
- Options ExecCGI
+ Options +ExecCGI
  </Location>
 
 `Location' refers to the uri, not a directory, think of the above as 

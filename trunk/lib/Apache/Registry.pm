@@ -135,16 +135,15 @@ sub handler {
 	}
 	$^W = $oldwarn;
 
-	my $err = $@;
-	if(exists $INC{'CGI.pm'}
-	   && ! $Apache::Registry::CGI_versioncheck_done ) {
-	    $Apache::Registry::CGI_versioncheck_done++;
-	    require Exporter;
-	    eval { Exporter::require_version('CGI', 2.36); }; 
-	    $err .= $@ if $@;
+	my $errsv = "";
+	if($@) {
+	    $errsv = $@;
+	    $@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks
+	    $@{"Apache::Registry"} = $errsv if $Apache::ERRSV_CAN_BE_HTTP;
 	}
-	if ($err) {
-	    $r->log_error($err);
+
+	if($errsv) {
+	    $r->log_error($errsv);
 	    return SERVER_ERROR unless $Debug && $Debug & 2;
 	    return Apache::Debug::dump($r, SERVER_ERROR);
 	}

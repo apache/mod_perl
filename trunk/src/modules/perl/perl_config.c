@@ -55,6 +55,94 @@
 
 extern module *top_module;
 
+
+#ifdef PERL_SECTIONS
+#if MODULE_MAGIC_NUMBER < 19970719
+#define limit_section limit
+#endif
+
+/* some prototypes for -Wall sake */
+const char *handle_command (cmd_parms *parms, void *config, const char *l);
+const char *limit_section (cmd_parms *cmd, void *dummy, const char *arg);
+void add_per_dir_conf (server_rec *s, void *dir_config);
+void add_per_url_conf (server_rec *s, void *url_config);
+void add_file_conf (core_dir_config *conf, void *url_config);
+const command_rec *find_command_in_modules (const char *cmd_name, module **mod);
+
+#if MODULE_MAGIC_NUMBER > 19970912 
+#define cmd_infile   parms->config_file
+#define cmd_filename parms->config_file->name
+#define cmd_linenum  parms->config_file->line_number
+
+void perl_config_getstr(void *buf, size_t bufsiz, void *param)
+{
+    SV *sv = (SV*)param;
+    STRLEN len;
+    char *tmp = SvPV(sv,len);
+
+    if(!SvTRUE(sv)) 
+	return;
+
+    Move(tmp, buf, bufsiz, char);
+
+    if(len < bufsiz) {
+	sv_setpv(sv, "");
+    }
+    else {
+	tmp += bufsiz;
+	sv_setpv(sv, tmp);
+    }
+}
+
+int perl_config_getch(void *param)
+{
+    SV *sv = (SV*)param;
+    STRLEN len;
+    char *tmp = SvPV(sv,len);
+    register int retval = *tmp;
+
+    if(!SvTRUE(sv)) 
+	return EOF;
+
+    if(len <= 1) {
+	sv_setpv(sv, "");
+    }
+    else {
+	++tmp;
+	sv_setpv(sv, tmp);
+    }
+
+    return retval;
+}
+
+void perl_eat_config_string(cmd_parms *cmd, void *dummy, SV *sv) {
+    CHAR_P errmsg; 
+    configfile_t *perl_cfg = 
+	pcfg_open_custom(cmd->pool, "mod_perl", (void*)sv,
+			 perl_config_getch, NULL, NULL);
+
+    configfile_t *old_cfg = cmd->config_file;
+    cmd->config_file = perl_cfg;
+    errmsg = srm_command_loop(cmd, dummy);
+    cmd->config_file = old_cfg;
+
+    if(errmsg)
+	fprintf(stderr, "mod_perl: %s\n", errmsg);
+}
+
+#define STRING_MEAL(s) ( (*s == 'P') && strEQ(s,"PerlConfig") )
+#else
+#define cmd_infile   parms->infile
+#define cmd_filename parms->config_file
+#define cmd_linenum  parms->config_line
+#define STRING_MEAL(s) 0
+#define perl_eat_config_string(cmd, dummy, sv) 
+#endif
+
+#define PERL_SECTIONS_PACKAGE "ApacheReadConfig"
+
+#endif /* PERL_SECTIONS */
+
 char *mod_perl_auth_name(request_rec *r, char *val)
 {
 #ifndef WIN32 
@@ -232,6 +320,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
 	return NULL; 
     } 
 #endif
+
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
@@ -357,6 +446,24 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 	
 	cls->PerlModules[cls->NumPerlModules++] = arg;
     }
+
+#ifdef PERL_SECTIONS
+# if MODULE_MAGIC_NUMBER > 19970912
+    if((parms->path == NULL) && PERL_SECTIONS_SELF_BOOT) {
+	if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
+
+	if(gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE)) {
+	    SV *sv = newSV(0);
+	    sv_setpv(sv, "<Perl>\n</Perl>\n");
+	    MP_TRACE(fprintf(stderr, 
+			     "mod_perl: bootstrapping <Perl> sections\n"));
+	    perl_eat_config_string(parms, dummy, sv);
+	    SvREFCNT_dec(sv);
+	}
+    }
+# endif
+#endif
+
     return NULL;
 }
 
@@ -456,91 +563,16 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
 }
 
 #ifdef PERL_SECTIONS
-#if MODULE_MAGIC_NUMBER < 19970719
-#define limit_section limit
-#endif
-
-/* some prototypes for -Wall sake */
-const char *handle_command (cmd_parms *parms, void *config, const char *l);
-const char *limit_section (cmd_parms *cmd, void *dummy, const char *arg);
-void add_per_dir_conf (server_rec *s, void *dir_config);
-void add_per_url_conf (server_rec *s, void *url_config);
-void add_file_conf (core_dir_config *conf, void *url_config);
-const command_rec *find_command_in_modules (const char *cmd_name, module **mod);
-
-#if MODULE_MAGIC_NUMBER > 19970912 
-#define cmd_infile parms->config_file
-
-void perl_config_getstr(void *buf, size_t bufsiz, void *param)
-{
-    SV *sv = (SV*)param;
-    STRLEN len;
-    char *tmp = SvPV(sv,len);
-
-    if(!SvTRUE(sv)) 
-	return;
-
-    Move(tmp, buf, bufsiz, char);
-
-    if(len < bufsiz) {
-	sv_setpv(sv, "");
-    }
-    else {
-	tmp += bufsiz;
-	sv_setpv(sv, tmp);
-    }
-}
-
-int perl_config_getch(void *param)
-{
-    SV *sv = (SV*)param;
-    STRLEN len;
-    char *tmp = SvPV(sv,len);
-    register int retval = *tmp;
-
-    if(!SvTRUE(sv)) 
-	return EOF;
-
-    if(len <= 1) {
-	sv_setpv(sv, "");
-    }
-    else {
-	++tmp;
-	sv_setpv(sv, tmp);
-    }
-
-    return retval;
-}
-
-void perl_eat_config_string(cmd_parms *cmd, void *dummy, SV *sv) {
-    CHAR_P errmsg; 
-    configfile_t *perl_cfg = 
-	pcfg_open_custom(cmd->pool, "mod_perl", (void*)sv,
-			 perl_config_getch, NULL, NULL);
-
-    configfile_t *old_cfg = cmd->config_file;
-    cmd->config_file = perl_cfg;
-    errmsg = srm_command_loop(cmd, dummy);
-    cmd->config_file = old_cfg;
-
-    if(errmsg)
-	fprintf(stderr, "mod_perl: %s\n", errmsg);
-}
-
-#define STRING_MEAL(s) ( (*s == 'P') && strEQ(s,"PerlConfig") )
-#else
-#define cmd_infile parms->infile
-#define STRING_MEAL(s) 0
-#define perl_eat_config_string(cmd, dummy, sv)
-#endif
 
 CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
 {
     char l[MAX_STRING_LEN];
+
     if(PERL_RUNNING()) {
-	sv_catpvn(sv, "\npackage Apache::ReadConfig;\n{\n", 29);
-	sv_catpvn(sv, "\n", 1);
+	sv_catpvf(sv, "package %s;", PERL_SECTIONS_PACKAGE);
+	sv_catpvf(sv, "\n\n#line %d %s\n", cmd_linenum+1, cmd_filename);
     }
+
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
 	if(instr(l, "</Perl>"))
 	    break;
@@ -549,8 +581,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
 	    sv_catpvn(sv, "\n", 1);
 	}
     }
-    if(PERL_RUNNING())
-	sv_catpvn(sv, "\n}\n", 3);
+
     return NULL;
 }
 
@@ -814,15 +845,20 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
 
 CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv)
 {
-    SV *sv = hv_delete(hv, "METHODS", 7, G_SCALAR);
-    STRLEN len;
-    char *methods = sv ? SvPV(sv,len) : ""; 
+    SV *sv;
+    char *methods;
     /*void *ac = (void*)create_default_per_dir_config(cmd->pool);*/
-    
-    if(!sv) return NULL;
 
+    if(hv_exists(hv,"METHODS", 7))
+       sv = hv_delete(hv, "METHODS", 7, G_SCALAR);
+    else
+	return NULL;
+
+    methods = SvPOK(sv) ? SvPVX(sv) : "";
+ 
     MP_TRACE(fprintf(stderr, 
-		     "Found Limit section for `%s'\n", methods));
+		     "Found Limit section for `%s'\n", 
+		     methods ? methods : "all methods"));
 
     limit_section(cmd, dummy, methods); 
     perl_section_hash_walk(cmd, dummy, hv);
@@ -933,15 +969,20 @@ char *splain_args(enum cmd_how args_how) {
 
 void perl_section_hash_init(char *name, I32 dotie)
 {
-    GV *gv = GvHV_init(name);
+    GV *gv;
+    ENTER;
+    save_hptr(&curstash);
+    curstash = gv_stashpv(PERL_SECTIONS_PACKAGE, GV_ADDWARN);
+    gv = GvHV_init(name);
     if(dotie) perl_tie_hash(GvHV(gv), "Tie::IxHash");
+    LEAVE;
 }
 
 CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 {
     dTHR;
     CHAR_P errmsg;
-    SV *code = newSV(0), *val;
+    SV *code, *val;
     HV *symtab;
     char *key;
     I32 klen, dotie=FALSE;
@@ -949,31 +990,34 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 
     if(!PERL_RUNNING()) perl_startup(cmd->server, cmd->pool); 
 
-    sv_setpv(code, "");
-    errmsg = perl_srm_command_loop(cmd, code);
-
-    if(!PERL_RUNNING()) {
-	MP_TRACE(fprintf(stderr, "perl_section: Perl not running, returning...\n"));
-	SvREFCNT_dec(code);
+    if(PERL_RUNNING()) {
+	code = newSV(0);
+	sv_setpv(code, "");
+	errmsg = perl_srm_command_loop(cmd, code);
+    }
+    else {
+	MP_TRACE(fprintf(stderr, 
+			 "perl_section: Perl not running, returning...\n"));
 	return NULL;
     }
 
     if((perl_require_module("Tie::IxHash", NULL) == OK))
 	dotie = TRUE;
 
-    perl_section_hash_init("Apache::ReadConfig::Location", dotie);
-    perl_section_hash_init("Apache::ReadConfig::VirtualHost", dotie);
-    perl_section_hash_init("Apache::ReadConfig::Directory", dotie);
-    perl_section_hash_init("Apache::ReadConfig::Files", dotie);
-    perl_section_hash_init("Apache::ReadConfig::Limit", dotie);
+    perl_section_hash_init("Location", dotie);
+    perl_section_hash_init("VirtualHost", dotie);
+    perl_section_hash_init("Directory", dotie);
+    perl_section_hash_init("Files", dotie);
+    perl_section_hash_init("Limit", dotie);
 
     perl_eval_sv(code, G_DISCARD);
+
     if(SvTRUE(ERRSV)) {
        fprintf(stderr, "Apache::ReadConfig: %s\n", SvPV(ERRSV,na));
        return NULL;
     }
 
-    symtab = (HV*)gv_stashpv("Apache::ReadConfig", FALSE);
+    symtab = (HV*)gv_stashpv(PERL_SECTIONS_PACKAGE, FALSE);
     (void)hv_iterinit(symtab);
     while ((val = hv_iternextsv(symtab, &key, &klen))) {
 	SV *sv;
@@ -1079,7 +1123,6 @@ int perl_hook(char *name)
 #endif
 	break;
 	case 'C':
-#if MODULE_MAGIC_NUMBER >= 19970728
 	    if (strEQ(name, "ChildInit")) 
 #ifdef PERL_CHILD_INIT
 		return 1;
@@ -1092,9 +1135,16 @@ int perl_hook(char *name)
 #else
 	return 0;    
 #endif
-#endif /* MMN */
 	    if (strEQ(name, "Cleanup")) 
 #ifdef PERL_CLEANUP
+		return 1;
+#else
+	return 0;    
+#endif
+	break;
+	case 'D':
+	    if (strEQ(name, "Dispatch")) 
+#ifdef PERL_DISPATCH
 		return 1;
 #else
 	return 0;    

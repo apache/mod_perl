@@ -8,12 +8,6 @@ use Cwd ();
 
 $VERSION = '0.01';
 
-#BEGIN {
-#    unless (defined %Apache::ReadConfig::) {
-#	*Apache::ReadConfig:: = \%ApacheReadConfig::;
-#    }
-#}
-
 sub new {
     my $class = shift;
     my $self = bless {
@@ -48,13 +42,14 @@ sub write {
 
     print $fh "PerlPassEnv PERL5LIB\n";
     print $fh "<Perl>\n";
-    print $fh "\$Apache::httpd_conf::BaseDir = '$base';\n";
-    print $fh "use ",  __PACKAGE__, " ();\n";
+    print $fh "BEGIN { \$Apache::httpd_conf::BaseDir = '$base'; }\n";
+    print $fh "use ",  __PACKAGE__, "();\n";
     print $fh "</Perl>\n";     
 
     while(my($k,$v) = each %$self) {
 	next unless $k =~ /^[A-Z]/;
-        ${$Apache::ReadConfig::{$k}} = $v;
+	no strict;
+        ${"Apache::ReadConfig::".$k} = $v;
 	print $fh "$k $v\n";
     }
     print $fh "\n";
@@ -65,10 +60,10 @@ sub write {
 sub server_start {
     my $self = shift;
     my @args = ();
-    my $args = {};
+    my $args = {catch_sig => 1};
     my $know_where = 0; 
 
-    my %not_for_httpd = map { $_,1 } qw{httpd};
+    my %not_for_httpd = map { $_,1 } qw{httpd catch_sig};
 
     do {
 	++$know_where if /^-(d|f)/;
@@ -86,20 +81,39 @@ sub server_start {
 
     push @args, "-d" => $Apache::httpd_conf::BaseDir unless $know_where;
 
-    warn "starting $httpd @args\n";
+    $self->catch_signals if $args->{catch_sig};
+
     system "$httpd @args &";
 }
 
-sub server_stop {
+sub pid {
     my $self = shift;
     my $pid_file = join "/", $self->{base}, $self->PidFile;
 
     my $fh = IO::File->new($pid_file) or 
 	die "can't open $pid_file $!\n";
     chomp(my $pid = <$fh>);
+    return $pid;
+}
 
-    warn "attempting to kill $pid\n";
-    kill 9, $pid;
+sub server_stop {
+    kill 9, shift->pid;
+}
+
+sub server_url {
+    no strict;
+    require URI::URL;
+    my $url = URI::URL->new();
+    $url->scheme('http');
+    $url->host($Apache::ReadConfig::ServerName || "localhost");
+    $url->port($Apache::ReadConfig::Port || 80);
+    return $url;
+}
+
+sub catch_signals {
+    my $self = shift;
+    $SIG{INT} = $SIG{__DIE__} = 
+	sub { print "stopping httpd\n"; $self->server_stop; exit(); }
 }
 
 sub prompt {
@@ -131,11 +145,25 @@ no strict;
 use subs qw(prompt);
 *prompt = \&Apache::httpd_conf::prompt;
 
-my $dir = $Apache::httpd_conf::BaseDir;
+my $dir = $Apache::httpd_conf::BaseDir || "";
+
+unless ($dir) {
+    my $cwd = Cwd::fastcwd();
+    for ($dir, "$dir/t") {
+	last, $dir = $_ if -d "$_/logs";
+    }
+}
 
 my $Is_Win32 = ($^O eq "MSWin32");
 
 $ServerRoot = $dir;
+
+my $startup = "$ServerRoot/startup.pl";
+
+if(-e $startup) {
+    push @PerlRequire, $startup;
+}
+
 
 $User  = $Is_Win32 ? "nobody" : (getpwuid($>) || $>);
 $Group = $Is_Win32 ? "nogroup" : (getgrgid($)) || $)); 
@@ -154,12 +182,10 @@ if($User eq "root") {
 $Port = 8529;
 $DocumentRoot = $dir ? "$dir/docs" : "docs";
 $ServerName = "localhost";
-
-push @AddType, ["text/x-server-parsed-html" => ".shtml"];
  
 @Alias = () unless defined @Alias;
 
-for (qw(/perl/ /cgi-bin/)) {
+for (qw(/perl /cgi-bin)) {
     push @Alias, [$_ => $dir ? "$dir/perl" : "perl"];
 }
 
@@ -168,6 +194,8 @@ my @mod_perl = (
     PerlHandler => "Apache::Registry",
     Options     => "+ExecCGI",
 );
+
+#push @AddType, ["text/x-server-parsed-html" => ".shtml"];
 
 $Location{"/perl"} = { 
     @mod_perl,
