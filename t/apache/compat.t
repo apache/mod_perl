@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 21, \&have_lwp;
+plan tests => 26, \&have_lwp;
 
 my $location = "/TestApache::compat";
 
@@ -54,7 +54,7 @@ t_header('out','unset',     q{$r->header_out($key => undef)});
 
 # Apache::File
 {
-    my @data = (test => 'file');
+    my @data = (test => 'Apache::File');
     my $data = GET_BODY query(@data) || '';
     ok_nok($data);
 }
@@ -66,7 +66,7 @@ sub query {
     "$location?" . join '&', map { "$_=$args{$_}" } keys %args;
 }
 
-sub t_header{
+sub t_header {
     my ($way, $what, $comment) = @_;
     ok t_cmp(
         "ok",

@@ -77,7 +77,7 @@ sub handler {
             $r->print(t_is_equal($exp, $got) ? 'ok' : 'nok');
         }
     }
-    elsif ($data{test} eq 'file') {
+    elsif ($data{test} eq 'Apache::File') {
         $gr = $r;
         my $file = $vars->{t_conf_file};
 
@@ -118,7 +118,7 @@ sub handler {
 
         # tmpfile
         my ($tmpfile, $tmpfh) = Apache::File->tmpfile;
-#89573612
+
         debug "open tmpfile fh";
         ok $tmpfh;
 
@@ -131,9 +131,31 @@ sub handler {
         seek $tmpfh, 0, 0;
         my $read = <$tmpfh>;
         ok $read eq $write;
+
+        debug "\$r->discard_request_body";
+        ok $r->discard_request_body == Apache::OK;
+
+        debug "\$r->meets_conditions";
+        ok $r->meets_conditions == Apache::OK;
+
+        debug "\$r->set_content_length";
+        $r->set_content_length(10);
+        my $cl_header = $r->headers_out->{"Content-length"} || '';
+        ok $cl_header == 10;
+
+        # XXX: how to test etag?
+        debug "\$r->set_etag";
+        $r->set_etag;
+        ok 1;
+
+        debug "\$r->update_mtime/\$r->mtime";
+        my $time = time;
+        $r->update_mtime($time);
+        ok $r->mtime == $time;
+
     }
 
-    OK;
+    Apache::OK;
 }
 
 sub ok    { $gr->print($_[0] ? "ok\n" : "nok\n"); }
