@@ -1,5 +1,18 @@
 #include "mod_perl.h"
 
+#ifndef USE_ITHREADS
+static apr_status_t modperl_shutdown(void *data)
+{
+    PerlInterpreter *perl = (PerlInterpreter *)data;
+    PL_perl_destruct_level = 2;
+    MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
+               (unsigned long)perl);
+    perl_destruct(perl);
+    perl_free(perl);
+    return APR_SUCCESS;
+}
+#endif
+
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
     MP_dSCFG(s);
@@ -38,12 +51,20 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     perl_run(perl);
 
+    MP_TRACE_i(MP_FUNC, "constructed interpreter=0x%lx\n",
+               (unsigned long)perl);
+
 #ifdef MP_USE_GTOP
     MP_TRACE_m_do(
         modperl_gtop_do_proc_mem_after(MP_FUNC ": perl_parse");
     );
 #endif
 
+#ifndef USE_ITHREADS
+    apr_pool_cleanup_register(p, (void*)perl,
+                              modperl_shutdown, apr_pool_cleanup_null);
+#endif
+    
     return perl;
 }
 
