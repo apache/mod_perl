@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22
 
+Perl -Duse64bit fix. apr_size_t pointers can't just be generically
+casted from/to UVs. Use PTR2UV/INT2PTR instead. [Gozer]
+
 fix a bug in Apache::Build::dir: If the right directory isn't found in
 the for loop $dir still contains a > value, so the ||= has no
 effect. [Nick Wellnhofer <wellnhofer@aevum.de>]

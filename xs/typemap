@@ -17,6 +17,9 @@ T_HASHOBJ
 T_VPTR
 	sv_setiv($arg, PTR2IV($var));
 
+T_UVPTR
+	sv_setuv($arg, PTR2UV($var));
+
 T_APR_TIME
 	sv_setnv($arg, (NV)(apr_time_sec($var)));
 
@@ -72,6 +75,9 @@ T_APACHEREF
 
 T_VPTR
 	$var = INT2PTR($type, SvIV(SvROK($arg) ? SvRV($arg) : $arg))
+
+T_UVPTR
+	$var = INT2PTR($type, SvUV(SvROK($arg) ? SvRV($arg) : $arg))
 
 T_APR_TIME
 	$var = (apr_time_t)(apr_time_from_sec(SvNV($arg)))
