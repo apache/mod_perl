@@ -320,6 +320,15 @@ to compile and install the Perl side of mod_perl.
 
 =over 3
 
+=item Compilers
+
+On most systems, both Perl and Apache+mod_perl must be built using the
+same compiler.  Sometimes Perl's configuration will choose one
+compiler, e.g. I<cc>, but Apache's configuration chooses a different
+one, e.g. I<gcc>.  If you run into this problem, consult Perl's and
+Apache's INSTALL documents on how to ensure both are built with the
+same compiler. 
+
 =item BSDI users
 
 Gary Shea <shea@xmission.com> discovered a nasty BSDI bug (seen in
