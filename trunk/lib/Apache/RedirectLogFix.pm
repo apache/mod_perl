@@ -4,7 +4,7 @@ use Apache::Constants qw(OK DECLINED REDIRECT);
 
 sub handler {
     my $r = shift;
-    return DECLINED unless $r->handler eq "perl-script";
+    return DECLINED unless $r->handler && ($r->handler eq "perl-script");
 
     if(my $loc = $r->header_out("Location")) {
 	if($r->status == 200 and substr($loc, 0, 1) ne "/") {
