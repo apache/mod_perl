@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY HEAD);
 
-use File::Spec::Functions qw(catfile);
+use Apache::TestUtil qw(t_catfile_apache);
 
 plan tests => 4, have_lwp;
 
@@ -16,7 +16,7 @@ my $base_url = "/registry/redirect.pl";
     my $redirect_path = "/registry/basic.pl";
     my $url = "$base_url?$redirect_path";
     my $vars = Apache::Test::config()->{vars};
-    my $script_file = catfile $vars->{serverroot}, 'cgi-bin', 'basic.pl';
+    my $script_file = t_catfile_apache $vars->{serverroot}, 'cgi-bin', 'basic.pl';
 
     ok t_cmp(
         "ok $script_file",
