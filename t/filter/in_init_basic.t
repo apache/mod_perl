@@ -8,8 +8,9 @@ use Apache::TestUtil;
 plan tests => 1;
 
 my $content = "content ok\n";
-my $expected = join '', $content, "init 1\n", "run 1\n";
+# older httpds may run the input request filter twice
+my $expected = join '', $content, "init 1\n", "run [12]\n";
 
 my $location = '/TestFilter__in_init_basic';
 my $response = POST_BODY $location, content => $content;
-ok t_cmp($expected, $response, "test filter init functionality");
+ok t_cmp(qr/$expected/, qr/$response/, "test filter init functionality");
