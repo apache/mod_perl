@@ -18,6 +18,17 @@
 
 ### other, less important things ###
 
+* Integrate the new perl feature: PL_use_safe_putenv (starting from
+  perl 5.8.6)
+  http://public.activestate.com/cgi-bin/perlbrowse?patch=23529 this is
+  needed to make it possible mod_php and mod_perl run at the same
+  time. Relevant threads:
+  http://www.gossamer-threads.com/lists/perl/porters/187753
+  http://www.phpbuilder.com/lists/php-install/2003092/0018.php
+
+  at the moment recompiling perl with -DPERL_USE_SAFE_PUTENV may or
+  may not work
+
 * $r->last is missing (it was provided explicitly by modperl, it's not
   an apache thing) see modperl/src/modules/perl/Apache.xs
 
