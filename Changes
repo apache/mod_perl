@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+fixes to compile with ActivePerl 5.8 beta
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix for directive handlers within vhosts using threaded MPMs
 [Stephen Clouse <stephenc@theiqgroup.com>]
 
