@@ -67,12 +67,15 @@ ApacheIO_tmpfile(self)
     else
         XPUSHs(RETVAL);
 
-void
+bool
 ApacheIO_close(self)
     SV *self
     
     CODE:
-    do_close((GV*)SvRV(self), TRUE);
+    RETVAL = do_close((GV*)SvRV(self), TRUE);
+
+    OUTPUT:
+    RETVAL
 
 
 
