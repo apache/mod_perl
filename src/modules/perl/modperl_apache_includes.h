@@ -30,6 +30,7 @@
 
 #if !APR_HAS_THREADS
 typedef unsigned long apr_os_thread_t;
+typedef void * apr_thread_mutex_t;
 #endif
 
 /* XXX: these backcompat macros can be deleted when we bump up the
