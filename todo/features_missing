@@ -57,11 +57,6 @@
   with dirname $r->filename.  consider overriding open() to resolve
   relative filenames.
 
-* $r->child_terminate:
-  haven't looked into this, but clearly not an option with threaded
-  mpms.  might consider knocking off the current PerlInterpreter
-  instead.
-
 * $r->log_reason:
   should be simple, see modperl_log.h (currently aliased to log_error
   in compat.pm)
