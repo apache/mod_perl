@@ -312,7 +312,6 @@ void *perl_create_dir_config (pool *p, char *dirname)
 
 void *perl_create_server_config (pool *p, server_rec *s)
 {
-    char **new;
     perl_server_config *cls =
 	(perl_server_config *)palloc(p, sizeof (perl_server_config));
 

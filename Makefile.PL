@@ -163,7 +163,6 @@ $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
 $APACHE_PREFIX = "";
-$APACHE_LAYOUT = "GNU";
 $APACHE_HEADER_INSTALL = 1;
 $PERL_SECTIONS = 0;
 $PERL_SSI = 0;
@@ -202,7 +201,7 @@ my %PassEnv = map { $_,1 } qw(SSL_BASE);
 
 my @mp_args = (keys %PassEnv,
     qw(EXPERIMENTAL EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE 
-       APACHE_PREFIX APACHE_LAYOUT
+       APACHE_PREFIX
        USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT XS_IMPORT));
 
@@ -885,11 +884,6 @@ sub init_tests_and_config {
 	
 	$cmd .= "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
-
-	my $v = httpd_version($APACHE_SRC, 1); 
-	if($v >= 134 and $APACI_ARGS !~ /--with-layout=/) {
-	    $cmd .= " --with-layout=$APACHE_LAYOUT";
-	}
 
 	if($USE_DSO) {
 	    $cmd .= " --enable-shared=perl";
@@ -1749,10 +1743,12 @@ EOF
 sub write_version_h {
     my $d = shift;
     unlink "$d/mod_perl_version.h";
+    my $pv = perl_version();
     local *FH;
     open FH, ">$d/mod_perl_version.h" or die "can't write $d/mod_perl_version.h $!";
     print FH <<EOF;
 #define MOD_PERL_STRING_VERSION "mod_perl/$VERSION"
+#define PERLV $pv
 EOF
     close FH;
 }

@@ -212,7 +212,7 @@ cmd(parms)
     Apache::CmdParms parms
 
     CODE:				   
-    RETVAL = parms->cmd;
+    RETVAL = (Apache__Command)parms->cmd;
 
     OUTPUT:
     RETVAL

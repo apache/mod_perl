@@ -44,6 +44,12 @@
 #endif
 #include "XSUB.h"
 
+#ifndef MOD_PERL_STRING_VERSION
+#include "mod_perl_version.h"
+#endif
+#ifndef MOD_PERL_VERSION
+#define MOD_PERL_VERSION "TRUE"
+#endif
 
 /* patchlevel.h causes a -Wall warning, 
  * plus chance that another patchlevel.h might be in -I paths
@@ -79,13 +85,6 @@
   host->PerlDestroy()
 
 #define perl_free(host)
-#endif
-
-#ifndef MOD_PERL_STRING_VERSION
-#include "mod_perl_version.h"
-#endif
-#ifndef MOD_PERL_VERSION
-#define MOD_PERL_VERSION "TRUE"
 #endif
 
 /* perl hides it's symbols in libperl when these macros are 
