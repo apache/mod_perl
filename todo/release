@@ -125,8 +125,8 @@
     thread's size, can we use B::Size and B::TerseSize?
 
     prefork:
-        Apache::SizeLimit (???)
-        Apache::GTopLimit (???)
+        Apache::SizeLimit - Owner: perrin
+        Apache::GTopLimit - Owner: stas
     threaded:
         Garbage Collector thread
 
