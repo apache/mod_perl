@@ -19,6 +19,15 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * make test fails when a wrong combination of URI and LWP are
+      installed. (e.g. lwp 5.64 and URI 1.09). LWP's Makefile.PL
+      requires the right URI version, but certain binary distributors
+      miss this requirement and distribute LWP without making a
+      dependency on the right version of the URI package
+        Report: many reports in the last year.
+        Status: ???
+        Suggestion: require libwww-perl 5.64 and URI 1.1 
+
     * two identical directives in <Perl> configuration
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=97449481013350&w=2
 	Status: 
