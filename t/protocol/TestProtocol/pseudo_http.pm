@@ -136,23 +136,27 @@ sub quit {
 1;
 __END__
 <NoAutoConfig>
-  <VirtualHost TestProtocol::pseudo_http>
+<VirtualHost TestProtocol::pseudo_http>
 
-    PerlProcessConnectionHandler TestProtocol::pseudo_http
+  PerlProcessConnectionHandler TestProtocol::pseudo_http
 
-    <Location TestProtocol::pseudo_http>
-        <IfModule @ACCESS_MODULE@>
-            <IfModule @AUTH_MODULE@>
-                Order Deny,Allow
-                Allow from @servername@
-                Require user stas
-                Satisfy any
-                # htpasswd -mbc basic-auth stas foobar
-                # using md5 password so it'll work on win32 too
-                AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
-            </IfModule>
-        </IfModule>
-    </Location>
+  <Location TestProtocol::pseudo_http>
 
-  </VirtualHost>
+      <IfModule @ACCESS_MODULE@>
+          Order Deny,Allow
+          Allow from @servername@
+      </IfModule>
+
+      <IfModule @AUTH_MODULE@>
+          # htpasswd -mbc basic-auth stas foobar
+          # using md5 password so it'll work on win32 too
+          AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
+      </IfModule>
+
+      Require user stas
+      Satisfy any
+
+  </Location>
+
+</VirtualHost>
 </NoAutoConfig>
