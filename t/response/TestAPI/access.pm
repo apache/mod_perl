@@ -57,4 +57,8 @@ Options None
 Options Indexes FollowSymLinks
 AuthName modperl
 AuthType none
-IdentityCheck On
+
+# this directive was moved from core in Apache 2.1
+# since we're not testing that identd is running
+# anyway we probably don't need to include it at all
+#IdentityCheck On
