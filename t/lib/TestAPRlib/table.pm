@@ -14,10 +14,11 @@ use APR::Pool ();
 use APR::Const    -compile => ':table';
 
 use constant TABLE_SIZE => 20;
-my $filter_count;
+our $filter_count;
 
 sub test {
 
+    $filter_count = 0;
     my $pool = APR::Pool->new();
     my $table = APR::Table::make($pool, TABLE_SIZE);
 
