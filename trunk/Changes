@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+fixed bug in Apache::ModuleConfig->getline
+
 Segfaults when build with Ben-SSL 1.27, and trying to exec the gcache.
 [ Michael Shields <shields@crosslink.net> ]
 
