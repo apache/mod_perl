@@ -3,6 +3,7 @@ use Apache::RequestIO ();
 use Apache::RequestUtil ();
 
 use Apache::Server ();
+use Apache::ServerUtil ();
 use Apache::Connection ();
 use Apache::Log ();
 
@@ -22,6 +23,15 @@ my $apr_mods = scalar grep { /^APR/ } keys %INC;
 
 Apache::Log->info("$ap_mods Apache:: modules loaded");
 Apache::Server->log->info("$apr_mods APR:: modules loaded");
+
+{
+    my $server = Apache->server;
+    my $vhosts = 0;
+    for (my $s = $server->next; $s; $s = $s->next) {
+        $vhosts++;
+    }
+    $server->log->info("base server + $vhosts vhosts ready to run tests");
+}
 
 sub ModPerl::Test::read_post {
     my $r = shift;
