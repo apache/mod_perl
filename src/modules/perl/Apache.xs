@@ -1046,10 +1046,10 @@ log_error(...)
     if(items > 1+i) {
 	sv = newSV(0);
         do_join(sv, &sv_no, MARK+i, SP); /* $sv = join '', @_[1..$#_] */
-        errstr = SvPVX(sv);
+        errstr = SvPV(sv,na);
     }
     else
-        errstr = SvPVX(ST(i));
+        errstr = SvPV(ST(i),na);
 
     switch((ix = XSANY.any_i32)) {
 	case 0:
@@ -1079,9 +1079,9 @@ cgi_env(r, ...)
 
     PPCODE:
     if(items > 1) {
-	key = SvPVX(ST(1));
+	key = SvPV(ST(1),na);
 	if(items > 2) 
-	    table_set(r->subprocess_env, key, SvPVX(ST(2)));
+	    table_set(r->subprocess_env, key, SvPV(ST(2),na));
     }
 
     if(GIMME == G_ARRAY) {
@@ -1310,7 +1310,7 @@ status_line(r, ...)
     RETVAL = (char *)r->status_line;
 
     if(items > 1)
-        r->status_line = pstrdup(r->pool, (char *)SvPVX(ST(1)));
+        r->status_line = pstrdup(r->pool, (char *)SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1333,7 +1333,7 @@ method(r, ...)
     RETVAL = r->method;
 
     if(items > 1)
-        r->method = pstrdup(r->pool, (char *)SvPVX(ST(1)));
+        r->method = pstrdup(r->pool, (char *)SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1468,7 +1468,7 @@ cgi_header_out(r, key, ...)
 
     if(items > 2) {
 	int status = 302;
-	val = SvPVX(ST(2));
+	val = SvPV(ST(2),na);
         if(!strncasecmp(key, "Content-type", 12)) {
 	    r->content_type = pstrdup (r->pool, val);
 	}
@@ -1593,7 +1593,7 @@ handler(r, ...)
     RETVAL = r->handler;
 
     if(items > 1)
-        r->handler = pstrdup(r->pool, SvPVX(ST(1)));
+        r->handler = pstrdup(r->pool, SvPV(ST(1),na));
   
     OUTPUT:
     RETVAL
@@ -1606,7 +1606,7 @@ content_encoding(r, ...)
     RETVAL = r->content_encoding;
 
     if(items > 1)
-      r->content_encoding = pstrdup(r->pool, SvPVX(ST(1)));
+      r->content_encoding = pstrdup(r->pool, SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1619,7 +1619,7 @@ content_language(r, ...)
     RETVAL = r->content_language;
 
     if(items > 1)
-        r->content_language = pstrdup(r->pool, SvPVX(ST(1)));
+        r->content_language = pstrdup(r->pool, SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1671,7 +1671,7 @@ uri(r, ...)
     RETVAL = r->uri;
 
     if(items > 1)
-        r->uri = pstrdup(r->pool, SvPVX(ST(1)));
+        r->uri = pstrdup(r->pool, SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1684,7 +1684,7 @@ filename(r, ...)
     RETVAL = r->filename;
 
     if(items > 1) {
-        r->filename = pstrdup(r->pool, SvPVX(ST(1)));
+        r->filename = pstrdup(r->pool, SvPV(ST(1),na));
 #ifndef WIN32
 	stat(r->filename, &r->finfo);
 #endif
@@ -1700,7 +1700,7 @@ path_info(r, ...)
     RETVAL = r->path_info;
 
     if(items > 1)
-        r->path_info = pstrdup(r->pool, SvPVX(ST(1)));
+        r->path_info = pstrdup(r->pool, SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1719,7 +1719,7 @@ query_string(r, ...)
     XPUSHs(sv);
 
     if(items > 1)
-        r->args = pstrdup(r->pool, (char *)SvPVX(ST(1)));
+        r->args = pstrdup(r->pool, (char *)SvPV(ST(1),na));
 
 #  /* Various other config info which may change with .htaccess files
 #   * These are config vectors, with one void* pointer for each module
@@ -1738,7 +1738,7 @@ dir_config(r, svkey=Nullsv, ...)
     SV *caller = Nullsv;
 
     CODE:
-    if(svkey && (gv_stashpv(SvPVX(svkey), FALSE)))
+    if(svkey && (gv_stashpv(SvPV(svkey,na), FALSE)))
         caller = svkey;
 
     if((svkey == Nullsv) || caller) {
@@ -1932,7 +1932,7 @@ user(conn, ...)
     RETVAL = conn->user;
 
     if(items > 1)
-        conn->user = pstrdup(conn->pool, (char *)SvPVX(ST(1)));
+        conn->user = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
@@ -1945,7 +1945,7 @@ auth_type(conn, ...)
     RETVAL = conn->auth_type;
 
     if(items > 1)
-        conn->auth_type = pstrdup(conn->pool, (char *)SvPVX(ST(1)));
+        conn->auth_type = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
 
     OUTPUT:
     RETVAL
