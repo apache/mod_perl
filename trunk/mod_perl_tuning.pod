@@ -414,7 +414,7 @@ If you have contributions for this document, please post them to the
 mailing list.  Perl POD format is best, but plain text will do, too.
 
 If you need assistance, contact the mod_perl mailing list at
-modperl@apache.org first (send 'subscribe' to modperl-request@apache.org
+modperl@perl.apache.org first (send 'subscribe' to modperl-request@apache.org
 to subscribe). There are lots of people there that can help. Also, 
 check the web pages http://perl.apache.org/ and http://www.apache.org/
 for explanations of the configuration options.
