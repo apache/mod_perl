@@ -196,7 +196,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
 
         if(val != NULL) {
 	    MP_TRACE_d(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
-	    mp_SetEnv(key,val);
+	    mp_SetEnv(key,pstrdup(p,val));
         }
     }
 }    
