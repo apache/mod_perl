@@ -16,9 +16,15 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-From: David-Michael Lincke <mcm-techlists@unisg.ch>
-Subject: Unresolved symbol building mod_perl-1.15/Apache 1.3.1 with
-         certain handler combination
+From: andreas.koenig@kulturbox.de (Andreas J. Koenig)
+Subject: Bug in <Perl> sections
+
+- make 'make test_report' more useful
+
+- $r->header_out->get in list context
+
+- ap_scan_script_header_err_string? and/or update cgi_header_out to
+  take action on Last-Modified header
 
 - Apache::exit broken under Apache::PerlRun (not seen w/ package declaration)
 
