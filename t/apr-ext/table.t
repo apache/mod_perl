@@ -1,15 +1,9 @@
+use strict;
+use warnings FATAL => 'all';
 use Apache::Test;
 
-use blib;
-use Apache2;
+use TestAPRlib::table;
 
-plan tests => 1;
+plan tests => TestAPRlib::table::number();
 
-require APR;
-require APR::Table;
-require APR::Pool;
-
-my $p = APR::Pool->new;
-
-my $table = APR::Table::make($p, 2);
-ok ref $table eq 'APR::Table';
+TestAPRlib::table::test();
