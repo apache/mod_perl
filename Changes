@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+workaround Cwd bug in 5.8.0-RC1 that breaks apache configuration on solaris
+
 fix get_set_PVp() to properly set NULL values when passing in undef
 thanks to Lyle Brooks for the spot
 [Stephen Clouse <stephenc@theiqgroup.com>]
