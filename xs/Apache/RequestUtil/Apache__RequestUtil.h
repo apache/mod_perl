@@ -43,13 +43,18 @@ SV *mpxs_Apache__RequestRec_get_handlers(request_rec *r,
 
 static MP_INLINE
 request_rec *mpxs_Apache__RequestRec_new(SV *classname,
-                                         conn_rec *c)
+                                         conn_rec *c,
+                                         apr_pool_t *base_pool)
 {
     apr_pool_t *p;
     request_rec *r;
     server_rec *s = c->base_server;
 
-    apr_pool_create(&p, c->pool);
+    if (!base_pool) {
+        base_pool = c->pool;
+    }
+
+    apr_pool_create(&p, base_pool);
     r = apr_pcalloc(p, sizeof(request_rec));
 
     r->pool = p;

@@ -9,7 +9,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_location_merge
  mpxs_Apache__RequestRec_set_basic_credentials
 PACKAGE=Apache::RequestRec
- mpxs_Apache__RequestRec_new
+ mpxs_Apache__RequestRec_new | | classname, c, base_pool=NULL
 
 MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  SV *:DEFINE_TIEHANDLE   | | SV *:stashsv, SV *:sv=Nullsv

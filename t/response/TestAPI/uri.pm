@@ -41,7 +41,7 @@ sub handler {
 
     ok $parsed->path eq $path;
 
-    my $newr = Apache::RequestRec->new($r->connection);
+    my $newr = Apache::RequestRec->new($r->connection, $r->pool);
     my $url_string = "$path?query";
 
     $newr->parse_uri($url_string);
