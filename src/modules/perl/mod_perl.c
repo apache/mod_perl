@@ -84,8 +84,8 @@ CPerlObj *pPerl;
 
 static command_rec perl_cmds[] = {
 #ifdef PERL_SECTIONS
-    { "<Perl>", perl_section, NULL, OR_ALL, RAW_ARGS, "Perl code" },
-    { "</Perl>", perl_end_section, NULL, OR_ALL, NO_ARGS, "End Perl code" },
+    { "<Perl>", perl_section, NULL, SECTION_ALLOWED, RAW_ARGS, "Perl code" },
+    { "</Perl>", perl_end_section, NULL, SECTION_ALLOWED, NO_ARGS, "End Perl code" },
 #endif
     { "=pod", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "Start of POD" },
     { "=back", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "End of =over" },
