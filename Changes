@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.21_04-dev
+=item 1.22 - March 22, 2000
 
 proxy support fixed wrt RFC2068, thanks to Benjamin Elijah
 Griffin for the spot
