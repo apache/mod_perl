@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+Solving an 'uninitialized value' warn in Apache::SizeLimit.
+post_connection() expects a return status from the callback function.
+[Stas Bekman <sbekman@stason.org>]
+
 include mod_perl hook/feature config in Apache::MyConfig
 [Geoffrey Young <gyoung@laserlink.net>]
 
