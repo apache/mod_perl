@@ -1156,7 +1156,14 @@ subprocess_env(r, key=NULL, ...)
     Apache    r
     char *key
 
+    PREINIT:
+    I32 gimme = GIMME_V;
+ 
     CODE:
+    if(gimme == G_VOID) {
+        (void)perl_cgi_env_init(r);
+        XSRETURN_UNDEF;
+    }
     TABLE_GET_SET(r->subprocess_env, FALSE);
 
     OUTPUT:
