@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+new Apache::PerlRun::flush_namespace method to undef() each [SAHC]V
+entry, rather than a blind clear (which triggered cores, e.g. sort)
+
 $r->custom_response will now return the current ErrorDocument
 
 Semicolon support in $r->args [ Eric Cholet <cholet@logilune.com> ]
