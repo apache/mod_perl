@@ -313,7 +313,7 @@ if(key == NULL) { \
 } \
 else { \
     char *val; \
-    if(table && (val = table_get(table, key))) \
+    if(table && (val = (char *)table_get(table, key))) \
 	RETVAL = newSVpv(val, 0); \
     else \
         RETVAL = newSV(0); \
@@ -1162,7 +1162,7 @@ cgi_env(r, ...)
         }
     }
     else if(key) {
-	char *value = table_get(r->subprocess_env, key);
+	char *value = (char *)table_get(r->subprocess_env, key);
 	XPUSHs(value ? sv_2mortal((SV*)newSVpv(value, 0)) : &sv_undef);
     }
     else
@@ -1369,7 +1369,7 @@ hostname(r)
     Apache	r
 
     CODE:
-    RETVAL = r->hostname;
+    RETVAL = (char *)r->hostname;
 
     OUTPUT:
     RETVAL
@@ -1556,7 +1556,7 @@ cgi_header_out(r, key, ...)
     char *val;
 
     CODE:
-    if((val = table_get(r->headers_out, key))) 
+    if((val = (char *)table_get(r->headers_out, key))) 
 	RETVAL = newSVpv(val, 0);
     else
         RETVAL = newSV(0);
@@ -1681,7 +1681,7 @@ content_type(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->content_type;
+    RETVAL = (char *)r->content_type;
 
     if(items > 1)
         r->content_type = pstrdup(r->pool, SvPV(ST(1), na));
@@ -1694,7 +1694,7 @@ handler(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->handler;
+    RETVAL = (char *)r->handler;
 
     if(items > 1)
         r->handler = (ST(1) == &sv_undef) ? 
@@ -1708,7 +1708,7 @@ content_encoding(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->content_encoding;
+    RETVAL = (char *)r->content_encoding;
 
     if(items > 1)
       r->content_encoding = pstrdup(r->pool, SvPV(ST(1),na));
@@ -1721,7 +1721,7 @@ content_language(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->content_language;
+    RETVAL = (char *)r->content_language;
 
     if(items > 1)
         r->content_language = pstrdup(r->pool, SvPV(ST(1),na));

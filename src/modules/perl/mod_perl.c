@@ -227,7 +227,7 @@ static void seqno_check_max(request_rec *r, int seqno)
     }
     else {
       if(cld->vars)
-	  max = table_get(cld->vars, "MaxModPerlRequestsPerChild");
+	  max = (char *)table_get(cld->vars, "MaxModPerlRequestsPerChild");
     }
 
 #if (MODULE_MAGIC_NUMBER >= 19970912) && !defined(WIN32)
@@ -943,10 +943,11 @@ int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)
 		MP_TRACE_h(fprintf(stderr, 
 				   "pushing `%s' into `%s' handlers\n", 
 				   SvPV(sub,na), hook));
-	    else
+	    else {
 		MP_TRACE_d(fprintf(stderr, 
 				   "pushing `%s' into `%s' handlers\n", 
 				   SvPV(sub,na), hook));
+	    }
 	}
 	else {
 	    warn("mod_perl_push_handlers: Not a subroutine name or CODE reference!");
@@ -1049,7 +1050,7 @@ void perl_per_request_init(request_rec *r)
 
     /* SetEnv PERL5LIB */
     if(!MP_INCPUSH(cld)) {
-	char *path = table_get(r->subprocess_env, "PERL5LIB");
+	char *path = (char *)table_get(r->subprocess_env, "PERL5LIB");
 	if(path) {
 	    perl_incpush(path);
 	    MP_INCPUSH_on(cld);
