@@ -24,6 +24,7 @@ sub pre_connection {
 
     return Apache::OK;
 }
+
 sub in_filter : FilterConnectionHandler {
     my $filter = shift;
 
