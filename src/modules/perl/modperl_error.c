@@ -36,10 +36,10 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
         /* apache apr errors */
         ptr = apr_strerror(rc, buf, sizeof(buf));
     }
-    
         
     /* must copy the string and not return a pointer to the local
-     * address */
+     * address. Using a single (per interpreter) static buffer.
+     */
     return Perl_form(aTHX_ "%s", ptr);
 }
 
