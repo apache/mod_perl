@@ -24,18 +24,21 @@ sub handler {
     # read/write timeouts
     $socket->timeout_set(20_000_000);
 
-    my ($buff, $rlen, $wlen, $rc);
-    for (;;) {
-        $rlen = BUFF_LEN;
-        $rc = $socket->recv($buff, $rlen);
-        die "timeout on socket read" if $rc == APR::TIMEUP;
-        last if $rlen <= 0;
+    while (1) {
+        my $buff = eval { $socket->recv(BUFF_LEN) };
+        if ($@) {
+            die "timed out, giving up: $@" if $@ == APR::TIMEUP;
+            die $@;
+        }
 
-        $wlen = $rlen;
-        $rc = $socket->send($buff, $wlen);
-        die "timeout on socket write" if $rc == APR::TIMEUP;
+        last unless length $buff; # EOF
 
-        last if $wlen != $rlen;
+        my $wlen = eval { $socket->send($buff) };
+        if ($@) {
+            die "timed out, giving up: $@" if $@ == APR::TIMEUP;
+            die $@;
+        }
+        last if $wlen != length $buff; # write failure?
     }
 
     Apache::OK;

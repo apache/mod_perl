@@ -12,7 +12,7 @@ use Apache::Connection ();
 use APR::Socket ();
 
 use Apache::Const -compile => 'OK';
-use APR::Const    -compile => qw(SO_NONBLOCK);
+use APR::Const    -compile => qw(SO_NONBLOCK TIMEUP EOF);
 
 use constant BUFF_LEN => 1024;
 
@@ -32,16 +32,12 @@ sub handler {
             or die "failed to set non-blocking mode";
     }
 
-    my ($buff, $rlen, $wlen);
-    for (;;) {
-        $rlen = BUFF_LEN;
-        $socket->recv($buff, $rlen);
-        last if $rlen <= 0;
+    while (1) {
+        my $buff = $socket->recv(BUFF_LEN);
+        last unless length $buff; # EOF
 
-        $wlen = $rlen;
-        $socket->send($buff, $wlen);
-
-        last if $wlen != $rlen;
+        my $wlen = $socket->send($buff);
+        last if $wlen != length $buff; # write failure?
     }
 
     Apache::OK;

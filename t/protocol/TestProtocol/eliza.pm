@@ -18,19 +18,16 @@ sub handler {
     my Apache::Connection $c = shift;
     my APR::Socket $socket = $c->client_socket;
 
-    my $buff;
     my $last = 0;
-    for (;;) {
-        my($rlen, $wlen);
-        $rlen = BUFF_LEN;
-        $socket->recv($buff, $rlen);
-        last if $rlen <= 0;
-        
+    while (1) {
+        my $buff = $socket->recv(BUFF_LEN);
+        last unless length $buff; # EOF
+
         # \r is sent instead of \n if the client is talking over telnet
         $buff =~ s/[\r\n]*$//;
         $last++ if $buff eq "Good bye, Eliza";
         $buff = $mybot->transform( $buff ) . "\n";
-        $socket->send($buff, length $buff);
+        $socket->send($buff);
         last if $last;
     }
 

@@ -44,7 +44,8 @@ MODULE=APR::Socket
 !apr_socket_accept
  apr_socket_listen
  apr_socket_connect
- apr_socket_recv | mpxs_ | sock, SV *:buf, SV *:len
+-apr_socket_recv | mpxs_
+ mpxs_APR__Socket_recv
  apr_socket_recvfrom
  apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
  apr_socket_sendto
@@ -455,7 +456,10 @@ MODULE=APR::Util PACKAGE=guess
 -apr_vsnprintf
 # only available if APR_HAS_RANDOM
 -apr_generate_random_bytes
- apr_strerror              | MPXS_ | statcode
+
+MODULE=APR::Error
+-apr_strerror
+ char *:DEFINE_strerror | | apr_status_t:rc
 
 !MODULE=APR::General
 -apr_app_initialize
