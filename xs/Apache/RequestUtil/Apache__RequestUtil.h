@@ -54,17 +54,21 @@ SV *mpxs_Apache__RequestRec_get_handlers(pTHX_ request_rec *r,
  */
 
 static MP_INLINE
-request_rec *mpxs_Apache__RequestRec_new(SV *classname,
-                                         conn_rec *c,
-                                         apr_pool_t *base_pool)
+SV *mpxs_Apache__RequestRec_new(pTHX_ SV *classname,
+                                conn_rec *c,
+                                SV *base_pool_sv)
 {
-    apr_pool_t *p;
+    apr_pool_t *p, *base_pool;
     request_rec *r;
     server_rec *s = c->base_server;
+    SV *r_sv;
 
     /* see: httpd-2.0/server/protocol.c:ap_read_request */
 
-    if (!base_pool) {
+    if (base_pool_sv) {
+        base_pool = mp_xs_sv2_APR__Pool(base_pool_sv);
+    }
+    else {
         base_pool = c->pool;
     }
 
@@ -113,7 +117,13 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     r->assbackwards    = 1;
     r->protocol        = "UNKNOWN";
 
-    return r;
+    r_sv = sv_setref_pv(NEWSV(0, 0), "Apache::RequestRec", (void*)r);
+
+    if (base_pool_sv) {
+        mpxs_add_pool_magic(r_sv, base_pool_sv);
+    }
+    
+    return r_sv;
 }
 
 static MP_INLINE

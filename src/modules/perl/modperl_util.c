@@ -154,7 +154,9 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         return r;
     }
 
-    if ((mg = mg_find(sv, PERL_MAGIC_ext))) {
+    /* there could be pool magic attached to custom $r object, so make
+     * sure that mg->mg_ptr is set */
+    if ((mg = mg_find(sv, PERL_MAGIC_ext)) && mg->mg_ptr) {
         return (request_rec *)mg->mg_ptr;
     }
     else {
