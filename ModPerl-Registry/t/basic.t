@@ -32,7 +32,7 @@ for my $alias (@aliases) {
     );
 }
 
-# test non-executable bit
+# test non-executable bit (it should be executed w/o a problem)
 for my $alias (@aliases) {
     if (Apache::TestConfig::WIN32) {
         skip "non-executable bit test for Win32", 0;
@@ -42,8 +42,8 @@ for my $alias (@aliases) {
 
     t_client_log_error_is_expected();
     ok t_cmp(
-        HEAD($url)->status_line(),
-        "403 Forbidden",
+        HEAD($url)->code,
+        200,
         "$modules{$alias} non-executable file",
     );
 }

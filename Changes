@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+ModPerl::Registry no longer checks for -x bit (we don't executed
+scripts anyway), and thus works on acl-based filesystems. Also
+replaced the -r check with a proper error handling when the file is
+read in. [Damon Buckwalter <buckwad@gmail.com>]
+
 Apache::RequestUtil::slurp_filename now throws an APR::Error exception
 object (before it was just croaking). [Stas]
 
