@@ -2306,6 +2306,17 @@ EOF
 	}
     }
 
+    if ($^O eq 'hpux' and ($USE_DSO or $USE_APXS) and $Config{ld} eq 'ld') {
+        unless ($ccflags =~ /\+z/i) {
+            my $switch = $] >= 5.006 ? 'A' : 'D';
+            phat_warn(<<EOF);
+mod_perl is unlikely to link with your libperl, suggestions:
+    *) Rebuild Perl with Configure -${switch}ccflags=+Z ...
+    *) Build mod_perl static rather than DSO
+EOF
+        }
+    }
+
     gdbm_check();
     malloc_check();
     uselargefiles_check();
