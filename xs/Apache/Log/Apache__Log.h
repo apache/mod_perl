@@ -181,7 +181,7 @@ static XS(MPXS_Apache__Log_dispatch)
     XSRETURN_EMPTY;
 }
 
-static XS(MPXS_Apache_LOG_MARK)
+static XS(MPXS_Apache__Log_LOG_MARK)
 {
     dXSARGS;
     ax = ax; /* -Wall */;
