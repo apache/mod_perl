@@ -1210,9 +1210,25 @@ sub typemaps {
 
 sub includes {
     my $self = shift;
+
+    my @inc = ();
+
+    unless (IS_MOD_PERL_BUILD) {
+        # XXX: what if apxs is not available? win32?
+        my $ap_inc = $self->apxs('-q' => 'INCLUDEDIR');
+        if ($ap_inc && -d $ap_inc) {
+            push @inc, $ap_inc;
+        } else {
+            # this is fatal
+            die "Can't find the mod_perl include dir";
+        }
+
+        return \@inc;
+    }
+
     my $src  = $self->dir;
     my $os = WIN32 ? 'win32' : 'unix';
-    my @inc = $self->file_path("src/modules/perl", "xs");
+    push @inc, $self->file_path("src/modules/perl", "xs");
 
     push @inc, $self->mp_include_dir;
 
