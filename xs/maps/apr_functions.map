@@ -450,7 +450,8 @@ MODULE=APR::Util PACKAGE=guess
 -apr_snprintf
 -apr_vformatter
 -apr_vsnprintf
- apr_generate_random_bytes | MPXS_ | length
+# only available if APR_HAS_RANDOM
+-apr_generate_random_bytes
  apr_strerror              | MPXS_ | statcode
 
 !MODULE=APR::General
