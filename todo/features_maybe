@@ -2,6 +2,16 @@
 # Nice to have features #
 #########################
 
+* If Apache::SubRequest::DESTROY gets invoked more than once on the
+  same object (directly and indirectly via object's exit of scope),
+  memory gets corrupted and some later unrelated requests get affected
+  badly (segfaults in unrelated areas). So we probably need to do the
+  same handling as APR::Pool, where we make sure that no matter how
+  DESTROY is called, it's always called only once, any consequent
+  calls can be made a NOP or assert. BTW, it's easy to reproduce the
+  problem, by simply calling $subrequest->DESTROY 3 times or so in a
+  raw, the server just hangs...
+
 * APR::BucketAlloc object returned by $r->connection->bucket_alloc
   doesn't have a real package. It's OK for now, but when used outside
   httpd, where that allocation should come from?
