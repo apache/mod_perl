@@ -36,16 +36,17 @@ char *mpxs_apr_uri_unparse(pTHX_
 }
 
 static MP_INLINE
-apr_uri_t *mpxs_apr_uri_parse(pTHX_
-                              SV *classname,
-                              apr_pool_t *p,
-                              const char *uri_string)
+SV *mpxs_apr_uri_parse(pTHX_ SV *classname, SV *p_sv, const char *uri_string)
 {
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     modperl_uri_t *uri = modperl_uri_new(p);
 
     (void)apr_uri_parse(p, uri_string, &uri->uri);
 
-    return (apr_uri_t *)uri;
+    SV *uri_sv = sv_setref_pv(NEWSV(0, 0), "APR::URI", (void*)uri);
+    mpxs_add_pool_magic(uri_sv, p_sv);
+    
+    return uri_sv;
 }
 
 static MP_INLINE
