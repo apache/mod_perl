@@ -1031,6 +1031,11 @@ The result is "bar", not the "SCALAR(0xDEADBEEF)" you might have expected. If
 you really want the reference to be printed out, force it into a scalar
 context by using C<print(scalar($foo))>.
 
+The print-a-scalar-reference feature is now deprecated. There are
+known bugs when using it and it's not supported by mod_perl 2.0. If
+you have a scalar reference containing a string to be printed,
+dereference it before sending it to print.
+
 =item $r-E<gt>send_fd( $filehandle )
 
 Send the contents of a file to the client.  Can for instance be used

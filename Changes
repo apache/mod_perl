@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.30_01-dev
 
+The print-a-scalar-reference feature is now deprecated and documented
+as such [Stas]
+
 fix "PerlSetVar Foo 0" so that $r->dir_config('Foo') returns 0, not undef
 [Geoffrey Young]
 
