@@ -1,6 +1,6 @@
 #include "mod_perl.h"
 
-void modperl_startup(server_rec *s, ap_pool_t *p)
+PerlInterpreter *modperl_startup(server_rec *s, ap_pool_t *p)
 {
     MP_dSCFG(s);
     PerlInterpreter *perl;
@@ -39,12 +39,60 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
     );
 #endif
 
-    modperl_interp_init(s, p, perl);
+    return perl;
 }
 
 void modperl_init(server_rec *s, ap_pool_t *p)
 {
-    modperl_startup(s, p);
+    server_rec *base_server = s;
+    server_rec *srvp;
+    PerlInterpreter *base_perl = modperl_startup(base_server, p);
+    modperl_interp_init(base_server, p, base_perl);
+
+    {
+        MP_dSCFG(base_server);
+        MpInterpBASE_On(scfg->mip->parent);
+    }
+
+    for (srvp=base_server->next; srvp; srvp=srvp->next) {
+        MP_dSCFG(srvp);
+        PerlInterpreter *perl = base_perl;
+
+        if (1) {
+            /* XXX: using getenv() just for testing here */
+            char *do_alloc = getenv("MP_SRV_ALLOC_TEST");
+            char *do_clone = getenv("MP_SRV_CLONE_TEST");
+            if (do_alloc && strEQ(do_alloc, srvp->server_hostname)) {
+                MpSrvPERL_ALLOC_On(scfg);
+            }
+            if (do_clone && strEQ(do_clone, srvp->server_hostname)) {
+                MpSrvPERL_CLONE_On(scfg);
+            }
+        }
+
+        /* if alloc flags is On, virtual host gets its own parent perl */
+        if (MpSrvPERL_ALLOC(scfg)) {
+            perl = modperl_startup(srvp, p);
+            MP_TRACE_i(MP_FUNC, "modperl_startup() server=%s\n",
+                       srvp->server_hostname);
+        }
+
+#ifdef USE_ITHREADS
+        /* if alloc flags is On or clone flag is On,
+         *  virtual host gets its own mip
+         */
+        if (MpSrvPERL_ALLOC(scfg) || MpSrvPERL_CLONE(scfg)) {
+            MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
+                       srvp->server_hostname);
+            modperl_interp_init(srvp, p, perl);
+        }
+
+        /* if we allocated a parent perl, mark it to be destroyed */
+        if (MpSrvPERL_ALLOC(scfg)) {
+            MpInterpBASE_On(scfg->mip->parent);
+        }
+#endif
+    }
 }
 
 void modperl_hook_init(ap_pool_t *pconf, ap_pool_t *plog, 

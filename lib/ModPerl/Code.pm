@@ -82,9 +82,10 @@ while (my($k,$v) = each %directive_proto) {
 }
 
 my %flags = (
-    Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART)],
+    Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART
+               PERL_CLONE PERL_ALLOC)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
-    Interp => [qw(NONE IN_USE PUTBACK CLONED)],
+    Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
 );
 

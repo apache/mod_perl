@@ -106,10 +106,16 @@ ap_status_t modperl_interp_pool_destroy(void *data)
     modperl_tipool_destroy(mip->tipool);
     mip->tipool = NULL;
 
-    MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
-               (unsigned long)mip->parent);
+    if (MpInterpBASE(mip->parent)) {
+        /* multiple mips might share the same parent
+         * make sure its only destroyed once
+         */
+        MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
+                   (unsigned long)mip->parent);
 
-    modperl_interp_destroy(mip->parent);
+        modperl_interp_destroy(mip->parent);
+    }
+
     mip->parent->perl = NULL;
 
     return APR_SUCCESS;
