@@ -489,10 +489,10 @@ sub perl_version_check {
     $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1." . ($2||0)/e;
     my $perl_threads = Apache::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
     my $perl_string = "Using Perl $perl_version $perl_threads ithreads";
+    my $mpm = $build->mpm_name();
 
     # certain mpms require perl 5.8.0+ w/ithreads
     if ($build->mpm_is_threaded()) {
-        my $mpm = $build->mpm_name();
         my @fail;
         push @fail, "Perl 5.8 or higher"
             unless $] >= 5.008;
@@ -503,6 +503,18 @@ sub perl_version_check {
                 "Failed requirements:",
                 join "", map {"  - $_\n"} @fail;
             exit 1;
+        }
+    }
+    else {
+        # before 5.8.2, perl_shutdown is incomplete (in the case of ithreads 
+        # each PerlInterpreter * gets tossed so it works)
+        if ($build->should_build_apache && !Apache::Build::PERL_HAS_ITHREADS) {
+            # before 5.8.2, perl_shutdown is incomplete
+            if ($] < 5.008_002) {
+                error "static $mpm mpm requires a threaded ".
+                      "perl 5.6.1-5.8.1 or any perl 5.8.2+";
+                exit 1;
+            }
         }
     }
 
