@@ -15,6 +15,7 @@ my $res = POST $location, content => $expected;
 
 my $received = $res->content;
 #t_debug($received);
+
 if ($res->header('Content-Encoding') =~ /gzip/) {
     require Compress::Zlib;
 
