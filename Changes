@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+fix APR::Error's overload of '==' (it was always returning true
+before), and add the corresponding '!=' [Stas]
+
 if $r->document_root was modified, restore it at the end of request
 [joes]
 

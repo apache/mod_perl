@@ -6,7 +6,8 @@ use APR::Util ();
 use overload
     nomethod => \&fatal,
     'bool'   => \&str,
-    '=='     => \&num,
+    '=='     => \&num_cmp,
+    '!='     => \&num_cmp_not,
     '0+'     => \&num,
     '""'     => \&str;
 
@@ -37,6 +38,9 @@ sub str {
 
 sub num { $_[0]->{rc} }
 
+sub num_cmp     { $_[0]->{rc} == $_[1] }
+sub num_cmp_not { $_[0]->{rc} != $_[1] }
+
 # skip the wrappers from this package from the long callers trace
 $Carp::CarpInternal{+__PACKAGE__}++;
 
@@ -63,6 +67,3 @@ sub confess {
         &Carp::confess;
     }
 }
-
-1;
-__END__

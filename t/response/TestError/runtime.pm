@@ -11,7 +11,7 @@ use APR::Socket ();
 use Apache::TestUtil;
 
 use Apache::Const -compile => qw(OK);
-use APR::Const    -compile => qw(TIMEUP);
+use APR::Const    -compile => qw(EACCES EAGAIN);
 
 use constant SIZE => 2048;
 
@@ -30,6 +30,30 @@ sub handler {
     $args->($r, $socket);
 
     return Apache::OK;
+}
+
+sub overload_test {
+    my($r, $socket) = @_;
+
+    eval { mp_error($socket) };
+
+    die "there should have been an exception" unless $@;
+
+    die "the exception should have been an APR::Error object"
+        unless ref $@ eq 'APR::Error';
+
+    # == && != (expecting APR::EAGAIN error)
+    die "'==' overload is broken" unless $@ == APR::EAGAIN;
+    die "'==' overload is broken" unless APR::EAGAIN == $@;
+    die "'==' overload is broken" unless $@ == $@;
+    die "'!=' overload is broken" unless $@ != APR::EACCES;
+    die "'!=' overload is broken" unless APR::EACCES != $@;
+    die "'!=' overload is broken" if     $@ != $@;
+
+    # XXX: add more overload tests
+
+    $r->print("ok overload_test");
+
 }
 
 sub plain_mp_error {
@@ -78,7 +102,7 @@ sub eval_block_mp_error {
     # throw in some retry attempts
     my $tries = 0;
     RETRY: eval { mp_error($socket) };
-    if ($@ && ref($@) && $@ == APR::TIMEUP) {
+    if ($@ && ref($@) && $@ == APR::EAGAIN) {
         if ($tries++ < 3) {
             goto RETRY;
         }
@@ -94,7 +118,7 @@ sub eval_block_mp_error {
 sub eval_string_mp_error {
     my($r, $socket) = @_;
     eval '$socket->recv(my $buffer, SIZE)';
-    if ($@ && ref($@) && $@ == APR::TIMEUP) {
+    if ($@ && ref($@) && $@ == APR::EAGAIN) {
         $r->print("ok eval_string_mp_error");
     }
     else {
