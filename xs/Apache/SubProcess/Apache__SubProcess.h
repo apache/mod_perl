@@ -180,7 +180,7 @@ static XS(MPXS_modperl_spawn_proc_prog)
             apr_file_to_glob =
                 APR_RETRIEVE_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
 
-            if (GIMME == G_SCALAR) {
+            if (GIMME_V == G_SCALAR) {
                 /* XXX: need to do lots of error checking before
                  * putting the object on the stack
                  */
