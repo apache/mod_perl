@@ -15,6 +15,9 @@
 
 #include "modperl_bucket.h"
 
+#define mpxs_APR__Bucket_delete  apr_bucket_delete
+#define mpxs_APR__Bucket_destroy apr_bucket_destroy
+
 static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
                                         apr_off_t offset, apr_size_t len)
 {
