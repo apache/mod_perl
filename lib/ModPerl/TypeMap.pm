@@ -143,10 +143,14 @@ sub can_map {
 
 sub map_arg {
     my($self, $arg) = @_;
+
+    my $map_type = $self->map_type($arg->{type});
+    die "unknown typemap: '$arg->{type}'" unless defined $map_type;
+
     return {
        name    => $arg->{name},
        default => $arg->{default},
-       type    => $self->map_type($arg->{type}),
+       type    => $map_type,
        rtype   => $arg->{type},
     }
 }
