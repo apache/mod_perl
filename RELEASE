@@ -46,18 +46,29 @@ Instructions for mod_perl 2.0 Release Manager
 
   b. ssh to www.apache.org, unpack the package, update symlinks to the
      tar ball and unpacked distro:
+
     % ssh www.apache.org
     % cd /www/perl.apache.org/dist/
-    % ln -sf /www/perl.apache.org/dist/mod_perl-1.99_12.tar.gz \
-      /www/perl.apache.org/dist/mod_perl-2.0-current.tar.gz
+    % ln -sf mod_perl-1.99_12.tar.gz mod_perl-2.0-current.tar.gz
     % tar -xzvf mod_perl-1.99_12.tar.gz
     % rm /www/perl.apache.org/dist/mod_perl-2.0-current
-    % ln -sf /www/perl.apache.org/dist/mod_perl-1.99_12 \
-      /www/perl.apache.org/dist/mod_perl-2.0-current
+    % ln -sf mod_perl-1.99_12 mod_perl-2.0-current
 
-  c. remove releases older by 2 subversions (keep the last one)
+  c. archive older releases (keep current + one prior release)
 
-  d. update the version and release date
+    % mv /www/perl.apache.org/dist/mod_perl-1.99_10.tar.gz \
+         /www/perl.apache.org/dist/old
+    % mv /www/perl.apache.org/dist/mod_perl-1.99_10.tar.gz.asc \
+         /www/perl.apache.org/dist/old
+    % rm -rf /www/perl.apache.org/dist/mod_perl-1.99_10
+
+  d. make sure that the files you just created are group rw so
+     all the dist admins can make changes:
+
+    % find /www/perl.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
+    % find /www/perl.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
+
+  e. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
      automatically updated within 6 hours. Alternatively you can do a
      manual update by logging into www.apache.org and running:
@@ -89,9 +100,9 @@ Instructions for mod_perl 2.0 Release Manager
 
     % scp mod_perl-1.99_12.tar.gz.asc www.apache.org:/www/perl.apache.org/dist/
     % ssh www.apache.org
-    % chmod 0664 /www/perl.apache.org/dist/mod_perl-1.99_12.tar.gz.asc
-    % ln -sf /www/perl.apache.org/dist/mod_perl-1.99_12.tar.gz.asc \
-      /www/perl.apache.org/dist/mod_perl-2.0-current.tar.gz.asc
+    % cd /www/perl.apache.org/dist/
+    % chmod 0664 mod_perl-1.99_12.tar.gz.asc
+    % ln -sf mod_perl-1.99_12.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
 
   c. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
@@ -100,7 +111,11 @@ Instructions for mod_perl 2.0 Release Manager
 
     % pgpv mod_perl-1.99_12.tar.gz.asc
 
-8. Prepare for the next cycle
+8. Distribute to www.apache.org/dist/perl
+
+   a. TBD
+
+9. Prepare for the next cycle
 
   a. increment version in lib/mod_perl.pm
 
