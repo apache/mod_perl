@@ -6,6 +6,7 @@ use warnings FATAL => 'all';
 use Apache::Log ();
 use Apache::Test;
 use Apache::Const -compile => ':log';
+use APR::Const -compile => ':error';
 
 my @LogLevels = qw(emerg alert crit error warn notice info debug);
 my $package = __PACKAGE__;
@@ -35,6 +36,15 @@ sub handler {
         ok sub { $rlog->can($method) };
         ok sub { $slog->can($method) };
     }
+
+    $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG, 0,
+                   "log_serror test ok");
+
+    $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG,
+                   APR::ENOTIME, "log_serror test 2 ok");
+
+    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_DEBUG|Apache::LOG_NOERRNO,
+                   APR::ENOTIME, "log_rerror test ok");
 
     $s->loglevel(Apache::LOG_INFO);
     $slog->debug(sub { die "set loglevel no workie" });

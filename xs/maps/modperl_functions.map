@@ -45,9 +45,13 @@ DEFINE_crit   | MPXS_Apache__Log_dispatch | ...
 
 PACKAGE=Apache::RequestRec
 SV *:DEFINE_log | | SV *:obj
+SV *:DEFINE_log_rerror | MPXS_Apache__Log_log_error | ...
 
 PACKAGE=Apache::Server
 SV *:DEFINE_log | | SV *:obj
+#using `log_serror' rather than `log_error' to avoid name conflict
+#with 1.xx version
+SV *:DEFINE_log_serror | MPXS_Apache__Log_log_error | ...
 
 PACKAGE=Apache
 
