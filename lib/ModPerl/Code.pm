@@ -37,27 +37,32 @@ my %hook_proto = (
     Process    => {
         ret  => 'void',
         args => [{type => 'apr_pool_t', name => 'p'},
-                 {type => 'server_rec', name => 's'}],
+                 {type => 'server_rec', name => 's'},
+                 {type => 'dummy', name => 'VOID'}],
     },
     Files      => {
         ret  => 'int',
         args => [{type => 'apr_pool_t', name => 'pconf'},
                  {type => 'apr_pool_t', name => 'plog'},
                  {type => 'apr_pool_t', name => 'ptemp'},
-                 {type => 'server_rec', name => 's'}],
+                 {type => 'server_rec', name => 's'},
+                 {type => 'dummy', name => 'RUN_ALL'}],
     },
     PerSrv     => {
         ret  => 'int',
-        args => [{type => 'request_rec', name => 'r'}],
+        args => [{type => 'request_rec', name => 'r'}, 
+                 {type => 'dummy', name => 'RUN_ALL'}],
     },
     Connection => {
         ret  => 'int',
-        args => [{type => 'conn_rec', name => 'c'}],
+        args => [{type => 'conn_rec', name => 'c'},
+                 {type => 'dummy', name => 'RUN_FIRST'}],
     },
     PreConnection => {
         ret  => 'int',
         args => [{type => 'conn_rec', name => 'c'},
-                 {type => 'void', name => 'csd'}],
+                 {type => 'void', name => 'csd'},
+                 {type => 'dummy', name => 'RUN_ALL'}],
     },
 );
 
@@ -210,6 +215,12 @@ sub generate_handler_hooks {
 
             my($protostr, $pass) = canon_proto($prototype, $name);
             my $ix = $self->{handler_index}->{$class}->[$i];
+
+            if ($callback =~ m/modperl_callback_per_(dir|srv)/) {
+                if ($ix =~ m/AUTH|TYPE|TRANS/) {
+                    $pass =~ s/RUN_ALL/RUN_FIRST/;
+                }
+            }
 
             print $h_fh "\n$protostr;\n";
 
@@ -557,8 +568,12 @@ sub canon_define {
 
 sub canon_args {
     my $args = shift->{args};
-    my @in   = map { "$_->{type} *$_->{name}" } @$args;
     my @pass = map { $_->{name} } @$args;
+    my @in;
+    foreach my $href (@$args) {
+        push @in, "$href->{type} *$href->{name}"
+            unless $href->{type} eq 'dummy';
+    }
     return wantarray ? (\@in, \@pass) : \@in;
 }
 

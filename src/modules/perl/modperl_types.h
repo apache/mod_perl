@@ -248,4 +248,10 @@ typedef struct {
     const char *func_name;
 } modperl_module_cmd_data_t;
 
+typedef enum {
+    RUN_ALL,
+    RUN_FIRST,
+    VOID
+} modperl_hook_run_mode_e;
+
 #endif /* MODPERL_TYPES_H */

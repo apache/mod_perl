@@ -341,6 +341,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     modperl_filter_mg_set(aTHX_ AvARRAY(args)[0],
                           modperl_filter_new(f, NULL, mode, 0, 0, 0));
 
+    /* XXX filters are VOID handlers.  should we ignore the status? */
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
@@ -384,6 +385,7 @@ int modperl_run_filter(modperl_filter_t *filter)
         av_push(args, newSViv(filter->readbytes));
     }
 
+    /* XXX filters are VOID handlers.  should we ignore the status? */
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }

@@ -290,7 +290,7 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
         rcfg->pnotes = Nullhv;
     }
 
-    retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r);
+    retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r, RUN_ALL);
     
     return retval;
 }

@@ -81,7 +81,8 @@ int modperl_callback_run_handlers(int idx, int type,
                                   request_rec *r, conn_rec *c, server_rec *s,
                                   apr_pool_t *pconf,
                                   apr_pool_t *plog,
-                                  apr_pool_t *ptemp)
+                                  apr_pool_t *ptemp,
+                                  modperl_hook_run_mode_e run_mode)
 {
 #ifdef USE_ITHREADS
     pTHX;
@@ -188,17 +189,61 @@ int modperl_callback_run_handlers(int idx, int type,
         
         MP_TRACE_h(MP_FUNC, "%s returned %d\n", handlers[i]->name, status);
 
-        if ((status != OK) && (status != DECLINED)) {
-            status = modperl_errsv(aTHX_ status, r, s);
-#ifdef MP_TRACE
-            if (i+1 != nelts) {
-                MP_TRACE_h(MP_FUNC, "there were %d uncalled handlers\n",
-                           nelts-i-1);
-            }
-#endif
-            break;
-        }
+        /* follow Apache's lead and let OK terminate the phase for
+         * RUN_FIRST handlers.  RUN_ALL handlers keep going on OK.
+         * VOID handler ignore all errors.
+         */
 
+        if (run_mode == RUN_ALL) {
+            /* the normal case:
+             *   OK and DECLINED continue 
+             *   errors end the phase
+             */
+            if ((status != OK) && (status != DECLINED)) {
+
+                status = modperl_errsv(aTHX_ status, r, s);
+#ifdef MP_TRACE
+                if (i+1 != nelts) {
+                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d uncalled handlers\n",
+                               status, desc, nelts-i-1);
+                }
+#endif
+                break;
+            }
+        }
+        else if (run_mode == RUN_FIRST) {
+            /* the exceptional case:
+             *   OK and errors end the phase
+             *   DECLINED continues
+             */
+
+            if (status == OK) {
+#ifdef MP_TRACE
+                if (i+1 != nelts) {
+                    MP_TRACE_h(MP_FUNC, "OK ends the %s stack, leaving %d uncalled handlers\n",
+                               desc, nelts-i-1);
+                }
+#endif
+                break;
+            }
+            if (status != DECLINED) {
+                status = modperl_errsv(aTHX_ status, r, s);
+#ifdef MP_TRACE
+                if (i+1 != nelts) {
+                    MP_TRACE_h(MP_FUNC, "error status %d leaves %d uncalled handlers\n",
+                               status, desc, nelts-i-1);
+                }
+#endif
+                break;
+            }
+        }
+        else {
+            /* the rare case.
+             * VOID handlers completely ignore the return status
+             * Apache should handle whatever mod_perl returns, 
+             * so there is no need to mess with the status
+             */
+        }
     }
 
     SvREFCNT_dec((SV*)av_args);
@@ -213,46 +258,52 @@ int modperl_callback_run_handlers(int idx, int type,
     return status;
 }
 
-int modperl_callback_per_dir(int idx, request_rec *r)
+int modperl_callback_per_dir(int idx, request_rec *r,
+                             modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PER_DIR,
                                          r, NULL, r->server,
-                                         NULL, NULL, NULL);
+                                         NULL, NULL, NULL, run_mode);
 }
 
-int modperl_callback_per_srv(int idx, request_rec *r)
+int modperl_callback_per_srv(int idx, request_rec *r, 
+                             modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PER_SRV,
                                          r, NULL, r->server,
-                                         NULL, NULL, NULL);
+                                         NULL, NULL, NULL, run_mode);
 }
 
-int modperl_callback_connection(int idx, conn_rec *c)
+int modperl_callback_connection(int idx, conn_rec *c, 
+                                modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_CONNECTION,
                                          NULL, c, c->base_server,
-                                         NULL, NULL, NULL);
+                                         NULL, NULL, NULL, run_mode);
 }
 
-int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd)
+int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd,
+                                    modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PRE_CONNECTION,
                                          NULL, c, c->base_server,
-                                         NULL, NULL, NULL);
+                                         NULL, NULL, NULL, run_mode);
 }
 
-void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s)
+void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s,
+                              modperl_hook_run_mode_e run_mode)
 {
     modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PROCESS,
                                   NULL, NULL, s,
-                                  p, NULL, NULL);
+                                  p, NULL, NULL, run_mode);
 }
 
 int modperl_callback_files(int idx,
                            apr_pool_t *pconf, apr_pool_t *plog,
-                           apr_pool_t *ptemp, server_rec *s)
+                           apr_pool_t *ptemp, server_rec *s,
+                           modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_FILES,
                                          NULL, NULL, s,
-                                         pconf, plog, ptemp);
+                                         pconf, plog, ptemp, run_mode);
 }

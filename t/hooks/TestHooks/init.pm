@@ -8,7 +8,7 @@ use Apache::Test;
 use APR::Table ();
 use Apache::RequestRec ();
 
-use Apache::Const -compile => 'OK';
+use Apache::Const -compile => qw(OK DECLINED);
 
 sub first {
     my $r = shift;
@@ -35,7 +35,7 @@ sub handler {
 
     $r->notes->set(ok3 => $ok + 1);
 
-    Apache::OK;
+    Apache::DECLINED;
 }
 
 sub response {

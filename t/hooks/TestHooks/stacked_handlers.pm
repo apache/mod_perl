@@ -28,7 +28,7 @@ sub one {
     $r->content_type('text/plain');
     $r->print("one\n");
 
-    return Apache::OK;
+    return Apache::DECLINED;
 }
 
 sub two {
@@ -36,7 +36,7 @@ sub two {
 
     $r->print("two\n");
 
-    return Apache::OK;
+    return Apache::DECLINED;
 }
 
 sub three {
