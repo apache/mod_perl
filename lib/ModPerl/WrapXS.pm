@@ -488,9 +488,9 @@ $self->{noedit_warning_hash}
 
 package $module;
 $isa
-use XSLoader ();
+use ModPerl::XSLoader ();
 our \$VERSION = '0.01';
-XSLoader::load __PACKAGE__;
+ModPerl::XSLoader::load __PACKAGE__;
 
 $code
 
