@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document the fact that $r->connection->user can be used to set
+the authenticated user name [Joshua Gerth <jgerth@ptdcs2.ra.intel.com>]
+
 document the fact that $r->uri sets/gets the URI minus the query string,
 not the complete URI [Andrei A. Voropaev <andrei@securities.com>]
 

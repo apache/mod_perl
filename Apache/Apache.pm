@@ -520,10 +520,11 @@ If the configuration directive B<IdentityCheck> is set to off: then
 C<$r-E<gt>get_remote_logname> does nothing and C<$c-E<gt>remote_logname> is
 always undefined.
 
-=item $c->user 
+=item $c->user( [$user] )
 
 If an authentication check was successful, the authentication handler
-caches the user name here.
+caches the user name here. Sets the user name to the optional first
+argument.
 
 =item $c->auth_type
 
