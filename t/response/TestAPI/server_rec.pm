@@ -9,6 +9,9 @@ use Apache::ServerUtil ();
 
 use Apache::Const -compile => 'OK';
 
+#this test module is only for testing fields in the server_rec
+#listed in apache_structures.map
+
 sub handler {
     my $r = shift;
 
@@ -61,9 +64,6 @@ sub handler {
     ok $s->limit_req_fields;
 
     Apache::OK;
-
 }
 
 1;
-
-__END__
