@@ -14,6 +14,7 @@ use Apache::Filter ();
 use APR::Table ();
 
 use Apache::TestTrace;
+use Apache::TestUtil;
 
 use Apache::Const -compile => qw(OK);
 
@@ -22,6 +23,7 @@ sub handler {
 
     debug join '', "-" x 20 , " filter called ", "-" x 20;
 
+    t_server_log_error_is_expected();
     die "This filter must die";
 
     return Apache::OK;
@@ -31,6 +33,7 @@ sub response {
     my $r = shift;
 
     my $len = $r->read(my $data, $r->headers_in->{'Content-Length'});
+    t_server_log_error_is_expected();
     die "failed to read POSTed data: $!" unless defined $len;
     debug "read $len bytes [$data]";
 
