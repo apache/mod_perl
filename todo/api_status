@@ -19,18 +19,18 @@ V: done completely
 -- src/docs/2.0/api/Apache.pod
 VV src/docs/2.0/api/Apache/Access.pod
 g- src/docs/2.0/api/Apache/CmdParms.pod
-VV src/docs/2.0/api/Apache/Command.pod
+g- src/docs/2.0/api/Apache/Command.pod
 VP src/docs/2.0/api/Apache/Connection.pod
         conn_config
 +- src/docs/2.0/api/Apache/Const.pod
-VV src/docs/2.0/api/Apache/Directive.pod
+g- src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
         The whole TIE interface   
 VV src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/HookRun.pod
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
-VV src/docs/2.0/api/Apache/Module.pod
+g- src/docs/2.0/api/Apache/Module.pod
 VV src/docs/2.0/api/Apache/PerlSections.pod
 VV src/docs/2.0/api/Apache/Process.pod
 VV src/docs/2.0/api/Apache/Reload.pod
