@@ -98,10 +98,10 @@ sub handler {
 
     {
         local $| = 0;
-        ok 9  == $r->print("buffered\n");
+        ok 11  == $r->print("# buffered\n");
         ok 0  == $r->print();
         local $| = 1;
-        ok 13 == $r->print('n','o','t',' ','b','u','f','f','e','r','e','d',"\n");
+        ok 15 == $r->print('#',' ','n','o','t',' ','b','u','f','f','e','r','e','d',"\n");
     }
 
     #no_local_copy
