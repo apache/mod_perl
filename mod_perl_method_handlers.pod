@@ -98,9 +98,9 @@ which displays:
 That wasn't really useful, so let's try something little more advanced.
 
 I've a little module which creates a graphical 'datebar' for a client.
-(See C<http://www.hip.dk/webajour/datebar>). It's reading a lot of
-small gifs with numbers and weekdays, and keeping them in memory in
-GD.pm's native format, ready to be copied together and served as gifs.
+(See C<http://www.hip.dk/date_bar>). It's reading a lot of small gifs 
+with numbers and weekdays, and keeping them in memory in GD.pm's native 
+format, ready to be copied together and served as gifs.
 
 Now I wanted to use it at another site too, but with a different
 look. Obviously something to do with a object. Hence I changed the
