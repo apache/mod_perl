@@ -1085,6 +1085,13 @@ sub constants_lookup_code_doc {
     }
 }
 
+# src/modules/perl/*.c files needed to build APR/APR::* outside
+# of mod_perl.so
+sub src_apr_ext {
+    return map { "modperl_$_" } (qw(error bucket),
+                                  map { "common_$_" } qw(util log));
+}
+
 1;
 __END__
 
