@@ -562,7 +562,10 @@ sub MY::postamble {
     my $string = $self->ModPerl::BuildMM::MY::postamble;
 
     $string .= <<'EOF';
-mydist : manifest tardist
+mydist : Apache-Test/META.yml manifest tardist
+
+Apache-Test/META.yml:
+	cd Apache-Test && make metafile
 
 cvs_tag :
 	cvs tag MODPERL_$(VERSION_SYM) .
