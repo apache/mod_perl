@@ -28,11 +28,8 @@ to build mod_perl dynamic:
 
 % perl Makefile.PL MP_USE_DSO=1 && make
 
-(note the EXTRA_LIBS are needed for my suse-6.1, might be
-different for your platform)
-
 % cd ../apache-2.0/src
-% EXTRA_LIBS="-ldl -rdynamic" ./configure --with-mpm=mpmt_pthread ...
+% ./configure --with-mpm=mpmt_pthread ...
 % make
 
 as for httpd.conf, mine looks something like so at the moment:
