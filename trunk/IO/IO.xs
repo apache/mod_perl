@@ -71,9 +71,6 @@ void
 ApacheIO_close(self)
     SV *self
     
-    ALIAS:
-    Apache::IO::DESTROY = 1
-
     CODE:
     do_close((GV*)SvRV(self), TRUE);
 
