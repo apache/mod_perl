@@ -173,7 +173,7 @@ sub Apache::AuthenTest::handler {
     my($res, $sent_pwd) = $r->get_basic_auth_pw;
     return $res if $res; #decline if not Basic
 
-    my $user = lc $r->connection->user;
+    my $user = lc $r->user;
     $r->notes("DoAuthenTest", 1);
     
     unless($user eq "dougm" and $sent_pwd eq "mod_perl") {

@@ -894,6 +894,16 @@ get_basic_auth_pw(r)
     else
 	XPUSHs(&sv_undef);
 
+char *
+user(r, ...)
+    Apache   r
+
+    CODE:
+    get_set_PVp(r->connection->user,r->pool);
+
+    OUTPUT:
+    RETVAL
+
 void
 basic_http_header(r)
     Apache	r
