@@ -64,6 +64,13 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * ACL support
+        Report: 
+            http://marc.theaimsgroup.com/?t=105042055700005&r=1&w=2
+        Status:
+            Patch available with the orignial report, but needs to make sure it will work
+            across all platforms, POSIX or not.
+
     * src/modules/ApacheModulePerl has been deprecated and replaced by src/modules/win32.
       Since it's not even distributed anymore, can that directory be deleted?
 
