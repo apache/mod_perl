@@ -7,6 +7,7 @@ use Apache::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Util ();
+use Apache::Filter ();
 
 use APR::Const -compile => qw(SUCCESS EOF);
 use Apache::Const -compile => qw(OK MODE_GETLINE);
