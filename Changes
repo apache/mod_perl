@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Removed Apache::Directive methods (data & walk_config) [Gozer]
+
 All Apache::Directive methods are now read-only [Gozer]
 
 Filters should not reset $@ if it was already set before
