@@ -1,0 +1,71 @@
+Instructions for mod_perl 2.0 Release Manager
+
+1. 'make dist' - to make sure nothing is missing from the manifest,
+   etc. Now test this generated package (not cvs) with as many
+   configurations as possible on as many platforms as possible.
+
+  a) nuke any preinstalled mod_perl libs and run 'make test'
+
+  b) test that you can 'make install' and then run 'make test' again
+
+2. once confident that the package is good, upload a release candidate
+   to perl.apache.org/~username and post 24 hour-ish candidate alert
+   to the modperl/dev list (may be longer to give most people a chance
+   to catch up). no need to tag this package
+
+2a. if problems are detected during stage 2, repeat stages 1 and 2.
+
+3. when the package has been reported to be good, prepare a new
+   package to be released
+
+  a. edit ./Changes:
+     - remove '-dev' 
+     - add release date
+
+  b. make sure tag looks right (might need to rerun Makefile.PL)
+     % make -n cvs_tag
+
+  c. commit Changes
+     % cvs ci Changes
+
+  d. tag
+     % make cvs_tag
+
+  e. create the final package
+     % make dist
+
+  f. test the final package again at least once
+
+4. Release the package and update links (e.g. mod_perl-1.99_09.tar.gz)
+
+  a. upload to www.apache.org:/www/perl.apache.org/dist/
+
+  b. ssh to www.apache.org, unpack the package, update symlinks to the
+     tar ball and unpacked distro:
+    % ssh www.apache.org
+    % cd /www/perl.apache.org/dist/
+    % ln -s /www/perl.apache.org/dist/mod_perl-1.99_09.tar.gz \
+      /www/perl.apache.org/dist/mod_perl-2.0-current.tar.gz
+    % tar -xzvf mod_perl-1.99_09.tar.gz
+    % ln -s /www/perl.apache.org/dist/mod_perl-1.99_09 \
+      /www/perl.apache.org/dist/mod_perl-2.0-current
+
+  c. remove releases older by 2 subversions (keep the last one)
+
+  d. update the version and release date in src/download.html in
+     modperl-docs repository.
+
+5. Upload the package to CPAN
+
+6. Announce the package
+
+  a. post ... to the modperl, announce lists
+  Subject: [ANNOUNCE]: mod_perl 1.99_10 
+     include 
+  - MD5 sig (as it comes from CPAN upload announce).
+  - the latest Changes
+
+7. Tarball signing
+
+META: Eric can you please complete this item?
+
