@@ -1,7 +1,6 @@
 current_callback.t
 env.t
 endav.t
-exit.t
 printf.t
 print.t
 pnotes.t

@@ -261,25 +261,16 @@ static apr_pool_t *modperl_sv2pool(pTHX_ SV *obj, CV *method)
     return p;
 }
 
-char *modperl_apr_strerror(apr_status_t rv)
-{
-    dTHX;
-    char buf[256];
-    apr_strerror(rv, buf, sizeof(buf));
-    return Perl_form(aTHX_ "%d:%s", rv, buf);
-}
-
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
 {
     SV *sv = ERRSV;
     STRLEN n_a;
 
     if (SvTRUE(sv)) {
-        if (SvMAGICAL(sv) && (SvCUR(sv) > 4) &&
-            strnEQ(SvPVX(sv), " at ", 4))
-        {
+        if (sv_derived_from(sv, "APR::Error") &&
+            SvIVx(sv) == MODPERL_RC_EXIT) {
             /* ModPerl::Util::exit was called */
-            return DECLINED;
+            return OK;
         }
 #if 0
         if (modperl_sv_is_http_code(ERRSV, &status)) {
@@ -572,15 +563,10 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
 
 void modperl_perl_exit(pTHX_ int status)
 {
-    const char *pat = NULL;
     ENTER;
     SAVESPTR(PL_diehook);
     PL_diehook = Nullsv; 
-    sv_setpv(ERRSV, "");
-#ifdef MP_PERL_5_6_0
-    pat = ""; /* NULL segvs in 5.6.0 */
-#endif
-    Perl_croak(aTHX_ pat);
+    modperl_croak(aTHX_ MODPERL_RC_EXIT, "ModPerl::Util::exit");
 }
 
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
@@ -716,7 +702,7 @@ void modperl_clear_symtab(pTHX_ HV *symtab)
     if (rc != APR_SUCCESS) { \
         SvREFCNT_dec(sv); \
         Perl_croak(aTHX_ "Error " action " '%s': %s ", r->filename, \
-                   modperl_apr_strerror(rc)); \
+                   modperl_error_strerror(aTHX_ rc)); \
     }
 
 MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
