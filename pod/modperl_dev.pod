@@ -41,6 +41,9 @@ For bleeding edge Perl:
  % make && make test && make install
  % ln -s $HOME/bleedperl/bin/perl5.x.x $HOME/bleedperl/bin/perl
 
+or otherwise make sure that your perl was built with threads enabled if
+you want to use the threaded MPM.
+
 If you are re-building Perl after rsync-ing, make sure to cleanup:
 
   % make distclean
