@@ -367,9 +367,15 @@ static apr_status_t modperl_sys_term(void *data)
     return APR_SUCCESS;
 }
 
+static int MP_init_done = 0;
+
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s)
 {
+    if (MP_init_done++ > 0) {
+        return OK;
+    }
+
     apr_pool_create(&server_pool, pconf);
 
     modperl_sys_init();
@@ -379,6 +385,20 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     modperl_init(s, pconf);
 
     return OK;
+}
+
+/*
+ * if we need to init earlier than post_config,
+ * e.g. <Perl> sections or directive handlers.
+ */
+/*
+ * XXX: this probably won't work well if called from a
+ * vhost rather than the base config if modperl_hook_init
+ * hasn't been run first from the base config.
+ */
+int modperl_run(apr_pool_t *p, server_rec *s)
+{
+    return modperl_hook_init(p, NULL, NULL, s);
 }
 
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
