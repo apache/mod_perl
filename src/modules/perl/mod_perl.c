@@ -1,5 +1,14 @@
 #include "mod_perl.h"
 
+/* make sure that mod_perl won't try to start itself, while it's
+ * already starting. If the flag's value is 1 * it's still starting,
+ * when it's 2 it is running */
+static int MP_init_status = 0;
+
+#define MP_IS_NOT_RUNNING (MP_init_status == 0 ? 1 : 0)
+#define MP_IS_STARTING    (MP_init_status == 1 ? 1 : 0)
+#define MP_IS_RUNNING     (MP_init_status == 2 ? 1 : 0)
+
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -306,8 +315,6 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     return OK;
 }
 
-static int MP_init_done = 0;
-
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
@@ -348,7 +355,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 
     base_perl = modperl_startup(base_server, p);
 
-    MP_init_done++;
+    MP_init_status = 2; /* only now mp has really started */
     
 #ifdef USE_ITHREADS
     modperl_interp_init(base_server, p, base_perl);
@@ -452,7 +459,7 @@ static apr_status_t modperl_sys_init(void)
 
 static apr_status_t modperl_sys_term(void *data)
 {
-    MP_init_done = 0;
+    MP_init_status = 0;
 
     modperl_env_unload();
 
@@ -467,10 +474,12 @@ static apr_status_t modperl_sys_term(void *data)
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s)
 {
-    if (MP_init_done > 0) {
+    if (MP_IS_STARTING || MP_IS_RUNNING) {
         return OK;
     }
 
+    MP_init_status = 1; /* now starting */
+ 
     apr_pool_create(&server_pool, pconf);
 
     modperl_sys_init();
@@ -498,7 +507,7 @@ int modperl_run(apr_pool_t *p, server_rec *s)
 
 int modperl_is_running(void)
 {
-    return MP_init_done;
+    return MP_IS_RUNNING;
 }
 
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
