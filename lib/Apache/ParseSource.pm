@@ -87,13 +87,13 @@ sub find_includes {
     }
 
     my @includes;
-    my $unwanted = join '|', qw(ap_listen internal);
+    my $unwanted = join '|', qw(ap_listen internal version);
 
     for my $dir (@dirs) {
         File::Find::finddepth({
                                wanted => sub {
                                    return unless /\.h$/;
-                                   return if /($unwanted)/o;
+                                   return if /^($unwanted)/o;
                                    my $dir = $File::Find::dir;
                                    push @includes, "$dir/$_";
                                },
