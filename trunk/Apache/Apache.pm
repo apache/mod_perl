@@ -41,7 +41,7 @@ sub parse_args {
     my($wantarray,$string) = @_;
     return unless defined $string and $string;
     if(defined $wantarray and $wantarray) {
-	return map { Apache::unescape_url_info($_) } split /[=&]/, $string, -1;
+	return map { Apache::unescape_url_info($_) } split /[=&;]/, $string, -1;
     }
     $string;
 }
