@@ -1,7 +1,6 @@
-package TestCompat::compat;
+package TestCompat::request_body;
 
-# these Apache::compat tests are all run on the server
-# side and validated on the client side. See also TestCompat::compat2.
+# $r->"method" tests that are validated by the client
 
 use strict;
 use warnings FATAL => 'all';
