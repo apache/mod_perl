@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_03-dev
 
+t/TEST =~ s/mod_perl_httpd.pid/httpd.pid 
+[Bruce W. Hoylman <bhoylma@advtech.uswest.com>]
+
 use a "%s" format for ap_log_{r}error, so %'s in the log message
 string are not treated as format strings
 
