@@ -115,3 +115,32 @@ these lines. Example:
   <IfModule !mod_perl.c>
   ...stuff for httpd w/o mod_perl...
   </IfModule>
+
+=head1 How can I terminate a chain of handlers?
+
+During each phase of request processing, apache calls handlers which
+have registered an interest in looking at and possibly handling the
+request.  In some phases it makes sense to let all of the handlers
+have a chance to look at the request.  In other phases the first
+handler to return "OK" terminates that phase (see the Apache
+documentation, /manual/misc/API.html).
+
+If you define more than one PerlHandler for a phase, they are placed
+on a stack and all of the handlers on the stack are called
+sequentially by mod_perl, as long as they return "DECLINED" or "OK".
+Apache sees the return code from the final handler and reacts to it.
+If a handler wants to terminate the chain and ensure that no other
+handler is called after it, it should set the corresponding stack to
+undef.  For instance, when a TransHandler has set $r->filename, it
+should terminate with
+
+  $r->set_handlers(PerlTransHandler => undef);
+  return OK;
+
+=head1 Why can't my handler see an environment variable that I set in httpd.conf?
+
+The configuration directives SetEnv and PassEnv are handled by
+apache's mod_env during the fixup stage, so mod_perl handlers that run
+prior to the fixup-stage don't see variables set with them.  You can
+use PerlSetEnv/PerlPassEnv instead - they are processed as soon as
+possible during a request.
