@@ -124,9 +124,6 @@ NEW STUFF
 - remove Apache::Symbol::undef cruft, now that the mandatory const sub
   redefined warning is downgraded in 5.004_05-tobe
 
-- stash POST data so $r->content works even after POST data is read
-  from the client  
-  
 - perl_clear_env() should skip those found in PerlPassEnv?
 
 - File::copy($file,*STDOUT) doesn't work (pp_syswrite needs tie support)
