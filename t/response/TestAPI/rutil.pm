@@ -3,6 +3,7 @@ package TestAPI::rutil;
 use strict;
 use warnings FATAL => 'all';
 
+use APR::URI ();
 use Apache::RequestUtil ();
 use Apache::Test;
 
@@ -14,7 +15,7 @@ my %default_ports = (
     wais => 210,
     nntp => 119,
     snews => 563,
-    prospero => 1525,
+    prospero => 191,
 );
 
 my %status_lines = (
@@ -39,7 +40,9 @@ sub handler {
     ok $r->get_limit_req_body || 1;
 
     while(my($scheme, $port) = each %default_ports) {
-        ok Apache::default_port_for_scheme($scheme) == $port;
+        my $apr_port = APR::URI::default_port_for_scheme($scheme);
+        #$r->puts("$scheme => expect: $port, got: $apr_port\n");
+        ok $apr_port == $port;
     }
 
     while (my($code, $line) = each %status_lines) {

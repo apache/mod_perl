@@ -218,4 +218,11 @@ typedef struct {
     void *data;
 } modperl_cleanup_data_t;
 
+/* subclass apr_uri_components */
+typedef struct {
+    apr_uri_components uri;
+    apr_pool_t *pool;
+    char *path_info;
+} modperl_uri_t;
+
 #endif /* MODPERL_TYPES_H */

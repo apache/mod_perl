@@ -217,23 +217,6 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    next
 </htaccess_result>
 
-<uri_components>
-   scheme
-   hostinfo
-   user
-   password
-   hostname
--  port_str
-   path
-   query
-   fragment
-   hostent
-~  port
-   is_initialized
-   dns_looked_up
-   dns_resolved
-</uri_components>
-
 !<piped_log>
    p
    fds
