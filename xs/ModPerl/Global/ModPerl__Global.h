@@ -21,19 +21,17 @@ static int mpxs_special_list_do(pTHX_ const char *name,
 }
 
 static
-MP_INLINE int mpxs_ModPerl__Global_special_list_call(const char *name,
+MP_INLINE int mpxs_ModPerl__Global_special_list_call(pTHX_ const char *name,
                                                      SV *package)
 {
-    dTHX; /* XXX */
     return mpxs_special_list_do(aTHX_ name, package,
                                 modperl_perl_global_avcv_call);
 }
 
 static
-MP_INLINE int mpxs_ModPerl__Global_special_list_clear(const char *name,
+MP_INLINE int mpxs_ModPerl__Global_special_list_clear(pTHX_ const char *name,
                                                       SV *package)
 {
-    dTHX; /* XXX */
     return mpxs_special_list_do(aTHX_ name, package,
                                 modperl_perl_global_avcv_clear);
 }

@@ -36,9 +36,8 @@ apr_uri_t *mpxs_apr_uri_parse(pTHX_
 }
 
 static MP_INLINE
-char *mpxs_APR__URI_port(apr_uri_t *uri, SV *portsv)
+char *mpxs_APR__URI_port(pTHX_ apr_uri_t *uri, SV *portsv)
 {
-    dTHX; /*XXX*/
     char *port_str = uri->port_str;
 
     if (portsv) {

@@ -1,7 +1,7 @@
 #define mpxs_Apache__Module_top_module(CLASS) \
 (CLASS ? ap_top_module : ap_top_module)
 
-static MP_INLINE int mpxs_Apache__Module_loaded(char *name)
+static MP_INLINE int mpxs_Apache__Module_loaded(pTHX_ char *name)
 {
     char nameptr[256];
     char *base;
@@ -34,7 +34,6 @@ static MP_INLINE int mpxs_Apache__Module_loaded(char *name)
         return 0;
     }
     else {
-        dTHX; /*XXX*/ 
         return modperl_perl_module_loaded(aTHX_ name);
     }
 }

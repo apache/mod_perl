@@ -104,9 +104,8 @@ SvCUR(SvRV(sv))
    ((apr_table_entry_t *) \
      apr_table_elts(t)->elts)[mpxs_apr_table_iterix(sv)++].key
 
-static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(SV *tsv, SV *key)
+static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(pTHX_ SV *tsv, SV *key)
 {
-    dTHX;
     apr_table_t *t = mp_xs_sv2_APR__Table(tsv); 
 
     if (apr_is_empty_table(t)) {
@@ -120,11 +119,11 @@ static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(SV *tsv, SV *key)
     return NULL;
 }
 
-static MP_INLINE const char *mpxs_APR__Table_FIRSTKEY(SV *tsv)
+static MP_INLINE const char *mpxs_APR__Table_FIRSTKEY(pTHX_ SV *tsv)
 {
     mpxs_apr_table_iterix(tsv) = 0; /* reset iterator index */
 
-    return mpxs_APR__Table_NEXTKEY(tsv, Nullsv);
+    return mpxs_APR__Table_NEXTKEY(aTHX_ tsv, Nullsv);
 }
 
 static XS(MPXS_apr_table_get)

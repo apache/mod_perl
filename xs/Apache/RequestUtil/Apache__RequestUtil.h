@@ -1,9 +1,8 @@
 static MP_INLINE
-int mpxs_Apache__RequestRec_push_handlers(request_rec *r,
+int mpxs_Apache__RequestRec_push_handlers(pTHX_ request_rec *r,
                                           const char *name,
                                           SV *sv)
 {
-    dTHX; /*XXX*/
     return modperl_handler_perl_add_handlers(aTHX_
                                              r, NULL, r->server, r->pool,
                                              name, sv,
@@ -12,11 +11,10 @@ int mpxs_Apache__RequestRec_push_handlers(request_rec *r,
 }
 
 static MP_INLINE
-int mpxs_Apache__RequestRec_set_handlers(request_rec *r,
+int mpxs_Apache__RequestRec_set_handlers(pTHX_ request_rec *r,
                                          const char *name,
                                          SV *sv)
 {
-    dTHX; /*XXX*/
     return modperl_handler_perl_add_handlers(aTHX_
                                              r, NULL, r->server, r->pool,
                                              name, sv,
@@ -24,10 +22,9 @@ int mpxs_Apache__RequestRec_set_handlers(request_rec *r,
 }
 
 static MP_INLINE
-SV *mpxs_Apache__RequestRec_get_handlers(request_rec *r,
+SV *mpxs_Apache__RequestRec_get_handlers(pTHX_ request_rec *r,
                                          const char *name)
 {
-    dTHX; /*XXX*/
     MpAV **handp =
         modperl_handler_get_handlers(r, NULL, r->server,
                                      r->pool, name,
@@ -86,7 +83,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
 }
 
 static MP_INLINE
-request_rec *mpxs_Apache_request(SV *classname, SV *svr)
+request_rec *mpxs_Apache_request(pTHX_ SV *classname, SV *svr)
 {
     request_rec *cur;
     apr_status_t status = modperl_tls_get_request_rec(&cur);
@@ -96,7 +93,6 @@ request_rec *mpxs_Apache_request(SV *classname, SV *svr)
     }
 
     if (svr) {
-        dTHX; /*XXX*/
         modperl_global_request_obj_set(aTHX_ svr);
     }
 
@@ -156,9 +152,8 @@ void mpxs_Apache__RequestRec_set_basic_credentials(request_rec *r,
 
 
 static MP_INLINE
-int mpxs_Apache__RequestRec_no_cache(request_rec *r, SV *flag)
+int mpxs_Apache__RequestRec_no_cache(pTHX_ request_rec *r, SV *flag)
 {
-    dTHX; /* XXX */
     int retval = r->no_cache;
 
     if (flag) {
