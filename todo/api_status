@@ -22,8 +22,9 @@ V: done completely
 -- src/docs/2.0/api/Apache/Connection.pod
 +- src/docs/2.0/api/Apache/Const.pod
 -- src/docs/2.0/api/Apache/Directive.pod
--- src/docs/2.0/api/Apache/Filter.pod
--- src/docs/2.0/api/Apache/FilterRec.pod
++- src/docs/2.0/api/Apache/Filter.pod
+        The whole TIE interface   
+VV src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/HookRun.pod
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
@@ -63,7 +64,6 @@ VV src/docs/2.0/api/APR/Brigade.pod
 VP src/docs/2.0/api/APR/Bucket.pod
         data
         start
-        (read needs TAINT flag on, but utf8::decode problem)
 VV src/docs/2.0/api/APR/BucketAlloc.pod
 VV src/docs/2.0/api/APR/BucketType.pod
 +- src/docs/2.0/api/APR/Const.pod
