@@ -1,4 +1,5 @@
 use Apache::test;
+use Apache::Table ();
 
 use strict;
 my $r = shift;
