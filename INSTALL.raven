@@ -26,9 +26,8 @@ and mod_perl statically
 1) untar and gunzip Apache, Raven SSL and mod_perl into their respective
 directories
 2) cd raven_ssl-x.x.x. Install Raven SSL via ./setup
-3) /usr/local/raven/bin/ravenctl
-   select Option 1, 'Raven SSL Module Manager'
-   select Option 2, 'Export Raven SSL module to Apache source'
+3) /usr/local/raven/bin/raven_admin_tls
+   select Option 1, 'Export Raven'
    note: this option exports the required EAPI patches and the needed Raven
 SSL module files into your Apache source tree
 4) cd mod_perl-x.x
