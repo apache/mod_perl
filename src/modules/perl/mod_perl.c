@@ -212,20 +212,16 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     modperl_cleanup_data_t *cdata;
 #endif
 
+    /* ensure that we start the base server's perl, before vhost's
+     * one, if modperl_startup was called by vhost before the former
+     * was started */
     if (MP_init_status != 2) {
         server_rec *base_server = modperl_global_get_server_rec();
         PerlInterpreter *base_perl;
-        modperl_config_srv_t *base_scfg;
         
         MP_init_status = 2; /* calls itself, so set the flag early */
         base_perl = modperl_startup(base_server, p);
-        base_scfg = modperl_config_srv_get(base_server);
         
-#ifdef USE_ITHREADS
-        /* a parent perl was allocated, mark it to be destroyed */
-        MpInterpBASE_On(base_scfg->mip->parent);
-#endif
-
         if (base_server == s ) {
             return base_perl;
         }
@@ -296,6 +292,9 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 #ifdef USE_ITHREADS
     /* base server / virtual host w/ +Parent gets its own mip */
     modperl_interp_init(s, p, perl);
+
+    /* mark the parent perl to be destroyed */
+    MpInterpBASE_On(scfg->mip->parent);
 #endif
 
     PL_endav = endav;
@@ -414,13 +413,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-    if (scfg->mip) {
-        /* if we allocated a parent perl, mark it to be destroyed */
-        if (MpSrvPARENT(scfg)) {
-            MpInterpBASE_On(scfg->mip->parent);
-        }
-    }
-    else {
+    if (!scfg->mip) {
         /* since mips are created after merge_server_configs()
          * need to point to the base mip here if this vhost
          * doesn't have its own
