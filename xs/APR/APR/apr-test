@@ -1,0 +1,77 @@
+#!perl
+
+use Test;
+
+plan tests => 10;
+
+use blib;
+use warnings FATAL => 'all';
+use strict;
+use APR ();
+use APR::UUID ();
+use APR::Pool ();
+use APR::Lock ();
+use APR::Lib ();
+use APR::Base64 ();
+use APR::Signal ();
+
+my $status;
+
+my $uuid = APR::UUID->new->format;
+
+ok $uuid;
+
+my $p = APR::Pool->new;
+
+my $num_bytes = $p->num_bytes;
+
+ok $num_bytes;
+
+#print "begin bytes=$num_bytes\n";
+
+ok $p;
+
+my $lock = APR::Lock->new($p, 0, 1, "lock.file");
+$status = $lock->acquire and die APR::strerror($status);
+$status = $lock->release and die APR::strerror($status);
+
+$status = APR::password_validate("one", "two");
+my $str = APR::strerror($status);
+ok $str eq "passwords do not match";
+
+ok $status;
+
+my $bytes = APR::generate_random_bytes(10);
+
+ok length($bytes) == 10;
+
+my $encoded = APR::Base64::encode($bytes);
+
+#print "encoded=$encoded\n";
+
+ok $encoded;
+
+my $decoded = APR::Base64::decode($encoded);
+
+ok $decoded eq $bytes;
+
+$p->clear;
+
+while ($num_bytes == $p->num_bytes) {
+    APR::Lock->new($p);
+}
+
+my $cur_num_bytes = $p->num_bytes;
+
+#print "end bytes=$cur_num_bytes\n";
+
+ok (($cur_num_bytes / 2) == $num_bytes);
+
+for (1..9) {
+    my $desc = APR::Signal::get_description($_);
+    #print "$_ => $desc\n";
+}
+
+ok 1;
+
+$p->destroy; #XXX
