@@ -102,6 +102,27 @@ mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_REQUEST)
 #define mpxs_Apache__Server_log(sv) \
 mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_SERVER)
 
+static MP_INLINE SV *modperl_perl_do_join(pTHX_ SV **mark, SV **sp)
+{
+    SV *sv = newSV(0);
+    SV *delim;
+#ifdef WIN32
+    /* XXX: using PL_sv_no crashes on win32 with 5.6.1 */
+    delim = newSVpv("", 0);
+#else
+    delim = SvREFCNT_inc(&PL_sv_no);
+#endif
+
+    do_join(sv, delim, mark, sp);
+
+    SvREFCNT_dec(delim);
+
+    return sv;
+}
+
+#define my_do_join(m, s) \
+   modperl_perl_do_join(aTHX_ (m), (s))
+
 static XS(MPXS_Apache__Log_dispatch)
 {
     dXSARGS;
@@ -115,8 +136,7 @@ static XS(MPXS_Apache__Log_dispatch)
     }
 
     if (items > 2) {
-        msgsv = newSV(0);
-        do_join(msgsv, &PL_sv_no, MARK+1, SP);
+        msgsv = my_do_join(MARK+1, SP);
     }
     else {
         msgsv = ST(1);
@@ -213,8 +233,7 @@ static XS(MPXS_Apache__Log_log_xerror)
     status = (apr_status_t)SvIV(ST(4));
 
     if (items > 6) {
-        msgsv = newSV(0);
-        do_join(msgsv, &PL_sv_no, MARK+5, SP);
+        msgsv = my_do_join(MARK+5, SP);
     }
     else {
         msgsv = ST(5);
@@ -279,8 +298,7 @@ static XS(MPXS_Apache__Log_log_error)
     }
 
     if (items > 1+i) {
-        sv = newSV(0);
-        do_join(sv, &PL_sv_no, MARK+i, SP); /* $sv = join '', @_[1..$#_] */
+        sv = my_do_join(MARK+i, SP); /* $sv = join '', @_[1..$#_] */
         errstr = SvPV(sv,n_a);
     }
     else {
