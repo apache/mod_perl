@@ -18,9 +18,7 @@ process size on every request:
     $Apache::SizeLimit::MAX_UNSHARED_SIZE = 12000; # 12MB
 
     # in your httpd.conf:
-    PerlFixupHandler Apache::SizeLimit
-    # you can set this up as any Perl*Handler that handles part of the
-    # request, even the LogHandler will do.
+    PerlCleanupHandler Apache::SizeLimit
 
 Or you can just check those requests that are likely to get big, such as
 CGI requests.  This way of checking is also easier for those who are mostly
@@ -254,8 +252,14 @@ sub setmax_unshared {
 
 sub handler {
     my $r = shift || Apache->request;
-    $r->post_connection(\&exit_if_too_big)
-	if ($r->is_main);
+    if ($r->is_main()) {
+        # we want to operate in a cleanup handler
+        if ($r->current_callback eq 'PerlCleanupHandler') {
+	    exit_if_too_big($r);
+        } else {
+	    $r->post_connection(\&exit_if_too_big);
+        }
+    }
     return(DECLINED);
 }
 
