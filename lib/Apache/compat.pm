@@ -1,6 +1,7 @@
 package Apache::compat;
 
 use strict;
+use warnings FATAL => 'all';
 
 #1.xx compat layer
 #some of this will stay as-is
