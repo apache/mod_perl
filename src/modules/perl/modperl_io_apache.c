@@ -1,5 +1,15 @@
 #include "mod_perl.h"
 
+/* not too long so it won't wrap when posted in email */
+#define IO_DUMP_LENGTH 35
+/* dumping hundreds of lines in the trace, makes it hard to read. Get
+ * a string chunk of IO_DUMP_LENGTH or less */
+#define IO_DUMP_FIRST_CHUNK(p, str, count)       \
+    count < IO_DUMP_LENGTH                       \
+        ? (char *)str                            \
+        : (char *)apr_psprintf(p, "%s...",       \
+                               apr_pstrmemdup(p, str, IO_DUMP_LENGTH))
+
 #ifdef MP_IO_TIE_PERLIO
 
 /***************************
@@ -14,16 +24,6 @@ typedef struct {
     struct _PerlIO base;
     request_rec *r;
 } PerlIOApache;
-
-/* not too long so it won't wrap when posted in email */
-#define IO_DUMP_LENGTH 35
-/* dumping hundreds of lines in the trace, makes it hard to read. Get
- * a string chunk of IO_DUMP_LENGTH or less */
-#define IO_DUMP_FIRST_CHUNK(p, str, count)       \
-    count < IO_DUMP_LENGTH                       \
-        ? (char *)str                            \
-        : (char *)apr_psprintf(p, "%s...",       \
-                               apr_pstrmemdup(p, str, IO_DUMP_LENGTH))
 
 /* _open just allocates the layer, _pushed does the real job of
  * filling the data in */
