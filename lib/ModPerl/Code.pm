@@ -278,7 +278,7 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp log config gtop);
-my @g_c_names = map { "modperl_$_" } qw(hooks directives);
+my @g_c_names = map { "modperl_$_" } qw(hooks directives xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
 sub c_files { [map { "$_.c" } @c_names] }
 sub o_files { [map { "$_.o" } @c_names] }
@@ -360,6 +360,11 @@ sub generate {
     }
 
     $self->postamble;
+
+    my $xsinit = "$self->{path}/modperl_xsinit.c";
+    warn "generating...$xsinit\n";
+
+    ExtUtils::Embed::xsinit($xsinit);
 }
 
 1;

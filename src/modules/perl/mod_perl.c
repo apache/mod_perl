@@ -2,13 +2,13 @@
 
 void modperl_startup(server_rec *s, ap_pool_t *p)
 {
+    MP_dSCFG(s);
     PerlInterpreter *perl;
     int status;
-    char *argv[] = { "httpd", "/dev/null" };
-    int argc = 2;
+    char **argv;
+    int argc;
 
 #ifdef MP_USE_GTOP
-    MP_dSCFG(s);
     MP_TRACE_m_do(
         scfg->gtop = modperl_gtop_new(p);
         modperl_gtop_do_proc_mem_before(MP_FUNC ": perl_parse");
@@ -21,8 +21,10 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
     }
 
     perl_construct(perl);
-    
-    status = perl_parse(perl, NULL, argc, argv, NULL);
+
+    argv = modperl_srv_config_argv_init(scfg, &argc);
+
+    status = perl_parse(perl, xs_init, argc, argv, NULL);
 
     if (status) {
         perror("perl_parse");
@@ -63,6 +65,7 @@ void modperl_register_hooks(void)
 }
 
 static command_rec modperl_cmds[] = {  
+    MP_SRV_CMD_ITERATE("PerlSwitches", switches, "Perl Switches"),
 #ifdef MP_TRACE
     MP_SRV_CMD_TAKE1("PerlTrace", trace, "Trace level"),
 #endif

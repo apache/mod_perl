@@ -84,6 +84,7 @@ typedef struct {
 #ifdef MP_USE_GTOP
     modperl_gtop_t *gtop;
 #endif
+    MpAV *argv;
     int flags;
 } modperl_srv_config_t;
 
