@@ -69,14 +69,12 @@ for my $f (qw(srm.conf access.conf mime.types)) {
 }
 
 # change the paths so everybody agrees on which files to use
-#
+# this is to make sure apache knows which files to take :
+#   apparently apache uner Win32
+#   change directories to the installation directory so "./t" 
+#   references do not work
+
 my $pwd = cwd();
-# this is to make sure apache knows which files to take 
-#   : apparently apache uner Win32
-
-# change directories to the installation directory so "./t" 
-# references do not work
-
 unless (-e $bak) {
     copy($conf, $bak) or die "Copying $conf to $bak failed: $!";
 }
