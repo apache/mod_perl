@@ -26,7 +26,9 @@ Instructions for mod_perl 2.0 Release Manager
      - remove '-dev' 
      - add release date
 
-  b. make sure tag looks right (might need to rerun Makefile.PL)
+  b. rerun:
+     % perl Makefile.PL MP_INST_APACHE2=1
+     make sure tag looks right
      % make -n cvs_tag
 
   c. commit Changes
