@@ -69,7 +69,7 @@ sub handler {
 
 	# second pass cares for slashes and words starting with a digit
 	$script_name =~ s{
-			  (/)        # directory
+			  (/+)       # directory
 			  (\d?)      # package's first character
 			 }[
 			   "::" . ($2 ? sprintf("_%2x",unpack("C",$2)) : "")
@@ -175,7 +175,7 @@ sub compile {
 #XXX not good enough yet
 my(%switches) = (
    'T' => sub {
-       Apache::warn("Apache::Registry: -T switch ignored, ".
+       Apache::warn("Apache::Registry: T switch ignored, ".
 		    "enable with 'PerlTaintCheck On'\n")
 	   unless $Apache::__T; "";
    },
@@ -323,6 +323,5 @@ perl(1), mod_perl(3), Apache(3), Apache::Debug(3)
 
 =head1 AUTHORS
 
-Andreas Koenig <andreas.koenig@franz.ww.tu-berlin.de> and
-Doug MacEachern <dougm@osf.org>
+Andreas J. Koenig and Doug MacEachern
 

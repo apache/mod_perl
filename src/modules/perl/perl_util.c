@@ -150,7 +150,7 @@ void perl_run_rgy_endav(char *s)
     char *key;
     dTHR;
 
-    if(!rgystash) {
+    if(!rgystash || !SvTRUE(rgystash)) {
 	MP_TRACE_g(fprintf(stderr, 
         "Apache::Registry::curstash not set, can't run END blocks for %s\n",
 			 s));
@@ -534,6 +534,7 @@ static SV *perl_sv_name(SV *svp)
 
 void mod_perl_mark_where(char *where, SV *sub)
 {
+    dTHR;
     SV *name = Nullsv;
     if(curcop->cop_line) {
 #if 0

@@ -45,6 +45,7 @@
 #undef my_memcmp
 #undef RETURN
 #undef die
+#undef __attribute__
 
 #ifndef _INCLUDE_APACHE_FIRST
 #include "httpd.h" 
@@ -311,7 +312,7 @@ typedef void mutex;
 
 #if MODULE_MAGIC_NUMBER < 19971226
 char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
-#endif;
+#endif
 
 #define PERL_SET_CUR_HOOK(h) \
 { \
@@ -809,7 +810,6 @@ I32 perl_module_is_loaded(char *name);
 SV *perl_module2file(char *name);
 int perl_require_module(char *module, server_rec *s);
 int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn);
-void newCONSTSUB(HV *stash, char *name, SV *sv);
 array_header *perl_cgi_env_init(request_rec *r);
 void perl_clear_env(void);
 void mod_perl_init_ids(void);

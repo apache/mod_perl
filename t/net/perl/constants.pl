@@ -6,11 +6,9 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use CGI ();
-use Apache::Constants;
+use Apache::Constants ();
 use strict qw(vars);
-my $q = CGI->new;
-$q->print($q->header(-type => "text/plain"));
+shift->send_http_header("text/plain");
 
 my $version = SERVER_VERSION; 
 
@@ -29,21 +27,27 @@ while(($key,$val) = each %Apache::Constants::EXPORT_TAGS) {
 
 push @export, grep {!$SEEN{$_}++} @Apache::Constants::EXPORT;
 
-my $tests = (1 + @export) - 4; 
+#skip some 1.3 stuff that 1.2 didn't have
+my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV 
+			   SERVER_VERSION SERVER_SUBVERSION SERVER_BUILT);
+
+my $tests = (1 + @export) - keys %skip; 
 print "1..$tests\n"; 
 #$loaded = 1;
-$q->print("ok 1\n");
+print "ok 1\n";
 my $ix = 2;
 
 my($sym);
 
-#skip some 1.3 stuff that 1.2 didn't have
-my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV);
 
 for $sym (sort @export) {
-    next if $skip{$sym} or $sym =~ /SERVER_.*VERSION/;
+    next if $skip{$sym};
     my $val = &$sym;
-    $q->print(defined $val ? "" : "not ", "ok $ix ($sym: $val)\n");
+    my $name = "";
+    eval {
+	$name = Apache::Constants->name($val);
+    };
+    print defined $val ? "" : "not ", "ok $ix ($name|$sym: $val)\n";
     $ix++;
 }
 
@@ -52,4 +56,5 @@ for $sym (sort @export) {
 # Insert your test code below (better if it prints "ok 13"
 # (correspondingly "not ok 13") depending on the success of chunk 13
 # of the test code):
+
 

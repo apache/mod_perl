@@ -1018,6 +1018,7 @@ char *splain_args(enum cmd_how args_how) {
 
 void perl_section_hash_init(char *name, I32 dotie)
 {
+    dTHR;
     GV *gv;
     ENTER;
     save_hptr(&curstash);

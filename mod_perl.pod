@@ -190,18 +190,17 @@ Modules and files pulled in via require/use which contain C<BEGIN>
 blocks will be executed:
   - only once, if pulled in by the parent process
   - once per-child process if not pulled in by the parent process
-  - again, once per-child process if the module is pulled in off of
-    disk again via Apache::StatINC
-  - again, only once in the parent process if PerlFreshRestart is On
+  - an additional time, once per-child process if the module is pulled in off of disk again via Apache::StatINC
+  - an additional time, in the parent process on each restart if PerlFreshRestart is On
   - unpredictable if you fiddle with C<%INC> yourself
 
 B<Apache::Registry> scripts which contain C<BEGIN> blocks will be
 executed: 
   - only once, if pulled in by the parent process via B<Apache::RegistryLoader>
   - once per-child process if not pulled in by the parent process
-  - again, once per-child process if the script file has changed on disk
-  - again, only once if pulled in by the parent process via
-    B<Apache::RegistryLoader> and PerlFreshRestart is On
+  - an additional time, once per-child process if the script file has changed on disk
+  - an additional time, in the parent process on each restart if pulled in by the
+    parent process via B<Apache::RegistryLoader> and PerlFreshRestart is On
 
 =head1 END blocks
 
@@ -744,6 +743,20 @@ environment variable which can contain any combination of:
  g - Trace global variable handling, intepreter construction, END blocks, etc.
  all - all of the above
 
+=item spinning httpds
+
+To see where an httpd is "spinning", try adding this to your script or a
+startup file:
+
+  use Carp ();
+  $SIG{'USR1'} = sub { 
+     Carp::confess("caught SIGUSR1!");
+  };
+
+Then issue the command line:
+
+  kill -USR1 <spinning_httpd_pid>
+
 =back
 
 =head1 PROFILING
@@ -779,6 +792,13 @@ See L<mod_perl_traps>.
 =head1 SUPPORT
 
 See the L<SUPPORT> file.
+
+=head1 Win32
+
+Jeffey Baker maintains the win32 binary distribution of mod_perl available
+from: 
+
+ http://www.perl.com/CPAN/authors/Jeffrey_Baker/
 
 =head1 REVISION
 
