@@ -42,39 +42,38 @@ PerlInterpreter *modperl_startup(server_rec *s, ap_pool_t *p)
     return perl;
 }
 
-void modperl_init(server_rec *s, ap_pool_t *p)
+void modperl_init(server_rec *base_server, ap_pool_t *p)
 {
-    server_rec *base_server = s;
-    server_rec *srvp;
+    server_rec *s;
+    modperl_srv_config_t *base_scfg =
+      (modperl_srv_config_t *)
+        ap_get_module_config(base_server->module_config, &perl_module);
     PerlInterpreter *base_perl = modperl_startup(base_server, p);
+
     modperl_interp_init(base_server, p, base_perl);
+    MpInterpBASE_On(base_scfg->mip->parent);
 
-    {
-        MP_dSCFG(base_server);
-        MpInterpBASE_On(scfg->mip->parent);
-    }
-
-    for (srvp=base_server->next; srvp; srvp=srvp->next) {
-        MP_dSCFG(srvp);
+    for (s=base_server->next; s; s=s->next) {
+        MP_dSCFG(s);
         PerlInterpreter *perl = base_perl;
 
         if (1) {
             /* XXX: using getenv() just for testing here */
             char *do_alloc = getenv("MP_SRV_ALLOC_TEST");
             char *do_clone = getenv("MP_SRV_CLONE_TEST");
-            if (do_alloc && strEQ(do_alloc, srvp->server_hostname)) {
+            if (do_alloc && strEQ(do_alloc, s->server_hostname)) {
                 MpSrvPERL_ALLOC_On(scfg);
             }
-            if (do_clone && strEQ(do_clone, srvp->server_hostname)) {
+            if (do_clone && strEQ(do_clone, s->server_hostname)) {
                 MpSrvPERL_CLONE_On(scfg);
             }
         }
 
         /* if alloc flags is On, virtual host gets its own parent perl */
         if (MpSrvPERL_ALLOC(scfg)) {
-            perl = modperl_startup(srvp, p);
+            perl = modperl_startup(s, p);
             MP_TRACE_i(MP_FUNC, "modperl_startup() server=%s\n",
-                       srvp->server_hostname);
+                       s->server_hostname);
         }
 
 #ifdef USE_ITHREADS
@@ -83,13 +82,21 @@ void modperl_init(server_rec *s, ap_pool_t *p)
          */
         if (MpSrvPERL_ALLOC(scfg) || MpSrvPERL_CLONE(scfg)) {
             MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
-                       srvp->server_hostname);
-            modperl_interp_init(srvp, p, perl);
+                       s->server_hostname);
+            modperl_interp_init(s, p, perl);
         }
 
         /* if we allocated a parent perl, mark it to be destroyed */
         if (MpSrvPERL_ALLOC(scfg)) {
             MpInterpBASE_On(scfg->mip->parent);
+        }
+
+        if (!scfg->mip) {
+            /* since mips are created after merge_server_configs()
+             * need to point to the base mip here if this vhost
+             * doesn't have its own
+             */
+            scfg->mip = base_scfg->mip;
         }
 #endif
     }
