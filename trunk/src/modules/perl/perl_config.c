@@ -1406,7 +1406,13 @@ CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv)
 {
     SV *sv;
     char *methods;
+    module *mod = top_module;
+    const command_rec *nrec = find_command_in_modules("<Limit", &mod);
+    const command_rec *orec = cmd->cmd;
     /*void *ac = (void*)create_default_per_dir_config(cmd->pool);*/
+
+    if(nrec)
+	cmd->cmd = nrec;
 
     if(hv_exists(hv,"METHODS", 7))
        sv = hv_delete(hv, "METHODS", 7, G_SCALAR);
@@ -1422,6 +1428,7 @@ CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv)
     limit_section(cmd, dummy, methods); 
     perl_section_hash_walk(cmd, dummy, hv);
     cmd->limited = -1;
+    cmd->cmd = orec;
 
     return NULL;
 }
@@ -1462,7 +1469,7 @@ void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config)
     else if(strnEQ(key, "Files", 5)) 
 	perl_filesection(cmd, (core_dir_config *)dummy, hv);
     else if(strEQ(key, "Limit")) 
-	perl_limit_section(cmd, dummy, hv);
+	perl_limit_section(cmd, config, hv);
 
     cmd->info = old_info;
 }
