@@ -200,7 +200,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
      * situation always explicitly flush STDOUT, before reopening it.
      */
     if (GvIOn(handle_orig) && IoOFP(GvIOn(handle_orig))) {
-        Perl_PerlIO_flush(aTHX_ IoOFP(GvIOn(handle_orig)));
+        PerlIO_flush(IoOFP(GvIOn(handle_orig)));
     }
     /* open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!"; */
     /* open first closes STDOUT */
