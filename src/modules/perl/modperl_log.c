@@ -19,6 +19,11 @@ unsigned long modperl_debug_level(void)
     return debug_level;  
 }
 
+void modperl_trace_logfile_set(apr_file_t *logfile_new)
+{
+    logfile = logfile_new;
+}
+
 void modperl_trace(const char *func, const char *fmt, ...)
 {
     char vstr[8192];
@@ -67,7 +72,7 @@ void modperl_trace_level_set(server_rec *s, const char *level)
 
     debug_level |= 0x80000000;
 
-    logfile = s->error_log; /* XXX */
+    modperl_trace_logfile_set(s->error_log);
 
     MP_TRACE_a_do(MP_TRACE_dump_flags());
 }
