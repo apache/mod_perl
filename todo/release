@@ -48,10 +48,6 @@
   http://marc.theaimsgroup.com/?t=108309295200003
   owner: geoff
 
-* PerlSetVar/PerlAddVar still do not merge properly.  geoff knows
-  the issues and thinks he knows how to fix it, he just needs the time.
-  owner: geoff
-
 * per-server cleanups core dump or are otherwise ineffective
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
