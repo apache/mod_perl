@@ -16,14 +16,14 @@ sub handler {
         Apache2::Reload->unregister_module($package);
         ModPerl::Util::unload_package($package);
         $r->print("unregistered OK");
-        return Apache2::OK;
+        return Apache2::Const::OK;
     }
 
     eval "use $package";
 
     Apache2::Reload::Test::run($r);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

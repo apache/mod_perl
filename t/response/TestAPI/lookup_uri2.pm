@@ -16,7 +16,7 @@ sub myplan {
 
     die "must indicate a sub-request" if $r->is_initial_req();
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub ok3 {
@@ -24,7 +24,7 @@ sub ok3 {
 
     $r->puts("ok 3\n");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub subrequest {
@@ -42,7 +42,7 @@ sub handler {
 
     subrequest($r, 'ok3');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -53,7 +53,7 @@ sub handler {
     ok !$c->aborted;
 
     ok t_cmp($c->keepalive,
-             Apache2::CONN_CLOSE,
+             Apache2::Const::CONN_CLOSE,
              "the client has issued a non-keepalive request");
 
     ok $c->local_ip;
@@ -68,7 +68,7 @@ sub handler {
     # XXX: missing tests
     # conn_config
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

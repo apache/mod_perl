@@ -23,7 +23,7 @@ sub handler {
 
     #warn "in callback: $callback\n";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub log          { check('Log')          }
@@ -36,7 +36,7 @@ sub check {
     die "expecting $expected callback, instead got $callback" 
         unless $callback eq $expected;
     #warn "in callback: $callback\n";
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

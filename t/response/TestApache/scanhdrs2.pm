@@ -14,7 +14,7 @@ sub handler {
 
     print "Location: $location\n\n";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

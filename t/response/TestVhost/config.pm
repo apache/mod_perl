@@ -37,7 +37,7 @@ sub my_handler {
         ok t_cmp($restart_count, 2, "PerlPostConfigRequire");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -53,7 +53,7 @@ sub handler {
         $filter->ctx(1); # flag that we have run this already
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub response {

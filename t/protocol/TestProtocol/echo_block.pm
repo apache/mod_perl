@@ -41,7 +41,7 @@ sub handler {
         $socket->send($buffer);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -71,7 +71,7 @@ sub handler : method {
 
     $self->post_config();
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub symdump {

@@ -80,7 +80,7 @@ sub handler {
         ok $ipsub->test($c->remote_addr);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

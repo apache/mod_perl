@@ -19,7 +19,7 @@ sub handler {
     #XXX: How to test that __END__ works proprely without cloberring all the other tests?
     ok t_cmp '__END__', '__END__';
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -29,7 +29,7 @@ sub handler {
       $filter->r->notes->set(invoked => $ctx->{invoked});
       #warn "filter was invoked $ctx->{invoked} times\n";
 
-      return Apache2::DECLINED;
+      return Apache2::Const::DECLINED;
 }
 
 sub response {
@@ -39,7 +39,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         # consume the data so the input filter is invoked
         my $data = TestCommon::Utils::read_post($r);
         ok t_cmp(length $data, 20000, "the request body received ok");
@@ -54,7 +54,7 @@ sub response {
     my $invoked = $r->notes->get('invoked') || 0;
     ok $invoked > 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

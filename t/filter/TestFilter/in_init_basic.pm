@@ -27,7 +27,7 @@ sub transparent_init : FilterInitHandler {
     $filter->r->notes->set(init => $ctx->{init});
     $filter->ctx($ctx);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 # this filter passes the data through unmodified and sets a note
@@ -44,14 +44,14 @@ sub transparent : FilterRequestHandler
 
     $filter->next->get_brigade($bb, $mode, $block, $readbytes);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 
 
 # this filter is not supposed to get a chance to run, since its init
 # handler immediately removes it
-sub suicide_init : FilterInitHandler { shift->remove(); Apache2::OK }
+sub suicide_init : FilterInitHandler { shift->remove(); Apache2::Const::OK }
 sub suicide      : FilterHasInitHandler(\&suicide_init) {
     die "this filter is not supposed to have a chance to run";
 }
@@ -61,7 +61,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         $r->print(TestCommon::Utils::read_post($r));
     }
 
@@ -69,7 +69,7 @@ sub response {
     my %times = map { $_ => $r->notes->get($_)||0 } @keys;
     $r->print("$_ $times{$_}\n") for @keys;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

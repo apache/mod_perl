@@ -35,7 +35,7 @@ sub read_post {
     my $seen_eos = 0;
     my $count = 0;
     do {
-        $r->input_filters->get_brigade($bb, Apache2::MODE_READBYTES,
+        $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;

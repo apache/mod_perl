@@ -61,7 +61,7 @@ sub handler {
 
     ok t_cmp($srv_cfg->{+KEY}, "Vhost", "Section");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -181,7 +181,7 @@ sub handler {
         ok $url_string eq "@c";
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

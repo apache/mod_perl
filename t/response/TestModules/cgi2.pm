@@ -51,7 +51,7 @@ sub handler {
         $r->print("no param or upload data\n");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

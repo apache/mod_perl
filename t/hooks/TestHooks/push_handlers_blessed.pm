@@ -24,14 +24,14 @@ sub handler {
     my $sub = sub {
         ok 1;
 
-        return Apache2::OK;
+        return Apache2::Const::OK;
     };
 
     my $handler = bless $sub, __PACKAGE__;
 
     $r->push_handlers(PerlResponseHandler => $handler);
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 1;

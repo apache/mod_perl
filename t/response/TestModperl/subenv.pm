@@ -90,7 +90,7 @@ sub handler {
         ok ! $ENV{$key};              # still shouldn't affect %ENV
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub ok_true {

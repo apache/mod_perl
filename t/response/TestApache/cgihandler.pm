@@ -15,7 +15,7 @@ sub handler {
 
     $ENV{FOO} = 2;
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $cl = $r->headers_in->get('content-length');
         my $buff;
 #XXX: working around a bug in ithreads Perl
@@ -35,7 +35,7 @@ sub handler {
         print "ok $foo\n";
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

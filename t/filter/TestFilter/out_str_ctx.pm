@@ -56,7 +56,7 @@ sub handler {
         $filter->ctx($ctx);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 
@@ -82,7 +82,7 @@ sub response {
         $r->rflush; # so the filter reads a chunk at a time
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

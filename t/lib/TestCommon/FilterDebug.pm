@@ -45,7 +45,7 @@ sub snoop {
     #    return -1;
     #}
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub bb_dump {

@@ -82,7 +82,7 @@ sub handler {
     my $rv = $filter->next->pass_brigade($bb_ctx);
     return $rv unless $rv == APR::SUCCESS;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -107,7 +107,7 @@ sub response {
         $r->rflush; # so the filter reads a chunk at a time
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

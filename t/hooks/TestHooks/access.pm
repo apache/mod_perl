@@ -24,13 +24,13 @@ sub handler {
 
     debug "access: " . ($fake_ip =~ $allowed_ips ? "OK\n" : "FORBIDDEN\n");
 
-    return Apache2::FORBIDDEN unless $fake_ip =~ $allowed_ips;
+    return Apache2::Const::FORBIDDEN unless $fake_ip =~ $allowed_ips;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
-sub fixup { debug "fixup\n"; Apache2::OK }
-sub init  { debug "init\n";  Apache2::OK }
+sub fixup { debug "fixup\n"; Apache2::Const::OK }
+sub init  { debug "init\n";  Apache2::Const::OK }
 
 1;
 __DATA__

@@ -24,7 +24,7 @@ sub handler {
         ok t_cmp($$, $$, "current process id");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

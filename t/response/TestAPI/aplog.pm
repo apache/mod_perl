@@ -61,14 +61,14 @@ sub handler {
     {
         t_server_log_warn_is_expected();
         $s->log_serror(Apache2::Log::LOG_MARK,
-                       Apache2::LOG_INFO|Apache2::LOG_STARTUP,
+                       Apache2::Const::LOG_INFO|Apache2::Const::LOG_STARTUP,
                        APR::SUCCESS, "This log message comes with no header");
         ok t_cmp $logdiff->diff,
             qr/^This log message comes with no header$/m,
             '$s->log_serror(LOG_MARK, LOG_INFO|LOG_STARTUP...)';
 
         t_server_log_warn_is_expected();
-        $s->log_serror(__FILE__, __LINE__, Apache2::LOG_DEBUG,
+        $s->log_serror(__FILE__, __LINE__, Apache2::Const::LOG_DEBUG,
                        APR::SUCCESS, "log_serror test 1");
         ok t_cmp $logdiff->diff,
             qr/: log_serror test 1$/m,
@@ -80,7 +80,7 @@ sub handler {
            : "Error string not specified yet";
 
         t_server_log_warn_is_expected();
-        $s->log_serror(Apache2::Log::LOG_MARK, Apache2::LOG_DEBUG,
+        $s->log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
                        APR::EGENERAL, "log_serror test 2");
         ok t_cmp $logdiff->diff,
             qr/$egeneral: log_serror test 2/,
@@ -89,7 +89,7 @@ sub handler {
 
     # log_rerror
     t_server_log_error_is_expected();
-    $r->log_rerror(Apache2::Log::LOG_MARK, Apache2::LOG_CRIT,
+    $r->log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_CRIT,
                    APR::ENOTIME, "log_rerror test");
     # can't match against the error string, since a locale may kick in
     ok t_cmp $logdiff->diff,
@@ -131,7 +131,7 @@ sub handler {
     if (!Apache2::MPM->is_threaded) {
         my $orig_log_level = $s->loglevel;
 
-        $s->loglevel(Apache2::LOG_INFO);
+        $s->loglevel(Apache2::Const::LOG_INFO);
 
         if ($s->error_fname) {
             #XXX: does not work under t/TEST -ssl
@@ -140,7 +140,7 @@ sub handler {
         }
 
         t_server_log_warn_is_expected();
-        $s->loglevel(Apache2::LOG_DEBUG);
+        $s->loglevel(Apache2::Const::LOG_DEBUG);
         $slog->debug(sub { ok 1; "$package test done" });
         ok t_cmp $logdiff->diff,
             qr/TestAPI::aplog test done/,
@@ -158,7 +158,7 @@ sub handler {
     if (!Apache2::MPM->is_threaded) {
         my $orig_log_level = $s->loglevel;
 
-        $r->server->loglevel(Apache2::LOG_ERR);
+        $r->server->loglevel(Apache2::Const::LOG_ERR);
         my $ignore = $logdiff->diff; # reset fh
         # notice < error
         my $msg = "This message should appear with LogLevel=error!";
@@ -203,7 +203,7 @@ sub handler {
         qr/\[warn\] warn test/,
         'overriden via export warn()';
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -43,18 +43,18 @@ sub init {
     # define a new symbol (sub) after the attack has caused a re-hash
     # check that mod_perl finds that symbol (fixup2) in the stash
     no warnings 'redefine';
-    eval qq[sub fixup2 { return Apache2::OK; }];
+    eval qq[sub fixup2 { return Apache2::Const::OK; }];
     $r->push_handlers(PerlFixupHandler => \&fixup2);
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
-sub fixup { return Apache2::OK; }
+sub fixup { return Apache2::Const::OK; }
 
 sub handler {
     my $r = shift;
     $r->print("ok");
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub attack {

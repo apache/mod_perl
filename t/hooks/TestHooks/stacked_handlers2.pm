@@ -21,28 +21,28 @@ sub ok {
 
     callback(shift);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub declined { 
 
     callback(shift);
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub auth_required { 
 
     callback(shift);
 
-    return Apache2::AUTH_REQUIRED;
+    return Apache2::Const::AUTH_REQUIRED;
 }
 
 sub server_error { 
 
     callback(shift);
 
-    return Apache2::SERVER_ERROR;
+    return Apache2::Const::SERVER_ERROR;
 }
 
 sub callback {
@@ -90,7 +90,7 @@ sub handler {
         $r->print("ran $count $callback handlers\n");
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub passthru {
@@ -106,7 +106,7 @@ sub passthru {
     }
 
     # this should be ignored?
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub filter {
@@ -128,7 +128,7 @@ sub filter {
     }
 
     # this should be ignored?
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -18,7 +18,7 @@ sub handler {
 
     $r->print('ok');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

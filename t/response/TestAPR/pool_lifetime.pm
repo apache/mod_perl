@@ -19,7 +19,7 @@ sub handler {
     $r->print("Pong");
     $pool = $r->pool;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

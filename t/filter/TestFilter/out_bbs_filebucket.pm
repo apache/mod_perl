@@ -55,7 +55,7 @@ sub response {
     Apache2::URI::unescape_url($file);
     $r->sendfile($file);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -34,7 +34,7 @@ sub handler {
 
     TestAPRlib::finfo::test();
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -23,7 +23,7 @@ sub handler {
     # this header will make it to the client only on 2xx response
     $r->headers_out->add('X-headers_out' => "headers_out");
 
-    return $r->args eq "404" ? Apache2::NOT_FOUND : Apache2::OK;
+    return $r->args eq "404" ? Apache2::Const::NOT_FOUND : Apache2::Const::OK;
 }
 
 1;

@@ -15,49 +15,49 @@ my $base = "/TestModperl__status";
 
 # valid Apache return codes
 {
-    my $uri = join '?', $base, Apache2::OK;
+    my $uri = join '?', $base, Apache2::Const::OK;
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 }
 
 {
-    my $uri = join '?', $base, Apache2::DECLINED;
+    my $uri = join '?', $base, Apache2::Const::DECLINED;
     my $code = GET_RC $uri;
 
     # no Alias to map us to DocumentRoot
     ok t_cmp($code,
-             Apache2::NOT_FOUND,
+             Apache2::Const::NOT_FOUND,
              $uri);
 }
 
 # standard HTTP status codes
 {
-    my $uri = join '?', $base, Apache2::NOT_FOUND;
+    my $uri = join '?', $base, Apache2::Const::NOT_FOUND;
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::NOT_FOUND,
+             Apache2::Const::NOT_FOUND,
              $uri);
 }
 
 {
-    my $uri = join '?', $base, Apache2::FORBIDDEN;
+    my $uri = join '?', $base, Apache2::Const::FORBIDDEN;
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::FORBIDDEN,
+             Apache2::Const::FORBIDDEN,
              $uri);
 }
 
 {
-    my $uri = join '?', $base, Apache2::SERVER_ERROR;
+    my $uri = join '?', $base, Apache2::Const::SERVER_ERROR;
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::SERVER_ERROR,
+             Apache2::Const::SERVER_ERROR,
              $uri);
 }
 
@@ -68,7 +68,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::SERVER_ERROR,
+             Apache2::Const::SERVER_ERROR,
              $uri);
 }
 
@@ -77,7 +77,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::SERVER_ERROR,
+             Apache2::Const::SERVER_ERROR,
              $uri);
 }
 
@@ -86,7 +86,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::SERVER_ERROR,
+             Apache2::Const::SERVER_ERROR,
              $uri);
 }
 
@@ -95,11 +95,11 @@ my $base = "/TestModperl__status";
 # succeed so the 200 is propagated to the client,
 # there's an error beneath that 200 code.
 {
-    my $uri = join '?', $base, Apache2::HTTP_OK;
+    my $uri = join '?', $base, Apache2::Const::HTTP_OK;
     my $response = GET $uri;
 
     ok t_cmp($response->code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 
     ok t_cmp($response->content,
@@ -114,7 +114,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 }
 
@@ -124,7 +124,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::SERVER_ERROR,
+             Apache2::Const::SERVER_ERROR,
              $uri);
 }
 
@@ -133,7 +133,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 }
 
@@ -142,7 +142,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 }
 
@@ -151,7 +151,7 @@ my $base = "/TestModperl__status";
     my $code = GET_RC $uri;
 
     ok t_cmp($code,
-             Apache2::HTTP_OK,
+             Apache2::Const::HTTP_OK,
              $uri);
 }
 

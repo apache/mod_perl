@@ -108,13 +108,13 @@ sub handler {
 
 sub get_server_name { return $_[0]->{virthost} if exists $_[0]->{virthost} }
 sub filename { shift->{filename} }
-sub status { Apache2::HTTP_OK }
+sub status { Apache2::Const::HTTP_OK }
 sub my_finfo    { shift->{filename} }
 sub uri      { shift->{uri} }
 sub path_info {}
-sub allow_options { Apache2::OPT_EXECCGI } #will be checked again at run-time
+sub allow_options { Apache2::Const::OPT_EXECCGI } #will be checked again at run-time
 sub log_error { shift; die @_ if $@; warn @_; }
-sub run { return Apache2::OK } # don't run the script
+sub run { return Apache2::Const::OK } # don't run the script
 sub server { shift }
 sub is_virtual { exists shift->{virthost} }
 

@@ -28,7 +28,7 @@ sub modperl {
         $r->internal_redirect("$redirect_uri?main=modperl");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub perl_script {
@@ -48,7 +48,7 @@ sub perl_script {
         $r->internal_redirect("$redirect_uri?main=perl-script");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

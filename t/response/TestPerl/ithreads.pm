@@ -71,7 +71,7 @@ sub handler {
         ok t_cmp($counter_priv, 2**10, "private counter");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

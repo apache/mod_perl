@@ -20,7 +20,7 @@ sub handler {
     ok t_cmp ModPerl::Util::current_perl_id(), qr/0x\w+/,
         "perl interpreter id";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

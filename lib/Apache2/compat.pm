@@ -540,7 +540,7 @@ sub register_cleanup {
 
 sub get_remote_host {
     my($r, $type) = @_;
-    $type = Apache2::REMOTE_NAME unless defined $type;
+    $type = Apache2::Const::REMOTE_NAME unless defined $type;
     $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
@@ -569,7 +569,7 @@ sub content {
     my $data = '';
     my $seen_eos = 0;
     do {
-        $r->input_filters->get_brigade($bb, Apache2::MODE_READBYTES,
+        $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
                                        APR::BLOCK_READ, IOBUFSIZE);
         while (!$bb->is_empty) {
             my $b = $bb->first;
@@ -839,7 +839,7 @@ use Apache2::Const -compile => 'DECLINED';
 
 sub handler {
     # don't set the SIGPIPE
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 package Apache2::Connection;

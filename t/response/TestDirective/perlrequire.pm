@@ -23,7 +23,7 @@ sub handler {
     $r->content_type('text/plain');
     $r->puts($ApacheTest::PerlRequireTest::MAGIC || '');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 my %require_tests = 

@@ -26,7 +26,7 @@ sub handler {
 
     $r->push_handlers(PerlResponseHandler => \&real_response);
 
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub real_response {
@@ -53,7 +53,7 @@ sub real_response {
              "can't switch from 'perl-script' to 'modperl' inside " .
              "the response phase");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

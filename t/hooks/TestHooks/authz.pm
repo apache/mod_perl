@@ -11,16 +11,16 @@ sub auth_any {
     my $r = shift;
 
     my($res, $sent_pw) = $r->get_basic_auth_pw;
-    return $res if $res != Apache2::OK;
+    return $res if $res != Apache2::Const::OK;
 
     unless($r->user and $sent_pw) {
         # testing $r->note_auth_failure:
         # AuthType Basic + note_auth_failure == note_basic_auth_failure;
 	$r->note_auth_failure;
-	return Apache2::HTTP_UNAUTHORIZED;
+	return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub handler {
@@ -28,13 +28,13 @@ sub handler {
 
     my $user = $r->user;
 
-    return Apache2::HTTP_UNAUTHORIZED unless $user;
+    return Apache2::Const::HTTP_UNAUTHORIZED unless $user;
 
     my($u, @allowed) = split /\s+/, $r->requires->[0]->{requirement};
 
-    return Apache2::HTTP_UNAUTHORIZED unless grep { $_ eq $user } @allowed;
+    return Apache2::Const::HTTP_UNAUTHORIZED unless grep { $_ eq $user } @allowed;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

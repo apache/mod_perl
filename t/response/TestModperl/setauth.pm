@@ -22,7 +22,7 @@ sub handler {
 
     ok t_cmp($r->auth_type(), 'Basic', 'default auth_type');
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

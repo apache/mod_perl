@@ -50,7 +50,7 @@ sub handler {
     # one plain ok 1 (4)
     ok 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

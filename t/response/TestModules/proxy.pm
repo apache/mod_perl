@@ -16,8 +16,8 @@ use Apache2::Const -compile => qw(DECLINED OK);
 sub proxy {
     my $r = shift;
 
-    return Apache2::DECLINED if $r->proxyreq;
-    return Apache2::DECLINED unless $r->uri eq '/TestModules__proxy';
+    return Apache2::Const::DECLINED if $r->proxyreq;
+    return Apache2::Const::DECLINED unless $r->uri eq '/TestModules__proxy';
 
     my $s = $r->server;
     my $real_url = sprintf "http://%s:%d%s",
@@ -28,7 +28,7 @@ sub proxy {
     $r->filename("proxy:$real_url");
     $r->handler('proxy-server');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -37,7 +37,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print("ok");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

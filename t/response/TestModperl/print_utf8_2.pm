@@ -20,7 +20,7 @@ sub handler {
     # \x{263A} == :-)
     $r->print("\$r->print() just works \x{263A}");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

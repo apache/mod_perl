@@ -23,37 +23,37 @@ ok t_cmp(AUTH_REQUIRED, 401, 'AUTH_REQUIRED');
 
 ok t_cmp(OK, 0, 'OK');
 
-ok t_cmp(Apache2::OK, 0, 'Apache2::OK');
+ok t_cmp(Apache2::Const::OK, 0, 'Apache2::Const::OK');
 
-ok t_cmp(Apache2::DECLINED, -1, 'Apache2::DECLINED');
+ok t_cmp(Apache2::Const::DECLINED, -1, 'Apache2::Const::DECLINED');
 
-ok t_cmp(Apache2::HTTP_GONE, 410, 'Apache2::HTTP_GONE');
+ok t_cmp(Apache2::Const::HTTP_GONE, 410, 'Apache2::Const::HTTP_GONE');
 
-ok t_cmp(Apache2::DIR_MAGIC_TYPE, 
+ok t_cmp(Apache2::Const::DIR_MAGIC_TYPE, 
          'httpd/unix-directory',
-         'Apache2::DIR_MAGIC_TYPE');
+         'Apache2::Const::DIR_MAGIC_TYPE');
 
-ok t_cmp(Apache2::MPMQ_MAX_SPARE_DAEMONS, 
+ok t_cmp(Apache2::Const::MPMQ_MAX_SPARE_DAEMONS, 
          9,
-         'Apache2::MPMQ_MAX_SPARE_DAEMONS');
+         'Apache2::Const::MPMQ_MAX_SPARE_DAEMONS');
 
 # the rest of the tests don't fit into the t_cmp() meme
 # for one reason or anothre...
 
-print "testing Apache2::OPT_EXECCGI is defined\n";
-ok defined Apache2::OPT_EXECCGI;
+print "testing Apache2::Const::OPT_EXECCGI is defined\n";
+ok defined Apache2::Const::OPT_EXECCGI;
 
-print "testing Apache2::DECLINE_CMD\n";
-ok Apache2::DECLINE_CMD eq "\x07\x08";
+print "testing Apache2::Const::DECLINE_CMD\n";
+ok Apache2::Const::DECLINE_CMD eq "\x07\x08";
 
 # try and weed out EBCDIC - this is the test httpd uses
 if (chr(0xC1) eq 'A') {
-    print "testing Apache2::CRLF (EBCDIC)\n";
-    ok Apache2::CRLF eq "\r\n";
+    print "testing Apache2::Const::CRLF (EBCDIC)\n";
+    ok Apache2::Const::CRLF eq "\r\n";
 }
 else {
-    print "testing Apache2::CRLF (ASCII)\n";
-    ok Apache2::CRLF eq "\015\012";
+    print "testing Apache2::Const::CRLF (ASCII)\n";
+    ok Apache2::Const::CRLF eq "\015\012";
 
 }
 

@@ -158,9 +158,9 @@ sub default_handler {
 
     if ($self->should_compile) {
         my $rc = $self->can_compile;
-        return $rc unless $rc == Apache2::OK;
+        return $rc unless $rc == Apache2::Const::OK;
         $rc = $self->convert_script_to_compiled_handler;
-        return $rc unless $rc == Apache2::OK;
+        return $rc unless $rc == Apache2::Const::OK;
     }
 
     # handlers shouldn't set $r->status but return it, so we reset the
@@ -168,7 +168,7 @@ sub default_handler {
     my $old_status = $self->{REQ}->status;
     my $rc = $self->run;
     my $new_status = $self->{REQ}->status($old_status);
-    return ($rc == Apache2::OK && $old_status != $new_status)
+    return ($rc == Apache2::Const::OK && $old_status != $new_status)
         ? $new_status
         : $rc;
 }
@@ -196,7 +196,7 @@ sub run {
         %orig_inc = %INC;
     }
 
-    my $rc = Apache2::OK;
+    my $rc = Apache2::Const::OK;
     { # run the code and preserve warnings setup when it's done
         no warnings FATAL => 'all';
         #local $^W = 0;
@@ -216,7 +216,7 @@ sub run {
 
             # use the END blocks return status if the script's execution
             # was successful
-            $rc = $new_rc if $rc == Apache2::OK;
+            $rc = $new_rc if $rc == Apache2::Const::OK;
         }
 
     }
@@ -255,19 +255,19 @@ sub can_compile {
     my $self = shift;
     my $r = $self->{REQ};
 
-    return Apache2::DECLINED if -d $r->my_finfo;
+    return Apache2::Const::DECLINED if -d $r->my_finfo;
 
     $self->{MTIME} = -M _;
 
-    if (!($r->allow_options & Apache2::OPT_EXECCGI)) {
+    if (!($r->allow_options & Apache2::Const::OPT_EXECCGI)) {
         $r->log_error("Options ExecCGI is off in this directory",
                        $self->{FILENAME});
-        return Apache2::FORBIDDEN;
+        return Apache2::Const::FORBIDDEN;
     }
 
     $self->debug("can compile $self->{FILENAME}") if DEBUG & D_NOISE;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 
 }
 #########################################################################
@@ -362,13 +362,13 @@ sub namespace_from_uri {
 sub convert_script_to_compiled_handler {
     my $self = shift;
 
-    my $rc = Apache2::OK;
+    my $rc = Apache2::Const::OK;
 
     $self->debug("Adding package $self->{PACKAGE}") if DEBUG & D_NOISE;
 
     # get the script's source
     $rc = $self->read_script;
-    return $rc unless $rc == Apache2::OK;
+    return $rc unless $rc == Apache2::Const::OK;
 
     # convert the shebang line opts into perl code
     my $shebang = $self->shebang_to_perl;
@@ -403,7 +403,7 @@ sub convert_script_to_compiled_handler {
                     "\n}"; # last line comment without newline?
 
     $rc = $self->compile(\$eval);
-    return $rc unless $rc == Apache2::OK;
+    return $rc unless $rc == Apache2::Const::OK;
     $self->debug(qq{compiled package \"$self->{PACKAGE}\"}) if DEBUG & D_NOISE;
 
     #$self->chdir_file("$Apache2::Server::CWD/");
@@ -528,7 +528,7 @@ sub flush_namespace_normal {
 # dflt: read_script
 # desc: reads the script in
 # args: $self - registry blessed object
-# rtrn: Apache2::OK on success, some other code on failure
+# rtrn: Apache2::Const::OK on success, some other code on failure
 # efct: initializes the CODE field with the source script
 #########################################################################
 
@@ -542,15 +542,15 @@ sub read_script {
         $self->log_error("$@");
 
         if (ref $@ eq 'APR::Error') {
-            return Apache2::FORBIDDEN if $@ == APR::EACCES;
-            return Apache2::NOT_FOUND if $@ == APR::ENOENT;
+            return Apache2::Const::FORBIDDEN if $@ == APR::EACCES;
+            return Apache2::Const::NOT_FOUND if $@ == APR::ENOENT;
         }
         else {
-            return Apache2::SERVER_ERROR;
+            return Apache2::Const::SERVER_ERROR;
         }
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 #########################################################################
@@ -682,7 +682,7 @@ sub compile {
 # dflt: error_check
 # desc: checks $@ for errors
 # args: $self - registry blessed object
-# rtrn: Apache2::SERVER_ERROR if $@ is set, Apache2::OK otherwise
+# rtrn: Apache2::Const::SERVER_ERROR if $@ is set, Apache2::Const::OK otherwise
 #########################################################################
 
 sub error_check {
@@ -693,9 +693,9 @@ sub error_check {
     # (see modperl_perl_exit() and modperl_errsv() C functions)
     if ($@ && !(ref $@ eq 'APR::Error' && $@ == ModPerl::EXIT)) {
         $self->log_error($@);
-        return Apache2::SERVER_ERROR;
+        return Apache2::Const::SERVER_ERROR;
     }
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 

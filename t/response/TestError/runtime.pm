@@ -29,7 +29,7 @@ sub handler {
     no strict 'refs';
     $args->($r, $socket);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub overload_test {

@@ -48,7 +48,7 @@ sub include {
         $filter->ctx(1);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub subrequest {
@@ -58,7 +58,7 @@ sub subrequest {
     $r->content_type('text/plain');
     $r->print("modperl subrequest\n");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -73,7 +73,7 @@ sub response {
     $r->rflush;
     $r->print("more content\n");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

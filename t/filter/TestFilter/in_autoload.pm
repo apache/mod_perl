@@ -23,7 +23,7 @@ sub handler {
         $filter->print(lc $buffer);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -39,7 +39,7 @@ sub handler {
     ok t_cmp($r->is_perl_option_enabled($_), 0,
              "PerlOptions -$_") for @dir_minus;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

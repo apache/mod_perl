@@ -17,7 +17,7 @@ sub access {
     my($key, $val) = cookie($r);
     die "I shouldn't get the cookie" if $r->args eq 'env' && defined $val;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub handler {
@@ -26,7 +26,7 @@ sub handler {
     my($key, $val) = cookie($r);
     $r->print($val) if defined $val;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub cookie {

@@ -148,7 +148,7 @@ sub handler {
                  "read dir_config of the base server");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 my $key_base = "TestModperl__request_rec_Key";

@@ -21,7 +21,7 @@ sub handler {
     # $requests locations with 7 tests each
     plan $r, tests => $requests * 7;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub env {
@@ -61,7 +61,7 @@ sub env {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub noenv {
@@ -101,7 +101,7 @@ sub noenv {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub someenv {
@@ -142,21 +142,21 @@ sub someenv {
              'server',
              'found per-server PerlSetEnv entry in %ENV');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub subenv_void {
 
     shift->subprocess_env;
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub subenv_one {
 
     shift->subprocess_env->set(SRV_SUBPROCESS => 'server');
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub subenv_two {
@@ -167,7 +167,7 @@ sub subenv_two {
 
     $r->subprocess_env->set(DIR_SUBPROCESS => $value);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

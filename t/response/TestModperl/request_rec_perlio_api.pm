@@ -20,7 +20,7 @@ sub handler {
 
     $r->args eq 'STDIN' ? test_STDIN($r) : test_STDOUT($r);
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub test_STDIN {

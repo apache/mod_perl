@@ -25,7 +25,7 @@ sub handler {
 
     die "This filter must die";
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -43,7 +43,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print("it shouldn't be printed, because the input filter has died");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 1;
 __DATA__

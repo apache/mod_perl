@@ -54,7 +54,7 @@ sub handler {
         ok t_cmp($received, $expected, "slurp filename (perl) untainted");
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub slurp_filename_perl {

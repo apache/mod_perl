@@ -93,7 +93,7 @@ sub handler {
         verify($len, 0, $data, 0);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 # this sub runs 3 sub-tests with a false $check_content

@@ -114,7 +114,7 @@ sub test_add_version_component {
     sub add_my_version {
         my($conf_pool, $log_pool, $temp_pool, $s) = @_;
         $s->add_version_component("world domination series/2.0");
-        return Apache2::OK;
+        return Apache2::Const::OK;
     }
 }
 

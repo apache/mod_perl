@@ -95,7 +95,7 @@ sub handler {
         debug $@ if $@;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub default_handler {

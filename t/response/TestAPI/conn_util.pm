@@ -22,16 +22,16 @@ sub handler {
 
     ok $c->get_remote_host() || 1;
 
-    for (Apache2::REMOTE_HOST, Apache2::REMOTE_NAME,
-        Apache2::REMOTE_NOLOOKUP, Apache2::REMOTE_DOUBLE_REV) {
+    for (Apache2::Const::REMOTE_HOST, Apache2::Const::REMOTE_NAME,
+        Apache2::Const::REMOTE_NOLOOKUP, Apache2::Const::REMOTE_DOUBLE_REV) {
         ok $c->get_remote_host($_) || 1;
     }
 
-    ok $c->get_remote_host(Apache2::REMOTE_HOST,
+    ok $c->get_remote_host(Apache2::Const::REMOTE_HOST,
                            $r->per_dir_config) || 1;
-    ok $c->get_remote_host(Apache2::REMOTE_HOST, $r->per_dir_config) || 1;
+    ok $c->get_remote_host(Apache2::Const::REMOTE_HOST, $r->per_dir_config) || 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

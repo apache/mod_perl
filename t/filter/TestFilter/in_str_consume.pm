@@ -14,7 +14,7 @@ package TestFilter::in_str_consume;
 # currently if the streaming filter doesn't print anything, the
 # upstream filter gets an empty brigade brigade (easily verified with
 # the snooping debug filter). Of course if the filter returns
-# Apache2::DECLINED the unconsumed data will be passed to upstream filter
+# Apache2::Const::DECLINED the unconsumed data will be passed to upstream filter
 #
 # However this filter has a problem. Since it doesn't consume all the
 # data, the client is left with un-read data, and when the response is
@@ -115,7 +115,7 @@ sub handler {
         # if we don't need to have it as a whole chunk
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 sub response {
@@ -123,7 +123,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
 
         # tell Apache to get rid of the rest of the request body
@@ -136,7 +136,7 @@ sub response {
         $r->print($len);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 1;
 __DATA__

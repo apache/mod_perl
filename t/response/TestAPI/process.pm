@@ -31,7 +31,7 @@ sub handler {
     t_debug($proc_name);
     ok $proc_name;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

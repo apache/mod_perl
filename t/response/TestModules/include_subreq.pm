@@ -54,7 +54,7 @@ sub handler {
         die "something is wrong, didn't get path_info";
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

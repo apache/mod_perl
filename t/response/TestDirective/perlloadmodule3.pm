@@ -125,7 +125,7 @@ sub handler {
         }
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 

@@ -93,7 +93,7 @@ sub test_apache_status {
 sub test_loglevel {
     use Apache2::Const -compile => 'LOG_INFO';
     my $s = Apache2->server;
-    my $oldloglevel = $s->loglevel(Apache2::LOG_INFO);
+    my $oldloglevel = $s->loglevel(Apache2::Const::LOG_INFO);
     # restore
     $s->loglevel($oldloglevel);
 }
@@ -117,7 +117,7 @@ sub test_server_shutdown_cleanup_register {
     # server shutdown, when the test suite has finished its run
     # so just check that we can register the cleanup and that it
     # doesn't segfault
-    Apache2::ServerUtil::server_shutdown_cleanup_register(sub { Apache2::OK });
+    Apache2::ServerUtil::server_shutdown_cleanup_register(sub { Apache2::Const::OK });
 
     # replace the sub with the following to get some visual debug
     # should log cnt:1 on -start, oncand cnt: 2 -stop followed by cnt: 1)
@@ -134,7 +134,7 @@ sub ModPerl::Test::exit_handler {
 
     $s->log->info("Child process pid=$$ is exiting");
 
-    Apache2::OK;
+    Apache2::Const::OK;
 
 }
 
@@ -150,7 +150,7 @@ sub ModPerl::Test::add_config {
     #test adding config at request time
     $r->add_config(['require valid-user']);
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

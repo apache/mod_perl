@@ -16,13 +16,13 @@ use Apache2::Const -compile => qw(M_POST OK);
 sub pass_through_response_handler {
     my $r = shift;
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         debug "pass_through_handler read: $data\n";
         $r->print($data);
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

@@ -58,7 +58,7 @@ sub handler {
         die "Something is wrong, this filter should have been called only once";
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 # if $scan_only is true, don't read the data, just look for eos
@@ -88,13 +88,13 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache2::M_POST) {
+    if ($r->method_number == Apache2::Const::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         $r->print($data);
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 1;
 __DATA__

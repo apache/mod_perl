@@ -47,7 +47,7 @@ sub TestCmdParms {
         $srv_cfg->{$args}{$method} = $parms->$method();
     }
     $srv_cfg->{$args}{check_ctx} = 
-        $parms->check_cmd_context(Apache2::NOT_IN_LOCATION);
+        $parms->check_cmd_context(Apache2::Const::NOT_IN_LOCATION);
 
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
 }
@@ -74,10 +74,10 @@ sub handler : method {
     {
         my $vhost = $srv_cfg->{Vhost};
 
-        my $wanted = Apache2::RSRC_CONF   |
-                     Apache2::OR_INDEXES  |
-                     Apache2::OR_FILEINFO |
-                     Apache2::OR_OPTIONS;
+        my $wanted = Apache2::Const::RSRC_CONF   |
+                     Apache2::Const::OR_INDEXES  |
+                     Apache2::Const::OR_FILEINFO |
+                     Apache2::Const::OR_OPTIONS;
         my $masked = $vhost->{override} & $wanted;
 
         ok t_cmp($masked, $wanted, 'override bitmask');
@@ -90,12 +90,12 @@ sub handler : method {
     {
         my $loc = $srv_cfg->{Location};
 
-        my $wanted = Apache2::ACCESS_CONF |
-                     Apache2::OR_INDEXES  |
-                     Apache2::OR_AUTHCFG  |
-                     Apache2::OR_FILEINFO |
-                     Apache2::OR_OPTIONS  |
-                     Apache2::OR_LIMIT;
+        my $wanted = Apache2::Const::ACCESS_CONF |
+                     Apache2::Const::OR_INDEXES  |
+                     Apache2::Const::OR_AUTHCFG  |
+                     Apache2::Const::OR_FILEINFO |
+                     Apache2::Const::OR_OPTIONS  |
+                     Apache2::Const::OR_LIMIT;
         my $masked = $loc->{override} & $wanted;
 
         ok t_cmp($masked, $wanted, 'override bitmask');
@@ -111,7 +111,7 @@ sub handler : method {
         ok !$limit->{limited};
     }
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

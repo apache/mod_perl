@@ -12,20 +12,20 @@ sub handler {
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
-    return $rc if $rc != Apache2::OK;
+    return $rc if $rc != Apache2::Const::OK;
 
     my $user = $r->user;
 
     my $requirement = $r->requires->[0]->{requirement};
 
-    return Apache2::SERVER_ERROR unless $requirement eq 'valid-user';
+    return Apache2::Const::SERVER_ERROR unless $requirement eq 'valid-user';
 
     unless ($user eq 'dougm' and $sent_pw eq 'foo') {
         $r->note_basic_auth_failure;
-        return Apache2::HTTP_UNAUTHORIZED;
+        return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

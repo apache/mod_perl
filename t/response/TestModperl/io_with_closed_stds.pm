@@ -32,7 +32,7 @@ sub fixup {
     close STDIN;
     close STDOUT;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub handler {
@@ -42,7 +42,7 @@ sub handler {
 
     ok 1;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub cleanup {
@@ -54,7 +54,7 @@ sub cleanup {
     close OLDIN;
     close OLDOUT;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

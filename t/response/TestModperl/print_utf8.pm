@@ -27,7 +27,7 @@ sub handler {
     # \x{263A} == :-)
     print "Hello Ayhan \x{263A} perlio rules!";
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

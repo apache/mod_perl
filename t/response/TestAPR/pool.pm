@@ -63,7 +63,7 @@ sub handler {
 
     TestAPRlib::pool::test();
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 sub set_cleanup {

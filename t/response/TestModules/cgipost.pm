@@ -16,7 +16,7 @@ sub handler {
 
     print join ":", map { $cgi->param($_) } $cgi->param;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 1;

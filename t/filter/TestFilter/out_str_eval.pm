@@ -19,7 +19,7 @@ use Apache2::Const -compile => qw(OK DECLINED);
 
 # dummy pass_through filter was good enough to trigger the problem
 sub handler {
-    return Apache2::DECLINED;
+    return Apache2::Const::DECLINED;
 }
 
 sub response {
@@ -33,7 +33,7 @@ sub response {
     $r->rflush;
     ok t_cmp($@, qr/Undefined subroutine/, "some croak");
 
-    return Apache2::OK;
+    return Apache2::Const::OK;
 }
 
 1;

@@ -37,7 +37,7 @@ sub handler {
 
     printf "ok %d\n", 6;
 
-    Apache2::OK;
+    Apache2::Const::OK;
 }
 
 END {
