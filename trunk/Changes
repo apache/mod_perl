@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+fix Apache::Registry bug when filename starts with a 0
+[Peter Deister <deister@opus5.de>]
+
 Apache::Registry will restore $r->status to the original value
 [Charles Levert <charles@comm.polymtl.ca>]
 
