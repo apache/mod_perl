@@ -44,6 +44,7 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
 
     if (arg) {
         st->r = modperl_sv2request_rec(aTHX_ arg);
+        MP_TRACE_o(MP_FUNC, "stored request_rec obj: 0x%lx", st->r);
     }
     else {
         Perl_croak(aTHX_ "$r wasn't passed");
@@ -53,8 +54,6 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
     /* this method also sets the right flags according to the
      * 'mode' */
     code = PerlIOBase_pushed(aTHX_ f, mode, Nullsv, tab);
-    
-    MP_TRACE_o(MP_FUNC, "done");
     
     return code;
 }
@@ -142,12 +141,19 @@ static IV
 PerlIOApache_flush(pTHX_ PerlIO *f)
 {
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
-    modperl_config_req_t *rcfg = modperl_config_req_get(st->r);
+    modperl_config_req_t *rcfg;
+
+    if (!st->r) {
+        Perl_warn(aTHX_ "an attempt to flush a stale IO handle");
+        return -1;
+    }
 
     /* no flush on readonly io handle */
     if (! (PerlIOBase(f)->flags & PERLIO_F_CANWRITE) ) {
         return -1;
     }
+
+    rcfg = modperl_config_req_get(st->r);
 
     MP_CHECK_WBUCKET_INIT("flush");
 
@@ -169,9 +175,15 @@ static IV PerlIOApache_noop_fail(pTHX_ PerlIO *f)
 static IV
 PerlIOApache_close(pTHX_ PerlIO *f)
 {
-    /* XXX: just temp for tracing */
-    MP_TRACE_o(MP_FUNC, "done");
-    return PerlIOBase_close(aTHX_ f);
+    IV code = PerlIOBase_close(aTHX_ f);
+    PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
+
+    MP_TRACE_o(MP_FUNC, "done with request_rec obj: 0x%lx", st->r);
+    /* prevent possible bugs where a stale r will be attempted to be
+     * reused (e.g. dupped filehandle) */
+    st->r = NULL;
+
+    return code;
 }
 
 static IV
