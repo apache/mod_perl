@@ -72,7 +72,7 @@ require Apache::test;
 Apache::test->import('simple_fetch');
 use subs 'simple_fetch';
 
-unless (simple_fetch "/") {
+unless (simple_fetch "/test.html") {
     if ($^O eq "solaris" and $Config{myhostname} eq "ramona") {
         print "go hang in the chill room $ENV{USER}, ramona is doggin...";
     }  
@@ -81,7 +81,7 @@ unless (simple_fetch "/") {
     }
     for (1..3) {
         sleep 1;
-        if (simple_fetch "/") {
+        if (simple_fetch "/test.html") {
             print "ok\n";
         }
         else {
@@ -90,7 +90,7 @@ unless (simple_fetch "/") {
     }
 }
 
-unless (simple_fetch "/") {
+unless (simple_fetch "/test.html") {
     print "not ok\n"; 
     die "server failed to start!";
 }
