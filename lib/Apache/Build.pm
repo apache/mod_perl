@@ -166,6 +166,23 @@ sub mpm_name {
     return $self->{mpm_name} = 'winnt' if WIN32;
 
     my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+
+    # building against the httpd source dir
+    unless ($mpm_name and exists $self->{dir}) {
+        my $config_vars_file = catfile $self->{dir},
+            "build", "config_vars.mk";
+        if (open my $fh, $config_vars_file) {
+            while(<$fh>) {
+                if(/MPM_NAME = (\w+)/) {
+                    $mpm_name = $1;
+                    last;
+                }
+                last if /^=item/;
+            }
+            close $fh;
+        }
+    }
+
     die "Failed to obtain the MPM name" unless $mpm_name;
     return $self->{mpm_name} = $mpm_name;
 }
