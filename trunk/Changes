@@ -18,6 +18,11 @@ Other contributors are mentioned below.
 
 =item 1.10_01-dev
 
+make sure Apache.pm is pulled in before PerlRequire'd scripts
+
+drop API_EXPORTs for mod_include #perl stuff which breaks under win32/1.3b6
+spotted by Jeff Baker
+
 Inclusion of $r->server->server_hostname if $r->server->is_virtual in
 Apache::Registry script namespaces is back to On by default after
 recently tripping up Ben Laurie, Janos Farkas, Tony Bowden.  To

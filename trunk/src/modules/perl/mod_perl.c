@@ -495,6 +495,8 @@ void perl_startup (server_rec *s, pool *p)
 
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
 
+    (void)perl_require_module("Apache", s);
+
     list = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {
 	if(perl_load_startup_script(s, p, list[i], TRUE) != OK) {
@@ -1025,7 +1027,7 @@ void perl_per_request_init(request_rec *r)
 }
 
 /* XXX this still needs work, getting there... */
-API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
+int perl_call_handler(SV *sv, request_rec *r, AV *args)
 {
     int count, status, is_method=0;
     dSP;

@@ -164,7 +164,7 @@ void perl_soak_script_output(request_rec *r)
     mod_perl_sent_header(r, TRUE);
 }
 
-API_EXPORT(void) perl_stdout2client(request_rec *r)
+void perl_stdout2client(request_rec *r)
 {
     dTHR;
 #ifdef USE_SFIO

@@ -779,7 +779,7 @@ void xs_init (void);
 
 /* generic handler stuff */ 
 int perl_handler_ismethod(HV *class, char *sub);
-API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args);
+int perl_call_handler(SV *sv, request_rec *r, AV *args);
 
 /* stacked handler stuff */
 int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers);
@@ -849,7 +849,7 @@ void mod_perl_mark_where(char *where, SV *sub);
 
 void perl_soak_script_output(request_rec *r);
 void perl_stdin2client(request_rec *r);
-API_EXPORT(void) perl_stdout2client(request_rec *r); 
+void perl_stdout2client(request_rec *r); 
 
 /* perl_config.c */
 
