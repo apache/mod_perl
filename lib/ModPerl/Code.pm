@@ -93,7 +93,8 @@ my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLED AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET'],
-    Dir => [qw(NONE SEND_HEADER SETUP_ENV MERGE_HANDLERS UNSET)],
+    Dir => [qw(NONE SEND_HEADER SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
+    Req => [qw(NONE SET_GLOBAL_REQUEST)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
 );
@@ -521,7 +522,7 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
-                     gtop util filter bucket mgv pcw);
+                     gtop util filter bucket mgv pcw global);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
