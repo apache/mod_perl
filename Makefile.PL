@@ -24,6 +24,9 @@ configure();
 WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
+    macro => {
+        MODPERL_SRC => $code->path,
+    },
     clean => {
         FILES => "@{ clean_files() }",
     },
@@ -148,16 +151,22 @@ EOF
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
-    my $path = $code->path;
 
     for (qw(SHARED STATIC)) {
         $string .= <<EOF;
 
 $build->{"MODPERL_LIB_$_"}:
-	@(cd $path && \$(MAKE) \$\@);
+	@(cd \$(MODPERL_SRC) && \$(MAKE) \$\@);
 
 EOF
     }
+
+    $string .= <<'EOF';
+
+modperl_src_clean:
+	@(cd $(MODPERL_SRC) && $(MAKE) clean);
+
+EOF
 
     $string;
 }
@@ -165,8 +174,7 @@ EOF
 sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean(@_);
-    my $path = $code->path;
-    $string .= "\t-cd $path && \$(MAKE) clean\n";
+    $string =~ s/(clean\s+::)/$1 modperl_src_clean /;
     $string;
 }
 
