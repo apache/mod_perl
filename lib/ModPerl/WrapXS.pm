@@ -1296,6 +1296,9 @@ EOF
 
     for my $entry (@$ModPerl::FunctionTable) {
         next if $self->func_is_static($entry);
+        unless (Apache::Build::PERL_HAS_ITHREADS) {
+            next if $entry->{name} =~ /^($ithreads_exports)/;
+        }
         ( my $name ) = $entry->{name} =~ /^modperl_(.*)/;
         print $fh "const void *modperl_hack_$name = (const void *)modperl_$name;\n";
     }
