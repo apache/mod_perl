@@ -735,6 +735,7 @@ sub dynamic_link_header_default {
 $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_RM_F) $@
 	$(MODPERL_LD) $(MODPERL_LDDLFLAGS) \
+	$(MODPERL_AP_LIBS) \
 	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS) \
 EOF
 }
@@ -749,7 +750,8 @@ EOF
 
 sub dynamic_link_MSWin32 {
     my $self = shift;
-    return $self->dynamic_link_header_default . <<'EOF';
+    return $self->dynamic_link_header_default .
+           "-def:$self->{cwd}/xs/modperl.def" . <<'EOF';
 	-out:$@
 EOF
 }
@@ -759,6 +761,20 @@ sub dynamic_link {
     my $link = \&{"dynamic_link_$^O"};
     $link = \&dynamic_link_default unless defined &$link;
     $link->($self);
+}
+
+sub apache_libs_MSWin32 {
+    my $self = shift;
+    my $prefix = $self->apxs(-q => 'PREFIX');
+    my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
+    "@libs";
+}
+
+sub apache_libs {
+    my $self = shift;
+    my $libs = \&{"apache_libs_$^O"};
+    return "" unless defined &$libs;
+    $libs->($self);
 }
 
 sub write_src_makefile {
@@ -773,6 +789,8 @@ sub write_src_makefile {
     print $fh noedit_warning_hash();
 
     $self->make_tools($fh);
+
+    print $fh $self->canon_make_attr('ap_libs', $self->apache_libs);
 
     print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
     print $fh $self->canon_make_attr('dlext', 'so'); #always use .so
