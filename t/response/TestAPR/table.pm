@@ -21,7 +21,7 @@ sub handler {
 
     my $tests = 19;
     $tests += 2 if HAVE_APACHE_2_0_47;
-                                                                                                    
+
     plan $r, tests => $tests;
 
     my $table = APR::Table::make($r->pool, $TABLE_SIZE);
