@@ -32,7 +32,9 @@ sub can_compile {
     my($pr) = @_;
     my $r = $pr->{r};
     my $filename = $r->filename;
-    if (-r $r->finfo && -s _) {
+#XXX reported problems with $r->finfo
+#    if (-r $r->finfo && -s _) {
+    if (-r $filename && -s _) {
 	if (!($r->allow_options & OPT_EXECCGI)) {
 	    $r->log_reason("Options ExecCGI is off in this directory",
 			   $filename);
