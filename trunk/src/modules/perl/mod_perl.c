@@ -386,8 +386,8 @@ static I32 scriptname_val(IV ix, SV* sv)
     request_rec *r = perl_request_rec(NULL);
     if(r) 
 	sv_setpv(sv, r->filename);
-    else if(strNE(SvPVX(GvSV(curcop->cop_filegv)), "-e"))
-	sv_setsv(sv, GvSV(curcop->cop_filegv));
+    else if(strNE(SvPVX(GvSV(CopFILEGV(curcop))), "-e"))
+	sv_setsv(sv, GvSV(CopFILEGV(curcop)));
     else {
 	SV *file = perl_eval_pv("(caller())[1]",TRUE);
 	sv_setsv(sv, file);
@@ -600,7 +600,11 @@ void perl_startup (server_rec *s, pool *p)
 # endif
 #endif
 
+#ifndef perl_init_i18nl10n
     perl_init_i18nl10n(1);
+#else
+    /* 5.6 calls during perl_construct() */
+#endif
 
     MP_TRACE_g(fprintf(stderr, "allocating perl interpreter..."));
     if((perl = perl_alloc()) == NULL) {
@@ -1005,9 +1009,9 @@ static void per_request_cleanup(request_rec *r)
 	MP_TRACE_g(fprintf(stderr, 
 			   "mod_perl: restoring SIG%s (%d) handler from: 0x%lx to: 0x%lx\n",
 			   my_signame(sigs[i]->signo), (int)sigs[i]->signo,
-			   (unsigned long)Perl_rsignal_state(sigs[i]->signo),
+			   (unsigned long)rsignal_state(sigs[i]->signo),
 			   (unsigned long)sigs[i]->h));
-	Perl_rsignal(sigs[i]->signo, sigs[i]->h);
+	rsignal(sigs[i]->signo, sigs[i]->h);
     }
 }
 
@@ -1047,17 +1051,17 @@ void mod_perl_end_cleanup(void *data)
 
 #ifdef PERL_STACKED_HANDLERS
     /* reset Apache->push_handlers, but don't clear ExitHandler */
-#define CH_EXIT_KEY "PerlChildExitHandler", 20
+#define CH_EXIT_KEY "PerlChildExitHandler"
     {
 	SV *exith = Nullsv;
-	if(hv_exists(stacked_handlers, CH_EXIT_KEY)) {
-	    exith = *hv_fetch(stacked_handlers, CH_EXIT_KEY, FALSE);
+	if(hv_exists(stacked_handlers, CH_EXIT_KEY, 20)) {
+	    exith = *hv_fetch(stacked_handlers, CH_EXIT_KEY, 20, FALSE);
             /* inc the refcnt since hv_clear will dec it */
 	    ++SvREFCNT(exith);
 	}
 	hv_clear(stacked_handlers);
 	if(exith) 
-	    hv_store(stacked_handlers, CH_EXIT_KEY, exith, FALSE);
+	    hv_store(stacked_handlers, CH_EXIT_KEY, 20, exith, FALSE);
     }
 
 #endif

@@ -104,6 +104,16 @@
 #include "apache_inc.h"
 #endif
 
+#ifdef pTHX_
+#define PERL_IS_5_6
+#else
+#define pTHX_
+#define aTHXo_
+#define CopFILEGV(cop) cop->cop_filegv
+#define CopLINE(cop)   cop->cop_line
+#define SAVECOPFILE(cop) SAVESPTR(CopFILEGV(curcop));
+#define SAVECOPLINE(cop) SAVEI16(CopLINE(cop))
+#endif
 
 #ifndef dTHR
 #define dTHR extern int errno
@@ -1019,7 +1029,11 @@ int log_transaction (request_rec *r);
 /* mod_perl prototypes */
 
 /* perlxsi.c */
+#ifdef aTHX_
+void xs_init (pTHX);
+#else
 void xs_init (void);
+#endif
 
 /* mod_perl.c */
 
