@@ -1,3 +1,4 @@
+#! /usr/local/bin/perl
 package Apache::Resource;
 
 use strict;
@@ -9,20 +10,22 @@ $Apache::Resource::VERSION = (qw$Revision$)[1];
 
 sub MB ($) { 
     my $num = shift;
-    if($num < (1024 * 1024)) {
-	return $num*1024*1024;
-    }
-    $num;
+    return ($num < (1024 * 1024)) ?  $num*1024*1024 : $num;
 }
 
-sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size
-sub DEFAULT_RLIMIT_CPU   () { 60*6 } #cpu time in milliseconds
-sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size
-sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size
-sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size 
-sub DEFAULT_RLIMIT_STACK () { 20 } #stack size
+sub BM ($) { 
+    my $num = shift;
+    return ($num > (1024 * 1024)) ?  '(' . ($num>>20) . 'Mb)' : '';
+}
 
-my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE};
+sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size in MB
+sub DEFAULT_RLIMIT_CPU   () { 60*6 } #cpu time in seconds
+sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size (MB)
+sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size (MB)
+sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size  (MB)
+sub DEFAULT_RLIMIT_STACK () { 20 } #stack size (MB)
+
+my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE CORE MEMLOCK};
 
 sub debug { print STDERR @_ if $Debug }
 
@@ -47,7 +50,7 @@ sub install_rlimit ($$$) {
 
     $hard ||= $soft;
 
-    debug "Apache::Resource: attempting to set `$name'=$soft:$hard ...";
+    debug "Apache::Resource: PID $$ attempting to set `$name'=$soft:$hard ...";
 
     ($soft, $hard) = (MB $soft, MB $hard) if $is_mb{$name};
 
@@ -82,18 +85,23 @@ sub default_handler {
 sub status_rlimit {
     my $lim = get_rlimits();
     my @retval = ("<table border=1><tr>", 
-		  (map "<td><b>$_</b></td>", qw(Resource Soft Hard)),
+		  (map "<th>$_</th>", qw(Resource Soft Hard)),
 		  "</tr>");
 
     for my $res (keys %$lim) {
 	my $val = eval "&BSD::Resource::${res}()";
+	my ($soft,$hard) = getrlimit $val;
+	(my $limit = $res) =~ s/^RLIMIT_//;
+	($soft, $hard) = ("$soft " . BM($soft),"$hard ". BM($hard))
+	  if $is_mb{$limit};
 	push @retval, 
 	"<tr>",
-	(map { "<td>$_</td>" } $res, getrlimit $val),
+	(map { "<td>$_</td>" } $res, $soft, $hard),
 	"</tr>";
     }
 
-    push @retval, "</table>";
+    push @retval, "</table><P>";
+    push @retval, "<SMALL>Apache::Resource $Apache::Resource::VERSION</SMALL>";
 
     return \@retval;
 }
@@ -121,12 +129,13 @@ Apache::Resource - Limit resources used by httpd children
 
 =head1 SYNOPSIS
 
- #set memory limit in megabytes
+ PerlModule Apache::Resource
+ #set child memory limit in megabytes
  #default is 64 Meg
- PerlSetEnv PERL_DATA_LIMIT 35
+ PerlSetEnv PERL_RLIMIT_DATA 32:48
 
- #set cpu limit in milliseconds
- #default is 60 milliseconds
+ #set child cpu limit in seconds
+ #default is 360 seconds
  PerlSetEnv PERL_RLIMIT_CPU 120
 
  PerlChildInitHandler Apache::Resource
@@ -138,13 +147,16 @@ uses the C function C<setrlimit> to set limits on
 system resources such as memory and cpu usage.
 
 Any B<RLIMIT> operation available to limit on your system can be set
-by defining that operation as an envrionment variable with a B<PERL_>
-prefix.  If no value is set a reasonable default is used if defined.
-See your system C<setrlimit> manpage for available resources which 
-can be limited.
- 
-By default, C<PERL_RLIMIT_DATA> is set to 64 megabytes if it does
-not exist in the current environment. 
+by defining that operation as an environment variable with a C<PERL_>
+prefix.  See your system C<setrlimit> manpage for available resources
+which can be limited.
+
+The following limit values are in megabytes: C<DATA>, C<RSS>, C<STACK>,
+C<FSIZE>, C<CORE>, C<MEMLOCK>; all others are treated as their natural unit.
+
+If the value of the variable is of the form C<S:H>, C<S> is treated as
+the soft limit, and C<H> is the hard limit.  If it is just a single
+number, it is used for both soft and hard limits.
 
 =head1 DEFAULTS
 
