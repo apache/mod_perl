@@ -17,18 +17,17 @@ my $socket = Apache::TestRequest::vhost_socket('default');
 
 my $file = catfile Apache::Test::vars('serverroot'), "..", 'Makefile';
 
-open(my $fh, $file) or die "open $file: $!";
-
+open my $fh, $file or die "open $file: $!";
 my $data = join '', <$fh>;
 close $fh;
+
 my $size = length $data;
 
 for my $string ("POST $location http/1.0",
                 "Content-length: $size",
-                "")
-{
+                "") {
     my $line = "$string\r\n";
-    syswrite($socket, $line, length $line);
+    syswrite $socket, $line, length($line);
 }
 
 my $written = 0;
@@ -39,7 +38,7 @@ my $sleeps = 2;
 while ($written < length($data)) {
     my $remain = length($data) - $written;
     my $len = $remain > $bufsiz ? $bufsiz : $remain;
-    $written += syswrite($socket, $data, $len, $written);
+    $written += syswrite $socket, $data, $len, $written;
     sleep 1 if $sleeps-- > 0;
 }
 
