@@ -1,6 +1,6 @@
 package TestApache::content_length_header;
 
-# see the client for the comments
+# see the client t/apache/content_length_header.t for the comments
 
 use strict;
 use warnings FATAL => 'all';
@@ -25,9 +25,14 @@ sub handler {
     }
 
     if ($args =~ /send_body/) {
-        # really could send just about anything, since Apache discards
-        # the response body on HEAD requests
         $r->print($body);
+    }
+
+    if ($args =~ /head_no_body/) {
+        if ($r->header_only) {
+            # see #2 in the discussion in the client
+            $r->rflush;
+        }
     }
 
     Apache::OK;
