@@ -10,19 +10,19 @@ to I<modperl@apache.org>.
 To subscribe to this list (which you must do to send mail to the
 list), send a mail message to 
 
-   I<modperl-subscribe@apache.org>
+I<modperl-subscribe@apache.org>
 
-We also have a mailinglist just for announcements. Subscribe my
+We also have a mailing list just for announcements. Subscribe by
 sending a message to 
 
-   I<announce-subscribe@perl.apache.org>
+I<announce-subscribe@perl.apache.org>
 
 Discussions about the perl.apache.org website and general mod_perl
 advocacy should go to the I<advocacy@perl.apache.org>
-mailinglist. Subscribe by sending mail to
+mailing list. Subscribe by sending mail to
 I<advocacy-subscribe@perl.apache.org>
 
-The HTML::Embperl mailinglist is at I<embperl@perl.apache.org>.
+The HTML::Embperl mailing list is at I<embperl@perl.apache.org>.
 Subscribe by (you properly got the idea by now) sending mail to
 I<embperl-subscribe@perl.apache.org>.
 
@@ -85,7 +85,7 @@ Version of apache
 
 Server configuration details
 
-relevant sections of your ErrorLog (make test's is: t/logs/error_log)
+Relevant sections of your ErrorLog (make test's is: t/logs/error_log)
 
 If 'make test' fails, the output of 'make test TEST_VERBOSE=1'
 
