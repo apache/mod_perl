@@ -12,6 +12,11 @@ Release:
 
 Available Patches:
 
+    * Need to correct the order of PERL5LIB entries insert into @INC.
+      and document that 'arch' is not automatically inserted
+      Report: +Patch by Gordon Lack 
+      http://marc.theaimsgroup.com/?t=110779533400004&r=1&w=2
+
     * Improper signal handler restoration with sigaction()
       Report: +Patch
       http://marc.theaimsgroup.com/?l=apache-modperl&m=107177256515969&w=2
