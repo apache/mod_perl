@@ -36,7 +36,7 @@ for my $file (qw(basic.pl env.pl)) {
 
     my %skip = map { $_ => 1 } 
         qw(lib.pl perlrun_require.pl syntax_error.pl runtime_error.pl
-           missing_headers.pl);
+           missing_headers.pl r_inherited.pl);
     my $dh = DirHandle->new($base_dir) or die $!;
     for my $file ($dh->read) {
         next unless $file =~ /\.pl$/;
