@@ -2,12 +2,10 @@ use 5.006;
 use strict;
 use warnings;
 
-use ExtUtils::Embed ();
-use ExtUtils::MakeMaker qw(WriteMakefile);
-
 use lib qw(lib);
 use Apache::Build ();
 use ModPerl::Code ();
+use ModPerl::MM ();
 
 our $VERSION;
 
@@ -21,12 +19,13 @@ if ($build->{MP_CPP}) {
 
 configure();
 
-WriteMakefile(
+ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
     macro => {
         MODPERL_SRC => $code->path,
         PERL => $build->perl_config('perlpath'),
+        MOD_INSTALL => ModPerl::MM::mod_install(),
     },
     clean => {
         FILES => "@{ clean_files() }",
@@ -60,6 +59,10 @@ sub configure {
     printf "Will build mod_perl %s as %s\n",
       $build->is_dynamic ? "shared" : "static",
         $build->{"MODPERL_LIB"};
+
+    if ($build->{MP_INST_APACHE2}) {
+        print "Will install Apache Perl modules into Apache2/\n";
+    }
 }
 
 sub echo_cmd {
@@ -82,12 +85,6 @@ sub make {
     }
 
     chdir $build->cwd;
-}
-
-sub echo_unlink {
-    my $file = shift;
-    print "unlink $file\n";
-    unlink $file;
 }
 
 sub clean_files {
@@ -153,11 +150,13 @@ EOF
     }
 }
 
+package MY;
+
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
 
-    $build->mm_add_dep(\$string, pure_all => 'modperl_lib');
+    ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
     $string .= <<'EOF';
 
@@ -175,7 +174,7 @@ EOF
 sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean(@_);
-    $build->mm_add_dep(\$string, clean => 'modperl_src_clean');
+    ModPerl::MM::add_dep(\$string, clean => 'modperl_src_clean');
     $string;
 }
 
@@ -185,4 +184,29 @@ sub MY::postamble {
 
 sub MY::tool_autosplit {
     '';
+}
+
+sub MY::post_initialize {
+    my $self = shift;
+    #up one from the Apache2/ subdir
+    #so it can be found for 'use Apache2 ()'
+    $self->{PM}->{'lib/Apache2.pm'} =~ s:^\$\(INST_LIB\):blib/lib:;
+    '';
+}
+
+sub MY::manifypods {
+    my $self = shift;
+    my $ver = $self->{VERSION} || "";
+    local $_ = $self->MM::manifypods(@_);
+    s/pod2man\s*$/pod2man --release mod_perl-$ver/m;
+    $_;
+}
+
+sub MY::pasthru {
+    my $self = shift;
+    chomp(my $str = $self->MM::pasthru);
+    join $/, "$str\\",
+    "\t".'PERL="$(PERL)"\\',
+    "\t".'DEFINE="$(DEFINE)"',
+    "";
 }

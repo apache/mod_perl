@@ -301,6 +301,7 @@ my %default_files = (
     'build_config' => 'lib/Apache/BuildConfig.pm',
     'ldopts' => 'src/modules/perl/ldopts',
     'makefile' => 'src/modules/perl/Makefile',
+    'apache2_pm' => 'lib/Apache2.pm',
 );
 
 sub clean_files {
@@ -743,13 +744,6 @@ sub define {
     my $self = shift;
 
     return "";
-}
-
-#--- tweak MakeMaker ---
-
-sub mm_add_dep {
-    my($self, $string, $targ, $add) = @_;
-    $$string =~ s/($targ\s+::)/$1 $add /;
 }
 
 1;

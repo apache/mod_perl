@@ -2,8 +2,10 @@ package ModPerl::Code;
 
 use strict;
 use warnings;
+use Apache::Build ();
 
 our $VERSION = '0.01';
+our @ISA = qw(Apache::Build);
 
 my %handlers = (
     Process    => [qw(ChildInit)], #ChildExit Restart PreConfig
@@ -473,6 +475,33 @@ sub generate {
     warn "generating...$xsinit\n";
 
     ExtUtils::Embed::xsinit($xsinit);
+
+    warn "generating...", $self->generate_apache2_pm, "\n";
+}
+
+sub generate_apache2_pm {
+    my $self = shift;
+
+    my $lib = $self->perl_config('installsitelib');
+    my $arch = $self->perl_config('installsitearch');
+    my $file = $self->default_file('apache2_pm');
+
+    open my $fh, '>', $file or die "open $file: $!";
+
+    my $package = 'package Apache2';
+
+    print $fh <<EOF;
+$package;
+
+use lib qw($lib/Apache2
+           $arch/Apache2);
+
+1;
+
+EOF
+    close $fh;
+
+    $file;
 }
 
 1;
