@@ -3,6 +3,8 @@ package TestModules::reload;
 use strict;
 use warnings FATAL => 'all';
 
+use ModPerl::Util ();
+
 use Apache::Const -compile => qw(OK);
 
 my $package = 'Apache::Reload::Test';
@@ -12,6 +14,7 @@ sub handler {
     
     if ($r->args eq 'last') {
         Apache::Reload->unregister_module($package);
+        ModPerl::Util::unload_package($package);
         $r->print("unregistered OK");
         return Apache::OK;
     }
