@@ -217,6 +217,11 @@ int modperl_callback_connection(int idx, conn_rec *c)
                                          NULL, NULL, NULL);
 }
 
+int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd)
+{
+    return DECLINED; /*XXX*/
+}
+
 void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s)
 {
     modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PROCESS,

@@ -119,6 +119,7 @@ typedef struct {
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
     MpAV *handlers_files[MP_HANDLER_NUM_FILES];
     MpAV *handlers_process[MP_HANDLER_NUM_PROCESS];
+    MpAV *handlers_pre_connection[MP_HANDLER_NUM_PRE_CONNECTION];
     MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
     int threaded_mpm;
 #ifdef USE_ITHREADS

@@ -25,6 +25,8 @@ int modperl_callback_per_srv(int idx, request_rec *r);
 
 int modperl_callback_connection(int idx, conn_rec *c);
 
+int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd);
+
 void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s);
 
 int modperl_callback_files(int idx,

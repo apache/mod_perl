@@ -414,7 +414,7 @@ void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
      */
 }
 
-static int modperl_hook_pre_connection(conn_rec *c)
+static int modperl_hook_pre_connection(conn_rec *c, void *csd)
 {
     modperl_input_filter_register_connection(c);
     modperl_output_filter_register_connection(c);
