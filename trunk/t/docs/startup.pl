@@ -5,9 +5,6 @@ unless (defined $ENV{MOD_PERL}) {
 }
 
 BEGIN {
-    #./blib/lib:./blib/arch
-    use ExtUtils::testlib;
-
     use lib map { "$Apache::Server::CWD/$_" } qw(t/docs blib/lib blib/arch);
     require "blib.pl" if -e "./t/docs/blib.pl";
     #Perl ignores w/ -T
