@@ -196,6 +196,12 @@ typedef struct {
 typedef struct {
     HV *pnotes;
     modperl_wbucket_t wbucket;
+    MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
+    MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
 } modperl_config_req_t;
+
+typedef struct {
+    MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
+} modperl_config_con_t;
 
 #endif /* MODPERL_TYPES_H */
