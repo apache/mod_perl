@@ -243,7 +243,7 @@ sub can_compile {
 
 sub namespace_root {
     my $self = shift;
-    join '::', 'ModPerl::ROOT', ref($self),
+    join '::', 'ModPerl::ROOT', ref($self);
 }
 
 #########################################################################
