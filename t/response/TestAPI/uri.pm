@@ -41,7 +41,9 @@ sub handler {
     ok $up =~ m:^$location:;
 
     my $server = $r->construct_server;
-    ok $server eq join ':', $r->get_server_name, $r->get_server_port;
+    ok t_cmp($server,
+             join(':', $r->get_server_name, $r->get_server_port),
+             "construct_server/get_server_name/get_server_port");
 
     my $curl = $r->construct_url;
     my $parsed = APR::URI->parse($r->pool, $curl);
