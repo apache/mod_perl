@@ -26,8 +26,6 @@ listed in deprecated_features.txt
 
 - cgi emulation, i.e. %ENV/END{}/@INC/exit() management
 
-- set Perl ids after fork $( $) $< $> (child_init)
-
 - die 404;
 
 - ... others ...
