@@ -1,4 +1,7 @@
-#modperl specfic functions
+##########  mod_perl specific functions  ##########
+
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
 
 MODULE=ModPerl::Util
  mpxs_ModPerl__Util_untaint | | ...

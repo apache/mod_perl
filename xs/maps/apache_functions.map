@@ -33,6 +33,7 @@
 
 # function names that do not begin with /^\w/ are skipped
 # for details see: %ModPerl::MapUtil::disabled_map
+# in lib/ModPerl/MapUtil.pm
 
 MODULE=Apache::RequestUtil   PACKAGE=guess
 >ap_finalize_request_protocol
@@ -221,12 +222,12 @@ MODULE=Apache::Filter PACKAGE=guess
 -ap_add_output_filter_handle
 -ap_get_output_filter_handle
 >ap_add_ouput_filters_by_type
--ap_get_brigade
+~ap_get_brigade
  mpxs_Apache__Filter_get_brigade | | \
                f, bb, mode=AP_MODE_READBYTES, \
                block=APR_BLOCK_READ, \
                readbytes=8192
--ap_pass_brigade
+~ap_pass_brigade
  mpxs_Apache__Filter_pass_brigade
 !ap_register_input_filter
 !ap_register_output_filter
@@ -234,7 +235,7 @@ MODULE=Apache::Filter PACKAGE=guess
 -ap_remove_input_filter
 !ap_save_brigade
  ap_filter_flush
--ap_fflush
+~ap_fflush
  mpxs_Apache__Filter_fflush
 -ap_fputstrs
 #int:DEFINE_ap_fputs | | \

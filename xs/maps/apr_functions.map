@@ -1,5 +1,8 @@
 ##########  APR Functions  ##########
 
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
 !MODULE=APR::Poll
  apr_poll_socket_add
  apr_poll_socket_clear
@@ -44,7 +47,7 @@ MODULE=APR::Socket
 !apr_socket_accept
  apr_socket_listen
  apr_socket_connect
--apr_socket_recv
+~apr_socket_recv
  mpxs_APR__Socket_recv
  apr_socket_recvfrom
  apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
@@ -59,12 +62,12 @@ MODULE=APR::Socket
 !apr_socket_addr_get
 !apr_socket_data_get
 !apr_socket_data_set
--apr_socket_opt_get
+~apr_socket_opt_get
  mpxs_APR__Socket_opt_get
--apr_socket_opt_set
+~apr_socket_opt_set
  mpxs_APR__Socket_opt_set
  apr_socket_timeout_get | mpxs_ | ...
--apr_socket_timeout_set
+~apr_socket_timeout_set
  mpxs_APR__Socket_timeout_set
 -apr_socket_sendfile
 -apr_socket_sendv
@@ -77,7 +80,7 @@ MODULE=APR::SockAddr
 
 MODULE=APR::Brigade
  apr_brigade_create | mpxs_ | SV *:CLASS, p, list | new
--apr_brigade_destroy
+~apr_brigade_destroy
  mpxs_APR__Brigade_destroy
 !apr_brigade_partition
 !apr_brigade_printf
@@ -116,50 +119,50 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_read | | bucket, block=APR_BLOCK_READ
  #modperl_bucket_sv_create
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
- >apr_bucket_alloc
- >apr_bucket_alloc_create
- >apr_bucket_alloc_destroy
- >apr_bucket_free
- !apr_bucket_copy_notimpl
- !apr_bucket_shared_copy
+>apr_bucket_alloc
+>apr_bucket_alloc_create
+>apr_bucket_alloc_destroy
+>apr_bucket_free
+!apr_bucket_copy_notimpl
+!apr_bucket_shared_copy
  apr_bucket_eos_create
- !apr_bucket_file_create
- !apr_bucket_file_enable_mmap
+!apr_bucket_file_create
+!apr_bucket_file_enable_mmap
  apr_bucket_flush_create
- !apr_bucket_heap_create
- !apr_bucket_immortal_create
- !apr_bucket_mmap_create
- !apr_bucket_pipe_create
- !apr_bucket_pool_create
- !apr_bucket_socket_create
- !apr_bucket_transient_create
- !apr_bucket_shared_destroy
- !apr_bucket_eos_make
- !apr_bucket_file_make
- !apr_bucket_flush_make
- !apr_bucket_heap_make
- !apr_bucket_immortal_make
- !apr_bucket_mmap_make
- !apr_bucket_pipe_make
- !apr_bucket_pool_make
- !apr_bucket_shared_make
- !apr_bucket_socket_make
- !apr_bucket_transient_make
- !apr_bucket_setaside_notimpl
- !apr_bucket_split_notimpl
- !apr_bucket_shared_split
- !apr_bucket_simple_split
- !apr_bucket_simple_copy
- !apr_bucket_destroy_noop
- !apr_bucket_setaside_noop
+!apr_bucket_heap_create
+!apr_bucket_immortal_create
+!apr_bucket_mmap_create
+!apr_bucket_pipe_create
+!apr_bucket_pool_create
+!apr_bucket_socket_create
+!apr_bucket_transient_create
+!apr_bucket_shared_destroy
+!apr_bucket_eos_make
+!apr_bucket_file_make
+!apr_bucket_flush_make
+!apr_bucket_heap_make
+!apr_bucket_immortal_make
+!apr_bucket_mmap_make
+!apr_bucket_pipe_make
+!apr_bucket_pool_make
+!apr_bucket_shared_make
+!apr_bucket_socket_make
+!apr_bucket_transient_make
+!apr_bucket_setaside_notimpl
+!apr_bucket_split_notimpl
+!apr_bucket_shared_split
+!apr_bucket_simple_split
+!apr_bucket_simple_copy
+!apr_bucket_destroy_noop
+!apr_bucket_setaside_noop
 
 MODULE=APR::Pool
 -apr_pool_num_bytes | | p, recurse=0 #only available with -DAPR_POOL_DEBUG
  apr_pool_cleanup_for_exec
--apr_pool_clear
+~apr_pool_clear
 mpxs_APR__Pool_clear
 >apr_pool_clear_debug
--apr_pool_destroy
+~apr_pool_destroy
  DEFINE_destroy | mpxs_apr_pool_DESTROY | SV *:obj
  DEFINE_DESTROY | mpxs_apr_pool_DESTROY | SV *:obj
 >apr_pool_destroy_debug
@@ -309,7 +312,7 @@ MODULE=APR::Table
 
 MODULE=APR::Finfo
 -apr_lstat
--apr_stat
+~apr_stat
  mpxs_APR__Finfo_stat
 
 !MODULE=APR::String
@@ -461,7 +464,7 @@ MODULE=APR::Util
 -apr_generate_random_bytes
 
 MODULE=APR::Error
--apr_strerror
+~apr_strerror
  char *:DEFINE_strerror | | apr_status_t:rc
 
 !MODULE=APR::General
