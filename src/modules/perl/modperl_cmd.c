@@ -1,5 +1,11 @@
 #include "mod_perl.h"
 
+static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
+{
+    return apr_pstrcat(parms->pool, parms->cmd->name,
+                       "> directive missing closing '>'", NULL);
+}
+
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
                                 apr_pool_t *p)
 {
@@ -169,9 +175,86 @@ MP_CMD_SRV_DECLARE(init_handlers)
     return modperl_cmd_post_read_request_handlers(parms, mconfig, arg);
 }
 
+static const char *modperl_cmd_parse_args(pTHX_ apr_pool_t *p,
+                                          const char *args,
+                                          HV **hv)
+{
+    const char *orig_args = args;
+    char *pair, *key, *val;
+    *hv = newHV();
+
+    while (*(pair = ap_getword(p, &args, ',')) != '\0') {
+        key = ap_getword_nc(p, &pair, '=');
+        val = pair;
+
+        if (!(*key && *val)) {
+            SvREFCNT_dec(*hv);
+            *hv = Nullhv;
+            return apr_pstrcat(p, "invalid args spec: ",
+                               orig_args, NULL);
+        }
+
+        hv_store(*hv, key, strlen(key), newSVpv(val,0), 0);
+    }
+
+    return NULL;
+}
+
 MP_CMD_SRV_DECLARE(perl)
 {
-    return "<Perl> sections not yet implemented in modperl-2.0";
+    apr_pool_t *p = parms->pool;
+    server_rec *s = parms->server;
+    const char *endp = ap_strrchr_c(arg, '>');
+    const char *errmsg;
+    modperl_handler_t *handler;
+    AV *args = Nullav;
+    HV *hv = Nullhv;
+    SV **handler_name;
+    int status = OK;
+#ifdef USE_ITHREADS
+    pTHX;
+    modperl_interp_t *interp;
+#endif
+
+    if (endp == NULL) {
+        return modperl_cmd_unclosed_directive(parms);
+    }
+
+    /* we must init earlier than normal */
+    modperl_run(p, s);
+
+#ifdef USE_ITHREADS
+    interp = modperl_interp_select(NULL, NULL, s);
+    aTHX = interp->perl;
+#endif
+
+    arg = apr_pstrndup(p, arg, endp - arg);
+
+    if ((errmsg = modperl_cmd_parse_args(aTHX_ p, arg, &hv))) {
+        return errmsg;
+    }
+
+    if (!(handler_name = hv_fetch(hv, "handler", strlen("handler"), 0))) {
+        /* XXX: we will have a default handler in the future */
+        return "no <Perl> handler specified";
+    }
+
+    handler = modperl_handler_new(p, SvPVX(*handler_name));
+
+    modperl_handler_make_args(aTHX_ &args,
+                              "Apache::CmdParms", parms,
+                              "HV", hv,
+                              NULL);
+
+    status = modperl_callback(aTHX_ handler, p, NULL, s, args);
+
+    if (status != OK) {
+        return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
+            apr_psprintf(p, "<Perl> handler %s failed with status=%d",
+                         handler->name, status);
+    }
+
+    return NULL;
 }
 
 #ifdef MP_COMPAT_1X
