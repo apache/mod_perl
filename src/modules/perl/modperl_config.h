@@ -18,10 +18,12 @@ const char *modperl_cmd_##item(cmd_parms *parms, \
                                void *dummy, char *arg)
 MP_DECLARE_SRV_CMD(trace);
 
+#ifdef USE_ITHREADS
 MP_DECLARE_SRV_CMD(interp_start);
 MP_DECLARE_SRV_CMD(interp_max);
 MP_DECLARE_SRV_CMD(interp_max_spare);
 MP_DECLARE_SRV_CMD(interp_min_spare);
+#endif
 
 #define MP_SRV_CMD_TAKE1(name, item, desc) \
     { name, modperl_cmd_##item, NULL, \

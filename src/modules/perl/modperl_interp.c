@@ -5,6 +5,8 @@
  * but it will do for proof-of-concept
  */
 
+#ifdef USE_ITHREADS
+
 modperl_interp_t *modperl_interp_new(ap_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
@@ -201,8 +203,8 @@ void modperl_interp_pool_remove(modperl_interp_pool_t *mip,
     MUTEX_UNLOCK(&mip->mip_lock);
 }
 
-void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
-                              PerlInterpreter *perl)
+void modperl_interp_init(server_rec *s, ap_pool_t *p,
+                         PerlInterpreter *perl)
 {
     pTHX;
     MP_dSCFG(s);
@@ -218,13 +220,11 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     MUTEX_INIT(&mip->mip_lock);
     COND_INIT(&mip->available);
 
-#ifdef USE_ITHREADS
     for (i=0; i<mip->cfg->start; i++) {
         modperl_interp_t *interp = modperl_interp_new(p, mip, perl);
 
         modperl_interp_pool_add(mip, interp);
     }
-#endif
 
     MP_TRACE_i(MP_FUNC, "parent == 0x%lx "
                "start=%d, max=%d, min_spare=%d, max_spare=%d\n",
@@ -234,6 +234,12 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
 
     ap_register_cleanup(p, (void*)mip,
                         modperl_interp_pool_destroy, ap_null_cleanup);
+
+
+    /* XXX: should only bother selecting an interpreter
+     * if one is needed for the request
+     */
+    ap_hook_post_read_request(modperl_interp_select, NULL, NULL, HOOK_FIRST);
 
     scfg->mip = mip;
 }
@@ -291,3 +297,19 @@ int modperl_interp_select(request_rec *r)
 
     return OK;
 }
+
+#else
+
+void modperl_interp_init(server_rec *s, ap_pool_t *p,
+                         PerlInterpreter *perl)
+{
+    MP_dSCFG(s);
+    scfg->perl = perl;
+}
+
+ap_status_t modperl_interp_cleanup(void *data)
+{
+    return APR_SUCCESS;
+}
+
+#endif /* USE_ITHREADS */
