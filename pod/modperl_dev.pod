@@ -16,6 +16,7 @@ in the same directory:
 
 =head2 Create the build environment
 
+  % cd modperl-2.0
   % perl Makefile.PL [options]
 
 I<options>  an optional list of (key,value) pairs. Currently all options are
@@ -25,31 +26,45 @@ boolean, set them with MP_XXX=1.
 
 =item MP_PROMPT_DEFAULT
 
-Do not prompt the user, instead use default answers to any questions.
+Accept default values for all would-be prompts
 
 =item MP_USE_DSO
 
-build mod_perl as a DSO
+Build mod_perl as a DSO
+
+=item MP_DYNAMIC
+
+Build Apache::*.xs as dynamic extensions
 
 =item MP_USE_GTOP
 
-use Gtop
+Link with libgtop and enable libgtop reporting
 
 =item MP_DEBUG
 
-compilation includes symbols for debugging. Implies MP_TRACE
+Turn on debugging (-g -Wall -lperld) and tracing
 
 =item MP_TRACE
 
-enable tracing
+Enable tracing
 
-=item MP_CPP
+=item MP_CCOPTS
 
-just run the C preprocessor, don't compile or link
+Add to compiler flags
+
+=item MP_INST_APACHE2
+
+Install *.pm relative to Apache2/ directory
+
+=item MP_OPTIONS_FILE
+
+Read options from given file
 
 =back
 
 Options can also be specified in the file C<makepl_args.mod_perl2>.
+Command line options override those from C<makepl_args_mod_perl2>
+and those from MP_OPTIONS_FILE.
 
 =head2 Compile mod_perl
 
