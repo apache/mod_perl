@@ -278,6 +278,12 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
         status = HTTP_INTERNAL_SERVER_ERROR;
     }
 
+    /* XXX: since the interpreter from which this data was allocated
+     * can be knocked off (PerlInterpMax{Spare,Requests}, the parse caching
+     * is broken.
+     */
+    modperl_handler_unparse(handler);
+
     return status;
 }
 
