@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/03/03 03:50:55 $]
+   Last modified at [$Date: 2003/03/04 09:42:41 $]
 
 Release:
 --------
@@ -177,7 +177,6 @@ Open Issues or Core Enhancements:
 ----
 
 * Apache::PerlSections missing features for backwards compatibility:
- - $Apache::Server::SaveConfig
  - $Apache::ReadConfig::DocumentRoot
  - Apache::PerlSections->store(filename)
 

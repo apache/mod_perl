@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+$Apache::Server::SaveConfig added. When set to a true value,
+will not clear the content of Apache::ReadConfig:: once <Perl >
+sections are processed. [Philippe M. Chiasson <gozer@cpan.org]
+
 Apache::compat: support 1.0's Apache->push_handlers,
 Apache->set_handlers and Apache->get_handlers [Stas]
 

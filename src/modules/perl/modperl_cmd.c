@@ -318,6 +318,8 @@ MP_CMD_SRV_DECLARE(perl)
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
 #define MP_STRICT_PERLSECTIONS_SV \
     get_sv("Apache::Server::StrictPerlSections", FALSE)
+#define MP_PERLSECTIONS_SAVECONFIG_SV \
+    get_sv("Apache::Server::SaveConfig", FALSE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
@@ -385,6 +387,7 @@ MP_CMD_SRV_DECLARE(perldo)
     }
     
     if (handler) {
+        SV *saveconfig;
         modperl_handler_make_args(aTHX_ &args,
                                   "Apache::CmdParms", parms,
                                   "APR::Table", options,
@@ -394,6 +397,13 @@ MP_CMD_SRV_DECLARE(perldo)
 
         SvREFCNT_dec((SV*)args);
 
+        if (!(saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV) || !SvTRUE(saveconfig)) {
+            HV *symtab = (HV*)gv_stashpv(package_name, FALSE);
+            if (symtab) {
+                modperl_clear_symtab(aTHX_ symtab);
+            }
+        }
+        
         if (status != OK) {
             return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
                 apr_psprintf(p, "<Perl> handler %s failed with status=%d",

@@ -615,3 +615,56 @@ SV *modperl_perl_gensym(pTHX_ char *pack)
     return rv;
 }
 
+static int modperl_gvhv_is_stash(GV *gv)
+{
+    int len = GvNAMELEN(gv);
+    char *name = GvNAME(gv);
+
+    if ((len > 2) && (name[len - 1] == ':') && (name[len - 2] == ':')) {
+        return 1;
+    }
+
+    return 0;
+}
+
+/*
+ * we do not clear symbols within packages, the desired behavior
+ * for directive handler classes.  and there should never be a package
+ * within the %Apache::ReadConfig.  nothing else that i'm aware of calls
+ * this function, so we should be ok.
+ */
+
+void modperl_clear_symtab(pTHX_ HV *symtab) 
+{
+    SV *val;
+    char *key;
+    I32 klen;
+
+    hv_iterinit(symtab);
+    
+    while ((val = hv_iternextsv(symtab, &key, &klen))) {
+        SV *sv;
+        HV *hv;
+        AV *av;
+        CV *cv;
+
+        if ((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val)) {
+            continue;
+        }
+        if ((sv = GvSV((GV*)val))) {
+            sv_setsv(GvSV((GV*)val), &PL_sv_undef);
+        }
+        if ((hv = GvHV((GV*)val)) && !modperl_gvhv_is_stash((GV*)val)) {
+            hv_clear(hv);
+        }
+        if ((av = GvAV((GV*)val))) {
+            av_clear(av);
+        }
+        if ((cv = GvCV((GV*)val)) && (GvSTASH((GV*)val) == GvSTASH(CvGV(cv)))) {
+            GV *gv = CvGV(cv);
+            cv_undef(cv);
+            CvGV(cv) = gv;
+            GvCVGEN(gv) = 1; /* invalidate method cache */
+        }
+    }
+}
