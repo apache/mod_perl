@@ -61,7 +61,7 @@ __PACKAGE__->install_aliases(\%aliases);
 #
 
 # META: if the ISA search results are cached on the first lookup, may
-# be need to alias only the those that aren't the defaults?
+# be we need to alias only those methods that override the defaults?
 
 
 1;

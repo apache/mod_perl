@@ -24,17 +24,3 @@ sub handler {
 1;
 __END__
 
-
-=head1 NAME
-
-ModPerl::RegistryBB - 
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
-C<ModPerl::RegistryBB> uses all the defaults, which do the very minimum
-to compile the file once and run it many times.
-
-=cut
-
