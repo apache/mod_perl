@@ -377,8 +377,8 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
          * temporary link to the base server config's 'modules'
          * member. e.g. so Apache::Module->get_config() can be called
          * from a custom directive's callback, before the server/vhost
-         * config merge is performed */
-
+         * config merge is performed
+         */
         if (!scfg->modules) {
             modperl_config_srv_t *base_scfg =
                 modperl_config_srv_get(modperl_global_get_server_rec());
