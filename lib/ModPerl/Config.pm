@@ -67,7 +67,7 @@ sub as_string {
         $cfg .= "$libs\n\n";
     }
     else {
-        $cfg .= "config script were not found\n\n";
+        $cfg .= "config scripts were not found\n\n";
     }
 
     # perl opts
