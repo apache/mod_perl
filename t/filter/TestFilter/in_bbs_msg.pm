@@ -32,7 +32,6 @@ sub handler : FilterConnectionHandler {
     }
 
     while (!$ctx_bb->empty) {
-        my $data;
         my $bucket = $ctx_bb->first;
 
         $bucket->remove;
@@ -43,12 +42,8 @@ sub handler : FilterConnectionHandler {
             last;
         }
 
-        my $status = $bucket->read($data);
+        my $data = $bucket->read;
         debug "FILTER READ:\n$data";
-
-        if ($status != APR::SUCCESS) {
-            return $status;
-        }
 
         if ($data and $data =~ s,GET $from_url,GET $to_url,) {
             debug "GET line rewritten to be:\n$data";

@@ -149,7 +149,6 @@ sub ModPerl::Test::read_post {
         warn "read_post: bb $count\n" if $debug;
 
         while (!$bb->empty) {
-            my $buf;
             my $b = $bb->first;
 
             $b->remove;
@@ -160,10 +159,7 @@ sub ModPerl::Test::read_post {
                 last;
             }
 
-            my $status = $b->read($buf);
-            if ($status != APR::SUCCESS) {
-                return $status;
-            }
+            my $buf = $b->read;
             warn "read_post: DATA bucket: [$buf]\n" if $debug;
             push @data, $buf;
         }
@@ -220,6 +216,7 @@ use base qw(Apache::Filter);
 use Apache::FilterRec ();
 use APR::Brigade ();
 use APR::Bucket ();
+use APR::BucketType ();
 
 use Apache::Const -compile => qw(OK DECLINED);
 use APR::Const -compile => ':common';
@@ -266,7 +263,7 @@ sub bb_dump {
 
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-        $b->read(my $bdata);
+        my $bdata = $b->read;
         $bdata = '' unless defined $bdata;
         push @data, $b->type->name, $bdata;
     }

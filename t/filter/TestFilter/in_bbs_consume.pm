@@ -75,7 +75,7 @@ sub bb_data_n_eos {
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $seen_eos++, last if $b->is_eos;
-        $b->read(my $bdata);
+        my $bdata = $b->read;
         $bdata = '' unless defined $bdata;
         push @data, $bdata;
     }
