@@ -8,6 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+Apache::Log optimizations:
+  ${r,s}->log->$method() will now accept a CODE ref as it's first
+  argument, which is only called when $method >= LogLevel
+  caller() file/line info determined only if LogLevel >= debug
+  avoid copy of message SV 
+
 tweak Apache->module so it can test for configured .c modules
 
 pushing out experimental stuff:

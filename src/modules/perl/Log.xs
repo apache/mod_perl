@@ -8,14 +8,36 @@ static void ApacheLog(int level, const server_rec *s, SV *msg)
 {
     char *file = NULL;
     int line   = 0;
-    if(level == APLOG_DEBUG) {
+    char *str;
+    SV *svstr = Nullsv;
+    int lmask = level & APLOG_LEVELMASK;
+
+    if((lmask == APLOG_DEBUG) && (s->loglevel >= APLOG_DEBUG)) {
 	SV *caller = perl_eval_pv("[ (caller)[1,2] ]", TRUE);
 	file = SvPV(*av_fetch((AV *)SvRV(caller), 0, FALSE),na);
 	line = (int)SvIV(*av_fetch((AV *)SvRV(caller), 1, FALSE));
     }
-    ap_log_error(file, line, APLOG_NOERRNO|level, 
-		 s, SvPV(msg,na));
+
+    if((s->loglevel >= lmask) && 
+       SvROK(msg) && (SvTYPE(SvRV(msg)) == SVt_PVCV)) {
+	dSP;
+	ENTER;SAVETMPS;
+	PUSHMARK(sp);
+	(void)perl_call_sv(msg, G_SCALAR);
+	SPAGAIN;
+	svstr = POPs;
+	++SvREFCNT(svstr);
+	PUTBACK;
+	FREETMPS;LEAVE;
+	str = SvPV(svstr,na);
+    }
+    else
+	str = SvPV(msg,na);
+
+    ap_log_error(file, line, APLOG_NOERRNO|level, s, str);
+
     SvREFCNT_dec(msg);
+    if(svstr) SvREFCNT_dec(svstr);
 }
 
 #define join_stack_msg \
@@ -25,7 +47,8 @@ if(items > 2) { \
     do_join(msgstr, &sv_no, MARK+1, SP); \
 } \
 else { \
-    msgstr = newSVsv(ST(1)); \
+    msgstr = ST(1); \
+    ++SvREFCNT(msgstr); \
 } 
 
 #define MP_AP_LOG(l,s) \

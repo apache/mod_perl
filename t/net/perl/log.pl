@@ -26,6 +26,8 @@ info
 debug
 };
 my $tests = @methods * 2;
+$tests += 2;
+
 print "1..$tests\n";
 for my $method (@methods)
 {
@@ -38,3 +40,10 @@ for my $method (@methods)
     test ++$i, $slog->can($method);
 }
 
+my $x = 0;
+$r->log->warn(sub { ++$x; "log __ANON__ OK" });
+test ++$i, $x;
+
+my $zero = 0;
+$r->log->debug(sub { ++$zero; "NOT OK" }); #LogLevel not set this high w/ 'make test'
+test ++$i, $zero == 0;
