@@ -309,12 +309,15 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
         ap_add_common_vars(r);
         ap_add_cgi_vars(r);
 
-#ifdef MP_COMPAT_1X
-        modperl_env_default_populate(aTHX); /* reset GATEWAY_INTERFACE */
-#endif
     }
 
     modperl_env_table_populate(aTHX_ r->subprocess_env);
+
+#ifdef MP_COMPAT_1X
+    if (! MpReqSETUP_ENV(rcfg)) {
+        modperl_env_default_populate(aTHX); /* reset GATEWAY_INTERFACE */
+    }
+#endif
 
     /* don't set up CGI variables again this request.
      * this also triggers modperl_env_request_unpopulate, which
