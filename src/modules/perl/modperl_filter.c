@@ -34,7 +34,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
 
     MP_TRACE_f(MP_FUNC, "buffer length=%d\n", len);
 
-    return ap_pass_brigade(wb->filters, bb);
+    return ap_pass_brigade(*(wb->filters), bb);
 }
 
 MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb)
@@ -91,7 +91,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     filter->bb = bb;
     filter->pool = p;
     filter->wbucket.pool = p;
-    filter->wbucket.filters = f->next;
+    filter->wbucket.filters = &f->next;
     filter->wbucket.outcnt = 0;
 
     MP_TRACE_f(MP_FUNC, "filter=0x%lx, mode=%s\n",

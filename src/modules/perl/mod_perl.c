@@ -399,7 +399,7 @@ void modperl_response_init(request_rec *r)
 
     /* setup buffer for output */
     rcfg->wbucket.pool = r->pool;
-    rcfg->wbucket.filters = r->output_filters;
+    rcfg->wbucket.filters = &r->output_filters;
     rcfg->wbucket.outcnt = 0;
 }
 

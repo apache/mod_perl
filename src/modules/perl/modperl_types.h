@@ -168,7 +168,7 @@ typedef struct {
     int outcnt;
     char outbuf[MP_IOBUFSIZE];
     apr_pool_t *pool;
-    ap_filter_t *filters;
+    ap_filter_t **filters;
     int header_parse;
     request_rec *r;
 } modperl_wbucket_t;
