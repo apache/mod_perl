@@ -20,8 +20,8 @@ use constant OSX   => Apache::TestConfig::OSX;
 use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
 
 use APR::Const -compile => qw(SUCCESS FINFO_NORM FILETYPE_REG
-                              FILEPROT_WREAD FILEPROT_WWRITE
-                              FILEPROT_WEXECUTE);
+                              FPROT_WREAD FPROT_WWRITE
+                              FPROT_WEXECUTE);
 
 sub num_of_tests {
     return 15;
@@ -97,21 +97,21 @@ sub test {
 
         # match world bits
 
-        ok t_cmp($finfo->protection & APR::FILEPROT_WREAD,
+        ok t_cmp($finfo->protection & APR::FPROT_WREAD,
                  $protection & S_IROTH,
-                 '$finfo->protection() & APR::FILEPROT_WREAD');
+                 '$finfo->protection() & APR::FPROT_WREAD');
 
-        ok t_cmp($finfo->protection & APR::FILEPROT_WWRITE,
+        ok t_cmp($finfo->protection & APR::FPROT_WWRITE,
                  $protection & S_IWOTH,
-                 '$finfo->protection() & APR::FILEPROT_WWRITE');
+                 '$finfo->protection() & APR::FPROT_WWRITE');
 
         if (WIN32) {
             skip "different file semantics", 0;
         }
         else {
-            ok t_cmp($finfo->protection & APR::FILEPROT_WEXECUTE,
+            ok t_cmp($finfo->protection & APR::FPROT_WEXECUTE,
                      $protection & S_IXOTH,
-                     '$finfo->protection() & APR::FILEPROT_WEXECUTE');
+                     '$finfo->protection() & APR::FPROT_WEXECUTE');
         }
     }
 

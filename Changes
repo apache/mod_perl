@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Further sync with libapr constants changes: [Stas] 
+- the constants
+  APR::(READ|WRITE|CREATE|APPEND|TRUNCATE|BINARY|EXCL|BUFFERED|DELONCLOSE)
+  now have a prefix APR::FOPEN_ and moved group s/filemode/fopen/
+- constants from the fileprot group moved to the fprot group and the
+  prefix has changed: from APR::FILEPROT_ to APR::FPROT_
+- this also fixes the import of APR_EXCL as an error constant
+
 $r->print() and tied print() now return 0E0 (zero but true) when the
 call was successful but for zero bytes.  [Geoffrey Young]
 
