@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.17_01-dev
+=item 1.18 - January 27, 1999
 
 if -DAPACHE_PERL5LIB is defined, feed the paths to @INC at startup
 
