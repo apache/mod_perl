@@ -200,6 +200,9 @@ sub parse_init_file {
             $self->{$key} = $val;
             print "   $key = $val\n";
 	}
+        else {
+            push @ARGV, $_;
+        }
     }
     close $fh;
 }
@@ -280,8 +283,8 @@ sub new {
         @_,
     }, $class;
 
-    $self->parse_argv;
     $self->parse_init_file;
+    $self->parse_argv;
 
     if ($self->{MP_DEBUG} and $self->{MP_USE_GTOP}) {
         $self->{MP_USE_GTOP} = 0 unless $self->find_dlfile('gtop');
