@@ -58,7 +58,7 @@ apr_strmatch_pattern apr_version_t
 -  pool
 -  hostname
 -  servname
-   port
+<  port
 -  sa
 -  salen
 -  ipaddr_len
