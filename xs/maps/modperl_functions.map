@@ -1,0 +1,24 @@
+#modperl specfic functions
+
+MODULE=Apache::RequestUtil   PACKAGE=guess
+ mpxs_Apache__RequestRec_push_handlers
+ mpxs_Apache__RequestRec_set_handlers
+ mpxs_Apache__RequestRec_get_handlers
+
+ #protocol module helpers
+ mpxs_Apache__RequestRec_location_merge
+ mpxs_Apache__RequestRec_set_basic_credentials
+PACKAGE=Apache::RequestRec
+ mpxs_Apache__RequestRec_new
+
+MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
+ mpxs_Apache__RequestRec_TIEHANDLE
+
+MODULE=Apache::ServerUtil   PACKAGE=guess
+ mpxs_Apache__Server_push_handlers
+ mpxs_Apache__Server_set_handlers
+ mpxs_Apache__Server_get_handlers
+
+MODULE=Apache::Filter   PACKAGE=Apache::OutputFilter
+ mpxs_Apache__OutputFilter_print | | ...
+ mpxs_Apache__OutputFilter_read  | | ...
