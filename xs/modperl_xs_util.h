@@ -67,8 +67,9 @@ if (items != 1) { \
 }
 
 #define mpxs_usage_va(i, obj, msg) \
-if ((items < i) || !(mpxs_sv2_obj(obj, *MARK))) \
-croak("usage: %s", msg); \
+if ((items < i) || !(mpxs_sv2_obj(obj, *MARK))) { \
+    Perl_croak(aTHX_ "usage: %s", msg); \
+} \
 MARK++
 
 #define mpxs_usage_va_1(obj, msg) mpxs_usage_va(1, obj, msg)
@@ -77,13 +78,14 @@ MARK++
 mpxs_usage_va(2, obj, msg); \
 arg = *MARK++
 
+/* XXX: we probably shouldn't croak here */
 #define mpxs_write_loop(func,obj) \
     while (MARK <= SP) { \
         apr_ssize_t wlen; \
         char *buf = SvPV(*MARK, wlen); \
         apr_status_t rv = func(obj, buf, &wlen); \
         if (rv != APR_SUCCESS) { \
-            croak(modperl_apr_strerror(rv)); \
+            Perl_croak(aTHX_ modperl_apr_strerror(rv)); \
         } \
         bytes += wlen; \
         MARK++; \
