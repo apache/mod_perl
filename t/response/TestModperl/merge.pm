@@ -86,6 +86,9 @@ sub handler {
 
     plan $r, tests => 10;
 
+    # need to insert PerlPassEnv entries
+    $r->subprocess_env;
+
     my $uri = $r->uri;
     my $hash;
 
