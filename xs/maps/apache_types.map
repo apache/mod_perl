@@ -50,6 +50,7 @@ long            | IV
 long int        | IV
 unsigned long   | UV
 unsigned        | UV
+double          | NV
 
 char *                   | PV
 const char *             | PV
