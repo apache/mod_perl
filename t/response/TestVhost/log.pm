@@ -6,16 +6,16 @@ package TestVhost::log;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Test;
-use Apache::TestUtil;
-
 use Apache::RequestUtil ();
-
+use Apache::Log ();
 use Apache::ServerRec qw(warn); # override warn locally
 
 use File::Spec::Functions qw(catfile);
 use POSIX ();
 use Symbol ();
+
+use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
 
