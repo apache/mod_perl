@@ -12,7 +12,7 @@
 # patch -p0 < newtest.patch
 
 # cvs diff
-my $o = `cvs diff`;
+my $o = `cvs diff -u`;
 
 # strip '? filename' cvs lines for unknown files
 $o =~ s/^\?.*\n//gm;
