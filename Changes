@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add $r->connection->fileno, provides the client file descriptors. This
+can be used to detect client disconnect without doing any I/O, e.g. using
+IO::Select [Eric Cholet <cholet@logilune.com>]
+
 if $r->bytes_sent has not been calculated, then do so before returning
 the value.  thanks to Dirk Melchers for the spot
 

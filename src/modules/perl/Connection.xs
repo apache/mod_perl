@@ -33,6 +33,22 @@ BOOT:
 #				 * get_remote_host() */
 
 int
+fileno(conn, ...)
+    Apache::Connection	conn
+
+    PREINIT:
+    int sts = 1;	/* default is output fd */
+
+    CODE:
+    if(items > 1) {
+        sts = (int)SvIV(ST(1));
+    }
+    RETVAL = ap_bfileno(conn->client, sts ? B_WR : B_RD);
+
+    OUTPUT:
+    RETVAL
+
+int
 aborted(conn)
     Apache::Connection	conn
 

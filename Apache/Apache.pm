@@ -531,6 +531,15 @@ C<$c-E<gt>user>, if any.
 
 Returns true if the client stopped talking to us.
 
+=item $c->fileno( [$direction] )
+
+Returns the client file descriptor. If $direction is 0, the input fd
+is returned. If $direction is not null or ommitted, the output fd is
+returned.
+
+This can be used to detect client disconnect without doing any I/O,
+e.g. using IO::Select.
+
 =back
 
 =back
