@@ -1,0 +1,12 @@
+TYPEMAP
+void *			T_VPTR
+
+######################################################################
+OUTPUT
+T_VPTR
+	sv_setiv($arg, PTR2IV($var));
+
+######################################################################
+INPUT
+T_VPTR
+	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
