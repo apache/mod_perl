@@ -15,6 +15,9 @@ to the ToDo file and never remove it ;-)
 SHORT TERM STUFF (this section should always be empty in a release version!)
 ---------------------------------------------------------------------------
 
+- see about fixing [error] PerlSetVar->nelts = 1111992
+           Stephan Nagy <rzjj60@EMAIL.SPS.MOT.COM>
+
 - Ralf's APACI Makefile.tmpl
 
 - Gerald's suggestion to avoid possible deadlock under win32
@@ -25,6 +28,14 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
            Jake Buchholz <jake@EXECPC.COM>
 
 ---------------------------------------------------------------------------
+DOCUMENTATION (areas that *really* need some)
+---------------------------------------------------------------------------
+
+- HTTP Headers!!!!
+
+- Apache::exit/child_terminate
+
+---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
 
@@ -32,6 +43,19 @@ KNOWN BUGS
   %Apache::ReadConfig::
 
 - die and AUTOLOADed DESTROY == empty $@ (Perl or mod_perl bug?)
+
+
+- ExtUtils::Embed/ExtUtils::Liblist clash sometime w/
+  PERL_STATIC_EXTS, like so: 
+ Unrecognized argument in LIBS ignored:
+ '/opt/oracle/product/7.3.3/lib/libclient.a' 
+
+ Note (probably harmless): No library found for -l:libcma.sl
+
+ -Wl,-E -Wl,-B,deferred -L/usr/local/lib
+ /home/web/perl5/lib/site_perl/portable/auto/DBD/Oracle/Oracle.a 
+ /home/  etc etc ...
+           mark rostron <useny036@IMATION.COM>
 
 ---------------------------------------------------------------------------
 NEW STUFF
