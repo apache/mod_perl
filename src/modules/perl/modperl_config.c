@@ -164,6 +164,11 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 
     ap_mpm_query(AP_MPMQ_IS_THREADED, &scfg->threaded_mpm);
 
+    /* give a chance to MOD_PERL_TRACE env var to set PerlTrace. This
+     * place is the earliest point in mod_perl configuration
+     * parsing */
+    modperl_trace_level_set(s, NULL);
+    
 #ifdef USE_ITHREADS
 
     scfg->interp_pool_cfg = 
