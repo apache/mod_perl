@@ -40,6 +40,13 @@ ModPerl::RegistryCooker syncs with mod_perl 1.0's registry:
 apr_table_t is now an opaque type, use apr_table_elts() to get the array
 record [Stas Bekman]
 
+add support for redirects with PerlOptions +ParseHeaders
+
+backport to 2.0.35
+
+adjust to filter register api change
+
+added APR::ThreadMutex module
 
 =item 1.99_04 - June 21, 2002
 
