@@ -6,6 +6,8 @@
 #define ap_fclose(r, fd) \
         ap_pfclose(r->pool, fd)
 
+#define ap_mtime(r) r->mtime
+
 #ifndef SvCLASS
 #define SvCLASS(o) HvNAME(SvSTASH(SvRV(o)))
 #endif
@@ -199,6 +201,10 @@ time_t
 ap_update_mtime(r, dependency_mtime=r->finfo.st_mtime)
     Apache r
     time_t dependency_mtime
+
+time_t
+ap_mtime(r)
+    Apache r
 
 int
 ap_discard_request_body(r)
