@@ -12,15 +12,13 @@ use Apache::Build;
 # become available
 use constant MIN_MAXCLIENTS => 2;
 
-# default timeout in secs (threaded mpms are extremely slow to
-# startup, due to a slow perl_clone operation)
-use constant DEFAULT_STARTUP_TIMEOUT =>
-    Apache::Build->build_config->mpm_is_threaded() ? 180 : 120;
-
 sub new_test_config {
     my $self = shift;
 
-    $self->{conf_opts}->{startup_timeout} ||= DEFAULT_STARTUP_TIMEOUT;
+    # default timeout in secs (threaded mpms are extremely slow to
+    # startup, due to a slow perl_clone operation)
+    $self->{conf_opts}->{startup_timeout} ||=
+        Apache::Build->build_config->mpm_is_threaded() ? 180 : 120;
 
     $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
 
