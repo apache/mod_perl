@@ -65,10 +65,6 @@ sub ap_prefix_invalid {
         return "include/ directory not found in $prefix";
     }
 
-    if (-e "$prefix/CHANGES") {
-        return "$prefix is a build directory (need an install directory)";
-    }
-
     return '';
 }
 
@@ -556,7 +552,7 @@ sub dir {
 
     return $self->{dir} if $self->{dir};
 
-    if(IS_MOD_PERL_BUILD) {
+    if (IS_MOD_PERL_BUILD) {
         my $build = $self->build_config;
 
         if ($dir = $build->{'dir'}) {
@@ -565,6 +561,8 @@ sub dir {
             }
         }
     }
+
+    $dir ||= $self->{MP_AP_PREFIX};
 
 # we not longer install Apache headers, so dont bother looking in @INC
 # might end up finding 1.x headers anyhow
@@ -1051,10 +1049,13 @@ sub includes {
 
     push @inc, $self->mp_include_dir;
 
-    my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
-    if (-d $ainc) {
-        push @inc, $ainc;
-        return \@inc;
+    my $prefix = $self->{MP_AP_PREFIX};
+    if (-d $prefix and not -e "$prefix/CHANGES") {
+        my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
+        if (-d $ainc) {
+            push @inc, $ainc;
+            return \@inc;
+        }
     }
 
     for ("$src/modules/perl", "$src/include",
