@@ -373,13 +373,6 @@ static void mp_preload_module(char **name)
 CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *p)
 { 
     SV *sva;
-#if !APACHE_SSL_12X && !defined(WIN32)
-    if(!PERL_RUNNING()) { 
-        MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: perl not running, skipping push\n")); 
-	return NULL; 
-    } 
-#endif
-
     mp_preload_module(&arg);
     sva = newSVpv(arg,0); 
     if(!*cmd) { 

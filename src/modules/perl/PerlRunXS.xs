@@ -55,11 +55,7 @@
  *
  */
 
-#ifdef MOD_PERL
 #include "mod_perl.h"
-#else
-#include "modules/perl/mod_perl.h"
-#endif
 
 static const char c2x_table[] = "0123456789abcdef";
 

@@ -6,14 +6,9 @@
 
 #PerlFreshRestart On
 
-
 #Configuration directives specific to mod_perl
 
 ServerRoot "./t"
-
-User nobody
-
-Group nogroup
 
 Port 8529
 
@@ -26,6 +21,7 @@ DocumentRoot "./t/docs"
 
 LoadModule perl_module modules/ApacheModulePerl.dll
 
+PerlRequire docs/startup.pl
 
 #-Tw
 
@@ -43,7 +39,7 @@ PerlSetVar KeyForPerlSetVar OK
 PerlTransHandler PerlTransHandler
 
 
-PerlScript docs/startup.pl
+
 
 
 Alias /perl/ ./t/net/perl/

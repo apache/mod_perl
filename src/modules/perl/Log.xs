@@ -1,8 +1,4 @@
-#ifdef MOD_PERL
 #include "mod_perl.h"
-#else
-#include "modules/perl/mod_perl.h"
-#endif
 
 #if MODULE_MAGIC_NUMBER >= MMN_132
 #define HAVE_LOG_RERROR 1

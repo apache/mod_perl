@@ -1,8 +1,4 @@
-#ifdef MOD_PERL
 #include "mod_perl.h"
-#else
-#include "modules/perl/mod_perl.h"
-#endif
 
 #define ap_fopen(r, name, mode) \
         ap_pfopen(r->pool, name, mode)

@@ -603,7 +603,7 @@ if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
 }
 for (qw(Log URI Util Connection Server File Table)) {
     my $s = "PERL_".uc($_)."_API";
-    if($$s) {
+    if($$s or $Is_Win32) {
 	push @xs_modules, "Apache::$_";
 	$callback_hooks{$s} = 1;
     }

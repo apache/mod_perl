@@ -96,7 +96,6 @@ src/modules/perl/perlio.c
 src/modules/perl/perl_config.c
 src/modules/perl/Makefile
 src/modules/ApacheModulePerl/ApacheModulePerl.dsp
-src/modules/ApacheModulePerl/ApacheModulePerl.mak
 src/opcodes.txt
 t/report.PL
 t/README

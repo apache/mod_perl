@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+new-ish xs modules added to win32 build: Apache::Log, Apache::File,
+Apache::Table, Apache::URI, Apache::Util
+ 
 new Apache::Table->new method
 
 two experimental options now on by default: 

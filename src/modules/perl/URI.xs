@@ -1,10 +1,5 @@
-#ifdef MOD_PERL
 #include "mod_perl.h"
 #include "mod_perl_xs.h"
-#else
-#include "modules/perl/mod_perl.h"
-#include "modules/perl/mod_perl_xs.h"
-#endif  
 
 typedef struct {
     uri_components uri;

@@ -1,10 +1,14 @@
 use Apache::test;
-use Apache::Table ();
 
 use strict;
 my $r = shift;
 
 $r->send_http_header("text/plain");
+
+unless(have_module "Apache::Table") {
+    print "1..0\n";
+    return;
+}
 
 my $i = 0;
 my $tests = 32;
