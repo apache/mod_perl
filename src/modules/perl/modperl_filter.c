@@ -707,6 +707,14 @@ static int modperl_filter_add_connection(conn_rec *c,
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
 
+            if ((handlers[i]->attrs & MP_FILTER_HTTPD_HANDLER)) {
+                addfunc(handlers[i]->name, NULL, NULL, c);
+                MP_TRACE_f(MP_FUNC,
+                           "a non-mod_perl %s handler %s configured (connection)\n",
+                           type, handlers[i]->name);
+                continue;
+            }
+            
             if (!(handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
                 MP_TRACE_f(MP_FUNC,
                            "%s is not a FilterConnection handler\n",
@@ -747,8 +755,17 @@ static int modperl_filter_add_request(request_rec *r,
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
             int registered = 0;
-            ap_filter_t *f = filters;
+            ap_filter_t *f;
 
+            if ((handlers[i]->attrs & MP_FILTER_HTTPD_HANDLER)) {
+                addfunc(handlers[i]->name, NULL, r, r->connection);
+                MP_TRACE_f(MP_FUNC,
+                           "a non-mod_perl %s handler %s configured (%s)\n",
+                           type, handlers[i]->name, r->uri);
+                continue;
+            }
+
+            f = filters;
             while (f) {
                 const char *fname = f->frec->name;
 

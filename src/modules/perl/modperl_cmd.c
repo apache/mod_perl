@@ -30,6 +30,27 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
     return NULL;
 }
 
+char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
+                                             const char *name,
+                                             apr_pool_t *p)
+{
+    modperl_handler_t *h = modperl_handler_new(p, name);
+
+    /* we don't want this special handler to be parsed */
+    MpHandlerPARSED_On(h);
+    h->attrs = MP_FILTER_HTTPD_HANDLER;
+        
+    if (!*handlers) {
+        *handlers = modperl_handler_array_new(p);
+        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+    }
+
+    modperl_handler_array_push(*handlers, h);
+    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s\n", h->name);
+
+    return NULL;
+}
+
 
 #define MP_CMD_SRV_TRACE \
     MP_TRACE_d(MP_FUNC, "%s %s\n", parms->cmd->name, arg)
@@ -475,6 +496,61 @@ MP_CMD_SRV_DECLARE(load_module)
 
     return modperl_module_add(p, s, arg);
 }
+
+/* propogate filters insertion ala SetInputFilter */
+MP_CMD_SRV_DECLARE(set_input_filter)
+{
+    MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
+    char *filter;
+    
+    if (!MpSrvENABLE(scfg)) {
+        return apr_pstrcat(parms->pool,
+                           "Perl is disabled for server ",
+                           parms->server->server_hostname, NULL);
+    }
+    if (!MpSrvINPUT_FILTER(scfg)) {
+        return apr_pstrcat(parms->pool,
+                           "PerlSetInputFilter is disabled for server ",
+                           parms->server->server_hostname, NULL);
+    }
+
+    while (*arg && (filter = ap_getword(parms->pool, &arg, ';'))) {
+        modperl_cmd_push_httpd_filter_handlers(
+            &(dcfg->handlers_per_dir[MP_INPUT_FILTER_HANDLER]),
+            filter, parms->pool);
+    }
+
+    return NULL;
+}
+
+/* propogate filters insertion ala SetOutputFilter */
+MP_CMD_SRV_DECLARE(set_output_filter)
+{
+    MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
+    char *filter;
+    
+    if (!MpSrvENABLE(scfg)) {
+        return apr_pstrcat(parms->pool,
+                           "Perl is disabled for server ",
+                           parms->server->server_hostname, NULL);
+    }
+    if (!MpSrvINPUT_FILTER(scfg)) {
+        return apr_pstrcat(parms->pool,
+                           "PerlSetOutputFilter is disabled for server ",
+                           parms->server->server_hostname, NULL);
+    }
+
+    while (*arg && (filter = ap_getword(parms->pool, &arg, ';'))) {
+        modperl_cmd_push_httpd_filter_handlers(
+            &(dcfg->handlers_per_dir[MP_OUTPUT_FILTER_HANDLER]),
+            filter, parms->pool);
+    }
+
+    return NULL;
+}
+
 
 #ifdef MP_COMPAT_1X
 

@@ -699,7 +699,12 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_SRV_TAKE1("PerlPassEnv", pass_env, "PerlPassEnv"),
     MP_CMD_SRV_RAW_ARGS_ON_READ("<Perl", perl, "Perl Code"),
     MP_CMD_SRV_RAW_ARGS("Perl", perldo, "Perl Code"),
-	
+
+    MP_CMD_DIR_TAKE1("PerlSetInputFilter", set_input_filter,
+                     "filter[;filter]"),
+    MP_CMD_DIR_TAKE1("PerlSetOutputFilter", set_output_filter,
+                     "filter[;filter]"),
+    
     MP_CMD_DIR_RAW_ARGS_ON_READ("=pod", pod, "Start of POD"),
     MP_CMD_DIR_RAW_ARGS_ON_READ("=back", pod, "End of =over"),
     MP_CMD_DIR_RAW_ARGS_ON_READ("=cut", pod_cut, "End of POD"),

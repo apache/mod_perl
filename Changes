@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+new directives PerlSetInputFilter and PerlSetOutputFilter, which are
+the same as SetInputFilter and SetOutputFilter respectively, but allow
+to insert non-mod_perl filters before, between or after mod_perl
+filters. + tests [Stas]
+
+improved filters debug tracing [Stas]
+
 implement $filter->remove (filter self-removal) + tests [Stas]
 
 remove the second-guessing code that was trying to guess the package

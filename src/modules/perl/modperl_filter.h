@@ -9,6 +9,7 @@
 
 #define MP_FILTER_CONNECTION_HANDLER 0x01
 #define MP_FILTER_REQUEST_HANDLER    0x02
+#define MP_FILTER_HTTPD_HANDLER      0x04 
 
 typedef ap_filter_t * MP_FUNC_T(modperl_filter_add_t) (const char *, void *,
                                                        request_rec *,
