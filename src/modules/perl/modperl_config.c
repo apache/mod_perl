@@ -222,13 +222,13 @@ MP_DECLARE_SRV_CMD(options)
 
 #ifdef USE_ITHREADS
 
-#define MP_IMP_INTERP_POOL_CFG(item) \
-const char *modperl_cmd_interp_##item(cmd_parms *parms, \
+#define MP_IMP_INTERP_POOL_CFG(xitem) \
+const char *modperl_cmd_interp_##xitem(cmd_parms *parms, \
                                       void *dummy, const char *arg) \
 { \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \
-    scfg->interp_pool_cfg->##item = item; \
+    scfg->interp_pool_cfg->xitem = item; \
     MP_TRACE_d(MP_FUNC, "%s %d\n", parms->cmd->name, item); \
     return NULL; \
 }
