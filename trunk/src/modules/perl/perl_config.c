@@ -1485,6 +1485,29 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
     }   
 }
 
+static void clear_symtab(HV *symtab) 
+{
+    SV *val;
+    char *key;
+    I32 klen;
+
+    (void)hv_iterinit(symtab);
+    while ((val = hv_iternextsv(symtab, &key, &klen))) {
+	SV *sv;
+	HV *hv;
+	AV *av;
+
+	if(SvTYPE(val) != SVt_PVGV) 
+	    continue;
+	if((sv = GvSV((GV*)val)))
+	    sv = &sv_undef;
+	if((hv = GvHV((GV*)val)))
+	    hv_clear(hv);
+	if((av = GvAV((GV*)val)))
+	    av_clear(av);
+    }
+}
+
 CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 {
     CHAR_P errmsg;
@@ -1608,7 +1631,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 	if(usv && SvTRUE(usv))
 	    ; /* keep it around */
 	else
-	    hv_clear(symtab);
+	    clear_symtab(symtab);
     }
     return NULL;
 }
