@@ -9,6 +9,7 @@ use warnings FATAL => 'all';
 
 use Apache::TestUtil;
 use Apache::Test;
+use File::Spec::Functions qw(catfile canonpath);
 
 use Apache::compat ();
 use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
@@ -16,7 +17,7 @@ use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 11;
+    plan $r, tests => 16;
 
     $r->send_http_header('text/plain');
 
@@ -62,6 +63,33 @@ sub handler {
     ok t_cmp('foo@bar.com', $r->server->server_admin,
              'Apache->httpd_conf');
     $r->server->server_admin($admin);
+
+    ok t_cmp(canonpath($Apache::Server::CWD),
+             canonpath(Apache::Test::config()->{vars}->{serverroot}),
+             '$Apache::Server::CWD');
+
+    ok t_cmp(canonpath($Apache::Server::CWD),
+             canonpath($r->server_root_relative),
+             '$r->server_root_relative()');
+
+    ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
+             $r->server_root_relative('conf'),
+             "\$r->server_root_relative('conf')");
+
+    # Apache->server_root_relative
+    {
+        Apache::compat::override_mp2_api('Apache::server_root_relative');
+
+        ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
+                 Apache->server_root_relative('conf'),
+                 "Apache->server_root_relative('conf')");
+
+        ok t_cmp(canonpath($Apache::Server::CWD),
+                 canonpath(Apache->server_root_relative),
+                 'Apache->server_root_relative()');
+
+        Apache::compat::restore_mp2_api('Apache::server_root_relative');
+    }
 
     OK;
 }

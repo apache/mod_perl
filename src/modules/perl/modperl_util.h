@@ -87,8 +87,6 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
                                         const char *classname, UV uv);
 
-apr_pool_t *modperl_sv2pool(pTHX_ SV *obj);
-
 char *modperl_apr_strerror(apr_status_t rv);
 
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
@@ -161,4 +159,7 @@ void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
 #endif
 
 char *modperl_file2package(apr_pool_t *p, const char *file);
+
+SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname);
+
 #endif /* MODPERL_UTIL_H */

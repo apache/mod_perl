@@ -166,7 +166,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
  ap_get_server_built
  ap_get_server_version
  ap_psignature | | r,prefix
- ap_server_root_relative | mpxs_ | SV *:p, fname=""
+~ap_server_root_relative
 
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules

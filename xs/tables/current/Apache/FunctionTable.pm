@@ -4724,7 +4724,7 @@ $Apache::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
+    'return_type' => 'SV *',
     'name' => 'ap_server_root_relative',
     'args' => [
       {

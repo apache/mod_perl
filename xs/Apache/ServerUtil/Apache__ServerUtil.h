@@ -42,14 +42,11 @@ SV *mpxs_Apache__Server_get_handlers(pTHX_ server_rec *s,
 #define mpxs_Apache_server(classname) \
 modperl_global_get_server_rec()
 
-static MP_INLINE char *mpxs_ap_server_root_relative(pTHX_
-                                                    SV *sv,
-                                                    const char *fname)
-{
-    apr_pool_t *p = modperl_sv2pool(aTHX_ sv);
+#define mpxs_Apache__Server_server_root_relative(sv, fname) \
+    modperl_server_root_relative(aTHX_ sv, fname);
 
-    return ap_server_root_relative(p, fname);
-}
+#define mpxs_Apache_server_root_relative(sv, fname) \
+    modperl_server_root_relative(aTHX_ sv, fname)
 
 static MP_INLINE
 int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,

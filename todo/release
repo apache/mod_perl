@@ -143,14 +143,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100622977803237&w=2
   http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
-* Apache->server_root_relative:
-  needs to default to current pool (pconf at startup, r->pool at
-  request time) - solution: require the pool object to be passed. if a
-  user doesn't have one, make them create one, e.g.:
-  Apache::server_root_relative(APR::Pool->new, ....). Must make sure
-  that the returned SV has a copy of that string and doesn't rely on
-  anything that it's in pool, which will be now destroyed.
-
 * $r->cleanup_for_exec  needs to be added to Apache::compat as a noop.
   Owner: stas
 

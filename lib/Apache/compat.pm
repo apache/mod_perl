@@ -139,6 +139,20 @@ EOI
 }
 EOI
 
+    'Apache::server_root_relative' => <<'EOI',
+{
+    require Apache::Server;
+    require Apache::ServerUtil;
+
+    my $orig_sub = *Apache::server_root_relative{CODE};
+    *Apache::server_root_relative = sub {
+        my $class = shift;
+        return Apache->server->server_root_relative(@_);
+    };
+    $orig_sub;
+}
+EOI
+
 );
 
 my %overridden_mp2_api = ();
@@ -210,7 +224,7 @@ sub request {
 
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
-our $CWD = Apache->server_root_relative();
+our $CWD = Apache::server_root;
 
 our $AddPerlVersion = 1;
 
@@ -334,9 +348,6 @@ sub send_http_header {
 
     $r->content_type($type);
 }
-
-#to support $r->server_root_relative
-*server_root_relative = \&Apache::server_root_relative;
 
 #we support Apache->request; this is needed to support $r->request
 #XXX: seems sorta backwards

@@ -59,3 +59,7 @@ apr_finfo_t *mpxs_Apache__RequestRec_finfo(request_rec *r)
 {
     return &r->finfo;
 }
+
+#define mpxs_Apache__RequestRec_server_root_relative(sv, fname) \
+    modperl_server_root_relative(aTHX_ sv, fname)
+
