@@ -11,7 +11,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 49;
+    plan $r, tests => 41;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -89,81 +89,6 @@ sub handler {
 
     #user
 
-    #<- dir_config tests ->#
-
-    # this test doesn't test all $r->dir_config->*(), since
-    # dir_config() returns a generic APR::Table which is tested in
-    # apr/table.t.
-
-    # object test
-    my $dir_config = $r->dir_config;
-    ok defined $dir_config && ref($dir_config) eq 'APR::Table';
-
-    # PerlAddVar ITERATE2 test
-    {
-        my $key = make_key('1');
-        my @received = $dir_config->get($key);
-        my @expected = qw(1_SetValue 2_AddValue 3_AddValue 4_AddValue);
-        ok t_cmp(
-                 \@expected,
-                 \@received,
-                 "testing PerlAddVar ITERATE2",
-                )
-    }
-
-    {
-        my $key = make_key('0');
-
-        # object interface test in a scalar context (for a single
-        # PerlSetVar key)
-        ok t_cmp("SetValue0",
-                 $dir_config->get($key),
-                 qq{\$dir_config->get("$key")});
-
-        #  direct fetch test in a scalar context (for a single
-        #  PerlSetVar)
-        ok t_cmp("SetValue0",
-                 $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
-    }
-
-    # test non-existent key
-    {
-        my $key = make_key();
-        ok t_cmp(undef,
-                 $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
-    }
-
-    # test set interface
-    {
-        my $key = make_key();
-        my $val = "DirConfig";
-        $r->dir_config($key => $val);
-        ok t_cmp($val,
-                 $r->dir_config($key),
-                 qq{\$r->dir_config($key => $val)});
-    }
-
-    # test unset interface
-    {
-        my $key = make_key();
-        $r->dir_config($key => 'whatever');
-        $r->dir_config($key => undef);
-        ok t_cmp(undef,
-                 $r->dir_config($key),
-                 qq{\$r->dir_config($key => undef)});
-    }
-
-    # test PerlSetVar set in base config
-    {
-        my $key = make_key('_set_in_Base');
-        ok t_cmp("BaseValue",
-                 $r->dir_config($key),
-                 qq{\$r->dir_config("$key")});
-    }
-
-    #no_cache
     ok $r->no_cache || 1;
 
     {
@@ -209,26 +134,6 @@ sub handler {
     Apache::OK;
 }
 
-my $key_base = "TestAPI__request_rec_Key";
-my $counter  = 0;
-sub make_key{
-    return $key_base .
-        (defined $_[0]
-            ? $_[0]
-            : unpack "H*", pack "n", ++$counter . rand(100) );
-}
 1;
 __END__
-<Base>
-    PerlSetVar TestAPI__request_rec_Key_set_in_Base BaseValue
-</Base>
 PerlOptions +GlobalRequest
-
-PerlSetVar TestAPI__request_rec_Key0 SetValue0
-
-
-PerlSetVar TestAPI__request_rec_Key1 ToBeLost
-PerlSetVar TestAPI__request_rec_Key1 1_SetValue
-PerlAddVar TestAPI__request_rec_Key1 2_AddValue
-PerlAddVar TestAPI__request_rec_Key1 3_AddValue 4_AddValue
-

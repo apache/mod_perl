@@ -14,7 +14,7 @@ sub handler {
 
     my $s = $r->server;
 
-    plan $r, tests => 21;
+    plan $r, tests => 17;
 
     ok $s;
 
@@ -60,46 +60,6 @@ sub handler {
 
     ok $s->limit_req_fields;
 
-    
-    #<- dir_config tests ->#
-
-    # this test doesn't test all $s->dir_config->*(), since
-    # dir_config() returns a generic APR::Table which is tested in
-    # apr/table.t.
-
-    # object test
-    my $dir_config = $s->dir_config;
-    ok defined $dir_config && ref($dir_config) eq 'APR::Table';
-
-    # PerlAddVar ITERATE2 test
-    {
-        my $key = 'TestAPI__server_rec_Key_set_in_Base';
-        my @received = $dir_config->get($key);
-        my @expected = qw(1_SetValue 2_AddValue 3_AddValue);
-        ok t_cmp(
-                 \@expected,
-                 \@received,
-                 "testing PerlAddVar ITERATE2 in $s",
-                )
-    }
-
-    {
-        # base server test
-        my $bs = Apache->server;
-        ok t_cmp(
-               'Apache::Server',
-               ($bs && ref($bs)),
-               "base server's object retrieval"
-              );
-
-        my $key = 'TestAPI__server_rec_Key_set_in_Base';
-        ok t_cmp(
-               '1_SetValue',
-               scalar ($bs->dir_config->get($key)),
-               "read dir_config of the base server"
-              );
-    }
-
     Apache::OK;
 
 }
@@ -107,9 +67,3 @@ sub handler {
 1;
 
 __END__
-<Base>
-    PerlSetVar TestAPI__server_rec_Key_set_in_Base 1_SetValue
-    PerlAddVar TestAPI__server_rec_Key_set_in_Base 2_AddValue 3_AddValue
-</Base>
-PerlSetVar TestAPI__server_rec_Key_set_in_Base WhatEver
-
