@@ -164,6 +164,7 @@ struct modperl_handler_t{
     modperl_mgv_t *mgv_obj;
     modperl_mgv_t *mgv_cv;
     const char *name; /* original name from .conf if any */
+    CV *cv;
     U8 flags;
     U32 attrs;
     modperl_handler_t *next;

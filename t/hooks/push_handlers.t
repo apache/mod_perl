@@ -11,10 +11,7 @@ my @refs = qw(conf conf1 conf2 coderef
              full_coderef coderef1 coderef2 coderef3);
 my @anon = qw(anonymous anonymous1 coderef4 anonymous3);
 
-my @strings = @refs;
-
-# XXX: anon-handlers unsupported yet
-# push @strings, @anon
+my @strings = (@refs, @anon);
 
 my $location = "/TestHooks__push_handlers";
 my $expected = join "\n", @strings, '';

@@ -45,9 +45,6 @@
   the whole thread is here:
   http://marc.theaimsgroup.com/?t=103713532800003&r=1&w=2
 
-- anonymous handler (for push_handlers, add_input_filter, etc), see
-  modperl_mgv.c: modperl_mgv_name_from_sv
-
 - PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
   Owner: geoff
 
@@ -105,5 +102,3 @@
 
 * Apache->unescape_url{_info}:
   not yet implemented.  should be moved to Apache::Util
-
-

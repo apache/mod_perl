@@ -353,21 +353,19 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
         char *code = apr_pstrcat(p, "package ", package_name, ";",
                                  init_handler_pv_code, NULL);
         SV *sv = eval_pv(code, TRUE);
-        char *init_handler_name;
 
         /* fprintf(stderr, "code: %s\n", code); */
-        
-        if ((init_handler_name = modperl_mgv_name_from_sv(aTHX_ p, sv))) {
-            modperl_handler_t *init_handler =
-                modperl_handler_new(p, apr_pstrdup(p, init_handler_name));
+        modperl_handler_t *init_handler =
+            modperl_handler_new_from_sv(aTHX_ p, sv);
 
+        if (init_handler) {
             MP_TRACE_h(MP_FUNC, "found init handler %s\n",
-                       init_handler->name);
+                       modperl_handler_name(init_handler));
 
-            if (! init_handler->attrs & MP_FILTER_INIT_HANDLER) {
+            if (!init_handler->attrs & MP_FILTER_INIT_HANDLER) {
                 Perl_croak(aTHX_ "handler %s doesn't have "
                            "the FilterInitHandler attribute set",
-                           init_handler->name);
+                           modperl_handler_name(init_handler));
             }
             
             handler->next = init_handler;
@@ -1091,12 +1089,11 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 SV *callback, const char *type)
 {
     apr_pool_t *pool = r ? r->pool : c->pool;
-    char *handler_name;
+    modperl_handler_t *handler =
+        modperl_handler_new_from_sv(aTHX_ pool, callback);
 
-    if ((handler_name = modperl_mgv_name_from_sv(aTHX_ pool, callback))) {
+    if (handler) {
         ap_filter_t *f;
-        modperl_handler_t *handler =
-            modperl_handler_new(pool, apr_pstrdup(pool, handler_name));
         modperl_filter_ctx_t *ctx =
             (modperl_filter_ctx_t *)apr_pcalloc(pool, sizeof(*ctx));
 

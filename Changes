@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Anonymous subs are now supported in push_handlers, set_handlers,
+add_input_filter, etc. A fast cached cv is used with non-ithreaded
+perl. A slower deparse/eval approach (via B::Deparse) is used with
+ithreads enabled perls. Further optimizations are planned for the
+latter case. [Stas]
+
 ht_time w/o the pool is now available only via override/restore compat
 API. format_time, has been renamed back to ht_time, and the default
 values for fmt, time and gmt are now supported. [Stas]

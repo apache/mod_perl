@@ -21,6 +21,10 @@ modperl_handler_array_item(handlers, ((handlers)->nelts - 1))
 
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name);
 
+modperl_handler_t *modperl_handler_new_from_sv(pTHX_ apr_pool_t *p, SV *sv);
+
+MP_INLINE const char *modperl_handler_name(modperl_handler_t *handler);
+    
 int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
                             apr_pool_t *p, server_rec *s);
 
