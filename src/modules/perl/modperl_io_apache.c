@@ -175,9 +175,7 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
 
     MP_TRACE_o(MP_FUNC, "%4db [%s]", rcfg->wbucket->outcnt,
                MP_TRACE_STR_TRUNC(rcfg->wbucket->pool,
-                                  apr_pstrmemdup(rcfg->wbucket->pool,
-                                                 rcfg->wbucket->outbuf,
-                                                 rcfg->wbucket->outcnt),
+                                  rcfg->wbucket->outbuf,
                                   rcfg->wbucket->outcnt));
 
     MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE));
