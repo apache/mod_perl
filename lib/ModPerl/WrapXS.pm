@@ -123,6 +123,7 @@ EOF
             }
 
             if ($passthru) {
+                $thx ||= 'aTHX_ ';
                 $parms = 'items, MARK+1, SP';
             }
 
