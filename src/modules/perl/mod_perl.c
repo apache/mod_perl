@@ -95,11 +95,10 @@ static void modperl_refgen_ops_fixup(void)
 
 #endif /* MP_REFGEN_FIXUP */
 
-static void modperl_boot(void *data)
+static void modperl_boot(pTHX_ void *data)
 {
     MP_dBOOT_DATA;
     MP_dSCFG(s);
-    dTHX; /* XXX: not too worried since this only happens at startup */
     int i;
     
 #ifdef MP_REFGEN_FIXUP
