@@ -28,7 +28,7 @@ static void extra_apr_init(pTHX)
     }
 }
 #else
-#   define extra_apr_init()
+#   define extra_apr_init(aTHX)
 #endif
 
 MODULE = APR    PACKAGE = APR
