@@ -20,6 +20,11 @@ META: there is also the todo/ dir...
  o Currently only MP_USE_DSO=1 is used, need to test that
    MP_USE_STATIC=1 works too.
 
+### Testing ###
+
+Currently ModPerl::Registry tests aren't run automatically, need to
+figure out how to run 'make test' recursively.
+
 ### Configuration ###
 
 * Set/Add config overlapping which is not doing the right thing. See:
@@ -28,6 +33,7 @@ META: there is also the todo/ dir...
 
 
 ### RunTime ###
+
 
 - API
 
