@@ -38,6 +38,7 @@ sub handler {
              Apache::current_callback(),
              'inside PerlResponseHandler');
 
+    t_server_log_error_is_expected();
     Apache::log_error("Apache::log_error test ok");
     ok 1;
 
