@@ -20,6 +20,12 @@ sub handler {
     my Apache::Connection $c = shift;
     my APR::Socket $socket = $c->client_socket;
 
+    # XXX: workaround to a problem on some platforms (solaris, bsd,
+    # etc), where Apache 2.0.49+ forgets to set the blocking mode on
+    # the socket
+    BEGIN { use APR::Const -compile => qw(SO_NONBLOCK) }
+    $c->client_socket->opt_set(APR::SO_NONBLOCK => 0);
+
     # set timeout (20 sec) so later we can do error checking on
     # read/write timeouts
     $socket->timeout_set(20_000_000);
