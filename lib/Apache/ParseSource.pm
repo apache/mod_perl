@@ -51,6 +51,7 @@ sub scan {
     my $c = C::Scan->new(filename => $self->{scan_filename});
 
     $c->set(includeDirs => $self->includes);
+    $c->set(Defines => '-DCORE_PRIVATE');
 
     bless $c, 'Apache::ParseSource::Scan';
 }
