@@ -765,7 +765,12 @@ sub get_apr_config {
 
     my $dir = $self->ap_includedir;
 
-    my $header = "$dir/apr.h";
+    my $header;
+    for my $d ($dir, "$dir/../srclib/apr/include") {
+        $header = "$d/apr.h";
+        last if -e $header;
+    }
+
     open my $fh, $header or do {
         error "Unable to open $header: $!";
         return undef;
