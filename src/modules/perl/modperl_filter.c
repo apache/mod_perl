@@ -141,16 +141,16 @@ MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
 /* unrolled AP_BRIGADE_FOREACH loop */
 
 #define MP_FILTER_SENTINEL(filter) \
-AP_RING_SENTINEL(&(filter->bb)->list, ap_bucket, link)
+AP_BRIGADE_SENTINEL(filter->bb)
 
 #define MP_FILTER_FIRST(filter) \
-AP_RING_FIRST(&(filter->bb)->list)
+AP_BRIGADE_FIRST(filter->bb)
 
 #define MP_FILTER_NEXT(filter) \
-AP_RING_NEXT(filter->bucket, link)
+AP_BUCKET_NEXT(filter->bucket)
 
 #define MP_FILTER_IS_EOS(filter) \
-(filter->bucket && AP_BUCKET_IS_EOS(filter->bucket))
+AP_BUCKET_IS_EOS(filter->bucket)
 
 MP_INLINE static int get_bucket(modperl_filter_t *filter)
 {
@@ -312,7 +312,7 @@ MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
 }
 
 #define AP_BRIGADE_IS_EOS(bb) \
-AP_BUCKET_IS_EOS(AP_RING_FIRST(&(bb)->list))
+AP_BUCKET_IS_EOS(AP_BRIGADE_FIRST(bb))
 
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
                                            ap_bucket_brigade *bb)
