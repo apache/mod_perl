@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+modules/request test fix
+[Ken Williams <ken@forum.swarthmore.edu>]
+
 switch usage of hard_timeout() to soft_timeout(), so if SIGALRM
 happens during Apache::{print,read}, the script will continue run,
 allowing proper cleanup (e.g. DESTROY)
