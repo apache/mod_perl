@@ -1,8 +1,15 @@
 package Apache::HelloWorld;
 
+#LoadModule perl_module modules/mod_perl.so
+#PerlSwitches -Mlib=modperl-2.0/examples/lib
+
+##optional
+#PerlModule Apache2
+#PerlModule Apache::compat
+
 #<Location /hello-world>
-#  SetHandler modperl
-#  PerlResponseHandler Apache::HelloWorld
+#    SetHandler modperl
+#    PerlResponseHandler Apache::HelloWorld
 #</Location>
 
 use strict;
@@ -19,7 +26,7 @@ sub handler {
 
     $r->puts(__PACKAGE__); #print not yet implemented
 
-    return OK;
+    return Apache::OK;
 }
 
 1;
