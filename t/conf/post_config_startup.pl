@@ -27,6 +27,8 @@ END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
 
+test_apache_resource();
+
 test_apache_size_limit();
 
 test_loglevel();
@@ -38,6 +40,22 @@ test_server_shutdown_cleanup_register();
 
 
 ### only subs below this line ###
+
+sub test_apache_resource {
+    ### Apache::Resource tests
+
+    # load first for the menu
+    require Apache::Status;
+
+    # uncomment for local tests
+    #$ENV{PERL_RLIMIT_DEFAULTS} = 1;
+    #$Apache::Resource::Debug   = 1;
+
+    # requires optional BSD::Resource
+    return unless eval { require BSD::Resource };
+
+    require Apache::Resource;
+}
 
 sub test_apache_size_limit {
     require Apache::MPM;

@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+make sure that modperl's internal post_config callback, which amongst
+other things, cloning perl interpreters is running as
+modperl_hook_post_config_last APR_HOOK_REALLY_LAST, which ensures that
+user's post_config callbacks are run before the cloning. now the code
+from config phase's startup.pl can be safely moved to the post_config
+phase's equivalent. [Stas]
+
 Further sync with libapr constants changes: [Stas] 
 - the constants
   APR::(READ|WRITE|CREATE|APPEND|TRUNCATE|BINARY|EXCL|BUFFERED|DELONCLOSE)
