@@ -99,16 +99,16 @@ Registry	Smpf	Run unaltered CGI scripts 		APML
 RobotRules	cdpf	Enforce robot rules (robots.txt)	PARKER
 Sandwich	bmpf	Layered document (sandwich) maker	VKHERA
 ShowRequest	bdpf	Show phases and module participation	DOUGM
-VhostSandwich	cdpf	Virtual host layered document maker	MARKC
+SimpleReplace   ampf    Simple replacement template tool        GEOFF
 SSI		RmpO	Implement server-side includes in Perl	KWILLIAM
 SSIChain	bmpO	SSI on other modules output		JANPAZ
 Stage		Rdpf	Manage a document staging directory	ANDK
 TarGzip		c						ZENIN
 TimedRedirect	bdpf	Redirect urls for a given time period	PETERM 
 UploadSvr	bdpO	A lightweight publishing system		ANDK
+VhostSandwich  cdpf    Virtual host layered document maker     MARKC
 WDB		bdpf	Database query/edit tool using DBI	JROWE
 WebSQL		cdpO	Adaptation of Sybase's WebSQL		GUNTHER
-SimpleReplace   ampf    Simple replacement template tool        GEOFF
 
 * PerlInitHandler's
 RequestNotes    ampf    Pass cookie & form data around pnotes   GEOFF
@@ -178,6 +178,7 @@ Throttle        bdpf    Speed-based content negotiation         DONS
 TransLDAP	bdpf	Translate URIs to LDAP queries		CDONLEY
 
 * PerlFixupHandler's
+Dispatch        amcf    call PerlHandlers as CGI scripts        GEOFF
 HttpEquiv	bdpf	HTML HTTP-EQUIV tags to HTTP headers	ROBH
 RefererBlock	bdpf	Block based on MIME type + Referer	CHOLET
 Timeit		bmpf	Benchmark PerlHandlers			APML
