@@ -567,11 +567,14 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
 
     switch (type) {
       case APR_PERLIO_HOOK_WRITE:
-        IoOFP(GvIOp(gv)) = apr_perlio_apr_file_to_FILE(aTHX_ file, type);
+        IoIFP(GvIOp(gv)) = IoOFP(GvIOp(gv)) =
+            apr_perlio_apr_file_to_FILE(aTHX_ file, type);
         IoFLAGS(GvIOp(gv)) |= IOf_FLUSH;
+        IoTYPE(GvIOp(gv)) = IoTYPE_WRONLY;
         break;
       case APR_PERLIO_HOOK_READ:
         IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_FILE(aTHX_ file, type);
+        IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
     };
   
