@@ -14,6 +14,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         const char *bodytext = NULL;
         int status = modperl_cgi_header_parse(r, (char *)buf, &bodytext);
 
+        wb->header_parse = 0; /* only once per-request */
+
         if (status == HTTP_MOVED_TEMPORARILY) {
             return APR_SUCCESS; /* XXX: HTTP_MOVED_TEMPORARILY ? */
         }
