@@ -783,7 +783,7 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
                                                   apr_size_t *len)
 {
     apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
-    char *copy = apr_pstrndup(filter->pool, buf, *len);
+    char *copy = apr_pmemdup(filter->pool, buf, *len);
     apr_bucket *bucket = apr_bucket_transient_create(copy, *len, ba);
     /* MP_TRACE_f(MP_FUNC, "writing %d bytes: %s\n", *len, copy); */
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT

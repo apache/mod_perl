@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+The filter streaming API print() function, now correctly handles a
+binary data [Stas]
+
 Fix Registry handlers, not to lose the execution errors, when they
 include END blocks [Stas]
 
