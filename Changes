@@ -19,8 +19,6 @@ process useless, so we now child_terminate() if this is the case
 
 <Perl> sections will now report configuration syntax errors
 
-USE_DSO=1 should work now
-
 added Apache::SubRequest->bytes_sent method
 
 added Apache::Server->register_cleanup method
