@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fixes to Apache::compat. make $r->connection->auth_type interface
+with r->ap_auth_type. make both $r->connection->auth_type and
+$r->connection->user writable. [Geoffrey Young]
+
 Open up r->ap_auth_type, making it possible to write custom
 authen handlers that don't rely on Basic authentication or
 it's associated ap_* functions.

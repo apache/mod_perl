@@ -538,8 +538,8 @@ package Apache::Connection;
 
 # auth_type and user records don't exist in 2.0 conn_rec struct
 # 'PerlOptions +GlobalRequest' is required
-sub auth_type { Apache->request->auth_type }
-sub user      { Apache->request->user      }
+sub auth_type { shift; Apache->request->ap_auth_type(@_) }
+sub user      { shift; Apache->request->user(@_)      }
 
 1;
 __END__

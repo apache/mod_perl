@@ -1,6 +1,6 @@
 package TestCompat::conn_authen;
 
-# simply check that we can retrieve:
+# compat checks for
 #   $r->connection->auth_type
 #   $r->connection->user
 # both records don't exist in 2.0 conn_rec and therefore require
@@ -16,19 +16,47 @@ use Apache::compat ();
 use Apache::Constants qw(OK REMOTE_HOST);
 
 sub handler {
+
     my $r = shift;
 
+    my $req_auth_type = $r->connection->auth_type || '';
+
+    die "request auth_type is '$req_auth_type', should be empty"
+        if $req_auth_type;
+
+    # get_basic_auth_pw populates $r->user and $r->ap_auth_type
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
     return $rc if $rc != Apache::OK;
 
-    my $auth_type = $r->connection->auth_type || '';
-    die "auth_type is '$auth_type', should be 'Basic'" 
-        unless $auth_type eq 'Basic';
+    $req_auth_type = $r->connection->auth_type || '';
+
+    die "request auth_type is '$req_auth_type', should be 'Basic'"
+        unless $req_auth_type eq 'Basic';
+
+    my $config_auth_type = $r->auth_type || '';
+
+    die "httpd.conf auth_type is '$config_auth_type', should be 'Basic'"
+        unless $config_auth_type eq 'Basic';
 
     my $user = $r->connection->user || '';
-    die "user is '$user', while expecting 'dougm'"
+
+    die "user is '$user', should be 'dougm'"
         unless $user eq 'dougm';
+
+    # make sure we can set both
+    $r->connection->auth_type('sailboat');
+    $r->connection->user('geoff');
+
+    $user = $r->connection->user || '';
+
+    die "user is '$user', should be 'geoff'"
+        unless $user eq 'geoff';
+
+    $req_auth_type = $r->connection->auth_type || '';
+
+    die "request auth_type is '$req_auth_type', should be 'sailboat'"
+        unless $req_auth_type eq 'sailboat';
 
     OK;
 }
