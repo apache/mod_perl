@@ -1,0 +1,74 @@
+#this file will be Include-d by @ServerRoot@/httpd.conf
+
+# make sure that we test under Taint mode
+PerlSwitches -T
+
+PerlSwitches -Mlib=@ServerRoot@/../lib
+PerlSwitches -Mlib=@ServerRoot@/../../lib
+PerlSwitches -Mlib=@ServerRoot@/../../blib/lib
+PerlSwitches -Mlib=@ServerRoot@/../../blib/arch
+
+Alias /registry/         @ServerRoot@/cgi-bin/
+Alias /registry_ng/      @ServerRoot@/cgi-bin/
+Alias /registry_bb/      @ServerRoot@/cgi-bin/
+Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
+Alias /perlrun/          @ServerRoot@/cgi-bin/
+
+#PerlModule TestDebugMy
+
+PerlSetVar ModPerl::RegistryCooker::DEBUG 0
+
+### DEVMODE: Remove in production ###
+PerlModule Apache::Reload
+PerlInitHandler Apache::Reload
+PerlSetVar ReloadAll Off
+PerlSetVar ReloadModules "ModPerl::*"
+
+PerlModule ModPerl::RegistryCooker
+PerlModule ModPerl::Util
+
+PerlModule ModPerl::RegistryNG
+<Location /registry_ng>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryNG
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::RegistryBB
+<Location /registry_bb>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::PerlRun
+<Location /perlrun>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::PerlRun
+    PerlOptions +ParseHeaders
+</Location>
+
+PerlModule ModPerl::Registry
+<Location /registry>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Location>
+
+# META: dumps core on OO handlers
+<Location /registry_oo_conf>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry->handler
+    PerlOptions +ParseHeaders
+</Location>
+

@@ -1,0 +1,36 @@
+- META tags in the modules
+
+---------------
+
+ - print STDERR is buffered in test handlers, whereas warn() works
+   normally. select() helps, but STDERR should be unbuffered in first
+   place.
+
+---------------
+
+> what's the replacement of NameWithVirtualHost? Obviously we need something
+> to distinguish between vhs.
+
+DougM: well, if possible we should distinguish between the uri and
+requested resource instead.  in otherwords, we have the: r->uri =>
+r->filename translation, just need to figure out if r->filename is the
+actual filename or a symlink (readlink can be used to get the real
+filename).  then create a package based on the filename, but with as
+few package:: levels as possible (hopefully none beyond
+ModPerl::RegistryROOT::filename)
+
+DougM: using filenames makes for long packages names == lengthy
+lookups and more memory than we need.  at least the way it is
+currently implemented where each '/' turns into '::'.  could be that
+s,/,_,g is good enough, but haven't thought about this for a while.
+in any case, we should get rid of the NameWithVirtualHost stuff, its
+caused too many problems in the past.
+
+---------------
+
+Bjarni R. Einarsson <bre@klaki.net> has suggested this Registry hack
+http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98961929702745&w=2
+Message-ID: <20010511221101.A20868@diskordiah.mmedia.is>
+
+---------------
+
