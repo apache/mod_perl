@@ -110,7 +110,7 @@ my $Wall =
 
 sub ap_ccopts {
     my($self) = @_;
-    my $ccopts = "";
+    my $ccopts = "-DMOD_PERL";
 
     if ($self->{MP_USE_GTOP}) {
         $ccopts .= " -DMP_USE_GTOP";
