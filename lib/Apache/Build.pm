@@ -723,10 +723,10 @@ sub make_tools {
     my $mm = bless {}, 'MM';
     $mm->init_others;
 
-    for (qw(RM_F MV LD AR)) {
-        my $val = $mm->{$_};
+    for (qw(rm_f mv ld ar)) {
+        my $val = $mm->{"\U$_"};
         $val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
-        print $fh $self->canon_make_attr($_ => $val);
+        print $fh $self->canon_make_attr($_ => $val || $Config{$_});
     }
 }
 
