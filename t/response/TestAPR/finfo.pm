@@ -45,8 +45,7 @@ sub handler {
     # stat tests
     {
         # populate the finfo struct first
-        my $status = APR::Finfo::stat($r->finfo, $file, 
-                                      APR::FINFO_NORM, $r->pool);
+        my $status = $r->finfo->stat($file, APR::FINFO_NORM, $r->pool);
 
         ok t_cmp(APR::SUCCESS,
                  $status,

@@ -38,7 +38,7 @@ stack handlers) [Stas]
 
 add access to $r->finfo() and related APR::Finfo methods,
 such as $r->finfo->size(), $r->finfo->mtime(), and
-APR::Finfo::stat() [Geoffrey Young]
+$r->finfo->stat() [Geoffrey Young]
 
 add :filetype import tag to APR::Const [Geoffrey Young]
 
