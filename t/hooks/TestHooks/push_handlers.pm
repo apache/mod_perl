@@ -21,17 +21,16 @@ sub handler {
         \&TestHooks::push_handlers::full_coderef);
 
     $r->push_handlers(PerlResponseHandler =>
-        [\&coderef1, \&coderef2, \&coderef3]);
+        [\&coderef1, __PACKAGE__.'::coderef2', \&coderef3]);
 
-# XXX: anon-handlers unsupported yet
-#    $r->push_handlers(PerlResponseHandler =>
-#        sub { return say(shift, "anonymous") });
+    $r->push_handlers(PerlResponseHandler =>
+        sub { return say(shift, "anonymous") });
 
-#    $r->push_handlers(PerlResponseHandler =>
-#        [sub { return say(shift, "anonymous1") },
-#         \&coderef4,
-#         sub { return say(shift, "anonymous3") },
-#        ]);
+    $r->push_handlers(PerlResponseHandler =>
+        [sub { return say(shift, "anonymous1") },
+         \&coderef4,
+         sub { return say(shift, "anonymous3") },
+        ]);
 
     $r->push_handlers(PerlResponseHandler => \&end);
 

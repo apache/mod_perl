@@ -8,8 +8,6 @@ int modperl_mgv_equal(modperl_mgv_t *mgv1,
 
 modperl_mgv_t *modperl_mgv_compile(pTHX_ apr_pool_t *p, const char *name);
 
-char *modperl_mgv_name_from_sv(pTHX_ apr_pool_t *p, SV *sv);
-
 GV *modperl_mgv_lookup(pTHX_ modperl_mgv_t *symbol);
 
 GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,

@@ -20,6 +20,18 @@ sub header_parser {
     # test adding by sub's name
     $r->add_output_filter("out_filter");
 
+    # test adding anon sub
+    $r->add_output_filter(sub {
+        my $filter = shift;
+
+        while ($filter->read(my $buffer, 1024)) {
+            $buffer .= "end";
+            $filter->print($buffer);
+        }
+
+        return Apache::OK;
+    });
+
     return Apache::DECLINED;
 }
 

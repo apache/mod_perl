@@ -3197,8 +3197,8 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
-    'name' => 'modperl_mgv_name_from_sv',
+    'return_type' => 'modperl_handler_t *',
+    'name' => 'modperl_handler_new_from_sv',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -3211,6 +3211,16 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'SV *',
         'name' => 'sv'
+      }
+    ]
+  },
+  {
+    'return_type' => 'const char *',
+    'name' => 'modperl_handler_name',
+    'args' => [
+      {
+        'type' => 'modperl_handler_t *',
+        'name' => 'handler'
       }
     ]
   },
