@@ -20,6 +20,8 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
+use TestCommon::SameInterp;
+
 plan tests => 3;
 
 my $module   = 'TestModperl::cookie';
@@ -48,43 +50,13 @@ for my $test (@tests_ordered) {
     my @headers = ();
     push @headers, (Cookie => $cookies{$test}) unless $test eq 'nocookie';
 
-    my $received = get_body($same_interp, \&GET, "$location?$test", @headers);
+    my $received = same_interp_req_body($same_interp, \&GET,
+                                        "$location?$test", @headers);
     $skip++ unless defined $received;
-    skip_not_same_interp(
+    same_interp_skip_not_found(
         $skip,
         $received,
         $expected,
         "perl-script+SetupEnv/cookie: $test"
     );
-}
-
-# if we fail to find the same interpreter, return undef (this is not
-# an error)
-sub get_body {
-    my $res = eval {
-        Apache::TestRequest::same_interp_do(@_);
-    };
-    return undef if $@ =~ /unable to find interp/;
-    return $res->content if $res;
-    die $@ if $@;
-}
-
-# make the tests resistant to a failure of finding the same perl
-# interpreter, which happens randomly and not an error.
-# the first argument is used to decide whether to skip the sub-test,
-# the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_interp {
-    my $skip_cond = shift;
-    if ($skip_cond) {
-        skip "Skip couldn't find the same interpreter", 0;
-    }
-    else {
-        my($package, $filename, $line) = caller;
-        # trick ok() into reporting the caller filename/line when a
-        # sub-test fails in sok()
-        return eval <<EOE;
-#line $line $filename
-    ok &t_cmp;
-EOE
-    }
 }
