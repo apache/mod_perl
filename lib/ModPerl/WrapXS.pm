@@ -865,20 +865,30 @@ sub lookup_method {
     if (@items == 1) {
         my $module = $items[0]->[MODULE];
         my $hint = "To use method '$method' add:\n" . "\tuse $module ();\n";
+        # we should really check that the method matches the object if
+        # any was passed, but it may not always work
         return ($hint, $module);
     }
     else {
         if (defined $object) {
             my $class = ref $object || $object;
             for my $item (@items) {
+                # real class or inheritance
                 if ($class eq $item->[OBJECT] or
-                    (ref($object) && $object->isa($class))) { # inheritance
+                    (ref($object) && $object->isa($item->[OBJECT]))) {
                     my $module = $item->[MODULE];
                     my $hint = "To use method '$method' add:\n" .
                         "\tuse $module ();\n";
                     return ($hint, $module);
                 }
             }
+            # fall-through
+            local $" = ", ";
+            my @modules = map $_->[MODULE], @items;
+            my $hint = "Several modules (@modules) contain method '$method' " .
+                "but none of them matches class '$class';\n";
+            return ($hint);
+
         }
         else {
             my %modules = map { $_->[MODULE] => 1 } @items;
