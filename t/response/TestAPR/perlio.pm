@@ -1,5 +1,9 @@
 package TestAPR::perlio;
 
+# to see what happens inside the io layer, assuming that you built
+# mod_perl with MP_TRACE=1, run:
+# env MOD_PERL_TRACE=o t/TEST -v -trace=debug apr/perlio
+
 use strict;
 use warnings FATAL => 'all';
 
