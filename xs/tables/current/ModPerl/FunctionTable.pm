@@ -1356,6 +1356,24 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
+    'name' => 'modperl_config_insert_parms',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'cmd_parms *',
+        'name' => 'parms'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'lines'
+      }
+    ]
+  },
+  {
+    'return_type' => 'const char *',
     'name' => 'modperl_config_insert_request',
     'args' => [
       {
@@ -5758,6 +5776,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'apr_uri_t *',
         'name' => 'apr_uri'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__CmdParms_add_config',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'cmd_parms *',
+        'name' => 'parms'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'lines'
       }
     ]
   },

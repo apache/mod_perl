@@ -561,6 +561,20 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
     return errmsg;
 }
 
+const char *modperl_config_insert_parms(pTHX_ cmd_parms *parms, 
+                                        SV *lines)
+{
+    return modperl_config_insert(aTHX_ 
+                                 parms->server, 
+                                 parms->pool, 
+                                 parms->temp_pool,
+                                 parms->override, 
+                                 parms->path,
+                                 parms->context,
+                                 lines);
+}
+
+
 const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines)
 {
     int override = (RSRC_CONF | OR_ALL) & ~(OR_AUTHCFG | OR_LIMIT);
