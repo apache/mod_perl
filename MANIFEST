@@ -46,6 +46,7 @@ lib/Apache/Resource.pm
 #lib/Apache/Safe.pm
 lib/Apache/SIG.pm
 lib/Apache/StatINC.pm
+lib/Apache/Constants/Exports.pm
 Apache/Apache.pm
 Apache/typemap
 Apache/Makefile.PL
@@ -54,6 +55,7 @@ Symbol/Symbol.pm
 Symbol/Symbol.xs
 Symbol/test.pl
 src/modules/perl/mod_perl_version.h
+src/modules/perl/Exports.c
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
 src/modules/perl/ModuleConfig.xs

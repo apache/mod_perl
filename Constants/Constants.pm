@@ -1,88 +1,20 @@
 package Apache::Constants;
 
-$Apache::Constants::VERSION = "1.08";
-
-use Exporter ();
-use strict;
-
-*import = \&Exporter::import;
+$Apache::Constants::VERSION = "1.09";
 
 unless(defined &bootstrap) {
     require DynaLoader;
     @Apache::Constants::ISA = qw(DynaLoader);
 }
 
-#XXX: should just generate all this from the documention =item's
-
-my(@common)     = qw(OK DECLINED DONE NOT_FOUND FORBIDDEN
-		     AUTH_REQUIRED SERVER_ERROR);
-my(@methods)    = qw(M_CONNECT M_DELETE M_GET M_INVALID M_OPTIONS
-		     M_POST M_PUT M_TRACE METHODS);
-my(@options)    = qw(OPT_NONE OPT_INDEXES OPT_INCLUDES 
-		     OPT_SYM_LINKS OPT_EXECCGI OPT_UNSET OPT_INCNOEXEC
-		     OPT_SYM_OWNER OPT_MULTI OPT_ALL);
-my(@server)     = qw(MODULE_MAGIC_NUMBER
-		     SERVER_VERSION SERVER_SUBVERSION SERVER_BUILT);
-my(@response)   = qw(DOCUMENT_FOLLOWS MOVED REDIRECT
-		     USE_LOCAL_COPY
-		     BAD_REQUEST
-		     BAD_GATEWAY 
-		     RESPONSE_CODES
-		     NOT_IMPLEMENTED
-		     NOT_AUTHORITATIVE
-		     CONTINUE);
-my(@satisfy)    = qw(SATISFY_ALL SATISFY_ANY SATISFY_NOSPEC);
-my(@remotehost) = qw(REMOTE_HOST REMOTE_NAME
-		     REMOTE_NOLOOKUP REMOTE_DOUBLE_REV);
-my(@http)       = qw(HTTP_METHOD_NOT_ALLOWED 
-		     HTTP_NOT_ACCEPTABLE 
-		     HTTP_LENGTH_REQUIRED
-		     HTTP_PRECONDITION_FAILED
-		     HTTP_SERVICE_UNAVAILABLE
-		     HTTP_VARIANT_ALSO_VARIES
-		     HTTP_NO_CONTENT
-		     HTTP_METHOD_NOT_ALLOWED 
-		     HTTP_NOT_ACCEPTABLE 
-		     HTTP_LENGTH_REQUIRED
-		     HTTP_PRECONDITION_FAILED
-		     HTTP_SERVICE_UNAVAILABLE
-		     HTTP_VARIANT_ALSO_VARIES);
-my(@config)     = qw(DECLINE_CMD);
-my(@types)      = qw(DIR_MAGIC_TYPE);
-
-my $rc = [@common, @response];
-
-%Apache::Constants::EXPORT_TAGS = (
-    common     => \@common,
-    config     => \@config,
-    response   => $rc,
-    http       => \@http,
-    options    => \@options,
-    methods    => \@methods,
-    remotehost => \@remotehost,
-    satisfy    => \@satisfy,
-    server     => \@server,				   
-    types      => \@types, 
-    #depreciated
-    response_codes => $rc,
-);
-
-@Apache::Constants::EXPORT_OK = (
-    @response,
-    @http,
-    @options,
-    @methods,
-    @remotehost,
-    @satisfy,
-    @server,
-    @config,
-    @types,
-); 
-   
-*Apache::Constants::EXPORT = \@common;
-
 if(exists $ENV{MOD_PERL}) {
     bootstrap Apache::Constants $Apache::Constants::VERSION;
+}
+
+unless(defined &import) {
+    require Exporter;
+    require Apache::Constants::Exports;
+    *import = \&Exporter::import;
 }
 
 sub AUTOLOAD {
@@ -95,8 +27,9 @@ my %ConstNameCache = ();
 
 sub name {
     my($self, $const) = @_;
+    require Apache::Constants::Exports;
     return $ConstNameCache{$const} if $ConstNameCache{$const};
-
+    
     for (@Apache::Constants::EXPORT, 
 	 @Apache::Constants::EXPORT_OK) {
 	if ((\&{$_})->() == $const) {
