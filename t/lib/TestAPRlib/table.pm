@@ -16,6 +16,10 @@ use APR::Const    -compile => ':table';
 use constant TABLE_SIZE => 20;
 our $filter_count;
 
+sub num_of_tests {
+    return 38;
+}
+
 sub test {
 
     $filter_count = 0;
@@ -272,10 +276,6 @@ sub my_filter_stop {
         die "arguments I received are bogus($key,$value)";
     }
     return $filter_count == int(TABLE_SIZE)/2 ? 0 : 1;
-}
-
-sub num_of_tests {
-    return 38;
 }
 
 1;
