@@ -22,8 +22,8 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 <  request_time
    status_line
    status
-<  method
-<  method_number
+   method
+   method_number
    allowed
    allowed_xmethods
    allowed_methods
