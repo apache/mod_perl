@@ -137,7 +137,7 @@ static MP_INLINE SV *modperl_perl_do_join(pTHX_ SV **mark, SV **sp)
 #define my_do_join(m, s)                        \
     modperl_perl_do_join(aTHX_ (m), (s))
 
-static XS(MPXS_Apache__Log_dispatch)
+MP_STATIC XS(MPXS_Apache__Log_dispatch)
 {
     dXSARGS;
     SV *msgsv;
@@ -195,7 +195,7 @@ static XS(MPXS_Apache__Log_dispatch)
     XSRETURN_EMPTY;
 }
 
-static XS(MPXS_Apache__Log_LOG_MARK)
+MP_STATIC XS(MPXS_Apache__Log_LOG_MARK)
 {
     dXSARGS;
     ax = ax; /* -Wall */;
@@ -213,7 +213,7 @@ static XS(MPXS_Apache__Log_LOG_MARK)
     });
 }
 
-static XS(MPXS_Apache__Log_log_xerror)
+MP_STATIC XS(MPXS_Apache__Log_log_xerror)
 {
     dXSARGS;
     SV *msgsv = Nullsv;
@@ -276,7 +276,7 @@ static XS(MPXS_Apache__Log_log_xerror)
  * $s->warn
  * Apache::ServerRec::warn
  */
-static XS(MPXS_Apache__Log_log_error)
+MP_STATIC XS(MPXS_Apache__Log_log_error)
 {
     dXSARGS;
     request_rec *r = NULL;

@@ -193,7 +193,7 @@ static MP_INLINE const char *mpxs_APR__Table_FETCH(pTHX_ SV *tsv,
 }
 
 
-static XS(MPXS_apr_table_get)
+MP_STATIC XS(MPXS_apr_table_get)
 {
     dXSARGS;
 

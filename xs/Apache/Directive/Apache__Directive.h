@@ -116,7 +116,7 @@ static MP_INLINE SV *mpxs_Apache__Directive_as_hash(pTHX_
     return newRV_noinc((SV *)hash);
 }
 
-static XS(MPXS_Apache__Directive_lookup)
+MP_STATIC XS(MPXS_Apache__Directive_lookup)
 {
     dXSARGS;
 
