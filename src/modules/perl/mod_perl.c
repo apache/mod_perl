@@ -481,8 +481,8 @@ int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
 
 static int modperl_hook_pre_connection(conn_rec *c, void *csd)
 {
-    modperl_input_filter_register_connection(c);
-    modperl_output_filter_register_connection(c);
+    modperl_input_filter_add_connection(c);
+    modperl_output_filter_add_connection(c);
     return OK;
 }
 
@@ -595,10 +595,10 @@ void modperl_register_hooks(apr_pool_t *p)
     ap_hook_handler(modperl_response_handler_cgi,
                     NULL, NULL, APR_HOOK_MIDDLE);
 
-    ap_hook_insert_filter(modperl_output_filter_register_request,
+    ap_hook_insert_filter(modperl_output_filter_add_request,
                           NULL, NULL, APR_HOOK_LAST);
 
-    ap_hook_insert_filter(modperl_input_filter_register_request,
+    ap_hook_insert_filter(modperl_input_filter_add_request,
                           NULL, NULL, APR_HOOK_LAST);
 
     ap_register_output_filter(MP_FILTER_REQUEST_OUTPUT_NAME,

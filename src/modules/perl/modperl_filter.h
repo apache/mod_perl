@@ -37,9 +37,9 @@ int modperl_run_filter(modperl_filter_t *filter,
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
                                            apr_bucket_brigade *bb);
 
-void modperl_output_filter_register_connection(conn_rec *c);
+void modperl_output_filter_add_connection(conn_rec *c);
 
-void modperl_output_filter_register_request(request_rec *r);
+void modperl_output_filter_add_request(request_rec *r);
 
 MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter);
 
@@ -61,8 +61,8 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
                                           apr_read_type_e block,
                                           apr_off_t readbytes);
 
-void modperl_input_filter_register_connection(conn_rec *c);
+void modperl_input_filter_add_connection(conn_rec *c);
 
-void modperl_input_filter_register_request(request_rec *r);
+void modperl_input_filter_add_request(request_rec *r);
 
 #endif /* MODPERL_FILTER_H */

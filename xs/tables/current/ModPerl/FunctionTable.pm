@@ -2322,7 +2322,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_input_filter_register_connection',
+    'name' => 'modperl_input_filter_add_connection',
     'args' => [
       {
         'type' => 'conn_rec *',
@@ -2332,7 +2332,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_input_filter_register_request',
+    'name' => 'modperl_input_filter_add_request',
     'args' => [
       {
         'type' => 'request_rec *',
@@ -3177,7 +3177,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_output_filter_register_connection',
+    'name' => 'modperl_output_filter_add_connection',
     'args' => [
       {
         'type' => 'conn_rec *',
@@ -3187,7 +3187,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_output_filter_register_request',
+    'name' => 'modperl_output_filter_add_request',
     'args' => [
       {
         'type' => 'request_rec *',
