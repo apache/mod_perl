@@ -85,9 +85,6 @@ we're running.
 Apache->httpd_conf:
 depends on <Perl> sections
 
-$r->location:
-not yet implemented
-
 Apache->request:
 need to deal with subclass objects which are not a request_rec
 (e.g. HASH ref)

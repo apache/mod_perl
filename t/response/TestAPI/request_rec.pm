@@ -11,7 +11,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 48;
+    plan $r, tests => 49;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -181,6 +181,10 @@ sub handler {
     ok $r->uri;
 
     ok $r->filename;
+
+    ok t_cmp('/' . __PACKAGE__,
+             $r->location,
+             "location");
 
     my $mtime = (stat __FILE__)[9];
     $r->mtime($mtime);
