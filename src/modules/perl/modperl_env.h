@@ -11,6 +11,8 @@
 #define modperl_env_tie(mg_flags) \
     MP_magical_tie(ENVHV, mg_flags)
 
+void modperl_env_hash_keys(void);
+
 void modperl_env_clear(pTHX);
 
 void modperl_env_default_populate(pTHX);

@@ -31,13 +31,23 @@ typedef struct {
 #define MP_ENV_ENT(k,v) \
 { k, sizeof(k)-1, v, sizeof(v)-1, 0 }
 
-static const modperl_env_ent_t modperl_env_const_vars[] = {
+static modperl_env_ent_t modperl_env_const_vars[] = {
 #ifdef MP_COMPAT_1X
     MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
 #endif
     MP_ENV_ENT("MOD_PERL", MP_VERSION_STRING),
     { NULL }
 };
+
+void modperl_env_hash_keys(void)
+{
+    modperl_env_ent_t *ent = modperl_env_const_vars;
+
+    while (ent->key) {
+        PERL_HASH(ent->hash, ent->key, ent->klen);
+        ent++;
+    }
+}
 
 void modperl_env_clear(pTHX)
 {

@@ -333,6 +333,7 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
     modperl_mgv_hash_handlers(pconf, s);
     modperl_modglobal_hash_keys();
+    modperl_env_hash_keys();
 #ifdef USE_ITHREADS
     modperl_init_clones(s, pconf);
 #endif
