@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+Makefile.PL warns about 5.6.0+uselargefiles if USE_APXS
+
 Apache::Table->unset can now be called with an array reference
 
 Apache::PerlRun::flush_namespace fixes, so aliased (imported)
