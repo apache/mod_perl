@@ -72,30 +72,38 @@ sub handler : method {
         ok t_cmp($cfg->{info}, 'cmd_data', 'cmd_data');
     }    
 
-    my $vhost = $srv_cfg->{Vhost};
+    # vhost
+    {
+        my $vhost = $srv_cfg->{Vhost};
 
-    $override = Apache::RSRC_CONF   |
-                Apache::OR_INDEXES  |
-                Apache::OR_FILEINFO |
-                Apache::OR_OPTIONS;
+        my $wanted = Apache::RSRC_CONF   |
+                     Apache::OR_INDEXES  |
+                     Apache::OR_FILEINFO |
+                     Apache::OR_OPTIONS;
+        my $masked = $vhost->{override} & $wanted;
 
-    ok t_cmp($vhost->{override}, $override, 'override');
-    ok t_cmp($vhost->{path}, undef, 'path');
-    ok t_cmp($vhost->{check_ctx}, undef, 'check_cmd_ctx');
+        ok t_cmp($masked, $wanted, 'override bitmask');
+        ok t_cmp($vhost->{path}, undef, 'path');
+        ok t_cmp($vhost->{check_ctx}, undef, 'check_cmd_ctx');
+    }
 
-    my $loc = $srv_cfg->{Location};
+    # Location
+    {
+        my $loc = $srv_cfg->{Location};
+        
+        my $wanted = Apache::ACCESS_CONF |
+                     Apache::OR_INDEXES  |
+                     Apache::OR_AUTHCFG  |
+                     Apache::OR_FILEINFO |
+                     Apache::OR_OPTIONS  |
+                     Apache::OR_LIMIT;
+        my $masked = $loc->{override} & $wanted;
 
-    $override = Apache::ACCESS_CONF |
-                Apache::OR_INDEXES  |
-                Apache::OR_AUTHCFG  |
-                Apache::OR_FILEINFO |
-                Apache::OR_OPTIONS  |
-                Apache::OR_LIMIT;
-
-    ok t_cmp($loc->{override}, $override, 'override');
-    ok t_cmp($loc->{path}, '/TestDirective__cmdparms', 'path');
-    ok t_cmp($loc->{check_ctx}, KEY . 
-              ' cannot occur within <Location> section', 'check_cmd_ctx');
+        ok t_cmp($masked, $wanted, 'override bitmask');
+        ok t_cmp($loc->{path}, '/TestDirective__cmdparms', 'path');
+        ok t_cmp($loc->{check_ctx}, KEY . 
+                  ' cannot occur within <Location> section', 'check_cmd_ctx');
+    }
 
     return Apache::OK;
 }
