@@ -95,6 +95,7 @@ VP src/docs/2.0/api/APR/Socket.pod
         listen
         recvfrom
         sendto
+VV src/docs/2.0/api/APR/String.pod
 VV src/docs/2.0/api/APR/Table.pod
 VP src/docs/2.0/api/APR/ThreadMutex.pod
         DESTROY
