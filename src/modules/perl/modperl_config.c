@@ -446,17 +446,23 @@ int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
 {
     modperl_require_file_t **requires;
     int i;
-
+#ifdef USE_ITHREADS
+    pTHX;
+#endif
+    
     requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
     for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++){
-        if (modperl_require_file( requires[i]->perl, requires[i]->file, TRUE)){
+#ifdef USE_ITHREADS
+        aTHX = requires[i]->perl;
+#endif
+        if (modperl_require_file(aTHX_ requires[i]->file, TRUE)){
             MP_TRACE_d(MP_FUNC, "loaded Perl file: %s for server %s\n",
-                       requires[i]->file, modperl_server_desc(s,p));
+                       requires[i]->file, modperl_server_desc(s, p));
         }
         else {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "Can't load Perl file: %s for server %s, exiting...",
-                         requires[i]->file, modperl_server_desc(s,p));
+                         requires[i]->file, modperl_server_desc(s, p));
             return FALSE;
         }
     }
@@ -472,6 +478,7 @@ int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
                                                  PerlInterpreter *perl,
                                                  apr_pool_t *p)
 {
+#ifdef USE_ITHREADS
     modperl_require_file_t **requires;
     int i;
 
@@ -483,6 +490,7 @@ int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
             requires[i]->perl = perl;
         }
     }
+#endif
 
     return 1;
 }
