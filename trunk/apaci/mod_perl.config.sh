@@ -107,18 +107,19 @@ echo "$display_prefix id: Perl/$perl_version ($os_version) [$perl_interp]" 1>&2
 #   determine build tools and flags  
 #
 
-case "$os_version" in
-    aix*)  os_flags="-bI:\$(APACHEEXT)/support/httpd.exp" ;;
-    * )    os_flags='' ;;
-esac
-
 perl_cc="`$perl_interp -MConfig -e 'print $Config{cc}'`"
 perl_ccflags="`$perl_interp -MConfig -e 'print $Config{ccflags}'`"
 perl_optimize="`$perl_interp -MConfig -e 'print $Config{optimize}'`"
 perl_cccdlflags="`$perl_interp -MConfig -e 'print $Config{cccdlflags}'`"
 perl_ld="`$perl_interp -MConfig -e 'print $Config{ld}'`"
 perl_ldflags="`$perl_interp -MConfig -e 'print $Config{ldflags}'`"
-perl_lddlflags="`$perl_interp -MConfig -e 'print $Config{lddlflags}'` $os_flags"
+perl_lddlflags="`$perl_interp -MConfig -e 'print $Config{lddlflags}'`"
+
+case "$os_version" in
+    aix*)  perl_lddlflags="$perl_lddlflags -bI:\$(APACHEEXT)/support/httpd.exp" ;;
+    * )    ;;
+esac
+
 cat >$tmpfile2 <<'EOT'
 use Config;
 my $ldopts = `$^X -MExtUtils::Embed -e ldopts -- -std @ARGV`;
