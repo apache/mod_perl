@@ -290,6 +290,11 @@ structure or C<undef> if there is no previous request.
 This method returns a blessed reference to the next (internal) request
 structure or C<undef> if there is no next request.
 
+=item $r->last
+
+This method returns a blessed reference to the last (internal) request
+structure.  Handy for logging modules.
+
 =item $r->is_main
 
 Returns true if the current request object is for the main request.
@@ -624,6 +629,10 @@ module provides the constants to check against.
 		      $filename);
    }
 
+=item $r->get_server_port
+
+Returns the port number on which the server is listening.
+
 =item $s = $r->server
 
 Return a reference to the server info object (blessed into the
@@ -912,6 +921,8 @@ kill_timeout() will disarm either variety of timeout.
 
 reset_timeout() resets the timeout in progress.
 
+=item $r->post_connection($code_ref)
+
 =item $r->register_cleanup($code_ref)
 
 Register a cleanup function which is called just before $r->pool is
@@ -921,6 +932,10 @@ destroyed.
        my $r = shift;
        warn "registered cleanup called for ", $r->uri, "\n";
    });
+
+The I<post_connection> method is simply an alias for I<register_cleanup>, 
+as this method may be used to run code after the client connection is closed,
+which may not be a I<cleanup>.
 
 =back
 

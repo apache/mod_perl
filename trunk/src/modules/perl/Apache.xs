@@ -276,6 +276,16 @@ child_terminate(request_rec *r)
 int basic_http_header(request_rec *r);
 #endif
 
+#if MODULE_MAGIC_NUMBER < 19980201
+unsigned get_server_port(const request_rec *r)
+{
+    unsigned port = r->server->port ? r->server->port : 80;
+
+    return r->hostname ? ntohs(r->connection->local_addr.sin_port)
+	: port;
+}
+#endif
+
 pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);
@@ -766,6 +776,10 @@ requires(r)
 
 int 
 allow_options(r)
+    Apache	r
+
+unsigned
+get_server_port(r)
     Apache	r
 
 char *

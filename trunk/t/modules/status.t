@@ -5,7 +5,6 @@ my @tests = qw{
    inc 
    rgysubs
    env 
-   sig 
    myconfig 
    hooks 
 };

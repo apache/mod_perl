@@ -121,10 +121,26 @@ static int sfapacheread(f, buffer, bufsiz, disc)
     int             bufsiz;      /* number of bytes to read */
     Sfdisc_t*       disc;   /* discipline */        
 {
+    dSP;
+    int count;
     long nrd;
-    request_rec	*r = ((Apache_t*)disc)->r;
+    char *tmpbuf;
+    SV *sv = sv_newmortal();
+    request_rec *r = ((Apache_t*)disc)->r;
     MP_TRACE_g(fprintf(stderr, "sfapacheread: want %d bytes\n", bufsiz)); 
-    PERL_READ_FROM_CLIENT;
+    ENTER;SAVETMPS;
+    PUSHMARK(sp);
+    XPUSHs(perl_bless_request_rec(r));
+    XPUSHs(sv);
+    XPUSHs(sv_2mortal(newSViv(bufsiz)));
+    PUTBACK;
+    perl_call_pv("Apache::read", G_SCALAR|G_EVAL);
+    tmpbuf = (char *)pstrdup(r->pool, SvPV(sv,na));
+    memcpy(buffer, tmpbuf, SvLEN(sv));
+    SPAGAIN;
+    if(count == 1) 
+	nrd = POPl;
+    FREETMPS;LEAVE;
     return bufsiz;
 }
 

@@ -22,6 +22,14 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+add a dTHR to perl_util.c for threaded 5.004_66
+[Brian P Millett <bpm@ec-group.com>] 
+
+added $r->get_server_port method
+
+sfio read will now call Apache::read, as it should.  
+Thanks to Steve Farrell for the spot
+
 added $r->last method
 
 $r->cgi_env when called in a void context will simply setup the

@@ -477,6 +477,7 @@ int perl_sv_is_http_code(SV *errsv, int *status)
     int i=0, http_code=0, retval = FALSE;
     char *errpv;
     char cpcode[4];
+    dTHR;
 
     if(!SvTRUE(errsv) || !ERRSV_CAN_BE_HTTP)
 	return FALSE;
