@@ -75,7 +75,7 @@ sub get_body {
 sub skip_not_same_interp {
     my $skip_cond = shift;
     if ($skip_cond) {
-        skip "Skip couldn't find the same interpreter";
+        skip "Skip couldn't find the same interpreter", 0;
     }
     else {
         my($package, $filename, $line) = caller;
