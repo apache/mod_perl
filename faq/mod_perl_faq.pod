@@ -49,10 +49,25 @@ http://www.perl.com/CPAN/modules/by-module/Apache/
 
 http://www.perl.com/CPAN/src/latest.tar.gz
 
-Win32 users note: at the time of writing, ActiveState's Perl cannot be
-used with mod_perl, because it is based on an old version of perl
-(perl-5.003_07, build 316).  There have been no reports of success
-with mod_perl and newer versions of ActiveState (April 1999).
+Win32 users note: mod_perl compiles cleanly and works with ActivePerl
+(build 626, June 2001).  In
+http://www.mail-archive.com/modperl@apache.org/msg11513.html Randy
+Kobes wrote:
+
+   A ppd for mod_perl, suitable for use with ActivePerls 
+   based on Perl-5.6.0, is now available. Installation is as ppm
+   install
+
+   http://theoryx5.uwinnipeg.ca/ppmpackages/mod_perl.ppd
+
+   or in ftp://theoryx5.uwinnipeg.ca/pub/ppmpackages/.
+   A post-install script will subsequently be run which
+   will download and install the required ApacheModulePerl.dll;
+   this should be placed in your Apache modules directory.
+   If for some reason the script fails, this dll can be
+   obtained from http://theoryx5.uwinnipeg.ca/ppmpackages/.
+   Also available in this directory is a sample Apache
+   httpd.conf suitable to test mod_perl on Win32.
 
 =item Apache
 
