@@ -1760,7 +1760,8 @@ sub includes {
         my $apuc = $self->apu_config_path;
         if ($apuc && -x $apuc) {
             chomp(my $apuincs = qx($apuc --includes));
-            $apuincs =~ s|-I||;
+            # win32: /Ipath, elsewhere -Ipath
+            $apuincs =~ s{^\s*(-|/)I}{};
             push @inc, $apuincs;
         }
 
