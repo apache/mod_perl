@@ -15,6 +15,7 @@ Server/Makefile.PL
 Server/Server.pm
 Connection/Makefile.PL
 Connection/Connection.pm
+LICENSE
 CREDITS
 INSTALL
 INSTALL.apaci
