@@ -1,6 +1,9 @@
 use strict;
 use warnings FATAL => 'all';
 
+# XXX: temp workaround for t/filter/TestFilter/in_error.pm
+use APR::Error;
+
 use ModPerl::RegistryLoader ();
 use Apache::Server ();
 use Apache::ServerUtil ();
