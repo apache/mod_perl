@@ -35,12 +35,11 @@ sub ErrorReport {
 # prepare config files
 #
 
-chdir "t/conf";
-copy("httpd.conf-win32", "httpd.conf");# PTI: unless -f httpd.conf;
-chdir "../net";
-
-#copy("config.pl.win32", "config.pl");# PTI: unless -f config.pl;
-chdir "../..";
+my $conf = 't/conf/httpd.conf';
+my $win32_conf = $conf . '-win32';
+my $bak = $conf . '.bak';
+copy($win32_conf, $conf)
+  or die "Copy of $win32_conf to $conf failed: $!";
 
 #
 #source or binary distribution
@@ -71,19 +70,25 @@ for my $f (qw(srm.conf access.conf mime.types)) {
 }
 
 # change the paths so everybody agrees on which files to use
-
 #
-
 $pwd = cwd();
-
-
 # this is to make sure apache knows which files to take 
 #   : apparently apache uner Win32
 
 # change directories to the installation directory so "./t" 
 # references do not work
 
-system "$fullperl -p -i.bak -e \"s#\\./t#$pwd/t#\" t/conf/httpd.conf";
+unless (-e $bak) {
+    copy($conf, $bak) or die "Copying $conf to $bak failed: $!";
+}
+open(BAK, $bak) or die "Open of $bak for reading failed: $!";
+open(CONF, ">$conf") or die "Open of $conf for writing failed: $!";
+while (<BAK>) {
+    s#\./t#$pwd/t#;
+    print CONF $_;
+}
+close BAK;
+close CONF;
 
 #
 # start ourselves a server to pound on
