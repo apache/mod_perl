@@ -287,9 +287,7 @@ int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
     modperl_handler_t **handlers;
     MpAV *av;
     int i, status;
-#ifdef MP_TRACE
     const char *desc;
-#endif
 
     if (type == MP_HANDLER_TYPE_DIR) {
         MP_dDCFG;

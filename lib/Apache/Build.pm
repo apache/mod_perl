@@ -72,7 +72,7 @@ sub ldopts {
     my $ldopts = ExtUtils::Embed::ldopts();
     chomp $ldopts;
 
-    if ($self->{use_gtop}) {
+    if ($self->{MP_USE_GTOP}) {
         $ldopts .= $self->gtop_ldopts;
     }
 
@@ -84,12 +84,17 @@ sub ccopts {
 
     my $ccopts = ExtUtils::Embed::ccopts();
 
-    if ($self->{use_gtop}) {
+    if ($self->{MP_USE_GTOP}) {
         $ccopts .= " -DMP_USE_GTOP";
     }
 
-    if ($self->{debug}) {
-        $ccopts .= " -g -Wall -DMP_TRACE";
+    if ($self->{MP_DEBUG}) {
+        $self->{MP_TRACE} = 1;
+        $ccopts .= " -g -Wall";
+    }
+
+    if ($self->{MP_TRACE}) {
+        $ccopts .= " -DMP_TRACE";
     }
 
     $ccopts;
@@ -168,9 +173,41 @@ EOF
 
 #--- user interaction ---
 
+sub parse_init_file {
+    my $self = shift;
+
+    my $fh;
+    for (qw(./ ../ ./. ../.), "$ENV{HOME}/.") {
+        my $file = $_ . 'makepl_args.mod_perl2';
+        if (open $fh, $file) {
+            $self->{init_file} = $file;
+            last;
+        }
+        $fh = undef;
+    }
+
+    return unless $fh;
+
+    print "Reading Makefile.PL args from $self->{init_file}\n";
+    while(<$fh>) {
+        chomp;
+        s/^\s+//; s/\s+$//;
+        next if /^\#/ || /^$/;
+        last if /^__END__/;
+
+        if (/^MP_/) {
+            my($key, $val) = split $self->{param_qr}, $_, 2;
+            $self->{$key} = $val;
+            print "   $key = $val\n";
+	}
+    }
+    close $fh;
+}
+
+
 sub prompt {
     my($self, $q, $default) = @_;
-    return $default if $self->{prompt_default};
+    return $default if $self->{MP_PROMPT_DEFAULT};
     require ExtUtils::MakeMaker;
     ExtUtils::MakeMaker::prompt($q, $default);
 }
@@ -222,9 +259,9 @@ sub parse_argv {
     @ARGV = ();
 
     for (@args) {
-        if (s/^MP_//) {
-            my($key, $val) = split '=', $_, 2;
-            $self->{lc $key} = $val;
+        if (/^MP_/) {
+            my($key, $val) = split $self->{param_qr}, $_, 2;
+            $self->{$key} = $val;
             print "$key = $val\n";
         }
         else {
@@ -239,13 +276,15 @@ sub new {
 
     my $self = bless {
         cwd => Cwd::fastcwd(),
+        param_qr => qr([\s=]+),
         @_,
     }, $class;
 
     $self->parse_argv;
+    $self->parse_init_file;
 
-    if ($self->{debug} and $self->{use_gtop}) {
-        $self->{use_gtop} = 0 unless $self->find_dlfile('gtop');
+    if ($self->{MP_DEBUG} and $self->{MP_USE_GTOP}) {
+        $self->{MP_USE_GTOP} = 0 unless $self->find_dlfile('gtop');
     }
 
     $self;
