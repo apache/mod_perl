@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 41;
+    plan $r, tests => 42;
 
     $r->send_http_header('text/plain');
 
@@ -209,6 +209,12 @@ sub handler {
     ok t_cmp($uri,
              $uri2,
              "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
+
+    my $html = '<p>"hi"&foo</p>';
+    my $esc_html = '&lt;p&gt;&quot;hi&quot;&amp;foo&lt;/p&gt;';
+
+    ok t_cmp($esc_html, Apache::Util::escape_html($html),
+             "Apache::Util::escape_html");
 
     OK;
 }

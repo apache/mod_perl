@@ -278,7 +278,7 @@ MODULE=Apache::Command
 MODULE=Apache::Util 
  ap_ht_time
 !ap_rfc1413
- ap_escape_html
+!ap_escape_html | | s, p
  #escape_uri
  ap_os_escape_path | | path, p, partial=TRUE | escape_path
 !ap_explode_recent_gmt
