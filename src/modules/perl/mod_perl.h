@@ -152,10 +152,14 @@ extern "C" {
 #endif
 
 #ifdef eval_pv
-#define perl_eval_pv Perl_eval_pv
+#   ifndef perl_eval_pv
+#      define perl_eval_pv eval_pv
+#   endif
 #endif
 #ifdef eval_sv
-#define perl_eval_sv Perl_eval_sv
+#   ifndef perl_eval_sv
+#      define perl_eval_sv eval_sv
+#   endif
 #endif
 
 #define MP_EXISTS_ERROR(k) \
