@@ -9,6 +9,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+skip tests that use xs/ap_ code if installed MMN is not equal to
+target MMN, since Apache releases may break binary compat
+
 Makefile.PL will look for --target=(\S+) in APACI_ARGS, if found use
 instead of the default `httpd' for 'make test'
 
