@@ -159,4 +159,5 @@ void modperl_clear_symtab(pTHX_ HV *symtab);
 void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
 #endif
 
+char *modperl_file2package(apr_pool_t *p, const char *file);
 #endif /* MODPERL_UTIL_H */

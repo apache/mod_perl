@@ -13,6 +13,7 @@ use Apache::ServerUtil ();
 use Apache::Const -compile => qw(OK);
 
 use constant SPECIAL_NAME => 'PerlConfig';
+use constant SPECIAL_PACKAGE => 'Apache::ReadConfig';
 
 sub new {
     my($package, @args) = @_;
@@ -54,24 +55,28 @@ sub handler : method {
 sub symdump {
     my($self) = @_;
 
-    my $pack = $self->package;
-
     unless ($self->{symbols}) {
-        $self->{symbols} = [];
-
         no strict;
-
-        #XXX: Shamelessly borrowed from Devel::Symdump;
-        while (my ($key, $val) = each(%{ *{"$pack\::"} })) {
-            local (*ENTRY) = $val;
-            if (defined $val && defined *ENTRY{SCALAR}) {
-                push @{$self->{symbols}}, [$key, $ENTRY];
-            }
-            if (defined $val && defined *ENTRY{ARRAY}) {
-                push @{$self->{symbols}}, [$key, \@ENTRY];
-            }
-            if (defined $val && defined *ENTRY{HASH} && $key !~ /::/) {
-                push @{$self->{symbols}}, [$key, \%ENTRY];
+        
+        $self->{symbols} = [];
+        
+        #XXX: Here would be a good place to warn about NOT using 
+        #     Apache::ReadConfig:: directly in <Perl> sections
+        foreach my $pack ($self->package, $self->SPECIAL_PACKAGE) {
+            #XXX: Shamelessly borrowed from Devel::Symdump;
+            while (my ($key, $val) = each(%{ *{"$pack\::"} })) {
+                #We don't want to pick up stashes...
+                next if ($key =~ /::$/);
+                local (*ENTRY) = $val;
+                if (defined $val && defined *ENTRY{SCALAR}) {
+                    push @{$self->{symbols}}, [$key, $ENTRY];
+                }
+                if (defined $val && defined *ENTRY{ARRAY}) {
+                    push @{$self->{symbols}}, [$key, \@ENTRY];
+                }
+                if (defined $val && defined *ENTRY{HASH} && $key !~ /::/) {
+                    push @{$self->{symbols}}, [$key, \%ENTRY];
+                }
             }
         }
     }

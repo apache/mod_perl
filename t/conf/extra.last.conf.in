@@ -19,6 +19,7 @@ $Location{'/perl_sections_saved'} = {
 	};
 #This is a comment
 $TestDirective::perl::comments="yes";
+$TestDirective::perl::PACKAGE = __PACKAGE__;
 </Perl>
 
 <Perl >
@@ -26,6 +27,23 @@ $Apache::Server::SaveConfig = 1;
 $TestDirective::perl::filename = __FILE__;
 $TestDirective::perl::dollar_zero = $0;
 $TestDirective::perl::line =  __LINE__;
+</Perl>
+
+#Handle re-entrant <Perl> sections
+<Perl >
+$Include = "@ServerRoot@/conf/perlsection.conf";
+</Perl>
+
+#Deprecated access to Apache::ReadConfig:: still works
+<Perl >
+push @Apache::ReadConfig::Alias, 
+    ['/perl_sections_readconfig', '@DocumentRoot@'];
+$Apache::ReadConfig::Location{'/perl_sections_readconfig'} = {
+    'PerlInitHandler'   => 'ModPerl::Test::add_config',
+    'AuthType'          => 'Basic',
+    'AuthName'          => 'PerlSection',
+    'PerlAuthenHandler' => 'TestHooks::authen',
+    };
 </Perl>
 
 ### --------------------------------- ###

@@ -27,11 +27,6 @@
   A few issues with <Perl> sections:
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
 
-* Recursive <Perl> sections:
-  http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_-_BUG_%5D_Issue_handing_Apache_config._error_messages_P70501/
-  and
-  http://mathforum.org/epigone/modperl/dartrimpcil
-
 * Fixing Apache->warn("foo")
 
   Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
