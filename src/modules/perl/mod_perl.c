@@ -173,7 +173,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
         if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
             exit(1);
         }
-
+        
 #ifdef USE_ITHREADS
 
         if (!MpSrvENABLE(scfg)) {
@@ -415,6 +415,8 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_SRV_ITERATE("PerlModule", modules, "PerlModule"),
     MP_CMD_SRV_ITERATE("PerlRequire", requires, "PerlRequire"),
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
+    MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),
+    MP_CMD_DIR_ITERATE2("PerlAddVar", add_var, "PerlAddVar"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif

@@ -13,7 +13,25 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 }
 
 #define merge_item(item) \
-mrg->item = add->item ? add->item : base->item
+    mrg->item = add->item ? add->item : base->item
+
+/* take the 'base' values, and override with 'add' values if any */
+#define merge_table_overlap_item(item) \
+    { \
+        apr_array_header_t *arr = apr_table_elts(base->item); \
+        apr_table_entry_t *entries  = (apr_table_entry_t *)arr->elts; \
+        int i; \
+        mrg->item = apr_table_copy(p, add->item); \
+        for (i = 0; i < arr->nelts; i++) { \
+            char *val; \
+            if ((val = (char *)apr_table_get(mrg->item, entries[i].key))){ \
+                continue; \
+            } \
+            else if ((val = (char *)apr_table_get(base->item, entries[i].key))){ \
+                apr_table_set(mrg->item, entries[i].key, val); \
+            } \
+        } \
+    }
 
 #define merge_handlers(merge_flag, array) \
     if (merge_flag(mrg)) { \
@@ -41,6 +59,8 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
 #endif
 
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
+
+    merge_table_overlap_item(SetVar);
 
     /* XXX: check if Perl*Handler is disabled */
     for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
@@ -76,6 +96,8 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
+    scfg->SetVar = apr_table_make(p, 2);
+    
     modperl_config_srv_argv_push((char *)ap_server_argv0);
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
@@ -90,6 +112,8 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p)
 
     dcfg->flags = modperl_options_new(p, MpDirType);
 
+    dcfg->SetVar = apr_table_make(p, 2);
+    
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)dcfg);
 
     return dcfg;
@@ -158,6 +182,8 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(PerlModule);
     merge_item(PerlRequire);
 
+    merge_table_overlap_item(SetVar);
+ 
     merge_item(threaded_mpm);
 
 #ifdef USE_ITHREADS

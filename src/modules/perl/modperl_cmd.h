@@ -4,14 +4,13 @@
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
                                 apr_pool_t *p);
 
-
 #define MP_CMD_SRV_DECLARE(item) \
-const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *mconfig, const char *arg)
+const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
+                               const char *arg)
 
 #define MP_CMD_SRV_DECLARE2(item) \
-const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *mconfig, const char *arg1, const char *arg2)
+const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
+                               const char *arg1, const char *arg2)
 
 #define MP_CMD_SRV_DECLARE_FLAG(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
@@ -21,6 +20,8 @@ MP_CMD_SRV_DECLARE(trace);
 MP_CMD_SRV_DECLARE(switches);
 MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
+MP_CMD_SRV_DECLARE2(set_var);
+MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE(options);
 
 #ifdef MP_COMPAT_1X
@@ -73,6 +74,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
    AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
 
+#define MP_CMD_SRV_ITERATE2(name, item, desc) \
+   AP_INIT_ITERATE2( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, desc )
+
 #define MP_CMD_DIR_TAKE1(name, item, desc) \
     AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
@@ -83,6 +88,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
 
 #define MP_CMD_DIR_ITERATE(name, item, desc) \
     AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
+      OR_ALL, desc )
+
+#define MP_CMD_DIR_ITERATE2(name, item, desc) \
+    AP_INIT_ITERATE2( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
 
 #define MP_CMD_DIR_FLAG(name, item, desc) \
