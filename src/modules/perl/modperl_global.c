@@ -15,19 +15,16 @@ void modperl_global_request_cfg_set(request_rec *r)
 void modperl_global_request_set(request_rec *r)
 {
     MP_dRCFG;
+    request_rec *old_r = NULL;
+
+    /* reset old value, important for subrequests */
+    (void)modperl_tls_get_request_rec(&old_r);
+    modperl_tls_reset_cleanup_request_rec(r->pool, old_r);
 
     modperl_tls_set_request_rec(r);
 
     /* so 'PerlOptions +GlobalRequest' doesnt wipe us out */
     MpReqSET_GLOBAL_REQUEST_On(rcfg);
-
-    if (r->main) {
-        /* reset after subrequests */
-        modperl_tls_reset_cleanup_request_rec(r->pool, r->main);
-    }
-    else {
-        modperl_tls_reset_cleanup_request_rec(r->pool, NULL);
-    }
 }
 
 void modperl_global_request_obj_set(pTHX_ SV *svr)

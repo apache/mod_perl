@@ -1,5 +1,7 @@
 =item 1.99_02-dev
 
+fix 'PerlOptions +GlobalRequest' when used within subrequests [dougm]
+
 get rid of some "subroutine redefined" warnings in ModPerl::MM that
 show up with newer bleedperls. [dougm]
 

@@ -9,6 +9,7 @@ use Apache::TestUtil;
 my @patterns = (
     'mod_perl mod_include test',
     'Hello World',
+    'cgi.pm',
     'footer',
 );
 
