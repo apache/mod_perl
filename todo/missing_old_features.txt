@@ -42,7 +42,7 @@ core modules:
 
 - Apache::ModuleConfig
 
-- Apache::File, Apache::Util
+- Apache::Util
 
 - see also: xs/maps/apache_functions.map
 
