@@ -325,10 +325,10 @@ static int modperl_run_filter_init(ap_filter_t *f,
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
 
+    MP_dINTERP_SELECT(r, c, s);    
+
     MP_TRACE_h(MP_FUNC, "running filter init handler %s\n", handler->name);
             
-    MP_dINTERP_SELECT(r, c, s);
-    
     modperl_handler_make_args(aTHX_ &args,
                               "Apache::Filter", f,
                               NULL);
