@@ -41,11 +41,8 @@ XS(XS_ModPerl__Util_exit)
     if (items < 0 || items > 1) {
         Perl_croak(aTHX_ "Usage: ModPerl::Util::exit(status=0)");
     }
-    if (items < 1)
-        status = 0; /* default: 0 */
-    else {
-        status = (int)SvIV(ST(0));
-    }
+    /* default: 0 */
+    status = items < 1 ? 0 : (int)SvIV(ST(0)); 
     modperl_perl_exit(aTHX_ status);
     
     XSRETURN_EMPTY;
