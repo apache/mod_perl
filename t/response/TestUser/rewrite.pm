@@ -54,7 +54,7 @@ sub response {
 
     my $args = $r->args();
 
-    ok t_cmp($args_real, $args, "args");
+    ok t_cmp($args, $args_real, "args");
 
     return Apache::OK;
 }
