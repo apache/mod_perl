@@ -223,10 +223,14 @@ sub map_function {
 
     return unless $self->can_map($map, $func->{return_type},
                                  map $_->{type}, @{ $func->{args} });
+
+    my $type = $map->{return_type} || $func->{return_type} || 'void';
+    my $map_type = $self->map_type($type);
+    die "unknown typemap: '$type'" unless defined $map_type;
+
     my $mf = {
        name        => $func->{name},
-       return_type => $self->map_type($map->{return_type} ||
-                                      $func->{return_type} || 'void'),
+       return_type => $map_type,
        args        => $self->map_args($func),
        perl_name   => $map->{name},
        thx         => $func->{thx},
