@@ -131,6 +131,8 @@ EOF
                 $parms = 'items, MARK+1, SP';
             }
 
+            $thx =~ s/_ $// unless $parms;
+
             my $retval = $return_type eq 'void' ?
               ["", ""] : ["RETVAL = ", "OUTPUT:\n    RETVAL\n"];
 
