@@ -29,8 +29,7 @@ sub new_test_config {
 
     $self->{conf_opts}->{maxclients} = 2;
 
-   $self->{conf_opts}->{src_dir} = catdir $base, qw(src modules perl);
-   # $self->{conf_opts}->{libmodperl} = "$cwd/../../src/modules/perl/mod_perl.so";
+    $self->{conf_opts}->{src_dir} = catdir $base, qw(src modules perl);
 
     return $self->SUPER::new_test_config;
 }
