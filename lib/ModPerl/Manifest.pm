@@ -34,14 +34,20 @@ my @add_files = qw{
     Apache-Test/META.yml
 };
 
+my @repos = qw(
+    Apache-Test
+    docs
+);
+
 sub get_svn_files {
     my @files;
-
-    foreach my $ent (`svn ls -R`) {
-        chomp($ent);
-        push @files, $ent if -f $ent;
+    foreach my $repos ('', @repos) {
+        foreach my $ent (`svn ls -R $repos`) {
+            chomp($ent);
+            $ent = File::Spec->catfile($repos, $ent) if $repos;
+            push @files, $ent if -f $ent;
+        }
     }
-
     return @files;
 }
 
