@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.99_02-dev
+=item 1.99_02 - June 1, 2002
 
 pass the PATH and TZ environment variables at startup by default as 1.xx did
 
