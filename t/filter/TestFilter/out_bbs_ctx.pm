@@ -4,7 +4,7 @@ package TestFilter::out_bbs_ctx;
 # bucket brigade API
 
 use strict;
-use warnings;# FATAL => 'all';
+use warnings FATAL => 'all';
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();

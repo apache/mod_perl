@@ -6,6 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
 use Apache::Filter ();
 
 use Apache::Const -compile => qw(OK DECLINED M_POST);
