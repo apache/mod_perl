@@ -46,7 +46,7 @@ sub parse_args {
 sub content {
     my($r) = @_;
     my $ct = $r->header_in("Content-type") || "";
-    return unless $ct eq "application/x-www-form-urlencoded";
+    return unless $ct =~ m!^application/x-www-form-urlencoded!;
     my $buff;
     $r->read($buff, $r->header_in("Content-length"));
     parse_args(wantarray, $buff);
