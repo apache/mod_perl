@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+On Win32 the uploaded file wasn't cleaned up (weither it's a bug in
+CGI.pm or not), make sure we don't leave any dropped files around
+[Steve Hay <steve.hay@uk.radan.com>]
+
 For Win32, keep drive letters in mod_perl.dsp to fix bug, reported 
 by DH <crazyinsomniac@yahoo.com>, when compiling mod_perl in
 cases where Apache and Perl are on different drives [Randy Kobes]. 
