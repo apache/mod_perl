@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Implement Apache->unescape_url_info in Apache::compat and drop it
+from the official API for CGI::Util::unescape() as a suggested
+replacement [Gozer]
+
 fix xs_generate to croak on duplicate entries in xs/maps files
 [Christian Krause <chkr plauener.de>]
 

@@ -845,6 +845,8 @@ my $methods_compat = {
                           ''],
     unescape_uri      => ['unescape_url',
                           ''],
+    unescape_url_info => [undef,
+                          'use CGI::Util::unescape() instead'],
     escape_html       => [undef, # XXX: will be ap_escape_html
                           'ap_escape_html now requires a pool object'],
     parsedate         => ['parse_http',

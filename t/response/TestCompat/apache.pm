@@ -19,7 +19,7 @@ use File::Spec::Functions qw(catfile canonpath);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 21;
+    plan $r, tests => 22;
 
     $r->send_http_header('text/plain');
 
@@ -110,6 +110,11 @@ sub handler {
                           canonpath($path),
                           "Apache->server_root_relative('$path')");
     }
+
+    ok t_cmp(Apache->unescape_url_info("/foo+bar%20baz"),
+             '/foo bar baz',
+             'Apache->unescape_url_info');
+    
 
     OK;
 }

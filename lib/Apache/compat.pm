@@ -500,7 +500,6 @@ sub get_remote_host {
     $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
-#XXX: should port 1.x's Apache::URI::unescape_url_info
 sub parse_args {
     my($r, $string) = @_;
     return () unless defined $string and $string;
@@ -510,6 +509,13 @@ sub parse_args {
         s/%([0-9a-fA-F]{2})/pack("C",hex($1))/ge;
         $_;
     } split /[=&;]/, $string, -1;
+}
+
+sub Apache::unescape_url_info {
+    my($class, $string) = @_;
+    Apache::URI::unescape_url($string);
+    $string =~ tr/+/ /;
+    $string;
 }
 
 #sorry, have to use $r->Apache::args at the moment
