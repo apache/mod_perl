@@ -88,8 +88,9 @@ while (my($k,$v) = each %directive_proto) {
 
 #XXX: allow disabling of PerDir hooks on a PerDir basis
 my @hook_flags = (map { canon_uc($_) } keys %hooks);
+my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
-    Srv => [qw(NONE CLONE PARENT ENABLED AUTOLOAD MERGE_HANDLERS),
+    Srv => ['NONE', @ithread_opts, qw(ENABLED AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET'],
     Dir => [qw(NONE SEND_HEADER SETUP_ENV MERGE_HANDLERS UNSET)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
@@ -376,6 +377,9 @@ EOF
 
     print $h_fh "\n#define MpSrvHOOKS_ALL_On(p) MpSrvFLAGS(p) |= (",
       (join '|', map { 'MpSrv_f_' . $_ } @hook_flags), ")\n";
+
+    print $h_fh "\n#define MpSrvOPT_ITHREAD_ONLY(o) \\\n",
+      (join ' || ', map("(o == MpSrv_f_$_)", @ithread_opts)), "\n";
 
     ();
 }
