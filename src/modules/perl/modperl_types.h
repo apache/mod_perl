@@ -109,6 +109,12 @@ typedef struct {
     int unset;
 } modperl_options_t;
 
+typedef enum {
+    MP_INTERP_LIFETIME_NONE,
+    MP_INTERP_LIFETIME_REQUEST,
+    MP_INTERP_LIFETIME_CONNECTION,
+} modperl_interp_lifetime_e;
+
 typedef struct {
     MpHV *SetVars;
     MpAV *PassEnv;
@@ -120,6 +126,7 @@ typedef struct {
 #ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
     modperl_tipool_config_t *interp_pool_cfg;
+    modperl_interp_lifetime_e interp_lifetime;
 #else
     PerlInterpreter *perl;
 #endif
