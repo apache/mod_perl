@@ -6,6 +6,9 @@
  * hopefully won't be much here since Perl/APR/Apache
  * take care of most portablity issues.
  */
+
+int modperl_sys_is_dir(pTHX_ SV *sv);
+
 int modperl_sys_dlclose(void *handle);
 
 #endif /* MODPERL_SYS_H */
