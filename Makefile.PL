@@ -45,8 +45,6 @@ my $build = Apache::Build->new(init => 1);
 
 perl_version_check($build);
 
-apache_check($build);
-
 my $code  = ModPerl::Code->new;
 
 configure();
@@ -186,9 +184,18 @@ sub configure {
     }
 
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
-      $httpd_version, $VERSION, $^V;
+        $httpd_version, $VERSION, $^V;
 
     my $apr_config = $build->get_apr_config; #cache it
+
+    # we need to know where apr-config and apu-configs are
+    # which sometimes aren't placed into the same dir with apxs/httpd
+    # XXX: need to fix that for WIN32
+    unless (WIN32 || $build->apr_config_path) {
+        error "can't find 'apr-config', please pass " .
+            "MP_APR_CONFIG=/full/path/to/apr-config to 'perl Makefile.PL'";
+        exit 1;
+    }
 
     for (@{ clean_files() }) {
         debug "unlink...$_" if -e $_ && unlink;
@@ -351,21 +358,6 @@ sub perl_version_check {
         error "$perl_string.",
             "5.7.x development versions of Perl are no longer supported",
             "Upgrade to Perl 5.8.0 or higher";
-        exit 1;
-    }
-}
-
-sub apache_check {
-    my $build = shift;
-
-    # XXX: need to fix that
-    return if WIN32;
-
-    # we need to know where apr-config and apu-configs are
-    # which sometimes aren't placed into the same dir with apxs/httpd
-    unless ($build->apr_config_path) {
-        error "can't find 'apr-config', please pass " .
-            "MP_APR_CONFIG=/full/path/to/apr-config to 'perl Makefile.PL'";
         exit 1;
     }
 }
