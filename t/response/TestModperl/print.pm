@@ -10,6 +10,8 @@ sub handler {
 
     plan $r, tests => 3;
 
+    binmode STDOUT; #Apache::RequestRec::BINMODE (noop)
+
     ok 1;
 
     ok 2;

@@ -3,6 +3,8 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
 #define mpxs_Apache__RequestRec_PRINT  mpxs_Apache__RequestRec_print
 #define mpxs_Apache__RequestRec_PRINTF mpxs_ap_rprintf
+#define mpxs_Apache__RequestRec_BINMODE(r) \
+    r ? &PL_sv_yes : &PL_sv_no /* noop */
 
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
