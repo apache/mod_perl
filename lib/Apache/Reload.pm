@@ -63,6 +63,10 @@ sub handler {
 
     my $TouchFile = ref($o) && $o->dir_config("ReloadTouchFile");
 
+    my $ConstantRedefineWarnings = ref($o) && 
+        (lc($o->dir_config("ReloadConstantRedefineWarnings") || '') eq 'off') 
+            ? 0 : 1;
+
     my $TouchModules;
 
     if ($TouchFile) {
@@ -141,6 +145,8 @@ sub handler {
                 undef %{$symref};
             }
             no warnings FATAL => 'all';
+            local $SIG{__WARN__} = \&skip_redefine_const_sub_warn
+                unless $ConstantRedefineWarnings;
             require $key;
             warn("Apache::Reload: process $$ reloading $key\n")
                     if $DEBUG;
@@ -149,6 +155,11 @@ sub handler {
     }
 
     return Apache::OK;
+}
+
+sub skip_redefine_const_sub_warn {
+    return if $_[0] =~ /^Constant subroutine [\w:]+ redefined at/;
+    CORE::warn(@_);
 }
 
 1;
