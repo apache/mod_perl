@@ -204,6 +204,7 @@ typedef struct {
     modperl_wbucket_t wbucket;
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
+    modperl_interp_t *interp;
 } modperl_config_req_t;
 
 typedef struct {

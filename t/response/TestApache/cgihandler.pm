@@ -32,3 +32,4 @@ sub handler {
 1;
 __END__
 SetHandler perl-script
+PerlInterpScope handler
