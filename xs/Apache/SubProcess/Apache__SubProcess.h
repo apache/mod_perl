@@ -113,24 +113,21 @@ static XS(MPXS_modperl_spawn_proc_prog)
         apr_file_t *script_in, *script_out, *script_err;
         apr_status_t rc;
         const char **argv;
-        int i;
-        AV *av_argv;
+        int i=0;
+        AV *av_argv = Nullav;
         I32 len=-1, av_items=0;
         request_rec *r = modperl_xs_sv2request_rec(aTHX_ ST(0), NULL, cv);
         const char *command = (const char *)SvPV_nolen(ST(1));
 
         if (items == 3) {
             if (SvROK(ST(2)) && SvTYPE(SvRV(ST(2))) == SVt_PVAV) {
-                av_argv = (AV*)SvREFCNT_inc(SvRV(ST(2)));
+                av_argv = (AV*)SvRV(ST(2));
                 len = AvFILLp(av_argv);
                 av_items = len+1;
             }
             else {
                 Perl_croak(aTHX_ usage);
             }
-        }
-        else {
-            av_argv = newAV();
         }
 
         /* ap_os_create_privileged_process expects ARGV as char
@@ -139,8 +136,10 @@ static XS(MPXS_modperl_spawn_proc_prog)
          */
         argv = apr_palloc(r->pool, (av_items + 2) * sizeof(char *));
         argv[0] = command;
-        for (i = 0; i <= len; i++) {
-            argv[i+1] = (const char *)SvPV_nolen(AvARRAY(av_argv)[i]);
+        if (av_argv) {
+            for (i = 0; i <= len; i++) {
+                argv[i+1] = (const char *)SvPV_nolen(AvARRAY(av_argv)[i]);
+            }
         }
         argv[i+1] = NULL;
 #if 0
@@ -152,8 +151,6 @@ static XS(MPXS_modperl_spawn_proc_prog)
         rc = modperl_spawn_proc_prog(r, command, &argv,
                                      &script_in, &script_out,
                                      &script_err);
-
-        SvREFCNT_dec(av_argv);
 
         if (rc == APR_SUCCESS) {
             /* XXX: apr_file_to_glob should be set once in the BOOT: section */
