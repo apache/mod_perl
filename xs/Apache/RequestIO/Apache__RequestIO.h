@@ -75,8 +75,8 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 }
 
 static MP_INLINE
-apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
-                                         SV **MARK, SV **SP)
+SV *mpxs_Apache__RequestRec_print(pTHX_ I32 items,
+                                 SV **MARK, SV **SP)
 {
     modperl_config_req_t *rcfg;
     request_rec *r;
@@ -95,7 +95,7 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     
     mpxs_output_flush(r, rcfg, "Apache::RequestIO::print");
     
-    return bytes;
+    return bytes ? newSVuv(bytes) : newSVpvn("0E0", 3);
 }  
 
 static MP_INLINE

@@ -6766,7 +6766,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_size_t',
+    'return_type' => 'SV *',
     'name' => 'mpxs_Apache__RequestRec_print',
     'args' => [
       {
