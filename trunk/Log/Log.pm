@@ -19,7 +19,7 @@ Apache::Log - Interface to Apache logging
   $rlog->debug("You only see this if `LogLevel' is set to `debug'");
 
   my $slog = $r->server->log;
- 
+
 =head1 DESCRIPTION
 
 The Apache::Log module provides an interface to Apache's I<ap_log_error>
