@@ -475,7 +475,7 @@ is always defined.
 
 You can also set this value by providing an argument to it. This is
 helpful if your server is behind a squid accelerator proxy which adds
-a HTTP_X_FORWARDED_FOR header.
+a X-Forwarded-For header.
 
 =item $c->local_addr
 
