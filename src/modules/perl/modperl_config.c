@@ -234,7 +234,7 @@ MP_DECLARE_SRV_CMD(options)
 #ifdef USE_ITHREADS
 
 static const char *MP_interp_lifetime_desc[] = {
-    "undef", "subrequest", "request", "connection",
+    "undef", "handler", "subrequest", "request", "connection",
 };
 
 const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime)
@@ -242,13 +242,19 @@ const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime)
     return MP_interp_lifetime_desc[lifetime];
 }
 
-#define MP_INTERP_LIFETIME_OPTS "PerlInterpLifetime must be one of "
+#define MP_INTERP_LIFETIME_USAGE "PerlInterpLifetime must be one of "
 
 #define MP_INTERP_LIFETIME_DIR_OPTS \
-MP_INTERP_LIFETIME_OPTS "subrequest or request"
+"handler, subrequest or request"
 
+#define MP_INTERP_LIFETIME_DIR_USAGE \
+MP_INTERP_LIFETIME_USAGE MP_INTERP_LIFETIME_DIR_OPTS
+ 
 #define MP_INTERP_LIFETIME_SRV_OPTS \
-MP_INTERP_LIFETIME_OPTS "subrequest, request or connection"
+"connection, " MP_INTERP_LIFETIME_DIR_OPTS
+
+#define MP_INTERP_LIFETIME_SRV_USAGE \
+MP_INTERP_LIFETIME_USAGE MP_INTERP_LIFETIME_SRV_OPTS
 
 MP_DECLARE_SRV_CMD(interp_lifetime)
 {
@@ -260,6 +266,11 @@ MP_DECLARE_SRV_CMD(interp_lifetime)
     lifetime = is_per_dir ? &dcfg->interp_lifetime : &scfg->interp_lifetime;
 
     switch (toLOWER(*arg)) {
+      case 'h':
+        if (strcaseEQ(arg, "handler")) {
+            *lifetime = MP_INTERP_LIFETIME_HANDLER;
+            break;
+        }
       case 's':
         if (strcaseEQ(arg, "subrequest")) {
             *lifetime = MP_INTERP_LIFETIME_SUBREQUEST;
@@ -277,7 +288,7 @@ MP_DECLARE_SRV_CMD(interp_lifetime)
         }
       default:
         return is_per_dir ?
-            MP_INTERP_LIFETIME_DIR_OPTS : MP_INTERP_LIFETIME_SRV_OPTS;
+            MP_INTERP_LIFETIME_DIR_USAGE : MP_INTERP_LIFETIME_SRV_USAGE;
     };
 
     return NULL;
