@@ -305,6 +305,14 @@ if((add->flags & f) || (base->flags & f)) \
 /* some 1.2.x/1.3.x compat stuff */
 /* once 1.3.0 is here, we can toss most of this junk */
 
+#if MODULE_MAGIC_NUMBER >= 19980627
+#define MP_CONST_CHAR const char
+#define MP_CONST_ARRAY_HEADER const array_header
+#else
+#define MP_CONST_CHAR char
+#define MP_CONST_ARRAY_HEADER array_header
+#endif
+
 #if MODULE_MAGIC_NUMBER > 19970912 
 #define cmd_infile   parms->config_file
 #define cmd_filename parms->config_file->name

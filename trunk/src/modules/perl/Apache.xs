@@ -756,7 +756,7 @@ requires(r)
     register int x;
     int m;
     char *t;
-    array_header *reqs_arr;
+    MP_CONST_ARRAY_HEADER *reqs_arr;
     require_line *reqs;
 
     CODE:
@@ -811,11 +811,11 @@ mod_perl_auth_name(r, val=NULL)
     Apache    r
     char *val
 
-char *
+const char *
 auth_type(r)
     Apache    r
 
-char *
+const char *
 document_root(r)
     Apache    r
 
@@ -853,14 +853,14 @@ get_basic_auth_pw(r)
     Apache r
 
     PREINIT:
-    char *sent_pw = NULL;
+    MP_CONST_CHAR *sent_pw = NULL;
     int ret;
 
     PPCODE:
     ret = get_basic_auth_pw(r, &sent_pw);
     XPUSHs(sv_2mortal((SV*)newSViv(ret)));
     if(ret == OK)
-	XPUSHs(sv_2mortal((SV*)newSVpv(sent_pw, 0)));
+	XPUSHs(sv_2mortal((SV*)newSVpv((char *)sent_pw, 0)));
     else
 	XPUSHs(&sv_undef);
 
