@@ -29,7 +29,7 @@ VV src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/HookRun.pod
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
-g- src/docs/2.0/api/Apache/Module.pod
+V- src/docs/2.0/api/Apache/Module.pod
 VV src/docs/2.0/api/Apache/PerlSections.pod
 VV src/docs/2.0/api/Apache/Process.pod
 VV src/docs/2.0/api/Apache/Reload.pod
