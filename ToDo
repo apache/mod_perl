@@ -3,12 +3,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- sort out early startup/auto pre-load Apache/@INC issues
-
-- Apache->push_handlers("PerlCleanupHandler", ...),
-  the handler isn't called unless there's already a CleanupHandler defined.
-  Jan-Pieter Cornet <johnpc@xs4all.net>
-
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
@@ -31,6 +25,11 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+
+- Apache->push_handlers("PerlCleanupHandler", ...),
+  the handler isn't called unless there's already a CleanupHandler defined.
+  Jan-Pieter Cornet <johnpc@xs4all.net>
+  (should use $r->register_cleanup anyhow)
 
 - sfio/solaris problem
 Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
@@ -261,6 +260,8 @@ NEW MODULE STUFF
 CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
             these things at some point
 ---------------------------------------------------------------------------
+
+early startup/auto pre-load Apache/@INC mess
 
 now that PerlRequire/PerlModule start Perl if not running already, no
 need for the array_headers in perl_srv_config

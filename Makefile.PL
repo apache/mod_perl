@@ -1352,8 +1352,8 @@ sub MY::postamble {
 cvs_export :
 	cvs -d $(CVSROOT) export -rv$(VERSION_SYM) -d$(DISTVNAME) .
 
-cvs_rtag :
-	cvs -d $(CVSROOT) rtag v$(VERSION_SYM) modperl
+cvs_tag :
+	cvs -d $(CVSROOT) tag v$(VERSION_SYM) modperl
 	@echo update mod_perl.pm's VERSION now
 
 EOF
