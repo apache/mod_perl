@@ -299,8 +299,27 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             }
         }
         else {
-            MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
-            return 0;
+            int ix = ap_rind(name, ':');
+            stash = Nullhv;
+
+            /* last guess: Perl*Handler is a fully qualified subroutine name
+             * but its module was not loaded
+             */
+            if (ix != -1) {
+                /* split Foo::Bar::baz into Foo::Bar, baz */
+                char *try_package = apr_pstrndup(p, name, ix-1);
+                handler_name = apr_pstrdup(p, name + ix + 1);
+
+                if (modperl_require_module(aTHX_ try_package)) {
+                    MP_TRACE_h(MP_FUNC, "loaded %s package\n", try_package);
+                    stash = gv_stashpv(try_package, FALSE);
+                }
+            }
+
+            if (!stash) {
+                MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
+                return 0;
+            }
         }
     }
 
