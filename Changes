@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+fix a bug in $r->document_root, which previously weren't copying the
+new string away [Stas]
+
 introduce a new build option MP_AP_DESTDIR to aid package builders
 direct the Apache-specific files to the right place. [Cory Omand
 <Cory.Omand@Sun.COM>]
