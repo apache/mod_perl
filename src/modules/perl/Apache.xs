@@ -1890,6 +1890,10 @@ no_cache(r, ...)
 	ap_table_setn(r->headers_out, "Pragma", "no-cache");
 	ap_table_setn(r->headers_out, "Cache-control", "no-cache");
     }
+    else if (items > 1) { /* $r->no_cache(0) */
+       ap_table_unset(r->headers_out, "Pragma");
+       ap_table_unset(r->headers_out, "Cache-control");
+    }
 
     OUTPUT:
     RETVAL
