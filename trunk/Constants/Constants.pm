@@ -1,6 +1,6 @@
 package Apache::Constants;
 
-use Apache ();
+use mod_perl ();
 
 {
     no strict;
