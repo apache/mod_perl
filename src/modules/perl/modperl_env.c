@@ -32,6 +32,15 @@ void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
     SvTAINTED_on(*svp);
 }
 
+static MP_INLINE
+void modperl_env_hv_delete(pTHX_ HV *hv, char *key)
+{
+    I32 klen = strlen(key);
+    if (hv_exists(hv, key, klen)) {
+        hv_delete(hv, key, strlen(key), G_DISCARD);
+    }
+}
+
 typedef struct {
     const char *key;
     I32 klen;
@@ -97,6 +106,31 @@ static void modperl_env_table_populate(pTHX_ apr_table_t *table)
         modperl_env_hv_store(aTHX_ hv, &elts[i]);
 
         MP_TRACE_e(MP_FUNC, "$ENV{%s} = \"%s\";", elts[i].key, elts[i].val);
+    }    
+
+    modperl_env_tie(mg_flags);
+}
+
+static void modperl_env_table_unpopulate(pTHX_ apr_table_t *table)
+{
+    HV *hv = ENVHV;
+    U32 mg_flags;
+    int i;
+    const apr_array_header_t *array;
+    apr_table_entry_t *elts;
+
+    modperl_env_untie(mg_flags);
+
+    array = apr_table_elts(table);
+    elts  = (apr_table_entry_t *)array->elts;
+
+    for (i = 0; i < array->nelts; i++) {
+        if (!elts[i].key) {
+            continue;
+        }
+        modperl_env_hv_delete(aTHX_ hv, elts[i].key);
+
+        MP_TRACE_e(MP_FUNC, "delete $ENV{%s};", elts[i].key);
     }    
 
     modperl_env_tie(mg_flags);
@@ -205,6 +239,24 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
 #endif
 
     MpReqSETUP_ENV_On(rcfg);
+}
+
+void modperl_env_request_unpopulate(pTHX_ request_rec *r)
+{
+    MP_dRCFG;
+
+    /* unset only once */
+    if (!MpReqSETUP_ENV(rcfg)) {
+        return;
+    }
+    
+    MP_TRACE_e(MP_FUNC,
+               "\n\t[%s/0x%lx/%s%s]\n\tdelete @ENV{keys r->subprocess_env};",
+               modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
+               modperl_server_desc(r->server, r->pool), r->uri);
+    modperl_env_table_unpopulate(aTHX_ r->subprocess_env);
+
+    MpReqSETUP_ENV_Off(rcfg);
 }
 
 void modperl_env_request_tie(pTHX_ request_rec *r)
