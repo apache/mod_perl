@@ -7,6 +7,8 @@ use mod_perl 1.99;
 
 our $VERSION = '0.08';
 
+use Apache::Const -compile => qw(OK);
+
 require Apache::RequestUtil;
 
 use vars qw(%INCS %Stat $TouchTime %UndefFields);
@@ -140,7 +142,7 @@ sub handler {
         $Stat{$file} = $mtime;
     }
 
-    return 1;
+    return Apache::OK;
 }
 
 1;
