@@ -100,12 +100,6 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                              "handler %s didn't return a valid return value!",
                              handler->name);
             }
-
-            /* assume OK for non-HTTP status codes and for 200 (HTTP_OK) */
-            if (((status > 0) && (status < 100)) ||
-                (status == 200) || (status > 600)) {
-                status = OK;
-            }
         }
 
         PUTBACK;

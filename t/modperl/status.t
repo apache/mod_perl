@@ -10,7 +10,7 @@ use Apache::Const -compile => qw(OK DECLINED
                                  NOT_FOUND SERVER_ERROR FORBIDDEN
                                  HTTP_OK);
 
-plan tests => 14;
+plan tests => 15;
 
 my $base = "/TestModperl__status";
 
@@ -62,21 +62,22 @@ my $base = "/TestModperl__status";
              $uri);
 }
 
-# the return code guessing game
+# apache translates non-HTTP codes into 500
+# see ap_index_of_response
 {
-    my $uri = join '?', $base, Apache::HTTP_OK;
+    my $uri = join '?', $base, 601;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
+    ok t_cmp(Apache::SERVER_ERROR, 
              $code,
              $uri);
 }
 
 {
-    my $uri = join '?', $base, 601;
+    my $uri = join '?', $base, 313;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
+    ok t_cmp(Apache::SERVER_ERROR, 
              $code,
              $uri);
 }
@@ -85,19 +86,25 @@ my $base = "/TestModperl__status";
     my $uri = join '?', $base, 1;
     my $code = GET_RC $uri;
 
-    ok t_cmp(Apache::HTTP_OK, 
+    ok t_cmp(Apache::SERVER_ERROR, 
              $code,
              $uri);
 }
 
-# apache translates non-HTTP codes into 500
-# see ap_index_of_response
+# HTTP_OK is treated as an error, since it's not
+# OK, DECLINED, or DONE.  while apache's lookups
+# succeed so the 200 is propagated to the client,
+# there's an error beneath that 200 code.
 {
-    my $uri = join '?', $base, 313;
-    my $code = GET_RC $uri;
+    my $uri = join '?', $base, Apache::HTTP_OK;
+    my $response = GET $uri;
 
-    ok t_cmp(Apache::SERVER_ERROR, 
-             $code,
+    ok t_cmp(Apache::HTTP_OK,
+             $response->code,
+             $uri);
+
+    ok t_cmp(qr/server encountered an internal error/,
+             $response->content,
              $uri);
 }
 

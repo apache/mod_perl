@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+return value from Perl callbacks are now passed directly to Apache
+without additional post-call manipulations (such as assuming HTTP_OK
+should really be OK).  [Geoffrey Young]
+
 perl 5.8.1 w/ ithreads has a bug where it reports the wrong parent pid
 (as if the process was never forked), provide a local workaround (+ new
 test). [Rafael Garcia-Suarez <rgarciasuarez@free.fr>]
