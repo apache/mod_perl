@@ -104,6 +104,10 @@ sub define {
     exists_config_define(@_);
 }
 
+sub log_error {
+    Apache->server->log_error(@_);
+}
+
 package Apache::Constants;
 
 use Apache::Const ();
