@@ -319,7 +319,7 @@ sub MY::post_initialize {
     my $self = shift;
 
     # install libmodperl.so
-    if (exists $build->{MP_USE_DSO} && $build->{MP_USE_DSO}) {
+    if ($build->{MP_USE_DSO}) {
         my $MODPERL_LIB = join '.', $build->{MP_LIBNAME}, 'so';
         $self->{PM}->{"src/modules/perl/$MODPERL_LIB"} =
             "\$(APACHE_LIBDIR)/$MODPERL_LIB";
