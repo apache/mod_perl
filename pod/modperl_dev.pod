@@ -41,7 +41,7 @@ For bleeding edge Perl:
  % make && make test && make install
  % ln -s $HOME/bleedperl/bin/perl5.x.x $HOME/bleedperl/bin/perl
 
-If you are re-building Perl after cvs update, make sure to cleanup:
+If you are re-building Perl after rsync-ing, make sure to cleanup:
 
   % make distclean
 
