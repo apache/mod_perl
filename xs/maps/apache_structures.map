@@ -157,8 +157,8 @@ $  limit_req_fields
 
 <command_rec>
    name
-   func
-   cmd_data
+!  func
+!  cmd_data
    req_override
    args_how
    errmsg
