@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+add perl_call_handler to mod_perl.def for win32/axkit
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix -[TB] file tests against $r->finfo, thanks to Geoffrey Young for
 the spot
 
