@@ -103,7 +103,6 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  ap_get_client_block   | mpxs_ | r, SV *:buffer, bufsiz
  ap_setup_client_block |       | r, read_policy=REQUEST_CHUNKED_ERROR
  ap_should_client_block
- ap_rflush
 PREFIX=ap_r
 ~ap_rwrite
  ap_rprintf | mpxs_ | ...

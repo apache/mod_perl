@@ -133,6 +133,23 @@ apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
     return wlen;
 }
 
+static MP_INLINE
+int mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
+                                   SV **MARK, SV **SP)
+{
+    modperl_config_req_t *rcfg;
+    request_rec *r;
+    
+    /* this also magically assings to r ;-) */
+    mpxs_usage_va_1(r, "$r->print(...)");
+
+    rcfg = modperl_config_req_get(r);
+
+    MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket));
+
+    return ap_rflush(r);
+}
+
 static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
                                                SV *buffer, int bufsiz)
 {

@@ -50,6 +50,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_print | | ...
  apr_ssize_t:DEFINE_WRITE | | \
              request_rec *:r, SV *:buffer, apr_ssize_t:bufsiz=-1, int:offset=0
+ mpxs_Apache__RequestRec_rflush | | ...
  mpxs_Apache__RequestRec_GETC
  mpxs_Apache__RequestRec_OPEN | | SV *:self, SV *:arg1, SV *:arg2=Nullsv
  mpxs_Apache__RequestRec_FILENO
