@@ -531,6 +531,54 @@ if (strEQ(name, "CONTINUE"))
 #else
 	    goto not_there;
 #endif
+        if (strEQ(name, "M_PATCH"))
+#ifdef M_PATCH
+            return M_PATCH;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_PROPFIND"))
+#ifdef M_PROPFIND
+            return M_PROPFIND;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_PROPPATCH"))
+#ifdef M_PROPPATCH
+            return M_PROPPATCH;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_MKCOL"))
+#ifdef M_MKCOL
+            return M_MKCOL;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_COPY"))
+#ifdef M_COPY
+            return M_COPY;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_MOVE"))
+#ifdef M_MOVE
+            return M_MOVE;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_LOCK"))
+#ifdef M_LOCK
+            return M_LOCK;
+#else
+            goto not_there;
+#endif
+        if (strEQ(name, "M_UNLOCK"))
+#ifdef M_UNLOCK
+            return M_UNLOCK;
+#else
+            goto not_there;
+#endif
 	break;
     case 'N':
 	if (strEQ(name, "NOT_AUTHORITATIVE"))

@@ -8,7 +8,7 @@
 
 eval { require Apache::Constants::Exports };
 
-use Apache::Constants ();
+use Apache::Constants qw(MODULE_MAGIC_NUMBER);
 use strict qw(vars);
 shift->send_http_header("text/plain");
 
@@ -32,6 +32,14 @@ push @export, grep {!$SEEN{$_}++} @Apache::Constants::EXPORT;
 #skip some 1.3 stuff that 1.2 didn't have
 my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV DECLINE_CMD DIR_MAGIC_TYPE
 			   SERVER_VERSION SERVER_SUBVERSION SERVER_BUILT);
+
+if(MODULE_MAGIC_NUMBER < 19981108) {
+    for(qw(M_PATCH M_PROPFIND M_PROPPATCH M_MKCOL M_COPY
+	   M_MOVE M_LOCK M_UNLOCK))
+    {
+	$skip{$_}++;
+    }
+}
 
 my $tests = (1 + @export) - keys %skip; 
 print "1..$tests\n"; 

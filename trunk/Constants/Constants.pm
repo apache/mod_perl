@@ -106,6 +106,14 @@ the Apache B<method_number> method.
  M_POST
  M_PUT
  M_TRACE 
+ M_PATCH
+ M_PROPFIND
+ M_PROPPATCH
+ M_MKCOL
+ M_COPY
+ M_MOVE
+ M_LOCK
+ M_UNLOCK
 
 =item options
 
