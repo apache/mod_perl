@@ -4,9 +4,6 @@
 
 -- see also todo/api_status
 
-* for RC2 need to temporarily fix makemanifest to exclude
-  Apache-Test/META.yml
-
 * pools that go out of scope:
 
   perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 
