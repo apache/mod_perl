@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_04-dev
 
+make sure lib/Apache/MyConfig.pm is written before used
+thanks to Albert Chin for the spot
+
 fixup the output of apxs -q CFLAGS to preserve quoting (again)
 
 =item 1.21_03 - March 15, 2000

@@ -853,6 +853,8 @@ unless (-e "t/net/config.pl") {
     cp "t/net/config.pl.dist", "t/net/config.pl";
 }
 
+write_my_config($APACHE_SRC);
+
 unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
     init_tests_and_config();
 }
@@ -1001,7 +1003,6 @@ PerlHandler Stacked::one Stacked::two Stacked::three Stacked::four
 EOF
 }
 
-write_my_config($APACHE_SRC);
 {
     (my $pmv = $VERSION) =~ s/_//g;
     $pmv =~ s/-dev$//;
