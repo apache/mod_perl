@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document the fact that $r->args can be used to set the query string
+as well as get it [Andrei A. Voropaev [SMTP:andrei@securities.com]
+
 add $r->connection->fileno, provides the client file descriptors. This
 can be used to detect client disconnect without doing any I/O, e.g. using
 IO::Select [Eric Cholet <cholet@logilune.com>]

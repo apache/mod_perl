@@ -383,6 +383,9 @@ I<value> pairs are returned, i.e. it can be used like this:
    $query = $r->args;
    %in    = $r->args;
 
+$r->args can also be used to set the I<query string>. This can be useful
+when redirecting a POST request.
+
 =item $r->headers_in
 
 The $r->headers_in method will return a %hash of client request
