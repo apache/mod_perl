@@ -1,12 +1,12 @@
 PerlModule Apache::Module
 
 ### --------------------------------- ###
-PerlLoadModule TestDirective::loadmodule
+PerlLoadModule TestDirective::perlloadmodule
 
 MyTest one two
 ServerTest per-server
 
-<Location /TestDirective::loadmodule>
+<Location /TestDirective::perlloadmodule>
     MyOtherTest value
 </Location>
 

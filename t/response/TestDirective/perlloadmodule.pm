@@ -1,4 +1,4 @@
-package TestDirective::loadmodule;
+package TestDirective::perlloadmodule;
 
 use strict;
 use warnings FATAL => 'all';
