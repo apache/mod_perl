@@ -7,7 +7,7 @@ my $r = shift;
 $r->send_http_header("text/plain");
 
 my $i = 0;
-my $tests = 30;
+my $tests = 32;
 print "1..$tests\n";
 
 my $headers_in = $r->headers_in;
@@ -122,3 +122,10 @@ for my $meth (qw{
     test ++$i, UNIVERSAL::isa($hash_ref, 'HASH');
     test ++$i, $tab->isa('Apache::Table');
 }
+
+my $tabobj = Apache::Table->new($r);
+test ++$i, $tabobj;
+
+$tabobj->{'a'} = 1;
+
+test ++$i, $tabobj->get('a');

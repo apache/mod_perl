@@ -80,7 +80,7 @@ TIEHASH(class, table)
     OUTPUT:
     RETVAL
 
-Apache::Table
+void
 new(class, r, nalloc=10)
     SV *class
     Apache r
@@ -88,10 +88,7 @@ new(class, r, nalloc=10)
 
     CODE:
     if(!class) XSRETURN_UNDEF;
-    RETVAL = ApacheTable_new(make_table(r->pool, nalloc));
-
-    OUTPUT:
-    RETVAL
+    ST(0) = mod_perl_tie_table(make_table(r->pool, nalloc));
 
 void
 DESTROY(self)

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+new Apache::Table->new method
+
 two experimental options now on by default: 
 PERL_SECTIONS_SELF_BOOT and ERRSV_CAN_BE_HTTP
 
