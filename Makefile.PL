@@ -29,7 +29,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-require "./mod_perl_version.pm";
+require "./mod_perl.pm_version";
 $VERSION = $mod_perl::VERSION;
 
 use subs qw(_prompt iedit asrc);
@@ -1175,7 +1175,7 @@ cvs_export :
 
 cvs_rtag :
 	cvs -d $(CVSROOT) rtag v$(VERSION_SYM) modperl
-	@echo update mod_perl_version.pm's VERSION now
+	@echo update mod_perl.pm_version's VERSION now
 
 EOF
 }

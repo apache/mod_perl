@@ -15,7 +15,7 @@ ToDo
 Makefile.PL
 README
 apache-modlist.html
-mod_perl_version.pm
+mod_perl.pm_version
 mod_perl.gif
 mod_perl.pod
 mod_perl_cvs.pod
