@@ -59,6 +59,10 @@ sub import {
 
 package Apache::RequestRec;
 
+#we support Apache->request; this is needed to support $r->request
+#XXX: seems sorta backwards
+*request = \&Apache::request;
+
 sub table_get_set {
     my($r, $table) = (shift, shift);
     my($key, $value) = @_;
