@@ -23,6 +23,13 @@ Available Patches:
             Patch available at 
             http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105359253610093&w=2
 
+    * Apache->request(bless {r => $r}, 'My::Apache')
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98600785703290&w=2
+	    Status:
+            Patch needs to get further testing
+        Patch:
+            http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105412732722992&w=2
+
 Needs Patch or Further Investigation
 
     * $r->print() ignores $,
@@ -73,10 +80,6 @@ Needs Patch or Further Investigation
 
     * revisit send_http_header and r->status
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99063926111686&w=2
-	Status:
-
-    * Apache->request(bless {r => $r}, 'My::Apache')
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98600785703290&w=2
 	Status:
 
     * recursion triggered by internal_redirect() called by a pushed handler
