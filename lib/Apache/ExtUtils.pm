@@ -5,6 +5,8 @@ use Exporter ();
 use IO::File ();
 use File::Copy ();
 
+$Apache::ExtUtils::VERSION = '1.02';
+
 *import = \&Exporter::import;
 @Apache::ExtUtils::EXPORT = qw(command_table);
 @Apache::ExtUtils::EXPORT_OK = qw(pm);
