@@ -30,19 +30,32 @@ void *modperl_create_dir_config(apr_pool_t *p, char *dir)
     return dcfg;
 }
 
+#define merge_item(item) \
+mrg->item = add->item ? add->item : base->item
+
 void *modperl_merge_dir_config(apr_pool_t *p, void *basev, void *addv)
 {
-#if 0
     modperl_dir_config_t
         *base = (modperl_dir_config_t *)basev,
         *add  = (modperl_dir_config_t *)addv,
         *mrg  = modperl_dir_config_new(p);
-#endif
 
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv);
 
-    return addv;
+#ifdef USE_ITHREADS
+    merge_item(interp_lifetime);
+#endif
+
+    { /* XXX: should do a proper merge of the arrays */
+      /* XXX: and check if Perl*Handler is disabled */
+        int i;
+        for (i=0; i<MP_PER_DIR_NUM_HANDLERS; i++) {
+            merge_item(handlers[i]);
+        }
+    }
+
+    return mrg;
 }
 
 modperl_request_config_t *modperl_request_config_new(request_rec *r)
@@ -147,9 +160,6 @@ void *modperl_create_srv_config(apr_pool_t *p, server_rec *s)
 
     return scfg;
 }
-
-#define merge_item(item) \
-mrg->item = add->item ? add->item : base->item
 
 /* XXX: this is not complete */
 void *modperl_merge_srv_config(apr_pool_t *p, void *basev, void *addv)
