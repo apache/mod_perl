@@ -15,12 +15,11 @@ package ModPerl::TestConfig;
 
 use base qw(Apache::TestConfig);
 
-#don't inherit LoadModule perl_module from the apache httpd.conf
-
-sub should_load_module {
+# don't inherit LoadModule perl_module from the apache httpd.conf
+sub should_skip_module {
     my($self, $name) = @_;
 
-    $name eq 'mod_perl.c' ? 0 : $self->SUPER::should_load_module($name);
+    $name eq 'mod_perl.c' ? 1 : $self->SUPER::should_load_module($name);
 }
 
 1;
