@@ -8,7 +8,7 @@ BEGIN {
 # should see it under ::Registry
 # should not see it under ::PerlRun
 
-print "Content-type: text/plain\r\n\r\n";
+print "Content-type: text/plain\n\n";
 
 # this is a closure (when compiled inside handler()):
 my $counter = 0;

@@ -10,7 +10,7 @@ BEGIN {
     $query = $ENV{QUERY_STRING};
 }
 
-print "Content-type: text/plain\r\n\r\n";
+print "Content-type: text/plain\n\n";
 
 my $r = shift;
 our $test = $r->args || '';

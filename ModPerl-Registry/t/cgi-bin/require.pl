@@ -1,6 +1,6 @@
 # test the require
 
-print "Content-type: text/plain\r\n\r\n";
+print "Content-type: text/plain\n\n";
 
 # XXX: fixme!
 #use lib qw(.);
