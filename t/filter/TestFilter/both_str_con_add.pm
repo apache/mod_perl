@@ -72,9 +72,12 @@ sub handler {
 
         last if $bb->is_empty;
 
-        my $b = APR::Bucket::flush_create($c->bucket_alloc);
-        $bb->insert_tail($b);
-        $c->output_filters->pass_brigade($bb);
+        # fflush is the equivalent of the following 3 lines of code:
+        #
+        # my $b = APR::Bucket::flush_create($c->bucket_alloc);
+        # $bb->insert_tail($b);
+        # $c->output_filters->pass_brigade($bb);
+        #$c->output_filters->fflush($bb);
     }
 
     $bb->destroy;
