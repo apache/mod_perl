@@ -1,0 +1,2551 @@
+=head1 NAME
+
+Apache::Const - Perl Interface for Apache Constants
+
+
+
+
+
+=head1 Synopsis
+
+  # make the constants available but don't import them
+  use Apache::Const -compile => qw(constant names ...);
+  
+  # w/o the => syntax sugar
+  use Apache::Const ("-compile", qw(constant names ...));
+  
+  # compile and import the constants
+  use Apache::Const qw(constant names ...);
+
+
+
+
+
+=head1 Description
+
+This package contains constants specific to C<Apache> features.
+
+mod_perl 2.0 comes with several hundreds of constants, which you don't
+want to make available to your Perl code by default, due to CPU and
+memory overhead. Therefore when you want to use a certain constant you
+need to explicitly ask to make it available.
+
+For example, the code:
+
+  use Apache::Const -compile => qw(FORBIDDEN OK);
+
+makes the constants C<Apache::FORBIDDEN> and C<Apache::OK> available
+to your code, but they aren't imported. In which case you need to use
+a fully qualified constants, as in:
+
+  return Apache::OK;
+
+If you drop the argument C<-compile> and write:
+
+  use Apache::Const qw(FORBIDDEN OK);
+
+Then both constants are imported into your code's namespace and can be
+used standalone like so:
+
+  return OK;
+
+Both, due to the extra memory requirement, when importing symbols, and
+since there are constants in other namespaces (e.g.,
+C<L<APR::|docs::2.0::api::APR::Const>> and
+C<L<ModPerl::|docs::2.0::api::ModPerl::Const>>, and non-mod_perl
+modules) which may contain the same names, it's not recommended to
+import constants. I.e. you want to use the C<-compile> construct.
+
+Finaly, in Perl C<=E<gt>> is almost the same as the comma operator. It
+can be used as syntax sugar making it more clear when there is a
+key-value relation between two arguments, and also it automatically
+parses its lefthand argument (the key) as a string, so you don't need
+to quote it.
+
+If you don't want to use that syntax, instead of writing:
+
+ use Apache::Const -compile => qw(FORBIDDEN OK);
+
+you could write:
+
+ use Apache::Const "-compile", qw(FORBIDDEN OK);
+
+and for parentheses-lovers:
+
+ use Apache::Const ("-compile", qw(FORBIDDEN OK));
+
+
+
+
+=head1 Constants
+
+
+
+
+=head2 C<:cmd_how>
+
+  use Apache::Const -compile => qw(:cmd_how);
+
+The C<:cmd_how> constants group is used in
+C<L<Apache::Module::add()|docs::2.0::api::Apache::Module/C_add_>>
+and
+C<L<$cmds-E<gt>args_how|docs::2.0::api::Apache::Command/C_args_how_>>.
+
+
+
+
+
+
+=head3 C<Apache::FLAG>
+
+One of I<On> or I<Off> (L<full
+description|docs::2.0::user::config::custom/C_Apache__FLAG_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::ITERATE>
+
+One argument, occuring multiple times (L<full
+description|docs::2.0::user::config::custom/C_Apache__ITERATE_>).
+
+
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::ITERATE2>
+
+Two arguments, the second occurs multiple times (L<full
+description|docs::2.0::user::config::custom/C_Apache__ITERATE2_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::NO_ARGS>
+
+No arguments at all (L<full
+description|docs::2.0::user::config::custom/C__C_Apache__NO_ARGS_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::RAW_ARGS>
+
+The command will parse the command line itself (L<full
+description|docs::2.0::user::config::custom/C_Apache__RAW_ARGS_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE1>
+
+One argument only (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE1_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE12>
+
+One or two arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE12_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE123>
+
+One, two or three arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE123_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE13>
+
+One or three arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE13_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE2>
+
+Two arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE2_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE23>
+
+Two or three arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE23_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::TAKE3>
+
+Three arguments (L<full
+description|docs::2.0::user::config::custom/C_Apache__TAKE3_>).
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=head2 C<:common>
+
+  use Apache::Const -compile => qw(:common);
+
+The C<:common> group is for XXX constants.
+
+
+
+
+=head3 C<Apache::AUTH_REQUIRED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::DECLINED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::DONE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FORBIDDEN>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::NOT_FOUND>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::REDIRECT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::SERVER_ERROR>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:config>
+
+  use Apache::Const -compile => qw(:config);
+
+The C<:config> group is for XXX constants.
+
+
+
+
+=head3 C<Apache::DECLINE_CMD>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+
+
+=head2 C<:conn_keepalive>
+
+  use Apache::Const -compile => qw(:conn_keepalive);
+
+The C<:conn_keepalive> constants group is used by the
+(C<L<$c-E<gt>keepalive|docs::2.0::api::Apache::Connection/C_keepalive_>>)
+method.
+
+
+
+
+=head3 C<Apache::CONN_CLOSE>
+
+The connection will be closed at the end of the current HTTP request.
+
+=over
+
+=item since: 1.99_13
+
+=back
+
+
+
+
+=head3 C<Apache::CONN_KEEPALIVE>
+
+The connection will be kept alive at the end of the current HTTP request.
+
+=over
+
+=item since: 1.99_13
+
+=back
+
+
+
+
+
+=head3 C<Apache::CONN_UNKNOWN>
+
+The connection is at an unknown state, e.g., initialized but not open
+yet.
+
+=over
+
+=item since: 1.99_13
+
+=back
+
+
+
+
+
+
+=head2 C<:context>
+
+  use Apache::Const -compile => qw(:context);
+
+The C<:context> group is used by the
+C<L<$parms-E<gt>check_cmd_context|docs::2.0::api::Apache::CmdParms/C_check_cmd_context_>>
+method.
+
+
+
+
+=head3 C<Apache::NOT_IN_VIRTUALHOST>
+
+The command is not in a E<lt>VirtualHostE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+=head3 C<Apache::NOT_IN_LIMIT>
+
+The command is not in a E<lt>LimitE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+=head3 C<Apache::NOT_IN_DIRECTORY>
+
+The command is not in a E<lt>DirectoryE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+=head3 C<Apache::NOT_IN_LOCATION>
+
+The command is not in a E<lt>LocationE<gt>/E<lt>LocationMatchE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+=head3 C<Apache::NOT_IN_FILES>
+
+The command is not in a E<lt>FilesE<gt>/E<lt>FilesMatchE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+
+=head3 C<Apache::NOT_IN_DIR_LOC_FILE>
+
+The command is not in a E<lt>FilesE<gt>/E<lt>FilesMatchE<gt>, 
+E<lt>LocationE<gt>/E<lt>LocationMatchE<gt> or 
+E<lt>DirectoryE<gt> block.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+=head3 C<Apache::GLOBAL_ONLY>
+
+The directive appears outside of any container directives.
+
+=over
+
+=item since: 1.99_15
+
+=back
+
+
+
+
+
+
+=head2 C<:filter_type>
+
+  use Apache::Const -compile => qw(:filter_type);
+
+The C<:filter_type> group is for XXX constants.
+
+
+
+
+=head3 C<Apache::FTYPE_CONNECTION>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FTYPE_CONTENT_SET>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FTYPE_NETWORK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FTYPE_PROTOCOL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FTYPE_RESOURCE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::FTYPE_TRANSCODE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+
+
+=head2 C<:http>
+
+  use Apache::Const -compile => qw(:http);
+
+The C<:http> group is for XXX constants.
+
+
+
+
+=head3 C<Apache::HTTP_ACCEPTED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_BAD_GATEWAY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_BAD_REQUEST>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_CONFLICT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_CONTINUE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_CREATED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_EXPECTATION_FAILED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_FAILED_DEPENDENCY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_FORBIDDEN>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_GATEWAY_TIME_OUT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_GONE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_INSUFFICIENT_STORAGE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_INTERNAL_SERVER_ERROR>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_LENGTH_REQUIRED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_LOCKED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_METHOD_NOT_ALLOWED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_MOVED_PERMANENTLY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_MOVED_TEMPORARILY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_MULTIPLE_CHOICES>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_MULTI_STATUS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NON_AUTHORITATIVE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NOT_ACCEPTABLE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NOT_EXTENDED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NOT_FOUND>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NOT_IMPLEMENTED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NOT_MODIFIED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_NO_CONTENT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_OK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_PARTIAL_CONTENT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_PAYMENT_REQUIRED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_PRECONDITION_FAILED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_PROCESSING>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_PROXY_AUTHENTICATION_REQUIRED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_RANGE_NOT_SATISFIABLE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_REQUEST_ENTITY_TOO_LARGE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_REQUEST_TIME_OUT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_REQUEST_URI_TOO_LARGE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_RESET_CONTENT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_SEE_OTHER>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_SERVICE_UNAVAILABLE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_SWITCHING_PROTOCOLS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_TEMPORARY_REDIRECT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_UNAUTHORIZED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_UNPROCESSABLE_ENTITY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_UNSUPPORTED_MEDIA_TYPE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_UPGRADE_REQUIRED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_USE_PROXY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::HTTP_VARIANT_ALSO_VARIES>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:input_mode>
+
+  use Apache::Const -compile => qw(:input_mode);
+
+The C<:input_mode> group is used by
+C<L<get_brigade|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+
+=head3 C<Apache::MODE_EATCRLF>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+
+=head3 C<Apache::MODE_EXHAUSTIVE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+=head3 C<Apache::MODE_GETLINE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+=head3 C<Apache::MODE_INIT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+=head3 C<Apache::MODE_READBYTES>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+=head3 C<Apache::MODE_SPECULATIVE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See
+C<L<Apache::Filter::get_brigade()|docs::2.0::api::Apache::Filter/C_get_brigade_>>.
+
+
+
+
+
+
+
+
+
+=head2 C<:log>
+
+  use Apache::Const -compile => qw(:log);
+
+The C<:log> group is for constants used by
+C<L<Apache::Log|docs::2.0::api::Apache::Log>>.
+
+
+
+
+=head3 C<Apache::LOG_ALERT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_ALERT_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_CRIT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_CRIT_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_DEBUG>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_DEBUG_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_EMERG>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_EMERG_>>.
+
+
+
+
+
+
+
+=head3 C<Apache::LOG_ERR>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_ERR_>>.
+
+
+
+
+
+
+=head3 C<Apache::LOG_INFO>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_INFO_>>.
+
+
+
+
+
+
+=head3 C<Apache::LOG_LEVELMASK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_LEVELMASK_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_NOTICE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_NOTICE_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_STARTUP>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_STARTUP_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_TOCLIENT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_TOCLIENT_>>.
+
+
+
+
+
+=head3 C<Apache::LOG_WARNING>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+See C<L<Apache::Log|docs::2.0::api::Apache::Log/C_Apache__LOG_WARNING_>>.
+
+
+
+
+
+=head2 C<:methods>
+
+  use Apache::Const -compile => qw(:methods);
+
+The C<:methods> constants group is used in conjunction with
+C<L<$r-E<gt>method_number|docs::2.0::api::Apache::RequestRec/C_method_number_>>.
+
+
+
+
+=head3 C<Apache::METHODS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_BASELINE_CONTROL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_CHECKIN>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_CHECKOUT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_CONNECT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_COPY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_DELETE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_GET>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+corresponds to the HTTP C<GET> method
+
+
+
+
+=head3 C<Apache::M_INVALID>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_LABEL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_LOCK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_MERGE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_MKACTIVITY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_MKCOL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_MKWORKSPACE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_MOVE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_OPTIONS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_PATCH>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_POST>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+corresponds to the HTTP C<POST> method
+
+
+
+=head3 C<Apache::M_PROPFIND>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_PROPPATCH>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_PUT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+corresponds to the HTTP C<PUT> method
+
+
+
+=head3 C<Apache::M_REPORT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_TRACE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_UNCHECKOUT>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_UNLOCK>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_UPDATE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::M_VERSION_CONTROL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:mpmq>
+
+  use Apache::Const -compile => qw(:mpmq);
+
+The C<:mpmq> group is for querying MPM properties.
+
+
+
+
+=head3 C<Apache::MPMQ_NOT_SUPPORTED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_STATIC>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_DYNAMIC>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_DAEMON_USED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_IS_THREADED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_IS_FORKED>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_HARD_LIMIT_DAEMONS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_HARD_LIMIT_THREADS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_THREADS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MIN_SPARE_DAEMONS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MIN_SPARE_THREADS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_SPARE_DAEMONS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_SPARE_THREADS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_REQUESTS_DAEMON>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::MPMQ_MAX_DAEMONS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+
+=head2 C<:options>
+
+  use Apache::Const -compile => qw(:options);
+
+The C<:options> group contains constants corresponding to the
+C<Options> configuration directive. For examples see:
+C<L<$r-E<gt>allow_options|docs::2.0::api::Apache::Access/C_allow_options_>>.
+
+
+
+
+=head3 C<Apache::OPT_ALL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_EXECCGI>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_INCLUDES>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_INCNOEXEC>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_INDEXES>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_MULTI>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_NONE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_SYM_LINKS>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_SYM_OWNER>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OPT_UNSET>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:override>
+
+  use Apache::Const -compile => qw(:override);
+
+The C<:override> group contains constants corresponding to the
+C<AllowOverride> configuration directive. For examples see:
+C<L<$r-E<gt>allow_options|docs::2.0::api::Apache::Access/C_allow_overrides_>>.
+
+
+
+
+=head3 C<Apache::ACCESS_CONF>
+
+F<*.conf> inside C<E<lt>DirectoryE<gt>> or C<E<lt>LocationE<gt>>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_ALL>
+
+C<L<Apache::OR_LIMIT|/C_Apache__OR_LIMIT_>> | 
+C<L<Apache::OR_OPTIONS|/C_Apache__OR_OPTIONS_>> | 
+C<L<Apache::OR_FILEINFO|/C_Apache__OR_FILEINFO_>> | 
+C<L<Apache::OR_AUTHCFG|/C_Apache__OR_AUTHCFG_>> | 
+C<L<Apache::OR_INDEXES|/C_Apache__OR_INDEXES_>>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_AUTHCFG>
+
+F<*.conf> inside C<E<lt>DirectoryE<gt>> or C<E<lt>LocationE<gt>> and
+F<.htaccess> when C<AllowOverride AuthConfig>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_FILEINFO>
+
+F<*.conf> anywhere and F<.htaccess> when C<AllowOverride FileInfo>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_INDEXES>
+
+F<*.conf> anywhere and F<.htaccess> when C<AllowOverride Indexes>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_LIMIT>
+
+F<*.conf> inside C<E<lt>DirectoryE<gt>> or C<E<lt>LocationE<gt>> and
+F<.htaccess> when C<AllowOverride Limit>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_NONE>
+
+F<*.conf> is not available anywhere in this override
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_OPTIONS>
+
+F<*.conf> anywhere and F<.htaccess> when C<AllowOverride Options>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::OR_UNSET>
+
+Unset a directive (in C<Allow>)
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::RSRC_CONF>
+
+F<*.conf> outside C<E<lt>DirectoryE<gt>> or C<E<lt>LocationE<gt>>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:platform>
+
+  use Apache::Const -compile => qw(:platform);
+
+The C<:platform> group is for constants that may
+differ from OS to OS.
+
+
+
+
+=head3 C<Apache::CRLF>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::CR>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::LF>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:remotehost>
+
+  use Apache::Const -compile => qw(:remotehost);
+
+The C<:remotehost> constants group is is used by the
+C<L<$c-E<gt>get_remote_host|docs::2.0::api::Apache::Connection/C_get_remote_host_>>
+method.
+
+
+
+
+=head3 C<Apache::REMOTE_DOUBLE_REV>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+=head3 C<Apache::REMOTE_HOST>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::REMOTE_NAME>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head3 C<Apache::REMOTE_NOLOOKUP>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head2 C<:satisfy>
+
+  use Apache::Const -compile => qw(:satisfy);
+
+The C<:satisfy> constants group is used in conjunction with
+C<L<$r-E<gt>satisfies|docs::2.0::api::Apache::Access/C_satisfies_>>.
+
+
+
+
+=head3 C<Apache::SATISFY_ALL>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+All of the requirements must be met.
+
+
+
+=head3 C<Apache::SATISFY_ANY>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+any of the requirements must be met.
+
+
+
+
+=head3 C<Apache::SATISFY_NOSPEC>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+There are no applicable satisfy lines
+
+
+
+
+
+=head2 C<:types>
+
+  use Apache::Const -compile => qw(:types);
+
+The C<:types> group is for XXX constants.
+
+
+
+
+=head3 C<Apache::DIR_MAGIC_TYPE>
+
+=over
+
+=item since: 1.99_12
+
+=back
+
+
+
+
+
+=head1 See Also
+
+L<mod_perl 2.0 documentation|docs::2.0::index>.
+
+
+
+
+=head1 Copyright
+
+mod_perl 2.0 and its core modules are copyrighted under
+The Apache Software License, Version 2.0.
+
+
+
+
+=head1 Authors
+
+L<The mod_perl development team and numerous
+contributors|about::contributors::people>.
+
+=cut
