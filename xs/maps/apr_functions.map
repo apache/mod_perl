@@ -51,8 +51,8 @@ MODULE=APR::Socket
  apr_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
  apr_sendto
 !apr_shutdown
--apr_socket_set_inherit
--apr_socket_unset_inherit
+-apr_socket_inherit_set
+-apr_socket_inherit_unset
 
 MODULE=APR::Socket
  apr_socket_close
