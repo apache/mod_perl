@@ -1,9 +1,3 @@
-#define mpxs_Apache__RequestRec_add_output_filter(r, name, ctx) \
-ap_add_output_filter(name, ctx, r, NULL)
-
-#define mpxs_Apache__RequestRec_add_input_filter(r, name, ctx) \
-ap_add_input_filter(name, ctx, r, NULL)
-
 #define mp_xs_sv2_modperl_filter(sv) \
 ((SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) \
 || (Perl_croak(aTHX_ "argument is not a blessed reference"),0) ? \
@@ -145,4 +139,60 @@ static MP_INLINE SV *mpxs_Apache__Filter_seen_eos(pTHX_ I32 items,
     modperl_filter_t *modperl_filter;
     mpxs_usage_va_1(modperl_filter, "$filter->seen_eos()");
     return modperl_filter->seen_eos ? &PL_sv_yes : &PL_sv_no;
+}
+
+static MP_INLINE
+void mpxs_Apache__RequestRec_add_input_filter(pTHX_ request_rec *r,
+                                              SV *callback)
+{
+    
+    modperl_filter_runtime_add(aTHX_ r,
+                               r->connection,
+                               MP_INPUT_FILTER_HANDLER,
+                               MP_FILTER_REQUEST_INPUT_NAME,
+                               ap_add_input_filter,
+                               callback,
+                               "InputFilter");
+}
+
+static MP_INLINE
+void mpxs_Apache__RequestRec_add_output_filter(pTHX_ request_rec *r,
+                                               SV *callback)
+{
+    
+    modperl_filter_runtime_add(aTHX_ r,
+                               r->connection,
+                               MP_OUTPUT_FILTER_HANDLER,
+                               MP_FILTER_REQUEST_OUTPUT_NAME,
+                               ap_add_output_filter,
+                               callback,
+                               "OutputFilter");
+}
+
+static MP_INLINE
+void mpxs_Apache__Connection_add_input_filter(pTHX_ conn_rec *c,
+                                              SV *callback)
+{
+    
+    modperl_filter_runtime_add(aTHX_ NULL,
+                               c,
+                               MP_INPUT_FILTER_HANDLER,
+                               MP_FILTER_CONNECTION_INPUT_NAME,
+                               ap_add_input_filter,
+                               callback,
+                               "InputFilter");
+}
+
+static MP_INLINE
+void mpxs_Apache__Connection_add_output_filter(pTHX_ conn_rec *c,
+                                               SV *callback)
+{
+    
+    modperl_filter_runtime_add(aTHX_ NULL,
+                               c,
+                               MP_OUTPUT_FILTER_HANDLER,
+                               MP_FILTER_CONNECTION_OUTPUT_NAME,
+                               ap_add_output_filter,
+                               callback,
+                               "OutputFilter");
 }

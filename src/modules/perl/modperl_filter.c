@@ -586,13 +586,11 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     }
 }
 
-typedef ap_filter_t * MP_FUNC_T(filter_add_t) (const char *, void *,
-                                               request_rec *, conn_rec *);
 
 static int modperl_filter_add_connection(conn_rec *c,
                                          int idx,
                                          const char *name,
-                                         filter_add_t addfunc,
+                                         modperl_filter_add_t addfunc,
                                          const char *type)
 {
     modperl_config_dir_t *dcfg =
@@ -632,7 +630,7 @@ static int modperl_filter_add_connection(conn_rec *c,
 static int modperl_filter_add_request(request_rec *r,
                                       int idx,
                                       const char *name,
-                                      filter_add_t addfunc,
+                                      modperl_filter_add_t addfunc,
                                       const char *type,
                                       ap_filter_t *filters)
 {
@@ -729,6 +727,32 @@ void modperl_input_filter_add_request(request_rec *r)
                                "InputFilter",
                                r->connection->input_filters);
 }
+
+void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c, int idx,
+                                const char *name,
+                                modperl_filter_add_t addfunc,
+                                SV *callback, const char *type)
+{
+    apr_pool_t *pool = r ? r->pool : c->pool;
+    char *handler_name;
+
+    if ((handler_name = modperl_mgv_name_from_sv(aTHX_ pool, callback))) {
+        modperl_filter_ctx_t *ctx =
+            (modperl_filter_ctx_t *)apr_pcalloc(pool, sizeof(*ctx));
+        ctx->handler = modperl_handler_new(pool,
+                                           apr_pstrdup(pool, handler_name));
+        addfunc(name, (void*)ctx, r, c);
+        
+        MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
+                   type, name);
+
+        return;
+    }
+
+    Perl_croak(aTHX_ "unable to resolve handler 0x%lx\n",
+               (unsigned long)callback);
+}
+
 
 void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
 {

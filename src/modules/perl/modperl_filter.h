@@ -10,6 +10,10 @@
 #define MP_FILTER_CONNECTION_HANDLER 0x01
 #define MP_FILTER_REQUEST_HANDLER    0x02
 
+typedef ap_filter_t * MP_FUNC_T(modperl_filter_add_t) (const char *, void *,
+                                                       request_rec *,
+                                                       conn_rec *);
+
 /* simple buffer api */
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *b,
                                             const char *buf, apr_size_t len);
@@ -81,6 +85,11 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
                                                   modperl_filter_t *filter,
                                                   const char *buf,
                                                   apr_size_t *len);
+
+void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c, int idx,
+                                const char *name,
+                                modperl_filter_add_t addfunc,
+                                SV *callback, const char *type);
 
 
 #endif /* MODPERL_FILTER_H */

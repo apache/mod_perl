@@ -282,6 +282,116 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'modperl_filter_runtime_add',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      },
+      {
+        'type' => 'int',
+        'name' => 'idx'
+      },
+      {
+        'type' => 'const char *',
+        'name' => 'name'
+      },
+      {
+        'type' => 'modperl_filter_add_t',
+        'name' => 'addfunc'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'callback'
+      },
+      {
+        'type' => 'const char *',
+        'name' => 'type'
+      },
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__RequestRec_add_input_filter',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'callback'
+      },
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__RequestRec_add_output_filter',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'callback'
+      },
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__Connection_add_input_filter',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'callback'
+      },
+    ]
+  },
+   {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__Connection_add_output_filter',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'callback'
+      },
+    ]
+  },
+ {
     'return_type' => 'int',
     'name' => 'modperl_cgi_header_parse',
     'attr' => [
