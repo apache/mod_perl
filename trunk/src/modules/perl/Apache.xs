@@ -990,8 +990,18 @@ internal_redirect_handler(r, location)
     Apache	r
     char *      location
 
+    ALIAS: 
+    Apache::internal_redirect = 1
+
     CODE:
-    internal_redirect_handler(location, r);
+    switch((ix = XSANY.any_i32)) {
+	case 0:
+	internal_redirect_handler(location, r);
+	break;
+	case 1:
+	internal_redirect(location, r);
+	break;
+    }
 
 #functions from http_log.c
 
