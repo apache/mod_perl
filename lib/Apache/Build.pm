@@ -285,7 +285,7 @@ sub configure_apache {
     my $cd = qq(cd $self->{MP_AP_PREFIX});
     
     #We need to clean the httpd tree before configuring it
-    if (-f 'Makefile') {
+    if (-f File::Spec->catfile($self->{MP_AP_PREFIX}, 'Makefile')) {
         my $cmd = qq(make clean);
         debug "Running $cmd";
         system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
