@@ -7,6 +7,9 @@ use Apache::TestRequest;
 
 use File::Spec::Functions qw(catfile catdir);
 
+use constant SIZE  => 10;
+use constant TRIES => 20;
+
 my $vars = Apache::Test::config->{vars};
 my $dir  = catdir $vars->{documentroot}, "hooks";
 my $file = catfile $dir, "cleanup";
@@ -30,7 +33,7 @@ plan tests => 2;
     # and fill in the file. (wait 0.25 .. 5 sec)
     my $t = 0;
     select undef, undef, undef, 0.25
-        until -e $file && -s _ == 10 || $t++ == 20;
+        until -e $file && -s _ == SIZE || $t++ == TRIES;
 
     unless (-e $file) {
         t_debug("can't find $file");
