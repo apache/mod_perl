@@ -6,6 +6,9 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_Apache__RequestRec_BINMODE(r) \
     r ? &PL_sv_yes : &PL_sv_no /* noop */
 
+#define mpxs_Apache__RequestRec_UNTIE(r, refcnt) \
+    (r && refcnt) ? &PL_sv_yes : &PL_sv_no /* noop */
+
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
