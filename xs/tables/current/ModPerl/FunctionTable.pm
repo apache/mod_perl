@@ -6550,6 +6550,10 @@ $ModPerl::FunctionTable = [
     'name' => 'mpxs_Apache__RequestRec_sendfile',
     'args' => [
       {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
         'type' => 'request_rec *',
         'name' => 'r'
       },

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+APR::RequestIO::sendfile() now flushes any buffered output before
+sending the file contents out [Stas]
+
 Registry: remove the misleading prefix "$$: $class:" in the logged
 error message, since not only registry errors will get logged if $@ is
 set [Stas]
