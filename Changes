@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+require Perl 5.6.1, 5.6.0 isn't supported for a long time, but we
+weren't aborting at the Makefile.PL stage [Stas]
+
 Apache::RequestUtil::method_register($s->process->pconf, 'FOO'); is
 now $s->method_register('FOO') [Stas]
 
