@@ -66,12 +66,14 @@ sub compile {
 sub namespace {
     my($r, $root) = @_;
 
+    my $uri = $r->uri; 
+    $uri = "/__INDEX__" if $uri eq "/";
     $r->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
-		  $r->uri) if $Debug && $Debug & 4;
+		  $uri) if $Debug && $Debug & 4;
 
     my $script_name = $r->path_info ?
-	substr($r->uri, 0, length($r->uri)-length($r->path_info)) :
-	    $r->uri;
+	substr($uri, 0, length($uri)-length($r->path_info)) :
+	    $uri;
 
     if($Apache::Registry::NameWithVirtualHost) {
 	my $srv = $r->server;
