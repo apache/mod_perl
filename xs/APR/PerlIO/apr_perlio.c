@@ -1,3 +1,4 @@
+#include "modperl_largefiles.h"
 
 #include "mod_perl.h"
 #include "apr_perlio.h"
@@ -194,8 +195,6 @@ static Off_t PerlIOAPR_tell(PerlIO *f)
     apr_off_t offset = 0;
     apr_status_t rc;
     
-    /* this is broken, for some reason it returns 6e17 */
-
     rc = apr_file_seek(st->file, APR_CUR, &offset);
     if (rc == APR_SUCCESS) {
         return (Off_t) offset;
