@@ -46,6 +46,9 @@ our ($HOW_BIG_IS_IT, $START_TIME);
 
 BEGIN {
 
+    die "Apache::SizeLimit at the moment works only with non-threaded MPMs"
+        if Apache::MPM->is_threaded();
+
     # decide at compile time how to check for a process' memory size.
     if (SOLARIS && $Config{'osvers'} >= 2.6) {
 
@@ -216,9 +219,6 @@ sub setmax_unshared {
 
 sub handler {
     my $r = shift;
-
-    die "Apache::SizeLimit at the moment works only with non-threaded MPMs"
-        if Apache::MPM->is_threaded();
 
     if ($r->is_initial_req()) {
         # we want to operate in a cleanup handler
