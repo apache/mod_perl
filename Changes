@@ -10,7 +10,7 @@ Changes - Apache mod_perl change logfile
 
 Apache::Log optimizations:
   ${r,s}->log->$method() will now accept a CODE ref as it's first
-  argument, which is only called when $method >= LogLevel
+  argument, which is only called when LogLevel >= $method
   caller() file/line info determined only if LogLevel >= debug
   avoid copy of message SV 
 
