@@ -146,6 +146,11 @@ $Apache::ConstantsTable = {
     'config' => [
       'DECLINE_CMD'
     ],
+    'platform' => [
+      'CRLF',
+      'CR',
+      'LF'
+    ],
     'types' => [
       'DIR_MAGIC_TYPE'
     ],

@@ -14,6 +14,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10 - September 29, 2003
 
+added Apache::CRLF, Apache::CR, and Apache::LF to
+Apache::Const's :platform group  [Geoffrey Young]
+
 make sure that the custom pools are destroyed only once and only when
 all references went out of scope [Stas]
 
