@@ -193,10 +193,12 @@ MODULE=Apache::Directive
 MODULE=Apache::Filter PACKAGE=Apache::RequestRec
 ap_filter_t *:DEFINE_add_output_filter | | \
               request_rec *:r, const char *:name, void *:ctx
+ap_filter_t *:DEFINE_add_input_filter | | \
+              request_rec *:r, const char *:name, void *:ctx
 
 PACKAGE=guess
 ~ap_add_output_filter
- ap_add_input_filter
+~ap_add_input_filter
  ap_get_brigade | mpxs_ | \
                filter, bucket, mode=AP_MODE_NONBLOCKING, SV *:readbytes=Nullsv
  ap_pass_brigade

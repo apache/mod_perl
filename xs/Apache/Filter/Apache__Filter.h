@@ -1,6 +1,9 @@
 #define mpxs_Apache__RequestRec_add_output_filter(r, name, ctx) \
 ap_add_output_filter(name, ctx, r, NULL)
 
+#define mpxs_Apache__RequestRec_add_input_filter(r, name, ctx) \
+ap_add_output_filter(name, ctx, r, NULL)
+
 #define mp_xs_sv2_modperl_filter(sv) \
 ((SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) \
 || (Perl_croak(aTHX_ "argument is not a blessed reference"),0) ? \
