@@ -205,7 +205,7 @@ sub can_compile {
     my $r = $o->[REQ];
 
     unless (-r $r->finfo && -s _) {
-        $r->log_error("$$: $o->[FILENAME] not found or unable to stat");
+        xlog_error($r, "$$: $o->[FILENAME] not found or unable to stat");
 	return Apache::NOT_FOUND;
     }
 
@@ -649,7 +649,7 @@ sub compile {
 sub error_check {
     my $o = shift;
     if ($@ and substr($@,0,4) ne " at ") {
-	$o->[REQ]->log_error("$$: $o->[CLASS]: `$@'");
+	xlog_error($o->[REQ], "$$: $o->[CLASS]: `$@'");
 	$@{$o->[REQ]->uri} = $@;
 	#$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return Apache::SERVER_ERROR;
@@ -688,6 +688,11 @@ sub debug {
     $o->[REQ]->log_error("$$: $o->[CLASS]: " . join '', @_);
 }
 
+sub xlog_error {
+    my($r, $msg) = @_;
+    $r->log_error($msg);
+    $r->notes('error-notes', $msg);
+}
 
 1;
 __END__
