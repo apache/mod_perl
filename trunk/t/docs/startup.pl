@@ -97,6 +97,13 @@ sub BaseClass::handler ($$) {
     0;
 }
 
+{
+    package BaseClass;
+    #so 5.005-tobe doesn't complain:
+    #No such package "BaseClass" in @ISA assignment at ...
+}
+
+
 $MyClass::Object = bless {}, "MyClass";
 @MyClass::ISA = qw(BaseClass);
 
