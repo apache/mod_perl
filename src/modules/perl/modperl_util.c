@@ -473,6 +473,14 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
     return 0;
 }
 
+void modperl_str_toupper(char *str)
+{
+    while (*str) {
+        *str = apr_toupper(*str);
+        ++str;
+    }
+}
+
 /* XXX: same as Perl_do_sprintf(); 
  * but Perl_do_sprintf() is not part of the "public" api
  */

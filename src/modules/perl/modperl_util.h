@@ -98,6 +98,8 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
 #define hv_fetch_he(hv,k,l,h) \
     modperl_perl_hv_fetch_he(aTHX_ hv, k, l, h)
 
+void modperl_str_toupper(char *str);
+
 void modperl_perl_do_sprintf(pTHX_ SV *sv, I32 len, SV **sarg);
 
 void modperl_perl_call_list(pTHX_ AV *subs, const char *name);
