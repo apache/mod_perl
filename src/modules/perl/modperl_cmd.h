@@ -26,6 +26,7 @@ MP_CMD_SRV_DECLARE(options);
 #ifdef MP_COMPAT_1X
 
 MP_CMD_SRV_DECLARE_FLAG(taint_check);
+MP_CMD_SRV_DECLARE_FLAG(warn);
 
 #endif /* MP_COMPAT_1X */
 
