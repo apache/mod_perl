@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+move the definition of DEFINE='-DMP_HAVE_APR_LIBS' to the top level
+Makefile.PL, since it overrides MY::pasthru target which makes it
+impossible to define local DEFINE in subdirs. [Stas]
+
 make APR perl functions work outside mod_perl: several libraries
 weren't linked. Also LIBS needs to receive all libs in one
 string. [Stas]

@@ -74,6 +74,7 @@ ModPerl::BuildMM::WriteMakefile(
     NAME      => 'mod_perl',
     VERSION   => $VERSION,
     EXE_FILES => \@exe_files,
+    DEFINE    => get_DEFINE(),
     macro     => {
         MODPERL_SRC        => $code->path,
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
@@ -94,6 +95,26 @@ ModPerl::BuildMM::WriteMakefile(
 );
 
 post_configure();
+
+sub get_DEFINE {
+
+    # do we have apr libs?
+    # XXX: this define is really needed in xs/APR/APR/Makefile.PL, but this 
+    # top-level Makefile.PL overrides MY::pasthru, and defines DEFINE= which
+    # overrides any local definition, not sure what's the right fix, for
+    # now just define it here
+    my $bin_prefix = $build->apxs(-q => 'PREFIX');
+    my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
+        map { qq{$bin_prefix/bin/$_-config} } qw(apr apu);
+    my $opt_define = @apr_libs ? '-DMP_HAVE_APR_LIBS' : '';
+
+    # preserve any DEFINE opts from outside and combine them with our
+    # local DEFINE
+    @ARGV = grep defined,
+        map { (/^DEFINE=(.*)/ && ($opt_define .= " $1")) ? undef : $_ } @ARGV;
+
+    return $opt_define;
+}
 
 sub configure {
     set_modperl_version();
