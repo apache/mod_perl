@@ -442,7 +442,8 @@ static void mp_server_notstarting(void *data)
 
 #define Apache__ServerStarting_on() \
     Apache__ServerStarting(PERL_RUNNING()); \
-    register_cleanup(p, NULL, mp_server_notstarting, mod_perl_noop) 
+    if(!PERL_IS_DSO) \
+        register_cleanup(p, NULL, mp_server_notstarting, mod_perl_noop) 
 
 #define MP_APACHE_VERSION 1.25
 

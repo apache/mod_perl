@@ -86,7 +86,7 @@ IDC_HTX		i						PTI
 JavaScript	cdpf	Generate JavaScript code		ABH
 Layer		bdpf	Layer content tree over one or more	SAM
 Magick		bdpf	Image conversion on-the-fly		MPB
-Mason		bdpO	HTML::Mason handler for mod_perl	JSWARTZ
+Mason		bdpO	Build sites w/ modular Perl/HTML blocks	JSWARTZ
 ModuleDoc	bdpf	Self documentation for Apache C modules	DOUGM
 NavBar		bdpO	Navigation bar generator		MPB
 OutputChain     bmpO	Chain output of stacked handlers	JANPAZ
@@ -213,6 +213,7 @@ Log		SmcO	ap_log_error interface			APML
 LogFile		bmcO	Interface to Apache's piped logs, etc.	APML
 Module		bmcO	Interface to Apache module struct	APML
 Server		SmcO	Interface to Apache server_rec struct	APML
+SubProcess	cmcO	Interface to Apache subprocess API	APML
 Table		SmcO	Interface to Apache table struct + API 	APML
 URI		SmcO	URI component parsing and unparsing	APML
 Util		Smcf	Interface to Apache's util*.c functions	APML
@@ -243,7 +244,7 @@ Include		Smpf	mod_include + Apache::Registry handler	APML
 Mmap		bdcf	Share data via Mmap module		FLETCH
 ParseLog	bdpO	OO interface to Apache log files	AKIRA
 RegistryLoader	SmpO	Apache::Registry startup script loader 	APML
-Request		bmpO    CGI.pm functionality using API methods	LDS
+Request		cmcO    CGI.pm functionality using API methods	APML
 Safe		ampO	Adaptation of "safecgiperl"		APML
 Session		bmpO	Maintain client &lt;-&gt; httpd session/state	JBAKER
 Servlet		ampO	Interface to the Java Servlet engine	IKLUFT
