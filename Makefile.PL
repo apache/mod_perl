@@ -63,7 +63,7 @@ local %ModPerl::BuildMM::PM = (
 my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h
        APR/PerlIO/modperl_apr_perlio.h);
-my @exe_files =  map "bin/$_", qw(mp2doc mp2bug);
+my @exe_files =  map "bin/$_", qw(mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
     NAME          => 'mod_perl2',
