@@ -1614,9 +1614,10 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 		    perl_eat_config_string(parms, dummy, sv);
 		}
 		else {
-		    MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n", 
-				     key, SvPV(sv,na)));
-		    sprintf(line, "%s %s", key, SvPV(sv,na));
+		    STRLEN junk;
+		    MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n",
+							 key, SvPV(sv,junk)));
+		    sprintf(line, "%s %s", key, SvPV(sv,junk));
 		    perl_handle_command(parms, dummy, line);
 		}
 	    }
