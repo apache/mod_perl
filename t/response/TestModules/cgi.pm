@@ -9,8 +9,6 @@ use CGI ();
 sub handler {
     my $r = shift;
 
-    system "echo hi";
-
     if ($CGI::Q) {
         die "CGI.pm globals were not reset";
     }
