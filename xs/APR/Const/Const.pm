@@ -15,6 +15,7 @@
 package APR::Const;
 
 use ModPerl::Const ();
+use APR ();
 use XSLoader ();
 
 our $VERSION = '0.01';
