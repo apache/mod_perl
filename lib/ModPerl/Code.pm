@@ -381,11 +381,12 @@ my @g_c_names = map { "modperl_$_" } qw(hooks directives xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
 sub c_files { [map { "$_.c" } @c_names] }
 sub o_files { [map { "$_.o" } @c_names] }
+sub o_pic_files { [map { "$_.lo" } @c_names] }
 
 my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
 
 sub clean_files {
-    (map { "$_.c" } @g_c_names), (map { "$_.h" } @g_h_names);
+    [(map { "$_.c" } @g_c_names), (map { "$_.h" } @g_h_names)];
 }
 
 sub noedit_warning {
