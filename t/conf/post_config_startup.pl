@@ -31,8 +31,6 @@ test_apache_size_limit();
 
 test_loglevel();
 
-test_apache_resource();
-
 test_perl_ithreads();
 
 test_server_shutdown_cleanup_register();
@@ -58,23 +56,6 @@ sub test_loglevel {
     # restore
     $s->loglevel($oldloglevel);
 }
-
-sub test_apache_resource {
-    ### Apache::Resource tests
-
-    # load first for the menu
-    require Apache::Status;
-
-    # uncomment for local tests
-    #$ENV{PERL_RLIMIT_DEFAULTS} = 1;
-    #$Apache::Resource::Debug   = 1;
-
-    # requires optional BSD::Resource
-    return unless eval { require BSD::Resource };
-
-    require Apache::Resource;
-}
-
 
 sub test_perl_ithreads {
     # this is needed for TestPerl::ithreads

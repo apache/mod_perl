@@ -37,6 +37,10 @@ test_modperl_env();
 
 test_method_obj();
 
+test_apache_resource();
+
+
+
 ### only subs below this line ###
 
 sub reorg_INC {
@@ -59,15 +63,15 @@ sub reorg_INC {
 }
 
 sub register_post_config_startup {
-    my $s = Apache->server;
-    my $pool = $s->process->pool;
-    my $t_conf_path = Apache::ServerUtil::server_root_relative($pool,
-                                                               "conf");
-
     # most of the startup code needs to be run at the post_config
     # phase
-    $s->push_handlers(PerlPostConfigHandler => sub {
-        require "$t_conf_path/post_config_startup.pl"; Apache::OK });
+    Apache->server->push_handlers(PerlPostConfigHandler => sub {
+        my $pool = Apache->server->process->pool;
+        my $t_conf_path = Apache::ServerUtil::server_root_relative($pool,
+                                                                   "conf");
+        require "$t_conf_path/post_config_startup.pl";
+        return Apache::OK;
+    });
 }
 
 sub startup_info {
@@ -148,6 +152,22 @@ sub test_method_obj {
     # see t/modperl/methodobj
     require TestModperl::methodobj;
     $TestModperl::MethodObj = TestModperl::methodobj->new;
+}
+
+sub test_apache_resource {
+    ### Apache::Resource tests
+
+    # load first for the menu
+    require Apache::Status;
+
+    # uncomment for local tests
+    #$ENV{PERL_RLIMIT_DEFAULTS} = 1;
+    #$Apache::Resource::Debug   = 1;
+
+    # requires optional BSD::Resource
+    return unless eval { require BSD::Resource };
+
+    require Apache::Resource;
 }
 
 sub ModPerl::Test::add_config {
