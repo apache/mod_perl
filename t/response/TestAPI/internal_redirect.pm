@@ -7,6 +7,8 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::SubRequest ();
 
+use Apache::TestTrace;
+
 use Apache::Const -compile => 'OK';
 
 sub modperl {
@@ -16,11 +18,13 @@ sub modperl {
     if ($args{main}) {
         # sub-req
         $r->content_type('text/plain');
+        debug "modperl: sub-req: response";
         $r->print("internal redirect: $args{main} => modperl");
     }
     else {
         # main-req
         my $redirect_uri = $args{uri};
+        debug "modperl: main-req => $redirect_uri?main=modperl";
         $r->internal_redirect("$redirect_uri?main=modperl");
     }
 
@@ -34,11 +38,13 @@ sub perl_script {
     if ($args{main}) {
         # sub-req
         $r->content_type('text/plain');
+        debug "perl-script: sub-req: response";
         print "internal redirect: $args{main} => perl-script";
     }
     else {
         # main-req
         my $redirect_uri = $args{uri};
+        debug "perl-script: main-req => $redirect_uri?main=perl-script";
         $r->internal_redirect("$redirect_uri?main=perl-script");
     }
 
