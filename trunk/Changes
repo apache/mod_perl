@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+use ap_bfileno() instead of r->connnection->client->fd directly
+[Paul J. Reder <rederpj@raleigh.ibm.com>]
+
 fix Table.xs:table_modify() under win32
 [Trung Tran-Duc <trung.tranduc@prague.ixos.cz>]
 
