@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/01/01 23:13:28 $]
+   Last modified at [$Date: 2003/01/01 23:22:19 $]
 
 Release:
 --------
@@ -23,8 +23,6 @@ Release:
 
 Release Showstoppers:
 ---------------------
-
- * Makefile.PL process ugly "unknown typemap" warnings must go away
 
 Available Patches:
 ------------------
