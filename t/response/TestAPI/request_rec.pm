@@ -50,7 +50,7 @@ sub handler {
 
     ok $r->the_request || 1;
 
-    ok $r->assbackwards || 1;
+    ok !$r->assbackwards;
 
     ok $r->proxyreq || 1;
 
@@ -72,20 +72,16 @@ sub handler {
 
     ok t_cmp $r->method_number, Apache::M_GET, "method number";
 
-    {
-        $r->allowed(1 << Apache::M_GET);
-
-        ok $r->allowed & (1 << Apache::M_GET);
-        ok ! ($r->allowed & (1 << Apache::M_PUT));
-
-        $r->allowed($r->allowed | (1 << Apache::M_PUT));
-        ok $r->allowed & (1 << Apache::M_PUT);
-    }
-
     #allowed_xmethods
     #allow_methods
 
-    ok $r->bytes_sent || 1;
+    {
+        $r->rflush;
+        my $sent = $r->bytes_sent;
+        t_debug "sent so far: $sent bytes";
+        # at least 100 chars were sent already
+        ok $sent > 100;
+    }
 
     ok $r->mtime || 1;
 
@@ -161,6 +157,16 @@ sub handler {
     #input_filers
 
     #eos_sent
+
+    {
+        $r->allowed(1 << Apache::M_GET);
+
+        ok $r->allowed & (1 << Apache::M_GET);
+        ok ! ($r->allowed & (1 << Apache::M_PUT));
+
+        $r->allowed($r->allowed | (1 << Apache::M_PUT));
+        ok $r->allowed & (1 << Apache::M_PUT);
+    }
 
     Apache::OK;
 }
