@@ -4,16 +4,15 @@ use Config;
 
 my $prefix = ModPerl::MM::build_config()->apxs(-q => 'PREFIX');
 
-my $libdir = "$prefix/lib";
-
-my @libs = map "-l$_", qw(apr aprutil);
+# XXX: this works only with libapr 0.9.2+ (not on win32)
+my @libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
+    map { qx{$prefix/bin/$_-config} } qw(apr apu);
+chomp @libs;
+my $define = @libs ? '-DMP_HAVE_APR_LIBS' : '';
 
 ModPerl::MM::WriteMakefile(
     'NAME'	   => 'APR',
     'VERSION_FROM' => 'APR.pm',
-#XXX: no longer works with apr's goofy versioning scheme
-#low priority to fix as nobody is using Perl APR bindings
-#outside of httpd
-#    'LIBS'         => ["-L$libdir @libs"],
-#    'DEFINE'       => '-DMP_HAVE_APR_LIBS', #only if @libs are found
+    'LIBS'         => \@libs,
+    'DEFINE'       => $define,
 );
