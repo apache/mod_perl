@@ -41,9 +41,10 @@ use constant WIN32 => Apache::Build::WIN32;
 
 our $VERSION;
 
-perl_version_check();
-
 my $build = Apache::Build->new(init => 1);
+
+perl_version_check($build);
+
 my $code  = ModPerl::Code->new;
 
 configure();
@@ -316,15 +317,21 @@ sub set_modperl_version {
 }
 
 sub perl_version_check {
+    my $build = shift;
 
-    if (Apache::Build::REQUIRE_ITHREADS()) {
+    # the following mpms require threaded perl (== 5.8.0/ithreads+)
+    my %threaded_mpms = map { $_ => 1}
+        qw(worker winnt beos mpmt_os2 netware leader
+           perchild threadpool);
+    my $mpm = $build->apxs(-q => 'MPM_NAME') || 'unknown' ;
+    if ($threaded_mpms{$mpm}) {
         unless (Apache::Build::HAS_ITHREADS()) {
-            die "your system requires an ithreads enabled Perl";
+            die "this httpd ($mpm mpm) requires Perl w/ ithreads enabled\n";
         }
         # 5.6.x ithreads aren't good
         unless ($] >= 5.008) {
-            die "Perl 5.8 or higher w/ ithreads is required. " .
-                "This is only Perl $]";
+            die "Perl 5.8 or higher w/ ithreads enabled is required. " .
+                "This is only Perl $]\n";
         }
     }
 
