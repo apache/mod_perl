@@ -197,6 +197,8 @@ typedef struct {
 
 typedef struct {
     HV *pnotes;
+    SV *global_request_obj;
+    U8 flags;
     modperl_wbucket_t wbucket;
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];

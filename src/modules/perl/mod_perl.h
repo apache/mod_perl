@@ -4,6 +4,8 @@
 #include "modperl_apache_includes.h"
 #include "modperl_perl_includes.h"
 
+#define MP_THREADED (defined(USE_ITHREADS) && APR_HAS_THREADS)
+
 extern module AP_MODULE_DECLARE_DATA perl_module;
 
 #include "modperl_flags.h"
@@ -27,6 +29,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_filter.h"
 #include "modperl_pcw.h"
 #include "modperl_mgv.h"
+#include "modperl_global.h"
 
 void modperl_init(server_rec *s, apr_pool_t *p);
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
