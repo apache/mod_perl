@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use APR::Lib ();
 
@@ -22,7 +23,7 @@ sub handler {
 
     my $str= APR::strerror($status);
 
-    print "strerror=$str\n";
+    t_debug "strerror=$str\n";
 
     ok $str eq 'passwords do not match';
 
