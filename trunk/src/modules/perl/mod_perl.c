@@ -637,8 +637,6 @@ int perl_handler(request_rec *r)
 
     PERL_CALLBACK("PerlHandler", cld->PerlHandler);
 
-    perl_run_rgy_endav(r->uri);
-
     FREETMPS;
     LEAVE;
     MP_TRACE_g(fprintf(stderr, "perl_handler LEAVE: SVs = %5d, OBJs = %5d\n", 
@@ -801,7 +799,10 @@ int PERL_LOG_HOOK(request_rec *r)
 
 void mod_perl_end_cleanup(void *data)
 {
+    request_rec *r = (request_rec *)data;
     MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
+
+    perl_run_rgy_endav(r->uri);
 
     /* clear %ENV */
     perl_clear_env();
@@ -1064,7 +1065,7 @@ void perl_per_request_init(request_rec *r)
     mod_perl_tie_scriptname();
     /* will be released in mod_perl_end_cleanup */
     (void)acquire_mutex(mod_perl_mutex); 
-    register_cleanup(r->pool, NULL, mod_perl_end_cleanup, mod_perl_noop);
+    register_cleanup(r->pool, (void*)r, mod_perl_end_cleanup, mod_perl_noop);
 
 #ifdef WIN32
     sv_setpvf(perl_get_sv("Apache::CurrentThreadId", TRUE), "0x%lx",
