@@ -2,6 +2,10 @@
 # Things to be resolved for mod_perl 2.0 release #
 ##################################################
 
+* revamp directive handlers, expose modperl_module_add, fix
+  PerlLoadModule, etc.
+  owner: geoff
+
 * PerlSetVar/PerlAddVar still do not merge properly.  geoff knows
   the issues and thinks he knows how to fix it, he just needs the time.
   owner: geoff
