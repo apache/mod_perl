@@ -10,7 +10,7 @@
     STRLEN len; \
     const char *bodytext; \
     modperl_cgi_header_parse(r, SvPV(sv,len), &bodytext); \
-    rcfg->wbucket.header_parse = 0; \
+    rcfg->wbucket->header_parse = 0; \
 }
 
 /* XXX: should only be part of Apache::compat */
@@ -23,5 +23,5 @@ mpxs_Apache__RequestRec_send_http_header(request_rec *r, const char *type)
         r->content_type = apr_pstrdup(r->pool, type);
     }
 
-    rcfg->wbucket.header_parse = 0; /* turn off PerlOptions +ParseHeaders */
+    rcfg->wbucket->header_parse = 0; /* turn off PerlOptions +ParseHeaders */
 }
