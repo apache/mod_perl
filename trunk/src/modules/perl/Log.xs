@@ -1,4 +1,5 @@
 #include "mod_perl.h"
+#include "mod_perl_xs.h"
 
 #if MODULE_MAGIC_NUMBER >= MMN_132
 #define HAVE_LOG_RERROR 1
@@ -210,11 +211,11 @@ BOOT:
 #endif
 
 int
-loglevel(server)
+loglevel(server, ...)
     Apache::Server	server
 
     CODE:
-    RETVAL = server->loglevel;
+    get_set_IV(server->loglevel); 
 
     OUTPUT:
     RETVAL
