@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+APR::PerlIO now accepts the pool object instead of a request/server
+objects, so it can be used anywhere, including outside mod_perl [Stas]
+
 when perl is built with perlio enabled (5.8+) the new PerlIO Apache
 layer is used, so now one can push layers onto STDIN, STDOUT handles
 e.g. binmode(STDOUT, ':utf8'); [Stas]
