@@ -78,7 +78,7 @@ apr_wait_how_e           | UNDEFINED
 apr_other_child_rec_t    | UNDEFINED
 
 #time stuff
-struct apr_exploded_time_t    | APR::ExplodedTime
+struct apr_time_exp_t    | APR::ExplodedTime
 struct apr_os_exp_time_t      | UNDEFINED
 struct apr_os_imp_time_t      | NOTIMPL
 
