@@ -677,17 +677,27 @@ void mod_perl_init_ids(void)  /* $$, $>, $), etc */
 
 int perl_eval_ok(server_rec *s)
 {
+    int status;
     SV *sv;
     dTHR;
     dTHRCTX;
 
     sv = ERRSV;
-    if(SvTRUE(sv)) {
-	MP_TRACE_g(fprintf(stderr, "perl_eval error: %s\n", SvPV(sv,na)));
-	mod_perl_error(s, SvPV(sv, na));
-	return -1;
+    if (SvTRUE(sv)) {
+        if (SvMAGICAL(sv) && (SvCUR(sv) > 4) &&
+            strnEQ(SvPVX(sv), " at ", 4))
+        {
+            /* Apache::exit was called */
+            return DECLINED;
+        }
+        if (perl_sv_is_http_code(ERRSV, &status)) {
+            return status;
+        }
+        MP_TRACE_g(fprintf(stderr, "perl_eval error: %s\n", SvPV(sv,na)));
+        mod_perl_error(s, SvPV(sv, na));
+        return SERVER_ERROR;
     }
-    return 0;
+    return OK;
 }
 
 int perl_sv_is_http_code(SV *errsv, int *status) 

@@ -1654,14 +1654,17 @@ callback:
     
     SPAGAIN;
 
-    if(perl_eval_ok(r->server) != OK) {
-	dTHRCTX;
-	MP_STORE_ERROR(r->uri, ERRSV);
-        if (r->notes) {
-            ap_table_set(r->notes, "error-notes", SvPVX(ERRSV));
+    if ((status = perl_eval_ok(r->server)) != OK) {
+        dTHRCTX;
+        if (status == SERVER_ERROR) {
+            MP_STORE_ERROR(r->uri, ERRSV);
+            if (r->notes) {
+                ap_table_set(r->notes, "error-notes", SvPVX(ERRSV));
+            }
         }
-	if(!perl_sv_is_http_code(ERRSV, &status))
-	    status = SERVER_ERROR;
+        else if (status == DECLINED) {
+            status = r->status == 200 ? OK : r->status;
+        }
     }
     else if(count != 1) {
 	mod_perl_error(r->server,
