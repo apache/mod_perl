@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/12/01 04:15:11 $]
+   Last modified at [$Date: 2002/12/12 08:30:47 $]
 
 Release:
 --------
@@ -100,9 +100,6 @@ Open Issues or Core Enhancements:
 
   Report: 
   Status: ???
-
-* Set/Add config overlapping which is not doing the right thing. See:
-  http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
 ----
 
