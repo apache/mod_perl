@@ -127,6 +127,8 @@ t/modules/stage.t
 t/modules/status.t
 t/modules/symbol.t
 t/modules/module.t
+t/modules/request.t
+t/modules/cookie.t
 t/internal/api.t
 t/internal/auth.t
 t/internal/croak.t
@@ -143,6 +145,7 @@ t/internal/stacked.t
 #t/internal/resolver.t
 t/internal/table.t
 t/internal/taint.t
+t/net/perl/have_module.pl
 t/net/perl/module.pl
 t/net/perl/file.pl
 t/net/perl/log.pl
@@ -168,6 +171,9 @@ t/net/perl/server_error.pl
 t/net/perl/dirty-script.cgi
 t/net/perl/dirty-test.cgi
 t/net/perl/dirty-lib
+t/net/perl/request-upload.pl
+t/net/perl/request-param.pl
+t/net/perl/request-cookie.pl
 #t/net/perl/resolver.pl
 t/net/perl/io/redir.pl
 t/net/perl/io/perlio.pl

@@ -37,13 +37,11 @@ for my $upload ($apr->upload) {
     my($lines, $bytes);
     $lines = $bytes = 0;
 
-    #open FH, ">/tmp/upload.txt" or die $!;
     while(<$fh>) {
 	++$lines;
 	$bytes += length;
-	print FH;
     }
-    close FH;
+
     my $info = $upload->info;
     while (my($k,$v) = each %$info) {
 	print "INFO: $k => $v\n";

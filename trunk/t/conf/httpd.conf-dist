@@ -279,3 +279,13 @@ PerlHandler Apache::Death
 SetHandler perl-script
 </Location>
 
+#libapr
+<Location /apr-form-test>   
+SetHandler apr-form  
+</Location>   
+<Location /apr-upload-test>   
+SetHandler apr-upload 
+</Location>   
+<Location /apr-cookie-test>   
+SetHandler apr-cookie 
+</Location>   
