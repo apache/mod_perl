@@ -17,6 +17,10 @@ BEGIN {
 	warn "GV alias broken\n";
 }
 
+eval {
+    require "local.pl"; 
+}; $@='' if $@;
+
 # BSD/OS 3.1 gets confused with some dynamically loaded code inside evals,
 # so make sure IO::File is loaded here, rather than later within an eval.
 # this should not harm any other platforms, since IO::File will be used
