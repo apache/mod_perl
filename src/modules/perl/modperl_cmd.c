@@ -282,16 +282,13 @@ MP_CMD_SRV_DECLARE(post_config_requires)
     apr_pool_t *p = parms->pool;
     apr_finfo_t finfo;
     MP_dSCFG(parms->server);
-    MP_PERL_DECLARE_CONTEXT;
 
     if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
         if (finfo.filetype != APR_NOFILE) {
              modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
 #ifdef USE_ITHREADS
             if (modperl_is_running()) {
-                MP_PERL_OVERRIDE_CONTEXT;
-                require->perl = aTHX;
-                MP_PERL_RESTORE_CONTEXT;   
+                require->perl = scfg->mip->parent->perl;
             }
 #endif
             require->file = arg;
