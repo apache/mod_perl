@@ -130,9 +130,9 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
                    (unsigned long)rp);
 
         if (!modperl_mgv_resolve(aTHX_ handler, rp, handler->name, FALSE)) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, 
-                         "failed to resolve handler `%s'",
-                         handler->name);
+            modperl_errsv_prepend(aTHX_
+                                  "failed to resolve handler `%s': ",
+                                  handler->name);
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }

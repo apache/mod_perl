@@ -1,10 +1,5 @@
 package TestError::syntax;
 
-BEGIN {
-    use Apache::TestUtil;
-    t_server_log_error_is_expected(2);
-}
-
 use strict;
 use warnings FATAL => 'all';
 

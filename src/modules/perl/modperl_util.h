@@ -47,6 +47,8 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
 
+void modperl_errsv_prepend(pTHX_ const char *pat, ...);
+
 int modperl_require_module(pTHX_ const char *pv, int logfailure);
 int modperl_require_file(pTHX_ const char *pv, int logfailure);
 
