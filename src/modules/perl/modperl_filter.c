@@ -692,11 +692,16 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
     apr_size_t len = 0;
 
     if (!filter->bb_in) {
+        apr_status_t rc;
         /* This should be read only once per handler invocation! */
         filter->bb_in = apr_brigade_create(filter->pool,
                                            filter->f->c->bucket_alloc);
-        ap_get_brigade(filter->f->next, filter->bb_in,
-                       filter->input_mode, filter->block, filter->readbytes);
+        rc = ap_get_brigade(filter->f->next, filter->bb_in,
+                            filter->input_mode, filter->block,
+                            filter->readbytes);
+        if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
+            modperl_croak(aTHX_ rc, "Apache::Filter::read"); 
+        }
         MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                    "retrieving bb: 0x%lx\n",
                    MP_FILTER_NAME(filter->f),
