@@ -1,4 +1,3 @@
-
 package TestAPI::module;
 
 use strict;
@@ -26,7 +25,7 @@ sub handler {
         $module_count++;
     }
 
-    my $tests = 10 + ( 5 * $module_count );
+    my $tests = 12 + ( 5 * $module_count );
 
     plan $r, tests => $tests;
 
@@ -52,11 +51,21 @@ sub handler {
              "Apache::Module::loaded('Apache__Module_foo.so')");
 
     #perl
-    ok t_cmp(Apache::Module::loaded('Apache::Module'), 1,
-             "Apache::Module::loaded('Apache::Module')");
+    {
+        ok t_cmp(Apache::Module::loaded('Apache::Module'), 1,
+                 "Apache::Module::loaded('Apache::Module')");
 
-    ok t_cmp(Apache::Module::loaded('Apache__Module_foo'), 0,
-             "Apache::Module::loaded('Apache__Module_foo')");
+        ok t_cmp(Apache::Module::loaded('Apache__Module_foo'), 0,
+                 "Apache::Module::loaded('Apache__Module_foo')");
+
+        # TestAPI::module::foo wasn't loaded but the stash exists
+        $TestAPI::module::foo::test = 1;
+        ok !Apache::Module::loaded("TestAPI::module::foo");
+
+        # module TestAPI wasn't loaded but the stash exists, since
+        # TestAPI::module was loaded
+        ok !Apache::Module::loaded("TestAPI");
+    }
 
     #bogus
     ok t_cmp(Apache::Module::loaded('Apache__Module_foo.foo'), 0,
