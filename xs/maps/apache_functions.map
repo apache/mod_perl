@@ -220,7 +220,7 @@ MODULE=Apache::Directive
 !ap_add_node
 !ap_build_config
 !ap_build_cont_config
- ap_walk_config
+!ap_walk_config
 >ap_process_config_tree
 
 MODULE=Apache::Filter PACKAGE=guess

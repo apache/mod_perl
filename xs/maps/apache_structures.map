@@ -190,7 +190,7 @@ $  limit_req_fields
 <  next
 <  first_child
 <  parent
-<  data
+!  data
 <  filename
 <  line_num
 </ap_directive_t>
