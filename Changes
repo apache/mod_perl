@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+rename overloaded LoadModule directive to PerlLoadModule
+
 =item 1.99_07 - September 25, 2002
 
 fix =pod directive test config problem

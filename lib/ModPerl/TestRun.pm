@@ -38,7 +38,7 @@ EOF
 
     #XXX: this should only be done for the modperl-2.0 tests
     $self->postamble(<<'EOF');
-LoadModule TestDirective::loadmodule
+PerlLoadModule TestDirective::loadmodule
 
 MyTest one two
 ServerTest per-server
