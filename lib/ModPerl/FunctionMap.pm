@@ -135,6 +135,9 @@ sub parse {
 
         if ($name =~ s/^(\W)// or not $cur{MODULE} or $disabled) {
             #notimplemented or cooked by hand
+            die qq[function '$name' appears more than once in xs/maps files]
+                if $map->{$name};
+
             $map->{$name} = undef;
             push @{ $self->{disabled}->{ $1 || '!' } }, $name;
             next;
@@ -160,6 +163,9 @@ sub parse {
             $name =~ s{^(DEFINE_)(.*)}
               {$1 . ModPerl::WrapXS::make_prefix($2, $cur{CLASS})}e;
         }
+
+        die qq[function '$name' appears more than once in xs/maps files]
+            if $map->{$name};
 
         my $entry = $map->{$name} = {
            name        => $alias || $name,

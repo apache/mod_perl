@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+fix xs_generate to croak on duplicate entries in xs/maps files
+[Christian Krause <chkr plauener.de>]
+
 Workaround a possible bug in Perl_load_module() [Gozer]
 
 Fix a problem building with non-GNU make (can't make target dynamic
