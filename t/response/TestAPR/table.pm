@@ -14,7 +14,7 @@ my $TABLE_SIZE = 20;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 16;
+    plan $r, tests => 17;
 
     my $table = APR::Table::make($r->pool, $TABLE_SIZE);
 
@@ -22,7 +22,17 @@ sub handler {
 
     ok $table->set('foo','bar') || 1;
 
+    # scalar context
     ok $table->get('foo') eq 'bar';
+
+    # add + list context
+    $table->add(foo => 'tar');
+    $table->add(foo => 'kar');
+    my @array = $table->get('foo');
+    ok @array == 3        &&
+       $array[0] eq 'bar' &&
+       $array[1] eq 'tar' &&
+       $array[2] eq 'kar';
 
     ok $table->unset('foo') || 1;
 
@@ -62,13 +72,14 @@ sub handler {
     #Tied interface
     {
         my $table = APR::Table::make($r->pool, $TABLE_SIZE);
-        
+
         ok (UNIVERSAL::isa($table, 'HASH'));
-    
+
         ok (UNIVERSAL::isa($table, 'HASH')) && tied(%$table);
-        
+
         ok $table->{'foo'} = 'bar';
 
+        # scalar context
         ok $table->{'foo'} eq 'bar';
 
         ok delete $table->{'foo'} || 1;
@@ -76,16 +87,16 @@ sub handler {
         ok not exists $table->{'foo'};
 
         for (1..$TABLE_SIZE) {
-            $table->{chr($_+97)} =  $_ ;  
+            $table->{chr($_+97)} = $_;
         }
 
         $filter_count = 0;
         foreach my $key (sort keys %$table) {
-            my_filter($key,$table->{$key});
+            my_filter($key, $table->{$key});
         }
         ok $filter_count == $TABLE_SIZE;
     }
-    
+
     Apache::OK;
 }
 
