@@ -175,6 +175,7 @@ modperl_perl_global_gvhv_save(pTHX_ modperl_perl_global_gvhv_t *gvhv)
 {
     U32 mg_flags;
     HV *hv = GvHV(gvhv->gv);
+    MAGIC *mg = SvMAGIC(hv);
 
     /*
      * there should only be a small number of entries in %ENV
@@ -194,6 +195,12 @@ modperl_perl_global_gvhv_save(pTHX_ modperl_perl_global_gvhv_t *gvhv)
     /* reapply magic flags */
     MP_magical_tie(hv, mg_flags);
     MP_magical_tie(gvhv->tmphv, mg_flags);
+
+    if (mg && mg->mg_type && !SvMAGIC(gvhv->tmphv)) {
+        /* propagate SvMAGIC(hv) to SvMAGIC(gvhv->tmphv) */
+        /* XXX: maybe newHVhv should do this? */
+        hv_magic(gvhv->tmphv, Nullgv, mg->mg_type);
+    }
 
     gvhv->orighv = hv;
     GvHV(gvhv->gv) = gvhv->tmphv;
