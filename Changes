@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_11-dev - 
+=item 1.99_11 - November 10, 2003
 
 add a build/win32_fetch_apxs script (called within the top-level
 Makefile.PL) to offer to fetch and install a Win32 development
