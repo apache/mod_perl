@@ -261,10 +261,10 @@ etags:
 	$(SHELL) build/make_etags
 
 modperl_lib:
-	@(cd $(MODPERL_SRC) && $(MAKE));
+	cd "$(MODPERL_SRC)" && $(MAKE)
 
 modperl_src_clean:
-	@(cd $(MODPERL_SRC) && $(MAKE) clean);
+	cd "$(MODPERL_SRC)" && $(MAKE) clean
 
 EOF
 
