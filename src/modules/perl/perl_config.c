@@ -1056,7 +1056,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
         if(!SvROK(rv) || (SvTYPE(SvRV(rv)) != SVt_PVHV)) \
    	    croak("not a HASH reference!"); \
         nhv = newHV(); \
-        hv_store(nhv, (char*)key, klen, rv, FALSE); \
+        hv_store(nhv, (char*)key, klen, SvREFCNT_inc(rv), FALSE); \
         tab = nhv; \
         t; \
         SvREFCNT_dec(nhv); \
