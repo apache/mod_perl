@@ -358,8 +358,9 @@ my $win32_auto;
 if ($vcpp and $win32_args{APACHE_SRC}) {
   $EVERYTHING = 1;
   my $fixed_apsrc = win32_fix_path($win32_args{APACHE_SRC}); 
-  $APACHE_SRC =  -d "$fixed_apsrc/include" ?
-    $fixed_apsrc  : $fixed_apsrc . '/src';
+  $APACHE_SRC =  -d "$fixed_apsrc/include" ? $fixed_apsrc  : 
+    (-d "$fixed_apsrc/src/include" ? $fixed_apsrc . '/src' :
+     die "Cannot find the Apache include directory under $fixed_apsrc");
   $win32_auto = 1;
 }
 
