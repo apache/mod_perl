@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+add a build/win32_fetch_apxs script (called within the top-level
+Makefile.PL) to offer to fetch and install a Win32 development
+version of apxs and (apr|apu)-config [Randy Kobes]
+
 rewrite $r->read() and perlio read functions to use the same function,
 which completely satisfies the read request if possible, on the way
 getting rid of get_client_block and its supporting functions which
