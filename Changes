@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+added Apache::Util::string_size function
+
 PerlDirectiveHandlers changes:
 
  -fix Apache::ExtUtils::command_table to properly deal with

@@ -11,9 +11,9 @@ use DynaLoader ();
 
 @ISA = qw(Exporter DynaLoader);
 @EXPORT_OK = qw(escape_html escape_uri unescape_uri unescape_uri_info 
-		parsedate ht_time);
+		parsedate ht_time size_string);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
-$VERSION = '0.01';
+$VERSION = '1.01';
 
 if($ENV{MOD_PERL}) {
     bootstrap Apache::Util $VERSION;
