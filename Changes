@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+when $r->handler($new_handler) is called from a response phase, it now
+checks that the response handler type is not switched (e.g. from
+'modperl' to 'perl-script') from the currently used one [Stas]
+
 Since Apache::SubProcess is now part of the mp2 API, add
 $r->cleanup_for_exec as a noop in Apache::compat. That function is no
 longer needed in Apache2. [Stas]
