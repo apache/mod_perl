@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+$r->connection->aborted now returns the flag as-is (no c->fd test)
+
 fix bug in Apache::ModuleConfig->get($r) when $r isa subclass of Apache
 
 =item 1.17 - January 6, 1999
