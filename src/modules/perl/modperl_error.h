@@ -19,6 +19,16 @@
 /* to check whether $@ is set by ModPerl::Util::exit */
 #define MODPERL_RC_EXIT APR_OS_START_USERERR + 0
 
+
+/**
+ * return the string representation of the error code 
+ * @param rc   error code
+ * @return     the error string
+ *
+ * The return value must be immediately copied unless used only in a
+ * limited visible scope where it's clear that Perl_form() is not
+ * called again (which could happen indirectly). If unsure, copy.
+ */
 char *modperl_error_strerror(pTHX_ apr_status_t rc);
         
 void modperl_croak(pTHX_ apr_status_t rc, const char* func);
