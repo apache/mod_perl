@@ -4,6 +4,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      request_rec *r, server_rec *s, AV *args)
 {
     CV *cv=Nullcv;
+    SV *status_sv;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
@@ -71,19 +72,26 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         SPAGAIN;
 
         if (count != 1) {
+            /* XXX can this really happen with G_EVAL|G_SCALAR? */
             status = OK;
         }
         else {
-            SV* status_sv = POPs;
-            if (SvIOK(status_sv)) {
-                status = (IV)SvIVx(status_sv);
-            }
-            else {
-                /* ModPerl::Util::exit doesn't return an integer value */
+            status_sv = POPs;
+
+            if (status_sv == &PL_sv_undef) {
+                /* ModPerl::Util::exit(), die(), or other croaks
+                 * Perl_croak sets count to 1 but the stack to undef with G_EVAL|G_SCALAR
+                 * if it was an error, it will be caught with ERRSV below */
                 status = OK; 
             }
-            /* assume OK for 200 (HTTP_OK) */
-            if ((status == 200)) {
+            else {
+                /* get the integer return code (or a string coerced into an int) */
+                status = SvIV(status_sv);
+            }
+
+            /* assume OK for non-http status codes and for 200 (HTTP_OK) */
+            if (((status > 0) && (status < 100)) ||
+                (status == 200) || (status > 600)) {
                 status = OK;
             }
         }
