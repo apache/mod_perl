@@ -42,6 +42,15 @@ int modperl_threaded_mpm(void)
     return MP_threaded_mpm;
 }
 
+/* sometimes non-threaded mpm also needs to know whether it's still
+ * starting up or after post_config) */
+static int MP_post_post_config_phase = 0;
+
+int modperl_post_post_config_phase(void)
+{
+    return MP_post_post_config_phase;
+}
+
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -551,6 +560,7 @@ static apr_status_t modperl_sys_term(void *data)
 {
     MP_init_status = 0;
     MP_threads_started = 0;
+    MP_post_post_config_phase = 0;
 
     MP_TRACE_i(MP_FUNC, "mod_perl sys term\n");
 
@@ -680,6 +690,8 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
     if (modperl_threaded_mpm()) {
         MP_threads_started = 1;
     }
+
+    MP_post_post_config_phase = 1;
     
     return OK;
 }

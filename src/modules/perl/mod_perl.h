@@ -108,6 +108,12 @@ int modperl_threaded_mpm(void);
                    what);                                       \
     }
 
+#define MP_CROAK_IF_POST_POST_CONFIG_PHASE(what)                \
+    if (modperl_post_post_config_phase()) {                     \
+        Perl_croak(aTHX_ "Can't run '%s' after server startup", \
+                   what);                                       \
+    }
+
 int modperl_init_vhost(server_rec *s, apr_pool_t *p,
                        server_rec *base_server);
 void modperl_init(server_rec *s, apr_pool_t *p);
