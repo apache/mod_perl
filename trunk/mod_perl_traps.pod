@@ -50,9 +50,8 @@ scripts.
 
 =item *
 
-Your scripts *will not* run from the command line (yet) unless you use
-CGI::Switch or CGI.pm and 5.004+ and do not make any direct calls to
-Apache->methods. 
+Your script *will not* run from the command line if your script makes
+any direct calls to Apache->methods.  See Apache::FakeRequest.
 
 =back
 
@@ -86,16 +85,10 @@ To this:
 
 =item *
 
-CGI.pm users B<must> have version B<2.36> of the package or higher,
-earlier versions will not work under mod_perl.  If you have Perl
-version 5.004 or higher, scripts may 'use CGI'.  Otherwise, scripts
-need to 'use CGI::Switch ()' so i/o goes through the Apache class
-methods. 
+CGI.pm users B<must> have version B<2.39> of the package or higher,
+earlier versions will not work under mod_perl.
 
 =item *
-
-The CGI::* modules (CGI::Request etal.) can be used only with Perl
-version 5.004 or higher.
 
 If you use the C<SendHeaders()> function, be sure to call
 $req_obj->cgi->done when you are done with a request, just as you

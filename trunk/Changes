@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_02-dev
 
+remove references to the deprecated CGI::Switch
+
 initialize %LocationMatch, %DirectoryMatch, %FilesMatch and tie to IxHash
 for <Perl> sections [Eric Cholet <cholet@logilune.com>]
 
