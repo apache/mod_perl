@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/10/22 03:59:45 $]
+   Last modified at [$Date: 2002/11/26 17:09:03 $]
 
 Release:
 --------
@@ -62,6 +62,10 @@ Needs Patch or Further Investigation:
 
   - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
     what Apache::Directive->as_string does, but one char or line at a time
+
+* xs/APR/APR/Makefile.PL
+  - linking against -lapr and -lapr-util to support new goofy apr version
+    scheme and the old one and windows
   
 Open Issues or Core Enhancements:
 ---------------------------------
