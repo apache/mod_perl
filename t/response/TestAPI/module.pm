@@ -30,7 +30,7 @@ sub handler {
 
     ok t_cmp(scalar keys %{ $cfg->{modules} },
              $top_module->module_index,
-             q{$top_module->module_index});
+             q{$top_module->module_index}) || 1;
 
     #XXX: some of these tests will fail if modperl is linked static
     #rather than dso.
