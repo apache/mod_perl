@@ -11,7 +11,8 @@ my @untrapped = qw(plain_mp_error            plain_non_mp_error
                    die_hook_confess_mp_error die_hook_confess_non_mp_error
                    die_hook_custom_mp_error  die_hook_custom_non_mp_error);
 my @trapped   = qw(eval_block_mp_error       eval_block_non_mp_error
-                   eval_string_mp_error      eval_block_non_error);
+                   eval_string_mp_error      eval_block_non_error
+                   overload_test);
 
 plan tests => @untrapped + @trapped;
 
