@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+Apache::PerlRun will now localize $SIG{__{DIE,WARN}__}
+thanks to Jon Coulter for the spot
+
 PERL5LIB support now properly unshifts paths into @INC rather than push
 [Tatsuhiko Miyagawa <miyagawa@edge.co.jp>]
 
