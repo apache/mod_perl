@@ -5459,7 +5459,29 @@ $ModPerl::FunctionTable = [
       }
     ]
   },
-  {
+   {
+    'return_type' => 'int',
+    'name' => 'mpxs_Apache__RequestRec_rflush',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'I32',
+        'name' => 'items'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'mark'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'sp'
+      }
+    ]
+  },
+ {
     'return_type' => 'int',
     'name' => 'mpxs_Apache__RequestRec_proxyreq',
     'args' => [
