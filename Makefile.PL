@@ -64,9 +64,12 @@ local %ModPerl::BuildMM::PM = (
 my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
 
+my @exe_files =  map "bin/$_", qw(mp2doc);
+
 ModPerl::BuildMM::WriteMakefile(
     NAME      => 'mod_perl',
     VERSION   => $VERSION,
+    EXE_FILES => \@exe_files,
     macro     => {
         MODPERL_SRC        => $code->path,
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
