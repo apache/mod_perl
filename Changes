@@ -21,8 +21,9 @@ was ignored) [Stas]
 ModPerl::Registry and friends now support non-parsed headers scripts,
 whose filename =~ /^nph-/, identically to mod_cgi. + test [Stas]
 
-implement APR::Brigade::length() and APR::Brigade::flatten()
-[Geoffrey Young]
+implement APR::Brigade::length() and APR::Brigade::flatten() (the
+latter implements a wrapper for apr_brigade_flatten, but also includes
+an emulation of apr_brigade_pflatten) as [Geoffrey Young]
 
 ($r|$s)->add_config() now die if failed (previously returned the
 error) [Stas]
