@@ -273,21 +273,21 @@ child_terminate(request_rec *r)
 void ap_custom_response(request_rec *r, int status, char *string)
 {
     core_dir_config *conf = 
-	ap_get_module_config(r->per_dir_config, &core_module);
+	get_module_config(r->per_dir_config, &core_module);
     int idx;
 
     if(conf->response_code_strings == NULL) {
         conf->response_code_strings = 
-	    ap_pcalloc(r->pool,
+	    pcalloc(r->pool,
 		    sizeof(*conf->response_code_strings) * 
 		    RESPONSE_CODES);
     }
 
-    idx = ap_index_of_response(status);
+    idx = index_of_response(status);
 
     conf->response_code_strings[idx] = 
-       ((ap_is_url(string) || (*string == '/')) && (*string != '"')) ? 
-       ap_pstrdup(r->pool, string) : ap_pstrcat(r->pool, "\"", string, NULL);
+       ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
+       pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
 }
 #endif
 
