@@ -31,9 +31,6 @@ BEGIN {
     $INC{'Apache.pm'} = 1;
 
     $INC{'Apache/Constants.pm'} = 1;
-
-    $ENV{MOD_PERL} = $mod_perl::VERSION;
-    $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1';
 }
 
 package Apache;
