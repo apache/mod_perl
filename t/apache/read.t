@@ -11,7 +11,7 @@ plan tests => 1;
 #force test to go over http, since this doesn't work with t/TEST -ssl
 Apache::TestRequest::scheme('http');
 
-my $location = "/TestApache2__read";
+my $location = "/TestApache__read";
 
 my $socket = Apache::TestRequest::vhost_socket('default');
 

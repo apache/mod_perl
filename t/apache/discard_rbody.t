@@ -5,7 +5,7 @@ use Apache::TestUtil;
 use Apache::Test;
 use Apache::TestRequest;
 
-my $location = "/TestApache2__discard_rbody";
+my $location = "/TestApache__discard_rbody";
 my $content = "Y" x 100000; # more than one bucket
 
 plan tests => 3;

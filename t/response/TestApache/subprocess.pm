@@ -1,4 +1,4 @@
-package TestApache2::subprocess;
+package TestApache::subprocess;
 
 use strict;
 use warnings FATAL => 'all';

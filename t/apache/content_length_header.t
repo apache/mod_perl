@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 12 * 2 + 3;
 
-my $location = "/TestApache2__content_length_header";
+my $location = "/TestApache__content_length_header";
 
 # 1. because Apache proclaims itself governor of the C-L header via
 # the C-L filter (ap_content_length_filter at

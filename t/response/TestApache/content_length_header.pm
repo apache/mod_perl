@@ -1,4 +1,4 @@
-package TestApache2::content_length_header;
+package TestApache::content_length_header;
 
 # see the client t/apache/content_length_header.t for the comments
 

@@ -1,4 +1,4 @@
-package TestApache2::scanhdrs2;
+package TestApache::scanhdrs2;
 
 use strict;
 use warnings FATAL => 'all';
