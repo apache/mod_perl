@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Apache::Status: provide a workaround for Config::myconfig() which
+fails under threads with (5.8.0 < perl < 5.8.3) [Elizabeth Mattijsen
+<liz@dijkmat.nl>]
+
 Fix Apache::Status::handler to return 'Apache::OK' [Juanma Barranquero
 <lektu@terra.es>]
 
