@@ -454,14 +454,15 @@ my %trace = (
 #    'a' => 'all',
     'c' => 'configuration for directive handlers',
     'd' => 'directive processing',
-    's' => 'perl sections',
-    'h' => 'handlers',
-    'm' => 'memory allocations',
-    't' => 'benchmark-ish timings',
-    'i' => 'interpreter pool management',
-    'g' => 'Perl runtime interaction',
+    'e' => 'environment variables',
     'f' => 'filters',
+    'g' => 'Perl runtime interaction',
+    'h' => 'handlers',
+    'i' => 'interpreter pool management',
+    'm' => 'memory allocations',
     'o' => 'I/O',
+    's' => 'perl sections',
+    't' => 'benchmark-ish timings',
 );
 
 sub generate_trace {
