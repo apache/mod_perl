@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Apache::RequestUtil::slurp_filename now throws an APR::Error exception
+object (before it was just croaking). [Stas]
+
 fix APR::Error's overload of '==' (it was always returning true
 before), and add the corresponding '!=' [Stas]
 
