@@ -309,16 +309,17 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
         return;
     }
 
-    max_spare = (tipool->size > tipool->cfg->max_spare);
+    max_spare = ((tipool->size - tipool->in_use) > tipool->cfg->max_spare);
     max_requests = ((num_requests > 0) &&
                     (num_requests > tipool->cfg->max_requests));
 
     if (max_spare) {
-        MP_TRACE_i(MP_FUNC, "throttle down (max_spare=%d, %d running)\n",
-                   tipool->cfg->max_spare, tipool->size);
+        MP_TRACE_i(MP_FUNC,
+                   "shrinking pool: max_spare=%d, only %d of %d in use\n",
+                   tipool->cfg->max_spare, tipool->in_use, tipool->size);
     }
     else if (max_requests) {
-        MP_TRACE_i(MP_FUNC, "max requests %d reached\n",
+        MP_TRACE_i(MP_FUNC, "shrinking pool: max requests %d reached\n",
                    tipool->cfg->max_requests);
     }
 
@@ -333,14 +334,17 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
                                             listp->data);
         }
 
-        if (max_requests && (tipool->size < tipool->cfg->min_spare)) {
+        if (max_requests && ((tipool->size - tipool->in_use) <
+                             tipool->cfg->min_spare)) {
             if (tipool->func->tipool_rgrow) {
                 void *item =
                     (*tipool->func->tipool_sgrow)(tipool,
                                                   tipool->data);
 
-                MP_TRACE_i(MP_FUNC, "new item: size %d < %d min_spare\n",
-                           tipool->size, tipool->cfg->min_spare);
+                MP_TRACE_i(MP_FUNC,
+                           "growing pool: min_spare=%d, %d of %d in use\n",
+                           tipool->cfg->min_spare, tipool->in_use,
+                           tipool->size);
 
                 modperl_tipool_add(tipool, item);
             }

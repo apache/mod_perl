@@ -223,10 +223,24 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
     return 0;
 }
 
-int modperl_callback(pTHX_ modperl_handler_t *handler)
+int modperl_callback(pTHX_ modperl_handler_t *handler, ap_pool_t *p)
 {
     dSP;
     int count, status;
+
+#ifdef USE_ITHREADS
+    if (p) {
+        /* under ithreads, each handler needs to get_cv() from the
+         * selected interpreter so the proper CvPADLIST is used
+         * XXX: this should probably be reworked so threads can cache
+         * parsed handlers
+         */
+        modperl_handler_t *new_handler = 
+            modperl_handler_new(p, (void*)handler->name,
+                                MP_HANDLER_TYPE_CHAR);
+        handler = new_handler;
+    }
+#endif
 
     if (!MpHandlerPARSED(handler)) {
         if (!modperl_handler_parse(aTHX_ handler)) {
@@ -278,12 +292,6 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
         status = HTTP_INTERNAL_SERVER_ERROR;
     }
 
-    /* XXX: since the interpreter from which this data was allocated
-     * can be knocked off (PerlInterpMax{Spare,Requests}, the parse caching
-     * is broken.
-     */
-    modperl_handler_unparse(handler);
-
     return status;
 }
 
@@ -303,6 +311,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     MP_dSCFG(s);
     MP_dDCFG;
     modperl_handler_t **handlers;
+    ap_pool_t *p = NULL;
     MpAV *av = NULL;
     int i, status = OK;
     const char *desc = NULL;
@@ -338,6 +347,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
 
 #ifdef USE_ITHREADS
     if (r || c) {
+        p = c ? c->pool : r->pool;
         interp = modperl_interp_select(r, c, s);
         aTHX = interp->perl;
     }
@@ -353,7 +363,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
-        status = modperl_callback(aTHX_ handlers[i]);
+        status = modperl_callback(aTHX_ handlers[i], p);
         MP_TRACE_h(MP_FUNC, "%s returned %d\n",
                    handlers[i]->name, status);
     }
