@@ -84,6 +84,7 @@ sub handler {
         }
     }
     elsif ($data{test} eq 'Apache::File') {
+        require Apache::File;
         my $file = $vars->{t_conf_file};
 
         debug "new Apache::File file object";
