@@ -422,7 +422,8 @@ MODULE=APR::Lib   PACKAGE=guess
 
 MODULE=APR::Signal
 -apr_signal
- apr_signal_get_description
+#not available on all platforms
+!apr_signal_get_description
 -apr_signal_init
 -apr_setup_signal_thread
  apr_signal_thread
