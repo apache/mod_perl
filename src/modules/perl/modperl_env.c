@@ -29,7 +29,7 @@ typedef struct {
 } modperl_env_ent_t;
 
 #define MP_ENV_ENT(k,v) \
-{ k, sizeof(k)-1, v, sizeof(v)-1, 0 }
+{ k, MP_SSTRLEN(k), v, MP_SSTRLEN(v), 0 }
 
 static modperl_env_ent_t MP_env_const_vars[] = {
 #ifdef MP_COMPAT_1X

@@ -13,6 +13,8 @@
 #   define MP_FUNC_T(name)          (*name)
 #endif
 
+#define MP_SSTRLEN(string) (sizeof(string)-1)
+
 #ifndef strcaseEQ
 #   define strcaseEQ(s1,s2) (!strcasecmp(s1,s2))
 #endif
