@@ -63,7 +63,7 @@ static char *lookup(hash_ptr *ht, SV *sv, void *tag)
 	p = (hash_ptr) malloc(sizeof(struct hash_s));
     p->link  = ht[hash];
     p->sv    = sv;
-    p->tag   = tag;
+    p->tag   = (char *)tag;
     ht[hash] = p;
     return NULL;
 }
@@ -101,11 +101,11 @@ static long int sv_apply_to_used(void *p, used_proc *proc, long int n)
     return n;
 }
 
-static char old[] = "old";
-static char new[] = "new";
+static char * t_old = "old";
+static char * t_new = "new";
 
 static long note_sv(void *p, SV *sv, long int n) {
-    lookup(p, sv, old);
+    lookup((struct hash_s **)p, sv, t_old);
     return n+1;
 }
 
@@ -119,9 +119,9 @@ static long note_used(hash_ptr **x)
 
 static long check_sv(void *p, SV *sv, long hwm)
 {
-    char *state = lookup(p,sv,new);
-    if (state != old) {                           
-	fprintf(stderr, "%s %p : ", state ? state : new, sv);
+    char *state = lookup((struct hash_s **)p, sv, t_new); 
+    if (state != t_old) { 
+	fprintf(stderr, "%s %p : ", state ? state : t_new, sv); 
 	sv_dump(sv);
     }
     return hwm+1;
@@ -136,7 +136,7 @@ static long check_used(hash_ptr **x) {
 	while (p) {
 	    hash_ptr t = p;
 	    p = t->link;
-	    if (t->tag != new) {
+	    if (t->tag != t_new) {
 		LangDumpVec(t->tag ? t->tag : "NUL", 1, &t->sv);
 	    }
 	    t->link = pile;
