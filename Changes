@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Support the Host: request header in Apache::TestClient [Stas]
+
 restore the ModPerl::RegistryLoader::new() method for backwards
 compatibility  [Stas]
 
