@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+new Apache::src->ccflags method to combine $Config{ccflags} and
+apxs -q CFLAGS
+[Matthias Urlichs <smurf@noris.net>]
+
+added Apache::src->apxs method
+
 make use of $Config{shrpenv} to find CORE/libperl.so
 [Ignasi Roca Carrió <ignasi.roca@fujitsu.siemens.es>]
 
