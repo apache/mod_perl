@@ -385,7 +385,7 @@ sub lib_check {
 
     my $maybe = $self->find_dlfile_maybe($name);
     my $suggest = @$maybe ? 
-      "You could just symlink it to $maybe->[0]" :
+        "You could just symlink it to $maybe->[0]" :
         'You might need to install Perl from source';
     $self->phat_warn(<<EOF);
 Your Perl is configured to link against lib$name,
