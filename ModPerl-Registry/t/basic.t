@@ -14,7 +14,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 3;
+plan tests => @aliases * 3 + 1;
 
 # very basic compilation/response test
 for my $alias (@aliases) {
@@ -62,3 +62,12 @@ for my $alias (@aliases) {
 #    );
 #}
 
+# test method handlers
+{
+    my $url = "/registry_oo_conf/env.pl?foo=bar";
+    ok t_cmp(
+        "foo=bar",
+        GET_BODY($url),
+        "ModPerl::Registry->handler mod_cgi-like environment pre-set",
+    );
+}
