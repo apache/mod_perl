@@ -33,6 +33,9 @@ my %hooks = map { $_, canon_lc($_) }
 my %not_ap_hook = map { $_, 1 } qw(child_exit response cleanup
                                    output_filter input_filter);
 
+my %not_request_hook = map { $_, 1 } qw(child_init process_connection
+                                        pre_connection open_logs post_config);
+
 my %hook_proto = (
     Process    => {
         ret  => 'void',
@@ -218,8 +221,12 @@ sub generate_handler_hooks {
 
             if (my $hook = $hooks{$handler}) {
                 next if $not_ap_hook{$hook};
+
+                my $order = $not_request_hook{$hook} ? 'APR_HOOK_FIRST'
+                                                     : 'APR_HOOK_REALLY_FIRST';
+
                 push @register_hooks,
-                  "    ap_hook_$hook($name, NULL, NULL, APR_HOOK_FIRST);";
+                  "    ap_hook_$hook($name, NULL, NULL, $order);";
             }
 
             my($protostr, $pass) = canon_proto($prototype, $name);
