@@ -34,7 +34,7 @@ sub handler {
         # 8kb chunks per brigade and we have sent 11k of data (1st bb:
         # 8kb, 2nd bb: ~3kb)
         my $len = $filter->read($mode, $block, $readbytes, my $buffer, 1024);
-        warn "FILTER READ: $len bytes\n";
+        #warn "FILTER READ: $len bytes\n";
         $filter->print("read just the first 1024b from the first brigade");
 
         $filter->ctx(1);
