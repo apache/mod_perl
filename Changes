@@ -12,13 +12,18 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::RequestIO: print(), printf(), puts(), write(), rflush() throw
+an exception on failure [Stas]
+
+Apache::SubRequest: run() throw an exception on failure [Stas]
+
 Apache::Filter: [Stas]
   - remove unneeded methods: remove_input_filter() and
     remove_output_filter(), fputs()
   - frec() accessor is made read-only
   - fflush(), get_brigade() and pass_brigade() now throw exceptions if
     called in the void context
-  - read, print() and puts() throw exception on failure
+  - read, print() and puts() throw an exception on failure
 
 Apache::FilterRec: [Stas]
   - remove the next() accessor since it's not used by Apache at the

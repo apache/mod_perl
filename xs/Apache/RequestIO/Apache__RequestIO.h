@@ -35,14 +35,15 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_Apache__RequestRec_UNTIE(r, refcnt) \
     (r && refcnt) ? SVYES : SVNO /* noop */
 
-#define mpxs_output_flush(r, rcfg) \
+#define mpxs_output_flush(r, rcfg, name)             \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
         MP_TRACE_o(MP_FUNC, "(flush) %d bytes [%s]", \
                    rcfg->wbucket->outcnt, \
                    apr_pstrmemdup(rcfg->wbucket->pool, rcfg->wbucket->outbuf, \
                                   rcfg->wbucket->outcnt)); \
-        MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE)); \
+        MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE), \
+                     name);                                      \
     }
 
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
@@ -92,7 +93,7 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
                     "Apache::RequestIO::print");
     
-    mpxs_output_flush(r, rcfg);
+    mpxs_output_flush(r, rcfg, "Apache::RequestIO::print");
     
     return bytes;
 }  
@@ -120,10 +121,11 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
 
     MP_TRACE_o(MP_FUNC, "%d bytes [%s]", bytes, SvPVX(sv));
 
-    MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
-                                           SvPVX(sv), &bytes));
+    MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
+                                       SvPVX(sv), &bytes),
+                 "Apache::RequestIO::printf");
     
-    mpxs_output_flush(r, rcfg);
+    mpxs_output_flush(r, rcfg, "Apache::RequestIO::printf");
 
     return bytes;
 }  
@@ -152,8 +154,9 @@ apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
     }
 
     MP_CHECK_WBUCKET_INIT("$r->write");
-    MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
-                                           buf+offset, &wlen));
+    MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
+                                       buf+offset, &wlen),
+                 "Apache::RequestIO::write");
     
     return wlen;
 }
@@ -175,7 +178,8 @@ int mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
                rcfg->wbucket->outcnt,
                apr_pstrmemdup(rcfg->wbucket->pool, rcfg->wbucket->outbuf,
                               rcfg->wbucket->outcnt));
-    MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE));
+    MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE),
+                 "Apache::RequestIO::rflush");
 
     return APR_SUCCESS;
 }

@@ -490,10 +490,12 @@ int modperl_run_filter(modperl_filter_t *filter)
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
         }
-        MP_FAILURE_CROAK(modperl_input_filter_flush(filter));
+        MP_RUN_CROAK(modperl_input_filter_flush(filter),
+                     "Apache::Filter");
     }
     else {
-        MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
+        MP_RUN_CROAK(modperl_output_filter_flush(filter),
+                     "Apache::Filter");
     }
 
     MP_INTERP_PUTBACK(interp);
