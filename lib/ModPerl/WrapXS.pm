@@ -163,6 +163,7 @@ sub get_structures {
     my $self = shift;
     my $typemap = $self->typemap;
 
+    require Apache::StructureTable;
     for my $entry (@$Apache::StructureTable) {
         my $struct = $typemap->map_structure($entry);
         next unless $struct;

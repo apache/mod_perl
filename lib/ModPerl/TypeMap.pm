@@ -272,6 +272,7 @@ sub check {
 
     my(@types, @missing, %seen);
 
+    require Apache::StructureTable;
     for my $entry (@$Apache::StructureTable) {
         push @types, map $_->{type}, @{ $entry->{elts} };
     }
