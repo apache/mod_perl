@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use ExtUtils::MakeMaker ();
 use ExtUtils::Install ();
+use Cwd ();
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
@@ -54,10 +55,17 @@ sub WriteMakefile {
     my $build = build_config();
     my_import();
     my @opts = (INC => $build->inc, CCFLAGS => $build->ap_ccopts);
-    my $typemap = $build->file_path('src/modules/perl/typemap');
-    if (-e $typemap) {
-        push @opts, TYPEMAPS => [$typemap];
+
+    my @typemaps;
+    my $pwd = Cwd::fastcwd();
+    for ('xs', $pwd, "$pwd/..") {
+        my $typemap = $build->file_path("$_/typemap");
+        if (-e $typemap) {
+            push @typemaps, $typemap;
+        }
     }
+    push @opts, TYPEMAPS => \@typemaps if @typemaps;
+
     ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
 }
 
@@ -90,8 +98,8 @@ sub ModPerl::MM::MY::constants {
                 $self->{HAS_LINK_CODE} = 0;
                 print "$name will be linked static\n";
                 #propagate static xs module to src/modules/perl/Makefile
-                $build->{XS}->{$name} = join '/',
-                  $self->{BASEEXT}, $xs;
+                $build->{XS}->{$name} =
+                  join '/', Cwd::fastcwd(), $xs;
                 $build->save;
             }
         }
