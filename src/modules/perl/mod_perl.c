@@ -354,15 +354,7 @@ static int modperl_hook_header_parser(request_rec *r)
 
 static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 {
-    modperl_perl_ids_t ids;
-    modperl_perl_ids_get(&ids);
-#ifdef USE_ITHREADS
-     modperl_interp_mip_walk_servers(NULL, s,
-                                     modperl_perl_init_ids_mip,
-                                    (void*)&ids);
-#else
-    modperl_perl_init_ids(aTHX_ &ids);
-#endif
+    modperl_perl_init_ids_server(s);
 }
 
 void modperl_register_hooks(apr_pool_t *p)
