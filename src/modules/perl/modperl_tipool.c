@@ -286,6 +286,12 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
         tipool->busy = modperl_list_remove_data(tipool->busy, data, &listp);
     }
 
+    if (!listp) {
+        /* XXX: Attempt to putback something that was never there */
+        modperl_tipool_unlock(tipool);
+        return;
+    }
+    
     tipool->idle = modperl_list_prepend(tipool->idle, listp);
 
     tipool->in_use--;
