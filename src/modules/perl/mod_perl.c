@@ -352,6 +352,15 @@ static int modperl_hook_header_parser(request_rec *r)
     return OK;
 }
 
+static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
+{
+#ifdef USE_ITHREADS
+    /*XXX*/
+#else
+    modperl_perl_init_ids(aTHX);
+#endif
+}
+
 void modperl_register_hooks(apr_pool_t *p)
 {
     ap_hook_open_logs(modperl_hook_init,
@@ -391,6 +400,9 @@ void modperl_register_hooks(apr_pool_t *p)
 
     ap_hook_header_parser(modperl_hook_header_parser,
                           NULL, NULL, APR_HOOK_FIRST);
+
+    ap_hook_child_init(modperl_hook_child_init,
+                       NULL, NULL, APR_HOOK_MIDDLE);
 
     modperl_register_handler_hooks();
 }
