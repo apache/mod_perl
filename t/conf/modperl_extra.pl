@@ -1,3 +1,6 @@
+use Socket (); #test DynaLoader vs. XSLoader workaround for 5.6.x
+use IO::File ();
+
 use Apache2 ();
 
 use ModPerl::Util (); #for CORE::GLOBAL::exit
