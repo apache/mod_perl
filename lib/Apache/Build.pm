@@ -33,10 +33,10 @@ our $APXS;
 
 sub apxs {
     my $self = shift;
-    my $build = $self->build_config;
+    $self = $self->build_config unless ref $self;
     my $apxs;
     my @trys = ($Apache::Build::APXS,
-                $build->{MP_APXS},
+                $self->{MP_APXS},
                 $ENV{MP_APXS});
 
     unless (IS_MOD_PERL_BUILD) {
@@ -463,7 +463,7 @@ sub ap_includedir  {
         return $self->{ap_includedir} = "$d/include";
     }
 
-    $self->{ap_includedir} = Apache::Build->apxs('-q' => 'INCLUDEDIR');
+    $self->{ap_includedir} = $self->apxs('-q' => 'INCLUDEDIR');
 }
 
 #--- parsing apache *.h files ---

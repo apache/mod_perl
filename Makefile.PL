@@ -1,6 +1,6 @@
 use 5.006;
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 
 use lib qw(lib);
 use Apache::Build ();
