@@ -5,13 +5,13 @@ PerlSwitches -T
 
 PerlModule Apache2
 
-PerlSwitches -Mlib=@ServerRoot@/../lib                  \
-             -Mlib=@ServerRoot@/../../Apache-Test/lib   \
-             -Mlib=@ServerRoot@/../../lib               \
-             -Mlib=@ServerRoot@/../../blib/lib/Apache2  \
-             -Mlib=@ServerRoot@/../../blib/arch/Apache2 \
-             -Mlib=@ServerRoot@/../../blib/lib          \
-             -Mlib=@ServerRoot@/../../blib/arch
+PerlSwitches -I@ServerRoot@/../lib                  \
+             -I@ServerRoot@/../../Apache-Test/lib   \
+             -I@ServerRoot@/../../lib               \
+             -I@ServerRoot@/../../blib/lib/Apache2  \
+             -I@ServerRoot@/../../blib/arch/Apache2 \
+             -I@ServerRoot@/../../blib/lib          \
+             -I@ServerRoot@/../../blib/arch
 
 # run on startup
 PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
