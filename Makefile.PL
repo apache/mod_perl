@@ -57,6 +57,8 @@ sub configure {
 
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
+
+    generate_xs($httpd_version) if $build->{MP_GENERATE_XS};
 }
 
 sub post_configure {
@@ -78,6 +80,26 @@ sub post_configure {
     }
 
     $build->save;
+}
+
+sub generate_xs {
+    my $httpd_version = shift;
+
+    my $tables_version =
+      $httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
+
+    my $tables_dir = "xs/tables/$tables_version";
+    unshift @INC, $tables_dir;
+
+    print "generating XS code using $tables_dir...\n";
+
+    require ModPerl::WrapXS;
+
+    my $xs = ModPerl::WrapXS->new;
+
+    $xs->generate;
+
+    shift @INC;
 }
 
 sub echo_cmd {

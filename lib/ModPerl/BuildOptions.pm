@@ -147,3 +147,4 @@ DYNAMIC		Build Apache::*.xs as dynamic extensions
 APXS            Path to apxs
 XS_GLUE_DIR     Directories containing extension glue
 INCLUDE_DIR     Add directories to search for header files
+GENERATE_XS     Generate XS code based on httpd version
