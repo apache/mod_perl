@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_03-dev
 
+added compat for Apache::log_error [Stas Bekman]
+
 =item 1.99_02 - June 1, 2002
 
 pass the PATH and TZ environment variables at startup by default as 1.xx did

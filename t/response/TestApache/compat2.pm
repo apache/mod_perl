@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 47;
+    plan $r, tests => 48;
 
     $r->send_http_header('text/plain');
 
@@ -246,6 +246,9 @@ sub handler {
     t_cmp(0, Apache::Util::validate_password("mguod", $hash));
 
     $r->post_connection(sub { OK });
+
+    Apache::log_error("testing Apache::log_error");
+    ok 1;
 
     OK;
 }
