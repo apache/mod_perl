@@ -487,9 +487,6 @@ void perl_startup (server_rec *s, pool *p)
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
     char **list, *dstr;
     int status, i, argc=1;
-#ifdef WIN32
-    char *dash_e = "BEGIN { $ENV{MOD_PERL} = 1; $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1'; }";
-#endif
     dPSRV(s);
     SV *pool_rv, *server_rv;
     GV *gv, *shgv;
@@ -566,8 +563,7 @@ void perl_startup (server_rec *s, pool *p)
 	argv[argc++] = "-w";
 
 #ifdef WIN32
-    argv[argc++] = "-e";
-    argv[argc++] = dash_e;
+    argv[argc++] = "nul";
 #else
     argv[argc++] = "/dev/null";
 #endif
