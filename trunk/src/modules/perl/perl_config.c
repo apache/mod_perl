@@ -600,20 +600,19 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 		dTHRCTX;
 		return SvPV(ERRSV,n_a);
 	    }
-	}
-	else {
-	    return NULL;
+#ifdef PERL_SECTIONS
+            else {
+                if (CAN_SELF_BOOT_SECTIONS) {
+                    perl_section_self_boot(parms, dummy, arg);
+                }
+	    }
+#endif
 	}
     }
-
-    if (cls->PerlModule) {
+    else {
+        /* Delay processing it until Perl starts */
         *(char **)push_array(cls->PerlModule) = pstrdup(parms->pool, arg);
     }
-
-#ifdef PERL_SECTIONS
-    if(CAN_SELF_BOOT_SECTIONS)
-	perl_section_self_boot(parms, dummy, arg);
-#endif
 
     return NULL;
 }
@@ -633,20 +632,19 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 		dTHRCTX;
 		return SvPV(ERRSV,n_a);
 	    }
+#ifdef PERL_SECTIONS
 	    else {
-		return NULL;
+                if (CAN_SELF_BOOT_SECTIONS) {
+                    perl_section_self_boot(parms, dummy, arg);
+                }
 	    }
+#endif
 	}
     }
-
-    if (cls->PerlRequire) {
+    else {
+        /* Delay processing it until Perl starts */
         *(char **)push_array(cls->PerlRequire) = pstrdup(parms->pool, arg);
     }
-
-#ifdef PERL_SECTIONS
-    if(CAN_SELF_BOOT_SECTIONS)
-	perl_section_self_boot(parms, dummy, arg);
-#endif
 
     return NULL;
 }
