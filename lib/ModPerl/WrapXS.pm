@@ -152,9 +152,7 @@ sub get_value {
         if (my $pool = $e->{pool}) {
             $pool .= '(obj)';
             $val = "((ST(1) == &PL_sv_undef) ? NULL :
-                    (SvPOK(ST(1)) ?
-                    apr_pstrndup($pool, SvPVX(ST(1)), SvCUR(ST(1))) :
-                    apr_pstrdup($pool, val)))";
+                    apr_pstrndup($pool, val, val_len))"
         }
     }
 
@@ -179,11 +177,21 @@ sub get_structures {
             (my $cast = $type) =~ s/:/_/g;
             my $val = get_value($e);
 
+            my $type_in = $type;
+            my $preinit = "/*nada*/";
+            if ($e->{class} eq 'PV' and $val ne 'val') {
+                $type_in =~ s/char/char_len/;
+                $preinit = "STRLEN val_len;";
+            }
+
             my $code = <<EOF;
 $type
 $name(obj, val=$default)
     $class obj
-    $type val
+    $type_in val
+
+    PREINIT:
+    $preinit
 
     CODE:
     RETVAL = ($cast) obj->$name;

@@ -1,5 +1,7 @@
 TYPEMAP
 void *			T_VPTR
+char_len *              T_CHAR_LEN
+const char_len *        T_CONST_CHAR_LEN
 
 ######################################################################
 OUTPUT
@@ -10,3 +12,9 @@ T_VPTR
 INPUT
 T_VPTR
 	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
+
+T_CHAR_LEN
+        $var = (char *)SvPV($arg, ${var}_len)
+
+T_CONST_CHAR_LEN
+        $var = (const char *)SvPV($arg, ${var}_len)

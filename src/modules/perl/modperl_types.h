@@ -14,6 +14,7 @@
 typedef request_rec subrequest_rec;
 typedef apr_array_header_t MpAV;
 typedef apr_table_t        MpHV;
+typedef char char_len; /* see xs/typemap */
 
 /* mod_perl structures */
 
