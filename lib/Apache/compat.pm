@@ -92,6 +92,7 @@ sub untaint {
 
 sub module {
     require Apache::Module;
+    die 'Usage: Apache->module($name)' if @_ != 2;
     return Apache::Module::loaded($_[1]);
 }
 
