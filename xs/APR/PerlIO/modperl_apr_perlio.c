@@ -110,7 +110,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     /* XXX: should probably add checks on pool validity in all other callbacks */
     sv = args[narg-1];
     if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
-        st->pool = (apr_pool_t *)SvIV((SV*)SvRV(sv));
+        st->pool = INT2PTR(apr_pool_t *, SvIV((SV*)SvRV(sv)));
     }
     else {
         Perl_croak(aTHX_ "argument is not a blessed reference "

@@ -98,7 +98,7 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
 {
     if (SvOBJECT(sv) || (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))) {
-        return (server_rec *)SvObjIV(sv);
+        return INT2PTR(server_rec *, SvObjIV(sv));
     }
 
     /* next see if we have Apache->request available */
@@ -164,7 +164,7 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
             /* XXX: find something faster than sv_derived_from */
             return NULL;
         }
-        return (request_rec *)SvIV(sv);
+        return INT2PTR(request_rec *, SvIV(sv));
     }
 
     return NULL;
@@ -288,7 +288,7 @@ void **modperl_xs_dl_handles_get(pTHX)
                        dl_librefs, (int)i);
 	    continue;
 	}
-	handle = (void *)SvIV(handle_sv);
+	handle = INT2PTR(void *, SvIV(handle_sv));
 
 	MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx\n",
                    SvPVX(module_sv), (unsigned long)handle);
@@ -349,7 +349,7 @@ static void modperl_package_unload_dynamic(pTHX_ const char *package,
     AV *librefs = get_av(dl_librefs, 0);
     SV *libref = *av_fetch(librefs, dl_index, 0);
 
-    modperl_sys_dlclose((void *)SvIV(libref));
+    modperl_sys_dlclose(INT2PTR(void *, SvIV(libref)));
 
     /* remove package from @dl_librefs and @dl_modules */
     modperl_av_remove_entry(aTHX_ get_av(dl_librefs, 0), dl_index);

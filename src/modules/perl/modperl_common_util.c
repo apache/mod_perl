@@ -121,7 +121,7 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
 {
     SV *rv = modperl_hash_tied_object_rv(aTHX_ classname, tsv);
     if (SvROK(rv)) {
-        return (void *)SvIVX(SvRV(rv));
+        return INT2PTR(void *, SvIVX(SvRV(rv)));
     }
     else {
         return NULL;

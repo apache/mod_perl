@@ -320,7 +320,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
             }
           case 'I':
             if (strEQ(classname, "IV")) {
-                sv = ptr ? newSViv((IV)ptr) : &PL_sv_undef;
+                sv = ptr ? newSViv(PTR2IV(ptr)) : &PL_sv_undef;
                 break;
             }
           case 'P':

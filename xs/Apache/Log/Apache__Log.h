@@ -37,11 +37,11 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     request_rec *r = NULL;
 
     if (SvROK(sv) && sv_isa(sv, "Apache::Log::Request")) {
-        r = (request_rec *)SvObjIV(sv);
+        r = INT2PTR(request_rec *, SvObjIV(sv));
         s = r->server;
     }
     else if (SvROK(sv) && sv_isa(sv, "Apache::Log::Server")) {
-        s = (server_rec *)SvObjIV(sv);
+        s = INT2PTR(server_rec *, SvObjIV(sv));
     }
     else {
         s = modperl_global_get_server_rec();
@@ -288,7 +288,7 @@ static XS(MPXS_Apache__Log_log_error)
 
     if (items > 1) {
         if (sv_isa(ST(0), "Apache::ServerRec")) {
-            s = (server_rec *)SvObjIV(ST(0));
+            s = INT2PTR(server_rec *, SvObjIV(ST(0)));
         }
         else if ((r = modperl_xs_sv2request_rec(aTHX_ ST(0),
                                                 "Apache::RequestRec", cv))) {
