@@ -7,3 +7,8 @@
 
 Apparently <Perl> still silently ignores bogus perl code.
 See: http://marc.theaimsgroup.com/?t=110986532900001&r=1&w=2
+
+Remove Apache2.pm, withdraw support for MP_INST_APACHE2,
+and rename all Apache:: modules to Apache2::.  See the
+apache2_rename todo file for current status.
+
