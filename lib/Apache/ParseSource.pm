@@ -87,7 +87,8 @@ sub find_includes {
     }
 
     my @includes;
-    my $unwanted = join '|', qw(ap_listen internal version);
+    my $unwanted = join '|', qw(ap_listen internal version
+                                apr_optional mod_include);
 
     for my $dir (@dirs) {
         File::Find::finddepth({
@@ -124,59 +125,151 @@ sub generate_cscan_file {
     return $filename;
 }
 
+my $filemode = join '|',
+  qw{READ WRITE CREATE APPEND TRUNCATE BINARY EXCL BUFFERED DELONCLOSE};
 
-my $defines_wanted = join '|', qw{
-OK DECLINED DONE
-DECLINE_CMD DIR_MAGIC_TYPE
-METHODS
-HTTP_ M_ OPT_ SATISFY_ REMOTE_
-OR_ ACCESS_CONF RSRC_CONF
-};
+my %defines_wanted = (
+    Apache => {
+        common     => [qw{OK DECLINED DONE}],
+        methods    => [qw{M_ METHODS}],
+        options    => [qw{OPT_}],
+        satisfy    => [qw{SATISFY_}],
+        remotehost => [qw{REMOTE_}],
+        http       => [qw{HTTP_}],
+#       config     => [qw{DECLINE_CMD}],
+#       types      => [qw{DIR_MAGIC_TYPE}],
+        override   => [qw{OR_ ACCESS_CONF RSRC_CONF}],
+    },
+    APR => {
+        poll      => [qw{APR_POLL}],
+        common    => [qw{APR_SUCCESS}],
+        error     => [qw{APR_E}],
+        fileperms => [qw{APR_\w(READ|WRITE|EXECUTE)}],
+        finfo     => [qw{APR_FINFO_}],
+        filepath  => [qw{APR_FILEPATH_}],
+        filemode  => ["APR_($filemode)"],
+        flock     => [qw{APR_FLOCK_}],
+        socket    => [qw{APR_SO_}],
+        limit     => [qw{APR_LIMIT}],
+        hook      => [qw{APR_HOOK_}],
+    },
+);
+
+my %defines_wanted_re;
+while (my($class, $groups) = each %defines_wanted) {
+    while (my($group, $wanted) = each %$groups) {
+        my $pat = join '|', @$wanted;
+        $defines_wanted_re{$class}->{$group} = $pat; #qr{^($pat)};
+    }
+}
+
+my %enums_wanted = (
+    Apache => { map { $_, 1 } qw(cmd_how) },
+    APR => { map { $_, 1 } qw(apr_shutdown_how) },
+);
 
 my $defines_unwanted = join '|', qw{
 HTTP_VERSION
 };
 
-my %enums_wanted = map { $_, 1 } qw(cmd_how);
-
 sub get_constants {
     my($self) = @_;
 
     my $includes = $self->find_includes;
-    my @constants;
+    my(%constants, %seen);
 
     for my $file (@$includes) {
         open my $fh, $file or die "open $file: $!";
         while (<$fh>) {
-            if (s/^\#define\s+//) {
-                next unless /^($defines_wanted)/o;
-                next if /^($defines_unwanted)/o;
-                push @constants, (split /\s+/)[0];
-            } elsif (m/^\s*enum\s+(\w+)\s+\{/) {
-                my $e = $self->get_enum($1, $fh);
-                push @constants, @$e if $e;
+            if (s/^\#define\s+(\w+)\s+.*/$1/) {
+                chomp;
+                next if $seen{$_}++;
+                $self->handle_constant(\%constants);
+            }
+            elsif (m/enum[^\{]+\{/) {
+                $self->handle_enum($fh, \%constants);
             }
         }
         close $fh;
     }
 
-    return \@constants;
+    #maintain a few handy shortcuts from 1.xx
+    #aliases are defined in ModPerl::Code
+    push @{ $constants{'Apache'}->{common} },
+      qw(NOT_FOUND FORBIDDEN AUTH_REQUIRED SERVER_ERROR);
+
+    return \%constants;
 }
 
-sub get_enum {
-    my($self, $name, $fh) = @_;
+sub handle_constant {
+    my($self, $constants) = @_;
+    my $keys = keys %defines_wanted_re; #XXX broken bleedperl ?
 
-    return unless $enums_wanted{$name};
-    local $_;
+    return if /^($defines_unwanted)/o;
+
+    while (my($class, $groups) = each %defines_wanted_re) {
+        my $keys = keys %$groups; #XXX broken bleedperl ?
+
+        while (my($group, $re) = each %$groups) {
+            next unless /^($re)/;
+            push @{ $constants->{$class}->{$group} }, $_;
+            return;
+        }
+    }
+}
+
+sub handle_enum {
+    my($self, $fh, $constants) = @_;
+
+    my($name, $e) = $self->parse_enum($fh);
+    return unless $name;
+
+    $name =~ s/_e$//;
+
+    my $class;
+    for (keys %enums_wanted) {
+        next unless $enums_wanted{$_}->{$name};
+        $class = $_;
+    }
+
+    return unless $class;
+    $name =~ s/^apr_//;
+
+    push @{ $constants->{$class}->{$name} }, @$e if $e;
+}
+
+#this should win an award for worlds lamest parser
+sub parse_enum {
+    my($self, $fh) = @_;
+    my $code = $_;
     my @e;
 
-    while (<$fh>) {
-        last if /\};/;
-        next unless /^\s*(\w+)/;
+    unless ($code =~ /;\s*$/) {
+        local $_;
+        while (<$fh>) {
+            $code .= $_;
+            last if /;\s*$/;
+        }
+    }
+
+    my $name;
+    if ($code =~ s/^\s*enum\s+(\w*)\s*//) {
+        $name = $1;
+    }
+    elsif ($code =~ s/^\s*typedef\s+enum\s+//) {
+        $code =~ s/\s*(\w+)\s*;\s*$//;
+        $name = $1;
+    }
+    $code =~ s:/\*.*?\*/::sg;
+    $code =~ s/\s*=\s*\d+//g;
+    $code =~ s/^[^\{]*\{//s;
+    $code =~ s/\}[^;]*;?//s;
+
+    while ($code =~ /\b(\w+)\b,?/g) {
         push @e, $1;
     }
 
-    return \@e;
+    return ($name, \@e);
 }
 
 sub wanted_functions  { shift->{prefix_re} }
@@ -277,6 +370,14 @@ sub write_structs_pm {
     my $name = shift || 'Apache::StructureTable';
 
     $self->write_pm($file, $name, $self->get_structs);
+}
+
+sub write_constants_pm {
+    my $self = shift;
+    my $file = shift || 'ConstantsTable.pm';
+    my $name = shift || 'Apache::ConstantsTable';
+
+    $self->write_pm($file, $name, $self->get_constants);
 }
 
 sub write_pm {

@@ -12,6 +12,8 @@ my $p = Apache::ParseSource->new(prefixes => ModPerl::FunctionMap->prefixes,
 
 $p->parse;
 
+$p->write_constants_pm;
+
 $p->write_functions_pm;
 
 $p->write_structs_pm;
