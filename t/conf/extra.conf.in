@@ -1,3 +1,15 @@
 # make sure that we test under Taint mode
 PerlSwitches -T
 
+#for t/modules/include.t
+<Directory @ServerRoot@/htdocs/includes>
+    AddOutputFilter INCLUDES .shtml
+    Options Indexes FollowSymLinks IncludesNoExec
+</Directory>
+
+<Directory @ServerRoot@/htdocs/includes-registry>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
+    PerlOptions +ParseHeaders
+</Directory>
