@@ -1,3 +1,4 @@
+#!perl
 eval {
     require Apache::Symbol;
 };

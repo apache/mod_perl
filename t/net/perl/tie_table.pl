@@ -1,3 +1,4 @@
+#!perl
 use Apache::test;
 
 use strict;

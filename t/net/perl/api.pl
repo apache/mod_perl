@@ -1,3 +1,4 @@
+#!perl
 use Apache ();
 use Apache::Constants qw(:server :common :methods);
 use Apache::test;

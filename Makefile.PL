@@ -1070,6 +1070,7 @@ sub init_tests_and_config {
     iedit "t/conf/httpd.conf", "s: \./t(\\S*): $PWD/t\$1:";
 
     for (qw(User Group)) {
+        $$_ = qq{"$$_"} if $$_ =~ /\s/; # User takes one parameter
 	iedit "t/conf/httpd.conf", "s/^$_ .*/$_ $$_/"; 
     }
     conf_append(<<EOF) if $IsBenSSL;
@@ -1117,9 +1118,8 @@ EOF
 
     require "lib/mod_perl_hooks.pm";
     my @list = mod_perl::hooks();
-    if ($Is_Cygwin) {
-    } 
-    else {
+
+    unless ($Is_Cygwin) { # test doesn't seem to be needed, works for me (Per Einar)
 	@list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
     }
 
@@ -1979,11 +1979,7 @@ sub iedit {
     return if $Is_Win32;
 
     #print STDERR "-e @_\n";
-    if ($Is_Cygwin) {
-    system $^X, "-e", "@_", $file;
-    } else {    
     system $^X, "-pi~", "-e", "@_", $file;
-    }
 }
 
 sub win32_setup {
