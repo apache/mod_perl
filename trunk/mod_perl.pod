@@ -778,7 +778,7 @@ See the L<SUPPORT> file.
 
 =head1 Win32
 
-Jeffey Baker maintains the win32 binary distribution of mod_perl available
+Jeffrey Baker maintains the win32 binary distribution of mod_perl available
 from: 
 
  http://www.perl.com/CPAN/authors/Jeffrey_Baker/
