@@ -733,6 +733,9 @@ sub apr_config_path {
             map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
         push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
             if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
+        # could be the source tree configured interactively
+        push @tries, catdir $self->{dir}, "srclib", "apr"
+            if exists $self->{dir} and -d $self->{dir};
 
         for (@tries) {
             my $try = catfile $_, "apr-config";
@@ -788,8 +791,9 @@ sub apr_includedir {
         $self->{apr_includedir} = $incdir;
     }
     else {
-        die "Can't find apr include/ directory,\n",
+        error "Can't find apr include/ directory,",
             "use MP_APR_CONFIG=/path/to/apr-config";
+        exit 1;
     }
 
     $self->{apr_includedir};
