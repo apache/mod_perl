@@ -21,5 +21,5 @@ utf8::decode($received) if ($res->header('Content-Type')||'') =~ /utf-8/i;
 
 # needed for debugging print out of utf8 strings
 binmode(STDOUT, ':utf8');
-ok t_cmp($expected, $received, 'UTF8 response via tied/perlio STDOUT');
+ok t_cmp($received, $expected, 'UTF8 response via tied/perlio STDOUT');
 

@@ -21,13 +21,13 @@ sub handler {
 
     plan $r, tests => $tests;
 
-    ok t_cmp(1, ${^TAINT}, "\${^TAINT}");
+    ok t_cmp(${^TAINT}, 1, "\${^TAINT}");
 
     eval { ${^TAINT} = 0 };
     ok t_cmp($@, qr/read-only/, "\${^TAINT} is read-only");
 
     if ($build->{MP_COMPAT_1X}) {
-        ok t_cmp(1, $Apache::__T, "\$Apache::__T");
+        ok t_cmp($Apache::__T, 1, "\$Apache::__T");
 
         eval { $Apache::__T = 0 };
         ok t_cmp($@, qr/read-only/, "\$Apache::__T is read-only");

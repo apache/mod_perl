@@ -52,8 +52,8 @@ for my $test (@tests_ordered) {
     $skip++ unless defined $received;
     skip_not_same_interp(
         $skip,
-        $expected,
         $received,
+        $expected,
         "perl-script+SetupEnv/cookie: $test"
     );
 }

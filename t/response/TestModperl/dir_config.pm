@@ -34,15 +34,15 @@ sub handler {
         my @received = $dir_config->get($key);
         my @expected = qw(1_SetValue 2_AddValue 3_AddValue 4_AddValue);
 
-        ok t_cmp(\@expected, \@received,
+        ok t_cmp(\@received, \@expected,
                  'PerlAddVar ITERATE2');
     }
 
     # sub-section inherits from super-section if it doesn't override it
     {
         my $key = make_key('_set_in_Base');
-        ok t_cmp('BaseValue',
-                 $r->dir_config($key),
+        ok t_cmp($r->dir_config($key),
+                 'BaseValue',
                  "sub-section inherits from super-section " .
                  "if it doesn't override it");
     }
@@ -50,7 +50,7 @@ sub handler {
     # sub-section overrides super-section for the same key
     {
         my $key = 'TestModperl__server_rec_Key_set_in_Base';
-        ok t_cmp('SubSecValue', $r->dir_config->get($key),
+        ok t_cmp($r->dir_config->get($key), 'SubSecValue',
                  "sub-section overrides super-section for the same key");
     }
 
@@ -59,14 +59,14 @@ sub handler {
 
         # object interface test in a scalar context (for a single
         # PerlSetVar key)
-        ok t_cmp('SetValue0',
-                 $dir_config->get($key),
+        ok t_cmp($dir_config->get($key),
+                 'SetValue0',
                  "table get() in a scalar context");
 
         # direct fetch test in a scalar context (for a single
         # PerlSetVar key)
-        ok t_cmp('SetValue0',
-                 $r->dir_config($key),
+        ok t_cmp($r->dir_config($key),
+                 'SetValue0',
                  "direct value fetch in a scalar context");
     }
 
@@ -74,8 +74,8 @@ sub handler {
     {
         my $key = 'TestModperl__request_rec_ZeroKey';
 
-        ok t_cmp(0,
-                 $r->dir_config($key),
+        ok t_cmp($r->dir_config($key),
+                 0,
                  'table value 0 is not undef');
     }
 
@@ -83,8 +83,8 @@ sub handler {
     {
         my $key = make_key();
 
-        ok t_cmp(undef,
-                 $r->dir_config($key),
+        ok t_cmp($r->dir_config($key),
+                 undef,
                  "non-existent key");
     }
 
@@ -95,8 +95,8 @@ sub handler {
 
         $r->dir_config($key => $val);
 
-        ok t_cmp($val,
-                 $r->dir_config($key),
+        ok t_cmp($r->dir_config($key),
+                 $val,
                  "set && get");
     }
 
@@ -131,20 +131,20 @@ sub handler {
         my @received = $dir_config->get($key);
         my @expected = qw(1_SetValue 2_AddValue 3_AddValue);
 
-        ok t_cmp(\@expected, \@received,
+        ok t_cmp(\@received, \@expected,
                  "testing PerlAddVar ITERATE2 in \$s");
     }
 
     {
         # base server test
         my $bs = Apache->server;
-        ok t_cmp('Apache::ServerRec',
-                 ($bs && ref($bs)),
+        ok t_cmp(($bs && ref($bs)),
+                 'Apache::ServerRec',
                  "base server's object retrieval");
 
         my $key = 'TestModperl__server_rec_Key_set_in_Base';
-        ok t_cmp('1_SetValue',
-                 scalar ($bs->dir_config->get($key)),
+        ok t_cmp(scalar ($bs->dir_config->get($key)),
+                 '1_SetValue',
                  "read dir_config of the base server");
     }
 
