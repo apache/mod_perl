@@ -522,7 +522,11 @@ void
 DESTROY(r=Nullsv)
     SV     *r
 
+    ALIAS:
+    Apache::CLOSE = 1
+
     CODE:
+    ix = ix; /*-Wall*/
     /*NOOP*/
 
 #httpd.h
