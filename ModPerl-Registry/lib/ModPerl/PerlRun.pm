@@ -42,6 +42,7 @@ my %aliases = (
     get_mark_line   => 'get_mark_line',
     compile         => 'compile',
     error_check     => 'error_check',
+    should_reset_inc_hash => 'TRUE',
     strip_end_data_segment             => 'strip_end_data_segment',
     convert_script_to_compiled_handler => 'convert_script_to_compiled_handler',
 );
