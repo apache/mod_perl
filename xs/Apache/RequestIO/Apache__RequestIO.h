@@ -333,6 +333,9 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
         apr_finfo_t finfo;
         apr_file_info_get(&finfo, APR_FINFO_NORM, fp);
         len = finfo.size;
+        if (offset) {
+            len -= offset;
+        }
     }
 
     /* flush any buffered modperl output */
