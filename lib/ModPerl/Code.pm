@@ -459,7 +459,8 @@ sub o_files { [map { "$_.o" } @c_names, @g_c_names] }
 sub o_pic_files { [map { "$_.lo" } @c_names, @g_c_names] }
 
 my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
-my @h_names = (@c_names, qw(modperl_types));
+my @h_names = (@c_names, map { "modperl_$_" }
+               qw(types apache_includes perl_includes));
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
 sub clean_files {
