@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/09/20 03:28:13 $]
+   Last modified at [$Date: 2003/09/23 20:36:43 $]
 
 Release:
 --------
@@ -239,7 +239,9 @@ Open Issues or Core Enhancements:
 * gcc 3.3 (from cvs 2003-07-28) supports a new option:
   -Wdeclaration-after-statement, which we need to enable in the
   maintainer mode, to catch any declarations after statements, since
-  by default gcc doesn't complain about them.
+  by default gcc doesn't complain about them. Probably need to wait
+  till gcc-3.3.2 and enable it then.
+  http://gcc.gnu.org/cgi-bin/cvsweb.cgi/gcc/gcc/ChangeLog.diff?r1=2.639&r2=2.640&f=h
 
 * Testing:
   Need to put Philippe's smoking test into the core
