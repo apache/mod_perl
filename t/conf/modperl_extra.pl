@@ -1,3 +1,6 @@
+use strict;
+use warnings FATAL => 'all';
+
 use Socket (); #test DynaLoader vs. XSLoader workaround for 5.6.x
 use IO::File ();
 use File::Spec::Functions qw(canonpath catdir);
@@ -119,10 +122,13 @@ sub ModPerl::Test::pass_through_response_handler {
     Apache::OK;
 }
 
-use constant IOBUFSIZE => 8192;
+use APR::Brigade ();
+use APR::Bucket ();
 
 use Apache::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
+
+use constant IOBUFSIZE => 8192;
 
 # to enable debug start with: (or simply run with -trace=debug)
 # t/TEST -trace=debug -start
@@ -130,15 +136,14 @@ sub ModPerl::Test::read_post {
     my $r = shift;
     my $debug = shift || 0;
 
-    my @data = ();
-    my $seen_eos = 0;
-    my $filters = $r->input_filters();
     my $ba = $r->connection->bucket_alloc;
     my $bb = APR::Brigade->new($r->pool, $ba);
 
+    my $data = '';
+    my $seen_eos = 0;
     my $count = 0;
     do {
-        my $rv = $filters->get_brigade($bb,
+        my $rv = $r->input_filters->get_brigade($bb,
             Apache::MODE_READBYTES, APR::BLOCK_READ, IOBUFSIZE);
         if ($rv != APR::SUCCESS) {
             return $rv;
@@ -161,14 +166,14 @@ sub ModPerl::Test::read_post {
 
             my $buf = $b->read;
             warn "read_post: DATA bucket: [$buf]\n" if $debug;
-            push @data, $buf;
+            $data .= $buf if length $buf;
         }
-
-        $bb->destroy;
 
     } while (!$seen_eos);
 
-    return join '', @data;
+    $bb->destroy;
+
+    return $data;
 }
 
 sub ModPerl::Test::add_config {
@@ -195,6 +200,9 @@ END {
 
 package ModPerl::TestTiePerlSection;
 
+use strict;
+use warnings FATAL => 'all';
+
 # the following is needed for the tied %Location test in <Perl>
 # sections. Unfortunately it can't be defined in the section itself
 # due to the bug in perl:
@@ -211,6 +219,9 @@ sub FETCH {
 }
 
 package ModPerl::TestFilterDebug;
+
+use strict;
+use warnings FATAL => 'all';
 
 use base qw(Apache::Filter);
 use APR::Brigade ();
@@ -262,9 +273,7 @@ sub bb_dump {
 
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-        my $bdata = $b->read;
-        $bdata = '' unless defined $bdata;
-        push @data, $b->type->name, $bdata;
+        push @data, $b->type->name, $b->read;
     }
 
     # send the sniffed info to STDERR so not to interfere with normal
@@ -328,8 +337,8 @@ package ModPerl::TestMemoryLeak;
 # need, so some leaks can be hard to see, unless many tests (like a
 # hundred) were run.
 
-use warnings;
 use strict;
+use warnings FATAL => 'all';
 
 # XXX: as of 5.8.4 when spawning ithreads we get an annoying
 #  Attempt to free unreferenced scalar ... perlbug #24660
