@@ -370,6 +370,10 @@ if ($vcpp and $win32_args{APACHE_SRC}) {
     (-d "$fixed_apsrc/src/include" ? $fixed_apsrc . '/src' :
      die "Cannot find the Apache include directory under $fixed_apsrc");
   $win32_auto = 1;
+  if (not defined $win32_args{INSTALL_DLL}) {
+    my $w32_ap_mod = $fixed_apsrc . '/modules';
+    $win32_args{INSTALL_DLL} = $w32_ap_mod if -d $w32_ap_mod;
+  }
 }
 
 my %very_experimental = map {$_,1} 
@@ -1293,17 +1297,6 @@ WriteMakefile(
 	FILES	=> "@do_clean",
     }
 );
-
-if ($Is_Win32) {
-  print <<'END';
-
-Beginning with version 1.3.15, Apache uses a different convention for 
-Win32 module names. Correspondingly, the name of the mod_perl module 
-built here has been changed from ApacheModulePerl.dll to mod_perl.so.
-Please see INSTALL.win32 for further details.
-
-END
-}
 
 print "*** BSDI users: be sure to read the INSTALL `Notes' section ***\n"
     if $Config{osname} =~ /bsdos/i;
