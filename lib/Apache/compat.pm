@@ -262,6 +262,8 @@ sub send_fd_length {
         $len = IOBUFSIZE;
     }
 
+    binmode $fh;
+
     while (CORE::read($fh, $buff, $len)) {
         $total_bytes_sent += $r->puts($buff);
     }
