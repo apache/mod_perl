@@ -22,12 +22,13 @@ g- src/docs/2.0/api/Apache/CmdParms.pod
 g- src/docs/2.0/api/Apache/Command.pod
 VP src/docs/2.0/api/Apache/Connection.pod
         conn_config
-+- src/docs/2.0/api/Apache/Const.pod
+VP src/docs/2.0/api/Apache/Const.pod
+        (this will never be complete, fill it in as we go)
 g- src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
         The whole TIE interface   
 VV src/docs/2.0/api/Apache/FilterRec.pod
--- src/docs/2.0/api/Apache/HookRun.pod
+VV src/docs/2.0/api/Apache/HookRun.pod
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
 g- src/docs/2.0/api/Apache/Module.pod
@@ -53,27 +54,16 @@ VP src/docs/2.0/api/Apache/ServerRec.pod
         wild_names
 VP src/docs/2.0/api/Apache/ServerUtil.pod
         error_log2stderr
--- src/docs/2.0/api/Apache/Status.pod
 VV src/docs/2.0/api/Apache/SubProcess.pod
 VV src/docs/2.0/api/Apache/SubRequest.pod
         internal_fast_redirect
         lookup_dirent
 VV src/docs/2.0/api/Apache/URI.pod
 VV src/docs/2.0/api/Apache/Util.pod
--- src/docs/2.0/api/Apache/compat.pod
--- src/docs/2.0/api/Apache/porting.pod
 
--- src/docs/2.0/api/ModPerl/BuildMM.pod
-++ src/docs/2.0/api/ModPerl/Const.pod
+VV src/docs/2.0/api/ModPerl/Const.pod
 VV src/docs/2.0/api/ModPerl/Global.pod
--- src/docs/2.0/api/ModPerl/MM.pod
-VV src/docs/2.0/api/ModPerl/MethodLookup.pod
--- src/docs/2.0/api/ModPerl/PerlRun.pod
--- src/docs/2.0/api/ModPerl/Registry.pod
--- src/docs/2.0/api/ModPerl/RegistryBB.pod
--- src/docs/2.0/api/ModPerl/RegistryCooker.pod
--- src/docs/2.0/api/ModPerl/RegistryLoader.pod
--- src/docs/2.0/api/ModPerl/Util.pod
+VV src/docs/2.0/api/ModPerl/Util.pod
 
 -- src/docs/2.0/api/APR.pod
 VV src/docs/2.0/api/APR/Base64.pod
@@ -83,7 +73,8 @@ VP src/docs/2.0/api/APR/Bucket.pod
         start
 VV src/docs/2.0/api/APR/BucketAlloc.pod
 VV src/docs/2.0/api/APR/BucketType.pod
-+- src/docs/2.0/api/APR/Const.pod
+VP src/docs/2.0/api/APR/Const.pod
+        (this will never be complete, fill it in as we go)
 VV src/docs/2.0/api/APR/Date.pod
 VV src/docs/2.0/api/APR/Error.pod
 -- src/docs/2.0/api/APR/Finfo.pod
@@ -114,6 +105,22 @@ VV src/docs/2.0/api/APR/URI.pod
 VP src/docs/2.0/api/APR/Util.pod
         filepath_name_get
         password_get
+
+#####################
+### other modules ###
+#####################
+
+-- src/docs/2.0/api/Apache/Status.pod
+VV src/docs/2.0/api/Apache/compat.pod
+VV src/docs/2.0/api/Apache/porting.pod
+-- src/docs/2.0/api/ModPerl/BuildMM.pod
+-- src/docs/2.0/api/ModPerl/MM.pod
+VV src/docs/2.0/api/ModPerl/MethodLookup.pod
+-- src/docs/2.0/api/ModPerl/PerlRun.pod
+-- src/docs/2.0/api/ModPerl/Registry.pod
+-- src/docs/2.0/api/ModPerl/RegistryBB.pod
+-- src/docs/2.0/api/ModPerl/RegistryCooker.pod
+-- src/docs/2.0/api/ModPerl/RegistryLoader.pod
 
 
 ################################
