@@ -2,6 +2,11 @@
 # working features but requiring optimization #
 ###############################################
 
+* consider using the temp pool for things that are needed only during
+  the configuration and can be dropped before the actual serving is
+  started. that pool gets destroyed right after the post-config phase
+  is over.
+
 * currently when ithreads-enabled perl is used anon-sub handlers are
   always deparsed and non-cached. there are several cases when this
   can be optimized. See modperl_handler_new_anon in modperl_handler.c
