@@ -56,4 +56,16 @@ MARK++
 mpxs_usage_va(2, obj, msg); \
 arg = *MARK++
 
+#define mpxs_write_loop(func,obj) \
+    while (MARK <= SP) { \
+        apr_ssize_t wlen; \
+        char *buf = SvPV(*MARK, wlen); \
+        apr_status_t rv = func(obj, buf, &wlen); \
+        if (rv != APR_SUCCESS) { \
+            croak(modperl_apr_strerror(rv)); \
+        } \
+        bytes += wlen; \
+        MARK++; \
+    }
+
 #endif /* MODPERL_XS_H */
