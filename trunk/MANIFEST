@@ -3,6 +3,7 @@ Constants/Constants.pm
 Constants/Makefile.PL
 ModuleConfig/ModuleConfig.pm
 ModuleConfig/Makefile.PL
+CREDITS
 INSTALL
 INSTALL.apaci
 SUPPORT
