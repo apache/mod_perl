@@ -14,15 +14,19 @@ sub handler {
 
     my $s = $r->server;
 
-    plan $r, tests => 2;
+    plan $r, tests => 3;
 
-    my $t_dir = Apache::server_root_relative('conf', $r->pool);
+    my $dir = Apache::server_root_relative('conf', $r->pool);
 
-    ok -d $t_dir;
+    ok -d $dir;
 
-    $t_dir = Apache::server_root_relative('logs');
+    $dir = Apache::server_root_relative('logs');
 
-    ok -d $t_dir;
+    ok -d $dir;
+
+    $dir = Apache::server_root_relative();
+
+    ok -d $dir;
 
     Apache::OK;
 }
