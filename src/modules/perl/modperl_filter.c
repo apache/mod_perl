@@ -139,8 +139,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         const char *body;
         int status;
 
-        MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %d bytes [%s]\n", len,
-                   apr_pstrmemdup(wb->pool, buf, len));
+        MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %db [%s]\n", len,
+                   MP_TRACE_STR_TRUNC(wb->pool, buf, len));
         
         status = modperl_cgi_header_parse(r, (char *)buf, &len, &body);
 
@@ -176,9 +176,10 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         APR_BRIGADE_INSERT_TAIL(bb, bucket);
     }
 
-    MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %d bytes\n"
+    MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %db [%s]\n"
                "\t\tfrom %s\n\t\tto %s filter handler\n",
                len, 
+               MP_TRACE_STR_TRUNC(wb->pool, buf, len),
                ((wb->r && wb->filters == &wb->r->output_filters)
                    ? "response handler" : "current filter handler"),
                MP_FILTER_NAME(*(wb->filters)));
@@ -589,17 +590,19 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
     /*modperl_brigade_dump(filter->bb_in, stderr);*/
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-               "wanted: %d bytes\n",
+               "wanted: %db\n",
                MP_FILTER_NAME(filter->f),
                wanted);
 
     if (filter->remaining) {
         if (filter->remaining >= wanted) {
             MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-                       "eating and returning %d of "
-                       "remaining %d leftover bytes\n",
+                       "eating and returning %d [%s]\n\tof "
+                       "remaining %db\n",
                        MP_FILTER_NAME(filter->f),
-                       wanted, filter->remaining);
+                       wanted,
+                       MP_TRACE_STR_TRUNC(filter->pool, filter->leftover, wanted),
+                       filter->remaining);
             sv_catpvn(buffer, filter->leftover, wanted);
             filter->leftover += wanted;
             filter->remaining -= wanted;
@@ -607,7 +610,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
         }
         else {
             MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-                       "eating remaining %d leftover bytes\n",
+                       "eating remaining %db\n",
                        MP_FILTER_NAME(filter->f),
                        filter->remaining);
             sv_catpvn(buffer, filter->leftover, filter->remaining);
@@ -632,7 +635,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
         if (filter->rc == APR_SUCCESS) {
             MP_TRACE_f(MP_FUNC,
                        MP_FILTER_NAME_FORMAT
-                       "read in: %s bucket with %d bytes (0x%lx)\n",
+                       "read in: %s bucket with %db (0x%lx)\n",
                        MP_FILTER_NAME(filter->f),
                        filter->bucket->type->name,
                        buf_len,
@@ -665,9 +668,10 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
 
     MP_TRACE_f(MP_FUNC,
                MP_FILTER_NAME_FORMAT
-               "return: %d bytes from %d bucket%s (%d bytes leftover)\n",
+               "return: %db from %d bucket%s [%s]\n\t(%db leftover)\n",
                MP_FILTER_NAME(filter->f),
                len, num_buckets, ((num_buckets == 1) ? "" : "s"),
+               MP_TRACE_STR_TRUNC(filter->pool, SvPVX(buffer), len),
                filter->remaining);
 
     return len;
@@ -785,11 +789,10 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
     apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
     char *copy = apr_pmemdup(filter->pool, buf, *len);
     apr_bucket *bucket = apr_bucket_transient_create(copy, *len, ba);
-    /* MP_TRACE_f(MP_FUNC, "writing %d bytes: %s\n", *len, copy); */
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-               "write out: %d bytes:\n",
-               MP_FILTER_NAME(filter->f),
-               *len);
+               "write out: %db [%s]:\n",
+               MP_FILTER_NAME(filter->f), *len,
+               MP_TRACE_STR_TRUNC(filter->pool, copy, *len));
     APR_BRIGADE_INSERT_TAIL(filter->bb_out, bucket);
     /* modperl_brigade_dump(filter->bb_out, stderr); */
     return APR_SUCCESS;
@@ -882,11 +885,12 @@ static int modperl_filter_add_connection(conn_rec *c,
     if ((av = dcfg->handlers_per_dir[idx])) {
         modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
         int i;
-        ap_filter_t *f;
 
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
+            ap_filter_t *f;
 
+            /* process non-mod_perl filter handlers */
             if ((handlers[i]->attrs & MP_FILTER_HTTPD_HANDLER)) {
                 addfunc(handlers[i]->name, NULL, NULL, c);
                 MP_TRACE_f(MP_FUNC,
@@ -895,9 +899,11 @@ static int modperl_filter_add_connection(conn_rec *c,
                 continue;
             }
             
+            /* skip non-connection level filters, e.g. request filters
+             * configured outside the resource container */
             if (!(handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
                 MP_TRACE_f(MP_FUNC,
-                           "%s is not a FilterConnection handler\n",
+                           "%s is not a FilterConnection handler, skipping\n",
                            handlers[i]->name);
                 continue;
             }
@@ -955,6 +961,7 @@ static int modperl_filter_add_request(request_rec *r,
             int registered = 0;
             ap_filter_t *f;
 
+            /* process non-mod_perl filter handlers */
             if ((handlers[i]->attrs & MP_FILTER_HTTPD_HANDLER)) {
                 addfunc(handlers[i]->name, NULL, r, r->connection);
                 MP_TRACE_f(MP_FUNC,
@@ -963,9 +970,13 @@ static int modperl_filter_add_request(request_rec *r,
                 continue;
             }
 
+            /* skip non-request level filters, e.g. connection filters
+             * configured outside the resource container, merged into
+             * resource's dcfg->handlers_per_dir[] entry.
+             */
             if ((handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
                 MP_TRACE_f(MP_FUNC,
-                           "%s is not a FilterRequest handler\n",
+                           "%s is not a FilterRequest handler, skipping\n",
                            handlers[i]->name);
                 continue;
             }
