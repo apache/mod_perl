@@ -298,13 +298,18 @@ sub set_modperl_version {
 sub perl_version_check {
     if ($] < 5.006_001) {
         error "You are running Perl version 5.6.0\n" .
-          "We strongly suggest you upgrade to at least 5.6.1";
+            "We strongly suggest you upgrade to at least 5.6.1";
     }
 
     if ($] >= 5.007 and $] < 5.008) {
         error "5.7.x development versions of Perl are no longer supported\n" .
-          "Upgrade to 5.8.0 or higher";
+            "Upgrade to 5.8.0 or higher";
         exit 1;
+    }
+
+    if (WIN32 and $] < 5.008) {
+        error "You are running a Perl version 5.6.x\n" .
+            "We strongly suggest you upgrade to 5.8\n";
     }
 }
 

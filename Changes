@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Strongly suggest win32 users to upgrade to 5.8.0, if they run 5.6.x
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 When installing the mod_perl shared object, first need to check
 whether the directory 'modules' already exists, and create it if not.
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
