@@ -170,7 +170,6 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
  ap_server_root_relative | mpxs_ | SV *:p, fname=""
 
 MODULE=Apache::Connection   PACKAGE=guess
- ap_get_remote_host
 #XXX: thought this might be useful for protocol modules
 #however it is not exported on win32
 !ap_read_request
