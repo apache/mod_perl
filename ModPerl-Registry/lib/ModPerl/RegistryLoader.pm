@@ -16,6 +16,7 @@ our @ISA = ();
 sub create {
     my $class = shift;
     my $self = bless {@_} => ref($class)||$class;
+    $self->{package} ||= 'ModPerl::Registry';
     $self->{pool} = APR::Pool->new();
     $self->load_package($self->{package});
     return $self;
