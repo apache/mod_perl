@@ -11,6 +11,18 @@ ServerTest per-server
 </Location>
 
 ### --------------------------------- ###
+PerlLoadModule TestDirective::perlloadmodule2
+
+MyMergeTest one two
+<Location /TestDirective::perlloadmodule2>
+    MyMergeTest three four
+</Location>
+<Location /TestDirective::perlloadmodule2/subdir>
+   MyMergeTest five
+   MyMergeTest six
+</Location>
+
+### --------------------------------- ###
 <Perl >
 push @Alias, ['/perl_sections', '@DocumentRoot@'],
 $Location{'/perl_sections'} = {
