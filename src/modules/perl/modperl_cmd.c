@@ -308,7 +308,7 @@ MP_CMD_SRV_DECLARE(load_module)
     server_rec *s = parms->server;
     const char *errmsg;
 
-    if (!strstr(arg, "::")) {
+    if (!ap_strstr_c(arg, "::")) {
         return DECLINE_CMD; /* let mod_so handle it */
     }
 
