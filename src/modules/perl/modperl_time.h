@@ -1,0 +1,30 @@
+#ifndef MODPERL_TIME_H
+#define MODPERL_TIME_H
+
+#ifdef MP_TRACE
+#define dMP_TIMES \
+    struct tms start_time; \
+    struct tms end_time
+#else
+#define dMP_TIMES dNOOP
+#endif
+
+#define MP_START_TIMES() \
+    MP_TRACE_t_do((void)times(&start_time))
+
+#define MP_END_TIMES() \
+    MP_TRACE_t_do((void)times(&end_time))
+
+#define MP_PRINT_TIMES(label) \
+    MP_TRACE_t_do({ \
+        double utime = \
+             (double)(end_time.tms_utime - start_time.tms_utime)/HZ; \
+        double stime = \
+             (double)(end_time.tms_stime - start_time.tms_stime)/HZ; \
+        if (utime || stime) { \
+            MP_TRACE_t(MP_FUNC, "%s %5.2f user %5.2f sys\n", \
+                       label, utime, stime); \
+        } \
+    })
+
+#endif /* MODPERL_TIME_H */
