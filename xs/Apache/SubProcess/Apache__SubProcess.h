@@ -18,7 +18,7 @@
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"
 
-static APR_OPTIONAL_FN_TYPE(apr_perlio_apr_file_to_glob) *apr_file_to_glob;
+static APR_OPTIONAL_FN_TYPE(modperl_apr_perlio_apr_file_to_glob) *apr_file_to_glob;
 #endif
 
 /* XXX: probably needs a lot more error checkings */
@@ -117,10 +117,10 @@ static int modperl_spawn_proc_prog(pTHX_
     PUSHs(apr_file_to_glob(aTHX_ fp, r->pool, type))
 
 #define PUSH_FILE_GLOB_READ(fp) \
-    PUSH_FILE_GLOB(fp, APR_PERLIO_HOOK_READ)
+    PUSH_FILE_GLOB(fp, MODPERL_APR_PERLIO_HOOK_READ)
 
 #define PUSH_FILE_GLOB_WRITE(fp) \
-    PUSH_FILE_GLOB(fp, APR_PERLIO_HOOK_WRITE)
+    PUSH_FILE_GLOB(fp, MODPERL_APR_PERLIO_HOOK_WRITE)
 
 static XS(MPXS_modperl_spawn_proc_prog)
 {
@@ -178,7 +178,7 @@ static XS(MPXS_modperl_spawn_proc_prog)
         if (rc == APR_SUCCESS) {
             /* XXX: apr_file_to_glob should be set once in the BOOT: section */
             apr_file_to_glob =
-                APR_RETRIEVE_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
+                APR_RETRIEVE_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
             
             if (GIMME == G_SCALAR) {
                 /* XXX: need to do lots of error checking before

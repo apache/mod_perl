@@ -1996,7 +1996,7 @@ $Apache::StructureTable = [
     'elts' => []
   },
   {
-    'type' => 'apr_perlio_hook_e',
+    'type' => 'modperl_apr_perlio_hook_e',
     'elts' => []
   },
   {
