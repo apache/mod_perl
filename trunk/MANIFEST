@@ -13,6 +13,10 @@ Server/Makefile.PL
 Server/Server.pm
 Connection/Makefile.PL
 Connection/Connection.pm
+IO/IO.pm
+IO/IO.xs
+t/net/perl/io.pl
+t/modules/io.t
 CREDITS
 INSTALL
 INSTALL.apaci

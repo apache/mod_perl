@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+new Apache::IO module
+
 send_fd() will now accept an optional length argument
 
 added set_last_modifed() method
