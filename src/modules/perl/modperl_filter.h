@@ -42,6 +42,8 @@ void modperl_output_filter_add_connection(conn_rec *c);
 void modperl_output_filter_add_request(request_rec *r);
 
 MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter);
+MP_INLINE apr_status_t modperl_input_filter_flush(modperl_filter_t *filter);
+
 
 MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
                                                 modperl_filter_t *filter,
@@ -64,5 +66,18 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
 void modperl_input_filter_add_connection(conn_rec *c);
 
 void modperl_input_filter_add_request(request_rec *r);
+
+MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
+                                               modperl_filter_t *filter,
+                                               ap_input_mode_t mode,
+                                               apr_read_type_e block,
+                                               apr_off_t readbytes,
+                                               SV *buffer,
+                                               apr_size_t wanted);
+    
+MP_INLINE apr_status_t modperl_input_filter_write(modperl_filter_t *filter,
+                                                  const char *buf,
+                                                  apr_size_t *len);
+
 
 #endif /* MODPERL_FILTER_H */

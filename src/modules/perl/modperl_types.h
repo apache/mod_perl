@@ -192,13 +192,15 @@ typedef struct {
     apr_ssize_t remaining;
     modperl_wbucket_t wbucket;
     apr_bucket *bucket;
-    apr_bucket_brigade *bb;
+    apr_bucket_brigade *bb_in;
+    apr_bucket_brigade *bb_out;
     apr_status_t rc;
     modperl_filter_mode_e mode;
     apr_pool_t *pool;
 } modperl_filter_t;
 
 typedef struct {
+    int sent_eos;
     SV *data;
     modperl_handler_t *handler;
     PerlInterpreter *perl;
