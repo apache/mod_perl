@@ -84,10 +84,6 @@
   release it any dependency on mod_perl will be resolved as mod_perl
   2.0, when mod_perl 1.0 may be required instead.
 
-* Set/Add overlapping in config which is not doing the right thing. See:
-  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100622977803237&w=2
-  http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
-
 * Apache::{Server,Process} classes:
   require mutex lock for writing (e.g. $s->(error_fname|error_log)
   Status: most likely some server/process datastructures aren't
