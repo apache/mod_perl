@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+Look for the makepl_args.mod_perl file as .makepl_args.mod_perl in
+./ and ../ too since the book says it works so. [Ask Bjoern Hansen
+<ask@valueclick.com>]
+
 PerlRestartHandler is now enabled w/ ALL_HOOKS=1 (or EVERYTHING=1)
 
 $r->no_cache(1) will now set the r->headers_out "Pragma" and
