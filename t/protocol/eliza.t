@@ -6,10 +6,10 @@ use Apache::TestUtil;
 use Apache::TestRequest ();
 
 my @test_strings = ('Hello Eliza', 
-                    'How are you', 
+                    'How are you?', 
                     'Why do I have core dumped?', 
-                    'I feel like writing some tests today, you?',
-                    'good bye');
+                    'I feel like writing some tests today, what about you?',
+                    'Good bye, Eliza');
 
 plan tests => 1 + @test_strings, have_module 'Chatbot::Eliza';
 
