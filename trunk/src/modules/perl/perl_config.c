@@ -696,11 +696,9 @@ CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg)
     if(PERL_RUNNING()) {
 	mp_PassEnv(arg);
     }
-    else {
-	char **entry;
-	entry = (char **)push_array(cls->PerlPassEnv);
-	*entry = pstrdup(parms->pool, arg);
-    }
+
+    *(char **)push_array(cls->PerlPassEnv) = pstrdup(parms->pool, arg);
+
     MP_TRACE_d(fprintf(stderr, "perl_cmd_pass_env: arg=`%s'\n", arg));
     arg = NULL;
     return NULL;
