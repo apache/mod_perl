@@ -52,17 +52,6 @@
   the issues and thinks he knows how to fix it, he just needs the time.
   owner: geoff
 
-* Apache::{Server,Process} classes:
-  require mutex lock for writing (e.g. $s->(error_fname|error_log)
-  Status: most likely some server/process datastructures aren't
-  supposed to be modified at request time. So instead of mutex
-  locking, we think we should simply have a flag that will be down
-  during the startup and will allow methods modifying $s/$proc structs
-  (the method will check that flag and if it's up it'll die). At the
-  beginning of child_end it'll raise the flag and lower it at the end
-  of child_exit.
-  owner: stas
-
 * Fixing Apache->warn("foo")
 
   Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
