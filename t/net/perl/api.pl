@@ -15,7 +15,7 @@ else {
 
 %ENV = $r->cgi_env;
 
-my $tests = 39;
+my $tests = 40;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -32,6 +32,7 @@ test ++$i, -d $Apache::Server::CWD;
 print "\$Apache::Server::CWD == $Apache::Server::CWD\n";
 print "\$0 == $0\n";
 
+test ++$i, $r->last;
 test ++$i, $ENV{GATEWAY_INTERFACE};
 test ++$i, defined($r->seqno);
 test ++$i, $r->protocol;

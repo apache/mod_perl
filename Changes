@@ -22,6 +22,11 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added $r->last method
+
+$r->cgi_env when called in a void context will simply setup the
+subprocess_env table 
+
 avoid some possible warnings in Apache.pm [Brian Mosley <ix@maz.org>]
 
 added $r->request_time method
