@@ -316,3 +316,11 @@ modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data)
     cdata->data = data;
     return cdata;
 }
+
+MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
+{
+    modperl_uri_t *uri = (modperl_uri_t *)apr_pcalloc(p, sizeof(*uri));
+    uri->pool = p;
+    return uri;
+}
+

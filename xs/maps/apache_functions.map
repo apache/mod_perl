@@ -37,7 +37,6 @@
 MODULE=Apache::RequestUtil   PACKAGE=guess
 >ap_finalize_request_protocol
 ?ap_default_port_for_request
- ap_default_port_for_scheme
  ap_default_type
  ap_get_server_name
  ap_get_server_port
@@ -245,13 +244,7 @@ MODULE=Apache::Util
 MODULE=Apache::URI   PACKAGE=guess
  ap_unescape_url | mpxs_ | SV *:url
  ap_parse_uri
-!ap_parse_hostinfo_components
- uri_components *:ap_parse_uri_components | mpxs_ | \
-                     SV *:classname, SV *:p, uri=NULL | parse
- ap_unparse_uri_components | mpxs_ | \
-                     uptr, flags=UNP_OMITPASSWORD | unparse
- #special case to set both uri->port and uri->port_str
- mpxs_Apache__URI_port | | uri, portsv=Nullsv
+
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_parsed_uri
 

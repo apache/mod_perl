@@ -153,3 +153,20 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    text
    next
 </apr_text>
+
+<apr_uri_components>
+   scheme
+   hostinfo
+   user
+   password
+   hostname
+-  port_str
+   path
+   query
+   fragment
+   hostent
+~  port
+   is_initialized
+   dns_looked_up
+   dns_resolved
+</apr_uri_components>

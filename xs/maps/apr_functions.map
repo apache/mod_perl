@@ -400,6 +400,16 @@ MODULE=APR::Base64
 -apr_base64_encode_binary
 -apr_base64_decode_binary
 
+MODULE=APR::URI
+!apr_uri_parse_hostinfo_components
+ apr_uri_components *:apr_uri_parse_components | mpxs_ | \
+                      SV *:classname, SV *:p, uri=NULL | parse
+ apr_uri_unparse_components | mpxs_ | \
+                      uptr, flags=UNP_OMITPASSWORD | unparse
+ #special case to set both uri->port and uri->port_str
+ mpxs_APR__URI_port | | uri, portsv=Nullsv
+ apr_uri_default_port_for_scheme
+
 !MODULE=Apache::XML
  apr_text_append
  apr_xml_parser_create

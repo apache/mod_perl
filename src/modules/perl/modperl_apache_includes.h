@@ -20,7 +20,7 @@
 
 #include "apr_lock.h"
 #include "apr_strings.h"
-
+#include "apr_uri.h"
 #include "apr_buckets.h"
 #include "util_filter.h"
 

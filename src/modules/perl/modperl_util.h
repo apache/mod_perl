@@ -47,4 +47,6 @@ void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles);
 
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data);
 
+MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p);
+
 #endif /* MODPERL_UTIL_H */
