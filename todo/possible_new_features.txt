@@ -48,6 +48,9 @@ perl language features:
 
 - some mod_perlIO/PerlIO type methods for xs modules? (e.g. Apache::Peek)
 
+- possible to support BEGIN,CHECK,INIT blocks similar to how END is
+  supported via ModPerl::Global::special_list_{call,clear}
+
 optimization features:
 ---------------------
 
