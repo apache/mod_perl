@@ -929,7 +929,6 @@ send_http_header(r, type=NULL)
         r->content_type = pstrdup(r->pool, type);
     send_http_header(r);
     mod_perl_sent_header(r, 1);
-    r->status = 200; /* XXX, why??? */
 
 #ifndef PERL_OBJECT
 
