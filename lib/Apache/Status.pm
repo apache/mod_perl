@@ -23,6 +23,9 @@ use Apache::RequestIO ();
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 use Apache::ServerUtil ();
+
+use File::Spec ();
+
 use Apache::Const -compile => qw(OK);
 
 $Apache::Status::VERSION = '3.00'; # mod_perl 2.0
@@ -31,28 +34,11 @@ use constant IS_WIN32 => ($^O eq "MSWin32");
 
 our $newQ;
 
-if (eval { require Apache::Request }) {
-    if ($Apache::Request::VERSION >= 2) {
-        $newQ ||= sub { Apache::Request->new(@_) };
-    }
+if (parse_version("Apache::Request") > 2 &&
+    eval { require Apache::Request }) {
+    $newQ ||= sub { Apache::Request->new(@_) };
 }
-else {
-    if ($@ !~ m|^Can't locate Apache/Request.pm|) {
-        # we hit Apache::Request from mp1 which has failed to load
-        # because it couldn't load other things, but it left all kind
-        # of things behind, that will affect other code (e.g. magical
-        # Apache::Table in %INC), so try to undo the damage
-        # otherwise loading Apache::compat which calls:
-        # $INC{'Apache/Table.pm'} = __FILE__;
-        # crashes
-        delete $INC{"Apache/Table.pm"};
-        delete $INC{"Apache/Request.pm"};
-    }
-    else {
-        # user has no Apache::Request installed
-    }
-}
-if (!$newQ && eval { require CGI }) {
+elsif (eval { require CGI }) {
     if ($CGI::VERSION >= 2.93) {
         $newQ ||= sub { CGI->new(@_) };
     }
@@ -855,6 +841,66 @@ sub myconfig {
     else {
         return Config::myconfig();
   }
+}
+
+# mp2 modules have to deal with situations where a binary incompatible
+# mp1 version of the same module is installed in the same
+# tree. therefore when checking for a certain version, one wants to
+# check the version of the module 'require()' will find without
+# loading that module. this function partially adopted from
+# ExtUtils::MM_Unix does just that. it returns the version number of
+# the first module that it finds, forcing numerical context, making
+# the return value suitable for immediate numerical comparison
+# operation. (i.e. 2.03-dev will be returned as 2.03,  0 will be
+# returned when the parsing has failed or a module wasn't found).
+sub parse_version {
+    my $name = shift;
+    die "no module name passed" unless $name;
+    my $file = File::Spec->catfile(split /::/, $name) . '.pm';
+    for my $dir (@INC) {
+        next if ref $dir; # skip code refs
+
+        my $pmfile = File::Spec->catfile($dir, $file);
+        next unless -r $pmfile;
+
+        open my $fh, $pmfile or die "can't open $pmfile: $!";
+
+        my $inpod = 0;
+        my $version;
+        while (<$fh>) {
+            $inpod = /^=(?!cut)/ ? 1 : /^=cut/ ? 0 : $inpod;
+            next if $inpod || /^\s*#/;
+
+            chomp;
+            next unless /([\$*])(([\w\:\']*)\bVERSION)\b.*\=/;
+            { local($1, $2); ($_ = $_) = /(.*)/; } # untaint
+            my $eval = qq{
+                package ModPerl::Util::_version;
+                no strict;
+
+                local $1$2;
+                \$$2=undef; do {
+                    $_
+                }; \$$2
+            };
+            no warnings;
+            $version = eval $eval;
+            warn "Could not eval '$eval' in $pmfile: $@" if $@;
+            last;
+        }
+
+        close $fh;
+
+        # avoid situations like "2.03-dev" and return a numerical
+        # version
+        if (defined $version) {
+            no warnings;
+            $version += 0; # force number
+            return $version;
+        }
+    }
+
+    return 0; # didn't find the file or the version number
 }
 
 1;
