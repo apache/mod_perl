@@ -456,6 +456,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		#print "rm -f $adir/$_\n";
 		unlink "$atopdir/$_";
 		next if not m,.+\.(xs|c|h)$, and $USE_APACI;
+		next if $DYNAMIC and /\.xs$/;
 		print "cp $_ $atopdir/$_\n" if $USE_APACI;
 		my $dest = "$atopdir/$_";
 		cp $_, $dest;
@@ -590,8 +591,9 @@ my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
 win32_setup() if $Is_Win32;
 
 if($DYNAMIC) {
+    print "Will build Apache::* extensions dynamic\n";
     for (@xs_mod_snames) {
-	cp "src/modules/perl/${_}.xs", "${_}/${_}.xs" if $DYNAMIC;
+	cp "src/modules/perl/${_}.xs", "${_}/${_}.xs";
     }
 }
 
@@ -1458,10 +1460,13 @@ sub setup_for_static {
     unless ($USE_APACI) {
 	#XXX: ho,hum, need to generate the whole damn thing 
 	#instead of all these frigging iedits.
-	iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @static_src/";
-	iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_modules/";
-	iedit $mf, "s/^#STATIC_/STATIC_/";
-
+	if ($DYNAMIC) {
+	}
+	else {
+	    iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @static_src/";
+	    iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_modules/";
+	    iedit $mf, "s/^#STATIC_/STATIC_/";
+	}
 	#bloody hell, make sucks and so does this.
 	#this has only cause a few people pain, enough.
 	iedit $mf, "s/ \Q\$(STATIC_SRC)\E/ @static_src/";
@@ -1782,9 +1787,14 @@ sub APACI::init {
 	die "can't open $lib_cfg $!";
 
     my @static_src = ();
+
     for (@xs_mod_snames) {
 	push @static_src, "$_.c";
     }
+    my $static_targets = <<EOF unless $DYNAMIC;
+PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
+PERL_STATIC_SRCS = @static_src
+EOF
 
     print $apaci_cfg <<EOF;
 ##
@@ -1798,8 +1808,8 @@ PERL_VERSION = $PERL_VERSION
 #   Perl interpreter to use 
 PERL = $^X
 LIBPERL = $LIBPERL
-PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
-PERL_STATIC_SRCS = @static_src
+
+$static_targets
 
 EOF
 

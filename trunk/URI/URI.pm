@@ -1,7 +1,7 @@
 package Apache::URI;
 
 use strict;
-
+use Apache ();
 use DynaLoader ();
 @Apache::URI::ISA = qw(DynaLoader);
 $Apache::URI::VERSION = '1.00';

@@ -12,7 +12,7 @@ $Debug ||= 0;
 my $Is_Win32 = $^O eq "MSWin32";
 
 $VERSION = '0.03';
-#@ISA = qw(DynaLoader);
+@ISA = qw(DynaLoader);
 
 if($ENV{MOD_PERL}) {
     bootstrap Apache::PerlRunXS $VERSION;
