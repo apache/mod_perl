@@ -140,7 +140,7 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
         av_push(args, newSViv(*readbytes));
     }
 
-    if ((status = modperl_callback(aTHX_ handler, p, s, args)) != OK) {
+    if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
 
