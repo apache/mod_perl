@@ -35,10 +35,10 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
     # should be no closure effect, always returns 1
-    my $first  = req($same_interp, $url);
-    my $second = req($same_interp, $url);
+    my $first  = get_body($same_interp, $url);
+    my $second = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second),
+        (scalar(grep defined, $first, $second) != 2),
         0,
         $first && $second && ($second - $first),
         "never the closure problem",
@@ -48,9 +48,9 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     sleep_and_touch_file($path);
 
     # it doesn't matter, since the script is not cached anyway
-    my $third = req($same_interp, $url);
+    my $third = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second, $third),
+        (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $third,
         "never the closure problem",
@@ -67,10 +67,10 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # we don't know what other test has called this uri before, so we
     # check the difference between two subsequent calls. In this case
     # the difference should be 1.
-    my $first  = req($same_interp, $url);
-    my $second = req($same_interp, $url);
+    my $first  = get_body($same_interp, $url);
+    my $second = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second),
+        (scalar(grep defined, $first, $second) != 2),
         1,
         $first && $second && ($second - $first),
         "the closure problem should exist",
@@ -80,9 +80,9 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     sleep_and_touch_file($path);
 
     # should not notice closure effect on the first request
-    my $third = req($same_interp, $url);
+    my $third = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second, $third),
+        (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $third,
         "no closure on the first request",
@@ -99,10 +99,10 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # we don't know what other test has called this uri before, so we
     # check the difference between two subsequent calls. In this case
     # the difference should be 1.
-    my $first  = req($same_interp, $url);
-    my $second = req($same_interp, $url);
+    my $first  = get_body($same_interp, $url);
+    my $second = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second),
+        (scalar(grep defined, $first, $second) != 2),
         1,
         $first && $second && ($second - $first),
         "the closure problem should exist",
@@ -112,9 +112,9 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     sleep_and_touch_file($path);
 
     # modification shouldn't be noticed
-    my $third = req($same_interp, $url);
+    my $third = get_body($same_interp, $url);
     skip_not_same_intrep(
-        scalar(grep defined, $first, $second, $third),
+        (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $first && $second && $third - $second,
         "no reload on modification, the closure problem persists",
@@ -134,26 +134,33 @@ sub sleep_and_touch_file {
 
 # if we fail to find the same interpreter, return undef (this is not
 # an error)
-sub req {
+sub get_body {
     my($same_interp, $url) = @_;
     my $res = eval {
         Apache::TestRequest::same_interp_do($same_interp, \&GET, $url);
     };
-    return undef if $@;
+    return undef if $@ =~ /unable to find interp/;
     return $res->content if $res;
-    die "failed to fetch $url";
+    die $@ if $@;
 }
+
 
 # make the tests resistant to a failure of finding the same perl
 # interpreter, which happens randomly and not an error.
 # the first argument is used to decide whether to skip the sub-test,
 # the rest of the arguments are passed to 'ok t_cmp';
 sub skip_not_same_intrep {
-    my $do_not_skip_cond = shift;
-    unless ($do_not_skip_cond) {
+    my $skip_cond = shift;
+    if ($skip_cond) {
         skip "Skip couldn't find the same interpreter";
     }
     else {
-        ok t_cmp(@_);
+        my($package, $filename, $line) = caller;
+        # trick ok() into reporting the caller filename/line when a
+        # sub-test fails in sok()
+        return eval <<EOE;
+#line $line $filename
+    ok &t_cmp;
+EOE
     }
 }
