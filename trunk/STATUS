@@ -17,16 +17,14 @@ Available Patches:
           the opposite of what the user is asking for --Geoff
           patch available at
           http://marc.theaimsgroup.com/?l=apache-modperl&m=101559176217056&w=2
- 
-
-Needs Patch or Further Investigation
-
+     
     * $r->print() ignores $\
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=102874705105904&w=2
-        Status:
-          not sure what to do with this, just sv_catpvn(sv, $\, 1) in Apache.xs's print()?
-          does that handle everything? (assuming I can figure out how to dig out 
-          what's in $\)  is this really important? --Geoff
+        Status: 
+            Patch available at 
+            http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105359253610093&w=2
+
+Needs Patch or Further Investigation
 
     * make test fails when a wrong combination of URI and LWP are
       installed. (e.g. lwp 5.64 and URI 1.09). LWP's Makefile.PL
