@@ -318,8 +318,18 @@ package ModPerl::TestMemoryLeak;
 use warnings;
 use strict;
 
+# XXX: as of 5.8.4 when spawning ithreads we get an annoying
+#  Attempt to free unreferenced scalar ... perlbug #24660
+# because of $gtop's CLONE'd object, so skip it for now
+
 # GTop v0.12 is the first version that will work under threaded mpms
-use constant HAS_GTOP => eval { require GTop && GTop->VERSION >= 0.12 };
+use constant MPM_IS_THREADED => eval {
+    require Apache::Build;
+    Apache::Build->build_config->mpm_is_threaded();
+};
+use constant HAS_GTOP => eval {
+    !MPM_IS_THREADED && require GTop && GTop->VERSION >= 0.12
+};
 
 my $gtop = HAS_GTOP ? GTop->new : undef;
 my @attrs = qw(size vsize resident share rss);
