@@ -222,6 +222,11 @@ sub inc {
 	$ssl_dir = "$Apache::MyConfig::Setup{SSL_BASE}/include";
     }
     push @inc, "-I$ssl_dir" if -d $ssl_dir;
+    require Apache::MyConfig;
+    if (my $apxs = $Apache::MyConfig::Setup{'APXS'}) {
+	my $ainc = `$apxs -q INCLUDEDIR`;
+	push @inc, "-I$ainc" if -d $ainc;
+    }
     return "@inc";
 }
 
