@@ -99,6 +99,15 @@ static int modperl_spawn_proc_prog(request_rec *r,
     return rc;
 }
 
+#define PUSH_FILE_GLOB(fp, type) \
+    PUSHs(apr_file_to_glob(aTHX_ fp, r->pool, type))
+
+#define PUSH_FILE_GLOB_READ(fp) \
+    PUSH_FILE_GLOB(fp, APR_PERLIO_HOOK_READ)
+
+#define PUSH_FILE_GLOB_WRITE(fp) \
+    PUSH_FILE_GLOB(fp, APR_PERLIO_HOOK_WRITE)
+
 static XS(MPXS_modperl_spawn_proc_prog)
 {
     dXSARGS;
@@ -161,9 +170,8 @@ static XS(MPXS_modperl_spawn_proc_prog)
                 /* XXX: need to do lots of error checking before
                  * putting the object on the stack
                  */
-                SV *out = apr_file_to_glob(aTHX_ script_out, r->pool,
-                                           APR_PERLIO_HOOK_READ);
-                XPUSHs(out);
+                EXTEND(SP, 1);
+                PUSH_FILE_GLOB_READ(script_out);
 
                 rc = apr_file_close(script_in);
                 if (rc != APR_SUCCESS) {
@@ -176,12 +184,10 @@ static XS(MPXS_modperl_spawn_proc_prog)
                 }
             }
             else {
-                XPUSHs(apr_file_to_glob(aTHX_ script_in,
-                                        r->pool, APR_PERLIO_HOOK_WRITE));
-                XPUSHs(apr_file_to_glob(aTHX_ script_out,
-                                        r->pool, APR_PERLIO_HOOK_READ));
-                XPUSHs(apr_file_to_glob(aTHX_ script_err,
-                                        r->pool, APR_PERLIO_HOOK_READ));
+                EXTEND(SP, 3);
+                PUSH_FILE_GLOB_WRITE(script_in);
+                PUSH_FILE_GLOB_READ(script_out);
+                PUSH_FILE_GLOB_READ(script_err);
             }
         }
         else {
