@@ -5,7 +5,21 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 3;
+plan tests => 6;
+
+{
+    # the script changes the status before the run-time error happens,
+    # this status change should be ignored
+    my $url = "/registry/runtime_error_n_status_change.pl";
+    my $res = GET($url);
+    #t_debug($res->content);
+    ok t_cmp(
+        500,
+        $res->code,
+        "500 error on runtime error (when the script changes the status)",
+       );
+}
+
 
 
 {
@@ -20,6 +34,21 @@ plan tests => 3;
 }
 
 {
+    my $url = "/registry/missing_headers.pl";
+    my $res = GET($url);
+    #t_debug($res->content);
+    ok t_cmp(
+        500,
+        $res->code,
+        "500 error on missing HTTP headers",
+       );
+}
+
+{
+    # since we have a runtime error before any body is sent, mod_perl
+    # has a chance to communicate the return status of the script to
+    # Apache before headers are sent, so we get the code 500 in the
+    # HTTP headers
     my $url = "/registry/runtime_error.pl";
     my $res = GET($url);
     #t_debug($res->content);
@@ -31,12 +60,23 @@ plan tests => 3;
 }
 
 {
-    my $url = "/registry/missing_headers.pl";
+    # even though we have a runtime error here, the scripts succeeds
+    # to send some body before the error happens and since by that
+    # time Apache has already sent the headers, they will include 
+    # 200 OK
+    my $url = "/registry/runtime_error_plus_body.pl";
     my $res = GET($url);
     #t_debug($res->content);
     ok t_cmp(
-        500,
+        200,
         $res->code,
-        "500 error on missing HTTP headers",
+        "200, followed by a runtime error",
+       );
+
+    # the error message is attached after the body
+    ok t_cmp(
+        qr/some body.*The server encountered an internal error/ms,
+        $res->content,
+        "200, followed by a runtime error",
        );
 }
