@@ -81,7 +81,7 @@ subrequest_rec *:ap_sub_req_method_uri  | | \
 
 PACKAGE=Apache::SubRequest   ISA=Apache::RequestRec
  ap_destroy_sub_req  | | r | DESTROY
- ap_run_sub_req      | | r | run
+ ap_run_sub_req      | mpxs_ | | run
 
 MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  ap_discard_request_body
