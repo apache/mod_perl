@@ -20,7 +20,7 @@ sub config_as_str{
 
     my $test_config = Apache::TestConfig->new;
     my $httpd = $test_config->{vars}->{httpd};
-    my $command = "$httpd -v";
+    my $command = "$httpd -V";
     $cfg .= "\n\n*** $command\n";
     $cfg .= qx{$command};
 
