@@ -8,6 +8,7 @@ use warnings FATAL => 'all';
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter;
+use Apache::URI ();
 
 use APR::Brigade ();
 use APR::Bucket ();
@@ -57,8 +58,9 @@ sub response {
     debug "\n-------- new request ----------";
 
     $r->content_type('text/plain');
-    my $file = $r->args;
 
+    my $file = $r->args;
+    Apache::URI::unescape_url($file);
     $r->sendfile($file);
 
     return Apache::OK;
