@@ -6462,8 +6462,8 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_status_t',
-    'name' => 'mpxs_apr_brigade_flatten',
+    'return_type' => 'SV *',
+    'name' => 'mpxs_APR__Brigade_flatten',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -6474,8 +6474,8 @@ $ModPerl::FunctionTable = [
         'name' => 'bb'
       },
       {
-        'type' => 'SV *',
-        'name' => 'sv_buf'
+        'type' => 'apr_pool_t *',
+        'name' => 'pool'
       },
       {
         'type' => 'SV *',
