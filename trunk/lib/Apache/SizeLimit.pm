@@ -171,6 +171,7 @@ sub bsd_size_check {
 }
 
 sub exit_if_too_big {
+    my $r = shift;
     return if ($REQUEST_COUNT++ < $CHECK_EVERY_N_REQUESTS);
     $REQUEST_COUNT = 1;
     if (defined($MAX_PROCESS_SIZE)) {
@@ -179,7 +180,7 @@ sub exit_if_too_big {
 	    # I have no idea if this will work on anything but UNIX
 	    if (getppid > 1) {	# this is a  child httpd
 		&error_log("httpd process too big, exiting at SIZE=$size KB");
-	        Apache::exit(-2);
+	        $r->child_terminate;
 	    } else {		# this is the main httpd
 		&error_log("main process too big, SIZE=$size KB");
 	    }
