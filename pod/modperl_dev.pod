@@ -64,8 +64,9 @@ with CPAN.pm shell:
   % perl Makefile.PL MP_GENERATE_XS=1 MP_USE_DSO=1 \
     MP_APXS=$apache_prefix/bin/apxs && make
 
-I<options>  an optional list of (key,value) pairs. Currently all options are
-boolean, set them with MP_XXX=1.
+I<options> an optional list of (key,value) pairs.
+
+Boolean options: set them with MP_XXX=1.
 
 =over 4
 
@@ -106,15 +107,21 @@ Maintainer compile mode, turn on MP_DEBUG and add gcc flags:
 
 Enable tracing
 
+=item MP_INST_APACHE2
+
+Install *.pm relative to Apache2/ directory
+
+=back
+
+Non-Boolean options: set them with MP_XXX=value.
+
+=over 4
+
 =item MP_CCOPTS
 
 Add to compiler flags, e.g.
 
  MP_CCOPTS = -Werror
-
-=item MP_INST_APACHE2
-
-Install *.pm relative to Apache2/ directory
 
 =item MP_OPTIONS_FILE
 
@@ -122,21 +129,36 @@ Read options from given file
 
 =back
 
-mod_perl specific compiler opts:
+mod_perl specific compiler options:
 
 =over 4
 
 =item -DMP_IOBUFSIZE
 
-Change the default mod_perl's 8k IO buffer size, e.g. 16k:
+Change the default mod_perl's 8K IO buffer size, e.g. 16K:
 
  MP_CCOPTS=-DMP_IOBUFSIZE=16384
 
 =back
 
-Options can also be specified in the file C<makepl_args.mod_perl2>.
-Command line options override those from C<makepl_args_mod_perl2>
-and those from MP_OPTIONS_FILE.
+Options can also be specified in the file I<makepl_args.mod_perl2> or
+I<.makepl_args.mod_perl2>. The file can be placed under $ENV{HOME},
+the root of the source package or its parent directory. So if you
+unpack the mod_perl source into I</tmp/mod_perl-2.x/> and your home is
+I</home/foo/>, the file will be searched in:
+
+  /tmp/mod_perl-2.x/makepl_args.mod_perl2
+  /tmp/makepl_args.mod_perl2
+  /home/foo/makepl_args.mod_perl2
+  /tmp/mod_perl-2.x/.makepl_args.mod_perl2
+  /tmp/.makepl_args.mod_perl2
+  /home/foo/.makepl_args.mod_perl2
+
+If the file specified in C<MP_OPTIONS_FILE> is found the
+I<makepl_args.mod_perl2> will be ignored.
+
+Command line options override those from I<makepl_args.mod_perl2> and
+those from C<MP_OPTIONS_FILE>.
 
 =head2 Compile mod_perl
 
@@ -311,7 +333,7 @@ warnings:
 set the trace level. This directive is enabled when mod_perl is compiled with
 the MP_TRACE option. C<level> is either:
 
-all
+  all
 
 which sets maximum logging and debugging levels;
 
@@ -325,7 +347,7 @@ a combination of one or more option letters from the following list:
   m  memory allocations
   s  perl sections
 
-a numeric value.
+or a numeric value.
 
 When C<level> is not specified, the tracing level will be set to the
 value of the MOD_PERL_TRACE environment variable.
@@ -452,3 +474,45 @@ Examples:
  <VirtualHost ...>
   PerlOptions -Authen -Authz -Access
  </VirtualHost>
+
+
+=head1 Notes for Developers
+
+If you develop some parts of the mod_perl core you may find these usefull:
+
+=over
+
+=item *
+
+Apache source code cross-reference (LXR):
+http://lxr.webperf.org/
+
+=item *
+
+Apache source code through Doxygen documentation system:
+
+http://docx.webperf.org/
+
+
+=item *
+
+
+
+=back
+
+
+
+
+=head1 Submitting Patches
+
+If you submit patches the I<Porting/patching.pod> manpage can be very
+useful. You can find it I<perl-5.7.0/Porting/patching.pod> or similar
+or read it online at
+http://sunsite.ualberta.ca/Documentation/Misc/perl-5.6.1/Porting/patching.html
+.
+
+Note that we prefer the patches inlined into an email. This makes
+easier to comment on them.
+
+=cut
+
