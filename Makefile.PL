@@ -6,8 +6,8 @@ use warnings FATAL => 'all';
 # directly or via the top level Makefile.PL
 $ENV{MOD_PERL_2_BUILD} = 1;
 
-my $min_httpd_version = '2.0.47';
-my $min_httpd_version_static = '2.0.51';
+use constant MIN_HTTPD_VERSION_DYNAMIC => '2.0.47';
+use constant MIN_HTTPD_VERSION_STATIC  => '2.0.51';
 
 my($old_modperl_version, $old_modperl_pm);
 
@@ -196,6 +196,10 @@ sub configure {
 
     system_sanity_check();
 
+    my $min_httpd_version = $build->should_build_apache
+        ? MIN_HTTPD_VERSION_STATIC
+        : MIN_HTTPD_VERSION_DYNAMIC;
+
     if ($build->{MP_APXS}) {
         debug "Using APXS => $build->{MP_APXS}";
     }
@@ -244,15 +248,7 @@ sub configure {
         exit(1);
     }
 
-    my $min_version;
-    if ($build->should_build_apache) {
-        $min_version = $min_httpd_version_static;
-    }
-    else {
-        $min_version = $min_httpd_version;
-    }
-    
-    if ($httpd_version lt $min_version) {
+    if ($httpd_version lt $min_httpd_version) {
         error "Apache/$httpd_version not supported, " .
               "$min_httpd_version or higher is required";
         exit(1);
