@@ -173,7 +173,7 @@ static MP_INLINE SV *mpxs_Apache__Filter_seen_eos(pTHX_ I32 items,
     MARK++;
     
     if (items == 2) {
-        modperl_filter->seen_eos = SvIV(*MARK) ? 1 : 0;
+        modperl_filter->seen_eos = SvTRUE(*MARK) ? 1 : 0;
     }
     
     return modperl_filter->seen_eos ? &PL_sv_yes : &PL_sv_no;
