@@ -91,21 +91,21 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
 {
     CV *cv;
     GV *gv;
-    HV *stash = gv_stashpv(class, FALSE);
+    HV *stash = gv_stashpv(package, FALSE);
 
     if (!stash) {
-        MP_TRACE_h(MP_FUNC, "class %s not defined, attempting to load\n",
-                   class);
-        require_module(aTHX_ class);
+        MP_TRACE_h(MP_FUNC, "package %s not defined, attempting to load\n",
+                   package);
+        require_module(aTHX_ package);
         if (SvTRUE(ERRSV)) {
-            MP_TRACE_h(MP_FUNC, "failed to load %s class\n", class);
+            MP_TRACE_h(MP_FUNC, "failed to load %s package\n", package);
             return 0;
         }
         else {
-            MP_TRACE_h(MP_FUNC, "loaded %s class\n", class);
-            if (!(stash = gv_stashpv(class, FALSE))) {
+            MP_TRACE_h(MP_FUNC, "loaded %s package\n", package);
+            if (!(stash = gv_stashpv(package, FALSE))) {
                 MP_TRACE_h(MP_FUNC, "%s package still does not exist\n",
-                           class);
+                           package);
                 return 0;
             }
         }
@@ -114,7 +114,7 @@ int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
     if ((gv = gv_fetchmethod(stash, name)) && (cv = GvCV(gv))) {
         if (CvFLAGS(cv) & CVf_METHOD) { /* sub foo : method {}; */
             MpHandlerMETHOD_On(handler);
-            handler->obj = newSVpv(class, 0);
+            handler->obj = newSVpv(package, 0);
             handler->cv = newSVpv(name, 0);
         }
         else {
@@ -198,38 +198,38 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
     }
     
     if ((tmp = strstr(name, "->"))) {
-        char class[256]; /*XXX*/
-        int class_len = strlen(name) - strlen(tmp);
-        apr_cpystrn(class, name, class_len+1);
+        char package[256]; /*XXX*/
+        int package_len = strlen(name) - strlen(tmp);
+        apr_cpystrn(package, name, package_len+1);
 
         MpHandlerMETHOD_On(handler);
         handler->cv = newSVpv(&tmp[2], 0);
 
-        if (*class == '$') {
-            SV *obj = eval_pv(class, FALSE);
+        if (*package == '$') {
+            SV *obj = eval_pv(package, FALSE);
 
             if (SvTRUE(obj)) {
                 handler->obj = SvREFCNT_inc(obj);
                 if (SvROK(obj) && sv_isobject(obj)) {
                     MpHandlerOBJECT_On(handler);
                     MP_TRACE_h(MP_FUNC, "handler object %s isa %s\n",
-                               class, HvNAME(SvSTASH((SV*)SvRV(obj))));
+                               package, HvNAME(SvSTASH((SV*)SvRV(obj))));
                 }
                 else {
                     MP_TRACE_h(MP_FUNC, "%s is not an object, pv=%s\n",
-                               class, SvPV_nolen(obj));
+                               package, SvPV_nolen(obj));
                 }
             }
             else {
-                MP_TRACE_h(MP_FUNC, "failed to thaw %s\n", class);
+                MP_TRACE_h(MP_FUNC, "failed to thaw %s\n", package);
                 return 0;
             }
         }
 
         if (!handler->obj) {
-            handler->obj = newSVpv(class, class_len);
+            handler->obj = newSVpv(package, package_len);
             MP_TRACE_h(MP_FUNC, "handler method %s isa %s\n",
-                       SvPVX(handler->cv), class);
+                       SvPVX(handler->cv), package);
         }
 
         MpHandlerPARSED_On(handler);
