@@ -7,6 +7,7 @@ use File::Copy ();
 
 *import = \&Exporter::import;
 @Apache::ExtUtils::EXPORT = qw(command_table);
+my $errsv = "";
 
 sub command_table {
     my($class, $cmds);
@@ -23,12 +24,18 @@ sub command_table {
 	require "$file.pm"; #so we can see prototypes
     };
     if ($@) {
+	unless ($@ =~ /Can.t locate /) {
+	    $errsv = $@;
+	}
 	require ExtUtils::testlib;
         ExtUtils::testlib->import;
 	require lib;
 	my $lib = "lib";#hmm, lib->import + -w == Unquoted string "lib" ...
 	$lib->import('./lib');
 	eval { require $class };
+	if ($@ and $@ !~ /Can.t locate /) {
+	    $errsv ||= $@;
+	}
     }
     unless (-e "$file.xs.orig") {
         File::Copy::cp("$file.xs", "$file.xs.orig");
@@ -117,7 +124,10 @@ sub xs_cmd_table {
 	    }
 	}
 	$desc ||= "1-3 value(s) for $name";
-
+	unless ($args_how) {
+	    $errsv ||= $@;
+	    die "Can't determine prototype for `$sub': $errsv";
+	}
 	(my $cname = $name) =~ s/\W/_/g;
 	$infos .= cmd_info($cname, $sub, $cmd_data, $args_how);
 	$cmdtab .= <<EOF;
