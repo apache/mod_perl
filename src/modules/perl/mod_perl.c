@@ -322,7 +322,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
     /* the base server could have mod_perl callbacks disabled, but it
-     * still negeds perl to drive the vhosts */
+     * still needs perl to drive the vhosts */
     if (!MpSrvENABLE(scfg) && s->is_virtual) {
         MP_TRACE_i(MP_FUNC, "mod_perl disabled for server %s\n", vhost);
         scfg->mip = NULL;
