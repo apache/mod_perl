@@ -47,11 +47,7 @@ sub handler {
 
     {
         require threads::shared;
-        my $counter_priv = 1;
-        # should be 
-        #    my $counter_shar : shared = 1;
-        # but it won't compile under $] < 5.8, before it gets a chance
-        # to skip this test, so using the function share() instead.
+        my $counter_priv          = 1;
         my $counter_shar : shared = 1;
         my $thr = threads->new(sub : locked {
                                    my $tid = threads->self->tid; 
