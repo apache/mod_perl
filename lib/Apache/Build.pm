@@ -26,12 +26,12 @@ use ExtUtils::Embed ();
 
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
-use constant AIX    => $^O eq 'aix';
-use constant DARWIN => $^O eq 'darwin';
+use constant AIX     => $^O eq 'aix';
+use constant DARWIN  => $^O eq 'darwin';
 use constant IRIX    => $^O eq 'irix';
-use constant HPUX   => $^O eq 'hpux';
+use constant HPUX    => $^O eq 'hpux';
 use constant OPENBSD => $^O eq 'openbsd';
-use constant WIN32  => $^O eq 'MSWin32';
+use constant WIN32   => $^O eq 'MSWin32';
 
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
 
@@ -773,7 +773,7 @@ sub new {
     my $class = shift;
 
     my $self = bless {
-        cwd => Cwd::fastcwd(),
+        cwd        => Cwd::fastcwd(),
         MP_LIBNAME => 'mod_perl',
         @_,
     }, $class;
@@ -789,8 +789,8 @@ sub DESTROY {}
 
 my %default_files = (
     'build_config' => 'lib/Apache/BuildConfig.pm',
-    'ldopts' => 'src/modules/perl/ldopts',
-    'makefile' => 'src/modules/perl/Makefile',
+    'ldopts'       => 'src/modules/perl/ldopts',
+    'makefile'     => 'src/modules/perl/Makefile',
 );
 
 sub clean_files {
