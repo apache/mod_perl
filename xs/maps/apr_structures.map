@@ -2,8 +2,9 @@
 
 IGNORE: apr_pool_t apr_os_ apr_vformatter_buff_t apr_pool_t \
 apr_table_t apr_in_addr_t apr_bucket_ apr_md5_ctx_t apr_sha1_ctx_t \
-apr_md4_ctx_t apr_sdbm_datum_t \
-apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
+apr_md4_ctx_t apr_sdbm_datum_t apr_memnode_t \
+apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t \
+apr_strmatch_pattern apr_version_t
 
 #buckets
 
@@ -23,11 +24,12 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    length
    start
    data
-   sms
+>  free
+>  list
 </apr_bucket>
 
 !<apr_finfo_t>
-   cntxt
+   pool
    valid
    protection
    filetype
@@ -94,13 +96,15 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 !<apr_table_entry_t>
    key
    val
+>  key_checksum
 </apr_table_entry_t>
 
 #getopt
 
 !<apr_getopt_t>
 -  cont
--  err
+-  errfn
+   errarg
    ind
 -  opt
 -  reset
@@ -116,6 +120,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    name
 -  optch
 -  has_arg
+   description
 </apr_getopt_option_t>
 
 #XML
