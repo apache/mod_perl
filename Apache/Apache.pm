@@ -1,7 +1,7 @@
 package Apache;
 
 use strict;
-use mod_perl ();
+use mod_perl 1.17_01;
 use Exporter ();
 use Apache::Constants qw(OK DECLINED);
 use Apache::Connection ();
@@ -21,7 +21,7 @@ Apache::SIG->set;
 
 {
     no strict;
-    $VERSION = "1.25";
+    $VERSION = "1.26";
     __PACKAGE__->mod_perl::boot($VERSION);
 }
 
