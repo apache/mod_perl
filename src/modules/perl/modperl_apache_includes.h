@@ -16,6 +16,7 @@
 #include "http_request.h"
 #include "http_connection.h"
 #include "http_core.h"
+#include "http_vhost.h"
 #include "ap_mpm.h"
 
 #include "apr_lib.h"
