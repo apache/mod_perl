@@ -65,6 +65,17 @@ sub handler {
 1;
 __END__
 
+# XXX: we want to have this configuration section to come first
+# amongst other perlloadmodule tests (<950), so we can test how
+# mod_perl starts from vhost. but currently we can't because
+# PerlSwitches from other tests are ignored, so the test suite fails
+# to startup.
+#
+# tmp solution: ensure that it's configured *after* all other
+# perlloadmodule tests
+#
+# APACHE_TEST_CONFIG_ORDER 951
+
 <VirtualHost TestDirective::perlloadmodule6>
     PerlLoadModule TestDirective::perlloadmodule6
     MyTest6 "Vhost"
