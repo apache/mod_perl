@@ -32,7 +32,7 @@ my $code  = ModPerl::Code->new;
 #NMAKE : fatal error U1077: 'cd' : return code '0x2'
 #Stop.
 my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
-                           qw(docs/src/api/mod_perl-2.0);
+                           qw(docs/api/mod_perl-2.0);
 
 my @scripts = qw(t/TEST t/SMOKE);
 configure();
