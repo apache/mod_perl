@@ -70,6 +70,7 @@ if [ ".$my_apxs" = . ]; then
     echo "$0:Error: no 'apxs' program found, please provide it's path via --with-apxs" 1>&2 
     exit 1
 fi
+my_apxs_sourcedir="`$my_apxs -q PREFIX`"
 my_apxs_cflags="`$my_apxs -q CFLAGS`"
 my_apxs_includes="-I`$my_apxs -q INCLUDEDIR`"
 
@@ -93,6 +94,8 @@ echo "CFLAGS=-DMOD_PERL $my_apxs_cflags" >>$my_makefileconf
 echo "INCLUDES=$my_apxs_includes" >>$my_makefileconf
 echo "RANLIB=ranlib" >>$my_makefileconf
 echo "LIBEXT=so" >>$my_makefileconf
+echo "APACHEEXT=$my_apxs_sourcedir/src" >>$my_makefileconf
+echo "BASEEXT=mod_perl" >>$my_makefileconf
 echo "APXS=$my_apxs" >>$my_makefileconf
 echo "#   own special stuff" >>$my_makefileconf
 echo "ADD_DISTCLEAN_FILES=$my_sourcefiles typemap" >>$my_makefileconf

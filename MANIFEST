@@ -225,6 +225,7 @@ apaci/mod_perl.config
 apaci/mod_perl.config.sh
 apaci/load_modules.pl.PL
 apaci/find_source.PL
+apaci/mod_perl.exp
 .gdbinit
 INSTALL.simple
 INSTALL.simple.ssl
