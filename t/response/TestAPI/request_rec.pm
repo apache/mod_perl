@@ -8,7 +8,7 @@ use Apache::Test;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 37;
+    plan $r, tests => 40;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -88,6 +88,15 @@ sub handler {
 
     #no_cache
     ok $r->no_cache || 1;
+    
+    {
+    local $| = 0;
+    ok 9  == $r->print("buffered\n");
+    ok 0  == $r->print();
+    local $| = 1;
+    ok 13 == $r->print('n','o','t',' ','b','u','f','f','e','r','e','d',"\n");
+    }
+    
 
     #no_local_copy
 

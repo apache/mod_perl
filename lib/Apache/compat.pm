@@ -111,8 +111,6 @@ sub chdir_file {
     #XXX resolve '.' in @INC to basename $r->filename
 }
 
-*print = \&puts;
-
 sub finfo {
     my $r = shift;
     stat $r->filename;

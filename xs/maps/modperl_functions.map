@@ -21,6 +21,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_read | | r, buffer, bufsiz, offset=0
  long:DEFINE_READ | | request_rec *:r, SV *:buffer, int:bufsiz, int:offset=0
  mpxs_Apache__RequestRec_write | | r, buffer, bufsiz=-1, offset=0
+ mpxs_Apache__RequestRec_print | | ...
  apr_ssize_t:DEFINE_WRITE | | \
              request_rec *:r, SV *:buffer, apr_ssize_t:bufsiz=-1, int:offset=0
 

@@ -1,16 +1,7 @@
 #define mpxs_Apache__RequestRec_TIEHANDLE(stashsv, sv) \
 modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
-#define mpxs_Apache__RequestRec_PRINT mpxs_ap_rvputs
-
-#if 0
-#define MP_USE_AP_RWRITE
-#endif
-
-#ifdef MP_USE_AP_RWRITE
-
-#define mpxs_call_rwrite(r,buf,len) \
-ap_rwrite(buf, len, r)
+#define mpxs_Apache__RequestRec_PRINT mpxs_Apache__RequestRec_print
 
 #define mpxs_rwrite_loop(func,obj) \
     while (MARK <= SP) { \
@@ -20,8 +11,6 @@ ap_rwrite(buf, len, r)
         bytes += wlen; \
         MARK++; \
     }
-
-#endif
 
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
                                            SV **MARK, SV **SP)
@@ -39,11 +28,7 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
     MP_START_TIMES();
 
-#ifdef MP_USE_AP_RWRITE
-    mpxs_rwrite_loop(mpxs_call_rwrite, r);
-#else
     mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
-#endif
 
     MP_END_TIMES();
     MP_PRINT_TIMES("r->puts");
@@ -52,6 +37,34 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
     return bytes;
 }
+
+static MP_INLINE
+apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
+                                         SV **MARK, SV **SP)
+{
+    modperl_config_srv_t *scfg;
+    modperl_config_req_t *rcfg;
+    request_rec *r;
+    
+    /* bytes must be called bytes */
+    apr_size_t bytes = 0;
+    
+    /* this also magically assings to r ;-) */
+    mpxs_usage_va_1(r, "$r->print(...)");
+    
+    rcfg = modperl_config_req_get(r);
+    scfg = modperl_config_srv_get(r->server);
+    
+    mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
+    
+    /* if ($|) */
+    if (IoFLUSH(PL_defoutgv)){
+        modperl_wbucket_flush(&rcfg->wbucket);
+        ap_rflush(r);
+    }
+    
+    return bytes;
+}  
 
 /* alias */
 #define mpxs_Apache__RequestRec_WRITE mpxs_Apache__RequestRec_write
