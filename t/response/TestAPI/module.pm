@@ -84,7 +84,7 @@ sub handler {
         my $name = $modp->name;
         ok $name;
         t_debug("Testing module: " . $modp->name);
-        ok $modp->version == $mmn_major;
+        ok t_cmp $modp->apache_api_version, $mmn_major;
         ok $modp->minor_version <= $mmn_minor;
         ok $modp->module_index >= 0;
         my $cmds = $modp->cmds;

@@ -131,7 +131,7 @@ $  limit_req_fields
 </server_addr_rec>
 
 <module>
-<  version
+~  version
 <  minor_version
 <  module_index
 <  name

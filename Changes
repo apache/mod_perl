@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Apache::Module $mod->version() renamed $mod->apache_api_version()
+for clarity [Gozer]
+
 Apache::Log changes: [Stas]
   - moved to compat: Apache::warn, Apache->warn, Apache::Server->warn,
     Apache::Server::warn
