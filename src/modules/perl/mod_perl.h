@@ -6,7 +6,11 @@
 
 #define MP_COMPAT_1X /* backwards compat */
 
+#ifdef WIN32
+#define MP_THREADED 1
+#else
 #define MP_THREADED (defined(USE_ITHREADS) && APR_HAS_THREADS)
+#endif
 
 extern module AP_MODULE_DECLARE_DATA perl_module;
 
