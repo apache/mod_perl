@@ -1507,8 +1507,10 @@ bytes_sent(r, ...)
 
     RETVAL = last->bytes_sent;
 
-    if(items > 1)
-        r->bytes_sent = (long)SvIV(ST(1));
+    if(items > 1) {
+        long nbytes = last->bytes_sent = (long)SvIV(ST(1));
+        ap_bsetopt(last->connection->client, BO_BYTECT, &nbytes);
+    }
 
     OUTPUT:
     RETVAL
