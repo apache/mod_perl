@@ -307,7 +307,7 @@ sub request {
     };
 }
 
-package Apache2::Server;
+package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
 our $CWD = Apache2::ServerUtil::server_root;
 
@@ -407,7 +407,7 @@ sub get_handlers {
     Apache2->server->get_handlers(@_);
 }
 
-package Apache2::Constants;
+package Apache::Constants;
 
 use Apache2::Const ();
 
@@ -680,7 +680,7 @@ sub is_main { !shift->main }
 # really old back-compat methods, they shouldn't be used in mp1
 *cgi_var = *cgi_env = \&Apache2::RequestRec::subprocess_env;
 
-package Apache2::File;
+package Apache::File;
 
 use Fcntl ();
 use Symbol ();
@@ -758,7 +758,7 @@ sub tmpfile {
 # the following functions now live in Apache2::RequestRec
 # * mtime
 
-package Apache2::Util;
+package Apache::Util;
 
 sub size_string {
     my($size) = @_;
@@ -823,7 +823,7 @@ sub Apache2::URI::parse {
     APR::URI->parse($r->pool, $uri);
 }
 
-package Apache2::Table;
+package Apache::Table;
 
 sub new {
     my($class, $r, $nelts) = @_;
@@ -831,7 +831,7 @@ sub new {
     APR::Table::make($r->pool, $nelts);
 }
 
-package Apache2::SIG;
+package Apache::SIG;
 
 use Apache2::Const -compile => 'DECLINED';
 
@@ -840,7 +840,7 @@ sub handler {
     return Apache2::DECLINED;
 }
 
-package Apache2::Connection;
+package Apache::Connection;
 
 # auth_type and user records don't exist in 2.0 conn_rec struct
 # 'PerlOptions +GlobalRequest' is required
