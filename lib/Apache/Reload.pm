@@ -35,7 +35,7 @@ $TouchTime = time;
 
 sub import {
     my $class = shift;
-    my($package,$file) = (caller)[0,1];
+    my($package, $file) = (caller)[0,1];
 
     $class->register_module($package, $file);
 }
@@ -85,7 +85,7 @@ sub handler {
 
     if ($TouchFile) {
         warn "Checking mtime of $TouchFile\n" if $DEBUG;
-        my $touch_mtime = (stat($TouchFile))[9] || return 1;
+        my $touch_mtime = (stat $TouchFile)[9] || return 1;
         return 1 unless $touch_mtime > $TouchTime;
         $TouchTime = $touch_mtime;
         open my $fh, $TouchFile or die "Can't open '$TouchFile': $!";
@@ -102,7 +102,7 @@ sub handler {
                 $TouchModules || 
                 (ref($o) && $o->dir_config("ReloadModules")) || 
                 '';
-        my @extra = split(/\s+/, $ExtraList);
+        my @extra = split /\s+/, $ExtraList;
         foreach (@extra) {
             if (/(.*)::\*$/) {
                 my $prefix = $1;
