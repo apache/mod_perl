@@ -433,8 +433,7 @@ int modperl_input_filter_register_request(request_rec *r)
                     modperl_handler_t *ctx_handler = 
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
 
-                    if (modperl_mgv_equal(ctx_handler->mgv_cv,
-                                          handlers[i]->mgv_cv)) {
+                    if (modperl_handler_equal(ctx_handler, handlers[i])) {
                         /* skip if modperl_input_filter_register_connection
                          * already registered this handler
                          * XXX: set a flag in the modperl_handler_t instead
