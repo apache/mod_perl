@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fix bug in Perl{Set,Add}Var so $r->dir_config->get('key') sees the
+same values as $r->dir_config('key'), thanks to Geoffrey Young for the spot
+
 PerlAddVar is now an ITERATE2 directive rather than TAKE2
 
 added Apache::Server::error_fname method
