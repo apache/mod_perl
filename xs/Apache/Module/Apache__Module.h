@@ -61,3 +61,9 @@ static MP_INLINE SV *mpxs_Apache__Module_get_config(pTHX_
 
     return SvREFCNT_inc(obj);
 }
+
+static MP_INLINE
+int mpxs_Apache__Module_apache_api_version(pTHX_ module *mod)
+{
+    return mod->version;
+}
