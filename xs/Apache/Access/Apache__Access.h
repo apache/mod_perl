@@ -60,7 +60,7 @@ static MP_INLINE void mpxs_insert_auth_cfg(pTHX_ request_rec *r,
     const char *errmsg;
     AV *config = newAV();
 
-    av_push(config, newSVpvf("%s %s", directive, val));
+    av_push(config, Perl_newSVpvf(aTHX_ "%s %s", directive, val));
 
     errmsg =
         modperl_config_insert_request(aTHX_ r,
