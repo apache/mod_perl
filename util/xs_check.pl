@@ -21,7 +21,7 @@ while (my($things, $obj) = each %check) {
     if (my $missing = $missing{$things}) {
         my $n = @$missing;
         print "$n $things are not mapped:\n";
-        print "--> $_\n" for @$missing;
+        print " $_\n" for sort @$missing;
     }
     else {
         print "all $things are mapped\n";
@@ -38,7 +38,7 @@ while (my($things, $obj) = each %check_exists) {
     if (my $missing = $obj->check_exists) {
         my $n = @$missing;
         print "$n mapped $things do not exist:\n";
-        print "--> $_\n" for @$missing;
+        print " $_\n" for sort @$missing;
     }
     else {
         print "all mapped $things exist\n";
@@ -62,7 +62,7 @@ for my $entry (@$Apache::FunctionTable) {
 if (@missing) {
     my $n = @missing;
     print "unable to glue $n mapped functions:\n";
-    print "--> $_\n" for @missing;
+    print " $_\n" for sort @missing;
 }
 else {
     print "all mapped functions are glued\n";
