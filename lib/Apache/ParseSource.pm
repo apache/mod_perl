@@ -257,6 +257,9 @@ my %defines_wanted = (
         table     => [qw{APR_OVERLAP_TABLES_}],
         uri       => [qw{APR_URI_}],
     },
+   ModPerl => {
+        common    => [qw{MODPERL_RC_}],
+   }
 );
 
 my %defines_wanted_re;

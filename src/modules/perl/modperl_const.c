@@ -31,8 +31,8 @@ static void new_constsub(pTHX_ constants_lookup lookup,
         SV *val = (*lookup)(aTHX_ name);
 
 #if 0
-        fprintf(stderr, "newCONSTSUB(%s, %s, %d)\n",
-                HvNAME(stash), name, val);
+        Perl_warn(aTHX_  "newCONSTSUB(%s, %s, %s)\n",
+                  HvNAME(stash), name, SvPV_nolen(val));
 #endif
 
         newCONSTSUB(stash, (char *)name, val);
@@ -67,9 +67,13 @@ int modperl_const_compile(pTHX_ const char *classname,
         lookup       = modperl_constants_lookup_apr;
         group_lookup = modperl_constants_group_lookup_apr;
     }
-    else {
+    else if (strnEQ(classname, "Apache", 6)) {
         lookup       = modperl_constants_lookup_apache;
         group_lookup = modperl_constants_group_lookup_apache;
+    }
+    else {
+        lookup       = modperl_constants_lookup_modperl;
+        group_lookup = modperl_constants_group_lookup_modperl;
     }
 
     if (*arg != '-') {
@@ -111,7 +115,9 @@ XS(XS_modperl_const_compile)
         Perl_croak(aTHX_ "Usage: %s->compile(...)", stashname);
     }
 
-    classname = *(stashname + 1) == 'P' ? "APR" : "Apache";
+    classname = *(stashname + 1) == 'P'
+        ? "APR" 
+        : (*stashname == 'A' ? "Apache" : "ModPerl");
     arg = SvPV(ST(1),n_a);
 
     for (i=2; i<items; i++) {

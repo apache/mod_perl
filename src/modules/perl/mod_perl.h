@@ -28,6 +28,7 @@
 
 extern module AP_MODULE_DECLARE_DATA perl_module;
 
+#include "modperl_error.h"
 #include "modperl_flags.h"
 #include "modperl_hooks.h"
 #include "modperl_perl_global.h"
