@@ -2,6 +2,9 @@
 # mod_perl bugs #
 #################
 
+* early pool destruction issues
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108872944815382&w=2
+
 * PassEnv/SetEnv propogation in <Perl> section 
   http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
 
