@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+make sure Apache::ExtUtils can be found when building inside of the
+apache source tree, thanks to Jonathan Swartz for the spot
+
 add perl_call_handler to mod_perl.def for win32/axkit
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

@@ -107,15 +107,19 @@ echo "$display_prefix id: Perl/$perl_version ($os_version) [$perl_interp]" 1>&2
 #   determine build tools and flags  
 #
 
-config_pm='-MApache::ExtUtils=%Config'
-#config_pm='-MConfig'
-perl_cc="`$perl_interp $config_pm -e 'print $Config{cc}'`"
-perl_ccflags="`$perl_interp $config_pm -e 'print $Config{ccflags}'`"
-perl_optimize="`$perl_interp $config_pm -e 'print $Config{optimize}'`"
-perl_cccdlflags="`$perl_interp $config_pm -e 'print $Config{cccdlflags}'`"
-perl_ld="`$perl_interp $config_pm -e 'print $Config{ld}'`"
-perl_ldflags="`$perl_interp $config_pm -e 'print $Config{ldflags}'`"
-perl_lddlflags="`$perl_interp $config_pm -e 'print $Config{lddlflags}'`"
+if test -f './modules/perl/perl_config'; then
+    perl_config='./modules/perl/perl_config'
+else
+    perl_config='./perl_config'
+fi
+
+perl_cc="`$perl_config 'cc'`"
+perl_ccflags="`$perl_config 'ccflags'`"
+perl_optimize="`$perl_config 'optimize'`"
+perl_cccdlflags="`$perl_config 'cccdlflags'`"
+perl_ld="`$perl_config 'ld'`"
+perl_ldflags="`$perl_config 'ldflags'`"
+perl_lddlflags="`$perl_config 'lddlflags'`"
 
 case "$os_version" in
     aix*)

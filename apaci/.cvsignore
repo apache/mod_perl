@@ -8,3 +8,4 @@ Makefile
 mod_perl.config
 find_source
 apxs_cflags
+perl_config
