@@ -765,7 +765,7 @@ EOF
 sub dynamic_link_MSWin32 {
     my $self = shift;
     my @defs = map "-def:$self->{cwd}/xs/modperl$_.def",
-        ("", "_inline");
+        ("", "_inline", "_ithreads");
     return $self->dynamic_link_header_default .
            "@defs" . <<'EOF';
 	-out:$@
