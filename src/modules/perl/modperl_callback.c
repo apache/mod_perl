@@ -174,8 +174,8 @@ int modperl_callback_run_handlers(int idx, int type,
     AV *av_args = Nullav;
 
     if (!MpSrvENABLE(scfg)) {
-        MP_TRACE_h(MP_FUNC, "PerlOff for server %s\n",
-                   s->server_hostname);
+        MP_TRACE_h(MP_FUNC, "PerlOff for server %s:%u\n",
+                   s->server_hostname, s->port);
         return DECLINED;
     }
 
