@@ -947,8 +947,13 @@ sub init_tests_and_config {
 	}
 
 	$cmd .= "./configure " .
-		  "--activate-module=src/modules/perl/libperl.a" .
-                    " --disable-rule=EXPAT";
+		  "--activate-module=src/modules/perl/libperl.a";
+   
+        # Do not disable the rule EXPAT for Stronghold, since this
+        # rule is not implementated yet and breaks the configure process.
+        if(is_ssl() !~ /stronghold/i) {
+           $cmd .= " --disable-rule=EXPAT";
+        }
 
 	if($USE_DSO) {
 	    $cmd .= " --enable-shared=perl";
