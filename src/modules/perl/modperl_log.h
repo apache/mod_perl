@@ -9,10 +9,10 @@
 #         define MP_FUNC __FUNCTION__
 #      endif
 #   else
-#      define MP_FUNC "MP_FUNC"
+#      define MP_FUNC NULL
 #   endif
 #else
-#   define MP_FUNC "MP_FUNC"
+#   define MP_FUNC NULL
 #endif
 
 #include "modperl_trace.h"
@@ -26,9 +26,17 @@
 #define MP_TIDF \
 (unsigned long)modperl_thread_self()
 
+unsigned long modperl_debug_level(void);
+
+#ifdef WIN32
+#define MP_debug_level modperl_debug_level()
+#else
+extern unsigned long MP_debug_level;
+#endif
+
 void modperl_trace(char *func, const char *fmt, ...);
 
-void modperl_trace_level_set(const char *level);
+void modperl_trace_level_set(server_rec *s, const char *level);
 
 #define modperl_log_warn(s,msg) \
     ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO, 0, s, "%s", msg)

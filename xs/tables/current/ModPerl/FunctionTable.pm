@@ -1221,6 +1221,11 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'unsigned long',
+    'name' => 'modperl_debug_level',
+    'args' => []
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'modperl_dir_config',
     'attr' => [
