@@ -15,9 +15,13 @@ sub handler {
 
     plan $r, tests => 1;
 
-    my $id = APR::OS::thread_current() || $$;
-
-    ok t_cmp($id, $id, "current thread id or process id");
+    if (Apache::MPM_IS_THREADED) {
+        my $id = APR::OS::thread_current();
+        ok t_cmp($id, $id, "current thread id");
+    }
+    else {
+        ok t_cmp($$, $$, "current process id");
+    }
 
     Apache::OK;
 }

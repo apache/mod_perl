@@ -96,6 +96,7 @@ static void modperl_refgen_ops_fixup(void)
 static void modperl_boot(void *data)
 {
     MP_dBOOT_DATA;
+    MP_dSCFG(s);
     dTHX; /* XXX: not too worried since this only happens at startup */
     int i;
     
@@ -115,6 +116,9 @@ static void modperl_boot(void *data)
         char *name = Perl_form(aTHX_ MP_xs_loader_name, MP_xs_loaders[i]);
         newCONSTSUB(PL_defstash, name, newSViv(1));
     }
+
+    newCONSTSUB(PL_defstash, "Apache::MPM_IS_THREADED",
+                newSViv(scfg->threaded_mpm));
 }
 
 static void modperl_xs_init(pTHX)
