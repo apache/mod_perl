@@ -25,7 +25,6 @@ sub handler {
     my $top_module_name = (defined $top_module && $top_module->name()) || '';
 
     my $tests = 11;
-    $tests += 3 if $top_module_name eq 'mod_perl.c';
 
     plan $r, tests => $tests;
 
@@ -40,19 +39,6 @@ sub handler {
              scalar(keys %{ $cfg->{modules} }),
              q{$top_module->module_index})
         || 1; # the A-T config could be wrong
-
-    #XXX: some of these tests will fail if modperl is linked static
-    #rather than dso.
-
-    if ($top_module_name eq 'mod_perl.c') {
-        ok t_cmp($top_module_name, 'mod_perl.c', q{$top_module->name}) || 1;
-
-        my $cmd = $top_module->cmds;
-
-        ok defined $cmd;
-
-        ok UNIVERSAL::isa($cmd, 'Apache::Command');
-    }
 
     if (0) { #XXX: currently fails with --enable-mods-shared=all
         local $cfg->{modules}->{'mod_perl.c'} = 1;
