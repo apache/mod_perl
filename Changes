@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+make APR::Socket::opt_(set|get) working (and change the previous
+behavior) [Stas]
+
 make sure that our protocol module tests that interact with the socket
 use a blocking read [Joe Orton]
 
