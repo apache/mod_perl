@@ -18,40 +18,47 @@
 static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
                                         int offset, int len)
 {
-    if (!len) {
-        (void)SvPV(sv, len);
-    }
 
+    int full_len;
+    (void)SvPV(sv, full_len);
+
+    if (len) {
+        if (len > full_len - offset) {
+            Perl_croak(aTHX_ "APR::Bucket::new: the length argument can't be"
+                       " bigger than the total buffer length minus offset");
+        }
+    }
+    else {
+        len = full_len - offset;
+    }
+    
     return modperl_bucket_sv_create(aTHX_ sv, offset, len);
 }
 
-/* this is just so C::Scan will pickup the prototype */
-static MP_INLINE apr_status_t modperl_bucket_read(apr_bucket *bucket,
-                                                  const char **str,
-                                                  apr_size_t *len,
-                                                  apr_read_type_e block)
+static MP_INLINE SV *mpxs_APR__Bucket_read(pTHX_
+                                           apr_bucket *bucket,
+                                           apr_read_type_e block)
 {
-    return apr_bucket_read(bucket, str, len, block);
-}
-
-static MP_INLINE apr_status_t mpxs_modperl_bucket_read(pTHX_
-                                                       apr_bucket *bucket,
-                                                       SV *buffer,
-                                                       apr_read_type_e block)
-{
-    int rc;
+    SV *buf;
     apr_size_t len;
     const char *str;
-
-    rc = modperl_bucket_read(bucket, &str, &len, block);
-
-    if ((rc != APR_SUCCESS) && (rc != APR_EOF)) {
-        /* XXX: croak ? */
+    apr_status_t rc = apr_bucket_read(bucket, &str, &len, block);
+    
+    if (rc == APR_EOF) {
+        return newSVpvn("", 0);
     }
 
-    sv_setpvn(buffer, str, len);
+    if (rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "APR::Bucket::read");  
+    }
 
-    return rc;
+    buf = newSVpvn(str, len);
+
+    /* XXX: must be on, but utf8::decode fails to parse it as UTF-8
+     * flag in 5.8.4 if the input is utf8 */
+    //SvTAINTED_on(buf);
+    
+    return buf;
 }
 
 static MP_INLINE int mpxs_APR__Bucket_is_eos(apr_bucket *bucket)
