@@ -32,7 +32,7 @@ sub name {
     
     for (@Apache::Constants::EXPORT, 
 	 @Apache::Constants::EXPORT_OK) {
-	if ((\&{$_})->() == $const) {
+	if ((\&{$_})->() eq $const) {
 	    return ($ConstNameCache{$const} = $_);
 	}
     }
