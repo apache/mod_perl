@@ -43,7 +43,7 @@ struct apr_uuid_t       | APR::UUID
 
 #crypto stuff
 struct apr_md5_ctx_t    | APR::MD5
-struct apr_md4_ctx_t    | APR::MD4
+struct apr_md4_ctx_t    | UNDEFINED
 struct apr_sha1_ctx_t   | APR::SHA1
 
 #getopt
