@@ -819,10 +819,10 @@ sub myconfig {
     # provide a workaround
     if ($Config::Config{useithreads} and $] > 5.008 and $] < 5.008003) {
         return $Config::summary_expanded if $Config::summary_expanded;
-        (my $summary_expanded = $Config::summary) =~
+        ($Config::summary_expanded = $Config::summary) =~
             s{\$(\w+)}
              { my $c = $Config::Config{$1}; defined($c) ? $c : 'undef' }ge;
-        return $summary_expanded;
+        return $Config::summary_expanded;
     }
     else {
         return Config::myconfig();
