@@ -26,12 +26,6 @@ sub new {
        glue_dirs => [xs_glue_dirs()],
     }, $class;
 
-    for (qw(c hash)) {
-        my $w = "noedit_warning_$_";
-        my $method = "ModPerl::Code::$w";
-        $self->{$w} = $self->$method();
-    }
-
     $self->typemap->get;
     $self;
 }
@@ -298,8 +292,10 @@ sub write_makefilepl {
     local $Data::Dumper::Terse = 1;
     $deps = Dumper $deps;
 
+    my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
+
     print $fh <<EOF;
-$self->{noedit_warning_hash}
+$noedit_warning
 
 use lib qw(../../../lib); #for Apache::BuildConfig
 use ModPerl::MM ();
@@ -412,8 +408,8 @@ sub write_xs {
     my($self, $module, $functions) = @_;
 
     my $fh = $self->open_class_file($module, '.xs');
-    print $fh "$self->{noedit_warning_c}\n",
-              "\n#define MP_IN_XS\n\n";
+    print $fh $self->ModPerl::Code::noedit_warning_c(), "\n";
+    print $fh "\n#define MP_IN_XS\n\n";
 
     my @includes = @{ $self->includes };
 
@@ -493,9 +489,10 @@ sub write_pm {
     my $loader = join '::', $base, 'XSLoader';
 
     my $fh = $self->open_class_file($module, '.pm');
+    my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
 
     print $fh <<EOF;
-$self->{noedit_warning_hash}
+$noedit_warning
 
 package $module;
 $isa
@@ -523,7 +520,7 @@ sub write_typemap {
     my %seen;
 
     my $fh = $self->open_class_file('ModPerl::WrapXS', 'typemap');
-    print $fh "$self->{noedit_warning_hash}\n";
+    print $fh $self->ModPerl::Code::noedit_warning_hash(), "\n";
 
     while (my($type, $class) = each %$map) {
         $class ||= $type;
@@ -550,7 +547,7 @@ sub write_typemap_h_file {
     my $file = join '/', $self->{XS_DIR}, $h;
 
     open my $fh, '>', $file or die "open $file: $!";
-    print $fh "$self->{noedit_warning_c}\n";
+    print $fh $self->ModPerl::Code::noedit_warning_c(), "\n";
     print $fh $code;
     close $fh;
 }
