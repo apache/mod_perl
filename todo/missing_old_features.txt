@@ -33,6 +33,10 @@ listed in deprecated_features.txt
 
 - ... others ...
 
+- Apache::__T flag which tells whether we run under -T (in 5.8.0 can check
+  ${^TAINT})
+
+
 core modules:
 ------------
 
