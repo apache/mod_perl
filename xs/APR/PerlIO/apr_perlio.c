@@ -31,7 +31,7 @@ typedef struct {
  */
 static IV PerlIOAPR_popped(PerlIO *f)
 {
-    //PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
+    /* PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR); */
 
     return 0;
 }
@@ -48,7 +48,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     apr_status_t rc;
     SV *sv;
     
-    if ( !(SvROK(arg) || SvPOK(arg)) ) {
+    if (!(SvROK(arg) || SvPOK(arg))) {
         return NULL;
     }
 
@@ -78,6 +78,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     st = PerlIOSelf(f, PerlIOAPR);
 
     sv = args[narg-1];
+    /* XXX: modperl_sv2pool cannot be used outside of httpd */
     st->pool = modperl_sv2pool(aTHX_ sv);
   
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
@@ -85,10 +86,9 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
         PerlIOBase(f)->flags |= PERLIO_F_ERROR;
         return NULL;
     }
-    else {
-        PerlIOBase(f)->flags |= PERLIO_F_OPEN;
-        return f;
-    }
+
+    PerlIOBase(f)->flags |= PERLIO_F_OPEN;
+    return f;
 }
 
 static IV PerlIOAPR_fileno(PerlIO *f)
@@ -105,7 +105,7 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
 {
     apr_status_t rc;
  
-    if ( (f = PerlIOBase_dup(aTHX_ f, o, param, flags)) ) {
+    if ((f = PerlIOBase_dup(aTHX_ f, o, param, flags))) {
         PerlIOAPR *fst = PerlIOSelf(f, PerlIOAPR);
         PerlIOAPR *ost = PerlIOSelf(o, PerlIOAPR);
 
@@ -117,9 +117,7 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
     }
 
     return NULL;
-    
 }
-
 
 /* currrently read is very not-optimized, since in many cases the read
  * process happens a char by char. Need to find a way to snoop on APR
@@ -129,33 +127,33 @@ static SSize_t PerlIOAPR_read(PerlIO *f, void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
-    dTHX;
+    dTHX; /* XXX: change Perl so this function has a pTHX_ prototype */
     
-//    fprintf(stderr, "in  read: count %d, %s\n", (int)count, (char*) vbuf);
+    /* fprintf(stderr, "in  read: count %d, %s\n",
+       (int)count, (char*) vbuf); */
     rc = apr_file_read(st->file, vbuf, &count);
-//    fprintf(stderr, "out read: count %d, %s\n", (int)count, (char*) vbuf);
+    /* fprintf(stderr, "out read: count %d, %s\n",
+       (int)count, (char*) vbuf); */
     if (rc == APR_SUCCESS) {
         return (SSize_t) count;
     }
-    else {
-        return (SSize_t) -1;
-    }
-}
 
+    return (SSize_t) -1;
+}
 
 static SSize_t PerlIOAPR_write(PerlIO *f, const void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
     
-//    fprintf(stderr, "in write: count %d, %s\n", (int)count, (char*) vbuf);
+    /* fprintf(stderr, "in write: count %d, %s\n",
+       (int)count, (char*) vbuf); */
     rc = apr_file_write(st->file, vbuf, &count);
     if (rc == APR_SUCCESS) {
         return (SSize_t) count;
     }
-    else {
-        return (SSize_t) -1;
-    }
+
+    return (SSize_t) -1;
 }
 
 static IV PerlIOAPR_seek(PerlIO *f, Off_t offset, int whence)
@@ -186,9 +184,8 @@ static IV PerlIOAPR_seek(PerlIO *f, Off_t offset, int whence)
     if (rc == APR_SUCCESS) {
         return 0;
     }
-    else {
-        return -1;
-    }
+
+    return -1;
 }
 
 static Off_t PerlIOAPR_tell(PerlIO *f)
@@ -203,9 +200,8 @@ static Off_t PerlIOAPR_tell(PerlIO *f)
     if (rc == APR_SUCCESS) {
         return (Off_t) offset;
     }
-    else {
-        return (Off_t) -1;
-    }
+
+    return (Off_t) -1;
 }
 
 static IV PerlIOAPR_close(PerlIO *f)
@@ -216,7 +212,7 @@ static IV PerlIOAPR_close(PerlIO *f)
 
     const char *new_path;
     apr_file_name_get(&new_path, st->file);
-//    fprintf(stderr, "closing file %s\n", new_path);
+    /* fprintf(stderr, "closing file %s\n", new_path); */
 
     rc = apr_file_flush(st->file);
     if (rc != APR_SUCCESS) {
@@ -240,9 +236,8 @@ static IV PerlIOAPR_flush(PerlIO *f)
     if (rc == APR_SUCCESS) {
         return 0;
     }
-    else {
-        return -1;
-    }
+
+    return -1;
 }
 
 static IV PerlIOAPR_fill(PerlIO *f)
@@ -262,8 +257,9 @@ static IV PerlIOAPR_eof(PerlIO *f)
       case APR_EOF:
         return 1;
       default:
-        return -1;
     }
+
+    return -1;
 }
 
 static PerlIO_funcs PerlIO_APR = {
@@ -339,9 +335,8 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
 
         return f;
     }
-    else {
-        return NULL;
-    }
+
+    return NULL;
 }
 
 /*
@@ -349,6 +344,7 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
  */
 static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, int type)
 {
+    /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
 
@@ -379,7 +375,7 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
 
 #elif !defined(PERLIO_LAYERS) /* NOT PERLIO_LAYERS (5.6.1) */
 
-FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
+static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
 {
     FILE *retval;
     char *mode;
@@ -405,7 +401,7 @@ FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
     }
     
     fd = PerlLIO_dup(os_file); 
-//    Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd);
+    /* Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd); */
     
     if (!(retval = PerlIO_fdopen(fd, mode))) { 
 	PerlLIO_close(fd);
@@ -422,6 +418,7 @@ FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
 SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
                                 apr_pool_t *pool, int type)
 {
+    /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
 
