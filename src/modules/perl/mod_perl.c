@@ -410,7 +410,7 @@ void perl_startup (server_rec *s, pool *p)
 	    mp_debug = 0xffffffff;
 	}
 	else if (isALPHA(dstr[0])) {
-	    static char debopts[] = "dshg";
+	    static char debopts[] = "dshgc";
 	    char *d;
 
 	    for (; *dstr && (d = strchr(debopts,*dstr)); dstr++) 

@@ -48,6 +48,7 @@ my(@http)       = qw(HTTP_METHOD_NOT_ALLOWED
 		     HTTP_SERVICE_UNAVAILABLE
 		     HTTP_VARIANT_ALSO_VARIES);
 my(@config)     = qw(DECLINE_CMD);
+my(@types)      = qw(DIR_MAGIC_TYPE);
 
 my $rc = [@common, @response];
 
@@ -61,6 +62,7 @@ my $rc = [@common, @response];
     remotehost => \@remotehost,
     satisfy    => \@satisfy,
     server     => \@server,				   
+    types      => \@types, 
     #depreciated
     response_codes => $rc,
 );
@@ -74,6 +76,7 @@ my $rc = [@common, @response];
     @satisfy,
     @server,
     @config,
+    @types,
 ); 
    
 *Apache::Constants::EXPORT = \@common;
@@ -231,7 +234,6 @@ These are constants related to server version:
 
  MODULE_MAGIC_NUMBER
  SERVER_VERSION
- SERVER_SUBVERSION
 
 =back
 

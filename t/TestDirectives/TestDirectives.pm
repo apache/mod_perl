@@ -104,6 +104,15 @@ sub new {
     }, $class;
 }
 
+sub dir_merge {
+    my($base, $add) = @_;
+    my %new = ();
+    @new{ keys %$base, keys %$add} = 
+	(values %$base, values %$add);
+
+    return bless \%new, ref($base);
+}
+
 # Preloaded methods go here.
 
 # Autoload methods go after =cut, and are processed by the autosplit program.

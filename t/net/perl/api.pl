@@ -16,7 +16,7 @@ else {
 %ENV = $r->cgi_env;
 $r->subprocess_env; #test void context
 
-my $tests = 45;
+my $tests = 46;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -114,6 +114,10 @@ test ++$i, $s;
 test ++$i, $s->server_admin;
 test ++$i, $s->server_hostname;
 test ++$i, $s->port;
+
+++$i;
+my $s = "ok $i\n";
+$r->print(\$s);
 
 test ++$i, $r->module("Apache");
 test ++$i, not Apache->module("Not::A::Chance");
