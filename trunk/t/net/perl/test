@@ -78,6 +78,9 @@ if($Apache::TestSIG) {
     #Process $$ going to Apache::exit with status=$s
 }
 
+my $scalar_args = $r->args;
+print "SCALAR_ARGS=$scalar_args\n" if defined $scalar_args;
+
 if (@args = $r->args) {
     $r->print(
        "ARGS: ",
