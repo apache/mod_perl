@@ -261,6 +261,9 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                 modperl_interp_unselect,
                                 p);
 
+    /* set context (THX) for this thread */
+    PERL_SET_CONTEXT(interp->perl);
+
     MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx\n",
                (unsigned long)interp, desc, (unsigned long)p);
 

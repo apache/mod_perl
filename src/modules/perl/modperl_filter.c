@@ -96,7 +96,6 @@ int modperl_run_filter(modperl_filter_t *filter)
     modperl_interp_t *interp = NULL;
     interp = modperl_interp_select(r, c, s);
     aTHX = interp->perl;
-    PERL_SET_CONTEXT(aTHX);
 #endif
 
     args = newAV();
