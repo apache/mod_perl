@@ -13,10 +13,11 @@ our @EXPORT_OK = qw(mkmanifest);
 *import = \&Exporter::import;
 
 #generate a MANIFEST based on CVS/Entries
-#anythin to be skipped goes after __DATA__ (MANIFEST.SKIP format)
+#anything to be skipped goes after __DATA__ (MANIFEST.SKIP format)
 #anything else to be added should go here:
 my @add_files = qw{
     MANIFEST
+    Apache-Test/META.yml
 };
 
 sub get_cvs_files {
