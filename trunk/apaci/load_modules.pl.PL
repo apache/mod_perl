@@ -44,11 +44,13 @@ finddepth(sub {
 
 my($perl_mod) = grep /perl/, @sh_mods;
 unshift @sh_mods, $perl_mod; #must come before mod_include/USE_PERL_SSI
-  
+
+my %seen;
+
 local *FH;
 open FH, ">$LoadModule_conf" or
     die "can't open $LoadModule_conf $!";
-print FH join "\n", @sh_mods, "";
+print FH join "\n", (grep { !$seen{$_}++ } @sh_mods), "";
 close FH;
 
 system "cat $LoadModule_conf $orig > $tmp && mv $tmp $orig";
