@@ -104,7 +104,7 @@ sub ccopts {
 
     if ($self->{MP_DEBUG}) {
         $self->{MP_TRACE} = 1;
-        $ccopts .= " -g";
+        $ccopts .= " -g -DMP_DEBUG";
     }
 
     if ($self->{MP_CCOPTS}) {

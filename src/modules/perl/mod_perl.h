@@ -24,6 +24,9 @@
 #include "apr_lock.h"
 #include "apr_strings.h"
 
+#include "ap_buckets.h"
+#include "util_filter.h"
+
 extern module MODULE_VAR_EXPORT perl_module;
 
 #include "modperl_flags.h"
@@ -33,6 +36,7 @@ extern module MODULE_VAR_EXPORT perl_module;
 #include "modperl_gtop.h"
 #endif
 #include "modperl_types.h"
+#include "modperl_util.h"
 #include "modperl_config.h"
 #include "modperl_callback.h"
 #include "modperl_tipool.h"
