@@ -40,6 +40,15 @@ static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode,
     return code;
 }
 
+static IV PerlIOAPR_popped(pTHX_ PerlIO *f)
+{
+    /* XXX: PL_perlio persists, and remembers old layers, which are
+     * inactive, but core perlio should reset it, provide a temp
+     * workaround */
+    PL_perlio = NULL;
+    return PerlIOBase_popped(aTHX_ f);
+}
+
 static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
                               PerlIO_list_t *layers, IV n,
                               const char *mode, int fd, int imode,
@@ -384,7 +393,7 @@ static PerlIO_funcs PerlIO_APR = {
     sizeof(PerlIOAPR),
     PERLIO_K_MULTIARG,
     PerlIOAPR_pushed,
-    PerlIOBase_popped,
+    PerlIOAPR_popped,
     PerlIOAPR_open,
     PerlIOBase_binmode,         /* binmode() is handled by :crlf */
     NULL,                       /* no getarg needed */
