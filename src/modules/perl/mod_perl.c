@@ -186,10 +186,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     modperl_config_srv_t *base_scfg;
     PerlInterpreter *base_perl;
     PerlInterpreter *perl;
-
-#ifdef MP_TRACE
     const char *vhost = modperl_server_desc(s, p);
-#endif
 
     if (base_server == NULL) {
         base_server = modperl_global_get_server_rec();
