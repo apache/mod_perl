@@ -3,7 +3,8 @@
 use strict;
 use warnings FATAL => 'all';
 
-use lib map { "$_/Apache-Test/lib" } qw(. ..);
+use FindBin;
+use lib "$FindBin::Bin/../Apache-Test/lib";
 
 use Apache::TestRunPerl ();
 
