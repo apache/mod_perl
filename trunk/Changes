@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+PerlRequire/PerlModule will start Perl if it is not already running
+
 (undocumented) $Apache::ReadConfig variable renamed $Apache::Server::SaveConfig
 
 SERVER_CREATE/SERVER_MERGE methods implemented for directive handlers
