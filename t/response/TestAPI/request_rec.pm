@@ -12,7 +12,7 @@ use Apache::RequestUtil ();
 
 use APR::Finfo ();
 
-use Apache::Const -compile => 'OK';
+use Apache::Const -compile => qw(OK M_GET M_PUT);
 use APR::Const    -compile => qw(FINFO_NORM);
 
 #this test module is only for testing fields in the request_rec
@@ -23,7 +23,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 43;
+    plan $r, tests => 45;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -70,9 +70,17 @@ sub handler {
 
     ok $r->method;
 
-    ok $r->method_number || 1;
+    ok t_cmp $r->method_number, Apache::M_GET, "method number";
 
-    ok $r->allowed || 1;
+    {
+        $r->allowed(1 << Apache::M_GET);
+
+        ok $r->allowed & (1 << Apache::M_GET);
+        ok ! ($r->allowed & (1 << Apache::M_PUT));
+
+        $r->allowed($r->allowed | (1 << Apache::M_PUT));
+        ok $r->allowed & (1 << Apache::M_PUT);
+    }
 
     #allowed_xmethods
     #allow_methods
