@@ -1417,19 +1417,6 @@ callback:
 	MP_STORE_ERROR(r->uri, ERRSV);
 	if(!perl_sv_is_http_code(ERRSV, &status))
 	    status = SERVER_ERROR;
-#if MODULE_MAGIC_NUMBER >= MMN_130
-	if(!SvREFCNT(TOPs)) {
-#ifdef WIN32
-	    mod_perl_error(r->server,
-			   "mod_perl: stack is corrupt, server may need restart\n");
-#else
-	    mod_perl_error(r->server,
-			   "mod_perl: stack is corrupt, exiting process\n");
-	    my_setenv("PERL_DESTRUCT_LEVEL", "-1");
-	    child_terminate(r);
-#endif /*WIN32*/
-	}
-#endif
     }
     else if(count != 1) {
 	mod_perl_error(r->server,

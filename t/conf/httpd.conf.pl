@@ -220,5 +220,10 @@ $Location{"/chain"} = {
     PerlHandler => [map { "Stacked::$_" } qw(one two three four)],
 };
 
+$Location{"/death"} = {
+    @mod_perl,
+    PerlHandler => "Apache::Death",
+};
+
 </Perl>
 

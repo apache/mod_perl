@@ -67,7 +67,9 @@ sub fetch {
 sub simple_fetch {
     my $ua = LWP::UserAgent->new;
     my $url = URI::URL->new("http://$net::httpserver");
-    $url->path(shift);
+    my($path,$q) = split /\?/, shift; 
+    $url->path($path);
+    $url->query($q) if $q;
     my $request = new HTTP::Request('GET', $url);
     my $response = $ua->request($request, undef, undef);   
     $response->is_success;

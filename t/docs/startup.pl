@@ -199,6 +199,31 @@ END {
     warn "[notice] END block called for startup.pl\n";
 }
 
+package Apache::Death;
+my $say_ok = <<EOF;
+*** The follow [error] is expected, no cause for alarm ***
+EOF
+
+sub handler {
+    my $r = shift;
+
+    my $args = $r->args || "";
+    if ($args =~ /die/) {
+	warn $say_ok;
+	delete $INC{"badsyntax.pl"};
+	require "badsyntax.pl";  # contains syntax error
+    }
+    if($args =~ /croak/) {
+	warn $say_ok;
+        Carp::croak("Apache::Death");
+    }
+
+    $r->content_type('text/html');
+    $r->send_http_header();
+    print "<h1>Script completed</h1>\n";
+    return 0;
+}
+
 package Destruction;
 
 sub new { bless {} }

@@ -274,3 +274,8 @@ Options +ExecCGI
 PerlSendHeader       Off
 PerlSetupEnv Off
 </Location> 
+
+<Location /death>
+PerlHandler Apache::Death
+SetHandler perl-script
+</Location>
