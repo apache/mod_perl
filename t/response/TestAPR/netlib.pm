@@ -4,11 +4,13 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Connection ();
 use Apache::RequestRec ();
 
 use APR::NetLib ();
+use APR::SockAddr ();
 
 use Apache::Const -compile => 'OK';
 
@@ -17,11 +19,14 @@ sub handler {
     my $c = $r->connection;
     my $p = $r->pool;
 
-    plan $r, tests => 3;
+    plan $r, tests => 4;
 
     my $ip = $c->remote_ip;
 
     ok $ip;
+
+    ok t_cmp($ip, $c->remote_addr->ip_get,
+             "remote_ip eq remote_addr->ip_get");
 
     my $ipsub = APR::IpSubnet->new($p, $ip);
 
