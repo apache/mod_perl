@@ -1,5 +1,11 @@
 package TestAPI::server_rec;
 
+# this test module is only for testing fields in the server_rec listed
+# in apache_structures.map
+
+# XXX: This test needs to be mucho improved. currently it justs checks
+# whether some value is set or not
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -12,15 +18,12 @@ use Apache::ServerUtil ();
 
 use Apache::Const -compile => 'OK';
 
-#this test module is only for testing fields in the server_rec
-#listed in apache_structures.map
-
 sub handler {
     my $r = shift;
 
     my $s = $r->server;
 
-    plan $r, tests => 17;
+    plan $r, tests => 20;
 
     ok $s;
 
@@ -34,25 +37,28 @@ sub handler {
 
     ok $s->port || 1;
 
-    ok $s->error_fname || 1; #vhost might not have its own (t/TEST -ssl)
+    ok $s->error_fname || 1; # vhost might not have its own (t/TEST -ssl)
 
-    #error_log;
+    # XXX: error_log;
 
     ok $s->loglevel;
 
     ok $s->is_virtual || 1;
 
-    #module_config
+    # XXX: module_config
 
-    #lookup_defaults
+    # XXX: lookup_defaults
 
     ok $s->addrs;
 
+    t_debug("timeout : ", $s->timeout);
     ok $s->timeout;
 
-    #keep_alive_timeout
-    #keep_alive_max
-    #keep_alive
+    t_debug("keep_alive_timeout : ", $s->keep_alive_timeout);
+    ok $s->keep_alive_timeout || 1;
+    t_debug("keep_alive_max : ", $s->keep_alive_max);
+    ok $s->keep_alive_max || 1;
+    ok $s->keep_alive || 1;
 
     ok $s->path || 1;
 
