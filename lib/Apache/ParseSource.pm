@@ -138,7 +138,7 @@ sub find_includes {
                                     apr_optional mod_include mod_cgi
                                     mod_proxy mod_ssl ssl_ apr_anylock
                                     apr_rmm ap_config mod_log_config
-                                    mod_perl modperl_);
+                                    mod_perl modperl_ apreq);
         $unwanted = qr|^$unwanted|;
         my $wanted = '';
 
