@@ -20,6 +20,14 @@
 #   endif
 #endif
 
+/* avoiding namespace collisions */
+
+#ifdef list
+#   undef list
+#endif
+
+/* avoiding -Wall warning */
+
 #undef dNOOP
 #define dNOOP extern int __attribute__ ((unused)) Perl___notused
 
