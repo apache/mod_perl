@@ -19,6 +19,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - look at using soft_timeout instead of hard_timeout
 
+- t/modules/cookie must test have_module "CGI::Cookie"
+
 - dorighthing if t/modules/status.t can see Devel::Symdump, but httpd cant
 
 - cure Apache::src::module_magic_number warnings when there are no header files
@@ -32,25 +34,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - turn of strip of httpd in Apache's install.sh
 
 - at .../perl/Apache/SIG.pm line 30 (Mark Downing, Ron Hawkins)
-
----------------------------------------------------------------------------
-DOCUMENTATION (areas that *really* need some more or don't have any)
----------------------------------------------------------------------------
-
-- forking under Apache::Registry, exit vs CORE::exit 
-
-- misc:
-  + DONE
-  + SUID access http://www.courtesan.com/sudo/
-  + $ENV{PATH}/PerlSetEnv and PerlTaintCheck
-
-- PerlRun::handler in cgi_to_mod_perl.pod
-
-- HTTP Headers!!!!
-
-- Apache::exit/child_terminate
-
-- push_handlers/set_handlers
 
 ---------------------------------------------------------------------------
 KNOWN BUGS
@@ -119,7 +102,6 @@ Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
 
 - die and AUTOLOADed DESTROY == empty $@ (Perl or mod_perl bug?)
 
-
 - ExtUtils::Embed/ExtUtils::Liblist clash sometime w/
   PERL_STATIC_EXTS, like so: 
  Unrecognized argument in LIBS ignored:
@@ -139,99 +121,6 @@ Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
   mod_perl.  To make it work I had to -DUSE_FCNTL_SERIALIZED_ACCEPT or
   the server would never answer a request.
 
-
----------------------------------------------------------------------------
-NEW STUFF
----------------------------------------------------------------------------
-
-- 'make htmldoc' (Brian Moseley)
-
-- make 'make test_report' more useful
-
-- hooks into Perl interactive debugger 
-  (Graham TerMarsch <grahamt@activestate.com>)
-
-- should be able to set PerlSetVar's to an empty string (Eric Cholet)
-
-- $r->method could be a dualval, method_number in a numeric context (Gisle Aas)
-
-- PerlAllowOverride directive to enable/disable hooks 
-  (Jason Riedy <ejr@cise.ufl.edu>)
-
-- PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
-
-- perl_clear_env() should skip those found in PerlPassEnv?
-
-- File::copy($file,*STDOUT) doesn't work (pp_syswrite needs tie support)
-	Bill Coffman <coffman@value.net>
-
-- option to set uid/gid before running any Perl code (copy-n-paste
-  from http_main.c) 
-	Doug Bagley <doug@dejanews.com>
-
-- provide namespace protection when 'use Foo' might be two different modules
-  i.e. re-visit Apache::Safe
-
-- move away from read_client_block to {setup,should,get}_client_block
-  see Apache.pm/Apache::new_read
-
-- PerlOptions directive?
-           Jason Riedy <ejr@cise.ufl.edu>
-
-- some mod_perlIO type methods for xs modules? (e.g. Apache::Peek)
-
-- make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
-  for the given location
-
-- <Perl> in .htaccess (could also call known bug)
-
-- provide namespace protection for mod_include #perl's
-
-- change configuration during runtime?
-
-- $Apache::ServerStarting in <Perl>
-
-- something with exec()?
-
-- Apache->http_message(501); #rc code returns a string
-
-- PerlFreshRestart, restarts on startup, should we stop that?
-
-- special treatment for nph- scripts?
-
-- fix Thread->new == linux<-SIGUSR1->Apache signal clash
-
-- win32:
-  + integrate with Perl 5.005's threading
-  + mod_include #perl support
-  + ability to nmake w/o going into VC++
-  + ability to disable Perl*Handler callback hooks
-  + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
-  + fix perl-status?mod_perl_hooks
-
-- @ARGV magic, tie to query string
-
-- overload %ENV magic:
-  + call subprocess_env when a value is set 
-              Doug Bagley <doug@dejanews.com>
-  + so it's not setup unless asked for
-
-- "save stack" mechanism so we can go back to caching CV lookups
-
-- improve the "stacked handlers" implementation, including:
-  + config merging of AV*'s
-
-  + allow push_handlers to have an additional argument, an array ref,
-    which will be passed to the handler as arguments, e.g.
-    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
-
-- allow Perl*Handler's to have arguments in config files, e.g.:
-
-  (calls &FooPackage::handler($r, "One", "Two", "Three");
-
-- allow <Perl></Perl> configuration sections to have read access to internal
-  configuration structures (would be nice if we could tie a %namespace::) 
-
 ---------------------------------------------------------------------------
 KNOWN MODULE BUGS
 ---------------------------------------------------------------------------
@@ -242,94 +131,3 @@ KNOWN MODULE BUGS
   being reported with negative age with -M test under Apache::Registry. 
   The workaround is to add $^T = time; at the beginning of the scripts. But
   it would be much better if the Apache::Registry will do that 
-
----------------------------------------------------------------------------
-NEW MODULE STUFF
----------------------------------------------------------------------------
-
-- Apache::Status extensions (ix)
-
-- StatINC doesn't reimport the imported symbols?
-  Stas Bekman <sbekman@iil.intel.com>, 
-  Message-Id: <Pine.A41.3.96.981007170413.44288Q-100000@ilx374.iil.intel.com>
-- Look at Apache::ASP's handling of exported functions (for implementation
-  in Apache::StatINC) (same thing as above?) [ask]
-
-- Option to StatINC to make it possible to only watch chosen modules
-  [ask]
-
-- Apache::Registry should check return value of the subroutine,
-  e.g. for REDIRECT   
-
-- should Apache::Registry use filename instead of vhost_name+uri?
-              Ben Laurie <ben@algroup.co.uk>
-
-- apache.pm: use apache '1.3b3';
-
-- have Apache::Status hunt for AUTOLOADing 
-
-- Apache::SawAmpersand
-
-- Apache::Status should list number of things
-
-- Apache::Constant's import should compile the constant sub
-
-- Apache::DProf as a Fixup
-
-- Apache::Include->virtual should update %ENV?
-
-- Apache->request vs. $_[0]
-
-- Apache::Registry should honor __END__ and __DATA__,
-  but how to get it right?
-
----------------------------------------------------------------------------
-CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
-            these things at some point
----------------------------------------------------------------------------
-
-early startup/auto pre-load Apache/@INC mess
-
-now that PerlRequire/PerlModule start Perl if not running already, no
-need for the array_headers in perl_srv_config
-
-get rid of Apache->can_stack_handlers (since we have UNIVERSAL->can now)
-
-mod_perl C code symbols, should look at cleaning up names with a
-common prefix, e.g. mp_, mod_perl_, mperl_ ?
-also static-ize those functions we can 
-
-remove Apache::Symbol::undef cruft, now that the mandatory const sub
-redefined warning is downgraded in 5.004_05-tobe
-
-change cgi_header_out and send_cgi_header to use new
-ap_scan_script_header_err_core function 
-
-cleanup Makefile.PL!!!
-
-loose dup code in Apache::Registry, use Apache::PerlRun functions
-
-use 5.005's newCONSTSUB in Constants.xs
-
----------------------------------------------------------------------------
-OPTIMIZATIONS
----------------------------------------------------------------------------
-
-- avoid write_client symtab lookup in print()
-
-- preloading of method cache
-
-- replace Apache::PerlRun with Apache::PerlRunXS
-
-- replace Apache::Registry with Apache::RegistryXS
-
-- make Apache::RegistryLoader work with RegistryXS
-
-- avoid a copy in PerlRunXS (use SvPVX instead of safemalloc'd copy)
-
-- XS_IMPORT=1 on by default
-
-- in places where Apache did a pstrdup, don't use newSVpv(), use
-  newSV()->sv_upgrade()->SvPVX/SvCUR_set to avoid another copy 
-
-- Apache::Constants::constant
