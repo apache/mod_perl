@@ -1,10 +1,6 @@
 This file tracks the things that need to be done to accomplish the
 move of modperl projects to SVN:
 
-* snapshot http://cvs.apache.org/snapshots/modperl-2.0/ => svn
-
-* snapshot http://cvs.apache.org/snapshots/modperl/ => svn
-
 * missing commit template files (à là CVS)
   PR:
   Obtained from:
@@ -42,9 +38,12 @@ so it can be applied/edited easily.
   $svn_id $first_subdir/$first_file ($trunk)
 
 * cvs2svn [cvs]embperl:
- Move to [svn]/perl/embperl/trunk (with tags/branches there too)
+  Move to [svn]/perl/embperl/trunk (with tags/branches there too)
 
 * cvs2svn [cvs]modperl (aka modperl-1.x)
- Move to [svn]/perl/modperl/branches/1/
- Tags along with mp2 tags in [svn]/perl/modperl/tags/
-XXX: not quite sure that this is the best idea
+  Move to [svn]/perl/modperl/branches/1/
+  Tags along with mp2 tags in [svn]/perl/modperl/tags/
+
+  and then update the snapshot (apmail/bin/taritup)
+  make_svn_snapshot "perl/modperl/branches/1" "modperl-1.0" 
+
