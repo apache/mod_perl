@@ -322,7 +322,7 @@ static void modperl_av_remove_entry(pTHX_ AV *av, I32 index)
         av_store(av, i, *av_fetch(tmpav, i, 0));
     }
     
-    SvREFCNT_dec(tmpav);
+    sv_free((SV *)tmpav);
 }
 
 static void modperl_package_unload_dynamic(pTHX_ const char *package, 
