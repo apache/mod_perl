@@ -133,6 +133,12 @@ static int modperl_env_request_get(pTHX_ SV *sv, MAGIC *mg)
 }
 #endif
 
+/*
+ * XXX: PL_vtbl_* are global (not per-interpreter)
+ * so this method of tie-ing is not thread-safe
+ * overridding svt_get is only useful with 5.7.2+ and requires
+ * a smarter lookup than the current modperl_env_request_get
+ */
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
     EnvMgObj = (char *)r;

@@ -24,7 +24,10 @@ sub handler {
     else {
         print "1..3\n";
         print "ok 1\n", "ok ", "$ENV{FOO}\n";
-        my $foo = $r->subprocess_env->get('FOO');
+#XXX: current implementation of tie %ENV to $r->subprocess_env
+#     is not threadsafe
+#        my $foo = $r->subprocess_env->get('FOO');
+        my $foo = $ENV{FOO};
         $foo++;
         print "ok $foo\n";
     }
