@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+overriden STD* streams now can be further overriden and will be
+properly restored, which allows functions like $r->internal_redirect
+work (+add tests) [Stas]
+
+implement perlio's getarg hook, which now allows dupping STD* streams
+overloaded by modperl [Stas]
+
 Add PerlMapToStorageHandler [Geoffrey Young]
 
 in the MP_MAINTAINER mode add the -Werror compilation flag when perl
