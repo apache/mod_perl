@@ -1086,7 +1086,19 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 	    }
 	}
 
-	if(class) stash = gv_stashpv(SvPV(class,na),FALSE);
+#ifdef PERL_OBJ_HANDLERS
+	if(*SvPVX(class) == '$') {
+	    SV *obj = perl_eval_pv(SvPVX(class), TRUE);
+	    if(SvROK(obj) && sv_isobject(obj)) {
+		MP_TRACE_h(fprintf(stderr, "handler object %s isa %s\n",
+				   SvPVX(class),  HvNAME(SvSTASH((SV*)SvRV(obj)))));
+		SvREFCNT_dec(class);
+		class = newSVsv(obj);
+		stash = SvSTASH((SV*)SvRV(class));
+	    }
+	}
+#endif
+	if(class && !stash) stash = gv_stashpv(SvPV(class,na),FALSE);
 	   
 #if 0
 	MP_TRACE_h(fprintf(stderr, "perl_call: class=`%s'\n", SvPV(class,na)));
