@@ -81,6 +81,7 @@ MODULE=Apache::ServerUtil  PACKAGE=Apache::ServerRec
 
 MODULE=Apache::ServerUtil PACKAGE=Apache::ServerUtil
  mpxs_Apache__ServerUtil_server_root_relative | | p, fname=""
+ apr_pool_t:DEFINE_base_server_pool
 
 PACKAGE=Apache
  server_rec *:DEFINE_server | | SV *:classname=Nullsv

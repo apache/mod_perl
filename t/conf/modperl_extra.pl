@@ -51,6 +51,8 @@ test_apache_resource();
 
 test_perl_ithreads();
 
+test_base_server_pool();
+
 
 
 ### only subs below this line ###
@@ -196,6 +198,22 @@ sub test_perl_ithreads {
         eval { require threads; "threads"->import() };
     }
 }
+
+sub test_base_server_pool {
+    # we can't really test the functionality since it happens at
+    # server shutdown, when the test suite has finished its run
+    # so just check that we can register the cleanup and that it
+    # doesn't segfault
+    my $base_server_pool = Apache::ServerUtil::base_server_pool();
+    $base_server_pool->cleanup_register(sub { Apache::OK });
+    # replace the sub with the following to get some visual debug
+    # should log the date twice (once on -start, once more on -stop)
+    # sub { local %ENV; qx[/bin/date >> /tmp/date]; Apache::OK; }
+    #
+    # also remember that cleanup_register() called on this pool will
+    # work only when registered at the server startup
+}
+
 
 sub ModPerl::Test::add_config {
     my $r = shift;

@@ -29,7 +29,7 @@ sub new {
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 15;
+    plan $r, tests => 17;
 
     {
         my $s = $r->server;
@@ -47,6 +47,14 @@ sub handler {
     ok $r->server->method_register('FOO');
 
     server_root_relative_tests($r);
+
+    my $base_server_pool = Apache::ServerUtil::base_server_pool();
+    ok $base_server_pool->isa('APR::Pool');
+
+    # this will never run since it's not registered in the parent
+    # process
+    $base_server_pool->cleanup_register(sub { Apache::OK });
+    ok 1;
 
     Apache::OK;
 }
