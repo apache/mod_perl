@@ -141,7 +141,7 @@ int mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
     request_rec *r;
     
     /* this also magically assings to r ;-) */
-    mpxs_usage_va_1(r, "$r->print(...)");
+    mpxs_usage_va_1(r, "$r->rflush()");
 
     rcfg = modperl_config_req_get(r);
 
