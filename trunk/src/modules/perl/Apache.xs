@@ -309,6 +309,7 @@ static int sv_str_header(void *arg, const char *k, const char *v)
 /*
  * ap_scan_script_header_err_core(r, buffer, getsfunc_SV, sv)
  */
+#if 0
 static int getsfunc_SV(char *buf, int bufsiz, void *param)
 {
     SV *sv = (SV*)param;
@@ -335,6 +336,7 @@ static int getsfunc_SV(char *buf, int bufsiz, void *param)
     }
     return 1;
 }
+#endif /*0*/
 #endif /*MODULE_MAGIC_NUMBER*/
 
 static void rwrite_neg_trace(request_rec *r)
