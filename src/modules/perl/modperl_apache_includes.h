@@ -17,7 +17,8 @@
 #   include <fcntl.h>
 #   include "EXTERN.h"
 #   include "perl.h"
-#   undef list
+
+#   include "modperl_perl_unembed.h"
 
 #   ifdef uid_t
 #      define apache_uid_t uid_t
