@@ -503,6 +503,7 @@ void perl_reload_inc(server_rec *s, pool *sp)
 	    SvREFCNT_dec(HeVAL(entry));
 	    HeVAL(entry) = &sv_undef;
 	    MP_TRACE_g(fprintf(stderr, "reloading %s\n", HeKEY(entry)));
+	    TAINT_NOT;
 	    perl_require_pv(HeKEY(entry));
 	}
 	SvREFCNT_dec(keysv);
