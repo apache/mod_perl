@@ -130,7 +130,7 @@ $REQUEST_COUNT = 1;
 BEGIN {
     # decide at compile time how to check for a process' memory size.
     if (($Config{'osname'} eq 'solaris') &&
-	 ($Config{'osvers'} >= '2.6')) {
+	 ($Config{'osvers'} >= 2.6)) {
 	$HOW_BIG_IS_IT = \&solaris_2_6_size_check;
     } elsif ($Config{'osname'} eq 'linux') {
 	$HOW_BIG_IS_IT = \&linux_size_check;
