@@ -11,14 +11,13 @@ use Apache::MPM ();
 
 use POSIX qw(SIGALRM);
 
-#use POSIX ':signal_h';
-
 use Apache::Const -compile => qw(OK);
 
 my $mpm = lc Apache::MPM->show;
 
 # signal handlers don't work anywhere but with prefork, since signals
 # and threads don't mix
+# moreover "unsafe"-non-POSIX sighandlers don't work under static prefork
 
 sub handler {
     my $r = shift;
@@ -31,6 +30,7 @@ sub handler {
     plan $r, tests => $tests,
         need { "works only for prefork" => ($mpm eq 'prefork') };
 
+    # doesn't work under static prefork
     if (!$static) {
         local $ENV{PERL_SIGNALS} = "unsafe";
 
