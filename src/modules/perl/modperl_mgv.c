@@ -277,7 +277,15 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
             }
             else {
-                Perl_croak(aTHX_ "failed to load %s package\n", name);
+                if (logfailure) {
+                    /* the caller doesn't handle the error checking */
+                    Perl_croak(aTHX_ "failed to load %s package\n", name);
+                }
+                else {
+                    /* the caller handles the error checking */
+                    MP_TRACE_h(MP_FUNC, "failied to load %s package\n", name);
+                    return 0;
+                }
             }
         }
         else {
