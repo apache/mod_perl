@@ -362,7 +362,7 @@ void modperl_response_finish(request_rec *r)
     modperl_wbucket_flush(&rcfg->wbucket);
 }
 
-static int modperl_response_handler_run(request_rec *r)
+static int modperl_response_handler_run(request_rec *r, int finish)
 {
     int retval;
 
@@ -374,7 +374,9 @@ static int modperl_response_handler_run(request_rec *r)
         r->handler = r->content_type; /* let http_core or whatever try */
     }
 
-    modperl_response_finish(r);
+    if (finish) {
+        modperl_response_finish(r);
+    }
 
     return retval;
 }
@@ -385,7 +387,7 @@ int modperl_response_handler(request_rec *r)
         return DECLINED;
     }
 
-    return modperl_response_handler_run(r);
+    return modperl_response_handler_run(r, TRUE);
 }
 
 int modperl_response_handler_cgi(request_rec *r)
@@ -419,7 +421,7 @@ int modperl_response_handler_cgi(request_rec *r)
     h_stdin  = modperl_io_tie_stdin(aTHX_ r);
 
     modperl_env_request_tie(aTHX_ r);
-    retval = modperl_response_handler_run(r);
+    retval = modperl_response_handler_run(r, FALSE);
 
     modperl_io_handle_untie(aTHX_ h_stdout);
     modperl_io_handle_untie(aTHX_ h_stdin);
@@ -433,6 +435,9 @@ int modperl_response_handler_cgi(request_rec *r)
         rcfg->interp = NULL;
     }
 #endif
+
+    /* flush output buffer after interpreter is putback */
+    modperl_response_finish(r);
 
     return retval;
 }
