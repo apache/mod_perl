@@ -33,7 +33,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     }
 
     if ((lmask == APLOG_DEBUG) && (s->loglevel >= APLOG_DEBUG)) {
-        COP *cop = cxstack[1].blk_oldcop;
+        COP *cop = PL_curcop;
         file = CopFILE(cop); /* (caller)[1] */
         line = CopLINE(cop); /* (caller)[2] */
     }
