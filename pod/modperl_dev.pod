@@ -266,7 +266,7 @@ archive: ???
 
 =item discussion/problems report:
 
-mailing list subscription: mailto:new-httpd-subscribe@apache.org
+mailing list subscription: mailto:dev-subscribe@httpd.apache.org
 
 archive: http://marc.theaimsgroup.com/?l=apache-new-httpd&r=1&w=
 
