@@ -1,6 +1,6 @@
 # test env vars
 
-use Apache::URI ();
+use Apache2::URI ();
 
 my $r = shift;
 my $path = $r->args || '';
