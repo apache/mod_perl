@@ -160,6 +160,7 @@ PROMPT_DEFAULT	Accept default value for all would-be prompts
 OPTIONS_FILE	Read options from given file
 STATIC_EXTS	Build Apache::*.xs as static extensions
 APXS            Path to apxs
+AP_PREFIX	Apache installation prefix
 XS_GLUE_DIR     Directories containing extension glue
 INCLUDE_DIR     Add directories to search for header files
 GENERATE_XS     Generate XS code based on httpd version

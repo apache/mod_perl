@@ -36,6 +36,13 @@ sub AUTOLOAD {
 
 our $APXS;
 
+my %apxs_query = (
+    INCLUDEDIR => 'include',
+    LIBEXECDIR => 'modules',
+    CFLAGS     => undef,
+    PREFIX     => '',
+);
+
 sub apxs {
     my $self = shift;
 
@@ -71,7 +78,12 @@ sub apxs {
         last if -x $apxs;
     }
 
-    return '' unless $apxs and -x $apxs;
+    unless ($apxs and -x $apxs) {
+        my $prefix = $self->{MP_AP_PREFIX} || "";
+        return '' unless -d $prefix and $is_query;
+        my $val = $apxs_query{$_[1]};
+        return defined $val ? ($val ? "$prefix/$val" : $prefix) : "";
+    }
 
     my $val = qx($apxs @_ 2>/dev/null);
 

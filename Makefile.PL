@@ -47,7 +47,10 @@ sub configure {
     set_modperl_version();
 
     if ($build->{MP_APXS}) {
-        print "Using $build->{MP_APXS}\n";
+        print "Using APXS => $build->{MP_APXS}\n";
+    }
+    elsif ($build->{MP_AP_PREFIX} and -e $build->apxs(-q => 'INCLUDEDIR')) {
+        print "Using Apache prefix => $build->{MP_AP_PREFIX}\n";
     }
     else {
         for my $path ($build->find) {
