@@ -4870,6 +4870,28 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__Filter_ctx',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'ap_filter_t *',
+        'name' => 'filter'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'data'
+      },
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'mpxs_Apache__Log_BOOT',
     'attr' => [
