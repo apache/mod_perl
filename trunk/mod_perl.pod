@@ -623,9 +623,6 @@ These are somewhat boring examples, but they should give you the basic
 idea.  You can mix in any Perl code your heart desires.
 See eg/httpd.conf.pl and eg/perl_sections.txt for some examples.
 
-Currently for <Perl> sections to work, the C<PerlRequire> configuration
-directive must be defined, C</dev/null> will do just fine.
-
 A tip for syntax checking outside of httpd:
 
  <Perl>
