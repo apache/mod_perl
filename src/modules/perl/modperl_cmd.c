@@ -60,38 +60,38 @@ MP_CMD_SRV_DECLARE(requires)
     return NULL;
 }
 
-MP_CMD_SRV_DECLARE2(set_var)
+static MP_CMD_SRV_DECLARE2(handle_vars)
 {
     MP_dSCFG(parms->server);
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
- 
-    apr_table_set(dcfg->vars, arg1, arg2);
-    MP_TRACE_d(MP_FUNC, "DIR: arg1 = %s, arg2 = %s\n", arg1, arg2);
+    const char *name = parms->cmd->name;
+
+    modperl_table_modify_t func =
+        strEQ(name, "PerlSetVar") ? apr_table_set : apr_table_add;
+
+    func(dcfg->vars, arg1, arg2);
+
+    MP_TRACE_d(MP_FUNC, "%s DIR: arg1 = %s, arg2 = %s\n",
+               name, arg1, arg2);
 
     /* make available via Apache->server->dir_config */
     if (!parms->path) {
-        apr_table_set(scfg->vars, arg1, arg2);
-        MP_TRACE_d(MP_FUNC, "SRV: arg1 = %s, arg2 = %s\n", arg1, arg2);
+        func(scfg->vars, arg1, arg2);
+        MP_TRACE_d(MP_FUNC, "%s SRV: arg1 = %s, arg2 = %s\n",
+                   name, arg1, arg2);
     }
 
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE2(set_var)
+{
+    return modperl_cmd_handle_vars(parms, mconfig, arg1, arg2);
+}
+
 MP_CMD_SRV_DECLARE2(add_var)
 {
-    MP_dSCFG(parms->server);
-    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
- 
-    apr_table_add(dcfg->vars, arg1, arg2);
-    MP_TRACE_d(MP_FUNC, "DIR: arg1 = %s, arg2 = %s\n", arg1, arg2);
-
-    /* make available via Apache->server->dir_config */
-    if (!parms->path) {
-        apr_table_add(scfg->vars, arg1, arg2);
-        MP_TRACE_d(MP_FUNC, "SRV: arg1 = %s, arg2 = %s\n", arg1, arg2);
-    }
-
-    return NULL;
+    return modperl_cmd_handle_vars(parms, mconfig, arg1, arg2);
 }
 
 MP_CMD_SRV_DECLARE2(set_env)

@@ -62,4 +62,8 @@ int modperl_response_handler_cgi(request_rec *r);
 
 #define MgTypeExt(mg) (mg->mg_type == '~')
 
+typedef void MP_FUNC_T(modperl_table_modify_t) (apr_table_t *,
+                                                const char *,
+                                                const char *);
+
 #endif /*  MOD_PERL_H */
