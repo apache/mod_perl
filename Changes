@@ -21,7 +21,9 @@ require Perl 5.6.1, 5.6.0 isn't supported for a long time, but we
 weren't aborting at the Makefile.PL stage [Stas]
 
 Apache::RequestUtil::method_register($s->process->pconf, 'FOO'); is
-now $s->method_register('FOO') [Stas]
+now $s->method_register('FOO').
+Apache::RequestUtil::add_version_component($s->process->pconf, 'BAR/0.1');
+is now $s->add_version_component('BAR/0.1').  [Stas]
 
 Remove $Apache::Server::StrictPerlSections. Now, all <Perl>
 sections errors are fatal by default and cause server startup to

@@ -109,6 +109,18 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
     }
 }
 
+{
+    # test add_version_component
+    Apache->server->push_handlers(
+        PerlPostConfigHandler => \&add_my_version);
+
+    sub add_my_version {
+        my($conf_pool, $log_pool, $temp_pool, $s) = @_;
+        $s->add_version_component("world domination series/2.0");
+        return Apache::OK;
+    }
+}
+
 # this is needed for TestModperl::ithreads
 # one should be able to boot ithreads at the server startup and then
 # access the ithreads setup at run-time when a perl interpreter is
