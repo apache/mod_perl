@@ -172,6 +172,8 @@ int modperl_callback_run_handlers(int idx, int type,
         break;
     };
 
+    modperl_callback_current_callback_set(desc);
+    
     /* XXX: deal with {push,set}_handler of the phase we're currently in */
     /* for now avoid the segfault by not letting av->nelts grow if
      * somebody push_handlers to the phase we are currently in, but

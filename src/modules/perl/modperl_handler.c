@@ -175,7 +175,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 }
 
 #define set_desc(dtype) \
-    MP_TRACE_a_do(if (desc) *desc = modperl_handler_desc_##dtype(idx))
+    if (desc) *desc = modperl_handler_desc_##dtype(idx)
 
 #define check_modify(dtype) \
 if ((action > MP_HANDLER_ACTION_GET) && rcfg) { \

@@ -125,6 +125,10 @@ sub httpd_conf {
     die $err if $err;
 }
 
+sub current_callback {
+    return Apache::current_callback();
+}
+
 package Apache::Constants;
 
 use Apache::Const ();

@@ -16,7 +16,7 @@ use Apache::Constants qw(OK DIR_MAGIC_TYPE);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 7;
+    plan $r, tests => 8;
 
     $r->send_http_header('text/plain');
 
@@ -33,6 +33,10 @@ sub handler {
     ok t_cmp(Apache::exists_config_define('MODPERL2'),
              Apache->define('MODPERL2'),
              'Apache->define');
+
+    ok t_cmp('PerlResponseHandler',
+             Apache::current_callback(),
+             'inside PerlResponseHandler');
 
     Apache::log_error("Apache::log_error test ok");
     ok 1;

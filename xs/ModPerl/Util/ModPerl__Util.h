@@ -10,3 +10,8 @@ static MP_INLINE void mpxs_ModPerl__Util_untaint(pTHX_ I32 items,
 }
 
 #define mpxs_ModPerl__Util_exit(status) modperl_perl_exit(aTHX_ status)
+
+#define mpxs_Apache_current_callback modperl_callback_current_callback_get
+
+
+

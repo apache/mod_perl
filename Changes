@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+implement Apache::current_callback + $r->current_callback goes into
+Apache::compat, since now we have a way too many callbacks unrelated
+to $r [Stas]
+
 Add Apache::compat methods: $r->connection->auth_type and
 $r->connection->user (requires 'PerlOptions +GlobalRequest') + tests
 [Stas]
