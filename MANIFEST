@@ -11,6 +11,7 @@ README
 apache-modlist.html
 mod_perl.gif
 mod_perl.pod
+mod_perl_cvs.pod
 mod_perl_tuning.pod
 cgi_to_mod_perl.pod
 mod_perl_traps.pod

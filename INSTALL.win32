@@ -51,8 +51,7 @@ select "Tools -> Options -> [Directories]"
 select "Show directories for: [Include files]"
 
 You'll need to add the following paths:
-C:\apache_x.xx\src\main
-C:\apache_x.xx\src\regex
+C:\apache_x.xx\src\include
 .  (should be expanded to C:\...\mod_perl-x.xx\src\modules\perl for you)
 C:\perl\lib\Core
 

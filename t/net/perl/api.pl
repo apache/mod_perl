@@ -1,10 +1,12 @@
 use Apache ();
-use Apache::Constants ();
+use Apache::Constants qw(:server);
 use strict;
 
 Apache->register_cleanup(sub {0});
 
 my $tests = 35;
+my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
+
 my $i;
 my $r = Apache->request;
 $r->content_type("text/plain");
@@ -92,6 +94,12 @@ test ++$i, $s->port;
 test ++$i, $r->module("Apache");
 test ++$i, not Apache->module("Not::A::Chance");
 test ++$i, Apache->module("Apache::Constants");
+
+#just make sure we can call this one
+if($test_custom_response) {
+    test ++$i, $r->custom_response(403, "no chance") || 1;
+}
+
 
 
 

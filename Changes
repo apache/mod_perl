@@ -16,6 +16,14 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.10_01-dev
+
+$r->custom_response will now work under win32 with 1.3b6-dev+
+
+added win32 test enhancements suggested by Gerald Richter
+
+added mod_perl_cvs.pod document
+
 =item 1.10 - March 21, 1998
 
 rid of SEGV in PerlChildExitHandler spotted by Eric Cholet 

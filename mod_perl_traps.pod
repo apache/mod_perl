@@ -130,12 +130,29 @@ Now, have your scripts say:
  Test::some_function();
 
 
+=item "Use of uninitialized value"
+
+Because of eval context, you may see warnings with useless
+filename/line, example:
+
+ Use of uninitialized value at (eval 80) line 12.
+ Use of uninitialized value at (eval 80) line 43.
+ Use of uninitialized value at (eval 80) line 44.
+
+To track down where this eval is really happening, try using a
+B<__WARN__> handler to give you a stack trace:
+
+ use Carp ();
+ local $SIG{__WARN__} = \&Carp::cluck;
+
+=item "Callback called exit"
+
 =item "Out of memory!"
 
 If something goes really wrong with your code, Perl may die with an
-"Out of memory!" message.  A common cause of this are never-ending
-loops, deep recursion or calling an undefined subroutine.  Here's one
-way to catch the problem:
+"Out of memory!" message and or "Callback called exit".  A common
+cause of this are never-ending loops, deep recursion or calling an
+undefined subroutine.  Here's one way to catch the problem:
 See Perl's INSTALL document for this item:
 
  =item -DPERL_EMERGENCY_SBRK
