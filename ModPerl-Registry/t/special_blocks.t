@@ -22,7 +22,7 @@ plan tests => @aliases * 4;
     # PerlRun always run BEGIN/END since it's never cached
 
     my $alias = "perlrun";
-    my $url = "/same_interp/$alias/blocks.pl";
+    my $url = "/same_interp/$alias/special_blocks.pl";
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
     ok t_cmp(
@@ -56,7 +56,7 @@ plan tests => @aliases * 4;
 
 
 for my $alias (grep !/^perlrun$/, @aliases) {
-    my $url = "/same_interp/$alias/blocks.pl";
+    my $url = "/same_interp/$alias/special_blocks.pl";
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
     # clear the cache of the registry package for the script in $url
