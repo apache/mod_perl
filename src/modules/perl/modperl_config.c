@@ -195,6 +195,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv);
 
+    merge_item(modules);
     merge_item(PerlModule);
     merge_item(PerlRequire);
 
