@@ -7,3 +7,19 @@
 
 Apparently <Perl> still silently ignores bogus perl code.
 See: http://marc.theaimsgroup.com/?t=110986532900001&r=1&w=2
+
+-------------
+
+When running as root and A-T figures it can't run the test suite
+(perms) it'll ask users if she wants to skip the test suite, if this
+happens:
+
+  Skip the test suite? [No] yes
+  Skipping the test suite execution, while returning success status
+  cd ModPerl-Registry && make test
+
+she gets to run the registry test suite anyway, since the top level
+test suite was successful (needed to make cpan/plus installers
+happy). Not sure what's the best solution here.
+
+---------------
