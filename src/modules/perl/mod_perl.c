@@ -9,6 +9,74 @@ static int MP_init_status = 0;
 #define MP_IS_STARTING    (MP_init_status == 1 ? 1 : 0)
 #define MP_IS_RUNNING     (MP_init_status == 2 ? 1 : 0)
 
+#if !(PERL_REVISION == 5 && ( PERL_VERSION < 8 || \
+    (PERL_VERSION == 8 && PERL_SUBVERSION == 0))) && \
+    (defined(USE_HASH_SEED) || defined(USE_HASH_SEED_EXPLICIT))
+#define MP_NEED_HASH_SEED_FIXUP
+#endif
+
+
+#ifdef MP_NEED_HASH_SEED_FIXUP
+static UV   MP_init_hash_seed = 0;
+static bool MP_init_hash_seed_set = FALSE;
+#endif
+
+/* see modperl_hash_seed_set() */
+static void modperl_hash_seed_init(apr_pool_t *p) 
+{
+#ifdef MP_NEED_HASH_SEED_FIXUP
+    char *s;
+
+    /* check if there is a specific hash seed passed via the env var
+     * and if that's the case -- use it */
+    apr_status_t rv = apr_env_get(&s, "PERL_HASH_SEED", p);
+    if (rv != APR_ENOTIMPL) {
+        if (s) {
+            while (isSPACE(*s)) s++;
+        }
+        if (s && isDIGIT(*s)) {
+            MP_init_hash_seed = (UV)Atol(s); // XXX: Atoul()?
+            MP_init_hash_seed_set = TRUE;
+        }
+    }
+
+    /* calculate our own random hash seed */
+    if (!MP_init_hash_seed_set) {
+        apr_uuid_t *uuid = (apr_uuid_t *)safemalloc(sizeof(apr_uuid_t));
+        char buf[APR_UUID_FORMATTED_LENGTH + 1];
+        int i;
+
+        apr_initialize();
+        apr_uuid_get(uuid);
+        apr_uuid_format(buf, uuid);
+        /* fprintf(stderr, "UUID: %s\n", buf); */
+
+        /* XXX: need a better alg to convert uuid string into a seed */
+        for (i=0; buf[i]; i++){
+            MP_init_hash_seed += (UV)(i+1)*(buf[i]+MP_init_hash_seed);
+        }
+
+        MP_init_hash_seed_set = TRUE;
+    }
+
+    /* fprintf(stderr, "GOT SEED: %ld\n", MP_init_hash_seed); */
+#endif
+}
+
+/* before 5.8.1, perl was using HASH_SEED=0, starting from 5.8.1
+ * it randomizes if perl was compiled with ccflags -DUSE_HASH_SEED
+ * or -DUSE_HASH_SEED_EXPLICIT, in which case we need to tell perl
+ * to use the same seed everywhere */
+static void modperl_hash_seed_set(pTHX) 
+{
+#ifdef MP_NEED_HASH_SEED_FIXUP
+    if (MP_init_hash_seed_set) {
+        PL_hash_seed_set = TRUE;
+        PL_hash_seed = MP_init_hash_seed;
+    }
+#endif
+}
+
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -163,6 +231,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 #endif
 
     perl_construct(perl);
+
+    modperl_hash_seed_set(aTHX);
 
     PL_perl_destruct_level = 2;
 
@@ -510,6 +580,7 @@ int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
     /* XXX: htf can we have PerlPreConfigHandler
      * without first configuring mod_perl ?
      */
+    modperl_hash_seed_init(p);
 
     return OK;
 }

@@ -34,6 +34,9 @@
 #include "apr_buckets.h"
 #include "apr_time.h"
 #include "apr_network_io.h"
+#include "apr_general.h"
+#include "apr_uuid.h"
+#include "apr_env.h"
 
 #include "util_filter.h"
 
