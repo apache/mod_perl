@@ -597,11 +597,23 @@ sub MY::clean {
 
 sub MY::test {
 
-    my $env = Apache::TestConfig->passenv_makestr();
-
-    my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
+    my $preamble;
+    if (Apache::TestConfig::WIN32) {
+        my $ap_bindir = $build->apr_bindir() || '';
+        unless ($ap_bindir) {
+            $ap_bindir = File::Spec->catdir($build->{MP_AP_PREFIX}, 'bin')
+                if $build->{MP_AP_PREFIX};
+        }
+        $preamble = <<EOF;
+PATH = \$(PATH);$ap_bindir
+EOF
+    }
+    else {
+        my $env = Apache::TestConfig->passenv_makestr();
+        $preamble = <<EOF;
 PASSENV = $env
 EOF
+    }
 
     return $preamble . <<'EOF';
 TEST_VERBOSE = 0
