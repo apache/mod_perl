@@ -330,7 +330,7 @@ int modperl_mgv_require_module(pTHX_ modperl_mgv_t *symbol,
 
 /* precompute the hash(es) for handler names */
 static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
-                                  MpAV *entry, void *reload)
+                                  MpAV *entry, void *data)
 {
     MP_dSCFG(s);
     int i;
@@ -347,7 +347,8 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
 
         if (MpHandlerPARSED(handler)) {
 #ifdef USE_ITHREADS
-            if (reload && !modperl_mgv_lookup(aTHX_ handler->mgv_cv)) {
+            if ((MpSrvPARENT(scfg) && MpSrvAUTOLOAD(scfg))
+                && !modperl_mgv_lookup(aTHX_ handler->mgv_cv)) {
                 /* 
                  * this VirtualHost has its own parent interpreter
                  * must require the module again with this server's THX
@@ -425,21 +426,4 @@ void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
     ap_pcw_walk_config(p, s, &perl_module, NULL,
                        modperl_dw_hash_handlers,
                        modperl_sw_hash_handlers);
-
-#ifdef USE_ITHREADS
-    /* check for parent interpreters in virtual hosts who need modules
-     * loaded in their own namespace
-     */
-    for (s=s->next; s; s=s->next) {
-        MP_dSCFG(s);
-
-        if (!MpSrvPARENT(scfg) || !MpSrvAUTOLOAD(scfg)) {
-            continue;
-        }
-
-        ap_pcw_walk_config(p, s, &perl_module, (void*)TRUE,
-                           modperl_dw_hash_handlers,
-                           modperl_sw_hash_handlers);
-    }
-#endif
 }
