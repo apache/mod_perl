@@ -438,7 +438,8 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     SPAGAIN;
 
     if (count == 1) {
-        if (strEQ(POPp, DECLINE_CMD)) {
+        SV *sv = POPs;
+        if (SvPOK(sv) && strEQ(SvPVX(sv), DECLINE_CMD)) {
             retval = DECLINE_CMD;
         }
     }
