@@ -57,7 +57,7 @@ sub check_exists {
     return @missing ? \@missing : undef;
 }
 
-my $keywords = join '|', qw(MODULE PACKAGE PREFIX);
+my $keywords = join '|', qw(MODULE PACKAGE PREFIX BOOT);
 
 sub guess_prefix {
     my $entry = shift;
@@ -129,6 +129,9 @@ sub parse {
             }
             if ($cur{ISA}) {
                 $self->{isa}->{ $cur{MODULE} }->{$package} = delete $cur{ISA};
+            }
+            if ($cur{BOOT}) {
+                $self->{boot}->{ $cur{MODULE} } = delete $cur{BOOT};
             }
         }
         else {
