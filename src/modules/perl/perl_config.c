@@ -717,17 +717,18 @@ CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg) {
 
 CHAR_P perl_cmd_var(cmd_parms *cmd, void *config, char *key, char *val)
 {
+    perl_dir_config *rec = (perl_dir_config *)config;
+
     MP_TRACE_d(fprintf(stderr, "perl_cmd_var: '%s' = '%s'\n", key, val));
-    if (cmd->path) {
-        perl_dir_config *rec = (perl_dir_config *) config;
-        if (cmd->info) {
-            table_add(rec->vars, key, val);
-        }
-        else {
-            table_set(rec->vars, key, val);
-        }
+
+    if (cmd->info) {
+        table_add(rec->vars, key, val);
     }
     else {
+        table_set(rec->vars, key, val);
+    }
+
+    if (cmd->path == NULL) {
         dPSRV(cmd->server);
         if (cmd->info) {
             table_add(cls->vars, key, val);
@@ -736,6 +737,7 @@ CHAR_P perl_cmd_var(cmd_parms *cmd, void *config, char *key, char *val)
             table_set(cls->vars, key, val);
         }
     }
+
     return NULL;
 }
 
