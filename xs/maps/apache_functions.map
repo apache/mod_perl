@@ -250,6 +250,8 @@ MODULE=Apache::URI   PACKAGE=guess
                      SV *:classname, SV *:p, uri=NULL | parse
  ap_unparse_uri_components | mpxs_ | \
                      uptr, flags=UNP_OMITPASSWORD | unparse
+ #special case to set both uri->port and uri->port_str
+ mpxs_Apache__URI_port | | uri, portsv=Nullsv
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_parsed_uri
 

@@ -223,12 +223,12 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    user
    password
    hostname
-   port_str
+-  port_str
    path
    query
    fragment
    hostent
-   port
+~  port
    is_initialized
    dns_looked_up
    dns_resolved

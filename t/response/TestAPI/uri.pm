@@ -12,7 +12,7 @@ my $location = '/' . __PACKAGE__;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 12;
+    plan $r, tests => 14;
 
     $r->args('query');
 
@@ -50,9 +50,11 @@ sub handler {
 
     ok $newr->args eq 'query';
 
-    ok $newr->parsed_uri->path eq $path;
+    my $puri = $newr->parsed_uri;
 
-    ok $newr->parsed_uri->query eq 'query';
+    ok $puri->path eq $path;
+
+    ok $puri->query eq 'query';
 
     my @c = qw(one two three);
     $url_string = join '%20', @c;
@@ -60,6 +62,15 @@ sub handler {
     Apache::unescape_url($url_string);
 
     ok $url_string eq "@c";
+
+    my $port = 6767;
+    $puri->port($port);
+    $puri->scheme('ftp');
+    $puri->hostname('perl.apache.org');
+
+    ok $puri->port == $port;
+
+    ok $puri->unparse eq "ftp://perl.apache.org:$port$path?query";
 
     Apache::OK;
 }
