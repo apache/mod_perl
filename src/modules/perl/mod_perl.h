@@ -22,26 +22,31 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_constants.h"
 
 /* both perl and apr have largefile support enabled */
-#define MP_LARGE_FILES_ENABLED \
-   (defined(USE_LARGE_FILES) && APR_HAS_LARGE_FILES)
+#if defined(USE_LARGE_FILES) && APR_HAS_LARGE_FILES
+#define MP_LARGE_FILES_ENABLED
+#endif
 
 /* both perl and apr have largefile support disabled */
-#define MP_LARGE_FILES_DISABLED \
-   (!defined(USE_LARGE_FILES) && !APR_HAS_LARGE_FILES)
+#if (!defined(USE_LARGE_FILES)) && !APR_HAS_LARGE_FILES
+#define MP_LARGE_FILES_DISABLED
+#endif
 
-/* perl support is enabled, apr support is disabled */
-#define MP_LARGE_FILES_PERL_ONLY \
-   (defined(USE_LARGE_FILES) && !APR_HAS_LARGE_FILES)
+/* perl largefile support is enabled, apr support is disabled */
+#if defined(USE_LARGE_FILES) && !APR_HAS_LARGE_FILES
+#define MP_LARGE_FILES_PERL_ONLY
+#endif
 
-/* apr support is enabled, perl support is disabled */
-#define MP_LARGE_FILES_APR_ONLY \
-   (!defined(USE_LARGE_FILES) && APR_HAS_LARGE_FILES)
+/* apr largefile support is enabled, perl support is disabled */
+#if (!defined(USE_LARGE_FILES)) && APR_HAS_LARGE_FILES
+#define MP_LARGE_FILES_APR_ONLY   
+#endif
 
 /* conflict due to not have either both perl and apr
  * support enabled or both disabled
  */
-#define MP_LARGE_FILES_CONFLICT \
-   !(MP_LARGE_FILES_ENABLED || MP_LARGE_FILES_DISABLED)
+#if defined(MP_LARGE_FILES_APR_ONLY) || defined(MP_LARGE_FILES_PERL_ONLY)
+#define MP_LARGE_FILES_CONFLICT
+#endif
 
 #ifdef MP_USE_GTOP
 #include "modperl_gtop.h"

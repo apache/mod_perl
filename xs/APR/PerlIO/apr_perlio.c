@@ -224,7 +224,7 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     apr_status_t rc;
     apr_off_t seek_offset = 0;
 
-#if MP_LARGE_FILES_CONFLICT
+#ifdef MP_LARGE_FILES_CONFLICT
     if (offset != 0) {
         Perl_croak(aTHX_ "PerlIO::APR::seek with non-zero offset"
                    "is not supported with Perl built w/ -Duselargefiles"
