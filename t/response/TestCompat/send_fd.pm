@@ -1,4 +1,4 @@
-package TestAPI::send_fd;
+package TestCompat::send_fd;
 
 use strict;
 use warnings FATAL => 'all';
