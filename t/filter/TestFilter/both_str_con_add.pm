@@ -10,6 +10,7 @@ use Apache::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Util ();
+use APR::Error ();
 
 use base qw(Apache::Filter);
 
@@ -57,7 +58,7 @@ sub handler {
     for (;;) {
         my $rv = $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
         if ($rv != APR::SUCCESS && $rv != APR::EOF) {
-            my $error = APR::strerror($rv);
+            my $error = APR::Error::strerror($rv);
             warn __PACKAGE__ . ": get_brigade: $error\n";
             last;
         }

@@ -643,7 +643,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
                        MP_FILTER_NAME_FORMAT
                        "read in: apr_bucket_read error: %s\n",
                        MP_FILTER_NAME(filter->f),
-                       modperl_apr_strerror(filter->rc));
+                       modperl_error_strerror(aTHX_ filter->rc));
             return len;
         }
 

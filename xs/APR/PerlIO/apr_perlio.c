@@ -198,7 +198,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
     }
     else if (rc != APR_SUCCESS) {
         Perl_croak(aTHX_ "failed to read from file: %s",
-                   modperl_apr_strerror(rc));
+                   modperl_error_strerror(aTHX_ rc));
     }
 
     return count;

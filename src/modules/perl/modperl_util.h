@@ -65,10 +65,12 @@
 #define MP_magical_tie(sv, mg_flags) \
     SvFLAGS((SV*)sv) |= mg_flags
 
+
+/* XXX: this should be removed */
 #define MP_FAILURE_CROAK(rc_run) do { \
         apr_status_t rc = rc_run; \
         if (rc != APR_SUCCESS) { \
-            Perl_croak(aTHX_ modperl_apr_strerror(rc)); \
+            Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rc)); \
         } \
     } while (0)
 
@@ -101,8 +103,6 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
 MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
                                         const char *classname, UV uv);
-
-char *modperl_apr_strerror(apr_status_t rv);
 
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
 
