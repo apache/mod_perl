@@ -45,7 +45,4 @@
   
   APR::Pool:
   ? mpxs_apr_pool_create (having problems): APR__Pool.patch
-  
-  Apache::RequestUtil:
-  ? mpxs_Apache__RequestRec_new (having problems): Apache__RequestUtil.patch
 

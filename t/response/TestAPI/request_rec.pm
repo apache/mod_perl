@@ -11,6 +11,7 @@ use Apache::RequestRec ();
 use Apache::RequestUtil ();
 
 use APR::Finfo ();
+use APR::Pool ();
 
 use Apache::Const -compile => qw(OK M_GET M_PUT);
 use APR::Const    -compile => qw(FINFO_NORM);
@@ -23,7 +24,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 53;
+    plan $r, tests => 54;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -207,6 +208,18 @@ sub handler {
         ok t_cmp $@, qr/$err/, "invalid $r object";
     }
 
+    # out-of-scope pools
+    {
+        my $newr = Apache::RequestRec->new($r->connection, APR::Pool->new);
+        {
+            require APR::Table;
+            # try to overwrite the pool
+            my $table = APR::Table::make(APR::Pool->new, 50);
+            $table->set($_ => $_) for 'aa'..'za';
+        }
+        # check if $newr is still OK
+        ok $newr->connection->isa('Apache::Connection');
+    }
 
     # tested in other tests
     # - input_filters:    TestAPI::in_out_filters
