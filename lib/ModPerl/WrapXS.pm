@@ -497,12 +497,10 @@ $noedit_warning
 
 package $module;
 
-BEGIN {
-    $isa
-    use $loader ();
-    our \$VERSION = '0.01';
-    $loader\::load __PACKAGE__;
-}
+$isa
+use $loader ();
+our \$VERSION = '0.01';
+$loader\::load __PACKAGE__;
 
 $code
 
