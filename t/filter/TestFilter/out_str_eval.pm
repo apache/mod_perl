@@ -29,6 +29,9 @@ sub response {
     # XXX: see if we can fix filter handlers to restore the original
     # $@ when the callback completes
     eval { i_do_not_exist_really_i_do_not() };
+    # trigger the filter invocation, before using $@
+    $r->print("# whatever");
+    $r->rflush;
     ok t_cmp(qr/Undefined subroutine/, $@, "some croak");
 
     return Apache::OK;
