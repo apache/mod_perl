@@ -2,7 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 no warnings 'redefine';
 
-use lib qw(../lib ../Apache-Test/lib);
+use lib map {($_, "../$_") } qw(lib Apache-Test/lib);
 
 use ModPerl::MM ();
 
