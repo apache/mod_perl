@@ -517,7 +517,7 @@ __END__
 
 =head1 NAME
 
-Apache::Test - Facilitates testing of Apache::* modules
+Apache::test - Facilitates testing of Apache::* modules
 
 =head1 SYNOPSIS
 
