@@ -165,7 +165,7 @@ void modperl_global_set_##gname(void *data)              \
 
 MP_GLOBAL_IMPL(pconf, apr_pool_t *);
 MP_GLOBAL_IMPL(server_rec, server_rec *);
-MP_GLOBAL_IMPL(threaded_mpm, int);
+MP_GLOBAL_IMPL(threaded_mpm, IV);
 
 #if MP_THREADED
 static apr_status_t modperl_tls_cleanup(void *data)

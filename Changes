@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+amd64 fixes  [Joe Schaefer <joe+gmane@sunstarsys.com>]
+  - use IV insteaf of int where a pointer is used
+  - mpxs_APR__Bucket_new needs to use apr_size_t/off_set_t types
+
 APR::Socket::recv() now returns the length of the read data [Stas]
 
 APR::Bucket's read() returns "" instead of undef when there is no data

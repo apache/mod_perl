@@ -77,7 +77,8 @@ static const apr_bucket_type_t modperl_bucket_sv_type = {
 static apr_bucket *modperl_bucket_sv_make(pTHX_
                                           apr_bucket *bucket,
                                           SV *sv,
-                                          int offset, int len)
+                                          apr_off_t offset,
+                                          apr_size_t len)
 {
     modperl_bucket_sv_t *svbucket; 
 
@@ -107,7 +108,8 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     return bucket;
 }
 
-apr_bucket *modperl_bucket_sv_create(pTHX_ SV *sv, int offset, int len)
+apr_bucket *modperl_bucket_sv_create(pTHX_ SV *sv, apr_off_t offset,
+                                     apr_size_t len)
 {
     apr_bucket *bucket;
 
