@@ -4,6 +4,10 @@
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
                                 apr_pool_t *p);
 
+char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
+                                             const char *name,
+                                             apr_pool_t *p);
+
 #define MP_CMD_SRV_DECLARE(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, void *mconfig, \
                                const char *arg)
@@ -32,6 +36,8 @@ MP_CMD_SRV_DECLARE(pod);
 MP_CMD_SRV_DECLARE(pod_cut);
 MP_CMD_SRV_DECLARE(END);
 MP_CMD_SRV_DECLARE(load_module);
+MP_CMD_SRV_DECLARE(set_input_filter);
+MP_CMD_SRV_DECLARE(set_output_filter);
 
 #ifdef MP_COMPAT_1X
 
