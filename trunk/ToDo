@@ -132,7 +132,10 @@ NEW STUFF
   + look at providing ASP (Active Server Plugin) support for NT users
   + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
 
-- overload %ENV magic so it's not setup unless asked for
+- overload %ENV magic:
+  + call subprocess_env when a value is set 
+              Doug Bagley <doug@dejanews.com>
+  + so it's not setup unless asked for
 
 - "save stack" mechanism so we can go back to caching CV lookups
 

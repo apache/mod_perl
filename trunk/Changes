@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+make $r->connection->aborted work as documented again, thanks to spot
+by Jens Heunemann
+
 swap order of stacked handlers so dynamic ones (push_handlers) are
 invoked after server .conf configured handlers
 
