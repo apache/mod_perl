@@ -59,4 +59,7 @@ static void mpxs_Apache__ServerUtil_BOOT(pTHX)
 {
     newCONSTSUB(PL_defstash, "Apache::server_root",
                 newSVpv(ap_server_root, 0));
+
+    newCONSTSUB(PL_defstash, "Apache::Server::get_server_built",
+                newSVpv(ap_get_server_built(), 0));
 }
