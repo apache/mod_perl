@@ -1,10 +1,8 @@
 #include "modperl_bucket.h"
 
-static apr_bucket *mpxs_APR__Bucket_new(SV *classname, SV *sv,
+static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
                                         int offset, int len)
 {
-    dTHX; /*XXX*/
-
     if (!len) {
         (void)SvPV(sv, len);
     }
