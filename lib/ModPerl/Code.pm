@@ -18,7 +18,8 @@ my %handlers = (
                       Access Authen Authz
                       Type Fixup Response Log
                       InputFilter OutputFilter)], #Init Cleanup
-    Connection => [qw(PreConnection ProcessConnection)],
+    Connection => [qw(ProcessConnection)],
+    PreConnection => [qw(PreConnection)],
 );
 
 my %hooks = map { $_, canon_lc($_) }
@@ -47,6 +48,11 @@ my %hook_proto = (
         ret  => 'int',
         args => [{type => 'conn_rec', name => 'c'}],
     },
+    PreConnection => {
+        ret  => 'int',
+        args => [{type => 'conn_rec', name => 'c'},
+                 {type => 'void', name => 'csd'}],
+    },
 );
 
 $hook_proto{PerDir} = $hook_proto{PerSrv};
@@ -73,7 +79,7 @@ my %directive_proto = (
     },
 );
 
-for my $class (qw(Process Connection Files)) {
+for my $class (qw(Process Connection PreConnection Files)) {
     $directive_proto{$class}->{cfg}->{name} = 'scfg';
     $directive_proto{$class}->{cfg}->{get} = $scfg_get;
 
