@@ -36,6 +36,8 @@ sok {
 
 if (HAVE_LWP) {
     sok {
+        t_client_log_warn_is_expected(4)
+            if $] < 5.008 && require CGI && $CGI::VERSION < 3.06;
         $str = UPLOAD_BODY $location, content => 4;
         t_cmp($str, "ok 4", 'file upload');
     };

@@ -27,6 +27,8 @@ for (@INC) {
 $filename ||= catfile Apache::Test::vars('serverroot'), "..", 'Makefile';
 
 for (1,2) {
+    t_client_log_warn_is_expected(4)
+        if $] < 5.008 && require CGI && $CGI::VERSION < 3.06;
     my $str = UPLOAD_BODY $location, filename => $filename;
     my $body_len = length $str;
     my $file_len = -s $filename;
