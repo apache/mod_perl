@@ -22,6 +22,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+add SSLCacheServer{Port,Path} directives for ApacheSSL + 'make test'
+[Adam Laurie <adam@algroup.co.uk>]
+
 added $r->location method
 
 Various fixes and improvements to the APACI support:

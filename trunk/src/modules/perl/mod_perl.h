@@ -891,8 +891,10 @@ void mod_perl_destroy_handler(void *data);
 
 SV *array_header2avrv(array_header *arr);
 array_header *avrv2array_header(SV *avrv, pool *p);
+table *hvrv2table(SV *rv);
 SV *mod_perl_gensym (char *pack);
 SV *mod_perl_tie_table(table *t);
+SV *perl_hvrv_magic_obj(SV *rv);
 void perl_tie_hash(HV *hv, char *class, SV *sv);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);

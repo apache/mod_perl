@@ -93,6 +93,16 @@ array_header *avrv2array_header(SV *avrv, pool *p)
     return arr;
 }
 
+table *hvrv2table(SV *rv)
+{
+    if(SvROK(rv) && SvTYPE(SvRV(rv)) == SVt_PVHV) {
+	SV *sv = perl_hvrv_magic_obj(rv);
+	if(!sv) croak("HV is not magic!");
+	return (table *)SvIV((SV*)SvRV(sv));
+    }
+    return (table *)SvIV((SV*)SvRV(rv));
+}
+
 /* same as Symbol::gensym() */
 SV *mod_perl_gensym (char *pack)
 {
@@ -111,8 +121,20 @@ SV *mod_perl_tie_table(table *t)
     sv_setref_pv(sv, "Apache::Table", (void*)t);
     perl_qrequire_module("Apache::Tie");
     perl_tie_hash(hv, "Apache::TieHashTable", sv);
-    return newRV_noinc((SV*)hv);
+    return sv_bless(newRV_noinc((SV*)hv), 
+		    gv_stashpv("Apache::TieHashTable", TRUE));
 }
+
+SV *perl_hvrv_magic_obj(SV *rv)
+{
+    HV *hv = (HV*)SvRV(rv); 
+    MAGIC *mg;
+    if(SvMAGICAL(hv) && (mg = mg_find((SV*)hv, 'P'))) 
+        return mg->mg_obj;
+    else
+	return Nullsv;
+}
+
 
 void perl_tie_hash(HV *hv, char *class, SV *sv)
 {

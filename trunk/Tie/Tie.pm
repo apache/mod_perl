@@ -9,6 +9,7 @@ $VERSION = '0.01';
 if($ENV{MOD_PERL}) {
     __PACKAGE__->bootstrap($VERSION);
 }
+*DESTROY = \&destroy; #avoid weird xsubpp bug
 
 1;
 
@@ -25,7 +26,7 @@ Apache::Tie - Tie interfaces to Apache structures
     ...
     }
 
-    my $table = tied %$headers_out;
+    my $table = $r->headers_out;
     $table->set(From => 'dougm@perl.apache.org');
 
 =head1 DESCRIPTION
@@ -41,8 +42,9 @@ This module provides tied interfaces to Apache data structures.
 The I<Apache::TieHashTable> class provides methods for interfacing
 with the Apache C<table> structure.
 The following I<Apache> class methods, when called in a scalar context
-with no "key" argument, will return a I<HASH> reference, 
-where I<HASH> is tied to I<Apache::TieHashTable>:
+with no "key" argument, will return a I<HASH> reference blessed into the
+I<Apache::TieHashTable> class and where I<HASH> is tied to
+I<Apache::TieHashTable>: 
 
  headers_in
  headers_out

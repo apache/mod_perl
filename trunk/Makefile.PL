@@ -118,6 +118,7 @@ $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
 $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
+$SSLCacheServerPort = 8539;
 $Port = 8529;
 $PORT ||= $Port;
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
@@ -693,7 +694,11 @@ unless($Is_Win32 or -e "t/conf/httpd.conf") {
     for (qw(User Group)) {
 	iedit "t/conf/httpd.conf", "s/^$_ .*/$_ $$_/"; 
     }
-    conf_append("SSLDisable") if $IsBenSSL;
+    conf_append(<<EOF) if $IsBenSSL;
+SSLDisable
+SSLCacheServerPort $SSLCacheServerPort
+SSLCacheServerPath /tmp  
+EOF
     conf_append($StrongholdKey) if $StrongholdKey;
 
     #phooey!

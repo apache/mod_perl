@@ -33,7 +33,7 @@ TIEHASH(class, table)
     RETVAL
 
 void
-DESTROY(self)
+destroy(self)
     Apache::TieHashTable self
 
     CODE:
