@@ -20,9 +20,13 @@ LWP                   - Used in testing
 
 Chatbot::Eliza        - Used in testing
 
+Compress::Zlib        - Used in testing
+
 Devel::Symdump        - Symbol table browsing with Apache::Status
 
 CGI  2.87             - Used in testing (it's in core, but some vendors exclude it)
+
+Bundle::ApacheTest    - Needs for testing
 
 =head1 DESCRIPTION
 
