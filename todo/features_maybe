@@ -140,6 +140,10 @@ modules:
   APR::File->mktemp (apr_file_mktemp) and a perlio layer
   defined in terms of apr_file_t to use it.
 
+- Apache::MethodList was implemented but was not usefull enough. 
+    Thread: http://marc.theaimsgroup.com/?t=109269086600003&r=1&w=2
+    Patch:  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=109278475112976&q=p6
+
 new modules:
 -----------
 
