@@ -303,9 +303,10 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     if ((gv = gv_fetchmethod(stash, handler_name)) && (cv = GvCV(gv))) {
         if (CvFLAGS(cv) & CVf_METHOD) { /* sub foo : method {}; */
             MpHandlerMETHOD_On(handler);
-            if (!handler->mgv_obj) {
-                modperl_mgv_new_name(handler->mgv_obj, p, HvNAME(stash));
-            }
+        }
+
+        if (MpHandlerMETHOD(handler) && !handler->mgv_obj) {
+            modperl_mgv_new_name(handler->mgv_obj, p, HvNAME(stash));
         }
 
         handler->attrs = (U32)MP_CODE_ATTRS(cv);

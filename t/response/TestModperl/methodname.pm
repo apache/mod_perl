@@ -10,7 +10,8 @@ use Apache::Const -compile => 'OK';
 
 use TestModperl::method ();
 
-sub response : method {
+#no : method attribute required when -> config syntax is used
+sub response {
     TestModperl::method::handler(@_);
 }
 
