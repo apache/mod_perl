@@ -97,6 +97,10 @@ sub parse {
                 %cur = ();
             }
 
+            if ($words{PACKAGE}) {
+                delete $cur{CLASS};
+            }
+
             for (keys %words) {
                 $cur{$_} = $words{$_};
             }
@@ -138,8 +142,6 @@ sub parse {
         for (keys %cur) {
             $entry->{lc $_} = $cur{$_};
         }
-
-        $entry->{prefix} ||= guess_prefix($entry);
 
         #avoid 'use of uninitialized value' warnings
         $entry->{$_} ||= "" for keys %{ $entry };

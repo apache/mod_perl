@@ -215,6 +215,9 @@ sub map_function {
     }
 
     $mf->{class}  = $map->{class}  || $self->first_class($mf);
+
+    $mf->{prefix} ||= ModPerl::FunctionMap::guess_prefix($mf);
+
     $mf->{module} = $map->{module} || $mf->{class};
 
     $mf;
