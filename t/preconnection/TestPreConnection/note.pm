@@ -1,7 +1,7 @@
 package TestPreConnection::note;
 
 use strict;
-use warnings;# FATAL => 'all';
+use warnings FATAL => 'all';
 
 use Apache::Connection ();
 
@@ -14,8 +14,6 @@ sub handler {
 
     return Apache::OK;
 }
-
-use constant BUFF_LEN => 1024;
 
 sub response {
     my $r = shift;
