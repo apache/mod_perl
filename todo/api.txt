@@ -3,7 +3,7 @@ in no particular order
 ------------------------------------------
 
 tied filehandle interface:
- -CLOSE, GETC, PRINTF, READLINE
+ -CLOSE, GETC, READLINE
 
 $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
