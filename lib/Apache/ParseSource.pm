@@ -2,6 +2,7 @@ package Apache::ParseSource;
 
 use strict;
 use Apache::Build ();
+use Apache::TestTrace;
 use Config ();
 
 our $VERSION = '0.02';
@@ -410,7 +411,24 @@ sub write_pm {
         $file = "$tdir/$subdir/$file";
     }
 
-    open my $pm, '>', $file or die "open $file: $!";
+    my $old_dump = '';
+    if (-e $file) {
+        my @old_file = ();
+        open my $old, '<', $file or die "open $file: $!";
+        my $skip = 1;
+        while (<$old>) {
+
+            if ($skip){
+                $skip = 0 if /^\$Apache/;
+            }
+            else {
+                $skip = 1 if /^\s*\n/;
+            }
+            push @old_file, $_ unless $skip;
+        }
+        close $old;
+        $old_dump = join '', @old_file;
+    }
 
     # sort the hashes (including nested ones) for a consistent dump
     canonsort(\$data);
@@ -418,11 +436,16 @@ sub write_pm {
     my $dump = Data::Dumper->new([$data],
                                  [$name])->Dump;
 
-    my $package = ref($self) || $self;
-    my $version = $self->VERSION;
-    my $date = scalar localtime;
+    # write the file only if it has been changed
+    if ($dump ne $old_dump) {
 
-    print $pm <<EOF;
+        my $package = ref($self) || $self;
+        my $version = $self->VERSION;
+        my $date = scalar localtime;
+
+        open my $pm, '>', $file or die "open $file: $!";
+
+        print $pm <<EOF;
 package $name;
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -435,7 +458,11 @@ $dump
 
 1;
 EOF
-    close $pm;
+        close $pm;
+    }
+    else {
+        warning "$file didn't change, skipping creating of the file";
+    }
 }
 
 # canonsort(\$data);

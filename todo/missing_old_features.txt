@@ -46,7 +46,7 @@ addon modules:
 
 - mod_perl.pm::import
 
-- Apache::PerlRun, Apache::{Registry,RegistryNG}, Apache::RegistryLoader
+- Apache::PerlRun, Apache::{Registry, RegistryNG}, Apache::RegistryLoader
 
 - Apache::Status
 
