@@ -458,6 +458,7 @@ $self->{noedit_warning_hash}
 package $module;
 $isa
 use XSLoader ();
+our \$VERSION = '0.01';
 XSLoader::load __PACKAGE__;
 
 $code
