@@ -24,7 +24,7 @@ AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
                 success with using this approach (dlopen fails).
 
 AIX   4.3.3 DSO reported to work with mod_perl_1.99_12 and 
-                Apache 2.0.84/prefork mpm 
+                Apache 2.0.48/prefork mpm 
                 but doesn't start with worker:
                 http://marc.theaimsgroup.com/?t=106894906200003&r=1&w=2
 
