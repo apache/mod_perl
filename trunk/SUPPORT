@@ -77,7 +77,7 @@ Version of apache
 
 Server configuration details
 
-relevant sections of t/logs/mod_perl_error_log or logs/error_log
+relevant sections of your ErrorLog (make test's is: t/logs/error_log)
 
 If 'make test' fails, the output of 'make test TEST_VERBOSE=1'
 
@@ -104,7 +104,7 @@ which will:
 Here's how to get a backtrace:
 
  % cd mod_perl-x.xx
- % touch /tmp/mod_perl_srm.conf
+ % touch conf/srm.conf
  % gdb ../apache_x.xx/src/httpd
  (gdb) run -X -f `pwd`/t/conf/httpd.conf -d `pwd`/t
  [now make request that causes core dump]

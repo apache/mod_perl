@@ -191,8 +191,8 @@ for (qw(status info)) {
     };
 }
 
-$ErrorLog = "logs/mod_perl_error_log";
-$PidFile  = "logs/mod_perl_httpd.pid";
+$ErrorLog = "logs/error_log";
+$PidFile  = "logs/httpd.pid";
 
 $AccessConfig = $TypesConfig = $ScoreBoardFile = "$dir/docs/null.txt";
 
