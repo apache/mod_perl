@@ -95,6 +95,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 
 int modperl_threads_started(void);
 int modperl_threaded_mpm(void);
+int modperl_post_post_config_phase(void);
 
 #define MP_CROAK_IF_THREADS_STARTED(what)                       \
     if (modperl_threads_started()) {                            \
