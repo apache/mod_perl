@@ -564,6 +564,12 @@ Create a new parent Perl interpreter for the given VirtualHost
 
 Give the VirtualHost its own interpreter pool.
 
+Use:
+
+  PerlSwitches +inherit
+
+to inherit base PerlSwitches.
+
 =item Enabled
 
 On by default, used to disable mod_perl for a given VirtualHost.
