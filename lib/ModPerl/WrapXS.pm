@@ -1072,6 +1072,33 @@ EOF
     close $fh;
 }
 
+sub write_module_versions_file {
+    my $self = shift;
+
+    my $file = catfile "lib", "ModPerl", "DummyVersions.pm";
+    debug "creating $file";
+    open my $fh, ">$file" or die "Can't open $file: $!";
+
+    my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
+    print $fh "$noedit_warning\n";
+
+    my @modules = keys %{ $self->{XS} };
+    push @modules, qw(ModPerl::MethodLookup);
+
+    my $len = 0;
+    for (@modules) {
+        $len = length $_ if length $_ > $len;
+    }
+
+    require mod_perl;
+    $len += length '$::VERSION';
+    for (@modules) {
+        my $ver = /^APR/ ? "0.900000" : "$mod_perl::VERSION";
+        printf $fh "package %s;\n%-${len}s = %s;\n\n",
+            $_, '$'.$_."::VERSION", $ver;
+    }
+}
+
 sub generate {
     my $self = shift;
 
@@ -1103,6 +1130,7 @@ sub generate {
     }
 
     $self->write_lookup_method_file;
+    $self->write_module_versions_file;
 }
 
 #three .sym files are generated:

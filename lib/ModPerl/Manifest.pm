@@ -58,6 +58,9 @@ sub get_svn_files {
 
     }}, $cwd);
 
+    # files to add which aren't under svn
+    push @files, qw(lib/ModPerl/DummyVersions.pm);
+
     return @files;
 }
 
