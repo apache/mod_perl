@@ -207,13 +207,27 @@ sub configure {
         debug "Using Apache prefix => $build->{MP_AP_PREFIX}";
     }
     else {
+        my $ok = 0;
         for my $path ($build->find) {
             $build->dir($path);
             my $mmn = $build->module_magic_number;
             my $v   = $build->httpd_version;
             next unless $v;
             next if $v lt $min_httpd_version;
-            last if $build->prompt_y("Configure mod_perl with $path?");
+            $ok++ if $build->prompt_y("Configure mod_perl with $path?");
+            last if $ok;
+        }
+        until ($ok) {
+            my $ask = "Please provide the location of the Apache directory:";
+            my $ans = $build->prompt($ask);
+            # strip leading/closing spaces
+            $ans =~ s/^\s*|\s*$//g;
+            if (defined $ans and -d $ans) {
+                $build->dir($ans);
+                $ok++;
+            }
+            else {
+                error "Can't find dir '$ans'";            }
         }
     }
 
@@ -229,7 +243,7 @@ sub configure {
         }
         exit(1);
     }
-    
+
     my $min_version;
     if ($build->should_build_apache) {
         $min_version = $min_httpd_version_static;
