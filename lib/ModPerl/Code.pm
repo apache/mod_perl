@@ -116,7 +116,7 @@ my %flags = (
     Req => [qw(NONE SET_GLOBAL_REQUEST PARSE_HEADERS SETUP_ENV 
                CLEANUP_REGISTERED)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
-    Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
+    Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC FAKE)],
 );
 
 $flags{DirSeen} = $flags{Dir};
