@@ -579,6 +579,7 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
 	    if (perl_require_module(arg, NULL) != OK) {
 		dTHR;
 		STRLEN n_a;
+		dTHRCTX;
 		return SvPV(ERRSV,n_a);
 	    }
 	}
@@ -608,6 +609,7 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 	    if (perl_load_startup_script(parms->server, parms->pool, arg, TRUE) != OK) {
 		dTHR;
 		STRLEN n_a;
+		dTHRCTX;
 		return SvPV(ERRSV,n_a);
 	    }
 	    else {
@@ -1026,8 +1028,11 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
     }
     FREETMPS;LEAVE;
 
-    if(SvTRUE(ERRSV))
-	retval = SvPVX(ERRSV);
+    {
+	dTHRCTX;
+	if(SvTRUE(ERRSV))
+	    retval = SvPVX(ERRSV);
+    }
 
     return retval;
 }
@@ -1701,6 +1706,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 
     {
 	dTHR;
+	dTHRCTX;
 	if(SvTRUE(ERRSV)) {
 	    MP_TRACE_s(fprintf(stderr, 
 			       "Apache::ReadConfig: %s\n", SvPV(ERRSV,na)));

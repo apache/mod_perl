@@ -116,6 +116,12 @@
 #define SAVECOPLINE(cop) SAVEI16(CopLINE(cop))
 #endif
 
+#ifdef USE_5005THREADS
+#define dTHRCTX struct perl_thread *thr = PERL_GET_CONTEXT
+#else
+#define dTHRCTX
+#endif
+
 #ifndef dTHR
 #define dTHR extern int errno
 #endif

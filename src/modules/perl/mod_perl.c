@@ -1612,6 +1612,7 @@ callback:
     SPAGAIN;
 
     if(perl_eval_ok(r->server) != OK) {
+	dTHRCTX;
 	MP_STORE_ERROR(r->uri, ERRSV);
 	if(!perl_sv_is_http_code(ERRSV, &status))
 	    status = SERVER_ERROR;
@@ -1641,8 +1642,11 @@ callback:
     MP_TRACE_g(fprintf(stderr, "perl_call_handler: SVs = %5d, OBJs = %5d\n", 
 	    (int)sv_count, (int)sv_objcount));
 
-    if(SvMAGICAL(ERRSV))
-       sv_unmagic(ERRSV, 'U'); /* Apache::exit was called */
+    {
+	dTHRCTX;
+	if(SvMAGICAL(ERRSV))
+	    sv_unmagic(ERRSV, 'U'); /* Apache::exit was called */
+    }
 
     return status;
 }
