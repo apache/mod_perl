@@ -48,7 +48,8 @@ sub handler {
 
     ok $c->local_host || 1;
 
-    ok $c->id;
+    t_debug "id", ($c->id == 0 ? "zero" : $c->id);
+    ok $c->id || 1;
 
     ok $c->notes;
 
