@@ -7,7 +7,7 @@ use Exporter ();
 use DynaLoader ();
 
 @ISA = qw(Exporter DynaLoader);
-@EXPORT_OK = qw(escape_html escape_uri);
+@EXPORT_OK = qw(escape_html escape_uri parsedate ht_time);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 $VERSION = '0.01';
 
@@ -70,6 +70,32 @@ This function replaces all unsafe characters in the $string with their
 escape sequence and returns the result.
 
  my $esc = Apache::Util::escape_uri($uri);
+
+=item parsedate
+
+Parses an HTTP date in one of three standard forms:
+
+ Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
+
+ Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
+
+ Sun Nov  6 08:49:37 1994       ; ANSI C's asctime() format       
+
+Example:
+
+ my $secs = Apache::Util::parsedate($date_str);
+
+=item ht_time
+
+Format a time string.
+
+Examples:
+
+ my $str = Apache::Util::ht_time(time);
+
+ my $str = Apache::Util::ht_time(time, "%d %b %Y %T %Z");
+
+ my $str = Apache::Util::ht_time(time, "%d %b %Y %T %Z", 0);
 
 =back
 
