@@ -102,14 +102,15 @@ enhancing Apache do the following:
  $ gunzip <mod_perl-1.X.tar.gz | tar xvf -
  $ cd mod_perl-1.X
  $ perl Makefile.PL \
-     APACHE_PREFIX=/path/to/install/of/apache
-     APACHE_SRC=../apache-1.3.X/src
+     APACHE_PREFIX=/path/to/install/of/apache \
+     APACHE_SRC=../apache-1.3.X/src \
      DO_HTTPD=1 \
      USE_APACI=1 \
      EVERYTHING=1 \
      APACI_ARGS='[...]' \
      [...]
- $ make 
+ $ make
+ $ make test
  $ make install
 
 This builds Apache statically with mod_perl, installs Apache under
@@ -147,6 +148,7 @@ tree:
      EVERYTHING=1 \
      [...]
  $ make
+ $ make test
  $ make install
  $ cd ..
 
@@ -175,6 +177,7 @@ Apache-side of mod_perl and any other prepared third-party modules:
      --activate-module=src/modules/perl/libperl.a \
      [...]
  $ make
+ $ make test
  $ make install
 
 (The C<--prefix> option is usually always needed and the C<--activate-module>
@@ -238,10 +241,11 @@ Here are the steps:
  $ cd mod_perl-1.X
  $ perl Makefile.PL \
      USE_APXS=1 \
-     WITH_APXS=/path/to/bin/apxs
+     WITH_APXS=/path/to/bin/apxs \
      EVERYTHING=1 \
      [...]
  $ make 
+ $ make test
  $ make install
 
 This will build the DSO C<libperl.so> B<outside> the Apache source tree with
