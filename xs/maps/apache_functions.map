@@ -276,7 +276,7 @@ MODULE=Apache::Command
 -ap_set_deprecated
 
 MODULE=Apache::Util 
- ap_ht_time
+ ap_ht_time | | t, fmt, gmt, p | format_time
 !ap_rfc1413
 !ap_escape_html | | s, p
  #escape_uri
