@@ -393,6 +393,7 @@ sub as_HTML {
     }
 
     for my $type (@methods) {
+	local $^W = 0; #weird tied DBI:: stuff
 	(my $dtype = uc $type) =~ s/E?S$//;
 	push @m, "<TR><TD valign=top><B>$type</B></TD>";
 	my @line = ();
