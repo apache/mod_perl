@@ -909,7 +909,21 @@ and the client should be told not to cache it.
 =item $r->print( @list )
 
 This method sends data to the client with C<$r-E<gt>write_client>, but first
-sets a timeout before sending with C<$r-E<gt>hard_timeout>.
+sets a timeout before sending with C<$r-E<gt>hard_timeout>. This method is
+called instead of CORE::print when you use print() in your mod_perl programs.
+
+This method treats scalar references specially. If an item in @list is a
+scalar reference, it will be dereferenced before printing. This is a
+performance optimization which prevents unneeded copying of large strings,
+and it is subtly different from Perl's standard print() behavior.
+
+Example:
+
+   $foo = \"bar"; print($foo);
+
+The result is "bar", not the "SCALAR(0xDEADBEEF)" you might have expected. If
+you really want the reference to be printed out, force it into a scalar
+context by using C<print(scalar($foo))>.
 
 =item $r->send_fd( $filehandle )
 

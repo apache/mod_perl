@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+document Apache::print's special behavior wrt references
+[Jeffrey W. Baker <jwbaker@acm.org>]
+
 fix core dump triggered by <Perl>do 'foo.pl'</Perl>,
 thanks to Robert S. Thau for the spot
 
