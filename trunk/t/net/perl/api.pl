@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 75;
+my $tests = 81;
 my $is_win32 = WIN32;
 $tests += 4 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -73,9 +73,16 @@ unless ($is_win32) {
 }
 
 my $the_request = $r->the_request;
-$r->the_request(join ' ', map { $r->$_() } qw(method uri protocol));
+my $request_string = $r->method . ' ' .
+                     $r->uri    . '?' .
+                     $r->args   . ' ' .
+                     $r->protocol; 
+$r->the_request($request_string);
 test ++$i, $the_request eq $r->the_request;
 printf "old=$the_request, new=%s\n", $r->the_request;
+$r->the_request(undef);
+test ++$i, not $r->the_request;
+test ++$i, not defined $r->the_request;
 
 my $doc_root = $r->document_root;
 $r->document_root('/tmp');
@@ -103,6 +110,14 @@ test ++$i, $r->status;
 test ++$i, $r->status_line;
 test ++$i, $r->method eq "GET";
 #test ++$i, $r->method_number
+
+# args
+test ++$i, $r->args eq 'arg1=one&arg2=two';
+$r->args('foo=bar');
+test ++$i, $r->args eq 'foo=bar';
+$r->args(undef);
+test ++$i, not $r->args;
+test ++$i, not defined $r->args;
 
 $r->subprocess_env(SetKey => 'value');
 test ++$i, $r->subprocess_env('SetKey') eq 'value';
