@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+don't try to read PERL_HASH_SEED env var, where apr_env_get is not
+available (apr < 0.9.3) [Stas]
+
+APR.so now can be loaded and used outside mod_perl (all the way back
+to httpd 2.0.36) [Stas]
+
 perl 5.8.1 randomizes the hash seed, because we precalculate the hash
 values of mgv elements the hash seed has to be the same across all
 perl interpreters. So mod_perl now intercepts cases where perl would
