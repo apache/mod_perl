@@ -1906,10 +1906,26 @@ no_cache(r, ...)
 #  struct stat finfo;		/* ST_MODE set to zero if no such file */
 
 SV *
-finfo(r)
+finfo(r, sv_statbuf=Nullsv)
     Apache r
+    SV *sv_statbuf
 
     CODE:
+    if (sv_statbuf) {
+        if (SvROK(sv_statbuf) && SvOBJECT(SvRV(sv_statbuf))) {
+            STRLEN sz;
+            char *buf = SvPV((SV*)SvRV(sv_statbuf), sz);
+            if (sz != sizeof(r->finfo)) {
+                croak("statbuf size mismatch, got %d, wanted %d",
+                      sz, sizeof(r->finfo));
+            }
+            memcpy(&r->finfo, buf, sz);
+        }
+        else {
+            croak("statbuf is not an object");
+        }
+    }
+
     statcache = r->finfo;
     if (r->finfo.st_mode) {
 	laststatval = 0;
