@@ -478,11 +478,15 @@ static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
 
     switch (type) {
       case APR_PERLIO_HOOK_WRITE:
-        IoOFP(GvIOp(gv)) = pio;
+          /* if IoIFP() is not assigned to it'll be never closed, see
+           * Perl_io_close() */
+        IoIFP(GvIOp(gv)) = IoOFP(GvIOp(gv)) = pio;
         IoFLAGS(GvIOp(gv)) |= IOf_FLUSH;
+        IoTYPE(GvIOp(gv)) = IoTYPE_WRONLY;
         break;
       case APR_PERLIO_HOOK_READ:
         IoIFP(GvIOp(gv)) = pio;
+        IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
     };
 
