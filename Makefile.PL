@@ -125,7 +125,7 @@ sub configure {
             error "cannot install mod_perl/$VERSION on top of $vstring",
                   "use MP_INST_APACHE2=1 option " .
                   "or to force installation delete:\n $old_modperl_pm";
-            die "\n";
+            exit 1;
         }
     }
 
@@ -328,12 +328,15 @@ sub perl_version_check {
     my $mpm = $build->apxs(-q => 'MPM_NAME') || 'unknown' ;
     if ($threaded_mpms{$mpm}) {
         unless (Apache::Build::HAS_ITHREADS()) {
-            die "this httpd ($mpm mpm) requires Perl w/ ithreads enabled\n";
+            error "this httpd ($mpm mpm) requires Perl w/ ithreads enabled\n";
+            exit 1;
         }
         # 5.6.x ithreads aren't good
         unless ($] >= 5.008) {
-            die "Perl 5.8 or higher w/ ithreads enabled is required. " .
+            error "Perl 5.8 or higher w/ ithreads enabled is required. " .
                 "This is only Perl $]\n";
+            exit 1;
+
         }
     }
 
@@ -355,8 +358,9 @@ sub apache_check {
     # we need to know where apr-config and apu-configs are
     # which sometimes aren't placed into the same dir with apxs/httpd
     unless ($build->apr_config_path) {
-        die "can't find 'apr-config', please pass " .
+        error "can't find 'apr-config', please pass " .
             "MP_APR_CONFIG=/full/path/to/apr-config to 'perl Makefile.PL'";
+        exit 1;
     }
 }
 
