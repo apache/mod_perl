@@ -133,7 +133,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
 
     /* open my $oldout, ">&STDOUT" or die "Can't dup STDOUT: $!"; */
-    status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE, O_RDONLY,
+    status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE, O_WRONLY,
                           0, Nullfp);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to dup STDOUT: %_", get_sv("!", TRUE));
@@ -143,7 +143,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
      * have file descriptors, so STDOUT must be closed before it can
      * be reopened */
     Perl_do_close(aTHX_ handle, TRUE); 
-    status = Perl_do_open9(aTHX_ handle, ">:Apache", 8, FALSE, O_RDONLY,
+    status = Perl_do_open9(aTHX_ handle, ">:Apache", 8, FALSE, O_WRONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STDOUT: %_", get_sv("!", TRUE));
@@ -188,7 +188,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
     /* Perl_do_close(aTHX_ handle_orig, FALSE); */
 
     /* open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!"; */
-    status = Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE, O_RDONLY,
+    status = Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE, O_WRONLY,
                            0, Nullfp, (SV*)handle, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to restore STDOUT: %_", get_sv("!", TRUE));
