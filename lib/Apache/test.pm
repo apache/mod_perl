@@ -138,13 +138,12 @@ sub get_test_params {
 }
 
 sub _read_existing_conf {
-    # Returns some config text 
-    shift;
-    my ($server_conf) = @_;
-    
+    # Returns some "(Add|Load)Module" config lines, generated from the
+    # existing config file and a few must-have modules.
+    my ($self, $server_conf) = @_;
     
     open SERVER_CONF, $server_conf or die "Couldn't open $server_conf: $!";
-    my @lines = grep {!m/^\s*#/} <SERVER_CONF>;
+    my @lines = grep {!m/^\s*\#/} <SERVER_CONF>;
     close SERVER_CONF;
     
     my @modules       =   grep /^\s*(Add|Load)Module/, @lines;
@@ -155,38 +154,44 @@ sub _read_existing_conf {
 	s!(\s)([^/\s]\S+/)!$1$server_root/$2!;
     }
     
-    # Directories where apache DSOs live.
-    my (@module_dirs) = map {m,(/\S*/),} @modules;
-    
-    # Have to make sure that dir, autoindex and perl are loaded.
-    my @required  = qw(dir autoindex perl);
-    
-    my @l = `t/httpd -l`;
-    my @compiled_in = map /^\s*(\S+)/, @l[1..@l-2];
+    my $static_mods = $self->static_modules('t/httpd');
     
     my @load;
-    foreach my $module (@required) {
-	if (!grep /$module/i, @compiled_in, @modules) {
+    # Have to make sure that dir, autoindex and perl are loaded.
+    foreach my $module (qw(dir autoindex perl)) {
+       unless ($static_mods->{"mod_$module"} or grep /$module/i, @modules) {
+           warn "Will attempt to load mod_$module dynamically.\n";
 	    push @load, $module;
 	}
     }
+    
+    # Directories where apache DSOs live.
+    my @module_dirs = map {m,(/\S*/),} @modules;
     
     # Finally compute the directives to load modules that need to be loaded.
  MODULE:
     foreach my $module (@load) {
 	foreach my $module_dir (@module_dirs) {
-	    if (-e "$module_dir/mod_$module.so") {
-		push @modules, "LoadModule ${module}_module $module_dir/mod_$module.so\n"; next MODULE;
-	    } elsif (-e "$module_dir/lib$module.so") {
-		push @modules, "LoadModule ${module}_module $module_dir/lib$module.so\n"; next MODULE;
-	    } elsif (-e "$module_dir/ApacheModule\u$module.dll") {
-		push @modules, "LoadModule ${module}_module $module_dir/ApacheModule\u$module.dll\n"; next MODULE;
+           foreach my $filename ("mod_$module.so", "lib$module.so", "ApacheModule\u$module.dll") {
+               if (-e "$module_dir/$filename") {
+                   push @modules, "LoadModule ${module}_module $module_dir/$filename\n"; next MODULE;
+               }
 	    }
 	}
+       warn "Warning: couldn't find anything to load for 'mod_$module'.\n";
     }
-		      
-    print "found the following modules: \n@modules";
+    
+    print "Adding the following dynamic config lines: \n@modules";
     return join '', @modules;
+}
+
+sub static_modules {
+    # Returns a hashref whose keys are each of the modules compiled
+    # statically into the given httpd binary.
+    my ($self, $httpd) = @_;
+
+    my @l = `$httpd -l`;
+    return {map {lc($_) => 1} map /(\S+)\.c/, @l};
 }
 
 # Find an executable in the PATH.
@@ -628,6 +633,14 @@ In a scalar context, fetch() returns the content of the web server's
 response.  In a list context, fetch() returns the content and the
 HTTP::Response object itself.  This can be handy if you need to check
 the response headers, or the HTTP return code, or whatever.
+
+=head2 static_modules
+
+ Example: $mods = Apache::test->static_modules('/path/to/httpd');
+
+This method returns a hashref whose keys are all the modules
+statically compiled into the given httpd binary.  The corresponding
+values are all 1.
 
 =head1 EXAMPLES
 
