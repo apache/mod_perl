@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.20_01-dev
 
+get rid of a warning in Apache::test [Joshua Chamas <joshua@chamas.com>]
+
 $r->read will now properly check the return value of
 ap_setup_client_block() and return undef if != OK,
 e.g. if LimitRequestBody is exceeded
