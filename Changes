@@ -15,7 +15,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 fix "PerlSetVar Foo 0" so that $r->dir_config('Foo') returns 0, not undef
 [Geoffrey Young]
 
-add Apache::MPM class, along with show_mpm() and mpm_query() functions
+add Apache::MPM class, along with show() and query() class methods
 [Geoffrey Young]
 
 add :mpmq import tag to Apache::Const [Geoffrey Young]
