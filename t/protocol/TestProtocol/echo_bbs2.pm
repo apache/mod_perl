@@ -35,6 +35,7 @@ sub handler {
             warn __PACKAGE__ . ": get_brigade: $error\n";
             last;
         }
+        last if $rc == APR::EOF;
 
         next unless $bb_in->flatten(my $data);
         $bb->cleanup;
