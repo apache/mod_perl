@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22
 
+fix a bug in Apache::Build::dir: If the right directory isn't found in
+the for loop $dir still contains a > value, so the ||= has no
+effect. [Nick Wellnhofer <wellnhofer@aevum.de>]
+
+
+
 =item 1.999_21 - January 22, 2005
 
 PerlPostConfigRequire was trying to detect missing files early on,
