@@ -14,6 +14,7 @@ use Config;
 
 $VERSION = '0.01';
 sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
+my $Is_Win32 = ($^O eq "MSWin32");
 
 sub new {
     my $class = shift;
@@ -46,6 +47,7 @@ sub new {
 
 sub mmn_eq {
     my($class, $dir) = @_;
+    return 1 if $Is_Win32; #just assume, till Apache::src works under win32 
     my $instsrc;
     {
 	local @INC = grep { !/blib/ } @INC;
@@ -185,8 +187,6 @@ sub httpd_version {
 
     return $version;
 }
-
-my $Is_Win32 = ($^O eq "MSWin32");
 
 sub typemaps {
     my $typemaps = [];

@@ -4,7 +4,7 @@ use strict;
 $Apache::Status::VERSION = '2.00';
 
 my %is_installed = ();
-
+my $Is_Win32 = ($^O eq "MSWin32");
 {
     local $SIG{__DIE__};
     %is_installed = map {
@@ -26,6 +26,8 @@ my(%status) = (
    myconfig => "Perl Configuration",	       
    hooks => "Enabled mod_perl Hooks",
 );
+
+delete $status{'sig'} if $Is_Win32;
 
 if($Apache::Server::SaveConfig) {
     $status{"section_config"} = "Perl Section Configuration";
