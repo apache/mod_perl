@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/22 20:04:53 $]
+   Last modified at [$Date: 2003/08/22 23:16:41 $]
 
 Release:
 --------
@@ -39,13 +39,16 @@ Available Patches:
   committed
 
   Report: http://mathforum.org/epigone/modperl-dev/zehporbreh/Pine.LNX.4.44.0204062240010.11967-100000@hope.stason.org
-  Status: waiting for Doug's review
+  Status: (stas) needs to be cleaned up and committed
 
 ----
 
-* 
-  Report: 
-  Status: 
+* protect registry classes from bad scripts which try to assassinate $r
+  Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106153785129782&w=2
+  Status: (stas) i'm not sure whether we really need this feature,
+          since it's the first time in the last 6 years we had a
+          problem with bad user code of this kind. let's keep it in
+          the patches until we have a real need for it.
 
 
 
