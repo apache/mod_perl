@@ -16,6 +16,11 @@ Fix Modperl::Util::unload_package() [Gozer]
   - Mistakenly skipping small entries of size 2 and less
   - Leave entries from other packages alone
 
+$filter->remove now works with native (non-modperl) filters + test
+[Torsten Förtsch <torsten.foertsch gmx.net>]
+
+
+
 =item 1.99_17 - October 22, 2004
 
 Implement Apache->unescape_url_info in Apache::compat and drop it
