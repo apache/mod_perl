@@ -15,6 +15,15 @@ config features:
   PerlSwitches -Mlib=/home/dev1/lib/perl, to set different @INC for
   different virtual hosts.
 
+- a possible implementation of PerlOptions +Inherit, similar to
+  +Parent but which allows virtual hosts to inherit everything that
+  was loaded by the main server, at the point of their definition in
+  the config file. This can make it easier to write configuration
+  files where there is a common base of modules to be loaded in all
+  servers. Of course this can be done by putting all these common
+  modules and code into foo.pl and running it from the base server and
+  all virtual hosts.
+
 perl language features:
 ----------------------
 
