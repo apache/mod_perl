@@ -8,7 +8,20 @@ use Apache::Test;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 33;
+    plan $r, tests => 35;
+
+    #Apache->request($r); #PerlOptions +GlobalRequest takes care
+    my $gr = Apache->request;
+
+    ok $$gr == $$r;
+
+    my $newr = Apache::RequestRec->new($r->connection, $r->pool);
+    Apache->request($newr);
+    $gr = Apache->request;
+
+    ok $$gr == $$newr;
+
+    Apache->request($r);
 
     ok $r->pool->isa('APR::Pool');
 
@@ -101,3 +114,5 @@ sub handler {
 }
 
 1;
+__END__
+PerlOptions +GlobalRequest
