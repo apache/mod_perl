@@ -148,7 +148,14 @@ use Apache::Const ();
 sub import {
     my $class = shift;
     my $package = scalar caller;
-    Apache::Const->compile($package => @_);
+
+    my @args = @_;
+
+    # treat :response as :common - it's not perfect
+    # but simple and close enough for the majority
+    my %args = map { s/^:response$/:common/; $_ => 1 } @args;
+
+    Apache::Const->compile($package => keys %args);
 }
 
 #no need to support in 2.0
