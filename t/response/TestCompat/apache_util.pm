@@ -28,10 +28,15 @@ my %crypt_supported = map {$_ => 1} qw(linux);
 
 my $crypt_ok = $crypt_supported{lc $^O} ? 1 : 0;
 
+my $locale = $ENV{LANG} || $ENV{LC_TIME} || '';
+# XXX: will any en_XXX work with http_parse?
+# XXX: should we set $ENV{LANG} to en_US instead of skipping?
+my $parse_time_ok = $locale =~ /^en_/ ? 1 : 0;
+
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 13 + $crypt_ok*2;
+    plan $r, tests => 12 + $parse_time_ok*1 + $crypt_ok*2;
 
     $r->send_http_header('text/plain');
 
@@ -71,13 +76,15 @@ sub handler {
 
     # ht_time(), parsedate()
     my $time = time;
+    
     my $fmtdate = Apache::Util::ht_time($time);
 
     ok t_cmp($fmtdate, $fmtdate, "Apache::Util::ht_time");
 
-    my $ptime = Apache::Util::parsedate($fmtdate);
-
-    ok t_cmp($time, $ptime, "Apache::Util::parsedate");
+    if ($parse_time_ok) {
+        my $ptime = Apache::Util::parsedate($fmtdate);
+        ok t_cmp($time, $ptime, "Apache::Util::parsedate");
+    }
 
     if ($crypt_ok) {
         # not all platforms support C-level crypt
