@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+send_cgi_header now turns the header parsing off and can send any data
+attached after the response headers as a response body. [Stas]
+
 move the check that print/printf/puts/write/etc are called in the
 response phase into the functions themselves so 1) we can print a more
 useful error message 2) this check is not always needed in
