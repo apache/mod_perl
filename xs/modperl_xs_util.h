@@ -104,4 +104,20 @@
         MARK++;                                                 \
     }
 
+/* several methods need to ensure that the pool that they take as an
+ * object doesn't go out of scope before the object that they return,
+ * since if this happens, the data contained in the later object
+ * becomes corrupted. this macro is used in various xs files where
+ * it's needed */
+#if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
+    /* modperl_hash_tie already attached another _ext magic under
+     * 5.8+, so must use sv_magicext to have two magics with the
+     * type  */
+#define mpxs_add_pool_magic(obj, pool_obj)                              \
+    sv_magicext(SvRV(obj), pool_obj, PERL_MAGIC_ext, NULL, Nullch, -1)
+#else
+#define mpxs_add_pool_magic(obj)                                        \
+    sv_magic(SvRV(obj), pool_obj, PERL_MAGIC_ext, Nullch, -1)
+#endif
+
 #endif /* MODPERL_XS_H */

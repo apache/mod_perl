@@ -20,7 +20,8 @@ sub handler {
 
     my $r = shift;
     my $ba = $r->connection->bucket_alloc;
-    plan $r, tests => 13;
+
+    plan $r, tests => 14;
 
     # basic + pool + destroy
     {
@@ -77,6 +78,22 @@ sub handler {
         $len = $bb3->flatten($data);
         ok t_cmp($len, 6, "bb3 flatten/len");
         ok t_cmp($data, "122122", "bb3 flatten/data");
+    }
+
+    # out-of-scope pools
+    {
+        my $bb1 = APR::Brigade->new(APR::Pool->new, $ba);
+        $bb1->insert_head(APR::Bucket->new($ba, "11"));
+        $bb1->insert_tail(APR::Bucket->new($ba, "12"));
+
+        # try to overwrite the temp pool data
+        require APR::Table;
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+        # now test that we are still OK
+
+        my $len = $bb1->flatten(my $data);
+        ok t_cmp($data, "1112", "correct data");
     }
 
     Apache::OK;

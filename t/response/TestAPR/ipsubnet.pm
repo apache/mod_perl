@@ -8,7 +8,7 @@ use Apache::TestUtil;
 
 use Apache::Connection ();
 use Apache::RequestRec ();
-
+use APR::Pool ();
 use APR::IpSubnet ();
 use APR::SockAddr ();
 
@@ -19,7 +19,7 @@ sub handler {
     my $c = $r->connection;
     my $p = $r->pool;
 
-    plan $r, tests => 7;
+    plan $r, tests => 8;
 
     my $ip = $c->remote_ip;
 
@@ -67,6 +67,17 @@ sub handler {
     {
         my $ipsub = eval { APR::IpSubnet->new($p, $ip, "255.0") };
         ok t_cmp($@, qr/The specified network mask is invalid/, "bogus mask");
+    }
+
+    # temp pool
+    {
+        my $ipsub = APR::IpSubnet->new(APR::Pool->new, $ip);
+        # try to overwrite the temp pool data
+        require APR::Table;
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+        # now test that we are still OK
+        ok $ipsub->test($c->remote_addr);
     }
 
     Apache::OK;

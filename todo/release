@@ -48,34 +48,21 @@ Index: t/response/TestAPI/rflush.pm
   === APR::Pool ===
   =================
   *** returning objects ***
-  
-  APR::Brigade:
-  - mpxs_apr_brigade_create
-  
+
   APR::Bucket:
-  - apr_bucket_alloc_create
-  - mpxs_APR__Bucket_setaside
-  
-  APR::Finfo:
-  - mpxs_APR__Finfo_stat
-  
-  APR::IpSubnet:
-  - mpxs_apr_ipsubnet_create
+  V apr_bucket_alloc_create
+  ? mpxs_APR__Bucket_setaside
+        (the wrapper is done, but the test is not reproducing the
+        problem, but this seems to be a problem in
+        modperl_bucket_sv_setaside which loses the newly seta-aside
+        bucket)
   
   APR::Pool:
-  - mpxs_apr_pool_create (not sure about this one)
+  ? mpxs_apr_pool_create (having problems): APR__Pool.patch
   
   Apache::RequestUtil:
-  - mpxs_Apache__RequestRec_new
+  ? mpxs_Apache__RequestRec_new (having problems): Apache__RequestUtil.patch
   
-  APR::Table:
-  - apr_table_copy
-  - apr_table_overlay
-  - apr_table_make
-  
-  APR::ThreadMutex
-  - mpxs_apr_thread_mutex_create
-
   *** returning strings ***
   
   Apache::ServerUtil

@@ -101,14 +101,29 @@ static MP_INLINE void mpxs_APR__Bucket_remove(apr_bucket *bucket)
 }
 
 static MP_INLINE
-apr_status_t mpxs_APR__Bucket_setaside(pTHX_ apr_bucket *b, apr_pool_t *p)
+apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
 {
+    apr_pool_t *p   = mp_xs_sv2_APR__Pool(p_sv);
+    apr_bucket *b = mp_xs_sv2_APR__Bucket(b_sv);
     apr_status_t rc = apr_bucket_setaside(b, p);
+
     /* if users don't bother to check the success, do it on their
      * behalf */
     if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
         modperl_croak(aTHX_ rc, "APR::Bucket::setaside");
     }
-
+    
+    //mpxs_add_pool_magic(b_sv, p_sv);
+    
     return rc;
+}
+
+static MP_INLINE
+SV *mpxs_APR__Bucket_alloc_create(pTHX_ SV *p_sv)
+{
+    apr_pool_t *p             = mp_xs_sv2_APR__Pool(p_sv);
+    apr_bucket_alloc_t *ba = apr_bucket_alloc_create(p);
+    SV *ba_sv = sv_setref_pv(NEWSV(0, 0), "APR::BucketAlloc", (void*)ba);
+    //mpxs_add_pool_magic(ba_sv, p_sv);
+    return ba_sv;
 }

@@ -14,12 +14,16 @@
  */
 
 static MP_INLINE
-apr_ipsubnet_t *mpxs_apr_ipsubnet_create(pTHX_ SV *classname, apr_pool_t *p,
-                                         const char *ipstr,
-                                         const char *mask_or_numbits)
+SV *mpxs_apr_ipsubnet_create(pTHX_ SV *classname, SV *p_sv,
+                             const char *ipstr,
+                             const char *mask_or_numbits)
 {
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     apr_ipsubnet_t *ipsub = NULL;
+    SV *ipsub_sv;
     MP_RUN_CROAK(apr_ipsubnet_create(&ipsub, ipstr, mask_or_numbits, p),
                  "APR::IpSubnet::new");
-    return ipsub;
+    ipsub_sv = sv_setref_pv(NEWSV(0, 0), "APR::IpSubnet", (void*)ipsub);
+    mpxs_add_pool_magic(ipsub_sv, p_sv);
+    return ipsub_sv;
 }

@@ -17,7 +17,7 @@ use constant TABLE_SIZE => 20;
 our $filter_count;
 
 sub num_of_tests {
-    my $tests = 50;
+    my $tests = 56;
 
     # tied hash values() for a table w/ multiple values for the same
     # key
@@ -295,6 +295,59 @@ sub test {
         ok t_cmp($foo[0], 'one, two, three');
         ok t_cmp($bar[0], 'beer');
     }
+
+
+    # temp pool objects.
+    # testing here that the temp pool object doesn't go out of scope
+    # before the object based on it was freed. the following tests
+    # were previously segfaulting when using apr1/httpd2.1 built w/
+    # --enable-pool-debug CPPFLAGS="-DAPR_BUCKET_DEBUG",
+    # the affected methods are:
+    # - make
+    # - copy
+    # - overlay
+    {
+        my $table = APR::Table::make(APR::Pool->new, 10);
+        $table->set($_ => $_) for 1..20;
+        ok t_cmp $table->get(20), 20, "no segfault";
+
+        my $table_copy = $table->copy(APR::Pool->new);
+        {
+            # verify that the temp pool used to create $table_copy was
+            # not freed, by allocating a new table to fill with a
+            # different data. if that former pool was freed
+            # $table_copy will now contain bogus data (and may
+            # segfault)
+            my $table = APR::Table::make(APR::Pool->new, 50);
+            $table->set($_ => $_) for 'a'..'z';
+            ok t_cmp $table->get('z'), 'z', "helper test";
+
+        }
+        ok t_cmp $table_copy->get(20), 20, "no segfault/valid data";
+
+        my $table2 = APR::Table::make(APR::Pool->new, 1);
+        $table2->set($_**2 => $_**2) for 1..20;
+        my $overlay = $table_copy->overlay($table2, APR::Pool->new);
+        {
+            # see the comment for above's:
+            # $table_copy = $table->copy(APR::Pool->new);
+            my $table = APR::Table::make(APR::Pool->new, 50);
+            $table->set($_ => $_) for 'aa'..'za';
+            ok t_cmp $table->get('za'), 'za', "helper test";
+
+        }
+        ok t_cmp $overlay->get(20), 20, "no segfault/valid data";
+    }
+    {
+        {
+            my $p = APR::Pool->new;
+            $p->cleanup_register(sub { "whatever" });
+            $table = APR::Table::make($p, 10)
+        };
+        $table->set(a => 5);
+        ok t_cmp $table->get("a"), 5, "no segfault";
+    }
+
 }
 
 sub my_filter {
