@@ -14,8 +14,6 @@ d) split off into something standalone on cpan
 
 - $Apache::Server::Starting, $Apache::Server::ReStarting
 
-- $Apache::Server::AddVersion, $Apache::Server::CWD
-
 - modules: 
   + Apache::SIG: dead
   + Apache::StatINC: replace with or point to Apache::Reload
