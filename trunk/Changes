@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+properly deal with $r->status codes (e.g. redirect) in
+Apache::RegistryNG [Geoff Young <geoff@modperlcookbook.org>]
+
 properly escape highbit chars in Apache::Utils::escape_html
 [Geoff Young <geoff@modperlcookbook.org>,
 Robin Berjon <robin@knowscape.com>]
