@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+mod_perl now refuses to build against threaded mpms (non-prefork)
+unless perl 5.8+ w/ithreads is used [Stas]
+
 don't try to read PERL_HASH_SEED env var, where apr_env_get is not
 available (apr < 0.9.3) [Stas]
 
