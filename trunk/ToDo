@@ -13,8 +13,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - <Perl> patch for *Match from Craig Lien <lien@rrnet.com>
 
-- fix $Apache::Server::Starting under dso
-
 - Apache::Include->virtual should return run() value, not status()
 
 - win32 socket bug (WSAStartup() needed for each thread?)
