@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Several issues resolved with parsing headers, including making work
+the handlers calling $r->content_type() and not sending raw headers,
+when the headers scanning is turned on. Lots of tests added to
+exercise different situations. [Stas]
+
 warn on using -T in ModPerl::Registry scripts when mod_perl is not
 running with -T [Stas]
 
