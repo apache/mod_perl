@@ -569,6 +569,7 @@ sub generate {
     $self->get_functions;
     $self->get_structures;
     $self->write_exp; #XXX if $^O eq 'aix'
+    $self->write_def; #XXX if $^O eq 'Win32'
 
     while (my($module, $functions) = each %{ $self->{XS} }) {
 #        my($root, $sub) = split '::', $module;
@@ -581,6 +582,13 @@ sub generate {
     }
 }
 
+sub open_export_file {
+    my($self, $name, $ext) = @_;
+    my $file = join '/', $self->{XS_DIR}, "$name.$ext";
+    open my $fh, '>', $file or die "open $file: $!";
+    return($fh, $file);
+}
+
 sub write_exp {
     my $self = shift;
 
@@ -590,13 +598,31 @@ sub write_exp {
     );
 
     while (my($name, $table) = each %files) {
-        my $file = join '/', $self->{XS_DIR}, "$name.exp";
-        open my $fh, '>', $file or die "open $file: $!";
-
+        my($fh, $file) = $self->open_export_file($name, 'exp');
         print $fh "#!\n";
 
         for my $entry (@$table) {
             print $fh "$entry->{name}\n";
+        }
+
+        close $fh or die "close $file: $!";
+    }
+}
+
+sub write_def {
+    my $self = shift;
+
+    my %files = (
+        modperl => $ModPerl::FunctionTable,
+        apache  => $Apache::FunctionTable,
+    );
+
+    while (my($name, $table) = each %files) {
+        my($fh, $file) = $self->open_export_file($name, 'def');
+        print $fh "LIBRARY\n\nEXPORTS\n\n";
+
+        for my $entry (@$table) {
+            print $fh "   $entry->{name}\n";
         }
 
         close $fh or die "close $file: $!";
