@@ -2,6 +2,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 use Apache::TestRequest;
 
 plan tests => 2;
@@ -19,10 +20,6 @@ ok $str;
 my $data = join '&', map { "$_=$data{$_}" } keys %data;
 
 $str = POST_BODY $location, content => $data;
-
-my $expect = join(':', length($data), $data);
-ok $str eq $expect;
-
-print "EXPECT: $expect\n";
-print "STR: $str\n";
-
+ok t_cmp(join(':', length($data), $data),
+    $str,
+    "POST");
