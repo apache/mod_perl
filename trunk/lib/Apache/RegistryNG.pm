@@ -17,7 +17,7 @@ $VERSION = '1.00';
 # see also: Apache::RegistryBB
  
 sub namespace_from {
-    shift->filename;
+    shift->{r}->filename;
 }
 
 sub handler ($$) {
