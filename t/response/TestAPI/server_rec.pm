@@ -14,7 +14,7 @@ sub handler {
 
     my $s = $r->server;
 
-    plan $r, tests => 19;
+    plan $r, tests => 21;
 
     ok $s;
 
@@ -82,7 +82,26 @@ sub handler {
                  "testing PerlAddVar ITERATE2 in $s",
                 )
     }
+
+    {
+        # base server test
+        my $bs = Apache->server;
+        ok t_cmp(
+               'Apache::Server',
+               ($bs && ref($bs)),
+               "base server's object retrieval"
+              );
+
+        my $key = 'TestAPI__server_rec_Key_set_in_Base';
+        ok t_cmp(
+               '1_SetValue',
+               scalar ($bs->dir_config->get($key)),
+               "read dir_config of the base server"
+              );
+    }
+
     Apache::OK;
+
 }
 
 1;
