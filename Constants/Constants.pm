@@ -243,6 +243,39 @@ directives.
 
 =back
 
+=head1 Misuses
+
+You should be aware of the issues relating to using constant
+subroutines in Perl. For example this:
+
+  $r->custom_response(FORBIDDEN => "File size exceeds quota.");
+
+will not set a custom response for C<FORBIDDEN>, but for the string
+C<"FORBIDDEN">, which clearly isn't what is expected. You'll get an
+error like this:
+
+  [Tue Apr 23 19:46:14 2002] null: Argument "FORBIDDEN" isn't
+  numeric in subroutine entry at ...
+
+Therefore, the best solution is not to use the hash notation for
+things that don't require it:
+
+  $r->custom_response(FORBIDDEN,  "File size exceeds quota.");
+
+Another important note is that instead of using HTTP codes, you should
+use designed for that purpose constants. Therefore, this is wrong:
+
+  sub handler { return 200; }
+
+The correct use is:
+
+  use Apache::Constants qw(OK);
+  sub handler { return OK; }
+
+Also remember that C<OK != HTTP_OK>.
+
 =head1 AUTHORS
 
 Doug MacEachern, Gisle Aas and h2xs
+
+=cut
