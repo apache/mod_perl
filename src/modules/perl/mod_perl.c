@@ -1331,9 +1331,15 @@ void perl_per_request_init(request_rec *r)
 	cfg->setup_env = 0; /* just once per-request */
     }
 
-    (void)perl_request_rec(r);
-
     if(callbacks_this_request++ > 0) return;
+
+    if (!r->main) {
+	/* so Apache->request will work before PerlHandler with CGI.pm
+	 * XXX: triggers core dump in subrequests, 
+	 * so just do in the main request for now
+	 */
+	(void)perl_request_rec(r);
+    }
 
     /* PerlSetEnv */
     mod_perl_dir_env(r, cld);
