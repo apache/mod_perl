@@ -8,6 +8,9 @@ use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::MM ();
 
+use File::Spec::Functions;
+use DirHandle ();
+
 use Apache::TestTrace;
 use Apache::TestMM qw(test);
 
@@ -16,12 +19,15 @@ our $VERSION;
 my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
+my @remote_makefile_dirs = qw(docs/src/api/mod_perl-2.0);
+
 my @scripts = qw(t/TEST);
 configure();
 
 ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
+    DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
     macro => {
         MODPERL_SRC   => $code->path,
         PERL          => $build->perl_config('perlpath'),
@@ -191,6 +197,26 @@ Your current configuration will most likely trigger core dumps, suggestions:
    *) Rebuild Perl without malloc pollution (Configure -Ubincompat5005)
 EOF
     }
+}
+
+
+# by default only Makefile.PL's in the first level sub-dirs are
+# discovered. If you want to reach a Makefile.PL's in some remote
+# directories, pass them to this function.
+sub get_dirs_with_makefile {
+    my @remove_makefile_dirs = @_;
+    my %mf_dirs = ();
+
+    # since we cannot override MM::init_dirscan, but at the same time
+    # want to change $self->{DIR}, we have to reproduce
+    # MM::init_dirscan's section on setting DIR
+    for my $dir (@remote_makefile_dirs,
+                 grep {-d} DirHandle->new(curdir())->read) {
+        next if curdir() eq $dir || updir() eq $dir;
+        next if -l $dir; # no symlinks per MakeMaker
+        $mf_dirs{$dir}++ if -f catfile($dir, "Makefile.PL");
+    }
+    return [sort keys %mf_dirs];
 }
 
 package MY;
