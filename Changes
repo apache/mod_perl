@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document $r->get_handlers, $r->set_handlers, $r->push_handlers
+[Eric Cholet <cholet@logilune.com>]
+
 document PerlSetVar [Eric Cholet <cholet@logilune.com>]
 
 document the fact that $r->dir_config handles keys in a
