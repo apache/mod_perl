@@ -9,7 +9,7 @@ my(@test_scripts) = qw(test perl-status);
 
 my(@sys_tests) = qw(syswrite_1 syswrite_2 syswrite_3);
 
-if($] > 5.003) {
+if($] > 5.005_03) {
     $num_tests += (3 + @sys_tests);
     push @test_scripts, qw(io/perlio.pl);
 }
