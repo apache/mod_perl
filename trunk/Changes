@@ -10,7 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
-Build fix for using gcc with AIX
+prevent $PerlRequire in a <Perl> section from triggering an endless loop
+[Salvador Ortiz Garcia <sog@msg.com.mx>]
+
+build fix for using gcc with AIX
 [Jens-Uwe Mager <jum@helios.de>]
 
 allow modification of $r->hostname
