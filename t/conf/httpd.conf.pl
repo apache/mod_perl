@@ -36,6 +36,8 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
  
     my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
 
+    $PerlConfig .= "YAC yet another\n";
+
     $PerlConfig .= "<Location /perl>\n";
     while(my($pp,$cp) = each %$proto_perl2c) {
 	my $arg = "A";
@@ -48,7 +50,6 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
 TestCmd one two
 AnotherCmd
 CmdIterate A B C D E F
-YAC yet another
 </Location>
 <Container /for/whatever>
 

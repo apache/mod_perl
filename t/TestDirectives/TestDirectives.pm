@@ -27,7 +27,8 @@ sub attr {
 
 sub Port ($$$) {
     my($parms, $cfg, $port) = @_;
-    warn "Port will be $port\n";
+    warn "$cfg->Port will be $port\n";
+    $cfg->{Port} = $port;
     return DECLINE_CMD();
 }
 
@@ -55,6 +56,7 @@ sub another_cmd {
     my($parms, $cfg, @data) = @_;
     $parms->info =~ /YAC/ or die "parms->info busted";
     $cfg->{parms_info_from_another_cmd} = $parms->info;
+    warn "$cfg->YAC called\n";
 }
 
 sub Container ($$$;*) {
@@ -93,6 +95,9 @@ package TestDirectives::Base;
 
 sub new {
     my($class, $parms) = @_;
+    my $info = $parms->info;
+    my $o = $parms->override;
+    warn "$class->new called info=`$info',override=`$o'\n";
     return bless {
 	FromNew => __PACKAGE__,
 	path => $parms->path || "",

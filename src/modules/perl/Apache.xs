@@ -223,7 +223,7 @@ static void set_handlers(request_rec *r, SV *hook, SV *sv)
 
 static char *r_keys[] = { "_r", "r", NULL };
 
-static request_rec *sv2request_rec(SV *in, char *class, CV *cv)
+request_rec *sv2request_rec(SV *in, char *class, CV *cv)
 {
     request_rec *r = NULL;
     SV *sv = Nullsv;
@@ -297,7 +297,11 @@ server_rec *perl_get_startup_server(void)
 }
 
 #define TABLE_GET_SET(table, do_taint) \
-{ \
+if(key == NULL) { \
+    ST(0) = mod_perl_tie_table(table); \
+    XSRETURN(1); \
+} \
+else { \
     char *val; \
     if(table && (val = table_get(table, key))) \
 	RETVAL = newSVpv(val, 0); \
@@ -1132,7 +1136,7 @@ cgi_env(r, ...)
    
 
 SV *
-subprocess_env(r, key, ...)
+subprocess_env(r, key=NULL, ...)
     Apache    r
     char *key
 
@@ -1452,11 +1456,16 @@ headers_in(r)
     Apache	r
 
     PREINIT:
+    
     int i;
     array_header *hdrs_arr;
     table_entry  *hdrs;
 
     PPCODE:
+    if(GIMME == G_SCALAR) {
+	ST(0) = mod_perl_tie_table(r->headers_in); 
+	XSRETURN(1); 	
+    }
     hdrs_arr = table_elts (r->headers_in);
     hdrs = (table_entry *)hdrs_arr->elts;
 
@@ -1550,9 +1559,12 @@ headers_out(r)
     table_entry  *hdrs;
 
     PPCODE:
+    if(GIMME == G_SCALAR) {
+	ST(0) = mod_perl_tie_table(r->headers_out); 
+	XSRETURN(1); 	
+    }
     hdrs_arr = table_elts (r->headers_out);
     hdrs = (table_entry *)hdrs_arr->elts;
-
     for (i = 0; i < hdrs_arr->nelts; ++i) {
 	if (!hdrs[i].key) continue;
 	PUSHelt(hdrs[i].key, hdrs[i].val, 0);
@@ -1579,6 +1591,10 @@ err_headers_out(r, ...)
     table_entry  *hdrs;
 
     PPCODE:
+    if(GIMME == G_SCALAR) {
+	ST(0) = mod_perl_tie_table(r->headers_out); 
+	XSRETURN(1); 	
+    }
     hdrs_arr = table_elts (r->err_headers_out);
     hdrs = (table_entry *)hdrs_arr->elts;
 
@@ -1588,7 +1604,7 @@ err_headers_out(r, ...)
     }
 
 SV *
-notes(r, key, ...)
+notes(r, key=NULL, ...)
     Apache    r
     char *key
 
@@ -1755,7 +1771,7 @@ query_string(r, ...)
 #  void *per_dir_config;		/* Options set in config files, etc. */
 
 SV *
-dir_config(r, key, ...)
+dir_config(r, key=NULL, ...)
     Apache  r
     char *key
 

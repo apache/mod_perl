@@ -127,6 +127,7 @@ typedef request_rec * Apache__SubRequest;
 typedef conn_rec    * Apache__Connection;
 typedef server_rec  * Apache__Server;
 typedef cmd_parms   * Apache__CmdParms;
+typedef table       * Apache__Table;
 
 #define GvHV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PVHV)
 #define GvSV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PV)
@@ -880,7 +881,8 @@ void mod_perl_destroy_handler(void *data);
 SV *array_header2avrv(array_header *arr);
 array_header *avrv2array_header(SV *avrv, pool *p);
 SV *mod_perl_gensym (char *pack);
-void perl_tie_hash(HV *hv, char *class);
+SV *mod_perl_tie_table(table *t);
+void perl_tie_hash(HV *hv, char *class, SV *sv);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
 void perl_run_rgy_endav(char *s);
@@ -978,3 +980,4 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls);
 
 pool *perl_get_startup_pool(void);
 server_rec *perl_get_startup_server(void);
+request_rec *sv2request_rec(SV *in, char *class, CV *cv);

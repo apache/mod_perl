@@ -26,7 +26,7 @@ my @directives = (
        cmd_data => "info for YAC",
        errmsg => "Yet another comand",
        args_how => "TAKE2",
-       req_override => "OR_ALL",
+       req_override => "RSRC_CONF",
    },
 );
 
