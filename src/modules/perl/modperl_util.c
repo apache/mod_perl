@@ -572,3 +572,13 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
 {
     return gv_stashpv(name, FALSE) ? 1 : 0;
 }
+
+/* same as Symbol::gensym() */
+SV *modperl_perl_gensym(pTHX_ char *pack)
+{
+    GV *gv = newGVgen(pack);
+    SV *rv = newRV((SV*)gv);
+    (void)hv_delete(gv_stashpv(pack, TRUE), 
+                    GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
+    return rv;
+}
