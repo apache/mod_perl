@@ -45,6 +45,8 @@
 #undef setreuid
 #undef sync
 #undef my_memcmp
+#undef my_bcopy
+#undef my_memset
 #undef RETURN
 #undef die
 #undef __attribute__
