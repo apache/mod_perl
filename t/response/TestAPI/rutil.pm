@@ -22,16 +22,10 @@ my %default_ports = (
     prospero => 191,
 );
 
-my %status_lines = (
-   200 => '200 OK',
-   400 => '400 Bad Request',
-   500 => '500 Internal Server Error',
-);
-
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 18;
+    plan $r, tests => 15;
 
     ok $r->default_type;
 
@@ -47,10 +41,6 @@ sub handler {
         my $apr_port = APR::URI::port_of_scheme($scheme);
         #$r->puts("$scheme => expect: $port, got: $apr_port\n");
         ok $apr_port == $port;
-    }
-
-    while (my($code, $line) = each %status_lines) {
-        ok Apache::get_status_line($code) eq $line;
     }
 
     ok $r->is_initial_req;

@@ -45,8 +45,14 @@ sub handler {
         '__PACKAGE__->new($r)' => __PACKAGE__->new($r),
     );
 
+    my %status_lines = (
+       200 => '200 OK',
+       400 => '400 Bad Request',
+       500 => '500 Internal Server Error',
+    );
     plan $r, tests => (scalar keys %pools) +
-                      (scalar keys %objects) + 11;
+                      (scalar keys %objects) + 
+                      (scalar keys %status_lines) + 11;
 
     # syntax - an object or pool is required
     t_debug("Apache::server_root_relative() died");
@@ -117,6 +123,12 @@ sub handler {
     t_debug('Apache::Server::exists_config_define');
     ok Apache::Server::exists_config_define('MODPERL2');
     ok ! Apache::Server::exists_config_define('FOO');
+
+    while (my($code, $line) = each %status_lines) {
+        ok t_cmp($line,
+                 Apache::Server::get_status_line($code),
+                 "Apache::Server::get_status_line($code)");
+    }
 
     Apache::OK;
 }
