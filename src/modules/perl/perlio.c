@@ -106,7 +106,7 @@ static int sfapachewrite(f, buffer, n, disc)
     XPUSHs(perl_bless_request_rec(((Apache_t*)disc)->r));
     XPUSHs(sv_2mortal(newSVpv(buffer,n)));
     PUTBACK;
-    (void)(*CvXSUB(cv))(cv); 
+    (void)(*CvXSUB(cv))(aTHXo_ cv); 
     FREETMPS;
     LEAVE;
     return n;
