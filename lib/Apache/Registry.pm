@@ -120,6 +120,7 @@ sub handler {
 			    "\n}", # last line comment without newline?
 			   );
 	    compile($eval);
+	    $r->stash_rgy_endav($script_name);
 	    if ($@) {
 		$r->log_error($@);
 		$@{$r->uri} = $@;

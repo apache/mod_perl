@@ -215,17 +215,19 @@ void mod_perl_clear_rgy_endav(request_rec *r, SV *sv)
     }
 }
 
-void perl_run_rgy_endav(char *s) 
+void perl_stash_rgy_endav(char *s, SV *rgystash)
 {
-    SV *rgystash = perl_get_sv("Apache::Registry::curstash", FALSE);
     AV *rgyendav = Nullav;
     STRLEN klen;
     char *key;
     dTHR;
 
+    if(!rgystash) 
+	rgystash = perl_get_sv("Apache::Registry::curstash", FALSE);
+
     if(!rgystash || !SvTRUE(rgystash)) {
 	MP_TRACE_g(fprintf(stderr, 
-        "Apache::Registry::curstash not set, can't run END blocks for %s\n",
+        "Apache::Registry::curstash not set, can't stash END blocks for %s\n",
 			 s));
 	return;
     }
@@ -256,12 +258,37 @@ void perl_run_rgy_endav(char *s)
 	}
     }
 
+    if(rgyendav)
+	hv_store(mod_perl_endhv, key, klen, (SV*)newRV((SV*)rgyendav), FALSE);
+}
+
+void perl_run_rgy_endav(char *s) 
+{
+    SV *rgystash = perl_get_sv("Apache::Registry::curstash", FALSE);
+    AV *rgyendav = Nullav;
+    STRLEN klen;
+    char *key;
+    dTHR;
+
+    if(!rgystash || !SvTRUE(rgystash)) {
+	MP_TRACE_g(fprintf(stderr, 
+        "Apache::Registry::curstash not set, can't run END blocks for %s\n",
+			 s));
+	return;
+    }
+
+    key = SvPV(rgystash,klen);
+
+    if(hv_exists(mod_perl_endhv, key, klen)) {
+	SV *entry = *hv_fetch(mod_perl_endhv, key, klen, FALSE);
+	if(SvTRUE(entry) && SvROK(entry)) 
+	    rgyendav = (AV*)SvRV(entry);
+    }
+
     MP_TRACE_g(fprintf(stderr, 
 	     "running %d END blocks for %s\n", rgyendav ? (int)AvFILL(rgyendav)+1 : 0, s));
     if((endav = rgyendav)) 
 	perl_run_blocks(scopestack_ix, endav);
-    if(rgyendav)
-	hv_store(mod_perl_endhv, key, klen, (SV*)newRV((SV*)rgyendav), FALSE);
     
     sv_setpv(rgystash,"");
 }

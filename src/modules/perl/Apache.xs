@@ -433,6 +433,14 @@ mod_perl_clear_rgy_endav(r, sv=APACHE_REGISTRY_CURSTASH)
     Apache     r
     SV *sv
 
+void
+mod_perl_stash_rgy_endav(r, sv=APACHE_REGISTRY_CURSTASH)
+    Apache     r
+    SV *sv
+
+    CODE:
+    perl_stash_rgy_endav(r->uri, sv);
+
 I32
 module(sv, name)
     SV *sv

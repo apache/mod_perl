@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+Apache::Registry will now save END blocks just after the script is compiled,
+instead of after the subroutine call.  otherwise, if the client breaks the
+connection, the hard_timeout will jump out of perl_handler(), and the save 
+will never happen.  Thanks to Robert Nice and Ben Laurie for spotting this.
+
 bug fix so PATH_INFO is properly reset, thanks to David Sklar for the spot
 
 =item 1.12 - June 14, 1998
