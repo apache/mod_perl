@@ -72,6 +72,8 @@ sub ap_prefix_invalid {
 sub ap_prefix_is_source_tree {
     my $self = shift;
 
+    return unless exists $self->{MP_AP_PREFIX};
+
     my $prefix = $self->{MP_AP_PREFIX};
 
     -d $prefix and -e "$prefix/CHANGES";
