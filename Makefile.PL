@@ -140,6 +140,7 @@ sub clean_files {
     my $path = $code->path;
 
     return [@{ $build->clean_files }, @scripts,
+            <xs/*.exp>, <xs/*.def>,
       map { "$path/$_"} @{ $code->clean_files }];
 }
 
