@@ -173,6 +173,8 @@ t/net/perl/request-param.pl
 t/net/perl/request-cookie.pl
 #t/net/perl/resolver.pl
 t/net/perl/io/redir.pl
+t/net/perl/io/redir1.pl
+t/net/perl/io/redir2.pl
 t/net/perl/io/perlio.pl
 t/net/perl/io/ssi1.pl
 t/net/perl/io/ssi2.pl
