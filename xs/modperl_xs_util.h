@@ -1,6 +1,10 @@
 #ifndef MODPERL_XS_H
 #define MODPERL_XS_H
 
+/* XXX: should be part of generation */
+#undef mp_xs_sv2_r /* defined in modperl_xs_sv_convert.h */
+#define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
+
 #define mpxs_Apache__RequestRec_pool(r) r->pool
 #define mpxs_Apache__Connection_pool(c) c->pool
 #define mpxs_Apache__URI_pool(u)        ((modperl_uri_t *)u)->pool
