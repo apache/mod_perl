@@ -2,8 +2,6 @@
 
 # test BEGIN/END blocks
 
-use ModPerl::RegistryCooker ();
-
 use vars qw($query);
 $query = '' unless defined $query;
 
