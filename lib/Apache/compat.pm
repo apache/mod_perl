@@ -708,7 +708,7 @@ sub escape_html {
 
 *parsedate = \&APR::Date::parse_http;
 
-*validate_password = \&APR::password_validate;
+*validate_password = \&APR::Util::password_validate;
 
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;

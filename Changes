@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+ARP::password_validate is now ARP::Util::password_validate [Stas]
+
 APR::IpSubnet::new() now throws APR::Error exception (not returning
 rc) [Stas]
 
