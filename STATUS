@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/01/01 03:45:54 $]
+   Last modified at [$Date: 2003/01/01 18:43:51 $]
 
 Release:
 --------
@@ -24,11 +24,9 @@ Release:
 Release Showstoppers:
 ---------------------
 
- * 
-   Report: 
-   Status: 
+ * current cvs does not work with vanilla 5.6.1 or 5.8.0 (CGI.pm version issue)
 
-
+ * Makefile.PL process ugly "unknown typemap" warnings must go away
 
 Available Patches:
 ------------------
