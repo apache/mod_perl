@@ -72,3 +72,33 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
 
     return nrd;
 }
+
+static MP_INLINE
+apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
+                                              const char *filename,
+                                              apr_off_t offset,
+                                              apr_size_t len)
+{
+    apr_size_t nbytes;
+    apr_status_t status;
+    apr_file_t *fp;
+
+    status = apr_file_open(&fp, filename, APR_READ|APR_BINARY,
+                           APR_OS_DEFAULT, r->pool);
+
+    if (status != APR_SUCCESS) {
+        return status;
+    }
+
+    if (!len) {
+        apr_finfo_t finfo;
+        apr_file_info_get(&finfo, APR_FINFO_NORM, fp);
+        len = finfo.size;
+    }
+
+    status = ap_send_fd(fp, r, offset, len, &nbytes);
+
+    /* apr_file_close(fp); */ /* do not do this */
+
+    return status;
+}

@@ -14,6 +14,7 @@ PACKAGE=Apache::RequestRec
 MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  SV *:DEFINE_TIEHANDLE   | | SV *:stashsv, SV *:sv=Nullsv
  apr_size_t:DEFINE_PRINT | | ...
+ mpxs_Apache__RequestRec_sendfile | | r, filename=r->filename, offset=0, len=0
 
 MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_push_handlers
