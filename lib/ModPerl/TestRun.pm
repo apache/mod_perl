@@ -19,7 +19,7 @@ our @ISA = qw(Apache::TestConfig);
 sub should_load_module {
     my($self, $name) = @_;
 
-    $name eq 'mod_perl.c' ? 0 : 1;
+    $name eq 'mod_perl.c' ? 0 : $self->SUPER::should_load_module($name);
 }
 
 1;
