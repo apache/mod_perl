@@ -39,7 +39,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "gozer"));
+my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 my $USE_THREADS;
 my $thrlib = join '|', qw(-lpthread);
 
