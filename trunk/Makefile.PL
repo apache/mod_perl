@@ -113,7 +113,6 @@ my(@do_clean) = qw{
    t/logs/error_log
    t/conf/srm.conf
    t/logs/httpd.pid
-   src/modules/perl/mod_perl_version.h
 };
 #t/conf/httpd.conf
 #t/net/config.pl
