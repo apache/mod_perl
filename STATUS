@@ -1,12 +1,13 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/06/04 13:01:20 $]
+   Last modified at [$Date: 2002/06/20 18:31:16 $]
 
 Release:
 --------
 
-   1.99_03-dev: In development
-   1.99_02-dev: Released June 01, 2002
-   1.99_01    : Released April 06, 2002
+   1.99_04-dev: In development
+   1.99_03-dev: Released Jun 16, 2002
+   1.99_02-dev: Released Jun 01, 2002
+   1.99_01    : Released Apr 06, 2002
 
 
    ===========================================
@@ -28,6 +29,15 @@ Release Showstoppers:
 Available Patches:
 ------------------
 
+* Fixing Apache->warn("foo")
+  Report: Message-ID: <3D11A4E5.6010202@stason.org>
+  Status: pending Apache::Log compat issues, this and other methods
+          might be dropped.
+----
+
+* 
+  Report: 
+  Status: 
 
 Needs Patch or Further Investigation:
 -------------------------------------
@@ -36,6 +46,32 @@ Needs Patch or Further Investigation:
 Open Issues or Core Enhancements:
 ---------------------------------
 
+* Apache::Log compat issues:
+
+  Apache->warn, Apache::warn, Apache::Server->warn and
+  Apache->Apache::Server->log_error are all doing:
+     s = modperl_global_get_server_rec();
+  and this function is thread safe only during the startup.
+
+  possible solutions:
+
+  1) enforce that these functions are used only at the server startup
+
+  2) require +GlobalRequest, which gives us r->server, now thread
+     safe (though slow).
+
+  3) drop them all from the API and move to compat. 
+     [remember that Apache::warn is needed for registry scripts to
+     override warn()]
+
+  Report: Message-ID: <Pine.LNX.4.33.0206201011070.2590-100000@mako.covalent.net>
+  Status: <img alt="Doug, contemplating">
+
+----
+
+* 
+  Report: 
+  Status: 
 
 Documentation:
 --------------
@@ -44,7 +80,7 @@ Documentation:
 Patches unlikely to be applied:
 -------------------------------
 
- * 
-   Report: 
-   Status: 
+* 
+  Report: 
+  Status: 
 
