@@ -1144,6 +1144,7 @@ void perl_stdout2client(request_rec *r);
 char *mod_perl_auth_name(request_rec *r, char *val);
 
 module *perl_get_module_ptr(char *name, int len);
+void *perl_merge_server_config(pool *p, void *basev, void *addv);
 void *perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_create_dir_config(pool *p, char *dirname);
 void *perl_create_server_config(pool *p, server_rec *s);

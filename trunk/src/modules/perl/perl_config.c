@@ -310,6 +310,59 @@ void *perl_create_dir_config (pool *p, char *dirname)
     return (void *)cld;
 }
 
+void *perl_merge_server_config (pool *p, void *basev, void *addv)
+{
+    int i, j;
+    char **keys_new, **keys_add;
+
+    perl_server_config *new = (perl_server_config *)pcalloc (p, sizeof(perl_server_config));
+    perl_server_config *base = (perl_server_config *)basev;
+    perl_server_config *add = (perl_server_config *)addv;
+
+    new->PerlPassEnv = append_arrays(p, add->PerlPassEnv, base->PerlPassEnv);
+#if 0
+    /* We don't merge these because they're inlined */
+    new->PerlModule = append_arrays(p, add->PerlModule, base->PerlModule);
+    new->PerlRequire = append_arrays(p, add->PerlRequire, base->PerlRequire);
+#endif
+
+    new->PerlTaintCheck = add->PerlTaintCheck ?
+        add->PerlTaintCheck : base->PerlTaintCheck;
+    new->PerlWarn = add->PerlWarn ?
+        add->PerlWarn : base->PerlWarn;
+    new->FreshRestart = add->FreshRestart ?
+        add->FreshRestart : base->FreshRestart;
+    new->PerlOpmask = add->PerlOpmask ?
+        add->PerlOpmask : base->PerlOpmask;
+
+#ifdef PERL_POST_READ_REQUEST
+    new->PerlPostReadRequestHandler = add->PerlPostReadRequestHandler ?
+        add->PerlPostReadRequestHandler : base->PerlPostReadRequestHandler;
+#endif
+#ifdef PERL_TRANS
+    new->PerlTransHandler = add->PerlTransHandler ?
+        add->PerlTransHandler : base->PerlTransHandler;
+#endif
+#ifdef PERL_CHILD_INIT
+    new->PerlChildInitHandler = add->PerlChildInitHandler ?
+        add->PerlChildInitHandler : base->PerlChildInitHandler;
+#endif
+#ifdef PERL_CHILD_EXIT
+    new->PerlChildExitHandler = add->PerlChildExitHandler ?
+        add->PerlChildExitHandler : base->PerlChildExitHandler;
+#endif
+#ifdef PERL_RESTART
+    new->PerlRestartHandler = add->PerlRestartHandler ?
+        add->PerlRestartHandler : base->PerlRestartHandler;
+#endif
+#ifdef PERL_INIT
+    new->PerlInitHandler = add->PerlInitHandler ?
+        add->PerlInitHandler : base->PerlInitHandler;
+#endif
+
+    return new;
+}
+
 void *perl_create_server_config (pool *p, server_rec *s)
 {
     perl_server_config *cls =
