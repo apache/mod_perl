@@ -393,11 +393,17 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
         /* eval the code in the parent handler's package's context */
         char *code = apr_pstrcat(p, "package ", package_name, ";",
                                  init_handler_pv_code, NULL);
-        SV *sv = eval_pv(code, TRUE);
+        SV *sv;
+
+        ENTER;SAVETMPS;
+
+        sv = eval_pv(code, TRUE);
 
         /* fprintf(stderr, "code: %s\n", code); */
         modperl_handler_t *init_handler =
             modperl_handler_new_from_sv(aTHX_ p, sv);
+
+        FREETMPS;LEAVE;
 
         if (init_handler) {
             MP_TRACE_h(MP_FUNC, "found init handler %s\n",

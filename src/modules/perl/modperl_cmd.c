@@ -541,11 +541,11 @@ MP_CMD_SRV_DECLARE(perldo)
     
     {
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
-        ENTER;
+        ENTER;SAVETMPS;
         save_scalar(gv); /* local $0 */
         sv_setpv_mg(GvSV(gv), directive->filename);
         eval_pv(arg, FALSE);
-        LEAVE;
+        FREETMPS;LEAVE;
     }
     
     if (SvTRUE(ERRSV)) {

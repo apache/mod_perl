@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+enclose all occurences of eval_* with ENTER;SAVETMPS;
+... FREETMPS;LEAVE; previously things just happened to work, due to
+external scopes which was not very reliable and some change could
+introduce obsure bugs. [Stas]
+
 in case a native apache response filter is configured outside the
 <Location> block with PerlSet*Filter directive, make sure that
 mod_perl doesn't try to add it as connection filter (previously was
