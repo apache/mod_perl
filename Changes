@@ -8,7 +8,10 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.21_01-dev
+=item 1.21_01 - March 5, 2000
+
+#ifdef _AIX, make sure Perl's dlclose is used, instead of Apache's
+during dso_unload [Jens-Uwe Mager <jum@helios.de>]
 
 __THE__ dso fix: dlclose() xs shared objects and call perl_shutdown()
 before mod_perl's libperl.so is unloaded/reloaded by mod_so
