@@ -200,6 +200,8 @@ MODULE=Apache::Module
 >ap_show_modules
 >ap_register_hooks
  mpxs_Apache__Module_loaded
+ #ap_get_module_config
+ mpxs_Apache__Module_get_config | | self, pmodule, s, v=NULL
 
 MODULE=Apache::Directive
  ap_directive_t *:DEFINE_conftree | | SV *:CLASS
