@@ -23,7 +23,12 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     }
 
     perl_construct(perl);
-
+#ifdef MP_DEBUG
+    {
+        dTHXa(perl);
+        PL_perl_destruct_level = 2;
+    }
+#endif
     status = perl_parse(perl, xs_init, argc, argv, NULL);
 
     if (status) {
