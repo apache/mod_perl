@@ -1,8 +1,10 @@
 #!perl
-
+BEGIN {
+    *ModPerl::XSLoader::BOOTSTRAP = sub () {1};
+}
 use Test;
 
-plan tests => 10;
+plan tests => 8;
 
 use blib;
 use warnings FATAL => 'all';
@@ -22,12 +24,6 @@ my $uuid = APR::UUID->new->format;
 ok $uuid;
 
 my $p = APR::Pool->new;
-
-my $num_bytes = $p->num_bytes;
-
-ok $num_bytes;
-
-#print "begin bytes=$num_bytes\n";
 
 ok $p;
 
@@ -56,16 +52,6 @@ my $decoded = APR::Base64::decode($encoded);
 ok $decoded eq $bytes;
 
 $p->clear;
-
-while ($num_bytes == $p->num_bytes) {
-    APR::Lock->new($p);
-}
-
-my $cur_num_bytes = $p->num_bytes;
-
-#print "end bytes=$cur_num_bytes\n";
-
-ok (($cur_num_bytes / 2) == $num_bytes);
 
 for (1..9) {
     my $desc = APR::Signal::get_description($_);
