@@ -430,6 +430,8 @@ static const command_rec modperl_cmds[] = {
                        "Subroutine name"),
     MP_CMD_SRV_FLAG("PerlTaintCheck", taint_check,
                     "Turn on -T switch"),
+    MP_CMD_SRV_FLAG("PerlWarn", warn,
+                    "Turn on -w switch"),
 #endif
     MP_CMD_ENTRIES,
     { NULL }, 

@@ -96,6 +96,15 @@ MP_CMD_SRV_DECLARE_FLAG(taint_check)
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE_FLAG(warn)
+{
+    if (flag_on) {
+        return modperl_cmd_switches(parms, mconfig, "-w");
+    }
+
+    return NULL;
+}
+
 #endif /* MP_COMPAT_1X */
 
 #ifdef USE_ITHREADS
