@@ -54,9 +54,7 @@ static MP_INLINE SV *mpxs_APR__Bucket_read(pTHX_
 
     buf = newSVpvn(str, len);
 
-    /* XXX: must be on, but utf8::decode fails to parse it as UTF-8
-     * flag in 5.8.4 if the input is utf8 */
-    //SvTAINTED_on(buf);
+    SvTAINTED_on(buf);
     
     return buf;
 }
