@@ -36,7 +36,7 @@ static const modperl_env_ent_t modperl_env_const_vars[] = {
     { NULL }
 };
 
-static void modperl_env_request_populate(pTHX_ request_rec *r)
+void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     HV *hv = GvHV(PL_envgv);
     int i;
@@ -102,11 +102,14 @@ static int modperl_env_request_get(pTHX_ SV *sv, MAGIC *mg)
 }
 #endif
 
+#define MpDirSeenSETUP_ENV(dcfg) \
+    (dcfg->flags->opts_seen & MpDir_f_SETUP_ENV)
+
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
     MP_dDCFG;
 
-    if (MpDirSETUP_ENV(dcfg)) {
+    if (MpDirSETUP_ENV(dcfg) || !MpDirSeenSETUP_ENV(dcfg)) {
         modperl_env_request_populate(aTHX_ r);
     }
 

@@ -82,6 +82,8 @@ const char *modperl_options_set(apr_pool_t *p, modperl_options_t *o,
     }
 #endif
 
+    o->opts_seen |= opt;
+
     if (action == '-') {
         o->opts_remove |= opt;
         o->opts_add &= ~opt;
@@ -125,6 +127,8 @@ modperl_options_t *modperl_options_merge(apr_pool_t *p,
         conf->opts_add = add->opts_add;
         conf->opts_remove = add->opts_remove;
     }
+
+    conf->opts_seen |= add->opts_seen;
 
     return conf;
 }

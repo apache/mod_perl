@@ -291,7 +291,8 @@ void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
                        apr_pool_t *ptemp, server_rec *s)
 {
     modperl_sys_init();
-    apr_pool_cleanup_register(pconf, NULL, modperl_sys_term, NULL);
+    apr_pool_cleanup_register(pconf, NULL,
+                              modperl_sys_term, apr_pool_cleanup_null);
     modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
 }
