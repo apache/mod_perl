@@ -74,8 +74,13 @@ SV *mpxs_Apache__RequestRec_subprocess_env(pTHX_ request_rec *r,
 }
 
 static MP_INLINE
-apr_finfo_t *mpxs_Apache__RequestRec_finfo(request_rec *r)
+apr_finfo_t *mpxs_Apache__RequestRec_finfo(pTHX_ request_rec *r,
+                                           apr_finfo_t *finfo)
 {
+    if (finfo) {
+        r->finfo = *finfo;
+    }
+
     return &r->finfo;
 }
 
