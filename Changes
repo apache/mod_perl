@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+introduce a new build option MP_AP_DESTDIR to aid package builders
+direct the Apache-specific files to the right place. [Cory Omand
+<Cory.Omand@Sun.COM>]
+
 Fix bug in modperl_package_clear_stash() segfaulting when
 encountering declared but not yet defined subroutines.
 [Steve Hay <steve.hay@uk.radan.com>, Gozer]

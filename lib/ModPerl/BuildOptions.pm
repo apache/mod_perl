@@ -230,6 +230,7 @@ PROMPT_DEFAULT 0    Accept default value for all would-be prompts
 OPTIONS_FILE   0    Read options from given file
 STATIC_EXTS    0    Build Apache::*.xs as static extensions
 APXS           0    Path to apxs
+AP_DESTDIR     0    Destination for Apache specific mod_perl bits
 AP_PREFIX      0    Apache installation or source tree prefix
 AP_CONFIGURE   0    Apache ./configure arguments
 APR_CONFIG     0    Path to apr-config
