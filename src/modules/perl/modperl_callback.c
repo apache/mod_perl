@@ -58,7 +58,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             }
             
             MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed\n",
-                         modperl_pid_tid(p), modperl_server_desc(s, p), name);
+                       modperl_pid_tid(p),
+                       modperl_server_desc(s, p), name);
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "lookup of '%s' failed", name);
             status = HTTP_INTERNAL_SERVER_ERROR;
@@ -116,7 +117,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
 }
 
 int modperl_callback_run_handlers(int idx, int type,
-                                  request_rec *r, conn_rec *c, server_rec *s,
+                                  request_rec *r, conn_rec *c,
+                                  server_rec *s,
                                   apr_pool_t *pconf,
                                   apr_pool_t *plog,
                                   apr_pool_t *ptemp,
@@ -220,11 +222,12 @@ int modperl_callback_run_handlers(int idx, int type,
     for (i=0; i<av->nelts; i++) {
         status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
         
-        MP_TRACE_h(MP_FUNC, "%s returned %d\n", handlers[i]->name, status);
+        MP_TRACE_h(MP_FUNC, "%s returned %d\n",
+                   handlers[i]->name, status);
 
         /* follow Apache's lead and let OK terminate the phase for
-         * MP_HOOK_RUN_FIRST handlers.  MP_HOOK_RUN_ALL handlers keep going on OK.
-         * MP_HOOK_VOID handler ignore all errors.
+         * MP_HOOK_RUN_FIRST handlers.  MP_HOOK_RUN_ALL handlers keep
+         * going on OK.  MP_HOOK_VOID handlers ignore all errors.
          */
 
         if (run_mode == MP_HOOK_RUN_ALL) {
@@ -313,7 +316,8 @@ int modperl_callback_per_dir(int idx, request_rec *r,
 int modperl_callback_per_srv(int idx, request_rec *r, 
                              modperl_hook_run_mode_e run_mode)
 {
-    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PER_SRV,
+    return modperl_callback_run_handlers(idx,
+                                         MP_HANDLER_TYPE_PER_SRV,
                                          r, NULL, r->server,
                                          NULL, NULL, NULL, run_mode);
 }
@@ -321,7 +325,8 @@ int modperl_callback_per_srv(int idx, request_rec *r,
 int modperl_callback_connection(int idx, conn_rec *c, 
                                 modperl_hook_run_mode_e run_mode)
 {
-    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_CONNECTION,
+    return modperl_callback_run_handlers(idx,
+                                         MP_HANDLER_TYPE_CONNECTION,
                                          NULL, c, c->base_server,
                                          NULL, NULL, NULL, run_mode);
 }
@@ -329,7 +334,8 @@ int modperl_callback_connection(int idx, conn_rec *c,
 int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd,
                                     modperl_hook_run_mode_e run_mode)
 {
-    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PRE_CONNECTION,
+    return modperl_callback_run_handlers(idx,
+                                         MP_HANDLER_TYPE_PRE_CONNECTION,
                                          NULL, c, c->base_server,
                                          NULL, NULL, NULL, run_mode);
 }
