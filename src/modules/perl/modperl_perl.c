@@ -119,8 +119,12 @@ void modperl_perl_destruct(PerlInterpreter *perl)
         modperl_perl_call_list(aTHX_ PL_endav, "END");
     }
 
-    if ((module_commands = modperl_module_config_table_get(perl, FALSE))) {
-        modperl_svptr_table_destroy(perl, module_commands);
+    {
+        dTHXa(perl);
+
+        if ((module_commands = modperl_module_config_table_get(aTHX_ FALSE))) {
+            modperl_svptr_table_destroy(aTHX_ module_commands);
+        }
     }
 
     perl_destruct(perl);
@@ -155,6 +159,19 @@ void modperl_perl_destruct(PerlInterpreter *perl)
  */
 
 #ifdef USE_ITHREADS
+
+#ifdef MP_PERL_5_6_x
+#   define my_sv_dup(s, p) sv_dup(s)
+
+typedef struct {
+    AV *stashes;
+    UV flags;
+    PerlInterpreter *proto_perl;
+} CLONE_PARAMS;
+
+#else
+#   define my_sv_dup(s, p) sv_dup(s, p)
+#endif
 
 /*
  * copy a PTR_TBL_t whos PTR_TBL_ENT_t values are SVs.
@@ -204,7 +221,7 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
             dst_ent->oldval = src_ent->oldval;
 
             dst_ent->newval =
-                SvREFCNT_inc(sv_dup((SV*)src_ent->newval, &parms));
+                SvREFCNT_inc(my_sv_dup((SV*)src_ent->newval, &parms));
         }
     }
 
@@ -212,6 +229,8 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
 
     return tbl;
 }
+
+#endif
 
 /*
  * need to free the SV values in addition to ptr_table_free
@@ -240,7 +259,6 @@ void modperl_svptr_table_destroy(pTHX_ PTR_TBL_t *tbl)
 
     ptr_table_free(tbl);
 }
-#endif
 
 /*
  * the Perl ptr_table_ api does not provide a function to remove
