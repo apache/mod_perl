@@ -169,9 +169,9 @@ sub mpm_name {
     my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
 
     # building against the httpd source dir
-    unless ($mpm_name and exists $self->{dir}) {
-        my $config_vars_file = catfile $self->{dir},
-            "build", "config_vars.mk";
+    unless ($mpm_name and $self->httpd_is_source_tree) {
+        my $prefix = $self->{MP_AP_PREFIX} || $self->{dir};
+        my $config_vars_file = catfile $prefix, "build", "config_vars.mk";
         if (open my $fh, $config_vars_file) {
             while (<$fh>) {
                 if (/MPM_NAME = (\w+)/) {
