@@ -744,7 +744,7 @@ sub xsubpp {
       '$(MODPERL_PRIVLIBEXP)/ExtUtils/xsubpp',
         '-typemap', '$(MODPERL_PRIVLIBEXP)/ExtUtils/typemap';
 
-    my $typemap = $self->file_path('src/modules/perl/typemap');
+    my $typemap = $self->file_path('lib/typemap');
     if (-e $typemap) {
         $xsubpp .= join ' ',
           ' -typemap', $typemap;
@@ -764,8 +764,11 @@ sub make_xs {
     my @xs_targ;
 
     while (my($name, $xs) = each %{ $self->{XS} }) {
-        #Foo/Bar.xs => Bar.c
-        (my $c = $xs) =~ s:.*/(\w+)\.xs$:$1.c:;
+        #Foo/Bar.xs => Foo_Bar.c
+        (my $c = $xs) =~ s:.*?WrapXS/::;
+        $c =~ s:/:_:g;
+        $c =~ s:\.xs$:.c:;
+
         push @files, $c;
 
         push @xs_targ, <<EOF;
