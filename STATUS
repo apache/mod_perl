@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/01 23:30:28 $]
+   Last modified at [$Date: 2003/04/03 06:41:22 $]
 
 Release:
 --------
@@ -50,6 +50,9 @@ Available Patches:
 Needs Patch or Further Investigation:
 -------------------------------------
 
+* we have a dependency check problem when xs/*/*.h use code from
+  xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
+  dependant files
   
 * we should stop generating xs/apache_*, at least for a reason that
   it's incomplete and will be never complete as we don't keep up with
