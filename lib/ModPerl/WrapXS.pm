@@ -11,7 +11,7 @@ use ModPerl::MapUtil qw(function_table xs_glue_dirs);
 use File::Path qw(rmtree mkpath);
 use Cwd qw(fastcwd);
 use Data::Dumper;
-use File::Spec::Functions qw(catfile);
+use File::Spec::Functions qw(catfile catdir);
 
 our $VERSION = '0.01';
 
@@ -221,7 +221,7 @@ EOF
 sub prepare {
     my $self = shift;
     $self->{DIR} = 'WrapXS';
-    $self->{XS_DIR} = catfile fastcwd(), 'xs';
+    $self->{XS_DIR} = catdir fastcwd(), 'xs';
 
     if (-e $self->{DIR}) {
         rmtree([$self->{DIR}], 1, 1);
@@ -243,7 +243,7 @@ sub class_dir {
 
     my $dirname = $self->class_dirname($class);
     my $dir = ($dirname =~ m:/: and $dirname !~ m:^$self->{DIR}:) ?
-      catfile($self->{DIR}, $dirname) : $dirname;
+      catdir($self->{DIR}, $dirname) : $dirname;
 
     mkpath [$dir], 1, 0755 unless -d $dir;
 
