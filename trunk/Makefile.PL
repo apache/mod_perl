@@ -1432,7 +1432,7 @@ sub MY::post_initialize {
 	$ap_inc = $ap_src = 'src'; #just install mod_perl headers
     }
 
-    return unless -d $ap_src;
+    return unless $ap_src and -d $ap_src;
 
     $My::self = $self;
     {
