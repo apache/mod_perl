@@ -64,8 +64,6 @@ PACKAGE=Apache
 
 MODULE=Apache::Connection
  mpxs_Apache__Connection_client_socket | | c, s=NULL
- mpxs_Apache__Connection_get_remote_host | | c, type=REMOTE_NAME, dir_config=NULL
-
 
 MODULE=Apache::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
