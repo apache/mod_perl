@@ -39,13 +39,13 @@ sub merge {
 
 sub DIR_MERGE {
     my $class = ref $_[0];
-    warn "$class->DIR_MERGE\n";
+    #warn "$class->DIR_MERGE\n";
     merge(@_);
 }
 
 sub SERVER_MERGE {
     my $class = ref $_[0];
-    warn "$class->SERVER_MERGE\n";
+    #warn "$class->SERVER_MERGE\n";
     merge(@_);
 }
 
@@ -57,7 +57,7 @@ sub SERVER_MERGE {
 # .htaccess files
 sub MyMergeTest {
     my($self, $parms, $arg) = @_;
-    warn "MyMergeTest: @{[$parms->path||'']}\n\t$arg\n";
+    #warn "MyMergeTest: @{[$parms->path||'']}\n\t$arg\n";
     push @{ $self->{MyMergeTest} }, $arg;
 
     # store the top level srv values in the server struct as well, so
