@@ -8,6 +8,7 @@ use Apache::TestUtil;
 use File::Spec::Functions qw(canonpath catfile);
 
 use Apache::RequestRec ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Process ();
 
@@ -45,7 +46,7 @@ sub handler {
         '__PACKAGE__->new($r)' => __PACKAGE__->new($r),
     );
 
-    plan $r, tests => 11     +
+    plan $r, tests => 12     +
         (scalar keys %pools) +
         (scalar keys %objects);
 
@@ -125,6 +126,9 @@ sub handler {
     t_debug('Apache::exists_config_define');
     ok Apache::exists_config_define('MODPERL2');
     ok ! Apache::exists_config_define('FOO');
+
+    t_debug('registering method FOO');
+    ok $r->server->method_register('FOO');
 
     Apache::OK;
 }

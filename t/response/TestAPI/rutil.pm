@@ -19,7 +19,7 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => (scalar keys %status_lines) + 8;
+    plan $r, tests => (scalar keys %status_lines) + 7;
 
     ok $r->default_type;
 
@@ -45,9 +45,6 @@ sub handler {
                  $line,
                  "Apache::RequestUtil::get_status_line($code)");
     }
-
-    t_debug('registering method FOO');
-    ok Apache::RequestUtil::method_register($r->server->process->pconf, 'FOO');
 
     Apache::OK;
 }
