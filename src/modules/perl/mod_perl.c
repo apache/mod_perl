@@ -41,7 +41,7 @@ static void modperl_hash_seed_init(apr_pool_t *p)
     
     /* calculate our own random hash seed */
     if (!MP_init_hash_seed_set) {
-        apr_uuid_t *uuid = (apr_uuid_t *)safemalloc(sizeof(apr_uuid_t));
+        apr_uuid_t *uuid = (apr_uuid_t *)apr_palloc(p, sizeof(apr_uuid_t));
         char buf[APR_UUID_FORMATTED_LENGTH + 1];
         int i;
 
