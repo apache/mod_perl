@@ -1409,6 +1409,10 @@ bytes_sent(r, ...)
     for(last=r; last->next; last=last->next)
         continue;
 
+    if (last->sent_bodyct && !last->bytes_sent) {
+	ap_bgetopt(last->connection->client, BO_BYTECT, &last->bytes_sent);
+    }
+
     RETVAL = last->bytes_sent;
 
     if(items > 1)
