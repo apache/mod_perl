@@ -270,7 +270,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 }
                 else {
                     /* the caller handles the error checking */
-                    MP_TRACE_h(MP_FUNC, "failied to load %s package\n", name);
+                    MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
                     return 0;
                 }
             }
