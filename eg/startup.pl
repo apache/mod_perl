@@ -12,6 +12,9 @@
 #add this to srm.conf:
 #PerlRequire scripts/startup.pl
 
+# make sure we are in a sane environment.
+$ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not Perl!";
+
 #modify @INC if needed
 #use lib qw(/foo/perl/lib);
 
