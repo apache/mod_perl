@@ -18,7 +18,7 @@ only be useful if your mpm is prefork (which is much like 1.3.x)
 
 to build mod_perl static:
 
-% perl Makefile.PL && make libmodperl.a
+% perl Makefile.PL && make
 
 % cd ../apache-2.0/src
 % ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
@@ -27,7 +27,7 @@ to build mod_perl static:
 
 to build mod_perl dynamic:
 
-% perl Makefile.PL && make libmodperl.so
+% perl Makefile.PL MP_USE_DSO=1 && make
 
 (note the dso-link-hack.pat is need for my suse-6.1, might be
 different for your platform)
@@ -64,4 +64,4 @@ sub MyLog::handler {
     warn "hey, it works!";
 }
 
---dougm 04/21
+--dougm 04/24
