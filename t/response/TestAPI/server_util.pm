@@ -33,7 +33,7 @@ sub handler {
 
     {
         my $s = $r->server;
-        my @expected = qw(ModPerl::Test::exit_handler);
+        my @expected = qw(ModPerl::Test::exit_handler TestExit::FromPerlModule::exit_handler);
         my @handlers =
             @{ $s->get_handlers('PerlChildExitHandler') || []};
         ok t_cmp(scalar(@handlers), scalar(@expected), "get_handlers");
