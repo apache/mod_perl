@@ -835,6 +835,9 @@ int mod_perl_sent_header(request_rec *r, int val)
 {
     dPPDIR;
 
+    if (val == DONE) {
+        val = r->assbackwards = 1; /* so apache does not send another header */
+    }
     if(val) MP_SENTHDR_on(cld);
     val = MP_SENTHDR(cld) ? 1 : 0;
     return MP_SENDHDR(cld) ? val : 1;
