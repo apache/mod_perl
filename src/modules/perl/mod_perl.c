@@ -219,9 +219,37 @@ static void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
     modperl_tls_create_request_rec(pconf);
 }
 
+static apr_status_t modperl_sys_init(void)
+{
+#if 0 /*XXX*/
+    PERL_SYS_INIT(0, NULL);
+
+#ifdef PTHREAD_ATFORK
+    if (!ap_exists_config_define("PERL_PTHREAD_ATFORK_DONE")) {
+        PTHREAD_ATFORK(Perl_atfork_lock,
+                       Perl_atfork_unlock,
+                       Perl_atfork_unlock);
+        *(char **)apr_array_push(ap_server_config_defines) =
+            "PERL_PTHREAD_ATFORK_DONE";
+    }
+#endif
+#endif
+    return APR_SUCCESS;
+}
+
+static apr_status_t modperl_sys_term(void *data)
+{
+#if 0 /*XXX*/
+    PERL_SYS_TERM();
+#endif
+    return APR_SUCCESS;
+}
+
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                        apr_pool_t *ptemp, server_rec *s)
 {
+    modperl_sys_init();
+    apr_pool_cleanup_register(pconf, NULL, modperl_sys_term, NULL);
     modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
 }
