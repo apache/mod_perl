@@ -152,7 +152,7 @@ sub apxs {
     my $query_key;
     if ($is_query) {
         $query_key = 'APXS_' . uc $_[1];
-        if (defined $self->{$query_key}) {
+        if (exists $self->{$query_key}) {
             return $self->{$query_key};
         }
     }
@@ -185,27 +185,27 @@ sub apxs {
 }
 
 sub apxs_cflags {
-    my $who = who_am_i(shift);
+    my $who = caller_package(shift);
     my $cflags = $who->apxs('-q' => 'CFLAGS');
     $cflags =~ s/\"/\\\"/g;
     $cflags;
 }
 
 sub apxs_extra_cflags {
-    my $who = who_am_i(shift);
+    my $who = caller_package(shift);
     my $flags = $who->apxs('-q' => 'EXTRA_CFLAGS');
     $flags =~ s/\"/\\\"/g;
     $flags;
 }
 
 sub apxs_extra_cppflags {
-    my $who = who_am_i(shift);
+    my $who = caller_package(shift);
     my $flags = $who->apxs('-q' => 'EXTRA_CPPFLAGS');
     $flags =~ s/\"/\\\"/g;
     $flags;
 }
 
-sub who_am_i {
+sub caller_package {
     my $arg = shift;
     return ($arg and ref($arg) eq __PACKAGE__) ? $arg : __PACKAGE__;
 }
