@@ -11965,7 +11965,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'apr_socket_set_inherit',
+    'name' => 'apr_socket_inherit_set',
     'args' => [
       {
         'type' => 'apr_socket_t *',
@@ -12003,7 +12003,7 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'apr_socket_unset_inherit',
+    'name' => 'apr_socket_inherit_unset',
     'args' => [
       {
         'type' => 'apr_socket_t *',
