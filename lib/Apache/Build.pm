@@ -1367,6 +1367,37 @@ sub define {
     return "";
 }
 
+# in case MP_INST_APACHE2=0 we shouldn't try to adjust @INC
+# because it may pick older Apache2 from the previous install
+sub generate_apache2_pm {
+    my $self = shift;
+
+    my $fixup = !$self->{MP_INST_APACHE2} 
+        ? '# MP_INST_APACHE2=0, do nothing'
+        : <<'EOF';
+BEGIN {
+    my @dirs = ();
+
+    for my $path (@INC) {
+        my $dir = "$path/Apache2";
+        next unless -d $dir;
+        push @dirs, $dir;
+    }
+
+    if (@dirs) {
+        unshift @INC, @dirs;
+    }
+}
+EOF
+
+    my $content = join "\n\n", 'package Apache2;', $fixup, "1;";
+    my $file = catfile qw(lib Apache2.pm);
+    open my $fh, '>', $file or die "Can't open $file: $!";
+    print $fh $content;
+    close $fh;
+
+}
+
 1;
 
 __END__
