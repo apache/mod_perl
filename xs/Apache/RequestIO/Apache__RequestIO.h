@@ -209,7 +209,7 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
 #define mpxs_Apache__RequestRec_READ(r, bufsv, len, offset) \
     mpxs_Apache__RequestRec_read(aTHX_ r, bufsv, len, offset)
 
-static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
+static SV* mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
                                          SV *bufsv, int len,
                                          int offset)
 {
@@ -220,7 +220,10 @@ static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
     }
 
     if (len <= 0) {
-        return 0;
+        sv_setpv(get_sv("!", TRUE),
+                 (char *)apr_psprintf(r->pool,
+                                      "The LENGTH argument can't be negative"));
+        return &PL_sv_undef;
     }
 
     /* XXX: need to handle negative offset */
@@ -237,15 +240,10 @@ static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
         sv_setpvn(bufsv, "", 0);
     }
     else {
-        /* need to return undef according to the read entry, but at
-         * the moment we return IV, so need to change to return SV,
-         * meanwhile just crock */
-        if (SvTRUE(ERRSV)) {
-            (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR, r, NULL);
-        }
+        return &PL_sv_undef;
     }
 
-    return total;
+    return sv_2mortal(newSViv(total));
 }
 
 static MP_INLINE

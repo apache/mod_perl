@@ -5748,7 +5748,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'long',
+    'return_type' => 'SV *',
     'name' => 'mpxs_Apache__RequestRec_read',
     'attr' => [
       'static'
