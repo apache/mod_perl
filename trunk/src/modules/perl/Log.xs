@@ -4,7 +4,7 @@
 #include "modules/perl/mod_perl.h"
 #endif
 
-#if MODULE_MAGIC_NUMBER >= 19980806
+#if MODULE_MAGIC_NUMBER >= MMN_132
 #define HAVE_LOG_RERROR 1
 #else
 #define HAVE_LOG_RERROR 0
