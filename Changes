@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+The Perl-5.8.0 crypt() workaround is now used only if 5.8.0 is used,
+since 5.8.1-tobe/5.9.0-tobe(blead-perl) won't compile with
+it. [Geoffrey Young]
+
 new directives PerlSetInputFilter and PerlSetOutputFilter, which are
 the same as SetInputFilter and SetOutputFilter respectively, but allow
 to insert non-mod_perl filters before, between or after mod_perl
