@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+add PerlCleanupHandler to the {get,set}_handlers table,
+thanks Geoffrey Young for the spot
+
 fix $r->args(undef), thanks to Greg Cope for the spot
 
 quotemeta path_info in Registry regexp

@@ -101,6 +101,7 @@ static perl_handler_table handler_table[] = {
     {HandlerDirEntry("PerlFixupHandler", PerlFixupHandler)},
     {HandlerDirEntry("PerlHandler", PerlHandler)},
     {HandlerDirEntry("PerlLogHandler", PerlLogHandler)},
+    {HandlerDirEntry("PerlCleanupHandler", PerlCleanupHandler)},
     { FALSE, NULL }
 };
 
