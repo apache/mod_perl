@@ -4,7 +4,7 @@ use strict;
 use Apache::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
-use APR::Const -compile => qw(SUCCESS);
+use APR::Const -compile => qw(SUCCESS EOF);
 use Apache::Const -compile => qw(MODE_BLOCKING);
 use APR::Lib ();
 
@@ -19,7 +19,9 @@ sub handler {
 
         if ($rv != APR::SUCCESS or $bb->empty) {
             my $error = APR::strerror($rv);
-            warn "get_brigade: $error\n";
+            unless ($rv == APR::EOF) {
+                warn "[echo_filter] get_brigade: $error\n";
+            }
             $bb->destroy;
             last;
         }
