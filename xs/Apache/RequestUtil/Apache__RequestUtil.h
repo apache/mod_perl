@@ -320,7 +320,7 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
         MP_CROAK_IF_THREADS_STARTED("setting $r->document_root");
         conf = ap_get_module_config(r->server->module_config, 
                                     &core_module);
-        conf->ap_document_root = SvPV_nolen(new_root);
+        conf->ap_document_root = apr_pstrdup(r->pool, SvPV_nolen(new_root));
     }
 
     return retval;

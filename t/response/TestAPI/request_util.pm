@@ -31,8 +31,12 @@ sub handler {
     ok $document_root;
 
     if (!Apache::MPM->is_threaded) {
-        ok t_cmp($document_root, $r->document_root('/tmp/foo'));
-        ok t_cmp('/tmp/foo', $r->document_root($document_root));
+        my $path_orig = my $path = '/tmp/foo';
+        ok t_cmp($document_root, $r->document_root($path));
+        # make sure that the new docroot string is copied internally,
+        # and later manipulations of the passed scalar don't affect it
+        $path .= "suffix";
+        ok t_cmp($path_orig, $r->document_root($document_root));
     }
     else {
         eval { $r->document_root('/tmp/foo') };
