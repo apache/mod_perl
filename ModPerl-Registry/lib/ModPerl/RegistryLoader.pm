@@ -109,12 +109,17 @@ sub namespace_root {
 
 # override Apache class methods called by Modperl::Registry*. normally
 # only available at request-time via blessed request_rec pointer
-sub my_slurp_filename {
+sub slurp_filename {
     my $r = shift;
+    my $tainted = @_ ? shift : 1;
     my $filename = $r->filename;
     open my $fh, $filename or die "can't open $filename: $!";
     local $/;
     my $code = <$fh>;
+    unless ($tainted) {
+        ($code) = $code =~ /(.*)/s; # untaint
+    }
+    close $fh;
     return \$code;
 }
 
