@@ -179,6 +179,7 @@
 * Apache::Reload
   - needs to handle properly redefined subs warnings
 
-
+* Apache->unescape_url{_info}:
+  not yet implemented.  should be moved to Apache::Util
 
 
