@@ -5,11 +5,15 @@
 #define MP_FILTER_NAME_FORMAT "   %s\n\n\t"
 
 #define MP_FILTER_NAME(f) \
-    ((modperl_filter_ctx_t *)f->ctx)->handler->name
+    (is_modperl_filter(f) \
+        ? ((modperl_filter_ctx_t *)(f)->ctx)->handler->name \
+        : (f)->frec->name)
 
 #define MP_FILTER_TYPE(filter) \
-    ((modperl_filter_ctx_t *)filter->f->ctx)->handler->attrs & \
-        MP_FILTER_CONNECTION_HANDLER  ? "connection" : "request"
+    (is_modperl_filter(filter->f) \
+        ? ((modperl_filter_ctx_t *)(filter)->f->ctx)->handler->attrs & \
+            MP_FILTER_CONNECTION_HANDLER  ? "connection" : "request" \
+        : "unknown")
 
 #define MP_FILTER_MODE(filter) \
     (filter->mode == MP_INPUT_FILTER_MODE ? "input" : "output")
@@ -17,7 +21,7 @@
 #define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
 
 /* this function is for tracing only, it's not optimized for performance */
-static const char* next_filter_name(ap_filter_t *f)
+static int is_modperl_filter(ap_filter_t *f)
 {
     const char *name = f->frec->name;
 
@@ -26,12 +30,13 @@ static const char* next_filter_name(ap_filter_t *f)
         !strcasecmp(name, MP_FILTER_CONNECTION_OUTPUT_NAME) ||
         !strcasecmp(name, MP_FILTER_REQUEST_INPUT_NAME)     ||
         !strcasecmp(name, MP_FILTER_REQUEST_OUTPUT_NAME) ) {
-        return ((modperl_filter_ctx_t *)f->ctx)->handler->name;
+        return 1;
     }
     else {
-        return name;
+        return 0;
     }
 }
+
 
 MP_INLINE static apr_status_t send_input_eos(modperl_filter_t *filter)
 {
@@ -110,6 +115,10 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             work_buf = (char *)apr_pcalloc(wb->pool, sizeof(char*)*len);
             memcpy((void*)work_buf, buf, len);
         }
+
+        MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %d bytes [%s]\n", len,
+                   apr_pstrmemdup(wb->pool, work_buf, len));
+        
         status = modperl_cgi_header_parse(r, (char *)work_buf, &bodytext);
 
         wb->header_parse = 0; /* only once per-request */
@@ -147,18 +156,21 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %d bytes\n"
                "\t\tfrom %s\n\t\tto %s filter handler\n",
                len, 
-               (wb->r && wb->filters == &wb->r->output_filters)
-                   ? "response handler" : "current filter handler",
-               next_filter_name(*(wb->filters)));
+               ((wb->r && wb->filters == &wb->r->output_filters)
+                   ? "response handler" : "current filter handler"),
+               MP_FILTER_NAME(*(wb->filters)));
 
     return ap_pass_brigade(*(wb->filters), bb);
 }
 
-/* if add_flush_bucket is TRUE
- *  and there is data to flush,
- *       a flush bucket is added to the tail of bb with data
- * otherwise
- *       a flush bucket is sent in its own bb
+/* flush data if any,
+ * if add_flush_bucket is TRUE
+ *     if there is data to flush
+ *         a flush bucket is added to the tail of bb with data
+ *     else
+ *         a flush bucket is sent in its own bb
+ * else
+ *     nothing is sent
  */
 MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb,
                                              int add_flush_bucket)
@@ -173,7 +185,7 @@ MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb,
     else if (add_flush_bucket) {
         rv = send_output_flush(*(wb->filters));
     }
-    
+
     return rv;
 }
 
@@ -183,8 +195,6 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
 {
     apr_size_t len = *wlen;
     *wlen = 0;
-
-    MP_TRACE_f(MP_FUNC, "\n\n\tbuffer out: %d bytes\n", len);
 
     if ((len + wb->outcnt) > sizeof(wb->outbuf)) {
         apr_status_t rv;
@@ -239,7 +249,8 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "new: %s %s filter (0x%lx)\n",
                MP_FILTER_NAME(f),
-               MP_FILTER_TYPE(filter), MP_FILTER_MODE(filter),
+               MP_FILTER_TYPE(filter),
+               MP_FILTER_MODE(filter),
                (unsigned long)filter);
 
     return filter;
