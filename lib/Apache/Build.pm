@@ -6,7 +6,7 @@ use warnings;
 
 use Config;
 use Cwd ();
-use File::Spec::Functions qw(catfile);
+use File::Spec::Functions qw(catfile catdir);
 use File::Basename;
 use ExtUtils::Embed ();
 
@@ -715,6 +715,8 @@ sub apr_bindir {
     $self->{apr_bindir};
 }
 
+# XXX: we assume that apr-config and apu-config reside in the same
+# directory
 sub apr_config_path {
     my ($self) = @_;
 
@@ -726,13 +728,16 @@ sub apr_config_path {
     }
 
     if (!$self->{apr_config_path}) {
-        if (exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX}) {
-            my $try = catfile $self->{MP_AP_PREFIX}, "bin", "apr-config";
-            $self->{apr_config_path} = $try if -x $try;
-        }
-        elsif (my $bindir = $self->apxs(-q => 'BINDIR')) {
-            my $try = catfile $bindir, "apr-config";
-            $self->{apr_config_path} = $try if -x $try;
+        # APR_BINDIR was added only at httpd-2.0.46
+        my @tries = grep length,
+            map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
+        push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
+            if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
+
+        for (@tries) {
+            my $try = catfile $_, "apr-config";
+            next unless -x $try;
+            $self->{apr_config_path} = $try;
         }
     }
 
