@@ -1,0 +1,7 @@
+package mod_perl;
+
+$VERSION = '1.13';
+
+1;
+
+__END__
