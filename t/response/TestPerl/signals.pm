@@ -32,6 +32,10 @@ sub handler {
 
     # doesn't work under static prefork
     if (!$static) {
+      if ($^O eq 'darwin') {
+        skip "ALRM can't be used on darwin", 0;
+      }
+      else {
         local $ENV{PERL_SIGNALS} = "unsafe";
 
         eval {
@@ -41,6 +45,7 @@ sub handler {
             alarm 0;
         };
         ok t_cmp $@, qr/alarm/, "SIGALRM / unsafe %SIG";
+      }
     }
 
     # POSIX::sigaction doesn't work under 5.6.x
