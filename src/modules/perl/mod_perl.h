@@ -361,7 +361,9 @@ if((add->flags & f) || (base->flags & f)) \
 #define DONE -2
 #endif
 
-#if MODULE_MAGIC_NUMBER >= 19980413
+#if MODULE_MAGIC_NUMBER >= 19980713
+#include "ap_compat.h"
+#elif MODULE_MAGIC_NUMBER >= 19980413
 #include "compat.h"
 #endif
  
