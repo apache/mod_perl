@@ -42,6 +42,20 @@ BEGIN {
     $INC{'Apache/File.pm'} = __FILE__;
 }
 
+sub request {
+    my $what = shift;
+
+    my $r = Apache->request;
+
+    unless ($r) {
+        die "cannot use $what ",
+            "without 'SetHandler perl-script' ",
+            "or 'PerlOptions +GlobalRequest'";
+    }
+
+    $r;
+}
+
 package Apache;
 
 sub exit {
@@ -346,13 +360,7 @@ my $Perms = 0600;
 sub tmpfile {
     my $class = shift;
     my $limit = 100;
-    my $r = Apache->request;
-
-    unless ($r) {
-        die "cannot use Apache::File->tmpfile ",
-            "without 'SetHandler perl-script' ",
-            "or 'PerlOptions +GlobalRequest'";
-    }
+    my $r = Apache::compat::request('Apache::File->tmpfile');
 
     while ($limit--) {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
