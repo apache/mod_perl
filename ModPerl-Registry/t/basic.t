@@ -3,7 +3,8 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::TestRequest;
+use Apache::TestRequest qw(GET_BODY HEAD);
+
 
 my %modules = 
     (registry    => 'ModPerl::Registry',
@@ -16,15 +17,13 @@ my @aliases = sort keys %modules;
 
 plan tests => @aliases * 3;
 
-my $cfg = Apache::Test::config();
-
 # very basic compilation/response test
 for my $alias (@aliases) {
     my $url = "/$alias/basic.pl";
 
     ok t_cmp(
              "ok",
-             $cfg->http_raw_get($url),
+             GET_BODY($url),
              "$modules{$alias} basic cgi test",
             );
 }
@@ -46,7 +45,7 @@ for my $alias (@aliases) {
 
     ok t_cmp(
              "foo=bar",
-             $cfg->http_raw_get($url),
+             GET_BODY($url),
              "$modules{$alias} mod_cgi-like environment pre-set",
             );
 }
@@ -59,7 +58,7 @@ for my $alias (@aliases) {
 
 #    ok t_cmp(
 #             "it works",
-#             $cfg->http_raw_get($url),
+#             GET_BODY($url),
 #             "$modules{$alias} mod_cgi-like environment pre-set",
 #            );
 #}
