@@ -67,7 +67,7 @@ sub handler {
         # d1->d2
         $d1->insert_after($d2);
 
-        # d1->f1->f2
+        # d1->f1->d2
         $d2->insert_before($f1);
 
         # d1->f1->d2->f2
