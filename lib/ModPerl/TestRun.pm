@@ -1,8 +1,9 @@
 package ModPerl::TestRun;
 
-use Apache::TestRunPerl ();
+use strict;
+use warnings FATAL => 'all';
 
-our @ISA = qw(Apache::TestRunPerl);
+use base qw(Apache::TestRunPerl);
 
 sub new_test_config {
     my $self = shift;
@@ -12,7 +13,7 @@ sub new_test_config {
 
 package ModPerl::TestConfig;
 
-our @ISA = qw(Apache::TestConfig);
+use base qw(Apache::TestConfig);
 
 #don't inherit LoadModule perl_module from the apache httpd.conf
 
