@@ -936,12 +936,11 @@ int PERL_LOG_HOOK(request_rec *r)
 }
 #endif
 
-#define CleanupHandler cld->PerlCleanupHandler
-
 #ifdef PERL_STACKED_HANDLERS
-#define has_CleanupHandler (CleanupHandler && SvREFCNT(CleanupHandler))
+#define CleanupHandler \
+((cld->PerlCleanupHandler && SvREFCNT(cld->PerlCleanupHandler)) ? cld->PerlCleanupHandler : Nullav)
 #else
-#define has_CleanupHandler CleanupHandler
+#define CleanupHandler cld->PerlCleanupHandler
 #endif
 
 void mod_perl_end_cleanup(void *data)
@@ -951,9 +950,7 @@ void mod_perl_end_cleanup(void *data)
     dPPDIR;
 
 #ifdef PERL_CLEANUP
-    if(has_CleanupHandler) {
-	PERL_CALLBACK("PerlCleanupHandler", cld->PerlCleanupHandler);
-    }
+    PERL_CALLBACK("PerlCleanupHandler", CleanupHandler);
 #endif
 
     MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));

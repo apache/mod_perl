@@ -26,11 +26,6 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 KNOWN BUGS
 ---------------------------------------------------------------------------
 
-- Apache->push_handlers("PerlCleanupHandler", ...),
-  the handler isn't called unless there's already a CleanupHandler defined.
-  Jan-Pieter Cornet <johnpc@xs4all.net>
-  (should use $r->register_cleanup anyhow)
-
 - sfio/solaris problem
 Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
 
