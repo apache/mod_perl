@@ -470,7 +470,7 @@ void perl_reload_inc(server_rec *s, pool *sp)
     dPSRV(s);
     HV *hash = GvHV(incgv);
     HE *entry;
-    I32 old_warn = dowarn;
+    U8 old_warn = dowarn;
     pool *p = ap_make_sub_pool(sp);
     table *reload = ap_make_table(p, HvKEYS(hash));
     char **entries;
@@ -573,10 +573,10 @@ void perl_do_file(char *pv)
     /*(void)hv_delete(GvHV(incgv), pv, strlen(pv), G_DISCARD);*/
 }      
 
-int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn)
+int perl_load_startup_script(server_rec *s, pool *p, char *script, U8 my_warn)
 {
     dTHR;
-    I32 old_warn = dowarn;
+    U8 old_warn = dowarn;
 
     if(!script) {
 	MP_TRACE_d(fprintf(stderr, "no Perl script to load\n"));

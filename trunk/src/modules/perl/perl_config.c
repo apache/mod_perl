@@ -1536,7 +1536,7 @@ void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *conf
 {
     I32 alen = AvFILL(av);
     I32 i, j;
-    I32 oldwarn = dowarn; /*XXX, hmm*/
+    U8 oldwarn = dowarn; /*XXX, hmm*/
     dowarn = FALSE;
 
     if(!n) n = alen+1;
