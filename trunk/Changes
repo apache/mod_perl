@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+Add Win32 support to Apache::SizeLimit [Matt Phillips
+<mphillips@virage.com> and Mohamed Hendawi <mhendawi@virage.com>]
+
 Change Apache::SizeLimit to not push a cleanup handler if already in
 the cleanup handler phase, and adjust docs to show that cleanup
 handler is the preferred phase to use [Perrin Harkins

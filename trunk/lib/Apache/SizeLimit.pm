@@ -125,6 +125,11 @@ efficient (a lot more efficient than reading it from the /proc fs anyway).
 Uses BSD::Resource::getrusage() to determine process size.  Not sure if the
 shared memory calculations will work or not.  AIX users?
 
+=item Win32
+
+Uses Win32::API to access process memory information.  Win32::API can be 
+installed under ActiveState perl using the supplied ppm utility.
+
 =back
 
 If your platform is not supported, and if you can tell me how to check for
@@ -146,7 +151,7 @@ use Config;
 use strict;
 use vars qw($VERSION $HOW_BIG_IS_IT $MAX_PROCESS_SIZE
 	    $REQUEST_COUNT $CHECK_EVERY_N_REQUESTS
-	    $MIN_SHARE_SIZE $MAX_UNSHARED_SIZE $START_TIME);
+	    $MIN_SHARE_SIZE $MAX_UNSHARED_SIZE $START_TIME $WIN32);
 
 $VERSION = '0.03';
 $CHECK_EVERY_N_REQUESTS = 1;
@@ -154,6 +159,7 @@ $REQUEST_COUNT = 1;
 $MAX_PROCESS_SIZE  = 0;
 $MIN_SHARE_SIZE    = 0;
 $MAX_UNSHARED_SIZE = 0;
+$WIN32 = 0;
 
 
 BEGIN {
@@ -170,6 +176,13 @@ BEGIN {
 	} else {
 	    die "you must install BSD::Resource for Apache::SizeLimit to work on your platform.";
 	}
+    } elsif ($Config{'osname'} eq 'MSWin32') {
+        $WIN32 = 1;
+        if (eval("require Win32::API")) {
+            $HOW_BIG_IS_IT = \&win32_size_check;
+        } else {
+            die "you must install Win32::API for Apache::SizeLimit to work on your platform.";
+        }
     } else {
 	die "Apache::SizeLimit not implemented on your platform.";
     }
@@ -200,6 +213,53 @@ sub bsd_size_check {
     return (&BSD::Resource::getrusage())[2,3];
 }
 
+sub win32_size_check {
+    # get handle on current process
+    my $GetCurrentProcess = new Win32::API('kernel32', 
+                                           'GetCurrentProcess', 
+                                           [], 
+                                           'I');
+    my $hProcess = $GetCurrentProcess->Call();
+
+    
+    # memory usage is bundled up in ProcessMemoryCounters structure
+    # populated by GetProcessMemoryInfo() win32 call
+    my $DWORD = 'B32';  # 32 bits
+    my $SIZE_T = 'I';   # unsigned integer
+
+    # build a buffer structure to populate
+    my $pmem_struct = "$DWORD" x 2 . "$SIZE_T" x 8;
+    my $pProcessMemoryCounters = pack($pmem_struct, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    
+    # GetProcessMemoryInfo is in "psapi.dll"
+    my $GetProcessMemoryInfo = new Win32::API('psapi', 
+                                              'GetProcessMemoryInfo', 
+                                              ['I', 'P', 'I'], 
+                                              'I');
+
+    my $bool = $GetProcessMemoryInfo->Call($hProcess, 
+                                           $pProcessMemoryCounters, 
+                                           length($pProcessMemoryCounters));
+
+    # unpack ProcessMemoryCounters structure
+    my ($cb, 
+        $PageFaultCount, 
+        $PeakWorkingSetSize,
+        $WorkingSetSize,
+        $QuotaPeakPagedPoolUsage,
+        $QuotaPagedPoolUsage,
+        $QuotaPeakNonPagedPoolUsage,
+        $QuotaNonPagedPoolUsage,
+        $PagefileUsage,
+        $PeakPagefileUsage) = unpack($pmem_struct, $pProcessMemoryCounters);
+
+    # only care about peak working set size
+    my $size = int($PeakWorkingSetSize / 1024);
+
+    return ($size, 0);
+}
+
+
 sub exit_if_too_big {
     my $r = shift;
     return DECLINED if ($CHECK_EVERY_N_REQUESTS &&
@@ -216,13 +276,18 @@ sub exit_if_too_big {
 	($MAX_UNSHARED_SIZE && ($size - $share) > $MAX_UNSHARED_SIZE)) {
 
 	    # wake up! time to die.
-	    if (getppid > 1) {	# this is a child httpd
+	    if ($WIN32 || (getppid > 1)) {	# this is a child httpd
 		my $e = time - $START_TIME;
 		my $msg = "httpd process too big, exiting at SIZE=$size KB ";
 		$msg .= " SHARE=$share KB " if ($share);
                 $msg .= " REQUESTS=$REQUEST_COUNT  LIFETIME=$e seconds";
 		error_log($msg);
-	        $r->child_terminate;
+
+		if ($WIN32) {
+		    CORE::exit(-2); # child_terminate() is disabled in win32 Apache
+		} else {
+		    $r->child_terminate();
+		}
 
 	    } else {	# this is the main httpd, whose parent is init?
 		my $msg = "main process too big, SIZE=$size KB ";
@@ -277,5 +342,8 @@ Brian Moseley <ix@maz.org>: Solaris 2.6 support
 
 Doug Steinwand and Perrin Harkins <perrin@elem.com>: added support 
     for shared memory and additional diagnostic info
+
+Matt Phillips <mphillips@virage.com> and Mohamed Hendawi
+<mhendawi@virage.com>: Win32 support
 
 =cut
