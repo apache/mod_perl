@@ -28,13 +28,14 @@ static apr_table_t *modperl_table_overlap(apr_pool_t *p,
     apr_table_t *merge = apr_table_copy(p, add);
 
     for (i = 0; i < arr->nelts; i++) {
-        char *val;
-
-        if ((val = (char *)apr_table_get(add, entries[i].key))) {
+        if (apr_table_get(add, entries[i].key)) {
             continue;
         }
-        else if ((val = (char *)apr_table_get(base, entries[i].key))){
-            apr_table_set(merge, entries[i].key, val);
+        else {
+            /*XXX: should setn() be addn()for PerlSetVar?
+             * since we have PerlAddVar, there may be multiple values.
+             */
+            apr_table_setn(merge, entries[i].key, entries[i].val);
         }
     }
 
