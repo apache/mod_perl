@@ -248,7 +248,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
 
     MP_TRACE_i(MP_FUNC, "server=%s\n", modperl_server_desc(s, p));
     
-    if (scfg->threaded_mpm) {
+    if (modperl_threaded_mpm()) {
         mip->tipool = modperl_tipool_new(p, scfg->interp_pool_cfg,
                                          &interp_pool_func, mip);
     }
@@ -341,7 +341,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
     MP_dSCFG(s);
     modperl_interp_t *interp = NULL;
 
-    if (scfg && (is_startup || !scfg->threaded_mpm)) {
+    if (scfg && (is_startup || !modperl_threaded_mpm())) {
         MP_TRACE_i(MP_FUNC, "using parent interpreter at %s\n",
                    is_startup ? "startup" : "request time (non-threaded MPM)");
 
@@ -383,7 +383,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     int is_subrequest = (r && r->main) ? 1 : 0;
     modperl_interp_scope_e scope;
 
-    if (!scfg->threaded_mpm) {
+    if (!modperl_threaded_mpm()) {
         MP_TRACE_i(MP_FUNC,
                    "using parent 0x%lx for non-threaded mpm (%s:%d)\n",
                    (unsigned long)scfg->mip->parent,

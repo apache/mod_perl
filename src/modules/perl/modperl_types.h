@@ -137,7 +137,6 @@ typedef struct {
     MpAV *handlers_process[MP_HANDLER_NUM_PROCESS];
     MpAV *handlers_pre_connection[MP_HANDLER_NUM_PRE_CONNECTION];
     MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
-    int threaded_mpm;
 #ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
     modperl_tipool_config_t *interp_pool_cfg;
