@@ -88,7 +88,7 @@ PerlOptions -SetupEnv
     PerlSetEnv TestDirective__env_srv2 env_srv2
 
     # XXX: temp workaround
-    PerlPostReadRequestHandler Apache::OK
+    PerlPostReadRequestHandler 'sub { use Apache::Const qw(DECLINED); DECLINED }'
 
     # PerlPassEnv is only per-server
     PerlPassEnv APACHE_TEST_HOSTNAME
