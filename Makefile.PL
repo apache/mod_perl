@@ -74,12 +74,13 @@ ModPerl::BuildMM::WriteMakefile(
     EXE_FILES     => \@exe_files,
     DEFINE        => get_DEFINE(),
     macro         => {
-        MODPERL_SRC        => $code->path,
-        MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
-        PERL               => $build->perl_config('perlpath'),
-        MOD_INSTALL        => ModPerl::BuildMM::mod_install(),
-        MODPERL_AP_INCLUDEDIR  => $build->install_headers_dir(),
-        MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
+        MODPERL_SRC           => $code->path,
+        MODPERL_MAKEFILE      => basename($build->default_file('makefile')),
+        PERL                  => $build->perl_config('perlpath'),
+        MOD_INSTALL           => ModPerl::BuildMM::mod_install(),
+        MODPERL_AP_INCLUDEDIR =>
+            $build->ap_destdir($build->install_headers_dir),
+        MODPERL_XS_H_FILES    => join(" \\\n\t", @xs_h_files),
     },
     clean     => {
         FILES => "@{ clean_files() }",

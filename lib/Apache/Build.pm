@@ -20,7 +20,8 @@ use warnings;
 
 use Config;
 use Cwd ();
-use File::Spec::Functions qw(catfile catdir canonpath rel2abs devnull);
+use File::Spec::Functions qw(catfile catdir canonpath rel2abs devnull
+                             catpath splitpath);
 use File::Basename;
 use ExtUtils::Embed ();
 
@@ -139,6 +140,27 @@ sub find_apxs_util {
             last;
         }
     }
+}
+
+# if MP_AP_DESTDIR was specified this sub will prepend this path to
+# any Apache-specific installation path (that option is used only by
+# package maintainers).
+sub ap_destdir {
+    my $self = shift;
+    my $path = shift || '';
+    return $path unless $self->{MP_AP_DESTDIR};
+
+    if (WIN32) {
+        my($dest_vol, $dest_dir) = splitpath $self->{MP_AP_DESTDIR}, 1;
+        my $real_dir = (splitpath $path)[1];
+
+        $path = catpath $dest_vol, catdir($dest_dir, $real_dir), '';
+    }
+    else {
+        $path = catdir $self->{MP_AP_DESTDIR}, $path;
+    }
+
+    return canonpath $path;
 }
 
 sub apxs {
@@ -1628,8 +1650,11 @@ EOI
 
     if (my $libs = $self->modperl_libs) {
         print $fh $self->canon_make_attr('lib_location', $libs);
-        print $fh $self->canon_make_attr('ap_libdir', 
-                                         "$self->{MP_AP_PREFIX}/lib");
+
+        print $fh $self->canon_make_attr('ap_libdir',
+            $self->ap_destdir(catdir $self->{MP_AP_PREFIX}, 'lib')
+        );
+
         $install .= <<'EOI';
 # install mod_perl.lib
 	@$(MKPATH) $(MODPERL_AP_LIBDIR)
@@ -1666,12 +1691,12 @@ EOI
     }
 
     print $fh $self->canon_make_attr('lib', "@libs");
-    
-    print $fh $self->canon_make_attr('AP_INCLUDEDIR', 
-                                     $self->install_headers_dir());
+
+    print $fh $self->canon_make_attr('AP_INCLUDEDIR',
+        $self->ap_destdir($self->install_headers_dir));
 
     print $fh $self->canon_make_attr('AP_LIBEXECDIR',
-                                     $self->apxs(-q => 'LIBEXECDIR'));
+        $self->ap_destdir($self->apxs(-q => 'LIBEXECDIR')));
 
     my $xs_targ = $self->make_xs($fh);
 
