@@ -11,9 +11,7 @@ use Carp;
 
 our @ISA = ();
 
-# using create() instead of new() since the latter is inherited from
-# the SUPER class, and it's used inside handler() from the SUPER class
-sub create {
+sub new {
     my $class = shift;
     my $self = bless {@_} => ref($class)||$class;
     $self->{package} ||= 'ModPerl::Registry';
@@ -48,7 +46,8 @@ sub handler {
                 $self->warn("Cannot find a translated from uri: $filename");
                 return;
             }
-        } else {
+        }
+        else {
             # try to guess
             (my $guess = $uri) =~ s|^/||;
 
@@ -74,7 +73,12 @@ sub handler {
         package  => $self->{package},
     } => ref($self) || $self;
 
-    __PACKAGE__->SUPER::handler($rl);
+    # can't call SUPER::handler here, because it usually calls new()
+    # and then the ModPerlRegistryLoader::new() will get called,
+    # instead of the super class' new, so we implement the super
+    # class' handler here. Hopefully all other subclasses use the same
+    # handler.
+    __PACKAGE__->SUPER::new($rl)->default_handler();
 
 }
 
