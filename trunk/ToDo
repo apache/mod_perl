@@ -115,6 +115,8 @@ KNOWN BUGS
 NEW STUFF
 ---------------------------------------------------------------------------
 
+- make Apache->server->register_cleanup work
+
 - mod_perl C code symbols, should look at cleaning up names with a
   common prefix, e.g. mp_, mod_perl_, mperl_ ?
   also static-ize those functions we can 
