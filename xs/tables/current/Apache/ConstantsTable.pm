@@ -158,7 +158,8 @@ $Apache::ConstantsTable = {
       'NOT_FOUND',
       'FORBIDDEN',
       'AUTH_REQUIRED',
-      'SERVER_ERROR'
+      'SERVER_ERROR',
+      'REDIRECT'
     ],
     'cmd_how' => [
       'RAW_ARGS',

@@ -8,8 +8,9 @@ use Apache2 ();
 use Apache::Const -compile => qw(DECLINED :http :common TAKE23 &OPT_EXECCGI);
 use Apache::Const; #defaults to :common
 
-plan tests => 12;
+plan tests => 13;
 
+ok REDIRECT == 302;
 ok AUTH_REQUIRED == 401;
 ok OK == 0;
 ok Apache::OK == 0;
