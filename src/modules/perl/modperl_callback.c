@@ -6,41 +6,10 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     CV *cv=Nullcv;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
-    int count, status, duped=0;
+    int count, status;
 
-#ifdef USE_ITHREADS
-    if (p && !MpHandlerPARSED(handler) && !MpHandlerDYNAMIC(handler)) {
-        MP_dSCFG(s);
-        if (scfg->threaded_mpm) {
-            /*
-             * cannot update the handler structure at request time without
-             * locking, so just copy it
-             */
-            handler = modperl_handler_dup(p, handler);
-            duped = 1;
-        }
-    }
-#endif
-
-    MP_TRACE_h_do(MpHandler_dump_flags(handler, handler->name));
-
-    if (!MpHandlerPARSED(handler)) {
-        apr_pool_t *rp = duped ? p : s->process->pconf;
-        MpHandlerAUTOLOAD_On(handler);
-
-        MP_TRACE_h(MP_FUNC,
-                   "handler %s was not compiled at startup, "
-                   "attempting to resolve using %s pool 0x%lx\n",
-                   handler->name,
-                   duped ? "current" : "server conf",
-                   (unsigned long)rp);
-
-        if (!modperl_mgv_resolve(aTHX_ handler, rp, handler->name)) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, 
-                         "failed to resolve handler `%s'",
-                         handler->name);
-            return HTTP_INTERNAL_SERVER_ERROR;
-        }
+    if ((status = modperl_handler_resolve(aTHX_ &handler, p, s)) != OK) {
+        return status;
     }
 
     ENTER;SAVETMPS;
