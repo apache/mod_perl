@@ -2,10 +2,15 @@
 #define MODPERL_LOG_H
 
 #ifdef MP_TRACE
-/* XXX: not every cc supports this
- * sort out later
- */
-#   define MP_FUNC __FUNCTION__
+#   if defined(__GNUC__)
+#      if (__GNUC__ > 2)
+#         define MP_FUNC __func__
+#      else
+#         define MP_FUNC __FUNCTION__
+#      endif
+#   else
+#      define MP_FUNC "MP_FUNC"
+#   endif
 #else
 #   define MP_FUNC "MP_FUNC"
 #endif
