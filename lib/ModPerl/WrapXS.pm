@@ -103,10 +103,13 @@ sub get_functions {
         my $return_type =
           $name =~ /^DESTROY$/ ? 'void' : $func->{return_type};
 
+        my $attrs = $self->attrs($name);
+
         my $code = <<EOF;
 $return_type
 $name($xs_parms)
 $proto
+$attrs
 EOF
 
         if ($dispatch || $orig_args) {
@@ -185,6 +188,8 @@ sub get_structures {
                 $preinit = "STRLEN val_len;";
             }
 
+            my $attrs = $self->attrs($name);
+
             my $code = <<EOF;
 $type
 $name(obj, val=$default)
@@ -193,6 +198,7 @@ $name(obj, val=$default)
 
     PREINIT:
     $preinit
+$attrs
 
     CODE:
     RETVAL = ($cast) obj->$name;
@@ -386,6 +392,16 @@ sub boot {
         $str = '    mpxs_' . $self->cname($module) . "_BOOT(aTHXo);\n";
     }
 
+    $str;
+}
+
+my $notshared = join '|', qw(TIEHANDLE); #not sure why yet
+
+sub attrs {
+    my($self, $name) = @_;
+    my $str = "";
+    return $str if $name =~ /$notshared$/o;
+    $str = "    ATTRS: shared\n" if $^V gt v5.7.0;
     $str;
 }
 
