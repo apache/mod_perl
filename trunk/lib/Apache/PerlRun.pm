@@ -8,6 +8,10 @@ unless (defined $Apache::Registry::NameWithVirtualHost) {
     $Apache::Registry::NameWithVirtualHost = 1;
 }
 
+unless (defined $Apache::Registry::MarkLine) {
+    $Apache::Registry::MarkLine = 1;
+}
+
 $Debug ||= 0;
 my $Is_Win32 = $^O eq "MSWin32";
 
@@ -23,62 +27,139 @@ sub new {
 	$r = Apache->request;
     }
     my $filename = $r->filename;
-    $r->log_error("Apache::PerlRun->new for $filename in process $$")
+    $r->warn("Apache::PerlRun->new for $filename in process $$")
 	if $Debug && $Debug & 4;
 
-    bless $r, $class;
+    bless {
+	'_r' => $r,
+    }, $class;
 }
 
 sub can_compile {
-    my($r) = @_;
-    my $filename = $r->filename;
+    my($pr) = @_;
+    my $filename = $pr->filename;
     if (-r $filename && -s _) {
-	if (!($r->allow_options & OPT_EXECCGI)) {
-	    $r->log_reason("Options ExecCGI is off in this directory",
+	if (!($pr->allow_options & OPT_EXECCGI)) {
+	    $pr->log_reason("Options ExecCGI is off in this directory",
 			   $filename);
 	    return FORBIDDEN;
  	}
 	if (-d _) {
-	    $r->log_reason("attempt to invoke directory as script", $filename);
+	    $pr->log_reason("attempt to invoke directory as script", $filename);
 	    return FORBIDDEN;
 	}
 	unless (-x _ or $Is_Win32) {
-	    $r->log_reason("file permissions deny server execution",
+	    $pr->log_reason("file permissions deny server execution",
 			   $filename);
 	    return FORBIDDEN;
 	}
 
-	return wantarray ? (OK, -M _) : OK;
+	$pr->{'mtime'} = -M _;
+	return wantarray ? (OK, $pr->{'mtime'}) : OK;
     }
     return NOT_FOUND;
 }
 
+sub mark_line {
+    my($pr) = @_;
+    my $filename = $pr->filename;
+    return $Apache::Registry::MarkLine ?
+	"\n#line 1 $filename\n" : "";
+}
+
+sub sub_wrap {
+    my($pr, $code, $package) = @_;
+
+    $code    ||= $pr->{'code'};
+    $package ||= $pr->{'namespace'};
+
+    my $line = $pr->mark_line;
+    my $sub = join(
+		    '',
+		    'package ',
+		    $package,
+		    ';use Apache qw(exit);',
+		    'sub handler {',
+		    $line,
+		    $$code,
+		    "\n}", # last line comment without newline?
+		    );
+    $pr->{'sub'} = \$sub;
+}
+
+sub should_compile {
+    my($pr, $package, $mtime) = @_;
+    $package ||= $pr->{'namespace'};
+    $mtime   ||= $pr->{'mtime'};
+    !(exists $Apache::Registry->{$package}{'mtime'}
+    &&
+      $Apache::Registry->{$package}{'mtime'} <= $mtime);
+}
+
+sub update_mtime {
+    my($pr, $mtime, $package) = @_;
+    $mtime   ||= $pr->{'mtime'};
+    $package ||= $pr->{'namespace'};
+    $Apache::Registry->{$package}{'mtime'} = $mtime;
+}
+
 sub compile {
-    my($r, $eval) = @_;
-    $r->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
+    my($pr, $eval) = @_;
+    $eval ||= $pr->{'sub'};
+    $pr->clear_rgy_endav;
+    $pr->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
     Apache->untaint($$eval);
     {
 	no strict; #so eval'd code doesn't inherit our bits
 	eval $$eval;
     }
+    $pr->stash_rgy_endav;
+    return $pr->error_check;
+}
+
+sub run {
+    my($pr) = @_;
+    my $package = $pr->{'namespace'};
+
+    my $rc = OK;
+    my $cv = \&{"$package\::handler"};
+    eval { $rc = &{$cv}($pr->{'_r'}, @_) } if $pr->seqno;
+    $pr->{status} = $rc;
+
+    my $errsv = "";
+    if($@) {
+	$errsv = $@;
+	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks
+	$@{$pr->uri} = $errsv;
+    }
+
+    if($errsv) {
+	$pr->log_error($errsv);
+	return SERVER_ERROR;
+    }
+
+    return wantarray ? (OK, $rc) : OK;
+}
+
+sub status {
+    shift->{'_r'}->status;
 }
 
 sub namespace {
-    my($r, $root) = @_;
+    my($pr, $root) = @_;
 
-    my $uri = $r->uri; 
+    my $uri = $pr->uri; 
     $uri = "/__INDEX__" if $uri eq "/";
-    $r->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
+    $pr->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
 		  $uri) if $Debug && $Debug & 4;
 
-    my $script_name = $r->path_info ?
-	substr($uri, 0, length($uri)-length($r->path_info)) :
+    my $script_name = $pr->path_info ?
+	substr($uri, 0, length($uri)-length($pr->path_info)) :
 	    $uri;
 
     if($Apache::Registry::NameWithVirtualHost) {
-	my $srv = $r->server;
-	$script_name = join "", $srv->server_hostname, $script_name
-	    if $srv->is_virtual;
+	my $name = $pr->get_server_name;
+	$script_name = join "", $name, $script_name if $name;
     }
 
     # Escape everything into valid perl identifiers
@@ -92,34 +173,27 @@ sub namespace {
 			   "::" . ($2 ? sprintf("_%2x",unpack("C",$2)) : "")
 			  ]egx;
 
-    $Apache::Registry::curstash = $script_name if 
-	scalar(caller) eq "Apache::Registry";
-
+    $Apache::Registry::curstash = $script_name;
+ 
     $root ||= "Apache::ROOT";
 
-    $r->log_error("Apache::PerlRun->namespace: package $root$script_name")
+    $pr->log_error("Apache::PerlRun->namespace: package $root$script_name")
 	if $Debug && $Debug & 4;
 
-    return $root.$script_name;
+    $pr->{'namespace'} = $root.$script_name;
+    return $pr->{'namespace'};
 }
 
 sub readscript {
-    my $r = shift;
-    my $filename = $r->filename;
-    $r->log_error("Apache::PerlRun->readscript $filename")
-	    if $Debug && $Debug & 4;
-    my $fh = Apache::gensym(__PACKAGE__);
-    open $fh, $filename;
-    local $/;
-    my $code = <$fh>;
-    return \$code;
+    my $pr = shift;
+    $pr->{'code'} = $pr->slurp_filename;
 }
 
 sub error_check {
-    my $r = shift;
+    my $pr = shift;
     if ($@ and substr($@,0,4) ne " at ") {
-	$r->log_error("PerlRun: `$@'");
-	$@{$r->uri} = $@;
+	$pr->log_error("PerlRun: `$@'");
+	$@{$pr->uri} = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return SERVER_ERROR;
     }
@@ -137,11 +211,12 @@ my(%switches) = (
 );
 
 sub parse_cmdline {
-    my($r, $sub) = @_;
-    my($line) = $$sub =~ /^(.*)$/m;
+    my($pr, $code) = @_;
+    $code ||= $pr->{'code'};
+    my($line) = $$code =~ /^(.*)$/m;
     my(@cmdline) = split /\s+/, $line;
-    return $sub unless @cmdline;
-    return $sub unless shift(@cmdline) =~ /^\#!/;
+    return $code unless @cmdline;
+    return $code unless shift(@cmdline) =~ /^\#!/;
     my($s, @s, $prepend);
     $prepend = "";
     for $s (@cmdline) {
@@ -153,41 +228,52 @@ sub parse_cmdline {
 	    $prepend .= &{$switches{$_}};
 	}
     }
-    $$sub =~ s/^/$prepend/ if $prepend;
-    return $sub;
+    $$code =~ s/^/$prepend/ if $prepend;
+    return $code;
+}
+
+sub chdir_file {
+    my($pr, $dir) = @_;
+    $pr->{'_r'}->chdir_file($dir ? $dir : $pr->filename);
+}
+
+sub set_script_name {
+    my($pr) = @_;
+    *0 = \$pr->filename;
 }
 
 sub handler {
     my $r = shift;
-
-    my $rc = can_compile($r);
+    my $pr = Apache::PerlRun->new($r);
+    my $rc = $pr->can_compile;
     return $rc unless $rc == OK;
 
-    my $package = namespace($r);
-    my $code = readscript($r);
-    parse_cmdline($r, $code);
+    my $package = $pr->namespace;
+    my $code = $pr->readscript;
+    $pr->parse_cmdline($code);
 
-    *0 = \$r->filename;
-    $r->chdir_file;
+    $pr->set_script_name;
+    $pr->chdir_file;
+    my $line = $pr->mark_line;
     local %INC = %INC;
 
     my $eval = join '',
 		    'package ',
 		    $package,
 		    ';use Apache qw(exit);',
-		    "\n#line 1 ", $r->filename, "\n",
+                    $line,
 		    $$code,
                     "\n";
-    compile($r, \$eval);
+    $rc = $pr->compile(\$eval);
 
-    chdir $Apache::Server::CWD;
+    $pr->chdir_file("$Apache::Server::CWD/");
 
     {   #flush the namespace
 	no strict;
 	%{$package.'::'} = ();
     }
 
-    return error_check($r);
+    return $rc;
 }
 
 1;

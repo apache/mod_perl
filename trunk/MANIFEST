@@ -49,6 +49,7 @@ lib/Apache/Options.pm
 lib/Apache/PerlRun.pm
 lib/Apache/PerlSections.pm
 lib/Apache/Registry.pm
+lib/Apache/RegistryNG.pm
 lib/Apache/RegistryLoader.pm
 lib/Apache/Resource.pm
 #lib/Apache/Safe.pm
