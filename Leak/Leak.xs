@@ -121,7 +121,7 @@ static long check_sv(void *p, SV *sv, long hwm)
 {
     char *state = lookup((struct hash_s **)p, sv, t_new); 
     if (state != t_old) { 
-	fprintf(stderr, "%s %p : ", state ? state : t_new, sv); 
+	PerlIO_printf(PerlIO_stderr(), "%s %p : ", state ? state : t_new, sv); 
 	sv_dump(sv);
     }
     return hwm+1;

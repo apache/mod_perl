@@ -850,10 +850,21 @@ int perl_handler(request_rec *r)
     dPPDIR;
     dPPREQ;
     dTHR;
-    GV *gv = gv_fetchpv("SIG", TRUE, SVt_PVHV);
+    GV *gv;
+
+#ifdef USE_ITHREADS
+    dTHX;
+
+    if (!aTHX) {
+	PERL_SET_CONTEXT(perl);
+    }
+#endif
 
     (void)acquire_mutex(mod_perl_mutex);
-    
+
+    gv = gv_fetchpv("SIG", TRUE, SVt_PVHV);
+
+   
 #if 0
     /* force 'PerlSendHeader On' for sub-requests
      * e.g. Apache::Sandwich 
@@ -1299,6 +1310,14 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
     I32 i, do_clear=FALSE;
     SV *sub, **svp; 
     int hook_len = strlen(hook);
+
+#ifdef USE_ITHREADS
+    dTHX;
+
+    if (!aTHX) {
+	PERL_SET_CONTEXT(perl);
+    }
+#endif
 
     if(handlers == Nullav) {
 	if(hv_exists(stacked_handlers, hook, hook_len)) {
