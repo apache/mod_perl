@@ -125,7 +125,7 @@ sub configure {
     set_modperl_version();
 
     if ($old_modperl_version) {
-        $old_modperl_version =~ s/(\d\d)(\d\d)/$1_$2/;
+        $old_modperl_version =~ s/(\d\d\d?)(\d\d)/$1_$2/;
         my $vstring = "mod_perl/$old_modperl_version";
         print "$vstring installation detected...";
 
@@ -136,7 +136,7 @@ sub configure {
         my $path = canonpath $old_modperl_pm;
         # XXX: doesn't handle relative paths yet
         # if PREFIX=/foo/bar is used, and it's not the same as the
-        # path where mod_perl < 1.99_22 is installed
+        # path where mod_perl < 1.999_22 is installed
         if ($prefix && $path !~ /^$prefix/) {
             print "ok (will install mod_perl/$VERSION into PREFIX=$prefix, " .
                 "no collision)\n";
