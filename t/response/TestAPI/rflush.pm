@@ -34,13 +34,14 @@ sub braket {
 sub response {
     my $r = shift;
 
-    # just to make sure that print() won't flush, or we would get the
-    # count wrong
-    local $| = 0;
-
     $r->content_type('text/plain');
-    $r->print("<foo");
-    $r->rflush;     # this sends the data in the buffer + flush bucket
+
+    # print is now unbuffered
+    local $| = 1;
+    $r->print("<foo"); # this sends the data in the buffer + flush bucket
+
+    # print is now buffered
+    local $| = 0;
     $r->print("bar>");
     $r->rflush;     # this sends the data in the buffer + flush bucket
     $r->print("<who");
