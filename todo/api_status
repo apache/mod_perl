@@ -32,7 +32,7 @@ VV src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/PerlSections.pod
 -- src/docs/2.0/api/Apache/Process.pod
 -- src/docs/2.0/api/Apache/Reload.pod
--- src/docs/2.0/api/Apache/RequestIO.pod
+VV src/docs/2.0/api/Apache/RequestIO.pod
 -- src/docs/2.0/api/Apache/RequestRec.pod
 -- src/docs/2.0/api/Apache/RequestUtil.pod
 -- src/docs/2.0/api/Apache/Response.pod
