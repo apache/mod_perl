@@ -41,6 +41,10 @@ testing cvs snapshots.
 Brian provides the bandwidth for perl.apache.org along with the
 mailing list and cvs repository.
 
+=item Daniel (daniel-authenradius@electricrain.com)
+
+Author of the Apache::AuthenRadius module.
+
 =item David Landgren (david@landgren.net)
 
 David maintains the mod_perl_traps.pod document.
@@ -134,19 +138,23 @@ Mark was also the first person besides Doug to write an Apache::* module,
 the first version of Apache::ePerl.
 He was also the first person to build and run mod_perl under Windows 95!
 
+=item Matthew Darwin (matthew@davin.ottawa.on.ca)
+
+Author of the Apache::RandomLocation module.
+
 =item Maurice Aubrey (maurice@hevanet.com)
 
 Author of the Apache::Traffic module.
-
-=item Michael Smith (mjs@iii.co.uk)
-
-Michael contributed the Apache::ProxyPass module.
 
 =item Michael Parker (parker@austx.tandem.com)
 
 Michael gave us Apache::AuthenSMB, a mod_perl NT Authentication module.
 
-=item Mike Fletcher (lemur1@mindspring.com)
+=item Michael Smith (mjs@iii.co.uk)
+
+Michael contributed the Apache::ProxyPass module.
+
+=item Mike Fletcher (fletch@phydeaux.org)
 
 Fletch gave us Apache::Mmap.
 
@@ -182,7 +190,7 @@ Salvador has helped bang out bugs and traps with sfio enabled
 mod_perls, along with various bug spotting and stopping since the
 early days.  He has also contributed to the Apache/Perl API.
 
-=item Vivek Khera (khera@kci.kcilink.com)
+=item Vivek Khera
 
 Vivek has saved many lives with his mod_perl_tuning.pod document.
 
