@@ -281,8 +281,8 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
-                               "uncalled handlers\n",
-                               status, desc, av->nelts-i-1);
+                               "uncalled %s handlers\n",
+                               status, av->nelts-i-1, desc);
                 }
 #endif
                 break;
@@ -298,8 +298,8 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "OK ends the %s stack, "
-                               "leaving %d uncalled handlers\n",
-                               desc, av->nelts-i-1);
+                               "leaving %d uncalled %s handlers\n",
+                               desc, av->nelts-i-1, desc);
                 }
 #endif
                 break;
@@ -309,8 +309,8 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
-                               "uncalled handlers\n",
-                               status, desc, av->nelts-i-1);
+                               "uncalled %s handlers\n",
+                               status, av->nelts-i-1, desc);
                 }
 #endif
                 break;
