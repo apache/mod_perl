@@ -44,6 +44,10 @@
 #   define MP_PERL_5_6_x
 #endif
 
+#if defined(MP_PERL_5_6_x) && (PERL_SUBVERSION == 0)
+#   define MP_PERL_5_6_0
+#endif
+
 #if defined(MP_PERL_5_6_x) && (PERL_SUBVERSION == 1)
 #   define MP_PERL_5_6_1
 #endif

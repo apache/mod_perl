@@ -530,11 +530,15 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
 
 void modperl_perl_exit(pTHX_ int status)
 {
+    const char *pat = NULL;
     ENTER;
     SAVESPTR(PL_diehook);
     PL_diehook = Nullsv; 
     sv_setpv(ERRSV, "");
-    Perl_croak(aTHX_ NULL);
+#ifdef MP_PERL_5_6_0
+    pat = ""; /* NULL segvs in 5.6.0 */
+#endif
+    Perl_croak(aTHX_ pat);
 }
 
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
