@@ -382,13 +382,6 @@ if($experimental{PERL_DEFAULT_OPMASK} > 1) {
     $PERL_EXTRA_CFLAGS .= " -DPERL_SAFE_STARTUP=1";
 }
 
-if ($PERL_USELARGEFILES and $] >= 5.006) {
-    $PERL_EXTRA_CFLAGS .= " $Config{ccflags}";
-}
-
-# apache-1.3.xx won't compile with -D_GNU_SOURCE
-$PERL_EXTRA_CFLAGS =~ s/-D_GNU_SOURCE//;
-
 for (keys %PassEnv) {
     $ENV{$_} = $$_ if $$_;
 }
@@ -429,6 +422,13 @@ if ($USE_APXS) {
 }
 
 system_sanity_check();
+
+if ($PERL_USELARGEFILES and $] >= 5.006) {
+    $PERL_EXTRA_CFLAGS .= " $Config{ccflags}";
+}
+
+# apache-1.3.xx won't compile with -D_GNU_SOURCE
+$PERL_EXTRA_CFLAGS =~ s/-D_GNU_SOURCE//;
 
 if ($USE_APACI) {
     print "Will configure via APACI";
@@ -2459,6 +2459,9 @@ sub uselargefiles_check {
     local $Apache::src::APXS = $WITH_APXS;
     my $cflags = Apache::src->new->apxs('-q' => 'CFLAGS') || '';
     return if $cflags =~ /LARGEFILE/;
+
+    $PERL_USELARGEFILES=0; #just do it since
+    return; #nobody seems to listen to the warning below
 
     phat_warn(<<EOF);
 Your Perl is uselargefiles enabled, but Apache is not, suggestions:
