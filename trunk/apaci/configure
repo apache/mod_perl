@@ -16,6 +16,9 @@ my_config_sh="./mod_perl.config.sh"
 my_config_override="$*"
 my_makefileconf="Makefile"
 my_makefiletmpl="Makefile.tmpl"
+my_sourcedir="../src/modules/perl"
+my_sourcefiles="mod_perl.c mod_perl.h perl_config.c perl_util.c perlio.c Apache.xs Constants.xs ModuleConfig.xs Tie.xs" 
+my_typemapdir="../Apache"
 
 #   find APXS
 my_apxs=""
@@ -70,6 +73,13 @@ my_apxs_includes="-I`$my_apxs -q INCLUDEDIR`"
 #   friendly header
 echo "Configuring mod_perl for building via APXS" 2>&1
 
+#   fetch the source files
+echo "$my_prefix Creating a local mod_perl source tree"
+for my_file in $my_sourcefiles; do
+    cp $my_sourcedir/$my_file .
+done
+cp $my_typemapdir/typemap .
+
 #   begin generation of Makefile
 echo "##" >$my_makefileconf
 echo "##  Makefile -- mod_perl stand-alone build environment Makefile" >>$my_makefileconf
@@ -81,6 +91,8 @@ echo "INCLUDES=$my_apxs_includes" >>$my_makefileconf
 echo "RANLIB=ranlib" >>$my_makefileconf
 echo "LIBEXT=so" >>$my_makefileconf
 echo "APXS=$my_apxs" >>$my_makefileconf
+echo "#   own special stuff" >>$my_makefileconf
+echo "ADD_DISTCLEAN_FILES=$my_sourcefiles typemap" >>$my_makefileconf
 
 #   transform mod_perl config into Makefile parameters
 echo "$my_prefix Setting up mod_perl build environment (Makefile)"
