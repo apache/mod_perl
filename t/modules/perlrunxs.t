@@ -15,7 +15,7 @@ for (qw(.. .)) {
 
 my $i = 0;
 my @internal = map { "$dir/internal/$_" } 
-qw(api.t http-get.t http-post.t tie.t);
+qw(api.t http-get.t http-post.t table.t);
 my $tests = @internal;
 print "1..$tests\n";
 
