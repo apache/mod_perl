@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Fix bug in modperl_package_clear_stash() segfaulting when
+encountering declared but not yet defined subroutines.
+[Steve Hay <steve.hay@uk.radan.com>. Gozer]
+
 win32 needs PERL_SYS_INIT3/PERL_SYS_TERM calls [Steve Hay
 <steve.hay@uk.radan.com>]
 
