@@ -10,13 +10,6 @@
 #define ap_hook_fixup  ap_hook_fixups
 #define ap_hook_log    ap_hook_log_transaction
 
-modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name);
-
-modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
-                                       modperl_handler_t *h);
-
-void modperl_handler_make_args(pTHX_ AV **avp, ...);
-
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      server_rec *s, AV *args);
 

@@ -511,8 +511,8 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
-my @c_src_names = qw(interp tipool log config options callback gtop
-                     util filter mgv pcw);
+my @c_src_names = qw(interp tipool log config options callback handler
+                     gtop util filter mgv pcw);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }

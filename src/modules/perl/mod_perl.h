@@ -16,6 +16,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_types.h"
 #include "modperl_util.h"
 #include "modperl_config.h"
+#include "modperl_handler.h"
 #include "modperl_callback.h"
 #include "modperl_tipool.h"
 #include "modperl_interp.h"
