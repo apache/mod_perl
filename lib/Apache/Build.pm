@@ -19,6 +19,8 @@ use constant HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
 
 use constant WIN32 => $^O eq 'MSWin32';
+use constant MSVC  => WIN32() && ($Config{cc} eq 'cl');
+
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 our $VERSION = '0.01';
@@ -180,7 +182,10 @@ sub ap_ccopts {
 
     if ($self->{MP_DEBUG}) {
         $self->{MP_TRACE} = 1;
-        $ccopts .= " -g -DMP_DEBUG";
+        my $win32_flags = MSVC  ? '-Od -MD -Zi' : '';
+        my $debug_flags = WIN32 ? $win32_flags : '-g';
+        $ccopts .= " $debug_flags" unless $Config{optimize} =~ /$debug_flags/;
+        $ccopts .= ' -DMP_DEBUG';
     }
 
     if ($self->{MP_CCOPTS}) {
