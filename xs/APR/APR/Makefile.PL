@@ -1,12 +1,16 @@
+use strict;
+use warnings;
+
 use lib qw(../lib);
 use ModPerl::BuildMM ();
+use File::Basename qw(dirname);
 use Config;
 
-my $prefix = ModPerl::BuildMM::build_config()->apxs(-q => 'PREFIX');
+my $apr_bindir = ModPerl::BuildMM::build_config()->apr_bindir();
 
 # XXX: this works only with libapr 0.9.2+ (not on win32)
 my @libs = grep $_, map { -x $_ && qx{$_ --link-ld --libs} }
-    map { qq{$prefix/bin/$_-config} } qw(apr apu);
+    map { qq{$apr_bindir/$_-config} } qw(apr apu);
 chomp @libs;
 my $libs = join ' ', @libs;
 
