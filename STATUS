@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/08/20 16:45:00 $]
+   Last modified at [$Date: 2002/08/28 03:28:35 $]
 
 Release:
 --------
@@ -12,10 +12,10 @@ Release:
    1.99_01    : Released Apr 06, 2002
 
 
-   ===========================================
-   === We are using the todo/ directory to ===
-   === track status; please look there ... ===
-   ===========================================
+   ====================================================
+   === We are still using the todo/ directory to    ===
+   === track some status; please look there too ... ===
+   ====================================================
 
 
 
@@ -54,7 +54,23 @@ Available Patches:
 Needs Patch or Further Investigation:
 -------------------------------------
 
+* pluggable <Perl> sections have been implemented but need a default
+  handler to actually convert the Perl code into apache config
 
+* Apache->httpd_conf compat method mapping to Apache::Directive->insert
+
+* directive handlers are supported but need some work for 1.x compat
+  - Apache::ModuleConfig->get needs a compat method mapping to
+    Apache::Module->get_config
+
+  - Apache::CmdParms::info for CmdParms implemented by Perl modules
+
+  - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
+    what Apache::Directive->as_string does, but one char or line at a time
+
+  - converting req_override and args_how string values to constant
+    values, e.g. "OR_ALL" -> Apache::OR_ALL, "TAKE1" -> Apache::TAKE1
+  
 Open Issues or Core Enhancements:
 ---------------------------------
 
