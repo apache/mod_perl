@@ -3,6 +3,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- dso fixes
+[Daniel Jacobowitz <drow@false.org>, Alan Burlison <Alan.Burlison@uk.sun.com>]
+
 - Support of <CR> <LF> in a EBCDIC environment
 [Ignasi Roca <ignasi.roca@fujitsu.siemens.es>]
 
@@ -64,42 +67,27 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 
 - should Apache::Registry use -M or (stat _)[9]?
 
-- restart troubles: Apache::DBI, @INC
-
 - ActivePerl?
 
 - ldopts() spits out ccdlflags when linker is ld
 
 - Apache::Include->virtual should return run() value, not status()
 
-- win32 socket bug (WSAStartup() needed for each thread?)
-
 - Makefile.PL should always push load_modules.pl for 'make test' 
-
-- make PERL_STARTUP_DONE_CHECK=1 default for win32?
-
-- turn of strip of httpd in Apache's install.sh
 
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
 
-- sfio/solaris problem
-Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
-
 - Gerald's report of Embperl/sub-request/print breakage
 
-- need turn of strip of httpd during 'make install'
+- need turn of strip of httpd during 'make install' ?
 
 - SSIs executed using /bin/sh, not suexec as configured?
   Theo Van Dinter <felicity@kluge.net>
 
 - /perl/perl-status?sig dumps core under hpux 10.20
    [David-Michael.Lincke@unisg.ch]
-
-- USE_DSO=1 --> END blocks are run at startup time
-
-- USE_DSO=1 broken on most platforms (core dump in dlclose)
 
 - $r cannot use many api methods during ChildInit/ChildExit -> SEGV
 
