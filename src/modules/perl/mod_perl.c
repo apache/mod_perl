@@ -526,6 +526,8 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
     int threaded_mpm;
     ap_mpm_query(AP_MPMQ_IS_THREADED, &threaded_mpm);
 
+    MP_TRACE_g(MP_FUNC, "mod_perl globals are configured\n");
+    
     modperl_global_init_pconf(pconf, pconf);
     modperl_global_init_threaded_mpm(pconf, threaded_mpm);
     modperl_global_init_server_rec(pconf, s);
