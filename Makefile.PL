@@ -8,6 +8,8 @@ BEGIN {
     } 
 }
 
+sub MMN_130 () { 19980527 }
+
 use ExtUtils::MakeMaker;
 use Config;
 use FileHandle ();
@@ -349,7 +351,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	}
 	#++$NO_HTTPD if $USE_APACI;
 	my $mmn = magic_number($APACHE_SRC);
-	if(($mmn < 19980527) and $USE_APACI) { #1.3.0
+	if(($mmn < MMN_130) and $USE_APACI) { #1.3.0
 	    print "Sorry, need 1.3.0+ for USE_APACI\n";
 	    $USE_APACI = $USE_DSO = 0;
 	}
@@ -488,11 +490,11 @@ if($DYNAMIC) {
     }
 }
 
-if($APACHE_SRC) {
+if($APACHE_SRC or $USE_APXS) {
     ++$STATIC if grep { $_ eq lc($Config{osname}) } qw(aix svr4 unixware);
 
-    my $mmn    = magic_number($APACHE_SRC);
-    my $httpdv = httpd_version($APACHE_SRC,1);
+    my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
+    my $httpdv = $USE_APXS ? 130     : httpd_version($APACHE_SRC,1);
 
     unless($httpdv >= 120) {
 	$callback_hooks{PERL_HEADER_PARSER} = 0;
@@ -527,20 +529,15 @@ if($APACHE_SRC) {
 	    "(need 1.3.0 or higher)";
     }
 
-#    if($Config{extensions} =~ /Thread/) {
-#	$PERL_SSI = 0;
-#	$cant_hook{PERL_SSI} = "(won't build w/ threaded Perl)";
-#    }
-
-    setup_for_static();
+    setup_for_static() unless $USE_APXS;
 
     iedit "$APACHE_SRC/modules/perl/Makefile",
-    "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!" unless $USE_APACI;
+    "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!" unless $USE_APACI or $USE_APXS;
 
     for (@callback_hooks) {
 	($k,$v) = ($_,$callback_hooks{$_});
 
-	unless ($USE_APACI) {
+	unless ($USE_APACI or $USE_APXS) {
 	    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^$k /#$k /" if $v;
 	}
 
@@ -578,12 +575,12 @@ if($APACHE_SRC) {
 	}
 
 	print "\n";
-	unless ($USE_APACI) {
+	unless ($USE_APACI or $USE_APXS) {
 	    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^($_) /#\$1 /"
 		if $$_;
 	}
     }
-    unless ($USE_APACI) {
+    unless ($USE_APACI or $USE_APXS) {
 	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#TRACE/TRACE/" if $PERL_TRACE;
     }
 
@@ -615,7 +612,7 @@ if($APACHE_SRC) {
 	    }
 	}
 
-	unless ($USE_APACI) {
+	unless ($USE_APACI or $USE_APXS) {
 	    iedit "$APACHE_SRC/modules/perl/Makefile",	
 	    "s:^#APACHE_SSL.*:APACHE_SSL = $SSL_CFLAGS:";
 	}
@@ -645,27 +642,11 @@ INCDIR = $incdir
 
 EOF
 
-    unless ($USE_APACI) {
+    unless ($USE_APACI or $USE_APXS) {
 	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#__ORIGINAL__/$edit_note/";
     }
-    #needed as of 1.3b1+ 
 
-    #XXX: argh, what a bloody nightmare!!!
-    #if($mmn >= 19970912) { 
-    if(0) {
-	my $fh = FileHandle->new("$APACHE_SRC/modules/perl/Makefile");
-	my @file = <$fh>;
-	close $fh;
-	$fh = FileHandle->new(">$APACHE_SRC/modules/perl/Makefile");
-	while (@file) {
-	    last if $file[0] =~ /Start of Makefile.PL created section/;
-    	    shift @file;
-	}
-	print $fh @file;
-	close $fh;
-    }
-
-    if($mmn >= 19970912 and not $USE_APACI) {     #1.3b1
+    if($mmn >= 19970912 and not $USE_APACI and not $USE_APXS) {     #1.3b1
 	system "cat $APACHE_SRC/Makefile.config $APACHE_SRC/modules/perl/Makefile > /tmp/mpmf.$$";
 	system "mv /tmp/mpmf.$$ $APACHE_SRC/modules/perl/Makefile";
     }
@@ -674,18 +655,23 @@ EOF
 	push @test_pre_init, 
 	"\t", '$(CP) t/conf/mod_perl_srm.conf /tmp', "\n";
     }
-    unless (-l "t/httpd") {
-	system "$Config{lns} $APACHE_SRC/httpd t/httpd";
+    unless ($USE_APXS) {
+	unless (-l "t/httpd") {
+	    system "$Config{lns} $APACHE_SRC/httpd t/httpd";
+	}
+	write_extra_tests();
     }
-    write_extra_tests();
 }
 
 unless (-e "t/net/config.pl") {
     cp "t/net/config.pl.dist", "t/net/config.pl";
 }
+
 unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
     init_tests_and_config();
 }
+
+init_tests_and_config() if $USE_APXS;
 
 sub init_tests_and_config {
     cp "t/conf/httpd.conf-dist", "t/conf/httpd.conf";
@@ -716,7 +702,7 @@ sub init_tests_and_config {
 	    die "can't open t/net/config.pl $!";
 
 	my $apaci_cfg = APACI->init;
-    
+
 	my($k,$v);
 	print $hf "%callback_hooks = (\n";
 	while(($k,$v) = each %callback_hooks) {
@@ -730,7 +716,7 @@ sub init_tests_and_config {
 	$apaci_cfg->close if $apaci_cfg;
     }
 
-    if($USE_APACI and not $PREP_HTTPD) {
+    if($USE_APACI and not $PREP_HTTPD and not $USE_APXS) {
 	my $cmd = "CC=\"$Config{cc}\" " .
 		  "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
@@ -995,7 +981,10 @@ sub MY::top_targets {
     my $string = $self->MM::top_targets;
     return $string unless $USE_APXS or $USE_APACI or $APACHE_SRC;
 
-    if($USE_APACI and !$PREP_HTTPD) {
+    if($USE_APXS) {
+	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apxs_libperl $2/;
+    }
+    elsif($USE_APACI and !$PREP_HTTPD) {
 	$string =~ s/(pure_all\s+::\s+)(.*)/$1 apaci_httpd $2/;
     }
     elsif($APACHE_SRC) {
@@ -1005,9 +994,7 @@ sub MY::top_targets {
 	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apache_httpd $2/;
 	}
     }
-    if($USE_APXS) {
-	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apxs_libperl $2/;
-    }
+
     $string .= <<'EOF';
 
 apxs_distclean:
@@ -1654,9 +1641,16 @@ sub ldopts {
 }
 
 sub APACI::init {
-    my $lib_cfg = "$APACHE_SRC/modules/perl/mod_perl.config";
-
-    return undef unless $USE_APACI;
+    my $lib_cfg;
+    if($USE_APXS) {
+	$lib_cfg = "apaci/mod_perl.config";
+    }
+    elsif($USE_APACI) {
+	$lib_cfg = "$APACHE_SRC/modules/perl/mod_perl.config";
+    }
+    else {
+	return undef;
+    }
     unless (File::Compare::compare($lib_cfg,"apaci/mod_perl.config") == 0) {
 	#warn "mod_perl.config already edited\n";
 	#return undef;
