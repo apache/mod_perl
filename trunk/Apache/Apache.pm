@@ -1116,6 +1116,36 @@ Returns true if the specified callback hook is enabled:
 
 =back
 
+=head1 GLOBAL VARIABLES
+
+=over 4
+
+=item $Apache::Server::Starting
+
+Set to true when the server is starting.
+
+=item $Apache::Server::ReStarting
+
+Set to true when the server is starting.
+
+=item $Apache::Server::ConfigTestOnly
+
+Set to true when the server is running in configuration test mode
+(C<httpd -t>).
+
+   <Perl>
+    # don't continue if it's a config test!
+    print("Skipping the <Perl> code!\n"),
+    return if $Apache::Server::ConfigTestOnly;
+   
+    print "Running the <Perl> code!\n"
+    # some code here
+   
+   </Perl>
+
+
+=back
+
 =head1 SEE ALSO
 
 perl(1),
