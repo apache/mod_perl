@@ -33,8 +33,8 @@ HvNAME(GvSTASH(CvGV(cv))), GvNAME(CvGV(cv))
 #define mpxs_sv_is_object(sv) \
 (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))
 
-#define mpxs_sv_object_deref(sv) \
-(mpxs_sv_is_object(sv) ? SvIV((SV*)SvRV(sv)) : NULL)
+#define mpxs_sv_object_deref(sv, type) \
+(mpxs_sv_is_object(sv) ? (type *)SvIVX((SV*)SvRV(sv)) : NULL)
 
 #define mpxs_sv2_obj(obj, sv) \
 (obj = mp_xs_sv2_##obj(sv))
