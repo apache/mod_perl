@@ -55,6 +55,8 @@ $i = 1;
 open HOOKS, "docs/hooks.txt";
 while(<HOOKS>) {
     chomp;
+    s/^\s*//; s/\s*$//;
+    next unless $_;
     next if $Seen{$_}++;
     print "ok $i\n"; $i++;
     last if $i > $hook_tests;
