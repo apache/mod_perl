@@ -77,7 +77,29 @@ sub WriteMakefile {
         }
     }
 
-    my $libs = join ' ', $build->apache_libs, $build->modperl_libs;
+    my $libs;
+    my @libs = ();
+    if (Apache::Build::WIN32) {
+        # in order to decouple APR/APR::* from mod_perl.so,
+        # link these modules against the static aprext.lib,
+        # rather than mod_perl.lib (which would demand mod_perl.so
+        # be available). For other modules, use mod_perl.lib as
+        # usual. This is done for APR in xs/APR/APR/Makefile.PL.
+        my $aprext = catfile $build->{cwd},
+            qw(blib arch Apache2 auto aprext aprext.lib);
+        my $name = $args{NAME};
+        if ($name =~ /^APR::\w+$/) {
+            @libs = ($build->apache_libs, $aprext);
+        }
+        else {
+            @libs = ($build->apache_libs, $build->modperl_libs);
+        }
+    }
+    else {
+        @libs = ($build->apache_libs, $build->modperl_libs);
+    }
+    $libs = join ' ', @libs;
+
     my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
 
     my @opts = (

@@ -149,17 +149,32 @@ sub configure {
 
     $build->generate_apache2_pm;
 
+    # On Win32, in order to decouple APR::* from mod_perl.so, we
+    # make up a static library aprext.lib of the symbols required from
+    # src/modules/perl/*.c (see xs/APR/aprext/Makefile.PL), and
+    # then link APR/APR::* against this library. The reason for
+    # this is that, unlike Unix, if we had linked APR/APR::* against
+    # mod_perl.lib, then use of APR/APR::* would demand mod_perl.so
+    # be available, even if these symbols are supplied by another
+    # loaded library (which is done for unix by APR.so - see
+    # xs/APR/APR/Makefile.PL). This also means we must ensure aprext.lib
+    # is built before any of the APR/APR::* modules (see the aprext
+    # target in the MY::top_targets sub below), as symbols must
+    # get resolved at link time.
+
     if (WIN32()) {
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
+        # this must also be done for aprext.lib, build in xs/APR/aprext/;
+        # we must create a dummy aprext.lib to pass the -e test.
         require File::Path;
         my $lib1 = "src/modules/perl/$build->{MP_LIBNAME}.lib";
-        my $apr_blib = catdir qw(blib arch Apache2 auto APR);
+        my $apr_blib = catdir qw(blib arch Apache2 auto aprext);
         unless (-d $apr_blib) {
             File::Path::mkpath($apr_blib) or die "mkdir $apr_blib failed: $!";
         }
-        my $lib2 = catfile $apr_blib, 'APR.lib';
+        my $lib2 = catfile $apr_blib, 'aprext.lib';
         foreach my $lib ($lib1, $lib2) {
             unless (-e $lib) {
                 open my $fh, '>', $lib or die "open $lib: $!";
@@ -471,13 +486,13 @@ sub MY::top_targets {
     my $string = $self->ModPerl::BuildMM::MY::top_targets;
 
     if (WIN32) {
-        ModPerl::MM::add_dep(\$string, pure_all => 'apr_lib');
+        ModPerl::MM::add_dep(\$string, pure_all => 'aprext');
 
-        my $apr_lib = catdir qw(xs APR APR);
+        my $aprext = catdir qw(xs APR aprext);
         $string .= <<"EOF";
 
-apr_lib:
-	cd "$apr_lib" && \$(MAKE) -f \$(FIRST_MAKEFILE) all \$(PASTHRU)
+aprext:
+        cd "$aprext" && \$(MAKE) -f \$(FIRST_MAKEFILE) all \$(PASTHRU)
 
 EOF
     }
