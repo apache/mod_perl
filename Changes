@@ -69,6 +69,7 @@ APR::BucketType: [Stas]
 APR::Brigade [Stas]
   - destroy() now throws APR::Error exception (not returning rc)
   - rename empty => is_empty
+  - added the method cleanup()
 
 APR::Bucket: [Stas]
   - read() now returns read data and throws APR::Error exception (not
