@@ -1,7 +1,7 @@
 package Apache::Status;
 use strict;
 
-$Apache::Status::VERSION = '2.01';
+$Apache::Status::VERSION = '2.02';
 
 my %is_installed = ();
 my $Is_Win32 = ($^O eq "MSWin32");
@@ -58,8 +58,8 @@ sub handler {
     my $sub = "status_$qs";
     no strict 'refs';
 
-    if($qs =~ /^noh_/) {
-	return &{$qs}($r);
+    if($qs =~ s/^(noh_\w+).*/$1/) {
+	return &{$qs}($r, $newQ->($r));
     }
 
     header($r);
@@ -67,7 +67,7 @@ sub handler {
 	$r->print(@{ &{$sub}($r, $newQ->($r)) });
     }
     elsif ($qs and %{$qs."::"}) {
-	$r->print(symdump($r, $qs));
+	$r->print(symdump($r, $newQ->($r), $qs));
     }
     else {
 	my $uri = $r->uri;
@@ -96,7 +96,7 @@ EOF
 }
 
 sub symdump {
-    my($r, $package) = @_;
+    my($r, $q, $package) = @_;
     unless ($is_installed{"Devel::Symdump"}) {
 	return <<EOF;
 Please install the <a href="$CPAN_base/Devel/">Devel::Symdump</a> module.
@@ -105,12 +105,12 @@ EOF
     my $meth = "new";
     $meth = "rnew" if lc($r->dir_config("StatusRdump")) eq "on";
     my $sob = Devel::Symdump->$meth($package);
-    return $sob->Apache::Status::as_HTML($package, $r);
+    return $sob->Apache::Status::as_HTML($package, $r, $q);
 }
 
 sub status_symdump { 
     my($r,$q) = @_;
-    [symdump($r, 'main')];
+    [symdump($r, $q, 'main')];
 }
 
 sub status_section_config {
@@ -265,7 +265,9 @@ sub status_cv_dump {
     push @retval, b_graph_link($r, $q, $name);
     push @retval, b_lexinfo_link($r, $q, $name);
     push @retval, b_terse_link($r, $q, $name);
+    push @retval, b_terse_size_link($r, $q, $name);
     push @retval, b_deparse_link($r, $q, $name);
+    push @retval, b_fathom_link($r, $q, $name);
     push @retval, "</pre>";
     \@retval;
 }
@@ -304,6 +306,8 @@ sub noh_b_lexinfo {
     print ${ $lexi->dumper($info) };
 }
 
+my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
+
 sub b_terse_link {
     my($r, $q, $name) = @_;
     return unless status_config($r, "StatusTerse");
@@ -311,8 +315,9 @@ sub b_terse_link {
     my $script = $q->script_name;
     my @retval;
     for (qw(exec slow)) {
+	my $exp = "$b_terse_exp{$_} order";
 	push @retval,
-	qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree ($_)</a>\n);
+	qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree Dump ($exp)</a>\n);
     }
     join '', @retval;
 }
@@ -322,8 +327,78 @@ sub noh_b_terse {
     $r->send_http_header("text/plain");
     no strict 'refs';
     my($arg, $name) = (split "/", $r->uri)[-2,-1];
-    $r->print("Syntax Tree ($arg) for $name\n\n");
+    $r->print("Syntax Tree Dump ($b_terse_exp{$arg}) for $name\n\n");
     B::Terse::compile($arg, $name)->();
+}
+
+sub b_terse_size_link {
+    my($r, $q, $name) = @_;
+    return unless status_config($r, "StatusTerseSize");
+    return unless eval { require B::TerseSize };
+    my $script = $q->script_name;
+    my @retval;
+    for (qw(exec slow)) {
+	my $exp = "$b_terse_exp{$_} order";
+	push @retval,
+	qq(\n<a href="$script/$_/$name?noh_b_terse_size">Syntax Tree Size ($exp)</a>\n);
+    }
+    join '', @retval;
+}
+
+sub noh_b_terse_size {
+    my $r = shift;
+    $r->send_http_header("text/html");
+    $r->print('<pre>');
+    my($arg, $name) = (split "/", $r->uri)[-2,-1];
+    my $uri = $r->location;
+    my $link = qq{<a href="$uri/$name/CODE?cv_dump">$name</a>};
+    $r->print("Syntax Tree Size ($b_terse_exp{$arg} order) for $link\n\n");
+    B::TerseSize::compile($arg, $name)->();
+}
+
+sub b_package_size_link {
+    my($r, $q, $name) = @_;
+    return unless status_config($r, "StatusPackageSize");
+    return unless eval { require B::TerseSize };
+    my $script = $q->script_name;
+    qq(<a href="$script/$name?noh_b_package_size">Memory Usage</a>\n);
+}
+
+sub noh_b_package_size {
+    my($r, $q) = @_;
+    $r->send_http_header("text/html");
+    $r->print('<pre>');
+    no strict 'refs';
+    my($package) = (split "/", $r->uri)[-1];
+    my $script = $q->script_name;
+    $r->print("Memory Usage for package $package\n\n");
+    my($subs, $opcount, $opsize) = B::TerseSize::package_size($package);
+    $r->print("Totals: $opsize bytes | $opcount OPs\n\n");
+    my($clen, $slen, $nlen);
+    my @keys = map {
+	$nlen = length > $nlen ? length : $nlen;
+	$_;
+    } (sort { $subs->{$b}->{size} <=> $subs->{$a}->{size} } keys %$subs);
+
+    $clen = length $subs->{$keys[0]}->{count};
+    $slen = length $subs->{$keys[0]}->{size};
+
+    for my $name (@keys) {
+	my $stats = $subs->{$name};
+	if ($name =~ /^my /) {
+	    printf "%-${nlen}s %${slen}d bytes\n", $name, $stats->{size};
+	}
+	elsif ($name =~ /^\*(\w+)\{(\w+)\}/) {
+	    my $link = qq(<a href="$script/$package\::$1/$2?data_dump">);
+	    printf "$link%-${nlen}s</a> %${slen}d bytes\n", $name, $stats->{size};
+	}
+	else {
+	    my $link = 
+	      qq(<a href="$script/slow/$package\::$name?noh_b_terse_size">);
+	    printf "$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n",
+	    $name, $stats->{size}, $stats->{count};
+	}
+    }
 }
 
 sub b_deparse_link {
@@ -338,13 +413,31 @@ sub b_deparse_link {
 sub noh_b_deparse {
     my $r = shift;
     $r->send_http_header("text/plain");
-    no strict 'refs';
-    my($name) = (split "/", $r->uri)[-1];
+    my $name = (split "/", $r->uri)[-1];
     $r->print("Deparse of $name\n\n");
     my $deparse = B::Deparse->new(split /\s+/, 
 				  $r->dir_config('StatusDeparseOptions')||"");
     my $body = $deparse->coderef2text(\&{$name});
     $r->print("sub $name $body");
+}
+
+sub b_fathom_link {
+    my($r, $q, $name) = @_;
+    return unless status_config($r, "StatusFathom");
+    return unless eval { require B::Fathom };
+    return unless $B::Fathom::VERSION >= 0.05;
+    my $script = $q->script_name;
+    return qq(\n<a href="$script/$name?noh_b_fathom">Fathom Score</a>\n);
+}
+
+sub noh_b_fathom {
+    my $r = shift;
+    $r->send_http_header("text/plain");
+    my $name = (split "/", $r->uri)[-1];
+    $r->print("Fathom Score of $name\n\n");
+    my $fathom = B::Fathom->new(split /\s+/, 
+				$r->dir_config('StatusFathomOptions')||"");
+    $r->print($fathom->fathom(\&{$name}));
 }
 
 sub peek_link {
@@ -381,9 +474,15 @@ sub noh_xref {
     B::Xref::compile($thing)->();
 }
 
+$Apache::Status::BGraphCache ||= 0;
+if ($Apache::Status::BGraphCache) {
+    Apache->push_handlers(PerlChildExitHandler => sub {
+			      unlink keys %Apache::Status::BGraphCache;
+			  });
+}
+
 sub noh_b_graph {
     my $r = shift;
-    require IO::File;
     require B::Graph;
 
     untie *STDOUT;
@@ -397,23 +496,29 @@ sub noh_b_graph {
     my $type = "dot";
     my $file = "$dir/$thing.$$.gif";
     
-    tie *STDOUT, "B::Graph", $r, $file;
-
-    B::Graph::compile("-$type", $thing)->();
-    
-    (tied *STDOUT)->{graph}->close;
+    unless (-e $file) {
+	tie *STDOUT, "B::Graph", $r, $file;
+	B::Graph::compile("-$type", $thing)->();
+	(tied *STDOUT)->{graph}->close;
+    }
 
     if(-s $file) {
-	my $fh = IO::File->new($file) or
+	local *FH;
+	open FH, $file or
 	    die "can't open $file $!";
 	$r->send_http_header("image/gif");
-	$r->send_fd($fh);
+	$r->send_fd(\*FH);
     }
     else {
 	$r->send_http_header("text/plain");
 	$r->print("Graph of $thing failed!\n");
     }
-    unlink $file;
+    if ($Apache::Status::BGraphCache) {
+	$Apache::Status::BGraphCache{$file}++;
+    }
+    else {
+	unlink $file;
+    }
 
     0;
 }
@@ -449,7 +554,7 @@ sub B::Graph::PRINT {
 my %can_dump = map {$_,1} qw(scalars arrays hashes);
 
 sub as_HTML {
-    my($self, $package, $r) = @_;
+    my($self, $package, $r, $q) = @_;
     my @m = qw(<TABLE>);
     my $uri = $r->uri;
     my $is_main = $package eq "main";
@@ -500,7 +605,8 @@ sub as_HTML {
 	push @m, "<TD>" . join(", ", @line) . "</TD></TR>\n";
     }
     push @m, "</TABLE>";
-    return join "\n", @m;
+
+    return join "\n", @m, "<hr>", b_package_size_link($r, $q, $package);
 }
 
 1;
@@ -596,6 +702,25 @@ With this option On, text-based op tree graphs of subroutines can be
 displayed, thanks to B<B::Terse>.
  
  PerlSetVar StatusTerse On
+
+=item StatusTerseSize
+
+With this option On and the B<B::TerseSize> module installed,
+text-based op tree graphs of subroutines and their size can be
+displayed.  See the B<B::TerseSize> docs for more info.
+ 
+ PerlSetVar StatusTerseSize On
+
+=item StatusTerseSizeMainSummary
+
+With this option On and the B<B::TerseSize> module installed, a
+"Memory Usage" will be added to the Apache::Status main menu.  This
+option is disabled by default, as it can be rather cpu intensive to
+summarize memory usage for the entire server.  It is strongly
+suggested that this option only be used with a development server
+running in B<-X> mode, as the results will be cached.
+
+ PerlSetVar StatusTerseSizeMainSummary On
 
 =item StatusGraph
 

@@ -40,7 +40,7 @@ Apache::SizeLimit now uses $r->child_terminate instead of Apache::exit(-2)
 
 get rid of various 5.005_60 warnings
 
-add Status{Terse,Deparse,OptionsAll} options to Apache::Status
+add Status{Terse,TerseSize,Deparse,Fathom,OptionsAll} options to Apache::Status
 
 adjust mod_perl.h for 5.005_59 perl_eval_{pv,sv} rename
 
