@@ -1023,9 +1023,21 @@ sub httpd_version {
             $version = $1;
             last;
         }
+        elsif(/^\#define\s+AP_SERVER_MAJORVERSION_NUMBER\s+(\d+)/) {
+            # new 2.1 config
+            my $major = $1;
+            my $minor = (split /\s+/, scalar(<$fh>))[-1];
+            my $patch = (split /\s+/, scalar(<$fh>))[-1];
+            my $string = (split /\s+/, scalar(<$fh>))[-1];
+            $version = join '.', $major, $minor, "$patch$string";
+            $version =~ s/\"//g;
+            last;
+        }
     }
 
     close $fh;
+
+    debug "parsed version $version from ap_release.h";
 
     $self->httpd_version_cache($dir, $version);
 }
