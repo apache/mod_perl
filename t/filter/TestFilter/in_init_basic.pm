@@ -18,7 +18,7 @@ use constant READ_SIZE  => 1024;
 
 # this filter is expected to be called once
 # it'll set a note, with the count
-sub init : FilterInitHandler {
+sub transparent_init : FilterInitHandler {
     my $filter = shift;
 
     my $ctx = $filter->ctx;
@@ -32,7 +32,7 @@ sub init : FilterInitHandler {
 # this filter passes the data through unmodified and sets a note
 # counting how many times it was invoked
 sub transparent : FilterRequestHandler
-                  FilterHasInitHandler(\&init)
+                  FilterHasInitHandler(\&transparent_init)
     {
     my ($filter, $bb, $mode, $block, $readbytes) = @_;
 
@@ -45,6 +45,15 @@ sub transparent : FilterRequestHandler
     return $rv unless $rv == APR::SUCCESS;
 
     return Apache::OK;
+}
+
+
+
+# this filter is not supposed to get a chance to run, since its init
+# handler immediately removes it
+sub suicide_init : FilterInitHandler { shift->remove(); Apache::OK }
+sub suicide      : FilterHasInitHandler(\&suicide_init) {
+    die "this filter is not supposed to have a chance to run";
 }
 
 sub response {
@@ -67,4 +76,5 @@ __DATA__
 SetHandler modperl
 PerlModule             TestFilter::in_init_basic
 PerlResponseHandler    TestFilter::in_init_basic::response
+PerlInputFilterHandler TestFilter::in_init_basic::suicide
 PerlInputFilterHandler TestFilter::in_init_basic::transparent
