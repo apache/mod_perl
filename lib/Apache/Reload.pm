@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use mod_perl 1.99;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use Apache::Const -compile => qw(OK);
 
@@ -72,7 +72,7 @@ sub handler {
         $TouchTime = $touch_mtime;
         open my $fh, $TouchFile or die "Can't open '$TouchFile': $!";
         $TouchModules = <$fh>;
-        chomp $TouchModules;
+        chomp $TouchModules if $TouchModules;
     }
 
     if (ref($o) && (lc($o->dir_config("ReloadAll") || 'on') eq 'on')) {
