@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+For Win32, add a .bat extension to candidates for the apxs and
+apr-config utilities used in Apache::Build, so that the -x file
+test can potentially succeed [Randy Kobes]
+
 Plug a memory leak with 'perl-script' not cleaning up the temp vars
 created during the override of STDIN/STDOUT to use the :Apache IO
 layer [Stas]
