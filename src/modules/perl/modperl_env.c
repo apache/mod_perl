@@ -84,7 +84,7 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     HV *hv = ENVHV;
     U32 mg_flags;
     int i;
-    apr_array_header_t *array;
+    const apr_array_header_t *array;
     apr_table_entry_t *elts;
 
 
