@@ -8,32 +8,3 @@
   give any more details, but I suspect that it's due to
   ModPerl::Util::unload_package() which perfectly fits the timing when
   the leak was introduced (when PerlRun started to use unload_package).
-
-* we need to deal with a situation where an object is used to
-  construct another object, but it's then auto-DESTROYed by perl
-  rendering the object that used it corrupted.
-
-  the solution is to make the newly created objects refer to the
-  underlying object via magic attachment.
-
-  only objects using objects that have DESTROY are effected, so for
-  example in the case of:
-
-  APR::Bucket::eos_create(APR::Bucket::alloc_create(APR::Pool->new)
-
-  the object returned by eos_create shouldn't be affected, since
-  alloc_create()'s object doesn't have perl's DESTROY. so only the
-  pool object is an issue here (i.e. alloc_create needs special
-  handling)
-
-  relevant objects with DESTROY : Apache::SubRequest,
-  APR::ThreadMutex, APR::UUID, APR::Pool
-
-
-  =================
-  === APR::Pool ===
-  =================
-  *** returning objects ***
-
-  APR::Bucket:
-  V apr_bucket_alloc_create
