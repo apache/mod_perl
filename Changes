@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Resolve a segfault in Apache::Module::get_config() for the edge case
+when the package name is bogus. [Stas Bekman]
+
 Apache::Reload: add support for watching and reloading modules only in
 specified sub-dirs [Harry Danilevsky <harry@deerfieldcapital.com>]
 
