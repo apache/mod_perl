@@ -9,6 +9,7 @@ use warnings FATAL => 'all';
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
+use Apache::ServerUtil ();
 
 use Apache::Const -compile => qw(OK DECLINED DONE);
 
