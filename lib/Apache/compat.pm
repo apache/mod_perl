@@ -24,6 +24,7 @@ use Apache::Server ();
 use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
+use Apache::ServerUtil ();
 use Apache::Response ();
 use Apache::Log ();
 use APR::Table ();
@@ -382,7 +383,13 @@ sub size_string {
     return $size;
 }
 
-*Apache::URI::parse = \&APR::URI::parse;
+sub Apache::URI::parse {
+    my($class, $r, $uri) = @_;
+
+    $uri ||= $r->construct_url($r->uri, $r->pool);
+
+    APR::URI->parse($r, $uri);
+}
 
 1;
 __END__
