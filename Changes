@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+Use a better approach to figure out whether we need to strip perl's
+LargeFilesSource flag, by checking whether libapr was compiled with
+-D_FILE_OFFSET_BITS=64 or not. Checking for APR_HAS_LARGE_FILES is
+useless since it doesn't tell whether 32 vs 64 bits off_t and similar
+types are used [Joe Orton]
+
 'SetHandler perl-script' no longer grabs any newly encountered END
 blocks, and removes them from PL_endav, but only if they are
 explicitly registered via ModPerl::Global::special_list_register(END
