@@ -898,6 +898,7 @@ SV *perl_hvrv_magic_obj(SV *rv);
 void perl_tie_hash(HV *hv, char *class, SV *sv);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
+void perl_stash_rgy_endav(char *s, SV *rgystash);
 void perl_run_rgy_endav(char *s);
 void perl_run_endav(char *s);
 void perl_call_halt(int status);

@@ -45,6 +45,7 @@ sub log_error { shift; die @_ if $@; warn @_; }
 *log_reason = \&log_error; 
 sub allow_options { OPT_EXECCGI } #will be checked again at run-time
 sub clear_rgy_endav {}
+sub stash_rgy_endav {}
 sub request {}
 sub seqno {0} 
 sub server { shift }
