@@ -78,13 +78,10 @@ void mod_perl_dir_env(perl_dir_config *cld)
     if(MP_HASENV(cld)) {
 	table_entry *elts = (table_entry *)cld->env->elts;
 	int i;
-	HV *env = PerlEnvHV; 
 	for (i = 0; i < cld->env->nelts; ++i) {
 	    MP_TRACE(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
 			     elts[i].key, elts[i].val));
-	    hv_store(env, elts[i].key, strlen(elts[i].key), 
-		     newSVpv(elts[i].val,0), FALSE); 
-	    my_setenv(elts[i].key, elts[i].val);
+	    mp_setenv(elts[i].key, elts[i].val);
 	}
 	MP_HASENV_off(cld); /* just doit once per-request */
     }
@@ -101,11 +98,16 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls)
 
     while (*arg) {
         key = getword(p, &arg, ' ');
-        val = getenv(key);
+
+        if(!(val = getenv(key)) && (ind(key, ':') > 0)) {
+	    CHAR_P tmp = pstrdup(p, key);
+	    key = getword(p, &tmp, ':');
+	    val = (char *)tmp;
+	}
+
         if(val != NULL) {
 	    MP_TRACE(fprintf(stderr, "PerlPassEnv: `%s'=`%s'\n", key, val));
-	    hv_store(GvHV(envgv), key, strlen(key), 
-		     newSVpv(val,0), 0);
+	    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE);
         }
     }
 }    
@@ -445,6 +447,11 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
     table_set(rec->env, key, val);
     MP_HASENV_on(rec);
     MP_TRACE(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
+    if(cmd->path == NULL) {
+       dPSRV(cmd->server);
+       cls->PerlPassEnv = pstrcat(cmd->pool, key, ":", val, " ", 
+                                  cls->PerlPassEnv, NULL);
+    }
     return NULL;
 }
 
@@ -531,7 +538,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
 {
     char l[MAX_STRING_LEN];
     if(PERL_RUNNING()) {
-	sv_catpvn(sv, "\npackage ApacheReadConfig;\n{\n", 29);
+	sv_catpvn(sv, "\npackage Apache::ReadConfig;\n{\n", 29);
 	sv_catpvn(sv, "\n", 1);
     }
     while (!(cfg_getline (l, MAX_STRING_LEN, cmd_infile))) {
@@ -556,6 +563,8 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
     (void)hv_iterinit(hv); \
     while ((val = hv_iternextsv(hv, (char **) &key, &klen))) { \
 	HV *tab; \
+        if(SvROK(val) && (SvTYPE(SvRV(val)) != SVt_PVHV)) \
+             croak("value of `%s' is not a HASH reference!", key); \
 	if(SvMAGICAL(val)) mg_get(val); \
 	if((tab = (HV *)SvRV(val))) { 
 
@@ -952,11 +961,11 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
     if((perl_require_module("Tie::IxHash", NULL) == OK))
 	dotie = TRUE;
 
-    perl_section_hash_init("ApacheReadConfig::Location", dotie);
-    perl_section_hash_init("ApacheReadConfig::VirtualHost", dotie);
-    perl_section_hash_init("ApacheReadConfig::Directory", dotie);
-    perl_section_hash_init("ApacheReadConfig::Files", dotie);
-    perl_section_hash_init("ApacheReadConfig::Limit", dotie);
+    perl_section_hash_init("Apache::ReadConfig::Location", dotie);
+    perl_section_hash_init("Apache::ReadConfig::VirtualHost", dotie);
+    perl_section_hash_init("Apache::ReadConfig::Directory", dotie);
+    perl_section_hash_init("Apache::ReadConfig::Files", dotie);
+    perl_section_hash_init("Apache::ReadConfig::Limit", dotie);
 
     perl_eval_sv(code, G_DISCARD);
     if(SvTRUE(ERRSV)) {
@@ -964,7 +973,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
        return NULL;
     }
 
-    symtab = (HV*)gv_stashpv("ApacheReadConfig", FALSE);
+    symtab = (HV*)gv_stashpv("Apache::ReadConfig", FALSE);
     (void)hv_iterinit(symtab);
     while ((val = hv_iternextsv(symtab, &key, &klen))) {
 	SV *sv;
@@ -1034,7 +1043,13 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 	}
     }
     SvREFCNT_dec(code);
-    hv_undef(symtab);
+    {
+	SV *usv = perl_get_sv("Apache::ReadConfig", FALSE);
+	if(usv && SvTRUE(usv))
+	    ; /* keep it around */
+	else
+	    hv_undef(symtab);
+    }
     return NULL;
 }
 
@@ -1146,6 +1161,12 @@ int perl_hook(char *name)
 #endif
 	    if (strEQ(name, "StackedHandlers")) 
 #ifdef PERL_STACKED_HANDLERS
+		return 1;
+#else
+	return 0;    
+#endif
+	    if (strEQ(name, "Sections")) 
+#ifdef PERL_SECTIONS
 		return 1;
 #else
 	return 0;    

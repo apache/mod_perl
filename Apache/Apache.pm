@@ -2,9 +2,10 @@ package Apache;
 use strict;
 use Exporter ();
 use Apache::Constants qw(OK DECLINED);
+use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn fork forkoption);
-$Apache::VERSION = "1.20";
+$Apache::VERSION = "1.21";
 
 *import = \&Exporter::import;
 
@@ -18,11 +19,24 @@ if (caller eq "CGI::Apache") {
     bootstrap Apache $Apache::VERSION;
 }
 else {
-    eval { bootstrap Apache $Apache::VERSION; } 
+    eval { bootstrap Apache $Apache::VERSION };
+    Apache::SIG->set;
 }
 if($@) {
     die "$@\n" if exists $ENV{MOD_PERL};
     warn "warning: can't `bootstrap Apache $Apache::VERSION' outside of httpd\n";
+}
+
+if($ENV{MOD_PERL} && perl_hook("Sections")) {
+    *ApacheReadConfig:: = \%Apache::ReadConfig::;
+
+    if(Apache::Constants::MODULE_MAGIC_NUMBER() >= 19971026) {
+	*Apache::httpd_conf = sub {
+	    shift;
+	    push @Apache::ReadConfig::PerlConfig,
+	    map "$_\n", @_;
+	};
+    }
 }
 
 sub module {
@@ -49,8 +63,9 @@ sub content {
 }
 
 sub args {
-    my($r) = @_;
-    parse_args(wantarray, $r->query_string);
+    my($r, $val) = @_;
+    parse_args(wantarray, 
+	       $val ? $r->query_string($val) : $r->query_string);
 }
 
 sub cgi_var {
@@ -82,6 +97,7 @@ sub read {
 	}
 	else {
 	    $_[1] = undef;
+	    last;
 	}
     }
     $r->kill_timeout;
@@ -979,7 +995,9 @@ Apache C API notes at C<http://www.apache.org/docs/>
 
 =head1 AUTHORS
 
-Gisle Aas <aas@sn.no> and Doug MacEachern <dougm@osf.org>
+Perl interface to the Apache C API written by Doug MacEachern
+with contributions from Gisle Aas, Andreas Koenig, Eric Bartley, 
+Rob Hartill, Gerald Richter, Salvador Garcia and others. 
 
 =cut
 

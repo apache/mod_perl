@@ -26,7 +26,7 @@ __END__
 
 Apache::fork - Override Perl's built-in fork()
 
-=head1 SYNOPISIS
+=head1 SYNOPSIS
 
  use Apache::fork;
 

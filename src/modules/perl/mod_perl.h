@@ -71,7 +71,10 @@ typedef request_rec * Apache__SubRequest;
 typedef conn_rec    * Apache__Connection;
 typedef server_rec  * Apache__Server;
 
-#define GvHV_init(gv) gv_fetchpv(gv, GV_ADDMULTI, SVt_PVHV)
+#define GvHV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PVHV)
+#define GvSV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PV)
+
+#define GvSV_setiv(gv,val) sv_setiv(GvSV(gv), val)
 
 #define iniHV(hv) hv = (HV*)sv_2mortal((SV*)newHV())
 #define iniAV(av) av = (AV*)sv_2mortal((SV*)newAV())
@@ -79,8 +82,6 @@ typedef server_rec  * Apache__Server;
 #define AvTRUE(av) (av && (AvFILL(av) > -1) && SvREFCNT(av))
 
 #define av_copy_array(av) av_make(av_len(av)+1, AvARRAY(av))  
-
-#define PerlEnvHV GvHV(envgv)
 
 #ifndef newRV_noinc
 #define newRV_noinc(sv)	((Sv = newRV(sv)), --SvREFCNT(SvRV(Sv)), Sv)
@@ -92,6 +93,14 @@ typedef server_rec  * Apache__Server;
 
 #define HV_SvTAINTED_on(hv,key,klen) \
     SvTAINTED_on(*hv_fetch(hv, key, klen, 0)) 
+
+#define mp_setenv(key, val) \
+{ \
+    int klen = strlen(key); \
+    hv_store(GvHV(envgv), key, klen, newSVpv(val,0), FALSE); \
+    HV_SvTAINTED_on(GvHV(envgv), key, klen); \
+    my_setenv(key, val); \
+}
 
 #ifdef PERL_TRACE
 #define MP_TRACE(a) a 

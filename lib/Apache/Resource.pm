@@ -7,23 +7,33 @@ use BSD::Resource qw(setrlimit getrlimit get_rlimits);
 $Debug ||= 0;
 $Apache::Resource::VERSION = (qw$Revision$)[1];
 
-sub MB ($) { $_[0]*1024*1024 }
+sub MB ($) { 
+    my $num = shift;
+    if($num < (1024 * 1024)) {
+	return $num*1024*1024;
+    }
+    $num;
+}
 
-sub DEFAULT_RLIMIT_DATA () { MB 64 } #data (memory) size
-sub DEFAULT_RLIMIT_CPU  () { 30 }     #cpu time in milliseconds
-sub DEFAULT_RLIMIT_CORE () { 0 }      #core file size
-sub DEFAULT_RLIMIT_RSS   () { MB 16 } #resident set size
+sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size
+sub DEFAULT_RLIMIT_CPU   () { 60 } #cpu time in milliseconds
+sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size
+sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size
+sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size 
+sub DEFAULT_RLIMIT_STACK () { 10 } #stack size
+
+my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE};
 
 sub install_rlimit ($$$) {
     my($res, $soft, $hard) = @_;
 
     my $cv = \&{"BSD::Resource::RLIMIT_${res}"};
-    eval { $res = &{$cv}() };
+    eval { $res = $cv->() };
     return if $@;
 
     unless ($soft) { 
 	my $defval = \&{"DEFAULT_RLIMIT_${res}"};
-	$soft = &$defval if defined &$defval;
+	$soft = $defval->() if defined &$defval;
     }
 
     $hard ||= $soft;
@@ -42,6 +52,8 @@ sub handler {
 	$k = $1;
 	my($soft, $hard) = split ":", $v, 2; 
 	$hard ||= $soft;
+ 
+	($soft, $hard) = (MB $soft, MB $hard) if $is_mb{$k};
 
 	debug "Apache::Resource: attempting to set `$k'=$soft:$hard ...";
 	my $set = install_rlimit $k, $soft, $hard;
@@ -74,7 +86,7 @@ sub status_rlimit {
 
 Apache::Status->menu_item(rlimit => "Resource Limits", 
 			  \&status_rlimit)
-    if $INC{"Apache/Status.pm"};
+    if Apache->module("Apache::Status");
 
 #perl Apache/Resource.pm
 ++$Debug, handler unless caller();
@@ -96,8 +108,8 @@ Apache::Resource - Limit resources used by httpd children
  PerlSetEnv PERL_DATA_LIMIT 35
 
  #set cpu limit in milliseconds
- #default is 30 milliseconds
- PerlSetEnv PERL_RLIMIT_CPU 20
+ #default is 60 milliseconds
+ PerlSetEnv PERL_RLIMIT_CPU 120
 
  PerlChildInitHandler Apache::Resource
 

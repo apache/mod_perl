@@ -19,6 +19,7 @@ eg/perlio.pl
 eg/registry.pl
 eg/README
 lib/mod_perl.pm
+lib/Apache/httpd_conf.pm
 lib/Apache/fork.pm
 lib/Apache/test.pm
 lib/Apache/Debug.pm
@@ -61,6 +62,8 @@ t/modules/cgi.t
 t/modules/constants.t
 t/modules/eperl.t
 t/modules/embperl.t
+t/modules/httpdconf.t
+t/modules/psections.t
 t/modules/include.t
 t/modules/ssi.test
 t/modules/sandwich.t

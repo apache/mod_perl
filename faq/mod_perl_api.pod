@@ -22,7 +22,7 @@ would start the installation process with:
 =head2 Is the handler correctly referenced in the configuration?
 
 Apache must be told to load your handler, either as a module with the
-C<PerlModule> directive or as a script with C<PerlScript>.  The
+C<PerlModule> directive or as a script with C<PerlRequire>.  The
 handler subroutine will then be available, but you must also specify
 which requests it should process.  This is done by naming it in one of
 the Perl*Handler directives (PerlInitHandler, PerlTransHandler, etc.).
@@ -35,7 +35,7 @@ section of access.conf or by putting it in a .htaccess file.
 Here is an example of the directives needed to call a handler during
 Apache's URI to filename translation phase:
 
-  PerlScript         /full/path/to/script/Trans.pl
+  PerlRequire        /full/path/to/script/Trans.pl
   PerlTransHandler   Trans::handler
 
 Trans.pl would start with the statement C<Package Trans;> and define a
@@ -100,10 +100,10 @@ URL and it is automagically processed by this code...
   
   1;
 
-=head1 I get syntax errors when I define a PerlScript for a location
+=head1 I get syntax errors when I define a PerlRequire for a location
 
-PerlScript can't be inside <Location>.  There should only be one
-PerlScript in httpd.conf, at the top-level.
+PerlRequire can't be inside <Location>.  There should only be one
+PerlRequire in httpd.conf, at the top-level.
 
 =head1 How can I check if mod_perl is available during configuration?
 

@@ -283,7 +283,7 @@ There are various ways to do this.  One way is to add
 to each script that needs modules from /my/perl/lib.
 
 Alternatively, you can arrange for all the modules that might be
-needed to be loaded when the server starts up.  Put a PerlScript
+needed to be loaded when the server starts up.  Put a PerlRequire
 directive into one of the httpd config files that pulls in a small
 module containing the relevant C<use>-statements.  There is an example
 of this in L<mod_perl_tuning>.
@@ -298,7 +298,7 @@ file:
 I want to send an argument to the ssi.pl script.  How?
 
 It won't work with Apache::Include.  Instead of a script, define a
-subroutine that's pulled in with PerlScript or PerlModule, like so:
+subroutine that's pulled in with PerlRequire or PerlModule, like so:
 
   sub My::ssi {
      my($r, $one, $two, $three) = @_;

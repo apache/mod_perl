@@ -154,7 +154,7 @@ CGI.pm detects that it is running under Apache::Registry by looking
 for an environment variable.  This test can fail if C<use CGI> is
 evaluated too early, before the environment has been set up.  That can
 happen if you have C<use CGI> in a script and pull the script in with
-a C<PerlScript> directive in httpd.conf.  Replacing C<use CGI> with
+a C<PerlRequire> directive in httpd.conf.  Replacing C<use CGI> with
 C<require CGI> will fix it.
 
 =head1 How can my script continue running after sending the response?

@@ -1,6 +1,8 @@
 
 in no particular order:
 
+provide namespace protection for mod_include #perl's
+
 port to threaded 5.004_5x (5.005-tobe)
 
 win32:

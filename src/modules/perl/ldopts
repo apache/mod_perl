@@ -1,2 +1,10 @@
+use Config;
 
-system "$^X -MExtUtils::Embed -e ldopts -- -std @ARGV";
+my $ldopts = `$^X -MExtUtils::Embed -e ldopts -- -std @ARGV`;
+
+if($^O eq "aix") {
+    $ldopts =~ s,(-bE:)(perl\.exp),$1$Config{archlibexp}/CORE/$2,;
+    #system "cp $Config{archlibexp}/CORE/perl.exp ./perl.exp";
+}	
+
+print $ldopts;

@@ -10,6 +10,8 @@ use Apache::test qw($USE_THREAD);
 
 not $filename or die "Apache::Registry scoping is broken!\n";
 
+$Apache::ServerStarting and die "Apache::ServerStarting var is broken\n";
+
 #make sure this untrip works
 if($USE_THREAD) {
     warn "must fix \$/ for threaded Perl\n";

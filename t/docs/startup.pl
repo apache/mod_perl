@@ -4,7 +4,7 @@ BEGIN {
 
     use lib './t/docs';
     require "blib.pl" if -e "./t/docs/blib.pl";
-
+    $Apache::ServerStarting or die "Server is not starting !?\n";
 }
 
 {
@@ -30,6 +30,8 @@ use mod_perl 1.03_01;
 if(defined &main::subversion) {
     die "mod_perl.pm is broken\n";
 }
+
+$ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
 
 #test Apache::RegistryLoader
 {

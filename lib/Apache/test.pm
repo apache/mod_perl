@@ -11,7 +11,7 @@ use Config;
 
 BEGIN { 
     if(not $ENV{MOD_PERL}) {
-	require "net/config.pl";
+	eval { require "net/config.pl"; }; #for 'make test'
     } 
 }
 

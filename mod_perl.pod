@@ -65,17 +65,17 @@ You may load modules at server startup via:
     PerlModule Apache::SSI SomeOther::Module
 
 There is a limit of 10 PerlModule's, if you need more to be loaded when the 
-server starts, use one PerlModule to pull in many or use the PerlScript 
+server starts, use one PerlModule to pull in many or use the PerlRequire 
 directive described below.
 
 Optionally:
 
-    PerlScript  perl-scripts/script_to_load_at_startup.pl
+    PerlRequire  perl-scripts/script_to_load_at_startup.pl
 
-A B<PerlScript> file is commonly used for intialization during server
-startup time.  A PerlScript file name can be absolute or relative to
-B<ServerRoot> or a path in C<@INC>.   The B<PerlScript> must return a
-true value, i.e., the end of this file should have a: 
+A B<PerlRequire> file is commonly used for intialization during server
+startup time.  A PerlRequire file name can be absolute or relative to
+B<ServerRoot> or a path in C<@INC>.   A B<PerlRequire>'d file must
+return a true value, i.e., the end of this file should have a: 
 
  1; #return true value
 
@@ -128,7 +128,7 @@ allowed in .htaccess files.
 
 By default, if a server is restarted 
 (ala kill -USR1 `cat logs/httpd.pid`), Perl scripts and modules are
-not reloaded.  To reload B<PerlScript>, B<PerlModule>'s, other
+not reloaded.  To reload B<PerlRequire>'s, B<PerlModule>'s, other
 use()'d modules and flush the B<Apache::Registry> cache, enable with 
 this command:
 
@@ -182,7 +182,7 @@ function, which is called once each time the Perl program is executed,
 e.g. once per (mod_cgi) CGI scripts.  However, mod_perl only calls
 C<perl_run()> once, during server startup.  Any B<END> blocks
 encountered during main server startup, i.e. those pulled in by the
-B<PerlScript> or by any B<PerlModule> are suspended and run at server
+B<PerlRequire> or by any B<PerlModule> are suspended and run at server
 shutdown, aka C<child_exit> (requires apache 1.3b1+).  Any B<END>
 blocks that are encountered during compilation of Apache::Registry
 scripts are called after the script done is running, including
@@ -253,7 +253,7 @@ Tradeoffs...
 
 =item Server Startup
 
-Use the B<PerlScript> and B<PerlModule> directives to load commonly
+Use the B<PerlRequire> and B<PerlModule> directives to load commonly
 used modules such as CGI.pm, DBI, etc., when the server is started.
 On most systems, server children will be able to share this space.
 
@@ -606,7 +606,7 @@ These are somewhat boring examples, but they should give you the basic
 idea.  You can mix in any Perl code your heart desires.
 See eg/httpd.conf.pl and eg/perl_sections.txt for some examples.
 
-Currently for <Perl> sections to work, the C<PerlScript> configuration
+Currently for <Perl> sections to work, the C<PerlRequire> configuration
 directive must be defined, C</dev/null> will do just fine.
 
 A tip for syntax checking outside of httpd:

@@ -94,7 +94,7 @@ PERL_HOOKS =   $(PERL_DISPATCH) $(PERL_CHILD_INIT) $(PERL_CHILD_EXIT) \
 
 #TRACE = -DPERL_TRACE
 #APACHE_SSL = $(SSL_CFLAGS) -DAPACHE_SSL $(SSL_INCLUDE) -I../../../ssl/include
-PERL=/opt/perl5/bin/perl
+PERL=/usr/bin/perl
 PERL_STATIC_EXTS =
 PERL5LIB=`$(PERL) -MConfig -e 'print $$Config{privlibexp}'`
 EXTUTILS_EMBED = $(PERL) -MExtUtils::Embed

@@ -5,7 +5,6 @@
 #include "perl.h"
 #include "XSUB.h"
 
-void newCONSTSUB(HV *stash, char *name, SV *sv);
 static CV *no_warn = Nullcv;
 
 CV *empty_anon_sub(void)
@@ -16,7 +15,7 @@ CV *empty_anon_sub(void)
                   block_end(block_start(TRUE), newOP(OP_STUB,0)));
 }
    
-void newCONSTSUB(HV *stash, char *name, SV *sv)
+static void newCONSTSUB(HV *stash, char *name, SV *sv)
 {
 #ifdef dTHR
     dTHR;
@@ -77,6 +76,12 @@ char *name;
 #endif
 	break;
     case 'C':
+if (strEQ(name, "CONTINUE"))
+#ifdef CONTINUE
+	    return CONTINUE;
+#else
+	    return DECLINED;
+#endif
 	break;
     case 'D':
 	if (strEQ(name, "DECLINED"))
@@ -441,6 +446,12 @@ char *name;
 #endif
 	break;
     case 'N':
+	if (strEQ(name, "NOT_AUTHORITATIVE"))
+#ifdef NOT_AUTHORITATIVE
+	    return NOT_AUTHORITATIVE;
+#else
+	    return DECLINED; 
+#endif
 	if (strEQ(name, "NOT_FOUND"))
 #ifdef NOT_FOUND
 	    return NOT_FOUND;
