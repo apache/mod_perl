@@ -3,15 +3,6 @@
 #include "mod_perl.h"
 #include "apr_perlio.h"
 
-/* XXX: prerequisites to have things working
- * PerlIO_flush patch : perl 5.7.2 patch 13978 is required
- * dup() : apr cvs date: 2001/12/06 13:43:45
- *
- * XXX: it's not enough to check for PERLIO_LAYERS, some functionality
- * and bug fixes were added only in the late 5.7.2, whereas
- * PERLIO_LAYERS is available in 5.7.1
- */
-
 #if defined(PERLIO_LAYERS) && defined(PERLIO_K_MULTIARG) /* 5.7.2+ */
 
 /**********************************************************************
