@@ -161,6 +161,10 @@ This now prepares the Apache-side of mod_perl in the Apache source tree but
 don't touches anything else inside it. It then just builds the Perl-side of
 mod_perl and installs it into the Perl installation hierarchy.
 
+Important: If you use C<PREP_HTTPD> as described above, to complete the
+build you must go into an apache source directory and run C<make> and
+C<make install>.
+
 =item B<3. Additionally prepare other third-party modules>
 
 Now you still have a chance to prepare more third-party modules.  For instance
