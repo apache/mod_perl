@@ -1335,6 +1335,16 @@ status(r, ...)
     OUTPUT:
     RETVAL
 
+time_t
+request_time(r)
+    Apache	r
+
+    CODE:
+    RETVAL = r->request_time;
+
+    OUTPUT:
+    RETVAL
+
 char *
 status_line(r, ...)
     Apache	r

@@ -48,7 +48,7 @@ sub parse_args {
 
 sub content {
     my($r) = @_;
-    my $ct = $r->header_in("Content-type");
+    my $ct = $r->header_in("Content-type") || "";
     return unless $ct eq "application/x-www-form-urlencoded";
     my $buff;
     $r->read($buff, $r->header_in("Content-length"));
@@ -218,7 +218,7 @@ sub as_string {
 	    push @retval, "$k: $v";
 	}
     }    
-    join "\n", @retval, "";
+    join "\n", grep { defined $_ } @retval, "";
 }
 
 sub TIEHANDLE {
