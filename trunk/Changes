@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+Apache::Resource was not converting PERL_RLIMIT_AS to MB values
+thanks to Ian Kallen for the spot
+
 fix unescape_url_info() when url is undef or "",
 thanks to Kenneth Lee for the spot
 

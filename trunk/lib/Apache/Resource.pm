@@ -26,7 +26,7 @@ sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size (MB)
 sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size  (MB)
 sub DEFAULT_RLIMIT_STACK () { 20 } #stack size (MB)
 
-my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE CORE MEMLOCK};
+my %is_mb = map {$_,1} qw{DATA RSS STACK FSIZE CORE MEMLOCK AS};
 
 sub debug { print STDERR @_ if $Debug }
 
