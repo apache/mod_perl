@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+add Apache::Util::unescape_uri alias to Apache::unescape_url in Apache::compat
+
+change Apache::unescape_url to return the escaped url as 1.x does
+
 disabled term coloring by default (enable with env var APACHE_TEST_COLOR=1)
 
 fix for APR::IpSubnet->new to check return status apr_ipsubnet_create

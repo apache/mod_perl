@@ -9,7 +9,7 @@ apr_uri_t *mpxs_Apache__RequestRec_parsed_uri(request_rec *r)
     return (apr_uri_t *)uri;
 }
 
-static MP_INLINE int mpxs_ap_unescape_url(pTHX_ SV *url)
+static MP_INLINE char *mpxs_ap_unescape_url(pTHX_ SV *url)
 {
     int status;
     STRLEN n_a;
@@ -20,5 +20,5 @@ static MP_INLINE int mpxs_ap_unescape_url(pTHX_ SV *url)
         SvCUR_set(url, strlen(SvPVX(url)));
     }
 
-    return status;
+    return SvPVX(url);
 }
