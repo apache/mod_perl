@@ -132,7 +132,7 @@ $  limit_req_fields
 
 <module>
 ~  version
-<  minor_version
+~  minor_version
 <  module_index
 <  name
 !  dynamic_load_handle

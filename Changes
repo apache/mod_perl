@@ -12,7 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
-Apache::Module $mod->version() renamed $mod->apache_api_version()
+Apache::Module $mod->version() and $mod->minor_version() renamed
+to $mod->ap_api_major_version() and $mod->ap_api_minor_version
 for clarity [Gozer]
 
 Apache::Log changes: [Stas]
