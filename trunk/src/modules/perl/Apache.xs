@@ -351,12 +351,12 @@ static int getsfunc_SV(char *buf, int bufsiz, void *param)
 
 static void rwrite_neg_trace(request_rec *r)
 {
-#ifdef HAVE_APACHE_V_130
+#if HAS_MMN_130
     ap_log_error(APLOG_MARK, APLOG_DEBUG, r->server,
 #else
     fprintf(stderr,
 #endif
-		 "mod_perl: rwrite returned -1 (fd=%d, B_EOUT=%d)",
+		 "mod_perl: rwrite returned -1 (fd=%d, B_EOUT=%d)\n",
 		 r->connection->client->fd, 
 		 r->connection->client->flags & B_EOUT);
 }
