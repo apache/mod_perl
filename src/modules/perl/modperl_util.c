@@ -127,7 +127,7 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
 
         if (!r) {
             if (classname && SvPOK(in) && !strEQ(classname, SvPVX(in))) {
-                /* might be Apache::{Server,RequestRec}-> dual method */
+                /* might be Apache::{ServerRec,RequestRec}-> dual method */
                 return NULL;
             }
             Perl_croak(aTHX_
