@@ -19,8 +19,8 @@ for my $type (@untrapped) {
     my $res = GET("$location?$type");
     #t_debug($res->content);
     ok t_cmp(
-        500,
         $res->code,
+        500,
         "500 error on $type exception",
    );
 }
@@ -28,8 +28,8 @@ for my $type (@untrapped) {
 for my $type (@trapped) {
     my $body = GET_BODY("$location?$type");
     ok t_cmp(
-        "ok $type",
         $body,
+        "ok $type",
         "200 on $type exception",
    );
 }
