@@ -15,6 +15,7 @@ else {
 
 %ENV = $r->cgi_env;
 $r->subprocess_env; #test void context
+my $is_xs = ($r->uri =~ /_xs/);
 
 my $tests = 46;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -192,7 +193,7 @@ if ($USE_THREAD) {
     warn "XXX: need to fix \$r->exit in t/net/api w/ threads\n";
 }
 else {
-    $r->exit;
+    $r->exit unless $is_xs;
 }
 
 

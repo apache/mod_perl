@@ -257,3 +257,16 @@ CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
             these things at some point
 ---------------------------------------------------------------------------
 
+---------------------------------------------------------------------------
+OPTIMIZATIONS
+---------------------------------------------------------------------------
+
+- replace Apache::PerlRun with Apache::PerlRunXS
+
+- replace Apache::Registry with Apache::RegistryXS
+
+- make Apache::RegistryLoader work with RegistryXS
+
+- XS_IMPORT=1 on by default
+
+

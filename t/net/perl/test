@@ -33,6 +33,8 @@ $Scalar = 1;
 
 my $r = Apache->request;
 $ENV{PATH} = "/bin";
+use vars qw($is_xs);
+$is_xs = ($r->uri =~ /_xs/);
 
 sub reset_scalar {
     $Scalar = 0;
@@ -117,7 +119,7 @@ if(defined &Apache::system and \&system == \&Apache::system) {
 test_exit(); # unless $ENV{CONTENT_LENGTH};
 
 sub test_exit {
-    if ($USE_THREAD) {
+    if ($USE_THREAD or $is_xs) {
 	warn "XXX: need to fix exit in t/net/header.t w/ threads\n";
     }
     else {

@@ -178,7 +178,9 @@ $PERL_TIE_TABLES = 0;
 $PERL_LOG_API = 0;
 $PERL_URI_API = 0;
 $PERL_UTIL_API = 0;
+$PERL_RUN_XS = 0;
 my %experimental = map { $_,1 } qw{
+PERL_RUN_XS
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
 DO_INTERNAL_REDIRECT
@@ -531,7 +533,16 @@ if($PERL_TIE_TABLES) {
     push @xs_modules, "Apache::Tie";
     $callback_hooks{PERL_TIE_TABLES} = 1;
 }
-
+if($PERL_RUN_XS) {
+    my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
+    if($mmn >= MMN_130) {
+	push @xs_modules, "Apache::PerlRunXS";
+    }
+    else {
+	$PERL_RUN_XS = 0;
+	print "Sorry, need 1.3.0+ for Apache::PerlRunXS\n";
+    }
+}
 for (qw(Log URI Util)) {
     my $s = "PERL_".uc($_)."_API";
     if($$s) {
@@ -778,6 +789,7 @@ sub init_tests_and_config {
 	    my $yes_no = $v ? "yes" : "no";
 	    print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
 	}
+	print $hf "   PERL_RUN_XS => $PERL_RUN_XS,\n";
         print $hf "   MMN => $mmn,\n";
 	print $hf ");\n1;\n";
 	$hf->close;

@@ -50,7 +50,7 @@ PerlScript docs/startup.pl
 PerlScript docs/stacked.pl
 
 Alias /perl/ ./t/net/perl/
-
+Alias /perl_xs/ ./t/net/perl/
 Alias /dirty-perl/ ./t/net/perl/
 
 Alias /cgi-bin/ ./t/net/perl/
@@ -59,6 +59,14 @@ Alias /cgi-bin/ ./t/net/perl/
 ErrorDocument 500 /perl/server_error.pl
 SetHandler perl-script
 PerlHandler Apache::Registry::handler
+Options +ExecCGI
+PerlSendHeader       Off
+</Location>
+
+<Location /perl_xs>
+ErrorDocument 500 /perl_xs/server_error.pl
+SetHandler perl-script
+PerlHandler Apache::RegistryXS
 Options +ExecCGI
 PerlSendHeader       Off
 </Location>
@@ -78,6 +86,14 @@ PerlSendHeader       Off
 PerlSetupEnv Off
 </Location>
 
+<Location /perl_xs/noenv>
+SetHandler perl-script
+PerlHandler Apache::RegistryXS
+Options +ExecCGI
+PerlSendHeader       Off
+PerlSetupEnv Off
+</Location>
+
 <Location /cgi-bin>
 SetHandler cgi-script
 Options +ExecCGI
@@ -91,7 +107,23 @@ PerlSendHeader On
 PerlSetupEnv   On
 </Location>
 
+<Location /perl_xs/io>
+SetHandler perl-script
+PerlHandler Apache::RegistryXS
+Options +ExecCGI
+PerlSendHeader On
+PerlSetupEnv   On
+</Location>
+
 <Location /perl/perl-status>
+PerlSetVar StatusPeek On
+PerlSetVar StatusGraph On
+PerlSetVar StatusDumper On
+SetHandler perl-script
+PerlHandler Apache::Status
+</Location>
+
+<Location /perl_xs/perl-status>
 PerlSetVar StatusPeek On
 PerlSetVar StatusGraph On
 PerlSetVar StatusDumper On
