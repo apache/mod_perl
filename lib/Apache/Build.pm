@@ -805,6 +805,10 @@ sub includes {
     }
     push @inc, $ssl_dir if -d $ssl_dir;
 
+    if ($self->{MP_INCLUDE_DIR}) {
+        push @inc, split /\s+/, $self->{MP_INCLUDE_DIR};
+    }
+
     return \@inc;
 }
 
