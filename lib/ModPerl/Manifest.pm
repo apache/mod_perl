@@ -105,7 +105,9 @@ __DATA__
 patches/
 #very few will have Chatbot::Eliza installed
 eliza
+# random failures
+t/perl/ithreads.t
+t/perl/ithreads2.t
+t/response/TestPerl/ithreads.pm
 # incomplete
-t/error/push_handlers.t
-t/response/TestError/push_handlers.pm
 t/apr-ext/perlio
