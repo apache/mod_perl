@@ -9,6 +9,12 @@ typedef struct {
 
 typedef struct {
     GV *gv;
+    HV *tmphv;
+    HV *orighv;
+} modperl_perl_global_gvhv_t;
+
+typedef struct {
+    GV *gv;
     char flags;
 } modperl_perl_global_gvio_t;
 
@@ -19,6 +25,7 @@ typedef struct {
 } modperl_perl_global_svpv_t;
 
 typedef struct {
+    modperl_perl_global_gvhv_t env;
     modperl_perl_global_gvav_t inc;
     modperl_perl_global_gvio_t defout;
     modperl_perl_global_svpv_t rs;
