@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+fix a bug in non-ithreaded-perl implementation where the cached
+compiled CODE refs of httpd.conf-inlined one-liner handlers like:
+PerlFixupHandler 'sub { use Apache::Const qw(DECLINED); DECLINED }'
+didn't have the reference count right. [Stas]
+
 per-server PerlSetEnv and PerlPassEnv values are properly added
 to %ENV when only a per-directory handler is configured.
 [Geoffrey Young]

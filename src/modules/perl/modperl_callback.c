@@ -79,6 +79,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         if (!handler->cv) {
             SV *sv = eval_pv(handler->name, TRUE); 
             handler->cv = (CV*)SvRV(sv); /* cache */
+            SvREFCNT_inc(handler->cv);
         }
         cv = handler->cv;
 #endif
