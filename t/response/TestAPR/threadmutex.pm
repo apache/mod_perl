@@ -12,7 +12,7 @@ use APR::Const -compile => qw(EBUSY SUCCESS);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 3, have 'APR::ThreadMutex';
+    plan $r, tests => 3, have_threads;
 
     require APR::ThreadMutex;
 
