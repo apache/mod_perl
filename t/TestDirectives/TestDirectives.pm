@@ -4,8 +4,7 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
 use DynaLoader (); 
-use Apache::Constants ();
-*DECLINE_CMD = \&Apache::Constants::DECLINE_CMD;
+use Apache::Constants qw(DECLINE_CMD);
 
 eval {
   require Apache::ModuleConfig;
@@ -26,14 +25,14 @@ sub attr {
 }
 
 sub Port ($$$) {
-    my($parms, $cfg, $port) = @_;
+    my($cfg, $parms, $port) = @_;
     warn "$cfg->Port will be $port\n";
     $cfg->{Port} = $port;
     return DECLINE_CMD();
 }
 
 sub TestCmd ($$$$) {
-    my($parms, $cfg, $one, $two) = @_;
+    my($cfg, $parms, $one, $two) = @_;
     #warn "TestCmd called with args: `$one', `$two'\n";
     $cfg->attr(TestCmd => [$one,$two]);
     $parms->server->isa("Apache::Server") or die "parms->server busted";
@@ -47,20 +46,21 @@ sub AnotherCmd () {
 }
 
 sub CmdIterate ($$@) {
-    my($parms, $cfg, @data) = @_;
+    my($cfg, $parms, @data) = @_;
     $cfg->{CmdIterate} = [@data];
     $cfg->{path} = $parms->path;
 }
 
 sub another_cmd {
-    my($parms, $cfg, @data) = @_;
+    my($cfg, $parms, @data) = @_;
+    warn "($cfg, $parms, @data)\n";
     $parms->info =~ /YAC/ or die "parms->info busted";
     $cfg->{parms_info_from_another_cmd} = $parms->info;
     warn "$cfg->YAC called\n";
 }
 
 sub Container ($$$;*) {
-    my($parms, $cfg, $arg, $fh) = @_;
+    my($cfg, $parms, $arg, $fh) = @_;
     $arg =~ s/>//;
     warn "ARG=$arg\n";
     #while($parms->getline($line)) {
@@ -83,7 +83,7 @@ while(my($pp,$cp) = each %$proto_perl2c) {
     $code .= <<SUB;
 sub $cp ($pp) { 
     warn "$cp called with args: ", (map "`\$_', ", \@_), "\n";
-    my(\$parms, \$cfg, \@args) = \@_;
+    my(\$cfg, \$parms, \@args) = \@_;
     \$cfg->attr($cp => [\@args]) if ref(\$cfg);
 }
 SUB
@@ -93,7 +93,7 @@ eval $code; die $@ if $@;
 
 package TestDirectives::Base;
 
-sub new {
+sub DIR_CREATE {
     my($class, $parms) = @_;
     my $info = $parms->info;
     my $o = $parms->override;
@@ -104,7 +104,7 @@ sub new {
     }, $class;
 }
 
-sub dir_merge {
+sub DIR_MERGE {
     my($base, $add) = @_;
     my %new = ();
     @new{ keys %$base, keys %$add} = 
@@ -113,37 +113,5 @@ sub dir_merge {
     return bless \%new, ref($base);
 }
 
-# Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
-
 1;
 __END__
-# Below is the stub of documentation for your module. You better edit it!
-
-=head1 NAME
-
-Apache::TestDirectives - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-  use Apache::TestDirectives;
-  blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Apache::TestDirectives was created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
-=head1 AUTHOR
-
-A. U. Thor, a.u.thor@a.galaxy.far.far.away
-
-=head1 SEE ALSO
-
-perl(1).
-
-=cut
