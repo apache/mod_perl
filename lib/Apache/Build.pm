@@ -407,6 +407,13 @@ sub ap_ccopts {
         $ccopts .= " -DMP_TRACE";
     }
 
+    # make sure apr.h can be safely included
+    # for example Perl's included -D_GNU_SOURCE implies
+    # -D_LARGEFILE64_SOURCE on linux, but this won't happen on
+    # Solaris, so we need apr flags living in apxs' EXTRA_CPPFLAGS
+    my $extra_cppflags = $self->apxs_extra_cppflags;
+    $ccopts .= " " . $extra_cppflags;
+
     $ccopts;
 }
 
