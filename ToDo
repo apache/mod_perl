@@ -24,11 +24,11 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 POSSIBLE NEW FEATURES
 ---------------------------------------------------------------------------
 
+- add Filter::Call support to Apache::RegistryNG (or subclass of)
+
 - Perl{Eval,Do} directives [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
 - add srand stuff ?
-
-- add Apache::Server::error_fname ?
 
 - Apache::SubRequest->run(1) allows ap_send_http_headers() to output
   for subrequests
