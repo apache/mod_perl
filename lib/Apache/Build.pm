@@ -283,6 +283,14 @@ sub configure_apache {
         split /\s+/, $ENV{CFLAGS} || '';
 
     my $cd = qq(cd $self->{MP_AP_PREFIX});
+    
+    #We need to clean the httpd tree before configuring it
+    if (-f 'Makefile') {
+        my $cmd = qq(make clean);
+        debug "Running $cmd";
+        system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
+    }
+    
     my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
     debug "Running $cmd";
     system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
