@@ -22,20 +22,19 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
-Added support for PERL_THREADS to apaci stuff.  
-This is needed under the bleeding edge Perl's (e.g. 5.004_6X).
-[Ralf S. Engelschall]
+Various fixes and improvements to the APACI support:
 
-Avoid more unnecessary file copies and edits under 
-APACI situation. 
-[Ralf S. Engelschall]
+ - Added support for PERL_THREADS to apaci stuff.  
+   This is needed under the bleeding edge Perl's 
+   (e.g. 5.004_6X).
+ - Avoid more unnecessary file copies and edits under 
+   APACI situation. 
+ - Cleanup the PERL_XXX hooks in apaci/mod_perl.config[.sh]
+ [Ralf S. Engelschall]
 
-Add additional .xs.o target to apaci/Makefile.tmpl to
-workaround braindead Makes.
-[Brian P Millett <bpm@ec-group.com>]
-
-Cleanup the PERL_XXX hooks in apaci/mod_perl.config[.sh]
-[Ralf S. Engelschall]
+ - Add additional .xs.o target to apaci/Makefile.tmpl to
+   workaround braindead Makes.
+ [Brian P Millett <bpm@ec-group.com>]
 
 if $r->subprocess_env is called in a void context just call
 (void)perl_cgi_env_init(r)
