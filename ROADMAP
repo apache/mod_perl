@@ -27,13 +27,16 @@ META: there is also the todo/ dir...
 * Set/Add config overlapping which is not doing the right thing. See:
   http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
+### Documentation ###
 
+* need to autogenerate and perlify API manpages
 
 ### RunTime ###
 
 
 - API
 
+  o sync apr_ and ap_ API with mp2 API
 
 
 - Hooks
