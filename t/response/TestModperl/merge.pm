@@ -148,13 +148,13 @@ __END__
         PerlSetVar   MergeAddVar1  AddVar1Val1
         PerlAddVar   MergeAddVar1  AddVar1Val2
 
-        # these are overridden in /merge1 and /merge1/merge2
+        # these are overridden in /merge2 and /merge2/merge3.html
         PerlSetEnv   MergeSetEnv2  SetEnv2Val
         PerlSetVar   MergeSetVar2  SetVar2Val
         PerlSetVar   MergeAddVar2  AddVar2Val1
         PerlAddVar   MergeAddVar2  AddVar2Val2
 
-        # these are overridden in /merge1/merge2 via htaccess
+        # these are overridden in /merge2/merge3.html only
         PerlSetEnv   MergeSetEnv3  SetEnv3Val
         PerlSetVar   MergeSetVar3  SetVar3Val
         PerlSetVar   MergeAddVar3  AddVar3Val1
