@@ -12,8 +12,6 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
-add PerlDefaultPortHandler [Geoffrey Young]
-
 fix the Makefile.PL option parser to support overriding of certain
 build options, in addition to appending to them (.e.g. now MP_LIBNAME
 is overridable) [Andrew Wyllie <wyllie@dilex.net>]
