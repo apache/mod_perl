@@ -1806,15 +1806,3 @@ run(r)
     OUTPUT:
     RETVAL
 
-long
-bytes_sent(r, ...)
-    Apache      r
-
-    CODE:
-    RETVAL = r->bytes_sent;
-
-    if(items > 1)
-        r->bytes_sent = (long)SvIV(ST(1));
-
-    OUTPUT:
-    RETVAL
