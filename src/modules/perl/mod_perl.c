@@ -119,6 +119,14 @@ static void modperl_boot(void *data)
 
     newCONSTSUB(PL_defstash, "Apache::MPM_IS_THREADED",
                 newSViv(scfg->threaded_mpm));
+
+#ifdef MP_PERL_5_6_x
+    /* make sure DynaLoader is loaded before XSLoader
+     * to workaround bug in 5.6.1 that can trigger a segv
+     * when using modperl as a dso
+     */
+    modperl_require_module(aTHX_ "DynaLoader", FALSE);
+#endif
 }
 
 static void modperl_xs_init(pTHX)

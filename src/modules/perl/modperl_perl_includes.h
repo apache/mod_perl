@@ -40,7 +40,11 @@
 #include "perl.h"
 #include "XSUB.h"
 
-#if (PERL_REVISION == 5) && (PERL_VERSION == 6) && (PERL_SUBVERSION == 1)
+#if (PERL_REVISION == 5) && (PERL_VERSION == 6)
+#   define MP_PERL_5_6_x
+#endif
+
+#if defined(MP_PERL_5_6_x) && (PERL_SUBVERSION == 1)
 #   define MP_PERL_5_6_1
 #endif
 
