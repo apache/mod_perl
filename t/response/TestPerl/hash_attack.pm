@@ -40,10 +40,17 @@ sub init {
     no strict 'refs';
     my @attack_keys = attack(\%{__PACKAGE__ . "::"}) if $] >= 5.008002;
 
+    # define a new symbol (sub) after the attack has caused a re-hash
+    # check that mod_perl finds that symbol (fixup2) in the stash
+    no warnings 'redefine';
+    eval qq[sub fixup2 { return Apache::OK; }];
+    $r->push_handlers(PerlFixupHandler => \&fixup2);
+
     return Apache::DECLINED;
 }
 
 sub fixup { return Apache::OK; }
+
 sub handler {
     my $r = shift;
     $r->print("ok");
