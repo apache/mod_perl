@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::SubRequest ();
 use Apache::RequestIO ();
+use Apache::RequestUtil ();
 
 use Apache::Const -compile => 'OK';
 
@@ -12,6 +13,8 @@ sub myplan {
     my $r = shift;
 
     $r->puts("1..3\nok 1\n");
+
+    die "must indicate a sub-request" if $r->is_initial_req();
 
     Apache::OK;
 }
