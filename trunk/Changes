@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+avoid logging "rwrite returned -1" multiple times in the
+same request [Eric Cholet <cholet@logilune.com>]
+
 bugfix in write_client() when running under APACHE_SSL
 [Michael Douglass <mikedoug@staff.texas.net>]
 
