@@ -28,9 +28,9 @@ use APR::Pool ();
 use mod_perl ();
 
 BEGIN {
-    $INC{'Apache.pm'} = 1;
+    $INC{'Apache.pm'} = __FILE__;
 
-    $INC{'Apache/Constants.pm'} = 1;
+    $INC{'Apache/Constants.pm'} = __FILE__;
 }
 
 package Apache;
