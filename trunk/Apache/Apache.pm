@@ -277,7 +277,7 @@ returns false if the request is a sub-request or internal redirect.
 Get or set the allowed methods bitmask. This allowed bitmask should be
 set whenever a 405 (method not allowed) or 501 (method not implemented)
 answer is returned. The bit corresponding to the method number should be
-et.
+set.
 
    unless ($r->method_number == M_GET) {
      $r->allowed($r->allowed | (1<<M_GET) | (1<<M_HEAD) | (1<<M_OPTIONS));
