@@ -1040,6 +1040,7 @@ WriteMakefile(
 	HTTPD => (is_ssl() ? "httpsd" : "httpd"),
 	PORT => $PORT,
 	PWD => $PWD,
+	SHRPENV => $Config{shrpenv},
 	CVSROOT => 'perl.apache.org:/export/home/cvs',
     },
     'dist'    => {
@@ -1140,7 +1141,7 @@ apxs_install: apxs_libperl
 	(cd ./apaci && $(MAKE) install;)
 
 apache_httpd: $(APACHE_SRC)/Makefile.tmpl
-	(cd $(APACHE_SRC) && $(MAKE) CC="$(CC)";)
+	(cd $(APACHE_SRC) && $(SHRPENV) $(MAKE) CC="$(CC)";)
 
 apaci_httpd: 
 	(cd $(APACHE_ROOT) && $(MAKE))
