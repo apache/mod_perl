@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.12_01-dev
+=item 1.13 - July 13, 1998
 
 fix Makefile.PL setting of numeric $User/$Group for 'make test'
 [Michael K. Sanders <msanders@confusion.net>]

@@ -1,6 +1,6 @@
 package mod_perl;
 
-$VERSION = '1.12_01-dev';
+$VERSION = '1.13';
 
 1;
 
