@@ -100,6 +100,10 @@ void modperl_perl_destruct(PerlInterpreter *perl)
     PL_origenviron = environ;
 #endif
 
+    if (PL_endav) {
+        modperl_perl_call_list(pTHX_ PL_endav, "END");
+    }
+
     perl_destruct(perl);
 
     /* XXX: big bug in 5.6.1 fixed in 5.7.2+
