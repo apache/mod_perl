@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+default AuthType to Basic if not set in $r->get_basic_auth_pw()
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 workaround glibc/Perl-5.8.0 crypt() bug (seen with threaded MPMs)
 
 fix delete $ENV{$key} bug

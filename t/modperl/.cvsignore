@@ -9,3 +9,4 @@ subenv.t
 methodname.t
 methodobj.t
 method.t
+setauth.t
