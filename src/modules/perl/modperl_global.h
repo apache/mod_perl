@@ -2,7 +2,9 @@
 #define MODPERL_GLOBAL_H
 
 typedef struct {
+#if MP_THREADED
     perl_mutex glock;
+#endif
     int flags;
     void *data;
     const char *name;
