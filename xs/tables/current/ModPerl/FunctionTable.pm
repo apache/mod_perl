@@ -4327,6 +4327,54 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'const char *',
+    'name' => 'mpxs_Apache__Directive_insert',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'self'
+      },
+      {
+        'type' => 'server_rec *',
+        'name' => 's'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'p'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'svav'
+      },
+    ]
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__Directive_to_string',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'ap_directive_t *',
+        'name' => 'self'
+      }
+    ]
+  },
+  {
     'return_type' => 'apr_size_t',
     'name' => 'mpxs_Apache__Filter_print',
     'attr' => [
