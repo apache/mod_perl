@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+rework PerlFreshRestart to avoid core dump triggered w/ 5.005_03
+
 fix $Apache::Server::Starting under dso
 
 use ap_bfileno() instead of r->connnection->client->fd directly
