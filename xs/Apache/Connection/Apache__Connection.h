@@ -1,3 +1,8 @@
+/* backwards compat for c->keepalive (see ap_mmn.h) */
+#if MODULE_MAGIC_NUMBER < 20020625
+typedef int ap_conn_keepalive_e;
+#endif
+
 static MP_INLINE
 apr_socket_t *mpxs_Apache__Connection_client_socket(pTHX_ conn_rec *c,
                                                     apr_socket_t *s)
