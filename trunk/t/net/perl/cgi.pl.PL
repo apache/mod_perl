@@ -19,4 +19,5 @@ if ($httpupload) {
     local $/;
     $content = <$httpupload>;
     $r->print( "ok $content\n" );
+    close $httpupload; # needed on win32?
 }
