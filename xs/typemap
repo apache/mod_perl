@@ -1,12 +1,12 @@
 TYPEMAP
-void *			T_VPTR
+void *                  T_VPTR
 char_len *              T_CHAR_LEN
 const char_len *        T_CONST_CHAR_LEN
 
 ######################################################################
 OUTPUT
 T_POOLOBJ
-        sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
 
 T_APACHEOBJ
 	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
@@ -28,7 +28,7 @@ INPUT
 T_PTROBJ
 	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
 	    IV tmp = SvIV((SV*)SvRV($arg));
-	    $var = INT2PTR($type,tmp);
+	    $var = INT2PTR($type, tmp);
 	}
 	else {
 	    Perl_croak(aTHX_ SvROK($arg) ?
@@ -42,7 +42,7 @@ T_POOLOBJ
             if (tmp == 0) {
                 Perl_croak(aTHX_ \"invalid pool object (already destroyed?)\");
             }
-	    $var = INT2PTR($type,tmp);
+	    $var = INT2PTR($type, tmp);
 	}
 	else {
 	    Perl_croak(aTHX_ SvROK($arg) ?
@@ -71,7 +71,7 @@ T_APACHEREF
 	$var = modperl_xs_sv2request_rec(aTHX_ $arg, \"$ntype\", cv)
 
 T_VPTR
-	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
+	$var = INT2PTR($type, SvIV(SvROK($arg) ? SvRV($arg) : $arg))
 
 T_APR_TIME
 	$var = (apr_time_t)(apr_time_from_sec(SvNV($arg)))
