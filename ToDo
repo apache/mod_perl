@@ -3,6 +3,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- Leak.xs under win32
+
 - $r->set_handlers(PerlAuthenHandler => undef) stomps other config!?
 
 - how to manipulate order of handlers (not just Perl*Handlers)
