@@ -640,7 +640,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     SV *sv = perl_get_sv("Apache::__CMDPARMS", TRUE);
     sv_setref_pv(sv, "Apache::Config", (void*)cmd);
 
-    if(!SvTRUE(*data))
+    if(!SvTRUE(*data)) 
 	*data = newRV_noinc((SV*)newHV());
 
     if(SvROK(*data) && !sv_isobject(*data))

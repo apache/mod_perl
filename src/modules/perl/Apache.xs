@@ -2077,3 +2077,19 @@ getline(self)
 
     OUTPUT:
     RETVAL
+
+char *
+path(self)
+    SV *self
+
+    PREINIT:
+    cmd_parms *parms = perl_get_cmd_parms();
+
+    CODE:				   
+    if(!parms) XSRETURN_UNDEF;
+
+    RETVAL = parms->path;
+
+    OUTPUT:
+    RETVAL
+
