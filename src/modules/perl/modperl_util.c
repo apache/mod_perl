@@ -486,9 +486,41 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
     return retval;
 }
 
+static char *package2filename(const char *package, int *len)
+{
+    const char *s;
+    char *d;
+    char *filename;
+
+    filename = malloc((strlen(package)+4)*sizeof(char));
+
+    for (s = package, d = filename; *s; s++, d++) {
+        if (*s == ':' && s[1] == ':') {
+            *d = '/';
+            s++;
+        }
+        else {
+            *d = *s;
+        }
+    }
+    *d++ = '.';
+    *d++ = 'p';
+    *d++ = 'm';
+    *d   = '\0';
+
+    *len = d - filename;
+    return filename;
+}
+
 MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
 {
-    return (*name && gv_stashpv(name, FALSE)) ? 1 : 0;
+    SV **svp;
+    int len;
+    char *filename = package2filename(name, &len);
+    svp = hv_fetch(GvHVn(PL_incgv), filename, len, 0);
+    free(filename);
+
+    return (svp && *svp != &PL_sv_undef) ? 1 : 0;
 }
 
 static int modperl_gvhv_is_stash(GV *gv)

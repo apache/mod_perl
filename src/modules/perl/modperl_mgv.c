@@ -171,32 +171,6 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 }
 #endif
 
-
-static void package2filename(apr_pool_t *p, const char *package,
-                             char **filename, int *len)
-{
-    const char *s;
-    char *d;
-
-    *filename = apr_palloc(p, (strlen(package)+4)*sizeof(char));
-
-    for (s = package, d = *filename; *s; s++, d++) {
-        if (*s == ':' && s[1] == ':') {
-            *d = '/';
-            s++;
-        }
-        else {
-            *d = *s;
-        }
-    }
-    *d++ = '.';
-    *d++ = 'p';
-    *d++ = 'm';
-    *d   = '\0';
-
-    *len = d - *filename;
-}
-
 /* currently used for complex filters attributes parsing */
 /* XXX: may want to generalize it for any handlers */
 #define MODPERL_MGV_DEEP_RESOLVE(handler, p) \
@@ -281,17 +255,10 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     }
 
     if (!stash && MpHandlerAUTOLOAD(handler)) {
-        int len;
-        char *filename;
-        SV **svp;
-
-        package2filename(p, name, &filename, &len);
-        svp = hv_fetch(GvHVn(PL_incgv), filename, len, 0);
-
-        if (!(svp && *svp != &PL_sv_undef)) { /* not in %INC */
+        if (!modperl_perl_module_loaded(aTHX_ name)) { /* not in %INC */
             MP_TRACE_h(MP_FUNC,
-                       "package %s not in %INC, attempting to load '%s'\n",
-                       name, filename);
+                       "package %s not in %INC, attempting to load it\n",
+                       name);
 
             if (modperl_require_module(aTHX_ name, logfailure)) {
                 MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
@@ -309,9 +276,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             }
         }
         else {
-            MP_TRACE_h(MP_FUNC, "package %s seems to be loaded\n"
-                       "  $INC{'%s')='%s';\n",
-                       name, filename, SvPV_nolen(*svp));
+            MP_TRACE_h(MP_FUNC, "package %s seems to be loaded\n", name);
         }
     }
 
