@@ -7,6 +7,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestConfig;
 use Apache::TestUtil;
+use Apache::BuildConfig;
 
 use Apache::Module ();
 use DynaLoader ();
@@ -84,9 +85,12 @@ sub handler {
              "Apache::Module::loaded('Apache__Module_foo.c')");
 
     #.so
-    ok t_cmp(1, Apache::Module::loaded('mod_perl.so'),
+    {
+    my $expect = Apache::BuildConfig->new->{MP_USE_STATIC} ? 0 : 1;
+    ok t_cmp($expect, Apache::Module::loaded('mod_perl.so'),
              "Apache::Module::loaded('mod_perl.so')");
-
+    }
+    
     ok t_cmp(0, Apache::Module::loaded('Apache__Module__foo.so'),
              "Apache::Module::loaded('Apache__Module_foo.so')");
 
