@@ -14,7 +14,12 @@ int modperl_require_module(pTHX_ const char *pv)
     SPAGAIN;
     POPSTACK;
 
-    return SvTRUE(ERRSV) ? FALSE : TRUE;
+    if (SvTRUE(ERRSV)) {
+        (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR, NULL, NULL);
+        return FALSE;
+    }
+        
+    return TRUE;
 }
 
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
