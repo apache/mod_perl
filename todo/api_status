@@ -50,9 +50,14 @@ V: done completely
 -- src/docs/2.0/api/Apache/porting.pod
 
 -- src/docs/2.0/api/ModPerl/BuildMM.pod
+++ src/docs/2.0/api/ModPerl/Const.pod
+
 VV src/docs/2.0/api/ModPerl/Global.pod
+
 -- src/docs/2.0/api/ModPerl/MM.pod
--- src/docs/2.0/api/ModPerl/MethodLookup.pod
+
+VV src/docs/2.0/api/ModPerl/MethodLookup.pod
+
 -- src/docs/2.0/api/ModPerl/PerlRun.pod
 -- src/docs/2.0/api/ModPerl/Registry.pod
 -- src/docs/2.0/api/ModPerl/RegistryBB.pod
@@ -66,12 +71,12 @@ VV src/docs/2.0/api/ModPerl/Global.pod
 -- src/docs/2.0/api/APR/Bucket.pod
 
 +- src/docs/2.0/api/APR/Const.pod
+VV src/docs/2.0/api/APR/Date.pod
+VV src/docs/2.0/api/APR/Error.pod
 
--- src/docs/2.0/api/APR/Date.pod
--- src/docs/2.0/api/APR/Error.pod
 -- src/docs/2.0/api/APR/Finfo.pod
 -- src/docs/2.0/api/APR/NetLib.pod
--- src/docs/2.0/api/APR/PerlIO.pod
++V src/docs/2.0/api/APR/PerlIO.pod
 
 
 VP src/docs/2.0/api/APR/Pool.pod
