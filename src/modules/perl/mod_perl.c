@@ -529,7 +529,7 @@ void perl_startup (server_rec *s, pool *p)
     dstr = NULL;
 #endif
 
-    if(PERL_RUNNING()) {
+    if(PERL_RUNNING() && PERL_STARTUP_IS_DONE) {
 	saveINC;
 	mp_check_version();
     }
@@ -664,12 +664,20 @@ void perl_startup (server_rec *s, pool *p)
 	GvIMPORTED_CV_on(exitgp);
     }
 
-    if(PERL_STARTUP_DONE_CHECK && !getenv("PERL_STARTUP_DONE")) {
-	MP_TRACE_g(fprintf(stderr, 
-			   "mod_perl: PerlModule,PerlRequire postponed\n"));
-	my_setenv("PERL_STARTUP_DONE", "1");
-	saveINC;
-	return;
+    if(PERL_STARTUP_DONE_CHECK)	{
+ 	int psd = getenv("PERL_STARTUP_DONE");
+ 	if (!psd) {
+ 	    MP_TRACE_g(fprintf(stderr, 
+ 			       "mod_perl: PerlModule,PerlRequire postponed\n"));
+ 	    my_setenv("PERL_STARTUP_DONE", "1");
+ 	    saveINC;
+	    return;
+	}
+ 	else { 
+ 	    MP_TRACE_g(fprintf(stderr, 
+ 			       "mod_perl: postponed PerlModule,PerlRequire enabled\n"));
+ 	    my_setenv("PERL_STARTUP_DONE", "2");
+	}
     }
 
     ENTER_SAFE(s,p);
