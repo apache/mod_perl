@@ -13,7 +13,7 @@
 #PerlRequire scripts/startup.pl
 
 # make sure we are in a sane environment.
-$ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not Perl!";
+$ENV{MOD_PERL} or die "not running under mod_perl!";
 
 #modify @INC if needed
 #use lib qw(/foo/perl/lib);
