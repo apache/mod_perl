@@ -33,8 +33,14 @@ sub import {
 *ccopts = \&ExtUtils::Embed::ccopts;
 
 sub Config_pm_fixup {
+    eval { require Apache::MyConfig; };
     my %config_fixups = (
        ccdlflags => sub { s/-R\s+/-R/; },
+       ccflags => sub {
+           unless ($Apache::MyConfig::Setup{PERL_USELARGEFILES}) {
+               s/-D_LARGEFILE_SOURCE\s+-D_FILE_OFFSET_BITS=\d+//;
+           }
+       },
     );
 
     while (my($key, $sub) = each %config_fixups) {

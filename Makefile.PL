@@ -41,6 +41,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
 
 my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 my $USE_THREADS;
+my $thrlib = join '|', qw(-lpthread);
 
 if ($] < 5.005_60) {
     $USE_THREADS = (defined($Config{usethreads}) && 
@@ -94,6 +95,7 @@ $APACHE_SRC_DEFAULT = $@ ?
     $Apache::MyConfig::Setup{Apache_Src} ; 
 
 my $PWD = cwd;
+$ENV{PERL5LIB} = "$PWD/lib";
 
 my %SSL = (
     "modules/ssl/apache_ssl.c" => "Ben-SSL",
@@ -188,7 +190,9 @@ $EVERYTHING = $EXPERIMENTAL = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
 $PERL_STATIC_EXTS = "";
-$PERL_EXTRA_CFLAGS = $] >= 5.006 ? $Config{ccflags} : "";
+$PERL_USELARGEFILES = 0;
+$PERL_EXTRA_CFLAGS = "";
+$PERL_EXTRA_LIBS = "";
 $SSLCacheServerPort = 8539;
 $SSL_BASE = ""; 
 $Port = $ENV{HTTP_PORT} || 8529;
@@ -357,6 +361,10 @@ if($EXPERIMENTAL) {
 if($experimental{PERL_DEFAULT_OPMASK} > 1) {
     $experimental{PERL_SAFE_STARTUP} = 2;
     $PERL_EXTRA_CFLAGS .= " -DPERL_SAFE_STARTUP=1";
+}
+
+if ($PERL_USELARGEFILES and $] >= 5.006) {
+    $PERL_EXTRA_CFLAGS .= " $Config{ccflags}";
 }
 
 for (keys %PassEnv) {
@@ -975,10 +983,18 @@ sub init_tests_and_config {
 	    $cmd .= qq(CFLAGS="$PERL_EXTRA_CFLAGS" );
 	}    
 	
-	if ($USE_DSO) {		# override apache's notion of this flag
-	  $cmd .= qq(LDFLAGS_SHLIB_EXPORT="$Config{ccdlflags}" );
-	}
+	if ($USE_DSO) {
+            # override apache's notion of this flag
+            $cmd .= qq(LDFLAGS_SHLIB_EXPORT="$Config{ccdlflags}" );
 
+            #if Perl is linked with -lpthread, httpd needs tobe too
+            if ($Config{libs} =~ /($thrlib)/) {
+                $PERL_EXTRA_LIBS .= " $1";
+            }
+	}
+        if ($PERL_EXTRA_LIBS) {
+            $cmd .= qq(LIBS="$PERL_EXTRA_LIBS" );
+        }
 	$cmd .= "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
    
@@ -1220,6 +1236,7 @@ WriteMakefile(
 	HTTPD => $TARGET,
 	PORT => $PORT,
 	PWD => $PWD,
+        PERL5LIB => "PERL5LIB=$ENV{PERL5LIB}",
 	SHRPENV => $Config{shrpenv},
 	CVSROOT => 'perl.apache.org:/home/cvs',
     },
@@ -1338,16 +1355,16 @@ apxs_distclean:
 	(cd ./apaci && $(MAKE) distclean)
 
 apxs_libperl:
-	(cd ./apaci && $(MAKE))
+	(cd ./apaci && $(PERL5LIB) $(MAKE))
 
 apxs_install: apxs_libperl
 	(cd ./apaci && $(MAKE) install;)
 
 apache_httpd: $(APACHE_SRC)/Makefile.tmpl
-	(cd $(APACHE_SRC) && $(SHRPENV) $(MAKE) CC="$(CC)";)
+	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)";)
 
 apaci_httpd: 
-	(cd $(APACHE_ROOT) && $(MAKE))
+	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE))
 
 apaci_install: 
 	(cd $(APACHE_ROOT) && $(MAKE) install)
@@ -1961,6 +1978,7 @@ package Apache::MyConfig;
    'Apache_Src' => \'$APACHE_SRC\',
    'SSL_BASE' => \'$SSL_BASE\',
    'APXS' => \'$WITH_APXS\',
+   'PERL_USELARGEFILES' => \'$PERL_USELARGEFILES\',
 EOT
 
   foreach my $key (sort @callback_hooks) {
@@ -2125,8 +2143,7 @@ sub win32_fix_path_dsp {
 
 sub ccopts {
     unless ($Embed::ccopts) {
-	$Embed::ccopts = `$^X -MExtUtils::Embed -e ccopts`;
-
+        $Embed::ccopts = "$Config{ccflags} -I$Config{archlibexp}/CORE";
 	if($USE_THREADS) {
 	    $Embed::ccopts .= " -DPERL_THREADS";
 	}
@@ -2277,6 +2294,12 @@ EOF
     uselargefiles_check();
     dynaloader_check();
 
+    if ($USE_APXS and $Config{libs} =~ /($thrlib)/) {
+        my $lib = $1;
+        phat_warn(<<EOF);
+Your Perl is linked with $lib, make sure that your httpd is built with LIBS=$lib
+EOF
+    }
 }
 
 sub gdbm_check {
@@ -2308,13 +2331,15 @@ EOF
 }
 
 sub uselargefiles_check {
-    return unless $] >= 5.006 and $Config{uselargefiles} and $USE_APXS;
+    return unless $] >= 5.006 and $Config{uselargefiles}
+      and $PERL_USELARGEFILES and $USE_APXS;
     local $Apache::src::APXS = $WITH_APXS;
     my $cflags = Apache::src->new->apxs('-q' => 'CFLAGS') || '';
     return if $cflags =~ /LARGEFILE/;
 
     phat_warn(<<EOF);
 Your Perl is uselargefiles enabled, but Apache is not, suggestions:
+    *) Rebuild mod_perl with Makefile.PL PERL_USELARGEFILES=0
     *) Rebuild Apache with CFLAGS="-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
     *) Rebuild Perl with Configure -Uuselargefiles
     *) Let mod_perl build Apache (USE_DSO=1 instead of USE_APXS=1)

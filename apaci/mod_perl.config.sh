@@ -107,8 +107,8 @@ echo "$display_prefix id: Perl/$perl_version ($os_version) [$perl_interp]" 1>&2
 #   determine build tools and flags  
 #
 
-#config_pm='-MApache::ExtUtils=%Config'
-config_pm='-MConfig'
+config_pm='-MApache::ExtUtils=%Config'
+#config_pm='-MConfig'
 perl_cc="`$perl_interp $config_pm -e 'print $Config{cc}'`"
 perl_ccflags="`$perl_interp $config_pm -e 'print $Config{ccflags}'`"
 perl_optimize="`$perl_interp $config_pm -e 'print $Config{optimize}'`"

@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+if Perl is linked with -lpthread, then httpd needs to be linked with
+-lpthread, make sure that happens with USE_DSO=1, warn if USE_APXS=1
+
+disable uselargefile flags by default, enable with:
+ Makefile.PL PERL_USELARGEFILES=1
+
 adjust test output (modules/{cgi,constants}) to make 5.7.0-dev
 Test::Harness happy
 
