@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+rid PL_na usage in Symbol.xs
+
 INSTALL.win32 updates, obsolete INSTALL.activeperl removed
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

@@ -2,11 +2,6 @@
 #include "perl.h"
 #include "XSUB.h"
 
-#include "patchlevel.h" 
-#if ((PATCHLEVEL >= 4) && (SUBVERSION >= 76)) || (PATCHLEVEL >= 5) 
-#define na PL_na 
-#endif 
-
 #ifdef PERL_OBJECT
 #define sv_name(svp) svp
 #define undef(ref) 
@@ -102,8 +97,10 @@ cv_const_sv(sv)
 		mg_get(sv);
 		sym = SvPOKp(sv) ? SvPVX(sv) : Nullch;
 	    }
-	    else
-		sym = SvPV(sv, na);
+	    else {
+                STRLEN n_a;
+                sym = SvPV(sv, n_a);
+            }
 	    if(sym)
 		cv = perl_get_cv(sym, TRUE);
 	    break;
