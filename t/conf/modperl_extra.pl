@@ -18,6 +18,9 @@ unless ($ENV{MOD_PERL}) {
     die '$ENV{MOD_PERL} not set!';
 }
 
+#see t/response/TestModperl/env.pm
+$ENV{MODPERL_EXTRA_PL} = __FILE__;
+
 my $ap_mods = scalar grep { /^Apache/ } keys %INC;
 my $apr_mods = scalar grep { /^APR/ } keys %INC;
 

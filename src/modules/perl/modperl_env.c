@@ -1,6 +1,7 @@
 #include "mod_perl.h"
 
 #define EnvMgObj SvMAGIC((SV*)ENVHV)->mg_ptr
+#define EnvMgLen SvMAGIC((SV*)ENVHV)->mg_len
 
 static MP_INLINE
 void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
@@ -87,7 +88,6 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     const apr_array_header_t *array;
     apr_table_entry_t *elts;
 
-
     if (MpReqSETUP_ENV(rcfg)) {
         return;
     }
@@ -118,69 +118,178 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     MpReqSETUP_ENV_On(rcfg);
 }
 
-static int modperl_env_request_set(pTHX_ SV *sv, MAGIC *mg)
-{
-    const char *key, *val;
-    STRLEN klen, vlen;
-    request_rec *r = (request_rec *)EnvMgObj;
-
-    key = (const char *)MgPV(mg,klen);
-    val = (const char *)SvPV(sv,vlen);
-
-    apr_table_set(r->subprocess_env, key, val);
-
-    /*return magic_setenv(sv, mg);*/
-
-    return 0;
-}
-
-#ifdef MP_PERL_HV_GMAGICAL_AWARE
-static int modperl_env_request_get(pTHX_ SV *sv, MAGIC *mg)
-{
-    const char *key, *val;
-    STRLEN klen;
-    request_rec *r = (request_rec *)EnvMgObj;
-
-    key = (const char *)MgPV(mg,klen);
-
-    if ((val = apr_table_get(r->subprocess_env, key))) {
-        sv_setpv(sv, val);
-    }
-    else {
-        sv_setsv(sv, &PL_sv_undef);
-    }
-
-    return 0;
-}
-#endif
-
-/*
- * XXX: PL_vtbl_* are global (not per-interpreter)
- * so this method of tie-ing is not thread-safe
- * overridding svt_get is only useful with 5.7.2+ and requires
- * a smarter lookup than the current modperl_env_request_get
- */
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
     EnvMgObj = (char *)r;
+    EnvMgLen = -1;
 
-    PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(modperl_env_request_set);
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     SvGMAGICAL_on((SV*)ENVHV);
-    PL_vtbl_envelem.svt_get = MEMBER_TO_FPTR(modperl_env_request_get);
 #endif
 }
 
 void modperl_env_request_untie(pTHX_ request_rec *r)
 {
-#if 0
-    /* XXX: not currently in use.  if enabled Perl_magic_setenv
-     * is not available to win32
-     */
-    PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(Perl_magic_setenv);
-#endif
+    EnvMgObj = NULL;
+
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     SvGMAGICAL_off((SV*)ENVHV);
-    PL_vtbl_envelem.svt_get = 0;
 #endif
+}
+
+/* to store the original virtual tables
+ * these are global, not per-interpreter
+ */
+static MGVTBL MP_PERL_vtbl_env;
+static MGVTBL MP_PERL_vtbl_envelem;
+
+#define MP_PL_vtbl_call(name, meth) \
+    MP_PERL_vtbl_##name.svt_##meth(aTHX_ sv, mg)
+
+#define MP_dENV_KEY \
+    STRLEN klen; \
+    const char *key = (const char *)MgPV(mg,klen)
+
+#define MP_dENV_VAL \
+    STRLEN vlen; \
+    const char *val = (const char *)SvPV(sv,vlen)
+
+/*
+ * XXX: what we do here might change:
+ *      - make it optional for %ENV to be tied to r->subprocess_env
+ *      - make it possible to modify environ
+ *      - we could allow modification of environ if mpm isn't threaded
+ *      - we could allow modification of environ if variable isn't a CGI
+ *        variable (still could cause problems)
+ */
+/*
+ * problems we are trying to solve:
+ *      - environ is shared between threads
+ *          + Perl does not serialize access to environ
+ *          + even if it did, CGI variables cannot be shared between threads!
+ * problems we create by trying to solve above problems:
+ *      - a forked process will not inherit the current %ENV
+ *      - C libraries might rely on environ, e.g. DBD::Oracle
+ */
+static int modperl_env_magic_set_all(pTHX_ SV *sv, MAGIC *mg)
+{
+    request_rec *r = (request_rec *)EnvMgObj;
+
+    if (r) {
+        if (PL_localizing) {
+            /* local %ENV = (FOO => 'bar', BIZ => 'baz') */
+            HE *entry;
+            STRLEN n_a;
+
+            hv_iterinit((HV*)sv);
+            while ((entry = hv_iternext((HV*)sv))) {
+                I32 keylen;
+                apr_table_set(r->subprocess_env,
+                              hv_iterkey(entry, &keylen),
+                              SvPV(hv_iterval((HV*)sv, entry), n_a));
+            }
+        }
+    }
+    else {
+        return MP_PL_vtbl_call(env, set);
+    }
+
+    return 0;
+}
+
+static int modperl_env_magic_clear_all(pTHX_ SV *sv, MAGIC *mg)
+{
+    request_rec *r = (request_rec *)EnvMgObj;
+
+    if (r) {
+        apr_table_clear(r->subprocess_env);
+    }
+    else {
+        return MP_PL_vtbl_call(env, clear);
+    }
+
+    return 0;
+}
+
+static int modperl_env_magic_set(pTHX_ SV *sv, MAGIC *mg)
+{
+    request_rec *r = (request_rec *)EnvMgObj;
+
+    if (r) {
+        MP_dENV_KEY;
+        MP_dENV_VAL;
+        apr_table_set(r->subprocess_env, key, val);
+    }
+    else {
+        return MP_PL_vtbl_call(envelem, set);
+    }
+
+    return 0;
+}
+
+static int modperl_env_magic_clear(pTHX_ SV *sv, MAGIC *mg)
+{
+    request_rec *r = (request_rec *)EnvMgObj;
+
+    if (r) {
+        MP_dENV_KEY;
+        apr_table_unset(r->subprocess_env, key);
+    }
+    else {
+        return MP_PL_vtbl_call(envelem, clear);
+    }
+
+    return 0;
+}
+
+#ifdef MP_PERL_HV_GMAGICAL_AWARE
+static int modperl_env_magic_get(pTHX_ SV *sv, MAGIC *mg)
+{
+    request_rec *r = (request_rec *)EnvMgObj;
+
+    if (r) {
+        MP_dENV_KEY;
+        const char *val;
+
+        if ((val = apr_table_get(r->subprocess_env, key))) {
+            sv_setpv(sv, val);
+        }
+        else {
+            sv_setsv(sv, &PL_sv_undef);
+        }
+    }
+    else {
+        /* there is no svt_get in PL_vtbl_envelem */
+    }
+
+    return 0;
+}
+#endif
+
+/* override %ENV virtual tables with our own */
+static MGVTBL MP_vtbl_env = {
+    0,
+    MEMBER_TO_FPTR(modperl_env_magic_set_all),
+    0,
+    MEMBER_TO_FPTR(modperl_env_magic_clear_all),
+    0
+};
+
+static MGVTBL MP_vtbl_envelem =	{
+    0,
+    MEMBER_TO_FPTR(modperl_env_magic_set),
+    0,
+    MEMBER_TO_FPTR(modperl_env_magic_clear),
+    0
+};
+
+void modperl_env_init(void)
+{
+    /* save originals */
+    StructCopy(&PL_vtbl_env, &MP_PERL_vtbl_env, MGVTBL);
+    StructCopy(&PL_vtbl_envelem, &MP_PERL_vtbl_envelem, MGVTBL);
+
+    /* replace with our versions */
+    StructCopy(&MP_vtbl_env, &PL_vtbl_env, MGVTBL);
+    StructCopy(&MP_vtbl_envelem, &PL_vtbl_envelem, MGVTBL);
 }
