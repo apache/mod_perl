@@ -660,17 +660,28 @@ sub whited_decl {		# Input is sanitized.
   unless ($out =~ /\w/) {
     # Probably a function-type declaration: typedef int f(int);
     # Redo scan leaving the last word of the first group of words:
-    $tout =~ /(\w+\s+)*(\w+)\s*\(/g;
-    $out = ' ' x (pos($tout) - length $2)
-      . $2 . ' ' x (length($tout) - pos($tout));
-    # warn "function typedef\n\t'$in'\nwhited-out as\n\t'$out'\n";
+      if ($tout =~ /(\w+\s+)*(\w+)\s*\(/g) {
+          $out = ' ' x (pos($tout) - length $2)
+              . $2 . ' ' x (length($tout) - pos($tout));
+      }
+      else {
+          # try a different approach to get the last type
+          my $len = length $tout;
+          # cut all non-words at the end of the definition
+          my $end = $tout =~ s/(\W*)$// ? length $1 : 0;
+          # remove everything but the last word
+          my $mid = $tout =~ s/.*?(\w*)$/$1/ ? length $1 : 0;
+          # restore the length
+          $out = $tout . ' ' x ($len - $mid);
+      }
+      # warn "function typedef\n\t'$in'\nwhited-out as\n\t'$out'\n";
   }
   warn "panic: length mismatch\n\t'$in'\nwhited-out as\n\t'$out'\n"
     if length($in) != length $out;
   # Sanity check
-  warn "panic: multiple types without intervening comma in\n\t$in\nwhited-out as\n\t$out\n"
+  warn "panic: multiple types without intervening comma in\n\t'$in'\nwhited-out as\n\t'$out'\n"
     if $out =~ /\w[^\w,]+\w/;
-  warn "panic: no types found in\n\t$in\nwhited-out as\n\t$out\n"
+  warn "panic: no types found in\n\t'$in'\nwhited-out as\n\t'$out'\n"
     unless $out =~ /\w/;
   $out
 }
