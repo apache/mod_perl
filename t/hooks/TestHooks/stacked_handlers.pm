@@ -1,12 +1,16 @@
 package TestHooks::stacked_handlers;
 
+# this test exercises the execution of the stacked handlers and test
+# whether the execution breaks when something different than OK or
+# DECLINED is returned
+
 use strict;
 use warnings FATAL => 'all';
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache::Const -compile => qw(OK DECLINED DONE);
 
 sub handler {
     my $r = shift;
@@ -42,7 +46,8 @@ sub three {
     return Apache::DONE;
 }
 
-# this one shouldn't get called, because the three has returned DONE
+# this one shouldn't get called, because the handler 'three' has
+# returned DONE
 sub four {
     my $r = shift;
 
