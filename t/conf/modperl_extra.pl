@@ -318,7 +318,8 @@ package ModPerl::TestMemoryLeak;
 use warnings;
 use strict;
 
-use constant HAS_GTOP => eval { require GTop };
+# GTop v0.12 is the first version that will work under threaded mpms
+use constant HAS_GTOP => eval { require GTop && GTop->VERSION >= 0.12 };
 
 my $gtop = HAS_GTOP ? GTop->new : undef;
 my @attrs = qw(size vsize resident share rss);
