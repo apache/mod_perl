@@ -24,7 +24,7 @@ sub handler {
 
     ok $s->port || 1;
 
-    ok $s->error_fname;
+    ok $s->error_fname || 1; #vhost might not have its own (t/TEST -ssl)
 
     #error_log;
 
