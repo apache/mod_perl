@@ -3,23 +3,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- recursion triggered by internal_redirect() called by a pushed handler
-[Ashish Goyal <ashishg@linux-delhi.org>]
-
-- Support of <CR> <LF> in a EBCDIC environment
-[Ignasi Roca <ignasi.roca@fujitsu.siemens.es>]
-
-- modules/src.t problem
-[G.W. Haywood <ged@jubileegroup.co.uk>]
-
 - DEFAULT_PATH quoting fixup
 [Sheldon Hearn <sheldonh@uunet.co.za>]
-
-- Apache::FakeRequest::args doesnt behave right in a list context
-[Michael Finke <mfinke@apollo.screamdesign.com>]
-
-- auth stuff segfaults if AuthType isn't set
-[Matt Sergeant <matt@sergeant.org>]
 
 - PERL_STATIC_EXTS doesnt work with USE_APACI=1
 
@@ -36,13 +21,27 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - fix t/httpd symlink logic ["Young, Geoffrey S." <younggs@acwilm.com>]
 
+- ldopts() spits out ccdlflags when linker is ld
+
+- Makefile.PL should always push load_modules.pl for 'make test' 
+
+- recursion triggered by internal_redirect() called by a pushed handler
+[Ashish Goyal <ashishg@linux-delhi.org>]
+
+- auth stuff segfaults if AuthType isn't set
+[Matt Sergeant <matt@sergeant.org>]
+
+- Support of <CR> <LF> in a EBCDIC environment
+[Ignasi Roca <ignasi.roca@fujitsu.siemens.es>]
+
+- Apache::FakeRequest::args doesnt behave right in a list context
+[Michael Finke <mfinke@apollo.screamdesign.com>]
+
 - rename PerlSendHeader?
 
 - syswrite/WRITE
 
 - libapreq: Apache::Cookie format sync w/ CGI.pm
-
-- think about making 'use Apache::Log ()' automatic
 
 - remove DIR_MAGIC_TYPE from mod_perl's handler table, if possible (Salvador)
 
@@ -50,11 +49,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - ActivePerl?
 
-- ldopts() spits out ccdlflags when linker is ld
-
 - Apache::Include->virtual should return run() value, not status()
 
-- Makefile.PL should always push load_modules.pl for 'make test' 
+- think about making 'use Apache::Log ()' automatic
 
 - coderef to $r->custom_response
 [Randal L. Schwartz <merlyn@stonehenge.com>]
