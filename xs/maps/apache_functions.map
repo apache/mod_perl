@@ -100,16 +100,16 @@ PREFIX=ap_r
 
 MODULE=Apache::Response   PACKAGE=guess
  ap_make_etag | | r, force_weak=0
- ap_set_content_length
+ ap_set_content_length | | r, length=r->finfo.csize
  ap_set_etag
  ap_meets_conditions
  ap_rationalize_mtime
- ap_update_mtime
+ ap_update_mtime | | r, dependency_mtime=0
  ap_send_error_response
 ~ap_send_fd
  ap_send_mmap | | r, mm, offset, length
  ap_set_keepalive
- ap_set_last_modified
+-ap_set_last_modified
  ap_custom_response
 
 MODULE=Apache::Access   PACKAGE=Apache::RequestRec
