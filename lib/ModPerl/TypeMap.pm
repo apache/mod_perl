@@ -396,6 +396,7 @@ my %convert_alias = (
     Apache__RequestRec => 'r',
     Apache__Server => 'server',
     Apache__Connection => 'connection',
+    APR__Table => 'table',
     APR__UUID => 'uuid',
     apr_status_t => 'status',
 );

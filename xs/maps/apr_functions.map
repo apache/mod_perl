@@ -183,7 +183,7 @@ MODULE=APR::Table
  apr_table_overlay | | base, overlay, p
  apr_table_add
 -apr_table_addn
- apr_table_do
+ apr_table_do | mpxs_ | ...
  apr_table_get
  apr_table_merge
 -apr_table_mergen
