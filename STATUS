@@ -18,6 +18,8 @@ Available Patches:
       http://marc.theaimsgroup.com/?l=apache-modperl&m=103374262313616&w=2
       Status: Rafael Garcia-Suarez says the patch looks good at the
               first glance
+      Followup from Eric:
+      http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=107244468206637&w=2
 
     * if the requested number of bytes was less
       than or equal to the available amount of input then the call
