@@ -65,7 +65,17 @@ CV *empty_anon_sub(void)
                   Nullop,
                   block_end(block_start(TRUE), newOP(OP_STUB,0)));
 }
-   
+
+#ifdef newCONSTSUB
+
+#define my_newCONSTSUB(stash, name, sv) \
+    if(!no_warn) no_warn = empty_anon_sub(); \
+    SAVESPTR(warnhook); \
+    warnhook = (SV*)no_warn; \
+    newCONSTSUB(stash, name, sv)
+
+#else   
+
 static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
 {
 #ifdef dTHR
@@ -99,6 +109,8 @@ static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
     curstash = old_curstash;
     curcop->cop_line = oldline;
 }
+
+#endif
 
 static enum cmd_how autoload_args_how(char *name) {
     if (strEQ(name, "FLAG"))

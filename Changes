@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+tweaks to compile/run with 5.5.670 + -Dusethreads
+
 $r->hostname now documented [Eric Cholet <cholet@logilune.com>]
 
 Apache::File methods are now documented 

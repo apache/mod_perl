@@ -754,10 +754,10 @@ int perl_sv_is_http_code(SV *errsv, int *status)
 	char *tmp = errpv;
 	tmp += 3;
 #ifndef PERL_MARK_WHERE
-	if(strNE(SvPVX(GvSV(curcop->cop_filegv)), "-e")) {
+	if(strNE(SvPVX(GvSV(CopFILEGV(curcop))), "-e")) {
 	    SV *fake = newSV(0);
 	    sv_setpv(fake, ""); /* avoid -w warning */
-	    sv_catpvf(fake, " at %_ line ", GvSV(curcop->cop_filegv));
+	    sv_catpvf(fake, " at %_ line ", GvSV(CopFILEGV(curcop)));
 
 	    if(strnEQ(SvPVX(fake), tmp, SvCUR(fake))) 
 		/* $@ is nothing but 3 digit code and the mess die tacks on */
@@ -838,19 +838,19 @@ void mod_perl_mark_where(char *where, SV *sub)
     if(curcop->cop_line) {
 #if 0
 	fprintf(stderr, "already know where: %s line %d\n",
-		SvPV(GvSV(curcop->cop_filegv),na), curcop->cop_line);
+		SvPV(GvSV(CopFILEGV(curcop)),na), CopFILEGV(curcop));
 #endif
 	return;
     }
 
-    SAVESPTR(curcop->cop_filegv);
-    SAVEI16(curcop->cop_line);
+    SAVECOPFILE(curcop);
+    SAVECOPLINE(curcop);
 
     if(sub) 
 	name = perl_sv_name(sub);
 
-    sv_setpv(GvSV(curcop->cop_filegv), "");
-    sv_catpvf(GvSV(curcop->cop_filegv), "%s subroutine `%_'", where, name);
+    sv_setpv(GvSV(CopFILEGV(curcop)), "");
+    sv_catpvf(GvSV(CopFILEGV(curcop)), "%s subroutine `%_'", where, name);
     curcop->cop_line = 1;
 
     if(name)

@@ -963,7 +963,7 @@ print(r, ...)
 #ifdef PERL_OBJECT
 	(void)(*CvXSUB(cv))(cv, pPerl); /* &Apache::write_client; */
 #else
-	(void)(*CvXSUB(cv))(cv); /* &Apache::write_client; */
+	(void)(*CvXSUB(cv))(aTHXo_ cv); /* &Apache::write_client; */
 #endif
 
 	if(IoFLAGS(GvIOp(defoutgv)) & IOf_FLUSH) /* if $| != 0; */

@@ -33,8 +33,15 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
 } if $File::Copy::VERSION < 2.0;
 
 my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
-my $USE_THREADS = 
-    (defined($Config{usethreads}) && ($Config{usethreads} eq "define"));
+my $USE_THREADS;
+
+if ($] < 5.005_60) {
+    $USE_THREADS = (defined($Config{usethreads}) && 
+		    ($Config{usethreads} eq "define"));
+}
+else {
+    $USE_THREADS = $Config{use5005threads} eq "define";
+}
    
 require "./lib/mod_perl.pm";
 $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
