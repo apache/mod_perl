@@ -97,6 +97,8 @@ int modperl_require_file(pTHX_ const char *pv, int logfailure);
 
 char *modperl_server_desc(server_rec *s, apr_pool_t *p);
 
+MP_INLINE char *modperl_pid_tid(apr_pool_t *p);
+
 void modperl_xs_dl_handles_clear(pTHX);
 
 void **modperl_xs_dl_handles_get(pTHX);

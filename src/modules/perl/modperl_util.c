@@ -289,6 +289,21 @@ char *modperl_server_desc(server_rec *s, apr_pool_t *p)
     return apr_psprintf(p, "%s:%u", s->server_hostname, s->port);
 }
 
+/* used in debug traces */
+MP_INLINE char *modperl_pid_tid(apr_pool_t *p)
+{
+    return apr_psprintf(p, "%lu"
+#if APR_HAS_THREADS
+                 "/%lu"
+#endif /* APR_HAS_THREADS */
+                 , (unsigned long)getpid()
+#if APR_HAS_THREADS
+                 , (unsigned long)apr_os_thread_current()
+#endif /* APR_HAS_THREADS */
+        );
+}
+
+    
 #define dl_librefs "DynaLoader::dl_librefs"
 #define dl_modules "DynaLoader::dl_modules"
 
