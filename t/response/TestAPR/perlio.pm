@@ -80,7 +80,7 @@ sub handler {
 
         my $pos = 3;
         seek $fh, $pos, Fcntl::SEEK_SET();
-        # XXX: broken
+
         my $got = tell($fh);
         ok t_cmp($pos,
                  $got,
