@@ -435,8 +435,12 @@ $ModPerl::FunctionTable = [
         'name' => 'buffer'
       },
       {
+        'type' => 'int *',
+        'name' => 'len'
+      }
+      {
         'type' => 'const char **',
-        'name' => 'bodytext'
+        'name' => 'body'
       }
     ]
   },

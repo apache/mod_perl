@@ -10,12 +10,13 @@ use Apache::Const -compile => qw(OK);
 sub handler {
     my $r = shift;
 
+    # at the same time test the \0 binary at the beginning of the data
     my $response = <<EOF;
 Content-type: text/plain
 X-Foo: X-Bar
 Set-Cookie: Bad Programmer, No cookie!
 
-This not the end of the world
+\000\000This not the end of the world\000\000
 EOF
 
     # bah, we can send the header and the response here

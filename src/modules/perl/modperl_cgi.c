@@ -1,17 +1,54 @@
 #include "mod_perl.h"
 
 MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
-                                       const char **bodytext)
+                                       int *len, const char **body)
 {
     int status;
     int termarg;
     const char *location;
+    const char *tmp;
+    int tlen, newln;
 
     if (!buffer) {
         return DECLINED;
     }
 
-    status = ap_scan_script_header_err_strs(r, NULL, bodytext,
+    /* ap_scan_script_header_err_strs won't handle correctly binary
+     * data following the headers, e.g. when the terminating /\n\r?\n/
+     * is followed by \0\0 which is a part of the response
+     * body. Therefore we need to separate the headers from the body
+     * and not rely on ap_scan_script_header_err_strs to do that for
+     * us.
+     */
+    tmp = buffer;
+    newln = 0;
+    tlen = *len;
+    while (tlen--) {
+        /* that strange mix of CR and \n (and not LF) copied from
+         * util_script.c:ap_scan_script_header_err_core
+         */
+        if (*tmp != CR && *tmp != '\n') {
+            newln = 0;
+        }
+        if (*tmp == '\n') {
+            newln++;
+        }
+        tmp++;
+        if (newln == 2) {
+            break;
+        }
+    }
+    
+    if (tmp - buffer >= *len) {
+        *body = NULL; /* no body along with headers */
+        *len = 0;
+    }
+    else {
+        *body = tmp;
+        *len = *len - (tmp - buffer);
+    }
+    
+    status = ap_scan_script_header_err_strs(r, NULL, NULL,
                                             &termarg, buffer, NULL);
 
     /* code below from mod_cgi.c */
