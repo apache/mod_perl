@@ -10,6 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+avoid various warnings under src/modules/perl/:
+- declare bufsiz to be STRLEN in Apache.xs, and add
+  STRLEN to Apache/typemap
+- add I32 typecast in Constants.xs
+- avoid use of unregistered local variables for Win32
+  in mod_perl.c and perl_config.c
+- s/I32/U8/ in mod_perl.h, perl_config.c, and perl_util.c
+- declare i and http_code to be STRLEN in perl_util.c
+[Stas Bekman, Randy Kobes]
+
 don't use $r variable in Apache::PerlRun::compile(), so the script
 won't use use inherited $r by mistake [Stas Bekman]
 
