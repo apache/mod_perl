@@ -336,7 +336,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
 
 #ifdef PERL_STACKED_HANDLERS
 
-CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
+CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *p)
 { 
     SV *sva;
 #if !defined(APACHE_SSL) && !defined(WIN32)
@@ -349,6 +349,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
+	register_cleanup(p, (void*)*cmd, mod_perl_cleanup_av, mod_perl_noop);
 	MP_TRACE_d(fprintf(stderr, "init `%s' stack\n", hook)); 
     } 
     MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: @%s, '%s'\n", hook, arg)); 
@@ -358,7 +359,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg)
 }
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
-return perl_cmd_push_handlers(hook,&cmd,arg)
+return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
 
 #else
 
@@ -720,6 +721,16 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	new->class = basevp->class;
     }
     return (void *)new;
+}
+
+void mod_perl_cleanup_av(void *data)
+{
+    AV *av = (AV*)data;
+    if(SvREFCNT((SV*)av)) {
+	MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
+			   (unsigned long)av, (int)SvREFCNT((SV*)av)));
+	SvREFCNT_dec((SV*)av);
+    }
 }
 
 void perl_perl_cmd_cleanup(void *data)
