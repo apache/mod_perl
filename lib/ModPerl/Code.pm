@@ -14,14 +14,15 @@ my %handlers = (
     PerSrv     => [qw(PostReadRequest Trans)], #Init
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
-                      Type Fixup OutputFilter Response Log)], #Init Cleanup
+                      Type Fixup Response Log
+                      InputFilter OutputFilter)], #Init Cleanup
     Connection => [qw(PreConnection ProcessConnection)],
 );
 
 my %hooks = map { $_, canon_lc($_) }
     map { @{ $handlers{$_} } } keys %handlers;
 
-my %not_ap_hook = map { $_, 1 } qw(response output_filter);
+my %not_ap_hook = map { $_, 1 } qw(response output_filter input_filter);
 
 my %hook_proto = (
     Process    => {
