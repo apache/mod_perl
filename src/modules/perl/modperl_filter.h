@@ -9,7 +9,9 @@
 
 #define MP_FILTER_CONNECTION_HANDLER 0x01
 #define MP_FILTER_REQUEST_HANDLER    0x02
-#define MP_FILTER_HTTPD_HANDLER      0x04 
+#define MP_FILTER_HAS_INIT_HANDLER   0x04 
+#define MP_FILTER_INIT_HANDLER       0x08 
+#define MP_FILTER_HTTPD_HANDLER      0x10 
 
 typedef ap_filter_t * MP_FUNC_T(modperl_filter_add_t) (const char *, void *,
                                                        request_rec *,
@@ -38,6 +40,9 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_off_t readbytes);
 
 modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj);
+
+int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
+                                        apr_pool_t *p);
 
 int modperl_run_filter(modperl_filter_t *filter);
 
@@ -90,6 +95,5 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 const char *name,
                                 modperl_filter_add_t addfunc,
                                 SV *callback, const char *type);
-
 
 #endif /* MODPERL_FILTER_H */
