@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Fix Apache::Status::handler to return 'Apache::OK' [Juanma Barranquero
+<lektu@terra.es>]
+
 <Perl> sections now proprely set filename and line number information,
 making error messages report the correct location. [Philippe M. Chiasson]
 
