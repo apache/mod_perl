@@ -75,7 +75,7 @@ sub generate_cscan_file {
     }
 
     my @includes;
-    my $unwanted = join '|', qw(ap_listen);
+    my $unwanted = join '|', qw(ap_listen internal);
     File::Find::finddepth({
                            wanted => sub {
                                return unless /\.h$/;
@@ -143,11 +143,12 @@ sub get_structs {
 
     my %seen;
     my $prefix = join '|', qw(ap_ apr_ apu_);
+    my $other  = join '|', qw(_rec module);
 
     my @structures;
 
     while (my($type, $elts) = each %$typedef_structs) {
-        next unless $type =~ /^($prefix)/o or $type =~ /_rec$/;
+        next unless $type =~ /^($prefix)/o or $type =~ /($other)$/o;
 
         next if $seen{$type}++;
 
@@ -225,10 +226,18 @@ sub cscan_filter {
     my %typedef;
 
     my $apache_file = 0;
+    my %typedef_aliases =
+      (cmd_parms_struct => 'cmd_parms',
+       command_struct => 'command_rec',
+       module_struct => 'module');
+
+    my $alias_re = join '|', keys %typedef_aliases;
 
     while (<$cmd>) {
         #C::Scan cannot parse this
         s/const\s+char\s*\*\s+const\s*\*/const char **/g;
+
+        s/\b($alias_re)\b/$typedef_aliases{$1}/o;
 
         if (m(^\s*\#\s*	        # Leading hash
               (line\s*)?	# 1: Optional line
