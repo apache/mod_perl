@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+fixed $r->finfo bug (properly set PL_laststatval)
+
 PerlRequire/PerlModule will not let the server start if there is an
 error (bug introduced in 1.16_xx), thanks to Brian Moseley for the spot
 

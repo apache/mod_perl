@@ -16,6 +16,9 @@
 #ifndef statcache
 #define statcache PL_statcache
 #endif
+#ifndef laststatval
+#define laststatval PL_laststatval
+#endif
 #ifndef rs
 #define rs PL_rs
 #endif
