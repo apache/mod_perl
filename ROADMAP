@@ -1,0 +1,89 @@
+Th ROADMAP document covers mod_perl 2.0 features that weren't
+implemented yet and tries to provide the details and pointers on how
+to implement them.
+
+Whereas the parallel STATUS document mostly covers issues with
+features that were implemented but have bugs.
+
+META: there is also the todo/ dir...
+
+### Installation ###
+
+ o Currently only MP_USE_DSO=1 is used, need to test that
+   MP_USE_STATIC=1 works too.
+
+
+### RunTime ###
+
+- API
+
+
+
+- Hooks
+
+  o hooks ordering is not implemented yet
+
+- Streaming Filters
+
+  o Input streaming filtering is not implemented. Proposed to
+    prototype in Perl and then port to C.
+
+  o Output filtering basically works, but needs more work:
+
+    * the user filter has no API for storing data away. e.g. if the
+      data comes in several brigades and the filter needs to have more
+      than one brigade's data before it can do things it needs some
+      API to store the data. see the thread:
+      http://marc.theaimsgroup.com/?t=103778902500001&r=1&w=2
+
+- Apache::Request
+
+  o everybody wants it. There is a ported C version, but the perl glue
+    code won't be written until we know where the C version
+    goes. Currently it's a patch for the httpd-2.0 rep, but wasn't yet
+    accepted by httpd :( The patch is here http://www.apache.org/~joes/
+
+- Registry modules
+
+  o An open issue with chdir, which is process-scoped. Arthur Bergman
+    has started the work on ex::threads::safecwd, which is discussed
+    here: http://www.perl.com/pub/a/2002/06/11/threads.html?page=2
+
+  o other less critical open issues are listed in
+    ModPerl-Registry/TODO
+
+- Misc:
+
+  o Need to be able to test whether we run under -T (and in 5.8.0 -t?)
+    In 1.0 we had Apache::__T (needed at least by the registry). 5.8.0
+    has a new special variable ${^TAINT}: 
+    Solution: create ${^TAINT} for 5.6.x (copy the code from 5.8.0)
+    Once available, adjust the RegistryCooker to use it
+
+- Resource limiting tools:
+
+  o Need to port tools that restrict the memory size used by processes
+    for prefork mpms and develop new ones for threaded mpms. Need to
+    work out the details of the implementation of the garbage
+    collection thread for the threaded mpms as originally suggested by
+    doug.  The issue with threads is that there is no way to know the
+    thread's size, can we use B::Size and B::TerseSize?
+
+    prefork:
+        Apache::SizeLimit (???)
+        Apache::GTopLimit (???)
+    threaded:
+        Garbage Collector thread
+
+  => Ideally the tools should work transparently with threaded and
+  non-threaded mpms, but how?
+
+  o Other resources, 
+    Apache::Resource ???
+
+
+- Monitoring tools:
+
+  Apache::VMonitor (depends on Apache::Scoreboard)
+  Apache::Scoreboard (almost ready)
+  Apache::Peek (???)
