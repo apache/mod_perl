@@ -807,15 +807,20 @@ void modperl_package_unload(pTHX_ const char *package)
 void modperl_restart_count_inc(server_rec *base_server)
 {
     void *data;
-    int cnt = 1;
+    int *counter;
     apr_pool_t *p = base_server->process->pool;
+    
     apr_pool_userdata_get(&data, MP_RESTART_COUNT_KEY, p);
     if (data) {
-        cnt = (int)data + 1;
+        counter = data;
+        (*counter)++;
     }
-    
-    apr_pool_userdata_set((const void *)cnt, MP_RESTART_COUNT_KEY,
-                          apr_pool_cleanup_null, p);
+    else {
+        counter = apr_palloc(p, sizeof *counter);
+        *counter = 1;
+        apr_pool_userdata_set(counter, MP_RESTART_COUNT_KEY,
+                              apr_pool_cleanup_null, p);
+    }    
 }
 
 int modperl_restart_count(void)
@@ -823,5 +828,5 @@ int modperl_restart_count(void)
     void *data;
     apr_pool_userdata_get(&data, MP_RESTART_COUNT_KEY,
                           modperl_global_get_server_rec()->process->pool);
-    return data ? (int)data : 0;
+    return data ? *(int *)data : 0;
  }
