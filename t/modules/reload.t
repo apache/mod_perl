@@ -11,7 +11,7 @@ use TestCommon::SameInterp;
 plan tests => 3;
 
 my $test_file = catfile Apache::Test::vars("serverroot"),
-    qw(lib Apache Reload Test.pm);
+    qw(lib Apache2 Reload Test.pm);
 
 my $module   = 'TestModules::reload';
 my $location = '/' . Apache::TestRequest::module2path($module);

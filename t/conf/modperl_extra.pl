@@ -28,8 +28,8 @@ BEGIN {
     *Apache::server = *Apache2::server;
 
     for (qw/Response RequestRec RequestUtil/) {
-        eval qq(package Apache::$_;
-                use base "Apache2::$_";
+        eval qq(
+                \*Apache::$_\:: = \*Apache2::$_\::;
                 \$INC{"Apache/$_.pm"} = ') . __FILE__ . "';";
         die $@ if $@;
     }
