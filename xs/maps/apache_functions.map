@@ -45,6 +45,12 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  ap_get_status_line
  ap_is_initial_req
 
+ #protocol module helpers
+ int:DEFINE_location_merge | | request_rec *:r, char *:location
+ void:DEFINE_set_basic_credentials | | request_rec *:r, char *:username, char *:password
+PACKAGE=Apache::RequestRec
+ request_rec *:DEFINE_new | | SV *:classname, conn_rec *:c
+
 #MODULE=Apache::RequestConfig
  ap_document_root
  ap_get_limit_req_body
