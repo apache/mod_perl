@@ -8,7 +8,6 @@ void modperl_global_request_cfg_set(request_rec *r)
     /* only if PerlOptions +GlobalRequest and not done already */
     if (MpDirGLOBAL_REQUEST(dcfg) && !MpReqSET_GLOBAL_REQUEST(rcfg)) {
         modperl_global_request_set(r);
-        MpReqSET_GLOBAL_REQUEST_On(rcfg);
     }
 }
 

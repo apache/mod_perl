@@ -21,7 +21,9 @@ my $location = '/' . __PACKAGE__;
 sub handler {
     my $r = __PACKAGE__->new(shift);
 
-    plan $r, tests => 4;
+    plan $r, tests => 5;
+
+    ok ! Apache->request;
 
     ok $r->uri eq $location;
 
@@ -39,3 +41,6 @@ sub handler {
 }
 
 1;
+__END__
+SetHandler perl-script
+PerlOptions -GlobalRequest

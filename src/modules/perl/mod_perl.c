@@ -696,6 +696,11 @@ int modperl_response_handler_cgi(request_rec *r)
         modperl_env_request_populate(aTHX_ r);
     }
 
+    /* default is +GlobalRequest, skip if PerlOption -GlobalRequest */
+    if (MpDirGLOBAL_REQUEST(dcfg) || !MpDirSeenGLOBAL_REQUEST(dcfg)) {
+        modperl_global_request_set(r);
+    }
+
     h_stdout = modperl_io_tie_stdout(aTHX_ r);
     h_stdin  = modperl_io_tie_stdin(aTHX_ r);
 
