@@ -20,6 +20,8 @@ From: David-Michael Lincke <mcm-techlists@unisg.ch>
 Subject: Unresolved symbol building mod_perl-1.15/Apache 1.3.1 with
          certain handler combination
 
+- Apache::exit broken under Apache::PerlRun (not seen w/ package declaration)
+
 - Apache::Registry should check return value of the subroutine,
   e.g. for REDIRECT   
 
