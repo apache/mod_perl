@@ -92,7 +92,9 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
 {
     dHANDLE("STDIN");
     int status;
-    GV *handle_save = gv_fetchpv("STDIN_SAVED", TRUE, SVt_PVIO);
+    GV *handle_save = gv_fetchpv(Perl_form(aTHX_ "Apache::RequestIO::_GEN_%ld",
+                                           (long)PL_gensym++),
+                                 TRUE, SVt_PVIO);
     SV *sv = sv_newmortal();
 
     sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
@@ -125,7 +127,9 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
 {
     dHANDLE("STDOUT");
     int status;
-    GV *handle_save = gv_fetchpv("STDOUT_SAVED", TRUE, SVt_PVIO);
+    GV *handle_save = gv_fetchpv(Perl_form(aTHX_ "Apache::RequestIO::_GEN_%ld",
+                                           (long)PL_gensym++),
+                                 TRUE, SVt_PVIO);
     SV *sv = sv_newmortal();
 
     MP_TRACE_o(MP_FUNC, "start");
