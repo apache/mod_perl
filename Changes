@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+complete Apache::Util 1.x compat
+
 added Apache::MPM_IS_THREADED constant
 
 added compat function for Apache::Constants::SERVER_VERSION
