@@ -6,6 +6,10 @@ package TestFilter::in_str_consume;
 # bb from the upstream is consumed or not. What matters is that the
 # filter sends something downstream (an empty bb will do).
 #
+# the real problem is that in the streaming filters we can't consume
+# more than one bucket brigade, which we can in non-stream filters.,
+# e.g. see in_bbs_underrun.pm
+#
 # e.g. a filter that cleans up the incoming stream (extra spaces?)
 # might reduce the whole bb into nothing (e.g. if it was made of only
 # white spaces) then it should send "" down.
