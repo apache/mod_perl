@@ -1,5 +1,9 @@
 #!perl -w
 
+BEGIN {
+    warn "note: the warning '... will not stay shared' is OK here!!!\n";
+}
+
 # this script will suffer from a closure problem under registry
 # should see it under ::Registry
 # should not see it under ::PerlRun
