@@ -72,11 +72,8 @@
 #endif
 
 #ifdef PERL_THREADS
-#define _INCLUDE_APACHE_FIRST
-#endif
-
-#ifdef _INCLUDE_APACHE_FIRST
 #include "apache_inc.h"
+#define _INCLUDE_APACHE_FIRST
 #endif
 
 #include "EXTERN.h"
