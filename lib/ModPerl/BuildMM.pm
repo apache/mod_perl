@@ -19,6 +19,8 @@ my @methods = grep *{$stash->{$_}}{CODE}, keys %$stash;
 ModPerl::MM::override_eu_mm_mv_all_methods(@methods);
 use strict 'refs';
 
+my $apache_test_dir = File::Spec->catdir(Cwd::getcwd(), "Apache-Test", "lib");
+
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
     q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::BuildMM \\}."\n" .
@@ -139,21 +141,13 @@ sub ModPerl::BuildMM::MY::top_targets {
 
 sub ModPerl::BuildMM::MY::postamble {
     my $self = shift;
-    my $build = build_config();
 
-    my $root = $build->{cwd};
-
-    my $doc_root = File::Spec->catdir($root, "docs", "api");
-
-    my $lib_dir         = File::Spec->catdir($root, "lib");
-    my $apache_test_dir = File::Spec->catdir($root, "Apache-Test", "lib");
+    my $doc_root = File::Spec->catdir(Cwd::getcwd(), "docs", "api");
 
     my @targets = ();
-    my @target;
 
     # add the code to glue the existing pods to the .pm files in blib
-
-    @target = ('glue_pods:');
+    my @target = ('glue_pods:');
 
     if (-d $doc_root) {
         while (my ($pm, $blib) = each %{$self->{PM}}) {
@@ -164,7 +158,7 @@ sub ModPerl::BuildMM::MY::postamble {
             next unless -r $podpath;
 
             push @target, 
-                "\$(FULLPERL) -I$lib_dir " .
+                '$(FULLPERL) -I$(INST_LIB) ' .
                 "-I$apache_test_dir -MModPerl::BuildMM " .
                 "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
         }
