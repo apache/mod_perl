@@ -181,6 +181,7 @@ EOF
 
     $build->lib_check('gdbm');
     malloc_check();
+    os_check();
 }
 
 sub malloc_check {
@@ -200,6 +201,24 @@ EOF
     }
 }
 
+sub os_check {
+    my $check = \&{"os_check_$^O"};
+    return unless defined &$check;
+    $check->()
+}
+
+sub os_check_hpux {
+    my $ccflags = $build->perl_config('ccflags');
+
+    if ($build->{MP_USE_DSO} and $Config{ld} eq 'ld') {
+        unless ($ccflags =~ /\+z/i) {
+            $build->phat_warn(<<EOF);
+mod_perl is unlikely to link with your libperl, suggestions:
+    *) Rebuild Perl with Configure -Accflags=+Z ...
+EOF
+        }
+    }
+}
 
 # by default only Makefile.PL's in the first level sub-dirs are
 # discovered. If you want to reach a Makefile.PL's in some remote
