@@ -18,6 +18,10 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+have ldopts yank ExtUtils::Liblist message:
+ Note (probably harmless): No library found for ...
+from stdout to stderr [Stas Bekman <sbekman@iil.intel.com>]
+
 change Apache.xs/typemap so classes who inherit from the Apache class
 can invoke methods with a hash object, provided $hash->{_r} contains a
 request_rec object

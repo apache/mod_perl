@@ -32,12 +32,13 @@ my $proto_perl2c = {
     '$$$'   => "TAKE2",
     '$$'    => "TAKE1",
     '$'     => "NO_ARGS",
+    ''      => "NO_ARGS",
     '$$;$'  => "TAKE12",
     '$$$;$' => "TAKE23",
     '$$;$$' => "TAKE123",
     '$@'    => "ITERATE",
     '$@;@'  => "ITERATE2",
-#    '$*'    => "RAW_ARGS",
+    '$$;*'  => "RAW_ARGS",
 };
 
 my $proto_c2perl = {
@@ -61,6 +62,12 @@ sub xs_cmd_table {
 	else {
 	    $name = $cmd;
 	}
+	my $realname = $name;
+	if($name =~ s/[\<\>]//g) {
+	    if($name =~ s:^/::) {
+		$name .= "_END";
+	    }
+	}
 	my $sub = join '::', $class, $name;
 	my $take = "TAKE123";
 	if(defined &$sub) {
@@ -73,7 +80,7 @@ sub xs_cmd_table {
 
 	$cmdtab .= <<EOF;
 
-    { "$name", perl_cmd_perl_$take,
+    { "$realname", perl_cmd_perl_$take,
       (void*)"$sub",
       OR_ALL, $take, "$desc" },
 EOF
@@ -130,6 +137,8 @@ MODULE = $class		PACKAGE = $class
 BOOT:
     add_module(&XS_${modname});
     stash_mod_pointer("$class", &XS_${modname});
+    av_push(perl_get_av("$class\:\:ISA",TRUE), newSVpv("Apache::Config",0));
+
 EOF
 }
 

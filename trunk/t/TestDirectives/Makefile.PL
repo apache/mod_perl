@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 
 BEGIN {
-    use lib qw{../../blib/lib ../../blib/arch ../../lib};
+    use lib qw{../../lib};
 }
 
 use strict;
@@ -17,6 +17,8 @@ my @directives = (
    [AnotherCmd => "Stuff for another command"],
    [YAC => "Yet another comand"],
    [CmdIterate => "No limit here"],
+   ["<Container" => "whatever"],
+   ["</Container>" => "end whatever"],
 );
 
 my $proto_perl2c = Apache::ExtUtils->proto_perl2c;

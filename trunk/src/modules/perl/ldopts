@@ -7,4 +7,8 @@ if($^O eq "aix") {
     #system "cp $Config{archlibexp}/CORE/perl.exp ./perl.exp";
 }	
 
+if($ldopts =~ s/^(Note.*)$//mg) {
+    warn "$1\n";
+}
+
 print $ldopts;

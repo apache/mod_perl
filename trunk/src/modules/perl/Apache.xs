@@ -274,6 +274,12 @@ child_terminate(request_rec *r)
 int basic_http_header(request_rec *r);
 #endif
 
+#if MODULE_MAGIC_NUMBER > 19970912 
+#define cmd_infile   parms->config_file
+#else
+#define cmd_infile   parms->infile
+#endif
+
 pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);
@@ -293,6 +299,17 @@ server_rec *perl_get_startup_server(void)
     }
     return NULL;
 }
+
+static cmd_parms *perl_get_cmd_parms(void)
+{
+    SV *sv = perl_get_sv("Apache::__CMDPARMS", FALSE);
+    if(sv) {
+	IV tmp = SvIV((SV*)SvRV(sv));
+	return (cmd_parms *)tmp;
+    }
+    return NULL;
+}
+
 
 #define TABLE_GET_SET(table, do_taint) \
 { \
@@ -2034,3 +2051,22 @@ names(server)
 
     OUTPUT:
     RETVAL				   
+
+MODULE = Apache  PACKAGE = Apache::Config
+
+char *
+getline(self)
+    SV *self
+
+    PREINIT:
+    cmd_parms *parms = perl_get_cmd_parms();
+    char l[MAX_STRING_LEN];
+
+    CODE:				   
+    if(!parms) XSRETURN_UNDEF;
+
+    (void)cfg_getline(l, MAX_STRING_LEN, cmd_infile);
+    RETVAL = l;
+
+    OUTPUT:
+    RETVAL
