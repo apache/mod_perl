@@ -46,7 +46,7 @@ sub handler {
     );
 
     plan $r, tests => (scalar keys %pools) +
-                      (scalar keys %objects) + 9;
+                      (scalar keys %objects) + 11;
 
     # syntax - an object or pool is required
     t_debug("Apache::server_root_relative() died");
@@ -111,10 +111,12 @@ sub handler {
                  "\$r->server_root_relative($dir)");
     }
 
-    {
-        t_debug('registering method FOO');
-        ok Apache::Server::method_register($r->server->process->pconf, 'FOO');
-    }
+    t_debug('registering method FOO');
+    ok Apache::Server::method_register($r->server->process->pconf, 'FOO');
+
+    t_debug('Apache::Server::exists_config_define');
+    ok Apache::Server::exists_config_define('MODPERL2');
+    ok ! Apache::Server::exists_config_define('FOO');
 
     Apache::OK;
 }

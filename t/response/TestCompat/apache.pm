@@ -31,7 +31,7 @@ sub handler {
              "Apache::module('mod_ne_exists.c')");
 
 
-    ok t_cmp(Apache::exists_config_define('MODPERL2'),
+    ok t_cmp(Apache::Server::exists_config_define('MODPERL2'),
              Apache->define('MODPERL2'),
              'Apache->define');
 

@@ -158,7 +158,6 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
 ?ap_replace_stderr_log
 
 #MODULE=Apache::ServerConfig
- ap_exists_config_define
 #XXX: thought this might be useful
 #however it is not exported on win32
 !ap_get_local_host
@@ -167,6 +166,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
 
 PACKAGE=Apache::Server
  ap_method_register
+ ap_exists_config_define
 ~ap_get_server_built
 ~ap_get_server_version
 ~ap_server_root
