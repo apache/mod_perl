@@ -132,7 +132,6 @@ static void set_taint_var(PerlInterpreter *perl)
     
 }
 
-
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
     AV *endav;
@@ -187,6 +186,30 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 #endif
     
     perl_run(perl);
+
+#ifdef USE_ITHREADS
+    if (s->is_virtual) {
+        /* if alloc flags is On or clone flag is On,
+         * virtual host gets its own mip
+         */
+        if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
+            MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
+                       modperl_server_desc(s, p));
+            modperl_interp_init(s, p, perl);
+        }
+
+        /* if we allocated a parent perl, mark it to be destroyed */
+        if (MpSrvPARENT(scfg)) {
+            MpInterpBASE_On(scfg->mip->parent);
+        }
+    }
+    else {
+        /* base server */
+        modperl_interp_init(s, p, perl);
+        MpInterpBASE_On(scfg->mip->parent);
+    }
+    
+#endif
 
     PL_endav = endav;
 
@@ -286,21 +309,6 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-
-    /* if alloc flags is On or clone flag is On,
-     *  virtual host gets its own mip
-     */
-    if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
-        MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
-                   modperl_server_desc(s, p));
-        modperl_interp_init(s, p, perl);
-    }
-
-    /* if we allocated a parent perl, mark it to be destroyed */
-    if (MpSrvPARENT(scfg)) {
-        MpInterpBASE_On(scfg->mip->parent);
-    }
-
     if (!scfg->mip) {
         /* since mips are created after merge_server_configs()
          * need to point to the base mip here if this vhost
@@ -356,11 +364,6 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     base_perl = modperl_startup(base_server, p);
 
     MP_init_status = 2; /* only now mp has really started */
-    
-#ifdef USE_ITHREADS
-    modperl_interp_init(base_server, p, base_perl);
-    MpInterpBASE_On(base_scfg->mip->parent);
-#endif
 
     for (s=base_server->next; s; s=s->next) {
         if (modperl_init_vhost(s, p, base_server) != OK) {
@@ -479,7 +482,7 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     }
 
     MP_init_status = 1; /* now starting */
- 
+
     apr_pool_create(&server_pool, pconf);
 
     modperl_sys_init();
