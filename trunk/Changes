@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+fix bug in modules/util test
+[Tatsuhiko Miyagawa <miyagawa@edge.co.jp>]
+
 Adjust the mailling list addresses
 's|\@apache\.org|\@perl.apache.org|' [Stas Bekman <stas@stason.org>]
 
