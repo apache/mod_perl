@@ -90,7 +90,7 @@ $  timeout
 $  keep_alive_timeout
 $  keep_alive_max
 $  keep_alive
-<  path
+$  path
 -  pathlen
 $  names
 $  wild_names
