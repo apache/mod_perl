@@ -637,6 +637,8 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     int count = 0;
     CV *cv = perl_get_cv(subname, TRUE);
     SV *obj;
+    SV *sv = perl_get_sv("Apache::__CMDPARMS", TRUE);
+    sv_setref_pv(sv, "Apache::Config", (void*)cmd);
 
     if(!SvTRUE(*data))
 	*data = newRV_noinc((SV*)newHV());
@@ -648,10 +650,12 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
-    XPUSHs(obj);
-    PUSHif(one);PUSHif(two);PUSHif(three);
+    if(SvPOK(cv) && (SvCUR(cv) || (SvPVX(cv) == NULL))) {
+	XPUSHs(obj);
+	PUSHif(one);PUSHif(two);PUSHif(three);
+    }
     PUTBACK;
-    count = perl_call_pv(subname, G_EVAL | G_SCALAR);
+    count = perl_call_sv((SV*)cv, G_EVAL | G_SCALAR);
     SPAGAIN;
 #if 0
     if(count == 1) {
@@ -665,7 +669,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
 #endif
     FREETMPS;LEAVE;
 
-    if(perl_eval_ok(cmd->server) != OK) 
+    if(SvTRUE(ERRSV))
 	return SvPVX(ERRSV);
     else
 	return NULL;

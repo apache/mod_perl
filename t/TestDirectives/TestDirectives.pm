@@ -50,14 +50,29 @@ sub YAC {
     #warn Dumper($cfg), $/;
 }
 
+sub Container ($$;*) {
+    my($cfg, $arg) = @_;
+    $arg =~ s/>//;
+    warn "ARG=$arg\n";
+    while(my($line) = $cfg->getline) {
+	last if $line =~ m:</Container>:i;
+	warn "LINE=`$line'\n";
+    }
+}
+
+sub Container_END () {
+    die "</Container> outside a <Container>\n";
+}
+
 use Apache::ExtUtils ();
 my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
 
 my $code = "";
 while(my($pp,$cp) = each %$proto_perl2c) {
+    next unless $pp;
     $code .= <<SUB;
 sub $cp ($pp) { 
-    warn "$cp called with args: ", (map "`\$_', ", \@_);
+    warn "$cp called with args: ", (map "`\$_', ", \@_), "\n";
     shift->attr($cp => [\@_]);
 }
 SUB
