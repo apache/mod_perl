@@ -19,31 +19,36 @@ sub Apache::TestToString::PRINTF {}
 sub handler {
     my($filter, $bb) = @_;
 
-    Apache::TestToString->start;
+    unless ($filter->ctx) {
 
-    plan tests => 4;
+        Apache::TestToString->start;
 
-    my $ba = $filter->r->connection->bucket_alloc;
+        plan tests => 4;
 
-    #should only have 1 bucket from the response() below
-    for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
-        ok $bucket->type->name;
-        ok $bucket->length == 2;
-        $bucket->read(my $data);
-        ok $data eq 'ok';
+        my $ba = $filter->r->connection->bucket_alloc;
+
+        #should only have 1 bucket from the response() below
+        for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
+            ok $bucket->type->name;
+            ok $bucket->length == 2;
+            $bucket->read(my $data);
+            ok (defined $data and $data eq 'ok');
+        }
+
+        my $tests = Apache::TestToString->finish;
+
+        my $brigade = APR::Brigade->new($filter->r->pool, $ba);
+        my $bucket = APR::Bucket->new($tests);
+
+        $brigade->insert_tail($bucket);
+
+        my $ok = $brigade->first->type->name =~ /mod_perl/ ? 4 : 0;
+        $brigade->insert_tail(APR::Bucket->new("ok $ok\n"));
+
+        $filter->next->pass_brigade($brigade);
+
+        $filter->ctx(1); # flag that we have run this already
     }
-
-    my $tests = Apache::TestToString->finish;
-
-    my $brigade = APR::Brigade->new($filter->r->pool, $ba);
-    my $bucket = APR::Bucket->new($tests);
-
-    $brigade->insert_tail($bucket);
-
-    my $ok = $brigade->first->type->name =~ /mod_perl/ ? 4 : 0;
-    $brigade->insert_tail(APR::Bucket->new("ok $ok\n"));
-
-    $filter->next->pass_brigade($brigade);
 
     Apache::OK;
 }
