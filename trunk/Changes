@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+print() now returns true on success, false on failure (1.3.6+)
+
+no longer set SIGPIPE handler if Apache >= 1.3.6
+
 fix bug triggered when siggv is not initialized, spotted by Preston Brown
 
 new Apache::PerlRun::flush_namespace method to undef() each [SAHC]V

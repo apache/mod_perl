@@ -6,7 +6,6 @@ use Exporter ();
 use Apache::Constants qw(OK DECLINED);
 use Apache::Connection ();
 use Apache::Server ();
-use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn);
 
@@ -16,8 +15,6 @@ if (caller eq "CGI::Apache") {
     #we must die here outside of httpd so CGI::Switch works
     die unless $ENV{MOD_PERL};
 }
- 
-Apache::SIG->set;
 
 {
     no strict;

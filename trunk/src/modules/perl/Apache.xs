@@ -903,17 +903,16 @@ get_client_block(r, buffer, bufsiz)
 	ST(1) = &sv_undef;
     }
 
-void 
+int
 print(r, ...)
     Apache	r
 
     ALIAS:
     Apache::PRINT = 1
 
-    PREINIT:
+    CODE:
     ix = ix; /* avoid -Wall warning */
 
-    CODE:
     if(!mod_perl_sent_header(r, 0)) {
 	SV *sv = sv_newmortal();
 	SV *rp = ST(0);
@@ -946,6 +945,11 @@ print(r, ...)
 #endif
 	kill_timeout(r);
     }
+
+    RETVAL = !r->connection->aborted;
+
+    OUTPUT:
+    RETVAL
 
 int
 write_client(r, ...)
@@ -989,6 +993,9 @@ write_client(r, ...)
         RETVAL += sent;
 #endif
     }
+
+    OUTPUT:
+    RETVAL
 
 #functions from http_request.c
 void
