@@ -63,8 +63,14 @@ sub WriteMakefile {
         }
     }
 
+    my $libs = $build->apache_libs;
     my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
-    my @opts = (INC => $inc, CCFLAGS => $ccflags);
+
+    my @opts = (
+        INC     => $inc,
+        CCFLAGS => $ccflags,
+        LIBS    => $libs,
+    );
 
     my @typemaps;
     my $pwd = Cwd::fastcwd();
