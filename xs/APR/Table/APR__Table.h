@@ -150,7 +150,7 @@ static XS(MPXS_apr_table_get)
             }
         }
         else {
-            apr_array_header_t *arr = apr_table_elts(t);
+            const apr_array_header_t *arr = apr_table_elts(t);
             apr_table_entry_t *elts  = (apr_table_entry_t *)arr->elts;
             int i;
             

@@ -20,7 +20,7 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 /* take the 'base' values, and override with 'add' values if any */
 #define merge_table_overlap_item(item) \
     { \
-        apr_array_header_t *arr = apr_table_elts(base->item); \
+        const apr_array_header_t *arr = apr_table_elts(base->item); \
         apr_table_entry_t *entries  = (apr_table_entry_t *)arr->elts; \
         int i; \
         mrg->item = apr_table_copy(p, add->item); \
