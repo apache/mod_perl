@@ -23,17 +23,10 @@ Or use anoncvs (password is "anoncvs"):
  % make && make install
 
 Once extracted, whenever you want to sync with the latest httpd-2.0
-version (and apr/apr-util projects, which httpd-2.0 relies on) and
-rebuild, run:
+version and rebuild, run:
 
  % cd httpd-2.0
  % cvs up -dP
- % cd srclib/apr
- % cvs up -dP
- % cd ../..
- % cd srclib/apr-util
- % cvs up -dP
- % cd ../..
  % make distclean && ./buildconf
  % ./configure --prefix=$HOME/apache-2.0 \
    --with-mpm=threaded --enable-so
