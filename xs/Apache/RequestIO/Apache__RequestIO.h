@@ -1,13 +1,22 @@
+#ifdef WIN32
+/* win32 not happy with &PL_sv_no */
+#   define SVNO  newSViv(0)
+#   define SVYES newSViv(1)
+#else
+#   define SVNO  &PL_sv_no
+#   define SVYES &PL_sv_yes
+#endif
+
 #define mpxs_Apache__RequestRec_TIEHANDLE(stashsv, sv) \
 modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
 #define mpxs_Apache__RequestRec_PRINT  mpxs_Apache__RequestRec_print
 #define mpxs_Apache__RequestRec_PRINTF mpxs_ap_rprintf
 #define mpxs_Apache__RequestRec_BINMODE(r) \
-    r ? &PL_sv_yes : &PL_sv_no /* noop */
+    r ? SVYES : SVNO /* noop */
 
 #define mpxs_Apache__RequestRec_UNTIE(r, refcnt) \
-    (r && refcnt) ? &PL_sv_yes : &PL_sv_no /* noop */
+    (r && refcnt) ? SVYES : SVNO /* noop */
 
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
