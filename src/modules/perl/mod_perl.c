@@ -544,6 +544,13 @@ void perl_startup (server_rec *s, pool *p)
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,"lib/perl"),0));
 
+    /* *CORE::GLOBAL::exit = \&Apache::exit */
+    if(gv_stashpv("CORE::GLOBAL", FALSE)) {
+        GV *exitgp = gv_fetchpv("CORE::GLOBAL::exit", TRUE, SVt_PVCV);
+	GvCV(exitgp) = perl_get_cv("Apache::exit", TRUE);
+	GvIMPORTED_CV_on(exitgp);
+    }
+
     list = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {
 	if(perl_load_startup_script(s, p, list[i], TRUE) != OK) {
