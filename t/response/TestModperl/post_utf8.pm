@@ -34,7 +34,10 @@ sub handler {
         have have_min_perl_version(5.008), have_perl('perlio');
 
     my $received = ModPerl::Test::read_post($r) || "";
-    utf8::decode($received); # assume that we know that it's utf8
+    # assume that we know that it's utf8
+    require Encode; # since 5.8.0
+    $received = Encode::decode('utf8', $received);
+    # utf8::decode() doesn't work under -T
     my ($received_ascii, $received_utf8) = split /=/, $received;
 
     ok t_cmp($expected_ascii, $received_ascii, "ascii");
