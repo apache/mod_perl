@@ -43,10 +43,18 @@ MP_DECLARE_SRV_CMD(interp_max_requests);
    AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
 
-#define MP_dRCFG \
-   modperl_request_config_t *rcfg = \
-      (modperl_request_config_t *) \
+#define modperl_request_config_init(r, rcfg) \
+    if (!rcfg) { \
+        rcfg = modperl_request_config_new(r); \
+        ap_set_module_config(r->request_config, &perl_module, rcfg); \
+    }
+
+#define modperl_request_config_get(r) \
+ (modperl_request_config_t *) \
           ap_get_module_config(r->request_config, &perl_module)
+
+#define MP_dRCFG \
+   modperl_request_config_t *rcfg = modperl_request_config_get(r)
 
 #define MP_dDCFG \
    modperl_dir_config_t *dcfg = \

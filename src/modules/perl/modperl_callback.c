@@ -77,9 +77,9 @@ void modperl_handler_cache_cv(pTHX_ modperl_handler_t *handler, CV *cv)
         /* handler->cvgen = MP_sub_generation; */;
     }
     else {
-        handler->cv = newSVpvf("%s::%s",
-                               HvNAME(GvSTASH(CvGV(cv))),
-                               GvNAME(CvGV(cv)));
+        handler->cv = Perl_newSVpvf(aTHX_ "%s::%s",
+                                    HvNAME(GvSTASH(CvGV(cv))),
+                                    GvNAME(CvGV(cv)));
     }
     MP_TRACE_h(MP_FUNC, "caching %s::%s\n",
                HvNAME(GvSTASH(CvGV(cv))),
@@ -437,12 +437,15 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     };
 
     for (i=0; i<av->nelts; i++) {
+#ifdef USE_ITHREADS
         if (!handlers[i]->perl) {
             handlers[i]->perl = aTHX;
         }
-
+#endif
         handlers[i]->args = av_args;
-        status = modperl_callback(aTHX_ handlers[i], p);
+        if ((status = modperl_callback(aTHX_ handlers[i], p)) != OK) {
+            status = modperl_errsv(aTHX_ status, r, s);
+        }
         handlers[i]->args = Nullav;
 
         MP_TRACE_h(MP_FUNC, "%s returned %d\n",

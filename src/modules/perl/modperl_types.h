@@ -23,6 +23,12 @@ typedef apr_pool_t    * Apache__Pool;
 
 /* mod_perl structures */
 
+typedef struct {
+    request_rec *r;
+    conn_rec    *c;
+    server_rec  *s;
+} modperl_rcs_t;
+
 #ifdef USE_ITHREADS
 
 typedef struct modperl_list_t modperl_list_t;
@@ -143,10 +149,6 @@ typedef struct {
 } modperl_dir_config_t;
 
 typedef struct {
-    HV *pnotes;
-} modperl_request_config_t;
-
-typedef struct {
     SV *obj; /* object or classname if cv is a method */
     SV *cv; /* subroutine reference or name */
     char *name; /* orignal name from .conf if any */
@@ -158,5 +160,45 @@ typedef struct {
 
 #define MP_HANDLER_TYPE_CHAR 1
 #define MP_HANDLER_TYPE_SV   2
+
+typedef struct {
+    int outcnt;
+    char outbuf[IOBUFSIZE];
+    apr_pool_t *pool;
+    ap_filter_t *filters;
+} modperl_wbucket_t;
+
+typedef enum {
+    MP_INPUT_FILTER_MODE,
+    MP_OUTPUT_FILTER_MODE,
+} modperl_filter_mode_e;
+
+typedef struct {
+    int eos;
+    ap_filter_t *f;
+    char *leftover;
+    apr_ssize_t remaining;
+    modperl_wbucket_t wbucket;
+    ap_bucket *bucket;
+    ap_bucket_brigade *bb;
+    apr_status_t rc;
+    modperl_filter_mode_e mode;
+    apr_pool_t *pool;
+} modperl_filter_t;
+
+typedef modperl_filter_t *  Apache__Filter;
+typedef modperl_filter_t *  Apache__OutputFilter;
+typedef modperl_filter_t *  Apache__InputFilter;
+
+typedef struct {
+    SV *data;
+    modperl_handler_t *handler;
+    PerlInterpreter *perl;
+} modperl_filter_ctx_t;
+
+typedef struct {
+    HV *pnotes;
+    modperl_wbucket_t wbucket;
+} modperl_request_config_t;
 
 #endif /* MODPERL_TYPES_H */

@@ -53,7 +53,7 @@ sub my_import {
 sub WriteMakefile {
     my $build = build_config();
     my_import();
-    my @opts = (INC => $build->inc);
+    my @opts = (INC => $build->inc, CCFLAGS => $build->ap_ccopts);
     my $typemap = $build->file_path('src/modules/perl/typemap');
     if (-e $typemap) {
         push @opts, TYPEMAPS => [$typemap];

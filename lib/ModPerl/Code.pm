@@ -2,6 +2,7 @@ package ModPerl::Code;
 
 use strict;
 use warnings;
+use mod_perl ();
 use Apache::Build ();
 
 our $VERSION = '0.01';
@@ -13,14 +14,14 @@ my %handlers = (
     PerSrv     => [qw(PostReadRequest Trans)], #Init
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
-                      Type Fixup Response Log)], #Init Cleanup
+                      Type Fixup OutputFilter Response Log)], #Init Cleanup
     Connection => [qw(PreConnection ProcessConnection)],
 );
 
 my %hooks = map { $_, canon_lc($_) }
     map { @{ $handlers{$_} } } keys %handlers;
 
-my %not_ap_hook = map { $_, 1 } qw(response);
+my %not_ap_hook = map { $_, 1 } qw(response output_filter);
 
 my %hook_proto = (
     Process    => {
@@ -160,19 +161,20 @@ sub generate_handler_hooks {
     while (my($class, $prototype) = each %{ $self->{hook_proto} }) {
         my $callback = canon_func($class, 'callback');
         my $return = $prototype->{ret} eq 'void' ? '' : 'return';
-        my $i = 0;
+        my $i = -1;
 
         for my $handler (@{ $self->{handlers}{$class} }) {
             my $name = canon_func($handler, 'handler');
+            $i++;
 
             if (my $hook = $hooks{$handler}) {
+                next if $not_ap_hook{$hook};
                 push @register_hooks,
-                  "    ap_hook_$hook($name, NULL, NULL, AP_HOOK_LAST);"
-                    unless $not_ap_hook{$hook};
+                  "    ap_hook_$hook($name, NULL, NULL, AP_HOOK_LAST);";
             }
 
             my($protostr, $pass) = canon_proto($prototype, $name);
-            my $ix = $self->{handler_index}->{$class}->[$i++];
+            my $ix = $self->{handler_index}->{$class}->[$i];
 
             print $h_fh "\n$protostr;\n";
 
@@ -326,10 +328,16 @@ my %trace = (
     'm' => 'memory allocations',
     'i' => 'interpreter pool management',
     'g' => 'Perl runtime interaction',
+    'f' => 'filters',
 );
 
 sub generate_trace {
     my($self, $h_fh) = @_;
+
+    my $dev = '-dev'; #XXX parse Changes
+    my $v = $mod_perl::VERSION;
+    $v =~ s/(\d\d)(\d\d)$/$1 . '_' . $2 . $dev/e;
+    print $h_fh qq(#define MP_VERSION_STRING "mod_perl/$v"\n);
 
     my $i = 1;
     my @trace = sort keys %trace;
@@ -443,7 +451,7 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp tipool log config options callback gtop
-                     util apache_xs);
+                     util filter apache_xs);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
@@ -451,7 +459,7 @@ sub o_files { [map { "$_.o" } @c_names, @g_c_names] }
 sub o_pic_files { [map { "$_.lo" } @c_names, @g_c_names] }
 
 my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
-my @h_names = @c_names;
+my @h_names = (@c_names, qw(modperl_types));
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
 sub clean_files {
