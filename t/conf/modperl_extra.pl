@@ -45,6 +45,17 @@ Apache::Server->log->info("$apr_mods APR:: modules loaded");
     $server->log->info("base server + $vhosts vhosts ready to run tests");
 }
 
+# testing $s->add_config()
+my $conf = <<'EOC';
+# must use PerlModule here to check for segfaults
+PerlModule Apache::TestHandler
+<Location /apache/add_config>
+  SetHandler perl-script
+  PerlHandler Apache::TestHandler::ok1
+</Location>
+EOC
+Apache->server->add_config([split /\n/, $conf]);
+
 use constant IOBUFSIZE => 8192;
 
 sub ModPerl::Test::read_post {
