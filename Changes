@@ -62,7 +62,9 @@ which module should be loaded when a certain method is reported to be
 missing. [Stas]
 
 fix a bug for apr < 0.9.3, where it segfaults in apr_uri_unparse, if
-hostname is set, but not the scheme. [Stas]
+hostname is set, but not the scheme. In case the hostname is defined
+but scheme is not Apache::compat will default to the 'http' scheme,
+whereas APR::URI::unparse provides no default [Stas]
 
 move $r->send_http_header implementation to Apache::compat.  This
 allows the 1.0 code to run unmodified if $r->send_http_header is
