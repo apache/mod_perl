@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+$r->custom_response($code, undef) will now unset the current CustomResponse
+[Geoffrey Young <gyoung@laserlink.net>]
+
 fix to compile with sfio+ithreads, thanks to Joe Schaefer for the spot
 
 win32 fixes for apache 1.3.20 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]

@@ -238,7 +238,7 @@ child_terminate(request_rec *r)
 }
 #endif
 
-static char *custom_response(request_rec *r, int status, char *string)
+static char *custom_response(request_rec *r, int status, char *string, int reset)
 {
     core_dir_config *conf = (core_dir_config *)
 	get_module_config(r->per_dir_config, &core_module);
@@ -254,7 +254,10 @@ static char *custom_response(request_rec *r, int status, char *string)
 
     idx = index_of_response(status);
     retval = conf->response_code_strings[idx];
-    if (string) {
+    if (reset) {
+        conf->response_code_strings[idx] = NULL;
+    }
+    else if (string) {
 	conf->response_code_strings[idx] = 
 	    ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
 		pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
@@ -751,6 +754,12 @@ custom_response(r, status, string=NULL)
     Apache     r
     int status
     char *string
+   
+    CODE:
+    RETVAL = custom_response(r, status, string, ST(2) == &sv_undef);
+
+    OUTPUT:
+    RETVAL
     
 int
 satisfies(r)
