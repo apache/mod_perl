@@ -185,6 +185,8 @@ Documentation:
         - faq/mod_perl_api.pod
         - faq/mod_perl_cgi.pod
         - faq/mod_perl_faq.pod
+        - benchmark/lwp-simple.pod
+        - benchmark/stopwatch.pod
 
 
     * document Apache::Status Apache::Request preference over CGI.pm
