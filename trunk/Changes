@@ -6,6 +6,14 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+=item 1.14_01-dev
+
+USE_APXS fixups:
+ 
+ -use apaci/find_source instead of hard-coding files in apaci/configure
+ -re-gen apaci/mod_perl.config before running apache/configure
+ -chmod 0644, apaci/mod_perl.config
+
 =item 1.14 - July 18, 1998
 
 PERL_DEBUG=1 w/ USE_APACI=1 will properly link against libperld if exists

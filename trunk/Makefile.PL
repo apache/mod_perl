@@ -55,6 +55,7 @@ use subs qw(_prompt iedit asrc);
 
 gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
+gen_script("apaci/find_source");
 write_version_h("src/modules/perl");
 
 if($] < 5.004_04) {
@@ -311,11 +312,6 @@ if($Is_Win32) {
     $NO_HTTPD = 1;
 } 
 
-if($USE_APXS) {
-    my $cmd = "./configure --with-perl=$^X";
-    $cmd .= " --with-apxs=$WITH_APXS" if $WITH_APXS;
-    system "(cd apaci && $cmd)";
-}
 
 unless ($NO_HTTPD && !$PREP_HTTPD) {
 for $src_dir ($APACHE_SRC, <../apache*/src>, 
@@ -807,6 +803,13 @@ sub init_tests_and_config {
 	print "(cd $APACHE_ROOT && $cmd)\n";
 	system "(cd $APACHE_ROOT && $cmd)";
     }
+
+    if($USE_APXS) {
+	my $cmd = "./configure --with-perl=$^X";
+	$cmd .= " --with-apxs=$WITH_APXS" if $WITH_APXS;
+	system "(cd apaci && $cmd)";
+    }
+
     #expand ./t to full path
     iedit "t/conf/httpd.conf", "s: \./t(\S*): $PWD/t\$1:";
 
@@ -1725,6 +1728,7 @@ sub APACI::init {
     my $lib_cfg;
     if($USE_APXS) {
 	$lib_cfg = "apaci/mod_perl.config";
+	chmod 0644, $lib_cfg;
     }
     elsif($USE_APACI) {
 	$lib_cfg = "$APACHE_SRC/modules/perl/mod_perl.config";

@@ -20,7 +20,7 @@ my_config_override="$*"
 my_makefileconf="Makefile"
 my_makefiletmpl="Makefile.tmpl"
 my_sourcedir="../src/modules/perl"
-my_sourcefiles="mod_perl.c mod_perl.h perl_config.c perl_util.c perlio.c Apache.xs Constants.xs ModuleConfig.xs Tie.xs" 
+my_sourcefiles="`find_source`"
 my_typemapdir="../Apache"
 
 #   find APXS
