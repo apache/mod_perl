@@ -133,30 +133,26 @@ MP_CMD_SRV_DECLARE(trace)
     return NULL;
 }
 
+/* this test shows whether the perl for the current s is running
+ * (either base or vhost) */
 static int modperl_vhost_is_running(server_rec *s)
 {
 #ifdef USE_ITHREADS
-    MP_dSCFG(s);
-    int is_vhost = (s != modperl_global_get_server_rec());
-
-    if (is_vhost && scfg->mip) {
-        return TRUE;
+    if (s->is_virtual){
+        MP_dSCFG(s);
+        return scfg->mip ? TRUE : FALSE;
     }
-    else {
-        return FALSE;
-    }
-#else
-    return modperl_is_running();
 #endif
+
+    return modperl_is_running();
+
 }
 
 MP_CMD_SRV_DECLARE(switches)
 {
     server_rec *s = parms->server;
     MP_dSCFG(s);
-    if (s->is_virtual
-        ? modperl_vhost_is_running(s)
-        : modperl_is_running() ) {
+    if (modperl_vhost_is_running(s)) {
         return modperl_cmd_too_late(parms);
     }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
@@ -167,6 +163,7 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(modules)
 {
     MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     MP_PERL_CONTEXT_DECLARE;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
@@ -186,6 +183,10 @@ MP_CMD_SRV_DECLARE(modules)
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
             error = SvPVX(ERRSV);
         }
+        else {
+            modperl_env_sync_srv_env_hash2table(aTHX_ parms->pool, scfg);
+            modperl_env_sync_dir_env_hash2table(aTHX_ parms->pool, dcfg);
+        }
         MP_PERL_CONTEXT_RESTORE;
 
         return error;
@@ -200,6 +201,7 @@ MP_CMD_SRV_DECLARE(modules)
 MP_CMD_SRV_DECLARE(requires)
 {
     MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     MP_PERL_CONTEXT_DECLARE;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
@@ -218,6 +220,10 @@ MP_CMD_SRV_DECLARE(requires)
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_file(aTHX_ arg, FALSE)) {
             error = SvPVX(ERRSV);
+        }
+        else {
+            modperl_env_sync_srv_env_hash2table(aTHX_ parms->pool, scfg);
+            modperl_env_sync_dir_env_hash2table(aTHX_ parms->pool, dcfg);
         }
         MP_PERL_CONTEXT_RESTORE;
 
@@ -244,15 +250,19 @@ MP_CMD_SRV_DECLARE(config_requires)
 MP_CMD_SRV_DECLARE(post_config_requires)
 {
     apr_pool_t *p = parms->temp_pool;
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     apr_finfo_t finfo;
     MP_dSCFG(parms->server);
 
     if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
         if (finfo.filetype != APR_NOFILE) {
             MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
-
-            *(const char **)
-                apr_array_push(scfg->PerlPostConfigRequire) = arg;
+            modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
+            require->file = arg;
+            require->dcfg = dcfg;
+            
+            *(modperl_require_file_t **)
+                apr_array_push(scfg->PerlPostConfigRequire) = require;
         }
     }
     else {
@@ -331,6 +341,13 @@ MP_CMD_SRV_DECLARE2(set_env)
     if (!parms->path) {
         /* will be propagated to environ */
         apr_table_setn(scfg->SetEnv, arg1, arg2);
+        /* sync SetEnv => %ENV only for the top-level values */
+        if (modperl_vhost_is_running(parms->server)) {
+            MP_PERL_CONTEXT_DECLARE;
+            MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
+            modperl_env_hv_store(aTHX_ arg1, arg2);
+            MP_PERL_CONTEXT_RESTORE;
+        }
     }
 
     apr_table_setn(dcfg->SetEnv, arg1, arg2);
@@ -353,6 +370,12 @@ MP_CMD_SRV_DECLARE(pass_env)
 
     if (val) {
         apr_table_setn(scfg->PassEnv, arg, apr_pstrdup(parms->pool, val));
+        if (modperl_vhost_is_running(parms->server)) {
+            MP_PERL_CONTEXT_DECLARE;
+            MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
+            modperl_env_hv_store(aTHX_ arg, val);
+            MP_PERL_CONTEXT_RESTORE;
+        }
         MP_TRACE_d(MP_FUNC, "arg = %s, val = %s\n", arg, val);
     }
     else {
@@ -368,7 +391,7 @@ MP_CMD_SRV_DECLARE(options)
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     int is_per_dir = parms->path ? 1 : 0;
     modperl_options_t *opts = is_per_dir ? dcfg->flags : scfg->flags;
-    apr_pool_t *p = parms->pool;
+    apr_pool_t *p = parms->temp_pool;
     const char *error;
 
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
@@ -473,16 +496,15 @@ MP_CMD_SRV_DECLARE(perl)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
-    apr_pool_t *p = parms->temp_pool;
+    apr_pool_t *p = parms->pool;
     server_rec *s = parms->server;
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     apr_table_t *options;
     modperl_handler_t *handler = NULL;
     const char *pkg_name = NULL;
     ap_directive_t *directive = parms->directive;
-#ifdef USE_ITHREADS
     MP_dSCFG(s);
     MP_PERL_CONTEXT_DECLARE;
-#endif
 
     if (!(arg && *arg)) {
         return NULL;
@@ -541,6 +563,8 @@ MP_CMD_SRV_DECLARE(perldo)
         save_scalar(gv); /* local $0 */
         sv_setpv_mg(GvSV(gv), directive->filename);
         eval_pv(arg, FALSE);
+        modperl_env_sync_srv_env_hash2table(aTHX_ p, scfg);
+        modperl_env_sync_dir_env_hash2table(aTHX_ p, dcfg);
         FREETMPS;LEAVE;
     }
 
