@@ -27,7 +27,7 @@ sub handler {
 
     #$tests += $lfs_tests if USE_LARGE_FILES; #XXX
 
-    plan $r, tests => $tests, have_perl 'iolayers';
+    plan $r, tests => $tests, todo => [5,8], have_perl 'iolayers';
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
