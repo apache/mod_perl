@@ -375,7 +375,6 @@ sub handler {
     # undefined cleanup subs
     {
         my $p = APR::Pool->new;
-        t_server_log_error_is_expected();
         $p->cleanup_register('TestAPR::pool::some_non_existing_sub', 1);
         eval { $p->destroy };
         ok t_cmp(qr/Undefined subroutine/,
@@ -384,7 +383,6 @@ sub handler {
     }
     {
         my $p = APR::Pool->new;
-        t_server_log_error_is_expected();
         $p->cleanup_register(\&non_existing1, 1);
         eval { $p->destroy };
         ok t_cmp(qr/Undefined subroutine/,
