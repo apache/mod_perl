@@ -168,6 +168,10 @@ sub ModPerl::MM::MY::post_initialize {
 sub ModPerl::MM::MY::libscan {
     my($self, $path) = @_;
 
+    if (Apache::Build::WIN32() and $path eq 'PerlIO') {
+        return ''; #XXX: APR::PerlIO does not link on win32
+    }
+
     return '' if $path =~ m/\.(pl|cvsignore)$/;
     return '' if $path =~ m:\bCVS/:;
     return '' if $path =~ m/~$/;
