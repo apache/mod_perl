@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+MaxClients is now overridable from the t/TEST -maxclients command line
+option (it was hardcoded before). [Stas]
+
 Postpone the allocation of the wbucket in filters till the moment it's
 needed (if at all). Since non-streaming filters aren't going to use
 that buffer, it's a waste to allocate/free it. [Stas]
