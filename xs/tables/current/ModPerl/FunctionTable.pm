@@ -5754,16 +5754,41 @@ $ModPerl::FunctionTable = [
       },
       {
         'type' => 'SV *',
-        'name' => 'buffer'
+        'name' => 'bufsv'
       },
       {
         'type' => 'int',
-        'name' => 'bufsiz'
+        'name' => 'len'
       },
       {
         'type' => 'int',
         'name' => 'offset'
       }
+    ]
+  },
+  {
+    'return_type' => 'SSize_t',
+    'name' => 'modperl_request_read',
+    'attr' => [
+      'static'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'char *',
+        'name' => 'buffer'
+      },
+      {
+        'type' => 'Size_t',
+        'name' => 'len'
+      },
     ]
   },
   {
