@@ -155,6 +155,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
 
     MP_TRACE_o(MP_FUNC, "end\n");
 
+    /* XXX: shouldn't we preserve the value STDOUT had before it was
+     * overridden? */
     IoFLUSH_off(handle); /* STDOUT's $|=0 */
 
     return handle_save;
