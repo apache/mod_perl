@@ -90,9 +90,6 @@ need to deal with subclass objects which are not a request_rec
 $r->cgi_header_out:
 anything in 1.x land actually using it?
 
-Apache->gensym:
->> Apache::compat ?
-
 $r->post_connection:
 alias not implemented
 

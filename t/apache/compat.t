@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 30, todo => [24, 27, 29], \&have_lwp;
+plan tests => 31, todo => [25, 28, 30], \&have_lwp;
 
 my $location = "/TestApache::compat";
 
@@ -38,6 +38,13 @@ my $location = "/TestApache::compat";
         GET_BODY(query(@data)),
         q{$r->Apache::args}
         );
+}
+
+# Apache->gensym
+{
+    my @data = (test => 'gensym');
+    my $data = GET_BODY query(@data) || '';
+    ok_nok($data);
 }
 
 # header_in

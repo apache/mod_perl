@@ -14,6 +14,7 @@ my $gr;
 
 sub handler {
     my $r = shift;
+    $gr = $r;
 
     $r->send_http_header('text/plain');
 
@@ -32,6 +33,11 @@ sub handler {
 
     if ($data{test} eq 'content' || $data{test} eq 'args') {
         $r->print("test $data{test}");
+    }
+    elsif ($data{test} eq 'gensym') {
+        debug "Apache->gensym";
+        my $fh = Apache->gensym;
+        ok ref $fh eq 'GLOB';
     }
     elsif ($data{test} eq 'header') {
         my $way      = $data{way};
@@ -78,7 +84,6 @@ sub handler {
         }
     }
     elsif ($data{test} eq 'Apache::File') {
-        $gr = $r;
         my $file = $vars->{t_conf_file};
 
         debug "new Apache::File file object";
