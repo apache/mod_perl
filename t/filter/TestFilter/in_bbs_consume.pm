@@ -28,7 +28,7 @@ sub handler {
 
     until ($satisfied) {
         my $tbb = APR::Brigade->new($filter->r->pool, $ba);
-        my $rv = $filter->next->get_brigade($tbb, $mode, $block, READ_SIZE);
+        $filter->next->get_brigade($tbb, $mode, $block, READ_SIZE);
         debug "asking for a bb of " . READ_SIZE . " bytes\n";
         my $data;
         ($data, $seen_eos) = bb_data_n_eos($tbb);
@@ -40,7 +40,7 @@ sub handler {
     # consume all the remaining input
     do {
         my $tbb = APR::Brigade->new($filter->r->pool, $ba);
-        my $rv = $filter->next->get_brigade($tbb, $mode, $block, $readbytes);
+        $filter->next->get_brigade($tbb, $mode, $block, $readbytes);
         debug "discarding the next bb";
         $seen_eos = bb_data_n_eos($tbb, 1); # only scan
         $tbb->destroy;

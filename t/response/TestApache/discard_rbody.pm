@@ -32,9 +32,8 @@ sub handler {
         my $filters = $r->input_filters();
         my $ba = $r->connection->bucket_alloc;
         my $bb = APR::Brigade->new($r->pool, $ba);
-        my $rv = $filters->get_brigade($bb, Apache::MODE_READBYTES,
-                                       APR::BLOCK_READ, IOBUFSIZE);
-        die "failed to read partial data" unless $rv == APR::SUCCESS;
+        $filters->get_brigade($bb, Apache::MODE_READBYTES,
+                              APR::BLOCK_READ, IOBUFSIZE);
     }
     elsif ($test eq 'all') {
         # consume all of the request body
