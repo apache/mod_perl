@@ -135,7 +135,7 @@ $  limit_req_fields
    minor_version
    module_index
    name
-   dynamic_load_handle
+!  dynamic_load_handle
    next
 >  magic
 -  rewrite_args
