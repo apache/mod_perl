@@ -49,7 +49,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
 >  vlist_validator
    user
 -  ap_auth_type #should use ap_auth_type function instead
-   no_cache
+~  no_cache
    no_local_copy
    unparsed_uri
    uri

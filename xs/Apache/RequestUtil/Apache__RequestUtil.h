@@ -153,3 +153,26 @@ void mpxs_Apache__RequestRec_set_basic_credentials(request_rec *r,
     auth_value = apr_pstrcat(r->pool, "Basic ", encoded, NULL);
     apr_table_setn(r->headers_in, "Authorization", auth_value);
 }
+
+
+static MP_INLINE
+int mpxs_Apache__RequestRec_no_cache(request_rec *r, SV *flag)
+{
+    dTHX; /* XXX */
+    int retval = r->no_cache;
+
+    if (flag) {
+        r->no_cache = (int)SvIV(flag);
+    }
+    
+    if (r->no_cache) {
+        apr_table_setn(r->headers_out, "Pragma", "no-cache");
+        apr_table_setn(r->headers_out, "Cache-control", "no-cache");
+    } 
+    else if (flag) { /* only unset if $r->no_cache(0) */
+        apr_table_unset(r->headers_out, "Pragma");
+        apr_table_unset(r->headers_out, "Cache-control");
+    }
+
+    return retval;
+}

@@ -8,6 +8,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  #protocol module helpers
  mpxs_Apache__RequestRec_location_merge
  mpxs_Apache__RequestRec_set_basic_credentials
+ mpxs_Apache__RequestRec_no_cache | | r, flag=Nullsv
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_new | | classname, c, base_pool=NULL
 PACKAGE=Apache

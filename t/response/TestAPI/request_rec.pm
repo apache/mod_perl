@@ -8,7 +8,7 @@ use Apache::Test;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 36;
+    plan $r, tests => 37;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -87,6 +87,8 @@ sub handler {
     #user
 
     #no_cache
+    ok $r->no_cache || 1;
+
     #no_local_copy
 
     ok $r->unparsed_uri;

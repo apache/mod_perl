@@ -18,9 +18,6 @@ haven't looked close enough yet)
 $r->header_{in,out}:
 deprecated, but should be included in Apache::compat
 
-$r->no_cache:
-does not yet manage Pragma, Cache-control headers as 1.x did
-
 $r->pnotes:
 not yet implemented
 
