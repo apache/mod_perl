@@ -17,8 +17,6 @@ are expected to break the build system; so we'll need to
 mark a few milestones to prepare for the trunk merge.  
 joes suggests these, s/TODO/DONE/ as each one is achieved:
 
-TODO: remove Apache2.pm and MP_INST_APACHE2.
-      This effort should not yield any test regressions.
 
 TODO: rename the modules, and bring the build 
       system back to a compilable state.  This
@@ -30,5 +28,8 @@ TODO: correct Apache-Test and the mp2 test suite,
       so all tests pass again.
 
       joes volunteers to do this.
+
+TODO: remove Apache2.pm and MP_INST_APACHE2.
+      This effort should not yield any test regressions.
 
 TODO: port the 2.0 documentation.
