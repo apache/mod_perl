@@ -174,6 +174,18 @@ apr_pool_t *modperl_sv2pool(pTHX_ SV *obj)
     char *classname = NULL;
     IV ptr = 0;
 
+    /* get the pool from the current request if applicable */
+    if (obj == &PL_sv_undef) {
+        request_rec *r = NULL;
+        (void)modperl_tls_get_request_rec(&r);
+
+        if (r) {
+            return r->pool;
+        }
+
+        return NULL;
+    }
+    
     if ((SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVMG))) {
         ptr = SvObjIV(obj);
         classname = SvCLASS(obj);
