@@ -1303,11 +1303,11 @@ is_main(r)
     RETVAL
 
 char *
-the_request(r)
+the_request(r, ...)
     Apache   r
 
     CODE:
-    RETVAL = r->the_request;
+    get_set_PVp(r->the_request,r->pool);
 
     OUTPUT:
     RETVAL

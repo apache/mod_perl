@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 65;
+my $tests = 66;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -69,6 +69,11 @@ unless ($is_win32) {
   test ++$i, $ft_s != $ft_def;
   test ++$i, (-s $r->finfo) == $ft_def;
 }
+
+my $the_request = $r->the_request;
+$r->the_request(join ' ', map { $r->$_ } qw(method uri protocol));
+test ++$i, $the_request eq $r->the_request;
+printf "old=$the_request, new=%s\n", $r->the_request;
 
 my $loc = $r->location;
 print "<Location $loc>\n";
