@@ -56,6 +56,15 @@ $Apache::ConstantsTable = {
       'OPT_MULTI',
       'OPT_ALL'
     ],
+    'context' => [
+      'NOT_IN_VIRTUALHOST',
+      'NOT_IN_LIMIT',
+      'NOT_IN_DIRECTORY',
+      'NOT_IN_LOCATION',
+      'NOT_IN_FILES',
+      'NOT_IN_DIR_LOC_FILE',
+      'GLOBAL_ONLY',
+    ],
     'mpmq' => [
       'AP_MPMQ_NOT_SUPPORTED',
       'AP_MPMQ_STATIC',
