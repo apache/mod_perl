@@ -88,7 +88,7 @@ sub find_includes {
 
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal version
-                                apr_optional mod_include mod_cgi
+                                apr_optional mod_include mod_cgi mod_proxy
                                 mod_ssl ssl_);
 
     for my $dir (@dirs) {
