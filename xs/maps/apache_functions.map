@@ -44,6 +44,9 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 !ap_content_type_tolower
  ap_get_status_line
  ap_is_initial_req
+ mpxs_Apache__RequestRec_push_handlers
+ mpxs_Apache__RequestRec_set_handlers
+ mpxs_Apache__RequestRec_get_handlers
 
  #protocol module helpers
  mpxs_Apache__RequestRec_location_merge
@@ -134,6 +137,9 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  ap_construct_server
  ap_construct_url | | r,uri,p
  ap_error_log2stderr
+ mpxs_Apache__Server_push_handlers
+ mpxs_Apache__Server_set_handlers
+ mpxs_Apache__Server_get_handlers
 
 #MODULE=Apache::ServerConfig
  ap_exists_config_define

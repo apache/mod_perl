@@ -92,7 +92,7 @@ my %flags = (
     Srv => [qw(NONE CLONE PARENT ENABLED AUTOLOAD), @hook_flags, 'UNSET'],
     Dir => [qw(NONE SEND_HEADER SETUP_ENV UNSET)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
-    Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD)],
+    Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
 );
 
 my %flags_lookup = map { $_,1 } qw(Srv Dir);

@@ -64,41 +64,252 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 #define set_desc(dtype) \
     MP_TRACE_a_do(if (desc) *desc = modperl_handler_desc_##dtype(idx))
 
+#define check_modify(dtype) \
+if ((action > MP_HANDLER_ACTION_GET) && rcfg) { \
+    dTHX; \
+    Perl_croak(aTHX_ "too late to modify %s handlers", \
+               modperl_handler_desc_##dtype(idx)); \
+}
+
+/*
+ * generic function to lookup handlers for use in modperl_callback(),
+ * $r->{push,set,get}_handlers, $s->{push,set,get}_handlers
+ * $s->push/set at startup time are the same as configuring Perl*Handlers
+ * $r->push/set at request time will create entries in r->request_config
+ * push will first merge with configured handlers, unless an entry
+ * in r->request_config already exists.  in this case, push or set has
+ * already been called for the given handler, 
+ * r->request_config entries then override those in r->per_dir_config
+ */
+
 MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
                                        modperl_config_srv_t *scfg,
                                        modperl_config_req_t *rcfg,
                                        apr_pool_t *p,
-                                       int type, int idx, int lvalue,
+                                       int type, int idx,
+                                       modperl_handler_action_e action,
                                        const char **desc)
 {
-    MpAV **avp = NULL;
+    MpAV **avp = NULL, **ravp = NULL;
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_DIR:
         avp = &dcfg->handlers_per_dir[idx];
+        if (rcfg) {
+            ravp = &rcfg->handlers_per_dir[idx];
+        }
         set_desc(per_dir);
         break;
       case MP_HANDLER_TYPE_PER_SRV:
         avp = &scfg->handlers_per_srv[idx];
+        if (rcfg) {
+            ravp = &rcfg->handlers_per_srv[idx];
+        }
         set_desc(per_srv);
         break;
       case MP_HANDLER_TYPE_CONNECTION:
         avp = &scfg->handlers_connection[idx];
+        check_modify(connection);
         set_desc(connection);
         break;
       case MP_HANDLER_TYPE_FILES:
         avp = &scfg->handlers_files[idx];
+        check_modify(files);
         set_desc(files);
         break;
       case MP_HANDLER_TYPE_PROCESS:
         avp = &scfg->handlers_process[idx];
+        check_modify(files);
         set_desc(process);
         break;
     };
 
-    if (lvalue && avp && !*avp && p) {
-        *avp = apr_array_make(p, lvalue, sizeof(modperl_handler_t *));
+    if (!avp) {
+        /* should never happen */
+        fprintf(stderr, "PANIC: no such handler type: %d\n", type);
+        return NULL;
     }
 
-    return avp;
+    switch (action) {
+      case MP_HANDLER_ACTION_GET:
+        /* just a lookup */
+        break;
+      case MP_HANDLER_ACTION_PUSH:
+        if (ravp && !*ravp) {
+            if (*avp) {
+                /* merge with existing configured handlers */
+                *ravp = apr_array_copy(p, *avp);
+            }
+            else {
+                /* no request handlers have been previously pushed or set */
+                *ravp = modperl_handler_array_new(p);
+            }
+        }
+        else if (!*avp) {
+            /* directly modify the configuration at startup time */
+            *avp = modperl_handler_array_new(p);
+        }
+        break;
+      case MP_HANDLER_ACTION_SET:
+        if (ravp) {
+            if (*ravp) {
+                /* wipe out existing pushed/set request handlers */
+                (*ravp)->nelts = 0;
+            }
+            else {
+                /* no request handlers have been previously pushed or set */
+                *ravp = modperl_handler_array_new(p);
+            }
+        }
+        else if (*avp) {
+            /* wipe out existing configuration, only at startup time */
+            (*avp)->nelts = 0;
+        }
+        else {
+            /* no configured handlers for this phase */
+            *avp = modperl_handler_array_new(p);
+        }
+        break;
+    }
+
+    return (ravp && *ravp) ? ravp : avp;
+}
+
+MpAV **modperl_handler_get_handlers(request_rec *r, conn_rec *c, server_rec *s,
+                                    apr_pool_t *p, const char *name,
+                                    modperl_handler_action_e action)
+{
+    MP_dSCFG(s);
+    MP_dDCFG;
+    MP_dRCFG;
+
+    int idx, type;
+
+    if (!r) {
+        /* so $s->{push,set}_handlers can configured request-time handlers */
+        dcfg = modperl_config_dir_get_defaults(s);
+    }
+
+    if ((idx = modperl_handler_lookup(name, &type)) == DECLINED) {
+        return FALSE;
+    }
+
+    if (r) {
+        modperl_config_req_init(r, rcfg);
+    }
+
+    return modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
+                                           type, idx,
+                                           action, NULL);
+}
+
+int modperl_handler_push_handlers(pTHX_ apr_pool_t *p,
+                                  MpAV *handlers, SV *sv)
+{
+    char *handler_name;
+
+    if ((handler_name = modperl_mgv_name_from_sv(aTHX_ p, sv))) {
+        modperl_handler_t *handler =
+            modperl_handler_new(p, apr_pstrdup(p, handler_name));
+        modperl_handler_array_push(handlers, handler);
+        return TRUE;
+    }
+
+    MP_TRACE_h(MP_FUNC, "unable to push_handler 0x%lx\n",
+               (unsigned long)sv);
+
+    return FALSE;
+}
+
+/* convert array header of modperl_handlers_t's to AV ref of CV refs */
+SV *modperl_handler_perl_get_handlers(pTHX_ MpAV **handp, apr_pool_t *p)
+{
+    AV *av = newAV();
+    int i;
+    modperl_handler_t **handlers;
+
+    if (!(handp && *handp)) {
+        return &PL_sv_undef;
+    }
+
+    av_extend(av, (*handp)->nelts - 1);
+
+    handlers = (modperl_handler_t **)(*handp)->elts;
+
+    for (i=0; i<(*handp)->nelts; i++) {
+        modperl_handler_t *handler = NULL;
+        GV *gv;
+
+        if (MpHandlerPARSED(handlers[i])) {
+            handler = handlers[i];
+        }
+        else {
+#ifdef USE_ITHREADS
+            if (!MpHandlerDYNAMIC(handlers[i])) {
+                handler = modperl_handler_dup(p, handlers[i]);
+            }
+#endif
+            if (!handler) {
+                handler = handlers[i];
+            }
+
+            if (!modperl_mgv_resolve(aTHX_ handler, p, handler->name)) {
+                MP_TRACE_h(MP_FUNC, "failed to resolve handler %s\n",
+                           handler->name);
+            }
+
+        }
+
+        if (handler->mgv_cv) {
+            if ((gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv))) {
+                CV *cv = modperl_mgv_cv(gv);
+                av_push(av, newRV_inc((SV*)cv));
+            }
+        }
+        else {
+            av_push(av, newSVpv(handler->name, 0));
+        }
+    }
+
+    return newRV_noinc((SV*)av);
+}
+
+#define push_sv_handler \
+    if ((modperl_handler_push_handlers(aTHX_ p, *handlers, sv))) { \
+        MpHandlerDYNAMIC_On(modperl_handler_array_last(*handlers)); \
+    }
+
+/* allow push/set of single cv ref or array ref of cv refs */
+int modperl_handler_perl_add_handlers(pTHX_
+                                      request_rec *r,
+                                      conn_rec *c,
+                                      server_rec *s,
+                                      apr_pool_t *p,
+                                      const char *name,
+                                      SV *sv,
+                                      modperl_handler_action_e action)
+{
+    I32 i;
+    AV *av = Nullav;
+    MpAV **handlers =
+        modperl_handler_get_handlers(r, c, s,
+                                     p, name, action);
+
+    if (!(handlers && *handlers)) {
+        return FALSE;
+    }
+
+    if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVAV)) {
+        av = (AV*)SvRV(sv);
+
+        for (i=0; i <= AvFILL(av); i++) {
+            sv = *av_fetch(av, i, FALSE);
+            push_sv_handler;
+        }
+    }
+    else {
+        push_sv_handler;
+    }
+
+    return TRUE;
 }

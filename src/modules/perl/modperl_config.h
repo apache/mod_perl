@@ -37,6 +37,10 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
       (r ? (modperl_config_dir_t *) \
               ap_get_module_config(r->per_dir_config, &perl_module) : NULL)
 
+#define modperl_config_dir_get_defaults(s) \
+      (modperl_config_dir_t *) \
+          ap_get_module_config(s->lookup_defaults, &perl_module)
+
 #define MP_dDCFG \
    modperl_config_dir_t *dcfg = modperl_config_dir_get(r)
 
