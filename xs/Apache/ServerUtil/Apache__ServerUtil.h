@@ -50,3 +50,9 @@ static MP_INLINE char *mpxs_ap_server_root_relative(pTHX_
 
     return ap_server_root_relative(p, fname);
 }
+
+static void mpxs_Apache__ServerUtil_BOOT(pTHX)
+{
+    newCONSTSUB(PL_defstash, "Apache::server_root",
+                newSVpv(ap_server_root, 0));
+}
