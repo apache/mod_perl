@@ -125,6 +125,7 @@ my(@do_clean) = qw{
    src/modules/perl/mod_perl_version.h
    t/net/perl/cgi.pl
    t/report
+   t/httpd
    apaci/find_source
 };
 #t/conf/httpd.conf

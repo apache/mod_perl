@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+remove t/httpd symlink during 'make realclean' and when rebuilding
+[Geoffrey Young <gyoung@laserlink.net>]
+
 add Apache::src::otherldflags method
 [Jens-Uwe Mager <jum@helios.de>]
 
@@ -262,7 +265,7 @@ added StatusLexInfo option to Apache::Status
 =item 1.20 - June 11, 1999
 
 turn off warnings in Apache::Status::as_HTML symdump code
-[Geoffrey Young <younggs@acwilm.com>, Tim Bunce <Tim.Bunce@ig.co.uk>]
+[Geoffrey Young <gyoung@laserlink.net>, Tim Bunce <Tim.Bunce@ig.co.uk>]
 
 tweak Apache::RegistryNG so it works with virtual includes, thanks to
 Vivek Khera for the spot
