@@ -101,7 +101,7 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 #endif
 
     if (PL_endav) {
-        modperl_perl_call_list(pTHX_ PL_endav, "END");
+        modperl_perl_call_list(aTHX_ PL_endav, "END");
     }
 
     perl_destruct(perl);
