@@ -9,13 +9,27 @@ use File::Copy ();
 @Apache::ExtUtils::EXPORT = qw(command_table);
 
 sub command_table {
-    my($class, $cmds) = @_;
+    my($class, $cmds);
+    if(@_ == 2) {
+	($class, $cmds) = @_;
+    }
+    else {
+	$cmds = shift;
+	$class = caller;
+    }
     (my $file = $class) =~ s,.*::,,;
 
     eval {
 	require "$file.pm"; #so we can see prototypes
     };
-
+    if ($@) {
+	require ExtUtils::testlib;
+        ExtUtils::testlib->import;
+	require lib;
+	my $lib = "lib";#hmm, lib->import + -w == Unquoted string "lib" ...
+	$lib->import('./lib');
+	require $class;
+    }
     unless (-e "$file.xs.orig") {
         File::Copy::cp("$file.xs", "$file.xs.orig");
     }
@@ -26,19 +40,19 @@ sub command_table {
     close $fh;
 }
 
-#the first `$' is for the config object
+#the first two `$$' are for the parms object and per-directory object
 my $proto_perl2c = {
-    '$$$$'  => "TAKE3",
-    '$$$'   => "TAKE2",
-    '$$'    => "TAKE1",
-    '$'     => "NO_ARGS",
-    ''      => "NO_ARGS",
-    '$$;$'  => "TAKE12",
-    '$$$;$' => "TAKE23",
-    '$$;$$' => "TAKE123",
-    '$@'    => "ITERATE",
-    '$@;@'  => "ITERATE2",
-    '$$;*'  => "RAW_ARGS",
+    '$$$$$'  => "TAKE3",
+    '$$$$'   => "TAKE2",
+    '$$$'    => "TAKE1",
+    '$$'     => "NO_ARGS",
+    ''       => "NO_ARGS",
+    '$$$;$'  => "TAKE12",
+    '$$$$;$' => "TAKE23",
+    '$$$;$$' => "TAKE123",
+    '$$@'    => "ITERATE",
+    '$$@;@'  => "ITERATE2",
+    '$$$;*'  => "RAW_ARGS",
 };
 
 my $proto_c2perl = {
@@ -48,54 +62,92 @@ my $proto_c2perl = {
 sub proto_perl2c { $proto_perl2c }
 sub proto_c2perl { $proto_c2perl }
 
+sub cmd_info {
+    my($name, $subname, $info, $args_how) = @_;
+    return <<EOF;
+static mod_perl_cmd_info cmd_info_$name = { 
+"$subname", "$info", 
+};
+EOF
+}
+
 sub xs_cmd_table {
     my($self, $class, $cmds) = @_;
     (my $modname = $class) =~ s/::/__/g;
     my $cmdtab = "";
+    my $infos = "";
 
     for my $cmd (@$cmds) {
-	my($name, $proto, $desc);
-
+	my($name, $sub, $cmd_data, $req_override, $args_how, $proto, $desc);
+	my $hash;
 	if(ref($cmd) eq "ARRAY") {
 	    ($name,$desc) = @$cmd;
+	}
+	elsif(ref($cmd) eq "HASH") {
+	    $name = $cmd->{name};
+	    $sub = $cmd->{func};
+	    $sub = join '::', $class, $cmd->{func} unless defined &$sub;
+	    $cmd_data = $cmd->{cmd_data};
+	    $req_override = $cmd->{req_override};
+	    $desc = $cmd->{errmsg};
+	    $args_how = $cmd->{args_how};
 	}
 	else {
 	    $name = $cmd;
 	}
+	$name ||= $sub;
 	my $realname = $name;
 	if($name =~ s/[\<\>]//g) {
 	    if($name =~ s:^/::) {
 		$name .= "_END";
 	    }
 	}
-	my $sub = join '::', $class, $name;
-	my $meth = $class->can($name);
-	my $take = "TAKE123";
-	if($meth || defined(&$sub)) {
+	$sub ||= join '::', $class, $name;
+	$req_override ||= "OR_ALL";
+	my $meth = $class->can($name) if $name;
+
+	if(not $args_how and ($meth || defined(&$sub))) {
 	    if(defined($proto = prototype($meth || \&{$sub}))) {
 		#extra $ is for config data
-		$take = $proto_perl2c->{$proto};
+		$args_how = $proto_perl2c->{$proto};
+	    }
+	    else {
+		$args_how ||= "TAKE123";
 	    }
 	}
 	$desc ||= "1-3 value(s) for $name";
 
+	(my $cname = $name) =~ s/\W/_/g;
+	$infos .= cmd_info($cname, $sub, $cmd_data, $args_how);
 	$cmdtab .= <<EOF;
 
-    { "$realname", perl_cmd_perl_$take,
-      (void*)"$sub",
-      OR_ALL, $take, "$desc" },
+    { "$realname", perl_cmd_perl_$args_how,
+      (void*)&cmd_info_$cname,
+      $req_override, $args_how, "$desc" },
 EOF
     }
 
     return <<EOF;
 #include "modules/perl/mod_perl.h"
 
-static SV *DirSV;
+static mod_perl_perl_dir_config *newPerlConfig(pool *p)
+{
+    mod_perl_perl_dir_config *cld =
+	(mod_perl_perl_dir_config *)
+	    palloc(p, sizeof (mod_perl_perl_dir_config));
+    cld->obj = Nullsv;
+    cld->class = NULL;
+    return cld;
+}
+
 static void *create_dir_config_sv (pool *p, char *dirname)
 {
-    SV *sv = newSV(TRUE);
-    DirSV = sv;
-    return &DirSV;
+    return newPerlConfig(p);
+}
+
+static void *create_srv_config_sv (pool *p, server_rec *s)
+{
+    return newPerlConfig(p);
 }
 
 static void stash_mod_pointer (char *class, void *ptr)
@@ -105,6 +157,8 @@ static void stash_mod_pointer (char *class, void *ptr)
     hv_store(perl_get_hv("Apache::XS_ModuleConfig",TRUE), 
 	     class, strlen(class), sv, FALSE);
 }
+
+$infos
 
 static command_rec mod_cmds[] = {
     $cmdtab
@@ -116,7 +170,7 @@ module MODULE_VAR_EXPORT XS_${modname} = {
     NULL,               /* module initializer */
     create_dir_config_sv,  /* per-directory config creator */
     NULL,   /* dir config merger */
-    NULL,       /* server config creator */
+    create_srv_config_sv,       /* server config creator */
     NULL,        /* server config merger */
     mod_cmds,               /* command table */
     NULL,           /* [7] list of handlers */
@@ -138,7 +192,6 @@ MODULE = $class		PACKAGE = $class
 BOOT:
     add_module(&XS_${modname});
     stash_mod_pointer("$class", &XS_${modname});
-    av_push(perl_get_av("$class\:\:ISA",TRUE), newSVpv("Apache::Config",0));
 
 EOF
 }

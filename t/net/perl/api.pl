@@ -15,10 +15,10 @@ else {
 
 %ENV = $r->cgi_env;
 
-my $tests = 39;
+my $tests = 38;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
-my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 6);
+my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
 
 my $i;
 
@@ -124,17 +124,18 @@ if($test_get_set) {
     test ++$i, @$handlers == 0;
 }
 
-my $dc = $r->dir_config;
-test ++$i, not $dc;
-
 if($test_dir_config) {
+    require Apache::ModuleConfig;
+    my $dc = Apache::ModuleConfig->get($r);
+    test ++$i, not $dc;
+
     for my $cv (
 		sub {
 		    package Apache::TestDirectives;
-		    Apache->request->dir_config;
+		    Apache::ModuleConfig->get(Apache->request);
 		},
                 sub {
-		    $r->dir_config("Apache::TestDirectives");
+		    Apache::ModuleConfig->get($r, "Apache::TestDirectives");
 		})
     {
         my $cfg = $cv->();

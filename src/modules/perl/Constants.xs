@@ -825,3 +825,13 @@ SERVER_SUBVERSION()
    OUTPUT:
    RETVAL
 
+char *
+DECLINE_CMD()
+   CODE:
+#ifdef DECLINE_CMD
+    RETVAL = DECLINE_CMD;
+#else
+    RETVAL = "\a\b";
+#endif
+   OUTPUT:
+   RETVAL

@@ -1,5 +1,6 @@
 TYPEMAP
 Apache			T_APACHEOBJ
+Apache::CmdParms	T_PTROBJ
 Apache::SubRequest	T_PTROBJ
 Apache::Connection	T_PTROBJ
 Apache::Server		T_PTROBJ

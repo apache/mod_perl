@@ -138,7 +138,7 @@ $STATIC = 1;
 $DYNAMIC = 0;
 $CONFIG = "";
 $ADD_MODULE = "";
-
+$PERL_DIRECTIVE_HANDLERS = 0;
 my %experimental = map { $_,1 } qw{
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
@@ -174,6 +174,7 @@ sub is_mp_arg {
    PERL_INIT PERL_CLEANUP
    PERL_STACKED_HANDLERS 
    PERL_METHOD_HANDLERS
+   PERL_DIRECTIVE_HANDLERS
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -238,6 +239,13 @@ if($ALL_HOOKS) {
 	$callback_hooks{$_}++;
     }
 }
+
+my @xs_modules = qw(Apache Apache::Constants);
+if($PERL_DIRECTIVE_HANDLERS) {
+    push @xs_modules, "Apache::ModuleConfig";
+    $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
+}
+my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
 
 if($Is_Win32) {
     $NO_HTTPD = 1;
@@ -413,7 +421,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 }
 
 if($DYNAMIC) {
-    for (qw(Apache Constants)) {
+    for (@xs_mod_snames) {
 	cp "src/modules/perl/${_}.xs", "${_}/${_}.xs" if $DYNAMIC;
     }
 }
@@ -1060,7 +1068,7 @@ sub magic_number {
 
 sub cleanup_for_static {
     return unless $STATIC;
-    for (qw(Apache Constants)) {
+    for (@xs_mod_snames) {
 	rename "${_}/${_}.xs.disabled", "${_}/${_}.xs";
     }
 }
@@ -1077,7 +1085,7 @@ sub setup_for_static {
 
     cp "Apache/typemap", $d;
 
-    for (qw(Apache Constants)) {
+    for (@xs_mod_snames) {
 	rename "${_}/${_}.xs", "${_}/${_}.xs.disabled" if -e "${_}/${_}.xs";
 	push @static_src, "$_.c";
     }
@@ -1105,6 +1113,10 @@ sub setup_for_static {
     iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_names/";
 =cut
 
+    #XXX: ho,hum, need to generate the whole damn thing 
+    #instead of all these frigging iedits.
+    iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @static_src/";
+    iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_modules/";
     iedit $mf, "s/^#STATIC_/STATIC_/";
 
     #bloody hell, make sucks and so does this.
@@ -1213,7 +1225,10 @@ sub edit_extra_cflags {
 	if($repl =~ s/(\\)\s*$//) {
 	    $backwhack = $1;
 	}
-
+	my $mmn = magic_number($APACHE_SRC);
+	if($mmn >= 19980507) {
+	    $ADD_VERSION = 0;
+	}
 	if($ADD_VERSION) {
 	    if(/$dssv=/) {
 		$repl =~ 
@@ -1345,9 +1360,9 @@ sub win32_setup {
     dirent_kludge($d);
     cp "Apache/typemap", $d;
     chdir $d;
-    system "$^X -MExtUtils::Embed -e xsinit -- -std Apache Apache::Constants $PERL_STATIC_EXTS";
+    system "$^X -MExtUtils::Embed -e xsinit -- -std @xs_modules $PERL_STATIC_EXTS";
     my $lib = $Config{privlibexp};
-    for (qw(Constants Apache)) {    
+    for (@xs_mod_snames) {    
         system "$^X $lib/ExtUtils/xsubpp -typemap $lib/ExtUtils/typemap $_.xs > $_.c";
 
     }
