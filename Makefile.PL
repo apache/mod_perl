@@ -80,7 +80,7 @@ ModPerl::MM::WriteMakefile(
         MODPERL_LIBMAKE    => '$(MAKE) -f $(MODPERL_MAKEFILE)',
         PERL               => $build->perl_config('perlpath'),
         MOD_INSTALL        => ModPerl::MM::mod_install(),
-        MODPERL_AP_INCLUDEDIR  => $build->apxs('-q' => 'includedir'),
+        MODPERL_AP_INCLUDEDIR  => $build->apxs('-q' => 'INCLUDEDIR'),
         MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
     clean => {
