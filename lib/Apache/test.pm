@@ -12,6 +12,8 @@ use FileHandle ();
 @EXPORT_OK = qw(have_httpd);
 
 BEGIN { 
+    $ENV{PERL_LWP_USE_HTTP_10} = 1; #default to http/1.0
+
     if(not $ENV{MOD_PERL}) {
 	eval { require "net/config.pl"; }; #for 'make test'
 	$PERL_DIR = $net::perldir;
