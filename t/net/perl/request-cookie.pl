@@ -69,8 +69,8 @@ for my $name (qw(one two three)) {
     print "as_string:  `$as_string'\n";
     print "header_out: `$header_out'\n";
     print "cgi cookie: `$cgi_as_string\n";  
-    test ++$i, $as_string eq $header_out;
-    test ++$i, $as_string eq $cgi_as_string;
+    test ++$i, cookie_eq($as_string, $header_out);
+    test ++$i, cookie_eq($as_string, $cgi_as_string);
 } 
 
 my (@Hargs) = (
@@ -103,7 +103,7 @@ for my $rv (\@Hargs, \@Aargs, \@Sargs) {
 	my $two = $c2->$meth() || "";
 	print "Apache::Cookie: $meth => $one\n";
 	print "CGI::Cookie:    $meth => $two\n";
-	test ++$i, $one eq $two;
+	test ++$i, cookie_eq($one, $two);
     } 
 }
 
@@ -124,7 +124,7 @@ if(my $string = $r->headers_in->get('Cookie')) {
     $hv = CGI::Cookie->parse($string);
     for (sort keys %$hv) {
 	print "   $_ => ", $hv->{$_}->as_string, $/;
-	test ++$i, $done{$_} eq $hv->{$_}->as_string;
+	test ++$i, cookie_eq($done{$_}, $hv->{$_}->as_string);
     }
 
     %done = ();
@@ -143,7 +143,7 @@ if(my $string = $r->headers_in->get('Cookie')) {
     %hv = CGI::Cookie->parse($string);
     for (sort keys %hv) {
 	my $val = join ", ", $hv{$_}->value;
-	test ++$i, $done{$_} eq $val;
+	test ++$i, cookie_eq($done{$_}, $val);
 	print "   $_ => $val\n";
     }
 } 
@@ -155,13 +155,22 @@ else {
     my $cgi_exp = CGI::expires('-1d', 'cookie');
     my $cookie_exp = Apache::Cookie->expires('-1d');
     print "cookie: $cookie_exp\ncgi: $cgi_exp\n";
-    test ++$i, $cookie_exp eq $cgi_exp;
+    test ++$i, cookie_eq($cookie_exp, $cgi_exp);
 }
 {
     my $cgi_exp = CGI::expires('-1d', 'http');
     my $apr_exp = Apache::Request->expires('-1d');
     print "apr: $apr_exp\ncgi: $cgi_exp\n";
-    test ++$i, $apr_exp eq $cgi_exp;
+    test ++$i, cookie_eq($apr_exp, $cgi_exp);
 }
 
 test ++$i, 1;
+
+sub cookie_eq {
+    my($one, $two) = @_;
+    unless ($one eq $two) {
+	print STDERR "cookie mismatch:\n", 
+	"`$one'\n", "   vs.\n", "`$two'\n";
+    }
+    ($one && $two) || (!$one && !$two);
+}
