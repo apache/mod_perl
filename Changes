@@ -10,7 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_05-dev
 
-compat tests were split into groups by functionality.  [Stas Bekman]
+core Registry packages all compile the scripts into
+ModPerl::RegistryROOT:: namespace and cache them in
+%ModPerl::RegistryCache. Both overridable by the sub-classes. [Stas Bekman]
+
+compat tests were split into groups by functionality, send_fd test
+moved to compat.  [Stas Bekman]
 
 added $c->get_remote_host and a compat wrapper $r->get_remote_host +
 tests [Stas Bekman]
@@ -22,6 +27,7 @@ ModPerl::RegistryCooker syncs with mod_perl 1.0's registry:
  - prototypes defined checks in flush_namespace 
                             [Yair Lenga <yair.lenga@citigroup.com>]
  - set error-notes on error [Geoff Young <geoff@modperlcookbook.org>]
+ - preserve status in Registry scripts [Geoff Young <geoff@modperlcookbook.org>]
 
 
 =item 1.99_04 - June 21, 2002
