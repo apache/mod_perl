@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fixed bug with Apache::print not dereferencing scalar referencess that
+are of type SVt_PVIV. [ T.J. Mather <tjmather@thoughtstore.com> / Ask ]
+
 quotemeta path_info in Registry regexp
 [Tobias Hoellrich <thoellri@adobe.com>]
 
