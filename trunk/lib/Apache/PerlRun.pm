@@ -280,6 +280,11 @@ sub handler ($$) {
     $pr->set_script_name;
     $pr->chdir_file;
     my $line = $pr->mark_line;
+
+    #make sure this hooks are restored to their original state
+    local $SIG{__DIE__}  = $SIG{__DIE__};
+    local $SIG{__WARN__} = $SIG{__WARN__};
+
     my %orig_inc = %INC;
     my $eval = join '',
 		    'package ',
