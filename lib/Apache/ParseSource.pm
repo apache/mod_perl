@@ -200,7 +200,7 @@ sub find_includes_wanted {
                                    my $dir = $File::Find::dir;
                                    push @includes, "$dir/$_";
                                },
-                               follow => 1,
+                               (Apache::Build::WIN32 ? '' : follow => 1),
                               }, $dir);
     }
     return @includes;
