@@ -8,7 +8,7 @@ use Apache::TestRequest qw(GET_BODY_ASSERT);
 plan tests => 2;
 
 my $module = 'TestApache::cookie';
-my $location = Apache::TestRequest::module2path($module);
+my $location = '/' . Apache::TestRequest::module2path($module);
 my $val = "bar";
 my $cookie = "key=$val";
 
@@ -19,6 +19,7 @@ my %expected =
 );
 
 for (qw/header env/) {
+    t_debug("-- testing cookie from $location?$_");
     my $received = GET_BODY_ASSERT "$location?$_", Cookie => $cookie;
     ok t_cmp($expected{$_}, $received);
 }
