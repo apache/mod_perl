@@ -193,7 +193,7 @@ sub namespace {
 			  (/+)       # directory
 			  (\d?)      # package's first character
 			 }[
-			   "::" . (defined $2 ? sprintf("_%2x",unpack("C",$2)) : "")
+			   "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
 			  ]egx;
 
     $Apache::Registry::curstash = $script_name;
