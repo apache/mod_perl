@@ -7,8 +7,8 @@ use Apache::TestUtil;
 
 plan tests => 1;
 
-my $blocks  = 11;
-my $invoked = 34;
+my $blocks  = 33;
+my $invoked = 100;
 my $sig = join "\n", "received $blocks complete blocks",
     "filter invoked $invoked times\n";
 my $data = "#" x $blocks . "x" x $blocks;

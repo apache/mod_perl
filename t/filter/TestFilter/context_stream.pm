@@ -65,14 +65,13 @@ sub response {
 
     $r->content_type('text/plain');
 
-    # make sure that 
+    # make sure that
     # - we send big enough data so it won't fit into one buffer
     # - use chunk size which doesn't nicely fit into a buffer size, so
     #   we have something to store in the context between filter calls
 
-    my $blocks = 11;
+    my $blocks = 33;
     my $block_size = BLOCK_SIZE + 1;
-    # embed \n, so there will be several buckets
     my $block = "x" x $block_size;
     for (1..$blocks) {
         $r->print($block);

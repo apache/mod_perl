@@ -73,48 +73,6 @@ sub handler {
     return Apache::OK;
 }
 
-sub handler1 {
-    my $filter = shift;
-
-    my $ctx = $filter->ctx;
-
-    $ctx->{invoked}++;
-
-    my ($data, $len) = (exists $ctx->{leftover} && length $ctx->{leftover})
-        ? ($ctx->{leftover}, $ctx->{leftover_len})
-        : ('', 0);
-
-    while (my $read_len = $filter->read(my $buffer, 1024)) {
-        $len += $read_len;
-        $data .= $buffer;
-        if ($len >= BLOCK_SIZE) {
-            my $blocks = int($len / BLOCK_SIZE);
-            warn "len $len, $read_len, blocks $blocks\n";
-            $len = $len % BLOCK_SIZE;
-            warn "len $len ", length($data), "\n";
-            $data = substr $data, $blocks*BLOCK_SIZE, $len;
-            $ctx->{blocks} += $blocks;
-            $filter->print("#" x $blocks);
-        }
-    }
-
-#
-#    # there shouldn't be any leftovers in our test
-#    if ($filter->eos) {
-#        if ($len) {
-#            $filter->print("?");
-#        }
-#        $filter->print("sig: $blocks blocks");
-#    }
-#    else {
-        $ctx->{leftover}     = $data;
-        $ctx->{leftover_len} = $len;
-        $filter->ctx($ctx);
-#    }
-
-    return Apache::OK;
-}
-
 sub response {
     my $r = shift;
 
@@ -125,9 +83,8 @@ sub response {
     # - use chunk size which doesn't nicely fit into a buffer size, so
     #   we have something to store in the context between filter calls
 
-    my $blocks = 11;
+    my $blocks = 33;
     my $block_size = BLOCK_SIZE + 1;
-    # embed \n, so there will be several buckets
     my $block = "x" x $block_size;
     for (1..$blocks) {
         $r->print($block);
