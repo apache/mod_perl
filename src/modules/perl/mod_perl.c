@@ -344,6 +344,11 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     PerlInterpreter *perl;
     const char *vhost = modperl_server_desc(s, p);
 
+    if (!scfg) {
+        MP_TRACE_i(MP_FUNC, "server %s has no mod_perl config\n", vhost);
+        return OK;
+    }
+
     if (base_server == NULL) {
         base_server = modperl_global_get_server_rec();
     }
@@ -364,11 +369,6 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
 #else
     perl = base_perl = base_scfg->perl;
 #endif /* USE_ITHREADS */
-
-    if (!scfg) {
-        MP_TRACE_i(MP_FUNC, "server %s has no mod_perl config\n", vhost);
-        return OK;
-    }
 
 #ifdef USE_ITHREADS
 
