@@ -23,7 +23,7 @@ sub handler {
 
     $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 
-    plan $r, tests => $tests, have_perl qw(APR::PerlIO);
+    plan $r, tests => $tests, have 'APR::PerlIO';
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
