@@ -29,5 +29,4 @@ __END__
 PerlModule Apache::Reload
 PerlInitHandler Apache::TestHandler::same_interp_fixup Apache::Reload
 PerlSetVar ReloadDebug Off
-PerlSetVar ReloadConstantRedefineWarnings Off
 PerlSetVar ReloadAll Off

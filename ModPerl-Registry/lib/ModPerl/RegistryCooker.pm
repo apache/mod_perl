@@ -525,48 +525,7 @@ sub flush_namespace_normal {
     my $self = shift;
 
     $self->debug("flushing namespace") if DEBUG & D_NOISE;
-
-    no strict 'refs';
-    my $tab = \%{ $self->{PACKAGE} . '::' };
-
-    # below we assign to a symbol first before undef'ing it, to avoid
-    # nuking aliases. If we undef directly we may undef not only the
-    # alias but the original function as well
-
-    for (keys %$tab) {
-        my $fullname = join '::', $self->{PACKAGE}, $_;
-        # code/hash/array/scalar might be imported make sure the gv
-        # does not point elsewhere before undefing each
-        if (%$fullname) {
-            *{$fullname} = {};
-            undef %$fullname;
-        }
-        if (@$fullname) {
-            *{$fullname} = [];
-            undef @$fullname;
-        }
-        if ($$fullname) {
-            my $tmp; # argh, no such thing as an anonymous scalar
-            *{$fullname} = \$tmp;
-            undef $$fullname;
-        }
-        if (defined &$fullname) {
-            no warnings;
-            local $^W = 0;
-            if (defined(my $p = prototype $fullname)) {
-                *{$fullname} = eval "sub ($p) {}";
-            }
-            else {
-                *{$fullname} = sub {};
-            }
-            undef &$fullname;
-        }
-        if (*{$fullname}{IO}) {
-            if (fileno $fullname) {
-                close $fullname;
-            }
-        }
-    }
+    ModPerl::Util::unload_package($self->{PACKAGE});
 }
 
 

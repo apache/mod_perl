@@ -303,6 +303,59 @@ void modperl_xs_dl_handles_close(void **handles)
     free(handles);
 }
 
+/* XXX: There is no XS accessible splice() */
+static void modperl_av_remove_entry(pTHX_ AV *av, I32 index)
+{
+    I32 i;
+    AV *tmpav = newAV();
+
+    /* stash the entries _before_ the item to delete */
+    for (i=0; i<=index; i++) {
+        av_store(tmpav, i, SvREFCNT_inc(av_shift(av)));
+    }
+    
+    /* make size at the beginning of the array */
+    av_unshift(av, index-1);
+    
+    /* add stashed entries back */
+    for (i=0; i<index; i++) {
+        av_store(av, i, *av_fetch(tmpav, i, 0));
+    }
+    
+    SvREFCNT_dec(tmpav);
+}
+
+static void modperl_package_unload_dynamic(pTHX_ const char *package, 
+                                           I32 dl_index)
+{
+    AV *librefs = get_av(dl_librefs, 0);
+    SV *libref = *av_fetch(librefs, dl_index, 0);
+
+    modperl_sys_dlclose((void *)SvIV(libref));
+    
+    /* remove package from @dl_librefs and @dl_modules */
+    modperl_av_remove_entry(aTHX_ get_av(dl_librefs, 0), dl_index);
+    modperl_av_remove_entry(aTHX_ get_av(dl_modules, 0), dl_index);
+    
+    return;    
+}
+
+static int modperl_package_is_dynamic(pTHX_ const char *package,
+                                      I32 *dl_index)
+{
+   I32 i;
+   AV *modules = get_av(dl_modules, FALSE);
+    
+   for (i=0; i<av_len(modules); i++) {
+        SV *module = *av_fetch(modules, i, 0);
+        if (strEQ(package, SvPVX(module))) {
+            *dl_index = i;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data)
 {
     modperl_cleanup_data_t *cdata =
@@ -526,60 +579,6 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
     return (svp && *svp != &PL_sv_undef) ? 1 : 0;
 }
 
-static int modperl_gvhv_is_stash(GV *gv)
-{
-    int len = GvNAMELEN(gv);
-    char *name = GvNAME(gv);
-
-    if ((len > 2) && (name[len - 1] == ':') && (name[len - 2] == ':')) {
-        return 1;
-    }
-
-    return 0;
-}
-
-/*
- * we do not clear symbols within packages, the desired behavior
- * for directive handler classes.  and there should never be a package
- * within the %Apache::ReadConfig.  nothing else that i'm aware of calls
- * this function, so we should be ok.
- */
-
-void modperl_clear_symtab(pTHX_ HV *symtab) 
-{
-    SV *val;
-    char *key;
-    I32 klen;
-
-    hv_iterinit(symtab);
-    
-    while ((val = hv_iternextsv(symtab, &key, &klen))) {
-        SV *sv;
-        HV *hv;
-        AV *av;
-        CV *cv;
-
-        if ((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val)) {
-            continue;
-        }
-        if ((sv = GvSV((GV*)val))) {
-            sv_setsv(GvSV((GV*)val), &PL_sv_undef);
-        }
-        if ((hv = GvHV((GV*)val)) && !modperl_gvhv_is_stash((GV*)val)) {
-            hv_clear(hv);
-        }
-        if ((av = GvAV((GV*)val))) {
-            av_clear(av);
-        }
-        if ((cv = GvCV((GV*)val)) && (GvSTASH((GV*)val) == GvSTASH(CvGV(cv)))) {
-            GV *gv = CvGV(cv);
-            cv_undef(cv);
-            CvGV(cv) = gv;
-            GvCVGEN(gv) = 1; /* invalidate method cache */
-        }
-    }
-}
-
 #define SLURP_SUCCESS(action) \
     if (rc != APR_SUCCESS) { \
         SvREFCNT_dec(sv); \
@@ -784,4 +783,46 @@ apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
     }
 
     return array;
+}
+
+/* Remove a package from %INC */
+static void modperl_package_delete_from_inc(pTHX_ const char *package)  
+{
+    int len;
+    char *filename = package2filename(package, &len);
+    hv_delete(GvHVn(PL_incgv), filename, len, G_DISCARD);
+    free(filename);
+}
+
+/* Destroy a package's stash */
+static void modperl_package_clear_stash(pTHX_ const char *package)
+{
+    HV *stash;
+    if ((stash = gv_stashpv(package, FALSE))) {
+        HE *he;
+        I32 len;
+        char *key;
+        hv_iterinit(stash);
+        while ((he = hv_iternext(stash))) {
+            key = hv_iterkey(he, &len);
+            /* We skip entries ending with ::, they are sub-stashes */
+            if (len > 2 && key[len] != ':' && key[len-1] != ':') {
+                hv_delete(stash, key, len, G_DISCARD);
+            }
+        }
+    }
+}
+
+/* Unload a module as completely and cleanly as possible */
+void modperl_package_unload(pTHX_ const char *package)
+{
+    I32 dl_index;
+    
+    modperl_package_clear_stash(aTHX_ package);
+    modperl_package_delete_from_inc(aTHX_ package);
+    
+    if (modperl_package_is_dynamic(aTHX_ package, &dl_index)) {
+        modperl_package_unload_dynamic(aTHX_ package, dl_index);
+    }
+    
 }

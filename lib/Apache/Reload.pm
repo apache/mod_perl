@@ -27,7 +27,9 @@ use Apache::Connection;
 use Apache::ServerUtil;
 use Apache::RequestUtil;
 
-use vars qw(%INCS %Stat $TouchTime %UndefFields);
+use ModPerl::Util ();
+
+use vars qw(%INCS %Stat $TouchTime);
 
 %Stat = ($INC{"Apache/Reload.pm"} => time);
 
@@ -47,6 +49,13 @@ sub package_to_module {
     return $package;
 }
 
+sub module_to_package {
+    my $module = shift;
+    $module =~ s/\//::/g;
+    $module =~ s/\.pm$//g;
+    return $module;
+}
+
 sub register_module {
     my($class, $package, $file) = @_;
     my $module = package_to_module($package);
@@ -58,11 +67,6 @@ sub register_module {
         $file = $INC{$module};
         return unless $file;
         $INCS{$module} = $file;
-    }
-
-    no strict 'refs';
-    if (%{"${package}::FIELDS"}) {
-        $UndefFields{$module} = "${package}::FIELDS";
     }
 }
 
@@ -116,15 +120,6 @@ sub handler {
                 foreach my $match (keys %INC) {
                     if ($match =~ /^\Q$prefix\E/) {
                         $Apache::Reload::INCS{$match} = $INC{$match};
-                        my $package = $match;
-                        $package =~ s/\//::/g;
-                        $package =~ s/\.pm$//;
-                        no strict 'refs';
-#                        warn "checking for FIELDS on $package\n";
-                        if (%{"${package}::FIELDS"}) {
-#                            warn "found fields in $package\n";
-                            $UndefFields{$match} = "${package}::FIELDS";
-                        }
                     }
                 }
             }
@@ -158,29 +153,16 @@ sub handler {
         }
 
         if ($mtime > $Stat{$file}) {
-            delete $INC{$key};
-#           warn "Reloading $key\n";
-            if (my $symref = $UndefFields{$key}) {
-#                warn "undeffing fields\n";
-                no strict 'refs';
-                undef %{$symref};
-            }
-            no warnings FATAL => 'all';
-            local $SIG{__WARN__} = \&skip_redefine_const_sub_warn
-                unless $ConstantRedefineWarnings;
+            my $package = module_to_package($key);
+            ModPerl::Util::unload_package($package);
             require $key;
-            warn("Apache::Reload: process $$ reloading $key\n")
+            warn("Apache::Reload: process $$ reloading $package from $key\n")
                     if $DEBUG;
         }
         $Stat{$file} = $mtime;
     }
 
     return Apache::OK;
-}
-
-sub skip_redefine_const_sub_warn {
-    return if $_[0] =~ /^Constant subroutine [\w:]+ redefined at/;
-    CORE::warn(@_);
 }
 
 1;

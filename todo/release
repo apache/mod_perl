@@ -100,10 +100,6 @@
                not sure when. we need to ping him every so often. but
                it'll probably won't happen by the time we release 2.0.
 
-* Apache::Reload
-  - needs to handle properly redefined subs warnings
-  owner: gozer
-
 * Apache->unescape_url{_info}:
   not yet implemented.  should be moved to Apache::Util (or may be
   APR::URI?)

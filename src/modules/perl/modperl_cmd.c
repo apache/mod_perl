@@ -577,10 +577,7 @@ MP_CMD_SRV_DECLARE(perldo)
         SvREFCNT_dec((SV*)args);
 
         if (!(saveconfig && SvTRUE(saveconfig))) {
-            HV *symtab = (HV*)gv_stashpv(pkg_name, FALSE);
-            if (symtab) {
-                modperl_clear_symtab(aTHX_ symtab);
-            }
+            modperl_package_unload(aTHX_ pkg_name);
         }
         
         if (status != OK) {
