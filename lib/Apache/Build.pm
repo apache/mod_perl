@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Config;
 use Cwd ();
+use ExtUtils::Embed ();
 use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
@@ -59,6 +60,40 @@ sub which {
 }
 
 #--- Perl Config stuff ---
+
+sub gtop_ldopts {
+    my $xlibs = "-L/usr/X11/lib -L/usr/X11R6/lib -lXau";
+    return " -lgtop -lgtop_sysdeps -lgtop_common $xlibs";
+}
+
+sub ldopts {
+    my($self) = @_;
+
+    my $ldopts = ExtUtils::Embed::ldopts();
+    chomp $ldopts;
+
+    if ($self->{use_gtop}) {
+        $ldopts .= $self->gtop_ldopts;
+    }
+
+    $ldopts;
+}
+
+sub ccopts {
+    my($self) = @_;
+
+    my $ccopts = ExtUtils::Embed::ccopts();
+
+    if ($self->{use_gtop}) {
+        $ccopts .= " -DMP_USE_GTOP";
+    }
+
+    if ($self->{debug}) {
+        $ccopts .= " -g -Wall -DMP_TRACE";
+    }
+
+    $ccopts;
+}
 
 sub perl_config {
     my($self, $key) = @_;
@@ -182,19 +217,34 @@ sub build_config {
 sub new {
     my $class = shift;
 
-    bless {
-           cwd => Cwd::fastcwd(),
-           @_,
-          }, $class;
+    my $self = bless {
+        cwd => Cwd::fastcwd(),
+        @_,
+    }, $class;
+
+    if ($self->{debug}) {
+        $self->{use_gtop} = 1 if $self->find_dlfile('gtop');
+    }
+
+    $self;
 }
 
 sub DESTROY {}
 
-my $save_file = 'lib/Apache/BuildConfig.pm';
+my %default_files = (
+    'build_config' => 'lib/Apache/BuildConfig.pm',
+    'ldopts' => 'src/modules/perl/ldopts',
+);
 
 sub clean_files {
     my $self = shift;
-    $self->{save_file} || $save_file;
+    map { $self->default_file($_) } keys %default_files;
+}
+
+sub default_file {
+    my($self, $name, $override) = @_;
+    my $key = join '_', 'file', $name;
+    $self->{$key} ||= ($override || $default_files{$name});
 }
 
 sub freeze {
@@ -205,12 +255,24 @@ sub freeze {
     $data;
 }
 
+sub save_ldopts {
+    my($self, $file) = @_;
+
+    $file ||= $self->default_file('ldopts', $file);
+    my $ldopts = $self->ldopts;
+
+    open my $fh, '>', $file or die "open $file: $!";
+    print $fh "#!/bin/sh\n\necho $ldopts\n";
+    close $fh;
+    chmod 0755, $file;
+}
+
 sub save {
     my($self, $file) = @_;
 
-    $self->{save_file} = $file || $save_file;
+    $file ||= $self->default_file('build_config');
     (my $obj = $self->freeze) =~ s/^/    /;
-    open my $fh, '>', $self->{save_file} or die "open $file: $!";
+    open my $fh, '>', $file or die "open $file: $!";
 
     print $fh <<EOF;
 package Apache::BuildConfig;

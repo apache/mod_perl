@@ -1,8 +1,6 @@
 #ifndef MODPERL_LOG_H
 #define MODPERL_LOG_H
 
-#define MP_TRACE /* XXX: make optional */
-
 #define MP_FUNC __FUNCTION__ /* XXX: not every cc supports this
                               * sort out later
                               */
