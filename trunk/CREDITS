@@ -117,6 +117,15 @@ Apache::Session module.
 John contributed the Apache::DBILogin module along with proving Oracle
 tips and tricks over the years.
 
+=item Joshua Chamas (chamas@alumni.stanford.org)
+
+Author of the Apache::ASP module.
+
+
+=item Ken Williams (ken@forum.swarthmore.edu)
+
+Author of the Apache::SSI module.
+
 =item Lincoln Stein (lstein@cshl.org)
 
 Everybody knows Lincoln gave us the must-have CGI.pm module, he's put
@@ -228,13 +237,12 @@ Christopher Thompson, Dan Peterson, David Hodson, Dean Gaudet, Elizabeth
 Mattijsen , Eric James Negaard, Evert-Jan Couperus, Gary Shea, Gurusamy
 Sarathy, James Cooper, Jarkko Hietaniemi, Jeff Hallgren, Jeff Rowe, Jens
 Heunemann, Jimmy Oh, Joel Wagner, John Detloff, Jon Drukman, Jon Orwant,
-Joonsuk Bae, Ken Williams, Liam Howlett, Lupe Christoph, Marc Slemko, Mark
-Constable, Mark Mills, Mark-Jason Dominus , Michael Alan Dorman, Michael
-Turner, Mike Pheasant, Mike Stok, Milan Votava, Nathan Torkington, Neil
-Jensen, Owen Scott Medd, Paul Phillips, Paul Sutton, Peter Levart, Randal
-Schwartz, Robert Tau, Ron Hawkins, Stas Bekman, Steve Farrell, Steve
-Nielsen, Sven Verdoolaege, Ted Corning, Tim Bunce, Todd Eigenschink, Ulrich
-Pfeifer
+Joonsuk Bae, Liam Howlett, Lupe Christoph, Marc Slemko, Mark Constable,
+Mark Mills, Mark-Jason Dominus , Michael Alan Dorman, Michael Turner, Mike
+Pheasant, Mike Stok, Milan Votava, Nathan Torkington, Neil Jensen, Owen
+Scott Medd, Paul Phillips, Paul Sutton, Peter Levart, Randal Schwartz,
+Robert Tau, Ron Hawkins, Stas Bekman, Steve Farrell, Steve Nielsen, Sven
+Verdoolaege, Ted Corning, Tim Bunce, Todd Eigenschink, Ulrich Pfeifer
 
 =head1 REVISION
 
