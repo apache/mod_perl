@@ -25,8 +25,10 @@ sub handler {
         $rlen = BUFF_LEN;
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
-        chomp $buff;
-        $last++ if $buff eq 'Good bye, Eliza';
+        
+        # \r is sent instead of \n if the client is talking over telnet
+        $buff =~ s/[\r\n]*$//;
+        $last++ if $buff eq "Good bye, Eliza";
         $buff = $mybot->transform( $buff ) . "\n";
         $socket->send($buff, length $buff);
         last if $last;
