@@ -8,14 +8,14 @@ my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 sub handler {
     my $r = shift;
     my $do_undef = ref($r) && ((lc($r->dir_config("StatINC_UndefOnReload") ||
-								   $r->dir_config("UndefOnReload")) || '') eq "on");
+				   $r->dir_config("UndefOnReload")) || '') eq "on");
     my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug") || '') eq "on");
     $DEBUG = $r->dir_config("StatINC_Debug") if ref($r) && $r->dir_config("StatINC_Debug");
-
+    
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
 	my $mtime = (stat $file)[9];
-	  # warn and skip the files with relative paths which can't be locate by applying @INC;
+	# warn and skip the files with relative paths which can't be locate by applying @INC;
 	warn "Apache::StatINC: Can't locate $file\n",next unless defined $mtime and $mtime;
 	unless(defined $Stat{$file}) { 
 	    $Stat{$file} = $^T;
@@ -24,16 +24,16 @@ sub handler {
 	    if($do_undef and $key =~ /\.pm$/) {
 		require Apache::Symbol;
 		my $class = Apache::Symbol::file2class($key);
-               $class->Apache::Symbol::undef_functions( undef, 1 );
+		$class->Apache::Symbol::undef_functions( undef, 1 );
 	    }
 	    delete $INC{$key};
 	    require $key;
 	    warn "Apache::StatINC: process $$ reloading $key\n"
-		  if $DEBUG > 0;
+		if $DEBUG > 0;
 	}
 	$Stat{$file} = $mtime;
     }
-
+    
     return 1;
 }
 
