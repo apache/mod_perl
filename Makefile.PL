@@ -463,6 +463,20 @@ modperl_xs_h_install:
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
 
+modperl_banner:
+	@$(ECHO) "+--------------------------------------------------------------+"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "| For details on getting started with mod_perl 2, see:         |"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "|   http://perl.apache.org/docs/2.0/user/intro/start_fast.html |"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "| Found a bug?  File a bug report:                             |"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "|   http://perl.apache.org/bugs/                               |"
+	@$(ECHO) "|                                                              |"
+	@$(ECHO) "+--------------------------------------------------------------+"
+
 EOF
 
     $string .= Apache::Test::install::nuke_Apache__test_target()
@@ -479,6 +493,8 @@ sub MY::install {
 
     ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
           if $apache_test_install;
+
+    ModPerl::MM::add_dep_after(\$string, qw(install doc_install modperl_banner));
 
     $string;
 }
@@ -528,7 +544,7 @@ mydist : manifest tardist
 
 cvs_tag :
 	cvs tag MODPERL_$(VERSION_SYM) .
-	@echo update mod_perl.pm VERSION now
+	@$(ECHO) update mod_perl.pm VERSION now
 EOF
 
     return $string;
