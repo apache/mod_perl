@@ -19,7 +19,7 @@ unsigned long modperl_debug_level(void)
     return debug_level;  
 }
 
-void modperl_trace(char *func, const char *fmt, ...)
+void modperl_trace(const char *func, const char *fmt, ...)
 {
     char vstr[8192];
     apr_size_t vstr_len = 0;
