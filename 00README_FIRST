@@ -1,0 +1,10 @@
+a (nearly) complete rewrite is underway for mod_perl-2.0
+
+the module is not usable yet
+
+what you see here is just a start on the new build/glue infrastructure
+
+more detailed design docs, etc. will follow along with updates here
+and on the list
+
+-dougm 04/12
