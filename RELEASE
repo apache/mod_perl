@@ -42,7 +42,7 @@ Instructions for mod_perl 2.0 Release Manager
 
   f. test the final package again at least once
 
-4. Release the package and update links (e.g. mod_perl-1.99_12.tar.gz)
+4. Release the package and update links (e.g. mod_perl-1.99_13.tar.gz)
 
   a. upload to www.apache.org:/www/perl.apache.org/dist/
 
@@ -51,18 +51,18 @@ Instructions for mod_perl 2.0 Release Manager
 
     % ssh www.apache.org
     % cd /www/perl.apache.org/dist/
-    % ln -sf mod_perl-1.99_12.tar.gz mod_perl-2.0-current.tar.gz
-    % tar -xzvf mod_perl-1.99_12.tar.gz
+    % ln -sf mod_perl-1.99_13.tar.gz mod_perl-2.0-current.tar.gz
+    % tar -xzvf mod_perl-1.99_13.tar.gz
     % rm /www/perl.apache.org/dist/mod_perl-2.0-current
-    % ln -sf mod_perl-1.99_12 mod_perl-2.0-current
+    % ln -sf mod_perl-1.99_13 mod_perl-2.0-current
 
   c. archive older releases (keep current + one prior release)
 
-    % mv /www/perl.apache.org/dist/mod_perl-1.99_10.tar.gz \
+    % mv /www/perl.apache.org/dist/mod_perl-1.99_11.tar.gz \
          /www/perl.apache.org/dist/old
-    % mv /www/perl.apache.org/dist/mod_perl-1.99_10.tar.gz.asc \
+    % mv /www/perl.apache.org/dist/mod_perl-1.99_11.tar.gz.asc \
          /www/perl.apache.org/dist/old
-    % rm -rf /www/perl.apache.org/dist/mod_perl-1.99_10
+    % rm -rf /www/perl.apache.org/dist/mod_perl-1.99_11
 
   d. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
@@ -80,24 +80,24 @@ Instructions for mod_perl 2.0 Release Manager
 
   a. sign your local copy of the tarball:
 
-    % gpg --detach-sign --armor mod_perl-1.99_12.tar.gz
+    % gpg --detach-sign --armor mod_perl-1.99_13.tar.gz
 
-    % pgps -b --armor mod_perl-1.99_12.tar.gz
+    % pgps -b --armor mod_perl-1.99_13.tar.gz
 
   b. upload the generated sig file to www.apache.org:
 
-    % scp mod_perl-1.99_12.tar.gz.asc www.apache.org:/www/perl.apache.org/dist/
+    % scp mod_perl-1.99_13.tar.gz.asc www.apache.org:/www/perl.apache.org/dist/
     % ssh www.apache.org
     % cd /www/perl.apache.org/dist/
-    % chmod 0664 mod_perl-1.99_12.tar.gz.asc
-    % ln -sf mod_perl-1.99_12.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
+    % chmod 0664 mod_perl-1.99_13.tar.gz.asc
+    % ln -sf mod_perl-1.99_13.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
 
   c. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
 
-    % gpg --verify mod_perl-1.99_12.tar.gz.asc
+    % gpg --verify mod_perl-1.99_13.tar.gz.asc
 
-    % pgpv mod_perl-1.99_12.tar.gz.asc
+    % pgpv mod_perl-1.99_13.tar.gz.asc
 
   d. make sure that the files you just created are group rw so
      all the dist admins can make changes:
@@ -109,15 +109,15 @@ Instructions for mod_perl 2.0 Release Manager
    and archive the old package under /www/archive.apache.org/dist/perl/
 
    % cd /www/www.apache.org/dist/perl/
-   % cp /www/perl.apache.org/dist/mod_perl-1.99_12.tar.gz* .
-   % tar -xzvf mod_perl-1.99_12.tar.gz
-   % mv mod_perl-1.99_10.tar.gz* /www/archive.apache.org/dist/perl/
-   % rm -rf mod_perl-1.99_11
+   % cp /www/perl.apache.org/dist/mod_perl-1.99_13.tar.gz* .
+   % tar -xzvf mod_perl-1.99_13.tar.gz
+   % mv mod_perl-1.99_11.tar.gz* /www/archive.apache.org/dist/perl/
+   % rm -rf mod_perl-1.99_12
 
 8. Announce the package
 
   a. post ... to the modperl, announce lists
-  Subject: [ANNOUNCE]: mod_perl 1.99_12 
+  Subject: [ANNOUNCE]: mod_perl 1.99_13 
      include 
   - MD5 sig (as it comes from CPAN upload announce).
   - the latest Changes
@@ -129,10 +129,18 @@ Instructions for mod_perl 2.0 Release Manager
   b. edit ./Changes:
      - start a new item with incremented version + '-dev'
 
-  =item 1.99_13-dev
+  =item 1.99_14-dev
 
   c. commit Changes
      % cvs ci Changes lib/mod_perl.pm
 
   d. add a release entry in STATUS and commit
      % cvs ci STATUS
+
+  e. update this file versions to make it easy to copy-n-paste things
+     on the next release:
+
+   perl -pi -e 's/_14/_15/g' RELEASE
+   perl -pi -e 's/_13/_14/g' RELEASE
+   perl -pi -e 's/_12/_13/g' RELEASE
+   perl -pi -e 's/_11/_12/g' RELEASE;
