@@ -298,7 +298,7 @@ void *perl_create_dir_config (pool *p, char *dirname)
     cld->env  = make_table(p, 5); 
     cld->flags = MPf_ENV;
     cld->SendHeader = MPf_None;
-    cld->SetupEnv = MPf_On;
+    cld->SetupEnv = MPf_None;
     cld->PerlHandler = PERL_CMD_INIT;
     PERL_DISPATCH_CREATE(cld);
     PERL_AUTHEN_CREATE(cld);
