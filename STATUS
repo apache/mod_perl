@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/03/06 04:08:02 $]
+   Last modified at [$Date: 2003/03/11 06:15:37 $]
 
 Release:
 --------
@@ -72,20 +72,6 @@ Needs Patch or Further Investigation:
 
   - why the loading doesn't happen
   - why the error doesn't happen (probably both connected)
-
-* in blead-perl (where ${^TAINT} returns -1 for -t and 1 for -T, 0
-  otherwise). in modperl/taint test under worker mpm ${^TAINT} returns
-  -1, when it should be 1. and the test fails
-
-   in mg.c :
-        else if (strEQ(mg->mg_ptr, "\024AINT"))
-            sv_setiv(sv, PL_tainting
-                    ? (PL_taint_warn || PL_unsafe ? -1 : 1)
-                    : 0);
-
-  need to check whether something different happens to PL_taint_warn
-  || PL_unsafe under worker mpm (it does the right thing with
-  prefork).
 
 * 'SetHandler modperl' doesn't reset $|, so if anything turns it on
   anywhere, it's going to stay that way. Meaning excessive flushing
