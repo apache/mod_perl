@@ -338,8 +338,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         }
 
         /* might have already been set by a ConnectionHandler */
-        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY,
-                                    r->connection->pool);
+        get_interp(r->connection->pool);
+
         if (interp) {
             desc = "r->connection pool";
             MP_TRACE_i(MP_FUNC,
