@@ -10,7 +10,7 @@ sub new {
     my $class = shift;
 
     my $self = bless {
-        config => Apache::Build->new,
+        config => Apache::Build->build_config,
         @_,
     }, $class;
 
@@ -65,7 +65,11 @@ sub scan {
     bless $c, 'Apache::ParseSource::Scan';
 }
 
-sub include_dir { shift->config->apxs(-q => 'INCLUDEDIR') }
+sub include_dirs {
+    my $self = shift;
+    ($self->config->apxs(-q => 'INCLUDEDIR'),
+     $self->config->mp_include_dir);
+}
 
 sub includes { shift->config->includes }
 
@@ -76,24 +80,26 @@ sub find_includes {
 
     require File::Find;
 
-    my $dir = $self->include_dir;
+    my(@dirs) = $self->include_dirs;
 
-    unless (-d $dir) {
+    unless (-d $dirs[0]) {
         die "could not find include directory";
     }
 
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal);
 
-    File::Find::finddepth({
-                           wanted => sub {
-                               return unless /\.h$/;
-                               return if /($unwanted)/o;
-                               my $dir = $File::Find::dir;
-                               push @includes, "$dir/$_";
-                           },
-                           follow => 1,
-                          }, $dir);
+    for my $dir (@dirs) {
+        File::Find::finddepth({
+                               wanted => sub {
+                                   return unless /\.h$/;
+                                   return if /($unwanted)/o;
+                                   my $dir = $File::Find::dir;
+                                   push @includes, "$dir/$_";
+                               },
+                               follow => 1,
+                              }, $dir);
+    }
 
     #include apr_*.h before the others
     my @wanted = grep { /apr_\w+\.h$/ } @includes;

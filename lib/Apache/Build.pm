@@ -13,6 +13,19 @@ use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 our $VERSION = '0.01';
+our $AUTOLOAD;
+
+sub AUTOLOAD {
+    my $self = shift;
+    my $name = uc ((split '::', $AUTOLOAD)[-1]);
+    unless ($name =~ /^MP_/) {
+        die "no such method: $AUTOLOAD";
+    }
+    unless ($self->{$name}) {
+        return wantarray ? () : undef;
+    }
+    return wantarray ? (split /\s+/, $self->{$name}) : $self->{$name};
+}
 
 #--- apxs stuff ---
 
@@ -784,6 +797,8 @@ sub includes {
     my $os = is_win32 ? 'win32' : 'unix';
     my @inc = $self->file_path("src/modules/perl", "xs");
 
+    push @inc, $self->mp_include_dir;
+
     my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
     if (-d $ainc) {
         push @inc, $ainc;
@@ -804,10 +819,6 @@ sub includes {
         $ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
     }
     push @inc, $ssl_dir if -d $ssl_dir;
-
-    if ($self->{MP_INCLUDE_DIR}) {
-        push @inc, split /\s+/, $self->{MP_INCLUDE_DIR};
-    }
 
     return \@inc;
 }
