@@ -8,6 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+fix tied $r->err_headers_out cut-n-pasto [Peter Kaas <Peter.Kaas@lunatech.com>]
+
+Apache::read_client_block will now use safemalloc/safefree, rather
+than palloc, so memory is released after each read(), rather than at
+the end of a request.  (e.g. so file uploads don't cause too much growth)
+
 Added mod_perl_method_handlers.pod file, a little article about using
 perl objects with modperl. [ ask@netcetera.dk ]
 
