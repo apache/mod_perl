@@ -7,7 +7,7 @@ use Apache::TestRequest qw(GET);
 
 plan tests => 2;
 
-my $url = "/same_interp/perlrun/perlrun_require.pl";
+my $url = "/same_interp/perlrun/perlrun_extload.pl";
 my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
 for (1..2) {
@@ -15,7 +15,7 @@ for (1..2) {
     my $res = get_body($same_interp, $url);
     skip_not_same_interp(
         !defined($res),
-        "1",
+        "01234",
         $res,
         "PerlRun requiring an external lib with subs",
     );
