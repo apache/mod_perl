@@ -91,12 +91,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     server_rec  *s = r ? r->server : NULL;
     apr_pool_t  *p = r ? r->pool : c->pool;
 
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp = NULL;
-    interp = modperl_interp_select(r, c, s);
-    aTHX = interp->perl;
-#endif
+    MP_dINTERP_SELECT(r, c, s);
 
     args = newAV();
 
