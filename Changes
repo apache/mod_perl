@@ -1,3 +1,7 @@
+=head1 NAME
+
+Changes - Apache mod_perl change logfile
+
 =head1 ACKNOWLEDGEMENTS
 
 Extra Thanks to:
@@ -17,8 +21,16 @@ Other contributors are mentioned below.
 =over 3
 
 =item 1.11_01-dev
- 
-APACI support added [Ralf S. Engelschall <rse@engelschall.com>]
+
+added new (but still optional!) Apache 1.3 support via the new Apache
+Autoconf-style Interface (APACI): The option USE_APACI=1 triggers a new
+build-environment (from local apaci/) for the APACHE_SRC/src/modules/perl/
+which provides a clean way (i.e.  without patching anything inside APACHE_SRC,
+not even the Configuration file) of configuring mod_perl via a
+APACHE_SRC/src/modules/perl/mod_perl.config file. The completey configuration
+is enabled by just using the APACI command "configure
+--activate-module=src/modules/perl/libperl.a" 
+[Ralf S. Engelschall <rse@engelschall.com>]
 
 experimental tie of $0 to Apache->request->filename, enable with
 -DPERL_TIE_SCRIPTNAME  
