@@ -1519,6 +1519,24 @@ BEGIN {
     if (@dirs) {
         unshift @INC, @dirs;
     }
+
+    # now re-org the libs to have first devel libs, then blib libs,
+    # and only then perl core libs
+    use File::Basename qw(dirname);
+    my $project_root = $blib ? dirname(dirname($blib)) : '';
+    if ($project_root) {
+        my (@a, @b, @c);
+        for (@INC) {
+            if (m|^\Q$project_root\E|) {
+                m|blib| ? push @b, $_ : push @a, $_;
+            }
+            else {
+                push @c, $_;
+            }
+        }
+        @INC = (@a, @b, @c);
+    }
+
 }
 EOF
 
