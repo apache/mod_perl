@@ -22,7 +22,7 @@ my(@xs_includes) = ('mod_perl.h',
 my @global_structs = qw(perl_module);
 
 my $build = Apache::Build->build_config;
-push @global_structs, 'MP_debug_level' if $build->{MP_DEBUG};
+push @global_structs, 'MP_debug_level' unless Apache::Build::WIN32;
 
 sub new {
     my $class = shift;
