@@ -1,36 +1,54 @@
-- META tags in the modules
+RegistryCooker:
 
----------------
+### bugs ###
 
- - print STDERR is buffered in test handlers, whereas warn() works
-   normally. select() helps, but STDERR should be unbuffered in first
-   place.
+- prototyping sub handler($$) segfaults on request
 
----------------
+### missing features ###
 
-> what's the replacement of NameWithVirtualHost? Obviously we need something
-> to distinguish between vhs.
+- need to port $Apache::__T, to test against when user supplies -T flag.
 
-DougM: well, if possible we should distinguish between the uri and
-requested resource instead.  in otherwords, we have the: r->uri =>
-r->filename translation, just need to figure out if r->filename is the
-actual filename or a symlink (readlink can be used to get the real
-filename).  then create a package based on the filename, but with as
-few package:: levels as possible (hopefully none beyond
-ModPerl::RegistryROOT::filename)
+- port Apache::PerlRunXS
 
-DougM: using filenames makes for long packages names == lengthy
-lookups and more memory than we need.  at least the way it is
-currently implemented where each '/' turns into '::'.  could be that
-s,/,_,g is good enough, but haven't thought about this for a while.
-in any case, we should get rid of the NameWithVirtualHost stuff, its
-caused too many problems in the past.
+- implement RegistryLoader (per module or a single one?)
 
----------------
+- implement slurp_filename and remove Apache::compat
 
-Bjarni R. Einarsson <bre@klaki.net> has suggested this Registry hack
-http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98961929702745&w=2
-Message-ID: <20010511221101.A20868@diskordiah.mmedia.is>
+- $r->chdir_file is not handled/implemented, see todo/api.txt unsafe!
 
----------------
+- $Apache::Server::CWD doesn't exist
+
+- NameWithVirtualHost is not handled
+
+- need to figure out what's happening with
+  ModPerl::Registry::MarkLine, why it's not on by default?
+
+- a cousin of convert_script_to_compiled_handler() in 1.x used to have
+  'undef &{"$o->[PACKAGE]\::handler"}' to avoid redefine handler()
+  warnings in case a user has used -w. also see the undef_functions on
+  the next line.
+
+- child_terminate is not implemented see
+  convert_script_to_compiled_handler().
+
+- print STDERR is buffered in test handlers, whereas warn() works
+  normally. select() helps, but STDERR should be unbuffered in first
+  place.
+
+### optimizations ###
+
+- $o->[CLASS] of the subclass is known at compile time, so should
+  create the subs using $o->[CLASS] on the fly for each subclass
+  which wants them
+
+### nice to have ###
+
+- in namespace_from_filename() should test whether a file is a symlink
+  and if so use readlink() to get the real filename.
+
+### other things ###
+
+- Bjarni R. Einarsson <bre@klaki.net> has suggested this Registry hack
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98961929702745&w=2
+  Message-ID: <20010511221101.A20868@diskordiah.mmedia.is>
 
