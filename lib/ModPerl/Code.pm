@@ -368,11 +368,10 @@ sub generate_flags {
     print $h_fh "\n#define MP_SYS_$dlsrc 1\n";
 
     while (my($class, $opts) = each %{ $self->{flags} }) {
-        my $i = 0;
         my @lookup = ();
         my %lookup = ();
         my $lookup_proto = "";
-        my @dumper;
+        my %dumper;
         if ($flags_options{$class}) {
             $lookup_proto = join canon_func('flags', 'lookup', $class),
               'U32 ', '(const char *str)';
@@ -388,6 +387,7 @@ sub generate_flags {
         print $h_fh "\n#define ${class}Type $n\n";
         $n++;
 
+        my $i = 0;
         my $max_len = 0;
         for my $f (@$opts) {
             my $x = sprintf "0x%08x", $i;
@@ -405,7 +405,7 @@ sub generate_flags {
 #define ${cmd}_Off(p) ($flags(p) &= ~$flag)
 
 EOF
-            push @dumper,
+            $dumper{$name} =
               qq{modperl_trace(NULL, " $name %s", \\
                          ($flags(p) & $x) ? "On " : "Off");};
 
@@ -434,11 +434,11 @@ EOF
             print $h_fh "$lookup_proto;\n";
         }
 
-        shift @dumper; #NONE
+        delete $dumper{None}; #NONE
         print $h_fh join ' \\'."\n", 
           "#define ${class}_dump_flags(p, str)",
                      qq{modperl_trace(NULL, "$class flags dump (%s):", str);},
-                     @dumper;
+                     map $dumper{$_}, sort keys %dumper;
     }
 
     print $h_fh "\n#define MpSrvHOOKS_ALL_On(p) MpSrvFLAGS(p) |= (",
@@ -493,7 +493,7 @@ exp; \\
 EOF
 
     my @dumper;
-    for my $type (@trace) {
+    for my $type (sort @trace) {
         my $define = "#define MP_TRACE_$type";
         my $define_do = join '_', $define, 'do';
 
