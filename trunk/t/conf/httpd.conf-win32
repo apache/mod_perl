@@ -19,7 +19,7 @@ DocumentRoot "./t/docs"
 
 #mod_perl stuff
 
-LoadModule perl_module modules/ApacheModulePerl.dll
+LoadModule perl_module modules/mod_perl.so
 
 #-Tw
 

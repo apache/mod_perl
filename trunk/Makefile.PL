@@ -1249,6 +1249,17 @@ WriteMakefile(
     }
 );
 
+if ($Is_Win32) {
+  print <<'END';
+
+Beginning with version 1.3.15, Apache uses a different convention for 
+Win32 module names. Correspondingly, the name of the mod_perl module 
+built here has been changed from ApacheModulePerl.dll to mod_perl.so.
+Please see INSTALL.win32 for further details.
+
+END
+}
+
 print "*** BSDI users: be sure to read the INSTALL `Notes' section ***\n"
     if $Config{osname} =~ /bsdos/i;
 
@@ -1268,8 +1279,8 @@ sub MY::clean {
     my $string = $self->MM::clean(@_);
     if ($win32_auto) {
       $string .= sprintf 
-	qq{\tmsdev src\\modules\\ApacheModulePerl\\ApacheModulePerl.dsp \\\n} .
-	  qq{\t/MAKE "ApacheModulePerl - Win32 %s" /CLEAN\n}, 
+	qq{\tmsdev src\\modules\\win32\\mod_perl.dsp \\\n} .
+	  qq{\t/MAKE "mod_perl - Win32 %s" /CLEAN\n}, 
 	  ($win32_args{DEBUG} == 1) ? 'Debug' : 'Release';
       return $string;
     }
@@ -1313,12 +1324,15 @@ sub MY::top_targets {
     if ($win32_auto) {
       $string =~ s/(pure_all\s+::.*\s+subdirs\s+)(.*)/$1 amp_dll $2/;
       $string .= sprintf qq{\namp_dll:\n} . 
-	qq{\tmsdev src\\modules\\ApacheModulePerl\\ApacheModulePerl.dsp \\\n} .
-	  qq{\t/MAKE "ApacheModulePerl - Win32 %s" /USEENV\n}, 
+	qq{\tmsdev src\\modules\\win32\\mod_perl.dsp \\\n} .
+	  qq{\t/MAKE "mod_perl - Win32 %s" /USEENV\n}, 
 	  ($win32_args{DEBUG} == 1) ? 'Debug' : 'Release';
       if ($win32_args{INSTALL_DLL}) {
 	$string .= sprintf qq{\namp_install:\n\t\$(CP) "%s" "%s"}, 
-	"$win32_path{MODPERL_LIB}/ApacheModulePerl.dll", $win32_args{INSTALL_DLL};
+	"$win32_path{MODPERL_LIB}/mod_perl.so", 
+	$win32_args{INSTALL_DLL} .
+	  ($win32_args{APACHE_VERS} < 1315 ?
+	   '/ApacheModulePerl.dll' : '/mod_perl.so');
       }
       return $string;
     }
@@ -2024,8 +2038,8 @@ sub win32_inc_and_lib {
   my $modperl_src = win32_fix_path(cwd) . '/src';
   $win32_path{MODPERL_INC} = $modperl_src . '/modules/perl';
   $win32_path{MODPERL_LIB} = ($win32_args{DEBUG} == 1) ? 
-    $modperl_src . '/modules/ApacheModulePerl/Debug' :
-      $modperl_src . '/modules/ApacheModulePerl/Release';
+    $modperl_src . '/modules/win32/Debug' :
+      $modperl_src . '/modules/win32/Release';
 
   unless ( -d $win32_args{APACHE_SRC}) {
     opendir(DIR, '../') or die "Cannot read parent directory: $!\n";
@@ -2038,9 +2052,12 @@ sub win32_inc_and_lib {
   $win32_args{APACHE_SRC} = win32_fix_path($win32_args{APACHE_SRC});
   $win32_args{APACHE_SRC} .= '/src' unless $win32_args{APACHE_SRC} =~ /src$/;
   $win32_path{APACHE_INC} = $win32_args{APACHE_SRC} .  '/include';
+  $win32_args{APACHE_VERS} = httpd_version($win32_path{APACHE_INC}, 1);
   $win32_path{APACHE_LIB} = ($win32_args{DEBUG} == 1) ? 
-    $win32_args{APACHE_SRC} . '/CoreD' :
-      $win32_args{APACHE_SRC} . '/CoreR';
+    $win32_args{APACHE_SRC} . 
+      ($win32_args{APACHE_VERS} < 1315 ? '/CoreD' : '/Debug') :
+	$win32_args{APACHE_SRC} . 
+	  ($win32_args{APACHE_VERS} < 1315 ? '/CoreR' : '/Release');
   die "Cannot find ApacheCore.lib under $win32_path{APACHE_LIB}\n"
     unless -f "$win32_path{APACHE_LIB}/ApacheCore.lib";
   
@@ -2060,7 +2077,7 @@ sub win32_inc_and_lib {
 	print <<'END';
 
 ****  The Apache/modules directory was not found.    *******
-****  Please install ApacheModulePerl.dll manually.  *******
+****      Please install mod_perl.so manually.       *******
 
 END
       }
@@ -2068,11 +2085,11 @@ END
   }
 }
 
-# fix ApacheModulePerl.dsp with the perl and apache inc and lib directories
+# fix mod_perl.dsp with the perl and apache inc and lib directories
 sub win32_fix_dsp {
 
-  my $amp = 'src/modules/ApacheModulePerl';
-  my $dsp = 'ApacheModulePerl.dsp';
+  my $amp = 'src/modules/win32';
+  my $dsp = 'mod_perl.dsp';
   unless ( -f "$amp/$dsp.orig") {
     rename("$amp/$dsp", "$amp/$dsp.orig")
       or die "Couldn't rename $amp/$dsp: $!\n";
@@ -2130,7 +2147,7 @@ sub win32_fix_path {
   return $_;
 }
 
-# fix a path for ApacheModulePerl.dsp
+# fix a path for mod_perl.dsp
 sub win32_fix_path_dsp {
   local $_ = shift;
   tr!/!\\!;
