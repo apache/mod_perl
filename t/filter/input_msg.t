@@ -3,8 +3,7 @@ use Apache::TestConfig ();
 
 my $module = 'TestFilter::input_msg';
 
-local $Apache::TestRequest::Module = $module;
-$Apache::TestRequest::Module ||= $module; #-w
+Apache::TestRequest::module($module);
 
 my $config = Apache::TestConfig->thaw;
 my $hostport = Apache::TestRequest::hostport($config);
