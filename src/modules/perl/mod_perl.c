@@ -636,7 +636,7 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_RAW_ARGS_ON_READ("=cut", pod_cut, "End of POD"),
     MP_CMD_DIR_RAW_ARGS_ON_READ("__END__", END, "Stop reading config"),
 
-    MP_CMD_SRV_RAW_ARGS("LoadModule", load_module, "A Perl module"),
+    MP_CMD_SRV_RAW_ARGS("PerlLoadModule", load_module, "A Perl module"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
