@@ -86,7 +86,7 @@ static int modperl_spawn_proc_prog(pTHX_
         Perl_croak(aTHX_ "broken program-out stream");
         return APR_EBADF;
     }
-    SET_TIMEOUT(*script_in);
+    SET_TIMEOUT(*script_out);
 
     if (!(*script_err = procnew->err)) {
         Perl_croak(aTHX_ "broken program-err stream");
