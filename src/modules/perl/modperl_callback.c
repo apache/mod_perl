@@ -282,12 +282,14 @@ int modperl_callback(pTHX_ modperl_handler_t *handler)
 
 int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
 {
+#ifdef USE_ITHREADS
     pTHX;
+#endif
     MP_dSCFG(s);
     modperl_handler_t **handlers;
     MpAV *av;
-    int i, status;
-    const char *desc;
+    int i, status = OK;
+    const char *desc = NULL;
 
     if (type == MP_HANDLER_TYPE_DIR) {
         MP_dDCFG;
@@ -316,7 +318,7 @@ int modperl_run_handlers(int idx, request_rec *r, server_rec *s, int type)
 #endif
     }
 #ifdef USE_ITHREADS
-    else if (s) {
+    else {
         /* Child{Init,Exit} */
         aTHX = scfg->mip->parent->perl;
     }

@@ -9,6 +9,9 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#undef dNOOP
+#define dNOOP extern int __attribute__ ((unused)) Perl___notused
+
 /*XXX*/
 #undef TRUE
 #undef FALSE

@@ -262,6 +262,8 @@ EOF
             $i += $i || 1;
         }
     }
+
+    ();
 }
 
 my %trace = (
@@ -324,6 +326,8 @@ EOF
                      '#define MP_TRACE_dump_flags()',
                      qq{fprintf(stderr, "mod_perl trace flags dump:\\n");},
                      @dumper;
+
+    ();
 }
 
 sub ins_underscore {
