@@ -252,10 +252,6 @@ sub ModPerl::BuildMM::MY::post_initialize {
 sub ModPerl::BuildMM::MY::libscan {
     my($self, $path) = @_;
 
-    if (Apache::Build::WIN32() and $path eq 'PerlIO') {
-        return ''; #XXX: APR::PerlIO does not link on win32
-    }
-
     my $apr_config = build_config()->get_apr_config();
 
     if ($path =~ m/(Thread|Global)Mutex/) {
