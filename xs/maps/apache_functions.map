@@ -226,7 +226,7 @@ MODULE=Apache::Filter PACKAGE=guess
                f, bb, mode=AP_MODE_READBYTES, \
                block=APR_BLOCK_READ, \
                readbytes=8192
-- ap_pass_brigade
+-ap_pass_brigade
  mpxs_Apache__Filter_pass_brigade
 !ap_register_input_filter
 !ap_register_output_filter
