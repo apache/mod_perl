@@ -16,6 +16,21 @@ package TestFilter::in_str_consume;
 # the snooping debug filter). Of course if the filter returns
 # Apache::DECLINED the unconsumed data will be passed to upstream filter
 #
+# However this filter has a problem. Since it doesn't consume all the
+# data, the client is left with un-read data, and when the response is
+# sent a client get the broken pipe on the socket. It seems that LWP
+# on linux handles that situation gracefully, but not on win32, where
+# it silently dies. Other clients may have similar problems as
+# well. The proper solution is to consume all the data till EOS and
+# just drop it on the floor if it's unneeded. Unfortunately we waste
+# the resources of passing the data through all filters in the chain
+# and doing a wasteful work, but currently there is no way to tell the
+# in_core network filter to discard all the data without passing it
+# upstream. Notice that in this test we solve the problem in a
+# different manner, we simply call $r->discard_request_body which does
+# the trick. However it's inappropriate for a stand-alone filter, who
+# should read all the data in instead.
+#
 # this test receives about 10 bbs
 # it reads only the first 23 bytes of each bb and discards the rest
 # since it wants only 105 bytes it partially consumes only the first 5 bbs
@@ -79,6 +94,8 @@ sub handler {
     unless ($wanted_total) {
         # we don't want to read the rest if there is anything left
         $filter->seen_eos(1);
+        # but we really should, though we workaround it in the
+        # response handler, by calling $r->discard_request_body
     }
 
     if ($filter->seen_eos) {
