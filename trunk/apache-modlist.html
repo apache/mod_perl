@@ -70,33 +70,37 @@ Apache::
 * PerlHandler's
 Archive		i	List archive contents			PETERSON
 ASP		bdpO	Implement Active Server Pages		CHAMAS
-BBS		bdpO 	BBS like System for Apache		MKOSS
+BBS		cdpO 	BBS like System for Apache		MKOSS
 CallHandler	cdpf	Map filenames to subroutine calls	GKNOPS
 Cachet		i	OutputChain with caching		MERLYN
 Dir		i	OO (subclassable) mod_dir replacement 	DOUGM
 <a href="http://perl.apache.org/embperl/">Embperl</a>		Rmcf	Embed Perl in HTML			GRICHTER
 EmbperlChain	bdpO	Feed handler output to Embperl		CHOLET
 ePerl		Rdpr  	Fast emulated Embedded Perl (ePerl)	RSE            
+Filter		bdpO	OutputChain like functionality		KWILLIAM
+Forward		bdpO	OutputChain like functionality		MPB
 FTP		i	Full-fledged FTP proxy			PMKANE
 Gateway		bdpf	A multiplexing gateway			CCWF
 GzipChain	bmpf	Compress files on the fly		ANDK
 IDC_HTX		i						PTI
-JavaScript	bdpf	Generate JavaScript code		ABH
+JavaScript	cdpf	Generate JavaScript code		ABH
 Layer		bdpf	Layer content tree over one or more	SAM
+Magick		bdpf	Image conversion on-the-fly		MPB
 ModuleDoc	bdpf	Self documentation for Apache C modules	DOUGM
+NavBar		bdpO	Navigation bar generator		MPB
 OutputChain     bmpO	Chain output of stacked handlers	JANPAZ
 PassFile	bdpf	Send file via OutputChain		ANDK
-PerlRun		bmpf	Run unaltered CGI scripts		APML
+PerlRun		Smpf	Run unaltered CGI scripts		APML
 PrettyText	bdpf	Re-format .txt files for client display	CHTHORMAN
 RandomLocation	bdpf	Random image display 			RKOBES
-Registry	Rmpf	Run unaltered CGI scripts 		APML
-RobotRules	bdpf	Enforce robot rules (robots.txt)	PARKER
+Registry	Smpf	Run unaltered CGI scripts 		APML
+RobotRules	cdpf	Enforce robot rules (robots.txt)	PARKER
 Sandwich	bmpf	Layered document (sandwich) maker	VKHERA
 ShowRequest	bdpf	Show phases and module participation	DOUGM
-VhostSandwich	bdpf	Virtual host layered document maker	MARKC
-SSI		bmpO	Implement server-side includes in Perl	KWILLIAM
+VhostSandwich	cdpf	Virtual host layered document maker	MARKC
+SSI		RmpO	Implement server-side includes in Perl	KWILLIAM
 SSIChain	bmpO	SSI on other modules output		JANPAZ
-Stage		bdpf	Manage a document staging directory	ANDK
+Stage		Rdpf	Manage a document staging directory	ANDK
 TarGzip		c						ZENIN
 TimedRedirect	bdpf	Redirect urls for a given time period	PETERM 
 UploadSvr	bdpO	A lightweight publishing system		ANDK
@@ -104,11 +108,10 @@ WDB		bdpf	Database query/edit tool using DBI	JROWE
 WebSQL		cdpO	Adaptation of Sybase's WebSQL		GUNTHER
 
 * PerlHeaderParserHandler's
-AgentDeny	bdpf	Deny abusive User-Agents		ROBH
+AgentDeny	cdpf	Deny abusive User-Agents		ROBH
 
 * PerlAuthenHandler's
-AuthAny		bdpf	Authenticate with any username/password	DOUGM
-Authen		bmpf	Perl Apache authentication utilities	SKANE
+AuthAny		bdpf	Authenticate with any username/password	MPB
 AuthenCache	bmpf	Cache authentication credentials	JBODNAR
 AuthCookie	bdpO	Authen + Authz via cookies		EBARTLEY
 AuthenDBI	bmpO	Authenticate via Perl's DBI		MERGL
@@ -119,34 +122,42 @@ AuthenPasswdSrv bdpf	External authentication server		JEFFH
 AuthenPasswd	bdpf	Authenticate against /etc/passwd	DEP
 AuthLDAP	bdpf	LDAP authentication module		CDONLEY
 AuthenNIS	bdpf	NIS authentication			DEP
-AuthNISPlus	bdpF	NIS Plus authentication/authorizattion	VALERIE
+AuthNISPlus	bdpF	NIS Plus authentication/authorization	VALERIE
 AuthenRaduis	bdpf	Authentication via a Radius server	DANIEL
 AuthenSmb	bdpf	Authenticate against NT server		PARKER
 AuthenURL	bdpf	Authenticate via another URL		JGROENVEL
 DBILogin	bdpf	Authenticate to backend database 	JGROENVEL
 DCELogin	bdpf	Obtain a DCE login context		DOUGM
 PHLogin		bdpf	Authenticate via a PH database		JGROENVEL
+TicketAccess	bdpO	Ticket based access/authentication	MPB
 
 * PerlAuthzHandler's
-AuthCookie	cdpf	Authen + Authz via cookies		EBARTLEY
+AuthCookie	bdpf	Authen + Authz via cookies		EBARTLEY
 AuthzAge	bmpf	Authorize based on age			APML
 AuthzDCE	cdpf	DFS/DCE ACL based access control	DOUGM
 AuthzDBI	bmpO	Group authorization via Perl's DBI	MERGL
+AuthzGender	bdpf	Authorize based on gender		MPB
 AuthzNIS	bdpf	NIS authorization			DEP
 AuthzPasswd	bdpf	Authorize against /etc/passwd		DEP
 RoleAuthz	i	Role-based authorization		DOUGM
 
 * PerlAccessHandler's
 AccessLimitNum	bmpf	Limit user access by number of requests	APML
-DayLimit	bmpf	Limit access based on day of week	APML
-RobotLimit	bdpf	Limit access of robots			PARKER
+BlockAgent	bdpf	Block access from certain agents	MPB
+DayLimit	bmpf	Limit access based on day of week	MPB
+RobotLimit	cdpf	Limit access of robots			PARKER
+SpeedLimit	bdpf	Control client request rate		MPB
 
 * PerlTypeHandler's
-AcceptLanguage	bdpf	Send file type based on language pref	ROBH
+AcceptLanguage	cdpf	Send file type based on language pref	ROBH
+MIME		bdcf	Perl implementation of mod_mime		MPB
+MimeDBI		bdpf	Type mapping from a DBI database	MPB
  
 * PerlTransHandler's    (May also include a PerlHandler)
+AdBlocker	bdpf	Block advertisement images		MPB
+AnonProxy	bdpf	Anonymizing proxy			MPB
+Checksum	bdpf	Manage document checksum trees		MPB
 DynaRPC		i	Dynamically translate URIs into RPCs	DOUGM
-Junction	i	Mount remote webserver namespace	DOUGM
 LowerCaseGETs	bdpf	Lowercase URI's when needed		PLISTER
 MsqlProxy	bmpf	Translate URI's into mSQL queries	APML
 ProxyPass	bdpf	Perl implementation of ProxyPass	MJS
@@ -164,19 +175,20 @@ Usertrack	bdpf	Perl version of mod_usertrack		ABH
 DBILogConfig	bdpf	Custom format logging via DBI		JBODNAR
 DBILogger	bdpf	Logging via DBI				ABH
 DumpHeaders	bdpf	Watch HTTP transaction via headers	DOUGM
+LogMail		bdpf	Log certain requests via email		MPB 
 Traffic		bdpf	Logs bytes transferred, per-user basis 	MAURICE
 WatchDog	c	Look for problematic URIs		DOUGM
 
 * PerlChildInitHandler's
-Resource	bmpf	Limit resources used by httpd children	APML
+Resource	Smpf	Limit resources used by httpd children	APML
 
 * Server Configuration
 ConfigLDAP	i	Config via LDAP and &lt;Perl&gt;		MARKK
 ConfigDBI	i	Config via DBI and &lt;Perl&gt;		MARKIM
-ModuleConfig	bmcO	Interface to configuration API		APML
-PerlSections	bmpO	Utilities for &lt;Perl&gt; sections		APML
+ModuleConfig	SmcO	Interface to configuration API		APML
+PerlSections	SmpO	Utilities for &lt;Perl&gt; sections		APML
 httpd_conf	bmpO	Methods to configure and run an httpd	APML
-src		ampO	Finding and reading bits of source	APML
+src		SmpO	Finding and reading bits of source	APML
 
 * Database
 DBI		bmpO	Persistent DBI connection mgmt.		MERGL
@@ -184,48 +196,54 @@ Sybase::DBlib   bmpO    Persistent DBlib connection mgmt.	BMILLET
 Sybase::CTlib	bapO	Persistent CTlib connection mgmt.	MDOWNING
 Mysql		bdpO	Persistent connection mgmt. for Mysql	NJENSEN
 
-* Interfaces and integration with various Apache C modules
-Constants	Rmcf	Constants defined in httpd.h		APML
-ExtUtils	bmpO	Utils for Apache:C/Perl glue		APML
-Include		Rmpf	mod_include + Apache::Registry handler	APML
-Global		cmcO	Access to server global variables	APML
-Log		bmcO	ap_log_error interface			APML
-LogFile		cmcO	Interface to Apache's piped logs, etc.	DOUGM
-Mime		bmcf	Interface to mod_mime functionality	MDORMAN
-Module		bmcO	Interface to Apache C module structures	DOUGM
-Options		Rmpf	Import Apache::Constants 'options'	APML
-Scoreboard	cmcO	Interface to scoreboard API		DOUGM
-Servlet		ampO	Interface to the Java Servlet engine	IKLUFT
-Sfio		cmcO	Interface to r-&gt;connection-&gt;client-&gt;sf* DOUGM
-Tie		bmcO	Tie interfaces to Apache structures 	APML
-URI		bmfO	URI component parsing and unparsing	APML
-Util		bmcf	Interface to Apache's util*.c functions	APML
+* Interfaces and integration with Apache C structures and modules
+Apache		SmcO	Interface to request_rec struct + API	APML
+CmdParms	SmcO	Interface to Apache cmd_parms struct	APML
+Command		bmcO	Interface to Apache command_rec struct	APML
+Connection	SmcO	Inteface to Apache conn_rec struct	APML
+Constants	Smcf	Constants defined in httpd.h		APML
+ExtUtils	SmpO	Utils for Apache:C/Perl glue		APML
+File		SmcO	Methods for working with files		APML 
+Handler		bmcO	Interface to Apache handler_rec struct	APML
+Log		SmcO	ap_log_error interface			APML
+LogFile		bmcO	Interface to Apache's piped logs, etc.	APML
+Module		bmcO	Interface to Apache module struct	APML
+Server		SmcO	Interface to Apache server_rec struct	APML
+Table		SmcO	Interface to Apache table struct + API 	APML
+URI		SmcO	URI component parsing and unparsing	APML
+Util		Smcf	Interface to Apache's util*.c functions	APML
+
+* HTTP Method handlers
+PATCH		bdpf	HTTP PATCH method handler		MPB
+PUT		cdpf	HTTP PUT method handler 		SORTIZ
 
 * Development and Debug tools
 Debug		Rmpf	mod_perl debugging utilities		APML
 DProf		bmcf	Hook Devel::DProf into mod_perl		DOUGM
 FakeRequest	ampO	Implement Apache methods off-line	APML
+Leak		bmcf	Memory leak tracking routines		APML
 Peek		amcf	Devel::Peek for mod_perl		APML
 SawAmpersand	bmpf	Make sure noone is using $&, $' or $`	APML
-SizeLimit	bmpf	Graceful exit for large children	DOUGB
+SizeLimit	Smpf	Graceful exit for large children	APML
 SmallProf	bmpf	Hook Devel::SmallProf into mod_perl	DOUGM
-StatINC		bmpf	Reload require'd files when updated	APML
-Status		Rmpf	Embedded interpreter runtime status	APML
+StatINC		Smpf	Reload require'd files when updated	APML
+Status		Smpf	Embedded interpreter runtime status	APML
 Symbol		bmcO	Things for symbol things		APML
-test		Rmpf	Handy routines for 'make test' scripts	APML
+Symdump		bmpf	Symbol table snapshots to disk		APML
+test		Smpf	Handy routines for 'make test' scripts	APML
 
 * Misc
 Byterun		i	Run Perl bytecode modules		DOUGM
 Icon		idcO	Access to AddIcon* configuration	DOUGM
+Include		Smpf	mod_include + Apache::Registry handler	APML
 Mmap		bdcf	Share data via Mmap module		FLETCH
 ParseLog	bdpO	OO interface to Apache log files	AKIRA
-Persistent	bdpO	Store data via IPC::, DBI, or disk	DOUGM
-PUT		cdpf	HTTP PUT method handler module		SORTIZ
-RegistryLoader	bmpf	Apache::Registry startup script loader 	APML
+RegistryLoader	SmpO	Apache::Registry startup script loader 	APML
 Request		bmpO    CGI.pm functionality using API methods	LDS
 Safe		ampO	Adaptation of "safecgiperl"		APML
 Session		bmpO	Maintain client &lt;-&gt; httpd session/state	JBAKER
-SIG		amoO	Signal handlers for mod_perl		APML
+Servlet		ampO	Interface to the Java Servlet engine	IKLUFT
+SIG		SmpO	Signal handlers for mod_perl		APML
 State		i	Powerful state engine			RSE
 TempFile	bdpf	Manage temporary files			TOMHUGHES
 
@@ -287,6 +305,7 @@ MERLYN	  Randal L. Schwartz &lt;merlyn@stonehenge.com&gt;
 MJS       Michael Smith &lt;mjs@iii.co.uk&gt;
 MKOSS	  Max Kossatzmax &lt;kossatz@thing.at&gt;
 MICB  	  Malcolm Beattie &lt;mbeattie@sable.ox.ac.uk&gt;
+MPB	  mod_perl book (Doug and Lincoln) &lt;book@modperl.com&gt;
 NJENSEN	  Neil Jensen &lt;njensen@habaneros.com&gt;
 PARKER	  Michael Parker &lt;parker@austx.tandem.com&gt;
 PETERM	  Peter Marshall &lt;peterm@pageactive.com&gt;
