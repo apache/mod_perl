@@ -30,9 +30,15 @@ sub new {
 # - the filename and line number are needed because perl doesn't
 #   provide that info when exception objects are involved
 sub str {
-    sprintf "%s: (%d) %s at %s line %d", $_[0]->{func},
+    # This function is called by SvTRUE in modperl_errsv() via
+    # overload and on win32 (and randomly on linux) causes crashes
+    # via: "Attempt to free temp prematurely" warning, where this
+    # 'temp' is the string returned by this function. Making it a
+    # lexical variable before returning it, resolves the problem
+    my $str = sprintf "%s: (%d) %s at %s line %d", $_[0]->{func},
         $_[0]->{rc}, APR::Error::strerror($_[0]->{rc}),
         $_[0]->{file}, $_[0]->{line};
+    return $str;
 }
 
 sub num { $_[0]->{rc} }
