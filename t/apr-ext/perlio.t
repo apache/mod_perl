@@ -88,8 +88,8 @@ close $fh;
         ok 0;
         close $fh;
     } else {
-        ok t_cmp($errno_string,
-                 "$!",
+        ok t_cmp("$!",
+                 $errno_string,
                  "expected failure");
     }
 }
@@ -107,8 +107,8 @@ unless (LARGE_FILES_CONFLICT) {
     my $pos = 3; # rewinds after reading 6 chars above
     seek $fh, $pos, Fcntl::SEEK_SET();
     my $got = tell($fh);
-    ok t_cmp($pos,
-             $got,
+    ok t_cmp($got,
+             $pos,
              "seek/tell the file Fcntl::SEEK_SET");
 
     # Fcntl::SEEK_CUR()
@@ -116,16 +116,16 @@ unless (LARGE_FILES_CONFLICT) {
     $pos = tell($fh) + $step;
     seek $fh, $step, Fcntl::SEEK_CUR();
     $got = tell($fh);
-    ok t_cmp($pos,
-             $got,
+    ok t_cmp($got,
+             $pos,
              "seek/tell the file Fcntl::SEEK_CUR");
 
     # Fcntl::SEEK_END()
     $pos = -s $file;
     seek $fh, 0, Fcntl::SEEK_END();
     $got = tell($fh);
-    ok t_cmp($pos,
-             $got,
+    ok t_cmp($got,
+             $pos,
              "seek/tell the file Fcntl::SEEK_END");
 
     close $fh;
@@ -140,15 +140,15 @@ unless (LARGE_FILES_CONFLICT) {
     ok ref($fh) eq 'GLOB';
 
     # basic single line read
-    ok t_cmp($expected,
-             scalar(<$fh>),
+    ok t_cmp(scalar(<$fh>),
+             $expected,
              "single line read");
 
     # slurp mode
     seek $fh, 0, Fcntl::SEEK_SET(); # rewind to the start
     local $/;
-    ok t_cmp($expected_all,
-             scalar(<$fh>),
+    ok t_cmp(scalar(<$fh>),
+             $expected_all,
              "slurp file");
 
     # test ungetc (a long sep requires read ahead)
@@ -156,8 +156,8 @@ unless (LARGE_FILES_CONFLICT) {
     local $/ = $sep;
     my @got_lines = <$fh>;
     my @expect = ($lines[0] . $sep, $lines[1]);
-    ok t_cmp(\@expect,
-             \@got_lines,
+    ok t_cmp(\@got_lines,
+             \@expect,
              "custom complex input record sep read");
 
     close $fh;
@@ -178,8 +178,8 @@ unless (LARGE_FILES_CONFLICT) {
 
     t_debug($received);
 
-    ok t_cmp(1,
-             eof($fh),
+    ok t_cmp(eof($fh),
+             1,
              "end of file");
     close $fh;
 }
@@ -197,8 +197,8 @@ unless (LARGE_FILES_CONFLICT) {
     my $received = <$dup_fh>;
 
     close $dup_fh;
-    ok t_cmp($expected,
-             $received,
+    ok t_cmp($received,
+             $expected,
              "read/write a dupped file");
 }
 
@@ -214,16 +214,16 @@ unless (LARGE_FILES_CONFLICT) {
     my $oldfh = select($wfh); $| = 1; select($oldfh);
     print $wfh $expected; # must be flushed to disk immediately
 
-    ok t_cmp($expected,
-             scalar(<$rfh>),
+    ok t_cmp(scalar(<$rfh>),
+             $expected,
              "file unbuffered write");
 
     # buffer up
     $oldfh = select($wfh); $| = 0; select($oldfh);
     print $wfh $expected; # should be buffered up and not flushed
 
-    ok t_cmp(undef,
-             scalar(<$rfh>),
+    ok t_cmp(scalar(<$rfh>),
+             undef,
              "file buffered write");
 
     close $wfh;
