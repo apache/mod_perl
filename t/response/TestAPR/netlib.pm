@@ -19,7 +19,7 @@ sub handler {
     my $c = $r->connection;
     my $p = $r->pool;
 
-    plan $r, tests => 4;
+    plan $r, tests => 5;
 
     my $ip = $c->remote_ip;
 
@@ -32,7 +32,11 @@ sub handler {
 
     ok $ipsub->test($c->remote_addr);
 
-    $ipsub = APR::IpSubnet->new($p, scalar reverse $ip);
+    my $reverse_remote_ip = scalar reverse $ip;
+    $ipsub = APR::IpSubnet->new($p, $reverse_remote_ip);
+
+    ok t_cmp($reverse_remote_ip, scalar reverse($c->remote_addr->ip_get),
+             "reversed remote_ip eq reversed remote_addr->ip_get");
 
     ok ! $ipsub->test($c->remote_addr);
 
