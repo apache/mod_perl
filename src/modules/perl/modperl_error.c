@@ -43,6 +43,16 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
     return Perl_form(aTHX_ "%s", ptr);
 }
 
+
+/* modperl_croak notes: under -T we can't really do anything when die
+ * was called in the stacked eval_sv (which is the case when a
+ * response handler calls a filter handler and that filter calls die
+ * ""). for example trying to require a file in modperl_croak(), will
+ * cause 'panic: POPSTACK' and the process will exit. Dave fixed that
+ * in perl Change 23209 by davem@davem-percy on 2004/08/09 19:48:57,
+ * which will hopefully appear in perl 5.8.6.
+ */
+
 /* croak with $@ as a APR::Error object
  *   rc   - set to apr_status_t value
  *   file - set to the callers filename
@@ -53,14 +63,20 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
 {
     HV *stash;
     HV *data;
-
-    /* XXX: it'd be nice to arrange for it to load early */
-    /* XXX: temp loaded from startup.pl
+    int is_tainted = PL_tainted;
+    
+    /* see the explanation above */
+    if (is_tainted) {
+        TAINT_NOT;
+    }
     Perl_require_pv(aTHX_ "APR/Error.pm");
+    if (is_tainted) {
+        TAINT;
+    }
+    
     if (SvTRUE(ERRSV)) {
         Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));   
     }
-    */
     
     stash = gv_stashpvn("APR::Error", 10, FALSE);
     data = newHV();

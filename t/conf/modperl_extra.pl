@@ -7,9 +7,6 @@ use File::Spec::Functions qw(canonpath catdir);
 
 use Apache2 ();
 
-# XXX: temp workaround for t/filter/TestFilter/in_error.pm
-use APR::Error;
-
 use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Process ();
