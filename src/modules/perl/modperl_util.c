@@ -98,11 +98,14 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         return r;
     }
 
-    /* XXX: not checking sv_derived_from(sv, classname); for speed */
     if ((mg = SvMAGIC(sv))) {
         return MgTypeExt(mg) ? (request_rec *)mg->mg_ptr : NULL;
     }
     else {
+        if (classname && !sv_derived_from(in, classname)) {
+            /* XXX: find something faster than sv_derived_from */
+            return NULL;
+        }
         return (request_rec *)SvIV(sv);
     }
 
