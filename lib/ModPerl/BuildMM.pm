@@ -245,6 +245,14 @@ sub ModPerl::BuildMM::MY::postamble {
                     '$(FULLPERL) -I$(INST_LIB) ' .
                     "-I$apache_test_dir -MModPerl::BuildMM " .
                     "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
+
+                # manify while we're at it
+                my (undef, $man, undef) = $blib =~ m!(blib/lib/)(.*)(\.pm)!;
+                $man =~ s!/!::!g;
+
+                push @target,
+                    '$(NOECHO) $(POD2MAN) --section=3 ' .
+                    "$podpath \$(INST_MAN3DIR)/$man.\$(MAN3EXT)"
             }
         }
 
