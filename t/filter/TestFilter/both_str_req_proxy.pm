@@ -67,7 +67,6 @@ __DATA__
         </Proxy>
 
         ProxyRequests Off
-        RewriteEngine On
 
         ProxyPass    /TestFilter__both_str_req_proxy/ \
         http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
