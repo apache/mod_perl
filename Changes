@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+fix flush_namespace undef logic in Apache::PerlRun, thanks to Karsten
+Meier for the spot
+
 Tweak Apache::content to comply with media-types embedded in content-types
 (RFC 2616 section 3.7) <cholet@logilune.com>
 
