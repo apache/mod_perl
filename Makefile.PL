@@ -85,8 +85,9 @@ sub post_configure {
 sub generate_xs {
     my $httpd_version = shift;
 
-    my $tables_version =
-      $httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
+    my $tables_version = 'current';
+    #XXX: support versioning
+    #$httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
 
     my $tables_dir = "xs/tables/$tables_version";
     unshift @INC, $tables_dir;
