@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+USE_DSO=1 should work now
+
 added Apache::SubRequest->bytes_sent method
 
 added Apache::Server->register_cleanup method
