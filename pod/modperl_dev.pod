@@ -141,6 +141,12 @@ include:
 
 =back
 
+hint:
+
+ % perl util/config.pl
+
+will generate this requested information.
+
 =head1 mod_perl configuration directives
 
 =head2 Installing handlers
