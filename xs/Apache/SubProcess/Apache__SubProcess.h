@@ -2,9 +2,7 @@
 
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"
-#endif
 
-#ifndef MP_SOURCE_SCAN
 static APR_OPTIONAL_FN_TYPE(apr_perlio_apr_file_to_glob) *apr_file_to_glob;
 #endif
 
@@ -17,8 +15,11 @@ typedef struct {
     apr_cmdtype_e  cmd_type;
 } exec_info;
 
-
 #define FAILED(command) ((rc = command) != APR_SUCCESS)
+
+#define SET_TIMEOUT(fp) \
+    apr_file_pipe_timeout_set(fp, \
+                              (int)(r->server->timeout * APR_USEC_PER_SEC))
 
 static int modperl_spawn_proc_prog(request_rec *r,
                                    const char *command,
@@ -34,27 +35,26 @@ static int modperl_spawn_proc_prog(request_rec *r,
     apr_procattr_t *procattr;
     apr_proc_t *procnew;
     apr_status_t rc = APR_SUCCESS;
-    
+
     e_info.in_pipe   = APR_CHILD_BLOCK;
     e_info.out_pipe  = APR_CHILD_BLOCK;
     e_info.err_pipe  = APR_CHILD_BLOCK;
     e_info.cmd_type  = APR_PROGRAM;
-    
+ 
     p = r->main ? r->main->pool : r->pool;
 
-    *script_out = NULL;
-    *script_in  = NULL;
-    *script_err = NULL;
+    *script_out = *script_in = *script_err = NULL;
 
-    env = (const char* const*)ap_create_environment(p, r->subprocess_env);
+    env = (const char * const *)ap_create_environment(p, r->subprocess_env);
 
-    if ( FAILED(apr_procattr_create(&procattr, p)) ||
-         FAILED(apr_procattr_io_set(procattr, e_info.in_pipe,
-                                    e_info.out_pipe, e_info.err_pipe)) ||
-         FAILED(apr_procattr_dir_set(procattr, 
-                                     ap_make_dirstr_parent(r->pool,
-                                                           r->filename))) ||
-         FAILED(apr_procattr_cmdtype_set(procattr, e_info.cmd_type))) {
+    if (FAILED(apr_procattr_create(&procattr, p)) ||
+        FAILED(apr_procattr_io_set(procattr, e_info.in_pipe,
+                                   e_info.out_pipe, e_info.err_pipe)) ||
+        FAILED(apr_procattr_dir_set(procattr, 
+                                    ap_make_dirstr_parent(r->pool,
+                                                          r->filename))) ||
+        FAILED(apr_procattr_cmdtype_set(procattr, e_info.cmd_type)))
+    {
         /* Something bad happened, tell the world. */
         ap_log_rerror(APLOG_MARK, APLOG_ERR, rc, r,
                       "couldn't set child process attributes: %s",
@@ -63,48 +63,46 @@ static int modperl_spawn_proc_prog(request_rec *r,
     }
 
     procnew = apr_pcalloc(p, sizeof(*procnew));
-    if FAILED(ap_os_create_privileged_process(r, procnew, command,
-                                              *argv, env, procattr, p)) {
+    if (FAILED(ap_os_create_privileged_process(r, procnew, command,
+                                              *argv, env, procattr, p)))
+    {
         /* Bad things happened. Everyone should have cleaned up. */
         ap_log_rerror(APLOG_MARK, APLOG_ERR, rc, r,
-                      "couldn't create child process: %d: %s", rc, r->filename);
+                      "couldn't create child process: %d: %s",
+                      rc, r->filename);
         return rc;
     }
 
     apr_pool_note_subprocess(p, procnew, kill_after_timeout);
 
-    *script_in = procnew->in;
-    if (!*script_in) {
+    if (!(*script_in = procnew->in)) {
+        /* XXX: this needs to be Perl_croak(aTHX_ ...)
+         * or go away so we can compile with -DPERL_CORE
+         */
         croak("broken program-in stream");
         return APR_EBADF;
     }
-    apr_file_pipe_timeout_set(*script_in,
-                              (int)(r->server->timeout * APR_USEC_PER_SEC));
+    SET_TIMEOUT(*script_in);
 
-    *script_out = procnew->out;
-    if (!*script_out) {
+    if (!(*script_out = procnew->out)) {
         croak("broken program-out stream");
         return APR_EBADF;
     }
-    apr_file_pipe_timeout_set(*script_out,
-                              (int)(r->server->timeout * APR_USEC_PER_SEC));
+    SET_TIMEOUT(*script_in);
 
-    *script_err = procnew->err;
-    if (!*script_err) {
+    if (!(*script_err = procnew->err)) {
         croak("broken program-err stream");
         return APR_EBADF;
     }
-    apr_file_pipe_timeout_set(*script_err,
-                              (int)(r->server->timeout * APR_USEC_PER_SEC));
+    SET_TIMEOUT(*script_err);
+
     return rc;
 }
-
 
 static XS(MPXS_modperl_spawn_proc_prog)
 {
     dXSARGS;
     const char *usage = "Usage: spawn_proc_prog($r, $command, [\\@argv])";
-    
     
     if (items < 2) {
         Perl_croak(aTHX_ usage);
@@ -137,29 +135,32 @@ static XS(MPXS_modperl_spawn_proc_prog)
          * first item.
          */
         argv = apr_palloc(r->pool,
-                          ( 3 + av_len(av_argv) ) * sizeof(char*) );
+                          (3 + av_len(av_argv)) * sizeof(char *));
         argv[0] = command;
         for (i = 0; i <= av_len(av_argv); i++) {
             argv[i+1] = (const char *)SvPV_nolen(AvARRAY(av_argv)[i]);
         }
         argv[i+1] = NULL;
-
-/*         for (i=0; i<=av_len(av_argv)+2; i++) { */
-/*             Perl_warn(aTHX_ "arg: %d %s\n", i, argv[i]); */
-/*         } */
-
+#if 0
+        for (i=0; i<=av_len(av_argv)+2; i++) {
+            Perl_warn(aTHX_ "arg: %d %s\n", i, argv[i]);
+        }
+#endif
         rc = modperl_spawn_proc_prog(r, command, &argv,
-                                            &script_in, &script_out,
-                                            &script_err);
+                                     &script_in, &script_out,
+                                     &script_err);
+
         if (rc == APR_SUCCESS) {
+            /* XXX: apr_file_to_glob should be set once in the BOOT: section */
             apr_file_to_glob =
                 APR_RETRIEVE_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
             
             if (GIMME == G_SCALAR) {
                 /* XXX: need to do lots of error checking before
-                 * putting the object on the stack */
+                 * putting the object on the stack
+                 */
                 SV *out = apr_file_to_glob(aTHX_ script_out, r->pool,
-                                          APR_PERLIO_HOOK_READ);
+                                           APR_PERLIO_HOOK_READ);
                 XPUSHs(out);
 
                 rc = apr_file_close(script_in);
