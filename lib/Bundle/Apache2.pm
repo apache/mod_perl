@@ -22,7 +22,7 @@ Chatbot::Eliza        - Used in testing
 
 Devel::Symdump        - Symbol table browsing with Apache::Status
 
-CGI                   - Used in testing (it's in core, but some vendors exclude it)
+CGI  2.87             - Used in testing (it's in core, but some vendors exclude it)
 
 =head1 DESCRIPTION
 
