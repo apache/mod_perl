@@ -2,8 +2,8 @@ package TestFilter::in_str_consume;
 
 # this test verifies that streaming filters framework handles
 # gracefully the case when a filter doesn't print anything at all to
-# the caller. I figure it's absolutely doesn't matter if the incoming
-# bb from the upstream is consumed or not. What matter is that the
+# the caller. I figure it absolutely doesn't matter if the incoming
+# bb from the upstream is consumed or not. What matters is that the
 # filter sends something downstream (an empty bb will do).
 #
 # e.g. a filter that cleans up the incoming stream (extra spaces?)
@@ -25,9 +25,9 @@ use Apache::Const -compile => qw(OK M_POST);
 sub handler {
     my $filter = shift;
 
-    my $ctx = $filter->ctx;
+    my $count = $filter->ctx || 0;
 
-    unless ($ctx) {
+    unless ($count) {
         # read a bit from the first brigade and leave the second
         # brigade completely unconsumed. we assume that there are two
         # brigades because the core input filter will split data in
@@ -40,9 +40,21 @@ sub handler {
         $filter->ctx(1);
     }
     else {
+        $count++;
+        #warn "FILTER CALLED post $count time\n";
         unless ($filter->seen_eos) {
             # XXX: comment out the next line to reproduce the segfault
             $filter->print("");
+            $filter->ctx($count);
+        }
+
+        # this is not needed in newer Apache versions, however older
+        # versions (2.0.40) will repeatedly call this filter, waiting
+        # for EOS which will never come from this filter so, after
+        # several invocations mark the seen_eos flag, to break the
+        # vicious cirle
+        if ($count > 10) {
+            $filter->seen_eos(1);
         }
     }
 
