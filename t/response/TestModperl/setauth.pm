@@ -17,6 +17,7 @@ sub handler {
 
     ok t_cmp(undef, $r->auth_type(), 'auth_type');
 
+    t_server_log_error_is_expected();
     $r->get_basic_auth_pw();
 
     ok t_cmp('Basic', $r->auth_type(), 'default auth_type');
