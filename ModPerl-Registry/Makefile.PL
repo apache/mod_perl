@@ -2,7 +2,7 @@ require 5.6.0;
 
 use ExtUtils::MakeMaker;
 
-use lib qw(lib ../blib/lib);
+use lib qw(lib ../Apache-Test/lib);
 
 # enable 'make test|clean'
 use Apache::TestMM qw(test clean);
