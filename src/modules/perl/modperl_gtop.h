@@ -1,6 +1,10 @@
 #ifndef MODPERL_GTOP_H
 #define MODPERL_GTOP_H
 
+#ifndef MP_TRACE
+#    undef MP_USE_GTOP
+#endif
+
 #ifdef MP_USE_GTOP
 
 #include <glibtop.h>
