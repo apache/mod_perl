@@ -8,6 +8,7 @@ package Apache::HelloWorld;
 use strict;
 use Apache::RequestRec (); #for $r->content_type
 use Apache::RequestIO ();  #for $r->puts
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -18,7 +19,7 @@ sub handler {
 
     $r->puts(__PACKAGE__); #print not yet implemented
 
-    0; #constants not yet implemented
+    return OK;
 }
 
 1;
