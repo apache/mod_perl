@@ -22,9 +22,9 @@ my $cfg = Apache::Test::config();
 my $file = 'closure.pl';
 my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
-# for all sub-tests in this test, we assume that we always get onto
-# the same interpreter (since there are no other requests happening in
-# parallel
+# for all sub-tests in this test, we make sure that we always get onto
+# the same interpreter. if this doesn't happen we skip the sub-test or
+# a group of them, where several sub-tests rely on each other.
 
 {
     # ModPerl::PerlRun
@@ -37,22 +37,24 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # should be no closure effect, always returns 1
     my $first  = req($same_interp, $url);
     my $second = req($same_interp, $url);
-    ok t_cmp(
-             0,
-             $first && $second && ($second - $first),
-             "never the closure problem",
-            );
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second),
+        0,
+        $first && $second && ($second - $first),
+        "never the closure problem",
+    );
 
     # modify the file
     sleep_and_touch_file($path);
 
     # it doesn't matter, since the script is not cached anyway
-    ok t_cmp(
-             1,
-             req($same_interp, $url),
-             "never the closure problem",
-            );
-
+    my $third = req($same_interp, $url);
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second, $third),
+        1,
+        $third,
+        "never the closure problem",
+    );
 }
 
 {
@@ -67,22 +69,24 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # the difference should be 1.
     my $first  = req($same_interp, $url);
     my $second = req($same_interp, $url);
-    ok t_cmp(
-             1,
-             $second - $first,
-             "the closure problem should exist",
-            );
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second),
+        1,
+        $first && $second && ($second - $first),
+        "the closure problem should exist",
+    );
 
     # modify the file
     sleep_and_touch_file($path);
 
-    # should no notice closure effect on the first request
-    ok t_cmp(
-             1,
-             req($same_interp, $url),
-             "no closure on the first request",
-            );
-
+    # should not notice closure effect on the first request
+    my $third = req($same_interp, $url);
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second, $third),
+        1,
+        $third,
+        "no closure on the first request",
+    );
 }
 
 {
@@ -97,23 +101,24 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # the difference should be 1.
     my $first  = req($same_interp, $url);
     my $second = req($same_interp, $url);
-    ok t_cmp(
-             1,
-             $second - $first,
-             "the closure problem should exist",
-            );
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second),
+        1,
+        $first && $second && ($second - $first),
+        "the closure problem should exist",
+    );
 
     # modify the file
     sleep_and_touch_file($path);
 
     # modification shouldn't be noticed
     my $third = req($same_interp, $url);
-    ok t_cmp(
-             1,
-             $third - $second,
-             "no reload on mod, the closure problem persists",
-            );
-
+    skip_not_same_intrep(
+        scalar(grep defined, $first, $second, $third),
+        1,
+        $first && $second && $third - $second,
+        "no reload on modification, the closure problem persists",
+    );
 }
 
 sub sleep_and_touch_file {
@@ -127,9 +132,28 @@ sub sleep_and_touch_file {
     utime $now, $now, $file;
 }
 
+# if we fail to find the same interpreter, return undef (this is not
+# an error)
 sub req {
     my($same_interp, $url) = @_;
-    my $res = Apache::TestRequest::same_interp_do($same_interp,
-                                                  \&GET, $url);
-    return $res ? $res->content : undef;
+    my $res = eval {
+        Apache::TestRequest::same_interp_do($same_interp, \&GET, $url);
+    };
+    return undef if $@;
+    return $res->content if $res;
+    die "failed to fetch $url";
+}
+
+# make the tests resistant to a failure of finding the same perl
+# interpreter, which happens randomly and not an error.
+# the first argument is used to decide whether to skip the sub-test,
+# the rest of the arguments are passed to 'ok t_cmp';
+sub skip_not_same_intrep {
+    my $do_not_skip_cond = shift;
+    unless ($do_not_skip_cond) {
+        skip "Skip couldn't find the same interpreter";
+    }
+    else {
+        ok t_cmp(@_);
+    }
 }
