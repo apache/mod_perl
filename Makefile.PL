@@ -97,7 +97,7 @@ sub get_DEFINE {
     if (my $apr_bindir = $build->apr_bindir()) {
         my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
             map { qq{$apr_bindir/$_-config} } qw(apr apu);
-        my $opt_define = '-DMP_HAVE_APR_LIBS' if @apr_libs;
+        $opt_define = '-DMP_HAVE_APR_LIBS' if @apr_libs;
     }
 
     # preserve any DEFINE opts from outside and combine them with our
