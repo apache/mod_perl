@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+per-server PerlSetEnv and PerlPassEnv values are properly added
+to %ENV when only a per-directory handler is configured.
+[Geoffrey Young]
+
 resolve several 'Use of uninitialized value in...' warnings in
 Apache::Status [Stas].
 
