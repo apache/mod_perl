@@ -27,8 +27,8 @@ int modperl_callback_connection(int idx, conn_rec *c);
 
 void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s);
 
-void modperl_callback_files(int idx,
-                            apr_pool_t *pconf, apr_pool_t *plog,
-                            apr_pool_t *ptemp, server_rec *s);
+int modperl_callback_files(int idx,
+                           apr_pool_t *pconf, apr_pool_t *plog,
+                           apr_pool_t *ptemp, server_rec *s);
 
 #endif /* MODPERL_CALLBACK_H */
