@@ -8,9 +8,7 @@ BEGIN {
 
 use strict;
 use Apache::src ();
-use Apache::ExtUtils ();
-
-require "./TestDirectives.pm";
+use Apache::ExtUtils qw(command_table);
 
 my $class = 'Apache::TestDirectives';
 
@@ -21,11 +19,13 @@ my @directives = (
    [CmdIterate => "No limit here"],
 );
 
-my $fh = IO::File->new(">TestDirectives.xs") or die $!;
-my $xs = Apache::ExtUtils->xs_cmd_table($class, \@directives);  
-print $fh $xs;
+my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
 
-close $fh;
+while(my($pp,$cp) = each %$proto_perl2c) {
+    push @directives, [$cp, "Test for $cp"];
+}
+
+command_table $class, \@directives;
 
 WriteMakefile(
     'NAME'	=> $class,
