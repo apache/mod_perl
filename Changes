@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Apache::ServerRec method which set the non-integer fields in the
+server_rec, now copy the value from the perl scalar, so if it changes
+or goes out of scope the C struct is not affected. Using internal perl
+variables to preserve the value, since using the server pool to
+allocate the memory will mean a memory leak [Stas]
+
 add the escape_url entry in the ModPerl::MethodLookup knowledgebase
 [Stas]
 

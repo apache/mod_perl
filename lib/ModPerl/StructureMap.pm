@@ -128,6 +128,9 @@ sub parse {
                 elsif ($1 eq '$') {
                     $map->{$class}->{$_} = 'r+w_startup';
                 }
+                elsif ($1 eq '%') {
+                    $map->{$class}->{$_} = 'r+w_startup_dup';
+                }
             }
             else {
                 $map->{$class}->{$_} = undef;

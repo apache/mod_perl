@@ -76,10 +76,10 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 <  next
 -  defn_name
 -  defn_line_number
-$  server_admin
-$  server_hostname
+%  server_admin
+%  server_hostname
 $  port
-$  error_fname
+%  error_fname
 $  error_log
 $  loglevel
 <  is_virtual
@@ -90,10 +90,10 @@ $  timeout
 $  keep_alive_timeout
 $  keep_alive_max
 $  keep_alive
-$  path
+%  path
 -  pathlen
-$  names
-$  wild_names
+%  names
+%  wild_names
 $  limit_req_line
 $  limit_req_fieldsize
 $  limit_req_fields
