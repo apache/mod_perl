@@ -8,8 +8,7 @@ more detailed design docs, etc. will follow along with updates here
 and on the list
 
 if you want to try building with an interpreter pool, you'll need Perl
-5.6.0 with patches/perl_no_get_context.pat applied and Perl built like 
-so:
+5.6.0 built like so:
 
 % ./Configure -des -Dusethreads
 

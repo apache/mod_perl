@@ -24,8 +24,17 @@ modperl_interp_t *modperl_interp_new(ap_pool_t *p,
         );
 #endif
 
-        interp->perl = perl_clone(perl, TRUE);
+        interp->perl = perl_clone(perl, FALSE);
+        {
+            /* XXX: hack for bug fixed in 5.6.1 */
+            dTHXa(interp->perl);
+            if (PL_scopestack_ix == 0) {
+                ENTER;
+            }
+        }
+
         MpInterpCLONED_On(interp);
+        PERL_SET_CONTEXT(mip->parent->perl);
 
 #ifdef MP_USE_GTOP
         MP_TRACE_m_do(
@@ -50,6 +59,7 @@ void modperl_interp_destroy(modperl_interp_t *interp)
         MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
     }
 
+    PERL_SET_CONTEXT(interp->perl);
     PL_perl_destruct_level = 2;
     perl_destruct(interp->perl);
     perl_free(interp->perl);
