@@ -10,14 +10,6 @@
  * from STDIN and write to STDOUT. The PerlIO API is documented in
  * perliol.pod */
 
-/*
- * XXX: Since we cannot snoop on the internal apr_file_io buffer
- * currently the IO is not buffered on the Perl side so every read
- * requests a char at a time, which is slow. Consider copying the
- * relevant code from PerlIOBuf to implement our own buffer, similar
- * to what PerlIOBuf does or push :perlio layer on top of this layer
- */
-
 typedef struct {
     struct _PerlIO base;
     request_rec *r;
