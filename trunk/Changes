@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+can't let the default typemap rule to convert sv into char* in
+unescape_url, since it doesn't handle correctly undefs (returns an
+unallocated "" string, which then causes a segfault in
+ap_unescape_url. use SvPV_force, instead, which does the right
+thing. [Stas Bekman]
+
 Make sure to start perl, if it's not running, before processing Perl*
 directives, with threaded perl and PERL_STACKED_HANDLERS=0 [Stas
 Bekman]

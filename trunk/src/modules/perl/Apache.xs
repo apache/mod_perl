@@ -655,8 +655,11 @@ mod_perl_slurp_filename(r)
     Apache r
 
 char *
-unescape_url(string)
-char *string
+unescape_url(sv)
+SV *sv
+
+    INIT:
+    char *string = SvPV_force(sv, PL_na);
 
     CODE:
     unescape_url(string);
