@@ -61,34 +61,30 @@ http://www.apache.org/dist/
 
 =head2 How do I install it?
 
-Here is the easiest way to proceed.  Let's assume you have the latest
-version of perl (5.004) installed.  Unpack the Apache and Mod_perl
-tarballs next to one another under a common directory: e.g.
+Configuring and installing apache with mod_perl is a complex process,
+so it is really not a good idea to attempt to do it manually.  If you
+are used to configuring third-party modules into Apache using the
+apache configuration process, please realize that running mod_perl's
+Makefile.PL with the right parameters does this for you.
 
-  % cd /usr/local/src
-  % zcat apache_1.2.0.tar.gz | tar xf -
-  % zcat mod_perl-0.98_12.tar.gz | tar xf -
-
-You probably do not need to change anything in the apache configuration
-before compiling.  Only if you want to enable additional non-standard
-modules do you need to edit apache_1.2.0/src/Configuration.  There is no
-need to set CC, CFLAGS, etc., because mod_perl will override them with the
-values that were used to compile your perl.
-
-Now go to the mod_perl directory and follow the instructions in the
-INSTALL file there.  If "make test" and "make install" are successful, you
-will find the new web server in apache_1.2.0/src/httpd.  Move it to a
-suitable location, make sure it has access to the correct configuration
-files, and fire it up.
+Read the INSTALL* files in the top-level mod_perl distribution
+directory and then choose one of the INSTALL.simple* recipes that is
+close to your requirements, as a starting point.  When you succeed in
+compiling and linking an httpd, a quick way to check that everything
+is configured according to plan is to run it with the -l (list
+compiled-in modules) and -V (show paths) flags.
 
 =head2 What documentation should I read?
 
 The mod_perl documentation in mod_perl.pod.  After you have installed
 mod_perl you can read it with the command: C<perldoc mod_perl>.
 
+The complete list of available documentation can be found at the end
+of mod_perl's README file.
+
 If you are using mod_perl to extend the server functionality, you will
 need to read C<perldoc Apache> and the Apache API notes, which can be
-found in apache_1.2.0/htdocs/manual/misc/API.html.
+found in apache_x.x.x/htdocs/manual/misc/API.html.
 
 Existing (perl-) CGI scripts should run as-is under mod_perl.  There are a
 number of reasons why they may need to be adjusted, and these are
@@ -142,11 +138,12 @@ Read the section on "Memory Consumption" in the mod_perl.pod.
 Make sure that your scripts are not leaking memory.  Global variables
 stay around indefinitely, lexical variables (declared with my()) are
 destroyed when they go out of scope, provided there are no references
-to them from outside of that scope.
+to them from outside of that scope.  The Apache::Leak module can warn
+about some types of memory leak.
 
 To get information about the modules that have been loaded and their
 symbol-tables, use the Apache::Status module.  It is enabled by adding
-these lines to a configuration file (e.g. access.conf);
+these lines to the httpd configuration file.
 
   <Location /perl-status>
   SetHandler  perl-script
@@ -170,19 +167,9 @@ the call and the name of the undefined subroutine.
 =head2 Do I have to restart the server when I change my Perl code?
 
 Apache::Registry checks the timestamp of scripts that it has loaded
-and reloads them if they change.  This does not happen for other
-handlers, unless you program it yourself.  One way to do this is in a
-PerlInitHandler.  If you define
-
-  sub MY::init {
-      delete $INC{"YourModule.pm"};
-      require YourModule;
-  }
-
-as an init handler, it will unconditionally reload YourModule at the
-start of each request, which may be useful while you are developing a
-new module.  It can be made more efficient by storing the timestamp of
-the file in a global variable and only reloading when necessary.
+and reloads them if they change.  Other handlers and library modules
+are not automatically reloaded by mod_perl, but you can use the
+Apache::StatINC module to do this for you.
 
 =head2 So how do I use mod_perl in conjunction with ErrorDocument?
 
@@ -279,23 +266,16 @@ Apache::Registry?
 
 =head2 How can I reference private library modules?
 
-The best place to put library modules is in the site_perl directory
-(usually /usr/lib/perl/site_perl), where perl will find them without
-further ado.  Local policy may prevent this, in which case you have to
-tell the perl interpreter where to find them by adding your private
-directory to the @INC array.
+If you put your modules into one of the directories on perl's search
+path (the @INC array), they will be found automatically.
+Traditionally, site-specific modules go in /usr/lib/perl5/site_perl/.
+Newer versions of mod_perl add the directory $ServerRoot/lib/perl to
+@INC on startup so that is a good place for modules that are only used 
+by mod_perl scripts.
 
-There are various ways to do this.  One way is to add
-
-  use lib '/my/perl/lib';
-
-to each script that needs modules from /my/perl/lib.
-
-Alternatively, you can arrange for all the modules that might be
-needed to be loaded when the server starts up.  Put a PerlRequire
-directive into one of the httpd config files that pulls in a small
-module containing the relevant C<use>-statements.  There is an example
-of this in L<mod_perl_tuning>.
+If you need to load files from other non-standard locations, you can
+add directories to the @INC array with a 'use lib' statement in a
+startup script.  See L<mod_perl_tuning> for an example.
 
 =head2 How can I pass arguments to a SSI script?
 
@@ -326,7 +306,7 @@ multiple connections and keep them open.  Because there is only one
 server process listening, each connection has to time-out before the
 next succeeds.  Turn off KeepAlive in httpd.conf to avoid this effect.
 
-=head2 What can cause a subroutine to suddenly become undefined?
+=head2 What can cause a subroutine or variable to be sporadically undefined?
 
 If you sometimes see error messages like this:
 
@@ -340,7 +320,8 @@ in a file that is pulled in by 'require' and both script1 and script2
 require it, you need to be sure that the file containing sub_foo sets
 a package name.  Otherwise, sub_foo gets defined in the namespace that
 is active the first time it is required, and the next require is a
-no-op because that file is already in %INC.
+no-op because that file is already in %INC.  The same problem can
+happen with global variables.
 
 The solution is simple, set up your require'd file something along
 these lines:
@@ -350,6 +331,16 @@ these lines:
   sub sub_foo {...}
 
 Now, have scripts call SomeName::sub_foo() instead of sub_foo().
+
+=head2 Is there a bug that causes httpd processes to crash?
+
+You may see httpd child processes crashing with segmentation fault
+when you restart the server with a HUP or USR1 signal.  This is not a
+bug in mod_perl.  If you have 'PerlFreshRestart On' in the
+configuration, the main httpd daemon reloads all the perl modules that
+it has preloaded when it gets a HUP or USR1 signal.  Unfortunately,
+not all perl modules are robust enough to survive this, for them,
+unusual situation.
 
 =head2 What could be causing sporadic errors "in cleanup"?
 
@@ -381,6 +372,12 @@ The MOD_PERL variable gets set immediately when the perl interpreter
 starts up, whereas GATEWAY_INTERFACE may not be set yet when BEGIN
 blocks are being processed.
 
+=head2 Why don't "format" and "write" work under mod_perl?
+
+The Perl tie'd filehandle interface is not complete, format/write is
+one of the missing pieces.  If you configure Perl with sfio, write()
+should work just fine.
+
 =head2 Where can I get help that I did not find in here?
 
 There is a mailing-list dedicated to mod_perl.  It is archived at
@@ -392,6 +389,12 @@ http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
 
 You can subscribe to the list by sending a mail with the line C<subscribe
 modperl> to C<majordomo@apache.org>.
+
+Remember: the mailing list is for questions about and discussion of
+mod_perl.  Quetions about perl programming in general should be asked
+in the newsgroup comp.lang.perl.misc, after consulting the fine perl
+faqs.  There is a whole set of newsgroups dedicated to web authoring,
+web servers etc.: comp.infosystems.www.*
 
 The mod_perl homepage http://perl.apache.org/ has links to other
 mod_perl resources.
