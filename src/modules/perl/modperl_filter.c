@@ -153,7 +153,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         apr_bucket *bucket = apr_bucket_flush_create(ba);
         APR_BRIGADE_INSERT_TAIL(bb, bucket);
     }
-        
+
     MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %d bytes\n"
                "\t\tfrom %s\n\t\tto %s filter handler\n",
                len, 
@@ -248,11 +248,13 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     }
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-               "new: %s %s filter (0x%lx)\n",
+               "new: %s %s filter (modperl_filter_t *0x%lx), "
+               "f (ap_filter_t *0x%lx)\n",
                MP_FILTER_NAME(f),
                MP_FILTER_TYPE(filter),
                MP_FILTER_MODE(filter),
-               (unsigned long)filter);
+               (unsigned long)filter,
+               (unsigned long)filter->f);
 
     return filter;
 }
@@ -898,6 +900,11 @@ static int modperl_filter_add_request(request_rec *r,
                 continue;
             }
 
+            /* XXX: I fail to see where this feature is used, since
+             * modperl_filter_add_connection doesn't register request
+             * filters. may be it'll be still useful when the same
+             * filter handler is configured to run more than once?
+             * e.g. snooping filter [stas] */
             f = filters;
             while (f) {
                 const char *fname = f->frec->name;
