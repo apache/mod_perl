@@ -542,7 +542,7 @@ sub read_script {
 
         if (ref $@ eq 'APR::Error') {
             return Apache::FORBIDDEN if $@ == APR::EACCES;
-            return Apache::NOT_FOUND if $@ == APR::ENOENT
+            return Apache::NOT_FOUND if $@ == APR::ENOENT;
         }
         else {
             return Apache::SERVER_ERROR;
