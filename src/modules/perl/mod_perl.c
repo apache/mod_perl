@@ -34,7 +34,7 @@ static void modperl_hash_seed_init(apr_pool_t *p)
             while (isSPACE(*s)) s++;
         }
         if (s && isDIGIT(*s)) {
-            MP_init_hash_seed = (UV)Atol(s); // XXX: Atoul()?
+            MP_init_hash_seed = (UV)Atol(s); /* XXX: Atoul()? */
             MP_init_hash_seed_set = TRUE;
         }
     }
