@@ -1675,7 +1675,7 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
     }   
 }
 
-static void clear_symtab(HV *symtab) 
+void perl_clear_symtab(HV *symtab) 
 {
     SV *val;
     char *key;
@@ -1686,6 +1686,7 @@ static void clear_symtab(HV *symtab)
 	SV *sv;
 	HV *hv;
 	AV *av;
+	CV *cv;
 	dTHR;
 
 	if((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val))
@@ -1696,6 +1697,8 @@ static void clear_symtab(HV *symtab)
 	    hv_clear(hv);
 	if((av = GvAV((GV*)val)))
 	    av_clear(av);
+	if((cv = GvCV((GV*)val)))
+	    cv_undef(cv);
     }
 }
 
@@ -1830,7 +1833,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 	if(usv && SvTRUE(usv))
 	    ; /* keep it around */
 	else
-	    clear_symtab(symtab);
+	    perl_clear_symtab(symtab);
     }
     return NULL;
 }

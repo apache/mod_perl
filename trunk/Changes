@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+fix directive handlers bug triggered by LoadModule foo_module
+
 allow $r->finfo to be modified
 
 if Perl is linked with -lpthread, then httpd needs to be linked with
