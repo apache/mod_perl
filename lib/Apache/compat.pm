@@ -35,7 +35,23 @@ BEGIN {
 
 package Apache;
 
-#XXX: exit,warn
+sub exit {
+    require ModPerl::Util;
+
+    my $status = 0;
+    my $nargs = @_;
+
+    if ($nargs == 2) {
+        $status = $_[1];
+    }
+    elsif ($nargs == 1 and $_[0] =~ /^\d+$/) {
+        $status = $_[0];
+    }
+
+    ModPerl::Util::exit($status);
+}
+
+#XXX: warn
 sub import {
 }
 
