@@ -168,7 +168,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
 #ifdef USE_ITHREADS
     modperl_interp_t *interp;
-    dTHX;
+    pTHX;
 #endif
     
     /* if the module is loaded in vhost, base==NULL */
