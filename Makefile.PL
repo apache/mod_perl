@@ -984,7 +984,7 @@ sub MY::install {
 	    $add = "apaci_install";
 	}
     }
-    if($add and !$NO_HTTPD and !$PREP_HTTPD) {
+    if($add and (!$NO_HTTPD and !$PREP_HTTPD) or $USE_APXS) {
 	$string =~ s/(pure_install\s+)(.*)/$1 $add $2/;
     }
     return $string;
