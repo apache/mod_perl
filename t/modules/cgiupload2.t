@@ -4,11 +4,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
-use Apache::Build ();
+use Apache2::Build ();
 
 use File::Spec::Functions qw(catfile);
 
-my $build = Apache::Build->build_config;
+my $build = Apache2::Build->build_config;
 plan tests => 2, need need_lwp(),
     need_min_module_version(CGI => 3.01);
 

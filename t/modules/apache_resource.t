@@ -6,12 +6,12 @@ use Apache::TestRequest;
 use Apache::TestUtil;
 
 plan tests => 1, need qw[BSD::Resource],
-    { "CGI.pm (2.93 or higher) or Apache::Request is needed" =>
+    { "CGI.pm (2.93 or higher) or Apache2::Request is needed" =>
           !!(eval { require CGI && $CGI::VERSION >= 2.93 } ||
-             eval { require Apache::Request })};
+             eval { require Apache2::Request })};
 
 {
-    # Apache::Status menu inserted by Apache::Resource
+    # Apache2::Status menu inserted by Apache::Resource
     my $url = '/status/perl?rlimit';
     my $body = GET_BODY_ASSERT $url;
     ok $body =~ /RLIMIT_CPU/;
@@ -20,6 +20,6 @@ plan tests => 1, need qw[BSD::Resource],
 # more tests would be nice, but I'm not sure how to write those w/o
 # causing problems to the rest of the test suite.
 # we could enable $ENV{PERL_RLIMIT_DEFAULTS} = 1; before loading
-# Apache::Resource, which sets certain default values (works for me)
+# Apache2::Resource, which sets certain default values (works for me)
 # but it's not guaranteed that it'll work for others (since it's very
 # OS specific)

@@ -31,13 +31,13 @@ my $location = "/TestCompat__request_body";
         );
 }
 
-# $r->Apache::args
+# $r->Apache2::args
 {
     my @data = (test => 'args');
     ok t_cmp(
         GET_BODY(query(@data)),
         "@data",
-        q{$r->Apache::args}
+        q{$r->Apache2::args}
         );
 }
 

@@ -4,9 +4,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
-use Apache::Build ();
+use Apache2::Build ();
 
-my $build = Apache::Build->build_config;
+my $build = Apache2::Build->build_config;
 
 use constant HAVE_LWP => have_lwp();
 

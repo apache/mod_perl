@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 use File::Spec::Functions qw(catfile);
 
-use Apache::Const -compile => qw(FORBIDDEN);
+use Apache2::Const -compile => qw(FORBIDDEN);
 
 my $module   = 'TestAPI::custom_response';
 my $location = '/' . Apache::TestRequest::module2path($module);
@@ -29,7 +29,7 @@ plan tests => 4, need_lwp;
     # custom text response
     my $expected = "This_is_a_custom_text_response";
     my $res = GET "$location?$expected";
-    ok t_cmp $res->code, Apache::FORBIDDEN, "custom text response (code)";
+    ok t_cmp $res->code, Apache2::FORBIDDEN, "custom text response (code)";
     ok t_cmp $res->content, $expected, "custom text response (body)";
 }
 
