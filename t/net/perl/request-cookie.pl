@@ -19,8 +19,8 @@ my $r = shift;
 $r->send_http_header('text/plain');
 
 my $i = 0;
-my $tests = 25;
-$tests += 6 if $r->headers_in->get("Cookie");
+my $tests = 31;
+$tests += 7 if $r->headers_in->get("Cookie");
 
 print "1..$tests\n";
 
@@ -40,11 +40,32 @@ for my $name (qw(one two three)) {
 			      );
     ++$letter;
     $c->bake;
-    my @val = $c->value;
+
     my $cgi_as_string = $cc->as_string;
     my $as_string = $c->as_string;
     my $header_out = ($r->err_headers_out->get("Set-Cookie"))[-1];
+    my @val = $c->value;
     print "VALUE: @val\n";
+    for my $v ("string", [@val]) {
+	$c->value($v);
+	my @arr = $c->value;
+	my $n = @arr;
+	if (ref $v) {
+	    test ++$i, $n == 2;
+	}
+	else {
+	    test ++$i, $n == 1;
+	}
+	print "  VALUE: @arr ($n)\n";
+	$c->value(\@val); #reset
+    }
+
+    for (1,0) {
+	my $secure = $c->secure;
+	$c->secure($_);
+	print "secure: $secure\n";
+    }
+
     print "as_string:  `$as_string'\n";
     print "header_out: `$header_out'\n";
     print "cgi cookie: `$cgi_as_string\n";  
@@ -111,6 +132,9 @@ if(my $string = $r->headers_in->get('Cookie')) {
     print "ARRAY context (value method):\n";
     print " Apache::Cookie:\n";
     my %hv = Apache::Cookie->new($r)->parse($string);
+    my %fetch = Apache::Cookie->fetch;
+    test ++$i, keys %hv == keys %fetch;
+
     for (sort keys %hv) {
 	$done{$_} = join ", ", $hv{$_}->value;
 	print "   $_ => $done{$_}\n";
