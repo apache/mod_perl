@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Apache::Log changes: [Stas]
+  - moved to compat: Apache::warn, Apache->warn, Apache::Server->warn,
+    Apache::Server::warn
+  - re-enabled $r->warn
+  - removed support for Apache::ServerRec->warn
+    (Apache::ServerRec::warn is still there)
+
 Apache::Directive conftree() changed from class method to
 regular subroutine [Gozer]
 

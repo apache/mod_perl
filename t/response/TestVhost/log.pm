@@ -22,16 +22,14 @@ use Apache::Const -compile => 'OK';
 my @methods1 = (
     '$r->log->warn',
     '$r->log_error',
+    '$r->warn',
     '$s->log->warn',
     '$s->log_error',
     '$s->warn',
 );
 
 my @methods2 = (
-    'Apache->warn',
-    'Apache::ServerRec->warn',
     'Apache::ServerRec::warn',
-    'Apache::warn',
     'warn',
 );
 

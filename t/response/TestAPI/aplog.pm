@@ -6,7 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
+use Apache::ServerRec qw(warn); # override warn locally
 use Apache::RequestRec ();
+use Apache::RequestUtil ();
 use Apache::Log ();
 use Apache::MPM ();
 
@@ -80,8 +82,22 @@ sub handler {
         ok 1;
     }
 
-    Apache->warn("Apache->warn test ok");
+    t_server_log_warn_is_expected();
     $s->warn('$s->warn test ok');
+
+    {
+        t_server_log_warn_is_expected();
+        # this uses global server to get $s internally
+        Apache::ServerRec::warn("Apache::ServerRec::warn test ok");
+
+        Apache->request($r);
+        t_server_log_warn_is_expected();
+        # this uses the global $r to get $s internally
+        Apache::ServerRec::warn("Apache::ServerRec::warn test ok");
+    }
+
+    t_server_log_warn_is_expected();
+    warn "warn test ok";
 
     Apache::OK;
 }

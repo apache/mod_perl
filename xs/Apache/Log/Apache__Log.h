@@ -44,7 +44,6 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         s = (server_rec *)SvObjIV(sv);
     }
     else {
-        MP_CROAK_IF_THREADS_STARTED("using global server object");
         s = modperl_global_get_server_rec();
     }
 
@@ -269,6 +268,14 @@ static XS(MPXS_Apache__Log_log_xerror)
     XSRETURN_EMPTY;
 }
 
+/*
+ * this function handles:
+ * $r->log_error
+ * $s->log_error
+ * $r->warn
+ * $s->warn
+ * Apache::ServerRec::warn
+ */
 static XS(MPXS_Apache__Log_log_error)
 {
     dXSARGS;
@@ -279,33 +286,16 @@ static XS(MPXS_Apache__Log_log_error)
     SV *sv = Nullsv;
     STRLEN n_a;
 
-    /*
-     * we support the following:
-     * Apache::warn
-     * Apache->warn
-     * Apache::ServerRec->log_error
-     * Apache::ServerRec->warn
-     * $r->log_error
-     * $r->warn
-     * $s->log_error
-     * $s->warn
-     */
-
     if (items > 1) {
-        if ((r = modperl_xs_sv2request_rec(aTHX_ ST(0),
-                                           "Apache::RequestRec", cv)))
-        {
-            s = r->server;
-        }
-        else if (sv_isa(ST(0), "Apache::ServerRec")) {
+        if (sv_isa(ST(0), "Apache::ServerRec")) {
             s = (server_rec *)SvObjIV(ST(0));
         }
-        else if (SvPOK(ST(0)) && strEQ(SvPVX(ST(0)), "Apache::ServerRec")) {
-            MP_CROAK_IF_THREADS_STARTED("using global server object");
-            s = modperl_global_get_server_rec();
+        else if ((r = modperl_xs_sv2request_rec(aTHX_ ST(0),
+                                                "Apache::RequestRec", cv))) {
+            s = r->server;
         }
     }
-              
+
     if (s) {
         i = 1;
     }
@@ -316,7 +306,6 @@ static XS(MPXS_Apache__Log_log_error)
             s = r->server;
         }
         else {
-            MP_CROAK_IF_THREADS_STARTED("using global server object");
             s = modperl_global_get_server_rec();
         }
     }
