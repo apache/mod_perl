@@ -20,7 +20,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 25;
+    plan $r, tests => 26;
 
     my $ba = $r->connection->bucket_alloc;
 
@@ -95,6 +95,9 @@ sub handler {
         ok t_cmp('EOS', $type->name, "eos_create");
 
         ok t_cmp(0, $b->length, "eos b->length");
+
+        # buckets with no data to read should return an empty string
+        ok t_cmp("", $b->read, "eos b->read");
     }
 
     # flush_create
