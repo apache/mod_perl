@@ -12,9 +12,16 @@ our %PM; #add files to installation
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
     # XXX: adding -MApache2 here so 3rd party modules could use this macro,
+    # taking into account that we can't do -MApache2 when installing
+    # mod_perl itself, when installed for the first time.
     # may be should have different macros for core build and modules build
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MApache2 -MModPerl::MM \\}."\n" .
-    q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
+    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) \\}."\n" .
+    q{-e "BEGIN { eval {require Apache2} } use ModPerl::MM; \\}."\n" .
+    q{ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
+
+    # the original was:
+    # q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::MM \\}."\n" .
+    # q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
 }
 
 sub add_dep {
