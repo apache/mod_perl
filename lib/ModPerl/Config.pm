@@ -23,7 +23,7 @@ use File::Spec ();
 use constant WIN32 => Apache::Build::WIN32;
 
 sub as_string {
-    my $build_config = Apache::Build->build_config;
+    my $build = Apache::Build->build_config;
 
     my $cfg = '';
 
@@ -34,15 +34,15 @@ sub as_string {
 
     # the widest key length
     my $max_len = 0;
-    for (map {length} grep /^MP_/, keys %$build_config) {
+    for (map {length} grep /^MP_/, keys %$build) {
         $max_len = $_ if $_ > $max_len;
     }
 
     # mod_perl opts
     $cfg .= "*** Makefile.PL options:\n";
     $cfg .= join '',
-        map {sprintf "  %-${max_len}s => %s\n", $_, $build_config->{$_}}
-            grep /^MP_/, sort keys %$build_config;
+        map {sprintf "  %-${max_len}s => %s\n", $_, $build->{$_}}
+            grep /^MP_/, sort keys %$build;
 
     my $command = '';
 
@@ -58,24 +58,17 @@ sub as_string {
 
     # apr
     $cfg .= "\n\n*** (apr|apu)-config linking info\n\n";
-    if (my $apr_bindir = $build_config->apr_bindir()) {
-        my @configs = $build_config->httpd_version_as_int =~ m/21\d+/
-            ? qw(apr-1 apu-1)
-            : qw(apr apu);
-
-        my $ext = WIN32 ? '.bat' : '';
-        my @libs = grep $_, map { -x $_ && qx{$_ --link-ld --libs} }
-            map { qq{$apr_bindir/$_-config$ext} } @configs;
-        chomp @libs;
-        my $libs = join "\n", @libs;
+    my @apru_link_flags = $build->apru_link_flags;
+    if (@apru_link_flags) {
+        my $libs = join "\n", @apru_link_flags;
         $cfg .= "$libs\n\n";
     }
     else {
-        $cfg .= "config scripts were not found\n\n";
+        $cfg .= "(apr|apu)-config scripts were not found\n\n";
     }
 
     # perl opts
-    my $perl = $build_config->{MODPERL_PERLPATH};
+    my $perl = $build->{MODPERL_PERLPATH};
     $command = "$perl -V";
     $cfg .= "\n\n*** $command\n";
     $cfg .= qx{$command};

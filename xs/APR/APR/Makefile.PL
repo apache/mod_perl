@@ -20,19 +20,8 @@ my %args = (
 my $libs = '';
 my $build = ModPerl::BuildMM::build_config();
 
-if (my $apr_bindir = $build->apr_bindir()) {
-
-    my @configs = $build->httpd_version_as_int =~ m/21\d+/
-        ? qw(apr-1 apu-1)
-        : qw(apr apu);
-
-    # XXX: this works only with libapr 0.9.2+
-    my $ext = WIN32 ? '.bat' : '';
-    my @libs = grep $_, map { -x $_ && qx{$_ --link-ld --libs} }
-        map { qq{$apr_bindir/$_-config$ext} } @configs;
-    chomp @libs;
-    $libs = join ' ', @libs;
-}
+my @apru_link_flags = $build->apru_link_flags;
+$libs .= join ' ', @apru_link_flags if @apru_link_flags;
 
 if (WIN32) {
     $libs =~ s{/libpath:}{-L}g;
