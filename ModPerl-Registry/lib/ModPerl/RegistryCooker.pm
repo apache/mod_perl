@@ -15,15 +15,20 @@ no warnings qw(redefine); # XXX, this should go away in production!
 
 our $VERSION = '1.99';
 
-use Apache::compat ();
-
 use Apache::Response ();
 use Apache::RequestRec ();
-use Apache::Log;
-use Apache::Const -compile => qw(:common &OPT_EXECCGI);
-use File::Spec::Functions ();
+use Apache::RequestIO ();
+use Apache::Log ();
+use Apache::Access ();
+
+use APR::Table ();
+
 use ModPerl::Util ();
 use ModPerl::Global ();
+
+use File::Spec::Functions ();
+
+use Apache::Const -compile => qw(:common &OPT_EXECCGI);
 
 unless (defined $ModPerl::Registry::MarkLine) {
     $ModPerl::Registry::MarkLine = 1;
@@ -210,7 +215,7 @@ sub can_compile {
     my $self = shift;
     my $r = $self->[REQ];
 
-    unless (-r $r->finfo && -s _) {
+    unless (-r $r->my_finfo && -s _) {
         $self->log_error("$self->[FILENAME] not found or unable to stat");
 	return Apache::NOT_FOUND;
     }
@@ -220,13 +225,13 @@ sub can_compile {
     $self->[MTIME] = -M _;
 
     unless (-x _ or IS_WIN32) {
-        $r->log_reason("file permissions deny server execution",
+        $r->log_error("file permissions deny server execution",
                        $self->[FILENAME]);
         return Apache::FORBIDDEN;
     }
 
     if (!($r->allow_options & Apache::OPT_EXECCGI)) {
-        $r->log_reason("Options ExecCGI is off in this directory",
+        $r->log_error("Options ExecCGI is off in this directory",
                        $self->[FILENAME]);
         return Apache::FORBIDDEN;
     }
@@ -440,7 +445,7 @@ sub is_cached {
 # wasn't modified
 sub should_compile_if_modified {
     my $self = shift;
-    $self->[MTIME] ||= -M $self->[REQ]->finfo;
+    $self->[MTIME] ||= -M $self->[REQ]->my_finfo;
     !($self->is_cached && 
       $self->cache_table->{ $self->[PACKAGE] }{mtime} <= $self->[MTIME]);
 }
@@ -519,7 +524,7 @@ sub read_script {
     my $self = shift;
 
     $self->debug("reading $self->[FILENAME]") if DEBUG & D_NOISE;
-    $self->[CODE] = $self->[REQ]->slurp_filename;
+    $self->[CODE] = $self->[REQ]->my_slurp_filename;
 }
 
 #########################################################################
@@ -741,6 +746,25 @@ sub uncache_myself {
         Apache->warn("$$: cannot find $package in cache");
     }
 }
+
+
+# XXX: these should go away when finfo() and slurp_filename() are
+# ported to 2.0 (don't want to depend on compat.pm)
+sub Apache::RequestRec::my_finfo {
+    my $r = shift;
+    stat $r->filename;
+    \*_;
+}
+
+sub Apache::RequestRec::my_slurp_filename {
+    my $r = shift;
+    open my $fh, $r->filename;
+    local $/;
+    my $data = <$fh>;
+    close $fh;
+    return \$data;
+}
+
 
 1;
 __END__
