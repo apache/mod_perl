@@ -102,9 +102,6 @@ Apache::compat)
 Apache->unescape_url{_info}:
 not yet implemented.  should be moved to Apache::Util
 
-apr_array_header_t:
-needs an interface, either methods and/or tied array interface
-
 Apache::perl_hook:
 should have this or something check if PerlOptions allows the given
 handler/feature to be used.
