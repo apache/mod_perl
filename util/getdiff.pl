@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# this script creates a diff against CVS
+# this script creates a diff against SVN
 # and against /dev/null for all files in ARGV
 # and prints it to STDOUT
 #
@@ -12,10 +12,7 @@
 # patch -p0 < newtest.patch
 
 # cvs diff
-my $o = `cvs diff -u`;
-
-# strip '? filename' cvs lines for unknown files
-$o =~ s/^\?.*\n//gm;
+my $o = `svn diff`;
 
 for (@ARGV) {
     $o .= "\n";
