@@ -1,8 +1,11 @@
 static MP_INLINE void mpxs_ModPerl__Util_untaint(pTHX_ I32 items,
                                                  SV **MARK, SV **SP)
 {
+    if (!PL_tainting) {
+        return;
+    }
     while (MARK <= SP) {
-        SvTAINTED_off(*MARK++);
+        sv_untaint(*MARK++);
     }
 }
 
