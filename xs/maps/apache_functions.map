@@ -101,7 +101,7 @@ MODULE=Apache::Response   PACKAGE=guess
  ap_set_last_modified
  ap_custom_response
 
-MODULE=Apache::Access   PACKAGE=guess
+MODULE=Apache::Access   PACKAGE=Apache::RequestRec
  ap_allow_methods | mpxs_ | ...
  ap_allow_options
  ap_allow_overrides
