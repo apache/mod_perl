@@ -340,7 +340,12 @@ sub flush_namespace {
         if (defined &$fullname) {
             no warnings;
             local $^W = 0;
-            *{$fullname} = sub {};
+            if (my $p = prototype $fullname) {
+                eval "*{\$fullname} = sub ($p) {}";
+            }
+            else {
+                *{$fullname} = sub {};
+            }
 	    undef &$fullname;
 	}
         if (*{$fullname}{IO}) {
