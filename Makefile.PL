@@ -153,11 +153,19 @@ sub configure {
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
-        my $lib = "src/modules/perl/$build->{MP_LIBNAME}.lib";
-        unless (-e $lib) {
-            open my $fh, '>', $lib or die "open $lib: $!";
-            print $fh "#this is a dummy file to trick MakeMaker";
-            close $fh;
+        require File::Path;
+        my $lib1 = "src/modules/perl/$build->{MP_LIBNAME}.lib";
+        my $apr_blib = catdir qw(blib arch Apache2 auto APR);
+        unless (-d $apr_blib) {
+            File::Path::mkpath($apr_blib) or die "mkdir $apr_blib failed: $!";
+        }
+        my $lib2 = catfile $apr_blib, 'APR.lib';
+        foreach my $lib ($lib1, $lib2) {
+            unless (-e $lib) {
+                open my $fh, '>', $lib or die "open $lib: $!";
+                print $fh "#this is a dummy file to trick MakeMaker";
+                close $fh;
+            }
         }
     }
 
@@ -448,6 +456,8 @@ sub win32_fetch_apxs {
 package MY;
 
 use Config;
+use File::Spec::Functions qw(catdir);
+use constant WIN32 => $^O eq 'MSWin32';
 
 my $apache_test_install;
 BEGIN {
@@ -459,6 +469,18 @@ BEGIN {
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->ModPerl::BuildMM::MY::top_targets;
+
+    if (WIN32) {
+        ModPerl::MM::add_dep(\$string, pure_all => 'apr_lib');
+
+        my $apr_lib = catdir qw(xs APR APR);
+        $string .= <<"EOF";
+
+apr_lib:
+	cd "$apr_lib" && \$(MAKE) -f \$(FIRST_MAKEFILE) all \$(PASTHRU)
+
+EOF
+    }
 
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
