@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+rename Apache::Tie/Apache::TieHashTable -> Apache::Table
+
 Apache::PerlRun::handler will explicitly undef subroutines before
 "flushing" the namespace [Gunther Birznieks <gunther@nhgri.nih.gov>]
 

@@ -592,7 +592,7 @@ if($PERL_DIRECTIVE_HANDLERS) {
     $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
 }
 if($PERL_TABLE_API) {
-    push @xs_modules, "Apache::Tie";
+    push @xs_modules, "Apache::Table";
     $callback_hooks{PERL_TABLE_API} = 1;
 }
 if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {

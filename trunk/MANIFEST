@@ -79,7 +79,7 @@ src/modules/perl/ModuleConfig.xs
 src/modules/perl/Log.xs
 src/modules/perl/URI.xs
 src/modules/perl/Util.xs
-src/modules/perl/Tie.xs
+src/modules/perl/Table.xs
 src/modules/perl/ldopts
 src/modules/perl/mod_perl.c
 src/modules/perl/mod_perl.h
@@ -137,8 +137,8 @@ t/internal/redirect.t
 t/internal/rwrite.t
 t/internal/stacked.t
 #t/internal/resolver.t
+t/internal/table.t
 t/internal/taint.t
-t/internal/tie.t
 t/net/perl/module.pl
 t/net/perl/file.pl
 t/net/perl/log.pl
@@ -202,8 +202,8 @@ faq/mod_perl_cgi.pod
 faq/mod_perl_faq.pod
 faq/mjtg-news.txt
 htdocs/manual/mod/mod_perl.html
-Tie/Makefile.PL
-Tie/Tie.pm
+Table/Makefile.PL
+Table/Table.pm
 apaci/Makefile.libdir
 apaci/Makefile.tmpl
 apaci/README

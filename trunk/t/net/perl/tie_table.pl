@@ -13,7 +13,7 @@ my $headers_in = $r->headers_in;
 my $table = tied %$headers_in;
 
 test ++$i, UNIVERSAL::isa($headers_in, 'HASH');
-test ++$i, $table->isa('Apache::TieHashTable');
+test ++$i, $table->isa('Apache::Table');
 test ++$i, $table->get('User-Agent');
 test ++$i, $r->headers_in->get('User-Agent');
 test ++$i, $headers_in->{'User-Agent'};
@@ -119,5 +119,5 @@ for my $meth (qw{
     print "TOTAL: ", scalar keys %$hash_ref, "\n\n";
 
     test ++$i, UNIVERSAL::isa($hash_ref, 'HASH');
-    test ++$i, $tab->isa('Apache::TieHashTable');
+    test ++$i, $tab->isa('Apache::Table');
 }

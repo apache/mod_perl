@@ -182,12 +182,20 @@ hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 #undef NO_PERL_RESTART
 #endif
 
+typedef struct {
+    table *table;
+    array_header *arr;
+    table_entry *elts;
+    int ix;
+} TiedTable;
+
 typedef request_rec * Apache;
 typedef request_rec * Apache__SubRequest;
 typedef conn_rec    * Apache__Connection;
 typedef server_rec  * Apache__Server;
 typedef cmd_parms   * Apache__CmdParms;
-typedef table       * Apache__Table;
+typedef TiedTable   * Apache__Table;
+typedef table       * Apache__table;
 typedef module      * Apache__Module;
 typedef handler_rec * Apache__Handler;
 typedef command_rec * Apache__Command;
