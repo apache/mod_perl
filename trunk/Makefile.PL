@@ -738,6 +738,16 @@ sub init_tests_and_config {
 	if($APACHE_PREFIX and $APACI_ARGS !~ /--prefix=/)  {
 	    $cmd .= " --prefix=$APACHE_PREFIX";
 	}
+	if($ADD_MODULE) {
+	    for (split ",", $ADD_MODULE) {
+		if(/([a-zA-Z0-9][a-zA-Z0-9_]*)/) {
+		    $cmd .= " --enable-module=$1";
+		}
+		elsif(m:(src/modules/[^/]+/[a-zA-Z0-9][a-zA-Z0-9_]*):) {
+		    $cmd .= " --activate-module=$1";
+		}
+	    }
+	}
 	print "(cd $APACHE_ROOT && $cmd)\n";
 	system "(cd $APACHE_ROOT && $cmd)";
     }
@@ -1046,9 +1056,14 @@ sub MY::pasthru {
 sub MY::test {
     my $self = shift;
     my $test = $self->MM::test;
+    my $mmn = magic_number($APACHE_SRC);
     return <<'EOF' if $USE_APXS;
 test:
 	@echo "Can't make test with APXS (yet)"
+EOF
+    return <<'EOF' if $USE_DSO and ($mmn <= 19980527);
+test:
+	@echo "Can't make test with DSO (yet)"
 EOF
 
     my $script = "t/TEST";
