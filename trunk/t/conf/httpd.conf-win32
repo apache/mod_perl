@@ -69,6 +69,10 @@ PerlSendHeader       Off
 PerlSetupEnv Off
 </Location>
 
+<Location /dirmagic>
+PerlHandler My::DirIndex
+</Location>
+
 <Location /perl>
 
 SetHandler perl-script
