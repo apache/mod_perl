@@ -28,18 +28,17 @@ sub handler {
 
     # test Apache::Server constant subroutines
 
-    ok t_filepath_cmp(canonpath(Apache::server_root),
+    ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
                       canonpath($root),
-                      'Apache::server_root()');
-     
+                      'Apache::ServerUtil::server_root()');
 
-    ok t_cmp(Apache::get_server_built,
+    ok t_cmp(Apache::ServerUtil::get_server_built,
              $built,
-             'Apache::get_server_built()');
+             'Apache::ServerUtil::get_server_built()');
 
-    ok t_cmp(Apache::get_server_version,
+    ok t_cmp(Apache::ServerUtil::get_server_version,
              $version,
-             'Apache::get_server_version()');
+             'Apache::ServerUtil::get_server_version()');
 
     Apache::OK;
 }

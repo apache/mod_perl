@@ -254,7 +254,7 @@ sub request {
 
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
-our $CWD = Apache::server_root;
+our $CWD = Apache::ServerUtil::server_root;
 
 our $AddPerlVersion = 1;
 
@@ -352,7 +352,7 @@ sub import {
 #no need to support in 2.0
 sub export {}
 
-sub SERVER_VERSION { Apache::get_server_version() }
+sub SERVER_VERSION { Apache::ServerUtil::get_server_version() }
 
 package Apache::RequestRec;
 
