@@ -151,31 +151,32 @@ sub configure {
     $build->generate_apache2_pm;
 
     # On Win32, in order to decouple APR::* from mod_perl.so, we
-    # make up a static library aprext.lib of the symbols required from
+    # make up a static library MP_APR_LIB of the symbols required from
     # src/modules/perl/*.c (see xs/APR/aprext/Makefile.PL), and
     # then link APR/APR::* against this library. The reason for
     # this is that, unlike Unix, if we had linked APR/APR::* against
-    # mod_perl.lib, then use of APR/APR::* would demand mod_perl.so
+    # the mod_perl lib, then use of APR/APR::* would demand mod_perl.so
     # be available, even if these symbols are supplied by another
     # loaded library (which is done for unix by APR.so - see
-    # xs/APR/APR/Makefile.PL). This also means we must ensure aprext.lib
-    # is built before any of the APR/APR::* modules (see the aprext
-    # target in the MY::top_targets sub below), as symbols must
-    # get resolved at link time.
+    # xs/APR/APR/Makefile.PL). This also means we must ensure the
+    # MP_APR_LIB lib is built before any of the APR/APR::* modules 
+    # (see the aprext target in the MY::top_targets sub below), as 
+    # symbols must get resolved at link time.
 
     if (WIN32()) {
+        require File::Basename;
+        require File::Path;
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
         # this must also be done for aprext.lib, build in xs/APR/aprext/;
         # we must create a dummy aprext.lib to pass the -e test.
-        require File::Path;
         my $lib1 = "src/modules/perl/$build->{MP_LIBNAME}.lib";
-        my $apr_blib = catdir qw(blib arch Apache2 auto aprext);
+        my $lib2 = $build->mp_apr_lib;
+        my $apr_blib = File::Basename::dirname($lib2);
         unless (-d $apr_blib) {
             File::Path::mkpath($apr_blib) or die "mkdir $apr_blib failed: $!";
         }
-        my $lib2 = catfile $apr_blib, 'aprext.lib';
         foreach my $lib ($lib1, $lib2) {
             unless (-e $lib) {
                 open my $fh, '>', $lib or die "open $lib: $!";
@@ -490,11 +491,19 @@ sub MY::top_targets {
 
         # must not import File::Spec functions inside MY, it breaks
         # 5.6.x builds
-        my $aprext = File::Spec->catdir(qw(xs APR aprext));
+        my $from = $build->mp_apr_lib;
+        my $apr_lib = $build->{MP_APR_LIB} . $Config{lib_ext};
+        (my $ap_lib = $build->ap_includedir()) =~ s{include$}{lib};
+        my $to = File::Spec->catfile($ap_lib, $apr_lib);
+        my $src_dir = File::Spec->catdir(qw(xs APR aprext));
         $string .= <<"EOF";
 
 aprext:
-        cd "$aprext" && \$(MAKE) -f \$(FIRST_MAKEFILE) all \$(PASTHRU)
+        cd "$src_dir" && \$(MAKE) all \$(PASTHRU)
+
+aprext_install:
+        \@\$(MKPATH) "$ap_lib"
+        \$(CP) "$from" "$to"
 
 EOF
     }
@@ -566,6 +575,8 @@ sub MY::install {
     my $string = $self->MM::install(@_);
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
+    # ModPerl::MM::add_dep(\$string, pure_install => 'aprext_install')
+    #    if WIN32;
 
     ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
           if $apache_test_install;

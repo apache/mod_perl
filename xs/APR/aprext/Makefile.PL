@@ -6,6 +6,8 @@ use ModPerl::BuildMM ();
 require ModPerl::Code;
 use Apache::Build ();
 
+my $build = ModPerl::BuildMM::build_config();
+
 my $srcdir = '../../../src/modules/perl';
 my @names = ModPerl::Code::src_apr_ext();
 
@@ -20,7 +22,7 @@ for (@names) {
 my @skip = qw(dynamic test);
 push @skip, q{static} unless Apache::Build::WIN32;
 
-my %args = (NAME          => 'aprext',
+my %args = (NAME          => $build->{MP_APR_LIB},
             VERSION_FROM  => '../APR/APR.pm',
             SKIP          =>  [ @skip ] ,
             LINKTYPE      =>  'static',

@@ -703,6 +703,8 @@ sub new {
         @_,
     }, $class;
 
+    $self->{MP_APR_LIB} = 'aprext';
+
     ModPerl::BuildOptions->init($self) if delete $self->{init};
 
     $self;
@@ -1345,6 +1347,24 @@ sub modperl_libs_MSWin32 {
 sub modperl_libs {
     my $self = shift;
     my $libs = \&{"modperl_libs_$^O"};
+    return "" unless defined &$libs;
+    $libs->($self);
+}
+
+sub mp_apr_lib_MSWin32 {
+    my $self = shift;
+    # MP_APR_LIB.lib will be installed into MP_AP_PREFIX/lib
+    # for use by 3rd party xs modules
+    my $mp_apr_lib = $self->{MP_APR_LIB};
+    my @dirs = $self->{MP_INST_APACHE2} ?
+        qw(blib arch Apache2 auto) : qw(blib arch auto);
+    return catdir $self->{cwd}, @dirs, $mp_apr_lib, "$mp_apr_lib.lib";
+}
+
+# name of lib used to build APR/APR::*
+sub mp_apr_lib {
+    my $self = shift;
+    my $libs = \&{"mp_apr_lib_$^O"};
     return "" unless defined &$libs;
     $libs->($self);
 }

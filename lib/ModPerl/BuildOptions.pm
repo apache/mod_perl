@@ -226,4 +226,5 @@ INCLUDE_DIR    1    Add directories to search for header files
 GENERATE_XS    0    Generate XS code based on httpd version
 LIBNAME        0    Name of the modperl dso library (default is  mod_perl)
 COMPAT_1X      0    Compile-time mod_perl 1.0 backcompat (default is  on)
+APR_LIB        0    Lib used to build APR::* on Win32 (default is aprext)
 

@@ -30,11 +30,14 @@ if (my $apr_bindir = $build->apr_bindir()) {
 }
 
 if (WIN32) {
+    require File::Basename;
     $libs =~ s{/libpath:}{-L}g;
     $libs =~ s{(\w+)\.lib}{-l$1}g;
-    # include the static aprext.lib
-    my $aprext = catdir $build->{cwd}, qw(blib arch Apache2 auto aprext);
-    $libs .= qq{ -L"$aprext" -laprext };
+    # include the static MP_APR_LIB lib
+    my ($lib, $dir, $ext) =
+        File::Basename::fileparse($build->mp_apr_lib, qr{\.lib});
+    $dir =~ s!\\$!!;
+    $libs .= qq{ -L"$dir" -l$lib };
 }
 
 if (SOLARIS && $libs) {
