@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 5, need 'HTML::HeadParser';
 
-my $module = 'TestApache2__scanhdrs2';
+my $module = 'TestApache__scanhdrs2';
 my $location = "/$module";
 
 my $redirect = 'http://perl.apache.org/';

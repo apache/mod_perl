@@ -94,7 +94,7 @@ sub test_add_config {
     my $conf = <<'EOC';
 # must use PerlModule here to check for segfaults
 PerlModule Apache::TestHandler
-<Location /apache2/add_config>
+<Location /apache/add_config>
   SetHandler perl-script
   PerlResponseHandler Apache::TestHandler::ok1
 </Location>

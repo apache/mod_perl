@@ -1,4 +1,4 @@
-package TestApache2::read;
+package TestApache::read;
 
 use strict;
 use warnings FATAL => 'all';

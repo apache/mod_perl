@@ -1,6 +1,6 @@
-package TestApache2::read2;
+package TestApache::read2;
 
-# extra tests in addition to TestApache2::read
+# extra tests in addition to TestApache::read
 
 use strict;
 use warnings FATAL => 'all';

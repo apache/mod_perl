@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 2;
 
-my $location = "/TestApache2__cgihandler";
+my $location = "/TestApache__cgihandler";
 
 my $expected = "1..3\nok 1\nok 2\nok 3\n";
 

@@ -1,4 +1,4 @@
-package TestApache2::write;
+package TestApache::write;
 
 use strict;
 use warnings FATAL => 'all';

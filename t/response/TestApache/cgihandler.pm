@@ -1,4 +1,4 @@
-package TestApache2::cgihandler;
+package TestApache::cgihandler;
 
 use strict;
 use warnings FATAL => 'all';
@@ -41,5 +41,5 @@ sub handler {
 1;
 __END__
 SetHandler perl-script
-PerlResponseHandler TestApache2::cgihandler
+PerlResponseHandler TestApache::cgihandler
 

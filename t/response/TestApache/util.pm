@@ -1,4 +1,4 @@
-package TestApache2::util;
+package TestApache::util;
 
 # Apache2::Util tests
 
