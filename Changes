@@ -17,7 +17,7 @@ workaround glibc/Perl-5.8.0 crypt() bug (seen with threaded MPMs)
 
 fix delete $ENV{$key} bug
 
-fix parse_args compat method to support non-ascii characters
+fix parse_args compat method to support non-ascii characters and tr/+/ /
 [Walery Studennikov <despair@sama.ru>]
 
 fix post_connection compat method to behave as it did in 1.x
