@@ -17,7 +17,21 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
+    { NULL },
 };
+
+modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
+{
+    int i;
+
+    for (i=0; MP_modglobal_keys[i].name; i++) {
+        if (strEQ(MP_modglobal_keys[i].name, name)) {
+            return &MP_modglobal_keys[i];
+        }
+    }
+
+    return NULL;
+}
 
 static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
                                           const char *package, I32 packlen)
