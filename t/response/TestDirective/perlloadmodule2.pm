@@ -23,19 +23,17 @@ our @APACHE_MODULE_COMMANDS = (
 
 sub merge {
     my($base, $add) = @_;
-    #use Data::Dumper;
-    #warn Dumper $base, $add;
 
     my %new = ();
 
-    push @{ $new{$_} }, @{ $base->{$_} } for keys %$base;
+    # be careful if the object values are references and not scalars.
+    # If that's the case a deep copy must be performed, or the merged
+    # object will affect the based object, which will break things
+    # when DIR_MERGE is called twice for the same $base/$add during
+    # the same request
+    push @{ $new{$_} }, @{ $base->{$_}||[] } for keys %$base;
+    push @{ $new{$_} }, @{ $add->{$_} ||[]  } for keys %$add;
 
-    # XXX: why this approach doesn't work?
-    # @new{keys %$base} = (values %$base);
-
-    push @{ $new{$_} }, @{ $add->{$_}||[] } for keys %$add;
-
-    #warn Dumper \%new;
     return bless \%new, ref($base);
 }
 
