@@ -897,6 +897,9 @@ PROTOTYPES: DISABLE
 
 BOOT:
     items = items;
+#ifndef XS_IMPORT
+    perl_require_module("Apache::Constants::Exports", NULL);
+#endif
     boot_ConstSubs("common");
 
 #ifdef XS_IMPORT
