@@ -34,21 +34,7 @@ list. Embperl CVS messages goes to I<embperl-cvs@perl.apache.org>.
 
 There are several modperl list archives, choose your favorite:
 
-Thanks to Ken Williams:
- 
- http://forum.swarthmore.edu/epigone/modperl
-
-Thanks to James Cooper:
-
- http://outside.organic.com/mail-archives/modperl/
-
-Thanks to Hank Leininger:
-
- http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
-
-Thanks to FindMail:
-
- http://www.findmail.com/listsaver/modperl/
+http://perl.apache.org/#maillists
 
 =back
 
@@ -59,8 +45,8 @@ Thanks to FindMail:
 =item HOMEWORK
 
 Make sure you've done your homework before reporting a problem.
-Check the mail archive, read cgi_to_mod_perl.pod, the FAQ and other
-pod documents in the distribution.
+Check the mail archive, read cgi_to_mod_perl.pod, the guide, the FAQ
+and other pod documents in the distribution.
 
 =item HOW
 
@@ -165,7 +151,8 @@ up all cpu), you can use gdb to find which Perl code is causing the
 spin:
 
 % gdb httpd <pid of spinning process>
-(gdb) source modperl_x.xx/.gdbinit
+(gdb) where
+(gdb) source mod_perl-x.xx/.gdbinit
 (gdb) curinfo
 
 =back
