@@ -465,8 +465,7 @@ sub clean_files {
 sub set_modperl_version {
     require './lib/mod_perl.pm';
 
-    $VERSION = $mod_perl::VERSION;
-    $VERSION =~ s/(\d\d)(\d\d)$/$1_$2/;
+    $VERSION = $mod_perl::VERSION_TRIPLET;
 
     open my $fh, 'Changes';
     while (<$fh>) {

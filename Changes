@@ -10,7 +10,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_20-dev
+=item 1.999_20-dev
+
+moving to the triplet version notation, which requires us to bump 1.99
+=> 1.999 so 1.999020 (mp2) > 1.29 (mp1). [Stas]
+Now we are gong to have:
+  $mod_perl::VERSION        : "1.099020"
+  int $mod_perl::VERSION    : 1.09902
+  $mod_perl::VERSION_TRIPLET: 1.99.20
 
 <Perl> and PerlPostConfigRequires were leaking some memory at
 startup. Use parms->temp_pool instead of parms->pool for temporary

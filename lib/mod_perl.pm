@@ -18,7 +18,22 @@ use 5.006;
 use strict;
 
 BEGIN {
-    our $VERSION = "1.9920";
+    our $VERSION = "1.999020";
+    our $VERSION_TRIPLET;
+
+    if ($VERSION =~ /(\d+)\.(\d\d\d)(\d+)/) {
+        my $v1 = $1;
+        my $v2 = int $2;
+        my $v3 = int($3 . "0" x (3 - length $3));
+        $VERSION_TRIPLET = "$v1.$v2.$v3";
+    }
+    else {
+        die "bad version: $VERSION";
+    }
+
+    # $VERSION        : "1.099020"
+    # int $VERSION    : 1.09902
+    # $VERSION_TRIPLET: 1.99.20
 }
 
 1;
