@@ -321,7 +321,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 #ifdef MP_DEBUG
     apr_pool_tag(temp_pool, "mod_perl temp filter");
 #endif
-    
+
     filter->temp_pool = temp_pool;
     filter->mode      = mode;
     filter->f         = f;
