@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+modperl_perl_module_loaded() fixed to use %INC to determine if a module
+is loaded instead of checking for the existence of a stash [Gozer]
+
 fix the modperl build, where httpd has been built against separate
 installations of apr-util and apr, where apr-util has been installed
 with a different includedir to apr. [Joe Orton]
