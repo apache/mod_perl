@@ -28,7 +28,6 @@ my $location = "/TestApache__head_request";
     ok t_cmp $res->code, 200, "code";
     ok t_cmp $res->header('Content-Length'), undef, "C-L header";
     ok t_cmp $res->content, "", "content";
-    t_debug $res->as_string;
 }
 
 {
@@ -38,7 +37,6 @@ my $location = "/TestApache__head_request";
     ok t_cmp $res->code, 200, "code";
     ok t_cmp $res->header('Content-Length'), undef, "C-L header";
     ok t_cmp $res->content, "", "content";
-    t_debug $res->as_string;
 }
 
 {
@@ -48,5 +46,4 @@ my $location = "/TestApache__head_request";
     ok t_cmp $res->code, 200, "code";
     ok t_cmp $res->header('Content-Length'), 25, "C-L header";
     ok t_cmp $res->content, "", "content";
-    t_debug $res->as_string;
 }
