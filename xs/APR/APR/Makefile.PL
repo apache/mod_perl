@@ -6,8 +6,9 @@ my $prefix = ModPerl::MM::build_config()->apxs(-q => 'PREFIX');
 
 # XXX: this works only with libapr 0.9.2+ (not on win32)
 my @libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
-    map { qx{$prefix/bin/$_-config} } qw(apr apu);
+    map { qq{$prefix/bin/$_-config} } qw(apr apu);
 chomp @libs;
+
 my $define = @libs ? '-DMP_HAVE_APR_LIBS' : '';
 
 ModPerl::MM::WriteMakefile(
