@@ -53,15 +53,17 @@
 #define CORE_PRIVATE
 #include "mod_perl.h"
 
-/* $Id$ */
-
 extern listen_rec *listeners;
 extern int mod_perl_socketexitoption;
 extern int mod_perl_weareaforkedchild;   
 
 #if defined(PERL_STACKED_HANDLERS) && defined(PERL_GET_SET_HANDLERS)
 
+#define PER_DIR_CONFIG 1
+#define PER_SRV_CONFIG 2
+
 typedef struct {
+    int type;
     char *name;
     void *offset;
     void (*set_func) (void *, void *, SV *);
@@ -77,11 +79,11 @@ static void set_handler_dir (perl_handler_table *tab, request_rec *r, SV *sv);
 static void set_handler_srv (perl_handler_table *tab, request_rec *r, SV *sv);
 
 #define HandlerDirEntry(name,member) \
-name, (void*)XtOffsetOf(perl_dir_config,member), \
+PER_DIR_CONFIG, name, (void*)XtOffsetOf(perl_dir_config,member), \
 (void(*)(void *, void *, SV *)) set_handler_dir
 
 #define HandlerSrvEntry(name,member) \
-name, (void*)XtOffsetOf(perl_server_config,member), \
+PER_SRV_CONFIG, name, (void*)XtOffsetOf(perl_server_config,member), \
 (void(*)(void *, void *, SV *)) set_handler_srv
 
 static perl_handler_table handler_table[] = {
@@ -95,7 +97,7 @@ static perl_handler_table handler_table[] = {
     {HandlerDirEntry("PerlFixupHandler", PerlFixupHandler)},
     {HandlerDirEntry("PerlHandler", PerlHandler)},
     {HandlerDirEntry("PerlLogHandler", PerlLogHandler)},
-    { NULL }
+    { FALSE, NULL }
 };
 
 static void perl_restore_av(void *data)
@@ -158,7 +160,7 @@ static void set_handler_base(void *ptr, perl_handler_table *tab, pool *p, SV *sv
 
 static void set_handler_dir(perl_handler_table *tab, request_rec *r, SV *sv)
 {
-     dPPDIR; 
+    dPPDIR; 
     set_handler_base((void*)cld, tab, r->pool, sv);
 }
 
@@ -184,13 +186,19 @@ static SV *get_handlers(request_rec *r, char *hook)
 {
     AV *avcopy;
     AV **av;
+    dPPDIR;
+    dPSRV(r->server);
+    void *ptr;
     perl_handler_table *tab = perl_handler_lookup(hook);
 
     if(!tab) return Nullsv;
-    {
-	dPPDIR;
-        av = (AV **)((char *)cld + (int)(long)tab->offset);
-    }
+
+    if(tab->type == PER_DIR_CONFIG)
+	ptr = (void*)cld;
+    else
+	ptr = (void*)cls;
+
+    av = (AV **)((char *)ptr + (int)(long)tab->offset);
 
     if(*av) 
 	avcopy = av_copy_array(*av);
