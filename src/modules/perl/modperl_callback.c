@@ -30,8 +30,8 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, void *h, int type)
         break;
     };
 
-    apr_register_cleanup(p, (void*)handler,
-                         modperl_handler_cleanup, apr_null_cleanup);
+    apr_pool_cleanup_register(p, (void*)handler,
+                         modperl_handler_cleanup, apr_pool_cleanup_null);
 
     return handler;
 }

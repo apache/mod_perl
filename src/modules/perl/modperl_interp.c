@@ -175,8 +175,9 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     
     modperl_tipool_init(tipool);
 
-    apr_register_cleanup(p, (void*)mip,
-                         modperl_interp_pool_destroy, apr_null_cleanup);
+    apr_pool_cleanup_register(p, (void*)mip,
+                              modperl_interp_pool_destroy,
+                              apr_pool_cleanup_null);
 
     scfg->mip = mip;
 }
@@ -209,7 +210,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     if (c) {
         desc = "conn_rec pool";
-        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY, c->pool);
+        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, c->pool);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
@@ -222,7 +223,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     }
     else if (r) {
         desc = "request_rec pool";
-        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY, r->pool);
+        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, r->pool);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
@@ -232,8 +233,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         }
 
         /* might have already been set by a ConnectionHandler */
-        (void)apr_get_userdata((void **)&interp, MP_INTERP_KEY,
-                               r->connection->pool);
+        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY,
+                                    r->connection->pool);
         if (interp) {
             desc = "r->connection pool";
             MP_TRACE_i(MP_FUNC,
@@ -255,9 +256,9 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp = modperl_interp_get(s ? s : r->server);
     ++interp->num_requests; /* should only get here once per request */
 
-    (void)apr_set_userdata((void *)interp, MP_INTERP_KEY,
-                           modperl_interp_unselect,
-                           p);
+    (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
+                                modperl_interp_unselect,
+                                p);
 
     MP_TRACE_i(MP_FUNC, "set interp 0x%lx in %s 0x%lx\n",
                (unsigned long)interp, desc, (unsigned long)p);

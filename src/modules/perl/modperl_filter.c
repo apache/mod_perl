@@ -6,7 +6,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
                                             const char *buf, apr_ssize_t len)
 {
     apr_bucket_brigade *bb = apr_brigade_create(wb->pool);
-    apr_bucket *bucket = apr_bucket_create_transient(buf, len);
+    apr_bucket *bucket = apr_bucket_transient_create(buf, len);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
     return ap_pass_brigade(wb->filters, bb);
 }
@@ -133,7 +133,7 @@ MP_INLINE modperl_filter_t *modperl_sv2filter(pTHX_ SV *sv)
 MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
 {
     apr_bucket_brigade *bb = apr_brigade_create(f->r->pool);
-    apr_bucket *b = apr_bucket_create_eos();
+    apr_bucket *b = apr_bucket_eos_create();
     APR_BRIGADE_INSERT_TAIL(bb, b);
     return ap_pass_brigade(f->next, bb);
 }
