@@ -1,7 +1,0 @@
-pm_to_blib
-Makefile
-*.c
-*.bs
-glue_pods
-blibdirs
-
