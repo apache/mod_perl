@@ -235,6 +235,11 @@ int modperl_callback_run_handlers(int idx, int type,
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::RequestRec", r, NULL);
 
+        /* per-server PerlSetEnv and PerlPassEnv - only once per-request */
+        if (! MpReqPERL_SET_ENV_SRV(rcfg)) {
+            modperl_env_configure_request_srv(aTHX_ r);
+        }
+
         /* per-directory PerlSetEnv - only once per-request */
         if (! MpReqPERL_SET_ENV_DIR(rcfg)) {
             modperl_env_configure_request_dir(aTHX_ r);
