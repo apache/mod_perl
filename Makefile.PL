@@ -16,6 +16,12 @@ use Apache::TestMM qw(test);
 
 our $VERSION;
 
+if (Apache::Build::REQUIRE_ITHREADS()) {
+    unless (Apache::Build::HAS_ITHREADS()) {
+	die "your system requires an ithreads enabled Perl";
+    }
+}
+
 my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
