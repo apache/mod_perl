@@ -21,12 +21,7 @@ sub handler {
              $callback,
              'inside PerlResponseHandler');
 
-    warn "in callback: $callback\n";
-
-#    my $callback = Apache::current_callback();
-#    my $expected = 'PerlFixupHandler';
-#    die "expecting $expected callback, instead got $callback" 
-#        unless $callback eq $expected;
+    #warn "in callback: $callback\n";
 
     Apache::OK;
 }
@@ -40,7 +35,7 @@ sub check {
     my $callback = Apache::current_callback();
     die "expecting $expected callback, instead got $callback" 
         unless $callback eq $expected;
-    warn "in callback: $callback\n";
+    #warn "in callback: $callback\n";
 }
 
 1;
