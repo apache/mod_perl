@@ -8,7 +8,7 @@ listed in deprecated_features.txt
 
 - PerlSetEnv, PerlPassEnv
 
-- PerlModule, PerlRequire, Perl{Set,Add}Var in .htacess is missing
+- PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
 
 - pod directives (=pod,=back,=cut) and __END__
 
@@ -42,7 +42,7 @@ core modules:
 
 - Apache::File, Apache::Util
 
-- see also: xs/maps/apache_function.map
+- see also: xs/maps/apache_functions.map
 
 addon modules:
 -------------
