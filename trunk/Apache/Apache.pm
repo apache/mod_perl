@@ -566,6 +566,8 @@ C<PerlSetVar> directive.
 
    my $val = $r->dir_config('Key');
 
+Keys are case-insensitive.
+
 Will return a I<HASH> reference blessed into the
 I<Apache::Table> class when called in a scalar context with no
 "key" argument. See I<Apache::Table>.
