@@ -164,6 +164,7 @@ MODULE=Apache::ServerUtil   PACKAGE=Apache::ServerRec BOOT=1
 
 MODULE=Apache::ServerUtil   PACKAGE=Apache::ServerUtil
  ap_exists_config_define
+ ap_server_root_relative | | p, fname=""
 
 MODULE=Apache::ServerUtil   PACKAGE=guess
  ap_error_log2stderr
@@ -176,7 +177,6 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
 ~ap_get_server_built
 ~ap_get_server_version
 ~ap_server_root
-~ap_server_root_relative
 
 
 MODULE=Apache::Connection   PACKAGE=guess
