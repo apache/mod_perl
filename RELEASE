@@ -112,3 +112,5 @@ Instructions for mod_perl 2.0 Release Manager
   c. commit Changes
      % cvs ci Changes lib/mod_perl.pm
 
+  d. add a release entry in STATUS and commit
+     % cvs ci STATUS
