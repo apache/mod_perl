@@ -112,10 +112,6 @@ Apache::compat)
 Apache->unescape_url{_info}:
 not yet implemented.  should be moved to Apache::Util
 
-$r->content_language:
-deprecate in favor of $r->content_languages?
-would require that apache-2.0 is also rid of r->content_language usage
-
 apr_array_header_t:
 needs an interface, either methods and/or tied array interface
 
