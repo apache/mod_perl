@@ -232,12 +232,25 @@ EOF
 
 #--- constuctors ---
 
+my $bpm = 'Apache/BuildConfig.pm';
+
 sub build_config {
     my $self = shift;
-    unshift @INC, 'lib';
-    delete $INC{'Apache/BuildConfig.pm'};
-    eval { require Apache::BuildConfig; };
-    shift @INC;
+    my $bpm_mtime = 0;
+
+    $bpm_mtime = (stat $INC{$bpm})[9] if $INC{$bpm};
+
+    if (-e "lib/$bpm" and (stat _)[9] > $bpm_mtime) {
+        #reload if Makefile.PL has regenerated
+        unshift @INC, 'lib';
+        delete $INC{$bpm};
+        eval { require Apache::BuildConfig; };
+        shift @INC;
+    }
+    else {
+        eval { require Apache::BuildConfig; };
+    }
+
     return bless {}, (ref($self) || $self) if $@;
     return Apache::BuildConfig::->new;
 }
@@ -251,7 +264,7 @@ sub new {
         @_,
     }, $class;
 
-    ModPerl::BuildOptions->init($self);
+    ModPerl::BuildOptions->init($self) if delete $self->{init};
 
     $self;
 }

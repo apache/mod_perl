@@ -9,7 +9,7 @@ use ModPerl::MM ();
 
 our $VERSION;
 
-my $build = Apache::Build->new;
+my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
 configure();
