@@ -386,6 +386,9 @@ if ($PERL_USELARGEFILES and $] >= 5.006) {
     $PERL_EXTRA_CFLAGS .= " $Config{ccflags}";
 }
 
+# apache-1.3.xx won't compile with -D_GNU_SOURCE
+$PERL_EXTRA_CFLAGS =~ s/-D_GNU_SOURCE//;
+
 for (keys %PassEnv) {
     $ENV{$_} = $$_ if $$_;
 }
