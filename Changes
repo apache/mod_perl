@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+tweaks to support Test.pm 1.21 [Philippe M. Chiasson <gozer@cpan.org>]
+
 add $r->add_config method to add dynamic configuration at request time
 
 add Apache::DIR_MAGIC_TYPE constant

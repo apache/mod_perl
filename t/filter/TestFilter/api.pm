@@ -17,6 +17,7 @@ my $response_data = "blah blah blah";
 #XXX: else pp_untie complains:
 #untie attempted while %d inner references still exist
 sub Apache::Filter::UNTIE {}
+sub Apache::Filter::PRINTF {}
 
 sub handler {
     my $filter = shift;

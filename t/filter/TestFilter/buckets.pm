@@ -13,6 +13,9 @@ use APR::Bucket ();
 
 use Apache::Const -compile => 'OK';
 
+#XXX: Not implemented yet, required by Test.pm
+sub Apache::TestToString::PRINTF {}
+
 sub handler {
     my($filter, $bb) = @_;
 
