@@ -27,13 +27,13 @@ sub handler : method {
     my($self, $r) = @_;
 
     plan $r, tests => 2;
-     
+
     my $top_module = Apache::Module->top_module();
     ok t_cmp (ref($top_module), 'Apache::Module');
 
     my $config = Apache::Module->get_config($self, $r->server);
     ok t_cmp ($config->{data}, 'Test');
-    
+
     OK;
 }
 
