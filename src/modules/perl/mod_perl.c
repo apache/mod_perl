@@ -231,6 +231,21 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         }
     }
 
+#ifdef MP_TRACE
+    {
+        server_rec *base_server = modperl_global_get_server_rec();
+        const char *desc = modperl_server_desc(s, p);
+        if (base_server == s) {        
+            MP_TRACE_i(MP_FUNC,
+                       "starting the parent perl for the base server\n", desc);
+        }
+        else {
+            MP_TRACE_i(MP_FUNC,
+                       "starting the parent perl for vhost %s\n", desc);
+        }
+    }
+#endif
+
 #ifdef MP_USE_GTOP
     MP_TRACE_m_do(
         modperl_gtop_do_proc_mem_before(MP_FUNC, "perl_parse");
