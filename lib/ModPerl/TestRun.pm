@@ -5,21 +5,22 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::TestRunPerl);
 
+use Apache::Build;
+
 # some mp2 tests require more than one server instance to be available
 # without which the server may hang, waiting for the single server
 # become available
 use constant MIN_MAXCLIENTS => 2;
 
-use Apache::Build;
-my $build = Apache::Build->build_config;
+# default timeout in secs (threaded mpms are extremely slow to
+# startup, due to a slow perl_clone operation)
+use constant DEFAULT_STARTUP_TIMEOUT =>
+    Apache::Build->build_config->mpm_is_threaded() ? 180 : 120;
 
 sub new_test_config {
     my $self = shift;
 
-    # timeout in secs (threaded mpms are extremely slow to startup,
-    # due to a slow perl_clone operation)
-    $self->{conf_opts}->{startup_timeout} =
-        $build->mpm_is_threaded() ? 180 : 120;
+    $self->{conf_opts}->{startup_timeout} ||= DEFAULT_STARTUP_TIMEOUT;
 
     $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
 

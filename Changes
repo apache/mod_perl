@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+make 't/TEST -startup_timeout secs' working (previously user's value
+was ignored) [Stas]
+
 ModPerl::Registry and friends now support non-parsed headers scripts,
 whose filename =~ /^nph-/, identically to mod_cgi. + test [Stas]
 
