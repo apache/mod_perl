@@ -27,9 +27,10 @@ use ModPerl::Util ();
 
 use Config;
 
-use constant WIN32   => $^O eq 'MSWin32';
-use constant SOLARIS => $^O eq 'solaris';
-use constant LINUX   => $^O eq 'linux';
+use constant WIN32    => $^O eq 'MSWin32';
+use constant SOLARIS  => $^O eq 'solaris';
+use constant LINUX    => $^O eq 'linux';
+use constant BSD_LIKE => $^O =~ /(bsd|aix|darwin)/i;
 
 use Apache::Const -compile => qw(OK DECLINED);
 
@@ -54,7 +55,7 @@ BEGIN {
 
         $HOW_BIG_IS_IT = \&linux_size_check;
 
-    } elsif ( $Config{'osname'} =~ /(bsd|aix|darwin)/i ) {
+    } elsif (BSD_LIKE) {
 
         # will getrusage work on all BSDs?  I should hope so.
         if ( eval { require BSD::Resource } ) {
@@ -75,7 +76,7 @@ BEGIN {
 
     } else {
 
-        die "Apache::SizeLimit not implemented on your platform.";
+        die "Apache::SizeLimit not implemented on $^O";
 
     }
 }
