@@ -60,18 +60,3 @@ __PACKAGE__->install_aliases(\%aliases);
 1;
 __END__
 
-
-=head1 NAME
-
-ModPerl::PerlRun - 
-
-=head1 SYNOPSIS
-
-
-
-=head1 DESCRIPTION
-
-
-
-=cut
-

@@ -67,19 +67,3 @@ __PACKAGE__->install_aliases(\%aliases);
 
 1;
 __END__
-
-
-=head1 NAME
-
-ModPerl::Registry - 
-
-=head1 SYNOPSIS
-
-
-
-=head1 DESCRIPTION
-
-
-
-=cut
-

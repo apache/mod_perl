@@ -767,17 +767,3 @@ sub Apache::RequestRec::my_slurp_filename {
 
 1;
 __END__
-
-=head1 NAME
-
-ModPerl::RegistryCooker - A Base Class of all mod_perl Registry Modules
-
-=head1 SYNOPSIS
-
-
-=head1 DESCRIPTION
-
-
-
-=cut
-
