@@ -53,4 +53,6 @@ it is possible to configure Perl*Handlers and callback into apache,
 much is the same as 1.x, but plenty is different at the moment.
 there will be a compat layer in the future.
 
+see the examples/ directory for examples.
+
 --dougm 03/26/01
