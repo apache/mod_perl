@@ -31,7 +31,9 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
     MP_END_TIMES();
     MP_PRINT_TIMES("r->puts");
 
-    /* XXX: flush if $| */
+    /* we do not check $| for this method,
+     * only in the functions called by the tied interface
+     */
 
     return bytes;
 }
