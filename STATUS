@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/03/11 06:15:37 $]
+   Last modified at [$Date: 2003/04/01 23:30:28 $]
 
 Release:
 --------
@@ -49,6 +49,16 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+  
+* we should stop generating xs/apache_*, at least for a reason that
+  it's incomplete and will be never complete as we don't keep up with
+  changes with ap_/apr_ namespace. Also we don't have the logic to
+  handle cases where functions aren't available on certain
+  platforms. Importing these unavailable functions may cause loading
+  problems on some platforms (aix?). If developers need to import
+  symbols from ap_/apr_ namespace they should use .exp files installed
+  by httpd/apr/aprutil.
 
 * this is probably a documenation issue. Several phases are of type VOID
   and docs say:
@@ -147,7 +157,12 @@ Needs Patch or Further Investigation:
 * Quite a few people reported problems with TestHooks during 'make test'
   - http://marc.theaimsgroup.com/?t=102985405500008&r=1&w=2
 
-
+* the issue with crypt_r: looks like 5.8.1 and 5.9.0 will have a bit
+  different handling. Jarkko has applied changes #19119 (maint) and 
+  #19122 (blead) to implements the on-demand option, because Ilya
+  Zakharevich reports that each interpreter was allocating 128K for
+  crypt_data. see the thread:
+  http://archive.develooper.com/perl5-porters@perl.org/msg93846.html
 
 Open Issues or Core Enhancements:
 ---------------------------------
