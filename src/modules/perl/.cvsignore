@@ -1,6 +1,7 @@
 modperl_hooks.h
 modperl_hooks.c
 modperl_flags.h
+modperl_flags.c
 modperl_directives.h
 modperl_directives.c
 modperl_trace.h
