@@ -792,7 +792,8 @@ if($APACHE_SRC or $USE_APXS) {
 	    "(need 1.2.0 or higher)";
     }
 
-    $PERL_SECTIONS = $PERL_SSI = 0 if $Is_Win32;
+#    $PERL_SECTIONS = $PERL_SSI = 0 if $Is_Win32;
+    $PERL_SSI = 0 if $Is_Win32;
     unless ($Is_Win32) {
       for (qw(PERL_SECTIONS PERL_SSI), keys %experimental) {
 	$k = $_;
