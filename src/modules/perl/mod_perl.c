@@ -354,6 +354,7 @@ static void mod_perl_set_cwd(void)
     GV *gv = gv_fetchpv(name, GV_ADDMULTI, SVt_PV);
     SV *cwd = perl_eval_pv("require Cwd; Cwd::fastcwd()", TRUE);
     sv_setsv(GvSV(gv), cwd);
+    mod_perl_untaint(GvSV(gv));
 }
 
 #ifdef PERL_TIE_SCRIPTNAME

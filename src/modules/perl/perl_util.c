@@ -103,6 +103,16 @@ table *hvrv2table(SV *rv)
     return (table *)SvIV((SV*)SvRV(rv));
 }
 
+void mod_perl_untaint(SV *sv)
+{
+    if(!tainting) return;
+    if (SvTYPE(sv) >= SVt_PVMG && SvMAGIC(sv)) {
+	MAGIC *mg = mg_find(sv, 't');
+	if (mg)
+	    mg->mg_len &= ~1;
+    }
+}
+
 /* same as Symbol::gensym() */
 SV *mod_perl_gensym (char *pack)
 {

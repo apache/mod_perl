@@ -460,13 +460,8 @@ untaint(...)
 
     CODE:
     if(!tainting) XSRETURN_EMPTY;
-    for(i=1; i<items; i++) {
-	if (SvTYPE(ST(i)) >= SVt_PVMG && SvMAGIC(ST(i))) {
-	    MAGIC *mg = mg_find(ST(i), 't');
-	    if (mg)
-		mg->mg_len &= ~1;
-	}
-    }
+    for(i=1; i<items; i++) 
+        mod_perl_untaint(ST(i));
 
 void
 taint(...)
