@@ -1035,6 +1035,54 @@ get_client_block(r, buffer, bufsiz)
     }
 
 int
+write(r, sv_buffer, sv_length=-1, offset=0)
+    Apache	r
+    SV *sv_buffer
+    int sv_length
+    int offset
+
+    ALIAS:
+    Apache::WRITE = 1
+
+    PREINIT:
+    STRLEN len;
+    char *buffer;
+    int sent = 0;
+
+    CODE:
+    ix = ix; /* avoid -Wall warning */
+    RETVAL = 0;
+
+    if (r->connection->aborted) {
+        XSRETURN_UNDEF;
+    }
+
+    buffer = SvPV(sv_buffer, len);
+    if (sv_length != -1) {
+        len = sv_length;
+    }
+
+    if (offset) {
+        buffer += offset;
+    }
+
+    while (len > 0) {
+        sent = rwrite(buffer,
+                      len < HUGE_STRING_LEN ? len : HUGE_STRING_LEN,
+                      r);
+        if (sent < 0) {
+            rwrite_neg_trace(r);
+	    break;
+        }
+        buffer += sent;
+        len -= sent;
+        RETVAL += sent;
+    }
+
+    OUTPUT:
+    RETVAL
+
+int
 print(r, ...)
     Apache	r
 

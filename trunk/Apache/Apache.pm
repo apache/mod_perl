@@ -158,12 +158,6 @@ sub PRINTF {
 }
 *printf = \&PRINTF;
 
-sub WRITE {
-    my($r, $buff, $length, $offset) = @_;
-    my $send = substr($buff, $offset, $length);
-    $r->print($send);
-}
-
 sub send_cgi_header {
     my($r, $headers) = @_;
     my $dlm = "\015?\012"; #a bit borrowed from LWP::UserAgent

@@ -7,8 +7,10 @@ my $num_tests = 10;
 my(@test_scripts) = qw(test perl-status);
 %get_only = map { $_,1 } qw(perl-status);
 
+my(@sys_tests) = qw(syswrite_1 syswrite_2 syswrite_3);
+
 if($] > 5.003) {
-    $num_tests += 3;
+    $num_tests += (3 + @sys_tests);
     push @test_scripts, qw(io/perlio.pl);
 }
 
@@ -42,7 +44,28 @@ foreach $s (@test_scripts) {
     next if $get_only{$s};
 
     test ++$i, ($str =~ /^REQUEST_METHOD=GET$/m); 
-    test ++$i, ($str =~ /^QUERY_STRING=query$/m); 
+    test ++$i, ($str =~ /^QUERY_STRING=query$/m);
+
+    if ($s eq 'io/perlio.pl') {
+        foreach my $h (@sys_tests) {
+            $url = new URI::URL("http://$netloc$script?$h");
+
+            $request = new HTTP::Request('GET', $url);
+
+            print "GET $url\n\n";
+
+            $response = $ua->request($request, undef, undef);
+
+            $str = $response->as_string;
+            print "$str\n";
+            if ($h eq 'syswrite_noheader') {
+                test ++$i, $str =~ /(Internal Server Error)/;
+            } else {
+                die "$1\n" if $str =~ /(Internal Server Error)/;
+                test ++$i, ($response->is_success);
+            }
+        }
+    }
 }
 
 my $mp_version;
