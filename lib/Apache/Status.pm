@@ -109,7 +109,7 @@ sub menu_item {
 
 sub handler {
     my($r) = @_;
-    Apache->request($r); #for Apache::CGI
+    #Apache->request($r); #for Apache::CGI
     my $qs = $r->args || "";
     my $sub = "status_$qs";
     no strict 'refs';
