@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 51;
+my $tests = 52;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -30,6 +30,9 @@ $r->content_languages([qw(en)]);
 $r->send_http_header;
 
 $r->print("1..$tests\n");
+
+test ++$i, $ENV{MOD_PERL};
+print "ENV{MOD_PERL} = $ENV{MOD_PERL}\n";
 
 #backward compat
 %ENV = $r->cgi_env;

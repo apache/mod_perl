@@ -3,13 +3,17 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- Makefile.PL saying: Can't stat : No such file or directory
+
+- internal/auth.......FAILED test 1 (w/o mod_autoindex)
+
+- install os-inline.c
+
+- avoid write_client symtab lookup in print()
+
 - turn of strip of httpd in Apache's install.sh
 
-- -e and setuid problem (Steve Neilsen)
-
 - method handler called when it shouldn't be? (Ken)
-
-- $ENV{MOD_PERL} is inherited by subprocesses, must stop this
 
 - Apache::Status extensions (ix)
 
