@@ -145,8 +145,9 @@ sub ModPerl::BuildMM::MY::postamble {
 
     my $doc_root = File::Spec->catdir($root, "docs", "api");
 
-    my $lib_dir = File::Spec->catdir($root, "lib");
-    my $blib_dir = File::Spec->catdir($root, "blib");
+    my $lib_dir         = File::Spec->catdir($root, "lib");
+    my $blib_dir        = File::Spec->catdir($root, "blib");
+    my $apache_test_dir = File::Spec->catdir($root, "Apache-Test", "lib");
 
     my @targets = ();
     my @target;
@@ -165,7 +166,7 @@ sub ModPerl::BuildMM::MY::postamble {
 
             push @target, 
                 "\$(FULLPERLRUN) -Mblib=$blib_dir -Mlib=$lib_dir " .
-                "-MModPerl::BuildMM " .
+                "-Mlib=$apache_test_dir -MModPerl::BuildMM " .
                 "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
         }
 
