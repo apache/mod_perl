@@ -8,6 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+Fixes for a clean compile with mod_ssl [ Salvador Ortiz Garcia
+<sog@msg.com.mx> ]
+
+Minor fix to the debug option in Apache::StatINC [ Ask Bjoern Hansen
+<ask@netcetera.dk> ]
+
 =item 1.16 - October 2, 1998
 
 Apache::Util::escape_html() now handles `"' and `&'. should also be a
