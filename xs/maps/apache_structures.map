@@ -233,19 +233,19 @@ $  limit_req_fields
 
 <cmd_parms>
 -  info
-   override
-   limited
-   limited_xmethods
-   xlimited
-   config_file
-   directive
-   pool
-   temp_pool
-   server
-   path
-   cmd
-   context
-   err_directive
+<  override
+<  limited
+!  limited_xmethods
+!  xlimited
+!  config_file
+<  directive
+<  pool
+<  temp_pool
+<  server
+<  path
+<  cmd
+<  context
+!  err_directive
 </cmd_parms>
 
 !<ap_mgmt_item_t>
