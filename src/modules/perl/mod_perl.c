@@ -210,8 +210,8 @@ int modperl_response_handler(request_rec *r)
 
     retval = modperl_per_dir_callback(MP_RESPONSE_HANDLER, r);
 
-    if (retval == DECLINED) {
-        r->handler = "*/*"; /* let http_core or whatever try */
+    if ((retval == DECLINED) && r->content_type) {
+        r->handler = r->content_type; /* let http_core or whatever try */
     }
 
     modperl_response_finish(r);
