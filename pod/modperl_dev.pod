@@ -42,7 +42,14 @@ Link with libgtop and enable libgtop reporting
 
 =item MP_DEBUG
 
-Turn on debugging (-g -Wall -lperld) and tracing
+Turn on debugging (-g -lperld) and tracing
+
+=item MP_MAINTAINER
+
+Maintainer compile mode, turn on MP_DEBUG and add gcc flags:
+
+ -DAP_DEBUG \
+ -Wall -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
 
 =item MP_TRACE
 
@@ -50,7 +57,9 @@ Enable tracing
 
 =item MP_CCOPTS
 
-Add to compiler flags
+Add to compiler flags, e.g.
+
+ MP_CCOPTS = -Werror
 
 =item MP_INST_APACHE2
 

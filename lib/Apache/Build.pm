@@ -82,6 +82,9 @@ sub ldopts {
     $ldopts;
 }
 
+my $Wall = 
+  "-Wall -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations";
+
 sub ccopts {
     my($self) = @_;
 
@@ -91,9 +94,17 @@ sub ccopts {
         $ccopts .= " -DMP_USE_GTOP";
     }
 
+    if ($self->{MP_MAINTAINER}) {
+        $self->{MP_DEBUG} = 1;
+        if ($self->perl_config('gccversion')) {
+            #same as --with-maintainter-mode
+            $ccopts .= " $Wall -DAP_DEBUG";
+        }
+    }
+
     if ($self->{MP_DEBUG}) {
         $self->{MP_TRACE} = 1;
-        $ccopts .= " -g -Wall";
+        $ccopts .= " -g";
     }
 
     if ($self->{MP_CCOPTS}) {

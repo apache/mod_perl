@@ -135,7 +135,8 @@ sub table {
 __DATA__
 
 USE_GTOP	Link with libgtop and enable libgtop reporting
-DEBUG		Turning on debugging (-g -Wall -lperld) and tracing
+DEBUG		Turning on debugging (-g -lperld) and tracing
+MAINTAINER	Maintainer mode: DEBUG=1 -DAP_DEBUG -Wall ...
 CCOPTS		Add to compiler flags
 TRACE		Turn on tracing
 USE_DSO	 	Build mod_perl as a dso

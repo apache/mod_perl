@@ -54,14 +54,14 @@ my %directive_proto = (
     PerSrv     => {
         args => [{type => 'cmd_parms', name => 'parms'},
                  {type => 'void', name => 'dummy'},
-                 {type => 'char', name => 'arg'}],
+                 {type => 'const char', name => 'arg'}],
         cfg  => {get => $scfg_get, name => 'scfg'},
         scope => 'RSRC_CONF',
     },
     PerDir     => {
         args => [{type => 'cmd_parms', name => 'parms'},
                  {type => 'void', name => 'dummy'},
-                 {type => 'char', name => 'arg'}],
+                 {type => 'const char', name => 'arg'}],
         cfg  => {get => $dcfg_get, name => 'dcfg'},
         scope => 'OR_ALL',
     },

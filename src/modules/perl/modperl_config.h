@@ -15,13 +15,14 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s);
 
 void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv);
 
-char *modperl_cmd_push_handlers(MpAV **handlers, char *name, ap_pool_t *p);
+char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
+                                ap_pool_t *p);
 
 char **modperl_srv_config_argv_init(modperl_srv_config_t *scfg, int *argc);
 
 #define MP_DECLARE_SRV_CMD(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *dummy, char *arg)
+                               void *dummy, const char *arg)
 MP_DECLARE_SRV_CMD(trace);
 MP_DECLARE_SRV_CMD(switches);
 MP_DECLARE_SRV_CMD(options);

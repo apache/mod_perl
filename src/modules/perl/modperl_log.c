@@ -15,7 +15,7 @@ void modperl_trace(char *func, const char *fmt, ...)
     va_end(args);
 }
 
-void modperl_trace_level_set(char *level)
+void modperl_trace_level_set(const char *level)
 {
     if (!level) {
         if (!(level = getenv("MOD_PERL_TRACE"))) {

@@ -31,6 +31,10 @@ void modperl_tipool_add(modperl_tipool_t *tipool, void *data);
 
 void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp);
 
+modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
+                                         void *data,
+                                         modperl_list_t **listp);
+
 modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool);
 
 void modperl_tipool_putback(modperl_tipool_t *tipool,

@@ -2,7 +2,7 @@
 
 #include "mod_perl.h"
 
-int modperl_gtop_size_string(size_t size, char *size_string)
+static int modperl_gtop_size_string(size_t size, char *size_string)
 {
     if (size == (size_t)-1) {
         ap_snprintf(size_string, MP_GTOP_SSS, "-");
@@ -29,7 +29,7 @@ int modperl_gtop_size_string(size_t size, char *size_string)
     return 1;
 }
 
-ap_status_t modperl_gtop_exit(void *data)
+static ap_status_t modperl_gtop_exit(void *data)
 {
     glibtop_close();
     return APR_SUCCESS;
@@ -71,7 +71,7 @@ void modperl_gtop_get_proc_mem_after(modperl_gtop_t *gtop)
  * XXX: this is pretty ugly, 
  * but avoids allocating buffers for the size string
  */
-void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
+static void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
 {
     int is_diff = (type == SS_TYPE_DIFF);
     glibtop_proc_mem *pm = NULL;

@@ -41,6 +41,12 @@ extern module MODULE_VAR_EXPORT perl_module;
 #include "modperl_directives.h"
 
 void modperl_init(server_rec *s, ap_pool_t *p);
+void modperl_hook_init(ap_pool_t *pconf, ap_pool_t *plog, 
+                       ap_pool_t *ptemp, server_rec *s);
+void modperl_pre_config_handler(ap_pool_t *p, ap_pool_t *plog,
+                                ap_pool_t *ptemp);
+void modperl_register_hooks(void);
+PerlInterpreter *modperl_startup(server_rec *s, ap_pool_t *p);
 void xs_init(pTHXo);
 
 #endif /*  MOD_PERL_H */

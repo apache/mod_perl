@@ -1,6 +1,7 @@
 #include "mod_perl.h"
 
-char *modperl_cmd_push_handlers(MpAV **handlers, char *name, ap_pool_t *p)
+char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
+                                ap_pool_t *p)
 {
     modperl_handler_t *h = modperl_handler_new(p, (void*)name,
                                                MP_HANDLER_TYPE_CHAR);
@@ -49,7 +50,7 @@ modperl_request_config_t *modperl_request_config_new(request_rec *r)
 }
 
 #define scfg_push_argv(arg) \
-    *(char **)ap_push_array(scfg->argv) = arg
+    *(const char **)ap_push_array(scfg->argv) = arg
 
 modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 {
@@ -223,7 +224,7 @@ MP_DECLARE_SRV_CMD(options)
 
 #define MP_IMP_INTERP_POOL_CFG(item) \
 const char *modperl_cmd_interp_##item(cmd_parms *parms, \
-                                      void *dummy, char *arg) \
+                                      void *dummy, const char *arg) \
 { \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \

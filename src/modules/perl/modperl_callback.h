@@ -25,6 +25,9 @@ int modperl_handler_parse(pTHX_ modperl_handler_t *handler);
 
 int modperl_callback(pTHX_ modperl_handler_t *handler, ap_pool_t *p);
 
+int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
+                         server_rec *s, int type);
+
 void modperl_process_callback(int idx, ap_pool_t *p, server_rec *s);
 
 void modperl_files_callback(int idx,
