@@ -4,6 +4,19 @@
 
 ### try to get this first post 2.0 release ###
 
+* mp2 test suite opens many files - quite a few failure reports were
+  due to the low shell file limit. But at the moment we can't tell
+  users why this have the problem. Gisle Aas has suggested that we
+  check whether the shell has a big enough setting for this limit and
+  either die explaining the situation or try to manually raise the
+  limit.
+
+    http://thread.gmane.org/gmane.comp.apache.mod-perl/16154
+
+  once implemented this should be ideally abstracted to be usable by
+  Apache-Test, and have a hook so each project can specify its own
+  min files limit, so other projects can benefit too.
+
 * directive handlers are supported but need some work for 1.x compat
   - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
     what Apache::Directive->as_string does, but one char or line at a time
