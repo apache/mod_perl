@@ -58,6 +58,7 @@ Symbol/Makefile.PL
 Symbol/Symbol.pm
 Symbol/Symbol.xs
 Symbol/test.pl
+src/modules/perl/perl_PL.h
 src/modules/perl/mod_perl_version.h
 src/modules/perl/Exports.c
 src/modules/perl/Constants.xs

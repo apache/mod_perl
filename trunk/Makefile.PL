@@ -33,6 +33,8 @@ my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 my $USE_THREADS = 
     (defined($Config{usethreads}) && ($Config{usethreads} eq "define"));
    
+$PERL_VERSION = perl_version();
+
 require "./lib/mod_perl.pm";
 $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
 {
@@ -688,6 +690,7 @@ if($APACHE_SRC or $USE_APXS) {
 #---------------------------------------------------------------------
 
 MOD_PERL_VERSION = $VERSION
+PERL_VERSION = $PERL_VERSION
 
 INCDIR = $incdir
 
@@ -1487,7 +1490,7 @@ sub edit_extra_cflags {
     $inc .= $SSL_INCLUDE if $SSL_INCLUDE;
     $inc .= " -DSTRONGHOLD" if is_ssl() =~ /stronghold/i;
     $inc .= " $PERL_EXTRA_CFLAGS" if $PERL_EXTRA_CFLAGS;
-    $inc .= " -DMOD_PERL";
+    $inc .= " -DMOD_PERL -DPERL_VERSION=$PERL_VERSION";
 
     while (<$fh>) {
 	push @file, $_;
@@ -1725,6 +1728,13 @@ sub ldopts {
     $Embed::ldopts;
 }
 
+sub perl_version {
+    my $v = "$]";
+    $v =~ s/\.//g;
+    $v .= "0" while length($v) < 6;
+    $v;
+}
+
 sub APACI::init {
     my $lib_cfg;
     if($USE_APXS) {
@@ -1757,6 +1767,7 @@ sub APACI::init {
 
 #   mod_perl version
 MOD_PERL_VERSION = $VERSION
+PERL_VERSION = $PERL_VERSION
 
 #   Perl interpreter to use 
 PERL = $^X
