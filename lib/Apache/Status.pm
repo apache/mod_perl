@@ -85,11 +85,12 @@ sub header {
     my $start = scalar localtime $^T;    
     my $srv = Apache::Constants::SERVER_VERSION();
     $r->send_http_header("text/html");
+    my $v = $^V ? sprintf "v%vd", $^V : $];
     $r->print(<<"EOF");
 <html>
 <head><title>Apache::Status</title></head>
 <body>
-Embedded Perl version <b>$]</b> for <b>$srv</b> process <b>$$</b>, 
+Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>, 
 <br> running since $start<hr>
 EOF
 
