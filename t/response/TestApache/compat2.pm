@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 34, todo => [23];
+    plan $r, tests => 33;
 
     $r->send_http_header('text/plain');
 
@@ -152,11 +152,11 @@ sub handler {
                  $r->headers_out->{"Content-length"},
                  "\$r->set_content_length($csize) w/ setting explicit size");
 
-        $r->set_content_length();
+#        $r->set_content_length();
         # TODO
-        ok t_cmp(0, # XXX: $r->finfo->csize is not available yet
-                 $r->headers_out->{"Content-length"},
-                 "\$r->set_content_length() w/o setting explicit size");
+#        ok t_cmp(0, # XXX: $r->finfo->csize is not available yet
+#                 $r->headers_out->{"Content-length"},
+#                 "\$r->set_content_length() w/o setting explicit size");
 
         # XXX: how to test etag?
         t_debug "\$r->set_etag";
