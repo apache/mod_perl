@@ -233,8 +233,6 @@ NEW MODULE STUFF
 - should Apache::Registry use filename instead of vhost_name+uri?
               Ben Laurie <ben@algroup.co.uk>
 
-- Apache::Util: functions from apache's util*.c files
-
 - apache.pm: use apache '1.3b3';
 
 - have Apache::Status hunt for AUTOLOADing 

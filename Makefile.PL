@@ -150,6 +150,7 @@ $PERL_DIRECTIVE_HANDLERS = 0;
 $PERL_TIE_TABLES = 0;
 $PERL_LOG_API = 0;
 $PERL_URI_API = 0;
+$PERL_UTIL_API = 0;
 my %experimental = map { $_,1 } qw{
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
@@ -193,6 +194,7 @@ sub is_mp_arg {
    PERL_TIE_TABLES
    PERL_LOG_API
    PERL_URI_API
+   PERL_UTIL_API
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -269,7 +271,7 @@ for (keys %callback_alias) {
 
 if($EVERYTHING) {
     @callback_hooks{qw(PERL_STACKED_HANDLERS PERL_METHOD_HANDLERS)} = (1) x 2;
-    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS PERL_LOG_API PERL_URI_API)) {
+    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS PERL_LOG_API PERL_URI_API PERL_UTIL_API)) {
        $$_ = 1;
     }
 }
@@ -284,7 +286,7 @@ if($ALL_HOOKS) {
 
 if($DYNAMIC) {
     $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = 
-	$PERL_LOG_API = $PERL_URI_API = 1;
+	$PERL_LOG_API = $PERL_URI_API = $PERL_UTIL_API = 1;
 }
 
 my @xs_modules = qw(Apache Apache::Constants);
@@ -358,7 +360,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $USE_APACI = $USE_DSO = 0;
 	    
 	}
-	for (qw(PERL_LOG_API PERL_URI_API)) {
+	for (qw(PERL_LOG_API PERL_URI_API PERL_UTIL_API)) {
 	    if(($mmn < MMN_130) and $$_) { #1.3.0
 		$$_ = 0;
 		$cant_hook{$_} = "(need 1.3.0 or higher)";
@@ -503,7 +505,7 @@ if($PERL_TIE_TABLES) {
     $callback_hooks{PERL_TIE_TABLES} = 1;
 }
 
-for (qw(Log URI)) {
+for (qw(Log URI Util)) {
     my $s = "PERL_".uc($_)."_API";
     if($$s) {
 	push @xs_modules, "Apache::$_";

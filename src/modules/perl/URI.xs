@@ -77,6 +77,7 @@ rpath(uri)
     Apache::URI uri
 
     CODE:
+    RETVAL = Nullsv;
 
     if(uri->path_info) {
 	int uri_len = strlen(uri->uri.path);
