@@ -27,6 +27,7 @@ sub handler {
     else {
         my $new_args = "$uri?main=1;$args";
         my $subr;
+        $args{filter} ||= '';
         if ($args{filter} eq 'first') {
             # run all request filters
             $subr = $r->lookup_uri($new_args,
