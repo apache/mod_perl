@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+Fixed Apache::Util::ht_time test (util.t) so it doesn't fail without
+any reason
+
 added $r->finfo method
 
 Apache::Connection and Apache::Server will not be loaded by default if
