@@ -177,6 +177,9 @@ sub MY::top_targets {
 
     $string .= <<'EOF';
 
+etags:
+	@(cd $(MODPERL_SRC) && find . -name '*.[ch]' | etags -L -);
+
 modperl_lib:
 	@(cd $(MODPERL_SRC) && $(MAKE));
 
