@@ -28,13 +28,13 @@ my $letter = 'a';
 for my $name (qw(one two three)) { 
     my $c = Apache::Cookie->new($r,
 				-name    =>  $name,  
-				-values  =>  ["bar_$name", $letter],  
+				-value  =>  ["bar_$name", $letter],  
 				-expires =>  '+3M',  
 				-path    =>  '/'  
 				);  
     my $cc = CGI::Cookie->new(
 			      -name    =>  $name,  
-			      -values  =>  ["bar_$name", $letter],  
+			      -value  =>  ["bar_$name", $letter],  
 			      -expires =>  '+3M',  
 			      -path    =>  '/'  
 			      );
