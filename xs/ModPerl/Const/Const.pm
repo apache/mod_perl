@@ -16,7 +16,7 @@ our @ISA = qw(DynaLoader);
 #   even when RTDL_GLOBAL is available, patch submitted to p5p
 use Config ();
 use constant DL_GLOBAL =>
-  $Config::Config{dlsrc} eq 'dl_dlopen.xs' ? 0x01 : 0x0;
+  ( $Config::Config{dlsrc} eq 'dl_dlopen.xs' && $^O ne 'openbsd' ) ? 0x01 : 0x0;
 sub dl_load_flags { DL_GLOBAL }
 
 #only bootstrap for use outside of mod_perl

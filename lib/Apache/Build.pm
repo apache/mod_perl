@@ -15,6 +15,7 @@ use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 use constant AIX    => $^O eq 'aix';
 use constant DARWIN => $^O eq 'darwin';
 use constant HPUX   => $^O eq 'hpux';
+use constant OPENBSD => $^O eq 'openbsd';
 use constant WIN32  => $^O eq 'MSWin32';
 
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
@@ -1049,7 +1050,7 @@ sub dynamic_link_default {
 
     my $ranlib = "\t" . '$(MODPERL_RANLIB) $@';
 
-    $link .= "\n" . $ranlib unless DARWIN;
+    $link .= "\n" . $ranlib unless (DARWIN or OPENBSD);
 
     $link;
 }
