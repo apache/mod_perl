@@ -17,7 +17,8 @@ object, but it's then auto-DESTROYed by perl rendering the object that
 used it corrupted. the solution is to make the newly created objects
 refer to the underlying object via magic attachment. only objects
 using objects that have DESTROY are effected. This concerns some of
-the methods accepting the APR::Pool object. [Stas]
+the methods accepting the custom APR::Pool object (not native pools
+like $r->pool). [Stas]
 Adjusted: 
 - APR::Brigade: new
 - APR::Finfo: stat
