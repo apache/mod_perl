@@ -107,8 +107,8 @@ const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
                 }
             }
             
-            r->handler = (const char *)apr_pstrmemdup(
-                mpxs_Apache__RequestRec_pool(r), new_handler, SvLEN(*MARK));
+            r->handler = (const char *)apr_pstrmemdup(r->pool, new_handler,
+                                                      SvLEN(*MARK));
         }
         else {
             Perl_croak(aTHX_ "the new_handler argument must be a string");
