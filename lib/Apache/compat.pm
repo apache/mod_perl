@@ -22,13 +22,14 @@ use Apache::Server ();
 use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
+use mod_perl ();
 
 BEGIN {
     $INC{'Apache.pm'} = 1;
 
     $INC{'Apache/Constants.pm'} = 1;
 
-    $ENV{MOD_PERL} = 1;
+    $ENV{MOD_PERL} = $mod_perl::VERSION;
 }
 
 package Apache;
