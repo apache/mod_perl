@@ -590,6 +590,13 @@ EOF
     return $string;
 }
 
+# this is a workaround so that ModPerl::MM will move MY::constants
+# away, and Apache-Test/Makefile.PL which has its own MY::constants
+# won't get complaints on MY::constants redefined
+sub MY::constants {
+    shift->ModPerl::BuildMM::MY::constants;
+}
+
 sub MY::tool_autosplit {
     '';
 }
