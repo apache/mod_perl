@@ -204,14 +204,20 @@ sub run {
         # log script's execution errors
         $rc = $self->error_check;
 
-        ModPerl::Global::special_list_call(END => $package);
+        {
+            # there might be no END blocks to call, so $@ will be not
+            # reset
+            local $@;
+            ModPerl::Global::special_list_call(END => $package);
 
-        # log script's END blocks execution errors
-        my $new_rc = $self->error_check;
+            # log script's END blocks execution errors
+            my $new_rc = $self->error_check;
 
-        # use the END blocks return status if the script's execution
-        # was successful
-        $rc = $new_rc if $rc != Apache::OK;
+            # use the END blocks return status if the script's execution
+            # was successful
+            $rc = $new_rc if $rc == Apache::OK;
+        }
+
     }
 
     if ($self->should_reset_inc_hash) {
