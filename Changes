@@ -16,8 +16,7 @@ support Apache::FakeRequest::args in a list context
 compile fixes for 5.6 + -Duse5005threads
 [Lincoln Stein <lstein@cshl.org>]
 
-fix possible core dump is PerlRequire fails, thanks to James Nicolson
-for the spot
+log to parms->server instead of stderr if PerlRequire fails
 
 make sure lib/Apache/MyConfig.pm is written before used
 thanks to Albert Chin for the spot
