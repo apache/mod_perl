@@ -18,8 +18,8 @@ use base qw(Apache::TestRunPerl);
 # redirect tests require 2 servers
 use constant MIN_MAXCLIENTS => 2;
 
-use Cwd ();
-use File::Spec::Functions qw(splitpath splitdir catpath catdir rootdir);
+use File::Spec::Functions qw(catdir);
+use File::Basename qw(dirname);
 
 use Apache::Build;
 
@@ -33,11 +33,10 @@ use constant DEFAULT_STARTUP_TIMEOUT =>
 sub new_test_config {
     my $self = shift;
 
-    my ($volume, $dir, $file) = splitpath Cwd::cwd(), 1;
-    my @dir = grep {length} splitdir $dir;
-    $dir = catdir @dir[0..($#dir-2)]; # remove two last dir segments
-    my $base = catpath $volume, rootdir(), $dir, $file;
-    $self->{conf_opts}->{src_dir} = catdir $base, qw(src modules perl);
+    require Apache::Test;
+    my $mp2_root_dir = dirname Apache::Test::vars('top_dir');
+    $self->{conf_opts}->{src_dir} = catdir $mp2_root_dir,
+        qw(src modules perl);
 
     $self->{conf_opts}->{startup_timeout} ||= DEFAULT_STARTUP_TIMEOUT;
 
