@@ -32,10 +32,7 @@ static apr_table_t *modperl_table_overlap(apr_pool_t *p,
             continue;
         }
         else {
-            /*XXX: should setn() be addn()for PerlSetVar?
-             * since we have PerlAddVar, there may be multiple values.
-             */
-            apr_table_setn(merge, entries[i].key, entries[i].val);
+            apr_table_addn(merge, entries[i].key, entries[i].val);
         }
     }
 
