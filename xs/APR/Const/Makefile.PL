@@ -1,7 +1,7 @@
 use lib qw(../lib);
-use ModPerl::MM ();
+use ModPerl::BuildMM ();
 
-ModPerl::MM::WriteMakefile(
+ModPerl::BuildMM::WriteMakefile(
     NAME => 'APR::Const',
     VERSION_FROM => 'Const.pm',
 );

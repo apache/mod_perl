@@ -1,5 +1,5 @@
 use lib qw(../lib);
-use ModPerl::MM ();
+use ModPerl::BuildMM ();
 
 my $srcdir = '../../../src/modules/perl';
 #link these two into Const.so so constants can be used outside of httpd
@@ -13,7 +13,7 @@ for (@names) {
     $src{$cfile} = "$srcdir/$cfile";
 }
 
-ModPerl::MM::WriteMakefile(
+ModPerl::BuildMM::WriteMakefile(
     NAME => 'ModPerl::Const',
     VERSION_FROM => 'Const.pm',
     OBJECT => "Const.o @obj",

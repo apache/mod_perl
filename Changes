@@ -10,6 +10,14 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+provide a workaround for ExtUtils::MakeMaker::mv_all_methods, so
+ModPerl::BuildMM and ModPerl::MM can override EU::MM methods behind
+the scenes. [Stas]
+
+adding ModPerl::BuildMM, which is now used for building mod_perl.
+ModPerl::MM will be used for 3rd party modules. ModPerl::BuildMM
+reuses ModPerl::MM where possible. [Stas]
+
 drop the glue code for apr_generate_random_bytes, since it's not
 available on all platforms. [Stas]
 

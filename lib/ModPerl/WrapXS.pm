@@ -307,9 +307,9 @@ sub write_makefilepl {
 $noedit_warning
 
 use lib qw(../../../lib); #for Apache::BuildConfig
-use ModPerl::MM ();
+use ModPerl::BuildMM ();
 
-ModPerl::MM::WriteMakefile(
+ModPerl::BuildMM::WriteMakefile(
     'NAME'    => '$class',
     'VERSION' => '0.01',
     'depend'  => $deps,

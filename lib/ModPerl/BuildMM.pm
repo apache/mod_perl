@@ -1,11 +1,14 @@
-package ModPerl::MM;
+package ModPerl::BuildMM;
 
 use strict;
 use warnings;
+
+use ModPerl::MM;
+
 use ExtUtils::MakeMaker ();
-use ExtUtils::Install ();
 use Cwd ();
 use Apache::Build ();
+use File::Spec;
 
 our %PM; #add files to installation
 
@@ -13,50 +16,13 @@ our %PM; #add files to installation
 no strict 'refs';
 my $stash = \%{__PACKAGE__ . '::MY::'};
 my @methods = grep *{$stash->{$_}}{CODE}, keys %$stash;
-my $eu_mm_mv_all_methods_overriden = 0;
-
+ModPerl::MM::override_eu_mm_mv_all_methods(@methods);
 use strict 'refs';
-
-sub override_eu_mm_mv_all_methods {
-    my @methods = @_;
-
-    my $orig_sub = \&ExtUtils::MakeMaker::mv_all_methods;
-    no warnings 'redefine';
-    *ExtUtils::MakeMaker::mv_all_methods = sub {
-        # do the normal move
-        $orig_sub->(@_);
-        # for all the overloaded methods mv_all_method installs a stab
-        # eval "package MY; sub $method { shift->SUPER::$method(\@_); }";
-        # therefore we undefine our methods so on the recursive invocation of
-        # Makefile.PL they will be undef, unless defined in Makefile.PL
-        # and my_import will override these methods properly
-        for my $sym (@methods) {
-            my $name = "MY::$sym";
-            undef &$name if defined &$name;
-        }
-    };
-}
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
-    # adding -MApache2 here so 3rd party modules could use this macro,
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB)  -MApache2 -MModPerl::MM \\}."\n" .
+    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::BuildMM \\}."\n" .
     q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
-}
-
-sub add_dep {
-    my($string, $targ, $add) = @_;
-    $$string =~ s/($targ\s+::)/$1 $add/;
-}
-
-sub add_dep_before {
-    my($string, $targ, $before_targ, $add) = @_;
-    $$string =~ s/($targ\s+::.*?) ($before_targ)/$1 $add $2/;
-}
-
-sub add_dep_after {
-    my($string, $targ, $after_targ, $add) = @_;
-    $$string =~ s/($targ\s+::.*?$after_targ)/$1 $add/;
 }
 
 sub build_config {
@@ -66,50 +32,25 @@ sub build_config {
     $build->{$key};
 }
 
-#strip the Apache2/ subdir so things are install where they should be
-sub install {
-    my $hash = shift;
-
-    if (build_config('MP_INST_APACHE2')) {
-        while (my($k,$v) = each %$hash) {
-            delete $hash->{$k};
-            $k =~ s:/Apache2$::;
-            $hash->{$k} = $v;
-        }
-    }
-
-    ExtUtils::Install::install($hash, @_);
-}
-
 #the parent WriteMakefile moves MY:: methods into a different class
 #so alias them each time WriteMakefile is called in a subdir
 
 sub my_import {
-    my $package = shift;
     no strict 'refs';
-    my $stash = \%{$package . '::MY::'};
+    my $stash = \%{__PACKAGE__ . '::MY::'};
     for my $sym (keys %$stash) {
         next unless *{$stash->{$sym}}{CODE};
         my $name = "MY::$sym";
-        # the method is defined in Makefile.PL
-        next if defined &$name;
-        # do the override behind the scenes
+        undef &$name if defined &$name;
         *$name = *{$stash->{$sym}}{CODE};
     }
 }
 
 sub WriteMakefile {
-
-    # override ExtUtils::MakeMaker::mv_all_methods
-    # can't do that on loading since ModPerl::MM is also use()'d
-    # by ModPerl::BuildMM which itself overrides it
-    unless ($eu_mm_mv_all_methods_overriden) {
-        override_eu_mm_mv_all_methods(@methods);
-        $eu_mm_mv_all_methods_overriden++;
-    }
+    my %args = @_;
 
     my $build = build_config();
-    my_import(__PACKAGE__);
+    ModPerl::MM::my_import(__PACKAGE__);
 
     my $inc = $build->inc;
     if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
@@ -140,12 +81,14 @@ sub WriteMakefile {
     }
     push @opts, TYPEMAPS => \@typemaps if @typemaps;
 
-    ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
+    ExtUtils::MakeMaker::WriteMakefile(@opts, %args);
 }
 
-sub ModPerl::MM::MY::constants {
-    my $self = shift;
+my %always_dynamic = map { $_, 1 }
+  qw(ModPerl::Const Apache::Const APR::Const APR APR::PerlIO);
 
+sub ModPerl::BuildMM::MY::constants {
+    my $self = shift;
     my $build = build_config();
 
     #install everything relative to the Apache2/ subdir
@@ -154,13 +97,34 @@ sub ModPerl::MM::MY::constants {
         $self->{INST_LIB} .= '/Apache2';
     }
 
+    #"discover" xs modules.  since there is no list hardwired
+    #any module can be unpacked in the mod_perl-2.xx directory
+    #and built static
+
+    #this stunt also make it possible to leave .xs files where
+    #they are, unlike 1.xx where *.xs live in src/modules/perl
+    #and are copied to subdir/ if DYNAMIC=1
+
+    if ($build->{MP_STATIC_EXTS}) {
+        #skip .xs -> .so if we are linking static
+        my $name = $self->{NAME};
+        unless ($always_dynamic{$name}) {
+            if (my($xs) = keys %{ $self->{XS} }) {
+                $self->{HAS_LINK_CODE} = 0;
+                print "$name will be linked static\n";
+                #propagate static xs module to src/modules/perl/Makefile
+                $build->{XS}->{$name} =
+                  join '/', Cwd::fastcwd(), $xs;
+                $build->save;
+            }
+        }
+    }
+
     $self->MM::constants;
 }
 
-
-sub ModPerl::MM::MY::post_initialize {
+sub ModPerl::BuildMM::MY::post_initialize {
     my $self = shift;
-
     my $build = build_config();
     my $pm = $self->{PM};
 
@@ -175,7 +139,11 @@ sub ModPerl::MM::MY::post_initialize {
     #gets installed into Apache2/
     if ($build->{MP_INST_APACHE2}) {
         while (my($k, $v) = each %$pm) {
-            #move everything to the Apache2/ subdir
+            #up one from the Apache2/ subdir
+            #so it can be found for 'use Apache2 ()'
+            next if $v =~ /Apache2\.pm$/;
+
+            #move everything else to the Apache2/ subdir
             #unless already specified with \$(INST_LIB)
             #or already in Apache2/
             unless ($v =~ /Apache2/) {
@@ -187,6 +155,26 @@ sub ModPerl::MM::MY::post_initialize {
     }
 
     '';
+}
+
+sub ModPerl::BuildMM::MY::libscan {
+    my($self, $path) = @_;
+
+    if (Apache::Build::WIN32() and $path eq 'PerlIO') {
+        return ''; #XXX: APR::PerlIO does not link on win32
+    }
+
+    my $apr_config = build_config()->get_apr_config();
+
+    if ($path =~ m/(Thread|Global)Mutex/) {
+        return unless $apr_config->{HAS_THREADS};
+    }
+
+    return '' if $path =~ m/\.(pl|cvsignore)$/;
+    return '' if $path =~ m:\bCVS/:;
+    return '' if $path =~ m/~$/;
+
+    $path;
 }
 
 1;
