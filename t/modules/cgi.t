@@ -3,24 +3,44 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestRequest;
+use Apache::TestUtil;
 
-plan tests => 6, \&have_lwp;
+plan tests => 5, \&have_lwp;
 
 my $module = 'TestModules::cgi';
 my $location = "/$module";
 
-ok 1;
+my($res, $str);
 
-my $res = GET "$location?PARAM=2";
-my $str = $res->content;
-ok $str eq "ok 2\n" or print "str=$str";
+sok {
+    my $url = "$location?PARAM=2";
+    $res = GET $url;
+    $str = $res->content;
+    t_cmp("ok 2", $str, "GET $url");
+};
 
-$str = POST_BODY $location, content => 'PARAM=%33';
-ok $str eq "ok 3\n" or print "str=$str";
+sok {
+    my $content = 'PARAM=%33';
+    $str = POST_BODY $location, content => $content;
+    t_cmp("ok 3", $str, "POST $location\n$content");
+};
 
-$str = UPLOAD_BODY $location, content => 4;
-ok $str eq "ok 4\n" or print "str=$str";
+sok {
+    $str = UPLOAD_BODY $location, content => 4;
+    t_cmp("ok 4", $str, 'file upload');
+};
 
-ok $res->header('Content-type') =~ m:^text/test-output:;
+sok {
+    my $header = 'Content-type';
+    $res = GET $location;
+    t_cmp(qr{^text/test-output},
+          $res->header($header),
+          "$header header");
+};
 
-ok $res->header('X-Perl-Module') eq $module;
+sok {
+    my $header = 'X-Perl-Module';
+    $res = GET $location;
+    t_cmp($module, $module,
+          "$header header");
+};

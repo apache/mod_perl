@@ -38,10 +38,10 @@ sub handler {
         no strict;
         local $/;
         my $content = <$httpupload>;
-        print "ok $content\n";
+        print "ok $content";
     }
     elsif ($param) {
-        print "ok $param\n";
+        print "ok $param";
     }
     else {
         print "no param or upload data\n";
