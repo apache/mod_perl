@@ -78,7 +78,7 @@ sub WriteMakefile {
     ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
 }
 
-my %always_dynamic = map { $_, 1 } qw(Apache::Leak);
+my %always_dynamic = map { $_, 1 } qw(ModPerl::Const Apache::Const APR::Const);
 
 sub ModPerl::MM::MY::constants {
     my $self = shift;
