@@ -33,6 +33,7 @@ sub APACHE_TEST_CONFIGURE {
 
     my $vars = $self->{vars};
     my $target_dir = catfile $vars->{documentroot}, 'testdirective';
+
     # create two different PerlRequireTest.pm packages to be loaded by
     # vh and main interpreters, on the fly before the tests start
     while (my($test, $magic) = each %require_tests) {
@@ -41,7 +42,8 @@ package ApacheTest::PerlRequireTest;
 \$ApacheTest::PerlRequireTest::MAGIC = '$magic';
 1;
 EOF
-        my $file = catfile $target_dir, $test, 'ApacheTest', 'PerlRequireTest.pm';
+        my $file = catfile $target_dir,
+            $test, 'ApacheTest', 'PerlRequireTest.pm';
         $self->writefile($file, $content, 1);
     }
 }

@@ -32,7 +32,8 @@ package ApacheTest::PerlModuleTest;
 \$ApacheTest::PerlModuleTest::MAGIC = '$magic';
 1;
 EOF
-    my $file = catfile $target_dir, 'perlmodule-vh', 'ApacheTest', 'PerlModuleTest.pm';
+    my $file = catfile $target_dir,
+        'perlmodule-vh', 'ApacheTest', 'PerlModuleTest.pm';
     $self->writefile($file, $content, 1);
 }
 
