@@ -1,5 +1,10 @@
 #include "mod_perl.h"
 
+/*
+ * bleedperl change #11639 switch tied handle magic
+ * from living in the gv to the GvIOp(gv), so we have to deal
+ * with both to support 5.6.x
+ */
 #if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
 #   define TIEHANDLE_SV(handle) (SV*)GvIOp((SV*)handle)
 #else
@@ -14,11 +19,6 @@ modperl_io_handle_tie(aTHX_ handle, "Apache::RequestRec", (void *)r)
 #define TIED(handle) \
 modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
 
-/*
- * XXX: bleedperl change #11639 switch tied handle magic
- * from living in the gv to the GvIOp(gv), so we have to deal
- * with both to support 5.6.x
- */
 MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
 #ifdef MP_TRACE
