@@ -1,7 +1,7 @@
 #this file will be Include-d by @ServerRoot@/httpd.conf
 
-# make sure that we test under Taint mode
-PerlSwitches -T
+# make sure that we test under Taint and warnings mode enabled
+PerlSwitches -wT
 
 PerlModule Apache2
 
