@@ -141,6 +141,7 @@ $LIBPERL = "DEFAULT";
 $USE_APACI = $USE_DSO = $USE_APXS = 0;
 $WITH_APXS = "";
 $APACI_ARGS = "";
+@APACI_ARGS = ();
 $EVERYTHING = $EXPERIMENTAL = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
@@ -249,9 +250,18 @@ my @mm_args;
 	    s/^\s+//; s/\s+$//;
 	    next if /^#/ || /^$/;
 	    last if /^__END__/;
-	    unshift @ARGV, split /\s+/, $_;
+	    if(/^APACI_ARGS/) { 
+		s/^APACI_ARGS=//;
+		push @APACI_ARGS, $_;
+	    }
+	    else {
+		unshift @ARGV, split /\s+/, $_;
+	    }
 	}
 	close $fh;
+    }
+    if(@APACI_ARGS) {
+	unshift @ARGV, "APACI_ARGS=" . join(",", @APACI_ARGS); 
     }
 }
 
