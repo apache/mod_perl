@@ -1,0 +1,186 @@
+=head1 NAME
+
+INSTALL.apaci - Installing with the new mod_perl hybrid build environment for Apache 1.3
+
+=head1 SUMMARY
+
+This document describes how to build and install mod_perl as clean as possible
+under Apache 1.3 by making use of both the Apache 1.3 ConfigStart/End facility
+and the new Autoconf-style Interface (APACI). In addition the Dynamic Shared
+Object (DSO) mechanism can be used to build mod_perl as an Apache module which
+can be loaded on-demand under run-time.
+
+=head1 BACKGROUND
+
+The source configuration mechanism in Apache 1.3 provides four major
+highlights mod_perl can benefit from:
+
+=over 3
+
+=item B<Per-module configuration scripts (ConfigStart/End)>
+
+This is a mechanism modules can use to link theirself into the configuration
+processing. It is useful for automatically adjusting configuration and build
+parameters from the modules sources. It is triggered by
+C<ConfigStart>/C<ConfigEnd> sections inside I<modulename>C<.module> files.
+
+=item B<Apache Autoconf-style Interface (APACI)>
+
+This is the new top-level C<configure> script from Apache 1.3 which provides a
+GNU Autoconf-style interface. It is useful for configuring the source tree
+without manually editing any C<src/Configuration> files. Any parametrization
+can be done via command line options to the C<configure> script. Internally
+this is just a nifty a wrapper to the old C<src/Configure> script.
+
+=item B<Dynamic Shared Object (DSO) support>
+
+This is beside Windows NT support one of most interesting features in Apache
+1.3. Its a way to build Apache modules as so-called C<dynamic shared objects>
+(usually named I<modulename>C<.so>) which can be loaded via the C<LoadModule>
+directives from within Apache's C<httpd.conf> file. The benefit is that the
+modules is part of the C<httpd> program only on-demand, i.e. only when the
+user wants the module it is loaded into the address space of the C<httpd>
+module. This is for instance interesting for memory consumption and easy
+upgrade issues. The DSO mechanism is provided by Apache's C<mod_so.c> which
+needs to be compiled into the C<httpd> program. This is automatically done
+when DSO is enabled for module C<mod_xxx> via C<configure --enable-module=xxx>
+or by explicitly adding C<mod_so> via C<configure --enable-module=so>.
+
+=item B<APache eXtenSion (APXS) support tool>
+
+This is a new support tool from Apache 1.3 which can be used to build an
+Apache module as a DSO even B<outside> the Apache source-tree. One can say
+APXS is what MakeMaker and XS is for Perl. It knows the platform dependent
+build parameters for making DSO files and provides an easy way to run the
+build commands with them.
+
+=back
+
+Taking these four features together provides a way to integrate mod_perl into
+Apache in a very clean and smooth way. No patching of the Apache source tree
+is needed in the standard situation and even not only the source tree itself
+is needed in the APXS situation.
+
+=head1 DESCRIPTION
+
+To benefit from the above described features a new hybrid build environment
+was created for the Apache-side of mod_perl. The Apache-side consists of the C
+source files of mod_perl which have to be compiled into the C<httpd> program.
+They are usually copied to the subdirectory C<src/modules/perl/> in the Apache
+source tree. To integrate this subtree into the Apache build process a lot of
+ajustments were done by mod_perl's C<Makefile.PL> in the past. And
+additionally the C<Makefile.PL> controlled the Apache build process. The
+side-effect of this approach was that it is both an not very clean and
+especially captive way. Because it assumed mod_perl is the only third-party
+modules which has to be integrated into Apache. This is very problematic.
+
+The new approach described below avoids these problems. It only prepares the
+C<src/modules/perl/> subtree inside the Apache source tree C<WITHOUT>
+adjusting or editing anything else. This way no conflicts can occur. Instead
+mod_perl is activated (and then configures itself) when the Apache source tree
+is configured via standard APACI calls later.
+
+=head1 THE GAME ITSELF
+
+There are three typical ways to build Apache with the new hybrid build
+environment:
+
+=head2 Build mod_perl as static object inside the Apache source tree via APACI
+
+This is the standard situation: Statically building mod_perl into the C<httpd>
+binary of Apache. Follow these steps
+
+=over 3
+
+=item B<1. Prepare the Apache 1.3 source tree>
+
+The first step is the extract the Apache 1.3 distribution:
+
+ $ gunzip <apache_1.3.X.tar.gz | tar xvf -
+
+=item B<2. Install mod_perl's Perl-side and prepare the Apache-side>
+
+The second step is to install the Perl-side of mod_perl into the Perl system
+and prepare the C<src/modules/perl/> subdirectory inside the Apache source
+tree:
+
+ $ cd mod_perl-1.XX
+ $ perl Makefile.PL \
+     APACHE_SRC=../apache_1.3.X/src \
+     DO_HTTPD=1 \
+     USE_APACI=1 \
+     [...]
+ $ make
+ $ make install
+ $ cd ..
+
+=item B<3. Additionally prepare other third-party modules>
+
+Now you still have a chance to prepare more third-party modules.  For instance
+the PHP3 language can be added similarily to the above mod_perl procedure.
+
+=item B<4. Build the Apache package>
+
+Finally its time to build the Apache package and thus also the
+Apache-side of mod_perl and any other prepared third-party modules:
+
+ $ cd apache_1.3.X
+ $ ./configure \
+     --prefix=/path/to/apache \
+     --activate-module=src/modules/perl/libperl.a \
+     [...]
+ $ make
+ $ make install
+
+=back
+
+Now bask in the glow and be happy to received a mod_perl-aware Apache 1.3
+system without having to mangle the Apache source tree for mod_perl plus the
+freedom of being able to adding more third-party modules.
+
+=head2 Build mod_perl as dynamic shared object inside the Apache source tree via APACI
+
+We already said that the new mod_perl build environment is a hybrid one. What
+does it mean? It means for instance that the same C<src/modules/perl/> stuff
+can be used to build mod_perl as a DSO, too. I<And again without having to
+edit anything specially for this>. When you want to build C<libperl.so> (sorry
+for the name, C<libmodperl.so> would be more correct, but because of historic
+Apache issues the name has to be C<libperl.so>. Don't confuse this with
+the real C<libperl.a> or even C<libperl.so> from the Perl installation)
+all you have to do is to add one single option to the above steps.
+
+Yeah, right, you follow exactly the above steps but change step number 
+4 to the following:
+
+ $ cd apache_1.3.X
+ $ ./configure \
+     --prefix=/path/to/apache \
+     --activate-module=src/modules/perl/libperl.a \
+     --enable-shared=perl
+     [...]
+ $ make
+ $ make install
+
+As you can see only an additional C<--enable-shared=perl> option is needed.
+Anything else is done automatcially: C<mod_so> is automatically enabled, the
+Makefiles are adjusted automatically and even the C<install> target from APACI
+now additionally installs the C<libperl.so> into the Apache installation tree.
+And even more: The C<LoadModule> and C<AddModule> directives are automatically
+added to the C<httpd.conf> file. 
+
+Do you still think the hybrid build environment and/or APACI is not
+impressive? Shame on you!
+
+=head2 Build mod_perl as dynamic shared object outside the Apache source tree via APXS
+
+...
+Support currently still not added to mod_perl's C<Makefile.PL>,
+although the hybrid build environment already provides this
+...
+
+=head1 AUTHOR
+
+ Ralf S. Engelschall
+ rse@engelschall.com
+ www.engelschall.com
+
