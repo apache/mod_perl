@@ -9,6 +9,15 @@
 #    define dITEMS I32 items = SP - MARK
 #endif
 
+#define mpxs_PPCODE(code) STMT_START { \
+    SP -= items; \
+    code; \
+    PUTBACK; \
+} STMT_END
+
+#define PUSHs_mortal_iv(iv) PUSHs(sv_2mortal(newSViv(iv)))
+#define PUSHs_mortal_pv(pv) PUSHs(sv_2mortal(newSVpv((char *)pv,0)))
+
 #define mpxs_sv_grow(sv, len) \
     (void)SvUPGRADE(sv, SVt_PV); \
     SvGROW(sv, len+1)

@@ -7,7 +7,18 @@ use Apache::Access ();
 
 sub handler {
     my $r = shift;
-    #auth api not complete yet
+
+    my($rc, $sent_pw) = $r->get_basic_auth_pw;
+
+    return $rc if $rc != 0;
+
+    my $user = $r->user;
+
+    unless ($user eq 'dougm' and $sent_pw eq 'foo') {
+        $r->note_basic_auth_failure;
+        return 401;
+    }
+
     0;
 }
 
