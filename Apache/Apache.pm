@@ -1128,23 +1128,6 @@ Set to true when the server is starting.
 
 Set to true when the server is starting.
 
-=item $Apache::Server::ConfigTestOnly
-
-Set to true when the server is running in configuration test mode
-(C<httpd -t>).
-
-   <Perl>
-    # don't continue if it's a config test!
-    print("Skipping the <Perl> code!\n"),
-    return if $Apache::Server::ConfigTestOnly;
-   
-    print "Running the <Perl> code!\n"
-    # some code here
-   
-   </Perl>
-
-This variable is not available under Win32.
-
 =back
 
 =head1 SEE ALSO
