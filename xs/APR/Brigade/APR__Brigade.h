@@ -157,3 +157,9 @@ SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
 
     return data;
 }
+
+static MP_INLINE
+void mpxs_APR__Brigade_destroy(pTHX_ apr_bucket_brigade *bb)
+{
+    MP_RUN_CROAK(apr_brigade_destroy(bb), "APR::Brigade::destroy");
+}
