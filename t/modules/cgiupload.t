@@ -18,7 +18,7 @@ for (@INC) {
     }
 }
 
-$filename ||= '../pod/modperl_2.0.pod';
+$filename ||= '../Makefile';
 
 for (1,2) {
     my $str = UPLOAD_BODY $location, filename => $filename;

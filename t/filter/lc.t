@@ -6,7 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 1, \&have_lwp;
 
-my $location = "/pod/modperl_2.0.pod";
+my $location = "/top_dir/Makefile";
 
 my $str = GET_BODY $location;
 
