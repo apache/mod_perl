@@ -27,14 +27,15 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
 
 /* XXX: PL_modglobal thingers might be useful elsewhere */
 
-#define MP_MODGLOBAL_FETCH(gkey) \
-hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
+#define MP_MODGLOBAL_FETCH(gkey)                                        \
+    hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
 
-#define MP_MODGLOBAL_STORE_HV(gkey) \
-(HV*)*hv_store(PL_modglobal, gkey->val, gkey->len, (SV*)newHV(), gkey->hash)
+#define MP_MODGLOBAL_STORE_HV(gkey)                                     \
+    (HV*)*hv_store(PL_modglobal, gkey->val, gkey->len,                  \
+                   (SV*)newHV(), gkey->hash)
 
-#define MP_MODGLOBAL_ENT(key) \
-{key, "ModPerl::" key, MP_SSTRLEN("ModPerl::") + MP_SSTRLEN(key), 0}
+#define MP_MODGLOBAL_ENT(key)                                           \
+    {key, "ModPerl::" key, MP_SSTRLEN("ModPerl::") + MP_SSTRLEN(key), 0}
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
