@@ -44,6 +44,7 @@ sok {
 sok {
     my $header = 'X-Perl-Module';
     $res = GET $location;
-    t_cmp($module, $module,
+    t_cmp($module,
+          $res->header($header),
           "$header header");
 };
