@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+force environ[] to be copied before any Perl code is loaded
+[Daniel Jacobowitz <drow@false.org>]
+
 localize $_ in Apache::send_cgi_header
 [Roderick Schertler <roderick@argon.org>]
 
