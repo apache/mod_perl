@@ -190,9 +190,12 @@ sub generate_trace {
     my($self, $h_fh) = @_;
 
     my $i = 1;
+    my $opts = join '', @trace;
 
     print $h_fh <<EOF;
 extern U32 MP_debug_level;
+
+#define MP_TRACE_OPTS "$opts"
 
 #ifdef MP_TRACE
 #define MP_TRACE_a if (MP_debug_level) modperl_trace
