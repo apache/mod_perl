@@ -1356,6 +1356,9 @@ start_httpd: test_pre_init
 	@sleep 2
 	@echo done
 
+start_httpd_fork:
+	$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -d `pwd`/t
+
 rehttpd:   kill_httpd start_httpd
 
 run_tests:
