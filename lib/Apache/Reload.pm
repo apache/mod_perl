@@ -9,7 +9,9 @@ our $VERSION = '0.08';
 
 use Apache::Const -compile => qw(OK);
 
-require Apache::RequestUtil;
+use Apache::Connection;
+use Apache::ServerUtil;
+use Apache::RequestUtil;
 
 use vars qw(%INCS %Stat $TouchTime %UndefFields);
 
@@ -50,12 +52,16 @@ sub register_module {
     }
 }
 
+# the first argument is:
+# $c if invoked as 'PerlPreConnectionHandler'
+# $r if invoked as 'PerlInitHandler'
 sub handler {
-    my $r = shift;
+    my $o = shift;
+    $o = $o->base_server if ref($o) eq 'Apache::Connection';
 
-    my $DEBUG = ref($r) && (lc($r->dir_config("ReloadDebug") || '') eq 'on');
+    my $DEBUG = ref($o) && (lc($o->dir_config("ReloadDebug") || '') eq 'on');
 
-    my $TouchFile = ref($r) && $r->dir_config("ReloadTouchFile");
+    my $TouchFile = ref($o) && $o->dir_config("ReloadTouchFile");
 
     my $TouchModules;
 
@@ -69,14 +75,14 @@ sub handler {
         chomp $TouchModules;
     }
 
-    if (ref($r) && (lc($r->dir_config("ReloadAll") || 'on') eq 'on')) {
+    if (ref($o) && (lc($o->dir_config("ReloadAll") || 'on') eq 'on')) {
         *Apache::Reload::INCS = \%INC;
     }
     else {
         *Apache::Reload::INCS = \%INCS;
         my $ExtraList = 
                 $TouchModules || 
-                (ref($r) && $r->dir_config("ReloadModules")) || 
+                (ref($o) && $o->dir_config("ReloadModules")) || 
                 '';
         my @extra = split(/\s+/, $ExtraList);
         foreach (@extra) {
@@ -104,7 +110,7 @@ sub handler {
         }
     }
 
-    my $ReloadDirs = ref($r) && $r->dir_config("ReloadDirectories");
+    my $ReloadDirs = ref($o) && $o->dir_config("ReloadDirectories");
     my @watch_dirs = split(/\s+/, $ReloadDirs||'');
     while (my($key, $file) = each %Apache::Reload::INCS) {
         next if @watch_dirs && !grep { $file =~ /^$_/ } @watch_dirs;
