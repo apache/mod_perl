@@ -479,6 +479,7 @@ Apache Apache::Constants
 
 if($Is_Win32) {
     $NO_HTTPD = 1;
+    $PERL_DIRECTIVE_HANDLERS = 1;
 } 
 
 
