@@ -209,6 +209,15 @@ MODULE=APR::Pool
  apr_global_mutex_trylock
  apr_global_mutex_unlock
 
+MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
+ apr_thread_mutex_t *:apr_thread_mutex_create | mpxs_ | \
+     SV *:classname, pool, flags=APR_THREAD_MUTEX_DEFAULT | new
+ void:apr_thread_mutex_destroy | | | apr_thread_mutex_DESTROY
+ apr_thread_mutex_lock
+ apr_thread_mutex_trylock
+ apr_thread_mutex_unlock
+ apr_thread_mutex_pool_get
+
 !MODULE=APR::ProcMutex
  apr_proc_mutex_child_init
  apr_proc_mutex_create
@@ -343,15 +352,6 @@ MODULE=APR::String
 -apr_proc_other_child_unregister
 -apr_proc_other_child_check
 -apr_proc_wait_all_procs
-
-MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
- apr_thread_mutex_t *:apr_thread_mutex_create | mpxs_ | \
-     SV *:classname, pool, flags=APR_THREAD_MUTEX_DEFAULT | new
- void:apr_thread_mutex_destroy | | | apr_thread_mutex_DESTROY
- apr_thread_mutex_lock
- apr_thread_mutex_trylock
- apr_thread_mutex_unlock
- apr_thread_mutex_pool_get
 
 -MODULE=APR::Thread
  apr_thread_create
