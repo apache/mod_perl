@@ -456,7 +456,9 @@ modperl_handler_t *modperl_handler_new_from_sv(pTHX_ apr_pool_t *p, SV *sv)
         if (CvANON((CV*)sv)) {
             return modperl_handler_new_anon(aTHX_ p, (CV*)sv);
         }
-        gv = CvGV((CV*)sv);
+        if (!(gv = CvGV((CV*)sv))) {
+            Perl_croak(aTHX_ "can't resolve the code reference");
+        }
         name = apr_pstrcat(p, HvNAME(GvSTASH(gv)), "::", GvNAME(gv), NULL);
         return modperl_handler_new(p, apr_pstrdup(p, name));
         break;
