@@ -482,15 +482,19 @@ sub write_pm {
         close $fh;
     }
 
+    my $base   = (split '::', $module)[0];
+    my $loader = join '::', $base, 'XSLoader';
+
     my $fh = $self->open_class_file($module, '.pm');
+
     print $fh <<EOF;
 $self->{noedit_warning_hash}
 
 package $module;
 $isa
-use ModPerl::XSLoader ();
+use $loader ();
 our \$VERSION = '0.01';
-ModPerl::XSLoader::load __PACKAGE__;
+$loader\::load __PACKAGE__;
 
 $code
 
