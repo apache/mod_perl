@@ -414,12 +414,13 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-    /* if we allocated a parent perl, mark it to be destroyed */
-    if (MpSrvPARENT(scfg)) {
-        MpInterpBASE_On(scfg->mip->parent);
+    if (scfg->mip) {
+        /* if we allocated a parent perl, mark it to be destroyed */
+        if (MpSrvPARENT(scfg)) {
+            MpInterpBASE_On(scfg->mip->parent);
+        }
     }
-    
-    if (!scfg->mip) {
+    else {
         /* since mips are created after merge_server_configs()
          * need to point to the base mip here if this vhost
          * doesn't have its own
