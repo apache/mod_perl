@@ -218,6 +218,7 @@ sub get_structs {
                my $type = $_->[0];
                $type =~ s/$sx//;
                $type .= $_->[1] if $_->[1];
+               $type =~ s/:\d+$//; #unsigned:1
                { type => $type, name => $_->[2] }
            } @$elts],
         };
