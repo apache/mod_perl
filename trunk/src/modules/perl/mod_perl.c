@@ -752,6 +752,7 @@ int perl_handler(request_rec *r)
     dPPREQ;
     dTHR;
     SV *nwvh = Nullsv;
+    GV *gv = gv_fetchpv("SIG", TRUE, SVt_PVHV);
 
     (void)acquire_mutex(mod_perl_mutex);
     
@@ -780,8 +781,8 @@ int perl_handler(request_rec *r)
 	}
     }
 
-    if (siggv) {
-	save_hptr(&GvHV(siggv)); 
+    if (gv) {
+	save_hptr(&GvHV(gv)); 
     }
 
     if (endav) {
