@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_03-dev
 
+unbuffer STDERR (by turning on autoflush by default)
+
+add support for Perl*Handler +Apache::Foo
+
+fix open_logs,post_config,child_init hooks to run in the proper order
+
 adjust to apr_bucket_type_t changes in 2.0.37-dev
 [Mladen Turk <mturk@mappingsoft.com>]
 
