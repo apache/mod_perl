@@ -23,68 +23,59 @@ use Apache::Const -compile => 'OK';
 # the keys to the main hash represent merge levels - 1 for the non-overriding
 # merge, 2 for an overriding merge, and 3 for a two-level merge
 # the rest should be self-explanatory - settings and expected values.
-our %merge1 = ( 1 =>
-                  { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
-                    PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
-                    PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
-                    PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
-                                                     'AddVar1Val2']],
-                  },
-                2 =>
-                  { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Val'],
-                    PerlSetVar  => [MergeSetVar2 => 'SetVar2Val'],
-                    PerlAddVar  => [MergeAddVar2 => ['AddVar2Val1', 
-                                                     'AddVar2Val2']],
-                  },
-                3 =>
-                  { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Val'],
-                    PerlSetVar  => [MergeSetVar3 => 'SetVar3Val'],
-                    PerlAddVar  => [MergeAddVar3 => ['AddVar3Val1',
-                                                     'AddVar3Val2']],
-                  },
-             );
+our %merge1 = ( 1 => { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
+                       PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
+                       PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
+                       PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
+                                                        'AddVar1Val2']],
+                     },
+                2 => { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Val'],
+                       PerlSetVar  => [MergeSetVar2 => 'SetVar2Val'],
+                       PerlAddVar  => [MergeAddVar2 => ['AddVar2Val1', 
+                                                        'AddVar2Val2']],
+                     },
+                3 => { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Val'],
+                       PerlSetVar  => [MergeSetVar3 => 'SetVar3Val'],
+                       PerlAddVar  => [MergeAddVar3 => ['AddVar3Val1',
+                                                        'AddVar3Val2']],
+                     },
+              );
 
-our %merge2 = ( 1 => 
-                  { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
-                    PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
-                    PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
-                    PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
-                                                     'AddVar1Val2']],
-                  },
-                2 =>
-                  { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Merge2Val'],
-                    PerlSetVar  => [MergeSetVar2 => 'SetVar2Merge2Val'],
-                    PerlAddVar  => [MergeAddVar2 => ['AddVar2Merge2Val1',
-                                                     'AddVar2Merge2Val2']],
-                  },
-                3 =>
-                  { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Val'],
-                    PerlSetVar  => [MergeSetVar3 => 'SetVar3Val'],
-                    PerlAddVar  => [MergeAddVar3 => ['AddVar3Val1',
-                                                     'AddVar3Val2']],
-                  },
-             );
+our %merge2 = ( 1 => { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
+                       PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
+                       PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
+                       PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
+                                                        'AddVar1Val2']],
+                     },
+                2 => { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Merge2Val'],
+                       PerlSetVar  => [MergeSetVar2 => 'SetVar2Merge2Val'],
+                       PerlAddVar  => [MergeAddVar2 => ['AddVar2Merge2Val1',
+                                                        'AddVar2Merge2Val2']],
+                     },
+                3 => { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Val'],
+                       PerlSetVar  => [MergeSetVar3 => 'SetVar3Val'],
+                       PerlAddVar  => [MergeAddVar3 => ['AddVar3Val1',
+                                                        'AddVar3Val2']],
+                     },
+              );
 
-our %merge3 = ( 1 => 
-                  { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
-                    PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
-                    PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
-                    PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
-                                                     'AddVar1Val2']],
-                  },
-                2 =>
-                  { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Merge2Val'],
-                    PerlSetVar  => [MergeSetVar2 => 'SetVar2Merge2Val'],
-                    PerlAddVar  => [MergeAddVar2 => ['AddVar2Merge2Val1',
-                                                     'AddVar2Merge2Val2']],
-                  },
-                3 =>
-                  { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Merge3Val'],
-                    PerlSetVar  => [MergeSetVar3 => 'SetVar3Merge3Val'],
-                    PerlAddVar  => [MergeAddVar3 => ['AddVar3Merge3Val1',
-                                                     'AddVar3Merge3Val2']],
-                  },
-             );
+our %merge3 = ( 1 => { PerlPassEnv => [APACHE_TEST_HOSTTYPE => 'z80'],
+                       PerlSetEnv  => [MergeSetEnv1 => 'SetEnv1Val'],
+                       PerlSetVar  => [MergeSetVar1 => 'SetVar1Val'],
+                       PerlAddVar  => [MergeAddVar1 => ['AddVar1Val1', 
+                                                        'AddVar1Val2']],
+                     },
+                2 => { PerlSetEnv  => [MergeSetEnv2 => 'SetEnv2Merge2Val'],
+                       PerlSetVar  => [MergeSetVar2 => 'SetVar2Merge2Val'],
+                       PerlAddVar  => [MergeAddVar2 => ['AddVar2Merge2Val1',
+                                                        'AddVar2Merge2Val2']],
+                     },
+                3 => { PerlSetEnv  => [MergeSetEnv3 => 'SetEnv3Merge3Val'],
+                       PerlSetVar  => [MergeSetVar3 => 'SetVar3Merge3Val'],
+                       PerlAddVar  => [MergeAddVar3 => ['AddVar3Merge3Val1',
+                                                        'AddVar3Merge3Val2']],
+                     },
+              );
 
 sub handler {
 
@@ -98,11 +89,11 @@ sub handler {
     my $hash;
 
     if ($location =~ m/(merge3)/) {
-      $hash = $1;
+        $hash = $1;
     } elsif ($location =~ m/(merge2)/) {
-      $hash = $1;
+        $hash = $1;
     } else {
-      $hash = 'merge1'; 
+        $hash = 'merge1'; 
     }
 
     t_debug("testing against results in $hash");
