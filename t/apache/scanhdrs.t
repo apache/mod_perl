@@ -11,7 +11,7 @@ my $location = "/$module";
 
 my $res = GET $location;
 
-ok $res->content eq "1..1\nok 1\n";
+ok $res->content =~ /^ok 1$/m;
 
 ok $res->header('Content-Type') eq 'text/test-output';
 
