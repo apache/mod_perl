@@ -110,7 +110,7 @@ sub handler : method {
 
     my $path = $dir_cfg->{path};
 
-    ok t_cmp(qr{^$path}, $r->uri,
+    ok t_cmp($r->uri, qr{^$path},
              'r->uri =~ parms->path');
 
     ok t_cmp($self, $srv_cfg->{name},

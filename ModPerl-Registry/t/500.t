@@ -83,9 +83,8 @@ plan tests => 7;
        );
 
     # the error message is attached after the body
-    ok t_cmp(
-        qr/some body.*The server encountered an internal error/ms,
-        $res->content,
-        "200, followed by a runtime error",
-       );
+    ok t_cmp($res->content,
+             qr/some body.*The server encountered an internal error/ms,
+             "200, followed by a runtime error",
+            );
 }

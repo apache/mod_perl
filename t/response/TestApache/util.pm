@@ -65,7 +65,7 @@ sub time_cmp {
         ok t_cmp($time, $ptime, $comment);
     }
     else {
-        ok t_cmp($fmtdate_ptn, $fmtdate, $comment);
+        ok t_cmp($fmtdate, $fmtdate_ptn, $comment);
     }
 }
 

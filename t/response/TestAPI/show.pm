@@ -16,8 +16,8 @@ sub handler {
 
     my $mpm = Apache::Test::config->{server}->{mpm};
 
-    ok t_cmp(qr!$mpm!i,
-             Apache::MPM->show(),
+    ok t_cmp(Apache::MPM->show(),
+             qr!$mpm!i,
              'Apache::MPM->show()');
 
     Apache::OK;

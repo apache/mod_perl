@@ -14,7 +14,7 @@ my $res = GET $location;
 
 t_debug $res->as_string;
 
-ok t_cmp(qr/^ok 1$/m, $res->content);
+ok t_cmp($res->content, qr/^ok 1$/m);
 
 ok t_cmp('text/test-output',
          $res->header('Content-Type'),
@@ -24,4 +24,4 @@ ok t_cmp($module,
          $res->header('X-Perl-Module'),
          "custom header");
 
-ok t_cmp(qr/beer/, $res->message);
+ok t_cmp($res->message, qr/beer/);

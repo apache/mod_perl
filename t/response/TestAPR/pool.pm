@@ -178,8 +178,8 @@ sub handler {
         # this should "gracefully" fail, since $sp's guts were
         # destroyed when the parent pool was destroyed
         eval { $pp = $sp->parent_get };
-        ok t_cmp(qr/invalid pool object/,
-                 $@,
+        ok t_cmp($@,
+                 qr/invalid pool object/,
                  "parent pool destroys child pool");
 
         # since pool $sp now contains 0 pointer, if we try to make a
@@ -219,8 +219,8 @@ sub handler {
             # must make sure that it won't try to hijack the new pool
             # $pp2 that (hopefully) took over $pp's place
             eval { $pp->parent_get };
-            ok t_cmp(qr/invalid pool object/,
-                     $@,
+            ok t_cmp($@,
+                     qr/invalid pool object/,
                      "a dead pool is a dead pool");
         }
 
@@ -377,16 +377,16 @@ sub handler {
         my $p = APR::Pool->new;
         $p->cleanup_register('TestAPR::pool::some_non_existing_sub', 1);
         eval { $p->destroy };
-        ok t_cmp(qr/Undefined subroutine/,
-                 $@,
+        ok t_cmp($@,
+                 qr/Undefined subroutine/,
                  "non existing function");
     }
     {
         my $p = APR::Pool->new;
         $p->cleanup_register(\&non_existing1, 1);
         eval { $p->destroy };
-        ok t_cmp(qr/Undefined subroutine/,
-                 $@,
+        ok t_cmp($@,
+                 qr/Undefined subroutine/,
                  "non existing function");
     }
 
@@ -403,8 +403,8 @@ sub handler {
 #        # sub-pool $sp should be now bogus, as clear() destroys
 #        # subpools
 #        eval { $sp->parent_get };
-#        ok t_cmp(qr/invalid pool object/,
-#                 $@,
+#        ok t_cmp($@,
+#                 qr/invalid pool object/,
 #                 "clear destroys sub pools");
 #
 #        # now we should be able to use the parent pool without

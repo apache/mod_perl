@@ -103,8 +103,8 @@ my $base = "/TestModperl__status";
              $response->code,
              $uri);
 
-    ok t_cmp(qr/server encountered an internal error/,
-             $response->content,
+    ok t_cmp($response->content,
+             qr/server encountered an internal error/,
              $uri);
 }
 

@@ -44,8 +44,8 @@ if (HAVE_LWP) {
 sok {
     my $header = 'Content-type';
     $res = GET $location;
-    t_cmp(qr{^text/test-output},
-          $res->header($header),
+    t_cmp($res->header($header),
+          qr{^text/test-output},
           "$header header");
 };
 

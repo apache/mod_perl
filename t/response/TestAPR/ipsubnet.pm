@@ -60,13 +60,13 @@ sub handler {
     # bogus IP
     {
         my $ipsub = eval { APR::IpSubnet->new($p, "345.234.678.987") };
-        ok t_cmp(qr/The specified IP address is invalid/, $@, "bogus IP");
+        ok t_cmp($@, qr/The specified IP address is invalid/, "bogus IP");
     }
 
     # bogus mask
     {
         my $ipsub = eval { APR::IpSubnet->new($p, $ip, "255.0") };
-        ok t_cmp(qr/The specified network mask is invalid/, $@, "bogus mask");
+        ok t_cmp($@, qr/The specified network mask is invalid/, "bogus mask");
     }
 
     Apache::OK;

@@ -32,7 +32,7 @@ sub response {
     # trigger the filter invocation, before using $@
     $r->print("# whatever");
     $r->rflush;
-    ok t_cmp(qr/Undefined subroutine/, $@, "some croak");
+    ok t_cmp($@, qr/Undefined subroutine/, "some croak");
 
     return Apache::OK;
 }
