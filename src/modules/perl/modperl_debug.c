@@ -69,13 +69,13 @@ void modperl_perl_modglobal_dump(pTHX)
 #endif
     MP_TRACE_g(MP_FUNC, "| PL_modglobal 0x%lx",
                (unsigned long)PL_modglobal);
-    
+
     while ((val = (AV*)hv_iternextsv(hv, &key, &klen))) {
         MP_TRACE_g(MP_FUNC, "| %s => 0x%lx", key, val);
     }
-    
+
     MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------\n");
-        
+
 }
 #endif
 

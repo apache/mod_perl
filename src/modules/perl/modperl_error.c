@@ -27,7 +27,7 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
 {
     char *ptr;
     char buf[256];
-        
+
     if (rc >= APR_OS_START_USERERR &&
         rc < APR_OS_START_USERERR + MP_error_strings_size) {
         /* custom mod_perl errors */
@@ -37,7 +37,7 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
         /* apache apr errors */
         ptr = apr_strerror(rc, buf, sizeof(buf));
     }
-        
+
     /* must copy the string and not return a pointer to the local
      * address. Using a single (per interpreter) static buffer.
      */
@@ -66,7 +66,7 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     HV *stash;
     HV *data;
     int is_tainted = PL_tainted;
-    
+
     /* see the explanation above */
     if (is_tainted) {
         TAINT_NOT;
@@ -75,11 +75,11 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     if (is_tainted) {
         TAINT;
     }
-    
+
     if (SvTRUE(ERRSV)) {
         Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));   
     }
-    
+
     stash = gv_stashpvn("APR::Error", 10, FALSE);
     data = newHV();
     /* $@ = bless {}, "APR::Error"; */

@@ -86,7 +86,7 @@ sub handler {
                              PerlResponseHandler)) {
 
         my $count = $r->notes->get($callback) || 0;
- 
+
         $r->print("ran $count $callback handlers\n");
     }
 
@@ -152,32 +152,32 @@ __DATA__
         # all 4 run
         PerlHeaderParserHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::declined
         PerlHeaderParserHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok
-  
+
         # all 2 run
         PerlAccessHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok 
-  
+
         # 2 run, 1 left behind
         PerlAuthenHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok 
         PerlAuthenHandler TestHooks::stacked_handlers2::auth_required
-  
+
         # 2 run, 1 left behind
         PerlAuthzHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok 
         PerlAuthzHandler TestHooks::stacked_handlers2::auth_required
-  
+
         # 1 run, 1 left behind
         PerlTypeHandler  TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers3::server_error
-  
+
         # all 2 run
         PerlFixupHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
-  
+
         # 2 run, 2 left behind
         PerlResponseHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2 
         PerlResponseHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::server_error
-  
+
         SetHandler modperl
         AuthType Basic
         Require valid-user
-  
+
         PerlOutputFilterHandler TestHooks::stacked_handlers2::passthru TestHooks::stacked_handlers2::filter
     </Location>
 

@@ -185,7 +185,7 @@ int modperl_global_anon_cnt_next(void)
     int next;
     /* XXX: inline lock/unlock? */
     modperl_global_lock(&MP_global_anon_cnt); 
-    
+
     next = ++*(int *)(MP_global_anon_cnt.data);
 
     modperl_global_unlock(&MP_global_anon_cnt); 

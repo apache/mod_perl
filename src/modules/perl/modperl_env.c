@@ -227,7 +227,7 @@ void modperl_env_configure_request_dir(pTHX_ request_rec *r)
          * and using apr_table_overlay would generate duplicate entries.
          * in order to use apr_table_overlap, though, we need to copy the
          * the dcfg table so that pool requirements are satisfied */
-        
+
         setenv_copy = apr_table_copy(r->pool, dcfg->SetEnv);
         apr_table_overlap(r->subprocess_env, setenv_copy, APR_OVERLAP_TABLES_SET);
     }
@@ -293,7 +293,7 @@ void modperl_env_default_populate(pTHX)
 void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     MP_dRCFG;
- 
+
     /* this is called under the following conditions
      *   - if PerlOptions +SetupEnv
      *   - if $r->subprocess_env() is called in a void context with no args
@@ -340,7 +340,7 @@ void modperl_env_request_unpopulate(pTHX_ request_rec *r)
     if (!MpReqSETUP_ENV(rcfg)) {
         return;
     }
-    
+
     MP_TRACE_e(MP_FUNC,
                "\n\t[%s/0x%lx/%s%s]\n\tdelete @ENV{keys r->subprocess_env};",
                modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
@@ -437,7 +437,7 @@ static int modperl_env_magic_set_all(pTHX_ SV *sv, MAGIC *mg)
 #ifdef MP_TRACE
         HE *entry;
         STRLEN n_a;
-        
+
         MP_TRACE_e(MP_FUNC,
                    "\n\t[%lu/0x%lx] populating %%ENV:",
                    (unsigned long)getpid(), modperl_interp_address(aTHX));

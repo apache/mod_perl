@@ -33,7 +33,7 @@ Apache::Module::add(__PACKAGE__, \@directives);
 sub MyTest4 {
     my($self, $parms, $arg) = @_;
     $self->{+KEY} = $arg;
-    
+
     unless ($parms->path) {
         my $srv_cfg = Apache::Module::get_config($self, $parms->server);
         $srv_cfg->{+KEY} = $arg;
@@ -73,7 +73,7 @@ sub handler {
     ok t_cmp($dir_cfg->{+KEY}, "Dir", "Section");
 
     ok t_cmp($srv_cfg->{+KEY}, "Vhost", "Section");
-    
+
     return Apache::OK;
 }
 

@@ -256,7 +256,7 @@ __DATA__
         PerlResponseHandler TestModperl::setupenv::env
 
         PerlOptions +SetupEnv
-    
+
         PerlHeaderParserHandler TestModperl::setupenv::subenv_void
         PerlFixupHandler TestModperl::setupenv::subenv_two
 

@@ -35,7 +35,7 @@ __END__
 <NoAutoConfig>
   <VirtualHost TestPreConnection::note>
     PerlPreConnectionHandler TestPreConnection::note
-  
+
     <Location /TestPreConnection__note>
       SetHandler modperl
       PerlResponseHandler TestPreConnection::note::response

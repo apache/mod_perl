@@ -55,10 +55,10 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
     SV *buffer;
 
     mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
-        
+
     MP_TRACE_f(MP_FUNC, "from %s\n",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);
-    
+
     if (items > 2) {
         wanted = SvIV(*MARK);
     }
@@ -79,7 +79,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
 
     /* must run any set magic */
     SvSETMAGIC(buffer);
-    
+
     SvTAINTED_on(buffer);
 
     return len;
@@ -184,7 +184,7 @@ static MP_INLINE SV *mpxs_Apache__Filter_ctx(pTHX_
      * a way to use one of the perl internal functions to clone an SV
      * (and it can contain any references)
      */
-    
+
     if (data != Nullsv) {
         if (ctx->data) {
             if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
@@ -214,11 +214,11 @@ static MP_INLINE SV *mpxs_Apache__Filter_seen_eos(pTHX_ I32 items,
         Perl_croak(aTHX_ "usage: $filter->seen_eos([$set])");
     }
     MARK++;
-    
+
     if (items == 2) {
         modperl_filter->seen_eos = SvTRUE(*MARK) ? 1 : 0;
     }
-    
+
     return modperl_filter->seen_eos ? &PL_sv_yes : &PL_sv_no;
 }
 
@@ -226,7 +226,7 @@ static MP_INLINE
 void mpxs_Apache__RequestRec_add_input_filter(pTHX_ request_rec *r,
                                               SV *callback)
 {
-    
+
     modperl_filter_runtime_add(aTHX_ r,
                                r->connection,
                                MP_FILTER_REQUEST_INPUT_NAME,
@@ -240,7 +240,7 @@ static MP_INLINE
 void mpxs_Apache__RequestRec_add_output_filter(pTHX_ request_rec *r,
                                                SV *callback)
 {
-    
+
     modperl_filter_runtime_add(aTHX_ r,
                                r->connection,
                                MP_FILTER_REQUEST_OUTPUT_NAME,
@@ -254,7 +254,7 @@ static MP_INLINE
 void mpxs_Apache__Connection_add_input_filter(pTHX_ conn_rec *c,
                                               SV *callback)
 {
-    
+
     modperl_filter_runtime_add(aTHX_ NULL,
                                c,
                                MP_FILTER_CONNECTION_INPUT_NAME,
@@ -268,7 +268,7 @@ static MP_INLINE
 void mpxs_Apache__Connection_add_output_filter(pTHX_ conn_rec *c,
                                                SV *callback)
 {
-    
+
     modperl_filter_runtime_add(aTHX_ NULL,
                                c,
                                MP_FILTER_CONNECTION_OUTPUT_NAME,
@@ -306,12 +306,12 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
         ap_remove_output_filter(f);
         return;
     }
-    
+
     f = modperl_filter->f;
 
     MP_TRACE_f(MP_FUNC, "   %s\n\n\tfilter removes itself\n",
                ((modperl_filter_ctx_t *)f->ctx)->handler->name);
-    
+
     if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
         ap_remove_input_filter(f);
     }

@@ -191,7 +191,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         /* already resolved anonymous handler */
         return 1;
     }
-    
+
     if (strnEQ(name, "sub ", 4)) {
         SV *sv;
         CV *cv;
@@ -201,7 +201,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         ENTER;SAVETMPS;
         sv = eval_pv(name, TRUE);
         if (!(SvROK(sv) && (cv = (CV*)SvRV(sv)) && (CvFLAGS(cv) & CVf_ANON))) {
-            
+
             Perl_croak(aTHX_ "expected anonymous sub, got '%s'\n", name);
         }
 
@@ -328,7 +328,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         /* note: this is the real function after @ISA lookup */
         handler->mgv_cv = modperl_mgv_compile(aTHX_ p, HvNAME(GvSTASH(gv)));
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);
-  
+
         MpHandlerPARSED_On(handler);
         MP_TRACE_h(MP_FUNC, "[%s] found `%s' in class `%s' as a %s\n",
                    modperl_pid_tid(p),
@@ -345,7 +345,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     if (MpHandlerAUTOLOAD(handler)) {
         Perl_croak(aTHX_ "failed to resolve handler %s\n", name);
     }
-    
+
 #ifdef MP_TRACE
     /* complain only if the class was actually loaded/created */
     if (stash) {

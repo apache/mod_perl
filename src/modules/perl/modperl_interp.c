@@ -190,7 +190,7 @@ apr_status_t modperl_interp_pool_destroy(void *data)
         modperl_tipool_destroy(mip->tipool);
         mip->tipool = NULL;
     }
-    
+
     if (MpInterpBASE(mip->parent)) {
         /* multiple mips might share the same parent
          * make sure its only destroyed once
@@ -247,16 +247,16 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
         (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
     MP_TRACE_i(MP_FUNC, "server=%s\n", modperl_server_desc(s, p));
-    
+
     if (modperl_threaded_mpm()) {
         mip->tipool = modperl_tipool_new(p, scfg->interp_pool_cfg,
                                          &interp_pool_func, mip);
     }
-    
+
     mip->server = s;
     mip->parent = modperl_interp_new(mip, NULL);
     aTHX = mip->parent->perl = perl;
-    
+
     /* this happens post-config in mod_perl.c:modperl_init_clones() */
     /* modperl_tipool_init(tipool); */
 

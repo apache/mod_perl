@@ -40,7 +40,7 @@ static void new_constsub(pTHX_ constants_lookup lookup,
         GvSHARED_on(*gvp);
 #endif
     }
-    
+
     /* export into callers namespace */
     if (caller_stash) {
         GV *alias = *(GV **)hv_fetch(caller_stash,

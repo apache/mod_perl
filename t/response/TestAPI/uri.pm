@@ -155,7 +155,7 @@ sub handler {
         ok t_cmp($puri->path,     $path,     "path");
         ok t_cmp($puri->query,    $query,    "query");
         ok t_cmp($puri->fragment, $fragment, "fragment");
-        
+
         #rpath
         ok t_cmp($puri->rpath, '/foo', "rpath");
 

@@ -137,7 +137,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
         svbucket->sv = sv;
         (void)SvREFCNT_inc(svbucket->sv);
     }
-    
+
     MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d\n",
                (unsigned long)svbucket->sv, SvREFCNT(svbucket->sv));
 

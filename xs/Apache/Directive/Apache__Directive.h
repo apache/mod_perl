@@ -78,10 +78,10 @@ static MP_INLINE SV *mpxs_Apache__Directive_as_hash(pTHX_
     int directive_len;
     const char *args;
     int args_len;
-    
+
     HV *hash = newHV();
     SV *subtree;
-    
+
     while (tree) {
         directive = tree->directive;
         directive_len = strlen(directive);
@@ -89,13 +89,13 @@ static MP_INLINE SV *mpxs_Apache__Directive_as_hash(pTHX_
         args_len = strlen(args);
 
         if (tree->first_child) {
-            
+
             /* Skip the prefix '<' */
             if ('<' == directive[0]) {
                 directive++;
                 directive_len--;
             }
-            
+
             /* Skip the postfix '>' */
             if ('>' == args[args_len-1]) {
                 args_len--;
@@ -109,22 +109,22 @@ static MP_INLINE SV *mpxs_Apache__Directive_as_hash(pTHX_
             hash_insert(aTHX_ hash, directive, directive_len, 
                         args, args_len, Nullsv);   
         }
-        
+
         tree = tree->next;
     }
-    
+
     return newRV_noinc((SV *)hash);
 }
 
 static XS(MPXS_Apache__Directive_lookup)
 {
     dXSARGS;
-    
+
     if (items < 2 || items > 3) {
 	    Perl_croak(aTHX_
                        "Usage: Apache::Directive::lookup(self, key, [args])");
     }
-    
+
     mpxs_PPCODE({
         Apache__Directive tree;
         char *value;
@@ -143,7 +143,7 @@ static XS(MPXS_Apache__Directive_lookup)
 	    else {
 	        tree = ap_conftree;
             }
-        
+
 	    if (items < 3) {
 	        value = NULL;
             }
@@ -154,15 +154,15 @@ static XS(MPXS_Apache__Directive_lookup)
         while (tree) {
             directive = tree->directive;
             directive_len = strlen(directive);
-            
+
             /* Remove starting '<' for container directives */
             if (directive[0] == '<') {
                 directive++;
                 directive_len--;
             }
-           
+
             if (0 == strncasecmp(directive, key, directive_len)) {
-                
+
                 if (value) {
                     args = tree->args;
                     args_len = strlen(args);
@@ -171,9 +171,9 @@ static XS(MPXS_Apache__Directive_lookup)
                     if ('>' == args[args_len-1]) {
                         args_len--;
                     }
-                    
+
                 }
-                
+
                 if ( (!value) || (0 == strncasecmp(args, value, args_len)) ) {
                     if (tree->first_child) {
                         XPUSHs(sv_2mortal(mpxs_Apache__Directive_as_hash(
@@ -188,7 +188,7 @@ static XS(MPXS_Apache__Directive_lookup)
                     }
                 }
             }
-            
+
             tree = tree->next ? tree->next : NULL;
         }
     });

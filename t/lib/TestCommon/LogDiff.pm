@@ -53,18 +53,18 @@ TestCommon::LogDiff - get log file diffs
 
   use TestCommon::LogDiff;
   use Apache::Test;
-  
+
   plan tests => 2;
-  
+
   my $path = "/tmp/mylog";
   open my $fh, ">>$path" or die "Can't open $path: $!";
-  
+
   my $logdiff = TestCommon::LogDiff->new($path);
-  
+
   print $fh "foo 123\n";
   my $expected = qr/^foo/;
   ok t_cmp $logdiff->diff, $expected;
-  
+
   print $fh "bar\n";
   my $expected = 'bar';
   ok t_cmp $logdiff->diff, $expected;

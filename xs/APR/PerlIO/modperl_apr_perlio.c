@@ -66,7 +66,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     apr_int32_t apr_flag;
     apr_status_t rc;
     SV *sv;
-    
+
     if (!(SvROK(arg) || SvPOK(arg))) {
         return NULL;
     }
@@ -81,7 +81,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
 
     /* grab the last arg as a filepath */
     path = (const char *)SvPV_nolen(args[narg-2]);
-    
+
     switch (*mode) {
       case 'a':
         apr_flag = APR_APPEND | APR_CREATE;
@@ -103,7 +103,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
      *               :perlio (== PerlIOBuf) layer on top
      */
     apr_flag |= APR_BUFFERED | APR_BINARY;
-    
+
     st = PerlIOSelf(f, PerlIOAPR);
 
     /* XXX: can't reuse a wrapper mp_xs_sv2_APR__Pool */
@@ -116,7 +116,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
         Perl_croak(aTHX_ "argument is not a blessed reference "
                    "(expecting an APR::Pool derived object)");
     }
-    
+
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
 
     MP_TRACE_o(MP_FUNC, "obj=0x%lx, file=0x%lx, name=%s, rc=%d",
@@ -147,13 +147,13 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
                              CLONE_PARAMS *param, int flags)
 {
     apr_status_t rc;
- 
+
     if ((f = PerlIOBase_dup(aTHX_ f, o, param, flags))) {
         PerlIOAPR *fst = PerlIOSelf(f, PerlIOAPR);
         PerlIOAPR *ost = PerlIOSelf(o, PerlIOAPR);
 
         rc = apr_file_dup(&fst->file, ost->file, ost->pool);
-        
+
         MP_TRACE_o(MP_FUNC, "obj=0x%lx, "
                    "file=0x%lx => 0x%lx, rc=%d",
                    (unsigned long)f, (unsigned long)ost->file,
@@ -177,7 +177,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 
     MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
                MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
-    
+
     if (rc == APR_EOF) {
         PerlIOBase(f)->flags |= PERLIO_F_EOF;
         return count;
@@ -196,7 +196,7 @@ static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
 
     MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
                MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
-    
+
     rc = apr_file_write(st->file, vbuf, &count);
     if (rc == APR_SUCCESS) {
         return (SSize_t) count;
@@ -241,7 +241,7 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     if (PerlIO_flush(f) != 0) {
         return -1;
     }
-        
+
     switch(whence) {
       case 0:
         where = APR_SET;
@@ -269,7 +269,7 @@ static Off_t PerlIOAPR_tell(pTHX_ PerlIO *f)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_off_t offset = 0;
     apr_status_t rc;
-    
+
     rc = apr_file_seek(st->file, APR_CUR, &offset);
     if (rc == APR_SUCCESS) {
         return (Off_t) offset;
@@ -337,7 +337,7 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
     if (!st->base.buf) {
         PerlIO_get_base(f);  /* allocate via vtable */
     }
-        
+
     MP_TRACE_o(MP_FUNC, "asked to fill %d chars", count);
 
     rc = apr_file_read(st->file, st->base.ptr, &count);
@@ -356,7 +356,7 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
         else {
             PerlIOBase(f)->flags |= PERLIO_F_ERROR;
         }
-        
+
         return -1;
     }
     st->base.end = st->base.buf + avail;
@@ -449,7 +449,7 @@ PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     if (!f) {
         Perl_croak(aTHX_ "Failed to allocate PerlIO struct");
     }
-    
+
     switch (type) {
       case MODPERL_APR_PERLIO_HOOK_WRITE:
         mode = "w";
@@ -460,7 +460,7 @@ PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
       default:
         Perl_croak(aTHX_ "unknown MODPERL_APR_PERLIO type: %d", type);
     };
-    
+
     PerlIO_apply_layers(aTHX_ f, mode, layers);
     if (!f) {
         Perl_croak(aTHX_ "Failed to apply the ':APR' layer");
@@ -478,7 +478,7 @@ PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
         if (rc != APR_SUCCESS) {
             croak("filedes retrieval failed!");
         }
-    
+
         MP_TRACE_o(MP_FUNC, "converting to PerlIO fd %d, mode '%s'",
                    os_file, mode);
     }
@@ -541,7 +541,7 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     int fd;
     apr_os_file_t os_file;
     apr_status_t rc;
-    
+
     switch (type) {
       case MODPERL_APR_PERLIO_HOOK_WRITE:
         mode = "w";
@@ -572,7 +572,7 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
        apr_file_close(file);
 
        after PerlIO_fdopen() or that fh will be leaked
-       
+
     */
 
     if (!(retval = PerlIO_fdopen(os_file, mode))) { 
@@ -605,7 +605,7 @@ SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
         IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
     };
-  
+
     return sv_2mortal(retval);
 }
 

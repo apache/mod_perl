@@ -152,7 +152,7 @@ void modperl_perl_global_avcv_clear(pTHX_ modperl_modglobal_key_t *gkey,
 
     MP_TRACE_g(MP_FUNC, "clear PL_modglobal %s::%s (has %d entries)",
                package, (char*)gkey->name, av ? 1+av_len(av) : 0);
-    
+
     if (av) {
         av_clear(av);
     }
@@ -174,9 +174,9 @@ static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
      * keeps the unshifted cv (e.g. END block) in its original av
      * (e.g. PL_endav)
      */
-     
+
     mav = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen, FALSE);
-    
+
     if (!mav) {
         MP_TRACE_g(MP_FUNC, "%s::%s is not going to PL_modglobal",
                    package, (char*)gkey->name);
@@ -186,16 +186,16 @@ static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
 
     MP_TRACE_g(MP_FUNC, "%s::%s is going into PL_modglobal",
                package, (char*)gkey->name);
-        
+
     sv = av_shift(av);
-    
+
     /* push @{ $PL_modglobal{$key}{$package} }, $cv */
     av_store(mav, AvFILLp(mav)+1, sv);
 
     /* print scalar @{ $PL_modglobal{$key}{$package} } */
     MP_TRACE_g(MP_FUNC, "%s::%s av now has %d entries\n",
                package, (char*)gkey->name, 1+av_len(mav));
-    
+
     return 1;
 }
 
@@ -266,7 +266,7 @@ static HV *copyENV(pTHX_ HV *ohv)
 
     hv_riter = HvRITER(ohv);    /* current root of iterator */
     hv_eiter = HvEITER(ohv);    /* current entry of iterator */
-        
+
     hv_iterinit(ohv);
     while ((entry = hv_iternext(ohv))) {
         SV *sv = newSVsv(HeVAL(entry));

@@ -53,7 +53,7 @@ MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
             break;
         }
     }
-    
+
     if (tmp - buffer >= *len) {
         *body = NULL; /* no body along with headers */
         *len = 0;
@@ -62,7 +62,7 @@ MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
         *body = tmp;
         *len = *len - (tmp - buffer);
     }
-    
+
     status = ap_scan_script_header_err_strs(r, NULL, NULL,
                                             &termarg, buffer, NULL);
 

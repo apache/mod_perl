@@ -99,7 +99,7 @@ modperl_list_t *modperl_list_remove(modperl_list_t *list,
                                     modperl_list_t *rlist)
 {
     modperl_list_t *tmp = list;
-  
+
     while (tmp) {
         if (tmp != rlist) {
             tmp = tmp->next;
@@ -135,7 +135,7 @@ modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
                                          modperl_list_t **listp)
 {
     modperl_list_t *tmp = list;
-  
+
     while (tmp) {
         if (tmp->data != data) {
             tmp = tmp->next;
@@ -310,7 +310,7 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
         modperl_tipool_unlock(tipool);
         return;
     }
-    
+
     tipool->idle = modperl_list_prepend(tipool->idle, listp);
 
     tipool->in_use--;

@@ -40,7 +40,7 @@ static apr_bucket *mpxs_APR__Bucket_new(pTHX_  SV *classname, apr_bucket_alloc_t
     else {
         len = full_len - offset;
     }
-    
+
     return modperl_bucket_sv_create(aTHX_ list, sv, offset, len);
 }
 
@@ -69,7 +69,7 @@ apr_size_t mpxs_APR__Bucket_read(pTHX_
     SvSETMAGIC(buffer);
 
     SvTAINTED_on(buffer);
-    
+
     return len;
 }
 

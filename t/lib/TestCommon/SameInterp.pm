@@ -54,16 +54,16 @@ TestCommon::SameInterp - Helper functions for same_interp framework
   use Apache::Test;
   use Apache::TestUtil;
   use Apache::TestRequest;
-  
+
   use TestCommon::SameInterp;
-  
+
   plan tests => 3;
-  
+
   my $url = "/path";
-  
+
   my $same_interp = Apache::TestRequest::same_interp_tie($url);
   ok $same_interp;
-  
+
   my $expected = 1;
   my $skip  = 0;
   # test GET over the same same_interp

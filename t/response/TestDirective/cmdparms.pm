@@ -48,7 +48,7 @@ sub TestCmdParms {
     }
     $srv_cfg->{$args}{check_ctx} = 
         $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
-    
+
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
 }
 
@@ -104,7 +104,7 @@ sub handler : method {
                   ' cannot occur within <Location> section', 'check_cmd_ctx');
         ok $loc->{limited};
     }
-    
+
     # Limit
     {
         my $limit = $srv_cfg->{Limit};
