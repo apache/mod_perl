@@ -177,6 +177,7 @@ $PERL_TABLE_API = 0;
 $PERL_LOG_API = 0;
 $PERL_URI_API = 0;
 $PERL_UTIL_API = 0;
+$PERL_FILE_API = 0;
 $PERL_CONNECTION_API = 1; #these two were split out late in the game
 $PERL_SERVER_API = 1;     #so they are on by default 
 $PERL_RUN_XS = 0;
@@ -231,6 +232,7 @@ sub is_mp_arg {
    PERL_LOG_API
    PERL_URI_API
    PERL_UTIL_API
+   PERL_FILE_API
    PERL_CONNECTION_API
    PERL_SERVER_API
 };
@@ -336,7 +338,7 @@ for (keys %callback_alias) {
 if($EVERYTHING) {
     @callback_hooks{qw(PERL_STACKED_HANDLERS PERL_METHOD_HANDLERS)} = (1) x 2;
     for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_DIRECTIVE_HANDLERS 
-	   PERL_LOG_API PERL_URI_API PERL_UTIL_API PERL_TABLE_API)) {
+	   PERL_LOG_API PERL_URI_API PERL_UTIL_API PERL_TABLE_API PERL_FILE_API)) {
        $$_ = 1;
     }
 }
@@ -349,7 +351,7 @@ if($ALL_HOOKS) {
 }
 
 if($DYNAMIC) {
-    $PERL_DIRECTIVE_HANDLERS = $PERL_TABLE_API = 
+    $PERL_DIRECTIVE_HANDLERS = $PERL_TABLE_API = $PERL_FILE_API =
 	$PERL_LOG_API = $PERL_URI_API = $PERL_UTIL_API = 1;
 }
 
@@ -421,7 +423,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $USE_APACI = $USE_DSO = 0;
 	    
 	}
-	for (qw(PERL_LOG_API PERL_URI_API PERL_UTIL_API)) {
+	for (qw(PERL_LOG_API PERL_URI_API PERL_UTIL_API PERL_FILE_API)) {
 	    if(($mmn < MMN_130) and $$_) { #1.3.0
 		$$_ = 0;
 		$cant_hook{$_} = "(need 1.3.0 or higher)";
@@ -583,7 +585,7 @@ if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
 	print "Sorry, need 1.3.0+ for Apache::PerlRunXS\n";
     }
 }
-for (qw(Log URI Util Connection Server)) {
+for (qw(Log URI Util Connection Server File)) {
     my $s = "PERL_".uc($_)."_API";
     if($$s) {
 	push @xs_modules, "Apache::$_";

@@ -1,6 +1,8 @@
 Changes
 Constants/Constants.pm
 Constants/Makefile.PL
+File/File.pm
+File/Makefile.PL
 ModuleConfig/ModuleConfig.pm
 ModuleConfig/Makefile.PL
 Log/Makefile.PL
@@ -13,11 +15,6 @@ Server/Makefile.PL
 Server/Server.pm
 Connection/Makefile.PL
 Connection/Connection.pm
-IO/IO.pm
-IO/IO.xs
-IO/Makefile.PL
-t/net/perl/io.pl
-t/modules/io.t
 CREDITS
 INSTALL
 INSTALL.apaci
@@ -73,6 +70,7 @@ Symbol/test.pl
 src/modules/perl/perl_PL.h
 src/modules/perl/mod_perl_version.h
 src/modules/perl/Exports.c
+src/modules/perl/File.xs
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
 src/modules/perl/Connection.xs
@@ -110,6 +108,7 @@ t/modules/cgi.t
 t/modules/constants.t
 t/modules/eperl.t
 t/modules/embperl.t
+t/modules/file.t
 t/modules/httpdconf.t
 t/modules/log.t
 t/modules/uri.t
@@ -138,6 +137,7 @@ t/internal/stacked.t
 #t/internal/resolver.t
 t/internal/taint.t
 t/internal/tie.t
+t/net/perl/file.pl
 t/net/perl/log.pl
 t/net/perl/uri.pl
 t/net/perl/util.pl
