@@ -186,7 +186,7 @@ $EVERYTHING = $EXPERIMENTAL = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
 $PERL_STATIC_EXTS = "";
-$PERL_EXTRA_CFLAGS = "";
+$PERL_EXTRA_CFLAGS = $] >= 5.006 ? $Config{ccflags} : "";
 $SSLCacheServerPort = 8539;
 $SSL_BASE = ""; 
 $Port = $ENV{HTTP_PORT} || 8529;
