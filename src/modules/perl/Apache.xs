@@ -1510,6 +1510,16 @@ status(r, ...)
     OUTPUT:
     RETVAL
 
+int
+allowed(r, ...)
+    Apache	r
+
+    CODE:
+    get_set_IV(r->allowed);
+
+    OUTPUT:
+    RETVAL
+
 time_t
 request_time(r)
     Apache	r

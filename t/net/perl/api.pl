@@ -1,5 +1,5 @@
 use Apache ();
-use Apache::Constants qw(:server :common);
+use Apache::Constants qw(:server :common :methods);
 use Apache::test;
 use strict;
 
@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 71;
+my $tests = 74;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -156,6 +156,12 @@ test ++$i, $r->filename;
 #just make sure we can actually call these
 test ++$i, $r->satisfies || 1;
 test ++$i, $r->some_auth_required || 1;
+
+$r->allowed(1 << M_GET);
+test ++$i, $r->allowed & (1 << M_GET);
+test ++$i, ! ($r->allowed & (1 << M_PUT));
+$r->allowed($r->allowed | (1 << M_PUT));
+test ++$i, $r->allowed & (1 << M_PUT);
 
 #dir_config
 
