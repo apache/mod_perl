@@ -28,7 +28,7 @@ typedef enum {
 } modperl_modglobal_key_e;
 
 typedef struct {
-    AV *av;
+    AV **av;
     modperl_modglobal_key_e key;
 } modperl_perl_global_avcv_t;
 
