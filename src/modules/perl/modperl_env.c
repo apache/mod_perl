@@ -62,9 +62,34 @@ void modperl_env_clear(pTHX)
     modperl_env_tie(mg_flags);
 }
 
+static void modperl_env_table_populate(pTHX_ apr_table_t *table)
+{
+    HV *hv = ENVHV;
+    U32 mg_flags;
+    int i;
+    const apr_array_header_t *array;
+    apr_table_entry_t *elts;
+
+    modperl_env_untie(mg_flags);
+
+    array = apr_table_elts(table);
+    elts  = (apr_table_entry_t *)array->elts;
+
+    for (i = 0; i < array->nelts; i++) {
+	if (!elts[i].key || !elts[i].val) {
+            continue;
+        }
+        modperl_env_hv_store(aTHX_ hv, &elts[i]);
+    }    
+
+    modperl_env_tie(mg_flags);
+}
+
 void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s)
 {
     /* XXX: propagate scfg->SetEnv to environ */
+    MP_dSCFG(s);
+    modperl_env_table_populate(aTHX_ scfg->SetEnv);
 }
 
 #define overlay_subprocess_env(r, tab) \
@@ -106,11 +131,6 @@ void modperl_env_default_populate(pTHX)
 void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     MP_dRCFG;
-    HV *hv = ENVHV;
-    U32 mg_flags;
-    int i;
-    const apr_array_header_t *array;
-    apr_table_entry_t *elts;
 
     if (MpReqSETUP_ENV(rcfg)) {
         return;
@@ -124,19 +144,7 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);
 
-    modperl_env_untie(mg_flags);
-
-    array = apr_table_elts(r->subprocess_env);
-    elts  = (apr_table_entry_t *)array->elts;
-
-    for (i = 0; i < array->nelts; i++) {
-	if (!elts[i].key || !elts[i].val) {
-            continue;
-        }
-        modperl_env_hv_store(aTHX_ hv, &elts[i]);
-    }    
-
-    modperl_env_tie(mg_flags);
+    modperl_env_table_populate(aTHX_ r->subprocess_env);
 
 #ifdef MP_COMPAT_1X
     modperl_env_default_populate(aTHX); /* reset GATEWAY_INTERFACE */
