@@ -33,6 +33,16 @@ MP_DECLARE_SRV_CMD(interp_max);
 MP_DECLARE_SRV_CMD(interp_max_spare);
 MP_DECLARE_SRV_CMD(interp_min_spare);
 MP_DECLARE_SRV_CMD(interp_max_requests);
+MP_DECLARE_SRV_CMD(interp_lifetime);
+
+const char *modperl_interp_lifetime_desc(modperl_srv_config_t *scfg);
+
+#define modperl_interp_lifetime_connection(scfg) \
+(scfg->interp_lifetime == MP_INTERP_LIFETIME_CONNECTION)
+
+#define modperl_interp_lifetime_request(scfg) \
+(scfg->interp_lifetime == MP_INTERP_LIFETIME_REQUEST)
+
 #endif
 
 #define MP_SRV_CMD_TAKE1(name, item, desc) \

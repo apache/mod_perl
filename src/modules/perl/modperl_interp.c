@@ -205,11 +205,14 @@ apr_status_t modperl_interp_unselect(void *data)
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
+    MP_dSCFG(s);
     modperl_interp_t *interp;
     apr_pool_t *p = NULL;
     const char *desc = NULL;
+    int lifetime_connection = 
+        (modperl_interp_lifetime_connection(scfg) || !r);
 
-    if (c) {
+    if (c && lifetime_connection) {
         desc = "conn_rec pool";
         (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, c->pool);
 

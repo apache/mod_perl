@@ -7,6 +7,13 @@
 #define MP_INLINE APR_INLINE
 #endif
 
+#ifndef strcaseEQ
+#   define strcaseEQ(s1,s2) (!strcasecmp(s1,s2))
+#endif
+#ifndef strncaseEQ
+#   define strncaseEQ(s1,s2,l) (!strncasecmp(s1,s2,l))
+#endif
+
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);

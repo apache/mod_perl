@@ -202,6 +202,9 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     }
 
 #ifdef USE_ITHREADS
+    if (r && !c && modperl_interp_lifetime_connection(scfg)) {
+        c = r->connection;
+    }
     if (r || c) {
         p = c ? c->pool : r->pool;
         interp = modperl_interp_select(r, c, s);

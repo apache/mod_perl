@@ -127,6 +127,8 @@ void *modperl_create_srv_config(apr_pool_t *p, server_rec *s)
         (modperl_tipool_config_t *)
         apr_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
 
+    scfg->interp_lifetime = MP_INTERP_LIFETIME_REQUEST;
+
     /* XXX: determine reasonable defaults */
     scfg->interp_pool_cfg->start = 3;
     scfg->interp_pool_cfg->max_spare = 3;
@@ -155,6 +157,7 @@ void *modperl_merge_srv_config(apr_pool_t *p, void *basev, void *addv)
 #ifdef USE_ITHREADS
     merge_item(mip);
     merge_item(interp_pool_cfg);
+    merge_item(interp_lifetime);
 #else
     merge_item(perl);
 #endif
@@ -221,6 +224,37 @@ MP_DECLARE_SRV_CMD(options)
 }
 
 #ifdef USE_ITHREADS
+
+static const char *MP_interp_lifetime_desc[] = {
+    "none", "request", "connection",
+};
+
+const char *modperl_interp_lifetime_desc(modperl_srv_config_t *scfg)
+{
+    return MP_interp_lifetime_desc[scfg->interp_lifetime];
+}
+
+MP_DECLARE_SRV_CMD(interp_lifetime)
+{
+    MP_dSCFG(parms->server);
+
+    switch (toLOWER(*arg)) {
+      case 'r':
+        if (strcaseEQ(arg, "request")) {
+            scfg->interp_lifetime = MP_INTERP_LIFETIME_REQUEST;
+            break;
+        }
+      case 'c':
+        if (strcaseEQ(arg, "connection")) {
+            scfg->interp_lifetime = MP_INTERP_LIFETIME_CONNECTION;
+            break;
+        }
+      default:
+        return "PerlInterpLifetime must be one of connection or request";
+    };
+
+    return NULL;
+}
 
 #define MP_IMP_INTERP_POOL_CFG(xitem) \
 const char *modperl_cmd_interp_##xitem(cmd_parms *parms, \
