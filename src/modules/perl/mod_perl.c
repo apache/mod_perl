@@ -537,6 +537,13 @@ static int modperl_hook_create_request(request_rec *r)
 
     modperl_config_req_init(r, rcfg);
 
+    /* set the default for cgi header parsing On as early as possible
+     * so $r->content_type in any phase after header_parser could turn
+     * it off. wb->header_parse will be set to 1 only if this flag
+     * wasn't turned off and MpDirPARSE_HEADERS is on
+     */
+    MpReqPARSE_HEADERS_On(rcfg);
+    
     return OK;
 }
 
@@ -549,17 +556,7 @@ static int modperl_hook_post_read_request(request_rec *r)
 }
 
 static int modperl_hook_header_parser(request_rec *r)
-{
-    MP_dDCFG;
-
-    /* set the default for cgi header parsing On (if applicable) as
-     * early as possible so $r->content_type in any phase after
-     * header_parser could turn it off */
-    if (MpDirPARSE_HEADERS(dcfg)) {
-        MP_dRCFG;
-        MpReqPARSE_HEADERS_On(rcfg);
-    }
-    
+{    
     /* if 'PerlOptions +GlobalRequest' is inside a container */
     modperl_global_request_cfg_set(r);
 
@@ -728,6 +725,7 @@ static const command_rec modperl_cmds[] = {
 void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
+    MP_dDCFG;
     modperl_wbucket_t *wb;
 
     if (!rcfg->wbucket) {
@@ -742,7 +740,8 @@ void modperl_response_init(request_rec *r)
     wb->pool = r->pool;
     wb->filters = &r->output_filters;
     wb->outcnt = 0;
-    wb->header_parse = MpReqPARSE_HEADERS(rcfg) ? 1 : 0;
+    wb->header_parse = MpDirPARSE_HEADERS(dcfg) && MpReqPARSE_HEADERS(rcfg)
+        ? 1 : 0;
     wb->r = r;
 }
 
