@@ -40,13 +40,18 @@ addon modules:
 
 - mod_perl.pm::import
 
-- Apache::Status
+- Apache::Status (stas: in progress, needs Apache::Peek and a few
+  other fixes)
 
 - Apache::test: tobe a compat stub around new test framework
 
 - Apache::src: tobe a compat stub around new build framework
 
-- Apache::PerlSections: depends on <Perl>
+- Apache::PerlSections: still missing:
+   - $Apache::Server::SaveConfig
+   - $Apache::ReadConfig::DocumentRoot
+   - $Apache::Server::StrictPerlSections
+   - Apache::PerlSections->store(filename)
 
 - Apache::SizeLimit and Apache::Resource
 
