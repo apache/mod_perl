@@ -333,6 +333,13 @@ sub save_ldopts {
     chmod 0755, $file;
 }
 
+my $noedit_warning_hash;
+
+#we are use'd by ModPerl::Code, so delay this until after compilation
+CHECK {
+    $noedit_warning_hash = ModPerl::Code::noedit_warning_hash(__PACKAGE__);
+}
+
 sub save {
     my($self, $file) = @_;
 
@@ -347,7 +354,7 @@ sub save {
     #work around autosplit braindeadness
     my $package = 'package Apache::BuildConfig';
 
-    print $fh ModPerl::Code::noedit_warning_hash();
+    print $fh $noedit_warning_hash;
 
     print $fh <<EOF;
 $package;
@@ -641,7 +648,7 @@ sub write_src_makefile {
 
     open my $fh, '>', $mf or die "open $mf: $!";
 
-    print $fh ModPerl::Code::noedit_warning_hash();
+    print $fh $noedit_warning_hash;
 
     $self->make_tools($fh);
 

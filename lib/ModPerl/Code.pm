@@ -469,9 +469,19 @@ sub clean_files {
     [(map { "$_.c" } @g_c_names), (map { "$_.h" } @g_h_names)];
 }
 
-sub noedit_warning {
-    my $v = join '/', __PACKAGE__, $VERSION;
-    return <<EOF;
+my %warnings;
+
+sub classname {
+    my $self = shift || __PACKAGE__;
+    ref($self) || $self;
+}
+
+sub noedit_warning_c {
+    my $class = classname(shift);
+    my $warning = \$warnings{C}->{$class};
+    return $$warning if $$warning;
+    my $v = join '/', $class, $class->VERSION;
+    $$warning = <<EOF;
 
 /*
  * *********** WARNING **************
@@ -483,13 +493,15 @@ sub noedit_warning {
 EOF
 }
 
-my $noedit_warning = noedit_warning();
-my $noedit_warning_hash = noedit_warning_hash();
-
+#this is named hash after the `#' character
+#rather than named perl, since #comments are used
+#non-Perl files, e.g. Makefile, typemap, etc.
 sub noedit_warning_hash {
-    return $noedit_warning_hash if $noedit_warning_hash;
-    (my $warning = noedit_warning()) =~ s/^/\# /mg;
-    $warning;
+    my $class = classname(shift);
+    my $warning = \$warnings{hash}->{$class};
+    return $$warning if $$warning;
+    ($$warning = noedit_warning_c($class)) =~ s/^/\# /mg;
+    $$warning;
 }
 
 sub init_file {
@@ -512,7 +524,7 @@ sub init_file {
     warn "generating...$file\n";
     unlink $file;
     open my $fh, '>>', $file or die "open $file: $!";
-    print $fh @preamble, $noedit_warning;
+    print $fh @preamble, noedit_warning_c();
 
     $self->{fh}->{$name} = $fh;
 }
@@ -576,7 +588,7 @@ sub generate_apache2_pm {
 
     my $package = 'package Apache2';
 
-    print $fh ModPerl::Code::noedit_warning_hash();
+    print $fh noedit_warning_hash();
 
     print $fh <<EOF;
 $package;
