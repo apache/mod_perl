@@ -1536,9 +1536,12 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 	dotie = TRUE;
 
     perl_section_hash_init("Location", dotie);
+    perl_section_hash_init("LocationMatch", dotie);
     perl_section_hash_init("VirtualHost", dotie);
     perl_section_hash_init("Directory", dotie);
+    perl_section_hash_init("DirectoryMatch", dotie);
     perl_section_hash_init("Files", dotie);
+    perl_section_hash_init("FilesMatch", dotie);
     perl_section_hash_init("Limit", dotie);
 
     sv_setpv(perl_get_sv("0", TRUE), cmd_filename);
