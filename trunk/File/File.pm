@@ -161,11 +161,11 @@ on the client side, and has not changed since it was cached.
 =item $r->mtime() 
 
 This method returns the last modified time of the requested file,
-expressed as seconds since the epoch. The last modified time may also
-be changed using this method, although update_mtime() method is better
-suited to this purpose.
+expressed as seconds since the epoch.
 
    my $date_string = localtime $r->mtime;
+
+To change the last modified time use the C<update_mtime()> method.
 
 =item $r->set_content_length() 
 
