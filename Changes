@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+make sure global for Apache->request is reset after configuring %ENV
+[Gerald Richter <richter@ecos.de>]
+
 adjust 'U' magic functions to Perl 5.7.x-dev prototype change
 
 Put Apache's CFLAGS into AP_CFLAGS instead of CFLAGS, so that
