@@ -206,14 +206,26 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
     IV code = PerlIOBase_close(aTHX_ f);
     apr_status_t rc;
 
-    const char *new_path = NULL;
-    apr_file_name_get(&new_path, st->file);
-
 #ifdef PERLIO_APR_DEBUG
+    const char *new_path = NULL;
+    if (!PL_dirty) {
+        /* if this is called during perl_destruct we are in trouble */
+        apr_file_name_get(&new_path, st->file);
+    }
+
     Perl_warn(aTHX_ "PerlIOAPR_close obj=0x%lx, file=0x%lx, name=%s\n",
               (unsigned long)f, (unsigned long)st->file,
               new_path ? new_path : "(UNKNOWN)");
 #endif
+
+    if (PL_dirty) {
+        /* there should not be any PerlIOAPR handles open
+         * during perl_destruct
+         */
+        Perl_warn(aTHX_ "leaked PerlIOAPR handle 0x%lx",
+                  (unsigned long)f);
+        return -1;
+    }
 
     rc = apr_file_flush(st->file);
     if (rc != APR_SUCCESS) {
