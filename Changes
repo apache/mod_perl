@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+fix $r->filename in Apache::compat to update the finfo struct (which
+is how it worked in mp1) [Stas]
+
 enclose all occurences of eval_* with ENTER;SAVETMPS;
 ... FREETMPS;LEAVE; previously things just happened to work, due to
 external scopes which was not very reliable and some change could

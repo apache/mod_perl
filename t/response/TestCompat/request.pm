@@ -10,13 +10,17 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
+use APR::Finfo ();
+
+use File::Spec::Functions qw(catfile);
+
 use Apache::compat ();
 use Apache::Constants qw(OK REMOTE_HOST);
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 20;
+    plan $r, tests => 22;
 
     $r->send_http_header('text/plain');
 
@@ -72,6 +76,26 @@ sub handler {
         }
     }
 
+    # $r->filename
+    {
+        Apache::compat::override_mp2_api('Apache::RequestRec::filename');
+        my $orig = $r->filename;
+        my $new  = catfile Apache::Test::vars("serverroot"),
+            "conf", "httpd.conf";
+
+        # in mp1 setting filename, updates $r's finfo (not in mp2)
+        $r->filename($new);
+        ok t_cmp $r->finfo->size, -s $new , "new filesize";
+
+        # restore
+        $new = __FILE__;
+        $r->filename($new);
+        ok t_cmp $r->finfo->size, -s $new , "new filesize";
+
+        # restore the real 2.0 filename() method, now that we are done
+        # with the compat one
+        Apache::compat::restore_mp2_api('Apache::RequestRec::filename');
+    }
 
     # $r->notes
     {
