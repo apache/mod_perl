@@ -41,16 +41,6 @@ use constant WIN32 => Apache::Build::WIN32;
 
 our $VERSION;
 
-if (Apache::Build::REQUIRE_ITHREADS()) {
-    unless (Apache::Build::HAS_ITHREADS()) {
-	die "your system requires an ithreads enabled Perl";
-    }
-    # 5.6.x ithreads aren't good
-    unless ($] >= 5.008) {
-        die "Perl 5.8 or higher w/ ithreads is required. This is only Perl $]";
-    }
-}
-
 perl_version_check();
 
 my $build = Apache::Build->new(init => 1);
@@ -326,6 +316,18 @@ sub set_modperl_version {
 }
 
 sub perl_version_check {
+
+    if (Apache::Build::REQUIRE_ITHREADS()) {
+        unless (Apache::Build::HAS_ITHREADS()) {
+            die "your system requires an ithreads enabled Perl";
+        }
+        # 5.6.x ithreads aren't good
+        unless ($] >= 5.008) {
+            die "Perl 5.8 or higher w/ ithreads is required. " .
+                "This is only Perl $]";
+        }
+    }
+
     if ($] < 5.006_001) {
         error "You are running Perl version 5.6.0\n" .
             "We strongly suggest you upgrade to at least 5.6.1";
