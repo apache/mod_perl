@@ -293,7 +293,8 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);
   
         MpHandlerPARSED_On(handler);
-        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s\n",
+        MP_TRACE_h(MP_FUNC, "[%s] found `%s' in class `%s' as a %s\n",
+                   modperl_pid_tid(p),
                    handler_name, HvNAME(stash),
                    MpHandlerMETHOD(handler) ? "method" : "function");
         MODPERL_MGV_DEEP_RESOLVE(handler, p);
