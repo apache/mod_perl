@@ -735,9 +735,10 @@ void perl_startup (server_rec *s, pool *p)
     perl_tainting_set(s, cls->PerlTaintCheck);
     (void)GvSV_init("Apache::__SendHeader");
     (void)GvSV_init("Apache::__CurrentCallback");
+#ifndef WIN32
     if (ap_configtestonly)
     	GvSV_setiv(GvSV_init("Apache::Server::ConfigTestOnly"), TRUE);
-
+#endif
     Apache__ServerReStarting(FALSE); /* just for -w */
     Apache__ServerStarting_on();
 
