@@ -22,6 +22,10 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+Added support for PERL_THREADS to apaci stuff.  
+This is needed under the bleeding edge Perl's (e.g. 5.004_6X).
+[Ralf S. Engelschall]
+
 Avoid more unnecessary file copies and edits under 
 APACI situation. 
 [Ralf S. Engelschall]
