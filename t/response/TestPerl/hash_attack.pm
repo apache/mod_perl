@@ -114,10 +114,9 @@ sub attack {
 # integer'). So we outsmart Perl and take modules 2*32 after each
 # calculation, emulating overflows that happen in C.
 sub hash {
-    my ($s) = @_;
-    my ($u, @c);
-    @c = split //, $s;
-    $u = 0;
+    my $s = shift;
+    my @c = split //, $s;
+    my $u = HASH_SEED;
     for (@c) {
         # (A % M) + (B % M) == (A + B) % M
         # This works because '+' produces a NV, which is big enough to hold
@@ -138,7 +137,7 @@ sub hash {
 sub hash_original {
     my $s = shift;
     my @c = split //, $s;
-    my $u = 0;
+    my $u = HASH_SEED;
     for (@c) {
         $u += ord;      $u %= MASK_U32;
         $u += $u << 10; $u %= MASK_U32;
