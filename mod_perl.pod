@@ -166,6 +166,18 @@ existing environment variable to Perl's C<%ENV>:
 
 =over 4
 
+=item CONFIGURATION
+
+The C<PerlSetVar> directive provides a simple mechanism for passing
+information from configuration files to Perl modules or Registry scripts:
+
+ PerlSetVar  SomeKey  SomeValue
+
+Perl modules or scripts retrieve configuration values using the
+C<$r->dir_config> method (see 'perldoc Apache').
+
+C<PerlSetVar> handles keys case-insensitively.
+
 =item GATEWAY_INTERFACE
 
 The standard CGI environment variable B<GATEWAY_INTERFACE> is set to
