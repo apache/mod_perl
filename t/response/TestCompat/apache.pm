@@ -36,7 +36,7 @@ sub handler {
              Apache::ServerUtil::exists_config_define('MODPERL2'),
              'Apache->define');
 
-    ok t_cmp(ModPerl::Util::current_callback(),
+    ok t_cmp($r->current_callback,
              'PerlResponseHandler',
              'inside PerlResponseHandler');
 
