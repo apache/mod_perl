@@ -28,27 +28,42 @@ sub attr {
 
 sub TestCmd ($$$) {
     my($cfg, $one, $two) = @_;
-    warn "TestCmd called with args: `$one', `$two'\n";
+    #warn "TestCmd called with args: `$one', `$two'\n";
     $cfg->attr(TestCmd => [$one,$two]);
-    warn Dumper($cfg), $/;
+    #warn Dumper($cfg), $/;
 }
 
 sub AnotherCmd {
     my($cfg, @data) = @_;
     $cfg->{AnotherCmd} = [@data];
-    warn Dumper($cfg), $/;
+    #warn Dumper($cfg), $/;
     $cfg->{YAC} = [@data];
 }
 
-sub CmdIterate (@) {
+sub CmdIterate ($@) {
     my($cfg, @data) = @_;
-    warn "$cfg->ITERATE: @data\n";
+    #warn "$cfg->ITERATE: @data\n";
 }
 
 sub YAC {
     my($cfg, @data) = @_;
-    warn Dumper($cfg), $/;
+    #warn Dumper($cfg), $/;
 }
+
+use Apache::ExtUtils ();
+my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
+
+my $code = "";
+while(my($pp,$cp) = each %$proto_perl2c) {
+    $code .= <<SUB;
+sub $cp ($pp) { 
+    warn "$cp called with args: ", (map "`\$_', ", \@_);
+    shift->attr($cp => [\@_]);
+}
+SUB
+}
+
+eval $code; die $@ if $@;
 
 # Preloaded methods go here.
 

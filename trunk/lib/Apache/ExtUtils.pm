@@ -1,6 +1,51 @@
 package Apache::ExtUtils;
 
 use strict;
+use Exporter ();
+use IO::File ();
+use File::Copy ();
+
+*import = \&Exporter::import;
+@Apache::ExtUtils::EXPORT = qw(command_table);
+
+sub command_table {
+    my($class, $cmds) = @_;
+    (my $file = $class) =~ s,.*::,,;
+
+    eval {
+	require "$file.pm"; #so we can see prototypes
+    };
+
+    unless (-e "$file.xs.orig") {
+        File::Copy::cp("$file.xs", "$file.xs.orig");
+    }
+    my $fh = IO::File->new(">$file.xs") or die $!;
+    my $xs = __PACKAGE__->xs_cmd_table($class, $cmds);  
+    print $fh $xs;
+
+    close $fh;
+}
+
+#the first `$' is for the config object
+my $proto_perl2c = {
+    '$$$$'  => "TAKE3",
+    '$$$'   => "TAKE2",
+    '$$'    => "TAKE1",
+    '$'     => "NO_ARGS",
+    '$$;$'  => "TAKE12",
+    '$$$;$' => "TAKE23",
+    '$$;$$' => "TAKE123",
+    '$@'    => "ITERATE",
+    '$@;@'  => "ITERATE2",
+#    '$*'    => "RAW_ARGS",
+};
+
+my $proto_c2perl = {
+    map { $proto_perl2c->{$_}, $_ } keys %$proto_perl2c
+};
+
+sub proto_perl2c { $proto_perl2c }
+sub proto_c2perl { $proto_c2perl }
 
 sub xs_cmd_table {
     my($self, $class, $cmds) = @_;
@@ -19,14 +64,9 @@ sub xs_cmd_table {
 	my $sub = join '::', $class, $name;
 	my $take = "TAKE123";
 	if(defined &$sub) {
-	    if($proto = prototype(\&{$sub})) {
+	    if(defined($proto = prototype(\&{$sub}))) {
 		#extra $ is for config data
-		$take = 
-		    $proto eq '$$$$' ? "TAKE3"   :
-	            $proto eq '$$$'  ? "TAKE2"   :
-	            $proto eq '$$'   ? "TAKE1"   :
-		    $proto eq '@'    ? "ITERATE" :
-                    $take;
+		$take = $proto_perl2c->{$proto};
 	    }
 	}
 	$desc ||= "1-3 value(s) for $name";
@@ -107,23 +147,7 @@ Apache::ExtUtils - Utils for Apache:C/Perl glue
 
 =head1 DESCRIPTION
 
-Just one method at the moment:
-
-  use IO::File ();
-  use Apache::ExtUtils ();
-
-  my @directives = qw(MyDirective);
-  my $fh = IO::File->new(">My/Module/Module.xs") or die $!
-  my $xs_code = Apache::ExtUtils->xs_cmd_table("My::Module", \@directives);
-  print $fh $xs_code;
-
-This example will generate a .xs file which declares an Apache C module
-for the I<My::Module> class.  It is used simply to allow Perl modules to
-add their own directives to Apache, rather than use B<PerlSetVar>.
-When the directive is encountered in a config file, a Perl subroutine of
-the same name in the I<My::Module> class is called with the given arguments.
-
-For an example, see t/TestDirectives in the mod_perl distribution.
+Under constuction, all here subject to change.
 
 =head1 AUTHOR
 

@@ -32,6 +32,17 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
     #t/TestDirectives/TestDirectives.pm
     push @INC, map { "t/TestDirectives/blib/$_" } qw(arch lib);
     require Apache::TestDirectives;
+    require Apache::ExtUtils;
+ 
+    my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
+
+    while(my($pp,$cp) = each %$proto_perl2c) {
+	my $arg = "A";
+	$pp =~ s/^\$//;
+	1 while $pp =~ s/(\$|\@)/$arg++ . " "/ge;
+	$PerlConfig .= "$cp $pp\n";
+    }
+
     $PerlConfig .= <<EOF;
 TestCmd one two
 AnotherCmd uno dos tres
@@ -169,3 +180,4 @@ $Location{"/chain"} = {
 };
 
 </Perl>
+
