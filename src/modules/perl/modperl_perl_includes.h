@@ -42,6 +42,10 @@
 #   endif
 #endif
 
+/* needed starting from 5.8.2 to access the PERL_HASH_INTERNAL macro
+ * in hv.h. we use it in modperl_util.c */
+#define PERL_HASH_INTERNAL_ACCESS
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
