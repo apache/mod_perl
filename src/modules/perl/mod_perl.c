@@ -354,7 +354,7 @@ void perl_restart(server_rec *s, pool *p)
 #endif
 
     /* reload %INC */
-    perl_reload_inc();
+    perl_reload_inc(s, p);
 
     LEAVE;
 

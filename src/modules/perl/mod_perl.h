@@ -1091,7 +1091,7 @@ void perl_run_rgy_endav(char *s);
 void perl_run_endav(char *s);
 void perl_call_halt(int status);
 CV *empty_anon_sub(void);
-void perl_reload_inc(void);
+void perl_reload_inc(server_rec *s, pool *p);
 I32 perl_module_is_loaded(char *name);
 SV *perl_module2file(char *name);
 int perl_require_module(char *module, server_rec *s);
