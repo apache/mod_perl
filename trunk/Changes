@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+add dir_merge support for directive handlers
+
 $r->print/print will dereference \$scalar refs to strings so scripts
 can avoid string copies when sending data to the client, 
 e.g. print \$large_string 

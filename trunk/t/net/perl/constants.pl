@@ -28,7 +28,7 @@ while(($key,$val) = each %Apache::Constants::EXPORT_TAGS) {
 push @export, grep {!$SEEN{$_}++} @Apache::Constants::EXPORT;
 
 #skip some 1.3 stuff that 1.2 didn't have
-my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV DECLINE_CMD
+my %skip = map { $_,1 } qw(DONE REMOTE_DOUBLE_REV DECLINE_CMD DIR_MAGIC_TYPE
 			   SERVER_VERSION SERVER_SUBVERSION SERVER_BUILT);
 
 my $tests = (1 + @export) - keys %skip; 

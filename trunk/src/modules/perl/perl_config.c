@@ -650,11 +650,12 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 	ENTER;SAVETMPS;
 	PUSHMARK(sp);
 	XPUSHs(sv_2mortal(newSVpv(HvNAME(class),0)));
-	XPUSHs(perl_bless_cmd_parms(parms));
+	if(parms)
+	    XPUSHs(perl_bless_cmd_parms(parms));
 	PUTBACK;
 	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
 	SPAGAIN;
-	if((perl_eval_ok(parms->server) == OK) && (count == 1)) {
+	if((perl_eval_ok(parms ? parms->server : NULL) == OK) && (count == 1)) {
 	    *sv = POPs;
 	    ++SvREFCNT(*sv);
 	}
@@ -671,6 +672,52 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 	else
 	    return *sv;
     }
+}
+
+#define DIR_MERGE "dir_merge"
+
+void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
+{
+    GV *gv;
+    mod_perl_perl_dir_config *new,
+	*basevp = (mod_perl_perl_dir_config *)basev,
+	*addvp  = (mod_perl_perl_dir_config *)addv;
+    SV *sv, *basesv = basevp->obj, *addsv = addvp->obj;
+
+    if(!sv_isobject(basesv))
+	return basesv;
+
+    MP_TRACE_c(fprintf(stderr, "looking for method %s in package `%s'\n", 
+		       DIR_MERGE, SvCLASS(basesv)));
+
+    if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), DIR_MERGE, FALSE)) && isGV(gv)) {
+	int count;
+	dSP;
+	new = (mod_perl_perl_dir_config *)
+	    palloc(p, sizeof(mod_perl_perl_dir_config));
+
+	MP_TRACE_c(fprintf(stderr, "calling %s->%s\n", 
+			   SvCLASS(basesv), DIR_MERGE));
+
+	ENTER;SAVETMPS;
+	PUSHMARK(sp);
+	XPUSHs(basesv);XPUSHs(addsv);
+	PUTBACK;
+	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
+	SPAGAIN;
+	if((perl_eval_ok(NULL) == OK) && (count == 1)) {
+	    sv = POPs;
+	    ++SvREFCNT(sv);
+	    new->obj = sv;
+	    new->class = SvCLASS(sv);
+	}
+	FREETMPS;LEAVE;
+    }
+    else {
+	new->obj = newSVsv(basesv);
+	new->class = basevp->class;
+    }
+    return (void *)new;
 }
 
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,

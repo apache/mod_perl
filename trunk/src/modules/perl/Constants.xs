@@ -846,3 +846,12 @@ DECLINE_CMD()
 #endif
    OUTPUT:
    RETVAL
+
+char *
+DIR_MAGIC_TYPE()
+
+    CODE:
+    RETVAL = DIR_MAGIC_TYPE;
+
+    OUTPUT:
+    RETVAL
