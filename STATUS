@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/08/15 15:22:02 $]
+   Last modified at [$Date: 2002/08/16 10:15:43 $]
 
 Release:
 --------
@@ -56,6 +56,14 @@ Needs Patch or Further Investigation:
 
 Open Issues or Core Enhancements:
 ---------------------------------
+
+* PerlPreConnectionHandler's modperl_callback_pre_connection is not
+  implemented
+
+  Report: 
+  Status: ???
+
+----
 
 * Apache::Log compat issues:
 
