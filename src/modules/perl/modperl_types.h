@@ -113,7 +113,8 @@ typedef enum {
 
 typedef struct {
     MpHV *SetVar;
-    MpAV *PassEnv;
+    MpHV *SetEnv;
+    MpHV *PassEnv;
     MpAV *PerlRequire, *PerlModule;
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
     MpAV *handlers_files[MP_HANDLER_NUM_FILES];

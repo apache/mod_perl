@@ -92,6 +92,39 @@ MP_CMD_SRV_DECLARE2(add_var)
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE2(set_env)
+{
+    MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
+ 
+    MP_TRACE_d(MP_FUNC, "arg1 = %s, arg2 = %s\n", arg1, arg2);
+
+    if (!parms->path) {
+        /* will be propagated to environ */
+        apr_table_setn(scfg->SetEnv, arg1, arg2);
+    }
+
+    apr_table_setn(dcfg->SetEnv, arg1, arg2);
+
+    return NULL;
+}
+
+MP_CMD_SRV_DECLARE(pass_env)
+{
+    MP_dSCFG(parms->server);
+    char *val = getenv(arg);
+ 
+    if (val) {
+        apr_table_setn(scfg->PassEnv, arg, apr_pstrdup(parms->pool, val));
+        MP_TRACE_d(MP_FUNC, "arg = %s, val = %s\n", arg, val);
+    }
+    else {
+        MP_TRACE_d(MP_FUNC, "arg = %s: not found via getenv()\n", arg);
+    }
+
+    return NULL;
+}
+
 MP_CMD_SRV_DECLARE(options)
 {
     MP_dSCFG(parms->server);
