@@ -81,6 +81,17 @@ sub simple_fetch {
     $response->is_success;
 }
 
+#even if eval $mod fails, the .pm ends up in %INC
+#so the next eval $mod succeeds, when it shouldnot
+
+my %really_have = (
+   'Apache::Table' => sub { Apache::Table->can('TIEHASH') },
+);
+
+for (qw(Apache::Cookie Apache::Request)) {
+    $really_have{$_} = $really_have{'Apache::Table'};
+}
+
 sub have_module {
     my $mod = shift;
     my $v = shift;
@@ -89,6 +100,7 @@ sub have_module {
 	 require Apache;
 	 require Apache::Constants;
     };
+
     eval "require $mod";
     if($v and not $@) {
 	eval { 
@@ -109,7 +121,13 @@ sub have_module {
     elsif($@) {
 	warn "$@\n";
     }
+
+    if (my $cv = $really_have{$mod}) {
+	return 0 unless $cv->();
+    }
+
     print "module $mod is installed\n";
+    
     return 1;
 }
 

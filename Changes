@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+Apache::test fix for Apache::Table
+
 PerlFreshRestart semantics changed to preserve order of PerlModule's
 and not to reload modules while actually iterating over %INC
 

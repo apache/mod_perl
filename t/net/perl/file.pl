@@ -9,11 +9,10 @@ unless(have_module "Apache::File") {
     return;
 }
 
-BEGIN{
-  # untaint $ENV{PATH}
-  $ENV{'PATH'} = '/bin:/usr/bin';
-  require Apache::File;
-}
+# untaint $ENV{PATH}
+$ENV{'PATH'} = '/bin:/usr/bin';
+require Apache::File;
+
 print "1..6\n";
 my $fh = Apache::File->new;
 my $i = 0;
