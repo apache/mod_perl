@@ -90,9 +90,19 @@ MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
     if (SvOBJECT(sv) || (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))) {
         return (server_rec *)SvObjIV(sv);
     }
-    else {
-        return modperl_global_get_server_rec();
+    
+    /* next see if we have Apache->request available */
+    {
+        request_rec *r = NULL;
+        (void)modperl_tls_get_request_rec(&r);
+        if (r) {
+            return r->server;
+        }
     }
+    
+    MP_CROAK_IF_THREADS_STARTED("using global server object");
+    /* modperl_global_get_server_rec is not thread safe w/o locking */
+    return modperl_global_get_server_rec();
 }
 
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)

@@ -44,6 +44,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         s = (server_rec *)SvObjIV(sv);
     }
     else {
+        MP_CROAK_IF_THREADS_STARTED("using global server object");
         s = modperl_global_get_server_rec();
     }
 
@@ -300,6 +301,7 @@ static XS(MPXS_Apache__Log_log_error)
             s = (server_rec *)SvObjIV(ST(0));
         }
         else if (SvPOK(ST(0)) && strEQ(SvPVX(ST(0)), "Apache::ServerRec")) {
+            MP_CROAK_IF_THREADS_STARTED("using global server object");
             s = modperl_global_get_server_rec();
         }
     }
@@ -310,7 +312,13 @@ static XS(MPXS_Apache__Log_log_error)
     else {
         request_rec *r = NULL;
         (void)modperl_tls_get_request_rec(&r);
-        s = r ? r->server : modperl_global_get_server_rec();
+        if (r) {
+            s = r->server;
+        }
+        else {
+            MP_CROAK_IF_THREADS_STARTED("using global server object");
+            s = modperl_global_get_server_rec();
+        }
     }
 
     if (items > 1+i) {
