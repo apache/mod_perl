@@ -1,6 +1,10 @@
 #ifndef MODPERL_XS_H
 #define MODPERL_XS_H
 
+#define mpxs_Apache__RequestRec_pool(r) r->pool
+#define mpxs_Apache__Connection_pool(c) c->pool
+#define mpxs_Apache__URI_pool(u)        ((modperl_uri_t *)u)->pool
+
 #ifndef dAX
 #    define dAX    I32 ax = mark - PL_stack_base + 1
 #endif

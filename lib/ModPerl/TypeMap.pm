@@ -332,10 +332,12 @@ sub check_exists {
 }
 
 #XXX: generate this
-my %class_pools = (
-    'Apache::RequestRec' => '.pool',
-    'Apache::Connection' => '.pool',
-);
+my %class_pools = map {
+    (my $f = "mpxs_${_}_pool") =~ s/:/_/g;
+    $_, $f;
+} qw{
+   Apache::RequestRec Apache::Connection Apache::URI
+};
 
 sub class_pool : lvalue {
     my($self, $class) = @_;

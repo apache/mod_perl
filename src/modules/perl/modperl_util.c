@@ -66,6 +66,46 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
     return sv;
 }
 
+apr_pool_t *modperl_sv2pool(pTHX_ SV *obj)
+{
+    char *classname;
+
+    if (!(SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVMG))) {
+        return NULL;
+    }
+
+    classname = SvCLASS(obj);
+
+    if (*classname != 'A') {
+        return NULL;
+    }
+
+    if (strnEQ(classname, "APR::", 5)) {
+        classname += 5;
+        switch (*classname) {
+          case 'P':
+            if (strEQ(classname, "Pool")) {
+                return (apr_pool_t *)SvObjIV(obj);
+            }
+          default:
+            return NULL;
+        };
+    }
+    else if (strnEQ(classname, "Apache::", 8)) {
+        classname += 8;
+        switch (*classname) {
+          case 'R':
+            if (strEQ(classname, "RequestRec")) {
+                return ((request_rec *)SvObjIV(obj))->pool;
+            }
+          default:
+            return NULL;
+        };
+    }
+
+    return NULL;
+}
+
 char *modperl_apr_strerror(apr_status_t rv)
 {
     dTHX;

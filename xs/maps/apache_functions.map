@@ -243,11 +243,15 @@ MODULE=Apache::Util
  ap_os_escape_path
 
 MODULE=Apache::URI   PACKAGE=guess
+ ap_unescape_url | mpxs_ | SV *:url
  ap_parse_uri
- ap_parse_uri_components
- ap_parse_hostinfo_components
- ap_unescape_url
- ap_unparse_uri_components
+!ap_parse_hostinfo_components
+ uri_components *:ap_parse_uri_components | mpxs_ | \
+                     SV *:classname, SV *:p, uri=NULL | parse
+ ap_unparse_uri_components | mpxs_ | \
+                     uptr, flags=UNP_OMITPASSWORD | unparse
+PACKAGE=Apache::RequestRec
+ mpxs_Apache__RequestRec_parsed_uri
 
 !MODULE=Apache::StringUtil   PACKAGE=guess
  ap_checkmask
