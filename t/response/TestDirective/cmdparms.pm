@@ -28,16 +28,16 @@ use Apache::Const -compile => qw(
 use constant KEY => "TestCmdParms";
 
 our @APACHE_MODULE_COMMANDS = (
-    { 
+    {
         name        => +KEY,
         cmd_data    => 'cmd_data',
         errmsg      => 'errmsg',
     },
 );
-  
+
 my @methods = qw(cmd context directive info limited override path
                  pool server temp_pool);
-  
+
 sub TestCmdParms {
     my($self, $parms, $args) = @_;
     my $srv_cfg = $self->get_config($parms->server);
@@ -56,7 +56,7 @@ sub get_config {
 ### response handler ###
 sub handler : method {
     my($self, $r) = @_;
-    my $override; 
+    my $override;
     my $srv_cfg = $self->get_config($r->server);
 
     plan $r, tests => 6 + ( 8 * keys(%$srv_cfg) );
@@ -70,7 +70,7 @@ sub handler : method {
         ok t_cmp(ref($cfg->{server}), 'Apache::ServerRec', 'server');
         ok t_cmp($cfg->{limited}, -1, 'limited');
         ok t_cmp($cfg->{info}, 'cmd_data', 'cmd_data');
-    }    
+    }
 
     # vhost
     {
@@ -90,7 +90,7 @@ sub handler : method {
     # Location
     {
         my $loc = $srv_cfg->{Location};
-        
+
         my $wanted = Apache::ACCESS_CONF |
                      Apache::OR_INDEXES  |
                      Apache::OR_AUTHCFG  |
@@ -101,7 +101,7 @@ sub handler : method {
 
         ok t_cmp($masked, $wanted, 'override bitmask');
         ok t_cmp($loc->{path}, '/TestDirective__cmdparms', 'path');
-        ok t_cmp($loc->{check_ctx}, KEY . 
+        ok t_cmp($loc->{check_ctx}, KEY .
                   ' cannot occur within <Location> section', 'check_cmd_ctx');
     }
 
