@@ -34,7 +34,7 @@ if ($last_modified_secs < $if_modified_since_secs) {
     $body   = '';
 }
 
-my $date = Apache::Util::format_time($r->request_time, FMT, GMT, $r->pool);
+my $date = Apache::Util::ht_time($r->pool, $r->request_time, FMT, GMT);
 
 print <<HEADERS;
 Status: $status
