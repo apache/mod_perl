@@ -84,7 +84,7 @@ MyEnvRegister
 
 PerlSetEnv EnvChangeMixedTest "conf1"
 
-<Perl>
+<Perl >
 TestModperl::setupenv2::register_mixed();
 TestModperl::setupenv2::register_perl();
 $ENV{EnvChangeMixedTest} = "<perl>";
