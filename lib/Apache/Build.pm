@@ -788,22 +788,8 @@ sub apr_includedir {
     my $apr_config_path = $self->apr_config_path;
 
     if ($apr_config_path) {
-        # --includedir is available since apr-0.9.3 (Apache 2.0.45),
-        # for older versions we attempt to parse 'apr-config --includes'
         my $httpd_version = $self->httpd_version;
-        if ($httpd_version lt '2.0.45') {
-            chomp(my $paths = `$apr_config_path --includes`);
-            for (split /\s+/, $paths || '') {
-                s/-I//;
-                if (-e catfile $_, "apr.h") {
-                    $incdir = $_;
-                    last;
-                }
-            }
-        }
-        else {
-            chomp($incdir = `$apr_config_path --includedir`);
-        }
+        chomp($incdir = `$apr_config_path --includedir`);
     }
 
     unless ($incdir and -d $incdir) {

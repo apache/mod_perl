@@ -122,6 +122,7 @@ sub handler {
     ok @foo == 3;
     ok $bar[0] eq 'beer';
 
+    # BACK_COMPAT_MARKER: make back compat issues easy to find :)
     if (HAVE_APACHE_2_0_47) {
         $overlay->compress(APR::OVERLAP_TABLES_MERGE);
 

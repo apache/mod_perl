@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+remove support for httpd 2.0.45/apr 0.9.3 and lower.
+httpd 2.0.46 is now the minimum supported version.
+[Geoffrey Young]
+
 APR::PerlIO now accepts the pool object instead of a request/server
 objects, so it can be used anywhere, including outside mod_perl [Stas]
 
