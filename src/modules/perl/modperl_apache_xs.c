@@ -13,6 +13,26 @@
         MARK++; \
     }
 
+#if 0
+#define MP_USE_AP_RWRITE
+#endif
+
+#ifdef MP_USE_AP_RWRITE
+
+#define mpxs_ap_rwrite(r,buf,len) \
+ap_rwrite(buf, len, r)
+
+#define mpxs_rwrite_loop(func,obj) \
+    while (MARK <= SP) { \
+        STRLEN len; \
+        char *buf = SvPV(*MARK, len); \
+        int wlen = func(obj, buf, len); \
+        bytes += wlen; \
+        MARK++; \
+    }
+
+#endif
+
 /*
  * it is not optimal to create an ap_bucket for each element of @_
  * so we use our own mini-buffer to build up a decent size buffer
@@ -39,6 +59,7 @@ arg = *MARK++
 MP_INLINE apr_size_t modperl_apache_xs_write(pTHX_ I32 items,
                                              SV **MARK, SV **SP)
 {
+    modperl_srv_config_t *scfg;
     modperl_request_config_t *rcfg;
     apr_size_t bytes = 0;
     request_rec *r;
@@ -46,8 +67,13 @@ MP_INLINE apr_size_t modperl_apache_xs_write(pTHX_ I32 items,
     mpxs_usage_1(r, "$r->write(...)");
 
     rcfg = modperl_request_config_get(r);
+    scfg = modperl_srv_config_get(r->server);
 
+#ifdef MP_USE_AP_RWRITE
+    mpxs_rwrite_loop(mpxs_ap_rwrite, r);
+#else
     mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
+#endif
 
     /* XXX: flush if $| */
 
