@@ -68,7 +68,9 @@ sub make {
     my $flags = "-g -Wall";
     $flags .= " -E" if $opts->{E};
 
-    for ($single_file ? $single_file : $code->c_files) {
+    my @c_files = $single_file ? $single_file : $code->c_files;
+
+    for (sort { (stat $b)[9] <=> (stat $a)[9] } @c_files) {
         echo_cmd "$cc $flags $ccopts @inc -c $_";
         return if $single_file;
     }
