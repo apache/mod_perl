@@ -167,6 +167,7 @@ sub handler {
 
     *0 = \$r->filename;
     $r->chdir_file;
+    local %INC = %INC;
 
     my $eval = join '',
 		    'package ',

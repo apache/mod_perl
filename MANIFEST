@@ -152,6 +152,7 @@ t/net/perl/throw_error.pl
 t/net/perl/server_error.pl
 t/net/perl/dirty-script.cgi
 t/net/perl/dirty-test.cgi
+t/net/perl/dirty-lib
 #t/net/perl/resolver.pl
 t/net/perl/io/redir.pl
 t/net/perl/io/perlio.pl

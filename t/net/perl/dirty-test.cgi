@@ -1,3 +1,9 @@
+use lib '.';
+require "dirty-lib";
+unless (defined(&not_ina_package) && not_ina_package()) {
+    die "%INC save/restore broken";
+}
+
 package Apache::ROOT::dirty_2dperl::dirty_2dscript_2epl;
 
 use Apache::test;
