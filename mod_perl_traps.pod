@@ -104,8 +104,8 @@ would under I<CGI::MiniSrv>.
 =item *
 
 Files pulled in via C<use> or C<require> statements are not
-automatically reloaded when changed on disk.  See the Apache::StatINC 
-module to add this functionality.
+automatically reloaded when changed on disk.  See the Apache::StatINC
+or the Apache::Reload module to add this functionality.
 
 =item Undefined subroutines
 
@@ -145,6 +145,9 @@ Now, have your scripts say:
 
  Test::some_function();
 
+=item Undefined subroutine &Foo::Bar::handler called at PerlHandler subroutine `Foo::Bar' line 1.
+
+You mistyped the module name in the 'package' line in your module.
 
 =item "Use of uninitialized value"
 
@@ -365,6 +368,7 @@ follows:
 Doug MacEachern, with contributions from
 Jens Heunemann E<lt>heunemann2@janet.deE<gt>,
 David Landgren E<lt>david@landgren.netE<gt>,
-Mark Mills E<lt>mark@ntr.netE<gt> and 
-Randal Schwartz E<lt>merlyn@stonehenge.comE<gt>
+Mark Mills E<lt>mark@ntr.netE<gt>,
+Randal Schwartz E<lt>merlyn@stonehenge.comE<gt> and
+Ask Bjoern Hansen E<lt>ask@develooper.comE<gt>
 
