@@ -78,8 +78,6 @@ revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
 - disable PERL_SSI unless mod_include is listed in httpd -l
   and Action unless mod_action, etc.
 
-- Mac OS X
-
 ... docs ...
 
 - remove eg/ directory, it's way out of date and no longer needed now
