@@ -22,6 +22,19 @@ sub init {
     parse_file($build);
     parse_argv($build);
 
+    # if AP_PREFIX is used apxs and apr-config from the apache build
+    # tree won't work, so it can't co-exist with APXS and APR_CONFIG
+    # options
+    if ($build->{MP_AP_PREFIX} and $build->{MP_APXS}) {
+        error "You need to pass either MP_AP_PREFIX or MP_APXS, but not both";
+        die "\n";
+    }
+    if ($build->{MP_AP_PREFIX} and $build->{MP_APR_CONFIG}) {
+        error "You need to pass either MP_AP_PREFIX or MP_APR_CONFIG, " .
+            "but not both";
+        die "\n";
+    }
+
     if ($build->{MP_DEBUG} and $build->{MP_USE_GTOP} and !$build->find_gtop) {
         error "Can't find libgtop, resetting MP_USE_GTOP=0";
         $build->{MP_USE_GTOP} = 0;
