@@ -19,7 +19,10 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_set_handlers
  mpxs_Apache__Server_get_handlers
 
-MODULE=Apache::Filter   PACKAGE=Apache::OutputFilter
+MODULE=Apache::Filter
+modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
+
+PACKAGE=Apache::OutputFilter
  mpxs_Apache__OutputFilter_print | | ...
  mpxs_Apache__OutputFilter_read  | | ...
  ap_filter_t *:DEFINE_f | | modperl_filter_t *:filter

@@ -34,11 +34,7 @@ ap_filter_type          | Apache::FilterType
 ap_filter_func          | UNDEFINED
 ap_out_filter_func      | UNDEFINED
 ap_in_filter_func       | UNDEFINED
-ap_input_mode_t         | UNDEFINED
-
-##########  Perl types  ##########
-
-SV * | SV
+ap_input_mode_t         | IV
 
 ##########  Standard types  ##########
 
