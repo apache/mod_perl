@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add $r->as_string [Geoffrey Young]
+
 add backcompat vars: $Apache::Server::CWD and
 $Apache::Server::AddPerlVersion [Stas Bekman]
 

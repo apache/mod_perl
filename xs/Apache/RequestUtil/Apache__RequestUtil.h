@@ -214,3 +214,26 @@ char *mpxs_Apache__RequestRec_location(request_rec *r)
 
     return dcfg->location;
 }
+
+static MP_INLINE
+SV *mpxs_Apache__RequestRec_as_string(pTHX_ request_rec *r)
+{
+    SV *retval = newSVpv(r->the_request, 0);
+
+    sv_catpvn(retval, "\n", 1);
+
+    apr_table_do((int (*) (void *, const char *, const char *))
+                  modperl_sv_str_header, (void *) retval, r->headers_in, NULL);
+
+    sv_catpvf(retval, "\n%s %s\n", r->protocol, r->status_line);
+
+    apr_table_do((int (*) (void *, const char *, const char *))
+                  modperl_sv_str_header, (void *) retval, r->headers_out, NULL);
+    apr_table_do((int (*) (void *, const char *, const char *))
+                  modperl_sv_str_header, (void *) retval, r->err_headers_out, NULL);
+
+    sv_catpvn(retval, "\n", 1);
+
+    return retval;
+}
+
