@@ -9,6 +9,58 @@ typedef struct {
 
 typedef apache_tiehash_table * Apache__TieHashTable;
 
+typedef struct {
+    SV *sv;
+    SV *cv;
+    HV *hv;
+} TableDo;
+
+static int Apache_table_do(TableDo *td, const char *key, const char *val)
+{
+    int count=0, rv=1;
+    dSP;
+
+    if(td->hv && !hv_exists(td->hv, (char*)key, strlen(key))) 
+       return 1;
+
+    ENTER;SAVETMPS;
+    PUSHMARK(sp);
+    if(td->sv && (td->sv != &sv_undef))
+	XPUSHs(td->sv);
+    XPUSHs(sv_2mortal(newSVpv((char *)key,0)));
+    XPUSHs(sv_2mortal(newSVpv((char *)val,0)));
+    PUTBACK;
+    count = perl_call_sv(td->cv, G_SCALAR);
+    SPAGAIN;
+    if(count == 1)
+	rv = POPi;
+    PUTBACK;
+    FREETMPS;LEAVE;
+    return rv;
+}
+
+static void table_modify(apache_tiehash_table *self, const char *key, SV *sv, 
+			 void (*tabfunc) (table *, const char *, const char *))
+{
+    const char *val;
+
+    if(!self->table) return;
+
+    if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVAV)) {
+	I32 i;
+	AV *av = (AV*)SvRV(sv);
+	for(i=0; i<=AvFILL(av); i++) {
+	    val = (const char *)SvPV(*av_fetch(av, i, FALSE),na);
+            (*tabfunc)(self->table, key, val);
+	}
+    }
+    else {
+        val = (const char *)SvPV(sv,na);
+	(*tabfunc)(self->table, key, val);
+    }
+
+}
+
 MODULE = Apache::Tie		PACKAGE = Apache::TieHashTable
 
 PROTOTYPES: DISABLE
@@ -154,28 +206,49 @@ FIRSTKEY(self)
     RETVAL
 
 void
-add(self, key, val)
+add(self, key, sv)
     Apache::TieHashTable self
     const char *key
-    const char *val
+    SV *sv;
 
     CODE:
-    if(!self->table) XSRETURN_UNDEF;
-    table_add(self->table, key, val);
+    table_modify(self, key, sv, table_add);
 
 void
-merge(self, key, val)
+merge(self, key, sv)
     Apache::TieHashTable self
     const char *key
-    const char *val
+    SV *sv
 
     CODE:
-    if(!self->table) XSRETURN_UNDEF;
-    table_merge(self->table, key, val);
+    table_modify(self, key, sv, table_merge);
 
+void
+do(self, cv, sv=Nullsv, ...)
+    Apache::TieHashTable self
+    SV *cv
+    SV *sv
 
+    PREINIT:
+    TableDo td;
+    HV *hv = Nullhv;
 
+    CODE:
+    if(items > 3) {
+	int i;
+	STRLEN len;
+	hv = newHV();
+	for(i=3; ; i++) {
+	    char *key = SvPV(ST(i),len);
+	    hv_store(hv, key, len, newSViv(1), FALSE);
+	    if(i == (items - 1)) break; 
+	}
+    }
+    td.sv = sv;
+    td.cv = cv;
+    td.hv = hv;
 
+    table_do((int (*) (void *, const char *, const char *)) Apache_table_do,
+	    (void *) &td, self->table, NULL);
 
-
-
+    if(hv) SvREFCNT_dec(hv);
