@@ -8,6 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+get rid of odd WRITE message in perlio.pl test if $Config{usesfio}
+[John Hughes <john@calva.com>]
+
+fix possible overwrite in perlio.c:sfapacheread() #ifdef USE_SFIO
+[John Hughes <john@calva.com>]
+
 dont use DEFAULT_PATH if r->subprocess_env->{PATH} is already set
 [Bertrand Demiddelaer <wing_co@hotmail.com>]
 

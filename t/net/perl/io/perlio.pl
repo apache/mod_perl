@@ -1,5 +1,7 @@
 #!/user/local/bin/perl
 
+use Config;
+
 #we're in Apache::Registry
 #our perl is configured use sfio so we can 
 #print() to STDOUT
@@ -25,10 +27,10 @@ else {
     print "perlio test...\n";
     print "\$^X is $^X\n" if $^X;
 
-    if($] >= 5.005) {
+    if($] >= 5.005 && $Config{usesfio} ne "true") {
 	my $msg = "1234WRITEmethod";
 	syswrite STDOUT, $msg, 5, 4;
-	print " to STDOUT works with $]\n";
+	print " to STDOUT works with $] without sfio\n";
     }
 
     my $loc = $r->location;

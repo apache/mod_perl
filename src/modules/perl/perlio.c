@@ -96,7 +96,7 @@ typedef struct {
 
 static int sfapachewrite(f, buffer, n, disc)
     Sfio_t* f;      /* stream involved */
-    char*           buffer;    /* buffer to read into */
+    char*           buffer;    /* buffer to write from */
     int             n;      /* number of bytes to send */
     Sfdisc_t*       disc;   /* discipline */        
 {
@@ -123,8 +123,7 @@ static int sfapacheread(f, buffer, bufsiz, disc)
 {
     dSP;
     int count;
-    long nrd;
-    char *tmpbuf;
+    int nrd;
     SV *sv = sv_newmortal();
     request_rec *r = ((Apache_t*)disc)->r;
     MP_TRACE_g(fprintf(stderr, "sfapacheread: want %d bytes\n", bufsiz)); 
@@ -134,14 +133,28 @@ static int sfapacheread(f, buffer, bufsiz, disc)
     XPUSHs(sv);
     XPUSHs(sv_2mortal(newSViv(bufsiz)));
     PUTBACK;
-    perl_call_pv("Apache::read", G_SCALAR|G_EVAL);
-    tmpbuf = (char *)pstrdup(r->pool, SvPV(sv,na));
-    memcpy(buffer, tmpbuf, SvLEN(sv));
+    count = perl_call_pv("Apache::read", G_SCALAR|G_EVAL);
     SPAGAIN;
-    if(count == 1) 
-	nrd = POPl;
+    if (SvTRUE(ERRSV)) {
+	fprintf (stderr, "Apache::read died %s\n", SvPV(ERRSV, na));
+	nrd = -1;
+	POPs;
+    }
+    else {
+        char *tmpbuf = SvPV(sv, nrd);
+        if(count == 1) {
+	    nrd = POPi;
+	}
+	MP_TRACE_g(fprintf(stderr, "sfapacheread: got %d \"%.*s\"\n",
+			   nrd, nrd > 40 ? 40 : nrd, tmpbuf));
+        if (nrd > bufsiz) {
+	    abort();
+	}
+	memcpy(buffer, tmpbuf, nrd);
+    }
+    PUTBACK;
     FREETMPS;LEAVE;
-    return bufsiz;
+    return nrd;
 }
 
 Sfdisc_t * sfdcnewapache(request_rec *r)
