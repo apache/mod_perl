@@ -215,6 +215,17 @@ sub slurp_filename {
     return \$data;
 }
 
+#XXX: would like to have a proper implementation
+#that reads line-by-line as defined by $/
+#the best way will probably be to use perlio in 5.8.0
+#anything else would be more effort that it is worth
+sub READLINE {
+    my $r = shift;
+    my $line;
+    $r->read($line, $r->headers_in->get('Content-length'));
+    $line ? $line : undef;
+}
+
 use constant IOBUFSIZE => 8192;
 
 #XXX: howto convert PerlIO to apr_file_t
