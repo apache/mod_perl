@@ -750,8 +750,7 @@ sub make_tools {
 
 sub export_files_MSWin32 {
     my $self = shift;
-    map "-def:$self->{cwd}/xs/modperl$_.def",
-        ("", "_inline", "_ithreads");
+    "-def:$self->{cwd}/xs/modperl.def";
 }
 
 sub dynamic_link_header_default {
@@ -774,9 +773,9 @@ EOF
 
 sub dynamic_link_MSWin32 {
     my $self = shift;
-    my @defs = $self->export_files_MSWin32;
+    my $defs = $self->export_files_MSWin32;
     return $self->dynamic_link_header_default .
-           "@defs" . <<'EOF';
+           $defs . <<'EOF';
 	-out:$@
 EOF
 }
@@ -923,8 +922,7 @@ sub otherldflags {
 #XXX: install *.def / search @INC
 sub otherldflags_MSWin32 {
     my $self = shift;
-    my(@defs) = $self->export_files_MSWin32;
-    return "@defs";
+    $self->export_files_MSWin32;
 }
 
 sub otherldflags_aix {

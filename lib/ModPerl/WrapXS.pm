@@ -582,27 +582,43 @@ sub generate {
     }
 }
 
-#two export files are generated:
-#$name.$ext - global symbols
-#${name}_inline.$ext - __inline__ functions
-#the inline export file is needed #ifdef MP_DEBUG
+#three .sym files are generated:
+#global   - global symbols
+#ithreads - #ifdef USE_ITHREADS functions
+#inline   - __inline__ functions
+#the inline symbols are needed #ifdef MP_DEBUG
 #since __inline__ will be turned off
+
+my %multi_export = map { $_, 1 } qw(exp);
 
 sub open_export_files {
     my($self, $name, $ext) = @_;
 
     my $dir = $self->{XS_DIR};
     my %handles;
+    my @types = qw(global inline ithreads);
 
-    for my $type ("", "_inline", "_ithreads") {
-        my $file = "$dir/$name$type.$ext";
+    if ($multi_export{$ext}) {
+        #write to multiple files
+        for my $type (@types) {
+            my $file = "$dir/${name}_$type.$ext";
+
+            open my $fh, '>', $file or
+              die "open $file: $!";
+
+            $handles{$type} = $fh;
+        }
+    }
+    else {
+        #write to one file
+        my $file = "$dir/$name.$ext";
 
         open my $fh, '>', $file or
           die "open $file: $!";
 
-        (my $fh_name = $type) =~ s/^_//;
-        $fh_name ||= 'default';
-        $handles{$fh_name} = $fh;
+        for my $type (@types) {
+            $handles{$type} = $fh;
+        }
     }
 
     \%handles;
@@ -659,7 +675,7 @@ sub export_func_handle {
         return $handles->{ithreads};
     }
 
-    $handles->{default};
+    $handles->{global};
 }
 
 sub write_export_file {
