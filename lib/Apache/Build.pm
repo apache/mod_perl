@@ -38,7 +38,19 @@ our $APXS;
 
 sub apxs {
     my $self = shift;
+
+    my $is_query = (@_ == 2) && ($_[0] eq '-q');
+
     $self = $self->build_config unless ref $self;
+
+    my $query_key;
+    if ($is_query) {
+        $query_key = 'APXS_' . $_[1];
+        if ($self->{$query_key}) {
+            return $self->{$query_key};
+        }
+    }
+
     my $apxs;
     my @trys = ($Apache::Build::APXS,
                 $self->{MP_APXS},
@@ -74,7 +86,7 @@ sub apxs {
         }
     }
 
-    $val;
+    $self->{$query_key} = $val;
 }
 
 sub apxs_cflags {
