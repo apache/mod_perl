@@ -12,6 +12,18 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Add the implementation of Apache::Connection::local_addr and
+Apache::Connection::remote_addr to the Apache::compat overridable
+functions. [Stas]
+
+Apache::compat's implementation of Apache::RequestRec::finfo and
+Apache::RequestRec::notes is now overridable and not enabled by
+default. [Stas]
+
+Apache::compat no longer enables functions which collide with mp2 API
+by default. It provides two new functions: override_mp2_api and
+restore_mp2_api to override and restore the original mp2 API. [Stas]
+
 For Win32, add a .bat extension to candidates for the apxs and
 apr-config utilities used in Apache::Build, so that the -x file
 test can potentially succeed [Randy Kobes]
