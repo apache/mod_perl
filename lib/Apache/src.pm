@@ -26,7 +26,7 @@ sub apxs {
 	 `which apxs`,
 	 "/usr/local/apache/bin/apxs")
       {
-	  next unless $apxs;
+	  next unless ($apxs = $_);
 	  chomp $apxs;
 	  last if -x $apxs;
       }
