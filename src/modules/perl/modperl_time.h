@@ -16,10 +16,10 @@
 #endif
 
 #define MP_START_TIMES() \
-    MP_TRACE_t_do((void)times(&start_time))
+    MP_TRACE_t_do((void)PerlProc_times(&start_time))
 
 #define MP_END_TIMES() \
-    MP_TRACE_t_do((void)times(&end_time))
+    MP_TRACE_t_do((void)PerlProc_times(&end_time))
 
 #define MP_PRINT_TIMES(label) \
     MP_TRACE_t_do({ \
