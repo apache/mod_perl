@@ -14,6 +14,28 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_hooks.h"
 #include "modperl_perl_global.h"
 
+/* both perl and apr have largefile support enabled */
+#define MP_LARGE_FILES_ENABLED \
+   (defined(USE_LARGE_FILES) && APR_HAS_LARGE_FILES)
+
+/* both perl and apr have largefile support disabled */
+#define MP_LARGE_FILES_DISABLED \
+   (!defined(USE_LARGE_FILES) && !APR_HAS_LARGE_FILES)
+
+/* perl support is enabled, apr support is disabled */
+#define MP_LARGE_FILES_PERL_ONLY \
+   (defined(USE_LARGE_FILES) && !APR_HAS_LARGE_FILES)
+
+/* apr support is enabled, perl support is disabled */
+#define MP_LARGE_FILES_APR_ONLY \
+   (!defined(USE_LARGE_FILES) && APR_HAS_LARGE_FILES)
+
+/* conflict due to not have either both perl and apr
+ * support enabled or both disabled
+ */
+#define MP_LARGE_FILES_CONFLICT \
+   !(MP_LARGE_FILES_ENABLED || MP_LARGE_FILES_DISABLED)
+
 #ifdef MP_USE_GTOP
 #include "modperl_gtop.h"
 #endif
