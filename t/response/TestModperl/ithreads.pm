@@ -17,7 +17,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 2, have
+    plan $r, tests => 4, have
         have_threads,
         {"perl >= 5.8.1 is required (this is $])" => ($] >= 5.008001)};
 
@@ -38,7 +38,25 @@ sub handler {
                                    debug "2nd TID is $tid" if defined $tid;
                                    return 2;
                                });
-        ok $thr->join == 2;
+        ok t_cmp(2, $thr->join, "thread callback returned value");
+    }
+
+    {
+        require threads::shared;
+        my $counter_priv          = 1;
+        my $counter_shar : shared = 1;
+        my $thr = threads->new(sub : locked { 
+                                   my $tid = threads->self->tid; 
+                                   debug "2nd TID is $tid" if defined $tid;
+                                   $counter_priv += $counter_priv for 1..10;
+                                   $counter_shar += $counter_shar for 1..10;
+                                   return 2;
+                               });
+        $counter_priv += $counter_priv for 1..10;
+        $counter_shar += $counter_shar for 1..10;
+        my $ret = $thr->join;
+        ok t_cmp(2**20, $counter_shar, "shared counter");
+        ok t_cmp(2**10, $counter_priv, "private counter");
     }
 
     Apache::OK;
