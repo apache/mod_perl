@@ -54,6 +54,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    unparsed_uri
    uri
    filename
+   canonical_filename
    path_info
    args
 ~  finfo
@@ -107,6 +108,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    aborted
    keepalive
 ?  double_reverse
+>  keepalives
    local_ip
    local_host
    id
@@ -114,7 +116,6 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    notes
    input_filters
    output_filters
-   remain
 </conn_rec>
 
 !<server_addr_rec>
@@ -240,3 +241,23 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    context
    err_directive
 </cmd_parms>
+
+!<ap_mgmt_item_t>
+   description
+   name
+   vtype
+   v
+</ap_mgmt_item_t>
+
+!<ap_mgmt_value>
+   s_value
+   i_value
+   h_value
+</ap_mgmt_value>
+
+!<ap_pod_t>
+   pod_in
+   pod_out
+   p
+   sa
+</ap_pod_t>

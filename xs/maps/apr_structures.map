@@ -2,6 +2,7 @@
 
 IGNORE: apr_pool_t apr_os_ apr_vformatter_buff_t apr_pool_t \
 apr_table_t apr_in_addr_t apr_bucket_ apr_md5_ctx_t apr_sha1_ctx_t \
+apr_md4_ctx_t apr_sdbm_datum_t \
 apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 
 #buckets
@@ -22,6 +23,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    length
    start
    data
+   sms
 </apr_bucket>
 
 !<apr_finfo_t>
@@ -55,6 +57,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    addr_str_len
    ipaddr_ptr
    next
+   family
 </apr_sockaddr_t>
 
 !<apr_proc_t>
@@ -81,7 +84,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 #generic data structures
 
 !<apr_array_header_t>
->  cont
+>  pool
 >  elt_size
    nelts
 >  nalloc
@@ -129,7 +132,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    attr
    last_child
    ns_scope
-   private
+   priv
 </apr_xml_elem>
 
 <apr_xml_doc>
