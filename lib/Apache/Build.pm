@@ -14,6 +14,10 @@ use ModPerl::Code ();
 use ModPerl::BuildOptions ();
 use Apache::TestTrace;
 
+use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
+use constant HAS_ITHREADS =>
+    $Config{useithreads} && ($Config{useithreads} eq 'define');
+
 use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
