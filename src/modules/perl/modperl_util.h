@@ -34,6 +34,15 @@
 #define SvObjIV(o) SvIV((SV*)SvRV(o))
 #define MgObjIV(m) SvIV((SV*)SvRV(m->mg_obj))
 
+#define MP_SvGROW(sv, len) \
+    (void)SvUPGRADE(sv, SVt_PV); \
+    SvGROW(sv, len+1)
+
+#define MP_SvCUR_set(sv, len) \
+    SvCUR_set(sv, len); \
+    *SvEND(sv) = '\0'; \
+    SvPOK_only(sv)
+
 #define MP_magical_untie(sv, mg_flags) \
     mg_flags = SvMAGICAL((SV*)sv); \
     SvMAGICAL_off((SV*)sv)

@@ -33,14 +33,11 @@
 #define XPUSHs_mortal_iv(iv) EXTEND(SP, 1); PUSHs_mortal_iv(iv)
 #define XPUSHs_mortal_pv(pv) EXTEND(SP, 1); PUSHs_mortal_pv(pv)
 
-#define mpxs_sv_grow(sv, len) \
-    (void)SvUPGRADE(sv, SVt_PV); \
-    SvGROW(sv, len+1)
+/* XXX: replace the old mpxs_sv_ macros with MP_Sv macros */
 
-#define mpxs_sv_cur_set(sv, len) \
-    SvCUR_set(sv, len); \
-    *SvEND(sv) = '\0'; \
-    SvPOK_only(sv)
+#define mpxs_sv_grow(sv, len)    MP_SvGROW(sv, len)
+
+#define mpxs_sv_cur_set(sv, len) MP_SvCUR_set(sv, len)
 
 #define mpxs_set_targ(func, arg) \
 STMT_START { \
