@@ -120,10 +120,10 @@ sub configure {
     system_sanity_check();
 
     if ($build->{MP_APXS}) {
-        print "Using APXS => $build->{MP_APXS}\n";
+        debug "Using APXS => $build->{MP_APXS}\n";
     }
     elsif ($build->{MP_AP_PREFIX} and -e $build->apxs(-q => 'INCLUDEDIR')) {
-        print "Using Apache prefix => $build->{MP_AP_PREFIX}\n";
+        debug "Using Apache prefix => $build->{MP_AP_PREFIX}\n";
     }
     else {
         for my $path ($build->find) {
@@ -152,7 +152,7 @@ sub configure {
       $httpd_version, $VERSION, $^V;
 
     for (@{ clean_files() }) {
-        print "unlink...$_\n" if -e $_ && unlink;
+        debug "unlink...$_" if -e $_ && unlink;
     }
 
     #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
@@ -168,7 +168,7 @@ sub configure {
     unshift @INC, $tables_dir;
 
     if ($build->{MP_GENERATE_XS}) {
-        print "generating XS code using $tables_dir...\n";
+        debug "generating XS code using $tables_dir...";
         xs_generate($httpd_version);
     }
 
