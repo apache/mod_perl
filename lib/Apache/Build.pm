@@ -545,8 +545,8 @@ sub httpd_version {
     my $version;
 
     while(<$fh>) {
-	next unless /^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/;
-	$version = $1;
+        next unless /^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/;
+        $version = $1;
         last;
     }
 
