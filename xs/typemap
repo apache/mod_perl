@@ -19,6 +19,17 @@ T_APR_TIME
 
 ######################################################################
 INPUT
+T_PTROBJ
+	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
+	    IV tmp = SvIV((SV*)SvRV($arg));
+	    $var = INT2PTR($type,tmp);
+	}
+	else {
+	    Perl_croak(aTHX_ SvROK($arg) ?
+                       \"$var is not of type ${ntype}\" :
+                       \"$var is not a blessed reference\");
+        }
+
 T_APACHEOBJ
 	$var = modperl_xs_sv2request_rec(aTHX_ $arg, \"$ntype\", cv)
     
