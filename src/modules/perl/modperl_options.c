@@ -1,15 +1,36 @@
 #include "mod_perl.h"
 
+/* re-use the ->unset field to determine options type */
+#define MpOptionsType(o)        (o)->unset
+#define MpOptionsTypeDir(o)     MpOptionsType(o) == MpDir_f_UNSET
+#define MpOptionsTypeSrv(o)     MpOptionsType(o) == MpSrv_f_UNSET
+#define MpOptionsTypeDir_set(o) MpOptionsType(o) = MpDir_f_UNSET
+#define MpOptionsTypeSrv_set(o) MpOptionsType(o) = MpSrv_f_UNSET
+#define MP_OPTIONS_TYPE_DIR     MpDir_f_UNSET
+#define MP_OPTIONS_TYPE_SRV     MpSrv_f_UNSET
+
 static modperl_opts_t flags_lookup(modperl_options_t *o,
                                    const char *str)
 {
-    switch (o->unset) {
-      case MpSrv_f_UNSET:
+    switch (MpOptionsType(o)) {
+      case MP_OPTIONS_TYPE_SRV:
         return modperl_flags_lookup_srv(str);
-      case MpDir_f_UNSET:
+      case MP_OPTIONS_TYPE_DIR:
         return modperl_flags_lookup_dir(str);
       default:
         return '\0';
+    };
+}
+
+static const char *type_lookup(modperl_options_t *o)
+{
+    switch (MpOptionsType(o)) {
+      case MP_OPTIONS_TYPE_SRV:
+        return "server";
+      case MP_OPTIONS_TYPE_DIR:
+        return "directory";
+      default:
+        return "unknown";
     };
 }
 
@@ -36,7 +57,20 @@ const char *modperl_options_set(apr_pool_t *p, modperl_options_t *o,
     }
 
     if (!(opt = flags_lookup(o, str))) {
-        error = apr_pstrcat(p, "Unknown PerlOption: ", str, NULL);
+        error = apr_pstrcat(p, "Invalid per-", type_lookup(o),
+                            " PerlOption: ", str, NULL);
+
+        if (MpOptionsTypeDir(o)) {
+            modperl_options_t dummy;
+            MpOptionsTypeSrv_set(&dummy);
+
+            if (flags_lookup(&dummy, str)) {
+                error = apr_pstrcat(p, error,
+                                    " (only allowed per-server)",
+                                    NULL);
+            }
+        }
+
         return error;
     }
     

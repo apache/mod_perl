@@ -134,7 +134,7 @@ typedef struct {
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpHV *SetEnv;
     MpHV *SetVars;
-    U8 flags;
+    modperl_options_t *flags;
 #ifdef USE_ITHREADS
     modperl_interp_lifetime_e interp_lifetime;
 #endif

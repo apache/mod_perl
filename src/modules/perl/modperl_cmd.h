@@ -49,4 +49,8 @@ MP_CMD_SRV_DECLARE(interp_lifetime);
     AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
 
+#define MP_CMD_DIR_ITERATE(name, item, desc) \
+    AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
+      OR_ALL, desc )
+
 #endif /* MODPERL_CMD_H */
