@@ -314,6 +314,16 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
         tmp   += read;
         len   -= read;
 
+        /* XXX: what happens if the downstream filter returns more
+         * data than the caller has asked for? We can't return more
+         * data that requested, so it needs to be stored somewhere and
+         * dealt with on the subsequent calls to this function. or may
+         * be we should just assert, blaming a bad filter. at the
+         * moment I couldn't find a spec telling whether it's wrong
+         * for the filter to return more data than it was asked for in
+         * the AP_MODE_READBYTES mode.
+         */
+        
         apr_brigade_cleanup(bb);
 
     } while (len > 0 && !seen_eos);
