@@ -184,6 +184,7 @@ $PERL_SERVER_API = 1;     #so they are on by default
 $PERL_RUN_XS = 0;
 
 my %experimental = map { $_,1 } qw{
+PERL_AUTOPRELOAD
 PERL_DSO_UNLOAD
 PERL_STARTUP_DONE_CHECK
 PERL_RUN_XS

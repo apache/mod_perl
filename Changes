@@ -12,7 +12,9 @@ Apache::PerlRun::handler will explicitly undef subroutines before
 "flushing" the namespace [Gunther Birznieks <gunther@nhgri.nih.gov>]
 
 Perl*Handler configuration will attempt to pre-load the argument as a
-module if it appears to be a two-level namespace
+module if it has a leading `+'.  PERL_AUTOPRELOAD=1 or
+$Apache::Server::AutoPreLoad=1 will turn on auto-preloading for all
+Perl*Handlers except those which have a leading `-'
 
 Apache::URI->parse($r) without a $url argument will create a "self" url 
 from $r->uri
