@@ -123,11 +123,6 @@ api:
 modules:
 -------
 
-- Apache::Registry should check return value of the subroutine,
-  e.g. for REDIRECT   
-
-- should Apache::Registry use filename instead of vhost_name+uri?
-
 - core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
   + currently works only with $] >= 5.007003 (see the
     apache/subprocess test)
