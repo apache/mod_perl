@@ -255,7 +255,63 @@ apr_status_t modperl_interp_unselect(void *data)
 #define MP_INTERP_KEY "MODPERL_INTERP"
 
 #define get_interp(p) \
-(void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, p)
+    (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, p)
+
+#define set_interp(p) \
+     (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY, \
+                                 modperl_interp_unselect, \
+                                 p)
+
+modperl_interp_t *modperl_interp_pool_get(apr_pool_t *p)
+{
+    modperl_interp_t *interp = NULL;
+    get_interp(p);
+    return interp;
+}
+
+void modperl_interp_pool_set(apr_pool_t *p,
+                             modperl_interp_t *interp,
+                             int cleanup)
+{
+    /* same as get_interp but optional cleanup  */
+    (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
+                                cleanup ? modperl_interp_unselect : NULL,
+                                p);
+}
+
+/*
+ * used in the case where we don't have a request_rec or conn_rec,
+ * such as for directive handlers per-{dir,srv} create and merge.
+ * "request time pool" is most likely a request_rec->pool.
+ */
+modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
+                                             server_rec *s)
+{
+    int is_startup = (p == s->process->pconf);
+    MP_dSCFG(s);
+    modperl_interp_t *interp = NULL;
+
+    if (scfg && (is_startup || !scfg->threaded_mpm)) {
+        MP_TRACE_i(MP_FUNC, "using parent interpreter at %s\n",
+                   is_startup ? "startup" : "request time (non-threaded MPM)");
+        interp = scfg->mip->parent;
+    }
+    else {
+        if (!(interp = modperl_interp_pool_get(p))) {
+            interp = modperl_interp_get(s);
+            modperl_interp_pool_set(p, interp, TRUE);
+
+            MP_TRACE_i(MP_FUNC, "set interp in request time pool 0x%lx\n",
+                       (unsigned long)p);
+        }
+        else {
+            MP_TRACE_i(MP_FUNC, "found interp in request time pool 0x%lx\n",
+                       (unsigned long)p);
+        }
+    }
+
+    return interp;
+}
 
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
@@ -379,9 +435,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
             return NULL;
         }
 
-        (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
-                                    modperl_interp_unselect,
-                                    p);
+        set_interp(p);
 
         MP_TRACE_i(MP_FUNC,
                    "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
