@@ -30,8 +30,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
-            ok t_cmp(Apache::MPMQ_NOT_SUPPORTED,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_NOT_SUPPORTED,
                      "MPMQ_IS_THREADED ($mpm)");
 
             # is_threaded() is just a constsub set to the result from
@@ -48,8 +48,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
-            ok t_cmp(Apache::MPMQ_DYNAMIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
 
@@ -59,8 +59,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
-            ok t_cmp(Apache::MPMQ_STATIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
@@ -74,8 +74,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
-            ok t_cmp(Apache::MPMQ_DYNAMIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
@@ -84,8 +84,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
-            ok t_cmp(Apache::MPMQ_STATIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
@@ -99,8 +99,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
-            ok t_cmp(Apache::MPMQ_DYNAMIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_DYNAMIC,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
@@ -109,8 +109,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
-            ok t_cmp(Apache::MPMQ_STATIC,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_STATIC,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
@@ -124,8 +124,8 @@ sub handler {
         {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_FORKED);
 
-            ok t_cmp(Apache::MPMQ_NOT_SUPPORTED,
-                     $query,
+            ok t_cmp($query,
+                     Apache::MPMQ_NOT_SUPPORTED,
                      "MPMQ_IS_FORKED ($mpm)");
         }
     }
@@ -140,8 +140,8 @@ sub handler {
     {
         my $query = Apache::MPM->query(72);
 
-        ok t_cmp(undef,
-                 $query,
+        ok t_cmp($query,
+                 undef,
                  "unknown MPMQ value returns undef");
     }
 

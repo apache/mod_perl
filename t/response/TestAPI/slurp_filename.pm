@@ -27,7 +27,7 @@ sub handler {
     {
         my $data = $r->slurp_filename(0); # untainted
         my $received = eval $$data;
-        ok t_cmp($expected, $received, "slurp filename untainted");
+        ok t_cmp($received, $expected, "slurp filename untainted");
     }
 
     {
@@ -38,7 +38,7 @@ sub handler {
 
         ModPerl::Util::untaint($$data);
         $received = eval $$data;
-        ok t_cmp($expected, $received, "slurp filename untainted");
+        ok t_cmp($received, $expected, "slurp filename untainted");
     }
 
     {
@@ -51,7 +51,7 @@ sub handler {
 
         ModPerl::Util::untaint($$data);
         $received = eval $$data;
-        ok t_cmp($expected, $received, "slurp filename (perl) untainted");
+        ok t_cmp($received, $expected, "slurp filename (perl) untainted");
     }
 
     Apache::OK;

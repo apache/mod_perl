@@ -122,7 +122,7 @@ sub handler {
     ok $r->filename;
 
     my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
-    ok t_cmp($location, $r->location, "location");
+    ok t_cmp($r->location, $location, "location");
 
     my $mtime = (stat __FILE__)[9];
     $r->mtime($mtime);
@@ -139,8 +139,8 @@ sub handler {
         $r->finfo($finfo);
         # just one field test, all accessors are fully tested in
         # TestAPR::finfo
-        ok t_cmp(__FILE__,
-                 $r->finfo->fname,
+        ok t_cmp($r->finfo->fname,
+                 __FILE__,
                  '$r->finfo');
     }
 
