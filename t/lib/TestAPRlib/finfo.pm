@@ -17,8 +17,9 @@ use Fcntl qw(:mode);
 
 use APR::Finfo ();
 use APR::Pool ();
-use APR::Const    -compile => qw(SUCCESS FINFO_NORM REG
-                                 WREAD WWRITE WEXECUTE);
+
+use APR::Const -compile => qw(SUCCESS FINFO_NORM REG
+                              WREAD WWRITE WEXECUTE);
 
 sub num_of_tests {
     return 15;
@@ -36,8 +37,8 @@ sub test {
     # stat tests (same as perl's stat)
     {
         # now, get information from perl's stat()
-        our ($device, $inode, $protection, $nlink, $user, $group,
-             undef, $size, $atime, $mtime, $ctime) = stat $file;
+        our($device, $inode, $protection, $nlink, $user, $group,
+            undef, $size, $atime, $mtime, $ctime) = stat $file;
 
         # skip certain tests on Win32 and others
         my %skip = ();
