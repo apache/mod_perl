@@ -37,7 +37,7 @@ sub handler {
     }
 
     {
-        my $thr = threads->new(sub { 
+        my $thr = threads->new(sub {
                                    my $tid = threads->self->tid; 
                                    debug "2nd TID is $tid" if defined $tid;
                                    return 2;
@@ -52,8 +52,8 @@ sub handler {
         #    my $counter_shar : shared = 1;
         # but it won't compile under $] < 5.8, before it gets a chance
         # to skip this test, so using the function share() instead.
-        my $counter_shar = 1 ; threads::shared::share(\$counter_shar);
-        my $thr = threads->new(sub : locked { 
+        my $counter_shar : shared = 1;
+        my $thr = threads->new(sub : locked {
                                    my $tid = threads->self->tid; 
                                    debug "2nd TID is $tid" if defined $tid;
                                    $counter_priv += $counter_priv for 1..10;
