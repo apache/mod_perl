@@ -120,7 +120,8 @@ sub handler {
     no strict 'refs';
 
     if ($qs =~ s/^(noh_\w+).*/$1/) {
-	return &{$qs}($r, $newQ->($r));
+        &{$qs}($r, $newQ->($r));
+        return Apache::OK;
     }
 
     header($r);
