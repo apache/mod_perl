@@ -3,7 +3,7 @@ package TestModperl::merge;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::RequestUtil ();
 use APR::Table ();

@@ -27,7 +27,7 @@ sub handler {
 
     ok $c->pool->isa('APR::Pool');
 
-    ok $c->base_server->isa('Apache::Server');
+    ok $c->base_server->isa('Apache::ServerRec');
 
     ok $c->client_socket->isa('APR::Socket');
 

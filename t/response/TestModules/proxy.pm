@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 

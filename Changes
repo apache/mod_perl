@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+In order to be consistent with Apache::RequestRec, Apache::Server is
+now Apache::ServerRec and all methods/functions from Apache::Server
+now live in Apache::ServerRec. [Stas]
+
 Use a context-specific Perl_load_module() instead of load_module(), to
 avoid the problem with 'load_module' symbol resolution on certain
 platforms, where for some reason it doesn't get resolved at compile

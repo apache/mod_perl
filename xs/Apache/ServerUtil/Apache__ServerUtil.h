@@ -14,7 +14,7 @@
  */
 
 static MP_INLINE
-int mpxs_Apache__Server_push_handlers(pTHX_ server_rec *s,
+int mpxs_Apache__ServerRec_push_handlers(pTHX_ server_rec *s,
                                       const char *name,
                                       SV *sv)
 {
@@ -27,7 +27,7 @@ int mpxs_Apache__Server_push_handlers(pTHX_ server_rec *s,
 }
 
 static MP_INLINE
-int mpxs_Apache__Server_set_handlers(pTHX_ server_rec *s,
+int mpxs_Apache__ServerRec_set_handlers(pTHX_ server_rec *s,
                                      const char *name,
                                      SV *sv)
 {
@@ -39,7 +39,7 @@ int mpxs_Apache__Server_set_handlers(pTHX_ server_rec *s,
 }
 
 static MP_INLINE
-SV *mpxs_Apache__Server_get_handlers(pTHX_ server_rec *s,
+SV *mpxs_Apache__ServerRec_get_handlers(pTHX_ server_rec *s,
                                      const char *name)
 {
     MpAV **handp =
@@ -51,20 +51,20 @@ SV *mpxs_Apache__Server_get_handlers(pTHX_ server_rec *s,
                                              s->process->pconf);
 }
 
-#define mpxs_Apache__Server_dir_config(s, key, sv_val) \
+#define mpxs_Apache__ServerRec_dir_config(s, key, sv_val) \
     modperl_dir_config(aTHX_ NULL, s, key, sv_val)
 
 #define mpxs_Apache_server(classname) \
 modperl_global_get_server_rec()
 
-#define mpxs_Apache__Server_server_root_relative(sv, fname) \
+#define mpxs_Apache__ServerRec_server_root_relative(sv, fname) \
     modperl_server_root_relative(aTHX_ sv, fname);
 
 #define mpxs_Apache_server_root_relative(sv, fname) \
     modperl_server_root_relative(aTHX_ sv, fname);
 
 static MP_INLINE
-int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
+int mpxs_Apache__ServerRec_is_perl_option_enabled(pTHX_ server_rec *s,
                                                const char *name)
 {
     return modperl_config_is_perl_option_enabled(aTHX_ NULL, s, name);
@@ -72,7 +72,7 @@ int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
 
 
 static MP_INLINE
-void mpxs_Apache__Server_add_config(pTHX_ server_rec *s, SV *lines)
+void mpxs_Apache__ServerRec_add_config(pTHX_ server_rec *s, SV *lines)
 {
     const char *errmsg = modperl_config_insert_server(aTHX_ s, lines);
     if (errmsg) {
