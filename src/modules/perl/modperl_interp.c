@@ -381,6 +381,70 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     return interp;
 }
 
+/* currently up to the caller if mip needs locking */
+void modperl_interp_mip_walk(PerlInterpreter *current_perl,
+                             PerlInterpreter *parent_perl,
+                             modperl_interp_pool_t *mip,
+                             modperl_interp_mip_walker_t walker,
+                             void *data)
+{
+    modperl_list_t *head = mip->tipool->idle;
+
+    if (!current_perl) {
+        current_perl = PERL_GET_CONTEXT;
+    }
+
+    if (parent_perl) {
+        PERL_SET_CONTEXT(parent_perl);
+        walker(parent_perl, mip, data);
+    }
+
+    while (head) {
+        PerlInterpreter *perl = ((modperl_interp_t *)head->data)->perl;
+        PERL_SET_CONTEXT(perl);
+        walker(perl, mip, data);
+        head = head->next;
+    }
+
+    PERL_SET_CONTEXT(current_perl);
+}
+
+void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
+                                     server_rec *base_server,
+                                     modperl_interp_mip_walker_t walker,
+                                     void *data)
+{
+    server_rec *s = base_server->next;
+    modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
+    PerlInterpreter *base_perl = base_scfg->mip->parent->perl;
+
+    modperl_interp_mip_walk(current_perl, base_perl,
+                            base_scfg->mip, walker, data);
+
+    while (s) {
+        MP_dSCFG(s);
+        PerlInterpreter *perl = scfg->mip->parent->perl;
+        modperl_interp_pool_t *mip = scfg->mip;
+
+        /* skip vhosts who share parent perl */
+        if (perl == base_perl) {
+            perl = NULL;
+        }
+
+        /* skip vhosts who share parent mip */
+        if (scfg->mip == base_scfg->mip) {
+            mip = NULL;
+        }
+
+        if (perl || mip) {
+            modperl_interp_mip_walk(current_perl, perl,
+                                    mip, walker, data);
+        }
+
+        s = s->next;
+    }
+}
+
 #else
 
 void modperl_interp_init(server_rec *s, apr_pool_t *p,
