@@ -706,12 +706,20 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     
     size = r->finfo.size;
     sv = newSV(size);
-    file = r->finfo.filehand;
-    if (!file) {
-        rc = apr_file_open(&file, r->filename, APR_READ|APR_BINARY,
-                           APR_OS_DEFAULT, r->pool);
-        SLURP_SUCCESS("opening");
+
+    if (!size) {
+        sv_setpvn(sv, "", 0);
+        return newRV_noinc(sv);
     }
+
+    /* XXX: could have checked whether r->finfo.filehand is valid and
+     * save the apr_file_open call, but apache gives us no API to
+     * check whether filehand is valid. we can't test whether it's
+     * NULL or not, as it may contain garbagea
+     */
+    rc = apr_file_open(&file, r->filename, APR_READ|APR_BINARY,
+                       APR_OS_DEFAULT, r->pool);
+    SLURP_SUCCESS("opening");
 
     rc = apr_file_read(file, SvPVX(sv), &size);
     SLURP_SUCCESS("reading");

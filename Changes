@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+fix slurp_filename to always open the file and not try to guess
+whether filename has been already opened, as there is no reliable way
+to accomplish that [Stas]
+
 Apache->can_stack_handlers is now in Apache::compat (mp2 always can
 stack handlers) [Stas]
 
