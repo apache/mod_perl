@@ -47,7 +47,7 @@ DocumentRoot ./t/docs
 #mod_perl stuff
 
 
-PerlPassEnv TERM EDITOR NOCHANCE USER
+PerlPassEnv TERM EDITOR NOCHANCE USER PERL5LIB
 PerlSetEnv KeyForPerlSetEnv OK
 PerlSetVar KeyForPerlSetVar OK
  
