@@ -10,6 +10,12 @@ Release:
    
 
 Available Patches:
+    * per_request_cleanup() only cleans up the current request. As one 
+      consequence, pnotes of parent requests will not get cleaned up.
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=104176956128093&w=2
+        Status:
+            Patch available at 
+            http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=104185397922327&w=2
 
     * Apache::Status allows standard keys to be overridden
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101559176217056&w=2
