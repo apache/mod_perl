@@ -33,12 +33,17 @@ Apache/Perl modules include:
     Apache::Embperl        - Embed Perl code in HTML documents
     Apache::SSI            - Implement server-side includes in Perl
     Apache::DBI            - Maintain persistent DBI connections
-    Apache::DCELogin       - Obtain a DCE Login context
-    Apache::AuthenDBI      - Authenticate via Perl DBI/DBD::* 
-    Apache::AuthzAge       - Authorize based on age
-    Apache::AccessLimitNum - Limit user access by number of requests
-    Apache::Constants      - Constants defined in httpd.h
-    Apache::MsqlProxy      - Translate URI's into mSQL database queries
+    Apache::Gateway	   - Implement an HTTP/1.1 gateway
+    Apache::GzipChain	   - Compress output on the fly
+    Apache::Filter	   - Filter document and script output
+    Apache::Sandwich	   - Generate page headers and footers
+    Apache::TransLDAP	   - Translate URIs via LDAP lookups
+    Apache::ASP		   - Implement "Active Server Pages"
+    Apache::AuthenDBI	   - Authenticate against a database via DBI  
+    Apache::PHLogin	   - Authenticate against a PH database
+    Apache::DBILogger	   - Log requests to a database via DBI
+    Apache::Session	   - Persistent session management
+    Apache::Throttle	   - Content negotiation based on connection speed
     
 There's plenty more Apache/Perl software you might be interested in. 
 The Apache/Perl module list keeps track of modules inside and outside
@@ -60,13 +65,31 @@ mailing list by sending mail to modperl-request@apache.org with the
 string "subscribe modperl" in the body.  "subscribe modperl-announce"
 will subscribe you to the very low-traffic announcements list.
 
-There is an Epigone archive for this list available from:
+Here is an important list of links to follow:
+
+Ken Williams' Epigone mail list archive:
 http://forum.swarthmore.edu/epigone/modperl
 
-The mod_perl FAQ is available from:
+Frank Cringle's mod_perl FAQ:
 http://perl.apache.org/faq/
 
-For more general information see the Apache/Perl homepage:
+Stas Bekman's "mod_perl Developer's Mini Guide":
+http://perl.apache.org/guide/
+
+Lincoln Stein and Doug MacEachern's book
+ "Writing Apache Modules with Perl and C":
+http://www.modperl.com/
+
+Andrew Ford's mod_perl quick reference card:
+http://www.refcards.com/
+
+Vivek Khera's mod_perl performance tuning guide:
+http://perl.apache.org/tuning/ 
+
+The Apache/Perl module list:
+http://www.perl.com/CPAN/modules/by-module/Apache/apache-modlist.html
+
+The Apache/Perl homepage:
 http://perl.apache.org/ 
  or
 http://apache.perl.org/
