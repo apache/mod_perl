@@ -13,10 +13,13 @@ void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv);
 
 char *modperl_cmd_push_handlers(MpAV *handlers, char *name, ap_pool_t *p);
 
+char **modperl_srv_config_argv_init(modperl_srv_config_t *scfg, int *argc);
+
 #define MP_DECLARE_SRV_CMD(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
                                void *dummy, char *arg)
 MP_DECLARE_SRV_CMD(trace);
+MP_DECLARE_SRV_CMD(switches);
 
 #ifdef USE_ITHREADS
 MP_DECLARE_SRV_CMD(interp_start);
@@ -28,6 +31,10 @@ MP_DECLARE_SRV_CMD(interp_min_spare);
 #define MP_SRV_CMD_TAKE1(name, item, desc) \
     { name, modperl_cmd_##item, NULL, \
       RSRC_CONF, TAKE1, desc }
+
+#define MP_SRV_CMD_ITERATE(name, item, desc) \
+    { name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, ITERATE, desc }
 
 #define MP_dRCFG \
    modperl_request_config_t *rcfg = \

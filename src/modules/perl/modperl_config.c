@@ -10,10 +10,42 @@ void *modperl_merge_dir_config(ap_pool_t *p, void *base, void *add)
     return NULL;
 }
 
+#define scfg_push_argv(arg) \
+    *(char **)ap_push_array(scfg->argv) = arg
+
 modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 {
-    return (modperl_srv_config_t *)
+    modperl_srv_config_t *scfg = (modperl_srv_config_t *)
         ap_pcalloc(p, sizeof(modperl_srv_config_t));
+
+    scfg->argv = ap_make_array(p, 2, sizeof(char *));
+
+    scfg_push_argv("httpd");
+
+    return scfg;
+}
+
+#ifdef MP_TRACE
+static void dump_argv(modperl_srv_config_t *scfg)
+{
+    int i;
+    char **argv = (char **)scfg->argv->elts;
+    fprintf(stderr, "modperl_srv_config_argv_init =>\n");
+    for (i=0; i<scfg->argv->nelts; i++) {
+        fprintf(stderr, "   %d = %s\n", i, argv[i]);
+    }
+}
+#endif
+
+char **modperl_srv_config_argv_init(modperl_srv_config_t *scfg, int *argc)
+{
+    scfg_push_argv("-e;0");
+    
+    *argc = scfg->argv->nelts;
+
+    MP_TRACE_g_do(dump_argv(scfg));
+
+    return (char **)scfg->argv->elts;
 }
 
 void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
@@ -56,9 +88,28 @@ void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
 #define MP_CONFIG_BOOTSTRAP(parms) \
 if (!scfg->mip) modperl_init(parms->server, parms->pool)
 
+#define MP_SRV_CMD_TRACE \
+    MP_TRACE_d(MP_FUNC, "%s %s\n", parms->cmd->name, arg)
+
+#define MP_SRV_CMD_CHECK \
+MP_SRV_CMD_TRACE; \
+{ \
+    const char *err = ap_check_cmd_context(parms, GLOBAL_ONLY); \
+    if (err) return err; \
+}
+
 MP_DECLARE_SRV_CMD(trace)
 {
+    MP_SRV_CMD_CHECK;
     modperl_trace_level_set(arg);
+    return NULL;
+}
+
+MP_DECLARE_SRV_CMD(switches)
+{
+    MP_dSCFG(parms->server);
+    MP_SRV_CMD_CHECK;
+    scfg_push_argv(arg);
     return NULL;
 }
 
