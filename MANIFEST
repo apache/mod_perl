@@ -98,7 +98,7 @@ src/modules/win32/mod_perl.def
 src/opcodes.txt
 t/report.PL
 t/README
-t/TEST
+t/TEST.PL
 t/TEST.win32
 t/conf/httpd.conf.pl
 t/conf/httpd.conf-dist

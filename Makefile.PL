@@ -148,6 +148,7 @@ my(@do_clean) = qw{
    src/modules/perl/mod_perl_version.h
    t/net/perl/cgi.pl
    t/report
+   t/TEST
    t/httpd
    apaci/find_source
    apaci/apxs_cflags
@@ -166,6 +167,7 @@ rmtree "t/docs/stacked", 0, 0;
 
 gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
+gen_script("t/TEST");
 gen_script("apaci/find_source");
 gen_script("apaci/apxs_cflags");
 gen_script("apaci/perl_config", "$PWD/lib");

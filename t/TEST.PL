@@ -1,4 +1,3 @@
-#!/usr/local/bin/perl
 
 $|++;
 use Config;
