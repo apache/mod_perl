@@ -1,3 +1,9 @@
+static MP_INLINE int mpxs_apr_password_validate(pTHX_ const char *passwd,
+                                                const char *hash)
+{
+    return apr_password_validate(passwd, hash) == APR_SUCCESS;
+}
+
 static MP_INLINE void mpxs_apr_strerror(pTHX_ SV *sv, SV *arg)
 {
     apr_status_t statcode = mp_xs_sv2_status(arg);
