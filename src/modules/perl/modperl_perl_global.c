@@ -1,0 +1,137 @@
+#include "mod_perl.h"
+
+static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
+{
+    globals->inc.gv    = PL_incgv;
+    globals->defout.gv = PL_defoutgv;
+    globals->rs.sv     = PL_rs;
+}
+
+static void
+modperl_perl_global_gvav_save(pTHX_ modperl_perl_global_gvav_t *gvav)
+{
+    AV *av = GvAV(gvav->gv);
+    I32 i, fill = AvFILLp(av);
+
+    gvav->tmpav = newAV();
+
+    av_extend(gvav->tmpav, fill);
+    AvFILLp(gvav->tmpav) = fill;
+
+    for (i=0; i<=fill; i++) {
+        AvARRAY(gvav->tmpav)[i] = SvREFCNT_inc(AvARRAY(av)[i]);
+    }
+
+    gvav->origav = GvAV(gvav->gv);
+    GvAV(gvav->gv) = gvav->tmpav;
+}
+
+static void
+modperl_perl_global_gvav_restore(pTHX_ modperl_perl_global_gvav_t *gvav)
+{
+    GvAV(gvav->gv) = gvav->origav;
+    SvREFCNT_dec(gvav->tmpav);
+}
+
+static void
+modperl_perl_global_gvio_save(pTHX_ modperl_perl_global_gvio_t *gvio)
+{
+    gvio->flags = IoFLAGS(GvIOp(gvio->gv));
+}
+
+static void
+modperl_perl_global_gvio_restore(pTHX_ modperl_perl_global_gvio_t *gvio)
+{
+    IoFLAGS(GvIOp(gvio->gv)) = gvio->flags;
+}
+
+static void
+modperl_perl_global_svpv_save(pTHX_ modperl_perl_global_svpv_t *svpv)
+{
+    svpv->cur = SvCUR(svpv->sv);
+    strncpy(svpv->pv, SvPVX(svpv->sv), sizeof(svpv->pv));
+}
+
+static void
+modperl_perl_global_svpv_restore(pTHX_ modperl_perl_global_svpv_t *svpv)
+{
+    sv_setpvn(svpv->sv, svpv->pv, svpv->cur);
+}
+
+typedef enum {
+    MP_GLOBAL_GVAV,
+    MP_GLOBAL_GVIO,
+    MP_GLOBAL_SVPV,
+} modperl_perl_global_types_e;
+
+typedef struct {
+    char *name;
+    int offset;
+    modperl_perl_global_types_e type;
+} modperl_perl_global_entry_t;
+
+#define MP_GLOBAL_OFFSET(m) \
+    STRUCT_OFFSET(modperl_perl_globals_t, m)
+
+static modperl_perl_global_entry_t modperl_perl_global_entries[] = {
+    {"INC",    MP_GLOBAL_OFFSET(inc),    MP_GLOBAL_GVAV}, /* @INC */
+    {"STDOUT", MP_GLOBAL_OFFSET(defout), MP_GLOBAL_GVIO}, /* $| */
+    {"/",      MP_GLOBAL_OFFSET(rs),     MP_GLOBAL_SVPV}, /* $/ */
+    {NULL}
+};
+
+#define MP_PERL_GLOBAL_SAVE(type, ptr) \
+    modperl_perl_global_##type##_save( \
+        aTHX_ (modperl_perl_global_##type##_t *)&(*ptr))
+
+#define MP_PERL_GLOBAL_RESTORE(type, ptr) \
+    modperl_perl_global_##type##_restore( \
+        aTHX_ (modperl_perl_global_##type##_t *)&(*ptr))
+
+#define MP_dGLOBAL_PTR(globals, i) \
+    apr_uint64_t **ptr = (apr_uint64_t **) \
+        ((char *)globals + (int)(long)modperl_perl_global_entries[i].offset)
+
+void modperl_perl_global_save(pTHX_ modperl_perl_globals_t *globals)
+{
+    int i;
+
+    modperl_perl_global_init(aTHX_ globals);
+
+    for (i=0; modperl_perl_global_entries[i].name; i++) {
+        MP_dGLOBAL_PTR(globals, i);
+
+        switch (modperl_perl_global_entries[i].type) {
+          case MP_GLOBAL_GVAV:
+            MP_PERL_GLOBAL_SAVE(gvav, ptr);
+            break;
+          case MP_GLOBAL_GVIO:
+            MP_PERL_GLOBAL_SAVE(gvio, ptr);
+            break;
+          case MP_GLOBAL_SVPV:
+            MP_PERL_GLOBAL_SAVE(svpv, ptr);
+            break;
+        };
+    }
+}
+
+void modperl_perl_global_restore(pTHX_ modperl_perl_globals_t *globals)
+{
+    int i;
+
+    for (i=0; modperl_perl_global_entries[i].name; i++) {
+        MP_dGLOBAL_PTR(globals, i);
+
+        switch (modperl_perl_global_entries[i].type) {
+          case MP_GLOBAL_GVAV:
+            MP_PERL_GLOBAL_RESTORE(gvav, ptr);
+            break;
+          case MP_GLOBAL_GVIO:
+            MP_PERL_GLOBAL_RESTORE(gvio, ptr);
+            break;
+          case MP_GLOBAL_SVPV:
+            MP_PERL_GLOBAL_RESTORE(svpv, ptr);
+            break;
+        }
+    }
+}
