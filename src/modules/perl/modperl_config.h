@@ -52,7 +52,9 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
    modperl_config_srv_t *scfg = modperl_config_srv_get(s)
 
 #ifdef USE_ITHREADS
-#   define MP_dSCFG_dTHX dTHXa(scfg->mip->parent->perl)
+#   define MP_dSCFG_dTHX \
+    dTHXa(scfg->mip->parent->perl); \
+    PERL_SET_CONTEXT(aTHX)
 #else
 #   define MP_dSCFG_dTHX dTHXa(scfg->perl)
 #endif
