@@ -663,15 +663,12 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
     MP_HASENV_on(rec);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_setenv: '%s' = '%s'\n", key, val));
     if(cmd->path == NULL) {
+	dPSRV(cmd->server); 
 	if(PERL_RUNNING()) { 
 	    mp_SetEnv(key,val);
 	} 
-	else { 
-           char **new; 
-           dPSRV(cmd->server); 
-           new = (char **)push_array(cls->PerlPassEnv); 
-           *new = pstrcat(cmd->pool, key, ":", val, NULL); 
-	} 
+	*(char **)push_array(cls->PerlPassEnv) = 
+	    pstrcat(cmd->pool, key, ":", val, NULL); 
     }
     return NULL;
 }
