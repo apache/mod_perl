@@ -1,0 +1,402 @@
+##########  Apache functions  ##########
+
+#keywords:
+# MODULE  = the module name
+#           e.g. Apache::Connection -> Apache/Connection.{pm,xs}
+#
+# PACKAGE = the package name functions belong to, defaults to MODULE
+#           value of 'guess' indicates that package name should be
+#           guessed based on first argument found that maps to a Perl class
+#           fallsback on the prefix (ap_ -> Apache, apr_ -> APR)
+#
+# PREFIX  = prefix to be stripped
+#           defaults to PACKAGE, converted to C name convention, e.g.
+#           APR::Base64 -> apr_base64_
+#           if the converted prefix does not match, defaults to ap_ or apr_
+
+#format of entries:
+# C function name | dispatch function name | argspec | Perl alias
+
+# dispatch function name defaults to C function name
+# if the dispatch name is just a prefix (mpxs_, MPXS_)
+# the C function name is appended to it
+# the return type can be specified before the C function name,
+# defaults to return_type in {Apache,ModPerl}::FunctionTable
+
+# the argspec defaults to arguments in {Apache,ModPerl}::FunctionTable
+# argument types can be specified to override those in the FunctionTable
+# default values can be specified, e.g. arg=default_value
+# argspec of '...' indicates passthru, calling the function with
+# (aTHX_ I32 items, SP **sp, SV **MARK)
+
+# the alias will be created in the current PACKAGE
+
+# function names that do not begin with /^\w/ are skipped
+# for details see: %ModPerl::MapUtil::disabled_map
+
+MODULE=Apache::RequestUtil   PACKAGE=guess
+ >ap_finalize_request_protocol
+ ap_default_port_for_request
+ ap_default_port_for_scheme
+ ap_default_type
+ ap_get_server_name
+ ap_get_server_port
+!ap_content_type_tolower
+ ap_get_status_line
+ ap_is_initial_req
+
+#MODULE=Apache::RequestConfig
+ ap_document_root
+ ap_get_limit_req_body
+ ap_get_limit_xml_body
+>ap_core_translate
+
+MODULE=Apache::SubRequest   PACKAGE=guess
+ ap_sub_req_lookup_file
+ ap_sub_req_lookup_uri
+ ap_sub_req_method_uri
+ ap_sub_req_output_filter
+ ap_set_sub_req_protocol
+-ap_finalize_sub_req_protocol
+ ap_internal_redirect
+ ap_internal_redirect_handler
+
+MODULE=Apache::SubRequest    PACKAGE=Apache::SubRequest
+ ap_destroy_sub_req
+ ap_run_sub_req
+
+MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
+ ap_discard_request_body
+!ap_getline
+ ap_get_client_block   | mpxs_ | r, SV *:buffer, bufsiz
+ ap_setup_client_block |       | r, read_policy=REQUEST_CHUNKED_ERROR
+ ap_should_client_block
+ ap_rflush
+PREFIX=ap_r
+ ap_rwrite | | r, buf, nbyte
+~ap_rprintf
+!ap_rputc
+~ap_rputs
+ ap_rvputs | mpxs_ | ... | puts
+-ap_vrprintf
+
+ mpxs_Apache__RequestRec_TIEHANDLE
+
+MODULE=Apache::Response   PACKAGE=guess
+ ap_make_etag
+ ap_set_content_length
+ ap_set_etag
+ ap_meets_conditions
+ ap_rationalize_mtime
+ ap_update_mtime
+ ap_send_error_response
+ ap_send_fd
+ ap_send_mmap
+ ap_send_size
+ ap_set_keepalive
+ ap_set_last_modified
+ ap_custom_response
+
+MODULE=Apache::Access   PACKAGE=guess
+ ap_allow_methods
+ ap_allow_options
+ ap_allow_overrides
+ ap_get_remote_logname
+!ap_requires
+ ap_satisfies
+
+#MODULE=Apache::Auth
+ ap_auth_name
+ ap_auth_type
+ ap_get_basic_auth_pw
+ ap_note_auth_failure
+ ap_note_basic_auth_failure
+ ap_note_digest_auth_failure
+ ap_some_auth_required
+
+!MODULE=Apache::ScriptUtil   PACKAGE=guess
+ ap_add_cgi_vars
+ ap_add_common_vars
+ ap_create_environment
+ ap_find_path_info
+-ap_scan_script_header_err
+-ap_scan_script_header_err_core
+-ap_scan_script_header_err_strs
+
+MODULE=Apache::ServerUtil   PACKAGE=guess
+ ap_add_version_component
+ ap_construct_server
+ ap_construct_url | | r,uri,p
+ ap_error_log2stderr
+
+#MODULE=Apache::ServerConfig
+ ap_exists_config_define
+ ap_get_local_host
+ ap_get_server_built
+ ap_get_server_version
+ ap_psignature | | r,prefix
+ ap_server_root_relative
+
+MODULE=Apache::Connection   PACKAGE=guess
+ ap_get_remote_host
+ ap_read_request
+>ap_update_vhost_given_ip
+ ap_new_connection
+
+!MODULE=Apache::Log   PACKAGE=guess
+ ap_log_assert
+ ap_log_error
+ ap_log_perror
+ ap_log_pid
+ ap_log_rerror
+>ap_open_stderr_log
+>ap_open_logs
+
+!MODULE=Apache::Module
+-ap_add_loaded_module
+-ap_add_module
+-ap_add_named_module
+ ap_find_linked_module
+ ap_find_module_name
+ ap_remove_loaded_module
+ ap_remove_module
+>ap_single_module_configure
+>ap_setup_prelinked_modules
+>ap_show_directives
+>ap_show_modules
+>ap_register_hooks
+
+!MODULE=Apache::Directive
+ ap_add_node
+ ap_build_config
+ ap_build_cont_config
+ ap_walk_config
+>ap_process_config_tree
+
+MODULE=Apache::Filter PACKAGE=Apache::RequestRec
+ap_filter_t *:DEFINE_add_output_filter | | \
+              request_rec *:r, const char *:name, void *:ctx
+
+MODULE=Apache::Filter   PACKAGE=guess
+~ap_add_output_filter
+ ap_add_input_filter
+ ap_get_brigade
+ ap_pass_brigade
+ ap_register_input_filter
+ ap_register_output_filter
+ ap_remove_output_filter
+!ap_save_brigade
+ ap_filter_flush
+ ap_fflush
+ ap_fputstrs
+ int:DEFINE_ap_fputs | | \
+     ap_filter_t *:f, apr_bucket_brigade *:bb, const char *:str
+-ap_fprintf
+>ap_byterange_filter
+>ap_http_header_filter
+>ap_content_length_filter
+>ap_old_write_filter
+
+!MODULE=Apache::Bucket
+ ap_bucket_error_create
+ ap_bucket_error_make
+
+!MODULE=Apache::Base64
+ ap_pbase64decode
+ ap_pbase64encode
+
+!MODULE=Apache::ConfigFile
+ ap_cfg_closefile
+ ap_cfg_getc
+ ap_cfg_getline
+ ap_pcfg_open_custom
+ ap_pcfg_openfile
+>ap_read_config
+>ap_create_request_config
+>ap_merge_per_dir_configs
+>ap_create_conn_config
+>ap_parse_htaccess
+>ap_process_resource_config
+
+!MODULE=Apache::Command
+ ap_check_cmd_context
+ ap_soak_end_container
+-ap_set_file_slot
+-ap_set_flag_slot
+-ap_set_string_slot
+-ap_set_string_slot_lower
+
+MODULE=Apache::Util 
+ ap_ht_time
+ ap_parseHTTPdate
+!ap_rfc1413
+ ap_escape_html
+ #escape_uri
+ ap_os_escape_path
+
+MODULE=Apache::URI   PACKAGE=guess
+ ap_parse_uri
+ ap_parse_uri_components
+ ap_parse_hostinfo_components
+ ap_unescape_url
+ ap_unparse_uri_components
+>ap_util_uri_init
+
+!MODULE=Apache::StringUtil   PACKAGE=guess
+ ap_checkmask
+ ap_count_dirs
+ ap_escape_path_segment
+ ap_escape_quotes
+ ap_escape_shell_cmd
+ ap_field_noparam
+ ap_find_last_token
+ ap_find_list_item
+ ap_find_token
+ ap_get_list_item
+ ap_size_list_item
+ ap_getparents
+ ap_get_token
+-ap_getword
+-ap_getword_conf
+-ap_getword_conf_nc
+-ap_getword_nc
+-ap_getword_nulls
+-ap_getword_nulls_nc
+-ap_getword_white
+-ap_getword_white_nc
+-ap_ind
+-ap_rind
+ ap_is_directory
+ ap_is_matchexp
+ ap_is_rdirectory
+ ap_is_url
+ ap_make_dirstr_parent
+ ap_make_dirstr_prefix
+ ap_make_full_path
+ ap_no2slash
+ ap_os_is_path_absolute
+ ap_resolve_env
+-ap_strcasecmp_match
+-ap_strcasestr
+-ap_strcmp_match
+ ap_stripprefix
+-ap_str_tolower
+
+!MODULE=Apache::MethodList
+ ap_clear_method_list
+-ap_copy_method_list
+ ap_make_method_list
+ ap_method_in_list
+ ap_method_is_limited
+ ap_method_list_add
+ ap_method_list_do
+ ap_method_list_remove
+ ap_method_list_vdo
+ ap_method_name_of
+ ap_method_number_of
+
+!MODULE=Apache::PipedLog
+ ap_close_piped_log
+ ap_open_piped_log
+
+!MODULE=Apache::Scoreboard
+ ap_exists_scoreboard_image
+ ap_sync_scoreboard_image
+-ap_update_child_status
+-ap_time_process_request
+-ap_create_scoreboard
+ ap_cleanup_scoreboard
+ ap_increment_counts
+
+!MODULE=Apache::Hooks
+ ap_hook_access_checker
+ ap_hook_auth_checker
+ ap_hook_check_user_id
+ ap_hook_child_init
+ ap_hook_default_port
+ ap_hook_fixups
+ ap_hook_handler
+ ap_hook_header_parser
+ ap_hook_http_method
+ ap_hook_insert_filter
+ ap_hook_log_transaction
+ ap_hook_open_logs
+ ap_hook_optional_fn_retrieve
+ ap_hook_post_config
+ ap_hook_post_read_request
+ ap_hook_pre_config
+ ap_hook_pre_connection
+ ap_hook_process_connection
+ ap_hook_translate_name
+ ap_hook_type_checker
+-ap_hook_get_suexec_identity
+
+MODULE=Apache::HookRun   PACKAGE=guess
+-ap_run_get_suexec_identity
+-ap_run_optional_fn_retrieve
+>ap_run_pre_config
+>ap_run_open_logs
+>ap_run_post_config
+>ap_run_insert_filter
+ ap_run_child_init
+?ap_run_default_port
+?ap_run_http_method
+>ap_run_pre_connection
+>ap_run_process_connection
+ ap_run_post_read_request
+ ap_run_translate_name
+ ap_run_header_parser
+ ap_run_access_checker
+ ap_run_check_user_id
+ ap_run_auth_checker
+ ap_run_type_checker
+ ap_run_fixups
+ ap_run_handler
+ ap_run_log_transaction
+ ap_run_rewrite_args
+ ap_invoke_handler
+ ap_die
+
+!MODULE=Apache::MD5
+ ap_md5
+ ap_md5_binary
+ ap_md5contextTo64
+ ap_md5digest
+
+-MODULE=Apache::Regexp
+ ap_pregcomp
+ ap_pregfree
+ ap_pregsub
+ ap_regerror
+ ap_regexec
+
+!MODULE=Apache::VHost
+-ap_set_name_virtual_host
+-ap_fini_vhost_config
+-ap_init_vhost_config
+ ap_matches_request_vhost
+ ap_parse_vhost_addrs
+-ap_update_vhost_from_headers
+-ap_fixup_virtual_hosts
+
+!MODULE=Apache::HTTPCore
+>ap_process_request
+>ap_make_content_type
+>ap_core_reorder_directories
+>ap_index_of_response
+
+!MODULE=Apache::XML
+ ap_xml_parse_input
+
+!MODULE=Apache::MPM
+ ap_mpm_query
+>ap_mpm_run
+ ap_os_create_privileged_process
+ ap_wait_or_timeout
+ ap_graceful_stop_signalled
+ ap_process_child_status
+ ap_reclaim_child_processes
+ ap_sock_disable_nagle
+ ap_gname2id
+ ap_uname2id
+ ap_lingering_close

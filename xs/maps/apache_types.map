@@ -1,0 +1,89 @@
+##########  Apache types  ##########
+
+struct server_rec       | Apache::Server
+struct server_addr_rec  | Apache::ServerAddr
+struct conn_rec         | Apache::Connection
+struct request_rec      | Apache::RequestRec
+struct process_rec      | Apache::Process
+struct uri_components   | Apache::URI
+struct ap_method_list_t | Apache::MethodList
+struct piped_log        | Apache::PipedLog
+
+struct module           | Apache::Module
+struct module_struct    | Apache::Module
+
+#config stuff
+struct command_rec      | Apache::Command
+enum cmd_how            | IV
+cmd_func                | UNDEFINED
+struct cmd_parms        | Apache::CmdParms
+struct ap_configfile_t  | Apache::ConfigFile
+struct htaccess_result  | UNDEFINED
+struct ap_directive_t   | Apache::Directive
+struct ap_conf_vector_t | Apache::ConfVector
+
+#system-ish stuff
+ap_scoreboard_e         | IV
+ap_unix_identity_t      | UNDEFINED
+
+#filters
+struct ap_filter_t	| Apache::Filter
+struct ap_filter_rec_t  | Apache::FilterRec
+ap_filter_type          | Apache::FilterType
+ap_filter_func          | UNDEFINED
+ap_out_filter_func      | UNDEFINED
+ap_in_filter_func       | UNDEFINED
+ap_input_mode_t         | UNDEFINED
+
+##########  Perl types  ##########
+
+SV * | SV
+
+##########  Standard types  ##########
+
+int             | IV
+int *           | UNDEFINED
+unsigned int    | UV
+signed int      | IV
+long            | IV
+long int        | IV
+unsigned long   | UV
+unsigned        | UV
+
+char *                   | PV
+const char *             | PV
+const char **            | UNDEFINED
+char const *             | PV
+unsigned char *          | PV
+const unsigned char *    | PV
+char **                  | UNDEFINED
+char ***                 | UNDEFINED
+const char * const *     | UNDEFINED
+
+char                   | CHAR
+const char             | CHAR
+const unsigned char    | U_CHAR
+unsigned char          | U_CHAR
+
+void *           | PTR
+void **          | UNDEFINED
+const void *     | PTR
+const void **    | UNDEFINED
+void             | VOID
+
+...              | UNDEFINED #varargs
+va_list          | UNDEFINED
+
+##########  Misc types  ##########
+
+time_t          | NV
+uid_t           | IV
+gid_t           | IV
+pid_t           | IV
+size_t          | IV
+size_t *        | UNDEFINED
+
+struct regex_t
+regmatch_t
+struct pthread_mutex_t
+struct iovec | NOTIMPL
