@@ -338,6 +338,36 @@ pitifully simple.  Either of the following will work:
 before any other directory containing a version of httpd, then
 call it as 'httpd' -- don't use a relative path!
 
+=item AIX users
+
+If you build mod_perl as a DSO you will get core dumps as soon as you
+try to use xs modules in perl, e.g. use Fcntl or use Socket. The
+following patch to perl 5.005_3 does fix that problem:
+
+	--- perl5.005_03/ext/DynaLoader/dl_aix.xs.orig	Fri Mar  3 17:00:58 2000
+	+++ perl5.005_03/ext/DynaLoader/dl_aix.xs	Fri Mar  3 17:06:51 2000
+	@@ -222,7 +222,16 @@
+		mp->refCnt = 1;
+		mp->next = modList;
+		modList = mp;
+	-	if (loadbind(0, mainModule, mp->entry) == -1) {
+	+	/*
+	+	 * Assume anonymous exports come from the module this dlopen
+	+	 * is linked into, that holds true as long as dlopen and all
+	+	 * of the perl core are in the same shared object. Also bind
+	+	 * against the main part, in the case a perl is not the main
+	+	 * part, e.g mod_perl as DSO in Apache so perl modules can
+	+	 * also reference Apache symbols.
+	+	 */
+	+	if (loadbind(0, (void *)dlopen, mp->entry) == -1 ||
+	+	    loadbind(0, mainModule, mp->entry) == -1) {
+			dlclose(mp);
+			errvalid++;
+			strcpy(errbuf, "loadbind: ");
+
+Please make sure that you rebuild both perl and mod_perl after applying
+this patch.
+
 =item more info
 
 Type 'perldoc mod_perl' for info on configuring, running
