@@ -67,8 +67,13 @@ VV src/docs/2.0/api/ModPerl/MethodLookup.pod
 
 -- src/docs/2.0/api/APR.pod
 -- src/docs/2.0/api/APR/Base64.pod
--- src/docs/2.0/api/APR/Brigade.pod
--- src/docs/2.0/api/APR/Bucket.pod
+VV src/docs/2.0/api/APR/Brigade.pod
+VP src/docs/2.0/api/APR/Bucket.pod
+        data
+        start
+        read (needs TAINT flag on, but utf-8 problem)
+VV src/docs/2.0/api/APR/BucketAlloc.pod
+VV src/docs/2.0/api/APR/BucketType.pod
 
 +- src/docs/2.0/api/APR/Const.pod
 VV src/docs/2.0/api/APR/Date.pod
@@ -76,6 +81,7 @@ VV src/docs/2.0/api/APR/Error.pod
 
 -- src/docs/2.0/api/APR/Finfo.pod
 -- src/docs/2.0/api/APR/NetLib.pod
+   XXX: going to be renamed to IpSubNet
 +V src/docs/2.0/api/APR/PerlIO.pod
 
 
@@ -97,3 +103,14 @@ VV src/docs/2.0/api/APR/Table.pod
 -- src/docs/2.0/api/APR/ThreadMutex.pod
 -- src/docs/2.0/api/APR/URI.pod
 -- src/docs/2.0/api/APR/Util.pod
+
+################################
+### Other API related things ###
+################################
+
+Q: APR::BucketAlloc object returned by $r->connection->bucket_alloc
+   doesn't have a real package. It's OK for now, but when used outside
+   httpd, where that allocation should come from?
+
+A: Add glue for function: apr_bucket_alloc_create(pool);
+   not urgent for 2.0
