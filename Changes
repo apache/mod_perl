@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+fix META.yaml s/private/no_index/ (to hide the bundled Apache-Test
+from PAUSE indexer) [Randy Kobes]
+
+
+
 =item 1.99_18 - December 12, 2004
 
 Fix x86_64 warnings in modperl_restart_count_*, due to casting between

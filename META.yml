@@ -1,7 +1,7 @@
 name:         mod_perl
 version_from: lib/mod_perl.pm
 installdirs:  site
-private:
+no_index:
     directory:
         - Apache-Test
 distribution_type: module
