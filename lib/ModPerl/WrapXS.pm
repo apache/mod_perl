@@ -568,8 +568,8 @@ sub generate {
 
     $self->get_functions;
     $self->get_structures;
-    $self->write_exp; #XXX if $^O eq 'aix'
-    $self->write_def; #XXX if $^O eq 'Win32'
+    $self->write_export_file('exp'); #XXX if $^O eq 'aix'
+    $self->write_export_file('def'); #XXX if $^O eq 'Win32'
 
     while (my($module, $functions) = each %{ $self->{XS} }) {
 #        my($root, $sub) = split '::', $module;
@@ -582,50 +582,93 @@ sub generate {
     }
 }
 
-sub open_export_file {
+#two export files are generated:
+#$name.$ext - global symbols
+#${name}_inline.$ext - __inline__ functions
+#the inline export file is needed #ifdef MP_DEBUG
+#since __inline__ will be turned off
+
+sub open_export_files {
     my($self, $name, $ext) = @_;
-    my $file = join '/', $self->{XS_DIR}, "$name.$ext";
-    open my $fh, '>', $file or die "open $file: $!";
-    return($fh, $file);
+
+    my $dir = $self->{XS_DIR};
+
+    my $exp_file = "$dir/$name.$ext";
+    my $exp_file_inline = "$dir/${name}_inline.$ext";
+
+    open my $exp_fh, '>', $exp_file or
+      die "open $exp_file: $!";
+    open my $exp_inline_fh, '>', $exp_file_inline or
+      die "open $exp_file_inline: $!";
+
+    return($exp_fh, $exp_inline_fh);
 }
 
-sub write_exp {
-    my $self = shift;
-
-    my %files = (
-        modperl => $ModPerl::FunctionTable,
-        apache  => $Apache::FunctionTable,
-    );
-
-    while (my($name, $table) = each %files) {
-        my($fh, $file) = $self->open_export_file($name, 'exp');
-        print $fh "#!\n";
-
-        for my $entry (@$table) {
-            print $fh "$entry->{name}\n";
-        }
-
-        close $fh or die "close $file: $!";
+sub func_is_static {
+    my($self, $entry) = @_;
+    if (my $attr = $entry->{attr}) {
+        return 1 if grep { $_ eq 'static' } @$attr;
     }
+    return 0;
 }
 
-sub write_def {
+sub func_is_inline {
+    my($self, $entry) = @_;
+    if (my $attr = $entry->{attr}) {
+        return 1 if grep { $_ eq '__inline__' } @$attr;
+    }
+    return 0;
+}
+
+sub export_file_header_exp {
     my $self = shift;
+    "#!\n";
+}
+
+sub export_file_format_exp {
+    my($self, $val) = @_;
+    "$val\n";
+}
+
+sub export_file_header_def {
+    my $self = shift;
+    "LIBRARY\n\nEXPORTS\n\n";
+}
+
+sub export_file_format_def {
+    my($self, $val) = @_;
+    "   $val\n";
+}
+
+sub write_export_file {
+    my($self, $ext) = @_;
 
     my %files = (
         modperl => $ModPerl::FunctionTable,
         apache  => $Apache::FunctionTable,
     );
 
-    while (my($name, $table) = each %files) {
-        my($fh, $file) = $self->open_export_file($name, 'def');
-        print $fh "LIBRARY\n\nEXPORTS\n\n";
+    my $header = \&{"export_file_header_$ext"};
+    my $format = \&{"export_file_format_$ext"};
 
-        for my $entry (@$table) {
-            print $fh "   $entry->{name}\n";
+    while (my($name, $table) = each %files) {
+        my($exp_fh, $exp_inline_fh) =
+          $self->open_export_files($name, $ext);
+
+        for my $fh ($exp_fh, $exp_inline_fh) {
+            print $fh $self->$header();
         }
 
-        close $fh or die "close $file: $!";
+        for my $entry (@$table) {
+            next if $self->func_is_static($entry);
+            my $fh = $self->func_is_inline($entry) ?
+              $exp_inline_fh : $exp_fh;
+            print $fh $self->$format($entry->{name});
+        }
+
+        for my $fh ($exp_fh, $exp_inline_fh) {
+            close $fh;
+        }
     }
 }
 
