@@ -64,8 +64,10 @@ MP_CMD_SRV_DECLARE(modules)
     MP_dSCFG(parms->server);
 
     if (modperl_is_running()) {
-        MP_dINTERP_SELECT(NULL, NULL, parms->server);
-
+#ifdef USE_ITHREADS
+        /* XXX: .htaccess support cannot use this perl with threaded MPMs */
+        dTHXa(scfg->mip->parent->perl);
+#endif
         MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
 
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
@@ -85,7 +87,10 @@ MP_CMD_SRV_DECLARE(requires)
     MP_dSCFG(parms->server);
 
     if (modperl_is_running()) {
-        MP_dINTERP_SELECT(NULL, NULL, parms->server);
+#ifdef USE_ITHREADS
+        /* XXX: .htaccess support cannot use this perl with threaded MPMs */
+        dTHXa(scfg->mip->parent->perl);
+#endif
 
         MP_TRACE_d(MP_FUNC, "load PerlRequire %s\n", arg);
 
@@ -247,8 +252,8 @@ MP_CMD_SRV_DECLARE(perl)
     SV **handler_name;
     int status = OK;
 #ifdef USE_ITHREADS
+    MP_dSCFG(s);
     pTHX;
-    modperl_interp_t *interp;
 #endif
 
     if (endp == NULL) {
@@ -259,8 +264,8 @@ MP_CMD_SRV_DECLARE(perl)
     modperl_run(p, s);
 
 #ifdef USE_ITHREADS
-    interp = modperl_interp_select(NULL, NULL, s);
-    aTHX = interp->perl;
+    /* XXX: .htaccess support cannot use this perl with threaded MPMs */
+    aTHX = scfg->mip->parent->perl;
 #endif
 
     arg = apr_pstrndup(p, arg, endp - arg);
