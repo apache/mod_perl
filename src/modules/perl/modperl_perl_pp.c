@@ -4,6 +4,7 @@ static enum opcode MP_pp_map[] = {
 #ifdef MP_REFGEN_FIXUP
     OP_SREFGEN,
 #endif
+    OP_REQUIRE
 };
 
 typedef OP * MP_FUNC_T(modperl_pp_t)(pTHX);
@@ -47,10 +48,17 @@ static OP *modperl_pp_srefgen(pTHX)
 
 #endif /* MP_REFGEN_FIXUP */
 
+static OP *modperl_pp_require(pTHX)
+{
+    /* nothing yet */
+    return MP_PERL_ppaddr[MP_OP_REQUIRE](aTHX);
+}
+
 static modperl_pp_t MP_ppaddr[] = {
 #ifdef MP_REFGEN_FIXUP
     MEMBER_TO_FPTR(modperl_pp_srefgen),
 #endif
+    MEMBER_TO_FPTR(modperl_pp_require)
 };
 
 void modperl_perl_pp_set(modperl_perl_opcode_e idx)

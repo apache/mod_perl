@@ -9,6 +9,7 @@ typedef enum {
 #ifdef MP_REFGEN_FIXUP
     MP_OP_SREFGEN,
 #endif
+    MP_OP_REQUIRE,
     MP_OP_max
 } modperl_perl_opcode_e;
 
