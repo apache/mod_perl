@@ -194,6 +194,9 @@ typedef struct {
     apr_bucket *bucket;
     apr_bucket_brigade *bb_in;
     apr_bucket_brigade *bb_out;
+    ap_input_mode_t input_mode;
+    apr_read_type_e block;
+    apr_off_t readbytes;
     apr_status_t rc;
     modperl_filter_mode_e mode;
     apr_pool_t *pool;

@@ -1696,6 +1696,18 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'modperl_filter_mode_e',
         'name' => 'mode'
+      },
+      {
+        'type' => 'ap_input_mode_t',
+        'name' => 'input_mode'
+      },
+      {
+        'type' => 'apr_read_type_e',
+        'name' => 'block'
+      },
+      {
+        'type' => 'apr_off_t',
+        'name' => 'readbytes'
       }
     ]
   },
@@ -2414,7 +2426,7 @@ $ModPerl::FunctionTable = [
       },
       {
         'type' => 'ap_input_mode_t',
-        'name' => 'mode'
+        'name' => 'input_mode'
       },
       {
         'type' => 'apr_read_type_e',
@@ -3907,18 +3919,6 @@ $ModPerl::FunctionTable = [
         'type' => 'modperl_filter_t *',
         'name' => 'filter'
       },
-      {
-        'type' => 'ap_input_mode_t',
-        'name' => 'mode'
-      },
-      {
-        'type' => 'apr_read_type_e',
-        'name' => 'block'
-      },
-      {
-        'type' => 'apr_off_t',
-        'name' => 'readbytes'
-      }
     ]
   },
   {

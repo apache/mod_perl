@@ -21,9 +21,9 @@ sub header_parser {
 }
 
 sub in_filter {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my $filter = shift;
 
-    while ($filter->read($mode, $block, $readbytes, my $buffer, 1024)) {
+    while ($filter->read(my $buffer, 1024)) {
         $filter->print(lc $buffer);
     }
 

@@ -17,11 +17,12 @@ my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::in_str_msg::response';
 
 sub handler : FilterConnectionHandler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my $filter = shift;
+
     #warn "FILTER CALLED\n";
     my $ctx = $filter->ctx;
 
-    while ($filter->read($mode, $block, $readbytes, my $buffer, 1024)) {
+    while ($filter->read(my $buffer, 1024)) {
         #warn "FILTER READ: $buffer\n";
         unless ($ctx) {
             $buffer =~ s|GET $from_url|GET $to_url|;
