@@ -1956,9 +1956,11 @@ finfo(r, sv_statbuf=Nullsv)
     statcache = r->finfo;
     if (r->finfo.st_mode) {
 	laststatval = 0;
+        sv_setpv(statname, r->filename);
     }
     else {
 	laststatval = -1;
+        sv_setpv(statname, "");
     }
     if(GIMME_V == G_VOID) XSRETURN_UNDEF;
     RETVAL = newRV_noinc((SV*)gv_fetchpv("_", TRUE, SVt_PVIO));
