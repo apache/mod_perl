@@ -500,10 +500,9 @@ void perl_reload_inc(server_rec *s, pool *sp)
 				   "%s not found in %%INC\n", elts[i].key));
 		continue;
 	    }
-	    SvREFCNT_dec(HeVAL(entry));
-	    HeVAL(entry) = &sv_undef;
-	    MP_TRACE_g(fprintf(stderr, "reloading %s\n", HeKEY(entry)));
-	    perl_require_pv(HeKEY(entry));
+	    hv_delete_ent(hash, keysv, G_DISCARD, 0);
+	    MP_TRACE_g(fprintf(stderr, "reloading %s\n", elts[i].key));
+	    perl_require_pv(elts[i].key);
 	}
 	SvREFCNT_dec(keysv);
     }
