@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/11/29 08:51:03 $]
+   Last modified at [$Date: 2002/11/29 10:30:11 $]
 
 Release:
 --------
@@ -55,6 +55,12 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* ModPerl::Registry END {} block woes , described in details at the
+  forwarded message from Jim Schueler
+  http://marc.theaimsgroup.com/?l=apache-modperl&m=103720834717981&w=2
+  the whole thread is here:
+  http://marc.theaimsgroup.com/?t=103713532800003&r=1&w=2
 
 * $r->rflush doesn't work. see:
   http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
