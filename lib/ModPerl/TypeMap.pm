@@ -487,7 +487,7 @@ sub sv_convert_code {
 #define $define(sv) \\
 ((SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) \\
 || (Perl_croak(aTHX_ "$croak ($expect)"),0) ? \\
-($ctype *)SvIV((SV*)SvRV(sv)) : ($ctype *)NULL)
+INT2PTR($ctype *, SvIV((SV*)SvRV(sv))) : ($ctype *)NULL)
 
 EOF
 

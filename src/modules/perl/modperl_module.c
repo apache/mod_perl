@@ -76,7 +76,7 @@ static SV **modperl_module_config_hash_get(pTHX_ int create)
 void modperl_module_config_table_set(pTHX_ PTR_TBL_t *table)
 {
     SV **svp = modperl_module_config_hash_get(aTHX_ TRUE);
-    sv_setiv(*svp, (IV)table);
+    sv_setiv(*svp, PTR2IV(table));
 }
 
 PTR_TBL_t *modperl_module_config_table_get(pTHX_ int create)
@@ -92,10 +92,10 @@ PTR_TBL_t *modperl_module_config_table_get(pTHX_ int create)
     sv = *svp;
     if (!SvIOK(sv) && create) {
         table = modperl_svptr_table_new(aTHX);
-        sv_setiv(sv, (IV)table);
+        sv_setiv(sv, PTR2IV(table));
     }
     else {
-        table = (PTR_TBL_t *)SvIV(sv);
+        table = INT2PTR(PTR_TBL_t *, SvIV(sv));
     }
 
     return table;

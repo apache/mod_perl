@@ -292,7 +292,7 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
 
     /* native filter */
     if (!modperl_filter) {
-        f = (ap_filter_t*)SvIV(SvRV(*MARK));
+        f = INT2PTR(ap_filter_t *, SvIV(SvRV(*MARK)));
         MP_TRACE_f(MP_FUNC,
                    "   %s\n\n\t non-modperl filter removes itself\n",
                    f->frec->name);

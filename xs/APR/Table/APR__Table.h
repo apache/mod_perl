@@ -153,7 +153,7 @@ static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(pTHX_ SV *tsv, SV *key)
                    "first argument not an APR::Table object");
     }
 
-    t = (apr_table_t *)SvIVX(SvRV(rv)); 
+    t = INT2PTR(apr_table_t *, SvIVX(SvRV(rv))); 
 
     if (apr_is_empty_table(t)) {
         return NULL;
@@ -180,7 +180,7 @@ static MP_INLINE const char *mpxs_APR__Table_FETCH(pTHX_ SV *tsv,
 {
     SV* rv = modperl_hash_tied_object_rv(aTHX_ "APR::Table", tsv);
     const int i = mpxs_apr_table_iterix(rv);
-    apr_table_t *t = (apr_table_t *)SvIVX(SvRV(rv));
+    apr_table_t *t = INT2PTR(apr_table_t *, SvIVX(SvRV(rv)));
     const apr_array_header_t *arr = apr_table_elts(t);
     apr_table_entry_t *elts = (apr_table_entry_t *)arr->elts;
 

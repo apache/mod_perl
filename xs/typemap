@@ -56,7 +56,7 @@ T_POOLOBJ
 T_UVOBJ
 	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
 	    UV tmp = SvUV((SV*)SvRV($arg));
-	    $var = ($type)tmp;
+	    $var = INT2PTR($type, tmp);
 	}
 	else {
 	    Perl_croak(aTHX_ SvROK($arg) ?
