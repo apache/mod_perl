@@ -206,15 +206,9 @@ sub configure {
     #ModPerl::BuildMM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
-    for my $util (qw(Report Smoke)) {
-        my $class = "Apache::Test${util}Perl";
-        $class->generate_script;
-    }
-
-    for my $util (qw(Run)) {
-        my $class = "ModPerl::Test${util}";
-        $class->generate_script;
-    }
+    ModPerl::TestRun->generate_script;
+    Apache::TestSmokePerl->generate_script;
+    Apache::TestReportPerl->generate_script;
 
     my $tables_dir = tables_dir($httpd_version);
 
