@@ -41,7 +41,7 @@ sub handler ($$) {
 
     $rc = $pr->run(@_);
     $pr->chdir_file("$Apache::Server::CWD/");
-    return $rc != OK ? $rc : $pr->status;
+    return ($rc != OK) ? $rc : $pr->status;
 }
 
 1;
