@@ -14,7 +14,7 @@ my $redirect = 'http://perl.apache.org/';
 
 my $res = GET "$location?$redirect", redirect_ok => 0;
 
-ok t_cmp($redirect, $res->header('Location'),
+ok t_cmp($redirect, $res->header('Location')||'',
          "Location header");
 
 ok t_cmp(302, $res->code,
