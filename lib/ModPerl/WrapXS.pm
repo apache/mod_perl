@@ -250,6 +250,40 @@ $attrs
 
 EOF
             }
+            elsif ($access_mode eq 'rw_char_undef') {
+                my $pool = $e->{pool} 
+                    or die "rw_char_undef accessors need pool";
+                $pool .= '(obj)';
+# XXX: not sure where val=$default is coming from, but for now use
+# hardcoded Nullsv
+                $code = <<EOF;
+$type
+$name(obj, val_sv=Nullsv)
+    $class obj
+    SV *val_sv
+
+    PREINIT:
+$attrs
+
+    CODE:
+    RETVAL = ($cast) obj->$name;
+
+    if (val_sv) {
+        if (SvOK(val_sv)) {
+            STRLEN val_len;
+            char *val = (char *)SvPV(val_sv, val_len);
+            obj->$name = apr_pstrndup($pool, val, val_len);
+        }
+        else {
+            obj->$name = NULL;
+        }
+    }
+
+    OUTPUT:
+    RETVAL
+
+EOF
+            }
 
             push @{ $self->{XS}->{ $struct->{module} } }, {
                code  => $code,
