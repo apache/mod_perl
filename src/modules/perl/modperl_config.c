@@ -32,8 +32,8 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
     { /* XXX: should do a proper merge of the arrays */
       /* XXX: and check if Perl*Handler is disabled */
         int i;
-        for (i=0; i<MP_PER_DIR_NUM_HANDLERS; i++) {
-            merge_item(handlers[i]);
+        for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
+            merge_item(handlers_per_dir[i]);
         }
     }
 
@@ -62,21 +62,6 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
     modperl_config_srv_argv_push((char *)ap_server_argv0);
-
-#ifdef MP_CONNECTION_NUM_HANDLERS
-    scfg->connection_cfg = (modperl_connection_config_t *)
-        apr_pcalloc(p, sizeof(*scfg->connection_cfg));
-#endif
-
-#ifdef MP_FILES_NUM_HANDLERS
-    scfg->files_cfg = (modperl_files_config_t *)
-        apr_pcalloc(p, sizeof(*scfg->files_cfg));
-#endif
-
-#ifdef MP_PROCESS_NUM_HANDLERS
-    scfg->process_cfg = (modperl_process_config_t *)
-        apr_pcalloc(p, sizeof(*scfg->process_cfg));
-#endif
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
 
@@ -161,15 +146,21 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
 #endif
 
     merge_item(argv);
-    merge_item(files_cfg);
-    merge_item(process_cfg);
-    merge_item(connection_cfg);
 
     { /* XXX: should do a proper merge of the arrays */
       /* XXX: and check if Perl*Handler is disabled */
         int i;
-        for (i=0; i<MP_PER_SRV_NUM_HANDLERS; i++) {
-            merge_item(handlers[i]);
+        for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
+            merge_item(handlers_per_srv[i]);
+        }
+        for (i=0; i < MP_HANDLER_NUM_FILES; i++) {
+            merge_item(handlers_files[i]);
+        }
+        for (i=0; i < MP_HANDLER_NUM_PROCESS; i++) {
+            merge_item(handlers_process[i]);
+        }
+        for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
+            merge_item(handlers_connection[i]);
         }
     }
 

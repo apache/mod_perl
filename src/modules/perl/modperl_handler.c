@@ -74,23 +74,23 @@ MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_DIR:
-        av = dcfg->handlers[idx];
+        av = dcfg->handlers_per_dir[idx];
         set_desc(per_dir);
         break;
       case MP_HANDLER_TYPE_PER_SRV:
-        av = scfg->handlers[idx];
+        av = scfg->handlers_per_srv[idx];
         set_desc(per_srv);
         break;
       case MP_HANDLER_TYPE_CONNECTION:
-        av = scfg->connection_cfg->handlers[idx];
+        av = scfg->handlers_connection[idx];
         set_desc(connection);
         break;
       case MP_HANDLER_TYPE_FILES:
-        av = scfg->files_cfg->handlers[idx];
+        av = scfg->handlers_files[idx];
         set_desc(files);
         break;
       case MP_HANDLER_TYPE_PROCESS:
-        av = scfg->process_cfg->handlers[idx];
+        av = scfg->handlers_process[idx];
         set_desc(process);
         break;
     };

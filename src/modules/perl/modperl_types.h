@@ -87,18 +87,6 @@ struct modperl_interp_pool_t {
 
 #endif /* USE_ITHREADS */
 
-typedef struct {
-    MpAV *handlers[MP_PROCESS_NUM_HANDLERS];
-} modperl_process_config_t;
-
-typedef struct {
-    MpAV *handlers[MP_CONNECTION_NUM_HANDLERS];
-} modperl_connection_config_t;
-
-typedef struct {
-    MpAV *handlers[MP_FILES_NUM_HANDLERS];
-} modperl_files_config_t;
-
 typedef U32 modperl_opts_t;
 
 typedef struct {
@@ -121,10 +109,10 @@ typedef struct {
     MpHV *SetVars;
     MpAV *PassEnv;
     MpAV *PerlRequire, *PerlModule;
-    MpAV *handlers[MP_PER_SRV_NUM_HANDLERS];
-    modperl_files_config_t *files_cfg;
-    modperl_process_config_t *process_cfg;
-    modperl_connection_config_t *connection_cfg;
+    MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
+    MpAV *handlers_files[MP_HANDLER_NUM_FILES];
+    MpAV *handlers_process[MP_HANDLER_NUM_PROCESS];
+    MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
 #ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
     modperl_tipool_config_t *interp_pool_cfg;
@@ -143,7 +131,7 @@ typedef struct {
 typedef struct {
     char *location;
     char *PerlDispatchHandler;
-    MpAV *handlers[MP_PER_DIR_NUM_HANDLERS];
+    MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpHV *SetEnv;
     MpHV *SetVars;
     U8 flags;
