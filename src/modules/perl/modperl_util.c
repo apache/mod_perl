@@ -399,6 +399,29 @@ MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)
     }
 }
 
+void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
+{
+    I32 i, oldscope = PL_scopestack_ix;
+    SV **ary = AvARRAY(subs);
+    
+    for (i=0; i<=AvFILLp(subs); i++) {
+	CV *cv = (CV*)ary[i];
+	SV *atsv = ERRSV;
+
+	PUSHMARK(PL_stack_sp);
+	call_sv((SV*)cv, G_EVAL|G_DISCARD);
+
+	if (SvCUR(atsv)) {
+            Perl_sv_catpvf(aTHX_ atsv, "%s failed--call queue aborted",
+                           name);
+	    while (PL_scopestack_ix > oldscope) {
+		LEAVE;
+            }
+            Perl_croak(aTHX_ "%s", SvPVX(atsv));
+	}
+    }
+}
+
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                                  char *key, SV *sv_val)
 {

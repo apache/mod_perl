@@ -68,6 +68,8 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_ const char *classname,
 
 MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src);
 
+void modperl_perl_call_list(pTHX_ AV *subs, const char *name);
+
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                                  char *key, SV *sv_val);
     
