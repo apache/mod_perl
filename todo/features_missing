@@ -12,9 +12,6 @@
   the def/exp files on Win32/AIX.
 
 * directive handlers are supported but need some work for 1.x compat
-  - Apache::ModuleConfig->get needs a compat method mapping to
-    Apache::Module->get_config
-
   - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
     what Apache::Directive->as_string does, but one char or line at a time
 
