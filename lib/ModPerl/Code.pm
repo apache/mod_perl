@@ -451,7 +451,7 @@ EOF
 }
 
 my %trace = (
-#    'a' => 'all',
+    'a' => 'Apache API interaction',
     'c' => 'configuration for directive handlers',
     'd' => 'directive processing',
     'e' => 'environment variables',
