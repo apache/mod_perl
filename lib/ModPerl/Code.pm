@@ -501,9 +501,14 @@ my %trace = (
 sub generate_trace {
     my($self, $h_fh) = @_;
 
-    my $v = $self->{build}->{VERSION};
+    my $v     = $self->{build}->{VERSION};
+    my $api_v = $self->{build}->{API_VERSION};
 
     print $h_fh qq(#define MP_VERSION_STRING "mod_perl/$v"\n);
+
+    # this needs to be a string, not an int, because of the
+    # macro definition.  patches welcome.
+    print $h_fh qq(#define MP_API_VERSION "$api_v"\n);
 
     my $i = 1;
     my @trace = sort keys %trace;

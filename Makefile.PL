@@ -479,7 +479,8 @@ sub set_modperl_version {
     }
     close $fh;
 
-    $build->{VERSION} = $VERSION;
+    $build->{VERSION}     = $VERSION;
+    $build->{API_VERSION} = $mod_perl::API_VERSION;
 }
 
 # needs to be run after configure() when apxs is setup
