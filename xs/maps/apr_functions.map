@@ -591,28 +591,28 @@ MODULE=APR::URI
  apr_xlate_get_sb
  apr_xlate_open
 
--MODULE=APR::OS
- apr_os_dir_get
- apr_os_exp_time_get
- apr_os_file_get
- apr_os_imp_time_get
- apr_os_sock_get
- apr_os_thread_get
- apr_os_threadkey_get
- apr_os_sock_make
- apr_os_dir_put
- apr_os_exp_time_put
- apr_os_file_put
- apr_os_imp_time_put
- apr_os_sock_put
- apr_os_thread_put
- apr_os_threadkey_put
- apr_os_dso_handle_get
- apr_os_dso_handle_put
- apr_os_thread_current
- apr_os_thread_equal
- apr_os_global_mutex_get
- apr_os_proc_mutex_get
- apr_os_proc_mutex_put
- apr_os_shm_get
- apr_os_shm_put
+MODULE=APR::OS
+-apr_os_dir_get
+-apr_os_exp_time_get
+-apr_os_file_get
+-apr_os_imp_time_get
+-apr_os_sock_get
+-apr_os_thread_get
+-apr_os_threadkey_get
+-apr_os_sock_make
+-apr_os_dir_put
+-apr_os_exp_time_put
+-apr_os_file_put
+-apr_os_imp_time_put
+-apr_os_sock_put
+-apr_os_thread_put
+-apr_os_threadkey_put
+-apr_os_dso_handle_get
+-apr_os_dso_handle_put
+ apr_os_thread_current | | mpxs_
+-apr_os_thread_equal
+-apr_os_global_mutex_get
+-apr_os_proc_mutex_get
+-apr_os_proc_mutex_put
+-apr_os_shm_get
+-apr_os_shm_put

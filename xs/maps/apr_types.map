@@ -96,7 +96,7 @@ apr_lockmech_e       | IV
 #thread stuff
 struct apr_threadkey_t       | UNDEFINED
 struct apr_os_threadkey_t    | UNDEFINED
-struct apr_os_thread_t       | UNDEFINED
+struct apr_os_thread_t       | PTR
 struct apr_thread_t          | UNDEFINED
 apr_thread_start_t           | UNDEFINED
 struct apr_threadattr_t      | UNDEFINED
