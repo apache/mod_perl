@@ -66,11 +66,12 @@ Here are some of the effects that you might see.
 
 =head2 The server terminates after processing the first request
 
-Your script is calling the perl C<exit()> function.  That is not a problem
-in a conventional CGI script, provided that query processing is complete.
-But you almost certainly don't want to exit in a mod_perl script.  It
-kills the server process that handled the request, meaning that the
-advantage of using mod_perl to avoid startup overhead is lost.
+Your script is calling the CORE perl C<exit()> function.  That is not
+a problem in a conventional CGI script, provided that query processing
+is complete.  But you almost certainly don't want to exit in a
+mod_perl script.  It kills the server process that handled the
+request, meaning that the advantage of using mod_perl to avoid startup
+overhead is lost.
 
 The best way to avoid calling C<exit()> is to restructure the script so
 that all execution paths return to a common point at the end of the
@@ -78,8 +79,13 @@ script.  If this seems impractical you can force the same effect by
 placing a label after the last executable statement and replacing calls to
 C<exit()> with C<goto label;>
 
-There may be exceptional circumstances in which an exit is required in a
-mod_perl script, in which case C<Apache-E<gt>exit()> should be used.
+See also what mod_perl_traps says about C<Apache::exit()> and the way
+that Apache::Registry causes it to terminate the script but not the
+httpd child.
+
+There may be exceptional circumstances in which you explicitly want to
+terminate the httpd child at the end of the current request.  In this
+case C<Apache-E<gt>exit(-2)> should be used.
 
 =head2 Variables retain their value from one request to the next
 
@@ -162,6 +168,14 @@ evaluated too early, before the environment has been set up.  That can
 happen if you have C<use CGI> in a script and pull the script in with
 a C<PerlRequire> directive in httpd.conf.  Replacing C<use CGI> with
 C<require CGI> will fix it.
+
+=head2 Do I have to rewrite my legacy code for mod_perl?
+
+If you have CGI code that seems to be fundamentally at odds with
+mod_perl's "compile once, run many" environment, you may be find that
+it will work if run under the module C<Apache::PerlRun>.  See the
+documentation of that module, which is included with recent versions
+of mod_perl.
 
 =head1 How can my script continue running after sending the response?
 
