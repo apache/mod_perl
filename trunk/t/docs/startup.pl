@@ -216,7 +216,7 @@ END {
 
 package Apache::Death;
 my $say_ok = <<EOF;
-*** The follow [error] is expected, no cause for alarm ***
+*** The following [error] is expected, no cause for alarm ***
 EOF
 
 sub handler {
