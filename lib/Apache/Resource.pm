@@ -19,6 +19,7 @@ sub BM ($) {
 }
 
 sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size in MB
+sub DEFAULT_RLIMIT_AS    () { 64 } #address space (memory) size in MB
 sub DEFAULT_RLIMIT_CPU   () { 60*6 } #cpu time in seconds
 sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size (MB)
 sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size (MB)
@@ -133,6 +134,10 @@ Apache::Resource - Limit resources used by httpd children
  #set child memory limit in megabytes
  #default is 64 Meg
  PerlSetEnv PERL_RLIMIT_DATA 32:48
+
+ #linux does not honor RLIMIT_DATA
+ #RLIMIT_AS (address space) will work to limit the size of a process
+ PerlSetEnv PERL_RLIMIT_AS 32:48
 
  #set child cpu limit in seconds
  #default is 360 seconds
