@@ -31,7 +31,6 @@ sub response {
     my $r = shift;
 
     my $len = $r->read(my $data, $r->headers_in->{'Content-Length'});
-    # XXX: what about $! it's incorrect now
     die "failed to read POSTed data: $!" unless defined $len;
     debug "read $len bytes [$data]";
 
