@@ -30,7 +30,10 @@ BEGIN {
 
 sub httpd_conf {
     shift;
-    push @Apache::ReadConfig::PerlConfig,
+    no strict 'refs';
+    #use a symbolic reference so %Apache::ReadConfig::
+    #is empty at compile time
+    push @{"Apache::ReadConfig::PerlConfig"},
       map "$_\n", @_;
 }
 

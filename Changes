@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+fix double-loading bug of Perl{Require,Module}s at startup time
+
 improve Apache::MyConfig [Stas Bekman <sbekman@stason.org>]
 
 back out 'stop win32 crash when bringing down service' change, no
