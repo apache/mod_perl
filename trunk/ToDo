@@ -3,6 +3,10 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- $VirtualHost{'111.22.33.55'} = [...]
+
+- stronghold patches [Todd R. Eigenschink <todd@tekinteractive.com>]
+
 - top-level PerlSetEnv isn't set for PerlChildInitHandler w/ 5.005_02
 
 - looks like we need a per-server configuration merge routine
