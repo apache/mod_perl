@@ -39,14 +39,6 @@ type check, fixup and logger stages of a request.
 The mod_perl FAQ is maintained by Frank Cringle <fdc@cliwe.ping.de>:
 http://perl.apache.org/faq/
 
-Mike Stok <mike@stok.co.uk> maintains mirrors of the mod_perl FAQ at:
-
-  http://www.stok.co.uk/~mike/mod_perl/
-
-and
-
-  http://www.tiac.net/users/stok/mod_perl/
-
 =head1 Apache/Perl API
 
 See 'perldoc Apache' for info on how to use the Perl-Apache API.
