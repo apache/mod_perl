@@ -144,6 +144,26 @@ sub Apache::AuthenTest::handler {
     return OK;                       
 }
 
+use Apache::Constants qw(DECLINED DIR_MAGIC_TYPE);
+
+sub My::DirIndex::handler {
+    my $r = shift;
+    return DECLINED unless $r->content_type and 
+	$r->content_type eq DIR_MAGIC_TYPE;
+    require DirHandle;
+    my $dh = DirHandle->new($r->filename) or die $!;
+    my @entries = $dh->read;
+    my $x = @entries;
+    $r->send_http_header('text/plain');
+    print "1..$x\n";
+    my $i = 1;
+    for my $e (@entries) {
+	print "ok $i ($e)\n";
+	++$i;
+    }
+    1;
+}
+
 sub My::ProxyTest::handler {
     my $r = shift;
     unless ($r->proxyreq and $r->uri =~ /proxytest/) {

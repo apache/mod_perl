@@ -181,8 +181,8 @@ static command_rec perl_cmds[] = {
 };
 
 static handler_rec perl_handlers [] = {
-    { PERL_APACHE_SSI_TYPE, perl_handler },
     { "perl-script", perl_handler },
+    { DIR_MAGIC_TYPE, perl_handler },
     { NULL }
 };
 

@@ -56,6 +56,10 @@ Alias /dirty-perl/ ./t/net/perl/
 
 Alias /cgi-bin/ ./t/net/perl/
 
+<Location /dirmagic>
+PerlHandler My::DirIndex
+</Location>
+
 <Location /perl>
 ErrorDocument 500 /perl/server_error.pl
 SetHandler perl-script

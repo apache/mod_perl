@@ -104,6 +104,7 @@ my $srv = $net::httpserver;
 ($srv = $net::httpserver) =~ s/\D+$//;
 $Port = (split ":", $srv, 2)[1];
 $Port ||= 8529;
+print "Will bind to Port $Port\n";
 
 $DocumentRoot = "$dir/docs";
 $ServerName = "localhost";
@@ -119,6 +120,10 @@ my @mod_perl = (
     PerlHandler => "Apache::Registry",
     Options     => "ExecCGI",
 );
+
+$Location{"/dirmagic"} = {
+    PerlHandler => "My::DirIndex",
+};
 
 $Location{"/dirty-perl"} = { 
     SetHandler => "perl-script",
