@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 2, need_min_module_version CGI => 2.87;
+plan tests => 2, need_min_module_version CGI => 3.07;
 
 my $url = "/registry/cgi.pl";
 my $res = GET $url;
