@@ -16,6 +16,14 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- problems w/ CGI.pm 2.4x + modules/cgi 6-7
+	Ask Bjorn Hansen <ask@netcetera.dk>
+
+- add directives for ApacheSSL + 'make test'
+ SSLCacheServerPort 30123
+ SSLCacheServerPath /tmp
+	Adam Laurie <adam@algroup.co.uk>
+
 - have Makefile.PL check for HTML::HeadParser
 
 - Gerald's report of Embperl/sub-request/print breakage
@@ -146,6 +154,10 @@ KNOWN BUGS
 ---------------------------------------------------------------------------
 NEW STUFF
 ---------------------------------------------------------------------------
+
+- option to set uid/gid before running any Perl code (copy-n-paste
+  from http_main.c) 
+	Doug Bagley <doug@dejanews.com>
 
 - Apache::URI interface to uri_components structure
  
