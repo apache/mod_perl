@@ -2,6 +2,10 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
+# useful for sub-Makefile.PL's to know whether they are invoked
+# directly or via the top level Makefile.PL
+$ENV{MOD_PERL_2_BUILD} = 1;
+
 my $min_httpd_version = '2.0.36';
 
 my($old_modperl_version, $old_modperl_pm);
@@ -382,6 +386,12 @@ package MY;
 
 use Config;
 
+BEGIN {
+    use constant APACHE_TEST_INSTALL => -e 'Apache-Test';
+    use lib './Apache-Test';
+    require 'install-pl' if APACHE_TEST_INSTALL;
+}
+
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->ModPerl::BuildMM::MY::top_targets;
@@ -417,6 +427,9 @@ modperl_src_clean:
 
 EOF
 
+    $string .= Apache::Test::install::nuke_Apache__test_target()
+        if APACHE_TEST_INSTALL();
+
     $string;
 }
 
@@ -425,6 +438,10 @@ sub MY::install {
     my $string = $self->MM::install(@_);
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
+
+    ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
+          if APACHE_TEST_INSTALL();
+
     $string;
 }
 
