@@ -5,6 +5,20 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
     modperl_handler_t *handler = 
         (modperl_handler_t *)apr_pcalloc(p, sizeof(*handler));
 
+    switch (*name) {
+      case '+':
+        ++name;
+        MpHandlerAUTOLOAD_On(handler);
+        break;
+      case '-':
+        ++name;
+        /* XXX: currently a noop; should disable autoload of given handler
+         * if PerlOptions +AutoLoad is configured
+         */
+        MpHandlerAUTOLOAD_Off(handler);
+        break;
+    }
+
     handler->name = name;
     MP_TRACE_h(MP_FUNC, "new handler %s\n", handler->name);
 
