@@ -64,7 +64,7 @@ sub make {
     chdir $code->path;
 
     for ($code->c_files) {
-        echo_cmd "$cc -Wall $ccopts @inc -c $_";
+        echo_cmd "$cc -g -Wall $ccopts @inc -c $_";
     }
 
     my @objs = $code->o_files;
