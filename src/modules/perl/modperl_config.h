@@ -27,8 +27,8 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
     }
 
 #define modperl_config_req_get(r) \
- (modperl_config_req_t *) \
-          ap_get_module_config(r->request_config, &perl_module)
+ (r ? (modperl_config_req_t *) \
+          ap_get_module_config(r->request_config, &perl_module) : NULL)
 
 #define MP_dRCFG \
    modperl_config_req_t *rcfg = modperl_config_req_get(r)
