@@ -3,6 +3,7 @@
 *.xs
 *.h
 .tmp.*
+*.lo
 typemap
 Makefile
 mod_perl.config
