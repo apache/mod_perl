@@ -1,12 +1,16 @@
 package TestCommon::Utils;
 
-sub is_tainted {
-    my $data = shift;
-    # the append of " " is crucial with older Perls (5.6), which won't
-    # consider a scalar with PV = ""\0 as tainted, even though it has
-    # the taint magic attached
-    eval { eval $data . " " };
-    return ($@ && $@ =~ qr/Insecure dependency in eval/) ? 1 : 0;
+use strict;
+use warnings FATAL => 'all';
+
+BEGIN {
+    # perl 5.8.0 (only) croaks on eval {} block at compile time when
+    # it thinks the application is setgid. workaround: that's why we
+    # need to shutdown compile time errors for this function
+    local $SIG{__DIE__} = sub { };
+    sub is_tainted {
+        return ! eval { eval join '', map { substr $_, 0, 0 } @_; 1};
+    }
 }
 
 1;
