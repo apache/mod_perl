@@ -78,6 +78,9 @@ sub import {
 
 package Apache::RequestRec;
 
+#to support $r->server_root_relative
+*server_root_relative = \&Apache::server_root_relative;
+
 #we support Apache->request; this is needed to support $r->request
 #XXX: seems sorta backwards
 *request = \&Apache::request;
