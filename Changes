@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Remove APR::Finfo::pool as it has no use to us [Stas]
+
 get PerlSetVar and PerlAddVar multi-level merges to (finally) work
 properly.  [Rici Lake <rici ricilake.net>]
 

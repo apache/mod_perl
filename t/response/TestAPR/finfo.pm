@@ -19,7 +19,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    my $tests = 2 + TestAPRlib::finfo::num_of_tests();
+    my $tests = 1 + TestAPRlib::finfo::num_of_tests();
     plan $r, tests => $tests;
 
     {
@@ -27,14 +27,6 @@ sub handler {
         my $isa = $finfo->isa('APR::Finfo');
 
         t_debug "\$r->finfo $finfo";
-        ok $isa;
-    }
-
-    {
-        my $pool = $r->finfo->pool;
-        my $isa = $pool->isa('APR::Pool');
-
-        t_debug "\$r->finfo->pool $pool";
         ok $isa;
     }
 
