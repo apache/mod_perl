@@ -48,19 +48,18 @@ sub handler {
         ok (! $r->$_()) || $r->$_()->isa('Apache::RequestRec');
     }
 
-    ok $r->the_request || 1;
-
     ok !$r->assbackwards;
 
-    ok $r->proxyreq || 1;
+    ok !$r->proxyreq; # see also TestModules::proxy
 
     ok !$r->header_only;
 
     ok $r->protocol =~ /http/i;
 
-    ok $r->proto_num;
+    # HTTP 1.0
+    ok t_cmp $r->proto_num, 1000, 't->proto_num';
 
-    ok t_cmp $r->hostname, $r->get_server_name, "hostname";
+    ok t_cmp $r->hostname, $r->get_server_name, '$r->hostname';
 
     ok $r->request_time;
 
@@ -68,12 +67,9 @@ sub handler {
 
     ok $r->status || 1;
 
-    ok t_cmp $r->method, 'GET', "method";
+    ok t_cmp $r->method, 'GET', '$r->method';
 
-    ok t_cmp $r->method_number, Apache::M_GET, "method number";
-
-    #allowed_xmethods
-    #allow_methods
+    ok t_cmp $r->method_number, Apache::M_GET, '$r->method_number';
 
     ok $r->headers_in;
 
@@ -89,12 +85,6 @@ sub handler {
     ok $r->content_type;
 
     ok $r->handler;
-
-    # content_encoding is tested in TestAPI::content_encoding
-
-    #content_languages
-
-    #user
 
     ok $r->ap_auth_type || 1;
 
@@ -126,6 +116,9 @@ sub handler {
         ok t_cmp $r->path_info, $path_info, '$r->path_info';
 
         ok t_cmp $r->args, $args, '$r->args';
+
+        ok t_cmp $r->the_request, "GET $base_uri$path_info?$args HTTP/1.0",
+            '$r->the_request';
 
         ok $r->filename;
 
@@ -171,14 +164,19 @@ sub handler {
         ok $r->allowed & (1 << Apache::M_PUT);
     }
 
-    # per_dir_config in several other tests
 
-    # request_config
+    # tested in other tests
+    # - input_filters:    TestAPI::in_out_filters
+    # - output_filters:   TestAPI::in_out_filters
+    # - per_dir_config:   in several other tests
+    # - content_encoding: TestAPI::content_encoding
+    # - user:             TestHooks::authz / TestHooks::authen
 
-    # input_filters and output_filters are tested in
-    # TestAPI::in_out_filters;
-
-    # eos_sent
+    # XXX: untested
+    # - request_config
+    # - content_languages
+    # - allowed_xmethods
+    # - allow_methods
 
     Apache::OK;
 }
