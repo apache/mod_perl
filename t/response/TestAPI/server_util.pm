@@ -123,9 +123,9 @@ sub handler {
                           "\$r->server_root_relative($dir)");
     }
 
-    t_debug('Apache::exists_config_define');
-    ok Apache::exists_config_define('MODPERL2');
-    ok ! Apache::exists_config_define('FOO');
+    t_debug('Apache::ServerUtil::exists_config_define');
+    ok Apache::ServerUtil::exists_config_define('MODPERL2');
+    ok ! Apache::ServerUtil::exists_config_define('FOO');
 
     t_debug('registering method FOO');
     ok $r->server->method_register('FOO');
