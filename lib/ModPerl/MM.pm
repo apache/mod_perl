@@ -71,9 +71,11 @@ sub WriteMakefile {
     my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
 
     my @opts = (
-        INC     => $inc,
-        CCFLAGS => $ccflags,
-        LIBS    => $libs,
+        INC       => $inc,
+        CCFLAGS   => $ccflags,
+        OPTIMIZE  => $build->perl_config('optimize'),
+        LDDLFLAGS => $build->perl_config('lddlflags'),
+        LIBS      => $libs,
         dynamic_lib => { OTHERLDFLAGS => $build->otherldflags },
     );
 

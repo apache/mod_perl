@@ -142,6 +142,11 @@ sub gtop_ldopts {
 sub ldopts {
     my($self) = @_;
 
+    my $config = tied %Config;
+    my $ldflags = $config->{ldflags};
+
+    $config->{ldflags} = '' if WIN32; #same as lddlflags
+
     my $ldopts = ExtUtils::Embed::ldopts();
     chomp $ldopts;
 
@@ -156,6 +161,8 @@ sub ldopts {
     if ($self->{MP_USE_GTOP}) {
         $ldopts .= $self->gtop_ldopts;
     }
+
+    $config->{ldflags} = $ldflags; #reset
 
     $ldopts;
 }
@@ -200,11 +207,21 @@ sub ap_ccopts {
 }
 
 sub perl_ccopts {
-    my $cflags = shift->strip_lfs(" $Config{ccflags} ");
+    my $self = shift;
+
+    my $cflags = $self->strip_lfs(" $Config{ccflags} ");
 
     my $fixup = \&{"ccopts_$^O"};
     if (defined &$fixup) {
         $fixup->(\$cflags);
+    }
+
+    if ($self->{MP_DEBUG}) {
+        my $optim = $Config{optimize};
+
+        unless ($optim =~ /-DDEBUGGING/) {
+            $cflags =~ s/$optim//;
+       }
     }
 
     $cflags;
@@ -226,10 +243,41 @@ sub ccopts {
     $cflags;
 }
 
+sub perl_config_optimize {
+    my($self, $val) = @_;
+
+    $val ||= $Config{optimize};
+
+    if ($self->{MP_DEBUG}) {
+        return ' ' unless $val =~ /-DDEBUGGING/;
+    }
+
+    $val;
+}
+
+sub perl_config_lddlflags {
+    my($self, $val) = @_;
+
+    if ($self->{MP_DEBUG}) {
+        if (MSVC) {
+            $val =~ s/-release/-debug/;
+        }
+    }
+
+    $val;
+}
+
 sub perl_config {
     my($self, $key) = @_;
 
-    return $Config{$key} ? $Config{$key} : '';
+    my $val = $Config{$key} || '';
+
+    my $method = \&{"perl_config_$key"};
+    if (defined &$method) {
+        return $method->($self, $val);
+    }
+
+    return $val;
 }
 
 sub find_in_inc {
@@ -731,7 +779,7 @@ my %perl_config_pm_alias = (
 my $mm_replace = join '|', keys %perl_config_pm_alias;
 
 my @perl_config_pm =
-  (qw(cc cpprun rm ranlib lib_ext obj_ext cccdlflags lddlflags),
+  (qw(cc cpprun rm ranlib lib_ext obj_ext cccdlflags lddlflags optimize),
    values %perl_config_pm_alias);
 
 sub mm_replace {
@@ -744,11 +792,6 @@ sub make_tools {
 
     for (@perl_config_pm) {
         print $fh $self->canon_make_attr($_, $self->perl_config($_));
-    }
-    unless ($self->{MP_DEBUG}) {
-        for (qw(optimize)) {
-            print $fh $self->canon_make_attr($_, $self->perl_config($_));
-        }
     }
 
     require ExtUtils::MakeMaker;
@@ -929,7 +972,7 @@ install:
 clean:
 	$(MODPERL_RM_F) *.a *.so *.xsc \
 	$(MODPERL_LIBNAME).exp $(MODPERL_LIBNAME).lib \
-	*$(MODPERL_OBJ_EXT) *.lo *.i *.s \
+	*$(MODPERL_OBJ_EXT) *.lo *.i *.s *.pdb \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
