@@ -164,8 +164,15 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         buf = body;
     }
 
-    bb = apr_brigade_create(wb->pool, ba);
+    /* this is a note for filter writers who may decide that there is
+     * a bug in mod_perl. We send a transient bucket. That means that
+     * this bucket can't be stored inside a filter without copying the
+     * data in it. This is done automatically by apr_bucket_setaside,
+     * which is written exactly for the purpose to make setaside
+     * operation transparent to the kind of bucket.
+     */
     bucket = apr_bucket_transient_create(buf, len, ba);
+    bb = apr_brigade_create(wb->pool, ba);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
 
     if (add_flush_bucket) {
