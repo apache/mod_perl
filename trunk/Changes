@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_02-dev
 
+when <Perl> sections empty a symbol table, don't clear imported/aliased
+variables (e.g. %Config::Config)
+
+remove warning if Apache::Table was not already loaded
+
 sv2request_rec (Apache typemap) will look for '~' so xs modules can
 subclass without using a HASH ref (e.g. Apache::Request NG)
 
