@@ -227,7 +227,7 @@ sub exit_if_too_big {
 	        $r->child_terminate;
 
 	    } else {	# this is the main httpd, whose parent is init?
-		my $msg = "main process too big, exiting at SIZE=$size KB ";
+		my $msg = "main process too big, SIZE=$size KB ";
 		$msg .= " SHARE=$share KB" if ($share);
 		error_log($msg);
 	    }
