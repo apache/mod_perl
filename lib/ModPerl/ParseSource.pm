@@ -25,7 +25,7 @@ sub find_includes {
     #filter/sort
     my @wanted  = grep { /mod_perl\.h/ } @$includes;
     push @wanted, grep { m:xs/modperl_xs_: } @$includes;
-    push @wanted, grep { m:xs/A: } @$includes;
+    push @wanted, grep { m:xs/[AM]: } @$includes;
     \@wanted;
 }
 
