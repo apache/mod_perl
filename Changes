@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+fix the $r->read function to return undef on failure similar to the
+core perl function and make $! available for those who test for read()
+failures. [Stas]
+
 Make sure that pnotes are destroyed after PerlCleanup handlers are
 finished and not before + test. [Stas]
 

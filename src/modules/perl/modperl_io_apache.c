@@ -277,15 +277,24 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
         rc = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES,
                             APR_BLOCK_READ, len);
         if (rc != APR_SUCCESS) { 
+            char *error;
             /* if we fail here, we want to just return and stop trying
              * to read data from the client.
              */
             r->connection->keepalive = AP_CONN_CLOSE;
             apr_brigade_destroy(bb);
-            sv_setpv(ERRSV,
+
+            if (SvTRUE(ERRSV)) {
+                STRLEN n_a;
+                error = SvPV(ERRSV, n_a);
+            }
+            else {
+                error = modperl_apr_strerror(rc);
+            }
+            sv_setpv(get_sv("!", TRUE),
                      (char *)apr_psprintf(r->pool, 
                                           "failed to get bucket brigade: %s",
-                                          modperl_apr_strerror(rc)));
+                                          error));
             return -1;
         }
 

@@ -452,7 +452,11 @@ int modperl_run_filter(modperl_filter_t *filter)
         av_push(args, newSViv(filter->readbytes));
     }
 
-    /* XXX filters are VOID handlers.  should we ignore the status? */
+    /* while filters are VOID handlers, we need to log any errors,
+     * because most perl coders will forget to check the return errors
+     * from read() and print() calls. and if the caller is not a perl
+     * program they won't make any sense of ERRSV or $!
+     */
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
