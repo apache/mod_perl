@@ -296,51 +296,6 @@ server_rec *perl_get_startup_server(void)
     return NULL;
 }
 
-#if MODULE_MAGIC_NUMBER > 19970909
-static int mp_get_basic_auth_pw(request_rec *r, char **pw)
-{
-    const char *auth_line = ap_table_get(r->headers_in,
-                                      r->proxyreq ? "Proxy-Authorization"
-                                                  : "Authorization");
-    char *t = r->connection->auth_type ?
-	r->connection->auth_type : auth_type(r);
-
-    if (!t || strcasecmp(t, "Basic"))
-        return DECLINED;
-
-    if (!auth_name(r)) {
-        aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_ERR,
-		    r->server, "need AuthName: %s", r->uri);
-        return SERVER_ERROR;
-    }
-
-    if (!auth_line) {
-        note_basic_auth_failure(r);
-        return AUTH_REQUIRED;
-    }
-
-    if (strcasecmp(getword(r->pool, &auth_line, ' '), "Basic")) {
-        /* Client tried to authenticate using wrong auth scheme */
-        aplog_error(APLOG_MARK, APLOG_NOERRNO|APLOG_ERR, r->server,
-                    "client used wrong authentication scheme: %s", r->uri);
-        note_basic_auth_failure(r);
-        return AUTH_REQUIRED;
-    }
-
-    t = uudecode(r->pool, auth_line);
-    /* Note that this allocation has to be made from r->connection->pool
-     * because it has the lifetime of the connection.  The other allocations
-     * are temporary and can be tossed away any time.
-     */
-    r->connection->user = getword_nulls_nc (r->connection->pool, &t, ':');
-    r->connection->ap_auth_type = "Basic";
-
-    *pw = t;
-
-    return OK;
-}
-#endif
-
 #define TABLE_GET_SET(table, do_taint) \
 { \
     char *val; \
@@ -876,11 +831,7 @@ get_basic_auth_pw(r)
     int ret;
 
     PPCODE:
-#if MODULE_MAGIC_NUMBER > 19970909
-    ret = mp_get_basic_auth_pw(r, &sent_pw);
-#else
     ret = get_basic_auth_pw(r, &sent_pw);
-#endif
     XPUSHs(sv_2mortal((SV*)newSViv(ret)));
     if(ret == OK)
 	XPUSHs(sv_2mortal((SV*)newSVpv(sent_pw, 0)));
