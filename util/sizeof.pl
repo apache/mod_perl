@@ -38,15 +38,14 @@ sub sizeof {
 
     print $fh <<EOF;
 #include <stdio.h>
-static FILE *outfp = stdout;
 #define PERLIO_NOT_STDIO 0
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-
+#undef fprintf
 int main(void) {
     int size = @elts;
-    fprintf(outfp, "%d", size);
+    fprintf(stdout, "%d", size);
     return 1;
 }
 EOF
