@@ -198,6 +198,11 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     char *handler_name = "handler";
     char *tmp;
 
+    if (MpHandlerANON(handler)) {
+        /* already resolved anonymous handler */
+        return 1;
+    }
+    
     if (strnEQ(name, "sub ", 4)) {
         MP_TRACE_h(MP_FUNC, "handler is anonymous\n");
         MpHandlerANON_On(handler);
