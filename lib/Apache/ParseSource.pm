@@ -17,6 +17,8 @@ package Apache::ParseSource;
 use strict;
 use Apache::Build ();
 use Config;
+use File::Basename;
+use File::Spec::Functions qw(catdir);
 
 our $VERSION = '0.02';
 
@@ -56,7 +58,7 @@ sub DESTROY {
 {
     package Apache::ParseSource::Scan;
 
-    our @ISA = qw(C::Scan);
+    our @ISA = qw(ModPerl::CScan);
 
     sub get {
         local $SIG{__DIE__} = \&Carp::confess;
@@ -68,20 +70,31 @@ my @c_scan_defines = (
     'CORE_PRIVATE',   #so we get all of apache
     'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
     '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
-    'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
+ #   'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
     'apr_table_do_callback_fn_t=void', #c-scan chokes on function pointers
 );
 
+
+# some types c-scan failing to resolve
+push @c_scan_defines, map { "$_=void" } 
+    qw(PPADDR_t PerlExitListEntry modperl_tipool_vtbl_t);
+
 sub scan {
-    require C::Scan;
-    C::Scan->VERSION(0.75);
+    require ModPerl::CScan;
+    ModPerl::CScan->VERSION(0.75);
     require Carp;
 
     my $self = shift;
 
-    my $c = C::Scan->new(filename => $self->{scan_filename});
+    my $c = ModPerl::CScan->new(filename => $self->{scan_filename});
 
-    $c->set(includeDirs => $self->includes);
+    my $includes = $self->includes;
+
+    # where to find perl headers, but we don't want to parse them otherwise
+    my $perl_core_path = catdir $Config{installarchlib}, "CORE";
+    push @$includes, $perl_core_path;
+
+    $c->set(includeDirs => $includes);
 
     my @defines = @c_scan_defines;
 
@@ -149,11 +162,14 @@ sub generate_cscan_file {
     my $includes = $self->find_includes;
 
     my $filename = '.apache_includes';
-
     open my $fh, '>', $filename or die "can't open $filename: $!";
-    for (@$includes) {
-        print $fh qq(\#include "$_"\n);
+
+    for my $path (@$includes) {
+        my $filename = basename $path;
+        next if $filename =~ /^modperl_/; # no modperl_ headers
+        print $fh qq(\#include "$path"\n);
     }
+
     close $fh;
 
     return $filename;
@@ -343,7 +359,7 @@ sub get_functions {
             }
         }
 
-        #XXX: working around C::Scan confusion here
+        #XXX: working around ModPerl::CScan confusion here
         #macro defines ap_run_error_log causes
         #cpp filename:linenumber to be included as part of the type
         for (@$args) {
