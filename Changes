@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+Make sure to start perl, if it's not running, before processing Perl*
+directives, with threaded perl and PERL_STACKED_HANDLERS=0 [Stas
+Bekman]
+
 Add Apache::Module to Bundle::Apache [Stas Bekman]
 
 use $Config{'installstyle'} instead of hardcoded 'lib', to handle
@@ -19,8 +23,8 @@ Makefile.PL's PREFIX option correctly [Philippe M. Chiasson
 prevent segfaults in mod_perl_mark_where() when a sub can't get
 resolved [Gerald Richter <richter@ecos.de>]
 
-Need to load B::Terse/TerseSize if it wasn't loaded yet in that child
-before using it.  [Dan Sully <daniel@electricrain.com>]
+Apache::Status: Need to load B::Terse/TerseSize if it wasn't loaded
+yet in that child before using it.  [Dan Sully <daniel@electricrain.com>]
 
 document the server_root_relative() method [Stas Bekman <stas@stason.org>]
 
