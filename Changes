@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Add Apache::compat methods: $r->connection->auth_type and
+$r->connection->user (requires 'PerlOptions +GlobalRequest') + tests
+[Stas]
+
 Several issues resolved with parsing headers, including making work
 the handlers calling $r->content_type() and not sending raw headers,
 when the headers scanning is turned on. Lots of tests added to
