@@ -456,7 +456,8 @@ sub ap_includedir  {
 
     $d ||= $self->dir;
 
-    return $self->{ap_includedir} if $self->{ap_includedir};
+    return $self->{ap_includedir}
+      if $self->{ap_includedir} and -d $self->{ap_includedir};
 
     if (-e "$d/include/httpd.h") {
         return $self->{ap_includedir} = "$d/include";
