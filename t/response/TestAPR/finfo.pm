@@ -98,9 +98,15 @@ sub handler {
 
     # tests for stuff not in perl's stat
     {
-        ok t_cmp($file,
-                 $r->finfo->fname,
-                 '$r->finfo->fname()');
+        # XXX r->finfo->fname requires on Win32 a patched cvs apr
+        if (WIN32) {
+            skip "finfo.fname not available yet on Win32";
+        }
+        else {
+            ok t_cmp($file,
+                     $r->finfo->fname,
+                     '$r->finfo->fname()');
+        }
 
         ok t_cmp(APR::REG,
                  $r->finfo->filetype,
