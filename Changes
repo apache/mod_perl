@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Apache::Resource ported to mp2 [Stas]
+
 If none of MP_APXS, MP_AP_PREFIX and MP_USE_STATIC were specified when
 configuring Makefile.PL, we now prompt for APXS path first and only if
 that fails ask for MP_AP_PREFIX. This is a requirement to get 'make
