@@ -373,7 +373,7 @@ The $r->path_info method will return what is left in the path after the
 I<URI --E<gt> filename> translation, optionally changing it with the first 
 argument if you happen to be doing the translation.
 
-=item $r->args
+=item $r->args( [$query_string] )
 
 The $r->args method will return the contents of the URI I<query
 string>.  When called in a scalar context, the entire string is
