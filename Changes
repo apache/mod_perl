@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+fix precedence problem in StatINC.pm
+[Daniel Jacobowitz <drow@false.org>]
+
 if hash value has magicalness in <Perl>, invoke FETCH
 thanks to Kevin Ruscoe for the spot
 
