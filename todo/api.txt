@@ -72,9 +72,6 @@ not yet implemented
 Apache::{Server,Process} classes:
 require mutex lock for writing
 
-Apache->untaint:
-not yet implemented, required for Apache::Registry
-
 Apache->exit:
 not yet implemented
 maybe use die $r/PROPAGATE instead of tie-ing $@ ?
@@ -111,9 +108,6 @@ alias not implemented
 $r->slurp_filename:
 optimized version not yet implemented (compat version exists in
 Apache::compat)
-
-$r->{stash,clear}_rgy_endav:
-not yet implemented, nor is any END block management
 
 Apache->unescape_url{_info}:
 not yet implemented.  should be moved to Apache::Util
