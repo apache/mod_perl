@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+added perl_perl_merge_dir_config and array_header2avrv symbols to
+mod_perl.def for win32 and mod_perl.exp for aix.
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 INSTALL.apaci: added an explanation of how perl has to be built in
 order to use DSO without problems (copied from the guide) based on
 email from Doug.  [Stas Bekman <stas@stason.org>]
