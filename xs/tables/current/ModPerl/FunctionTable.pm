@@ -6429,6 +6429,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'mpxs_apr_pool_DESTROY',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'SV *',
+        'name' => 'obj'
+      },
+    ]
+  },
+  {
     'return_type' => 'apr_pool_t *',
     'name' => 'mpxs_apr_pool_create',
     'attr' => [

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+APR::Pool::DESTROY implemented and tweaked to only
+destroy pools created via APR::Pool->new() [Geoffrey Young]
+
 $r->slurp_filename is now implemented in C. [Stas]
 
 remove support for httpd 2.0.45/apr 0.9.3 and lower.
