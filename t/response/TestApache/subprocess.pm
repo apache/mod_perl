@@ -12,7 +12,7 @@ use IO::Select ();
 use Apache::Const -compile => 'OK';
 
 use Config;
-use constant PERLIO_IS_ENABLED => $Config{useperlio};
+use constant PERLIO_5_8_IS_ENABLED => $Config{useperlio} && $] > 5.7;
 
 my %scripts = (
      argv   => 'print STDOUT "@ARGV";',
@@ -146,7 +146,10 @@ sub read_data {
     # so we use the following wrapper: if we are under perlio we just
     # go ahead and read the data, if we are under non-perlio we first
     # select for a few secs. (XXX: is 10 secs enough?)
-    if (PERLIO_IS_ENABLED || $sel->can_read(10)) {
+    #
+    # btw: we use perlIO only for perl 5.7+
+    #
+    if (PERLIO_5_8_IS_ENABLED || $sel->can_read(10)) {
         @data = wantarray ? (<$fh>) : <$fh>;
     }
 
