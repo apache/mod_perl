@@ -367,7 +367,7 @@ sub get_structs {
     my %seen;
     my $wanted = $self->wanted_structures;
     my $other  = join '|', qw(_rec module
-                              piped_log uri_components htaccess_result
+                              piped_log uri_t htaccess_result
                               cmd_parms cmd_func cmd_how);
 
     my @structures;
