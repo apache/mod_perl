@@ -86,8 +86,6 @@ sub libpth {
 sub find_dlfile {
     my($self, $name) = @_;
 
-    return '' unless $Config{'libs'} =~ /$name/;
-
     require DynaLoader;
     require AutoLoader; #eek
 
@@ -101,7 +99,7 @@ sub find_dlfile {
     return $found;
 }
 
-sub file_dlfile_maybe {
+sub find_dlfile_maybe {
     my($self, $name) = @_;
 
     my $path = $self->libpth;
@@ -114,6 +112,23 @@ sub file_dlfile_maybe {
     }
 
     return \@maybe;
+}
+
+sub lib_check {
+    my($self, $name) = @_;
+    return unless $self->perl_config('libs') =~ /$name/;
+
+    return if $self->find_dlfile($name);
+
+    my $maybe = $self->find_dlfile_maybe($name);
+    my $suggest = @$maybe ? 
+      "You could just symlink it to $maybe->[0]" :
+        'You might need to install Perl from source';
+    $self->phat_warn(<<EOF);
+Your Perl is configured to link against lib$name,
+  but lib$name.so was not found.
+  $suggest
+EOF
 }
 
 #--- user interaction ---
@@ -133,6 +148,24 @@ sub prompt_y {
 sub prompt_n {
     my($self, $q) = @_;
     $self->prompt($q, 'n') =~ /^n/i;
+}
+
+sub phat_warn {
+    my($self, $msg, $abort) = @_;
+    my $level = $abort ? 'ERROR' : 'WARNING';
+    warn <<EOF;
+************* $level *************
+
+  $msg
+
+************* $level *************
+EOF
+    if ($abort) {
+        exit 1;
+    }
+    else {
+        sleep 5;
+    }
 }
 
 #--- constuctors ---
