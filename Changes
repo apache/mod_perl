@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+fix the Makefile.PL option parser to support overriding of certain
+build options, in addition to appending to them (.e.g. now MP_LIBNAME
+is overridable) [Andrew Wyllie <wyllie@dilex.net>]
+
 make sure that connection filters won't be inserted as request filters [Stas]
 
 Prevent the 'Use of uninitialized value.' warning when
