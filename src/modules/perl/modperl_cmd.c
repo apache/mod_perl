@@ -550,11 +550,13 @@ MP_CMD_SRV_DECLARE(perldo)
     }
 
     {
+        SV *code = newSVpv(arg, 0);
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;SAVETMPS;
         save_scalar(gv); /* local $0 */
         sv_setpv_mg(GvSV(gv), directive->filename);
-        eval_pv(arg, FALSE);
+        eval_sv(code, G_SCALAR|G_KEEPERR);
+        SvREFCNT_dec(code);
         modperl_env_sync_srv_env_hash2table(aTHX_ p, scfg);
         modperl_env_sync_dir_env_hash2table(aTHX_ p, dcfg);
         FREETMPS;LEAVE;
