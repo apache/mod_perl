@@ -4,7 +4,7 @@ This is mod_perl version 2.0-tobe
 
 Apache:
   This version of mod_perl works with Apache versions 2.0.36 -
-  2.0.46. Newer Apache versions may work with this version of mod_perl.
+  2.0.47. Newer Apache versions may work with this version of mod_perl.
   If not, the the cvs version likely will, which can be obtained from:
   http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
 
