@@ -21,9 +21,17 @@ sub new {
     bless \%args, $class;
 }
 
+#
+# - even though the error id is not useful most of the time to the end
+#   users, developers may need to know it. For example in case of a
+#   non-english user locale setting, the error string could be
+#   incomprehensible to a developer, but by having the error id it's
+#   possible to find the english equivalent
+# - the filename and line number are needed because perl doesn't
+#   provide that info when exception objects are involved
 sub str {
-    sprintf "%s: %s at %s line %d", $_[0]->{func},
-        APR::Error::strerror($_[0]->{rc}),
+    sprintf "%s: (%d) %s at %s line %d", $_[0]->{func},
+        $_[0]->{rc}, APR::Error::strerror($_[0]->{rc}),
         $_[0]->{file}, $_[0]->{line};
 }
 
@@ -38,7 +46,7 @@ $Carp::CarpInternal{+__PACKAGE__}++;
 # caller).
 sub cluck {
     if (ref $_[0] eq __PACKAGE__) {
-        Carp::cluck("$_[0]->{func}: " .
+        Carp::cluck("$_[0]->{func}: ($_[0]->{rc}) " .
                     APR::Error::strerror($_[0]->{rc}));
     }
     else {
@@ -48,7 +56,7 @@ sub cluck {
 
 sub confess {
     if (ref $_[0] eq __PACKAGE__) {
-        Carp::confess("$_[0]->{func}: " .
+        Carp::confess("$_[0]->{func}: ($_[0]->{rc}) " .
                     APR::Error::strerror($_[0]->{rc}));
     }
     else {
