@@ -26,6 +26,12 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * $r->print() ignores $,
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=102902480103484&w=2
+    Status:
+          Patch available with the original report, but needs to be simplified a bit and
+          currently will not work with perl 5.8+, see the patch for $\
+
     * make test fails when a wrong combination of URI and LWP are
       installed. (e.g. lwp 5.64 and URI 1.09). LWP's Makefile.PL
       requires the right URI version, but certain binary distributors
