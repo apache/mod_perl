@@ -27,7 +27,7 @@ void modperl_trace_level_set(char *level)
         MP_debug_level = 0xffffffff;
     }
     else if (isALPHA(level[0])) {
-        static char debopts[] = "dshgc";
+        static char debopts[] = MP_TRACE_OPTS;
         char *d;
 
         for (; *level && (d = strchr(debopts, *level)); level++) {
