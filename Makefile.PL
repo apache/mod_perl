@@ -332,6 +332,8 @@ EOF
     }
 }
 
+system_sanity_check();
+
 if($USE_APXS) {
     if(-e $USE_APXS and !(-d _)) {
         $WITH_APXS = $USE_APXS;
@@ -1113,8 +1115,6 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
 }
 
 $TARGET ||= (is_ssl() ? "httpsd" : "httpd");
-
-system_sanity_check();
 
 WriteMakefile(
     #DIR => \@DIR,
@@ -1973,6 +1973,7 @@ EOF
 	}
     }
 
+    gdbm_check();
 
     if ($USE_DSO and $] < 5.005_56 and 
 	$^O eq 'solaris' and $Config{'usemymalloc'} eq 'y') 
@@ -1985,4 +1986,32 @@ Your current configuration will most likely trigger core dumps, suggestions:
    *) Switch to an os other than $^O
 EOF
       }
+}
+
+sub gdbm_check {
+    if ($Config{libs} =~ /gdbm/) {
+	require DynaLoader;
+	require AutoLoader; #eek
+	my $found = 0;
+	my @path = split /\s+/, $Config{libpth};
+
+	for (@path) {
+	    last if $found = DynaLoader::dl_findfile($_, "-lgdbm");
+	}
+
+	unless ($found) {
+	    my @maybe = ();
+	    for (@path) {
+		push @maybe, grep { ! -l $_ } <$_/libgdbm.*>;
+	    }
+	    my $suggest = @maybe ? 
+	      "You could just symlink it to $maybe[0]" :
+		"You might need to install Perl from source";
+	    phat_warn(<<EOF);
+Your Perl is configured to link against libgdbm, 
+  but libgdbm.so was not found.
+  $suggest
+EOF
+       }
+    }
 }

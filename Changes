@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add sanity check for libgdbm
+
 change PL_siggv usage to gv_fetchpv("SIG", ...) for Perl 5.6-tobe
 [Andreas J. Koenig <andreas.koenig@anima.de>]
 
