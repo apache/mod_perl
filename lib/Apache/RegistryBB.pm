@@ -23,7 +23,7 @@ sub can_compile {
     }
     if (-d _) {
 	$r->log_reason("attempt to invoke directory as script");
-	return FORBIDDEN;
+	return DECLINED;
     }
     return OK;
 }
