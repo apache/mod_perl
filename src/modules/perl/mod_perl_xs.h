@@ -33,10 +33,6 @@ else { \
 #define MP_CHECK_REQ(r,f) \
     if(!r) croak("`%s' called without setting Apache->request!", f)
 
-/* request_rec */
-#define mod_perl_finfo(r) \
-statcache = r->finfo
-
 /* for Apache::fork, should no longer need */
 #ifdef Apache__fork
 extern listen_rec *listeners;
