@@ -32,8 +32,7 @@ sub handler {
 
     {
         my $data = $r->slurp_filename; # tainted
-        my $received;
-        eval { $received = eval $$data };
+        my $received = eval { eval $$data };
         ok t_cmp($@, qr/Insecure dependency in eval/,
                  "slurp filename tainted");
 
@@ -46,8 +45,7 @@ sub handler {
         # just in case we will encounter some probs in the future,
         # here is pure perl function for comparison
         my $data = slurp_filename_perl($r); # tainted
-        my $received;
-        eval { $received = eval $$data };
+        my $received = eval { eval $$data };
         ok t_cmp($@, qr/Insecure dependency in eval/,
                  "slurp filename (perl) tainted");
 
