@@ -269,3 +269,10 @@ PerlHandler HTML::Embperl
 Options +ExecCGI
 </Files>  
 
+<Location /perl/noenv>
+SetHandler perl-script
+PerlHandler Apache::Registry::handler
+Options +ExecCGI
+PerlSendHeader       Off
+PerlSetupEnv Off
+</Location> 
