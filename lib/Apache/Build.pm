@@ -315,6 +315,12 @@ sub default_file {
     $self->{$key} ||= ($override || $default_files{$name});
 }
 
+sub file_path {
+    my($self, $file) = @_;
+    return $file if $file =~ m:^/:;
+    join '/', $self->{cwd}, $file;
+}
+
 sub freeze {
     require Data::Dumper;
     local $Data::Dumper::Terse = 1;
@@ -339,6 +345,8 @@ sub save {
     my($self, $file) = @_;
 
     $file ||= $self->default_file('build_config');
+    $file = $self->file_path($file);
+
     (my $obj = $self->freeze) =~ s/^/    /;
     open my $fh, '>', $file or die "open $file: $!";
 
@@ -573,8 +581,69 @@ sub canon_make_attr {
     "$attr = $self->{$attr}\n\n";
 }
 
+sub xsubpp {
+    my $self = shift;
+    my $xsubpp = join ' ', '$(MODPERL_PERLPATH)',
+      '$(MODPERL_PRIVLIBEXP)/ExtUtils/xsubpp',
+        '-typemap', '$(MODPERL_PRIVLIBEXP)/ExtUtils/typemap';
+    $xsubpp;
+}
+
+sub make_xs {
+    my($self, $fh) = @_;
+
+    print $fh $self->canon_make_attr(xsubpp => $self->xsubpp);
+
+    return [] unless $self->{XS};
+
+    my @files;
+    my @xs_targ;
+
+    while (my($name, $xs) = each %{ $self->{XS} }) {
+        #Foo/Bar.xs => Bar.c
+        (my $c = $xs) =~ s:.*/(\w+)\.xs$:$1.c:;
+        push @files, $c;
+
+        $xs = "../../../$xs"; #XXX
+
+        push @xs_targ, <<EOF;
+$c: $xs
+\t\$(MODPERL_XSUBPP) $xs > \$*.xsc && \$(MODPERL_MV) \$*.xsc \$@
+
+EOF
+    }
+
+    my %o = (xs_o_files => 'o', xs_o_pic_files => 'lo');
+
+    for my $ext (qw(xs_o_files xs_o_pic_files)) {
+        print $fh $self->canon_make_attr($ext, map {
+            (my $file = $_) =~ s/c$/$o{$ext}/; $file;
+        } @files);
+    }
+
+    print $fh $self->canon_make_attr(xs_clean_files => @files);
+
+    \@xs_targ;
+}
+
 my @perl_config_pm =
-  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags optimize);
+  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags optimize
+     perlpath privlibexp);
+
+sub make_tools {
+    my($self, $fh) = @_;
+
+    #XXX win32
+
+    for (@perl_config_pm) {
+        print $fh $self->canon_make_attr($_, $self->perl_config($_));
+    }
+
+    print $fh $self->canon_make_attr('RM_F' => #XXX
+                                     $self->{MODPERL_RM} . ' -f');
+
+    print $fh $self->canon_make_attr(MV => 'mv');
+}
 
 sub write_src_makefile {
     my $self = shift;
@@ -585,12 +654,7 @@ sub write_src_makefile {
 
     open my $fh, '>', $mf or die "open $mf: $!";
 
-    for (@perl_config_pm) {
-        print $fh $self->canon_make_attr($_, $self->perl_config($_));
-    }
-
-    print $fh $self->canon_make_attr('RM_F' => #XXX
-                                     $self->{MODPERL_RM} . ' -f');
+    $self->make_tools($fh);
 
     print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
 
@@ -600,10 +664,7 @@ sub write_src_makefile {
     print $fh $self->canon_make_attr('lib_static',
                        "$self->{MP_LIBNAME}$self->{MODPERL_LIB_EXT}");
 
-    print $fh $self->canon_make_attr('xsubpp',
-                                     join '/', 
-                                     $self->perl_config('privlibexp'),
-                                    'xsubpp');
+
 
     print $fh $self->canon_make_attr('libperl',
                                      join '/',
@@ -623,25 +684,30 @@ sub write_src_makefile {
                                      $self->{MODPERL_LIB_SHARED} :
                                      $self->{MODPERL_LIB_STATIC});
 
+    my $xs_targ = $self->make_xs($fh);
+
     print $fh <<'EOF';
+MODPERL_CCFLAGS = $(MODPERL_INC) $(MODPERL_CCOPTS) $(MODPERL_OPTIMIZE)
+
+MODPERL_CCFLAGS_SHLIB = $(MODPERL_CCFLAGS) $(MODPERL_CCCDLFLAGS)
+
+MODPERL_OBJS = $(MODPERL_O_FILES) $(MODPERL_XS_O_FILES)
+
+MODPERL_PIC_OBJS = $(MODPERL_O_PIC_FILES) $(MODPERL_XS_O_PIC_FILES)
 
 all: lib
 
 lib: $(MODPERL_LIB)
 
-MODPERL_CCFLAGS = $(MODPERL_INC) $(MODPERL_CCOPTS) $(MODPERL_OPTIMIZE)
-
-MODPERL_CCFLAGS_SHLIB = $(MODPERL_CCFLAGS) $(MODPERL_CCCDLFLAGS)
-
-$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_O_FILES)
+$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_OBJS)
 	$(MODPERL_RM_F) $@
-	$(MODPERL_AR) crv $@ $(MODPERL_O_FILES)
+	$(MODPERL_AR) crv $@ $(MODPERL_OBJS)
 	$(MODPERL_RANLIB) $@
 
-$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_O_PIC_FILES)
+$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_RM_F) $@
 	$(MODPERL_LD) $(MODPERL_LDDLFLAGS) -o $@ \
-	$(MODPERL_O_PIC_FILES) $(MODPERL_LDOPTS)
+	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS)
 	$(MODPERL_RANLIB) $@
 
 .SUFFIXES: .xs .c .o .lo
@@ -665,16 +731,17 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_O_PIC_FILES)
 	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && mv $*.o $*.lo
 
 clean:
-	$(MODPERL_RM_F) *.a *.so
-	$(MODPERL_RM_F) $(MODPERL_O_FILES)
-	$(MODPERL_RM_F) $(MODPERL_O_FILES)
-	$(MODPERL_RM_F) $(MODPERL_O_PIC_FILES)
-	$(MODPERL_RM_F) $(MODPERL_CLEAN_FILES)
+	$(MODPERL_RM_F) *.a *.so *.xsc *.o *.lo \
+	$(MODPERL_CLEAN_FILES) \
+	$(MODPERL_XS_CLEAN_FILES)
 
-$(MODPERL_O_FILES): $(MODPERL_H_FILES) Makefile
-$(MODPERL_O_PIC_FILES): $(MODPERL_H_FILES) Makefile
+$(MODPERL_OBJS): $(MODPERL_H_FILES) Makefile
+$(MODPERL_PIC_OBJS): $(MODPERL_H_FILES) Makefile
 $(MODPERL_LIB): $(MODPERL_LIBPERL)
+
 EOF
+
+    print $fh @$xs_targ;
 
     close $fh;
 }
