@@ -30,8 +30,6 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    local $| = 1;
-
     plan $r, tests => 18;
 
     ok $r->default_type;
