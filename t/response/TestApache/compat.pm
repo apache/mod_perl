@@ -116,8 +116,14 @@ sub handler {
         debug "new+open non-exists";
         ok !Apache::File->new("$file.yeahright");
 
-        debug "open tmpfile";
-        ok my ($tmpfile, $tmpfh) = Apache::File->tmpfile;
+        # tmpfile
+        my ($tmpfile, $tmpfh) = Apache::File->tmpfile;
+#89573612
+        debug "open tmpfile fh";
+        ok $tmpfh;
+
+        debug "open tmpfile name";
+        ok $tmpfile;
 
         debug "write/read from tmpfile";
         my $write = "test $$";
@@ -134,3 +140,5 @@ sub ok    { $gr->print($_[0] ? "ok\n" : "nok\n"); }
 sub debug { $gr->print("# $_\n") for @_; }
 
 1;
+__END__
+PerlOptions +GlobalRequest

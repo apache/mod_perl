@@ -301,11 +301,14 @@ sub tmpfile {
     my $class = shift;
     my $limit = 100;
     my $r = Apache->request;
+    unless ($r) {
+        die "'PerlOptions +GlobalRequest' setting is required";
+    }
     while ($limit--) {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
         my $fh = $class->new;
         sysopen($fh, $tmpfile, $Mode, $Perms);
-        $r->register_cleanup(sub { unlink $tmpfile }) if $r;
+        $r->pool->cleanup_register(sub { unlink $tmpfile }) if $r;
         if ($fh) {
 	    return wantarray ? ($tmpfile, $fh) : $fh;
 	}
