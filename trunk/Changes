@@ -18,6 +18,12 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added COMPILED REGULAR EXPRESSIONS section to mod_perl_traps.pod
+[David Landgren <david@landgren.net>, 
+Mark Mills <mark@ntr.net>, 
+Randal Schwartz <merlyn@stonehenge.com>, 
+Jens Heunemann <heunemann2@janet.de>]
+
 have ldopts yank ExtUtils::Liblist message:
  Note (probably harmless): No library found for ...
 from stdout to stderr [Stas Bekman <sbekman@iil.intel.com>]

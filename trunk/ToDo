@@ -21,8 +21,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - swap calling order of .conf handlers and push_handlers?
 
 - documentation:
-  + m//o trap
-         "Jens Heunemann" <heunemann2@janet.de>
   + modperl.opensrc.org
   + PerlRun::handler
   + Frank's FAQ update: http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz

@@ -230,4 +230,92 @@ Rebuild libgdbm, then Apache/mod_perl.
 
 =back
 
+=head1 REGULAR EXPRESSIONS
+
+=head2 COMPILED REGULAR EXPRESSIONS
+
+When using a regular expression that contains an interpolated Perl variable,
+if it is known that the variable (or variables) will not vary during the
+execution of the program, a standard optimization technique consists of
+adding the C<o> modifier to the regexp pattern, to direct the compiler to
+build the internal table once, for the entire lifetime of the script, rather
+than every time the pattern is executed. Consider:
+
+        my $pat = '^foo$'; # likely to be input from an HTML form field
+        foreach( @list ) {
+                print if /$pat/o;
+        }
+
+This is usually a big win in loops over lists, or when using C<grep> or
+C<map>.
+
+In long-lived C<mod_perl> scripts, however, this can pose a problem if the
+variable changes according to the invocation. The first invocation of a
+fresh httpd child will compile the table and perform the search correctly,
+however, all subsequent uses by the httpd child will continue to match the
+original pattern, regardless of the current contents of the Perl variables
+the pattern is dependent on. Your script will appear broken.
+
+There are two solutions to this problem.
+
+The first is to use C<eval q//>, to force the code to be evaluated each
+time. Just make sure that the C<eval> block covers the entire loop of
+processing, and not just the pattern match itself.
+
+The above code fragment would be rewritten as:
+
+        my $pat = '^foo$';
+        eval q{
+                foreach( @list ) {
+                        print if /$pat/o;
+                }
+        }
+
+Just saying
+
+        eval q{ print if /$pat/o; };
+
+is going to be a horribly expensive proposition.
+
+You use this approach if you require more than one pattern match operator in
+a given section of code. If the section contains only one operator (be it an
+C<m//> or C<s///>), you can rely on the property of the null pattern, that
+reuses the last pattern seen. This leads to the second solution, which also
+eliminates the use of C<eval>.
+
+The above code fragment becomes:
+
+        my $pat = '^foo$';
+        "something" =~ /$pat/; # dummy match (MUST NOT FAIL!)
+        foreach( @list ) {
+                print if //;
+        }
+
+The only gotcha is that the dummy match that boots the regular expression
+engine must absolutely, positively succeed, otherwise the pattern will not
+be cached, and the // will match everything. If you can't count on fixed
+text to ensure the match succeeds, you have two possibilities.
+
+If you can guaranteee that the pattern variable contains no meta-characters
+(things like C<*>, C<+>, C<^>, C<$>...), you can use the dummy match:
+
+        "$pat" =~ /\Q$pat\E/; # guaranteed if no meta-characters present
+
+If there is a possibility that the pattern can contain meta-characters, you
+should search for the pattern or the unsearchable C<\377> character as
+follows:
+
+        "\377" =~ /$pat|^[\377]$/; # guarenteed if meta-characters present
+
+=head2 References
+
+        The Camel Book, 2nd edition, p. 538 (p. 356 in the 1st edition).
+
+=head1 AUTHORS
+
+Doug MacEachern, with contributions from
+Jens Heunemann <heunemann2@janet.de>,
+David Landgren <david@landgren.net>,
+Mark Mills <mark@ntr.net> and 
+Randal Schwartz <merlyn@stonehenge.com>
 
