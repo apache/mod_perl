@@ -288,12 +288,12 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
     apr_status_t retval;
     MP_dRCFG;
 
+    retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r, MP_HOOK_RUN_ALL);
+
     if (rcfg->pnotes) {
         SvREFCNT_dec(rcfg->pnotes);
         rcfg->pnotes = Nullhv;
     }
-
-    retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r, MP_HOOK_RUN_ALL);
 
     /* undo changes to %ENV caused by +SetupEnv, perl-script, or
      * $r->subprocess_env, so the values won't persist  */

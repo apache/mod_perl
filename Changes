@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Make sure that pnotes are destroyed after PerlCleanup handlers are
+finished and not before + test. [Stas]
+
 =item 1.99_12 - Decemeber 22, 2003
 
 Restore a proper behavior of all Registry handlers, but PerlRun, not
