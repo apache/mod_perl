@@ -33,7 +33,7 @@ package TestFilter::in_bbs_underrun;
 # ==> seen eos, flushing the remaining: 8182 bytes
 #
 # it's clear from the log that the filter was invoked 3 times, however
-# it has consumed 6 bucket brigade
+# it has consumed 6 bucket brigades
 #
 # finally, we have to note that this is impossible to do with
 # streaming filters, since they can only read data from one bucket
@@ -61,7 +61,8 @@ sub handler {
     my $data;
     debug_sub "filter called";
 
-    # consume data untill we get at least SIZE bytes
+    # fetch and consume bucket brigades untill we have at least SIZE
+    # bytes to work with
     do {
         my $tbb = APR::Brigade->new($filter->r->pool, $ba);
         my $rv = $filter->next->get_brigade($tbb, $mode, $block, $readbytes);
@@ -133,4 +134,4 @@ SetHandler modperl
 PerlModule          TestFilter::in_bbs_underrun
 PerlResponseHandler TestFilter::in_bbs_underrun::response
 PerlInputFilterHandler TestFilter::in_bbs_underrun::handler
-PerlInputFilterHandler ModPerl::TestFilterDebug::snoop_request
+#PerlInputFilterHandler ModPerl::TestFilterDebug::snoop_request
