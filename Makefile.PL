@@ -23,9 +23,11 @@ ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
     macro => {
-        MODPERL_SRC => $code->path,
-        PERL => $build->perl_config('perlpath'),
-        MOD_INSTALL => ModPerl::MM::mod_install(),
+        MODPERL_SRC   => $code->path,
+        PERL          => $build->perl_config('perlpath'),
+        MOD_INSTALL   => ModPerl::MM::mod_install(),
+        APACHE_PREFIX => $build->apxs('-q' => 'prefix'),
+        APACHE_LIBDIR => $build->apxs('-q' => 'libexecdir'),
     },
     clean => {
         FILES => "@{ clean_files() }",
@@ -193,6 +195,8 @@ EOF
 
 package MY;
 
+use Config;
+
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
@@ -239,6 +243,14 @@ sub MY::tool_autosplit {
 
 sub MY::post_initialize {
     my $self = shift;
+
+    # install libmodperl.so, MODPERL_LIB is not known here yet
+    if (exists $build->{MP_USE_DSO} && $build->{MP_USE_DSO}) {
+        my $MODPERL_LIB = join '.', $build->{MP_LIBNAME}, $Config{dlext};
+        $self->{PM}->{"src/modules/perl/$MODPERL_LIB"} =
+            "\$(APACHE_LIBDIR)/$MODPERL_LIB";
+    }
+
     #up one from the Apache2/ subdir
     #so it can be found for 'use Apache2 ()'
     $self->{PM}->{'lib/Apache2.pm'} = "blib/lib/Apache2.pm";
