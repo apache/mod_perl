@@ -4953,6 +4953,42 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
+    'name' => 'mpxs_Apache__RequestRec_auth_name',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'char *',
+        'name' => 'name'
+      }
+    ]
+  },
+  {
+    'return_type' => 'const char *',
+    'name' => 'mpxs_Apache__RequestRec_auth_type',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'char *',
+        'name' => 'type'
+      }
+    ]
+  },  
+  {
+    'return_type' => 'const char *',
     'name' => 'mpxs_Apache__RequestRec_add_config',
     'args' => [
       {

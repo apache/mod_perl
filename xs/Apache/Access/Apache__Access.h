@@ -78,4 +78,45 @@ void mpxs_ap_allow_methods(pTHX_ I32 items, SV **MARK, SV **SP)
     }
 }
 
-                                            
+static MP_INLINE void mpxs_insert_auth_cfg(pTHX_ request_rec *r,
+                                           char *directive,
+                                           char *val)
+{
+    const char *errmsg;
+    AV *config = newAV();
+
+    av_push(config, newSVpvf("%s %s", directive, val));
+
+    errmsg =
+        modperl_config_insert_request(aTHX_ r,
+                                      newRV_noinc((SV*)config),
+                                      r->filename, OR_AUTHCFG);
+
+    if (errmsg) {
+        Perl_warn(aTHX_ "Can't change %s to '%s'\n", directive, val);
+    }
+
+    SvREFCNT_dec((SV*)config);
+}
+
+static MP_INLINE
+const char *mpxs_Apache__RequestRec_auth_type(pTHX_ request_rec *r,
+                                              char *type)
+{
+    if (type) {
+        mpxs_insert_auth_cfg(aTHX_ r, "AuthType", type);
+    }
+
+    return ap_auth_type(r);
+}
+
+static MP_INLINE
+const char *mpxs_Apache__RequestRec_auth_name(pTHX_ request_rec *r,
+                                              char *name)
+{
+    if (name) {
+        mpxs_insert_auth_cfg(aTHX_ r, "AuthName", name);
+    }
+
+    return ap_auth_name(r);
+}

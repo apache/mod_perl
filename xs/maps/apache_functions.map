@@ -136,8 +136,8 @@ MODULE=Apache::Access   PACKAGE=Apache::RequestRec
  ap_satisfies
 
 #MODULE=Apache::Auth
- ap_auth_name
- ap_auth_type
+ mpxs_Apache__RequestRec_auth_name | | r, name=NULL
+ mpxs_Apache__RequestRec_auth_type | | r, type=NULL
  ap_get_basic_auth_pw | MPXS_ | r
  ap_note_auth_failure
  ap_note_basic_auth_failure
