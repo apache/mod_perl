@@ -33,22 +33,24 @@ sub handler {
 sub response {
     my $r = shift;
 
-    plan $r, tests => 1;
+    plan $r, tests => 2;
 
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
         # consume the data so the input filter is invoked
         my $data = ModPerl::Test::read_post($r);
+        ok t_cmp(20000, length $data, "the request body received ok");
     }
 
     # ~20k of input makes it four bucket brigades:
     #    - 2 full bucket brigades of 8k
     #    - 1 half full brigade ~4k
     #    - 1 bucket brigade with EOS bucket
-    my $expected = 4;
+    # however different Apache versions may send extra bb or split
+    # data differently so we can't rely on the exact count
     my $invoked = $r->notes->get('invoked') || 0;
-    ok t_cmp($expected, $invoked, "input stream filter declined");
+    ok $invoked > 1;
 
     Apache::OK;
 }
