@@ -423,10 +423,11 @@ package MY;
 
 use Config;
 
+my $apache_test_install;
 BEGIN {
-    use constant APACHE_TEST_INSTALL => -e 'Apache-Test';
+    $apache_test_install = -e 'Apache-Test';
     use lib './Apache-Test';
-    require 'install-pl' if APACHE_TEST_INSTALL;
+    require 'install-pl' if $apache_test_install;
 }
 
 sub MY::top_targets {
@@ -465,7 +466,7 @@ modperl_src_clean:
 EOF
 
     $string .= Apache::Test::install::nuke_Apache__test_target()
-        if APACHE_TEST_INSTALL();
+        if $apache_test_install;
 
     $string;
 }
@@ -477,7 +478,7 @@ sub MY::install {
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
 
     ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
-          if APACHE_TEST_INSTALL();
+          if $apache_test_install;
 
     $string;
 }
