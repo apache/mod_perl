@@ -8,13 +8,10 @@ my $config = Apache::Test::config();
 my $vars = $config->{vars};
 
 my $module = 'TestVhost::config';
-my $path = Apache::TestRequest::module2path($module);
+my $url    = Apache::TestRequest::module2url($module);
 
-Apache::TestRequest::module($module);
-my $hostport = Apache::TestRequest::hostport($config);
-
-t_debug("connecting to $hostport");
-my $res = GET "http://$hostport/$path";
+t_debug("connecting to $url");
+my $res = GET $url;
 
 if ($res->is_success) {
     print $res->content;

@@ -6,11 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 
 my $module = 'TestUser::rewrite';
+my $url    = Apache::TestRequest::module2url($module);
 
-Apache::TestRequest::module($module);
-my $path     = Apache::TestRequest::module2path($module);
-my $config   = Apache::Test::config();
-my $hostport = Apache::TestRequest::hostport($config);
-t_debug("connecting to $hostport");
-
-print GET_BODY_ASSERT "http://$hostport/$path";
+t_debug("connecting to $url");
+print GET_BODY_ASSERT $url;

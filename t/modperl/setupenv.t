@@ -5,26 +5,20 @@ use Apache::TestRequest qw(GET_BODY_ASSERT);
 use Apache::Test;
 use Apache::TestUtil;
 
-my $module   = "TestModperl::setupenv";
-Apache::TestRequest::module($module);
+my $module = 'TestModperl::setupenv';
+my $url    = Apache::TestRequest::module2url($module);
 
-my $config   = Apache::Test::config();
-my $hostport = Apache::TestRequest::hostport($config);
-my $path     = Apache::TestRequest::module2path($module);
+t_debug("connecting to $url");
 
-my $base = "http://$hostport/$path";
-
-t_debug("connecting to $base");
-
-my @locations = ("${base}_mpdefault",
-                 "${base}_mpsetup",
-                 "${base}_mpdefault",  # make sure %ENV is cleared
-                 "${base}_mpvoid",
-                 "${base}_mpsetupvoid",
-                 "${base}_psdefault",
-                 "${base}_psnosetup",
-                 "${base}_psvoid",
-                 "${base}_psnosetupvoid");
+my @locations = ("${url}_mpdefault",
+                 "${url}_mpsetup",
+                 "${url}_mpdefault",  # make sure %ENV is cleared
+                 "${url}_mpvoid",
+                 "${url}_mpsetupvoid",
+                 "${url}_psdefault",
+                 "${url}_psnosetup",
+                 "${url}_psvoid",
+                 "${url}_psnosetupvoid");
 
 # plan the tests from a handler so we can run
 # tests from within handlers across multiple requests
@@ -37,7 +31,7 @@ unless (need_lwp()) {
 }
 
 Apache::TestRequest::user_agent(keep_alive => 1);
-print GET_BODY_ASSERT join '?', $base, scalar @locations;
+print GET_BODY_ASSERT join '?', $url, scalar @locations;
 
 # this tests for when %ENV is populated with CGI variables
 # as well as the contents of the subprocess_env table
