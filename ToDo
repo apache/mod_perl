@@ -9,13 +9,13 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - From: Vivek Khera <khera@kciLink.com>
   Subject: missing docs
 
-- From: Paul Walmsley <shag@booyaka.com>
-  Subject: BUG: mod_perl >= 1.23 on Perl 5.6 uses stdout fd for STDIN and STDOUT
-
 - From: Wenzhong Tang <Tang@appliant.com>
   Subject: RE: Prototype mismatch in Apache::PerlRun line 343
 
 - -- post 1.25 --
+
+- fileno(STD{IN,OUT}) should be r->connection->client->fd or
+  fileno(std{in,out}), rather than hardcoded fileno(stdout)
 
 - consider making PERL_USELARGEFILES=0 by default
 
