@@ -110,24 +110,6 @@ sub set_modperl_version {
     close $fh;
 }
 
-sub phat_warn {
-    my($msg, $abort) = @_;
-    my $level = $abort ? 'ERROR' : 'WARNING';
-    warn <<EOF;
-************* $level *************
-
-  $msg
-
-************* $level *************
-EOF
-    if ($abort) {
-        exit 1;
-    }
-    else {
-        sleep 5;
-    }
-}
-
 sub system_sanity_check {
     return if $build->is_win32;
 
@@ -136,7 +118,7 @@ sub system_sanity_check {
 	next unless s/^-I//;
 	my $header = "$_/ap_mmn.h";
 	if (-e $header) {
-	    phat_warn(<<EOF);
+	    $build->phat_warn(<<EOF);
 Apache headers found in unexpected location: ``$_'', suggestions:
    *) Remove via ``rpm -e apache''
    *) Remove by hand
@@ -146,22 +128,8 @@ EOF
 	}
     }
 
-    gdbm_check();
+    $build->lib_check('gdbm');
     malloc_check();
-}
-
-sub gdbm_check {
-    return if $build->find_dlfile('gdbm');
-
-    my $maybe = $build->find_dlfile_maybe('gdbm');
-    my $suggest = @$maybe ? 
-      "You could just symlink it to $maybe->[0]" :
-        'You might need to install Perl from source';
-    phat_warn(<<EOF);
-Your Perl is configured to link against libgdbm,
-  but libgdbm.so was not found.
-  $suggest
-EOF
 }
 
 sub malloc_check {
@@ -173,7 +141,7 @@ sub malloc_check {
     my $bincompat = $build->perl_config('bincompat5005');
 
     if ($bincompat) {
-             phat_warn(<<EOF, $abort);
+             $build->phat_warn(<<EOF, $abort);
 Your current configuration will most likely trigger core dumps, suggestions:
    *) Do not configure mod_perl as a DSO
    *) Rebuild Perl without malloc pollution (Configure -Ubincompat5005)
