@@ -23,7 +23,7 @@ SUPPORT
 INSTALL.win32
 INSTALL.raven
 MANIFEST
-ToDo
+STATUS
 Makefile.PL
 README
 apache-modlist.html
@@ -35,10 +35,6 @@ cgi_to_mod_perl.pod
 mod_perl_traps.pod
 mod_perl_method_handlers.pod
 eg/makepl_args.mod_perl
-eg/perl_sections.txt
-eg/startup.pl
-eg/test.pl
-eg/registry.pl
 eg/README
 lib/mod_perl_hooks.pm.PL
 lib/mod_perl.pm
@@ -107,7 +103,6 @@ t/TEST.win32
 t/conf/httpd.conf.pl
 t/conf/httpd.conf-dist
 t/conf/httpd.conf-win32
-eg/httpd.conf.pl
 t/conf/mod_perl_srm.conf
 t/net/config.pl.dist
 t/modules/actions.t
