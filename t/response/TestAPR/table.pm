@@ -13,7 +13,7 @@ use TestAPRlib::table;
 sub handler {
     my $r = shift;
 
-    my $tests = TestAPRlib::table::number();
+    my $tests = TestAPRlib::table::num_of_tests();
     plan $r, tests => $tests;
 
     TestAPRlib::table::test();

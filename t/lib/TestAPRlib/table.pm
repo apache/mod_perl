@@ -273,7 +273,7 @@ sub my_filter_stop {
     return $filter_count == int(TABLE_SIZE)/2 ? 0 : 1;
 }
 
-sub number {
+sub num_of_tests {
     return 38;
 }
 
