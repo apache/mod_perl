@@ -41,4 +41,9 @@ void modperl_response_init(request_rec *r);
 void modperl_response_finish(request_rec *r);
 int modperl_response_handler(request_rec *r);
 
+/* betting on Perl*Handlers not using CvXSUBANY
+ * mod_perl reuses this field for handler attributes
+ */
+#define MP_CODE_ATTRS(cv) (CvXSUBANY((CV*)cv).any_i32)
+
 #endif /*  MOD_PERL_H */

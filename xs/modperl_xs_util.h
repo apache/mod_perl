@@ -1,8 +1,6 @@
 #ifndef MODPERL_XS_H
 #define MODPERL_XS_H
 
-#define MP_CODE_ATTRS(cv) (CvXSUBANY((CV*)cv).any_i32)
-
 #ifndef dAX
 #    define dAX    I32 ax = mark - PL_stack_base + 1
 #endif

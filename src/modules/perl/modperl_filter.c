@@ -397,8 +397,16 @@ int modperl_input_filter_register_connection(conn_rec *c)
         int i;
 
         for (i=0; i<av->nelts; i++) {
-            modperl_filter_ctx_t *ctx =
-                (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
+            modperl_filter_ctx_t *ctx;
+
+            if (!(handlers[i]->attrs & MP_INPUT_FILTER_MESSAGE)) {
+                MP_TRACE_f(MP_FUNC,
+                           "%s is not an InputFilterMessage handler\n",
+                           handlers[i]->name);
+                continue;
+            }
+
+            ctx = (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
             ap_add_input_filter(MODPERL_INPUT_FILTER_NAME,
                                 (void*)ctx, NULL, c);

@@ -56,16 +56,23 @@ static MP_INLINE apr_size_t mpxs_Apache__OutputFilter_read(pTHX_ I32 items,
     return len;
 }
 
-static MP_INLINE I32 *modperl_filter_attributes(SV *package, SV *cvrv)
+static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
 {
-    return &MP_CODE_ATTRS(SvRV(cvrv));
+    return (U32 *)&MP_CODE_ATTRS(SvRV(cvrv));
 }
+
+#define trace_attr() \
+MP_TRACE_f(MP_FUNC, "apply %s to %s handler\n", attribute, \
+           HvNAME(stash))
 
 static XS(MPXS_modperl_filter_attributes)
 {
     dXSARGS;
-    I32 *attrs = modperl_filter_attributes(ST(0), ST(1));
+    U32 *attrs = modperl_filter_attributes(ST(0), ST(1));
     I32 i;
+#ifdef MP_TRACE
+    HV *stash = gv_stashpv(SvPVX(ST(0)), TRUE);
+#endif
 
     for (i=2; i < items; i++) {
         STRLEN len;
@@ -80,11 +87,13 @@ static XS(MPXS_modperl_filter_attributes)
                   case 'B':
                     if (strEQ(pv, "Body")) {
                         *attrs |= MP_INPUT_FILTER_BODY;
+                        trace_attr();
                         continue;
                     }
                   case 'M':
                     if (strEQ(pv, "Message")) {
                         *attrs |= MP_INPUT_FILTER_MESSAGE;
+                        trace_attr();
                         continue;
                     }
                 }
