@@ -8,7 +8,7 @@ use Apache::TestUtil;
 use Apache2 ();
 
 # -compile puts constants into the Apache:: namespace
-use Apache::Const -compile => qw(:http :common 
+use Apache::Const -compile => qw(:http :common :mpmq
                                  TAKE23 &OPT_EXECCGI
                                  DECLINE_CMD DIR_MAGIC_TYPE 
                                  CRLF);
@@ -17,7 +17,7 @@ use Apache::Const -compile => qw(:http :common
 # caller namespace.  also defaults to :common
 use Apache::Const;
 
-plan tests => 16;
+plan tests => 17;
 
 ok t_cmp(302, REDIRECT, 'REDIRECT');
 
@@ -34,6 +34,10 @@ ok t_cmp(410, Apache::HTTP_GONE, 'Apache::HTTP_GONE');
 ok t_cmp('httpd/unix-directory', 
          Apache::DIR_MAGIC_TYPE, 
          'Apache::DIR_MAGIC_TYPE');
+
+ok t_cmp(9, 
+         Apache::MPMQ_MAX_SPARE_DAEMONS, 
+         'Apache::MPMQ_MAX_SPARE_DAEMONS');
 
 # the rest of the tests don't fit into the t_cmp() meme
 # for one reason or anothre...

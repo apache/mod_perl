@@ -185,7 +185,24 @@ $Apache::ConstantsTable = {
       'TAKE23',
       'TAKE123',
       'TAKE13'
-    ]
+    ],
+    'mpmq' => [
+      'AP_MPMQ_NOT_SUPPORTED',
+      'AP_MPMQ_STATIC',
+      'AP_MPMQ_DYNAMIC',
+      'AP_MPMQ_MAX_DAEMON_USED',
+      'AP_MPMQ_IS_THREADED',
+      'AP_MPMQ_IS_FORKED',
+      'AP_MPMQ_HARD_LIMIT_DAEMONS',
+      'AP_MPMQ_HARD_LIMIT_THREADS',
+      'AP_MPMQ_MAX_THREADS',
+      'AP_MPMQ_MIN_SPARE_DAEMONS',
+      'AP_MPMQ_MIN_SPARE_THREADS',
+      'AP_MPMQ_MAX_SPARE_DAEMONS',
+      'AP_MPMQ_MAX_SPARE_THREADS',
+      'AP_MPMQ_MAX_REQUESTS_DAEMON',
+      'AP_MPMQ_MAX_DAEMONS',
+    ],
   },
   'APR' => {
     'uri' => [
