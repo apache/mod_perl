@@ -16,6 +16,7 @@ use APR::Const -compile => ':common';
 sub handler : FilterRequestHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
+    #warn "Called!";
     my $ba = $filter->r->connection->bucket_alloc;
 
     my $ctx_bb = APR::Brigade->new($filter->r->pool, $ba);
@@ -33,17 +34,19 @@ sub handler : FilterRequestHandler {
         $bucket->remove;
 
         if ($bucket->is_eos) {
+            #warn "EOS!!!!";
             $bb->insert_tail($bucket);
             last;
         }
 
         my $status = $bucket->read($data);
-
+        #warn "DATA bucket!!!!";
         if ($status != APR::SUCCESS) {
             return $status;
         }
 
         if ($data) {
+            #warn"[$data]\n";
             $bucket = APR::Bucket->new(scalar reverse $data);
         }
 

@@ -19,6 +19,7 @@ my $to_url = '/TestFilter::input_msg::response';
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
+    #warn "FILTER CALLED\n";
     my $c = $filter->c;
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
@@ -35,11 +36,13 @@ sub handler : FilterConnectionHandler {
         $bucket->remove;
 
         if ($bucket->is_eos) {
+            #warn "EOS!!!!";
             $bb->insert_tail($bucket);
             last;
         }
 
         my $status = $bucket->read($data);
+        #warn "FILTER READ: $data\n";
 
         if ($status != APR::SUCCESS) {
             return $status;
