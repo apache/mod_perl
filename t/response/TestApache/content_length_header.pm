@@ -1,4 +1,4 @@
-package TestApache::head_request;
+package TestApache::content_length_header;
 
 # see the client for the comments
 
