@@ -150,7 +150,7 @@ PERL_TIE_SCRIPTNAME
 
 my @mp_args = 
     qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE 
-       USE_APACI USE_DSO USE_APXS APACI_ARGS
+       USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
 
 sub is_mp_arg {
@@ -720,13 +720,16 @@ sub init_tests_and_config {
     }
 
     if($USE_APACI) {
-	my $cmd = "./configure --activate-module=src/modules/perl/libperl.a";
+	my $cmd = "CC=\"$Config{cc}\" " .
+		  "./configure " .
+		  "--activate-module=src/modules/perl/libperl.a";
 	if($USE_DSO) {
 	    $cmd .= " --enable-shared=perl";
 	}
 	if($APACI_ARGS) {
 	    $cmd .= " " . join " ", split(',', $APACI_ARGS);
 	}
+	print "(cd $APACHE_ROOT && $cmd)\n";
 	system "(cd $APACHE_ROOT && $cmd)";
     }
     #expand ./t to full path
@@ -965,7 +968,7 @@ sub MY::top_targets {
     $string .= <<'EOF';
 
 apxs_libperl:
-	(cd ./apaci && $(MAKE) CC="$(CC)";)
+	(cd ./apaci && $(MAKE))
 
 apxs_install: apxs_libperl
 	(cd ./apaci && $(MAKE) install;)
@@ -974,7 +977,7 @@ apache_httpd: $(APACHE_SRC)/Makefile.tmpl
 	(cd $(APACHE_SRC) && $(MAKE) CC="$(CC)";)
 
 apaci_httpd: 
-	(cd $(APACHE_ROOT) && $(MAKE) CC="$(CC)";)
+	(cd $(APACHE_ROOT) && $(MAKE))
 
 tar_Apache:
 	(cd $(INSTALLSITELIB); \
@@ -1011,7 +1014,7 @@ sub MY::test {
     my $test = $self->MM::test;
     return <<'EOF' if $USE_APXS;
 test:
-	@echo can't make test with apxs (yet)
+	@echo "Can't make test with APXS (yet)"
 EOF
 
     my $script = "t/TEST";
