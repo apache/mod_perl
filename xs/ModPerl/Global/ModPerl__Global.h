@@ -6,15 +6,16 @@ static int mpxs_special_list_do(pTHX_ const char *name,
                                 mpxs_special_list_do_t func)
 {
     STRLEN packlen;
+    char *packname;
     modperl_modglobal_key_t *gkey = modperl_modglobal_lookup(aTHX_ name);
 
     if (!gkey) {
         return FALSE;
     }
 
-    SvPV_force(package, packlen);
+    packname = SvPV(package, packlen);
 
-    func(aTHX_ gkey, SvPVX(package), packlen);
+    func(aTHX_ gkey, packname, packlen);
 
     return TRUE;
 }
