@@ -572,6 +572,7 @@ sub write_pm {
 
     my $fh = $self->open_class_file($module, '.pm');
     my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
+    my $use_apr = ($module =~ /^APR::\w+$/) ? 'use APR ();' : '';
 
     print $fh <<EOF;
 $noedit_warning
@@ -582,6 +583,7 @@ use strict;
 use warnings FATAL => 'all';
 
 $isa
+$use_apr
 use $loader ();
 our \$VERSION = '0.01';
 $loader\::load __PACKAGE__;

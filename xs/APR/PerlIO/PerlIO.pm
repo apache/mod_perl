@@ -22,6 +22,7 @@ our $VERSION = '0.01';
 use Config;
 use constant PERLIO_LAYERS_ARE_ENABLED => $Config{useperlio} && $] >= 5.00703;
 
+use APR ();
 use APR::XSLoader ();
 APR::XSLoader::load __PACKAGE__;
 
