@@ -73,13 +73,13 @@ chdir "../..";
 
 #source or binary distribution
 
-for (qw(src/modules/ApacheModulePerl/Release
-	src/modules/ApacheModulePerl/Debug
+for (qw(src/modules/win32/Release
+        src/modules/win32/Debug
 	win32/modules)) 
 {	
-    my $dll = "$_/ApacheModulePerl.dll";
+    my $dll = "$_/mod_perl.so";
     next unless -e $dll;
-    copy $dll, "t/modules/ApacheModulePerl.dll";
+    copy $dll, "t/modules/mod_perl.so";
     last;
 }
 

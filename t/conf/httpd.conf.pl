@@ -1,7 +1,7 @@
 #PerlOpmask default
 
 <IfModule mod_dll.c>
-LoadModule perl_module modules/ApacheModulePerl.dll
+LoadModule perl_module modules/mod_perl.so
 </IfModule>
 
 AddType text/x-server-parsed-html .shtml
