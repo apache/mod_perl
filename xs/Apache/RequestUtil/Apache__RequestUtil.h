@@ -306,10 +306,10 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
     const char *retval = ap_document_root(r);
     
     if (new_root) {
+        core_server_config *conf;
         MP_CROAK_IF_THREADS_STARTED("setting $r->document_root");
-        core_server_config *conf = 
-            ap_get_module_config(r->server->module_config, 
-                                 &core_module);
+        conf = ap_get_module_config(r->server->module_config, 
+                                    &core_module);
         conf->ap_document_root = SvPV_nolen(new_root);
     }
 
