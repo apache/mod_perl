@@ -1,11 +1,20 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/05/19 09:28:06 $]
+   Last modified at [$Date: 2002/06/04 12:37:46 $]
 
 Release:
 --------
 
-   1.99_02-dev: In development.
+   1.00_03-dev: In development
+   1.99_02-dev: Released June 01, 2002
    1.99_01    : Released April 06, 2002
+
+
+   ===========================================
+   === We are using the todo/ directory to ===
+   === track status; please look there ... ===
+   ===========================================
+
+
 
 Release Showstoppers:
 ---------------------
