@@ -101,6 +101,7 @@ sub xs_cmd_table {
 	    if($name =~ s:^/::) {
 		$name .= "_END";
 	    }
+	    $sub = join '::', $class, $name;
 	}
 	$sub ||= join '::', $class, $name;
 	$req_override ||= "OR_ALL";
@@ -127,7 +128,7 @@ sub xs_cmd_table {
 EOF
     }
 
-    my $dir_merger = $class->can('dir_merge') ?
+    my $dir_merger = $class->can('DIR_MERGE') ?
 	"perl_perl_merge_dir_config" : "NULL";
 
     return <<EOF;
@@ -194,6 +195,7 @@ module MODULE_VAR_EXPORT XS_${modname} = {
 MODULE = $class		PACKAGE = $class
 
 BOOT:
+    XS_${modname}.name = "$class";
     add_module(&XS_${modname});
     stash_mod_pointer("$class", &XS_${modname});
 
