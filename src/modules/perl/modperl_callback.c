@@ -18,11 +18,15 @@ modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
     return modperl_handler_new(p, h->name);
 }
 
-void modperl_handler_make_args(pTHX_ AV *av, ...)
+void modperl_handler_make_args(pTHX_ AV **avp, ...)
 {
     va_list args;
 
-    va_start(args, av);
+    if (!*avp) {
+        *avp = newAV(); /* XXX: cache an intialized AV* per-request */
+    }
+
+    va_start(args, avp);
 
     for (;;) {
         char *classname = va_arg(args, char *);
@@ -51,7 +55,7 @@ void modperl_handler_make_args(pTHX_ AV *av, ...)
             break;
         }
 
-        av_push(av, sv);
+        av_push(*avp, sv);
     }
 
     va_end(args);
@@ -213,16 +217,15 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
                av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
-    av_args = newAV();
 
     switch (type) {
       case MP_HANDLER_TYPE_DIR:
       case MP_HANDLER_TYPE_SRV:
-        modperl_handler_make_args(aTHX_ av_args,
+        modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::RequestRec", r, NULL);
         break;
       case MP_HANDLER_TYPE_CONN:
-        modperl_handler_make_args(aTHX_ av_args,
+        modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::Connection", c, NULL);
         break;
       case MP_HANDLER_TYPE_FILE:
@@ -235,7 +238,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
               ptemp = va_arg(args, apr_pool_t *);
               va_end(args);
 
-              modperl_handler_make_args(aTHX_ av_args,
+              modperl_handler_make_args(aTHX_ &av_args,
                                         "Apache::Pool", pconf,
                                         "Apache::Pool", plog,
                                         "Apache::Pool", ptemp,
@@ -254,7 +257,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
                   p = pconf;
               }
 
-              modperl_handler_make_args(aTHX_ av_args,
+              modperl_handler_make_args(aTHX_ &av_args,
                                         "Apache::Pool", pconf,
                                         "Apache::Server", s, NULL);
           }

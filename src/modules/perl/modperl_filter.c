@@ -81,7 +81,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 int modperl_run_filter(modperl_filter_t *filter)
 {
-    AV *args;
+    AV *args = Nullav;
     int status;
     modperl_handler_t *handler =
         ((modperl_filter_ctx_t *)filter->f->ctx)->handler;
@@ -93,9 +93,7 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     MP_dINTERP_SELECT(r, c, s);
 
-    args = newAV();
-
-    modperl_handler_make_args(aTHX_ args,
+    modperl_handler_make_args(aTHX_ &args,
                               filter_classes[filter->mode], filter,
                               NULL);
 
