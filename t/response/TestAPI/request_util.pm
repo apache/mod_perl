@@ -20,7 +20,7 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => (scalar keys %status_lines) + 10;
+    plan $r, tests => (scalar keys %status_lines) + 11;
 
     ok $r->default_type;
 
@@ -63,6 +63,14 @@ sub handler {
         ok t_cmp(Apache::RequestUtil::get_status_line($code),
                  $line,
                  "Apache::RequestUtil::get_status_line($code)");
+    }
+
+    if (Apache::MPM->is_threaded) {
+        eval { $r->child_terminate() };
+        ok t_cmp($@, qr/Can't run.*in a threaded mpm/, "child_terminate");
+    }
+    else {
+        ok $r->child_terminate() || 1;
     }
 
     Apache::OK;

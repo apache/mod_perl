@@ -32,6 +32,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
  mpxs_Apache__RequestRec_add_config | | r, lines, override=OR_AUTHCFG 
  mpxs_Apache__RequestRec_document_root | | r, new_root=Nullsv
+ mpxs_Apache__RequestRec_child_terminate
 
  #protocol module helpers
  mpxs_Apache__RequestRec_location_merge
