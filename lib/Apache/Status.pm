@@ -26,7 +26,12 @@ if (eval {require Apache::Request}) {
     $newQ ||= sub { Apache::Request->new(@_) };
 }
 elsif (eval {require CGI}) {
-    $newQ ||= sub { CGI->new; };
+    if ($CGI::VERSION >= 2.93) {
+        $newQ ||= sub { CGI->new(@_) };
+    }
+    else {
+        $newQ ||= sub { CGI->new };
+    }
 }
 else {
     die "Need CGI.pm or Apache::Request to operate";
