@@ -130,7 +130,7 @@ apr_uint32_t           | IV
 apr_uint64_t           | NV
 apr_socklen_t          | IV
 apr_ssize_t            | IV
-apr_size_t             | IV
+apr_size_t             | UV
 apr_time_t             | NV
 apr_interval_time_t    | NV
 apr_gid_t              | IV
