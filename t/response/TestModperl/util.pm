@@ -8,8 +8,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestIO ();
-use Apache::RequestUtil ();
+use ModPerl::Util ();
 
 use Apache::Const -compile => 'OK';
 
