@@ -1,8 +1,10 @@
 Instructions for mod_perl 2.0 Release Manager
 
 1. 'make dist' - to make sure nothing is missing from the manifest,
-   etc. Now test this generated package (not cvs) with as many
-   configurations as possible on as many platforms as possible.
+   etc. Now test this generated package mod_perl-1.99_14.tar.gz (not
+   the current build) with as many
+   configurations as possible on as many platforms as possible,
+   unpacking the package each time afresh.
 
   a) nuke any preinstalled mod_perl libs and run 'make test'
 
@@ -11,6 +13,10 @@ Instructions for mod_perl 2.0 Release Manager
   c) test whether we still 100% OK on systems with no LWP:
 
      % APACHE_TEST_PRETEND_NO_LWP=1 make test
+
+  d) build and test as root. double check that you have started from a
+     fresh source, without having any stale dirs from the previous
+     build laying around.
 
 2. once confident that the package is good, upload a release candidate
    to perl.apache.org/~username and post 24 hour-ish candidate alert
