@@ -25,6 +25,9 @@ void modperl_global_request_set(request_rec *r)
         /* reset after subrequests */
         modperl_tls_reset_cleanup_request_rec(r->pool, r->main);
     }
+    else {
+        modperl_tls_reset_cleanup_request_rec(r->pool, NULL);
+    }
 }
 
 void modperl_global_request_obj_set(pTHX_ SV *svr)
@@ -181,15 +184,19 @@ typedef struct {
 
 static apr_status_t modperl_tls_reset(void *data)
 {
-    modperl_tls_cleanup_data_t *cdata;
-    return modperl_tls_set(cdata->key, data);
+    modperl_tls_cleanup_data_t *cdata = 
+        (modperl_tls_cleanup_data_t *)data;
+    return modperl_tls_set(cdata->key, cdata->data);
 }
 
 void modperl_tls_reset_cleanup(apr_pool_t *p, modperl_tls_t *key,
                                void *data)
 {
     modperl_tls_cleanup_data_t *cdata =
-        (modperl_tls_cleanup_data_t *)apr_pcalloc(p, sizeof(*cdata));
+        (modperl_tls_cleanup_data_t *)apr_palloc(p, sizeof(*cdata));
+
+    cdata->key = key;
+    cdata->data = data;
 
     apr_pool_cleanup_register(p, (void *)cdata,
                               modperl_tls_reset,
