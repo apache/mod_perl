@@ -231,7 +231,7 @@ sub prepare {
     $self->{DIR} = 'WrapXS';
     $self->{XS_DIR} = catdir fastcwd(), 'xs';
 
-    my $verbose = $Apache::TestTrace::Level eq 'debug' ? 1 : 0;
+    my $verbose = Apache::TestTrace::trace_level() eq 'debug' ? 1 : 0;
 
     if (-e $self->{DIR}) {
         rmtree([$self->{DIR}], $verbose, 1);
