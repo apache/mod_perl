@@ -19,13 +19,18 @@ use Apache::Const -compile => 'OK';
 #XXX: you can set to zero if largefile support is not enabled in Perl
 use constant LARGE_FILES_CONFLICT => 1;
 
+# apr_file_dup has a bug on win32,
+# should be fixed in apr 0.9.4 / httpd-2.0.48
+require Apache::Build;
+use constant APR_WIN32_FILE_DUP_BUG => 
+    Apache::Build::WIN32() && !have_min_apache_version('2.0.48');
+
 sub handler {
     my $r = shift;
 
-    my $tests = 12;
-    my $lfs_tests = 3;
-
-    $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
+    my $tests = 11;
+    $tests += 3 unless LARGE_FILES_CONFLICT;
+    $tests += 1 unless APR_WIN32_FILE_DUP_BUG;
 
     require APR::PerlIO;
     plan $r, tests => $tests,
@@ -180,9 +185,11 @@ sub handler {
         my $received = <$dup_fh>;
 
         close $dup_fh;
-        ok t_cmp($expected,
-                 $received,
-                 "read/write a dupped file");
+        unless (APR_WIN32_FILE_DUP_BUG) {
+            ok t_cmp($expected,
+                     $received,
+                     "read/write a dupped file");
+        }
     }
 
     # unbuffered write
