@@ -23,8 +23,7 @@ const char *modperl_interp_scope_desc(modperl_interp_scope_e scope);
 
 void modperl_interp_clone_init(modperl_interp_t *interp);
 
-modperl_interp_t *modperl_interp_new(apr_pool_t *p,
-                                     modperl_interp_pool_t *mip,
+modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl);
 
 void modperl_interp_destroy(modperl_interp_t *interp);

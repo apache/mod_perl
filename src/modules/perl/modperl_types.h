@@ -74,7 +74,6 @@ typedef struct {
 struct modperl_tipool_t {
     perl_mutex tiplock;
     perl_cond available;
-    apr_pool_t *ap_pool;
     modperl_list_t *idle, *busy;
     int in_use; /* number of items currrently in use */
     int size; /* current number of items */
@@ -84,7 +83,6 @@ struct modperl_tipool_t {
 };
 
 struct modperl_interp_pool_t {
-    apr_pool_t *ap_pool;
     server_rec *server;
     modperl_tipool_t *tipool;
     modperl_tipool_config_t *tipool_cfg;

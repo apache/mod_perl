@@ -35,14 +35,15 @@ void modperl_interp_clone_init(modperl_interp_t *interp)
     modperl_xs_dl_handles_clear(aTHX);
 }
 
-modperl_interp_t *modperl_interp_new(apr_pool_t *p,
-                                     modperl_interp_pool_t *mip,
+modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
 {
     UV clone_flags = 0;
     modperl_interp_t *interp = 
-        (modperl_interp_t *)apr_pcalloc(p, sizeof(*interp));
-    
+        (modperl_interp_t *)malloc(sizeof(*interp));
+
+    memset(interp, '\0', sizeof(*interp));
+
     interp->mip = mip;
     interp->refcnt = 0; /* for use by APR::Pool->cleanup_register */
 
@@ -97,6 +98,8 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     modperl_perl_destruct(interp->perl);
 
     modperl_xs_dl_handles_close(handles);
+
+    free(interp);
 }
 
 apr_status_t modperl_interp_cleanup(void *data)
@@ -162,7 +165,7 @@ static void *interp_pool_grow(modperl_tipool_t *tipool, void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
     MP_TRACE_i(MP_FUNC, "adding new interpreter to the pool\n");
-    return (void *)modperl_interp_new(mip->ap_pool, mip, mip->parent->perl);
+    return (void *)modperl_interp_new(mip, mip->parent->perl);
 }
 
 static void interp_pool_shrink(modperl_tipool_t *tipool, void *data,
@@ -206,9 +209,8 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
                            &interp_pool_func, mip);
 
     mip->tipool = tipool;
-    mip->ap_pool = p;
     mip->server  = s;
-    mip->parent = modperl_interp_new(p, mip, NULL);
+    mip->parent = modperl_interp_new(mip, NULL);
     aTHX = mip->parent->perl = perl;
     
     /* this happens post-config in mod_perl.c:modperl_init_clones() */

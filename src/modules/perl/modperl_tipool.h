@@ -3,7 +3,7 @@
 
 #ifdef USE_ITHREADS
 
-modperl_list_t *modperl_list_new(apr_pool_t *p);
+modperl_list_t *modperl_list_new(void);
 
 modperl_list_t *modperl_list_last(modperl_list_t *list);
 

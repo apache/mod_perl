@@ -15,10 +15,11 @@
  * this is another "proof-of-concept", plenty of room for improvement here
  */
 
-modperl_list_t *modperl_list_new(apr_pool_t *p)
+modperl_list_t *modperl_list_new()
 {
     modperl_list_t *listp = 
-        (modperl_list_t *)apr_pcalloc(p, sizeof(*listp));
+        (modperl_list_t *)malloc(sizeof(*listp));
+    memset(listp, '\0', sizeof(*listp));
     return listp;
 }
 
@@ -151,7 +152,6 @@ modperl_tipool_t *modperl_tipool_new(apr_pool_t *p,
     modperl_tipool_t *tipool =
         (modperl_tipool_t *)apr_pcalloc(p, sizeof(*tipool));
 
-    tipool->ap_pool = p;
     tipool->cfg = cfg;
     tipool->func = func;
     tipool->data = data;
@@ -201,7 +201,7 @@ void modperl_tipool_destroy(modperl_tipool_t *tipool)
 
 void modperl_tipool_add(modperl_tipool_t *tipool, void *data)
 {
-    modperl_list_t *listp = modperl_list_new(tipool->ap_pool);
+    modperl_list_t *listp = modperl_list_new();
 
     listp->data = data;
 
@@ -339,6 +339,8 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
             (*tipool->func->tipool_destroy)(tipool, tipool->data,
                                             listp->data);
         }
+
+        free(listp); /* gone for good */
 
         if (max_requests && ((tipool->size - tipool->in_use) <
                              tipool->cfg->min_spare)) {
