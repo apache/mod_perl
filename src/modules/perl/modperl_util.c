@@ -713,3 +713,40 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
 
     return text;
 }
+
+SV *modperl_apr_array_header2avrv(pTHX_ apr_array_header_t *array)
+{
+    AV *av = newAV(); 
+
+    if (array) {
+        int i; 
+        for (i = 0; i < array->nelts; i++) {
+            av_push(av, newSVpv(((char **)array->elts)[i], 0));
+        }
+    }
+    return newRV_noinc((SV*)av);
+}
+
+apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
+                                                  SV *avrv)
+{
+    AV *av;
+    apr_array_header_t *array;
+    int i, av_size;
+    
+    if (!(SvROK(avrv) && (SvTYPE(SvRV(avrv)) == SVt_PVAV))) {
+        Perl_croak(aTHX_ "Not an array reference");
+    }
+    
+    av = (AV*)SvRV(avrv);
+    av_size = av_len(av);
+    array = apr_array_make(p, av_size+1, sizeof(char *));
+    
+    for (i = 0; i <= av_size; i++) {
+        SV *sv = *av_fetch(av, i, FALSE);
+        char **entry = (char **)apr_array_push(array);
+        *entry = apr_pstrdup(p, SvPV(sv, PL_na));
+    }
+
+    return array;
+}

@@ -31,6 +31,20 @@ const char *mpxs_Apache__RequestRec_content_type(pTHX_ request_rec *r,
 }
 
 static MP_INLINE
+SV *mpxs_Apache__RequestRec_content_languages(pTHX_ request_rec *r,
+                                              SV *languages)
+{
+    SV *retval = modperl_apr_array_header2avrv(aTHX_ 
+                                               r->content_languages);
+    if (languages) {
+        r->content_languages = modperl_avrv2apr_array_header(aTHX_ 
+                                                             r->pool,
+                                                             languages);
+    }
+    return retval;
+}
+
+static MP_INLINE
 int mpxs_Apache__RequestRec_proxyreq(pTHX_ request_rec *r, SV *val)
 {
     int retval = r->proxyreq;

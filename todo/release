@@ -14,8 +14,6 @@
 
 * APR::URI missing $uri->rpath (was in mp1)
 
-* Apache::RequestRec's $r->content_languages is missing (was in mp1)
-
 * check other todo/features_missing items (some of them might be
   critical for 2.0 release, since missing methods might be a problem
   for migration)

@@ -23,7 +23,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 45;
+    plan $r, tests => 49;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -164,7 +164,19 @@ sub handler {
         ok $r->allowed & (1 << Apache::M_PUT);
     }
 
+    # content_languages
+    {
+        my $def = [qw(fr)];       #default value
+        my $l   = [qw(fr us cn)]; #new value
 
+        ok t_cmp $r->content_languages, $def, '$r->content_languages';
+        ok t_cmp $r->content_languages($l), $def, '$r->content_languages';
+        ok t_cmp $r->content_languages, $l, '$r->content_languages';
+
+        eval { $r->content_languages({}) };
+        ok t_cmp $@, qr/Not an array reference/,
+                '$r->content_languages(invalid)';
+    }
     # tested in other tests
     # - input_filters:    TestAPI::in_out_filters
     # - output_filters:   TestAPI::in_out_filters
@@ -174,7 +186,6 @@ sub handler {
 
     # XXX: untested
     # - request_config
-    # - content_languages
     # - allowed_xmethods
     # - allowed_methods
 
@@ -184,3 +195,4 @@ sub handler {
 1;
 __END__
 PerlOptions +GlobalRequest
+DefaultLanguage fr

@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_16-dev
 
+Added $r->content_languages in Apache::RequestRec [Gozer]
+
 APR::Bucket: add delete() and destroy() methods [Stas]
 
 
