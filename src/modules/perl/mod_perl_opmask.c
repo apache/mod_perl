@@ -89,7 +89,7 @@ static char *read_opmask(server_rec *s, pool *p, char *file)
 
     if(!cfg) {
 	ap_log_error(APLOG_MARK, APLOG_CRIT, s,
-		     "mod_perl: unable to PerlOpmask file %s", file);
+		     "mod_perl: unable to open PerlOpmask file %s", file);
 	exit(1);
     }
 
@@ -101,6 +101,7 @@ static char *read_opmask(server_rec *s, pool *p, char *file)
 	    set_opset_bits(mask, bitspec, TRUE, opname);
 	}
     }
+    ap_cfg_closefile(cfg);
     return mask;
 
 #else
