@@ -10,9 +10,6 @@ use Apache::Test ();
 use APR::Brigade ();
 use APR::Bucket ();
 
-#XXX
-@Apache::InputFilter::ISA = qw(Apache::OutputFilter);
-
 my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::input_msg::response';
 

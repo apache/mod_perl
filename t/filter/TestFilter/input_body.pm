@@ -12,9 +12,6 @@ use APR::Const -compile => ':common';
 use APR::Brigade ();
 use APR::Bucket ();
 
-#XXX
-@Apache::InputFilter::ISA = qw(Apache::OutputFilter);
-
 sub handler : InputFilterBody {
     my($filter, $bb, $mode) = @_;
 
