@@ -9,3 +9,4 @@ string.t
 table.t
 util.t
 uuid.t
+os.t
