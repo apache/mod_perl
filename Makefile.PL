@@ -233,6 +233,10 @@ sub configure {
         }
     }
 
+    if ($build->should_build_apache) {
+        $build->configure_apache();
+    }
+
     my $httpd_version = $build->httpd_version;
     unless ($httpd_version) {
         error 'Unable to determine server version, aborting.';
@@ -273,10 +277,6 @@ sub configure {
 
     #ModPerl::BuildMM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
-
-    if ($build->should_build_apache) {
-        $build->configure_apache();
-    }
 
     ModPerl::TestRun->generate_script;
     ModPerl::TestReport->generate_script;
