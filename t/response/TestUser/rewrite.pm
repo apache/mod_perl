@@ -62,6 +62,7 @@ sub response {
 1;
 __END__
 <NoAutoConfig>
+  <VirtualHost TestUser::rewrite>
     PerlModule              TestUser::rewrite
     PerlTransHandler        TestUser::rewrite::trans
     PerlMapToStorageHandler TestUser::rewrite::map2storage
@@ -69,5 +70,6 @@ __END__
         SetHandler modperl
         PerlResponseHandler TestUser::rewrite::response
     </Location>
+  </VirtualHost>
 </NoAutoConfig>
 

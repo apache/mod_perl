@@ -54,11 +54,15 @@ sub response {
 
 1;
 __DATA__
-PerlInitHandler TestHooks::init::second
-<Base>
+<NoAutoConfig>
+  <VirtualHost TestHooks::init>
     PerlModule      TestHooks::init
     PerlInitHandler TestHooks::init::first
-</Base>
-PerlResponseHandler TestHooks::init
-PerlResponseHandler TestHooks::init::response
-SetHandler modperl
+    <Location /TestHooks__init>
+        PerlInitHandler TestHooks::init::second
+        PerlResponseHandler TestHooks::init
+        PerlResponseHandler TestHooks::init::response
+        SetHandler modperl
+    </Location>
+  </VirtualHost>
+</NoAutoConfig>

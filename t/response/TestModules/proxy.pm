@@ -43,6 +43,7 @@ sub response {
 1;
 __END__
 <NoAutoConfig>
+  <VirtualHost TestModules::proxy>
     <IfModule mod_proxy.c>
         <Proxy http://@servername@:@port@/*>
             <IfModule @ACCESS_MODULE@>
@@ -59,5 +60,6 @@ __END__
             PerlResponseHandler TestModules::proxy::response
         </Location>
     </IfModule>
+  </VirtualHost>
 </NoAutoConfig>
 
