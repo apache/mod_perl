@@ -14,23 +14,25 @@ define httpd
 end
 
 define STpvx
-   print ((XPV*) (Perl_stack_base [ax + ($arg0)] )->sv_any )->xpv_pv
+   print ((XPV*) (PL_stack_base [ax + ($arg0)] )->sv_any )->xpv_pv
 end
 
-define TOPs 
+define TOPs
     print ((XPV*) (**sp)->sv_any )->xpv_pv
 end
 
 define curstash
-   print ((XPVHV*) (Perl_curstash)->sv_any)->xhv_name
+   print ((XPVHV*) (PL_curstash)->sv_any)->xhv_name
 end
 
 define defstash
-   print ((XPVHV*) (Perl_defstash)->sv_any)->xhv_name
+   print ((XPVHV*) (PL_defstash)->sv_any)->xhv_name
 end
 
-define curcopfile
-   print ((XPV*) ((((XPVGV*)Perl_curcop->cop_filegv)->xgv_gp)->gp_sv)->sv_any)->xpv_pv
+define curinfo
+   printf "%d:%s\n", PL_curcop->cop_line, \
+   ((XPV*)(*(XPVGV*)PL_curcop->cop_filegv->sv_any)\
+   ->xgv_gp->gp_sv->sv_any)->xpv_pv 
 end
 
 define SvPVX
@@ -58,7 +60,7 @@ define SvTAINTED
 end
 
 define SvTRUE
-   print (	!$arg0	? 0	:    (($arg0)->sv_flags  & 0x00040000 ) 	?   ((Perl_Xpv  = (XPV*)($arg0)->sv_any ) &&	(*Perl_Xpv ->xpv_pv > '0' ||	Perl_Xpv ->xpv_cur > 1 ||	(Perl_Xpv ->xpv_cur && *Perl_Xpv ->xpv_pv != '0'))	? 1	: 0)	:	(($arg0)->sv_flags  & 0x00010000 ) 	? ((XPVIV*)  ($arg0)->sv_any )->xiv_iv  != 0	:   (($arg0)->sv_flags  & 0x00020000 ) 	? ((XPVNV*)($arg0)->sv_any )->xnv_nv  != 0.0	: Perl_sv_2bool ($arg0) ) 
+   print (	!$arg0	? 0	:    (($arg0)->sv_flags  & 0x00040000 ) 	?   ((PL_Xpv  = (XPV*)($arg0)->sv_any ) &&	(*PL_Xpv ->xpv_pv > '0' ||	PL_Xpv ->xpv_cur > 1 ||	(PL_Xpv ->xpv_cur && *PL_Xpv ->xpv_pv != '0'))	? 1	: 0)	:	(($arg0)->sv_flags  & 0x00010000 ) 	? ((XPVIV*)  ($arg0)->sv_any )->xiv_iv  != 0	:   (($arg0)->sv_flags  & 0x00020000 ) 	? ((XPVNV*)($arg0)->sv_any )->xnv_nv  != 0.0	: Perl_sv_2bool ($arg0) ) 
 end
 
 define GvHV
@@ -109,7 +111,7 @@ define AvFILL
    print ((XPVAV*)  ($arg0)->sv_any)->xav_fill
 end
 
-define dump_av
+define dumpav
     set $n = ((XPVAV*)  ($arg0)->sv_any)->xav_fill
     set $i = 0
     while $i <= $n
@@ -119,7 +121,7 @@ define dump_av
     end
 end
 
-define dump_hv
+define dumphv
     set $n = ((XPVHV*)  ($arg0)->sv_any)->xhv_keys
     set $i = 0
     set $key = 0
@@ -132,7 +134,7 @@ define dump_hv
     end
 end
 
-define hv_fetch
+define hvfetch
    set $klen = strlen($arg1)
    set $sv = *Perl_hv_fetch($arg0, $arg1, $klen, 0)
    printf "%s = `%s'\n", $arg1, ((XPV*) ($sv)->sv_any )->xpv_pv
@@ -145,14 +147,14 @@ define hvINCval
    printf "%s = `%s'\n", $arg0, ((XPV*) ($sv)->sv_any )->xpv_pv
 end
 
-define dump_any
+define dumpany
    set $sv = Perl_newSVpv("use Data::Dumper; Dumper \\",0)
    set $void = Perl_sv_catpv($sv, $arg0)
    set $dump = perl_eval_pv(((XPV*) ($sv)->sv_any )->xpv_pv, 1)
    printf "%s = `%s'\n", $arg0, ((XPV*) ($dump)->sv_any )->xpv_pv
 end
 
-define dump_any_rv
+define dumpanyrv
    set $rv = Perl_newRV((SV*)$arg0)
    set $rvpv = perl_get_sv("main::DumpAnyRv", 1)
    set $void = Perl_sv_setsv($rvpv, $rv)
@@ -160,7 +162,7 @@ define dump_any_rv
    printf "`%s'\n", ((XPV*) ($sv)->sv_any )->xpv_pv
 end
 
-define sv_peek
+define svpeek
    set $pv = Perl_sv_peek((SV*)$arg0)
    printf "%s\n", $pv
 end
