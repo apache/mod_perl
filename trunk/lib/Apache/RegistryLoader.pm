@@ -37,6 +37,7 @@ sub handler {
 #override Apache class methods called by Apache::Registry
 #normally only available at request-time via blessed request_rec pointer
 
+sub get_server_name {}
 sub filename { shift->{filename} }
 sub uri { shift->{uri} }
 sub status {200}

@@ -16,6 +16,10 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+From: David-Michael Lincke <mcm-techlists@unisg.ch>
+Subject: Unresolved symbol building mod_perl-1.15/Apache 1.3.1 with
+         certain handler combination
+
 - Apache::Registry should check return value of the subroutine,
   e.g. for REDIRECT   
 
@@ -147,9 +151,6 @@ NEW STUFF
 
 - some mod_perlIO type methods for xs modules? (e.g. Apache::Peek)
 
-- method to fetch current value of <Location ...>?
-              "Simon Matthews" <sam@peritas.com>
-
 - make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
   for the given location
 
@@ -183,7 +184,6 @@ NEW STUFF
   + mod_include #perl support
   + ability to nmake w/o going into VC++
   + ability to disable Perl*Handler callback hooks
-  + look at providing ASP (Active Server Plugin) support for NT users
   + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
 
 - @ARGV magic, tie to query string
@@ -219,16 +219,6 @@ KNOWN MODULE BUGS
 
 - can't multiple Apache::Include->virtual in a single request
 
-- (the bug in Apache::fork is that we shouldn't need the damn thing)
-  Apache::fork is an ugly work around for what looks like might be
-  fixed in 1.3b6:
-
-  *) After a SIGHUP the listening sockets in the parent weren't
-     properly marked for closure on fork().
-     [Jürgen Keil <jk@tools.de>] PR#2000
-
-  If anyone can confirm, please let me know!
-
 ---------------------------------------------------------------------------
 NEW MODULE STUFF
 ---------------------------------------------------------------------------
@@ -259,6 +249,8 @@ NEW MODULE STUFF
 CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
             these things at some point
 ---------------------------------------------------------------------------
+
+merge cgi_env/subprocess_env
 
 ---------------------------------------------------------------------------
 OPTIMIZATIONS

@@ -178,6 +178,8 @@ $PERL_TIE_TABLES = 0;
 $PERL_LOG_API = 0;
 $PERL_URI_API = 0;
 $PERL_UTIL_API = 0;
+$PERL_CONNECTION_API = 1; #these two were split out late in the game
+$PERL_SERVER_API = 1;     #so they are on by default 
 $PERL_RUN_XS = 0;
 my %experimental = map { $_,1 } qw{
 PERL_RUN_XS
@@ -224,6 +226,8 @@ sub is_mp_arg {
    PERL_LOG_API
    PERL_URI_API
    PERL_UTIL_API
+   PERL_CONNECTION_API
+   PERL_SERVER_API
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -318,7 +322,9 @@ if($DYNAMIC) {
 	$PERL_LOG_API = $PERL_URI_API = $PERL_UTIL_API = 1;
 }
 
-my @xs_modules = qw(Apache Apache::Constants);
+my @xs_modules = qw{
+Apache Apache::Constants
+};
 
 if($Is_Win32) {
     $NO_HTTPD = 1;
@@ -543,7 +549,7 @@ if($PERL_RUN_XS) {
 	print "Sorry, need 1.3.0+ for Apache::PerlRunXS\n";
     }
 }
-for (qw(Log URI Util)) {
+for (qw(Log URI Util Connection Server)) {
     my $s = "PERL_".uc($_)."_API";
     if($$s) {
 	push @xs_modules, "Apache::$_";

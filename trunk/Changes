@@ -8,6 +8,18 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+added $r->finfo method
+
+Apache::Connection and Apache::Server will not be loaded by default if
+a PerlRequire file says: no mod_perl qw(Connection Server);
+
+Apache.xs cleanups:
+
+ -move Apache::Connection code from Apache.xs to Connection.xs
+ -move Apache::Server code from Apache.xs to Server.xs
+ -remove Apache::fork stuff
+ -remove max_request_per_client method (use Apache::Globals instead)
+
 =item 1.15 - July 24, 1998
 
 new experimental XS implementation of Apache::PerlRun/Apache::Registry

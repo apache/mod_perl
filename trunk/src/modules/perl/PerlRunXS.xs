@@ -131,8 +131,10 @@ static SV *slash2stash(const char *segment) {
 #define ApachePerlRun_chdir_scwd() \
     chdir(SvPV(perl_get_sv("Apache::Server::CWD", TRUE),na))
 
+#ifndef ApachePerlRun_name_with_virtualhost
 #define ApachePerlRun_name_with_virtualhost() \
     perl_get_sv("Apache::Registry::NameWithVirtualHost", FALSE)
+#endif
 
 SV *ApachePerlRun_namespace(request_rec *r, char *root)
 {

@@ -9,6 +9,10 @@ URI/Makefile.PL
 URI/URI.pm
 Util/Makefile.PL
 Util/Util.pm
+Server/Makefile.PL
+Server/Server.pm
+Connection/Makefile.PL
+Connection/Connection.pm
 CREDITS
 INSTALL
 INSTALL.apaci
@@ -60,9 +64,12 @@ Symbol/Symbol.xs
 Symbol/test.pl
 src/modules/perl/perl_PL.h
 src/modules/perl/mod_perl_version.h
+src/modules/perl/fork.xs
 src/modules/perl/Exports.c
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
+src/modules/perl/Connection.xs
+src/modules/perl/Server.xs
 src/modules/perl/ModuleConfig.xs
 src/modules/perl/Log.xs
 src/modules/perl/URI.xs
@@ -71,6 +78,7 @@ src/modules/perl/Tie.xs
 src/modules/perl/ldopts
 src/modules/perl/mod_perl.c
 src/modules/perl/mod_perl.h
+src/modules/perl/mod_perl_xs.h
 src/modules/perl/perl_util.c
 src/modules/perl/perlio.c
 src/modules/perl/perl_config.c

@@ -1087,3 +1087,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls);
 pool *perl_get_startup_pool(void);
 server_rec *perl_get_startup_server(void);
 request_rec *sv2request_rec(SV *in, char *class, CV *cv);
+
+/* PerlRunXS.xs */
+#define ApachePerlRun_name_with_virtualhost() \
+    perl_get_sv("Apache::Registry::NameWithVirtualHost", FALSE) 

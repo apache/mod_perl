@@ -62,9 +62,8 @@ sub handler {
 		$r->uri;
 
 	if($Apache::Registry::NameWithVirtualHost) {
-	    my $srv = $r->server;
-	    $script_name = join "", $srv->server_hostname, $script_name
-		if $srv->is_virtual;
+	    my $name = $r->get_server_name;
+	    $script_name = join "", $name, $script_name if $name;
 	}
 
 	# Escape everything into valid perl identifiers

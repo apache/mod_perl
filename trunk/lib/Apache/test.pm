@@ -76,11 +76,11 @@ sub simple_fetch {
 sub have_module {
     my $mod = shift;
     my $v = shift;
-    {# surpress "can't boostrap" warnings
+    eval {# surpress "can't boostrap" warnings
 	 local $SIG{__WARN__} = sub {};
 	 require Apache;
 	 require Apache::Constants;
-     }  
+    };
     eval "require $mod";
     if($v) {
 	eval { 
