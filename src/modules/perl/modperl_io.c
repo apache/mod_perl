@@ -32,7 +32,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 
     SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
 
-    MP_TRACE_g(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
+    MP_TRACE_r(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
                GvNAME(handle), (unsigned long)handle, classname,
                SvREFCNT(TIEHANDLE_SV(handle)));
 }
@@ -82,7 +82,7 @@ MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
 	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
 
 	if (!strEQ(package, classname)) {
-	    MP_TRACE_g(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
+	    MP_TRACE_r(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
 	    return TRUE;
 	}
     }
@@ -94,7 +94,7 @@ MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
 #ifdef MP_TRACE
     if (mg_find(TIEHANDLE_SV(handle), 'q')) {
-        MP_TRACE_g(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
+        MP_TRACE_r(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
                    GvNAME(handle), (unsigned long)handle,
                    SvREFCNT(TIEHANDLE_SV(handle)));
     }
