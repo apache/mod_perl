@@ -55,6 +55,13 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
     return SvROK(sv) ? SvRV(sv) : sv;
 }
 
+MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
+{
+    return SvOBJECT(sv) ?
+        (server_rec *)SvObjIV(sv) :
+        modperl_global_get_server_rec();
+}
+
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
 {
     return modperl_xs_sv2request_rec(aTHX_ sv, NULL, Nullcv);

@@ -20,6 +20,7 @@
 
 #define SvObjIV(o) SvIV((SV*)SvRV(o))
 
+MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
 request_rec *modperl_xs_sv2request_rec(pTHX_ SV *sv, char *classname, CV *cv);
