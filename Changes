@@ -27,6 +27,7 @@ Adjusted:
 - APR::ThreadMutex: new
 - APR::URI: parse
 - Apache::RequestUtil: new
+- APR::Pool: new
 
 speed up the 'perl Makefile.PL' stage [Randy Kobes]:
  - reduce the number of calls to build_config() of
