@@ -2,6 +2,7 @@ package Apache::ParseSource;
 
 use strict;
 use Apache::Build ();
+use Tie::IxHash ();
 use Config ();
 
 our $VERSION = '0.02';
@@ -313,7 +314,9 @@ sub get_functions {
         push @functions, $func;
     }
 
-    $self->{$key} = \@functions;
+    # sort the functions by the 'name' attribute to ensure a
+    # consistent output on different systems.
+    $self->{$key} = [sort { $a->{name} cmp $b->{name} } @functions];
 }
 
 sub get_structs {
@@ -356,7 +359,9 @@ sub get_structs {
         push @structures, $struct;
     }
 
-    $self->{$key} = \@structures;
+    # sort the structs by the 'type' attribute to ensure a consistent
+    # output on different systems.
+    $self->{$key} = [sort { $a->{type} cmp $b->{type} } @structures];
 }
 
 sub write_functions_pm {
@@ -398,6 +403,9 @@ sub write_pm {
 
     open my $pm, '>', $file or die "open $file: $!";
 
+    # sort the hashes (including nested ones) for a consistent dump
+    canonsort(\$data);
+
     my $dump = Data::Dumper->new([$data],
                                  [$name])->Dump;
 
@@ -419,6 +427,42 @@ $dump
 1;
 EOF
     close $pm;
+}
+
+# canonsort(\$data);
+# sort nested hashes in the data structure.
+# the data structure itself gets modified
+
+sub canonsort {
+    my $ref = shift;
+    my $type = ref $$ref;
+
+    return unless $type;
+
+    my $data = $$ref;
+
+    if ($type eq 'ARRAY') {
+        for (@$data) {
+            canonsort(\$_);
+        }
+    }
+    elsif ($type eq 'HASH') {
+        for (keys %$data) {
+            canonsort(\$data->{$_});
+        }
+
+        tie my %ixhash, 'Tie::IxHash';
+
+        # reverse sort so we get the order of:
+        # return_type, name, args { type, name } for functions
+        # type, elts { type, name } for structures
+
+        for (sort { $b cmp $a } keys %$data) {
+            $ixhash{$_} = $data->{$_};
+        }
+
+        $$ref = \%ixhash;
+    }
 }
 
 1;
