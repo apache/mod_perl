@@ -62,7 +62,7 @@ sub handler {
     Apache->httpd_conf('ServerAdmin foo@bar.com');
     ok t_cmp($r->server->server_admin, 'foo@bar.com',
              'Apache->httpd_conf');
-    $r->server->server_admin($admin);
+    Apache->httpd_conf("ServerAdmin $admin");
 
     ok t_filepath_cmp(canonpath(Apache::Test::config()->{vars}->{serverroot}),
                       canonpath($Apache::Server::CWD),

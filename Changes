@@ -12,6 +12,25 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::ServerRec accessors changes: [Stas]
+- readonly accessors:
+
+    process, next, is_virtual, module_config, lookup_defaults, addrs
+    and path
+
+- readwrite accessors with the exception of threaded mpms, where the
+  accessors are writable only before the child_init phase (i.e. before
+  threads are spawned):
+
+    server_admin, server_hostname, port, error_fname, error_log,
+    loglevel, timeout, keep_alive_timeout, keep_alive_max, keep_alive,
+    names, wild_names, limit_req_line, limit_req_fieldsize and
+    limit_req_fields
+
+supports a new type of struct accessor, which is just like read/write
+one, but doesn't allow write access starting at the ChildInit phase
+under threaded mpm (to avoid thread-safely issues) [Stas]
+
 In order to be consistent with Apache::RequestRec, Apache::Server is
 now Apache::ServerRec and all methods/functions from Apache::Server
 now live in Apache::ServerRec. [Stas]
