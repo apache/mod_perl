@@ -14,7 +14,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 new API Apache::ServerUtil::restart_count() which can be used to tell
 whether the server is starting/restarting/gracefully
-restarting/etc. [Stas]
+restarting/etc. Based on this feature implement
+$Apache::Server::Starting and $Apache::Server::ReStarting in
+Apache::compat [Stas]
 
 provide perl glue for the mod_perl's base_server_pool
 via Apache::ServerUtil::base_server_pool() [Geoff, Stas]

@@ -72,6 +72,9 @@ BEGIN {
     $INC{'Apache/Table.pm'} = __FILE__;
 }
 
+($Apache::Server::Starting, $Apache::Server::ReStarting) =
+    Apache::ServerUtil::restart_count() == 1 ? (1, 0) : (0, 1);
+
 # api => "overriding code"
 # the overriding code, needs to "return" the original CODE reference
 # when eval'ed , so that it can be restored later
