@@ -1,4 +1,4 @@
-#include "modules/perl/mod_perl.h"
+#include "mod_perl.h"
 
 typedef struct {
     table *table;
