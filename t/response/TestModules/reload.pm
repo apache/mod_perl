@@ -9,7 +9,7 @@ sub handler {
     my $r = shift;
 
     eval "use Apache::Reload::Test";
-    
+
     Apache::Reload::Test::run($r);
 
     return Apache::OK;
@@ -20,6 +20,6 @@ __END__
 
 PerlModule Apache::Reload
 PerlInitHandler Apache::TestHandler::same_interp_fixup Apache::Reload
-PerlSetVar ReloadDebug On
+PerlSetVar ReloadDebug Off
 PerlSetVar ReloadConstantRedefineWarnings Off
 PerlSetVar ReloadAll Off
