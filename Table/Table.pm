@@ -1,6 +1,6 @@
 package Apache::Table;
 
-use Apache ();
+use mod_perl ();
 
 $VERSION = '0.01';
 __PACKAGE__->mod_perl::boot($VERSION);

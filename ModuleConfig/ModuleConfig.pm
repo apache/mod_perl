@@ -1,6 +1,7 @@
 package Apache::ModuleConfig;
 
 use strict;
+use mod_perl ();
 
 {
     no strict;

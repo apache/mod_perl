@@ -2,7 +2,7 @@ package Apache::File;
 
 use strict;
 use Fcntl ();
-use Apache ();
+use mod_perl ();
 
 {
     no strict;
