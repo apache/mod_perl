@@ -10,6 +10,7 @@ print "Content-type: text/plain\n\n";
 open FH, $0 or die $!;
 
 sub subroutine {}
+*imported = \&Outside::imported;
 
 push @array, 1;
 

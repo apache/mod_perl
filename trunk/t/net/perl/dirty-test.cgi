@@ -10,7 +10,7 @@ use Apache::test;
 
 print "Content-type: text/plain\n\n";
 
-print "1..5\n";
+print "1..6\n";
 
 my $i = 0;
 
@@ -19,5 +19,6 @@ test ++$i, not defined @array;
 test ++$i, not defined %hash;
 test ++$i, not defined $scalar;
 test ++$i, not defined fileno(FH);
+test ++$i, Outside::imported() == 4;
 
 

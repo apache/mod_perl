@@ -9,6 +9,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+do not undef subroutines when flushing Apache::PerlRun::handler
+namespace unless subroutine lives in that namespace, i.e. not imported
+(no undef happens unless `B' module is loaded)
+
 untaint Apache::File->tmpfile (if $ENV{TMPDIR,TEMP} are used)
 
 'make test' fixups:
