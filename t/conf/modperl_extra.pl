@@ -22,19 +22,6 @@ die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
 
 use File::Spec::Functions qw(canonpath catdir);
 
-BEGIN {
-    ## XXX: Block of temporary hacks for Apache::compat and CGI.pm
-    *Apache::request = *Apache2::request;
-    *Apache::server = *Apache2::server;
-
-    for (qw/Response RequestRec RequestUtil/) {
-        eval qq(
-                \*Apache::$_\:: = \*Apache2::$_\::;
-                \$INC{"Apache/$_.pm"} = ') . __FILE__ . "';";
-        die $@ if $@;
-    }
-}
-
 use Apache2::ServerUtil ();
 use Apache2::ServerRec ();
 use Apache2::Process ();
