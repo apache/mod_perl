@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+In the static build, run make in httpd's srclib/ early to have
+generated files present at mod_perl configure time [Gozer]
+
 When searching for ap(r|u)-config in httpd's source tree, search
 into srclib/apr-util as well as srclib/apr [Gozer]
 
