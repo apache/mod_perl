@@ -19,28 +19,39 @@ sub ok {
 
     callback(shift);
 
-    return Apache::OK 
+    return Apache::OK;
+}
+
+sub ok_fileset { 
+
+    my $r = shift;
+
+    $r->filename(__FILE__);
+
+    callback($r);
+
+    return Apache::OK;
 }
 
 sub declined { 
 
     callback(shift);
 
-    return Apache::DECLINED
+    return Apache::DECLINED;
 }
 
 sub auth_required { 
 
     callback(shift);
 
-    return Apache::AUTH_REQUIRED
+    return Apache::AUTH_REQUIRED;
 }
 
 sub server_error { 
 
     callback(shift);
 
-    return Apache::SERVER_ERROR
+    return Apache::SERVER_ERROR;
 }
 
 sub callback {
@@ -140,7 +151,7 @@ __DATA__
     PerlPostReadRequestHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
 
     # 1 run, 1 left behind
-    PerlTransHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::server_error
+    PerlTransHandler TestHooks::stacked_handlers2::ok_fileset TestHooks::stacked_handlers2::server_error
 
     <Location /TestHooks__stacked_handlers2>
         # all 4 run
