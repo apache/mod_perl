@@ -371,7 +371,7 @@ sub perl_version_check {
     my $build = shift;
 
     my $perl_version = $];
-    $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1" . ($2 ? ".$2" : "")/e;
+    $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1." . ($2 ? $2 : 0)/e;
     my $perl_threads = Apache::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
     my $perl_string = "Using Perl $perl_version $perl_threads ithreads";
 
