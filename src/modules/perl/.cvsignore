@@ -1,3 +1,4 @@
+modperl_exports.c
 modperl_hooks.h
 modperl_hooks.c
 modperl_flags.h

@@ -637,6 +637,7 @@ my %sources = (
    generate_largefiles         => {h => 'modperl_largefiles.h'},
    generate_constants          => {h => 'modperl_constants.h',
                                    c => 'modperl_constants.c'},
+   generate_exports            => {c => 'modperl_exports.c'},
 );
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
@@ -645,7 +646,7 @@ my @c_src_names = qw(interp tipool log config cmd options callback handler
                      const constants apache_compat error debug
                      common_util common_log);
 my @h_src_names = qw(perl_unembed);
-my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
+my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit exports);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
 sub o_files { [map { "$_.o" } @c_names, @g_c_names] }
@@ -1083,6 +1084,12 @@ sub constants_lookup_code_doc {
                 unless $seen_const{$class}{$name}
         }
     }
+}
+
+sub generate_exports {
+    my($self, $c_fh) = @_;
+    require ModPerl::WrapXS;
+    ModPerl::WrapXS->generate_exports($c_fh);
 }
 
 # src/modules/perl/*.c files needed to build APR/APR::* outside

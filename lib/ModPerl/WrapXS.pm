@@ -1267,5 +1267,35 @@ sub stats {
     return \%stats;
 }
 
+sub generate_exports {
+    my($self, $fh) = @_;
+
+    if (!$build->should_build_apache) {
+        print $fh <<"EOF";
+/* This is intentionnaly left blank, only usefull for static build */
+const void *modperl_ugly_hack = NULL;
+EOF
+        return;
+    }
+    
+    print $fh <<"EOF";
+/* 
+ * This is indeed a ugly hack!
+ * See also src/modules/perl/mod_perl.c for modperl_ugly_hack
+ * If we don't build such a list of exported API functions, the over-zealous
+ * linker can and will remove the unused functions completely. In order to
+ * avoid this, we create this object and modperl_ugly_hack to create a 
+ * dependency between all the exported API and mod_perl.c
+ */
+const void *modperl_ugly_hack = NULL;
+EOF
+
+    for my $entry (@$ModPerl::FunctionTable) {
+        next if $self->func_is_static($entry);
+        ( my $name ) = $entry->{name} =~ /^modperl_(.*)/;
+        print $fh "const void *modperl_hack_$name = (const void *)modperl_$name;\n";
+    }
+}
+
 1;
 __END__
