@@ -649,12 +649,8 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
                        (unsigned long)filter->bucket);
         }
         else {
-            MP_TRACE_f(MP_FUNC,
-                       MP_FILTER_NAME_FORMAT
-                       "read in: apr_bucket_read error: %s\n",
-                       MP_FILTER_NAME(filter->f),
-                       modperl_error_strerror(aTHX_ filter->rc));
-            return len;
+            SvREFCNT_dec(buffer);
+            modperl_croak(aTHX_ filter->rc, "Apache::Filter::read");
         }
 
         if (buf_len) {
@@ -692,32 +688,28 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
     apr_size_t len = 0;
 
     if (!filter->bb_in) {
-        apr_status_t rc;
         /* This should be read only once per handler invocation! */
         filter->bb_in = apr_brigade_create(filter->pool,
                                            filter->f->c->bucket_alloc);
-        rc = ap_get_brigade(filter->f->next, filter->bb_in,
-                            filter->input_mode, filter->block,
-                            filter->readbytes);
-        if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
-            modperl_croak(aTHX_ rc, "Apache::Filter::read"); 
-        }
         MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                    "retrieving bb: 0x%lx\n",
                    MP_FILTER_NAME(filter->f),
                    (unsigned long)(filter->bb_in));
+        MP_RUN_CROAK(ap_get_brigade(filter->f->next, filter->bb_in,
+                                    filter->input_mode, filter->block,
+                                    filter->readbytes),
+                     "Apache::Filter::read");
     }
 
     len = modperl_filter_read(aTHX_ filter, buffer, wanted);
 
-/*     if (APR_BRIGADE_EMPTY(filter->bb_in)) { */
-/*         apr_brigade_destroy(filter->bb_in); */
-/*         filter->bb_in = NULL; */
-/*     } */
-
     if (filter->flush && len == 0) {
         /* if len > 0 then $filter->write will flush */
-        modperl_input_filter_flush(filter);
+        apr_status_t rc = modperl_input_filter_flush(filter);
+        if (rc != APR_SUCCESS) {
+            SvREFCNT_dec(buffer);
+            modperl_croak(aTHX_ rc, "Apache::Filter::read");
+        }
     }
 
     return len;
@@ -734,7 +726,11 @@ MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
     
     if (filter->flush && len == 0) {
         /* if len > 0 then $filter->write will flush */
-        MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
+        apr_status_t rc = modperl_output_filter_flush(filter);
+        if (rc != APR_SUCCESS) {
+            SvREFCNT_dec(buffer);
+            modperl_croak(aTHX_ rc, "Apache::Filter::read");
+        }
     }
 
     return len;
@@ -1158,7 +1154,9 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
         if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER && handler->next) {
             int status = modperl_run_filter_init(f, mode, handler->next);
             if (status != OK) {
-                /* XXX */
+                modperl_croak(aTHX_ status, strEQ("InputFilter", type)
+                              ? "Apache::Filter::add_input_filter"
+                              : "Apache::Filter::add_output_filter");
             }
         }
         

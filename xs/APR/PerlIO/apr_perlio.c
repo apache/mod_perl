@@ -134,6 +134,9 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
                path ? path : "(UNKNOWN)", rc);
 
     if (rc != APR_SUCCESS) {
+        /* it just so happens that since $! is tied to errno, we get
+         * it set right via the system call that apr_file_open has
+         * performed internally, no need to do anything special */
         PerlIO_pop(aTHX_ f);
         return NULL;
     }
@@ -144,7 +147,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
 
 static IV PerlIOAPR_fileno(pTHX_ PerlIO *f)
 {
-    /* apr_file_t* is an opaque struct, so fileno is not available
+    /* apr_file_t* is an opaque struct, so fileno is not available.
      * -1 in this case indicates that the layer cannot provide fileno
      */
     return -1;
@@ -190,8 +193,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
         return count;
     }
     else if (rc != APR_SUCCESS) {
-        Perl_croak(aTHX_ "failed to read from file: %s",
-                   modperl_error_strerror(aTHX_ rc));
+        modperl_croak(aTHX_ rc, "APR::PerlIO::read");  
     }
 
     return count;

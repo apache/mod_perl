@@ -60,7 +60,8 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
     MP_START_TIMES();
 
     MP_CHECK_WBUCKET_INIT("$r->puts");
-    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
+    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
+                    "Apache::RequestIO::puts");
 
     MP_END_TIMES();
     MP_PRINT_TIMES("r->puts");
@@ -88,7 +89,8 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     rcfg = modperl_config_req_get(r);
 
     MP_CHECK_WBUCKET_INIT("$r->print");
-    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
+    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
+                    "Apache::RequestIO::print");
     
     mpxs_output_flush(r, rcfg);
     
