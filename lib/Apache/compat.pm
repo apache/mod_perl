@@ -589,7 +589,8 @@ sub tmpfile {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
         my $fh = $class->new;
 
-        sysopen($fh, $tmpfile, $Mode, $Perms);
+        sysopen $fh, $tmpfile, $Mode, $Perms
+            or die "failed to open $tmpfile: $!";
         $r->pool->cleanup_register(sub { unlink $tmpfile });
 
         if ($fh) {
