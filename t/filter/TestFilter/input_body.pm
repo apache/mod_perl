@@ -23,18 +23,20 @@ sub handler : FilterRequestHandler {
         }
     }
 
-    for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
+    while (!$bb->empty) {
+        my $bucket = $bb->first;
         my $data;
         my $status = $bucket->read($data);
 
         $bucket->remove;
+
         if ($data) {
-            $bb->insert_tail(APR::Bucket->new(scalar reverse $data));
+            $bucket = APR::Bucket->new(scalar reverse $data);
         }
-        else {
-            #maintain EOS bucket
-            $bb->insert_tail($bucket);
-        }
+
+        $bb->insert_tail($bucket);
+
+        last if $bucket->is_eos;
     }
 
     Apache::OK;
