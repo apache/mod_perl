@@ -76,6 +76,10 @@ __END__
     <IfDefine PERL_USEITHREADS>
         # a new interpreter pool
         PerlOptions +Parent
+        PerlInterpStart         1
+        PerlInterpMax           1
+        PerlInterpMinSpare      1
+        PerlInterpMaxSpare      1
     </IfDefine>
 
     # use test system's @INC

@@ -1,3 +1,33 @@
+# The following tests require more then 1 interpreters during the same
+# request:
+#
+# perls  Test
+# ----------- 
+#     2  t/modules/apache_status
+#     2  t/filter/both_str_req_proxy
+#     2  t/modules/proxy
+#
+# the following tests will clone a new perl interpreter via
+# ithreads.pm regardless of how many interpreters mod_perl has:
+#
+# t/perl/ithreads
+# t/perl/ithreads2
+#
+# therefore we need at most 2 interpreters, the missing one loading on
+# demand, but we start only with 1, so the startup is quick,
+# especially since we immediately restart. We also want MaxSpare to be
+# the same as Max, since we have more than one test that requires more
+# than one interpreter, so don't waste time to kill and start a new
+# one later -- keep it around once spawned
+#
+# Adjust PerlInterpMax and PerlInterpMaxSpare if the requirements change
+<IfDefine PERL_USEITHREADS>
+    PerlInterpStart         1
+    PerlInterpMax           2
+    PerlInterpMinSpare      1
+    PerlInterpMaxSpare      2
+</IfDefine>
+
 # make sure that we test under Taint and warnings mode enabled
 PerlSwitches -wT
 

@@ -1,5 +1,14 @@
 #this file will be Include-d by @ServerRoot@/httpd.conf
 
+# Adjust PerlInterpMax and PerlInterpMaxSpare if the requirements change
+# at the moment all tests require only 1 interprter
+<IfDefine PERL_USEITHREADS>
+    PerlInterpStart         1
+    PerlInterpMax           1
+    PerlInterpMinSpare      1
+    PerlInterpMaxSpare      1
+</IfDefine>
+
 # make sure that we test under Taint and warnings mode enabled
 PerlSwitches -wT
 
