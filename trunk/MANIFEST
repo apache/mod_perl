@@ -122,6 +122,7 @@ t/modules/src.t
 t/modules/stage.t
 t/modules/status.t
 t/modules/symbol.t
+t/modules/module.t
 t/internal/api.t
 t/internal/auth.t
 t/internal/croak.t
@@ -138,6 +139,7 @@ t/internal/stacked.t
 #t/internal/resolver.t
 t/internal/taint.t
 t/internal/tie.t
+t/net/perl/module.pl
 t/net/perl/file.pl
 t/net/perl/log.pl
 t/net/perl/uri.pl
