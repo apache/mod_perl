@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+only perl_section_self_boot() if an %Apache::ReadConfig:: entry is defined()
+this fixes a bug spotted by Eric Cholet where a startup file
+subroutine that accessed %Apache::ReadConfig:: would trigger a
+self-boot wipe-out
+
 add Perl/$] to Server: header if $Apache::Server::AddPerlVersion is true
 
 fixed refcnt bug in $r->current_callback

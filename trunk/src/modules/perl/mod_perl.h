@@ -1084,6 +1084,9 @@ void perl_stdout2client(request_rec *r);
 
 /* perl_config.c */
 
+#define defined_Apache__ReadConfig \
+SvTRUE(perl_eval_pv("grep {defined %$_ or defined @$_ or defined $$_} keys %Apache::ReadConfig::;",TRUE))
+
 char *mod_perl_auth_name(request_rec *r, char *val);
 
 module *perl_get_module_ptr(char *name, int len);
