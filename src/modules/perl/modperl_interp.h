@@ -33,12 +33,6 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
 apr_status_t modperl_interp_pool_destroy(void *data);
 
-void modperl_interp_pool_add(modperl_interp_pool_t *mip,
-                             modperl_interp_t *interp);
-
-void modperl_interp_pool_remove(modperl_interp_pool_t *mip,
-                                modperl_interp_t *interp);
-
 typedef apr_status_t (*modperl_interp_mip_walker_t)(pTHX_ 
                                                     modperl_interp_pool_t *mip,
                                                     void *data);
