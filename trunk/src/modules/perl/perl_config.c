@@ -209,6 +209,9 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
 
     array_header *vars = (array_header *)base->vars;
 
+    new->location = add->location ? 
+        add->location : base->location;
+
     /* XXX: what triggers such a condition ?*/
     if(vars && (vars->nelts > 100000)) {
 	fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
@@ -287,6 +290,7 @@ void *perl_create_dir_config (pool *p, char *dirname)
     perl_dir_config *cld =
 	(perl_dir_config *)palloc(p, sizeof (perl_dir_config));
 
+    cld->location = pstrdup(p, dirname);
     cld->vars = make_table(p, 5); 
     cld->env  = make_table(p, 5); 
     cld->flags = MPf_ENV;

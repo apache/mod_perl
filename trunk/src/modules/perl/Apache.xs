@@ -1814,6 +1814,20 @@ query_string(r, ...)
   
 #  void *per_dir_config;		/* Options set in config files, etc. */
 
+char *
+location(r)
+    Apache  r
+
+    CODE:
+    if(r->per_dir_config) {				   
+	dPPDIR;
+        RETVAL = cld->location;
+    }
+    else XSRETURN_UNDEF;
+
+    OUTPUT:
+    RETVAL
+
 SV *
 dir_config(r, key=NULL, ...)
     Apache  r
