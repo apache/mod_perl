@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 50;
+my $tests = 53;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -49,6 +49,8 @@ test ++$i, $r->filename eq $0;
 test ++$i, -d $Apache::Server::CWD;
 print "\$Apache::Server::CWD == $Apache::Server::CWD\n";
 print "\$0 == $0\n";
+test ++$i, not $Apache::Server::Starting;
+test ++$i, not $Apache::Server::ReStarting;
 
 unless ($is_win32) {
   my $ft_s = -s $INC{'Apache.pm'};
@@ -150,6 +152,12 @@ for (my $srv = $r->server; $srv; $srv = $srv->next) {
 my $str = "ok $i\n";
 $r->print(\$str);
 
+test ++$i, $r->define("FOO") || 1; #just make sure we can call it
+for (qw(TEST NOCHANCE)) {
+    if(Apache->define($_)) {
+	print "IfDefine $_\n";
+    }
+}
 test ++$i, $r->module("Apache");
 test ++$i, not Apache->module("Not::A::Chance");
 test ++$i, Apache->module("Apache::Constants");

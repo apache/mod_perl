@@ -278,6 +278,24 @@ unsigned get_server_port(const request_rec *r)
     (r->hostname ? r->hostname : r->server->server_hostname) 
 #endif
 
+#if MODULE_MAGIC_NUMBER >= MMN_131
+static int mod_perl_define(SV *sv, char *name)
+{
+    char **defines;
+    int i;
+
+    defines = (char **)ap_server_config_defines->elts;
+    for (i = 0; i < ap_server_config_defines->nelts; i++) {
+        if (strcmp(defines[i], name) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+#else
+#define mod_perl_define(sv,name) 0
+#endif
+
 static int sv_str_header(void *arg, const char *k, const char *v)
 {
     SV *sv = (SV*)arg;
@@ -425,6 +443,11 @@ mod_perl_stash_rgy_endav(r, sv=APACHE_REGISTRY_CURSTASH)
 
     CODE:
     perl_stash_rgy_endav(r->uri, sv);
+
+I32
+mod_perl_define(sv, name)
+    SV *sv
+    char *name
 
 I32
 module(sv, name)

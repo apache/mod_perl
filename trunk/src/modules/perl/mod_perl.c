@@ -433,6 +433,15 @@ static void mp_dso_unload(void *data)
 } 
 #endif
 
+static void mp_server_notstarting(void *data) 
+{
+    Apache__ServerStarting(FALSE);
+}
+
+#define Apache__ServerStarting_on() \
+    Apache__ServerStarting(PERL_RUNNING()); \
+    register_cleanup(p, NULL, mp_server_notstarting, mod_perl_noop) 
+
 #define MP_APACHE_VERSION 1.25
 
 void mp_check_version(void)
@@ -518,6 +527,7 @@ void perl_startup (server_rec *s, pool *p)
     else if(perl_is_running < PERL_DONE_STARTUP) {
 	/* skip the -HUP at server-startup */
 	perl_is_running++;
+	Apache__ServerStarting_on();
 	MP_TRACE_g(fprintf(stderr, "perl_startup: perl aleady running...ok\n"));
 	return;
     }
@@ -611,7 +621,7 @@ void perl_startup (server_rec *s, pool *p)
     (void)GvHV_init("mod_perl::UNIMPORT");
 
     Apache__ServerReStarting(FALSE); /* just for -w */
-    Apache__ServerStarting(PERL_RUNNING());
+    Apache__ServerStarting_on();
 
 #ifdef PERL_STACKED_HANDLERS
     if(!stacked_handlers) {
@@ -651,7 +661,6 @@ void perl_startup (server_rec *s, pool *p)
 			   "mod_perl: PerlModule,PerlRequire postponed\n"));
 	my_setenv("PERL_STARTUP_DONE", "1");
 	saveINC;
-	Apache__ServerStarting(FALSE);
 	return;
     }
 
@@ -687,7 +696,6 @@ void perl_startup (server_rec *s, pool *p)
 #endif
 
     saveINC;
-    Apache__ServerStarting(FALSE);
 #if MODULE_MAGIC_NUMBER >= MMN_130
     if(perl_module.dynamic_load_handle) 
 	register_cleanup(p, NULL, mp_dso_unload, null_cleanup); 
