@@ -25,3 +25,12 @@ mpxs_Apache__RequestRec_send_http_header(request_rec *r, const char *type)
 
     rcfg->wbucket->header_parse = 0; /* turn off PerlOptions +ParseHeaders */
 }
+
+static MP_INLINE void
+mpxs_Apache__RequestRec_set_last_modified(request_rec *r, apr_time_t mtime)
+{
+    if (mtime) {
+        ap_update_mtime(r, mtime);
+    }
+    ap_set_last_modified(r);
+}
