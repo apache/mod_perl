@@ -36,7 +36,6 @@ VV src/docs/2.0/api/Apache/RequestIO.pod
 VP src/docs/2.0/api/Apache/RequestRec.pod
         allowed_methods
         allowed_xmethods
-        canonical_filename
         content_languages (was in mp1, need to implement APR::ArrayHeader )
         request_config
         used_path_info
