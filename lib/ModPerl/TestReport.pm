@@ -99,4 +99,7 @@ sub package2filename {
     return $package;
 }
 
+sub report_to { 'modperl@perl.apache.org' }
+
+
 1;
