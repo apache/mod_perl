@@ -81,6 +81,9 @@
 #define perl_free(host)
 #endif
 
+#ifndef MOD_PERL_STRING_VERSION
+#include "mod_perl_version.h"
+#endif
 #ifndef MOD_PERL_VERSION
 #define MOD_PERL_VERSION "TRUE"
 #endif
