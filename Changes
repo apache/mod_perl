@@ -10,6 +10,18 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+pass the PATH and TZ environment variables at startup by default as 1.xx did
+
+fix ModPerl::Util::exit segv with 5.6.0
+
+no longer support 5.7.x perl development versions
+
+added compat for Apache::Table->new
+
+various fixes to compile/run on darwin
+
+server-scope Perl{Set,Pass}Env config now propagated to %ENV at startup
+
 use SvOK(sv) instead of sv == &PL_sv_undef to detect undef values in xs
 [Stephen Clouse <stephenc@theiqgroup.com>]
 
