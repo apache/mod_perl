@@ -312,7 +312,6 @@ sub status_data_dump {
     my($r, $q) = @_;
 
     my($name, $type) = (split "/", $r->uri)[-2,-1];
-    my $script = $q->script_name;
 
     no strict 'refs';
     my @retval = "Data Dump of $name $type <pre>\n";
@@ -336,17 +335,21 @@ sub status_cv_dump {
 
     no strict 'refs';
     my($name, $type) = (split "/", $r->uri)[-2,-1];
+    # could be another child, which doesn't have this symbol table?
+    return unless *$name{CODE}; 
+
     my @retval = "Subroutine info for <b>$name</b> <pre>\n";
-    my $script = $q->script_name;
     my $obj    = B::svref_2object(*$name{CODE});
     my $file   = cv_file($obj);
     my $stash  = $obj->GV->STASH->NAME;
+    my $script = $r->location;
 
     push @retval, "File: ", 
         (-e $file ? qq(<a href="file:$file">$file</a>) : $file), "\n";
 
     my $cv    = $obj->GV->CV;
     my $proto = $cv->PV if $cv->can('PV');
+
     push @retval, qq(Package: <a href="$script?$stash">$stash</a>\n);
     push @retval, "Line: ",      $obj->GV->LINE, "\n";
     push @retval, "Prototype: ", $proto || "none", "\n";
@@ -376,7 +379,7 @@ sub b_graph_link {
     return unless eval { require B::Graph };
 
     B::Graph->UNIVERSAL::VERSION('0.03');
-    my $script = $q->script_name;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_graph">OP Tree Graph</a>\n);
 }
 
@@ -386,7 +389,7 @@ sub b_lexinfo_link {
     return unless status_config($r, "StatusLexInfo");
     return unless eval { require B::LexInfo };
 
-    my $script = $q->script_name;
+    my $script = $q->location;
     return qq(\n<a href="$script/$name?noh_b_lexinfo">Lexical Info</a>\n);
 }
 
@@ -411,7 +414,7 @@ sub b_terse_link {
     return unless status_config($r, "StatusTerse");
     return unless eval { require B::Terse };
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     my @retval;
     for (qw(exec slow)) {
 	my $exp = "$b_terse_exp{$_} order";
@@ -440,7 +443,7 @@ sub b_terse_size_link {
     return unless status_config($r, "StatusTerseSize");
     return unless eval { require B::TerseSize };
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     my @retval;
     for (qw(exec slow)) {
 	my $exp = "$b_terse_exp{$_} order";
@@ -471,7 +474,7 @@ sub b_package_size_link {
     return unless status_config($r, "StatusPackageSize");
     return unless eval { require B::TerseSize };
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     qq(<a href="$script/$name?noh_b_package_size">Memory Usage</a>\n);
 }
 
@@ -485,7 +488,7 @@ sub noh_b_package_size {
 
     no strict 'refs';
     my($package) = (split "/", $r->uri)[-1];
-    my $script = $q->script_name;
+    my $script = $r->location;
     $r->print("Memory Usage for package $package\n\n");
     my($subs, $opcount, $opsize) = B::TerseSize::package_size($package);
     $r->print("Totals: $opsize bytes | $opcount OPs\n\n");
@@ -525,7 +528,7 @@ sub b_deparse_link {
     return unless eval { require B::Deparse };
     return unless $B::Deparse::VERSION >= 0.59;
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_deparse">Deparse</a>\n);
 }
 
@@ -549,7 +552,7 @@ sub b_fathom_link {
     return unless eval { require B::Fathom };
     return unless $B::Fathom::VERSION >= 0.05;
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_fathom">Fathom Score</a>\n);
 }
 
@@ -571,7 +574,7 @@ sub peek_link {
     return unless status_config($r, "StatusPeek");
     return unless $is_installed{"Apache::Peek"};
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name/$type?noh_peek">Peek Dump</a>\n);
 }
 
@@ -592,7 +595,7 @@ sub xref_link {
 
     return unless $is_installed{"B::Xref"};
 
-    my $script = $q->script_name;
+    my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_xref">Cross Reference Report</a>\n);
 }
 
