@@ -11,12 +11,12 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use Apache::compat ();
-use Apache::Constants qw(OK DIR_MAGIC_TYPE);
+use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 8;
+    plan $r, tests => 11;
 
     $r->send_http_header('text/plain');
 
@@ -42,8 +42,20 @@ sub handler {
     Apache::log_error("Apache::log_error test ok");
     ok 1;
 
+    # explicitly imported
     ok t_cmp("httpd/unix-directory", DIR_MAGIC_TYPE,
              'DIR_MAGIC_TYPE');
+
+    # :response is ignored, but is now aliased in :common
+    ok t_cmp("302", REDIRECT,
+             'REDIRECT');
+
+    # from :common
+    ok t_cmp("401", AUTH_REQUIRED,
+             'AUTH_REQUIRED');
+
+    ok t_cmp("0", OK,
+             'OK');
 
     my $admin = $r->server->server_admin;
     Apache->httpd_conf('ServerAdmin foo@bar.com');
