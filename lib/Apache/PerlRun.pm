@@ -28,6 +28,12 @@ sub new {
     return bless {r=>$r}, $class;
 }
 
+sub xlog_error {
+    my($r, $msg) = @_;
+    $r->log_error($msg);
+    $r->notes('error-notes', $msg);
+}
+
 sub can_compile {
     my($pr) = @_;
     my $r = $pr->{r};
@@ -52,7 +58,7 @@ sub can_compile {
 	$pr->{'mtime'} = -M _;
 	return wantarray ? (OK, $pr->{'mtime'}) : OK;
     }
-    $r->log_error("$filename not found or unable to stat");
+    xlog_error($r, "$filename not found or unable to stat");
     return NOT_FOUND;
 }
 
@@ -139,7 +145,7 @@ sub run {
     }
 
     if($errsv) {
-	$r->log_error($errsv);
+	xlog_error($r, $errsv);
 	return SERVER_ERROR;
     }
 
@@ -211,6 +217,7 @@ sub error_check {
     my $pr = shift;
     if ($@ and substr($@,0,4) ne " at ") {
 	$pr->{r}->log_error("PerlRun: `$@'");
+	$pr->{r}->notes('error-notes', $@);
 	$@{$pr->{r}->uri} = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return SERVER_ERROR;
