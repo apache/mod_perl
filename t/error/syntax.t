@@ -11,7 +11,7 @@ my $location = "/TestError__syntax";
 my $res = GET($location);
 #t_debug($res->content);
 ok t_cmp(
-    500,
     $res->code,
+    500,
     "500 error on syntax error",
    );
