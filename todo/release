@@ -4,24 +4,6 @@
 
 -- see also todo/api_status
 
-* problems to start the test suite
-  1) if the apxs/httpd is not passed as an argument
-    - in this case the user is prompted for the source dir, not
-      apxs/httpd location, so when we reach the test phase we don't
-      know where the httpd binary is
-    solution: ask for httpd/apxs first? and if not found then ask for
-    the source?
-    http://thread.gmane.org/gmane.comp.apache.mod-perl/15502
-
-  2) like 1, but if the binary doesn't exist, mod_perl builds just
-     fine but will fail to run the test suite since httpd binary
-     simply doesn't exist
-     http://thread.gmane.org/gmane.comp.apache.mod-perl.devel/5639
-
-  1+2 are tightly related and should be solved together. the test
-  suite fails to start since it doesn't find APXS values in
-  Apache/BuildConfig.pm
-
 * $r->child_terminate:
   - a must to be able to port Apache::SizeLimit, which is a
     showstopper for many mp1 users wanting to move to mp2.
