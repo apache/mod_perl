@@ -73,12 +73,13 @@ static SV *
 PerlIOApache_getarg(pTHX_ PerlIO *f, CLONE_PARAMS *param, int flags)
 {
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
-    SV *sv = newSV(0);
+    SV *sv;
 
     if (!st->r) {
         Perl_croak(aTHX_ "an attempt to getarg from a stale io handle");
     }
     
+    sv = newSV(0);
     sv_setref_pv(sv, "Apache::RequestRec", (void*)(st->r));
 
     MP_TRACE_o(MP_FUNC, "retrieved request_rec obj: 0x%lx", st->r);
