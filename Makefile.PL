@@ -344,8 +344,9 @@ sub os_check {
 
 sub os_check_hpux {
     my $ccflags = $build->perl_config('ccflags');
+    my $ld = $build->perl_config('ld');
 
-    if ($build->is_dynamic and $Config{ld} eq 'ld') {
+    if ($build->is_dynamic and $ld eq 'ld') {
         unless ($ccflags =~ /\+z/i) {
             $build->phat_warn(<<EOF);
 mod_perl is unlikely to link with your libperl, suggestions:
