@@ -4,12 +4,13 @@ use warnings FATAL => 'all';
 # The Cookie HTTP header can be accessed via $r->headers_in and in certain
 # situations via $ENV{HTTP_COOKIE}.
 #
-# in this test we should be able get the cookie via %ENV,
-# since 'SetHandler perl-script' sets up mod_cgi env var. Moreover
-# adding 'PerlOptions +SetupEnv' adds them at the very first stage used
-# by mod_perl handlers, 'access' in this test. the last sub-test makes
-# sure, that mod_cgi env vars don't persist and are properly re-set at
-# the end of each request
+# 'SetHandler perl-script', combined with 'PerlOptions -SetupEnv', or
+# 'SetHandler modperl' do not populate %ENV with CGI variables.  So in
+# this test we call $r->subprocess_env, which adds them on demand, and
+# we are able to get the cookie via %ENV.
+#
+# the last sub-test makes sure that mod_cgi env vars don't persist 
+# and are properly re-set at the end of each request.
 #
 # since the test is run against the same interpreter we also test that
 # the cookie value doesn't persist if it makes it to %ENV.

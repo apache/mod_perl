@@ -13,6 +13,9 @@ use Apache::Const -compile => 'OK';
 sub access {
     my $r = shift;
 
+    # setup CGI variables early
+    $r->subprocess_env() if $r->args eq 'env';
+
     my($key, $val) = cookie($r);
     my $cookie_is_expected =
         ($r->args eq 'header' or $r->args eq 'env') ? 1 : 0;
@@ -48,7 +51,4 @@ PerlModule          TestModperl::cookie
 PerlInitHandler     Apache::TestHandler::same_interp_fixup
 PerlAccessHandler   TestModperl::cookie::access
 PerlResponseHandler TestModperl::cookie
-# PerlOptions +SetupEnv is needed here, because we want the mod_cgi
-# env to be set at the access phase. without it, perl-script sets it
-# only for the response phase
-PerlOptions +SetupEnv
+PerlOptions -SetupEnv
