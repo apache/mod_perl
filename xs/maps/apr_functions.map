@@ -20,7 +20,14 @@
  apr_rfc822_date
  apr_strftime
  apr_explode_gmt
+ apr_implode_gmt
  apr_explode_localtime
+ apr_explode_time
+
+!MODULE=APR::Date
+ apr_date_checkmask
+ apr_date_parse_http
+ apr_date_parse_rfc
 
 !MODULE=APR::Array
  apr_array_append
@@ -41,6 +48,8 @@ MODULE=APR::Socket
  apr_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
  apr_sendto
  apr_shutdown
+-apr_socket_set_inherit
+-apr_socket_unset_inherit
 
 MODULE=APR::Socket
  apr_socket_close
@@ -75,6 +84,7 @@ MODULE=APR::Brigade
  apr_brigade_write
  apr_brigade_puts
  apr_brigade_putc
+!apr_brigade_cleanup
  mpxs_APR__Brigade_first        #APR_BRIGADE_FIRST
  mpxs_APR__Brigade_last         #APR_BRIGADE_LAST
  mpxs_APR__Brigade_prev         #APR_BUCKET_PREV
@@ -106,7 +116,6 @@ MODULE=APR::Bucket
  !apr_bucket_pool_create
  !apr_bucket_socket_create
  !apr_bucket_transient_create
- !apr_bucket_destroy_notimpl
  !apr_bucket_shared_destroy
  !apr_bucket_eos_make
  !apr_bucket_file_make
@@ -124,9 +133,10 @@ MODULE=APR::Bucket
  !apr_bucket_shared_split
  !apr_bucket_simple_split
  !apr_bucket_simple_copy
+ !apr_bucket_destroy_noop
+ !apr_bucket_setaside_noop
 
 MODULE=APR::Pool
->apr_pool_free_blocks_num_bytes
 -apr_pool_num_bytes | | p, recurse=0 #only available with -DAPR_POOL_DEBUG
  apr_pool_cleanup_for_exec
  apr_pool_clear
@@ -145,6 +155,11 @@ MODULE=APR::Pool
 -apr_palloc
 -apr_pcalloc
 -apr_pmemdup
+ apr_pool_child_cleanup_set
+ apr_pool_get_abort
+ apr_pool_get_parent
+ apr_pool_is_ancestor
+ apr_pool_set_abort
 
 MODULE=APR::Lock
 !apr_lock_child_init
@@ -156,6 +171,9 @@ MODULE=APR::Lock
  apr_lock_data_set
  apr_lock_acquire
  apr_lock_release
+ apr_lock_acquire_rw
+ apr_lock_create_np
+ apr_lock_tryacquire
 
 MODULE=APR::Table
  apr_table_clear
@@ -208,6 +226,15 @@ MODULE=APR::Table
 -apr_file_rename
  apr_file_data_set
  apr_file_perms_set
+-apr_file_flags_get
+-apr_file_open_stdin
+-apr_file_set_inherit
+-apr_file_unset_inherit
+-apr_file_trunc
+ apr_filepath_get
+ apr_filepath_merge
+ apr_filepath_root
+ apr_filepath_set
 
 -MODULE=APR::Finfo
  apr_lstat
@@ -226,6 +253,11 @@ MODULE=APR::Table
  apr_strnatcasecmp
  apr_strnatcmp
 -apr_tokenize_to_argv
+ apr_strfsize
+-apr_strtok
+-apr_itoa
+-apr_ltoa
+-apr_off_t_toa
 
 !MODULE=APR::ProcAttr
  apr_procattr_create
@@ -244,7 +276,6 @@ MODULE=APR::Table
  apr_proc_kill
  apr_proc_wait
  apr_proc_detach
--apr_proc_probe_writable_fds
 -apr_proc_other_child_read
 -apr_proc_other_child_register
 -apr_proc_other_child_unregister
@@ -258,6 +289,15 @@ MODULE=APR::Table
  apr_thread_detach
  apr_thread_exit
  apr_thread_join
+ apr_thread_mutex_create
+ apr_thread_mutex_destroy
+ apr_thread_mutex_lock
+ apr_thread_mutex_trylock
+ apr_thread_mutex_unlock
+ apr_thread_once
+ apr_thread_once_init
+ apr_thread_pool_get
+ apr_thread_yield
 
 -MODULE=APR::ThreadKey
  apr_threadkey_data_get
@@ -284,6 +324,49 @@ MODULE=APR::Table
  apr_dbm_nextkey
  apr_dbm_open
  apr_dbm_store
+
+-MODULE=APR::SDBM
+ apr_sdbm_close
+ apr_sdbm_delete
+ apr_sdbm_fetch
+ apr_sdbm_firstkey
+ apr_sdbm_lock
+ apr_sdbm_nextkey
+ apr_sdbm_open
+ apr_sdbm_rdonly
+ apr_sdbm_store
+ apr_sdbm_unlock
+
+-MODULE=APR::SMS
+ apr_sms_blocks_create
+ apr_sms_calloc
+ apr_sms_cleanup_register
+ apr_sms_cleanup_run
+ apr_sms_cleanup_run_type
+ apr_sms_cleanup_unregister
+ apr_sms_cleanup_unregister_type
+ apr_sms_destroy
+ apr_sms_free
+ apr_sms_get_abort
+ apr_sms_get_identity
+ apr_sms_get_parent
+ apr_sms_is_ancestor
+ apr_sms_lock
+ apr_sms_malloc
+ apr_sms_realloc
+ apr_sms_reset
+ apr_sms_set_abort
+ apr_sms_std_create
+ apr_sms_thread_register
+ apr_sms_thread_unregister
+ apr_sms_threads_create
+ apr_sms_threads_create_ex
+ apr_sms_tracking_create
+ apr_sms_trivial_create
+ apr_sms_trivial_create_ex
+ apr_sms_unlock
+ apr_sms_userdata_get
+ apr_sms_userdata_set
 
 -MODULE=APR::Dir
  apr_dir_close
@@ -312,14 +395,14 @@ MODULE=APR::Lib   PACKAGE=guess
 !MODULE=APR::General
 -apr_initialize
 -apr_terminate
--apr_set_abort
+-apr_terminate2
 
 MODULE=APR::Signal
 -apr_signal
  apr_signal_get_description
 -apr_signal_init
 -apr_setup_signal_thread
--apr_create_signal_thread
+ apr_signal_thread
 
 MODULE=APR::UUID
  apr_uuid_format             | MPXS_ | uuid
@@ -328,20 +411,20 @@ MODULE=APR::UUID
  apr_uuid_DESTROY            |       | uuid
 
 !MODULE=APR::Hook
- apr_hook_generic_get
  apr_hook_deregister_all
- apr_hook_generic_add
  apr_hook_sort_register
 -apr_register_optional_fn
  apr_show_hook
  apr_sort_hooks
+ apr_optional_hook_add
+ apr_optional_hook_get
 
 !MODULE=APR::User
  apr_get_groupname
  apr_get_home_directory
  apr_get_username
- apr_get_user_passwd
  apr_get_userid
+ apr_current_userid
 
 MODULE=APR::NetLib
  apr_gethostname
@@ -377,13 +460,23 @@ PACKAGE=guess
  apr_hash_set
  apr_hash_this
  apr_hash_make
+ apr_hash_overlay
+ apr_hash_pool_get
 
 !MODULE=APR::MD5
+ apr_md5
  apr_md5_encode
  apr_md5_final
  apr_md5_init
  apr_md5_set_xlate
  apr_md5_update
+
+!MODULE=APR::MD4
+ apr_md4
+ apr_md4_final
+ apr_md4_init
+ apr_md4_set_xlate
+ apr_md4_update
 
 !MODULE=APR::SHA1
  apr_sha1_base64
@@ -421,6 +514,7 @@ MODULE=APR::URI
  apr_xml_quote_string
  apr_xml_quote_elem
  apr_xml_insert_uri
+ apr_xml_parse_file
 
 !MODULE=APR::Mmap
  apr_mmap_create
@@ -452,3 +546,7 @@ MODULE=APR::URI
  apr_os_sock_put
  apr_os_thread_put
  apr_os_threadkey_put
+ apr_os_dso_handle_get
+ apr_os_dso_handle_put
+ apr_os_thread_current
+ apr_os_thread_equal
