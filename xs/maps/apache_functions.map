@@ -237,8 +237,8 @@ MODULE=Apache::Filter PACKAGE=guess
 -ap_fflush
  mpxs_Apache__Filter_fflush
 -ap_fputstrs
- int:DEFINE_ap_fputs | | \
-     ap_filter_t *:f, apr_bucket_brigade *:bb, const char *:str
+#int:DEFINE_ap_fputs | | \
+#     ap_filter_t *:f, apr_bucket_brigade *:bb, const char *:str
 -ap_fprintf
 >ap_byterange_filter
 >ap_http_header_filter
