@@ -1369,7 +1369,11 @@ my %perl_config_pm_alias = (
 
 my $mm_replace = join '|', keys %perl_config_pm_alias;
 
-my @perl_config_pm = (values(%perl_config_pm_alias), qw(cc cpprun
+# get rid of dups
+my %perl_config_pm_alias_values = reverse %perl_config_pm_alias;
+my @perl_config_pm_alias_values = keys %perl_config_pm_alias_values;
+
+my @perl_config_pm = (@perl_config_pm_alias_values, qw(cc cpprun
     rm ranlib lib_ext obj_ext cccdlflags lddlflags optimize));
 
 sub mm_replace {
