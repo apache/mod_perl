@@ -10,7 +10,7 @@ use Apache::Response ();
 
 use Apache::Const -compile => qw(FORBIDDEN);
 
-sub access {
+sub handler {
     my $r = shift;
 
     my $how = $r->args || '';
@@ -24,11 +24,10 @@ sub access {
 1;
 __END__
 <NoAutoConfig>
-PerlModule TestAPI::custom_response
 <Location /TestAPI__custom_response>
     AuthName dummy
     AuthType none
-    PerlAccessHandler TestAPI::custom_response::access
+    PerlAccessHandler TestAPI::custom_response
 </Location>
 </NoAutoConfig>
 
