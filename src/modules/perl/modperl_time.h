@@ -1,6 +1,12 @@
 #ifndef MODPERL_TIME_H
 #define MODPERL_TIME_H
 
+#ifdef HZ
+#   define MP_HZ HZ
+#else
+#   define MP_HZ 100
+#endif
+
 #ifdef MP_TRACE
 #define dMP_TIMES \
     struct tms start_time; \
@@ -18,9 +24,9 @@
 #define MP_PRINT_TIMES(label) \
     MP_TRACE_t_do({ \
         double utime = \
-             (double)(end_time.tms_utime - start_time.tms_utime)/HZ; \
+             (double)(end_time.tms_utime - start_time.tms_utime)/MP_HZ; \
         double stime = \
-             (double)(end_time.tms_stime - start_time.tms_stime)/HZ; \
+             (double)(end_time.tms_stime - start_time.tms_stime)/MP_HZ; \
         if (utime || stime) { \
             MP_TRACE_t(MP_FUNC, "%s %5.2f user %5.2f sys\n", \
                        label, utime, stime); \
