@@ -681,8 +681,7 @@ add a new test TestDirective::perlloadmodule2, which performs a more
 evolved merging.  [Stas Bekman]
 
 fix Apache::TestConfigPerl under mod_perl 1.0, need to require
-mod_perl.pm before using $mod_perl::VERSION [Geoffrey Young
-<GYoung@covad.com>]
+mod_perl.pm before using $mod_perl::VERSION [Geoffrey Young]
 
 add an Apache::SIG backcompat stub to Apache::compat [Stas Bekman]
 
@@ -734,7 +733,7 @@ fix parse_args compat method to support non-ascii characters and tr/+/ /
 [Walery Studennikov <despair@sama.ru>]
 
 fix post_connection compat method to behave as it did in 1.x
-[Geoff Young <geoff@modperlcookbook.org>]
+[Geoffrey Young]
 
 add support for setting $r->auth_name and $r->auth_type
 [Philippe M. Chiasson <gozer@cpan.org>]
@@ -822,8 +821,8 @@ tree. [Stas Bekman]
 ModPerl::RegistryCooker syncs with mod_perl 1.0's registry:
  - prototypes defined checks in flush_namespace 
                             [Yair Lenga <yair.lenga@citigroup.com>]
- - set error-notes on error [Geoff Young <geoff@modperlcookbook.org>]
- - preserve status in Registry scripts [Geoff Young <geoff@modperlcookbook.org>]
+ - set error-notes on error [Geoffrey Young]
+ - preserve status in Registry scripts [Geoffrey Young]
 
 apr_table_t is now an opaque type, use apr_table_elts() to get the array
 record [Stas Bekman]
