@@ -52,10 +52,7 @@
 
 #define CORE_PRIVATE
 #include "mod_perl.h"
-
-extern listen_rec *listeners;
-extern int mod_perl_socketexitoption;
-extern int mod_perl_weareaforkedchild;   
+#include "mod_perl_xs.h"
 
 #if defined(PERL_STACKED_HANDLERS) && defined(PERL_GET_SET_HANDLERS)
 
@@ -272,6 +269,13 @@ child_terminate(request_rec *r)
 }
 #endif
 
+static void Apache_terminate_if_done(request_rec *r, int sts)
+{
+#ifndef WIN32
+    if(Apache_exit_is_done(sts)) child_terminate(r);
+#endif
+}
+
 #if MODULE_MAGIC_NUMBER < 19980317
 int basic_http_header(request_rec *r);
 #endif
@@ -308,50 +312,12 @@ server_rec *perl_get_startup_server(void)
     return NULL;
 }
 
-#define TABLE_GET_SET(table, do_taint) \
-if(key == NULL) { \
-    ST(0) = mod_perl_tie_table(table); \
-    XSRETURN(1); \
-} \
-else { \
-    char *val; \
-    if(table && (val = (char *)table_get(table, key))) \
-	RETVAL = newSVpv(val, 0); \
-    else \
-        RETVAL = newSV(0); \
-    if(do_taint) SvTAINTED_on(RETVAL); \
-    if(table && (items > 2)) { \
-	if(ST(2) == &sv_undef) \
-	    table_unset(table, key); \
-	else \
-	    table_set(table, key, SvPV(ST(2),na)); \
-    } \
-}
-
-#define MP_CHECK_REQ(r,f) \
-    if(!r) croak("`%s' called without setting Apache->request!", f)
-
 MODULE = Apache  PACKAGE = Apache   PREFIX = mod_perl_
 
 PROTOTYPES: DISABLE
 
 BOOT:
     items = items; /*avoid warning*/ 
-
-int
-max_requests_per_child(...)
-
-    CODE:
-    items = items; /*avoid warning*/
-    RETVAL = 0;
-#ifdef WIN32
-    croak("Apache->max_requests_per_child not supported under win32!");
-#else
-    RETVAL = max_requests_per_child;
-    warn("use Apache::Globals->max_request_per_child, not Apache->");
-#endif
-    OUTPUT:
-    RETVAL
 
 SV *
 current_callback(r)
@@ -508,81 +474,11 @@ exit(...)
 
     if(!r->connection->aborted)
         rflush(r);
-#ifndef WIN32
-    if((sts == DONE)||
-       ((mod_perl_weareaforkedchild) && (mod_perl_socketexitoption > 1)))  
-        child_terminate(r); /* only 1.3b1+ does this right */
-#endif
+    Apache_terminate_if_done(r,sts);
     perl_call_halt(sts);
 
-# toggle closing of the http socket on fork...
-void 
-forkoption(i)
-    int i;
-
-    CODE: 
-    if ((i<0)||(i>3)) { 
-	croak("Usage: Apache::forkoption(0|1|2|3)"); 
-    }
-    else {
-	mod_perl_socketexitoption = i;
-    } 
-    /* probably SHOULD set weareaforkedchild = 0 if socketexitoption
-     * is set to something that DOESN'T cause a forked child to
-     * actually die on exit, but... 
-     */
-
-# We want the http socket closed
-int 
-fork(...)
-
-    PREINIT:
-    listen_rec *l;
-    static listen_rec *mhl;
-    dSP; dTARGET;
-    int childpid;
-    GV *tmpgv;
-
-    CODE:
-    RETVAL = 0; 
-#ifdef HAS_FORK
-    items = items; 
-    EXTEND(SP,1);
-    childpid = fork();
-
-    if((childpid < 0)) {
-        RETVAL=-1;
-    }
-    else {
-	if(!childpid) {
- 	    if(mod_perl_socketexitoption>1) mod_perl_weareaforkedchild++;
-	    if ((mod_perl_socketexitoption==1) ||
-                (mod_perl_socketexitoption==3)) {
-	        /* So?  I can't get at head_listener...
-	         * (It is a ring anyhow...)
-                 */
-		mhl = listeners;
-		l = mhl;
-
-		do {
-		    if (l->fd > 0) close(l->fd);
-		    l = l->next;
-		} while (l != mhl);
-	    }
-	    if((tmpgv = gv_fetchpv("$", TRUE, SVt_PV)))
-	        sv_setiv(GvSV(tmpgv), (IV)getpid());
-	    hv_clear(pidstatus);
-	}
-	PUSHi(childpid);
-
-	RETVAL = childpid;
-    }
-#else
-    croak("Unsupported function fork");
-#endif
-
-    OUTPUT:
-    RETVAL
+#in case you need Apache::fork
+# INCLUDE: fork.xs
 
 #shutup AutoLoader
 void 
@@ -903,13 +799,6 @@ int
 rflush(r)
     Apache     r
 
-    CODE:
-#if MODULE_MAGIC_NUMBER >= 19970103
-    RETVAL = rflush(r);
-#else
-    RETVAL = bflush(r->connection->client);
-#endif
-
 void
 read_client_block(r, buffer, bufsiz)
     Apache	r
@@ -1213,23 +1102,21 @@ request(self, r=NULL)
 #  conn_rec *connection;
 #  server_rec *server;
 
-void
+Apache::Connection
 connection(r)
     Apache	r
-	
-    PREINIT:
-    char *packname = "Apache::Connection";
-  
-    CODE:
-    ST(0) = sv_newmortal();
-    sv_setref_pv(ST(0), packname, (void*)r->connection);
 
-void
+    CODE:	
+    RETVAL = r->connection;
+
+    OUTPUT:
+    RETVAL
+
+Apache::Server
 server(rsv)
     SV *rsv
 	
     PREINIT:
-    char *packname = "Apache::Server";
     server_rec *s;
     request_rec *r;
 
@@ -1242,8 +1129,10 @@ server(rsv)
 	   croak("Apache->server: no startup server_rec available");
     }
 
-    ST(0) = sv_newmortal();
-    sv_setref_pv(ST(0), packname, (void*)s);
+    RETVAL = s;
+
+    OUTPUT:
+    RETVAL
 
 #  request_rec *next;		/* If we wind up getting redirected,
 #				 * pointer to the request we redirected to.
@@ -1344,10 +1233,7 @@ proxyreq(r, ...)
     Apache   r
 
     CODE:
-    RETVAL = r->proxyreq;
-
-    if(items > 1)
-        r->proxyreq = (int)SvIV(ST(1));
+    get_set_IV(r->proxyreq);
 
     OUTPUT:
     RETVAL
@@ -1387,10 +1273,7 @@ status(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->status;
-
-    if(items > 1)
-        r->status = (int)SvIV(ST(1));
+    get_set_IV(r->status);
 
     OUTPUT:
     RETVAL
@@ -1410,10 +1293,7 @@ status_line(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->status_line;
-
-    if(items > 1)
-        r->status_line = pstrdup(r->pool, (char *)SvPV(ST(1),na));
+    get_set_PV(r->status_line);
 
     OUTPUT:
     RETVAL
@@ -1433,10 +1313,7 @@ method(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->method;
-
-    if(items > 1)
-        r->method = pstrdup(r->pool, (char *)SvPV(ST(1),na));
+    get_set_PV(r->method);
 
     OUTPUT:
     RETVAL
@@ -1446,10 +1323,7 @@ method_number(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->method_number;
-
-    if(items > 1)
-        r->method_number = (int)SvIV(ST(1));
+    get_set_IV(r->method_number);
 
     OUTPUT:
     RETVAL
@@ -1689,10 +1563,7 @@ content_type(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->content_type;
-
-    if(items > 1)
-        r->content_type = pstrdup(r->pool, SvPV(ST(1), na));
+    get_set_PV(r->content_type);
   
     OUTPUT:
     RETVAL
@@ -1702,11 +1573,7 @@ handler(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->handler;
-
-    if(items > 1)
-        r->handler = (ST(1) == &sv_undef) ? 
-	NULL : pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->handler);
   
     OUTPUT:
     RETVAL
@@ -1716,10 +1583,7 @@ content_encoding(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->content_encoding;
-
-    if(items > 1)
-      r->content_encoding = pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->content_encoding);
 
     OUTPUT:
     RETVAL
@@ -1729,10 +1593,7 @@ content_language(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = (char *)r->content_language;
-
-    if(items > 1)
-        r->content_language = pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->content_language);
 
     OUTPUT:
     RETVAL
@@ -1757,10 +1618,7 @@ no_cache(r, ...)
     Apache	r
 
     CODE: 
-    RETVAL = r->no_cache;
-
-    if(items > 1)
-        r->no_cache = (int)SvIV(ST(1));
+    get_set_IV(r->no_cache);
 
     OUTPUT:
     RETVAL
@@ -1776,15 +1634,16 @@ no_cache(r, ...)
 #  char *args;			/* QUERY_ARGS, if any */
 #  struct stat finfo;		/* ST_MODE set to zero if no such file */
 
+void
+mod_perl_finfo(r)
+    Apache r
+
 char *
 uri(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->uri;
-
-    if(items > 1)
-        r->uri = pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->uri);
 
     OUTPUT:
     RETVAL
@@ -1794,14 +1653,12 @@ filename(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->filename;
-
-    if(items > 1) {
-        r->filename = pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->filename);
 #ifndef WIN32
+    if(items > 1)
 	stat(r->filename, &r->finfo);
 #endif
-    }
+
     OUTPUT:
     RETVAL
 
@@ -1810,10 +1667,7 @@ path_info(r, ...)
     Apache	r
 
     CODE:
-    RETVAL = r->path_info;
-
-    if(items > 1)
-        r->path_info = pstrdup(r->pool, SvPV(ST(1),na));
+    get_set_PV(r->path_info);
 
     OUTPUT:
     RETVAL
@@ -1929,237 +1783,3 @@ run(r)
 
     OUTPUT:
     RETVAL
-
-#/* Things which are per connection
-# */
-
-#struct conn_rec {
-
-MODULE = Apache  PACKAGE = Apache::Connection
-
-PROTOTYPES: DISABLE
-
-#  pool *pool;
-#  server_rec *server;
-  
-#  /* Information about the connection itself */
-  
-#  BUFF *client;			/* Connetion to the guy */
-#  int aborted;			/* Are we still talking? */
-  
-#  /* Who is the client? */
-  
-#  struct sockaddr_in local_addr; /* local address */
-#  struct sockaddr_in remote_addr;/* remote address */
-#  char *remote_ip;		/* Client's IP address */
-#  char *remote_host;		/* Client's DNS name, if known.
-#                                 * NULL if DNS hasn't been checked,
-#                                 * "" if it has and no address was found.
-#                                 * N.B. Only access this though
-#				 * get_remote_host() */
-
-int
-aborted(conn)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->aborted || (conn->client && (conn->client->fd < 0));
-
-    OUTPUT:
-    RETVAL
-
-SV *
-local_addr(conn)
-    Apache::Connection        conn
-
-    CODE:
-    RETVAL = newSVpv((char *)&conn->local_addr,
-		     sizeof conn->local_addr);
-
-    OUTPUT:
-    RETVAL
-
-SV *
-remote_addr(conn)
-    Apache::Connection        conn
-
-    CODE:
-    RETVAL = newSVpv((char *)&conn->remote_addr,
-                      sizeof conn->remote_addr);
-
-    OUTPUT:
-    RETVAL
-
-char *
-remote_ip(conn)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->remote_ip;
-
-    OUTPUT:
-    RETVAL
-
-char *
-remote_host(conn)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->remote_host;
-
-    OUTPUT:
-    RETVAL
-
-#  char *remote_logname;		/* Only ever set if doing_rfc931
-#                                 * N.B. Only access this through
-#				 * get_remote_logname() */
-#    char *user;			/* If an authentication check was made,
-#				 * this gets set to the user name.  We assume
-#				 * that there's only one user per connection(!)
-#				 */
-#  char *auth_type;		/* Ditto. */
-
-char *
-remote_logname(conn)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->remote_logname;
-
-    OUTPUT:
-    RETVAL
-
-char *
-user(conn, ...)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->user;
-
-    if(items > 1)
-        conn->user = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
-
-    OUTPUT:
-    RETVAL
-
-char *
-auth_type(conn, ...)
-    Apache::Connection	conn
-
-    CODE:
-    RETVAL = conn->auth_type;
-
-    if(items > 1)
-        conn->auth_type = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
-
-    OUTPUT:
-    RETVAL
-
-#  int keepalive;		/* Are we using HTTP Keep-Alive? */
-#  int keptalive;		/* Did we use HTTP Keep-Alive? */
-#  int keepalives;		/* How many times have we used it? */
-#};
-
-#/* Per-vhost config... */
-
-#struct server_rec {
-
-MODULE = Apache  PACKAGE = Apache::Server
-
-PROTOTYPES: DISABLE
-
-#  server_rec *next;
-  
-#  /* Full locations of server config info */
-  
-#  char *srm_confname;
-#  char *access_confname;
-  
-#  /* Contact information */
-  
-#  char *server_admin;
-#  char *server_hostname;
-#  short port;                    /* for redirects, etc. */
-
-char *
-server_admin(server, ...)
-    Apache::Server	server
-
-    CODE:
-    RETVAL = server->server_admin;
-
-    OUTPUT:
-    RETVAL
-
-char *
-server_hostname(server)
-    Apache::Server	server
-
-    CODE:
-    RETVAL = server->server_hostname;
-
-    OUTPUT:
-    RETVAL
-
-short
-port(server, ...)
-    Apache::Server	server
-
-    CODE:
-    RETVAL = server->port;
-
-    if(items > 1)
-        server->port = (short)SvIV(ST(1));
-
-    OUTPUT:
-    RETVAL
-  
-#  /* Log files --- note that transfer log is now in the modules... */
-  
-#  char *error_fname;
-#  FILE *error_log;
-
-#  /* Module-specific configuration for server, and defaults... */
-
-#  int is_virtual;               /* true if this is the virtual server */
-#  void *module_config;		/* Config vector containing pointers to
-#				 * modules' per-server config structures.
-#				 */
-#  void *lookup_defaults;	/* MIME type info, etc., before we start
-#				 * checking per-directory info.
-#				 */
-#  /* Transaction handling */
-
-#  struct in_addr host_addr;	/* The bound address, for this server */
-#  short host_port;              /* The bound port, for this server */
-#  int timeout;			/* Timeout, in seconds, before we give up */
-#  int keep_alive_timeout;	/* Seconds we'll wait for another request */
-#  int keep_alive_max;		/* Maximum requests per connection */
-#  int keep_alive;		/* Use persistent connections? */
-
-#  char *names;			/* Wildcarded names for HostAlias servers */
-#  char *virthost;		/* The name given in <VirtualHost> */
-
-int
-is_virtual(server)
-    Apache::Server	server
-
-    CODE:
-    RETVAL = server->is_virtual;
-
-    OUTPUT:
-    RETVAL
-
-char *
-names(server)
-    Apache::Server	server
-
-    CODE:
-#if MODULE_MAGIC_NUMBER < 19980305
-    RETVAL = server->names;
-#else
-    RETVAL = ""; /* XXX: fixme */			   
-#endif
-
-    OUTPUT:
-    RETVAL				   

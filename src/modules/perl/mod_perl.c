@@ -535,6 +535,7 @@ void perl_startup (server_rec *s, pool *p)
 
     (void)GvSV_init("Apache::__SendHeader");
     (void)GvSV_init("Apache::__CurrentCallback");
+    (void)GvHV_init("mod_perl::UNIMPORT");
 
     Apache__ServerReStarting(FALSE); /* just for -w */
     Apache__ServerStarting(PERL_RUNNING());
@@ -625,6 +626,7 @@ int perl_handler(request_rec *r)
     dSTATUS;
     dPPDIR;
     dTHR;
+    SV *nwvh = Nullsv;
 
     (void)acquire_mutex(mod_perl_mutex);
     
@@ -647,6 +649,13 @@ int perl_handler(request_rec *r)
 		     (int)sv_count, (int)sv_objcount));
     ENTER;
     SAVETMPS;
+
+    if((nwvh = ApachePerlRun_name_with_virtualhost())) {
+	if(!r->server->is_virtual) {
+	    SAVESPTR(nwvh);
+	    sv_setiv(nwvh, 0);
+	}
+    }
 
     save_hptr(&GvHV(siggv)); 
 

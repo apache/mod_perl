@@ -1,3 +1,6 @@
+#ifndef statcache
+#define statcache PL_statcache
+#endif
 #ifndef rs
 #define rs PL_rs
 #endif

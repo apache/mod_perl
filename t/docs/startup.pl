@@ -7,6 +7,8 @@ BEGIN {
     $Apache::ServerStarting or warn "Server is not starting !?\n";
 }
 
+#no mod_perl qw(Connection Server);
+
 eval {
     require Apache::PerlRunXS;
 }; $@ = '' if $@;
@@ -112,9 +114,12 @@ $MyClass::Object = bless {}, "MyClass";
 
 sub My::child_init {
     my $r = shift;
-    my $s = $r->server;
-    my $sa = $s->server_admin;
-    $s->warn("[notice] child_init for process $$, report any problems to $sa\n");
+    eval {
+      my $s = $r->server;
+      my $sa = $s->server_admin;
+      $s->warn("[notice] child_init for process $$, report any problems to $sa\n");
+    }; $@='' if $@;
+    0;
 }
 
 sub My::child_exit {

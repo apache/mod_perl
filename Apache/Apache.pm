@@ -20,6 +20,8 @@ if (caller eq "CGI::Apache") {
 }
 else {
     if(exists $ENV{MOD_PERL}) {
+      require Apache::Server unless $mod_perl::UNIMPORT{'server'};
+      require Apache::Connection unless $mod_perl::UNIMPORT{'connection'};
 	bootstrap Apache $Apache::VERSION;
     }
     Apache::SIG->set;

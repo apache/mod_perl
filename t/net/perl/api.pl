@@ -18,6 +18,8 @@ $r->subprocess_env; #test void context
 my $is_xs = ($r->uri =~ /_xs/);
 
 my $tests = 46;
+my $is_win32 = WIN32;
+++$tests unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -33,6 +35,14 @@ test ++$i, $r->filename eq $0;
 test ++$i, -d $Apache::Server::CWD;
 print "\$Apache::Server::CWD == $Apache::Server::CWD\n";
 print "\$0 == $0\n";
+
+unless ($is_win32) {
+  my $ft_s = -s $INC{'Apache.pm'};
+  $r->finfo;
+  my $ft_def = -s _;
+  print "Apache.pm == $ft_s, $0 == $ft_def\n";
+  test ++$i, $ft_s != $ft_def;
+}
 
 my $loc = $r->location;
 print "<Location $loc>\n";
