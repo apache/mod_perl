@@ -16,7 +16,7 @@ else {
 %ENV = $r->cgi_env;
 $r->subprocess_env; #test void context
 
-my $tests = 44;
+my $tests = 45;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -32,6 +32,10 @@ test ++$i, $r->filename eq $0;
 test ++$i, -d $Apache::Server::CWD;
 print "\$Apache::Server::CWD == $Apache::Server::CWD\n";
 print "\$0 == $0\n";
+
+my $loc = $r->location;
+print "<Location $loc>\n";
+test ++$i, $loc and $r->uri =~ m:^$loc:;
 
 test ++$i, $r->get_remote_host;
 test ++$i, $r->get_server_port;

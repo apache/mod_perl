@@ -810,6 +810,7 @@ typedef struct {
     U32 flags;
     int SendHeader;
     int SetupEnv;
+    char *location;
 } perl_dir_config;
 
 typedef struct {

@@ -22,6 +22,8 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added $r->location method
+
 Various fixes and improvements to the APACI support:
 
  - Added support for PERL_THREADS to apaci stuff.  

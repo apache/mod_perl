@@ -10,6 +10,7 @@
 #PerlSendHeader On
 #PerlSetupEnv   On
 
+my $r = shift;
 my $sub = "test_$ENV{QUERY_STRING}";
 if (defined &{$sub}) {
     &{$sub};
@@ -23,6 +24,8 @@ else {
 
     print "perlio test...\n";
     print "\$^X is $^X\n" if $^X;
+    my $loc = $r->location;
+    print "<Location $loc>\n";
     my(@args);
 
     if (@args = split(/\+/, $ENV{QUERY_STRING})) {
