@@ -481,13 +481,13 @@ sub generate_trace {
 #define MP_TRACE_OPTS "$opts"
 
 #ifdef MP_TRACE
-#define MP_TRACE_a if ($tl) modperl_trace
-#define MP_TRACE_a_do(exp) if ($tl) { \\
+#define MP_TRACE_any if ($tl) modperl_trace
+#define MP_TRACE_any_do(exp) if ($tl) { \\
 exp; \\
 }
 #else
-#define MP_TRACE_a if (0) modperl_trace
-#define MP_TRACE_a_do(exp)
+#define MP_TRACE_any if (0) modperl_trace
+#define MP_TRACE_any_do(exp)
 #endif
 
 EOF

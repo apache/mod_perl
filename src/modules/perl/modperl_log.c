@@ -74,5 +74,5 @@ void modperl_trace_level_set(server_rec *s, const char *level)
 
     modperl_trace_logfile_set(s->error_log);
 
-    MP_TRACE_a_do(MP_TRACE_dump_flags());
+    MP_TRACE_any_do(MP_TRACE_dump_flags());
 }
