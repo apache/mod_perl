@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 26, \&have_lwp;
+plan tests => 30, todo => [24, 27, 29], \&have_lwp;
 
 my $location = "/TestApache::compat";
 

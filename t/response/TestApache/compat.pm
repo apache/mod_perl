@@ -139,6 +139,9 @@ sub handler {
         ok $r->meets_conditions == Apache::OK;
 
         debug "\$r->set_content_length";
+        # XXX: broken
+        #$r->set_content_length();
+        ok 0;
         $r->set_content_length(10);
         my $cl_header = $r->headers_out->{"Content-length"} || '';
         ok $cl_header == 10;
@@ -149,10 +152,20 @@ sub handler {
         ok 1;
 
         debug "\$r->update_mtime/\$r->mtime";
+        # XXX: broken
+        # $r->update_mtime; # just check that it's valid
+        ok 0;
         my $time = time;
         $r->update_mtime($time);
         ok $r->mtime == $time;
 
+        debug "\$r->set_last_modified";
+        # XXX: broken
+        # $r->set_last_modified($time);
+        ok 0;
+        $time = time;
+        $r->set_last_modified();
+        ok $r->mtime == $time;
     }
 
     Apache::OK;
