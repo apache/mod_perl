@@ -26,6 +26,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 #include "modperl_log.h"
 #include "modperl_options.h"
 #include "modperl_directives.h"
+#include "modperl_io.h"
 #include "modperl_filter.h"
 #include "modperl_pcw.h"
 #include "modperl_mgv.h"
@@ -43,6 +44,7 @@ void xs_init(pTHXo);
 void modperl_response_init(request_rec *r);
 void modperl_response_finish(request_rec *r);
 int modperl_response_handler(request_rec *r);
+int modperl_response_handler_cgi(request_rec *r);
 
 /* betting on Perl*Handlers not using CvXSUBANY
  * mod_perl reuses this field for handler attributes

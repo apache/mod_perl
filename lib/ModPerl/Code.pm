@@ -522,7 +522,7 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
-                     gtop util filter bucket mgv pcw global);
+                     gtop util io filter bucket mgv pcw global);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
