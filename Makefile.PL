@@ -1820,7 +1820,7 @@ sub add_static_ar {
     return unless -d $ar_dir;
 
     finddepth(sub {
-	return unless /\.a$/;
+	return unless /^[A-Z]\w+\.a$/;
 	(my $rel = $File::Find::dir) =~ s:$APACHE_SRC/?::;
 	(my $mod = $rel) =~ s:.*auto/::;
 	$mod =~ s,/,::,;
