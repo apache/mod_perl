@@ -1,7 +1,7 @@
 use Apache::Test ();
 use Apache::TestUtil;
 
-use Apache::TestRequest 'GET_BODY_ASSERT';
+use Apache::TestRequest 'POST_BODY_ASSERT';
 
 my $module = 'TestFilter::in_str_msg';
 
@@ -12,4 +12,4 @@ my $config = Apache::Test::config();
 my $hostport = Apache::TestRequest::hostport($config);
 t_debug("connecting to $hostport");
 
-print GET_BODY_ASSERT "/input_filter.html";
+print POST_BODY_ASSERT "/input_filter.html", content => "upcase me";
