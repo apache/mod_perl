@@ -133,7 +133,7 @@ __END__
 
     <VirtualHost TestModperl::merge>
         # XXX: temp workaround
-        PerlPostReadRequestHandler Apache::OK
+        PerlPostReadRequestHandler 'sub { use Apache::Const qw(DECLINED); DECLINED }'
 
         # these should pass through all merges untouched
         PerlPassEnv  APACHE_TEST_HOSTTYPE
