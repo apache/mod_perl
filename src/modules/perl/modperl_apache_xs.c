@@ -49,7 +49,7 @@ static MP_INLINE void modperl_wbucket_write(modperl_wbucket_t *b,
         modperl_wbucket_pass(b, buf, len);
     }
     else {
-	memcpy(&b->outbuf[b->outcnt], buf, len);
+        memcpy(&b->outbuf[b->outcnt], buf, len);
         b->outcnt += len;
     }
 }
