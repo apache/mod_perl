@@ -10,12 +10,12 @@ use ModPerl::Code ();
 
 our $VERSION;
 
-my $build = Apache::Build->new(debug => 1);
+my $build = Apache::Build->new;
 my $code  = ModPerl::Code->new;
 
 #quick hack until build system is complete
 #e.g.
-#perl Makefile.PL -c -ma (configure and make all)
+#perl Makefile.PL -c -ma MP_DEBUG=1 (configure and 'make all' debug mode)
 #perl Makefile.PL -mc    (make clean)
 {
     use Getopt::Std;
