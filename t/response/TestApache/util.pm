@@ -55,7 +55,7 @@ sub handler {
     Apache::OK;
 }
 
-my $fmtdate_ptn = qr/^\w\w\w, \d\d \w\w\w \d\d\d\d \d\d:\d\d:\d\d/;
+my $fmtdate_ptn = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;
 sub time_cmp {
     my($time, $fmtdate, $comment, $exact_match) = @_;
 
