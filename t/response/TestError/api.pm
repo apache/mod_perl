@@ -19,7 +19,7 @@ sub handler {
     $r->content_type('text/plain');
 
     # PerlOptions -GlobalRequest is in effect
-    eval { Apache->request; };
+    eval { my $gr = Apache->request; };
     ok t_cmp($@, 
              qr/\$r object is not available/,
              "unavailable global $r object");
