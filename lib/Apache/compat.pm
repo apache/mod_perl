@@ -1,0 +1,120 @@
+package Apache::compat;
+
+#1.xx compat layer
+#some of this will stay as-is
+#some will be implemented proper later on
+
+#there's enough here to get simple registry scripts working
+#add to startup.pl:
+#use Apache::compat ();
+#use lib ...; #or something to find 1.xx Apache::Registry
+
+#Alias /perl /path/to/perl/scripts
+#<Location /perl>
+#   Options +ExecCGI
+#   SetHandler modperl
+#   PerlResponseHandler Apache::Registry
+#</Location>
+
+use Apache::RequestRec ();
+use Apache::Connection ();
+use Apache::Server ();
+use Apache::Access ();
+use Apache::RequestIO ();
+use Apache::RequestUtil ();
+
+BEGIN {
+    $INC{'Apache.pm'} = 1;
+
+    $INC{'Apache/Constants.pm'} = 1;
+
+    $ENV{MOD_PERL} = 1;
+}
+
+package Apache;
+
+#XXX: exit,warn
+sub import {
+}
+
+sub untaint {
+}
+
+sub warn {
+}
+
+package Apache::Constants;
+
+use Apache::Const ();
+
+sub import {
+    my $class = shift;
+    my $package = scalar caller;
+    Apache::Const->compile($package => @_);
+}
+
+package Apache::RequestRec;
+
+our $Request;
+
+sub request {
+    my($r, $set) = @_;
+    $Request = $set if $set;
+
+    untie *STDOUT;
+    tie *STDOUT, 'Apache::RequestRec', $r;
+
+    unless (defined &PRINT) {
+        *PRINT = \&puts;
+    }
+
+    $Request;
+}
+
+sub send_http_header {
+    my($r, $type) = @_;
+    if ($type) {
+        $r->content_type($type);
+    }
+}
+
+sub clear_rgy_endav {
+}
+
+sub stash_rgy_endav {
+}
+
+sub seqno {
+    1;
+}
+
+sub chdir_file {
+    #XXX resolve '.' in @INC to basename $r->filename
+}
+
+*print = \&puts;
+
+sub finfo {
+    my $r = shift;
+    stat $r->filename;
+    \*_;
+}
+
+sub log_error {
+    my $r = shift;
+    warn @_, "\n";
+}
+
+*log_reason = \&log_error;
+
+sub slurp_filename {
+    my $r = shift;
+    open my $fh, $r->filename;
+    local $/;
+    my $data = <$fh>;
+    close $fh;
+    return \$data;
+}
+
+1;
+__END__
