@@ -16,7 +16,7 @@ V: done completely
 - the file path is relative to the modperl-docs cvs repository
 #########################################################
 -- src/docs/2.0/api/Apache.pod
--- src/docs/2.0/api/Apache/Access.pod
+VV src/docs/2.0/api/Apache/Access.pod
 -- src/docs/2.0/api/Apache/CmdParms.pod
 -- src/docs/2.0/api/Apache/Command.pod
 +- src/docs/2.0/api/Apache/Connection.pod
