@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Created a META.yml for CPAN and friends, including Apache-Test as
+a private resource to keep CPAN from installing mod_perl when a
+user just wants Apache::Test [Gozer]
+
 Moving HTTP specific functions get_status_line, method_register from
 Apache:: to Apache::RequestUtil:: to match their container [Stas]
 
