@@ -11,6 +11,16 @@ Release:
    
 
 Available Patches:
+
+    * if the requested number of bytes was less
+      than or equal to the available amount of input then the call
+      would be successful, otherwise the buffer would come back
+      undefined. In the case that the requested number of bytes was
+      larger than the available number of bytes, the returned number
+      of bytes would still equal the available number of bytes.
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105903751619552&w=2
+        Status: 
+
     * per_request_cleanup() only cleans up the current request. As one 
       consequence, pnotes of parent requests will not get cleaned up.
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=104176956128093&w=2
