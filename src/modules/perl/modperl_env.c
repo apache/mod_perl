@@ -39,6 +39,18 @@ static const modperl_env_ent_t modperl_env_const_vars[] = {
     { NULL }
 };
 
+void modperl_env_clear(pTHX)
+{
+    HV *hv = ENVHV;
+    U32 mg_flags;
+
+    modperl_env_untie(mg_flags);
+
+    hv_clear(hv);
+
+    modperl_env_tie(mg_flags);
+}
+
 void modperl_env_default_populate(pTHX)
 {
     HV *hv = ENVHV;
