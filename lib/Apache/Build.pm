@@ -919,12 +919,7 @@ sub otherldflags {
     $flags->($self);
 }
 
-#XXX: install *.def / search @INC
-sub otherldflags_MSWin32 {
-    my $self = shift;
-    $self->export_files_MSWin32;
-}
-
+#XXX: install *.exp / search @INC
 sub otherldflags_aix {
     ""; #XXX: -bI:*.exp files
 }
