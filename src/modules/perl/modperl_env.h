@@ -6,11 +6,10 @@
 #endif
 
 #define modperl_env_untie(mg_flags) \
-    mg_flags = SvMAGICAL((SV*)ENVHV); \
-    SvMAGICAL_off((SV*)ENVHV)
+    MP_magical_untie(ENVHV, mg_flags)
 
 #define modperl_env_tie(mg_flags) \
-    SvFLAGS((SV*)ENVHV) |= mg_flags
+    MP_magical_tie(ENVHV, mg_flags)
 
 void modperl_env_clear(pTHX);
 
