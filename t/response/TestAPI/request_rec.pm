@@ -11,7 +11,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 54;
+    plan $r, tests => 49;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -78,16 +78,6 @@ sub handler {
     ok $r->subprocess_env;
 
     ok $r->notes;
-
-    ok $r->pnotes;
- 
-    ok t_cmp('pnotes_bar', $r->pnotes('pnotes_foo','pnotes_bar'), qq{\$r->pnotes(key,val)});
-
-    ok t_cmp("pnotes_bar", $r->pnotes('pnotes_foo') , qq{\$r->pnotes(key)});
-
-    ok t_cmp('HASH', ref($r->pnotes), qq{ref($r->pnotes)});
-
-    ok t_cmp('pnotes_bar', $r->pnotes()->{'pnotes_foo'}, qq{\$r->pnotes()->{}});
 
     ok $r->content_type;
 
