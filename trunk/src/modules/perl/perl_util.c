@@ -259,7 +259,8 @@ void perl_tie_hash(HV *hv, char *pclass, SV *sv)
     dSP;
     SV *obj, *varsv = (SV*)hv;
     char *methname = "TIEHASH";
-    
+    dTHRCTX;
+
     ENTER;
     SAVETMPS;
     PUSHMARK(sp);
@@ -287,6 +288,7 @@ void perl_run_blocks(I32 oldscope, AV *subs)
     STRLEN len;
     I32 i;
     dTHR;
+    dTHRCTX;
 
     for(i=0; i<=AvFILL(subs); i++) {
 	CV *cv = (CV*)*av_fetch(subs, i, FALSE);
@@ -441,6 +443,7 @@ void perl_call_halt(int status)
     struct ufuncs umg;
     int is_http_code = 
 	((status >= 100) && (status < 600) && ERRSV_CAN_BE_HTTP);
+    dTHRCTX;
 
     umg.uf_val = errgv_empty_set;
     umg.uf_set = errgv_empty_set;
@@ -544,6 +547,8 @@ int perl_require_module(char *name, server_rec *s)
 {
     dTHR;
     SV *sv = sv_newmortal();
+    dTHRCTX;
+
     sv_setpvn(sv, "require ", 8);
     MP_TRACE_d(fprintf(stderr, "loading perl module '%s'...", name)); 
     sv_catpv(sv, name);
@@ -695,8 +700,11 @@ void mod_perl_init_ids(void)  /* $$, $>, $), etc */
 
 int perl_eval_ok(server_rec *s)
 {
+    SV *sv;
     dTHR;
-    SV *sv = ERRSV;
+    dTHRCTX;
+
+    sv = ERRSV;
     if(SvTRUE(sv)) {
 	MP_TRACE_g(fprintf(stderr, "perl_eval error: %s\n", SvPV(sv,na)));
 	mod_perl_error(s, SvPV(sv, na));
