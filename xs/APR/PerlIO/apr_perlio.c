@@ -4,9 +4,8 @@
 #include "apr_perlio.h"
 
 /* XXX: prerequisites to have things working
- * open(): perl 5.7.2 patch 13534 is required
+ * pTHX_: perl 5.7.2 patch 13809 is required
  * dup() : apr cvs date: 2001/12/06 13:43:45
- * tell(): the patch isn't in yet.
  *
  * XXX: it's not enough to check for PERLIO_LAYERS, some functionality
  * and bug fixes were added only in the late 5.7.2, whereas
@@ -30,7 +29,7 @@ typedef struct {
  * popped without being closed if the program is dynamically managing
  * layers on the stream.
  */
-static IV PerlIOAPR_popped(PerlIO *f)
+static IV PerlIOAPR_popped(pTHX_ PerlIO *f)
 {
     /* PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR); */
 
@@ -92,7 +91,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     return f;
 }
 
-static IV PerlIOAPR_fileno(PerlIO *f)
+static IV PerlIOAPR_fileno(pTHX_ PerlIO *f)
 {
     /* apr_file_t* is an opaque struct, so fileno is not available */
     /* XXX: this -1 workaround should be documented in perliol.pod */
@@ -124,13 +123,12 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
  * process happens a char by char. Need to find a way to snoop on APR
  * read buffer from PerlIO, or implement our own buffering layer here
  */
-static SSize_t PerlIOAPR_read(PerlIO *f, void *vbuf, Size_t count)
+static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
-    dTHX; /* XXX: change Perl so this function has a pTHX_ prototype */
-    
-    /* fprintf(stderr, "in  read: count %d, %s\n",
+
+    /* fprintf(stderr, "in  read: count %d, %s\n", 
        (int)count, (char*) vbuf); */
     rc = apr_file_read(st->file, vbuf, &count);
     /* fprintf(stderr, "out read: count %d, %s\n",
@@ -142,7 +140,7 @@ static SSize_t PerlIOAPR_read(PerlIO *f, void *vbuf, Size_t count)
     return (SSize_t) -1;
 }
 
-static SSize_t PerlIOAPR_write(PerlIO *f, const void *vbuf, Size_t count)
+static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
@@ -157,7 +155,7 @@ static SSize_t PerlIOAPR_write(PerlIO *f, const void *vbuf, Size_t count)
     return (SSize_t) -1;
 }
 
-static IV PerlIOAPR_seek(PerlIO *f, Off_t offset, int whence)
+static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_seek_where_t where;
@@ -189,7 +187,7 @@ static IV PerlIOAPR_seek(PerlIO *f, Off_t offset, int whence)
     return -1;
 }
 
-static Off_t PerlIOAPR_tell(PerlIO *f)
+static Off_t PerlIOAPR_tell(pTHX_ PerlIO *f)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_off_t offset = 0;
@@ -203,10 +201,10 @@ static Off_t PerlIOAPR_tell(PerlIO *f)
     return (Off_t) -1;
 }
 
-static IV PerlIOAPR_close(PerlIO *f)
+static IV PerlIOAPR_close(pTHX_ PerlIO *f)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
-    IV code = PerlIOBase_close(f);
+    IV code = PerlIOBase_close(aTHX_ f);
     apr_status_t rc;
 
     const char *new_path;
@@ -226,7 +224,7 @@ static IV PerlIOAPR_close(PerlIO *f)
     return code;
 }
 
-static IV PerlIOAPR_flush(PerlIO *f)
+static IV PerlIOAPR_flush(pTHX_ PerlIO *f)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
@@ -239,12 +237,12 @@ static IV PerlIOAPR_flush(PerlIO *f)
     return -1;
 }
 
-static IV PerlIOAPR_fill(PerlIO *f)
+static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
 {
     return -1;
 }
 
-static IV PerlIOAPR_eof(PerlIO *f)
+static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
