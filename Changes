@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+pass $Config{ccflags} to apache for 5.6.0+
+
 fix Apache->httpd_conf, thanks to Will Trillich for the spot
 
 fixed 'make clean' to remove FILES => passed to MakeMaker
