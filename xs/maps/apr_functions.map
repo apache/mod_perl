@@ -72,6 +72,7 @@ MODULE=APR::Socket
 -apr_socket_sendfile
 -apr_socket_sendv
 !apr_socket_from_file
+ mpxs_APR__Socket_poll
 
 MODULE=APR::SockAddr
 !apr_sockaddr_info_get

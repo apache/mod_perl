@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Introduce APR::Socket::poll to poll a non-blocking socket [Ken Simpson
+<ksimpson@larch.mailchannels.com>]
+
 Fix the error message when the minimal required httpd version is not
 satisfied [Pratik <pratiknaik@gmail.com>]
 

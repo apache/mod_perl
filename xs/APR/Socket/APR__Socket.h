@@ -96,3 +96,22 @@ void mpxs_APR__Socket_opt_set(pTHX_ apr_socket_t *socket, apr_int32_t opt,
     MP_RUN_CROAK(apr_socket_opt_set(socket, opt, val),
                  "APR::Socket::opt_set");
 }
+
+static MP_INLINE
+apr_status_t mpxs_APR__Socket_poll(apr_socket_t *socket,
+                                   apr_pool_t *pool,
+                                   apr_interval_time_t timeout,
+                                   apr_int16_t reqevents)
+{
+    apr_pollfd_t fd;
+    apr_int32_t nsds;
+    
+    /* what to poll */
+    fd.p         = pool;
+    fd.desc_type = APR_POLL_SOCKET;
+    fd.desc.s    = socket;
+    fd.reqevents = reqevents;
+    fd.rtnevents = 0; /* XXX: not really necessary to set this */
+    
+    return apr_poll(&fd, 1, &nsds, timeout);
+}
