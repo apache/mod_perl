@@ -74,11 +74,16 @@ sub handler {
             qr/: log_serror test 1$/m,
             '$s->log_serror(__FILE__, __LINE__, LOG_DEBUG...)';
 
+        # the APR_EGENERAL error string changed for APR 1.0
+        my $egeneral = have_min_apache_version('2.1.0')
+           ? "Internal error"
+           : "Error string not specified yet";
+
         t_server_log_warn_is_expected();
         $s->log_serror(Apache::Log::LOG_MARK, Apache::LOG_DEBUG,
                        APR::EGENERAL, "log_serror test 2");
         ok t_cmp $logdiff->diff,
-            qr/Error string not specified yet: log_serror test 2/,
+            qr/$egeneral: log_serror test 2/,
             '$s->log_serror(LOG_MARK, LOG_DEBUG, APR::EGENERAL...)';
     }
 
