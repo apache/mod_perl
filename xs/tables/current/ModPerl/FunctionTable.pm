@@ -18,6 +18,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'modperl_apr_array_header2avrv',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_array_header_t *',
+        'name' => 'array'
+      }
+    ]
+  },
+  {
     'return_type' => 'int',
     'name' => 'modperl_authen_handler',
     'args' => [
@@ -34,6 +48,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'request_rec *',
         'name' => 'r'
+      }
+    ]
+  },
+  {
+    'return_type' => 'apr_array_header_t *',
+    'name' => 'modperl_avrv2apr_array_header',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'p'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'avrv'
       }
     ]
   },
@@ -6265,6 +6297,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'char *',
         'name' => 'type'
+      }
+    ]
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__RequestRec_content_languages',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'languages'
       }
     ]
   },
