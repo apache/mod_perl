@@ -593,7 +593,13 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             cmd->args_how = TAKE1; /* default */
         }
         else {
-            cmd->args_how = SvIV(val);
+            if (SvIOK(val)) {
+                cmd->args_how = SvIV(val);
+            }
+            else {
+                cmd->args_how =
+                    modperl_constants_lookup_apache(SvPV(val, len));
+            }
             SvREFCNT_dec(val);
         }
 
@@ -615,7 +621,13 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             cmd->req_override = OR_ALL; /* default */
         }
         else {
-            cmd->req_override = SvIV(val);
+            if (SvIOK(val)) {
+                cmd->req_override = SvIV(val);
+            }
+            else {
+                cmd->req_override =
+                    modperl_constants_lookup_apache(SvPV(val, len));
+            }
             SvREFCNT_dec(val);
         }
 

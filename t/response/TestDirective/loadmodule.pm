@@ -17,8 +17,8 @@ our @APACHE_MODULE_COMMANDS = (
      func => __PACKAGE__ . '::MyTest',
      req_override => Apache::RSRC_CONF,
 #     req_override => 'RSRC_CONF', #test 1.x compat for strings
-     args_how => Apache::TAKE23,
-#     args_how => 'TAKE23', #test 1.x compat for strings
+#     args_how => Apache::TAKE23,
+     args_how => 'TAKE23', #test 1.x compat for strings
      errmsg => 'A test',
     },
     {
