@@ -63,8 +63,7 @@ sub inject_header_bucket {
 
     if (1) {
         # extra debug, wasting cycles
-        my $data;
-        $bucket->read($data);
+        my $data = $bucket->read;
         debug "injected header: [$data]";
     }
     else {
@@ -157,7 +156,6 @@ sub handler : FilterConnectionHandler {
     return $rv unless $rv == APR::SUCCESS;
 
     while (!$ctx_bb->empty) {
-        my $data;
         my $bucket = $ctx_bb->first;
 
         $bucket->remove;
@@ -168,9 +166,8 @@ sub handler : FilterConnectionHandler {
             last;
         }
 
-        my $status = $bucket->read($data);
+        my $data = $bucket->read;
         debug "filter read:\n[$data]";
-        return $status unless $status == APR::SUCCESS;
 
         # check that we really work only on the headers
         die "This filter should not ever receive the request body, " .

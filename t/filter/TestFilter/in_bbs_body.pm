@@ -28,7 +28,6 @@ sub handler : FilterRequestHandler {
     }
 
     while (!$ctx_bb->empty) {
-        my $data;
         my $bucket = $ctx_bb->first;
 
         $bucket->remove;
@@ -39,13 +38,7 @@ sub handler : FilterRequestHandler {
             last;
         }
 
-        my $status = $bucket->read($data);
-        #warn "DATA bucket!!!!";
-        if ($status != APR::SUCCESS) {
-            return $status;
-        }
-
-        if ($data) {
+        if (my $data = $bucket->read) {
             #warn"[$data]\n";
             $bucket = APR::Bucket->new(scalar reverse $data);
         }

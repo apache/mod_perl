@@ -43,9 +43,7 @@ sub handler {
             last;
         }
 
-        my $status = $bucket->read(my $bdata);
-        return $status unless $status == APR::SUCCESS;
-
+        my $bdata = $bucket->read;
         if (defined $bdata) {
             $data .= $bdata;
             my $len = length $data;

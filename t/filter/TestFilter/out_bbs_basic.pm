@@ -10,6 +10,7 @@ use Apache::RequestIO ();
 use Apache::Filter ();
 use APR::Brigade ();
 use APR::Bucket ();
+use APR::BucketType ();
 
 use Apache::Const -compile => 'OK';
 
@@ -31,7 +32,7 @@ sub handler {
         for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
             ok $bucket->type->name;
             ok $bucket->length == 2;
-            $bucket->read(my $data);
+            my $data = $bucket->read;
             ok (defined $data and $data eq 'ok');
         }
 
