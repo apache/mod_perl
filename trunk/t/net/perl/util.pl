@@ -3,7 +3,7 @@ use strict;
 use Apache::test;
 $|++;
 my $i = 0;
-my $tests = 7;
+my $tests = 9;
 
 my $r = shift;
 $r->send_http_header('text/plain');
@@ -100,6 +100,25 @@ timethese(10000, {
     Perl => sub { my $esc = URI::Escape::uri_escape($uri) },
 });  
 =cut
+
+    {
+        my $str = "aa%20dd%2epl";
+        my $expected = "aa dd.pl";
+        my $received = Apache::unescape_url($str);
+        test ++$i, $received eq $expected;
+        print "expected: $expected\n";
+        print "received: $received\n";
+    }
+
+    {
+        my $str = undef;
+        my $expected = "";
+        no warnings;
+        my $received = Apache::unescape_url($str);
+        test ++$i, $received eq $expected;
+        print "expected: $expected\n";
+        print "received: $received\n";
+    }
 
 $C = Apache::Util::ht_time();
 $Perl = HTTP::Date::time2str();
