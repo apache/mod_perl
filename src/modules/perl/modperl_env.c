@@ -73,6 +73,7 @@ typedef struct {
 
 static modperl_env_ent_t MP_env_const_vars[] = {
     MP_ENV_ENT("MOD_PERL", MP_VERSION_STRING),
+    MP_ENV_ENT("MOD_PERL_API_VERSION", MP_API_VERSION),
     { NULL }
 };
 
