@@ -95,8 +95,7 @@ my %flags = (
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
 );
 
-my %flags_lookup = map { $_,1 } qw(Srv Dir);
-my %flags_options = map { $_,1 } qw(Srv);
+my %flags_options = map { $_,1 } qw(Srv Dir);
 
 sub new {
     my $class = shift;
@@ -322,7 +321,7 @@ sub generate_flags {
         my @lookup = ();
         my $lookup_proto = "";
         my @dumper;
-        if ($flags_lookup{$class}) {
+        if ($flags_options{$class}) {
             $lookup_proto = join canon_func('flags', 'lookup', $class),
               'U32 ', '(const char *str)';
             push @lookup, "$lookup_proto {";

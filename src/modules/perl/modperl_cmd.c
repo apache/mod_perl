@@ -46,11 +46,19 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(options)
 {
     MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)dummy;
+    int is_per_dir = parms->path ? 1 : 0;
+    modperl_options_t *opts = is_per_dir ? dcfg->flags : scfg->flags;
     apr_pool_t *p = parms->pool;
     const char *error;
 
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
-    error = modperl_options_set(p, scfg->flags, arg);
+    if ((error = modperl_options_set(p, opts, arg)) && !is_per_dir) {
+        /* maybe a per-directory option outside of a container */
+        if (modperl_options_set(p, dcfg->flags, arg) == NULL) {
+            error = NULL;
+        }
+    }
 
     if (error) {
         return error;

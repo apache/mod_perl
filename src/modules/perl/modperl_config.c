@@ -37,6 +37,8 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
         }
     }
 
+    mrg->flags = modperl_options_merge(p, base->flags, add->flags);
+
     return mrg;
 }
 
@@ -72,6 +74,8 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p)
 {
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)
         apr_pcalloc(p, sizeof(modperl_config_dir_t));
+
+    dcfg->flags = modperl_options_new(p, MpDirType);
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)dcfg);
 

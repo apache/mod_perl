@@ -234,7 +234,7 @@ void modperl_register_hooks(apr_pool_t *p)
 
 static const command_rec modperl_cmds[] = {  
     MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
-    MP_CMD_SRV_ITERATE("PerlOptions", options, "Perl Options"),
+    MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
