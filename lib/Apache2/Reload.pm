@@ -95,8 +95,8 @@ sub handler {
 
     if ($TouchFile) {
         warn "Checking mtime of $TouchFile\n" if $DEBUG;
-        my $touch_mtime = (stat $TouchFile)[9] || return 1;
-        return 1 unless $touch_mtime > $TouchTime;
+        my $touch_mtime = (stat $TouchFile)[9] || return Apache::OK;
+        return Apache::OK unless $touch_mtime > $TouchTime;
         $TouchTime = $touch_mtime;
         open my $fh, $TouchFile or die "Can't open '$TouchFile': $!";
         $TouchModules = <$fh>;
