@@ -169,8 +169,8 @@ yourself, like this:
 
 =head1 AUTHOR
 
-This document is written by Ask Bjoern Hansen <ask@netcetera.dk> or
-<ask@apache.org>.  Corrections and suggestions are most
+This document is written by Ask Bjoern Hansen E<lt>ask@netcetera.dkE<gt> or
+E<lt>ask@apache.orgE<gt>.  Corrections and suggestions are most
 welcome. In particular would more examples be appreciated, most of my
 own code is way too integrated with our system, which isn't suitable
 for public release.
