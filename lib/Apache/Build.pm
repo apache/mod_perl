@@ -6,21 +6,13 @@ use warnings;
 
 use lib qw(Apache-Test/lib);
 
-use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
-
 use Config;
 use Cwd ();
 use File::Spec::Functions qw(catfile);
 use File::Basename;
 use ExtUtils::Embed ();
-use ModPerl::Code ();
-use ModPerl::BuildOptions ();
-use Apache::TestTrace;
-use Apache::TestConfig ();
 
-use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
-use constant HAS_ITHREADS =>
-    $Config{useithreads} && ($Config{useithreads} eq 'define');
+use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 use constant AIX    => $^O eq 'aix';
 use constant DARWIN => $^O eq 'darwin';
@@ -28,6 +20,15 @@ use constant HPUX   => $^O eq 'hpux';
 use constant WIN32  => $^O eq 'MSWin32';
 
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
+
+use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
+use constant HAS_ITHREADS =>
+    $Config{useithreads} && ($Config{useithreads} eq 'define');
+
+use ModPerl::Code ();
+use ModPerl::BuildOptions ();
+use Apache::TestTrace;
+use Apache::TestConfig ();
 
 our $VERSION = '0.01';
 our $AUTOLOAD;

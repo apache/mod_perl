@@ -2,10 +2,11 @@ package ModPerl::MM;
 
 use strict;
 use warnings;
+
 use ExtUtils::MakeMaker ();
 use ExtUtils::Install ();
+
 use Cwd ();
-use Apache::Build ();
 use Carp;
 
 our %PM; #add files to installation
@@ -62,6 +63,7 @@ sub add_dep_after {
 
 sub build_config {
     my $key = shift;
+    require Apache::Build;
     my $build = Apache::Build->build_config;
     return $build unless $key;
     $build->{$key};
