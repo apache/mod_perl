@@ -7,7 +7,13 @@ use Apache::TestUtil;
 use Apache::Build ();
 
 my $build = Apache::Build->build_config;
-plan tests => 5, have 'LWP',
+
+use constant HAVE_LWP => have_lwp();
+
+my $tests = 4;
+$tests += 1 if HAVE_LWP;
+
+plan tests => $tests, have
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $module = 'TestModules::cgi';
@@ -28,10 +34,12 @@ sok {
     t_cmp("ok 3", $str, "POST $location\n$content");
 };
 
-sok {
-    $str = UPLOAD_BODY $location, content => 4;
-    t_cmp("ok 4", $str, 'file upload');
-};
+if (HAVE_LWP) {
+    sok {
+        $str = UPLOAD_BODY $location, content => 4;
+        t_cmp("ok 4", $str, 'file upload');
+    };
+}
 
 sok {
     my $header = 'Content-type';
