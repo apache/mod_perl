@@ -19,7 +19,13 @@
 #include "http_vhost.h"
 #include "ap_mpm.h"
 
+#ifndef APR_POLLIN
+/*
+ * apr_poll.h introduced around 2.0.40
+ * APR_POLL* constants moved here around 2.0.44
+ */
 #include "apr_poll.h"
+#endif
 #include "apr_lib.h"
 #include "apr_strings.h"
 #include "apr_uri.h"
