@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/01/11 04:14:55 $]
+   Last modified at [$Date: 2003/01/15 05:22:53 $]
 
 Release:
 --------
@@ -49,6 +49,13 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* Currently modperl_filter_add_{connection|request} check the filter
+  handler function attrs before accepting the filter. If the module
+  wasn't preloaded the check fails and filter handler is skipped. We
+  could have this issue documented (which is OK, but might raise too
+  many questions), but we could also always preload the filter
+  handlers. To test see TestFilter::input_msg
 
 * we still have a problem with mod_perl starting from a
   vhost. consider the following config:
