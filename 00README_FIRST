@@ -28,12 +28,11 @@ to build mod_perl dynamic:
 
 % perl Makefile.PL MP_USE_DSO=1 && make
 
-(note the dso-link-hack.pat is need for my suse-6.1, might be
+(note the EXTRA_LIBS are needed for my suse-6.1, might be
 different for your platform)
 
 % cd ../apache-2.0/src
-% ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
-% patch -p1 < ../modperl-2.0/patches/dso-link-hack.pat
+% EXTRA_LIBS="-ldl -rdynamic" ./configure --with-mpm=mpmt_pthread ...
 % make
 
 as for httpd.conf, mine looks something like so at the moment:
@@ -63,4 +62,4 @@ sub MyLog::handler {
     warn "hey, it works!";
 }
 
---dougm 04/24
+--dougm 04/28
