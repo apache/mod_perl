@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_02-dev
 
+fix 'make test' problem seen with Perl 5.005_03
+
 remove $r->finfo usage from Apache::PerlRun, clearly finfo isn't as
 stable as it should be
 [Surat Singh Bhati <surat@indiamart.com>]
