@@ -1377,19 +1377,14 @@ sub httpd_version {
     return($version.$extra);
 }
 
+use lib "./lib";
+use Apache::src ();
+
 sub magic_number {
     my $d = asrc shift;
-    return $mcache{$d} if $mcache{$d};
-    my $fh = FileHandle->new("$d/http_config.h") or return 0;
-    my $n;
-    while(<$fh>) {
-	if(s/^#define\s+MODULE_MAGIC_NUMBER\s+(\d+).*/$1/) {
-	   chomp($n = $_);
-	   last;
-       }
-    }
-    $fh->close;
-    return($mcache{$d} = $n);
+    my $src = Apache::src->new;
+    $src->dir($d);
+    return($mcache{$d} = $src->module_magic_number);
 }
 
 sub cleanup_for_static {
