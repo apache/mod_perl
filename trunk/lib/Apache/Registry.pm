@@ -62,9 +62,10 @@ sub handler {
 	# turn into a package name
 	$r->log_error(sprintf "Apache::Registry::handler examining %s",
 		      $uri) if $Debug && $Debug & 4;
-	my $script_name = $r->path_info ?
-	    substr($uri, 0, length($uri)-length($r->path_info)) :
-		$uri;
+	my $path_info = $r->path_info;
+	my $script_name = $path_info && $uri =~ /$path_info$/ ?
+	    substr($uri, 0, length($uri)-length($path_info)) :
+	    $uri;
 
 	if($Apache::Registry::NameWithVirtualHost) {
 	    my $name = $r->get_server_name;
