@@ -36,6 +36,7 @@ sub import {
     if($_[0] =~ /^\d/) {
 	$class->UNIVERSAL::VERSION(shift);
     }
+    return unless $ENV{MOD_PERL};
 
     for my $hook (@_) {
 	require Apache;
