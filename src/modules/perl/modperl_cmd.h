@@ -23,6 +23,7 @@ MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE(options);
+MP_CMD_SRV_DECLARE(init_handlers);
 
 #ifdef MP_COMPAT_1X
 
