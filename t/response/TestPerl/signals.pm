@@ -6,10 +6,13 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::BuildConfig;
+use Apache::TestConfig;
 
 use Apache::MPM ();
 
 use POSIX qw(SIGALRM);
+
+use constant OSX => Apache::TestConfig::OSX;
 
 use Apache::Const -compile => qw(OK);
 
@@ -32,20 +35,20 @@ sub handler {
 
     # doesn't work under static prefork
     if (!$static) {
-      if ($^O eq 'darwin') {
-        skip "ALRM can't be used on darwin", 0;
-      }
-      else {
-        local $ENV{PERL_SIGNALS} = "unsafe";
+        if (OSX) {
+            skip "ALRM can't be used on darwin", 0;
+        }
+        else {
+            local $ENV{PERL_SIGNALS} = "unsafe";
 
-        eval {
-            local $SIG{ALRM} = sub { die "alarm" };
-            alarm 2;
-            run_for_5_sec();
-            alarm 0;
-        };
-        ok t_cmp $@, qr/alarm/, "SIGALRM / unsafe %SIG";
-      }
+            eval {
+                local $SIG{ALRM} = sub { die "alarm" };
+                alarm 2;
+                run_for_5_sec();
+                alarm 0;
+            };
+            ok t_cmp $@, qr/alarm/, "SIGALRM / unsafe %SIG";
+        }
     }
 
     # POSIX::sigaction doesn't work under 5.6.x
