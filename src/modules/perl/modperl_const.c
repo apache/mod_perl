@@ -75,6 +75,9 @@ int modperl_const_compile(pTHX_ const char *classname,
         }
     }
     else {
+        if (*name == '&') {
+            name++;
+        }
         new_constsub(aTHX_ lookup, caller_stash, stash, name);
     }
 
