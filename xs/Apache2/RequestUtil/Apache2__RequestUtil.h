@@ -79,6 +79,8 @@ SV *mpxs_Apache2__RequestRec_new(pTHX_ SV *classname,
     r->connection = c;
     r->server     = s;
 
+    r->request_time = apr_time_now();
+    
     r->user            = NULL;
     r->ap_auth_type    = NULL;
 

@@ -18,6 +18,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
      1.99_XX. Please read the below changes carefully.
     ***************************************************
 
+Apache2::RequestRec->new now sets $r->request_time [Stas]
+
 s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
 APIs [joes].
 
