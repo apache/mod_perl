@@ -30,7 +30,6 @@ Available Patches:
         Patch:
             http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105412732722992&w=2
 
-Needs Patch or Further Investigation
     * mp_preload_module and method handlers broken.
         Report: 
             http://marc.theaimsgroup.com/?t=105532710700003&r=1&w=2
@@ -40,6 +39,10 @@ Needs Patch or Further Investigation
             or added to the startup scripts, Foo->bar(undef) will be called on startup
             without a valid $r to speak of. Similar broken behaviour happens with
             Perl*Handler $My::Obj->foo.
+        Patch:
+            http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=105591097807663&w=2
+
+Needs Patch or Further Investigation
 
     * $r->print() ignores $,
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=102902480103484&w=2
