@@ -23,6 +23,11 @@ use File::Spec::Functions qw(splitpath splitdir catpath catdir rootdir);
 
 use Apache::Build;
 
+# default timeout in secs (threaded mpms are extremely slow to
+# startup, due to a slow perl_clone operation)
+use constant DEFAULT_STARTUP_TIMEOUT =>
+    Apache::Build->build_config->mpm_is_threaded() ? 180 : 90;
+
 # subclass new_test_config to add some config vars which will be
 # replaced in generated httpd.conf
 sub new_test_config {
@@ -34,12 +39,9 @@ sub new_test_config {
     my $base = catpath $volume, rootdir(), $dir, $file;
     $self->{conf_opts}->{src_dir} = catdir $base, qw(src modules perl);
 
-    $self->{conf_opts}->{maxclients} = MIN_MAXCLIENTS;
+    $self->{conf_opts}->{startup_timeout} ||= DEFAULT_STARTUP_TIMEOUT;
 
-    # timeout in secs (threaded mpms are extremely slow to startup,
-    # due to a slow perl_clone operation)
-    $self->{conf_opts}->{startup_timeout} =
-        Apache::Build->build_config->mpm_is_threaded() ? 180 : 90;
+    $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
 
     return $self->SUPER::new_test_config;
 }
