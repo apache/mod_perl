@@ -30,7 +30,7 @@
 #include "apr_network_io.h"
 #include "apr_general.h"
 #include "apr_uuid.h"
-
+#include "apr_env.h"
 #include "util_filter.h"
 
 #include "util_script.h"
