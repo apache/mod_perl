@@ -284,7 +284,11 @@ sub handler {
 
     {   #flush the namespace
 	no strict;
-	%{$package.'::'} = ();
+	my $tab = \%{$package.'::'};
+        foreach (keys %$tab) {
+	    undef &{$tab->{$_}};
+	}
+	%$tab = ();
     }
 
     return $rc;
