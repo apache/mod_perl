@@ -42,8 +42,6 @@ sub handler {
 
     plan $r, tests => 4, have qw(APR::PerlIO Apache::SubProcess);
 
-    eval { require Apache::SubProcess };
-
     my $target_dir = catfile $vars->{documentroot}, "util";
 
     {
@@ -149,7 +147,7 @@ sub read_data {
     #
     # btw: we use perlIO only for perl 5.7+
     #
-    if (PERLIO_5_8_IS_ENABLED || $sel->can_read(10)) {
+    if (APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED() || $sel->can_read(10)) {
         @data = wantarray ? (<$fh>) : <$fh>;
     }
 
