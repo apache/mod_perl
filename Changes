@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+$Apache::Registry::NameWithVirtualHost fix take 2
+(move is_virtual logic from mod_perl.c to Registry.pm)
+[John Hughes <john@Calva.COM>]
+
 added Apache::OPEN method for 5.6.0+ tied filehandle support
 
 Apache::Table is now loaded by default (if enabled), rather than
