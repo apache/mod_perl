@@ -116,7 +116,7 @@
 #define mpxs_add_pool_magic(obj, pool_obj)                              \
     sv_magicext(SvRV(obj), pool_obj, PERL_MAGIC_ext, NULL, Nullch, -1)
 #else
-#define mpxs_add_pool_magic(obj)                                        \
+#define mpxs_add_pool_magic(obj, pool_obj)                              \
     sv_magic(SvRV(obj), pool_obj, PERL_MAGIC_ext, Nullch, -1)
 #endif
 
