@@ -497,6 +497,11 @@ void perl_startup (server_rec *s, pool *p)
 #include "mod_perl_version.h"
 #endif
     ap_add_version_component(MOD_PERL_STRING_VERSION);
+    if(PERL_RUNNING()) {
+	if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
+	    ap_add_version_component(form("Perl/%s", patchlevel));
+	}
+    }
 #endif
 
 #ifndef WIN32

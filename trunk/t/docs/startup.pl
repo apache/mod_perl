@@ -52,7 +52,7 @@ eval {
 
 $Apache::DoInternalRedirect = 1;
 $Apache::ERRSV_CAN_BE_HTTP  = 1;
-
+$Apache::Server::AddPerlVersion = 1;
 #warn "ServerStarting=$Apache::ServerStarting\n";
 #warn "ServerReStarting=$Apache::ServerReStarting\n";
 
