@@ -56,7 +56,8 @@ my $html = <<EOF;
 <title>Testing Escape</title>
 </head>
 <body>
-ok
+"ok"
+&how
 </body>
 </html>
 EOF
