@@ -963,6 +963,7 @@ void xs_init (void);
 /* generic handler stuff */ 
 int perl_handler_ismethod(HV *class, char *sub);
 int perl_call_handler(SV *sv, request_rec *r, AV *args);
+request_rec *mp_fake_request_rec(server_rec *s, pool *p, char *hook);
 
 /* stacked handler stuff */
 int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers);

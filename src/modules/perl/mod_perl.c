@@ -300,7 +300,7 @@ void perl_shutdown (server_rec *s, pool *p)
     MP_TRACE_g(fprintf(stderr, "ok\n"));
 }
 
-static request_rec *fake_request_rec(server_rec *s, pool *p, char *hook)
+request_rec *mp_fake_request_rec(server_rec *s, pool *p, char *hook)
 {
     request_rec *r = (request_rec *)palloc(p, sizeof(request_rec));
     r->pool = p; 
@@ -316,7 +316,7 @@ void perl_restart_handler(server_rec *s, pool *p)
     char *hook = "PerlRestartHandler";
     dSTATUS;
     dPSRV(s);
-    request_rec *r = fake_request_rec(s, p, hook);
+    request_rec *r = mp_fake_request_rec(s, p, hook);
     PERL_CALLBACK(hook, cls->PerlRestartHandler);   
 }
 #endif
@@ -713,7 +713,7 @@ void PERL_CHILD_INIT_HOOK(server_rec *s, pool *p)
     char *hook = "PerlChildInitHandler";
     dSTATUS;
     dPSRV(s);
-    request_rec *r = fake_request_rec(s, p, hook);
+    request_rec *r = mp_fake_request_rec(s, p, hook);
     server_hook_args *args = 
 	(server_hook_args *)palloc(p, sizeof(server_hook_args));
 
@@ -732,7 +732,7 @@ void PERL_CHILD_EXIT_HOOK(server_rec *s, pool *p)
     char *hook = "PerlChildExitHandler";
     dSTATUS;
     dPSRV(s);
-    request_rec *r = fake_request_rec(s, p, hook);
+    request_rec *r = mp_fake_request_rec(s, p, hook);
 
     PERL_CALLBACK(hook, cls->PerlChildExitHandler);
 

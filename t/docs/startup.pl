@@ -20,6 +20,7 @@ eval {
     require Apache::PerlRunXS;
 }; $@ = '' if $@;
 
+
 {
     last;
     Apache::warn("use Apache 'warn' is ok\n");

@@ -32,6 +32,10 @@ PerlSetEnv KeyForPerlSetEnv OK
 use Apache ();
 use Apache::Registry ();
 
+Apache::Server->register_cleanup(sub { 
+    warn "Apache::Server registered cleanup called for $$\n";
+});
+
 if($ENV{TEST_PERL_DIRECTIVES}) {
     #t/TestDirectives/TestDirectives.pm
     push @INC, map { "t/TestDirectives/blib/$_" } qw(arch lib);
