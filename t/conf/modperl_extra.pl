@@ -1,6 +1,6 @@
 use Socket (); #test DynaLoader vs. XSLoader workaround for 5.6.x
 use IO::File ();
-use File::Spec::Functions qw(canonpath);
+use File::Spec::Functions qw(canonpath catdir);
 
 use Apache2 ();
 
@@ -79,6 +79,18 @@ Apache->server->add_config([split /\n/, $conf]);
 # attempt to use perl's mip  early
 Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 
+# cleanup files for TestHooks::startup which can't be done from the
+# test itself because the files are created at the server startup and
+# the test needing these files may run more than once (t/SMOKE)
+{
+    require Apache::Test;
+    my $dir = catdir Apache::Test::config()->{vars}->{documentroot}, 'hooks',
+        'startup';
+    for (<$dir/*>) {
+        my $file = ($_ =~ /(.*(?:open_logs|post_config)-\d+)/);
+        unlink $file;
+    }
+}
 
 # this is needed for TestModperl::ithreads
 # one should be able to boot ithreads at the server startup and then

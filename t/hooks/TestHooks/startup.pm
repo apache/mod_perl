@@ -90,8 +90,9 @@ sub handler {
         my $received = <$fh> || '';
         close $fh;
 
-        # cleanup
-        unlink $file;
+        # can't cleanup the file here, because t/SMOKE may run this
+        # test more than once, so we cleanup on startup in modperl_extra.pl
+        # unlink $file;
 
         if ($expected eq $received) {
             $r->print("$phase ok\n");
