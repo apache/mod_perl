@@ -237,6 +237,13 @@ SV *mpxs_Apache__RequestRec_GETC(pTHX_ request_rec *r)
 }
 
 static MP_INLINE
+int mpxs_Apache__RequestRec_FILENO(pTHX_ request_rec *r)
+{
+    dHANDLE("STDOUT");
+    return PerlIO_fileno(IoOFP(TIEHANDLE_SV(handle)));
+}
+
+static MP_INLINE
 apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
                                               const char *filename,
                                               apr_off_t offset,

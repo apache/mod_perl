@@ -1,6 +1,19 @@
 #ifndef MODPERL_IO_H
 #define MODPERL_IO_H
 
+/*
+ * bleedperl change #11639 switch tied handle magic
+ * from living in the gv to the GvIOp(gv), so we have to deal
+ * with both to support 5.6.x
+ */
+#if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
+#   define TIEHANDLE_SV(handle) (SV*)GvIOp((SV*)handle)
+#else
+#   define TIEHANDLE_SV(handle) (SV*)handle
+#endif
+
+#define dHANDLE(name) GV *handle = gv_fetchpv(name, TRUE, SVt_PVIO)
+
 #define IoFLUSH_off(gv) \
 IoFLAGS(GvIOp((gv))) &= ~IOf_FLUSH
 

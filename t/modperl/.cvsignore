@@ -10,3 +10,4 @@ methodname.t
 methodobj.t
 method.t
 setauth.t
+request_rec_tie_api.t
