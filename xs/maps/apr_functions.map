@@ -1,0 +1,421 @@
+##########  APR Functions  ##########
+
+!MODULE=APR::Poll
+ apr_poll_socket_add
+ apr_poll_socket_clear
+ apr_poll_data_get
+ apr_poll_revents_get
+ apr_poll_socket_mask
+ apr_poll
+ apr_poll_socket_remove
+ apr_poll_data_set
+ apr_poll_setup
+
+!MODULE=APR::Time
+ apr_ansi_time_to_apr_time
+-apr_ctime
+ apr_implode_time
+-apr_time_now
+-apr_sleep
+ apr_rfc822_date
+ apr_strftime
+ apr_explode_gmt
+ apr_explode_localtime
+
+!MODULE=APR::Array
+ apr_array_append
+ apr_array_cat
+ apr_array_pstrcat
+ apr_array_copy
+ apr_array_copy_hdr
+ apr_array_make
+ apr_array_push
+
+MODULE=APR::Socket
+ apr_bind
+!apr_accept
+ apr_listen
+ apr_connect
+ apr_recv
+ apr_send
+ apr_shutdown
+
+MODULE=APR::Socket
+ apr_socket_close
+!apr_socket_create
+ apr_socket_addr_get
+ apr_socket_data_get
+ apr_socket_data_set
+ apr_getsocketopt
+ apr_setsocketopt
+-apr_sendfile
+-apr_sendv
+ apr_socket_from_file
+
+!MODULE=APR::SocketAddr
+ apr_sockaddr_info_get
+ apr_sockaddr_ip_get
+ apr_sockaddr_ip_set
+ apr_sockaddr_port_set
+ apr_sockaddr_port_get
+
+MODULE=APR::Brigade
+ apr_brigade_create | mpxs_ | SV *:CLASS, p | new
+ apr_brigade_destroy
+ apr_brigade_partition
+ apr_brigade_printf
+ apr_brigade_putstrs
+ apr_brigade_split
+-apr_brigade_to_iovec
+-apr_brigade_vprintf
+-apr_brigade_vputstrs
+ apr_brigade_length
+ apr_brigade_write
+ apr_brigade_puts
+ apr_brigade_putc
+
+!MODULE=APR::Bucket
+ apr_bucket_copy_notimpl
+ apr_bucket_shared_copy
+ apr_bucket_eos_create
+ apr_bucket_file_create
+ apr_bucket_flush_create
+ apr_bucket_heap_create
+ apr_bucket_immortal_create
+ apr_bucket_mmap_create
+ apr_bucket_pipe_create
+ apr_bucket_pool_create
+ apr_bucket_socket_create
+ apr_bucket_transient_create
+ apr_bucket_destroy_notimpl
+ apr_bucket_shared_destroy
+ apr_bucket_eos_make
+ apr_bucket_file_make
+ apr_bucket_flush_make
+ apr_bucket_heap_make
+ apr_bucket_immortal_make
+ apr_bucket_mmap_make
+ apr_bucket_pipe_make
+ apr_bucket_pool_make
+ apr_bucket_shared_make
+ apr_bucket_socket_make
+ apr_bucket_transient_make
+ apr_bucket_setaside_notimpl
+ apr_bucket_split_notimpl
+ apr_bucket_shared_split
+ apr_bucket_simple_split
+ apr_bucket_simple_copy
+
+MODULE=APR::Pool
+>apr_pool_free_blocks_num_bytes
+ apr_pool_num_bytes
+ apr_pool_cleanup_for_exec
+ apr_pool_clear
+ apr_pool_destroy
+ apr_pool_t *:apr_pool_create | mpxs_ | SV *:obj | new
+ apr_pool_userdata_get
+ apr_pool_userdata_set
+>apr_pool_alloc_init
+>apr_pool_alloc_term
+ apr_pool_cleanup_kill
+ apr_pool_cleanup_run
+-apr_pool_cleanup_null
+ apr_pool_cleanup_register
+ apr_pool_sub_make
+ apr_pool_note_subprocess
+-apr_palloc
+-apr_pcalloc
+-apr_pmemdup
+
+MODULE=APR::Lock
+!apr_lock_child_init
+ apr_lock_t *:apr_lock_create | mpxs_ | \
+              SV *:CLASS, cont, type=0, scope=1, fname="lock.file" | new
+-apr_lock_destroy
+ apr_lock_DESTROY | | lock
+ apr_lock_data_get
+ apr_lock_data_set
+ apr_lock_acquire
+ apr_lock_release
+
+MODULE=APR::Table
+ apr_table_clear
+ apr_table_copy    | | t, p
+ apr_table_make
+ apr_table_overlap
+ apr_table_overlay | | base, overlay, p
+ apr_table_add
+-apr_table_addn
+ apr_table_do
+ apr_table_get
+ apr_table_merge
+-apr_table_mergen
+ apr_table_set
+-apr_table_setn
+ apr_table_unset
+-apr_table_vdo
+
+!MODULE=APR::File
+-apr_file_open
+-apr_file_close
+-apr_file_namedpipe_create
+ apr_file_pipe_create
+-apr_file_dup
+-apr_file_flush
+-apr_file_eof
+-apr_file_error
+-apr_file_gets
+-apr_file_printf
+-apr_file_write_full
+-apr_file_read_full
+-apr_file_getc
+-apr_file_ungetc
+-apr_file_putc
+-apr_file_puts
+-apr_file_read
+-apr_file_write
+-apr_file_writev
+-apr_file_seek
+ apr_file_data_get
+ apr_file_info_get
+ apr_file_name_get
+ apr_file_pool_get
+ apr_file_pipe_timeout_get
+ apr_file_pipe_timeout_set
+ apr_file_lock
+ apr_file_unlock
+ apr_file_open_stderr
+ apr_file_open_stdout
+-apr_file_remove
+-apr_file_rename
+ apr_file_data_set
+ apr_file_perms_set
+
+-MODULE=APR::Finfo
+ apr_lstat
+ apr_stat
+
+!MODULE=APR::Strings
+ apr_collapse_spaces
+-apr_cpystrn
+ apr_fnmatch
+ apr_is_fnmatch
+-apr_psprintf
+-apr_pstrcat
+-apr_pstrdup
+-apr_pstrndup
+-apr_pvsprintf
+ apr_strnatcasecmp
+ apr_strnatcmp
+-apr_tokenize_to_argv
+
+!MODULE=APR::ProcAttr
+ apr_procattr_create
+ apr_procattr_child_err_set
+ apr_procattr_child_in_set
+ apr_procattr_child_out_set
+ apr_procattr_cmdtype_set
+ apr_procattr_detach_set
+ apr_procattr_dir_set
+ apr_procattr_io_set
+ apr_procattr_limit_set
+
+!MODULE=APR::Proc
+ apr_proc_create
+ apr_proc_fork
+ apr_proc_kill
+ apr_proc_wait
+ apr_proc_detach
+-apr_proc_probe_writable_fds
+-apr_proc_other_child_read
+-apr_proc_other_child_register
+-apr_proc_other_child_unregister
+-apr_proc_other_child_check
+-apr_proc_wait_all_procs
+
+-MODULE=APR::Thread
+ apr_thread_create
+ apr_thread_data_get
+ apr_thread_data_set
+ apr_thread_detach
+ apr_thread_exit
+ apr_thread_join
+
+-MODULE=APR::ThreadKey
+ apr_threadkey_data_get
+ apr_threadkey_data_set
+ apr_threadkey_private_get
+ apr_threadkey_private_set
+ apr_threadkey_private_create
+ apr_threadkey_private_delete
+
+-MODULE=APR::ThreadAttr
+ apr_threadattr_create
+ apr_threadattr_detach_set
+ apr_threadattr_detach_get
+
+-MODULE=APR::DBM
+ apr_dbm_close
+ apr_dbm_delete
+ apr_dbm_exists
+ apr_dbm_fetch
+ apr_dbm_firstkey
+ apr_dbm_freedatum
+ apr_dbm_geterror
+ apr_dbm_get_usednames
+ apr_dbm_nextkey
+ apr_dbm_open
+ apr_dbm_store
+
+-MODULE=APR::Dir
+ apr_dir_close
+ apr_dir_open
+ apr_dir_read
+ apr_dir_rewind
+ apr_dir_make
+ apr_dir_remove
+
+!MODULE=APR::DSO
+ apr_dso_error
+ apr_dso_load
+ apr_dso_sym
+ apr_dso_unload
+
+MODULE=APR::Lib   PACKAGE=guess
+ apr_filename_of_pathname
+ apr_password_get
+ apr_password_validate
+-apr_snprintf
+-apr_vformatter
+-apr_vsnprintf
+ apr_generate_random_bytes | MPXS_ | length
+ apr_strerror              | MPXS_ | statcode
+
+!MODULE=APR::General
+-apr_initialize
+-apr_terminate
+-apr_set_abort
+
+MODULE=APR::Signal
+-apr_signal
+ apr_signal_get_description
+-apr_signal_init
+-apr_setup_signal_thread
+-apr_create_signal_thread
+
+MODULE=APR::UUID
+ apr_uuid_format             | MPXS_ | uuid
+ apr_uuid_t *:apr_uuid_get   | mpxs_ | SV *:CLASS | new
+ apr_uuid_t *:apr_uuid_parse | mpxs_ | SV *:CLASS,char *:buf | parse
+ apr_uuid_DESTROY            |       | uuid
+
+!MODULE=APR::Hook
+ apr_hook_generic_get
+ apr_hook_deregister_all
+ apr_hook_generic_add
+ apr_hook_sort_register
+-apr_register_optional_fn
+ apr_show_hook
+ apr_sort_hooks
+
+!MODULE=APR::User
+ apr_get_groupname
+ apr_get_home_directory
+ apr_get_username
+ apr_get_userid
+
+!MODULE=APR::NetworkIO
+ apr_gethostname
+ apr_getnameinfo
+-apr_getservbyname
+ apr_parse_addr_port
+
+!MODULE=APR::Getopt
+ apr_getopt
+ apr_getopt_long
+ apr_getopt_init
+
+!MODULE=APR::Shm
+ apr_shm_name_get
+ apr_shm_name_set 
+ apr_shm_open
+ apr_shm_avail
+ apr_shm_calloc
+ apr_shm_destroy
+ apr_shm_free
+ apr_shm_init
+ apr_shm_malloc
+
+!MODULE=APR::Hash
+ apr_hash_count
+ apr_hash_first
+ apr_hash_get
+ apr_hash_next
+ apr_hash_set
+ apr_hash_this
+ apr_hash_make
+
+!MODULE=APR::MD5
+ apr_md5_encode
+ apr_md5_final
+ apr_md5_init
+ apr_md5_set_xlate
+ apr_md5_update
+
+!MODULE=APR::SHA1
+ apr_sha1_base64
+ apr_sha1_final
+ apr_sha1_init
+ apr_sha1_update
+ apr_sha1_update_binary
+
+MODULE=APR::Base64
+ apr_base64_decode | MPXS_ | coded_src
+ apr_base64_encode | MPXS_ | plain_src
+ apr_base64_encode_len
+ apr_base64_decode_len
+-apr_base64_encode_binary
+-apr_base64_decode_binary
+
+!MODULE=Apache::XML
+ apr_text_append
+ apr_xml_parser_create
+ apr_xml_parser_feed
+ apr_xml_parser_done
+ apr_xml_parser_geterror
+ apr_xml_to_text
+ apr_xml_empty_elem
+ apr_xml_quote_string
+ apr_xml_quote_elem
+ apr_xml_insert_uri
+
+!MODULE=APR::Mmap
+ apr_mmap_create
+ apr_mmap_delete
+ apr_mmap_offset
+
+!MODULE=APR::Xlate
+ apr_xlate_close
+ apr_xlate_conv_buffer
+ apr_xlate_conv_byte
+ apr_xlate_get_sb
+ apr_xlate_open
+
+-MODULE=APR::OS
+ apr_os_dir_get
+ apr_os_exp_time_get
+ apr_os_file_get
+ apr_os_imp_time_get
+ apr_os_lock_get
+ apr_os_sock_get
+ apr_os_thread_get
+ apr_os_threadkey_get
+ apr_os_sock_make
+ apr_os_dir_put
+ apr_os_exp_time_put
+ apr_os_file_put
+ apr_os_imp_time_put
+ apr_os_lock_put
+ apr_os_sock_put
+ apr_os_thread_put
+ apr_os_threadkey_put
