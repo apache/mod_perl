@@ -31,6 +31,7 @@ use base qw(Apache::Filter);
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Connection ();
+use Apache::Server ();
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::Table ();
@@ -113,9 +114,13 @@ sub push_output_filter : FilterInitHandler {
     # at this point we don't know whether the connection is going to
     # be keepalive or not, since the relevant input headers weren't
     # parsed yet. we know only after ap_http_header_filter was called.
-    # therefore we have no choice but to always add the flagging
-    # output filter
-    $filter->c->add_output_filter(\&flag_request_reset);
+    # therefore we have no choice but to add the flagging output filter
+    # unless we know that the server is configured not to allow
+    # keep_alive connections
+    my $s = $filter->c->base_server;
+    if ($s->keep_alive && $s->keep_alive_timeout > 0) {
+        $filter->c->add_output_filter(\&flag_request_reset);
+    }
 
     return Apache::OK;
 }
