@@ -165,7 +165,7 @@ while (my($class, $groups) = each %defines_wanted) {
 
 my %enums_wanted = (
     Apache => { map { $_, 1 } qw(cmd_how input_mode filter_type) },
-    APR => { map { $_, 1 } qw(apr_shutdown_how) },
+    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type) },
 );
 
 my $defines_unwanted = join '|', qw{
@@ -390,8 +390,9 @@ sub write_pm {
 
     my($subdir) = (split '::', $name)[0];
 
-    if (-d "lib/$subdir") {
-        $file = "lib/$subdir/$file";
+    my $tdir = 'xs/tables/current';
+    if (-d "$tdir/$subdir") {
+        $file = "$tdir/$subdir/$file";
     }
 
     open my $pm, '>', $file or die "open $file: $!";
