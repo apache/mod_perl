@@ -48,6 +48,7 @@ for $sym (sort @export) {
 	$name = Apache::Constants->name($val);
     };
     print defined $val ? "" : "not ", "ok $ix ($name|$sym: $val)\n";
+    last if $ix >= $tests;
     $ix++;
 }
 

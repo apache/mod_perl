@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+experimental tie of $0 to Apache->request->filename, enable with
+-DPERL_TIE_SCRIPTNAME  
+
 added little Apache::system that redirects output to the browser,
 should this be imported into Apache::{Registry,PerlRun} scripts?
 
