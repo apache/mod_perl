@@ -11,6 +11,7 @@ use TestCommon::Utils;
 
 use APR::Pool ();
 use APR::Bucket ();
+use APR::BucketAlloc ();
 use APR::BucketType ();
 use APR::Table ();
 
@@ -21,7 +22,7 @@ sub num_of_tests {
 sub test {
 
     my $pool = APR::Pool->new();
-    my $ba = APR::Bucket::alloc_create($pool);
+    my $ba   = APR::BucketAlloc->new($pool);
 
     # new: basic
     {
@@ -171,7 +172,7 @@ sub test {
         my $data   = "foobartar";
         my $offset = 3;
         my $real = substr $data, $offset;
-        #my $ba = APR::Bucket::alloc_create(APR::Pool->new);
+        #my $ba = APR::BucketAlloc->new(APR::Pool->new);
         my $b = APR::Bucket->new($ba, $data, $offset);
 
         # try to overwrite the temp pool data
@@ -205,8 +206,7 @@ sub test {
         $b->destroy;
     }
 
-    APR::Bucket::alloc_destroy($ba);
-
+    $ba->destroy;
 }
 
 1;

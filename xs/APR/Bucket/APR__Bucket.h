@@ -117,13 +117,3 @@ apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
     
     return rc;
 }
-
-static MP_INLINE
-SV *mpxs_APR__Bucket_alloc_create(pTHX_ SV *p_sv)
-{
-    apr_pool_t *p             = mp_xs_sv2_APR__Pool(p_sv);
-    apr_bucket_alloc_t *ba = apr_bucket_alloc_create(p);
-    SV *ba_sv = sv_setref_pv(NEWSV(0, 0), "APR::BucketAlloc", (void*)ba);
-    //mpxs_add_pool_magic(ba_sv, p_sv);
-    return ba_sv;
-}
