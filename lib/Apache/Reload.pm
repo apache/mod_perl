@@ -5,6 +5,8 @@ use warnings FATAL => 'all';
 
 our $VERSION = '0.08';
 
+require Apache::RequestUtil;
+
 use vars qw(%INCS %Stat $TouchTime %UndefFields);
 
 %Stat = ($INC{"Apache/Reload.pm"} => time);
