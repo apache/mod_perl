@@ -191,6 +191,10 @@ sub ModPerl::BuildMM::MY::postamble {
     # add the code to glue the existing pods to the .pm files in blib.
     # create a dependency on pm_to_blib subdirs linkext targets to
     # allow 'make -j'
+    require ExtUtils::MakeMaker;
+    my $pm_to_blib = $ExtUtils::MakeMaker::VERSION >= 6.22
+        ? "pm_to_blib.ts"
+        : "pm_to_blib";
     my @target = ('glue_pods: pm_to_blib subdirs linkext');
 
     if (-d $doc_root) {
