@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fix $r->read() so it will not block if all data has already been read
+and so that Apache will not hang during ap_discard_request_body() on
+error or redirect after all data has been read
+
 fix for Makefile.PL ADD_MODULE=src/module/foo/libfoo.a
 [Nelson Oliveira <NOliveira@extend.com>]
 

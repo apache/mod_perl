@@ -954,22 +954,27 @@ read_client_block(r, buffer, bufsiz)
     int      bufsiz
 
     PREINIT:
-    long nrd = 0;
+    long nrd = 0, old_read_length;
     int rc;
 
     PPCODE:
-    if ((rc = setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-	aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, r->server, 
-		    "mod_perl: setup_client_block failed: %d", rc);
-	XSRETURN_UNDEF;
+    if (!r->read_length) {
+        if ((rc = setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
+            aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, r->server, 
+                        "mod_perl: setup_client_block failed: %d", rc);
+            XSRETURN_UNDEF;
+        }
     }
+
+    old_read_length = r->read_length;
+    r->read_length = 0;
 
     if (should_client_block(r)) {
         SvUPGRADE(buffer, SVt_PV);
         SvGROW(buffer, bufsiz+1);
         nrd = get_client_block(r, SvPVX(buffer), bufsiz);
-        r->read_length = 0;
-    } 
+    }
+    r->read_length += old_read_length;
 
     if (nrd > 0) {
         XPUSHs(sv_2mortal(newSViv((long)nrd)));

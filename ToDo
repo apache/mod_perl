@@ -65,10 +65,6 @@ POSSIBLE NEW FEATURES
 
 - Apache::PerlRun::flush_namespace should be re-written in c
 
-- should $r->content unset $r->headers_in('content-length') ?
-NOTE: im worried this could break apps who need to know content-length 
-after data has been read
-
 - syswrite/WRITE
 
 - Jeffrey W. Baker's Apache::Util::escape_html() replacement
