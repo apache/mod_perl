@@ -140,12 +140,8 @@ sub win32_size_check {
                                     length $pProcessMemoryCounters);
 
     # unpack ProcessMemoryCounters structure
-    my ($cb,                         $PageFaultCount,
-        $PeakWorkingSetSize,         $WorkingSetSize,
-        $QuotaPeakPagedPoolUsage,    $QuotaPagedPoolUsage,
-        $QuotaPeakNonPagedPoolUsage, $QuotaNonPagedPoolUsage,
-        $PagefileUsage,              $PeakPagefileUsage)
-        = unpack $pmem_struct, $pProcessMemoryCounters;
+    my $PeakWorkingSetSize =
+        (unpack $pmem_struct, $pProcessMemoryCounters)[2];
 
     # only care about peak working set size
     my $size = int($PeakWorkingSetSize / 1024);
