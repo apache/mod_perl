@@ -1,5 +1,10 @@
-use lib '.';
+
+unshift @INC, 
+       -e "dirty-lib" ? '.' :
+       Apache->server_root_relative("net/perl");
 require "dirty-lib";
+shift @INC;
+
 unless (defined(&not_ina_package) && not_ina_package()) {
     die "%INC save/restore broken";
 }

@@ -92,6 +92,10 @@ SOURCE=..\perl\Apache.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\ApacheModulePerl.def
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\..\Apache\ApacheCore.lib
 # End Source File
 # Begin Source File
