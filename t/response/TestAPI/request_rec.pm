@@ -1,7 +1,7 @@
 package TestAPI::request_rec;
 
 use strict;
-use warnings FATAL => 'all';
+use warnings;# FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -54,13 +54,13 @@ sub handler {
 
     ok $r->proxyreq || 1;
 
-    ok $r->header_only || 1;
+    ok !$r->header_only;
 
     ok $r->protocol =~ /http/i;
 
     ok $r->proto_num;
 
-    ok $r->hostname || 1;
+    ok t_cmp $r->hostname, $r->get_server_name, "hostname";
 
     ok $r->request_time;
 
@@ -154,8 +154,8 @@ sub handler {
     #per_dir_config
     #request_config
 
-    #output_filters
-    #input_filers
+    # input_filters and output_filters are tested in
+    # TestAPI::in_out_filters;
 
     #eos_sent
 
