@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+fix $Apache::Server::Starting under dso
+
 use ap_bfileno() instead of r->connnection->client->fd directly
 [Paul J. Reder <rederpj@raleigh.ibm.com>]
 
