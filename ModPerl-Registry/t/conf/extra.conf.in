@@ -31,19 +31,9 @@ PerlModule ModPerl::Util
 ### Normal registry setup ###
 #############################
 Alias /registry/         @ServerRoot@/cgi-bin/
-Alias /registry_ng/      @ServerRoot@/cgi-bin/
 Alias /registry_bb/      @ServerRoot@/cgi-bin/
 Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
 Alias /perlrun/          @ServerRoot@/cgi-bin/
-
-PerlModule ModPerl::RegistryNG
-<Location /registry_ng>
-    PerlOptions +GlobalRequest
-    SetHandler perl-script
-    Options +ExecCGI
-    PerlResponseHandler ModPerl::RegistryNG
-    PerlOptions +ParseHeaders
-</Location>
 
 PerlModule ModPerl::RegistryBB
 <Location /registry_bb>
@@ -86,20 +76,11 @@ PerlModule ModPerl::PerlRun
 #######################################
 
 Alias /same_interp/registry/         @ServerRoot@/cgi-bin/
-Alias /same_interp/registry_ng/      @ServerRoot@/cgi-bin/
 Alias /same_interp/registry_bb/      @ServerRoot@/cgi-bin/
 Alias /same_interp/registry_oo_conf/ @ServerRoot@/cgi-bin/
 Alias /same_interp/perlrun/          @ServerRoot@/cgi-bin/
 
 PerlModule Apache::TestHandler
-<Location /same_interp/registry_ng>
-    PerlOptions +GlobalRequest
-    SetHandler perl-script
-    Options +ExecCGI
-    PerlFixupHandler Apache::TestHandler::same_interp_fixup
-    PerlResponseHandler ModPerl::RegistryNG
-    PerlOptions +ParseHeaders
-</Location>
 
 <Location /same_interp/registry_bb>
     PerlOptions +GlobalRequest
