@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET GET_BODY HEAD);
+use Apache::TestConfig ();
 
 my %modules = (
     registry    => 'ModPerl::Registry',
