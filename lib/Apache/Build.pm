@@ -1724,6 +1724,13 @@ sub includes {
     unless ($self->httpd_is_source_tree) {
         push @inc, $self->apr_includedir;
 
+        my $apuc = $self->apu_config_path;
+        if ($apuc && -x $apuc) {
+            chomp(my $apuincs = qx($apuc --includes));
+            $apuincs =~ s|-I||;
+            push @inc, $apuincs;
+        }
+
         my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
         if (-d $ainc) {
             push @inc, $ainc;
