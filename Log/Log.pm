@@ -5,33 +5,9 @@ use Apache ();
 use vars qw($VERSION @ISA);
 
 use DynaLoader ();
-@ISA = qw(DynaLoader Apache Apache::Server);
+@ISA = qw(DynaLoader);
 
-$VERSION = '1.00';
-
-*Apache::log = *Apache::Server::log = \&log;
-*emerg = \&emergency;
-*crit  = \&critical;
-
-sub log { 
-    my $self = shift;
-    my $s;
-    if(ref $self) { 
-	if($self->isa("Apache")) {
-	    $s = $self->server;
-	}
-	elsif($self->isa("Apache::Server")) {
-	    $s = $self;
-	}
-	else {
-	    die("Can't pull an Apache::Server from $self");
-	}
-    }
-    else {
-	$s = Apache->request->server;
-    }
-    bless $s; 
-}
+$VERSION = '1.01';
 
 if($ENV{MOD_PERL}) {
     bootstrap Apache::Log $VERSION;
@@ -47,13 +23,15 @@ Apache::Log - Interface to Apache logging
 =head1 SYNOPSIS
 
   use Apache::Log ();
-  my $log = $r->log;
-  $log->debug("You only see this if `LogLevel' is set to `debug'");
+  my $rlog = $r->log;
+  $rlog->debug("You only see this if `LogLevel' is set to `debug'");
 
+  my $slog = $r->server->log;
+ 
 =head1 DESCRIPTION
 
 The Apache::Log module provides an interface to Apache's I<ap_log_error>
-routine.
+and I<ap_log_rerror> routines.
 
 =over 4
 

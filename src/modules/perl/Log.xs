@@ -4,13 +4,38 @@
 #include "modules/perl/mod_perl.h"
 #endif
 
-static void ApacheLog(int level, const server_rec *s, SV *msg)
+#if MODULE_MAGIC_NUMBER >= 19980806
+#define HAVE_LOG_RERROR 1
+#else
+#define HAVE_LOG_RERROR 0
+#endif
+
+static void perl_cv_alias(char *to, char *from)
+{
+    GV *gp = gv_fetchpv(to, TRUE, SVt_PVCV);
+    GvCV(gp) = perl_get_cv(from, TRUE);
+}
+
+static void ApacheLog(int level, SV *sv, SV *msg)
 {
     char *file = NULL;
     int line   = 0;
     char *str;
     SV *svstr = Nullsv;
     int lmask = level & APLOG_LEVELMASK;
+    server_rec *s;
+    request_rec *r = NULL;
+
+    if(sv_isa(sv, "Apache::Log::Request") && SvROK(sv)) {
+	r = (request_rec *) SvIV((SV*)SvRV(sv));
+	s = r->server;
+    }
+    else if(sv_isa(sv, "Apache::Log::Server") && SvROK(sv)) {
+	s = (server_rec *) SvIV((SV*)SvRV(sv));
+    }
+    else {
+        croak("Argument is not an Apache or Apache::Server object");
+    }
 
     if((lmask == APLOG_DEBUG) && (s->loglevel >= APLOG_DEBUG)) {
 	SV *caller = perl_eval_pv("[ (caller)[1,2] ]", TRUE);
@@ -34,7 +59,14 @@ static void ApacheLog(int level, const server_rec *s, SV *msg)
     else
 	str = SvPV(msg,na);
 
-    ap_log_error(file, line, APLOG_NOERRNO|level, s, str);
+    if(r && HAVE_LOG_RERROR) {
+#if HAVE_LOG_RERROR > 0
+	ap_log_rerror(file, line, APLOG_NOERRNO|level, r, str);
+#endif
+    }
+    else {
+	ap_log_error(file, line, APLOG_NOERRNO|level, s, str);
+    }
 
     SvREFCNT_dec(msg);
     if(svstr) SvREFCNT_dec(svstr);
@@ -57,13 +89,13 @@ join_stack_msg; \
 ApacheLog(l, s, msgstr); \
 }
 
-#define Apache_log_emergency(s) \
+#define Apache_log_emerg(s) \
 MP_AP_LOG(APLOG_EMERG, s)
 
 #define Apache_log_alert(s) \
 MP_AP_LOG(APLOG_ALERT, s)
 
-#define Apache_log_critical(s) \
+#define Apache_log_crit(s) \
 MP_AP_LOG(APLOG_CRIT, s)
 
 #define Apache_log_error(s) \
@@ -86,41 +118,77 @@ MODULE = Apache::Log		PACKAGE = Apache
 PROTOTYPES: DISABLE
 
 BOOT:
+    perl_cv_alias("Apache::log", "Apache::Log::log");
+    perl_cv_alias("Apache::Server::log", "Apache::Log::log");
+    perl_cv_alias("emergency", "emerg");
+    perl_cv_alias("critical", "crit");
+
+    av_push(perl_get_av("Apache::Log::Request::ISA",TRUE), 
+	    newSVpv("Apache::Log",11));
+    av_push(perl_get_av("Apache::Log::Server::ISA",TRUE), 
+	    newSVpv("Apache::Log",11));
+
     items = items; /*avoid warning*/ 
 
 MODULE = Apache::Log		PACKAGE = Apache::Log PREFIX=Apache_log_
 
 void
-Apache_log_emergency(s, ...)
-	Apache::Server s
+Apache_log_log(sv)
+    SV *sv
+
+    PREINIT:
+    void *retval;
+    char *class = "Apache::Log::Request";
+
+    CODE:
+    if(!SvROK(sv))
+        croak("Argument is not a reference");
+
+    if(sv_derived_from(sv, "Apache")) {
+	/*ok*/
+    }
+    else if(sv_derived_from(sv, "Apache::Server")) {
+	class = "Apache::Log::Server";
+    }
+    else {
+        croak("Argument is not an Apache or Apache::Server object");
+    }
+
+    retval = (void *) SvIV((SV*)SvRV(sv));
+    ST(0) = sv_newmortal();
+    sv_setref_pv(ST(0), class, (void*)retval);
+
+void
+Apache_log_emerg(s, ...)
+	SV *s
 
 void
 Apache_log_alert(s, ...)
-	Apache::Server s
+	SV *s
 
 void
-Apache_log_critical(s, ...)
-	Apache::Server s
+Apache_log_crit(s, ...)
+	SV *s
 
 void
 Apache_log_error(s, ...)
-	Apache::Server s
+	SV *s
 
 void
 Apache_log_warn(s, ...)
-	Apache::Server s
+	SV *s
 
 void
 Apache_log_notice(s, ...)
-	Apache::Server s
+	SV *s
 
 void
 Apache_log_info(s, ...)
-	Apache::Server s
+	SV *s
 
 void
 Apache_log_debug(s, ...)
-	Apache::Server s
+	SV *s
 
 
 
