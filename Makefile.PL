@@ -1343,6 +1343,18 @@ sub MY::post_initialize {
 
     finddepth(\&wanted, $APACHE_SRC);
     $self->{PM}{"Apache/typemap"} = '$(INST_ARCHLIB)/' . "auto/Apache/typemap";
+
+    my $v = httpd_version($APACHE_SRC, 1);
+    return '' unless $v >= 133;
+    for (qw(ap_config_auto.h)) {
+	my $from = "$APACHE_SRC/include/$_";
+	my $to = '$(INST_ARCHLIB)/' . "auto/Apache/include/$_";
+	unless ($self->{PM}->{$from}) {
+	    $self->{PM}->{$from} = $to;
+	    system "$Config{touch} $from";
+	}
+    }
+
     '';
 }
 

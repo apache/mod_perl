@@ -9,6 +9,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+make sure ap_config_auto.h is picked up when PREP_HTTPD=1 (for
+non-distribution modules that use Apache::src to build)
+
 Fixed "broken" $VERSION's so CPAN won't be confused
 [ Ask Bjoern Hansen <ask@netcetera.dk> ]
 
