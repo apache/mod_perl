@@ -4,8 +4,6 @@ use strict;
 use warnings FATAL => 'all';
 use ModPerl::MapUtil qw();
 use ModPerl::ParseSource ();
-use Apache::FunctionTable ();
-use ModPerl::FunctionTable ();
 
 our @ISA = qw(ModPerl::MapBase);
 
