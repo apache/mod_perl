@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-static MP_INLINE apr_status_t mpxs_apr_socket_recv(pTHX_ apr_socket_t *socket,
-                                                   SV *sv_buf, SV *sv_len)
+static MP_INLINE
+apr_status_t mpxs_apr_socket_recv(pTHX_ apr_socket_t *socket,
+                                  SV *sv_buf, SV *sv_len)
 {
     apr_status_t status;
     apr_size_t len = mp_xs_sv2_apr_size_t(sv_len);
@@ -30,8 +31,9 @@ static MP_INLINE apr_status_t mpxs_apr_socket_recv(pTHX_ apr_socket_t *socket,
     return status;
 }
 
-static MP_INLINE apr_status_t mpxs_apr_socket_send(pTHX_ apr_socket_t *socket,
-                                                   SV *sv_buf, SV *sv_len)
+static MP_INLINE
+apr_status_t mpxs_apr_socket_send(pTHX_ apr_socket_t *socket,
+                                  SV *sv_buf, SV *sv_len)
 {
     apr_status_t status;
     apr_size_t buf_len;
@@ -50,8 +52,9 @@ static MP_INLINE apr_status_t mpxs_apr_socket_send(pTHX_ apr_socket_t *socket,
     return status;
 }
 
-static MP_INLINE apr_interval_time_t
-mpxs_apr_socket_timeout_get(pTHX_ I32 items, SV **MARK, SV **SP)
+static MP_INLINE
+apr_interval_time_t mpxs_apr_socket_timeout_get(pTHX_ I32 items,
+                                                SV **MARK, SV **SP)
 {
     apr_interval_time_t	t;
     APR__Socket APR__Socket;
@@ -65,7 +68,17 @@ mpxs_apr_socket_timeout_get(pTHX_ I32 items, SV **MARK, SV **SP)
 }
 
 static MP_INLINE
-apr_int32_t mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket, apr_int32_t opt)
+void mpxs_APR__Socket_timeout_set(pTHX_ apr_socket_t *socket,
+                                 apr_interval_time_t t)
+{
+    MP_FAILURE_CROAK(apr_socket_timeout_set(socket, t));
+}
+
+
+
+static MP_INLINE
+apr_int32_t mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket,
+                                     apr_int32_t opt)
 {
     apr_int32_t val;
     MP_FAILURE_CROAK(apr_socket_opt_get(socket, opt, &val));
@@ -74,7 +87,7 @@ apr_int32_t mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket, apr_int32_t opt
 
 static MP_INLINE
 void mpxs_APR__Socket_opt_set(pTHX_ apr_socket_t *socket, apr_int32_t opt,
-                         apr_int32_t val)
+                              apr_int32_t val)
 {
     MP_FAILURE_CROAK(apr_socket_opt_set(socket, opt, val));
 }
