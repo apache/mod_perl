@@ -20,7 +20,7 @@ sub handler {
 
     my $c = $r->connection;
 
-    plan $r, tests => 14;
+    plan $r, tests => 16;
 
     ok $c;
 
@@ -34,7 +34,19 @@ sub handler {
 
     ok $c->remote_addr->isa('APR::SockAddr');
 
-    ok $c->remote_ip;
+    # remote_ip
+    {
+        my $remote_ip_org = $c->remote_ip;
+        my $remote_ip_new = "10.10.10.255";
+        ok $remote_ip_org;
+
+        $c->remote_ip($remote_ip_new);
+        ok t_cmp $c->remote_ip, $remote_ip_new;
+
+        # restore
+        $c->remote_ip($remote_ip_org);
+        ok t_cmp $c->remote_ip, $remote_ip_org;
+    }
 
     ok $c->remote_host || 1;
 

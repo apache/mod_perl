@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Apache::Connection::remote_ip is now settable (needed to set the
+remote_ip record based on proxy's X-Forwarded-For header) [Stas]
+
 Fix Modperl::Util::unload_package() [Gozer]
   - Mistakenly skipping small entries of size 2 and less
   - Leave entries from other packages alone
