@@ -21,7 +21,7 @@ sub new_test_config {
     $self->{conf_opts}->{startup_timeout} =
         $build->mpm_is_threaded() ? 180 : 120;
 
-    $self->{conf_opts}->{maxclients} = MIN_MAXCLIENTS;
+    $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
 
     ModPerl::TestConfig->new($self->{conf_opts});
 }
