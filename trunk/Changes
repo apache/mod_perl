@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+fix $...NameWithVirtualHost defaulting in Apache::PerlRun 
+["Ryan A. Whelan" <rwhelan@2rad.net>
+
 r->as_string now uses table_do() and moved to xs
 
 use 1.3.2-dev+'s ap_custom_response() when possible
