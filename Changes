@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.20_01-dev
+=item 1.21 - July 2, 1999
 
 fix refcount bug in %VirtualHost [] values, thanks to Pete Ehlke for
 the spot
