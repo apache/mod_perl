@@ -516,23 +516,12 @@ MP_CMD_SRV_DECLARE(perldo)
     }
     
     {
-        /* Set $0 to the current configuration file */
-        SV *dollar_zero = get_sv("0", TRUE);
-        int dollar_zero_tainted = SvTAINTED(dollar_zero);
-
-        if (dollar_zero_tainted) {
-            SvTAINTED_off(dollar_zero); 
-        }
-
+        GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;
-        save_item(dollar_zero);
-        sv_setpv(dollar_zero, directive->filename);
+        save_scalar(gv); /* local $0 */
+        sv_setpv_mg(GvSV(gv), directive->filename);
         eval_pv(arg, FALSE);
         LEAVE;
-
-        if (dollar_zero_tainted) {
-            SvTAINTED_on(dollar_zero);
-        }
     }
     
     if (SvTRUE(ERRSV)) {
