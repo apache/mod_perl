@@ -91,8 +91,11 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     return status;
 }
 
-int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
-                                  server_rec *s, int type, ...)
+int modperl_callback_run_handlers(int idx, int type,
+                                  request_rec *r, conn_rec *c, server_rec *s,
+                                  apr_pool_t *pconf,
+                                  apr_pool_t *plog,
+                                  apr_pool_t *ptemp)
 {
 #ifdef USE_ITHREADS
     pTHX;
@@ -105,7 +108,6 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
     MpAV *av, **avp;
     int i, status = OK;
     const char *desc = NULL;
-    va_list args;
     AV *av_args = Nullav;
 
     if (!MpSrvENABLED(scfg)) {
@@ -114,8 +116,15 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
         return DECLINED;
     }
 
-    avp = modperl_handler_lookup_handlers(dcfg, scfg, NULL,
-                                          type, idx, &desc);
+    if (r || c) {
+        p = c ? c->pool : r->pool;
+    }
+    else {
+        p = pconf;
+    }
+
+    avp = modperl_handler_lookup_handlers(dcfg, scfg, NULL, p,
+                                          type, idx, FALSE, &desc);
 
     if (!(avp && (av = *avp))) {
         MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
@@ -128,7 +137,6 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
         c = r->connection;
     }
     if (r || c) {
-        p = c ? c->pool : r->pool;
         interp = modperl_interp_select(r, c, s);
         aTHX = interp->perl;
     }
@@ -150,39 +158,17 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
                                   "Apache::Connection", c, NULL);
         break;
       case MP_HANDLER_TYPE_FILES:
-          {
-              apr_pool_t *pconf, *plog, *ptemp;
-
-              va_start(args, type);
-              pconf = va_arg(args, apr_pool_t *);
-              plog  = va_arg(args, apr_pool_t *);
-              ptemp = va_arg(args, apr_pool_t *);
-              va_end(args);
-
-              modperl_handler_make_args(aTHX_ &av_args,
-                                        "Apache::Pool", pconf,
-                                        "Apache::Pool", plog,
-                                        "Apache::Pool", ptemp,
-                                        "Apache::Server", s, NULL);
-          }
-          break;
+        modperl_handler_make_args(aTHX_ &av_args,
+                                  "Apache::Pool", pconf,
+                                  "Apache::Pool", plog,
+                                  "Apache::Pool", ptemp,
+                                  "Apache::Server", s, NULL);
+        break;
       case MP_HANDLER_TYPE_PROCESS:
-          {
-              apr_pool_t *pconf;
-
-              va_start(args, type);
-              pconf = va_arg(args, apr_pool_t *);
-              va_end(args);
-
-              if (!p) {
-                  p = pconf;
-              }
-
-              modperl_handler_make_args(aTHX_ &av_args,
-                                        "Apache::Pool", pconf,
-                                        "Apache::Server", s, NULL);
-          }
-          break;
+        modperl_handler_make_args(aTHX_ &av_args,
+                                  "Apache::Pool", pconf,
+                                  "Apache::Server", s, NULL);
+        break;
     };
 
     MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
@@ -212,36 +198,37 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
 
 int modperl_callback_per_dir(int idx, request_rec *r)
 {
-    return modperl_callback_run_handlers(idx, r, NULL,
-                                         r->server,
-                                         MP_HANDLER_TYPE_PER_DIR);
+    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PER_DIR,
+                                         r, NULL, r->server,
+                                         NULL, NULL, NULL);
 }
 
 int modperl_callback_per_srv(int idx, request_rec *r)
 {
-    return modperl_callback_run_handlers(idx, r, NULL,
-                                         r->server,
-                                         MP_HANDLER_TYPE_PER_SRV);
+    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PER_SRV,
+                                         r, NULL, r->server,
+                                         NULL, NULL, NULL);
 }
 
 int modperl_callback_connection(int idx, conn_rec *c)
 {
-    return modperl_callback_run_handlers(idx, NULL, c,
-                                         c->base_server,
-                                         MP_HANDLER_TYPE_CONNECTION);
+    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_CONNECTION,
+                                         NULL, c, c->base_server,
+                                         NULL, NULL, NULL);
 }
 
 void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s)
 {
-    modperl_callback_run_handlers(idx, NULL, NULL, s,
-                                  MP_HANDLER_TYPE_PROCESS, p);
+    modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_PROCESS,
+                                  NULL, NULL, s,
+                                  p, NULL, NULL);
 }
 
 void modperl_callback_files(int idx,
                             apr_pool_t *pconf, apr_pool_t *plog,
                             apr_pool_t *ptemp, server_rec *s)
 {
-    modperl_callback_run_handlers(idx, NULL, NULL, s,
-                                  MP_HANDLER_TYPE_FILES,
+    modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_FILES,
+                                  NULL, NULL, s,
                                   pconf, plog, ptemp);
 }

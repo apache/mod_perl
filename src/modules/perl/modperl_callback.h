@@ -13,8 +13,11 @@
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      server_rec *s, AV *args);
 
-int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
-                                  server_rec *s, int type, ...);
+int modperl_callback_run_handlers(int idx, int type,
+                                  request_rec *r, conn_rec *c, server_rec *s,
+                                  apr_pool_t *pconf,
+                                  apr_pool_t *plog,
+                                  apr_pool_t *ptemp);
 
 int modperl_callback_per_dir(int idx, request_rec *r);
 

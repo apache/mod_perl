@@ -67,33 +67,38 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
                                        modperl_config_srv_t *scfg,
                                        modperl_config_req_t *rcfg,
-                                       int type, int idx,
+                                       apr_pool_t *p,
+                                       int type, int idx, int lvalue,
                                        const char **desc)
 {
-    MpAV *av = NULL;
+    MpAV **avp = NULL;
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_DIR:
-        av = dcfg->handlers_per_dir[idx];
+        avp = &dcfg->handlers_per_dir[idx];
         set_desc(per_dir);
         break;
       case MP_HANDLER_TYPE_PER_SRV:
-        av = scfg->handlers_per_srv[idx];
+        avp = &scfg->handlers_per_srv[idx];
         set_desc(per_srv);
         break;
       case MP_HANDLER_TYPE_CONNECTION:
-        av = scfg->handlers_connection[idx];
+        avp = &scfg->handlers_connection[idx];
         set_desc(connection);
         break;
       case MP_HANDLER_TYPE_FILES:
-        av = scfg->handlers_files[idx];
+        avp = &scfg->handlers_files[idx];
         set_desc(files);
         break;
       case MP_HANDLER_TYPE_PROCESS:
-        av = scfg->handlers_process[idx];
+        avp = &scfg->handlers_process[idx];
         set_desc(process);
         break;
     };
 
-    return av ? &av : NULL;
+    if (lvalue && avp && !*avp && p) {
+        *avp = apr_array_make(p, lvalue, sizeof(modperl_handler_t *));
+    }
+
+    return avp;
 }

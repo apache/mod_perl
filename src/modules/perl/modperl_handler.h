@@ -11,7 +11,8 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...);
 MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
                                        modperl_config_srv_t *scfg,
                                        modperl_config_req_t *rcfg,
-                                       int type, int idx,
+                                       apr_pool_t *p,
+                                       int type, int idx, int lvalue,
                                        const char **desc);
 
 #endif /* MODPERL_HANDLER_H */
