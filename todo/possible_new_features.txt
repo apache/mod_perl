@@ -72,8 +72,8 @@ modules:
        modperl_require_module("Apache::compat");
   #endif
 
-  if MP_APACHE_COMPAT Makefile.PL option is true, but this carries a
-  performance hit, so this is just an option.
+  if MP_APACHE_COMPAT Makefile.PL option is true. But this adds bloat,
+  so this is just an option to consider.
 
 
 new modules:
