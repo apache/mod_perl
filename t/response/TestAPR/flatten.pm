@@ -16,11 +16,13 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 9;
+    plan $r, tests => 14;
 
     # first, create a brigade
-    my $bb = APR::Brigade->new($r->pool, 
-                               $r->connection->bucket_alloc);
+    my $pool = $r->pool;
+    my $ba   = $r->connection->bucket_alloc;
+
+    my $bb   = APR::Brigade->new($pool, $ba);
 
     # now, let's put several buckets in it
     for (1 .. 10) {
@@ -34,19 +36,17 @@ sub handler {
              $bb->length,
              'APR::Brigade::length()');
 
-    # slurp up the entire brigade
-    # this is somewhat wasteful, since we're simulating a user
-    # 'guessing' at how much data there is to slurp
+    # syntax: always require a pool
+    eval { $bb->flatten() };
+
+    ok t_cmp(qr/Usage: APR::Brigade::flatten/,
+             $@,
+             'APR::Brigade::flatten() requires a pool');
+
+    # flatten($pool) will slurp up the entire brigade
+    # equivalent to calling apr_brigade_pflatten
     {
-        my $rc = $bb->flatten(my $data, my $length = 300000);
-
-        ok t_cmp(APR::SUCCESS,
-                 $rc,
-                 'APR::Brigade::flatten() return value');
-
-        ok t_cmp(200000,
-                 $length,
-                 'APR::Brigade::flatten() length population');
+        my $data = $bb->flatten($pool);
 
         ok t_cmp(200000,
                  length($data),
@@ -58,44 +58,68 @@ sub handler {
         ok ($data !~ m/[^x]/);
     }
 
-    # test that other length variants - such as constants and
-    # subroutine returns - don't segfault
+    # syntax: flatten($p, 0) is equivalent to flatten($p)
     {
-        my $rc = $bb->flatten(my $data, 300000);
+        my $data = $bb->flatten($pool, 0);
 
-        ok t_cmp(APR::SUCCESS,
-             $rc,
-             'APR::Brigade::flatten() return value');
-    }
-
-    # this is probably the best example of using flatten() to
-    # get the entire brigade - using $bb->length to determine 
-    # the full size of the brigade.
-    # probably still inefficient, though...
-    {
-        my $rc = $bb->flatten(my $data, $bb->length);
-
-        ok t_cmp(APR::SUCCESS,
-             $rc,
-             'APR::Brigade::flatten() return value');
-    }
-
-    # this is the most proper use of flatten() - retrieving
-    # only a chunk of a brigade.  most examples in httpd core
-    # use flatten() to grab the first 30 bytes or so
-    {
-        my $rc = $bb->flatten(my $data, 100000);
-
-        ok t_cmp(APR::SUCCESS,
-             $rc,
-             'APR::Brigade::flatten() return value');
-
-        ok t_cmp(100000,
+        ok t_cmp(200000,
                  length($data),
                  'APR::Brigade::flatten() returned all the data');
+
+        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        ok ($data !~ m/[^x]/);
     }
 
-    # pflatten() examples to come...
+
+    # flatten($pool, $length) will return the first $length bytes
+    # equivalent to calling apr_brigade_flatten
+    {
+        # small
+        my $data = $bb->flatten($pool, 30);
+
+        ok t_cmp(30,
+                 length($data),
+                 'APR::Brigade::flatten() returned all the data');
+
+        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        ok ($data !~ m/[^x]/);
+    }
+
+    {
+        # large 
+        my $data = $bb->flatten($pool, 190000);
+
+        ok t_cmp(190000,
+                 length($data),
+                 'APR::Brigade::flatten() returned all the data');
+
+        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        ok ($data !~ m/[^x]/);
+    }
+
+    {
+        # more than enough
+        my $data = $bb->flatten($pool, 300000);
+
+        ok t_cmp(200000,
+                 length($data),
+                 'APR::Brigade::flatten() returned all the data');
+
+        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        ok ($data !~ m/[^x]/);
+    }
+
+    # fetch from a brigade with no data in it
+    {
+        my $data = APR::Brigade->new($pool, $ba)->flatten($pool);
+
+        t_debug('an empty brigade returns a defined value');
+        ok (defined $data);
+    
+        ok t_cmp(0,
+                 length($data),
+                 'an empty brigade returns data of 0 length');
+    }
 
     Apache::OK;
 }

@@ -87,19 +87,53 @@ SV *mpxs_APR__Brigade_length(pTHX_ apr_bucket_brigade *bb,
 }
 
 static MP_INLINE
-apr_status_t mpxs_apr_brigade_flatten(pTHX_ apr_bucket_brigade *bb,
-                                      SV *sv_buf, SV *sv_len)
+SV *mpxs_APR__Brigade_flatten(pTHX_ apr_bucket_brigade *bb,
+                              apr_pool_t *pool, SV *sv_len)
 {
+
+    /* XXX we're deviating from the API here to try and make
+     * the API more Perlish - nobody likes the idea of two
+     * "in/out" arguments.  and we generally don't ever need
+     * the length anyway...
+     */
+
     apr_status_t status;
-    apr_size_t len = mp_xs_sv2_apr_size_t(sv_len);
+    char *buffer;
+    apr_size_t length;
 
-    mpxs_sv_grow(sv_buf, len);
-    status = apr_brigade_flatten(bb, SvPVX(sv_buf), &len);
-    mpxs_sv_cur_set(sv_buf, len);
+    if (SvTRUE(sv_len)) {
+        /* APR::Brigade->flatten($p, $length);
+         * use apr_brigade_flatten to get the first $length bytes
+         *
+         * note that $length must be non-zero to get here
+         */
 
-    if (!SvREADONLY(sv_len)) {
-        sv_setiv(sv_len, len);
+        length = mp_xs_sv2_apr_size_t(sv_len);
+
+        /* since we always require a pool, we can allocate from it */
+        buffer = apr_pcalloc(pool, length);
+
+        status = apr_brigade_flatten(bb, buffer, &length);
+
+    }
+    else {
+        /* APR::Brigade->flatten($p);
+         * use apr_brigade_pflatten to slurp the entire brigade
+         *
+         * note that it doesn't matter what we pass in for length
+         */
+
+        status = apr_brigade_pflatten(bb, &buffer, &length, pool);
+
     }
 
-    return status;
+    if (status != APR_SUCCESS) {
+        /* XXX croak?
+         * note that reading from an empty brigade will return
+         * an empty string, not undef, so there is a difference
+         */
+        return &PL_sv_undef;
+    }
+
+    return newSVpvn(buffer, length);
 }
