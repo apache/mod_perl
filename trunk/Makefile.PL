@@ -131,6 +131,7 @@ my(@do_clean) = qw{
    t/report
    t/httpd
    apaci/find_source
+   apaci/apxs_cflags
    apaci/mod_perl.config
 };
 #t/conf/httpd.conf
@@ -147,6 +148,7 @@ rmtree "t/docs/stacked", 0, 0;
 gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
 gen_script("apaci/find_source");
+gen_script("apaci/apxs_cflags");
 write_version_h("src/modules/perl");
 
 my(@test_pre_init) = qq(
@@ -357,12 +359,12 @@ if($USE_APXS) {
     if(-e $USE_APXS and !(-d _)) {
         $WITH_APXS = $USE_APXS;
     }
-    elsif($USE_APXS and $APACHE_PREFIX) {
+    if(not -x $WITH_APXS and $USE_APXS and $APACHE_PREFIX) {
 	for (qw(sbin bin)) {
 	    last if -e ($WITH_APXS = "$APACHE_PREFIX/$_/apxs");
 	}
     }
-    unless ($WITH_APXS) {
+    unless (-x $WITH_APXS) {
 	chomp($WITH_APXS = `which apxs`);
     }
 

@@ -1,7 +1,7 @@
 package Apache::src;
 
 use strict;
-use vars qw($VERSION $AUTOLOAD);
+use vars qw($VERSION);
 use File::Path ();
 use IO::File ();
 use Cwd ();
@@ -15,13 +15,28 @@ use Config;
 $VERSION = '0.01';
 sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
 my $Is_Win32 = ($^O eq "MSWin32");
+$Apache::src::APXS = "";
 
 sub apxs {
     my $self = shift;
     require Apache::MyConfig;
-    my $apxs = $Apache::MyConfig::Setup{'APXS'};
+    my $apxs;
+    for ($Apache::src::APXS,
+	 $Apache::MyConfig::Setup{'APXS'},
+	 `which apxs`,
+	 "/usr/local/apache/bin/apxs")
+      {
+	  last if -x ($apxs = $_);
+      }
     return "" unless $apxs and -x $apxs;
     `$apxs @_`;
+}
+
+sub apxs_cflags {
+    my $cflags = __PACKAGE__->apxs(-q => 'CFLAGS');
+    #$cflags =~ s/-D\w+=\".*\"//g; #get rid of -Ds with quotes
+    $cflags =~ s/\"/\\\"/g;
+    $cflags;
 }
 
 sub new {
