@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+add =pod config support for '={begin,for} apache ... =end apache'
+
 Apache::TieHashTable->get in list context will return all values found for
 the given key
 

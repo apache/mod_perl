@@ -53,7 +53,7 @@ if($ENV{PERL_TEST_NEW_READ}) {
 $ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
 
 %net::callback_hooks = ();
-require "./t/net/config.pl";
+require "net/config.pl";
 if($net::callback_hooks{PERL_SAFE_STARTUP}) {
     eval "open \$0";
     unless ($@ =~ /open trapped by operation mask/) {
