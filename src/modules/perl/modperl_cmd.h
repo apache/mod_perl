@@ -27,6 +27,7 @@ MP_CMD_SRV_DECLARE(pass_env);
 MP_CMD_SRV_DECLARE(options);
 MP_CMD_SRV_DECLARE(init_handlers);
 MP_CMD_SRV_DECLARE(perl);
+MP_CMD_SRV_DECLARE(load_module);
 
 #ifdef MP_COMPAT_1X
 
