@@ -14,7 +14,7 @@
 #   from Perl and Apache parameters
 MP_CC=$(PERL_CC)
 MP_CFLAGS=$(PERL_OPTIMIZE) -I$(PERL_INC) $(PERL_CCFLAGS) \
-          $(PERL_DEFS) $(INCLUDES) $(CFLAGS)
+          $(PERL_DEFS) $(INCLUDES) $(AP_CFLAGS) $(CFLAGS)
 MP_CFLAGS_SHLIB=$(PERL_CCCDLFLAGS) $(MP_CFLAGS)
 MP_LD=$(PERL_LD)
 MP_LDFLAGS_SHLIB=$(PERL_LDDLFLAGS)
@@ -99,7 +99,7 @@ install:
 depend:
 	cp Makefile.tmpl Makefile.tmpl.bak \
 	    && sed -ne '1,/^# DO NOT REMOVE/p' Makefile.tmpl > Makefile.new \
-	    && gcc -MM $(INCLUDES) $(CFLAGS) *.c >> Makefile.new \
+	    && gcc -MM $(INCLUDES) $(AP_CFLAGS) $(CFLAGS) *.c >> Makefile.new \
 	    && sed -e '1,$$s: $(INCDIR)/: $$(INCDIR)/:g' \
 	           -e '1,$$s: $(OSDIR)/: $$(OSDIR)/:g' Makefile.new \
 		> Makefile.tmpl \
