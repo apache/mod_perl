@@ -1291,7 +1291,7 @@ WriteMakefile(
 	HTTPD => $TARGET,
 	PORT => $PORT,
 	PWD => $PWD,
-        PERL5LIB => "PERL5LIB=$ENV{PERL5LIB}",
+        PERL5LIB_ENV => "PERL5LIB=$ENV{PERL5LIB}",
 	SHRPENV => $Config{shrpenv},
 	CVSROOT => 'cvs.apache.org:/home/cvs',
     },
@@ -1419,16 +1419,16 @@ apxs_distclean:
 	(cd ./apaci && $(MAKE) distclean)
 
 apxs_libperl:
-	(cd ./apaci && $(PERL5LIB) $(MAKE))
+	(cd ./apaci && $(PERL5LIB_ENV) $(MAKE))
 
 apxs_install: apxs_libperl
 	(cd ./apaci && $(MAKE) install;)
 
 apache_httpd: $(APACHE_SRC)/Makefile.tmpl
-	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)";)
+	(cd $(APACHE_SRC) && $(PERL5LIB_ENV) $(SHRPENV) $(MAKE) CC="$(CC)";)
 
 apaci_httpd: 
-	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE))
+	(cd $(APACHE_ROOT) && $(PERL5LIB_ENV) $(MAKE))
 
 apaci_install: 
 	(cd $(APACHE_ROOT) && $(MAKE) install)
