@@ -641,6 +641,10 @@ Returns true if this is a virtual server.
 
 Returns the wild-carded names for ServerAlias servers. 
 
+=item $s->dir_config( $key )
+
+Alias for Apache::dir_config.
+
 =item $s->warn
 
 Alias for Apache::warn.

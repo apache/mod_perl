@@ -1821,15 +1821,28 @@ dir_config(r, key=NULL, ...)
     Apache  r
     char *key
 
+    ALIAS:
+    Apache::Server::dir_config = 1
+
     PREINIT:
     perl_dir_config *c;
+    perl_server_config *cs;
+    server_rec *s;
 
     CODE:
-    if(r->per_dir_config) {				   
-        c = get_module_config(r->per_dir_config, &perl_module);
-        TABLE_GET_SET(c->vars, FALSE);
+    if(r && r->per_dir_config) {				   
+	c = get_module_config(r->per_dir_config, &perl_module);
+	TABLE_GET_SET(c->vars, FALSE);
     }
-    else XSRETURN_UNDEF;
+    if (!SvTRUE(RETVAL)) {
+	s = r ? r->server : perl_get_startup_server();
+	if (s && s->module_config) {
+	    SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
+	    cs = get_module_config(s->module_config, &perl_module);
+	    TABLE_GET_SET(cs->vars, FALSE);
+	}
+	else XSRETURN_UNDEF;
+    }
  
     OUTPUT:
     RETVAL
