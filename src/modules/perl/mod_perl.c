@@ -29,6 +29,7 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
 void modperl_init(ap_pool_t *pconf, ap_pool_t *plog, 
                   ap_pool_t *ptemp, server_rec *s)
 {
+    modperl_trace_level_set("all"); /* XXX: all for now */
     modperl_startup(s, pconf);
 }
 

@@ -184,6 +184,38 @@ EOF
     }
 }
 
+my @trace = qw(d s h g c i);
+
+sub generate_trace {
+    my($self, $h_fh) = @_;
+
+    my $i = 1;
+
+    print $h_fh <<EOF;
+extern U32 MP_debug_level;
+
+#ifdef MP_TRACE
+#define MP_TRACE_a if (MP_debug_level) modperl_trace
+#else
+#define MP_TRACE_a if (0) modperl_trace
+#endif
+
+EOF
+
+    for my $type (@trace) {
+        my $define = "#define MP_TRACE_$type";
+
+        print $h_fh <<EOF;
+#ifdef MP_TRACE
+$define if (MP_debug_level & $i) modperl_trace
+#else
+$define if (0) modperl_trace
+#endif
+EOF
+        $i += $i;
+    }
+}
+
 sub ins_underscore {
     $_[0] =~ s/([a-z])([A-Z])/$1_$2/g;
 }
@@ -233,14 +265,15 @@ my %sources = (
    generate_handler_directives => {h => 'modperl_directives.h',
                                    c => 'modperl_directives.c'},
    generate_flags              => {h => 'modperl_flags.h'},
+   generate_trace              => {h => 'modperl_trace.h'},
 );
 
 my @g_c_names = map { "modperl_$_" } qw(hooks directives);
-my @c_names   = (qw(mod_perl modperl_interp), @g_c_names);
+my @c_names   = (qw(mod_perl modperl_interp modperl_log), @g_c_names);
 sub c_files { map { "$_.c" } @c_names }
 sub o_files { map { "$_.o" } @c_names }
 
-my @g_h_names = map { "modperl_$_" } qw(hooks directives flags);
+my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
 
 sub clean_files {
     (map { "$_.c" } @g_c_names), (map { "$_.h" } @g_h_names);
