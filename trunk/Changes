@@ -10,6 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+fixed the failure of t/modules/file test in 'make test' suit by untainting
+the $ENV{PATH} in ./t/net/perl/file.pl [Stas Bekman <sbekman@iname.com>]
+
+added the Apache::GTopLimit to MANIFEST and thus to distribution [Stas
+Bekman <sbekman@iname.com>]
+
+Apache::RegistryLoader::handler was rewritten to allow a better
+diagnostics of scripts preloading problems. [Stas Bekman 
+<sbekman@iname.com>]
+
 document the fact that $r->args can be used to set the query string
 as well as get it [Andrei A. Voropaev <andrei@securities.com>]
 
