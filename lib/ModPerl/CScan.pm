@@ -3,6 +3,7 @@ package ModPerl::CScan;
 require Exporter;
 use Config '%Config';
 use File::Basename;
+use constant WIN32 => $^O eq 'MSWin32';
 
 # NOTE to distributors: this module is needed only for mp2 developers,
 # it's not a requirement for mod_perl users
@@ -929,8 +930,9 @@ sub new {
     $addincludes = "-I" . join(" -I", @$Includes)
       if defined $Includes and @$Includes;
     my($sym) = gensym;
-    my $cmd = "echo '\#include \"$filename\"' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
-    #my $cmd = "$Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} < $filename |";
+    my $cmd = WIN32 ?
+        "$Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $filename |" :
+            "echo '\#include \"$filename\"' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
     #my $cmd = "echo '\#include <$filename>' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
 
     (open($sym, $cmd) or die "Cannot open pipe from `$cmd': $!")
