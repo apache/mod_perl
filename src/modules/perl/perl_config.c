@@ -1546,7 +1546,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
     }
     SvREFCNT_dec(code);
     {
-	SV *usv = perl_get_sv(PERL_SECTIONS_PACKAGE, FALSE);
+	SV *usv = perl_get_sv("Apache::ReadConfig", FALSE);
 	if(usv && SvTRUE(usv))
 	    ; /* keep it around */
 	else
