@@ -104,8 +104,9 @@ sub parse_file {
     my $self = shift;
 
     my $fh;
-    my @files = map { $_ . 'makepl_args.mod_perl2' }
-      qw(./ ../ ./. ../.), "$ENV{HOME}/.";
+    my @dirs = qw(./ ../ ./. ../.);
+    push @dirs, "$ENV{HOME}/." if exists $ENV{HOME};
+    my @files = map { $_ . 'makepl_args.mod_perl2' } @dirs;
     unshift @files, $self->{MP_OPTIONS_FILE} if $self->{MP_OPTIONS_FILE};
 
     for my $file (@files) {
