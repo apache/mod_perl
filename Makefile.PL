@@ -34,7 +34,7 @@ my $code  = ModPerl::Code->new;
 my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
                            qw(docs/src/api/mod_perl-2.0);
 
-my @scripts = qw(t/TEST);
+my @scripts = qw(t/TEST t/SMOKE);
 configure();
 
 ModPerl::MM::WriteMakefile(
