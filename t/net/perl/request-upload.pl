@@ -48,7 +48,7 @@ for my $upload ($apr->upload) {
     }
     unless ($name eq $first) {
 	print "-" x 40, $/;
-	my $info = $apr->upload->info($first);
+	my $info = $apr->upload($first)->info;
 	print "Lookup `$first':[$info]\n";
 	while (my($k,$v) = each %$info) {
 	    print "INFO: $k => $v\n";
