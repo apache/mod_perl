@@ -392,8 +392,8 @@ sub perl_version_check {
     }
 
     if ($] < 5.006_001) {
-        error "$perl_string.",
-            "We strongly suggest you upgrade it to at least 5.6.1";
+        error "$perl_string. You need at least Perl 5.6.1";
+        exit 1;
     }
 
     if ($] >= 5.007 and $] < 5.008) {
