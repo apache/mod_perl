@@ -218,8 +218,8 @@ sub generate_handler_directives {
             print $h_fh <<EOF;
 
 #define $cmd_name \\
-{"$h_name", $name, NULL, \\
- $prototype->{scope}, ITERATE, "Subroutine name"}
+AP_INIT_ITERATE("$h_name", $name, NULL, \\
+ $prototype->{scope}, "Subroutine name")
 
 EOF
             print $c_fh <<EOF;
