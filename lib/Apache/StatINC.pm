@@ -14,6 +14,8 @@ sub handler {
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
 	my $mtime = (stat $file)[9];
+	  # warn and skip the files with relative paths which can't be locate by applying @INC;
+	warn "Apache::StatINC: Can't locate $file\n",next unless defined $mtime and $mtime;
 	unless(defined $Stat{$file}) { 
 	    $Stat{$file} = $^T;
 	}
