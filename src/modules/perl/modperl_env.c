@@ -90,6 +90,7 @@ void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s)
     /* XXX: propagate scfg->SetEnv to environ */
     MP_dSCFG(s);
     modperl_env_table_populate(aTHX_ scfg->SetEnv);
+    modperl_env_table_populate(aTHX_ scfg->PassEnv);
 }
 
 #define overlay_subprocess_env(r, tab) \
