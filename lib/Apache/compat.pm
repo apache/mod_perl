@@ -597,8 +597,6 @@ sub chdir_file {
     #XXX resolve '.' in @INC to basename $r->filename
 }
 
-*log_reason = \&log_error;
-
 #XXX: would like to have a proper implementation
 #that reads line-by-line as defined by $/
 #the best way will probably be to use perlio in 5.8.0
