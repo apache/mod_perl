@@ -26,7 +26,7 @@ sub handler {
 
     plan $r, tests => 3;
 
-    # test Apache::Server constant subroutines
+    # test Apache::ServerUtil constant subroutines
 
     ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
                       canonpath($root),

@@ -113,7 +113,7 @@ sub handler {
     }
 
 
-    #Apache::Server::dir_config tests
+    #Apache::ServerUtil::dir_config tests
 
     my $s = $r->server;
 
