@@ -50,13 +50,11 @@ for information on getting httpd and mod_perl from svn, as well as
 
 for svn information in general. 
 
-svn for cvs users:
-
-  http://svnbook.red-bean.com/en/1.0/svn-book.html#svn-ap-a
-
-for cvs-to-svn migration help, see:
+svn for cvs users (including migration tools):
 
   http://svnbook.red-bean.com/en/1.0/apa.html
+
+
 
 OTHER NOTES:
 
