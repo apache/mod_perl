@@ -33,6 +33,13 @@
   reference, see t/filter/TestFilter/both_str_rec_add.pm, to
   reproduce the problem, simply s/modperl/perl-script/)
 
+
+* Apache::PerlSection->dump() will not preserve tied'edness. This is
+  handled proprely in Storable, so either switch dump/restore to
+  non-human readable (-0.5) or borrow the same logic to dump/restore
+  tied objects.
+
+
 * $r->rflush doesn't work. see:
   http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
   I also see a weird behavior where it does sends FLUSH buckets but
