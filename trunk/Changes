@@ -16,6 +16,69 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.07_02 - December 22, 1997
+
+fixed perl.exp thang on aix
+
+added tests t/modules/httpdconf.t and t/modules/perlsections.t
+
+added Apache::httpd_conf module
+
+if variable $Apache::ReadConfig is true, don't undef the <Perl>
+section eval package %Apache::ReadConfig::
+
+output of Apache::PerlSections->dump is now suitable to be eval'd
+
+added Apache->httpd_conf method (just pushes into
+@Apache::ReadConfig::PerlConfig and requires 1.3b3+)
+
+renamed package <Perl> sections are proccessed in 
+from ApacheReadConfig to Apache::ReadConfig
+
+ensure values of %Location keys, etc. in <Perl> sections are HASH refs
+to stop possible core dump spotted by Stuart Frew
+
+fixed memory leak in $r->push_handlers() with help from Gerald Richter
+
+added new items to Apache::Status: "Environment", 
+"Perl Configuration", and "Signal Handlers"
+
+when %ENV is setup, my_setenv() is now called so subprocesses will inherit
+
+"top-level" PerlSetEnv variables will now be set during server startup
+
+got rid of unintialized warning in Apache::Status
+
+$r->custom_response will now add the `"' needed if arg is not a url or
+filename 
+
+added new Constants CONTINUE and NOT_AUTHORITATIVE as aliases for DECLINED 
+
+change the `PerlScript' directive name to `PerlRequire' as suggested
+by Dick Hardt (PerlScript will still work, but is not documented)
+
+set variable $Apache::ServerStarting to 1 during perl_startup()
+
+set variable $Apache::ServerReStarting to 1 during perl_restart()
+
+Apache::SIG->set is now called at server startup by default
+
+applied patch from Doug Bagley to stop possible infininite loop in
+Apache->read 
+
+create stacked_handlers = newHV() before modules are loaded,
+so PerlModule's can do things like:
+   Apache->push_handlers(PerlChildInitHandler => sub {
+	srand(time ^ $$);
+   });
+
+$r->args can now be modified as suggested by Joel Truher
+
+remove obsolete (and broken) iedit of t/net/perl/cgi.pl thanks to
+Vivek Khera
+
+Apache::Resource now correctly converts MB values
+
 =item 1.07_01 - 12/1/97
 
 added t/internal/stacked test

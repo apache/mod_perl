@@ -193,6 +193,32 @@ mod_perl_clear_rgy_endav(r, sv)
     Apache     r
     SV *sv
 
+#should be elsewhere, but doesn't do much yet
+SV *
+sv_name(svp) 
+    SV *svp
+
+    PREINIT:
+    SV *sv;
+
+    CODE:
+
+    RETVAL = newSV(0);
+
+    if(sv && SvROK(svp) && (sv = SvRV(svp))) {
+	switch(SvTYPE(sv)) {
+	    case SVt_PVCV:
+	    gv_fullname(RETVAL, CvGV(sv));
+	    break;
+
+	    default:
+	    break;
+	}
+    }
+
+    OUTPUT:
+    RETVAL
+
 void
 untaint(...)
 
@@ -451,7 +477,9 @@ custom_response(r, status, string)
 	croak("Unsupported HTTP response code %d\n", status);
     }
 
-    conf->response_code_strings[type] = pstrdup(r->pool, string);
+    conf->response_code_strings[type] = 
+       ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
+       pstrdup(r->pool, string) : pstrcat(r->pool, "\"", string, NULL);
 #endif
 
 int

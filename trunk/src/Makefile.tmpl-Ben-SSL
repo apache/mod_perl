@@ -13,7 +13,7 @@ OBJS= alloc.o http_main.o http_core.o http_config.o http_request.o \
 all: Configuration $(TARGET)
 
 RANLIB=ranlib
-PERL=/opt/perl5/bin/perl
+PERL=/usr/bin/perl
 PERL_LD_OPTS=`$(PERL) modules/perl/ldopts`
 
 modules/perl/libperl.a:

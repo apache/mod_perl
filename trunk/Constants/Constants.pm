@@ -1,6 +1,6 @@
 package Apache::Constants;
 
-$Apache::Constants::VERSION = "1.07";
+$Apache::Constants::VERSION = "1.08";
 
 use Exporter ();
 use strict;
@@ -28,7 +28,9 @@ my(@response)   = qw(DOCUMENT_FOLLOWS MOVED REDIRECT
 		     BAD_REQUEST
 		     BAD_GATEWAY 
 		     RESPONSE_CODES
-		     NOT_IMPLEMENTED);
+		     NOT_IMPLEMENTED
+		     NOT_AUTHORITATIVE
+		     CONTINUE);
 my(@satisfy)    = qw(SATISFY_ALL SATISFY_ANY SATISFY_NOSPEC);
 my(@remotehost) = qw(REMOTE_HOST REMOTE_NAME
 		     REMOTE_NOLOOKUP REMOTE_DOUBLE_REV);
@@ -135,7 +137,11 @@ response codes:
  BAD_GATEWAY
  RESPONSE_CODES
  NOT_IMPLEMENTED
+ CONTINUE
+ NOT_AUTHORITATIVE
 
+B<CONTINUE> and B<NOT_AUTHORITATIVE> are aliases for B<DECLINED>.
+ 
 =item methods
 
 This are the method numbers, commonly used with

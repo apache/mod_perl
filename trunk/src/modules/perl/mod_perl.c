@@ -96,7 +96,10 @@ static command_rec perl_cmds[] = {
       RSRC_CONF, FLAG, "Turn on -w switch" },
     { "PerlScript", perl_cmd_script,
       NULL,
-      OR_ALL, ITERATE, "A Perl script name" },
+      OR_ALL, ITERATE, "this directive is depreciated, use `PerlRequire'" },
+    { "PerlRequire", perl_cmd_script,
+      NULL,
+      OR_ALL, ITERATE, "A Perl script name, pulled in via require" },
     { "PerlModule", perl_cmd_module,
       NULL,
       OR_ALL, ITERATE, "List of Perl modules" },
@@ -272,8 +275,10 @@ void perl_restart(server_rec *s, pool *p)
     /* restart as best we can */
     SV *rgy_cache = perl_get_sv("Apache::Registry", FALSE);
     HV *rgy_symtab = (HV*)gv_stashpv("Apache::ROOT", FALSE);
+    GV *restarting_gv = GvSV_init("Apache::ServerReStarting");
 
     ENTER;
+    GvSV_setiv(restarting_gv, 1);
 
     SAVESPTR(warnhook);
     warnhook = perl_eval_pv("sub {}", TRUE);
@@ -289,6 +294,7 @@ void perl_restart(server_rec *s, pool *p)
     /* reload modules and PerlScripts */
     perl_reload_inc();
 
+    GvSV_setiv(restarting_gv, 0);
     LEAVE;
 
     mod_perl_notice(s, "mod_perl restarted"); 
@@ -302,6 +308,7 @@ void perl_startup (server_rec *s, pool *p)
     char *dash_e = "BEGIN { $ENV{MOD_PERL} = 1; $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1'; }";
     dPSRV(s);
     SV *pool_rv, *server_rv;
+    GV *starting_gv;
 
 #ifndef WIN32
     argv[0] = server_argv0;
@@ -379,6 +386,17 @@ void perl_startup (server_rec *s, pool *p)
     server_rv = perl_get_sv("Apache::__SERVER", TRUE);
     sv_setref_pv(server_rv, Nullch, (void*)s);
 
+    starting_gv = GvSV_init("Apache::ServerStarting");
+    GvSV_setiv(starting_gv, 1);
+
+#ifdef PERL_STACKED_HANDLERS
+    if(!stacked_handlers)
+	stacked_handlers = newHV();
+#endif 
+#ifdef MULTITHREAD
+    mod_perl_mutex = create_mutex(NULL);
+#endif
+
     status = perl_run(perl);
 
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
@@ -421,31 +439,12 @@ void perl_startup (server_rec *s, pool *p)
     {
 	GV *gv = gv_fetchpv("Apache::__T", GV_ADDMULTI, SVt_PV);
 	if(cls->PerlTaintCheck) 
-	    sv_setiv(GvSV(gv), 1);
+	    GvSV_setiv(gv, 1);
 	SvREADONLY_on(GvSV(gv));
     }
 
-    if(hv_exists(GvHV(incgv), "Apache/SIG.pm", 13)) {
-#if 0
-	char *sargs[] = { NULL };
-	perl_call_argv("Apache::SIG::set", G_EVAL | G_DISCARD, sargs); 
-#endif
-	MP_TRACE(fprintf(stderr, "mod_perl: Apache::SIG is installed\n"));
-    }
-    else {
-	hv_store(GvHV(siggv), "PIPE", 4, newSVpv("IGNORE",6), FALSE);
-	MP_TRACE(fprintf(stderr, "mod_perl: defaulting $SIG{PIPE}=IGNORE\n"));
-    }
-
     (void)gv_fetchpv("Apache::__SendHeader", GV_ADDMULTI, SVt_PV);    
-
-#ifdef PERL_STACKED_HANDLERS
-    if(!stacked_handlers)
-	stacked_handlers = newHV();
-#endif 
-#ifdef MULTITHREAD
-    mod_perl_mutex = create_mutex(NULL);
-#endif
+    GvSV_setiv(starting_gv, 0);
 }
 
 int mod_perl_sent_header(request_rec *r, int val)
@@ -746,8 +745,8 @@ int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)
 	    else {
 		MP_TRACE(fprintf(stderr, "%s handlers stack undef, creating\n", hook));
 		handlers = newAV();
+		do_store = 1;
 	    }
-	    do_store = 1;
 	}
 	    
 	if(SvROK(sub) && (SvTYPE(SvRV(sub)) == SVt_PVCV)) {
@@ -765,7 +764,7 @@ int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)
 
 	if(do_store) 
 	    hv_store(stacked_handlers, hook, len, 
-		     (SV*)newRV((SV*)handlers), 0);
+		     (SV*)newRV_noinc((SV*)handlers), 0);
 	return 1;
     }
     return 0;
@@ -1107,21 +1106,16 @@ SV *perl_bless_request_rec(request_rec *r)
 
 void perl_setup_env(request_rec *r)
 { 
-    int klen;
     array_header *env_arr = table_elts (r->subprocess_env); 
-    HV *cgienv = PerlEnvHV;
     CGIENVinit; 
 
     if (tz != NULL) 
-	hv_store(cgienv, "TZ", 2, newSVpv(tz,0), 0);
+	mp_setenv("TZ", tz);
     
     for (i = 0; i < env_arr->nelts; ++i) {
 	if (!elts[i].key || !elts[i].val) continue;
 	if (strnEQ("HTTP_AUTHORIZATION", elts[i].key, 18)) continue;
-	klen = strlen(elts[i].key);  
-	hv_store(cgienv, elts[i].key, klen,
-		 newSVpv(elts[i].val,0), 0);
-	HV_SvTAINTED_on(cgienv, elts[i].key, klen);
+	mp_setenv(elts[i].key, elts[i].val);
     }
     MP_TRACE(fprintf(stderr, "perl_setup_env...%d keys\n", i));
 }

@@ -4,12 +4,15 @@ use strict;
 $Apache::Status::VERSION = (qw$Revision$)[1];
 
 my(%status) = (
-   script => "Loaded PerlScripts",
+   script => "PerlRequire'd Files",
    inc => "Loaded Modules",
    rgysubs => "Compiled Registry Scripts",
    symdump => "Symbol Table Dump",
    inh_tree => "Inheritance Tree",
    isa_tree => "ISA Tree",	       
+   env => "Environment",
+   sig => "Signal Handlers",	       
+   myconfig => "Perl Configuration",	       
 );
 
 sub menu_item {
@@ -23,7 +26,7 @@ sub menu_item {
 sub handler {
     my($r) = @_;
     Apache->request($r); #for Apache::CGI
-    my $qs = $r->args;
+    my $qs = $r->args || "";
     my $sub = "status_$qs";
     no strict 'refs';
     header($r);
@@ -101,9 +104,9 @@ sub status_script {
     my($r,$q) = @_;
     my(@retval, $file);
     push @retval, "<table border=1>";
-    push @retval, "<tr><td><b>PerlScript</b></td><td><b>File</b></td></tr>";
+    push @retval, "<tr><td><b>PerlRequire</b></td><td><b>Location</b></td></tr>";
     foreach $file (sort keys %INC) {
-	next if $file =~ m:\.pm$:;
+	next if $file =~ m:\.(pm|al|ix)$:;
 	push @retval, 
 	qq(<tr><td>$file</td><td>$INC{$file}</td></tr>);
     }
@@ -125,6 +128,34 @@ sub status_rgysubs {
 	"<br>";
     }
     \@retval;
+}
+
+sub status_env { 
+    ["<pre>", 
+     (map { "$_ = $ENV{$_}\n" } sort keys %ENV), 
+     "</pre>"];
+}
+
+sub status_sig { 
+    ["<pre>", 
+     (map { 
+	 my $val = $SIG{$_} || "";
+	 if($val and ref $val eq "CODE") {
+	     if(my $name = Apache::sv_name($val)) {
+		 $val = "\\&$name";
+	     }
+	 }
+	 "$_ = $val\n" }
+      sort keys %SIG), 
+     "</pre>"];
+}
+
+sub status_myconfig {
+    require Config;
+    local %ENV; $ENV{PATH} = "/bin"; #for -T
+    ["<pre>", 
+     eval "`$Config::Config{perlpath} -V`" || Config::myconfig(), 
+     "</pre>"]
 }
 
 sub status_inh_tree { ["<pre>", Devel::Symdump->inh_tree, "</pre>"] }

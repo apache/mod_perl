@@ -99,6 +99,7 @@ AuthNIS		bdpf	NIS authentication and authorization	DOUGM
 BasicCookieAuth	cdpf	Accept cookie or basic auth creds	PMKANE
 DBILogin	bdpf	Authenticate to backend database 	JGROENVEL
 DCELogin	bdpf	Obtain a DCE login context		DOUGM
+AuthAny		bdpf	Authenticate with any username/password	DOUGM
 
 * PerlAuthzHandler's
 AuthCookie	cdpf	Authen + Authz via cookies		EBARTLEY
@@ -140,6 +141,7 @@ ConfigLDAP	i	Config via LDAP and &lt;Perl&gt;		MARKK
 ConfigDBI	i	Config via DBI and &lt;Perl&gt;		MARKIM
 ModuleConfig	cmcO	Interface to configuration API		DOUGM
 PerlSections	bmpO	Utilities for &lt;Perl&gt; sections		APML
+httpd_conf	bmpO	Methods to configure and run an httpd	APML
 
 * Database
 DBI		bmpO	Persistent DBI connection mgmt.		MERGL
@@ -161,13 +163,15 @@ Debug		Rmpf	mod_perl debugging utilities		APML
 ErrorLog	c	error_log interfaces			FLETCH
 FakeRequest	ampO	Implement Apache methods off-line	APML
 Mmap		bdcf	Share data via Mmap module		FLETCH
-PUT		cdpf	HTTP PUT method handler module		PLISTER
+Persistent	bdpO	Store data via IPC::, DBI, or disk	DOUGM
+PUT		cdpf	HTTP PUT method handler module		SORTIZ
 RegistryLoader	bmpf	Apache::Registry startup script loader 	APML
 Safe		ampO	Adaptation of "safecgiperl"		APML
 Session		cmpf	Maintain client <-> httpd session/state	APML
 SIG		amoO	Signal handlers for mod_perl		APML
 StatINC		bmpf	Reload require'd files when updated	APML
 State		i	Powerful state engine			RSE
+test		Rmpf	Handy routines for 'make test' scripts	APML
 
 </pre>
 <a name="where">
@@ -213,6 +217,7 @@ RMANGI   Rick Mangi &lt;rmangi@tgix.com&gt;
 ROBH	 Rob Hartill &lt;robh@imdb.com&gt;
 RSE      Ralf S. Engelschall &lt;rse@engelschall.com&gt;
 SKANE    Stephen E Kane &lt;sek112@elvis.arl.psu.edu&gt;
+SORTIZ	 Salvador Ortiz Garcia &lt;sortiz@cfe.gob.mx&gt;
 </pre>
 
 <a name="info">

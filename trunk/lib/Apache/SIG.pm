@@ -4,14 +4,15 @@ use strict;
 $Apache::SIG::VERSION = (qw$Revision$)[1];
 
 sub handler {
-    $| = 1;
-    $SIG{PIPE} = sub {
-	my $ppid = getppid;
-	my $s = ($ppid > 1) ? -2 : 0;
-	warn "Client hit STOP or Netscrape bit it!\n";
-	warn "Process $$ going to Apache::exit with status=$s\n";
-        Apache::exit($s);
-    };
+    $SIG{PIPE} = \&PIPE;
+}
+
+sub PIPE {
+    my $ppid = getppid;
+    my $s = ($ppid > 1) ? -2 : 0;
+    warn "Client hit STOP or Netscrape bit it!\n";
+    warn "Process $$ going to Apache::exit with status=$s\n";
+    Apache::exit($s);  
 }
 
 *set = \&handler;

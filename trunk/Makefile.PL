@@ -25,7 +25,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-$VERSION = "1.07_01";
+$VERSION = "1.07_02";
 
 use subs qw(_prompt iedit asrc);
 
@@ -52,8 +52,6 @@ unless ($Is_Win32) {
     # Patch up the Makefiles we are going to use with Apache
     system $^X, "-pi", "-e", "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!",
                 <src/Makefile.tmpl*>, "src/modules/perl/Makefile";
-
-    iedit "t/net/perl/cgi.pl", "s:^(#!.*perl):#!$Config{'perlpath'}:";
 
     #soes yous can try out the zamples
     unless (-l "t/net/perl/eg") {
@@ -1086,6 +1084,9 @@ sub ccopts {
 
 sub ldopts {
     $Embed::ldopts ||= `$^X -MExtUtils::Embed -e ldopts`;
+    if($^O eq "aix") {
+	$Embed::ldopts =~ s,(-bE:)(perl\.exp),$1$Config{archlibexp}/$2,;
+    }
     $Embed::ldopts;
 }
 

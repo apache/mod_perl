@@ -7,11 +7,11 @@ use Devel::Symdump ();
 use Data::Dumper ();
 
 sub dump {
-    my @retval = ();
+    my @retval = "package Apache::ReadConfig;";
 
     local $Data::Dumper::Indent = 1;
 
-    my $stab = Devel::Symdump->rnew('ApacheReadConfig');
+    my $stab = Devel::Symdump->rnew('Apache::ReadConfig');
 
     my %dump = (
 	hashes  => 'HASH',
@@ -21,24 +21,31 @@ sub dump {
 
     while(my($meth,$type) = each %dump) {
 	no strict 'refs';
-	push @retval, "$meth:\n";
+	push @retval, "#$meth:\n";
 	for my $name ($stab->$meth()) {
-	    my $s = Data::Dumper->Dump([*$name{$type}], [$name]);
-	    $s =~ s/ApacheReadConfig:://;
-	    push @retval, $s unless $s =~ /undef;$/;
+            my $s = Data::Dumper->Dump([*$name{$type}], ['*'.$name]);
+	    $s =~ s/Apache:{0,2}ReadConfig:://;
+            if($s =~ /^\$/) {
+               $s =~ s/= \\/= /; #whack backwack
+            }
+	    push @retval, $s unless $s =~ /= (undef|\(\));$/;
 	}
     }
 
-    return join "\n", @retval;
+    return join "\n", @retval, "1;", "__END__", "";
 }
 
-eval join '', <main::DATA> unless caller;
+{
+    my $fh = \*main::DATA;
+    $fh = $fh; #avoid -w warnings
+    eval join '', <main::DATA> unless caller;
+}
 
 1;
 
 __END__
 
-package ApacheReadConfig;
+package Apache::ReadConfig;
 
 $Port = 8529;
 
