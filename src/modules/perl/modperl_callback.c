@@ -67,20 +67,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
 
     if (MpHandlerANON(handler)) {
 #ifdef USE_ITHREADS
-        /* it's possible that the interpreter that is running the anon
-         * cv, isn't the one that compiled it. so to be safe need to
-         * re-eval the deparsed form before using it.
-         * XXX: possible optimizations, see modperl_handler_new_anon */
-        SV *sv = eval_pv(handler->name, TRUE); 
-        cv = (CV*)SvRV(sv);
+        cv = modperl_handler_anon_get(aTHX_ handler->mgv_obj);
 #else
-        /* the same interpreter that has compiled the anon cv is used
-         * to run it */
-        if (!handler->cv) {
-            SV *sv = eval_pv(handler->name, TRUE); 
-            handler->cv = (CV*)SvRV(sv); /* cache */
-            SvREFCNT_inc(handler->cv);
-        }
         cv = handler->cv;
 #endif
     }
@@ -90,7 +78,6 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             cv = modperl_mgv_cv(gv);
         }
         else {
-            
             const char *name;
             modperl_mgv_t *symbol = handler->mgv_cv;
             

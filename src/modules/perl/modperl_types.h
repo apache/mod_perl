@@ -176,13 +176,16 @@ struct modperl_mgv_t {
 
 typedef struct modperl_handler_t modperl_handler_t;
 
-struct modperl_handler_t{
+struct modperl_handler_t {
+    /* could be:
+     * - the lightweight gv for named subs
+     * - the lookup data in $PL_modperl{ANONSUB}
+     */
     modperl_mgv_t *mgv_obj;
     modperl_mgv_t *mgv_cv;
     /* could be:
-     * - a subroutine name
-     * - a subroutine source code as a string (anon subs)
-     * - NULL, when .cv is set (anon subs)
+     * - a subroutine name for named subs
+     * - NULL for anon subs
      */
     const char *name; 
     CV *cv;

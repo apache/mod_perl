@@ -193,9 +193,35 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     }
     
     if (strnEQ(name, "sub ", 4)) {
-        MP_TRACE_h(MP_FUNC, "handler is anonymous\n");
-        MpHandlerANON_On(handler);
+        SV *sv;
+        CV *cv;
         MpHandlerPARSED_On(handler);
+        MpHandlerANON_On(handler);
+
+        ENTER;SAVETMPS;
+        sv = eval_pv(name, TRUE);
+        if (!(SvROK(sv) && (cv = (CV*)SvRV(sv)) && (CvFLAGS(cv) & CVf_ANON))) {
+            
+            Perl_croak(aTHX_ "expected anonymous sub, got '%s'\n", name);
+        }
+
+#ifdef USE_ITHREADS
+        handler->cv      = NULL;
+        handler->name    = NULL;
+        handler->mgv_obj = modperl_handler_anon_next(aTHX_ p);
+        modperl_handler_anon_add(aTHX_ handler->mgv_obj, cv);
+        MP_TRACE_h(MP_FUNC, "[%s] new anon handler",
+                   modperl_pid_tid(p));
+#else
+        SvREFCNT_inc(cv);
+        handler->cv      = cv;
+        handler->name    = NULL;
+        MP_TRACE_h(MP_FUNC, "[%s] new cached-cv anon handler",
+                   modperl_pid_tid(p));
+#endif
+
+        FREETMPS;LEAVE;
+
         return 1;
     }
 

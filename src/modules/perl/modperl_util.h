@@ -96,14 +96,6 @@ SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted);
 
 char *modperl_file2package(apr_pool_t *p, const char *file);
 
-/**
- * convert a compiled *CV ref to its original source code
- * @param p       pool object (with a shortest possible life scope)
- * @param cv      compiled *CV
- * @return string of original source code
- */
-char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv);
-
 SV *modperl_apr_array_header2avrv(pTHX_ apr_array_header_t *array);
 apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
                                                   SV *avrv);

@@ -19,7 +19,7 @@ use Apache::Const -compile => qw(OK DECLINED);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 1, need_min_module_version('B::Deparse', 0.61);;
+    plan $r, tests => 1;
 
     my $sub = sub {
         ok 1;
