@@ -54,7 +54,7 @@ sub configure {
     my $httpd_version = $build->httpd_version;
     unless ($httpd_version) {
         error 'Unable to determine server version, aborting.';
-        exit;
+        exit(1);
     }
 
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
