@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.14_01-dev
 
+added $r->get_server_name method
+
 move /tmp/mod_perl_* to t/logs, t/conf
 
 alias Apache::Util unescape_uri -> Apache::unescape_url

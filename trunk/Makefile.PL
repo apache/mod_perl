@@ -153,8 +153,9 @@ $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
 $Port = 8529;
 #so Doug can 'make test' different-builds@sametime/samebox
-if(!Is_Win32 and $Is_dougm and $$ > 8000 and $$ < 30000) {
+if(!$Is_Win32 and $Is_dougm and $$ > 8000 and $$ < 30000) {
     $PORT ||= $$;
+    print "I'll use Port $PORT\n";
 }
 $PORT ||= $Port;
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
