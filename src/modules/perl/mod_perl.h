@@ -665,34 +665,6 @@ else { \
 #define CHAR_P char * 
 #endif
 
-/* bleh */
-#if MODULE_MAGIC_NUMBER >= 19961125 
-#define PERL_READ_SETUP setup_client_block(r, REQUEST_CHUNKED_ERROR); 
-#else
-#define PERL_READ_SETUP
-#endif 
-
-#if MODULE_MAGIC_NUMBER >= 19970622 
-#define PERL_SET_READ_LENGTH  r->read_length = 0
-#else
-#define PERL_SET_READ_LENGTH
-#endif 
-
-#if MODULE_MAGIC_NUMBER >= 19961125 
-#define PERL_READ_CLIENT \
-if(should_client_block(r)) { \
-    nrd = get_client_block(r, buffer, bufsiz); \
-    PERL_SET_READ_LENGTH; \
-} 
-#else 
-#define PERL_READ_CLIENT \
-nrd = read_client_block(r, buffer, bufsiz); 
-#endif       
-
-#define PERL_READ_FROM_CLIENT \
-PERL_READ_SETUP; \
-PERL_READ_CLIENT
-
 #define PUSHelt(key,val,klen) \
 { \
     SV *psv = (SV*)newSVpv(val, 0); \

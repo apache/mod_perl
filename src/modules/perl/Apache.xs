@@ -866,11 +866,22 @@ read_client_block(r, buffer, bufsiz)
 
     PREINIT:
     long nrd = 0;
+    int rc;
 
     PPCODE:
     buffer = (char*)safemalloc(bufsiz);
-    PERL_READ_FROM_CLIENT;
-    if ( nrd > 0 ) {
+    if ((rc = setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
+	aplog_error(APLOG_MARK, APLOG_ERR | APLOG_NOERRNO, r->server, 
+		    "mod_perl: setup_client_block failed: %d", rc);
+	XSRETURN_UNDEF;
+    }
+
+    if(should_client_block(r)) {
+	nrd = get_client_block(r, buffer, bufsiz);
+	r->read_length = 0;
+    } 
+
+    if (nrd > 0) {
 	XPUSHs(sv_2mortal(newSViv((long)nrd)));
 	sv_setpvn((SV*)ST(1), buffer, nrd);
 #ifdef PERL_STASH_POST_DATA
@@ -1405,16 +1416,6 @@ bytes_sent(r, ...)
 
     OUTPUT:
     RETVAL
-
-long
-read_length(r, len=-1)
-    Apache	r
-    long len
-
-    CODE:
-    RETVAL = r->read_length;
-    if(len > -1)
-        r->read_length = len;
 
 #    /* MIME header environments, in and out.  Also, an array containing
 #   * environment variables to be passed to subprocesses, so people can
