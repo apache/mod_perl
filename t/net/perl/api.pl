@@ -30,6 +30,7 @@ print "r == $r\n";
 test ++$i, $r->filename eq $0;
 test ++$i, -d $Apache::Server::CWD;
 print "\$Apache::Server::CWD == $Apache::Server::CWD\n";
+print "\$0 == $0\n";
 
 test ++$i, $ENV{GATEWAY_INTERFACE};
 test ++$i, defined($r->seqno);

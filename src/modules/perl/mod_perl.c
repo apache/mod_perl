@@ -352,6 +352,36 @@ static void mod_perl_set_cwd(void)
     sv_setsv(GvSV(gv), cwd);
 }
 
+#ifdef PERL_TIE_SCRIPTNAME
+static I32 scriptname_val(IV ix, SV* sv)
+{ 
+    request_rec *r = perl_request_rec(NULL);
+    if(r) 
+	sv_setpv(sv, r->filename);
+    else if(strNE(SvPVX(GvSV(curcop->cop_filegv)), "-e"))
+	sv_setsv(sv, GvSV(curcop->cop_filegv));
+    else {
+	SV *file = perl_eval_pv("(caller())[1]",TRUE);
+	sv_setsv(sv, file);
+    }
+    MP_TRACE_g(fprintf(stderr, "FETCH $0 => %s\n", SvPV(sv,na)));
+    return TRUE;
+}
+
+static void mod_perl_tie_scriptname(void)
+{
+    SV *sv = perl_get_sv("0",TRUE);
+    struct ufuncs umg;
+    umg.uf_val = scriptname_val;
+    umg.uf_set = NULL;
+    umg.uf_index = (IV)0;
+    sv_unmagic(sv, 'U');
+    sv_magic(sv, Nullsv, 'U', (char*) &umg, sizeof(umg));
+}
+#else
+#define mod_perl_tie_scriptname()
+#endif
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -468,6 +498,7 @@ void perl_startup (server_rec *s, pool *p)
     perl_clear_env();
     mod_perl_pass_env(p, cls);
     mod_perl_set_cwd();
+    mod_perl_tie_scriptname();
     MP_TRACE_g(fprintf(stderr, "running perl interpreter..."));
 
     ENTER;
@@ -1021,7 +1052,7 @@ void perl_per_request_init(request_rec *r)
 	dPSRV(r->server);
 	mod_perl_pass_env(r->pool, cls);
     }
-
+    mod_perl_tie_scriptname();
     /* will be released in mod_perl_end_cleanup */
     (void)acquire_mutex(mod_perl_mutex); 
     register_cleanup(r->pool, NULL, mod_perl_end_cleanup, mod_perl_noop);
