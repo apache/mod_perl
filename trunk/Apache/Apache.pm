@@ -678,6 +678,34 @@ This is the value of the User directive.
 Returns the numeric group id under which the server answers requests.
 This is the value of the Group directive.
 
+=item $r->get_handlers( $hook )
+
+Returns a reference to a list of handlers enabled for $hook. $hook is
+a string representing the phase to handle. The returned list is a list
+of references to the handler subroutines.
+
+	$list = $r->get_handlers( 'PerlHandler' );
+
+=item $r->set_handlers( $hook, [\&handler, ... ] )
+
+Sets the list if handlers to be called for $hook. $hook is a string
+representing the phase to handle. The list of handlers is an anonymous
+array of code references to the handlers to install for this request
+phase. The special list [ \&OK ] can be used to disable a particular
+phase.
+
+	$r->set_handlers( PerlLogHandler => [ \&myhandler1, \&myhandler2 ] );
+	$r->set_handlers( PerlAuthenHandler => [ \&OK ] );
+
+=item $r->push_handlers( $hook, \&handler )
+
+Pushes a new handler to be called for $hook. $hook is a string
+representing the phase to handle. The handler is a reference to a
+subroutine to install for this request phase. This handler will be
+called before any configured handlers.
+
+	$r->push_handlers( PerlHandler => \&footer);
+
 =back
 
 =head1 SETTING UP THE RESPONSE
