@@ -780,8 +780,8 @@ mydist : Apache-Test/META.yml manifest tardist
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
-cvs_tag :
-	cvs tag MODPERL_$(VERSION_SYM) .
+tag :
+	svn copy . https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
 	@$(ECHO) update mod_perl.pm VERSION now
 EOF
 

@@ -38,13 +38,13 @@ Instructions for mod_perl 2.0 Release Manager
   c. rerun:
      % perl Makefile.PL MP_INST_APACHE2=1
      make sure tag looks right
-     % make -n cvs_tag
+     % make -n tag
 
   d. commit Changes README Makefile.PL
-     % cvs ci Changes README Makefile.PL
+     % svn ci Changes README Makefile.PL
 
   e. tag
-     % make cvs_tag
+     % make tag
 
   f. create the final package
      % make dist
@@ -171,5 +171,5 @@ Instructions for mod_perl 2.0 Release Manager
 
   e. commit the changed files
 
-     % cvs ci Changes lib/mod_perl.pm STATUS RELEASE
+     % svn ci Changes lib/mod_perl.pm STATUS RELEASE
 
