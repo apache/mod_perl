@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+make use of $Config{shrpenv} to find CORE/libperl.so
+[Ignasi Roca Carrió <ignasi.roca@fujitsu.siemens.es>]
+
 fix Apache::Registry bug when filename starts with a 0
 [Peter Deister <deister@opus5.de>, Ken Williams <ken@forum.swarthmore.edu>]
 
