@@ -36,6 +36,7 @@ sub check {
     die "expecting $expected callback, instead got $callback" 
         unless $callback eq $expected;
     #warn "in callback: $callback\n";
+    return Apache::OK;
 }
 
 1;
