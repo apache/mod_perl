@@ -19,3 +19,7 @@ t/report
 src/modules/perl/mod_perl_version.h
 lib/mod_perl.pm
 *.tar.gz
+src/Configuration
+t/docs/stacked
+t/docs/subr/index.html
+t/modules/ssi.t
