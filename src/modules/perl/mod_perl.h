@@ -32,4 +32,6 @@ extern module MODULE_VAR_EXPORT perl_module;
 
 #include "modperl_directives.h"
 
+void modperl_init(server_rec *s, ap_pool_t *p);
+
 #endif /*  MOD_PERL_H */

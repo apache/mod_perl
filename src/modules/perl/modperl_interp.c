@@ -67,7 +67,7 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
     MUTEX_LOCK(&mip->mip_lock);
 
     if (mip->size == mip->in_use) {
-        if (mip->size < mip->max) {
+        if (mip->size < mip->cfg->max) {
             interp = modperl_interp_new(mip->ap_pool, mip, 
                                         mip->parent->perl);
             MUTEX_UNLOCK(&mip->mip_lock);
@@ -211,6 +211,7 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     int i;
 
     mip->ap_pool = p;
+    mip->cfg = scfg->interp_pool_cfg;
     mip->parent = modperl_interp_new(p, mip, NULL);
     aTHX = mip->parent->perl = perl;
     
@@ -218,11 +219,7 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     COND_INIT(&mip->available);
 
 #ifdef USE_ITHREADS
-    mip->start = 3; /*XXX*/
-    mip->max = 4;
-    mip->max_spare = 3;
-
-    for (i=0; i<mip->start; i++) {
+    for (i=0; i<mip->cfg->start; i++) {
         modperl_interp_t *interp = modperl_interp_new(p, mip, perl);
 
         modperl_interp_pool_add(mip, interp);
@@ -232,7 +229,8 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     MP_TRACE_i(MP_FUNC, "parent == 0x%lx "
                "start=%d, max=%d, min_spare=%d, max_spare=%d\n",
                (unsigned long)mip->parent, 
-               mip->max, mip->start, mip->min_spare, mip->max_spare);
+               mip->cfg->start, mip->cfg->max,
+               mip->cfg->min_spare, mip->cfg->max_spare);
 
     ap_register_cleanup(p, (void*)mip,
                         modperl_interp_pool_destroy, ap_null_cleanup);
@@ -254,13 +252,13 @@ ap_status_t modperl_interp_unselect(void *data)
     MP_TRACE_i(MP_FUNC, "0x%lx now available (%d in use, %d running)\n",
                (unsigned long)interp, mip->in_use, mip->size);
 
-    if (mip->in_use == (mip->max - 1)) {
+    if (mip->in_use == (mip->cfg->max - 1)) {
         MP_TRACE_i(MP_FUNC, "broadcast available\n");
         COND_SIGNAL(&mip->available);
     }
-    else if (mip->size > mip->max_spare) {
+    else if (mip->size > mip->cfg->max_spare) {
         MP_TRACE_i(MP_FUNC, "throttle down (max_spare=%d, %d running)\n",
-                   mip->max_spare, mip->size);
+                   mip->cfg->max_spare, mip->size);
         MUTEX_UNLOCK(&mip->mip_lock);
         modperl_interp_pool_remove(mip, interp);
         modperl_interp_destroy(interp);
