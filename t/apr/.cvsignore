@@ -12,3 +12,4 @@ uuid.t
 os.t
 socket.t
 threadmutex.t
+finfo.t
