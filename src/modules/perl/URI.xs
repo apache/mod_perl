@@ -1,7 +1,9 @@
 #ifdef MOD_PERL
 #include "mod_perl.h"
+#include "mod_perl_xs.h"
 #else
 #include "modules/perl/mod_perl.h"
+#include "modules/perl/mod_perl_xs.h"
 #endif  
 
 typedef struct {
@@ -93,141 +95,101 @@ rpath(uri)
     RETVAL 
 
 char *
-scheme(uri, set=Nullsv)
+scheme(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.scheme;
-
-    if(set) 
-        uri->uri.scheme = SvPV(set,na);
+    get_set_PVp(uri->uri.scheme,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-hostinfo(uri, set=Nullsv)
+hostinfo(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.hostinfo;
-
-    if(set) 
-        uri->uri.hostinfo = SvPV(set,na);
+    get_set_PVp(uri->uri.hostinfo,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-user(uri, set=Nullsv)
+user(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.user;
-
-    if(set) 
-        uri->uri.user = SvPV(set,na);
+    get_set_PVp(uri->uri.user,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-password(uri, set=Nullsv)
+password(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.password;
-
-    if(set) 
-        uri->uri.password = SvPV(set,na);
+    get_set_PVp(uri->uri.password,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-hostname(uri, set=Nullsv)
+hostname(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.hostname;
-
-    if(set) 
-        uri->uri.hostname = SvPV(set,na);
+    get_set_PVp(uri->uri.hostname,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-path(uri, set=Nullsv)
+path(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.path;
-
-    if(set) 
-        uri->uri.path = SvPV(set,na);
+    get_set_PVp(uri->uri.path,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-query(uri, set=Nullsv)
+query(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.query;
-
-    if(set) 
-        uri->uri.query = SvPV(set,na);
+    get_set_PVp(uri->uri.query,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-fragment(uri, set=Nullsv)
+fragment(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.fragment;
-
-    if(set) 
-        uri->uri.fragment = SvPV(set,na);
+    get_set_PVp(uri->uri.fragment,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-port(uri, set=Nullsv)
+port(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->uri.port_str;
-
-    if(set) 
-        uri->uri.port_str = SvPV(set,na);
+    get_set_PVp(uri->uri.port_str,uri->pool);
 
     OUTPUT:
     RETVAL 
 
 char *
-path_info(uri, set=Nullsv)
+path_info(uri, ...)
     Apache::URI uri
-    SV *set
 
     CODE:
-    RETVAL = uri->path_info;
-
-    if(set) 
-        uri->path_info = SvPV(set,na);
+    get_set_PVp(uri->path_info,uri->pool);
 
     OUTPUT:
     RETVAL 
