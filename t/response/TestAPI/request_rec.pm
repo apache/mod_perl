@@ -100,28 +100,38 @@ sub handler {
 
     ok $r->no_cache || 1;
 
-    {
-        local $| = 0;
-        ok 11  == $r->print("# buffered\n");
-        ok 0  == $r->print();
-        local $| = 1;
-        ok 15 == $r->print('#',' ','n','o','t',' ','b','u','f','f','e','r','e','d',"\n");
-    }
-
     ok !$r->no_local_copy;
 
-    ok $r->unparsed_uri;
+    {
+        local $| = 0;
+        ok t_cmp $r->print("# buffered\n"), 11, "buffered print";
+        ok t_cmp $r->print(), 0, "buffered print";
 
-    ok $r->uri;
+        local $| = 1;
+        my $string = "# not buffered\n";
+        ok t_cmp $r->print(split //, $string), length($string),
+            "unbuffered print";
+    }
 
-    ok $r->filename;
+    # GET header components
+    {
+        my $args      = "my_args=3";
+        my $path_info = "/my_path_info";
+        my $base_uri  = "/TestAPI__request_rec";
 
-    my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
-    ok t_cmp($r->location, $location, "location");
+        ok t_cmp $r->unparsed_uri, "$base_uri$path_info?$args";
 
-    ok $r->path_info || 1;
+        ok t_cmp $r->uri, "$base_uri$path_info", '$r->uri';
 
-    ok $r->args || 1;
+        ok t_cmp $r->path_info, $path_info, '$r->path_info';
+
+        ok t_cmp $r->args, $args, '$r->args';
+
+        ok $r->filename;
+
+        my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
+        ok t_cmp $r->location, $location, '$r->location';
+    }
 
     # bytes_sent
     {
@@ -161,15 +171,14 @@ sub handler {
         ok $r->allowed & (1 << Apache::M_PUT);
     }
 
-    #parsed_uri
+    # per_dir_config in several other tests
 
-    #per_dir_config
-    #request_config
+    # request_config
 
     # input_filters and output_filters are tested in
     # TestAPI::in_out_filters;
 
-    #eos_sent
+    # eos_sent
 
     Apache::OK;
 }
