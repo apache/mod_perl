@@ -85,6 +85,12 @@ use constant NAMESPACE_ROOT => 'ModPerl::ROOT';
 
 
 #########################################################################
+
+unless (defined $ModPerl::RegistryCooker::NameWithVirtualHost) {
+    $ModPerl::RegistryCooker::NameWithVirtualHost = 1;
+}
+
+#########################################################################
 # func: new
 # dflt: new
 # args: $class - class to bless into
@@ -310,6 +316,12 @@ sub namespace_from_uri {
     my $script_name = $path_info && $self->[URI] =~ /$path_info$/ ?
 	substr($self->[URI], 0, length($self->[URI]) - length($path_info)) :
 	$self->[URI];
+
+    if ($ModPerl::RegistryCooker::NameWithVirtualHost && 
+        $self->[REQ]->server->is_virtual) {
+        my $name = $self->[REQ]->get_server_name;
+        $script_name = join "", $name, $script_name if $name;
+    }
 
     $script_name =~ s:/+$:/__INDEX__:;
 
