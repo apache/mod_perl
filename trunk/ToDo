@@ -3,9 +3,55 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+... core bugs ...
+
 - readdir() broken with glibc 2.2
 
 - PERL5LIB foo
+
+- 1.25 Apache::ExtUtils fix broke elsewhere
+
+- warn() going to the wrong log?
+
+- From: Andy Wardley <abw@cre.canon.co.uk>
+  Subject: Problems with SERVER_MERGE and DIR_MERGE
+
+- $r->args parsing of one=&two=2
+
+- From: Adi Fairbank <adi@certsite.com>
+  Subject: Re: two identical directives in <Perl> configuration
+
+- segfaults with DBI->connect (mysql), reported that downgrade to
+  1.21_03 cures
+
+- need to revisit send_http_header and r->status again, patch to
+revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
+
+- revisit DSO restart leakage
+
+... core enhancements ...
+
+- PerlChildInitHandler should not be allowed inside <VirtualHost>
+
+- rid Apache->can_stack_handlers, make Apache->can('push_handlers') work
+
+- fileno(STD{IN,OUT}) should be r->connection->client->fd or
+  fileno(std{in,out}), rather than hardcoded fileno(stdout)
+
+- close STDERR;
+
+- {get,set}_handlers troubles [Geoffrey Young <gyoung@laserlink.net>]
+  see also: http://perl.apache.org/~dougm/set_handlers.pat
+
+... modules ...
+
+- 1.25 change did not work for:
+  From: Wenzhong Tang <Tang@appliant.com>
+  Subject: RE: Prototype mismatch in Apache::PerlRun line 343
+
+- Apache::FakeRequest improvments [Gary Richardson <gary@atdot.org>]
+
+- Apache::StatINC patch [Ilya Konstantinov <modperl@future.galanet.net>]
 
 - From: Dave Rolsky <autarch@urth.org>
   Subject: Apache::test patch
@@ -13,15 +59,14 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - From: Joshua Chamas <joshua@chamas.com>
   Subject: Apache::SizeLimit patches
 
-- 1.25 Apache::ExtUtils fix broke elsewhere
+- IPC::Open3 no workie
 
-- 1.25 change did not work for:
-  From: Wenzhong Tang <Tang@appliant.com>
-  Subject: RE: Prototype mismatch in Apache::PerlRun line 343
+- From: JR Mayberry <jr.mayberry@e-vend.net>
+  Subject: Apache::Status problems?..CGI::Cookie, (dont want no CGI.pm) (?)
 
-- warn() going to the wrong log?
+... build items ...
 
-- rid Apache->can_stack_handlers, make Apache->can('push_handlers') work
+- xsubpp -nolinenumbers is not supported with 5.004
 
 - 'make test' as root permissions problems
 
@@ -29,34 +74,10 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - support SSL_BASE=SYSTEM (i.e. test -d $SSL_BASE in Makefile.PL)
 
-- re-enabled unsigned short-ness test for $s->port in t/net/perl/api.pl
+- disable PERL_SSI unless mod_include is listed in httpd -l
+  and Action unless mod_action, etc.
 
-- From: Andy Wardley <abw@cre.canon.co.uk>
-  Subject: Problems with SERVER_MERGE and DIR_MERGE
-
-- hooking up PL_check (-c) to ap_configtest_only
-
-- fileno(STD{IN,OUT}) should be r->connection->client->fd or
-  fileno(std{in,out}), rather than hardcoded fileno(stdout)
-
-- consider making PERL_USELARGEFILES=0 by default
-
-- $r->args parsing of one=&two=2
-
-- From: JR Mayberry <jr.mayberry@e-vend.net>
-  Subject: Apache::Status problems?..CGI::Cookie, (dont want no CGI.pm) (?)
-
-- From: Adi Fairbank <adi@certsite.com>
-  Subject: Re: two identical directives in <Perl> configuration
-
-- PerlChildInitHandler should not be allowed inside <VirtualHost>
-
-- close STDERR;
-
-- require +ExecCGI for <Perl> in .htaccess, etc.
-
-- {get,set}_handlers troubles [Geoffrey Young <gyoung@laserlink.net>]
-  see also: http://perl.apache.org/~dougm/set_handlers.pat
+... docs ...
 
 - remove eg/ directory, it's way out of date and no longer needed now
   with the guide, the books, and piles of Apache::* modules
@@ -65,30 +86,17 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
   and make it more clear that Apache::Status should not be used in a
   production environment, as it adds quite a bit of bloat
 
-- segfaults with DBI->connect (mysql), reported that downgrade to
-  1.21_03 cures
-
-- disable PERL_SSI unless mod_include is listed in httpd -l
-  and Action unless mod_action, etc.
-
 - docs: update CREDITS, cleanup install docs
-
-- Apache::FakeRequest improvments [Gary Richardson <gary@atdot.org>]
-
-- Apache::StatINC patch [Ilya Konstantinov <modperl@future.galanet.net>]
-
-- need to revisit send_http_header and r->status again, patch to
-revert to old behavior from [Julian Gilbey <J.D.Gilbey@qmw.ac.uk>]
-
-- IPC::Open3 no workie
-
-- xsubpp -nolinenumbers is not supported with 5.004
-
-- revisit DSO restart leakage
 
 ---------------------------------------------------------------------------
 POSSIBLE NEW FEATURES
 ---------------------------------------------------------------------------
+
+- require +ExecCGI for <Perl> in .htaccess, etc.
+
+- hooking up PL_check (-c) to ap_configtest_only
+
+- consider making PERL_USELARGEFILES=0 by default
 
 - add Filter::Call support to Apache::RegistryNG (or subclass of)
 
