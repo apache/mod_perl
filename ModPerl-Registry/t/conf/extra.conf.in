@@ -35,6 +35,8 @@ Alias /registry_bb/      @ServerRoot@/cgi-bin/
 Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
 Alias /perlrun/          @ServerRoot@/cgi-bin/
 
+ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
+
 PerlModule ModPerl::RegistryBB
 <Location /registry_bb>
     PerlOptions +GlobalRequest
