@@ -4,9 +4,6 @@ package TestProtocol::echo_bbs;
 # manipulations on the buckets inside the connection handler, rather
 # then using filter
 
-# it also demonstrates how to use a single bucket bridade to do all
-# the manipulation
-
 use strict;
 use warnings FATAL => 'all';
 
@@ -26,31 +23,38 @@ sub handler {
     # the socket to a blocking IO mode
     $c->client_socket->opt_set(APR::SO_NONBLOCK, 0);
 
-    my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
+    my $bb_in  = APR::Brigade->new($c->pool, $c->bucket_alloc);
+    my $bb_out = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     while (1) {
-        my $rc = $c->input_filters->get_brigade($bb,
+        my $rc = $c->input_filters->get_brigade($bb_in,
                                                 Apache::MODE_GETLINE);
         last if $rc == APR::EOF;
         die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
 
-        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
+        while (!$bb_in->is_empty) {
+            my $bucket = $bb_in->first;
 
-            last if $b->is_eos;
+            $bucket->remove;
 
-            if ($b->read(my $data)) {
-                last if $data =~ /^[\r\n]+$/;
-                my $nb = APR::Bucket->new(uc $data);
-                # head->...->$nb->$b ->...->tail
-                $b->insert_before($nb);
-                $b->remove;
+            if ($bucket->is_eos) {
+                $bb_out->insert_tail($bucket);
+                last;
             }
+
+            if ($bucket->read(my $data)) {
+                last if $data =~ /^[\r\n]+$/;
+                $bucket = APR::Bucket->new(uc $data);
+            }
+
+            $bb_out->insert_tail($bucket);
         }
 
-        $c->output_filters->fflush($bb);
+        $c->output_filters->fflush($bb_out);
     }
 
-    $bb->destroy;
+    $bb_in->destroy;
+    $bb_out->destroy;
 
     Apache::OK;
 }
