@@ -698,6 +698,12 @@ int PERL_POST_READ_REQUEST_HOOK(request_rec *r)
 {
     dSTATUS;
     dPSRV(r->server);
+#if MODULE_MAGIC_NUMBER > 19980270
+    if(r->parsed_uri.scheme && r->parsed_uri.hostname) {
+	r->proxyreq = 1;
+	r->uri = r->unparsed_uri;
+    }
+#endif
     PERL_CALLBACK("PerlPostReadRequestHandler", cls->PerlPostReadRequestHandler);
     return status;
 }
@@ -1007,7 +1013,8 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 	    MARK_WHERE(hook, sub);
 	    status = perl_call_handler(sub, r, Nullav);
 	    UNMARK_WHERE;
-
+	    MP_TRACE_h(fprintf(stderr, "&{%s->[%d]} returned status=%d\n",
+			       hook, (int)i, status));
 	    if((status != OK) && (status != DECLINED)) {
 		if(do_clear)
 		    av_clear(handlers);	

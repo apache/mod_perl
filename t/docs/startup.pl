@@ -148,6 +148,25 @@ sub Apache::AuthenTest::handler {
     return OK;                       
 }
 
+sub My::ProxyTest::handler {
+    my $r = shift;
+    unless ($r->proxyreq and $r->uri =~ /proxytest/) {
+	warn sprintf "ProxyTest: proxyreq=%d, uri=%s\n",
+	$r->proxyreq, $r->uri;
+    }
+    return -1 unless $r->proxyreq;
+    return -1 unless $r->uri =~ /proxytest/;
+    $r->handler("perl-script");
+    $r->push_handlers(PerlHandler => sub {
+	my $r = shift;
+	$r->send_http_header("text/plain");
+	$r->print("1..1\n");
+	$r->print("ok 1\n");
+	$r->print("URI=`", $r->uri, "'\n");
+    });
+    return 0;
+}
+
 if(Apache->can_stack_handlers) {
     Apache->push_handlers(PerlChildExitHandler => sub {
 	warn "[notice] push'd PerlChildExitHandler called, pid=$$\n";

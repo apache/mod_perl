@@ -16,8 +16,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- post_request_handler for r->proxyreq
-
 - Gerald's report of Embperl/sub-request/print breakage
 
 - make sure SERVER_VERSION/SERVER_SUBVERSION, etc. is in sync w/ 1.3b7 changes
@@ -50,11 +48,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - PATH_INFO can break Apache::Registry
 	"Jeffrey W. Baker" <jwb@tamu.edu>
 
-- File::copy($file,*STDOUT) doesn't work
+- File::copy($file,*STDOUT) doesn't work 
 	Bill Coffman <coffman@value.net>
-
-- something broken inside #ifndef  PERL_MARK_WHERE
-	"Kermit Tensmeyer" <kermit@brite.net>
 
 - solaris 2.6/apache1.2.6/mod_perl1.11 exploit
 	sfarrell+lists@farrell.org
@@ -150,6 +145,8 @@ KNOWN BUGS
 NEW STUFF
 ---------------------------------------------------------------------------
 
+- Apache::URI interface to uri_components structure
+ 
 - provide namespace protection when 'use Foo' might be two different modules
   i.e. re-visit Apache::Safe
 

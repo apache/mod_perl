@@ -11,6 +11,7 @@ my $have_com = 0;
 
 eval {
     require HTTP::Request::Common;
+    $HTTP::Request::Common::VERSION ||= '1.00'; #-w
     if($CGI::VERSION >= 2.39 and 
        $HTTP::Request::Common::VERSION >= 1.08) 
     {

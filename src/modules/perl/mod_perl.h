@@ -122,8 +122,8 @@ hv_store(ERRHV, k, strlen(k), v, FALSE)
    mod_perl_mark_where(w,s)
 #define UNMARK_WHERE LEAVE
 #else
-#define MARK_WHERE(w,s)
-#define UNMARK_WHERE
+#define MARK_WHERE(w,s) mod_perl_noop(NULL)
+#define UNMARK_WHERE mod_perl_noop(NULL)
 #endif
 
 typedef request_rec * Apache;
@@ -585,6 +585,10 @@ PERL_READ_CLIENT
 #endif
 
 /* on/off switches for callback hooks during request stages */
+
+#if !defined(NO_PERL_TRANS) && (MODULE_MAGIC_NUMBER > 19980207)
+#undef NO_PERL_POST_READ_REQUEST
+#endif
 
 #ifndef NO_PERL_POST_READ_REQUEST
 #define PERL_POST_READ_REQUEST
