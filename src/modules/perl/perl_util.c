@@ -214,13 +214,11 @@ SV *mod_perl_slurp_filename(request_rec *r)
 
 SV *mod_perl_tie_table(table *t)
 {
-    HV *hv;
+    HV *hv = newHV();
     SV *sv = sv_newmortal();
-    iniHV(hv);
     sv_setref_pv(sv, "Apache::table", (void*)t);
-    perl_qrequire_module("Apache::Table");
     perl_tie_hash(hv, "Apache::Table", sv);
-    return sv_bless(newRV_noinc((SV*)hv), 
+    return sv_bless(sv_2mortal(newRV_noinc((SV*)hv)), 
 		    gv_stashpv("Apache::Table", TRUE));
 }
 
