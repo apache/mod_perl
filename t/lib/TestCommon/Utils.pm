@@ -2,7 +2,10 @@ package TestCommon::Utils;
 
 sub is_tainted {
     my $data = shift;
-    eval { eval $data };
+    # the append of " " is crucial with older Perls (5.6), which won't
+    # consider a scalar with PV = ""\0 as tainted, even though it has
+    # the taint magic attached
+    eval { eval $data . " " };
     return ($@ && $@ =~ qr/Insecure dependency in eval/) ? 1 : 0;
 }
 
