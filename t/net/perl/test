@@ -1,0 +1,103 @@
+#!/usr/local/bin/perl -Tw
+
+use Apache ();
+use Apache::fork;
+use strict;
+use vars qw($Scalar @Array %Hash); #for testing perl-status
+use vars qw($filename); 
+use Config;
+use Apache::test qw($USE_THREAD);
+
+not $filename or die "Apache::Registry scoping is broken!\n";
+
+#make sure this untrip works
+if($USE_THREAD) {
+    warn "must fix \$/ for threaded Perl\n";
+}
+else {
+    $/ eq "\n" or die "\$/ was not reset!\n";
+    $/ = "";
+}
+
+$Scalar = 1;
+@Array  = qw(one two three);
+%Hash   = qw(one 1 two 2 three 3);
+
+my $r = Apache->request;
+$ENV{PATH} = "/bin";
+
+sub first_one {
+    print STDERR "first_one called\n";
+    return 0;
+}
+
+$r->post_connection(sub {
+    my $r = shift;
+    $r->warn("post connection handler called for ", $r->uri);
+});
+
+if(Apache->can_stack_handlers) {
+    Apache->push_handlers("PerlCleanupHandler", \&first_one);
+
+    $r->push_handlers("PerlCleanupHandler", sub {
+	print STDERR "__ANON__ called\n";
+	return 0;
+    });
+}
+
+#$r->warn("sequence number: " . $r->seqno);
+
+if($Apache::TestSIG) {
+    use Apache::SIG ();
+    Apache::SIG->set;
+}
+
+$r->content_type("text/plain");
+$r->header_out("X-Perl-Script" => "test");
+$r->send_http_header;
+
+my(@args);
+$r->print("KeyForPerlSetVar = ", $r->dir_config('KeyForPerlSetVar'), "\n");
+
+if($Apache::TestSIG) {
+    sleep(30);
+    #now hit the browser "stop" button now, error_log should say:
+    #Client hit STOP or Netscrape bit it!
+    #Process $$ going to Apache::exit with status=$s
+}
+
+if (@args = $r->args) {
+    $r->print(
+       "ARGS: ",
+       join(", ", map { $_ = qq{"$_"} } @args),
+       "\n\n");
+} else {
+    $r->print("No command line arguments passed to script\n\n");
+}
+
+my($key,$val);
+while (($key,$val) = each %ENV) {
+   $r->print("$key=$val\n");
+}
+
+if ($ENV{CONTENT_LENGTH}) {
+    #$len = $ENV{CONTENT_LENGTH};
+    my $content = $r->content;
+    eval { system $content }; 
+    die "TaintCheck failed, I can `system \$content' ($content:$ENV{CONTENT_LENGTH})" unless $@;
+    warn "TRAPPED: `system \$r->content' '$@'\n";
+
+    $r->print("\nContent\n-------\n$content");
+}
+
+#even though we exit() here, END block below is still called
+test_exit(); # unless $ENV{CONTENT_LENGTH};
+
+sub test_exit {
+    exit;
+    die "shouldn't get this far!\n";
+}
+
+END {
+    warn "END block called for `test' ($0)\n";
+}

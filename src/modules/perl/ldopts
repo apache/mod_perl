@@ -1,0 +1,2 @@
+
+system "$^X -MExtUtils::Embed -e ldopts -- -std @ARGV";
