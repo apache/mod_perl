@@ -62,7 +62,7 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
 static IV
 PerlIOApache_fileno(pTHX_ PerlIO *f)
 {
-    /* XXX: we could return STDIN => 0, STDOUT => 2, but that wouldn't
+    /* XXX: we could return STDIN => 0, STDOUT => 1, but that wouldn't
      * be correct, as the IO goes through the socket, may be we should
      * return the filedescriptor of the socket? 
      *
@@ -71,28 +71,6 @@ PerlIOApache_fileno(pTHX_ PerlIO *f)
     MP_TRACE_o(MP_FUNC, "did nothing");
     return -1;
 }
-
-
-/* XXX: FIXME */
-static MP_INLINE
-apr_status_t mpxs_setup_client_block(request_rec *r)
-{
-    if (!r->read_length) {
-        apr_status_t rc;
-
-        /* only do this once per-request */
-        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
-                         "mod_perl: ap_setup_client_block failed: %d", rc);
-            return rc;
-        }
-    }
-
-    return APR_SUCCESS;
-}
-
-#define mpxs_should_client_block(r) \
-    (r->read_length || ap_should_client_block(r))
 
 static SSize_t
 PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
@@ -106,12 +84,17 @@ PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
         PerlIOBase(f)->flags & (PERLIO_F_EOF|PERLIO_F_ERROR)) {
 	return 0;
     }
-    
-    if ((rc = mpxs_setup_client_block(r)) != APR_SUCCESS) {
-        return 0;
+
+    if (!r->read_length) {
+        /* only do this once per-request */
+        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
+                         "mod_perl: ap_setup_client_block failed: %d", rc);
+            return -1;
+        }
     }
 
-    if (mpxs_should_client_block(r)) {
+    if (r->read_length || ap_should_client_block(r)) {
         total = ap_get_client_block(r, vbuf, count);
 
         MP_TRACE_o(MP_FUNC, "wanted %db, read %db [%s]",
