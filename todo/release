@@ -5,6 +5,12 @@
 -- see also todo/api_status
 -- see also todo/release-checklist
 
+Segfaults under Apache::Reload (could be uncovering a bug in mp):
+http://marc.theaimsgroup.com/?t=111145169900002&r=1&w=2
+owner: gozer
+
+-------------
+
 When running as root and A-T figures it can't run the test suite
 (perms) it'll ask users if she wants to skip the test suite, if this
 happens:
