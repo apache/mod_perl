@@ -43,6 +43,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* sfio */
+#if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
+# undef printf
+#endif
+
 #include "httpd.h" 
 #include "http_config.h" 
 #include "http_protocol.h" 
@@ -52,6 +58,12 @@ extern "C" {
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
+
+/* sfio */
+#if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
+# define printf PerlIO_stdoutf
+#endif
+
 #if defined(APACHE_SSL) || defined(MOD_SSL)
 #undef _
 #ifdef _config_h_
