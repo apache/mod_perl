@@ -128,3 +128,21 @@ Alias /error_document/ @ServerRoot@/cgi-bin/
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry
 </Location>
+
+### deflate tests ###
+
+Alias /registry_bb_deflate/ @ServerRoot@/cgi-bin/
+
+#PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_connection
+PerlModule ModPerl::RegistryBB
+<Location /registry_bb_deflate>
+    PerlOptions +GlobalRequest
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryBB
+    PerlOptions +ParseHeaders
+    #PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_request
+    <IfModule mod_deflate.c>
+        SetOutputFilter DEFLATE
+    </IfModule>
+</Location>
