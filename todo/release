@@ -14,14 +14,6 @@
   that, though they use autoconf, which is not quite what we
   want. Anyway it's something to look at.
 
-* perl Makefile.PL PREFIX=/foo/bar works fine, however Makefile.PL'll
-  still refuse to build unless MP_INST_APACHE2=1 is passed. It should
-  refuse to do so only if it finds mod_perl 1.0 installed under that
-  PREFIX, which can be a tricky check, since the exact logic to figure
-  out the paths is deep inside EU::MM. Probably it's better to run
-  'File::Find' and search for 'mod_perl.pm' under PREFIX, if found
-  check its version and assert only if it's 1.xx
-
 * META.yml. Generate META.yml (make dist does that), add Apache-Test
   as a private resource, so it won't be attempted to be indexed by
   PAUSE, add NO_META=>1 to WriteMakefile() which tells EU::MM not to

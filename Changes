@@ -12,8 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+When 'perl Makefile.PL PREFIX=/foo/bar' is used and mod_perl 1 is
+found, but at different prefix no longer require
+MP_INST_APACHE2=1. [Stas]
+
 modperl_mgv_resolve now croaks when a module scheduled for autoloading
-fails to load.  AutoLoaded modules shouldn't silently fail.[Stas]
+fails to load.  AutoLoaded modules shouldn't silently fail. [Stas]
 
 Perl(Input|Output)FilterHandler handlers are now always AutoLoaded, as
 if '+' prefix was used. This must be performed to get the access to
