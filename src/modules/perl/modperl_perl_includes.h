@@ -63,4 +63,9 @@
 #   define PERL_MAGIC_tied 'P'
 #endif
 
+#if defined(__APPLE__) && !defined(PERL_CORE) && !defined(environ)
+#   include <crt_externs.h>
+#   define environ (*_NSGetEnviron())
+#endif
+
 #endif /* MODPERL_PERL_INCLUDES_H */
