@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Fix a problem building with non-GNU make (can't make target dynamic
+in xs/APR/aprext) [Gozer]
+
 escape HTML in dumped variables by Apache::Status [Markus Wichitill
 <mawic@gmx.de>]
 
