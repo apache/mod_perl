@@ -202,8 +202,21 @@ sub find_in_inc {
     }
 }
 
-#XXX
-#do similar for mod_perl.exp and httpd.exp
+sub otherldflags {
+    my @ldflags = ();
+
+    if ($^O eq "aix") {
+	if (my $file = find_in_inc("mod_perl.exp")) {
+	    push @ldflags, "-bI:" . $file;
+	}
+	require Apache::MyConfig;
+	if (my $apxs = $Apache::MyConfig::Setup{'APXS'}) {
+	    my $httpdexp = `$apxs -q LIBEXECDIR` . "/httpd.exp";
+	    push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
+	}
+    }
+    return join(' ', @ldflags);
+}
 
 sub typemaps {
     my $typemaps = [];
@@ -354,6 +367,28 @@ Return the server version.
 Example:
 
  my $v = $src->httpd_version;
+
+=item otherldflags
+
+Return other ld flags for MakeMaker's B<dynamic_lib> argument to
+C<WriteMakefile>. This might be needed on systems like AIX that need
+special flags to the linker to be able to reference mod_perl or httpd
+symbols.
+
+Example:
+
+ use ExtUtils::MakeMaker;
+
+ use Apache::src ();
+
+ WriteMakefile(
+     'NAME'        => 'Apache::Module',
+     'VERSION'     => '0.01', 
+     'INC'         => Apache::src->new->inc,	      
+     'dynamic_lib' => {
+	 'OTHERLDFLAGS' => Apache::src->new->otherldflags,
+     },
+ );
 
 =back
 
