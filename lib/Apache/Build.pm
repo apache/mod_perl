@@ -824,6 +824,9 @@ sub mm_replace {
     $$val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
 }
 
+#help prevent warnings
+my @mm_init_vars = (BASEEXT => '');
+
 sub make_tools {
     my($self, $fh) = @_;
 
@@ -832,7 +835,7 @@ sub make_tools {
     }
 
     require ExtUtils::MakeMaker;
-    my $mm = bless {}, 'MM';
+    my $mm = bless { @mm_init_vars }, 'MM';
     $mm->init_others;
 
     for (qw(rm_f mv ld ar cp test_f)) {
