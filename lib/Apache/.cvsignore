@@ -1,3 +1,4 @@
 BuildConfig.pm
 FunctionTable.pm
 StructureTable.pm
+TestConfigData.pm
