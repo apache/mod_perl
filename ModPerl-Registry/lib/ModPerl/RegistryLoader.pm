@@ -86,7 +86,7 @@ sub server { shift }
 # the preloaded file needs to be precompiled into the package
 # specified by the 'package' attribute, not RegistryLoader
 sub namespace_root {
-    join '::', 'ModPerl::ROOT', 
+    join '::', ModPerl::RegistryCooker::NAMESPACE_ROOT,
         shift->[ModPerl::RegistryCooker::REQ]->{package};
 }
 
