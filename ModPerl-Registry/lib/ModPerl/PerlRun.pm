@@ -8,8 +8,7 @@ no warnings qw(redefine); # XXX, this should go away in production!
 
 our $VERSION = '1.99';
 
-use ModPerl::RegistryCooker;
-@ModPerl::PerlRun::ISA = qw(ModPerl::RegistryCooker);
+use base qw(ModPerl::RegistryCooker);
 
 # META: prototyping ($$) segfaults on request
 sub handler {
