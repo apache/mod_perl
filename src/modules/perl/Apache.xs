@@ -984,6 +984,9 @@ write_client(r, ...)
     CODE:
     RETVAL = 0;
 
+    if (r->connection->aborted)
+        XSRETURN_IV(0);
+
     for(i = 1; i <= items - 1; i++) {
 	int sent = 0;
         SV *sv = SvROK(ST(i)) && (SvTYPE(SvRV(ST(i))) == SVt_PV) ?
