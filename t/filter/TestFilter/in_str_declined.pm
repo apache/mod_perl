@@ -39,10 +39,10 @@ sub response {
         my $data = ModPerl::Test::read_post($r);
     }
 
-    # ~20k of input: makes it four bucket briages
-    # 2 full bucket brigades of 8k
-    #                1 half full brigade <8k
-    #                eos bucket brigade
+    # ~20k of input makes it four bucket brigades:
+    #    - 2 full bucket brigades of 8k
+    #    - 1 half full brigade ~4k
+    #    - 1 bucket brigade with EOS bucket
     my $expected = 4;
     my $invoked = $r->notes->get('invoked') || 0;
     ok t_cmp($expected, $invoked, "input stream filter declined");
