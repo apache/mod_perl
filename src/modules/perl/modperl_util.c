@@ -559,7 +559,7 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
         retval = modperl_hash_tie(aTHX_ "APR::Table",
                                   Nullsv, (void*)table); 
     }
-    else if (sv_val == &PL_sv_no) { /* no val was passed */
+    else if (!sv_val) { /* no val was passed */
         char *val; 
         if ((val = (char *)apr_table_get(table, key))) { 
             retval = newSVpv(val, 0); 
