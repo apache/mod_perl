@@ -18,6 +18,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_set_handlers
  mpxs_Apache__RequestRec_get_handlers
  mpxs_Apache__RequestRec_location
+ mpxs_Apache__RequestRec_as_string
  mpxs_Apache__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
  modperl_config_insert_request | | \
   r, lines, path=r->filename, override=OR_AUTHCFG | add_config

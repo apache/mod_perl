@@ -6242,7 +6242,21 @@ $ModPerl::FunctionTable = [
         'name' => 'func'
       }
     ]
-  }
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__RequestRec_as_string',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
 ];
 
 

@@ -53,9 +53,6 @@ and calls ap_send_fd() underneath. ap_send_fd() in APR doesn't work
 with fd's which aren't files and of unknown length, therefore it cannot 
 be used for implementing 1.x compatible send_fd.
 
-$r->as_string:
-not yet implemented
-
 Apache::{Server,Process} classes:
 require mutex lock for writing
 

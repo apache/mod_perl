@@ -30,7 +30,7 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 17;
+    plan $r, tests => 18;
 
     ok $r->default_type;
 
@@ -53,6 +53,11 @@ sub handler {
     }
 
     ok $r->is_initial_req;
+
+    # test for the request_line, status_ling, and few 
+    # headers that should always be there
+    ok $r->as_string =~ 
+        m!GET /TestAPI::rutil.*Host:.*200 OK.*Content-Type:!s;
 
     Apache::OK;
 }

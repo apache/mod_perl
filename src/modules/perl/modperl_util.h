@@ -119,4 +119,6 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name);
 
 SV *modperl_perl_gensym(pTHX_ char *pack);
     
+int modperl_sv_str_header(void *arg, const char *k, const char *v);
+
 #endif /* MODPERL_UTIL_H */
