@@ -57,7 +57,9 @@ sub apxs {
 
     return '' unless $apxs and -x $apxs;
 
-    qx($apxs @_ 2>/dev/null);
+    my $val = qx($apxs @_ 2>/dev/null);
+    warn "ERROR: `$apxs query @_' failed\n" unless $val;
+    $val;
 }
 
 sub apxs_cflags {
