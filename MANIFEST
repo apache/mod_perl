@@ -30,6 +30,7 @@ lib/Apache/Debug.pm
 lib/Apache/ExtUtils.pm
 lib/Apache/FakeRequest.pm
 lib/Apache/Options.pm
+lib/Apache/PerlRun.pm
 lib/Apache/PerlSections.pm
 lib/Apache/Registry.pm
 lib/Apache/RegistryLoader.pm
@@ -72,6 +73,7 @@ t/modules/eperl.t
 t/modules/embperl.t
 t/modules/httpdconf.t
 t/modules/psections.t
+t/modules/perlrun.t
 t/modules/include.t
 t/modules/ssi.test
 t/modules/sandwich.t
@@ -106,6 +108,8 @@ t/net/perl/rwrite.pl
 t/net/perl/sym.pl
 t/net/perl/throw_error.pl
 t/net/perl/server_error.pl
+t/net/perl/dirty-script.cgi
+t/net/perl/dirty-test.cgi
 #t/net/perl/resolver.pl
 t/net/perl/io/redir.pl
 t/net/perl/io/perlio.pl

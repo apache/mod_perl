@@ -1,10 +1,11 @@
 use Apache ();
-use Apache::Constants qw(:server);
+use Apache::Constants qw(:server :common);
 use strict;
 
 Apache->register_cleanup(sub {0});
 
 my $tests = 35;
+my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 
 my $i;
@@ -100,6 +101,21 @@ if($test_custom_response) {
     test ++$i, $r->custom_response(403, "no chance") || 1;
 }
 
+if($test_get_set) {
+    $r->set_handlers(PerlLogHandler => ['My::Logger']);
+    my $handlers = $r->get_handlers('PerlLogHandler');
+    test ++$i, @$handlers >= 1;
+    $r->set_handlers(PerlLogHandler => undef);
+    $handlers = $r->get_handlers('PerlLogHandler');
+    test ++$i, @$handlers == 0;
+    $handlers = $r->get_handlers('PerlHandler');
+    test ++$i, @$handlers == 1;
+    $r->set_handlers('PerlHandler', $handlers);
+
+    $r->set_handlers(PerlTransHandler => DONE); #make sure a per-server config thing works
+    $handlers = $r->get_handlers('PerlTransHandler');
+    test ++$i, @$handlers == 0;
+}
 
 
 

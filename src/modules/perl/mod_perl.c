@@ -1085,7 +1085,6 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
 	    }
 	}
 
-#ifdef PERL_OBJECT_HANDLERS
 	if(*SvPVX(class) == '$') {
 	    SV *obj = perl_eval_pv(SvPVX(class), TRUE);
 	    if(SvROK(obj) && sv_isobject(obj)) {
@@ -1097,7 +1096,7 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
 		stash = SvSTASH((SV*)SvRV(class));
 	    }
 	}
-#endif
+
 	if(class && !stash) stash = gv_stashpv(SvPV(class,na),FALSE);
 	   
 #if 0

@@ -74,7 +74,7 @@ $ServerName = "localhost";
 
 push @AddType, ["text/x-server-parsed-html" => ".shtml"];
  
-for (qw(/perl /cgi-bin)) {
+for (qw(/perl /cgi-bin /dirty-perl)) {
     push @Alias, [$_ => "$dir/net/perl/"];
 }
 
@@ -84,10 +84,22 @@ my @mod_perl = (
     Options     => "ExecCGI",
 );
 
+$Location{"/dirty-perl"} = { 
+    SetHandler => "perl-script",
+    PerlHandler => "Apache::PerlRun",
+    Options => "+ExecCGI ",
+    PerlSendHeader => "On",
+};
+
 $Location{"/perl"} = { 
     @mod_perl,
     PerlSetEnv => [KeyForPerlSetEnv => "OK"],
 #    PerlSetVar => [KeyForPerlSetVar => "OK"],
+};
+
+$Location{"/noenv"} = { 
+    @mod_perl,
+    PerlSetupEnv => "Off",
 };
 
 $Location{"/cgi-bin"} = {

@@ -290,6 +290,10 @@ if((add->flags & f) || (base->flags & f)) \
 /* some 1.2.x/1.3.x compat stuff */
 /* once 1.3.0 is here, we can toss most of this junk */
 
+#ifndef DONE
+#define DONE -2
+#endif
+
 #if MODULE_MAGIC_NUMBER >= 19980413
 #include "compat.h"
 #endif

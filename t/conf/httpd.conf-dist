@@ -51,6 +51,8 @@ PerlScript docs/stacked.pl
 
 Alias /perl/ ./t/net/perl/
 
+Alias /dirty-perl/ ./t/net/perl/
+
 Alias /cgi-bin/ ./t/net/perl/
 
 <Location /perl>
@@ -59,6 +61,13 @@ SetHandler perl-script
 PerlHandler Apache::Registry::handler
 Options +ExecCGI
 PerlSendHeader       Off
+</Location>
+
+<Location /dirty-perl>
+Options +ExecCGI
+SetHandler perl-script
+PerlHandler Apache::PerlRun
+PerlSendHeader On
 </Location>
 
 <Location /perl/noenv>

@@ -59,6 +59,160 @@ extern listen_rec *listeners;
 extern int mod_perl_socketexitoption;
 extern int mod_perl_weareaforkedchild;   
 
+#if defined(PERL_STACKED_HANDLERS) && defined(PERL_GET_SET_HANDLERS)
+
+typedef struct {
+    char *name;
+    void *offset;
+    void (*set_func) (void *, void *, SV *);
+} perl_handler_table;
+
+typedef struct {
+    I32 fill;
+    AV *av;
+    AV **ptr;
+} perl_save_av;
+
+static void set_handler_dir (perl_handler_table *tab, request_rec *r, SV *sv);
+static void set_handler_srv (perl_handler_table *tab, request_rec *r, SV *sv);
+
+#define HandlerDirEntry(name,member) \
+name, (void*)XtOffsetOf(perl_dir_config,member), \
+(void(*)(void *, void *, SV *)) set_handler_dir
+
+#define HandlerSrvEntry(name,member) \
+name, (void*)XtOffsetOf(perl_server_config,member), \
+(void(*)(void *, void *, SV *)) set_handler_srv
+
+static perl_handler_table handler_table[] = {
+    {HandlerSrvEntry("PerlPostReadRequestHandler", PerlPostReadRequestHandler)},
+    {HandlerSrvEntry("PerlTransHandler", PerlTransHandler)},
+    {HandlerDirEntry("PerlHeaderParserHandler", PerlHeaderParserHandler)},
+    {HandlerDirEntry("PerlAccessHandler", PerlAccessHandler)},
+    {HandlerDirEntry("PerlAuthenHandler", PerlAuthenHandler)},
+    {HandlerDirEntry("PerlAuthzHandler", PerlAuthzHandler)},
+    {HandlerDirEntry("PerlTypeHandler", PerlTypeHandler)},
+    {HandlerDirEntry("PerlFixupHandler", PerlFixupHandler)},
+    {HandlerDirEntry("PerlHandler", PerlHandler)},
+    {HandlerDirEntry("PerlLogHandler", PerlLogHandler)},
+    { NULL }
+};
+
+static void perl_restore_av(void *data)
+{
+    perl_save_av *save_av = (perl_save_av *)data;
+
+    if(save_av->fill != DONE) {
+	AvFILL(*save_av->ptr) = save_av->fill;
+    }
+    else if(save_av->av != Nullav) {
+	*save_av->ptr = save_av->av;
+    }
+}
+
+static void perl_handler_merge_avs(char *hook, AV **dest)
+{
+    int i = 0;
+    HV *hv = perl_get_hv("Apache::PerlStackedHandlers", FALSE);
+    SV **svp = hv_fetch(hv, hook, strlen(hook), FALSE);
+    AV *base;
+    
+    if(!(svp && SvROK(*svp)))
+	return;
+
+    base = (AV*)SvRV(*svp);
+    for(i=0; i<=AvFILL(base); i++) { 
+	SV *sv = *av_fetch(base, i, FALSE);
+	av_push(*dest, sv);
+    }
+}
+
+static void set_handler_base(void *ptr, perl_handler_table *tab, pool *p, SV *sv) 
+{
+    AV **av = (AV **)((char *)ptr + (int)(long)tab->offset);
+
+    perl_save_av *save_av = 
+	(perl_save_av *)palloc(p, sizeof(perl_save_av));
+
+    save_av->fill = DONE;
+    save_av->av = Nullav;
+    
+    if((sv == &sv_undef) || (SvIOK(sv) && SvIV(sv) == DONE)) {
+	if(AvTRUE(*av)) {
+	    save_av->fill = AvFILL(*av);
+	    AvFILL(*av) = -1;
+	}
+    }
+    else if(SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVAV) {
+	if(AvTRUE(*av))
+	    save_av->av = av_copy_array(*av);
+	*av = (AV*)SvRV(sv);
+	++SvREFCNT(*av);
+    }
+    else {
+	croak("Can't set_handler with that value");
+    }
+    save_av->ptr = av;
+    register_cleanup(p, save_av, perl_restore_av, mod_perl_noop);
+}
+
+static void set_handler_dir(perl_handler_table *tab, request_rec *r, SV *sv)
+{
+     dPPDIR; 
+    set_handler_base((void*)cld, tab, r->pool, sv);
+}
+
+static void set_handler_srv(perl_handler_table *tab, request_rec *r, SV *sv)
+{
+    dPSRV(r->server); 
+    set_handler_base((void*)cls, tab, r->pool, sv);
+}
+
+static perl_handler_table *perl_handler_lookup(char *name)
+{
+    int i;
+    for (i=0; handler_table[i].name; i++) {
+	perl_handler_table *tab = &handler_table[i];
+        if(strEQ(name, tab->name))
+	    return tab;
+    }
+    return NULL;
+}
+
+
+static SV *get_handlers(request_rec *r, char *hook)
+{
+    AV *avcopy;
+    AV **av;
+    perl_handler_table *tab = perl_handler_lookup(hook);
+
+    if(!tab) return Nullsv;
+    {
+	dPPDIR;
+        av = (AV **)((char *)cld + (int)(long)tab->offset);
+    }
+
+    if(*av) 
+	avcopy = av_copy_array(*av);
+    else
+	avcopy = newAV();
+
+    perl_handler_merge_avs(hook, &avcopy);
+
+    return newRV_noinc((SV*)avcopy);
+}
+
+static void set_handlers(request_rec *r, SV *hook, SV *sv)
+{
+    perl_handler_table *tab = perl_handler_lookup(SvPV(hook,na));
+    if(tab && tab->set_func) 
+        (*tab->set_func)(tab, r, sv);
+
+    (void)hv_delete_ent(perl_get_hv("Apache::PerlStackedHandlers", FALSE),
+			hook, G_DISCARD, FALSE);
+}
+#endif
+
 #if MODULE_MAGIC_NUMBER < 19970909
 static void
 child_terminate(request_rec *r)
@@ -68,10 +222,6 @@ child_terminate(request_rec *r)
 #endif
     exit(0);
 }
-#endif
-
-#ifndef DONE
-#define DONE -2
 #endif
 
 #if MODULE_MAGIC_NUMBER < 19980317
@@ -162,6 +312,30 @@ mod_perl_seqno(self, inc=0)
 int
 perl_hook(name)
     char *name
+
+#if defined(PERL_GET_SET_HANDLERS)
+SV *
+get_handlers(r, hook)
+    Apache     r
+    char *hook
+
+    CODE:
+#ifdef get_handlers
+    get_handlers(r,hook);
+#else
+    RETVAL = get_handlers(r,hook);
+#endif
+   
+    OUTPUT:
+    RETVAL
+
+void    
+set_handlers(r, hook, sv)
+    Apache     r
+    SV *hook
+    SV *sv
+
+#endif
 
 int
 mod_perl_push_handlers(self, hook, cv)
