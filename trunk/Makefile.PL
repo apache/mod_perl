@@ -269,9 +269,12 @@ while($_ = shift) {
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
 }
 
+my %very_experimental = map {$_,1} 
+qw(PERL_DEFAULT_OPMASK PERL_SAFE_STARTUP);
+
 if($EXPERIMENTAL) {
     for (keys %experimental) {
-        next if $_ eq "PERL_DEFAULT_OPMASK"; #have to *really* ask for this one
+        next if $very_experimental{$_}; #have to *really* ask for this one
         next if $experimental{$_}++ > 1;
 	$PERL_EXTRA_CFLAGS .= " -D$_=1";
     }
