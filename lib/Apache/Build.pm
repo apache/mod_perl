@@ -239,7 +239,7 @@ sub mpm_name {
         $msg .= " Please specify MP_APXS=/full/path/to/apxs to solve " .
             "this problem." unless exists $self->{MP_APXS};
         error $msg;
-        exit 1;
+        die "\n";
     }
 
     return $self->{mpm_name} = $mpm_name;
@@ -270,7 +270,7 @@ sub configure_apache {
     my $httpd = File::Spec->catfile($self->{MP_AP_PREFIX}, 'httpd');
     $self->{'httpd'} ||= $httpd;
     push @Apache::TestMM::Argv, ('httpd' => $self->{'httpd'});
-    
+
     my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
     my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
 
@@ -283,14 +283,14 @@ sub configure_apache {
         split /\s+/, $ENV{CFLAGS} || '';
 
     my $cd = qq(cd $self->{MP_AP_PREFIX});
-    
+
     #We need to clean the httpd tree before configuring it
     if (-f File::Spec->catfile($self->{MP_AP_PREFIX}, 'Makefile')) {
         my $cmd = qq(make clean);
         debug "Running $cmd";
         system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
     }
-    
+
     my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
     debug "Running $cmd";
     system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
