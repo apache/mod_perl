@@ -6,3 +6,6 @@ print.t
 pnotes.t
 dir_config.t
 subenv.t
+methodname.t
+methodobj.t
+method.t

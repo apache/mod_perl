@@ -9,6 +9,7 @@ modperl_trace.h
 modperl_xsinit.c
 ldopts
 Makefile
+Makefile.modperl
 *.lo
 *.o
 *.a
