@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+new package Apache::porting to make it easier to port mp1 code to mp2
+[Stas]
+
 new Apache::Build methods: mpm_name(), mpm_is_threaded(). use them in
 the top-level Makefile.PL to require 5.8.0/ithreads if mpm requires
 threads. [Stas]
