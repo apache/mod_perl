@@ -23,6 +23,11 @@ AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
                 symbol resolution at linking time, but I had not much
                 success with using this approach (dlopen fails).
 
+AIX   4.3.3 DSO reported to work with mod_perl_1.99_12 and 
+                Apache 2.0.84/prefork mpm 
+                but doesn't start with worker:
+                http://marc.theaimsgroup.com/?t=106894906200003&r=1&w=2
+
 FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
                 5.1-RELEASE)
                 http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
