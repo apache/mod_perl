@@ -1205,7 +1205,7 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
 
     /* make sure this module is re-loaded for the second config read */
     if(PERL_RUNNING() == 1) {
-	SV *file;
+	SV *file = Nullsv;
 	if(arg) {
 	    if(strrchr(arg, '/') || strrchr(arg, '.'))
 		file = newSVpv((char *)arg,0);

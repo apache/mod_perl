@@ -197,7 +197,9 @@ extern U32	mp_debug;
 #endif
 
 /* cut down on some noise in source */
-#define dSTATUS int status = DECLINED, dstatus
+#define dSTATUS \
+int dstatus = DECLINED; \
+int status = dstatus
 
 #define dPPDIR \
    perl_dir_config *cld = get_module_config(r->per_dir_config, &perl_module)   
@@ -893,6 +895,7 @@ void perl_reload_inc(void);
 I32 perl_module_is_loaded(char *name);
 SV *perl_module2file(char *name);
 int perl_require_module(char *module, server_rec *s);
+void perl_qrequire_module (char *name);
 int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn);
 array_header *perl_cgi_env_init(request_rec *r);
 void perl_clear_env(void);

@@ -35,28 +35,20 @@ test ++$i, scalar keys %$headers_in == 0;
 
 %$headers_in = %save;
 
-print "headers_in:\n";
-while(my($k,$v) = each %$headers_in) {
-    print "$k = $v\n";
-}
-
-print "TOTAL: ", scalar keys %$headers_in, "\n\n";
-
-my $dir_config = $r->dir_config;
-
-print "dir_config:\n";
-while(my($k,$v) = each %$dir_config) {
-    print "$k = $v\n";
-}
-
-print "TOTAL: ", scalar keys %$dir_config, "\n\n";
-
 for my $meth (qw{
     headers_in headers_out err_headers_out notes dir_config subprocess_env
     })
 {
     my $hash_ref = $r->$meth();
     my $tab = tied %$hash_ref;
+
+    print "$meth:\n";
+    while(my($k,$v) = each %$hash_ref) {
+	print "$k = $v\n";
+    }
+
+    print "TOTAL: ", scalar keys %$hash_ref, "\n\n";
+
     test ++$i, UNIVERSAL::isa($hash_ref, 'HASH');
     test ++$i, $tab->isa('Apache::TieHashTable');
 }

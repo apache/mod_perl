@@ -4,7 +4,7 @@ use Exporter ();
 use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
-@Apache::EXPORT_OK = qw(exit warn fork forkoption);
+@Apache::EXPORT_OK = qw(system exit warn fork forkoption);
 $Apache::VERSION = "1.22";
 
 *import = \&Exporter::import;
@@ -164,6 +164,10 @@ sub WRITE {
     my($r, $buff, $length, $offset) = @_;
     my $send = substr($buff, $offset, $length);
     $r->print($send);
+}
+
+sub system {
+    print `@_`;
 }
 
 sub send_cgi_header {

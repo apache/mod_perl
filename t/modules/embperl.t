@@ -1,6 +1,12 @@
 
 use Apache::test;
 
+if($ENV{USER} eq 'dougm' and 
+   $net::callback_hooks{MMN} < 19980413) 
+{
+    skip_test; #1.3b6 broke binary compat
+}
+
 skip_test unless have_module "HTML::Embperl";
 
 print "1..1\n";

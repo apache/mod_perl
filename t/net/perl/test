@@ -105,6 +105,11 @@ if ($ENV{CONTENT_LENGTH}) {
     $r->print("\nContent\n-------\n$content");
 }
 
+print "\n";
+if(defined &Apache::system and \&system == \&Apache::system) {
+    system qq{$Config::Config{perlpath} -le 'print "Apache::system ok"'};
+}
+
 #even though we exit() here, END block below is still called
 test_exit(); # unless $ENV{CONTENT_LENGTH};
 
