@@ -49,6 +49,28 @@ my %apxs_query = (
     PREFIX     => '',
 );
 
+sub ap_prefix_invalid {
+    my $self = shift;
+
+    my $prefix = $self->{MP_AP_PREFIX};
+
+    unless (-d $prefix) {
+        return "$prefix: No such file or directory";
+    }
+
+    my $include_dir = $self->apxs(-q => 'INCLUDEDIR');
+
+    unless (-e $include_dir) {
+        return "include/ directory not found in $prefix";
+    }
+
+    if (-e "$prefix/CHANGES") {
+        return "$prefix is a build directory (need an install directory)";
+    }
+
+    return '';
+}
+
 sub apxs {
     my $self = shift;
 
