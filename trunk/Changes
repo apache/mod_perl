@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document that Apache 1.2.x is no longer supported
+
+Apache::src now supported with USE_APXS=1
+
 'make test' AllowOverride None for Directory / 
 [Steve Lembark <Steve.Lembark@wfg.com>]
 

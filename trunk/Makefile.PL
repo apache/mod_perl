@@ -339,8 +339,14 @@ if($USE_APXS) {
         $WITH_APXS = $USE_APXS;
     }
     elsif($USE_APXS and $APACHE_PREFIX) {
-	$WITH_APXS = "$APACHE_PREFIX/sbin/apxs";
+	for (qw(sbin bin)) {
+	    last if -e ($WITH_APXS = "$APACHE_PREFIX/$_/apxs");
+	}
     }
+    unless ($WITH_APXS) {
+	chomp($WITH_APXS = `which apxs`);
+    }
+
     print "Will configure via APXS";
     print " (apxs=$WITH_APXS)" if $WITH_APXS;
     print "\n";
@@ -642,10 +648,9 @@ if($APACHE_SRC or $USE_APXS) {
     my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
     my $httpdv = $USE_APXS ? 130     : httpd_version($APACHE_SRC,1);
 
-    unless($httpdv >= 120) {
-	$callback_hooks{PERL_HEADER_PARSER} = 0;
-	$cant_hook{PERL_HEADER_PARSER} = 
-	    "(need 1.2.0 or higher)";
+    unless($httpdv >= 130) {
+	phat_warn("Apache Version 1.3.0 required, aborting...");
+	exit(1);
     }
 
     if($httpdv >= 130) {
@@ -1368,17 +1373,28 @@ sub wanted {
 sub MY::post_initialize {
     my($self) = shift;
 
-    return unless $APACHE_SRC and $APACHE_HEADER_INSTALL;
+    return unless $APACHE_HEADER_INSTALL;
+    my($ap_src, $ap_inc);
+    if ($APACHE_SRC) {
+	$ap_src = $APACHE_SRC;
+	$ap_inc = "$ap_src/include";
+    }
+    elsif ($USE_APXS) {
+	#$base = `$WITH_APXS -q INCLUDEDIR`;
+	$ap_inc = $ap_src = 'src'; #just install mod_perl headers
+    }
+
+    return unless -d $ap_src;
 
     $My::self = $self;
-
-    finddepth(\&wanted, $APACHE_SRC);
+    {
+	local $APACHE_SRC = $ap_src;
+	finddepth(\&wanted, $ap_src);
+    }
     $self->{PM}{"Apache/typemap"} = '$(INST_ARCHLIB)/' . "auto/Apache/typemap";
 
-    my $v = httpd_version($APACHE_SRC, 1);
-    return '' unless $v >= 133;
     for (qw(ap_config_auto.h)) {
-	my $from = "$APACHE_SRC/include/$_";
+	my $from = "$ap_inc/$_";
 	my $to = '$(INST_ARCHLIB)/' . "auto/Apache/include/$_";
 	unless ($self->{PM}->{$from}) {
 	    $self->{PM}->{$from} = $to;
@@ -1819,6 +1835,7 @@ package Apache::MyConfig ;
 %Setup = (
    'Apache_Src' => \'$APACHE_SRC\',
    'SSL_BASE' => \'$SSL_BASE\',
+   'APXS' => \'$WITH_APXS\',
 );
 
 1;
