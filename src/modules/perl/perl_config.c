@@ -709,8 +709,12 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
     mod_perl_perl_dir_config *new = NULL,
 	*basevp = (mod_perl_perl_dir_config *)basev,
 	*addvp  = (mod_perl_perl_dir_config *)addv;
-    SV *sv, *basesv = basevp->obj, *addsv = addvp->obj;
 
+    SV *sv, 
+	*basesv = basevp ? basevp->obj : Nullsv,
+	*addsv  = addvp  ? addvp->obj  : Nullsv;
+
+    if(!basesv) basesv = addsv;
     if(!sv_isobject(basesv))
 	return basesv;
 
