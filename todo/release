@@ -4,16 +4,107 @@
 
 -- see also todo/api_status
 
-* pools that go out of scope:
+* take a look at this:
+Index: t/response/TestAPI/rflush.pm
+===================================================================
+--- t/response/TestAPI/rflush.pm        (revision 122914)
++++ t/response/TestAPI/rflush.pm        (working copy)
+@@ -36,6 +36,10 @@
 
-  perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 
-  open my $fh, "<:APR", "/tmp/xxx", APR::Pool->new; print <$fh>'
-  APR::PerlIO::read: (9) Bad file descriptor at -e li
+     $r->content_type('text/plain');
 
-  first of all, try to never allow passing temp pools, e.g in the
-  above example, we can check that the pool object doesn't have the
-  TEMP flag on.
++# XXX: perlio needs to be tested with cases:
++# my $oldfh = select(STDOUT); $| = 1; select($oldfh);
++# and see if the print is unbuffered
++
+     # print is now unbuffered
+     local $| = 1;
+     $r->print("<foo"); # this sends the data in the buffer + flush bucket
 
-  but that doesn't really solve the problem. So we aren't sure how to
-  deal with that.
 
+
+* we need to deal with a situation where an object is used to
+  construct another object, but it's then auto-DESTROYed by perl
+  rendering the object that used it corrupted.
+
+  the solution is to make the newly created objects refer to the
+  underlying object via magic attachment.
+
+  only objects using objects that have DESTROY are effected, so for
+  example in the case of:
+
+  APR::Bucket::eos_create(APR::Bucket::alloc_create(APR::Pool->new)
+
+  the object returned by eos_create shouldn't be affected, since
+  alloc_create()'s object doesn't have perl's DESTROY. so only the
+  pool object is an issue here (i.e. alloc_create needs special
+  handling)
+
+  relevant objects with DESTROY : Apache::SubRequest,
+  APR::ThreadMutex, APR::UUID, APR::Pool
+
+
+  =================
+  === APR::Pool ===
+  =================
+  *** returning objects ***
+  
+  APR::Brigade:
+  - mpxs_apr_brigade_create
+  
+  APR::Bucket:
+  - apr_bucket_alloc_create
+  - mpxs_APR__Bucket_setaside
+  
+  APR::Finfo:
+  - mpxs_APR__Finfo_stat
+  
+  APR::IpSubnet:
+  - mpxs_apr_ipsubnet_create
+  
+  APR::Pool:
+  - mpxs_apr_pool_create (not sure about this one)
+  
+  Apache::RequestUtil:
+  - mpxs_Apache__RequestRec_new
+  
+  APR::Table:
+  - apr_table_copy
+  - apr_table_overlay
+  - apr_table_make
+  
+  APR::ThreadMutex
+  - mpxs_apr_thread_mutex_create
+
+  *** returning strings ***
+  
+  Apache::ServerUtil
+  - mpxs_Apache__ServerUtil_server_root_relative (once this is
+    supported, we no longer need to double copy the string)
+  
+  Apache::URI:
+  - ap_construct_server
+  - ap_construct_url
+  
+  APR::URI
+  - mpxs_apr_uri_parse
+  
+  Apache::Util
+  - ap_ht_time
+  - escape_path
+
+
+  ==========================
+  === Apache::SubRequest ===
+  ==========================
+  no method uses the object in a way related to the issue in hand
+
+  =================
+  === APR::UUID ===
+  =================
+  no method uses the object in a way related to the issue in hand
+
+  ========================
+  === APR::ThreadMutex ===
+  ========================
+  no method uses the object in a way related to the issue in hand
