@@ -150,6 +150,7 @@ In httpd.conf:
 
   PerlInitHandler Apache::Reload
   PerlSetVar ReloadAll Off
+  #PerlSetVar ReloadDebug On
 
 Then your module:
 
@@ -221,10 +222,16 @@ happen. This can be a great boon in a live environment:
 Now when you're happy with your changes, simply go to the command line and
 type:
 
-  touch /tmp/reload_modules
+  % touch /tmp/reload_modules
 
 And your modules will be magically reloaded on the next request. This option
 works in both StatINC emulation mode and the registered modules mode.
+
+=head2 Debug
+
+You can enable the debugging mode with the setting:
+
+  PerlSetVar ReloadDebug On
 
 =head1 PSUEDOHASHES
 
