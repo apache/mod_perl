@@ -13,19 +13,12 @@ to the ToDo file and never remove it ;-)
 
 ---------------------------------------------------------------------------
 SHORT TERM STUFF (this section should always be empty in a release version!)
+                 (well, close to it anyhow)
 ---------------------------------------------------------------------------
-
-- see about fixing [error] PerlSetVar->nelts = 1111992
-           Stephan Nagy <rzjj60@EMAIL.SPS.MOT.COM>
 
 - Ralf's APACI Makefile.tmpl
 
 - Gerald's suggestion to avoid possible deadlock under win32
-
-- Doug B's Apache::SIG enhancement
-
-- look at possible bug w/ HUP and PerlFreshRestart
-           Jake Buchholz <jake@EXECPC.COM>
 
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some)
@@ -38,6 +31,16 @@ DOCUMENTATION (areas that *really* need some)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+
+- find a way to prevent "httpd spinning" (bug in Perl, not mod_perl)
+
+- linkage problem w/ mod_auth_dbm (-ldbm)
+ Config.pm New: libs='-lsocket -lnsl -ldl -lm -lc -lcrypt -ldb'
+ Was:           libs='-lsocket -lnsl -ldb -ldl -lm -lc -lcrypt'
+ SunOS mailhost.cmc.net 5.5 Generic_103093-17 sun4m sparc sun4m
+             brian moore <bem@cmc.net>
+
+- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992
 
 - perl_config should not av_shift ARRAY refs from
   %Apache::ReadConfig::
@@ -56,6 +59,7 @@ KNOWN BUGS
  /home/web/perl5/lib/site_perl/portable/auto/DBD/Oracle/Oracle.a 
  /home/  etc etc ...
            mark rostron <useny036@IMATION.COM>
+           Brian Slesinsky <bslesins@best.com>
 
 ---------------------------------------------------------------------------
 NEW STUFF

@@ -3,19 +3,32 @@ package Apache::SIG;
 use strict;
 $Apache::SIG::VERSION = (qw$Revision$)[1];
 
-sub handler {
+$Apache::SIG::PipeKey ||= 'SIGPIPE';
+
+sub set {
     $SIG{PIPE} = \&PIPE;
+}
+
+sub handler {
+    my $r = shift;
+    if ($r->is_main) {
+        $r->request($r);
+        $SIG{PIPE} = \&PIPE;
+    }
 }
 
 sub PIPE {
     my $ppid = getppid;
     my $s = ($ppid > 1) ? -2 : 0;
-    warn "Client hit STOP or Netscrape bit it!\n";
-    warn "Process $$ going to Apache::exit with status=$s\n";
-    Apache::exit($s);  
-}
 
-*set = \&handler;
+    if (my $r = Apache->request) {
+        $r->subprocess_env($Apache::SIG::PipeKey => '1');
+    } else {
+        warn "Client hit STOP or Netscrape bit it!\n";
+        warn "Process $$ going to Apache::exit with status=$s\n";
+    }
+    Apache::exit($s);
+}
 
 1;
 
@@ -40,12 +53,37 @@ are handled by that child.  When Apache::SIG is used, it installs a
 different SIGPIPE handler which rewinds the context to make sure Perl
 is back to normal state, preventing these bizarre errors.
 
-As of mod_perl version 1.07_02, the Apache::SIG set method is called 
+If you would like to log when a request was cancelled by a SIGPIPE in your
+Apache access_log, you can declare Apache::SIG as a handler (any
+Perl*Handler will do, as long as it is run before PerlHandler,
+e.g. PerlFixupHandler), and you must also define a custom LogFormat in your
+httpd.conf, like so:
+
+PerlFixupHandler Apache::SIG
+LogFormat "%h %l %u %t \"%r\" %s %b %{SIGPIPE}e"
+
+If the server has noticed that the request was cancelled via a SIGPIPE,
+then the log line will end with C<1>, otherwise it will just be a dash.
+
+As of mod_perl version 1.07_02, the Apache::SIG set method is called
 by default when the server is started.
 
-=head1 AUTHOR
+=head1 CAVEATS
 
-Doug MacEachern
+The signal handler in this package uses the subprocess_env table of the
+main request object to supply the 'SIGPIPE' "environment variable" to
+the log handler. If you already use the key 'SIGPIPE' in your
+subprocess_env table, then you can redefine the key like this:
+
+$Apache::SIG::PipeKey = 'my_SIGPIPE';
+
+and log it like this:
+
+LogFormat "%h %l %u %t \"%r\" %s %b %{my_SIGPIPE}e"
+
+=head1 AUTHORS
+
+Doug MacEachern and Doug Bagley
 
 =head1 SEE ALSO
 
