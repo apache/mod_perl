@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+rename APR::NetLib -> APR::IpSubnet to match the class name [Stas]
+
 APR::BucketType: [Stas]
   - name is readonly
 
