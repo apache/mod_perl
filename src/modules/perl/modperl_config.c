@@ -227,6 +227,28 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     return mrg;
 }
 
+/* any per-request cleanup goes here */
+
+apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
+{
+    MP_dRCFG;
+
+    if (rcfg->pnotes) {
+        SvREFCNT_dec(rcfg->pnotes);
+        rcfg->pnotes = Nullhv;
+    }
+
+    return APR_SUCCESS;
+}
+
+apr_status_t modperl_config_req_cleanup(void *data)
+{
+    request_rec *r = (request_rec *)data;
+    MP_dTHX;
+
+    return modperl_config_request_cleanup(aTHX_ r);
+}
+
 void *modperl_get_perl_module_config(ap_conf_vector_t *cv)
 {
     return ap_get_module_config(cv, &perl_module);
