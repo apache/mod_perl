@@ -173,7 +173,7 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
         /* Must store the global server record as early as possible,
          * because if mod_perl happens to be started from within a
          * vhost (e.g., PerlLoadModule) the base server record won't
-         * be availalbe to vhost and things will blow up
+         * be available to vhost and things will blow up
          */
         modperl_init_globals(s, p);
 
