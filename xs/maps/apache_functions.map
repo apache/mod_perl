@@ -169,6 +169,7 @@ PACKAGE=Apache::Server
  ap_method_register
 ~ap_get_server_built
 ~ap_get_server_version
+~ap_server_root
  
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules

@@ -224,7 +224,7 @@ sub request {
 
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
-our $CWD = Apache::server_root;
+our $CWD = Apache::Server::server_root;
 
 our $AddPerlVersion = 1;
 
