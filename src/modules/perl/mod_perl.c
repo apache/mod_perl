@@ -279,8 +279,24 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
-    modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
+    modperl_config_srv_t *base_scfg;
     PerlInterpreter *base_perl;
+
+    /* get the real base server when invoked from vhost.
+     *
+     * without doing it segfaults when the first PerlLoadModule
+     * appears inside vhost, e.g.:
+     *     <VirtualHost _default_:8535>
+     *         PerlLoadModule Foo
+     *     </VirtualHost> 
+     * an arrangement which is unfortunately hard to automate with our
+     * test suite, but see test TestDirective::perlloadmodule6
+     */
+    if (base_server->is_virtual) {
+        base_server = modperl_global_get_server_rec();
+    }
+
+    base_scfg = modperl_config_srv_get(base_server);
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
                                    base_server->server_hostname));
@@ -359,7 +375,7 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 }
 #endif /* USE_ITHREADS */
 
-static void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
+void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
 {
     int threaded_mpm;
     ap_mpm_query(AP_MPMQ_IS_THREADED, &threaded_mpm);
@@ -428,7 +444,7 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     modperl_sys_init();
     apr_pool_cleanup_register(pconf, NULL,
                               modperl_sys_term, apr_pool_cleanup_null);
-    modperl_init_globals(s, pconf);
+
     modperl_init(s, pconf);
 
     return OK;

@@ -2281,6 +2281,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'modperl_init_globals',
+    'args' => [
+      {
+        'type' => 'server_rec *',
+        'name' => 's'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'pconf'
+      }
+    ]
+  },
+  {
     'return_type' => 'apr_status_t',
     'name' => 'modperl_input_filter_handler',
     'args' => [
