@@ -284,11 +284,33 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
     modperl_filter_t *modperl_filter;
     ap_filter_t *f;
 
-    mpxs_usage_va_1(modperl_filter, "$filter->remove()");
+    if (items < 1) {
+        Perl_croak(aTHX_ "usage: $filter->remove()");
+    }
+
+    modperl_filter = mp_xs_sv2_modperl_filter(*MARK);
+
+    /* native filter */
+    if (!modperl_filter) {
+        f = (ap_filter_t*)SvIV(SvRV(*MARK));
+        MP_TRACE_f(MP_FUNC,
+                   "   %s\n\n\t non-modperl filter removes itself\n",
+                   f->frec->name);
+
+        /* the filter can reside in only one chain. hence we try to
+         * remove it from both, the input and output chains, since
+         * unfortunately we can't tell what kind of filter is that and
+         * whether the first call was successful
+         */
+        ap_remove_input_filter(f);
+        ap_remove_output_filter(f);
+        return;
+    }
+    
     f = modperl_filter->f;
 
     MP_TRACE_f(MP_FUNC, "   %s\n\n\tfilter removes itself\n",
-               ((modperl_filter_ctx_t *)f->ctx)->handler->name);
+        ((modperl_filter_ctx_t *)f->ctx)->handler->name);
     
     if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
         ap_remove_input_filter(f);
