@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+Starting from ExtUtils::MakeMaker 6.26 went back to pm_to_blib target
+from pm_to_blib.ts introduced in 6.22, so needed to fix the glue_pod
+target, so install will work correctly [Stas]
+
 Syntax errors in <Perl> sections were not correctly caught and
 reported. [Gozer]
 

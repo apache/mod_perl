@@ -194,7 +194,8 @@ sub ModPerl::BuildMM::MY::postamble {
     # create a dependency on pm_to_blib subdirs linkext targets to
     # allow 'make -j'
     require ExtUtils::MakeMaker;
-    my $pm_to_blib = $ExtUtils::MakeMaker::VERSION >= 6.22
+    my $pm_to_blib = ($ExtUtils::MakeMaker::VERSION >= 6.22 &&
+                      $ExtUtils::MakeMaker::VERSION <= 6.25 )
         ? "pm_to_blib.ts"
         : "pm_to_blib";
     my @target = ("glue_pods: $pm_to_blib subdirs linkext");
