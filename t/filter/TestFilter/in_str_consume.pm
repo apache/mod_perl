@@ -42,6 +42,9 @@ use warnings FATAL => 'all';
 use Apache::Filter ();
 use Apache::TestTrace;
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant READ_BYTES_TOTAL => 105;
@@ -66,6 +69,7 @@ sub handler {
         $ctx->{data} .= $buffer;
         $wanted_total -= $len;
         $wanted       -= $len;
+        debug "FILTER READ: [$buffer]";
         debug "FILTER READ: $len ($wanted_total more to go)";
         last unless $len; # no more data to read in this bb
     }
