@@ -111,3 +111,6 @@
   no send_fd without the length argument as in mp1
   Owner: stas
 
+* Apache::Debug:
+  Possibly work it differently, but certainly add support for dealing with $^M
+  Report: http://gossamer-threads.com/lists/modperl/modperl/77853
