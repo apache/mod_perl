@@ -1,8 +1,15 @@
 Simple install:
 
-% perl Makefile.PL MP_AP_PREFIX=/usr/local/apache2
+% perl Makefile.PL MP_APXS=/usr/local/apache2/bin/apxs
 % make && make test
 % make install
+
+If Apache was built but not installed yet or if apxs is not available
+and Apache was installed under a single tree (e.g.,
+/usr/local/apache2), you should use the MP_AP_PREFIX option, which
+points that the Apache tree:
+
+% perl Makefile.PL MP_AP_PREFIX=/usr/local/apache2
 
 See docs/user/install/install.pod for details.
 
