@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_05-dev
 
+fix PerlOptions +ParseHeaders to only parse once per-request
+
 add external redirects Registry tests [Stas Bekman]
 
 get rid of the compat layer in ModPerl-Registry [Stas Bekman]
