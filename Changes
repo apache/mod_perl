@@ -6,7 +6,7 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.18_01-dev
+=item 1.19 - April 7, 1999
 
 Apache::Leak fixes for win32 
 [Matthew Sergeant <Matthew.Sergeant@eml.ericsson.se>]
