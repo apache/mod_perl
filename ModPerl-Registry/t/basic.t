@@ -6,6 +6,8 @@ use Apache::TestUtil;
 use Apache::TestRequest qw(GET GET_BODY HEAD);
 use Apache::TestConfig ();
 
+use File::Spec::Functions qw(catfile);
+
 my %modules = (
     registry    => 'ModPerl::Registry',
     registry_bb => 'ModPerl::RegistryBB',
@@ -16,12 +18,15 @@ my @aliases = sort keys %modules;
 
 plan tests => @aliases * 4 + 3;
 
+my $vars = Apache::Test::config()->{vars};
+my $script_file = catfile $vars->{serverroot}, 'cgi-bin', 'basic.pl';
+
 # very basic compilation/response test
 for my $alias (@aliases) {
     my $url = "/$alias/basic.pl";
 
     ok t_cmp(
-        "ok",
+        "ok $script_file",
         GET_BODY($url),
         "$modules{$alias} basic cgi test",
     );
