@@ -16,8 +16,6 @@ C<perl -MCPAN -e 'install Bundle::Apache'>
 
 =head1 CONTENTS
 
-#Bundle::LWP - LWP and friends
-
 MIME::Base64       - Used in authentication headers
 
 Digest::MD5        - Needed to do Digest authentication
