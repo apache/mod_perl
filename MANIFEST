@@ -112,6 +112,7 @@ t/net/perl/io/perlio.pl
 t/net/perl/io/ssi1.pl
 t/net/perl/io/ssi2.pl
 t/net/perl/io/include.pl	
+t/net/perl/noenv/test.pl
 lib/Apache/RedirectLogFix.pm
 lib/Apache/Include.pm
 lib/Apache/Status.pm

@@ -16,6 +16,20 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.11_01-dev
+
+widen scope of mutex lock under win32 to avoid possible deadlock
+[Gerald Richter <richter@ecos.de>]
+
+fixed bug in directory_merge where FLAG directives would inherit `On'
+from the base configuration, even if the directory explicitly had the
+flag turned `Off', this was the case for PerlSendHeader and
+PerlSetupEnv.  thanks to Mark-Jason Dominus for the spot.
+
+added `grab' function to Apache::test, which fetches a url and gives
+diagnostics as to validity of the HTTP response 
+(a test for properly formatted headers!)
+
 =item 1.11 - April 21, 1998
 
 Apache::SIG enhancements for LogFormat [Doug Bagley <doug@dejanews.com>]

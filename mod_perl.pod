@@ -697,6 +697,11 @@ Example:
 
  <!--#perl sub="Package::handler" arg="one" arg="two" -->
 
+ #don't forget to escape double quotes!
+ Perl is
+        <!--#perl sub="sub {for (0..10) {print \"very \"}}"-->
+        fun to use!
+
 The B<Apache::Include> module makes it simple to include
 B<Apache::Registry> scripts with the mod_include perl directive. 
 

@@ -748,7 +748,6 @@ int PERL_LOG_HOOK(request_rec *r)
 
 void mod_perl_end_cleanup(void *data)
 {
-    (void)acquire_mutex(mod_perl_mutex); 
     MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
 
     /* clear %ENV */
@@ -1008,6 +1007,8 @@ void perl_per_request_init(request_rec *r)
 	mod_perl_pass_env(r->pool, cls);
     }
 
+    /* will be released in mod_perl_end_cleanup */
+    (void)acquire_mutex(mod_perl_mutex); 
     register_cleanup(r->pool, NULL, mod_perl_end_cleanup, mod_perl_noop);
 
     /* hookup stderr to error_log */
