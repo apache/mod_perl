@@ -107,4 +107,19 @@ int modperl_config_apply_PerlRequire(server_rec *s,
                                      modperl_config_srv_t *scfg,
                                      PerlInterpreter *perl, apr_pool_t *p);
 
+const char *modperl_config_insert(pTHX_ server_rec *s,
+                                  apr_pool_t *p,
+                                  apr_pool_t *ptmp,
+                                  int override,
+                                  char *path,
+                                  ap_conf_vector_t *conf,
+                                  SV *lines);
+
+const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines);
+
+const char *modperl_config_insert_request(pTHX_
+                                          request_rec *r,
+                                          SV *lines,
+                                          char *path,
+                                          int override);
 #endif /* MODPERL_CONFIG_H */
