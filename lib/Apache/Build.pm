@@ -682,9 +682,18 @@ EOF
     \@xs_targ;
 }
 
+#when we use a bit of MakeMaker, make it use our values for these vars
+my %perl_config_pm_alias = (
+    PERL         => 'perlpath',
+    PERL_LIB     => 'privlibexp',
+    PERL_ARCHLIB => 'archlibexp',
+);
+
+my $mm_replace = join '|', keys %perl_config_pm_alias;
+
 my @perl_config_pm =
-  qw(cc cpprun ld ar rm ranlib lib_ext dlext cccdlflags lddlflags
-     perlpath privlibexp);
+  (qw(cc cpprun ld ar rm ranlib lib_ext dlext cccdlflags lddlflags),
+   values %perl_config_pm_alias);
 
 sub make_tools {
     my($self, $fh) = @_;
@@ -703,7 +712,9 @@ sub make_tools {
     $mm->init_others;
 
     for (qw(RM_F MV)) {
-        print $fh $self->canon_make_attr($_ => $mm->{$_});
+        my $val = $mm->{$_};
+        $val =~ s/\(($mm_replace)\)/(MODPERL_\U$perl_config_pm_alias{$1})/g;
+        print $fh $self->canon_make_attr($_ => $val);
     }
 }
 
