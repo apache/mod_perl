@@ -47,6 +47,19 @@ ServerTest per-server
     MyOtherTest value
 </Location>
 EOF
+
+    #XXX: this should only be done for the modperl-2.0 tests
+    $self->postamble(<<'EOF');
+=pod
+This is some pod data
+=over apache
+PerlSetVar TestDirective__pod_over_worked yes
+=back
+This is some more pod
+=cut
+PerlSetVar TestDirective__pod_cut_worked yes
+EOF
+    
 }
 
 1;

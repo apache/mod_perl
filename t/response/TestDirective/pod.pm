@@ -22,16 +22,3 @@ sub handler {
 }
 
 1;
-__END__
-=pod
-This is some pod data
-
-=over apache
-PerlSetVar TestDirective__pod_over_worked yes
-=back
-
-This is some more pod
-
-=cut
-
-PerlSetVar TestDirective__pod_cut_worked yes
