@@ -9,6 +9,7 @@ use File::Spec ();
 use ExtUtils::Embed ();
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
+use Apache::TestTrace;
 
 use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
@@ -58,7 +59,18 @@ sub apxs {
     return '' unless $apxs and -x $apxs;
 
     my $val = qx($apxs @_ 2>/dev/null);
-    warn "ERROR: `$apxs query @_' failed\n" unless $val;
+
+    unless ($val) {
+        error "'$apxs @_' failed:";
+
+        if (my $error = qx($apxs @_ 2>&1)) {
+            error $error;
+        }
+        else {
+            error 'unknown error';
+        }
+    }
+
     $val;
 }
 
@@ -459,7 +471,7 @@ sub ap_includedir  {
     return $self->{ap_includedir}
       if $self->{ap_includedir} and -d $self->{ap_includedir};
 
-    $d ||= $self->apxs('-q' => 'INCLUDEDIR') || $self->dir;
+    return unless $d ||= $self->apxs('-q' => 'INCLUDEDIR') || $self->dir;
 
     if (-e "$d/include/ap_release.h") {
         return $self->{ap_includedir} = "$d/include";
@@ -551,7 +563,8 @@ sub httpd_version_cache {
 
 sub httpd_version {
     my($self, $dir) = @_;
-    $dir = $self->ap_includedir($dir);
+
+    return unless $dir = $self->ap_includedir($dir);
 
     if (my $v = $self->httpd_version_cache($dir)) {
         return $v;

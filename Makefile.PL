@@ -2,13 +2,13 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
-use lib qw(lib);
+use lib qw(lib Apache-Test/lib);
 use Config;
 use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::MM ();
 
-use lib qw(Apache-Test/lib);
+use Apache::TestTrace;
 use Apache::TestMM qw(test);
 
 our $VERSION;
@@ -53,10 +53,8 @@ sub configure {
 
     my $httpd_version = $build->httpd_version;
     unless ($httpd_version) {
-        $build->phat_warn(<<EOF);
-Unable to determine server version, attempting to continue..
-EOF
-        $httpd_version = 'unknown';
+        error 'Unable to determine server version, aborting.';
+        exit;
     }
 
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
