@@ -1,8 +1,12 @@
 #ifndef MODPERL_PERL_H
 #define MODPERL_PERL_H
 
+/* starting from 5.8.1 perl caches ppids, so we need to main our
+ * own. some distros fetch fake 5.8.0 with changes from 5.8.1, so we
+ * need to do that for those fake 5.8.0 as well
+ */
 #if PERL_REVISION == 5 && \
-    (PERL_VERSION == 8 && PERL_SUBVERSION >= 1 || PERL_VERSION >= 9) && \
+    (PERL_VERSION == 8 && PERL_SUBVERSION >= 0 || PERL_VERSION >= 9) && \
     THREADS_HAVE_PIDS
 #define MP_MAINTAIN_PPID
 #endif
