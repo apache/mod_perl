@@ -250,7 +250,12 @@ package Apache;
 
 sub server_root_relative {
     my $class = shift;
-    File::Spec->catfile(Apache::ServerUtil::server_root, @_);
+    if (@_ && defined($_[0]) && File::Spec->file_name_is_absolute($_[0])) {
+         return File::Spec->catfile(@_);
+    }
+    else {
+        File::Spec->catfile(Apache::ServerUtil::server_root, @_);
+    }
 }
 
 sub exit {
