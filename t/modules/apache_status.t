@@ -10,7 +10,9 @@ my $base_url = '/status/perl';
 my @opts = qw(script myconfig rgysubs section_config env isa_tree
               symdump inc inh_tree sig);
 
-plan tests => @opts + 1;
+plan tests => @opts + 1, have
+    { "CGI.pm or Apache::Request is needed" =>
+          !!(eval { require CGI } || eval { require Apache::Request })};
 
 {
     my $url = "$base_url";
