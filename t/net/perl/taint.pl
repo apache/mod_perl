@@ -4,7 +4,7 @@ use Apache ();
 use strict;
 
 my $r = Apache->request;
-$ENV{PATH} = "/bin";
+local $ENV{PATH} = "/bin";
 
 $r->content_type("text/plain");
 $r->send_http_header;

@@ -286,9 +286,10 @@ mp_magic_setenv(key, val, 0)
 #define mp_setenv(key, val) \
 { \
     int klen = strlen(key); \
-    hv_store(GvHV(envgv), key, klen, newSVpv(val,0), FALSE); \
+    SV *sv = newSVpv(val,0); \
+    hv_store(GvHV(envgv), key, klen, sv, FALSE); \
     HV_SvTAINTED_on(GvHV(envgv), key, klen); \
-    my_setenv(key, val); \
+    my_setenv(key, SvPVX(sv)); \
 }
 
 #define mp_SetEnv(key, val) \
