@@ -61,7 +61,8 @@ ConfigStart
             echo ""
         else
             echo "$my_prefix enabling Perl support for SSI (mod_include)"
-            CFLAGS="$CFLAGS -DUSE_PERL_SSI"
+            my_perl_ccflags="`egrep '^PERL_CCFLAGS=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
+            CFLAGS="$CFLAGS -DUSE_PERL_SSI $my_perl_ccflags"
             my_perl_inc="`egrep '^PERL_INC=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
             INCLUDES="$INCLUDES -I\$(SRCDIR) $my_perl_inc"
             if [ ".`egrep '^PERL_THREADS[ 	]*=[ 	]*yes' $my_config`" != . ]; then
