@@ -184,8 +184,10 @@ sub send_cgi_header {
 	    else {
 		$not_sent = 1;
 	    }
-	    $r->send_http_header if
-              $not_sent and $r->status == 200;
+            if ($not_sent) {
+                $r->send_http_header;
+                $r->sent_header(-2);
+            }
 	    $r->print($headers); #send rest of buffer, without stripping newlines!!!
 	    last;
 	}
