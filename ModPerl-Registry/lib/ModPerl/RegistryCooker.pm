@@ -177,7 +177,10 @@ sub run {
 
     my $cv = \&{"$package\::handler"};
 
-    my %orig_inc = %INC;
+    my %orig_inc;
+    if ($self->should_reset_inc_hash) {
+        %orig_inc = %INC;
+    }
 
     { # run the code and preserve warnings setup when it's done
         no warnings;
@@ -185,11 +188,16 @@ sub run {
         ModPerl::Global::special_list_call(END => $package);
     }
 
-    # %INC cleanup in case .pl files do not declare package ...;
-    for (keys %INC) {
-        next if $orig_inc{$_};
-        next if /\.pm$/;
-        delete $INC{$_};
+    if ($self->should_reset_inc_hash) {
+        # to avoid the bite of require'ing a file with no package delaration
+        # Apache::PerlRun in mod_perl 1.15_01 started to localize %INC
+        # later on it has been adjusted to preserve loaded .pm files,
+        # which presumably contained the package declaration
+        for (keys %INC) {
+            next if $orig_inc{$_};
+            next if /\.pm$/;
+            delete $INC{$_};
+        }
     }
 
     $self->flush_namespace;
@@ -457,6 +465,17 @@ sub should_compile_if_modified {
 sub should_compile_once {
     not shift->is_cached;
 }
+
+#########################################################################
+# func: should_reset_inc_hash
+# dflt: FALSE
+# desc: decide whether to localize %INC for required .pl files from the script
+# args: $self - registry blessed object
+# rtrn: TRUE if should reset
+#       FALSE otherwise
+#########################################################################
+
+*should_reset_inc_hash = \&FALSE;
 
 #########################################################################
 # func: flush_namespace
