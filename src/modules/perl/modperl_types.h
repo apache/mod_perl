@@ -242,4 +242,10 @@ typedef struct {
     char *path_info;
 } modperl_uri_t;
 
+typedef struct {
+    module *modp;
+    const char *cmd_data;
+    const char *func_name;
+} modperl_module_cmd_data_t;
+
 #endif /* MODPERL_TYPES_H */

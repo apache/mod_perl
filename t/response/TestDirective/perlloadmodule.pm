@@ -23,6 +23,7 @@ our @APACHE_MODULE_COMMANDS = (
     },
     {
      name => 'MyOtherTest',
+     cmd_data => 'some info',
     },
     {
      name => 'ServerTest',
@@ -72,11 +73,13 @@ sub SERVER_CREATE {
 sub MyTest {
     my($self, $parms, @args) = @_;
     $self->{MyTest} = \@args;
+    $self->{MyTestInfo} = $parms->info;
 }
 
 sub MyOtherTest {
     my($self, $parms, $arg) = @_;
     $self->{MyOtherTest} = $arg;
+    $self->{MyOtherTestInfo} = $parms->info;
 }
 
 sub ServerTest {
@@ -97,7 +100,7 @@ sub handler : method {
     my $dir_cfg = $self->get_config($s, $r->per_dir_config);
     my $srv_cfg = $self->get_config($s);
 
-    plan $r, tests => 7;
+    plan $r, tests => 9;
 
     t_debug("per-dir config:", $dir_cfg);
     t_debug("per-srv config:", $srv_cfg);
@@ -116,8 +119,13 @@ sub handler : method {
     ok t_cmp('value', $dir_cfg->{MyOtherTest},
              'MyOtherTest value');
 
+    ok t_cmp('some info', $dir_cfg->{MyOtherTestInfo},
+             'MyOtherTest cmd_data');
+
     ok t_cmp(['one', 'two'], $dir_cfg->{MyTest},
              'MyTest one two');
+
+    ok ! $dir_cfg->{MyTestInfo};
 
     ok t_cmp('per-server', $srv_cfg->{ServerTest});
 

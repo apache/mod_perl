@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+implement $parms->info.  directive handlers should now be complete.
+[Geoffrey Young]
+
 MP_GTOP now works with modern GCC
 [Philippe M. Chiasson <gozer@cpan.org]
 

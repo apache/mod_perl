@@ -6641,6 +6641,24 @@ $ModPerl::FunctionTable = [
       }
     ]
   },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__CmdParms_info',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'cmd_parms *',
+        'name' => 'cmd_parms'
+      }
+    ]
+  },
 ];
 
 

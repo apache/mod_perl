@@ -2499,10 +2499,6 @@ $Apache::StructureTable = [
     'type' => 'cmd_parms',
     'elts' => [
       {
-        'type' => 'void *',
-        'name' => 'info'
-      },
-      {
         'type' => 'int',
         'name' => 'override'
       },
