@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+disabled term coloring by default (enable with env var APACHE_TEST_COLOR=1)
+
 fix for APR::IpSubnet->new to check return status apr_ipsubnet_create
 
 enabled APR::SockAddr module
