@@ -27,8 +27,6 @@ modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj);
 
 int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode);
 
-MP_INLINE modperl_filter_t *modperl_sv2filter(pTHX_ SV *sv);
-
 /* output filters */
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
                                            apr_bucket_brigade *bb);
