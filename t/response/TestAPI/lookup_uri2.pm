@@ -26,7 +26,8 @@ sub ok3 {
 
 sub subrequest {
     my($r, $sub) = @_;
-    $r->lookup_uri(join '::', __PACKAGE__, $sub)->run;
+    (my $uri = join '::', __PACKAGE__, $sub) =~ s!::!__!g;
+    $r->lookup_uri($uri)->run;
 }
 
 sub handler {
@@ -43,12 +44,12 @@ sub handler {
 
 1;
 __DATA__
-<Location /TestAPI::lookup_uri2::myplan>
+<Location /TestAPI__lookup_uri2__myplan>
     SetHandler modperl
     PerlResponseHandler TestAPI::lookup_uri2::myplan
 </Location>
 
-<Location /TestAPI::lookup_uri2::ok3>
+<Location /TestAPI__lookup_uri2__ok3>
     SetHandler modperl
     PerlResponseHandler TestAPI::lookup_uri2::ok3
 </Location>
