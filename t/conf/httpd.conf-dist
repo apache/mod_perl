@@ -247,7 +247,7 @@ AddType text/html .ehtml
 #Apache::EP
 <Files *.ep>
     SetHandler perl-script
-    PerlFixupHandler "sub { $INC{'DBI.pm'} ||= 1; require Apache::EP; }"
+    #PerlFixupHandler "sub { $INC{'DBI.pm'} ||= 1; require Apache::EP; }"
     PerlHandler Apache::EP->handler
     Options +ExecCGI
 </Files>
