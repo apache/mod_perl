@@ -1538,7 +1538,7 @@ PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
 PERL_STATIC_SRCS = @static_src
 
 EOF
-    for (qw(PERL_SSI PERL_TRACE)) {
+    for (qw(PERL_SECTIONS PERL_SSI PERL_TRACE)) {
 	my $yes_no = $$_ ? "yes" : "no";
 	print $apaci_cfg "$_ = $yes_no\n";
     }
