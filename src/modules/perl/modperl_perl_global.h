@@ -49,6 +49,8 @@ typedef struct {
     modperl_perl_global_svpv_t rs;
 } modperl_perl_globals_t;
 
+void modperl_modglobal_hash_keys(void);
+
 modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name);
 
 void modperl_perl_global_request_save(pTHX_ request_rec *r);
