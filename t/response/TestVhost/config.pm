@@ -32,11 +32,11 @@ sub my_handler {
         my $received = $r->dir_config->get('DocumentRootCheck');
         ok t_cmp(canonpath($received), canonpath($expected), "DocumentRoot");
     }
-    
+
     {
         ok t_cmp($restart_count, 2, "PerlPostConfigRequire");
     }
-    
+
     Apache::OK;
 }
 
