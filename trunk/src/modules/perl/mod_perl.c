@@ -477,6 +477,8 @@ void perl_startup (server_rec *s, pool *p)
 # endif
 #endif
 
+    perl_init_i18nl10n(1);
+
     MP_TRACE_g(fprintf(stderr, "allocating perl interpreter..."));
     if((perl = perl_alloc()) == NULL) {
 	MP_TRACE_g(fprintf(stderr, "not ok\n"));
