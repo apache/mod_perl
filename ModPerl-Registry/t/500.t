@@ -20,8 +20,6 @@ plan tests => 7;
        );
 }
 
-
-
 {
     my $url = "/registry/syntax_error.pl";
     my $res = GET($url);

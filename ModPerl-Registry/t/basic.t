@@ -35,6 +35,7 @@ for my $alias (@aliases) {
     }
     my $url = "/$alias/not_executable.pl";
 
+    t_client_log_error_is_expected();
     ok t_cmp(
         "403 Forbidden",
         HEAD($url)->status_line(),

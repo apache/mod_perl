@@ -1,7 +1,8 @@
 #!perl -w
 
 BEGIN {
-    warn "note: the warning '... will not stay shared' is OK here!!!\n";
+    use Apache::TestUtil;
+    t_server_log_warn_is_expected();
 }
 
 # this script will suffer from a closure problem under registry
