@@ -1729,19 +1729,25 @@ query_string(r, ...)
 #  void *per_dir_config;		/* Options set in config files, etc. */
 
 SV *
-dir_config(r, key=NULL, ...)
+dir_config(r, svkey=Nullsv, ...)
     Apache  r
-    char *key
+    SV *svkey
 
     PREINIT:
     perl_dir_config *c;
+    SV *caller = Nullsv;
 
     CODE:
-    if(key == NULL) {
-	SV *caller = perl_eval_pv("scalar caller", TRUE);
+    if(svkey && (gv_stashpv(SvPVX(svkey), FALSE)))
+        caller = svkey;
+
+    if((svkey == Nullsv) || caller) {
 	HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
 	SV **mod_ptr;
 	RETVAL = Nullsv;
+
+	if(!caller)
+	    caller = perl_eval_pv("scalar caller", TRUE);
 
 	if(caller) 
 	    mod_ptr = hv_fetch(xs_config, SvPVX(caller), SvCUR(caller), FALSE);
@@ -1754,6 +1760,7 @@ dir_config(r, key=NULL, ...)
 	if(!RETVAL) XSRETURN_UNDEF;
     }
     else {
+	char *key = SvPV(svkey,na);
         c = get_module_config(r->per_dir_config, &perl_module);
         TABLE_GET_SET(c->vars, FALSE);
     }

@@ -18,7 +18,7 @@ else {
 my $tests = 39;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
-my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 2);
+my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 4);
 
 my $i;
 
@@ -128,17 +128,23 @@ my $dc = $r->dir_config;
 test ++$i, not $dc;
 
 if($test_dir_config) {
-    my $cfg;
+    for my $cv (
+		sub {
+		    package Apache::TestDirectives;
+		    Apache->request->dir_config;
+		},
+                sub {
+		    $r->dir_config("Apache::TestDirectives");
+		})
     {
-	package Apache::TestDirectives;
-	$cfg = Apache->request->dir_config;
-    }
-    require Data::Dumper;
-    $r->print(Data::Dumper::Dumper($cfg));
-    test ++$i, "$cfg" =~ /HASH/;
-    test ++$i, keys(%$cfg) >= 3;
-    unless ($cfg->{SetFromScript}) {
-	$cfg->{SetFromScript} = [$0,$$];
+        my $cfg = $cv->();
+        require Data::Dumper;
+        $r->print(Data::Dumper::Dumper($cfg));
+        test ++$i, "$cfg" =~ /HASH/;
+        test ++$i, keys(%$cfg) >= 3;
+        unless ($cfg->{SetFromScript}) {
+	    $cfg->{SetFromScript} = [$0,$$];
+	}
     }
 }
 
