@@ -18,7 +18,7 @@ sub handler {
 
     my $cfg = Apache::Test::config();
 
-    plan $r, tests => 13;
+    plan $r, tests => 14;
 
     my $top_module = Apache::Module->top_module;
 
@@ -91,6 +91,9 @@ sub handler {
     #bogus
     ok t_cmp(0, Apache::Module::loaded('Apache__Module_foo.foo'),
              "Apache::Module::loaded('Apache__Module_foo.foo')");
+
+    ok t_cmp(0, Apache::Module::loaded(''),
+             "Apache::Module::loaded('')");
 
     Apache::OK;
 }

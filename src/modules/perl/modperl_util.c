@@ -602,7 +602,7 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
 
 MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
 {
-    return gv_stashpv(name, FALSE) ? 1 : 0;
+    return (*name && gv_stashpv(name, FALSE)) ? 1 : 0;
 }
 
 /* same as Symbol::gensym() */
