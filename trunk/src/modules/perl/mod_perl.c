@@ -782,10 +782,8 @@ int perl_handler(request_rec *r)
     SAVETMPS;
 
     if((nwvh = ApachePerlRun_name_with_virtualhost())) {
-	if(!r->server->is_virtual) {
-	    SAVESPTR(nwvh);
-	    sv_setiv(nwvh, 0);
-	}
+	SAVESPTR(nwvh);
+	sv_setiv(nwvh, r->server->is_virtual);
     }
 
     if (gv) {
