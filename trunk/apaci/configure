@@ -76,9 +76,9 @@ echo "Configuring mod_perl for building via APXS" 2>&1
 #   fetch the source files
 echo "$my_prefix Creating a local mod_perl source tree"
 for my_file in $my_sourcefiles; do
-    cp $my_sourcedir/$my_file .
+    cp -f $my_sourcedir/$my_file .
 done
-cp $my_typemapdir/typemap .
+cp -f $my_typemapdir/typemap .
 
 #   begin generation of Makefile
 echo "##" >$my_makefileconf
