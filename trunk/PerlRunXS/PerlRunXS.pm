@@ -40,18 +40,18 @@ __END__
 
 =head1 NAME
 
-Apache::PerlRun - Run unaltered CGI scripts under mod_perl
+Apache::PerlRunXS - XS implementation of Apache::PerlRun/Apache::Registry
 
 =head1 SYNOPSIS
 
  #in httpd.conf
 
- Alias /cgi-perl/ /perl/apache/scripts/ 
- PerlModule Apache::PerlRun
+ Alias /perl/ /perl/apache/scripts/ 
+ PerlModule Apache::PerlRunXS
 
- <Location /cgi-perl>
+ <Location /perl>
  SetHandler perl-script
- PerlHandler Apache::PerlRun
+ PerlHandler Apache::RegistryXS
  Options +ExecCGI 
  #optional
  PerlSendHeader On
@@ -60,20 +60,8 @@ Apache::PerlRun - Run unaltered CGI scripts under mod_perl
 
 =head1 DESCRIPTION
 
-This module's B<handler> emulates the CGI environment,
-allowing programmers to write scripts that run under CGI or
-mod_perl without change.  Unlike B<Apache::Registry>, the
-B<Apache::PerlRun> handler does not cache the script inside of a
-subroutine.  Scripts will be "compiled" every request.  After the
-script has run, it's namespace is flushed of all variables and
-subroutines.
-
-The B<Apache::Registry> handler is much faster than
-B<Apache::PerlRun>.  However, B<Apache::PerlRun> is much faster than
-CGI as the fork is still avoided and scripts can use modules which
-have been pre-loaded at server startup time.  This module is meant for
-"Dirty" CGI Perl scripts which relied on the single request lifetime
-of CGI and cannot run under B<Apache::Registry> without cleanup.
+This XS implementation of Apache::PerlRun and Apache::Registry will some day
+replace the Perl versions.
 
 =head1 SEE ALSO
 
@@ -82,4 +70,8 @@ perl(1), mod_perl(3), Apache::Registry(3)
 =head1 AUTHOR
 
 Doug MacEachern
+
+
+
+
 
