@@ -174,7 +174,7 @@ while (my($class, $groups) = each %defines_wanted) {
 
 my %enums_wanted = (
     Apache => { map { $_, 1 } qw(cmd_how input_mode filter_type) },
-    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type) },
+    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
 );
 
 my $defines_unwanted = join '|', qw{

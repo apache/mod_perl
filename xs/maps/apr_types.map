@@ -93,6 +93,7 @@ apr_hash_index_t            | APR::HashIndex
 apr_os_lock_t        | NOTIMPL
 struct apr_lock_t    | APR::Lock
 apr_locktype_e       | IV
+apr_lockmech_e       | IV
 apr_lockscope_e      | IV
 apr_readerwriter_e   | IV
 apr_lockmech_e_np    | IV
