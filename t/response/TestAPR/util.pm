@@ -7,6 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use APR::Util ();
+use APR::Error ();
 
 use Apache::Const -compile => 'OK';
 use APR::Const -compile => 'EMISMATCH';
@@ -25,7 +26,7 @@ sub handler {
 
     my $status = APR::EMISMATCH;
 
-    my $str = APR::strerror($status);
+    my $str = APR::Error::strerror($status);
 
     t_debug "strerror=$str\n";
 

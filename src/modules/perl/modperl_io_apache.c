@@ -156,7 +156,7 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
         
     rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
     if (rv != APR_SUCCESS) {
-        Perl_croak(aTHX_ modperl_apr_strerror(rv)); 
+        Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rv)); 
     }
     bytes += count;
     
@@ -305,7 +305,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
                 error = SvPV(ERRSV, n_a);
             }
             else {
-                error = modperl_apr_strerror(rc);
+                error = modperl_error_strerror(aTHX_ rc);
             }
             sv_setpv(ERRSV,
                      (char *)apr_psprintf(r->pool, 
@@ -341,7 +341,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
             sv_setpv(ERRSV,
                      (char *)apr_psprintf(r->pool, 
                                           "failed to read: %s",
-                                          modperl_apr_strerror(rc)));
+                                          modperl_error_strerror(aTHX_ rc)));
             return -1;
         }
         total += read;
