@@ -4,13 +4,6 @@
 
 -- see also todo/api_status
 
-* provide interface for APR_STATUS_IS_SUCCESS and change all
-  code/tests/examples away from
-    if ($rc = APR::SUCCESS)
-  apr-dev seems to be saying that it's a _bad_ idea and that
-  the api contract is that only 0 is success, and that that
-  macro should be killed
-
 * $bb->cleanup segfaults (originally in TestProtocol::echo_bbs2
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
   owner: gozer
