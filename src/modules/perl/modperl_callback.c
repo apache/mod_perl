@@ -249,10 +249,7 @@ int modperl_callback_run_handlers(int idx, int type,
     SvREFCNT_dec((SV*)av_args);
 
 #ifdef USE_ITHREADS
-    if (interp && MpInterpPUTBACK(interp)) {
-        /* PerlInterpScope handler */
-        modperl_interp_unselect(interp);
-    }
+    MP_dINTERP_PUTBACK(interp);
 #endif
 
     return status;
