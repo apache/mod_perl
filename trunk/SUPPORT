@@ -104,7 +104,7 @@ which will:
 Here's how to get a backtrace:
 
  % cd mod_perl-x.xx
- % touch conf/srm.conf
+ % touch t/conf/srm.conf
  % gdb ../apache_x.xx/src/httpd
  (gdb) run -X -f `pwd`/t/conf/httpd.conf -d `pwd`/t
  [now make request that causes core dump]
