@@ -15,12 +15,21 @@ modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
  */
 MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
+#ifdef MP_TRACE
+    if (mg_find((SV*)handle, 'q') ||
+        mg_find((SV*)GvIOp(handle), 'q'))
+    {
+        MP_TRACE_g(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
+                   GvNAME(handle), (unsigned long)handle,
+                   SvREFCNT((SV*)handle));
+    }
+    else {
+        return;
+    }
+#endif
+
     sv_unmagic((SV*)handle, 'q');
     sv_unmagic((SV*)GvIOp(handle), 'q');
-
-    MP_TRACE_g(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
-               GvNAME(handle), (unsigned long)handle,
-               SvREFCNT((SV*)handle));
 }
 
 MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
@@ -28,9 +37,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 {
     SV *obj = modperl_ptr2obj(aTHX_ classname, ptr);
 
-    if (mg_find((SV*)handle, 'q')) {
-        modperl_io_handle_untie(aTHX_ handle);
-    }
+    modperl_io_handle_untie(aTHX_ handle);
 
     sv_magic((SV*)handle, obj, 'q', Nullch, 0);
     sv_magic((SV*)GvIOp(handle), obj, 'q', Nullch, 0);
