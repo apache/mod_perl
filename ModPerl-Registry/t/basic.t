@@ -5,7 +5,6 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY HEAD);
 
-
 my %modules = (
     registry    => 'ModPerl::Registry',
     registry_bb => 'ModPerl::RegistryBB',
@@ -14,7 +13,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 3 + 1;
+plan tests => @aliases * 4 + 1;
 
 # very basic compilation/response test
 for my $alias (@aliases) {
@@ -49,18 +48,16 @@ for my $alias (@aliases) {
     );
 }
 
-# XXX: chdir is not safe yet!
+# require (actually chdir test)
+for my $alias (@aliases) {
+    my $url = "/$alias/require.pl";
 
-## require (actually chdir test)
-#for my $alias (@aliases) {
-#    my $url = "/$alias/require.pl";
-
-#    ok t_cmp(
-#        "it works",
-#        GET_BODY($url),
-#        "$modules{$alias} mod_cgi-like environment pre-set",
-#    );
-#}
+    ok t_cmp(
+        "it works",
+        GET_BODY($url),
+        "$modules{$alias} mod_cgi-like environment pre-set",
+    );
+}
 
 # test method handlers
 {
