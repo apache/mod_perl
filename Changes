@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+use plain malloc/free to allocate filter structs, since they could be
+invoked hundreds of times during a single request, causing huge memory
+demands if the memory is allocated from the pool, which gets destroyed
+only at the end of a request. [Stas]
+
 Fix a compilation error in APX.xs when MP_HAVE_APR_LIBS is not defined
 [Fred Moyer <fred@taperfriendlymusic.org>]
 
