@@ -21,7 +21,12 @@ ModPerl::BuildMM::WriteMakefile(
 );
 
 sub MY::postamble {
-    join '', map {
+    my $self = shift;
+    my $string = $self->ModPerl::BuildMM::MY::postamble;
+
+    $string .= join '', map {
         "$_: $src{$_}\n\t\$(CP) $src{$_} .\n";
     } keys %src;
+
+    return $string;
 }

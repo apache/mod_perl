@@ -81,6 +81,11 @@ sub WriteMakefile {
     }
     push @opts, TYPEMAPS => \@typemaps if @typemaps;
 
+    my $clean_files = (exists $args{clean} && exists $args{clean}{FILES}) ?
+        $args{clean}{FILES} : '';
+    $clean_files .= " glue_pods"; # cleanup the dependency target
+    $args{clean}{FILES} = $clean_files;
+
     ExtUtils::MakeMaker::WriteMakefile(@opts, %args);
 }
 
@@ -121,6 +126,85 @@ sub ModPerl::BuildMM::MY::constants {
     }
 
     $self->MM::constants;
+}
+
+sub ModPerl::BuildMM::MY::top_targets {
+    my $self = shift;
+    my $string = $self->MM::top_targets;
+
+    ModPerl::MM::add_dep_after(\$string, "pure_all", pm_to_blib => 'glue_pods');
+
+    return $string;
+}
+
+sub ModPerl::BuildMM::MY::postamble {
+    my $self = shift;
+    my $build = build_config();
+
+    my $root = $build->{cwd};
+
+    my $doc_root = File::Spec->catdir($root, "docs", "api");
+
+    my $lib_dir = File::Spec->catdir($root, "lib");
+
+    my @targets = ();
+    my @target;
+
+    # add the code to glue the existing pods to the .pm files in blib
+
+    @target = ('glue_pods:');
+
+    if (-d $doc_root) {
+        while (my ($pm, $blib) = each %{$self->{PM}}) {
+            my $pod = File::Spec->catdir(
+                (File::Spec->splitdir($blib))[-2 .. -1]);
+            $pod =~ s/\.pm/\.pod/;
+            my $podpath = File::Spec->catfile($doc_root, $pod);
+            next unless -r $podpath;
+
+            push @target, 
+                "\$(FULLPERLRUN) -Mlib=$lib_dir -MModPerl::BuildMM " .
+                "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
+        }
+
+        push @target, $self->{NOECHO} . '$(TOUCH) $@';
+    }
+    else {
+        # we don't have the docs sub-cvs repository extracted, skip
+        # the docs gluing
+        push @target, $self->{NOECHO} . '$(NOOP)';
+    }
+    push @targets, join "\n\t", @target;
+
+#    # next target: cleanup the dependency file
+#    @target = ('glue_pods_clean:');
+#    push @target, '$(RM_F) glue_pods';
+#    push @targets, join "\n\t", @target;
+
+    return join "\n\n", @targets, '';
+}
+
+sub glue_pod {
+
+    die "expecting 3 arguments: pm, pod, dst" unless @ARGV == 3;
+    my($pm, $pod, $dst) = @ARGV;
+
+    # have we already glued the doc?
+    exit 0 unless -s $pm == -s $dst;
+
+    # ExtUtils::Install::pm_to_blib removes the 'w' perms, so we can't
+    # just append the doc there
+    my $orig_mode = (stat $dst)[2];
+    my $rw_mode   = 0666;
+
+    chmod $rw_mode, $dst      or die "Can't chmod $rw_mode $dst: $!";
+    open my $pod_fh, "<$pod"  or die "Can't open $pod: $!";
+    open my $dst_fh, ">>$dst" or die "Can't open $dst: $!";
+    print $dst_fh (<$pod_fh>);
+    close $pod_fh;
+    close $dst_fh;
+    # restore the perms
+    chmod $orig_mode, $dst    or die "Can't chmod $orig_mode $dst: $!";
 }
 
 sub ModPerl::BuildMM::MY::post_initialize {

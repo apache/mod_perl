@@ -404,7 +404,7 @@ use Config;
 
 sub MY::top_targets {
     my $self = shift;
-    my $string = $self->MM::top_targets;
+    my $string = $self->ModPerl::BuildMM::MY::top_targets;
 
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
@@ -478,13 +478,19 @@ EOF
 }
 
 sub MY::postamble {
-    return <<'EOF';
+    my $self = shift;
+
+    my $string = $self->ModPerl::BuildMM::MY::postamble;
+
+    $string .= <<'EOF';
 mydist : manifest tardist
 
 cvs_tag :
 	cvs tag MODPERL_$(VERSION_SYM) .
 	@echo update mod_perl.pm VERSION now
 EOF
+
+    return $string;
 }
 
 sub MY::tool_autosplit {
