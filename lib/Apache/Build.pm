@@ -127,6 +127,14 @@ sub ldopts {
     my $ldopts = ExtUtils::Embed::ldopts();
     chomp $ldopts;
 
+    if ($^O eq 'hpux' and $Config{ld} eq 'ld') {
+        while ($ldopts =~ s/-Wl,(\S+)/$1/) {
+            my $cp = $1;
+            (my $repl = $cp) =~ s/,/ /g;
+            $ldopts =~ s/\Q$cp/$repl/;
+        }
+    }
+
     if ($self->{MP_USE_GTOP}) {
         $ldopts .= $self->gtop_ldopts;
     }
