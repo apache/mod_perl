@@ -48,7 +48,7 @@ sub handler {
     my $file = catfile $dir, "test";
     t_debug "open file $file for writing";
     my $foo = "bar";
-    open my $fh, ">:APR", $file, $r
+    open my $fh, ">:APR", $file, $r->pool
         or die "Cannot open $file for writing: $!";
     ok ref($fh) eq 'GLOB';
 
@@ -65,7 +65,7 @@ sub handler {
 
         # non-existent file
         my $file = "/this/file/does/not/exist";
-        if (open my $fh, "<:APR", $file, $r) {
+        if (open my $fh, "<:APR", $file, $r->pool) {
             t_debug "must not be able to open $file!";
             ok 0;
             close $fh;
@@ -79,7 +79,7 @@ sub handler {
 
     # seek/tell() tests
     unless (LARGE_FILES_CONFLICT) {
-        open my $fh, "<:APR", $file, $r 
+        open my $fh, "<:APR", $file, $r->pool
             or die "Cannot open $file for reading: $!";
 
         # read the whole file so we can test the buffer flushed
@@ -116,7 +116,7 @@ sub handler {
 
     # read() tests
     {
-        open my $fh, "<:APR", $file, $r
+        open my $fh, "<:APR", $file, $r->pool
             or die "Cannot open $file for reading: $!";
 
         # basic open test
@@ -150,7 +150,7 @@ sub handler {
 
     # eof() tests
     {
-        open my $fh, "<:APR", $file, $r 
+        open my $fh, "<:APR", $file, $r->pool
             or die "Cannot open $file for reading: $!";
 
         ok t_cmp(0,
@@ -170,7 +170,7 @@ sub handler {
 
     # dup() test
     {
-        open my $fh, "<:APR", $file, $r 
+        open my $fh, "<:APR", $file, $r->pool
             or die "Cannot open $file for reading: $!";
 
         open my $dup_fh, "<&:APR", $fh
@@ -188,9 +188,9 @@ sub handler {
 
     # unbuffered write
     {
-        open my $wfh, ">:APR", $file, $r
+        open my $wfh, ">:APR", $file, $r->pool
             or die "Cannot open $file for writing: $!";
-        open my $rfh,  "<:APR", $file, $r
+        open my $rfh,  "<:APR", $file, $r->pool
             or die "Cannot open $file for reading: $!";
 
         my $expected = "This is an un buffering write test";

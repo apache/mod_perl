@@ -89,10 +89,17 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     
     st = PerlIOSelf(f, PerlIOAPR);
 
+    /* XXX: can't reuse a wrapper mp_xs_sv2_APR__Pool */
+    /* XXX: should probably add checks on pool validity in all other callbacks */
     sv = args[narg-1];
-    /* XXX: modperl_sv2pool cannot be used outside of httpd */
-    st->pool = modperl_sv2pool(aTHX_ sv);
-  
+    if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
+        st->pool = (apr_pool_t *)SvIV((SV*)SvRV(sv));
+    }
+    else {
+        Perl_croak(aTHX_ "argument is not a blessed reference "
+                   "(expecting an APR::Pool  derived object)");
+    }
+    
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
 
 #ifdef PERLIO_APR_DEBUG
