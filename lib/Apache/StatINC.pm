@@ -2,13 +2,14 @@ package Apache::StatINC;
 
 use strict;
 
-$Apache::StatINC::VERSION = "1.04";
+$Apache::StatINC::VERSION = "1.05";
 
 my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 
 sub handler {
     my $r = shift;
     my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload")) eq "on");
+	my $DEBUG = (lc($r->dir_config(StatINCDebug) eq "on");
 
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
@@ -24,7 +25,8 @@ sub handler {
 	    }
 	    delete $INC{$key};
 	    require $key;
-	    #warn "Apache::StatINC: process $$ reloading $key\n";
+	    warn "Apache::StatINC: process $$ reloading $key\n"
+		  if $DEBUG;
 	}
 	$Stat{$file} = $mtime;
     }
@@ -81,6 +83,13 @@ B<Apache::Symbol> I<undef_functions> method to avoid these mandatory
 warnings:
 
  PerlSetVar UndefOnReload On
+
+=item StatINCDebug
+
+You can make StatINC tell when it reloads a module by setting this
+option to on.
+
+ PerlSetVar StatINCDebug On
 
 =back
 
