@@ -420,7 +420,7 @@ static const char *modperl_cmd_parse_args(apr_pool_t *p,
 
 MP_CMD_SRV_DECLARE(perl)
 {
-    apr_pool_t *p = parms->temp_pool;
+    apr_pool_t *p = parms->pool;
     const char *endp = ap_strrchr_c(arg, '>');
     const char *errmsg;
     char *code = "";
