@@ -218,7 +218,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
 }
 
 /**
- * run registered cleanups
+ * register cleanups to run
  * @param p      pool with which to associate the cleanup
  * @param cv     subroutine reference to run
  * @param arg    optional argument to pass to the subroutine
