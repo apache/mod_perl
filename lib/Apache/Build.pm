@@ -686,6 +686,14 @@ sub ap_includedir  {
     $self->{ap_includedir} = $d;
 }
 
+# where apr-config and apu-config reside
+sub apr_bindir {
+    my ($self) = @_;
+
+    $self->apr_config_path unless $self->{apr_bindir};
+    $self->{apr_bindir};
+}
+
 sub apr_config_path {
     my ($self) = @_;
 
@@ -696,13 +704,22 @@ sub apr_config_path {
         $self->{apr_config_path} = $self->{MP_APR_CONFIG};
     }
 
-    if (!$self->{apr_config_path} and 
-        exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX}) {
-        my $try = catfile $self->{MP_AP_PREFIX}, "bin", "apr-config";
-        $self->{apr_config_path} = $try if -x $try;
+    if (!$self->{apr_config_path}) {
+        if (exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX}) {
+            my $try = catfile $self->{MP_AP_PREFIX}, "bin", "apr-config";
+            $self->{apr_config_path} = $try if -x $try;
+        }
+        elsif (my $bindir = $self->apxs(-q => 'BINDIR')) {
+            my $try = catfile $bindir, "apr-config";
+            $self->{apr_config_path} = $try if -x $try;
+        }
     }
 
     $self->{apr_config_path} ||= Apache::TestConfig::which('apr-config');
+
+    $self->{apr_bindir} = $self->{apr_config_path}
+        ? dirname $self->{apr_config_path}
+        : '';
 
     $self->{apr_config_path};
 }
