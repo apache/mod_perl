@@ -357,7 +357,7 @@ static void rwrite_neg_trace(request_rec *r)
     fprintf(stderr,
 #endif
 		 "mod_perl: rwrite returned -1 (fd=%d, B_EOUT=%d)\n",
-		 r->connection->client->fd, 
+		 ap_bfileno(r->connection->client, B_WR), 
 		 r->connection->client->flags & B_EOUT);
 }
 
