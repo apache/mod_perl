@@ -688,6 +688,26 @@ This is the value of the User directive.
 Returns the numeric group id under which the server answers requests.
 This is the value of the Group directive.
 
+=item $s->loglevel
+
+Returns the value of the current LogLevel. This method is added by
+the Apache::Log module, which needs to be pulled in.
+
+    use Apache::Log;
+    print "LogLevel = ", $s->loglevel;
+
+If using Perl 5.005+, the following constants are defined (but not
+exported):
+
+    Apache::Log::EMERG
+    Apache::Log::ALERT
+    Apache::Log::CRIT
+    Apache::Log::ERR
+    Apache::Log::WARNING
+    Apache::Log::NOTICE
+    Apache::Log::INFO
+    Apache::Log::DEBUG
+
 =item $r->get_handlers( $hook )
 
 Returns a reference to a list of handlers enabled for $hook. $hook is

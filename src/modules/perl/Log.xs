@@ -190,8 +190,31 @@ void
 Apache_log_debug(s, ...)
 	SV *s
 
+MODULE = Apache::Log		PACKAGE = Apache::Server
 
+PROTOTYPES: DISABLE
 
+BOOT:
+#ifdef newCONSTSUB
+ {
+    HV *stash = gv_stashpv("Apache::Log", TRUE);
+    newCONSTSUB(stash, "EMERG",   newSViv(APLOG_EMERG));
+    newCONSTSUB(stash, "ALERT",   newSViv(APLOG_ALERT));
+    newCONSTSUB(stash, "CRIT",    newSViv(APLOG_CRIT));
+    newCONSTSUB(stash, "ERR",     newSViv(APLOG_ERR));
+    newCONSTSUB(stash, "WARNING", newSViv(APLOG_WARNING));
+    newCONSTSUB(stash, "NOTICE",  newSViv(APLOG_NOTICE));
+    newCONSTSUB(stash, "INFO",    newSViv(APLOG_INFO));
+    newCONSTSUB(stash, "DEBUG",   newSViv(APLOG_DEBUG));
+ }
+#endif
 
+int
+loglevel(server)
+    Apache::Server	server
 
+    CODE:
+    RETVAL = server->loglevel;
 
+    OUTPUT:
+    RETVAL
