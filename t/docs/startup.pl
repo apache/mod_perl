@@ -1,4 +1,9 @@
 #! /usr/local/bin/perl
+
+unless (defined $ENV{MOD_PERL}) {
+    die "\$ENV{MOD_PERL} not set!";
+}
+
 BEGIN {
     #./blib/lib:./blib/arch
     use ExtUtils::testlib;

@@ -33,9 +33,6 @@ sub import {
 	return;
     }
 
-    $ENV{MOD_PERL} = $mod_perl::VERSION;
-    $ENV{GATEWAY_INTERFACE} = "CGI-Perl/1.1";
-
     return unless @_;
 
     if($_[0] =~ /^\d/) {

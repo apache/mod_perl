@@ -486,8 +486,9 @@ void perl_startup (server_rec *s, pool *p)
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
     char **list, *dstr;
     int status, i, argc=1;
+#ifdef WIN32
     char *dash_e = "BEGIN { $ENV{MOD_PERL} = 1; $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1'; }";
-    char *line_info = "#line 1 mod_perl";
+#endif
     dPSRV(s);
     SV *pool_rv, *server_rv;
     GV *gv, *shgv;
@@ -566,15 +567,12 @@ void perl_startup (server_rec *s, pool *p)
     if(cls->PerlWarn)
 	argv[argc++] = "-w";
 
-#ifdef PERL_MARK_WHERE
-    argv[argc++] = "-e";
-    argv[argc++] = line_info;
-#else
-    line_info = NULL; 
-#endif
-
+#ifdef WIN32
     argv[argc++] = "-e";
     argv[argc++] = dash_e;
+#else
+    argv[argc++] = "/dev/null";
+#endif
 
     MP_TRACE_g(fprintf(stderr, "perl_parse args: "));
     for(i=1; i<argc; i++)
@@ -747,8 +745,6 @@ int perl_handler(request_rec *r)
 
     if(MP_SENDHDR(cld)) 
 	MP_SENTHDR_off(cld);
-
-    table_set(r->subprocess_env, "MOD_PERL", MOD_PERL_VERSION);
 
     (void)perl_request_rec(r); 
 

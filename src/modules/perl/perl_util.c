@@ -600,6 +600,12 @@ void perl_clear_env(void)
     HV *hv = (HV*)GvHV(envgv);
 
     sv_unmagic((SV*)hv, 'E');
+    if(!hv_exists(hv, "MOD_PERL", 8)) {
+	hv_store(hv, "MOD_PERL", 8, 
+		 newSVpv(MOD_PERL_STRING_VERSION,0), FALSE);
+	hv_store(hv, "GATEWAY_INTERFACE", 17, 
+		 newSVpv("CGI-Perl/1.1",0), FALSE);
+    }
     (void)hv_iterinit(hv); 
     while ((val = hv_iternextsv(hv, (char **) &key, &klen))) { 
 	if((*key == 'G') && strEQ(key, "GATEWAY_INTERFACE"))
