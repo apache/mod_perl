@@ -30,20 +30,20 @@ sub handler {
 
     my $data = exists $ctx->{data} ? $ctx->{data} : '';
 
-    while (my $bucket = $bb->first) {
-        $bucket->remove;
+    while (my $b = $bb->first) {
+        $b->remove;
 
-        if ($bucket->is_eos) {
+        if ($b->is_eos) {
             # flush the remainings and send a stats signature
             $bb_ctx->insert_tail(APR::Bucket->new("$data\n")) if $data;
             my $sig = join "\n", "received $ctx->{blocks} complete blocks",
                 "filter invoked $ctx->{invoked} times\n";
             $bb_ctx->insert_tail(APR::Bucket->new($sig));
-            $bb_ctx->insert_tail($bucket);
+            $bb_ctx->insert_tail($b);
             last;
         }
 
-        if ($bucket->read(my $bdata)) {
+        if ($b->read(my $bdata)) {
             $data .= $bdata;
             my $len = length $data;
 
@@ -55,8 +55,8 @@ sub handler {
                 $ctx->{blocks} += $blocks;
             }
             if ($blocks) {
-                $bucket = APR::Bucket->new("#" x $blocks);
-                $bb_ctx->insert_tail($bucket);
+                $b = APR::Bucket->new("#" x $blocks);
+                $bb_ctx->insert_tail($b);
             }
         }
     }
