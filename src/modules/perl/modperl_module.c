@@ -5,12 +5,11 @@ typedef struct {
     modperl_mgv_t *dir_merge;
     modperl_mgv_t *srv_create;
     modperl_mgv_t *srv_merge;
+    int namelen;
 } modperl_module_info_t;
 
 typedef struct {
     server_rec *server;
-    const char *name;
-    int namelen;
     modperl_module_info_t *minfo;
 } modperl_module_cfg_t;
 
@@ -233,11 +232,12 @@ modperl_module_config_get_obj(pTHX_
                               PTR_TBL_t *table,
                               modperl_module_cfg_t *cfg,
                               modperl_module_cmd_data_t *info,
-                              const char *method,
+                              modperl_mgv_t *method,
                               cmd_parms *parms,
                               SV **obj)
 {
-    HV *stash;
+    const char *mname = info->modp->name;
+    modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     GV *gv;
     int is_startup = (p == parms->server->process->pconf);
 
@@ -253,26 +253,19 @@ modperl_module_config_get_obj(pTHX_
 
     MP_TRACE_c(MP_FUNC, "%s cfg=0x%lx for %s.%s\n",
                method, (unsigned long)cfg,
-               info->modp->name,
-               parms->cmd->name);
+               mname, parms->cmd->name);
 
-    cfg->name = info->modp->name;
-    cfg->namelen = strlen(cfg->name);
     /* used by merge functions to get a Perl interp */
     cfg->server = parms->server;
-    cfg->minfo = MP_MODULE_INFO(info->modp);
+    cfg->minfo = minfo;
 
-    stash = gv_stashpvn(cfg->name, cfg->namelen, TRUE);
-
-    /* return $class->type if $class->can(type) */
-    /* XXX: should do this lookup at startup time */
-    if ((gv = gv_fetchmethod_autoload(stash, method, FALSE)) && isGV(gv)) {
+    if (method && (gv = modperl_mgv_lookup(aTHX_ method))) {
         int count;
         dSP;
 
         ENTER;SAVETMPS;
         PUSHMARK(sp);
-        XPUSHs(sv_2mortal(newSVpv(cfg->name, cfg->namelen)));
+        XPUSHs(sv_2mortal(newSVpv(mname, minfo->namelen)));
         XPUSHs(modperl_bless_cmd_parms(parms));
 
         PUTBACK;
@@ -291,6 +284,7 @@ modperl_module_config_get_obj(pTHX_
         }
     }
     else {
+        HV *stash = gv_stashpvn(mname, minfo->namelen, FALSE);
         /* return bless {}, $class */
         *obj = newRV_noinc((SV*)newHV());
         *obj = sv_bless(*obj, stash);
@@ -321,6 +315,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     apr_pool_t *p = parms->pool;
     modperl_module_cmd_data_t *info =
         (modperl_module_cmd_data_t *)cmd->cmd_data;
+    modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     modperl_module_cfg_t *srv_cfg;
 
 #ifdef USE_ITHREADS
@@ -334,7 +329,8 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     dSP;
 
     errmsg = modperl_module_config_get_obj(aTHX_ p, table, cfg, info,
-                                           "DIR_CREATE", parms, &obj);
+                                           minfo->dir_create,
+                                           parms, &obj);
 
     if (errmsg) {
         return errmsg;
@@ -354,8 +350,8 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     if (srv_cfg) {
         SV *srv_obj;
         errmsg = modperl_module_config_get_obj(aTHX_ p, table, srv_cfg, info,
-                                               "SERVER_CREATE", parms,
-                                               &srv_obj);
+                                               minfo->srv_create,
+                                               parms, &srv_obj);
         if (errmsg) {
             return errmsg;
         }
@@ -729,8 +725,16 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     modp->create_server_config = modperl_module_config_srv_create;
     modp->merge_server_config  = modperl_module_config_srv_merge;
 
+    minfo->namelen = strlen(name);
+
+    minfo->dir_create =
+        modperl_module_fetch_method(aTHX_ p, modp, "DIR_CREATE");
+
     minfo->dir_merge =
         modperl_module_fetch_method(aTHX_ p, modp, "DIR_MERGE");
+
+    minfo->srv_create =
+        modperl_module_fetch_method(aTHX_ p, modp, "SERVER_CREATE");
 
     minfo->srv_merge =
         modperl_module_fetch_method(aTHX_ p, modp, "SERVER_MERGE");
