@@ -111,6 +111,10 @@ SOURCE=..\perl\Log.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\perl\ModuleConfig.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\perl\mod_perl.c
 # End Source File
 # Begin Source File

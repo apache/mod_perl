@@ -354,7 +354,14 @@ while($_ = shift) {
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
 }
 
-my $win32_auto = ($vcpp and $win32_args{APACHE_SRC}) ? 1 : 0;
+my $win32_auto;
+if ($vcpp and $win32_args{APACHE_SRC}) {
+  $EVERYTHING = 1;
+  my $fixed_apsrc = win32_fix_path($win32_args{APACHE_SRC}); 
+  $APACHE_SRC =  -d "$fixed_apsrc/include" ?
+    $fixed_apsrc  : $fixed_apsrc . '/src';
+  $win32_auto = 1;
+}
 
 my %very_experimental = map {$_,1} 
 qw(PERL_DEFAULT_OPMASK PERL_SAFE_STARTUP PERL_ORALL_OPMASK 
@@ -774,7 +781,9 @@ if($APACHE_SRC or $USE_APXS) {
 	    "(need 1.2.0 or higher)";
     }
 
-    for (qw(PERL_SECTIONS PERL_SSI), keys %experimental) {
+    $PERL_SECTIONS = $PERL_SSI = 0 if $Is_Win32;
+    unless ($Is_Win32) {
+      for (qw(PERL_SECTIONS PERL_SSI), keys %experimental) {
 	$k = $_;
 
 	if($experimental{$_}) {
@@ -797,6 +806,7 @@ if($APACHE_SRC or $USE_APXS) {
 	    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^($_) /#\$1 /"
 		if $$_;
 	}
+      }
     }
     unless ($USE_APACI or $USE_APXS) {
 	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#TRACE/TRACE/" if $PERL_TRACE;
@@ -877,7 +887,7 @@ EOF
 	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#__ORIGINAL__/$edit_note/";
     }
 
-    if($mmn >= 19970912 and not $USE_APACI and not $USE_APXS) {     #1.3b1
+    if($mmn >= 19970912 and not $USE_APACI and not $USE_APXS and not $Is_Win32) {     #1.3b1
 	system "cat $APACHE_SRC/Makefile.config $APACHE_SRC/modules/perl/Makefile > /tmp/mpmf.$$";
 	system "mv /tmp/mpmf.$$ $APACHE_SRC/modules/perl/Makefile";
     }
@@ -887,7 +897,7 @@ EOF
 	"\t", '$(CP) t/conf/mod_perl_srm.conf t/conf/srm.conf', "\n";
     }
     unless ($USE_APXS) {
-	unless (-l "t/httpd") {
+	unless (-l "t/httpd" or $Is_Win32) {
 	    system "$Config{lns} $APACHE_SRC/httpd t/httpd";
 	}
 	write_extra_tests();
@@ -1088,6 +1098,10 @@ EOF
     my $dummy = "hooks=`$hooks'\n" unless $hooks;
     cp "lib/mod_perl_hooks.pm.PL", "lib/mod_perl_hooks.pm"; 
 
+    if ($Is_Win32) {
+      my @args = ($^X, ' -spi.bak ', ' -e ', "\"s/sub mod_perl::hooks.*/sub mod_perl::hooks { qw($hooks) }/\"", 'lib/mod_perl_hooks.pm');
+      system(@args) == 0 or die "@args failed\n";
+    }
     iedit "lib/mod_perl_hooks.pm", 
     qq(s/sub mod_perl::hooks.*/sub mod_perl::hooks { qw($hooks) }/);
 
@@ -1099,7 +1113,7 @@ EOF
 	@list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
     }
 
-    unlink "lib/mod_perl_hooks.pm~";
+    unlink $Is_Win32 ? "lib/mod_perl_hooks.pm.bak" : "lib/mod_perl_hooks.pm~";
 }
 
 #checking for LWP code, borrowed from LWP's own Makefile.PL :-)
@@ -1183,7 +1197,15 @@ sub write_extra_tests {
     }
 
     mkdir "t/docs/subr", 0755;
-    system "date > t/docs/subr/index.html";
+    if ($Is_Win32) {
+      open FH, ">t/docs/subr/index.html" 
+	or die "Cannot open t/docs/subr/index.html: $!";
+      print FH scalar(localtime);
+      close FH;
+    }
+    else {
+      system "date > t/docs/subr/index.html";
+    }
 
     return unless 
 	$callback_hooks{PERL_STACKED_HANDLERS} 
@@ -1524,6 +1546,18 @@ sub wanted {
     $My::self->{PM}->{$from} = $to;
 }
 
+sub win32_mph {
+    return unless /\.h$/ or /os-inline\.c$/;
+    (my $d = $File::Find::dir) =~ s:^\Q$MODPERL_SRC::;
+    $d =~ s:^/::;
+    my $from = "$File::Find::dir/$_";
+    my $to   = '$(INST_ARCHLIB)/' . "auto/Apache/include/modules/perl/";
+    $to .= "$d/" if $d;
+    $to .= $_;
+
+    $My::self->{PM}->{$from} = $to;
+}
+
 sub MY::post_initialize {
     my($self) = shift;
 
@@ -1544,6 +1578,10 @@ sub MY::post_initialize {
     {
 	local $APACHE_SRC = $ap_src;
 	finddepth(\&wanted, $ap_src);
+    }
+    if ($Is_Win32) {
+      	local $MODPERL_SRC = win32_fix_path($PWD) . '/src/modules/perl';
+	finddepth(\&win32_mph, $MODPERL_SRC);
     }
     $self->{PM}{"Apache/typemap"} = '$(INST_ARCHLIB)/' . "auto/Apache/typemap";
     $self->{PM}{"apaci/mod_perl.exp"} = '$(INST_ARCHLIB)/' . "auto/Apache/mod_perl.exp";
@@ -2010,6 +2048,7 @@ sub write_my_config {
         for (qw(APACHE_INC APACHE_LIB MODPERL_INC MODPERL_LIB)) {
             $my_config{$_} = $win32_path{$_};
         }
+	$my_config{APACHE_SRC} = $APACHE_SRC;
     }
 
     #need this alias for Apache::src backwards compat

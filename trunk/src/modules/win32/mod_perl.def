@@ -12,3 +12,5 @@ EXPORTS
    perl_perl_cmd_cleanup
    hvrv2table
    perl_call_handler
+   perl_clear_symtab
+   perl_get_startup_pool
