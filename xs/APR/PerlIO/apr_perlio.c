@@ -372,6 +372,12 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
     return -1;
 }
 
+/* 5.8.0 doesn't export PerlIOBase_noop_fail, so we duplicate it here */
+static IV PerlIOAPR_noop_fail(pTHX_ PerlIO *f)
+{
+    return -1;
+}
+
 static PerlIO_funcs PerlIO_APR = {
     sizeof(PerlIO_funcs),
     "APR",
@@ -391,7 +397,7 @@ static PerlIO_funcs PerlIO_APR = {
     PerlIOAPR_tell,
     PerlIOAPR_close,
     PerlIOAPR_flush,            /* flush */
-    PerlIOBase_noop_fail,       /* fill */
+    PerlIOAPR_noop_fail,        /* fill */
     PerlIOAPR_eof,
     PerlIOBase_error,
     PerlIOBase_clearerr,
@@ -502,7 +508,7 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
                                      type);
 }
 
-#elif !defined(PERLIO_LAYERS) && !defined(WIN32) /* NOT PERLIO_LAYERS (5.6.1) */
+#else /* NOT PERLIO_LAYERS (5.6.1) */
 
 static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file,
                                          apr_perlio_hook_e type)
@@ -584,13 +590,6 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
 void apr_perlio_init(pTHX)
 {
     APR_REGISTER_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
-}
-
-#else
-
-void apr_perlio_init(pTHX)
-{
-    Perl_croak(aTHX_ "APR::PerlIO not usable with this version of Perl");
 }
 
 #endif /* PERLIO_LAYERS */

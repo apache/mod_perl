@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/22 06:12:47 $]
+   Last modified at [$Date: 2003/05/12 00:11:24 $]
 
 Release:
 --------
@@ -69,14 +69,6 @@ Needs Patch or Further Investigation:
     errors (symbol resolution).  Should replace -berok with a proper
     symbol resolution at linking time, but I had not much success with
     using this approach (dlopen fails).
-
-    win32 and aix have a problem with PerlIOBase_noop_fail symbol not
-    being exported by libperl.so, used in apr_perlio.c (both platforms
-    need symbol export files. So currently win32 simply can't use
-    APR::PerlIO and should be fixed. Notice that perl doesn't export
-    any of the PerlIOBase_* symbols. If that's the intention of not
-    exposing the internal API, we need to find a way not to use the
-    PerlIOBase_* symbols in apr_perlio.c
 
 * we have a dependency check problem when xs/*/*.h use code from
   xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
