@@ -5,55 +5,62 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-my @modules = qw(registry registry_ng registry_bb perlrun);
+my %modules = 
+    (registry    => 'ModPerl::Registry',
+     registry_ng => 'ModPerl::RegistryNG',
+     registry_bb => 'ModPerl::RegistryBB',
+     perlrun     => 'ModPerl::PerlRun',
+    );
 
-plan tests => scalar @modules * 3;
+my @aliases = sort keys %modules;
+
+plan tests => @aliases * 3;
 
 my $cfg = Apache::Test::config();
 
 # very basic compilation/response test
-for my $module (@modules) {
-    my $url = "/$module/basic.pl";
+for my $alias (@aliases) {
+    my $url = "/$alias/basic.pl";
 
     ok t_cmp(
              "ok",
              $cfg->http_raw_get($url),
-             "basic cgi test",
+             "$modules{$alias} basic cgi test",
             );
 }
 
 # test non-executable bit
-for my $module (@modules) {
-    my $url = "/$module/not_executable.pl";
+for my $alias (@aliases) {
+    my $url = "/$alias/not_executable.pl";
 
     ok t_cmp(
              "403 Forbidden",
              HEAD($url)->status_line(),
-             "non-executable file",
+             "$modules{$alias} non-executable file",
             );
 }
 
 # test environment pre-set
-for my $module (@modules) {
-    my $url = "/$module/env.pl?foo=bar";
+for my $alias (@aliases) {
+    my $url = "/$alias/env.pl?foo=bar";
 
     ok t_cmp(
              "foo=bar",
              $cfg->http_raw_get($url),
-             "mod_cgi-like environment pre-set",
+             "$modules{$alias} mod_cgi-like environment pre-set",
             );
 }
 
 # chdir is not safe yet!
 #
 # require (actually chdir test)
-#for my $module (@modules) {
-#    my $url = "/$module/require.pl";
+#for my $alias (@aliases) {
+#    my $url = "/$alias/require.pl";
 
 #    ok t_cmp(
 #             "it works",
 #             $cfg->http_raw_get($url),
-#             "mod_cgi-like environment pre-set",
+#             "$modules{$alias} mod_cgi-like environment pre-set",
 #            );
 #}
 
