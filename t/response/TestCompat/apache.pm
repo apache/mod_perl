@@ -11,12 +11,12 @@ use Apache::TestUtil;
 use Apache::Test;
 
 use Apache::compat ();
-use Apache::Constants qw(OK);
+use Apache::Constants qw(OK DIR_MAGIC_TYPE);
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 5;
+    plan $r, tests => 6;
 
     $r->send_http_header('text/plain');
 
@@ -36,6 +36,9 @@ sub handler {
 
     Apache::log_error("Apache::log_error test ok");
     ok 1;
+
+    ok t_cmp("httpd/unix-directory", DIR_MAGIC_TYPE,
+             'DIR_MAGIC_TYPE');
 
     OK;
 }
