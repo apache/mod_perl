@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+On Solaris add a workaround for xs/APR/APR/Makefile.PL to build
+APR.so, correctly linked against apr and apr-util libs, by addding the
+missing -R paths corresponding to -L flags. EU::MM was adding them via
+LD_RUN_PATH instead of using -R, but since perl's lddflags may have -R
+it overrides LD_RUN_PATH. So explicitly add anything that may go into
+LD_RUN_PATH via -R. Also make sure that -R coming from Apache will
+appear first. [Brad Lanam <bll@gentoo.com>]
+
 'make dist' now generates and picks Apache-Test/META.yml which was
 always reported missing, as it was included in Apache-Test/MANIFEST
 [Stas]
