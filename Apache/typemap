@@ -11,6 +11,8 @@ Apache::Command		T_PTROBJ
 Apache::Table		T_TABLEOBJ
 Apache::table		T_PTROBJ
 pid_t			T_IV
+uid_t			T_IV
+gid_t			T_IV
 Apache::Scoreboard      O_HvRV
 Apache::URI		T_PTROBJ    
 
