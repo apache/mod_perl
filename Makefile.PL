@@ -321,33 +321,36 @@ sub set_modperl_version {
 sub perl_version_check {
     my $build = shift;
 
-    # the following mpms require threaded perl (== 5.8.0/ithreads+)
-    my %threaded_mpms = map { $_ => 1}
-        qw(worker winnt beos mpmt_os2 netware leader
-           perchild threadpool);
-    my $mpm = $build->apxs(-q => 'MPM_NAME') || 'unknown' ;
-    if ($threaded_mpms{$mpm}) {
-        unless (Apache::Build::HAS_ITHREADS()) {
-            error "this httpd ($mpm mpm) requires Perl w/ ithreads enabled\n";
-            exit 1;
-        }
-        # 5.6.x ithreads aren't good
-        unless ($] >= 5.008) {
-            error "Perl 5.8 or higher w/ ithreads enabled is required. " .
-                "This is only Perl $]\n";
-            exit 1;
+    my $perl_version = $];
+    $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1" . ($2 ? ".$2" : "")/e;
+    my $perl_threads = Apache::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
+    my $perl_string = "Using Perl $perl_version $perl_threads ithreads";
 
+    # certain mpms require perl 5.8.0+ w/ithreads
+    if ($build->mpm_is_threaded()) {
+        my $mpm = $build->mpm_name();
+        my @fail;
+        push @fail, "Perl 5.8 or higher"
+            unless $] >= 5.008;
+        push @fail, "Perl built with ithreads (build perl with -Dusethreads)"
+            unless Apache::Build::PERL_HAS_ITHREADS();
+        if (@fail) {
+            error "$perl_string and '$mpm' mpm httpd.",
+                "Failed requirements:",
+                join "", map {"  - $_\n"} @fail;
+            exit 1;
         }
     }
 
     if ($] < 5.006_001) {
-        error "You are running Perl version 5.6.0\n" .
-            "We strongly suggest you upgrade to at least 5.6.1";
+        error "$perl_string.",
+            "We strongly suggest you upgrade it to at least 5.6.1";
     }
 
     if ($] >= 5.007 and $] < 5.008) {
-        error "5.7.x development versions of Perl are no longer supported\n" .
-            "Upgrade to 5.8.0 or higher";
+        error "$perl_string.",
+            "5.7.x development versions of Perl are no longer supported",
+            "Upgrade to Perl 5.8.0 or higher";
         exit 1;
     }
 }

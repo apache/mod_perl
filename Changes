@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+new Apache::Build methods: mpm_name(), mpm_is_threaded(). use them in
+the top-level Makefile.PL to require 5.8.0/ithreads if mpm requires
+threads. [Stas]
+
 add the missing XS methods to ModPerl::MethodLookup, add support for
 mp1 methods that are no longer in the mod_perl 2.0 API. [Stas]
 
