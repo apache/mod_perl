@@ -30,7 +30,7 @@ for my $size (@sizes) {
 sub write_file {
     my $size = shift;
 
-    my $data = "ABCD" x ($size * 256);
+    my $data = "abcd" x ($size * 256);
 
     my $file = catfile $dir, "data_${size}k.txt";
     open my $fh, ">$file" or die "can't open $file: $!";
