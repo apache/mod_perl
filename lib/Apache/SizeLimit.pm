@@ -21,7 +21,6 @@ use mod_perl 1.99;
 
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
-use Apache::Connection ();
 use Apache::MPM ();
 use APR::Pool ();
 use ModPerl::Util ();
@@ -191,7 +190,7 @@ sub setmax {
     $MAX_PROCESS_SIZE = shift;
     my $r = shift || Apache->request();
     unless ($r->pnotes('size_limit_cleanup')) {
-        $r->connection->pool->cleanup_register(\&exit_if_too_big, $r);
+        $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
     }
 }
@@ -200,7 +199,7 @@ sub setmin {
     $MIN_SHARE_SIZE = shift;
     my $r = shift || Apache->request();
     unless ($r->pnotes('size_limit_cleanup')) {
-        $r->connection->pool->cleanup_register(\&exit_if_too_big, $r);
+        $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
     }
 }
@@ -209,7 +208,7 @@ sub setmax_unshared {
     $MAX_UNSHARED_SIZE = shift;
     my $r = shift || Apache->request();
     unless ($r->pnotes('size_limit_cleanup')) {
-        $r->connection->pool->cleanup_register(\&exit_if_too_big, $r);
+        $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
     }
 }
@@ -225,7 +224,7 @@ sub handler {
         if (ModPerl::Util::current_callback() eq 'PerlCleanupHandler') {
             exit_if_too_big($r);
         } else {
-            $r->connection->pool->cleanup_register(\&exit_if_too_big);
+            $r->pool->cleanup_register(\&exit_if_too_big, $r);
         }
     }
 
