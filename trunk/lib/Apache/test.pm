@@ -84,7 +84,7 @@ sub have_module {
 	 require Apache::Constants;
     };
     eval "require $mod";
-    if($v) {
+    if($v and not $@) {
 	eval { 
 	    local $SIG{__WARN__} = sub {};
 	    $mod->UNIVERSAL::VERSION($v);

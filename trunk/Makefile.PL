@@ -163,7 +163,7 @@ $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
 $APACHE_PREFIX = "";
-$APACHE_LAYOUT = "Apache";
+$APACHE_LAYOUT = "GNU";
 $APACHE_HEADER_INSTALL = 1;
 $PERL_SECTIONS = 0;
 $PERL_SSI = 0;
@@ -414,7 +414,7 @@ unless (@adirs) {
 	    last;
 	}
 	else {
-	    print "Can't stat $src_dir\n";
+	    print "Can't stat `$src_dir'\n";
 	}
     }
 }
@@ -1328,7 +1328,7 @@ sub MY::subdirs {
 }
 
 sub wanted {
-    return unless /\.h$/;
+    return unless /\.h$/ or /os-inline\.c$/;
     (my $d = $File::Find::dir) =~ s:^\Q$APACHE_SRC::;
     $d =~ s:^/::;
 
@@ -1821,6 +1821,7 @@ sub add_static_ar {
 	last if -d ($ar_dir = "$APACHE_SRC/modules/perl/$_");
 	$ar_dir = "";
     }
+    return unless -d $ar_dir;
 
     finddepth(sub {
 	return unless /\.a$/;

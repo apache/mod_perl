@@ -3,19 +3,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- Makefile.PL saying: Can't stat : No such file or directory
-
-- internal/auth.......FAILED test 1 (w/o mod_autoindex)
-
-- install os-inline.c
-
-- avoid write_client symtab lookup in print()
-
 - turn of strip of httpd in Apache's install.sh
 
 - method handler called when it shouldn't be? (Ken)
-
-- Apache::Status extensions (ix)
 
 - <perl> sections and DirectoryIndex (Eric Cholet)
 
@@ -247,6 +237,8 @@ KNOWN MODULE BUGS
 NEW MODULE STUFF
 ---------------------------------------------------------------------------
 
+- Apache::Status extensions (ix)
+
 - StatINC doesn't reimport the imported symbols?
   Stas Bekman <sbekman@iil.intel.com>, 
   Message-Id: <Pine.A41.3.96.981007170413.44288Q-100000@ilx374.iil.intel.com>
@@ -312,6 +304,8 @@ use 5.005's newCONSTSUB in Constants.xs
 ---------------------------------------------------------------------------
 OPTIMIZATIONS
 ---------------------------------------------------------------------------
+
+- avoid write_client symtab lookup in print()
 
 - preloading of method cache
 
