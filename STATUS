@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/03 06:41:22 $]
+   Last modified at [$Date: 2003/04/04 05:41:00 $]
 
 Release:
 --------
@@ -53,7 +53,21 @@ Needs Patch or Further Investigation:
 * we have a dependency check problem when xs/*/*.h use code from
   xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
   dependant files
-  
+
+* most of the xs wrappers print no "Usage: " when wrong args/wrong
+  number of args are passed, would be nice to add the usage message
+  whenever incorrect arguments error is logged. e.g., when
+  APR::URI->parse() gets the wrong first arg (non-pool) it prints:
+
+    p is not of type APR::Pool at ...
+
+  whereas it's not so obvious that the function expected the pool
+  object, neither it specifies which ("arg number") of the arguments
+  is wrong.
+
+  possible solution: add a new field to the map files, which will be
+  used as a usage message whenever an argument error occurs.
+
 * we should stop generating xs/apache_*, at least for a reason that
   it's incomplete and will be never complete as we don't keep up with
   changes with ap_/apr_ namespace. Also we don't have the logic to
