@@ -125,7 +125,7 @@ static long mpxs_Apache__RequestRec_read(request_rec *r,
     r->read_length = 0;
 
     if (ap_should_client_block(r)) {
-        mpxs_sv_grow(buffer, bufsiz+SvCUR(buffer));
+        mpxs_sv_grow(buffer, bufsiz+offset);
         nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
     }
 
