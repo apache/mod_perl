@@ -276,6 +276,11 @@ apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
 	return NULL;
     }
 
+    if (!AvFILL(librefs) >= 0) {
+        /* dl_librefs and dl_modules are empty */
+        return NULL;
+    }
+
     handles = apr_array_make(p, AvFILL(librefs)-1, sizeof(void *));
 
     for (i=0; i<=AvFILL(librefs); i++) {
