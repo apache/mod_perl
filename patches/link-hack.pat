@@ -17,3 +17,30 @@ diff -u -u -r1.3 program.mk
  $(PROGRAM_NAME): $(PROGRAM_DEPENDENCIES) $(PROGRAM_OBJECTS)
 -	$(LINK) $(PROGRAM_LDFLAGS) $(PROGRAM_OBJECTS) $(PROGRAM_LDADD)
 +	$(LINK) $(PROGRAM_LDFLAGS) $(PROGRAM_OBJECTS) $(PROGRAM_LDADD) $(MP_LDADD)
+
+--- src/modules.c~	Wed Apr 12 20:00:23 2000
++++ src/modules.c	Wed Apr 12 20:10:16 2000
+@@ -26,6 +26,7 @@
+ extern module auth_module;
+ extern module setenvif_module;
+ extern module echo_module;
++extern module perl_module;
+ 
+ /*
+  *  Modules which implicitly form the
+@@ -54,6 +55,7 @@
+   &auth_module,
+   &setenvif_module,
+   &echo_module,
++  &perl_module,
+   NULL
+ };
+ 
+@@ -84,6 +86,7 @@
+   &auth_module,
+   &setenvif_module,
+   &echo_module,
++  &perl_module,
+   NULL
+ };
+
