@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+fix Apache::Status bug prototype check of 'use constant' subs, thanks to
+Eric Cholet for the spot
+
 added set_byterange() and each_byterange() methods
 
 added proper support for {Location,Directory,Files}Match in <Perl> sections
