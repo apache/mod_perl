@@ -32,4 +32,17 @@
 typedef unsigned long apr_os_thread_t;
 #endif
 
+/* XXX: these backcompat macros can be deleted when we bump up the
+ * minimal supported httpd version to 2.0.40 or higher
+ */
+#ifndef apr_time_sec
+#define apr_time_sec(time) ((apr_int64_t)((time) / APR_USEC_PER_SEC))
+#endif
+#ifndef apr_time_usec
+#define apr_time_usec(time) ((apr_int32_t)((time) % APR_USEC_PER_SEC))
+#endif
+#ifndef apr_time_from_sec
+#define apr_time_from_sec(sec) ((apr_time_t)(sec) * APR_USEC_PER_SEC)
+#endif 
+
 #endif /* MODPERL_APACHE_INCLUDES_H */
