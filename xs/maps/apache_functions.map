@@ -81,8 +81,8 @@ MODULE=Apache::SubRequest   PACKAGE=Apache::RequestRec
 -ap_finalize_sub_req_protocol
  ap_internal_redirect         | | r, new_uri
  ap_internal_redirect_handler | | r, new_uri
- ap_internal_fast_redirect
- ap_sub_req_lookup_dirent
+ ap_internal_fast_redirect    | | r, sub_req
+ ap_sub_req_lookup_dirent     | | r, finfo, subtype=AP_SUBREQ_NO_ARGS, next_filter=NULL | lookup_dirent
 
 subrequest_rec *:ap_sub_req_lookup_file | | \
  r, new_file, next_filter=r->output_filters->next | lookup_file
@@ -436,7 +436,7 @@ MODULE=Apache::HookRun   PACKAGE=guess
 >ap_run_open_logs
 >ap_run_post_config
 >ap_run_insert_filter
- ap_run_child_init
+>ap_run_child_init
 ?ap_run_default_port
 ?ap_run_http_method
 >ap_run_create_connection
@@ -460,7 +460,7 @@ MODULE=Apache::HookRun   PACKAGE=guess
 >ap_run_pre_mpm
 !ap_run_quick_handler
  ap_invoke_handler
- ap_die
+ ap_die | | r, type
 
 !MODULE=Apache::MD5
  ap_md5
