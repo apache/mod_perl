@@ -52,7 +52,7 @@ static char *lookup(hash_ptr *ht, SV *sv, void *tag)
     while (p) {
 	if (p->sv == sv) {
 	    char *old = p->tag;
-	    p->tag = tag;
+	    p->tag = (char *) tag;
 	    return old;
 	}
 	p = p->link;
