@@ -165,7 +165,6 @@ MODULE=APR::Table
 -apr_file_dup
 -apr_file_flush
 -apr_file_eof
--apr_file_error
 -apr_file_gets
 -apr_file_printf
 -apr_file_write_full
