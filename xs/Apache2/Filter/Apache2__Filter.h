@@ -114,7 +114,7 @@ static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
     }
 
 
-static XS(MPXS_modperl_filter_attributes)
+MP_STATIC XS(MPXS_modperl_filter_attributes)
 {
     dXSARGS;
     U32 *attrs = modperl_filter_attributes(ST(0), ST(1));

@@ -29,6 +29,7 @@ use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl2.pm" } qw(. ..);
 
 use constant AIX     => $^O eq 'aix';
 use constant DARWIN  => $^O eq 'darwin';
+use constant CYGWIN  => $^O eq 'cygwin';
 use constant IRIX    => $^O eq 'irix';
 use constant HPUX    => $^O eq 'hpux';
 use constant OPENBSD => $^O eq 'openbsd';
@@ -547,6 +548,10 @@ sub perl_ccopts {
         unless ($optim =~ /-DDEBUGGING/) {
             $cflags =~ s/$optim//;
        }
+    }
+
+    if (CYGWIN) {
+        $cflags .= " -DCYGWIN ";
     }
 
     $cflags;

@@ -111,7 +111,7 @@ const char *mpxs_Apache2__RequestRec_auth_name(pTHX_ request_rec *r,
     return ap_auth_name(r);
 }
 
-static XS(MPXS_ap_get_basic_auth_pw)
+MP_STATIC XS(MPXS_ap_get_basic_auth_pw)
 {
     dXSARGS;
     request_rec *r;

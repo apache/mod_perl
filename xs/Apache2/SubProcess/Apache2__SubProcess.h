@@ -128,7 +128,7 @@ static int modperl_spawn_proc_prog(pTHX_
         XSRETURN_UNDEF;                         \
     }
 
-static XS(MPXS_modperl_spawn_proc_prog)
+MP_STATIC XS(MPXS_modperl_spawn_proc_prog)
 {
     dXSARGS;
     const char *usage = "Usage: spawn_proc_prog($r, $command, [\\@argv])";
