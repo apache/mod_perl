@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef APR_PERLIO_H
-#define APR_PERLIO_H
+#ifndef MODPERL_APR_PERLIO_H
+#define MODPERL_APR_PERLIO_H
 
 #ifdef PERLIO_LAYERS
 #include "perliol.h"
@@ -68,4 +68,4 @@ APR_DECLARE_OPTIONAL_FN(SV *,
                          apr_perlio_hook_e type));
 #endif /* MP_SOURCE_SCAN */
 
-#endif /* APR_PERLIO_H */
+#endif /* MODPERL_APR_PERLIO_H */

@@ -16,7 +16,7 @@
 #include "modperl_largefiles.h"
 
 #include "mod_perl.h"
-#include "apr_perlio.h"
+#include "modperl_apr_perlio.h"
 
 #if defined(PERLIO_LAYERS) && defined(PERLIO_K_MULTIARG) /* 5.7.2+ */
 
