@@ -60,6 +60,38 @@ MP_CMD_SRV_DECLARE(requires)
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE2(set_var)
+{
+    MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
+ 
+    if (parms->path) {
+        apr_table_set(dcfg->SetVar, arg1, arg2);
+        MP_TRACE_d(MP_FUNC, "DIR: arg1 = %s, arg2 = %s\n", arg1, arg2);
+    }
+    else {
+        apr_table_set(scfg->SetVar, arg1, arg2);
+        MP_TRACE_d(MP_FUNC, "SRV: arg1 = %s, arg2 = %s\n", arg1, arg2);
+    }
+    return NULL;
+}
+
+MP_CMD_SRV_DECLARE2(add_var)
+{
+    MP_dSCFG(parms->server);
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
+ 
+    if (parms->path) {
+        apr_table_add(dcfg->SetVar, arg1, arg2);
+        MP_TRACE_d(MP_FUNC, "DIR: arg1 = %s, arg2 = %s\n", arg1, arg2);
+    }
+    else {
+        apr_table_add(scfg->SetVar, arg1, arg2);
+        MP_TRACE_d(MP_FUNC, "SRV: arg1 = %s, arg2 = %s\n", arg1, arg2);
+    }
+    return NULL;
+}
+
 MP_CMD_SRV_DECLARE(options)
 {
     MP_dSCFG(parms->server);
