@@ -106,6 +106,8 @@ apr_thread_start_t           | UNDEFINED
 struct apr_threadattr_t      | UNDEFINED
 struct apr_thread_mutex_t    | UNDEFINED
 struct apr_thread_once_t     | UNDEFINED
+struct apr_thread_cond_t     | UNDEFINED
+struct apr_thread_rwlock_t   | UNDEFINED
 
 #signal stuff
 apr_signum_t                 | UNDEFINED
