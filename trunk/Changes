@@ -17,6 +17,8 @@ Other contributors are mentioned below.
 =over 3
 
 =item 1.11_01-dev
+ 
+APACI support added [Ralf S. Engelschall <rse@engelschall.com>]
 
 experimental tie of $0 to Apache->request->filename, enable with
 -DPERL_TIE_SCRIPTNAME  

@@ -12,6 +12,7 @@ use ExtUtils::MakeMaker;
 use Config;
 use FileHandle ();
 use DirHandle ();
+use File::Compare ();
 use File::Basename qw(dirname);
 use File::Path qw(mkpath rmtree);
 use Cwd;
@@ -119,6 +120,7 @@ my(@adirs, %seen, %mft_map, %vers_map, $src_dir, $vers, $conf, $ans);
     NONE => "", 
 );	     
 
+$USE_APACI = 0;
 $EVERYTHING = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
@@ -152,7 +154,7 @@ PERL_TIE_SCRIPTNAME
 };
 
 my @mp_args = 
-    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE
+    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE USE_APACI
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
 
 sub is_mp_arg {
@@ -218,6 +220,10 @@ while($_ = shift) {
     }
     ${$k} = $v, next if defined ${$k};
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
+}
+
+if($USE_APACI) {
+    print "Will configure via APACI\n";
 }
 
 @ARGV = @mm_args;
@@ -317,6 +323,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    $IsBenSSL = -e "$adir/apache_ssl.c";
 	    last unless(-e $conf || -e "$conf.tmpl"); #building from 'make offsite-tar' 
 	}
+	++$NO_HTTPD if $USE_APACI;
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
 	    ++$NO_HTTPD unless $ans =~ /^y$/i;
@@ -329,36 +336,45 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		print "(cd $adir && ./Configure -file $cfgfile)";
 	    }
 	}
-	last if $NO_HTTPD;
 
-	unless ($can_dash_make{asrc $adir}) {
-	    unless (-e "$adir/Makefile.tmpl.bak") {
-		print STDERR "Backing up $adir/Makefile.tmpl to $adir/Makefile.tmpl.bak\n";
-		cp "$adir/Makefile.tmpl", "$adir/Makefile.tmpl.bak";
+	#copy the source files
+	if(!$NO_HTTPD or $USE_APACI) {
+	    mkpath "$adir/modules/perl";
+	    #ignore make's output here
+	    `(cd $adir/modules/perl && make clean 2> /dev/null)`;
+
+	    local(*MANI);
+	    open MANI, "MANIFEST" or die "open MANIFEST $!";
+	    my $atopdir = dirname($adir);
+
+	    #only rm and cp files mod_perl ships with
+	    while(<MANI>) {
+		next unless m,^src/modules/perl/,; chomp;
+		#print "rm -f $adir/$_\n";
+		unlink "$atopdir/$_";
+		print "cp $_ $atopdir/$_\n" if $USE_APACI;
+		my $dest = "$atopdir/$_";
+		cp $_, $dest;
+		$mani_src{$_}++;
 	    }
-	    cp "src/$mft_map{$adir}", "$adir/Makefile.tmpl";
-	    print STDERR "cp src/$mft_map{$adir} $adir/Makefile.tmpl\n";
+	    close MANI;
+
+	    if($USE_APACI) {
+		open MANI, "MANIFEST" or die "open MANIFEST $!";
+		while(<MANI>) {
+		    next unless m,^apaci/,; chomp;
+		    (my $to = $_) =~ s,^apaci/,src/modules/perl/,;
+		    unlink "$atopdir/$to";
+		    print "cp $_ $atopdir/$to\n";
+		    my $dest = "$atopdir/$to";
+		    cp $_, $dest;
+		    chmod 0755, $dest if -x $_;
+		}
+		close MANI;
+	    }
 	}
 
-	mkpath "$adir/modules/perl";
-	#ignore make's output here
-	`(cd $adir/modules/perl && make clean 2> /dev/null)`;
-
-	local(*MANI);
-	open *MANI, "MANIFEST" or die "open MANIFEST $!";
-	my $atopdir = dirname($adir);
-
-	#only rm and cp files mod_perl ships with
-	while(<MANI>) {
-	    next unless m,^src/modules/perl/,; chomp;
-	    #print "rm -f $adir/$_\n";
-	    unlink "$atopdir/$_";
-	    #print "cp $_ $atopdir/$_\n";
-	    my $dest = "$atopdir/$_";
-	    cp $_, $dest;
-	    $mani_src{$_}++;
-	}
-	close MANI;
+	last if $NO_HTTPD or $USE_APACI;
 
 	if($PERL_EXTRA_CFLAGS) {
 	    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
@@ -488,7 +504,9 @@ if($APACHE_SRC) {
     for (@callback_hooks) {
 	($k,$v) = ($_,$callback_hooks{$_});
 
-	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^$k /#$k /" if $v;
+	unless ($USE_APACI) {
+	    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^$k /#$k /" if $v;
+	}
 
 	$why = ($cant_hook{$k} || "(enable with $k=1)") unless $v;
 	$k =~ s/([A-Z]+)/ucfirst(lc($1))/ge;
@@ -524,12 +542,14 @@ if($APACHE_SRC) {
 	}
 
 	print "\n";
-
-	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^($_) /#\$1 /"
-	    if $$_;
+	unless ($USE_APACI) {
+	    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^($_) /#\$1 /"
+		if $$_;
+	}
     }
-
-    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#TRACE/TRACE/" if $PERL_TRACE;
+    unless ($USE_APACI) {
+	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#TRACE/TRACE/" if $PERL_TRACE;
+    }
 
     my $ssl_name = is_ssl();
     if($ssl_name) {
@@ -559,8 +579,10 @@ if($APACHE_SRC) {
 	    }
 	}
 
-	iedit "$APACHE_SRC/modules/perl/Makefile",	
-	"s:^#APACHE_SSL.*:APACHE_SSL = $SSL_CFLAGS:";
+	unless ($USE_APACI) {
+	    iedit "$APACHE_SRC/modules/perl/Makefile",	
+	    "s:^#APACHE_SSL.*:APACHE_SSL = $SSL_CFLAGS:";
+	}
     }
 
     #my $incdir = ($mmn >= 19970825) ? "../../main" : "../..";
@@ -587,8 +609,9 @@ INCDIR = $incdir
 
 EOF
 
-    iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#__ORIGINAL__/$edit_note/";
-
+    unless ($USE_APACI) {
+	iedit "$APACHE_SRC/modules/perl/Makefile", "s/^#__ORIGINAL__/$edit_note/";
+    }
     #needed as of 1.3b1+ 
 
     #XXX: argh, what a bloody nightmare!!!
@@ -606,7 +629,7 @@ EOF
 	close $fh;
     }
 
-    if($mmn >= 19970912) {     #1.3b1
+    if($mmn >= 19970912 and not $USE_APACI) {     #1.3b1
 	system "cat $APACHE_SRC/Makefile.config $APACHE_SRC/modules/perl/Makefile > /tmp/mpmf.$$";
 	system "mv /tmp/mpmf.$$ $APACHE_SRC/modules/perl/Makefile";
     }
@@ -648,17 +671,24 @@ unless($Is_Win32 or -e "t/conf/httpd.conf") {
     }
 
     {
-	my $mmn = magic_number($APACHE_SRC) unless $NO_HTTPD;
+	my $mmn = magic_number($APACHE_SRC) || 0;
+
 	my $hf = FileHandle->new(">>t/net/config.pl") or 
-	    die "can't open t/net/config.pl";
+	    die "can't open t/net/config.pl $!";
+
+	my $apaci_cfg = APACI->init;
+    
 	my($k,$v);
 	print $hf "%callback_hooks = (\n";
 	while(($k,$v) = each %callback_hooks) {
 	    print $hf "   $k => $v,\n";
+	    my $yes_no = $v ? "yes" : "no";
+	    print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
 	}
         print $hf "   MMN => $mmn,\n";
 	print $hf ");\n1;\n";
 	$hf->close;
+	$apaci_cfg->close if $apaci_cfg;
     }
 
     #expand ./t to full path
@@ -1067,7 +1097,7 @@ sub httpd_version {
 sub magic_number {
     my $d = asrc shift;
     return $mcache{$d} if $mcache{$d};
-    my $fh = FileHandle->new("$d/http_config.h") or die $!;
+    my $fh = FileHandle->new("$d/http_config.h") or return 0;
     my $n;
     while(<$fh>) {
 	if(s/^#define\s+MODULE_MAGIC_NUMBER\s+(\d+).*/$1/) {
@@ -1091,9 +1121,10 @@ sub setup_for_static {
     my $mf = "$APACHE_SRC/modules/perl/Makefile";
     my @static_src = ();
 
-    iedit $mf, "s/(PERL_STATIC_EXTS) =.*/\$1 = $PERL_STATIC_EXTS/"
-	if $PERL_STATIC_EXTS;
-
+    unless ($USE_APACI) {
+	iedit $mf, "s/(PERL_STATIC_EXTS) =.*/\$1 = $PERL_STATIC_EXTS/"
+	    if $PERL_STATIC_EXTS;
+    }
     return unless $STATIC;
 
     cp "Apache/typemap", $d;
@@ -1126,15 +1157,17 @@ sub setup_for_static {
     iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_names/";
 =cut
 
-    #XXX: ho,hum, need to generate the whole damn thing 
-    #instead of all these frigging iedits.
-    iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @static_src/";
-    iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_modules/";
-    iedit $mf, "s/^#STATIC_/STATIC_/";
+    unless ($USE_APACI) {
+	#XXX: ho,hum, need to generate the whole damn thing 
+	#instead of all these frigging iedits.
+	iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @static_src/";
+	iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_modules/";
+	iedit $mf, "s/^#STATIC_/STATIC_/";
 
-    #bloody hell, make sucks and so does this.
-    #this has only cause a few people pain, enough.
-    iedit $mf, "s/ \Q\$(STATIC_SRC)\E/ @static_src/";
+	#bloody hell, make sucks and so does this.
+	#this has only cause a few people pain, enough.
+	iedit $mf, "s/ \Q\$(STATIC_SRC)\E/ @static_src/";
+    }
 }
 
 sub module_name_from_xs {
@@ -1457,4 +1490,42 @@ sub ldopts {
     $Embed::ldopts;
 }
 
-                                    
+sub APACI::init {
+    my $lib_cfg = "$APACHE_SRC/modules/perl/mod_perl.config";
+
+    return undef unless $USE_APACI;
+    unless (File::Compare::compare($lib_cfg,"apaci/mod_perl.config") == 0) {
+	#warn "mod_perl.config already edited\n";
+	return undef;
+    }
+
+    my $apaci_cfg = FileHandle->new(">$lib_cfg") or 
+	die "can't open $lib_cfg $!";
+
+    my @static_src = ();
+    for (@xs_mod_snames) {
+	push @static_src, "$_.c";
+    }
+
+    print $apaci_cfg <<EOF;
+##
+##  mod_perl.config -- mod_perl shared configuration file
+##
+
+#   mod_perl version
+MOD_PERL_VERSION = $VERSION
+
+#   Perl interpreter to use 
+PERL = DEFAULT
+
+PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
+PERL_STATIC_SRCS = @static_src
+
+EOF
+    for (qw(PERL_SSI PERL_TRACE)) {
+	my $yes_no = $$_ ? "yes" : "no";
+	print $apaci_cfg "$_ = $yes_no\n";
+    }
+
+    return $apaci_cfg;
+}
