@@ -23,20 +23,20 @@ sub handler {
 
     ### Apache-> tests
     my $fh = Apache->gensym;
-    ok t_cmp('GLOB', ref($fh), "Apache->gensym");
+    ok t_cmp(ref($fh), 'GLOB', "Apache->gensym");
 
-    ok t_cmp(1, Apache->module('mod_perl.c'),
+    ok t_cmp(Apache->module('mod_perl.c'), 1,
              "Apache::module('mod_perl.c')");
-    ok t_cmp(0, Apache->module('mod_ne_exists.c'),
+    ok t_cmp(Apache->module('mod_ne_exists.c'), 0,
              "Apache::module('mod_ne_exists.c')");
 
 
-    ok t_cmp(Apache::exists_config_define('MODPERL2'),
-             Apache->define('MODPERL2'),
+    ok t_cmp(Apache->define('MODPERL2'),
+             Apache::exists_config_define('MODPERL2'),
              'Apache->define');
 
-    ok t_cmp('PerlResponseHandler',
-             Apache::current_callback(),
+    ok t_cmp(Apache::current_callback(),
+             'PerlResponseHandler',
              'inside PerlResponseHandler');
 
     t_server_log_error_is_expected();
@@ -44,48 +44,48 @@ sub handler {
     ok 1;
 
     # explicitly imported
-    ok t_cmp("httpd/unix-directory", DIR_MAGIC_TYPE,
+    ok t_cmp(DIR_MAGIC_TYPE, "httpd/unix-directory",
              'DIR_MAGIC_TYPE');
 
     # :response is ignored, but is now aliased in :common
-    ok t_cmp("302", REDIRECT,
+    ok t_cmp(REDIRECT, "302",
              'REDIRECT');
 
     # from :common
-    ok t_cmp("401", AUTH_REQUIRED,
+    ok t_cmp(AUTH_REQUIRED, "401",
              'AUTH_REQUIRED');
 
-    ok t_cmp("0", OK,
+    ok t_cmp(OK, "0",
              'OK');
 
     my $admin = $r->server->server_admin;
     Apache->httpd_conf('ServerAdmin foo@bar.com');
-    ok t_cmp('foo@bar.com', $r->server->server_admin,
+    ok t_cmp($r->server->server_admin, 'foo@bar.com',
              'Apache->httpd_conf');
     $r->server->server_admin($admin);
 
-    ok t_filepath_cmp(canonpath($Apache::Server::CWD),
-                      canonpath(Apache::Test::config()->{vars}->{serverroot}),
+    ok t_filepath_cmp(canonpath(Apache::Test::config()->{vars}->{serverroot}),
+                      canonpath($Apache::Server::CWD),
                       '$Apache::Server::CWD');
 
-    ok t_filepath_cmp(canonpath($Apache::Server::CWD),
-                      canonpath($r->server_root_relative),
+    ok t_filepath_cmp(canonpath($r->server_root_relative),
+                      canonpath($Apache::Server::CWD),
                       '$r->server_root_relative()');
 
-    ok t_filepath_cmp(catfile($Apache::Server::CWD, 'conf'),
-                      canonpath($r->server_root_relative('conf')),
+    ok t_filepath_cmp(canonpath($r->server_root_relative('conf')),
+                      catfile($Apache::Server::CWD, 'conf'),
                       "\$r->server_root_relative('conf')");
 
     # Apache->server_root_relative
     {
         Apache::compat::override_mp2_api('Apache::server_root_relative');
 
-        ok t_filepath_cmp(catfile($Apache::Server::CWD, 'conf'),
-                          canonpath(Apache->server_root_relative('conf')),
+        ok t_filepath_cmp(canonpath(Apache->server_root_relative('conf')),
+                          catfile($Apache::Server::CWD, 'conf'),
                           "Apache->server_root_relative('conf')");
 
-        ok t_filepath_cmp(canonpath($Apache::Server::CWD),
-                          canonpath(Apache->server_root_relative),
+        ok t_filepath_cmp(canonpath(Apache->server_root_relative),
+                          canonpath($Apache::Server::CWD),
                           'Apache->server_root_relative()');
 
         Apache::compat::restore_mp2_api('Apache::server_root_relative');

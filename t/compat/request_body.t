@@ -14,8 +14,8 @@ my $location = "/TestCompat__request_body";
 {
     my @data = (test => 'content-type');
     ok t_cmp(
-        "text/plain",
         HEAD(query(@data))->content_type(),
+        "text/plain",
         q{$r->send_http_header('text/plain')}
         );
 }
@@ -25,8 +25,8 @@ my $location = "/TestCompat__request_body";
     my @data = (test => 'content');
     my $content = join '=', @data;
     ok t_cmp(
-        "@data",
         POST_BODY($location, content => $content),
+        "@data",
         q{$r->content via POST}
         );
 }
@@ -35,8 +35,8 @@ my $location = "/TestCompat__request_body";
 {
     my @data = (test => 'args');
     ok t_cmp(
-        "@data",
         GET_BODY(query(@data)),
+        "@data",
         q{$r->Apache::args}
         );
 }
@@ -48,8 +48,8 @@ my $location = "/TestCompat__request_body";
         body => '%DC%DC+%EC%2E+%D6%D6+%D6%2F',
     );
     ok t_cmp(
-        $data{body},
         GET_BODY(query(%data)),
+        $data{body},
         q{decoding}
        );
 }
@@ -63,8 +63,8 @@ my $location = "/TestCompat__request_body";
        );
     my $content = join '=', %data;
     ok t_cmp(
-        length($data{body}),
         POST_BODY($location, content => $content),
+        length($data{body}),
         q{big POST}
        );
 }

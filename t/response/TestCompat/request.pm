@@ -40,8 +40,8 @@ sub handler {
                     $r->$sub_good->set($key, $key x 2);
                 }
 
-                ok t_cmp($r->$sub_good->get($key),
-                         $r->$sub_test($key),
+                ok t_cmp($r->$sub_test($key),
+                         $r->$sub_good->get($key),
                          "\$r->$sub_test in scalar context");
             }
 
@@ -49,8 +49,8 @@ sub handler {
             {
                 my @exp = qw(foo bar);
                 $r->$sub_good->add($key => $_) for @exp;
-                ok t_cmp(\@exp,
-                         [ $r->$sub_test($key) ],
+                ok t_cmp([ $r->$sub_test($key) ],
+                         \@exp,
                          "\$r->$sub_test in list context");
             }
 
@@ -59,7 +59,7 @@ sub handler {
                 my $exp = $key x 2;
                 $r->$sub_test($key => $exp);
                 my $got = $r->$sub_test($key);
-                ok t_cmp($exp, $got, "\$r->$sub_test set()");
+                ok t_cmp($got, $exp, "\$r->$sub_test set()");
             }
 
             # unset
@@ -67,7 +67,7 @@ sub handler {
                 my $exp = undef;
                 $r->$sub_test($key => $exp);
                 my $got = $r->$sub_test($key);
-                ok t_cmp($exp, $got, "\$r->$sub_test unset()");
+                ok t_cmp($got, $exp, "\$r->$sub_test unset()");
             }
         }
     }
@@ -82,8 +82,8 @@ sub handler {
         {
             my $val = 'ok';
             $r->notes($key => $val);
-            ok t_cmp($r->notes->get($key), $val, "\$r->notes->get(\$key)");
-            ok t_cmp($r->notes($key),      $val, "\$r->notes(\$key)");
+            ok t_cmp($val, $r->notes->get($key), "\$r->notes->get(\$key)");
+            ok t_cmp($val, $r->notes($key),      "\$r->notes(\$key)");
         }
 
         # unset
@@ -91,14 +91,14 @@ sub handler {
             my $exp = undef;
             $r->notes($key => $exp);
             my $got = $r->notes($key);
-            ok t_cmp($exp, $got, "\$r->notes unset()");
+            ok t_cmp($got, $exp, "\$r->notes unset()");
         }
 
         # get/set list context
         {
             my @exp = qw(foo bar);
             $r->notes->add($key => $_) for @exp;
-            ok t_cmp(\@exp, [ $r->notes($key) ], "\$r->notes in list context");
+            ok t_cmp([ $r->notes($key) ], \@exp, "\$r->notes in list context");
         }
 
         # restore the real 2.0 notes() method, now that we are done

@@ -48,7 +48,7 @@ sub handler {
         $parsed->hostname($r->get_server_name);
         $parsed->port($r->get_server_port);
         #$parsed->scheme('http'); # compat defaults to 'http' like apache-1.3 did
-        ok t_cmp($r->construct_url, $parsed->unparse);
+        ok t_cmp($parsed->unparse, $r->construct_url);
         Apache::compat::restore_mp2_api('APR::URI::unparse');
     }
 

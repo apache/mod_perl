@@ -23,9 +23,9 @@ sub handler {
     my $t = Apache::Table->new($r);
     my $t_class = ref $t;
 
-    ok t_cmp('APR::Table', $t_class, "Apache::Table->new");
+    ok t_cmp($t_class, 'APR::Table', "Apache::Table->new");
 
-    ok t_cmp(!$r->main, $r->is_main,
+    ok t_cmp($r->is_main, !$r->main,
              '$r->is_main');
 
     OK;

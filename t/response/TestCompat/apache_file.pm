@@ -74,20 +74,20 @@ sub handler {
     my $write = "test $$";
     print $tmpfh $write;
     seek $tmpfh, 0, 0;
-    ok t_cmp($write, <$tmpfh>, "write/read from tmpfile");
+    ok t_cmp(<$tmpfh>, $write, "write/read from tmpfile");
 
-    ok t_cmp(Apache::OK,
-             $r->discard_request_body,
+    ok t_cmp($r->discard_request_body,
+             Apache::OK,
              "\$r->discard_request_body");
 
-    ok t_cmp(Apache::OK,
-             $r->meets_conditions,
+    ok t_cmp($r->meets_conditions,
+             Apache::OK,
              "\$r->meets_conditions");
 
     my $csize = 10;
     $r->set_content_length($csize);
-    ok t_cmp($csize,
-             $r->headers_out->{"Content-length"},
+    ok t_cmp($r->headers_out->{"Content-length"},
+             $csize,
              "\$r->set_content_length($csize) w/ setting explicit size");
 
 #    #$r->set_content_length();
@@ -109,14 +109,14 @@ sub handler {
 
     my $time = time;
     $r->update_mtime($time);
-    ok t_cmp($time, $r->mtime, "\$r->update_mtime(\$time)/\$r->mtime");
+    ok t_cmp($r->mtime, $time, "\$r->update_mtime(\$time)/\$r->mtime");
 
     # $r->set_last_modified
     $r->set_last_modified();
-    ok t_cmp($time, $r->mtime, "\$r->set_last_modified()");
+    ok t_cmp($r->mtime, $time, "\$r->set_last_modified()");
 
     $r->set_last_modified($time);
-    ok t_cmp($time, $r->mtime, "\$r->set_last_modified(\$time)");
+    ok t_cmp($r->mtime, $time, "\$r->set_last_modified(\$time)");
 
     OK;
 }
