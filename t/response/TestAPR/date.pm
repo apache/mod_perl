@@ -1,5 +1,7 @@
 package TestAPR::date;
 
+# testing APR::Date API
+
 use strict;
 use warnings FATAL => 'all';
 
