@@ -407,7 +407,9 @@ hard_timeout(r, string)
     char       *string
 
     CODE:
+#ifndef USE_THREADS
     hard_timeout(string, r);
+#endif
 
 void
 soft_timeout(r, string)
@@ -420,6 +422,11 @@ soft_timeout(r, string)
 void
 kill_timeout(r)
     Apache     r
+
+    CODE:
+#ifndef USE_THREADS
+    kill_timeout(r);
+#endif
 
 void
 reset_timeout(r)

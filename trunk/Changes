@@ -16,6 +16,12 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.10 - March 21, 1998
+
+rid of SEGV in PerlChildExitHandler spotted by Eric Cholet 
+
+#ifdef USE_THREADS, don't hard_timeout/kill_timeout, SIGALRM causes hangage
+
 =item 1.09 - March 19, 1998
 
 rid of stupid "can't bootstrap Apache::Constants outside of httpd" message
