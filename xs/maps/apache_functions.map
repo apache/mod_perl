@@ -178,6 +178,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
 ~ap_server_root
 ~ap_server_root_relative
 
+
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules
 #however it is not exported on win32

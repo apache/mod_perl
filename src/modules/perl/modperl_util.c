@@ -179,80 +179,6 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
     return sv;
 }
 
-static apr_pool_t *modperl_sv2pool(pTHX_ SV *obj, CV *method)
-{
-    apr_pool_t *p = NULL;
-    char *classname = NULL;
-    IV ptr = 0;
-
-    if ((SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVMG))) {
-        /* standard classes */
-        classname = SvCLASS(obj);
-        ptr = SvObjIV(obj);
-    }
-    else if ((SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVHV))) {
-        /* Apache::RequestRec subclass */
-        classname = SvCLASS(obj);
-        ptr = SvIV(modperl_hv_request_find(aTHX_ obj, classname, method));
-
-        /* if modperl_hv_request_find succeeeds then the class is an 
-         * Apache::RequestRec subclass (the only subclass we support).
-         * so, fake things a bit so we can dig out the proper pool below
-         */
-         classname = "Apache::RequestRec";
-    }
-    else {
-        MP_TRACE_m(MP_FUNC, "SV not a recognized object");
-        return NULL;
-    }
-
-    if (strnEQ(classname, "APR::", 5)) {
-        classname += 5;
-        switch (*classname) {
-          case 'P':
-            if (strEQ(classname, "Pool")) {
-                p = (apr_pool_t *)SvObjIV(obj);
-            }
-            break;
-          default:
-            MP_TRACE_m(MP_FUNC, "class %s not recognized", classname);
-            break;
-        };
-    }
-    else if (strnEQ(classname, "Apache::", 8)) {
-        classname += 8;
-        switch (*classname) {
-          case 'C':
-            if (strEQ(classname, "Connection")) {
-                p = ((conn_rec *)ptr)->pool;
-            }
-            break;
-          case 'R':
-            if (strEQ(classname, "RequestRec")) {
-                p = ((request_rec *)ptr)->pool;
-            }
-            break;
-          case 'S':
-            if (strEQ(classname, "ServerRec")) {
-                p = ((server_rec *)ptr)->process->pconf;
-            }
-            break;
-          default:
-            MP_TRACE_m(MP_FUNC, "class %s not recognised", classname);
-            break;
-        };
-    }
-    else {
-        MP_TRACE_m(MP_FUNC, "class %s not recognised", classname);
-    }
-
-    if (p == NULL) {
-        MP_TRACE_m(MP_FUNC, "unable to derive pool from object");
-    }
-
-    return p;
-}
-
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
 {
     SV *sv = ERRSV;
@@ -710,30 +636,6 @@ char *modperl_file2package(apr_pool_t *p, const char *file)
     }
    
     return package;
-}
-
-/* this is used across server_root_relative() in the
- * Apache, Apache::ServerRec, Apache::RequestRec, and 
- * Apache::Connection classes
- */
-SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname)
-{
-    apr_pool_t *p;
-
-    if (!sv_isobject(sv)) {
-        Perl_croak(aTHX_ "usage: Apache::server_root_relative(obj, name)");
-    }
-
-    p = modperl_sv2pool(aTHX_ sv, get_cv("Apache::server_root_relative", 0));
-
-    if (p == NULL) {
-        MP_TRACE_a(MP_FUNC,
-                   "unable to isolate pool for ap_server_root_relative()");
-        return &PL_sv_undef;
-    }
-
-    /* copy the SV in case the pool goes out of scope before the perl scalar */
-    return newSVpv(ap_server_root_relative(p, fname), 0);
 }
 
 char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)

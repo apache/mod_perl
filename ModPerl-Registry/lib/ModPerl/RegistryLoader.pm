@@ -18,10 +18,13 @@ use strict;
 use warnings;
 
 use ModPerl::RegistryCooker ();
+use Apache::ServerUtil ();
 use APR::Pool ();
 
-use Apache::Const -compile => qw(OK HTTP_OK OPT_EXECCGI);
 use Carp;
+use File::Spec ();
+
+use Apache::Const -compile => qw(OK HTTP_OK OPT_EXECCGI);
 
 our @ISA = ();
 
@@ -68,7 +71,8 @@ sub handler {
             $self->warn("Trying to guess filename based on uri")
                 if $self->{debug};
 
-            $filename = Apache::server_root_relative($self->{pool}, $guess);
+            $filename = File::Spec->catfile(Apache::ServerUtil::server_root,
+                                            $guess);
             unless (-e $filename) {
                 $self->warn("Cannot find guessed file: $filename",
                             "provide \$filename or 'trans' sub");

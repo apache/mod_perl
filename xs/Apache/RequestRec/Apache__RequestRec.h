@@ -84,9 +84,6 @@ apr_finfo_t *mpxs_Apache__RequestRec_finfo(pTHX_ request_rec *r,
     return &r->finfo;
 }
 
-#define mpxs_Apache__RequestRec_server_root_relative(sv, fname) \
-    modperl_server_root_relative(aTHX_ sv, fname)
-
 static MP_INLINE
 const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
                                             SV **MARK, SV **SP)

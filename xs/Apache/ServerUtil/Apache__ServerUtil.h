@@ -60,14 +60,16 @@ SV *mpxs_Apache__ServerRec_get_handlers(pTHX_ server_rec *s,
 #define mpxs_Apache__ServerRec_dir_config(s, key, sv_val) \
     modperl_dir_config(aTHX_ NULL, s, key, sv_val)
 
-#define mpxs_Apache_server(classname) \
-modperl_global_get_server_rec()
+#define mpxs_Apache_server(classname) modperl_global_get_server_rec()
 
-#define mpxs_Apache__ServerRec_server_root_relative(sv, fname) \
-    modperl_server_root_relative(aTHX_ sv, fname);
-
-#define mpxs_Apache_server_root_relative(sv, fname) \
-    modperl_server_root_relative(aTHX_ sv, fname);
+static MP_INLINE
+SV *mpxs_Apache__ServerUtil_server_root_relative(pTHX_ apr_pool_t *p,
+                                                 const char *fname)
+{
+    /* copy the SV in case the pool goes out of scope before the perl
+     * scalar */
+    return newSVpv(ap_server_root_relative(p, fname), 0);
+}
 
 static MP_INLINE
 int mpxs_Apache__ServerRec_is_perl_option_enabled(pTHX_ server_rec *s,

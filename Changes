@@ -12,6 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+($r|$c|$s)->server_root_relative were removed. Now only an explicit
+and somewhat deprecated function API remains:
+Apache::ServerUtil::server_root_relative($pool, $path); it's too easy
+to cause memory leak with this method, and it's inefficient as it
+duplicates the return value, to avoid potential segfaults if the pool
+it was allocated from gets destroyed and the value is attempted to be
+used. Instead of this method use the equivalent:
+File::Spec->catfile(Apache::ServerUtil::server_root, $fname); [Stas]
+
 $r->psignature now lives in the package it belongs to:
 Apache::RequestUtil (previously lived in Apache::ServerUtil). [Stas]
 

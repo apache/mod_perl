@@ -40,5 +40,3 @@ const char *mpxs_Apache__Connection_get_remote_host(pTHX_ conn_rec *c,
     return ap_get_remote_host(c, (void *)dir_config, type, NULL);
 }
 
-#define mpxs_Apache__Connection_server_root_relative(sv, fname) \
-    modperl_server_root_relative(aTHX_ sv, fname)
