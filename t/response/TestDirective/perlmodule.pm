@@ -46,7 +46,7 @@ EOF
 1;
 __END__
 <Base>
-    PerlSwitches -Mlib=@documentroot@/testdirective/perlmodule-vh
+    PerlSwitches -I@documentroot@/testdirective/perlmodule-vh
 </Base>
 
 <VirtualHost TestDirective::perlmodule>
