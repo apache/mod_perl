@@ -40,6 +40,11 @@ sub parse {
 
         $_ = "$continue $_" if $continue;
 
+        #example: +"MP_CCOPTS=-Werror" if $] >= 5.007
+        if (s/^\+//) {
+            $_ = eval $_;
+        }
+
         if (/^MP_/) {
             my($key, $val) = split $param_qr, $_, 2;
             $val ||= "";
