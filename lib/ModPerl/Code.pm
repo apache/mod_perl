@@ -51,7 +51,7 @@ $hook_proto{PerDir} = $hook_proto{PerSrv};
 my $scfg_get = 'MP_dSCFG(parms->server)';
 
 my $dcfg_get = "$scfg_get;\n" .
-  'modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy';
+  'modperl_config_dir_t *dcfg = (modperl_config_dir_t *)dummy';
 
 my %directive_proto = (
     PerSrv     => {

@@ -138,7 +138,7 @@ typedef struct {
 #endif
     MpAV *argv;
     modperl_options_t *flags;
-} modperl_srv_config_t;
+} modperl_config_srv_t;
 
 typedef struct {
     char *location;
@@ -150,7 +150,7 @@ typedef struct {
 #ifdef USE_ITHREADS
     modperl_interp_lifetime_e interp_lifetime;
 #endif
-} modperl_dir_config_t;
+} modperl_config_dir_t;
 
 typedef struct modperl_mgv_t modperl_mgv_t;
 
@@ -208,6 +208,6 @@ typedef struct {
 typedef struct {
     HV *pnotes;
     modperl_wbucket_t wbucket;
-} modperl_request_config_t;
+} modperl_config_req_t;
 
 #endif /* MODPERL_TYPES_H */
