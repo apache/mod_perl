@@ -47,6 +47,8 @@ test_add_version_component();
 
 test_apache_status();
 
+test_apache_resource();
+
 test_perl_ithreads();
 
 
@@ -163,6 +165,23 @@ sub test_apache_status {
        }
     ) if Apache::Module::loaded('Apache::Status');
 }
+
+sub test_apache_resource {
+    ### Apache::Resource tests
+
+    # load first for the menu
+    require Apache::Status;
+
+    # uncomment for local tests
+    #$ENV{PERL_RLIMIT_DEFAULTS} = 1;
+    #$Apache::Resource::Debug   = 1;
+
+    # requires optional BSD::Resource
+    return unless eval { require BSD::Resource };
+
+    require Apache::Resource;
+}
+
 
 sub test_perl_ithreads {
     # this is needed for TestPerl::ithreads

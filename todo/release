@@ -58,8 +58,6 @@
   => Ideally the tools should work transparently with threaded and
   non-threaded mpms, but how?
 
-* Apache::Resource
-
 * It'd be nice to have PAUSE and the clients support packages with
   several versions, like mod_perl 1.0 and mod_perl 2.0, since once we
   release it any dependency on mod_perl will be resolved as mod_perl
