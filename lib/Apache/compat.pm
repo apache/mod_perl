@@ -392,7 +392,7 @@ sub Apache::URI::parse {
 
     $uri ||= $r->construct_url;
 
-    APR::URI->parse($r, $uri);
+    APR::URI->parse($r->pool, $uri);
 }
 
 1;
