@@ -9,6 +9,14 @@ use CGI ();
 sub handler {
     my $r = shift;
 
+    if ($CGI::Q) {
+        die "CGI.pm globals were not reset";
+    }
+
+    unless ($CGI::MOD_PERL) {
+        die "CGI.pm does not think this is mod_perl";
+    }
+
     my $cgi = CGI->new;
 
     my $param = $cgi->param('PARAM');
@@ -17,13 +25,17 @@ sub handler {
     print $cgi->header('-type' => 'text/test-output',
                        '-X-Perl-Module' => __PACKAGE__);
 
-    print "ok $param\n" if $param;
-
     if ($httpupload) {
         no strict;
         local $/;
         my $content = <$httpupload>;
         print "ok $content\n";
+    }
+    elsif ($param) {
+        print "ok $param\n";
+    }
+    else {
+        print "no param or upload data\n";
     }
 
     Apache::OK;
