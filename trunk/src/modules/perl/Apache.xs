@@ -274,12 +274,6 @@ child_terminate(request_rec *r)
 int basic_http_header(request_rec *r);
 #endif
 
-#if MODULE_MAGIC_NUMBER > 19970912 
-#define cmd_infile   parms->config_file
-#else
-#define cmd_infile   parms->infile
-#endif
-
 pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);
@@ -296,16 +290,6 @@ server_rec *perl_get_startup_server(void)
     if(sv) {
 	IV tmp = SvIV((SV*)SvRV(sv));
 	return (server_rec *)tmp;
-    }
-    return NULL;
-}
-
-static cmd_parms *perl_get_cmd_parms(void)
-{
-    SV *sv = perl_get_sv("Apache::__CMDPARMS", FALSE);
-    if(sv) {
-	IV tmp = SvIV((SV*)SvRV(sv));
-	return (cmd_parms *)tmp;
     }
     return NULL;
 }
@@ -1806,41 +1790,16 @@ query_string(r, ...)
 #  void *per_dir_config;		/* Options set in config files, etc. */
 
 SV *
-dir_config(r, svkey=Nullsv, ...)
+dir_config(r, key, ...)
     Apache  r
-    SV *svkey
+    char *key
 
     PREINIT:
     perl_dir_config *c;
-    SV *caller = Nullsv;
 
     CODE:
-    if(svkey && (gv_stashpv(SvPV(svkey,na), FALSE)))
-        caller = svkey;
-
-    if((svkey == Nullsv) || caller) {
-	HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
-	SV **mod_ptr;
-	RETVAL = Nullsv;
-
-	if(!caller)
-	    caller = perl_eval_pv("scalar caller", TRUE);
-
-	if(caller) 
-	    mod_ptr = hv_fetch(xs_config, SvPVX(caller), SvCUR(caller), FALSE);
-
-	if(mod_ptr && *mod_ptr) {
-	    IV tmp = SvIV((SV*)SvRV(*mod_ptr));
-	    SV **data = get_module_config(r->per_dir_config, (module *)tmp);
-	    RETVAL = data ? SvREFCNT_inc(*data) : Nullsv; 
-	}
-	if(!RETVAL) XSRETURN_UNDEF;
-    }
-    else {
-	char *key = SvPV(svkey,na);
-        c = get_module_config(r->per_dir_config, &perl_module);
-        TABLE_GET_SET(c->vars, FALSE);
-    }
+    c = get_module_config(r->per_dir_config, &perl_module);
+    TABLE_GET_SET(c->vars, FALSE);
 
     OUTPUT:
     RETVAL
@@ -2135,38 +2094,3 @@ names(server)
 
     OUTPUT:
     RETVAL				   
-
-MODULE = Apache  PACKAGE = Apache::Config
-
-char *
-getline(self)
-    SV *self
-
-    PREINIT:
-    cmd_parms *parms = perl_get_cmd_parms();
-    char l[MAX_STRING_LEN];
-
-    CODE:				   
-    if(!parms) XSRETURN_UNDEF;
-
-    (void)cfg_getline(l, MAX_STRING_LEN, cmd_infile);
-    RETVAL = l;
-
-    OUTPUT:
-    RETVAL
-
-char *
-path(self)
-    SV *self
-
-    PREINIT:
-    cmd_parms *parms = perl_get_cmd_parms();
-
-    CODE:				   
-    if(!parms) XSRETURN_UNDEF;
-
-    RETVAL = parms->path;
-
-    OUTPUT:
-    RETVAL
-

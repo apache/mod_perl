@@ -93,6 +93,16 @@ array_header *avrv2array_header(SV *avrv, pool *p)
     return arr;
 }
 
+/* same as Symbol::gensym() */
+SV *mod_perl_gensym (char *pack)
+{
+    GV *gv = newGVgen(pack);
+    SV *rv = newRV((SV*)gv);
+    (void)hv_delete(gv_stashpv(pack, TRUE), 
+		    GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
+    return rv;
+}
+
 #ifdef PERL_SECTIONS
 void perl_tie_hash(HV *hv, char *class)
 {

@@ -36,18 +36,20 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
  
     my $proto_perl2c = Apache::ExtUtils->proto_perl2c;
 
+    $PerlConfig .= "<Location /perl>\n";
     while(my($pp,$cp) = each %$proto_perl2c) {
 	my $arg = "A";
-	$pp =~ s/^\$//;
+	$pp =~ s/^\$\$//;
 	1 while $pp =~ s/(\$|\@)/$arg++ . " "/ge;
 	$PerlConfig .= "$cp $pp\n";
     }
 
     $PerlConfig .= <<EOF;
 TestCmd one two
-AnotherCmd uno dos tres
+AnotherCmd
 CmdIterate A B C D E F
 YAC yet another
+</Location>
 <Container /for/whatever>
 
 it's  
@@ -55,6 +57,10 @@ it's
 time
 #make that a scotch
 </Container>
+
+<Location /perl/io>
+TestCmd PerlIO IsStdio
+</Location>
 EOF
 }
 

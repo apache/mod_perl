@@ -3,7 +3,7 @@
 # Check GET via HTTP.
 #
 
-my $num_tests = 8;
+my $num_tests = 9;
 my(@test_scripts) = qw(test perl-status);
 %get_only = map { $_,1 } qw(perl-status);
 
@@ -44,6 +44,9 @@ foreach $s (@test_scripts) {
     test ++$i, ($str =~ /^REQUEST_METHOD=GET$/m); 
     test ++$i, ($str =~ /^QUERY_STRING=query$/m); 
 }
+
+test ++$i, $response->header("Server") =~ /mod_perl/;
+print "Server: ", $response->header("Server"), "\n";
 
 #test PerlSetupEnv Off
 test ++$i, fetch("/perl/noenv/test.pl") !~ /SERVER_SOFTWARE/m;

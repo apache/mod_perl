@@ -31,7 +31,6 @@ $Apache::ERRSV_CAN_BE_HTTP  = 1;
 #warn "ServerReStarting=$Apache::ServerReStarting\n";
 
 #use Apache::Debug level => 4;
-
 use mod_perl 1.03_01;
 
 if(defined &main::subversion) {

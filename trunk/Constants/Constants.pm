@@ -47,11 +47,13 @@ my(@http)       = qw(HTTP_METHOD_NOT_ALLOWED
 		     HTTP_PRECONDITION_FAILED
 		     HTTP_SERVICE_UNAVAILABLE
 		     HTTP_VARIANT_ALSO_VARIES);
+my(@config)     = qw(DECLINE_CMD);
 
 my $rc = [@common, @response];
 
 %Apache::Constants::EXPORT_TAGS = (
     common     => \@common,
+    config     => \@config,
     response   => $rc,
     http       => \@http,
     options    => \@options,
@@ -71,6 +73,7 @@ my $rc = [@common, @response];
     @remotehost,
     @satisfy,
     @server,
+    @config,
 ); 
    
 *Apache::Constants::EXPORT = \@common;

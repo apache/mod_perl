@@ -55,16 +55,6 @@
 
 extern API_VAR_EXPORT module *top_module;
 
-#if MODULE_MAGIC_NUMBER > 19970912 
-#define cmd_infile   parms->config_file
-#define cmd_filename parms->config_file->name
-#define cmd_linenum  parms->config_file->line_number
-#else
-#define cmd_infile   parms->infile
-#define cmd_filename parms->config_file
-#define cmd_linenum  parms->config_line
-#endif
-
 #ifdef PERL_SECTIONS
 static int perl_sections_self_boot = 0;
 static const char *perl_sections_boot_module = NULL;
@@ -619,22 +609,33 @@ CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
     return perl_pod_end_magic;
 }
 
-CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, SV **data, char *one)
+#ifdef PERL_DIRECTIVE_HANDLERS
+
+CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, mod_perl_perl_dir_config *data, char *one)
 {
     return perl_cmd_perl_TAKE123(cmd, data, one, NULL, NULL);
 }
 
-CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two)
+CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, mod_perl_perl_dir_config *data, char *one, char *two)
 {
     return perl_cmd_perl_TAKE123(cmd, data, one, two, NULL);
 }
 
 
-static SV *perl_perl_create_dir_config(SV **sv, HV *class)
+static SV *perl_bless_cmd_parms(cmd_parms *parms)
+{
+    SV *sv = sv_newmortal();
+    sv_setref_pv(sv, "Apache::CmdParms", (void*)parms);
+    MP_TRACE_g(fprintf(stderr, "blessing cmd_parms=(0x%lx)\n",
+		     (unsigned long)parms));
+    return sv;
+}
+
+static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 {
     GV *gv; 
 
-    if(SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
+    if(*sv && SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
 	return *sv;
 
     /* return $class->new if $class->can("new") */
@@ -645,10 +646,11 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class)
 	ENTER;SAVETMPS;
 	PUSHMARK(sp);
 	XPUSHs(sv_2mortal(newSVpv(HvNAME(class),0)));
+	XPUSHs(perl_bless_cmd_parms(parms));
 	PUTBACK;
 	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
 	SPAGAIN;
-	if(count == 1) {
+	if((perl_eval_ok(parms->server) == OK) && (count == 1)) {
 	    *sv = POPs;
 	    ++SvREFCNT(*sv);
 	}
@@ -667,35 +669,42 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class)
     }
 }
 
-CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
 				  char *one, char *two, char *three)
 {
     dSP;
-    char *subname = (char *)cmd->info;
+    mod_perl_cmd_info *info = (mod_perl_cmd_info *)cmd->info;
+    char *subname = info->subname;
     int count = 0;
     CV *cv = perl_get_cv(subname, TRUE);
     SV *obj;
-    SV *sv = perl_get_sv("Apache::__CMDPARMS", TRUE);
-    sv_setref_pv(sv, "Apache::Config", (void*)cmd);
+    bool has_empty_proto = (SvPOK(cv) && (SvLEN(cv) == 1));
 
-    obj = perl_perl_create_dir_config(data, CvSTASH(cv));
+    obj = perl_perl_create_dir_config(&data->obj, CvSTASH(cv), cmd);
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
-    if(SvPOK(cv) && (SvCUR(cv) || (SvPVX(cv) == NULL))) {
+    if(!has_empty_proto) {
+	SV *cmd_obj = perl_bless_cmd_parms(cmd);
+	XPUSHs(cmd_obj);
 	XPUSHs(obj);
-	PUSHif(one);PUSHif(two);PUSHif(three);
+	if(cmd->cmd->args_how != NO_ARGS) {
+	    PUSHif(one);PUSHif(two);PUSHif(three);
+	}
+	if(SvPOK(cv) && (*(SvEND((SV*)cv)-1) == '*')) {
+	    SV *gp = mod_perl_gensym("Apache::CmdParms");
+	    sv_magic((SV*)SvRV(gp), cmd_obj, 'q', Nullch, 0); 
+	    XPUSHs(gp);
+	}
     }
     PUTBACK;
     count = perl_call_sv((SV*)cv, G_EVAL | G_SCALAR);
     SPAGAIN;
-#if 1
     if(count == 1) {
 	char *retval = POPp;
 	if(strEQ(retval, DECLINE_CMD))
 	    return DECLINE_CMD;
     }
-#endif
     FREETMPS;LEAVE;
 
     if(SvTRUE(ERRSV))
@@ -703,6 +712,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     else
 	return NULL;
 }
+#endif /* PERL_DIRECTIVE_HANDLERS */
 
 #ifdef PERL_SECTIONS
 

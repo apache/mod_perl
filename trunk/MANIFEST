@@ -1,6 +1,8 @@
 Changes
 Constants/Constants.pm
 Constants/Makefile.PL
+ModuleConfig/ModuleConfig.pm
+ModuleConfig/Makefile.PL
 INSTALL
 SUPPORT
 INSTALL.win32
@@ -48,6 +50,7 @@ Symbol/test.pl
 src/modules/perl/mod_perl_version.h
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
+src/modules/perl/ModuleConfig.xs
 src/modules/perl/ldopts
 src/modules/perl/mod_perl.c
 src/modules/perl/mod_perl.h
@@ -118,6 +121,7 @@ t/net/perl/io/perlio.pl
 t/net/perl/io/ssi1.pl
 t/net/perl/io/ssi2.pl
 t/net/perl/io/include.pl	
+t/net/perl/io/dir_config.pl
 t/net/perl/noenv/test.pl
 lib/Apache/RedirectLogFix.pm
 lib/Apache/Include.pm

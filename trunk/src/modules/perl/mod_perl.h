@@ -126,6 +126,7 @@ typedef request_rec * Apache;
 typedef request_rec * Apache__SubRequest;
 typedef conn_rec    * Apache__Connection;
 typedef server_rec  * Apache__Server;
+typedef cmd_parms   * Apache__CmdParms;
 
 #define GvHV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PVHV)
 #define GvSV_init(name) gv_fetchpv(name, GV_ADDMULTI, SVt_PV)
@@ -271,6 +272,9 @@ if((add->flags & f) || (base->flags & f)) \
 #define PERL_APACHE_SSI_TYPE "text/x-perl-server-parsed-html"
 /* PerlSetVar */
 
+#ifndef NO_PERL_DIRECTIVE_HANDLERS
+#define PERL_DIRECTIVE_HANDLERS
+#endif
 #ifndef NO_PERL_STACKED_HANDLERS
 #define PERL_STACKED_HANDLERS
 #endif
@@ -293,6 +297,16 @@ if((add->flags & f) || (base->flags & f)) \
 
 /* some 1.2.x/1.3.x compat stuff */
 /* once 1.3.0 is here, we can toss most of this junk */
+
+#if MODULE_MAGIC_NUMBER > 19970912 
+#define cmd_infile   parms->config_file
+#define cmd_filename parms->config_file->name
+#define cmd_linenum  parms->config_file->line_number
+#else
+#define cmd_infile   parms->infile
+#define cmd_filename parms->config_file
+#define cmd_linenum  parms->config_line
+#endif
 
 #ifndef DONE
 #define DONE -2
@@ -795,6 +809,16 @@ typedef struct {
     char *method;
 } mod_perl_handler;
 
+typedef struct {
+    SV *obj;
+    char *class;
+} mod_perl_perl_dir_config;
+
+typedef struct {
+    char *subname;
+    char *info;
+} mod_perl_cmd_info;
+
 extern module MODULE_VAR_EXPORT perl_module;
 
 /* a couple for -Wall sanity sake */
@@ -855,6 +879,7 @@ void mod_perl_destroy_handler(void *data);
 
 SV *array_header2avrv(array_header *arr);
 array_header *avrv2array_header(SV *avrv, pool *p);
+SV *mod_perl_gensym (char *pack);
 void perl_tie_hash(HV *hv, char *class);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
@@ -933,9 +958,9 @@ CHAR_P perl_cmd_type_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg
 CHAR_P perl_cmd_fixup_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_handler_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
-CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, SV **data, char *one);
-CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two);
-CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **config,
+CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *one);
+CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *one, char *two);
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *d,
 			     char *one, char *two, char *three);
 
 #define perl_cmd_perl_RAW_ARGS perl_cmd_perl_TAKE1
