@@ -73,7 +73,6 @@ Leak/Leak.xs
 Leak/Makefile.PL
 Leak/typemap
 src/modules/perl/perl_PL.h
-src/modules/perl/mod_perl_version.h
 src/modules/perl/Exports.c
 src/modules/perl/File.xs
 src/modules/perl/Constants.xs

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+mod_perl_version.h removed from MANIFEST
+
 fix modules/sandwich test
 
 apxs/aix port [Paul J. Reder <rederpj@raleigh.ibm.com>]
