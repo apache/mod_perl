@@ -6,6 +6,7 @@ use strict;
 use Apache::ParseSource ();
 use ModPerl::ParseSource ();
 use ModPerl::FunctionMap ();
+use ModPerl::WrapXS (); #XXX: we should not need to require this here
 
 my $p = Apache::ParseSource->new(prefixes => ModPerl::FunctionMap->prefixes,
                                  @ARGV);
