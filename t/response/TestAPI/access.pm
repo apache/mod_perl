@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Access ();
 
@@ -12,7 +13,7 @@ use Apache::Const -compile => qw(OK :options :override :satisfy);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 10;
+    plan $r, tests => 11;
 
     $r->allow_methods(1, qw(GET POST));
 
@@ -40,7 +41,12 @@ sub handler {
 
     ok !$r->some_auth_required;
 
-    # XXX: $r->get_remote_logname();
+    # XXX: this test requires a running identd, which we have no way
+    # to figure out whether it's running, or how to start one. so for
+    # now just check that the method is call-able.
+    my $remote_logname = $r->get_remote_logname() || '';
+    t_debug "get_remote_logname: $remote_logname";
+    ok 1;
 
     Apache::OK;
 }
