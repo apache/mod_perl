@@ -563,6 +563,110 @@ sub write_typemap_h_file {
     close $fh;
 }
 
+sub write_lookup_method_file {
+    my $self = shift;
+
+    my %map = ();
+    while (my($module, $functions) = each %{ $self->{XS} }) {
+        my $last_prefix = "";
+        for my $func (@$functions) {
+            my $class = $func->{class};
+            my $prefix = $func->{prefix};
+            $last_prefix = $prefix if $prefix;
+
+            my $name = $func->{name};
+            if ($name =~ /^mpxs_/) {
+                #e.g. mpxs_Apache__RequestRec_
+                my $class_prefix = class_c_prefix($class);
+                if ($name =~ /$class_prefix/) {
+                    $prefix = class_mpxs_prefix($class);
+                }
+            }
+            $name =~ s/^$prefix// if $prefix;
+
+            push @{ $map{$name} }, [$module, $class];
+        }
+    }
+
+    local $Data::Dumper::Terse = 1;
+    $Data::Dumper::Terse = $Data::Dumper::Terse; # warn
+    my $methods = Dumper(\%map);
+    $methods =~ s/\n$//;
+
+    my $package = "ModPerl::MethodLookup";
+    my $file = catfile "lib", "ModPerl", "MethodLookup.pm";
+    debug "creating $file";
+    open my $fh, ">$file" or die "Can't open $file: $!";
+
+    my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
+
+    print $fh <<EOF;
+$noedit_warning
+package $package;
+
+use strict;
+use warnings;
+
+my \$methods = $methods;
+
+EOF
+
+    print $fh <<'EOF';
+use constant MODULE => 0;
+use constant CLASS  => 1;
+
+sub preload_all_modules {
+    eval "require $_" for map $_->[MODULE], map @$_, values %$methods;
+}
+
+sub lookup_method {
+    my ($method, $arg) = @_;
+
+    unless (defined $method) {
+        my $hint = "no 'method' argument was passed";
+        return ($hint);
+    }
+
+    # strip the package name for the fully qualified method
+    $method =~ s/.+:://;
+
+    unless (exists $methods->{$method}) {
+        my $hint = "don't know anything about method '$method'";
+        return ($hint);
+    }
+
+    my @items = @{ $methods->{$method} };
+    if (@items == 1) {
+        my $module = $items[0]->[MODULE];
+        my $hint = "to use method '$method' add:\n" . "\tuse $module ();\n";
+        return ($hint, $module);
+    }
+    else {
+        if (defined $arg and ref $arg) {
+            my $class = ref $arg;
+            for my $item (@items) {
+                if ($class eq $item->[CLASS]) {
+                    my $module = $item->[MODULE];
+                    my $hint = "to use method '$method' add:\n" .
+                        "\tuse $module ();\n";
+                    return ($hint, $module);
+                }
+            }
+        }
+        else {
+            my @modules = map {$_->[MODULE]} @items;
+            my $hint = "There is more than one class with method '$method'\n" .
+                "try one of:\n" . join '', map {"\tuse $_ ();\n"} @modules;
+            return ($hint, @modules);
+        }
+    }
+}
+
+1;
+EOF
+    close $fh;
+}
+
 sub generate {
     my $self = shift;
 
@@ -592,6 +696,8 @@ sub generate {
         $self->write_xs($module, $functions);
         $self->write_pm($module);
     }
+
+    $self->write_lookup_method_file;
 }
 
 #three .sym files are generated:
