@@ -138,7 +138,7 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
 }
 
-void modperl_register_hooks(void)
+void modperl_register_hooks(apr_pool_t *p)
 {
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_MIDDLE);
 
