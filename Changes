@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+fix Makefile.PL arguments parser to support more than one MP_foo
+option on the same line (including .makepl_args.mod_perl2 file) [Stas]
+
 fix compilation issues in ModPerl::Util::current_perl_id (on some
 builds newSVpvf can't be resolved but Perl_newSVpvf works just
 fine). [Stas, Markus Wichitill <mawic@gmx.de>]
