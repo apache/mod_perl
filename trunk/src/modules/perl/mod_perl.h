@@ -153,7 +153,7 @@ extern "C" {
 ERRHV && hv_exists(ERRHV, k, strlen(k))
 
 #define MP_STORE_ERROR(k,v) \
-hv_store(ERRHV, k, strlen(k), v, FALSE)
+hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 
 #define MP_FETCH_ERROR(k) \
 *hv_fetch(ERRHV, k, strlen(k), FALSE)

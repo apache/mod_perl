@@ -255,4 +255,8 @@ SetHandler perl-script
 PerlHandler $My::Obj->method
 </Location>
 
+<Location /death>
+PerlHandler Apache::Death
+SetHandler perl-script
+</Location>
 

@@ -124,6 +124,7 @@ t/modules/status.t
 t/modules/symbol.t
 t/internal/api.t
 t/internal/auth.t
+t/internal/croak.t
 t/internal/dirmagic.t
 t/internal/error.t
 t/internal/headers.t
@@ -181,6 +182,7 @@ t/docs/env.iphtml
 t/docs/lists.ehtml
 t/docs/test.html
 t/docs/rgy-include.shtml
+t/docs/badsyntax.pl
 t/docs/startup.pl
 t/docs/rl.pl
 t/docs/stacked.pl
