@@ -401,6 +401,7 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
 
 #define PERL_CALLBACK(h,name) \
 PERL_SET_CUR_HOOK(h); \
+(void)acquire_mutex(mod_perl_mutex); \
 status = perl_run_stacked_handlers(h, r, Nullav); \
 if((status != OK) && (status != DECLINED)) { \
     MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
@@ -408,6 +409,7 @@ if((status != OK) && (status != DECLINED)) { \
 else if(AvTRUE(name)) { \
     status = perl_run_stacked_handlers(h, r, name); \
 } \
+(void)release_mutex(mod_perl_mutex); \
 MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status))
 
 
