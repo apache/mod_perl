@@ -1166,6 +1166,8 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
     char *tmpkey; 
     I32 tmpklen; 
     SV *tmpval;
+    void *old_info = cmd->info;
+
     (void)hv_iterinit(hv); 
     while ((tmpval = hv_iternextsv(hv, &tmpkey, &tmpklen))) { 
 	char line[MAX_STRING_LEN]; 
@@ -1195,6 +1197,9 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 	if(errmsg)
 	    log_printf(cmd->server, "<Perl>: %s", errmsg);
     }
+
+    cmd->info = old_info;
+
     /* Emulate the handling of end token for the section */ 
     perl_set_config_vectors(cmd, cfg, &core_module);
 } 
@@ -1511,9 +1516,7 @@ void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config)
     void *dummy = perl_set_config_vectors(cmd, config, &core_module);
     void *old_info = cmd->info;
 
-    if (strstr(key, "Match")) {
-	cmd->info = (void*)key;
-    }
+    cmd->info = (void *)strstr(key, "Match");
 
     if(strnEQ(key, "Location", 8))
 	perl_urlsection(cmd, dummy, hv);

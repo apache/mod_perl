@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+fix multiple %LocationMatch in <Perl> sections bug
+[Salvador Ortiz Garcia <sog@msg.com.mx>]
+
 rip -D_GNU_SOURCE out of Perl 5.7.3+'s ccflags, which modperl doesn't
 need and apache won't compile with [Stas Bekman <stas@stason.org>]
 

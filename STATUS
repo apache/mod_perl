@@ -21,12 +21,6 @@ Available Patches:
 	Status: 
           doc patch at http://marc.theaimsgroup.com/?l=apache-modperl&m=97450363501652&w=2
 
-    * %LocationMatch <Perl> bug
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98260537428737&w=2
-	Status:
-          may be fixed here
-            http://marc.theaimsgroup.com/?l=apache-modperl&m=101366182205497&w=2
-
     * PVIV issues
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99905070209305&w=2
 	Status:
