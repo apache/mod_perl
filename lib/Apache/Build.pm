@@ -81,7 +81,7 @@ sub ap_prefix_invalid {
 
     my $include_dir = $self->apxs(-q => 'INCLUDEDIR');
 
-    unless (-e $include_dir) {
+    unless (-d $include_dir) {
         return "include/ directory not found in $prefix";
     }
 
@@ -1667,12 +1667,14 @@ sub includes {
         my $ap_inc = $self->apxs('-q' => 'INCLUDEDIR');
         if ($ap_inc && -d $ap_inc) {
             push @inc, $ap_inc;
-        } else {
-            # this is fatal
-            die "Can't find the mod_perl include dir";
+            return \@inc;
         }
 
-        return \@inc;
+        # this is fatal
+        my $reason = $ap_inc
+            ? "path $ap_inc doesn't exist"
+            : "apxs -q INCLUDEDIR didn't return a value";
+        die "Can't find the mod_perl include dir (reason: $reason)";
     }
 
     my $src = $self->dir;
