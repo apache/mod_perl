@@ -5397,6 +5397,28 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
+    'name' => 'mpxs_Apache__RequestRec_OPEN',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'self'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'arg1'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'arg2'
+      },
+    ]
+  },
+  {
+    'return_type' => 'int',
     'name' => 'mpxs_Apache__RequestRec_FILENO',
     'args' => [
       {

@@ -3,8 +3,9 @@ in no particular order
 ------------------------------------------
 
 tied filehandle interface:
- -CLOSE, OPEN, EOF, TELL, SEEK
+ -EOF, TELL, SEEK
  -READLINE - proper implementation (see comment in Apache::compat)
+ need to attempt to fix that interface so it'll work with IPC::Open* family  
 
 $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,

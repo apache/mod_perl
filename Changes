@@ -10,7 +10,7 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
-Add $r->FILENO implementation [Stas]
+OPEN, CLOSE and FILENO implementation for Apache::RequestRec [Stas]
 
 Apache::Test: Support <NoAutoConfig> </NoAutoConfig> blocks in .pm
 files, so we can have a full manual control over generated config

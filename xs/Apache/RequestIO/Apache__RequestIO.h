@@ -14,6 +14,8 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_Apache__RequestRec_PRINTF mpxs_ap_rprintf
 #define mpxs_Apache__RequestRec_BINMODE(r) \
     r ? SVYES : SVNO /* noop */
+#define mpxs_Apache__RequestRec_CLOSE(r) \
+    r ? SVYES : SVNO /* noop */
 
 #define mpxs_Apache__RequestRec_UNTIE(r, refcnt) \
     (r && refcnt) ? SVYES : SVNO /* noop */
@@ -234,6 +236,28 @@ SV *mpxs_Apache__RequestRec_GETC(pTHX_ request_rec *r)
     }
 
     return &PL_sv_undef;
+}
+
+static MP_INLINE
+int mpxs_Apache__RequestRec_OPEN(pTHX_ SV *self,  SV *arg1, SV *arg2)
+{
+    char *name;
+    STRLEN len;
+    SV *arg;
+    dHANDLE("STDOUT");
+    
+    modperl_io_handle_untie(aTHX_ handle); /* untie *STDOUT */
+ 
+    if (arg2 && self) {
+        arg = newSVsv(arg1);
+        sv_catsv(arg, arg2);
+    }
+    else {
+        arg = arg1;
+    }
+
+    name = SvPV(arg, len);
+    return do_open(handle, name, len, FALSE, O_RDONLY, 0, Nullfp);
 }
 
 static MP_INLINE
