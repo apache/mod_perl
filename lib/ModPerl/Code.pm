@@ -275,8 +275,8 @@ my %sources = (
 my @c_src_names = qw(interp log config);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
-sub c_files { map { "$_.c" } @c_names }
-sub o_files { map { "$_.o" } @c_names }
+sub c_files { [map { "$_.c" } @c_names] }
+sub o_files { [map { "$_.o" } @c_names] }
 
 my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
 

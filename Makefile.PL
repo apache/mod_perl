@@ -21,7 +21,7 @@ my $code  = ModPerl::Code->new;
     use Getopt::Std;
     my %opts;
     getopts('Ecm:', \%opts);
-    configure()    if $opts{c};
+    configure()  if $opts{c};
     make(\%opts) if $opts{m};
 }
 
@@ -55,9 +55,7 @@ sub echo_cmd {
 
 sub make {
     my $opts = shift;
-    my $target = $opts->{m};
-    return clean() if $target eq 'c';
-    my $single_file = $target =~ /\.c$/ ? $target : "";
+    return clean() if $opts->{m} eq 'c';
 
     my $ccopts = ExtUtils::Embed::ccopts();
     my @inc = $build->inc;
@@ -68,16 +66,11 @@ sub make {
     my $flags = "-g -Wall";
     $flags .= " -E" if $opts->{E};
 
-    my @c_files = $single_file ? $single_file : $code->c_files;
-
-    for (sort { (stat $b)[9] <=> (stat $a)[9] } @c_files) {
+    for (sort { (stat $b)[9] <=> (stat $a)[9] } @{ $code->c_files }) {
         echo_cmd "$cc $flags $ccopts @inc -c $_";
-        return if $single_file;
     }
 
-    my @objs = $code->o_files;
-
-    echo_cmd "$ar crv libmodperl.a @objs";
+    echo_cmd "$ar crv libmodperl.a @{ $code->o_files }";
 
     chdir $build->cwd;
 }
