@@ -73,5 +73,8 @@ EVERYTHING=1
 #this happens just before PerlFreshRestart does it's thang
 #PERL_RESTART_HANDLER=1
 
+#Link Tie.o with the server. Required for use of Apache::Tie
+#PERL_TIE_TABLES=1
+
 __END__
 
