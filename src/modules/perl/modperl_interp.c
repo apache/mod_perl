@@ -212,13 +212,16 @@ apr_status_t modperl_interp_unselect(void *data)
  */
 #define MP_INTERP_KEY "MODPERL_INTERP"
 
+#define get_interp(p) \
+(void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, p)
+
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
     modperl_config_dir_t *dcfg = modperl_config_dir_get(r);
     const char *desc = NULL;
-    modperl_interp_t *interp;
+    modperl_interp_t *interp = NULL;
     apr_pool_t *p = NULL;
     int is_subrequest = (r && r->main) ? 1 : 0;
     modperl_interp_lifetime_e lifetime;
@@ -252,7 +255,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     if (c && (lifetime == MP_INTERP_LIFETIME_CONNECTION)) {
         desc = "conn_rec pool";
-        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, c->pool);
+        get_interp(c->pool);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
@@ -266,14 +269,23 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     else if (r) {
         if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
             /* share 1 interpreter across sub-requests */
-            p = r->main->pool;
+            request_rec *main_r = r->main;
+
+            while (main_r && !interp) {
+                p = main_r->pool;
+                get_interp(p);
+                MP_TRACE_i(MP_FUNC,
+                           "looking for interp in main request for %s...%s\n",
+                           main_r->uri, interp ? "found" : "not found");
+                main_r = main_r->main;
+            }                
         }
         else {
             p = r->pool;
+            get_interp(p);
         }
 
         desc = "request_rec pool";
-        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, p);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
