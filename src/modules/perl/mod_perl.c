@@ -25,10 +25,6 @@ static bool MP_init_hash_seed_set = FALSE;
 static void modperl_hash_seed_init(apr_pool_t *p) 
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
-
-/* XXX: not sure how to portably handle env reading for older apr
- * libs, for now just ignore it */
-#ifdef APR_VERSION_0_9_3_PLUS
     char *s;
     /* check if there is a specific hash seed passed via the env var
      * and if that's the case -- use it */
@@ -42,7 +38,6 @@ static void modperl_hash_seed_init(apr_pool_t *p)
             MP_init_hash_seed_set = TRUE;
         }
     }
-#endif
     
     /* calculate our own random hash seed */
     if (!MP_init_hash_seed_set) {
