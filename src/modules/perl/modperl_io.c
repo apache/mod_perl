@@ -16,10 +16,10 @@
 #include "mod_perl.h"
 
 #define TIEHANDLE(handle,r) \
-modperl_io_handle_tie(aTHX_ handle, "Apache::RequestRec", (void *)r)
+modperl_io_handle_tie(aTHX_ handle, "Apache2::RequestRec", (void *)r)
 
 #define TIED(handle) \
-modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
+modperl_io_handle_tied(aTHX_ handle, "Apache2::RequestRec")
 
 MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
                                      char *classname, void *ptr)
@@ -116,7 +116,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     if (handle && SvTYPE(handle) == SVt_PVGV &&
         IoTYPE(GvIO(handle)) != IoTYPE_CLOSED) {
         handle_save = gv_fetchpv(Perl_form(aTHX_
-                                           "Apache::RequestIO::_GEN_%ld",
+                                           "Apache2::RequestIO::_GEN_%ld",
                                            (long)PL_gensym++),
                                  TRUE, SVt_PVIO);
 
@@ -133,8 +133,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
         Perl_do_close(aTHX_ handle, TRUE);
     }
 
-    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
-    status = Perl_do_open9(aTHX_ handle, "<:Apache", 8, FALSE, O_RDONLY,
+    sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
+    status = Perl_do_open9(aTHX_ handle, "<:Apache2", 9, FALSE, O_RDONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STDIN: %_", get_sv("!", TRUE));
@@ -159,7 +159,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     if (handle && SvTYPE(handle) == SVt_PVGV &&
         IoTYPE(GvIO(handle)) != IoTYPE_CLOSED) {
         handle_save = gv_fetchpv(Perl_form(aTHX_
-                                           "Apache::RequestIO::_GEN_%ld",
+                                           "Apache2::RequestIO::_GEN_%ld",
                                            (long)PL_gensym++),
                                  TRUE, SVt_PVIO);
 
@@ -176,8 +176,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
         Perl_do_close(aTHX_ handle, TRUE);
     }
 
-    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
-    status = Perl_do_open9(aTHX_ handle, ">:Apache", 8, FALSE, O_WRONLY,
+    sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
+    status = Perl_do_open9(aTHX_ handle, ">:Apache2", 9, FALSE, O_WRONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STDOUT: %_", get_sv("!", TRUE));
@@ -217,7 +217,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
         }
 
         Perl_do_close(aTHX_ handle, FALSE);
-        (void)hv_delete(gv_stashpv("Apache::RequestIO", TRUE), 
+        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {
@@ -264,7 +264,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
         }
 
         Perl_do_close(aTHX_ handle, FALSE);
-        (void)hv_delete(gv_stashpv("Apache::RequestIO", TRUE), 
+        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {

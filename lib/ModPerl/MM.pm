@@ -77,8 +77,8 @@ sub add_dep_after {
 
 sub build_config {
     my $key = shift;
-    require Apache::Build;
-    my $build = Apache::Build->build_config;
+    require Apache2::Build;
+    my $build = Apache2::Build->build_config;
     return $build unless $key;
     $build->{$key};
 }

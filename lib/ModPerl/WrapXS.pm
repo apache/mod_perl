@@ -19,7 +19,7 @@ use warnings FATAL => 'all';
 
 use constant GvUNIQUE => 0; #$] >= 5.008;
 use Apache::TestTrace;
-use Apache::Build ();
+use Apache2::Build ();
 use ModPerl::Code ();
 use ModPerl::TypeMap ();
 use ModPerl::MapUtil qw(function_table xs_glue_dirs);
@@ -35,8 +35,8 @@ my(@xs_includes) = ('mod_perl.h',
 
 my @global_structs = qw(perl_module);
 
-my $build = Apache::Build->build_config;
-push @global_structs, 'MP_debug_level' unless Apache::Build::WIN32;
+my $build = Apache2::Build->build_config;
+push @global_structs, 'MP_debug_level' unless Apache2::Build::WIN32;
 
 sub new {
     my $class = shift;
@@ -187,8 +187,8 @@ sub get_structures {
     my $self = shift;
     my $typemap = $self->typemap;
 
-    require Apache::StructureTable;
-    for my $entry (@$Apache::StructureTable) {
+    require Apache2::StructureTable;
+    for my $entry (@$Apache2::StructureTable) {
         my $struct = $typemap->map_structure($entry);
         next unless $struct;
 
@@ -348,7 +348,7 @@ sub prepare {
 sub class_dirname {
     my($self, $class) = @_;
     my($base, $sub) = split '::', $class;
-    return "$self->{DIR}/$base" unless $sub; #Apache | APR
+    return "$self->{DIR}/$base" unless $sub; #Apache2 | APR
     return $sub if $sub eq $self->{DIR}; #WrapXS
     return "$base/$sub";
 }
@@ -425,7 +425,7 @@ sub write_makefilepl {
     print $fh <<EOF;
 $noedit_warning
 
-use lib qw(../../../lib); #for Apache::BuildConfig
+use lib qw(../../../lib); #for Apache2::BuildConfig
 use ModPerl::BuildMM ();
 
 ModPerl::BuildMM::WriteMakefile(
@@ -557,7 +557,7 @@ sub write_xs {
         $last_prefix = $prefix if $prefix;
 
         if ($func->{name} =~ /^mpxs_/) {
-            #e.g. mpxs_Apache__RequestRec_
+            #e.g. mpxs_Apache2__RequestRec_
             my $class_prefix = class_c_prefix($class);
             if ($func->{name} =~ /$class_prefix/) {
                 $prefix = class_mpxs_prefix($class);
@@ -616,7 +616,7 @@ sub write_pm {
 
     my $base   = (split '::', $module)[0];
     unless (-e "lib/$base/XSLoader.pm") {
-        $base = 'Apache';
+        $base = 'Apache2';
     }
     my $loader = join '::', $base, 'XSLoader';
 
@@ -647,7 +647,7 @@ EOF
 }
 
 my %typemap = (
-    'Apache::RequestRec' => 'T_APACHEOBJ',
+    'Apache2::RequestRec' => 'T_APACHEOBJ',
     'apr_time_t'         => 'T_APR_TIME',
     'APR::Table'         => 'T_HASHOBJ',
     'APR::Pool'          => 'T_POOLOBJ',
@@ -714,7 +714,7 @@ sub write_lookup_method_file {
             $name =~ s/^DEFINE_//;
 
             if ($name =~ /^mpxs_/) {
-                #e.g. mpxs_Apache__RequestRec_
+                #e.g. mpxs_Apache2__RequestRec_
                 my $class_prefix = class_c_prefix($class);
                 if ($name =~ /$class_prefix/) {
                     $prefix = class_mpxs_prefix($class);
@@ -801,10 +801,10 @@ sub _get_objects {
 # exists, the second field is for extra comments (e.g. when there is
 # no replacement method)
 my $methods_compat = {
-    # Apache::
+    # Apache2::
     gensym            => ['Symbol::gensym',
                           'or use "open my $fh, $file"'],
-    module            => ['Apache::Module::loaded',
+    module            => ['Apache2::Module::loaded',
                           ''],
     define            => ['exists_config_define',
                           ''],
@@ -815,7 +815,7 @@ my $methods_compat = {
     can_stack_handlers=> [undef,
                           'there is no more need for that method in mp2'],
 
-    # Apache::RequestRec
+    # Apache2::RequestRec
     soft_timeout      => [undef,
                           'there is no more need for that method in mp2'],
     hard_timeout      => [undef,
@@ -838,8 +838,8 @@ my $methods_compat = {
                           ''],
     post_connection   => ['cleanup_register',
                           ''],
-    content           => [undef, # XXX: Apache::Request::what?
-                          'use CGI.pm or Apache::Request instead'],
+    content           => [undef, # XXX: Apache2::Request::what?
+                          'use CGI.pm or Apache2::Request instead'],
     clear_rgy_endav   => ['special_list_clear',
                           ''],
     stash_rgy_endav   => [undef,
@@ -944,7 +944,7 @@ sub print_method {
     while (@args) {
          my $method = shift @args;
          my $object = (@args && 
-             (ref($args[0]) || $args[0] =~ /^(Apache|ModPerl|APR)/))
+             (ref($args[0]) || $args[0] =~ /^(Apache2|ModPerl|APR)/))
              ? shift @args
              : undef;
          print( (lookup_method($method, $object))[0]);
@@ -1021,7 +1021,7 @@ sub lookup_method {
         else {
             my %modules = map { $_->[MODULE] => 1 } @items;
             # remove dups if any (e.g. $s->add_input_filter and
-            # $r->add_input_filter are loaded by the same Apache::Filter)
+            # $r->add_input_filter are loaded by the same Apache2::Filter)
             my @modules = keys %modules;
             my $hint;
             if (@modules == 1) {
@@ -1147,7 +1147,7 @@ sub generate {
 
     $self->prepare;
 
-    for (qw(ModPerl::WrapXS Apache APR ModPerl)) {
+    for (qw(ModPerl::WrapXS Apache2 APR ModPerl)) {
         $self->write_makefilepl($_);
     }
 
@@ -1159,8 +1159,8 @@ sub generate {
 
     $self->get_functions;
     $self->get_structures;
-    $self->write_export_file('exp') if Apache::Build::AIX;
-    $self->write_export_file('def') if Apache::Build::WIN32;
+    $self->write_export_file('exp') if Apache2::Build::AIX;
+    $self->write_export_file('def') if Apache2::Build::WIN32;
 
     while (my($module, $functions) = each %{ $self->{XS} }) {
 #        my($root, $sub) = split '::', $module;
@@ -1285,7 +1285,7 @@ sub write_export_file {
 
     my %files = (
         modperl => $ModPerl::FunctionTable,
-        apache  => $Apache::FunctionTable,
+        apache2 => $Apache2::FunctionTable,
         apr     => $APR::FunctionTable,
     );
 
@@ -1369,7 +1369,7 @@ EOF
 
     for my $entry (@$ModPerl::FunctionTable) {
         next if $self->func_is_static($entry);
-        unless (Apache::Build::PERL_HAS_ITHREADS) {
+        unless (Apache2::Build::PERL_HAS_ITHREADS) {
             next if $entry->{name} =~ /^($ithreads_exports)/;
         }
         ( my $name ) = $entry->{name} =~ /^modperl_(.*)/;

@@ -17,7 +17,7 @@ package ModPerl::MapUtil;
 use strict;
 use warnings;
 use Exporter ();
-use Apache::Build ();
+use Apache2::Build ();
 
 our @EXPORT_OK = qw(list_first disabled_reason
                     function_table structure_table
@@ -45,10 +45,10 @@ my $function_table = [];
 sub function_table {
     return $function_table if @$function_table;
     push @INC, "xs/tables/current";
-    require Apache::FunctionTable;
+    require Apache2::FunctionTable;
     require ModPerl::FunctionTable;
     require APR::FunctionTable;
-    @$function_table = (@$Apache::FunctionTable, @$ModPerl::FunctionTable,
+    @$function_table = (@$Apache2::FunctionTable, @$ModPerl::FunctionTable,
                         @$APR::FunctionTable);
     $function_table;
 }
@@ -57,8 +57,8 @@ my $structure_table = [];
 
 sub structure_table {
     return $structure_table if @$structure_table;
-    require Apache::StructureTable;
-    @$structure_table = (@$Apache::StructureTable);
+    require Apache2::StructureTable;
+    @$structure_table = (@$Apache2::StructureTable);
     $structure_table;
 }
 
@@ -67,7 +67,7 @@ sub disabled_reason {
 }
 
 sub xs_glue_dirs {
-    Apache::Build->build_config->mp_xs_glue_dir;
+    Apache2::Build->build_config->mp_xs_glue_dir;
 }
 
 sub list_first (&@) {

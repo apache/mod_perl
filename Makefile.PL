@@ -13,10 +13,11 @@ my($old_modperl_version, $old_modperl_pm);
 
 BEGIN {
     eval {
-        require mod_perl;
-        if ($mod_perl::VERSION < 1.99) {
-            $old_modperl_version = $mod_perl::VERSION;
-        }
+        require mod_perl2;
+# XXX: this section is unnecessary now
+#        if ($mod_perl2::VERSION < 1.99) {
+#            $old_modperl_version = $mod_perl::VERSION;
+#        }
         $old_modperl_pm = delete $INC{'mod_perl.pm'};
         %mod_perl:: = ();
     };
@@ -32,7 +33,7 @@ use File::Copy 'cp';
 use File::Basename 'basename';
 use File::Find ();
 
-use Apache::Build ();
+use Apache2::Build ();
 use Apache::TestSmokePerl ();
 use Apache::TestTrace;
 use ModPerl::TestReport ();
@@ -40,12 +41,12 @@ use ModPerl::TestRun ();
 use ModPerl::Code ();
 use ModPerl::BuildMM ();
 
-use constant WIN32 => Apache::Build::WIN32;
-use constant BUILD_APREXT => Apache::Build::BUILD_APREXT;
+use constant WIN32 => Apache2::Build::WIN32;
+use constant BUILD_APREXT => Apache2::Build::BUILD_APREXT;
 
 our $VERSION;
 
-my $build = Apache::Build->new(init => 1);
+my $build = Apache2::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
 win32_fetch_apxs() if WIN32;
@@ -63,14 +64,13 @@ local %ModPerl::BuildMM::PM = (
 my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h
        APR/PerlIO/modperl_apr_perlio.h);
-
 my @exe_files =  map "bin/$_", qw(mp2doc mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
-    NAME          => 'mod_perl',
+    NAME          => 'mod_perl2',
     VERSION       => '2.0.0-RC5',
     NO_META       => 1,
-    ABSTRACT_FROM => 'lib/mod_perl.pm',
+    ABSTRACT_FROM => 'lib/mod_perl2.pm',
     EXE_FILES     => \@exe_files,
     DEFINE        => get_DEFINE(),
     macro         => {
@@ -283,7 +283,7 @@ EOI
         exit(1);
     }
 
-    printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
+    printf "Configuring Apache/%s mod_perl2/%s Perl/v%vd\n",
         $httpd_version, $VERSION, $^V;
 
     my $apr_config = $build->get_apr_config; #cache it
@@ -302,7 +302,7 @@ EOI
         debug "unlink...$_" if -e $_ && unlink;
     }
 
-    #ModPerl::BuildMM will use Apache::BuildConfig in subdir/Makefile.PL's
+    #ModPerl::BuildMM will use Apache2::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
     ModPerl::TestRun->generate_script;
@@ -368,7 +368,7 @@ EOI
 sub post_configure {
 
     #now have any data subdir/Makefile.PL's save, e.g. XS
-    $build = Apache::Build->build_config;
+    $build = Apache2::Build->build_config;
 
     $build->write_src_makefile;
     $build->save_ldopts;
@@ -465,9 +465,9 @@ sub clean_files {
 }
 
 sub set_modperl_version {
-    require './lib/mod_perl.pm';
+    require './lib/mod_perl2.pm';
 
-    $VERSION = $mod_perl::VERSION_TRIPLET;
+    $VERSION = $mod_perl2::VERSION_TRIPLET;
 
     open my $fh, 'Changes';
     while (<$fh>) {
@@ -488,7 +488,7 @@ sub perl_version_check {
 
     my $perl_version = $];
     $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1." . ($2||0)/e;
-    my $perl_threads = Apache::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
+    my $perl_threads = Apache2::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
     my $perl_string = "Using Perl $perl_version $perl_threads ithreads";
     my $mpm = $build->mpm_name();
 
@@ -498,7 +498,7 @@ sub perl_version_check {
         push @fail, "Perl 5.8 or higher"
             unless $] >= 5.008;
         push @fail, "Perl built with ithreads (build perl with -Dusethreads)"
-            unless Apache::Build::PERL_HAS_ITHREADS();
+            unless Apache2::Build::PERL_HAS_ITHREADS();
         if (@fail) {
             error "$perl_string and '$mpm' mpm httpd.",
                 "Failed requirements:",
@@ -509,7 +509,7 @@ sub perl_version_check {
     else {
         # before 5.8.2, perl_shutdown is incomplete (in the case of ithreads 
         # each PerlInterpreter * gets tossed so it works)
-        if ($build->should_build_apache && !Apache::Build::PERL_HAS_ITHREADS) {
+        if ($build->should_build_apache && !Apache2::Build::PERL_HAS_ITHREADS) {
             # before 5.8.2, perl_shutdown is incomplete
             if ($] < 5.008_002) {
                 error "static $mpm mpm requires a threaded ".
@@ -604,7 +604,7 @@ package MY;
 
 use Config;
 use constant WIN32 => $^O eq 'MSWin32';
-use constant BUILD_APREXT => Apache::Build::BUILD_APREXT;
+use constant BUILD_APREXT => Apache2::Build::BUILD_APREXT;
 
 my $apache_test_install;
 BEGIN {

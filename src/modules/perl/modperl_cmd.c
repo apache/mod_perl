@@ -291,7 +291,7 @@ static const char *modperl_cmd_modvar(modperl_var_modify_t varfunc,
     MP_TRACE_d(MP_FUNC, "%s DIR: arg1 = %s, arg2 = %s\n",
                parms->cmd->name, arg1, arg2);
 
-    /* make available via Apache->server->dir_config */
+    /* make available via Apache2->server->dir_config */
     if (!parms->path) {
         MP_dSCFG(parms->server);
         varfunc(scfg->configvars, scfg->setvars, arg1, arg2);
@@ -481,10 +481,10 @@ MP_CMD_SRV_DECLARE(perl)
     return NULL;
 }
 
-#define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSections"
-#define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
+#define MP_DEFAULT_PERLSECTION_HANDLER "Apache2::PerlSections"
+#define MP_DEFAULT_PERLSECTION_PACKAGE "Apache2::ReadConfig"
 #define MP_PERLSECTIONS_SAVECONFIG_SV \
-    get_sv("Apache::PerlSections::Save", FALSE)
+    get_sv("Apache2::PerlSections::Save", FALSE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
@@ -571,7 +571,7 @@ MP_CMD_SRV_DECLARE(perldo)
         AV *args = Nullav;
 
         modperl_handler_make_args(aTHX_ &args,
-                                  "Apache::CmdParms", parms,
+                                  "Apache2::CmdParms", parms,
                                   "APR::Table", options,
                                   NULL);
 

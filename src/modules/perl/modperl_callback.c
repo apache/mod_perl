@@ -209,7 +209,7 @@ int modperl_callback_run_handlers(int idx, int type,
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:
         modperl_handler_make_args(aTHX_ &av_args,
-                                  "Apache::RequestRec", r, NULL);
+                                  "Apache2::RequestRec", r, NULL);
 
         /* per-server PerlSetEnv and PerlPassEnv - only once per-request */
         if (! MpReqPERL_SET_ENV_SRV(rcfg)) {
@@ -219,7 +219,7 @@ int modperl_callback_run_handlers(int idx, int type,
         break;
       case MP_HANDLER_TYPE_PER_DIR:
         modperl_handler_make_args(aTHX_ &av_args,
-                                  "Apache::RequestRec", r, NULL);
+                                  "Apache2::RequestRec", r, NULL);
 
         /* per-server PerlSetEnv and PerlPassEnv - only once per-request */
         if (! MpReqPERL_SET_ENV_SRV(rcfg)) {
@@ -235,19 +235,19 @@ int modperl_callback_run_handlers(int idx, int type,
       case MP_HANDLER_TYPE_PRE_CONNECTION:
       case MP_HANDLER_TYPE_CONNECTION:
         modperl_handler_make_args(aTHX_ &av_args,
-                                  "Apache::Connection", c, NULL);
+                                  "Apache2::Connection", c, NULL);
         break;
       case MP_HANDLER_TYPE_FILES:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "APR::Pool", pconf,
                                   "APR::Pool", plog,
                                   "APR::Pool", ptemp,
-                                  "Apache::ServerRec", s, NULL);
+                                  "Apache2::ServerRec", s, NULL);
         break;
       case MP_HANDLER_TYPE_PROCESS:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "APR::Pool", pconf,
-                                  "Apache::ServerRec", s, NULL);
+                                  "Apache2::ServerRec", s, NULL);
         break;
     };
 
@@ -281,7 +281,7 @@ int modperl_callback_run_handlers(int idx, int type,
                 else {
                     ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                                  "Callback '%s' returned %d, whereas "
-                                 "Apache::OK (%d) is the only valid "
+                                 "Apache2::OK (%d) is the only valid "
                                  "return value for %s handlers",
                                  modperl_handler_name(handlers[i]),
                                  status, OK, desc);

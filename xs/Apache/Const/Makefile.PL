@@ -2,6 +2,6 @@ use lib qw(../lib);
 use ModPerl::BuildMM ();
 
 ModPerl::BuildMM::WriteMakefile(
-    NAME => 'Apache::Const',
+    NAME => 'Apache2::Const',
     VERSION_FROM => 'Const.pm',
 );

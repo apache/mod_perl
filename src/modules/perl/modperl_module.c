@@ -258,7 +258,7 @@ static void *modperl_module_config_srv_merge(apr_pool_t *p,
 }
 
 #define modperl_bless_cmd_parms(parms) \
-    sv_2mortal(modperl_ptr2obj(aTHX_ "Apache::CmdParms", (void *)parms))
+    sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", (void *)parms))
 
 static const char *
 modperl_module_config_create_obj(pTHX_
@@ -385,7 +385,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         /* if PerlLoadModule Foo is called from the base server, but
          * Foo's directives are used inside a vhost, we need to
          * temporary link to the base server config's 'modules'
-         * member. e.g. so Apache::Module->get_config() can be called
+         * member. e.g. so Apache2::Module->get_config() can be called
          * from a custom directive's callback, before the server/vhost
          * config merge is performed
          */
@@ -415,7 +415,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     }
 
     /* XXX: could delay creation of srv_obj until
-     * Apache::ModuleConfig->get is called.
+     * Apache2::ModuleConfig->get is called.
      */
     srv_cfg = ap_get_module_config(s->module_config, info->modp);
 
@@ -668,7 +668,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             }
             else {
                 cmd->args_how =
-                    SvIV(modperl_constants_lookup_apache(aTHX_ SvPV(val, len)));
+                    SvIV(modperl_constants_lookup_apache2(aTHX_ SvPV(val, len)));
             }
         }
 
@@ -694,7 +694,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             }
             else {
                 cmd->req_override =
-                    SvIV(modperl_constants_lookup_apache(aTHX_ SvPV(val, len)));
+                    SvIV(modperl_constants_lookup_apache2(aTHX_ SvPV(val, len)));
             }
         }
 

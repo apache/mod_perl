@@ -23,7 +23,7 @@ use File::Spec::Functions qw(catdir catfile splitdir);
 use File::Basename;
 use File::Find;
 
-use Apache::Build ();
+use Apache2::Build ();
 use ModPerl::MM;
 
 our %PM; #add files to installation
@@ -48,7 +48,7 @@ my $build;
 
 sub build_config {
     my $key = shift;
-    $build ||= Apache::Build->build_config;
+    $build ||= Apache2::Build->build_config;
     return $build unless $key;
     $build->{$key};
 }
@@ -82,7 +82,7 @@ sub WriteMakefile {
 
     my $libs;
     my @libs = ();
-    if (Apache::Build::BUILD_APREXT) {
+    if (Apache2::Build::BUILD_APREXT) {
         # in order to decouple APR/APR::* from mod_perl.so,
         # link these modules against the static MP_APR_LIB lib,
         # rather than the mod_perl lib (which would demand mod_perl.so
@@ -131,7 +131,7 @@ sub WriteMakefile {
 }
 
 my %always_dynamic = map { $_, 1 }
-  qw(ModPerl::Const Apache::Const APR::Const APR APR::PerlIO);
+  qw(ModPerl::Const Apache2::Const APR::Const APR APR::PerlIO);
 
 sub ModPerl::BuildMM::MY::constants {
     my $self = shift;
@@ -312,10 +312,10 @@ sub ModPerl::BuildMM::MY::post_initialize {
         }
     }
 
-    # prefix typemap with Apache/ so when installed in the
+    # prefix typemap with Apache2/ so when installed in the
     # perl-lib-tree it won't be picked by non-mod_perl modules
     if (exists $pm->{'lib/typemap'} ) {
-        $pm->{'lib/typemap'} = '$(INST_ARCHLIB)/auto/Apache/typemap';
+        $pm->{'lib/typemap'} = '$(INST_ARCHLIB)/auto/Apache2/typemap';
     }
 
     #not everything in MakeMaker uses INST_LIB

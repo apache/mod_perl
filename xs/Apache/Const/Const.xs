@@ -16,9 +16,9 @@
 #include "mod_perl.h"
 #include "modperl_const.h"
 
-MODULE = Apache::Const    PACKAGE = Apache::Const
+MODULE = Apache2::Const    PACKAGE = Apache2::Const
 
 PROTOTYPES: disable
 
 BOOT:
-    MP_newModPerlConstXS("Apache");
+    MP_newModPerlConstXS("Apache2");

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
+APIs, breaking both MP_INST_APACHE2 and the test suite [joes].
+
 ModPerl::Registry no longer checks for -x bit (we don't executed
 scripts anyway), and thus works on acl-based filesystems. Also
 replaced the -r check with a proper error handling when the file is
@@ -1443,7 +1446,7 @@ Fix DynaLoader breakage when using DL_GLOBAL on OpenBSD
 renamed the private modperl_module_config_get_obj function to 
 modperl_module_config_create_obj, since the logic creates 
 the object but doesn't dig it out if it already exists.  then,
-moved logic from mpxs_Apache__Module_get_config into a new public
+moved logic from mpxs_Apache2__Module_get_config into a new public
 C function that reused the old name, modperl_module_config_get_obj.
 while Apache::Module->get_config exists as a wrapper to return the
 object to Perl space, now C/XS folks can also access the object

@@ -26,12 +26,12 @@ use warnings FATAL => 'all';
 
 our $VERSION = '1.99';
 
-use Apache::Response ();
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::RequestIO ();
-use Apache::Log ();
-use Apache::Access ();
+use Apache2::Response ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::RequestIO ();
+use Apache2::Log ();
+use Apache2::Access ();
 
 use APR::Table ();
 
@@ -42,7 +42,7 @@ use File::Spec::Functions ();
 use File::Basename;
 
 use APR::Const     -compile => qw(EACCES ENOENT);
-use Apache::Const  -compile => qw(:common &OPT_EXECCGI);
+use Apache2::Const  -compile => qw(:common &OPT_EXECCGI);
 use ModPerl::Const -compile => 'EXIT';
 
 unless (defined $ModPerl::Registry::MarkLine) {
@@ -62,11 +62,11 @@ use constant D_NOISE   => 8;
 # the debug level can be overriden on the main server level of
 # httpd.conf with:
 #   PerlSetVar ModPerl::RegistryCooker::DEBUG 4
-use Apache::ServerUtil ();
+use Apache2::ServerUtil ();
 use constant DEBUG => 0;
 #XXX: below currently crashes the server on win32
-#    defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
-#        ? Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+#    defined Apache2->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+#        ? Apache2->server->dir_config('ModPerl::RegistryCooker::DEBUG')
 #        : D_NONE;
 
 #########################################################################
@@ -97,7 +97,7 @@ unless (defined $ModPerl::RegistryCooker::NameWithVirtualHost) {
 # func: new
 # dflt: new
 # args: $class - class to bless into
-#       $r     - Apache::Request object
+#       $r     - Apache2::RequestRec object
 # desc: create the class's object and bless it
 # rtrn: the newly created object
 #########################################################################
@@ -113,7 +113,7 @@ sub new {
 # func: init
 # dflt: init
 # desc: initializes the data object's fields: REQ FILENAME URI
-# args: $r - Apache::Request object
+# args: $r - Apache2::RequestRec object
 # rtrn: nothing
 #########################################################################
 
@@ -128,11 +128,11 @@ sub init {
 # dflt: handler
 # desc: the handler() sub that is expected by Apache
 # args: $class - handler's class
-#       $r     - Apache::Request object
+#       $r     - Apache2::RequestRec object
 #       (o)can be called as handler($r) as well (without leading $class)
 # rtrn: handler's response status
 # note: must be implemented in a sub-class unless configured as
-#       Apache::Foo->handler in httpd.conf (because of the
+#       Apache2::Foo->handler in httpd.conf (because of the
 #       __PACKAGE__, which is tied to the file)
 #########################################################################
 
@@ -158,9 +158,9 @@ sub default_handler {
 
     if ($self->should_compile) {
         my $rc = $self->can_compile;
-        return $rc unless $rc == Apache::OK;
+        return $rc unless $rc == Apache2::OK;
         $rc = $self->convert_script_to_compiled_handler;
-        return $rc unless $rc == Apache::OK;
+        return $rc unless $rc == Apache2::OK;
     }
 
     # handlers shouldn't set $r->status but return it, so we reset the
@@ -168,7 +168,7 @@ sub default_handler {
     my $old_status = $self->{REQ}->status;
     my $rc = $self->run;
     my $new_status = $self->{REQ}->status($old_status);
-    return ($rc == Apache::OK && $old_status != $new_status)
+    return ($rc == Apache2::OK && $old_status != $new_status)
         ? $new_status
         : $rc;
 }
@@ -178,7 +178,7 @@ sub default_handler {
 # dflt: run
 # desc: executes the compiled code
 # args: $self - registry blessed object
-# rtrn: execution status (Apache::?)
+# rtrn: execution status (Apache2::?)
 #########################################################################
 
 sub run {
@@ -196,7 +196,7 @@ sub run {
         %orig_inc = %INC;
     }
 
-    my $rc = Apache::OK;
+    my $rc = Apache2::OK;
     { # run the code and preserve warnings setup when it's done
         no warnings FATAL => 'all';
         #local $^W = 0;
@@ -216,14 +216,14 @@ sub run {
 
             # use the END blocks return status if the script's execution
             # was successful
-            $rc = $new_rc if $rc == Apache::OK;
+            $rc = $new_rc if $rc == Apache2::OK;
         }
 
     }
 
     if ($self->should_reset_inc_hash) {
         # to avoid the bite of require'ing a file with no package delaration
-        # Apache::PerlRun in mod_perl 1.15_01 started to localize %INC
+        # Apache2::PerlRun in mod_perl 1.15_01 started to localize %INC
         # later on it has been adjusted to preserve loaded .pm files,
         # which presumably contained the package declaration
         for (keys %INC) {
@@ -235,7 +235,7 @@ sub run {
 
     $self->flush_namespace;
 
-    #XXX: $self->chdir_file("$Apache::Server::CWD/");
+    #XXX: $self->chdir_file("$Apache2::Server::CWD/");
 
     return $rc;
 }
@@ -255,19 +255,19 @@ sub can_compile {
     my $self = shift;
     my $r = $self->{REQ};
 
-    return Apache::DECLINED if -d $r->my_finfo;
+    return Apache2::DECLINED if -d $r->my_finfo;
 
     $self->{MTIME} = -M _;
 
-    if (!($r->allow_options & Apache::OPT_EXECCGI)) {
+    if (!($r->allow_options & Apache2::OPT_EXECCGI)) {
         $r->log_error("Options ExecCGI is off in this directory",
                        $self->{FILENAME});
-        return Apache::FORBIDDEN;
+        return Apache2::FORBIDDEN;
     }
 
     $self->debug("can compile $self->{FILENAME}") if DEBUG & D_NOISE;
 
-    return Apache::OK;
+    return Apache2::OK;
 
 }
 #########################################################################
@@ -362,13 +362,13 @@ sub namespace_from_uri {
 sub convert_script_to_compiled_handler {
     my $self = shift;
 
-    my $rc = Apache::OK;
+    my $rc = Apache2::OK;
 
     $self->debug("Adding package $self->{PACKAGE}") if DEBUG & D_NOISE;
 
     # get the script's source
     $rc = $self->read_script;
-    return $rc unless $rc == Apache::OK;
+    return $rc unless $rc == Apache2::OK;
 
     # convert the shebang line opts into perl code
     $self->rewrite_shebang;
@@ -402,10 +402,10 @@ sub convert_script_to_compiled_handler {
                     "\n}"; # last line comment without newline?
 
     $rc = $self->compile(\$eval);
-    return $rc unless $rc == Apache::OK;
+    return $rc unless $rc == Apache2::OK;
     $self->debug(qq{compiled package \"$self->{PACKAGE}\"}) if DEBUG & D_NOISE;
 
-    #$self->chdir_file("$Apache::Server::CWD/");
+    #$self->chdir_file("$Apache2::Server::CWD/");
 
 #    if(my $opt = $r->dir_config("PerlRunOnce")) {
 #        $r->child_terminate if lc($opt) eq "on";
@@ -527,7 +527,7 @@ sub flush_namespace_normal {
 # dflt: read_script
 # desc: reads the script in
 # args: $self - registry blessed object
-# rtrn: Apache::OK on success, some other code on failure
+# rtrn: Apache2::OK on success, some other code on failure
 # efct: initializes the CODE field with the source script
 #########################################################################
 
@@ -541,15 +541,15 @@ sub read_script {
         $self->log_error("$@");
 
         if (ref $@ eq 'APR::Error') {
-            return Apache::FORBIDDEN if $@ == APR::EACCES;
-            return Apache::NOT_FOUND if $@ == APR::ENOENT;
+            return Apache2::FORBIDDEN if $@ == APR::EACCES;
+            return Apache2::NOT_FOUND if $@ == APR::ENOENT;
         }
         else {
-            return Apache::SERVER_ERROR;
+            return Apache2::SERVER_ERROR;
         }
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 #########################################################################
@@ -564,8 +564,8 @@ sub read_script {
 
 my %switches = (
    'T' => sub {
-       Apache::ServerRec::warn("-T switch is ignored, enable " .
-                               "with 'PerlSwitches -T' in httpd.conf\n")
+       Apache2::ServerRec::warn("-T switch is ignored, enable " .
+                                "with 'PerlSwitches -T' in httpd.conf\n")
              unless ${^TAINT};
        "";
    },
@@ -680,7 +680,7 @@ sub compile {
 # dflt: error_check
 # desc: checks $@ for errors
 # args: $self - registry blessed object
-# rtrn: Apache::SERVER_ERROR if $@ is set, Apache::OK otherwise
+# rtrn: Apache2::SERVER_ERROR if $@ is set, Apache2::OK otherwise
 #########################################################################
 
 sub error_check {
@@ -691,9 +691,9 @@ sub error_check {
     # (see modperl_perl_exit() and modperl_errsv() C functions)
     if ($@ && !(ref $@ eq 'APR::Error' && $@ == ModPerl::EXIT)) {
         $self->log_error($@);
-        return Apache::SERVER_ERROR;
+        return Apache2::SERVER_ERROR;
     }
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 
@@ -762,23 +762,23 @@ sub uncache_myself {
     my($class) = __PACKAGE__->cache_table_common();
 
     unless (defined $class) {
-        Apache->warn("$$: cannot figure out cache symbol table for $package");
+        Apache2->warn("$$: cannot figure out cache symbol table for $package");
         return;
     }
 
     if (exists $class->{$package} && exists $class->{$package}{mtime}) {
-        Apache->warn("$$: uncaching $package\n") if DEBUG & D_COMPILE;
+        Apache2->warn("$$: uncaching $package\n") if DEBUG & D_COMPILE;
         delete $class->{$package}{mtime};
     }
     else {
-        Apache->warn("$$: cannot find $package in cache");
+        Apache2->warn("$$: cannot find $package in cache");
     }
 }
 
 
 # XXX: should go away when finfo() is ported to 2.0 (don't want to
 # depend on compat.pm)
-sub Apache::RequestRec::my_finfo {
+sub Apache2::RequestRec::my_finfo {
     my $r = shift;
     stat $r->filename;
     \*_;

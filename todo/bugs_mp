@@ -110,6 +110,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106893251911930&w=2
   Priority: Low 
 
-* mpxs_Apache__RequestRec_GETC in Apache_RequestIO.h is out to be
+* mpxs_Apache2__RequestRec_GETC in Apache_RequestIO.h is out to be
   reimplemented similar to read() w/o using the deprecated
   client_block interface

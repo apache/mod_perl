@@ -443,7 +443,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
                modperl_handler_name(handler));
 
     modperl_handler_make_args(aTHX_ &args,
-                              "Apache::Filter", f,
+                              "Apache2::Filter", f,
                               NULL);
 
     modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter);
@@ -488,7 +488,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     MP_FILTER_SAVE_ERRSV(errsv);
 
     modperl_handler_make_args(aTHX_ &args,
-                              "Apache::Filter", filter->f,
+                              "Apache2::Filter", filter->f,
                               "APR::Brigade",
                               (filter->mode == MP_INPUT_FILTER_MODE
                                ? filter->bb_out
@@ -535,11 +535,11 @@ int modperl_run_filter(modperl_filter_t *filter)
             filter->bb_in = NULL;
         }
         MP_RUN_CROAK(modperl_input_filter_flush(filter),
-                     "Apache::Filter");
+                     "Apache2::Filter");
     }
     else {
         MP_RUN_CROAK(modperl_output_filter_flush(filter),
-                     "Apache::Filter");
+                     "Apache2::Filter");
     }
 
     MP_FILTER_RESTORE_ERRSV(errsv);
@@ -698,7 +698,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
         }
         else {
             SvREFCNT_dec(buffer);
-            modperl_croak(aTHX_ filter->rc, "Apache::Filter::read");
+            modperl_croak(aTHX_ filter->rc, "Apache2::Filter::read");
         }
 
         if (buf_len) {
@@ -746,7 +746,7 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
         MP_RUN_CROAK(ap_get_brigade(filter->f->next, filter->bb_in,
                                     filter->input_mode, filter->block,
                                     filter->readbytes),
-                     "Apache::Filter::read");
+                     "Apache2::Filter::read");
     }
 
     len = modperl_filter_read(aTHX_ filter, buffer, wanted);
@@ -756,7 +756,7 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
         apr_status_t rc = modperl_input_filter_flush(filter);
         if (rc != APR_SUCCESS) {
             SvREFCNT_dec(buffer);
-            modperl_croak(aTHX_ rc, "Apache::Filter::read");
+            modperl_croak(aTHX_ rc, "Apache2::Filter::read");
         }
     }
 
@@ -777,7 +777,7 @@ MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
         apr_status_t rc = modperl_output_filter_flush(filter);
         if (rc != APR_SUCCESS) {
             SvREFCNT_dec(buffer);
-            modperl_croak(aTHX_ rc, "Apache::Filter::read");
+            modperl_croak(aTHX_ rc, "Apache2::Filter::read");
         }
     }
 
@@ -1226,8 +1226,8 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
             int status = modperl_run_filter_init(f, mode, handler->next);
             if (status != OK) {
                 modperl_croak(aTHX_ status, strEQ("InputFilter", type)
-                              ? "Apache::Filter::add_input_filter"
-                              : "Apache::Filter::add_output_filter");
+                              ? "Apache2::Filter::add_input_filter"
+                              : "Apache2::Filter::add_output_filter");
             }
         }
 

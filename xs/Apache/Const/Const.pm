@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-package Apache::Const;
+package Apache2::Const;
 
 use ModPerl::Const ();
 use XSLoader ();
 
-our $VERSION = do { require mod_perl; $mod_perl::VERSION };
+our $VERSION = do { require mod_perl2; $mod_perl2::VERSION };
 our @ISA = qw(ModPerl::Const);
 
 XSLoader::load(__PACKAGE__, $VERSION);

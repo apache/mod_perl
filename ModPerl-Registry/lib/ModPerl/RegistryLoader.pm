@@ -18,13 +18,13 @@ use strict;
 use warnings;
 
 use ModPerl::RegistryCooker ();
-use Apache::ServerUtil ();
+use Apache2::ServerUtil ();
 use APR::Pool ();
 
 use Carp;
 use File::Spec ();
 
-use Apache::Const -compile => qw(OK HTTP_OK OPT_EXECCGI);
+use Apache2::Const -compile => qw(OK HTTP_OK OPT_EXECCGI);
 
 our @ISA = ();
 
@@ -71,7 +71,7 @@ sub handler {
             $self->warn("Trying to guess filename based on uri")
                 if $self->{debug};
 
-            $filename = File::Spec->catfile(Apache::ServerUtil::server_root,
+            $filename = File::Spec->catfile(Apache2::ServerUtil::server_root,
                                             $guess);
             unless (-e $filename) {
                 $self->warn("Cannot find guessed file: $filename",
@@ -108,13 +108,13 @@ sub handler {
 
 sub get_server_name { return $_[0]->{virthost} if exists $_[0]->{virthost} }
 sub filename { shift->{filename} }
-sub status { Apache::HTTP_OK }
+sub status { Apache2::HTTP_OK }
 sub my_finfo    { shift->{filename} }
 sub uri      { shift->{uri} }
 sub path_info {}
-sub allow_options { Apache::OPT_EXECCGI } #will be checked again at run-time
+sub allow_options { Apache2::OPT_EXECCGI } #will be checked again at run-time
 sub log_error { shift; die @_ if $@; warn @_; }
-sub run { return Apache::OK } # don't run the script
+sub run { return Apache2::OK } # don't run the script
 sub server { shift }
 sub is_virtual { exists shift->{virthost} }
 
@@ -153,7 +153,7 @@ sub load_package {
 
 sub warn {
     my $self = shift;
-    Apache->warn(__PACKAGE__ . ": @_\n");
+    Apache2->warn(__PACKAGE__ . ": @_\n");
 }
 
 1;
