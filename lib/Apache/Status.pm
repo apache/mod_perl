@@ -263,6 +263,7 @@ sub status_cv_dump {
     push @retval, peek_link($r, $q, $name, $type);
     #push @retval, xref_link($r, $q, $name);
     push @retval, b_graph_link($r, $q, $name);
+    push @retval, lexinfo_link($r, $q, $name);
     push @retval, "</pre>";
     \@retval;
 }
@@ -270,10 +271,29 @@ sub status_cv_dump {
 sub b_graph_link {
     my($r,$q,$name) = @_;
     return unless lc($r->dir_config("StatusGraph")) eq "on";
-    return unless eval "require B::Graph";
+    return unless eval { require B::Graph };
     B::Graph->UNIVERSAL::VERSION('0.03');
     my $script = $q->script_name;
     return qq(\n<a href="$script/$name?noh_b_graph">OP Tree Graph</a>\n);
+}
+
+sub lexinfo_link {
+    my($r, $q, $name) = @_;
+    return unless lc($r->dir_config("StatusLexInfo")) eq "on";
+    return unless eval { require B::LexInfo };
+    my $script = $q->script_name;
+    return qq(\n<a href="$script/$name?noh_lexinfo">Lexical Info</a>\n);
+}
+
+sub noh_lexinfo {
+    my $r = shift;
+    $r->send_http_header("text/plain");
+    no strict 'refs';
+    my($name) = (split "/", $r->uri)[-1];
+    $r->print("Lexical Info for $name\n\n");
+    my $lexi = B::LexInfo->new;
+    my $info = $lexi->cvlexinfo($name);
+    print ${ $lexi->dumper($info) };
 }
 
 sub peek_link {
@@ -492,6 +512,13 @@ With this option On and the B<Apache::Peek> module installed,
 functions and variables can be viewed ala B<Devel::Peek> style:
 
  PerlSetVar StatusPeek On
+
+=item StatusLexInfo
+
+With this option On and the B<B::LexInfo> module installed,
+subroutine lexical variable information can be viewed.
+
+ PerlSetVar StatusLexInfo On
 
 =item StatusGraph
 

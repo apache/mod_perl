@@ -71,6 +71,7 @@ TestCmd one two
 </Files>
 
 Alias /perl/ ./t/net/perl/
+Alias /lexinfo/ ./t/net/perl/
 Alias /perl_xs/ ./t/net/perl/
 Alias /dirty-perl/ ./t/net/perl/
 
@@ -84,6 +85,13 @@ PerlHandler -My::DirIndex
 ErrorDocument 500 /perl/server_error.pl
 SetHandler perl-script
 PerlHandler Apache::Registry::handler
+Options +ExecCGI
+PerlSendHeader       Off
+</Location>
+
+<Location /lexinfo>
+SetHandler perl-script
+PerlHandler Apache::RegistryLexInfo->handler
 Options +ExecCGI
 PerlSendHeader       Off
 </Location>
@@ -144,6 +152,7 @@ PerlSetupEnv   On
 PerlSetVar StatusPeek On
 PerlSetVar StatusGraph On
 PerlSetVar StatusDumper On
+PerlSetVar StatusLexInfo On
 SetHandler perl-script
 PerlHandler +Apache::Status
 </Location>
