@@ -10,15 +10,20 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
-Move the custom mod_perl 2.0 configuration bits out of the
+fix the Apache::TestConfigPerl's run_apache_test_config() function
+where test packages are scanned for the magic APACHE_TEST_CONFIGURE
+and if found get require()'d. Apache2 needs to be run for mod_perl
+2.0.  [Stas Bekman]
+
+move the custom mod_perl 2.0 configuration bits out of the
 ModPerl::TestRun, where they don't belong, into a special config file
 which is included at the very end of httpd.conf [Stas Bekman]
 
-Extend Apache::Test to allow extra configuration files to be included
+extend Apache::Test to allow extra configuration files to be included
 at the very end of httpd.conf, when everything was loaded and
 configured [Stas Bekman]
 
-Resolve a segfault in Apache::Module::get_config() for the edge case
+resolve a segfault in Apache::Module::get_config() for the edge case
 when the package name is bogus. [Stas Bekman]
 
 Apache::Reload: add support for watching and reloading modules only in
