@@ -1,7 +1,7 @@
 use Apache ();
-use Cwd 'fastcwd';
+use Cwd 'getcwd';
 my $tests = 0;
-my $pwd = fastcwd;
+my $pwd = getcwd;
 
 my $r = Apache->request;
 $r->content_type("text/html");

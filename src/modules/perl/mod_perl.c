@@ -356,9 +356,9 @@ static void mod_perl_set_cwd(void)
 
     if(pwd) 
 	sv_setpv(GvSV(gv), pwd);
-    else
+    else 
 	sv_setsv(GvSV(gv), 
-		 perl_eval_pv("require Cwd; Cwd::fastcwd()", TRUE));
+		 perl_eval_pv("require Cwd; Cwd::getcwd()", TRUE));
 
     mod_perl_untaint(GvSV(gv));
 }

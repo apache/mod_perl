@@ -29,6 +29,10 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
+my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
+my $USE_THREADS = 
+    (defined($Config{usethreads}) && ($Config{usethreads} eq "define"));
+   
 require "./mod_perl.pm_version";
 $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
 
@@ -793,8 +797,8 @@ EOF
     conf_append("PerlTransHandler My::ProxyTest") 
     if $callback_hooks{PERL_TRANS} and 
 	$callback_hooks{PERL_STACKED_HANDLERS} and
-	$mmn > 19980270 and
-	defined $ENV{USER} and $ENV{USER} eq "dougm";
+	    $mmn > 19980270 and $Is_dougm;
+	    
     conf_append(<<EOF) if $callback_hooks{PERL_STACKED_HANDLERS}; 
 <Location /chain>
 SetHandler perl-script
@@ -926,7 +930,7 @@ cp "t/conf/httpd.conf", "t/httpd.conf";
 
 if($ENV{TEST_PERL_DIRECTIVES}) {
     #push @DIR, 't/TestDirectives';
-    if($ENV{USER} eq "dougm" and $Config{usethreads} eq "define") {
+    if($Is_dougm and $USE_THREADS) {
 	delete $ENV{TEST_PERL_DIRECTIVES};
     }
     else {
@@ -1079,11 +1083,11 @@ sub MY::test {
     my $self = shift;
     my $test = $self->MM::test;
     my $mmn = magic_number($APACHE_SRC);
-    return <<'EOF' if $USE_APXS;
+    return <<'EOF' if $USE_APXS and not $Is_dougm;
 test:
 	@echo "Can't make test with APXS (yet)"
 EOF
-    return <<'EOF' if $USE_DSO and ($mmn <= 19980527);
+    return <<'EOF' if $USE_DSO and ($mmn <= 19980527) and not $Is_dougm;
 test:
 	@echo "Can't make test with DSO (yet)"
 EOF
@@ -1658,7 +1662,7 @@ sub ccopts {
     unless ($Embed::ccopts) {
 	$Embed::ccopts = `$^X -MExtUtils::Embed -e ccopts`;
 
-	if(defined $Config{usethreads} and $Config{usethreads} eq "define") {
+	if($USE_THREADS) {
 	    $Embed::ccopts .= " -DPERL_THREADS";
 	}
     }
@@ -1718,8 +1722,7 @@ EOF
     }
 
     $yes_no = 'no';
-    $yes_no = 'yes' if (defined $Config{usethreads} and 
-			$Config{usethreads} eq "define");
+    $yes_no = 'yes' if $USE_THREADS;
     print $apaci_cfg "PERL_THREADS = $yes_no\n";
 
     return $apaci_cfg;

@@ -116,8 +116,8 @@ test ++$i, $s->server_hostname;
 test ++$i, $s->port;
 
 ++$i;
-my $s = "ok $i\n";
-$r->print(\$s);
+my $str = "ok $i\n";
+$r->print(\$str);
 
 test ++$i, $r->module("Apache");
 test ++$i, not Apache->module("Not::A::Chance");
