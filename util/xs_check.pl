@@ -1,4 +1,4 @@
-use lib qw(lib xs/tables/current);
+use lib qw(Apache-Test/lib lib xs/tables/current);
 
 use strict;
 use warnings qw(FATAL all);
