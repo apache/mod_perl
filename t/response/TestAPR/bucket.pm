@@ -22,7 +22,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 18 + TestAPRlib::bucket::num_of_tests();
+    plan $r, tests => 20 + TestAPRlib::bucket::num_of_tests();
 
     TestAPRlib::bucket::test();
 
@@ -120,6 +120,23 @@ sub handler {
 
         # and no next
         ok t_cmp($bb->next($b_first), undef, "no next bucket");
+    }
+
+    # delete+destroy
+    {
+        my $bb = APR::Brigade->new($r->pool, $ba);
+        $bb->insert_head(APR::Bucket->new("a"));
+        $bb->insert_head(APR::Bucket->new("b"));
+
+        my $b1 = $bb->first;
+        $b1->remove;
+        $b1->destroy;
+        ok 1;
+
+        # delete = remove + destroy
+        my $b2 = $bb->first;
+        $b2->delete;
+        ok 1;
     }
 
     return Apache::OK;

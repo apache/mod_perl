@@ -119,6 +119,8 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_read | | bucket, buffer, block=APR_BLOCK_READ
  #modperl_bucket_sv_create
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
+ void:DEFINE_destroy | | apr_bucket:bucket
+ void:DEFINE_delete  | | apr_bucket:bucket
 >apr_bucket_alloc
 >apr_bucket_alloc_create
 >apr_bucket_alloc_destroy

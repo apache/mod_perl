@@ -12,10 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_16-dev
 
+APR::Bucket: add delete() and destroy() methods [Stas]
 
 
 
-=item 1.99_15  - Aug 20, 2004
+=item 1.99_15 - Aug 20, 2004
 
 replace the memory allocation for modperl filter handlers to use a
 temporary subpool of the ap_filter_t object. previously using perl's
