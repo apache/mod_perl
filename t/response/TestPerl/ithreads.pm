@@ -17,7 +17,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 4,need 
+    plan $r, tests => 4, need
         need_threads,
         {"perl >= 5.8.1 is required (this is $])" => ($] >= 5.008001)};
 
@@ -38,7 +38,7 @@ sub handler {
 
     {
         my $thr = threads->new(sub {
-                                   my $tid = threads->self->tid; 
+                                   my $tid = threads->self->tid;
                                    debug "2nd TID is $tid" if defined $tid;
                                    return 2;
                                });
