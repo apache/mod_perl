@@ -14,8 +14,6 @@ static int new_constsub(pTHX_ constants_lookup lookup,
 
     /* dont redefine */
     if (!isGV(*gvp) || !GvCV(*gvp)) {
-        CV *cv;
-
         val = (*lookup)(name);
 
 #if 0
