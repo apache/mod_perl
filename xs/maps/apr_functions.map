@@ -478,8 +478,8 @@ MODULE=APR::UUID
  apr_hook_deregister_all
  apr_hook_sort_register
 -apr_register_optional_fn
- apr_show_hook
- apr_sort_hooks
+ apr_hook_debug_show
+ apr_hook_sort_all
  apr_optional_hook_add
  apr_optional_hook_get
 
