@@ -4,9 +4,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4, need_lwp && need_auth;
+plan tests => 4, need need_lwp, need_auth;
 
-my $location = "/TestHooks__authen";
+my $location = "/TestHooks__authen_basic";
 
 sok {
     ! GET_OK $location;
