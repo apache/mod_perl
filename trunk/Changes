@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_04-dev
 
+set Apache::Resource::DEFAULT_RLIMIT_AS (address space) to 64Mb
+[Kevin Murphy <kevin@boojiboy.eorbit.net>]
+
 Bundle::Apache will now install Bundle::LWP before mod_perl
 [Aaron Johnson <solution@gina.net>]
 
