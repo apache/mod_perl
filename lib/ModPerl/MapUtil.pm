@@ -23,6 +23,7 @@ my $function_table = [];
 
 sub function_table {
     return $function_table if @$function_table;
+    push @INC, "xs/tables/current";
     require Apache::FunctionTable;
     require ModPerl::FunctionTable;
     @$function_table = (@$Apache::FunctionTable, @$ModPerl::FunctionTable);
