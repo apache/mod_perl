@@ -95,8 +95,9 @@ sub get_DEFINE {
     # overrides any local definition, not sure what's the right fix, for
     # now just define it here (should it define PASTHRU_DEFINE instead?)
     if (my $apr_bindir = $build->apr_bindir()) {
+        my $ext = WIN32 ? '.bat' : '';
         my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
-            map { qq{$apr_bindir/$_-config} } qw(apr apu);
+            map { qq{$apr_bindir/$_-config$ext} } qw(apr apu);
         $opt_define = '-DMP_HAVE_APR_LIBS' if @apr_libs;
     }
 
