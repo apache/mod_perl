@@ -33,6 +33,25 @@ MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
     return r;
 }
 
+MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj)
+{
+    SV *newobj;
+
+    if (!obj) {
+        obj = stashsv;
+        stashsv = Nullsv;
+    }
+
+    newobj = newSVsv(obj);
+
+    if (stashsv) {
+        HV *stash = gv_stashsv(stashsv, TRUE);
+        return sv_bless(newobj, stash);
+    }
+
+    return newobj;
+}
+
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
 {
     SV *sv = newSV(0);

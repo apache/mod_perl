@@ -16,6 +16,8 @@
 
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
+MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj);
+
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
 #define modperl_bless_request_rec(r) \

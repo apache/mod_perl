@@ -6,6 +6,11 @@ ap_add_output_filter(name, ctx, r, NULL)
 || (Perl_croak(aTHX_ "argument is not a blessed reference"),0) ? \
 modperl_filter_mg_get(aTHX_ sv) : NULL)
 
+#define mpxs_Apache__Filter_TIEHANDLE(stashsv, sv) \
+modperl_newSVsv_obj(aTHX_ stashsv, sv)
+
+#define mpxs_Apache__Filter_PRINT mpxs_Apache__Filter_print
+
 static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
                                                       SV **MARK, SV **SP)
 {
