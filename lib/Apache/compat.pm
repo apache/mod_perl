@@ -661,8 +661,10 @@ sub tmpfile {
     }
 }
 
-# the following functions now live in Apache::Response
+# the following functions now live in Apache::RequestIO
 # * discard_request_body
+
+# the following functions now live in Apache::Response
 # * meets_conditions
 # * set_content_length
 # * set_etag
