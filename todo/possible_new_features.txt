@@ -1,6 +1,16 @@
 config features:
 ----------------
 
+- Since now we have protocol modules, it'd be nice to have a similar
+  thing to PerlCleanupHandler, which works only for HTTP requests. 
+  It should probably be called PerlConnectionCleanupHandler.
+
+  If we add it we should probably rename PerlCleanupHadndler to
+  PerlRequestCleanupHandler and keep the old name as a deprecated alias.
+
+  We could also have PerlServerCleanupHandler, but that's exactly what
+  PerlChildExitHandler does. Consider having ServerCleanup as an alias.
+
 - tie %ENV to r->subprocess_env so stores are added to
   r->subprocess_env and fetches are looked up in there and elsewhere
   (e.g. HTTP_* from r->headers_in).  see modperl_env.c, current
@@ -30,7 +40,7 @@ config features:
   modules and code into foo.pl and running it from the base server and
   all virtual hosts.
 
--  PerlModule can be made more efficent using Perl_load_module
+-  PerlModule can be made more efficient using Perl_load_module
 
 perl language features:
 ----------------------
