@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+new variable $Apache::Server::StrictPerlSections, if true, will croak
+<Perl> section generates invalid Apache configuration syntax
+
 new Apache::src->ccflags method to combine $Config{ccflags} and
 apxs -q CFLAGS
 [Matthias Urlichs <smurf@noris.net>]
