@@ -18,10 +18,10 @@ sub handler {
         $rc =~ m/foo/) {
         t_server_log_error_is_expected();
     }
-   
+
     ModPerl::Util::exit if $rc eq 'exit';
 
-    die if $rc eq 'die'; 
+    die if $rc eq 'die';
 
     return if $rc eq 'undef';
 
