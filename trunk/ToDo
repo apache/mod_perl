@@ -40,8 +40,6 @@ POSSIBLE NEW FEATURES
 
 - replace Apache::StatINC with Apache::ModuleReload?
 
-- ken w's Apache::test patch
-
 - CHECK blocks? [Michael J Schout <mschout@gkg.net>]
 
 - see if possible to have the dso libperl.so be named something else,
