@@ -11,6 +11,22 @@ owner: gozer
 
 -------------
 
+MP_STATIC_EXTS=1 must link all extensions but APR.so. At the moment
+the following are not linked:
+
+  APR/Const.so APR/PerlIO.so Apache/Const.so ModPerl/Const.so
+
+owner: ???
+
+note: when testing MP_STATIC_EXTS=1 build we must ensure that there is
+no preinstalled mod_perl2. Since if there is a preinstall of a normal
+build, MP_STATIC_EXTS=1 will be not properly tested, as the
+preinstalled .so modules will be loaded. A potential solution: when
+MP_STATIC_EXTS=1 is used change .pm files not to load the .xs
+extensions!
+
+-------------
+
 When running as root and A-T figures it can't run the test suite
 (perms) it'll ask users if she wants to skip the test suite, if this
 happens:
