@@ -61,7 +61,7 @@ static int modperl_vhost_is_running(server_rec *s)
         return FALSE;
     }
 #else
-    return TRUE;
+    return modperl_is_running();
 #endif
 }
 
