@@ -80,7 +80,7 @@ unless (simple_fetch "/test.html") {
         print "still waiting for server to warm up...";
     }
     for (1..3) {
-        sleep 1;
+        sleep $_;
         if (simple_fetch "/test.html") {
             print "ok\n";
         }
@@ -92,7 +92,7 @@ unless (simple_fetch "/test.html") {
 
 unless (simple_fetch "/test.html") {
     print "not ok\n"; 
-    die "server failed to start!";
+    die "server failed to start! (please examine t/logs/error_log)";
 }
 
 runtests @tests;
