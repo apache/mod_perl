@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 13;
+    plan $r, tests => 14;
 
     #Apache::RequestRec::dir_config tests
 
@@ -68,6 +68,15 @@ sub handler {
         ok t_cmp('SetValue0',
                  $r->dir_config($key),
                  "direct value fetch in a scalar context");
+    }
+
+    # make sure 0 comes through as 0 and not undef
+    {
+        my $key = 'TestModperl__request_rec_ZeroKey';
+
+        ok t_cmp(0,
+                 $r->dir_config($key),
+                 'table value 0 is not undef');
     }
 
     # test non-existent key
@@ -159,6 +168,8 @@ __END__
     PerlSetVar TestModperl__server_rec_Key_set_in_Base 1_SetValue
     PerlAddVar TestModperl__server_rec_Key_set_in_Base 2_AddValue 3_AddValue
 </Base>
+
+PerlSetVar TestModperl__request_rec_ZeroKey 0
 
 PerlSetVar TestModperl__request_rec_Key0 SetValue0
 

@@ -19,7 +19,7 @@ use constant HAVE_APACHE_2_0_47 => have_min_apache_version('2.0.47');
 sub handler {
     my $r = shift;
 
-    my $tests = 19;
+    my $tests = 21;
     $tests += 2 if HAVE_APACHE_2_0_47;
 
     plan $r, tests => $tests;
@@ -41,6 +41,16 @@ sub handler {
        $array[0] eq 'bar' &&
        $array[1] eq 'tar' &&
        $array[2] eq 'kar';
+
+    # make sure 0 comes through as 0 and not undef
+    $table->set(foo => 0);
+    my $zero = $table->get('foo');
+
+    ok defined $zero;
+    
+    ok t_cmp(0,
+             $zero,
+             'table value 0 is not undef');
 
     ok $table->unset('foo') || 1;
 
