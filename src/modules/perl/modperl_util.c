@@ -387,6 +387,18 @@ MP_INLINE void *modperl_hash_tied_object(pTHX_
     return NULL;
 }
 
+MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)
+{
+    I32 i, j, src_fill = AvFILLp(src), dst_fill = AvFILLp(dst);
+
+    av_extend(dst, src_fill);
+    AvFILLp(dst) += src_fill+1;
+
+    for (i=dst_fill+1, j=0; j<=AvFILLp(src); i++, j++) {
+        AvARRAY(dst)[i] = SvREFCNT_inc(AvARRAY(src)[j]);
+    }
+}
+
 MP_INLINE
 SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                        char *key, SV *sv_val)
