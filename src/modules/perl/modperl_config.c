@@ -20,7 +20,7 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 
     scfg->argv = ap_make_array(p, 2, sizeof(char *));
 
-    scfg_push_argv("httpd");
+    scfg_push_argv(ap_server_argv0);
 
     return scfg;
 }
