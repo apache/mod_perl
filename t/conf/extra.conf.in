@@ -1,0 +1,3 @@
+# make sure that we test under Taint mode
+PerlSwitches -T
+
