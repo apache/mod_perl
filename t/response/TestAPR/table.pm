@@ -125,8 +125,8 @@ sub handler {
     if (HAVE_APACHE_2_0_47) {
         $overlay->compress(APR::OVERLAP_TABLES_MERGE);
 
-        # XXX is insertion order guaranteed on all platforms?
-        ok $overlay->get('foo') =~ m!(\w+, ){2}\w+!;
+        # $add first, then $base
+        ok $overlay->get('foo') eq 'three, one, two';
         ok $overlay->get('bar') eq 'beer';
     }
 
