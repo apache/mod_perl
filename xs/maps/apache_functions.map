@@ -91,10 +91,10 @@ subrequest_rec *:ap_sub_req_lookup_file | | \
  r, new_file, next_filter=r->proto_output_filters | lookup_file
 
 subrequest_rec *:ap_sub_req_lookup_uri  | | \
- r, new_file, next_filter=r->proto_output_filters | lookup_uri
+ r, new_uri, next_filter=r->proto_output_filters | lookup_uri
 
 subrequest_rec *:ap_sub_req_method_uri  | | \
- r, method, new_file, next_filter=r->proto_output_filters | lookup_method_uri
+ r, method, new_uri, next_filter=r->proto_output_filters | lookup_method_uri
 
 PACKAGE=Apache::SubRequest   ISA=Apache::RequestRec
  ap_destroy_sub_req  | | r | DESTROY
