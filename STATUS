@@ -12,6 +12,13 @@ Release:
 
 Available Patches:
 
+    * Improper signal handler restoration with sigaction()
+      Report: +Patch
+      http://marc.theaimsgroup.com/?l=apache-modperl&m=107177256515969&w=2
+      http://marc.theaimsgroup.com/?l=apache-modperl&m=103374262313616&w=2
+      Status: Rafael Garcia-Suarez says the patch looks good at the
+              first glance
+
     * if the requested number of bytes was less
       than or equal to the available amount of input then the call
       would be successful, otherwise the buffer would come back
