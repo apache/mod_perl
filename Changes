@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Fix $s->log->*, $s->log_error and $s->log_serror to again log into the
+vhost's error_log file (if there is one). [Stas]
+
 
 
 

@@ -17,13 +17,13 @@ static void mpxs_Apache__Log_BOOT(pTHX)
 {
     av_push(get_av("Apache::Log::Request::ISA", TRUE), 
             newSVpv("Apache::Log", 11));
-    av_push(get_av("Apache::Log::Server::ISA", TRUE), 
+    av_push(get_av("Apache::Log::ServerRec::ISA", TRUE), 
             newSVpv("Apache::Log", 11));
 }
 
 #define croak_inval_obj()                                       \
     Perl_croak(aTHX_ "Argument is not an Apache::RequestRec "   \
-               "or Apache::Server object")
+               "or Apache::ServerRec object")
 
 static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
 {
@@ -40,7 +40,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         r = (request_rec *)SvObjIV(sv);
         s = r->server;
     }
-    else if (SvROK(sv) && sv_isa(sv, "Apache::Log::Server")) {
+    else if (SvROK(sv) && sv_isa(sv, "Apache::Log::ServerRec")) {
         s = (server_rec *)SvObjIV(sv);
     }
     else {
@@ -97,7 +97,7 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
         retval = (void *)modperl_sv2request_rec(aTHX_ sv);
         break;
       case MP_LOG_SERVER:
-        pclass = "Apache::Log::Server";
+        pclass = "Apache::Log::ServerRec";
         retval = (void *)modperl_sv2server_rec(aTHX_ sv);
         break;
       default:
@@ -282,8 +282,8 @@ static XS(MPXS_Apache__Log_log_error)
      * we support the following:
      * Apache::warn
      * Apache->warn
-     * Apache::Server->log_error
-     * Apache::Server->warn
+     * Apache::ServerRec->log_error
+     * Apache::ServerRec->warn
      * $r->log_error
      * $r->warn
      * $s->log_error
@@ -296,10 +296,10 @@ static XS(MPXS_Apache__Log_log_error)
         {
             s = r->server;
         }
-        else if (sv_isa(ST(0), "Apache::Server")) {
+        else if (sv_isa(ST(0), "Apache::ServerRec")) {
             s = (server_rec *)SvObjIV(ST(0));
         }
-        else if (SvPOK(ST(0)) && strEQ(SvPVX(ST(0)), "Apache::Server")) {
+        else if (SvPOK(ST(0)) && strEQ(SvPVX(ST(0)), "Apache::ServerRec")) {
             s = modperl_global_get_server_rec();
         }
     }
