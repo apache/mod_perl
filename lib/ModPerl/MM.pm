@@ -6,6 +6,7 @@ use ExtUtils::MakeMaker ();
 use ExtUtils::Install ();
 use Cwd ();
 use Apache::Build ();
+use Carp;
 
 our %PM; #add files to installation
 
@@ -100,22 +101,25 @@ sub my_import {
 
 my @default_opts = qw(CCFLAGS LIBS INC OPTIMIZE LDDLFLAGS TYPEMAPS);
 my @default_dlib_opts = qw(OTHERLDFLAGS);
+my $b = build_config();
+my %opts = (
+    CCFLAGS      => sub { $b->perl_ccopts . $b->ap_ccopts             },
+    LIBS         => sub { join ' ', $b->apache_libs, $b->modperl_libs },
+    INC          => sub { $b->inc;                                    },
+    OPTIMIZE     => sub { $b->perl_config('optimize');                },
+    LDDLFLAGS    => sub { $b->perl_config('lddlflags');               },
+    TYPEMAPS     => sub { $b->typemaps;                               },
+    OTHERLDFLAGS => sub { $b->otherldflags;                           },
+);
 
-sub opt_CCFLAGS {
-    my $build = build_config();
-    $build->perl_ccopts . $build->ap_ccopts;
+sub get_def_opt {
+    my $opt = shift;
+    return $opts{$opt}->() if exists $opts{$opt};
+    # handle cases when Makefile.PL wants an option we don't have a
+    # default for. XXX: some options expect [] rather than scalar.
+    Carp::carp("!!! no default argument defined for argument: $opt");
+    return '';
 }
-
-sub opt_LIBS {
-    my $build = build_config();
-    join ' ', $build->apache_libs, $build->modperl_libs;
-}
-
-sub opt_INC          { build_config()->inc;                      }
-sub opt_OPTIMIZE     { build_config()->perl_config('optimize');  }
-sub opt_LDDLFLAGS    { build_config()->perl_config('lddlflags'); }
-sub opt_TYPEMAPS     { build_config()->typemaps;                 }
-sub opt_OTHERLDFLAGS { build_config()->otherldflags;             }
 
 sub WriteMakefile {
     my %args = @_;
@@ -133,16 +137,14 @@ sub WriteMakefile {
 
     # set top-level WriteMakefile's values if weren't set already
     for (@default_opts) {
-        no strict 'refs';
-        $args{$_} = "opt_$_"->() unless exists $args{$_}; # already defined
+        $args{$_} = get_def_opt($_) unless exists $args{$_}; # already defined
     }
 
     # set dynamic_lib-level WriteMakefile's values if weren't set already
     $args{dynamic_lib} ||= {};
     my $dlib = $args{dynamic_lib};
     for (@default_dlib_opts) {
-        no strict 'refs';
-        $dlib->{$_} = "opt_$_"->() unless exists $dlib->{$_};
+        $dlib->{$_} = get_def_opt($_) unless exists $dlib->{$_};
     }
 
     ExtUtils::MakeMaker::WriteMakefile(%args);
