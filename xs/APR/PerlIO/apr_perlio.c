@@ -82,6 +82,13 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     st->pool = modperl_sv2pool(aTHX_ sv);
   
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
+
+#ifdef PERLIO_APR_DEBUG
+    Perl_warn(aTHX_ "PerlIOAPR_open obj=0x%lx, file=0x%lx, name=%s, rc=%d\n",
+              (unsigned long)f, (unsigned long)st->file,
+              path ? path : "(UNKNOWN)", rc);
+#endif
+
     if (rc != APR_SUCCESS) {
         PerlIOBase(f)->flags |= PERLIO_F_ERROR;
         return NULL;
@@ -110,6 +117,15 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
         PerlIOAPR *ost = PerlIOSelf(o, PerlIOAPR);
 
         rc = apr_file_dup(&fst->file, ost->file, ost->pool);
+
+#ifdef PERLIO_APR_DEBUG
+        Perl_warn(aTHX_ "PerlIOAPR_dup obj=0x%lx, "
+                        "file=0x%lx => 0x%lx, rc=%d\n",
+                  (unsigned long)f,
+                  (unsigned long)ost->file,
+                  (unsigned long)fst->file, rc);
+#endif
+
         if (rc == APR_SUCCESS) {
             fst->pool = ost->pool;
             return f;
@@ -190,9 +206,14 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
     IV code = PerlIOBase_close(aTHX_ f);
     apr_status_t rc;
 
-    const char *new_path;
+    const char *new_path = NULL;
     apr_file_name_get(&new_path, st->file);
-    /* Perl_warn(aTHX_ "closing file %s\n", new_path); */
+
+#ifdef PERLIO_APR_DEBUG
+    Perl_warn(aTHX_ "PerlIOAPR_close obj=0x%lx, file=0x%lx, name=%s\n",
+              (unsigned long)f, (unsigned long)st->file,
+              new_path ? new_path : "(UNKNOWN)");
+#endif
 
     rc = apr_file_flush(st->file);
     if (rc != APR_SUCCESS) {
