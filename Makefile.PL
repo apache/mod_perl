@@ -53,7 +53,7 @@ my $code  = ModPerl::Code->new;
 #Stop.
 #NMAKE : fatal error U1077: 'cd' : return code '0x2'
 #Stop.
-my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
+my @remote_makefile_dirs = Apache::Build::WIN32() ? () :
                            qw(docs/api/mod_perl-2.0);
 
 configure();
@@ -105,7 +105,7 @@ sub configure {
         }
     }
 
-    if (Apache::Build::is_win32()) {
+    if (Apache::Build::WIN32()) {
         #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
         #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
@@ -271,7 +271,7 @@ sub set_modperl_version {
 }
 
 sub system_sanity_check {
-    return if $build->is_win32;
+    return if Apache::Build::WIN32;
 
     my $ccflags = $build->perl_config('ccflags');
     for (split /\s+/, $ccflags) {
