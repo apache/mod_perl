@@ -141,6 +141,33 @@ GV *modperl_mgv_lookup(pTHX_ modperl_mgv_t *symbol)
     return Nullgv;
 }
 
+#ifdef USE_ITHREADS
+MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
+                                          server_rec *s, apr_pool_t *p)
+{
+    MP_dSCFG(s);
+    GV *gv = modperl_mgv_lookup(aTHX_ symbol);
+
+    if (gv || !MpSrvPARENT(scfg)) {
+        return gv;
+    }
+
+    /* 
+     * this VirtualHost has its own parent interpreter
+     * must require the module again with this server's THX
+     */
+    modperl_mgv_require_module(aTHX_ symbol, s, p);
+
+    return modperl_mgv_lookup(aTHX_ symbol);
+}
+#else
+MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
+                                          server_rec *s, apr_pool_t *p)
+{
+    return modperl_mgv_lookup(aTHX_ symbol);
+}
+#endif
+
 int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                         apr_pool_t *p, const char *name)
 {
@@ -257,31 +284,53 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 }
 
 char *modperl_mgv_as_string(pTHX_ modperl_mgv_t *symbol,
-                            apr_pool_t *p)
+                            apr_pool_t *p, int package)
 {
     char *string, *ptr;
     modperl_mgv_t *mgv;
     int len = 0;
 
-    for (mgv = symbol; mgv; mgv = mgv->next) {
+    for (mgv = symbol; (package ? mgv->next : mgv); mgv = mgv->next) {
         len += mgv->len;
     }
 
     ptr = string = apr_palloc(p, len+1);
 
-    for (mgv = symbol; mgv; mgv = mgv->next) {
+    for (mgv = symbol; (package ? mgv->next : mgv); mgv = mgv->next) {
         Copy(mgv->name, ptr, mgv->len, char);
         ptr += mgv->len;
     }
 
-    *ptr = '\0';
+    if (package) {
+        *(ptr-2) = '\0'; /* trim trailing :: */
+    }
+    else {
+        *ptr = '\0';
+    }
 
     return string;
 }
 
+#ifdef USE_ITHREADS
+int modperl_mgv_require_module(pTHX_ modperl_mgv_t *symbol,
+                               server_rec *s, apr_pool_t *p)
+{
+    char *package =
+        modperl_mgv_as_string(aTHX_ symbol, p, 1);
+
+    if (modperl_require_module(aTHX_ package)) {
+        MP_TRACE_h(MP_FUNC, "reloaded %s for server %s\n",
+                   package, modperl_server_desc(s, p));
+        return TRUE;
+    }
+
+    return FALSE;
+}
+#endif
+
 /* precompute the hash(es) for handler names */
 static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
-                                  MpAV *entry)
+                                  MpAV *entry, void *reload)
 {
     MP_dSCFG(s);
     int i;
@@ -297,7 +346,18 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
         modperl_handler_t *handler = handlers[i];
 
         if (MpHandlerPARSED(handler)) {
-            MP_TRACE_h(MP_FUNC, "%s already resolved\n", handler->name);
+#ifdef USE_ITHREADS
+            if (reload && !modperl_mgv_lookup(aTHX_ handler->mgv_cv)) {
+                /* 
+                 * this VirtualHost has its own parent interpreter
+                 * must require the module again with this server's THX
+                 */
+                modperl_mgv_require_module(aTHX_ handler->mgv_cv,
+                                           s, p);
+            }
+#endif
+            MP_TRACE_h(MP_FUNC, "%s already resolved in server %s\n",
+                       handler->name, modperl_server_desc(s, p));
         }
         else {
             if (MpSrvAUTOLOAD(scfg)) {
@@ -324,7 +384,7 @@ static int modperl_dw_hash_handlers(apr_pool_t *p, server_rec *s,
     }
 
     for (i=0; i < MP_PER_DIR_NUM_HANDLERS; i++) {
-        modperl_hash_handlers(aTHX_ p, s, dir_cfg->handlers[i]);
+        modperl_hash_handlers(aTHX_ p, s, dir_cfg->handlers[i], data);
     }
 
     return 1;
@@ -339,22 +399,22 @@ static int modperl_sw_hash_handlers(apr_pool_t *p, server_rec *s,
 
     for (i=0; i < MP_PER_SRV_NUM_HANDLERS; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->handlers[i]);
+                              scfg->handlers[i], data);
     }
 
     for (i=0; i < MP_PROCESS_NUM_HANDLERS; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->process_cfg->handlers[i]);
+                              scfg->process_cfg->handlers[i], data);
     }
 
     for (i=0; i < MP_CONNECTION_NUM_HANDLERS; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->connection_cfg->handlers[i]);
+                              scfg->connection_cfg->handlers[i], data);
     }
 
     for (i=0; i < MP_FILES_NUM_HANDLERS; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->files_cfg->handlers[i]);
+                              scfg->files_cfg->handlers[i], data);
     }
 
     return 1;
@@ -365,4 +425,21 @@ void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
     ap_pcw_walk_config(p, s, &perl_module, NULL,
                        modperl_dw_hash_handlers,
                        modperl_sw_hash_handlers);
+
+#ifdef USE_ITHREADS
+    /* check for parent interpreters in virtual hosts who need modules
+     * loaded in their own namespace
+     */
+    for (s=s->next; s; s=s->next) {
+        MP_dSCFG(s);
+
+        if (!MpSrvPARENT(scfg) || !MpSrvAUTOLOAD(scfg)) {
+            continue;
+        }
+
+        ap_pcw_walk_config(p, s, &perl_module, (void*)TRUE,
+                           modperl_dw_hash_handlers,
+                           modperl_sw_hash_handlers);
+    }
+#endif
 }

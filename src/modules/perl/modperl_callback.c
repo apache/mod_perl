@@ -62,7 +62,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 }
 
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
-                     AV *args)
+                     server_rec *s, AV *args)
 {
     CV *cv=Nullcv;
     I32 flags = G_EVAL|G_SCALAR;
@@ -113,12 +113,12 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         cv = (CV*)SvRV(sv);
     }
     else {
-        GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv);
+        GV *gv = modperl_mgv_lookup_autoload(aTHX_ handler->mgv_cv, s, p);
         if (gv) {
             cv = modperl_mgv_cv(gv);
         }
         else {
-            char *name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p);
+            char *name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 0);
             MP_TRACE_h(MP_FUNC, "lookup of %s failed\n", name);
         }
     }
@@ -268,7 +268,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     };
 
     for (i=0; i<av->nelts; i++) {
-        if ((status = modperl_callback(aTHX_ handlers[i], p, av_args)) != OK) {
+        if ((status = modperl_callback(aTHX_ handlers[i], p, s, av_args)) != OK) {
             status = modperl_errsv(aTHX_ status, r, s);
         }
 

@@ -97,7 +97,7 @@ int modperl_run_filter(modperl_filter_t *filter)
                               filter_classes[filter->mode], filter,
                               NULL);
 
-    if ((status = modperl_callback(aTHX_ handler, p, args)) != OK) {
+    if ((status = modperl_callback(aTHX_ handler, p, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
 
