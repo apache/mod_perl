@@ -2,9 +2,18 @@ use strict;
 
 use Apache::test;
 
-use Apache::Request ();
-use Apache::Cookie ();
-use CGI::Cookie ();
+eval {
+  require Apache::Request;
+  require Apache::Cookie;
+  require CGI::Cookie;
+};
+
+unless (Apache::Request->can('upload')) {
+    print "1..0\n";
+    print $@ if $@;
+    print "$INC{'Apache/Request.pm'}\n";
+    return;
+}
 
 my $r = shift;
 $r->send_http_header('text/plain');
