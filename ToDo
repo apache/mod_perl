@@ -21,8 +21,6 @@ Subject: Bug in <Perl> sections
 
 - make 'make test_report' more useful
 
-- $r->header_out->get in list context
-
 - ap_scan_script_header_err_string? and/or update cgi_header_out to
   take action on Last-Modified header
 

@@ -39,7 +39,7 @@ destroy(self)
     CODE:
     safefree(self);
 
-const char*
+void
 FETCH(self, key)
     Apache::TieHashTable self
     const char *key
@@ -47,13 +47,23 @@ FETCH(self, key)
     ALIAS:
     get = 1
 
-    CODE:
+    PPCODE:
     ix = ix; /*avoid warning*/
     if(!self->table) XSRETURN_UNDEF;
-    RETVAL = table_get(self->table, key);
-
-    OUTPUT:
-    RETVAL
+    if(GIMME == G_SCALAR) {
+	const char *val = table_get(self->table, key);
+	if (val) XPUSHs(sv_2mortal(newSVpv((char*)val,0)));
+	else XSRETURN_UNDEF;
+    }
+    else {
+	int i;
+	array_header *arr  = table_elts(self->table);
+	table_entry *elts = (table_entry *)arr->elts;
+	for (i = 0; i < arr->nelts; ++i) {
+	    if (!elts[i].key || strcasecmp(elts[i].key, key)) continue;
+	    XPUSHs(sv_2mortal(newSVpv(elts[i].val,0)));
+	}
+    }
 
 bool
 EXISTS(self, key)

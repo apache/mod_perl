@@ -6,7 +6,7 @@ my $r = shift;
 $r->send_http_header("text/plain");
 
 my $i = 0;
-my $tests = 26;
+my $tests = 27;
 print "1..$tests\n";
 
 my $headers_in = $r->headers_in;
@@ -40,8 +40,12 @@ my %my_hash = (two => 2, three => 3);
 @{ $r->notes }{ keys %my_hash } = (values %my_hash);
 
 for (keys %my_hash) {
-    test ++$i, $r->notes->get($_);
+    test ++$i, scalar $r->notes->get($_);
 }
+$r->notes->add(three => "tre");
+my(@notes) = $r->notes->get("three");
+print "\@notes = @notes\n";
+test ++$i, @notes == 2;
 
 for my $meth (qw{
     headers_in headers_out err_headers_out notes dir_config subprocess_env
