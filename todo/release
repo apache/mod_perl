@@ -4,6 +4,10 @@
 
 -- see also todo/api_status
 
+* on windows $pool->clean, followed by $pool->destroy breaks other tests
+  See test TestAPR::pool
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108547894817083&w=2
+
 * consider changing the allocation method in APR::Bucket::new from
   malloc/free to bucket_alloc, like all other buckets do
 
@@ -120,3 +124,4 @@
 
 * Apache->unescape_url{_info}:
   not yet implemented.  should be moved to Apache::Util
+
