@@ -7,14 +7,18 @@ use vars qw($VERSION @ISA);
 $VERSION = '1.00';
 @ISA = qw(Apache::PerlRun);
 
+#OO replacement for Apache::Registry
+#configure like so:
+# <Location /perl>
+# SetHandler perl-script
+# PerlHandler Apache::RegistryNG->handler
+# Options +ExecCGI
+# </Location>
+# see also: Apache::RegistryBB
+ 
 sub handler ($$) {
-    my($class, $r);
-    if(@_ == 1) {
-	($class, $r) = (__PACKAGE__, @_);
-    }
-    else {
-	($class, $r) = (shift,shift);
-    }
+    my($class, $r) = (shift,shift);
+
     my $pr = $class->new($r);
 
     my $rc = $pr->can_compile;

@@ -122,7 +122,7 @@ for (qw(/perl /cgi-bin /dirty-perl /perl_xs)) {
 
 my @mod_perl = (
     SetHandler  => "perl-script",
-    PerlHandler => "Apache::RegistryNG",
+    PerlHandler => "Apache::RegistryNG->handler",
     Options     => "ExecCGI",
 );
 

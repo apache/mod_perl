@@ -87,11 +87,16 @@ sub sub_wrap {
     $pr->{'sub'} = \$sub;
 }
 
+sub cached {
+    my($pr) = @_;
+    exists $Apache::Registry->{$pr->namespace}{'mtime'};
+}
+
 sub should_compile {
     my($pr, $package, $mtime) = @_;
     $package ||= $pr->{'namespace'};
     $mtime   ||= $pr->{'mtime'};
-    !(exists $Apache::Registry->{$package}{'mtime'}
+    !($pr->cached
     &&
       $Apache::Registry->{$package}{'mtime'} <= $mtime);
 }
@@ -118,12 +123,12 @@ sub compile {
 }
 
 sub run {
-    my($pr) = @_;
+    my $pr = shift;
     my $package = $pr->{'namespace'};
 
     my $rc = OK;
     my $cv = \&{"$package\::handler"};
-    eval { $rc = &{$cv}($pr->{'_r'}, @_) } if $pr->seqno;
+    eval { $rc = &{$cv}($pr, @_) } if $pr->seqno;
     $pr->{status} = $rc;
 
     my $errsv = "";
@@ -147,6 +152,7 @@ sub status {
 
 sub namespace {
     my($pr, $root) = @_;
+    return $pr->{'namespace'} if $pr->{'namespace'};
 
     my $uri = $pr->uri; 
     $uri = "/__INDEX__" if $uri eq "/";

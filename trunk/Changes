@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+Apache::PerlRun subclass-able-ness near complete, see new example
+modules Apache::RegistryNG and Apache::RegistryBB
+
 fix compile problem under aix [Ed Hill <ed-hill@uiowa.edu>]
 
 fix 'make test' @INC problem under NT, thanks to Dale Couch
