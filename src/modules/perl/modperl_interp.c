@@ -323,6 +323,14 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
     if (scfg && (is_startup || !scfg->threaded_mpm)) {
         MP_TRACE_i(MP_FUNC, "using parent interpreter at %s\n",
                    is_startup ? "startup" : "request time (non-threaded MPM)");
+
+        if (!scfg->mip) {
+            /* we get here if directive handlers are invoked
+             * before server merge.
+             */
+            modperl_init_vhost(s, p, NULL);
+        }
+
         interp = scfg->mip->parent;
     }
     else {

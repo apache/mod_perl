@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+fix for directive handlers within vhosts using threaded MPMs
+[Stephen Clouse <stephenc@theiqgroup.com>]
+
 fix <IfDefine MODPERL2> support
 
 default AuthType to Basic if not set in $r->get_basic_auth_pw()
