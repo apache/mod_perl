@@ -8,7 +8,12 @@
 * PassEnv/SetEnv propogation in <Perl> section 
   http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
 
-
+* there was a report about PerlRun leaking memory. the reporter didn't
+  give any more details, but I suspect that it's due to
+  ModPerl::Util::unload_package() which perfectly fits the timing when
+  the leak was introduced (when PerlRun started to use unload_package).
+  
+  Report: http://gossamer-threads.com/lists/modperl/modperl/77162
 
 * most of the xs wrappers print no "Usage: " when wrong args/wrong
   number of args are passed, would be nice to add the usage message
