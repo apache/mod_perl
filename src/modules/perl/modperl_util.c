@@ -399,51 +399,54 @@ MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)
     }
 }
 
-MP_INLINE
-SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
-                       char *key, SV *sv_val)
+MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
+                                 char *key, SV *sv_val)
 {
-    SV *RETVAL = &PL_sv_undef;
+    SV *retval = &PL_sv_undef;
 
     if (r && r->per_dir_config) {				   
         MP_dDCFG;
-        RETVAL = modperl_table_get_set(aTHX_ dcfg->SetVar, key, sv_val, FALSE);
+        retval = modperl_table_get_set(aTHX_ dcfg->SetVar,
+                                       key, sv_val, FALSE);
     }
 
-    if (!SvTRUE(RETVAL)) {
+    if (!SvTRUE(retval)) {
         if (s && s->module_config) {
             MP_dSCFG(s);
-            SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
-            RETVAL = modperl_table_get_set(aTHX_ scfg->SetVar, key, sv_val, FALSE);
-        } else {
-            RETVAL = &PL_sv_undef;
+            SvREFCNT_dec(retval); /* in case above did newSV(0) */
+            retval = modperl_table_get_set(aTHX_ scfg->SetVar,
+                                           key, sv_val, FALSE);
+        }
+        else {
+            retval = &PL_sv_undef;
         }
     }
         
-    return RETVAL;
+    return retval;
 }
 
 SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
                           SV *sv_val, bool do_taint)
 {
-    SV *RETVAL = &PL_sv_undef;
+    SV *retval = &PL_sv_undef;
 
     if (table == NULL) { 
         /* do nothing */
     }
     else if (key == NULL) { 
-        RETVAL = modperl_hash_tie(aTHX_ "APR::Table", Nullsv, (void*)table); 
+        retval = modperl_hash_tie(aTHX_ "APR::Table",
+                                  Nullsv, (void*)table); 
     }
     else if (sv_val == &PL_sv_no) { /* no val was passed */
         char *val; 
         if ((val = (char *)apr_table_get(table, key))) { 
-            RETVAL = newSVpv(val, 0); 
+            retval = newSVpv(val, 0); 
         } 
         else { 
-            RETVAL = newSV(0); 
+            retval = newSV(0); 
         } 
         if (do_taint) { 
-            SvTAINTED_on(RETVAL); 
+            SvTAINTED_on(retval); 
         } 
     }
     else if (sv_val == &PL_sv_undef) { /* val was passed in as undef */
@@ -453,7 +456,7 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
         apr_table_set(table, key, SvPV_nolen(sv_val));
     } 
 
-    return RETVAL;
+    return retval;
 }
 
 MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
