@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/10/10 08:10:41 $]
+   Last modified at [$Date: 2002/10/13 00:37:05 $]
 
 Release:
 --------
@@ -71,6 +71,8 @@ Open Issues or Core Enhancements:
    Message-ID: <20021009214318.53247.qmail@web11203.mail.yahoo.com>
    Message-ID: <20021010000442.H59257-100000@miette.develooper.com>
    Message-ID: <20021010003942.P59257-100000@miette.develooper.com>
+   ah, seems like this is a glibc problem on linux:
+     http://archive.develooper.com/perl5-porters@perl.org/msg85673.html
 
 
 * PerlPreConnectionHandler's modperl_callback_pre_connection is not
