@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use Apache::BuildConfig;
 
 use Apache::MPM ();
 
@@ -22,10 +23,15 @@ my $mpm = lc Apache::MPM->show;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 2,
+    my $build = Apache::BuildConfig->new;
+    my $static = $build->should_build_apache ? 1 : 0;
+    
+    my $tests = $static ? 1 : 2;
+    
+    plan $r, tests => $tests,
         need { "works only for prefork" => ($mpm eq 'prefork') };
 
-    {
+    if (!$static) {
         local $ENV{PERL_SIGNALS} = "unsafe";
 
         eval {
