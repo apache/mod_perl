@@ -102,6 +102,16 @@ typedef struct {
     MpAV *handlers[MP_FILES_NUM_HANDLERS];
 } modperl_files_config_t;
 
+typedef U32 modperl_opts_t;
+
+typedef struct {
+    modperl_opts_t opts;
+    modperl_opts_t opts_add;
+    modperl_opts_t opts_remove;
+    modperl_opts_t opts_override;
+    int unset;
+} modperl_options_t;
+
 typedef struct {
     MpHV *SetVars;
     MpAV *PassEnv;
@@ -120,7 +130,7 @@ typedef struct {
     modperl_gtop_t *gtop;
 #endif
     MpAV *argv;
-    int flags;
+    modperl_options_t *flags;
 } modperl_srv_config_t;
 
 typedef struct {

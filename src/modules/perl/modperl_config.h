@@ -24,6 +24,7 @@ const char *modperl_cmd_##item(cmd_parms *parms, \
                                void *dummy, char *arg)
 MP_DECLARE_SRV_CMD(trace);
 MP_DECLARE_SRV_CMD(switches);
+MP_DECLARE_SRV_CMD(options);
 
 #ifdef USE_ITHREADS
 MP_DECLARE_SRV_CMD(interp_start);

@@ -316,7 +316,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     int i, status = OK;
     const char *desc = NULL;
 
-    if (MpSrvPERL_OFF(scfg)) {
+    if (!MpSrvENABLED(scfg)) {
         MP_TRACE_h(MP_FUNC, "PerlOff for server %s\n",
                    s->server_hostname);
         return DECLINED;
