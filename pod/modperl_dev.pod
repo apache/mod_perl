@@ -473,6 +473,8 @@ decide to debug some test) use C<-verbose> option:
 
 =item PerlPostReadRequestHandler
 
+=item PerlInitHandler
+
 =item PerlTransHandler
 
 =back
