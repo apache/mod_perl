@@ -1227,7 +1227,7 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
     }   
 }
 
-CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
+CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 {
     CHAR_P errmsg;
     SV *code, *val;
@@ -1236,13 +1236,13 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
     I32 klen, dotie=FALSE;
     char line[MAX_STRING_LEN];
 
-    if(!PERL_RUNNING()) perl_startup(cmd->server, cmd->pool); 
+    if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
 
     if(PERL_RUNNING()) {
 	code = newSV(0);
 	sv_setpv(code, "");
 	if(arg) 
-	    errmsg = perl_srm_command_loop(cmd, code);
+	    errmsg = perl_srm_command_loop(parms, code);
     }
     else {
 	MP_TRACE_s(fprintf(stderr, 
@@ -1258,6 +1258,8 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
     perl_section_hash_init("Directory", dotie);
     perl_section_hash_init("Files", dotie);
     perl_section_hash_init("Limit", dotie);
+
+    sv_setpv(perl_get_sv("0", TRUE), cmd_filename);
 
     perl_eval_sv(code, G_DISCARD);
 
@@ -1282,19 +1284,19 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 	if((sv = GvSV((GV*)val))) {
 	    if(SvTRUE(sv)) {
 		if(STRING_MEAL(key)) {
-		    perl_eat_config_string(cmd, dummy, sv);
+		    perl_eat_config_string(parms, dummy, sv);
 		}
 		else {
 		    MP_TRACE_s(fprintf(stderr, "SVt_PV: $%s = `%s'\n", 
 				     key, SvPV(sv,na)));
 		    sprintf(line, "%s %s", key, SvPV(sv,na));
-		    perl_handle_command(cmd, dummy, line);
+		    perl_handle_command(parms, dummy, line);
 		}
 	    }
 	}
 
 	if((hv = GvHV((GV*)val))) {
-	    perl_handle_command_hv(hv, key, cmd, dummy);
+	    perl_handle_command_hv(hv, key, parms, dummy);
 	}
 	else if((av = GvAV((GV*)val))) {	
 	    module *mod = top_module;
@@ -1304,7 +1306,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 	    if(STRING_MEAL(key)) {
 		SV *tmpsv;
 		while((tmpsv = av_shift(av)) != &sv_undef)
-		    perl_eat_config_string(cmd, dummy, tmpsv);
+		    perl_eat_config_string(parms, dummy, tmpsv);
 		continue;
 	    }
 
@@ -1335,7 +1337,7 @@ CHAR_P perl_section (cmd_parms *cmd, void *dummy, const char *arg)
 		break;
 	    }
 	    if(shift > alen) shift = 1; /* elements are refs */ 
-	    perl_handle_command_av(av, shift, key, cmd, dummy);
+	    perl_handle_command_av(av, shift, key, parms, dummy);
 	}
     }
     SvREFCNT_dec(code);

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+set $0 to .conf file name when inside <Perl> sections
+
 fixed $r->subprocess_env bug introduced in 1.12, spotted by Ken Williams
 
 '*CORE::GLOBAL::exit = \&Apache::exit' for 5.005-tobe+ Perls 
