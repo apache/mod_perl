@@ -190,7 +190,7 @@ APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
 
 #define MP_PERL_CONTEXT_DECLARE
 #define MP_PERL_CONTEXT_STORE
-#define MP_PERL_CONTEXT_OVERRIDE(perl)
+#define MP_PERL_CONTEXT_OVERRIDE(new_perl)
 #define MP_PERL_CONTEXT_STORE_OVERRIDE(new_perl)
 #define MP_PERL_CONTEXT_RESTORE
 
