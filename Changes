@@ -12,7 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
-Apache::RequestRec method: method_number is now read-only [Stas]
+Apache::RequestRec methods: method_number, connection,
+canonical_filename are now read-only [Stas]
 
 The func Apache::SubProcess::spawn_proc_prog is now a method:
 $r->spawn_proc_prog [Stas]

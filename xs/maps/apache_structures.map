@@ -7,7 +7,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 
 <request_rec>
    pool
-   connection
+<  connection
    server
    next
    prev
@@ -55,7 +55,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    unparsed_uri
    uri
    filename
-   canonical_filename
+<  canonical_filename
    path_info
    args
 ~  finfo
