@@ -585,7 +585,8 @@ sub write_lookup_method_file {
             my $prefix = $func->{prefix};
             $last_prefix = $prefix if $prefix;
 
-            my $name = $func->{name};
+            my $name = $func->{perl_name} || $func->{name};
+            $name =~ s/^DEFINE_//;
 
             if ($name =~ /^mpxs_/) {
                 #e.g. mpxs_Apache__RequestRec_
@@ -604,8 +605,10 @@ sub write_lookup_method_file {
         }
     }
 
-    local $Data::Dumper::Terse = 1;
-    $Data::Dumper::Terse = $Data::Dumper::Terse; # warn
+    local $Data::Dumper::Terse    = 1;
+    local $Data::Dumper::Sortkeys = 1;
+    $Data::Dumper::Terse    = $Data::Dumper::Terse;    # warn
+    $Data::Dumper::Sortkeys = $Data::Dumper::Sortkeys; # warn
     my $methods = Dumper(\%map);
     $methods =~ s/\n$//;
 
@@ -628,18 +631,71 @@ my \$methods = $methods;
 EOF
 
     print $fh <<'EOF';
-use constant MODULE => 0;
-use constant CLASS  => 1;
 
-sub preload_all_modules {
-    eval "require $_" for map $_->[MODULE], map @$_, values %$methods;
+use base qw(Exporter);
+
+our @EXPORT = qw(print_method print_module print_object);
+
+use constant MODULE => 0;
+use constant OBJECT  => 1;
+
+my $modules;
+my $objects;
+
+sub _get_modules {
+    for my $method (sort keys %$methods) { 
+        for my $item ( @{ $methods->{$method} }) {
+            push @{ $modules->{$item->[MODULE]} }, [$method, $item->[OBJECT]];
+        }
+    }
 }
 
+sub _get_objects {
+    for my $method (sort keys %$methods) { 
+        for my $item ( @{ $methods->{$method} }) {
+            push @{ $objects->{$item->[OBJECT]} }, [$method, $item->[MODULE]];
+        }
+    }
+}
+
+sub preload_all_modules {
+    _get_modules() unless $modules;
+    eval "require $_" for keys %$modules;
+}
+
+sub _print_func {
+    my $func = shift;
+    my @args = @_ ? @_ : @ARGV;
+    no strict 'refs';
+    print( ($func->($_))[0]) for @args;
+}
+
+sub print_module { _print_func('lookup_module', @_) }
+sub print_object { _print_func('lookup_object', @_) }
+
+sub print_method {
+    my @args = @_ ? @_ : @ARGV;
+    while (@args) {
+         my $method = shift @args;
+         my $object = (@args && 
+             (ref($args[0]) || $args[0] =~ /^(Apache|ModPerl|APR)/))
+             ? shift @args
+             : undef;
+         print( (lookup_method($method, $object))[0]);
+    }
+}
+
+sub sep { return '-' x (shift() + 20) . "\n" }
+
+# what modules contain the passed method.
+# an optional object or a reference to it can be passed to help
+# resolve situations where there is more than one module containing
+# the same method.
 sub lookup_method {
-    my ($method, $arg) = @_;
+    my ($method, $object) = @_;
 
     unless (defined $method) {
-        my $hint = "no 'method' argument was passed";
+        my $hint = "No 'method' argument was passed\n";
         return ($hint);
     }
 
@@ -647,7 +703,7 @@ sub lookup_method {
     $method =~ s/.+:://;
 
     unless (exists $methods->{$method}) {
-        my $hint = "don't know anything about method '$method'";
+        my $hint = "Don't know anything about method '$method'\n";
         return ($hint);
     }
 
@@ -658,10 +714,10 @@ sub lookup_method {
         return ($hint, $module);
     }
     else {
-        if (defined $arg and ref $arg) {
-            my $class = ref $arg;
+        if (defined $object) {
+            my $class = ref $object || $object;
             for my $item (@items) {
-                if ($class eq $item->[CLASS]) {
+                if ($class eq $item->[OBJECT]) {
                     my $module = $item->[MODULE];
                     my $hint = "to use method '$method' add:\n" .
                         "\tuse $module ();\n";
@@ -670,12 +726,94 @@ sub lookup_method {
             }
         }
         else {
-            my @modules = map {$_->[MODULE]} @items;
-            my $hint = "There is more than one class with method '$method'\n" .
-                "try one of:\n" . join '', map {"\tuse $_ ();\n"} @modules;
-            return ($hint, @modules);
+            my %modules = map { $_->[MODULE] => 1 } @items;
+            # remove dups if any (e.g. $s->add_input_filter and
+            # $r->add_input_filter are loaded by the same Apache::Filter)
+            my @modules = keys %modules;
+            my $hint;
+            if (@modules == 1) {
+                $hint = "To use method '$method' add:\n\tuse $modules[0] ();\n";
+                return ($hint, $modules[0]);
+            }
+            else {
+                $hint = "There is more than one class with method '$method'\n" .
+                    "try one of:\n" . join '', map {"\tuse $_ ();\n"} @modules;
+                return ($hint, @modules);
+            }
         }
     }
+}
+
+# what methods are contained in the passed module name
+sub lookup_module {
+    my ($module) = shift;
+
+    unless (defined $module) {
+        my $hint = "no 'module' argument was passed\n";
+        return ($hint);
+    }
+
+    _get_modules() unless $modules;
+
+    unless (exists $modules->{$module}) {
+        my $hint = "don't know anything about module '$module'\n";
+        return ($hint);
+    }
+
+    my @methods;
+    my $max_len = 6;
+    for ( @{ $modules->{$module} } ) {
+        $max_len = length $_->[0] if length $_->[0] > $max_len;
+        push @methods, $_->[0];
+    }
+
+    my $format = "%-${max_len}s %s\n";
+    my $banner = sprintf($format, "Method", "Invoked on object type");
+    my $hint = join '',
+        ("\nModule '$module' contains the following XS methods:\n\n", 
+         $banner,  sep(length($banner)),
+         map( { sprintf $format, $_->[0], $_->[1]} @{ $modules->{$module} }),
+         sep(length($banner)));
+
+    return ($hint, @methods);
+}
+
+# what methods can be invoked on the passed object (or its reference)
+sub lookup_object {
+    my ($object) = shift;
+
+    unless (defined $object) {
+        my $hint = "no 'object' argument was passed\n";
+        return ($hint);
+    }
+
+    _get_objects() unless $objects;
+
+    # a real object was passed?
+    $object = ref $object || $object;
+
+    unless (exists $objects->{$object}) {
+        my $hint = "don't know anything about objects of type '$object'\n";
+        return ($hint);
+    }
+
+    my @methods;
+    my $max_len = 6;
+    for ( @{ $objects->{$object} } ) {
+        $max_len = length $_->[0] if length $_->[0] > $max_len;
+        push @methods, $_->[0];
+    }
+
+    my $format = "%-${max_len}s %s\n";
+    my $banner = sprintf($format, "Method", "Module");
+    my $hint = join '',
+        ("\nObjects of type '$object' can invoke the following XS methods:\n\n",
+         $banner, sep(length($banner)),
+         map({ sprintf $format, $_->[0], $_->[1]} @{ $objects->{$object} }),
+         sep(length($banner)));
+
+    return ($hint, @methods);
+
 }
 
 1;
