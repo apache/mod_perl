@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+warn that dso+Perl malloc needs a Perl built with -Ubincompat5005
+
 add Apache::BINMODE stub for 5.6.0 tied filehandle support (fixes cgi.t #4)
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

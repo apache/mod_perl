@@ -1992,15 +1992,21 @@ EOF
 }
 
 sub phat_warn {
-    my $msg = shift;
-	    warn <<EOF;
-************* WARNING *************
+    my($msg, $abort) = @_;
+    my $level = $abort ? "ERROR" : "WARNING";  
+    warn <<EOF;
+************* $level *************
 
   $msg
 
-************* WARNING *************
+************* $level *************
 EOF
-  sleep 5;
+    if ($abort) {
+        exit 1;
+    }
+    else {
+        sleep 5;
+    }
 }
 
 sub system_sanity_check {
@@ -2022,47 +2028,9 @@ EOF
     }
 
     gdbm_check();
+    malloc_check();
+    dynaloader_check();
 
-    if (($USE_DSO or $USE_APXS) and $] < 5.005_56 and 
-	$^O eq 'solaris' and $Config{'usemymalloc'} eq 'y') 
-      {
-	  phat_warn(<<EOF);
-Your current configuration will most likely trigger core dumps, suggestions:
-   *) Do not configure mod_perl as a DSO
-   *) Upgrade your Perl version to 5.005_56 or higher
-   *) Configure Perl with -Uusemymalloc
-   *) Switch to an os other than $^O
-EOF
-      }
-
-    if ($^O eq 'aix' and $] <= 5.00503 and ($USE_DSO or $USE_APXS)) {
-    	phat_warn(<<EOF);
-Please make sure that you apply the following patch to the perl
-distribution before you install mod_perl, without this patch you will
-not be able load any xs modules.
-
---- perl5.005_03/ext/DynaLoader/dl_aix.xs.orig  Fri Mar  3 17:00:58 2000
-+++ perl5.005_03/ext/DynaLoader/dl_aix.xs       Fri Mar  3 17:06:51 2000
-@@ -222,7 +222,16 @@
-        mp->refCnt = 1;
-        mp->next = modList;
-        modList = mp;
--       if (loadbind(0, mainModule, mp->entry) == -1) {
-+       /*
-+        * Assume anonymous exports come from the module this dlopen
-+        * is linked into, that holds true as long as dlopen and all
-+        * of the perl core are in the same shared object. Also bind
-+        * against the main part, in the case a perl is not the main
-+        * part, e.g mod_perl as DSO in Apache so perl modules can
-+        * also reference Apache symbols.
-+        */
-+       if (loadbind(0, (void *)dlopen, mp->entry) == -1 ||
-+           loadbind(0, mainModule, mp->entry) == -1) {
-                dlclose(mp);
-                errvalid++;
-                strcpy(errbuf, "loadbind: ");
-EOF
-    }
 }
 
 sub gdbm_check {
@@ -2091,4 +2059,62 @@ Your Perl is configured to link against libgdbm,
 EOF
        }
     }
+}
+
+sub malloc_check {
+    return unless $USE_DSO or $USE_APXS;
+    return unless $Config{'usemymalloc'} eq 'y';
+
+    my $abort = $^O eq 'solaris';
+
+    my $bincompat = $Config{bincompat5005} and 
+                    $Config{bincompat5005} eq 'define';
+
+    if ($] < 5.006) {
+        phat_warn(<<EOF, $abort);
+Your current configuration will most likely trigger core dumps, suggestions:
+   *) Do not configure mod_perl as a DSO
+   *) Upgrade your Perl version to 5.6.0 or higher (w/ -Ubincompat5005)
+   *) Configure Perl with -Uusemymalloc (not recommended for performance)
+EOF
+     }
+     else {
+             phat_warn(<<EOF, $abort);
+Your current configuration will most likely trigger core dumps, suggestions:
+   *) Do not configure mod_perl as a DSO
+   *) Rebuild Perl without malloc pollution (Configure -Ubincompat5005)
+EOF
+    }
+}
+
+sub dynaloader_check {
+    return unless $^O eq 'aix' and $] <= 5.00503 and ($USE_DSO or $USE_APXS);
+    phat_warn(<<EOF);
+Please make sure that you apply the following patch to the perl
+distribution before you install mod_perl, without this patch you will
+not be able load any xs modules.
+EOF
+
+    warn <<EOF;
+--- perl5.005_03/ext/DynaLoader/dl_aix.xs.orig  Fri Mar  3 17:00:58 2000
++++ perl5.005_03/ext/DynaLoader/dl_aix.xs       Fri Mar  3 17:06:51 2000
+@@ -222,7 +222,16 @@
+        mp->refCnt = 1;
+        mp->next = modList;
+        modList = mp;
+-       if (loadbind(0, mainModule, mp->entry) == -1) {
++       /*
++        * Assume anonymous exports come from the module this dlopen
++        * is linked into, that holds true as long as dlopen and all
++        * of the perl core are in the same shared object. Also bind
++        * against the main part, in the case a perl is not the main
++        * part, e.g mod_perl as DSO in Apache so perl modules can
++        * also reference Apache symbols.
++        */
++       if (loadbind(0, (void *)dlopen, mp->entry) == -1 ||
++           loadbind(0, mainModule, mp->entry) == -1) {
+                dlclose(mp);
+                errvalid++;
+                strcpy(errbuf, "loadbind: ");
+EOF
 }
