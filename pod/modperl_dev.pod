@@ -22,6 +22,16 @@ Or use anoncvs (password is "anoncvs"):
    --with-mpm=threaded --enable-so
  % make && make install
 
+Once extracted, whenever you want to sync with the latest httpd-2.0
+version and rebuild, run:
+
+ % cd httpd-2.0
+ % cvs up
+ % make testclean && ./buildconf
+ % ./configure --prefix=$HOME/apache-2.0 \
+   --with-mpm=threaded --enable-so
+ % make && make install
+
 For bleeding edge Perl:
 
  % rsync -auvz rsync://ftp.linux.activestate.com/perl-current/ perl-current
@@ -118,8 +128,6 @@ Change the default mod_perl's 8k IO buffer size, e.g. 16k:
 
 =back
 
-
-
 Options can also be specified in the file C<makepl_args.mod_perl2>.
 Command line options override those from C<makepl_args_mod_perl2>
 and those from MP_OPTIONS_FILE.
@@ -151,9 +159,12 @@ NOTE: source_scan.pl is a HEAVY process, do not be alarmed.
 =head1 Support
 
 Discussion of mod_perl-2.0 currently takes place on the
-dev@perl.apache.org list.
-Any problems/questions should be report to that list, be sure to
-include:
+dev@perl.apache.org list.  Any problems/questions should be report to
+that list, be sure to include the output of:
+
+ % perl util/config.pl
+
+which generates the output from:
 
 =over 4
 
@@ -165,11 +176,23 @@ include:
 
 =back
 
-hint:
+You can also use I<util/bugreport.pl>.
 
- % perl util/config.pl
+=head1 'make test' Debug
 
-will generate this requested information.
+mod_perl-2.0 provides built in 'make test' debug facility. So in case
+you get a core dump during make test, or just for fun, run in one shell:
+
+  % t/TEST -debug
+
+in another shell:
+
+  % t/TEST -run
+
+then the I<-debug> shell will have a (gdb) prompt, type 'where' for
+stacktrace.
+
+
 
 =head1 mod_perl configuration directives
 
