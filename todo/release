@@ -55,10 +55,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
   owner: gozer
 
-* on windows $pool->clean, followed by $pool->destroy breaks other tests
-  See test TestAPR::pool
-  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108547894817083&w=2
-
 * per-server cleanups core dump or are otherwise ineffective
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
