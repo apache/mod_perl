@@ -426,8 +426,7 @@ void perl_run_endav(char *s)
     }
 }
 
-static I32
-errgv_empty_set(IV ix, SV* sv)
+static PERL_MG_UFUNC(errgv_empty_set, ix, sv)
 { 
     sv_setsv(sv, &sv_no);
     return TRUE;
