@@ -1,6 +1,6 @@
 #include "mod_perl.h"
 
-
+#ifdef USE_ITHREADS
 static
 char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
 {
@@ -58,6 +58,7 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
 
     return text;
 }
+#endif
 
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
 {
