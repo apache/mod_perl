@@ -245,15 +245,15 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
     va_end(args);
 }
 
-#define set_desc(dtype) \
+#define set_desc(dtype)                                 \
     if (desc) *desc = modperl_handler_desc_##dtype(idx)
 
-#define check_modify(dtype) \
-if ((action > MP_HANDLER_ACTION_GET) && rcfg) { \
-    dTHX; \
-    Perl_croak(aTHX_ "too late to modify %s handlers", \
-               modperl_handler_desc_##dtype(idx)); \
-}
+#define check_modify(dtype)                                     \
+    if ((action > MP_HANDLER_ACTION_GET) && rcfg) {             \
+        MP_dSCFG_dTHX;                                          \
+        Perl_croak(aTHX_ "too late to modify %s handlers",      \
+                   modperl_handler_desc_##dtype(idx));          \
+    }
 
 /*
  * generic function to lookup handlers for use in modperl_callback(),
