@@ -20,7 +20,8 @@ V: done completely
 VV src/docs/2.0/api/Apache/Access.pod
 g- src/docs/2.0/api/Apache/CmdParms.pod
 VV src/docs/2.0/api/Apache/Command.pod
--- src/docs/2.0/api/Apache/Connection.pod
+VP src/docs/2.0/api/Apache/Connection.pod
+        conn_config
 +- src/docs/2.0/api/Apache/Const.pod
 VV src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
@@ -55,7 +56,7 @@ VP src/docs/2.0/api/Apache/ServerUtil.pod
 -- src/docs/2.0/api/Apache/Status.pod
 VV src/docs/2.0/api/Apache/SubProcess.pod
 -- src/docs/2.0/api/Apache/SubRequest.pod
--- src/docs/2.0/api/Apache/URI.pod
+VV src/docs/2.0/api/Apache/URI.pod
 -- src/docs/2.0/api/Apache/Util.pod
 -- src/docs/2.0/api/Apache/compat.pod
 -- src/docs/2.0/api/Apache/porting.pod
