@@ -24,8 +24,8 @@
  apr_explode_localtime
  apr_explode_time
 
-!MODULE=APR::Date
- apr_date_checkmask
+MODULE=APR::Date
+-apr_date_checkmask
  apr_date_parse_http
  apr_date_parse_rfc
 
