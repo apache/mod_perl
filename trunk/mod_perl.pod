@@ -563,44 +563,7 @@ otherwise.
 
 =head1 PERL METHOD HANDLERS
 
-If a Perl*Handler is prototyped with '$$', this handler will be
-invoked as method.  e.g.
-
- package My;
- @ISA = qw(BaseClass);
-
- sub handler ($$) {
-     my($class, $r) = @_;
-     ...;
- }
-
- package BaseClass;
-
- sub method ($$) {
-     my($class, $r) = @_;
-     ...;
- }
-
- __END__
-
-Configuration:
-
- PerlHandler My
-
-or
-
- PerlHandler My->handler
-
-Since the handler is invoked as a method, it may inherit from other
-classes:
-
- PerlHandler My->method
-
-In this case, the 'My' class inherits this method from 'BaseClass'.
-
-To build in this feature, configure with:
-
- % perl Makefile.PL PERL_METHOD_HANDLERS=1 [PERL_FOO_HOOK=1,etc]
+See L<mod_perl_method_handlers>.
 
 =head1 PERL SECTIONS
 

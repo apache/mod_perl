@@ -1,13 +1,12 @@
 
 =head1 NAME 
 
-Methodhandlers - a little article about methodhandlers and
-objecthandlers
+mod_perl_method_handlers - How to use mod_perl's MethodHandlers 
 
 =head1 DESCRIPTION
 
-Described here are a few examples and hints how to use methodhandlers
-(and objects) with modperl.
+Described here are a few examples and hints how to use MethodHandlers
+with modperl.
 
 This document assumes familiarity with at least L<perltoot> and
 "normal" usage of the Perl*Handlers.
@@ -15,8 +14,48 @@ This document assumes familiarity with at least L<perltoot> and
 It isn't strictly modperl related, more like "what I use objects for
 in my modperl environment".
 
-Methodhandlers was introduced between as an experimental feature
-between modperl 1.10 and 1.11. They can be enabled in 1.12 with 
+=head1 SYNOPSIS
+
+If a Perl*Handler is prototyped with '$$', this handler will be
+invoked as method, being passed a class name or blessed object as it's
+first argument and the blessed I<request_rec> as the second argument,
+e.g.
+
+ package My;
+ @ISA = qw(BaseClass);
+
+ sub handler ($$) {
+     my($class, $r) = @_;
+     ...;
+ }
+
+ package BaseClass;
+
+ sub method ($$) {
+     my($class, $r) = @_;
+     ...;
+ }
+
+ __END__
+
+Configuration:
+
+ PerlHandler My
+
+or
+
+ PerlHandler My->handler
+
+Since the handler is invoked as a method, it may inherit from other
+classes:
+
+ PerlHandler My->method
+
+In this case, the 'My' class inherits this method from 'BaseClass'.
+
+To build in this feature, configure with:
+
+ % perl Makefile.PL PERL_METHOD_HANDLERS=1 [PERL_FOO_HOOK=1,etc]
 
 =head1 WHY?
 
@@ -27,9 +66,6 @@ The slightly longer version would include some about code reusage and
 more clean interface between modules.
 
 =head1 SIMPLE EXAMPLE
-
-Make sure you're running at least modperl 1.12 and you have compiled
-modperl with PERL_METHOD_HANDLERS=1 or EVERYTHING=1.
 
 Let's start with a simple example.
 
@@ -115,9 +151,10 @@ Very very useful!
 mod_perl expects object handlers to be in the form of a string, which it
 will thaw for you. That means that something like 
 
- $r->push_handlers(PerlHandler => $self->perl_handler_method);
+ $r->push_handlers(PerlHandler => '$self->perl_handler_method');
 
-DON'T work, since Perl isn't able to see $self once it goes to PerlHandler.
+This doesn't work as you might expect, since Perl isn't able to see
+$self once it goes to PerlHandler. 
 
 The best solution to this is to use an anonymous subroutine and pass it $r
 yourself, like this:
