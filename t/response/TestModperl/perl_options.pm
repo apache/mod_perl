@@ -44,17 +44,19 @@ sub handler {
 
 1;
 __DATA__
+<NoAutoConfig>
 <VirtualHost TestModperl::perl_options>
     PerlOptions -PreConnection -ProcessConnection
     PerlOptions -Autoload -Log -InputFilter -OutputFilter
     PerlOptions +ChildInit +ChildExit
     PerlModule TestModperl::perl_options
     PerlOptions +ParseHeaders
-    <Location /TestModperl::perl_options>
+    <Location /TestModperl__perl_options>
         SetHandler modperl
         PerlOptions -GlobalRequest -SetupEnv
         PerlOptions +MergeHandlers
         PerlResponseHandler TestModperl::perl_options
     </Location>
 </VirtualHost>
+</NoAutoConfig>
 
