@@ -439,11 +439,25 @@ sub ccopts_hpux {
     $$cflags .= " -Ae ";
 }
 
+# XXX: there could be more, but this is just for cosmetics
+my %cflags_dups = map { $_ => 1 } qw(-D_GNU_SOURCE -D_REENTRANT);
 sub ccopts {
     my($self) = @_;
 
     my $cflags = $self->perl_ccopts . ExtUtils::Embed::perl_inc() .
                  $self->ap_ccopts;
+
+    # remove duplicates of certain cflags coming from perl and ap/apr
+    my @cflags = ();
+    my %dups    = ();
+    for (split /\s+/, $cflags) {
+        if ($cflags_dups{$_}) {
+            next if $dups{$_};
+            $dups{$_}++;
+        }
+        push @cflags, $_;
+    }
+    $cflags = "@cflags";
 
     $cflags;
 }
