@@ -21,12 +21,12 @@ VV src/docs/2.0/api/Apache/Access.pod
 g- src/docs/2.0/api/Apache/CmdParms.pod
         info
         context
-g- src/docs/2.0/api/Apache/Command.pod
+VV src/docs/2.0/api/Apache/Command.pod
 VP src/docs/2.0/api/Apache/Connection.pod
         conn_config
 VP src/docs/2.0/api/Apache/Const.pod
         (this will never be complete, fill it in as we go)
-g- src/docs/2.0/api/Apache/Directive.pod
+VV src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
         The whole TIE interface   
 VV src/docs/2.0/api/Apache/FilterRec.pod
