@@ -12,6 +12,21 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+APR::BucketType: [Stas]
+  - name is readonly
+
+APR::Brigade [Stas]
+  - destroy() now throws APR::Error exception (not returning rc)
+
+APR::Bucket: [Stas]
+  - read() now returns read data and throws APR::Error exception (not
+    returning rc)
+  - type->name now has a module APR::BucketType
+  - type(), length(), start(), data() are now all readonly
+  - new() fix a bug in offset handling
+
+
+
 =item 1.99_14 - May 21, 2004
 
 APR::SockAddr::port() accessor is now read-only [Stas]
