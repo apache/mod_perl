@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::Module remove_loaded_module re-added [Gozer]
+
 Disable Apache::HookRun::run_create_request -- it's already run
 internally by Apache::RequestRec->new [Stas]
 
