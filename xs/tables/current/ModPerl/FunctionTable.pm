@@ -4577,6 +4577,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'modperl_wbucket_t *',
         'name' => 'b'
+      },
+      {
+        'type' => 'int',
+        'name' => 'add_flush_bucket'
       }
     ]
   },
@@ -4598,6 +4602,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'apr_size_t',
         'name' => 'len'
+      },
+      {
+        'type' => 'int',
+        'name' => 'add_flush_bucket'
       }
     ]
   },

@@ -16,9 +16,11 @@ typedef ap_filter_t * MP_FUNC_T(modperl_filter_add_t) (const char *, void *,
 
 /* simple buffer api */
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *b,
-                                            const char *buf, apr_size_t len);
+                                            const char *buf, apr_size_t len,
+                                            int add_flush_bucket);
 
-MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *b);
+MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *b,
+                                             int add_flush_bucket);
 
 MP_INLINE apr_status_t modperl_wbucket_write(pTHX_
                                              modperl_wbucket_t *b,

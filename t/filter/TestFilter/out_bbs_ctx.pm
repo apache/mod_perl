@@ -78,7 +78,11 @@ sub response {
 
     $r->content_type('text/plain');
 
-    # make sure that 
+    # just to make sure that print() won't flush, or we would get the
+    # count wrong
+    local $| = 0;
+
+    # make sure that:
     # - we send big enough data so it won't fit into one buffer
     # - use chunk size which doesn't nicely fit into a buffer size, so
     #   we have something to store in the context between filter calls

@@ -10,6 +10,14 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+revamp the code handling output flushing and flush bucket
+sending. Namelly modperl_wbucket_flush and modperl_wbucket_pass now
+can be told to send a flush bucket by themselves, attaching it to the
+data bb they are already sending. This halfs the number of output
+filter invocations when the response handler flushes output via $| or
+rflush. adjust tests, which were counting the number of invocations.
+[Stas]
+
 move ModPerl::RegistryCooker to use a hash as object (similar to mp1),
 to make it easier to subclass. [Nathan Byrd <nathan@byrd.net>]
 

@@ -8,7 +8,8 @@ use Apache::TestUtil;
 plan tests => 1;
 
 my $blocks  = 33;
-my $invoked = 100;
+my $invoked = 34; # 33 bb made of data and 1 flush bucket (unbuffered print)
+                  #  1 bb with EOS bucket
 my $sig = join "\n", "received $blocks complete blocks",
     "filter invoked $invoked times\n";
 my $data = "#" x $blocks . "x" x $blocks;

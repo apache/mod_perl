@@ -23,8 +23,7 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
-        MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket)); \
-        ap_rflush(r); \
+        MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE)); \
     }
 
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
@@ -145,9 +144,9 @@ int mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
 
     rcfg = modperl_config_req_get(r);
 
-    MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket));
+    MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE));
 
-    return ap_rflush(r);
+    return APR_SUCCESS;
 }
 
 static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
