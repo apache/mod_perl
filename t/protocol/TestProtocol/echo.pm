@@ -7,6 +7,7 @@ use Apache::Connection ();
 use APR::Socket ();
 
 use Apache::Const -compile => 'OK';
+use APR::Const    -compile => qw(:socket);
 
 use constant BUFF_LEN => 1024;
 
@@ -15,6 +16,11 @@ sub handler {
     my APR::Socket $socket = $c->client_socket;
 
     my $buff;
+
+    # make sure the socket is in the blocking mode for recv().
+    # on some platforms (e.g. OSX/Solaris) httpd hands us a
+    # non-blocking socket
+    $socket->opt_set(APR::SO_NONBLOCK, 0);
 
     for (;;) {
         my($rlen, $wlen);

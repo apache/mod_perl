@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+make sure that our protocol module tests that interact with the socket
+use a blocking read [Joe Orton]
+
 Use a better approach to figure out whether we need to strip perl's
 LargeFilesSource flag, by checking whether libapr was compiled with
 -D_FILE_OFFSET_BITS=64 or not. Checking for APR_HAS_LARGE_FILES is
