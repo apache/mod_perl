@@ -12,8 +12,14 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
 
 /* XXX: PL_modglobal thingers might be useful elsewhere */
 
+#define MP_MODGLOBAL_FETCH(gkey) \
+hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
+
+#define MP_MODGLOBAL_STORE_HV(gkey) \
+(HV*)*hv_store(PL_modglobal, gkey->val, gkey->len, (SV*)newHV(), gkey->hash)
+
 #define MP_MODGLOBAL_ENT(key) \
-{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1)}
+{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1), 0}
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
@@ -36,18 +42,18 @@ modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
 static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
                                           const char *package, I32 packlen)
 {
-    SV **svp = hv_fetch(PL_modglobal, gkey->val, gkey->len, FALSE);
+    HE *he = MP_MODGLOBAL_FETCH(gkey);
     HV *hv;
 
-    if (!(svp && (hv = (HV*)*svp))) {
+    if (!(he && (hv = (HV*)HeVAL(he)))) {
         return Nullav;
     }
 
-    if (!(svp = hv_fetch(hv, package, packlen, FALSE))) {
+    if (!(he = hv_fetch_he(hv, (char *)package, packlen, 0))) {
         return Nullav;
     }
 
-    return (AV*)*svp;
+    return (AV*)HeVAL(he);
 }
 
 void modperl_perl_global_avcv_call(pTHX_ modperl_modglobal_key_t *gkey,
@@ -76,6 +82,7 @@ void modperl_perl_global_avcv_clear(pTHX_ modperl_modglobal_key_t *gkey,
 
 static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
 {
+    HE *he;
     HV *hv;
     AV *mav, *av = (AV*)sv;
     const char *package = HvNAME(PL_curstash);
@@ -83,11 +90,19 @@ static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
     modperl_modglobal_key_t *gkey =
         (modperl_modglobal_key_t *)mg->mg_ptr;
 
-    hv = (HV*)*hv_fetch(PL_modglobal, gkey->val, gkey->len, TRUE);
-    (void)SvUPGRADE((SV*)hv, SVt_PVHV);
+    if ((he = MP_MODGLOBAL_FETCH(gkey))) {
+        hv = (HV*)HeVAL(he);
+    }
+    else {
+        hv = MP_MODGLOBAL_STORE_HV(gkey);
+    }
 
-    mav = (AV*)*hv_fetch(hv, package, packlen, TRUE);
-    (void)SvUPGRADE((SV*)mav, SVt_PVAV);
+    if ((he = hv_fetch_he(hv, (char *)package, packlen, 0))) {
+        mav = (AV*)HeVAL(he);
+    }
+    else {
+        mav = (AV*)*hv_store(hv, package, packlen, (SV*)newAV(), 0);
+    }
 
     /* $cv = pop @av */
     sv = AvARRAY(av)[AvFILLp(av)];

@@ -5,6 +5,7 @@ typedef struct {
     const char *name;
     const char *val;
     I32 len;
+    U32 hash;
 } modperl_modglobal_key_t;
 
 typedef enum {
