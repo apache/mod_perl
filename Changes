@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+it's now possible to push new handlers into the same phase that is
+running at the moment [Stas].
+
 when $r->handler($new_handler) is called from a response phase, it now
 checks that the response handler type is not switched (e.g. from
 'modperl' to 'perl-script') from the currently used one [Stas]
