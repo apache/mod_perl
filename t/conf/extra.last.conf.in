@@ -61,10 +61,19 @@ Perl $TestDirective::perl::worked="yes";
 
 ### --------------------------------- ###
 =pod
-This is some pod data
+
+The following line is not seen by Apache
+
+PerlSetVar TestDirective__pod_hidden whatever
+
 =over apache
+
 PerlSetVar TestDirective__pod_over_worked yes
+
 =back
+
 This is some more pod
+
 =cut
+
 PerlSetVar TestDirective__pod_cut_worked yes
