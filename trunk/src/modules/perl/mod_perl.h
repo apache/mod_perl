@@ -384,6 +384,10 @@ if((add->flags & f) || (base->flags & f)) \
 #endif
 #endif
 
+#ifndef PERL_STARTUP_DONE_CHECK
+#define PERL_STARTUP_DONE_CHECK getenv("PERL_STARTUP_DONE_CHECK")
+#endif
+
 #ifdef APACHE_SSL
 #define PERL_DONE_STARTUP 1
 #else
