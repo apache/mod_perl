@@ -43,6 +43,9 @@ EOF
 
 1;
 __END__
+
+# APACHE_TEST_CONFIG_ORDER 940
+
 <Base>
     PerlSwitches -I@documentroot@/testdirective/perlmodule-vh
 </Base>

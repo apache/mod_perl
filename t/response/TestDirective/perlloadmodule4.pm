@@ -77,6 +77,8 @@ sub handler {
 1;
 __END__
 
+# APACHE_TEST_CONFIG_ORDER 950
+
 <Base>
     PerlLoadModule TestDirective::perlloadmodule4
 </Base>
