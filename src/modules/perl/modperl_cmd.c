@@ -457,18 +457,10 @@ MP_CMD_SRV_DECLARE(perldo)
 {
     apr_pool_t *p = parms->pool;
     server_rec *s = parms->server;
-    apr_table_t *options = NULL;
-    const char *handler_name = NULL;
+    apr_table_t *options;
     modperl_handler_t *handler = NULL;
-    const char *pkg_base = NULL;
-    const char *pkg_namespace = NULL;
     const char *pkg_name = NULL;
-    const char *line_header = NULL;
     ap_directive_t *directive = parms->directive;
-    int status = OK;
-    AV *args = Nullav;
-    SV *dollar_zero = Nullsv;
-    int dollar_zero_tainted;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     MP_PERL_DECLARE_CONTEXT;
@@ -488,7 +480,12 @@ MP_CMD_SRV_DECLARE(perldo)
     MP_PERL_OVERRIDE_CONTEXT;
 
     /* data will be set by a <Perl> section */
-    if ((options = parms->directive->data)) {
+    if ((options = directive->data)) {
+        const char *pkg_namespace;
+        const char *pkg_base;
+        const char *handler_name;
+        const char *line_header;
+
         if (!(handler_name = apr_table_get(options, "handler"))) {
             handler_name = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_HANDLER);
             apr_table_set(options, "handler", handler_name);
@@ -517,28 +514,30 @@ MP_CMD_SRV_DECLARE(perldo)
         arg = apr_pstrcat(p, "package ", pkg_name, ";", line_header,
                           arg, NULL);
     }
+    
+    {
+        /* Set $0 to the current configuration file */
+        SV *dollar_zero = get_sv("0", TRUE);
+        int dollar_zero_tainted = SvTAINTED(dollar_zero);
 
-    /* Set $0 to the current configuration file */
-    dollar_zero = get_sv("0", TRUE);
-    dollar_zero_tainted = SvTAINTED(dollar_zero);
+        if (dollar_zero_tainted) {
+            SvTAINTED_off(dollar_zero); 
+        }
 
-    if (dollar_zero_tainted) {
-        SvTAINTED_off(dollar_zero); 
+        ENTER;
+        save_item(dollar_zero);
+        sv_setpv(dollar_zero, directive->filename);
+        eval_pv(arg, FALSE);
+        LEAVE;
+
+        if (dollar_zero_tainted) {
+            SvTAINTED_on(dollar_zero);
+        }
     }
-
-    ENTER;
-    save_item(dollar_zero);
-    sv_setpv(dollar_zero, directive->filename);
-    eval_pv(arg, FALSE);
-    LEAVE;
-
-    if (dollar_zero_tainted) {
-        SvTAINTED_on(dollar_zero);
-    }
-
+    
     if (SvTRUE(ERRSV)) {
-        SV *strict;
-        if ((strict = MP_STRICT_PERLSECTIONS_SV) && SvTRUE(strict)) {
+        SV *strict = MP_STRICT_PERLSECTIONS_SV;
+        if (strict && SvTRUE(strict)) {
             char *error = SvPVX(ERRSV);
             MP_PERL_RESTORE_CONTEXT;
             return error;
@@ -548,12 +547,14 @@ MP_CMD_SRV_DECLARE(perldo)
                                              directive->filename, 
                                              directive->line_num, 
                                              SvPVX(ERRSV)));
-
         }
     }
     
     if (handler) {
-        SV *saveconfig;
+        int status;
+        SV *saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV;
+        AV *args = Nullav;
+        
         modperl_handler_make_args(aTHX_ &args,
                                   "Apache::CmdParms", parms,
                                   "APR::Table", options,
@@ -563,7 +564,7 @@ MP_CMD_SRV_DECLARE(perldo)
 
         SvREFCNT_dec((SV*)args);
 
-        if (!(saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV) || !SvTRUE(saveconfig)) {
+        if (!(saveconfig && SvTRUE(saveconfig))) {
             HV *symtab = (HV*)gv_stashpv(pkg_name, FALSE);
             if (symtab) {
                 modperl_clear_symtab(aTHX_ symtab);
