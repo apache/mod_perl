@@ -98,8 +98,15 @@ remote_ip(conn, ...)
     CODE:
     RETVAL = conn->remote_ip;
  
-    if(items > 1)
-         conn->remote_ip = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
+    if(items > 1) {
+#ifdef SGI_BOOST
+        ap_cpystrn(conn->remote_ip, (char *)SvPV(ST(1),na),
+                   sizeof(conn->remote_ip));
+        conn->remote_ip_len = strlen(conn->remote_ip);
+#else
+        conn->remote_ip = pstrdup(conn->pool, (char *)SvPV(ST(1),na));
+    }
+#endif
 
     OUTPUT:
     RETVAL

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+fix $r->connection->remote_ip for SGI performance patches (#ifdef SGI_BOOST)
+[Artem Veremey <scimitar@mail.ru>]
+
 mod_perl.exp is now installed
 
 aix tweaks for building with apxs
