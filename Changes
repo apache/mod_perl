@@ -17,7 +17,7 @@ add mod_perl.pm_version so CPAN.pm can 'install mod_perl' again
 
 ensure Apache::Server::CWD is untainted
 
-add support to compile with -DPERL_OBJECT (win32 + 5.004_72+)
+add support to compile with -DPERL_OBJECT (win32 + 5.004_73+)
 
 add dir_merge support for directive handlers
 

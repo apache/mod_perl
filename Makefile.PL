@@ -30,7 +30,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
 } if $File::Copy::VERSION < 2.0;
 
 require "./mod_perl.pm_version";
-$VERSION = $mod_perl::VERSION;
+$VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
 
 use subs qw(_prompt iedit asrc);
 
@@ -51,6 +51,7 @@ unless ($Is_Win32) {
     readline_setup();        
 }
 
+%Apache::MyConfig::Setup = ();
 eval 'require Apache::MyConfig' ;
 
 $APACHE_SRC_DEFAULT = $@ ? 
@@ -385,7 +386,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		print "cp $_ $atopdir/$_\n" if $USE_APACI;
 		my $dest = "$atopdir/$_";
 		cp $_, $dest;
-		$mani_src{$_}++;
+		#$mani_src{$_}++;
 	    }
 	    close MANI;
 
@@ -455,6 +456,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    if $can_dash_make{asrc $adir} and $mft_map{$adir};
 	#print STDERR "(cd $adir; ./Configure${dash_make} -file $PWD/$conf)\n";
 	$cfgfile = $CONFIG ? $CONFIG : "$PWD/$conf";
+	$dash_make ||= "";
 	system "(cd $adir && ./Configure${dash_make} -file $cfgfile)";
 
 	open FH, "$APACHE_SRC/Makefile" or 
@@ -776,14 +778,16 @@ EOF
 
     #phooey!
     my $v = httpd_version($APACHE_SRC, 1);
+    my $mmn = magic_number($APACHE_SRC) || 0;
 
     conf_append("LockFile /tmp/mod_perl.lock") if $v >= 121;
     conf_append("PerlChildInitHandler My::child_init") if $My::child_init;
     conf_append("PerlChildExitHandler My::child_exit") if $My::child_exit;
     conf_append("PerlTransHandler My::ProxyTest") 
     if $callback_hooks{PERL_TRANS} and 
-    $callback_hooks{PERL_STACKED_HANDLERS} and
-    $mmn > 19980270;
+	$callback_hooks{PERL_STACKED_HANDLERS} and
+	$mmn > 19980270 and
+	defined $ENV{USER} and $ENV{USER} eq "dougm";
     conf_append(<<EOF) if $callback_hooks{PERL_STACKED_HANDLERS}; 
 <Location /chain>
 SetHandler perl-script
@@ -1204,7 +1208,8 @@ sub vcache {
 
 sub httpd_version {
     my($dir, $vnumber) = @_;
-    $dir = asrc $dir;
+    local $^W=0;
+    $dir = asrc($dir) || "";
     if($vnumber) {
 	return $vcache{$dir} if $vcache{$dir};
     }
@@ -1232,7 +1237,7 @@ sub httpd_version {
 
 	    if($fserver eq "Apache") {
 		($server, $version) = ($fserver, $fversion);
-		if($version == 1.2 and $frest =~ s/^b(\d+).*/$1/) {
+		if($version eq '1.2' and $frest =~ s/^b(\d+).*/$1/) {
 		    if($frest >= 8 and is_ssl($dir)) {
 			$do_link_swap++;
 			$can_dash_make{$dir}++;
@@ -1355,6 +1360,7 @@ sub module_name_from_xs {
 }
 
 sub readline_setup {
+    local $^W = 0;
     eval 'use Term::ReadLine' ;
 
     if ($@ eq '') {
@@ -1476,7 +1482,8 @@ sub conf_fixup {
     my $sro = 1 if $mmn >= 19970825;
 
     edit_extra_cflags($cfg);
-
+    $PERL_STATIC_EXTS ||= "";
+    $libperl ||= "";
     my $ldopts = "`$^X $PWD/src/modules/perl/ldopts $PERL_STATIC_EXTS $libperl`";
     iedit $cfg,
     q{next unless /EXTRA_LIBS\s*=/;}.
@@ -1644,7 +1651,7 @@ sub ccopts {
     unless ($Embed::ccopts) {
 	$Embed::ccopts = `$^X -MExtUtils::Embed -e ccopts`;
 
-	if($Config{usethreads} eq "define") {
+	if(defined $Config{usethreads} and $Config{usethreads} eq "define") {
 	    $Embed::ccopts .= " -DPERL_THREADS";
 	}
     }
@@ -1704,7 +1711,8 @@ EOF
     }
 
     $yes_no = 'no';
-    $yes_no = 'yes' if ($Config{usethreads} eq "define");
+    $yes_no = 'yes' if (defined $Config{usethreads} and 
+			$Config{usethreads} eq "define");
     print $apaci_cfg "PERL_THREADS = $yes_no\n";
 
     return $apaci_cfg;
