@@ -203,13 +203,15 @@ sub post_configure {
 
     $code->generate($build);
 
-    warning sprintf "mod_perl will be built %s as %s",
-      $build->is_dynamic ? "shared" : "static",
-        $build->{"MODPERL_LIB"};
+    for my $type (qw(DSO STATIC)) {
+        next unless $build->{"MP_USE_$type"};
+        warning "mod_perl \L$type\E library will be built as ".
+          $build->{"MODPERL_LIB_$type"};
+    }
 
     if ($build->is_dynamic) {
         warning "You'll need to add the following to httpd.conf:",
-                " LoadModule perl_module modules/$build->{MODPERL_LIB}\n";
+                " LoadModule perl_module modules/$build->{MODPERL_LIB_DSO}\n";
     }
 
     if ($build->{MP_INST_APACHE2}) {
@@ -337,7 +339,7 @@ sub os_check {
 sub os_check_hpux {
     my $ccflags = $build->perl_config('ccflags');
 
-    if ($build->{MP_USE_DSO} and $Config{ld} eq 'ld') {
+    if ($build->is_dynamic and $Config{ld} eq 'ld') {
         unless ($ccflags =~ /\+z/i) {
             $build->phat_warn(<<EOF);
 mod_perl is unlikely to link with your libperl, suggestions:
