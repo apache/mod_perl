@@ -31,7 +31,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_print(pTHX_ I32 items,
 
     mpxs_usage_va_1(modperl_filter, "$filter->print(...)");
 
-    MP_TRACE_f(MP_FUNC, "%s::print\n",
+    MP_TRACE_f(MP_FUNC, "from %s\n",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);    
     if (modperl_filter->mode == MP_OUTPUT_FILTER_MODE) {
         mpxs_write_loop(modperl_output_filter_write, modperl_filter);
@@ -54,7 +54,7 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
 
     mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
         
-    MP_TRACE_f(MP_FUNC, "%s::read\n",
+    MP_TRACE_f(MP_FUNC, "from %s\n",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);
     
     if (items > 2) {
