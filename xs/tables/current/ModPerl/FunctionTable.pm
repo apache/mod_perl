@@ -4247,20 +4247,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_pool_t *',
-    'name' => 'modperl_sv2pool',
-    'args' => [
-      {
-        'type' => 'PerlInterpreter *',
-        'name' => 'my_perl'
-      },
-      {
-        'type' => 'SV *',
-        'name' => 'obj'
-      }
-    ]
-  },
-  {
     'return_type' => 'request_rec *',
     'name' => 'modperl_sv2request_rec',
     'attr' => [
