@@ -1,0 +1,22 @@
+This is mod_perl version 2.0
+
+Apache version 2.0.35 or higher is required.
+
+Perl version 5.6.0 or higher is required.
+
+Perl with ithreads enabled is required to use mod_perl-2.0 with a
+threaded MPM.
+
+mod_perl-2.0 is not 100% feature complete with the 1.xx version.
+See the todo/ directory for what remains to be done.
+
+For comments, questions, bug-reports, etc., join the Apache/Perl
+mailing list by sending mail to modperl-subscribe@perl.apache.org.
+sending mail to announce-subscribe@perl.apache.org
+will subscribe you to the very low-traffic announcements list.
+
+mod_perl-2.0 was designed and written by Doug MacEachern, with
+contributions from many others (see the CREDITS and Changes files).
+
+Doug's mod_perl-2.0 development time is sponsored by
+Covalent Technologies: http://www.covalent.net/
