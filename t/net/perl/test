@@ -121,9 +121,6 @@ sub test_exit {
 	exit;
 	die "shouldn't get this far!\n";
     }
-
-    exit;
-    die "shouldn't get this far!\n";
 }
 
 END {
