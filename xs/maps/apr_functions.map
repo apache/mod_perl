@@ -127,7 +127,7 @@ MODULE=APR::Bucket
 
 MODULE=APR::Pool
 >apr_pool_free_blocks_num_bytes
- apr_pool_num_bytes
+ apr_pool_num_bytes | | p, recurse=0
  apr_pool_cleanup_for_exec
  apr_pool_clear
  apr_pool_destroy
