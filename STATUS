@@ -173,6 +173,12 @@ Open Issues or Core Enhancements:
 
 Documentation:
 
+    * Consider removing the following files from the distribution,
+      they were already removed from the site and not maintained:
+        - cgi_to_mod_perl.pod
+        - mod_perl.pod
+        - mod_perl_tuning.pod
+
     * document Apache::Status Apache::Request preference over CGI.pm
       and make it more clear that Apache::Status should not be used in a
       production environment, as it adds quite a bit of bloat
