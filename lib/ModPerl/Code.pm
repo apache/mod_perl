@@ -681,35 +681,6 @@ sub generate {
     #create bootstrap method for static xs modules
     my $static_xs = [keys %{ $build->{XS} }];
     ExtUtils::Embed::xsinit($xsinit, 1, $static_xs);
-
-    warn "generating...", $self->generate_apache2_pm, "\n";
-}
-
-sub generate_apache2_pm {
-    my $self = shift;
-
-    my $lib = $self->perl_config('installsitelib');
-    my $arch = $self->perl_config('installsitearch');
-    my $file = $self->default_file('apache2_pm');
-
-    open my $fh, '>', $file or die "open $file: $!";
-
-    my $package = 'package Apache2';
-
-    print $fh noedit_warning_hash();
-
-    print $fh <<EOF;
-$package;
-
-use lib qw($lib/Apache2
-           $arch/Apache2);
-
-1;
-
-EOF
-    close $fh;
-
-    $file;
 }
 
 my $constant_prefixes = join '|', qw{APR?};
