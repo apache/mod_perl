@@ -10,4 +10,5 @@ rutil.t
 send_fd.t
 sendfile.t
 server_rec.t
+server_util.t
 uri.t
