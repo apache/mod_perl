@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+
+
 =item 1.99_13 - March 8, 2004
 
 respect $ENV{APACHE_TEST_STARTUP_TIMEOUT} settings if any [Stas]
@@ -176,6 +178,8 @@ failures. [Stas]
 Make sure that pnotes are destroyed after PerlCleanup handlers are
 finished and not before + test. [Stas]
 
+
+
 =item 1.99_12 - December 22, 2003
 
 Restore a proper behavior of all Registry handlers, but PerlRun, not
@@ -303,6 +307,8 @@ Fix Apache::Status::handler to return 'Apache::OK' [Juanma Barranquero
 <Perl> sections now properly set filename and line number information,
 making error messages report the correct location. [Philippe M. Chiasson]
 
+
+
 =item 1.99_11 - November 10, 2003
 
 add a build/win32_fetch_apxs script (called within the top-level
@@ -377,6 +383,8 @@ ModPerl::Util::exit is used. [Stas]
 To make the test-suite sandbox-friendly, which break when things try to
 run off /tmp, use t/logs as the location of the mod_cgid socket and
 TMPDIR env var [Haroon Rafique <haroon.rafique@utoronto.ca>]
+
+
 
 =item 1.99_10 - September 29, 2003
 
@@ -561,6 +569,8 @@ Fix Apache::Reload to gracefully handle the case with empty Touchfiles
 
 PerlRequire entried should be executed before PerlModule entries in
 VirtualHost containers, just like in the base server [Stas]
+
+
 
 =item 1.99_09 - April 28, 2003
 
@@ -847,6 +857,8 @@ Request input and output filters are now getting the EOS bucket, which
 wasn't passed through before. Now the context can be flushed on
 EOS. [Stas]
 
+
+
 =item 1.99_08 - January 10, 2003
 
 Correct ModPerl::RegistryCooker to reset %INC, after compile for .pl
@@ -998,10 +1010,14 @@ stuffed into.
 rename overloaded LoadModule directive to PerlLoadModule and adjust
 the test naming
 
+
+
 =item 1.99_07 - September 25, 2002
 
 fix =pod directive test config problem
 [Philippe M. Chiasson <gozer@cpan.org>]
+
+
 
 =item 1.99_06 - September 25, 2002
 
@@ -1040,6 +1056,8 @@ remove dup() when converting filehandles from apr_file_t to FILE*
 under perlio-disabled Perl (APR::PerlIO) [Stas Bekman]
 
 fix compilation if apache/apr do not have thread support
+
+
 
 =item 1.99_05 - August 20, 2002
 
@@ -1083,6 +1101,8 @@ adjust to filter register api change
 
 added APR::ThreadMutex module
 
+
+
 =item 1.99_04 - June 21, 2002
 
 various APR PerlIO updates [Stas Bekman]
@@ -1098,6 +1118,8 @@ get the -DPERL_CORE optimization working again
 PERL_SET_CONTEXT to the parent interpreter when cloning interpreters at
 request time, else dTHX might be NULL during clone in the given thread,
 which would crash the server.
+
+
 
 =item 1.99_03 - June 15, 2002
 
@@ -1122,6 +1144,8 @@ add MODPERL2 config define, as if the server had been started with -DMODPERL2
 compat additions and fixes: $r->lookup_{file,uri}, $r->is_main, Apache->define
 
 added compat for Apache::log_error [Stas Bekman]
+
+
 
 =item 1.99_02 - June 1, 2002
 
@@ -1224,6 +1248,8 @@ get rid of some "subroutine redefined" warnings in ModPerl::MM that
 show up with newer bleedperls.
 
 a few fixes for Apache::compat [Dave Rolsky <autarch@urth.org>]
+
+
 
 =item 1.99_01 - April 6, 2002
 
