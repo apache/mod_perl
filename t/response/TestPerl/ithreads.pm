@@ -12,7 +12,7 @@ use Apache::Const -compile => 'OK';
 # XXX: at this moment ithreads can be used only with 5.8.1. However
 # once ithreads will be available on CPAN, we will need to change the
 # check for perl 5.8.0 and this certain version of ithreads (here and
-# in t/conf/modperl_extra.pl
+# in t/conf/post_config_startup.pl
 
 sub handler {
     my $r = shift;
@@ -22,7 +22,7 @@ sub handler {
         {"perl >= 5.8.1 is required (this is $])" => ($] >= 5.008001)};
 
     # threads must have been preloaded at the server startup for this
-    # test (this is done at t/conf/modperl_extra.pl)
+    # test (this is done at t/conf/post_config_startup.pl)
     require threads;
     threads->import();
 
