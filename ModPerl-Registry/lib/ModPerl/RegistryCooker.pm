@@ -144,7 +144,8 @@ sub default_handler {
     if ($o->should_compile) {
         my $rc = $o->can_compile;
         return $rc unless $rc == Apache::OK;
-        $o->convert_script_to_compiled_handler;
+        $rc = $o->convert_script_to_compiled_handler;
+        return $rc unless $rc == Apache::OK;
     }
 
     return $o->run;
@@ -333,6 +334,7 @@ sub convert_script_to_compiled_handler {
     my %orig_inc = %INC;
 
     my $rc = $o->compile(\$eval);
+    return $rc unless $rc == Apache::OK;
     $o->debug(qq{compiled package \"$o->[PACKAGE]\"}) if DEBUG & D_NOISE;
 
     #$o->chdir_file("$Apache::Server::CWD/");
