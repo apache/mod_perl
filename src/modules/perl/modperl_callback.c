@@ -347,7 +347,8 @@ int modperl_per_srv_callback(int idx, request_rec *r)
 
 int modperl_connection_callback(int idx, conn_rec *c)
 {
-    return DECLINED;
+    return modperl_run_handlers(idx, NULL, c->base_server,
+                                MP_HANDLER_TYPE_SRV);
 }
 
 void modperl_process_callback(int idx, ap_pool_t *p, server_rec *s)
