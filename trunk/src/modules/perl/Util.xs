@@ -22,13 +22,42 @@ static pool *util_pool(void)
     return NULL;
 }
 
+static SV *size_string(size_t size)
+{
+    SV *sv = newSVpv("    -", 5);
+    if (size == (size_t)-1) {
+	/**/
+    }
+    else if (!size) {
+	sv_setpv(sv, "   0k");
+    }
+    else if (size < 1024) {
+	sv_setpv(sv, "   1k");
+    }
+    else if (size < 1048576) {
+	sv_setpvf(sv, "%4dk", (size + 512) / 1024);
+    }
+    else if (size < 103809024) {
+	sv_setpvf(sv, "%4.1fM", size / 1048576.0);
+    }
+    else {
+	sv_setpvf(sv, "%4dM", (size + 524288) / 1048576);
+    }
+
+    return sv;
+}
+
 MODULE = Apache::Util		PACKAGE = Apache::Util		
 
 PROTOTYPES: DISABLE
 
 BOOT:
     items = items; /*avoid warning*/
-                                         
+
+SV *
+size_string(size)
+    size_t size
+
 char *
 escape_uri(segment)
     const char *segment
