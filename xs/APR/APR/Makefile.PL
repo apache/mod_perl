@@ -1,5 +1,3 @@
-use ExtUtils::MakeMaker;
-
 use lib qw(../lib);
 use ModPerl::MM ();
 use Config;
