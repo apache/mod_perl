@@ -58,7 +58,7 @@ void mpxs_Apache__Server_add_config(pTHX_ server_rec *s, SV *lines)
 {
     const char *errmsg = modperl_config_insert_server(aTHX_ s, lines);
     if (errmsg) {
-        Perl_croak(aTHX_ "\$s->add_config() has failed: %s", errmsg);
+        Perl_croak(aTHX_ "$s->add_config() has failed: %s", errmsg);
     }
 }
 
