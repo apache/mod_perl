@@ -1,15 +1,3 @@
-#define mpxs_write_loop(func,obj) \
-    while (MARK <= SP) { \
-        apr_ssize_t wlen; \
-        char *buf = SvPV(*MARK, wlen); \
-        apr_status_t rv = func(obj, buf, &wlen); \
-        if (rv != APR_SUCCESS) { \
-            croak(modperl_apr_strerror(rv)); \
-        } \
-        bytes += wlen; \
-        MARK++; \
-    }
-
 #if 0
 #define MP_USE_AP_RWRITE
 #endif
