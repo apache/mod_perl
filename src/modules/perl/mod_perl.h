@@ -1261,6 +1261,7 @@ CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *d, int flag)
 #define perl_cmd_perl_TAKE12 perl_cmd_perl_TAKE2
 #define perl_cmd_perl_TAKE23 perl_cmd_perl_TAKE123
 #define perl_cmd_perl_TAKE3 perl_cmd_perl_TAKE123
+#define perl_cmd_perl_TAKE13 perl_cmd_perl_TAKE123
 void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_perl_merge_srv_config(pool *p, void *basev, void *addv);
 
