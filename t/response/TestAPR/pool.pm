@@ -17,18 +17,25 @@ sub cleanup {
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 2;
+    plan $r, tests => 4;
 
     my $p = APR::Pool->new;
 
     ok $p->isa('APR::Pool');
+
+    my $subp = $p->new;
+
+    ok $subp->isa('APR::Pool');
 
 #only available with -DAPR_POOL_DEBUG
 #    my $num_bytes = $p->num_bytes;
 #    ok $num_bytes;
 
     $p->cleanup_register(\&cleanup, 33);
+    $subp->cleanup_register(\&cleanup, 33);
 
+    # should destroy the subpool too, so
+    # cleanup is called twice
     $p->destroy;
 
     Apache::OK;
