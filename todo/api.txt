@@ -54,10 +54,11 @@ with fd's which aren't files and of unknown length, therefore it cannot
 be used for implementing 1.x compatible send_fd.
 
 $r->auth_{name,type}:
- are not yet writable.  will also require locking.
+ are not yet writable.  need wrappers to call modperl_config_insert_request
 
 $r->get_basic_auth_pw:
 does not yet default AuthType and AuthName as 1.x does
+(should use modperl_config_insert_request to do so)
 
 $r->as_string:
 not yet implemented

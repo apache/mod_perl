@@ -10,13 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+add $r->add_config method to add dynamic configuration at request time
+
 add Apache::DIR_MAGIC_TYPE constant
 
 add support for directive handlers
 
 fix source_scan to run with current httpd/apr
 
-add Apache::Directive->insert method to add dynamic configuration
+add Apache::Server->add_config method to add dynamic configuration at
+server startup time
   
 add Apache::Directive->to_string method
 
