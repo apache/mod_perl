@@ -12,9 +12,10 @@ use TestCommon::Utils;
 use APR::Pool ();
 use APR::Bucket ();
 use APR::BucketType ();
+use APR::Table ();
 
 sub num_of_tests {
-    return 18;
+    return 23;
 }
 
 sub test {
@@ -160,11 +161,49 @@ sub test {
         $data =~ s/^..../BBBB/;
         $b->read(my $read);
         ok !t_cmp($read, $data,
-                 "data inside the setaside bucket is uaffected by " .
+                 "data inside the setaside bucket is unaffected by " .
                  "changes to the Perl variable it's created from");
         $b->destroy;
     }
 
+    # alloc_create on out-of-scope pools
+    {
+        my $data   = "foobartar";
+        my $offset = 3;
+        my $real = substr $data, $offset;
+        my $ba = APR::Bucket::alloc_create(APR::Pool->new);
+        my $b = APR::Bucket->new($ba, $data, $offset);
+
+        # try to overwrite the temp pool data
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+
+        # now test that we are still OK
+        my $rlen = $b->read(my $read);
+        ok t_cmp($read, $real, 'new($data, $offset)/buffer');
+        ok t_cmp($rlen, length($read), 'new($data, $offset)/len');
+        ok t_cmp($b->start, $offset, 'offset');
+
+    }
+
+    # setaside on out-of-scope pools
+    {
+        my $data = "A" x 10;
+        my $orig = $data;
+        my $b = APR::Bucket->new($ba, $data);
+        my $status = $b->setaside(APR::Pool->new);
+        ok t_cmp $status, 0, "setaside status";
+
+        # try to overwrite the temp pool data
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+
+        # now test that we are still OK
+        $b->read(my $read);
+        ok t_cmp($read, $data,
+                 "data inside the setaside bucket is not corrupted");
+        $b->destroy;
+    }
 
     APR::Bucket::alloc_destroy($ba);
 

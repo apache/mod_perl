@@ -17,6 +17,31 @@
 #define mpxs_APR__Table_DELETE  apr_table_unset
 #define mpxs_APR__Table_CLEAR   apr_table_clear
 
+#define MPXS_DO_TABLE_N_MAGIC_RETURN(call)                              \
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);                          \
+    apr_table_t *t = call;                                              \
+    SV *t_sv = modperl_hash_tie(aTHX_ "APR::Table", Nullsv, t);         \
+    mpxs_add_pool_magic(t_sv, p_sv);                                    \
+    return t_sv;
+
+static MP_INLINE SV *mpxs_APR__Table_make(pTHX_ SV *p_sv, int nelts)
+{
+    MPXS_DO_TABLE_N_MAGIC_RETURN(apr_table_make(p, nelts));
+}
+
+
+static MP_INLINE SV *mpxs_APR__Table_copy(pTHX_ apr_table_t *base, SV *p_sv)
+{
+    MPXS_DO_TABLE_N_MAGIC_RETURN(apr_table_copy(p, base));
+}
+
+static MP_INLINE SV *mpxs_APR__Table_overlay(pTHX_ apr_table_t *base,
+                                             apr_table_t *overlay, SV *p_sv)
+{
+    MPXS_DO_TABLE_N_MAGIC_RETURN(apr_table_overlay(p, overlay, base));
+}
+
+
 typedef struct {
     SV *cv;
     apr_hash_t *filter;

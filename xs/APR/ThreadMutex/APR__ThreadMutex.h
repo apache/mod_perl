@@ -16,11 +16,14 @@
 #define apr_thread_mutex_DESTROY apr_thread_mutex_destroy
 
 static MP_INLINE
-apr_thread_mutex_t *mpxs_apr_thread_mutex_create(pTHX_ SV *classname,
-                                                 apr_pool_t *pool,
-                                                 unsigned int flags)
+SV *mpxs_apr_thread_mutex_create(pTHX_ SV *classname, SV *p_sv,
+                                 unsigned int flags)
 {
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     apr_thread_mutex_t *mutex = NULL;
-    (void)apr_thread_mutex_create(&mutex, flags, pool);
-    return mutex;
+    SV *mutex_sv;
+    (void)apr_thread_mutex_create(&mutex, flags, p);
+    mutex_sv = sv_setref_pv(NEWSV(0, 0), "APR::ThreadMutex", (void*)mutex);
+    mpxs_add_pool_magic(mutex_sv, p_sv);
+    return mutex_sv;
 }

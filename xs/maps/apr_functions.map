@@ -80,7 +80,7 @@ MODULE=APR::SockAddr
  apr_sockaddr_equal
 
 MODULE=APR::Brigade
- apr_brigade_create | mpxs_ | SV *:CLASS, p, list | new
+ SV *:apr_brigade_create | mpxs_ | SV *:CLASS, SV *:p_sv, list | new
 ~apr_brigade_destroy
  mpxs_APR__Brigade_destroy
 !apr_brigade_partition
@@ -124,7 +124,8 @@ MODULE=APR::Bucket
  void:DEFINE_destroy | | apr_bucket:bucket
  void:DEFINE_delete  | | apr_bucket:bucket
 >apr_bucket_alloc
- apr_bucket_alloc_create
+~ apr_bucket_alloc_create
+ mpxs_APR__Bucket_alloc_create
  apr_bucket_alloc_destroy
 ~apr_bucket_setaside
  mpxs_APR__Bucket_setaside
@@ -225,8 +226,8 @@ mpxs_APR__Pool_clear
  apr_global_mutex_unlock
 
 MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
- apr_thread_mutex_t *:apr_thread_mutex_create | mpxs_ | \
-     SV *:classname, pool, flags=APR_THREAD_MUTEX_DEFAULT | new
+ SV *:apr_thread_mutex_create | mpxs_ | \
+     SV *:classname, SV *:p_sv, flags=APR_THREAD_MUTEX_DEFAULT | new
  void:apr_thread_mutex_destroy | | | apr_thread_mutex_DESTROY
  apr_thread_mutex_lock
  apr_thread_mutex_trylock
@@ -244,10 +245,13 @@ MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
 
 MODULE=APR::Table
  apr_table_clear
- apr_table_copy    | | t, p
- apr_table_make
+~apr_table_copy
+ mpxs_APR__Table_copy
+~apr_table_make
+ mpxs_APR__Table_make
  apr_table_overlap
- apr_table_overlay | | base, overlay, p
+~apr_table_overlay
+ mpxs_APR__Table_overlay
  apr_table_compress
  apr_table_add
 -apr_table_addn
@@ -517,8 +521,8 @@ MODULE=APR::UUID
 !apr_parse_addr_port
 
 MODULE=APR::IpSubnet
- apr_ipsubnet_t *:apr_ipsubnet_create | mpxs_ | \
-                  SV *:CLASS, p, ipstr, mask_or_numbits=NULL | new
+ SV *:apr_ipsubnet_create | mpxs_ | \
+     SV *:CLASS, SV *:p_sv, ipstr, mask_or_numbits=NULL | new
  apr_ipsubnet_test
 
 !MODULE=APR::Getopt

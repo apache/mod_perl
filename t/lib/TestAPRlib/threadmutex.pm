@@ -10,7 +10,7 @@ use APR::Const -compile => qw(EBUSY SUCCESS);
 use APR::Pool();
 
 sub num_of_tests {
-    return 3;
+    return 5;
 }
 
 sub test {
@@ -32,6 +32,20 @@ sub test {
 
     ok t_cmp($mutex->unlock, APR::SUCCESS,
              'unlock == APR::SUCCESS');
+
+    # out-of-scope pool
+    {
+        my $mutex = APR::ThreadMutex->new(APR::Pool->new);
+        # try to overwrite the temp pool data
+        require APR::Table;
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+        # now test that we are still OK
+        ok t_cmp($mutex->lock, APR::SUCCESS,
+                 'lock == APR::SUCCESS');
+        ok t_cmp($mutex->unlock, APR::SUCCESS,
+                 'unlock == APR::SUCCESS');
+    }
 
 }
 
