@@ -181,10 +181,19 @@ impressive? Shame on you!
 
 =head2 Build mod_perl as dynamic shared object outside the Apache source tree via APXS
 
-...
-Support currently still not added to mod_perl's C<Makefile.PL>,
-although the hybrid build environment already provides this
-...
+(I<Support currently still not added to top-level 
+Makefile.PL, but already useable manually!>)
+
+In short:
+
+ $ cd apaci
+ $ ./configure --with-apxs=/path/to/apache/sbin/apxs \
+               --with-perl=/path/to/bin/perl
+ $ make
+ $ make install
+
+This will build the DSO C<libperl.so> B<outside> the Apache source
+tree with the new Apache 1.3 support tool C<apxs>.
 
 =head1 AUTHOR
 
