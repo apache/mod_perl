@@ -65,6 +65,17 @@ modules:
 
 - core Apache::SubProcess w/ proper CORE::GLOBAL::{fork,exec} support
 
+- Apache::compat has to be loaded before CGI.pm, other than
+  documenting this issue, it's possible that we will add:
+
+  #ifdef MP_APACHE_COMPAT
+       modperl_require_module("Apache::compat");
+  #endif
+
+  if MP_APACHE_COMPAT Makefile.PL option is true, but this carries a
+  performance hit, so this is just an option.
+
+
 new modules:
 -----------
 
