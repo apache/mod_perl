@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Apache::Test: provide a new request macro _BODY_ASSERT to replace
+_BODY in cases where the client part of the test directly prints to
+the output, in order to avoid skipped tests instead of reporting the
+failure of the server side. Use it in automatically generated
+tests. [Stas]
+
 httpd (1.3 && 2) / winFU have problems when the first path's segment
 includes ':' (security precaution which breaks the rfc) so we can't
 use /TestFoo::bar as path_info in Apache::Tests. Adjusting all tests
