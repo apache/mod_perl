@@ -84,6 +84,7 @@ arg = *MARK++
     while (MARK <= SP) { \
         apr_ssize_t wlen; \
         char *buf = SvPV(*MARK, wlen); \
+        MP_TRACE_o(MP_FUNC, "%d bytes [%s]", wlen, buf); \
         apr_status_t rv = func(aTHX_ obj, buf, &wlen); \
         if (rv != APR_SUCCESS) { \
             Perl_croak(aTHX_ modperl_apr_strerror(rv)); \
