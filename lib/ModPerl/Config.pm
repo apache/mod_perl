@@ -10,6 +10,8 @@ sub as_string {
 
     my $cfg = '';
 
+    $cfg .= "*** mod_perl version $mod_perl::VERSION\n\n";;
+
     $cfg .= "*** using $INC{'Apache/BuildConfig.pm'}\n";
 
     # the widest key length
