@@ -12,7 +12,7 @@ my $base_dir = Apache::server_root_relative($pool, "cgi-bin");
 
 
 # test the scripts pre-loading by explicitly specifying uri => filename
-my $rl = ModPerl::RegistryLoader->create(package => "ModPerl::Registry");
+my $rl = ModPerl::RegistryLoader->new(package => "ModPerl::Registry");
 my $base_uri = "/cgi-bin";
 for my $file (qw(basic.pl env.pl)) {
     my $file_path = "$base_dir/$file";
@@ -29,7 +29,7 @@ for my $file (qw(basic.pl env.pl)) {
         return Apache::server_root_relative($pool, $uri);
     }
 
-    my $rl = ModPerl::RegistryLoader->create(
+    my $rl = ModPerl::RegistryLoader->new(
         package => "ModPerl::RegistryBB",
         trans   => \&trans,
     );
