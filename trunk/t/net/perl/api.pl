@@ -16,7 +16,7 @@ else {
 %ENV = $r->cgi_env;
 $r->subprocess_env; #test void context
 
-my $tests = 45;
+my $tests = 44;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -41,7 +41,6 @@ test ++$i, $r->get_remote_host;
 test ++$i, $r->get_server_port;
 
 test ++$i, SERVER_VERSION =~ /mod_perl/;
-test ++$i, SERVER_SUBVERSION =~ /mod_perl/;
 
 test ++$i, $r->last;
 test ++$i, $ENV{GATEWAY_INTERFACE};

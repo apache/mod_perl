@@ -919,11 +919,12 @@ read_client_block(r, buffer, bufsiz)
     long nrd = 0;
 
     PPCODE:
-    buffer = (char*)palloc(r->pool, bufsiz);
+    buffer = (char*)safemalloc(bufsiz);
     PERL_READ_FROM_CLIENT;
     if ( nrd > 0 ) {
 	XPUSHs(sv_2mortal(newSViv((long)nrd)));
 	sv_setpvn((SV*)ST(1), buffer, nrd);
+        safefree(buffer);
 	SvTAINTED_on((SV*)ST(1));
     } 
     else {
@@ -1644,7 +1645,7 @@ err_headers_out(r, ...)
 
     PPCODE:
     if(GIMME == G_SCALAR) {
-	ST(0) = mod_perl_tie_table(r->headers_out); 
+	ST(0) = mod_perl_tie_table(r->err_headers_out); 
 	XSRETURN(1); 	
     }
     hdrs_arr = table_elts (r->err_headers_out);
