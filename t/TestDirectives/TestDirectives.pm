@@ -3,18 +3,12 @@ package Apache::TestDirectives;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 
-require Exporter;
-require DynaLoader;
-require AutoLoader;
+use DynaLoader (); 
+
 use Data::Dumper 'Dumper';
 
-@ISA = qw(Exporter DynaLoader);
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-@EXPORT = qw(
-	
-);
+@ISA = qw(DynaLoader TestDirectives::Base);
+
 $VERSION = '0.01';
 
 if($ENV{MOD_PERL}) {
@@ -79,6 +73,13 @@ SUB
 }
 
 eval $code; die $@ if $@;
+
+package TestDirectives::Base;
+
+sub new {
+    my $class = shift;
+    return bless {FromNew => __PACKAGE__}, $class;
+}
 
 # Preloaded methods go here.
 

@@ -629,6 +629,45 @@ CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two)
     return perl_cmd_perl_TAKE123(cmd, data, one, two, NULL);
 }
 
+
+static SV *perl_perl_create_dir_config(SV **sv, HV *class)
+{
+    GV *gv; 
+    SV *obj = Nullsv;
+
+    if(SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
+	return *sv;
+
+    /* return $class->new if $class->can("new") */
+    if((gv = gv_fetchmethod_autoload(class, "new", FALSE)) && isGV(gv)) {
+	int count;
+	dSP;
+
+	ENTER;SAVETMPS;
+	PUSHMARK(sp);
+	XPUSHs(sv_2mortal(newSVpv(HvNAME(class),0)));
+	PUTBACK;
+	count = perl_call_sv((SV*)GvCV(gv), G_EVAL | G_SCALAR);
+	SPAGAIN;
+	if(count == 1) {
+	    *sv = POPs;
+	    ++SvREFCNT(*sv);
+	}
+	FREETMPS;LEAVE;
+
+	return *sv;
+    }
+    else {
+	/* return bless {}, $class */
+	if(!SvTRUE(*sv)) {
+	    *sv = newRV_noinc((SV*)newHV());
+	    return sv_bless(*sv, class);
+	}
+	else
+	    return *sv;
+    }
+}
+
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
 				  char *one, char *two, char *three)
 {
@@ -640,13 +679,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     SV *sv = perl_get_sv("Apache::__CMDPARMS", TRUE);
     sv_setref_pv(sv, "Apache::Config", (void*)cmd);
 
-    if(!SvTRUE(*data)) 
-	*data = newRV_noinc((SV*)newHV());
-
-    if(SvROK(*data) && !sv_isobject(*data))
-	obj = sv_bless(*data, CvSTASH(cv));
-    else
-	obj = *data;
+    obj = perl_perl_create_dir_config(data, CvSTASH(cv));
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
