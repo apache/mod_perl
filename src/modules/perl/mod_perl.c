@@ -1217,9 +1217,6 @@ void perl_per_request_init(request_rec *r)
     dPPDIR;
     dPPREQ;
     
-    /* PerlSetEnv */
-    mod_perl_dir_env(cld);
-
     /* PerlSendHeader */
     if(MP_SENDHDR(cld)) {
 	MP_SENTHDR_off(cld);
@@ -1245,6 +1242,9 @@ void perl_per_request_init(request_rec *r)
     else if (cfg->setup_env && MP_ENV(cld)) { 
 	perl_setup_env(r);
     }
+
+    /* PerlSetEnv */
+    mod_perl_dir_env(cld);
 
     if(callbacks_this_request++ > 0) return;
 

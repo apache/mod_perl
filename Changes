@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+make sure per-dir PerlSetEnv happens after defaults are set (e.g. PATH)
+
 cure core dump with 5.005_03-threads
 
 ensure mod_perl/x.xx component is not added before Apache/x.x.x
