@@ -2,6 +2,18 @@
 ### IMPORTANT: only things that must be run absolutely ###
 ### during the config phase should be in this file     ###
 ##########################################################
+#
+# On the 2nd pass, during server-internal restart, none of the code
+# running from this file (config phase) will be able to log any STDERR
+# messages. This is because Apache redirects STDERR to /dev/null until
+# the open_logs phase. That means that any of the code fails, the
+# error message will be lost (but it should have failed on the 1st
+# pass, when STDERR goes to the console and any error messages are
+# properly logged). Therefore avoid putting any code here (unless
+# there is no other way) and instead put all the code to be run at the
+# server startup into post_config_startup.pl. when the latter is run,
+# STDERR is sent to $ErrorLog.
+#
 
 use strict;
 use warnings FATAL => 'all';
@@ -29,18 +41,16 @@ test_add_config();
 
 test_add_version_component();
 
-test_apache_status();
-
 test_hooks_startup();
 
 test_modperl_env();
-
-test_method_obj();
 
 
 
 ### only subs below this line ###
 
+# need to run from config phase, since we want to adjust @INC as early
+# as possible
 sub reorg_INC {
     # after Apache2 has pushed blib and core dirs including Apache2 on
     # top reorg @INC to have first devel libs, then blib libs, and
@@ -60,6 +70,7 @@ sub reorg_INC {
     @INC = (@a, @b, @c);
 }
 
+# need to run from config phase, since it registers PerlPostConfigHandler
 sub register_post_config_startup {
     # most of the startup code needs to be run at the post_config
     # phase
@@ -72,6 +83,10 @@ sub register_post_config_startup {
     });
 }
 
+# this can be run from post_config_startup.pl, but then it'll do the
+# logging twice, so in this case it's actually good to have this code
+# run during config phase, so it's logged only once (even though it's
+# run the second time, but STDERR == /dev/null)
 sub startup_info {
     my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
     my $apr_mods = scalar grep { /^APR/    } keys %INC;
@@ -88,6 +103,7 @@ sub startup_info {
     $server->log->info("base server + $vhosts vhosts ready to run tests");
 }
 
+# need to run from config phase, since it changes server config
 sub test_add_config {
     # testing $s->add_config()
     my $conf = <<'EOC';
@@ -105,6 +121,7 @@ EOC
     Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 }
 
+# need to run from config phase, since it registers PerlPostConfigHandler
 sub test_add_version_component {
     Apache->server->push_handlers(
         PerlPostConfigHandler => \&add_my_version);
@@ -116,22 +133,12 @@ sub test_add_version_component {
     }
 }
 
-sub test_apache_status {
-    ### Apache::Status tests
-    require Apache::Status;
-    require Apache::Module;
-    Apache::Status->menu_item(
-       'test_menu' => "Test Menu Entry",
-       sub {
-           my($r, $q) = @_; #request and CGI objects
-           return ["This is just a test entry"];
-       }
-    ) if Apache::Module::loaded('Apache::Status');
-}
-
 # cleanup files for TestHooks::startup which can't be done from the
 # test itself because the files are created at the server startup and
 # the test needing these files may run more than once (t/SMOKE)
+#
+# we need to run it at config phase since we need to cleanup before
+# the open_logs phase
 sub test_hooks_startup {
     require Apache::Test;
     my $dir = catdir Apache::Test::vars('documentroot'), qw(hooks startup);
@@ -144,22 +151,6 @@ sub test_hooks_startup {
 sub test_modperl_env {
     # see t/response/TestModperl/env.pm
     $ENV{MODPERL_EXTRA_PL} = __FILE__;
-}
-
-sub test_method_obj {
-    # see t/modperl/methodobj
-    require TestModperl::methodobj;
-    $TestModperl::MethodObj = TestModperl::methodobj->new;
-}
-
-
-sub ModPerl::Test::add_config {
-    my $r = shift;
-
-    #test adding config at request time
-    $r->add_config(['require valid-user']);
-
-    Apache::OK;
 }
 
 1;

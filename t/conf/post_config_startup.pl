@@ -31,11 +31,15 @@ test_apache_resource();
 
 test_apache_size_limit();
 
+test_apache_status();
+
 test_loglevel();
 
 test_perl_ithreads();
 
 test_server_shutdown_cleanup_register();
+
+test_method_obj();
 
 
 
@@ -62,6 +66,19 @@ sub test_apache_size_limit {
     # would be nice to write a real test, but for now just see that we
     # can load it for non-threaded mpms
     require Apache::SizeLimit unless Apache::MPM->is_threaded;
+}
+
+sub test_apache_status {
+    ### Apache::Status tests
+    require Apache::Status;
+    require Apache::Module;
+    Apache::Status->menu_item(
+       'test_menu' => "Test Menu Entry",
+       sub {
+           my($r, $q) = @_; #request and CGI objects
+           return ["This is just a test entry"];
+       }
+    ) if Apache::Module::loaded('Apache::Status');
 }
 
 # test startup loglevel setting (under threaded mpms loglevel can be
@@ -115,5 +132,19 @@ sub ModPerl::Test::exit_handler {
 
 }
 
+sub test_method_obj {
+    # see t/modperl/methodobj
+    require TestModperl::methodobj;
+    $TestModperl::MethodObj = TestModperl::methodobj->new;
+}
+
+sub ModPerl::Test::add_config {
+    my $r = shift;
+
+    #test adding config at request time
+    $r->add_config(['require valid-user']);
+
+    Apache::OK;
+}
 
 1;
