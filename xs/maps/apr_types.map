@@ -33,7 +33,7 @@ apr_bucket_refcount         | UNDEFINED
 #apr_bucket_shared           | UNDEFINED
 
 #uri
-struct apr_uri_components   | APR::URI
+struct apr_uri_t        | APR::URI
 
 #uuid
 struct apr_uuid_t       | APR::UUID

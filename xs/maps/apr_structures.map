@@ -154,7 +154,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    next
 </apr_text>
 
-<apr_uri_components>
+<apr_uri_t>
    scheme
    hostinfo
    user
@@ -169,4 +169,4 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    is_initialized
    dns_looked_up
    dns_resolved
-</apr_uri_components>
+</apr_uri_t>
