@@ -69,6 +69,19 @@ sub test {
             }
         }
 
+        # XXX: are there any platforms csize is available at all?
+        # We don't want to see the skipped message all the time if
+        # it's not really used anywhere
+        # if (my $csize = $finfo->csize) {
+        #     # The storage size is at least as big as the file size
+        #     # perl's stat() doesn't have the equivalent of csize
+        #     t_debug "csize=$csize, size=$size";
+        #     ok $csize >= $size;
+        # }
+        # else {
+        #     skip "csize is not available on this platform", 0;
+        # }
+
         # match world bits
 
         ok t_cmp($finfo->protection & APR::WREAD,
