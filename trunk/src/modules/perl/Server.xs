@@ -150,6 +150,26 @@ timeout(server, set=0)
     OUTPUT:
     RETVAL
 
+uid_t
+uid(server)
+    Apache::Server	server
+
+    CODE:
+    RETVAL = server->server_uid;
+
+    OUTPUT:
+    RETVAL
+
+gid_t
+gid(server)
+    Apache::Server	server
+
+    CODE:
+    RETVAL = server->server_gid;
+
+    OUTPUT:
+    RETVAL
+
 int
 is_virtual(server)
     Apache::Server	server
@@ -170,3 +190,4 @@ names(server)
 #else
     ST(0) = array_header2avrv(server->names);
 #endif
+

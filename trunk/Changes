@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add $r->server->uid and $r->server->gid [Eric Cholet <cholet@logilune.com>]
+
 add per-server configuration merge [Eric Cholet <cholet@logilune.com>]
 
 `_' is no longer escaped in Apache::Registry package names
@@ -39,7 +41,7 @@ fix flush_namespace undef logic in Apache::PerlRun, thanks to Karsten
 Meier for the spot
 
 Tweak Apache::content to comply with media-types embedded in content-types
-(RFC 2616 section 3.7) <cholet@logilune.com>
+(RFC 2616 section 3.7) [Eric Cholet <cholet@logilune.com>]
 
 Removed and added a few modules from the Bundle file. <ask@netcetera.dk>
 
