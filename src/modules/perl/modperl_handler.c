@@ -15,69 +15,6 @@
 
 #include "mod_perl.h"
 
-#ifdef USE_ITHREADS
-static
-char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
-{
-    dSP;
-    int count;
-    SV *bdeparse;
-    char *text;
-    
-    /* B::Deparse >= 0.61 needed for blessed code references.
-     * 0.6 works fine for non-blessed code refs.
-     * notice that B::Deparse is not CPAN-updatable.
-     * 0.61 is available starting from 5.8.0
-     */
-    load_module(PERL_LOADMOD_NOIMPORT,
-                newSVpvn("B::Deparse", 10),
-                newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
-
-    ENTER;
-    SAVETMPS;
-
-    /* create the B::Deparse object */
-    PUSHMARK(sp);
-    XPUSHs(sv_2mortal(newSVpvn("B::Deparse", 10)));
-    PUTBACK;
-    count = call_method("new", G_SCALAR);
-    SPAGAIN;
-    if (count != 1) {
-        Perl_croak(aTHX_ "Unexpected return value from B::Deparse::new\n");
-    }
-    if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ "error: %s", SvPVX(ERRSV));
-    }
-    bdeparse = POPs;
-
-    PUSHMARK(sp);
-    XPUSHs(bdeparse);
-    XPUSHs(sv_2mortal(newRV_inc((SV*)cv)));
-    PUTBACK;
-    count = call_method("coderef2text", G_SCALAR);
-    SPAGAIN;
-    if (count != 1) {
-        Perl_croak(aTHX_ "Unexpected return value from "
-                   "B::Deparse::coderef2text\n");
-    }
-    if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ "error: %s", SvPVX(ERRSV));
-    }
-    
-    {
-        STRLEN n_a;
-        text = apr_pstrcat(p, "sub ", POPpx, NULL);
-    }
-    
-    PUTBACK;
-    
-    FREETMPS;
-    LEAVE;
-
-    return text;
-}
-#endif
-
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
 {
     modperl_handler_t *handler = 

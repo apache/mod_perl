@@ -690,7 +690,8 @@ sub compile {
 
     $self->debug("compiling $self->{FILENAME}") if DEBUG && D_COMPILE;
 
-    ModPerl::Global::special_list_clear(END => $self->{PACKAGE});
+    ModPerl::Global::special_list_register(END => $self->{PACKAGE});
+    ModPerl::Global::special_list_clear(   END => $self->{PACKAGE});
 
     {
         # let the code define its own warn and strict level 

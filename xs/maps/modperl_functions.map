@@ -10,6 +10,7 @@ PACKAGE=Apache
 MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
  mpxs_ModPerl__Global_special_list_clear
+ mpxs_ModPerl__Global_special_list_register
 
 MODULE=Apache::RequestRec   PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_content_type   | | r, type=Nullsv

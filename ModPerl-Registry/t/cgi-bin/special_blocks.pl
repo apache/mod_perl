@@ -1,6 +1,7 @@
 #!perl -w
 
 # test BEGIN/END blocks
+
 use Apache::RequestRec ();
 
 use vars qw($query);
@@ -31,4 +32,3 @@ END {
         print "end ok";
     }
 }
-

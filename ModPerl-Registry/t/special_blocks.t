@@ -20,6 +20,9 @@ plan tests => @aliases * 4;
 {
     # PerlRun always run BEGIN/END since it's never cached
 
+    # see also t/perlrun_extload.t which exercises BEGIN/END blocks
+    # from external modules loaded from PerlRun scripts
+
     my $alias = "perlrun";
     my $url = "/same_interp/$alias/special_blocks.pl";
     my $same_interp = Apache::TestRequest::same_interp_tie($url);

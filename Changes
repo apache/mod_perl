@@ -12,6 +12,17 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+'SetHandler perl-script' no longer grabs any newly encountered END
+blocks, and removes them from PL_endav, but only if they are
+explicitly registered via ModPerl::Global::special_list_register(END
+=> $package_name) (this is a new function). It's now possible to have
+a complete control of when END blocks are run from the user space, not
+only in the registry handlers [Stas]
+
+END blocks encountered by child processes and not hijacked by
+ModPerl::Global::special_list_register() are now executed at the
+server shutdown (previously they weren't executed at all). [Stas]
+
 Added test to ensure <Perl> sections can have things like %Location
 tied [Gozer]
 

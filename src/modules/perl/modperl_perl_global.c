@@ -21,7 +21,7 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
     globals->inc.gv    = PL_incgv;
     globals->defout.gv = PL_defoutgv;
     globals->rs.sv     = &PL_rs;
-    globals->end.av    = &PL_endav;
+    globals->end.av    = PL_endav;
     globals->end.key   = MP_MODGLOBAL_END;
 }
 
@@ -65,78 +65,142 @@ modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
     return NULL;
 }
 
+/*
+ * if (exists $PL_modglobal{$key}{$package}) {
+ *      return $PL_modglobal{$key}{$package};
+ * }
+ * elsif ($autovivify) {
+ *     return $PL_modglobal{$key}{$package} = [];
+ * }
+ * else {
+ *     return $Nullav; # a null pointer in C of course :)
+ * }
+ */
 static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
-                                          const char *package, I32 packlen)
+                                          const char *package, I32 packlen,
+                                          I32 autovivify)
 {
     HE *he = MP_MODGLOBAL_FETCH(gkey);
     HV *hv;
 
     if (!(he && (hv = (HV*)HeVAL(he)))) {
-        return Nullav;
+        if (autovivify) {
+            hv = MP_MODGLOBAL_STORE_HV(gkey);
+        }
+        else {
+            return Nullav;
+        }
     }
 
-    if (!(he = hv_fetch_he(hv, (char *)package, packlen, 0))) {
-        return Nullav;
+    if ((he = hv_fetch_he(hv, (char *)package, packlen, 0))) {
+        return (AV*)HeVAL(he);
     }
-
-    return (AV*)HeVAL(he);
+    else {
+        if (autovivify) {
+            return (AV*)*hv_store(hv, package, packlen, (SV*)newAV(), 0);
+        }
+        else {
+            return Nullav;
+        }
+    }
 }
 
+/* autovivify $PL_modglobal{$key}{$package} if it doesn't exist yet,
+ * so that in modperl_perl_global_avcv_set we will know whether to
+ * store blocks in it or keep them in the original list.
+ *
+ * For example in the case of END blocks, if
+ * $PL_modglobal{END}{$package} exists, modperl_perl_global_avcv_set
+ * will push newly encountered END blocks to it, otherwise it'll keep
+ * them in PL_endav.
+ */
+void modperl_perl_global_avcv_register(pTHX_ modperl_modglobal_key_t *gkey,
+                                       const char *package, I32 packlen)
+{
+    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey,
+                                            package, packlen, TRUE);
+
+    MP_TRACE_g(MP_FUNC, "register PL_modglobal %s::%s (has %d entries)",
+               package, (char*)gkey->name, av ? 1+av_len(av) : 0);
+}
+
+/* if (exists $PL_modglobal{$key}{$package}) {
+ *     for my $cv (@{ $PL_modglobal{$key}{$package} }) {
+ *         $cv->();
+ *     }
+ * }
+ */
 void modperl_perl_global_avcv_call(pTHX_ modperl_modglobal_key_t *gkey,
                                    const char *package, I32 packlen)
 {
-    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen);
+    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen,
+                                            FALSE);
 
-    if (!av) {
-        return;
+    MP_TRACE_g(MP_FUNC, "run PL_modglobal %s::%s (has %d entries)",
+               package, (char*)gkey->name, av ? 1+av_len(av) : 0);
+
+    if (av) {
+        modperl_perl_call_list(aTHX_ av, gkey->name);
     }
-
-    modperl_perl_call_list(aTHX_ av, gkey->name);
 }
 
+
+/* if (exists $PL_modglobal{$key}{$package}) {
+ *     @{ $PL_modglobal{$key}{$package} } = ();
+ * }
+ */
 void modperl_perl_global_avcv_clear(pTHX_ modperl_modglobal_key_t *gkey,
                                     const char *package, I32 packlen)
 {
-    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen);
+    AV *av = modperl_perl_global_avcv_fetch(aTHX_ gkey,
+                                            package, packlen, FALSE);
 
-    if (!av) {
-        return;
+    MP_TRACE_g(MP_FUNC, "clear PL_modglobal %s::%s (has %d entries)",
+               package, (char*)gkey->name, av ? 1+av_len(av) : 0);
+    
+    if (av) {
+        av_clear(av);
     }
-
-    av_clear(av);
 }
 
 static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
 {
-    HE *he;
-    HV *hv;
     AV *mav, *av = (AV*)sv;
     const char *package = HvNAME(PL_curstash);
     I32 packlen = strlen(package);
     modperl_modglobal_key_t *gkey =
         (modperl_modglobal_key_t *)mg->mg_ptr;
 
-    if ((he = MP_MODGLOBAL_FETCH(gkey))) {
-        hv = (HV*)HeVAL(he);
-    }
-    else {
-        hv = MP_MODGLOBAL_STORE_HV(gkey);
+    /* the argument sv, is the original list perl was operating on.
+     * (e.g. PL_endav). So now if we find that we have package/cv name
+     * (e.g. Foo/END) registered for set-aside, we remove the cv that
+     * was just unshifted in and push it into
+     * $PL_modglobal{$key}{$package}. Otherwise we do nothing, which
+     * keeps the unshifted cv (e.g. END block) in its original av
+     * (e.g. PL_endav)
+     */
+     
+    mav = modperl_perl_global_avcv_fetch(aTHX_ gkey, package, packlen, FALSE);
+    
+    if (!mav) {
+        MP_TRACE_g(MP_FUNC, "%s::%s is not going to PL_modglobal",
+                   package, (char*)gkey->name);
+        /* keep it in the tied list (e.g. PL_endav) */
+        return 1;
     }
 
-    if ((he = hv_fetch_he(hv, (char *)package, packlen, 0))) {
-        mav = (AV*)HeVAL(he);
-    }
-    else {
-        mav = (AV*)*hv_store(hv, package, packlen, (SV*)newAV(), 0);
-    }
-
-    /* $cv = pop @av */
-    sv = AvARRAY(av)[AvFILLp(av)];
-    AvARRAY(av)[AvFILLp(av)--] = &PL_sv_undef;
-
+    MP_TRACE_g(MP_FUNC, "%s::%s is going into PL_modglobal",
+               package, (char*)gkey->name);
+        
+    sv = av_shift(av);
+    
     /* push @{ $PL_modglobal{$key}{$package} }, $cv */
     av_store(mav, AvFILLp(mav)+1, sv);
 
+    /* print scalar @{ $PL_modglobal{$key}{$package} } */
+    MP_TRACE_g(MP_FUNC, "%s::%s av now has %d entries\n",
+               package, (char*)gkey->name, 1+av_len(mav));
+    
     return 1;
 }
 
@@ -146,9 +210,6 @@ static MGVTBL modperl_vtbl_global_avcv_t = {
     0, 0, 0,
 };
 
-/* XXX: Apache::RegistryLoader type things need access to this
- * for compiling scripts at startup
- */
 static void modperl_perl_global_avcv_tie(pTHX_ modperl_modglobal_key_e key,
                                          AV *av)
 {
@@ -172,17 +233,13 @@ static void modperl_perl_global_avcv_untie(pTHX_ AV *av)
 static void
 modperl_perl_global_avcv_save(pTHX_ modperl_perl_global_avcv_t *avcv)
 {
-    avcv->origav = *avcv->av;
-    *avcv->av = newAV(); /* XXX: only need 1 of these AVs per-interpreter */
-    modperl_perl_global_avcv_tie(aTHX_ avcv->key, *avcv->av);
+    modperl_perl_global_avcv_tie(aTHX_ avcv->key, avcv->av);
 }
 
 static void
 modperl_perl_global_avcv_restore(pTHX_ modperl_perl_global_avcv_t *avcv)
 {
-    modperl_perl_global_avcv_untie(aTHX_ *avcv->av);
-    SvREFCNT_dec(*avcv->av); /* XXX: see XXX above */
-    *avcv->av = avcv->origav;
+    modperl_perl_global_avcv_untie(aTHX_ avcv->av);
 }
 
 /*

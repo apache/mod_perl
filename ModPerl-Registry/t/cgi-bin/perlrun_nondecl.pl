@@ -5,9 +5,16 @@ use Apache::TestUtil;
 
 my $num;
 
+# this BEGIN block is called on every request, since this file gets
+# removed from %INC after it was loaded
+BEGIN {
+    # use an external package which will persist across requests
+    $MyData::blocks{BEGIN}{perlrun_nondecl}++;
+}
+
 use subs qw(warn_exp);
 
-# all subs in tis file get 'redefined' warning because they are
+# all subs in this file get 'redefined' warning because they are
 # reloaded in the main:: package, which is not under PerlRun's
 # control.
 
@@ -41,6 +48,8 @@ BEGIN {
 # a constant.
 sub nondecl_const       ()  { 4 }
 
-
+END {
+    $MyData::blocks{END}{perlrun_nondecl}++;
+}
 
 1;

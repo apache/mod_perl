@@ -3839,6 +3839,28 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
+    'name' => 'modperl_perl_global_avcv_register',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'modperl_modglobal_key_t *',
+        'name' => 'gkey'
+      },
+      {
+        'type' => 'const char *',
+        'name' => 'package'
+      },
+      {
+        'type' => 'I32',
+        'name' => 'packlen'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
     'name' => 'modperl_perl_global_request_restore',
     'args' => [
       {
@@ -6191,6 +6213,27 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'int',
+    'name' => 'mpxs_ModPerl__Global_special_list_register',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'const char *',
+        'name' => 'name'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'package'
+      }
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'mpxs_ModPerl__Util_untaint',
     'attr' => [
@@ -6414,6 +6457,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'const char *',
         'name' => 'fname'
+      }
+    ]
+  },
+  {
+    'return_type' => 'char *',
+    'name' => 'modperl_coderef2text',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'p'
+      },
+      {
+        'type' => 'CV *',
+        'name' => 'cv'
       }
     ]
   },

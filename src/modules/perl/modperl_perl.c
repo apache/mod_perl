@@ -57,7 +57,7 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
     ids->gid  = getgid(); 
     ids->gid  = getegid(); 
 
-    MP_TRACE_g(MP_FUNC, 
+    MP_TRACE_r(MP_FUNC, 
                "pid=%d, "
 #ifdef MP_MAINTAIN_PPID
                "ppid=%d, "
@@ -120,6 +120,8 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 
     PERL_SET_CONTEXT(perl);
 
+    modperl_perl_call_endav(aTHX);
+
     PL_perl_destruct_level = modperl_perl_destruct_level();
 
 #ifdef USE_ENVIRON_ARRAY
@@ -143,10 +145,6 @@ void modperl_perl_destruct(PerlInterpreter *perl)
     PL_origenviron = environ;
 #   endif
 #endif
-
-    if (PL_endav) {
-        modperl_perl_call_list(aTHX_ PL_endav, "END");
-    }
 
     {
         dTHXa(perl);
@@ -174,6 +172,13 @@ void modperl_perl_destruct(PerlInterpreter *perl)
         environ = orig_environ;
     }
 #endif
+}
+
+void modperl_perl_call_endav(pTHX)
+{
+     if (PL_endav) {
+         modperl_perl_call_list(aTHX_ PL_endav, "END");
+     }
 }
 
 #if !(PERL_REVISION == 5 && ( PERL_VERSION < 8 ||    \

@@ -6,6 +6,18 @@ use strict;
 use base qw(Exporter);
 our @EXPORT = qw(decl_proto);
 
-sub decl_proto ($;$) { my $x = shift; $x*"0"; }
+# this BEGIN block is called only once, since this module doesn't get
+# removed from %INC after it was loaded
+BEGIN {
+    # use an external package which will persist across requests
+    $MyData::blocks{perlrun_decl}++;
+}
+
+sub decl_proto ($;$) { shift }
+
+# this END block won't be executed until the server shutdown
+END {
+    $MyData::blocks{perlrun_decl}--;
+}
 
 1;
