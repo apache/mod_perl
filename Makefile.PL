@@ -871,8 +871,10 @@ sub init_tests_and_config {
     #use only first value if $) contains more than one
     $gid =~ s/^(\d+).*$/$1/;
 
-    $User  = $Is_Win32 ? "nobody" : (getpwuid($uid) || "#$uid");
-    $Group = $Is_Win32 ? "nogroup" : (getgrgid($gid) || "#$gid");
+    $User  = $Is_Win32 ? "nobody" : 
+      $ENV{APACHE_USER} || (getpwuid($uid) || "#$uid");
+    $Group = $Is_Win32 ? "nogroup" : 
+      $ENV{APACHE_GROUP} || (getgrgid($gid) || "#$gid");
 
     if($User eq "root") {
 	my $other = (getpwnam('nobody'))[0];
