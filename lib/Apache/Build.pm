@@ -173,11 +173,10 @@ sub mpm_name {
             "build", "config_vars.mk";
         if (open my $fh, $config_vars_file) {
             while ((<$fh>) {
-                if(/MPM_NAME = (\w+)/) {
+                if (/MPM_NAME = (\w+)/) {
                     $mpm_name = $1;
                     last;
                 }
-                last if /^=item/;
             }
             close $fh;
         }
