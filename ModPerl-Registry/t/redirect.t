@@ -33,10 +33,10 @@ my $base_url = "/registry/redirect.pl";
        );
 }
 
-$base_url = "/registry/redirect-cookie.pl";
 {
     local $Apache::TestRequest::RedirectOK = 0;
 
+    my $base_url = "/registry/redirect-cookie.pl";
     my $redirect_path = "/registry/basic.pl";
     my $url = "$base_url?$redirect_path";
 
