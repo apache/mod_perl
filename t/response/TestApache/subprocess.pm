@@ -43,7 +43,7 @@ sub handler {
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
-    plan $r, tests => 4, have qw(APR::PerlIO Apache::SubProcess);
+    plan $r, tests => 4, need qw(APR::PerlIO Apache::SubProcess);
 
     my $target_dir = catfile $vars->{documentroot}, "util";
 
