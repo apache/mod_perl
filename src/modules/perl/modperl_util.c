@@ -252,10 +252,10 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
         }
 #endif
         if (r) {
-            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, SvPV(sv, n_a));
+            ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, r, "%s", SvPV(sv, n_a));
         }
         else {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, SvPV(sv, n_a));
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, "%s", SvPV(sv, n_a));
         }
 
         return status;
