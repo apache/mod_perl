@@ -1187,7 +1187,11 @@ sub export_file_format_def {
 
 my $ithreads_exports = join '|', qw{
 modperl_cmd_interp_
-modperl_interp_ modperl_list_ modperl_tipool_
+modperl_interp_
+modperl_list_
+modperl_tipool_
+modperl_svptr_table_clone$
+modperl_mgv_require_module$
 };
 
 sub export_func_handle {
