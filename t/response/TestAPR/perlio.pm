@@ -1,22 +1,21 @@
 package TestAPR::perlio;
 
 use strict;
-use warnings;# FATAL => 'all';
-
-use Apache::Const -compile => 'OK';
+use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
 
-my $have_perlio = eval { require APR::PerlIO };
-
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
+
+use Apache::Const -compile => 'OK';
+use constant HAVE_PERLIO => eval { require APR::PerlIO };
 
 sub handler {
     my $r = shift;
 
-    unless ($have_perlio) {
+    unless (HAVE_PERLIO) {
         #XXX dunno why have_module doesn't work here.
         my $reason = "APR::PerlIO is not available with this Perl";
         $r->puts("1..0 #Skipped: $reason\n");

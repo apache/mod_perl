@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Access ();
+
 use Apache::Const -compile => qw(OK AUTH_REQUIRED);
 
 sub auth_any {

@@ -3,7 +3,11 @@ package TestModperl::getc;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestIO ();
+
 use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

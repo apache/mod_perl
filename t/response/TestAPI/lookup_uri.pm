@@ -4,7 +4,10 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+
 use Apache::SubRequest ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -14,7 +17,7 @@ sub handler {
     die unless $subr->uri eq $uri;
     $subr->run;
 
-    0;
+    Apache::OK;
 }
 
 1;

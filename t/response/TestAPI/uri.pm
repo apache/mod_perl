@@ -3,11 +3,14 @@ package TestAPI::uri;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::Test;
+
 use APR::URI ();
 use Apache::URI ();
+use Apache::RequestRec ();
 use Apache::RequestUtil ();
-use Apache::ServerUtil ();
-use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 my $location = '/' . __PACKAGE__;
 

@@ -5,6 +5,8 @@ use warnings FATAL => 'all';
 
 use APR::Table ();
 use Apache::Access ();
+use Apache::RequestRec ();
+
 use Apache::Const -compile => qw(OK FORBIDDEN);
 
 my $allowed_ips = qr{^(10|127)\.};

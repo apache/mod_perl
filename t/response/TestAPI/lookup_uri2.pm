@@ -4,6 +4,9 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::SubRequest ();
+use Apache::RequestIO ();
+
+use Apache::Const -compile => 'OK';
 
 sub myplan {
     my $r = shift;

@@ -3,7 +3,11 @@ package TestFilter::reverse;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $filter = shift;
@@ -25,7 +29,7 @@ sub response {
     $r->puts(scalar reverse "1..1\n");
     $r->puts(scalar reverse "ok 1\n");
 
-    0;
+    Apache::OK;
 }
 
 1;

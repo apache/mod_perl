@@ -6,8 +6,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestConfig;
 use Apache::TestUtil;
+
 use Apache::Module ();
 use DynaLoader ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -87,7 +90,7 @@ sub handler {
     ok t_cmp(0, Apache::Module::loaded('Apache__Module_foo.foo'),
              "Apache::Module::loaded('Apache__Module_foo.foo')");
 
-    0;
+    Apache::OK;
 }
 
 1;

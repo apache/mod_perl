@@ -5,6 +5,11 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
+use APR::Table ();
+use Apache::RequestRec ();
+
+use Apache::Const -compile => 'OK';
+
 sub first {
     my $r = shift;
 

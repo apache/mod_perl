@@ -5,6 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
+use Apache::RequestRec ();
+use Apache::RequestUtil ();
+use Apache::Connection ();
+
 use Apache::Const -compile => 'OK';
 
 #this test module is only for testing fields in the conn_rec

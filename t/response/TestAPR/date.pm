@@ -5,9 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::Const -compile => 'OK';
 
 use APR::Date ();
+
+use Apache::Const -compile => 'OK';
 
 my @http_dates = (
     'Sun, 06 Nov 1994 08:49:37 GMT',  # RFC 822, updated by RFC 1123

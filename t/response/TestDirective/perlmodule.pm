@@ -10,8 +10,12 @@ use warnings FATAL => 'all';
 use Apache2 ();
 
 use Apache::Test ();
-use Apache::Const -compile => 'OK';
+
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use File::Spec::Functions qw(catfile);
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

@@ -6,6 +6,8 @@ use warnings FATAL => 'all';
 use Apache::compat ();
 use CGI ();
 
+use Apache::Const -compile => 'OK';
+
 sub handler {
     my $r = shift;
 

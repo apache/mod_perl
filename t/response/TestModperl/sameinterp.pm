@@ -3,6 +3,10 @@ package TestModperl::sameinterp;
 use warnings FATAL => 'all';
 use strict;
 
+use Apache::RequestIO ();
+
+use Apache::TestHandler ();
+
 use Apache::Const -compile => qw(OK);
 
 my $value = '';

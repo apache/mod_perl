@@ -3,9 +3,12 @@ package TestAPI::rutil;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::Test;
+
 use APR::URI ();
 use Apache::RequestUtil ();
-use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 my %default_ports = (
     http => 80,

@@ -4,6 +4,9 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::compat ();
+use Apache::RequestRec ();
+
+use Apache::Const -compile => ':common';
 
 sub handler {
     my $r = shift;

@@ -5,10 +5,13 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::Filter); #so we inherit MODIFY_CODE_ATTRIBUTES
 
-use Apache::Const -compile => qw(M_POST);
-use APR::Const -compile => ':common';
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
+
+use Apache::Const -compile => qw(OK M_POST);
+use APR::Const -compile => ':common';
 
 sub handler : FilterRequestHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;

@@ -3,8 +3,11 @@ package TestApache::scanhdrs;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::compat ();
 use Apache::Test;
+
+use Apache::compat ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
