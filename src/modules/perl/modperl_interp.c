@@ -91,9 +91,8 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
 
 #ifdef MP_TRACE
     interp->tid = MP_TIDF;
-#endif
-
     MP_TRACE_i(MP_FUNC, "thread == 0x%lx\n", interp->tid);
+#endif
 
     MpInterpIN_USE_On(interp);
 
