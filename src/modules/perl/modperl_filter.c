@@ -20,6 +20,25 @@
 
 #define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
 
+/* allocate wbucket memory using malloc and not request pools, since
+ * we may need many of these if the filter is invoked multiple
+ * times */
+#define WBUCKET_INIT(wb, p, next_filter)                   \
+    if (!wb) {                                             \
+        wb = (modperl_wbucket_t *)safemalloc(sizeof(*wb)); \
+        wb->pool    = p;                                   \
+        wb->filters = &next_filter;                        \
+        wb->outcnt  = 0;                                   \
+        wb->r       = NULL;                                \
+        wb->header_parse = 0;                              \
+    }
+
+#define FILTER_FREE(filter)        \
+    if (filter->wbucket) {         \
+        safefree(filter->wbucket); \
+    }                              \
+    safefree(filter);
+
 /* this function is for tracing only, it's not optimized for performance */
 static int is_modperl_filter(ap_filter_t *f)
 {
@@ -264,9 +283,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     filter->mode = mode;
     filter->f = f;
     filter->pool = p;
-    filter->wbucket.pool = p;
-    filter->wbucket.filters = &f->next;
-    filter->wbucket.outcnt = 0;
+    filter->wbucket = NULL;
 
     if (mode == MP_INPUT_FILTER_MODE) {
         filter->bb_in  = NULL;
@@ -393,7 +410,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
         status = modperl_errsv(aTHX_ status, r, s);
     }
 
-    safefree(filter);
+    FILTER_FREE(filter);
     SvREFCNT_dec((SV*)args);
 
     MP_INTERP_PUTBACK(interp);
@@ -739,7 +756,8 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
         filter->flush = 0;
     }
 
-    filter->rc = modperl_wbucket_flush(&filter->wbucket, add_flush_bucket);
+    WBUCKET_INIT(filter->wbucket, filter->pool, filter->f->next);
+    filter->rc = modperl_wbucket_flush(filter->wbucket, add_flush_bucket);
     if (filter->rc != APR_SUCCESS) {
         return filter->rc;
     }
@@ -779,7 +797,8 @@ MP_INLINE apr_status_t modperl_output_filter_write(pTHX_
                                                    const char *buf,
                                                    apr_size_t *len)
 {
-    return modperl_wbucket_write(aTHX_ &filter->wbucket, buf, len);
+    WBUCKET_INIT(filter->wbucket, filter->pool, filter->f->next);
+    return modperl_wbucket_write(aTHX_ filter->wbucket, buf, len);
 }
 
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
@@ -800,7 +819,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
         filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE,
                                     0, 0, 0);
         status = modperl_run_filter(filter);
-        safefree(filter);
+        FILTER_FREE(filter);
     }
     
     switch (status) {
@@ -834,7 +853,7 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
         filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE,
                                     input_mode, block, readbytes);
         status = modperl_run_filter(filter);
-        safefree(filter);
+        FILTER_FREE(filter);
     }
     
     switch (status) {
