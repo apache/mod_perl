@@ -10,7 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
-the top level 'make test' now descend into the ModPerl-Registry dir
+Skip the handler package::func resolving error, only when the error
+message matches "Can't locate .*? in @INC", rather than just "Can't
+locate", since there are many other errors that start with that
+string. [Stas]
+
+the top level 'make test' now descends into the ModPerl-Registry dir
 to run 'make test' there [Stas]
 
 Apache::Test: don't inherit loading of the mod_perl object from the
