@@ -4,8 +4,8 @@
 #define MODPERL_OUTPUT_FILTER_NAME "MODPERL_OUTPUT"
 #define MODPERL_INPUT_FILTER_NAME  "MODPERL_INPUT"
 
-#define MP_INPUT_FILTER_MESSAGE 0x01
-#define MP_INPUT_FILTER_BODY    0x02
+#define MP_FILTER_CONNECTION_HANDLER 0x01
+#define MP_FILTER_REQUEST_HANDLER    0x02
 
 /* simple buffer api */
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *b,
@@ -32,7 +32,9 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
                                            apr_bucket_brigade *bb);
 
-void modperl_output_filter_register(request_rec *r);
+void modperl_output_filter_register_connection(conn_rec *c);
+
+void modperl_output_filter_register_request(request_rec *r);
 
 MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter);
 
@@ -53,8 +55,8 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
                                           ap_input_mode_t mode,
                                           apr_size_t *readbytes);
 
-int modperl_input_filter_register_connection(conn_rec *c);
+void modperl_input_filter_register_connection(conn_rec *c);
 
-int modperl_input_filter_register_request(request_rec *r);
+void modperl_input_filter_register_request(request_rec *r);
 
 #endif /* MODPERL_FILTER_H */

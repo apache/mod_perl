@@ -13,7 +13,7 @@ use APR::Bucket ();
 my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::input_msg::response';
 
-sub handler : InputFilterMessage {
+sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $readbytes) = @_;
 
     if ($bb->empty) {

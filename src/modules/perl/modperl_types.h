@@ -180,6 +180,7 @@ typedef enum {
 
 typedef struct {
     int eos;
+    int flush;
     ap_filter_t *f;
     char *leftover;
     apr_ssize_t remaining;

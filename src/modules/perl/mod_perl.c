@@ -264,7 +264,9 @@ void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
 
 static int modperl_hook_pre_connection(conn_rec *c)
 {
-    return modperl_input_filter_register_connection(c);
+    modperl_input_filter_register_connection(c);
+    modperl_output_filter_register_connection(c);
+    return OK;
 }
 
 static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
@@ -297,7 +299,7 @@ static int modperl_hook_post_read_request(request_rec *r)
     /* if 'PerlOptions +GlobalRequest' is outside a container */
     modperl_global_request_cfg_set(r);
 
-    return modperl_input_filter_register_request(r);
+    return OK;
 }
 
 static int modperl_hook_header_parser(request_rec *r)
@@ -305,7 +307,7 @@ static int modperl_hook_header_parser(request_rec *r)
     /* if 'PerlOptions +GlobalRequest' is inside a container */
     modperl_global_request_cfg_set(r);
 
-    return modperl_input_filter_register_request(r);
+    return OK;
 }
 
 void modperl_register_hooks(apr_pool_t *p)
@@ -322,7 +324,10 @@ void modperl_register_hooks(apr_pool_t *p)
     ap_hook_handler(modperl_response_handler_cgi,
                     NULL, NULL, APR_HOOK_MIDDLE);
 
-    ap_hook_insert_filter(modperl_output_filter_register,
+    ap_hook_insert_filter(modperl_output_filter_register_request,
+                          NULL, NULL, APR_HOOK_LAST);
+
+    ap_hook_insert_filter(modperl_input_filter_register_request,
                           NULL, NULL, APR_HOOK_LAST);
 
     ap_register_output_filter(MODPERL_OUTPUT_FILTER_NAME,
