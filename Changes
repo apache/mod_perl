@@ -1,14 +1,62 @@
+=head1 NAME
+
+Changes - Apache mod_perl change logfile
+
+=head1 CHANGES
+
+all changes without author attribution are by Doug MacEachern
+
+=over 3
+
 =item 1.99_02-dev
 
-fix ModPerl::Util::exit to clear $@ before calling Perl_croak [dougm]
+fix for APR::IpSubnet->new to check return status apr_ipsubnet_create
 
-fix 'PerlOptions +GlobalRequest' when used within subrequests [dougm]
+enabled APR::SockAddr module
+
+turn on binmode for filehandle used in $r->send_fd
+
+get MP_{TRACE,DEBUG} Makefile.PL options working on win32
+
+various fixes to build/run with bleedperl
+
+various fixes for win32 to get make test passing
+
+moved constuct_{url,server} methods to Apache::URI module
+
+implement Apache::URI::parse in Apache::compat
+
+give Perl*Handlers precedence over other handlers by using APR_HOOK_FIRST
+rather than APR_HOOK_LAST
+
+workaround bug in 5.6.1 when XSLoader loads DynaLoader, wiping out any
+dl handles it had been keeping track of.
+
+tidy up test to run standalone (without modperl test config) 
+[Stas Bekman]
+
+override T_PTROBJ INPUT typemap to croak if object is not a blessed
+reference, to prevent possible segv from e.g. Apache::Server->process
+
+apr_lock.h is gone; disable APR::Lock for the moment
+
+enabled the Apache::Process module
+
+fix ModPerl::Util::exit to clear $@ before calling Perl_croak
+
+cut down on some build noise
+
+fix 'PerlOptions +GlobalRequest' when used within subrequests
 
 get rid of some "subroutine redefined" warnings in ModPerl::MM that
-show up with newer bleedperls. [dougm]
+show up with newer bleedperls.
 
 a few fixes for Apache::compat [Dave Rolsky <autarch@urth.org>]
 
 =item 1.99_01 - April 6, 2002
 
 First public release of mod_perl-2.0-tobe.
+
+=back
+
+=cut
