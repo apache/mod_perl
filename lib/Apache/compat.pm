@@ -241,6 +241,8 @@ sub Apache::args {
     return $r->parse_args($args);
 }
 
+use constant IOBUFSIZE => 8192;
+
 sub content {
     my $r = shift;
 
@@ -248,13 +250,17 @@ sub content {
 
     return undef unless $r->should_client_block;
 
-    my $len = $r->headers_in->get('content-length');
-
+    my $data = '';
     my $buf;
-    $r->get_client_block($buf, $len);
+    while (my $read_len = $r->get_client_block($buf, IOBUFSIZE)) {
+        if ($read_len == -1) {
+            die "some error while reading with get_client_block";
+        }
+        $data .= $buf;
+    }
 
-    return $buf unless wantarray;
-    return $r->parse_args($buf)
+    return $data unless wantarray;
+    return $r->parse_args($data);
 }
 
 sub clear_rgy_endav {
@@ -316,8 +322,6 @@ sub READLINE {
     $r->read($line, $r->headers_in->get('Content-length'));
     $line ? $line : undef;
 }
-
-use constant IOBUFSIZE => 8192;
 
 #XXX: howto convert PerlIO to apr_file_t
 #so we can use the real ap_send_fd function

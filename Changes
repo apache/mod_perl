@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+fix the method content() in Apache::compat to read a whole request
+body. same for ModPerl::Test::read_post. add tests.  [Stas]
+
 Adjust the reverse filter test to work on win32 (remove trailing \r)
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

@@ -36,12 +36,26 @@ sub handler {
     if ($data{test} eq 'content' || $data{test} eq 'args') {
         $r->print("test $data{test}");
     }
+    elsif ($data{test} eq 'decoding') {
+        $r->print(encode($data{body}));
+    }
+    elsif ($data{test} eq 'big_input') {
+        $r->print(length $data{body});
+    }
+    else {
+        # nothing
+    }
 
     OK;
 }
 
-sub ok    { $gr->print($_[0] ? "ok\n" : "nok\n"); }
-sub debug { $gr->print("# $_\n") for @_; }
+sub encode {
+    my $val = shift;
+    $val =~ s/(.)/sprintf "%%%02X", ord $1/eg;
+    $val =~ s/\%20/+/g;
+    return $val;
+}
+
 
 1;
 __END__
