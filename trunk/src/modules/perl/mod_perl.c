@@ -78,6 +78,10 @@ static AV *cleanup_av = Nullav;
 static HV *stacked_handlers = Nullhv;
 #endif
 
+#ifdef PERL_OBJECT
+CPerlObj *pPerl;
+#endif
+
 static command_rec perl_cmds[] = {
 #ifdef PERL_SECTIONS
     { "<Perl>", perl_section, NULL, OR_ALL, RAW_ARGS, "Perl code" },
