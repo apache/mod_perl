@@ -850,7 +850,9 @@ void mod_perl_end_cleanup(void *data)
     dSTATUS;
     dPPDIR;
 
-    PERL_CALLBACK("PerlCleanupHandler", cld->PerlCleanupHandler);
+    if(cld->PerlCleanupHandler &&  SvREFCNT(cld->PerlCleanupHandler)) { 
+	PERL_CALLBACK("PerlCleanupHandler", cld->PerlCleanupHandler);
+    }
 
     MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
     perl_run_rgy_endav(r->uri);
