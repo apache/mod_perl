@@ -31,9 +31,6 @@ sub handler {
                            $r->per_dir_config) || 1;
     ok $c->get_remote_host(Apache::REMOTE_HOST, $r->per_dir_config) || 1;
 
-    # XXX: missing tests
-    # remain
-
     Apache::OK;
 }
 
