@@ -629,6 +629,16 @@ CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
     return perl_pod_end_magic;
 }
 
+void mod_perl_cleanup_av(void *data)
+{
+    AV *av = (AV*)data;
+    if(SvREFCNT((SV*)av)) {
+	MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
+			   (unsigned long)av, (int)SvREFCNT((SV*)av)));
+	SvREFCNT_dec((SV*)av);
+    }
+}
+
 #ifdef PERL_DIRECTIVE_HANDLERS
 
 CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, mod_perl_perl_dir_config *data, char *one)
@@ -736,16 +746,6 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	new->class = basevp->class;
     }
     return (void *)new;
-}
-
-void mod_perl_cleanup_av(void *data)
-{
-    AV *av = (AV*)data;
-    if(SvREFCNT((SV*)av)) {
-	MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
-			   (unsigned long)av, (int)SvREFCNT((SV*)av)));
-	SvREFCNT_dec((SV*)av);
-    }
 }
 
 void perl_perl_cmd_cleanup(void *data)
