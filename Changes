@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Move the custom mod_perl 2.0 configuration bits out of the
+ModPerl::TestRun, where they don't belong, into a special config file
+which is included at the very end of httpd.conf [Stas Bekman]
+
 Extend Apache::Test to allow extra configuration files to be included
 at the very end of httpd.conf, when everything was loaded and
 configured [Stas Bekman]

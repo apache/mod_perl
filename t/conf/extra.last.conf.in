@@ -1,0 +1,35 @@
+PerlModule Apache::Module
+
+### --------------------------------- ###
+PerlLoadModule TestDirective::loadmodule
+
+MyTest one two
+ServerTest per-server
+
+<Location /TestDirective::loadmodule>
+    MyOtherTest value
+</Location>
+
+### --------------------------------- ###
+<Perl >
+push @Alias, ['/perl_sections', '@DocumentRoot@'],
+$Location{'/perl_sections'} = {
+	'PerlInitHandler' => 'ModPerl::Test::add_config',
+	'AuthType' => 'Basic',
+	'AuthName' => 'PerlSection',
+	'PerlAuthenHandler' => 'TestHooks::authen',
+	};
+</Perl>
+
+### --------------------------------- ###
+Perl $TestDirective::perl::worked="yes";
+
+### --------------------------------- ###
+=pod
+This is some pod data
+=over apache
+PerlSetVar TestDirective__pod_over_worked yes
+=back
+This is some more pod
+=cut
+PerlSetVar TestDirective__pod_cut_worked yes
