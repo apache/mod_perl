@@ -155,6 +155,39 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
     }
 }
 
+static MP_INLINE void mpxs_APR__Pool_clear(pTHX_ SV *obj)
+{
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(obj);
+    mpxs_pool_account_t *data;
+
+    apr_pool_userdata_get((void **)&data, MP_APR_POOL_NEW, p);
+    if (!(data && data->sv)) {
+        MP_POOL_TRACE(MP_FUNC, "parent pool (0x%lx) is a core pool",
+                      (unsigned long)p);
+        apr_pool_clear(p);
+        return;
+    }
+
+    MP_POOL_TRACE(MP_FUNC,
+                  "parent pool (0x%lx) is a custom pool, sv 0x%lx",
+                  (unsigned long)p,
+                  (unsigned long)data->sv);
+
+    apr_pool_clear(p);
+
+    /* apr_pool_clear removes all the user data, so we need to restore
+     * it. Since clear triggers mpxs_apr_pool_cleanup call, our
+     * object's guts get nuked too, so we need to restore them too */
+
+    /* this is sv_setref_pv, but for an existing object */
+    sv_setiv(newSVrv(obj, "APR::Pool"), PTR2IV((void*)p));
+    data->sv = SvRV(obj);
+
+    /* reinstall the user data */
+    apr_pool_userdata_set(data, MP_APR_POOL_NEW, NULL, p);
+}
+
+
 typedef struct {
     SV *cv;
     SV *arg;

@@ -16,11 +16,11 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 66;
+    plan $r, tests => 75;
 
     ### native pools ###
 
-    # explicit DESTROY shouldn't destroy native pools
+    # explicit destroy shouldn't destroy native pools
     {
         my $p = $r->pool;
 
@@ -28,9 +28,9 @@ sub handler {
         t_debug "\$r->pool has 2 or more ancestors (found $count)";
         ok $count >= 2;
 
-        $p->cleanup_register(\&set_cleanup, [$r, 'native DESTROY']);
+        $p->cleanup_register(\&set_cleanup, [$r, 'native destroy']);
 
-        $p->DESTROY;
+        $p->destroy;
 
         my @notes = $r->notes->get('cleanup');
 
@@ -63,23 +63,23 @@ sub handler {
     ### custom pools ###
 
 
-    # test: explicit pool object DESTROY destroys the custom pool
+    # test: explicit pool object destroy destroys the custom pool
     {
         my $p = APR::Pool->new;
 
-        $p->cleanup_register(\&set_cleanup, [$r, 'new DESTROY']);
+        $p->cleanup_register(\&set_cleanup, [$r, 'new destroy']);
 
         ok t_cmp(1, ancestry_count($p),
                  "a new pool has one ancestor: the global pool");
 
-        # explicity DESTROY the object
-        $p->DESTROY;
+        # explicity destroy the object
+        $p->destroy;
 
         my @notes = $r->notes->get('cleanup');
 
         ok t_cmp(1, scalar(@notes), "should be 1 note");
 
-        ok t_cmp('new DESTROY', $notes[0]);
+        ok t_cmp('new destroy', $notes[0]);
 
         $r->notes->clear;
     }
@@ -128,7 +128,7 @@ sub handler {
         my ($pp, $sp) = both_pools_create_ok($r);
 
         # destroying $pp should destroy the subpool $sp too
-        $pp->DESTROY;
+        $pp->destroy;
 
         both_pools_destroy_ok($r);
 
@@ -141,8 +141,8 @@ sub handler {
     {
         my ($pp, $sp) = both_pools_create_ok($r);
 
-        $sp->DESTROY;
-        $pp->DESTROY;
+        $sp->destroy;
+        $pp->destroy;
 
         both_pools_destroy_ok($r);
 
@@ -157,8 +157,8 @@ sub handler {
     {
         my ($pp, $sp) = both_pools_create_ok($r);
 
-        $pp->DESTROY;
-        $sp->DESTROY;
+        $pp->destroy;
+        $sp->destroy;
 
         both_pools_destroy_ok($r);
 
@@ -173,7 +173,7 @@ sub handler {
         my ($pp, $sp) = both_pools_create_ok($r);
 
         # parent pool destroys child pool
-        $pp->DESTROY;
+        $pp->destroy;
 
         # this should "gracefully" fail, since $sp's guts were
         # destroyed when the parent pool was destroyed
@@ -203,13 +203,13 @@ sub handler {
         my $pp2;
         {
             my $pp = APR::Pool->new;
-            $pp->DESTROY;
+            $pp->destroy;
             # $pp2 ideally should take the exact place of apr_pool
             # previously pointed to by $pp
             $pp2 = APR::Pool->new;
             # $pp object didn't go away yet (it'll when exiting this
             # scope). in the previous implementation, $pp will be
-            # DESTROY'ed second time on the exit of the scope and it
+            # destroyed second time on the exit of the scope and it
             # could happen to work, because $pp2 pointer has allocated
             # exactly the same address. and if so it would have killed
             # the pool that $pp2 points to
@@ -226,7 +226,7 @@ sub handler {
 
         # next make sure that $pp2's pool is still alive
         $pp2->cleanup_register(\&set_cleanup, [$r, 'overtake']);
-        $pp2->DESTROY;
+        $pp2->destroy;
 
         my @notes = $r->notes->get('cleanup');
 
@@ -259,7 +259,7 @@ sub handler {
             my $pp = APR::Pool->new;
             my $sp = $pp->new;
             # parent destroys $sp
-            $pp->DESTROY;
+            $pp->destroy;
 
             # hopefully these pool will take over the $pp and $sp
             # allocations
@@ -272,7 +272,7 @@ sub handler {
         $r->notes->clear;
 
         # parent pool destroys child pool
-        $pp2->DESTROY;
+        $pp2->destroy;
 
         both_pools_destroy_ok($r);
 
@@ -300,7 +300,7 @@ sub handler {
         $r->notes->clear;
 
         # now the last copy is gone and the cleanup hooks will be called
-        $cp->DESTROY;
+        $cp->destroy;
 
         @notes = $r->notes->get('cleanup');
         ok t_cmp(1, scalar(@notes), "should be 1 note");
@@ -308,7 +308,6 @@ sub handler {
 
         $r->notes->clear;
     }
-
     {
         # and another variation
         my $pp = $r->pool->new;
@@ -318,14 +317,14 @@ sub handler {
         my $pp2 = $sp->parent_get;
 
         # parent destroys children
-        $pp->DESTROY;
+        $pp->destroy;
 
         # grand parent ($r->pool) is undestroyable (core pool)
-        $gp->DESTROY;
+        $gp->destroy;
 
         # now all custom pools are destroyed - $sp and $pp2 point nowhere
-        $pp2->DESTROY;
-        $sp->DESTROY;
+        $pp2->destroy;
+        $sp->destroy;
 
         ok 1;
     }
@@ -388,6 +387,37 @@ sub handler {
         t_server_log_error_is_expected();
         $p->cleanup_register(\&non_existing1, 1);
     }
+
+    ### $p->clear ###
+    {
+        my ($pp, $sp) = both_pools_create_ok($r);
+        $pp->clear;
+        # both pools should have run their cleanups
+        both_pools_destroy_ok($r);
+
+        # sub-pool $sp should be now bogus, as clear() destroys
+        # subpools
+        eval { $sp->parent_get };
+        ok t_cmp(qr/invalid pool object/,
+                 $@,
+                 "clear destroys sub pools");
+
+        # now we should be able to use the parent pool without
+        # allocating it
+        $pp->cleanup_register(\&set_cleanup, [$r, 're-using pool']);
+        $pp->destroy;
+
+        my @notes = $r->notes->get('cleanup');
+        ok t_cmp('re-using pool', $notes[0]);
+
+        $r->notes->clear;
+    }
+
+
+
+
+
+
 
     # other stuff
     {
