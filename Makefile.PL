@@ -438,6 +438,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    open MANI, "MANIFEST" or die "open MANIFEST $!";
 	    my $atopdir = dirname($adir);
 
+	    unlink "$atopdir/perlxsi.c";
 	    #only rm and cp files mod_perl ships with
 	    while(<MANI>) {
 		next unless m,^src/modules/perl/,; chomp;
