@@ -548,6 +548,10 @@ EOF
         }
     }
 
+    if ($module eq 'APR::Pool') {
+        print $fh "    modperl_opt_interp_unselect = APR_RETRIEVE_OPTIONAL_FN(modperl_interp_unselect);\n\n";
+    }
+
     close $fh;
 }
 

@@ -715,6 +715,11 @@ static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
 
 void modperl_register_hooks(apr_pool_t *p)
 {
+
+#ifdef USE_ITHREADS
+    APR_REGISTER_OPTIONAL_FN(modperl_interp_unselect);
+#endif
+
     /* for <IfDefine MODPERL2> and Apache->define("MODPERL2") */
     *(char **)apr_array_push(ap_server_config_defines) =
         apr_pstrdup(p, "MODPERL2");
