@@ -478,7 +478,8 @@ EOF
     # $(ECHO) was broken before 6.10_01
     # XXX: if ever require 6.11 we can remove this workaround
     require ExtUtils::MakeMaker;
-    my $say = ExtUtils::MakeMaker->VERSION > 6.10
+    (my $mm_ver = ExtUtils::MakeMaker->VERSION) =~ s/_\d+//;
+    my $say = $mm_ver > 6.10
         ? '@$(ECHO)'
         : '@$(PERL) -le "print shift"';
 
