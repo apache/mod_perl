@@ -3,7 +3,7 @@ use 5.003_97;
 use strict;
 
 BEGIN {
-    $mod_perl::VERSION = "1.1101";
+    $mod_perl::VERSION = "1.1301";
 }
 
 sub subversion {
@@ -51,9 +51,6 @@ sub import {
 	}
     }
 }
-
-
-sub hooks { qw() }
 
 1;
 

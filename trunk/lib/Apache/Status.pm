@@ -110,6 +110,7 @@ sub status_section_config {
 sub status_hooks {
     my($r,$q) = @_;
     require mod_perl;
+    require mod_perl_hooks;
     my @retval = qw(<table>);
     my @list = mod_perl::hooks();
     for my $hook (sort @list) {

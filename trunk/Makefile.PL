@@ -33,8 +33,22 @@ my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 my $USE_THREADS = 
     (defined($Config{usethreads}) && ($Config{usethreads} eq "define"));
    
-require "./mod_perl.pm_version";
+require "./lib/mod_perl.pm";
 $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
+{
+    $VERSION =~ s/(\d\d)(\d\d)$/$1_$2/;
+}
+{
+    local *FH;
+    open FH, "Changes";
+    while(<FH>) {
+	if(/=item.*-dev/) {
+	    $VERSION .= "-dev";
+	    last;
+	}
+    }
+    close FH;
+}
 
 use subs qw(_prompt iedit asrc);
 
@@ -825,17 +839,16 @@ write_my_config($APACHE_SRC);
     $pmv =~ s/-dev$//;
     my $hooks = "@mod_perl_hooks";
     my $dummy = "hooks=`$hooks'\n" unless $hooks;
-    cp "lib/mod_perl.pm.PL", "lib/mod_perl.pm"; 
-    iedit "lib/mod_perl.pm", qq(s/VERSION .*/VERSION = "$pmv";/);
+    cp "lib/mod_perl_hooks.pm.PL", "lib/mod_perl_hooks.pm"; 
 
-    iedit "lib/mod_perl.pm", 
-    qq(s/sub hooks.*/sub hooks { qw($hooks) }/);
+    iedit "lib/mod_perl_hooks.pm", 
+    qq(s/sub mod_perl::hooks.*/sub mod_perl::hooks { qw($hooks) }/);
 
-    require "lib/mod_perl.pm";
+    require "lib/mod_perl_hooks.pm";
     my @list = mod_perl::hooks();
-    @list == @mod_perl_hooks or die "Edit of lib/mod_perl.pm failed $!\n";
+    @list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
 
-    unlink "lib/mod_perl.pm~";
+    unlink "lib/mod_perl_hooks.pm~";
 }
 
 #checking for LWP code, borrowed from LWP's own Makefile.PL :-)
@@ -1209,7 +1222,7 @@ cvs_export :
 
 cvs_rtag :
 	cvs -d $(CVSROOT) rtag v$(VERSION_SYM) modperl
-	@echo update mod_perl.pm_version's VERSION now
+	@echo update mod_perl.pm's VERSION now
 
 EOF
 }
