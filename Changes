@@ -14,7 +14,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 replace the memory allocation for modperl filter handlers to use a
 temporary subpool of the ap_filter_t object. previously using perl's
-safemalloc had problems on win32 (randonly my_perl == NULL) [Stas]
+safemalloc had problems on win32 (randomly my_perl == NULL) [Stas]
 
 Apache::Module remove_loaded_module re-added [Gozer]
 
@@ -40,8 +40,8 @@ Apache-Test version distributed with the mod_perl source) [Stas]
 combine handler resolving failure error with the actual error, so
 there is only one logged entry [Stas]
 
-pod manpages are now glued to all .pm files for which .pod exists
-[Stas]
+pod manpages are now glued to all .pm files for which .pod exists at
+'make install' phase [Stas]
 
 Apache::RequestIO::sendfile() now indicates which file it has failed
 to open on failure. [Stas]
