@@ -968,9 +968,24 @@ int PERL_LOG_HOOK(request_rec *r)
 #define CleanupHandler cld->PerlCleanupHandler
 #endif
 
+#ifdef PERL_TRACE
+static char *sig_name(I32 num)
+{
+#ifdef Perl_psig_name
+    return Perl_psig_name[num] ?
+	SvPV(Perl_psig_name[num],na) : "?";
+#else
+    return PL_sig_name[num];
+#endif
+}
+
+#endif
+
 static void per_request_cleanup(request_rec *r)
 {
     dPPREQ;
+    perl_request_sigsave **sigs;
+    int i;
 
     if(!cfg) {
 	return;
@@ -979,6 +994,16 @@ static void per_request_cleanup(request_rec *r)
 	hv_clear(cfg->pnotes);
 	SvREFCNT_dec(cfg->pnotes);
 	cfg->pnotes = Nullhv;
+    }
+
+    sigs = (perl_request_sigsave **)cfg->sigsave->elts;
+    for (i=0; i < cfg->sigsave->nelts; i++) {
+	MP_TRACE_g(fprintf(stderr, 
+			   "mod_perl: restoring SIG%s (%d) handler from: 0x%lx to: 0x%lx\n",
+			   sig_name(sigs[i]->signo), (int)sigs[i]->signo,
+			   (unsigned long)Perl_rsignal_state(sigs[i]->signo),
+			   (unsigned long)sigs[i]->h));
+	Perl_rsignal(sigs[i]->signo, sigs[i]->h);
     }
 }
 

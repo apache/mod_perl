@@ -1008,8 +1008,14 @@ typedef struct {
 } perl_dir_config;
 
 typedef struct {
+    Sighandler_t h;
+    I32 signo;
+} perl_request_sigsave;
+
+typedef struct {
     HV *pnotes;
     int setup_env;
+    array_header *sigsave;
 } perl_request_config;
 
 typedef struct {
