@@ -12,7 +12,8 @@ PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_new
 
 MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
- mpxs_Apache__RequestRec_TIEHANDLE
+ SV *:DEFINE_TIEHANDLE   | | SV *:stashsv, SV *:sv=Nullsv
+ apr_size_t:DEFINE_PRINT | | ...
 
 MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_push_handlers
@@ -26,4 +27,4 @@ MODULE=Apache::Filter
  mpxs_Apache__Filter_read  | | ...
 
  SV *:DEFINE_TIEHANDLE | | SV *:stashsv, SV *:sv=Nullsv
- int:DEFINE_PRINT | | ...
+ int:DEFINE_PRINT      | | ...

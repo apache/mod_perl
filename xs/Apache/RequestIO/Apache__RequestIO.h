@@ -1,3 +1,8 @@
+#define mpxs_Apache__RequestRec_TIEHANDLE(stashsv, sv) \
+modperl_newSVsv_obj(aTHX_ stashsv, sv)
+
+#define mpxs_Apache__RequestRec_PRINT mpxs_ap_rvputs
+
 #if 0
 #define MP_USE_AP_RWRITE
 #endif
@@ -66,11 +71,4 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
     }
 
     return nrd;
-}
-
-static MP_INLINE
-request_rec *mpxs_Apache__RequestRec_TIEHANDLE(SV *classname,
-                                               request_rec *r)
-{
-    return r;
 }

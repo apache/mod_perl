@@ -122,14 +122,6 @@ sub parse {
             next;
         }
 
-        my $entry = $map->{$name} = {
-           name        => $alias || $name,
-           dispatch    => $dispatch,
-           argspec     => $argspec ? [split /\s*,\s*/, $argspec] : "",
-           return_type => $return_type,
-           alias       => $alias,
-        };
-
         if (my $package = $cur{PACKAGE}) {
             unless ($package eq 'guess') {
                 $cur{CLASS} = $package;
@@ -141,6 +133,20 @@ sub parse {
         else {
             $cur{CLASS} = $cur{MODULE};
         }
+
+        #XXX: make_prefix() stuff should be here, not ModPerl::WrapXS
+        if ($name =~ /^DEFINE_/ and $cur{CLASS}) {
+            $name =~ s{^(DEFINE_)(.*)}
+              {$1 . ModPerl::WrapXS::make_prefix($2, $cur{CLASS})}e;
+        }
+
+        my $entry = $map->{$name} = {
+           name        => $alias || $name,
+           dispatch    => $dispatch,
+           argspec     => $argspec ? [split /\s*,\s*/, $argspec] : "",
+           return_type => $return_type,
+           alias       => $alias,
+        };
 
         for (keys %cur) {
             $entry->{lc $_} = $cur{$_};
