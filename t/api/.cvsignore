@@ -1,5 +1,6 @@
 access.t
 aplog.t
+command.t
 conn_rec.t
 lookup_uri2.t
 lookup_uri.t
