@@ -24,15 +24,23 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 48;
+    plan $r, tests => 50;
 
     $r->send_http_header('text/plain');
 
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
+    ### Apache-> tests
     my $fh = Apache->gensym;
     ok t_cmp('GLOB', ref($fh), "Apache->gensym");
+
+    ok t_cmp(1, Apache->module('mod_perl.c'),
+             "Apache::module('mod_perl.c')");
+    ok t_cmp(0, Apache->module('mod_ne_exists.c'),
+             "Apache::module('mod_ne_exists.c')");
+
+    ### $r-> tests
 
     # test header_in and header_out
     # and err_header_out
