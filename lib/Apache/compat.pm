@@ -127,6 +127,8 @@ sub SERVER_VERSION { Apache::get_server_version() }
 
 package Apache::RequestRec;
 
+use Apache::Const -compile => qw(REMOTE_NAME);
+
 #no longer exist in 2.0
 sub soft_timeout {}
 sub hard_timeout {}
@@ -201,7 +203,9 @@ sub post_connection {
 }
 
 sub get_remote_host {
-    shift->connection->remote_host(@_);
+    my($r, $type) = @_;
+    $type = Apache::REMOTE_NAME unless defined $type;
+    $r->connection->get_remote_host($type, $r->dir_config);
 }
 
 sub parse_args {
