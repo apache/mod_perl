@@ -67,6 +67,8 @@ EOF
 sleep(1);
 }
 
+#'
+
 %Apache::MyConfig::Setup = ();
 eval 'require Apache::MyConfig' ;
 
@@ -1047,6 +1049,8 @@ sub write_extra_tests {
 
     if($PERL_SSI) {
 	cp "t/modules/ssi.test", "t/modules/ssi.t";
+    } else {
+      unlink "t/modules/ssi.t";	# might be there from prior run
     }
 
     mkdir "t/docs/subr", 0755;
@@ -1377,6 +1381,8 @@ cvs_tag :
 EOF
 }
 
+#'
+
 sub MY::manifypods {
     my $self = shift;
     my $ver = $self->{VERSION} || "";
@@ -1512,6 +1518,7 @@ sub setup_for_static {
     #XXX think about this some more
     iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @xs_files/";
     iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_names/";
+
 =cut
 
     unless ($USE_APACI) {
@@ -1652,7 +1659,7 @@ sub conf_fixup {
 
             #XXX hack
             $repl = quotemeta('CFLAGS=$(CFLAGS)');
-            iedit $mf, qq(s:\Q\"CFLAGS=\$(CFLAGS)"\E:'$repl':;);
+            iedit $mf, qq(s:\Q\"CFLAGS=\$(CFLAGS)"\E:'$repl':;); #"
 	}
 	my $repl = q{AUX_CFLAGS='\$(CFLAGS)'};
 	iedit $mf, qq{s/AUX_CFLAGS="..CFLAGS."/$repl/};
