@@ -1047,14 +1047,17 @@ sub apr_includedir {
         $incdir = $self->ap_includedir;
     }
 
+    my $header = "apr.h";
     my @tries = ($incdir);
     if ($self->httpd_is_source_tree) {
+        $header = "apr.h.in"; # pristine source has no .h file
         my $path = catdir $self->dir, "srclib", "apr", "include";
         push @tries, $path if -d $path;
     }
 
+
     for (@tries) {
-        next unless $_ && -e catfile $_, "apr.h";
+        next unless $_ && -e catfile $_, $header;
         $self->{apr_includedir} = $_;
         last;
     }
