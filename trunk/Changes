@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+Apache::src::apxs fixups to quiet warnings if apxs doesnt exist or
+httpd is not dso enabled, thanks to Oleg Bartunov and Ville Skyttä for 
+spotting
+
 fix #ifdef SGI_BOOST typo
 [Ville Skyttä <ville@office.popsystems.com>]
 
