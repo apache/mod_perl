@@ -263,29 +263,37 @@ sub status_cv_dump {
     push @retval, peek_link($r, $q, $name, $type);
     #push @retval, xref_link($r, $q, $name);
     push @retval, b_graph_link($r, $q, $name);
-    push @retval, lexinfo_link($r, $q, $name);
+    push @retval, b_lexinfo_link($r, $q, $name);
+    push @retval, b_terse_link($r, $q, $name);
+    push @retval, b_deparse_link($r, $q, $name);
     push @retval, "</pre>";
     \@retval;
 }
 
+sub status_config {
+    my($r, $key) = @_;
+    return (lc($r->dir_config($key)) eq "on") ||
+      (lc($r->dir_config('StatusOptionsAll')) eq "on");
+}
+
 sub b_graph_link {
     my($r,$q,$name) = @_;
-    return unless lc($r->dir_config("StatusGraph")) eq "on";
+    return unless status_config($r, "StatusGraph");
     return unless eval { require B::Graph };
     B::Graph->UNIVERSAL::VERSION('0.03');
     my $script = $q->script_name;
     return qq(\n<a href="$script/$name?noh_b_graph">OP Tree Graph</a>\n);
 }
 
-sub lexinfo_link {
+sub b_lexinfo_link {
     my($r, $q, $name) = @_;
-    return unless lc($r->dir_config("StatusLexInfo")) eq "on";
+    return unless status_config($r, "StatusLexInfo");
     return unless eval { require B::LexInfo };
     my $script = $q->script_name;
-    return qq(\n<a href="$script/$name?noh_lexinfo">Lexical Info</a>\n);
+    return qq(\n<a href="$script/$name?noh_b_lexinfo">Lexical Info</a>\n);
 }
 
-sub noh_lexinfo {
+sub noh_b_lexinfo {
     my $r = shift;
     $r->send_http_header("text/plain");
     no strict 'refs';
@@ -296,9 +304,52 @@ sub noh_lexinfo {
     print ${ $lexi->dumper($info) };
 }
 
+sub b_terse_link {
+    my($r, $q, $name) = @_;
+    return unless status_config($r, "StatusTerse");
+    return unless eval { require B::Terse };
+    my $script = $q->script_name;
+    my @retval;
+    for (qw(exec slow)) {
+	push @retval,
+	qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree ($_)</a>\n);
+    }
+    join '', @retval;
+}
+
+sub noh_b_terse {
+    my $r = shift;
+    $r->send_http_header("text/plain");
+    no strict 'refs';
+    my($arg, $name) = (split "/", $r->uri)[-2,-1];
+    $r->print("Syntax Tree ($arg) for $name\n\n");
+    B::Terse::compile($arg, $name)->();
+}
+
+sub b_deparse_link {
+    my($r, $q, $name) = @_;
+    return unless status_config($r, "StatusDeparse");
+    return unless eval { require B::Deparse };
+    return unless $B::Deparse::VERSION >= 0.59;
+    my $script = $q->script_name;
+    return qq(\n<a href="$script/$name?noh_b_deparse">Deparse</a>\n);
+}
+
+sub noh_b_deparse {
+    my $r = shift;
+    $r->send_http_header("text/plain");
+    no strict 'refs';
+    my($name) = (split "/", $r->uri)[-1];
+    $r->print("Deparse of $name\n\n");
+    my $deparse = B::Deparse->new(split /\s+/, 
+				  $r->dir_config('StatusDeparseOptions')||"");
+    my $body = $deparse->coderef2text(\&{$name});
+    $r->print("sub $name $body");
+}
+
 sub peek_link {
     my($r,$q,$name,$type) = @_;
-    return unless lc($r->dir_config("StatusPeek")) eq "on";
+    return unless status_config($r, "StatusPeek");
     return unless $is_installed{"Apache::Peek"};
     my $script = $q->script_name;
     return qq(\n<a href="$script/$name/$type?noh_peek">Peek Dump</a>\n);
@@ -403,7 +454,7 @@ sub as_HTML {
     my $uri = $r->uri;
     my $is_main = $package eq "main";
 
-    my $do_dump = lc($r->dir_config("StatusDumper")) eq "on";
+    my $do_dump = status_config($r, "StatusDumper");
 
     my @methods = sort keys %{$self->{'AUTOLOAD'}};
 
@@ -498,6 +549,12 @@ PerlModule or PerlRequire directives.
 
 =over 4
 
+=item StatusOptionsAll
+
+This single directive will enable all of the options described below.
+
+ PerlSetVar StatusOptionsAll On
+
 =item StatusDumper
 
 When browsing symbol tables, the values of arrays, hashes ans calars
@@ -519,6 +576,26 @@ With this option On and the B<B::LexInfo> module installed,
 subroutine lexical variable information can be viewed.
 
  PerlSetVar StatusLexInfo On
+
+=item StatusDeparse
+
+With this option On and B<B::Deparse> version 0.59 or higher 
+(included in Perl 5.005_59+), subroutines can be "deparsed".
+
+ PerlSetVar StatusDeparse On
+
+Options can be passed to B::Deparse::new like so:
+
+ PerlSetVar StatusDeparseOptions "-p -sC"
+
+See the B<B::Deparse> manpage for details.
+
+=item StatusTerse
+
+With this option On, text-based op tree graphs of subroutines can be 
+displayed, thanks to B<B::Terse>.
+ 
+ PerlSetVar StatusTerse On
 
 =item StatusGraph
 
