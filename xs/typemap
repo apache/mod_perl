@@ -5,11 +5,20 @@ const char_len *        T_CONST_CHAR_LEN
 
 ######################################################################
 OUTPUT
+T_APACHEOBJ
+	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+
 T_VPTR
 	sv_setiv($arg, PTR2IV($var));
 
 ######################################################################
 INPUT
+T_APACHEOBJ
+	$var = modperl_xs_sv2request_rec(aTHX_ $arg, \"$ntype\", cv)
+
+T_APACHEREF
+	$var = modperl_xs_sv2request_rec(aTHX_ $arg, \"$ntype\", cv)
+
 T_VPTR
 	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
 

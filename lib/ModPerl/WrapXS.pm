@@ -467,6 +467,10 @@ __END__
 EOF
 }
 
+my %typemap = (
+    'Apache::RequestRec' => 'T_APACHEOBJ',
+);
+
 sub write_typemap {
     my $self = shift;
     my $typemap = $self->typemap;
@@ -481,7 +485,8 @@ sub write_typemap {
         next if $seen{$type}++ || $typemap->special($class);
 
         if ($class =~ /::/) {
-            print $fh "$class\tT_PTROBJ\n";
+            my $typemap = $typemap{$class} || 'T_PTROBJ';
+            print $fh "$class\t$typemap\n";
         }
         else {
             print $fh "$type\tT_$class\n";

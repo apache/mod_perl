@@ -1,3 +1,7 @@
+/* XXX: should be part of generation */
+#undef mp_xs_sv2_r
+#define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
+
 #define mpxs_Apache__RequestRec_TIEHANDLE(stashsv, sv) \
 modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
