@@ -118,6 +118,18 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
     }
 }
 
+### Apache::Status tests
+use Apache::Status;
+use Apache::Module;
+Apache::Status->menu_item(
+   'test_menu' => "Test Menu Entry",
+   sub {
+       my($r, $q) = @_; #request and CGI objects
+       return ["This is just a test entry"];
+   }
+) if Apache::Module::loaded('Apache::Status');
+
+
 # this is needed for TestModperl::ithreads
 # one should be able to boot ithreads at the server startup and then
 # access the ithreads setup at run-time when a perl interpreter is
