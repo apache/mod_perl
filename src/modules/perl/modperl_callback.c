@@ -49,7 +49,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         GV *gv;
         if (!handler->mgv_obj) {
             Perl_croak(aTHX_ "panic: %s method handler object is NULL!",
-                       handler->name);
+                       modperl_handler_name(handler));
         }
         gv = modperl_mgv_lookup(aTHX_ handler->mgv_obj);
         XPUSHs(modperl_mgv_sv(gv));
@@ -262,8 +262,8 @@ int modperl_callback_run_handlers(int idx, int type,
     for (i=0; i<av->nelts; i++) {
         status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
         
-        MP_TRACE_h(MP_FUNC, "%s returned %d\n",
-                   handlers[i]->name, status);
+        MP_TRACE_h(MP_FUNC, "callback '%s' returned %d\n",
+                   modperl_handler_name(handlers[i]), status);
 
         /* follow Apache's lead and let OK terminate the phase for
          * MP_HOOK_RUN_FIRST handlers.  MP_HOOK_RUN_ALL handlers keep
