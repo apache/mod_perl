@@ -5,7 +5,6 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil qw(t_cmp t_server_log_error_is_expected);
 
-use Apache2;
 use Apache2::Const -compile => qw(OK DECLINED
                                  NOT_FOUND SERVER_ERROR FORBIDDEN
                                  HTTP_OK);

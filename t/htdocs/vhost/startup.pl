@@ -1,7 +1,6 @@
 use warnings;
 use strict;
 
-use Apache2;
 use Apache2::ServerUtil ();
 use Apache2::ServerRec ();
 

@@ -75,7 +75,6 @@ __END__
     # use test system's @INC
     PerlSwitches -I@serverroot@
     PerlRequire "conf/modperl_inc.pl"
-    PerlModule Apache2
 
     PerlSwitches -I@documentroot@/testdirective/vh
     PerlRequire "ApacheTest/PerlRequireTest.pm"

@@ -225,7 +225,6 @@ CCOPTS         1    Add to compiler flags
 TRACE          0    Turn on tracing
 USE_DSO        0    Build mod_perl as a dso
 USE_STATIC     0    Build mod_perl static
-INST_APACHE2   0    Install *.pm relative to Apache2/ directory
 PROMPT_DEFAULT 0    Accept default value for all would-be prompts
 OPTIONS_FILE   0    Read options from given file
 STATIC_EXTS    0    Build Apache2::*.xs as static extensions

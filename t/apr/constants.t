@@ -4,7 +4,6 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache2 ();
 use Apache::TestUtil;
 
 use APR::Const -compile => qw(:common POLLIN :filetype);

@@ -1545,8 +1545,7 @@ sub mp_apr_blib {
     my $self = shift;
     return unless (my $mp_apr_lib = $self->{MP_APR_LIB});
     my $lib_mp_apr_lib = 'lib' . $mp_apr_lib;
-    my @dirs = $self->{MP_INST_APACHE2} ?
-        qw(blib arch Apache2 auto) : qw(blib arch auto);
+    my @dirs = qw(blib arch auto);
     my $apr_blib = catdir $self->{cwd}, @dirs, $lib_mp_apr_lib;
     my $full_libname = $lib_mp_apr_lib . $Config{lib_ext};
     return ($apr_blib, $full_libname);
@@ -1807,7 +1806,6 @@ sub typemaps {
     # for post install use
     for (@INC) {
         # make sure not to pick mod_perl 1.0 typemap
-        next if $self->{MP_INST_APACHE2} && $_ !~ /Apache2$/;
         my $file = "$_/auto/Apache2/typemap";
         push @typemaps, $file if -e $file;
     }
@@ -1967,56 +1965,6 @@ sub define {
     my $self = shift;
 
     return "";
-}
-
-# in case MP_INST_APACHE2=0 we shouldn't try to adjust @INC
-# because it may pick older Apache2 from the previous install
-sub generate_apache2_pm {
-    my $self = shift;
-
-    my $fixup = !$self->{MP_INST_APACHE2} 
-        ? '# MP_INST_APACHE2=0, do nothing'
-        : <<'EOF';
-BEGIN {
-    my @dirs = ();
-
-    for my $path (@INC) {
-        my $dir = "$path/Apache2";
-        next unless -d $dir;
-        push @dirs, $dir;
-    }
-
-    if (@dirs) {
-        unshift @INC, @dirs;
-    }
-
-    # now re-org the libs to have first devel libs, then blib libs,
-    # and only then perl core libs
-    use File::Basename qw(dirname);
-    my $project_root = $blib ? dirname(dirname($blib)) : '';
-    if ($project_root) {
-        my (@a, @b, @c);
-        for (@INC) {
-            if (m|^\Q$project_root\E|) {
-                m|blib| ? push @b, $_ : push @a, $_;
-            }
-            else {
-                push @c, $_;
-            }
-        }
-        @INC = (@a, @b, @c);
-    }
-
-}
-EOF
-
-    my $content = join "\n\n", noedit_warning_hash(),
-        'package Apache2;', $fixup, "1;";
-    my $file = catfile qw(lib Apache2.pm);
-    open my $fh, '>', $file or die "Can't open $file: $!";
-    print $fh $content;
-    close $fh;
-
 }
 
 1;

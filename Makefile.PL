@@ -9,17 +9,17 @@ $ENV{MOD_PERL_2_BUILD} = 1;
 use constant MIN_HTTPD_VERSION_DYNAMIC => '2.0.47';
 use constant MIN_HTTPD_VERSION_STATIC  => '2.0.51';
 
-my($old_modperl_version, $old_modperl_pm);
+my($old_modperl_version, $old_modperl_pm, $apache2_pm);
 
 BEGIN {
     eval {
-        require mod_perl2;
-# XXX: this section is unnecessary now
-#        if ($mod_perl2::VERSION < 1.99) {
-#            $old_modperl_version = $mod_perl::VERSION;
-#        }
-        $old_modperl_pm = delete $INC{'mod_perl.pm'};
-        %mod_perl:: = ();
+        require Apache2;
+        $apache2_pm = 1;
+        require mod_perl;
+        if ($mod_perl::VERSION < 1.999_22) {
+            $old_modperl_version = $mod_perl::VERSION;
+            $old_modperl_pm = delete $INC{'mod_perl.pm'};
+        }
     };
 }
 
@@ -56,7 +56,6 @@ perl_version_check($build);
 
 local %ModPerl::BuildMM::PM = (
     'lib/typemap' => 'blib/lib/Apache2/typemap',
-    'lib/Apache2.pm' => 'blib/lib/Apache2.pm',
 );
 
 # these h files need to be installed system-wide so 3rd party XS
@@ -130,51 +129,36 @@ sub configure {
         my $vstring = "mod_perl/$old_modperl_version";
         print "$vstring installation detected...";
 
-        if ($build->{MP_INST_APACHE2}) {
-            print "ok (installing relative to Apache2/)\n";
+        my $prefix;
+        /^PREFIX=(.*)/ && $1 && ($prefix = canonpath glob($1)) for @ARGV;
+
+        # check that it's a full path
+        my $path = canonpath $old_modperl_pm;
+        # XXX: doesn't handle relative paths yet
+        # if PREFIX=/foo/bar is used, and it's not the same as the
+        # path where mod_perl < 1.99_22 is installed
+        if ($prefix && $path !~ /^$prefix/) {
+            print "ok (will install mod_perl/$VERSION into PREFIX=$prefix, " .
+                "no collision)\n";
         }
         else {
-            my $prefix;
-            /^PREFIX=(.*)/ && $1 && ($prefix = canonpath glob($1)) for @ARGV;
+            print " not ok\n\n";
+            print <<EOI;
+Cannot install mod_perl/$VERSION on top of $vstring
+due to a major API change between mod_perl 1.999_21 and 1.999_22.
+Please nuke the prior mod_perl installation from your site_lib,
+use a different perl to run the installation process, or use the
+PREFIX option when creating your Makefile.  see
 
-            # check that it's a full path
-            my $mp1_path = canonpath $old_modperl_version;
-            # XXX: doesn't handle relative paths yet
-            # if PREFIX=/foo/bar is used, and it's not the same as the
-            # path where mod_perl 1 is installed, we don't need to require
-            # MP_INST_APACHE2
-            if ($prefix && $mp1_path !~ /^$prefix/) {
-                print "ok (will install mod_perl 2 into PREFIX=$prefix, " .
-                    "no collision)\n";
-            }
-            else {
-                print " not ok\n\n";
-                error <<EOI;
-Cannot install mod_perl/$VERSION on top of $vstring.
-Add the MP_INST_APACHE2=1 option or answer 'yes'
-to the next question
-EOI
-                my $prompt = "Is it OK to install relative to Apache2/?";
-                if ($build->prompt_y($prompt)) {
-                    $build->{MP_INST_APACHE2} = 1;
-                }
-                else {
-                    error <<EOI;
+  http://perl.apache.org/somelinkwellwritelater
 
-The answer is 'No' => aborting...
+for more details.
 
-To build mod_perl 2 either add MP_INST_APACHE2=1 Makefile.PL option
-or first remove mod_perl $old_modperl_version files, including
-$old_modperl_pm
-
+aborting...
 EOI
                     exit 1;
-                }
-            }
         }
     }
-
-    $build->generate_apache2_pm;
 
     # On Win32, in order to decouple APR::* from mod_perl.so, we
     # make up a static library MP_APR_LIB of the symbols required from
@@ -384,13 +368,6 @@ sub post_configure {
     if ($build->is_dynamic) {
         warning "You'll need to add the following to httpd.conf:",
                 " LoadModule perl_module modules/$build->{MODPERL_LIB_DSO}\n";
-    }
-
-    if ($build->{MP_INST_APACHE2}) {
-        warning "Apache Perl modules will be installed relative to Apache2/";
-        warning "Don't forget to:",
-                "- configure 'PerlModule Apache2' in httpd.conf",
-                "- or 'use Apache2 ();' in a startup script";
     }
 
     $build->save;

@@ -83,21 +83,6 @@ sub build_config {
     $build->{$key};
 }
 
-#strip the Apache2/ subdir so things are install where they should be
-sub install {
-    my $hash = shift;
-
-    if (build_config('MP_INST_APACHE2')) {
-        while (my($k,$v) = each %$hash) {
-            delete $hash->{$k};
-            $k =~ s{[/\\:]Apache2$}{};
-            $hash->{$k} = $v;
-        }
-    }
-
-    ExtUtils::Install::install($hash, @_);
-}
-
 #the parent WriteMakefile moves MY:: methods into a different class
 #so alias them each time WriteMakefile is called in a subdir
 
@@ -177,21 +162,6 @@ sub WriteMakefile {
 
 #### MM overrides ####
 
-sub ModPerl::MM::MY::constants {
-    my $self = shift;
-
-    my $build = build_config();
-
-    #install everything relative to the Apache2/ subdir
-    if ($build->{MP_INST_APACHE2}) {
-        $self->{INST_ARCHLIB} .= '/Apache2';
-        $self->{INST_LIB} .= '/Apache2';
-    }
-
-    $self->MM::constants;
-}
-
-
 sub ModPerl::MM::MY::post_initialize {
     my $self = shift;
 
@@ -200,22 +170,6 @@ sub ModPerl::MM::MY::post_initialize {
 
     while (my($k, $v) = each %PM) {
         if (-e $k) {
-            $pm->{$k} = $v;
-        }
-    }
-
-    #not everything in MakeMaker uses INST_LIB
-    #so we have do fixup a few PMs to make sure *everything*
-    #gets installed into Apache2/
-    if ($build->{MP_INST_APACHE2}) {
-        while (my($k, $v) = each %$pm) {
-            #move everything to the Apache2/ subdir
-            #unless already specified with \$(INST_LIB)
-            #or already in Apache2/
-            unless ($v =~ /Apache2/) {
-                $v =~ s|(blib/lib)|$1/Apache2|;
-            }
-
             $pm->{$k} = $v;
         }
     }
