@@ -428,7 +428,7 @@ modperl_lib_install:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) install
 
 modperl_xs_h_install:
-	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
+	@$(MKPATH) $(APACHE_INCLUDEDIR)
 	$(CP) $(MODPERL_XS_H_FILES) $(APACHE_INCLUDEDIR)
 
 modperl_src_clean:
