@@ -4,7 +4,11 @@ package TestVhost::log;
 # the vhost error_log and not the main one.
 
 use strict;
-use warnings FATAL => 'all';
+use warnings;
+# don't use:
+#   use warnings FATAL => 'all';
+# here as it breaks the $SIG{__WARN__} sub test for perl 5.6, though
+# it works fine with perl 5.8+
 
 use Apache::RequestUtil ();
 use Apache::Log ();
