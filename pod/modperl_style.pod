@@ -106,7 +106,7 @@ Avoid indirect method calls, e.g.
 =item Avoid inherting from certain modules
 
 Exporter 
-To void inherting B<AutoLoader::AUTOLOAD>
+To avoid inherting B<AutoLoader::AUTOLOAD>
 
  instead of this:
 
