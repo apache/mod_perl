@@ -1,6 +1,6 @@
-#ifdef MP_USE_GTOP
-
 #include "mod_perl.h"
+
+#ifdef MP_USE_GTOP
 
 static int modperl_gtop_size_string(size_t size, char *size_string)
 {

@@ -151,6 +151,8 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 
         MP_TRACE_i(MP_FUNC, "PerlInterpLifetime set to %s for %s\n",
                    modperl_interp_lifetime_desc(scfg->interp_lifetime), name);
+#else
+        char *name = NULL;
 #endif /* MP_TRACE */
 
         if (scfg->mip->tipool->idle) {
