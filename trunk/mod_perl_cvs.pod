@@ -64,20 +64,21 @@ Here's a config file for the client (cvsup) to sync modperl sources.
 
 =item anoncvs
 
-See http://dev.apache.org/anoncvs.txt  The difference
-is that you use "modperl" instead of "apache-x.x".
+See http://dev.apache.org/anoncvs.txt The difference is that you use
+"modperl" instead of "apache-x.x" and perl.apache.org instead of
+dev.apache.org.
 
 =item from-cvs
 
 A snapshot is rolled of the modperl tree every 6 hours and placed
 here:
 
-http://dev.apache.org/from-cvs/modperl/
+http://perl.apache.org/from-cvs/modperl/
 
 A snapshot of the Apache development tree is also rolled every 6 hours
 and placed here:
 
-http://dev.apache.org/from-cvs/
+http://perl.apache.org/from-cvs/
 
 =back
 
