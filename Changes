@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+APR::Bucket->new now requires an APR::BucketAlloc as its first argument.
+New subs added: APR::Bucket::setaside, APR::Bucket::alloc_create,
+APR::Bucket::alloc_destroy, APR::Brigade::bucket_alloc. [joes]
+
 make sure that Apache::Filter::read, APR::Socket::recv,
 Apache::RequestIO::read, APR::Brigade::flatten, and APR::Bucket::read
 all return tainted data under -T [Stas]
