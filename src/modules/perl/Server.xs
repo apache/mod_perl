@@ -96,7 +96,7 @@ server_hostname(server)
     OUTPUT:
     RETVAL
 
-short
+unsigned short
 port(server, ...)
     Apache::Server	server
 
@@ -104,7 +104,7 @@ port(server, ...)
     RETVAL = server->port;
 
     if(items > 1)
-        server->port = (short)SvIV(ST(1));
+        server->port = (unsigned short)SvIV(ST(1));
 
     OUTPUT:
     RETVAL
