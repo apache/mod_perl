@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use Apache::Build;
 
 use File::Spec::Functions qw(catfile catdir);
 use IO::Select ();
@@ -13,6 +14,8 @@ use Apache::Const -compile => 'OK';
 
 use Config;
 use constant PERLIO_5_8_IS_ENABLED => $Config{useperlio} && $] >= 5.007;
+
+my $perl = Apache::Build->build_config()->perl_config('perlpath');
 
 my %scripts = (
      argv   => 'print STDOUT "@ARGV";',
@@ -46,9 +49,10 @@ sub handler {
 
     {
         # test: passing argv + scalar context
-        my $command = catfile $target_dir, "argv.pl";
+        my $script = catfile $target_dir, "argv.pl";
         my @argv = qw(foo bar);
-        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $command, \@argv);
+        my $out_fh =
+            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script, @argv]);
         my $output = read_data($out_fh);
         ok t_cmp(\@argv,
                  [split / /, $output],
@@ -58,10 +62,10 @@ sub handler {
 
     {
         # test: passing env to subprocess through subprocess_env
-        my $command = catfile $target_dir, "env.pl";
+        my $script = catfile $target_dir, "env.pl";
         my $value = "my cool proc";
         $r->subprocess_env->set(SubProcess => $value);
-        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $command);
+        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         my $output = read_data($out_fh);
         ok t_cmp($value,
                  $output,
@@ -71,12 +75,12 @@ sub handler {
 
     {
         # test: subproc's stdin -> stdout + list context
-        my $command = catfile $target_dir, "in_out.pl";
-        my $value = "my cool proc\n"; # must have \n for <IN>
-        my ($in_fh, $out_fh, $err_fh) = 
-            Apache::SubProcess::spawn_proc_prog($r, $command);
+        my $script = catfile $target_dir, "in_out.pl";
+        my $value = "my cool proc\r\n"; # must have \n for <IN>
+        my ($in_fh, $out_fh, $err_fh) =
+            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         print $in_fh $value;
-        my $output = read_data($out_fh);
+        (my $output = read_data($out_fh)) =~ s/[\r\n]{1,2}/\r\n/;
         ok t_cmp($value,
                  $output,
                  "testing subproc's stdin -> stdout + list context"
@@ -85,12 +89,12 @@ sub handler {
 
     {
         # test: subproc's stdin -> stderr + list context
-        my $command = catfile $target_dir, "in_err.pl";
-        my $value = "my stderr\n"; # must have \n for <IN>
-        my ($in_fh, $out_fh, $err_fh) = 
-            Apache::SubProcess::spawn_proc_prog($r, $command);
+        my $script = catfile $target_dir, "in_err.pl";
+        my $value = "my stderr\r\n"; # must have \n for <IN>
+        my ($in_fh, $out_fh, $err_fh) =
+            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         print $in_fh $value;
-        my $output = read_data($err_fh);
+        (my $output = read_data($err_fh)) =~ s/[\r\n]{1,2}/\r\n/;
         ok t_cmp($value,
                  $output,
                  "testing subproc's stdin -> stderr + list context"
