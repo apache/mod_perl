@@ -4865,6 +4865,11 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
+    'name' => 'modperl_post_post_config_phase',
+    'args' => []
+  },
+  {
+    'return_type' => 'int',
     'name' => 'modperl_threads_started',
     'args' => []
   },
