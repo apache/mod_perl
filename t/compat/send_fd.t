@@ -4,6 +4,8 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
+use File::Spec::Functions qw(catfile);
+
 plan tests => 3;
 
 my $config = Apache::Test::config();
@@ -14,7 +16,8 @@ my $data = GET_BODY($url);
 
 ok $data;
 
-my $module = 'response/TestCompat/send_fd.pm';
+my $module = catfile Apache::Test::vars('serverroot'),
+    'response/TestCompat/send_fd.pm';
 
 ok length($data) == -s $module;
 
