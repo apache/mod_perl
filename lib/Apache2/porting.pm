@@ -70,9 +70,9 @@ sub porting_autoload {
 # - removed and replaced packages
 
 my %packages = (
-     'Apache2::Constants' => [qw(Apache2::Const)],
-     'Apache2::Table'     => [qw(APR::Table)],
-     'Apache2::File'      => [qw(Apache2::Response Apache2::RequestRec)],
+     'Apache::Constants' => [qw(Apache2::Const)],
+     'Apache::Table'     => [qw(APR::Table)],
+     'Apache::File'      => [qw(Apache2::Response Apache2::RequestRec)],
      'Apache'            => [qw(ModPerl::Util Apache2::Module)],
 );
 
