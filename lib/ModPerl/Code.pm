@@ -141,18 +141,19 @@ sub generate_handler_index {
     while (my($class, $handlers) = each %{ $self->{handlers} }) {
         my $i = 0;
         my $n = @$handlers;
+        my $handler_type = canon_define('HANDLER_TYPE', $class);
 
         print $h_fh "\n#define ",
           canon_define($class, 'num_handlers'), " $n\n\n";
 
-        print $h_fh "#define ",
-          canon_define('HANDLER_TYPE', $class), " $type\n\n";
+        print $h_fh "#define $handler_type $type\n\n";
 
         $type++;
 
         for my $name (@$handlers) {
             my $define = canon_define($name, 'handler');
             $self->{handler_index}->{$class}->[$i] = $define;
+            $self->{handler_index_type}->{$class}->[$i] = $handler_type;
             $self->{handler_index_desc}->{$class}->[$i] = "Perl${name}Handler";
             print $h_fh "#define $define $i\n";
             $i++;
@@ -203,6 +204,55 @@ EOF
     $self->handler_desc(\$h_add, \$c_add);
 
     return ($h_add, $c_add);
+}
+
+sub generate_handler_find {
+    my($self, $h_fh, $c_fh) = @_;
+
+    my $proto = 'int modperl_handler_lookup(const char *name, int *type)';
+    my(%ix, %switch);
+
+    print $h_fh "$proto;\n";
+
+    print $c_fh <<EOF;
+$proto
+{
+    if (*name == 'P' && strnEQ(name, "Perl", 4)) {
+        name += 4;
+    }
+
+    switch (*name) {
+EOF
+
+    while (my($class, $handlers) = each %{ $self->{handlers} }) {
+        my $i = 0;
+
+        for my $name (@$handlers) {
+            $name =~ /^([A-Z])/;
+            push @{ $switch{$1} }, $name;
+            $ix{$name}->{name} = $self->{handler_index}->{$class}->[$i];
+            $ix{$name}->{type} = $self->{handler_index_type}->{$class}->[$i++];
+        }
+    }
+
+    for my $key (sort keys %switch) {
+        my $names = $switch{$key};
+        print $c_fh "      case '$key':\n";
+
+        for my $name (@$names) {
+            my $n = length($name);
+            print $c_fh <<EOF;
+          if (strnEQ(name, "$name", $n)) {
+              *type = $ix{$name}->{type};
+              return $ix{$name}->{name};
+          }
+EOF
+        }
+    }
+
+    print $c_fh "    };\n    return -1;\n}\n";
+
+    return ("", "");
 }
 
 sub generate_handler_directives {
@@ -454,6 +504,8 @@ my %sources = (
                                    c => 'modperl_hooks.c'},
    generate_handler_directives => {h => 'modperl_directives.h',
                                    c => 'modperl_directives.c'},
+   generate_handler_find       => {h => 'modperl_hooks.h',
+                                   c => 'modperl_hooks.c'},
    generate_flags              => {h => 'modperl_flags.h',
                                    c => 'modperl_flags.c'},
    generate_trace              => {h => 'modperl_trace.h'},
@@ -560,6 +612,7 @@ sub generate {
     }
 
     for my $method (reverse sort keys %sources) {
+        print "$method...";
         my($h_fh, $c_fh) = map {
             $self->fh($sources{$method}->{$_});
         } qw(h c);
@@ -570,6 +623,7 @@ sub generate {
         if ($c_add) {
             print $c_fh $c_add;
         }
+        print "done\n";
     }
 
     $self->postamble;
