@@ -71,6 +71,9 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     MpSrvENABLED_On(scfg); /* mod_perl enabled by default */
     MpSrvHOOKS_ALL_On(scfg); /* all hooks enabled by default */
 
+    scfg->PerlModule  = apr_array_make(p, 2, sizeof(char *));
+    scfg->PerlRequire = apr_array_make(p, 2, sizeof(char *));
+
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
     modperl_config_srv_argv_push((char *)ap_server_argv0);
@@ -152,6 +155,9 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv);
 
+    merge_item(PerlModule);
+    merge_item(PerlRequire);
+
     merge_item(threaded_mpm);
 
 #ifdef USE_ITHREADS
@@ -183,3 +189,48 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     return mrg;
 }
 
+int modperl_config_apply_PerlModule(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p)
+{
+    char **entries;
+    int i;
+    dTHXa(perl);
+
+    entries = (char **)scfg->PerlModule->elts;
+    for (i = 0; i < scfg->PerlModule->nelts; i++){
+        if (modperl_require_module(aTHX_ entries[i], TRUE)){
+            MP_TRACE_d(MP_FUNC, "loaded Perl module %s for server %s\n",
+                       entries[i], modperl_server_desc(s,p));
+        }
+        else {
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                         "Can't load Perl module %s for server %s, exiting...\n",
+                         entries[i], modperl_server_desc(s,p));
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+int modperl_config_apply_PerlRequire(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p)
+{
+    char **entries;
+    int i;
+    dTHXa(perl);
+
+    entries = (char **)scfg->PerlRequire->elts;
+    for (i = 0; i < scfg->PerlRequire->nelts; i++){
+        if (modperl_require_file(aTHX_ entries[i], TRUE)){
+            MP_TRACE_d(MP_FUNC, "loaded Perl file: %s for server %s\n",
+                       entries[i], modperl_server_desc(s,p));
+        }
+        else {
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                         "Can't load Perl file: %s for server %s, exiting...\n",
+                         entries[i], modperl_server_desc(s,p));
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}

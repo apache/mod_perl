@@ -59,4 +59,7 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
 #   define MP_dSCFG_dTHX dTHXa(scfg->perl)
 #endif
 
+int modperl_config_apply_PerlModule(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p);
+int modperl_config_apply_PerlRequire(server_rec *s, modperl_config_srv_t *scfg, PerlInterpreter *perl, apr_pool_t *p);
+
 #endif /* MODPERL_CONFIG_H */
