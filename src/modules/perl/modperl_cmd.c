@@ -316,6 +316,8 @@ MP_CMD_SRV_DECLARE(perl)
 
 #define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSection"
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
+#define MP_STRICT_PERLSECTIONS_SV \
+get_sv("Apache::Server::StrictPerlSections", FALSE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
@@ -369,7 +371,17 @@ MP_CMD_SRV_DECLARE(perldo)
     eval_pv(arg, FALSE);
 
     if (SvTRUE(ERRSV)) {
-        return SvPVX(ERRSV);
+        SV *strict;
+        if ((strict = MP_STRICT_PERLSECTIONS_SV) && SvTRUE(strict)) {
+            return SvPVX(ERRSV);
+        }
+        else {
+            modperl_log_warn(s, apr_psprintf(p, "Syntax error at %s:%d %s", 
+                                             parms->directive->filename, 
+                                             parms->directive->line_num, 
+                                             SvPVX(ERRSV)));
+
+        }
     }
     
     if (handler) {
