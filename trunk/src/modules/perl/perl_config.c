@@ -334,17 +334,13 @@ void *perl_create_server_config (pool *p, server_rec *s)
     return (void *)cls;
 }
 
-#if 0
-static int is_2lns(const char *name)
+perl_request_config *perl_create_request_config(pool *p, server_rec *s)
 {
-    register int x, n;
-
-    for (x = 0, n = 0; name[x]; x++)
-        if (name[x] == ':')
-            n++;
-    return n == 2;
+    perl_request_config *cfg = 
+	(perl_request_config *)pcalloc(p, sizeof(perl_request_config));
+    cfg->pnotes = Nullhv;
+    return cfg;
 }
-#endif
 
 #ifdef WIN32
 #define mp_preload_module(name)

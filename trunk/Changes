@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_03-dev
 
+new $r->pnotes method
+
 $ENV{MOD_PERL} is not inherited by subprocesses
 
 no longer use -e with perl_parse() (under unix)
@@ -15,7 +17,7 @@ no longer use -e with perl_parse() (under unix)
 Apache::ExtUtils will complain if it can't determine the
 directive handler prototype (args_how), rather than fail during 'make'
 
-default --with-layout to `Apache' for 1.3.4, can be overridden with
+default --with-layout to `GNU' for 1.3.4, can be overridden with
 APACI_ARGS or APACHE_LAYOUT Makefile.PL attribute
 
 t/TEST =~ s/mod_perl_httpd.pid/httpd.pid 
