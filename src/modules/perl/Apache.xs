@@ -1962,8 +1962,22 @@ finfo(r, sv_statbuf=Nullsv)
             croak("statbuf is not an object");
         }
     }
-
+/* workaround for USE_LARGE_FILES on WIN32 ActivePerl 8xx */
+#if defined(WIN32) && defined(USE_LARGE_FILES)
+    statcache.st_dev = r->finfo.st_dev;
+    statcache.st_ino = r->finfo.st_ino;
+    statcache.st_mode = r->finfo.st_mode;
+    statcache.st_nlink = r->finfo.st_nlink;
+    statcache.st_uid = r->finfo.st_uid;
+    statcache.st_gid = r->finfo.st_gid;
+    statcache.st_rdev = r->finfo.st_rdev;
+    statcache.st_size = (__int64) r->finfo.st_size;
+    statcache.st_atime = r->finfo.st_atime;
+    statcache.st_mtime = r->finfo.st_mtime;
+    statcache.st_ctime = r->finfo.st_ctime;
+#else
     statcache = r->finfo;
+#endif
     if (r->finfo.st_mode) {
 	laststatval = 0;
         sv_setpv(statname, r->filename);
