@@ -512,6 +512,7 @@ sub generate_largefiles {
     return unless $flags;
 
     for my $flag (split /\s+/, $flags) {
+        next if $flag =~ /^-/; # skip -foo flags
         my($name, $val) = split '=', $flag;
         $val ||= '';
         $name =~ s/^-D//;

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fix the code that autogenerates modperl_largefiles.h not to define
+macros matching m/^-/ (was a problem on aix-4.3.3) [Stas]
+
 $Apache::Server::StrictPerlSections added. When set to a true
 value, will abort server startup if there are syntax errors
 in <Perl > sections [Philippe M. Chiasson <gozer@cpan.org]
