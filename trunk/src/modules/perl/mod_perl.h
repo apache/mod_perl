@@ -1076,6 +1076,7 @@ void perl_stdout2client(request_rec *r);
 
 char *mod_perl_auth_name(request_rec *r, char *val);
 
+module *perl_get_module_ptr(char *name, int len);
 void *perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_create_dir_config(pool *p, char *dirname);
 void *perl_create_server_config(pool *p, server_rec *s);
@@ -1139,6 +1140,7 @@ CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *d, int flag)
 #define perl_cmd_perl_TAKE23 perl_cmd_perl_TAKE123
 #define perl_cmd_perl_TAKE3 perl_cmd_perl_TAKE123
 void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv);
+void *perl_perl_merge_srv_config(pool *p, void *basev, void *addv);
 
 void mod_perl_dir_env(perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);

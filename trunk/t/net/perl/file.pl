@@ -1,4 +1,4 @@
-
+use strict;
 use Apache::test;
 
 my $r = shift;
@@ -12,6 +12,7 @@ unless(have_module "Apache::File") {
 require Apache::File;
 print "1..5\n";
 my $fh = Apache::File->new;
+my $i = 0;
 test ++$i, $fh;
 test ++$i, $fh->open($0);
 test ++$i, !$fh->open("$0.nochance");

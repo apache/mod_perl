@@ -113,5 +113,15 @@ sub DIR_MERGE {
     return bless \%new, ref($base);
 }
 
+*SERVER_MERGE = \&DIR_MERGE;
+
+sub SERVER_CREATE {
+    my($class, $parms) = @_;
+    warn "$class->SERVER_CREATE\n";
+    return bless {
+	ServerClass => __PACKAGE__,
+    }, $class;
+}
+ 
 1;
 __END__

@@ -131,6 +131,15 @@ EOF
     my $dir_merger = $class->can('DIR_MERGE') ?
 	"perl_perl_merge_dir_config" : "NULL";
 
+    my $dir_create = $class->can('DIR_CREATE') ?
+	"perl_perl_create_dir_config" : "NULL";
+
+    my $server_merger = $class->can('SERVER_MERGE') ?
+	"perl_perl_merge_srv_config" : "NULL";
+
+    my $server_create = $class->can('SERVER_CREATE') ?
+	"perl_perl_create_srv_config" : "NULL";
+
     return <<EOF;
 #include "modules/perl/mod_perl.h"
 
@@ -176,7 +185,7 @@ module MODULE_VAR_EXPORT XS_${modname} = {
     create_dir_config_sv,  /* per-directory config creator */
     $dir_merger,   /* dir config merger */
     create_srv_config_sv,       /* server config creator */
-    NULL,        /* server config merger */
+    $server_merger,        /* server config merger */
     mod_cmds,               /* command table */
     NULL,           /* [7] list of handlers */
     NULL,  /* [2] filename-to-URI translation */
