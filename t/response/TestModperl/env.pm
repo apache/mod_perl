@@ -21,24 +21,26 @@ sub handler {
     ok $ENV{MODPERL_EXTRA_PL}; #set in t/conf/modperl_extra.pl
     ok $ENV{MOD_PERL};
 
-    $ENV{FOO} = 2;
-    ok $ENV{FOO} == 2;
-    ok $env->get('FOO') == 2;
-
-    $ENV{FOO}++;
-    ok $ENV{FOO} == 3;
-    ok $env->get('FOO') == 3;
-
-    $ENV{FOO} .= 6;
-    ok $ENV{FOO} == 36;
-    ok $env->get('FOO') == 36;
-
-    delete $ENV{FOO};
-    ok ! $ENV{FOO};
-    ok ! $env->get('FOO');
-
     ok $ENV{SERVER_SOFTWARE};
     ok $env->get('SERVER_SOFTWARE');
+
+    {
+        $ENV{FOO} = 2;
+        ok $ENV{FOO} == 2;
+        ok $env->get('FOO') == 2;
+
+        $ENV{FOO}++;
+        ok $ENV{FOO} == 3;
+        ok $env->get('FOO') == 3;
+
+        $ENV{FOO} .= 6;
+        ok $ENV{FOO} == 36;
+        ok $env->get('FOO') == 36;
+
+        delete $ENV{FOO};
+        ok ! $ENV{FOO};
+        ok ! $env->get('FOO');
+    }
 
     {
         local %ENV = (FOO => 1, BAR => 2);
@@ -71,8 +73,7 @@ sub handler {
             '$r->subprocess_env($key => $val)';
     }
 
-    #Make sure each key can be deleted
-
+    # make sure each key can be deleted
     for my $key (sort keys %ENV) {
         eval { delete $ENV{$key}; };
         ok t_cmp($@, '', $key);
