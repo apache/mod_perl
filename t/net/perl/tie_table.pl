@@ -62,26 +62,26 @@ test ++$i, $Seen{three} == 2;
 test ++$i, $Seen{two};
 
 %Seen = ();
-$r->notes->do(\&print_header, undef, qw(three));
+$r->notes->do(\&print_header, qw(three));
 test ++$i, not exists $Seen{two};
-
-sub str_header {
-    my($av, $k, $v) = @_;
-    push @$av, "$k: $v";
-    1;
-}
 
 sub my_as_string {
     my $r = shift;
     my @retval = ();
     push @retval, $r->the_request;
 
-    $r->headers_in->do(\&str_header, \@retval);
+    my $str_header = sub {
+	my($k, $v) = @_;
+	push @retval, "$k: $v";
+	1;
+    };
+
+    $r->headers_in->do($str_header);
     push @retval, "";
 
     push @retval, join(" ", $r->protocol, $r->status_line);
     for my $meth (qw(headers_out err_headers_out)) {
-	$r->$meth()->do(\&str_header, \@retval);
+	$r->$meth()->do($str_header);
     }
     push @retval, "", "";
     join "\n", grep { defined $_ } @retval;

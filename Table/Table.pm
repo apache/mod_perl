@@ -9,7 +9,6 @@ $VERSION = '0.01';
 if($ENV{MOD_PERL}) {
     __PACKAGE__->bootstrap($VERSION);
 }
-*DESTROY = \&destroy; #avoid weird xsubpp bug
 
 1;
 
