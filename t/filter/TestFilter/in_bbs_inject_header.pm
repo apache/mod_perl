@@ -4,11 +4,16 @@ package TestFilter::in_bbs_inject_header;
 # 1. how to write a filter that will work only on HTTP headers
 # 2. how to inject extra HTTP headers
 #
-# the first task is simple -- as soon as a bucket which matches
-# /^[\r\n]+$/ is read we can store that event in the filter context and
-# simply 'return Apache::DECLINED on the future invocation, so not to
-# slow things.
+# the first task is simple for non-keepalive connections -- as soon as
+# a bucket which matches /^[\r\n]+$/ is read we can store that event
+# in the filter context and simply 'return Apache::DECLINED on the
+# future invocation, so not to slow things.
 #
+# it becomes much trickier with keepalive connection, since Apache
+# provides no API to tell you whether a new request is coming in. The
+# only way to work around that is to install a connection output
+# filter and make it snoop on EOS bucket (when the response is
+# completed an EOS bucket is sent, regardless of the connection type).
 #
 # the second task is a bit trickier, as the headers_in core httpd
 # filter is picky and it wants each header to arrive in a separate
@@ -25,14 +30,14 @@ use base qw(Apache::Filter);
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
+use Apache::Connection ();
 use APR::Brigade ();
 use APR::Bucket ();
+use APR::Table ();
 
-use Apache::Test;
-use Apache::TestUtil;
 use Apache::TestTrace;
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache::Const -compile => qw(OK DECLINED CONN_KEEPALIVE);
 use APR::Const    -compile => ':common';
 
 my $header1_key = 'X-My-Protocol';
@@ -74,23 +79,78 @@ sub inject_header_bucket {
     return 1;
 }
 
-sub handler : FilterConnectionHandler {
+sub flag_request_reset : FilterConnectionHandler {
+    my($filter, $bb) = @_;
+
+    # we need this filter only when the connection is keepalive
+    unless ($filter->c->keepalive == Apache::CONN_KEEPALIVE) {
+        $filter->remove;
+        return Apache::DECLINED;
+    }
+
+    debug join '', "-" x 20 , " output filter called ", "-" x 20;
+
+    #ModPerl::TestFilterDebug::bb_dump("connection", "output", $bb);
+
+    for (my $b = $bb->first; $b; $b = $bb->next($b)) {
+        next unless $b->is_eos;
+        # end of request, the input filter may get a new request now,
+        # so it should be ready to parse headers again
+        debug "flagging the end of response";
+        $filter->c->notes->set(reset_request => 1);
+    }
+
+    return $filter->next->pass_brigade($bb);
+}
+
+# instead of using FilterInitHandler, you could register the output
+# filter explicitly in the configuration file. that will be more
+# efficient for a production site, as one will need to do it only if
+# they support KeepAlive configurations
+sub push_output_filter : FilterInitHandler {
+    my $filter = shift;
+
+    # at this point we don't know whether the connection is going to
+    # be keepalive or not, since the relevant input headers weren't
+    # parsed yet. we know only after ap_http_header_filter was called.
+    # therefore we have no choice but to always add the flagging
+    # output filter
+    $filter->c->add_output_filter(\&flag_request_reset);
+
+    return Apache::OK;
+}
+
+sub handler : FilterConnectionHandler
+              FilterHasInitHandler(\&push_output_filter) {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
-    debug join '', "-" x 20 , " filter called ", "-" x 20;
+    debug join '', "-" x 20 , " input filter called -", "-" x 20;
 
-    my $ctx;
-    unless ($ctx = $filter->ctx) {
+    my $c = $filter->c;
+
+    my $ctx = $filter->ctx;
+    unless ($ctx) {
         debug "filter context init";
         $ctx = {
             buckets             => [],
             done_with_headers   => 0,
             seen_body_separator => 0,
         };
+
         # since we are going to manipulate the reference stored in
         # ctx, it's enough to store it only once, we will get the same
         # reference in the following invocations of that filter
         $filter->ctx($ctx);
+    }
+
+    # reset the filter state, we start a new request
+    if ($c->keepalive == Apache::CONN_KEEPALIVE &&
+        $ctx->{done_with_headers} && $c->notes->get('reset_request')) {
+        debug "a new request resetting the input filter state";
+        $c->notes->set('reset_request' => 0);
+        $ctx->{buckets} = [];
+        $ctx->{seen_body_separator} = 0;
+        $ctx->{done_with_headers} = 0;
     }
 
     # handling the HTTP request body
@@ -110,7 +170,6 @@ sub handler : FilterConnectionHandler {
     return Apache::OK if inject_header_bucket($bb, $ctx);
 
     # normal HTTP headers processing
-    my $c = $filter->c;
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
     my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
     return $rv unless $rv == APR::SUCCESS;
@@ -185,21 +244,17 @@ sub handler : FilterConnectionHandler {
 sub response {
     my $r = shift;
 
-    my $data = ModPerl::Test::read_post($r);
-
-    plan $r, tests => 2 + keys %headers;
-
-    ok t_cmp($request_body, $data);
-
-    ok t_cmp($header1_val,
-             $r->headers_in->get($header1_key),
-             "injected header $header1_key");
+    # propogate the input headers and the input back to the client
+    # as we need to do the validations on the client side
+    $r->headers_out->set($header1_key => 
+                         $r->headers_in->get($header1_key)||'');
 
     for my $key (sort keys %headers) {
-        ok t_cmp($headers{$key},
-                 $r->headers_in->get($key),
-                 "injected header $key");
+        $r->headers_out->set($key => $r->headers_in->get($key)||'');
     }
+
+    my $data = ModPerl::Test::read_post($r);
+    $r->print($data);
 
     Apache::OK;
 }
@@ -214,6 +269,5 @@ __END__
      SetHandler modperl
      PerlResponseHandler TestFilter::in_bbs_inject_header::response
   </Location>
-
 </VirtualHost>
 </NoAutoConfig>
