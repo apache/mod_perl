@@ -36,9 +36,9 @@ MODULE=APR::Socket
 !apr_accept
  apr_listen
  apr_connect
- apr_recv
+ apr_recv | mpxs_ | sock, SV *:buf, SV *:len
  apr_recvfrom
- apr_send
+ apr_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
  apr_sendto
  apr_shutdown
 
