@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+make sure DynaLoader is loaded before XSLoader, not only with perl
+5.6.1, but always because of the issues with <Perl> sections are
+loaded from +Parent vhost [Stas]
+
 added ($r|$s)->is_perl_option_enabled($option_name), to test for
 PerlOptions + tests [Stas]
 
