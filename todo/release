@@ -45,7 +45,8 @@
   the whole thread is here:
   http://marc.theaimsgroup.com/?t=103713532800003&r=1&w=2
 
-- PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
+- PerlModule, PerlRequire, <Perl> in .htaccess is missing
+  http://marc.theaimsgroup.com/?t=105370088700001&r=1&w=2
   Owner: geoff
 
 - cgi emulation: %ENV management:
