@@ -1569,6 +1569,27 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'modperl_slurp_filename',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      },
+      {
+        'type' => 'int',
+        'name' => 'tainted'
+      },
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'modperl_env_clear',
     'args' => [

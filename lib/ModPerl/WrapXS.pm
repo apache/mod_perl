@@ -726,8 +726,6 @@ my $methods_compat = {
                           'not in the Apache 2.0 API'],
     log_reason        => ['log_error',
                           'not in the Apache 2.0 API'],
-    slurp_filename    => [undef,
-                          'not in the mod_perl 2.0 API'],
     READLINE          => [undef, # XXX: to be resolved
                           ''],
     send_fd_length    => [undef,

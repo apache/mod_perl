@@ -345,15 +345,6 @@ sub finfo {
 
 *log_reason = \&log_error;
 
-sub slurp_filename {
-    my $r = shift;
-    open my $fh, $r->filename;
-    local $/;
-    my $data = <$fh>;
-    close $fh;
-    return \$data;
-}
-
 #XXX: would like to have a proper implementation
 #that reads line-by-line as defined by $/
 #the best way will probably be to use perlio in 5.8.0

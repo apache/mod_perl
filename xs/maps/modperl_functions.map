@@ -33,6 +33,8 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_new | | classname, c, base_pool=NULL
  SV *:DEFINE_dir_config | | request_rec *:r, char *:key=NULL, SV *:sv_val=Nullsv
+ SV *:DEFINE_slurp_filename | | request_rec *:r, int:tainted=1
+
 PACKAGE=Apache
  mpxs_Apache_request | | classname, svr=Nullsv
 

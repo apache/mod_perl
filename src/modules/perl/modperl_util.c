@@ -668,3 +668,54 @@ void modperl_clear_symtab(pTHX_ HV *symtab)
         }
     }
 }
+
+#define SLURP_SUCCESS(action) \
+    if (rc != APR_SUCCESS) { \
+        SvREFCNT_dec(sv); \
+        Perl_croak(aTHX_ "Error " action " '%s': %s ", r->filename, \
+                   modperl_apr_strerror(rc)); \
+    }
+
+MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
+{
+    SV *sv;
+    apr_status_t rc;
+    apr_size_t size;
+    apr_file_t *file;
+    
+    size = r->finfo.size;
+    sv = newSV(size);
+    file = r->finfo.filehand;
+    if (!file) {
+        rc = apr_file_open(&file, r->filename, APR_READ|APR_BINARY,
+                           APR_OS_DEFAULT, r->pool);
+        SLURP_SUCCESS("opening");
+    }
+
+    rc = apr_file_read(file, SvPVX(sv), &size);
+    SLURP_SUCCESS("reading");
+
+    MP_TRACE_o(MP_FUNC, "read %d bytes from '%s'\n", size, r->filename);
+    
+    if (r->finfo.size != size) {
+        SvREFCNT_dec(sv); 
+        Perl_croak(aTHX_ "Error: read %d bytes, expected %d ('%s')",
+                   size, r->finfo.size, r->filename);
+    }
+
+    rc = apr_file_close(file);
+    SLURP_SUCCESS("closing");
+    
+    SvPVX(sv)[size] = '\0';
+    SvCUR_set(sv, size);
+    SvPOK_on(sv);
+
+    if (tainted) {
+        SvTAINTED_on(sv);
+    }
+    else {
+        SvTAINTED_off(sv);
+    }
+    
+    return newRV_noinc(sv);
+}

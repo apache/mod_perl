@@ -197,6 +197,9 @@ SV *mpxs_Apache__RequestRec_pnotes(pTHX_ request_rec *r, SV *key, SV *val)
 #define mpxs_Apache__RequestRec_dir_config(r, key, sv_val) \
     modperl_dir_config(aTHX_ r, r->server, key, sv_val)
 
+#define mpxs_Apache__RequestRec_slurp_filename(r, tainted) \
+    modperl_slurp_filename(aTHX_ r, tainted)
+
 static MP_INLINE
 char *mpxs_Apache__RequestRec_location(request_rec *r)
 {
