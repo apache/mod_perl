@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+resolve several 'Use of uninitialized value in...' warnings in
+Apache::Status [Stas].
+
 make install and static build now correctly installs mod_perl as
 well as the statically built apache [Gozer]
 
