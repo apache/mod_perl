@@ -1132,7 +1132,7 @@ request_rec *perl_request_rec(request_rec *);
 void perl_setup_env(request_rec *r);
 SV  *perl_bless_request_rec(request_rec *); 
 void perl_set_request_rec(request_rec *); 
-void mod_perl_cleanup_av(void *data);
+void mod_perl_cleanup_sv(void *data);
 void mod_perl_cleanup_handler(void *data);
 void mod_perl_end_cleanup(void *data);
 void mod_perl_register_cleanup(request_rec *r, SV *sv);
