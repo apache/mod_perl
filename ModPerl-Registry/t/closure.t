@@ -37,7 +37,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # should be no closure effect, always returns 1
     my $first  = get_body($same_interp, $url);
     my $second = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
         0,
         $first && $second && ($second - $first),
@@ -49,7 +49,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
     # it doesn't matter, since the script is not cached anyway
     my $third = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $third,
@@ -69,7 +69,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # the difference should be 1.
     my $first  = get_body($same_interp, $url);
     my $second = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
         1,
         $first && $second && ($second - $first),
@@ -81,7 +81,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
     # should not notice closure effect on the first request
     my $third = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $third,
@@ -101,7 +101,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     # the difference should be 1.
     my $first  = get_body($same_interp, $url);
     my $second = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
         1,
         $first && $second && ($second - $first),
@@ -113,7 +113,7 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
     # modification shouldn't be noticed
     my $third = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
         1,
         $first && $second && $third - $second,
@@ -149,7 +149,7 @@ sub get_body {
 # interpreter, which happens randomly and not an error.
 # the first argument is used to decide whether to skip the sub-test,
 # the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_intrep {
+sub skip_not_same_interp {
     my $skip_cond = shift;
     if ($skip_cond) {
         skip "Skip couldn't find the same interpreter";

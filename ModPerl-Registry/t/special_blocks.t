@@ -30,7 +30,7 @@ plan tests => @aliases * 4;
 
     my $res = get_body($same_interp, "$url?begin");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "begin ok",
         $res,
@@ -39,7 +39,7 @@ plan tests => @aliases * 4;
 
     $res = $skip ? undef : get_body($same_interp, "$url?begin");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "begin ok",
         $res,
@@ -48,7 +48,7 @@ plan tests => @aliases * 4;
 
     $res = $skip ? undef : get_body($same_interp, "$url?end");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "end ok",
         $res,
@@ -57,7 +57,7 @@ plan tests => @aliases * 4;
 
     $res = $skip ? undef : get_body($same_interp, "$url?end");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "end ok",
         $res,
@@ -84,7 +84,7 @@ for my $alias (grep !/^perlrun$/, @aliases) {
 
     $res = $skip ? undef : get_body($same_interp, "$url?begin");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "begin ok",
         $res,
@@ -94,7 +94,7 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     $res = $skip ? undef : get_body($same_interp, "$url?begin");
     $skip++ unless defined $res;
     t_debug($res);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "",
         $res,
@@ -110,7 +110,7 @@ for my $alias (grep !/^perlrun$/, @aliases) {
 
     $res = $skip ? undef : get_body($same_interp, "$url?end");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "end ok",
         $res,
@@ -119,7 +119,7 @@ for my $alias (grep !/^perlrun$/, @aliases) {
 
     $res = $skip ? undef : get_body($same_interp, "$url?end");
     $skip++ unless defined $res;
-    skip_not_same_intrep(
+    skip_not_same_interp(
         $skip,
         "end ok",
         $res,
@@ -143,7 +143,7 @@ sub get_body {
 # interpreter, which happens randomly and not an error.
 # the first argument is used to decide whether to skip the sub-test,
 # the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_intrep {
+sub skip_not_same_interp {
     my $skip_cond = shift;
     if ($skip_cond) {
         skip "Skip couldn't find the same interpreter";
