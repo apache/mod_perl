@@ -1,5 +1,11 @@
 #include "mod_perl.h"
 
+#if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
+#   define TIEHANDLE_SV(handle) (SV*)GvIOp((SV*)handle)
+#else
+#   define TIEHANDLE_SV(handle) (SV*)handle
+#endif
+
 #define dHANDLE(name) GV *handle = gv_fetchpv(name, TRUE, SVt_PVIO)
 
 #define TIEHANDLE(handle,r) \
@@ -16,20 +22,17 @@ modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
 MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
 #ifdef MP_TRACE
-    if (mg_find((SV*)handle, 'q') ||
-        mg_find((SV*)GvIOp(handle), 'q'))
-    {
+    if (mg_find(TIEHANDLE_SV(handle), 'q')) {
         MP_TRACE_g(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
                    GvNAME(handle), (unsigned long)handle,
-                   SvREFCNT((SV*)handle));
+                   SvREFCNT(TIEHANDLE_SV(handle)));
     }
     else {
         return;
     }
 #endif
 
-    sv_unmagic((SV*)handle, 'q');
-    sv_unmagic((SV*)GvIOp(handle), 'q');
+    sv_unmagic(TIEHANDLE_SV(handle), 'q');
 }
 
 MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
@@ -39,20 +42,19 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 
     modperl_io_handle_untie(aTHX_ handle);
 
-    sv_magic((SV*)handle, obj, 'q', Nullch, 0);
-    sv_magic((SV*)GvIOp(handle), obj, 'q', Nullch, 0);
+    sv_magic(TIEHANDLE_SV(handle), obj, 'q', Nullch, 0);
 
     SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
 
     MP_TRACE_g(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
                GvNAME(handle), (unsigned long)handle, classname,
-               SvREFCNT((SV*)handle));
+               SvREFCNT(TIEHANDLE_SV(handle)));
 }
 
 MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
 {
     MAGIC *mg;
-    SV *sv = SvMAGICAL(GvIOp(handle)) ? (SV*)GvIOp(handle) : (SV*)handle;
+    SV *sv = TIEHANDLE_SV(handle);
 
     if (SvMAGICAL(sv) && (mg = mg_find(sv, 'q'))) {
 	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
