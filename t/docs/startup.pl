@@ -25,6 +25,7 @@ if ($] >= 5.005 and -e "t/docs/local.pl") {
     }; $@='' if $@;
 }
 
+use Socket (); #test DynaLoader vs. XSLoader workaroud
 use Apache ();
 use Apache::Registry ();
 unless ($INC{'Apache.pm'} =~ /blib/) {

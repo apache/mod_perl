@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+make sure DynaLoader is loaded before XSLoader to workaround possible
+segv when using mod_perl as a dso with perl 5.6.1
+
 autoset PERL_USELARGEFILES=0 if needed
 
 fix taint issues with bleedperl

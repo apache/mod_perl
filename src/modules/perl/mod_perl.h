@@ -1192,6 +1192,7 @@ void perl_stdout2client(request_rec *r);
 /* perl_config.c */
 
 #define require_Apache(s) \
+    perl_require_module("DynaLoader", s); \
     perl_require_module("Apache", s)
 
 char *mod_perl_auth_name(request_rec *r, char *val);
