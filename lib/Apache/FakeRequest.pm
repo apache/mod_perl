@@ -11,7 +11,7 @@ sub print { shift; CORE::print(@_) }
 
 #dummy method stubs
 my @methods = qw{
-  allow_options args
+  allow_options
   as_string auth_name auth_type
   basic_http_header bootstrap bytes_sent
   can_stack_handlers cgi_env cgi_header_out
@@ -28,7 +28,7 @@ my @methods = qw{
   lookup_file lookup_uri main
   max_requests_per_child method method_number
   module next no_cache
-  note_basic_auth_failure notes parse_args
+  note_basic_auth_failure notes
   path_info perl_hook post_connection prev
   protocol proxyreq push_handlers
   query_string read read_client_block
@@ -48,6 +48,25 @@ sub elem {
     $self->{$key} = $val if $val;
     $self->{$key};
 }
+
+sub parse_args {
+    my($wantarray,$string) = @_;
+    return unless defined $string and $string;
+    if(defined $wantarray and $wantarray) {
+        return map { 
+	    s/%([0-9a-fA-F]{2})/pack("c",hex($1))/ge;
+	    $_;
+	} split /[=&;]/, $string, -1;
+    }
+    $string;
+}
+
+sub args {
+    my($r,$val) = @_;
+    $r->{args} = $val if $val;
+    parse_args(wantarray, $r->{args});
+}
+
 
 {
     my @code;
