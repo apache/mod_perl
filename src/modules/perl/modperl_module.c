@@ -152,6 +152,15 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         *tmp,
         *base = (modperl_module_cfg_t *)basev,
         *add  = (modperl_module_cfg_t *)addv;
+    server_rec *s;
+    int is_startup;
+    PTR_TBL_t *table;
+    SV *mrg_obj = Nullsv, *base_obj, *add_obj;
+
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+    dTHX;
+#endif
     
     /* if the module is loaded in vhost, base==NULL */
     tmp = (base && base->server) ? base : add;
@@ -161,18 +170,17 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         return basev;
     }
     
-    server_rec *s = tmp->server;
-    int is_startup = (p == s->process->pconf);
+    s = tmp->server;
+    is_startup = (p == s->process->pconf);
 
 #ifdef USE_ITHREADS
-    modperl_interp_t *interp = modperl_interp_pool_select(p, s);
-    dTHXa(interp->perl);
+    interp = modperl_interp_pool_select(p, s);
+    aTHX = interp->perl;
 #endif
 
-    PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
-    SV *mrg_obj = Nullsv,
-        *base_obj = modperl_svptr_table_fetch(aTHX_ table, base),
-        *add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
+    table = modperl_module_config_table_get(aTHX_ TRUE);
+    base_obj = modperl_svptr_table_fetch(aTHX_ table, base);
+    add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
     if (!base_obj || (base_obj == add_obj)) {
         return addv;
@@ -335,7 +343,17 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     modperl_module_cfg_t *srv_cfg;
 
-   if (s->is_virtual) {
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp = modperl_interp_pool_select(p, s);
+    dTHXa(interp->perl);
+#endif
+
+    int count;
+    PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
+    SV *obj = Nullsv;
+    dSP;
+    
+    if (s->is_virtual) {
         MP_dSCFG(s);
 
         /* if the Perl module is loaded in the base server and a vhost
@@ -371,16 +389,6 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         
     }
     
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp = modperl_interp_pool_select(p, s);
-    dTHXa(interp->perl);
-#endif
-
-    int count;
-    PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
-    SV *obj = Nullsv;
-    dSP;
-
     errmsg = modperl_module_config_get_obj(aTHX_ p, table, cfg, info,
                                            minfo->dir_create,
                                            parms, &obj);
