@@ -52,7 +52,7 @@ TestCommon::LogDiff - get log file diffs
 =head1 Synopsis
 
   use TestCommon::LogDiff;
-  use Test;
+  use Apache::Test;
   
   plan tests => 2;
   

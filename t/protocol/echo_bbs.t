@@ -1,7 +1,7 @@
 use strict;
 use warnings FATAL => 'all';
 
-use Test;
+use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest ();
 

@@ -2,7 +2,7 @@ use ExtUtils::testlib;
 use strict;
 use warnings FATAL => 'all';
 
-use Test;
+use Apache::Test;
 
 use Apache2 ();
 use Apache::TestUtil;
