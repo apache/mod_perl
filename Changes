@@ -16,8 +16,9 @@ Ignore Apache-Test/META.yml in distribution tarballs until PAUSE
 is capable of handling multiple META.yml files in one distro [Gozer]
 
 modperl_exports.c now wraps all exported functions in a #ifndef
-function_name wrapper to help in weeding out functions that only
-make sense for certain Perl configurations (perlio, threads) [Gozer]
+function_name wrapper to help in weeding out functions that only make
+sense for certain Perl configurations (perlio, threads) (which also
+fixes static build against perlio-disabled perls, like 5.6.x) [Gozer]
 
 for make test, skip configuring fastcgi if it's found in the global
 httpd.conf, as it causes crashes in the test suite [Stas]
