@@ -32,7 +32,7 @@ sub handler {
     my $rc = $subr->run;
     ok $rc, Apache::SERVER_ERROR, "rc";
 
-    # test an explictit DESTROY (which happens automatically on the
+    # test an explicit DESTROY (which happens automatically on the
     # scope exit)
     undef $subr;
     ok 1;
