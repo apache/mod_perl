@@ -25,6 +25,13 @@ typedef ap_pool_t    * Apache__Pool;
 
 #ifdef USE_ITHREADS
 
+typedef struct modperl_list_t modperl_list_t;
+
+struct modperl_list_t {
+    modperl_list_t *prev, *next;
+    void *data;
+};
+
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 
@@ -38,7 +45,8 @@ typedef struct {
 struct modperl_interp_t {
     modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
-    modperl_interp_t *next;
+    modperl_list_t *listp;
+    int num_requests;
     int flags;
 };
 
@@ -51,7 +59,7 @@ struct modperl_interp_pool_t {
     int in_use; /* number of Perl interpreters currrently in use */
     int size; /* current number of Perl interpreters */
     modperl_interp_t *parent; /* from which to perl_clone() */
-    modperl_interp_t *head, *tail;
+    modperl_list_t *idle, *busy;
 };
 
 #endif /* USE_ITHREADS */
