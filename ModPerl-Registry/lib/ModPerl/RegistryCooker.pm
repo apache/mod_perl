@@ -146,7 +146,12 @@ sub default_handler {
         return $rc unless $rc == Apache::OK;
     }
 
-    return $self->run;
+    # handlers shouldn't set $r->status but return it
+    my $old_status = $self->[REQ]->status;
+    my $rc = $self->run;
+    my $new_status = $self->[REQ]->status($old_status);
+
+    return ($rc != Apache::OK) ? $rc : $new_status;
 }
 
 #########################################################################
@@ -178,7 +183,7 @@ sub run {
 
     $self->flush_namespace;
 
-    #$self->chdir_file("$Apache::Server::CWD/");
+    #XXX: $self->chdir_file("$Apache::Server::CWD/");
 
     if ( ($rc = $self->error_check) != Apache::OK) {
         return $rc;
