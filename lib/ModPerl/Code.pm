@@ -606,8 +606,8 @@ my %sources = (
 );
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
-                     gtop util io filter bucket mgv pcw global env cgi
-                     perl perl_global perl_pp sys module svptr_table
+                     gtop util io io_apache filter bucket mgv pcw global env
+                     cgi perl perl_global perl_pp sys module svptr_table
                      const constants apache_compat);
 my @h_src_names = qw(perl_unembed);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
