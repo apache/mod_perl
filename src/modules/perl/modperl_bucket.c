@@ -49,6 +49,9 @@ static void modperl_bucket_sv_destroy(void *data)
 
 static const apr_bucket_type_t modperl_bucket_sv_type = {
     "mod_perl SV bucket", 4,
+#if MODULE_MAGIC_NUMBER >= 20020602
+    APR_BUCKET_DATA,
+#endif
     modperl_bucket_sv_destroy,
     modperl_bucket_sv_read,
     apr_bucket_setaside_notimpl,

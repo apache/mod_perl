@@ -10,12 +10,14 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_03-dev
 
+adjust to apr_bucket_type_t changes in 2.0.37-dev
+[Mladen Turk <mturk@mappingsoft.com>]
+
 add MODPERL2 config define, as if the server had been started with -DMODPERL2
 
 compat additions and fixes: $r->lookup_{file,uri}, $r->is_main, Apache->define
 
 added compat for Apache::log_error [Stas Bekman]
-
 
 =item 1.99_02 - June 1, 2002
 
