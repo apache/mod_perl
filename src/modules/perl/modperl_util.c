@@ -422,6 +422,14 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
     }
 }
 
+void modperl_perl_exit(pTHX_ int status)
+{
+    ENTER;
+    SAVESPTR(PL_diehook);
+    PL_diehook = Nullsv; 
+    Perl_croak(aTHX_ NULL);
+}
+
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                                  char *key, SV *sv_val)
 {

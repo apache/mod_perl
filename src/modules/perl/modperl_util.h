@@ -70,6 +70,8 @@ MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src);
 
 void modperl_perl_call_list(pTHX_ AV *subs, const char *name);
 
+void modperl_perl_exit(pTHX_ int status);
+
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                                  char *key, SV *sv_val);
     
