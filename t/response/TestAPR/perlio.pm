@@ -48,7 +48,7 @@ sub handler {
         or die "Cannot open $file for writing: $!";
     ok ref($fh) eq 'GLOB';
 
-    t_debug "write to a file:\n$expected";
+    t_debug "write to a file:\n$expected\n";
     print $fh $expected_all;
     close $fh;
 
@@ -152,11 +152,12 @@ sub handler {
         ok t_cmp(0,
                  int eof($fh), # returns false, not 0
                  "not end of file");
-        # go to the end and read
+        # go to the end and read so eof will return 1
         seek $fh, 0, Fcntl::SEEK_END();
         my $received = <$fh>;
 
         t_debug($received);
+
         ok t_cmp(1,
                  eof($fh),
                  "end of file");
