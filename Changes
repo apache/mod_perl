@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+fix the apxs build function to not handle empty lookups as errors
+[Randy Kobes, Steve Hay]
+
 fix type casting problems in the io functions [Stas]
 
 add support for libgtop 2.5.0+ (maintenance mode) [Stas]

@@ -168,13 +168,15 @@ sub apxs {
     chomp $val if defined $val; # apxs post-2.0.40 adds a new line
 
     unless ($val) {
-        error "'$apxs @_' failed:";
-
-        if (my $error = qx($apxs @_ 2>&1)) {
+        # do we have an error or is it just an empty value?
+        my $error = qx($apxs @_ 2>&1);
+        chomp $error if defined $error; # apxs post-2.0.40 adds a new line
+        if ($error) {
+            error "'$apxs @_' failed:";
             error $error;
         }
         else {
-            error 'unknown error';
+            $val = '';
         }
     }
 
