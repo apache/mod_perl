@@ -18,6 +18,8 @@ typedef modperl_global_t modperl_tls_t;
 
 void modperl_global_request_cfg_set(request_rec *r);
 
+request_rec *modperl_global_request(pTHX_ SV *svr);
+
 void modperl_global_request_set(request_rec *r);
 
 void modperl_global_request_obj_set(pTHX_ SV *svr);

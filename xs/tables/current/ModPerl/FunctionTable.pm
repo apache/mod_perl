@@ -1494,6 +1494,20 @@ $ModPerl::FunctionTable = [
     'args' => []
   },
   {
+    'return_type' => 'request_rec *',
+    'name' => 'modperl_global_request',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'svr'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'modperl_dir_config',
     'attr' => [
