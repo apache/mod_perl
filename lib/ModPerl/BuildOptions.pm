@@ -24,7 +24,10 @@ sub init {
         $build->{MP_USE_GTOP} = 0 unless $build->find_dlfile('gtop');
     }
 
-    $build->{MP_USE_DSO} = 1 unless $build->{MP_USE_STATIC};
+    unless ($build->{MP_USE_DSO} or $build->{MP_USE_STATIC}) {
+        $build->{MP_USE_DSO} = $build->{MP_USE_STATIC} = 1;
+    }
+
     $build->{MP_GENERATE_XS} = 1 unless exists $build->{MP_GENERATE_XS};
 }
 

@@ -533,10 +533,7 @@ sub rebuild {
 
 #--- attribute access ---
 
-sub is_dynamic {
-    my $self = shift;
-    $self->{MP_USE_DSO} || $self->{MP_USE_APXS};
-}
+sub is_dynamic { shift->{MP_USE_DSO} }
 
 sub default_dir {
     my $build = shift->build_config;
@@ -909,13 +906,17 @@ sub write_src_makefile {
     print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
     print $fh $self->canon_make_attr('dlext', 'so'); #always use .so
 
-    print $fh $self->canon_make_attr('lib_shared',
-                       "$self->{MP_LIBNAME}.$self->{MODPERL_DLEXT}");
+    my %libs = (
+        dso    => "$self->{MP_LIBNAME}.$self->{MODPERL_DLEXT}",
+        static => "$self->{MP_LIBNAME}$self->{MODPERL_LIB_EXT}",
+    );
 
-    print $fh $self->canon_make_attr('lib_static',
-                       "$self->{MP_LIBNAME}$self->{MODPERL_LIB_EXT}");
+    #XXX short-term compat for Apache::TestConfigPerl
+    $libs{shared} = $libs{dso};
 
-
+    while (my($type, $lib) = each %libs) {
+        print $fh $self->canon_make_attr("lib_$type", $libs{$type});
+    }
 
     print $fh $self->canon_make_attr('libperl',
                                      join '/',
@@ -931,9 +932,12 @@ sub write_src_makefile {
         print $fh $self->canon_make_attr($method, @{ $code->$method() });
     }
 
-    print $fh $self->canon_make_attr('lib', $self->is_dynamic ?
-                                     $self->{MODPERL_LIB_SHARED} :
-                                     $self->{MODPERL_LIB_STATIC});
+    my @libs;
+    for my $type (map { uc } keys %libs) {
+        push @libs, $self->{"MODPERL_LIB_$type"} if $self->{"MP_USE_$type"};
+    }
+
+    print $fh $self->canon_make_attr('lib', "@libs");
 
     for my $q (qw(LIBEXECDIR)) {
         print $fh $self->canon_make_attr("AP_$q",
@@ -956,8 +960,8 @@ all: lib
 lib: $(MODPERL_LIB)
 
 install:
-	$(MODPERL_TEST_F) $(MODPERL_LIB_SHARED) && \
-	$(MODPERL_CP) $(MODPERL_LIB_SHARED) $(MODPERL_AP_LIBEXECDIR)
+	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
+	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
 
 .SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
