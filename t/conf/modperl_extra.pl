@@ -63,7 +63,7 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 use constant IOBUFSIZE => 8192;
 
 use Apache::Const -compile => qw(MODE_READBYTES);
-use APR::Const    -compile => qw(BLOCK_READ);
+use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
 sub ModPerl::Test::read_post {
     my $r = shift;
