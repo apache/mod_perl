@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+For Win32, add an INSTALL_LIB option to 'perl Makefile.PL' to
+allow one to specify where to install mod_perl.lib. If not
+given, this defaults to APACHE_SRC\libexec, if this exists.
+Suggested by Steve Hay [randyk]
+
 Fix t/net/perl/sym.pl (called by modules/symbol) not to affect other
 tests (internal/http-get and internal/http-post, which were failing to
 call exit) [Stas]

@@ -330,7 +330,8 @@ my @mm_args;
 
 my $vcpp = ($Config{cc} =~ /^cl(\.exe)?$/);
 my %win32_args;
-my %win32_accept = map {$_ => 1} qw(APACHE_SRC INSTALL_DLL DEBUG EAPI);
+my %win32_accept = map {$_ => 1} 
+    qw(APACHE_SRC INSTALL_DLL INSTALL_LIB DEBUG EAPI);
 
 while($_ = shift) {
     ($k,$v) = split /=/, $_, 2;
@@ -374,6 +375,10 @@ if ($vcpp and $win32_args{APACHE_SRC}) {
   unless ($win32_args{INSTALL_DLL}) {
     my $w32_ap_mod = $fixed_apsrc . '/modules';
     $win32_args{INSTALL_DLL} = $w32_ap_mod if -d $w32_ap_mod;
+  }
+  unless ($win32_args{INSTALL_LIB}) {
+    my $w32_ap_lib = $fixed_apsrc . '/libexec';
+    $win32_args{INSTALL_LIB} = $w32_ap_lib if -d $w32_ap_lib;
   }
 }
 
@@ -1341,7 +1346,8 @@ sub MY::install {
     if($USE_APXS) {
 	$add = "apxs_install";
     }
-    elsif ($win32_auto and $win32_args{INSTALL_DLL}) {
+    elsif ($win32_auto and 
+           ($win32_args{INSTALL_DLL} or $win32_args{INSTALL_LIB})) {
       $add = 'amp_install';
     }
     elsif($USE_APACI) {
@@ -1372,12 +1378,11 @@ sub MY::top_targets {
 	$win32_args{INSTALL_DLL} .
 	  ($win32_args{APACHE_VERS} < 1315 ?
 	   '/ApacheModulePerl.dll' : '/mod_perl.so');
-        if (-d "$win32_args{APACHE_SRC}/libexec") {
-          my $libexec = win32_fix_path($win32_args{APACHE_SRC}) . '/libexec';
-          $string .= sprintf qq{\n\t\$(CP) "%s" "%s"}, 
-            "$win32_path{MODPERL_LIB}/mod_perl.lib", 
-              $libexec . '/mod_perl.lib';
-        }
+      }
+      if ($win32_args{INSTALL_LIB}) {
+        $string .= sprintf qq{\n\t\$(CP) "%s" "%s"}, 
+          "$win32_path{MODPERL_LIB}/mod_perl.lib", 
+            $win32_args{INSTALL_LIB} . '/mod_perl.lib';
       }
       return $string;
     }
@@ -2155,7 +2160,7 @@ sub win32_inc_and_lib {
   
   if ($win32_args{INSTALL_DLL} ) {
     $win32_args{INSTALL_DLL} = 
-	win32_fix_path($win32_args{INSTALL_DLL});
+      win32_fix_path($win32_args{INSTALL_DLL});
     unless ( -d $win32_args{INSTALL_DLL}) {
       my @dirs = grep {-d} 
 	('\Program Files\Apache Group\Apache\modules', 
@@ -2170,6 +2175,28 @@ sub win32_inc_and_lib {
 
 ****  The Apache/modules directory was not found.    *******
 ****      Please install mod_perl.so manually.       *******
+
+END
+      }
+    }
+  }
+  if ($win32_args{INSTALL_LIB} ) {
+    $win32_args{INSTALL_LIB} = 
+      win32_fix_path($win32_args{INSTALL_LIB});
+    unless ( -d $win32_args{INSTALL_LIB}) {
+      my @dirs = grep {-d} 
+	('\Program Files\Apache Group\Apache\libexec', 
+	 '\Apache\libexec', '\Program Files\Apache\libexec');
+      $win32_args{INSTALL_LIB} = find_dir(\@dirs, 'Apache/libexec');
+      if ($win32_args{INSTALL_LIB} and -d $win32_args{INSTALL_LIB}) {
+	$win32_args{INSTALL_LIB} = 
+	  win32_fix_path($win32_args{INSTALL_LIB});
+      }
+      else {
+	print <<'END';
+
+****  The Apache/libexec directory was not found.    *******
+****      Please install mod_perl.lib manually.       *******
 
 END
       }
