@@ -105,7 +105,8 @@ sub find_includes {
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal version
                                 apr_optional mod_include mod_cgi mod_proxy
-                                mod_ssl ssl_ apr_anylock apr_rmm);
+                                mod_ssl ssl_ apr_anylock apr_rmm
+                                ap_config mod_log_config);
 
     for my $dir (@dirs) {
         File::Find::finddepth({
