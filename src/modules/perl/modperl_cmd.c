@@ -15,42 +15,6 @@
 
 #include "mod_perl.h"
 
-#ifdef USE_ITHREADS
-
-/*
- * perl context overriding and restoration is required when
- * PerlOptions +Parent/+Clone is used in vhosts, and perl is used to
- * at the server startup. So that <Perl> sections, PerlLoadModule,
- * PerlModule and PerlRequire are all run using the right perl context
- * and restore to the original context when they are done.
- *
- * As of perl-5.8.3 it's unfortunate that it uses PERL_GET_CONTEXT and
- * doesn't rely on the passed pTHX internally. When and if perl is
- * fixed to always use pTHX if available, this context switching mess
- * can be removed.
- */
-
-#define MP_PERL_DECLARE_CONTEXT \
-    PerlInterpreter *orig_perl; \
-    pTHX;
-
-/* XXX: .htaccess support cannot use this perl with threaded MPMs */
-#define MP_PERL_OVERRIDE_CONTEXT    \
-    orig_perl = PERL_GET_CONTEXT;   \
-    aTHX = scfg->mip->parent->perl; \
-    PERL_SET_CONTEXT(aTHX);
-
-#define MP_PERL_RESTORE_CONTEXT     \
-    PERL_SET_CONTEXT(orig_perl);
-
-#else
-
-#define MP_PERL_DECLARE_CONTEXT
-#define MP_PERL_OVERRIDE_CONTEXT
-#define MP_PERL_RESTORE_CONTEXT
-
-#endif
-
 /* This ensures that a given directive is either in Server context
  * or in a .htaccess file, usefull for things like PerlRequire
  */
@@ -203,7 +167,7 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(modules)
 {
     MP_dSCFG(parms->server);
-    MP_PERL_DECLARE_CONTEXT;
+    MP_PERL_CONTEXT_DECLARE;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
 
@@ -218,11 +182,11 @@ MP_CMD_SRV_DECLARE(modules)
 
         MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
 
-        MP_PERL_OVERRIDE_CONTEXT;
+        MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
             error = SvPVX(ERRSV);
         }
-        MP_PERL_RESTORE_CONTEXT;
+        MP_PERL_CONTEXT_RESTORE;
 
         return error;
     }
@@ -236,7 +200,7 @@ MP_CMD_SRV_DECLARE(modules)
 MP_CMD_SRV_DECLARE(requires)
 {
     MP_dSCFG(parms->server);
-    MP_PERL_DECLARE_CONTEXT;
+    MP_PERL_CONTEXT_DECLARE;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
 
@@ -251,11 +215,11 @@ MP_CMD_SRV_DECLARE(requires)
 
         MP_TRACE_d(MP_FUNC, "load PerlRequire %s\n", arg);
 
-        MP_PERL_OVERRIDE_CONTEXT;
+        MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_file(aTHX_ arg, FALSE)) {
             error = SvPVX(ERRSV);
         }
-        MP_PERL_RESTORE_CONTEXT;
+        MP_PERL_CONTEXT_RESTORE;
 
         return error;
     }
@@ -525,7 +489,7 @@ MP_CMD_SRV_DECLARE(perldo)
     ap_directive_t *directive = parms->directive;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
-    MP_PERL_DECLARE_CONTEXT;
+    MP_PERL_CONTEXT_DECLARE;
 #endif
 
     if (!(arg && *arg)) {
@@ -541,7 +505,7 @@ MP_CMD_SRV_DECLARE(perldo)
         return "init mod_perl vhost failed";
     }
 
-    MP_PERL_OVERRIDE_CONTEXT;
+    MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
 
     /* data will be set by a <Perl> section */
     if ((options = directive->data)) {
@@ -589,7 +553,7 @@ MP_CMD_SRV_DECLARE(perldo)
     }
 
     if (SvTRUE(ERRSV)) {
-        MP_PERL_RESTORE_CONTEXT;
+        MP_PERL_CONTEXT_RESTORE;
         return SvPVX(ERRSV);
     }
 
@@ -615,12 +579,12 @@ MP_CMD_SRV_DECLARE(perldo)
             char *error = SvTRUE(ERRSV) ? SvPVX(ERRSV) :
                 apr_psprintf(p, "<Perl> handler %s failed with status=%d",
                              handler->name, status);
-            MP_PERL_RESTORE_CONTEXT;
+            MP_PERL_CONTEXT_RESTORE;
             return error;
         }
     }
 
-    MP_PERL_RESTORE_CONTEXT;
+    MP_PERL_CONTEXT_RESTORE;
     return NULL;
 }
 
