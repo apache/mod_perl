@@ -10,6 +10,16 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+move the check that print/printf/puts/write/etc are called in the
+response phase into the functions themselves so 1) we can print a more
+useful error message 2) this check is not always needed in
+modperl_wbucket_write, when called internally, so we save some cycles.
+[Stas]
+
+add checks that print/printf/puts/write/etc are called in the response
+phase. move the check into the functions themselves so we can print a
+more useful error message [Stas]
+
 'make install' now installs mod_perl*h files under httpd's include
 tree [Stas]
 

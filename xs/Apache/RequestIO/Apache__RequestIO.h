@@ -40,6 +40,7 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
     MP_START_TIMES();
 
+    MP_CHECK_WBUCKET_INIT("$r->puts");
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
 
     MP_END_TIMES();
@@ -66,7 +67,8 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     mpxs_usage_va_1(r, "$r->print(...)");
     
     rcfg = modperl_config_req_get(r);
-    
+
+    MP_CHECK_WBUCKET_INIT("$r->print");
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
     
     mpxs_output_flush(r, rcfg);
@@ -93,6 +95,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     modperl_perl_do_sprintf(aTHX_ sv, items, MARK);
     bytes = SvCUR(sv);
 
+    MP_CHECK_WBUCKET_INIT("$r->printf");
     MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                            SvPVX(sv), &bytes));
     
@@ -126,6 +129,7 @@ apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
         wlen = bufsiz;
     }
 
+    MP_CHECK_WBUCKET_INIT("$r->write");
     MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                            buf+offset, &wlen));
     
@@ -144,6 +148,7 @@ int mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
 
     rcfg = modperl_config_req_get(r);
 
+    MP_CHECK_WBUCKET_INIT("$r->rflush");
     MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE));
 
     return APR_SUCCESS;

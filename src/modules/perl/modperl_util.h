@@ -56,7 +56,13 @@
             Perl_croak(aTHX_ modperl_apr_strerror(rc)); \
         } \
     } while (0)
-        
+
+/* check whether the response phase has been initialized already */
+#define MP_CHECK_WBUCKET_INIT(func) \
+    if (!rcfg->wbucket) { \
+        Perl_croak(aTHX_ func "can't be called before the response phase"); \
+    }
+
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
