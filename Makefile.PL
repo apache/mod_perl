@@ -460,7 +460,7 @@ run_tests : test_clean
 	$(PASSENV) \
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
 	t/TEST
-	cd ModPerl-Registry && make test
+	cd ModPerl-Registry && $(MAKE) test
 
 test :: pure_all run_tests test_clean
 EOF
