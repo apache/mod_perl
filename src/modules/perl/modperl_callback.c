@@ -292,11 +292,11 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
 {
 #ifdef USE_ITHREADS
     pTHX;
+    modperl_interp_t *interp = NULL;
 #endif
     MP_dSCFG(s);
     MP_dDCFG;
     modperl_handler_t **handlers;
-    modperl_interp_t *interp = NULL;
     MpAV *av = NULL;
     int i, status = OK;
     const char *desc = NULL;
