@@ -421,6 +421,7 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),
     MP_CMD_DIR_ITERATE2("PerlAddVar", add_var, "PerlAddVar"),
+    MP_CMD_SRV_RAW_ARGS("<Perl", perl, "NOT YET IMPLEMENTED"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
