@@ -44,6 +44,32 @@ sub new {
     }, $class;
 }
 
+sub mmn_eq {
+    my($class, $dir) = @_;
+    my $instsrc;
+    {
+	local @INC = grep { !/blib/ } @INC;
+	my $instdir;
+        for (@INC) { 
+            last if -d ($instdir = "$_/auto/Apache/include"); 
+        } 
+	$instsrc = $class->new(dir => $instdir);
+    }
+    my $targsrc = $class->new($dir ? (dir => $dir) : ()); 
+ 
+    my $inst_mmn = $instsrc->module_magic_number; 
+    my $targ_mmn = $targsrc->module_magic_number; 
+
+    unless ($inst_mmn && $targ_mmn) {
+	return 0;
+    }
+    if ($inst_mmn == $targ_mmn) {
+	return 1;
+    }
+    print "Installed MMN $inst_mmn does not match target $targ_mmn\n";
+    return 0;
+}
+
 sub default_dir {
     eval { require Apache::MyConfig };
     return $@ ? 
@@ -106,7 +132,7 @@ sub module_magic_number {
     #return $mcache{$d} if $mcache{$d};
     my $fh;
     for (qw(ap_mmn.h http_config.h)) {
-	last if $fh = FileHandle->new("$d/$_");
+	last if $fh = IO::File->new("$d/$_");
     }
     return 0 unless $fh;
 
