@@ -558,8 +558,8 @@ sub read_script {
 
 my %switches = (
    'T' => sub {
-       Apache::warn("-T switch is ignored, " .
-                    "enable with 'PerlSwitches -T' in httpd.conf\n")
+       Apache::ServerRec::warn("-T switch is ignored, enable " .
+                               "with 'PerlSwitches -T' in httpd.conf\n")
              unless ${^TAINT};
        "";
    },
