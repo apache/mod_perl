@@ -10,4 +10,5 @@ table.t
 util.t
 uuid.t
 os.t
+socket.t
 threadmutex.t
