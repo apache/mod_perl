@@ -18,6 +18,10 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+change Apache.xs/typemap so classes who inherit from the Apache class
+can invoke methods with a hash object, provided $hash->{_r} contains a
+request_rec object
+
 additions to experimental Perl directive support:
 -  a per-directory config object is now passed as the first argument
    to directive handlers registered via Apache::ExtUtils->xs_cmd_table

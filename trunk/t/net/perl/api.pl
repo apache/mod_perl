@@ -4,10 +4,18 @@ use Apache::test;
 use strict;
 
 Apache->register_cleanup(sub {0});
-my $r = Apache->request;
+my $r;
+
+if(Apache->module("Apache::Request")) {
+    $r = Apache::Request->new;
+}
+else {
+    $r = Apache->request;
+}
+
 %ENV = $r->cgi_env;
 
-my $tests = 36;
+my $tests = 39;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 2);
@@ -18,7 +26,7 @@ $r->content_type("text/plain");
 $r->content_languages([qw(en)]);
 $r->send_http_header;
 $r->print("1..$tests\n");
-
+print "r == $r\n";
 test ++$i, $r->filename eq $0;
 
 test ++$i, $ENV{GATEWAY_INTERFACE};
@@ -83,6 +91,8 @@ test ++$i, $c->local_addr;
 #Connection::user
 #Connection::auth_type
 
+test ++$i, $r->server_root_relative;
+
 my $s = $r->server;
 test ++$i, $s;
 test ++$i, $s->server_admin;
@@ -131,4 +141,24 @@ if($test_dir_config) {
 	$cfg->{SetFromScript} = [$0,$$];
     }
 }
+
+@My::Req::ISA = qw(Apache);
+
+my $hr = bless {
+    _r => $r,
+}, "My::Req";
+
+test ++$i, $hr->filename;
+delete $hr->{_r};
+my $uri;
+
+eval { 
+    $uri = $hr->uri;
+};
+test ++$i, not $uri;
+print $@ if $@;
+
+$r->exit;
+
+
 

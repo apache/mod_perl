@@ -21,13 +21,13 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - swap calling order of .conf handlers and push_handlers?
 
 - documentation:
-  + Ken Williams <ken@forum.swarthmore.edu>
-    list archive  http://forum.swarthmore.edu/epigone/modperl
-  + findmail archive http://www.findmail.com/
+  + m//o trap
+         "Jens Heunemann" <heunemann2@janet.de>
   + modperl.opensrc.org
   + PerlRun::handler
   + Frank's FAQ update: http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz
   + DONE
+  + SUID access http://www.courtesan.com/sudo/
 
 - rand() broken under win32!
            Jeff Baker <jeff@godzilla.tamu.edu>
@@ -36,6 +36,14 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - AIX 3.2.5, mod_perl and sfio97 problem
   Jeff Drumm <DRUMMJ@MAIL.MMC.ORG>
+
+- PerlOptions directive?
+           Jason Riedy <ejr@cise.ufl.edu>
+
+- read_client_block/read
+           Brian Slesinsky <bslesins@best.com>
+- read_client_block/fileupload
+         Ed Jordan <ed@fidalgo.net>
 
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some)
