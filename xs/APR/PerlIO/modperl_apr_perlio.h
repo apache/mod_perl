@@ -43,7 +43,9 @@ typedef enum {
     APR_PERLIO_HOOK_WRITE
 } apr_perlio_hook_e;
 
+#ifndef MP_SOURCE_SCAN
 void apr_perlio_init(pTHX);
+#endif
 
 /* The following functions can be used from other .so libs, they just
  * need to load APR::PerlIO perl module first
