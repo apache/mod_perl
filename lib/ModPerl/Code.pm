@@ -18,7 +18,7 @@ our @ISA = qw(Apache::Build);
 my %handlers = (
     Process    => [qw(ChildInit ChildExit)], #Restart PreConfig
     Files      => [qw(OpenLogs PostConfig)],
-    PerSrv     => [qw(PostReadRequest Trans)],
+    PerSrv     => [qw(PostReadRequest Trans MapToStorage)],
     PerDir     => [qw(HeaderParser
                       Access Authen Authz
                       Type Fixup Response Log Cleanup
@@ -217,7 +217,7 @@ sub generate_handler_hooks {
             my $ix = $self->{handler_index}->{$class}->[$i];
 
             if ($callback =~ m/modperl_callback_per_(dir|srv)/) {
-                if ($ix =~ m/AUTH|TYPE|TRANS/) {
+                if ($ix =~ m/AUTH|TYPE|TRANS|MAP/) {
                     $pass =~ s/MP_HOOK_RUN_ALL/MP_HOOK_RUN_FIRST/;
                 }
             }

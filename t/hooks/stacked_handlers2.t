@@ -20,6 +20,7 @@ plan tests => 1;
 
 my $expected = q!ran 2 PerlPostReadRequestHandler handlers
 ran 1 PerlTransHandler handlers
+ran 1 PerlMapToStorageHandler handlers
 ran 4 PerlHeaderParserHandler handlers
 ran 2 PerlAccessHandler handlers
 ran 2 PerlAuthenHandler handlers
