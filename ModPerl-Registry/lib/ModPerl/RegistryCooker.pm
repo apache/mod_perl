@@ -49,20 +49,23 @@ unless (defined $ModPerl::Registry::MarkLine) {
 # - see META's accross the file
 
 #########################################################################
-# debug flag constants
+# debug constants
 #
 #########################################################################
+use constant D_NONE    => 0;
 use constant D_ERROR   => 1;
 use constant D_WARN    => 2;
 use constant D_COMPILE => 4;
 use constant D_NOISE   => 8;
 
-# use ModPerl::RegistryCooker::DEBUG constant if defined elsewhere
-# before the compilation of this package: D_NOISE devel mode (prod==0)
-#use constant DEBUG => ModPerl::RegistryCooker->can('DEBUG') || D_NOISE;
-#use Apache::ServerUtil;
-#use constant DEBUG => defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG') ? Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG') : D_NOISE;
-use constant DEBUG => D_NOISE;
+# can override the debug level in httpd.conf with:
+#   PerlSetVar ModPerl::RegistryCooker::DEBUG 4
+# on the server level 
+use Apache::ServerUtil ();
+use constant DEBUG =>
+    defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+        ? Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+        : D_NONE;
 
 #########################################################################
 # object's array index's access constants
