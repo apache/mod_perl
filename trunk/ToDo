@@ -239,8 +239,6 @@ CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
             these things at some point
 ---------------------------------------------------------------------------
 
-merge cgi_env/subprocess_env
-
 change cgi_header_out and send_cgi_header to use new
 ap_scan_script_header_err_core function 
 

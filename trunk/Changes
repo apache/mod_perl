@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+deprecate $r->cgi_{env,var}, $r->subprocess_env can do all that and
+them some
+
 when rwrite() returns -1, break out of the loop, no longer checking
 r->connection->aborted 
 

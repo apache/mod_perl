@@ -13,11 +13,10 @@ else {
     $r = Apache->request;
 }
 
-%ENV = $r->cgi_env;
-$r->subprocess_env; #test void context
+
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 49;
+my $tests = 50;
 my $is_win32 = WIN32;
 ++$tests unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -29,7 +28,20 @@ my $i;
 $r->content_type("text/plain");
 $r->content_languages([qw(en)]);
 $r->send_http_header;
+
 $r->print("1..$tests\n");
+
+#backward compat
+%ENV = $r->cgi_env;
+my $envk = keys %ENV;
+#print "cgi_env ($envk):\n";
+#print map { "$_ = $ENV{$_}\n" } keys %ENV;
+
+$r->subprocess_env; #test void context
+$envk = keys %ENV;
+#print "subprocess_env ($envk):\n";
+#print map { "$_ = $ENV{$_}\n" } keys %ENV;
+
 test ++$i, $r->as_string;
 print $r->as_string;
 print "r == $r\n";
@@ -57,6 +69,7 @@ test ++$i, SERVER_VERSION =~ /mod_perl/;
 
 test ++$i, $r->last;
 test ++$i, $ENV{GATEWAY_INTERFACE};
+test ++$i, scalar $r->cgi_var('GATEWAY_INTERFACE');
 test ++$i, defined($r->seqno);
 test ++$i, $r->protocol;
 #hostname

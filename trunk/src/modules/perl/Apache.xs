@@ -1121,49 +1121,33 @@ log_error(...)
     if(sv) SvREFCNT_dec(sv);
 
 #methods for creating a CGI environment
-void
-cgi_env(r, ...)
-    Apache	r
-
-    PREINIT:
-    char *key = NULL;
-    I32 gimme = GIMME_V;
-
-    PPCODE:
-    if(items > 1) {
-	key = SvPV(ST(1),na);
-	if(items > 2) 
-	    table_set(r->subprocess_env, key, SvPV(ST(2),na));
-    }
-
-    if((gimme == G_ARRAY) || (gimme == G_VOID)) {
-        int i;
-        array_header *arr  = perl_cgi_env_init(r);
-        table_entry *elts = (table_entry *)arr->elts;
-        if(gimme == G_ARRAY) {
-	    for (i = 0; i < arr->nelts; ++i) {
-	        if (!elts[i].key) continue;
-	        PUSHelt(elts[i].key, elts[i].val, 0);
-	    }
-        }
-    }
-    else if(key) {
-	char *value = (char *)table_get(r->subprocess_env, key);
-	XPUSHs(value ? sv_2mortal((SV*)newSVpv(value, 0)) : &sv_undef);
-    }
-    else
-        croak("Apache->cgi_env: need another argument in scalar context"); 
-   
 
 SV *
 subprocess_env(r, key=NULL, ...)
     Apache    r
     char *key
 
+    ALIAS:
+    Apache::cgi_env = 1
+    Apache::cgi_var = 2
+
     PREINIT:
     I32 gimme = GIMME_V;
  
     CODE:
+    if(((ix = XSANY.any_i32) == 1) && (gimme == G_ARRAY)) {
+	/* backwards compat */
+	int i;
+	array_header *arr  = perl_cgi_env_init(r);
+	table_entry *elts = (table_entry *)arr->elts;
+	SP -= items;
+	for (i = 0; i < arr->nelts; ++i) {
+	    if (!elts[i].key) continue;
+	    PUSHelt(elts[i].key, elts[i].val, 0);
+	}
+	PUTBACK;
+	return;
+    }
     if((items == 1) && (gimme == G_VOID)) {
         (void)perl_cgi_env_init(r);
         XSRETURN_UNDEF;
