@@ -590,14 +590,16 @@ my @c_src_names = qw(interp tipool log config cmd options callback handler
                      gtop util io filter bucket mgv pcw global env cgi
                      perl perl_global perl_pp sys module svptr_table
                      const constants);
+my @h_src_names = qw(perl_unembed);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
 sub o_files { [map { "$_.o" } @c_names, @g_c_names] }
 sub o_pic_files { [map { "$_.lo" } @c_names, @g_c_names] }
 
-my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace);
-my @h_names = (@c_names, map { "modperl_$_" }
+my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace
+                                        largefiles);
+my @h_names = (@c_names, map { "modperl_$_" } @h_src_names,
                qw(types time apache_includes perl_includes));
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
