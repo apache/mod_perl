@@ -68,7 +68,7 @@ sub read {
     $_[1] ||= "";
     #$_[1] = " " x $bufsiz unless defined $_[1]; #XXX?
 
-    $r->hard_timeout("Apache->read");
+    $r->soft_timeout("Apache->read");
 
     while($bufsiz) {
 	$nrd = $r->read_client_block($buf, $bufsiz) || 0;
@@ -113,7 +113,7 @@ sub new_read {
 	return 0;
     }
 
-    $r->hard_timeout("Apache->read");
+    $r->soft_timeout("Apache->read");
     
     while($bufsiz) {
 	$nrd = $r->get_client_block($buf, $bufsiz) || 0;
@@ -425,7 +425,7 @@ This method is used to read data from the client,
 looping until it gets all of C<$bytes_to_read> or a timeout happens.
 
 In addition, this method sets a timeout before reading with
-C<$r-E<gt>hard_timeout>.
+C<$r-E<gt>soft_timeout>.
 
 =item $r->get_remote_host
 
@@ -909,7 +909,7 @@ and the client should be told not to cache it.
 =item $r->print( @list )
 
 This method sends data to the client with C<$r-E<gt>write_client>, but first
-sets a timeout before sending with C<$r-E<gt>hard_timeout>. This method is
+sets a timeout before sending with C<$r-E<gt>soft_timeout>. This method is
 called instead of CORE::print when you use print() in your mod_perl programs.
 
 This method treats scalar references specially. If an item in @list is a
