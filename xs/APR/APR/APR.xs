@@ -13,6 +13,8 @@
 
 MODULE = APR    PACKAGE = APR
 
+PROTOTYPES: disable
+
 BOOT:
     file = file; /* -Wall */
     apr_initialize();
