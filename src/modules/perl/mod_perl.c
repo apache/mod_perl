@@ -354,8 +354,12 @@ static apr_status_t modperl_sys_init(void)
     return APR_SUCCESS;
 }
 
+static int MP_init_done = 0;
+
 static apr_status_t modperl_sys_term(void *data)
 {
+    MP_init_done = 0;
+
     modperl_env_unload();
 
     modperl_perl_pp_unset_all();
@@ -365,8 +369,6 @@ static apr_status_t modperl_sys_term(void *data)
 #endif
     return APR_SUCCESS;
 }
-
-static int MP_init_done = 0;
 
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s)
