@@ -1,9 +1,12 @@
 #include "mod_perl.h"
 
+#undef getenv /* from XSUB.h */
+
 U32 MP_debug_level = 0;
 
 void modperl_trace(char *func, const char *fmt, ...)
 {
+#ifndef WIN32 /* XXX */
     va_list args;
 
     if (func) {
@@ -13,6 +16,7 @@ void modperl_trace(char *func, const char *fmt, ...)
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
+#endif
 }
 
 void modperl_trace_level_set(const char *level)
