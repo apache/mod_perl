@@ -87,15 +87,18 @@ post_configure();
 
 sub get_DEFINE {
 
+    my $opt_define = '';
+
     # do we have apr libs?
     # XXX: this define is really needed in xs/APR/APR/Makefile.PL, but this 
     # top-level Makefile.PL overrides MY::pasthru, and defines DEFINE= which
     # overrides any local definition, not sure what's the right fix, for
     # now just define it here (should it define PASTHRU_DEFINE instead?)
-    my $apr_bindir = $build->apr_bindir();
-    my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
-        map { qq{$apr_bindir/$_-config} } qw(apr apu);
-    my $opt_define = @apr_libs ? '-DMP_HAVE_APR_LIBS' : '';
+    if (my $apr_bindir = $build->apr_bindir()) {
+        my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
+            map { qq{$apr_bindir/$_-config} } qw(apr apu);
+        my $opt_define = '-DMP_HAVE_APR_LIBS' if @apr_libs;
+    }
 
     # preserve any DEFINE opts from outside and combine them with our
     # local DEFINE
@@ -189,7 +192,8 @@ sub configure {
     # we need to know where apr-config and apu-configs are
     # which sometimes aren't placed into the same dir with apxs/httpd
     # XXX: need to fix that for WIN32
-    unless (WIN32 || $build->apr_config_path) {
+    # XXX: when the source tree is used, there is not much use for apr-config
+    unless (WIN32 || $build->apr_config_path || $build->httpd_is_source_tree) {
         error "can't find 'apr-config', please pass " .
             "MP_APR_CONFIG=/full/path/to/apr-config to 'perl Makefile.PL'";
         exit 1;

@@ -73,14 +73,15 @@ sub ap_prefix_invalid {
     return '';
 }
 
-sub ap_prefix_is_source_tree {
+sub httpd_is_source_tree {
     my $self = shift;
 
-    return unless exists $self->{MP_AP_PREFIX};
+    return $self->{httpd_is_source_tree}
+        if exists $self->{httpd_is_source_tree};
 
-    my $prefix = $self->{MP_AP_PREFIX};
-
-    -d $prefix and -e "$prefix/CHANGES";
+    my $prefix = $self->{MP_AP_PREFIX} || $self->{dir};
+    $self->{httpd_is_source_tree} = 
+        defined $prefix && -d $prefix && -e "$prefix/CHANGES";
 }
 
 sub apxs {
@@ -744,14 +745,20 @@ sub apr_config_path {
     }
 
     if (!$self->{apr_config_path}) {
-        # APR_BINDIR was added only at httpd-2.0.46
-        my @tries = grep length,
-            map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
-        push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
-            if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
-#        # could be the source tree configured interactively
-#        push @tries, catdir $self->{dir}, "srclib", "apr"
-#            if exists $self->{dir} and -d $self->{dir};
+        my @tries = ();
+        if ($self->httpd_is_source_tree) {
+            push @tries, grep { -d $_ }
+                map catdir($_, "srclib", "apr"),
+                grep defined $_,
+                map $self->{$_}, qw(dir MP_AP_PREFIX);
+        }
+        else {
+            # APR_BINDIR was added only at httpd-2.0.46
+            push @tries, grep length,
+                map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
+            push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
+                if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
+        }
 
         for (@tries) {
             my $try = catfile $_, "apr-config";
@@ -762,9 +769,14 @@ sub apr_config_path {
 
     $self->{apr_config_path} ||= Apache::TestConfig::which('apr-config');
 
-    $self->{apr_bindir} = $self->{apr_config_path}
-        ? dirname $self->{apr_config_path}
-        : '';
+    # apr_bindir makes sense only if httpd/apr is installed, if we are
+    # building against the source tree we can't link against
+    # apr/aprutil libs
+    unless ($self->httpd_is_source_tree) {
+        $self->{apr_bindir} = $self->{apr_config_path}
+            ? dirname $self->{apr_config_path}
+            : '';
+        }
 
     $self->{apr_config_path};
 }
@@ -1427,7 +1439,7 @@ sub includes {
 
     push @inc, $self->mp_include_dir;
 
-    unless ($self->ap_prefix_is_source_tree) {
+    unless ($self->httpd_is_source_tree) {
         push @inc, $self->apr_includedir;
 
         my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
