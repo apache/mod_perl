@@ -11,6 +11,10 @@ config features:
 
 - setuid/gid before running any Perl code
 
+- implement PerlINC (or similar) as a nicer interface for the working
+  PerlSwitches -Mlib=/home/dev1/lib/perl, to set different @INC for
+  different virtual hosts.
+
 perl language features:
 ----------------------
 
@@ -92,3 +96,4 @@ apache features that would be neat for mod_perl:
 -----------------------------------------------
 
 - "autoload" hook for configuration directives
+
