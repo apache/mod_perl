@@ -180,6 +180,8 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
     scfg->interp_pool_cfg->max_requests = 2000;
 #endif /* USE_ITHREADS */
 
+    scfg->server = s;
+
     return scfg;
 }
 
@@ -205,9 +207,9 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_table_overlap_item(PassEnv);
  
     merge_item(threaded_mpm);
+    merge_item(server);
 
 #ifdef USE_ITHREADS
-    merge_item(mip);
     merge_item(interp_pool_cfg);
     merge_item(interp_scope);
 #else
@@ -239,6 +241,16 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
         merge_handlers(MpSrvMERGE_HANDLERS, handlers_connection[i]);
     }
+
+    if (modperl_is_running()) {
+        if (modperl_init_vhost(mrg->server, p, NULL) != OK) {
+            exit(1); /*XXX*/
+        }
+    }
+
+#ifdef USE_ITHREADS
+    merge_item(mip);
+#endif
 
     return mrg;
 }

@@ -179,6 +179,106 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     return perl;
 }
 
+int modperl_init_vhost(server_rec *s, apr_pool_t *p,
+                       server_rec *base_server)
+{
+    MP_dSCFG(s);
+    modperl_config_srv_t *base_scfg;
+    PerlInterpreter *base_perl;
+    PerlInterpreter *perl;
+
+#ifdef MP_TRACE
+    const char *vhost = modperl_server_desc(s, p);
+#endif
+
+    if (base_server == NULL) {
+        base_server = modperl_global_get_server_rec();
+    }
+
+    if (base_server == s) {
+        MP_TRACE_i(MP_FUNC, "skipping vhost init for base server %s\n",
+                   vhost);
+        return OK;
+    }
+
+    base_scfg = modperl_config_srv_get(base_server);
+
+#ifdef USE_ITHREADS
+    perl = base_perl = base_scfg->mip->parent->perl;
+#else
+    perl = base_perl = base_scfg->perl;
+#endif /* USE_ITHREADS */
+
+    if (!scfg) {
+        MP_TRACE_i(MP_FUNC, "server %s has no mod_perl config\n", vhost);
+        return OK;
+    }
+
+#ifdef USE_ITHREADS
+
+    if (scfg->mip) {
+        MP_TRACE_i(MP_FUNC, "server %s already initialized\n", vhost);
+        return OK;
+    }
+
+    if (!MpSrvENABLE(scfg)) {
+        MP_TRACE_i(MP_FUNC, "mod_perl disabled for server %s\n", vhost);
+        scfg->mip = NULL;
+        return OK;
+    }
+
+    PERL_SET_CONTEXT(perl);
+
+#endif /* USE_ITHREADS */
+
+    MP_TRACE_d_do(MpSrv_dump_flags(scfg, s->server_hostname));
+
+    /* if alloc flags is On, virtual host gets its own parent perl */
+    if (MpSrvPARENT(scfg)) {
+        perl = modperl_startup(s, p);
+        MP_TRACE_i(MP_FUNC,
+                   "created parent interpreter for VirtualHost %s\n",
+                   modperl_server_desc(s, p));
+    }
+    else {
+        if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
+            return HTTP_INTERNAL_SERVER_ERROR;
+        }
+        if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
+            return HTTP_INTERNAL_SERVER_ERROR;
+        }
+    }
+
+#ifdef USE_ITHREADS
+
+    /* if alloc flags is On or clone flag is On,
+     *  virtual host gets its own mip
+     */
+    if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
+        MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
+                   modperl_server_desc(s, p));
+        modperl_interp_init(s, p, perl);
+    }
+
+    /* if we allocated a parent perl, mark it to be destroyed */
+    if (MpSrvPARENT(scfg)) {
+        MpInterpBASE_On(scfg->mip->parent);
+    }
+
+    if (!scfg->mip) {
+        /* since mips are created after merge_server_configs()
+         * need to point to the base mip here if this vhost
+         * doesn't have its own
+         */
+        MP_TRACE_i(MP_FUNC, "%s mip inherited from %s\n",
+                   vhost, modperl_server_desc(base_server, p));
+        scfg->mip = base_scfg->mip;
+    }
+#endif  /* USE_ITHREADS */
+
+    return OK;
+}
+
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
@@ -209,60 +309,9 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 #endif
 
     for (s=base_server->next; s; s=s->next) {
-        MP_dSCFG(s);
-        PerlInterpreter *perl = base_perl;
-
-        PERL_SET_CONTEXT(perl);
-
-        MP_TRACE_d_do(MpSrv_dump_flags(scfg, s->server_hostname));
-
-        /* if alloc flags is On, virtual host gets its own parent perl */
-        if (MpSrvPARENT(scfg)) {
-            perl = modperl_startup(s, p);
-            MP_TRACE_i(MP_FUNC,
-                       "created parent interpreter for VirtualHost %s\n",
-                       modperl_server_desc(s, p));
+        if (modperl_init_vhost(s, p, base_server) != OK) {
+            exit(1); /*XXX*/
         }
-        else {
-            if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
-                exit(1);
-            }
-            if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
-                exit(1);
-            }
-        }
-
-#ifdef USE_ITHREADS
-
-        if (!MpSrvENABLE(scfg)) {
-            scfg->mip = NULL;
-            continue;
-        }
-
-        /* if alloc flags is On or clone flag is On,
-         *  virtual host gets its own mip
-         */
-        if (MpSrvPARENT(scfg) || MpSrvCLONE(scfg)) {
-            MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
-                       modperl_server_desc(s, p));
-            modperl_interp_init(s, p, perl);
-        }
-
-        /* if we allocated a parent perl, mark it to be destroyed */
-        if (MpSrvPARENT(scfg)) {
-            MpInterpBASE_On(scfg->mip->parent);
-        }
-
-        if (!scfg->mip) {
-            /* since mips are created after merge_server_configs()
-             * need to point to the base mip here if this vhost
-             * doesn't have its own
-             */
-            scfg->mip = base_scfg->mip;
-        }
-
-#endif /* USE_ITHREADS */
-
     }
 }
 
