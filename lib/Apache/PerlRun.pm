@@ -5,7 +5,7 @@ use vars qw($Debug);
 use Apache::Constants qw(:common &OPT_EXECCGI);
 
 BEGIN {
-    OPT_EXECCGI(); #preload, :common are alread pre-loaded
+    OPT_EXECCGI() if $ENV{MOD_PERL}; #preload, :common are alread pre-loaded
 }
 
 unless (defined $Apache::Registry::NameWithVirtualHost) {

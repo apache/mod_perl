@@ -14,10 +14,13 @@ unless(defined &import) {
     *import = \&Exporter::import;
 }
 
-sub AUTOLOAD {
-                    #why must we stringify first???
-    __AUTOLOAD() if "$Apache::Constants::AUTOLOAD"; 
-    goto &$Apache::Constants::AUTOLOAD;
+if ($ENV{MOD_PERL}) {
+    #outside of mod_perl this will recurse looking for __AUTOLOAD, grr
+    *AUTOLOAD  = sub {
+	#why must we stringify first???
+	__AUTOLOAD() if "$Apache::Constants::AUTOLOAD"; 
+	goto &$Apache::Constants::AUTOLOAD;
+    };
 }
 
 my %ConstNameCache = ();

@@ -4,7 +4,7 @@ use Apache ();
 use Apache::Constants qw(:common &OPT_EXECCGI);
 
 BEGIN {
-    OPT_EXECCGI(); #preload, :common are alread pre-loaded
+    OPT_EXECCGI() if $ENV{MOD_PERL}; #preload, :common are alread pre-loaded
 }
 
 $Apache::Registry::VERSION = '2.01';
