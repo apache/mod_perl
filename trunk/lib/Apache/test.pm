@@ -37,6 +37,7 @@ my $UA;
 
 eval {
     require LWP::UserAgent;
+    require URI::URL;
     $UA = LWP::UserAgent->new;
 };
 
