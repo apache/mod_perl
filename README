@@ -7,7 +7,7 @@ Apache:
   Static mod_perl:           Apache 2.0.51 - 2.0.52.
 
   Newer Apache versions may work with this version of mod_perl.  If
-  not, the cvs version likely will, which can be obtained from:
+  not, the svn version likely will, which can be obtained from:
   http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
 
 Perl: 
