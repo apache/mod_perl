@@ -524,6 +524,9 @@ $noedit_warning
 
 package $module;
 
+use strict;
+use warnings FATAL => 'all';
+
 $isa
 use $loader ();
 our \$VERSION = '0.01';
