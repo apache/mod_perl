@@ -264,14 +264,15 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
                        "created parent interpreter for VirtualHost %s\n",
                        modperl_server_desc(s, p));
         }
+        else {
+            if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
+                exit(1);
+            }
+            if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
+                exit(1);
+            }
+        }
 
-        if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
-            exit(1);
-        }
-        if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
-            exit(1);
-        }
-        
 #ifdef USE_ITHREADS
 
         if (!MpSrvENABLE(scfg)) {
