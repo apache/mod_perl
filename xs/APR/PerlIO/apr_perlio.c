@@ -3,6 +3,16 @@
 #include "mod_perl.h"
 #include "apr_perlio.h"
 
+/* XXX: modperl_perl_gensym() cannot be used outside of httpd */
+static SV *apr_perlio_gensym(pTHX_ char *pack)
+{
+    GV *gv = newGVgen(pack);
+    SV *rv = newRV((SV*)gv);
+    (void)hv_delete(gv_stashpv(pack, TRUE), 
+                    GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
+    return rv;
+}
+
 #if defined(PERLIO_LAYERS) && defined(PERLIO_K_MULTIARG) /* 5.7.2+ */
 
 /**********************************************************************
@@ -483,8 +493,7 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
 
 static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
 {
-    /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
-    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
+    SV *retval = apr_perlio_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
 
     gv_IOadd(gv); 
@@ -573,7 +582,7 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
                                 apr_perlio_hook_e type)
 {
     /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
-    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
+    SV *retval = apr_perlio_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
 
     gv_IOadd(gv); 
