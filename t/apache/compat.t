@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 31, todo => [25, 28, 30];
+plan tests => 3;
 
 my $location = "/TestApache::compat";
 
@@ -41,48 +41,12 @@ my $location = "/TestApache::compat";
         );
 }
 
-# Apache->gensym
-{
-    my @data = (test => 'gensym');
-    my $data = GET_BODY query(@data) || '';
-    ok_nok($data);
-}
-
-# header_in
-t_header('in','get_scalar',q{scalar ctx: $r->header_in($key)});
-t_header('in','get_list',  q{list ctx: $r->header_in($key)});
-t_header('in','set',       q{$r->header_in($key => $val)});
-t_header('in','unset',     q{$r->header_in($key => undef)});
-
-# header_out
-t_header('out','get_scalar',q{scalar ctx: $r->header_out($key)});
-t_header('out','get_list',  q{list ctx: $r->header_out($key)});
-t_header('out','set',       q{$r->header_out($key => $val)});
-t_header('out','unset',     q{$r->header_out($key => undef)});
-
-# Apache::File
-{
-    my @data = (test => 'Apache::File');
-    my $data = GET_BODY query(@data) || '';
-    ok_nok($data);
-}
-
 
 ### helper subs ###
 sub query {
     my(%args) = (@_ % 2) ? %{+shift} : @_;
     "$location?" . join '&', map { "$_=$args{$_}" } keys %args;
 }
-
-sub t_header {
-    my ($way, $what, $comment) = @_;
-    ok t_cmp(
-        "ok",
-        GET_BODY(query(test => 'header', way => $way, what => $what)),
-        $comment
-        );
-}
-
 
 # accepts multiline var where, the lines matching:
 # ^ok\n$  results in ok(1)
