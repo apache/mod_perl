@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+$bb->cleanup is no more segfaulting (was segfaulting due to a broken
+prototype in APR, and consequently invalid XS glue code) [Randy Kobes,
+Stas]
+
 make sure that ABSPERLRUN and ABSPERLRUN are defined in
 src/modules/perl/Makefile (needed by win32 build) [Stas]
 
