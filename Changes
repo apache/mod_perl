@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Perl handlers are now guaranteed to run before core C handlers for
+all request phases.  [Geoffrey Young]
+
 Fix the STDIN/OUT overriding process to handle gracefully cases, when
 either or both are closed/bogus (the problem was only with useperlio
 enabled perl) [Stas]
