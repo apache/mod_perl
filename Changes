@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.28_01-dev
+
 =item 1.28 - July 2, 2003
 
 Apache::FakeRequest now isa Apache so code that is carefull about
