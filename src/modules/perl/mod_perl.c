@@ -202,10 +202,6 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
         return;
     }
 
-    modperl_perl_pp_set_all();
-
-    modperl_env_init();
-
     base_perl = modperl_startup(base_server, p);
 
 #ifdef USE_ITHREADS
@@ -330,6 +326,10 @@ static void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
     modperl_tls_create_request_rec(pconf);
 }
 
+/*
+ * modperl_sys_{init,term} are things that happen
+ * once per-parent process, not per-interpreter
+ */
 static apr_status_t modperl_sys_init(void)
 {
 #if 0 /*XXX*/
@@ -345,11 +345,22 @@ static apr_status_t modperl_sys_init(void)
     }
 #endif
 #endif
+
+    /* modifies PL_ppaddr */
+    modperl_perl_pp_set_all();
+
+    /* modifies PL_vtbl_env{elem} */
+    modperl_env_init();
+
     return APR_SUCCESS;
 }
 
 static apr_status_t modperl_sys_term(void *data)
 {
+    modperl_env_unload();
+
+    modperl_perl_pp_unset_all();
+
 #if 0 /*XXX*/
     PERL_SYS_TERM();
 #endif
@@ -362,7 +373,7 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     apr_pool_create(&server_pool, pconf);
 
     modperl_sys_init();
-    apr_pool_cleanup_register(server_pool, NULL,
+    apr_pool_cleanup_register(pconf, NULL,
                               modperl_sys_term, apr_pool_cleanup_null);
     modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
