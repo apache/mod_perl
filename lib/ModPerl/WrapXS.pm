@@ -150,7 +150,7 @@ sub get_value {
 
     if ($e->{class} eq 'PV') {
         if (my $pool = $e->{pool}) {
-            $pool =~ s/^\./obj->/;
+            $pool .= '(obj)';
             $val = "((ST(1) == &PL_sv_undef) ? NULL :
                     (SvPOK(ST(1)) ?
                     apr_pstrndup($pool, SvPVX(ST(1)), SvCUR(ST(1))) :

@@ -14,11 +14,19 @@
 #   define strncaseEQ(s1,s2,l) (!strncasecmp(s1,s2,l))
 #endif
 
+#ifndef SvCLASS
+#define SvCLASS(o) HvNAME(SvSTASH(SvRV(o)))
+#endif
+
+#define SvObjIV(o) SvIV((SV*)SvRV(o))
+
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
 MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj);
 
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
+
+apr_pool_t *modperl_sv2pool(pTHX_ SV *obj);
 
 #define modperl_bless_request_rec(r) \
 modperl_ptr2obj("Apache", r)
