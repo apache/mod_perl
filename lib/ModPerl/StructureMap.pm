@@ -2,8 +2,7 @@ package ModPerl::StructureMap;
 
 use strict;
 use warnings FATAL => 'all';
-use Apache::StructureTable ();
-use ModPerl::MapUtil ();
+use ModPerl::MapUtil qw(structure_table);
 
 our @ISA = qw(ModPerl::MapBase);
 
@@ -16,7 +15,7 @@ sub generate {
     my $self = shift;
     my $map = $self->get;
 
-    for my $entry (@$Apache::StructureTable) {
+    for my $entry (@{ structure_table() }) {
         my $type = $entry->{type};
         my $elts = $entry->{elts};
 
@@ -42,7 +41,7 @@ sub check {
 
     my @missing;
 
-    for my $entry (@$Apache::StructureTable) {
+    for my $entry (@{ structure_table() }) {
         my $type = $entry->{type};
 
         for my $name (map $_->{name}, @{ $entry->{elts} }) {
@@ -59,7 +58,7 @@ sub check_exists {
     my $self = shift;
 
     my %structures;
-    for my $entry (@$Apache::StructureTable) {
+    for my $entry (@{ structure_table() }) {
         $structures{ $entry->{type} } = { map {
             $_->{name}, 1
         } @{ $entry->{elts} } };
