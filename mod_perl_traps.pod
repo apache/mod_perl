@@ -197,6 +197,29 @@ If you wish to use a module that is normally linked static with your
 Perl, it must be listed in static_ext in Perl's Config.pm to be linked
 with httpd during the mod_perl build.
 
+=item Can't load '$Config{sitearchexp}/auto/Foo/Foo.so' for module Foo...
+
+When starting httpd some people have reported seeing an error along
+the lines of:
+
+ [Thu Jul  9 17:33:42 1998] [error] Can't load
+ '/usr/local/ap/lib/perl5/site_perl/sun4-solaris/auto/DBI/DBI.so' for
+ module DBI: ld.so.1: src/httpd: fatal: relocation error: file
+ /usr/local/ap/lib/perl5/site_perl/sun4-solaris/auto/DBI/DBI.so: symbol
+ Perl_sv_undef: referenced symbol not found at
+ /usr/local/ap/lib/perl5/sun4-solaris/5.00404/DynaLoader.pm line 166. 
+
+Or similar for the IO module or whatever dynamic module mod_perl tries
+to pull in first.  The solution is to re-configure, re-build and
+re-install Perl and dynamic modules with the following flags when
+Configure asks for "additional LD flags":
+
+ -Xlinker --export-dynamic 
+
+or
+
+ -Xlinker -E
+
 =back
 
 
