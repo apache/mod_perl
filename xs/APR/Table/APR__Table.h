@@ -143,7 +143,7 @@ static XS(MPXS_apr_table_get)
             XSRETURN_UNDEF;
         }
         
-        if(GIMME_V == G_SCALAR) {
+        if (GIMME_V == G_SCALAR) {
             const char *val = apr_table_get(t, key);
 
             if (val) {
