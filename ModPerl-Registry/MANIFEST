@@ -17,4 +17,4 @@ t/cgi-bin/local-conf.pl
 t/cgi-bin/not_executable.pl
 t/cgi-bin/require.pl
 t/conf/extra.conf.in
-t/htdocs/index.html
+
