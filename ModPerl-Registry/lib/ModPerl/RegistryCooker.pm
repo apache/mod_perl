@@ -173,7 +173,6 @@ sub run {
     my $r       = $self->{REQ};
     my $package = $self->{PACKAGE};
 
-    $self->set_script_name;
     $self->chdir_file;
 
     my $cv = \&{"$package\::handler"};
@@ -356,10 +355,13 @@ sub convert_script_to_compiled_handler {
 
     $self->strip_end_data_segment;
 
+    my $script_name = $self->get_script_name || $0;
+
     my $eval = join '',
                     'package ',
                     $self->{PACKAGE}, ";",
-                    "sub handler {\n",
+                    "sub handler {",
+                    "local \$0 = '$script_name';",
                     $line,
                     ${ $self->{CODE} },
                     "\n}"; # last line comment without newline?
@@ -568,15 +570,15 @@ sub rewrite_shebang {
 }
 
 #########################################################################
-# func: set_script_name
-# dflt: set_script_name
-# desc: set $0 to the script's name
+# func: get_script_name
+# dflt: get_script_name
+# desc: get the script's name to set into $0
 # args: $self - registry blessed object
-# rtrn: nothing
+# rtrn: path to the script's filename
 #########################################################################
 
-sub set_script_name {
-    *0 = \(shift->{FILENAME});
+sub get_script_name {
+    shift->{FILENAME};
 }
 
 #########################################################################
