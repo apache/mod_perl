@@ -8,6 +8,8 @@ my $param_qr = qr([\s=]+);
 use constant VERBOSE => 1;
 use constant UNKNOWN_FATAL => 2;
 
+use File::Spec;
+
 sub init {
     my($self, $build) = @_;
 
@@ -54,6 +56,11 @@ sub parse {
                 my $usage = usage();
                 die "Unknown Option: $key\nUsage:\n$usage";
             }
+			
+            if($key eq 'MP_APXS') {
+                $val = File::Spec->canonpath(File::Spec->rel2abs($val));
+            }
+
             if ($self->{$key}) {
                 $self->{$key} .= ' ';
             }
