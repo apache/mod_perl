@@ -20,6 +20,19 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
 #define modperl_config_srv_argv_push(arg) \
     *(const char **)apr_array_push(scfg->argv) = arg
 
+apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r);
+
+apr_status_t modperl_config_req_cleanup(void *data);
+
+#define modperl_config_req_cleanup_register(r, rcfg) \
+    if (r && !MpReqCLEANUP_REGISTERED(rcfg)) { \
+        apr_pool_cleanup_register(r->pool, \
+                                  (void*)r, \
+                                   modperl_config_req_cleanup, \
+                                   apr_pool_cleanup_null); \
+        MpReqCLEANUP_REGISTERED_On(rcfg); \
+    }
+
 void *modperl_get_perl_module_config(ap_conf_vector_t *cv);
 void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 

@@ -222,6 +222,14 @@ apr_status_t modperl_interp_unselect(void *data)
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
 
+    if (interp->request) {
+        /* ithreads + a threaded mpm + PerlInterpScope handler */
+        request_rec *r = interp->request;
+        MP_dRCFG;
+        modperl_config_request_cleanup(interp->perl, r);
+        MpReqCLEANUP_REGISTERED_Off(rcfg);
+    }
+
     MpInterpIN_USE_Off(interp);
     MpInterpPUTBACK_Off(interp);
 
@@ -351,6 +359,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     if (scope == MP_INTERP_SCOPE_HANDLER) {
         /* caller is responsible for calling modperl_interp_unselect() */
+        interp->request = r;
+        MpReqCLEANUP_REGISTERED_On(rcfg);
         MpInterpPUTBACK_On(interp);
     }
     else {
