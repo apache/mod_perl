@@ -348,7 +348,7 @@ sub ModPerl::BuildMM::MY::libscan {
         return unless $apr_config->{HAS_THREADS};
     }
 
-    return '' if $path =~ m/\.(pl|cvsignore)$/;   ### fixme after we remove .cvsignore files
+    return '' if $path =~ m/\.pl$/;
     return '' if $path =~ m/~$/;
     return '' if $path =~ /\B\.svn\b/;
 
