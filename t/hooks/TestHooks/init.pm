@@ -56,6 +56,7 @@ sub response {
 __DATA__
 PerlInitHandler TestHooks::init::second
 <Base>
+    PerlModule      TestHooks::init
     PerlInitHandler TestHooks::init::first
 </Base>
 PerlResponseHandler TestHooks::init

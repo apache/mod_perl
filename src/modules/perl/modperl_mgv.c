@@ -265,53 +265,8 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             }
         }
         else {
-            I32 errlen = 0;
-            char *errpv;
-            int ix = ap_rind(name, ':');
-            stash = Nullhv;
-
-            /* last guess: Perl*Handler is a fully qualified subroutine name
-             * but its module was not loaded
-             * XXX: This guess may incorrectly pick the wrong module,
-             * e.g. if Apache::Foo is not found, Apache will be picked
-             */ 
-            if (ix != -1) {
-                /* split Foo::Bar::baz into Foo::Bar, baz */
-                char *try_package = apr_pstrndup(p, name, ix-1);
-                handler_name = apr_pstrdup(p, name + ix + 1);
-
-                /* if this fails we want to log $@ from failure above */
-                errlen = SvCUR(ERRSV);
-                errpv  = apr_pstrndup(p, SvPVX(ERRSV), errlen);
-
-                if (modperl_require_module(aTHX_ try_package, FALSE)) {
-                    MP_TRACE_h(MP_FUNC, "loaded %s package\n", try_package);
-                    stash = gv_stashpv(try_package, FALSE);
-                }
-                else {
-                    /* however, if require has failed and the error
-                     * wasn't "Can't locate ... in @INC", we did find
-                     * the package, and there is a problem with it
-                     */
-                    if (!(strnEQ(SvPVX(ERRSV), "Can't locate", 12)
-                        && ap_strstr(SvPVX(ERRSV), "in @INC"))) {
-                        errlen = SvCUR(ERRSV);
-                        errpv  = apr_pstrndup(p, SvPVX(ERRSV), errlen);
-                    }
-                }
-            }
-
-            if (!stash) {
-                if (errlen) {
-                    sv_setpvn(ERRSV, errpv, errlen);
-                }
-                if (logfailure) {
-                    (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
-                                        NULL, NULL);
-                }
-                MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
-                return 0;
-            }
+            MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
+            return 0;
         }
     }
 

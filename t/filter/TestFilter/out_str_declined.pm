@@ -75,6 +75,7 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule              TestFilter::out_str_declined
 PerlResponseHandler     TestFilter::out_str_declined::response
 PerlOutputFilterHandler TestFilter::out_str_declined::decline
 PerlOutputFilterHandler TestFilter::out_str_declined::black_hole

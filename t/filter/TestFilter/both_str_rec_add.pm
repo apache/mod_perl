@@ -58,8 +58,9 @@ sub handler {
 1;
 __DATA__
 <NoAutoConfig>
+    PerlModule TestFilter::both_str_rec_add
     <Location /TestFilter::both_str_rec_add>
-        SetHandler modperl 
+        SetHandler modperl
         PerlHeaderParserHandler TestFilter::both_str_rec_add::header_parser
         PerlResponseHandler     TestFilter::both_str_rec_add
     </Location>

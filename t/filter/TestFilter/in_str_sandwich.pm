@@ -48,4 +48,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::in_str_sandwich
 PerlResponseHandler TestFilter::in_str_sandwich::response

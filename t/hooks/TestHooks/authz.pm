@@ -40,6 +40,7 @@ __DATA__
 require user dougm
 AuthType Basic
 AuthName simple
+PerlModule          TestHooks::authz
 PerlAuthenHandler   TestHooks::authz::auth_any
 PerlResponseHandler Apache::TestHandler::ok1
 SetHandler modperl

@@ -34,4 +34,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::in_str_lc
 PerlResponseHandler TestFilter::in_str_lc::response

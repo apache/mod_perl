@@ -65,4 +65,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::in_str_consume
 PerlResponseHandler TestFilter::in_str_consume::response

@@ -66,4 +66,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::out_str_api
 PerlResponseHandler TestFilter::out_str_api::response

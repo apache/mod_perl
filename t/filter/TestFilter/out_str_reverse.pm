@@ -59,6 +59,7 @@ sub response {
 1;
 __DATA__
 <Base>
+    PerlModule TestFilter::out_str_reverse
     <LocationMatch "/filter/reverse.txt">
         PerlOutputFilterHandler TestFilter::out_str_reverse
     </LocationMatch>

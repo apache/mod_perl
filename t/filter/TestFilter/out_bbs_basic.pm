@@ -65,4 +65,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::out_bbs_basic
 PerlResponseHandler TestFilter::out_bbs_basic::response
