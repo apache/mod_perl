@@ -6829,6 +6829,54 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_APR__Socket_opt_get',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_socket_t *',
+        'name' => 'socket'
+      },
+      {
+        'type' => 'apr_int32_t',
+        'name' => 'opt'
+      },
+    ]
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_APR__Socket_opt_set',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_socket_t *',
+        'name' => 'socket'
+      },
+      {
+        'type' => 'apr_int32_t',
+        'name' => 'opt'
+      },
+      {
+        'type' => 'apr_int32_t',
+        'name' => 'val'
+      },
+    ]
+  },
+  {
     'return_type' => '',
     'name' => 'mpxs_apr_sockaddr_ip_get',
     'args' => [

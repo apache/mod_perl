@@ -58,8 +58,10 @@ MODULE=APR::Socket
 !apr_socket_addr_get
 !apr_socket_data_get
 !apr_socket_data_set
- apr_socket_opt_get
- apr_socket_opt_set
+-apr_socket_opt_get
+-apr_socket_opt_set
+ mpxs_APR__Socket_opt_get
+ mpxs_APR__Socket_opt_set
  apr_socket_timeout_get | mpxs_ | ...
  apr_socket_timeout_set
 -apr_socket_sendfile

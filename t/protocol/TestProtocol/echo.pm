@@ -15,13 +15,25 @@ sub handler {
     my Apache::Connection $c = shift;
     my APR::Socket $socket = $c->client_socket;
 
-    my $buff;
-
     # make sure the socket is in the blocking mode for recv().
     # on some platforms (e.g. OSX/Solaris) httpd hands us a
     # non-blocking socket
-    $socket->opt_set(APR::SO_NONBLOCK, 0);
+    my $nonblocking = $socket->opt_get(APR::SO_NONBLOCK);
+    die "failed to \$socket->opt_get: $ARP::err"
+        unless defined $nonblocking;
+    if ($nonblocking) {
+        my $prev_value = $socket->opt_set(APR::SO_NONBLOCK => 0);
+        die "failed to \$socket->opt_set: $ARP::err"
+            unless defined $prev_value;
 
+        # test that we really are in the non-blocking mode
+        $nonblocking = $socket->opt_get(APR::SO_NONBLOCK);
+        die "failed to \$socket->opt_get: $ARP::err"
+            unless defined $nonblocking;
+        die "failed to set non-blocking mode" if $nonblocking;
+    }
+
+    my $buff;
     for (;;) {
         my($rlen, $wlen);
         $rlen = BUFF_LEN;
