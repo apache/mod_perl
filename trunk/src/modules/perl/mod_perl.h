@@ -460,6 +460,17 @@ if((add->flags & f) || (base->flags & f)) \
 #define HAS_MMN_132 HAS_MMN(MMN_132)
 #define HAS_MMN_136 HAS_MMN(MMN_136)
 
+#define HAS_CONTEXT MODULE_MAGIC_AT_LEAST(MMN_136,2)
+#if HAS_CONTEXT
+#define CAN_SELF_BOOT_SECTIONS	(PERL_SECTIONS_SELF_BOOT)
+#define SECTION_ALLOWED		OR_ALL
+#define USABLE_CONTEXT		parms->context
+#else
+#define CAN_SELF_BOOT_SECTIONS	((parms->path==NULL)&&PERL_SECTIONS_SELF_BOOT)
+#define SECTION_ALLOWED		RSRC_CONF
+#define USABLE_CONTEXT		parms->server->lookup_defaults
+#endif
+
 #define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
 
 #if MODULE_MAGIC_NUMBER < MMN_130
@@ -1122,9 +1133,6 @@ void perl_stdout2client(request_rec *r);
 #define require_Apache(s) \
     perl_require_module("Apache", s)
 
-#define defined_Apache__ReadConfig \
-SvTRUE(perl_eval_pv("grep {defined %$_ or defined @$_ or defined $$_} keys %Apache::ReadConfig::;",TRUE))
-
 char *mod_perl_auth_name(request_rec *r, char *val);
 
 module *perl_get_module_ptr(char *name, int len);
@@ -1145,10 +1153,9 @@ CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv);
 CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv);
-void perl_add_file_conf (server_rec *s, void *url_config);
-void perl_handle_command(cmd_parms *cmd, void *dummy, char *line);
-void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *dummy);
-void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *dummy);
+void perl_handle_command(cmd_parms *cmd, void *config, char *line);
+void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config);
+void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *config);
 
 void perl_tainting_set(server_rec *s, int arg);
 CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg);

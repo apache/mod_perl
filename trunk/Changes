@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+<Perl> sections now use 1.3.7-dev's cmd_parms->context to cure many
+known, old bugs, e.g. @DirectoryIndex outside of %Location, .htaccess
+and many more  [Salvador Ortiz Garcia <sog@msg.com.mx>]
+
 fix bug where top-level PerlSetEnv's would be lost after 1st request
 
 fix bug in Apache::ModuleConfig->get [Dave Hayes <dave@jetcafe.org>]

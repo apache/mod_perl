@@ -7,8 +7,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - modules/file #6
 
-- <Perl> patch from Salvador
-
 - Salvador's patch to avoid %ENV setup on subrequests
 
 - <Perl> patch for *Match from Craig Lien <lien@rrnet.com>
@@ -22,8 +20,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - $r->set_handlers(PerlAuthenHandler => undef) stomps other config!?
 
 - fix $Apache::Server::Starting under dso
-
-- push_handlers recursion bug spotted by Andreas
 
 - PerlSetEnv gets lost?
 
@@ -92,12 +88,6 @@ Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
  Was:           libs='-lsocket -lnsl -ldb -ldl -lm -lc -lcrypt'
  SunOS mailhost.cmc.net 5.5 Generic_103093-17 sun4m sparc sun4m
              brian moore <bem@cmc.net>
-
-- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992, e.g.:
-  $User = "www";
-  $ServerType = "standalone";
-  @ScriptAlias = [('/cgi-bin','/the/path')];
-  @Alias = [('/web/','/usr/home/web')];
 
 - perl_config should not av_shift ARRAY refs from
   %Apache::ReadConfig::
