@@ -377,6 +377,18 @@ static int getsfunc_SV(char *buf, int bufsiz, void *param)
 }
 #endif /*MODULE_MAGIC_NUMBER*/
 
+static void rwrite_neg_trace(request_rec *r)
+{
+#ifdef HAVE_APACHE_V_130
+    ap_log_error(APLOG_MARK, APLOG_DEBUG, r->server,
+#else
+    fprintf(stderr,
+#endif
+		 "mod_perl: rwrite returned -1 (fd=%d, B_EOUT=%d)",
+		 r->connection->client->fd, 
+		 r->connection->client->flags & B_EOUT);
+}
+
 MODULE = Apache  PACKAGE = Apache   PREFIX = mod_perl_
 
 PROTOTYPES: DISABLE
@@ -995,18 +1007,16 @@ write_client(r, ...)
 	        buffer += HUGE_STRING_LEN;
 	    }
 	    if(sent < 0) {
-	        mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
-                if(r->connection->aborted) break;
-                else continue;   
+		rwrite_neg_trace(r);
+		break;
 	    }
 	    len -= sent;
 	    RETVAL += sent;
         }
 #else
         if((sent = rwrite(buffer, len, r)) < 0) {
-	    mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
-	    if(r->connection->aborted) break;
-	    else continue;
+	    rwrite_neg_trace(r);
+	    break;
         }
         RETVAL += sent;
 #endif
