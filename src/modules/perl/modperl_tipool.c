@@ -239,7 +239,7 @@ modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
                        tipool->size, tipool->cfg->max);
             if (tipool->func->tipool_rgrow) {
                 void * item =
-                    (*tipool->func->tipool_sgrow)(tipool, tipool->data);
+                    (*tipool->func->tipool_rgrow)(tipool, tipool->data);
 
                 modperl_tipool_add(tipool, item);
             }
@@ -338,7 +338,7 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
                              tipool->cfg->min_spare)) {
             if (tipool->func->tipool_rgrow) {
                 void *item =
-                    (*tipool->func->tipool_sgrow)(tipool,
+                    (*tipool->func->tipool_rgrow)(tipool,
                                                   tipool->data);
 
                 MP_TRACE_i(MP_FUNC,
