@@ -13,6 +13,7 @@ use ExtUtils::Embed ();
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
 use Apache::TestTrace;
+use Apache::TestConfig ();
 
 use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant HAS_ITHREADS =>
@@ -96,7 +97,7 @@ sub apxs {
         #these extra tries are for things built outside of mod_perl
         #e.g. libapreq
         push @trys,
-        which('apxs'),
+        Apache::TestConfig::which('apxs'),
         '/usr/local/apache/bin/apxs';
     }
 
@@ -133,12 +134,6 @@ sub apxs_cflags {
     my $cflags = __PACKAGE__->apxs('-q' => 'CFLAGS');
     $cflags =~ s/\"/\\\"/g;
     $cflags;
-}
-
-sub which {
-    foreach (map { File::Spec->catfile($_, $_[0]) } File::Spec->path) {
-	return $_ if -x;
-    }
 }
 
 #--- Perl Config stuff ---
