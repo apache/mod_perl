@@ -195,7 +195,7 @@ sub ModPerl::BuildMM::MY::postamble {
     my $pm_to_blib = $ExtUtils::MakeMaker::VERSION >= 6.22
         ? "pm_to_blib.ts"
         : "pm_to_blib";
-    my @target = ('glue_pods: pm_to_blib subdirs linkext');
+    my @target = ("glue_pods: $pm_to_blib subdirs linkext");
 
     if (-d $doc_root) {
         my $build = build_config();
