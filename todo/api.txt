@@ -68,9 +68,6 @@ but does not have the performance benefits of ap_send_fd()
 however, $r->sendfile is a new function that opens the file for you
 and calls ap_send_fd() underneath.
 
-$r->print:
-does not yet honor $|
-
 $r->{hard,reset,soft,kill}_timeout:
 do not exist in 2.0.  should be deprecated.  consider adding noops in
 Apache::compat
