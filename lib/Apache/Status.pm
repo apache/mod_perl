@@ -15,13 +15,7 @@
 package Apache::Status;
 
 use strict;
-#use warnings; #XXX FATAL => 'all'; 
-no warnings; # 'redefine';
-
-# XXX: something is wrong with bleadperl, it warns about redefine
-# warnings, when no warnings 'redefine' is set (test with 5.8.0). even
-# when used with 'no warnings' it still barks on redefinining the
-# constants
+use warnings FATAL => 'all';
 
 use mod_perl 1.99;
 
