@@ -216,10 +216,6 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
     if(vars && (vars->nelts > 100000)) {
 	fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
     }
-    else {
-	new->vars = overlay_tables(p, add->vars, base->vars);
-    }
-
     new->vars = overlay_tables(p, add->vars, base->vars);
     new->env = overlay_tables(p, add->env, base->env);
 
@@ -331,6 +327,7 @@ void *perl_merge_server_config (pool *p, void *basev, void *addv)
         add->FreshRestart : base->FreshRestart;
     new->PerlOpmask = add->PerlOpmask ?
         add->PerlOpmask : base->PerlOpmask;
+    new->vars = overlay_tables(p, add->vars, base->vars);
 
 #ifdef PERL_POST_READ_REQUEST
     new->PerlPostReadRequestHandler = add->PerlPostReadRequestHandler ?
@@ -372,6 +369,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
     cls->PerlWarn = 0;
     cls->FreshRestart = 0;
     cls->PerlOpmask = NULL;
+    cls->vars = make_table(p, 5); 
     PERL_POST_READ_REQUEST_CREATE(cls);
     PERL_TRANS_CREATE(cls);
     PERL_CHILD_INIT_CREATE(cls);
@@ -717,10 +715,17 @@ CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg) {
     return NULL;
 }
 
-CHAR_P perl_cmd_var(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val)
+CHAR_P perl_cmd_var(cmd_parms *cmd, void *config, char *key, char *val)
 {
-    table_set(rec->vars, key, val);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_var: '%s' = '%s'\n", key, val));
+    if (cmd->path) {
+        perl_dir_config *rec = (perl_dir_config *) config;
+        table_set(rec->vars, key, val);
+    }
+    else {
+        dPSRV(cmd->server);
+        table_set(cls->vars, key, val);
+    }
     return NULL;
 }
 

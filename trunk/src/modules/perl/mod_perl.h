@@ -986,6 +986,7 @@ typedef struct {
     PERL_CMD_TYPE *PerlChildExitHandler;
     PERL_CMD_TYPE *PerlRestartHandler;
     char *PerlOpmask;
+    table *vars;
 } perl_server_config;
 
 typedef struct {
@@ -1169,7 +1170,7 @@ void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *conf
 void perl_tainting_set(server_rec *s, int arg);
 CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg);
-CHAR_P perl_cmd_var(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val);
+CHAR_P perl_cmd_var(cmd_parms *cmd, void *config, char *key, char *val);
 CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val);
 CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg);
 CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg);

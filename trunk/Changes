@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add per-server PerlSetVar variables, accessed using
+Apache->server->dir_config or $r->server->dir_config.
+$r->dir_config merges them with per-directory variables.
+[Eric Cholet <cholet@logilune.com>]
+
 documentation type [David Harris <dharris@drh.net>]
 
 add $r->server->uid and $r->server->gid [Eric Cholet <cholet@logilune.com>]
