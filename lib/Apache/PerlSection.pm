@@ -7,6 +7,10 @@ our $VERSION = '0.01';
 
 use Apache::CmdParms ();
 use Apache::Directive ();
+use APR::Table ();
+use Apache::Server ();
+use Apache::ServerUtil ();
+use Apache::Const -compile => qw(OK);
 
 use constant SPECIAL_NAME => 'PerlConfig';
 
