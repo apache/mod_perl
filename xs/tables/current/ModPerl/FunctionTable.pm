@@ -5632,6 +5632,16 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_finfo_t *',
+    'name' => 'mpxs_Apache__RequestRec_finfo',
+    'args' => [
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_Apache__RequestRec_pnotes',
     'args' => [

@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+add access to $r->finfo() and related APR::Finfo methods,
+such as $r->finfo->size(), $r->finfo->mtime(), and
+APR::Finfo::stat() [Geoffrey Young]
+
 add :filetype import tag to APR::Const [Geoffrey Young]
 
 <Perl> sections now proprely set $0 to the name of the configuration
