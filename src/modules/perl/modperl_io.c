@@ -102,9 +102,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     status = Perl_do_open(aTHX_ handle_save, ">&STDIN", 8, FALSE, O_RDONLY,
                           0, Nullfp);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to dup STDIN: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to dup STDIN: %_", get_sv("!", TRUE));
     }
 
     /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
@@ -114,9 +112,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     status = Perl_do_open9(aTHX_ handle, "<:Apache", 8, FALSE, O_RDONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to open STDIN: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to open STDIN: %_", get_sv("!", TRUE));
     }
 
     MP_TRACE_o(MP_FUNC, "end\n");
@@ -140,9 +136,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE, O_RDONLY,
                           0, Nullfp);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to dup STDOUT: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to dup STDOUT: %_", get_sv("!", TRUE));
     }
 
     /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
@@ -152,9 +146,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     status = Perl_do_open9(aTHX_ handle, ">:Apache", 8, FALSE, O_RDONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to open STDOUT: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to open STDOUT: %_", get_sv("!", TRUE));
     }
 
     MP_TRACE_o(MP_FUNC, "end\n");
@@ -178,9 +170,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
     status = Perl_do_open9(aTHX_ handle_orig, "<&", 2, FALSE, O_RDONLY,
                            0, Nullfp, (SV*)handle, 1);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to restore STDIN: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to restore STDIN: %_", get_sv("!", TRUE));
     }
 
     IoFLUSH_off(handle); /* STDIN's $|=0 */
@@ -201,9 +191,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
     status = Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE, O_RDONLY,
                            0, Nullfp, (SV*)handle, 1);
     if (status == 0) {
-        STRLEN n_a;
-        Perl_croak(aTHX_ "Failed to restore STDOUT: %s",
-                   SvTRUE(ERRSV) ? SvPV(ERRSV, n_a) : "unknown error");
+        Perl_croak(aTHX_ "Failed to restore STDOUT: %_", get_sv("!", TRUE));
     }
 
     MP_TRACE_o(MP_FUNC, "end\n");
