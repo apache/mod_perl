@@ -35,20 +35,20 @@ sub handler {
         my $fmtdate;
 
         $fmtdate = Apache::Util::ht_time($r->pool);
-        time_cmp($time, $fmtdate,
+        time_cmp($fmtdate, $time,
                  'Apache::Util::ht_time($pool)', 0);
 
         $fmtdate = Apache::Util::ht_time($r->pool, $time);
-        time_cmp($time, $fmtdate,
+        time_cmp($fmtdate, $time,
                  'Apache::Util::ht_time($pool, $time)', 1);
 
         $fmtdate = Apache::Util::ht_time($r->pool, $time, $fmt);
-        time_cmp($time, $fmtdate,
+        time_cmp($fmtdate, $time,
                  'Apache::Util::ht_time($pool, $time, $fmt)', 1);
 
         my $gmt = 0;
         $fmtdate = Apache::Util::ht_time($r->pool, $time, $fmt, $gmt);
-        time_cmp($time, $fmtdate,
+        time_cmp($fmtdate, $time,
                  'Apache::Util::ht_time($pool, $time, $fmt, $gmt)', 0);
     }
 
@@ -57,15 +57,15 @@ sub handler {
 
 my $fmtdate_ptn = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;
 sub time_cmp {
-    my($time, $fmtdate, $comment, $exact_match) = @_;
+    my($fmtdate, $time, $comment, $exact_match) = @_;
 
     if ($parse_time_ok && $exact_match) {
         my $ptime = APR::Date::parse_http($fmtdate);
         t_debug "fmtdate: $fmtdate";
-        ok t_cmp($time, $ptime, $comment);
+        ok t_cmp($ptime, $time, $comment);
     }
     else {
-        ok t_cmp($fmtdate, $fmtdate_ptn, $comment);
+        ok t_cmp($fmtdate_ptn, $fmtdate, $comment);
     }
 }
 

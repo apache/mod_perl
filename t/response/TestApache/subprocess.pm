@@ -54,8 +54,8 @@ sub handler {
         my $out_fh =
             Apache::SubProcess::spawn_proc_prog($r, $perl, [$script, @argv]);
         my $output = read_data($out_fh);
-        ok t_cmp(\@argv,
-                 [split / /, $output],
+        ok t_cmp([split / /, $output],
+                 \@argv,
                  "passing ARGV"
                 );
     }
@@ -67,8 +67,8 @@ sub handler {
         $r->subprocess_env->set(SubProcess => $value);
         my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         my $output = read_data($out_fh);
-        ok t_cmp($value,
-                 $output,
+        ok t_cmp($output,
+                 $value,
                  "passing env via subprocess_env"
                 );
     }
@@ -81,8 +81,8 @@ sub handler {
             Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         print $in_fh $value;
         (my $output = read_data($out_fh)) =~ s/[\r\n]{1,2}/\r\n/;
-        ok t_cmp($value,
-                 $output,
+        ok t_cmp($output,
+                 $value,
                  "testing subproc's stdin -> stdout + list context"
                 );
     }
@@ -95,8 +95,8 @@ sub handler {
             Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
         print $in_fh $value;
         (my $output = read_data($err_fh)) =~ s/[\r\n]{1,2}/\r\n/;
-        ok t_cmp($value,
-                 $output,
+        ok t_cmp($output,
+                 $value,
                  "testing subproc's stdin -> stderr + list context"
                 );
     }
@@ -106,20 +106,20 @@ sub handler {
 
 # these are wannabe's
 #    ok t_cmp(
-#             Apache::SUCCESS,
 #             Apache::SubProcess::spawn_proc_sub($r, $sub, \@args),
+#             Apache::SUCCESS,
 #             "spawn a subprocess and run a subroutine in it"
 #            );
 
 #    ok t_cmp(
-#             Apache::SUCCESS,
 #             Apache::SubProcess::spawn_thread_prog($r, $command, \@argv),
+#             Apache::SUCCESS,
 #             "spawn thread and run a program in it"
 #            );
 
 #     ok t_cmp(
-#             Apache::SUCCESS,
 #             Apache::SubProcess::spawn_thread_sub($r, $sub, \@args),
+#             Apache::SUCCESS,
 #             "spawn thread and run a subroutine in it"
 #            );
 
