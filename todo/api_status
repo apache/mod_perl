@@ -1,0 +1,82 @@
+This file provides the status of the supported API, via the
+API documentation files.
+
+col1 legend
+-----------
+-: not started/unknown
++: in process
+V: done (for 2.0 release)
+
+col2 legend
+-----------
+-: not started/unknown
+P: post 2.0 (has API to be polished after 2.0 release)
+V: done completely
+
+- the file path is relative to the modperl-docs cvs repository
+#########################################################
+-- src/docs/2.0/api/Apache.pod
+-- src/docs/2.0/api/Apache/Access.pod
+-- src/docs/2.0/api/Apache/CmdParms.pod
+-- src/docs/2.0/api/Apache/Command.pod
+-- src/docs/2.0/api/Apache/Connection.pod
+-- src/docs/2.0/api/Apache/Const.pod
+-- src/docs/2.0/api/Apache/Directive.pod
+-- src/docs/2.0/api/Apache/Filter.pod
+-- src/docs/2.0/api/Apache/FilterRec.pod
+-- src/docs/2.0/api/Apache/HookRun.pod
+-- src/docs/2.0/api/Apache/Log.pod
+-- src/docs/2.0/api/Apache/Module.pod
+-- src/docs/2.0/api/Apache/PerlSections.pod
+-- src/docs/2.0/api/Apache/Process.pod
+-- src/docs/2.0/api/Apache/Reload.pod
+-- src/docs/2.0/api/Apache/RequestIO.pod
+-- src/docs/2.0/api/Apache/RequestRec.pod
+-- src/docs/2.0/api/Apache/RequestUtil.pod
+-- src/docs/2.0/api/Apache/Response.pod
+-- src/docs/2.0/api/Apache/Server.pod
+-- src/docs/2.0/api/Apache/ServerUtil.pod
+-- src/docs/2.0/api/Apache/Status.pod
+-- src/docs/2.0/api/Apache/SubProcess.pod
+-- src/docs/2.0/api/Apache/SubRequest.pod
+-- src/docs/2.0/api/Apache/URI.pod
+-- src/docs/2.0/api/Apache/Util.pod
+-- src/docs/2.0/api/Apache/compat.pod
+-- src/docs/2.0/api/Apache/porting.pod
+
+-- src/docs/2.0/api/ModPerl/BuildMM.pod
+VV src/docs/2.0/api/ModPerl/Global.pod
+-- src/docs/2.0/api/ModPerl/MM.pod
+-- src/docs/2.0/api/ModPerl/MethodLookup.pod
+-- src/docs/2.0/api/ModPerl/PerlRun.pod
+-- src/docs/2.0/api/ModPerl/Registry.pod
+-- src/docs/2.0/api/ModPerl/RegistryBB.pod
+-- src/docs/2.0/api/ModPerl/RegistryCooker.pod
+-- src/docs/2.0/api/ModPerl/RegistryLoader.pod
+-- src/docs/2.0/api/ModPerl/Util.pod
+
+-- src/docs/2.0/api/APR.pod
+-- src/docs/2.0/api/APR/Base64.pod
+-- src/docs/2.0/api/APR/Brigade.pod
+-- src/docs/2.0/api/APR/Bucket.pod
+-- src/docs/2.0/api/APR/Const.pod
+-- src/docs/2.0/api/APR/Date.pod
+-- src/docs/2.0/api/APR/Error.pod
+-- src/docs/2.0/api/APR/Finfo.pod
+-- src/docs/2.0/api/APR/NetLib.pod
+-- src/docs/2.0/api/APR/PerlIO.pod
+-- src/docs/2.0/api/APR/Pool.pod
+-- src/docs/2.0/api/APR/SockAddr.pod
+
+VP src/docs/2.0/api/APR/Socket.pod
+        bind
+        close
+        connect
+        listen
+        recvfrom
+        sendto
+
+-- src/docs/2.0/api/APR/Table.pod
+-- src/docs/2.0/api/APR/ThreadMutex.pod
+-- src/docs/2.0/api/APR/URI.pod
+-- src/docs/2.0/api/APR/Util.pod
