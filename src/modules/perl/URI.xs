@@ -183,6 +183,9 @@ port(uri, ...)
 
     CODE:
     get_set_PVp(uri->uri.port_str,uri->pool);
+    if (items > 1) {
+        uri->uri.port = (int)SvIV(ST(1));
+    }
 
     OUTPUT:
     RETVAL 
