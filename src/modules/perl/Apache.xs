@@ -463,6 +463,9 @@ mod_perl_define(sv, name)
     SV *sv
     char *name
 
+    CLEANUP:
+    sv = sv; /*-Wall*/
+
 I32
 module(sv, name)
     SV *sv
@@ -1852,6 +1855,7 @@ dir_config(r, key=NULL, ...)
     server_rec *s;
 
     CODE:
+    ix = ix; /*-Wall*/
     RETVAL = Nullsv;
     if(r && r->per_dir_config) {				   
 	c = (perl_dir_config *)get_module_config(r->per_dir_config, 
