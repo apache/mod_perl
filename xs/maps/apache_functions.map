@@ -214,7 +214,8 @@ ap_remove_loaded_module
  mpxs_Apache__Module_loaded
  #ap_get_module_config
  mpxs_Apache__Module_get_config | | pmodule, s, v=NULL
- mpxs_Apache__Module_apache_api_version
+ mpxs_Apache__Module_ap_api_major_version
+ mpxs_Apache__Module_ap_api_minor_version
 
 MODULE=Apache::Directive
  ap_directive_t *:DEFINE_conftree

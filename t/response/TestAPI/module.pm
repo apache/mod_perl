@@ -84,8 +84,8 @@ sub handler {
         my $name = $modp->name;
         ok $name;
         t_debug("Testing module: " . $modp->name);
-        ok t_cmp $modp->apache_api_version, $mmn_major;
-        ok $modp->minor_version <= $mmn_minor;
+        ok t_cmp $modp->ap_api_major_version, $mmn_major;
+        ok $modp->ap_api_minor_version <= $mmn_minor;
         ok $modp->module_index >= 0;
         my $cmds = $modp->cmds;
         ok !defined($cmds) || ref($cmds) eq 'Apache::Command';

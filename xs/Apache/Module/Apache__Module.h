@@ -63,7 +63,13 @@ static MP_INLINE SV *mpxs_Apache__Module_get_config(pTHX_
 }
 
 static MP_INLINE
-int mpxs_Apache__Module_apache_api_version(pTHX_ module *mod)
+int mpxs_Apache__Module_ap_api_major_version(pTHX_ module *mod)
 {
     return mod->version;
+}
+
+static MP_INLINE
+int mpxs_Apache__Module_ap_api_minor_version(pTHX_ module *mod)
+{
+    return mod->minor_version;
 }
