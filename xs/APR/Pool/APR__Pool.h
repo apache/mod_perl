@@ -203,7 +203,11 @@ typedef struct {
  * @param data   internal storage
  */
 
-static APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
+#ifndef MP_SOURCE_SCAN
+#include "apr_optional.h"
+static
+APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
+#endif
 
 static apr_status_t mpxs_cleanup_run(void *data)
 {
