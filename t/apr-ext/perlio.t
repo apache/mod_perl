@@ -30,17 +30,22 @@ my $build = Apache::Build->build_config;
 my $has_apr_config = $build->{apr_config_path} && 
     !$build->httpd_is_source_tree;
 
+my $has_perlio_layers = 0;
+if ($has_apr_config) {
+    require APR;
+    require APR::PerlIO;
+    $has_perlio_layers = 1 if APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED();
+}
+
 my $tests = 12;
 my $lfs_tests = 3;
 
 $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
-
+require APR; require APR::PerlIO;
 plan tests => $tests,
-    have {"the build couldn't find apr-config" => $has_apr_config,
-          "This Perl build doesn't support PerlIO layers" => 
-              (eval { require APR; require APR::PerlIO } && 
-               APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED()),
-          };
+    have {"this build couldn't find apr-config"      => $has_apr_config,
+          "this build doesn't support PerlIO layers" => $has_perlio_layers,
+    };
 
 require APR::Pool;
 
