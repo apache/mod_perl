@@ -90,7 +90,7 @@ sub ServerTest {
 
 sub get_config {
     my($self, $s) = (shift, shift);
-    Apache::Module->get_config($self, $s, @_);
+    Apache::Module::get_config($self, $s, @_);
 }
 
 sub handler : method {
