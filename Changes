@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+Added test to ensure <Perl> sections can have things like %Location
+tied [Gozer]
+
 Fix the installation on Win32 so that an appropriate Apache2
 subdirectory under the Perl tree is used when MP_INST_APACHE2 is
 specified [Randy Kobes]
