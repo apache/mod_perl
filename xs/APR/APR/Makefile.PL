@@ -78,6 +78,9 @@ $args{clean}  = { FILES => "@clean" };
 
 ModPerl::BuildMM::WriteMakefile(%args);
 
+# avoid redefined warnings from imported postamble symbol from
+# elsewhere in other Makefile.PL files
+no warnings 'redefine';
 sub MY::postamble {
     my $self = shift;
     my $string = $self->ModPerl::BuildMM::MY::postamble;
