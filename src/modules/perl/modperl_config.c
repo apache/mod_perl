@@ -489,3 +489,38 @@ const char *modperl_config_insert_request(pTHX_
 
     return NULL;
 }
+
+
+/* if r!=NULL check for dir PerlOptions, otherwise check for server
+ * PerlOptions, (s must be always set)
+ */
+int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
+                                          server_rec *s, const char *name)
+{
+    U32 flag;
+    MP_dSCFG(s);
+
+    /* XXX: should we test whether perl is disabled for this server? */
+    /*  if (!MpSrvENABLE(scfg)) { */
+    /*      return 0;             */
+    /*  }                         */
+
+    if (r) {
+        if ((flag = modperl_flags_lookup_dir(name))) {
+            MP_dDCFG;
+            return MpDirFLAGS(dcfg) & flag ? 1 : 0;
+        }
+        else {
+            Perl_croak(aTHX_ "PerlOptions %s is not a directory option", name);
+        }
+    }
+    else {
+        if ((flag = modperl_flags_lookup_srv(name))) {
+            return MpSrvFLAGS(scfg) & flag ? 1 : 0;
+        }
+        else {
+            Perl_croak(aTHX_ "PerlOptions %s is not a server option", name);
+        }
+    }
+
+}

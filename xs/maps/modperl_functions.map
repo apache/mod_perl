@@ -21,6 +21,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_push_handlers
  mpxs_Apache__RequestRec_set_handlers
  mpxs_Apache__RequestRec_get_handlers
+ mpxs_Apache__RequestRec_is_perl_option_enabled
  mpxs_Apache__RequestRec_location
  mpxs_Apache__RequestRec_as_string
  mpxs_Apache__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
@@ -67,6 +68,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_push_handlers
  mpxs_Apache__Server_set_handlers
  mpxs_Apache__Server_get_handlers
+ mpxs_Apache__Server_is_perl_option_enabled
  modperl_config_insert_server | | | add_config
 
 PACKAGE=Apache::Server

@@ -122,4 +122,9 @@ const char *modperl_config_insert_request(pTHX_
                                           SV *lines,
                                           char *path,
                                           int override);
+
+int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
+                                          server_rec *s, const char *name);
+
+
 #endif /* MODPERL_CONFIG_H */

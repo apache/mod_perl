@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+added ($r|$s)->is_perl_option_enabled($option_name), to test for
+PerlOptions + tests [Stas]
+
 On Solaris add a workaround for xs/APR/APR/Makefile.PL to build
 APR.so, correctly linked against apr and apr-util libs, by addding the
 missing -R paths corresponding to -L flags. EU::MM was adding them via
