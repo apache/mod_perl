@@ -273,7 +273,7 @@ static XS(MPXS_Apache__Log_log_error)
     dXSARGS;
     request_rec *r = NULL;
     server_rec *s = NULL;
-    int i=0;
+    int i = 0;
     char *errstr = NULL;
     SV *sv = Nullsv;
     STRLEN n_a;
@@ -305,7 +305,7 @@ static XS(MPXS_Apache__Log_log_error)
     }
               
     if (s) {
-        i=1;
+        i = 1;
     }
     else {
         s = modperl_global_get_server_rec();
