@@ -55,7 +55,7 @@ sub content {
 sub args {
     my($r, $val) = @_;
     parse_args(wantarray, 
-	       $val ? $r->query_string($val) : $r->query_string);
+	       @_ > 1 ? $r->query_string($val) : $r->query_string);
 }
 
 *READ = \&read unless defined &READ;
