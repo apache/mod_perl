@@ -10,6 +10,13 @@ Release:
 
 Available Patches:
 
+    * Win32 build problems with spaces in shell arguments
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101681938513575&w=2
+	Status: 
+          patch available at
+          http://marc.theaimsgroup.com/?l=apache-modperl&m=101729204503165&w=2
+
+
 Needs Patch or Further Investigation
 
     * two identical directives in <Perl> configuration
