@@ -513,8 +513,15 @@ void mp_check_version(void)
 
     require_Apache(NULL);
 
-    if(!(version = perl_get_sv("Apache::VERSION", FALSE)))
-	croak("Apache.pm failed to load!"); /*should never happen*/
+    if(!(version = perl_get_sv("Apache::VERSION", FALSE))) {
+        /* should never happen but might if the perl mod_perl
+         * was built with isn't around anymore
+         */
+	croak("Apache.pm failed to load! (%s)",
+                  SvTRUE(ERRSV) ? SvPV(ERRSV,na) : "no error?"
+              );
+    }
+
     if(strEQ(SvPV(version,n_a), MP_APACHE_VERSION)) /*no worries*/
 	return;
 
