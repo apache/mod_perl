@@ -22,7 +22,7 @@ sub handler {
 
     # starting from Apache 2.0.49 several platforms require you to set
     # the socket to a blocking IO mode
-    $c->client_socket->opt_set(APR::SO_NONBLOCK => 0);
+    $c->client_socket->opt_set(APR::SO_NONBLOCK, 0);
 
     # set timeout (20 sec) so later we can do error checking on
     # read/write timeouts
