@@ -6,7 +6,7 @@ package TestAPR::uri;
 # unparse,
 
 use strict;
-use warnings;# FATAL => 'all';
+use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -38,7 +38,8 @@ my %url = (
     fragment => ["fragment",        undef            ],
 );
 
-my @keys_urls = qw(scheme user password hostname port path query fragment);
+my @keys_urls = qw(scheme user password hostname port path query
+                   fragment);
 my @keys_hostinfo = qw(user password hostname port);
 
 sub handler {
@@ -67,7 +68,8 @@ sub handler {
     for my $method (keys %url) {
         no strict 'refs';
         $parsed->$method($url{$method}[1]);
-        t_debug("$method: $url{$method}[1] => " . $parsed->$method||'');
+        t_debug("$method: " . ($url{$method}[1]||'undef') .
+                " => " . ($parsed->$method||'undef'));
     }
 
     ### unparse ###
@@ -79,8 +81,7 @@ sub handler {
     # updated: so we see the old value here
     ok t_cmp($hostinfo0, $parsed->hostinfo, "hostinfo");
 
-    # - since the port is 21 which is the default for ftp, unparse
-    #   omits it
+    # - since 21 is the default port for ftp, unparse omits it
     # - if no flags are passed to unparse, APR::URI_UNP_OMITPASSWORD
     #   is passed by default -- it hides the password
     my $url1 = sprintf "%s://%s\@%s%s",
@@ -96,7 +97,7 @@ sub handler {
     }
 
     ### port_of_scheme ###
-    while(my($scheme, $port) = each %default_ports) {
+    while (my($scheme, $port) = each %default_ports) {
         my $apr_port = APR::URI::port_of_scheme($scheme);
         ok t_cmp($port, $apr_port, "scheme: $scheme");
     }

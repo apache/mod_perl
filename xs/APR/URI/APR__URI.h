@@ -54,12 +54,19 @@ char *mpxs_APR__URI_port(pTHX_ apr_uri_t *uri, SV *portsv)
     char *port_str = uri->port_str;
 
     if (portsv) {
-        STRLEN len;
-        char *port = SvPV(portsv, len);
-        uri->port_str = apr_pstrndup(((modperl_uri_t *)uri)->pool,
-                                     port, len);
-        uri->port = (int)SvIV(portsv);
+        if (SvOK(portsv)) {
+            STRLEN len;
+            char *port = SvPV(portsv, len);
+            uri->port_str = apr_pstrndup(((modperl_uri_t *)uri)->pool,
+                                         port, len);
+            uri->port = (int)SvIV(portsv);
+        }
+        else {
+            uri->port_str = NULL;
+            uri->port = 0;
+        }
     }
 
     return port_str;
 }
+

@@ -1,5 +1,8 @@
 ##########  APR structures  ##########
 
+# for mapping see %ModPerl::MapUtil::disabled_map in
+# lib/ModPerl/MapUtil.pm
+
 IGNORE: apr_pool_t apr_os_ apr_vformatter_buff_t apr_pool_t \
 apr_table_t apr_in_addr_t apr_bucket_ apr_md5_ctx_t apr_sha1_ctx_t \
 apr_md4_ctx_t apr_sdbm_datum_t apr_memnode_t \
@@ -169,18 +172,18 @@ apr_strmatch_pattern apr_version_t
 </apr_text>
 
 <apr_uri_t>
-   scheme
+&  scheme
    hostinfo
-   user
-   password
-   hostname
+&  user
+&  password
+&  hostname
 -  port_str
-   path
-   query
-   fragment
+&  path
+&  query
+&  fragment
    hostent
 ~  port
-   is_initialized
-   dns_looked_up
-   dns_resolved
+-  is_initialized
+-  dns_looked_up
+-  dns_resolved
 </apr_uri_t>
