@@ -16,9 +16,9 @@ Other contributors are mentioned below.
 
 =over 3
 
-=item 1.10_01-dev
+=item 1.11 - April 21, 1998
 
-make sure Apache.pm is pulled in before PerlRequire'd scripts
+Apache::SIG enhancements for LogFormat [Doug Bagley <doug@dejanews.com>]
 
 drop API_EXPORTs for mod_include #perl stuff which breaks under win32/1.3b6
 spotted by Jeff Baker

@@ -221,7 +221,7 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
 
     /* XXX: what triggers such a condition ?*/
     if(vars && (vars->nelts > 100000)) {
-	fprintf(stderr, "[error] PerlSetVar->nelts = %d\n", vars->nelts);
+	fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
     }
     else {
 	new->vars = overlay_tables(p, add->vars, base->vars);

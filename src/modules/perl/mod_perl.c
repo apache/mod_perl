@@ -223,7 +223,7 @@ static void seqno_check_max(request_rec *r, int seqno)
 
     /* XXX: what triggers such a condition ?*/
     if(vars && (vars->nelts > 100000)) {
-	fprintf(stderr, "[error] PerlSetVar->nelts = %d\n", vars->nelts);
+	fprintf(stderr, "[warning] PerlSetVar->nelts = %d\n", vars->nelts);
     }
     else {
       if(cld->vars)
@@ -494,8 +494,6 @@ void perl_startup (server_rec *s, pool *p)
     status = perl_run(perl);
 
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
-
-    (void)perl_require_module("Apache", s);
 
     list = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {

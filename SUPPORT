@@ -5,13 +5,14 @@
 =item MAIL LIST
 
 For comments, questions, bug-reports, announcements, etc., send mail
-to I<modperl@listproc.itribe.net>
+to I<modperl@apache.org>
 To subscribe to this list (which you must do to send mail to the
-list), send a mail message to I<listserv@listproc.itribe.net> with the body:
+list), send a mail message to I<majordomo@apache.org> with the body:
 
  subscribe modperl
 
-(Thanks to Mark A. Imbriaco)
+(Thanks to Brian Behlendorf)
+(Thanks also to Mark A. Imbriaco who maintained the original list for 2 years)
 
 =item MAIL LIST ARCHIVE
 
