@@ -187,9 +187,9 @@ sub run {
 
     # %INC cleanup in case .pl files do not declare package ...;
     for (keys %INC) {
-	next if $orig_inc{$_};
-	next if /\.pm$/;
-	delete $INC{$_};
+        next if $orig_inc{$_};
+        next if /\.pm$/;
+        delete $INC{$_};
     }
 
     $self->flush_namespace;
@@ -220,7 +220,7 @@ sub can_compile {
 
     unless (-r $r->my_finfo && -s _) {
         $self->log_error("$self->{FILENAME} not found or unable to stat");
-	return Apache::NOT_FOUND;
+        return Apache::NOT_FOUND;
     }
 
     return Apache::DECLINED if -d _;
@@ -310,9 +310,9 @@ sub namespace_from_uri {
     my $self = shift;
 
     my $path_info = $self->{REQ}->path_info;
-    my $script_name = $path_info && $self->{URI} =~ /$path_info$/ ?
-	substr($self->{URI}, 0, length($self->{URI}) - length($path_info)) :
-	$self->{URI};
+    my $script_name = $path_info && $self->{URI} =~ /$path_info$/
+        ? substr($self->{URI}, 0, length($self->{URI}) - length($path_info))
+        : $self->{URI};
 
     if ($ModPerl::RegistryCooker::NameWithVirtualHost && 
         $self->{REQ}->server->is_virtual) {
@@ -370,7 +370,7 @@ sub convert_script_to_compiled_handler {
     #$self->chdir_file("$Apache::Server::CWD/");
 
 #    if(my $opt = $r->dir_config("PerlRunOnce")) {
-#	$r->child_terminate if lc($opt) eq "on";
+#        $r->child_terminate if lc($opt) eq "on";
 #    }
 
     $self->cache_it;
@@ -499,8 +499,8 @@ sub flush_namespace_normal {
             else {
                 *{$fullname} = sub {};
             }
-	    undef &$fullname;
-	}
+            undef &$fullname;
+        }
         if (*{$fullname}{IO}) {
             if (fileno $fullname) {
                 close $fullname;
@@ -556,12 +556,12 @@ sub rewrite_shebang {
 
     my $prepend = "";
     for my $s (@cmdline) {
-	next unless $s =~ s/^-//;
-	last if substr($s,0,1) eq "-";
-	for (split //, $s) {
-	    next unless exists $switches{$_};
-	    $prepend .= $switches{$_}->();
-	}
+        next unless $s =~ s/^-//;
+        last if substr($s,0,1) eq "-";
+        for (split //, $s) {
+            next unless exists $switches{$_};
+            $prepend .= $switches{$_}->();
+        }
     }
     ${ $self->{CODE} } =~ s/^/$prepend/ if $prepend;
 }
@@ -661,8 +661,8 @@ sub compile {
 sub error_check {
     my $self = shift;
     if ($@ and substr($@,0,4) ne " at ") {
-	$self->log_error($@);
-	return Apache::SERVER_ERROR;
+        $self->log_error($@);
+        return Apache::SERVER_ERROR;
     }
     return Apache::OK;
 }
