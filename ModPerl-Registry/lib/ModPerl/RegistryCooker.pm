@@ -235,21 +235,15 @@ sub can_compile {
 }
 #########################################################################
 # func: namespace_root
-# dflt: namespace_root_common
+# dflt: namespace_root
 # desc: define the namespace root for storing compiled scripts
 # args: $self - registry blessed object
 # rtrn: the namespace root
 #########################################################################
 
-*namespace_root = \&namespace_root_common;
-
-sub namespace_root_common {
-    'ModPerl::RegistryROOT';
-}
-
-sub namespace_root_local {
+sub namespace_root {
     my $self = shift;
-    join '::', ref($self), 'ROOT';
+    join '::', 'ModPerl::ROOT', ref($self),
 }
 
 #########################################################################
