@@ -156,12 +156,12 @@ $  limit_req_fields
 </process_rec>
 
 <command_rec>
-   name
+<  name
 !  func
 !  cmd_data
-   req_override
-   args_how
-   errmsg
+<  req_override
+<  args_how
+<  errmsg
 </command_rec>
 
 <ap_filter_rec_t>
