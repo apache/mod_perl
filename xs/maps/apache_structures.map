@@ -40,7 +40,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    err_headers_out
    subprocess_env
    notes
-   content_type
+~  content_type
    handler
    content_encoding
    content_languages

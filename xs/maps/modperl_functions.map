@@ -8,6 +8,9 @@ MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
  mpxs_ModPerl__Global_special_list_clear
 
+MODULE=Apache::RequestRec   PACKAGE=Apache::RequestRec
+ mpxs_Apache__RequestRec_content_type | | r, type=Nullsv
+
 MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_push_handlers
  mpxs_Apache__RequestRec_set_handlers
