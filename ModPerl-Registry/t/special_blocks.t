@@ -35,8 +35,8 @@ plan tests => @aliases * 4;
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "begin ok",
         $res,
+        "begin ok",
         "$modules{$alias} is running BEGIN blocks on the first request",
     );
 
@@ -44,8 +44,8 @@ plan tests => @aliases * 4;
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "begin ok",
         $res,
+        "begin ok",
         "$modules{$alias} is running BEGIN blocks on the second request",
     );
 
@@ -53,8 +53,8 @@ plan tests => @aliases * 4;
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "end ok",
         $res,
+        "end ok",
         "$modules{$alias} is running END blocks on the third request",
     );
 
@@ -62,8 +62,8 @@ plan tests => @aliases * 4;
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "end ok",
         $res,
+        "end ok",
         "$modules{$alias} is running END blocks on the fourth request",
     );
 }
@@ -89,8 +89,8 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "begin ok",
         $res,
+        "begin ok",
         "$modules{$alias} is running BEGIN blocks on the first request",
     );
 
@@ -99,8 +99,8 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     t_debug($res);
     skip_not_same_interp(
         $skip,
-        "",
         $res,
+        "",
         "$modules{$alias} is not running BEGIN blocks on the second request",
     );
 
@@ -115,8 +115,8 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "end ok",
         $res,
+        "end ok",
         "$modules{$alias} is running END blocks on the first request",
     );
 
@@ -124,8 +124,8 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     $skip++ unless defined $res;
     skip_not_same_interp(
         $skip,
-        "end ok",
         $res,
+        "end ok",
         "$modules{$alias} is running END blocks on the second request",
     );
 }

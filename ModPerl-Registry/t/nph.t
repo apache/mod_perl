@@ -34,16 +34,16 @@ for my $key (keys %expected) {
     if ($key eq 'headers') {
         for my $header (keys %$expected) {
             ok t_cmp(
-                $expected->{$header},
                 $received->{$header},
+                $expected->{$header},
                 "test header $header"
             );
         }
     }
     else {
         ok t_cmp(
-            $expected,
             $received,
+            $expected,
             "test key: $key"
         );
     }

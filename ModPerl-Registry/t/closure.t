@@ -39,8 +39,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $second = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
-        0,
         $first && $second && ($second - $first),
+        0,
         "never the closure problem",
     );
 
@@ -51,8 +51,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $third = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
-        1,
         $third,
+        1,
         "never the closure problem",
     );
 }
@@ -71,8 +71,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $second = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
-        1,
         $first && $second && ($second - $first),
+        1,
         "the closure problem should exist",
     );
 
@@ -83,8 +83,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $third = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
-        1,
         $third,
+        1,
         "no closure on the first request",
     );
 }
@@ -103,8 +103,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $second = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second) != 2),
-        1,
         $first && $second && ($second - $first),
+        1,
         "the closure problem should exist",
     );
 
@@ -115,8 +115,8 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
     my $third = get_body($same_interp, $url);
     skip_not_same_interp(
         (scalar(grep defined, $first, $second, $third) != 3),
-        1,
         $first && $second && $third - $second,
+        1,
         "no reload on modification, the closure problem persists",
     );
 }
