@@ -776,6 +776,15 @@ called before any configured handlers.
 
 	$r->push_handlers( PerlHandler => \&footer);
 
+=item $r->current_callback
+
+Returns the name of the handler currently being run. This method is most
+useful to PerlDispatchHandlers who wish to only take action for certain phases.
+
+	if($r->current_callback eq "PerlLogHandler") {
+		$r->warn("Logging request");
+	}
+
 =back
 
 =head1 SETTING UP THE RESPONSE
