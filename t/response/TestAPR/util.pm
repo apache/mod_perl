@@ -9,6 +9,7 @@ use Apache::TestUtil;
 use APR::Util ();
 
 use Apache::Const -compile => 'OK';
+use APR::Const -compile => 'EMISMATCH';
 
 sub handler {
     my $r = shift;
@@ -20,11 +21,11 @@ sub handler {
 #    my $bytes = APR::generate_random_bytes($blen);
 #    ok length($bytes) == $blen;
 
-    my $status = APR::password_validate("one", "two");
+    ok ! APR::password_validate("one", "two");
 
-    ok $status != 0;
+    my $status = APR::EMISMATCH;
 
-    my $str= APR::strerror($status);
+    my $str = APR::strerror($status);
 
     t_debug "strerror=$str\n";
 
