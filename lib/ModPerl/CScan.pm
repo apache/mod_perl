@@ -3,7 +3,6 @@ package ModPerl::CScan;
 require Exporter;
 use Config '%Config';
 use File::Basename;
-use constant WIN32 => $^O eq 'MSWin32';
 
 # NOTE to distributors: this module is needed only for mp2 developers,
 # it's not a requirement for mod_perl users
@@ -917,6 +916,7 @@ package C::Preprocessed;
 use Symbol;
 use File::Basename;
 use Config;
+use constant WIN32 => $^O eq 'MSWin32';
 
 sub new {
     die "usage: C::Preprocessed->new(filename[, defines[, includes[, cpp]]])" 
