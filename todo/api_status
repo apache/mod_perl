@@ -35,7 +35,9 @@ VV src/docs/2.0/api/Apache/Reload.pod
 VV src/docs/2.0/api/Apache/RequestIO.pod
 -- src/docs/2.0/api/Apache/RequestRec.pod
 VV src/docs/2.0/api/Apache/RequestUtil.pod
--- src/docs/2.0/api/Apache/Response.pod
+VP src/docs/2.0/api/Apache/Response.pod
+        send_error_response
+        send_mmap
 VP src/docs/2.0/api/Apache/ServerRec.pod
         addrs
         lookup_defaults
