@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/10/07 02:44:30 $]
+   Last modified at [$Date: 2002/10/10 08:10:41 $]
 
 Release:
 --------
@@ -65,6 +65,13 @@ Needs Patch or Further Investigation:
   
 Open Issues or Core Enhancements:
 ---------------------------------
+
+* crypt() problem:
+   crypt() seems to give weird return values under mod_perl 2.0:
+   Message-ID: <20021009214318.53247.qmail@web11203.mail.yahoo.com>
+   Message-ID: <20021010000442.H59257-100000@miette.develooper.com>
+   Message-ID: <20021010003942.P59257-100000@miette.develooper.com>
+
 
 * PerlPreConnectionHandler's modperl_callback_pre_connection is not
   implemented
