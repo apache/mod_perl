@@ -1516,7 +1516,7 @@ sub APACI::init {
 MOD_PERL_VERSION = $VERSION
 
 #   Perl interpreter to use 
-PERL = DEFAULT
+PERL = $^X
 
 PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
 PERL_STATIC_SRCS = @static_src
