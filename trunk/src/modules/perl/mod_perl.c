@@ -447,7 +447,12 @@ static void unload_xs_so(void)
 	MP_TRACE_g(fprintf(stderr, "unload_xs_so: %s (0x%lx)\n",
 			   SvPVX(module_sv), (unsigned long)handle));
 	if (handle) {
+#ifdef _AIX
+	    /* make sure Perl's dlclose is used, instead of Apache's */
+	    dlclose(handle)
+#else
 	    ap_os_dso_unload(handle);
+#endif
 	}
     }
 
@@ -455,11 +460,10 @@ static void unload_xs_so(void)
     av_clear(librefs);
 }
 
-#if MODULE_MAGIC_NUMBER >= MMN_130
-static void mp_dso_unload(void *data) 
-{ 
 #if 0
-
+/* unload_xs_dso should obsolete this hack */
+static void cancel_dso_dlclose(void)
+{
     module *modp;
 
     if(!PERL_DSO_UNLOAD)
@@ -476,12 +480,14 @@ static void mp_dso_unload(void *data)
 	    modp->dynamic_load_handle = NULL;
 	}
     }
-#else
+}
+#endif
+
+static void mp_dso_unload(void *data) 
+{ 
     unload_xs_so();
     perl_shutdown(NULL, NULL);
-#endif
 } 
-#endif
 
 static void mp_server_notstarting(void *data) 
 {
