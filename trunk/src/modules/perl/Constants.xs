@@ -1,9 +1,13 @@
+#if 0
 #include "httpd.h"
 #include "http_core.h"
 #include "http_config.h"
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#endif
+
+#include "mod_perl.h"
 
 static CV *no_warn = Nullcv;
 
@@ -20,11 +24,9 @@ static void newCONSTSUB(HV *stash, char *name, SV *sv)
 #ifdef dTHR
     dTHR;
 #endif
-    line_t oldline = curcop->cop_line;
-    curcop->cop_line = copline;
-
     ENTER;
     SAVEI32(hints);
+    SAVEI16(curcop->cop_line);
     hints &= ~HINT_BLOCK_SCOPE;
 
     if(stash) {
@@ -44,7 +46,6 @@ static void newCONSTSUB(HV *stash, char *name, SV *sv)
 	   newSTATEOP(0, Nullch, newSVOP(OP_CONST, 0, sv)));
 
     LEAVE;
-    curcop->cop_line = oldline;
 }
 
 static double
@@ -77,11 +78,7 @@ char *name;
 	break;
     case 'C':
 if (strEQ(name, "CONTINUE"))
-#ifdef CONTINUE
-	    return CONTINUE;
-#else
-	    return DECLINED;
-#endif
+    return DECLINED;
 	break;
     case 'D':
 	if (strEQ(name, "DECLINED"))
@@ -697,6 +694,18 @@ char *
 SERVER_VERSION()
    CODE: 
    RETVAL = SERVER_VERSION;
+
+   OUTPUT:
+   RETVAL
+
+char *
+SERVER_BUILT()
+   CODE: 
+#if MODULE_MAGIC_NUMBER >= 19970912
+   RETVAL = (char *)SERVER_BUILT;
+#else
+   RETVAL = "unknown";
+#endif
 
    OUTPUT:
    RETVAL

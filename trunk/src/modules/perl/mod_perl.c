@@ -352,7 +352,7 @@ void perl_startup (server_rec *s, pool *p)
     char *line_info = "#line 1 mod_perl";
     dPSRV(s);
     SV *pool_rv, *server_rv;
-    GV *gv;
+    GV *gv, *shgv;
 
 #ifndef WIN32
     argv[0] = server_argv0;
@@ -480,8 +480,11 @@ void perl_startup (server_rec *s, pool *p)
     Apache__ServerStarting(PERL_RUNNING());
 
 #ifdef PERL_STACKED_HANDLERS
-    if(!stacked_handlers)
+    if(!stacked_handlers) {
 	stacked_handlers = newHV();
+	shgv = GvHV_init("Apache::PerlStackedHandlers");
+	GvHV(shgv) = stacked_handlers;
+    }
 #endif 
 #ifdef MULTITHREAD
     mod_perl_mutex = create_mutex(NULL);
@@ -502,7 +505,7 @@ void perl_startup (server_rec *s, pool *p)
 
     MP_TRACE_g(fprintf(stderr, 
 	     "mod_perl: %d END blocks encountered during server startup\n",
-	     endav ? AvFILL(endav)+1 : 0));
+	     endav ? (int)AvFILL(endav)+1 : 0));
 #if MODULE_MAGIC_NUMBER < 19970728
     if(endav)
 	MP_TRACE_g(fprintf(stderr, "mod_perl: cannot run END blocks encoutered at server startup without apache_1.3b2+\n"));
@@ -786,7 +789,9 @@ void mod_perl_cleanup_handler(void *data)
 	UNMARK_WHERE;
     }
     av_clear(cleanup_av);
+#ifndef WIN32
     if(cld) MP_RCLEANUP_off(cld);
+#endif
     (void)release_mutex(mod_perl_mutex); 
 }
 
@@ -901,7 +906,7 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 	do_clear = TRUE;
 	MP_TRACE_h(fprintf(stderr, 
 		 "running %d pushed (stacked) handlers for %s...\n", 
-			 AvFILL(handlers)+1, r->uri)); 
+			 (int)AvFILL(handlers)+1, r->uri)); 
     }
     else {
 #ifdef PERL_STACKED_HANDLERS
@@ -915,7 +920,7 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 #endif
 	MP_TRACE_h(fprintf(stderr, 
 		 "running %d server configured stacked handlers for %s...\n", 
-			 AvFILL(handlers)+1, r->uri)); 
+			 (int)AvFILL(handlers)+1, r->uri)); 
     }
     for(i=0; i<=AvFILL(handlers); i++) {
 	MP_TRACE_h(fprintf(stderr, "calling &{%s->[%d]}\n", hook, (int)i));

@@ -143,7 +143,6 @@ Resource	bmpf	Limit resources used by httpd children	APML
 ConfigLDAP	i	Config via LDAP and &lt;Perl&gt;		MARKK
 ConfigDBI	i	Config via DBI and &lt;Perl&gt;		MARKIM
 ModuleConfig	cmcO	Interface to configuration API		DOUGM
-Module		cmcO	Interface to Apache C module structures	DOUGM
 PerlSections	bmpO	Utilities for &lt;Perl&gt; sections		APML
 httpd_conf	bmpO	Methods to configure and run an httpd	APML
 src		ampO	Finding and reading bits of source	APML
@@ -156,7 +155,11 @@ Mysql		bdpO	Persistent connection mgmt. for Mysql	NJENSEN
 * Interfaces and integration with various Apache C modules
 Constants	Rmcf	Constants defined in httpd.h		APML
 Include		Rmpf	mod_include + Apache::Registry handler	APML
+Global		cmcO	Access to server global variables	APML
+LogError	c	aplog_error interface			FLETCH
+LogFile		cmcO	Interface to Apache's piped logs, etc.	DOUGM
 Mime		bmcf	Interface to mod_mime functionality	MDORMAN
+Module		cmcO	Interface to Apache C module structures	DOUGM
 Options		Rmpf	Import Apache::Constants 'options'	APML
 Scoreboard	cmcO	Interface to scoreboard API		DOUGM
 Servlet		ampO	Interface to the Java Servlet engine	IKLUFT
@@ -175,7 +178,6 @@ test		Rmpf	Handy routines for 'make test' scripts	APML
 
 * Misc
 Byterun		i	Run Perl bytecode modules		DOUGM
-ErrorLog	c	error_log interfaces			FLETCH
 Mmap		bdcf	Share data via Mmap module		FLETCH
 Persistent	bdpO	Store data via IPC::, DBI, or disk	DOUGM
 PUT		cdpf	HTTP PUT method handler module		SORTIZ

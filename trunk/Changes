@@ -16,6 +16,55 @@ Other contributors are mentioned below.
 
 =over 3
 
+=item 1.08 - February 20, 1998
+
+Apache::Registry will now fold multiple /'s to fix possible bug
+spotted by Gerald Richter
+
+fix Apache/Makefile.PL and Constants/Makefile.PL so DYNAMIC=1 works
+with 1.3b5 (new include directory)
+
+Constants.xs will now #include mod_perl.h so namespace #undefs are used
+
+fixup some #define clashes on aix thanks to Eric Bartley
+
+fixed Makefile.PL workaround for plucking SSL_INCLUDE with help from
+Dan Peterson
+
+can build again with threaded Perl (was just missing a few dTHR's)
+
+cleared up BEGIN/END documenation with help from John Charlesworth
+
+applied patch from Christopher McCrory so -f is also used when 'make
+test' httpd is started so it'll work with a .rpm file for a redhat
+linux 
+
+added Apache::Constants->name method
+
+fix an #endif; in mod_perl.h thanks to Eric Bartley
+
+mod_perl_cleanup_handler won't try to if(cld) MP_RCLEANUP_off(cld);
+#ifdef WIN32 to stop crash spotted by David Hodson
+
+expose stacked handlers to Perl via %Apache::PerlStackedHandlers
+(this is only those pushed via $r->push_handlers)
+
+can now tell Makefile.PL APACHE_INCLUDE_INSTALL=0 if you don't want
+header files installed
+
+when Apache::Status tries to load optional modules, it will locally
+turn off $SIG{__DIE__} to fix bug spotted by Dan Peterson
+
+added SERVER_BUILT to Apache::Constants
+
+got rid of "Use of uninitialized value." warning in perl_util.c seen
+when running HTML::Embperl, hunted down by Todd Eigenschink and Gerald
+Richter (listed as change in _04, but was lost!)
+
+fixed Makefile.PL so it can deal with metacharacters when copying the
+apache source include files, otherwise src.pm breaks, thanks to Dan
+Peterson for the spot
+
 =item 1.07_04 - February 10, 1998
 
 fix "building mod_perl by hand" bug w/ 1.3bx spotted by Brian Mosley

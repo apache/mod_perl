@@ -96,12 +96,15 @@ PERL_HOOKS =   $(PERL_DISPATCH) $(PERL_CHILD_INIT) $(PERL_CHILD_EXIT) \
 #STATIC_EXTS = Apache Apache::Constants
 
 #TRACE = -DPERL_TRACE
-#APACHE_SSL = $(SSL_CFLAGS) -DAPACHE_SSL $(SSL_INCLUDE) -I../../../ssl/include
+#SSL_COMMON_INC = -I../../../ssl/include -I/usr/local/ssl/include
+#APACHE_SSL = 
 PERL=/usr/bin/perl
 PERL_STATIC_EXTS =
 PERL5LIB=`$(PERL) -MConfig -e 'print $$Config{privlibexp}'`
 EXTUTILS_EMBED = $(PERL) -MExtUtils::Embed
 PERL_CCFLAGS = `$(EXTUTILS_EMBED) -e ccopts` $(PERL_HOOKS) $(TRACE)
+
+.SUFFIXES: .xs .c .o
 
 XS_INIT = `$(EXTUTILS_EMBED) -e xsinit -- -std $(PERL_STATIC_EXTS) $(STATIC_EXTS)`
 
@@ -118,11 +121,8 @@ all:	$(LIB)
 perlxsi.c:
 	$(XS_INIT) 
 
-Apache.c: Apache.xs
-	$(PERL) $(PERL5LIB)/ExtUtils/xsubpp -typemap $(PERL5LIB)/ExtUtils/typemap Apache.xs >Apache.c
-
-Constants.c: Constants.xs
-	$(PERL) $(PERL5LIB)/ExtUtils/xsubpp -typemap $(PERL5LIB)/ExtUtils/typemap Constants.xs >Constants.c
+.xs.c:
+	$(PERL) $(PERL5LIB)/ExtUtils/xsubpp -typemap $(PERL5LIB)/ExtUtils/typemap $*.xs > $@
 
 PERLSRC=mod_perl.c perlxsi.c perl_config.c perl_util.c perlio.c $(STATIC_SRC)
 

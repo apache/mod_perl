@@ -121,6 +121,19 @@ Example:
 You'll see all options enabled and you will not be prompted for apache
 source location, it will default to ../apache_1.3b3
 
+=item Installation of Apache header files
+
+By default, the apache headers files are installed into 
+$Config{sitearchexp}/auto/Apache/include
+
+The reason for installing the header files is to make life simple for
+module authors/users when building/installing a module that taps into
+some Apache C functions, e.g. Embperl, Apache::Peek, etc. 
+
+If you wish not to install these files, tell Makefile.PL like so:
+
+ perl Makefile.PL APACHE_HEADER_INSTALL=0
+
 =item Linking Perl extensions static with httpd
 
 Normally, if an exension is linked static with Perl it is listed in
@@ -228,7 +241,7 @@ Copy the source files into the apache build directory:
 
 Run:
 
- % perl Makefile.PL && make install
+ % perl Makefile.PL DYNAMIC=1 && make install
 
 When prompted, you must tell Makefile.PL where to find apache sources
 (for header files), answer 'n' when asked 

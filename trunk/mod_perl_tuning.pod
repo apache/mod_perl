@@ -362,7 +362,7 @@ Vivek Khera.  My email is I<MyFirstName@MyLastName.org>.  I'd spell it
 out for you, but if this ends up on the net, I don't want some
 automatic mass-mail address collector to find me.
 
-This document is copyright E<copy> 1997 by Vivek Khera.
+This document is copyright 1997 by Vivek Khera.
 
 If you have contributions for this document, please send them to me or
 post them to the mailing list.  Perl POD format is best, but plain

@@ -1725,7 +1725,8 @@ port(server, ...)
 #  short host_port;              /* The bound port, for this server */
 #  int timeout;			/* Timeout, in seconds, before we give up */
 #  int keep_alive_timeout;	/* Seconds we'll wait for another request */
-#  int keep_alive;		/* Maximum requests per connection */
+#  int keep_alive_max;		/* Maximum requests per connection */
+#  int keep_alive;		/* Use persistent connections? */
 
 #  char *names;			/* Wildcarded names for HostAlias servers */
 #  char *virthost;		/* The name given in <VirtualHost> */

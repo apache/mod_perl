@@ -11,6 +11,7 @@ BEGIN {
 use ExtUtils::MakeMaker;
 use Config;
 use FileHandle ();
+use DirHandle ();
 use File::Basename qw(dirname);
 use File::Path qw(mkpath rmtree);
 use Cwd;
@@ -25,7 +26,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-$VERSION = "1.07_04";
+$VERSION = "1.08";
 
 use subs qw(_prompt iedit asrc);
 
@@ -128,6 +129,7 @@ $NO_HTTPD = $ENV{NO_HTTPD} || 0;
 $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
+$APACHE_INCLUDE_INSTALL = 1;
 $PERL_SECTIONS = 0;
 $PERL_SSI = 0;
 $ADD_VERSION = 1;
@@ -146,7 +148,7 @@ PERL_RESTART_HANDLER
 
 my @mp_args = 
     qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE
-       ALL_HOOKS APACHE_SRC ADD_VERSION STATIC DYNAMIC);
+       ALL_HOOKS ADD_VERSION STATIC DYNAMIC);
 
 sub is_mp_arg {
     my $arg = shift; 
@@ -199,7 +201,7 @@ my @mm_args;
 
 while($_ = shift) {
     ($k,$v) = split /=/, $_, 2;
-    unless (/^PERL/ or is_mp_arg($k)) {
+    unless (/^(PERL|APACHE)/ or is_mp_arg($k)) {
 	push @mm_args, $_;
     }
     $v = 1 unless defined $v;
@@ -331,20 +333,9 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    #print "cp $_ $atopdir/$_\n";
 	    my $dest = "$atopdir/$_";
 	    cp $_, $dest;
+	    $mani_src{$_}++;
 	}
 	close MANI;
-
-	open FH, "$APACHE_SRC/Makefile";
-	while(<FH>) {
-	    $SSL_BASE  = $1 if /SSL_BASE\s*=\s*(.*)/;
-	    $EXTRA_CFLAGS = $1 if /CFLAGS1\s*=\s*(.*)/;
-	}
-	close FH;
-
-	if($SSL_BASE) {
-	    $SSL_INCLUDE = " -I$SSL_BASE/include ";
-	    $EXTRA_CFLAGS .= $SSL_INCLUDE;
-	}
 
 	if($PERL_EXTRA_CFLAGS) {
 	    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
@@ -370,7 +361,6 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	$PERL_EXTRA_CFLAGS .= " -DPERL_DESTRUCT_LEVEL=$PERL_DESTRUCT_LEVEL"
 	    if $PERL_DESTRUCT_LEVEL;
 
-	print "EXTRA_CFLAGS: $EXTRA_CFLAGS\n" if $EXTRA_CFLAGS;
 
 	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf)) {
 	    unless(-e $conf) {
@@ -394,8 +384,29 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	#print STDERR "(cd $adir; ./Configure${dash_make} -file $PWD/$conf)\n";
 	$cfgfile = $CONFIG ? $CONFIG : "$PWD/$conf";
 	system "(cd $adir && ./Configure${dash_make} -file $cfgfile)";
-    }
 
+	open FH, "$APACHE_SRC/Makefile" or 
+	    die "can't open $APACHE_SRC/Makefile $!";
+	while(<FH>) {
+	    $SSL_BASE  = $1 if /SSL_BASE\s*=\s*(.*)/;
+	    $EXTRA_CFLAGS = $1 if /CFLAGS1\s*=\s*(.*)/;
+	    $SSLINCS = $1 if /SSLINCS\s*=\s*(.*)/;
+	}
+	close FH;
+
+	if($SSL_BASE) {
+	    $SSL_INCLUDE = " -I$SSL_BASE/include ";
+	    $SSL_CFLAGS = "-DAPACHE_SSL $SSL_INCLUDE";
+	}
+
+	#stronghold
+	if($SSLINCS) {
+	    $SSL_INCLUDE = " $SSLINCS ";
+	    $SSL_CFLAGS = "-DAPACHE_SSL $SSL_INCLUDE";
+	}
+    }
+    print "EXTRA_CFLAGS: $EXTRA_CFLAGS\n" if $EXTRA_CFLAGS;
+    print "SSL_CFLAGS: $SSL_CFLAGS\n" if $SSL_CFLAGS;
     last if $APACHE_SRC;
 }
 
@@ -526,7 +537,9 @@ if($APACHE_SRC) {
 		"you must add your `StrongholdKey' to t/conf/httpd.conf\n"; 
 	    }
 	}
-	iedit "$APACHE_SRC/modules/perl/Makefile",	"s/^#APACHE_SSL/APACHE_SSL/";
+
+	iedit "$APACHE_SRC/modules/perl/Makefile",	
+	"s:^#APACHE_SSL.*:APACHE_SSL = $SSL_CFLAGS:";
     }
 
     #my $incdir = ($mmn >= 19970825) ? "../../main" : "../..";
@@ -859,7 +872,7 @@ start_httpd: test_pre_init
 	@(cd t/conf; test -f httpd.conf || cp httpd.conf-dist httpd.conf)
 	@(cd t/net; test -f config.pl || cp config.pl.dist config.pl)
 	@$(TOUCH) /tmp/mod_perl_srm.conf
-	$(APACHE_SRC)/$(HTTPD) -X -d `pwd`/t & 
+	$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -X -d `pwd`/t &
 	@echo httpd listening on port $(PORT)
 	@echo will write error_log to: /tmp/mod_perl_error_log
 	@echo "letting apache warm up...\c"
@@ -886,7 +899,7 @@ use File::Find;
 
 sub wanted {
     return unless /\.h$/;
-    (my $d = $File::Find::dir) =~ s:^$APACHE_SRC::;
+    (my $d = $File::Find::dir) =~ s:^\Q$APACHE_SRC::;
     $d =~ s:^/::;
 
     my $from = "$File::Find::dir/$_";
@@ -900,7 +913,7 @@ sub wanted {
 sub MY::post_initialize {
     my($self) = shift;
 
-    return unless $APACHE_SRC;
+    return unless $APACHE_SRC and $APACHE_INCLUDE_INSTALL;
 
     $My::self = $self;
 
@@ -1016,7 +1029,48 @@ sub setup_for_static {
 	rename "${_}/${_}.xs", "${_}/${_}.xs.disabled" if -e "${_}/${_}.xs";
     }
 
+=pod
+    my @xs_names = ();
+    my @xs_files = ();
+    my $dir = "src/modules/perl";
+    my $dh = DirHandle->new($dir) or die;
+
+    for my $file ($dh->read) {
+	next unless $file =~ /\.xs$/;
+	push @xs_names, module_name_from_xs("$dir/$file");
+	push @xs_files, $file;
+	unless ($mani_src{"$dir/$file"}) {
+	    cp "$dir/$file", $d;
+	    print "Adding module `$xs_names[-1]' to httpd\n";
+	}
+    }
+    #print "XS_NAMES=@xs_names\n";
+    #print "XS_FILES=@xs_files\n";
+
+    #XXX think about this some more
+    iedit $mf, "s/^#STATIC_SRC.*/STATIC_SRC = @xs_files/";
+    iedit $mf, "s/^#STATIC_EXTS.*/STATIC_EXTS = @xs_names/";
+=cut
+
     iedit $mf, "s/^#STATIC_/STATIC_/";
+}
+
+sub module_name_from_xs {
+    my $file = shift;
+    my $fh = FileHandle->new($file) or
+	die "can't open file $file $!";
+    my($module, $package, $prefix, %seen);
+    while(<$fh>) {
+	if( ($module, $package, $prefix) =
+	    /^MODULE\s*=\s*([\w:]+)(?:\s+PACKAGE\s*=\s*([\w:]+))?(?:\s+PREFIX\s*=\s*(\S+))?\s*$/)
+	{
+	    $seen{$module}++;
+	}
+    }
+    if(keys %seen > 1) {
+	warn "$module name guess might be incorrect";
+    }
+    return (keys %seen)[0];
 }
 
 sub readline_setup {

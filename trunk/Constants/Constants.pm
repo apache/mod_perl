@@ -22,7 +22,7 @@ my(@options)    = qw(OPT_NONE OPT_INDEXES OPT_INCLUDES
 		     OPT_SYM_LINKS OPT_EXECCGI OPT_UNSET OPT_INCNOEXEC
 		     OPT_SYM_OWNER OPT_MULTI OPT_ALL);
 my(@server)     = qw(MODULE_MAGIC_NUMBER
-		     SERVER_VERSION SERVER_SUBVERSION);
+		     SERVER_VERSION SERVER_SUBVERSION SERVER_BUILT);
 my(@response)   = qw(DOCUMENT_FOLLOWS MOVED REDIRECT
 		     USE_LOCAL_COPY
 		     BAD_REQUEST
@@ -85,6 +85,20 @@ sub AUTOLOAD {
                     #why must we stringify first???
     __AUTOLOAD() if "$Apache::Constants::AUTOLOAD"; 
     goto &$Apache::Constants::AUTOLOAD;
+}
+
+my %ConstNameCache = ();
+
+sub name {
+    my($self, $const) = @_;
+    return $ConstNameCache{$const} if $ConstNameCache{$const};
+
+    for (@Apache::Constants::EXPORT, 
+	 @Apache::Constants::EXPORT_OK) {
+	if ((\&{$_})->() == $const) {
+	    return ($ConstNameCache{$const} = $_);
+	}
+    }
 }
 
 1;
@@ -222,4 +236,4 @@ These are constants related to server version:
 
 =head1 AUTHORS
 
-Gisle Aas <aas@sn.no>, Doug MacEachern <dougm@osf.org> and h2xs
+Doug MacEachern, Gisle Aas and h2xs

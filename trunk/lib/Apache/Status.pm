@@ -3,9 +3,14 @@ use strict;
 
 $Apache::Status::VERSION = (qw$Revision$)[1];
 
-my %is_installed = map {
-    $_, (eval("require $_") || 0);
-} qw (Data::Dumper Devel::Symdump CGI B Apache::Peek Apache::Symbol);
+my %is_installed = ();
+
+{
+    local $SIG{__DIE__};
+    %is_installed = map {
+	$_, (eval("require $_") || 0);
+    } qw (Data::Dumper Devel::Symdump CGI B Apache::Peek Apache::Symbol);
+}
 
 my $CPAN_base = "http://www.perl.com/CPAN/modules/by-module";
 
@@ -395,7 +400,8 @@ sub as_HTML {
 		    push @line, $_;
 		}
 	    }
-	    elsif($do_dump and $can_dump{$type}) {
+	    elsif($do_dump and $can_dump{$type} and 
+		  $is_installed{"Data::Dumper"}) {
 		next if /_</;
 		push @line, qq(<a href="$uri/$_/$dtype?data_dump">$_</a>);
 	    }

@@ -76,8 +76,8 @@ sub main {
 sub asrc {
     my $d = shift;
     return $d if -e "$d/httpd.h";
-    return "$d/main" if -e "$d/main/httpd.h";
     return "$d/include" if -e "$d/include/httpd.h";
+    return "$d/main" if -e "$d/main/httpd.h";
     return undef;
 }
 

@@ -26,6 +26,9 @@ EVERYTHING=1
 #depending on your os and site_perl modules, see mod_perl's INSTALL
 # PERL_STATIC_EXTS=...
 
+#apache header files are installed by default, stop that if you wish
+# APACHE_HEADER_INSTALL=0
+
 #Apache and Apache::Constants modules will be built as shared libraries
 # DYNAMIC=1
 
