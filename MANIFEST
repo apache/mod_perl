@@ -193,6 +193,7 @@ t/docs/null.txt
 t/docs/error.txt
 t/docs/env.iphtml
 t/docs/lists.ehtml
+t/docs/test.ep
 t/docs/test.html
 t/docs/rgy-include.shtml
 t/docs/badsyntax.pl
