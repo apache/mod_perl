@@ -12,7 +12,7 @@ use File::Spec::Functions qw(catdir);
 # and not the vhost's one. needs to be fixed.
 my $s = Apache->server;
 
-my $vhost_doc_root = catdir Apache::Server::server_root, qw(htdocs vhost);
+my $vhost_doc_root = catdir Apache::server_root, qw(htdocs vhost);
 
 # testing $s->add_config() in vhost
 my $conf = <<"EOC";

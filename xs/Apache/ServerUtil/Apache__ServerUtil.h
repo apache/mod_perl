@@ -60,6 +60,9 @@ modperl_global_get_server_rec()
 #define mpxs_Apache__Server_server_root_relative(sv, fname) \
     modperl_server_root_relative(aTHX_ sv, fname);
 
+#define mpxs_Apache_server_root_relative(sv, fname) \
+    modperl_server_root_relative(aTHX_ sv, fname);
+
 static MP_INLINE
 int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
                                                const char *name)
@@ -79,12 +82,12 @@ void mpxs_Apache__Server_add_config(pTHX_ server_rec *s, SV *lines)
 
 static void mpxs_Apache__ServerUtil_BOOT(pTHX)
 {
-    newCONSTSUB(PL_defstash, "Apache::Server::server_root",
+    newCONSTSUB(PL_defstash, "Apache::server_root",
                 newSVpv(ap_server_root, 0));
 
-    newCONSTSUB(PL_defstash, "Apache::Server::get_server_built",
+    newCONSTSUB(PL_defstash, "Apache::get_server_built",
                 newSVpv(ap_get_server_built(), 0));
 
-    newCONSTSUB(PL_defstash, "Apache::Server::get_server_version",
+    newCONSTSUB(PL_defstash, "Apache::get_server_version",
                 newSVpv(ap_get_server_version(), 0));
 }
