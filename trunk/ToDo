@@ -18,8 +18,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - compat.h problem
 
-- mod_perl.pm + CPAN indexer
-
 - /perl/perl-status?sig dumps core under hpux 10.20
    [David-Michael.Lincke@unisg.ch]
 
