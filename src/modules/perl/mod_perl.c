@@ -77,6 +77,14 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
                                    base_server->server_hostname));
 
+#ifndef USE_ITHREADS
+    if (base_scfg->threaded_mpm) {
+        ap_log_error(APLOG_MARK, APLOG_ERR, 0, base_server,
+                     "cannot use threaded MPM without ithreads enabled Perl");
+        exit(1);
+    }
+#endif
+
     if (!MpSrvENABLED(base_scfg)) {
         /* how silly */
         return;

@@ -117,8 +117,9 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 {
     modperl_config_srv_t *scfg = modperl_config_srv_new(p);
 
-#ifdef USE_ITHREADS
     ap_mpm_query(AP_MPMQ_IS_THREADED, &scfg->threaded_mpm);
+
+#ifdef USE_ITHREADS
 
     scfg->interp_pool_cfg = 
         (modperl_tipool_config_t *)
@@ -149,11 +150,12 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv);
 
+    merge_item(threaded_mpm);
+
 #ifdef USE_ITHREADS
     merge_item(mip);
     merge_item(interp_pool_cfg);
     merge_item(interp_lifetime);
-    merge_item(threaded_mpm);
 #else
     merge_item(perl);
 #endif
