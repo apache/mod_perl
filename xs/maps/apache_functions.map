@@ -95,7 +95,6 @@ MODULE=Apache::Response   PACKAGE=guess
  ap_send_error_response
 ~ap_send_fd
  ap_send_mmap | | r, mm, offset, length
- ap_send_size
  ap_set_keepalive
  ap_set_last_modified
  ap_custom_response
