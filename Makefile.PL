@@ -60,6 +60,7 @@ configure();
 
 local %ModPerl::MM::PM = (
     'lib/typemap' => 'blib/lib/Apache2/typemap',
+    'lib/Apache2.pm' => 'blib/lib/Apache2.pm',
 );
 
 ModPerl::MM::WriteMakefile(
