@@ -2,7 +2,7 @@
 
 # test all the basic functionality
 
-print "Content-type: text/plain\r\n\r\n";
+print "Content-type: text/plain\n\n";
 print "ok";
 
 __END__
