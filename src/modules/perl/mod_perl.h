@@ -376,7 +376,7 @@ if((add->flags & f) || (base->flags & f)) \
 
 #ifdef PERL_SECTIONS
 #ifndef PERL_SECTIONS_SELF_BOOT
-#define PERL_SECTIONS_SELF_BOOT 1
+#define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
 #endif
 #endif
 
