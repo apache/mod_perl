@@ -163,6 +163,9 @@ gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
 gen_script("apaci/find_source");
 gen_script("apaci/apxs_cflags");
+gen_script("apaci/perl_config", "$PWD/lib");
+gen_script("apaci/load_modules.pl");
+
 write_version_h("src/modules/perl");
 
 my(@test_pre_init) = qq(
@@ -417,7 +420,6 @@ system_sanity_check();
 
 if ($USE_APACI) {
     print "Will configure via APACI";
-    gen_script("apaci/load_modules.pl");
     if($USE_DSO) {
         print " (DSO enabled)";
     }
@@ -603,6 +605,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		open MANI, "MANIFEST" or die "open MANIFEST $!";
 		while(<MANI>) {
 		    next unless m,^apaci/,; chomp;
+                    s/\.PL$//;
 		    (my $to = $_) =~ s,^apaci/,src/modules/perl/,;
 		    unlink "$atopdir/$to";
 		    print "cp $_ $atopdir/$to\n";
@@ -1909,10 +1912,15 @@ sub add_module {
 
 sub gen_script {
     my $file = shift;
+    my(@lib) = @_;
     local(*IN,*OUT);
     open IN, "$file.PL" or die "Couldn't open $file.PL: $!";
     open OUT, ">$file" or die "Couldn't open $file: $!";
-    print OUT "#!$Config{perlpath}\n", join '', <IN>;
+    print OUT "#!$Config{perlpath}\n";
+    if (@lib) {
+        print OUT "use lib qw(@lib);\n";
+    }
+    print OUT join '', <IN>;
     close OUT;
     close IN;
     chmod 0755, "$file";    

@@ -227,6 +227,7 @@ apaci/mod_perl.config.sh
 apaci/load_modules.pl.PL
 apaci/find_source.PL
 apaci/apxs_cflags.PL
+apaci/perl_config.PL
 apaci/mod_perl.exp
 .gdbinit
 INSTALL.simple
