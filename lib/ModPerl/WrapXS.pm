@@ -1302,7 +1302,12 @@ EOF
             next if $entry->{name} =~ /^($ithreads_exports)/;
         }
         ( my $name ) = $entry->{name} =~ /^modperl_(.*)/;
-        print $fh "const void *modperl_hack_$name = (const void *)modperl_$name;\n";
+        print $fh <<"EOF";
+#ifndef modperl_$name
+const void *modperl_hack_$name = (const void *)modperl_$name;
+#endif
+
+EOF
     }
 }
 

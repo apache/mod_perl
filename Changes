@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+modperl_exports.c now wraps all exported functions in a #ifndef
+function_name wrapper to help in weeding out functions that only
+make sense for certain Perl configurations (perlio, threads) [Gozer]
+
 for make test, skip configuring fastcgi if it's found in the global
 httpd.conf, as it causes crashes in the test suite [Stas]
 

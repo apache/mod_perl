@@ -44,6 +44,11 @@ HPUX11i     DSO
                 http://marc.theaimsgroup.com/?l=apache-modperl&m=108334017416318&w=2
                 Static works OK!
 
+* Need to cleanup functions only needed for certain build flavors
+  (perlio/threads/etc) out of lib/ModPerl/WrapXS.pm:$ithread_exports
+  and use the newer, simpler #ifdef technique (see modperl_io_apache_init
+  for an example)
+
 * we should stop generating xs/apache_*, at least for a reason that
   it's incomplete and will be never complete as we don't keep up with
   changes with ap_/apr_ namespace. Also we don't have the logic to
