@@ -54,7 +54,7 @@ BEGIN {
 
         $HOW_BIG_IS_IT = \&linux_size_check;
 
-    } elsif ( $Config{'osname'} =~ /(bsd|aix)/i ) {
+    } elsif ( $Config{'osname'} =~ /(bsd|aix|darwin)/i ) {
 
         # will getrusage work on all BSDs?  I should hope so.
         if ( eval { require BSD::Resource } ) {
