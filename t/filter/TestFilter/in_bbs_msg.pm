@@ -23,35 +23,24 @@ sub handler : FilterConnectionHandler {
 
     debug "FILTER CALLED";
     my $c = $filter->c;
-    my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
-    $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
+    $filter->next->get_brigade($bb, $mode, $block, $readbytes);
+    for (my $b = $bb->first; $b; $b = $bb->next($b)) {
 
-    while (!$ctx_bb->is_empty) {
-        my $b = $ctx_bb->first;
+        last if $b->is_eos;
 
-        $b->remove;
-
-        if ($b->is_eos) {
-            debug "EOS!!!";
-            $bb->insert_tail($b);
-            last;
-        }
-
-        $b->read(my $data);
-        debug "FILTER READ:\n$data";
-
-        if ($data and $data =~ s,GET $from_url,GET $to_url,) {
-            debug "GET line rewritten to be:\n$data";
-            $b = APR::Bucket->new($data);
+        if ($b->read(my $data)) {
+            next unless $data =~ s|GET $from_url|GET $to_url|;
+            debug "new GET line:\n$data";
+            my $nb = APR::Bucket->new($data);
+            $b->insert_before($nb);
+            $b->remove;
             # XXX: currently a bug in httpd doesn't allow to remove
             # the first connection filter. once it's fixed adjust the test
             # to test that it was invoked only once.
             # debug "removing the filter";
             # $filter->remove; # this filter is no longer needed
         }
-
-        $bb->insert_tail($b);
     }
 
     Apache::OK;

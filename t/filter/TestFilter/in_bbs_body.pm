@@ -19,27 +19,17 @@ sub handler : FilterRequestHandler {
     #warn "Called!";
     my $ba = $filter->r->connection->bucket_alloc;
 
-    my $ctx_bb = APR::Brigade->new($filter->r->pool, $ba);
+    $filter->next->get_brigade($bb, $mode, $block, $readbytes);
+    for (my $b = $bb->first; $b; $b = $bb->next($b)) {
 
-    $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
-
-    while (!$ctx_bb->is_empty) {
-        my $b = $ctx_bb->first;
-
-        $b->remove;
-
-        if ($b->is_eos) {
-            #warn "EOS!!!!";
-            $bb->insert_tail($b);
-            last;
-        }
+        last if $b->is_eos;
 
         if ($b->read(my $data)) {
             #warn"[$data]\n";
-            $b = APR::Bucket->new(scalar reverse $data);
+            my $nb = APR::Bucket->new(scalar reverse $data);
+            $b->insert_before($nb);
+            $b->remove;
         }
-
-        $bb->insert_tail($b);
     }
 
     Apache::OK;
