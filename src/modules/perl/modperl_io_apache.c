@@ -58,6 +58,23 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
     return code;
 }
 
+static SV *
+PerlIOApache_getarg(pTHX_ PerlIO *f, CLONE_PARAMS *param, int flags)
+{
+    PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
+    SV *sv = newSV(0);
+
+    if (!st->r) {
+        Perl_croak(aTHX_ "an attempt to getarg from a stale io handle");
+    }
+    
+    sv_setref_pv(sv, "Apache::RequestRec", (void*)(st->r));
+
+    MP_TRACE_o(MP_FUNC, "retrieved request_rec obj: 0x%lx", st->r);
+    
+    return sv;
+}
+
 static IV
 PerlIOApache_fileno(pTHX_ PerlIO *f)
 {
@@ -204,7 +221,7 @@ static PerlIO_funcs PerlIO_Apache = {
     PerlIOApache_popped,
     PerlIOApache_open,
     PerlIOBase_binmode,
-    NULL,                       /* no getarg needed */
+    PerlIOApache_getarg,
     PerlIOApache_fileno,
     PerlIOBase_dup,
     PerlIOApache_read,
