@@ -17,7 +17,7 @@ Solving an 'uninitialized value' warn in Apache::SizeLimit.
 post_connection() expects a return status from the callback function.
 [Stas Bekman <sbekman@stason.org>]
 
-include mod_perl hook/feature config in Apache::MyConfig
+include mod_perl hook/feature config and pod in Apache::MyConfig
 [Geoffrey Young <gyoung@laserlink.net>]
 
 rewrite of Apache::WRITE() in c/xs
