@@ -1,0 +1,163 @@
+=head1 Disclaimer
+
+This is preliminary developer's documentation, incomplete and probably
+inaccurate at times. Feel free to contribute.
+
+=head1 Installing
+
+Download the apache-2.0 and modperl-2.0 tarballs, and extract them
+in the same directory:
+
+  % ls -l
+  drwxr-xr-x   8 eric  eric   512 May 28 03:12 apache-2.0
+  drwxr-xr-x   8 eric  eric   512 May 28 11:59 modperl-2.0
+
+=head1 Compiling
+
+=head2 Create the build environment
+
+  % perl Makefile.PL [options]
+
+I<options>  an optional list of (key,value) pairs. Currently all options are
+boolean, set them with MP_XXX=1.
+
+=over 4
+
+=item MP_PROMPT_DEFAULT
+
+Do not prompt the user, instead use default answers to any questions.
+
+=item MP_USE_DSO
+
+build mod_perl as a DSO
+
+=item MP_USE_GTOP
+
+use Gtop
+
+=item MP_DEBUG
+
+compilation includes symbols for debugging. Implies MP_TRACE
+
+=item MP_TRACE
+
+enable tracing
+
+=item MP_CPP
+
+just run the C preprocessor, don't compile or link
+
+=back
+
+Options can also be specified in the file C<makepl_args.mod_perl2>.
+
+=head2 Compile mod_perl
+
+  % make
+
+=head2 Configure and compile Apache
+
+  % cd ../apache-2.0/src
+  % ./configure --with-mpm=mpmt_pthread
+  % make
+
+
+=head1 mod_perl configuration directives
+
+=head2 Installing handlers
+
+=over 4
+
+=item PerlChildInitHandler
+
+=item PerlOpenLogsHandler
+
+=item PerlPostConfigHandler
+
+=item PerlPreConnectionHandler
+
+=item PerlProcessConnectionHandler
+
+=item PerlHeaderParserHandler
+
+=item PerlAccessHandler
+
+=item PerlAuthenHandler
+
+=item PerlAuthzHandler
+
+=item PerlTypeHandler
+
+=item PerlFixupHandler
+
+=item PerlLogHandler
+
+=item PerlPostReadRequestHandler
+
+=item PerlTransHandler
+
+=back
+
+=head2 General directives
+
+=over 4
+
+=item PerlSwitches switches
+
+pass switches to the Perl command line. For example, to enable
+warnings:
+
+  PerlSwitches -w
+
+=item PerlTrace [level]
+
+set the trace level. This directive is enabled when mod_perl is compiled with
+the MP_TRACE option. C<level> is either:
+
+all
+
+which sets maximum logging and debugging levels;
+
+a combination of one or more option letters from the following list:
+
+  d  directive processing
+  g  Perl runtime interaction
+  h  handlers
+  i  interpreter pool management
+  m  memory allocations
+  s  perl sections
+
+a numeric value.
+
+When C<level> is not specified, the tracing level will be set to the
+value of the MOD_PERL_TRACE environment variable.
+
+=back
+
+=head2 Threaded mode directives
+
+These directives are enabled only in a threaded mod_perl+Apache combo.
+
+=over 4
+
+=item PerlInterpStart
+
+Number of Perl interpreters to start
+
+=item PerlInterpMax
+
+Max number of running Perl interpreters
+
+=item PerlInterpMaxSpare
+
+Max number of spare Perl interpreters
+
+=item PerlInterpMinSpare
+
+Min number of spare Perl interpreters
+
+=item PerlInterpMaxRequests
+
+Max number of requests per Perl interpreters
+
+=back
