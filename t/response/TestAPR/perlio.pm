@@ -23,7 +23,7 @@ sub handler {
         return Apache::OK;
     }
 
-    plan $r, tests => 9, todo => [5];
+    plan $r, tests => 9, todo => [5], have_perl 'iolayers';
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
