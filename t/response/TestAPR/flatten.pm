@@ -36,50 +36,50 @@ sub handler {
              $bb->length,
              'APR::Brigade::length()');
 
-    # syntax: always require a pool
-    eval { $bb->flatten() };
+    # syntax: require a $bb
+    eval { APR::Brigade::flatten("") };
 
-    ok t_cmp(qr/Usage: APR::Brigade::flatten/,
+    ok t_cmp(qr!expecting an APR::Brigade derived object!,
              $@,
-             'APR::Brigade::flatten() requires a pool');
+             'APR::Brigade::flatten() requires a brigade');
 
-    # flatten($pool) will slurp up the entire brigade
+    # flatten() will slurp up the entire brigade
     # equivalent to calling apr_brigade_pflatten
     {
-        my $data = $bb->flatten($pool);
+        my $data = $bb->flatten();
 
         ok t_cmp(200000,
                  length($data),
-                 'APR::Brigade::flatten() returned all the data');
+                 '$bb->flatten() returned all the data');
 
         # don't use t_cmp() here, else we get 200,000 characters
         # to look at in verbose mode
-        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        t_debug("data all 'x' characters");
         ok ($data !~ m/[^x]/);
     }
 
-    # syntax: flatten($p, 0) is equivalent to flatten($p)
+    # flatten(0) returns 0 bytes
     {
-        my $data = $bb->flatten($pool, 0);
+        my $data = $bb->flatten(0);
 
-        ok t_cmp(200000,
+        t_debug('$bb->flatten(0) returns a defined value');
+        ok (defined $data);
+    
+        ok t_cmp(0,
                  length($data),
-                 'APR::Brigade::flatten() returned all the data');
-
-        t_debug("APR::Brigade::flatten() data all 'x' characters");
-        ok ($data !~ m/[^x]/);
+                 '$bb->flatten(0) returned no data');
     }
 
 
-    # flatten($pool, $length) will return the first $length bytes
+    # flatten($length) will return the first $length bytes
     # equivalent to calling apr_brigade_flatten
     {
         # small
-        my $data = $bb->flatten($pool, 30);
+        my $data = $bb->flatten(30);
 
         ok t_cmp(30,
                  length($data),
-                 'APR::Brigade::flatten() returned all the data');
+                 '$bb->flatten(30) returned 30 characters');
 
         t_debug("APR::Brigade::flatten() data all 'x' characters");
         ok ($data !~ m/[^x]/);
@@ -87,38 +87,38 @@ sub handler {
 
     {
         # large 
-        my $data = $bb->flatten($pool, 190000);
+        my $data = $bb->flatten(190000);
 
         ok t_cmp(190000,
                  length($data),
-                 'APR::Brigade::flatten() returned all the data');
+                 '$bb->flatten(190000) returned 19000 characters');
 
-        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        t_debug("data all 'x' characters");
         ok ($data !~ m/[^x]/);
     }
 
     {
         # more than enough
-        my $data = $bb->flatten($pool, 300000);
+        my $data = $bb->flatten(300000);
 
         ok t_cmp(200000,
                  length($data),
-                 'APR::Brigade::flatten() returned all the data');
+                 '$bb->flatten(300000) returned all 200000 characters');
 
-        t_debug("APR::Brigade::flatten() data all 'x' characters");
+        t_debug("data all 'x' characters");
         ok ($data !~ m/[^x]/);
     }
 
     # fetch from a brigade with no data in it
     {
-        my $data = APR::Brigade->new($pool, $ba)->flatten($pool);
+        my $data = APR::Brigade->new($pool, $ba)->flatten();
 
-        t_debug('an empty brigade returns a defined value');
+        t_debug('empty brigade returns a defined value');
         ok (defined $data);
     
         ok t_cmp(0,
                  length($data),
-                 'an empty brigade returns data of 0 length');
+                 'empty brigade returns data of 0 length');
     }
 
     Apache::OK;

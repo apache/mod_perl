@@ -96,47 +96,38 @@ SV *mpxs_APR__Brigade_length(pTHX_ apr_bucket_brigade *bb,
     return &PL_sv_undef;
 }
 
+#define mp_xs_sv2_bb mp_xs_sv2_APR__Brigade
+
 static MP_INLINE
-SV *mpxs_APR__Brigade_flatten(pTHX_ apr_bucket_brigade *bb,
-                              apr_pool_t *pool, SV *sv_len)
+SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
+                              SV **MARK, SV **SP)
 {
 
-    /* XXX we're deviating from the API here to try and make
-     * the API more Perlish - nobody likes the idea of two
-     * "in/out" arguments.  and we generally don't ever need
-     * the length anyway...
-     */
-
-    apr_status_t status;
-    char *buffer;
+    apr_bucket_brigade *bb;
     apr_size_t length;
+    apr_status_t status;
+    SV *data = newSV(0);
 
-    if (SvTRUE(sv_len)) {
-        /* APR::Brigade->flatten($p, $length);
-         * use apr_brigade_flatten to get the first $length bytes
-         *
-         * note that $length must be non-zero to get here
-         */
+    mpxs_usage_va_1(bb, "$bb->flatten([$length])");
 
-        length = mp_xs_sv2_apr_size_t(sv_len);
-
-        /* since we always require a pool, we can allocate from it */
-        buffer = apr_pcalloc(pool, length);
-
-        status = apr_brigade_flatten(bb, buffer, &length);
-
+    if (items > 1) {
+        /* APR::Brigade->flatten($length); */
+        length = SvIV(*MARK);
     }
     else {
-        /* APR::Brigade->flatten($p);
-         * use apr_brigade_pflatten to slurp the entire brigade
-         *
-         * note that it doesn't matter what we pass in for length
+        /* APR::Brigade->flatten(); */
+        /* can't use pflatten, because we can't realloc() memory
+         * allocated by pflatten. and we need to append '\0' to it in
+         * SvPVX.  so we copy pflatten's guts here.
          */
-
-        status = apr_brigade_pflatten(bb, &buffer, &length, pool);
-
+        apr_off_t actual;
+        apr_brigade_length(bb, 1, &actual);
+        length = (apr_size_t)actual;
     }
 
+    mpxs_sv_grow(data, length);
+
+    status = apr_brigade_flatten(bb, SvPVX(data), &length);
     if (status != APR_SUCCESS) {
         /* XXX croak?
          * note that reading from an empty brigade will return
@@ -145,5 +136,8 @@ SV *mpxs_APR__Brigade_flatten(pTHX_ apr_bucket_brigade *bb,
         return &PL_sv_undef;
     }
 
-    return newSVpvn(buffer, length);
+    mpxs_sv_cur_set(data, length);
+    SvTAINTED_on(data);
+
+    return data;
 }
