@@ -30,7 +30,7 @@ VP src/docs/2.0/api/Apache/Filter.pod
         The whole TIE interface   
 VV src/docs/2.0/api/Apache/FilterRec.pod
 VV src/docs/2.0/api/Apache/HookRun.pod
-+- src/docs/2.0/api/Apache/Log.pod
+VP src/docs/2.0/api/Apache/Log.pod
         log_pid
 VV src/docs/2.0/api/Apache/Module.pod
 VV src/docs/2.0/api/Apache/PerlSections.pod

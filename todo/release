@@ -51,20 +51,6 @@
   the issues and thinks he knows how to fix it, he just needs the time.
   owner: geoff
 
-* Fixing Apache->warn("foo")
-
-  Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
-  Thread: http://mathforum.org/epigone/modperl-dev/noxtramcay
-  Status: pending Apache::Log compat issues, this and other methods
-          might be dropped.
-  There are other problems with Apache::Log: at the moment only $r->
-  and $s-> log calls log into vhost's error_log, need to figure out
-  how to do that for object-less methods (Apache->warn(),
-  Apache::warn(), warn (need to override with CORE::GLOBAL::warn), and
-  if possible internal warnings as well
-  owner: stas
-
-
 * per-server cleanups core dump or are otherwise ineffective
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
