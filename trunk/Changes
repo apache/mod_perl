@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_04-dev
 
+fix possible core dump is PerlRequire fails, thanks to James Nicolson
+for the spot
+
 make sure lib/Apache/MyConfig.pm is written before used
 thanks to Albert Chin for the spot
 
