@@ -447,18 +447,6 @@ static int modperl_hook_create_request(request_rec *r)
 
     modperl_config_req_init(r, rcfg);
 
-    if (r->main) {
-        modperl_config_req_t *main_rcfg =
-            modperl_config_req_get(r->main);
-
-        rcfg->wbucket = main_rcfg->wbucket;
-    }
-    else {
-        rcfg->wbucket =
-            (modperl_wbucket_t *)apr_palloc(r->pool,
-                                            sizeof(*rcfg->wbucket));
-    }
-
     return OK;
 }
 
@@ -588,11 +576,15 @@ void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
     MP_dDCFG;
-    modperl_wbucket_t *wb = rcfg->wbucket;
+    modperl_wbucket_t *wb;
 
-    if (r->main && wb->pool) {
-        return; /* using bucket from main request */
+    if (!rcfg->wbucket) {
+        rcfg->wbucket =
+            (modperl_wbucket_t *)apr_palloc(r->pool,
+                                            sizeof(*rcfg->wbucket));
     }
+
+    wb = rcfg->wbucket;
 
     /* setup buffer for output */
     wb->pool = r->pool;
