@@ -30,6 +30,11 @@ sub init {
     }
 
     $build->{MP_GENERATE_XS} = 1 unless exists $build->{MP_GENERATE_XS};
+
+    # define MP_COMPAT_1X unless explicitly told to disable it
+    $build->{MP_COMPAT_1X} = 1
+        unless exists $build->{MP_COMPAT_1X} && !$build->{MP_COMPAT_1X};
+
 }
 
 sub parse {
@@ -64,7 +69,7 @@ sub parse {
                 die "Unknown Option: $key\nUsage:\n$usage";
             }
 
-            if($key eq 'MP_APXS') {
+            if ($key eq 'MP_APXS') {
                 $val = File::Spec->canonpath(File::Spec->rel2abs($val));
             }
 
@@ -176,3 +181,4 @@ XS_GLUE_DIR     Directories containing extension glue
 INCLUDE_DIR     Add directories to search for header files
 GENERATE_XS     Generate XS code based on httpd version
 LIBNAME         Name of the modperl dso library (default is mod_perl)
+COMPAT_1X       Compile-time mod_perl 1.0 backcompat (default is on)

@@ -10,8 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+MP_COMPAT_1X=0 now can be passed to Makefile.PL to disable
+mp1-back-compat compile-time features + adjust tests. [Stas]
+
 <SERVER_ROOT> and <SERVER_ROOT>/lib/perl are now added to @INC, just
-like mod_perl 1.0 with MP_COMPAT_1X=1 (currently enabled by default).
+like mod_perl 1.0 with MP_COMPAT_1X=1 (currently enabled by
+default). [Stas]
 
 The Perl-5.8.0 crypt() workaround is now used only if 5.8.0 is used,
 since 5.8.1-tobe/5.9.0-tobe(blead-perl) won't compile with

@@ -228,6 +228,10 @@ sub ap_ccopts {
         }
     }
 
+    if ($self->{MP_COMPAT_1X}) {
+        $ccopts .= " -DMP_COMPAT_1X";
+    }
+
     if ($self->{MP_DEBUG}) {
         $self->{MP_TRACE} = 1;
         my $win32_flags = MSVC  ? '-Od -MD -Zi' : '';
