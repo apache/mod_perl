@@ -22,7 +22,16 @@ listed in deprecated_features.txt
 
 - PerlFreshRestart
 
-- cgi emulation, i.e. %ENV/END{}/exit() management
+- cgi emulation, i.e. END{}/exit() management
+
+- %ENV managment:
+   - %ENV is currently only saved/restored for the perl-script
+     handler, i.e. changes to %ENV outside of a perl-script handler
+     are not cleared.  of course, "clean" modules would use local() to
+     modify %ENV, but there should be an option to save/restore
+     globals outside of the perl-script handler
+ 
+   - see if we can avoid touching environ[] until a fork() from Perl happens
 
 - die 404;
 
