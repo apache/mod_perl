@@ -32,6 +32,7 @@ sub new_test_config {
     # default timeout in secs (threaded mpms are extremely slow to
     # startup, due to a slow perl_clone operation)
     $self->{conf_opts}->{startup_timeout} ||=
+        $ENV{APACHE_TEST_STARTUP_TIMEOUT} ||
         Apache::Build->build_config->mpm_is_threaded() ? 300 : 120;
 
     $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
