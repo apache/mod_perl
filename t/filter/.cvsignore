@@ -1,6 +1,3 @@
-api.t
-buckets.t
-input_body.t
-input_msg.t
-lc.t
+out_bbs_basic.t
+out_str_api.t
 
