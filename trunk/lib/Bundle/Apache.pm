@@ -1,6 +1,6 @@
 package Bundle::Apache;
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 
 1;
 
@@ -21,6 +21,8 @@ Apache - Perl interface to Apache server API
 ExtUtils::Embed - Needed to build httpd
 
 MIME::Base64 - Needed for LWP
+
+URI::URL - Needed for LWP
 
 LWP - Web client to run mod_perl tests
 
