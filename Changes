@@ -8,6 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+Apache::PerlRun::handler changes:
+
+ - PerlRunOnce option
+ - don't localize %INC, just remove new, non-.pm files
+
 fix bug that would hose child if a croak() happened, be it from a
 syntax error, Carp::croak(), etc.  remove child_terminate() hack that
 was blaming the Perl stack being corrupt
