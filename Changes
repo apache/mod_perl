@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_04-dev
 
+Bundle::Apache will now install Bundle::LWP before mod_perl
+[Aaron Johnson <solution@gina.net>]
+
 support Apache::FakeRequest::args in a list context
 [Michael Finke <mfinke@apollo.screamdesign.com>]
 
