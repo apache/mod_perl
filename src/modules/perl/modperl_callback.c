@@ -18,7 +18,7 @@
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      request_rec *r, server_rec *s, AV *args)
 {
-    CV *cv=Nullcv;
+    CV *cv = Nullcv;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
