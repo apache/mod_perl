@@ -26,7 +26,7 @@ my %mcache = (); #MODULE_MAGIC_NUMBER
     for (@_) { -e $_ or die $! }
 } if $File::Copy::VERSION < 2.0;
 
-$VERSION = "1.11";
+$VERSION = "1.11_01-dev";
 
 use subs qw(_prompt iedit asrc);
 
@@ -943,7 +943,7 @@ cvs_export :
 	cvs -d $(CVSROOT) export -rv$(VERSION_SYM) -d$(DISTVNAME) .
 
 cvs_rtag :
-	cvs -d $(CVSROOT) rtag v$(VERSION_SYM) .
+	cvs -d $(CVSROOT) rtag v$(VERSION_SYM) modperl
 	@echo update Makefile.PL's VERSION now
 
 EOF
