@@ -1,6 +1,11 @@
 config features:
 ----------------
 
+- could add support for embedding apache directives into perl
+  directives values, e.g. interpolating $ServerRoot
+
+  PerlSwitches -I$ServerRoot/lib/perl
+
 - Since now we have protocol modules, it'd be nice to have a similar
   thing to PerlCleanupHandler, which works only for HTTP requests. 
   It should probably be called PerlConnectionCleanupHandler.
