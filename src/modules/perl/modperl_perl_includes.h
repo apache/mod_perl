@@ -67,6 +67,10 @@
 #   define PERL_MAGIC_tied 'P'
 #endif
 
+#ifndef PERL_MAGIC_ext
+#   define PERL_MAGIC_ext '~'
+#endif
+
 #if defined(__APPLE__) && !defined(PERL_CORE) && !defined(environ)
 #   include <crt_externs.h>
 #   define environ (*_NSGetEnviron())
