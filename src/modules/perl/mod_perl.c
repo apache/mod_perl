@@ -61,7 +61,7 @@ void modperl_pre_config_handler(ap_pool_t *p, ap_pool_t *plog,
 void modperl_register_hooks(void)
 {
     /* XXX: should be pre_config hook or 1.xx logic */
-    ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_FIRST);
+    ap_hook_open_logs(modperl_hook_init, NULL, NULL, AP_HOOK_MIDDLE);
     modperl_register_handler_hooks();
 }
 
