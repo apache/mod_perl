@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+document PerlSetVar [Eric Cholet <cholet@logilune.com>]
+
 document the fact that $r->dir_config handles keys in a
 case insensitive manner [Ken Williams <ken@forum.swarthmore.edu>]
 
