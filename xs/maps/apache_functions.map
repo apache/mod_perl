@@ -87,7 +87,7 @@ PREFIX=ap_r
 -ap_vrprintf
 
 MODULE=Apache::Response   PACKAGE=guess
- ap_make_etag
+ ap_make_etag | | r, force_weak=0
  ap_set_content_length
  ap_set_etag
  ap_meets_conditions
@@ -95,7 +95,7 @@ MODULE=Apache::Response   PACKAGE=guess
  ap_update_mtime
  ap_send_error_response
 ~ap_send_fd
- ap_send_mmap
+ ap_send_mmap | | r, mm, offset, length
  ap_send_size
  ap_set_keepalive
  ap_set_last_modified
