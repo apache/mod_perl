@@ -35,7 +35,22 @@ void modperl_handler_make_args(pTHX_ AV *av, ...)
 
         ptr = va_arg(args, void *);
 
-        sv = modperl_ptr2obj(aTHX_ classname, ptr);
+        switch (*classname) {
+          case 'I':
+            if (strEQ(classname, "IV")) {
+                sv = ptr ? newSViv((IV)ptr) : &PL_sv_undef;
+                break;
+            }
+          case 'P':
+            if (strEQ(classname, "PV")) {
+                sv = ptr ? newSVpv((char *)ptr, 0) : &PL_sv_undef;
+                break;
+            }
+          default:
+            sv = modperl_ptr2obj(aTHX_ classname, ptr);
+            break;
+        }
+
         av_push(av, sv);
     }
 
