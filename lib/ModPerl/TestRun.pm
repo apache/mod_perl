@@ -64,12 +64,9 @@ sub new {
 
 # - don't inherit LoadModule perl_module from the apache httpd.conf
 # - loaded fastcgi crashes some mp2 tests
-my %skip = map { ("mod_$_.c" => 1) } qw(perl fastcgi);
-sub should_skip_module {
-    my($self, $name) = @_;
+my @skip = ('mod_perl.c', qr/mod_fastcgi.*?\.c$/);
 
-    exists $skip{$name} ? 1 : $self->SUPER::should_skip_module($name);
-}
+Apache::TestConfig::autoconfig_skip_module_add(@skip);
 
 1;
 
