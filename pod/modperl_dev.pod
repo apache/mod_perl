@@ -557,18 +557,19 @@ Enable/Disable Options.  Options include:
 
 =item Parent
 
-Create a new parent Perl interpreter for the given VirtualHost
-(implies Clone).
+Create a new parent Perl interpreter for the given VirtualHost and
+give it its own interpreter pool (implies Clone).
 
 =item Clone
 
-Give the VirtualHost its own interpreter pool.
+Share the parent Perl interpreter, but give the VirtualHost its own
+interpreter pool.
 
 Use:
 
   PerlSwitches +inherit
 
-to inherit base PerlSwitches.
+to inherit base Perl interpreter's C<PerlSwitches>.
 
 =item Enable
 
