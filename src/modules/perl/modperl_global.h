@@ -41,6 +41,8 @@ type modperl_global_get_##gname(void); \
 void modperl_global_set_##gname(void *)
 
 MP_GLOBAL_DECL(pconf, apr_pool_t *);
+MP_GLOBAL_DECL(server_rec, server_rec *);
+MP_GLOBAL_DECL(threaded_mpm, int);
 
 apr_status_t modperl_tls_create(apr_pool_t *p, modperl_tls_t **key);
 apr_status_t modperl_tls_get(modperl_tls_t *key, void **data);

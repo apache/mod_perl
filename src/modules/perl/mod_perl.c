@@ -207,15 +207,22 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 }
 #endif /* USE_ITHREADS */
 
-static void modperl_init_globals(apr_pool_t *pconf)
+static void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
 {
-    modperl_global_init_pconf(pconf, (void *)pconf);
+    int threaded_mpm;
+    ap_mpm_query(AP_MPMQ_IS_THREADED, &threaded_mpm);
+
+    modperl_global_init_pconf(pconf, pconf);
+    modperl_global_init_threaded_mpm(pconf, threaded_mpm);
+    modperl_global_init_server_rec(pconf, s);
+
     modperl_tls_create_request_rec(pconf);
 }
 
 void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                        apr_pool_t *ptemp, server_rec *s)
 {
+    modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
 }
 
@@ -243,7 +250,6 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     ap_add_version_component(pconf,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
     modperl_mgv_hash_handlers(pconf, s);
-    modperl_init_globals(pconf);
 #ifdef USE_ITHREADS
     modperl_init_clones(s, pconf);
 #endif

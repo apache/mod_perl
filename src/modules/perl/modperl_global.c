@@ -126,6 +126,8 @@ void modperl_global_set_##gname(void *data)              \
 }                                                        \
 
 MP_GLOBAL_IMPL(pconf, apr_pool_t *);
+MP_GLOBAL_IMPL(server_rec, server_rec *);
+MP_GLOBAL_IMPL(threaded_mpm, int);
 
 #if MP_THREADED
 static apr_status_t modperl_tls_cleanup(void *data)
@@ -151,6 +153,10 @@ apr_status_t modperl_tls_create(apr_pool_t *p, modperl_tls_t **key)
 apr_status_t modperl_tls_get(modperl_tls_t *key, void **data)
 {
 #if MP_THREADED
+    if (!key) {
+        *data = NULL;
+        return APR_SUCCESS;
+    }
     return apr_threadkey_private_get(data, key);
 #else
     *data = modperl_global_get((modperl_global_t *)key);
