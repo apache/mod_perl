@@ -56,6 +56,10 @@ PerlModule Apache::TestHandler
 EOC
 Apache->server->add_config([split /\n/, $conf]);
 
+# test a directive that triggers an early startup, so we get an
+# attempt to use perl's mip  early
+Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
+
 use constant IOBUFSIZE => 8192;
 
 sub ModPerl::Test::read_post {
