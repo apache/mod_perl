@@ -78,7 +78,7 @@ sub new {
        hook_proto      => \%hook_proto,
        directive_proto => \%directive_proto,
        flags           => \%flags,
-       path            => "src/modules/perl",
+       path            => 'src/modules/perl',
     }, $class;
 }
 
@@ -91,7 +91,7 @@ sub generate_handler_index {
         my $i = 0;
         my $n = @$handlers;
 
-        print $h_fh "\n#define ",
+        print $h_fh "\n", '#define ',
           canon_define($class, 'num_handlers'), " $n\n\n";
 
         for my $name (@$handlers) {

@@ -94,15 +94,15 @@ sub clean {
 }
 
 sub set_modperl_version {
-    require "./lib/mod_perl.pm";
+    require './lib/mod_perl.pm';
 
     $VERSION = $mod_perl::VERSION;
     $VERSION =~ s/(\d\d)(\d\d)$/$1_$2/;
 
-    open my $fh, "Changes";
+    open my $fh, 'Changes';
     while(<$fh>) {
 	if(/^=item.*-dev/) {
-	    $VERSION .= "-dev";
+	    $VERSION .= '-dev';
 	    last;
 	}
 	last if /^=item/;
@@ -112,7 +112,7 @@ sub set_modperl_version {
 
 sub phat_warn {
     my($msg, $abort) = @_;
-    my $level = $abort ? "ERROR" : "WARNING";
+    my $level = $abort ? 'ERROR' : 'WARNING';
     warn <<EOF;
 ************* $level *************
 
@@ -156,9 +156,9 @@ sub gdbm_check {
     my $maybe = $build->find_dlfile_maybe('gdbm');
     my $suggest = @$maybe ? 
       "You could just symlink it to $maybe->[0]" :
-        "You might need to install Perl from source";
+        'You might need to install Perl from source';
     phat_warn(<<EOF);
-Your Perl is configured to link against libgdbm, 
+Your Perl is configured to link against libgdbm,
   but libgdbm.so was not found.
   $suggest
 EOF

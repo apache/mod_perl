@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Config;
 use Cwd ();
-use constant is_win32 => $^O eq "MSWin32";
+use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 our $VERSION = '0.01';
@@ -26,8 +26,8 @@ sub apxs {
 	#these extra tries are for things built outside of mod_perl
 	#e.g. libapreq
 	push @trys,
-	which("apxs"),
-	"/usr/local/apache/bin/apxs";
+	which('apxs'),
+	'/usr/local/apache/bin/apxs';
     }
 
     for (@trys) {
@@ -36,13 +36,13 @@ sub apxs {
 	last if -x $apxs;
     }
 
-    return "" unless $apxs and -x $apxs;
+    return '' unless $apxs and -x $apxs;
 
     qx($apxs @_ 2>/dev/null);
 }
 
 sub apxs_cflags {
-    my $cflags = __PACKAGE__->apxs("-q" => 'CFLAGS');
+    my $cflags = __PACKAGE__->apxs('-q' => 'CFLAGS');
     $cflags =~ s/\"/\\\"/g;
     $cflags;
 }
@@ -55,7 +55,7 @@ sub which {
 	return $app if -x $app;
     }
 
-    return "";
+    return '';
 }
 
 #--- Perl Config stuff ---
@@ -63,7 +63,7 @@ sub which {
 sub perl_config {
     my($self, $key) = @_;
 
-    return $Config{$key} ? $Config{$key} : "";
+    return $Config{$key} ? $Config{$key} : '';
 }
 
 
@@ -86,7 +86,7 @@ sub libpth {
 sub find_dlfile {
     my($self, $name) = @_;
 
-    return "" unless $Config{'libs'} =~ /$name/;
+    return '' unless $Config{'libs'} =~ /$name/;
 
     require DynaLoader;
     require AutoLoader; #eek
@@ -139,7 +139,7 @@ sub prompt_n {
 
 sub build_config {
     my $self = shift;
-    unshift @INC, "lib";
+    unshift @INC, 'lib';
     eval { require Apache::BuildConfig; };
     shift @INC;
     return bless {}, (ref($self) || $self) if $@;
@@ -260,7 +260,7 @@ sub find {
                      $self->default_dir,
                      <../apache*/src>,
                      <../stronghold*/src>,
-                     "../src", "./src")
+                     '../src', './src')
       {
           next unless (-d $src_dir || -l $src_dir);
           next if $seen{$src_dir}++;
@@ -282,7 +282,7 @@ sub ap_includedir  {
         return $self->{ap_includedir} = "$d/include";
     }
 
-    $self->{ap_includedir} = Apache::Build->apxs("-q" => 'INCLUDEDIR');
+    $self->{ap_includedir} = Apache::Build->apxs('-q' => 'INCLUDEDIR');
 }
 
 #--- parsing apache *.h files ---
@@ -334,7 +334,7 @@ sub module_magic_number {
     return 0 unless $fh;
 
     my $n;
-    my $mmn_pat = join "|", qw(MODULE_MAGIC_NUMBER_MAJOR MODULE_MAGIC_NUMBER);
+    my $mmn_pat = join '|', qw(MODULE_MAGIC_NUMBER_MAJOR MODULE_MAGIC_NUMBER);
     while(<$fh>) {
 	if(s/^\#define\s+($mmn_pat)\s+(\d+).*/$2/) {
 	   chomp($n = $_);
@@ -349,7 +349,7 @@ sub module_magic_number {
 sub fold_dots {
     my $v = shift;
     $v =~ s/\.//g;
-    $v .= "0" if length $v < 3;
+    $v .= '0' if length $v < 3;
     $v;
 }
 
@@ -361,7 +361,7 @@ sub httpd_version_as_int {
 
 sub httpd_version_cache {
     my($self, $dir, $v) = @_;
-    return "" unless $dir;
+    return '' unless $dir;
     $self->{httpd_version}->{$dir} = $v if $v;
     $self->{httpd_version}->{$dir};
 }
@@ -393,7 +393,7 @@ sub httpd_version {
 	    next unless ($fserver,$fversion,$frest) =
 		m,^([^/]+)/(\d\.\d+\.?\d*)([^ ]*),i;
 
-	    if($fserver eq "Apache") {
+	    if($fserver eq 'Apache') {
 		($server, $version) = ($fserver, $fversion);
 		#$frest =~ s/^(a|b)(\d+).*/'_' . (length($2) > 1 ? $2 : "0$2")/e;
 		$version .= $frest if $frest;
@@ -411,11 +411,11 @@ sub otherldflags {
     my $self = shift;
     my @ldflags = ();
 
-    if ($^O eq "aix") {
-	if (my $file = find_in_inc("mod_perl.exp")) {
-	    push @ldflags, "-bI:" . $file;
+    if ($^O eq 'aix') {
+	if (my $file = find_in_inc('mod_perl.exp')) {
+	    push @ldflags, '-bI:' . $file;
 	}
-	my $httpdexp = $self->apxs("-q" => 'LIBEXECDIR') . "/httpd.exp";
+	my $httpdexp = $self->apxs('-q' => 'LIBEXECDIR') . '/httpd.exp';
 	push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
     }
     return join(' ', @ldflags);
@@ -424,12 +424,12 @@ sub otherldflags {
 sub typemaps {
     my $typemaps = [];
 
-    if (my $file = find_in_inc("typemap")) {
+    if (my $file = find_in_inc('typemap')) {
 	push @$typemaps, $file;
     }
 
     if(IS_MOD_PERL_BUILD) {
-	push @$typemaps, "../Apache/typemap";
+	push @$typemaps, '../Apache/typemap';
     }
 
     return $typemaps;
@@ -438,7 +438,7 @@ sub typemaps {
 sub inc {
     my $self = shift;
     my $src  = $self->dir;
-    my $os = is_win32 ? "win32" : "unix";
+    my $os = is_win32 ? 'win32' : 'unix';
     my @inc = ();
 
     for ("$src/modules/perl", "$src/include",
@@ -450,11 +450,11 @@ sub inc {
     my $ssl_dir = "$src/../ssl/include";
     unless (-d $ssl_dir) {
         my $build = $self->build_config;
-	$ssl_dir = join '/', $self->SSL_BASE || "", "include";
+	$ssl_dir = join '/', $self->SSL_BASE || '', 'include';
     }
     push @inc, "-I$ssl_dir" if -d $ssl_dir;
 
-    my $ainc = $self->apxs("-q" => 'INCLUDEDIR');
+    my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
     push @inc, "-I$ainc" if -d $ainc;
 
     return "@inc";
@@ -463,7 +463,7 @@ sub inc {
 sub ccflags {
     my $self = shift;
     my $cflags = $Config{'ccflags'};
-    join " ", $cflags, $self->apxs("-q" => 'CFLAGS');
+    join ' ', $cflags, $self->apxs('-q' => 'CFLAGS');
 }
 
 sub define {
