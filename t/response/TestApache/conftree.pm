@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 use Apache::TestConfig ();
 
 use Apache::Directive ();
@@ -14,7 +15,7 @@ sub handler {
     my $r = shift;
 
     my $cfg = Apache::Test::config();
-    plan $r, tests => 7;
+    plan $r, tests => 8;
 
     ok $cfg;
 
@@ -26,43 +27,40 @@ sub handler {
 
     ok $tree;
 
-    my $port = find_config_val($tree, 'Listen');
+    my $port = $tree->lookup('Listen');
 
-    ok $port;
+    ok t_cmp($vars->{port}, $port);
 
-    ok $port == $vars->{port};
+    my $documentroot = $tree->lookup('DocumentRoot');
 
-    my $documentroot = find_config_val($tree, 'DocumentRoot');
+    ok t_cmp('HASH' , ref($tree->as_hash()), 'as_hash');
 
-    ok $documentroot;
+    ok t_cmp(qq("$vars->{documentroot}"), $documentroot);
 
-    ok $documentroot eq qq("$vars->{documentroot}");
+    ok t_cmp(qq("$vars->{documentroot}"), $tree->lookup("DocumentRoot"));
+
+    #XXX: This test isn't so good, but its quite problematic to try
+    #and _really_ compare $cfg and $tree...
+    {
+        my %vhosts = map { 
+            $cfg->{vhosts}{$_}{name} => { %{$cfg->{vhosts}{$_}}, index => $_ }
+        } keys %{$cfg->{vhosts}};
+
+        for my $v (keys %vhosts) {
+            $vhosts{ $vhosts{$v}{index} }  = $vhosts{$v};
+        }
+
+        my $vhost_failed;
+        for my $vhost ($tree->lookup("VirtualHost")) {
+            unless (exists $vhosts{$vhost->{'ServerName'} 
+                || $vhost->{'PerlProcessConnectionHandler'}}) {
+                $vhost_failed++;
+            }
+        }
+
+        ok !$vhost_failed;
+    }
 
     Apache::OK;
 }
-
-sub find_config_val {
-    my($tree, $directive) = @_;
-
-    while ($tree) {
-        if ($directive eq $tree->directive) {
-            return $tree->args;
-        }
-
-        if (my $kid = $tree->first_child) {
-            $tree = $kid;
-        } elsif (my $next = $tree->next) {
-            $tree = $next;
-        }
-        else {
-            if (my $parent = $tree->parent) {
-                $tree = $parent->next;
-            }
-            else {
-                $tree = undef;
-            }
-        }
-    }
-}
-
 1;

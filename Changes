@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+New Apache::Directive methods: as_hash(), lookup() + tests + docs
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 Stacked handlers chain execution is now aborted when a handler returns
 something other than OK or DECLINED [Stas]
 
