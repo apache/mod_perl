@@ -30,9 +30,9 @@ void ap_pcw_walk_directory_config(apr_pool_t *pconf, server_rec *s,
                                   ap_pcw_dir_cb_t dir_cb, void *data)
 {
     int i;
-    ap_conf_vector_t **dirs = (ap_conf_vector_t **)sconf->sec->elts;
+    ap_conf_vector_t **dirs = (ap_conf_vector_t **)sconf->sec_dir->elts;
 
-    for (i = 0; i < sconf->sec->nelts; i++) {
+    for (i = 0; i < sconf->sec_dir->nelts; i++) {
         core_dir_config *conf =
             ap_get_module_config(dirs[i], &core_module);
         void *dir_cfg = ap_get_module_config(dirs[i], modp);
@@ -49,9 +49,9 @@ void ap_pcw_walk_files_config(apr_pool_t *pconf, server_rec *s,
                               ap_pcw_dir_cb_t dir_cb, void *data)
 {
     int i;
-    ap_conf_vector_t **dirs = (ap_conf_vector_t **)dconf->sec->elts;
+    ap_conf_vector_t **dirs = (ap_conf_vector_t **)dconf->sec_file->elts;
 
-    for (i = 0; i < dconf->sec->nelts; i++) {
+    for (i = 0; i < dconf->sec_file->nelts; i++) {
         core_dir_config *conf =
             ap_get_module_config(dirs[i], &core_module);
         void *dir_cfg = ap_get_module_config(dirs[i], modp);
