@@ -6,21 +6,29 @@
 
 For comments, questions, bug-reports, announcements, etc., send mail
 to I<modperl@apache.org>.
+
 To subscribe to this list (which you must do to send mail to the
-list), send a mail message to I<majordomo@apache.org> with the body:
+list), send a mail message to 
 
- subscribe modperl
-
-Please note that mails on the mailinglist go out with a reply-to
-header, so you have to be subscribed to get the answers.
+   I<modperl-subscribe@apache.org>
 
 We also have a mailinglist just for announcements. Subscribe my
-sending a message to I<majordomo@apache.org> with the body:
+sending a message to 
 
- subscribe modperl-announce
+   I<announce-subscribe@perl.apache.org>
 
-(Thanks to Brian Behlendorf)
-(Thanks also to Mark A. Imbriaco who maintained the original list for 2 years)
+Discussions about the perl.apache.org website and general mod_perl
+advocacy should go to the I<advocacy@perl.apache.org>
+mailinglist. Subscribe by sending mail to
+I<advocacy-subscribe@perl.apache.org>
+
+The HTML::Embperl mailinglist is at I<embperl@perl.apache.org>.
+Subscribe by (you properly got the idea by now) sending mail to
+I<embperl-subscribe@perl.apache.org>.
+
+All CVS commit messages goes to the I<modperl-cvs@apache.org>
+list. Embperl CVS messages goes to I<embperl-cvs@perl.apache.org>.
+
 
 =item MAIL LIST ARCHIVES
 
