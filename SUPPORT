@@ -143,6 +143,19 @@ $Config{archlibexp} is:
 
 Rebuild httpd/mod_perl with PERL_DEBUG=1, let's see a new backtrace.
 
+If you get a segfault but no core file gets dumped and you cannot
+reproduce the segfault on will, you have to make sure that your
+environment is set to allow a core file to be dumped. Change the
+script that starts the server to do (in bash):
+
+  ulimit -c unlimited
+
+before the code that starts the server. Alternatively you can execute
+this command from the shell and then start the server from the same
+shell. Now you should be able to get the core dumped. 
+
+Of course the directory the server is running in (usually as defined
+by ServerRoot) should be writable as well.
 
 =item SPINNING PROCESSES
 
