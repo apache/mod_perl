@@ -7,6 +7,8 @@ use ExtUtils::Install ();
 use Cwd ();
 use Apache::Build ();
 
+our %PM; #add files to installation
+
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
     q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::MM \\}."\n" .
@@ -130,20 +132,30 @@ sub ModPerl::MM::MY::post_initialize {
     my $self = shift;
 
     my $build = build_config();
+    my $pm = $self->{PM};
+
+    while (my($k,$v) = each %PM) {
+        if (-e $k) {
+            $pm->{$k} = $v;
+        }
+    }
 
     #not everything in MakeMaker uses INST_LIB
     #so we have do fixup a few PMs to make sure *everything*
     #gets installed into Apache2/
     if ($build->{MP_INST_APACHE2}) {
-        my $pm = $self->{PM};
-
         while (my($k, $v) = each %$pm) {
             #up one from the Apache2/ subdir
             #so it can be found for 'use Apache2 ()'
             next if $v =~ /Apache2\.pm$/;
 
             #move everything else to the Apache2/ subdir
-            $v =~ s,(blib/lib),$1/Apache2,;
+            #unless already specified with \$(INST_LIB)
+            #or already in Apache2/
+            unless ($v =~ /Apache2/) {
+                $v =~ s,(blib/lib),$1/Apache2,;
+            }
+
             $pm->{$k} = $v;
         }
     }

@@ -57,6 +57,10 @@ my @remote_makefile_dirs = Apache::Build::is_win32() ? () :
 
 configure();
 
+local %ModPerl::MM::PM = (
+    'xs/typemap' => 'blib/lib/Apache2/typemap',
+);
+
 ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
