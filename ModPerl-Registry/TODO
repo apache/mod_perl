@@ -43,6 +43,10 @@ RegistryCooker:
 - in namespace_from_filename() should test whether a file is a symlink
   and if so use readlink() to get the real filename.
 
+- see what can be done to handle HEAD requests without altering the scripts. 
+  I'm thinking of running the script normally, but send back only the
+  generated headers.
+ 
 - documentation
 
 ### optimizations ###
