@@ -69,6 +69,8 @@ Turn on debugging (-g -lperld) and tracing
 
 =item MP_MAINTAINER
 
+NOTE: apache must be build with --enable-maintainer-mode
+
 Maintainer compile mode, turn on MP_DEBUG and add gcc flags:
 
  -DAP_DEBUG \
