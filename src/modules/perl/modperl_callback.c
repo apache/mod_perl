@@ -16,7 +16,12 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     PUSHMARK(SP);
 
     if (MpHandlerMETHOD(handler)) {
-        GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_obj);
+        GV *gv;
+        if (!handler->mgv_obj) {
+            Perl_croak(aTHX_ "panic: %s method handler object is NULL!",
+                       handler->name);
+        }
+        gv = modperl_mgv_lookup(aTHX_ handler->mgv_obj);
         XPUSHs(modperl_mgv_sv(gv));
     }
 
