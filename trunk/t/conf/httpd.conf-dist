@@ -57,7 +57,7 @@ Alias /dirty-perl/ ./t/net/perl/
 Alias /cgi-bin/ ./t/net/perl/
 
 <Location /dirmagic>
-PerlHandler My::DirIndex
+PerlHandler -My::DirIndex
 </Location>
 
 <Location /perl>
@@ -125,7 +125,7 @@ PerlSetVar StatusPeek On
 PerlSetVar StatusGraph On
 PerlSetVar StatusDumper On
 SetHandler perl-script
-PerlHandler Apache::Status
+PerlHandler +Apache::Status
 </Location>
 
 <Location /perl_xs/perl-status>

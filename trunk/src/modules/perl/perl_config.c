@@ -336,6 +336,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
     return (void *)cls;
 }
 
+#if 0
 static int is_2lns(const char *name)
 {
     register int x, n;
@@ -345,15 +346,24 @@ static int is_2lns(const char *name)
             n++;
     return n == 2;
 }
+#endif
 
 #ifdef WIN32
 #define mp_preload_module(name)
 #else
-#define mp_preload_module(name) \
-if(is_2lns(name) && !perl_module_is_loaded(name)) { \
-    MP_TRACE_d(fprintf(stderr, \
-    "mod_perl: attempting to pre-load module `%s'\n", name)); \
-    perl_require_module(name,NULL); \
+static void mp_preload_module(char **name)
+{
+    if(**name == '-' && ++*name) return;
+    if(**name == '+') ++*name;
+    else if(!PERL_AUTOPRELOAD) return;
+    if(!PERL_RUNNING()) return;
+
+    if(!perl_module_is_loaded(*name)) { 
+	MP_TRACE_d(fprintf(stderr, 
+			   "mod_perl: attempting to pre-load module `%s'\n", 
+			   *name));
+	perl_require_module(*name,NULL);
+    }
 }
 #endif
 
@@ -369,7 +379,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
     } 
 #endif
 
-    mp_preload_module(arg);
+    mp_preload_module(&arg);
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
@@ -389,7 +399,7 @@ return perl_cmd_push_handlers(hook,&cmd,arg,parms->pool)
 
 #define PERL_CMD_PUSH_HANDLERS(hook, cmd) \
 cmd = arg; \
-if(PERL_RUNNING()) mp_preload_module(arg); \
+mp_preload_module(&arg); \
 return NULL
 
 int mod_perl_push_handlers(SV *self, char *hook, SV *sub, AV *handlers)

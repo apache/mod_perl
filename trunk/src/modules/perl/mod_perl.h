@@ -162,6 +162,10 @@ hv_store(ERRHV, k, strlen(k), newSVsv(v), FALSE)
 (void)hv_delete(ERRHV, k, strlen(k), G_DISCARD)
 
 
+#ifndef PERL_AUTOPRELOAD
+#define PERL_AUTOPRELOAD perl_get_sv("Apache::Server::AutoPreLoad", FALSE)
+#endif
+
 #ifndef ERRSV_CAN_BE_HTTP
 #define ERRSV_CAN_BE_HTTP perl_get_sv("Apache::ERRSV_CAN_BE_HTTP", FALSE)
 #endif
