@@ -156,3 +156,23 @@ apache features that would be neat for mod_perl:
 -----------------------------------------------
 
 - "autoload" hook for configuration directives
+
+tools that may help us develop/maintain mp2 
+-------------------------------------------
+- B::Xref
+
+- gcov: test code coverage
+  http://apr.apache.org/coverage/index.html
+  http://gozer.ectoplasm.org/mod_perl/coverage/report.html
+
+- valgrind (currently valgrind chokes when running apache, long before
+  we get to mod_perl). I've heard that we could use some special
+  #define controls to tell valgrind where to look and where not.
+
+- gprof
+
+- lxr
+
+- tinderbox
+
+
