@@ -34,6 +34,54 @@ static SV *ApacheFile_new(char *class)
     return RETVAL;
 }
 
+#if 0
+
+static char *ApacheFile_basename(SV *self, const char *filename)
+{
+    char *RETVAL = strrchr(filename, '/'); 
+    ++RETVAL;
+    return RETVAL;
+}
+
+static SV *ApacheFile_dirname(SV *self, const char *filename)
+{
+    SV *RETVAL = newSVpv(ap_make_dirstr_parent(perl_get_util_pool(), filename), 0);
+    *(SvEND(RETVAL) - 1) = '\0';
+    --SvCUR(RETVAL); 
+    return RETVAL;
+}
+
+typedef struct {
+    SV *base;
+    SV *ext;
+} AFparsed;
+
+AFparsed *ApacheFile_parse(SV *fname, SV *pattern)
+{
+    AFparsed *afp = (AFparsed *)safemalloc(sizeof(AFparsed));
+    regexp *re;
+    PMOP pm;
+    STRLEN len;
+    STRLEN slen;
+    char *s = SvPV(pattern,len), *ptr = SvPV(fname,slen);
+    Zero(&pm,1,PMOP);
+    re = Perl_pregcomp(s, s+len, &pm);
+    Perl_pregexec(re, ptr, ptr+slen, ptr, 0, Nullsv, 1);
+    if (re->endp[1]) {
+	afp->ext = sv_newmortal();
+	afp->base = sv_newmortal();
+	sv_setpvn(afp->ext, re->startp[1], re->endp[1] - re->startp[1]);
+	sv_setpvn(afp->base, ptr, slen - SvCUR(afp->ext));
+    }
+    else {
+	afp->ext = &sv_undef;
+	afp->base = sv_2mortal(newSVsv(fname));
+    }
+    Perl_pregfree(re);
+    return afp;
+}
+#endif
+
 MODULE = Apache::File		PACKAGE = Apache::File    PREFIX = ApacheFile_
 
 PROTOTYPES: DISABLE
@@ -83,6 +131,39 @@ ApacheFile_close(self)
 
     OUTPUT:
     RETVAL
+
+#if 0
+ 
+SV *
+ApacheFile_dirname(self, filename)
+    SV *self
+    const char *filename
+
+char *
+ApacheFile_basename(self, filename)
+    SV *self
+    const char *filename
+
+void
+parse(self, filename, pattern)
+    SV *self
+    SV *filename
+    SV *pattern
+
+    PREINIT:
+    SV *name, *path, *base, *par = newSVpv("",0);
+    AFparsed *afp;
+
+    PPCODE:
+    path = ApacheFile_dirname(self, SvPVX(filename));
+    sv_2mortal(path);
+    base = newSVpv(ApacheFile_basename(self, SvPVX(filename)),0);
+    sv_setpvf(par, "%c%_%c", '(', pattern, ')');
+    afp = ApacheFile_parse(base, par);
+    EXTEND(sp, 3); PUSHs(afp->base); PUSHs(path); PUSHs(afp->ext);
+    safefree(afp); SvREFCNT_dec(base); SvREFCNT_dec(par);
+
+#endif
 
 MODULE = Apache::File  PACKAGE = Apache   PREFIX = ap_
 
