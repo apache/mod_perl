@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+set the magic taint flags before modules are required [Stas]
+
+make sure to set base server's mip before any of the
+PerlRequire/PerlModule directives are called, since they may add
+add_config(), which in turn runs Perl sections or PerlLoadModule,
+which may need the scfg->mip to be set. [Stas]
+
 ModPerl::MM is now ready to be used in Makefile.PL of 3rd party
 mod_perl modules [Stas and Geoff]
 
