@@ -153,6 +153,11 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
                 sv = ptr ? newSVpv((char *)ptr, 0) : &PL_sv_undef;
                 break;
             }
+          case 'H':
+            if (strEQ(classname, "HV")) {
+                sv = newRV_noinc((SV*)ptr);
+                break;
+            }
           default:
             sv = modperl_ptr2obj(aTHX_ classname, ptr);
             break;
