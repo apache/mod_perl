@@ -11,15 +11,15 @@ use APR::Pool ();
 use APR::Table ();
 
 sub num_of_tests {
-    return 65;
+    return 74;
 }
 
 sub test {
 
     my $pool = APR::Pool->new();
     my $table = APR::Table::make($pool, 2);
-    ### custom pools ###
 
+    ### custom pools ###
 
     # test: explicit pool object destroy destroys the custom pool
     {
@@ -43,9 +43,6 @@ sub test {
     }
 
 
-
-
-
     # test: lexical scoping DESTROYs the custom pool
     {
         {
@@ -65,6 +62,8 @@ sub test {
 
         $table->clear;
     }
+
+
 
     ### custom pools + sub-pools ###
 
@@ -348,39 +347,32 @@ sub test {
                  "non existing function");
     }
 
-# XXX: on windows $pool->clean, followed by $pool->destroy breaks
-# other tests. Specifically,
-#    perl t/TEST apr/pool compat/send_fd
-# or
-#    perl t/TEST apr/pool directive/setupenv
-# causes a
-#    response had protocol HTTP/0.9 (headers not sent?)
-# error. on unix it works fine.
-# 
-#    ### $p->clear ###
-#    {
-#        my ($pp, $sp) = both_pools_create_ok($table);
-#        $pp->clear;
-#        # both pools should have run their cleanups
-#        both_pools_destroy_ok($table);
-#
-#        # sub-pool $sp should be now bogus, as clear() destroys
-#        # subpools
-#        eval { $sp->parent_get };
-#        ok t_cmp($@,
-#                 qr/invalid pool object/,
-#                 "clear destroys sub pools");
-#
-#        # now we should be able to use the parent pool without
-#        # allocating it
-#        $pp->cleanup_register(\&set_cleanup, [$table, 're-using pool']);
-#        $pp->destroy;
-#
-#        my @notes = $table->get('cleanup');
-#        ok t_cmp('re-using pool', $notes[0]);
-#
-#        $table->clear;
-#    }
+
+
+    ### $p->clear ###
+    {
+        my ($pp, $sp) = both_pools_create_ok($table);
+        $pp->clear;
+        # both pools should have run their cleanups
+        both_pools_destroy_ok($table);
+
+        # sub-pool $sp should be now bogus, as clear() destroys
+        # subpools
+        eval { $sp->parent_get };
+        ok t_cmp($@,
+                 qr/invalid pool object/,
+                 "clear destroys sub pools");
+
+        # now we should be able to use the parent pool without
+        # allocating it
+        $pp->cleanup_register(\&set_cleanup, [$table, 're-using pool']);
+        $pp->destroy;
+
+        my @notes = $table->get('cleanup');
+        ok t_cmp('re-using pool', $notes[0]);
+
+        $table->clear;
+    }
 
 
     # a pool can be tagged, so when doing low level apr_pool tracing
