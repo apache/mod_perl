@@ -60,7 +60,7 @@ static void *vector_from_sv (SV *sv, int *type)
 {
 
     if(sv_derived_from(sv, "Apache") && SvROK(sv)) {
-	request_rec *r = (request_rec *) SvIV((SV*)SvRV(sv));
+	request_rec *r = sv2request_rec(sv, "Apache", Nullcv);
 	*type = MP_TYPE_DIR;
 	return r->per_dir_config;
     }
