@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+starting from perl 5.7.3 for tied filehandles, tiedscalar magic is applied 
+to the IO slot of the GP rather than the GV itself. adjust the TIEHANDLE 
+macro to work properly under 5.7.3+. [Charles Jardine <cj10@cam.ac.uk>, 
+Stas Bekman <stas@stason.org>]
+
 added perl_perl_merge_dir_config and array_header2avrv symbols to
 mod_perl.def for win32 and mod_perl.exp for aix.
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
