@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#define mpxs_Apache__ServerRec_method_register(s, methname)    \
+    ap_method_register(s->process->pconf, methname);
+
 static MP_INLINE
 int mpxs_Apache__ServerRec_push_handlers(pTHX_ server_rec *s,
                                       const char *name,

@@ -1,4 +1,4 @@
-=head1 NAME
+ =head1 NAME
 
 Changes - Apache mod_perl changes logfile
 
@@ -11,6 +11,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 =over 3
 
 =item 1.99_15-dev
+
+Apache::RequestUtil::method_register($s->process->pconf, 'FOO'); is
+now $s->method_register('FOO') [Stas]
 
 Remove $Apache::Server::StrictPerlSections. Now, all <Perl>
 sections errors are fatal by default and cause server startup to
