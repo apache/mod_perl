@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+document the server_root_relative() method [Stas Bekman <stas@stason.org>]
+
 eliminate warnings when flushing functions with empty () prototypes in
 Apache::PerlRun::flush_namespace [Yair Lenga <yair.lenga@citigroup.com>]
 
