@@ -488,7 +488,7 @@ EOF
     print $fh "    items = items; /* -Wall */\n\n";
 
     if (my $newxs = $self->{newXS}->{$module}) {
-        for my $xs (@$newxs) {
+        for my $xs (sort { $a->[0] cmp $b->[0] } @$newxs) {
             print $fh qq{   cv = newXS("$xs->[0]", $xs->[1], __FILE__);\n};
             print $fh qq{   GvUNIQUE_on(CvGV(cv));\n} if GvUNIQUE;
         }
