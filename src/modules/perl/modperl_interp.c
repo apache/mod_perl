@@ -7,6 +7,15 @@
 
 #ifdef USE_ITHREADS
 
+static const char *MP_interp_lifetime_desc[] = {
+    "undef", "handler", "subrequest", "request", "connection",
+};
+
+const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime)
+{
+    return MP_interp_lifetime_desc[lifetime];
+}
+
 modperl_interp_t *modperl_interp_new(apr_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)

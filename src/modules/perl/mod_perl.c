@@ -233,23 +233,23 @@ void modperl_register_hooks(apr_pool_t *p)
 }
 
 static const command_rec modperl_cmds[] = {  
-    MP_SRV_CMD_ITERATE("PerlSwitches", switches, "Perl Switches"),
-    MP_SRV_CMD_ITERATE("PerlOptions", options, "Perl Options"),
+    MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
+    MP_CMD_SRV_ITERATE("PerlOptions", options, "Perl Options"),
 #ifdef MP_TRACE
-    MP_SRV_CMD_TAKE1("PerlTrace", trace, "Trace level"),
+    MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
 #ifdef USE_ITHREADS
-    MP_SRV_CMD_TAKE1("PerlInterpStart", interp_start,
+    MP_CMD_SRV_TAKE1("PerlInterpStart", interp_start,
                      "Number of Perl interpreters to start"),
-    MP_SRV_CMD_TAKE1("PerlInterpMax", interp_max,
+    MP_CMD_SRV_TAKE1("PerlInterpMax", interp_max,
                      "Max number of running Perl interpreters"),
-    MP_SRV_CMD_TAKE1("PerlInterpMaxSpare", interp_max_spare,
+    MP_CMD_SRV_TAKE1("PerlInterpMaxSpare", interp_max_spare,
                      "Max number of spare Perl interpreters"),
-    MP_SRV_CMD_TAKE1("PerlInterpMinSpare", interp_min_spare,
+    MP_CMD_SRV_TAKE1("PerlInterpMinSpare", interp_min_spare,
                      "Min number of spare Perl interpreters"),
-    MP_SRV_CMD_TAKE1("PerlInterpMaxRequests", interp_max_requests,
+    MP_CMD_SRV_TAKE1("PerlInterpMaxRequests", interp_max_requests,
                      "Max number of requests per Perl interpreters"),
-    MP_DIR_CMD_TAKE1("PerlInterpLifetime", interp_lifetime,
+    MP_CMD_DIR_TAKE1("PerlInterpLifetime", interp_lifetime,
                      "Lifetime of a Perl interpreter"),
 #endif
     MP_CMD_ENTRIES,
