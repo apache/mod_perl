@@ -806,7 +806,9 @@ my %shortcuts = (
 my %ifdef = map { $_, 1 } 
     qw(APLOG_TOCLIENT APR_LIMIT_NOFILE), # added in ???
     qw(AP_MPMQ_STARTING AP_MPMQ_RUNNING AP_MPMQ_STOPPING 
-       AP_MPMQ_MPM_STATE); # added in 2.0.49
+       AP_MPMQ_MPM_STATE), # added in 2.0.49
+    qw(APR_FILEPROT_USETID APR_FILEPROT_GSETID
+       APR_FILEPROT_WSTICKY); # added in 2.0.50?
 
 sub constants_ifdef {
     my $name = shift;
