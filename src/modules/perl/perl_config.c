@@ -1451,6 +1451,8 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
 
     if(HvKEYS(symtab) < 1) 
 	return;
+    if(!defined_Apache__ReadConfig)
+	return;
 
     MP_TRACE_s(fprintf(stderr, 
 		     "bootstrapping <Perl> sections: arg=%s, keys=%d\n", 
