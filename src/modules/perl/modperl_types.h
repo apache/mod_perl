@@ -1,3 +1,6 @@
+#ifndef MODPERL_TYPES_H
+#define MODPERL_TYPES_H
+
 /* aliases */
 
 typedef ap_array_header_t MpAV;
@@ -16,13 +19,28 @@ typedef handler_rec *  Apache__Handler;
 typedef command_rec *  Apache__Command;
 
 typedef ap_table_t   * Apache__table;
-typedef ap_context_t * Apache__Context;
+typedef ap_pool_t    * Apache__Pool;
 
 /* mod_perl structures */
 
-typedef struct {
+typedef struct modperl_interp_t modperl_interp_t;
+
+struct modperl_interp_t {
+    ap_lock_t *mip_lock;
     PerlInterpreter *perl;
-} modperl_runtime_t;
+    modperl_interp_t *next;
+    int flags;
+};
+
+typedef struct {
+    ap_lock_t *mip_lock;
+    int start; /* number of Perl intepreters to start (clone) */
+    int min_spare; /* minimum number of spare Perl interpreters */
+    int max_spare; /* maximum number of spare Perl interpreters */
+    int size; /* current number of Perl interpreters */
+    modperl_interp_t *parent; /* from which to perl_clone() */
+    modperl_interp_t *head;
+} modperl_interp_pool_t;
 
 typedef struct {
     MpAV *handlers[MP_PROCESS_NUM_HANDLERS];
@@ -43,7 +61,7 @@ typedef struct {
     MpAV *handlers[MP_PER_SRV_NUM_HANDLERS];
     modperl_process_config_t *process_cfg;
     modperl_connection_config_t *connection_cfg;
-    modperl_runtime_t *runtime;
+    modperl_interp_pool_t *mip;
     int flags;
 } modperl_srv_config_t;
 
@@ -66,3 +84,5 @@ typedef struct {
     char *name;
     int flags;
 } modperl_handler_t;
+
+#endif /* MODPERL_TYPES_H */

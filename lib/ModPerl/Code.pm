@@ -20,14 +20,14 @@ my %handlers = (
 my %hook_proto = (
     Process    => {
         ret  => 'void',
-        args => [{type => 'ap_context_t', name => 'p'},
+        args => [{type => 'ap_pool_t', name => 'p'},
                  {type => 'server_rec', name => 's'}],
     },
     Files      => {
         ret  => 'void',
-        args => [{type => 'ap_context_t', name => 'pconf'},
-                 {type => 'ap_context_t', name => 'plog'},
-                 {type => 'ap_context_t', name => 'ptemp'},
+        args => [{type => 'ap_pool_t', name => 'pconf'},
+                 {type => 'ap_pool_t', name => 'plog'},
+                 {type => 'ap_pool_t', name => 'ptemp'},
                  {type => 'server_rec', name => 's'}],
     },
     PerSrv     => {
@@ -69,6 +69,7 @@ for (qw(Process Connection Files)) {
 my %flags = (
     Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
+    Interp => [qw(NONE IN_USE PUTBACK)],
 );
 
 sub new {
@@ -91,7 +92,7 @@ sub generate_handler_index {
         my $i = 0;
         my $n = @$handlers;
 
-        print $h_fh "\n", '#define ',
+        print $h_fh "\n#define ",
           canon_define($class, 'num_handlers'), " $n\n\n";
 
         for my $name (@$handlers) {
@@ -235,7 +236,7 @@ my %sources = (
 );
 
 my @g_c_names = map { "modperl_$_" } qw(hooks directives);
-my @c_names   = (qw(mod_perl), @g_c_names);
+my @c_names   = (qw(mod_perl modperl_interp), @g_c_names);
 sub c_files { map { "$_.c" } @c_names }
 sub o_files { map { "$_.o" } @c_names }
 
