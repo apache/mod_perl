@@ -96,6 +96,20 @@ Read options from given file
 
 =back
 
+mod_perl specific compiler opts:
+
+=over 4
+
+=item -DMP_IOBUFSIZE
+
+Change the default mod_perl's 8k IO buffer size, e.g. 16k:
+
+ MP_CCOPTS=-DMP_IOBUFSIZE=16384
+
+=back
+
+
+
 Options can also be specified in the file C<makepl_args.mod_perl2>.
 Command line options override those from C<makepl_args_mod_perl2>
 and those from MP_OPTIONS_FILE.
