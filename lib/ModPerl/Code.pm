@@ -515,6 +515,8 @@ my %sources = (
    generate_flags              => {h => 'modperl_flags.h',
                                    c => 'modperl_flags.c'},
    generate_trace              => {h => 'modperl_trace.h'},
+   generate_constants          => {h => 'modperl_constants.h',
+                                   c => 'modperl_constants.c'},
 );
 
 my @c_src_names = qw(interp tipool log config cmd options callback handler
@@ -531,7 +533,14 @@ my @h_names = (@c_names, map { "modperl_$_" }
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
 sub clean_files {
-    [(map { "$_.c" } @g_c_names), (map { "$_.h" } @g_h_names)];
+    my @c_names = @g_c_names;
+    my @h_names = @g_h_names;
+
+    for (\@c_names, \@h_names) {
+        push @$_, 'modperl_constants';
+    }
+
+    [(map { "$_.c" } @c_names), (map { "$_.h" } @h_names)];
 }
 
 my %warnings;
@@ -669,6 +678,149 @@ EOF
     close $fh;
 
     $file;
+}
+
+use Apache::ConstantsTable ();
+
+my $constant_prefixes = join '|', qw{APR};
+
+sub generate_constants {
+    my($self, $h_fh, $c_fh) = @_;
+
+    print $c_fh qq{\#include "modperl_const.h"\n};
+    print $h_fh "#define MP_ENOCONST -3\n\n";
+
+    generate_constants_lookup($h_fh, $c_fh);
+    generate_constants_group_lookup($h_fh, $c_fh);
+}
+
+my %shortcuts = (
+     NOT_FOUND => 'HTTP_NOT_FOUND',
+     FORBIDDEN => 'HTTP_FORBIDDEN',
+     AUTH_REQUIRED => 'HTTP_UNAUTHORIZED',
+     SERVER_ERROR => 'HTTP_INTERNAL_SERVER_ERROR',
+);
+
+sub constants_lookup_code {
+    my($h_fh, $c_fh, $constants, $class) = @_;
+
+    my(%switch, %alias);
+
+    %alias = %shortcuts;
+
+    my $postfix = lc $class;
+    my $package = $class . '::';
+    my $package_len = length $package;
+
+    my $func = canon_func(qw(constants lookup), $postfix);
+    my $proto = "int $func(const char *name)";
+
+    print $h_fh "$proto;\n";
+
+    print $c_fh <<EOF;
+
+$proto
+{
+    if (*name == 'A' && strnEQ(name, "$package", $package_len)) {
+        name += $package_len;
+    }
+
+    switch (*name) {
+EOF
+
+    for (@$constants) {
+        if (s/^($constant_prefixes)_//o) {
+            $alias{$_} = join '_', $1, $_;
+        }
+        else {
+            $alias{$_} ||= $_;
+        }
+        next unless /^([A-Z])/;
+        push @{ $switch{$1} }, $_;
+    }
+
+    for my $key (sort keys %switch) {
+        my $names = $switch{$key};
+        print $c_fh "      case '$key':\n";
+
+        for my $name (@$names) {
+            print $c_fh <<EOF;
+          if (strEQ(name, "$name")) {
+              return $alias{$name};
+          }
+EOF
+        }
+        print $c_fh "      break;\n";
+    }
+
+    print $c_fh <<EOF
+    };
+    Perl_croak_nocontext("unknown constant %s", name);
+    return MP_ENOCONST;
+}
+EOF
+}
+
+sub generate_constants_lookup {
+    my($h_fh, $c_fh) = @_;
+
+    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+        my $constants = [map { @$_ } values %$groups];
+
+        constants_lookup_code($h_fh, $c_fh, $constants, $class);
+    }
+}
+
+sub generate_constants_group_lookup {
+    my($h_fh, $c_fh) = @_;
+
+    while (my($class, $groups) = each %$Apache::ConstantsTable) {
+        constants_group_lookup_code($h_fh, $c_fh, $class, $groups);
+    }
+}
+
+sub constants_group_lookup_code {
+    my($h_fh, $c_fh, $class, $groups) = @_;
+    my @tags;
+    my @code;
+
+    $class = lc $class;
+    while (my($group, $constants) = each %$groups) {
+	push @tags, $group;
+        my $name = join '_', 'MP_constants', $class, $group;
+	print $c_fh "\nstatic const char *$name [] = { \n",
+          (map { s/^APR_//; qq(   "$_",\n) } @$constants), "   NULL,\n};\n";
+    }
+
+    my %switch;
+    for (@tags) {
+        next unless /^([A-Z])/i;
+        push @{ $switch{$1} }, $_;
+    }
+
+    my $func = canon_func(qw(constants group lookup), $class);
+
+    my $proto = "const char **$func(const char *name)";
+
+    print $h_fh "$proto;\n";
+    print $c_fh "\n$proto\n{\n", "   switch (*name) {\n";
+
+    for my $key (sort keys %switch) {
+	my $val = $switch{$key};
+	print $c_fh "\tcase '$key':\n";
+	for my $group (@$val) {
+            my $name = join '_', 'MP_constants', $class, $group;
+	    print $c_fh qq|\tif(strEQ("$group", name))\n\t   return $name;\n|;
+	}
+        print $c_fh "      break;\n";
+    }
+
+    print $c_fh <<EOF;
+    };
+    Perl_croak_nocontext("unknown group `%s'", name);
+    return NULL;
+}
+EOF
 }
 
 1;
