@@ -24,7 +24,7 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
         mrg->item = apr_table_copy(p, add->item); \
         for (i = 0; i < arr->nelts; i++) { \
             char *val; \
-            if ((val = (char *)apr_table_get(mrg->item, entries[i].key))){ \
+            if ((val = (char *)apr_table_get(add->item, entries[i].key))){ \
                 continue; \
             } \
             else if ((val = (char *)apr_table_get(base->item, entries[i].key))){ \
