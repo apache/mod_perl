@@ -1258,6 +1258,7 @@ void perl_per_request_init(request_rec *r)
     }
     else if (cfg->setup_env && MP_ENV(cld)) { 
 	perl_setup_env(r);
+	cfg->setup_env = 0; /* just once per-request */
     }
 
     /* PerlSetEnv */
