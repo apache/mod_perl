@@ -290,3 +290,11 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
         ap_remove_output_filter(f);
     }
 }
+
+static MP_INLINE
+void mpxs_Apache__Filter_fflush(pTHX_ ap_filter_t *filter,
+                                apr_bucket_brigade *brigade)
+{
+    MP_RUN_CROAK(ap_fflush(filter, brigade),
+                 "Apache::Filter::fflush");
+}
