@@ -161,7 +161,7 @@ my %defines_wanted = (
         override   => [qw{OR_ ACCESS_CONF RSRC_CONF}],
         log        => [qw(APLOG_)],
         platform   => [qw{CRLF CR LF}],
-        mpmq      => [qw{AP_MPMQ_}],
+        mpmq       => [qw{AP_MPMQ_}],
     },
     APR => {
         table     => [qw{APR_OVERLAP_TABLES_}],
