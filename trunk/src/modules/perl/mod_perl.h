@@ -25,6 +25,16 @@
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
+#ifdef APACHE_SSL
+#undef _
+#ifdef _config_h_
+#ifdef CAN_PROTOTYPE
+#define _(args) args
+#else
+#define _(args) ()
+#endif
+#endif
+#endif
 #endif
 
 #include "EXTERN.h"
@@ -92,6 +102,16 @@ extern "C" {
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
+#ifdef APACHE_SSL
+#undef _
+#ifdef _config_h_
+#ifdef CAN_PROTOTYPE
+#define _(args) args
+#else
+#define _(args) ()
+#endif
+#endif
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -338,6 +358,9 @@ if((add->flags & f) || (base->flags & f)) \
 
 /* some 1.2.x/1.3.x compat stuff */
 /* once 1.3.0 is here, we can toss most of this junk */
+
+#define MMN_130 19980527
+#define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
 
 #if MODULE_MAGIC_NUMBER >= 19980627
 #define MP_CONST_CHAR const char

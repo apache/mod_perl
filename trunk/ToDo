@@ -16,6 +16,16 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- move /tmp/mod_perl_* to t/logs
+
+- deal with PL_ renaming in 5.005-beta2
+
+- move unescape_url and unescape_url_info to Apache::Util
+
+- add crit/emerg aliases to Apache::Log
+
+- add $r->get_server_port method
+
 - /perl/perl-status?sig dumps core under hpux 10.20
    [David-Michael.Lincke@unisg.ch]
 
