@@ -19,6 +19,13 @@ sub handler {
 	if(my $func = $self->{trans}) {
 	    no strict 'refs';
 	    $filename = &{$func}($uri);
+       } else {
+
+      # warn user if translate process fails,
+          warn "RegistryLoader: Cannot translate the URI $uri
+              into a real path to the filename. Please refer to the manpage for$
+              or use the complete method's call like:
+              \$rl->handler(uri,filname);\n";
 	}
     }
 
