@@ -13,28 +13,6 @@
     rcfg->wbucket->header_parse = 0; \
 }
 
-/* XXX: should only be part of Apache::compat */
-static MP_INLINE void
-mpxs_Apache__RequestRec_send_http_header(pTHX_ request_rec *r,
-                                         const char *type)
-{
-    MP_dRCFG;
-
-    if (type) {
-        ap_set_content_type(r, apr_pstrdup(r->pool, type));
-    }
-
-    if (rcfg->wbucket) {
-        /* turn off PerlOptions +ParseHeaders */
-        rcfg->wbucket->header_parse = 0; 
-    }
-    else {
-        /* the response is not initialized yet */
-        Perl_croak(aTHX_ "send_http_header() can't be called before "
-                   "the response phase");
-    }
-}
-
 static MP_INLINE void
 mpxs_Apache__RequestRec_set_last_modified(request_rec *r, apr_time_t mtime)
 {
