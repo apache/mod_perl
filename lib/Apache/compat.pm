@@ -57,6 +57,35 @@ sub import {
 
 package Apache::RequestRec;
 
+sub table_set_get {
+    my($r, $table) = (shift, shift);
+    my($key, $value) = @_;
+
+    if (1 == @_) {
+        return $table->{$key};
+    }
+    elsif (2 == @_) {
+        return $table->{$key} = $value;
+    }
+    elsif (0 == @_) {
+        return $table;
+    }
+    else {
+        my $name = (caller(1))[3];
+        warn "Usage: $name([key [,val]])";
+    }
+}
+
+sub header_out {
+    my $r = shift;
+    return $r->table_set_get(scalar $r->headers_out, @_);
+}
+
+sub header_in {
+    my $r = shift;
+    return $r->table_set_get(scalar $r->headers_in, @_);
+}
+
 sub register_cleanup {
     shift->pool->cleanup_register(@_);
 }

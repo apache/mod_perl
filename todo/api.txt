@@ -9,9 +9,6 @@ $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
 haven't looked close enough yet)
 
-$r->header_{in,out}:
-deprecated, but should be included in Apache::compat
-
 $r->pnotes:
 not yet implemented
 
