@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+Fix Registry handlers, not to lose the execution errors, when they
+include END blocks [Stas]
+
 
 
 =item 1.99_13 - March 8, 2004
