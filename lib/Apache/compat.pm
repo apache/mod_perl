@@ -118,8 +118,10 @@ sub log_error {
 
 sub httpd_conf {
     shift;
-    my $err = (Apache->request || Apache->server)->
-      add_config([split /\n/, join '', @_]);
+    my $obj;
+    eval { $obj = Apache->request };
+    $obj = Apache->server if $@;
+    my $err = $obj->add_config([split /\n/, join '', @_]);
     die $err if $err;
 }
 
