@@ -119,7 +119,7 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
 
 #ifdef USE_ITHREADS
     scfg->interp_pool_cfg = 
-        (modperl_interp_pool_config_t *)
+        (modperl_tipool_config_t *)
         ap_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
 
     /* XXX: determine reasonable defaults */
@@ -127,7 +127,7 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
     scfg->interp_pool_cfg->max_spare = 3;
     scfg->interp_pool_cfg->min_spare = 3;
     scfg->interp_pool_cfg->max = 5;
-
+    scfg->interp_pool_cfg->max_requests = 2000;
 #endif /* USE_ITHREADS */
 
     return scfg;
@@ -198,5 +198,6 @@ MP_IMP_INTERP_POOL_CFG(start);
 MP_IMP_INTERP_POOL_CFG(max);
 MP_IMP_INTERP_POOL_CFG(max_spare);
 MP_IMP_INTERP_POOL_CFG(min_spare);
+MP_IMP_INTERP_POOL_CFG(max_requests);
 
 #endif /* USE_ITHREADS */

@@ -34,6 +34,7 @@ extern module MODULE_VAR_EXPORT perl_module;
 #include "modperl_types.h"
 #include "modperl_config.h"
 #include "modperl_callback.h"
+#include "modperl_tipool.h"
 #include "modperl_interp.h"
 #include "modperl_log.h"
 

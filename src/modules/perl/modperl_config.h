@@ -30,6 +30,7 @@ MP_DECLARE_SRV_CMD(interp_start);
 MP_DECLARE_SRV_CMD(interp_max);
 MP_DECLARE_SRV_CMD(interp_max_spare);
 MP_DECLARE_SRV_CMD(interp_min_spare);
+MP_DECLARE_SRV_CMD(interp_max_requests);
 #endif
 
 #define MP_SRV_CMD_TAKE1(name, item, desc) \
