@@ -19,6 +19,8 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_get_handlers
  mpxs_Apache__RequestRec_location
  mpxs_Apache__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
+ modperl_config_insert_request | | \
+  r, lines, path=r->filename, override=OR_AUTHCFG | add_config
 
  #protocol module helpers
  mpxs_Apache__RequestRec_location_merge
@@ -55,6 +57,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  mpxs_Apache__Server_push_handlers
  mpxs_Apache__Server_set_handlers
  mpxs_Apache__Server_get_handlers
+ modperl_config_insert_server | | | add_config
 
 PACKAGE=Apache::Server
  SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=Nullsv
@@ -105,6 +108,5 @@ MODULE=Apache::SubProcess
  modperl_spawn_proc_prog | MPXS_ | ... | spawn_proc_prog
 
 MODULE=Apache::Directive
- mpxs_Apache__Directive_insert
  mpxs_Apache__Directive_as_string
 
