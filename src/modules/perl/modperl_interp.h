@@ -7,6 +7,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
 apr_status_t modperl_interp_cleanup(void *data);
 
 #ifdef USE_ITHREADS
+
 const char *modperl_interp_scope_desc(modperl_interp_scope_e scope);
 
 void modperl_interp_clone_init(modperl_interp_t *interp);
@@ -38,10 +39,6 @@ void modperl_interp_pool_add(modperl_interp_pool_t *mip,
 void modperl_interp_pool_remove(modperl_interp_pool_t *mip,
                                 modperl_interp_t *interp);
 
-#else
-#define MP_dINTERP_SELECT(r, c, s) dNOOP
-#endif
-
 typedef apr_status_t (*modperl_interp_mip_walker_t)(pTHX_ 
                                                     modperl_interp_pool_t *mip,
                                                     void *data);
@@ -56,5 +53,10 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
                                      server_rec *base_server,
                                      modperl_interp_mip_walker_t walker,
                                      void *data);
+#else
+
+#define MP_dINTERP_SELECT(r, c, s) dNOOP
+
+#endif /* USE_ITHREADS */
 
 #endif /* MODPERL_INTERP_H */

@@ -32,13 +32,6 @@ void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 #endif
 }
 
-apr_status_t modperl_perl_init_ids_mip(pTHX_ modperl_interp_pool_t *mip,
-                                       void *data)
-{
-    modperl_perl_init_ids(aTHX_ (modperl_perl_ids_t *)data);
-    return APR_SUCCESS;
-}
-
 void modperl_perl_init_ids_server(server_rec *s)
 {
     modperl_perl_ids_t ids;
@@ -51,3 +44,14 @@ void modperl_perl_init_ids_server(server_rec *s)
     modperl_perl_init_ids(aTHX_ &ids);
 #endif
 }
+
+#ifdef USE_ITHREADS
+
+apr_status_t modperl_perl_init_ids_mip(pTHX_ modperl_interp_pool_t *mip,
+                                       void *data)
+{
+    modperl_perl_init_ids(aTHX_ (modperl_perl_ids_t *)data);
+    return APR_SUCCESS;
+}
+
+#endif /* USE_ITHREADS */
