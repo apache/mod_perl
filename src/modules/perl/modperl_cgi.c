@@ -16,13 +16,13 @@
 #include "mod_perl.h"
 
 MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
-                                       int *len, const char **body)
+                                       apr_size_t *len, const char **body)
 {
     int status;
     int termarg;
     const char *location;
     const char *tmp;
-    int tlen, newln;
+    apr_size_t tlen, newln;
 
     if (!buffer) {
         return DECLINED;
