@@ -19,7 +19,7 @@ V: done completely
 -- src/docs/2.0/api/Apache.pod
 VV src/docs/2.0/api/Apache/Access.pod
 g- src/docs/2.0/api/Apache/CmdParms.pod
-g- src/docs/2.0/api/Apache/Command.pod
+VV src/docs/2.0/api/Apache/Command.pod
 -- src/docs/2.0/api/Apache/Connection.pod
 +- src/docs/2.0/api/Apache/Const.pod
 VV src/docs/2.0/api/Apache/Directive.pod
