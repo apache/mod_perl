@@ -12,9 +12,12 @@
 #   include <malloc.h>
 #   include <win32.h>
 #   include <win32iop.h>
+#   undef errno
+#   undef read
 #   include <fcntl.h>
 #   include "EXTERN.h"
 #   include "perl.h"
+#   undef list
 
 #   ifdef uid_t
 #      define apache_uid_t uid_t
