@@ -70,6 +70,10 @@ libperl.so: $(MP_OBJS_PIC)
 .xs.c:
 	$(MP_XSUBPP) $*.xs >$@
 
+.xs.o:
+	$(MP_XSUBPP) $*.xs >$*.c
+	$(MP_CC) $(MP_CFLAGS) -c $*.c
+
 perlxsi.c:
 	$(MP_XSINIT) -- -o perlxsi.c -std $(MP_STATIC_EXTS)
 
