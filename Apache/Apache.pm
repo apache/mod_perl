@@ -162,6 +162,7 @@ sub send_cgi_header {
     my($r, $headers) = @_;
     my $dlm = "\015?\012"; #a bit borrowed from LWP::UserAgent
     my($key, $val);
+    local $_;
     while(($_, $headers) = split /$dlm/, $headers, 2) {
 	#warn "hunk=`$_'\n";
 	#warn "rest=`$headers'\n";
