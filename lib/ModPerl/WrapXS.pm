@@ -457,6 +457,7 @@ $destructor->{name}($arg)
 EOF
     }
 
+    print $fh "MODULE = $module\n";
     print $fh "PROTOTYPES: disabled\n\n";
     print $fh "BOOT:\n";
     print $fh $self->boot($module);
