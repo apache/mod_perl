@@ -633,7 +633,7 @@ sub dir {
 
     $dir ||= $self->{MP_AP_PREFIX};
 
-# we not longer install Apache headers, so dont bother looking in @INC
+# we no longer install Apache headers, so don't bother looking in @INC
 # might end up finding 1.x headers anyhow
 #    unless ($dir and -d $dir) {
 #        for (@INC) {
