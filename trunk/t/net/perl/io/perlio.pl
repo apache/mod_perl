@@ -147,7 +147,8 @@ sub test_syswrite {
     }
     my $bytes_sent = 
 	defined($offset) ? syswrite STDOUT, $msg, $len, $offset :  
-	 defined($len) ? syswrite STDOUT, $msg, $len : syswrite STDOUT, $msg;
+	 defined($len) ? syswrite STDOUT, $msg, $len : 
+           syswrite STDOUT, $msg, length($msg);
 
     my $real_b = $r->bytes_sent;
     print "REAL Bytes sent = $real_b\n";
