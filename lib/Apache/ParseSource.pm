@@ -366,10 +366,12 @@ sub parse_enum {
         $code =~ s/\s*(\w+)\s*;\s*$//;
         $name = $1;
     }
+
     $code =~ s:/\*.*?\*/::sg;
     $code =~ s/\s*=\s*\w+//g;
     $code =~ s/^[^\{]*\{//s;
     $code =~ s/\}[^;]*;?//s;
+    $code =~ s/^\s*\n//gm;
 
     while ($code =~ /\b(\w+)\b,?/g) {
         push @e, $1;
