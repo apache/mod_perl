@@ -33,7 +33,7 @@ static void modperl_hash_seed_init(apr_pool_t *p)
     /* check if there is a specific hash seed passed via the env var
      * and if that's the case -- use it */
     apr_status_t rv = apr_env_get(&s, "PERL_HASH_SEED", p);
-    if (rv != APR_ENOTIMPL) {
+    if (rv == APR_SUCCESS) {
         if (s) {
             while (isSPACE(*s)) s++;
         }
