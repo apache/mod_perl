@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+For static builds, we now run 'make clean' in httpd's source
+tree before running ./configure if the source tree has been
+configured before [Gozer]
+
 Apache::SizeLimit ported [Perrin Harkins <perrin elem.com>]
 
 create a new subpool modperl_server_user_pool (from
