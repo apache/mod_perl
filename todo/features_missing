@@ -60,10 +60,6 @@
 
 * size_string() - can we use apr_strfsize ?
 
-* escape_html() - consider jeff baker's more robust implementation of
-  my_escape_html(), which should probably be made in apache-2.0 itself
-  (is there apache api? or just drop it)
-
 * $r->send_fd:
   need to figure out howto map PerlIO <-> apr_file_t
   at the moment $r->send_fd is implement in Apache::compat, functions,
