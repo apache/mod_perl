@@ -25,10 +25,9 @@ in [Gozer]
 Apache::RequestRec methods changes [Stas]
 - readwrite => readonly:
 
-    method_number, connection, canonical_filename, header_only, main,
-    method, next, prev, pool, per_dir_config, request_config,
-    proto_num, protocol, request_time, server, the_request,
-    unparsed_uri
+    connection, canonical_filename, header_only, main, next, prev,
+    pool, per_dir_config, request_config, proto_num, protocol,
+    request_time, server, the_request, unparsed_uri
 
 - removed:
 
