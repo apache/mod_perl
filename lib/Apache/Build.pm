@@ -1308,6 +1308,8 @@ sub includes {
     push @inc, $self->mp_include_dir;
 
     unless ($self->ap_prefix_is_source_tree) {
+        push @inc, $self->apr_includedir;
+
         my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
         if (-d $ainc) {
             push @inc, $ainc;
