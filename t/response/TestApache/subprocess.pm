@@ -7,8 +7,12 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use File::Spec::Functions qw(catfile catdir);
+use IO::Select ();
 
 use Apache::Const -compile => 'OK';
+
+use Config;
+use constant PERLIO_IS_ENABLED => $Config{useperlio};
 
 my %scripts = (
      argv   => 'print STDOUT "@ARGV";',
@@ -36,10 +40,7 @@ sub handler {
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
-    # XXX: these tests randomly fail under 5.6.1
-    plan $r, tests => 4,
-        have {"perl < 5.7.3" => sub { $] >= 5.007003 } },
-             qw(APR::PerlIO Apache::SubProcess);
+    plan $r, tests => 4, have qw(APR::PerlIO Apache::SubProcess);
 
     eval { require Apache::SubProcess };
 
@@ -49,9 +50,10 @@ sub handler {
         # test: passing argv + scalar context
         my $command = catfile $target_dir, "argv.pl";
         my @argv = qw(foo bar);
-        my $out = Apache::SubProcess::spawn_proc_prog($r, $command, \@argv);
+        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $command, \@argv);
+        my $output = read_data($out_fh);
         ok t_cmp(\@argv,
-                 [split / /, <$out>],
+                 [split / /, $output],
                  "passing ARGV"
                 );
     }
@@ -61,9 +63,10 @@ sub handler {
         my $command = catfile $target_dir, "env.pl";
         my $value = "my cool proc";
         $r->subprocess_env->set(SubProcess => $value);
-        my $out = Apache::SubProcess::spawn_proc_prog($r, $command);
+        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $command);
+        my $output = read_data($out_fh);
         ok t_cmp($value,
-                 scalar(<$out>),
+                 $output,
                  "passing env via subprocess_env"
                 );
     }
@@ -72,11 +75,12 @@ sub handler {
         # test: subproc's stdin -> stdout + list context
         my $command = catfile $target_dir, "in_out.pl";
         my $value = "my cool proc\n"; # must have \n for <IN>
-        my ($in, $out, $err) = 
+        my ($in_fh, $out_fh, $err_fh) = 
             Apache::SubProcess::spawn_proc_prog($r, $command);
-        print $in $value;
+        print $in_fh $value;
+        my $output = read_data($out_fh);
         ok t_cmp($value,
-                 scalar(<$out>),
+                 $output,
                  "testing subproc's stdin -> stdout + list context"
                 );
     }
@@ -85,11 +89,12 @@ sub handler {
         # test: subproc's stdin -> stderr + list context
         my $command = catfile $target_dir, "in_err.pl";
         my $value = "my stderr\n"; # must have \n for <IN>
-        my ($in, $out, $err) = 
+        my ($in_fh, $out_fh, $err_fh) = 
             Apache::SubProcess::spawn_proc_prog($r, $command);
-        print $in $value;
+        print $in_fh $value;
+        my $output = read_data($err_fh);
         ok t_cmp($value,
-                 scalar(<$err>),
+                 $output,
                  "testing subproc's stdin -> stderr + list context"
                 );
     }
@@ -119,6 +124,39 @@ sub handler {
    Apache::OK;
 }
 
+
+
+sub read_data {
+    my($fh) = @_;
+    my @data = ();
+    my $sel = IO::Select->new($fh);
+
+    # here is the catch:
+    #
+    # non-PerlIO pipe fh needs to select if the other end is not fast
+    # enough to send the data, since the read is non-blocking
+    #
+    # PerlIO-based pipe fh on the other hand does the select
+    # internally via apr_wait_for_io_or_timeout() in
+    # apr_file_read(). But you cannot call select() on the
+    # PerlIO-based, because its fileno() returns (-1), remember that
+    # apr_file_t is an opaque object, and on certain platforms
+    # fileno() is different from unix
+    #
+    # so we use the following wrapper: if we are under perlio we just
+    # go ahead and read the data, if we are under non-perlio we first
+    # select for a few secs. (XXX: is 10 secs enough?)
+    if (PERLIO_IS_ENABLED || $sel->can_read(10)) {
+        @data = wantarray ? (<$fh>) : <$fh>;
+    }
+
+    if (wantarray) {
+        return @data;
+    }
+    else {
+        return defined $data[0] ? $data[0] : '';
+    }
+}
 
 1;
 
