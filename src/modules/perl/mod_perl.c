@@ -449,7 +449,7 @@ static void unload_xs_so(void)
 	if (handle) {
 #ifdef _AIX
 	    /* make sure Perl's dlclose is used, instead of Apache's */
-	    dlclose(handle)
+	    dlclose(handle);
 #else
 	    ap_os_dso_unload(handle);
 #endif
