@@ -102,7 +102,7 @@ PERL_HOOKS =   $(PERL_DISPATCH) $(PERL_CHILD_INIT) $(PERL_CHILD_EXIT) \
 #APACHE_SSL = 
 PERL=/usr/bin/perl
 PERL_STATIC_EXTS =
-PERL5LIB=`$(PERL) -MConfig -e 'print $$Config{privlibexp}'`
+PRIVLIB=`$(PERL) -MConfig -e 'print $$Config{privlibexp}'`
 EXTUTILS_EMBED = $(PERL) -MExtUtils::Embed
 #CONFIG_PM=-MConfig
 CONFIG_PM='-MApache::ExtUtils=%Config'
@@ -129,7 +129,7 @@ perlxsi.c:
 	$(XS_INIT) 
 
 .xs.c:
-	$(PERL) $(PERL5LIB)/ExtUtils/xsubpp -typemap $(PERL5LIB)/ExtUtils/typemap $*.xs > $@
+	$(PERL) $(PRIVLIB)/ExtUtils/xsubpp -typemap $(PRIVLIB)/ExtUtils/typemap $*.xs > $@
 
 PERLSRC=mod_perl_opmask.c mod_perl.c perlxsi.c perl_config.c perl_util.c perlio.c $(STATIC_SRC)
 
