@@ -714,11 +714,12 @@ This is the value of the Group directive.
 
 =item $s->loglevel
 
-Returns the value of the current LogLevel. This method is added by
+Get or set the value of the current LogLevel. This method is added by
 the Apache::Log module, which needs to be pulled in.
 
     use Apache::Log;
     print "LogLevel = ", $s->loglevel;
+    $s->loglevel(Apache::Log::DEBUG);
 
 If using Perl 5.005+, the following constants are defined (but not
 exported):
