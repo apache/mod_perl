@@ -525,9 +525,10 @@ sub read_script {
 
 my %switches = (
    'T' => sub {
-       Apache::warn("T switch is ignored, ".
-		    "enable with 'PerlSwitches -T' in httpd.conf\n")
-	   unless $Apache::__T; "";
+# XXX: need to have $Apache::__T set by the core on PerlSwitches -T
+#       Apache::warn("T switch is ignored, ",
+#                    "enable with 'PerlSwitches -T' in httpd.conf\n")
+#             unless $Apache::__T; "";
    },
    'w' => sub { "use warnings;\n" },
 );
