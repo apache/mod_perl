@@ -3138,6 +3138,19 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
+    'name' => 'modperl_input_filter_flush',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'modperl_filter_t *',
+        'name' => 'filter'
+      }
+    ]
+  },
+  {
+    'return_type' => 'apr_status_t',
     'name' => 'modperl_output_filter_handler',
     'args' => [
       {
@@ -3176,6 +3189,43 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_size_t',
+    'name' => 'modperl_input_filter_read',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'modperl_filter_t *',
+        'name' => 'filter'
+      },
+      {
+        'type' => 'ap_input_mode_t',
+        'name' => 'mode'
+      },
+      {
+        'type' => 'apr_read_type_e',
+        'name' => 'block'
+      },
+      {
+        'type' => 'apr_off_t',
+        'name' => 'readbytes'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'buffer'
+      },
+      {
+        'type' => 'apr_size_t',
+        'name' => 'wanted'
+      }
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'modperl_output_filter_add_connection',
     'args' => [
@@ -3198,6 +3248,27 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'apr_status_t',
     'name' => 'modperl_output_filter_write',
+    'attr' => [
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'modperl_filter_t *',
+        'name' => 'filter'
+      },
+      {
+        'type' => 'const char *',
+        'name' => 'buf'
+      },
+      {
+        'type' => 'apr_size_t *',
+        'name' => 'len'
+      }
+    ]
+  },
+  {
+    'return_type' => 'apr_status_t',
+    'name' => 'modperl_input_filter_write',
     'attr' => [
       '__inline__'
     ],
