@@ -80,7 +80,7 @@ static MP_INLINE void mpxs_insert_auth_cfg(pTHX_ request_rec *r,
     errmsg =
         modperl_config_insert_request(aTHX_ r,
                                       newRV_noinc((SV*)config),
-                                      r->filename, OR_AUTHCFG);
+                                      OR_AUTHCFG);
 
     if (errmsg) {
         Perl_warn(aTHX_ "Can't change %s to '%s'\n", directive, val);

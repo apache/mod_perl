@@ -135,7 +135,6 @@ const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines);
 const char *modperl_config_insert_request(pTHX_
                                           request_rec *r,
                                           SV *lines,
-                                          char *path,
                                           int override);
 
 int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,

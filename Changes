@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Removed the deprecated path argument to $r->add_config() [Gozer]
+
 Created a META.yml for CPAN and friends, including Apache-Test as
 a private resource to keep CPAN from installing mod_perl when a
 user just wants Apache::Test [Gozer]
