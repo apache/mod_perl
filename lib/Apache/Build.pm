@@ -267,7 +267,7 @@ sub perl_ccopts {
 
 sub ccopts_hpux {
     my $cflags = shift;
-    #return if $Config{cc} eq 'gcc'; #XXX?
+    return if $Config{cc} eq 'gcc'; #XXX?
     return if $$cflags =~ /(-Ae|\+e)/;
     $$cflags .= " -Ae ";
 }
