@@ -763,6 +763,20 @@ server_root_relative(rsv, name="")
 #functions from http_protocol.c
 
 void
+set_last_modified(r, mtime=r->finfo.st_mtime)
+    Apache r
+    time_t mtime
+
+    CODE:
+#if MODULE_MAGIC_NUMBER >= MMN_130
+    ap_update_mtime(r, mtime);
+    ap_set_last_modified(r);
+    ap_set_etag(r);
+#else
+    set_last_modified(r, mtime);
+#endif
+
+void
 note_basic_auth_failure(r)
     Apache r
 
@@ -806,12 +820,13 @@ send_http_header(r, type=NULL)
     r->status = 200; /* XXX, why??? */
  
 int
-send_fd(r, f)
+send_fd(r, f, length=-1)
     Apache	r
     FILE *f
+    long length
 
     CODE:
-    RETVAL = send_fd(f, r);
+    RETVAL = send_fd_length(f, r, length);
 
     OUTPUT:
     RETVAL
