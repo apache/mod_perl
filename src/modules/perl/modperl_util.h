@@ -19,6 +19,7 @@
 #endif
 
 #define SvObjIV(o) SvIV((SV*)SvRV(o))
+#define MgObjIV(m) SvIV((SV*)SvRV(m->mg_obj))
 
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
@@ -49,5 +50,13 @@ void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles);
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data);
 
 MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p);
+
+/* tie %hash */
+MP_INLINE SV *modperl_hash_tie(pTHX_ const char *classname,
+                               SV *tsv, void *p);
+
+/* tied %hash */
+MP_INLINE void *modperl_hash_tied_object(pTHX_ const char *classname,
+                                         SV *tsv);
 
 #endif /* MODPERL_UTIL_H */

@@ -14,9 +14,9 @@ my $TABLE_SIZE = 20;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 9;
+    plan $r, tests => 16;
 
-    my $table = APR::Table::make($r->pool, 16);
+    my $table = APR::Table::make($r->pool, $TABLE_SIZE);
 
     ok (UNIVERSAL::isa($table, 'APR::Table'));
 
@@ -59,6 +59,33 @@ sub handler {
     $table->do("my_filter", "c", "b", "e");
     ok $filter_count == 3;
 
+    #Tied interface
+    {
+        my $table = APR::Table::make($r->pool, $TABLE_SIZE);
+        
+        ok (UNIVERSAL::isa($table, 'HASH'));
+    
+        ok (UNIVERSAL::isa($table, 'HASH')) && tied(%$table);
+        
+        ok $table->{'foo'} = 'bar';
+
+        ok $table->{'foo'} eq 'bar';
+
+        ok delete $table->{'foo'} || 1;
+
+        ok not exists $table->{'foo'};
+
+        for (1..$TABLE_SIZE) {
+            $table->{chr($_+97)} =  $_ ;  
+        }
+
+        $filter_count = 0;
+        foreach my $key (sort keys %$table) {
+            my_filter($key,$table->{$key});
+        }
+        ok $filter_count == $TABLE_SIZE;
+    }
+    
     Apache::OK;
 }
 

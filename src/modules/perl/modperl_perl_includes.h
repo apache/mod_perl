@@ -51,4 +51,8 @@
 #   define G_METHOD 64
 #endif
 
+#ifndef PERL_MAGIC_tied
+#   define PERL_MAGIC_tied 'P'
+#endif
+
 #endif /* MODPERL_PERL_INCLUDES_H */

@@ -339,3 +339,50 @@ MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
     return uri;
 }
 
+MP_INLINE SV *modperl_hash_tie(pTHX_ 
+                               const char *classname,
+                               SV *tsv, void *p)
+{
+    SV *hv = (SV*)newHV();
+    SV *rsv = newSViv(0);
+
+    sv_setref_pv(rsv, classname, p);
+    sv_magic(hv, rsv, PERL_MAGIC_tied, Nullch, 0);
+
+    return SvREFCNT_inc(sv_bless(sv_2mortal(newRV_noinc(hv)),
+                                 gv_stashpv(classname, TRUE)));
+}
+
+MP_INLINE void *modperl_hash_tied_object(pTHX_ 
+                                         const char *classname,
+                                         SV *tsv)
+{
+    if (sv_derived_from(tsv, classname)) {
+        if (SVt_PVHV == SvTYPE(SvRV(tsv))) {
+            SV *hv = SvRV(tsv);
+            MAGIC *mg;
+
+            if (SvMAGICAL(hv)) {
+                if ((mg = mg_find(hv, PERL_MAGIC_tied))) {
+                    return (void *)MgObjIV(mg);
+                }
+                else {
+                    Perl_warn(aTHX_ "Not a tied hash: (magic=%c)", mg);
+                }
+            }
+            else {
+                Perl_warn(aTHX_ "SV is not tied");
+            }
+        }
+        else {
+            return (void *)SvObjIV(tsv);
+        }
+    }
+    else {
+        Perl_croak(aTHX_
+                   "argument is not a blessed reference "
+                   "(expecting an %s derived object)", classname);
+    }
+
+    return NULL;
+}
