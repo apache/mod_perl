@@ -75,6 +75,7 @@ static void modperl_xs_init(pTHX)
 
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
+    AV *endav;
     dTHXa(NULL);
     MP_dSCFG(s);
     PerlInterpreter *perl;
@@ -116,7 +117,13 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
+    /* suspend END blocks to be run at server shutdown */
+    endav = PL_endav;
+    PL_endav = Nullav;
+
     perl_run(perl);
+
+    PL_endav = endav;
 
     MP_TRACE_i(MP_FUNC, "constructed interpreter=0x%lx\n",
                (unsigned long)perl);
