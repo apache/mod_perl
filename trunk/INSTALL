@@ -6,7 +6,7 @@ INSTALL - Apache mod_perl installation instructions
 
 How to build, test, configure and install mod_perl
 
-=head1 PREREQUSITES
+=head1 PREREQUISITES
 
 =over 3
 
@@ -136,7 +136,7 @@ If you wish not to install these files, tell Makefile.PL like so:
 
 =item Linking Perl extensions static with httpd
 
-Normally, if an exension is linked static with Perl it is listed in
+Normally, if an extension is linked static with Perl it is listed in
 Config.pm's $Config{static_exts}, in which case, mod_perl will also
 link this extension static with httpd.  However, if an extension is
 linked static with Perl after it is installed, it is not listed in
@@ -253,7 +253,7 @@ Follow the apache install docs from there
 
 =head1 Configuring and building with Stronghold
 
-=over3
+=over 3
 
 You must first build and install Stronghold without mod_perl,
 following Stronghold's install procedure.
