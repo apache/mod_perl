@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+Standardize the Apache::PerlSections package name to it's plural form for
+clarity and so that the pod gets glued in it's proper place.
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 return value from Perl callbacks are now passed directly to Apache
 without additional post-call manipulations (such as assuming HTTP_OK
 should really be OK).  [Geoffrey Young]
