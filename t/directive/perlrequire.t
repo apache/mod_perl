@@ -22,7 +22,7 @@ for my $module (sort keys %checks) {
 
     my $config   = Apache::Test::config();
     my $hostport = Apache::TestRequest::hostport($config);
-    print "connecting to $hostport\n";
+    t_debug("connecting to $hostport");
 
     ok t_cmp($checks{$module},
              $config->http_raw_get("/TestDirective::perlrequire", undef),
