@@ -107,6 +107,7 @@ VV src/docs/2.0/api/APR/URI.pod
 VP src/docs/2.0/api/APR/Util.pod
         filepath_name_get
         password_get
+VV src/docs/2.0/api/APR/UUID.pod
 
 #####################
 ### other modules ###
