@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+replace uses of SvPVX() with SvPV() to prevent possible core dump if
+called with a non-string value
+
 added COMPILED REGULAR EXPRESSIONS section to mod_perl_traps.pod
 [David Landgren <david@landgren.net>, 
 Mark Mills <mark@ntr.net>, 
