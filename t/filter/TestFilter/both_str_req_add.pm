@@ -59,7 +59,7 @@ sub handler {
 __DATA__
 <NoAutoConfig>
     PerlModule TestFilter::both_str_req_add
-    <Location /TestFilter::both_str_req_add>
+    <Location /TestFilter__both_str_req_add>
         SetHandler modperl
         PerlHeaderParserHandler TestFilter::both_str_req_add::header_parser
         PerlResponseHandler     TestFilter::both_str_req_add

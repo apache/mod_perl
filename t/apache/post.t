@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 2;
 
-my $location = "/TestApache::post";
+my $location = "/TestApache__post";
 my $str;
 
 my @data = (arizona => 'wildcats');

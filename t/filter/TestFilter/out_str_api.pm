@@ -9,6 +9,7 @@ use Apache::Filter ();
 use Apache::FilterRec ();
 
 use Apache::Test;
+use Apache::TestRequest;
 
 use Apache::Const -compile => 'OK';
 
@@ -44,7 +45,8 @@ sub handler {
 
         ok $r->isa('Apache::RequestRec');
 
-        ok $r->uri eq '/' . __PACKAGE__;
+        my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
+        ok $r->uri eq $path;
 
         untie *STDOUT;
 

@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my $location = '/TestFilter::in_str_consume';
+my $location = '/TestFilter__in_str_consume';
 
 # send a message bigger than 8k, so to make sure that the input filter
 # will get more than one bucket brigade with data.

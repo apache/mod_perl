@@ -16,7 +16,7 @@ my @strings = @refs;
 # XXX: anon-handlers unsupported yet
 # push @strings, @anon
 
-my $location = "/TestHooks::push_handlers";
+my $location = "/TestHooks__push_handlers";
 my $expected = join "\n", @strings, '';
 my $received = GET_BODY $location;
 

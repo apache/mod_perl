@@ -6,7 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 4, \&have_lwp;
 
-my $location = "/TestHooks::authz";
+my $location = "/TestHooks__authz";
 
 ok ! GET_OK $location;
 

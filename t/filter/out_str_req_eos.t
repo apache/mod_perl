@@ -7,7 +7,7 @@ use Apache::TestUtil;
 
 plan tests => 1, ['include'];
 
-my $location = '/TestFilter::out_str_req_eos';
+my $location = '/TestFilter__out_str_req_eos';
 
 my $content = 'BODY';
 my $prefix = 'PREFIX_';

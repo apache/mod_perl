@@ -79,7 +79,7 @@ __END__
 <VirtualHost TestDirective::perlloadmodule6>
     PerlLoadModule TestDirective::perlloadmodule6
     MyTest6 "Vhost"
-    <Location /TestDirective::perlloadmodule6>
+    <Location /TestDirective__perlloadmodule6>
         MyTest6 "Dir"
         SetHandler modperl
         PerlResponseHandler TestDirective::perlloadmodule6

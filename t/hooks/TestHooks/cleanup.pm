@@ -52,7 +52,7 @@ sub cleanup2 {
 1;
 __DATA__
 <NoAutoConfig>
-  <Location /TestHooks::cleanup>
+  <Location /TestHooks__cleanup>
       SetHandler modperl
       PerlCleanupHandler  TestHooks::cleanup::cleanup1
       PerlResponseHandler TestHooks::cleanup

@@ -69,7 +69,7 @@ sub handler {
 __DATA__
 <NoAutoConfig>
     PerlModule TestFilter::out_str_req_mix
-    <Location /TestFilter::out_str_req_mix> 
+    <Location /TestFilter__out_str_req_mix>
         Options +Includes
         PerlOutputFilterHandler TestFilter::out_str_req_mix::adjust
         PerlSetOutputFilter INCLUDES

@@ -14,7 +14,7 @@ use Apache::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
 my $from_url = '/input_filter.html';
-my $to_url = '/TestFilter::in_str_msg::response';
+my $to_url = '/TestFilter__in_str_msg';
 
 sub handler : FilterConnectionHandler {
     my $filter = shift;
@@ -53,7 +53,7 @@ __END__
   PerlModule TestFilter::in_str_msg
   PerlInputFilterHandler TestFilter::in_str_msg
 
-  <Location /TestFilter::in_str_msg::response>
+  <Location /TestFilter__in_str_msg>
      SetHandler modperl
      PerlResponseHandler TestFilter::in_str_msg::response
   </Location>

@@ -10,7 +10,7 @@ my $build = Apache::Build->build_config;
 plan tests => 2, have 'LWP',
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
-my $location = "/TestModules::cgiupload";
+my $location = "/TestModules__cgiupload";
 
 my $filename;
 my $pod = 'pod/perlfunc.pod';

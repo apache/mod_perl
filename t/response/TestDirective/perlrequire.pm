@@ -76,7 +76,7 @@ __END__
     PerlSwitches -I@documentroot@/testdirective/vh
     PerlRequire "ApacheTest/PerlRequireTest.pm"
 
-    <Location /TestDirective::perlrequire>
+    <Location /TestDirective__perlrequire>
         SetHandler modperl
         PerlResponseHandler TestDirective::perlrequire
     </Location>

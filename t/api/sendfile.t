@@ -8,7 +8,7 @@ plan tests => 3;
 
 my $config = Apache::Test::config();
 
-my $url = '/TestAPI::sendfile';
+my $url = '/TestAPI__sendfile';
 
 my $data = GET_BODY($url);
 

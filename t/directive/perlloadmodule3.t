@@ -8,6 +8,7 @@ use Apache::TestRequest;
 my $module = "TestDirective::perlloadmodule3";
 my $config   = Apache::Test::config();
 my $base_hostport = Apache::TestRequest::hostport($config);
+my $path = Apache::TestRequest::module2path($module);
 
 # XXX: probably a good idea to split into more sub-tests, that test
 # smaller portions of information, but requires a more elaborate
@@ -32,7 +33,7 @@ MyList     : ["MainServer"]
 MyOverride : MainServer
 MyPlus     : 5
 EOI
-    my $location = "http://$base_hostport/$module";
+    my $location = "http://$base_hostport/$path";
     my $received = GET_BODY $location;
     ok t_cmp($expected, $received, "server merge");
 }
@@ -63,7 +64,7 @@ MyList     : ["MainServer", "VHost", "Dir"]
 MyOverride : Dir
 MyPlus     : 10
 EOI
-    my $location = "http://$hostport/$module";
+    my $location = "http://$hostport/$path";
     my $received = GET_BODY $location;
     ok t_cmp($expected, $received, "server/dir merge");
 }
@@ -91,7 +92,7 @@ MyOverride : SubDir
 MyPlus     : 11
 EOI
 
-    my $location = "http://$hostport/$module/subdir";
+    my $location = "http://$hostport/$path/subdir";
     my $received = GET_BODY $location;
     ok t_cmp($expected, $received, "server/dir/subdir merge");
 }

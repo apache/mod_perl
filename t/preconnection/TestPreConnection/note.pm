@@ -30,7 +30,7 @@ __END__
   <VirtualHost TestPreConnection::note>
     PerlPreConnectionHandler TestPreConnection::note
   
-    <Location /TestPreConnection::note>
+    <Location /TestPreConnection__note>
       SetHandler modperl
       PerlResponseHandler TestPreConnection::note::response
     </Location>

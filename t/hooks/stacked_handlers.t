@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my $location = "/TestHooks::stacked_handlers";
+my $location = "/TestHooks__stacked_handlers";
 my $expected = join "\n", qw(one two three), '';
 my $received = GET_BODY $location;
 

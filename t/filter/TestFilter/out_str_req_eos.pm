@@ -65,7 +65,7 @@ sub handler {
 __DATA__
 <NoAutoConfig>
     PerlModule TestFilter::out_str_req_eos
-    <Location /TestFilter::out_str_req_eos>
+    <Location /TestFilter__out_str_req_eos>
         SetHandler modperl
         PerlResponseHandler     TestFilter::out_str_req_eos
         PerlOutputFilterHandler TestFilter::out_str_req_eos::add_prefix

@@ -60,7 +60,7 @@ sub full_coderef { return say(shift, "full_coderef") }
 1;
 __DATA__
 <NoAutoConfig>
-  <Location /TestHooks::push_handlers>
+  <Location /TestHooks__push_handlers>
       SetHandler modperl
       PerlHeaderParserHandler TestHooks::push_handlers
       PerlResponseHandler     TestHooks::push_handlers::conf

@@ -61,7 +61,7 @@ sub four {
 1;
 __DATA__
 <NoAutoConfig>
-  <Location /TestHooks::stacked_handlers>
+  <Location /TestHooks__stacked_handlers>
       SetHandler modperl
       PerlHeaderParserHandler TestHooks::stacked_handlers
   </Location>

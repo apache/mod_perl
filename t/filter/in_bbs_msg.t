@@ -12,7 +12,7 @@ my $config = Apache::Test::config();
 my $hostport = Apache::TestRequest::hostport($config);
 t_debug("connecting to $hostport");
 
-my $res = GET "/input_filter.html";
+my $res = GET "http://$hostport/input_filter.html";
 if ($res->is_success) {
     print $res->content;
 }

@@ -53,7 +53,7 @@ __END__
 <VirtualHost TestDirective::perlmodule>
     PerlModule ApacheTest::PerlModuleTest
 
-    <Location /TestDirective::perlmodule>
+    <Location /TestDirective__perlmodule>
         SetHandler modperl
         PerlResponseHandler TestDirective::perlmodule
     </Location>

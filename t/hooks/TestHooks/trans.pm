@@ -28,14 +28,6 @@ sub handler {
 
     my $uri = $r->uri;
 
-    #XXX: temp workaround, core_translate trips on :'s
-    if (Apache::TestConfig::WIN32()) {
-        if ($uri =~ m,^/Test[A-Z]\w+::,) {
-            $r->filename(__FILE__);
-            return Apache::OK;
-        }
-    }
-
     my $handler = $trans{ $uri };
 
     return Apache::DECLINED unless $handler;

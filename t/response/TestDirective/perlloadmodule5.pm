@@ -85,7 +85,7 @@ __END__
     # here mod_perl sets the scfg by itself for this vhost
     PerlModule File::Spec
     MyTest5 "Vhost"
-    <Location /TestDirective::perlloadmodule5>
+    <Location /TestDirective__perlloadmodule5>
         MyTest5 "Dir"
         SetHandler modperl
         PerlResponseHandler TestDirective::perlloadmodule5

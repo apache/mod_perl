@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+httpd (1.3 && 2) / winFU have problems when the first path's segment
+includes ':' (security precaution which breaks the rfc) so we can't
+use /TestFoo::bar as path_info in Apache::Tests. Adjusting all tests
+to use /TestFoo__bar. [Stas]
+
 implement init filter handlers + tests [Stas]
 
 improving ModPerl::MethodLookup to:

@@ -7,7 +7,7 @@ use Apache::TestUtil;
 
 plan tests => 3;
 
-my $location = '/TestDirective::setupenv';
+my $location = '/TestDirective__setupenv';
 
 my $env = GET_BODY $location;
 

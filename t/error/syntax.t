@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my $location = "/TestError::syntax";
+my $location = "/TestError__syntax";
 my $res = GET($location);
 #t_debug($res->content);
 ok t_cmp(

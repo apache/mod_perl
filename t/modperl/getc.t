@@ -7,7 +7,7 @@ use Apache::TestUtil;
 
 plan tests => 2;
 
-my $location = "/TestModperl::getc";
+my $location = "/TestModperl__getc";
 
 my $expect = join '', 'a'..'Z';
 

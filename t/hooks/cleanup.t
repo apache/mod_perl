@@ -16,7 +16,7 @@ plan tests => 2;
 {
     # this registers and performs cleanups, but we test whether the
     # cleanup was run only in the next sub-test
-    my $location = "/TestHooks::cleanup";
+    my $location = "/TestHooks__cleanup";
     my $expected = 'ok';
     my $received = GET_BODY $location;
     ok t_cmp($expected, $received, "register req cleanup");

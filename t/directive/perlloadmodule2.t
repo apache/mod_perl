@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-my $url = "/TestDirective::perlloadmodule2";
+my $url = "/TestDirective__perlloadmodule2";
 
 plan tests => 3;
 

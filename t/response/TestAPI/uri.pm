@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use Apache::TestRequest;
 
 use APR::URI ();
 use Apache::URI ();
@@ -13,7 +14,7 @@ use Apache::RequestUtil ();
 
 use Apache::Const -compile => 'OK';
 
-my $location = '/' . __PACKAGE__;
+my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
 sub handler {
     my $r = shift;
