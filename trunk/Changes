@@ -10,12 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fixes to run and pass 'make test' on ActivePerl [Randy Kobes, Gerald Richter]
+
 Makefile.PL:post_initialize fix for win32, thanks to john sterling for 
 the spot
 
 fixes for ActivePerl [Gurusamy Sarathy <gsar@ActiveState.com>]
-
-runs now on ActivePerl [Randy Korbes, Gerald Richter]
 
 change apaci/Makefile.tmpl and src/modules/perl/Makefile so Perl's
 include path comes before /usr/local/include, e.g. to make sure Perl's 
