@@ -1497,7 +1497,7 @@ static void clear_symtab(HV *symtab)
 	HV *hv;
 	AV *av;
 
-	if(SvTYPE(val) != SVt_PVGV) 
+	if((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val))
 	    continue;
 	if((sv = GvSV((GV*)val)))
 	    sv_setsv(GvSV((GV*)val), &sv_undef);

@@ -232,7 +232,6 @@ SV *mod_perl_tie_table(table *t)
 
     /*try to make this quick as possible*/  
     if(!hv_exists(GvHV(incgv), "Apache/Table.pm", 15)) {
-	fprintf(stderr, "WARNING: autoloading Apache::Table\n");
 	utilize(TRUE, start_subparse(FALSE, 0), Nullop, 
 		newSVOP(OP_CONST, 0, newSVpv("Apache/Table.pm",15)), Nullop);
     }
