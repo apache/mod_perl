@@ -74,6 +74,13 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     );
 #endif
 
+    if (!modperl_config_apply_PerlModule(s, scfg, perl, p)){
+        exit(1);
+    }
+    if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)){
+        exit(1);
+    }
+
 #ifndef USE_ITHREADS
     cdata = modperl_cleanup_data_new(p, (void*)perl);
     apr_pool_cleanup_register(p, cdata,
@@ -124,6 +131,13 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
             MP_TRACE_i(MP_FUNC,
                        "created parent interpreter for VirtualHost %s\n",
                        modperl_server_desc(s, p));
+        }
+
+        if (!modperl_config_apply_PerlModule(s, scfg, perl, p)){
+            exit(1);
+        }
+        if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)){
+            exit(1);
         }
 
 #ifdef USE_ITHREADS
@@ -355,6 +369,8 @@ void modperl_register_hooks(apr_pool_t *p)
 
 static const command_rec modperl_cmds[] = {  
     MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
+    MP_CMD_SRV_ITERATE("PerlModule", modules, "PerlModule"),
+    MP_CMD_SRV_ITERATE("PerlRequire", requires, "PerlRequire"),
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),

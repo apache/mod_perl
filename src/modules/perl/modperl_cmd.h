@@ -10,6 +10,8 @@ const char *modperl_cmd_##item(cmd_parms *parms, \
                                void *dummy, const char *arg)
 MP_CMD_SRV_DECLARE(trace);
 MP_CMD_SRV_DECLARE(switches);
+MP_CMD_SRV_DECLARE(modules);
+MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE(options);
 
 #ifdef USE_ITHREADS

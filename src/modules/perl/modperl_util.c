@@ -25,6 +25,32 @@ int modperl_require_module(pTHX_ const char *pv, int logfailure)
     return TRUE;
 }
 
+int modperl_require_file(pTHX_ const char *pv, int logfailure)
+{
+    SV *sv;
+
+    dSP;
+    PUSHSTACKi(PERLSI_REQUIRE);
+    PUTBACK;
+    sv = sv_newmortal();
+    sv_setpv(sv, "require \"");
+    sv_catpv(sv, pv);
+    sv_catpv(sv, "\"");
+    eval_sv(sv, G_DISCARD);
+    SPAGAIN;
+    POPSTACK;
+
+    if (SvTRUE(ERRSV)) {
+        if (logfailure) {
+            (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
+                                NULL, NULL);
+        }
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
 {
     static char *r_keys[] = { "r", "_r", NULL };
