@@ -480,29 +480,6 @@ static void unload_xs_so(array_header *librefs)
     }
 }
 
-#if 0
-/* unload_xs_dso should obsolete this hack */
-static void cancel_dso_dlclose(void)
-{
-    module *modp;
-
-    if(!PERL_DSO_UNLOAD)
-	return;
-
-    if(strEQ(top_module->name, "mod_perl.c"))
-	return;
-
-    for(modp = top_module; modp; modp = modp->next) {
-	if(modp->dynamic_load_handle) {
-	    MP_TRACE_g(fprintf(stderr, 
-			       "mod_perl: cancel dlclose for %s\n", 
-			       modp->name));
-	    modp->dynamic_load_handle = NULL;
-	}
-    }
-}
-#endif
-
 static void mp_dso_unload(void *data) 
 { 
     array_header *librefs;
