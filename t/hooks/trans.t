@@ -8,15 +8,20 @@ use Apache::TestRequest;
 use Apache2 ();
 use Apache::Const ':common';
 
+my $module = 'TestHooks::trans';
+Apache::TestRequest::module($module);
+my $path     = Apache::TestRequest::module2path($module);
+my $config   = Apache::Test::config();
+my $hostport = Apache::TestRequest::hostport($config);
+t_debug("connecting to $hostport");
+
 plan tests => 3;
 
 t_client_log_error_is_expected();
-ok GET_RC('/nope') == NOT_FOUND;
+ok t_cmp GET_RC("http://$hostport/nope"), NOT_FOUND;
 
-my $module = '/TestHooks/trans.pm';
+my $body = GET_BODY "http://$hostport/TestHooks/trans.pm";
 
-my $body = GET_BODY $module;
+ok $body =~ /package $module/;
 
-ok $body =~ /package TestHooks::trans/;
-
-ok GET_OK '/phooey';
+ok GET_OK "http://$hostport/phooey";

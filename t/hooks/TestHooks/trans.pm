@@ -37,5 +37,12 @@ sub handler {
 
 1;
 __DATA__
-PerlResponseHandler Apache::TestHandler::ok1
-SetHandler modperl
+<NoAutoConfig>
+  <VirtualHost TestHooks::trans>
+    PerlTransHandler TestHooks::trans
+    <Location /TestHooks__trans>
+        PerlResponseHandler Apache::TestHandler::ok1
+        SetHandler modperl
+    </Location>
+  </VirtualHost>
+</NoAutoConfig>
