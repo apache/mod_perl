@@ -1,7 +1,7 @@
 package TestFilter::in_bbs_underrun;
 
 # this test exercises the underrun filter concept. Sometimes filters
-# need to read at least N bytes before they can apply they
+# need to read at least N bytes before they can apply their
 # transformation. It's quite possible that reading one bucket brigade
 # is not enough. But two or more are needed.
 #
