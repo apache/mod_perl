@@ -418,19 +418,22 @@ static void mod_perl_tie_scriptname(void)
 #define dl_librefs "DynaLoader::dl_librefs"
 #define dl_modules "DynaLoader::dl_modules"
 
-static void unload_xs_so(void)
+static array_header *xs_dl_librefs(pool *p)
 {
     I32 i;
     AV *librefs = perl_get_av(dl_librefs, FALSE);
     AV *modules = perl_get_av(dl_modules, FALSE);
+    array_header *arr;
 
     if (!librefs) {
 	MP_TRACE_g(fprintf(stderr, 
 			   "Could not get @%s for unloading.\n",
 			   dl_librefs));
-	return;
+	return NULL;
     }
-	
+
+    arr = ap_make_array(p, AvFILL(librefs)-1, sizeof(void *));
+
     for (i=0; i<=AvFILL(librefs); i++) {
 	void *handle;
 	SV *handle_sv = *av_fetch(librefs, i, FALSE);
@@ -444,20 +447,38 @@ static void unload_xs_so(void)
 	}
 	handle = (void *)SvIV(handle_sv);
 
-	MP_TRACE_g(fprintf(stderr, "unload_xs_so: %s (0x%lx)\n",
+	MP_TRACE_g(fprintf(stderr, "%s dl handle == 0x%lx\n",
 			   SvPVX(module_sv), (unsigned long)handle));
 	if (handle) {
-#ifdef _AIX
-	    /* make sure Perl's dlclose is used, instead of Apache's */
-	    dlclose(handle);
-#else
-	    ap_os_dso_unload(handle);
-#endif
+	    *(void **)ap_push_array(arr) = handle;
 	}
     }
 
     av_clear(modules);
     av_clear(librefs);
+
+    return arr;
+}
+
+static void unload_xs_so(array_header *librefs)
+{
+    int i;
+
+    if (!librefs) {
+	return;
+    }
+
+    for (i=0; i < librefs->nelts; i++) {
+	void *handle = ((void **)librefs->elts)[i];
+	MP_TRACE_g(fprintf(stderr, "unload_xs_so: 0x%lx\n",
+			   (unsigned long)handle));
+#ifdef _AIX
+	/* make sure Perl's dlclose is used, instead of Apache's */
+	dlclose(handle);
+#else
+	ap_os_dso_unload(handle);
+#endif
+    }
 }
 
 #if 0
@@ -485,8 +506,9 @@ static void cancel_dso_dlclose(void)
 
 static void mp_dso_unload(void *data) 
 { 
-    unload_xs_so();
+    array_header *librefs = xs_dl_librefs((pool *)data);
     perl_shutdown(NULL, NULL);
+    unload_xs_so(librefs);
 } 
 
 static void mp_server_notstarting(void *data) 
@@ -798,7 +820,7 @@ void perl_startup (server_rec *s, pool *p)
     saveINC;
 #if MODULE_MAGIC_NUMBER >= MMN_130
     if(perl_module.dynamic_load_handle) 
-	register_cleanup(p, NULL, mp_dso_unload, null_cleanup); 
+	register_cleanup(p, p, mp_dso_unload, null_cleanup); 
 #endif
 }
 
