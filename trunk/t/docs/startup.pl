@@ -4,7 +4,11 @@ BEGIN {
 
     use lib './t/docs';
     require "blib.pl" if -e "./t/docs/blib.pl";
-    $Apache::ServerStarting or warn "Server is not starting !?\n";
+    $Apache::Server::Starting or warn "Server is not starting !?\n";
+    \$Apache::Server::Starting == \$Apache::ServerStarting or 
+	warn "GV alias broken\n";
+    \$Apache::Server::ReStarting == \$Apache::ServerReStarting or 
+	warn "GV alias broken\n";
 }
 
 use Apache ();

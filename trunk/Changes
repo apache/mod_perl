@@ -8,6 +8,7 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+global renames: $Apache::Server{Re}Starting -> $Apache::Server::{Re}Starting
 
 s/PERL_TIE_TABLES/PERL_TABLE_API/g
 

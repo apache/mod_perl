@@ -9,8 +9,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - $ENV{PATH}
 
-- $Apache::Server{Re}Starting -> $Apache::Server::{Re}Starting
-
 - Apache::SubRequest->bytes_sent
 
 - deal with mod_ssl.c/Stronghold test configuration
