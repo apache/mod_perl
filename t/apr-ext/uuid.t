@@ -12,7 +12,10 @@ my $build = Apache::Build->build_config;
 # XXX: only when apr-config is found APR will be linked against
 # libapr/libaprutil, probably need a more intuitive method for this
 # prerequisite
-my $has_apr_config = $build->{apr_config_path};
+# also need to check whether we build against the source tree, in
+# which case we APR.so won't be linked against libapr/libaprutil
+my $has_apr_config = $build->{apr_config_path} && 
+    !$build->httpd_is_source_tree;
 
 plan tests => 3,
     have {"the build couldn't find apr-config" => $has_apr_config};
