@@ -18,6 +18,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
      1.99_XX. Please read the below changes carefully.
     ***************************************************
 
+Make sure that CPAN shell doesn't triple over usage of
+$ExtUtils::MakeMaker::VERSION [Randy Kobes]
+
 make sure not to use apr_os_thread_current in debug mode when libapr 
 wasn't built with threads support [Stas]
 
