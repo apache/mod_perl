@@ -13,9 +13,6 @@ use Apache::Test;
 use Apache::compat ();
 use Apache::Constants qw(OK);
 
-
-
-
 sub handler {
     my $r = shift;
 
@@ -39,12 +36,7 @@ sub handler {
     #    }
 
     {
-        # since Apache::compat redefines APR::URI::unparse and the test for
-        # real APR::URI forces reload of APR::URI (to get the right behavior),
-        # we need to force reload of Apache::compat
-        delete $INC{"Apache/compat.pm"};
-        require Apache::compat;
-
+        Apache::compat::override_mp2_api('APR::URI::unparse');
         # test the segfault in apr < 0.9.2 (fixed on mod_perl side)
         # passing only the /path
         my $parsed = $r->parsed_uri;
@@ -53,6 +45,7 @@ sub handler {
         $parsed->port($r->get_server_port);
         #$parsed->scheme('http'); # compat defaults to 'http' like apache-1.3 did
         ok t_cmp($r->construct_url, $parsed->unparse);
+        Apache::compat::restore_mp2_api('APR::URI::unparse');
     }
 
     OK;

@@ -19,14 +19,6 @@ my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 sub handler {
     my $r = shift;
 
-    # since Apache::compat redefines APR::URI::unparse and the test for
-    # backcompat Apache::URI forces redefinition of APR::URI::unparse
-    # (to get the right behavior during the test),
-    # we need to force reload of APR::URI
-    delete $INC{"APR/URI.pm"};
-    no warnings 'redefine';
-    require APR::URI;
-
     plan $r, tests => 15;
 
     $r->args('query');
