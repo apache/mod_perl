@@ -112,7 +112,6 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     apr_bucket_alloc_t *ba = (*wb->filters)->c->bucket_alloc;
     apr_bucket_brigade *bb;
     apr_bucket *bucket;
-    const char *work_buf = buf;
 
     /* reset the counter to 0 as early as possible and in one place,
      * since this function will always either pass the data out (and
@@ -125,27 +124,10 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         const char *body;
         int status;
 
-        /*
-         * since wb->outbuf is persistent between requests, if the
-         * current response is shorter than the size of wb->outbuf
-         * it may include data from the previous request at the
-         * end. When this function receives a pointer to
-         * wb->outbuf as 'buf', modperl_cgi_header_parse may
-         * return that irrelevant data as part of 'body'. So
-         * to avoid this risk, we create a new buffer of size 'len'
-         * XXX: if buf wasn't 'const char *buf' we could simply do
-         * buf[len] = '\0'
-         */
-        /* MP_IOBUFSIZE is the size of wb->outbuf */
-        if (buf == wb->outbuf && len < MP_IOBUFSIZE) {
-            work_buf = (char *)apr_pcalloc(wb->pool, sizeof(char*)*len);
-            memcpy((void*)work_buf, buf, len);
-        }
-
         MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %d bytes [%s]\n", len,
-                   apr_pstrmemdup(wb->pool, work_buf, len));
+                   apr_pstrmemdup(wb->pool, buf, len));
         
-        status = modperl_cgi_header_parse(r, (char *)work_buf, &len, &body);
+        status = modperl_cgi_header_parse(r, (char *)buf, &len, &body);
 
         wb->header_parse = 0; /* only once per-request */
 
@@ -164,11 +146,11 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             return APR_SUCCESS;
         }
 
-        work_buf = body;
+        buf = body;
     }
 
     bb = apr_brigade_create(wb->pool, ba);
-    bucket = apr_bucket_transient_create(work_buf, len, ba);
+    bucket = apr_bucket_transient_create(buf, len, ba);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
 
     if (add_flush_bucket) {
