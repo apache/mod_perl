@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+'make test' AllowOverride None for Directory / 
+[Steve Lembark <Steve.Lembark@wfg.com>]
+
 disable experimental perlrunxs until future notice
 
 add sanity check for libgdbm
