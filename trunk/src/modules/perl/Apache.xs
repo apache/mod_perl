@@ -1637,7 +1637,7 @@ pnotes(r, k=Nullsv, val=Nullsv)
     SV *val
 
     PREINIT:
-    perl_request_config *cfg;
+    perl_request_config *cfg = NULL;
     char *key = NULL;
     STRLEN len;
 
@@ -1645,7 +1645,12 @@ pnotes(r, k=Nullsv, val=Nullsv)
     if(k) {
 	key = SvPV(k,len);
     }
-    cfg = (perl_request_config*) get_module_config(r->request_config, &perl_module);
+    cfg = (perl_request_config *)
+      get_module_config(r->request_config, &perl_module);
+    if (!cfg) {
+	XSRETURN_UNDEF;
+    }
+
     if(!cfg->pnotes) cfg->pnotes = newHV();
     if(key) {
 	if(hv_exists(cfg->pnotes, key, len)) {
