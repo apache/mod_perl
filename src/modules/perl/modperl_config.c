@@ -118,7 +118,7 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     
     modperl_config_srv_argv_push((char *)ap_server_argv0);
 
-    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
+    MP_TRACE_d(MP_FUNC, "new scfg: 0x%lx\n", (unsigned long)scfg);
 
     return scfg;
 }
@@ -134,7 +134,7 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p)
 
     dcfg->SetEnv = apr_table_make(p, 2);
     
-    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)dcfg);
+    MP_TRACE_d(MP_FUNC, "new dcfg: 0x%lx\n", (unsigned long)dcfg);
 
     return dcfg;
 }
