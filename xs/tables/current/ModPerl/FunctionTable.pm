@@ -2045,11 +2045,6 @@ $ModPerl::FunctionTable = [
     'args' => []
   },
   {
-    'return_type' => 'IV',
-    'name' => 'modperl_global_get_threaded_mpm',
-    'args' => []
-  },
-  {
     'return_type' => 'void',
     'name' => 'modperl_global_init',
     'args' => [
@@ -2101,20 +2096,6 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_global_init_threaded_mpm',
-    'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'p'
-      },
-      {
-        'type' => 'IV',
-        'name' => 'threaded_mpm'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
     'name' => 'modperl_global_lock',
     'args' => [
       {
@@ -2131,11 +2112,6 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'void',
     'name' => 'modperl_global_lock_server_rec',
-    'args' => []
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'modperl_global_lock_threaded_mpm',
     'args' => []
   },
   {
@@ -2222,16 +2198,6 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
-    'name' => 'modperl_global_set_threaded_mpm',
-    'args' => [
-      {
-        'type' => 'void *',
-        'name' => 'arg0'
-      }
-    ]
-  },
-  {
-    'return_type' => 'void',
     'name' => 'modperl_global_unlock',
     'args' => [
       {
@@ -2248,11 +2214,6 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'void',
     'name' => 'modperl_global_unlock_server_rec',
-    'args' => []
-  },
-  {
-    'return_type' => 'void',
-    'name' => 'modperl_global_unlock_threaded_mpm',
     'args' => []
   },
   {
