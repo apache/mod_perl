@@ -600,6 +600,16 @@ OPEN(self, arg1, arg2=Nullsv)
     OUTPUT:
     RETVAL
 
+int
+FILENO(r)
+    Apache r
+
+    CODE:
+    RETVAL = fileno(stdout);
+
+    OUTPUT:
+    RETVAL
+
 SV *
 as_string(r)
     Apache r
