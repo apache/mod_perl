@@ -19,7 +19,6 @@ ToDo
 Makefile.PL
 README
 apache-modlist.html
-mod_perl.pm_version
 mod_perl.gif
 mod_perl.pod
 mod_perl_cvs.pod
@@ -33,7 +32,8 @@ eg/startup.pl
 eg/test.pl
 eg/registry.pl
 eg/README
-lib/mod_perl.pm.PL
+lib/mod_perl_hooks.pm.PL
+lib/mod_perl.pm
 lib/Apache/src.pm
 lib/Apache/httpd_conf.pm
 lib/Apache/fork.pm
