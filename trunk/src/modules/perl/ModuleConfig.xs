@@ -208,6 +208,16 @@ server(parms)
     OUTPUT:
     RETVAL
 
+Apache::Command
+cmd(parms)
+    Apache::CmdParms parms
+
+    CODE:				   
+    RETVAL = parms->cmd;
+
+    OUTPUT:
+    RETVAL
+
 int
 override(parms)
     Apache::CmdParms parms
