@@ -120,6 +120,7 @@ int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp);
 void modperl_register_hooks(apr_pool_t *p);
 apr_pool_t *modperl_server_pool(void);
+apr_pool_t *modperl_server_user_pool(void);
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p);
 int modperl_perl_destruct_level(void);
 void xs_init(pTHX);

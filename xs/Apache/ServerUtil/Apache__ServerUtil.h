@@ -15,7 +15,7 @@
 
 #define mpxs_Apache__ServerUtil_restart_count modperl_restart_count
 
-#define mpxs_Apache__ServerUtil_base_server_pool modperl_server_pool
+#define mpxs_Apache__ServerUtil_base_server_pool modperl_server_user_pool
 
 #define mpxs_Apache__ServerRec_method_register(s, methname)     \
     ap_method_register(s->process->pconf, methname);

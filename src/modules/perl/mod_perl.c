@@ -130,12 +130,24 @@ static void modperl_xs_init(pTHX)
  * the parent process will run the cleanups since server_pool is a subpool
  * of pconf.  we manually clear the server_pool to run cleanups in the
  * child processes
+ *
+ * the "server_user_pool" is a subpool of the "server_pool", this is
+ * the pool which is exposed to users, so that they can register
+ * cleanup callbacks. This is needed so that the perl cleanups won't
+ * be run before user cleanups are executed.
+ *
  */
 static apr_pool_t *server_pool = NULL;
+static apr_pool_t *server_user_pool = NULL;
 
 apr_pool_t *modperl_server_pool(void)
 {
     return server_pool;
+}
+
+apr_pool_t *modperl_server_user_pool(void)
+{
+    return server_user_pool;
 }
 
 static void set_taint_var(PerlInterpreter *perl)
@@ -553,6 +565,9 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
 
     apr_pool_create(&server_pool, pconf);
     apr_pool_tag(server_pool, "mod_perl server pool");
+
+    apr_pool_create(&server_user_pool, pconf);
+    apr_pool_tag(server_user_pool, "mod_perl server user pool");
 
     modperl_sys_init();
     apr_pool_cleanup_register(server_pool, NULL,
