@@ -8,18 +8,18 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 <request_rec>
 <  pool
 <  connection
-   server
+<  server
 <  next
 <  prev
 <  main
-   the_request
+<  the_request
    assbackwards
 ~  proxyreq
 <  header_only
-   protocol
-   proto_num
+<  protocol
+<  proto_num
 <  hostname
-   request_time
+<  request_time
    status_line
    status
 <  method
@@ -33,7 +33,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 >  chunked
 >  range
 >  clength
-   remaining
+-  remaining
 >  read_length
 >  read_body
 >  read_chunked
@@ -52,7 +52,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    ap_auth_type
 ~  no_cache
    no_local_copy
-   unparsed_uri
+<  unparsed_uri
    uri
    filename
 <  canonical_filename
@@ -61,8 +61,8 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 ~  finfo
 ~  parsed_uri
    used_path_info
-   per_dir_config
-   request_config
+<  per_dir_config
+<  request_config
 !  htaccess
    output_filters
    input_filters
