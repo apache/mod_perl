@@ -263,7 +263,7 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
         if (SvMAGICAL(sv) && (SvCUR(sv) > 4) &&
             strnEQ(SvPVX(sv), " at ", 4))
         {
-            /* Apache::exit was called */
+            /* ModPerl::Util::exit was called */
             return DECLINED;
         }
 #if 0
