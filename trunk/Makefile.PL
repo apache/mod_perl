@@ -281,7 +281,6 @@ my @xs_modules = qw(Apache Apache::Constants);
 
 if($Is_Win32) {
     $NO_HTTPD = 1;
-    win32_setup();
 } 
 
 if($USE_APXS) {
@@ -496,6 +495,8 @@ if($PERL_LOG_API) {
 }
 
 my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
+
+win32_setup() if $Is_Win32;
 
 if($DYNAMIC) {
     for (@xs_mod_snames) {
