@@ -465,7 +465,7 @@ CHAR_P perl_cmd_init_handlers (cmd_parms *parms, void *rec, char *arg)
 			       ((perl_dir_config *)rec)->PerlInitHandler);
     }
     else {
-	PERL_CMD_PUSH_HANDLERS("PerlTransHandler", cls->PerlInitHandler);
+	PERL_CMD_PUSH_HANDLERS("PerlInitHandler", cls->PerlInitHandler);
     }
 }
 
