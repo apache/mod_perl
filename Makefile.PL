@@ -180,6 +180,7 @@ $PERL_SERVER_API = 1;     #so they are on by default
 $PERL_RUN_XS = 0;
 
 my %experimental = map { $_,1 } qw{
+PERL_DSO_UNLOAD
 PERL_STARTUP_DONE_CHECK
 PERL_RUN_XS
 PERL_GET_SET_HANDLERS
@@ -282,7 +283,7 @@ while($_ = shift) {
 
 my %very_experimental = map {$_,1} 
 qw(PERL_DEFAULT_OPMASK PERL_SAFE_STARTUP PERL_ORALL_OPMASK 
-   PERL_STARTUP_DONE_CHECK);
+   PERL_STARTUP_DONE_CHECK PERL_DSO_UNLOAD);
 
 if($EXPERIMENTAL) {
     for (keys %experimental) {

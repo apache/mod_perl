@@ -1,7 +1,8 @@
 use Apache::test;
 #we're testing an experimental feature that doesn't work for some folks
 #will revisit later
-unless (defined $ENV{USER} and $ENV{USER} eq 'dougm') {
+unless (defined $ENV{USER} and $ENV{USER} eq 'dougm'
+       and $net::callback_hooks{ERRSV_CAN_BE_HTTP}) {
     print "1..1\nok 1\n"; 
     exit;
 }

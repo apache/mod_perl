@@ -388,6 +388,10 @@ if((add->flags & f) || (base->flags & f)) \
 #define PERL_STARTUP_DONE_CHECK getenv("PERL_STARTUP_DONE_CHECK")
 #endif
 
+#ifndef PERL_DSO_UNLOAD
+#define PERL_DSO_UNLOAD getenv("PERL_DSO_UNLOAD")
+#endif
+
 #ifdef APACHE_SSL
 #define PERL_DONE_STARTUP 1
 #else
