@@ -23,3 +23,14 @@ PerlChildExitHandler ModPerl::Test::exit_handler
         PerlModule Doesnt::Exist
     </IfDefine>
 </IfModule>
+
+# <sandbox-friendly>
+# keep everything self-contained, to avoid problems with sandboxes
+# which break when things try to run off /tmp
+<IfModule mod_cgid.c>
+    ScriptSock logs/cgisock
+</IfModule>
+#
+SetEnv TMPDIR @t_logs@
+# </sandbox-friendly>
+
