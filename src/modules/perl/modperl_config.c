@@ -63,6 +63,8 @@ const char *modperl_cmd_interp_##item(cmd_parms *parms, \
 { \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \
+    const char *err = ap_check_cmd_context(parms, GLOBAL_ONLY); \
+    if (err) return err; \
     scfg->interp_pool_cfg->##item = item; \
     MP_TRACE_d(MP_FUNC, "%s %d\n", parms->cmd->name, item); \
     return NULL; \
