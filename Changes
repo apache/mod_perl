@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add support for setting $r->auth_name and $r->auth_type
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 add Apache->httpd_conf compat method
 [Philippe M. Chiasson <gozer@cpan.org>]
 
