@@ -975,10 +975,10 @@ sub init_tests_and_config {
 	} 
 	if($ADD_MODULE) {
 	    for (split ",", $ADD_MODULE) {
-		if(/([a-zA-Z0-9][a-zA-Z0-9_]*)/) {
+		if(/^([a-zA-Z0-9][a-zA-Z0-9_]+)$/) {
 		    $cmd .= " --enable-module=$1";
 		}
-		elsif(m:(src/modules/[^/]+/[a-zA-Z0-9][a-zA-Z0-9_]*):) {
+		elsif(m:(src/modules/[^/]+/[^/]+)$:) {
 		    $cmd .= " --activate-module=$1";
 		}
 	    }
