@@ -718,7 +718,9 @@ my %shortcuts = (
      REDIRECT => 'HTTP_MOVED_TEMPORARILY',
 );
 
-my %ifdef = map { $_, 1 } qw(APLOG_TOCLIENT);
+#backwards compat with older httpd/apr
+#XXX: remove once we require newer httpd/apr
+my %ifdef = map { $_, 1 } qw(APLOG_TOCLIENT APR_LIMIT_NOFILE);
 
 sub constants_ifdef {
     my $name = shift;
