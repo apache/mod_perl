@@ -66,8 +66,8 @@ apr_interval_time_t mpxs_apr_socket_timeout_get(pTHX_ I32 items,
     /* this also magically assings to APR_Socket ;-) */
     mpxs_usage_va_1(APR__Socket, "$socket->timeout_get()");
 
-    MP_FAILURE_CROAK(apr_socket_timeout_get(APR__Socket, &t));
-
+    MP_RUN_CROAK(apr_socket_timeout_get(APR__Socket, &t),
+                 "APR::Socket::timeout_get");
     return t;
 }
 
@@ -75,7 +75,8 @@ static MP_INLINE
 void mpxs_APR__Socket_timeout_set(pTHX_ apr_socket_t *socket,
                                  apr_interval_time_t t)
 {
-    MP_FAILURE_CROAK(apr_socket_timeout_set(socket, t));
+    MP_RUN_CROAK(apr_socket_timeout_set(socket, t),
+                 "APR::Socket::timeout_set");
 }
 
 
@@ -85,7 +86,8 @@ apr_int32_t mpxs_APR__Socket_opt_get(pTHX_ apr_socket_t *socket,
                                      apr_int32_t opt)
 {
     apr_int32_t val;
-    MP_FAILURE_CROAK(apr_socket_opt_get(socket, opt, &val));
+    MP_RUN_CROAK(apr_socket_opt_get(socket, opt, &val),
+                 "APR::Socket::opt_get");
     return val;
 }
 
@@ -93,5 +95,6 @@ static MP_INLINE
 void mpxs_APR__Socket_opt_set(pTHX_ apr_socket_t *socket, apr_int32_t opt,
                               apr_int32_t val)
 {
-    MP_FAILURE_CROAK(apr_socket_opt_set(socket, opt, val));
+    MP_RUN_CROAK(apr_socket_opt_set(socket, opt, val),
+                 "APR::Socket::opt_set");
 }
