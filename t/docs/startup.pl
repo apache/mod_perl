@@ -62,7 +62,10 @@ if($ENV{PERL_TEST_NEW_READ}) {
     *Apache::READ = \&Apache::new_read;
 }
 
-$ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
+unless($ENV{KeyForPerlSetEnv} and 
+       $ENV{KeyForPerlSetEnv} eq "OK") {
+    warn "PerlSetEnv is broken\n";
+}
 
 %net::callback_hooks = ();
 require "net/config.pl";

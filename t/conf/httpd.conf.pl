@@ -30,8 +30,15 @@ use Apache ();
 use Apache::Registry ();
 use Apache::RegistryNG ();
 
+for (qw(TEST NOCHANCE)) {
+    if(Apache->define($_)) {
+	print "IfDefine $_\n";
+    }
+}
+
 Apache::Server->register_cleanup(sub { 
     warn "Apache::Server registered cleanup called for $$\n";
+    0;
 });
 
 if($ENV{TEST_PERL_DIRECTIVES}) {

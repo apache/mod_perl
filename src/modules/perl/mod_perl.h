@@ -422,6 +422,7 @@ if((add->flags & f) || (base->flags & f)) \
 /* once 1.3.0 is here, we can toss most of this junk */
 
 #define MMN_130 19980527
+#define MMN_131 19980713
 #define MMN_132 19980806
 #if MODULE_MAGIC_NUMBER >= MMN_130
 #define HAVE_APACHE_V_130

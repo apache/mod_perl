@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+new Apache->define method works like IfDefine 
+
 PerlRequire/PerlModule will start Perl if it is not already running
 
 (undocumented) $Apache::ReadConfig variable renamed $Apache::Server::SaveConfig
