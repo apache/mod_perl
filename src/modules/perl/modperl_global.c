@@ -26,6 +26,30 @@ void modperl_global_request_set(request_rec *r)
     MpReqSET_GLOBAL_REQUEST_On(rcfg);
 }
 
+/* get/set */
+request_rec *modperl_global_request(pTHX_ SV *svr)
+{
+    request_rec *cur = NULL;
+    apr_status_t status = modperl_tls_get_request_rec(&cur);
+
+    if (status != APR_SUCCESS) {
+        /* an internal problem */
+        Perl_croak(aTHX_ "failed to retrieve the request object");
+    }
+
+    if (!cur) {
+        /* wrong configuration */
+        Perl_croak(aTHX_ "Global $r object is not available. Set:\n"
+                   "\tPerlOptions +GlobalRequest\nin httpd.conf");
+    }
+    
+    if (svr) {
+        modperl_global_request_obj_set(aTHX_ svr);
+    }
+
+    return cur;
+}
+
 void modperl_global_request_obj_set(pTHX_ SV *svr)
 {
     /* XXX: support sublassing */
