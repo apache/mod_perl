@@ -4,7 +4,11 @@
 
 * static build - if we make it working on OpenBSD, AIX and FreeBSD,
   then it's not important to fix the DSO issues, otherwise make the
-  DSO issues a release issue.
+  DSO issues in (todo/bugs_build) a release issue.
+  httpd-apreq-2 has recently implemented a static build support, we
+  could probably try to re-use some of the code that was written to do
+  that, though they use autoconf, which is not quite what we
+  want. Anyway it's something to look at.
 
 * perl Makefile.PL PREFIX=/foo/bar works fine, however Makefile.PL'll
   still refuse to build unless MP_INST_APACHE2=1 is passed. It should
