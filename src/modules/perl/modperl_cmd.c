@@ -125,6 +125,11 @@ MP_CMD_SRV_DECLARE(init_handlers)
     return modperl_cmd_post_read_request_handlers(parms, mconfig, arg);
 }
 
+MP_CMD_SRV_DECLARE(perl)
+{
+    return "<Perl> sections not yet implemented in modperl-2.0";
+}
+
 #ifdef MP_COMPAT_1X
 
 MP_CMD_SRV_DECLARE_FLAG(taint_check)

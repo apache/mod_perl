@@ -24,6 +24,7 @@ MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE(options);
 MP_CMD_SRV_DECLARE(init_handlers);
+MP_CMD_SRV_DECLARE(perl);
 
 #ifdef MP_COMPAT_1X
 
@@ -58,6 +59,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
 (scfg->interp_scope == MP_INTERP_SCOPE_CONNECTION)
 
 #endif
+
+#define MP_CMD_SRV_RAW_ARGS(name, item, desc) \
+    AP_INIT_RAW_ARGS( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF, desc )
 
 #define MP_CMD_SRV_FLAG(name, item, desc) \
     AP_INIT_FLAG( name, modperl_cmd_##item, NULL, \
