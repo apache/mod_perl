@@ -12,13 +12,6 @@ umm, we use this to test mod_perl
 
 =cut
 
-#we do this to test that `PerlSendHeader Off' will work
-<Files ~ "\.pl$">
-   PerlHandler          Apache::Registry
-   PerlSendHeader       On
-   Options              ExecCGI
-</Files>
-
 #make sure all regex stuff works
 #BrowserMatch Mozilla/2 nokeepalive
 
@@ -47,8 +40,15 @@ PerlPassEnv TERM EDITOR NOCHANCE USER
 PerlSetEnv KeyForPerlSetEnv OK
 PerlSetVar KeyForPerlSetVar OK
  
-PerlScript docs/startup.pl
-PerlScript docs/stacked.pl
+PerlRequire docs/startup.pl
+PerlRequire docs/stacked.pl
+
+#we do this to test that `PerlSendHeader Off' will work
+<Files ~ "\.pl$">
+   PerlHandler          Apache::Registry
+   PerlSendHeader       On
+   Options              ExecCGI
+</Files>
 
 Alias /perl/ ./t/net/perl/
 Alias /perl_xs/ ./t/net/perl/
