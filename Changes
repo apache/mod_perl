@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+remove deprecated APR features: apr_uri_default_port_for_scheme(), 
+apr_socket_opt_get(), apr_socket_opt_set(), and APR_NO_TIMEOUT.
+[Geoffrey Young]
+
 Apache::MPM->is_threaded() replaces Apache::MPM_IS_THREADED
 [Geoffrey Young]
 

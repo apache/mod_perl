@@ -58,6 +58,8 @@ sub handler {
 __DATA__
 <NoAutoConfig>
     <IfModule mod_proxy.c>
+
+        # 2.0
         <IfModule mod_access.c>
             <Proxy http://@servername@:@port@/*>
                 Order Deny,Allow
@@ -71,7 +73,24 @@ __DATA__
             http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
             ProxyPassReverse /TestFilter__both_str_req_proxy/ \
             http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
-    </IfModule>
+        </IfModule>
+
+        # 2.1
+        <IfModule mod_authz_host.c>
+            <Proxy http://@servername@:@port@/*>
+                Order Deny,Allow
+                Deny from all
+                Allow from @servername@
+            </Proxy>
+            ProxyRequests Off
+            RewriteEngine On
+
+            ProxyPass    /TestFilter__both_str_req_proxy/ \
+            http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
+            ProxyPassReverse /TestFilter__both_str_req_proxy/ \
+            http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
+        </IfModule>
+
     </IfModule>
 
     PerlModule TestFilter::both_str_req_proxy
