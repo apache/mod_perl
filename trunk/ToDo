@@ -28,6 +28,8 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 
 - fix t/httpd symlink logic ["Young, Geoffrey S." <younggs@acwilm.com>]
 
+- document $r->hostname
+
 - rename PerlSendHeader?
 
 - syswrite/WRITE
