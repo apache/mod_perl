@@ -30,7 +30,7 @@ void modperl_perl_core_global_init(pTHX)
     }
 }
 
-void modperl_perl_ids_get(modperl_perl_ids_t *ids)
+static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 {
     ids->pid  = (I32)getpid();
 #ifndef WIN32
@@ -46,7 +46,7 @@ void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 #endif
 }
 
-void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
+static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 {
     sv_setiv(GvSV(gv_fetchpv("$", TRUE, SVt_PV)), ids->pid);
 
@@ -57,6 +57,18 @@ void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
     PL_egid = ids->egid;
 #endif
 }
+
+
+#ifdef USE_ITHREADS
+
+static apr_status_t modperl_perl_init_ids_mip(pTHX_ modperl_interp_pool_t *mip,
+                                              void *data)
+{
+    modperl_perl_init_ids(aTHX_ (modperl_perl_ids_t *)data);
+    return APR_SUCCESS;
+}
+
+#endif /* USE_ITHREADS */
 
 void modperl_perl_init_ids_server(server_rec *s)
 {
@@ -70,14 +82,3 @@ void modperl_perl_init_ids_server(server_rec *s)
     modperl_perl_init_ids(aTHX_ &ids);
 #endif
 }
-
-#ifdef USE_ITHREADS
-
-apr_status_t modperl_perl_init_ids_mip(pTHX_ modperl_interp_pool_t *mip,
-                                       void *data)
-{
-    modperl_perl_init_ids(aTHX_ (modperl_perl_ids_t *)data);
-    return APR_SUCCESS;
-}
-
-#endif /* USE_ITHREADS */
