@@ -4,8 +4,6 @@
 #include "modperl_apache_includes.h"
 #include "modperl_perl_includes.h"
 
-#define MP_COMPAT_1X /* backwards compat */
-
 #ifdef WIN32
 #define MP_THREADED 1
 #else
