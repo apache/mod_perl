@@ -17,12 +17,27 @@ T_VPTR
 T_APR_TIME
 	sv_setnv($arg, (NV)($var / APR_USEC_PER_SEC));
 
+T_UVOBJ
+	sv_setref_uv($arg, \"${ntype}\", (UV)$var);
+
 ######################################################################
 INPUT
 T_PTROBJ
 	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
 	    IV tmp = SvIV((SV*)SvRV($arg));
 	    $var = INT2PTR($type,tmp);
+	}
+	else {
+	    Perl_croak(aTHX_ SvROK($arg) ?
+                       \"$var is not of type ${ntype}\" :
+                       \"$var is not a blessed reference\");
+        }
+
+INPUT
+T_UVOBJ
+	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
+	    UV tmp = SvUV((SV*)SvRV($arg));
+	    $var = ($type)tmp;
 	}
 	else {
 	    Perl_croak(aTHX_ SvROK($arg) ?
