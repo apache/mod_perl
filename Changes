@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Require perl 5.8 or higher when building mod_perl on OSes requiring
+ithreads (e.g., win32), since 5.6.x ithreads aren't good. [Stas]
+
 MP_COMPAT_1X=0 now can be passed to Makefile.PL to disable
 mp1-back-compat compile-time features + adjust tests. [Stas]
 
