@@ -25,5 +25,8 @@ MP_INLINE void modperl_io_apache_init(pTHX);
 #define modperl_io_apache_init(pTHX)
 
 #endif /* #ifdef PERLIO_LAYERS */
-    
+
+MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
+                                       char *buffer, Size_t len);
+
 #endif /* MODPERL_IO_APACHE_H */

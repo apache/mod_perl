@@ -105,37 +105,17 @@ PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
     request_rec *r = st->r;
     long total = 0;
-    int rc;
 
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANREAD) ||
         PerlIOBase(f)->flags & (PERLIO_F_EOF|PERLIO_F_ERROR)) {
 	return 0;
     }
 
-    if (!r->read_length) {
-        /* only do this once per-request */
-        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
-                         "mod_perl: ap_setup_client_block failed: %d", rc);
-            return -1;
-        }
-    }
+    total = modperl_request_read(aTHX_ r, (char*)vbuf, count);
 
-    if (r->read_length || ap_should_client_block(r)) {
-        total = ap_get_client_block(r, vbuf, count);
-
-        MP_TRACE_o(MP_FUNC, "wanted %db, read %db [%s]",
-                   count, total,
-                   IO_DUMP_FIRST_CHUNK(r->pool, vbuf, total));
-
-        if (total < 0) {
-            /*
-             * XXX: as stated in ap_get_client_block, the real
-             * error gets lots, so we only know that there was one
-             */
-            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
-                         "mod_perl: $r->read failed to read");
-        }
+    if (total < 0) {
+        PerlIOBase(f)->flags |= PERLIO_F_ERROR;
+        /* modperl_request_read takes care of setting ERRSV */
     }
 
     return total;
@@ -268,6 +248,83 @@ MP_INLINE void modperl_io_apache_init(pTHX)
 
 #endif /* defined MP_IO_TIE_PERLIO */
 
+/******  Other request IO functions  *******/
+
+
+MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
+                                       char *buffer, Size_t len)
+{
+    long total = 0;
+    int wanted = len;
+    int seen_eos = 0;
+    char *tmp = buffer;
+    apr_bucket_brigade *bb;
+
+    if (len <= 0) {
+        return 0;
+    }
+
+    bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+    if (bb == NULL) {
+        r->connection->keepalive = AP_CONN_CLOSE;
+        return -1;
+    }
+
+    do {
+        apr_size_t read;
+        int rc;
+
+        rc = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES,
+                            APR_BLOCK_READ, len);
+        if (rc != APR_SUCCESS) { 
+            /* if we fail here, we want to just return and stop trying
+             * to read data from the client.
+             */
+            r->connection->keepalive = AP_CONN_CLOSE;
+            apr_brigade_destroy(bb);
+            sv_setpv(ERRSV,
+                     (char *)apr_psprintf(r->pool, 
+                                          "failed to get bucket brigade: %s",
+                                          modperl_apr_strerror(rc)));
+            return -1;
+        }
+
+        /* If this fails, it means that a filter is written
+         * incorrectly and that it needs to learn how to properly
+         * handle APR_BLOCK_READ requests by returning data when
+         * requested.
+         */
+        AP_DEBUG_ASSERT(!APR_BRIGADE_EMPTY(bb));
+
+        if (APR_BUCKET_IS_EOS(APR_BRIGADE_LAST(bb))) {
+            seen_eos = 1;
+        }
+
+        read = len;
+        rc = apr_brigade_flatten(bb, tmp, &read);
+        if (rc != APR_SUCCESS) {
+            apr_brigade_destroy(bb);
+            sv_setpv(ERRSV,
+                     (char *)apr_psprintf(r->pool, 
+                                          "failed to read: %s",
+                                          modperl_apr_strerror(rc)));
+            return -1;
+        }
+        total += read;
+        tmp   += read;
+        len   -= read;
+
+        apr_brigade_cleanup(bb);
+
+    } while (len > 0 && !seen_eos);
+
+    apr_brigade_destroy(bb);
+
+    MP_TRACE_o(MP_FUNC, "wanted %db, read %db [%s]", wanted, total,
+               IO_DUMP_FIRST_CHUNK(r->pool, buffer, total));
+
+    return total;
+}
 
 
 

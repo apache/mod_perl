@@ -206,55 +206,45 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
     (r->read_length || ap_should_client_block(r))
 
 /* alias */
-#define mpxs_Apache__RequestRec_READ(r, buffer, bufsiz, offset) \
-    mpxs_Apache__RequestRec_read(aTHX_ r, buffer, bufsiz, offset)
+#define mpxs_Apache__RequestRec_READ(r, bufsv, len, offset) \
+    mpxs_Apache__RequestRec_read(aTHX_ r, bufsv, len, offset)
 
 static long mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
-                                         SV *buffer, int bufsiz,
+                                         SV *bufsv, int len,
                                          int offset)
 {
-    long total = 0;
-    int rc;
+    long total;
 
-    if ((rc = mpxs_setup_client_block(r)) != APR_SUCCESS) {
+    if (!SvOK(bufsv)) {
+        sv_setpvn(bufsv, "", 0);
+    }
+
+    if (len <= 0) {
         return 0;
     }
 
-    if (mpxs_should_client_block(r)) {
-        long nrd;
-        /* ap_should_client_block() will return 0 if r->read_length */
-        mpxs_sv_grow(buffer, bufsiz+offset);
-        while (bufsiz) {
-            nrd = ap_get_client_block(r, SvPVX(buffer)+offset+total, bufsiz);
-            if (nrd > 0) {
-                total  += nrd;
-                bufsiz -= nrd;
-            }
-            else if (nrd == 0) {
-                break;
-            }
-            else {
-                /*
-                 * XXX: as stated in ap_get_client_block, the real
-                 * error gets lots, so we only know that there was one
-                 */
-                ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
-                         "mod_perl: $r->read failed to read");
-                break;
-            }
+    /* XXX: need to handle negative offset */
+    /* XXX: need to pad with \0 if offset > size of the buffer */
+
+    mpxs_sv_grow(bufsv, len+offset);
+    total = modperl_request_read(aTHX_ r, SvPVX(bufsv)+offset, len);
+
+    if (total > 0) {
+        mpxs_sv_cur_set(bufsv, offset+total);
+        SvTAINTED_on(bufsv);
+    } 
+    else if (total == 0) {
+        sv_setpvn(bufsv, "", 0);
+    }
+    else {
+        /* need to return undef according to the read entry, but at
+         * the moment we return IV, so need to change to return SV,
+         * meanwhile just crock */
+        if (SvTRUE(ERRSV)) {
+            (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR, r, NULL);
         }
     }
 
-    if (total > 0) {
-        mpxs_sv_cur_set(buffer, offset+total);
-        SvTAINTED_on(buffer);
-    } 
-    else {
-        sv_setpvn(buffer, "", 0);
-    }
-
-    MP_TRACE_o(MP_FUNC, "%d bytes [%s]", total, SvPVX(buffer));
- 
     return total;
 }
 
