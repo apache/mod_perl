@@ -1,5 +1,8 @@
 package TestModperl::request_rec_tie_api;
 
+# this test is relevant only when the tied STDIN/STDOUT are used (when
+# $Config{useperlio} is not defined.)
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -13,13 +16,17 @@ use File::Spec::Functions qw(catfile catdir);
 
 use Apache::Const -compile => 'OK';
 
+use Config;
+
 sub handler {
     my $r = shift;
 
     require Apache::Build;
     my @todo;
     push @todo, 1 if Apache::Build::AIX();
-    plan $r, tests => 3, todo => \@todo;
+    plan $r, tests => 3, todo => \@todo,
+        have { "perl $]: PerlIO is used instead of TIEd IO"
+                   => !($] >= 5.008 && $Config{useperlio}) };
 
     # XXX: on AIX 4.3.3 we get:
     #                     STDIN STDOUT STDERR
