@@ -79,6 +79,19 @@ Apache->server->add_config([split /\n/, $conf]);
 # attempt to use perl's mip  early
 Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 
+
+# this is needed for TestModperl::ithreads
+# one should be able to boot ithreads at the server startup and then
+# access the ithreads setup at run-time when a perl interpreter is
+# running on a different native threads (testing that perl
+# interpreters and ithreads aren't related to the native threads they
+# are running on). This should work starting from perl-5.8.1 and higher.
+use Config;
+if ($] >= 5.008001 && $Config{useithreads}) {
+    eval { require threads; threads->import() };
+}
+
+
 use constant IOBUFSIZE => 8192;
 
 use Apache::Const -compile => qw(MODE_READBYTES);
