@@ -55,6 +55,7 @@ my @c_scan_defines = (
     'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
     '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
     'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
+    'apr_table_do_callback_fn_t=void', #c-scan chokes on function pointers
 );
 
 sub scan {
