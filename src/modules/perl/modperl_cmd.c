@@ -63,7 +63,7 @@ MP_CMD_SRV_DECLARE(requires)
 MP_CMD_SRV_DECLARE(options)
 {
     MP_dSCFG(parms->server);
-    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)dummy;
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     int is_per_dir = parms->path ? 1 : 0;
     modperl_options_t *opts = is_per_dir ? dcfg->flags : scfg->flags;
     apr_pool_t *p = parms->pool;
@@ -89,8 +89,8 @@ MP_CMD_SRV_DECLARE(options)
 
 MP_CMD_SRV_DECLARE_FLAG(taint_check)
 {
-    if (on) {
-        return modperl_cmd_switches(parms, dummy, "-T");
+    if (flag_on) {
+        return modperl_cmd_switches(parms, mconfig, "-T");
     }
 
     return NULL;
@@ -117,7 +117,7 @@ MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_SRV_OPTS
 MP_CMD_SRV_DECLARE(interp_scope)
 {
     modperl_interp_scope_e *scope;
-    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)dummy;
+    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     MP_dSCFG(parms->server);
     int is_per_dir = parms->path ? 1 : 0;
 
@@ -154,7 +154,7 @@ MP_CMD_SRV_DECLARE(interp_scope)
 
 #define MP_CMD_INTERP_POOL_IMP(xitem) \
 const char *modperl_cmd_interp_##xitem(cmd_parms *parms, \
-                                      void *dummy, const char *arg) \
+                                      void *mconfig, const char *arg) \
 { \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \

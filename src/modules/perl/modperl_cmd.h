@@ -7,15 +7,15 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
 
 #define MP_CMD_SRV_DECLARE(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *dummy, const char *arg)
+                               void *mconfig, const char *arg)
 
 #define MP_CMD_SRV_DECLARE2(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *dummy, const char *arg1, const char *arg2)
+                               void *mconfig, const char *arg1, const char *arg2)
 
 #define MP_CMD_SRV_DECLARE_FLAG(item) \
 const char *modperl_cmd_##item(cmd_parms *parms, \
-                               void *dummy, int on)
+                               void *mconfig, int flag_on)
 
 MP_CMD_SRV_DECLARE(trace);
 MP_CMD_SRV_DECLARE(switches);
