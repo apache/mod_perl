@@ -79,7 +79,7 @@ unless (simple_fetch "/test.html") {
     else {
         print "still waiting for server to warm up...";
     }
-    for (1..3) {
+    for (1..4) {
         sleep $_;
         if (simple_fetch "/test.html") {
             print "ok\n";

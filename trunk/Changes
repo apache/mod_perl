@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+__THE__ dso fix: dlclose() xs shared objects and call perl_shutdown()
+before mod_perl's libperl.so is unloaded/reloaded by mod_so
+[Daniel Jacobowitz <drow@false.org>, Alan Burlison <Alan.Burlison@uk.sun.com>]
+
 add  /D "_MSWSOCK_" to ApacheModulePerl.dsp
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 
