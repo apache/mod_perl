@@ -1,6 +1,6 @@
 This is mod_perl version 2.0-tobe
 
-Apache version 2.0.35 or higher is required.
+Apache version 2.0.37 or higher is required.
 
 Perl version 5.6.0 or higher is required.
 
@@ -10,6 +10,9 @@ mod_perl is currently considered alpha when used with a threaded MPM.
 
 Only DSO build of mod_perl-2.0 is currently supported, static builds
 will be support in the future.
+
+docs are available in /docs. Currently they don't get installed on
+'make install'. Certain API documentation can be found in docs/api/.
 
 mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
 See the todo/ directory for what remains to be done.
