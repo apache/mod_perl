@@ -283,7 +283,7 @@ sub write_makefilepl {
     print $fh <<EOF;
 $self->{noedit_warning_hash}
 
-use lib qw(../../lib); #for Apache::BuildConfig
+use lib qw(../../../lib); #for Apache::BuildConfig
 use ModPerl::MM ();
 
 ModPerl::MM::WriteMakefile(
