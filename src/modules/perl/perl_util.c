@@ -103,6 +103,66 @@ table *hvrv2table(SV *rv)
     return (table *)SvIV((SV*)SvRV(rv));
 }
 
+static char *r_keys[] = { "_r", "r", NULL };
+
+request_rec *sv2request_rec(SV *in, char *class, CV *cv)
+{
+    request_rec *r = NULL;
+    SV *sv = Nullsv;
+
+    if(in == &sv_undef) return NULL;
+
+    if(SvROK(in) && (SvTYPE(SvRV(in)) == SVt_PVHV)) {
+	int i;
+	for (i=0; r_keys[i]; i++) {
+	    int klen = strlen(r_keys[i]);
+	    if(hv_exists((HV*)SvRV(in), r_keys[i], klen) &&
+	       (sv = *hv_fetch((HV*)SvRV(in), 
+			       r_keys[i], klen, FALSE)))
+		break;
+	}
+	if(!sv)
+	    croak("method `%s' invoked by a `%s' object with no `r' key!",
+		  GvNAME(CvGV(cv)), HvNAME(SvSTASH(SvRV(in))));
+    }
+
+    if(!sv) sv = in;
+    if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
+	if(sv_derived_from(sv, class))
+	    r = (request_rec *) SvIV((SV*)SvRV(sv));
+	else
+	    return NULL;
+    }
+    else if((r = perl_request_rec(NULL))) {
+	/*ok*/
+    } 
+    else {
+	croak("Apache->%s called without setting Apache->request!",
+	      GvNAME(CvGV(cv)));
+    }
+    return r;
+}
+
+pool *perl_get_startup_pool(void)
+{
+    SV *sv = perl_get_sv("Apache::__POOL", FALSE);
+    if(sv) {
+	IV tmp = SvIV((SV*)SvRV(sv));
+	return (pool *)tmp;
+    }
+    return NULL;
+}
+
+server_rec *perl_get_startup_server(void)
+{
+    SV *sv = perl_get_sv("Apache::__SERVER", FALSE);
+    if(sv) {
+	IV tmp = SvIV((SV*)SvRV(sv));
+	return (server_rec *)tmp;
+    }
+    return NULL;
+}
+
 void mod_perl_untaint(SV *sv)
 {
     if(!tainting) return;

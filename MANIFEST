@@ -192,7 +192,6 @@ faq/mjtg-news.txt
 htdocs/manual/mod/mod_perl.html
 Tie/Makefile.PL
 Tie/Tie.pm
-Tie/typemap
 apaci/Makefile.libdir
 apaci/Makefile.tmpl
 apaci/README

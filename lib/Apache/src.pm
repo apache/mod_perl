@@ -13,12 +13,27 @@ use Config;
 #once it is sane, we'll use these methods in Makefile.PL
 
 $VERSION = '0.01';
+sub IS_MOD_PERL_BUILD () {-e "../lib/mod_perl.pm"}
 
 sub new {
     my $class = shift;
     my $dir;
-    for (@INC) {
-	last if -d ($dir = "$_/auto/Apache/include");
+
+    if(IS_MOD_PERL_BUILD) {
+	eval "require Apache::MyConfig";
+	print $@ if $@;
+	unless ($@) {
+	    $dir = $Apache::MyConfig::Setup{Apache_Src};
+	    for ($dir, "../$dir", "../../$dir") {
+		last if -d ($dir = $_);
+	    }
+	}
+    }
+
+    unless ($dir) {
+	for (@INC) {
+	    last if -d ($dir = "$_/auto/Apache/include");
+	}
     }
 
     bless {
@@ -155,6 +170,10 @@ sub typemaps {
 	    last;
 	}
     }
+    if(IS_MOD_PERL_BUILD) {
+	push @$typemaps, "../Apache/typemap";
+    }
+
     return $typemaps;
 }
 
@@ -163,7 +182,7 @@ sub inc {
     my $src  = $self->dir;
     my $main = $self->main;
     my $os = $Is_Win32 ? "win32" : "unix";
-    my @inc = ("-I$src", "-I$main");
+    my @inc = ("-I$src", "-I$src/modules/perl", "-I$main");
     for ("src/regex", "$src/os/$os") {
 	push @inc, "-I$_" if -d $_;
     }
