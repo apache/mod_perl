@@ -8,7 +8,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 12, \&have_lwp;
+plan tests => 12;
 
 my $url = "/TestModperl::sameinterp";
 
@@ -38,9 +38,10 @@ for (1..2) {
     my $value = 1;
     for (1..2) {
         $value++;
+        my $content = join ' ', 'ok', $_ + 3;
         my $res = Apache::TestRequest::same_interp_do($same_interp, \&POST,
-                                                      $url, [ok => $_+3],
-                                                      content => "foo");
+                                                      $url,
+                                                      content => $content);
         ok t_cmp(
             $value,
             defined $res && $res->content,

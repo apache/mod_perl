@@ -1,4 +1,4 @@
-use Apache::TestRequest ();
+use Apache::TestRequest;
 use Apache::Test ();
 use Apache::TestUtil;
 
@@ -11,4 +11,4 @@ my $config = Apache::Test::config();
 my $hostport = Apache::TestRequest::hostport($config);
 t_debug("connecting to $hostport");
 
-print $config->http_raw_get("/input_filter.html");
+print GET_BODY("/input_filter.html");

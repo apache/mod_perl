@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::Const ':common';
 
-plan tests => 3, \&have_lwp;
+plan tests => 3;
 
 ok GET_RC('/nope') == NOT_FOUND;
 
