@@ -4,8 +4,6 @@ use 5.006;
 use strict;
 use warnings;
 
-use lib qw(Apache-Test/lib);
-
 use Config;
 use Cwd ();
 use File::Spec::Functions qw(catfile);

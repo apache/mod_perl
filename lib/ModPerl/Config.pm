@@ -1,7 +1,6 @@
 package ModPerl::Config;
 
 use strict;
-use lib qw(Apache-Test/lib);
 
 use Apache::Build ();
 use Apache::TestConfig ();
