@@ -27,25 +27,25 @@ plan tests => @aliases * 4;
 
     ok t_cmp(
              "begin ok",
-             req($same_interp, "$url?test=begin"),
+             req($same_interp, "$url?begin"),
              "$modules{$alias} is running BEGIN blocks on the first req",
             );
 
     ok t_cmp(
              "begin ok",
-             req($same_interp, "$url?test=begin"),
+             req($same_interp, "$url?begin"),
              "$modules{$alias} is running BEGIN blocks on the second req",
             );
 
     ok t_cmp(
              "end ok",
-             req($same_interp, "$url?test=end"),
+             req($same_interp, "$url?end"),
              "$modules{$alias} is running END blocks on the first req",
             );
 
     ok t_cmp(
              "end ok",
-             req($same_interp, "$url?test=end"),
+             req($same_interp, "$url?end"),
              "$modules{$alias} is running END blocks on the second req",
             );
 }
@@ -60,32 +60,32 @@ for my $alias (grep !/^perlrun$/, @aliases) {
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
     # clear the cache of the registry package for the script in $url
-    req($same_interp, "$url?test=uncache");
+    req($same_interp, "$url?uncache");
 
     ok t_cmp(
              "begin ok",
-             req($same_interp, "$url?test=begin"),
+             req($same_interp, "$url?begin"),
              "$modules{$alias} is running BEGIN blocks on the first req",
             );
 
     ok t_cmp(
              "",
-             req($same_interp, "$url?test=begin"),
+             req($same_interp, "$url?begin"),
              "$modules{$alias} is not running BEGIN blocks on the second req",
             );
 
     # clear the cache of the registry package for the script in $url
-    req($same_interp, "$url?test=uncache");
+    req($same_interp, "$url?uncache");
 
     ok t_cmp(
              "end ok",
-             req($same_interp, "$url?test=end"),
+             req($same_interp, "$url?end"),
              "$modules{$alias} is running END blocks on the first req",
             );
 
     ok t_cmp(
              "end ok",
-             req($same_interp, "$url?test=end"),
+             req($same_interp, "$url?end"),
              "$modules{$alias} is running END blocks on the second req",
             );
 
