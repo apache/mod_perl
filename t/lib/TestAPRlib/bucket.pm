@@ -12,7 +12,7 @@ use APR::Bucket ();
 use APR::BucketType ();
 
 sub num_of_tests {
-    return 13;
+    return 14;
 }
 
 sub test {
@@ -120,12 +120,16 @@ sub test {
 
     }
 
-    # remove
+    # remove/destroy
     {
         my $b = APR::Bucket->new("aaa");
         # remove $b when it's not attached to anything (not sure if
         # that should be an error)
         $b->remove;
+        ok 1;
+
+        # a dangling bucket needs to be destroyed
+        $b->destroy;
         ok 1;
 
         # real remove from bb is tested in many other filter tests
