@@ -1103,7 +1103,7 @@ WriteMakefile(
 	PORT => $PORT,
 	PWD => $PWD,
 	SHRPENV => $Config{shrpenv},
-	CVSROOT => 'perl.apache.org:/export/home/cvs',
+	CVSROOT => 'perl.apache.org:/home/cvs',
     },
     'dist'    => {
 	COMPRESS=> 'gzip -9f', SUFFIX=>'gz',
