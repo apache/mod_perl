@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+fix a bug for apr < 0.9.3, where it segfaults in apr_uri_unparse, if
+hostname is set, but not the scheme. [Stas]
+
 move $r->send_http_header implementation to Apache::compat.  This
 allows the 1.0 code to run unmodified if $r->send_http_header is
 called before the response change. we already handle the check whether

@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use APR::URI ();
 use Apache::URI ();
@@ -17,7 +18,7 @@ my $location = '/' . __PACKAGE__;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 14;
+    plan $r, tests => 15;
 
     $r->args('query');
 
@@ -49,6 +50,17 @@ sub handler {
     $parsed->path($path);
 
     ok $parsed->path eq $path;
+
+    {
+        # test the segfault in apr < 0.9.3 (fixed on mod_perl side)
+        # passing only the /path
+        my $parsed = APR::URI->parse($r->pool, $r->uri);
+        # set hostname, but not the scheme
+        $parsed->hostname($r->get_server_name);
+        $parsed->port($r->get_server_port);
+        #$parsed->scheme('http'); 
+        ok t_cmp($r->construct_url, $parsed->unparse);
+    }
 
     my $newr = Apache::RequestRec->new($r->connection, $r->pool);
     my $url_string = "$path?query";
