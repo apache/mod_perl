@@ -656,8 +656,6 @@ sub error_check {
     my $self = shift;
     if ($@ and substr($@,0,4) ne " at ") {
 	$self->log_error($@);
-	$@{$self->[REQ]->uri} = $@;
-	#$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return Apache::SERVER_ERROR;
     }
     return Apache::OK;
@@ -701,6 +699,7 @@ sub log_error {
 
     $self->[REQ]->log_error("$$: $class: $msg");
     $self->[REQ]->notes('error-notes', $msg);
+    $@{$self->[URI]} = $msg;
 }
 
 #########################################################################
