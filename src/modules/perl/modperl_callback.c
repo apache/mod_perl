@@ -287,12 +287,11 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p)
     }
 
     if (handler->args) {
-        I32 i, len = AvFILL(handler->args);
+        I32 items = AvFILLp(handler->args) + 1;
 
-        EXTEND(SP, len);
-        for (i=0; i<=len; i++) {
-            PUSHs(*av_fetch(handler->args, i, FALSE));
-        }
+        EXTEND(SP, items);
+        Copy(AvARRAY(handler->args), SP + 1, items, SV*);
+        SP += items;
     }
 
     PUTBACK;
