@@ -52,7 +52,9 @@ need to figure out howto map PerlIO <-> apr_file_t
 at the moment $r->send_fd is implement in Apache::compat, functions,
 but does not have the performance benefits of ap_send_fd()
 however, $r->sendfile is a new function that opens the file for you
-and calls ap_send_fd() underneath.
+and calls ap_send_fd() underneath. ap_send_fd() in APR doesn't work 
+with fd's which aren't files and of unknown length, therefore it cannot 
+be used for implementing 1.x compatible send_fd.
 
 $r->{hard,reset,soft,kill}_timeout:
 do not exist in 2.0.  should be deprecated.  consider adding noops in
