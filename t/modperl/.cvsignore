@@ -5,3 +5,4 @@ printf.t
 print.t
 pnotes.t
 dir_config.t
+subenv.t

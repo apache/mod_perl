@@ -39,3 +39,15 @@ int mpxs_Apache__RequestRec_proxyreq(pTHX_ request_rec *r, SV *val)
 
     return retval;
 }
+
+static MP_INLINE
+SV *mpxs_Apache__RequestRec_subprocess_env(pTHX_ request_rec *r,
+                                           char *key, SV *val)
+{
+    if (GIMME_V == G_VOID) {
+        modperl_env_request_populate(aTHX_ r);
+    }
+
+    return modperl_table_get_set(aTHX_ r->subprocess_env,
+                                 key, val, TRUE);
+}

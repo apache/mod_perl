@@ -38,7 +38,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    headers_in
    headers_out
    err_headers_out
-   subprocess_env
+~  subprocess_env
    notes
 ~  content_type
    handler
