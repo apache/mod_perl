@@ -642,15 +642,15 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
 {
     /* in the threaded environment, no server_rec/process_rec
      * modifications should be done beyond this point */
+#ifdef USE_ITHREADS
+    MP_dSCFG(s);
+    dTHXa(scfg->mip->parent->perl);
+#endif
     if (modperl_threaded_mpm()) {
         MP_threads_started = 1;
     }
 
     MP_post_post_config_phase = 1;
-    #ifdef USE_ITHREADS
-    MP_dSCFG(s);
-    dTHXa(scfg->mip->parent->perl);
-#endif
 
 #ifdef MP_TRACE
     /* httpd core open_logs handler re-opens s->error_log, which might
