@@ -22,6 +22,10 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added additional installation document INSTALL.apaci which
+describes the new APACI stuff (including background information).
+[Ralf S. Engelschall <rse@engelschall.com>]
+
 added new (but still optional!) Apache 1.3 support via the new Apache
 Autoconf-style Interface (APACI): The option USE_APACI=1 triggers a new
 build-environment (from local apaci/) for the APACHE_SRC/src/modules/perl/
