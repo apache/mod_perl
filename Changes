@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+croak if the filehandle passed to $r->send_fd is NULL, otherwise
+apache will segfault
+
 if PREFIX is given to Makefile.PL add it to @INC at startup
 [Philippe M . Chiasson <gozer@cpan.org>]
 
