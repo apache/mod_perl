@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+'make install' now installs mod_perl*h files under httpd's include
+tree [Stas]
+
 When PerlOptions +ParseHeaders is an effect, the CGI headers parsing
 won't be done if any *mod_perl* handler before and including the
 response phase, sets $r->content_type.  (similar behavior to mp1's

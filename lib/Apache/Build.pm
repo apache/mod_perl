@@ -1036,7 +1036,7 @@ sub write_src_makefile {
 
     print $fh $self->canon_make_attr('lib', "@libs");
 
-    for my $q (qw(LIBEXECDIR)) {
+    for my $q (qw(LIBEXECDIR INCLUDEDIR)) {
         print $fh $self->canon_make_attr("AP_$q",
                                          $self->apxs(-q => $q));
     }
@@ -1059,9 +1059,13 @@ all: lib
 lib: $(MODPERL_LIB)
 
 install:
+# install mod_perl.so
 	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
 	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
 	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
+# install mod_perl .h files
+	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
+	$(MODPERL_CP) $(MODPERL_H_FILES) $(MODPERL_AP_INCLUDEDIR)
 
 .SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
