@@ -10,6 +10,8 @@ use DynaLoader ();
 $VERSION = '1.00';
 
 *Apache::log = *Apache::Server::log = \&log;
+*emerg = \&emergency;
+*crit  = \&critical;
 
 sub log { 
     my $self = shift;
@@ -55,11 +57,11 @@ routine.
 
 =over 4
 
-=item emergency
+=item emerg
 
 =item alert
 
-=item critical
+=item crit
 
 =item error
 
