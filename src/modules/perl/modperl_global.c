@@ -165,6 +165,38 @@ void modperl_global_set_##gname(void *data)              \
 MP_GLOBAL_IMPL(pconf, apr_pool_t *);
 MP_GLOBAL_IMPL(server_rec, server_rec *);
 
+
+
+
+
+/*** anon handlers code ***/
+
+static modperl_global_t MP_global_anon_cnt;
+
+void modperl_global_anon_cnt_init(apr_pool_t *p)
+{
+    int *data = (int *)apr_pcalloc(p, sizeof(int));
+    *data = 0;
+    modperl_global_init(&MP_global_anon_cnt, p, (void *)data, "anon_cnt");
+}
+
+int modperl_global_anon_cnt_next(void)
+{
+    int next;
+    /* XXX: inline lock/unlock? */
+    modperl_global_lock(&MP_global_anon_cnt); 
+    
+    next = ++*(int *)(MP_global_anon_cnt.data);
+
+    modperl_global_unlock(&MP_global_anon_cnt); 
+
+    return next;
+}
+
+
+
+/*** TLS ***/
+
 #if MP_THREADED
 static apr_status_t modperl_tls_cleanup(void *data)
 {
