@@ -73,6 +73,7 @@ fi
 my_apxs_sourcedir="`$my_apxs -q PREFIX`"
 my_apxs_cflags="`$my_apxs -q CFLAGS`"
 my_apxs_includes="-I`$my_apxs -q INCLUDEDIR`"
+my_apxs_libexec="`$my_apxs -q LIBEXECDIR`"
 
 #   friendly header
 echo "Configuring mod_perl for building via APXS" 2>&1
@@ -95,6 +96,7 @@ echo "INCLUDES=$my_apxs_includes" >>$my_makefileconf
 echo "RANLIB=ranlib" >>$my_makefileconf
 echo "LIBEXT=so" >>$my_makefileconf
 echo "APACHEEXT=$my_apxs_sourcedir/src" >>$my_makefileconf
+echo "APACHELIBEXEC=$my_apxs_libexec" >>$my_makefileconf
 echo "BASEEXT=mod_perl" >>$my_makefileconf
 echo "APXS=$my_apxs" >>$my_makefileconf
 echo "#   own special stuff" >>$my_makefileconf

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+aix tweaks for building with apxs
+[Jens-Uwe Mager <jum@helios.de>]
+
 pod fixups to avoid WARNING from newer pod2*
 
 Apache::RedirectLogFix now uses $r->last
