@@ -3,15 +3,6 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
 #define mpxs_Apache__RequestRec_PRINT mpxs_Apache__RequestRec_print
 
-#define mpxs_rwrite_loop(func,obj) \
-    while (MARK <= SP) { \
-        STRLEN len; \
-        char *buf = SvPV(*MARK, len); \
-        int wlen = func(obj, buf, len); \
-        bytes += wlen; \
-        MARK++; \
-    }
-
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
