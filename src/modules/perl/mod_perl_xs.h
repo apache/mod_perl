@@ -15,7 +15,7 @@
 
 #define TABLE_GET_SET(table, do_taint) \
 if(key == NULL) { \
-    ST(0) = mod_perl_tie_table(table); \
+    ST(0) = table ? mod_perl_tie_table(table) : &sv_undef; \
     XSRETURN(1); \
 } \
 else { \

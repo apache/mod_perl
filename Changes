@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+$r->current_callback now works properly when PerlHandler invokes
+subrequests, thanks to James Smith for the spot
+
+if an Apache::Table is NULL return undef (e.g. $r->notes during ChildInit)
+
 ActivePerl compile patches [Jochen Wiedmann <joe@ispsoft.de>]
 
 document that Apache 1.2.x is no longer supported

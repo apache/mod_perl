@@ -368,12 +368,12 @@ PROTOTYPES: DISABLE
 BOOT:
     items = items; /*avoid warning*/ 
 
-SV *
+char *
 current_callback(r)
     Apache     r
 
     CODE:
-    RETVAL = newSVsv(perl_get_sv("Apache::__CurrentCallback", TRUE));
+    RETVAL = PERL_GET_CUR_HOOK;
 
     OUTPUT:
     RETVAL
