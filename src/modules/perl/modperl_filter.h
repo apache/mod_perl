@@ -25,7 +25,8 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj);
 
-int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode);
+int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
+                       apr_size_t *readbytes);
 
 /* output filters */
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
@@ -49,7 +50,8 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp);
 /* input filters */
 apr_status_t modperl_input_filter_handler(ap_filter_t *f,
                                           apr_bucket_brigade *bb,
-                                          ap_input_mode_t mode);
+                                          ap_input_mode_t mode,
+                                          apr_size_t *readbytes);
 
 int modperl_input_filter_register_connection(conn_rec *c);
 
