@@ -11,8 +11,6 @@ my $location = '/TestFilter::out_str_req_mix';
 
 my $content = '<!--#include virtual="/includes/REMOVEclear.shtml" -->';
 
-my $body   = 'This is a clear text';
-
 my $expected = 'This is a clear text';
 my $received = POST_BODY $location, content => $content;
 

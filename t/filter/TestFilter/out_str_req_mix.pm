@@ -43,7 +43,7 @@ use Apache::Const -compile => qw(OK M_POST);
 sub adjust {
     my $filter = shift;
 
-    warn "add_prefix called\n";
+    #warn "add_prefix called\n";
 
     while ($filter->read(my $buffer, 1024)){
         $buffer =~ s/REMOVE//;
