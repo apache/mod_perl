@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.23_01-dev
+
 =item 1.23 - April 20, 2000
 
 create test files during Makefile.PL so 'make test' can be run as root
