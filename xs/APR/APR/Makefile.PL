@@ -3,7 +3,6 @@ use warnings;
 
 use lib qw(../lib);
 use ModPerl::BuildMM ();
-use File::Basename qw(dirname);
 use Config;
 
 my $apr_bindir = ModPerl::BuildMM::build_config()->apr_bindir();
