@@ -792,7 +792,6 @@ if($APACHE_SRC or $USE_APXS) {
 	    "(need 1.2.0 or higher)";
     }
 
-#    $PERL_SECTIONS = $PERL_SSI = 0 if $Is_Win32;
     $PERL_SSI = 0 if $Is_Win32;
     unless ($Is_Win32) {
       for (qw(PERL_SECTIONS PERL_SSI), keys %experimental) {
@@ -1602,7 +1601,6 @@ sub MY::post_initialize {
 	my $to = '$(INST_ARCHLIB)/' . "auto/Apache/include/$_";
 	unless ($self->{PM}->{$from}) {
 	    $self->{PM}->{$from} = $to;
-#	    system "$Config{touch} $from";
 	    my @args = ($Config{perlpath}, '-MExtUtils::Command', 
 		        '-e', 'touch', $from);
 	    system(@args) == 0
