@@ -1176,6 +1176,8 @@ EOF
 
     print $fh @$xs_targ;
 
+    print $fh "\n"; # Makefile must end with \n to avoid warnings
+
     close $fh;
 }
 
