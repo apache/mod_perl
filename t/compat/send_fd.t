@@ -8,13 +8,13 @@ plan tests => 3;
 
 my $config = Apache::Test::config();
 
-my $url = '/TestAPI::send_fd';
+my $url = '/TestCompat::send_fd';
 
 my $data = GET_BODY($url);
 
 ok $data;
 
-my $module = 'response/TestAPI/send_fd.pm';
+my $module = 'response/TestCompat/send_fd.pm';
 
 ok length($data) == -s $module;
 
