@@ -8,7 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
-rename PERL_VERSION macro to PERLV to avoid conflict with 5.00502's 
+plugged leak in mod_perl_tie_table()
+
+methods that return an Apache::Table object no longer attempt to
+'require Apache::Table' for you
+
+rename PERL_VERSION macro to PERLV to avoid possibl future conflict
 
 rename Apache::Tie/Apache::TieHashTable -> Apache::Table
 

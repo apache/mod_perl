@@ -20,6 +20,8 @@ Apache::Table - Perl interface to the Apache table structure
 
 =head1 SYNOPSIS
 
+    use Apache::Table ();
+
     my $headers_out = $r->headers_out;
     while(my($key,$val) = each %$headers_out) {
     ...
