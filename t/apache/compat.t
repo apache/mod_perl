@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 11, \&have_lwp;
+plan tests => 20, \&have_lwp;
 
 my $location = "/TestApache::compat";
 
@@ -52,6 +52,12 @@ t_header('out','get_list',  q{list ctx: $r->header_out($key)});
 t_header('out','set',       q{$r->header_out($key => $val)});
 t_header('out','unset',     q{$r->header_out($key => undef)});
 
+# Apache::File
+{
+    my @data = (test => 'file');
+    my $data = GET_BODY query(@data) || '';
+    ok_nok($data);
+}
 
 
 ### helper subs ###
@@ -67,5 +73,21 @@ sub t_header{
         GET_BODY(query(test => 'header', way => $way, what => $what)),
         $comment
         );
+}
 
+
+# accepts multiline var where, the lines matching:
+# ^ok\n$  results in ok(1)
+# ^nok\n$ results in ok(0)
+# the rest is printed as is
+sub ok_nok {
+    for (split /\n/, shift) {
+        if (/^ok\n?$/) {
+            ok 1;
+        } elsif (/^nok\n?$/) {
+            ok 0;
+        } else {
+            print "$_\n";
+        }
+    }
 }

@@ -263,5 +263,68 @@ sub send_fd {
     $r->send_fd_length($fh, -1);
 }
 
+package Apache::File;
+
+use Fcntl ();
+use Symbol ();
+
+sub new {
+    my($class) = shift;
+    my $fh = Symbol::gensym;
+    my $self = bless $fh, ref($class)||$class;
+    if (@_) {
+        return $self->open(@_) ? $self : undef;
+    }
+    else {
+        return $self;
+    }
+}
+
+sub open {
+    my($self) = shift;
+    open $self, shift, @_; # because of open's prototype
+}
+
+sub close {
+    my($self) = shift;
+    close $self;
+}
+
+
+my $TMPNAM = 'aaaaaa';
+my $TMPDIR = $ENV{'TMPDIR'} || $ENV{'TEMP'} || '/tmp';
+($TMPDIR) = $TMPDIR =~ /^([^<>|;*]+)$/; #untaint
+my $Mode = Fcntl::O_RDWR()|Fcntl::O_EXCL()|Fcntl::O_CREAT();
+my $Perms = 0600;
+
+sub tmpfile {
+    my $class = shift;
+    my $limit = 100;
+    my $r = Apache->request;
+    while ($limit--) {
+        my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
+        my $fh = $class->new;
+        sysopen($fh, $tmpfile, $Mode, $Perms);
+        $r->register_cleanup(sub { unlink $tmpfile }) if $r;
+        if ($fh) {
+	    return wantarray ? ($tmpfile, $fh) : $fh;
+	}
+    }
+}
+
+# the following functions now live in Apache::Response
+use Apache::Response;
+# * discard_request_body
+# * meets_conditions
+# * set_content_length
+# * set_etag
+# * set_last_modified
+# * update_mtime
+
+# the following functions now live in Apache::RequestRec
+use Apache::RequestRec;
+# * mtime
+
+
 1;
 __END__
