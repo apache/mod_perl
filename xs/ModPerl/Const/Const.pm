@@ -6,7 +6,14 @@ our $VERSION = '0.01';
 our @ISA = qw(DynaLoader);
 
 #dlopen("Const.so", RTDL_GLOBAL);
-#XXX: this probably isn't portable; hpux works fine tho
+#XXX: dl_dlopen.xs check isn't portable; works for hpux
+# - on aix this is dl_aix.xs, and depending on release, RTDL_GLOBAL is
+#   available or not, e.g. 4.3 doesn't have it in the headers, while
+#   5.1 does have it
+# - from looking at ext/DynaLoader/dl_*.xs when 0x01 is used when it's
+#   not supported perl issues a warning and passes the right flag to dlopen
+# - currently (patchlevel 18958) dl_aix.xs always issues a warning
+#   even when RTDL_GLOBAL is available, patch submitted to p5p
 use Config ();
 use constant DL_GLOBAL =>
   $Config::Config{dlsrc} eq 'dl_dlopen.xs' ? 0x01 : 0x0;
