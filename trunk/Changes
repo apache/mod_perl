@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+workaround Apache::Constants::AUTOLOAD problem with bleedperl
+
 the first flag argument to perl cannot start with space, since perl tries 
 to open the " -spi.bak" as a file. fix that in the win32 case.
 [Stas Bekman <stas@stason.org>]

@@ -96,7 +96,7 @@ $APACHE_SRC_DEFAULT = $@ ?
 
 my $PWD = cwd;
 $ENV{APACHE_CWD} = $PWD;
-$ENV{PERL5LIB} = "$PWD/lib";
+$ENV{PERL5LIB} = join ':', "$PWD/lib", $ENV{PERL5LIB};
 
 my %SSL = (
     "modules/ssl/apache_ssl.c" => "Ben-SSL",

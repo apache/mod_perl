@@ -125,10 +125,6 @@ Needs Patch or Further Investigation
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=99909095916498&w=2
         Status:
 
-    * bleedperl AUTOLOAD XSUB issues
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101477676216889&w=2
-	Status:
-
     * Apache->request(bless {r => $r}, 'My::Apache')
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=98600785703290&w=2
 	Status:

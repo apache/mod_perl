@@ -14,20 +14,22 @@ unless(defined &import) {
     *import = \&Exporter::import;
 }
 
+sub autoload {
+    if (defined &__AUTOLOAD) { #make extra sure we don't recurse
+        #why must we stringify first???
+        __AUTOLOAD() if "$Apache::Constants::AUTOLOAD";
+        goto &$Apache::Constants::AUTOLOAD;
+    }
+    else {
+        require Carp;
+        Carp::confess("__AUTOLOAD is undefined, ",
+                      "trying to AUTOLOAD $Apache::Constants::AUTOLOAD");
+    }
+}
+
 if ($ENV{MOD_PERL}) {
     #outside of mod_perl this will recurse looking for __AUTOLOAD, grr
-    *AUTOLOAD  = sub {
-        if (defined &__AUTOLOAD) { #make extra sure we don't recurse
-            #why must we stringify first???
-            __AUTOLOAD() if "$Apache::Constants::AUTOLOAD";
-            goto &$Apache::Constants::AUTOLOAD;
-        }
-        else {
-            require Carp;
-            Carp::confess("__AUTOLOAD is undefined, ",
-                          "trying to AUTOLOAD $Apache::Constants::AUTOLOAD");
-        }
-    };
+    *AUTOLOAD = \&autoload;
 }
 
 my %ConstNameCache = ();
