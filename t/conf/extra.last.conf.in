@@ -14,7 +14,7 @@ $Location{'/perl_sections'} = {
 
 <Perl >
 #Test tied %Location
-tie %Location, 'Tie::PerlSection';
+tie %Location, 'ModPerl::TestTiePerlSection';
 $Location{'/tied'} = 'test_tied';
 
 $Apache::Server::SaveConfig = 1;
