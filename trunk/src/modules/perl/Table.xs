@@ -29,8 +29,14 @@ static int Apache_table_do(TableDo *td, const char *key, const char *val)
     return rv;
 }
 
+typedef void (
+#ifdef WIN32
+      _stdcall 
+#endif
+      *TABFUNC) (table *, const char *, const char *);
+
 static void table_modify(TiedTable *self, const char *key, SV *sv, 
-			 void (*tabfunc) (table *, const char *, const char *))
+			 TABFUNC tabfunc)
 {
     dTHR;
     const char *val;
@@ -224,7 +230,7 @@ add(self, key, sv)
     SV *sv;
 
     CODE:
-    table_modify(self, key, sv, (void*)table_add);
+    table_modify(self, key, sv, (TABFUNC)table_add);
 
 void
 merge(self, key, sv)
@@ -233,7 +239,7 @@ merge(self, key, sv)
     SV *sv
 
     CODE:
-    table_modify(self, key, sv, (void*)table_merge);
+    table_modify(self, key, sv, (TABFUNC)table_merge);
 
 void
 do(self, cv, ...)
