@@ -142,6 +142,12 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         status = HTTP_INTERNAL_SERVER_ERROR;
     }
 
+    if (status == HTTP_INTERNAL_SERVER_ERROR) {
+        if (r && r->notes) {
+            apr_table_set(r->notes, "error-notes", SvPV_nolen(ERRSV));
+        }
+    }
+    
     return status;
 }
 
