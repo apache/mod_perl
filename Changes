@@ -13,9 +13,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 =item 1.99_13-dev
 
 moved many functions out of the Apache:: namespace:
-  Apache::unescape_url() is now Apache::URI::unescape_url()
-  Apache::log_pid()      is now Apache::Log::log_pid()
-  Apache::LOG_MARK()     is now Apache::Log::LOG_MARK()
+  Apache::unescape_url()    is now Apache::URI::unescape_url()
+  Apache::log_pid()         is now Apache::Log::log_pid()
+  Apache::LOG_MARK()        is now Apache::Log::LOG_MARK()
+  Apache::method_register() is now Apache::Server::method_register()
 
 if MP_AP_PREFIX is used apxs and apr-config from the apache build tree
 won't work, so it can't co-exist with MP_APXS and MP_APR_CONFIG build
