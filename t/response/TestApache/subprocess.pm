@@ -38,7 +38,9 @@ sub handler {
     my $vars = $cfg->{vars};
 
     # XXX: these tests randomly fail under 5.6.1
-    plan $r, todo => [1..4], tests => 4, have_module 'Apache::SubProcess';
+    my @todo = $] < 5.007003 ? (todo => [1..4]) : ();
+
+    plan $r, @todo, tests => 4, have_module 'Apache::SubProcess';
 
     my $target_dir = catfile $vars->{documentroot}, "util";
 
