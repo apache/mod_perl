@@ -7,3 +7,4 @@ trans.t
 init.t
 push_handlers_same_phase.t
 push_handlers_blessed.t
+set_handlers.t
