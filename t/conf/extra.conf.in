@@ -9,7 +9,8 @@ PerlSwitches -T
 
 <Directory @ServerRoot@/htdocs/includes-registry>
     SetHandler perl-script
-    Options +ExecCGI
+    Options +ExecCGI +IncludesNoExec
     PerlResponseHandler ModPerl::Registry
     PerlOptions +ParseHeaders +GlobalRequest
+    AddOutputFilter INCLUDES .spl
 </Directory>
