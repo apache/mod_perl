@@ -88,7 +88,7 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 # are running on). This should work starting from perl-5.8.1 and higher.
 use Config;
 if ($] >= 5.008001 && $Config{useithreads}) {
-    eval { require threads; threads->import() };
+    eval { require threads; "threads"->import() };
 }
 
 
