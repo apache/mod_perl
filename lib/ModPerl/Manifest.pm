@@ -50,6 +50,7 @@ sub get_svn_files {
         while (my $line = <$fh>) {
              if ($line =~ /name\s*=\s*"([^"]*)"/) {
                 my $file = $1;
+                next if $file eq 'svn:this_dir';
                 next if !$file or -d "../$file" or $file =~ /^\./;
                 push @files, $dir ? "$dir/$file" : $file;
              }
