@@ -62,6 +62,16 @@ sub ModPerl::Test::read_post {
     return $buf;
 }
 
+sub ModPerl::Test::add_config {
+    my $r = shift;
+
+    #test adding config at request time
+    my $errmsg = $r->add_config(['require valid-user']);
+    die $errmsg if $errmsg;
+
+    Apache::OK;
+}
+
 #<Perl handler=ModPerl::Test::perl_section>
 # ...
 #</Perl>
@@ -77,23 +87,22 @@ sub ModPerl::Test::perl_section {
 ##   a real handler would do something like:
 #    eval "package $package; $code";
 #    die $@ if $@;
-##   feed %Apache::ReadConfig:: to Apache::Directive->insert
+##   feed %Apache::ReadConfig:: to Apache::Server->add_config
 
     my $htdocs = Apache::server_root_relative($parms->pool, 'htdocs');
 
     my @cfg = (
        "Alias /perl_sections $htdocs",
        "<Location /perl_sections>",
-       "   require valid-user",
+#       "   require valid-user",
+       "   PerlInitHandler ModPerl::Test::add_config",
        "   AuthType Basic",
        "   AuthName PerlSection",
        "   PerlAuthenHandler TestHooks::authen",
        "</Location>",
     );
 
-    my $errmsg = Apache::Directive->insert($parms->server,
-                                           $parms->pool,
-                                           \@cfg);
+    my $errmsg = $parms->server->add_config(\@cfg);
 
     die $errmsg if $errmsg;
 
