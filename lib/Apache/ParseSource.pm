@@ -331,6 +331,7 @@ sub get_functions {
         for (@$args) {
             next unless $_->[0];
             $_->[0] =~ s/^\#.*?\"\s+//;
+            $_->[0] =~ s/^register //;
         }
 
         my $func = {
