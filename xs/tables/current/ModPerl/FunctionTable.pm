@@ -5175,6 +5175,32 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'void',
+    'name' => 'mpxs_Apache__Filter_remove',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'I32',
+        'name' => 'items'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'mark'
+      },
+      {
+        'type' => 'SV **',
+        'name' => 'sp'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
     'name' => 'mpxs_Apache__Log_BOOT',
     'attr' => [
       'static'
