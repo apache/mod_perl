@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+fix -[TB] file tests against $r->finfo, thanks to Geoffrey Young for
+the spot
+
 Apache::SizeLimit enhancements [Perrin Harkins <perrin@elem.com>]:
 - Added support for minimum shared memory and maximum unshared memory
 settings.

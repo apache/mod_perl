@@ -19,6 +19,9 @@
 #ifndef laststatval
 #define laststatval PL_laststatval
 #endif
+#ifndef statname
+#define statname PL_statname
+#endif
 #ifndef rs
 #define rs PL_rs
 #endif

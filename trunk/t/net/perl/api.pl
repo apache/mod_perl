@@ -18,7 +18,7 @@ my $is_xs = ($r->uri =~ /_xs/);
 
 my $tests = 74;
 my $is_win32 = WIN32;
-$tests += 2 unless $is_win32;
+$tests += 4 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && ($tests += 4);
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 9);
@@ -68,6 +68,8 @@ unless ($is_win32) {
   print "Apache.pm == $ft_s, $0 == $ft_def\n";
   test ++$i, $ft_s != $ft_def;
   test ++$i, (-s $r->finfo) == $ft_def;
+  test ++$i, -T $r->finfo;
+  test ++$i, not -B $r->finfo;
 }
 
 my $the_request = $r->the_request;
