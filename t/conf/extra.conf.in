@@ -60,8 +60,9 @@ PerlChildExitHandler ModPerl::Test::exit_handler
 <IfModule mod_cgid.c>
     ScriptSock logs/cgisock
 </IfModule>
-#
-SetEnv TMPDIR @t_logs@
+<IfModule mod_env.c>
+    SetEnv TMPDIR @t_logs@
+</IfModule>
 # </sandbox-friendly>
 
 <Location /status/perl>
