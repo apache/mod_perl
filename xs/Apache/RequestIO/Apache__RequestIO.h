@@ -226,17 +226,17 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
     (r->read_length || ap_should_client_block(r))
 
 /* alias */
-#define mpxs_Apache__RequestRec_READ(r, bufsv, len, offset) \
-    mpxs_Apache__RequestRec_read(aTHX_ r, bufsv, len, offset)
+#define mpxs_Apache__RequestRec_READ(r, buffer, len, offset) \
+    mpxs_Apache__RequestRec_read(aTHX_ r, buffer, len, offset)
 
 static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
-                                         SV *bufsv, apr_size_t len,
+                                         SV *buffer, apr_size_t len,
                                          apr_off_t offset)
 {
     SSize_t total;
 
-    if (!SvOK(bufsv)) {
-        sv_setpvn(bufsv, "", 0);
+    if (!SvOK(buffer)) {
+        sv_setpvn(buffer, "", 0);
     }
 
     if (len <= 0) {
@@ -246,19 +246,19 @@ static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
     /* XXX: need to handle negative offset */
     /* XXX: need to pad with \0 if offset > size of the buffer */
 
-    mpxs_sv_grow(bufsv, len+offset);
-    total = modperl_request_read(aTHX_ r, SvPVX(bufsv)+offset, len);
+    mpxs_sv_grow(buffer, len+offset);
+    total = modperl_request_read(aTHX_ r, SvPVX(buffer)+offset, len);
 
     if (total > 0) {
-        mpxs_sv_cur_set(bufsv, offset+total);
-        SvTAINTED_on(bufsv);
+        mpxs_sv_cur_set(buffer, offset+total);
+        SvTAINTED_on(buffer);
     } 
     else {
-        sv_setpvn(bufsv, "", 0);
+        sv_setpvn(buffer, "", 0);
     }
 
     /* must run any set magic */
-    SvSETMAGIC(bufsv);
+    SvSETMAGIC(buffer);
 
     return newSViv(total);
 }
