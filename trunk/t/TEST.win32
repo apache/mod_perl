@@ -89,17 +89,16 @@ for (qw(src/modules/ApacheModulePerl/Release
 
 #
 
-
 mkdir("/tmp","755") unless -d "/tmp";
 
-open(BROL, ">/tmp/mod_perl_srm.conf"); close BROL;
+for my $d (qw(logs conf)) {
+	mkdir("t/$d","755") unless -d "t/$d";
+}
 
-open(BROL, ">/tmp/mod_perl_access.conf"); close BROL;
-
-open(BROL, ">/tmp/mod_perl_mime.types"); close BROL;
-
-
-#
+for my $f (qw(srm.conf access.conf mime.types)) {
+    local *FH;
+    open FH, ">t/conf/$f"; close FH;
+}
 
 # change the paths so everybody agrees on which files to use
 
@@ -136,7 +135,7 @@ Win32::Process::Create($HttpdObj,
 
 print "httpd listening on port $port\n";
 
-print "will write error_log to: /tmp/mod_perl_error_log\n";
+print "will write error_log to: t/logs/mod_perl_error_log\n";
 
 print "letting apache warm up...\n";
 

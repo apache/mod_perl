@@ -93,8 +93,10 @@ unless (-e "t/docs/test.shtml") {
 
 chmod 0644, "t/conf/mod_perl_srm.conf";
 
+mkdir "t/logs", 0777;
+chmod 0777, "t/logs";
+
 unless ($Is_Win32) {
-    mkdir "t/logs", 0755;
      system "chmod a+x t/net/perl/* t/net/perl/io/*";
 }
 
@@ -107,9 +109,9 @@ my(@do_clean) = qw{
    Apache/Apache.xs
    Constants/Constants.xs
    t/modules/ssi.t       
-   /tmp/mod_perl_error_log
-   /tmp/mod_perl_srm.conf
-   /tmp/mod_perl_httpd.pid
+   t/logs/mod_perl_error_log
+   t/conf/srm.conf
+   t/logs/mod_perl_httpd.pid
 };
 #t/conf/httpd.conf
 #t/net/config.pl
@@ -150,6 +152,10 @@ $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
 $Port = 8529;
+#so Doug can 'make test' different-builds@sametime/samebox
+if(!Is_Win32 and $Is_dougm and $$ > 8000 and $$ < 30000) {
+    $PORT ||= $$;
+}
 $PORT ||= $Port;
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
 $NO_HTTPD = $ENV{NO_HTTPD} || 0;
@@ -707,7 +713,7 @@ EOF
 
     if($callback_hooks{PERL_TRANS}) {
 	push @test_pre_init, 
-	"\t", '$(CP) t/conf/mod_perl_srm.conf /tmp', "\n";
+	"\t", '$(CP) t/conf/mod_perl_srm.conf t/conf/srm.conf', "\n";
     }
     unless ($USE_APXS) {
 	unless (-l "t/httpd") {
@@ -1167,19 +1173,19 @@ MP_TEST_SCRIPT=$script
 TEST_VERBOSE=0
 
 kill_httpd:
-	kill `cat /tmp/mod_perl_httpd.pid`
-	@$(RM_F) /tmp/mod_perl_srm.conf
-	@$(RM_F) /tmp/mod_perl.lock.*
-	$(RM_F) /tmp/mod_perl_httpd.pid
-	$(RM_F) /tmp/mod_perl_error_log
+	kill `cat t/logs/mod_perl_httpd.pid`
+	@$(RM_F) t/conf/srm.conf
+	@$(RM_F) t/logs/mod_perl.lock.*
+	$(RM_F) t/logs/mod_perl_httpd.pid
+	$(RM_F) t/logs/mod_perl_error_log
 
 start_httpd: test_pre_init
 	@(cd t/conf; test -f httpd.conf || cp httpd.conf-dist httpd.conf)
 	@(cd t/net; test -f config.pl || cp config.pl.dist config.pl)
-	@$(TOUCH) /tmp/mod_perl_srm.conf
+	@$(TOUCH) t/conf/srm.conf
 	$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -X -d `pwd`/t &
 	@echo httpd listening on port $(PORT)
-	@echo will write error_log to: /tmp/mod_perl_error_log
+	@echo will write error_log to: t/logs/mod_perl_error_log
 	@echo "letting apache warm up...\c"
 	@sleep 2
 	@echo done

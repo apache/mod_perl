@@ -69,7 +69,7 @@ Version of apache
 
 Server configuration details
 
-relevant sections of /tmp/mod_perl_error_log or logs/error_log
+relevant sections of t/logs/mod_perl_error_log or logs/error_log
 
 If 'make test' fails, the output of 'make test TEST_VERBOSE=1'
 

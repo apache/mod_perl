@@ -123,25 +123,19 @@ PerlHandler Apache::Status
 
 #
 
-# let all bogus and temporary files start with /tmp/mod_perl_
+ErrorLog logs/mod_perl_error_log
 
-# to keep the entropy rise minimal
+PidFile logs/mod_perl_httpd.pid
 
-#
+AccessConfig conf/access.conf
 
-ErrorLog /tmp/mod_perl_error_log
+ResourceConfig conf/srm.conf
 
-PidFile /tmp/mod_perl_httpd.pid
+TypesConfig conf/mime.types
 
-AccessConfig /tmp/mod_perl_access.conf
+TransferLog logs/xferlog
 
-ResourceConfig /tmp/mod_perl_srm.conf
-
-TypesConfig /tmp/mod_perl_mime.types
-
-TransferLog /tmp/mod_perl_xferlog
-
-ScoreBoardFile /tmp/mod_perl_scoreboard
+ScoreBoardFile logs/scoreboard
 
 
 AddType text/x-server-parsed-html .shtml
