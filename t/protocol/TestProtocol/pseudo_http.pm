@@ -18,6 +18,7 @@ use Apache::Access ();
 use APR::Socket ();
 
 use Apache::Const -compile => qw(OK DONE DECLINED);
+use APR::Const -compile => qw(SO_NONBLOCK);
 
 my @cmds = qw(date quit);
 my %commands = map { $_, \&{$_} } @cmds;
@@ -25,6 +26,10 @@ my %commands = map { $_, \&{$_} } @cmds;
 sub handler {
     my $c = shift;
     my $socket = $c->client_socket;
+    
+    if ($socket->opt_get(APR::SO_NONBLOCK)) {
+        $socket->opt_set(APR::SO_NONBLOCK => 0);
+    }
 
     if ((my $rc = greet($c)) != Apache::OK) {
         $socket->send("Say HELO first\n");
