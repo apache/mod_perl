@@ -2,6 +2,7 @@ package Apache::compat;
 
 use strict;
 use warnings FATAL => 'all';
+no warnings 'redefine';
 
 #1.xx compat layer
 #some of this will stay as-is
@@ -418,17 +419,17 @@ sub open {
     # cannot forward @_ to open() because of its prototype
     if (@_ > 1) {
         my ($mode, $file) = @_;
-        open $self, $mode, $file;
+        CORE::open $self, $mode, $file;
     }
     else {
         my $file = shift;
-        open $self, $file;
+        CORE::open $self, $file;
     }
 }
 
 sub close {
     my($self) = shift;
-    close $self;
+    CORE::close $self;
 }
 
 my $TMPNAM = 'aaaaaa';
@@ -541,6 +542,22 @@ sub Apache::URI::parse {
     $uri ||= $r->construct_url;
 
     APR::URI->parse($r->pool, $uri);
+}
+
+{
+    my $sub = *APR::URI::unparse{CODE};
+    *APR::URI::unparse = sub {
+        my($uri, $flags) = @_;
+
+        if (defined $uri->hostname && !defined $uri->scheme) {
+            # we do this only for back compat, the new APR::URI is
+            # protocol-agnostic and doesn't fallback to 'http' when the
+            # scheme is not provided
+            $uri->scheme('http');
+        }
+
+        $sub->(@_);
+    };
 }
 
 package Apache::Table;
