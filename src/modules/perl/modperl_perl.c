@@ -91,6 +91,15 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 
     PL_perl_destruct_level = 2;
 
+#ifdef USE_ENVIRON_ARRAY
+    /* XXX: otherwise Perl may try to free() environ multiple times
+     * but it wasn't Perl that modified environ
+     * at least, not if modperl is doing things right
+     * this is a bug in Perl.
+     */
+    PL_origenviron = environ;
+#endif
+
     perl_destruct(perl);
 
     /* XXX: big bug in 5.6.1 fixed in 5.7.2+
