@@ -926,6 +926,15 @@ print "*** BSDI users: be sure to read the INSTALL `Notes' section ***\n"
 
 cleanup_for_static();
 
+sub MY::dist_basics {
+    my $self = shift;
+    my $string = $self->MM::dist_basics;
+    if($USE_APXS) {
+	$string =~ s/(distclean\s+::\s+)/$1 apxs_distclean /;
+    }
+    return $string;
+}
+
 sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean;
@@ -967,6 +976,9 @@ sub MY::top_targets {
 	    $string =~ s/(pure_all\s+::\s+)(.*)/$1 apxs_libperl $2/;
     }
     $string .= <<'EOF';
+
+apxs_distclean:
+	(cd ./apaci && $(MAKE) distclean)
 
 apxs_libperl:
 	(cd ./apaci && $(MAKE))
