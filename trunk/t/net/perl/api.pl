@@ -7,7 +7,7 @@ Apache->register_cleanup(sub {0});
 my $r;
 
 if(Apache->module("Apache::Request")) {
-    $r = Apache::Request->new;
+    $r = Apache::Request->new(shift);
 }
 else {
     $r = Apache->request;

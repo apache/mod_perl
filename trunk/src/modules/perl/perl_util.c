@@ -105,6 +105,12 @@ table *hvrv2table(SV *rv)
 
 static char *r_keys[] = { "_r", "r", NULL };
 
+static request_rec *r_magic_get(SV *sv)
+{
+    MAGIC *mg  = mg_find(sv, '~');
+    return mg ? (request_rec *)mg->mg_ptr : NULL;
+}
+
 request_rec *sv2request_rec(SV *in, char *class, CV *cv)
 {
     request_rec *r = NULL;
@@ -128,10 +134,17 @@ request_rec *sv2request_rec(SV *in, char *class, CV *cv)
 
     if(!sv) sv = in;
     if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
-	if(sv_derived_from(sv, class))
-	    r = (request_rec *) SvIV((SV*)SvRV(sv));
-	else
+	if(sv_derived_from(sv, class)) {
+	    if((r = r_magic_get(SvRV(sv)))) {
+		/* ~ magic */
+	    }
+	    else {
+		r = (request_rec *) SvIV((SV*)SvRV(sv));
+	    }
+	}
+	else {
 	    return NULL;
+	}
     }
     else if((r = perl_request_rec(NULL))) {
 	/*ok*/
