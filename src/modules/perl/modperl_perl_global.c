@@ -5,7 +5,7 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
     globals->env.gv    = PL_envgv;
     globals->inc.gv    = PL_incgv;
     globals->defout.gv = PL_defoutgv;
-    globals->rs.sv     = PL_rs;
+    globals->rs.sv     = &PL_rs;
 }
 
 static void
@@ -92,14 +92,14 @@ modperl_perl_global_gvio_restore(pTHX_ modperl_perl_global_gvio_t *gvio)
 static void
 modperl_perl_global_svpv_save(pTHX_ modperl_perl_global_svpv_t *svpv)
 {
-    svpv->cur = SvCUR(svpv->sv);
-    strncpy(svpv->pv, SvPVX(svpv->sv), sizeof(svpv->pv));
+    svpv->cur = SvCUR(*svpv->sv);
+    strncpy(svpv->pv, SvPVX(*svpv->sv), sizeof(svpv->pv));
 }
 
 static void
 modperl_perl_global_svpv_restore(pTHX_ modperl_perl_global_svpv_t *svpv)
 {
-    sv_setpvn(svpv->sv, svpv->pv, svpv->cur);
+    sv_setpvn(*svpv->sv, svpv->pv, svpv->cur);
 }
 
 typedef enum {

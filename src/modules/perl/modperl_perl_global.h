@@ -19,7 +19,7 @@ typedef struct {
 } modperl_perl_global_gvio_t;
 
 typedef struct {
-    SV *sv;
+    SV **sv;
     char pv[256]; /* XXX: only need enough for $/ at the moment */
     I32 cur;
 } modperl_perl_global_svpv_t;
