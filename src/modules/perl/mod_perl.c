@@ -3,12 +3,21 @@
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
-    PerlInterpreter *perl = (PerlInterpreter *)data;
+    modperl_cleanup_data_t *cdata = (modperl_cleanup_data_t *)data;
+    PerlInterpreter *perl = (PerlInterpreter *)cdata->data;
+    apr_array_header_t *handles;
+
     PL_perl_destruct_level = 2;
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
                (unsigned long)perl);
+
     perl_destruct(perl);
     perl_free(perl);
+
+    if ((handles = modperl_xs_dl_handles_get(cdata->pool)) {
+        modperl_xs_dl_handles_close(handles);
+    }
+
     return APR_SUCCESS;
 }
 #endif
@@ -20,6 +29,9 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     int status;
     char **argv;
     int argc;
+#ifndef USE_ITHREADS
+    modperl_cleanup_data_t *cdata;
+#endif
 
 #ifdef MP_USE_GTOP
     MP_TRACE_m_do(
@@ -61,7 +73,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 #endif
 
 #ifndef USE_ITHREADS
-    apr_pool_cleanup_register(p, (void*)perl,
+    cdata = modperl_cleanup_data_new(p, (void*)perl);
+    apr_pool_cleanup_register(p, cdata,
                               modperl_shutdown, apr_pool_cleanup_null);
 #endif
     
