@@ -13,7 +13,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    $r->notes->set(url => $ENV{REQUEST_URI});
+    $r->notes->set(headerparser => 'set');
 
     Apache::OK;
 }
@@ -23,7 +23,7 @@ sub response {
 
     plan $r, tests => 1;
 
-    ok $r->notes->get('url') eq $r->uri;
+    ok $r->notes->get('headerparser') eq 'set';
 
     Apache::OK;
 }

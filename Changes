@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+standard %ENV population with CGI variables and contents of the
+subprocess_env table (such as SetEnv and PassEnv) has been delayed
+until the last possible moment before content-generation runs.
+PerlSetEnv and PerlPassEnv are each an exception to this and are
+placed in both %ENV and the subprocess_env table immediately,
+regardless of the current [+-]SetupEnv setting.
+[Geoffrey Young]
+
 fix PerlAddVar configuration merging [Geoffrey Young]
 
 Anonymous subs are now supported in push_handlers, set_handlers,

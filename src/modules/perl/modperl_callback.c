@@ -198,15 +198,25 @@ int modperl_callback_run_handlers(int idx, int type,
     modperl_config_req_cleanup_register(r, rcfg);
 
     switch (type) {
-      case MP_HANDLER_TYPE_PER_DIR:
       case MP_HANDLER_TYPE_PER_SRV:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::RequestRec", r, NULL);
 
-        /* only happens once per-request */
-        if (MpDirSETUP_ENV(dcfg)) {
-            modperl_env_request_populate(aTHX_ r);
+        /* per-server PerlSetEnv and PerlPassEnv - only once per-request */
+        if (! MpReqPERL_SET_ENV_SRV(rcfg)) {
+            modperl_env_configure_request_srv(aTHX_ r);
         }
+
+        break;
+      case MP_HANDLER_TYPE_PER_DIR:
+        modperl_handler_make_args(aTHX_ &av_args,
+                                  "Apache::RequestRec", r, NULL);
+
+        /* per-directory PerlSetEnv - only once per-request */
+        if (! MpReqPERL_SET_ENV_DIR(rcfg)) {
+            modperl_env_configure_request_dir(aTHX_ r);
+        }
+
         break;
       case MP_HANDLER_TYPE_PRE_CONNECTION:
       case MP_HANDLER_TYPE_CONNECTION:

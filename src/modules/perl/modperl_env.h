@@ -20,7 +20,9 @@ void modperl_env_clear(pTHX);
 
 void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s);
 
-void modperl_env_configure_request(request_rec *r);
+void modperl_env_configure_request_srv(pTHX_ request_rec *r);
+
+void modperl_env_configure_request_dir(pTHX_ request_rec *r);
 
 void modperl_env_default_populate(pTHX);
 

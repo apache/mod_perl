@@ -837,11 +837,40 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 
 int modperl_response_handler(request_rec *r)
 {
+    MP_dDCFG;
+    apr_status_t retval;
+
+#ifdef USE_ITHREADS
+    pTHX;
+    modperl_interp_t *interp;
+#endif
+
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
 
-    return modperl_response_handler_run(r, TRUE);
+    /* default is -SetupEnv, add if PerlOption +SetupEnv */
+    if (MpDirSETUP_ENV(dcfg)) {
+#ifdef USE_ITHREADS
+        interp = modperl_interp_select(r, r->connection, r->server);
+        aTHX = interp->perl;
+#endif
+
+        modperl_env_request_populate(aTHX_ r);
+    }
+
+    retval = modperl_response_handler_run(r, TRUE);
+
+    if (MpDirSETUP_ENV(dcfg)) {
+#ifdef USE_ITHREADS
+        if (MpInterpPUTBACK(interp)) {
+            /* PerlInterpScope handler */
+            modperl_interp_unselect(interp);
+        }
+#endif
+    }
+
+    return retval;
 }
 
 int modperl_response_handler_cgi(request_rec *r)
