@@ -6,6 +6,8 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+=item 1.17_01-dev
+
 =item 1.17 - January 6, 1999
 
 change silly "Client hit STOP or Netscrape bit it!" message to a more
