@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+`_' is no longer escaped in Apache::Registry package names
+
 fix $ENV{PATH} corruption
 
 mod_perl_version.h removed from MANIFEST

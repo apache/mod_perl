@@ -72,7 +72,7 @@ sub handler {
 	}
 
 	# Escape everything into valid perl identifiers
-	$script_name =~ s/([^A-Za-z0-9\/])/sprintf("_%2x",unpack("C",$1))/eg;
+	$script_name =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
 
 	# second pass cares for slashes and words starting with a digit
 	$script_name =~ s{
