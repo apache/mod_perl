@@ -11,13 +11,19 @@ use Apache::TestUtil;
 use APR::Table ();
 use APR::Pool ();
 
-use APR::Const    -compile => ':table';
+use APR::Const -compile => ':table';
 
 use constant TABLE_SIZE => 20;
 our $filter_count;
 
 sub num_of_tests {
-    return 38;
+    my $tests = 50;
+
+    # tied hash values() for a table w/ multiple values for the same
+    # key
+    $tests += 2 if $] >= 5.008;
+
+    return $tests;
 }
 
 sub test {
@@ -173,6 +179,37 @@ sub test {
             my_filter($key, $table->{$key});
         }
         ok $filter_count == TABLE_SIZE;
+    }
+
+
+    # each, values
+    {
+        my $table = APR::Table::make($pool, 2);
+
+        $table->add("first"  => 1);
+        $table->add("second" => 2);
+        $table->add("first"  => 3);
+
+        my $i = 0;
+        while (my($a,$b) = each %$table) {
+            my $key = ("first", "second")[$i % 2];
+            my $val = ++$i;
+
+            ok t_cmp $a,           $key, "table each: key test";
+            ok t_cmp $b,           $val, "table each: value test";
+            ok t_cmp $table->{$a}, $val, "table each: get test";
+
+            ok t_cmp tied(%$table)->FETCH($a), $val,
+                "table each: tied get test";
+        }
+
+        # this doesn't work with Perl < 5.8
+        if ($] >= 5.008) {
+            ok t_cmp "1,2,3", join(",", values %$table),
+                "table values";
+            ok t_cmp "first,1,second,2,first,3", join(",", %$table),
+                "table entries";
+        }
     }
 
     # overlap and compress routines
