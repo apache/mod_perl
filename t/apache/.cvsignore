@@ -1,1 +1,8 @@
+cgihandler.t
+compat.t
 conftree.t
+constants.t
+post.t
+read.t
+scanhdrs.t
+write.t
