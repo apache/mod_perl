@@ -123,6 +123,7 @@ sub ap_ccopts {
         if ($self->perl_config('gccversion')) {
             #same as --with-maintainter-mode
             $ccopts .= " $Wall -DAP_DEBUG";
+            $ccopts .= " -DAP_HAVE_DESIGNATED_INITIALIZER";
         }
     }
 
