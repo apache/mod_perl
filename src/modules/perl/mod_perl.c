@@ -42,12 +42,67 @@ static struct {
     apr_pool_t *p = MP_boot_data.p; \
     server_rec *s = MP_boot_data.s
 
+#if defined(USE_ITHREADS) && defined(MP_PERL_5_6_1)
+#   define MP_REFGEN_FIXUP
+#endif
+
+#ifdef MP_REFGEN_FIXUP
+
+/*
+ * nasty workaround for bug fixed in bleedperl (11536 + 11553)
+ * XXX: when 5.8.0 is released + stable, we will require 5.8.0
+ * if ithreads are enabled.
+ */
+static OP * (*MP_pp_srefgen_ptr)(pTHX) = NULL;
+
+static OP *modperl_pp_srefgen(pTHX)
+{
+    dSP;
+    OP *o;
+    SV *sv = *SP;
+
+    if (SvPADTMP(sv) && IS_PADGV(sv)) {
+        /* prevent S_refto from making a copy of the GV,
+         * tricking it to SvREFCNT_inc and point to this one instead.
+         */
+        SvPADTMP_off(sv);
+    }
+    else {
+        sv = Nullsv;
+    }
+
+    /* o = Perl_pp_srefgen(aTHX) */
+    o = MP_pp_srefgen_ptr(aTHX);
+
+    if (sv) {
+        /* restore original flags */
+        SvPADTMP_on(sv);
+    }
+
+    return o;
+}
+
+static void modperl_refgen_ops_fixup(void)
+{
+    /* XXX: OP_REFGEN suffers a similar problem */
+    if (!MP_pp_srefgen_ptr) {
+        MP_pp_srefgen_ptr = PL_ppaddr[OP_SREFGEN];
+        PL_ppaddr[OP_SREFGEN] = MEMBER_TO_FPTR(modperl_pp_srefgen);
+    }
+}
+
+#endif /* MP_REFGEN_FIXUP */
+
 static void modperl_boot(void *data)
 {
     MP_dBOOT_DATA;
     dTHX; /* XXX: not too worried since this only happens at startup */
     int i;
     
+#ifdef MP_REFGEN_FIXUP
+    modperl_refgen_ops_fixup();
+#endif
+
     modperl_env_clear(aTHX);
 
     modperl_env_default_populate(aTHX);

@@ -35,6 +35,10 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#if (PERL_REVISION == 5) && (PERL_VERSION == 6) && (PERL_SUBVERSION == 1)
+#   define MP_PERL_5_6_1
+#endif
+
 #ifdef PERL_CORE
 #   ifndef croak
 #      define croak Perl_croak_nocontext
