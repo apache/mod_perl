@@ -297,6 +297,33 @@ MP_CMD_SRV_DECLARE(perl)
     return NULL;
 }
 
+/*
+ * XXX: the name of this directive may or may not stay.
+ * need a way to note that a module has config directives.
+ * don't want to start mod_perl when we see a non-special PerlModule.
+ */
+MP_CMD_SRV_DECLARE(load_module)
+{
+    apr_pool_t *p = parms->pool;
+    server_rec *s = parms->server;
+    const char *errmsg;
+
+    if (!strstr(arg, "::")) {
+        return DECLINE_CMD; /* let mod_so handle it */
+    }
+
+    MP_TRACE_d(MP_FUNC, "LoadModule %s\n", arg);
+
+    /* we must init earlier than normal */
+    modperl_run(p, s);
+
+    if ((errmsg = modperl_cmd_modules(parms, mconfig, arg))) {
+        return errmsg;
+    }
+
+    return modperl_module_add(p, s, arg);
+}
+
 #ifdef MP_COMPAT_1X
 
 MP_CMD_SRV_DECLARE_FLAG(taint_check)
