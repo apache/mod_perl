@@ -20,7 +20,8 @@ a static library of needed functions is built, and APR/APR::*
 then link into this library [Stas, Joe Schaefer, Randy Kobes]
 
 APR::RequestIO::sendfile() now flushes any buffered output before
-sending the file contents out [Stas]
+sending the file contents out. If the return status is not checked and
+an error happens it'll throw an exception. [Stas]
 
 Registry: remove the misleading prefix "$$: $class:" in the logged
 error message, since not only registry errors will get logged if $@ is

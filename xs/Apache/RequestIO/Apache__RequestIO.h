@@ -314,14 +314,19 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
                                               apr_size_t len)
 {
     apr_size_t nbytes;
-    apr_status_t status;
+    apr_status_t rc;
     apr_file_t *fp;
 
-    status = apr_file_open(&fp, filename, APR_READ|APR_BINARY,
-                           APR_OS_DEFAULT, r->pool);
+    rc = apr_file_open(&fp, filename, APR_READ|APR_BINARY,
+                       APR_OS_DEFAULT, r->pool);
 
-    if (status != APR_SUCCESS) {
-        return status;
+    if (rc != APR_SUCCESS) {
+        if (GIMME_V == G_VOID) {
+            modperl_croak(aTHX_ rc, "Apache::RequestIO::sendfile");
+        }
+        else {
+            return rc;
+        }
     }
 
     if (!len) {
@@ -346,9 +351,13 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
         }
     }
     
-    status = ap_send_fd(fp, r, offset, len, &nbytes);
+    rc = ap_send_fd(fp, r, offset, len, &nbytes);
 
     /* apr_file_close(fp); */ /* do not do this */
 
-    return status;
+    if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "Apache::RequestIO::sendfile");
+    }
+
+    return rc;
 }

@@ -12,7 +12,7 @@ my $url = '/TestAPI__sendfile';
 my $file = catfile Apache::Test::vars('serverroot'),
     'response/TestAPI/sendfile.pm';
 
-plan tests => 5;
+plan tests => 7;
 
 {
     my $header = "This is a header\n";
@@ -34,6 +34,15 @@ plan tests => 5;
 
 {
     my $res = GET "$url?noexist.txt";
+    # 200 even though it wasn't found (since an output was sent before
+    # sendfile was done)
+    ok t_cmp($res->code, 200, "output already sent");
+    t_debug($res->content);
+    ok $res->content =~ /an internal error/;
+}
+
+{
+    my $res = GET "$url?noexist-n-nocheck.txt";
     # 200 even though it wasn't found (since an output was sent before
     # sendfile was done)
     ok t_cmp($res->code, 200, "output already sent");
