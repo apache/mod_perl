@@ -29,8 +29,8 @@ sub find_includes {
     \@wanted;
 }
 
-my $prefixes = join '|', qw(modperl_|mpxs_|mp_xs);
-my $prefix_re = qr{^($prefixes)};
+my $prefixes = join '|', qw(modperl mpxs mp_xs);
+my $prefix_re = qr{^($prefixes)_};
 sub wanted_functions { $prefix_re }
 
 sub write_functions_pm {
