@@ -499,7 +499,10 @@ static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
 {
     const char *errmsg = NULL;
 
-    *retval = Nullsv;
+    if (*retval) {
+        SvREFCNT_dec(*retval);
+        *retval = Nullsv;
+    }
 
     if (sv_isobject(obj)) {
         int count;
@@ -572,7 +575,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
     cmds = apr_array_make(p, fill+1, sizeof(command_rec));
 
     for (i=0; i<=fill; i++) {
-        SV *val;
+        SV *val = Nullsv;
         STRLEN len;
         SV *obj = AvARRAY(module_cmds)[i];
         modperl_module_cmd_data_t *info = modperl_module_cmd_data_new(p);
@@ -586,7 +589,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         }
 
         cmd->name = apr_pstrdup(p, SvPV(val, len));
-        SvREFCNT_dec(val);
 
         if ((errmsg = modperl_module_cmd_fetch(aTHX_ obj, "args_how", &val))) {
             /* XXX default based on $self->func prototype */
@@ -600,7 +602,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
                 cmd->args_how =
                     modperl_constants_lookup_apache(SvPV(val, len));
             }
-            SvREFCNT_dec(val);
         }
 
         if (!modperl_module_cmd_lookup(cmd)) {
@@ -614,7 +615,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         }
         else {
             info->func_name = apr_pstrdup(p, SvPV(val, len));
-            SvREFCNT_dec(val);
         }
 
         if ((errmsg = modperl_module_cmd_fetch(aTHX_ obj, "req_override", &val))) {
@@ -628,7 +628,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
                 cmd->req_override =
                     modperl_constants_lookup_apache(SvPV(val, len));
             }
-            SvREFCNT_dec(val);
         }
 
         if ((errmsg = modperl_module_cmd_fetch(aTHX_ obj, "errmsg", &val))) {
@@ -638,7 +637,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         }
         else {
             cmd->errmsg = apr_pstrdup(p, SvPV(val, len));
-            SvREFCNT_dec(val);
         }
 
         cmd->cmd_data = info;
@@ -646,7 +644,11 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         /* no default if undefined */
         if (!(errmsg = modperl_module_cmd_fetch(aTHX_ obj, "data", &val))) {
             info->cmd_data = apr_pstrdup(p, SvPV(val, len));
+        }
+
+        if (val) {
             SvREFCNT_dec(val);
+            val = Nullsv;
         }
     }
 
