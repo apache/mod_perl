@@ -189,7 +189,7 @@ const char *modperl_handler_name(modperl_handler_t *handler)
     }
     else {
         /* anon sub stores the internal modperl name in mgv_obj */
-        return handler->mgv_obj ? handler->mgv_obj->name : "unknown";
+        return handler->mgv_obj ? handler->mgv_obj->name : "anonsub";
     }
 }
 
