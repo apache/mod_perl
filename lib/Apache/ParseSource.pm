@@ -88,7 +88,8 @@ sub find_includes {
 
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal version
-                                apr_optional mod_include);
+                                apr_optional mod_include
+                                mod_ssl ssl_);
 
     for my $dir (@dirs) {
         File::Find::finddepth({
