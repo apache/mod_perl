@@ -22,6 +22,8 @@ $filename ||= '../pod/modperl_2.0.pod';
 
 for (1,2) {
     my $str = UPLOAD_BODY $location, filename => $filename;
-
-    ok -s $filename == length($str);
+    my $body_len = length $str;
+    my $file_len = -s $filename;
+    print "body_len=$body_len, file_len=$file_len\n";
+    ok $body_len == $file_len;
 }
