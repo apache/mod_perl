@@ -119,6 +119,26 @@ EOI
 }
 EOI
 
+    'APR::URI::unparse' => <<'EOI',
+{
+    require APR::URI;
+    my $orig_sub = *APR::URI::unparse{CODE};
+    *APR::URI::unparse = sub {
+        my($uri, $flags) = @_;
+
+        if (defined $uri->hostname && !defined $uri->scheme) {
+            # we do this only for back compat, the new APR::URI is
+            # protocol-agnostic and doesn't fallback to 'http' when the
+            # scheme is not provided
+            $uri->scheme('http');
+        }
+
+        $orig_sub->(@_);
+    };
+    $orig_sub;
+}
+EOI
+
 );
 
 my %overridden_mp2_api = ();
@@ -659,22 +679,6 @@ sub Apache::URI::parse {
     $uri ||= $r->construct_url;
 
     APR::URI->parse($r->pool, $uri);
-}
-
-{
-    my $sub = *APR::URI::unparse{CODE};
-    *APR::URI::unparse = sub {
-        my($uri, $flags) = @_;
-
-        if (defined $uri->hostname && !defined $uri->scheme) {
-            # we do this only for back compat, the new APR::URI is
-            # protocol-agnostic and doesn't fallback to 'http' when the
-            # scheme is not provided
-            $uri->scheme('http');
-        }
-
-        $sub->(@_);
-    };
 }
 
 package Apache::Table;

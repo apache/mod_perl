@@ -27,9 +27,9 @@ Add the implementation of Apache::Connection::local_addr and
 Apache::Connection::remote_addr to the Apache::compat overridable
 functions. [Stas]
 
-Apache::compat's implementation of Apache::RequestRec::finfo and
-Apache::RequestRec::notes is now overridable and not enabled by
-default. [Stas]
+Apache::compat's implementation of APR::URI::unparse,
+Apache::RequestRec::finfo and Apache::RequestRec::notes is now
+overridable and not enabled by default. [Stas]
 
 Apache::compat no longer enables functions which collide with mp2 API
 by default. It provides two new functions: override_mp2_api and
