@@ -93,11 +93,6 @@ sub finfo {
     \*_;
 }
 
-sub log_error {
-    my $r = shift;
-    warn @_, "\n";
-}
-
 *log_reason = \&log_error;
 
 sub slurp_filename {
