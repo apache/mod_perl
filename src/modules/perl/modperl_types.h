@@ -6,20 +6,6 @@
 typedef apr_array_header_t MpAV;
 typedef apr_table_t        MpHV;
 
-/* xs typemap */
-
-typedef request_rec *  Apache;
-typedef request_rec *  Apache__SubRequest;
-typedef conn_rec    *  Apache__Connection;
-typedef server_rec  *  Apache__Server;
-
-typedef cmd_parms   *  Apache__CmdParms;
-typedef module      *  Apache__Module;
-typedef command_rec *  Apache__Command;
-
-typedef apr_table_t   * Apache__table;
-typedef apr_pool_t    * Apache__Pool;
-
 /* mod_perl structures */
 
 typedef struct {

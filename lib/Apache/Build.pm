@@ -308,9 +308,9 @@ sub default_file {
 }
 
 sub file_path {
-    my($self, $file) = @_;
-    return $file if $file =~ m:^/:;
-    join '/', $self->{cwd}, $file;
+    my $self = shift;
+    my @files = map { m:^/: ? $_ : join('/', $self->{cwd}, $_) } @_;
+    return wantarray ? @files : $files[0];
 }
 
 sub freeze {
@@ -336,6 +336,8 @@ sub save_ldopts {
 sub save {
     my($self, $file) = @_;
 
+    delete $INC{$bpm};
+
     $file ||= $self->default_file('build_config');
     $file = $self->file_path($file);
 
@@ -359,7 +361,7 @@ $obj;
 1;
 EOF
 
-    close $fh;
+    close $fh or die "failed to write $file: $!";
 }
 
 #--- attribute access ---
@@ -586,8 +588,6 @@ sub make_xs {
         (my $c = $xs) =~ s:.*/(\w+)\.xs$:$1.c:;
         push @files, $c;
 
-        $xs = "../../../$xs"; #XXX
-
         push @xs_targ, <<EOF;
 $c: $xs
 \t\$(MODPERL_XSUBPP) $xs > \$*.xsc && \$(MODPERL_MV) \$*.xsc \$@
@@ -775,7 +775,7 @@ sub includes {
     my $self = shift;
     my $src  = $self->dir;
     my $os = is_win32 ? 'win32' : 'unix';
-    my @inc = $self->file_path("src/modules/perl");
+    my @inc = $self->file_path("src/modules/perl", "xs");
 
     my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
     if (-d $ainc) {
