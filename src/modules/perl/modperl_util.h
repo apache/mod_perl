@@ -141,6 +141,14 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
 
 MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name);
 
+/**
+ * slurp the contents of r->filename and return them as a scalar
+ * @param r       request record
+ * @param tainted whether the SV should be marked tainted or not
+ * @return a PV scalar with the contents of the file
+ */
+SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted);
+
 SV *modperl_perl_gensym(pTHX_ char *pack);
 
 void modperl_clear_symtab(pTHX_ HV *symtab);
