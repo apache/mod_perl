@@ -207,8 +207,13 @@ sub test_base_server_pool {
     my $base_server_pool = Apache::ServerUtil::base_server_pool();
     $base_server_pool->cleanup_register(sub { Apache::OK });
     # replace the sub with the following to get some visual debug
-    # should log the date twice (once on -start, once more on -stop)
-    # sub { local %ENV; qx[/bin/date >> /tmp/date]; Apache::OK; }
+    # should log cnt:1 on -start, oncand cnt: 2 -stop followed by cnt: 1)
+    #$base_server_pool->cleanup_register( sub {
+    #    my $cnt = Apache::ServerUtil::restart_count();
+    #    open my $fh, ">>/tmp/out" or die "$!";
+    #    print $fh "cnt: $cnt\n";
+    #    close $fh;
+    #});
     #
     # also remember that cleanup_register() called on this pool will
     # work only when registered at the server startup

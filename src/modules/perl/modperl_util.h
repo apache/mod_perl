@@ -139,4 +139,10 @@ void modperl_package_unload(pTHX_ const char *package);
         : (char *)apr_psprintf(p, "%s...",                               \
                                apr_pstrmemdup(p, str, MP_TRACE_STR_LEN))
 
+/* functions maintaining the amount of times mod_perl was restarted,
+ * e.g. on Apache start, it restarts itself, so the count will be
+ * first 1, and on on restart 2 */
+void modperl_restart_count_inc(server_rec *base_server);
+int  modperl_restart_count(void);
+
 #endif /* MODPERL_UTIL_H */
