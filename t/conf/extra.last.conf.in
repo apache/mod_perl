@@ -31,7 +31,10 @@ $TestDirective::perl::line =  __LINE__;
 
 #Handle re-entrant <Perl> sections
 <Perl >
-$Include = "@ServerRoot@/conf/perlsection.conf";
+    my $file = File::Spec->catfile('@ServerRoot@', 'conf', 'perlsection.conf');
+    my $conf = join "\n", qw(<Perl> $TestDirective::perl::Included++; </Perl>);
+    Apache::TestUtil::t_write_file($file, $conf); 
+    $Include = $file;
 </Perl>
 
 #Deprecated access to Apache::ReadConfig:: still works
