@@ -23,36 +23,37 @@ sub Apache::Filter::PRINTF {}
 sub handler {
     my $filter = shift;
 
-    unless ($filter->ctx) {
-
-        $filter->read(my $buffer); #slurp everything;
-
-        tie *STDOUT, $filter;
-
-        plan tests => 6;
-
-        ok $buffer eq $response_data;
-
-        ok $filter->isa('Apache::Filter');
-
-        my $frec = $filter->frec;
-
-        ok $frec->isa('Apache::FilterRec');
-
-        ok $frec->name;
-
-        my $r = $filter->r;
-
-        ok $r->isa('Apache::RequestRec');
-
-        my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
-        ok $r->uri eq $path;
-
-        untie *STDOUT;
-
-        $filter->ctx(1); # flag that we have sent this output already
-
+    my $data = '';
+    while ($filter->read(my $buffer, 1024)) {
+        $data .= $buffer;
     }
+
+    tie *STDOUT, $filter;
+
+    plan tests => 6;
+
+    ok $data eq $response_data;
+
+    ok $filter->isa('Apache::Filter');
+
+    my $frec = $filter->frec;
+
+    ok $frec->isa('Apache::FilterRec');
+
+    ok $frec->name;
+
+    my $r = $filter->r;
+
+    ok $r->isa('Apache::RequestRec');
+
+    my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
+    ok $r->uri eq $path;
+
+    untie *STDOUT;
+
+    # we have done the job
+    $filter->remove;
+
     Apache::OK;
 }
 
