@@ -43,6 +43,115 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
     return handler;
 }
 
+/* How anon-subs are handled:
+ * We have two ways anon-subs can be registered
+ * A) at startup from httpd.conf:
+ *    PerlTransHandler 'sub { ... }'
+ * B) run-time perl code
+ *    $r->push_handlers(PerlTransHandler => sub { .... });
+ *
+ * In the case of non-threaded perl, we just compile A or grab B and
+ * store it in the mod_perl struct and call it when it's used. No
+ * problems here
+ *
+ * In the case of threads, things get more complicated. we no longer
+ * can store the CV value of the compiled anon-sub, since when
+ * perl_clone is called each interpreter will have a different CV
+ * value. since we need to be able to have 1 entry for each anon-sub
+ * across all interpreters a different solution is needed. to remind
+ * in the case of named subs, we just store the name of the sub and
+ * look its corresponding CV when we need it.
+ *
+ * The used solution: each process has a global counter, which always
+ * grows. Every time a new anon-sub is encountered, a new ID is
+ * allocated from that process-global counter and that ID is stored in
+ * the mod_perl struct. The compiled CV is stored as
+ *     $PL_modglobal{ANONSUB}{$id} = CV;
+ * when perl_clone is called, each clone will clone that CV value, but
+ * we will still be able to find it, since we stored it in the
+ * hash. so we retrieve the CV value, whatever it is and we run it.
+ * 
+ * that explanation can be written and run in perl:
+ *
+ * use threads;
+ * our %h;
+ * $h{x} = eval 'sub { print qq[this is sub @_\n] }';
+ * $h{x}->("main");
+ * threads->new(sub { $h{x}->(threads->self->tid)});
+ *
+ * XXX: more nuances will follow
+ */
+
+void modperl_handler_anon_init(pTHX_ apr_pool_t *p)
+{
+    modperl_modglobal_key_t *gkey =
+        modperl_modglobal_lookup(aTHX_ "ANONSUB");
+    MP_TRACE_h(MP_FUNC, "init $PL_modglobal{ANONSUB} = []");
+    MP_MODGLOBAL_STORE_HV(gkey);
+
+    /* init the counter to 0 */
+    modperl_global_anon_cnt_init(p);
+}
+ 
+/* allocate and populate the anon handler sub-struct */
+MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
+{
+    /* re-use modperl_mgv_t entry which is otherwise is not used
+     * by anon handlers */
+    modperl_mgv_t *anon = 
+        (modperl_mgv_t *)apr_pcalloc(p, sizeof(*anon));
+
+    anon->name = apr_psprintf(p, "%d", modperl_global_anon_cnt_next());
+    anon->len  = strlen(anon->name);
+    PERL_HASH(anon->hash, anon->name, anon->len);
+
+    MP_TRACE_h(MP_FUNC, "[%s] new anon handler: '%s'",
+               modperl_pid_tid(p), anon->name);
+    return anon;
+}
+
+MP_INLINE void modperl_handler_anon_add(pTHX_ modperl_mgv_t *anon, CV *cv)
+{
+    modperl_modglobal_key_t *gkey =
+        modperl_modglobal_lookup(aTHX_ "ANONSUB");
+    HE *he = MP_MODGLOBAL_FETCH(gkey);
+    HV *hv;
+
+    if (!(he && (hv = (HV*)HeVAL(he)))) {
+        Perl_croak(aTHX_ "can't find ANONSUB top entry (get)");
+    }
+
+    SvREFCNT_inc(cv);
+    if (!(*hv_store(hv, anon->name, anon->len, (SV*)cv, anon->hash))) {
+        SvREFCNT_dec(cv);
+        Perl_croak(aTHX_ "hv_store of '%s' has failed!", anon->name);
+    }
+
+    MP_TRACE_h(MP_FUNC, "anonsub '%s' added", anon->name);
+}
+
+MP_INLINE CV *modperl_handler_anon_get(pTHX_ modperl_mgv_t *anon)
+{
+    modperl_modglobal_key_t *gkey =
+        modperl_modglobal_lookup(aTHX_ "ANONSUB");
+    HE *he = MP_MODGLOBAL_FETCH(gkey);
+    HV *hv;
+    SV *sv;
+
+    if (!(he && (hv = (HV*)HeVAL(he)))) {
+        Perl_croak(aTHX_ "can't find ANONSUB top entry (get)");
+    }
+
+    if ((he = hv_fetch_he(hv, anon->name, anon->len, anon->hash))) {
+        sv = HeVAL(he);
+        MP_TRACE_h(MP_FUNC, "anonsub get '%s'", anon->name);
+    }
+    else {
+        Perl_croak(aTHX_ "can't find ANONSUB's '%s' entry", anon->name);
+    }
+
+    return (CV*)sv;
+}
 
 static
 modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
@@ -53,34 +162,16 @@ modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
     MpHandlerANON_On(handler);
 
 #ifdef USE_ITHREADS
-    /* XXX: perhaps we can optimize this further. At the moment when
-     * perl w/ ithreads is used, we always deparse the anon subs
-     * before storing them and then eval them each time they are
-     * used. This is because we don't know whether the same perl that
-     * compiled the anonymous sub is used to run it.
-     *
-     * A possible optimization is to cache the CV and use that cached
-     * value w/ or w/o deparsing at all if:
-     *
-     * - the mpm is non-threaded mpm and no +Clone/+Parent is used
-     *   (i.e. no perl pools) (no deparsing is needed at all)
-     * 
-     * - the interpreter that has supplied the anon cv is the same
-     *   interpreter that is executing that cv (requires storing aTHX
-     *   in the handler's struct) (need to deparse in case the
-     *   interpreter gets switched)
-     *
-     * - other cases?
-     */
-    handler->cv = NULL;
-    handler->name = modperl_coderef2text(aTHX_ p, cv);
-    MP_TRACE_h(MP_FUNC, "[%s] new deparsed anon handler:\n%s\n",
-               modperl_pid_tid(p), handler->name);
+    handler->cv      = NULL;
+    handler->name    = NULL;
+    handler->mgv_obj = modperl_handler_anon_next(aTHX_ p);
+    modperl_handler_anon_add(aTHX_ handler->mgv_obj, cv);
 #else
     /* it's safe to cache and later use the cv, since the same perl
      * interpeter is always used */
-    handler->cv = cv;
+    handler->cv   = cv;
     handler->name = NULL;
+
     MP_TRACE_h(MP_FUNC, "[%s] new cached cv anon handler\n",
                modperl_pid_tid(p));
 #endif

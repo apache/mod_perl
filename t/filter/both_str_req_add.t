@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, need_min_module_version('B::Deparse', 0.6);
+plan tests => 1;
 
 my $data = join ' ', 'A'..'Z', 0..9;
 my $expected = lc $data; # that's what the input filter does

@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 1, need_min_module_version('B::Deparse', 0.6);
+plan tests => 1;
 
 my @refs = qw(conf conf1 conf2 coderef 
              full_coderef coderef1 coderef2 coderef3);

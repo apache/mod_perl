@@ -22,6 +22,11 @@ typedef enum {
     MP_HANDLER_ACTION_SET
 } modperl_handler_action_e;
 
+void modperl_handler_anon_init(pTHX_ apr_pool_t *p);
+MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p);
+MP_INLINE void modperl_handler_anon_add(pTHX_ modperl_mgv_t *anon, CV *cv);
+MP_INLINE CV *modperl_handler_anon_get(pTHX_ modperl_mgv_t *anon);
+    
 #define modperl_handler_array_new(p) \
 apr_array_make(p, 1, sizeof(modperl_handler_t *))
 

@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+replace the slow implementation of anon handlers using B::Deparse,
+with per-interpreter cache of compiled CODE refs (sort of emulating
+named subroutines for anonymous handlers) [Stas].
+
 avoid segfaults when a bogus $r object is used [Stas]
 
 Remove magicness of PerlLoadModule and implement Apache::Module::add()

@@ -16,6 +16,13 @@
 #ifndef MODPERL_PERL_GLOBAL_H
 #define MODPERL_PERL_GLOBAL_H
 
+#define MP_MODGLOBAL_FETCH(gkey)                                        \
+    hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
+
+#define MP_MODGLOBAL_STORE_HV(gkey)                                     \
+    (HV*)*hv_store(PL_modglobal, gkey->val, gkey->len,                  \
+                   (SV*)newHV(), gkey->hash)
+
 typedef struct {
     const char *name;
     const char *val;

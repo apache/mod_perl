@@ -15,30 +15,14 @@
 
 #include "mod_perl.h"
 
-static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
-{
-    globals->env.gv    = PL_envgv;
-    globals->inc.gv    = PL_incgv;
-    globals->defout.gv = PL_defoutgv;
-    globals->rs.sv     = &PL_rs;
-    globals->end.av    = &PL_endav;
-    globals->end.key   = MP_MODGLOBAL_END;
-}
-
 /* XXX: PL_modglobal thingers might be useful elsewhere */
-
-#define MP_MODGLOBAL_FETCH(gkey)                                        \
-    hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
-
-#define MP_MODGLOBAL_STORE_HV(gkey)                                     \
-    (HV*)*hv_store(PL_modglobal, gkey->val, gkey->len,                  \
-                   (SV*)newHV(), gkey->hash)
 
 #define MP_MODGLOBAL_ENT(key)                                           \
     {key, "ModPerl::" key, MP_SSTRLEN("ModPerl::") + MP_SSTRLEN(key), 0}
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
+    MP_MODGLOBAL_ENT("ANONSUB"),
     { NULL },
 };
 
@@ -64,6 +48,16 @@ modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
     }
 
     return NULL;
+}
+
+static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
+{
+    globals->env.gv    = PL_envgv;
+    globals->inc.gv    = PL_incgv;
+    globals->defout.gv = PL_defoutgv;
+    globals->rs.sv     = &PL_rs;
+    globals->end.av    = &PL_endav;
+    globals->end.key   = MP_MODGLOBAL_END;
 }
 
 /*
