@@ -18,7 +18,7 @@ use ModPerl::Const ();
 use APR ();
 use XSLoader ();
 
-our $VERSION = '0.01';
+our $VERSION = '0.009000';
 our @ISA = qw(ModPerl::Const);
 
 XSLoader::load(__PACKAGE__, $VERSION);

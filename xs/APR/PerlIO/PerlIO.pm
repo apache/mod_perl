@@ -16,7 +16,7 @@ package APR::PerlIO;
 
 require 5.006001;
 
-our $VERSION = '0.01';
+our $VERSION = '0.009000';
 
 # The PerlIO layer is available only since 5.8.0 (5.7.2@13534)
 use Config;
