@@ -767,10 +767,14 @@ int perl_handler(request_rec *r)
 	}
     }
 
-    save_hptr(&GvHV(siggv)); 
+    if (siggv) {
+	save_hptr(&GvHV(siggv)); 
+    }
 
-    save_aptr(&endav); 
-    endav = Nullav;
+    if (endav) {
+	save_aptr(&endav); 
+	endav = Nullav;
+    }
 
     /* hookup STDIN & STDOUT to the client */
     perl_stdout2client(r);
