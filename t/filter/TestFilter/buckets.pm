@@ -4,7 +4,6 @@ use strict;
 use warnings FATAL => 'all';
 
 use Test;
-use Apache::Test ();
 use Apache::Filter ();
 use APR::Brigade ();
 use APR::Bucket ();

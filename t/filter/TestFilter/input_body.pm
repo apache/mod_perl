@@ -5,8 +5,6 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::Filter); #so we inherit MODIFY_CODE_ATTRIBUTES
 
-use Test;
-use Apache::Test ();
 use Apache::Const -compile => qw(M_POST);
 use APR::Const -compile => ':common';
 use APR::Brigade ();

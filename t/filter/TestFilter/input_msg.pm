@@ -5,8 +5,6 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::Filter);
 
-use Test;
-use Apache::Test ();
 use APR::Brigade ();
 use APR::Bucket ();
 
