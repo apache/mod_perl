@@ -95,7 +95,7 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
         SvTAINTED_on(buffer);
     }
     else {
-        sv_setsv(buffer, &PL_sv_undef); /* XXX */
+        sv_setpvn(buffer, "", 0);
     }
 
     return nrd;
@@ -109,10 +109,11 @@ static long mpxs_Apache__RequestRec_read(request_rec *r,
                                          int offset)
 {
     dTHX; /*XXX*/
-    long nrd = 0, old_read_length;
+    long nrd = 0;
     int rc;
 
     if (!r->read_length) {
+        /* only do this once per-request */
         if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
             ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0,
                          r->server,
@@ -121,22 +122,18 @@ static long mpxs_Apache__RequestRec_read(request_rec *r,
         }
     }
 
-    old_read_length = r->read_length;
-    r->read_length = 0;
-
-    if (ap_should_client_block(r)) {
+    if (r->read_length || ap_should_client_block(r)) {
+        /* ap_should_client_block() will return 0 if r->read_length */
         mpxs_sv_grow(buffer, bufsiz+offset);
         nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
     }
-
-    r->read_length += old_read_length;
 
     if (nrd > 0) {
         mpxs_sv_cur_set(buffer, nrd+offset);
         SvTAINTED_on(buffer);
     } 
     else {
-        sv_setsv(buffer, &PL_sv_undef);
+        sv_setpvn(buffer, "", 0);
     }
 
     return nrd;
