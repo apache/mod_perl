@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+Fix Apache::ExtUtils to work with blead perl (it was breaking the
+build) http://rt.perl.org/rt2/Ticket/Display.html?id=23803 [Stas]
+
 On Win32 the uploaded file wasn't cleaned up (weither it's a bug in
 CGI.pm or not), make sure we don't leave any dropped files around
 [Steve Hay <steve.hay@uk.radan.com>]

@@ -17,9 +17,9 @@ my $errsv = "";
 sub import {
     my $class = shift;
     my $config_export = join '|', @config_export;
-    for (@_) {
+    for my $symbol (@_) {
 	#perl -Mlib=lib -MApache::ExtUtils=%Config -e 'print $Config{cc}'
-	if (/$config_export/o) {
+	if ($symbol =~ /$config_export/o) {
 	    require Config;
 	    *Apache::ExtUtils::Config = \%Config::Config;
 	    Config_pm_fixup();
