@@ -2,6 +2,22 @@
 # mp1 missing features #
 ########################
 
+### try to get this first post 2.0 release ###
+
+* directive handlers are supported but need some work for 1.x compat
+  - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
+    what Apache::Directive->as_string does, but one char or line at a time
+
+  - Automatic setting of cmd_args in @APACHE_MODULE_DIRECTIVE based on
+    function prototype
+
+* tied filehandle interface:
+ -EOF, TELL, SEEK
+ -READLINE - proper implementation (see comment in Apache::compat)
+ need to attempt to fix that interface so it'll work with IPC::Open* family  
+
+### other, less important things ###
+
 * $r->last is missing (it was provided explicitly by modperl, it's not
   an apache thing) see modperl/src/modules/perl/Apache.xs
 
@@ -10,13 +26,6 @@
   functions appearing in ModPerl::FunctionTable that are
   needed when building APR.so, and is used when generating
   the def/exp files on Win32/AIX.
-
-* directive handlers are supported but need some work for 1.x compat
-  - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
-    what Apache::Directive->as_string does, but one char or line at a time
-
-  - Automatic setting of cmd_args in @APACHE_MODULE_DIRECTIVE based on
-    function prototype
 
 * Apache::PerlSections missing features for backwards compatibility:
  - $Apache::ReadConfig::DocumentRoot
@@ -40,11 +49,6 @@
 * hooks ordering is not implemented yet
   Owner: geoff
 
-* tied filehandle interface:
- -EOF, TELL, SEEK
- -READLINE - proper implementation (see comment in Apache::compat)
- need to attempt to fix that interface so it'll work with IPC::Open* family  
-
 * $r->finfo:
   need apr_finfo_t <-> struct stat conversion (might already be there,
   haven't looked close enough yet)
@@ -54,19 +58,11 @@
   with dirname $r->filename.  consider overriding open() to resolve
   relative filenames.
 
-* $r->log_reason:
-  should be simple, see modperl_log.h (currently aliased to log_error
-  in compat.pm)
-
 * size_string() - can we use apr_strfsize ?
 
 * escape_html() - consider jeff baker's more robust implementation of
   my_escape_html(), which should probably be made in apache-2.0 itself
   (is there apache api? or just drop it)
-
-* $r->document_root:
-  cannot currently be modified.  requires locking since it is part of
-  the per-server config structure which is shared between threads
 
 * $r->send_fd:
   need to figure out howto map PerlIO <-> apr_file_t
