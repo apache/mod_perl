@@ -181,3 +181,7 @@ sub MY::postamble {
 
     '';
 }
+
+sub MY::tool_autosplit {
+    '';
+}
