@@ -548,6 +548,9 @@ exit(...)
 void 
 CLOSE(...)
 
+    ALIAS:
+    BINMODE = 1
+    
     CODE:
     items = items;
     /*NOOP*/

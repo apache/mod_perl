@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+add Apache::BINMODE stub for 5.6.0 tied filehandle support (fixes cgi.t #4)
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 5.6.0+win32 typedef,prototype clash fixes
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 
