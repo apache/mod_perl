@@ -56,6 +56,10 @@ sub configure {
     $code->generate;
 
     $build->write_src_makefile;
+
+    printf "Will build mod_perl %s as %s\n",
+      $build->is_dynamic ? "shared" : "static",
+        $build->{"MODPERL_LIB"};
 }
 
 sub echo_cmd {
@@ -153,16 +157,12 @@ sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
 
-    for (qw(SHARED STATIC)) {
-        $string .= <<EOF;
-
-$build->{"MODPERL_LIB_$_"}:
-	@(cd \$(MODPERL_SRC) && \$(MAKE) \$\@);
-
-EOF
-    }
+    $build->mm_add_dep(\$string, pure_all => 'modperl_lib');
 
     $string .= <<'EOF';
+
+modperl_lib:
+	@(cd $(MODPERL_SRC) && $(MAKE));
 
 modperl_src_clean:
 	@(cd $(MODPERL_SRC) && $(MAKE) clean);
@@ -175,19 +175,11 @@ EOF
 sub MY::clean {
     my $self = shift;
     my $string = $self->MM::clean(@_);
-    $string =~ s/(clean\s+::)/$1 modperl_src_clean /;
+    $build->mm_add_dep(\$string, clean => 'modperl_src_clean');
     $string;
 }
 
 sub MY::postamble {
-    my $i = 0;
-    print "you may now run:\n";
-
-    for (qw(SHARED STATIC)) {
-        print qq(make $build->{"MODPERL_LIB_$_"}\n);
-        print " - or - \n" unless $i++;
-    }
-
     '';
 }
 

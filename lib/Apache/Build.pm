@@ -22,7 +22,7 @@ sub apxs {
     my $build = $self->build_config;
     my $apxs;
     my @trys = ($Apache::Build::APXS,
-		$build->APXS);
+		$build->{MP_APXS});
 
     unless (IS_MOD_PERL_BUILD) {
 	#if we are building mod_perl via apxs, apxs should already be known
@@ -363,7 +363,7 @@ EOF
 
 sub is_dynamic {
     my $self = shift;
-    $self->USE_DSO;
+    $self->{MP_USE_DSO} || $self->{MP_USE_APXS};
 }
 
 sub default_dir {
@@ -404,14 +404,6 @@ sub dir {
     }
 
     return $self->{dir} = $dir;
-}
-
-our $AUTOLOAD;
-
-sub AUTOLOAD {
-    my $self = shift;
-    (my $name = $AUTOLOAD) =~ s/.*::(\w+)$/$1/;
-    return $self->{$name} || $self->{lc $name};
 }
 
 #--- finding apache *.h files ---
@@ -620,9 +612,11 @@ sub write_src_makefile {
         print $fh $self->canon_make_attr($method, @{ $code->$method() });
     }
 
-    print $fh <<'EOF';
+    print $fh $self->canon_make_attr('lib', $self->is_dynamic ?
+                                     $self->{MODPERL_LIB_SHARED} :
+                                     $self->{MODPERL_LIB_STATIC});
 
-MODPERL_LIB=$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT)
+    print $fh <<'EOF';
 
 all: lib
 
@@ -722,7 +716,7 @@ sub inc {
     my $ssl_dir = "$src/../ssl/include";
     unless (-d $ssl_dir) {
         my $build = $self->build_config;
-	$ssl_dir = join '/', $self->SSL_BASE || '', 'include';
+	$ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
     }
     push @inc, "-I$ssl_dir" if -d $ssl_dir;
 
@@ -742,6 +736,13 @@ sub define {
     my $self = shift;
 
     return "";
+}
+
+#--- tweak MakeMaker ---
+
+sub mm_add_dep {
+    my($self, $string, $targ, $add) = @_;
+    $$string =~ s/($targ\s+::)/$1 $add /;
 }
 
 1;
