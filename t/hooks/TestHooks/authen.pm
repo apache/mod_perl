@@ -4,22 +4,23 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Access ();
+use Apache::Const -compile => qw(OK AUTH_REQUIRED);
 
 sub handler {
     my $r = shift;
 
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
-    return $rc if $rc != 0;
+    return $rc if $rc != Apache::OK;
 
     my $user = $r->user;
 
     unless ($user eq 'dougm' and $sent_pw eq 'foo') {
         $r->note_basic_auth_failure;
-        return 401;
+        return Apache::AUTH_REQUIRED;
     }
 
-    0;
+    Apache::OK;
 }
 
 1;
