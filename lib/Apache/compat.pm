@@ -440,6 +440,18 @@ sub escape_html {
     $html;
 }
 
+sub ht_time {
+    my($t, $fmt, $gmt) = @_;
+
+    $t   ||= time;
+    $fmt ||= '%a, %d %b %Y %H:%M:%S %Z';
+    $gmt = 1 unless @_ == 3;
+
+    my $r = Apache::compat::request('Apache::Util::ht_time');
+
+    return Apache::Util::format_time($t, $fmt, $gmt, $r->pool);
+}
+
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;
 
