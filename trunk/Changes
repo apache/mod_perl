@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+Change Apache::SizeLimit to not push a cleanup handler if already in
+the cleanup handler phase, and adjust docs to show that cleanup
+handler is the preferred phase to use [Perrin Harkins
+<perrin@elem.com>]
+
 Rename Apache::test to Apache::testold because Apache::test on 
 case-insensitive systems will collide with Apache::Test which 
 supercedes Apache::test. So if you want to keep on using Apache::test,
