@@ -3,6 +3,8 @@ package TestFilter::in_str_lc;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
 
 use Apache::Const -compile => qw(OK M_POST);

@@ -43,9 +43,11 @@ package TestFilter::in_bbs_underrun;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::TestTrace;
-
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
+
+use Apache::TestTrace;
 
 use Apache::Const -compile => qw(OK M_POST);
 
