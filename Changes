@@ -17,7 +17,8 @@ option, configure and compile an httpd with mod_perl statically linked
 in [Gozer]
 
 Apache::RequestRec methods: method_number, connection,
-canonical_filename are now read-only [Stas]
+canonical_filename, header_only, main, method, next, prev, pool are
+now read-only [Stas]
 
 The func Apache::SubProcess::spawn_proc_prog is now a method:
 $r->spawn_proc_prog [Stas]
