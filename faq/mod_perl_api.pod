@@ -144,28 +144,3 @@ apache's mod_env during the fixup stage, so mod_perl handlers that run
 prior to the fixup-stage don't see variables set with them.  You can
 use PerlSetEnv/PerlPassEnv instead - they are processed as soon as
 possible during a request.
-
-=head1 Why does the server hang when I try to read a FORM?
-
-The C<$r-E<gt>content> method reads C<application/x-www-form-urlencoded>
-data directly from the client and it does not keep a copy, so if you
-(or another handler) call it again, the server will hang.  One way of
-avoiding this, if you do not have full control of all the handlers
-involved, is to convert the request from POST to GET in the first
-handler that reads the content:
-
-    use Apache::Constants qw(M_GET);
-    
-    sub My::Test::handler {
-    	my $r = shift;
-    
-    	if ($r->method eq 'POST') { 
-    	   my $content = $r->content;
-    	   # ...
-    	   #make sure nobody else tries to read POST data now that we have
-    	   $r->method('GET');
-    	   $r->method_number(M_GET);
-    	   $r->headers_in->unset('Content-length');
-    	}
-        # ...
-    }
