@@ -112,8 +112,12 @@ apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
     if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
         modperl_croak(aTHX_ rc, "APR::Bucket::setaside");
     }
-    
-    //mpxs_add_pool_magic(b_sv, p_sv);
+
+    /* No need to call mpxs_add_pool_magic(b_sv, p_sv); since
+     * pool_bucket_cleanup is called by apr_bucket_pool_make (called
+     * by modperl_bucket_sv_setaside) if the pool goes out of scope,
+     * copying the data to the heap.
+     */
     
     return rc;
 }

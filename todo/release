@@ -37,8 +37,3 @@
 
   APR::Bucket:
   V apr_bucket_alloc_create
-  ? mpxs_APR__Bucket_setaside
-        (the wrapper is done, but the test is not reproducing the
-        problem, but this seems to be a problem in
-        modperl_bucket_sv_setaside which loses the newly seta-aside
-        bucket)

@@ -190,6 +190,13 @@ sub test {
 
     # setaside on out-of-scope pools
     {
+        # note that at the moment APR internally handles the situation
+        # when the pool goes out of scope, so modperl doesn't need to do
+        # any special handling of the pool object passed to setaside()
+        # to insure that it survives as long as $b is alive
+        #
+        # to make sure that this doesn't change internally in APR, the
+        # sub-test remains here
         my $data = "A" x 10;
         my $orig = $data;
         my $b = APR::Bucket->new($ba, $data);
