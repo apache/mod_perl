@@ -249,6 +249,7 @@ EOF
 sub build_config {
     my $self = shift;
     unshift @INC, 'lib';
+    delete $INC{'Apache/BuildConfig.pm'};
     eval { require Apache::BuildConfig; };
     shift @INC;
     return bless {}, (ref($self) || $self) if $@;
@@ -541,31 +542,14 @@ sub httpd_version {
     }
 
     open my $fh, "$dir/httpd.h" or return undef;
-    my($server, $version, $rest);
-    my($fserver, $fversion, $frest);
-    my($string, $extra, @vers);
+    my $version;
 
     while(<$fh>) {
-	next unless /^\#define/;
-	s/SERVER_PRODUCT \"/\"Apache/; #1.3.13+
-	next unless s/^\#define\s+AP_SERVER_(BASE|)VERSION\s+"(.*)\s*".*/$2/;
-	chomp($string = $_);
-
-	#print STDERR "Examining SERVER_VERSION '$string'...";
-	#could be something like:
-	#Stronghold-1.4b1-dev Ben-SSL/1.3 Apache/1.1.1 
-	@vers = split /\s+/, $string;
-	foreach (@vers) {
-	    next unless ($fserver,$fversion,$frest) =
-		m,^([^/]+)/(\d\.\d+\.?\d*)([^ ]*),i;
-
-	    if($fserver eq 'Apache') {
-		($server, $version) = ($fserver, $fversion);
-		#$frest =~ s/^(a|b)(\d+).*/'_' . (length($2) > 1 ? $2 : "0$2")/e;
-		$version .= $frest if $frest;
-	    }
-	}
+	next unless /^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/;
+	$version = $1;
+        last;
     }
+
     close $fh;
 
     $self->httpd_version_cache($dir, $version);
@@ -586,6 +570,13 @@ sub xsubpp {
     my $xsubpp = join ' ', '$(MODPERL_PERLPATH)',
       '$(MODPERL_PRIVLIBEXP)/ExtUtils/xsubpp',
         '-typemap', '$(MODPERL_PRIVLIBEXP)/ExtUtils/typemap';
+
+    my $typemap = $self->file_path('src/modules/perl/typemap');
+    if (-e $typemap) {
+        $xsubpp .= join ' ',
+          '-typemap', '../src/modules/perl/typemap';
+    }
+
     $xsubpp;
 }
 
