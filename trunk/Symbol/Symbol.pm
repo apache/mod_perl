@@ -95,7 +95,7 @@ Apache::Symbol - Things for symbol things
 =head1 SYNOPSIS
 
  use Apache::Symbol ();
-    
+
  @ISA = qw(Apache::Symbol);
 
 =head1 DESCRIPTION

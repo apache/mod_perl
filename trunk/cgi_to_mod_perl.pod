@@ -97,7 +97,7 @@ everything is cleaned up for you, e.g. globals variables, open files,
 etc.  Scripts running under mod_perl have a longer lifetime, over
 several request, different scripts may be in the same process.  This
 means you must clean up after yourself.  You've heard:
- 
+
  always 'use strict' and C<-w>!!!
 
 It's more important under mod_perl Perl than anywhere else, while it's

@@ -654,7 +654,7 @@ Other modules can "plugin" a menu item like so:
 
 B<WARNING>: Apache::Status must be loaded before these modules via the 
 PerlModule or PerlRequire directives.
-  
+
 =head1 OPTIONS
 
 =over 4
@@ -704,7 +704,7 @@ See the B<B::Deparse> manpage for details.
 
 With this option On, text-based op tree graphs of subroutines can be 
 displayed, thanks to B<B::Terse>.
- 
+
  PerlSetVar StatusTerse On
 
 =item StatusTerseSize
@@ -712,7 +712,7 @@ displayed, thanks to B<B::Terse>.
 With this option On and the B<B::TerseSize> module installed,
 text-based op tree graphs of subroutines and their size can be
 displayed.  See the B<B::TerseSize> docs for more info.
- 
+
  PerlSetVar StatusTerseSize On
 
 =item StatusTerseSizeMainSummary

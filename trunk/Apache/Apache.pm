@@ -756,7 +756,7 @@ for the realm defined by the configuration directive C<AuthName>.
 
 Set the handler for a request.
 Normally set by the configuration directive C<AddHandler>.
-  
+
    $r->handler( "perl-script" );
 
 =item $r->notes( $key, [$value] )
@@ -1028,8 +1028,8 @@ $r->send_http_header().  Example of use:
 
    $r->send_cgi_header(<<EOT);
    Location: /foo/bar
-   Content-type: text/html 
-   
+   Content-type: text/html
+
    EOT
 
 =back

@@ -52,7 +52,7 @@ Additions to F<httpd.conf>:
    PerlHandler Apache::Registry
    PerlSendHeader On
  </Directory>
- 
+
  # like above, but no PerlSendHeaders
  <Directory /var/www/docs/rprograms>
    AllowOverride None
@@ -61,7 +61,7 @@ Additions to F<httpd.conf>:
    PerlHandler Apache::Registry
    PerlSendHeader Off
  </Directory>
- 
+
  # allow arbitrary *.perl files to be scattered throughout the site.
  <Files *.perl>
    SetHandler perl-script
@@ -69,7 +69,7 @@ Additions to F<httpd.conf>:
    PerlSendHeader On
    Options +ExecCGI
  </Files>
- 
+
  # like *.perl, but do not send HTTP headers
  <Files *.rperl>
    SetHandler perl-script
@@ -77,7 +77,7 @@ Additions to F<httpd.conf>:
    PerlSendHeader Off
    Options +ExecCGI
  </Files>
- 
+
  <Location /perl-status>
    SetHandler perl-script
    PerlHandler Apache::Status
@@ -93,20 +93,20 @@ programs directory, or the *.perl files).  Here is an example:
 
  #! /usr/local/bin/perl
  use strict;
- 
+
  # load up necessary perl function modules to be able to call from Perl-SSI
  # files.  These objects are reloaded upon server restart (SIGHUP or SIGUSR1)
  # if PerlFreshRestart is "On" in httpd.conf (as of mod_perl 1.03).
- 
+
  # only library-type routines should go in this directory.
- 
+
  use lib "/var/www/perllib";
- 
+
  # make sure we are in a sane environment.
  $ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not Perl!";
- 
+
  use Apache::Registry ();	# for things in the "/programs" URL
- 
+
  # pull in things we will use in most requests so it is read and compiled
  # exactly once
  use CGI (); CGI->compile(':all');
@@ -146,11 +146,11 @@ F<programs> directory to test the functionality of the configuration.
  #! /usr/local/bin/perl
  use strict;
  # print the environment in a mod_perl program under Apache::Registry
- 
+
  print "Content-type: text/html\n\n";
- 
+
  print "<HEAD><TITLE>Apache::Registry Environment</TITLE></HEAD>\n";
- 
+
  print "<BODY><PRE>\n";
  print map { "$_ = $ENV{$_}\n" } sort keys %ENV;
  print "</PRE></BODY>\n";
@@ -356,14 +356,14 @@ mod_perl programs for their purposes.
 First, in your F<startup.perl> file add the following code:
 
  use Apache::Constants qw(OK);
- 
+
  sub My::SquidRemoteAddr ($) {
    my $r = shift;
- 
+
    if (my ($ip) = $r->header_in('X-Forwarded-For') =~ /([^,\s]+)$/) {
      $r->connection->remote_ip($ip);
    }
- 
+
    return OK;
  }
 

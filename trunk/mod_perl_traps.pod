@@ -58,7 +58,7 @@ any direct calls to Apache->methods.  See Apache::FakeRequest.
 =head2 Apache::Registry
 
 =over 4
- 
+
 =item undefined subroutine &Apache::Registry::handler
 
 Interaction with certain modules causes the shortcut configuration to
@@ -136,7 +136,7 @@ Or something more simple, along these lines:
  sub some_function {...}
 
  ...
- 
+
  __END__
 
 Now, have your scripts say:
@@ -181,7 +181,7 @@ If you compile with that option and add 'use Apache::Debug level => 4;'
 to your PerlScript, it will allocate the $^M emergency pool and the
 $SIG{__DIE__} handler will call Carp::confess, giving you a stack
 trace which should reveal where the problem is.
-                                                                         
+
 See the B<Apache::Resource> module for prevention of spinning httpds.
 
 =item *
@@ -226,7 +226,7 @@ The solution to these problems is to rebuild Perl and extension
 modules from a fresh source tree.  Tip for running Perl's Configure
 script, use the `C<-des>' flags to accepts defaults and `C<-D>' flag to
 override certain attributes:
- 
+
  % ./Configure -des -Dcc=gcc ... && make test && make install
 
 Read Perl's INSTALL doc for more details.

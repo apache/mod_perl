@@ -281,7 +281,7 @@ source code.
 Create an object blessed into the B<Apache::src> class.
 
  my $src = Apache::src->new;
- 
+
 =item dir
 
 Top level directory where source files are located.
