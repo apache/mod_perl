@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+$r->document_root can now be changed when safe to do so [Gozer]
+
 APR::Bucket->new now requires an APR::BucketAlloc as its first argument.
 New subs added: APR::Bucket::setaside, APR::Bucket::alloc_create,
 APR::Bucket::alloc_destroy, APR::Brigade::bucket_alloc. [joes]

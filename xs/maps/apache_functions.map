@@ -55,7 +55,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 ~ap_set_content_type
 
 #MODULE=Apache::RequestConfig
- ap_document_root
+~ap_document_root
  ap_get_limit_req_body
 ?ap_get_limit_xml_body
 >ap_core_translate

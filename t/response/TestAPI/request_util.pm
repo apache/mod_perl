@@ -7,6 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use Apache::RequestUtil ();
+use Apache::MPM ();
 
 use Apache::Const -compile => 'OK';
 
@@ -19,12 +20,25 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => (scalar keys %status_lines) + 8;
+    plan $r, tests => (scalar keys %status_lines) + 10;
 
     ok $r->default_type;
 
-    ok $r->document_root;
+    my $document_root = $r->document_root;
 
+    ok $document_root;
+    
+    if (!Apache::MPM->is_threaded) {
+        ok t_cmp($document_root, $r->document_root('/tmp/foo'));
+        ok t_cmp('/tmp/foo', $r->document_root($document_root));
+    }
+    else {
+        eval { $r->document_root('/tmp/foo') };
+        ok t_cmp($@, qr/Can't run.*in the threaded env/, 
+                 "document_root is read-only under threads");
+        ok 1;
+    }
+    
     ok $r->get_server_name;
 
     ok $r->get_server_port;
