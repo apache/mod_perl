@@ -26,7 +26,7 @@ my %commands = map { $_, \&{$_} } @cmds;
 sub handler {
     my $c = shift;
     my $socket = $c->client_socket;
-    
+
     if ($socket->opt_get(APR::SO_NONBLOCK)) {
         $socket->opt_set(APR::SO_NONBLOCK => 0);
     }
@@ -73,6 +73,10 @@ sub login {
     my $c = shift;
 
     my $r = Apache::RequestRec->new($c);
+
+    # test whether we can invoke modperl HTTP handlers on the fake $r
+    $r->push_handlers(PerlAccessHandler => \&my_access);
+
     $r->location_merge(__PACKAGE__);
 
     for my $method (qw(run_access_checker run_check_user_id
@@ -96,6 +100,12 @@ sub login {
         }
     }
 
+    return Apache::OK;
+}
+
+sub my_access {
+    # just test that we can invoke a mod_perl HTTP handler
+    debug "running my_access";
     return Apache::OK;
 }
 

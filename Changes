@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Update Apache::RequestRec->new() to initialize members of request_rec
+which were added some time ago (without it we were getting segfaults
+in the new pseudo_http test. [Stas]
+
 Apache::CmdParms->limited member replaced by is_method_limited()
 method [Gozer]
 
