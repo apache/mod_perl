@@ -94,8 +94,6 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name);
  */
 SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted);
 
-void modperl_clear_symtab(pTHX_ HV *symtab);
-
 char *modperl_file2package(apr_pool_t *p, const char *file);
 
 /**
