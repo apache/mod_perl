@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use APR::Table ();
 
@@ -127,8 +128,12 @@ sub handler {
         $overlay->compress(APR::OVERLAP_TABLES_MERGE);
 
         # $add first, then $base
-        ok $overlay->get('foo') eq 'three, one, two';
-        ok $overlay->get('bar') eq 'beer';
+        ok t_cmp($overlay->get('foo'),
+                 'three, one, two',
+                 "$overlay->compress");
+        ok t_cmp($overlay->get('bar'),
+                 'beer',
+                 "\$overlay->compress");
     }
 
     Apache::OK;
