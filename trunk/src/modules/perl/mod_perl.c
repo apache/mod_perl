@@ -719,6 +719,16 @@ void perl_startup (server_rec *s, pool *p)
     }
     MP_TRACE_g(fprintf(stderr, "ok\n"));
 
+    /* Force the environment to be copied out of its original location
+       above argv[].  This fixes a crash caused when a module called putenv()
+       before any Perl modified the environment - environ would change to a
+       new value, and the check in my_setenv() to duplicate the environment
+       would fail, and then setting some environment value which had a previous
+       value would cause perl to try to free() something from the original env.
+       This crashed free(). */
+    my_setenv("MODPERL_ENV_FIXUP", "0");
+    my_setenv("MODPERL_ENV_FIXUP", NULL);
+
     {
 	dTHR;
 	TAINT_NOT; /* At this time all is safe */
