@@ -131,7 +131,9 @@ void modperl_perl_destruct(PerlInterpreter *perl)
     perl_free(perl);
 #endif
 
+#ifdef USE_ENVIRON_ARRAY
     if (orig_environ) {
         environ = orig_environ;
     }
+#endif
 }
