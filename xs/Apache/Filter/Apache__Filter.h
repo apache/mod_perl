@@ -63,9 +63,13 @@ static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
     return (U32 *)&MP_CODE_ATTRS(SvRV(cvrv));
 }
 
+#ifdef MP_TRACE
 #define trace_attr() \
-MP_TRACE_f(MP_FUNC, "apply %s to %s handler\n", attribute, \
+MP_TRACE_f(MP_FUNC, "applied %s attribute to %s handler\n", attribute, \
            HvNAME(stash))
+#else
+#define trace_attr()
+#endif
 
 static XS(MPXS_modperl_filter_attributes)
 {
@@ -73,7 +77,7 @@ static XS(MPXS_modperl_filter_attributes)
     U32 *attrs = modperl_filter_attributes(ST(0), ST(1));
     I32 i;
 #ifdef MP_TRACE
-    HV *stash = gv_stashpv(SvPVX(ST(0)), TRUE);
+    HV *stash = gv_stashsv(ST(0), TRUE);
 #endif
 
     for (i=2; i < items; i++) {
