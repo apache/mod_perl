@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+New configuration directives: [Gozer]
+ - PerlConfigRequire
+    Just like PerlRequire, but _always_ triggers an immediate
+    interpreter startup
+ - PerlPostConfigRequire
+    A delayed form of PerlRequire, that waits until the post_config
+    phase before require'ing files
+
 fix a warning in Apache::Status [John Williams <williams tni.com>]
 
 Ignore Apache-Test/META.yml in distribution tarballs until PAUSE

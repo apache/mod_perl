@@ -327,6 +327,10 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
+    if (!modperl_config_prepare_PerlPostConfigRequire(s, scfg, perl, p)) {
+        exit(1);   
+    }
+
 #ifndef USE_ITHREADS
     cdata = modperl_cleanup_data_new(server_pool, (void*)perl);
     apr_pool_cleanup_register(server_pool, cdata,
@@ -414,6 +418,10 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
+
+        if (!modperl_config_prepare_PerlPostConfigRequire(s, scfg, perl, p)) {
+            return HTTP_INTERNAL_SERVER_ERROR;
+        }
     }
 
 #ifdef USE_ITHREADS
@@ -464,6 +472,17 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     PERL_SET_CONTEXT(base_perl);
 #endif
 
+}
+
+static int modperl_post_config_require(server_rec *s, apr_pool_t *p)
+{
+    for (; s; s=s->next) {
+        MP_dSCFG(s);
+        if (!modperl_config_apply_PerlPostConfigRequire(s, scfg, p)) {
+            return FALSE;   
+        }
+    }
+    return TRUE;
 }
 
 #ifdef USE_ITHREADS
@@ -646,6 +665,11 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
     MP_dSCFG(s);
     dTHXa(scfg->mip->parent->perl);
 #endif
+
+    if (!modperl_post_config_require(s, pconf)) {
+        exit(1);
+    }
+
     if (modperl_threaded_mpm()) {
         MP_threads_started = 1;
     }
@@ -860,6 +884,8 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
     MP_CMD_DIR_ITERATE("PerlModule", modules, "PerlModule"),
     MP_CMD_DIR_ITERATE("PerlRequire", requires, "PerlRequire"),
+    MP_CMD_SRV_ITERATE("PerlConfigRequire", config_requires, "PerlConfigRequire"),
+    MP_CMD_SRV_ITERATE("PerlPostConfigRequire", post_config_requires, "PerlPostConfigRequire"),
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),

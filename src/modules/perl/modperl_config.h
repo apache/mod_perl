@@ -122,6 +122,15 @@ int modperl_config_apply_PerlRequire(server_rec *s,
                                      modperl_config_srv_t *scfg,
                                      PerlInterpreter *perl, apr_pool_t *p);
 
+int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
+                                                 modperl_config_srv_t *scfg,
+                                                 PerlInterpreter *perl,
+                                                 apr_pool_t *p);
+
+int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
+                                               modperl_config_srv_t *scfg,
+                                               apr_pool_t *p);
+
 const char *modperl_config_insert(pTHX_ server_rec *s,
                                   apr_pool_t *p,
                                   apr_pool_t *ptmp,

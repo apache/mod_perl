@@ -266,6 +266,49 @@ MP_CMD_SRV_DECLARE(requires)
     }
 }
 
+MP_CMD_SRV_DECLARE(config_requires)
+{    
+    /* we must init earlier than normal */
+    modperl_run();
+
+    /* PerlConfigFile is only different from PerlRequires by forcing
+     * an immediate init.
+     */
+    return modperl_cmd_requires(parms, mconfig, arg);
+}
+
+MP_CMD_SRV_DECLARE(post_config_requires)
+{
+    MP_dSCFG(parms->server);
+    MP_PERL_DECLARE_CONTEXT;
+    apr_pool_t *p = parms->pool;
+    apr_finfo_t finfo;
+
+    if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
+        if (finfo.filetype != APR_NOFILE) {
+             modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
+#ifdef USE_ITHREADS
+            if (modperl_is_running()) {
+                MP_PERL_OVERRIDE_CONTEXT;
+                require->perl = aTHX;
+                MP_PERL_RESTORE_CONTEXT;   
+            }
+#endif
+            require->file = arg;
+
+            MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
+
+            *(modperl_require_file_t **)
+                apr_array_push(scfg->PerlPostConfigRequire) = require;
+        }
+    }
+    else {
+        return apr_pstrcat(p, "No such file : ", arg, NULL);   
+    }   
+
+    return NULL;
+}
+
 static void modperl_cmd_addvar_func(apr_table_t *configvars,
                                     apr_table_t *setvars,
                                     const char *key, const char *val)

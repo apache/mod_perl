@@ -17,19 +17,26 @@ use File::Spec::Functions qw(canonpath catdir);
 
 use Apache::Const -compile => 'OK';
 
+# initialized in t/htdocs/vhost/post_config.pl
+our $restart_count;
+
 # using a different from 'handler' name on purpose, to make sure
 # that the module is preloaded at the server startup
 sub my_handler {
     my $r = shift;
 
-    plan $r, tests => 1;
+    plan $r, tests => 2;
 
     {
         my $expected = $r->document_root;
         my $received = $r->dir_config->get('DocumentRootCheck');
         ok t_cmp(canonpath($received), canonpath($expected), "DocumentRoot");
     }
-
+    
+    {
+        ok t_cmp($restart_count, 2, "PerlPostConfigRequire");
+    }
+    
     Apache::OK;
 }
 
@@ -56,6 +63,7 @@ __END__
 
     # private to this vhost stuff
     PerlRequire "@documentroot@/vhost/startup.pl"
+    PerlPostConfigRequire "@documentroot@/vhost/post_config.pl"
 
     # <Location /TestVhost__config> container is added via add_config
     # in t/htdocs/vhost/startup.pl

@@ -33,8 +33,6 @@ use Apache::Const -compile => ':common';
 
 reorg_INC();
 
-register_post_config_startup();
-
 startup_info();
 
 test_add_config();
@@ -68,19 +66,6 @@ sub reorg_INC {
         }
     }
     @INC = (@a, @b, @c);
-}
-
-# need to run from config phase, since it registers PerlPostConfigHandler
-sub register_post_config_startup {
-    # most of the startup code needs to be run at the post_config
-    # phase
-    Apache->server->push_handlers(PerlPostConfigHandler => sub {
-        my $pool = Apache->server->process->pool;
-        my $t_conf_path = Apache::ServerUtil::server_root_relative($pool,
-                                                                   "conf");
-        require "$t_conf_path/post_config_startup.pl";
-        return Apache::OK;
-    });
 }
 
 # this can be run from post_config_startup.pl, but then it'll do the

@@ -39,6 +39,8 @@ MP_CMD_SRV_DECLARE(trace);
 MP_CMD_SRV_DECLARE(switches);
 MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
+MP_CMD_SRV_DECLARE(config_requires);
+MP_CMD_SRV_DECLARE(post_config_requires);
 MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE2(set_env);
