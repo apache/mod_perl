@@ -559,7 +559,13 @@ EOF
 
     if ($build->should_build_apache) {
         ModPerl::MM::add_dep(\$string, pure_all => 'ap_build');
-        $string .= qq[\nap_build: modperl_lib\n\tcd "$build->{MP_AP_PREFIX}" && make\n];
+        $string .= <<"EOF";
+ap_build: modperl_lib
+	cd "$build->{MP_AP_PREFIX}" && make
+    
+ap_install: ap_build
+	cd "$build->{MP_AP_PREFIX}" && make install
+EOF
     }
     
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
@@ -627,6 +633,8 @@ EOF
 sub MY::install {
     my $self = shift;
     my $string = $self->MM::install(@_);
+    ModPerl::MM::add_dep(\$string, pure_install => 'ap_install') 
+        if $build->should_build_apache;
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
     # ModPerl::MM::add_dep(\$string, pure_install => 'aprext_install')
