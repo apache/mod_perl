@@ -1688,7 +1688,8 @@ handler(r, ...)
     RETVAL = r->handler;
 
     if(items > 1)
-        r->handler = pstrdup(r->pool, SvPV(ST(1),na));
+        r->handler = (ST(1) == &sv_undef) ? 
+	NULL : pstrdup(r->pool, SvPV(ST(1),na));
   
     OUTPUT:
     RETVAL
