@@ -1280,7 +1280,11 @@ EOI
 
     my @libs;
     for my $type (map { uc } keys %libs) {
-        push @libs, $self->{"MODPERL_LIB_$type"} if $self->{"MP_USE_$type"};
+        next unless $self->{"MP_USE_$type"};
+        # on win32 mod_perl.lib must come after mod_perl.so
+        $type eq 'STATIC'
+            ? push    @libs, $self->{"MODPERL_LIB_$type"}
+            : unshift @libs, $self->{"MODPERL_LIB_$type"};
     }
 
     print $fh $self->canon_make_attr('lib', "@libs");
