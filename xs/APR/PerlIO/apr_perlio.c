@@ -304,11 +304,10 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 
     rc = apr_file_eof(st->file);
     switch (rc) {
-      case APR_SUCCESS: 
-        return 0;
       case APR_EOF:
         return 1;
       default:
+        return 0;
     }
 
     return -1;
@@ -357,8 +356,8 @@ void apr_perlio_init(pTHX)
 
 /* ***** PerlIO <=> apr_file_t helper functions ***** */
 
-PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
-                                      apr_pool_t *pool, int type)
+PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
+                                      apr_perlio_hook_e type)
 {
     char *mode;
     const char *layers = ":APR";
@@ -374,8 +373,6 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
       case APR_PERLIO_HOOK_READ:
         mode = "r";
         break;
-      default:
-        /* */
     };
     
     PerlIO_apply_layers(aTHX_ f, mode, layers);
@@ -394,10 +391,7 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     return NULL;
 }
 
-/*
- * type: APR_PERLIO_HOOK_READ | APR_PERLIO_HOOK_WRITE
- */
-static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, int type)
+static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
 {
     /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
@@ -413,24 +407,24 @@ static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, int type)
       case APR_PERLIO_HOOK_READ:
         IoIFP(GvIOp(gv)) = pio;
         break;
-      default:
-        /* */
     };
 
     return sv_2mortal(retval);
 }
 
-SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
-                                apr_pool_t *pool, int type)
+SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
+                                apr_perlio_hook_e type)
 {
     return apr_perlio_PerlIO_to_glob(aTHX_
-                                     apr_perlio_apr_file_to_PerlIO(aTHX_ file, pool, type),
+                                     apr_perlio_apr_file_to_PerlIO(aTHX_ file,
+                                                                   pool, type),
                                      type);
 }
 
 #elif !defined(PERLIO_LAYERS) && !defined(WIN32) /* NOT PERLIO_LAYERS (5.6.1) */
 
-static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
+static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file,
+                                         apr_perlio_hook_e type)
 {
     FILE *retval;
     char *mode;
@@ -445,8 +439,6 @@ static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
       case APR_PERLIO_HOOK_READ:
         mode = "r";
         break;
-      default:
-        /* */
     };
 
     /* convert to the OS representation of file */
@@ -466,12 +458,8 @@ static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
     return retval;
 }
 
-/*
- * 
- * type: APR_PERLIO_HOOK_READ | APR_PERLIO_HOOK_WRITE
- */
-SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
-                                apr_pool_t *pool, int type)
+SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
+                                apr_perlio_hook_e type)
 {
     /* XXX: modperl_perl_gensym() cannot be used outside of httpd */
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
@@ -487,8 +475,6 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
       case APR_PERLIO_HOOK_READ:
         IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_FILE(aTHX_ file, type);
         break;
-      default:
-        /* */
     };
   
     return sv_2mortal(retval);
