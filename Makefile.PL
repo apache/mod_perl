@@ -610,6 +610,9 @@ sub MY::install {
 
     ModPerl::MM::add_dep_after(\$string, qw(install doc_install modperl_banner));
 
+    # glue_pods target must come first
+    ModPerl::MM::add_dep(\$string, pure_install => 'glue_pods');
+
     $string;
 }
 

@@ -171,9 +171,6 @@ sub ModPerl::BuildMM::MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
 
-    ModPerl::MM::add_dep_after(\$string, "pure_all",
-                               linkext => 'glue_pods');
-
     return $string;
 }
 
