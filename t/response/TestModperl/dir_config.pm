@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 13;
+    plan $r, tests => 14;
 
     #Apache::RequestRec::dir_config tests
 
@@ -35,14 +35,22 @@ sub handler {
         my @expected = qw(1_SetValue 2_AddValue 3_AddValue 4_AddValue);
 
         ok t_cmp(\@expected, \@received,
-                 'testing PerlAddVar ITERATE2');
+                 'PerlAddVar ITERATE2');
     }
 
-    # sub-section overrides parent section for the same key
+    # sub-section inherits from super-section if it doesn't override it
+    {
+        my $key = 'TestModperl__request_rec_Key_set_in_Base';
+        ok t_cmp('BaseValue', $r->dir_config->get($key),
+                 "sub-section inherits from super-section if" .
+                 "it doesn't override it");
+    }
+
+    # sub-section overrides super-section for the same key
     {
         my $key = 'TestModperl__server_rec_Key_set_in_Base';
         ok t_cmp('SubSecValue', $r->dir_config->get($key),
-                 "sub-section overrides parent section for the same key");
+                 "sub-section overrides super-section for the same key");
     }
 
     {
