@@ -103,6 +103,15 @@ Needs Patch or Further Investigation
         Report: ?
 	Status:
 
+    * Apache::DProf seg-fault via Devel::DProf's prof_mark()
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101923951812332&w=2
+	Status:
+
+    * collisions between Apache::Status and English.pm
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=102096856215178&w=2
+	Status:
+
+
 Open Issues or Core Enhancements:
 
     * method handler cached-CVs
