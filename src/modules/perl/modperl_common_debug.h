@@ -13,4 +13,8 @@
  * limitations under the License.
  */
 
-#include "modperl_log.h"
+#ifndef MODPERL_COMMON_DEBUG_H
+#define MODPERL_COMMON_DEBUG_H
+
+
+#endif /* MODPERL_COMMON_DEBUG_H */

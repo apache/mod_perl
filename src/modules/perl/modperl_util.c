@@ -290,19 +290,6 @@ int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s)
     return status;
 }
 
-char *modperl_server_desc(server_rec *s, apr_pool_t *p)
-{
-    return apr_psprintf(p, "%s:%u", s->server_hostname, s->port);
-}
-
-/* used in debug traces */
-MP_INLINE char *modperl_pid_tid(apr_pool_t *p)
-{
-    return apr_psprintf(p, "%lu" MP_TRACEf_TID,
-                        (unsigned long)getpid() MP_TRACEv__TID);
-}
-
-    
 #define dl_librefs "DynaLoader::dl_librefs"
 #define dl_modules "DynaLoader::dl_modules"
 
@@ -393,54 +380,6 @@ MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
     modperl_uri_t *uri = (modperl_uri_t *)apr_pcalloc(p, sizeof(*uri));
     uri->pool = p;
     return uri;
-}
-
-MP_INLINE SV *modperl_hash_tie(pTHX_ 
-                               const char *classname,
-                               SV *tsv, void *p)
-{
-    SV *hv = (SV*)newHV();
-    SV *rsv = sv_newmortal();
-
-    sv_setref_pv(rsv, classname, p);
-    sv_magic(hv, rsv, PERL_MAGIC_tied, Nullch, 0);
-
-    return SvREFCNT_inc(sv_bless(sv_2mortal(newRV_noinc(hv)),
-                                 gv_stashpv(classname, TRUE)));
-}
-
-MP_INLINE void *modperl_hash_tied_object(pTHX_ 
-                                         const char *classname,
-                                         SV *tsv)
-{
-    if (sv_derived_from(tsv, classname)) {
-        if (SVt_PVHV == SvTYPE(SvRV(tsv))) {
-            SV *hv = SvRV(tsv);
-            MAGIC *mg;
-
-            if (SvMAGICAL(hv)) {
-                if ((mg = mg_find(hv, PERL_MAGIC_tied))) {
-                    return (void *)MgObjIV(mg);
-                }
-                else {
-                    Perl_warn(aTHX_ "Not a tied hash: (magic=%c)", mg);
-                }
-            }
-            else {
-                Perl_warn(aTHX_ "SV is not tied");
-            }
-        }
-        else {
-            return (void *)SvObjIV(tsv);
-        }
-    }
-    else {
-        Perl_croak(aTHX_
-                   "argument is not a blessed reference "
-                   "(expecting an %s derived object)", classname);
-    }
-
-    return NULL;
 }
 
 MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)
@@ -623,16 +562,6 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
 MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
 {
     return (*name && gv_stashpv(name, FALSE)) ? 1 : 0;
-}
-
-/* same as Symbol::gensym() */
-SV *modperl_perl_gensym(pTHX_ char *pack)
-{
-    GV *gv = newGVgen(pack);
-    SV *rv = newRV((SV*)gv);
-    (void)hv_delete(gv_stashpv(pack, TRUE), 
-                    GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
-    return rv;
 }
 
 static int modperl_gvhv_is_stash(GV *gv)
@@ -881,51 +810,3 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
 
     return text;
 }
-
-#ifdef MP_TRACE
-
-/* XXX: internal debug function, a candidate for modperl_debug.c */
-/* any non-false value for MOD_PERL_TRACE/PerlTrace enables this function */
-void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
-{
-    int i;
-    const apr_array_header_t *array;
-    apr_table_entry_t *elts;
-
-    array = apr_table_elts(table);
-    elts  = (apr_table_entry_t *)array->elts;
-    modperl_trace(MP_FUNC, "Contents of table %s", name);
-    for (i = 0; i < array->nelts; i++) {
-        if (!elts[i].key || !elts[i].val) {
-            continue;
-        }
-        modperl_trace(MP_FUNC, "%s => %s", elts[i].key, elts[i].val);
-    }    
-}
-
-/* XXX: internal debug function, a candidate for modperl_debug.c */
-void modperl_perl_modglobal_dump(pTHX)
-{
-    HV *hv = PL_modglobal;
-    AV *val;
-    char *key;
-    I32 klen;
-    hv_iterinit(hv);
-
-    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------");
-#ifdef USE_ITHREADS
-    MP_TRACE_g(MP_FUNC, "| perl 0x%lx", (unsigned long)aTHX);
-#endif
-    MP_TRACE_g(MP_FUNC, "| PL_modglobal 0x%lx",
-               (unsigned long)PL_modglobal);
-    
-    while ((val = (AV*)hv_iternextsv(hv, &key, &klen))) {
-        MP_TRACE_g(MP_FUNC, "| %s => 0x%lx", key, val);
-    }
-    
-    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------\n");
-        
-}
-
-
-#endif

@@ -55,7 +55,10 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     HV *data;
 
     /* XXX: it'd be nice to arrange for it to load early */
-    modperl_require_module(aTHX_ "APR::Error", TRUE);
+    Perl_require_pv(aTHX_ "APR/Error.pm");
+    if (SvTRUE(ERRSV)) {
+        Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));   
+    }
     
     stash = gv_stashpvn("APR::Error", 10, FALSE);
     data = newHV();

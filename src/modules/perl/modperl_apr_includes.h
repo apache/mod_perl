@@ -1,4 +1,4 @@
-/* Copyright 2000-2004 The Apache Software Foundation
+/* Copyright 2001-2004 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,4 +13,26 @@
  * limitations under the License.
  */
 
-#include "modperl_log.h"
+#ifndef MODPERL_APR_INCLUDES_H
+#define MODPERL_APR_INCLUDES_H
+
+/* header files for APR */
+
+#ifndef CORE_PRIVATE
+#define CORE_PRIVATE
+#endif
+
+#include "apr_version.h"
+#include "apr_poll.h"
+#include "apr_lib.h"
+#include "apr_strings.h"
+#include "apr_uri.h"
+#include "apr_date.h"
+#include "apr_buckets.h"
+#include "apr_time.h"
+#include "apr_network_io.h"
+#include "apr_general.h"
+#include "apr_uuid.h"
+#include "apr_env.h"
+
+#endif /* MODPERL_APR_INCLUDES_H */

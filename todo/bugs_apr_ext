@@ -17,21 +17,31 @@
   server-side as well as the client-side (normally env var aren't
   propogated to the server).
 
-* APR::Table now depends on modperl_hash_tie, so it can't be used
-  outside mod_perl. should probably abstract this function into a new
-  utils.c object that can be linked by APR.so.
+* APR::Pool relies on interpreter management function:
+  modperl_interp_unselect. At the moment I've worked around it by
+  defining an empty function in APR.xs. But a cleaner solution is
+  desirable.
 
-  Status: see the next item
+* modules that we need to add tests for in apr-ext:
+  APR::Date
+  APR::Const
+  APR::URI
+  APR::Base64
+  APR::String
+  APR::Error
+  APR::XSLoader
+  APR::PerlIO
+  APR::OS
+  APR::Socket
+  APR::Brigade
+  APR::Finfo
+  APR::Util
+  APR::Bucket
+  APR::NetLib
+  APR::ThreadMutex
+  APR::SockAddr
 
-* APR::PerlIO needs an equivalent of modperl_perl_gensym
-
-  Status: we need to abstract those function into a separate object,
-  which can be linked by APR.so. However I think we should probably
-  provide a static build and after that see how to do the linking
-  right. Otherwise we may have collisions with statically linked
-  symbols and the dynamic ones.
-
-  APR::Pool relies on interpreter management functions and therefore
-  can't be used outside mod_perl.
-
-  Status: 
+  I think that it's enough to just load them, since most of them are
+  already thoroughly tested under mod_perl. Then if we find some
+  running-outside-mod_perl specific bugs we can write specific tests
+  for those.

@@ -21,7 +21,8 @@
 #endif
 
 #ifdef MP_USE_GTOP
-
+/* prevent undef symbol errors (glibtop_error_vr) */
+#define __GLIBTOP_ERROR_H__
 #include <glibtop.h>
 #include <glibtop/open.h>
 #include <glibtop/close.h>

@@ -15,6 +15,12 @@
 
 #include "mod_perl.h"
 
+/* XXX: provide the missing symbol for APR::Pool as a tmp workaround  */
+#ifndef modperl_interp_unselect
+apr_status_t modperl_interp_unselect(void *data);
+apr_status_t modperl_interp_unselect(void *data) { return APR_SUCCESS; }
+#endif
+
 #ifdef MP_HAVE_APR_LIBS
 #   define APR_initialize apr_initialize
 #   define APR_terminate  apr_terminate
@@ -41,6 +47,17 @@ static void extra_apr_init(pTHX)
         /* XXX: mutex locking? */
         apr_hook_global_pool = global_pool;
     }
+    {
+        apr_file_t *stderr_apr_handle;
+        apr_status_t rv = apr_file_open_stderr(&stderr_apr_handle,
+                                               apr_hook_global_pool);
+        if (rv != APR_SUCCESS) {
+            PerlIO_printf(PerlIO_stderr(),
+                          "Fatal error: failed to open stderr ");
+        }
+        modperl_trace_level_set(stderr_apr_handle, NULL);
+    }
+    
 }
 #else
 #   define extra_apr_init(aTHX)

@@ -4979,8 +4979,8 @@ $ModPerl::FunctionTable = [
     'name' => 'modperl_trace_level_set',
     'args' => [
       {
-        'type' => 'server_rec *',
-        'name' => 's'
+        'type' => 'apr_file_t *',
+        'name' => 'logfile'
       },
       {
         'type' => 'const char *',

@@ -16,47 +16,11 @@
 #ifndef MODPERL_LOG_H
 #define MODPERL_LOG_H
 
-#define MP_STRINGIFY(n) MP_STRINGIFY_HELPER(n)
-#define MP_STRINGIFY_HELPER(n) #n
+#include "modperl_common_log.h"
+#include "modperl_apache_includes.h"
 
-#ifdef MP_TRACE
-#   if defined(__GNUC__)
-#      if (__GNUC__ > 2)
-#         define MP_FUNC __func__
-#      else
-#         define MP_FUNC __FUNCTION__
-#      endif
-#   else
-#      define MP_FUNC __FILE__ ":" MP_STRINGIFY(__LINE__)
-#   endif
-#else
-#   define MP_FUNC NULL
-#endif
-
-#include "modperl_trace.h"
-
-#ifdef _PTHREAD_H
-#define modperl_thread_self() pthread_self()
-#else
-#define modperl_thread_self() 0
-#endif
-
-#define MP_TIDF \
-(unsigned long)modperl_thread_self()
-
-void modperl_trace_logfile_set(apr_file_t *logfile_new);
-    
-unsigned long modperl_debug_level(void);
-
-#ifdef WIN32
-#define MP_debug_level modperl_debug_level()
-#else
-extern unsigned long MP_debug_level;
-#endif
-
-void modperl_trace(const char *func, const char *fmt, ...);
-
-void modperl_trace_level_set(server_rec *s, const char *level);
+#define modperl_trace_level_set_apache(s, level) \
+    modperl_trace_level_set(s->error_log, level);
 
 #define modperl_log_warn(s,msg) \
     ap_log_error(APLOG_MARK, APLOG_WARNING, 0, s, "%s", msg)

@@ -13,4 +13,18 @@
  * limitations under the License.
  */
 
-#include "modperl_log.h"
+#ifndef MODPERL_DEBUG_H
+#define MODPERL_DEBUG_H
+
+#include "mod_perl.h"
+
+char *modperl_server_desc(server_rec *s, apr_pool_t *p);
+MP_INLINE char *modperl_pid_tid(apr_pool_t *p);
+
+#ifdef MP_TRACE
+void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
+/* dump the contents of PL_modglobal */
+void modperl_perl_modglobal_dump(pTHX);
+#endif
+
+#endif /* MODPERL_DEBUG_H */
