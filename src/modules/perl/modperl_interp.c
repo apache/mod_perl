@@ -15,8 +15,7 @@ modperl_interp_t *modperl_interp_new(ap_pool_t *p,
         interp->mip_lock = parent->mip_lock;
     }
 
-    fprintf(stderr, "modperl_interp_new: 0x%lx\n",
-            (unsigned long)interp);
+    MP_TRACE_i(MP_FUNC, "0x%lx\n", (unsigned long)interp);
 
     return interp;
 }
@@ -33,7 +32,7 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
          * need to lock the interpreter during callbacks
          * unless mpm is prefork
          */
-        fprintf(stderr, "modperl_interp_get: no pool, returning parent\n");
+        MP_TRACE_i(MP_FUNC, "no pool, returning parent\n");
         return mip->parent;
     }
 
@@ -41,25 +40,25 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
 
     head = mip->head;
 
-    fprintf(stderr, "modperl_interp_get: head == 0x%lx, parent == 0x%lx\n",
-            (unsigned long)head, (unsigned long)mip->parent);
+    MP_TRACE_i(MP_FUNC, "head == 0x%lx, parent == 0x%lx\n",
+               (unsigned long)head, (unsigned long)mip->parent);
 
     while (head) {
         if (!MpInterpIN_USE(head)) {
             interp = head;
-            fprintf(stderr, "modperl_interp_get: selected 0x%lx\n",
-                    (unsigned long)interp);
+            MP_TRACE_i(MP_FUNC, "selected 0x%lx\n",
+                       (unsigned long)interp);
 #ifdef _PTHREAD_H
-            fprintf(stderr, "pthread_self == 0x%lx\n",
-                    (unsigned long)pthread_self());
+            MP_TRACE_i(MP_FUNC, "pthread_self == 0x%lx\n",
+                       (unsigned long)pthread_self());
 #endif
             MpInterpIN_USE_On(interp);
             MpInterpPUTBACK_On(interp);
             break;
         }
         else {
-            fprintf(stderr, "modperl_interp_get: 0x%lx in use\n",
-                    (unsigned long)head);
+            MP_TRACE_i(MP_FUNC, "0x%lx in use\n",
+                       (unsigned long)head);
             head = head->next;
         }
     }
@@ -85,12 +84,11 @@ ap_status_t modperl_interp_pool_destroy(void *data)
     while (mip->head) {
         dTHXa(mip->head->perl);
 
-        fprintf(stderr, "modperl_interp_pool_destroy: head == 0x%lx",
-                (unsigned long)mip->head);
+        MP_TRACE_i(MP_FUNC, "head == 0x%lx\n",
+                   (unsigned long)mip->head);
         if (MpInterpIN_USE(mip->head)) {
-            fprintf(stderr, " *error - still in use!*");
+            MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
         }
-        fprintf(stderr, "\n");
 
         PL_perl_destruct_level = 2;
         perl_destruct(mip->head->perl);
@@ -100,8 +98,8 @@ ap_status_t modperl_interp_pool_destroy(void *data)
         mip->head = mip->head->next;
     }
 
-    fprintf(stderr, "modperl_interp_pool_destroy: parent == 0x%lx\n",
-            (unsigned long)mip->parent);
+    MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
+               (unsigned long)mip->parent);
 
     perl_destruct(mip->parent->perl);
     perl_free(mip->parent->perl);
@@ -149,10 +147,10 @@ void modperl_interp_pool_init(server_rec *s, ap_pool_t *p,
     }
 #endif
 
-    fprintf(stderr, "modperl_interp_pool_init: parent == 0x%lx "
-            "start=%d, min_spare=%d, max_spare=%d\n",
-            (unsigned long)mip->parent, 
-            mip->start, mip->min_spare, mip->max_spare);
+    MP_TRACE_i(MP_FUNC, "parent == 0x%lx "
+               "start=%d, min_spare=%d, max_spare=%d\n",
+               (unsigned long)mip->parent, 
+               mip->start, mip->min_spare, mip->max_spare);
 
     ap_register_cleanup(p, (void*)mip,
                         modperl_interp_pool_destroy, ap_null_cleanup);
@@ -169,8 +167,8 @@ ap_status_t modperl_interp_unselect(void *data)
 
     MpInterpIN_USE_Off(interp);
 
-    fprintf(stderr, "modperl_interp_unselect: 0x%lx\n",
-            (unsigned long)interp);
+    MP_TRACE_i(MP_FUNC, "0x%lx now available\n",
+               (unsigned long)interp);
 
     ap_unlock(interp->mip_lock);
 
