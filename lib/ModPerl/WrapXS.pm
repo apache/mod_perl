@@ -535,18 +535,26 @@ sub write_typemap {
     my $fh = $self->open_class_file('ModPerl::WrapXS', 'typemap');
     print $fh $self->ModPerl::Code::noedit_warning_hash(), "\n";
 
+    my %entries = ();
+    my $max_key_len = 0;
     while (my($type, $class) = each %$map) {
         $class ||= $type;
+        my $val;
         next if $seen{$type}++ || $typemap->special($class);
 
         if ($class =~ /::/) {
-            my $typemap = $typemap{$class} || 'T_PTROBJ';
-            print $fh "$class\t$typemap\n";
+            $val = $typemap{$class} || 'T_PTROBJ';
         }
         else {
-            my $typemap = $typemap{$type} || "T_$class";
-            print $fh "$type\t$typemap\n";
+            $val = $typemap{$type} || "T_$class";
         }
+
+        $entries{$type} = $val;
+        $max_key_len = length $type if length $type > $max_key_len;
+    }
+
+    for (sort keys %entries) {
+        printf $fh "%-${max_key_len}s %s\n", $_, $entries{$_};
     }
 
     close $fh;
