@@ -42,10 +42,11 @@ use constant D_NOISE   => 8;
 # httpd.conf with:
 #   PerlSetVar ModPerl::RegistryCooker::DEBUG 4
 use Apache::ServerUtil ();
-use constant DEBUG =>
-    defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
-        ? Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
-        : D_NONE;
+use constant DEBUG => 0;
+#XXX: below currently crashes the server on win32
+#    defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+#        ? Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
+#        : D_NONE;
 
 #########################################################################
 # object's array index's access constants
