@@ -203,7 +203,7 @@ sub thx_fixup {
 
     return unless $first;
 
-    if ($first->{type} =~ /^PerlInterpreter/) {
+    if ($first->{type} =~ /PerlInterpreter/) {
         shift @{ $func->{args} };
         $func->{thx} = 1;
     }
