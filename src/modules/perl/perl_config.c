@@ -436,7 +436,7 @@ CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *
     sva = newSVpv(arg,0); 
     if(!*cmd) { 
         *cmd = newAV(); 
-	register_cleanup(p, (void*)*cmd, mod_perl_cleanup_av, mod_perl_noop);
+	register_cleanup(p, (void*)*cmd, mod_perl_cleanup_sv, mod_perl_noop);
 	MP_TRACE_d(fprintf(stderr, "init `%s' stack\n", hook)); 
     } 
     MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: @%s, '%s'\n", hook, arg)); 
@@ -823,13 +823,13 @@ CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
     return NULL;
 }
 
-void mod_perl_cleanup_av(void *data)
+void mod_perl_cleanup_sv(void *data)
 {
-    AV *av = (AV*)data;
-    if(SvREFCNT((SV*)av)) {
-	MP_TRACE_g(fprintf(stderr, "cleanup_av: SvREFCNT(0x%lx)==%d\n", 
-			   (unsigned long)av, (int)SvREFCNT((SV*)av)));
-	SvREFCNT_dec((SV*)av);
+    SV *sv = (SV*)data;
+    if (SvREFCNT(sv)) {
+        MP_TRACE_g(fprintf(stderr, "cleanup_sv: SvREFCNT(0x%lx)==%d\n",
+                           (unsigned long)sv, (int)SvREFCNT(sv)));
+        SvREFCNT_dec(sv);
     }
 }
 
@@ -929,7 +929,7 @@ static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
 	*basevp = (mod_perl_perl_dir_config *)basev,
 	*addvp  = (mod_perl_perl_dir_config *)addv;
 
-    SV *sv, 
+    SV *sv=Nullsv, 
 	*basesv = basevp ? basevp->obj : Nullsv,
 	*addsv  = addvp  ? addvp->obj  : Nullsv;
 
@@ -958,16 +958,23 @@ static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
 	if((perl_eval_ok(NULL) == OK) && (count == 1)) {
 	    sv = POPs;
 	    ++SvREFCNT(sv);
-	    mrg->obj = sv;
 	    mrg->pclass = SvCLASS(sv);
 	}
 	PUTBACK;
 	FREETMPS;LEAVE;
     }
     else {
-	mrg->obj = newSVsv(basesv);
-	mrg->pclass = basevp->pclass;
+        sv = newSVsv(basesv);
+        mrg->pclass = basevp->pclass;
     }
+
+    if (sv) {
+        mrg->obj = sv;
+        register_cleanup(p, (void*)mrg,
+                         perl_perl_cmd_cleanup, mod_perl_noop);
+
+    }
+
     return (void *)mrg;
 }
 

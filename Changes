@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+plug leak in DIR_MERGE, thanks to Matt Sergeant for the spot
+
 fixes to run and pass 'make test' on ActivePerl [Randy Kobes, Gerald Richter]
 
 Makefile.PL:post_initialize fix for win32, thanks to john sterling for 
