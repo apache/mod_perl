@@ -1495,10 +1495,17 @@ sub write_src_makefile {
 
     my $install = <<'EOI';
 install:
+EOI
+    if (!$self->should_build_apache) {
+        $install .= <<'EOI';
 # install mod_perl.so
 	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
 	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
 	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
+EOI
+    }
+    
+    $install .= <<'EOI';
 # install mod_perl .h files
 	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
 	$(MODPERL_CP) $(MODPERL_H_FILES) $(MODPERL_AP_INCLUDEDIR)
