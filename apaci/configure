@@ -8,6 +8,9 @@
 ##  off-source via APXS.
 ##
 
+DIFS=' 	
+'
+
 #   configuration
 my_prefix=" +"
 my_buildtype="DSO"
@@ -24,12 +27,12 @@ my_typemapdir="../Apache"
 my_apxs=""
 OIFS=$IFS IFS=':'
 for my_dir in $PATH; do
-	if test -f "$my_dir/apxs"; then
-		if test -x "$my_dir/apxs"; then
-			my_apxs="$my_dir/apxs"
-			break 2
-		fi
-	fi
+    if test -f "$my_dir/apxs"; then
+        if test -x "$my_dir/apxs"; then
+            my_apxs="$my_dir/apxs"
+            break 2
+        fi
+    fi
 done
 IFS="$OIFS"
 my_apxs="`echo $my_apxs | sed -e 's://:/:'`"
@@ -64,8 +67,8 @@ fi
 
 #   APXS information
 if [ ".$my_apxs" = . ]; then
-	echo "$0:Error: no 'apxs' program found, please provide it's path via --with-apxs" 1>&2 
-	exit 1
+    echo "$0:Error: no 'apxs' program found, please provide it's path via --with-apxs" 1>&2 
+    exit 1
 fi
 my_apxs_cflags="`$my_apxs -q CFLAGS`"
 my_apxs_includes="-I`$my_apxs -q INCLUDEDIR`"
