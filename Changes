@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Fix the corruption of the httpd process argv[0], caused by $0
+manipulating [Stas]
+
 ModPerl::MethodLookup::lookup_method now handles sub-classed objects
 [Stas]
 
