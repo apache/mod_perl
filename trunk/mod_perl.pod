@@ -56,10 +56,6 @@ You may load modules at server startup via:
 
     PerlModule Apache::SSI SomeOther::Module
 
-There is a limit of 10 PerlModule's, if you need more to be loaded when the 
-server starts, use one PerlModule to pull in many or use the PerlRequire 
-directive described below.
-
 Optionally:
 
     PerlRequire  perl-scripts/script_to_load_at_startup.pl
