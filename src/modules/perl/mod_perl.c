@@ -856,7 +856,7 @@ int perl_handler(request_rec *r)
     dTHX;
 
     if (!aTHX) {
-	PERL_SET_CONTEXT(perl);
+        PERL_SET_CONTEXT(perl);
     }
 #endif
 
@@ -1315,7 +1315,7 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
     dTHX;
 
     if (!aTHX) {
-	PERL_SET_CONTEXT(perl);
+        PERL_SET_CONTEXT(perl);
     }
 #endif
 
