@@ -4,11 +4,6 @@
 
 -- see also todo/api_status
 
-* modperl_package_clear_stash() is skipping over any stash entry with
-  len(name) <= 2 
-  http://marc.theaimsgroup.com/?t=109687024800002&r=1&w=2
-  owner: gozer
-
 * APR::Finfo constants: APR::FILETYPE_* and APR::FILEPROT_* will
   probably be APR::FTYPE_* and APR::FPROT_*
   will know exactly once libapr is fixed

@@ -827,6 +827,14 @@ static void modperl_package_delete_from_inc(pTHX_ const char *package)
 }
 
 /* Destroy a package's stash */
+#define MP_STASH_SUBSTASH(key, len) ((len >= 2) &&                  \
+                                     (key[len-1] == ':') &&         \
+                                     (key[len-2] == ':'))   
+#define MP_STASH_DEBUGGER(key, len) ((len >= 2) &&                  \
+                                     (key[0] == '_') &&             \
+                                     (key[1] == '<'))
+#define MP_SAFE_STASH(key, len)     (!(MP_STASH_SUBSTASH(key,len)|| \
+                                      (MP_STASH_DEBUGGER(key, len))))
 static void modperl_package_clear_stash(pTHX_ const char *package)
 {
     HV *stash;
@@ -837,9 +845,16 @@ static void modperl_package_clear_stash(pTHX_ const char *package)
         hv_iterinit(stash);
         while ((he = hv_iternext(stash))) {
             key = hv_iterkey(he, &len);
-            /* We skip entries ending with ::, they are sub-stashes */
-            if (len > 2 && key[len] != ':' && key[len-1] != ':') {
-                hv_delete(stash, key, len, G_DISCARD);
+            if (MP_SAFE_STASH(key, len)) {
+                SV *val = hv_iterval(stash, he);
+                char *this_stash = HvNAME(GvSTASH(val));
+                /* The safe thing to do is to skip over stash entries
+                 * that don't come from the package we are trying to
+                 * unload
+                 */
+                if (strcmp(this_stash, package) == 0) {
+                    hv_delete(stash, key, len, G_DISCARD);
+                }
             }
         }
     }
