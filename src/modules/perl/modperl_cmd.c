@@ -105,6 +105,12 @@ MP_CMD_SRV_DECLARE_FLAG(warn)
     return NULL;
 }
 
+MP_CMD_SRV_DECLARE_FLAG(send_header)
+{
+    char *arg = flag_on ? "+ParseHeaders" : "-ParseHeaders";
+    return modperl_cmd_options(parms, mconfig, arg);
+}
+
 #endif /* MP_COMPAT_1X */
 
 #ifdef USE_ITHREADS

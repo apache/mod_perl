@@ -426,6 +426,8 @@ static const command_rec modperl_cmds[] = {
                      "Scope of a Perl interpreter"),
 #endif
 #ifdef MP_COMPAT_1X
+    MP_CMD_DIR_FLAG("PerlSendHeader", send_header,
+                    "Tell mod_perl to scan output for HTTP headers"),
     MP_CMD_DIR_ITERATE("PerlHandler", response_handlers,
                        "Subroutine name"),
     MP_CMD_SRV_FLAG("PerlTaintCheck", taint_check,
