@@ -29,15 +29,15 @@ sub handler {
 
     my $hostname_lookups = $tree->lookup('HostnameLookups');
 
-    ok t_cmp("Off", $hostname_lookups);
+    ok t_cmp($hostname_lookups, "Off");
 
     my $documentroot = $tree->lookup('DocumentRoot');
 
-    ok t_cmp('HASH' , ref($tree->as_hash()), 'as_hash');
+    ok t_cmp(ref($tree->as_hash()), 'HASH', 'as_hash');
 
-    ok t_cmp(qq("$vars->{documentroot}"), $documentroot);
+    ok t_cmp($documentroot, qq("$vars->{documentroot}"));
 
-    ok t_cmp(qq("$vars->{documentroot}"), $tree->lookup("DocumentRoot"));
+    ok t_cmp($tree->lookup("DocumentRoot"), qq("$vars->{documentroot}"));
 
     #XXX: This test isn't so good, but its quite problematic to try
     #and _really_ compare $cfg and $tree...

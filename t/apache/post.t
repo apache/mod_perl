@@ -20,6 +20,6 @@ ok $str;
 my $data = join '&', map { "$_=$data{$_}" } keys %data;
 
 $str = POST_BODY $location, content => $data;
-ok t_cmp(join(':', length($data), $data),
-    $str,
+ok t_cmp($str,
+    join(':', length($data), $data),
     "POST");

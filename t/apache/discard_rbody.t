@@ -12,6 +12,6 @@ plan tests => 3;
 
 for my $test (qw(none partial all)) {
     my $received = POST_BODY "$location?$test", content => $content;
-    ok t_cmp($test, $received, "data consumption: $test");
+    ok t_cmp($received, $test, "data consumption: $test");
 }
 

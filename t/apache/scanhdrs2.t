@@ -14,20 +14,20 @@ my $redirect = 'http://perl.apache.org/';
 
 my $res = GET "$location?$redirect", redirect_ok => 0;
 
-ok t_cmp($redirect, $res->header('Location')||'',
+ok t_cmp($res->header('Location')||'', $redirect,
          "Location header");
 
-ok t_cmp(302, $res->code,
+ok t_cmp($res->code, 302,
          "status == 302");
 
 $redirect = '/index.html';
 
 $res = GET "$location?$redirect", redirect_ok => 0;
 
-ok t_cmp(1, !$res->header('Location'),
+ok t_cmp(!$res->header('Location'), 1,
          "no Location header");
 
-ok t_cmp(200, $res->code,
+ok t_cmp($res->code, 200,
          "status == 200");
 
 ok t_cmp($res->content, qr{welcome to},

@@ -19,24 +19,24 @@ use Apache::Const;
 
 plan tests => 17;
 
-ok t_cmp(302, REDIRECT, 'REDIRECT');
+ok t_cmp(REDIRECT, 302, 'REDIRECT');
 
-ok t_cmp(401, AUTH_REQUIRED, 'AUTH_REQUIRED');
+ok t_cmp(AUTH_REQUIRED, 401, 'AUTH_REQUIRED');
 
-ok t_cmp(0, OK, 'OK');
+ok t_cmp(OK, 0, 'OK');
 
-ok t_cmp(0, Apache::OK, 'Apache::OK');
+ok t_cmp(Apache::OK, 0, 'Apache::OK');
 
-ok t_cmp(-1, Apache::DECLINED, 'Apache::DECLINED');
+ok t_cmp(Apache::DECLINED, -1, 'Apache::DECLINED');
 
-ok t_cmp(410, Apache::HTTP_GONE, 'Apache::HTTP_GONE');
+ok t_cmp(Apache::HTTP_GONE, 410, 'Apache::HTTP_GONE');
 
-ok t_cmp('httpd/unix-directory', 
-         Apache::DIR_MAGIC_TYPE, 
+ok t_cmp(Apache::DIR_MAGIC_TYPE, 
+         'httpd/unix-directory',
          'Apache::DIR_MAGIC_TYPE');
 
-ok t_cmp(9, 
-         Apache::MPMQ_MAX_SPARE_DAEMONS, 
+ok t_cmp(Apache::MPMQ_MAX_SPARE_DAEMONS, 
+         9,
          'Apache::MPMQ_MAX_SPARE_DAEMONS');
 
 # the rest of the tests don't fit into the t_cmp() meme

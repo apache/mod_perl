@@ -10,22 +10,22 @@ plan tests => 4;
 my $location = "/TestApache__send_cgi_header";
 my $res = GET $location;
 
-ok t_cmp('X-Bar',
-         $res->header('X-Foo'),
+ok t_cmp($res->header('X-Foo'),
+         'X-Bar',
          "header test");
 
-ok t_cmp('Bad Programmer, No cookie!',
-         $res->header('Set-Cookie'),
+ok t_cmp($res->header('Set-Cookie'),
+         'Bad Programmer, No cookie!',
          "header test2");
 
 my $expected = "\0\0This not the end of the world\0\0\n";
 my $received = $res->content;
 
-ok t_cmp(length($expected),
-         length($received),
+ok t_cmp(length($received),
+         length($expected),
          "body length test");
 
 # \000 aren't seen when printed
-ok t_cmp($expected,
-         $received,
+ok t_cmp($received,
+         $expected,
          "body content test");
