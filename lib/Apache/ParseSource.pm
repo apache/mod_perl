@@ -302,6 +302,14 @@ sub get_functions {
             $rtype =~ s/^$_\s+//;
         }
 
+        #XXX: working around C::Scan confusion here
+        #macro defines ap_run_error_log causes
+        #cpp filename:linenumber to be included as part of the type
+        for (@$args) {
+            next unless $_->[0];
+            $_->[0] =~ s/^\#.*?\"\s+//;
+        }
+
         my $func = {
            name => $name,
            return_type => $rtype,
