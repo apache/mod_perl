@@ -57,8 +57,9 @@ sub get_functions {
     my $typemap = $self->typemap;
 
     for my $entry (@{ $self->function_list() }) {
-        my $func;
-        next unless $func = $typemap->map_function($entry);
+        my $func = $typemap->map_function($entry);
+        #print "FAILED to map $entry->{name}\n" unless $func;
+        next unless $func;
 
         my($name, $module, $class, $args) =
           @{ $func } { qw(perl_name module class args) };
@@ -311,6 +312,22 @@ sub mod_h {
     undef;
 }
 
+sub mod_pm {
+    my($self, $module, $complete) = @_;
+
+    my $dirname = $self->class_dirname($module);
+    my($base, $sub) = split '::', $module;
+    my $mod_pm = "$dirname/${sub}_pm";
+
+    for ($self->{XS_DIR}, @{ $self->{glue_dirs} }) {
+        my $file = "$_/$mod_pm";
+        $mod_pm = $file if $complete;
+        return $mod_pm if -e $file;
+    }
+
+    undef;
+}
+
 sub class_c_prefix {
     my $class = shift;
     $class =~ s/:/_/g;
@@ -417,6 +434,14 @@ sub write_pm {
 
     my $isa = $self->isa_str($module);
 
+    my $code = "";
+    if (my $mod_pm = $self->mod_pm($module, 1)) {
+        open my $fh, '<', $mod_pm;
+        local $/;
+        $code = <$fh>;
+        close $fh;
+    }
+
     my $fh = $self->open_class_file($module, '.pm');
     print $fh <<EOF;
 $self->{noedit_warning_hash}
@@ -425,6 +450,8 @@ package $module;
 $isa
 use XSLoader ();
 XSLoader::load __PACKAGE__;
+
+$code
 
 1;
 __END__
