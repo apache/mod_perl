@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 1.999_22
+
 =item 1.999_21 - January 22, 2005
 
 PerlPostConfigRequire was trying to detect missing files early on,
