@@ -30,15 +30,26 @@ static const char *MP_xs_loaders[] = {
 
 #define MP_xs_loader_name "%s::XSLoader::BOOTSTRAP"
 
-static void modperl_xs_init(pTHX)
+static void modperl_boot(void *data)
 {
+    dTHX; /* XXX: not too worried since this only happens at startup */
     int i;
-    xs_init(aTHX); /* see modperl_xsinit.c */
 
     for (i=0; MP_xs_loaders[i]; i++) {
         char *name = Perl_form(aTHX_ MP_xs_loader_name, MP_xs_loaders[i]);
         newCONSTSUB(PL_defstash, name, newSViv(1));
     }
+}
+
+static void modperl_xs_init(pTHX)
+{
+    xs_init(aTHX); /* see modperl_xsinit.c */
+
+    /* XXX: in 5.7.2+ we can call the body of modperl_boot here
+     * but in 5.6.1 the Perl runtime is not properly setup yet
+     * so we have to pull this stunt to delay
+     */
+    SAVEDESTRUCTOR_X(modperl_boot, 0);
 }
 
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
