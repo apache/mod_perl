@@ -165,7 +165,7 @@ sub Apache::AuthenTest::handler {
 
     my $user = lc $r->connection->user;
     $r->notes("DoAuthenTest", 1);
-
+    
     unless($user eq "dougm" and $sent_pwd eq "mod_perl") {
         $r->note_basic_auth_failure;
         return AUTH_REQUIRED;

@@ -9,6 +9,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+'make test' fixups:
+
+ -for when other modules (e.g. auth, dirindex, type)
+  come before mod_perl in the module list
+ -exit graceful if LWP is still not installed
+
 loose @ISA 'DynaLoader' to avoid inheriting AutoLoader::AUTOLOAD
 
 added $r->server->timeout method
