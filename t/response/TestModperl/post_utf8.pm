@@ -30,12 +30,17 @@ sub handler {
     # utf encode/decode was added only in 5.8.0
     # XXX: currently binmode is only available with perlio (used on the
     # server side on the tied/perlio STDOUT)
-    plan $r, tests => 2, 
+    plan $r, tests => 2,
         need need_min_perl_version(5.008), need_perl('perlio');
 
     my $received = ModPerl::Test::read_post($r) || "";
     # assume that we know that it's utf8
     require Encode; # since 5.8.0
+
+    # workaround for perl-5.8.0, which doesn't decode correctly a
+    # tainted variable
+    ModPerl::Util::untaint($received) if $] == 5.008;
+
     $received = Encode::decode('utf8', $received);
     # utf8::decode() doesn't work under -T
     my ($received_ascii, $received_utf8) = split /=/, $received;
