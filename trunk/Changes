@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+win32 fixes [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix double-loading bug of Perl{Require,Module}s at startup time
 
 improve Apache::MyConfig [Stas Bekman <sbekman@stason.org>]

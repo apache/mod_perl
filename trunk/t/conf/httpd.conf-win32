@@ -32,6 +32,8 @@ PerlSetEnv KeyForPerlSetEnv OK
 
 PerlSetVar KeyForPerlSetVar OK
 
+PerlRequire docs/init.pl
+
 PerlRequire docs/startup.pl
 
 PerlTransHandler PerlTransHandler

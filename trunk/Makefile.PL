@@ -1932,6 +1932,15 @@ sub win32_setup {
 
     }
     chdir "../../../";
+
+    open(F, '>t/docs/init.pl') 
+      or die "Cannot open t/docs/init.pl: $!";
+    print F <<"END";
+#!perl
+\$Apache::Server::CWD = '$PWD';
+
+END
+  close F;
 }
 
 sub dirent_kludge {
@@ -1967,16 +1976,6 @@ EOF
 
 sub write_my_config {
     my $src = shift;
-    
-    my $string;
-    if ($win32_auto) {
-      $string =<<"EOS";
-'APACHE_INC' => '$win32_path{APACHE_INC}',
-   'APACHE_LIB' => '$win32_path{APACHE_LIB}',
-   'MODPERL_INC' => '$win32_path{MODPERL_INC}',
-   'MODPERL_LIB' => '$win32_path{MODPERL_LIB}',
-EOS
-    }
 
 # preparing and writing Configuration to Apache::MyConfig
     my %my_config = %callback_hooks;
@@ -1988,6 +1987,11 @@ EOS
     {
         no strict 'refs';
         $my_config{$_} = ${$_} for @other_hooks;
+    }
+    if ($win32_auto) {
+        for (qw(APACHE_INC APACHE_LIB MODPERL_INC MODPERL_LIB)) {
+            $my_config{$_} = $win32_path{$_};
+        }
     }
 
     #need this alias for Apache::src backwards compat
@@ -2117,7 +2121,7 @@ sub win32_fix_dsp {
     }
     elsif (/ADD CPP/) {
       my $apache_inc = win32_fix_path_dsp($win32_path{APACHE_INC});
-      s!(/D "WIN32")!/I "$apache_inc" /I "$perl_inc" $1!;
+      s!(/D "WIN32")!/I "$apache_inc"  /I "$apache_inc/../os/win32" /I "$perl_inc" $1!;
       s!(/D "WIN32")!$1 /D "EAPI" ! if $win32_args{EAPI}; 
       print NEWDSP $_;
     }
