@@ -24,8 +24,8 @@ sub handler {
 
     ok $top_module;
 
-    ok t_cmp($cfg->{httpd_info}->{MODULE_MAGIC_NUMBER},
-             $top_module->version . ':0',
+    ok t_cmp($cfg->{httpd_info}->{MODULE_MAGIC_NUMBER_MAJOR},
+             $top_module->version,
              q{$top_module->version});
 
     ok t_cmp(scalar keys %{ $cfg->{modules} },
