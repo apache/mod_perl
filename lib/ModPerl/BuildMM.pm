@@ -5,7 +5,7 @@ use warnings;
 
 use ExtUtils::MakeMaker ();
 use Cwd ();
-use File::Spec;
+use File::Spec::Functions qw(catdir catfile splitdir);
 use File::Basename;
 
 use Apache::Build ();
@@ -20,7 +20,7 @@ my @methods = grep *{$stash->{$_}}{CODE}, keys %$stash;
 ModPerl::MM::override_eu_mm_mv_all_methods(@methods);
 use strict 'refs';
 
-my $apache_test_dir = File::Spec->catdir(Cwd::getcwd(), "Apache-Test", "lib");
+my $apache_test_dir = catdir Cwd::getcwd(), "Apache-Test", "lib";
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
@@ -102,8 +102,8 @@ sub ModPerl::BuildMM::MY::constants {
 
     #install everything relative to the Apache2/ subdir
     if ($build->{MP_INST_APACHE2}) {
-        $self->{INST_ARCHLIB} .= '/Apache2';
-        $self->{INST_LIB} .= '/Apache2';
+        $self->{INST_ARCHLIB} = catdir $self->{INST_ARCHLIB}, 'Apache2';
+        $self->{INST_LIB} = catdir $self->{INST_LIB}, 'Apache2';
     }
 
     #"discover" xs modules.  since there is no list hardwired
@@ -144,7 +144,7 @@ sub ModPerl::BuildMM::MY::top_targets {
 sub ModPerl::BuildMM::MY::postamble {
     my $self = shift;
 
-    my $doc_root = File::Spec->catdir(Cwd::getcwd(), "docs", "api");
+    my $doc_root = catdir Cwd::getcwd(), "docs", "api";
 
     my @targets = ();
 
@@ -153,10 +153,10 @@ sub ModPerl::BuildMM::MY::postamble {
 
     if (-d $doc_root) {
         while (my ($pm, $blib) = each %{$self->{PM}}) {
-            my $pod = File::Spec->catdir(
-                (File::Spec->splitdir($blib))[-2 .. -1]);
+            my $pod = catdir(
+                (splitdir($blib))[-2 .. -1]);
             $pod =~ s/\.pm/\.pod/;
-            my $podpath = File::Spec->catfile($doc_root, $pod);
+            my $podpath = catfile $doc_root, $pod;
             next unless -r $podpath;
 
             push @target, 
@@ -235,7 +235,7 @@ sub ModPerl::BuildMM::MY::post_initialize {
             #unless already specified with \$(INST_LIB)
             #or already in Apache2/
             unless ($v =~ /Apache2/) {
-                $v =~ s|(blib/lib)|$1/Apache2|;
+                $v =~ s{ (blib[/\\:]lib) }{ catdir $1, 'Apache2'}xe;
             }
 
             $pm->{$k} = $v;
