@@ -34,7 +34,7 @@ sub handler {
 
     # test an explictit DESTROY (which happens automatically on the
     # scope exit)
-    $subr->DESTROY;
+    undef $subr;
     ok 1;
 
     Apache::OK;
