@@ -224,7 +224,9 @@ sub get_structs {
 
     my %seen;
     my $prefix = join '|', qw(ap_ apr_ apu_);
-    my $other  = join '|', qw(_rec module);
+    my $other  = join '|', qw(_rec module
+                              piped_log uri_components htaccess_result
+                              cmd_parms cmd_func cmd_how);
 
     my @structures;
     my $sx = qr(^struct\s+);
