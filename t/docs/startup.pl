@@ -155,5 +155,17 @@ sub DESTROY {
 #prior to 1.3b1 (and the child_exit hook), this object's DESTROY method would not be invoked
 $global_object = Destruction->new;
 
-#0; #make sure we're not required to return a true value
+package This::Class;
+
+$My::Obj = bless {};
+
+sub method ($$) {
+    my($self, $r) = @_;
+    $r->send_http_header("text/plain");
+    print "$self isa ", ref($self), "\n";
+    $self->{called}++;
+    print map { "$_ = $self->{$_}\n" } keys %$self;
+    0;
+}
+
 1;

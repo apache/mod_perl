@@ -176,4 +176,8 @@ SetHandler perl-script
 PerlHandler Apache::ModuleDoc
 </Location>
 
+<Location /object>
+SetHandler perl-script
+PerlHandler $My::Obj->method
+</Location>
 
