@@ -334,6 +334,10 @@ sub hard_timeout {}
 sub kill_timeout {}
 sub reset_timeout {}
 
+# this function is from mp1's Apache::SubProcess 3rd party module
+# which is now a part of mp2 API. this function doesn't exist in 2.0.
+sub cleanup_for_exec {}
+
 sub current_callback {
     return Apache::current_callback();
 }
