@@ -3,7 +3,7 @@
 #where's the bloody manpage for .gdbinit syntax?
 
 define thttpd
-   run -X -d `pwd`/t
+   run -X -f `pwd`/t/conf/httpd.conf -d `pwd`/t
 #   set $sv = perl_eval_pv("$Apache::ErrLog = '/tmp/mod_perl_error_log'",1)
 end
 
