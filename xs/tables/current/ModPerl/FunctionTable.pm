@@ -5769,9 +5769,6 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'SSize_t',
     'name' => 'modperl_request_read',
-    'attr' => [
-      'static'
-    ],
     'args' => [
       {
         'type' => 'PerlInterpreter *',
