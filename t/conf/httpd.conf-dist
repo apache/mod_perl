@@ -27,6 +27,13 @@ umm, we use this to test mod_perl
 
 =cut
 
+<Directory />
+AllowOverride None
+</Directory>
+<Directory ./t>
+AllowOverride All
+</Directory>
+
 #make sure all regex stuff works
 #BrowserMatch Mozilla/2 nokeepalive
 
