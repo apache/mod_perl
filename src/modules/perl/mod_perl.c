@@ -45,9 +45,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
-    modperl_srv_config_t *base_scfg =
-      (modperl_srv_config_t *)
-        ap_get_module_config(base_server->module_config, &perl_module);
+    modperl_srv_config_t *base_scfg = modperl_srv_config_get(base_server);
     PerlInterpreter *base_perl;
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
