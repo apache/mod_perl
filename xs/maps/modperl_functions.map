@@ -49,3 +49,7 @@ SV *:DEFINE_log | | SV *:obj
 PACKAGE=Apache::Server
 SV *:DEFINE_log | | SV *:obj
 
+PACKAGE=Apache
+
+DEFINE_LOG_MARK | MPXS_Apache_LOG_MARK | ...
+
