@@ -61,8 +61,8 @@ mod_include gives an extra speed boost and allows Perl code to be
 directly inside SSI files. 
 
 For comments, questions, bug-reports, etc., join the Apache/Perl
-mailing list by sending mail to modperl-request@apache.org with the
-string "subscribe modperl" in the body.  "subscribe modperl-announce"
+mailing list by sending mail to modperl-subscribe@apache.org.
+sending mail to announce-subscribe@perl.apache.org
 will subscribe you to the very low-traffic announcements list.
 
 Here is an important list of links to follow:
