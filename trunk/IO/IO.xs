@@ -2,6 +2,10 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#ifndef SvCLASS
+#define SvCLASS(o) HvNAME(SvSTASH(SvRV(o)))
+#endif
+
 bool ApacheIO_open(SV *obj, SV *sv)
 {
     PerlIO *IOp = Nullfp;
@@ -10,6 +14,17 @@ bool ApacheIO_open(SV *obj, SV *sv)
     char *filename = SvPV(sv,len);
 
     return do_open(gv, filename, len, FALSE, 0, 0, IOp); 
+}
+
+SV *ApacheIO_new(char *class)
+{
+    SV *RETVAL = sv_newmortal();
+    GV *gv = newGVgen(class);
+    HV *stash = GvSTASH(gv);
+
+    sv_setsv(RETVAL, sv_bless(sv_2mortal(newRV((SV*)gv)), stash));
+    (void)hv_delete(stash, GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
+    return RETVAL;
 }
 
 MODULE = Apache::IO		PACKAGE = Apache::IO    PREFIX = ApacheIO_
@@ -22,13 +37,10 @@ ApacheIO_new(class, filename=Nullsv)
     SV *filename
 
     PREINIT:
-    SV *RETVAL = sv_newmortal();
-    GV *gv = newGVgen("Apache::IO");
-    HV *stash = GvSTASH(gv);
+    SV *RETVAL;
 
     PPCODE:
-    sv_setsv(RETVAL, sv_bless(sv_2mortal(newRV((SV*)gv)), stash));
-    (void)hv_delete(stash, GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
+    RETVAL = ApacheIO_new(class);
     if(filename) {
 	if(!ApacheIO_open(RETVAL, filename))
 	    XSRETURN_UNDEF;
@@ -39,6 +51,21 @@ bool
 ApacheIO_open(self, filename)
     SV *self
     SV *filename
+
+void
+ApacheIO_tmpfile(self)
+    SV *self
+
+    PREINIT:
+    PerlIO *fp = PerlIO_tmpfile();
+    char *class = SvROK(self) ? SvCLASS(self) : SvPV(self,na);
+    SV *RETVAL = ApacheIO_new(class);
+
+    PPCODE:
+    if(!do_open((GV*)SvRV(RETVAL), "+>&", 3, FALSE, 0, 0, fp))
+        XSRETURN_UNDEF;
+    else
+        XPUSHs(RETVAL);
 
 void
 ApacheIO_close(self)
