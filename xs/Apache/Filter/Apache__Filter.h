@@ -156,6 +156,19 @@ static MP_INLINE SV *mpxs_Apache__Filter_ctx(pTHX_
     modperl_filter_ctx_t *ctx = (modperl_filter_ctx_t *)(filter->ctx);
 
     if (data != Nullsv) {
+        if (ctx->data) {
+            if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
+                /* release the previously stored SV so we don't leak
+                 * an SV */
+                SvREFCNT_dec(ctx->data);
+            }
+        }
+
+#ifdef USE_ITHREADS
+        if (!ctx->perl) {
+            ctx->perl = aTHX;
+        }
+#endif
         ctx->data = SvREFCNT_inc(data);
     }
 
