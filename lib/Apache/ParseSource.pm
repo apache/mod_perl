@@ -169,7 +169,7 @@ my %enums_wanted = (
 );
 
 my $defines_unwanted = join '|', qw{
-HTTP_VERSION
+HTTP_VERSION APR_EOL_STR
 };
 
 sub get_constants {
@@ -183,6 +183,7 @@ sub get_constants {
         while (<$fh>) {
             if (s/^\#define\s+(\w+)\s+.*/$1/) {
                 chomp;
+                next if /_H$/;
                 next if $seen{$_}++;
                 $self->handle_constant(\%constants);
             }
