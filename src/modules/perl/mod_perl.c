@@ -35,7 +35,6 @@ int modperl_threads_started(void)
     return MP_threads_started;
 }
 
-
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -43,11 +42,6 @@ static apr_status_t modperl_shutdown(void *data)
     PerlInterpreter *perl = (PerlInterpreter *)cdata->data;
     void **handles;
 
-    /* reset for restarts */
-    if (scfg->threaded_mpm) {
-        MP_threads_started = 0;
-    }
-    
     handles = modperl_xs_dl_handles_get(aTHX);
 
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
