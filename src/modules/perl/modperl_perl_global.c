@@ -13,7 +13,7 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
 /* XXX: PL_modglobal thingers might be useful elsewhere */
 
 #define MP_MODGLOBAL_ENT(key) \
-{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1), 0}
+{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1)}
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
