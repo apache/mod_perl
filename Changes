@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+dont use DEFAULT_PATH if r->subprocess_env->{PATH} is already set
+[Bertrand Demiddelaer <wing_co@hotmail.com>]
+
 ensure perl_setup_env() is called just once per-request
 [Salvador Ortiz Garcia <sog@msg.com.mx>]
 

@@ -584,10 +584,14 @@ array_header *perl_cgi_env_init(request_rec *r)
     add_common_vars(r); 
     add_cgi_vars(r); 
 
-    if ((tz = getenv("TZ")) != NULL)
-	table_set(envtab, "TZ", tz);
-
-    table_set(envtab, "PATH", DEFAULT_PATH);
+    if (!table_get(envtab, "TZ")) {
+	if ((tz = getenv("TZ")) != NULL) {
+	    table_set(envtab, "TZ", tz);
+	}
+    }
+    if (!table_get(envtab, "PATH")) {
+	table_set(envtab, "PATH", DEFAULT_PATH);
+    }
     table_set(envtab, "GATEWAY_INTERFACE", PERL_GATEWAY_INTERFACE);
 
     return table_elts(envtab);
