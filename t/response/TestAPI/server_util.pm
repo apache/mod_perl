@@ -14,7 +14,7 @@ sub handler {
 
     my $s = $r->server;
 
-    plan $r, tests => 7;
+    plan $r, tests => 9;
 
     for my $p ($r->pool, $r->connection->pool,
                $r, $r->connection, $r->server)
@@ -24,7 +24,15 @@ sub handler {
         ok -d $dir;
     }
 
-    my $dir = Apache->server_root_relative('logs'); #1.x ish
+    my $dir = Apache::server_root; #constant
+
+    ok -d $dir;
+
+    $dir = join '/', Apache::server_root, 'logs';
+
+    ok $dir eq Apache::server_root_relative($r->pool, 'logs');
+
+    $dir = Apache->server_root_relative('logs'); #1.x ish
 
     ok -d $dir;
 
