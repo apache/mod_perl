@@ -32,7 +32,7 @@ if (@ARGV) {
     #shutdown httpd before make aborts
     $SIG{'__DIE__'} = sub {
 	return unless $_[0] =~ /^Failed/i; 
-	my $el = "../logs/mod_perl_httpd.pid";
+	my $el = "../t/logs/mod_perl_httpd.pid";
 	if(-e $el) {
 	    system "kill `cat $el`";
 	}
