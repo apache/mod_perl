@@ -121,7 +121,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                 status = SvIVx(status_sv);
                 MP_TRACE_h(MP_FUNC,
                            "coercing handler %s's return value '%s' into %d",
-                           handler->name, SvPVX(status_sv), status);
+                           handler->name, SvPV_nolen(status_sv), status);
             }
             else {
                 /* any other return types are considered as errors */
@@ -138,7 +138,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     FREETMPS;LEAVE;
 
     if (SvTRUE(ERRSV)) {
-        MP_TRACE_h(MP_FUNC, "$@ = %s", SvPVX(ERRSV));
+        MP_TRACE_h(MP_FUNC, "$@ = %s", SvPV_nolen(ERRSV));
         status = HTTP_INTERNAL_SERVER_ERROR;
     }
 
