@@ -775,9 +775,7 @@ sub dynamic_link_MSWin32 {
     my $self = shift;
     my $defs = $self->export_files_MSWin32;
     return $self->dynamic_link_header_default .
-           $defs . <<'EOF';
-	-out:$@
-EOF
+           "\t$defs" . ' -out:$@';
 }
 
 sub dynamic_link {
