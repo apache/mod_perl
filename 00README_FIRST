@@ -1,11 +1,6 @@
 a (nearly) complete rewrite is underway for mod_perl-2.0
 
-the module is not usable yet, at least not the way 1.xx is
-
-what you see here is just a start on the new build/glue infrastructure
-
-more detailed design docs, etc. will follow along with updates here
-and on the list
+more detailed design docs, etc., see the pod/ directory
 
 if you want to try building with an interpreter pool, you'll need Perl
 5.6.0 built like so:
@@ -16,21 +11,39 @@ mod_perl-2.0 will still work with an out-of-the-box Perl, but will
 only be useful if your mpm is prefork (which is much like 1.3.x)
 
 to build mod_perl static:
+NOTE: static linking untested for several months
 
 % perl Makefile.PL && make
 
 % cd ../httpd-2.0
-% ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
+% ./configure --prefix=$HOME/apache-2.0 --with-mpm=threaded
 % patch -p1 < ../../modperl-2.0/patches/link-hack.pat
 % make
 
 to build mod_perl dynamic:
 
-% perl Makefile.PL MP_USE_DSO=1 && make
-
-% cd ../httpd-2.0
-% ./configure --with-mpm=mpmt_pthread ...
+build httpd with mod_so enabled:
+% cd httpd-2.0
+% ./configure --with-mpm=threaded --enable-so ...
 % make
+% make install
+
+build the parsed structure and function tables:
+
+NOTE: requires C::Scan 0.75, which at the moment is unreleased, there
+is a working copy here: http://perl.apache.org/~dougm/Scan.pm
+
+NOTE: source_scan.pl is a HEAVY process, do not be alarmed
+should be run each time you update your httpd-2.0 tree
+
+% perl util/source_scan.pl apxs $apache_prefix/bin/apxs
+
+generate xs code from the tables:
+
+% perl util/xs_generate.pl
+
+#build libmodperl.so and extension .so's
+% perl Makefile.PL MP_USE_DSO=1 MP_APXS=$apache_prefix/bin/apxs && make
 
 as for httpd.conf, mine looks something like so at the moment:
 
@@ -49,13 +62,8 @@ PerlInterpMax 4
 
 PerlSwitches -T /home/dougm/test/startup.pl
 
-it is possible to configure Perl*Handlers, but there is not yet an
-interface back into Apache, e.g.
+it is possible to configure Perl*Handlers and callback into apache,
+much is the same as 1.x, but plenty is different at the moment.
+there will be a compat layer in the future.
 
-PerlLogHandler MyLog::handler
-
-sub MyLog::handler {
-    warn "hey, it works!";
-}
-
---dougm 01/02
+--dougm 03/04/01
