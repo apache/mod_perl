@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+new Apache::PerlRun::namespace_from() method, returns
+$r->uri - $r->path_info, can be overridden as Apache::RegistryNG does to
+return $r->filename instead
+
 some minor test fixups for when certain things are not installed and
 be sure $ENV{PERL5LIB} is used (Perl ignores w/ -T)
 

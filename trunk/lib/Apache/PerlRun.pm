@@ -149,11 +149,11 @@ sub status {
     shift->{'_r'}->status;
 }
 
-sub namespace {
-    my($pr, $root) = @_;
-    return $pr->{'namespace'} if $pr->{'namespace'};
+sub namespace_from {
+    my($pr) = @_;
 
     my $uri = $pr->uri; 
+
     $uri = "/__INDEX__" if $uri eq "/";
     $pr->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
 		  $uri) if $Debug && $Debug & 4;
@@ -166,6 +166,15 @@ sub namespace {
 	my $name = $pr->get_server_name;
 	$script_name = join "", $name, $script_name if $name;
     }
+
+    return $script_name;
+}
+
+sub namespace {
+    my($pr, $root) = @_;
+    return $pr->{'namespace'} if $pr->{'namespace'};
+
+    my $script_name = $pr->namespace_from;
 
     # Escape everything into valid perl identifiers
     $script_name =~ s/([^A-Za-z0-9\/])/sprintf("_%2x",unpack("C",$1))/eg;

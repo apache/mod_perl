@@ -16,6 +16,10 @@ $VERSION = '1.00';
 # </Location>
 # see also: Apache::RegistryBB
  
+sub namespace_from {
+    shift->filename;
+}
+
 sub handler ($$) {
     my($class, $r) = (shift,shift);
 
