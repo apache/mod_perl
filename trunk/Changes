@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+mod_perl.exp is now installed
+
 aix tweaks for building with apxs
 [Jens-Uwe Mager <jum@helios.de>]
 

@@ -192,16 +192,26 @@ sub httpd_version {
     return $version;
 }
 
+sub find_in_inc {
+    my $name = shift;
+    for (@INC) {
+	my $file;
+	if (-e ($file = "$_/auto/Apache/$name")) {
+	    return $file;
+	}
+    }
+}
+
+#XXX
+#do similar for mod_perl.exp and httpd.exp
+
 sub typemaps {
     my $typemaps = [];
     
-    for (@INC) {
-	my $file;
-	if (-e ($file = "$_/auto/Apache/typemap")) {
-	    push @$typemaps, $file;
-	    last;
-	}
+    if (my $file = find_in_inc("typemap")) {
+	push @$typemaps, $file;
     }
+
     if(IS_MOD_PERL_BUILD) {
 	push @$typemaps, "../Apache/typemap";
     }

@@ -1405,7 +1405,7 @@ sub MY::post_initialize {
 	finddepth(\&wanted, $ap_src);
     }
     $self->{PM}{"Apache/typemap"} = '$(INST_ARCHLIB)/' . "auto/Apache/typemap";
-
+    $self->{PM}{"apaci/mod_perl.exp"} = '$(INST_ARCHLIB)/' . "auto/Apache/mod_perl.exp";
     for (qw(ap_config_auto.h)) {
 	my $from = "$ap_inc/$_";
 	my $to = '$(INST_ARCHLIB)/' . "auto/Apache/include/$_";
