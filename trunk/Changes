@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+add proper offset support to Apache::read
+
 config/test fixups for libapreq/win32
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

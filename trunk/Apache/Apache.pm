@@ -20,7 +20,7 @@ if (caller eq "CGI::Apache") {
 
 {
     no strict;
-    $VERSION = "1.26";
+    $VERSION = "1.27";
     __PACKAGE__->mod_perl::boot($VERSION);
 }
 
@@ -61,12 +61,11 @@ sub args {
 *READ = \&read unless defined &READ;
 
 sub read {
-    my($r, $bufsiz) = @_[0,2];
+    my($r, $bufsiz, $offset) = @_[0,2,3];
     my($nrd, $buf, $total);
     $nrd = $total = 0;
     $buf = "";
-    $_[1] ||= "";
-    #$_[1] = " " x $bufsiz unless defined $_[1]; #XXX?
+    $_[1] = "" unless $offset;
 
     $r->soft_timeout("Apache->read");
 
@@ -74,8 +73,13 @@ sub read {
 	$nrd = $r->read_client_block($buf, $bufsiz) || 0;
 	if(defined $nrd and $nrd > 0) {
 	    $bufsiz -= $nrd;
-	    $_[1] .= $buf;
- 	    #substr($_[1], $total, $nrd) = $buf;
+            if ($offset) {
+                substr($_[1], $offset) .= $buf;
+                #$_[1] .= $buf;
+            }
+            else {
+                $_[1] .= $buf;
+            }
 	    $total += $nrd;
 	    next if $bufsiz;
 	    last;
@@ -420,10 +424,13 @@ returned.  When called in a list context, a list of parsed I<key> =>
 I<value> pairs are returned.  *NOTE*: you can only ask for this once,
 as the entire body is read from the client.
 
-=item $r->read($buf, $bytes_to_read)
+=item $r->read($buf, $bytes_to_read, [$offset])
 
 This method is used to read data from the client, 
 looping until it gets all of C<$bytes_to_read> or a timeout happens.
+
+An offset may be specified to place the read data at some other place
+than the beginning of the string.
 
 In addition, this method sets a timeout before reading with
 C<$r-E<gt>soft_timeout>.

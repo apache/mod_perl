@@ -12,14 +12,13 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - segfaults with DBI->connect (mysql), reported that downgrade to
   1.21_03 cures
 
-- Apache::read() does not clear $_[1] before appending data, bug or feature?
-  [Cyrus Rahman <cr@jcmax.com>]
-
 - {get,set}_handlers troubles [Geoffrey Young <gyoung@laserlink.net>]
   see also: http://perl.apache.org/~dougm/set_handlers.pat
 
 - remove eg/ directory, it's way out of date and no longer needed now
   with the guide, the books, and piles of Apache::* modules
+
+- add $r->set_keepalive method?
 
 ---------------------------------------------------------------------------
 POSSIBLE NEW FEATURES
