@@ -11,7 +11,12 @@ our @ISA = qw(ModPerl::MapBase);
 
 sub new {
     my $class = shift;
-    my $self = bless { INCLUDE => [] }, $class;
+
+    my $self = bless {
+        INCLUDE => [],
+        struct  => [],
+        typedef => [],
+    }, $class;
 
     $self->{function_map}  = ModPerl::FunctionMap->new,
     $self->{structure_map} = ModPerl::StructureMap->new,
@@ -46,15 +51,19 @@ sub parse {
         my($type, $class) = (split /\s*\|\s*/, $_)[0,1];
         $class ||= 'UNDEFINED';
 
-        if ($type =~ s/^struct\s+(.*)/$1/) {
-            push @aliases,
-              $type, "const $type", "$type *", "const $type *",
-              "struct $type *", "const struct $type *",
-              "$type **";
+        if ($type =~ s/^(struct|typedef)\s+(.*)/$2/) {
+            my $typemap = $1;
+            push @aliases, $type;
+
+            if ($typemap eq 'struct') {
+                push @aliases, "const $type", "$type *", "const $type *",
+                  "struct $type *", "const struct $type *",
+                  "$type **";
+            }
 
             my $cname = $class;
-            if ($cname =~ s/::/__/) {
-                push @{ $self->{typedefs} }, [$type, $cname];
+            if ($cname =~ s/::/__/g) {
+                push @{ $self->{$typemap} }, [$type, $cname];
             }
         }
         elsif ($type =~ /_t$/) {
@@ -408,9 +417,14 @@ sub typedefs_code {
         $code .= qq{\#include "$_"\n}
     }
 
-    for my $t (@{ $self->{typedefs} }) {
+    for my $t (@{ $self->{struct} }) {
         next if $seen{ $t->[1] }++;
         $code .= "typedef $t->[0] * $t->[1];\n";
+    }
+
+    for my $t (@{ $self->{typedef} }) {
+        next if $seen{ $t->[1] }++;
+        $code .= "typedef $t->[0] $t->[1];\n";
     }
 
     $self->h_wrap('typedefs', $code);
