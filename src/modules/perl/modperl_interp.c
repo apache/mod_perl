@@ -119,7 +119,9 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 #endif
     }
 
-    MP_TRACE_i(MP_FUNC, "0x%lx\n", (unsigned long)interp);
+    MP_TRACE_i(MP_FUNC, "0x%lx / perl: 0x%lx / parent perl: 0x%lx\n",
+               (unsigned long)interp, (unsigned long)interp->perl,
+               (unsigned long)perl);
 
     return interp;
 }
@@ -131,8 +133,8 @@ void modperl_interp_destroy(modperl_interp_t *interp)
 
     PERL_SET_CONTEXT(interp->perl);
 
-    MP_TRACE_i(MP_FUNC, "interp == 0x%lx\n",
-               (unsigned long)interp);
+    MP_TRACE_i(MP_FUNC, "interp == 0x%lx / perl: 0x%lx\n",
+               (unsigned long)interp, (unsigned long)interp->perl);
 
     if (MpInterpIN_USE(interp)) {
         MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
