@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_03-dev
 
+win32 fix for the global Apache->request object to make sure it uses
+the thread local storage mechanism
+
 add a reference count mechanism to interpreters for use in threaded MPMs,
 so if APR::Pool cleanups have been registered the interpreter is not
 putback into the interpreter pool until all cleanups have run.
