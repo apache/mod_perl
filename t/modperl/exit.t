@@ -18,7 +18,7 @@ plan tests => 3;
 {
     my $exit_excpt = ModPerl::EXIT;
     my $body = GET_BODY_ASSERT("$location?eval");
-    ok t_cmp(qr/^ModPerl::Util::exit: ($exit_excpt) exit was called/,
+    ok t_cmp(qr/^ModPerl::Util::exit: \($exit_excpt\) exit was called/,
              $body,
              "exit in eval context");
 
