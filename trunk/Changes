@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+variable $Apache::Server::ConfigTestOnly is set to 1 if Apache
+is running in configuration test mode (httpd -t)
+[Eric Cholet <cholet@logilune.com>]
+
 add PerlAddVar directive, like PerlSetVar, but uses ap_table_add
 instead of ap_table_set
 
