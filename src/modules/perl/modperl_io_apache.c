@@ -292,7 +292,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
             else {
                 error = modperl_apr_strerror(rc);
             }
-            sv_setpv(get_sv("!", TRUE),
+            sv_setpv(ERRSV,
                      (char *)apr_psprintf(r->pool, 
                                           "failed to get bucket brigade: %s",
                                           error));
