@@ -16,9 +16,18 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 3;
+    require Apache::Build;
+    my @todo;
+    push @todo, 1 if Apache::Build::AIX();
+    plan $r, tests => 3, todo => \@todo;
 
-    ok fileno STDOUT;
+    # XXX: on AIX 4.3.3 we get:
+    #                     STDIN STDOUT STDERR
+    # perl    :               0      1      2
+    # mod_perl:               0      0      2
+    my $fileno = fileno STDOUT;
+    ok $fileno;
+    t_debug "fileno STDOUT: $fileno";
 
     {
         my $vars = Apache::Test::config()->{vars};
