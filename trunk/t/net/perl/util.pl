@@ -38,7 +38,7 @@ eval {
 
 unless($@) {
     $test_time_parsedate = 1;
-    #$tests += $test_time_parsedate;
+    $tests += $test_time_parsedate;
 }
 $@ = '';
  
@@ -148,6 +148,11 @@ if($test_time_parsedate) {
 
     my $p = Time::ParseDate::parsedate($date_str);
     print "Perl says: ", scalar(localtime $p), "\n";
+    my $htt = Apache::Util::ht_time($c, $formats[-1], 0);
+    print "HTT=$htt\n";
+    test ++$i, 
+      Apache::Util::ht_time($c, $formats[-1], 0) eq 
+      Apache::Util::ht_time($p, $formats[-1], 0) 
 }
 
 =pod
