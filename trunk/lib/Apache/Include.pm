@@ -24,6 +24,7 @@ sub virtual {
     my($self, $uri, $r) = @_;
     $r ||= Apache->request;
     my $subr = $r->lookup_uri($uri);
+    $subr->header_in("Content-length" => "0");
     $subr->run;
     return $subr->status;
 }
