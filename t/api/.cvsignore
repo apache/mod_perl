@@ -8,7 +8,6 @@ request_rec.t
 response.t
 r_subclass.t
 rutil.t
-send_fd.t
 sendfile.t
 server_rec.t
 server_util.t
