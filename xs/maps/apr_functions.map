@@ -94,7 +94,8 @@ MODULE=APR::Brigade
 !apr_brigade_write
 !apr_brigade_puts
 -apr_brigade_putc
- apr_brigade_cleanup
+~ apr_brigade_cleanup
+ mpxs_APR__Brigade_cleanup
 ~apr_brigade_flatten
 ~apr_brigade_pflatten
 ?apr_brigade_split_line

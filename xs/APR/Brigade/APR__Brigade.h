@@ -14,6 +14,14 @@
  */
 
 static MP_INLINE
+void mpxs_APR__Brigade_cleanup(apr_bucket_brigade *brigade)
+{
+    /* apr has a broken prototype (passing 'void *' instead of
+     * 'apr_bucket_brigade *', so use a wrapper here */
+    apr_brigade_cleanup(brigade);
+}
+
+static MP_INLINE
 apr_bucket_brigade *mpxs_apr_brigade_create(pTHX_ SV *CLASS,
                                             apr_pool_t *p,
                                             apr_bucket_alloc_t *ba)

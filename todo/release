@@ -26,7 +26,3 @@
   but that doesn't really solve the problem. So we aren't sure how to
   deal with that.
 
-* $bb->cleanup segfaults (originally in TestProtocol::echo_bbs2
-  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
-  owner: gozer
-
