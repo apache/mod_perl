@@ -38,8 +38,8 @@
     ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, \
                  "access to %s failed for %s, reason: %s", \
                  file, \
-                 get_remote_host(r->connection, \
-                 r->per_dir_config, REMOTE_NAME), \
+                 ap_get_remote_host(r->connection, \
+                 r->per_dir_config, REMOTE_NAME, NULL), \
                  msg)
 
 #endif /* MODPERL_LOG_H */

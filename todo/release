@@ -4,10 +4,6 @@
 
 -- see also todo/api_status
 
-* $r->log_reason:
-  just add to compat
-  owner: stas
-
 * APR::Finfo constants: APR::FILETYPE_* and APR::FILEPROT_* will
   probably be APR::FTYPE_* and APR::FPROT_*
   will know exactly once libapr is fixed

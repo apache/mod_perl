@@ -28,7 +28,7 @@ sub handler {
     my $r = shift;
     my $s = $r->server;
 
-    plan $r, tests => (@LogLevels * 2) + 17;
+    plan $r, tests => (@LogLevels * 2) + 19;
 
     my $logdiff = TestCommon::LogDiff->new($path);
 
@@ -104,6 +104,21 @@ sub handler {
         ok t_cmp $logdiff->diff,
             qr/\[error\] \$s->log_error test/,
             '$s->log_error(...)';
+    }
+    
+    # log_reason
+    {
+        t_server_log_error_is_expected();
+        $r->log_reason('$r->log_reason test');
+        ok t_cmp $logdiff->diff,
+            qr/\[error\] access to.*failed.*reason: \$r->log_reason test/,
+            '$r->log_reason(msg)';
+        
+        t_server_log_error_is_expected();
+        $r->log_reason('$r->log_reason filename test','filename');
+        ok t_cmp $logdiff->diff,
+            qr/\[error\] access to filename failed.*\$r->log_reason filename test/,
+            '$r->log_reason(msg, filename)';
     }
 
     # XXX: at the moment we can't change loglevel after server startup
