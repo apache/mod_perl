@@ -42,7 +42,7 @@ sub handler {
                                    debug "2nd TID is $tid" if defined $tid;
                                    return 2;
                                });
-        ok t_cmp(2, $thr->join, "thread callback returned value");
+        ok t_cmp($thr->join, 2, "thread callback returned value");
     }
 
     {
@@ -59,8 +59,8 @@ sub handler {
         $counter_priv += $counter_priv for 1..10;
         $counter_shar += $counter_shar for 1..10;
         $thr->join;
-        ok t_cmp(2**20, $counter_shar, "shared counter");
-        ok t_cmp(2**10, $counter_priv, "private counter");
+        ok t_cmp($counter_shar, 2**20, "shared counter");
+        ok t_cmp($counter_priv, 2**10, "private counter");
     }
 
     Apache::OK;
