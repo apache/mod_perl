@@ -172,7 +172,12 @@ sub dump_entry {
         $self->add_config("$name $$entry\n");
     }
     elsif ($type eq 'ARRAY') {
-        $self->add_config("$name @$entry\n");
+        if (grep {ref} @$entry) {
+            $self->dump_entry($name, $_) for @$entry;
+        }
+        else {
+            $self->add_config("$name @$entry\n");
+        }
     }
     elsif ($type eq 'HASH') {
         $self->dump_hash($name, $entry);
