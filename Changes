@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Static builds for httpd >= 2.0.51 available. With the new MP_AP_BUILD
+option, configure and compile an httpd with mod_perl statically linked
+in [Gozer]
+
 Apache::RequestRec methods: method_number, connection,
 canonical_filename are now read-only [Stas]
 

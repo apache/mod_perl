@@ -87,7 +87,7 @@ sub handler {
     #.so
     {
         my $build = Apache::BuildConfig->new;
-        my $expect = $build->{MODPERL_LIB_SHARED} ? 1 : 0;
+	my $expect = $build->should_build_apache ? 0 : 1;
         ok t_cmp(Apache::Module::loaded('mod_perl.so'), $expect,
                  "Apache::Module::loaded('mod_perl.so')");
     }

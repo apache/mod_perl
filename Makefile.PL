@@ -7,6 +7,7 @@ use warnings FATAL => 'all';
 $ENV{MOD_PERL_2_BUILD} = 1;
 
 my $min_httpd_version = '2.0.46';
+my $min_httpd_version_static = '2.0.51';
 
 my($old_modperl_version, $old_modperl_pm);
 
@@ -222,8 +223,16 @@ sub configure {
         }
         exit(1);
     }
-
-    if ($httpd_version lt $min_httpd_version) {
+    
+    my $min_version;
+    if ($build->should_build_apache) {
+        $min_version = $min_httpd_version_static;
+    }
+    else {
+        $min_version = $min_httpd_version;
+    }
+    
+    if ($httpd_version lt $min_version) {
         error "Apache/$httpd_version not supported, " .
               "$min_httpd_version or higher is required";
         exit(1);
@@ -250,6 +259,10 @@ sub configure {
 
     #ModPerl::BuildMM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
+
+    if ($build->should_build_apache) {
+        $build->configure_apache();
+    }
 
     ModPerl::TestRun->generate_script;
     ModPerl::TestReport->generate_script;
@@ -509,6 +522,11 @@ aprext_install:
 EOF
     }
 
+    if ($build->should_build_apache) {
+        ModPerl::MM::add_dep(\$string, pure_all => 'ap_build');
+        $string .= qq[\nap_build:\n\tcd "$build->{MP_AP_PREFIX}" && make\n];
+    }
+    
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
     $string .= <<'EOF';

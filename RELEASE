@@ -32,21 +32,24 @@ Instructions for mod_perl 2.0 Release Manager
      - remove '-dev' 
      - add release date
 
-  b. rerun:
+  b. check ./README & ./Makefile.PL
+     - make sure supported httpd versions (dso & static) are current
+
+  c. rerun:
      % perl Makefile.PL MP_INST_APACHE2=1
      make sure tag looks right
      % make -n cvs_tag
 
-  c. commit Changes
-     % cvs ci Changes
+  d. commit Changes README Makefile.PL
+     % cvs ci Changes README Makefile.PL
 
-  d. tag
+  e. tag
      % make cvs_tag
 
-  e. create the final package
+  f. create the final package
      % make dist
 
-  f. test the final package again at least once
+  g. test the final package again at least once
 
 4. Release the package and update links (e.g. mod_perl-1.99_15.tar.gz)
 

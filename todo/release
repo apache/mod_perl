@@ -58,15 +58,6 @@
   of child_exit.
   owner: stas
 
-* static build - if we make it working on OpenBSD, AIX and FreeBSD,
-  then it's not important to fix the DSO issues, otherwise make the
-  DSO issues in (todo/bugs_build) a release issue.
-  httpd-apreq-2 has recently implemented a static build support, we
-  could probably try to re-use some of the code that was written to do
-  that, though they use autoconf, which is not quite what we
-  want. Anyway it's something to look at.
-  owner: gozer
-
 * <Perl> sections:
   A few issues with <Perl> sections:
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
