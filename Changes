@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.20_01-dev
 
+fix some problems with %ENV (e.g. SetEnv PATH cause mangled value)
+
 loosen module/cookie tests
 
 fix bug in register_cleanup() [Chip Turner <chip@ZFx.com>]

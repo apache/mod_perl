@@ -257,21 +257,15 @@ if(arg) \
     SvTAINTED_on(*hv_fetch(hv, key, klen, 0)) 
 
 #define mp_setenv(key, val) \
-{ \
-    int klen = strlen(key); \
-    hv_store(GvHV(envgv), key, klen, newSVpv(val,0), FALSE); \
-    HV_SvTAINTED_on(GvHV(envgv), key, klen); \
-    my_setenv(key, val); \
-}
+mp_magic_setenv(key, val, 1)
 
 #define mp_SetEnv(key, val) \
-    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE); \
-    my_setenv(key, val)
+mp_magic_setenv(key, val, 0)
 
 #define mp_PassEnv(key) \
 { \
     char *val = getenv(key); \
-    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val?val:"",0), FALSE); \
+    mp_magic_setenv(key, val?val:"", 0); \
 }
 
 #define mp_debug mod_perl_debug_flags
@@ -1120,6 +1114,7 @@ void perl_qrequire_module (char *name);
 int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn);
 array_header *perl_cgi_env_init(request_rec *r);
 void perl_clear_env(void);
+void mp_magic_setenv(char *key, char *val, int is_tainted);
 void mod_perl_init_ids(void);
 int perl_eval_ok(server_rec *s);
 int perl_sv_is_http_code(SV *sv, int *status);
