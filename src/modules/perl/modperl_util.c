@@ -443,3 +443,8 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
 
     return RETVAL;
 }
+
+MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
+{
+    return gv_stashpv(name, FALSE) ? 1 : 0;
+}

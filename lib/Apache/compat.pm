@@ -42,6 +42,11 @@ sub import {
 sub untaint {
 }
 
+sub module {
+    require Apache::Module;
+    return Apache::Module::loaded($_[1]);
+}
+
 package Apache::Constants;
 
 use Apache::Const ();

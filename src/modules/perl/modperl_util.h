@@ -72,4 +72,6 @@ MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
 SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
                           SV *sv_val, bool do_taint);
 
+MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name);
+
 #endif /* MODPERL_UTIL_H */
