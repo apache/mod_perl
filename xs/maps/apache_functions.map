@@ -183,7 +183,11 @@ MODULE=Apache::Filter PACKAGE=Apache::RequestRec
 ap_filter_t *:DEFINE_add_output_filter | | \
               request_rec *:r, const char *:name, void *:ctx
 
-MODULE=Apache::Filter   PACKAGE=guess
+PACKAGE=Apache::OutputFilter
+ mpxs_Apache__OutputFilter_print | | ...
+ mpxs_Apache__OutputFilter_read  | | ...
+
+PACKAGE=guess
 ~ap_add_output_filter
  ap_add_input_filter
  ap_get_brigade
