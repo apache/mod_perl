@@ -781,10 +781,12 @@ See the L<SUPPORT> file.
 
 =head1 Win32
 
-Jeffrey Baker maintains the win32 binary distribution of mod_perl available
+See L<INSTALL.win32> for building from sources.
+
+Info about win32 binary distributions of mod_perl are available
 from: 
 
- http://www.perl.com/CPAN/authors/Jeffrey_Baker/
+ http://perl.apache.org/distributions/
 
 =head1 REVISION
 
