@@ -53,7 +53,6 @@ lib/Apache/RegistryNG.pm
 lib/Apache/RegistryBB.pm
 lib/Apache/RegistryLoader.pm
 lib/Apache/Resource.pm
-#lib/Apache/Safe.pm
 lib/Apache/SIG.pm
 lib/Apache/SizeLimit.pm
 lib/Apache/StatINC.pm
@@ -137,7 +136,6 @@ t/internal/proxy.t
 t/internal/redirect.t
 t/internal/rwrite.t
 t/internal/stacked.t
-#t/internal/resolver.t
 t/internal/table.t
 t/internal/taint.t
 t/net/perl/have_module.pl
@@ -169,7 +167,6 @@ t/net/perl/dirty-lib
 t/net/perl/request-upload.pl
 t/net/perl/request-param.pl
 t/net/perl/request-cookie.pl
-#t/net/perl/resolver.pl
 t/net/perl/io/redir.pl
 t/net/perl/io/redir1.pl
 t/net/perl/io/redir2.pl
