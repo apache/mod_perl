@@ -142,6 +142,26 @@ KNOWN BUGS
 ---------------------------------------------------------------------------
 NEW STUFF
 ---------------------------------------------------------------------------
+- Apache::read_client_block should use safemalloc/safefree, rather
+  than palloc, so memory is released after each read(), rather than at
+  the end of a request.  (e.g. so file uploads don't cause too much growth)
+
+--- Apache.xs	1998/06/05 02:08:17	1.30
++++ Apache.xs	1998/06/12 14:18:22
+@@ -911,11 +911,12 @@
+     long nrd = 0;
+ 
+     PPCODE:
+-    buffer = (char*)palloc(r->pool, bufsiz);
++    buffer = (char*)safemalloc(bufsiz);
+     PERL_READ_FROM_CLIENT;
+     if ( nrd > 0 ) {
+ 	XPUSHs(sv_2mortal(newSViv((long)nrd)));
+ 	sv_setpvn((SV*)ST(1), buffer, nrd);
++       safefree(buffer);
+ 	SvTAINTED_on((SV*)ST(1));
+     } 
+     else {
 
 - option to set uid/gid before running any Perl code (copy-n-paste
   from http_main.c) 
