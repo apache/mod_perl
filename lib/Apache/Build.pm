@@ -899,7 +899,9 @@ lib: $(MODPERL_LIB)
 	-c $*.c && $(MODPERL_MV) $*$(MODPERL_OBJ_EXT) $*.lo
 
 clean:
-	$(MODPERL_RM_F) *.a *.so *.xsc *$(MODPERL_OBJ_EXT) *.lo *.i *.s \
+	$(MODPERL_RM_F) *.a *.so *.xsc \
+	$(MODPERL_LIBNAME).exp $(MODPERL_LIBNAME).lib \
+	*$(MODPERL_OBJ_EXT) *.lo *.i *.s \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
