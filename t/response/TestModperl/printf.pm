@@ -7,7 +7,7 @@ use Apache::RequestIO ();
 use Apache::RequestRec ();
 use APR::Table ();
 
-use Apache::Const -compile => qw(OK LOG_ERR);
+use Apache::Const -compile => qw(OK);
 
 sub handler {
     my $r = shift;
