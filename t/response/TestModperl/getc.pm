@@ -8,7 +8,8 @@ use Apache::Test;
 sub handler {
     my $r = shift;
 
-    tie *STDIN, $r unless tied *STDIN;
+    untie *STDIN;
+    tie *STDIN, $r;
 
     while (my $c = getc) {
         die "got more than 1 char" unless length($c) == 1;
