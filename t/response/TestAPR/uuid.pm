@@ -5,28 +5,16 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use APR::UUID ();
+use TestAPRlib::uuid;
 
 use Apache::Const -compile => 'OK';
-
-my $dummy_uuid = 'd48889bb-d11d-b211-8567-ec81968c93c6';
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 3;
+    plan $r, tests => TestAPRlib::uuid::num_of_tests();
 
-#XXX: apr_generate_random_bytes may block forever on /dev/random
-#    my $uuid = APR::UUID->new->format;
-    my $uuid = $dummy_uuid;
-
-    ok $uuid;
-
-    my $uuid_parsed = APR::UUID->parse($uuid);
-
-    ok $uuid_parsed;
-
-    ok $uuid eq $uuid_parsed->format;
+    TestAPRlib::uuid::test();
 
     Apache::OK;
 }
