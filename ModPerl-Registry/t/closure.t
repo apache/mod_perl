@@ -4,6 +4,8 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
+use TestCommon::SameInterp;
+
 use File::Spec::Functions;
 
 # this test tests how various registry packages cache and flush the
@@ -36,9 +38,9 @@ my $orig_mtime = (stat($path))[8];
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
 
     # should be no closure effect, always returns 1
-    my $first  = get_body($same_interp, $url);
-    my $second = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $first  = same_interp_req_body($same_interp, \&GET, $url);
+    my $second = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second) != 2),
         $first && $second && ($second - $first),
         0,
@@ -49,8 +51,8 @@ my $orig_mtime = (stat($path))[8];
     touch_mtime($path);
 
     # it doesn't matter, since the script is not cached anyway
-    my $third = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $third = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second, $third) != 3),
         $third,
         1,
@@ -70,9 +72,9 @@ my $orig_mtime = (stat($path))[8];
     # we don't know what other test has called this uri before, so we
     # check the difference between two subsequent calls. In this case
     # the difference should be 1.
-    my $first  = get_body($same_interp, $url);
-    my $second = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $first  = same_interp_req_body($same_interp, \&GET, $url);
+    my $second = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second) != 2),
         $first && $second && ($second - $first),
         1,
@@ -83,8 +85,8 @@ my $orig_mtime = (stat($path))[8];
     touch_mtime($path);
 
     # should not notice closure effect on the first request
-    my $third = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $third = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second, $third) != 3),
         $third,
         1,
@@ -104,9 +106,9 @@ my $orig_mtime = (stat($path))[8];
     # we don't know what other test has called this uri before, so we
     # check the difference between two subsequent calls. In this case
     # the difference should be 1.
-    my $first  = get_body($same_interp, $url);
-    my $second = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $first  = same_interp_req_body($same_interp, \&GET, $url);
+    my $second = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second) != 2),
         $first && $second && ($second - $first),
         1,
@@ -117,8 +119,8 @@ my $orig_mtime = (stat($path))[8];
     touch_mtime($path);
 
     # modification shouldn't be noticed
-    my $third = get_body($same_interp, $url);
-    skip_not_same_interp(
+    my $third = same_interp_req_body($same_interp, \&GET, $url);
+    same_interp_skip_not_found(
         (scalar(grep defined, $first, $second, $third) != 3),
         $first && $second && $third - $second,
         1,
@@ -140,37 +142,4 @@ sub reset_mtime {
     my $file = shift;
     # reset  the timestamp to the original mod-time
     utime $orig_mtime, $orig_mtime, $file;
-}
-
-# if we fail to find the same interpreter, return undef (this is not
-# an error)
-sub get_body {
-    my($same_interp, $url) = @_;
-    my $res = eval {
-        Apache::TestRequest::same_interp_do($same_interp, \&GET, $url);
-    };
-    return undef if $@ =~ /unable to find interp/;
-    return $res->content if $res;
-    die $@ if $@;
-}
-
-
-# make the tests resistant to a failure of finding the same perl
-# interpreter, which happens randomly and not an error.
-# the first argument is used to decide whether to skip the sub-test,
-# the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_interp {
-    my $skip_cond = shift;
-    if ($skip_cond) {
-        skip "Skip couldn't find the same interpreter", 0;
-    }
-    else {
-        my($package, $filename, $line) = caller;
-        # trick ok() into reporting the caller filename/line when a
-        # sub-test fails in sok()
-        return eval <<EOE;
-#line $line $filename
-    ok &t_cmp;
-EOE
-    }
 }

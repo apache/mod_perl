@@ -6,6 +6,9 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use lib grep { -d } map "$FindBin::Bin/../../$_", qw(lib Apache-Test/lib);
 
+# pick the common test libs
+use lib "$FindBin::Bin/../../t/lib";
+
 MyTest->new->run(@ARGV);
 
 
