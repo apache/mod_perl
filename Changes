@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::Process methods (pool, pconf and short_name) are now read-only
+[Stas]
+
 ($r|$c|$s)->server_root_relative were removed. Now only an explicit
 and somewhat deprecated function API remains:
 Apache::ServerUtil::server_root_relative($pool, $path); it's too easy

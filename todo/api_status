@@ -30,7 +30,7 @@ VV src/docs/2.0/api/Apache/FilterRec.pod
         log_pid
 -- src/docs/2.0/api/Apache/Module.pod
 VV src/docs/2.0/api/Apache/PerlSections.pod
--- src/docs/2.0/api/Apache/Process.pod
+VV src/docs/2.0/api/Apache/Process.pod
 VV src/docs/2.0/api/Apache/Reload.pod
 VV src/docs/2.0/api/Apache/RequestIO.pod
 -- src/docs/2.0/api/Apache/RequestRec.pod

@@ -148,11 +148,11 @@ $  limit_req_fields
 </module>
 
 <process_rec>
-   pool
-   pconf
+<  pool
+<  pconf
 -  argc
 !  argv
-   short_name
+<  short_name
 </process_rec>
 
 <command_rec>
