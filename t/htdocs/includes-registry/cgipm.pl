@@ -1,3 +1,4 @@
+use Apache::compat ();
 use CGI ();
 
 my $cgi = CGI->new;
