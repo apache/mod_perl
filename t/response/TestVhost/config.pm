@@ -13,7 +13,7 @@ use Apache::TestUtil;
 use Apache::RequestUtil ();
 use APR::Table ();
 
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(canonpath catdir);
 
 use Apache::Const -compile => 'OK';
 
@@ -27,7 +27,7 @@ sub my_handler {
     {
         my $expected = $r->document_root;
         my $received = $r->dir_config->get('DocumentRootCheck');
-        ok t_cmp($expected, $received, "DocumentRoot");
+        ok t_cmp(canonpath($expected), canonpath($received), "DocumentRoot");
     }
 
     Apache::OK;

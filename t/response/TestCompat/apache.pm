@@ -73,7 +73,7 @@ sub handler {
              '$r->server_root_relative()');
 
     ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
-             $r->server_root_relative('conf'),
+             canonpath($r->server_root_relative('conf')),
              "\$r->server_root_relative('conf')");
 
     # Apache->server_root_relative
@@ -81,7 +81,7 @@ sub handler {
         Apache::compat::override_mp2_api('Apache::server_root_relative');
 
         ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
-                 Apache->server_root_relative('conf'),
+                 canonpath(Apache->server_root_relative('conf')),
                  "Apache->server_root_relative('conf')");
 
         ok t_cmp(canonpath($Apache::Server::CWD),
