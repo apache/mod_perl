@@ -184,13 +184,20 @@ sub post_configure {
 
     $code->generate($build);
 
-    printf "Will build mod_perl %s as %s\n",
+    warning sprintf "mod_perl will be built %s as %s",
       $build->is_dynamic ? "shared" : "static",
         $build->{"MODPERL_LIB"};
 
+    if ($build->is_dynamic) {
+        warning "You'll need to add the following to httpd.conf:",
+                " LoadModule perl_module modules/$build->{MODPERL_LIB}\n";
+    }
+
     if ($build->{MP_INST_APACHE2}) {
-        print "Will install Apache Perl modules relative to Apache2/\n";
-        print "Don't forget to 'use Apache2 ();' in a startup script\n";
+        warning "Apache Perl modules will be installed relative to Apache2/";
+        warning "Don't forget to:",
+                "- configure 'PerlModule Apache2' in httpd.conf",
+                "- or 'use Apache2 ();' in a startup script";
     }
 
     $build->save;
