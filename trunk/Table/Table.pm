@@ -1,14 +1,9 @@
 package Apache::Table;
 
-use strict;
-use DynaLoader ();
-use vars qw(@ISA $VERSION);
-@ISA = qw(DynaLoader);
-$VERSION = '0.01';
+use Apache ();
 
-if($ENV{MOD_PERL}) {
-    __PACKAGE__->bootstrap($VERSION);
-}
+$VERSION = '0.01';
+__PACKAGE__->mod_perl::boot($VERSION);
 
 1;
 

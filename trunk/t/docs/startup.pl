@@ -37,8 +37,6 @@ unless ($INC{'Apache.pm'} =~ /blib/) {
 
 Apache::Constants->export(qw(HTTP_MULTIPLE_CHOICES));
 
-#no mod_perl qw(Connection Server);
-
 eval {
     require Apache::PerlRunXS;
 }; $@ = '' if $@;

@@ -1,17 +1,9 @@
 package Apache::Log;
 
-use strict;
 use Apache ();
-use vars qw($VERSION @ISA);
-
-use DynaLoader ();
-@ISA = qw(DynaLoader);
 
 $VERSION = '1.01';
-
-if($ENV{MOD_PERL}) {
-    bootstrap Apache::Log $VERSION;
-}
+__PACKAGE__->mod_perl::boot($VERSION);
 
 1;
 __END__

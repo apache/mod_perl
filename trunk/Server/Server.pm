@@ -1,14 +1,9 @@
 package Apache::Server;
 
-use strict;
+use Apache ();
 
-use DynaLoader ();
-@Apache::Server::ISA = qw(DynaLoader);
-$Apache::Server::VERSION = '1.00';
-
-if ($ENV{MOD_PERL}) {
-    bootstrap Apache::Server $Apache::Server::VERSION;
-}
+$VERSION = '1.01';
+__PACKAGE__->mod_perl::boot($VERSION);
 
 1;
 __END__

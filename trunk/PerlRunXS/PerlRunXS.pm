@@ -1,7 +1,7 @@
 package Apache::PerlRunXS;
 
 use strict;
-use vars qw($Debug $VERSION @ISA);
+use vars qw($Debug $VERSION);
 use Apache::Constants qw(:common);
 
 unless (defined $Apache::Registry::NameWithVirtualHost) {
@@ -12,11 +12,8 @@ $Debug ||= 0;
 my $Is_Win32 = $^O eq "MSWin32";
 
 $VERSION = '0.03';
-@ISA = qw(DynaLoader);
 
-if($ENV{MOD_PERL}) {
-    bootstrap Apache::PerlRunXS $VERSION;
-}
+__PACKAGE__->mod_perl::boot($VERSION);
 
 sub new {
     my($class, $r) = @_;

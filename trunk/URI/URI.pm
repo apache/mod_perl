@@ -1,14 +1,9 @@
 package Apache::URI;
 
-use strict;
 use Apache ();
-use DynaLoader ();
-@Apache::URI::ISA = qw(DynaLoader);
-$Apache::URI::VERSION = '1.00';
 
-if ($ENV{MOD_PERL}) {
-    bootstrap Apache::URI $Apache::URI::VERSION;
-}
+$VERSION = '1.00';
+__PACKAGE__->mod_perl::boot($VERSION);
 
 1;
 __END__

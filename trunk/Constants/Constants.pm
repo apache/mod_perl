@@ -1,14 +1,11 @@
 package Apache::Constants;
 
-$Apache::Constants::VERSION = "1.09";
+use Apache ();
 
-unless(defined &bootstrap) {
-    require DynaLoader;
-    @Apache::Constants::ISA = qw(DynaLoader);
-}
-
-if(exists $ENV{MOD_PERL}) {
-    bootstrap Apache::Constants $Apache::Constants::VERSION;
+{
+    no strict;
+    $VERSION = "1.09";
+    __PACKAGE__->mod_perl::boot($VERSION);
 }
 
 unless(defined &import) {

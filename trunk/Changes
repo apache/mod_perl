@@ -9,6 +9,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+loose @ISA 'DynaLoader' to avoid inheriting AutoLoader::AUTOLOAD
+
 added $r->server->timeout method
 
 skip tests that use xs/ap_ code if installed MMN is not equal to
