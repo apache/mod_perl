@@ -10,7 +10,7 @@ use Apache::Log ();
 use Apache::RequestRec ();
 
 use Apache::Const -compile => qw(OK :log);
-use APR::Const -compile    => qw(:error SUCCESS);
+use APR::Const    -compile => qw(:error SUCCESS);
 
 my @LogLevels = qw(emerg alert crit error warn notice info debug);
 my $package = __PACKAGE__;
@@ -40,6 +40,11 @@ sub handler {
         ok sub { $rlog->can($method) };
         ok sub { $slog->can($method) };
     }
+
+    # this message shouldn't be logged (since it can be logged only
+    # during the startup)
+    $s->log_serror(Apache::LOG_MARK, Apache::LOG_INFO|Apache::LOG_STARTUP,
+                   APR::SUCCESS, "This log message comes with no header");
 
     t_server_log_warn_is_expected();
     $s->log_serror(__FILE__, __LINE__, Apache::LOG_DEBUG,
