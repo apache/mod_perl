@@ -91,7 +91,7 @@ sub handler {
         eval { Apache::Server::server_root_relative($obj, 'conf') };
 
         ok t_cmp(qr/server_root_relative.*no .* key/,
-                 canonpath($@),
+                 $@,
                  "Apache::Server::server_root_relative(\$obj, 'conf')");
     }
 
