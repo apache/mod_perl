@@ -48,8 +48,10 @@ PerlRequire "PerlRequireTest.pm"
 
 <VirtualHost TestDirective::perlrequire>
 
+<IfDefine PERL_USEITHREADS>
   # a new interpreter pool
   PerlOptions +Parent
+</IfDefine>
 
   # use test system's @INC
   PerlSwitches -Mlib=@serverroot@
