@@ -15,9 +15,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 - DEFAULT_PATH quoting fixup
 [Sheldon Hearn <sheldonh@uunet.co.za>]
 
-- PerlRun $^W save/restore
-[Honza Pazdziora <adelton@informatics.muni.cz>]
-
 - Apache::FakeRequest::args doesnt behave right in a list context
 [Michael Finke <mfinke@apollo.screamdesign.com>]
 
@@ -40,6 +37,9 @@ just cvs [John M Vinopal <jvinopal@abattoir.com>]
 - solaris Perl Configure adds a space before -R in ccdlflags, see
   about removing that
   [Ken McNamara <conmara@oaktree.net>]
+
+- fixup for building with apxs when $Config{useshrplib} eq "define"
+[iroca@ssa.siemens.es]
 
 - see if possible to have the dso libperl.so be named something else,
   e.g. libmodperl.so 
