@@ -14,7 +14,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10 - September 29, 2003
 
-make sure that the custom pools and destroyed only once and only when
+make sure that the custom pools are destroyed only once and only when
 all references went out of scope [Stas]
 
 ($r|$c)->add_(input|output)_filter(\&handler) now verify that the
