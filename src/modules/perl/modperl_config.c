@@ -43,6 +43,11 @@ static apr_table_t *modperl_table_overlap(apr_pool_t *p,
      * note that this is equivalent to apr_table_overlap except a new
      * table is generated, which is required (otherwise we would clobber
      * the existing parent or child configurations)
+     *
+     * note that this is *not* equivalent to apr_table_overlap, although
+     * I think it should be, because apr_table_overlap seems to clear
+     * its first argument when the tables have different pools. I think
+     * this is wrong -- rici
      */
     apr_table_t *merge = apr_table_overlay(p, base, add);
 
@@ -59,54 +64,29 @@ static apr_table_t *modperl_table_overlap(apr_pool_t *p,
 #define merge_table_overlap_item(item) \
     mrg->item = modperl_table_overlap(p, base->item, add->item)
 
-static apr_table_t *merge_table_config_vars(apr_pool_t *p,
-                                            apr_table_t *configvars,
-                                            apr_table_t *set,
-                                            apr_table_t *add)
+static apr_table_t *merge_config_add_vars(apr_pool_t *p,
+                                          const apr_table_t *base,
+                                          const apr_table_t *unset,
+                                          const apr_table_t *add)
 {
-    apr_table_t *base = apr_table_copy(p, configvars);
-    apr_table_t *merged_config_vars;
+    apr_table_t *temp = apr_table_copy(p, base);
 
     const apr_array_header_t *arr;
     apr_table_entry_t *entries;
     int i;
 
-    /* configvars already contains a properly merged PerlSetVar/PerlAddVar
-     * configuration for the base (parent), so all we need to do is merge
-     * the add (child) configuration into it properly.
-     *
-     * any PerlSetVar settings in the add (child) config need to reset
-     * existing entries in the base (parent) config, or generate a
-     * new entry where none existed previously.  PerlAddVar settings
-     * are merged into that.
-     *
-     * unfortunately, there is no set of apr functions to do this for us - 
-     * apr_compress_table would be ok, except it always merges mulit-valued
-     * keys into one, regardless of the APR_OVERLAP_TABLES flag.  that is,
-     * regardless of whether newer entries are set or merged into existing
-     * entries, the entire table is _always_ compressed.  this is no good -
-     * we need separate entries for existing keys, not a single (compressed)
-     * entry.
-     *
-     * fortunately, the logic here is simple.  first, (re)set the base (parent)
-     * table where a PerlSetVar entry exists in the add (child) configuration.
-     * then, just overlay the PerlAddVar configuration into it.
-     */
-
-    arr = apr_table_elts(set);
+    /* for each key in unset do apr_table_unset(temp, key); */
+    arr = apr_table_elts(unset);
     entries  = (apr_table_entry_t *)arr->elts;
 
     /* hopefully this is faster than using apr_table_do  */
     for (i = 0; i < arr->nelts; i++) {
-        apr_table_setn(base, entries[i].key, entries[i].val);
+        if (entries[i].key) {
+            apr_table_unset(temp, entries[i].key);
+        }
     }
-
-    /* at this point, all the PerlSetVar merging has happened.  add in the 
-     * add (child) PerlAddVar entries and we're done
-     */
-    merged_config_vars = apr_table_overlay(p, base, add);
-      
-    return merged_config_vars;
+     
+    return apr_table_overlay(p, temp, add);
 }
 
 #define merge_handlers(merge_flag, array) \
@@ -141,18 +121,10 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
     merge_table_overlap_item(SetEnv);
 
     /* this is where we merge PerlSetVar and PerlAddVar together */
-    mrg->configvars = merge_table_config_vars(p,
-                                              base->configvars,
-                                              add->setvars, add->addvars);
-
-    /* note we don't care about merging dcfg->setvars or dcfg->addvars
-     * specifically - what is important to merge is dfcg->configvars.
-     * but we need to keep track of the entries for this config, so
-     * the merged values are simply the values for the add (current)
-     * configuration.
-     */
-    mrg->setvars = add->setvars;
-    mrg->addvars = add->addvars;
+    mrg->configvars = merge_config_add_vars(p,
+                                            base->configvars,
+                                            add->setvars, add->configvars);
+    merge_table_overlap_item(setvars);
 
     /* XXX: check if Perl*Handler is disabled */
     for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
@@ -187,7 +159,6 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
     scfg->setvars = apr_table_make(p, 2);
-    scfg->addvars = apr_table_make(p, 2);
     scfg->configvars = apr_table_make(p, 2);
 
     scfg->PassEnv = apr_table_make(p, 2);
@@ -223,7 +194,6 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p)
     dcfg->flags = modperl_options_new(p, MpDirType);
 
     dcfg->setvars = apr_table_make(p, 2);
-    dcfg->addvars = apr_table_make(p, 2);
     dcfg->configvars = apr_table_make(p, 2);
 
     dcfg->SetEnv = apr_table_make(p, 2);
@@ -320,18 +290,10 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_table_overlap_item(PassEnv);
  
     /* this is where we merge PerlSetVar and PerlAddVar together */
-    mrg->configvars = merge_table_config_vars(p,
-                                              base->configvars,
-                                              add->setvars, add->addvars);
-
-    /* note we don't care about merging dcfg->setvars or dcfg->addvars
-     * specifically - what is important to merge is dfcg->configvars.
-     * but we need to keep track of the entries for this config, so
-     * the merged values are simply the values for the add (current)
-     * configuration.
-     */
-    mrg->setvars = add->setvars;
-    mrg->addvars = add->addvars;
+    mrg->configvars = merge_config_add_vars(p,
+                                            base->configvars,
+                                            add->setvars, add->configvars);
+    merge_table_overlap_item(setvars);
 
     merge_item(server);
 
