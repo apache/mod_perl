@@ -20,6 +20,7 @@ use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
 
+use constant DARWIN => $^O eq 'darwin';
 use constant WIN32 => $^O eq 'MSWin32';
 use constant MSVC  => WIN32() && ($Config{cc} eq 'cl');
 
@@ -863,10 +864,14 @@ EOF
 
 sub dynamic_link_default {
     my $self = shift;
-    return $self->dynamic_link_header_default . <<'EOF';
-	-o $@
-	$(MODPERL_RANLIB) $@
-EOF
+
+    my $link = $self->dynamic_link_header_default . "\t" . '-o $@';
+
+    my $ranlib = "\t" . '$(MODPERL_RANLIB) $@';
+
+    $link .= "\n" . $ranlib unless DARWIN;
+
+    $link;
 }
 
 sub dynamic_link_MSWin32 {
