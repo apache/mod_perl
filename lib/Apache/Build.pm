@@ -68,6 +68,14 @@ sub ap_prefix_invalid {
     return '';
 }
 
+sub ap_prefix_is_source_tree {
+    my $self = shift;
+
+    my $prefix = $self->{MP_AP_PREFIX};
+
+    -d $prefix and -e "$prefix/CHANGES";
+}
+
 sub apxs {
     my $self = shift;
 
@@ -1049,8 +1057,7 @@ sub includes {
 
     push @inc, $self->mp_include_dir;
 
-    my $prefix = $self->{MP_AP_PREFIX};
-    if (-d $prefix and not -e "$prefix/CHANGES") {
+    unless ($self->ap_prefix_is_source_tree) {
         my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
         if (-d $ainc) {
             push @inc, $ainc;
