@@ -1574,7 +1574,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char **',
-    'name' => 'modperl_constants_group_lookup_apache2',
+    'name' => 'modperl_constants_group_lookup_apache2_const',
     'args' => [
       {
         'type' => 'const char *',
@@ -1584,7 +1584,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char **',
-    'name' => 'modperl_constants_group_lookup_apr',
+    'name' => 'modperl_constants_group_lookup_apr_const',
     'args' => [
       {
         'type' => 'const char *',
@@ -1604,7 +1604,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'modperl_constants_lookup_apache2',
+    'name' => 'modperl_constants_lookup_apache2_const',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
@@ -1618,7 +1618,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'modperl_constants_lookup_apr',
+    'name' => 'modperl_constants_lookup_apr_const',
     'args' => [
       {
         'type' => 'PerlInterpreter *',
