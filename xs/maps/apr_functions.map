@@ -50,21 +50,21 @@ MODULE=APR::Socket
  apr_recvfrom
  apr_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
  apr_sendto
- apr_shutdown
+!apr_shutdown
 -apr_socket_set_inherit
 -apr_socket_unset_inherit
 
 MODULE=APR::Socket
  apr_socket_close
 !apr_socket_create
- apr_socket_addr_get
- apr_socket_data_get
- apr_socket_data_set
+!apr_socket_addr_get
+!apr_socket_data_get
+!apr_socket_data_set
  apr_getsocketopt
  apr_setsocketopt
 -apr_sendfile
 -apr_sendv
- apr_socket_from_file
+!apr_socket_from_file
 
 MODULE=APR::SockAddr
 !apr_sockaddr_info_get
@@ -78,15 +78,15 @@ MODULE=APR::Brigade
  apr_brigade_create | mpxs_ | SV *:CLASS, p, list | new
  apr_brigade_destroy
 !apr_brigade_partition
- apr_brigade_printf
+!apr_brigade_printf
 -apr_brigade_putstrs
  apr_brigade_split
 -apr_brigade_to_iovec
 -apr_brigade_vprintf
 -apr_brigade_vputstrs
 !apr_brigade_length
- apr_brigade_write
- apr_brigade_puts
+!apr_brigade_write
+!apr_brigade_puts
 -apr_brigade_putc
 !apr_brigade_cleanup
 ?apr_brigade_flatten
@@ -159,22 +159,22 @@ MODULE=APR::Pool
  apr_pool_t *:DEFINE_new | mpxs_apr_pool_create | SV *:obj
 -apr_pool_create_ex
 >apr_pool_create_ex_debug
- apr_pool_userdata_get
- apr_pool_userdata_set
+!apr_pool_userdata_get
+!apr_pool_userdata_set
 -apr_pool_userdata_setn
- apr_pool_cleanup_kill
- apr_pool_cleanup_run
+!apr_pool_cleanup_kill
+!apr_pool_cleanup_run
 -apr_pool_cleanup_null
  apr_pool_cleanup_register | mpxs_ | p, SV *:cv, SV *:arg=Nullsv
  apr_pool_sub_make
- apr_pool_note_subprocess
+!apr_pool_note_subprocess
 -apr_palloc
 >apr_palloc_debug
 >apr_pcalloc_debug
 -apr_pcalloc
 -apr_pmemdup
- apr_pool_child_cleanup_set
- apr_pool_get_abort
+!apr_pool_child_cleanup_set
+!apr_pool_get_abort
  apr_pool_get_parent
  apr_pool_is_ancestor
 -apr_pool_set_abort
@@ -492,9 +492,9 @@ MODULE=APR::UUID
 
 MODULE=APR::NetLib
 -apr_gethostname
- apr_getnameinfo
+!apr_getnameinfo
 -apr_getservbyname
- apr_parse_addr_port
+!apr_parse_addr_port
 PACKAGE=APR::IpSubnet
  apr_ipsubnet_t *:apr_ipsubnet_create | mpxs_ | \
                   SV *:CLASS, p, ipstr, mask_or_numbits=NULL | new
