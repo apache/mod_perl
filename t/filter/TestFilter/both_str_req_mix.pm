@@ -124,9 +124,12 @@ __DATA__
         Options +Includes
 
         # DEFLATE has a higher priority (AP_FTYPE_CONTENT_SET=20) than
-        # mod_perl request filters (AP_FTYPE_RESOURCE), so it's going
+        # mod_perl request filters (AP_FTYPE_RESOURCE=10), so it's going
         # to filter input first no matter how we insert other mod_perl
-        # filters.
+        # filters. (mod_perl connection filter handlers have an even
+        # higher priority (AP_FTYPE_PROTOCOL = 30), see
+        # include/util_filter.h for those definitions).
+        #
         # PerlSetInputFilter is only useful for preserving the
         # insertion order of filters with the same priority
         SetInputFilter     DEFLATE
