@@ -2,6 +2,7 @@ access.t
 aplog.t
 conn_rec.t
 lookup_uri.t
+lookup_uri2.t
 module.t
 request_rec.t
 response.t
