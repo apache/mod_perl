@@ -15,6 +15,7 @@ use Apache::RequestRec ();
 use Apache::RequestUtil ();
 use Apache::HookRun ();
 use APR::Table ();
+use ModPerl::Util ();
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -111,7 +112,7 @@ sub post_read_request {
 sub any {
     my $r = shift;
 
-    my $callback = Apache::current_callback();
+    my $callback = ModPerl::Util::current_callback();
 
     debug "running $callback\n";
     $r->notes->set($callback => 1);

@@ -6,9 +6,7 @@
 MODULE=ModPerl::Util
  mpxs_ModPerl__Util_untaint | | ...
  DEFINE_exit | | int:status=0
-
-PACKAGE=Apache
-  char *:DEFINE_current_callback 
+ char *:DEFINE_current_callback 
 
 MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
