@@ -37,7 +37,7 @@ extern module MODULE_VAR_EXPORT perl_module;
 #include "modperl_tipool.h"
 #include "modperl_interp.h"
 #include "modperl_log.h"
-
+#include "modperl_options.h"
 #include "modperl_directives.h"
 
 void modperl_init(server_rec *s, ap_pool_t *p);

@@ -176,3 +176,61 @@ Min number of spare Perl interpreters
 Max number of requests per Perl interpreters
 
 =back
+
+=head2 PerlOptions Directive
+
+Enable/Disable Options.  Options include:
+
+=over 4
+
+=item Parent
+
+Create a new parent Perl interpreter for the given VirtualHost
+(implies Clone).
+
+=item Clone
+
+Give the VirtualHost its own interpreter pool.
+
+=item Enabled
+
+On by default, used to disable mod_perl for a given VirtualHost.
+
+=item Perl*Handler
+
+Disable Perl*Handlers, all compiled in handlers are enabled by default.
+
+=back
+
+Examples:
+
+ #disable mod_perl for this host
+ <VirtualHost ...>
+ PerlOptions -Enable
+ </VirtualHost>
+
+ #create 2 Parent Perls,
+ #each pointing to a different developer library tree
+ <VirtualHost ...>
+  ServerName dev1
+  PerlOptions +Parent
+  PerlSwitches -Mblib=/home/dev1/lib/perl
+ </VirtualHost>
+
+ <VirtualHost ...>
+  ServerName dev2
+  PerlOptions +Parent
+  PerlSwitches -Mblib=/home/dev2/lib/perl
+ </VirtualHost>
+
+ #give VirtualHost its own interpreter pool
+ <VirtualHost ...>
+  PerlOptions +Clone
+  PerlInterpStart 2
+  PerlInterpMax 2
+ </VirtualHost>
+
+ #disable handlers
+ <VirtualHost ...>
+  PerlOptions -Authen -Authz -Access
+ </VirtualHost>

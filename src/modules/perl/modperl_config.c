@@ -56,6 +56,10 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
     modperl_srv_config_t *scfg = (modperl_srv_config_t *)
         ap_pcalloc(p, sizeof(*scfg));
 
+    scfg->flags = modperl_options_new(p, MpSrvType);
+    MpSrvENABLED_On(scfg); /* mod_perl enabled by default */
+    MpSrvHOOKS_ALL_On(scfg); /* all hooks enabled by default */
+
     scfg->argv = ap_make_array(p, 2, sizeof(char *));
 
     scfg_push_argv((char *)ap_server_argv0);
@@ -154,16 +158,20 @@ void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
     merge_item(perl);
 #endif
 
+    merge_item(argv);
     merge_item(files_cfg);
     merge_item(process_cfg);
     merge_item(connection_cfg);
 
     { /* XXX: should do a proper merge of the arrays */
+      /* XXX: and check if Perl*Handler is disabled */
         int i;
         for (i=0; i<MP_PER_SRV_NUM_HANDLERS; i++) {
             merge_item(handlers[i]);
         }
     }
+
+    mrg->flags = modperl_options_merge(p, base->flags, add->flags);
 
     return mrg;
 }
@@ -192,6 +200,22 @@ MP_DECLARE_SRV_CMD(switches)
 {
     MP_dSCFG(parms->server);
     scfg_push_argv(arg);
+    return NULL;
+}
+
+MP_DECLARE_SRV_CMD(options)
+{
+    MP_dSCFG(parms->server);
+    ap_pool_t *p = parms->pool;
+    const char *error;
+
+    MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
+    error = modperl_options_set(p, scfg->flags, arg);
+
+    if (error) {
+        return error;
+    }
+
     return NULL;
 }
 

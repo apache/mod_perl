@@ -81,15 +81,17 @@ while (my($k,$v) = each %directive_proto) {
     $directive_proto{$k}->{ret} = 'const char *';
 }
 
+#XXX: allow disabling of PerDir hooks on a PerDir basis
+my @hook_flags = (map { canon_uc($_) } keys %hooks);
 my %flags = (
-    Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART
-               PERL_CLONE PERL_ALLOC PERL_OFF UNSET)],
-    Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
+    Srv => [qw(NONE CLONE PARENT ENABLED), @hook_flags, 'UNSET'],
+    Dir => [qw(NONE SEND_HEADER SETUP_ENV UNSET)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
 );
 
-my %flags_lookup = map { $_,1 } qw(Srv);
+my %flags_lookup = map { $_,1 } qw(Srv Dir);
+my %flags_options = map { $_,1 } qw(Srv);
 
 sub new {
     my $class = shift;
@@ -201,10 +203,11 @@ sub generate_handler_directives {
         my $i = 0;
 
         for my $h (@$handlers) {
+            my $h_name = join $h, qw(Perl Handler);
             my $name = canon_func('cmd', $h, 'handlers');
             my $cmd_name = canon_define('cmd', $h, 'entry');
             my $protostr = canon_proto($prototype, $name);
-
+            my $flag = 'MpSrv' . canon_uc($h);
             my $ix = $self->{handler_index}->{$class}->[$i++];
             my $av = "$prototype->{cfg}->{name}->handlers[$ix]";
 
@@ -215,7 +218,7 @@ sub generate_handler_directives {
             print $h_fh <<EOF;
 
 #define $cmd_name \\
-{"Perl${h}Handler", $name, NULL, \\
+{"$h_name", $name, NULL, \\
  $prototype->{scope}, ITERATE, "Subroutine name"}
 
 EOF
@@ -223,9 +226,14 @@ EOF
 $protostr
 {
     $prototype->{cfg}->{get};
-    if (MpSrvPERL_OFF(scfg)) {
+    if (!MpSrvENABLED(scfg)) {
         return ap_pstrcat(parms->pool,
                           "Perl is disabled for server ",
+                          parms->server->server_hostname, NULL);
+    }
+    if (!$flag(scfg)) {
+        return ap_pstrcat(parms->pool,
+                          "$h_name is disabled for server ",
                           parms->server->server_hostname, NULL);
     }
     MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
@@ -243,24 +251,34 @@ EOF
 sub generate_flags {
     my($self, $h_fh, $c_fh) = @_;
 
+    my $n = 1;
+
     while (my($class, $opts) = each %{ $self->{flags} }) {
         my $i = 0;
         my @lookup = ();
         my $lookup_proto = "";
+        my @dumper;
         if ($flags_lookup{$class}) {
             $lookup_proto = join canon_func('flags', 'lookup', $class),
-              'int ', '(const char *str)';
+              'U32 ', '(const char *str)';
             push @lookup, "$lookup_proto {";
         }
 
-        print $h_fh "\n#define Mp${class}FLAGS(p) p->flags\n";
+        my $flags = join $class, qw(Mp FLAGS);
+
+        print $h_fh "\n#define $flags(p) ",
+          ($flags_options{$class} ? '(p)->flags->opts' : '(p)->flags'), "\n";
+
         $class = "Mp$class";
+        print $h_fh "\n#define ${class}Type $n\n";
+        $n++;
 
         for my $f (@$opts) {
             my $flag = "${class}_f_$f";
             my $cmd  = $class . $f;
+            my $name = canon_name($f);
+
             if (@lookup) {
-                my $name = canon_name($f);
                 push @lookup, qq(   if (strEQ(str, "$name")) return $flag;);
             }
 
@@ -268,18 +286,31 @@ sub generate_flags {
 
 /* $f */
 #define $flag $i
-#define $cmd(p)  ((p)->flags & $flag)
-#define ${cmd}_On(p)  ((p)->flags |= $flag)
-#define ${cmd}_Off(p) ((p)->flags &= ~$flag)
+#define $cmd(p)  ($flags(p) & $flag)
+#define ${cmd}_On(p)  ($flags(p) |= $flag)
+#define ${cmd}_Off(p) ($flags(p) &= ~$flag)
 
 EOF
+            push @dumper,
+              qq{fprintf(stderr, " $name %s\\n", \\
+                         ($flags(p) & $i) ? "On " : "Off");};
+
             $i += $i || 1;
         }
         if (@lookup) {
-            print $c_fh join "\n", @lookup, "   return -1;\n}\n";
+            print $c_fh join "\n", @lookup, "   return 0;\n}\n";
             print $h_fh "$lookup_proto;\n";
         }
+
+        shift @dumper; #NONE
+        print $h_fh join ' \\'."\n", 
+          "#define ${class}_dump_flags(p, str)",
+                     qq{fprintf(stderr, "$class flags dump (%s):\\n", str);},
+                     @dumper;
     }
+
+    print $h_fh "\n#define MpSrvHOOKS_ALL_On(p) MpSrvFLAGS(p) |= (",
+      (join '|', map { 'MpSrv_f_' . $_ } @hook_flags), ")\n";
 
     ();
 }
@@ -408,7 +439,7 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
-my @c_src_names = qw(interp tipool log config callback gtop);
+my @c_src_names = qw(interp tipool log config options callback gtop);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
 sub c_files { [map { "$_.c" } @c_names, @g_c_names] }
