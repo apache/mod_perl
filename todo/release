@@ -68,35 +68,6 @@ Index: t/response/TestAPI/rflush.pm
   Apache::RequestUtil:
   ? mpxs_Apache__RequestRec_new (having problems): Apache__RequestUtil.patch
   
-  *** returning strings ***
-  
-  Apache::ServerUtil
-  - mpxs_Apache__ServerUtil_server_root_relative (once this is
-    supported, we no longer need to double copy the string)
-  
-  Apache::URI:
-  - ap_construct_server
-  - ap_construct_url
-  
   APR::URI
   - mpxs_apr_uri_parse
-  
-  Apache::Util
-  - ap_ht_time
-  - escape_path
 
-
-  ==========================
-  === Apache::SubRequest ===
-  ==========================
-  no method uses the object in a way related to the issue in hand
-
-  =================
-  === APR::UUID ===
-  =================
-  no method uses the object in a way related to the issue in hand
-
-  ========================
-  === APR::ThreadMutex ===
-  ========================
-  no method uses the object in a way related to the issue in hand
