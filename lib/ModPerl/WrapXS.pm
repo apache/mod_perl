@@ -496,10 +496,13 @@ sub write_pm {
 $noedit_warning
 
 package $module;
-$isa
-use $loader ();
-our \$VERSION = '0.01';
-$loader\::load __PACKAGE__;
+
+BEGIN {
+    $isa
+    use $loader ();
+    our \$VERSION = '0.01';
+    $loader\::load __PACKAGE__;
+}
 
 $code
 
