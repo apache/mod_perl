@@ -294,7 +294,16 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
          * handle APR_BLOCK_READ requests by returning data when
          * requested.
          */
-        AP_DEBUG_ASSERT(!APR_BRIGADE_EMPTY(bb));
+        if (APR_BRIGADE_EMPTY(bb)) {
+            apr_brigade_destroy(bb);
+            /* we can't tell which filter is broken, since others may
+             * just pass data through */
+            sv_setpv(ERRSV, "Aborting read from client. "
+                     "One of the input filters is broken. "
+                     "It returned an empty bucket brigade for "
+                     "the APR_BLOCK_READ mode request");
+            return -1;
+        }
 
         if (APR_BUCKET_IS_EOS(APR_BRIGADE_LAST(bb))) {
             seen_eos = 1;
