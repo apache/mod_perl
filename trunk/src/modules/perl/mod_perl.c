@@ -436,7 +436,7 @@ static void mp_dso_unload(void *data)
 static void mp_server_notstarting(void *data) 
 {
     saveINC;
-    perl_require_module("Apache", NULL); 
+    require_Apache(NULL); 
     Apache__ServerStarting(FALSE);
 }
 

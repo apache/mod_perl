@@ -1084,6 +1084,9 @@ void perl_stdout2client(request_rec *r);
 
 /* perl_config.c */
 
+#define require_Apache(s) \
+    perl_require_module("Apache", s)
+
 #define defined_Apache__ReadConfig \
 SvTRUE(perl_eval_pv("grep {defined %$_ or defined @$_ or defined $$_} keys %Apache::ReadConfig::;",TRUE))
 

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_02-dev
 
+<Perl> sections will always make sure Apache.pm is loaded
+
 =item 1.16_01 - November 24, 1998
 
 $r->connection->remote_addr can now be changed
