@@ -190,11 +190,11 @@ int modperl_callback_run_handlers(int idx, int type,
         MP_TRACE_h(MP_FUNC, "%s returned %d\n", handlers[i]->name, status);
 
         /* follow Apache's lead and let OK terminate the phase for
-         * RUN_FIRST handlers.  RUN_ALL handlers keep going on OK.
-         * VOID handler ignore all errors.
+         * MP_HOOK_RUN_FIRST handlers.  MP_HOOK_RUN_ALL handlers keep going on OK.
+         * MP_HOOK_VOID handler ignore all errors.
          */
 
-        if (run_mode == RUN_ALL) {
+        if (run_mode == MP_HOOK_RUN_ALL) {
             /* the normal case:
              *   OK and DECLINED continue 
              *   errors end the phase
@@ -211,7 +211,7 @@ int modperl_callback_run_handlers(int idx, int type,
                 break;
             }
         }
-        else if (run_mode == RUN_FIRST) {
+        else if (run_mode == MP_HOOK_RUN_FIRST) {
             /* the exceptional case:
              *   OK and errors end the phase
              *   DECLINED continues
@@ -239,7 +239,7 @@ int modperl_callback_run_handlers(int idx, int type,
         }
         else {
             /* the rare case.
-             * VOID handlers completely ignore the return status
+             * MP_HOOK_VOID handlers completely ignore the return status
              * Apache should handle whatever mod_perl returns, 
              * so there is no need to mess with the status
              */

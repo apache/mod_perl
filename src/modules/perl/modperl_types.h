@@ -249,9 +249,9 @@ typedef struct {
 } modperl_module_cmd_data_t;
 
 typedef enum {
-    RUN_ALL,
-    RUN_FIRST,
-    VOID
+    MP_HOOK_RUN_ALL,
+    MP_HOOK_RUN_FIRST,
+    MP_HOOK_VOID
 } modperl_hook_run_mode_e;
 
 #endif /* MODPERL_TYPES_H */

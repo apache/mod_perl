@@ -64,7 +64,7 @@
     }
 
 /* turn off cgi header parsing. in case we are already inside
- *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, RUN_FIRST); 
+ *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, MP_HOOK_RUN_FIRST); 
  * but haven't sent any data yet, it's too late to change
  * MpReqPARSE_HEADERS, so change the wbucket's private flag directly
  */
