@@ -1666,6 +1666,27 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
     }   
 }
 
+static int gvhv_is_stash(GV *gv)
+{
+    int len = GvNAMELEN(gv);
+    char *name = GvNAME(gv);
+
+    if ((len > 2) &&
+        (name[len - 1] == ':') &&
+        (name[len - 2] == ':'))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+/*
+ * we do not clear symbols within packages, the desired behavior
+ * for directive handler classes.  and there should never be a package
+ * within the %Apache::ReadConfig.  nothing else that i'm aware of calls
+ * this function, so we should be ok.
+ */
 void perl_clear_symtab(HV *symtab) 
 {
     SV *val;
@@ -1684,7 +1705,7 @@ void perl_clear_symtab(HV *symtab)
 	    continue;
 	if((sv = GvSV((GV*)val)))
 	    sv_setsv(GvSV((GV*)val), &sv_undef);
-	if((hv = GvHV((GV*)val)))
+	if((hv = GvHV((GV*)val)) && !gvhv_is_stash((GV*)val))
 	    hv_clear(hv);
 	if((av = GvAV((GV*)val)))
 	    av_clear(av);
