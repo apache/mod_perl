@@ -3929,14 +3929,6 @@ $ModPerl::FunctionTable = [
     'return_type' => 'int',
     'name' => 'modperl_run',
     'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'p'
-      },
-      {
-        'type' => 'server_rec *',
-        'name' => 's'
-      }
     ]
   },
   {

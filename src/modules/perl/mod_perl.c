@@ -331,20 +331,6 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     modperl_config_srv_t *base_scfg;
     PerlInterpreter *base_perl;
 
-    /* get the real base server when invoked from vhost.
-     *
-     * without doing it segfaults when the first PerlLoadModule
-     * appears inside vhost, e.g.:
-     *     <VirtualHost _default_:8535>
-     *         PerlLoadModule Foo
-     *     </VirtualHost> 
-     * an arrangement which is unfortunately hard to automate with our
-     * test suite, but see test TestDirective::perlloadmodule6
-     */
-    if (base_server->is_virtual) {
-        base_server = modperl_global_get_server_rec();
-    }
-
     base_scfg = modperl_config_srv_get(base_server);
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
@@ -505,14 +491,12 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
  * if we need to init earlier than post_config,
  * e.g. <Perl> sections or directive handlers.
  */
-/*
- * XXX: this probably won't work well if called from a
- * vhost rather than the base config if modperl_hook_init
- * hasn't been run first from the base config.
- */
-int modperl_run(apr_pool_t *p, server_rec *s)
+int modperl_run(void)
 {
-    return modperl_hook_init(p, NULL, NULL, s);
+    return modperl_hook_init(modperl_global_get_pconf(),
+                             NULL,
+                             NULL,
+                             modperl_global_get_server_rec());
 }
 
 int modperl_is_running(void)
