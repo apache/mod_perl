@@ -7,7 +7,9 @@ Changes - Apache mod_perl change logfile
 =over 3
 
 =item 1.13_01-dev
- 
+
+added Apache::URI module (enable with PERL_URI_API=1 or EVERYTHING=1)
+
 register_cleanup to SvREFCNT_dec handler stacks, otherwise we leak
 during kill -USR1 when configuration is re-read
 

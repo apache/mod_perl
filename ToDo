@@ -133,8 +133,6 @@ NEW STUFF
   from http_main.c) 
 	Doug Bagley <doug@dejanews.com>
 
-- Apache::URI interface to uri_components structure
- 
 - provide namespace protection when 'use Foo' might be two different modules
   i.e. re-visit Apache::Safe
 
