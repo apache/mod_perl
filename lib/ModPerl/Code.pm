@@ -433,9 +433,8 @@ my %trace = (
 sub generate_trace {
     my($self, $h_fh) = @_;
 
-    my $dev = '-dev'; #XXX parse Changes
-    my $v = $mod_perl::VERSION;
-    $v =~ s/(\d\d)(\d\d)$/$1 . '_' . $2 . $dev/e;
+    my $v = $self->{build}->{VERSION};
+
     print $h_fh qq(#define MP_VERSION_STRING "mod_perl/$v"\n);
 
     my $i = 1;
@@ -667,6 +666,8 @@ sub postamble {
 
 sub generate {
     my($self, $build) = @_;
+
+    $self->{build} = $build;
 
     for my $s (values %sources) {
         for (qw(h c)) {
