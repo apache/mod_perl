@@ -1974,6 +1974,27 @@ EOT
 1;
 
 __END__
+
+=head1 NAME
+
+Apache::MyConfig - build options access
+
+=head1 SYNOPSIS
+
+ use Apache::MyConfig;
+ die unless \$Apache::MyConfig::Setup{PERL_FILE_API};
+
+=head1 DESCRIPTION
+
+B<Apache::MyConfig> module provides access to the various hooks
+and features set when mod_perl is built.  This circumvents the
+need to set up a live server just to find out if a certain callback
+hook is available.
+
+Itterate through \%Apache::MyConfig::Setup to get obtain build
+information then see Appendix B of the Eagle book for more detail
+on each key.
+
 EOT
     close FH;
 
