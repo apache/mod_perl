@@ -58,6 +58,7 @@ static void modperl_xs_init(pTHX)
 
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
+    dTHXa(NULL);
     MP_dSCFG(s);
     PerlInterpreter *perl;
     int status;
@@ -81,13 +82,12 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
+    aTHX = perl;
+
     perl_construct(perl);
-#ifdef MP_DEBUG
-    {
-        dTHXa(perl);
-        PL_perl_destruct_level = 2;
-    }
-#endif
+
+    PL_perl_destruct_level = 2;
+
     status = perl_parse(perl, modperl_xs_init, argc, argv, NULL);
 
     if (status) {
