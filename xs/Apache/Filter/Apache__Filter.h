@@ -100,24 +100,22 @@ static XS(MPXS_modperl_filter_attributes)
         char *pv = SvPV(ST(i), len);
         char *attribute = pv;
 
+        if (strnEQ(pv, "Filter", 6)) {
+            pv += 6;
+        }
+
         switch (*pv) {
-          case 'I':
-            if (strnEQ(pv, "InputFilter", 11)) {
-                pv += 11;
-                switch (*pv) {
-                  case 'B':
-                    if (strEQ(pv, "Body")) {
-                        *attrs |= MP_INPUT_FILTER_BODY;
-                        trace_attr();
-                        continue;
-                    }
-                  case 'M':
-                    if (strEQ(pv, "Message")) {
-                        *attrs |= MP_INPUT_FILTER_MESSAGE;
-                        trace_attr();
-                        continue;
-                    }
-                }
+          case 'C':
+            if (strEQ(pv, "ConnectionHandler")) {
+                *attrs |= MP_FILTER_CONNECTION_HANDLER;
+                trace_attr();
+                continue;
+            }
+          case 'R':
+            if (strEQ(pv, "RequestHandler")) {
+                *attrs |= MP_FILTER_REQUEST_HANDLER;
+                trace_attr();
+                continue;
             }
           default:
             XPUSHs_mortal_pv(attribute);

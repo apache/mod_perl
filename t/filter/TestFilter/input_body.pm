@@ -12,7 +12,7 @@ use APR::Const -compile => ':common';
 use APR::Brigade ();
 use APR::Bucket ();
 
-sub handler : InputFilterBody {
+sub handler : FilterRequestHandler {
     my($filter, $bb, $mode, $readbytes) = @_;
 
     if ($bb->empty) {

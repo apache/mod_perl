@@ -75,12 +75,13 @@ MP_INLINE apr_status_t modperl_wbucket_write(modperl_wbucket_t *wb,
 
 /* generic filter routines */
 
+#define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
+
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_bucket_brigade *bb,
                                      modperl_filter_mode_e mode)
 {
-    apr_pool_t *p = mode == MP_INPUT_FILTER_MODE ?
-        f->c->pool : f->r->pool;
+    apr_pool_t *p = MP_FILTER_POOL(f);
     modperl_filter_t *filter = apr_pcalloc(p, sizeof(*filter));
 
     filter->mode = mode;
@@ -152,8 +153,16 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
 
 MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
 {
-    apr_bucket_brigade *bb = apr_brigade_create(f->r->pool);
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f));
     apr_bucket *b = apr_bucket_eos_create();
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+    return ap_pass_brigade(f->next, bb);
+}
+
+MP_INLINE static apr_status_t send_flush(ap_filter_t *f)
+{
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f));
+    apr_bucket *b = apr_bucket_flush_create();
     APR_BRIGADE_INSERT_TAIL(bb, b);
     return ap_pass_brigade(f->next, bb);
 }
@@ -171,6 +180,9 @@ APR_BUCKET_NEXT(filter->bucket)
 
 #define MP_FILTER_IS_EOS(filter) \
 APR_BUCKET_IS_EOS(filter->bucket)
+
+#define MP_FILTER_IS_FLUSH(filter) \
+APR_BUCKET_IS_FLUSH(filter->bucket)
 
 MP_INLINE static int get_bucket(modperl_filter_t *filter)
 {
@@ -253,6 +265,11 @@ MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
             filter->eos = 1;
             break;
         }
+        else if (MP_FILTER_IS_FLUSH(filter)) {
+            MP_TRACE_f(MP_FUNC, "received FLUSH bucket\n");
+            filter->flush = 1;
+            break;
+        }
 
         num_buckets++;
 
@@ -298,7 +315,7 @@ MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
     }
 #endif
 
-    if (filter->eos && (len == 0)) {
+    if ((filter->eos || filter->flush) && (len == 0)) {
         /* if len > 0 then $filter->write will flush */
         modperl_output_filter_flush(filter);
     }
@@ -313,12 +330,14 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
         return filter->rc;
     }
 
-    if (filter->eos) {
-        MP_TRACE_f(MP_FUNC, "sending EOS bucket\n");
-        filter->rc = send_eos(filter->f);
+    if (filter->eos || filter->flush) {
+        MP_TRACE_f(MP_FUNC, "sending %s bucket\n",
+                   filter->eos ? "EOS" : "FLUSH");
+        filter->rc = filter->eos ?
+            send_eos(filter->f) : send_flush(filter->f);
         apr_brigade_destroy(filter->bb);
         filter->bb = NULL;
-        filter->eos = 0;
+        filter->flush = filter->eos = 0;
     }
 
     return filter->rc;
@@ -387,87 +406,74 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     }
 }
 
-void modperl_output_filter_register(request_rec *r)
-{
-    MP_dDCFG;
-    MpAV *av;
+typedef ap_filter_t * (*filter_add_t) (const char *, void *,
+                                       request_rec *, conn_rec *);
 
-    if ((av = dcfg->handlers_per_dir[MP_OUTPUT_FILTER_HANDLER])) {
-        modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
-        int i;
-
-        for (i=0; i<av->nelts; i++) {
-            modperl_filter_ctx_t *ctx =
-                (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
-            ctx->handler = handlers[i];
-            ap_add_output_filter(MODPERL_OUTPUT_FILTER_NAME,
-                                 (void*)ctx, r, r->connection);
-        }
-
-        return;
-    }
-
-    MP_TRACE_h(MP_FUNC, "no OutputFilter handlers configured (%s)\n",
-               r->uri);
-}
-
-int modperl_input_filter_register_connection(conn_rec *c)
+static int modperl_filter_register_connection(conn_rec *c,
+                                              int idx,
+                                              const char *name,
+                                              filter_add_t addfunc,
+                                              const char *type)
 {
     modperl_config_dir_t *dcfg =
         modperl_config_dir_get_defaults(c->base_server);
     MpAV *av;
 
-    if ((av = dcfg->handlers_per_dir[MP_INPUT_FILTER_HANDLER])) {
+    if ((av = dcfg->handlers_per_dir[idx])) {
         modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
         int i;
 
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
 
-            if (!(handlers[i]->attrs & MP_INPUT_FILTER_MESSAGE)) {
+            if (!(handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
                 MP_TRACE_f(MP_FUNC,
-                           "%s is not an InputFilterMessage handler\n",
+                           "%s is not an FilterConnection handler\n",
                            handlers[i]->name);
                 continue;
             }
 
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
-            ap_add_input_filter(MODPERL_INPUT_FILTER_NAME,
-                                (void*)ctx, NULL, c);
+            addfunc(name, (void*)ctx, NULL, c);
         }
 
         return OK;
     }
 
-    MP_TRACE_h(MP_FUNC, "no InputFilter handlers configured (connection)\n");
+    MP_TRACE_h(MP_FUNC, "no %s handlers configured (connection)\n", type);
 
     return DECLINED;
 }
 
-int modperl_input_filter_register_request(request_rec *r)
+static int modperl_filter_register_request(request_rec *r,
+                                           int idx,
+                                           const char *name,
+                                           filter_add_t addfunc,
+                                           const char *type,
+                                           ap_filter_t *filters)
 {
     MP_dDCFG;
     MpAV *av;
 
-    if ((av = dcfg->handlers_per_dir[MP_INPUT_FILTER_HANDLER])) {
+    if ((av = dcfg->handlers_per_dir[idx])) {
         modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
         int i;
 
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
             int registered = 0;
-            ap_filter_t *f = r->connection->input_filters;
+            ap_filter_t *f = filters;
 
             while (f) {
                 const char *name = f->frec->name;
 
-                if (*name == 'M' && strEQ(name, MODPERL_INPUT_FILTER_NAME)) {
+                if (*name == 'M' && strEQ(name, name)) {
                     modperl_handler_t *ctx_handler = 
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
 
                     if (modperl_handler_equal(ctx_handler, handlers[i])) {
-                        /* skip if modperl_input_filter_register_connection
+                        /* skip if modperl_filter_register_connection
                          * already registered this handler
                          * XXX: set a flag in the modperl_handler_t instead
                          */
@@ -481,24 +487,61 @@ int modperl_input_filter_register_request(request_rec *r)
 
             if (registered) {
                 MP_TRACE_f(MP_FUNC,
-                        "%s InputFilter already registered\n",
-                        handlers[i]->name);
+                        "%s %s already registered\n",
+                        handlers[i]->name, type);
                 continue;
             }
 
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
-            ap_add_input_filter(MODPERL_INPUT_FILTER_NAME,
-                                (void*)ctx, r, r->connection);
+            addfunc(name, (void*)ctx, r, NULL);
         }
 
         return OK;
     }
 
-    MP_TRACE_h(MP_FUNC, "no InputFilter handlers configured (%s)\n",
-               r->uri);
+    MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
+               type, r->uri);
 
     return DECLINED;
+}
+
+void modperl_output_filter_register_connection(conn_rec *c)
+{
+    modperl_filter_register_connection(c,
+                                       MP_OUTPUT_FILTER_HANDLER,
+                                       MODPERL_OUTPUT_FILTER_NAME,
+                                       ap_add_output_filter,
+                                       "OutputFilter");
+}
+
+void modperl_output_filter_register_request(request_rec *r)
+{
+    modperl_filter_register_request(r,
+                                    MP_OUTPUT_FILTER_HANDLER,
+                                    MODPERL_OUTPUT_FILTER_NAME,
+                                    ap_add_output_filter,
+                                    "OutputFilter",
+                                    r->connection->output_filters);
+}
+
+void modperl_input_filter_register_connection(conn_rec *c)
+{
+    modperl_filter_register_connection(c,
+                                       MP_INPUT_FILTER_HANDLER,
+                                       MODPERL_INPUT_FILTER_NAME,
+                                       ap_add_input_filter,
+                                       "InputFilter");
+}
+
+void modperl_input_filter_register_request(request_rec *r)
+{
+    modperl_filter_register_request(r,
+                                    MP_INPUT_FILTER_HANDLER,
+                                    MODPERL_INPUT_FILTER_NAME,
+                                    ap_add_input_filter,
+                                    "InputFilter",
+                                    r->connection->input_filters);
 }
 
 void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
