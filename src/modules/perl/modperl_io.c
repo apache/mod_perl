@@ -99,7 +99,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     MP_TRACE_o(MP_FUNC, "start");
 
     /* open my $oldout, ">&STDIN" or die "Can't dup STDIN: $!"; */
-    status = Perl_do_open(aTHX_ handle_save, ">&STDIN", 8, FALSE, O_RDONLY,
+    status = Perl_do_open(aTHX_ handle_save, ">&STDIN", 7, FALSE, O_RDONLY,
                           0, Nullfp);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to dup STDIN: %_", get_sv("!", TRUE));
