@@ -112,11 +112,9 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     
     rc = apr_file_open(&st->file, path, apr_flag, APR_OS_DEFAULT, st->pool);
 
-#ifdef PERLIO_APR_DEBUG
-    Perl_warn(aTHX_ "PerlIOAPR_open obj=0x%lx, file=0x%lx, name=%s, rc=%d\n",
-              (unsigned long)f, (unsigned long)st->file,
-              path ? path : "(UNKNOWN)", rc);
-#endif
+    MP_TRACE_o(MP_FUNC, "obj=0x%lx, file=0x%lx, name=%s, rc=%d",
+               (unsigned long)f, (unsigned long)st->file,
+               path ? path : "(UNKNOWN)", rc);
 
     if (rc != APR_SUCCESS) {
         PerlIO_pop(aTHX_ f);
@@ -145,14 +143,11 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
         PerlIOAPR *ost = PerlIOSelf(o, PerlIOAPR);
 
         rc = apr_file_dup(&fst->file, ost->file, ost->pool);
-
-#ifdef PERLIO_APR_DEBUG
-        Perl_warn(aTHX_ "PerlIOAPR_dup obj=0x%lx, "
-                        "file=0x%lx => 0x%lx, rc=%d\n",
-                  (unsigned long)f,
-                  (unsigned long)ost->file,
-                  (unsigned long)fst->file, rc);
-#endif
+        
+        MP_TRACE_o(MP_FUNC, "obj=0x%lx, "
+                   "file=0x%lx => 0x%lx, rc=%d",
+                   (unsigned long)f, (unsigned long)ost->file,
+                   (unsigned long)fst->file, rc);
 
         if (rc == APR_SUCCESS) {
             fst->pool = ost->pool;
@@ -169,20 +164,24 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
     apr_status_t rc;
 
     rc = apr_file_read(st->file, vbuf, &count);
+
+#ifdef MP_TRACE
+    {
+        const char *trace_buf = (char *)apr_pcalloc(st->pool,
+                                                   sizeof(char*)*count);
+        memcpy((void*)trace_buf, vbuf, count);
+        trace_buf[count] = '\0';
+        MP_TRACE_o(MP_FUNC, "count %d, [%s]", (int)count, (char*) trace_buf);
+    }
+#endif
+    
     if (rc == APR_EOF) {
         PerlIOBase(f)->flags |= PERLIO_F_EOF;
         return count;
     }
     else if (rc != APR_SUCCESS) {
-#ifdef PERLIO_APR_DEBUG
-        /* XXX: need to figure way to map APR errno to normal errno,
-         * so we can use SETERRNO to make the apr errors available to
-         * Perl's $!  */
         Perl_croak(aTHX_ "failed to read from file: %s",
                    modperl_apr_strerror(rc));
-#endif
-        PerlIOBase(f)->flags |= PERLIO_F_ERROR;
-        return -1;
     }
 
     return count;
@@ -193,10 +192,7 @@ static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
 
-#if 0    
-     Perl_warn(aTHX_ "in write: count %d, %s\n",
-               (int)count, (char*) vbuf);
-#endif
+    MP_TRACE_o(MP_FUNC, "count %d, [%s]", (int)count, (char*) vbuf);
     
     rc = apr_file_write(st->file, vbuf, &count);
     if (rc == APR_SUCCESS) {
@@ -283,7 +279,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
     IV code = PerlIOBase_close(aTHX_ f);
     apr_status_t rc;
 
-#ifdef PERLIO_APR_DEBUG
+#ifdef MP_TRACE
     const char *new_path = NULL;
     apr_os_file_t os_file;
 
@@ -297,9 +293,9 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
         Perl_croak(aTHX_ "filedes retrieval failed!");
     }
 
-    Perl_warn(aTHX_ "PerlIOAPR_close obj=0x%lx, file=0x%lx, fd=%d, name=%s\n",
-              (unsigned long)f, (unsigned long)st->file, os_file,
-              new_path ? new_path : "(UNKNOWN)");
+    MP_TRACE_o(MP_FUNC, "obj=0x%lx, file=0x%lx, fd=%d, name=%s",
+               (unsigned long)f, (unsigned long)st->file, os_file,
+               new_path ? new_path : "(UNKNOWN)");
 #endif
 
     if (PL_dirty) {
@@ -337,9 +333,7 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
         PerlIO_get_base(f);  /* allocate via vtable */
     }
         
-#if 0
-     Perl_warn(aTHX_ "ask to fill %d chars\n", count);
-#endif
+    MP_TRACE_o(MP_FUNC, "asked to fill %d chars", count);
 
     rc = apr_file_read(st->file, st->base.ptr, &count);
     if (rc != APR_SUCCESS) {
@@ -347,9 +341,7 @@ static IV PerlIOAPR_fill(pTHX_ PerlIO *f)
         return -1;
     }
 
-#if 0    
-     Perl_warn(aTHX_ "got to fill %d chars\n", count);
-#endif
+    MP_TRACE_o(MP_FUNC, "got to fill %d chars", count);
 
     avail = count; /* apr_file_read() sets how many chars were read in count */
     if (avail <= 0) {
@@ -468,7 +460,7 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
 
     st = PerlIOSelf(f, PerlIOAPR);
 
-#ifdef PERLIO_APR_DEBUG    
+#ifdef MP_TRACE
     {
         apr_status_t rc;
         apr_os_file_t os_file;
@@ -479,8 +471,8 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
             croak("filedes retrieval failed!");
         }
     
-        Perl_warn(aTHX_ "converting to PerlIO fd %d, mode '%s'\n",
-                  os_file, mode);
+        MP_TRACE_o(MP_FUNC, "converting to PerlIO fd %d, mode '%s'",
+                   os_file, mode);
     }
 #endif
 
@@ -550,14 +542,12 @@ static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file,
         Perl_croak(aTHX_ "filedes retrieval failed!");
     }
 
-#ifdef PERLIO_APR_DEBUG
-    Perl_warn(aTHX_ "converting fd %d\n", os_file);
-#endif
+    MP_TRACE_o(MP_FUNC, "converting fd %d", os_file);
 
     /* let's try without the dup, it seems to work fine:
 
        fd = PerlLIO_dup(os_file);
-       Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd);
+       MP_TRACE_o(MP_FUNC, "fd old: %d, new %d\n", os_file, fd);
        if (!(retval = PerlIO_fdopen(fd, mode))) { 
        ...
        }
