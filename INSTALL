@@ -10,4 +10,13 @@ Simple config:
 
 LoadModule perl_module modules/mod_perl.so
 
+If the MP_INST_APACHE2=1 option was given to Makefile.PL, you'll want
+to configure:
+
+PerlModule Apache2
+
+For compat with the 1.x version, you'll want to configure:
+
+PerlModule Apache::compat
+
 See docs/user/config/config.pod for details.

@@ -1,22 +1,24 @@
-This is mod_perl version 2.0
+This is mod_perl version 2.0-tobe
 
 Apache version 2.0.35 or higher is required.
 
 Perl version 5.6.0 or higher is required.
 
-Perl with ithreads enabled is required to use mod_perl-2.0 with a
-threaded MPM.
+mod_perl is currently considered beta when used with the prefork MPM.
+
+mod_perl is currently considered alpha when used with a threaded MPM.
 
 Only DSO build of mod_perl-2.0 is currently supported, static builds
 will be support in the future.
 
-mod_perl-2.0 is not 100% feature complete with the 1.xx version.
+mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
 See the todo/ directory for what remains to be done.
 
-For comments, questions, bug-reports, etc., join the Apache/Perl
-mailing list by sending mail to modperl-subscribe@perl.apache.org.
-sending mail to announce-subscribe@perl.apache.org
-will subscribe you to the very low-traffic announcements list.
+For comments, questions, bug-reports, etc., join the mod_perl users
+list by sending mail to modperl-subscribe@perl.apache.org.
+
+For announcements join the mod_perl announce list by sending mail to
+announce-subscribe@perl.apache.org.
 
 mod_perl-2.0 was designed and written by Doug MacEachern, with
 contributions from many others (see the CREDITS and Changes files).
