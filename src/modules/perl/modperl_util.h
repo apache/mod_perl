@@ -59,6 +59,9 @@ MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj);
 
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
+MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
+                                        const char *classname, UV uv);
+
 apr_pool_t *modperl_sv2pool(pTHX_ SV *obj);
 
 char *modperl_apr_strerror(apr_status_t rv);
