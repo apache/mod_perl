@@ -205,6 +205,7 @@ my %defines_wanted = (
         limit     => [qw{APR_LIMIT}],
         poll      => [qw{APR_POLL}],
         socket    => [qw{APR_SO_}],
+        status    => [qw{APR_TIMEUP}],
         table     => [qw{APR_OVERLAP_TABLES_}],
         uri       => [qw{APR_URI_}],
     },
