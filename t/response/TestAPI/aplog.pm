@@ -117,10 +117,11 @@ sub handler {
             # ok t_cmp $logdiff->diff...
         }
 
+        t_server_log_warn_is_expected();
         $s->loglevel(Apache::LOG_DEBUG);
         $slog->debug(sub { ok 1; "$package test done" });
         ok t_cmp $logdiff->diff,
-            qr/\$slog->debug\(sub \{/,
+            qr/TestAPI::aplog test done/,
             '$slog->debug(sub { })';
 
     }
