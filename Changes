@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+provide a workaround for a bug in perl's newSVpvn, so that now
+APR::Bucket's read() returns "" instead of undef when there is no data
+to read. [Stas]
+
 fix a bug in Registry handlers, where the same error was logged twice
 and potentially a wrong error code returned [Stas]
 

@@ -52,8 +52,14 @@ static MP_INLINE SV *mpxs_APR__Bucket_read(pTHX_
         modperl_croak(aTHX_ rc, "APR::Bucket::read");  
     }
 
-    buf = newSVpvn(str, len);
-
+    /* XXX: bug in perl, newSVpvn(NULL, 0) doesn't produce "" sv */
+    if (len) {
+        buf = newSVpvn(str, len);
+    }
+    else {
+        buf = newSVpvn("", 0);
+    }
+    
     SvTAINTED_on(buf);
     
     return buf;
