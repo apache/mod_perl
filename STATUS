@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/04 05:41:00 $]
+   Last modified at [$Date: 2003/04/08 00:24:27 $]
 
 Release:
 --------
@@ -174,11 +174,11 @@ Needs Patch or Further Investigation:
 * Quite a few people reported problems with TestHooks during 'make test'
   - http://marc.theaimsgroup.com/?t=102985405500008&r=1&w=2
 
-* the issue with crypt_r: looks like 5.8.1 and 5.9.0 will have a bit
-  different handling. Jarkko has applied changes #19119 (maint) and 
-  #19122 (blead) to implements the on-demand option, because Ilya
-  Zakharevich reports that each interpreter was allocating 128K for
-  crypt_data. see the thread:
+* the issue with crypt_r: in 5.8.0's each perl clone allocates 128K
+  for crypt_data. This fixed in 5.8.1 and 5.9.0 (#19119 (maint) and 
+  #19122 (blead)), however this could be quite a waste for those using
+  5.8.0. perhaps adding a note to performance chapter will do. For
+  more info see the thread:
   http://archive.develooper.com/perl5-porters@perl.org/msg93846.html
 
 Open Issues or Core Enhancements:
