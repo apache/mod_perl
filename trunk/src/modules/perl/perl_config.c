@@ -504,8 +504,11 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     dPSRV(parms->server);
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
     require_Apache(parms->server);
-    if(PERL_RUNNING()) 
-	perl_require_module(arg, parms->server);
+    if(PERL_RUNNING()) {
+	if (perl_require_module(arg, NULL) != OK) {
+	    return SvPV(ERRSV,na);
+	}
+    }
     else {
 	char **new;
 	MP_TRACE_d(fprintf(stderr, "push_perl_modules: arg='%s'\n", arg));
@@ -526,8 +529,11 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
     dPSRV(parms->server);
     if(!PERL_RUNNING()) perl_startup(parms->server, parms->pool); 
     MP_TRACE_d(fprintf(stderr, "perl_cmd_require: %s\n", arg));
-    if(PERL_RUNNING()) 
-	perl_load_startup_script(parms->server, parms->pool, arg, TRUE);
+    if(PERL_RUNNING()) {
+	if (perl_load_startup_script(NULL, parms->pool, arg, TRUE) != OK) {
+	    return SvPV(ERRSV,na);
+	}
+    }
     else {
 	char **new;
 	new = (char **)push_array(cls->PerlRequire);
