@@ -27,7 +27,10 @@ my @binary = "$PWD/docs/book.gif";
 
 my $test_pods = $ENV{UPLOAD_PODS} || ($Is_dougm ? 20 : 3);
 my $tests = 2;
-$tests += ($test_pods * 2) + (@binary * 2);
+
+unless ($USE_SFIO) {
+    $tests += ($test_pods * 2) + (@binary * 2);
+}
 
 print "1..$tests\n";
 my $i = 0;
@@ -38,6 +41,8 @@ use DirHandle ();
 for my $cv (\&post_test, \&get_test) {
     $cv->();
 }
+
+exit(0) if $USE_SFIO;
 
 if ($Is_dougm) {
     for (@binary) {

@@ -1,14 +1,14 @@
 package Apache::test;
 
 use strict;
-use vars qw(@EXPORT $USE_THREAD $PERL_DIR);
+use vars qw(@EXPORT $USE_THREAD $USE_SFIO $PERL_DIR);
 use Exporter ();
 use Config;
 use FileHandle ();
 *import = \&Exporter::import;
 
 @EXPORT = qw(test fetch simple_fetch have_module skip_test 
-	     $USE_THREAD $PERL_DIR WIN32 grab run_test); 
+	     $USE_THREAD $USE_SFIO $PERL_DIR WIN32 grab run_test); 
 
 BEGIN { 
     if(not $ENV{MOD_PERL}) {
@@ -20,6 +20,7 @@ BEGIN {
 $PERL_DIR = $ENV{PERL_DIR} if exists $ENV{PERL_DIR};
 
 $USE_THREAD = ($Config{extensions} =~ /Thread/) || $Config{usethreads};
+$USE_SFIO = ($Config{'usesfio'} eq 'true');
 
 my $Is_Win32 = ($^O eq "MSWin32");
 sub WIN32 () { $Is_Win32 };

@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+Apache::Request upload tests are skipped #ifdef USE_SFIO 
+
+$r->send_fd() will croak() #ifdef USE_SFIO
+
 added $r->mtime method [Andreas J. Koenig <andreas.koenig@anima.de>]
 
 fix so version info is not inserted too early (i.e. before Apache/x.x.x)

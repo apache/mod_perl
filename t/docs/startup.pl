@@ -20,7 +20,7 @@ BEGIN {
 	warn "GV alias broken\n";
 }
 
-if (-e "t/docs/local.pl") {
+if ($] >= 5.005 and -e "t/docs/local.pl") {
     eval {
 	require "local.pl"; 
     }; $@='' if $@;

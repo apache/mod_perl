@@ -54,6 +54,16 @@
 #include "mod_perl.h"
 #include "mod_perl_xs.h"
 
+
+#ifdef USE_SFIO
+#undef send_fd_length    
+static long send_fd_length(FILE *f, request_rec *r, long length)
+{
+    croak("Apache::send_fd() not supported with sfio");
+    return 0;
+}
+#endif
+
 #if defined(PERL_STACKED_HANDLERS) && defined(PERL_GET_SET_HANDLERS)
 
 #define PER_DIR_CONFIG 1

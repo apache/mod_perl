@@ -10,7 +10,7 @@ unless(have_module "Apache::File") {
 }
 
 require Apache::File;
-print "1..5\n";
+print "1..6\n";
 my $fh = Apache::File->new;
 my $i = 0;
 test ++$i, $fh;
@@ -23,7 +23,7 @@ test ++$i, !Apache::File->new($r->filename.".yeahright");
 #print $tmp "ok $i\n";
 #seek $tmp, 0, 0;
 #print scalar(<$tmp>);
-#test ++$i, Apache::File->tmpfile;
+test ++$i, Apache::File->tmpfile;
 
 $r->update_mtime;
 test ++$i, $r->mtime;
