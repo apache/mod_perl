@@ -71,7 +71,7 @@ MODULE=APR::Brigade
 -apr_brigade_to_iovec
 -apr_brigade_vprintf
 -apr_brigade_vputstrs
- apr_brigade_length
+!apr_brigade_length
  apr_brigade_write
  apr_brigade_puts
  apr_brigade_putc
