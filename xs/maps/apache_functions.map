@@ -88,13 +88,13 @@ MODULE=Apache::SubRequest   PACKAGE=Apache::RequestRec
  ap_sub_req_lookup_dirent     | | r, finfo, subtype=AP_SUBREQ_NO_ARGS, next_filter=NULL | lookup_dirent
 
 subrequest_rec *:ap_sub_req_lookup_file | | \
- r, new_file, next_filter=r->output_filters->next | lookup_file
+ r, new_file, next_filter=r->proto_output_filters | lookup_file
 
 subrequest_rec *:ap_sub_req_lookup_uri  | | \
- r, new_file, next_filter=r->output_filters->next | lookup_uri
+ r, new_file, next_filter=r->proto_output_filters | lookup_uri
 
 subrequest_rec *:ap_sub_req_method_uri  | | \
- r, method, new_file, next_filter=r->output_filters->next | lookup_method_uri
+ r, method, new_file, next_filter=r->proto_output_filters | lookup_method_uri
 
 PACKAGE=Apache::SubRequest   ISA=Apache::RequestRec
  ap_destroy_sub_req  | | r | DESTROY

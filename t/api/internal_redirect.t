@@ -18,7 +18,7 @@ my %map = (
     "modperl => perl-script"     => "${uri}_modperl?uri=${uri}_perl_script",
 );
 
-plan tests => 4;
+plan tests => scalar keys %map;
 
 while (my($key, $val) = each %map) {
     my $expected = "internal redirect: $key";

@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+fix Apache::SubRequest's methods: lookup_file, lookup_uri,
+lookup_method_uri to default the last argument to
+r->proto_output_filters (no request filters for the subrequest) and
+not r->output_filters->next as it was before (one filter was getting
+skipped and the rest of the filters were applied *twice*). [Stas]
+
 Apache::CmdParms changes [Gozer]
 - readwrite => readonly:
     override, limited, directive, pool, temp_pool, server, path,

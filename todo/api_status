@@ -55,7 +55,9 @@ VP src/docs/2.0/api/Apache/ServerUtil.pod
         error_log2stderr
 -- src/docs/2.0/api/Apache/Status.pod
 VV src/docs/2.0/api/Apache/SubProcess.pod
--- src/docs/2.0/api/Apache/SubRequest.pod
+VV src/docs/2.0/api/Apache/SubRequest.pod
+        internal_fast_redirect
+        lookup_dirent
 VV src/docs/2.0/api/Apache/URI.pod
 VV src/docs/2.0/api/Apache/Util.pod
 -- src/docs/2.0/api/Apache/compat.pod
