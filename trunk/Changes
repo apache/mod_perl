@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+Apache::Registry errors are now saved in $r->notes('error-notes')
+[Jesse Erlbaum <jesse@vm.com>]
+
 fix Win32 build problems with spaces in shell arguments
 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 

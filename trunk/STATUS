@@ -10,15 +10,6 @@ Release:
 
 Available Patches:
 
-    * implement notes('error-notes') in Registry a la mod_cgo
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101862462900504&w=2
-	Status: 
-          I haven't had the chance to investigate this thoroughly, but 
-          mod_perl does seem to be setting error-notes for some things.  maybe
-          just not enough things or Registry specific things? --Geoff
-          patch available at
-          http://marc.theaimsgroup.com/?l=apache-modperl&m=101862462900504&w=2
-
     * Apache::Status allows standard keys to be overridden
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=101559176217056&w=2
 	Status: 
