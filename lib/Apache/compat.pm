@@ -43,6 +43,8 @@ BEGIN {
     $INC{'Apache/Constants.pm'} = __FILE__;
 
     $INC{'Apache/File.pm'} = __FILE__;
+
+    $INC{'Apache/Table.pm'} = __FILE__;
 }
 
 sub request {
