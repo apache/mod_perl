@@ -6,6 +6,8 @@ use warnings;
 
 use lib qw(Apache-Test/lib);
 
+use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
+
 use Config;
 use Cwd ();
 use File::Spec::Functions qw(catfile);
@@ -26,8 +28,6 @@ use constant HPUX   => $^O eq 'hpux';
 use constant WIN32  => $^O eq 'MSWin32';
 
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
-
-use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
 our $VERSION = '0.01';
 our $AUTOLOAD;
