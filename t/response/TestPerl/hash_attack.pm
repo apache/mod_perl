@@ -114,6 +114,28 @@ sub attack {
 # integer'). So we outsmart Perl and take modules 2*32 after each
 # calculation, emulating overflows that happen in C.
 sub hash {
+    my ($s) = @_;
+    my ($u, @c);
+    @c = split //, $s;
+    $u = 0;
+    for (@c) {
+        # (A % M) + (B % M) == (A + B) % M
+        # This works because '+' produces a NV, which is big enough to hold
+        # the intermidiate result. We only need the % before any "^" and "&"
+        # to get the result in the range for an I32.
+        # and << doesn't work on NV, so using 1 << 10
+        $u += ord;
+        $u += $u * (1 << 10); $u %= MASK_U32;
+        $u ^= $u >> 6;
+    }
+    $u += $u << 3;  $u %= MASK_U32;
+    $u ^= $u >> 11; $u %= MASK_U32;
+    $u += $u << 15; $u %= MASK_U32;
+    $u;
+}
+
+# a bit slower but simpler version
+sub hash_original {
     my $s = shift;
     my @c = split //, $s;
     my $u = 0;
