@@ -43,6 +43,7 @@ use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use Apache::Response ();
 use Apache::SubRequest ();
+use Apache::Filter ();
 use Apache::Util ();
 use Apache::Log ();
 use Apache::URI ();
@@ -473,28 +474,26 @@ use constant IOBUFSIZE => 8192;
 sub content {
     my $r = shift;
 
-    my $ba = $r->connection->bucket_alloc;
-    my $bb = APR::Brigade->new($r->pool, $ba);
+    my $bb = APR::Brigade->new($r->pool,
+                               $r->connection->bucket_alloc);
 
     my $data = '';
     my $seen_eos = 0;
-    my $count = 0;
     do {
-        $r->input_filters->get_brigade($bb,
-            Apache::MODE_READBYTES, APR::BLOCK_READ, IOBUFSIZE);
+        $r->input_filters->get_brigade($bb, Apache::MODE_READBYTES,
+                                       APR::BLOCK_READ, IOBUFSIZE);
 
-        while (!$bb->is_empty) {
-            my $b = $bb->first;
-
-            $b->remove;
-
+        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
             if ($b->is_eos) {
                 $seen_eos++;
                 last;
             }
 
-            $b->read(my $buf);
-            $data .= $buf;
+            if ($b->read(my $buf)) {
+                $data .= $buf;
+            }
+
+            $b->remove; # optimization to reuse memory
         }
     } while (!$seen_eos);
 
