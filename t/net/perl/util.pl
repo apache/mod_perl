@@ -109,7 +109,7 @@ print "Perl = $Perl\n";
 print "builtin = $builtin\n";
 
 #test ++$i, lc($C) eq lc($Perl); 
-test ++$i, length($C) and length($Perl); 
+test ++$i, length($C) && length($Perl); 
 
 =pod
 use Benchmark;
