@@ -223,6 +223,16 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     return mrg;
 }
 
+void *modperl_get_perl_module_config(ap_conf_vector_t *cv)
+{
+    return ap_get_module_config(cv, &perl_module);
+}
+
+void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg)
+{
+    ap_set_module_config(cv, &perl_module, cfg);
+}
+
 int modperl_config_apply_PerlModule(server_rec *s,
                                     modperl_config_srv_t *scfg,
                                     PerlInterpreter *perl, apr_pool_t *p)
