@@ -58,11 +58,6 @@ EVERYTHING=1
 #can also enable via $Apache::DoInternalRedirect = 1;
 # DO_INTERNAL_REDIRECT=1
 
-#if you say 'die 401' or 'exit 401' where 401 can be any HTTP code,
-#the current Perl callback will return with this code value
-#can also enable via $Apache::ERRSV_CAN_BE_HTTP = 1;
-# ERRSV_CAN_BE_HTTP=1
-
 #enable the PerlRestartHandler which will be called during restart
 #this happens just before PerlFreshRestart does it's thang
 #PERL_RESTART_HANDLER=1
