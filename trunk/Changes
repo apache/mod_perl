@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+do not clear symbol tables within a package in perl_clear_symtab()
+used by directive handler extensions
+[Stephen Clouse <stephenc@theiqgroup.com>]
+
 properly deal with $r->status codes (e.g. redirect) in
 Apache::RegistryNG [Geoff Young <geoff@modperlcookbook.org>]
 

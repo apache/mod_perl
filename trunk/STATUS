@@ -21,11 +21,6 @@ Available Patches:
 	Status: 
           doc patch at http://marc.theaimsgroup.com/?l=apache-modperl&m=97450363501652&w=2
 
-    * vanishing symbol tables
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=100820262006934&w=2
-	Status:
-          patch available
-        
     * $r->finfo problem with HTML::Mason::ApacheHandler
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=96854561311519&w=2
 	Status:
