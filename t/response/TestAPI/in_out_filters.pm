@@ -32,7 +32,6 @@ sub handler {
     Apache::OK;
 }
 
-
 sub send_response_body {
     my($r, $data) = @_;
 
@@ -60,7 +59,6 @@ sub read_request_body {
                                        APR::BLOCK_READ, IOBUFSIZE);
 
         $count++;
-
         warn "read_post: bb $count\n" if $debug;
 
         for (my $b = $bb->first; $b; $b = $bb->next($b)) {
