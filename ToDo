@@ -25,8 +25,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
  SSLCacheServerPath /tmp
 	Adam Laurie <adam@algroup.co.uk>
 
-- have Makefile.PL check for HTML::HeadParser
-
 - Gerald's report of Embperl/sub-request/print breakage
 
 - make sure SERVER_VERSION/SERVER_SUBVERSION, etc. is in sync w/ 1.3b7 changes
