@@ -186,7 +186,8 @@ sub mpm_name {
         my $msg = 'Failed to obtain the MPM name.';
         $msg .= " Please specify MP_APXS=/full/path/to/apxs to solve " .
             "this problem." unless exists $self->{MP_APXS};
-        die "$msg\n";
+        error $msg;
+        exit 1;
     }
 
     return $self->{mpm_name} = $mpm_name;
