@@ -279,9 +279,11 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     av_push(GvAV(PL_incgv),
             newSVpv(ap_server_root_relative(p, "lib/perl"), 0));
 #endif /* MP_COMPAT_1X */
-    
-    modperl_handler_anon_init(aTHX_ p);
-    
+
+    if (!s->is_virtual) {
+        modperl_handler_anon_init(aTHX_ p);
+    }
+
     if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
         exit(1);
     }
