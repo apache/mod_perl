@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 76;
+    plan $r, tests => 78;
 
     ### native pools ###
 
@@ -372,20 +372,24 @@ sub handler {
         $r->notes->clear;
     }
 
-    # bogus callbacks unfortunately will fail only when the pool is
-    # destroyed, and we have no way to propogate (and thus trap) those
-    # errors. They are logged though. So as usual, one has to always
-    # watch error_log (things like CGI::Carp's fatalsToBrowser) won't
-    # quite be able to catch those.
+    # undefined cleanup subs
     {
         my $p = APR::Pool->new;
         t_server_log_error_is_expected();
-        $p->cleanup_register('some_bogus_non_existing', 1);
+        $p->cleanup_register('TestAPR::pool::some_non_existing_sub', 1);
+        eval { $p->destroy };
+        ok t_cmp(qr/Undefined subroutine/,
+                 $@,
+                 "non existing function");
     }
     {
         my $p = APR::Pool->new;
         t_server_log_error_is_expected();
         $p->cleanup_register(\&non_existing1, 1);
+        eval { $p->destroy };
+        ok t_cmp(qr/Undefined subroutine/,
+                 $@,
+                 "non existing function");
     }
 
     ### $p->clear ###
