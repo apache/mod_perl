@@ -293,7 +293,7 @@ sub map_structure {
         my($name, $type) = ($e->{name}, $e->{type});
         my $rtype;
 
-        # ro/rw/undef(disabled)
+        # ro/rw/r+w_startup/undef(disabled)
         my $access_mode = $self->structure_map->{$stype}->{$name};
         next unless $access_mode;
         next unless $rtype = $self->map_type($type);

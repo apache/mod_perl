@@ -24,6 +24,18 @@ static int MP_init_status = 0;
 #define MP_IS_STARTING    (MP_init_status == 1 ? 1 : 0)
 #define MP_IS_RUNNING     (MP_init_status == 2 ? 1 : 0)
 
+/* false while there is only the parent process and may be child
+ * processes, but no threads around, useful for allowing things that
+ * don't require locking and won't affect other threads. It should
+ * become true just before the child_init phase  */
+static int MP_threads_started = 0;
+
+int modperl_threads_started(void)
+{
+    return MP_threads_started;
+}
+
+
 #ifndef USE_ITHREADS
 static apr_status_t modperl_shutdown(void *data)
 {
@@ -31,6 +43,11 @@ static apr_status_t modperl_shutdown(void *data)
     PerlInterpreter *perl = (PerlInterpreter *)cdata->data;
     void **handles;
 
+    /* reset for restarts */
+    if (scfg->threaded_mpm) {
+        MP_threads_started = 0;
+    }
+    
     handles = modperl_xs_dl_handles_get(aTHX);
 
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
@@ -613,6 +630,20 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     return OK;
 }
 
+static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
+                                         apr_pool_t *ptemp, server_rec *s)
+{
+    MP_dSCFG(s);
+
+    /* in the threaded environment, no server_rec/process_rec
+     * modifications should be done beyond this point */
+    if (scfg->threaded_mpm) {
+        MP_threads_started = 1;
+    }
+    
+    return OK;
+}
+
 static int modperl_hook_create_request(request_rec *r)
 {
     MP_dRCFG;
@@ -729,6 +760,9 @@ void modperl_register_hooks(apr_pool_t *p)
 
     ap_hook_post_config(modperl_hook_post_config,
                         NULL, NULL, APR_HOOK_FIRST);
+
+    ap_hook_post_config(modperl_hook_post_config_last,
+                        NULL, NULL, APR_HOOK_REALLY_LAST);
 
     ap_hook_handler(modperl_response_handler,
                     NULL, NULL, APR_HOOK_MIDDLE);

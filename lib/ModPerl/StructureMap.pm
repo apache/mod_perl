@@ -125,6 +125,9 @@ sub parse {
                 elsif ($1 eq '&') {
                     $map->{$class}->{$_} = 'rw_char_undef';
                 }
+                elsif ($1 eq '$') {
+                    $map->{$class}->{$_} = 'r+w_startup';
+                }
             }
             else {
                 $map->{$class}->{$_} = undef;

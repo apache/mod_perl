@@ -227,7 +227,12 @@ $attrs
 
 EOF
             }
-            elsif ($access_mode eq 'rw') {
+            elsif ($access_mode eq 'rw' or $access_mode eq 'r+w_startup') {
+
+                my $check_runtime = $access_mode eq 'rw'
+                    ? ''
+                    : qq[MP_CROAK_IF_THREADS_STARTED("setting $name");];
+
                 $code = <<EOF;
 $type
 $name(obj, val=$default)
@@ -242,6 +247,7 @@ $attrs
     RETVAL = ($cast) obj->$name;
 
     if (items > 1) {
+         $check_runtime
          obj->$name = ($cast) $val;
     }
 
