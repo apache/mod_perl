@@ -15,7 +15,7 @@ my $pool = Apache->server->process->pool;
 my $project_root = canonpath Apache::server_root_relative($pool, "..");
 my (@a, @b, @c);
 for (@INC) {
-    if (m|^$project_root|) {
+    if (m|^\Q$project_root\E|) {
         m|blib| ? push @b, $_ : push @a, $_;
     }
     else {
