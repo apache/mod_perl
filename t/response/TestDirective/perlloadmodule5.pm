@@ -83,7 +83,7 @@ __END__
 </Base>
 <VirtualHost TestDirective::perlloadmodule5>
     # here mod_perl sets the scfg by itself for this vhost
-    PerlModule CGI
+    PerlModule File::Spec
     MyTest5 "Vhost"
     <Location /TestDirective::perlloadmodule5>
         MyTest5 "Dir"
