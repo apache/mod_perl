@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+INSTALL.win32 updates, obsolete INSTALL.activeperl removed
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 Solving an 'uninitialized value' warn in Apache::SizeLimit.
 post_connection() expects a return status from the callback function.
 [Stas Bekman <sbekman@stason.org>]
