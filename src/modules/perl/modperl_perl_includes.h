@@ -104,7 +104,7 @@
 #endif
 
 #ifndef PERL_MAGIC_tiedscalar
-#   define PERL_MAGIC_tiedscalar 'p'
+#   define PERL_MAGIC_tiedscalar 'q'
 #endif
 
 #ifndef PERL_MAGIC_ext
