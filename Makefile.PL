@@ -124,7 +124,11 @@ sub configure {
     if ($build->{MP_APXS}) {
         debug "Using APXS => $build->{MP_APXS}";
     }
-    elsif ($build->{MP_AP_PREFIX} and -e $build->apxs(-q => 'INCLUDEDIR')) {
+    elsif ($build->{MP_AP_PREFIX}) {
+        if (my $reason = $build->ap_prefix_invalid) {
+            error "invalid MP_AP_PREFIX: $reason";
+            exit 1;
+        }
         debug "Using Apache prefix => $build->{MP_AP_PREFIX}";
     }
     else {
