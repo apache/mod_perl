@@ -689,12 +689,7 @@ static void modperl_hook_child_init(apr_pool_t *p, server_rec *s)
                               apr_pool_cleanup_null);
 }
 
-/* api change in 2.0.40-ish */
-#if (MODULE_MAGIC_NUMBER_MAJOR >= 20020628)
-#   define MP_FILTER_HANDLER(f) f, NULL
-#else
-#   define MP_FILTER_HANDLER(f) f
-#endif
+#define MP_FILTER_HANDLER(f) f, NULL
 
 void modperl_register_hooks(apr_pool_t *p)
 {

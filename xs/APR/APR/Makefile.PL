@@ -13,9 +13,6 @@ if (my $apr_bindir = ModPerl::BuildMM::build_config()->apr_bindir()) {
         map { qq{$apr_bindir/$_-config} } qw(apr apu);
     chomp @libs;
     $libs = join ' ', @libs;
-
-    # fix for broken older apu-config script 0.9.2 (httpd 2.0.43)
-    $libs =~ s/-laprutil(?!-)/-laprutil-0/ if $libs =~ /-lapr-0/;
 }
 
 

@@ -73,9 +73,7 @@ plan tests => $tests;
        );
 }
 
-# this behavior is specific for 2.0.42+ I think (at least it's still
-# different with apache < 2.0.41 (haven't tested with 41, 42, 43))
-if (HAVE_MIN_APACHE_2_0_42) {
+{
     # even though we have a runtime error here, the scripts succeeds
     # to send some body before the error happens and since by that
     # time Apache has already sent the headers, they will include 

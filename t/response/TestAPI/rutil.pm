@@ -28,8 +28,6 @@ my %status_lines = (
    500 => '500 Internal Server Error',
 );
 
-use constant HAVE_APACHE_2_0_40 => have_apache_version("2.0.40");
-
 sub handler {
     my $r = shift;
 
@@ -57,10 +55,8 @@ sub handler {
 
     ok $r->is_initial_req;
 
-    # XXX: Apache 2.0.40 seems to miss status and content-type
-    my $pattern = HAVE_APACHE_2_0_40
-        ? qr!(?s)GET /TestAPI__rutil.*Host:.*!
-        : qr!(?s)GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!;
+    my $pattern = qr!(?s)GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!;
+
     ok t_cmp(
         $pattern,
         $r->as_string,

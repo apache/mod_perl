@@ -20,24 +20,7 @@
 #include "ap_mpm.h"
 
 #include "apr_version.h"
-
-/* 2.0.36 is APR_0_9_0-dev */
-
-#if APR_MAJOR_VERSION == 0 && APR_MINOR_VERSION == 9 && APR_PATCH_VERSION < 3
-/* apr < 0.9.3 */
-#define APR_VERSION_0_9_3_MINUS
-#else
-/* apr >= 0.9.3 */
-#define APR_VERSION_0_9_3_PLUS
-#endif
-
-#ifndef APR_POLLIN
-/*
- * apr_poll.h introduced around 2.0.40
- * APR_POLL* constants moved here around 2.0.44
- */
 #include "apr_poll.h"
-#endif
 #include "apr_lib.h"
 #include "apr_strings.h"
 #include "apr_uri.h"
@@ -51,10 +34,5 @@
 #include "util_filter.h"
 
 #include "util_script.h"
-
-
-#ifdef APR_VERSION_0_9_3_PLUS
-#include "apr_env.h"
-#endif
 
 #endif /* MODPERL_APACHE_INCLUDES_H */

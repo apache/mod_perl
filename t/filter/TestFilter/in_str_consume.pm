@@ -57,6 +57,7 @@ sub handler {
         # for EOS which will never come from this filter so, after
         # several invocations mark the seen_eos flag, to break the
         # vicious cirle
+        # BACK_COMPAT_MARKER: make back compat issues easy to find
         if ($count > 10) {
             $filter->seen_eos(1);
         }
