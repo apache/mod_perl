@@ -11,7 +11,9 @@ our %PM; #add files to installation
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::MM \\}."\n" .
+    # XXX: adding -MApache2 here so 3rd party modules could use this macro,
+    # may be should have different macros for core build and modules build
+    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MApache2 -MModPerl::MM \\}."\n" .
     q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
 }
 
