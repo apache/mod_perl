@@ -80,6 +80,7 @@ $APACHE_SRC_DEFAULT = $@ ?
 
 my $PWD = cwd;
 my %SSL = (
+    "modules/ssl/apache_ssl.c" => "Ben-SSL",
     "apache_ssl.c" => "Ben-SSL",
     "mod_ssl.h"   => "Stronghold",
 );

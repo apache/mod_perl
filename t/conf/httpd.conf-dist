@@ -188,6 +188,12 @@ AddType text/html .ehtml
     Options +ExecCGI  
 </Files>
 
+<IfModule apache_ssl.c>
+SSLDisable
+SSLCacheServerPath /tmp
+SSLCacheServerPort /tmp/gcache_port
+</IfModule>
+
 <Location /status>
 SetHandler server-status
 </Location>
@@ -205,4 +211,5 @@ PerlHandler Apache::ModuleDoc
 SetHandler perl-script
 PerlHandler $My::Obj->method
 </Location>
+
 

@@ -339,7 +339,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
 CHAR_P perl_cmd_push_handlers(char *hook, PERL_CMD_TYPE **cmd, char *arg, pool *p)
 { 
     SV *sva;
-#if !defined(APACHE_SSL) && !defined(WIN32)
+#if !APACHE_SSL_12X && !defined(WIN32)
     if(!PERL_RUNNING()) { 
         MP_TRACE_d(fprintf(stderr, "perl_cmd_push_handlers: perl not running, skipping push\n")); 
 	return NULL; 
