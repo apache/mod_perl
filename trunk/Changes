@@ -21,7 +21,7 @@ new $r->pnotes method
 
 $ENV{MOD_PERL} is not inherited by subprocesses
 
-no longer use -e with perl_parse() (under unix)
+no longer use -e with perl_parse()
 
 Apache::ExtUtils will complain if it can't determine the
 directive handler prototype (args_how), rather than fail during 'make'
