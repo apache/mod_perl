@@ -185,14 +185,14 @@ $  limit_req_fields
 </ap_method_list_t>
 
 <ap_directive_t>
-   directive
-   args
-   next
-   first_child
-   parent
-   data
-   filename
-   line_num
+<  directive
+<  args
+<  next
+<  first_child
+<  parent
+<  data
+<  filename
+<  line_num
 </ap_directive_t>
 
 !<ap_configfile_t>
