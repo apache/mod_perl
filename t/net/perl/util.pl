@@ -152,7 +152,7 @@ Benchmark: timing 10000 iterations of C, Perl...
   Perl: 21 secs (20.57 usr  0.14 sys = 20.71 cpu) 
 =cut
 
-my $date_str = "Sat, 18 Jul 1998 08:38:00 -0700";
+my $date_str = "Sat, 18 Jul 1998 08:38:00 GMT";
 
 test ++$i, Apache::Util::parsedate($date_str);
 
