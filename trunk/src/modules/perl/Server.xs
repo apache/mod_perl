@@ -25,6 +25,16 @@ BOOT:
 #  char *server_hostname;
 #  short port;                    /* for redirects, etc. */
 
+Apache::Server
+next(server)
+    Apache::Server	server
+
+    CODE:
+    if(!(RETVAL = server->next)) XSRETURN_UNDEF;
+
+    OUTPUT:
+    RETVAL
+
 char *
 server_admin(server, ...)
     Apache::Server	server
