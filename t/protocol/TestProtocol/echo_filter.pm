@@ -11,7 +11,7 @@ use APR::Util ();
 sub handler {
     my Apache::Connection $c = shift;
 
-    my $bb = APR::Brigade->new($c->pool);
+    my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     for (;;) {
         my $rv = $c->input_filters->get_brigade($bb,
@@ -26,7 +26,7 @@ sub handler {
             last;
         }
 
-        my $b = APR::Bucket::flush_create();
+        my $b = APR::Bucket::flush_create($c->bucket_alloc);
         $bb->insert_tail($b);
         $c->output_filters->pass_brigade($bb);
     }
