@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+new function ModPerl::Util::current_perl_id() which returns something
+like (.e.g 0x92ac760) (aTHX) under threaded mpm and 0 under
+non-threaded perl (0x0). Useful for debugging modperl under threaded
+perls.  [Stas]
+
 make sure that modperl's internal post_config callback, which amongst
 other things, cloning perl interpreters is running as
 modperl_hook_post_config_last APR_HOOK_REALLY_LAST, which ensures that
