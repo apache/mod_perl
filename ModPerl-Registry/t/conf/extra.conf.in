@@ -34,6 +34,7 @@ Alias /registry/         @ServerRoot@/cgi-bin/
 Alias /registry_bb/      @ServerRoot@/cgi-bin/
 Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
 Alias /perlrun/          @ServerRoot@/cgi-bin/
+Alias /nph/              @ServerRoot@/cgi-bin/
 
 ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
 
@@ -61,6 +62,12 @@ PerlModule ModPerl::Registry
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry->handler
     PerlOptions +ParseHeaders
+</Location>
+
+<Location /nph>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::Registry
 </Location>
 
 PerlModule ModPerl::PerlRun
