@@ -144,8 +144,8 @@ PerlHandler Apache::Status
 
 #end mod_perl stuff
 
-ErrorLog logs/mod_perl_error_log
-PidFile logs/mod_perl_httpd.pid
+ErrorLog logs/error_log
+PidFile logs/httpd.pid
 AccessConfig /dev/null
 ResourceConfig conf/srm.conf
 TypesConfig /dev/null

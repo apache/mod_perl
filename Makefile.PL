@@ -107,9 +107,9 @@ my(@do_clean) = qw{
    Apache/Apache.xs
    Constants/Constants.xs
    t/modules/ssi.t       
-   t/logs/mod_perl_error_log
+   t/logs/error_log
    t/conf/srm.conf
-   t/logs/mod_perl_httpd.pid
+   t/logs/httpd.pid
 };
 #t/conf/httpd.conf
 #t/net/config.pl
@@ -151,7 +151,7 @@ $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
 $SSL_BASE = ""; 
-$Port = $Is_dougm ? 8530 : 8529;
+$Port = 8529;
 #so Doug can 'make test' different-builds@sametime/samebox
 if(!$Is_Win32 and $ENV{RANDOM_PORT} and $$ > 8000 and $$ < 30000) {
     $PORT ||= $$;
@@ -1281,11 +1281,11 @@ MP_TEST_SCRIPT=$script
 TEST_VERBOSE=0
 
 kill_httpd:
-	kill `cat t/logs/mod_perl_httpd.pid`
+	kill `cat t/logs/httpd.pid`
 	@$(RM_F) t/conf/srm.conf
 	@$(RM_F) t/logs/mod_perl.lock*
-	$(RM_F) t/logs/mod_perl_httpd.pid
-	$(RM_F) t/logs/mod_perl_error_log
+	$(RM_F) t/logs/httpd.pid
+	$(RM_F) t/logs/error_log
 
 start_httpd: test_pre_init
 	@(cd t/conf; test -f httpd.conf || cp httpd.conf-dist httpd.conf)
@@ -1293,7 +1293,7 @@ start_httpd: test_pre_init
 	@$(TOUCH) t/conf/srm.conf
 	$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -X -d `pwd`/t &
 	@echo httpd listening on port $(PORT)
-	@echo will write error_log to: t/logs/mod_perl_error_log
+	@echo will write error_log to: t/logs/error_log
 	@echo "letting apache warm up...\c"
 	@sleep 2
 	@echo done
