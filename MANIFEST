@@ -15,6 +15,7 @@ Connection/Makefile.PL
 Connection/Connection.pm
 IO/IO.pm
 IO/IO.xs
+IO/Makefile.PL
 t/net/perl/io.pl
 t/modules/io.t
 CREDITS
