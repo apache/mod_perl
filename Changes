@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+win32 fixes for apache 1.3.20 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 adjust perl_clear_symtab() to deal properly bleedperl's version of
 cv_undef() (which broke modules with directive handlers)
 thanks to Geoffrey Young for the spot

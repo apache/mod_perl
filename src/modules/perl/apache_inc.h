@@ -69,6 +69,11 @@
 #undef sleep
 #endif
 
+#ifdef isnan
+#define apache_isnan isnan
+#undef isnan
+#endif
+
 #ifdef PERL_IS_5_6
 
 #ifdef opendir
@@ -171,6 +176,12 @@ extern "C" {
 #undef stat
 #define stat apache_stat
 #undef apache_stat
+#endif
+
+#ifdef apache_isnan
+#undef isnan
+#define isnan apache_isnan
+#undef apache_isnan
 #endif
 
 #ifdef apache_opendir
