@@ -1,7 +1,7 @@
 package Apache::Util;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
+use vars qw($VERSION @EXPORT_OK %EXPORT_TAGS);
 
 use Exporter ();
 use DynaLoader ();
@@ -9,15 +9,14 @@ use DynaLoader ();
 *unescape_uri = \&Apache::unescape_url;
 *unescape_uri_info = \&Apache::unescape_url_info;
 
-@ISA = qw(Exporter DynaLoader);
+*import = \&Exporter::import;
+
 @EXPORT_OK = qw(escape_html escape_uri unescape_uri unescape_uri_info 
 		parsedate ht_time size_string);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 $VERSION = '1.01';
 
-if($ENV{MOD_PERL}) {
-    bootstrap Apache::Util $VERSION;
-}
+__PACKAGE__->mod_perl::boot($VERSION);
 
 1;
 __END__

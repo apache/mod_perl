@@ -1,30 +1,28 @@
 package Apache;
+
 use strict;
+use mod_perl ();
 use Exporter ();
 use Apache::Constants qw(OK DECLINED);
+use Apache::Connection ();
+use Apache::Server ();
 use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn);
-$Apache::VERSION = "1.25";
 
 *import = \&Exporter::import;
 
-unless(defined &bootstrap) {
-    require DynaLoader;
-    @Apache::ISA = qw(DynaLoader);
-}
-
 if (caller eq "CGI::Apache") {
     #we must die here outside of httpd so CGI::Switch works
-    bootstrap Apache $Apache::VERSION;
+    die unless $ENV{MOD_PERL};
 }
-else {
-    if(exists $ENV{MOD_PERL}) {
-      require Apache::Server unless $mod_perl::UNIMPORT{'server'};
-      require Apache::Connection unless $mod_perl::UNIMPORT{'connection'};
-	bootstrap Apache $Apache::VERSION;
-    }
-    Apache::SIG->set;
+ 
+Apache::SIG->set;
+
+{
+    no strict;
+    $VERSION = "1.25";
+    __PACKAGE__->mod_perl::boot($VERSION);
 }
 
 if($ENV{MOD_PERL} && perl_hook("Sections")) {

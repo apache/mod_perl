@@ -1,13 +1,22 @@
 package mod_perl;
 use 5.003_97;
 use strict;
+use DynaLoader ();
 
 BEGIN {
     $mod_perl::VERSION = "1.1701";
 }
 
-sub subversion {
-    print qq( -DSERVER_SUBVERSION=\\"mod_perl/$mod_perl::VERSION\\" );
+sub boot {
+    my($class, $version) = @_;
+    no strict 'refs';
+    *{$class.'::dl_load_flags'} = DynaLoader->can('dl_load_flags');
+    if ($ENV{MOD_PERL}) {
+        (defined &{$class.'::bootstrap'} ?
+         \&{$class.'::bootstrap'} :
+         \&DynaLoader::bootstrap)->
+             ($class, $version);
+    }
 }
 
 sub hook {
@@ -19,19 +28,8 @@ sub hook {
     return Apache::perl_hook($try);
 }
 
-sub unimport {
-  my $class = shift;
-  %mod_perl::UNIMPORT = map { lc($_),1 } @_;
-}
-
 sub import {
     my $class = shift;
-
-    #so we can say EXTRA_CFLAGS = `perl -Mmod_perl -e subversion`
-    unless(exists $ENV{MOD_PERL}) {
-	*main::subversion = \&subversion;
-	return;
-    }
 
     return unless @_;
 

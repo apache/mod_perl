@@ -1,12 +1,14 @@
 package Apache::File;
 
-use Apache ();
+use strict;
 use Fcntl ();
-use DynaLoader ();
-@ISA = qw(DynaLoader);
-$VERSION = '1.01';
+use Apache ();
 
-__PACKAGE__->bootstrap($VERSION) if $ENV{MOD_PERL};
+{
+    no strict;
+    $VERSION = '1.01';
+    __PACKAGE__->mod_perl::boot($VERSION);
+}
 
 my $TMPNAM = 'aaaaaa';
 my $TMPDIR = $ENV{'TMPDIR'} || $ENV{'TEMP'} || '/tmp';
