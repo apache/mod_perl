@@ -109,7 +109,8 @@ POSSIBLE NEW FEATURES
 
 - something like 2.0's Apache::BuildConfig for testing build options
 
-- replace Apache::StatINC with Apache::ModuleReload?
+- replace Apache::StatINC with Apache::Reload, as in modperl 2.x. And
+  make Apache::StatINC a wrapper around the latter.
 
 - CHECK blocks? [Michael J Schout <mschout@gkg.net>]
   INIT blocks?  [T.J. Mather <tjmather@anidea.com>]
