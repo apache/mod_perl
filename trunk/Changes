@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+fix _AIX typo in dso_unload
+[Jens-Uwe Mager <jum@helios.de>]
+
 =item 1.21_01 - March 5, 2000
 
 #ifdef _AIX, make sure Perl's dlclose is used, instead of Apache's
