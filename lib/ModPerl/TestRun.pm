@@ -27,11 +27,25 @@ sub configure_startup_pl {
 
     $self->SUPER::configure_startup_pl;
 
+    #XXX: issue for these is they need to happen after PerlSwitches
+
     #XXX: this should only be done for the modperl-2.0 tests
     $self->postamble(<<'EOF');
 <Perl handler=ModPerl::Test::perl_section>
     $Foo = 'bar';
 </Perl>
+EOF
+
+    #XXX: this should only be done for the modperl-2.0 tests
+    $self->postamble(<<'EOF');
+LoadModule TestDirective::loadmodule
+
+MyTest one two
+ServerTest per-server
+
+<Location /TestDirective::loadmodule>
+    MyOtherTest value
+</Location>
 EOF
 }
 
