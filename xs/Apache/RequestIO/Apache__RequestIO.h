@@ -262,6 +262,8 @@ SV *mpxs_Apache__RequestRec_GETC(pTHX_ request_rec *r)
 {
     char c[1] = "\0";
 
+    /* XXX: reimplement similar to read() w/o using the deprecated
+     * client_block interface */
     if (mpxs_setup_client_block(r) == APR_SUCCESS) {
         if (mpxs_should_client_block(r)) {
             if (ap_get_client_block(r, c, 1) == 1) {
