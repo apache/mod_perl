@@ -82,7 +82,8 @@ VV src/docs/2.0/api/APR/Error.pod
 VP src/docs/2.0/api/APR/Pool.pod
         cleanup_for_exec
 
--- src/docs/2.0/api/APR/SockAddr.pod
+VP src/docs/2.0/api/APR/SockAddr.pod
+        equal
 
 VP src/docs/2.0/api/APR/Socket.pod
         bind
@@ -93,7 +94,6 @@ VP src/docs/2.0/api/APR/Socket.pod
         sendto
 
 VV src/docs/2.0/api/APR/Table.pod
-
 -- src/docs/2.0/api/APR/ThreadMutex.pod
 -- src/docs/2.0/api/APR/URI.pod
 -- src/docs/2.0/api/APR/Util.pod
