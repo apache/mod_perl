@@ -983,9 +983,10 @@ sub apru_config_path {
     if (!$self->{$key}) {
         my @tries = ();
         if ($self->httpd_is_source_tree) {
-            push @tries, grep { -d $_ }
-                map catdir($_, "srclib", "apr"),
-                grep defined $_, $self->dir;
+            for my $base (grep defined $_, $self->dir) {
+                push @tries, grep -d $_,
+                    map catdir($base, "srclib", $_), qw(apr apr-util);
+            }
         }
         else {
             push @tries, grep length,
