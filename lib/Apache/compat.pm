@@ -138,6 +138,30 @@ EOI
 }
 EOI
 
+    'Apache::Module::top_module' => <<'EOI',
+{
+    require Apache::Module;
+    my $orig_sub = *Apache::Module::top_module{CODE};
+    *Apache::Module::top_module = sub {
+        shift;
+        $orig_sub->(@_);
+    };
+    $orig_sub;
+}
+EOI
+
+    'Apache::Module::get_config' => <<'EOI',
+{
+    require Apache::Module;
+    my $orig_sub = *Apache::Module::get_config{CODE};
+    *Apache::Module::get_config = sub {
+        shift;
+        $orig_sub->(@_);
+    };
+    $orig_sub;
+}
+EOI
+
     'APR::URI::unparse' => <<'EOI',
 {
     require APR::URI;

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Apache::Module top_module() and get_config() as class methods
+added to Apache::compat for backwards compatibility [Gozer]
+
 Apache::Module top_module() and get_config() changed from class
 methods to regular subroutines [Gozer]
 
