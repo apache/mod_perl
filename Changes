@@ -12,19 +12,25 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
-add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
-which mod_perl version is being used at request time.  [Geoffrey Young]
+    ******************** IMPORTANT ********************
+    this version of mod_perl is completely incompatible
+      with prior versions of mod_perl, both 1.XX and
+     1.99_XX. Please read the below changes carefully.
+    ***************************************************
+
+s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
+APIs [joes].
 
 remove MP_INST_APACHE2 installation option and Apache2.pm - all
 mod_perl related files will now be installed so they are visible
 via standard @INC.  also, refuse to install over mod_perl 2 versions
 less than 1.999_22.  [Geoffrey Young]
 
+add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
+which mod_perl version is being used at request time.  [Geoffrey Young]
+
 remove CGI.pm and Apache::Request dependencies from Apache2::Status
 since they weren't used at all [Geoffrey Young]
-
-s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
-APIs, breaking both MP_INST_APACHE2 and the test suite [joes].
 
 ModPerl::Registry no longer checks for -x bit (we don't executed
 scripts anyway), and thus works on acl-based filesystems. Also
