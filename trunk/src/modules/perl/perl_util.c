@@ -885,3 +885,59 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size)
 
 #endif
 
+#if defined(WIN32) && defined(PERL_IS_5_6)
+void
+Perl_do_join(pTHX_ register SV *sv, SV *del, register SV **mark, register SV **sp)
+{
+    SV **oldmark = mark;
+    register I32 items = sp - mark;
+    register STRLEN len;
+    STRLEN delimlen;
+    register char *delim = SvPV(del, delimlen);
+    STRLEN tmplen;
+
+    mark++;
+    len = (items > 0 ? (delimlen * (items - 1) ) : 0);
+    (void)SvUPGRADE(sv, SVt_PV);
+    if (SvLEN(sv) < len + items) {	/* current length is way too short */
+	while (items-- > 0) {
+	    if (*mark && !SvGMAGICAL(*mark) && SvOK(*mark)) {
+		SvPV(*mark, tmplen);
+		len += tmplen;
+	    }
+	    mark++;
+	}
+	SvGROW(sv, len + 1);		/* so try to pre-extend */
+
+	mark = oldmark;
+	items = sp - mark;
+	++mark;
+    }
+
+    if (items-- > 0) {
+	char *s;
+
+	if (*mark) {
+	    s = SvPV(*mark, tmplen);
+	    sv_setpvn(sv, s, tmplen);
+	}
+	else
+	    sv_setpv(sv, "");
+	mark++;
+    }
+    else
+	sv_setpv(sv,"");
+    len = delimlen;
+    if (len) {
+	for (; items > 0; items--,mark++) {
+	    sv_catpvn(sv,delim,len);
+	    sv_catsv(sv,*mark);
+	}
+    }
+    else {
+	for (; items > 0; items--,mark++)
+	    sv_catsv(sv,*mark);
+    }
+    SvSETMAGIC(sv);
+}
+#endif
