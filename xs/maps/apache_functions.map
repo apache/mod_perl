@@ -146,7 +146,9 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
 
 #MODULE=Apache::ServerConfig
  ap_exists_config_define
- ap_get_local_host
+#XXX: thought this might be useful
+#however it is not exported on win32
+!ap_get_local_host
  ap_get_server_built
  ap_get_server_version
  ap_psignature | | r,prefix
