@@ -353,6 +353,7 @@ static int is_2lns(const char *name)
 #else
 static void mp_preload_module(char **name)
 {
+    if(ind(*name, ' ') >= 0) return;
     if(**name == '-' && ++*name) return;
     if(**name == '+') ++*name;
     else if(!PERL_AUTOPRELOAD) return;
@@ -904,15 +905,38 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
 #define dSECiter_start \
     (void)hv_iterinit(hv); \
     while ((val = hv_iternextsv(hv, (char **) &key, &klen))) { \
-	HV *tab; \
-        if(SvROK(val) && (SvTYPE(SvRV(val)) != SVt_PVHV)) \
-             croak("value of `%s' is not a HASH reference!", key); \
+        HV *tab = Nullhv; \
+        AV *list = Nullav; \
 	if(SvMAGICAL(val)) mg_get(val); \
-	if((tab = (HV *)SvRV(val))) { 
+	if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVHV)) \
+	    tab = (HV *)SvRV(val); \
+	else if(SvROK(val) && (SvTYPE(SvRV(val)) == SVt_PVAV)) \
+	    list = (AV *)SvRV(val); \
+	else \
+	    croak("value of `%s' is not a HASH or ARRAY reference!", key); \
+	if(list || tab) { \
 
 #define dSECiter_stop \
         } \
     }
+
+#define SECiter_list(t) \
+{ \
+    I32 i; \
+    for(i=0; i<=AvFILL(list); i++) { \
+        SV *rv = *av_fetch(list, i, FALSE); \
+        HV *nhv; \
+        if(!SvROK(rv) || (SvTYPE(SvRV(rv)) != SVt_PVHV)) \
+   	    croak("not a HASH reference!"); \
+        nhv = newHV(); \
+        hv_store(nhv, (char*)key, klen, rv, FALSE); \
+        tab = nhv; \
+        t; \
+        SvREFCNT_dec(nhv); \
+    } \
+    list = Nullav; \
+    continue; \
+}
 
 void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 {
@@ -953,6 +977,9 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 #define TRACE_SECTION(n,v) \
     MP_TRACE_s(fprintf(stderr, "perl_section: <%s %s>\n", n, v))
 
+#define TRACE_SECTION_END(n) \
+    MP_TRACE_s(fprintf(stderr, "perl_section: </%s>\n", n))
+
 /* XXX, had to copy-n-paste much code from http_core.c for
  * perl_*sections, would be nice if the core config routines 
  * had a handful of callback hooks instead
@@ -966,6 +993,10 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
     char *arg; 
     const char *errmsg = NULL;
     dSECiter_start
+
+    if(list) {
+	SECiter_list(perl_virtualhost_section(cmd, dummy, tab));
+    }
 
     arg = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
 
@@ -989,7 +1020,7 @@ CHAR_P perl_virtualhost_section (cmd_parms *cmd, void *dummy, HV *hv)
     cmd->server = main_server;
 
     dSECiter_stop
-
+    TRACE_SECTION_END("VirtualHost");
     return NULL;
 }
 
@@ -1023,6 +1054,10 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     regex_t *r = NULL;
 
     void *new_url_conf = create_per_dir_config (cmd->pool);
+
+    if(list) {
+	SECiter_list(perl_urlsection(cmd, dummy, tab));
+    }
     
     cmd->path = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
     cmd->override = OR_ALL|ACCESS_CONF;
@@ -1052,7 +1087,7 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     cmd->path = old_path;
     cmd->override = old_overrides;
-
+    TRACE_SECTION_END("Location");
     return NULL;
 }
 
@@ -1067,6 +1102,10 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
     core_dir_config *conf;
     void *new_dir_conf = create_per_dir_config (cmd->pool);
     regex_t *r = NULL;
+
+    if(list) {
+	SECiter_list(perl_dirsection(cmd, dummy, tab));
+    }
 
     cmd->path = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
 
@@ -1096,7 +1135,7 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     cmd->path = old_path;
     cmd->override = old_overrides;
-
+    TRACE_SECTION_END("Directory");
     return NULL;
 }
 
@@ -1120,6 +1159,10 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     core_dir_config *conf;
     void *new_file_conf = create_per_dir_config (cmd->pool);
     regex_t *r = NULL;
+
+    if(list) {
+	SECiter_list(perl_filesection(cmd, dummy, tab));
+    }
 
     cmd->path = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
     /* Only if not an .htaccess file */
@@ -1151,7 +1194,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     perl_add_file_conf (cmd->server, new_file_conf);
 
     dSECiter_stop
-
+    TRACE_SECTION_END("Files");
     cmd->path = old_path;
     cmd->override = old_overrides;
 

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+allow $VirtualHost{'111.22.33.55'} = [...] syntax in <Perl> sections
+
 Perl*Handler commands will now call perl_startup() if Perl is not
 already running to cure dso problem [Daniel Jacobowitz <drow+@cs.cmu.edu>]
 
