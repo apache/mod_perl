@@ -38,12 +38,13 @@ void modperl_modglobal_hash_keys(void)
 
 modperl_modglobal_key_t *modperl_modglobal_lookup(pTHX_ const char *name)
 {
-    int i;
+    modperl_modglobal_key_t *gkey = MP_modglobal_keys;
 
-    for (i=0; MP_modglobal_keys[i].name; i++) {
-        if (strEQ(MP_modglobal_keys[i].name, name)) {
-            return &MP_modglobal_keys[i];
+    while (gkey->name) {
+        if (strEQ(gkey->name, name)) {
+            return gkey;
         }
+        gkey++;
     }
 
     return NULL;
