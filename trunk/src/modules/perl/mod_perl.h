@@ -25,7 +25,7 @@
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
-#ifdef APACHE_SSL
+#if defined(APACHE_SSL) || defined(MOD_SSL)
 #undef _
 #ifdef _config_h_
 #ifdef CAN_PROTOTYPE
@@ -118,7 +118,7 @@ extern "C" {
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
-#ifdef APACHE_SSL
+#if defined(APACHE_SSL) || defined(MOD_SSL)
 #undef _
 #ifdef _config_h_
 #ifdef CAN_PROTOTYPE
