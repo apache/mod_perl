@@ -485,7 +485,7 @@ MP_CMD_SRV_DECLARE(load_module)
     server_rec *s = parms->server;
     const char *errmsg;
 
-    MP_TRACE_d(MP_FUNC, "LoadPerlModule %s\n", arg);
+    MP_TRACE_d(MP_FUNC, "PerlLoadModule %s\n", arg);
 
     /* we must init earlier than normal */
     modperl_run(p, s);
