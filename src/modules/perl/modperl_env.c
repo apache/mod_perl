@@ -62,6 +62,30 @@ void modperl_env_clear(pTHX)
     modperl_env_tie(mg_flags);
 }
 
+void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s)
+{
+    /* XXX: propagate scfg->SetEnv to environ */
+}
+
+#define overlay_subprocess_env(r, tab) \
+    r->subprocess_env = apr_table_overlay(r->pool, \
+                                          r->subprocess_env, \
+                                          tab)
+
+void modperl_env_configure_request(request_rec *r)
+{
+    MP_dDCFG;
+    MP_dSCFG(r->server);
+
+    if (!apr_is_empty_table(dcfg->SetEnv)) {
+        overlay_subprocess_env(r, dcfg->SetEnv);
+    }
+
+    if (!apr_is_empty_table(scfg->PassEnv)) {
+        overlay_subprocess_env(r, scfg->PassEnv);
+    }
+}
+
 void modperl_env_default_populate(pTHX)
 {
     modperl_env_ent_t *ent = MP_env_const_vars;
@@ -93,6 +117,9 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     }
 
     MP_TRACE_g(MP_FUNC, "populating environment for %s\n", r->uri);
+
+    /* XXX: might want to always do this regardless of PerlOptions -SetupEnv */
+    modperl_env_configure_request(r);
 
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);

@@ -22,6 +22,8 @@ MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
+MP_CMD_SRV_DECLARE2(set_env);
+MP_CMD_SRV_DECLARE(pass_env);
 MP_CMD_SRV_DECLARE(options);
 MP_CMD_SRV_DECLARE(init_handlers);
 MP_CMD_SRV_DECLARE(perl);

@@ -28,14 +28,31 @@ static const char *MP_xs_loaders[] = {
 
 #define MP_xs_loader_name "%s::XSLoader::BOOTSTRAP"
 
+/* ugly hack to have access to startup pool and server during xs_init */
+static struct {
+    apr_pool_t *p;
+    server_rec *s;
+} MP_boot_data = {NULL,NULL};
+
+#define MP_boot_data_set(pool, server) \
+    MP_boot_data.p = pool; \
+    MP_boot_data.s = server
+
+#define MP_dBOOT_DATA \
+    apr_pool_t *p = MP_boot_data.p; \
+    server_rec *s = MP_boot_data.s
+
 static void modperl_boot(void *data)
 {
+    MP_dBOOT_DATA;
     dTHX; /* XXX: not too worried since this only happens at startup */
     int i;
-
+    
     modperl_env_clear(aTHX);
 
     modperl_env_default_populate(aTHX);
+
+    modperl_env_configure_server(aTHX_ p, s);
 
     modperl_perl_core_global_init(aTHX);
 
@@ -90,7 +107,9 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     PL_perl_destruct_level = 2;
 
+    MP_boot_data_set(p, s);
     status = perl_parse(perl, modperl_xs_init, argc, argv, NULL);
+    MP_boot_data_set(NULL, NULL);
 
     if (status) {
         perror("perl_parse");
@@ -423,6 +442,8 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),
     MP_CMD_DIR_ITERATE2("PerlAddVar", add_var, "PerlAddVar"),
+    MP_CMD_DIR_TAKE2("PerlSetEnv", set_env, "PerlSetEnv"),
+    MP_CMD_SRV_TAKE1("PerlPassEnv", pass_env, "PerlPassEnv"),
     MP_CMD_SRV_RAW_ARGS("<Perl", perl, "NOT YET IMPLEMENTED"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
