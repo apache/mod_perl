@@ -8,15 +8,15 @@ eval {
   require CGI::Cookie;
 };
 
-unless (Apache::Request->can('upload')) {
+my $r = shift;
+$r->send_http_header('text/plain');
+
+unless (have_module "Apache::Cookie" and Apache::Request->can('upload')) {
     print "1..0\n";
     print $@ if $@;
     print "$INC{'Apache/Request.pm'}\n";
     return;
 }
-
-my $r = shift;
-$r->send_http_header('text/plain');
 
 my $i = 0;
 my $tests = 33;

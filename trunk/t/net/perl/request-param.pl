@@ -8,7 +8,7 @@ eval {
     require Apache::Request;
 };
 
-unless (Apache::Request->can('upload')) {
+unless (have_module "Apache::Request" and Apache::Request->can('upload')) {
     print "1..0\n";
     print $@ if $@;
     print "$INC{'Apache/Request.pm'}\n";
