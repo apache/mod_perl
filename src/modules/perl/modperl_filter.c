@@ -3,7 +3,7 @@
 /* simple buffer api */
 
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
-                                            const char *buf, apr_ssize_t len)
+                                            const char *buf, apr_size_t len)
 {
     apr_bucket_alloc_t *ba = (*wb->filters)->c->bucket_alloc;
     apr_bucket_brigade *bb;
@@ -52,9 +52,9 @@ MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb)
 
 MP_INLINE apr_status_t modperl_wbucket_write(modperl_wbucket_t *wb,
                                              const char *buf,
-                                             apr_ssize_t *wlen)
+                                             apr_size_t *wlen)
 {
-    apr_ssize_t len = *wlen;
+    apr_size_t len = *wlen;
     *wlen = 0;
 
     if ((len + wb->outcnt) > sizeof(wb->outbuf)) {
@@ -226,13 +226,13 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
     return 0;
 }
 
-MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
-                                                 modperl_filter_t *filter,
-                                                 SV *buffer,
-                                                 apr_ssize_t wanted)
+MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
+                                                modperl_filter_t *filter,
+                                                SV *buffer,
+                                                apr_size_t wanted)
 {
     int num_buckets = 0;
-    apr_ssize_t len = 0;
+    apr_size_t len = 0;
 
     (void)SvUPGRADE(buffer, SVt_PV);
     SvPOK_only(buffer);
@@ -268,7 +268,7 @@ MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
 
     while (1) {
         const char *buf;
-        apr_ssize_t buf_len;
+        apr_size_t buf_len;
 
         if (!get_bucket(filter)) {
             break;
@@ -361,7 +361,7 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
 
 MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
                                                    const char *buf,
-                                                   apr_ssize_t *len)
+                                                   apr_size_t *len)
 {
     return modperl_wbucket_write(&filter->wbucket, buf, len);
 }

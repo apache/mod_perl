@@ -25,7 +25,7 @@ static MP_INLINE apr_status_t mpxs_modperl_bucket_read(pTHX_
                                                        apr_read_type_e block)
 {
     int rc;
-    apr_ssize_t len;
+    apr_size_t len;
     const char *str;
 
     rc = modperl_bucket_read(bucket, &str, &len, block);

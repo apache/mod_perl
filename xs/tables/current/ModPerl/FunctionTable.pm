@@ -2848,7 +2848,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_ssize_t',
+    'return_type' => 'apr_size_t',
     'name' => 'modperl_output_filter_read',
     'attr' => [
       '__inline__'
@@ -2867,7 +2867,7 @@ $ModPerl::FunctionTable = [
         'name' => 'buffer'
       },
       {
-        'type' => 'apr_ssize_t',
+        'type' => 'apr_size_t',
         'name' => 'wanted'
       }
     ]
@@ -2908,7 +2908,7 @@ $ModPerl::FunctionTable = [
         'name' => 'buf'
       },
       {
-        'type' => 'apr_ssize_t *',
+        'type' => 'apr_size_t *',
         'name' => 'len'
       }
     ]
@@ -3889,7 +3889,7 @@ $ModPerl::FunctionTable = [
         'name' => 'buf'
       },
       {
-        'type' => 'apr_ssize_t',
+        'type' => 'apr_size_t',
         'name' => 'len'
       }
     ]
@@ -3910,7 +3910,7 @@ $ModPerl::FunctionTable = [
         'name' => 'buf'
       },
       {
-        'type' => 'apr_ssize_t *',
+        'type' => 'apr_size_t *',
         'name' => 'wlen'
       }
     ]
@@ -4726,7 +4726,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'apr_ssize_t',
+    'return_type' => 'apr_size_t',
     'name' => 'mpxs_Apache__RequestRec_write',
     'args' => [
       {
@@ -4742,7 +4742,7 @@ $ModPerl::FunctionTable = [
         'name' => 'buffer'
       },
       {
-        'type' => 'apr_ssize_t',
+        'type' => 'apr_size_t',
         'name' => 'bufsiz'
       },
       {
