@@ -1038,6 +1038,7 @@ sub cleanup_for_static {
 sub setup_for_static {
     my $d = "$APACHE_SRC/modules/perl";
     my $mf = "$APACHE_SRC/modules/perl/Makefile";
+    my @static_src = ();
 
     iedit $mf, "s/(PERL_STATIC_EXTS) =.*/\$1 = $PERL_STATIC_EXTS/"
 	if $PERL_STATIC_EXTS;
@@ -1048,6 +1049,7 @@ sub setup_for_static {
 
     for (qw(Apache Constants)) {
 	rename "${_}/${_}.xs", "${_}/${_}.xs.disabled" if -e "${_}/${_}.xs";
+	push @static_src, "$_.c";
     }
 
 =pod
@@ -1074,6 +1076,10 @@ sub setup_for_static {
 =cut
 
     iedit $mf, "s/^#STATIC_/STATIC_/";
+
+    #bloody hell, make sucks and so does this.
+    #this has only cause a few people pain, enough.
+    iedit $mf, "s/ \Q\$(STATIC_SRC)\E/ @static_src/";
 }
 
 sub module_name_from_xs {

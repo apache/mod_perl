@@ -18,6 +18,15 @@ Other contributors are mentioned below.
 
 =item 1.10_01-dev
 
+Inclusion of $r->server->server_hostname if $r->server->is_virtual in
+Apache::Registry script namespaces is back to On by default after
+recently tripping up Ben Laurie, Janos Farkas, Tony Bowden.  To
+disable (only gain is to conserve memory) in a startup file set:
+ $Apache::Registry::NameWithVirtualHost = 0;
+
+work around bloody make problem "don't know how to make Apache.c Constants.c"
+spotted on SCO by Krister Keskitalo (along w/ 1-2 others in the past)
+
 fix Makefile.PL for apache-1.2.6+ssl_1.16 
 [Stefano Santoro <ssantoro@voicetek.com>, Dan Peterson <pete@spry.com>]
 
