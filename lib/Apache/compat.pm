@@ -367,6 +367,7 @@ sub reset_timeout {}
 sub cleanup_for_exec {}
 
 sub current_callback {
+    require ModPerl::Util;
     return ModPerl::Util::current_callback();
 }
 
