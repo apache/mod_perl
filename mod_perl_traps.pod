@@ -46,7 +46,7 @@ not be sent to the browser unless you Perl was configured with sfio.
 Perl's exit() built-in function cannot be used in mod_perl scripts.
 The Apache::exit() function should be used instead.  Apache::exit()
 automatically overrides the built-in exit() for Apache::Registry
-scripts. 
+and Apache::PerlRun scripts. 
 
 =item *
 
