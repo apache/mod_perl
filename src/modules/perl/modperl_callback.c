@@ -224,11 +224,11 @@ void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s)
                                   p, NULL, NULL);
 }
 
-void modperl_callback_files(int idx,
-                            apr_pool_t *pconf, apr_pool_t *plog,
-                            apr_pool_t *ptemp, server_rec *s)
+int modperl_callback_files(int idx,
+                           apr_pool_t *pconf, apr_pool_t *plog,
+                           apr_pool_t *ptemp, server_rec *s)
 {
-    modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_FILES,
-                                  NULL, NULL, s,
-                                  pconf, plog, ptemp);
+    return modperl_callback_run_handlers(idx, MP_HANDLER_TYPE_FILES,
+                                         NULL, NULL, s,
+                                         pconf, plog, ptemp);
 }

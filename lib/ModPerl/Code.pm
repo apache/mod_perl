@@ -33,7 +33,7 @@ my %hook_proto = (
                  {type => 'server_rec', name => 's'}],
     },
     Files      => {
-        ret  => 'void',
+        ret  => 'int',
         args => [{type => 'apr_pool_t', name => 'pconf'},
                  {type => 'apr_pool_t', name => 'plog'},
                  {type => 'apr_pool_t', name => 'ptemp'},

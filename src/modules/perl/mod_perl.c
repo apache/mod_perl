@@ -315,14 +315,16 @@ static apr_status_t modperl_sys_term(void *data)
     return APR_SUCCESS;
 }
 
-void modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
-                       apr_pool_t *ptemp, server_rec *s)
+int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
+                      apr_pool_t *ptemp, server_rec *s)
 {
     modperl_sys_init();
     apr_pool_cleanup_register(pconf, NULL,
                               modperl_sys_term, apr_pool_cleanup_null);
     modperl_init_globals(s, pconf);
     modperl_init(s, pconf);
+
+    return OK;
 }
 
 void modperl_pre_config_handler(apr_pool_t *p, apr_pool_t *plog,
@@ -340,8 +342,8 @@ static int modperl_hook_pre_connection(conn_rec *c)
     return OK;
 }
 
-static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
-                                     apr_pool_t *ptemp, server_rec *s)
+static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
+                                    apr_pool_t *ptemp, server_rec *s)
 {
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
@@ -356,6 +358,8 @@ static void modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
 #ifdef USE_ITHREADS
     modperl_init_clones(s, pconf);
 #endif
+
+    return OK;
 }
 
 static int modperl_hook_create_request(request_rec *r)
