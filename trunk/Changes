@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+fix bug in PerlPassEnv spotted by Gerd Knops, where values were munged  
+
 make sure per-dir PerlSetEnv happens after defaults are set (e.g. PATH)
 
 cure core dump with 5.005_03-threads
