@@ -350,7 +350,13 @@ sub test {
     }
 
 # XXX: on windows $pool->clean, followed by $pool->destroy breaks
-# other tests. on unix it works fine.
+# other tests. Specifically,
+#    perl t/TEST apr/pool compat/send_fd
+# or
+#    perl t/TEST apr/pool directive/setupenv
+# causes a
+#    response had protocol HTTP/0.9 (headers not sent?)
+# error. on unix it works fine.
 # 
 #    ### $p->clear ###
 #    {
