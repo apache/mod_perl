@@ -312,36 +312,50 @@ sub handler ($$) {
     return $rc;
 }
 
+BEGIN {
+    if ($] < 5.006) {
+        $INC{'warnings.pm'} = __FILE__;
+        *warnings::unimport = sub {};
+    }
+}
+
 sub flush_namespace {
     my($self, $package) = @_;
     $package ||= $self->namespace;
 
-    no strict;
+    no strict 'refs';
     my $tab = \%{$package.'::'};
 
     for (keys %$tab) {
-	if(*{ $tab->{$_} }{CODE}) {
-	    undef_cv_if_owner($package, \&{ $tab->{$_} });
-	} 
-        if(*{ $tab->{$_} }{HASH}) {
-            undef %{ $tab->{$_} };
+        my $fullname = join '::', $package, $_;
+        #code/hash/array/scalar might be imported
+        #make sure the gv does not point elsewhere
+        #before undefing each
+        if (%$fullname) {
+            *{$fullname} = {};
+            undef %$fullname;
         }
-        if(*{ $tab->{$_} }{ARRAY}) {
-            undef @{ $tab->{$_} };
+        if (@$fullname) {
+            *{$fullname} = [];
+            undef @$fullname;
         }
-        if(*{ $tab->{$_} }{SCALAR}) {
-	    undef ${ $tab->{$_} };
+        if ($$fullname) {
+            my $tmp; #argh, no such thing as an anonymous scalar
+            *{$fullname} = \$tmp;
+            undef $$fullname;
         }
-     }
-}
-
-sub undef_cv_if_owner {
-    return unless $INC{'B.pm'};
-    my($package, $cv) = @_;
-    my $obj    = B::svref_2object($cv);
-    my $stash  = $obj->GV->STASH->NAME;
-    return unless $package eq $stash;
-    undef &$cv;
+        if (defined &$fullname) {
+            no warnings;
+            local $^W = 0;
+            *{$fullname} = sub {};
+	    undef &$fullname;
+	}
+        if (*{$fullname}{IO}) {
+            if (fileno $fullname) {
+                close $fullname;
+            }
+        }
+    }
 }
 
 1;

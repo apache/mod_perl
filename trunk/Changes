@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+Apache::PerlRun::flush_namespace fixes, so aliased (imported)
+code/hash/array/scalar are undefined without undef-ing the pointed-to
+data and without using B.pm, thanks to Richard Chen for the suggestion
+
 document Apache::print's special behavior wrt references
 [Jeffrey W. Baker <jwbaker@acm.org>]
 
