@@ -865,6 +865,8 @@ unless (-e "t/net/config.pl") {
     cp "t/net/config.pl.dist", "t/net/config.pl";
 }
 
+init_config_pl() if $Is_Win32;
+
 write_my_config($APACHE_SRC);
 
 unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
@@ -872,6 +874,32 @@ unless($Is_Win32 or -e "t/conf/httpd.conf" or ($NO_HTTPD && !$PREP_HTTPD)) {
 }
 
 init_tests_and_config() if $USE_APXS;
+
+sub init_config_pl {
+    my $mmn = magic_number($APACHE_SRC) || 0;
+
+    my $hf = FileHandle->new(">>t/net/config.pl") or 
+      die "can't open t/net/config.pl $!";
+
+    my $apaci_cfg = APACI->init;
+
+    my($k,$v);
+    my(%all) = %callback_hooks;
+    while (($k,$v) = each %experimental) {
+        $all{$k} = ($experimental{$k} > 1) ? 1 : 0;
+    }
+    print $hf "%callback_hooks = (\n";
+    while (($k,$v) = each %all) {
+        print $hf "   $k => $v,\n";
+        my $yes_no = $v ? "yes" : "no";
+        print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
+    }
+    print $hf "   MMN => $mmn,\n";
+    print $hf "   USE_DSO => 1,\n" if $USE_DSO;
+    print $hf ");\n1;\n";
+    $hf->close;
+    $apaci_cfg->close if $apaci_cfg;
+}
 
 sub init_tests_and_config {
     local *FH;
@@ -913,31 +941,8 @@ sub init_tests_and_config {
 	    iedit "t/conf/httpd.conf", "s/^#(PerlOpmask)/\$1/";
 	}
     }
-    {
-	my $mmn = magic_number($APACHE_SRC) || 0;
 
-	my $hf = FileHandle->new(">>t/net/config.pl") or 
-	    die "can't open t/net/config.pl $!";
-
-	my $apaci_cfg = APACI->init;
-
-	my($k,$v);
-	my(%all) = %callback_hooks;
-	while(($k,$v) = each %experimental) {
-	    $all{$k} = ($experimental{$k} > 1) ? 1 : 0;
-	}
-	print $hf "%callback_hooks = (\n";
-	while(($k,$v) = each %all) {
-	    print $hf "   $k => $v,\n";
-	    my $yes_no = $v ? "yes" : "no";
-	    print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
-	}
-        print $hf "   MMN => $mmn,\n";
-	print $hf "   USE_DSO => 1,\n" if $USE_DSO;
-	print $hf ");\n1;\n";
-	$hf->close;
-	$apaci_cfg->close if $apaci_cfg;
-    }
+    init_config_pl();
 
     if($USE_APACI and not $PREP_HTTPD and not $USE_APXS) {
 	my $shrpenv = $Config{shrpenv} || "";
@@ -1962,6 +1967,7 @@ sub add_static_ar {
 }
 
 sub APACI::init {
+    return undef if $Is_Win32;
     my $lib_cfg;
     if($USE_APXS) {
 	$lib_cfg = "apaci/mod_perl.config";
