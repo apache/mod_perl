@@ -159,7 +159,17 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     apr_seek_where_t where;
     apr_status_t rc;
     IV code;
-    
+    apr_off_t seek_offset = 0;
+
+#ifdef USE_LARGE_FILES
+    if (offset != 0) {
+        Perl_croak(aTHX_ "PerlIO::APR::seek with non-zero offset"
+                   " not supported with -Duselargefiles");
+    }
+#else
+    seek_offset = offset;
+#endif
+
     /* Flush the fill buffer */
     code = PerlIOBuf_flush(aTHX_ f);
     if (code != 0) {
@@ -178,7 +188,7 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
         break;
     }
 
-    rc = apr_file_seek(st->file, where, (apr_off_t *)&offset);
+    rc = apr_file_seek(st->file, where, &seek_offset);
     if (rc == APR_SUCCESS) {
         return 0;
     }
