@@ -35,6 +35,7 @@ ServerSignature On
 PerlSwitches -wT
 
 PerlChildExitHandler ModPerl::Test::exit_handler
+PerlModule TestExit::FromPerlModule
 
 #for t/modules/include.t
 <Directory @ServerRoot@/htdocs/includes>
