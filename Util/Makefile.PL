@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 
 use ExtUtils::testlib;
-use lib qw(../blib/lib ../blib/arch);
+use lib qw(../blib/lib ../blib/arch ../lib);
 
 use Apache::src ();
 my $src = Apache::src->new;
