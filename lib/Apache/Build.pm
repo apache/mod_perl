@@ -616,7 +616,7 @@ sub write_src_makefile {
         print $fh $self->canon_make_attr($method, $self->$method());
     }
 
-    for my $method (qw(c_files o_files o_pic_files)) {
+    for my $method (qw(c_files o_files o_pic_files h_files)) {
         print $fh $self->canon_make_attr($method, @{ $code->$method() });
     }
 
@@ -670,7 +670,8 @@ clean:
 	$(MODPERL_RM_F) $(MODPERL_O_PIC_FILES)
 	$(MODPERL_RM_F) $(MODPERL_CLEAN_FILES)
 
-$(MODPERL_O_FILES): Makefile
+$(MODPERL_O_FILES): $(MODPERL_H_FILES) Makefile
+$(MODPERL_O_PIC_FILES): $(MODPERL_H_FILES) Makefile
 EOF
 
     close $fh;
