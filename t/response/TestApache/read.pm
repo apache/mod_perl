@@ -14,12 +14,12 @@ sub handler {
     my $r = shift;
     $r->content_type('text/plain');
 
-    my $ct = $r->headers_in->get('content-length');
+    my $cl = $r->headers_in->get('content-length');
     my $buffer = "";
     my $bufsiz = $r->args || BUFSIZ;
 
     my $offset = 0;
-    while (my $remain = $ct - $offset) {
+    while (my $remain = $cl - $offset) {
         my $len = $remain >= $bufsiz ? $bufsiz : $remain;
         my $read = $r->read($buffer, $len, $offset);
         if ($read != $len) {
