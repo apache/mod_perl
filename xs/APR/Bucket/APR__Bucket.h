@@ -100,3 +100,15 @@ static MP_INLINE void mpxs_APR__Bucket_remove(apr_bucket *bucket)
     APR_BUCKET_REMOVE(bucket);
 }
 
+static MP_INLINE
+apr_status_t mpxs_APR__Bucket_setaside(pTHX_ apr_bucket *b, apr_pool_t *p)
+{
+    apr_status_t rc = apr_bucket_setaside(b, p);
+    /* if users don't bother to check the success, do it on their
+     * behalf */
+    if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "APR::Bucket::setaside");
+    }
+
+    return rc;
+}
