@@ -6,9 +6,9 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-=item 1.13_01-dev
+=item 1.14 - July 18, 1998
 
-PERL_DEBUG=1 and USE_APACI=1 will properly link against libperld if exists
+PERL_DEBUG=1 w/ USE_APACI=1 will properly link against libperld if exists
 
 remove mod_perl.pm_version file.  move Makefile.PL-time generated code
 from mod_perl.pm.PL to mod_perl_hooks.pm.PL, remove mod_perl.pm.PL and
