@@ -19,7 +19,7 @@ my $r = shift;
 $r->send_http_header('text/plain');
 
 my $i = 0;
-my $tests = 31;
+my $tests = 33;
 $tests += 7 if $r->headers_in->get("Cookie");
 
 print "1..$tests\n";
@@ -150,5 +150,18 @@ if(my $string = $r->headers_in->get('Cookie')) {
 else { 
     print "NO Cookie set"; 
 } 
+
+{
+    my $cgi_exp = CGI::expires('-1d', 'cookie');
+    my $cookie_exp = Apache::Cookie->expires('-1d');
+    print "cookie: $cookie_exp\ncgi: $cgi_exp\n";
+    test ++$i, $cookie_exp eq $cgi_exp;
+}
+{
+    my $cgi_exp = CGI::expires('-1d', 'http');
+    my $apr_exp = Apache::Request->expires('-1d');
+    print "apr: $apr_exp\ncgi: $cgi_exp\n";
+    test ++$i, $apr_exp eq $cgi_exp;
+}
 
 test ++$i, 1;
