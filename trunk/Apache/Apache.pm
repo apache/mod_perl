@@ -757,9 +757,11 @@ content to the client.
 
 =over 4
 
-=item $r->send_http_header
+=item $r->send_http_header( [$content_type] )
 
 Send the response line and all headers to the client.
+Takes an optional parameter indicating the content-type of the
+response, i.e. 'text/html'.
 
 This method will create headers from the $r->content_xxx() and
 $r->no_cache() attributes (described below) and then append the
