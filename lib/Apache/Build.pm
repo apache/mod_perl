@@ -172,7 +172,7 @@ sub mpm_name {
         my $config_vars_file = catfile $self->{dir},
             "build", "config_vars.mk";
         if (open my $fh, $config_vars_file) {
-            while ((<$fh>) {
+            while (<$fh>) {
                 if (/MPM_NAME = (\w+)/) {
                     $mpm_name = $1;
                     last;
@@ -749,9 +749,9 @@ sub apr_config_path {
             map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
         push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
             if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
-        # could be the source tree configured interactively
-        push @tries, catdir $self->{dir}, "srclib", "apr"
-            if exists $self->{dir} and -d $self->{dir};
+#        # could be the source tree configured interactively
+#        push @tries, catdir $self->{dir}, "srclib", "apr"
+#            if exists $self->{dir} and -d $self->{dir};
 
         for (@tries) {
             my $try = catfile $_, "apr-config";
