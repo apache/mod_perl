@@ -23,7 +23,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 52;
+    plan $r, tests => 53;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -60,6 +60,12 @@ sub handler {
     ok t_cmp $r->proto_num, 1000, 't->proto_num';
 
     ok t_cmp $r->hostname, $r->get_server_name, '$r->hostname';
+
+    {
+        my $old_hostname = $r->hostname("other.hostname");
+        ok t_cmp $r->hostname, "other.hostname", '$r->hostname rw';
+        $r->hostname($old_hostname);
+    }
 
     ok $r->request_time;
 

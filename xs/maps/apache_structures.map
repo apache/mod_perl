@@ -18,7 +18,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 <  header_only
 <  protocol
 <  proto_num
-<  hostname
+   hostname
 <  request_time
    status_line
    status
