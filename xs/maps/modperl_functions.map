@@ -13,6 +13,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  mpxs_Apache__RequestRec_set_handlers
  mpxs_Apache__RequestRec_get_handlers
  mpxs_Apache__RequestRec_location
+ mpxs_Apache__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
 
  #protocol module helpers
  mpxs_Apache__RequestRec_location_merge

@@ -172,6 +172,38 @@ int mpxs_Apache__RequestRec_no_cache(pTHX_ request_rec *r, SV *flag)
     return retval;
 }
 
+static MP_INLINE
+SV *mpxs_Apache__RequestRec_pnotes(pTHX_ request_rec *r, SV *key, SV *val)
+{
+    MP_dRCFG;
+    SV *retval = NULL;
+
+    if (!rcfg) {
+        return &PL_sv_undef;
+    }
+    if (!rcfg->pnotes) {
+        rcfg->pnotes = newHV();
+    }
+
+    if (key) {
+        STRLEN len;
+        char *k = SvPV(key, len);
+        
+        if (val) {
+            retval = *hv_store(rcfg->pnotes, k, len,
+                               SvREFCNT_inc(val), 0);
+        }
+        else if (hv_exists(rcfg->pnotes, k, len)) {
+            retval = *hv_fetch(rcfg->pnotes, k, len, FALSE);
+        }
+    }
+    else {
+        retval = newRV_inc((SV *)rcfg->pnotes);
+    }
+    
+    return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+}
+
 #define mpxs_Apache__RequestRec_dir_config(r, key, sv_val) \
     modperl_dir_config(aTHX_ r, r->server, key, sv_val)
 
