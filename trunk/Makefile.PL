@@ -1,10 +1,12 @@
 #! /usr/local/bin/perl
 BEGIN { 
     $Is_Win32 = ($^O eq "MSWin32");
+    $Is_Cygwin = ($^O =~ m/cygwin/g);
     if($Is_Win32) {
 	require 5.004_02;
-    }
-    else {
+    } elsif($Is_Cygwin) {
+    require 5.005_03;
+    } else {
 	require 5.003_97; 
     } 
 }
@@ -973,7 +975,11 @@ write_my_config($APACHE_SRC);
 
     require "lib/mod_perl_hooks.pm";
     my @list = mod_perl::hooks();
+    if ($Is_Cygwin) {
+    @list == @mod_perl_hooks
+    } else {
     @list == @mod_perl_hooks or die "Edit of lib/mod_perl_hooks.pm failed $!\n";
+    }
 
     unlink "lib/mod_perl_hooks.pm~";
 }
@@ -1737,7 +1743,11 @@ sub iedit {
     return if $Is_Win32;
 
     #print STDERR "-e @_\n";
+    if ($Is_Cygwin) {
+    system $^X, "-e", "@_", $file;
+    } else {    
     system $^X, "-pi~", "-e", "@_", $file;
+    }
 }
 
 sub win32_setup {

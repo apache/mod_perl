@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+cygwin port [Stipe Tolj <tolj@uni-duesseldorf.de>]
+
 Documented $r->pnotes [<ask@valueclick.com>]
 
 Change "setting auth_name" trace message so we don't get it without
