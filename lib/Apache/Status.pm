@@ -368,15 +368,8 @@ sub status_sig {
 }
 
 sub status_myconfig {
-    # XXX: Config::myconfig(); fails under threads with (perl < 5.8.3?)
-    # "Modification of a read-only value attempted"
-    # need API to query the mpm and run it only if the mpm is not threaded
-    # require Config;
-    # my $myconfig = Config::myconfig();
-    my $myconfig = "Under construction";
-    ["<pre>", $myconfig, "</pre>"];
+    ["<pre>", myconfig(), "</pre>"];
 }
-
 
 sub status_inh_tree {
     return has(shift, "symdump")
@@ -817,6 +810,23 @@ sub as_HTML {
     push @m, "</table>";
 
     return join "\n", @m, "<hr>", b_package_size_link($r, $q, $package);
+}
+
+sub myconfig {
+    require Config;
+    # Config::myconfig(); fails under threads with (5.8.0 < perl < 5.8.3)
+    # "Modification of a read-only value attempted"
+    # provide a workaround
+    if ($Config::Config{useithreads} and $] > 5.008 and $] < 5.008003) {
+        return $Config::summary_expanded if $Config::summary_expanded;
+        (my $summary_expanded = $Config::summary) =~
+            s{\$(\w+)}
+             { my $c = $Config::Config{$1}; defined($c) ? $c : 'undef' }ge;
+        return $summary_expanded;
+    }
+    else {
+        return Config::myconfig();
+  }
 }
 
 1;
