@@ -29,6 +29,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  SV *:DEFINE_TIEHANDLE    | | SV *:stashsv, SV *:sv=Nullsv
  apr_size_t:DEFINE_PRINT  | | ...
  apr_size_t:DEFINE_PRINTF | | ...
+ SV *:DEFINE_BINMODE  | | request_rec *:r
  mpxs_Apache__RequestRec_sendfile | | r, filename=r->filename, offset=0, len=0
  mpxs_Apache__RequestRec_read | | r, buffer, bufsiz, offset=0
  long:DEFINE_READ | | request_rec *:r, SV *:buffer, int:bufsiz, int:offset=0

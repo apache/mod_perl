@@ -3,7 +3,7 @@ in no particular order
 ------------------------------------------
 
 tied filehandle interface:
- -CLOSE, OPEN, BINMODE, EOF, TELL, SEEK, FILENO
+ -CLOSE, OPEN, EOF, TELL, SEEK, FILENO
  -READLINE - proper implementation (see comment in Apache::compat)
 
 $r->finfo:
