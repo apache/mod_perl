@@ -9,6 +9,7 @@ use lib qw(Apache-Test/lib);
 use Config;
 use Cwd ();
 use File::Spec ();
+use File::Basename;
 use ExtUtils::Embed ();
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
@@ -450,7 +451,7 @@ sub DESTROY {}
 my %default_files = (
     'build_config' => 'lib/Apache/BuildConfig.pm',
     'ldopts' => 'src/modules/perl/ldopts',
-    'makefile' => 'src/modules/perl/Makefile',
+    'makefile' => 'src/modules/perl/Makefile.modperl',
 );
 
 sub clean_files {
@@ -908,6 +909,8 @@ sub write_src_makefile {
 
     print $fh noedit_warning_hash();
 
+    print $fh $self->canon_make_attr('makefile', basename $mf);
+
     $self->make_tools($fh);
 
     print $fh $self->canon_make_attr('ap_libs', $self->apache_libs);
@@ -1006,8 +1009,8 @@ clean:
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
-$(MODPERL_OBJS): $(MODPERL_H_FILES) Makefile
-$(MODPERL_PIC_OBJS): $(MODPERL_H_FILES) Makefile
+$(MODPERL_OBJS): $(MODPERL_H_FILES) $(MODPERL_MAKEFILE)
+$(MODPERL_PIC_OBJS): $(MODPERL_H_FILES) $(MODPERL_MAKEFILE)
 $(MODPERL_LIB): $(MODPERL_LIBPERL)
 
 $(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_OBJS)
