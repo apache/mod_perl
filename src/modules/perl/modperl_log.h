@@ -34,7 +34,7 @@ unsigned long modperl_debug_level(void);
 extern unsigned long MP_debug_level;
 #endif
 
-void modperl_trace(char *func, const char *fmt, ...);
+void modperl_trace(const char *func, const char *fmt, ...);
 
 void modperl_trace_level_set(server_rec *s, const char *level);
 
