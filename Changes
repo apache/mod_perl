@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+expose APR::Brigade::length() and APR::Brigade::flatten()
+[Geoffrey Young]
+
 ($r|$s)->add_config() now die if failed (previously returned the
 error) [Stas]
 

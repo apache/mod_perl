@@ -6444,6 +6444,46 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_APR__Brigade_length',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_bucket_brigade *',
+        'name' => 'bb'
+      },
+      {
+        'type' => 'int',
+        'name' => 'read_all'
+      },
+    ]
+  },
+  {
+    'return_type' => 'apr_status_t',
+    'name' => 'mpxs_apr_brigade_flatten',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_bucket_brigade *',
+        'name' => 'bb'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'sv_buf'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'sv_len'
+      },
+    ]
+  },
+  {
     'return_type' => 'apr_ipsubnet_t *',
     'name' => 'mpxs_apr_ipsubnet_create',
     'args' => [

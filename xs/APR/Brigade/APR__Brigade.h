@@ -67,3 +67,39 @@ int mpxs_APR__Brigade_empty(apr_bucket_brigade *brigade)
     return APR_BRIGADE_EMPTY(brigade);
 }
 
+static MP_INLINE
+SV *mpxs_APR__Brigade_length(pTHX_ apr_bucket_brigade *bb,
+                             int read_all)
+{
+    apr_off_t length;
+
+    apr_status_t rv = apr_brigade_length(bb, read_all, &length);
+
+    /* XXX - we're deviating from the API here a bit in order to
+     * make it more perlish - returning the length instead of
+     * the return code.  maybe that's not such a good idea, though...
+     */
+    if (rv == APR_SUCCESS) {
+        return newSViv((int)length);
+    }
+
+    return &PL_sv_undef;
+}
+
+static MP_INLINE
+apr_status_t mpxs_apr_brigade_flatten(pTHX_ apr_bucket_brigade *bb,
+                                      SV *sv_buf, SV *sv_len)
+{
+    apr_status_t status;
+    apr_size_t len = mp_xs_sv2_apr_size_t(sv_len);
+
+    mpxs_sv_grow(sv_buf, len);
+    status = apr_brigade_flatten(bb, SvPVX(sv_buf), &len);
+    mpxs_sv_cur_set(sv_buf, len);
+
+    if (!SvREADONLY(sv_len)) {
+        sv_setiv(sv_len, len);
+    }
+
+    return status;
+}
