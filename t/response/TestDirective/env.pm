@@ -87,6 +87,9 @@ PerlOptions -SetupEnv
     # per-server entry not overwritten
     PerlSetEnv TestDirective__env_srv2 env_srv2
 
+    # XXX: temp workaround
+    PerlPostReadRequestHandler Apache::OK
+
     # PerlPassEnv is only per-server
     PerlPassEnv APACHE_TEST_HOSTNAME
 </Base>
