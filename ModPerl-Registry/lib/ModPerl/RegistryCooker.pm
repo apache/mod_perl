@@ -17,6 +17,7 @@ our $VERSION = '1.99';
 
 use Apache::Response ();
 use Apache::RequestRec ();
+use Apache::RequestUtil ();
 use Apache::RequestIO ();
 use Apache::Log ();
 use Apache::Access ();
@@ -524,7 +525,7 @@ sub read_script {
     my $self = shift;
 
     $self->debug("reading $self->{FILENAME}") if DEBUG & D_NOISE;
-    $self->{CODE} = $self->{REQ}->my_slurp_filename;
+    $self->{CODE} = $self->{REQ}->slurp_filename(0); # untainted
 }
 
 #########################################################################
@@ -639,7 +640,6 @@ sub compile {
 
     ModPerl::Global::special_list_clear(END => $self->{PACKAGE});
 
-    ModPerl::Util::untaint($$eval);
     {
         # let the code define its own warn and strict level 
         no strict;
@@ -753,15 +753,6 @@ sub Apache::RequestRec::my_finfo {
     my $r = shift;
     stat $r->filename;
     \*_;
-}
-
-sub Apache::RequestRec::my_slurp_filename {
-    my $r = shift;
-    open my $fh, $r->filename;
-    local $/;
-    my $data = <$fh>;
-    close $fh;
-    return \$data;
 }
 
 
