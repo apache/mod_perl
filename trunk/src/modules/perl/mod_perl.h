@@ -1022,13 +1022,13 @@ typedef struct {
     int is_method;
     int is_anon;
     int in_perl;
-    SV *class;
+    SV *pclass;
     char *method;
 } mod_perl_handler;
 
 typedef struct {
     SV *obj;
-    char *class;
+    char *pclass;
 } mod_perl_perl_dir_config;
 
 typedef struct {
@@ -1050,7 +1050,7 @@ void xs_init (void);
 /* mod_perl.c */
 
 /* generic handler stuff */ 
-int perl_handler_ismethod(HV *class, char *sub);
+int perl_handler_ismethod(HV *pclass, char *sub);
 int perl_call_handler(SV *sv, request_rec *r, AV *args);
 request_rec *mp_fake_request_rec(server_rec *s, pool *p, char *hook);
 
@@ -1105,7 +1105,7 @@ SV *mod_perl_gensym (char *pack);
 SV *mod_perl_slurp_filename(request_rec *r);
 SV *mod_perl_tie_table(table *t);
 SV *perl_hvrv_magic_obj(SV *rv);
-void perl_tie_hash(HV *hv, char *class, SV *sv);
+void perl_tie_hash(HV *hv, char *pclass, SV *sv);
 void perl_util_cleanup(void);
 void mod_perl_clear_rgy_endav(request_rec *r, SV *sv);
 void perl_stash_rgy_endav(char *s, SV *rgystash);
@@ -1223,7 +1223,7 @@ void mod_perl_pass_env(pool *p, perl_server_config *cls);
 pool *perl_get_util_pool(void);
 pool *perl_get_startup_pool(void);
 server_rec *perl_get_startup_server(void);
-request_rec *sv2request_rec(SV *in, char *class, CV *cv);
+request_rec *sv2request_rec(SV *in, char *pclass, CV *cv);
 
 /* PerlRunXS.xs */
 #define ApachePerlRun_name_with_virtualhost() \

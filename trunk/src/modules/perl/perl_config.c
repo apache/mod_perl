@@ -807,7 +807,7 @@ module *perl_get_module_ptr(char *name, int len)
 }
 
 static SV *
-perl_perl_create_cfg(SV **sv, HV *class, cmd_parms *parms, char *type)
+perl_perl_create_cfg(SV **sv, HV *pclass, cmd_parms *parms, char *type)
 {
     GV *gv;
 
@@ -815,13 +815,13 @@ perl_perl_create_cfg(SV **sv, HV *class, cmd_parms *parms, char *type)
 	return *sv;
 
     /* return $class->type if $class->can(type) */
-    if((gv = gv_fetchmethod_autoload(class, type, FALSE)) && isGV(gv)) {
+    if((gv = gv_fetchmethod_autoload(pclass, type, FALSE)) && isGV(gv)) {
 	int count;
 	dSP;
 
 	ENTER;SAVETMPS;
 	PUSHMARK(sp);
-	XPUSHs(sv_2mortal(newSVpv(HvNAME(class),0)));
+	XPUSHs(sv_2mortal(newSVpv(HvNAME(pclass),0)));
 	if(parms)
 	    XPUSHs(perl_bless_cmd_parms(parms));
 	PUTBACK;
@@ -840,21 +840,21 @@ perl_perl_create_cfg(SV **sv, HV *class, cmd_parms *parms, char *type)
 	/* return bless {}, $class */
 	if(!SvTRUE(*sv)) {
 	    *sv = newRV_noinc((SV*)newHV());
-	    return sv_bless(*sv, class);
+	    return sv_bless(*sv, pclass);
 	}
 	else
 	    return *sv;
     }
 }
 
-static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
+static SV *perl_perl_create_dir_config(SV **sv, HV *pclass, cmd_parms *parms)
 {
-    return perl_perl_create_cfg(sv, class, parms, PERL_DIR_CREATE);
+    return perl_perl_create_cfg(sv, pclass, parms, PERL_DIR_CREATE);
 }
 
-static SV *perl_perl_create_srv_config(SV **sv, HV *class, cmd_parms *parms)
+static SV *perl_perl_create_srv_config(SV **sv, HV *pclass, cmd_parms *parms)
 {
-    return perl_perl_create_cfg(sv, class, parms, PERL_SERVER_CREATE);
+    return perl_perl_create_cfg(sv, pclass, parms, PERL_SERVER_CREATE);
 }
 
 static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
@@ -894,14 +894,14 @@ static void *perl_perl_merge_cfg(pool *p, void *basev, void *addv, char *meth)
 	    sv = POPs;
 	    ++SvREFCNT(sv);
 	    new->obj = sv;
-	    new->class = SvCLASS(sv);
+	    new->pclass = SvCLASS(sv);
 	}
 	PUTBACK;
 	FREETMPS;LEAVE;
     }
     else {
 	new->obj = newSVsv(basesv);
-	new->class = basevp->class;
+	new->pclass = basevp->pclass;
     }
     return (void *)new;
 }
@@ -923,7 +923,7 @@ void perl_perl_cmd_cleanup(void *data)
     if(cld->obj) {
 	MP_TRACE_c(fprintf(stderr, 
 			   "cmd_cleanup: SvREFCNT($%s::$obj) == %d\n",
-			   cld->class, (int)SvREFCNT(cld->obj)));
+			   cld->pclass, (int)SvREFCNT(cld->obj)));
 	SvREFCNT_dec(cld->obj);
     }
 }
@@ -938,7 +938,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
     CV *cv = perl_get_cv(subname, TRUE);
     SV *obj;
     bool has_empty_proto = (SvPOK(cv) && (SvLEN(cv) == 1));
-    module *xsmod = perl_get_module_ptr(data->class, strlen(data->class));
+    module *xsmod = perl_get_module_ptr(data->pclass, strlen(data->pclass));
     mod_perl_perl_dir_config *sdata = NULL;
     obj = perl_perl_create_dir_config(&data->obj, CvSTASH(cv), cmd);
 

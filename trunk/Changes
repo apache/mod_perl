@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+s/class/pclass/g so we can compile w/ c++
+
 mod_perl will now save/restore SIGALRM
 
 fix Apache::Status bug prototype check of 'use constant' subs, thanks to

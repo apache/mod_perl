@@ -76,25 +76,25 @@ BOOT:
     items = items; /*avoid warning*/ 
 
 Apache::Table
-TIEHASH(class, table)
-    SV *class
+TIEHASH(pclass, table)
+    SV *pclass
     Apache::table table
 
     CODE:
-    if(!class) XSRETURN_UNDEF;
+    if(!pclass) XSRETURN_UNDEF;
     RETVAL = ApacheTable_new(table);
 
     OUTPUT:
     RETVAL
 
 void
-new(class, r, nalloc=10)
-    SV *class
+new(pclass, r, nalloc=10)
+    SV *pclass
     Apache r
     int nalloc
 
     CODE:
-    if(!class) XSRETURN_UNDEF;
+    if(!pclass) XSRETURN_UNDEF;
     ST(0) = mod_perl_tie_table(make_table(r->pool, nalloc));
 
 void

@@ -1089,7 +1089,7 @@ void mod_perl_cleanup_handler(void *data)
 }
 
 #ifdef PERL_METHOD_HANDLERS
-int perl_handler_ismethod(HV *class, char *sub)
+int perl_handler_ismethod(HV *pclass, char *sub)
 {
     CV *cv;
     HV *stash;
@@ -1100,7 +1100,7 @@ int perl_handler_ismethod(HV *class, char *sub)
     if(!sub) return 0;
     sv = newSVpv(sub,0);
     if(!(cv = sv_2cv(sv, &stash, &gv, FALSE))) {
-	GV *gvp = gv_fetchmethod(class, sub);
+	GV *gvp = gv_fetchmethod(pclass, sub);
 	if (gvp) cv = GvCV(gvp);
     }
 
@@ -1327,7 +1327,7 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
     dSP;
     perl_dir_config *cld = NULL;
     HV *stash = Nullhv;
-    SV *class = newSVsv(sv), *dispsv = Nullsv;
+    SV *pclass = newSVsv(sv), *dispsv = Nullsv;
     CV *cv = Nullcv;
     char *method = "handler";
     int defined_sub = 0, anon = 0;
@@ -1353,7 +1353,7 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
 	perl_per_request_init(r);
 
     if(!dispatcher && (SvTYPE(sv) == SVt_PV)) {
-	char *imp = pstrdup(r->pool, (char *)SvPV(class,na));
+	char *imp = pstrdup(r->pool, (char *)SvPV(pclass,na));
 
 	if((anon = strnEQ(imp,"sub ",4))) {
 	    sv = perl_eval_pv(imp, FALSE);
@@ -1365,37 +1365,37 @@ int perl_call_handler(SV *sv, request_rec *r, AV *args)
 
 #ifdef PERL_METHOD_HANDLERS
 	{
-	    char *end_class = NULL;
+	    char *end_pclass = NULL;
 
-	    if ((end_class = strstr(imp, "->"))) {
-		end_class[0] = '\0';
-		if(class)
-		    SvREFCNT_dec(class);
-		class = newSVpv(imp, 0);
-		end_class[0] = ':';
-		end_class[1] = ':';
-		method = &end_class[2];
+	    if ((end_pclass = strstr(imp, "->"))) {
+		end_pclass[0] = '\0';
+		if(pclass)
+		    SvREFCNT_dec(pclass);
+		pclass = newSVpv(imp, 0);
+		end_pclass[0] = ':';
+		end_pclass[1] = ':';
+		method = &end_pclass[2];
 		imp = method;
 		++is_method;
 	    }
 	}
 
-	if(*SvPVX(class) == '$') {
-	    SV *obj = perl_eval_pv(SvPVX(class), TRUE);
+	if(*SvPVX(pclass) == '$') {
+	    SV *obj = perl_eval_pv(SvPVX(pclass), TRUE);
 	    if(SvROK(obj) && sv_isobject(obj)) {
 		MP_TRACE_h(fprintf(stderr, "handler object %s isa %s\n",
-				   SvPVX(class),  HvNAME(SvSTASH((SV*)SvRV(obj)))));
-		SvREFCNT_dec(class);
-		class = obj;
-		++SvREFCNT(class); /* this will _dec later */
-		stash = SvSTASH((SV*)SvRV(class));
+				   SvPVX(pclass),  HvNAME(SvSTASH((SV*)SvRV(obj)))));
+		SvREFCNT_dec(pclass);
+		pclass = obj;
+		++SvREFCNT(pclass); /* this will _dec later */
+		stash = SvSTASH((SV*)SvRV(pclass));
 	    }
 	}
 
-	if(class && !stash) stash = gv_stashpv(SvPV(class,na),FALSE);
+	if(pclass && !stash) stash = gv_stashpv(SvPV(pclass,na),FALSE);
 	   
 #if 0
-	MP_TRACE_h(fprintf(stderr, "perl_call: class=`%s'\n", SvPV(class,na)));
+	MP_TRACE_h(fprintf(stderr, "perl_call: pclass=`%s'\n", SvPV(pclass,na)));
 	MP_TRACE_h(fprintf(stderr, "perl_call: imp=`%s'\n", imp));
 	MP_TRACE_h(fprintf(stderr, "perl_call: method=`%s'\n", method));
 	MP_TRACE_h(fprintf(stderr, "perl_call: stash=`%s'\n", 
@@ -1472,11 +1472,11 @@ callback:
     PUSHMARK(sp);
 #ifdef PERL_METHOD_HANDLERS
     if(is_method)
-	XPUSHs(sv_2mortal(class));
+	XPUSHs(sv_2mortal(pclass));
     else
-	SvREFCNT_dec(class);
+	SvREFCNT_dec(pclass);
 #else
-    SvREFCNT_dec(class);
+    SvREFCNT_dec(pclass);
 #endif
 
     XPUSHs((SV*)perl_bless_request_rec(r)); 

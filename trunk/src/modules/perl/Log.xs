@@ -138,7 +138,7 @@ Apache_log_log(sv)
 
     PREINIT:
     void *retval;
-    char *class = "Apache::Log::Request";
+    char *pclass = "Apache::Log::Request";
 
     CODE:
     if(!SvROK(sv))
@@ -148,7 +148,7 @@ Apache_log_log(sv)
 	retval = (void*)sv2request_rec(sv, "Apache", cv);
     }
     else if(sv_derived_from(sv, "Apache::Server")) {
-	class = "Apache::Log::Server";
+	pclass = "Apache::Log::Server";
 	retval = (void *) SvIV((SV*)SvRV(sv));
     }
     else {
@@ -156,7 +156,7 @@ Apache_log_log(sv)
     }
 
     ST(0) = sv_newmortal();
-    sv_setref_pv(ST(0), class, (void*)retval);
+    sv_setref_pv(ST(0), pclass, (void*)retval);
 
 void
 Apache_log_emerg(s, ...)

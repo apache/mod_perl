@@ -22,10 +22,10 @@ static bool ApacheFile_open(SV *obj, SV *sv)
     return do_open(gv, filename, len, FALSE, 0, 0, IOp); 
 }
 
-static SV *ApacheFile_new(char *class)
+static SV *ApacheFile_new(char *pclass)
 {
     SV *RETVAL = sv_newmortal();
-    GV *gv = newGVgen(class);
+    GV *gv = newGVgen(pclass);
     HV *stash = GvSTASH(gv);
 
     sv_setsv(RETVAL, sv_bless(sv_2mortal(newRV((SV*)gv)), stash));
@@ -89,15 +89,15 @@ BOOT:
     items = items; /*avoid warning*/ 
 
 void
-ApacheFile_new(class, filename=Nullsv)
-    char *class
+ApacheFile_new(pclass, filename=Nullsv)
+    char *pclass
     SV *filename
 
     PREINIT:
     SV *RETVAL;
 
     PPCODE:
-    RETVAL = ApacheFile_new(class);
+    RETVAL = ApacheFile_new(pclass);
     if(filename) {
 	if(!ApacheFile_open(RETVAL, filename))
 	    XSRETURN_UNDEF;
@@ -117,8 +117,8 @@ ApacheFile_tmp(self)
 
     PREINIT:
     PerlIO *fp = PerlIO_tmpfile();
-    char *class = SvROK(self) ? SvCLASS(self) : SvPV(self,na);
-    SV *RETVAL = ApacheFile_new(class);
+    char *pclass = SvROK(self) ? SvCLASS(self) : SvPV(self,na);
+    SV *RETVAL = ApacheFile_new(pclass);
 
     PPCODE:
     if(!do_open((GV*)SvRV(RETVAL), "+>&", 3, FALSE, 0, 0, fp))
