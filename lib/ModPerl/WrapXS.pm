@@ -1195,6 +1195,7 @@ sub write_export_file {
     my %files = (
         modperl => $ModPerl::FunctionTable,
         apache  => $Apache::FunctionTable,
+        apr     => $APR::FunctionTable,
     );
 
     my $header = \&{"export_file_header_$ext"};

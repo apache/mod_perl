@@ -42,7 +42,9 @@ sub function_table {
     push @INC, "xs/tables/current";
     require Apache::FunctionTable;
     require ModPerl::FunctionTable;
-    @$function_table = (@$Apache::FunctionTable, @$ModPerl::FunctionTable);
+    require APR::FunctionTable;
+    @$function_table = (@$Apache::FunctionTable, @$ModPerl::FunctionTable,
+                        @$APR::FunctionTable);
     $function_table;
 }
 
