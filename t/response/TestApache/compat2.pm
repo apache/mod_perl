@@ -233,6 +233,8 @@ sub handler {
     t_cmp(1, Apache::Util::validate_password("dougm", $hash));
     t_cmp(0, Apache::Util::validate_password("mguod", $hash));
 
+    $r->post_connection(sub { OK });
+
     OK;
 }
 
