@@ -3,6 +3,7 @@
 use strict;
 use warnings FATAL => 'all';
 
+use lib "../lib"; # test against the source lib for easier dev
 use lib map {("../blib/$_", "../../blib/$_")} qw(lib arch);
 
 use Apache::TestRunPerl ();
