@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Apache->can_stack_handlers is now in Apache::compat (mp2 always can
+stack handlers) [Stas]
+
 add access to $r->finfo() and related APR::Finfo methods,
 such as $r->finfo->size(), $r->finfo->mtime(), and
 APR::Finfo::stat() [Geoffrey Young]

@@ -126,6 +126,9 @@ sub httpd_conf {
     die $err if $err;
 }
 
+# mp2 always can stack handlers
+sub can_stack_handlers { 1; }
+
 sub push_handlers {
     shift;
     Apache->server->push_handlers(@_);
