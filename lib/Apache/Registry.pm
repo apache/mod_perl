@@ -165,6 +165,7 @@ sub handler {
 #	}
 	return $r->status($old_status);
     } else {
+        $r->log_error("$filename not found or unable to stat");
 	return NOT_FOUND unless $Debug && $Debug & 2;
 	return Apache::Debug::dump($r, NOT_FOUND);
     }
