@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+rename PERL_VERSION macro to PERLV to avoid conflict with 5.00502's 
+
 rename Apache::Tie/Apache::TieHashTable -> Apache::Table
 
 Apache::PerlRun::handler will explicitly undef subroutines before
