@@ -87,6 +87,7 @@ sub get_functions {
           @{ $func } {qw(dispatch orig_args)};
 
         if ($dispatch =~ /^MPXS_/) {
+            $name =~ s/^mpxs_//;
             $name =~ s/^$func->{prefix}//;
             push @{ $self->{newXS}->{ $module } },
               ["$class\::$name", $dispatch];
