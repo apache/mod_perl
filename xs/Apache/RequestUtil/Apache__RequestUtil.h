@@ -85,7 +85,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
 static MP_INLINE
 request_rec *mpxs_Apache_request(pTHX_ SV *classname, SV *svr)
 {
-    request_rec *cur;
+    request_rec *cur = NULL;
     apr_status_t status = modperl_tls_get_request_rec(&cur);
 
     if (status != APR_SUCCESS) {
