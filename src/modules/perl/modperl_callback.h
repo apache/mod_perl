@@ -10,12 +10,6 @@
 #define ap_hook_fixup  ap_hook_fixups
 #define ap_hook_log    ap_hook_log_transaction
 
-#define MP_HANDLER_TYPE_PER_DIR    1
-#define MP_HANDLER_TYPE_PER_SRV    2
-#define MP_HANDLER_TYPE_CONNECTION 3
-#define MP_HANDLER_TYPE_PROCESS    4
-#define MP_HANDLER_TYPE_FILES      5
-
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name);
 
 modperl_handler_t *modperl_handler_dup(apr_pool_t *p,

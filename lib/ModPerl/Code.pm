@@ -136,12 +136,19 @@ EOF
 sub generate_handler_index {
     my($self, $h_fh) = @_;
 
+    my $type = 1;
+
     while (my($class, $handlers) = each %{ $self->{handlers} }) {
         my $i = 0;
         my $n = @$handlers;
 
         print $h_fh "\n#define ",
           canon_define($class, 'num_handlers'), " $n\n\n";
+
+        print $h_fh "#define ",
+          canon_define('HANDLER_TYPE', $class), " $type\n\n";
+
+        $type++;
 
         for my $name (@$handlers) {
             my $define = canon_define($name, 'handler');
