@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.99_97-dev
+
 =item 1.99_06 - September 25, 2002
 
 add support for pod directives (=pod,=back,=cut) and __END__ directive
