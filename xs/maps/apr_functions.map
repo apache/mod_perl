@@ -44,7 +44,7 @@ MODULE=APR::Socket
 !apr_socket_accept
  apr_socket_listen
  apr_socket_connect
--apr_socket_recv | mpxs_
+-apr_socket_recv
  mpxs_APR__Socket_recv
  apr_socket_recvfrom
  apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
@@ -77,7 +77,8 @@ MODULE=APR::SockAddr
 
 MODULE=APR::Brigade
  apr_brigade_create | mpxs_ | SV *:CLASS, p, list | new
- apr_brigade_destroy
+-apr_brigade_destroy
+ mpxs_APR__Brigade_destroy
 !apr_brigade_partition
 !apr_brigade_printf
 -apr_brigade_putstrs
@@ -112,8 +113,7 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
  mpxs_APR__Bucket_remove         #APR_BUCKET_REMOVE
  #apr_bucket_read
- modperl_bucket_read | mpxs_ | \
-                    bucket, SV *:buffer, block=APR_BLOCK_READ | read
+ mpxs_APR__Bucket_read | | bucket, block=APR_BLOCK_READ
  #modperl_bucket_sv_create
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
  >apr_bucket_alloc
