@@ -53,4 +53,8 @@ sub ModPerl::Test::read_post {
     return $buf;
 }
 
+END {
+    warn "END in modperl_extra.pl, pid=$$\n";
+}
+
 1;

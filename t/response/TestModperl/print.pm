@@ -21,4 +21,9 @@ sub handler {
     Apache::OK;
 }
 
+END {
+    my $package = __PACKAGE__;
+    warn "END in $package, pid=$$\n";
+}
+
 1;
