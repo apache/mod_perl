@@ -50,7 +50,7 @@ if ($Is_dougm) {
     }
     #try various sizes
     my $dir = "";
-    for my $path (@INC) {
+    for my $path (@INC, $ENV{PERL_POD_LIB}) {
 	last if -d ($dir = "$path/pod");
     }
     my $dh = DirHandle->new($dir) or die $!;
