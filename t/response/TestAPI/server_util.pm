@@ -55,8 +55,8 @@ sub handler {
                       (scalar keys %status_lines) + 11;
 
     # syntax - an object or pool is required
-    t_debug("Apache::server_root_relative() died");
-    eval { my $dir = Apache::server_root_relative() };
+    t_debug("Apache::Server::server_root_relative() died");
+    eval { my $dir = Apache::Server::server_root_relative() };
     t_debug("\$\@: $@");
     ok $@;
 
@@ -72,8 +72,8 @@ sub handler {
     foreach my $p (keys %pools) {
 
         ok t_cmp(catfile($serverroot, 'conf'),
-                 Apache::server_root_relative($pools{$p}, 'conf'),
-                 "Apache::server_root_relative($p, 'conf')");
+                 Apache::Server::server_root_relative($pools{$p}, 'conf'),
+                 "Apache::Server::server_root_relative($p, 'conf')");
     }
 
     # dig out the pool from valid objects
@@ -87,11 +87,11 @@ sub handler {
     # syntax - unrecognized objects don't segfault
     {
         my $obj = bless {}, 'Apache::Foo';
-        eval { Apache::server_root_relative($obj, 'conf') };
+        eval { Apache::Server::server_root_relative($obj, 'conf') };
 
         ok t_cmp(qr/server_root_relative.*no .* key/,
                  $@,
-                 "Apache::server_root_relative(\$obj, 'conf')");
+                 "Apache::Server::server_root_relative(\$obj, 'conf')");
     }
 
     # no file argument gives ServerRoot
@@ -100,8 +100,8 @@ sub handler {
              '$r->server_root_relative()');
 
     ok t_cmp(canonpath($serverroot),
-             canonpath(Apache::server_root_relative($r->pool)),
-             'Apache::server_root_relative($r->pool)');
+             canonpath(Apache::Server::server_root_relative($r->pool)),
+             'Apache::Server::server_root_relative($r->pool)');
 
     # Apache::Server::server_root is also the ServerRoot constant
     ok t_cmp(canonpath(Apache::Server::server_root),

@@ -45,9 +45,6 @@ modperl_global_get_server_rec()
 #define mpxs_Apache__Server_server_root_relative(sv, fname) \
     modperl_server_root_relative(aTHX_ sv, fname);
 
-#define mpxs_Apache_server_root_relative(sv, fname) \
-    modperl_server_root_relative(aTHX_ sv, fname)
-
 static MP_INLINE
 int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
                                                const char *name)

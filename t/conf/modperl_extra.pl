@@ -12,7 +12,7 @@ use Apache::Process ();
 # reorg @INC to have first devel libs, then blib libs, and only then
 # perl core libs
 my $pool = Apache->server->process->pool;
-my $project_root = canonpath Apache::server_root_relative($pool, "..");
+my $project_root = canonpath Apache::Server::server_root_relative($pool, "..");
 my (@a, @b, @c);
 for (@INC) {
     if (m|^\Q$project_root\E|) {

@@ -78,7 +78,6 @@ PACKAGE=Apache::Server
 
 PACKAGE=Apache
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
- SV *:DEFINE_server_root_relative | | SV *:p, const char *:fname=""
 
 MODULE=Apache::Connection
  mpxs_Apache__Connection_client_socket | | c, s=NULL

@@ -9,7 +9,7 @@ use Apache::Process ();
 use DirHandle ();
 
 my $pool = Apache->server->process->pool;
-my $base_dir = Apache::server_root_relative($pool, "cgi-bin");
+my $base_dir = Apache::Server::server_root_relative($pool, "cgi-bin");
 
 # test the scripts pre-loading by explicitly specifying uri => filename
 my $rl = ModPerl::RegistryLoader->new(package => "ModPerl::Registry");
@@ -26,7 +26,7 @@ for my $file (qw(basic.pl env.pl)) {
     sub trans {
         my $uri = shift; 
         $uri =~ s|^/registry_bb/|cgi-bin/|;
-        return Apache::server_root_relative($pool, $uri);
+        return Apache::Server::server_root_relative($pool, $uri);
     }
 
     my $rl = ModPerl::RegistryLoader->new(
