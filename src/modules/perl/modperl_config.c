@@ -144,9 +144,9 @@ static void dump_argv(modperl_config_srv_t *scfg)
 {
     int i;
     char **argv = (char **)scfg->argv->elts;
-    modperl_trace(NULL, "modperl_config_srv_argv_init =>\n");
+    modperl_trace(NULL, "modperl_config_srv_argv_init =>");
     for (i=0; i<scfg->argv->nelts; i++) {
-        modperl_trace(NULL, "   %d = %s\n", i, argv[i]);
+        modperl_trace(NULL, "   %d = %s", i, argv[i]);
     }
 }
 #endif

@@ -406,7 +406,7 @@ sub generate_flags {
 
 EOF
             push @dumper,
-              qq{modperl_trace(NULL, " $name %s\\n", \\
+              qq{modperl_trace(NULL, " $name %s", \\
                          ($flags(p) & $x) ? "On " : "Off");};
 
             $i += $i || 1;
@@ -437,7 +437,7 @@ EOF
         shift @dumper; #NONE
         print $h_fh join ' \\'."\n", 
           "#define ${class}_dump_flags(p, str)",
-                     qq{modperl_trace(NULL, "$class flags dump (%s):\\n", str);},
+                     qq{modperl_trace(NULL, "$class flags dump (%s):", str);},
                      @dumper;
     }
 
@@ -509,13 +509,13 @@ $define_do(exp)
 #endif
 EOF
         push @dumper,
-          qq{modperl_trace(NULL, " $type %s ($trace{$type})\\n", ($tl & $i) ? "On " : "Off");};
+          qq{modperl_trace(NULL, " $type %s ($trace{$type})", ($tl & $i) ? "On " : "Off");};
         $i += $i;
     }
 
     print $h_fh join ' \\'."\n", 
                      '#define MP_TRACE_dump_flags()',
-                     qq{modperl_trace(NULL, "mod_perl trace flags dump:\\n");},
+                     qq{modperl_trace(NULL, "mod_perl trace flags dump:");},
                      @dumper;
 
     ();
