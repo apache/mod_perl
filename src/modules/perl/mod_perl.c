@@ -640,17 +640,21 @@ int modperl_response_handler_cgi(request_rec *r)
         modperl_env_request_populate(aTHX_ r);
     }
 
-    h_stdout = modperl_io_tie_stdout(aTHX_ r);
-    h_stdin  = modperl_io_tie_stdin(aTHX_ r);
+    if (!r->main) {
+        h_stdout = modperl_io_tie_stdout(aTHX_ r);
+        h_stdin  = modperl_io_tie_stdin(aTHX_ r);
 
-    modperl_env_request_tie(aTHX_ r);
+        modperl_env_request_tie(aTHX_ r);
+    }
 
     retval = modperl_response_handler_run(r, FALSE);
 
-    modperl_io_handle_untie(aTHX_ h_stdout);
-    modperl_io_handle_untie(aTHX_ h_stdin);
+    if (!r->main) {
+        modperl_io_handle_untie(aTHX_ h_stdout);
+        modperl_io_handle_untie(aTHX_ h_stdin);
 
-    modperl_env_request_untie(aTHX_ r);
+        modperl_env_request_untie(aTHX_ r);
+    }
 
     modperl_perl_global_request_restore(aTHX_ r);
 
