@@ -125,6 +125,21 @@ sub httpd_conf {
     die $err if $err;
 }
 
+sub push_handlers {
+    shift;
+    Apache->server->push_handlers(@_);
+}
+
+sub set_handlers {
+    shift;
+    Apache->server->set_handlers(@_);
+}
+
+sub get_handlers {
+    shift;
+    Apache->server->get_handlers(@_);
+}
+
 package Apache::Constants;
 
 use Apache::Const ();

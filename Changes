@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Apache::compat: support 1.0's Apache->push_handlers,
+Apache->set_handlers and Apache->get_handlers [Stas]
+
 revamp the code handling output flushing and flush bucket
 sending. Namelly modperl_wbucket_flush and modperl_wbucket_pass now
 can be told to send a flush bucket by themselves, attaching it to the
