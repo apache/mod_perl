@@ -975,6 +975,7 @@ sub apru_config_path {
 
     my $key = "${what}_config_path"; # apr_config_path
     my $mp_key = "MP_" . uc($what) . "_CONFIG"; # MP_APR_CONFIG
+    my $bindir = uc($what) . "_BINDIR"; # APR_BINDIR
 
     return $self->{$key} if $self->{$key} and -x $self->{$key};
 
@@ -993,7 +994,7 @@ sub apru_config_path {
         }
         else {
             push @tries, grep length,
-                map $self->apxs(-q => $_), qw(APR_BINDIR BINDIR);
+                map $self->apxs(-q => $_), $bindir, "BINDIR";
             push @tries, catdir $self->{MP_AP_PREFIX}, "bin"
                 if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
         }
