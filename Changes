@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+use perl_get_sv("]") instead of patchlevel for $AddPerlVersion
+
 adjust Makefile.PL and Apache::src to parse 1.3.13-dev's httpd.h
 
 Apache::Util functions $r->unescape_uri, $r->unescape_uri_info,

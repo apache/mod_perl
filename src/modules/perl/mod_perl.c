@@ -502,7 +502,7 @@ void perl_module_init(server_rec *s, pool *p)
     ap_add_version_component(MOD_PERL_STRING_VERSION);
     if(PERL_RUNNING()) {
 	if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
-	    ap_add_version_component(form("Perl/%s", patchlevel));
+	    ap_add_version_component(form("Perl/%_", perl_get_sv("]",TRUE)));
 	}
     }
 #endif
