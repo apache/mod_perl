@@ -1,4 +1,5 @@
-#! /usr/local/bin/perl
+#!perl
+
 BEGIN { 
     $Is_Win32 = ($^O eq "MSWin32");
     $Is_Cygwin = ($^O =~ m/cygwin/g);
@@ -362,9 +363,7 @@ EOF
     }
 }
 
-system_sanity_check();
-
-if($USE_APXS) {
+if ($USE_APXS) {
     if(-e $USE_APXS and !(-d _)) {
         $WITH_APXS = $USE_APXS;
     }
@@ -382,7 +381,10 @@ if($USE_APXS) {
     print "\n";
     ++$NO_HTTPD;
 }
-elsif($USE_APACI) {
+
+system_sanity_check();
+
+if ($USE_APACI) {
     print "Will configure via APACI";
     gen_script("apaci/load_modules.pl");
     if($USE_DSO) {
@@ -2041,6 +2043,7 @@ EOF
 
     gdbm_check();
     malloc_check();
+    uselargefiles_check();
     dynaloader_check();
 
 }
@@ -2071,6 +2074,20 @@ Your Perl is configured to link against libgdbm,
 EOF
        }
     }
+}
+
+sub uselargefiles_check {
+    return unless $] >= 5.006 and $Config{uselargefiles} and $USE_APXS;
+    local $Apache::src::APXS = $WITH_APXS;
+    my $cflags = Apache::src->new->apxs('-q' => 'CFLAGS') || '';
+    return if $cflags =~ /LARGEFILE/;
+
+    phat_warn(<<EOF);
+Your Perl is uselargefiles enabled, but Apache is not, suggestions:
+    *) Rebuild Apache with CFLAGS="-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
+    *) Rebuild Perl with Configure -Uuselargefiles
+    *) Let mod_perl build Apache (USE_DSO=1 instead of USE_APXS=1)
+EOF
 }
 
 sub malloc_check {
