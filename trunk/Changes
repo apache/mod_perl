@@ -8,6 +8,17 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+Fixed apaci/load_modules.pl.PL to properly fixup log_agent and
+log_referer when loaded as DSOs. (<vivek@khera.org>)
+
+Fixed apaci/mod_perl.config.sh to remove the ccdlflags from the
+PERL_LIBS variable when building under bsd/os 4.x, since that causes
+errors when passing "cc" oriented flags to "ld".  I suspect this
+should be done for all platforms, as passing cc options to ld just
+seems wrong to me.  Also fixed up Makefile.PL to override Apache's
+notion of LDFLAGS_SHLIB_EXPORT to use Perl's idea of the proper flags
+when building as a DSO under APACI.  (<vivek@khera.org>)
+
 =item 1.19 - April 7, 1999
 
 Apache::Leak fixes for win32 
