@@ -239,10 +239,6 @@ MpAV **modperl_handler_get_handlers(request_rec *r, conn_rec *c, server_rec *s,
         return FALSE;
     }
 
-    if (r) {
-        modperl_config_req_init(r, rcfg);
-    }
-
     return modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
                                            type, idx,
                                            action, NULL);
