@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Remove $Apache::Server::StrictPerlSections. Now, all <Perl>
+sections errors are fatal by default and cause server startup to
+abort on error. [Gozer]
+
 Fix ($r|$filter|$bucket)->read() functions to run the set magic logic,
 to handle cases when a passed buffer to fill is not a regular
 scalar. [Stas]
