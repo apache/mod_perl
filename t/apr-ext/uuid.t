@@ -7,33 +7,25 @@ use Apache2;
 use Apache::Test;
 use Apache::Build ();
 
-my $build = Apache::Build->build_config;
-
 # XXX: only when apr-config is found APR will be linked against
 # libapr/libaprutil, probably need a more intuitive method for this
 # prerequisite
 # also need to check whether we build against the source tree, in
 # which case we APR.so won't be linked against libapr/libaprutil
-my $has_apr_config = $build->{apr_config_path} && 
-    !$build->httpd_is_source_tree;
+# In order to do this for all the apr-ext tests, could have
+# a wrapper around plan() that does a check like
+#######
+# my $build = Apache::Build->build_config;
+#
+# my $has_apr_config = $build->{apr_config_path} && 
+#    !$build->httpd_is_source_tree;
+# plan tests => TestAPRlib::uuid::num_of_tests(),
+#    have {"the build couldn't find apr-config" => $has_apr_config};
+######
+# that is called from some TestAPRlib::common.
 
-plan tests => 3,
-    have {"the build couldn't find apr-config" => $has_apr_config};
+use TestAPRlib::uuid;
 
-my $dummy_uuid = 'd48889bb-d11d-b211-8567-ec81968c93c6';
+plan tests => TestAPRlib::uuid::num_of_tests();
 
-require APR;
-require APR::UUID;
-
-#XXX: apr_generate_random_bytes may block forever on /dev/random
-#    my $uuid = APR::UUID->new->format;
-my $uuid = $dummy_uuid;
-
-ok $uuid;
-
-my $uuid_parsed = APR::UUID->parse($uuid);
-
-ok $uuid_parsed;
-
-ok $uuid eq $uuid_parsed->format;
-
+TestAPRlib::uuid::test();
