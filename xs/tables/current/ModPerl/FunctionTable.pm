@@ -6899,12 +6899,37 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'int',
-    'name' => 'mpxs_Apache__MPM_mpm_query',
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache__MPM_query',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
     'args' => [
       {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'self'
+      },
+      {
         'type' => 'int',
-        'name' => 'query'
+        'name' => 'query_code'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache__MPM_BOOT',
+    'attr' => [
+      'static'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
       }
     ]
   },
