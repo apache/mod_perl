@@ -10,8 +10,7 @@ our $VERSION = '1.99';
 
 use base qw(ModPerl::RegistryCooker);
 
-# META: prototyping ($$) segfaults on request
-sub handler {
+sub handler : method {
     my $class = (@_ >= 2) ? shift : __PACKAGE__;
     my $r = shift;
     return $class->new($r)->default_handler();

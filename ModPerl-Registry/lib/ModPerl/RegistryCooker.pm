@@ -119,10 +119,10 @@ sub init {
 #       __PACKAGE__, which is tied to the file)
 #########################################################################
 
-sub handler {
+sub handler : method {
     my $class = (@_ >= 2) ? shift : __PACKAGE__;
     my $r = shift;
-    $class->new($r)->default_handler();
+    return $class->new($r)->default_handler();
 }
 
 #########################################################################
