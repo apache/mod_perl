@@ -54,9 +54,6 @@ typedef struct {
 
 static modperl_env_ent_t MP_env_const_vars[] = {
     MP_ENV_ENT("MOD_PERL", MP_VERSION_STRING),
-#ifdef MP_COMPAT_1X
-    MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
-#endif
     { NULL }
 };
 
@@ -312,12 +309,6 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
     }
 
     modperl_env_table_populate(aTHX_ r->subprocess_env);
-
-#ifdef MP_COMPAT_1X
-    if (! MpReqSETUP_ENV(rcfg)) {
-        modperl_env_default_populate(aTHX); /* reset GATEWAY_INTERFACE */
-    }
-#endif
 
     /* don't set up CGI variables again this request.
      * this also triggers modperl_env_request_unpopulate, which
