@@ -67,7 +67,4 @@ Index: t/response/TestAPI/rflush.pm
   
   Apache::RequestUtil:
   ? mpxs_Apache__RequestRec_new (having problems): Apache__RequestUtil.patch
-  
-  APR::URI
-  - mpxs_apr_uri_parse
 

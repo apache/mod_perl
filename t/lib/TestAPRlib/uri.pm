@@ -42,7 +42,7 @@ my @keys_urls = qw(scheme user password hostname port path query
 my @keys_hostinfo = qw(user password hostname port);
 
 sub num_of_tests {
-    return 27;
+    return 36;
 }
 
 sub test {
@@ -157,6 +157,31 @@ sub test {
     while (my($scheme, $port) = each %default_ports) {
         my $apr_port = APR::URI::port_of_scheme($scheme);
         ok t_cmp($apr_port, $port, "scheme: $scheme");
+    }
+
+    # parse + out-of-scope pools
+    {
+
+        my $url0 = sprintf "%s://%s:%s\@%s:%d%s?%s#%s",
+            map { $url{$_}[0] } @keys_urls;
+        # warn "URL: $url\n";
+        my $hostinfo0 =  sprintf "%s:%s\@%s:%d",
+            map { $url{$_}[0] } @keys_hostinfo;
+
+        require APR::Pool;
+        my $parsed = APR::URI->parse(APR::Pool->new, $url0);
+
+        # try to overwrite the temp pool data
+        require APR::Table;
+        my $table = APR::Table::make(APR::Pool->new, 50);
+        $table->set($_ => $_) for 'aa'..'za';
+
+        for my $method (keys %url) {
+            no strict 'refs';
+            ok t_cmp($parsed->$method, $url{$method}[0], $method);
+        }
+
+        ok t_cmp($parsed->hostinfo, $hostinfo0, "hostinfo");
     }
 }
 
