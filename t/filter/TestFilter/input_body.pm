@@ -13,10 +13,10 @@ use APR::Brigade ();
 use APR::Bucket ();
 
 sub handler : InputFilterBody {
-    my($filter, $bb, $mode) = @_;
+    my($filter, $bb, $mode, $readbytes) = @_;
 
     if ($bb->empty) {
-        my $rv = $filter->next->get_brigade($bb, $mode);
+        my $rv = $filter->next->get_brigade($bb, $mode, $readbytes);
 
         if ($rv != APR::SUCCESS) {
             return $rv;

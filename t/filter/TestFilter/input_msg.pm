@@ -14,10 +14,10 @@ my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::input_msg::response';
 
 sub handler : InputFilterMessage {
-    my($filter, $bb, $mode) = @_;
+    my($filter, $bb, $mode, $readbytes) = @_;
 
     if ($bb->empty) {
-        my $rv = $filter->next->get_brigade($bb, $mode);
+        my $rv = $filter->next->get_brigade($bb, $mode, $readbytes);
 
         if ($rv != APR::SUCCESS) {
             return $rv;

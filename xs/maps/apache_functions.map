@@ -186,7 +186,8 @@ ap_filter_t *:DEFINE_add_output_filter | | \
 PACKAGE=guess
 ~ap_add_output_filter
  ap_add_input_filter
- ap_get_brigade | | filter, bucket, mode=AP_MODE_NONBLOCKING
+ ap_get_brigade | mpxs_ | \
+               filter, bucket, mode=AP_MODE_NONBLOCKING, SV *:readbytes=Nullsv
  ap_pass_brigade
  ap_register_input_filter
  ap_register_output_filter
