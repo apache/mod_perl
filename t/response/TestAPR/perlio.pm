@@ -23,11 +23,15 @@ sub handler {
 
     $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 
-    eval { require APR::PerlIO };
+    # 1) APR::PerlIO is not available on all platforms
+    # 2) on those platforms where available,
+    #    PerlIO-enabled perl is needed to run this test
+    my $run = eval { require APR::PerlIO } && 
+        APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED()
+            ? 1
+            : have  { "This Perl build doesn't support PerlIO layers" => 0 };
 
-    plan $r, tests => $tests, have {
-        "This Perl build doesn't support PerlIO layers" =>
-            APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED() };
+    plan $r, tests => $tests, $run;
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
