@@ -16,6 +16,8 @@ sub handler {
         $r->puts($line);
     }
 
+    untie *STDIN;
+
     Apache::OK;
 }
 
