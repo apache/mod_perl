@@ -170,7 +170,13 @@ sub ldopts {
     my $config = tied %Config;
     my $ldflags = $config->{ldflags};
 
-    $config->{ldflags} = '' if WIN32; #same as lddlflags
+    if (WIN32) {
+        $config->{ldflags} = ''; #same as lddlflags
+    }
+    elsif (DARWIN) {
+        #not sure how this can happen, but it shouldn't
+        $config->{ldflags} =~ s/-undefined suppress//;
+    }
 
     my $ldopts = ExtUtils::Embed::ldopts();
     chomp $ldopts;
