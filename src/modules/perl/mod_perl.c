@@ -507,7 +507,21 @@ static void cancel_dso_dlclose(void)
 
 static void mp_dso_unload(void *data) 
 { 
-    array_header *librefs = xs_dl_librefs((pool *)data);
+    array_header *librefs;
+
+#ifdef WIN32
+    // This is here to stop a crash when bringing down
+    // a service.  Apparently the dso is unloaded too early.
+    // This if statement tests to see if we are running as a 
+    // service. apache does the same
+    // see apache's isProcessService() in service.c 
+    if (AllocConsole()) {
+        FreeConsole();
+        return;
+    } 
+#endif
+
+    librefs = xs_dl_librefs((pool *)data);
     perl_shutdown(NULL, NULL);
     unload_xs_so(librefs);
 } 
