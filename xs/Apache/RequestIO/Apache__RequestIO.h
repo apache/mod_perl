@@ -95,7 +95,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     /* XXX: we could have an rcfg->sprintf_buffer to reuse this SV
      * across requests
      */
-    sv = newSV(0);
+    sv = sv_newmortal();
     modperl_perl_do_sprintf(aTHX_ sv, items, MARK);
     bytes = SvCUR(sv);
 
@@ -107,8 +107,6 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
                                            SvPVX(sv), &bytes));
     
     mpxs_output_flush(r, rcfg);
-
-    SvREFCNT_dec(sv);
 
     return bytes;
 }  
