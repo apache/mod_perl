@@ -186,8 +186,6 @@ static void modperl_env_sync_table(pTHX_ apr_table_t *table)
 void modperl_env_sync_srv_env_hash2table(pTHX_ apr_pool_t *p,
                                          modperl_config_srv_t *scfg)
 {
-    MP_TRACE_d(MP_FUNC, "******* scfg==0x%lx, scfg->SetEnv==0x%lx\n",
-               (unsigned long)scfg, (unsigned long)scfg->SetEnv);
     modperl_env_sync_table(aTHX_ scfg->SetEnv);
     modperl_env_sync_table(aTHX_ scfg->PassEnv);
 }
@@ -195,8 +193,6 @@ void modperl_env_sync_srv_env_hash2table(pTHX_ apr_pool_t *p,
 void modperl_env_sync_dir_env_hash2table(pTHX_ apr_pool_t *p,
                                          modperl_config_dir_t *dcfg)
 {
-    MP_TRACE_d(MP_FUNC, "******* dcfg==0x%lx, dcfg->SetEnv==0x%lx\n",
-               (unsigned long)dcfg, (unsigned long)dcfg->SetEnv);
     modperl_env_sync_table(aTHX_ dcfg->SetEnv);
 }
 
