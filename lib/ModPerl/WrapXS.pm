@@ -1150,6 +1150,10 @@ sub func_is_static {
     if (my $attr = $entry->{attr}) {
         return 1 if grep { $_ eq 'static' } @$attr;
     }
+    
+    #C::Scan doesnt always pickup static __inline__
+    return 1 if $entry->{name} =~ /^mpxs_/o;
+    
     return 0;
 }
 
@@ -1231,9 +1235,6 @@ sub write_export_file {
         for my $entry (@$table) {
             next if $self->func_is_static($entry);
             my $name = $entry->{name};
-
-            #C::Scan doesnt always pickup static __inline__
-            next if $name =~ /^mpxs_/o;
 
             my $fh = $self->export_func_handle($entry, $handles);
 
