@@ -74,3 +74,20 @@ static MP_INLINE int mpxs_ap_unescape_url(pTHX_ SV *url)
 
     return status;
 }
+
+static MP_INLINE
+char *mpxs_Apache__URI_port(uri_components *uri, SV *portsv)
+{
+    dTHX; /*XXX*/
+    char *port_str = uri->port_str;
+
+    if (portsv) {
+        STRLEN len;
+        char *port = SvPV(portsv, len);
+        uri->port_str = apr_pstrndup(((modperl_uri_t *)uri)->pool,
+                                     port, len);
+        uri->port = (int)SvIV(portsv);
+    }
+
+    return port_str;
+}
