@@ -200,14 +200,18 @@ typedef command_rec * Apache__Command;
 
 #define Apache__ServerStarting(val) \
 { \
-    GV *sgv = GvSV_init("Apache::ServerStarting"); \
+    GV *sgv = GvSV_init("Apache::Server::Starting"); \
+    GV *agv = GvSV_init("Apache::ServerStarting"); \
     GvSV_setiv(sgv, val); \
+    GvSV(agv) = GvSV(sgv); \
 }
 
 #define Apache__ServerReStarting(val) \
 { \
-    GV *sgv = GvSV_init("Apache::ServerReStarting"); \
+    GV *sgv = GvSV_init("Apache::Server::ReStarting"); \
+    GV *agv = GvSV_init("Apache::ServerReStarting"); \
     GvSV_setiv(sgv, val); \
+    GvSV(agv) = GvSV(sgv); \
     if(perl_is_running == PERL_DONE_STARTUP) \
         Apache__ServerStarting((val == FALSE ? FALSE : PERL_RUNNING())); \
 }
