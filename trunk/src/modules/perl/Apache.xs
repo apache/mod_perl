@@ -956,6 +956,10 @@ send_fd(r, f, length=-1)
     long length
 
     CODE:
+    if (!f) {
+        croak("send_fd: NULL filehandle "
+              "(hint: did you check the return value of open?)");
+    }
     RETVAL = send_fd_length(f, r, length);
 
     OUTPUT:
