@@ -178,11 +178,11 @@ cause of this are never-ending loops, deep recursion or calling an
 undefined subroutine.  Here's one way to catch the problem:
 See Perl's INSTALL document for this item:
 
- =item -DPERL_EMERGENCY_SBRK
+=item -DPERL_EMERGENCY_SBRK
 
- If PERL_EMERGENCY_SBRK is defined, running out of memory need not be a
- fatal error: a memory pool can allocated by assigning to the special
- variable $^M.  See perlvar(1) for more details.
+If PERL_EMERGENCY_SBRK is defined, running out of memory need not be a
+fatal error: a memory pool can allocated by assigning to the special
+variable $^M.  See perlvar(1) for more details.
 
 If you compile with that option and add 'use Apache::Debug level => 4;'
 to your PerlScript, it will allocate the $^M emergency pool and the
