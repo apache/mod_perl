@@ -1,0 +1,61 @@
+##
+##  libperl.module -- mod_perl Apache source tree stub
+##  Written by Ralf S. Engelschall <rse@apache.org>
+##
+##  This script is _sourced_ by Apache's src/Configure script
+##  while configuring the module subdirectories. We can use
+##  two variables here to find ourself: $modfile, $modbase.
+##  Additionally because we run inside src/Configure's namespace
+##  we can directly adjust CFLAGS, LIBS, etc.
+##
+
+Name: perl_module
+ConfigStart
+
+    #   paths   
+    my_dir="`echo ${modfile} | sed -e 's:/[^/]*$::'`"
+    my_config="${my_dir}/mod_perl.config"
+    my_config_sh="${my_dir}/mod_perl.config.sh"
+    my_outfile="Makefile.config"
+    my_prefix="      +"
+
+    #   determine requested build-type
+    case $modfile in
+        *.so ) 
+            my_buildtype="DSO"
+            ;;
+        *.a  ) 
+            my_buildtype="OBJ"
+            ;;
+    esac
+    echo "$my_prefix mod_perl build type: $my_buildtype"
+
+    #   import MODPERL_CONFIG environment variable
+    my_config_override=''
+    if [ ".$MODPERL_CONFIG" != . ]; then
+        my_config_override="$MODPERL_CONFIG"
+    fi
+
+    #   transform mod_perl config into Makefile config
+    echo "$my_prefix setting up mod_perl build environment"
+    $my_config_sh --config-file=$my_config \
+                  --config-override="$my_config_override" \
+                  --build-type=$my_buildtype \
+                  --display-prefix="$my_prefix" >>$my_outfile
+
+    #   additionally adjust the Apache build environment
+    echo "$my_prefix adjusting Apache build environment"
+    CFLAGS="$CFLAGS -DMOD_PERL"
+    if [ ".$my_buildtype" = .OBJ ]; then
+        my_perl_libs="`egrep '^PERL_LIBS=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
+        LIBS="$LIBS $my_perl_libs"
+    fi
+    if [ ".`egrep '^PERL_SSI=yes' $my_outfile`" != . ]; then
+        echo "$my_prefix enabling Perl support for SSI (mod_include)"
+        CFLAGS="$CFLAGS -DUSE_PERL_SSI"
+        my_perl_inc="`egrep '^PERL_INC=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
+        INCLUDES="$INCLUDES -I\$(SRCDIR) $my_perl_inc"
+    fi
+
+ConfigEnd
+
