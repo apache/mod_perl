@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+fix Apache::RegistryBB when $r->filename NOT_FOUND 
+[Frank D. Cringle <fdc@cliwe.ping.de>]
+
 cygwin port [Stipe Tolj <tolj@uni-duesseldorf.de>]
 
 Documented $r->pnotes [<ask@valueclick.com>]
