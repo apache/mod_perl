@@ -14,6 +14,7 @@ static void perl_cv_alias(char *to, char *from)
 
 static void ApacheLog(int level, SV *sv, SV *msg)
 {
+ dTHR;
     char *file = NULL;
     int line   = 0;
     char *str;

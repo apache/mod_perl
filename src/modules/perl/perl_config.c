@@ -1013,6 +1013,7 @@ CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
 
 void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
 {
+ dTHR;
     CHAR_P errmsg;
     char *tmpkey; 
     I32 tmpklen; 
@@ -1513,6 +1514,7 @@ static void clear_symtab(HV *symtab)
 	SV *sv;
 	HV *hv;
 	AV *av;
+	dTHR;
 
 	if((SvTYPE(val) != SVt_PVGV) || GvIMPORTED((GV*)val))
 	    continue;
