@@ -957,6 +957,14 @@ sub apru_link_flags {
     for ($self->apr_config_path, $self->apu_config_path) {
         if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
             chomp $link;
+            if ($self->httpd_is_source_tree) {
+                my @libs;
+                while ($link =~ m/-L(\S+)/g) {
+                    my $dir = File::Spec->catfile($1, '.libs');
+                    push @libs, $dir if -d $dir;
+                }
+                push @apru_link_flags, join ' ', map { "-L$_" } @libs;
+            }
             push @apru_link_flags, $link;
         }
     }
