@@ -51,8 +51,7 @@ sub handler {
         # test: passing argv + scalar context
         my $script = catfile $target_dir, "argv.pl";
         my @argv = qw(foo bar);
-        my $out_fh =
-            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script, @argv]);
+        my $out_fh = $r->spawn_proc_prog($perl, [$script, @argv]);
         my $output = read_data($out_fh);
         ok t_cmp([split / /, $output],
                  \@argv,
@@ -65,7 +64,7 @@ sub handler {
         my $script = catfile $target_dir, "env.pl";
         my $value = "my cool proc";
         $r->subprocess_env->set(SubProcess => $value);
-        my $out_fh = Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
+        my $out_fh = $r->spawn_proc_prog($perl, [$script]);
         my $output = read_data($out_fh);
         ok t_cmp($output,
                  $value,
@@ -78,7 +77,7 @@ sub handler {
         my $script = catfile $target_dir, "in_out.pl";
         my $value = "my cool proc\r\n"; # must have \n for <IN>
         my ($in_fh, $out_fh, $err_fh) =
-            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
+            $r->spawn_proc_prog($perl, [$script]);
         print $in_fh $value;
         (my $output = read_data($out_fh)) =~ s/[\r\n]{1,2}/\r\n/;
         ok t_cmp($output,
@@ -92,7 +91,7 @@ sub handler {
         my $script = catfile $target_dir, "in_err.pl";
         my $value = "my stderr\r\n"; # must have \n for <IN>
         my ($in_fh, $out_fh, $err_fh) =
-            Apache::SubProcess::spawn_proc_prog($r, $perl, [$script]);
+            $r->spawn_proc_prog($perl, [$script]);
         print $in_fh $value;
         (my $output = read_data($err_fh)) =~ s/[\r\n]{1,2}/\r\n/;
         ok t_cmp($output,
