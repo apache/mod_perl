@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Fix :Apache perlio's STDOUT to be reentrant + modules/include_subreq
+test [Stas]
+
 fix slurp_filename to always open the file and not try to guess
 whether filename has been already opened, as there is no reliable way
 to accomplish that [Stas]

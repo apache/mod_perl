@@ -190,9 +190,18 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
 
     MP_TRACE_o(MP_FUNC, "start");
 
-    /* Perl_do_close(aTHX_ handle_orig, FALSE); */
-
+    /* since closing unflushed STDOUT may trigger a subrequest
+     * (e.g. via mod_include), resulting in potential another response
+     * handler call, which may try to close STDOUT too. We will
+     * segfault, if that subrequest doesn't return before the the top
+     * level STDOUT is attempted to be closed. To prevent this
+     * situation always explicitly flush STDOUT, before reopening it.
+     */
+    if (GvIOn(handle_orig) && IoOFP(GvIOn(handle_orig))) {
+        Perl_PerlIO_flush(aTHX_ IoOFP(GvIOn(handle_orig)));
+    }
     /* open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!"; */
+    /* open first closes STDOUT */
     status = Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE, O_WRONLY,
                            0, Nullfp, (SV*)handle, 1);
     Perl_do_close(aTHX_ handle, FALSE);
