@@ -1,4 +1,4 @@
-package TestFilter::api;
+package TestFilter::out_str_api;
 
 use strict;
 use warnings FATAL => 'all';
@@ -66,4 +66,4 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
-PerlResponseHandler TestFilter::api::response
+PerlResponseHandler TestFilter::out_str_api::response

@@ -1,4 +1,4 @@
-package TestFilter::buckets;
+package TestFilter::out_bbs_basic;
 
 use strict;
 use warnings FATAL => 'all';
@@ -65,4 +65,4 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
-PerlResponseHandler TestFilter::buckets::response
+PerlResponseHandler TestFilter::out_bbs_basic::response

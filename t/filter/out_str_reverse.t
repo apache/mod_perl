@@ -16,7 +16,7 @@ my $expected = join "\n", @data, $sig;
 
 {
     # test the filtering of the mod_perl response handler
-    my $location = '/TestFilter::reverse';
+    my $location = '/TestFilter::out_str_reverse';
     my $response = POST_BODY $location, content => $reversed_data;
     ok t_cmp($expected, $response, "reverse filter");
 }

@@ -1,4 +1,4 @@
-package TestFilter::reverse;
+package TestFilter::out_str_reverse;
 
 use strict;
 use warnings FATAL => 'all';
@@ -43,10 +43,10 @@ sub response {
 __DATA__
 <Base>
     <LocationMatch "/filter/reverse.txt">
-        PerlOutputFilterHandler TestFilter::reverse
+        PerlOutputFilterHandler TestFilter::out_str_reverse
     </LocationMatch>
 </Base>
 
 SetHandler modperl
-PerlResponseHandler TestFilter::reverse::response
+PerlResponseHandler TestFilter::out_str_reverse::response
 

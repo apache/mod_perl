@@ -1,4 +1,4 @@
-package TestFilter::input_body;
+package TestFilter::in_bbs_body;
 
 use strict;
 use warnings FATAL => 'all';
@@ -75,4 +75,4 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
-PerlResponseHandler TestFilter::input_body::response
+PerlResponseHandler TestFilter::in_bbs_body::response
