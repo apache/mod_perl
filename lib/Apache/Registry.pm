@@ -149,14 +149,12 @@ sub handler {
 	    return Apache::Debug::dump($r, SERVER_ERROR);
 	}
 
-=pod
-	#XXX
-	if(my $loc = $r->header_out("Location")) {
-	    if($r->status == 200 and substr($loc, 0, 1) ne "/") {
-		return REDIRECT;
-	    }
-	}
-=cut
+#	#XXX
+#	if(my $loc = $r->header_out("Location")) {
+#	    if($r->status == 200 and substr($loc, 0, 1) ne "/") {
+#		return REDIRECT;
+#	    }
+#	}
 	return $r->status;
     } else {
 	return NOT_FOUND unless $Debug && $Debug & 2;
