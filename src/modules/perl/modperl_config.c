@@ -155,6 +155,8 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 
     scfg->PerlModule  = apr_array_make(p, 2, sizeof(char *));
     scfg->PerlRequire = apr_array_make(p, 2, sizeof(char *));
+    scfg->PerlPostConfigRequire =
+        apr_array_make(p, 1, sizeof(modperl_require_file_t *));
 
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
@@ -285,6 +287,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(modules);
     merge_item(PerlModule);
     merge_item(PerlRequire);
+    merge_item(PerlPostConfigRequire);
 
     merge_table_overlap_item(SetEnv);
     merge_table_overlap_item(PassEnv);
@@ -435,6 +438,53 @@ int modperl_config_apply_PerlRequire(server_rec *s,
     }
 
     return TRUE;
+}
+
+int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
+                                               modperl_config_srv_t *scfg,
+                                               apr_pool_t *p)
+{
+    modperl_require_file_t **requires;
+    int i;
+
+    requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
+    for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++){
+        if (modperl_require_file( requires[i]->perl, requires[i]->file, TRUE)){
+            MP_TRACE_d(MP_FUNC, "loaded Perl file: %s for server %s\n",
+                       requires[i]->file, modperl_server_desc(s,p));
+        }
+        else {
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                         "Can't load Perl file: %s for server %s, exiting...",
+                         requires[i]->file, modperl_server_desc(s,p));
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+/* In the case where files were added when interpreters were not yet started,
+ * we need to go over the existing files and assign them the correct interpreter
+ */
+int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
+                                                 modperl_config_srv_t *scfg,
+                                                 PerlInterpreter *perl,
+                                                 apr_pool_t *p)
+{
+    modperl_require_file_t **requires;
+    int i;
+
+    requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
+    for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++) {
+        if (!requires[i]->perl) {
+            MP_TRACE_d(MP_FUNC, "Late binding of %s to an interpreter",
+                   requires[i]->file);
+            requires[i]->perl = perl;
+        }
+    }
+
+    return 1;
 }
 
 typedef struct {

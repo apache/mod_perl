@@ -65,6 +65,13 @@ struct modperl_interp_t {
 };
 
 typedef struct {
+    const char *file;
+#ifdef USE_ITHREADS
+    PerlInterpreter *perl;
+#endif
+} modperl_require_file_t;
+
+typedef struct {
     /* s == startup grow
      * r == runtime grow
      */
@@ -130,7 +137,7 @@ typedef struct {
     MpHV *configvars;
     MpHV *SetEnv;
     MpHV *PassEnv;
-    MpAV *PerlRequire, *PerlModule;
+    MpAV *PerlRequire, *PerlModule, *PerlPostConfigRequire;
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
     MpAV *handlers_files[MP_HANDLER_NUM_FILES];
     MpAV *handlers_process[MP_HANDLER_NUM_PROCESS];
