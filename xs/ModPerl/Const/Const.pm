@@ -6,7 +6,11 @@ our $VERSION = '0.01';
 our @ISA = qw(DynaLoader);
 
 #dlopen("Const.so", RTDL_GLOBAL);
-sub dl_load_flags { 0x01 }
+#XXX: this probably isn't portable; hpux works fine tho
+use Config ();
+use constant DL_GLOBAL =>
+  $Config::Config{dlsrc} eq 'dl_dlopen.xs' ? 0x01 : 0x0;
+sub dl_load_flags { DL_GLOBAL }
 
 __PACKAGE__->bootstrap($VERSION);
 
