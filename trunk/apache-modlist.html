@@ -116,8 +116,9 @@ AuthExpire	i	Expire Basic auth credentials		DOUGM
 AuthenGSS	cdpf    Generic Security Service (RFC 2078)	DOUGM
 AuthenIMAP	bdpf	Authentication via an IMAP server	MICB
 AuthenPasswdSrv bdpf	External authentication server		JEFFH
+AuthenPasswd	bdpf	Authenticate against /etc/passwd	DEP
 AuthLDAP	bdpf	LDAP authentication module		CDONLEY
-AuthNIS		bdpf	NIS authentication and authorization	DOUGM
+AuthenNIS	bdpf	NIS authentication			DEP
 AuthNISPlus	bdpF	NIS Plus authentication/authorizattion	VALERIE
 AuthenRaduis	bdpf	Authentication via a Radius server	DANIEL
 AuthenSmb	bdpf	Authenticate against NT server		PARKER
@@ -131,7 +132,8 @@ AuthCookie	cdpf	Authen + Authz via cookies		EBARTLEY
 AuthzAge	bmpf	Authorize based on age			APML
 AuthzDCE	cdpf	DFS/DCE ACL based access control	DOUGM
 AuthzDBI	bmpO	Group authorization via Perl's DBI	MERGL
-AuthNIS		bdpf	NIS authentication and authorization	DOUGM
+AuthzNIS	bdpf	NIS authorization			DEP
+AuthzPasswd	bdpf	Authorize against /etc/passwd		DEP
 RoleAuthz	i	Role-based authorization		DOUGM
 
 * PerlAccessHandler's
@@ -254,6 +256,7 @@ CHAMAS	  Joshua Chamas &lt;chamas@alumni.stanford.org&gt;
 CHOLET	  Eric Cholet &lt;cholet@logilune.com&gt;
 CHTHORMAN Chris Thorman &lt;chris@thorman.com&gt;
 DANIEL	  Daniel &lt;daniel-authenradius@electricrain.com&gt;
+DEP	  Demetrios E. Paneras &lt;dep@media.mit.edu&gt;
 DONS	  Don Schwarz &lt;don@dons.xnet.com&gt;
 DOUGB     Doug Bagley &lt;doug@dejanews.com&gt;
 DOUGM	  Doug MacEachern &lt;dougm@pobox.com&gt;
