@@ -18,7 +18,7 @@ modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
 void modperl_handler_make_args(pTHX_ AV **avp, ...);
 
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
-                     AV *args);
+                     server_rec *s, AV *args);
 
 int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
                          server_rec *s, int type, ...);
