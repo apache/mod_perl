@@ -527,13 +527,21 @@ int modperl_response_handler_cgi(request_rec *r)
     h_stdout = modperl_io_tie_stdout(aTHX_ r);
     h_stdin  = modperl_io_tie_stdin(aTHX_ r);
 
+#if 0
+    /* current implementation of tie %ENV to $r->subprocess_env 
+     * is not threadsafe
+     */
     modperl_env_request_tie(aTHX_ r);
+#endif
+
     retval = modperl_response_handler_run(r, FALSE);
 
     modperl_io_handle_untie(aTHX_ h_stdout);
     modperl_io_handle_untie(aTHX_ h_stdin);
 
+#if 0
     modperl_env_request_untie(aTHX_ r);
+#endif
 
     modperl_perl_global_restore(aTHX_ &rcfg->perl_globals);
 
