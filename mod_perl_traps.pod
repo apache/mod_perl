@@ -224,14 +224,6 @@ This problem is only known to be caused by installing gnu ld under Solaris.
 
 =back
 
-
-=head2 I/O 
-
-Unless you have perl version 5.004 or higher, by default, you cannot
-print() to STDOUT from your script, use $r->print() instead.  Nor can
-you read() from STDIN, use $r->read() or the $r->content() methods to
-read POST data. 
-
 =head2 Clashes with other Apache C modules
 
 =over 4
