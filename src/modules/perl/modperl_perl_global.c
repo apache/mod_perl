@@ -54,19 +54,9 @@ modperl_perl_global_gvhv_restore(pTHX_ modperl_perl_global_gvhv_t *gvhv)
 static void
 modperl_perl_global_gvav_save(pTHX_ modperl_perl_global_gvav_t *gvav)
 {
-    AV *av = GvAV(gvav->gv);
-    I32 i, fill = AvFILLp(av);
-
-    gvav->tmpav = newAV();
-
-    av_extend(gvav->tmpav, fill);
-    AvFILLp(gvav->tmpav) = fill;
-
-    for (i=0; i<=fill; i++) {
-        AvARRAY(gvav->tmpav)[i] = SvREFCNT_inc(AvARRAY(av)[i]);
-    }
-
     gvav->origav = GvAV(gvav->gv);
+    gvav->tmpav = newAV();
+    modperl_perl_av_push_elts_ref(aTHX_ gvav->tmpav, gvav->origav);
     GvAV(gvav->gv) = gvav->tmpav;
 }
 
