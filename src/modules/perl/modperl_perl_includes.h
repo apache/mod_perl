@@ -9,6 +9,8 @@
 
 #define PERLIO_NOT_STDIO 0
 
+#include "config.h"
+
 /*
  * sizeof(struct PerlInterpreter) changes #ifdef USE_LARGE_FILES
  * apache-2.0 cannot be compiled with lfs because of sendfile.h
