@@ -75,7 +75,7 @@ MODULE=APR::Brigade
  apr_brigade_destroy
 !apr_brigade_partition
  apr_brigade_printf
- apr_brigade_putstrs
+-apr_brigade_putstrs
  apr_brigade_split
 -apr_brigade_to_iovec
 -apr_brigade_vprintf
@@ -83,7 +83,7 @@ MODULE=APR::Brigade
 !apr_brigade_length
  apr_brigade_write
  apr_brigade_puts
- apr_brigade_putc
+-apr_brigade_putc
 !apr_brigade_cleanup
  mpxs_APR__Brigade_first        #APR_BRIGADE_FIRST
  mpxs_APR__Brigade_last         #APR_BRIGADE_LAST
@@ -159,7 +159,7 @@ MODULE=APR::Pool
  apr_pool_get_abort
  apr_pool_get_parent
  apr_pool_is_ancestor
- apr_pool_set_abort
+-apr_pool_set_abort
 
 MODULE=APR::Lock
 !apr_lock_child_init

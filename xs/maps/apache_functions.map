@@ -410,7 +410,7 @@ MODULE=Apache::HookRun   PACKAGE=guess
  ap_run_log_transaction
 >ap_run_rewrite_args
  ap_run_create_request
- ap_run_error_log
+>ap_run_error_log
 >ap_run_get_mgmt_items
  ap_run_map_to_storage
 >ap_run_pre_mpm
