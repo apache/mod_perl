@@ -9,10 +9,7 @@ no warnings; # 'redefine';
 # when used with 'no warnings' it still barks on redefinining the
 # constants
 
-
-
-# XXX
-# use mod_perl 2.0;
+use mod_perl 1.99;
 
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
