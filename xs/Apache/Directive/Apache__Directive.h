@@ -73,7 +73,7 @@ static MP_INLINE const char *mpxs_Apache__Directive_insert(pTHX_
 }
 
 /* XXX: this is only useful for <Perl> at the moment */
-SV *mpxs_Apache__Directive_to_string(pTHX_ ap_directive_t *self)
+SV *mpxs_Apache__Directive_as_string(pTHX_ ap_directive_t *self)
 {
     ap_directive_t *d;
     SV *sv = newSVpv("", 0);

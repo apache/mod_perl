@@ -4358,7 +4358,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
-    'name' => 'mpxs_Apache__Directive_to_string',
+    'name' => 'mpxs_Apache__Directive_as_string',
     'attr' => [
       'static',
       '__inline__'

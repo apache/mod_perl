@@ -71,7 +71,7 @@ sub ModPerl::Test::perl_section {
     require Apache::CmdParms;
     require Apache::Directive;
 
-    my $code = $parms->directive->to_string;
+    my $code = $parms->directive->as_string;
     my $package = $args->{package} || 'Apache::ReadConfig';
 
 ##   a real handler would do something like:
