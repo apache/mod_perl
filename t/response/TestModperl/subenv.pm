@@ -13,26 +13,34 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 16;
+    plan $r, tests => 19;
 
     my $env = $r->subprocess_env;
     ok $env;
 
     # subprocess_env in void context populates the same as +SetEnv
-    ok_false($r, 'REMOTE_ADDR');
-    $r->subprocess_env; 
-    ok_true($r, 'REMOTE_ADDR');
+    {
+        my $key = 'REMOTE_ADDR';
+        ok_false($r, $key);
+        $r->subprocess_env;
+        ok_true($r, $key);
+        ok $ENV{$key}; # mod_cgi emulation
+    }
 
-    $env = $r->subprocess_env; #table may have been overlayed
+    {
+        my $key = 'FOO';
+        $env = $r->subprocess_env; #table may have been overlayed
+        $env->set($key => 1);
+        ok_true($r, $key);
+        ok ! $ENV{$key}; # shouldn't affect %ENV
 
-    $env->set(FOO => 1);
-    ok_true($r, 'FOO');
+        $r->subprocess_env($key => undef);
+        ok_false($r, $key);
 
-    $r->subprocess_env(FOO => undef);
-    ok_false($r, 'FOO');
-
-    $r->subprocess_env(FOO => 1);
-    ok_true($r, 'FOO');
+        $r->subprocess_env($key => 1);
+        ok_true($r, $key);
+        ok ! $ENV{$key}; # shouldn't affect %ENV
+    }
 
     Apache::OK;
 }
