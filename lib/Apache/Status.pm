@@ -11,6 +11,7 @@ no warnings; # 'redefine';
 
 use mod_perl 1.99;
 
+use Apache::RequestIO ();
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 use Apache::ServerUtil ();
