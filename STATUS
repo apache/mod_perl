@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/11/29 10:30:11 $]
+   Last modified at [$Date: 2002/12/01 04:15:11 $]
 
 Release:
 --------
@@ -56,6 +56,12 @@ Available Patches:
 Needs Patch or Further Investigation:
 -------------------------------------
 
+* slurp_filename's C implementation.
+
+  Status: 1.x's like patch posted: doug -1
+  Dependency: Doug promised to detail how it should be different in 2.0.  
+  Thread: http://marc.theaimsgroup.com/?t=100364777500004&r=1&w=2
+
 * ModPerl::Registry END {} block woes , described in details at the
   forwarded message from Jim Schueler
   http://marc.theaimsgroup.com/?l=apache-modperl&m=103720834717981&w=2
@@ -85,6 +91,7 @@ Needs Patch or Further Investigation:
   - http://marc.theaimsgroup.com/?t=102985405500008&r=1&w=2
 
 
+
 Open Issues or Core Enhancements:
 ---------------------------------
 
@@ -93,6 +100,9 @@ Open Issues or Core Enhancements:
 
   Report: 
   Status: ???
+
+* Set/Add config overlapping which is not doing the right thing. See:
+  http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
 ----
 
