@@ -14,7 +14,6 @@ sub handler {
     my $r = shift;
 
     $r->handler("modperl");
-    $r->push_handlers(PerlResponseHandler => \&start);
 
     $r->push_handlers(PerlResponseHandler => \&coderef);
     $r->push_handlers(PerlResponseHandler => 
@@ -38,11 +37,18 @@ sub handler {
     return Apache::DECLINED;
 }
 
+sub end { return Apache::DONE }
+sub say { shift->print(shift,"\n"); return Apache::OK }
 
-sub start { shift->content_type('text/plain'); return Apache::OK }
-sub end   { return Apache::DONE }
-sub say   { shift->print(shift,"\n"); return Apache::OK }
+sub conf {
+    # this one is configured from httpd.conf
+    my $r= shift;
+    $r->content_type('text/plain');
+    return say($r, "conf");
+}
 
+sub conf1        { return say(shift, "conf1")        }
+sub conf2        { return say(shift, "conf2")        }
 sub coderef      { return say(shift, "coderef")      }
 sub coderef1     { return say(shift, "coderef1")     }
 sub coderef2     { return say(shift, "coderef2")     }
@@ -56,6 +62,8 @@ __DATA__
   <Location /TestHooks::push_handlers>
       SetHandler modperl
       PerlHeaderParserHandler TestHooks::push_handlers
+      PerlResponseHandler     TestHooks::push_handlers::conf
+      PerlResponseHandler     TestHooks::push_handlers::conf1 TestHooks::push_handlers::conf2
   </Location>
 </NoAutoConfig>
 
