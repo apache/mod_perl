@@ -87,10 +87,16 @@ sub module_magic_number {
     my $d = asrc(shift || $self->dir);
 
     #return $mcache{$d} if $mcache{$d};
-    my $fh = IO::File->new("$d/http_config.h") or return undef;
+    my $fh;
+    for (qw(ap_mmn.h http_config.h)) {
+	last if $fh = FileHandle->new("$d/$_");
+    }
+    return 0 unless $fh;
+
     my $n;
+    my $mmn_pat = join "|", qw(MODULE_MAGIC_NUMBER_MAJOR MODULE_MAGIC_NUMBER);
     while(<$fh>) {
-	if(s/^#define\s+MODULE_MAGIC_NUMBER\s+(\d+).*/$1/) {
+	if(s/^#define\s+($mmn_pat)\s+(\d+).*/$2/) {
 	   chomp($n = $_);
 	   last;
        }

@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+fix Makefile.PL and Apache::src to find MODULE_MAGIC_NUMBER in ap_mmn.h
+
 if PERL_DESTRUCT_LEVEL < 0, skip perl_destruct(), etc. in perl_shutdown()
 
 add CLOSE method for tied *STD{OUT,IN}
