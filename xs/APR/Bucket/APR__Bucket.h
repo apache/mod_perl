@@ -50,6 +50,10 @@ apr_size_t mpxs_APR__Bucket_read(pTHX_
     }
 
     sv_setpvn(buffer, (len ? str : ""), len);
+
+    /* must run any set magic */
+    SvSETMAGIC(buffer);
+    
     return len;
 }
 
