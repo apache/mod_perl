@@ -1,0 +1,1022 @@
+=head1 NAME
+
+mod_perl-2.0 - overview of mod_perl-2.0
+
+=head1 Introduction
+
+mod_perl was introduced in early 1996, both Perl and Apache have
+changed a great deal since that time. mod_perl has adjusted to both
+along the way over the past 4 and a half years or so using the same
+code base.  Over this course of time, the mod_perl sources have become
+more and more difficult to maintain, in large part to provide
+compatibility between the many different flavors of Apache and Perl.
+And, compatibility across these versions and flavors is a more
+diffcult goal for mod_perl to reach that a typical Apache or Perl
+module, since mod_perl reaches a bit deeper into the corners of Apache
+and Perl internals than most.  Mentions of the idea to rewrite mod_perl as
+version 2.0 started surfacing in 1998, but never made it much further
+than an idea.  When Apache 2.0 development was underway it became
+clear that a rewrite of mod_perl would be required to adjust to the
+new Apache architechure and API.
+
+Of the many changes happening in Apache 2.0, the one which has the
+most impact on mod_perl is the introduction of threads to the overall
+design.  Threads have been a part of Apache on the win32 side since
+the Apache port was introduced.  The mod_perl port to win32 happened
+in verison 1.00b1, released in June of 1997.  This port enabled
+mod_perl to compile and run in a threaded windows environment, with
+one major caveat: only one concurrent mod_perl request could be
+handled at any given time.  This was due to the fact that Perl did not 
+introduce thread safe interpreters until version 5.6.0, released in
+March of 2000.  Contrary to popular belief, the "thread support"
+implemented in Perl 5.005 (released July 1998), did not make Perl
+thread safe internally.  Well before that version, Perl had the notion 
+of "Multiplicity", which allowed multiple interpreter instances in the 
+same process.  However, these instances were not thread safe, that is, 
+concurrent callbacks into multiple interpreters were not supported.
+
+It just so happens that the release of Perl 5.6.0 was nearly at the
+same time as the first alpha version of Apache 2.0.  The development
+of mod_perl 2.0 was underway before those releases, but as both Perl
+5.6.x and Apache 2.0 are reaching stability, mod_perl-2.0 becomes more 
+of a reality.  In addition to the adjustments for threads and Apache
+2.0 API changes, this rewrite of mod_perl is an opportunity to clean
+up the source tree.  This includes both removing the old backward
+compatibility bandaids and building a smarter, stronger and faster
+implementation based on lessons learned over the 4.5 years since
+mod_perl was introduced.
+
+This paper and talk assume basic knowlege of mod_perl 1.xx features
+and will focus only the differences mod_perl-2.00 will bring.
+
+Note 1: The Apache and mod_perl APIs mentioned in this paper are both in
+an "alpha" state and subject to change.
+
+Note 2: Some of the mod_perl APIs mentioned in this paper do not even
+exist and are subject to be implemented, in which case you would be
+redirected to "Note 1".
+
+=head1 Apache 2.0 Summary
+
+Note: This section will give you a brief overview of the changes in
+Apache 2.0, just enough to understand where mod_perl will fit in.  For
+more details on Apache 2.0 consult the papers by Ryan Bloom.
+
+=head2 MPMs - Multi-Processing Model Modules
+
+In Apache 1.3.x concurrent requests were handled by multiple
+processes, and the logic to manage these processes lived in one place,
+I<http_main.c>, 7200 some odd lines of code.  If Apache 1.3.x is
+compiled on a Win32 system large parts of this source file are
+redefined to handle requests using threads.  Now suppose you want to
+change the way Apache 1.3.x processes requests, say, into a DCE RPC
+listener.  This is possible only by slicing and dicing I<http_main.c>
+into more pieces or by redefining the I<standalone_main> function,
+with a C<-DSTANDALONE_MAIN=your_function> compile time flag.
+Neither of which is a clean, modular mechanism.
+
+Apache-2.0 solves this problem by intoducing I<Multi Processing Model
+modules>, better known as I<MPMs>.  The task of managing incoming
+requests is left to the MPMs, shrinking I<http_main.c> to less than
+500 lines of code.  Several MPMs are included with Apache 2.0 in the
+I<src/modules/mpm> directory:
+
+=over 4
+
+=item prefork
+
+The I<prefork> module emulates 1.3.x's preforking model, where each
+request is handled by a different process.
+
+=item pthread/dexter
+
+These two MPMs implement a hybrid multi-process multi-threaded
+approach based on the I<pthreads> standard, but each offers different
+fine-tuning configuration. 
+
+=item os2/winnt/beos
+
+These MPMs also implement the hybrid multi-process/multi-threaded
+model, with each based on native OS thread implementations.
+
+=item perchild
+
+The I<perchild> MPM is based on the I<dexter> MPM, but is extended
+with a mechanism which allows mapping of requests to virtual hosts to
+a process running under the user id and group configured for that host.
+This provides a robust replacement for the I<suexec> mechanism.
+
+=back
+
+=head2 APR - Apache Portable Runtime
+
+Apache 1.3.x has been ported to a very large number of platforms
+including various flavors of unix, win32, os/2, the list goes on.
+However, in 1.3.x there was no clear-cut, pre-designed portability
+layer for third-party modules to take advantage of.  APR provides this 
+API layer in a very clean way.  For mod_perl, APR will assist a great
+deal with portability.  Combined with the portablity of Perl, mod_perl-2.0
+needs only to implement a portable build system, the rest comes "for free".
+A Perl interface will be provided for certain areas of APR, such as
+the shared memory abstraction, but the majority of APR will be used by 
+mod_perl "under the covers".
+
+=head2 New Hook Scheme
+
+In Apache 1.3, modules were registered using the I<module> structure,
+normally static to I<mod_foo.c>.  This structure contains pointers to
+the command table, config create/merge functions, response handler
+table and function pointers for all of the other hooks, such as
+I<child_init> and I<check_user_id>.  In 2.0, this structure has been
+pruned down to the first three items mention and a new function
+pointer added called I<register_hooks>.  It is the job of
+I<register_hooks> to register functions for all other hooks (such as
+I<child_init> and I<check_user_id>).  Not only is hook registration
+now dynamic, it is also possible for modules to register more than one 
+function per hook, unlike 1.3.  The new hook mechanism also makes it
+possible to sort registered functions, unlike 1.3 with function
+pointers hardwired into the module structure, and each module
+structure into a linked list.  Order in 1.3 depended on this list,
+which was possible to order using compile-time and configuration-time
+configuration, but that was left to the user.  Whereas in 2.0, the
+add_hook functions accept an order preference parameter, those
+commonly used are:
+
+=over 4
+
+=item FIRST
+
+=item MIDDLE
+
+=item LAST
+
+=back
+
+For mod_perl, dynamic registration provides a cleaner way to bypass the
+I<Perl*Handler> configuration.  By simply adding this configuration:
+
+ PerlModule Apache::Foo
+
+I<Apache/Foo.pm> can register hooks itself at server startup:
+
+ Apache::Hook->add(PerlAuthenHandler => \&authenticate, Apache::Hook::MIDDLE);
+ Apache::Hook->add(PerlLogHandler => \&logger, Apache::Hook::LAST);
+
+However, this means that Perl subroutines registered via this
+mechanism will be called for *every* request.  It will be left to that 
+subroutine to decide if it was to handle or decline the given phase.
+As there is overhead in entering the Perl runtime, it will most likely 
+be to your advantage to continue using I<Perl*Handler> configuration
+to reduce this overhead.  If it is the case that your I<Perl*Handler>
+should be invoked for every request, the hook registration mechanism
+will save some configuration keystrokes.
+
+=head2 Configuration Tree
+
+When configuration files are read by Apache 1.3, it hands off the
+parsed text to module configuration directive handlers and discards
+that text afterwards.  With Apache 2.0, the configuration files are
+first parsed into a tree structure, which is then walked to pass data
+down to the modules.  This tree is then left in memory with an API for 
+accessing it at request time.  The tree can be quite useful for other
+modules.  For example, in 1.3, mod_info has it's own configuration
+parser and parses the configuration files each time you access it.
+With 2.0 there is already a parse tree in memory, which mod_info can
+then walk to output it's information.
+
+If a mod_perl 1.xx module wants access to configuration information,
+there are two approaches.  A module can "subclass" directive handlers, 
+saving a copy of the data for itself, then returning B<DECLINE_CMD> so 
+the other modules are also handed the info.  Or, the
+C<$Apache::Server::SaveConfig> variable can be set to save <Perl>
+configuration in the C<%Apache::ReadConfig::> namespace.  Both methods 
+are rather kludgy, version 2.0 will provide a Perl interface to the
+Apache configuration tree.
+
+=head2 I/O Filtering
+
+Filtering of Perl modules output has been possible for years since
+tied filehandle support was added to Perl.  There are several modules, 
+such as I<Apache::Filter> and I<Apache::OutputChain> which have been
+written to provide mechanisms for filtering the C<STDOUT> "stream".
+There are several of these modules because no one approach has quite
+been able to offer the ease of use one would expect, which is due
+simply to limitations of the Perl tied filehandle design.  Another
+problem is that these filters can only filter the output of other Perl
+modules. C modules in Apache 1.3 send data directly to the client and
+there is no clean way to capture this stream.  Apache 2.0 has solved
+this problem by introducing a filtering API.  With the baseline i/o
+stream tied to this filter mechansim, any module can filter the output
+of any other module, with any number of filters in between.
+
+=head2 Protocol Modules
+
+Apache 1.3 is hardwired to speak only one protocol, HTTP.  Apache 2.0
+has moved to more of a "server framework" architecture making it
+possible to plugin handlers for protocols other than HTTP.  The
+protocol module design also abstracts the transport layer so protocols 
+such as SSL can be hooked into the server without requiring
+modifications to the Apache source code.  This allows Apache to be
+extended much further than in the past, making it possible to add
+support for protocols such as FTP, SMTP, RPC flavors and the like.
+The main advantage being that protocol plugins can take advantage of
+Apache's portability, process/thread management, configuration
+mechanism and plugin API.
+
+=head1 mod_perl and Threaded MPMs
+
+=head2 Perl 5.6
+
+Thread safe Perl interpreters, also known as "ithreads" (Intepreter
+Threads) provide the mechanism need for mod_perl to adapt to the
+Apache 2.0 thread architecture.  This mechanism is a compile time
+option which encapsulates the Perl runtime inside of a single
+I<PerlInterpreter> structure.  With each interpreter instance
+containing its own symbol tables, stacks and other Perl runtime
+mechanisms, it is possible for any number of threads in the same
+process to concurrently callback into Perl.  This of course requires
+each thread to have it's own I<PerlInterpreter> object, or at least
+that each instance is only access by one thread at any given time.
+
+mod_perl-1.xx has only a single I<PerlInterpreter>, which is
+contructed by the parent process, then inherited across the forks to
+child processes.  mod_perl-2.0 has a configurable number of
+I<PerlInterpreters> and two classes of interpreters, I<parent> and
+I<clone>.  A I<parent> is like that in 1.xx, the main interpreter
+created at startup time which compiles any pre-loaded Perl code.
+A I<clone> is created from the parent using the Perl API
+I<perl_clone()> function.  At request time, I<parent> interpreters are 
+only used for making more I<clones>, as they are the interpreters
+which actually handle requests.  Care is taken by Perl to copy only
+mutable data, which means that no runtime locking is required and
+read-only data such as the syntax tree is shared from the I<parent>.
+
+=head2 New mod_perl Directives for Threaded MPMs
+
+Rather than create a I<PerlInterperter> per-thread by default,
+mod_perl creates a pool of interpreters.  The pool mechanism helps cut 
+down memory usage a great deal.  As already mentioned, the syntax tree 
+is shared between all cloned interpreters.  If your server is serving
+more than mod_perl requests, having a smaller number of
+PerlInterpreters than the number of threads will clearly cut down on
+memory usage.  Finally and perhaps the biggest win is memory reuse.
+That is, as calls are made into Perl subroutines, memory allocations
+are made for variables when they are used for the first time.
+Subsequent use of variables may allocate more memory, e.g. if the
+string needs to hold a larger than it did before, or an array more
+elements than in the past.  As an optimization, Perl hangs onto these
+allocations, even though their values "go out of scope".  With the
+1.xx model, random children would be hit with these allocations.  With 
+2.0, mod_perl has much better control over which PerlInterpreters are
+used for incoming requests.  The intepreters are stored in two linked
+lists, one for available interpreters one for busy.  When needed to
+handle a request, one is taken from the head of the available list and
+put back into the head of the list when done.  This means if you have,
+say, 10 interpreters configured to be cloned at startup time, but no
+more than 5 are ever used concurrently, those 5 continue to reuse
+Perls allocations, while the other 5 remain much smaller, but ready to 
+go if the need arises.
+
+Various attributes of the pools are configurable with the following
+configuration directives:
+
+=over 4
+
+=item PerlInterpStart
+
+The number of intepreters to clone at startup time.
+
+=item PerlInterpMax
+
+If all running interpreters are in use, mod_perl will clone new
+interpreters to handle the request, up until this number of
+interpreters is reached. When Max is reached, mod_perl will block
+until one becomes available.
+
+=item PerlInterpMinSpare
+
+The minimum number of available interpreters this parameter will clone
+interpreters up to Max, before a request comes in.
+
+=item PerlInterpMaxSpare
+
+mod_perl will throttle down the number of interpreters to this number
+as those in use become available.
+
+=item PerlInterpMaxRequests
+
+The maximum number of requests an interpreter should serve, the
+interpreter is destroyed when the number is reached and replaced with
+a fresh clone.
+
+=back
+
+=head2 Issues with Threading
+
+The Perl "ithreads" implementation ensures that Perl code is thread
+safe, at least with respect to the Apache threads in which it is
+running.  However, it does not ensure that extensions which call into
+third-party C/C++ libraries are thread safe.  In the case of
+non-threadsafe extensions, if it is not possible to fix those
+routines, care will need to be taken to serialize calls into such
+functions (either at the xs or Perl level).
+
+=head1 Thread Item Pool API
+
+As we discussed, mod_perl implements a pool mechanism to manage
+I<PerlInterpreters> between threads.  This mechanism has been
+abstracted into an API known as "tipool", I<Thread Item Pool>.  This
+pool can be used to manage any data structure, in which you wish to
+have a smaller number than the number of configured threads.  A good
+example of such a data structure is a database connection handle.
+The I<Apache::DBI> module implements persisent connections for 1.xx,
+but may result in each child maintaining its own connection, when it
+is most often the case that number of connections is never needed
+concurrently.  The TIPool API provides a mechanism to solve this
+problem, consisting of the following methods:
+
+=over 4
+
+=item new
+
+Create a new thread item pool.  This constructor is passed an
+I<Apache::Pool> object, a hash reference to pool configuration parameters,
+a hash reference to pool callbacks and an optional userdata variable
+which is passed to callbacks:
+
+ my $tip = Apache::TIPool->new($p,
+                               {Start => 3, Max => 6},
+                               {grow => \&new_connection,
+                                shrink => \&close_connection},
+                               \%my_config);
+
+The configuration parameters, I<Start>, I<Max>, I<MinSpare>, I<MaxSpare>
+and I<MaxRequests> configure the pool for your items, just as the
+I<PerlInterp*> directives do for I<PerlInterpreters>.
+
+The I<grow> callback is called to create new items to be added to the
+pool, I<shrink> is called when an item is removed from the pool.
+
+
+=item pop
+
+This method will return an item from the pool, from the head of the
+available list.  If the current number of items are all busy, and that
+number is less than the configured maximum, a new item will be created
+by calling the configured I<grow> callback.  Otherwise, the I<pop>
+method will block until an item is available.
+
+ my $item = $tip->pop;
+
+=item putback
+
+This method gives an item (returned from I<pop>) back to the pool,
+which is pushed into the head of the available list:
+
+ $tip->putback($item);
+
+=back
+
+Future improvements will be made to the TIPool API, such as the
+ability to sort the I<available> and I<busy> lists and specify if
+items should be popped and putback to/from the head or tail of the
+list.
+
+=head2 Apache::DBIPool
+
+Now we will take a look at how to make I<DBI> take advantage of
+I<TIPool> API with the I<Apache::DBIPool> module.  The module
+configuration in httpd.conf will look something like so:
+
+ PerlModule Apache::DBIPool
+
+ <DBIPool dbi:mysql:db_name>
+   DBIPoolStart 10
+   DBIPoolMax   20
+   DBIPoolMaxSpare 10
+   DBIPoolMinSpare 5
+   DBIUserName dougm
+   DBIPassWord XxXx
+ </DBIPool>
+
+The module is loaded using the I<PerlModule> directive just as with
+other modules.  TIPools are then configured using I<DBIPool>
+configuration sections.  The argument given to the container is the
+I<dsn> and within are the pool directives I<Start>, I<Max>,
+I<MaxSpare> and I<MinSpare>.  The I<UserName> and I<PassWord>
+directives will be passed to the I<DBI> I<connect> method.
+There can be any number of I<DBIPool> containers, provided each I<dsn> 
+is different, and/or each container is inside a different
+I<VirtualHost> container.
+
+Now let's examine the source code, keeping in mind this module
+contains the basics and the official release (tbd) will likely contain 
+more details, such as how it hooks into I<DBI.pm> to provide
+transparency the way I<Apache::DBI> currently does.
+
+After pulling in the modules needed I<Apache::TIPool>,
+I<Apache::ModuleConfig> and I<DBI>, we setup a callback table.  The 
+I<new_connection> function will be called with the TIP needs to add a
+new item and I<close_connection> when an item is being removed from
+the pool.  The I<Apache::Hook> I<add> method registers a
+I<PerlPostConfigHandler> which will be called after Apache has read
+the configuration files.
+
+This handler (our I<init> function) is passed 3 I<Apache::Pool>
+objects and one I<Apache::Server> object.  Each I<Apache::Pool> has a
+different lifetime, the first will be alive until configuration is
+read again, such as during restarts.  The second will be alive until
+logs are re-opened and the third is a temporary pool which is cleared
+before Apache starts serving requests.  Since the DBI connection pool
+is associated with configuration in httpd.conf, we will use that pool.  
+
+The I<Apache::ModuleConfig> I<get> method is called with the
+I<Apache::Server> object to give us the configuration associated with
+the given server.  Next is a while loop which iterates over the
+configuration parsed by the I<DBIPool> directive handler.  The keys of
+this hash are the configured I<dsn>, of which there is one per
+I<DBIPool> configuration section.  The values will be a hash reference
+to the pool configuration, I<Start>, I<Max>, I<MinSpare>, I<MaxSpare>
+and I<MaxRequests>.
+
+A I<new> I<Apache::TIPool> is then contructed, passing it the
+C<$pconf> I<Apache::Pool>, configuration C<$params>, the I<$callbacks> 
+table and C<$conn> hash ref.  The I<TIPool> is then saved into the
+C<$cfg> object, indexed by the I<dsn>.
+
+At the time I<Apache::TIPool::new> is called, the I<new_connection>
+callback will be called the number of time to which I<Start> is
+configured.  This callback localizes I<Apache::DBIPool::connect> to a
+code reference which makes the real database connection.
+
+At request time I<Apache::DBIPool::connect> will fetch a database
+handle from the I<TIPool>.  It does so by digging into the
+configuration object associated with the current virtual host to
+obtain a reference to the I<TIPool> object.  It then calls the I<pop>
+method, which will immediatly return a database handle if one is
+available.  If all opened connection are in used and the current
+number of connections is less than the configured I<Max>, the call to
+I<pop> will result in a call to I<new_connection>.  If I<Max> has
+already been reached, then I<pop> will block until a handle is
+I<putback> into the pool.
+
+Finally, the handle is blessed into the I<Apache::DBIPool::db> class
+which will override the dbd class I<disconnect> method.  The
+overridden I<disconnect> method obtains a reference to the I<TIPool>
+object and passes it to the I<putback> method, making it available for 
+use by other threads.  Should the Perl code using this handle neglect to
+call the I<disconnect> method, the overridden I<connect> method has
+already registered a cleanup function to make sure it is I<putback>.
+
+=head2 Apache::DBIPool Source
+
+ package Apache::DBIPool;
+
+ use strict;
+ use Apache::TIPool ();
+ use Apache::ModuleConfig ();
+ use DBI ();
+
+ my $callbacks = {
+    grow => \&new_connection,     #add new connection to the pool
+    shrink => \&close_connection, #handle removed connection from pool
+ };
+
+ Apache::Hook->add(PerlPostConfigHandler => \&init); #called at startup
+
+ sub init {
+     my($pconf, $plog, $ptemp, $s) = @_;
+
+     my $cfg = Apache::ModuleConfig->get($s, __PACKAGE__);
+
+     #create a TIPool for each dsn
+     while (my($conn, $params) = each %{ $cfg->{DBIPool} }) {
+         my $tip = Apache::TIPool->new($pconf, $params, $callbacks, $conn);
+         $cfg->{TIPool}->{ $conn->{dsn} } = $tip;
+     }
+ }
+
+ sub new_connection {
+     my($tip, $conn) = @_;
+
+     #make actual connection to the database
+     local *Apache::DBIPool::connect = sub {
+         my($class, $drh) = (shift, shift);
+         $drh->connect($dbname, @_);
+     };
+
+     return DBI->connect(@{$conn}{qw(dsn username password attr)});
+ }
+
+ sub close_connection {
+     my($tip, $conn, $dbh) = @_;
+     my $driver = (split $conn->{dsn}, ':')[1];
+     my $method = join '::', 'DBD', $driver, 'db', 'disconnect';
+     $dbh->$method(); #call the real disconnect method
+ }
+
+ my $EndToken = '</DBIPool>';
+
+ #parse <DBIPool dbi:mysql:...>...
+
+ sub DBIPool ($$$;*) {
+     my($cfg, $parms, $dsn, $cfg_fh) = @_;
+     $dsn =~ s/>$//;
+
+     $cfg->{DBIPool}->{$dsn}->{dsn} = $dsn;
+
+     while((my $line = <$cfg_fh>) !~ m:^$EndToken:o) {
+         my($name, $value) = split $line, /\s+/, 2;
+         $name =~ s/^DBIPool(\w+)/lc $1/ei;
+         $cfg->{DBIPool}->{$dsn}->{$name} = $value;
+     }
+ }
+
+ sub config {
+     my $r = Apache->request;
+     return Apache::ModuleConfig->get($r, __PACKAGE__);
+ }
+
+ #called from DBI::connect
+ sub connect {
+     my($class, $drh) = (shift, shift);
+
+     $drh->{DSN} = join ':', 'dbi', $drh->{Name}, $_[0];
+     my $cfg = config();
+
+     my $tip = $cfg->{TIPool}->{ $drh->{DSN} };
+
+     unless ($tip) {
+         #XXX: do a real connect or fallback to Apache::DBI
+     }
+
+     my $item = $tip->pop; #select a connection from the pool
+
+     $r->register_cleanup(sub { #incase disconnect() is not called
+         $tip->putback($item);
+     });
+
+     return bless 'Apache::DBIPool::db', $item->data; #the dbh
+ }
+
+ package Apache::DBIPool::db;
+
+ our @ISA = qw(DBI::db);
+
+ #override disconnect, puts database handle back in the pool
+ sub disconnect {
+     my $dbh = shift;
+     my $tip = config()->{TIPool}->{ $dbh->{DSN} };
+     $tip->putback($dbh);
+     1;
+ }
+
+ 1;
+ __END__
+
+=head1 PerlOptions Directive
+
+A new configuration directive to mod_perl-2.0, I<PerlOptions>,
+provides fine-grained configuration for what were compile-time only
+options in mod_perl-1.xx.  In addition, this directive provides
+control over what class of I<PerlInterpreter> is used for a
+I<VirtualHost> or location configured with I<Location>, I<Directory>, etc.
+
+These are all best explained with examples, first here's how to
+disable mod_perl for a certain host:
+
+ <VirtualHost ...>
+    PerlOptions -Enable
+ </VirtualHost>
+
+
+Suppose a one of the hosts does not want to allow users to configure
+I<PerlAuthenHandler>, I<PerlAuthzHandler> or I<PerlAccessHandler> or
+<Perl> sections:
+
+ <VirtualHost ...>
+    PerlOptions -Authen -Authz -Access -Sections
+ </VirtualHost>
+
+Or maybe everything but the response handler:
+
+ <VirtualHost ...>
+    PerlOptions None +Response
+ </VirtualHost>
+
+A common problem with mod_perl-1.xx was the shared namespace between
+all code within the process.  Consider two developers using the same
+server and each which to run a different version of a module with the
+same name.  This example will create two I<parent> Perls, one for each 
+I<VirtualHost>, each with its own namespace and pointing to a
+different paths in C<@INC>:
+
+ <VirtualHost ...>
+    ServerName dev1
+    PerlOptions +Parent
+    PerlSwitches -Mblib=/home/dev1/lib/perl
+ </VirtualHost>
+
+ <VirtualHost ...>
+    ServerName dev2
+    PerlOptions +Parent
+    PerlSwitches -Mblib=/home/dev2/lib/perl
+ </VirtualHost>
+
+Or even for a given location, for something like "dirty" cgi scripts:
+
+ <Location /cgi-bin>
+    PerlOptions +Parent
+    PerlInterpMaxRequests 1
+    PerlInterpStart 1
+    PerlInterpMax 1
+    PerlHandler Apache::Registry
+ </Location>
+
+Will use a fresh interpreter with its own namespace to handle each
+request.
+
+Should you wish to fine tune Interpreter pools for a given host:
+
+ <VirtualHost ...>
+    PerlOptions +Clone
+    PerlInterpStart 2
+    PerlInterpMax 2
+ </VirtualHost>
+
+This might be worthwhile in the case where certain hosts have their
+own sets of large-ish modules, used only in each host.  By tuning each 
+host to have it's own pool, that host will continue to reuse the Perl
+allocations in their specific modules.
+
+=head1 Integration with 2.0 Filtering
+
+The mod_perl-2.0 interface to the Apache filter API is much simpler
+than the C API, hiding most of the details underneath.  Perl filters
+are configured using the I<PerlFilterHandler> directive, for example:
+
+ PerlFilterHandler Apache::ReverseFilter
+
+This simply registers the filter, which can then be turned on using
+the core I<AddFilter> directive:
+
+ <Location /foo>
+    AddFilter Apache::ReverseFilter
+ </Location>
+
+The I<Apache::ReverseFilter> handler will now be called for anything
+accessed in the I</foo> url space.  The I<AddFilter> directive takes
+any number of filters, for example, this configuration will first send 
+the output to I<mod_include>, which will in turn pass its output down
+to I<Apache::ReverseFilter>:
+
+ AddFilter INCLUDE Apache::ReverseFilter
+
+For our example, I<Apache::ReverseFilter> simply reverses all of the
+output characters and then sends them downstream.  The first argument
+to a filter handler is an I<Apache::Filter> object, which at the
+moment provides two methods I<read> and I<write>.  The I<read> method
+pulls down a chunk of the output stream into the given buffer,
+returning the length read into the buffer.  An optional size argument
+may be given to specify the maximum size to read into the buffer.  If
+omitted, an arbitrary size will fill the buffer, depending on the
+upstream filter. The I<write> method passes data down to the next
+filter.  In our case C<scalar reverse> takes advantage of Perl's
+builtins to reverse the upstream buffer:
+
+ package Apache::ReverseFilter;
+
+ use strict;
+
+ sub handler {
+     my $filter = shift;
+
+     while ($filter->read(my $buffer, 1024)) {
+         $filter->write(scalar reverse $buffer);
+     }
+
+     return Apache::OK;
+ }
+
+ 1;
+
+=head1 Protocol Modules with mod_perl-2.0
+
+=head2 Apache::Echo
+
+Apache 2.0 ships with an example protocol module, I<mod_echo>, which
+simply reads data from the client and echos it right back.  Here we'll 
+take a look at a Perl version of that module, called I<Apache::Echo>.
+A protocol handler is configured using the
+I<PerlProcessConnectionHandler> directive and we'll use an I<IfDefine> 
+section so it's only enabled via the command line and binds to a
+different Port B<8084>:
+
+ <IfDefine Apache::Echo>
+     Port 8084
+     PerlProcessConnectionHandler Apache::Echo
+ </IfDefine>
+
+Apache::Echo is then enabled by starting Apache like so:
+
+ % httpd -DApache::Echo
+
+And we give it a whirl:
+
+ % telnet localhost 8084
+ Trying 127.0.0.1...
+ Connected to localhost (127.0.0.1).
+ Escape character is '^]'.
+ hello apachecon
+ hello apachecon
+ ^]
+
+The code is just a few lines of code, with the standard I<package>
+declaration and of course, C<use strict;>.  As with all
+I<Perl*Handler>s, the subroutine name defaults to I<handler>.  However, 
+in the case of a protocol handler, the first argument is not a
+I<request_rec>, but a I<conn_rec> blessed into the
+I<Apache::Connection> class.  Right away we enter the echo loop, stopping if 
+the I<eof> method returns true, indicating that the client has
+disconnected.  Next the I<read> method is called with a maximum of
+1024 bytes placed in C<$buff> and returns the actual length read into
+C<$rlen>.  If no bytes were read we break out of the while loop.
+Otherwise, attempt to echo the data back using the I<write> method.
+The I<flush> method is called so the buffer is flushed to the client
+right away, otherwise the client would not see any data until the
+buffer was full (with around 8k or so worth).  Once the client has
+disconnected, the module returns B<OK>, telling Apache we have handled
+the connection:
+
+ package Apache::Echo;
+
+ use strict;
+
+ sub handler {
+     my Apache::Connection $c = shift;
+
+     while (!$c->eof) {
+         my $rlen = $c->read(my $buff, 1024);
+
+         last unless $rlen > 0 and $c->write($buff);
+
+         $c->flush;
+     }
+
+     return Apache::OK;
+ }
+
+ 1;
+ __END__
+
+
+=head2 Apache::CommandServer
+
+Our first protocol handler example took advange of Apache's server
+framework, but did not tap into any other modules.  The next example
+is based on the example in the "TCP Servers with IO::Socket" section
+of I<perlipc>.  Of course, we don't need I<IO::Socket> since Apache
+takes care of those details for us.  The rest of that example can
+still be used to illustrate implementing a simple text protocol.  In
+this case, one where a command is sent by the client to be executed on
+the server side, with results sent back to the client.
+
+The I<Apache::CommandServer> handler will support four commands:
+I<motd>, I<date>, I<who> and I<quit>.  These are probably not
+commands which can be exploited, but should we add such commands,
+we'll want to limit access based on ip address/hostname,
+authentication and authorization.  Protocol handlers need to take care 
+of these tasks themselves, since we bypass the HTTP protocol handler.
+
+As with all I<PerlProcessConnectionHandlers>, we are passed an
+I<Apache::Connection> object as the first argument.  After every call
+to the I<write> method we want the client to see the data right away,
+so first I<autoflush> is turned on to take care of that for us.  Next, 
+the I<login> subroutine is called to check if access by this client
+should be allowed.  This routine makes up for what we lost with the 
+core HTTP protocol handler bypassed.  First we call the
+I<fake_request> method, which returns a I<request_rec> object, just
+like that which is passed into request time I<Perl*Handlers> and
+returned by the subrequest API methods, I<lookup_uri> and
+I<lookup_file>.  However, this "fake request" does not run handlers
+for any of the phases, it simply returns an object which we can use to 
+do that ourselves.  The C<__PACKAGE__> argument is given as our
+"location" for this request, mainly used for looking up configuration.
+For example, should we only wish to allow access to this server from
+certain locations:
+
+    <Location Apache::CommandServer>
+        deny from all
+        allow from 10.*
+    </Location>
+
+The I<fake_request> method only looks up the configuration, we still
+need to apply it.
+This is done in I<for> loop, iterating over three methods:
+I<check_access>, I<check_user_id> and I<check_authz>.  These methods
+will call directly into the Apache functions that invoke module
+handlers for these phases and will return an integer status code, such 
+as B<OK>, B<DECLINED> or B<FORBIDDEN>.  If I<check_access> returns
+something other than B<OK> or B<DECLINED>, that status will be
+propagated up to the handler routine and then back up to Apache.
+Otherwise the access check passed and the loop will break unless
+I<some_auth_required> returns true.  This would be false given the
+previous configuration example, but would be true in the presense of a 
+I<require> directive, such as:
+
+    <Location Apache::CommandServer>
+        deny from all
+        allow from 10.*
+        require user dougm
+    </Location>
+
+Given this configuration, I<some_auth_required> will return true.
+The I<user> method is then called, which will return false if we have
+not yet authenticated.  A I<prompt> utility is called to read the
+username and password, which are then injected into the I<headers_in>
+table using the I<set_basic_credentials> method.  The I<Authenticate>
+field in this table is set to a base64 encoded value of the
+username:password pair, exactly the same format a browser would send
+for I<Basic authentication>.  Next time through the loop
+I<check_user_id> is called, which will in turn invoke any
+authentication handlers, such as I<mod_auth>.  When I<mod_auth> calls
+the I<ap_get_basic_auth_pw()> API function (as all Basic auth modules
+do), it will get back the username and password we injected.
+If we fail authentication a B<401> status code is returned which we
+propagate up.  Otherwise, authorization handlers are run via
+I<check_authz>.  Authorization handlers normally need the I<user>
+field of the I<request_rec> for its checks and that field was filled
+in when I<mod_auth> called I<ap_get_basic_auth_pw()>.
+
+Provided login is a success, a welcome message is printed and main
+request loop entered.  Inside the loop the I<getline> method returns
+just one line of data, with newline characters stripped.  If the
+string sent by the client is in our command table, the command is then 
+invoked, otherwise a usage message is sent.  If the command does not
+return a true value, we break out of the loop.  Let's give it a try
+with this configuration:
+
+ <IfDefine Apache::CommandServer>
+     Port 8085
+     PerlProcessConnectionHandler Apache::CommandServer
+
+     <Location Apache::CommandServer>
+         allow from 127.0.0.1
+         require user dougm
+         satisfy any
+         AuthUserFile /tmp/basic-auth
+     </Location>
+ </IfDefine>
+
+ % telnet localhost 8085
+ Trying 127.0.0.1...
+ Connected to localhost (127.0.0.1).
+ Escape character is '^]'.
+ Login: dougm
+ Password: foo
+ Welcome to Apache::CommandServer
+ Available commands: motd date who quit
+ motd
+ Have a lot of fun...
+ date
+ Wed Sep 13 23:47:26 2000
+ who
+ dougm    tty1     Sep  7 11:40
+ dougm    ttyp0    Sep 12 11:38 (:0.0)
+ dougm    ttyp1    Sep 12 15:50 (:0.0)
+ quit
+ Connection closed by foreign host.
+
+=head2 Apache::CommandServer Source
+
+ package Apache::CommandServer;
+
+ use strict;
+
+ my @cmds = qw(motd date who quit);
+ my %commands = map { $_, \&{$_} } @cmds;
+
+ sub handler {
+     my Apache::Connection $c = shift;
+
+     $c->autoflush(1);
+
+     if ((my $rc = login($c)) != Apache::OK) {
+         $c->write("Access Denied\n");
+         return $rc;
+     }
+
+     $c->write("Welcome to ", __PACKAGE__,
+               "\nAvailable commands: @cmds\n");
+
+     while (!$c->eof) {
+         my $cmd;
+         next unless $cmd = $c->getline;
+
+         if (my $sub = $commands{$cmd}) {
+             last unless $sub->($c);
+         }
+         else {
+             $c->write("Commands: @cmds\n");
+         }
+     }
+
+     return Apache::OK;
+ }
+
+ sub login {
+     my $c = shift;
+
+     my $r = $c->fake_request(__PACKAGE__);
+
+     for my $method (qw(check_access check_user_id check_authz)) {
+         my $rc = $r->$method();
+
+         if ($rc != Apache::OK and $rc != Apache::DECLINED) {
+             return $rc;
+         }
+
+         last unless $r->some_auth_required;
+
+         unless ($r->user) {
+             my $username = prompt($c, "Login");
+             my $password = prompt($c, "Password");
+
+             $r->set_basic_credentials($username, $password);
+         }
+     }
+
+     return Apache::OK;
+ }
+
+ sub prompt {
+     my($c, $msg) = @_;
+     $c->write("$msg: ");
+     $c->getline;
+ }
+
+ sub motd {
+     my $c = shift;
+     open my $fh, '/etc/motd' or return;
+     local $/;
+     $c->write(<$fh>);
+     close $fh;
+ }
+
+ sub date {
+     my $c = shift;
+     $c->write(scalar localtime, "\n");
+ }
+
+ sub who {
+     my $c = shift;
+     $c->write(`who`);
+ }
+
+ sub quit {0}
+
+ 1;
+ __END__
+
+=head1 mod_perl-2.0 Optimizations
+
+As mentioned in the introduction, the rewrite of mod_perl gives us the 
+chances to build a smarter, stronger and faster implementation based
+on lessons learned over the 4.5 years since mod_perl was introduced.
+There are optimizations which can be made in the mod_perl source code,
+some which can be made in the Perl space by optimizing its syntax
+tree and some a combination of both.  In this section we'll take a
+brief look at some of the optimizations that are being considered.
+
+The details of these optimizations will from the most part be hidden
+from mod_perl users, the exeception being that some will only be turned 
+on with configuration directives.  The explanation of these
+optimization ideas are best left for the live talk, a few which will
+be overviewed then include:
+
+=over 4
+
+=item "Compiled" Perl*Handlers
+
+=item Method calls faster than subroutine calls!
+
+=item `print' enhancements
+
+=item Inlined Apache::*.xs calls
+
+=item Use of Apache Pools for memory allocations
+
+=item Copy-on-write strings
+
+=back
+
+=head1 References
+
+=over 4
+
+=item http://perl.apache.org/
+
+The mod_perl homepage will announce mod_perl-2.0 developments as they
+become available.
+
+=back
