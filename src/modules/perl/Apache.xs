@@ -1134,7 +1134,8 @@ print(r, ...)
 	sv_setiv(sendh, 0);
     }
     else {
-	CV *cv = GvCV(gv_fetchpv("Apache::write_client", FALSE, SVt_PVCV));
+        /* should exist already */
+        CV *cv = GvCV(gv_fetchpv("Apache::write_client", GV_ADDWARN, SVt_PVCV));
 	soft_timeout("mod_perl: Apache->print", r);
 	PUSHMARK(mark);
 #ifdef PERL_OBJECT
