@@ -7,10 +7,8 @@ use Apache::Test;
 use Apache::TestUtil;
 
 use APR::Util ();
-use APR::Error ();
 
 use Apache::Const -compile => 'OK';
-use APR::Const -compile => 'EMISMATCH';
 
 sub handler {
     my $r = shift;
@@ -22,15 +20,11 @@ sub handler {
 #    my $bytes = APR::generate_random_bytes($blen);
 #    ok length($bytes) == $blen;
 
-    ok ! APR::password_validate("one", "two");
+    ok ! APR::Util::password_validate("one", "two");
 
-    my $status = APR::EMISMATCH;
-
-    my $str = APR::Error::strerror($status);
-
-    t_debug "strerror=$str\n";
-
-    ok $str eq 'passwords do not match';
+    my $clear = "pass1";
+    my $hash  = "1fWDc9QWYCWrQ";
+    ok APR::Util::password_validate($clear, $hash);
 
     Apache::OK;
 }
