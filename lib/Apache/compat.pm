@@ -321,6 +321,8 @@ sub send_fd {
     $r->send_fd_length($fh, -1);
 }
 
+sub is_main { !shift->main }
+
 package Apache::File;
 
 use Fcntl ();

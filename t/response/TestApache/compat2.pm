@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 45;
+    plan $r, tests => 46;
 
     $r->send_http_header('text/plain');
 
@@ -230,6 +230,9 @@ sub handler {
     my $t_class = ref $t;
 
     ok t_cmp('APR::Table', $t_class, "Apache::Table->new");
+
+    ok t_cmp(!$r->main, $r->is_main,
+             '$r->is_main');
 
     #note these are not actually part of the tests
     #since i think on platforms where crypt is not supported,
