@@ -303,6 +303,13 @@ Min number of spare Perl interpreters
 
 Max number of requests per Perl interpreters
 
+=item PerlInterpScope
+
+Scope for which selected interpreter should be held, one of:
+I<request>, I<connection>, I<handler>, I<subrequest>.
+
+The default is I<request>.
+
 =back
 
 =head2 PerlOptions Directive
@@ -327,6 +334,34 @@ On by default, used to disable mod_perl for a given VirtualHost.
 =item Perl*Handler
 
 Disable Perl*Handlers, all compiled in handlers are enabled by default.
+
+=item AutoLoad
+
+Resolve Perl*Handlers at startup time, includes loading the module
+from disk if not already loaded.
+
+=item GlobalRequest
+
+Setup the global request_rec for use with Apache->request
+
+=item ParseHeaders
+
+Scan output for HTTP headers, same functionality as 1.x's
+PerlSendHeaders, but more robust.
+
+=item MergeHandlers
+
+Turn on merging of Perl*Handler arrays, example:
+
+ PerlFixupHandler One::fixup
+
+ <Location /foo>
+    PerlFixupHandler Another::fixup
+ </Location>
+
+By default, a request for /foo only runs B<Another::fixup> (1.x behavior)
+I<PerlOptions +MergeHandlers> (inside Location /foo) will run both
+B<One::fixup> and B<Another::fixup>.
 
 =back
 
