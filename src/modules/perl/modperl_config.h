@@ -59,6 +59,16 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
 #   define MP_dSCFG_dTHX dTHXa(scfg->perl)
 #endif
 
+/* hopefully this macro will not need to be used often */
+#ifdef USE_ITHREADS
+#   define MP_dTHX \
+    modperl_interp_t *interp = \
+       modperl_interp_select(r, r->connection, r->server); \
+    dTHXa(interp->perl)
+#else
+#   define MP_dTHX dNOOP
+#endif
+
 int modperl_config_apply_PerlModule(server_rec *s,
                                     modperl_config_srv_t *scfg,
                                     PerlInterpreter *perl, apr_pool_t *p);
