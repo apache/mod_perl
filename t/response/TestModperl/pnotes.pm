@@ -35,7 +35,7 @@ sub handler {
     ok t_cmp($r->pnotes('pnotes_foo'), undef,
              q{unset entry contents});
     my $exists = exists $r->pnotes->{'pnotes_foo'};
-    $exists = 1 if $] <= 5.008001; # changed in perl 5.8.1
+    $exists = 1 if $] < 5.008001; # changed in perl 5.8.1
     ok $exists;
 
     # now delete completely (possible only via the hash inteface)
