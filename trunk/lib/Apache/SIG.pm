@@ -25,6 +25,7 @@ sub PIPE {
         $r->subprocess_env($Apache::SIG::PipeKey => '1');
     } else {
         warn "[modperl] caught SIGPIPE in process $$\n";
+        warn "\thint: may be a client (browser) hit STOP?\n";
         warn "[modperl] process $$ going to Apache::exit with status=$s\n";
     }
     Apache::exit($s);
