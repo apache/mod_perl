@@ -5,7 +5,7 @@ use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn fork forkoption);
-$Apache::VERSION = "1.23";
+$Apache::VERSION = "1.24";
 
 *import = \&Exporter::import;
 
@@ -661,7 +661,7 @@ Returns true if this is a virtual server.
 
 =item $s->names
 
-Returns the wild-carded names for HostAlias servers. 
+Returns the wild-carded names for ServerAlias servers. 
 
 =item $s->warn
 
@@ -833,12 +833,16 @@ like this:
   $r->send_fd(FILE);
   close(FILE);
 
-=item $r->internal_redirect_handler( $newplace )
+=item $r->internal_redirect( $newplace )
 
 Redirect to a location in the server namespace without 
 telling the client. For instance:
 
-   $r->internal_redirect_handler("/home/sweet/home.html");
+   $r->internal_redirect("/home/sweet/home.html");
+
+=item $r->internal_redirect_handler( $newplace )
+
+Same as I<internal_redirect>, but the I<handler> from C<$r> is preserved.
 
 =item $r->custom_response($code, $uri)
 
