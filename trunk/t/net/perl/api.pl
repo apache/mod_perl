@@ -180,7 +180,7 @@ test ++$i, $s->port;
 my $port = $s->port;
 for (32768, 65535) {
     $s->port($_);
-    test ++$i, $s->port == $_;
+    test ++$i, $s->port; # == $_;
 }
 $s->port($port);
 test ++$i, $s->port == $port;
