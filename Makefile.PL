@@ -68,7 +68,7 @@ sub configure {
     $build->save;
 
     for (@scripts) {
-        generate_script($_);
+        Apache::TestMM::generate_script($_);
     }
 
     my $tables_dir = tables_dir($httpd_version);
@@ -120,19 +120,6 @@ sub generate_xs {
     $xs->generate;
 
     #shift @INC; #ModPerl::Code needs this path too
-}
-
-sub generate_script {
-    my $file = shift;
-    open my $in, "$file.PL" or die "Couldn't open $file.PL: $!";
-    open my $out, '>', $file or die "Couldn't open $file: $!";
-    print "generating script...$file\n";
-    print $out "#!$Config{perlpath}\n",
-               "# WARNING: this file is generated, edit $file.PL instead\n",
-               join '', <$in>;
-    close $out or die "close $file: $!";
-    close $in;
-    chmod 0544, $file;
 }
 
 sub echo_cmd {
