@@ -19,25 +19,26 @@
 
 #define MP_FILTER_NAME_FORMAT "   %s\n\n\t"
 
-#define MP_FILTER_NAME(f) \
-    (is_modperl_filter(f) \
-        ? modperl_handler_name(((modperl_filter_ctx_t *)(f)->ctx)->handler) \
-        : (f)->frec->name)
+#define MP_FILTER_NAME(f)                                   \
+    (is_modperl_filter(f)                                   \
+         ? modperl_handler_name(                            \
+             ((modperl_filter_ctx_t *)(f)->ctx)->handler)   \
+         : (f)->frec->name)
 
-#define MP_FILTER_TYPE(filter) \
-    (is_modperl_filter(filter->f) \
+#define MP_FILTER_TYPE(filter)                                         \
+    (is_modperl_filter(filter->f)                                      \
         ? ((modperl_filter_ctx_t *)(filter)->f->ctx)->handler->attrs & \
-            MP_FILTER_CONNECTION_HANDLER  ? "connection" : "request" \
+            MP_FILTER_CONNECTION_HANDLER  ? "connection" : "request"   \
         : "unknown")
 
-#define MP_FILTER_MODE(filter) \
+#define MP_FILTER_MODE(filter)                                  \
     (filter->mode == MP_INPUT_FILTER_MODE ? "input" : "output")
 
 #define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
 
-/* allocate wbucket memory using malloc and not request pools, since
- * we may need many of these if the filter is invoked multiple
- * times */
+/* allocate wbucket memory using a sub-pool and not a ap_filter_t
+ * pool, since we may need many of these if the filter is invoked
+ * multiple times */
 #define WBUCKET_INIT(filter)                                     \
     if (!filter->wbucket) {                                      \
         modperl_wbucket_t *wb =                                  \
@@ -51,7 +52,7 @@
         filter->wbucket  = wb;                                   \
     }
 
-#define FILTER_FREE(filter)        \
+#define FILTER_FREE(filter)                     \
     apr_pool_destroy(filter->temp_pool);
 
 /* Save the value of $@ if it was set */
@@ -65,7 +66,8 @@
                    );                               \
     }
 
-/* Restore previously saved value of $@, warning if a new error was generated */
+/* Restore previously saved value of $@, warning if a new error was
+ * generated */
 #define MP_FILTER_RESTORE_ERRSV(tmpsv)                  \
     if (tmpsv) {                                        \
         if (SvTRUE(ERRSV)) {                            \
@@ -323,18 +325,18 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     }
     filter = (modperl_filter_t *)apr_pcalloc(temp_pool, sizeof(*filter));
                 
-    filter->mode = mode;
-    filter->f = f;
     filter->temp_pool = temp_pool;
-    filter->pool = p;
-    filter->wbucket = NULL;
+    filter->mode      = mode;
+    filter->f         = f;
+    filter->pool      = p;
+    filter->wbucket   = NULL;
 
     if (mode == MP_INPUT_FILTER_MODE) {
-        filter->bb_in  = NULL;
-        filter->bb_out = bb;
+        filter->bb_in      = NULL;
+        filter->bb_out     = bb;
         filter->input_mode = input_mode;
-        filter->block = block;
-        filter->readbytes = readbytes;
+        filter->block      = block;
+        filter->readbytes  = readbytes;
     }
     else {
         filter->bb_in  = bb;
@@ -553,23 +555,23 @@ int modperl_run_filter(modperl_filter_t *filter)
 
 /* unrolled APR_BRIGADE_FOREACH loop */
 
-#define MP_FILTER_EMPTY(filter) \
-APR_BRIGADE_EMPTY(filter->bb_in)
+#define MP_FILTER_EMPTY(filter)                 \
+    APR_BRIGADE_EMPTY(filter->bb_in)
 
-#define MP_FILTER_SENTINEL(filter) \
-APR_BRIGADE_SENTINEL(filter->bb_in)
+#define MP_FILTER_SENTINEL(filter)              \
+    APR_BRIGADE_SENTINEL(filter->bb_in)
 
-#define MP_FILTER_FIRST(filter) \
-APR_BRIGADE_FIRST(filter->bb_in)
+#define MP_FILTER_FIRST(filter)                 \
+    APR_BRIGADE_FIRST(filter->bb_in)
 
-#define MP_FILTER_NEXT(filter) \
-APR_BUCKET_NEXT(filter->bucket)
+#define MP_FILTER_NEXT(filter)                  \
+    APR_BUCKET_NEXT(filter->bucket)
 
-#define MP_FILTER_IS_EOS(filter) \
-APR_BUCKET_IS_EOS(filter->bucket)
+#define MP_FILTER_IS_EOS(filter)                \
+    APR_BUCKET_IS_EOS(filter->bucket)
 
-#define MP_FILTER_IS_FLUSH(filter) \
-APR_BUCKET_IS_FLUSH(filter->bucket)
+#define MP_FILTER_IS_FLUSH(filter)              \
+    APR_BUCKET_IS_FLUSH(filter->bucket)
 
 MP_INLINE static int get_bucket(modperl_filter_t *filter)
 {
