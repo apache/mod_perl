@@ -144,7 +144,6 @@ sub handler {
 
         # omit the query and fragment strings
         {
-            $parsed->query("my_query");
             my $url_unparsed = $parsed->unparse(
                 APR::URI_UNP_OMITQUERY|APR::URI_UNP_OMITPASSWORD);
             my $url2 = sprintf "%s://%s\@%s%s", map { $url{$_}[1] }
