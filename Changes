@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+Apache::Status now generates HTML 4.01 Strict (and in many cases, also
+ISO-HTML) compliant output. Also add a simple CSS to make the reports
+look nicer. [Ville Skyttä <ville.skytta@iki.fi>]
+
 APR::Pool::DESTROY implemented and tweaked to only
 destroy pools created via APR::Pool->new() [Geoffrey Young]
 

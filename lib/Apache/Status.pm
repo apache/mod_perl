@@ -85,12 +85,12 @@ sub has {
     return 1;
 }
 
-use constant CPAN_SEARCH => 'http://search.cpan.org/search?mode=module&query';
+use constant CPAN_SEARCH => 'http://search.cpan.org/search?mode=module;query';
 
 sub install_hint {
     my ($module) = @_;
-    return qq{Please install the } .
-           qq{<a href="@{[CPAN_SEARCH]}=$module">$module</a> module.};
+    return qq{<p>Please install the } .
+           qq{<a href="@{[CPAN_SEARCH]}=$module">$module</a> module.</p>};
 }
 
 sub status_config {
@@ -126,9 +126,11 @@ sub handler {
     }
     else {
 	my $uri = $r->uri;
+	$r->print('<p>');
 	$r->print(
  	    map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
         );
+	$r->print('</p>');
     }
     $r->print("</body></html>");
 
@@ -142,11 +144,28 @@ sub header {
     $r->content_type("text/html");
     my $v = $^V ? sprintf "v%vd", $^V : $];
     $r->print(<<"EOF");
-<html>
-<head><title>Apache::Status</title></head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+  <title>Apache::Status</title>
+  <style type="text/css">
+  body {
+    color: #000;
+    background-color: #fff;
+  }
+  p.hdr {
+    background-color: #ddd;
+    border: 2px outset;
+    padding: 3px;
+    width: 99%;
+  }
+  </style>
+</head>
 <body>
-Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>, 
-<br> running since $start<hr>
+<p class="hdr">
+  Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>,<br>
+  running since $start
+</p>
 EOF
 
 }
@@ -194,7 +213,7 @@ sub status_inc {
 
     my $uri = $r->uri;
     my @retval = (
-        "<table border=1>",
+        '<table border="1">',
         "<tr>", 
         (map "<td><b>$_</b></td>", qw(Package Version Modified File)),
         "</tr>\n"
@@ -227,7 +246,7 @@ sub status_script {
     my($r, $q) = @_;
 
     my @retval = (
-        "<table border=1>",
+        '<table border="1">',
         "<tr><td><b>PerlRequire</b></td><td><b>Location</b></td></tr>\n",
     );
 
@@ -284,17 +303,19 @@ sub status_rgysubs {
 
     my @retval = "<h2>Compiled registry scripts grouped by their handler</h2>";
 
-    push @retval, "<b>Click on package name to see its symbol table</b><p>\n";
+    push @retval,
+      "<p><b>Click on package name to see its symbol table</b></p>\n";
 
     my $root = "ModPerl::ROOT";
     no strict 'refs';
     my %handlers = get_packages_per_handler($root, *{$root . "::"});
     for my $handler (sort keys %handlers) {
-        push @retval, "<h4>$handler:</h4>";
+        push @retval, "<h4>$handler:</h4>\n<p>\n";
         for (sort @{ $handlers{$handler} }) {
             my $full = join '::', $root, $handler, $_;
             push @retval, qq(<a href="$uri?$full">$_</a>\n), "<br>";
         }
+        push @retval, "</p>\n";
     }
 
     \@retval;
@@ -303,7 +324,7 @@ sub status_rgysubs {
 sub status_env {
     my ($r) = shift;
 
-    my @retval = ();
+    my @retval = ("<p>\n");
 
     if ($r->handler eq 'modperl') {
         # the handler can be executed under the "modperl" handler
@@ -319,6 +340,7 @@ sub status_env {
         push @retval,
             qq{<b>Under the "perl-script" handler, the environment is</b>:};
     }
+    push @retval, "\n</p>\n";
     push @retval, "<pre>", (map "$_ = $ENV{$_}\n", sort keys %ENV), "</pre>";
 
     \@retval;
@@ -365,7 +387,7 @@ sub status_data_dump {
     my($name, $type) = (split "/", $r->uri)[-2,-1];
 
     no strict 'refs';
-    my @retval = "Data Dump of $name $type <pre>\n";
+    my @retval = "<p>\nData Dump of $name $type\n</p>\n<pre>\n";
     my $str = Data::Dumper->Dump([*$name{$type}], ['*'.$name]);
     $str =~ s/= \\/= /; #whack backwack
     push @retval, $str, "\n";
@@ -389,7 +411,7 @@ sub status_cv_dump {
     # could be another child, which doesn't have this symbol table?
     return unless *$name{CODE}; 
 
-    my @retval = "Subroutine info for <b>$name</b> <pre>\n";
+    my @retval = "<p>Subroutine info for <b>$name</b></p>\n<pre>\n";
     my $obj    = B::svref_2object(*$name{CODE});
     my $file   = cv_file($obj);
     my $stash  = $obj->GV->STASH->NAME;
@@ -734,7 +756,7 @@ my %can_dump = map {$_,1} qw(scalars arrays hashes);
 sub as_HTML {
     my($self, $package, $r, $q) = @_;
 
-    my @m = qw(<TABLE>);
+    my @m = qw(<table>);
     my $uri = $r->uri;
     my $is_main = $package eq "main";
 
@@ -749,7 +771,7 @@ sub as_HTML {
 
     for my $type (@methods) {
 	(my $dtype = uc $type) =~ s/E?S$//;
-	push @m, "<TR><TD valign=top><B>$type</B></TD>";
+	push @m, "<tr><td valign=\"top\"><b>$type</b></td>";
 	my @line = ();
 
 	for (sort $self->_partdump(uc $type)) {
@@ -779,9 +801,9 @@ sub as_HTML {
 		push @line, $_;
 	    }
 	}
-	push @m, "<TD>" . join(", ", @line) . "</TD></TR>\n";
+	push @m, "<td>" . join(", ", @line) . "</td></tr>\n";
     }
-    push @m, "</TABLE>";
+    push @m, "</table>";
 
     return join "\n", @m, "<hr>", b_package_size_link($r, $q, $package);
 }
