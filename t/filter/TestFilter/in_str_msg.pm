@@ -48,8 +48,6 @@ sub response {
 1;
 __END__
 <VirtualHost TestFilter::in_str_msg>
-  # must be preloaded so the FilterConnectionHandler attributes will
-  # be set by the time the filter is inserted into the filter chain
   PerlModule TestFilter::in_str_msg
   PerlInputFilterHandler TestFilter::in_str_msg
 

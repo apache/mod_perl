@@ -4,6 +4,10 @@
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
                                 apr_pool_t *p);
 
+char *modperl_cmd_push_filter_handlers(MpAV **handlers,
+                                       const char *name,
+                                       apr_pool_t *p);
+
 char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
                                              const char *name,
                                              apr_pool_t *p);

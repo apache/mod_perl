@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Perl(Input|Output)FilterHandler handlers are now always AutoLoaded, as
+if '+' prefix was used. This must be performed to get the access to
+filter attributes long before the filter itself is executed. [Stas]
+
 APR.xs has been reimplemented.  The problem with the previous
 implementation is that a dead perl pool object could hijack a newly
 created pool, which didn't belong to that object, but which happened

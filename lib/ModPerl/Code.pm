@@ -66,6 +66,15 @@ my %hook_proto = (
     },
 );
 
+my %cmd_push = (
+    InputFilter  => 'modperl_cmd_push_filter_handlers',
+    OutputFilter => 'modperl_cmd_push_filter_handlers',
+);
+my $cmd_push_default = 'modperl_cmd_push_handlers';
+sub cmd_push {
+    $cmd_push{+shift} || $cmd_push_default;
+}
+
 $hook_proto{PerDir} = $hook_proto{PerSrv};
 
 my $scfg_get = 'MP_dSCFG(parms->server)';
@@ -320,6 +329,7 @@ sub generate_handler_directives {
             my $flag = 'MpSrv' . canon_uc($h);
             my $ix = $self->{handler_index}->{$class}->[$i++];
             my $av = "$prototype->{handlers} [$ix]";
+            my $cmd_push = cmd_push($h);
 
             print $h_fh "$protostr;\n";
 
@@ -347,7 +357,7 @@ $protostr
                            parms->server->server_hostname, NULL);
     }
     MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
-    return modperl_cmd_push_handlers(&($av), arg, parms->pool);
+    return $cmd_push(&($av), arg, parms->pool);
 }
 EOF
         }

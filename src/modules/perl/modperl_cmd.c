@@ -66,6 +66,41 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
     return NULL;
 }
 
+char *modperl_cmd_push_filter_handlers(MpAV **handlers,
+                                       const char *name,
+                                       apr_pool_t *p)
+{
+    modperl_handler_t *h = modperl_handler_new(p, name);
+
+    /* filter modules need to be autoloaded, because their attributes
+     * need to be known long before the callback is issued
+     */
+    if (*name == '-') {
+        MP_TRACE_h(MP_FUNC,
+                   "[%s] warning: filter handler %s will be not autoloaded. "
+                   "Unless the module defining this handler is explicitly "
+                   "preloaded, filter attributes will be ignored.\n",
+                   modperl_pid_tid(p), h->name);
+    }
+    else {
+        MpHandlerAUTOLOAD_On(h);
+        MP_TRACE_h(MP_FUNC,
+                   "[%s] filter handler %s will be autoloaded (to make "
+                   "the filter attributes available)\n",
+                   modperl_pid_tid(p), h->name);
+    }
+    
+    if (!*handlers) {
+        *handlers = modperl_handler_array_new(p);
+        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+    }
+
+    modperl_handler_array_push(*handlers, h);
+    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s\n", h->name);
+
+    return NULL;
+}
+
 char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
                                              const char *name,
                                              apr_pool_t *p)
