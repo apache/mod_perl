@@ -182,7 +182,7 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 #endif
 
 int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
-                        apr_pool_t *p, const char *name)
+                        apr_pool_t *p, const char *name, int logfailure)
 {
     CV *cv;
     GV *gv;
@@ -292,8 +292,10 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 if (errlen) {
                     sv_setpvn(ERRSV, errpv, errlen);
                 }
-                (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
-                                    NULL, NULL);
+                if (logfailure) {
+                    (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
+                                        NULL, NULL);
+                }
                 MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
                 return 0;
             }
@@ -320,7 +322,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                    MpHandlerMETHOD(handler) ? "method" : "function");
         return 1;
     }
-    
+
     MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
                handler_name, name);
 
@@ -424,7 +426,7 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
                 MpHandlerAUTOLOAD_On(handler);
             }
 
-            modperl_mgv_resolve(aTHX_ handler, p, handler->name);
+            modperl_mgv_resolve(aTHX_ handler, p, handler->name, TRUE);
         }
     }
 }

@@ -58,7 +58,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
                    duped ? "current" : "server conf",
                    (unsigned long)rp);
 
-        if (!modperl_mgv_resolve(aTHX_ handler, rp, handler->name)) {
+        if (!modperl_mgv_resolve(aTHX_ handler, rp, handler->name, FALSE)) {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, 
                          "failed to resolve handler `%s'",
                          handler->name);
@@ -364,7 +364,7 @@ SV *modperl_handler_perl_get_handlers(pTHX_ MpAV **handp, apr_pool_t *p)
                 handler = handlers[i];
             }
 
-            if (!modperl_mgv_resolve(aTHX_ handler, p, handler->name)) {
+            if (!modperl_mgv_resolve(aTHX_ handler, p, handler->name, TRUE)) {
                 MP_TRACE_h(MP_FUNC, "failed to resolve handler %s\n",
                            handler->name);
             }
