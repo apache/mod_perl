@@ -180,7 +180,9 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     endav = PL_endav;
     PL_endav = Nullav;
 
-#if defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
+/* This was fixed in 5.9.0/5.8.1 (17775), but won't compile after 19122 */
+#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 0 && \
+    defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
     /* workaround perl5.8.0/glibc bug */
     PL_reentrant_buffer->_crypt_struct.current_saltbits = 0;
 #endif

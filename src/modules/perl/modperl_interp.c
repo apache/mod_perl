@@ -63,7 +63,8 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 
         interp->perl = perl_clone(perl, clone_flags);
 
-#if defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
+#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 0 && \
+    defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
         {
             dTHXa(interp->perl);
             /* workaround 5.8.0 bug */
