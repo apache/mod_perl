@@ -45,7 +45,10 @@ foreach $s (@test_scripts) {
     test ++$i, ($str =~ /^QUERY_STRING=query$/m); 
 }
 
-test ++$i, $response->header("Server") =~ /mod_perl/;
+my $mp_version;
+my $server = $response->header("Server");
+++$mp_version while $server =~ /(mod_perl)/g;
+test ++$i, $mp_version == 1;
 print "Server: ", $response->header("Server"), "\n";
 
 #test PerlSetupEnv Off

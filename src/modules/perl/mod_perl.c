@@ -494,10 +494,12 @@ void perl_startup (server_rec *s, pool *p)
     GV *gv, *shgv;
 
 #if MODULE_MAGIC_NUMBER >= 19980507
-    ap_add_version_component(MOD_PERL_STRING_VERSION);
-    if(PERL_RUNNING()) {
-	if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
-	    ap_add_version_component(form("Perl/%s", patchlevel));
+    if (!strstr(ap_get_server_version(), MOD_PERL_STRING_VERSION)) {
+	ap_add_version_component(MOD_PERL_STRING_VERSION);
+	if(PERL_RUNNING()) {
+	    if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
+		ap_add_version_component(form("Perl/%s", patchlevel));
+	    }
 	}
     }
 #endif

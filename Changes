@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+prevent double mod_perl/x.xx in Server header under DSO
+[Jan Wedekind <jan.wedekind@de.uu.net>]
+
 Apache::Status HTML cosmetics + prefer Apache::Request over CGI.pm
 [Andreas J. Koenig <andreas.koenig@anima.de>]
 
