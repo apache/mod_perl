@@ -27,7 +27,7 @@ configure();
 ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
-    DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
+#    DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
     macro => {
         MODPERL_SRC   => $code->path,
         PERL          => $build->perl_config('perlpath'),
