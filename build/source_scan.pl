@@ -1,6 +1,6 @@
 #requires C::Scan 0.75+
 
-use lib qw(lib);
+use lib qw(lib Apache-Test/lib);
 
 use strict;
 use Apache::ParseSource ();
