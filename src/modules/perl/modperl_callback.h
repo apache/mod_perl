@@ -26,20 +26,27 @@ int modperl_callback_run_handlers(int idx, int type,
                                   request_rec *r, conn_rec *c, server_rec *s,
                                   apr_pool_t *pconf,
                                   apr_pool_t *plog,
-                                  apr_pool_t *ptemp);
+                                  apr_pool_t *ptemp,
+                                  modperl_hook_run_mode_e run_mode);
 
-int modperl_callback_per_dir(int idx, request_rec *r);
+int modperl_callback_per_dir(int idx, request_rec *r, 
+                             modperl_hook_run_mode_e run_mode);
 
-int modperl_callback_per_srv(int idx, request_rec *r);
+int modperl_callback_per_srv(int idx, request_rec *r,
+                             modperl_hook_run_mode_e run_mode);
 
-int modperl_callback_connection(int idx, conn_rec *c);
+int modperl_callback_connection(int idx, conn_rec *c,
+                                modperl_hook_run_mode_e run_mode);
 
-int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd);
+int modperl_callback_pre_connection(int idx, conn_rec *c, void *csd,
+                                    modperl_hook_run_mode_e run_mode);
 
-void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s);
+void modperl_callback_process(int idx, apr_pool_t *p, server_rec *s,
+                              modperl_hook_run_mode_e run_mode);
 
 int modperl_callback_files(int idx,
                            apr_pool_t *pconf, apr_pool_t *plog,
-                           apr_pool_t *ptemp, server_rec *s);
+                           apr_pool_t *ptemp, server_rec *s,
+                           modperl_hook_run_mode_e run_mode);
 
 #endif /* MODPERL_CALLBACK_H */

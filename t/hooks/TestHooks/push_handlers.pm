@@ -39,7 +39,7 @@ sub handler {
 }
 
 sub end { return Apache::DONE }
-sub say { shift->print(shift,"\n"); return Apache::OK }
+sub say { shift->print(shift,"\n"); return Apache::DECLINED }
 
 sub conf {
     # this one is configured from httpd.conf

@@ -150,6 +150,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'conn_rec *',
         'name' => 'c'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -176,6 +180,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'server_rec *',
         'name' => 's'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -190,6 +198,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'request_rec *',
         'name' => 'r'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -204,6 +216,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'request_rec *',
         'name' => 'r'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -222,6 +238,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'void *',
         'name' => 'csd'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -240,6 +260,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'server_rec *',
         'name' => 's'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
@@ -278,6 +302,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'apr_pool_t *',
         'name' => 'ptemp'
+      },
+      {
+        'type' => 'modperl_hook_run_mode_e',
+        'name' => 'run_mode'
       }
     ]
   },
