@@ -593,21 +593,19 @@ CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg)
     MP_TRACE_d(fprintf(stderr, "PerlModule: arg='%s'\n", arg));
 
     if(PERL_RUNNING()) {
-	if (PERL_STARTUP_IS_DONE) {
-	    if (perl_require_module(arg, NULL) != OK) {
-		dTHR;
-		STRLEN n_a;
-		dTHRCTX;
-		return SvPV(ERRSV,n_a);
-	    }
+        if (perl_require_module(arg, NULL) != OK) {
+            dTHR;
+            STRLEN n_a;
+            dTHRCTX;
+            return SvPV(ERRSV,n_a);
+        }
 #ifdef PERL_SECTIONS
-            else {
-                if (CAN_SELF_BOOT_SECTIONS) {
-                    perl_section_self_boot(parms, dummy, arg);
-                }
-	    }
+        else {
+            if (CAN_SELF_BOOT_SECTIONS) {
+                perl_section_self_boot(parms, dummy, arg);
+            }
+        }
 #endif
-	}
     }
     else {
         /* Delay processing it until Perl starts */
@@ -625,21 +623,19 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
     MP_TRACE_d(fprintf(stderr, "PerlRequire: arg=`%s'\n", arg));
 
     if(PERL_RUNNING()) {
-	if (PERL_STARTUP_IS_DONE) {
-	    if (perl_load_startup_script(parms->server, parms->pool, arg, TRUE) != OK) {
-		dTHR;
-		STRLEN n_a;
-		dTHRCTX;
-		return SvPV(ERRSV,n_a);
-	    }
+        if (perl_load_startup_script(parms->server, parms->pool, arg, TRUE) != OK) {
+            dTHR;
+            STRLEN n_a;
+            dTHRCTX;
+            return SvPV(ERRSV,n_a);
+        }
 #ifdef PERL_SECTIONS
-	    else {
-                if (CAN_SELF_BOOT_SECTIONS) {
-                    perl_section_self_boot(parms, dummy, arg);
-                }
-	    }
+        else {
+            if (CAN_SELF_BOOT_SECTIONS) {
+                perl_section_self_boot(parms, dummy, arg);
+            }
+        }
 #endif
-	}
     }
     else {
         /* Delay processing it until Perl starts */

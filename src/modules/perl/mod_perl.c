@@ -603,7 +603,7 @@ void perl_startup (server_rec *s, pool *p)
     dstr = NULL;
 #endif
 
-    if(PERL_RUNNING() && PERL_STARTUP_IS_DONE) {
+    if(PERL_RUNNING()) {
 	saveINC;
 	mp_check_version();
 #if !HAS_MMN_136
@@ -760,22 +760,6 @@ void perl_startup (server_rec *s, pool *p)
 	GvIMPORTED_CV_on(exitgp);
     }
 
-    if(PERL_STARTUP_DONE_CHECK)	{
- 	char *psd = getenv("PERL_STARTUP_DONE");
- 	if (!psd) {
- 	    MP_TRACE_g(fprintf(stderr, 
- 			       "mod_perl: PerlModule,PerlRequire postponed\n"));
- 	    my_setenv("PERL_STARTUP_DONE", "1");
- 	    saveINC;
-	    return;
-	}
- 	else { 
- 	    MP_TRACE_g(fprintf(stderr, 
- 			       "mod_perl: postponed PerlModule,PerlRequire enabled\n"));
- 	    my_setenv("PERL_STARTUP_DONE", "2");
-	}
-    }
-
     ENTER_SAFE(s,p);
     MP_TRACE_g(mod_perl_dump_opmask());
 
@@ -808,10 +792,10 @@ void perl_startup (server_rec *s, pool *p)
 #endif
 
     saveINC;
-#if MODULE_MAGIC_NUMBER >= MMN_130
-    if(perl_module.dynamic_load_handle) 
-	register_cleanup(p, p, mp_dso_unload, null_cleanup); 
-#endif
+
+    if (PERL_IS_DSO) {
+	register_cleanup(p, p, mp_dso_unload, null_cleanup);
+    }
 }
 
 int mod_perl_sent_header(request_rec *r, int val)

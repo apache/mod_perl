@@ -503,17 +503,6 @@ if((add->flags & f) || (base->flags & f)) \
 # endif
 #endif
 
-#ifndef PERL_STARTUP_DONE_CHECK
-#define PERL_STARTUP_DONE_CHECK getenv("PERL_STARTUP_DONE_CHECK")
-#endif
-
-#define PERL_STARTUP_IS_DONE \
-(!PERL_STARTUP_DONE_CHECK || strEQ(getenv("PERL_STARTUP_DONE"), "2"))
-
-#ifndef PERL_DSO_UNLOAD
-#define PERL_DSO_UNLOAD getenv("PERL_DSO_UNLOAD")
-#endif
-
 #ifdef APACHE_SSL
 #define PERL_DONE_STARTUP 1
 #else
