@@ -21,8 +21,8 @@
 #define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
 
 #undef mp_xs_sv2_APR__Table
-#define mp_xs_sv2_APR__Table(sv) \
-   (apr_table_t *)modperl_hash_tied_object(aTHX_ "APR::Table", sv)
+#define mp_xs_sv2_APR__Table(sv)                                        \
+    (apr_table_t *)modperl_hash_tied_object(aTHX_ "APR::Table", sv)
 
 #define mpxs_Apache__RequestRec_pool(r) r->pool
 #define mpxs_Apache__Connection_pool(c) c->pool
@@ -37,10 +37,10 @@
 #    define dITEMS I32 items = SP - MARK
 #endif
 
-#define mpxs_PPCODE(code) STMT_START { \
-    SP -= items; \
-    code; \
-    PUTBACK; \
+#define mpxs_PPCODE(code) STMT_START {          \
+    SP -= items;                                \
+    code;                                       \
+    PUTBACK;                                    \
 } STMT_END
 
 #define PUSHs_mortal_iv(iv) PUSHs(sv_2mortal(newSViv(iv)))
@@ -55,58 +55,58 @@
 
 #define mpxs_sv_cur_set(sv, len) MP_SvCUR_set(sv, len)
 
-#define mpxs_set_targ(func, arg) \
-STMT_START { \
-    dXSTARG; \
-    XSprePUSH; \
-    func(aTHX_ TARG, arg); \
-    PUSHTARG; \
-    XSRETURN(1); \
+#define mpxs_set_targ(func, arg)                \
+    STMT_START {                                \
+    dXSTARG;                                    \
+    XSprePUSH;                                  \
+    func(aTHX_ TARG, arg);                      \
+    PUSHTARG;                                   \
+    XSRETURN(1);                                \
 } STMT_END
 
-#define mpxs_cv_name() \
-HvNAME(GvSTASH(CvGV(cv))), GvNAME(CvGV(cv))
+#define mpxs_cv_name()                          \
+    HvNAME(GvSTASH(CvGV(cv))), GvNAME(CvGV(cv))
 
-#define mpxs_sv_is_object(sv) \
-(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))
+#define mpxs_sv_is_object(sv)                           \
+    (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))
 
-#define mpxs_sv_object_deref(sv, type) \
-(mpxs_sv_is_object(sv) ? (type *)SvIVX((SV*)SvRV(sv)) : NULL)
+#define mpxs_sv_object_deref(sv, type)                            \
+    (mpxs_sv_is_object(sv) ? (type *)SvIVX((SV*)SvRV(sv)) : NULL)
 
-#define mpxs_sv2_obj(obj, sv) \
-(obj = mp_xs_sv2_##obj(sv))
+#define mpxs_sv2_obj(obj, sv)                   \
+    (obj = mp_xs_sv2_##obj(sv))
 
-#define mpxs_usage_items_1(arg) \
-if (items != 1) { \
-    Perl_croak(aTHX_ "usage: %s::%s(%s)", \
-               mpxs_cv_name(), arg); \
-}
+#define mpxs_usage_items_1(arg)                 \
+    if (items != 1) {                           \
+        Perl_croak(aTHX_ "usage: %s::%s(%s)",   \
+                   mpxs_cv_name(), arg);        \
+    }
 
-#define mpxs_usage_va(i, obj, msg) \
-if ((items < i) || !(mpxs_sv2_obj(obj, *MARK))) { \
-    Perl_croak(aTHX_ "usage: %s", msg); \
-} \
-MARK++
+#define mpxs_usage_va(i, obj, msg)                      \
+    if ((items < i) || !(mpxs_sv2_obj(obj, *MARK))) {   \
+        Perl_croak(aTHX_ "usage: %s", msg);             \
+    }                                                   \
+    MARK++
 
 #define mpxs_usage_va_1(obj, msg) mpxs_usage_va(1, obj, msg)
 
-#define mpxs_usage_va_2(obj, arg, msg) \
-mpxs_usage_va(2, obj, msg); \
-arg = *MARK++
+#define mpxs_usage_va_2(obj, arg, msg)          \
+    mpxs_usage_va(2, obj, msg);                 \
+    arg = *MARK++
 
 /* XXX: we probably shouldn't croak here */
-#define mpxs_write_loop(func, obj) \
-    while (MARK <= SP) { \
-        apr_size_t wlen; \
-        apr_status_t rv; \
-        char *buf = SvPV(*MARK, wlen);        \
+#define mpxs_write_loop(func, obj)                       \
+    while (MARK <= SP) {                                 \
+        apr_size_t wlen;                                 \
+        apr_status_t rv;                                 \
+        char *buf = SvPV(*MARK, wlen);                   \
         MP_TRACE_o(MP_FUNC, "%d bytes [%s]", wlen, buf); \
-        rv = func(aTHX_ obj, buf, &wlen);    \
-        if (rv != APR_SUCCESS) { \
-            Perl_croak(aTHX_ modperl_apr_strerror(rv)); \
-        } \
-        bytes += wlen; \
-        MARK++; \
+        rv = func(aTHX_ obj, buf, &wlen);                \
+        if (rv != APR_SUCCESS) {                         \
+            Perl_croak(aTHX_ modperl_apr_strerror(rv));  \
+        }                                                \
+        bytes += wlen;                                   \
+        MARK++;                                          \
     }
 
 #endif /* MODPERL_XS_H */
