@@ -29,6 +29,7 @@ use File::Spec::Functions;
 use DirHandle ();
 use File::Copy 'cp';
 use File::Basename 'basename';
+use File::Find ();
 
 use Apache::Build ();
 use Apache::TestSmokePerl ();
@@ -368,10 +369,28 @@ sub echo_cmd {
 sub clean_files {
     my $path = $code->path;
 
+    my @files = ();
+    File::Find::find(sub { push @files, "$File::Find::dir/$_" if -f $_},
+                     "WrapXS");
+
+    push @files, map { "xs/$_.h" }
+        qw(modperl_xs_typedefs modperl_xs_sv_convert);
+
     return [@{ $build->clean_files },
-            qw(lib/typemap),
-            <xs/*.exp>, <xs/*.def>,
-            map { "$path/$_"} @{ $code->clean_files }];
+            @files,
+            qw(lib/typemap
+               lib/ModPerl/MethodLookup.pm
+               t/htdocs/vhost/error_log
+               t/SMOKE
+               t/TEST
+               t/REPORT
+              ),
+            <t/htdocs/hooks/startup/open_logs*>,
+            <t/htdocs/hooks/startup/post_config*>,
+            <xs/*.exp>,
+            <xs/*.def>,
+            map { "$path/$_"} @{ $code->clean_files }
+           ];
 }
 
 sub set_modperl_version {
