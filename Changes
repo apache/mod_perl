@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+under non-threaded perl need to check whether mod_perl is running,
+when modperl_vhost_is_running check is done. [Stas]
+
 fix $r->read to read all the requested amount of data if possible,
 adjust the test TestApache::read to verify that [Stas]
 
