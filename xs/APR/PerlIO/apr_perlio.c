@@ -321,6 +321,7 @@ static PerlIO_funcs PerlIO_APR = {
     PerlIOBase_pushed,
     PerlIOAPR_popped,
     PerlIOAPR_open,
+    NULL,   /* XXX: binmode? */
     NULL,  /* no getarg needed */
     PerlIOAPR_fileno,
     PerlIOAPR_dup,
