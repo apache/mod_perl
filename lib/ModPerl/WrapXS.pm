@@ -553,7 +553,7 @@ sub generate {
 
     $self->prepare;
 
-    for (qw(ModPerl::WrapXS Apache APR)) {
+    for (qw(ModPerl::WrapXS Apache APR ModPerl)) {
         $self->write_makefilepl($_);
     }
 
