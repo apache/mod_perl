@@ -7,32 +7,6 @@
 #define CORE_PRIVATE
 #endif
 
-#ifdef WIN32
-#   include <winsock2.h>
-#   include <malloc.h>
-#   include <win32.h>
-#   include <win32iop.h>
-#   undef errno
-#   undef read
-#   include <fcntl.h>
-#   include "EXTERN.h"
-#   include "perl.h"
-
-#   include "modperl_perl_unembed.h"
-
-#   ifdef uid_t
-#      define apache_uid_t uid_t
-#      undef uid_t
-#   endif
-#   define uid_t apache_uid_t
-
-#   ifdef gid_t
-#      define apache_gid_t gid_t
-#      undef gid_t
-#   endif
-#   define gid_t apache_gid_t
-#endif /* WIN32 */
-
 #include "ap_mmn.h"
 #include "httpd.h"
 #include "http_config.h"

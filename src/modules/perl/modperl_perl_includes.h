@@ -31,6 +31,11 @@
 #   endif
 #endif
 
+#ifdef WIN32
+#   define uid_t perl_uid_t
+#   define gid_t perl_gid_t
+#endif
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"

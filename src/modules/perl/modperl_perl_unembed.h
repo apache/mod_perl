@@ -19,7 +19,10 @@
 #undef read
 #undef free
 /* modperl_perl.c */
-#undef getpid
+#ifdef WIN32
+#   undef getpid
+#   undef getenv
+#endif
 
 #undef list
 

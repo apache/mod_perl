@@ -718,6 +718,7 @@ EOF
 #when we use a bit of MakeMaker, make it use our values for these vars
 my %perl_config_pm_alias = (
     PERL         => 'perlpath',
+    PERLRUN      => 'perlpath',
     PERL_LIB     => 'privlibexp',
     PERL_ARCHLIB => 'archlibexp',
 );
