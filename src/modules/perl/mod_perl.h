@@ -76,8 +76,30 @@
 
 #define __RGY_ERRHV ERRHV, "Apache::Registry", 16
 
+#ifndef PERL_DESTRUCT_LEVEL
+#define PERL_DESTRUCT_LEVEL 0
+#endif
+
 #ifndef PERL_SECTIONS_SELF_BOOT
 #define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
+#endif
+
+#ifndef DO_INTERNAL_REDIRECT
+#define DO_INTERNAL_REDIRECT perl_get_sv("Apache::DoInternalRedirect", FALSE)
+#endif
+
+#ifdef PERL_RESTART_HANDLER
+#undef NO_PERL_RESTART
+#endif
+
+#ifdef PERL_MARK_WHERE
+#define MARK_WHERE(w,s) \
+   ENTER; \
+   mod_perl_mark_where(w,s)
+#define UNMARK_WHERE LEAVE
+#else
+#define MARK_WHERE(w,s)
+#define UNMARK_WHERE
 #endif
 
 typedef request_rec * Apache;
@@ -130,10 +152,22 @@ typedef server_rec  * Apache__Server;
     my_setenv(key, val); \
 }
 
+#define mp_debug mod_perl_debug
+
+extern U32	mp_debug;
+
 #ifdef PERL_TRACE
-#define MP_TRACE(a) a 
+#define MP_TRACE(a)   if (mp_debug)	a
+#define MP_TRACE_d(a) if (mp_debug & 1)	a /* directives */
+#define MP_TRACE_s(a) if (mp_debug & 2)	a /* perl sections */
+#define MP_TRACE_h(a) if (mp_debug & 4)	a /* handlers */
+#define MP_TRACE_g(a) if (mp_debug & 8)	a /* globals and allocation */
 #else
 #define MP_TRACE(a)
+#define MP_TRACE_d(a) 
+#define MP_TRACE_s(a) 
+#define MP_TRACE_h(a) 
+#define MP_TRACE_g(a) 
 #endif
 
 /* cut down on some noise in source */
@@ -196,9 +230,6 @@ if((add->flags & f) || (base->flags & f)) \
 /* Apache::SSI */
 #define PERL_APACHE_SSI_TYPE "text/x-perl-server-parsed-html"
 /* PerlSetVar */
-#define MAX_PERL_CONF_VARS 10
-/* must alloc for PerlModule ... */
-#define MAX_PERL_MODS 10
 
 #ifndef NO_PERL_STACKED_HANDLERS
 #define PERL_STACKED_HANDLERS
@@ -278,13 +309,14 @@ typedef void mutex;
 
 #endif
 
+#if MODULE_MAGIC_NUMBER < 19971226
+char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
+#endif;
+
 #define PERL_SET_CUR_HOOK(h) \
 { \
-   perl_dir_config *cld; \
-   if(r->per_dir_config) { \
-       cld = get_module_config(r->per_dir_config, &perl_module); \
-       table_set(cld->vars, "PERL_CALLBACK", h); \
-   } \
+   SV *sv = perl_get_sv("Apache::__CurrentCallback", TRUE); \
+   if (sv) sv_setpv(sv, h); \
 }
 
 #ifdef PERL_STACKED_HANDLERS
@@ -314,13 +346,13 @@ PERL_SET_CUR_HOOK(h); \
 (void)acquire_mutex(mod_perl_mutex); \
 status = perl_run_stacked_handlers(h, r, Nullav); \
 if((status != OK) && (status != DECLINED)) { \
-    MP_TRACE(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
+    MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
 } \
 else if(AvTRUE(name)) { \
     status = perl_run_stacked_handlers(h, r, name); \
 } \
 (void)release_mutex(mod_perl_mutex); \
-MP_TRACE(fprintf(stderr, "%s handlers returned %d\n", h, status))
+MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status))
 
 
 #else
@@ -337,13 +369,15 @@ if(name != NULL) { \
     SV *sv; \
     (void)acquire_mutex(mod_perl_mutex); \
     sv = newSVpv(name,0); \
+    MARK_WHERE(h, sv); \
     status = perl_call_handler(sv, r, Nullav); \
+    UNMARK_WHERE; \
     SvREFCNT_dec(sv); \
     (void)release_mutex(mod_perl_mutex); \
-    MP_TRACE(fprintf(stderr, "perl_call %s '%s' returned: %d\n", h,name,status)); \
+    MP_TRACE_h(fprintf(stderr, "perl_call %s '%s' returned: %d\n", h,name,status)); \
 } \
 else { \
-    MP_TRACE(fprintf(stderr, "mod_perl: declining to handle %s, no callback defined\n", h)); \
+    MP_TRACE_h(fprintf(stderr, "mod_perl: declining to handle %s, no callback defined\n", h)); \
 }
 
 #endif
@@ -406,19 +440,6 @@ PERL_READ_CLIENT
     XPUSHs(sv_2mortal((SV*)psv)); \
 }
 
-#define CGIENVinit \
-       int i; \
-       char *tz = NULL; \
-       table_entry *elts = NULL; \
-       if(table_get(env_arr,"GATEWAY_INTERFACE") != PERL_GATEWAY_INTERFACE) { \
-           add_common_vars(r); \
-           add_cgi_vars(r); \
-           elts = (table_entry *)env_arr->elts; \
-           tz = getenv("TZ"); \
-           table_set (env_arr, "PATH", DEFAULT_PATH); \
-           table_set (env_arr, "GATEWAY_INTERFACE", PERL_GATEWAY_INTERFACE); \
-       }
-
 /* on/off switches for callback hooks during server startup/shutdown */
 
 #ifndef NO_PERL_DISPATCH
@@ -470,6 +491,21 @@ PERL_READ_CLIENT
 #define PERL_CHILD_EXIT_HOOK NULL
 #define PERL_CHILD_EXIT_CMD_ENTRY NULL
 #define PERL_CHILD_EXIT_CREATE(s) 
+#endif
+
+#ifndef NO_PERL_RESTART
+#define PERL_RESTART
+
+#define PERL_RESTART_CMD_ENTRY \
+"PerlRestartHandler", perl_cmd_restart_handlers, \
+    NULL,	 \
+    RSRC_CONF, PERL_TAKE, "the Perl Restart handler routine name"  
+
+#define PERL_RESTART_CREATE(s) s->PerlRestartHandler = PERL_CMD_INIT
+#else
+
+#define PERL_RESTART_CMD_ENTRY NULL
+#define PERL_RESTART_CREATE(s) 
 #endif
 
 /* on/off switches for callback hooks during request stages */
@@ -664,18 +700,17 @@ PERL_READ_CLIENT
 #endif
 
 typedef struct {
-    char *PerlPassEnv;
-    char **PerlScript;
-    char **PerlModules;
-    int  NumPerlModules;
-    int  NumPerlScript;
-    int  PerlTaintCheck;
-    int  PerlWarn;
+    array_header *PerlPassEnv;
+    array_header *PerlRequire;
+    array_header *PerlModule;
+    int PerlTaintCheck;
+    int PerlWarn;
     int FreshRestart;
     PERL_CMD_TYPE *PerlPostReadRequestHandler;
     PERL_CMD_TYPE *PerlTransHandler;
     PERL_CMD_TYPE *PerlChildInitHandler;
     PERL_CMD_TYPE *PerlChildExitHandler;
+    PERL_CMD_TYPE *PerlRestartHandler;
 } perl_server_config;
 
 typedef struct {
@@ -770,14 +805,19 @@ void perl_run_endav(char *s);
 void perl_call_halt(int status);
 CV *empty_anon_sub(void);
 void perl_reload_inc(void);
+I32 perl_module_is_loaded(char *name);
+SV *perl_module2file(char *name);
 int perl_require_module(char *module, server_rec *s);
 int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn);
 void newCONSTSUB(HV *stash, char *name, SV *sv);
+array_header *perl_cgi_env_init(request_rec *r);
 void perl_clear_env(void);
 void mod_perl_init_ids(void);
 int perl_eval_ok(server_rec *s);
 int perl_sv_is_http_code(SV *sv, int *status);
 void perl_incpush(char *s);
+SV *mod_perl_sv_name(SV *svp);
+void mod_perl_mark_where(char *where, SV *sub);
 
 /* perlio.c */
 
@@ -793,6 +833,7 @@ void *perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_create_dir_config(pool *p, char *dirname);
 void *perl_create_server_config(pool *p, server_rec *s);
 
+void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg);
 CHAR_P perl_section (cmd_parms *cmd, void *dummy, CHAR_P arg);
 CHAR_P perl_end_section (cmd_parms *cmd, void *dummy);
 CHAR_P perl_limit_section(cmd_parms *cmd, void *dummy, HV *hv);
@@ -804,7 +845,7 @@ void perl_handle_command(cmd_parms *cmd, void *dummy, char *line);
 void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *dummy);
 void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *dummy);
 
-CHAR_P perl_cmd_script (cmd_parms *parms, void *dummy, char *arg);
+CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_module (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_var(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val);
 CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *val);
@@ -823,6 +864,7 @@ CHAR_P perl_cmd_post_read_request_handlers (cmd_parms *parms, void *dumm, char *
 CHAR_P perl_cmd_trans_handlers (cmd_parms *parms, void *dumm, char *arg);
 CHAR_P perl_cmd_child_init_handlers (cmd_parms *parms, void *dumm, char *arg);
 CHAR_P perl_cmd_child_exit_handlers (cmd_parms *parms, void *dumm, char *arg);
+CHAR_P perl_cmd_restart_handlers (cmd_parms *parms, void *dumm, char *arg);
 CHAR_P perl_cmd_authen_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_authz_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_access_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);

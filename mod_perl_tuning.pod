@@ -44,7 +44,7 @@ Additions to F<httpd.conf>:
 
  # put mod_perl programs here
  # startup.perl loads all functions that we want to use within mod_perl
- PerlRequire /var/www/perllib/startup.perl
+ Perlrequire /var/www/perllib/startup.perl
  <Directory /var/www/docs/programs>
    AllowOverride None
    Options ExecCGI
@@ -86,7 +86,7 @@ Additions to F<httpd.conf>:
    allow from 204.117.82.
  </Location>
 
-Now, you'll notice that I use a C<PerlRequire> directive to load in the
+Now, you'll notice that I use a C<Perlrequire> directive to load in the
 file F<startup.perl>.  In that file, I include all of the C<use>
 statements that occur in any of my mod_perl programs (either from the
 programs directory, or the *.perl files).  Here is an example:
@@ -127,6 +127,9 @@ all of your programs.  You do, however, still need to C<use> the
 modules in your programs.  Perl is smart enough to know it doesn't
 need to recompile the code, but it does need to C<import> the module
 methods into your program's name space.
+
+If you only have a few modules to load, you can use the PerlModule
+directive to pre-load them with the same effect.
 
 The biggest benefit here is that the child process never needs to
 recompile the code, so it is faster to start, and the child process
@@ -359,7 +362,7 @@ Vivek Khera.  My email is I<MyFirstName@MyLastName.org>.  I'd spell it
 out for you, but if this ends up on the net, I don't want some
 automatic mass-mail address collector to find me.
 
-This document is copyright 1997 by Vivek Khera.
+This document is copyright E<copy> 1997 by Vivek Khera.
 
 If you have contributions for this document, please send them to me or
 post them to the mailing list.  Perl POD format is best, but plain

@@ -1,8 +1,6 @@
 
 use Apache::test;
 
-#skip_test; #until ePerl issues are resolved
-
 skip_test unless have_module "Apache::ePerl";
 
 my $v = $Apache::ePerl::VERSION;

@@ -20,8 +20,6 @@ else {
 
 __END__
 
-=pod
-
 =head1 NAME
 
 Apache::fork - Override Perl's built-in fork()

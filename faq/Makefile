@@ -8,6 +8,7 @@ HTML = mod_perl_faq.html mod_perl_cgi.html mod_perl_api.html
 .SUFFIXES: .pod .html
 
 .pod.html:
+	rm -f $*.html
 	$(POD2HTML) --infile=$*.pod --outfile=$*.tmp
 	sed 's/ manpage<\/A>/ FAQ<\/A>/' $*.tmp >$*.html
 	rm $*.tmp
@@ -15,7 +16,7 @@ HTML = mod_perl_faq.html mod_perl_cgi.html mod_perl_api.html
 html:	$(HTML)
 
 tar:	$(POD)
-	tar cf - $(POD) Makefile | gzip -9 >mod_perl_faq.tar.gz
+	tar cf - $(POD) mjtg-news.txt Makefile | gzip -9 >mod_perl_faq.tar.gz
 
 clean:
-	rm -f $(HTML) mod_perl_faq.tar.gz pod2html-*cache
+	rm -f $(HTML) pod2html-*cache

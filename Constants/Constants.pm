@@ -73,8 +73,7 @@ my $rc = [@common, @response];
     @server,
 ); 
    
-#*Apache::Constants::EXPORT = \@common;
-@Apache::Constants::EXPORT = (@common, qw(OPT_EXECCGI));
+*Apache::Constants::EXPORT = \@common;
 
 eval { bootstrap Apache::Constants $Apache::Constants::VERSION; };
 if($@) {

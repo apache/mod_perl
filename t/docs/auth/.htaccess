@@ -5,7 +5,7 @@ PerlAuthenHandler Apache::AuthenTest
 require valid-user
 
 #<Perl>
-#$AuthName = "mod_perl <Perl>";
+#$AuthName = "mod_perl";
 #$AuthType = "Basic";
 #$PerlAuthenHandler = "Apache::AuthenTest";
 #$require = "valid-user";

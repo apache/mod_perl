@@ -113,24 +113,5 @@ See L<mod_perl_traps>.
 
 =head1 REPORTING PROBLEMS
 
-The README explains how to subscribe to the mod_perl mailing list,
-which is the best place to ask any mod_perl related questions.
-Before you do that, be sure to read the FAQ, relevant sections of
-mod_perl.pod and search the mail archive.  Pointers to all are in the
-README.
-
-When debugging, always start httpd with the C<-X> switch so only one
-process is started.
-
-Always check the error_log, and be sure to include relevant messages
-along with the versions of mod_perl, apache and Perl you are working
-with.  C<perl -V> is requested as well.
-
-You may also be asked:
-
--Does 'make test' pass 100%?
-
--Does your script still work under CGI?
-
--Do you have a *small* test script that illustrates the problem?
+Read the L<SUPPORT> file.
 

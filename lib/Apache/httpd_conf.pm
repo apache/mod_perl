@@ -149,8 +149,8 @@ my $dir = $Apache::httpd_conf::BaseDir || "";
 
 unless ($dir) {
     my $cwd = Cwd::fastcwd();
-    for ($dir, "$dir/t") {
-	last, $dir = $_ if -d "$_/logs";
+    for ($cwd, "$cwd/t") {
+	$dir = $_, last if -d "$_/logs";
     }
 }
 
@@ -195,7 +195,7 @@ my @mod_perl = (
     Options     => "+ExecCGI",
 );
 
-#push @AddType, ["text/x-server-parsed-html" => ".shtml"];
+push @AddType, ["text/x-server-parsed-html" => ".shtml"];
 
 $Location{"/perl"} = { 
     @mod_perl,
@@ -229,10 +229,6 @@ for my $sym (
 {
     $$sym = "/dev/null";
 }
-
-
-#so we're pulled back in on the second read_config()
-delete $INC{"Apache/httpd_conf.pm"};
 
 while (my($k,$v) = each %Apache::ReadConfig::) {
     $$k ||= $v if defined $$k; #avoid -w warnings

@@ -20,6 +20,10 @@ BEGIN {
     $s->warn("report any problems to server_admin $admin");
 }
 
+#use HTTP::Status ();
+#use Apache::Symbol ();
+#Apache::Symbol->make_universal;
+
 $Apache::DoInternalRedirect = 1;
 $Apache::ERRSV_CAN_BE_HTTP  = 1;
 
@@ -102,6 +106,14 @@ sub My::child_exit {
     warn "[notice] child process $$ terminating\n";
 }
 
+sub My::restart {
+    my $r = shift;
+    my $s = $r->server;
+    my $sa = $s->server_admin;
+    push @HTTP::Status::ISA, "Apache::Symbol";
+    HTTP::Status->undef_functions;
+}
+
 sub Apache::AuthenTest::handler {
     use Apache::Constants ':common';
     my $r = shift;
@@ -120,6 +132,12 @@ sub Apache::AuthenTest::handler {
     }
 
     return OK;                       
+}
+
+if(Apache->can_stack_handlers) {
+    Apache->push_handlers(PerlChildExitHandler => sub {
+	warn "[notice] push'd PerlChildExitHandler called, pid=$$\n";
+    });
 }
 
 END {

@@ -106,11 +106,11 @@ The following configuration directives take one argument, which is the name
 of the subroutine to call.  If the value is not a subroutine name, mod_perl
 assumes it is a package name which implements a 'handler' subroutine.
 
-    PerlChildInitHandler          (requires apache_1.3b1 or higher)
-    PerlPostReadRequestHandler    (requires apache_1.3b1 or higher)
+    PerlChildInitHandler          (requires apache_1.3b3 or higher)
+    PerlPostReadRequestHandler    (requires apache_1.3b3 or higher)
     PerlInitHandler
     PerlTransHandler    
-    PerlHeaderParserHandler       (requires apache_1.2.0 or higher)
+    PerlHeaderParserHandler       
     PerlAccessHandler
     PerlAuthenHandler
     PerlAuthzHandler
@@ -119,7 +119,7 @@ assumes it is a package name which implements a 'handler' subroutine.
     PerlHandler
     PerlLogHandler
     PerlCleanupHandler
-    PerlChildExitHandler          (requires apache_1.3b1 or higher)
+    PerlChildExitHandler          (requires apache_1.3b3 or higher)
 
 Only ChildInit, ChildExit, PostReadRequest and Trans handlers are not
 allowed in .htaccess files.
@@ -175,27 +175,62 @@ The environment variable `MOD_PERL' is set so scripts can say:
 
 =back
 
+=head1 BEGIN blocks
+
+Perl executes C<BEGIN> blocks during the compile time of code as soon
+as possible.  The same is true under mod_perl.  However, since
+mod_perl normally only compiles scripts and modules once, in the
+parent server or once per-child, C<BEGIN> blocks in that code will
+only be run once.  As L<perlmod> explains, once a C<BEGIN> has run, it
+is immediately undefined.  In the mod_perl environment, this means
+C<BEGIN> blocks will not be run during each incoming request unless
+that request happens to be one that is compiling the code.  
+
+Modules and files pulled in via require/use which contain C<BEGIN>
+blocks will be executed:
+  - only once, if pulled in by the parent process
+  - once per-child process if not pulled in by the parent process
+  - again, once per-child process if the module is pulled in off of
+    disk again via Apache::StatINC
+  - again, only once in the parent process if PerlFreshRestart is On
+  - unpredictable if you fiddle with C<%INC> yourself
+
+B<Apache::Registry> scripts which contain C<BEGIN> blocks will be
+executed: 
+  - only once, if pulled in by the parent process via B<Apache::RegistryLoader>
+  - once per-child process if not pulled in by the parent process
+  - again, once per-child process if the script file has changed on disk
+  - again, only once if pulled in by the parent process via
+    B<Apache::RegistryLoader> and PerlFreshRestart is On
+
 =head1 END blocks
 
-Normally, B<END> blocks are executed by Perl during it's C<perl_run()>
+As L<perlmod> explains, an C<END> subroutine is executed as late as
+possible, that is, when the interpreter is being exited.  In the
+mod_perl environment, the interpreter does not exit until the server
+is shutdown.  However, mod_perl does make a special case for
+B<Apache::Registry> scripts.
+
+Normally, C<END> blocks are executed by Perl during it's C<perl_run()>
 function, which is called once each time the Perl program is executed,
 e.g. once per (mod_cgi) CGI scripts.  However, mod_perl only calls
-C<perl_run()> once, during server startup.  Any B<END> blocks
+C<perl_run()> once, during server startup.  Any C<END> blocks
 encountered during main server startup, i.e. those pulled in by the
 B<PerlRequire> or by any B<PerlModule> are suspended and run at server
-shutdown, aka C<child_exit> (requires apache 1.3b1+).  Any B<END>
+shutdown, aka C<child_exit> (requires apache 1.3b3+).  Any C<END>
 blocks that are encountered during compilation of Apache::Registry
 scripts are called after the script done is running, including
 subsequent invocations when the script is cached in memory.   
-All other B<END> blocks encountered during other Perl*Handler callbacks,
+All other C<END> blocks encountered during other Perl*Handler callbacks,
 e.g. B<PerlChildInitHandler>, will be suspended while the process is
 running and called during C<child_exit> when the process is shutting down.   
 Module authors may be wish to use C<$r-E<gt>register_cleanup> as an
-alternative to B<END> blocks if this behavior is not desirable. 
+alternative to C<END> blocks if this behavior is not desirable. 
 
 =head1 MEMORY CONSUMPTION
 
-No matter what, your httpd will be larger than normal to start, 
+Don't be alarmed by the size of your httpd after you've linked with
+mod_perl.  No matter what, your httpd will be larger than normal to start, 
 simply because you've linked with perl's runtime.
 
 Here's I'm just running
@@ -227,29 +262,35 @@ whatever modules it's use'ing or require'ing.  Not to mention
 AUTOLOADing.  (Modules that you 'use' will be compiled when the server
 starts unless they are inside an eval block.)  httpd will grow just as
 big as our /usr/bin/perl would, or a CGI process for that matter, it
-all depends on your setup. 
-
-Newer Perl versions also have other options to reduce runtime memory
-consumption.  See Perl's INSTALL file for details on C<-DPACK_MALLOC>
-and C<-DTWO_POT_OPTIMIZE>.  With these options, my httpd shrinks down
-~150K. 
+all depends on your setup.  The L<mod_perl_tuning> document gives
+advice on how to best setup your mod_perl server environment.
 
 The mod_perl INSTALL document explains how to build the Apache::
 extensions as shared libraries (with 'perl Makefile.PL DYNAMIC=1').
 This may save you some memory, however, it doesn't work on a few
 systems such as aix and unixware.
 
-For me, once everything is compiled, the processes no longer grow, I can live
-with the size at that point. For others, this size might be too big, or they 
-might be using a module that leaks or have code of their own that leaks, in
-any case using the apache configuration directive 'MaxRequestsPerChild' is 
-your best bet to keep the size down, but at the same time, you'll be slowing 
-things down when Apache::Registry scripts have to recompile.  
-Tradeoffs...
+However, on most systems, this strategy will only make the httpd
+I<look> smaller.  When in fact, an httpd with Perl linked static with
+take up less real memory and preform faster than shared libraries at
+the same time.  See the L<mod_perl_tuning> document for details.
 
-=head2 Additional Memory Tips
+=head2 MEMORY TIPS
 
 =over 4
+
+=item Leaks
+
+If you are using a module that leaks or have code of their own that leaks, in
+any case using the apache configuration directive 'MaxRequestsPerChild' is 
+your best bet to keep the size down.  
+
+=item Perl Options
+
+Newer Perl versions also have other options to reduce runtime memory
+consumption.  See Perl's INSTALL file for details on C<-DPACK_MALLOC>
+and C<-DTWO_POT_OPTIMIZE>.  With these options, my httpd shrinks down
+~150K. 
 
 =item Server Startup
 
@@ -304,8 +345,8 @@ vs.
 
 =item Further Reading
 
-See Vivek Khera's L<mod_perl_tuning> document for more tips on
-improving Apache/mod_perl performance.
+In case I forgot to mention, read Vivek Khera's L<mod_perl_tuning>
+document for more tips on improving Apache/mod_perl performance.
 
 =back
 
@@ -317,14 +358,22 @@ such as C<-w> or C<-T>.  Since the command line is only parsed once,
 when the server starts, these switches are unavailable to mod_perl
 scripts.  However, most command line arguments have a perl special
 variable equivilant.  For example, the C<$^W> variable coresponds
-to the C<-w> switch.  Consult L<perlvar> for more details.  The switch
-which enables taint checks does not have a special variable, so mod_perl
-provides the B<PerlTaintCheck> directive to turn on taint checks.  In
-httpd.conf, enable with: 
+to the C<-w> switch.  Consult L<perlvar> for more details.  With
+mod_perl it is also possible to turn on warnings globaly via the
+B<PerlWarn> directive:
+
+ PerlWarn On
+
+The switch which enables taint checks does not have a special
+variable, so mod_perl provides the B<PerlTaintCheck> directive to turn
+on taint checks.  In httpd.conf, enable with: 
 
  PerlTaintCheck On
 
 Now, any and all code compiled inside httpd will be checked.
+
+The environment variable B<PERL5OPT> can be used to set additional
+perl startup flags such as B<-d> and B<-D>.  See L<perlrun>.
 
 =head1 PERSISTENT DATABASE CONNECTIONS
 
@@ -357,6 +406,12 @@ a connection, minimizing resource consumption.  Example:
 Although B<$dbh> shown here will go out of scope when the script ends,
 the Apache::DBI module's reference to it does not, keep the connection
 open.
+
+B<WARNING:> Do not attempt to open a persistent database connection in
+the parent process (via PerlRequire or PerlModule).  If you do,
+children will get a copy of this handle, causing clashes when the
+handle is used by two processes at the same time.  Each child must
+have it's own unique connection handle.
 
 =head1 STACKED HANDLERS
 
@@ -669,10 +724,53 @@ If you're interested in sprinkling Perl code inside your HTML
 documents, you'll also want to look at the Apache::Embperl,
 Apache::ePerl and Apache::SSI modules. 
 
+=head1 DEBUGGING
+
+=over 4
+
+=item MOD_PERL_TRACE
+
+To enable mod_perl debug tracing configure mod_perl with the
+PERL_TRACE option:
+
+ perl Makefile.PL PERL_TRACE=1
+
+The trace levels can then be enabled via the B<MOD_PERL_TRACE>
+environment variable which can contain any combination of:
+
+ d - Trace directive handling during configuration read
+ s - Trace processing of perl sections
+ h - Trace Perl*Handler callbacks
+ g - Trace global variable handling, intepreter construction, END blocks, etc.
+ all - all of the above
+
+=back
+
+=head1 PROFILING
+
+It is possible to profile code run under mod_perl with the
+B<Devel::DProf> module available on CPAN.  However, you must have
+apache version 1.3b3 or higher and the C<PerlChildExitHandler>
+enabled.  When the server is started, B<Devel::DProf> installs an
+C<END> block to write the I<tmon.out> file, which will be run when the
+server is shutdown.  Here's how to start and stop a server with the
+profiler enabled:
+
+ % setenv PERL5OPT -d:DProf
+ % httpd -X -d `pwd` &
+ ... make some requests to the server here ...
+ % kill `cat logs/httpd.pid`
+ % unsetenv PERL5OPT
+ % dprofpp
+
+See also: B<Apache::DProf>
+
 =head1 BENCHMARKING
 
 How much faster is mod_perl that CGI?  There are many ways to
 benchmark the two, see the C<benchmark/> directory for some examples.
+
+See also: B<Apache::Timeit>
 
 =head1 WARNINGS
 
@@ -680,13 +778,15 @@ See L<mod_perl_traps>.
 
 =head1 SUPPORT
 
-For comments, questions, bug-reports, announcements, etc., send mail
-to listserv@listproc.itribe.net with the string "subscribe modperl"
-in the body.  
+See the L<SUPPORT> file.
+
+=head1 REVISION
+
+$Id$
 
 =head1 AUTHOR
 
-Doug MacEachern E<lt>dougm@osf.orgE<gt>
+Doug MacEachern 
 
 
 

@@ -5,7 +5,7 @@ use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn fork forkoption);
-$Apache::VERSION = "1.21";
+$Apache::VERSION = "1.22";
 
 *import = \&Exporter::import;
 
@@ -37,11 +37,6 @@ if($ENV{MOD_PERL} && perl_hook("Sections")) {
 	    map "$_\n", @_;
 	};
     }
-}
-
-sub module {
-    my($self, $module) = @_;
-    eval "require $module;";
 }
 
 sub parse_args {
@@ -817,7 +812,7 @@ Example:
         #ErrorDocument 401 "sorry, go away"
         #</Location>
 
-        #$r->custom_response(AUTH_REQUIRED, qq("sorry, go away"));
+        #$r->custom_response(AUTH_REQUIRED, "sorry, go away");
 
         return AUTH_REQUIRED;
     }

@@ -1,7 +1,12 @@
 #make sure all regex stuff works
 #BrowserMatch Mozilla/2 nokeepalive
 
+#PerlPassEnv PERL5LIB PERL5OPT
+
+#PerlPostReadRequestHandler Apache::StatINC
+#PerlRestartHandler Apache::Symbol
 #PerlFreshRestart On
+PerlSetVar UndefOnReload On
 
 #Configuration directives specific to mod_perl
 ServerRoot ./t
@@ -48,6 +53,9 @@ PerlSetupEnv   On
 </Location>
 
 <Location /perl/perl-status>
+PerlSetVar StatusPeek On
+PerlSetVar StatusGraph On
+PerlSetVar StatusDumper On
 SetHandler perl-script
 PerlHandler Apache::Status
 </Location>

@@ -1,5 +1,5 @@
 /* ====================================================================
- * Copyright (c) 1995-1997 The Apache Group.  All rights reserved.
+ * Copyright (c) 1995-1998 The Apache Group.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,12 +97,12 @@ server_rec *perl_get_startup_server(void)
 #define TABLE_GET_SET(table, do_taint) \
 { \
     char *val; \
-    if((val = table_get(table, key))) \
+    if(table && (val = table_get(table, key))) \
 	RETVAL = newSVpv(val, 0); \
     else \
         RETVAL = newSV(0); \
     if(do_taint) SvTAINTED_on(RETVAL); \
-    if(items > 2) { \
+    if(table && (items > 2)) { \
 	if(ST(2) == &sv_undef) \
 	    table_unset(table, key); \
 	else \
@@ -134,15 +134,12 @@ max_requests_per_child(...)
     OUTPUT:
     RETVAL
 
-char *
+SV *
 current_callback(r)
     Apache     r
 
     CODE:
-    {
-	dPPDIR;
-	RETVAL = table_get(cld->vars, "PERL_CALLBACK");
-    }
+    RETVAL = perl_get_sv("Apache::__CurrentCallback", TRUE);
 
     OUTPUT:
     RETVAL
@@ -187,34 +184,19 @@ mod_perl_register_cleanup(r, sv)
 
     PREINIT:
     ix = ix; /* avoid -Wall warning */
-
+    
 void
 mod_perl_clear_rgy_endav(r, sv)
     Apache     r
     SV *sv
 
-#should be elsewhere, but doesn't do much yet
-SV *
-sv_name(svp) 
-    SV *svp
-
-    PREINIT:
-    SV *sv;
+I32
+module(sv, name)
+    SV *sv
+    char *name
 
     CODE:
-
-    RETVAL = newSV(0);
-
-    if(sv && SvROK(svp) && (sv = SvRV(svp))) {
-	switch(SvTYPE(sv)) {
-	    case SVt_PVCV:
-	    gv_fullname(RETVAL, CvGV(sv));
-	    break;
-
-	    default:
-	    break;
-	}
-    }
+    RETVAL = (sv && perl_module_is_loaded(name));
 
     OUTPUT:
     RETVAL
@@ -245,6 +227,14 @@ taint(...)
     if(!tainting) XSRETURN_EMPTY;
     for(i=1; i<items; i++)
         sv_magic(ST(i), Nullsv, 't', Nullch, 0);
+
+#ifndef WIN32
+
+void
+child_terminate(r)
+    Apache     r
+
+#endif
 
 #CORE::exit only causes trouble when we're embedded
 void
@@ -350,8 +340,8 @@ fork(...)
 
 #shutup AutoLoader
 void 
-DESTROY(r)
-    Apache     r
+DESTROY(r=Nullsv)
+    SV     *r
 
     CODE:
     /*NOOP*/
@@ -473,9 +463,7 @@ custom_response(r, status, string)
 		    RESPONSE_CODES);
     }
 
-    if((type = index_of_response(status)) == idx500) {
-	croak("Unsupported HTTP response code %d\n", status);
-    }
+    type = index_of_response(status);
 
     conf->response_code_strings[type] = 
        ((is_url(string) || (*string == '/')) && (*string != '"')) ? 
@@ -537,7 +525,7 @@ get_remote_host(r, type=REMOTE_NAME)
 
     CODE:
     RETVAL = (char *)get_remote_host(r->connection, 
-				     r->per_dir_config, REMOTE_NAME);
+				     r->per_dir_config, type);
 
     OUTPUT:
     RETVAL
@@ -560,7 +548,7 @@ document_root(r)
     Apache    r
 
 char *
-server_root_relative(rsv, name)
+server_root_relative(rsv, name="")
     SV   *rsv
     char *name
 
@@ -616,10 +604,13 @@ basic_http_header(r)
 #endif
 
 void
-send_http_header(r)
+send_http_header(r, type=NULL)
     Apache	r
+    char *type
 
     CODE:
+    if(type)
+        r->content_type = pstrdup(r->pool, type);
     send_http_header(r);
     mod_perl_sent_header(r, 1);
     r->status = 200; /* XXX, why??? */
@@ -773,7 +764,7 @@ log_error(...)
 
 	/* if below is true, delay log_error */
 	if(PERL_RUNNING() < PERL_DONE_STARTUP) {
-	    MP_TRACE(fprintf(stderr, "error_log not open yet\n"));
+	    MP_TRACE_g(fprintf(stderr, "error_log not open yet\n"));
 	    XSRETURN_UNDEF;
 	}
     }
@@ -820,32 +811,31 @@ cgi_env(r, ...)
     Apache	r
 
     PREINIT:
-    array_header *env_arr = NULL;
-    char *key=NULL;
+    char *key = NULL;
 
     PPCODE:
-    env_arr = table_elts (r->subprocess_env);
     if(items > 1) {
 	key = SvPVX(ST(1));
 	if(items > 2) 
-	    table_set(env_arr, key, SvPVX(ST(2)));
+	    table_set(r->subprocess_env, key, SvPVX(ST(2)));
     }
+
     if(GIMME == G_ARRAY) {
-	CGIENVinit;
-	if (tz != NULL) {
-	    PUSHelt("TZ", tz, 0);
-	}
-	for (i = 0; i < env_arr->nelts; ++i) {
+        int i;
+        array_header *arr  = perl_cgi_env_init(r);
+        table_entry *elts = (table_entry *)arr->elts;
+
+	for (i = 0; i < arr->nelts; ++i) {
 	    if (!elts[i].key) continue;
 	    PUSHelt(elts[i].key, elts[i].val, 0);
 	}
     }
     else if(key) {
-	char *value = table_get(env_arr, key);
+	char *value = table_get(r->subprocess_env, key);
 	XPUSHs(value ? sv_2mortal((SV*)newSVpv(value, 0)) : &sv_undef);
     }
     else
-        croak("need an argument in scalar context"); 
+        croak("Apache->cgi_env: need another argument in scalar context"); 
    
 
 SV *
@@ -1226,7 +1216,7 @@ cgi_header_out(r, key, ...)
 	    if (val && val[0] == '/' && r->status == 200) {
 		/* not sure if this is quite right yet */
 		/* set $Apache::DoInternalRedirect++ to test */
-		if(perl_get_sv("Apache::DoInternalRedirect", FALSE)) {
+		if(DO_INTERNAL_REDIRECT) {
 		    r->method = pstrdup(r->pool, "GET");
 		    r->method_number = M_GET;
 
@@ -1518,7 +1508,7 @@ DESTROY(r)
 
     CODE:
     destroy_sub_req(r);
-    MP_TRACE(fprintf(stderr, 
+    MP_TRACE_g(fprintf(stderr, 
 	    "Apache::SubRequest::DESTROY(0x%lx)\n", (unsigned long)r));
 
 int

@@ -46,46 +46,9 @@ sub dump {
     return join "\n", @retval, "1;", "__END__", "";
 }
 
-{
-    no strict;
-    my $fh = \*main::DATA;
-    $fh = $fh; #avoid -w warnings
-    eval join '', <main::DATA> unless caller;
-}
-
 1;
 
 __END__
-
-package Apache::ReadConfig;
-
-$Port = 8529;
-
-$Location{"/perl"} = {
-    SetHandler => "perl-script",
-    PerlHandler => "Apache::Registry",
-    Options => "ExecCGI",
-};
-
-@DocumentIndex = qw(index.htm index.html);
-
-$VirtualHost{"www.foo.com"} = {
-    DocumentRoot => "/tmp/docs",
-    ErrorLog => "/dev/null",
-    Location => {
-	"/" => {
-	    Allowoverride => 'All',
-	    Order => 'deny,allow',
-	    Deny  => 'from all',
-	    Allow => 'from foo.com',
-	},
-    },
-};   
-
-print "Apache::PerlSections self-test:\n";
-print Apache::PerlSections->dump;
-
-=pod
 
 =head1 NAME
 

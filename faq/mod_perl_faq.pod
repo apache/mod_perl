@@ -378,7 +378,7 @@ There is a mailing-list dedicated to mod_perl.  It is archived at
 http://outside.organic.com/mail-archives/modperl/
 
 You can subscribe to the list by sending a mail with the line C<subscribe
-modperl> to C<majordomo@listproc.itribe.net>.
+modperl> to C<listserv@listproc.itribe.net>.
 
 The mod_perl homepage http://perl.apache.org/ has links to other
 mod_perl resources.
