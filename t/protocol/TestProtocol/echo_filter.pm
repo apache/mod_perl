@@ -5,7 +5,7 @@ use Apache::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Const -compile => qw(SUCCESS EOF);
-use Apache::Const -compile => qw(MODE_BLOCKING);
+use Apache::Const -compile => qw(MODE_GETLINE);
 use APR::Lib ();
 
 sub handler {
@@ -15,7 +15,7 @@ sub handler {
 
     for (;;) {
         my $rv = $c->input_filters->get_brigade($bb,
-                                                Apache::MODE_BLOCKING);
+                                                Apache::MODE_GETLINE);
 
         if ($rv != APR::SUCCESS or $bb->empty) {
             my $error = APR::strerror($rv);

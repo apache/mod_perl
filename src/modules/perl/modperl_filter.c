@@ -113,7 +113,9 @@ modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
     return mg ? (modperl_filter_t *)mg->mg_ptr : NULL;
 }
 
-int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
+int modperl_run_filter(modperl_filter_t *filter,
+                       ap_input_mode_t mode,
+                       apr_read_type_e block,
                        apr_off_t *readbytes)
 {
     AV *args = Nullav;
@@ -137,6 +139,7 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
 
     if (filter->mode == MP_INPUT_FILTER_MODE) {
         av_push(args, newSViv(mode));
+        av_push(args, newSViv(block));
         av_push(args, newSViv(*readbytes));
     }
 
@@ -374,7 +377,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
     }
     else {
         filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, 0, 0);
+        status = modperl_run_filter(filter, 0, 0, 0);
     }
 
     switch (status) {
@@ -390,6 +393,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
 apr_status_t modperl_input_filter_handler(ap_filter_t *f,
                                           apr_bucket_brigade *bb,
                                           ap_input_mode_t mode,
+                                          apr_read_type_e block,
                                           apr_off_t *readbytes)
 {
     modperl_filter_t *filter;
@@ -402,7 +406,7 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     }
     else {
         filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, mode, readbytes);
+        status = modperl_run_filter(filter, mode, block, readbytes);
     }
 
     switch (status) {

@@ -11,11 +11,11 @@ use APR::Brigade ();
 use APR::Bucket ();
 
 sub handler : FilterRequestHandler {
-    my($filter, $bb, $mode, $readbytes) = @_;
+    my($filter, $bb, $mode, $block, $readbytes) = @_;
 
     my $ctx_bb = APR::Brigade->new($filter->r->pool);
 
-    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $readbytes);
+    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
 
     if ($rv != APR::SUCCESS) {
         return $rv;
