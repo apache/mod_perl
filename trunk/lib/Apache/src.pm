@@ -131,6 +131,8 @@ sub module_magic_number {
     my $self = shift;
     my $d = asrc(shift || $self->dir);
 
+    return 0 unless $d;
+
     #return $mcache{$d} if $mcache{$d};
     my $fh;
     for (qw(ap_mmn.h http_config.h)) {
