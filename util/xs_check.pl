@@ -1,4 +1,4 @@
-use lib qw(lib);
+use lib qw(lib xs/tables/current);
 
 use strict;
 use warnings qw(FATAL all);
