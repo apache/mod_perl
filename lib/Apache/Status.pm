@@ -43,7 +43,7 @@ my %status = (
     rgysubs   => "Compiled Registry Scripts",
     symdump   => "Symbol Table Dump",
     inh_tree  => "Inheritance Tree",
-    isa_tree  => "ISA Tree",	
+    isa_tree  => "ISA Tree",
     env       => "Environment",
     sig       => "Signal Handlers",
     myconfig  => "Perl Configuration",
@@ -126,18 +126,18 @@ sub handler {
 
     header($r);
     if (defined &$sub) {
-	$r->print(@{ &{$sub}($r, $newQ->($r)) });
+        $r->print(@{ &{$sub}($r, $newQ->($r)) });
     }
     elsif ($qs and %{$qs."::"}) {
-	$r->print(symdump($r, $newQ->($r), $qs));
+        $r->print(symdump($r, $newQ->($r), $qs));
     }
     else {
-	my $uri = $r->uri;
-	$r->print('<p>');
-	$r->print(
- 	    map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
+        my $uri = $r->uri;
+        $r->print('<p>');
+        $r->print(
+            map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
         );
-	$r->print('</p>');
+        $r->print('</p>');
     }
     $r->print("</body></html>");
 
@@ -182,7 +182,7 @@ sub symdump {
 
     return install_hint("Devel::Symdump") unless has($r, "symdump");
 
-    my $meth = lc($r->dir_config("StatusRdump")) eq "on" 
+    my $meth = lc($r->dir_config("StatusRdump")) eq "on"
         ? "rnew" : "new";
     my $sob = Devel::Symdump->$meth($package);
     return $sob->Apache::Status::as_HTML($package, $r, $q);
@@ -207,9 +207,9 @@ sub status_hooks {
     my @retval = qw(<table>);
     my @list = mod_perl::hooks();
     for my $hook (sort @list) {
-	my $on_off = 
-	  mod_perl::hook($hook) ? "<b>Enabled</b>" : "<i>Disabled</i>";
-	push @retval, "<tr><td>$hook</td><td>$on_off</td></tr>\n";
+        my $on_off = 
+            mod_perl::hook($hook) ? "<b>Enabled</b>" : "<i>Disabled</i>";
+        push @retval, "<tr><td>$hook</td><td>$on_off</td></tr>\n";
     }
     push @retval, qw(</table>);
     \@retval;
@@ -227,16 +227,16 @@ sub status_inc {
     );
 
     foreach my $file (sort keys %INC) {
-	local $^W = 0;
-	next if $file =~ m:^/:;
-	next unless $file =~ m:\.pm:;
-	next unless $INC{$file}; #e.g. fake Apache/TieHandle.pm
+        local $^W = 0;
+        next if $file =~ m:^/:;
+        next unless $file =~ m:\.pm:;
+        next unless $INC{$file}; #e.g. fake Apache/TieHandle.pm
 
-	no strict 'refs';
-	(my $module = $file) =~ s,/,::,g;
-	$module =~ s,\.pm$,,;
-	my $v = ${"$module\:\:VERSION"} || '0.00';
-	push @retval, (
+        no strict 'refs';
+        (my $module = $file) =~ s,/,::,g;
+        $module =~ s,\.pm$,,;
+        my $v = ${"$module\:\:VERSION"} || '0.00';
+        push @retval, (
             "<tr>", 
             (map "<td>$_</td>", 
                 qq(<a href="$uri?$module">$module</a>),
@@ -258,8 +258,8 @@ sub status_script {
     );
 
     foreach my $file (sort keys %INC) {
-	next if $file =~ m:\.(pm|al|ix)$:;
-	push @retval, 
+        next if $file =~ m:\.(pm|al|ix)$:;
+        push @retval, 
             qq(<tr><td>$file</td><td>$INC{$file}</td></tr>\n);
     }
     push @retval, "</table>";
@@ -356,15 +356,15 @@ sub status_env {
 sub status_sig {
     ["<pre>",
      (map {
-	 my $val = $SIG{$_} || "";
-	 if ($val and ref $val eq "CODE") {
+         my $val = $SIG{$_} || "";
+         if ($val and ref $val eq "CODE") {
              # XXX: 2.0 doesn't have Apache::Symbol
-	     if (my $cv = Apache::Symbol->can('sv_name')) {
-		 $val = "\\&".  $cv->($val);
-	     }
-	 }
-	 "$_ = $val\n" }
-     sort keys %SIG),
+             if (my $cv = Apache::Symbol->can('sv_name')) {
+                 $val = "\\&".  $cv->($val);
+             }
+         }
+         "$_ = $val\n" }
+      sort keys %SIG),
      "</pre>"];
 }
 
@@ -477,8 +477,8 @@ sub b_terse_link {
     my $script = $r->location;
     my @retval;
     for (qw(exec slow)) {
-	my $exp = "$b_terse_exp{$_} order";
-	push @retval,
+        my $exp = "$b_terse_exp{$_} order";
+        push @retval,
             qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree Dump ($exp)</a>\n);
     }
     join '', @retval;
@@ -507,8 +507,8 @@ sub b_terse_size_link {
     my $script = $r->location;
     my @retval;
     for (qw(exec slow)) {
-	my $exp = "$b_terse_exp{$_} order";
-	push @retval,
+        my $exp = "$b_terse_exp{$_} order";
+        push @retval,
             qq(\n<a href="$script/$_/$name?noh_b_terse_size">Syntax Tree Size ($exp)</a>\n);
     }
     join '', @retval;
@@ -554,29 +554,29 @@ sub noh_b_package_size {
 
     my $nlen = 0;
     my @keys = map {
-	$nlen = length > $nlen ? length : $nlen;
-	$_;
+        $nlen = length > $nlen ? length : $nlen;
+        $_;
     } (sort { $subs->{$b}->{size} <=> $subs->{$a}->{size} } keys %$subs);
 
     my $clen = length $subs->{$keys[0]}->{count};
     my $slen = length $subs->{$keys[0]}->{size};
 
     for my $name (@keys) {
-	my $stats = $subs->{$name};
-	if ($name =~ /^my /) {
-	    $r->printf("%-${nlen}s %${slen}d bytes\n", $name, $stats->{size});
-	}
-	elsif ($name =~ /^\*(\w+)\{(\w+)\}/) {
-	    my $link = qq(<a href="$script/$package\::$1/$2?data_dump">);
-	    $r->printf("$link%-${nlen}s</a> %${slen}d bytes\n", 
-                $name, $stats->{size});
-	}
-	else {
-	    my $link = 
+        my $stats = $subs->{$name};
+        if ($name =~ /^my /) {
+            $r->printf("%-${nlen}s %${slen}d bytes\n", $name, $stats->{size});
+        }
+        elsif ($name =~ /^\*(\w+)\{(\w+)\}/) {
+            my $link = qq(<a href="$script/$package\::$1/$2?data_dump">);
+            $r->printf("$link%-${nlen}s</a> %${slen}d bytes\n", 
+                       $name, $stats->{size});
+        }
+        else {
+            my $link = 
                 qq(<a href="$script/slow/$package\::$name?noh_b_terse_size">);
-	    $r->printf("$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n",
-                $name, $stats->{size}, $stats->{count});
-	}
+            $r->printf("$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n",
+                       $name, $stats->{size}, $stats->{count});
+        }
     }
 }
 
@@ -598,7 +598,7 @@ sub noh_b_deparse {
     my $name = (split "/", $r->uri)[-1];
     $r->print("Deparse of $name\n\n");
     my $deparse = B::Deparse->new(split /\s+/, 
-				  $r->dir_config('StatusDeparseOptions')||"");
+                                  $r->dir_config('StatusDeparseOptions')||"");
     my $body = $deparse->coderef2text(\&{$name});
     $r->print("sub $name $body");
 }
@@ -621,7 +621,7 @@ sub noh_b_fathom {
     my $name = (split "/", $r->uri)[-1];
     $r->print("Fathom Score of $name\n\n");
     my $fathom = B::Fathom->new(split /\s+/, 
-				$r->dir_config('StatusFathomOptions')||"");
+                                $r->dir_config('StatusFathomOptions')||"");
     $r->print($fathom->fathom(\&{$name}));
 }
 
@@ -670,8 +670,8 @@ sub noh_xref {
 $Apache::Status::BGraphCache ||= 0;
 if ($Apache::Status::BGraphCache) {
     Apache->push_handlers(PerlChildExitHandler => sub {
-			      unlink keys %Apache::Status::BGraphCache;
-			  });
+        unlink keys %Apache::Status::BGraphCache;
+    });
 }
 
 sub b_graph_link {
@@ -690,8 +690,8 @@ sub noh_b_graph {
 
     untie *STDOUT;
 
-    my $dir = $r->server_root_relative(
-        $r->dir_config("GraphDir") || "logs/b_graphs");
+    my $dir = 
+        $r->server_root_relative($r->dir_config("GraphDir") || "logs/b_graphs");
 
     mkdir $dir, 0755 unless -d $dir;
 
@@ -701,26 +701,26 @@ sub noh_b_graph {
     my $file = "$dir/$thing.$$.gif";
 
     unless (-e $file) {
-	tie *STDOUT, "B::Graph", $r, $file;
-	B::Graph::compile("-$type", $thing)->();
-	(tied *STDOUT)->{graph}->close;
+        tie *STDOUT, "B::Graph", $r, $file;
+        B::Graph::compile("-$type", $thing)->();
+        (tied *STDOUT)->{graph}->close;
     }
 
     if (-s $file) {
-	local *FH;
-	open FH, $file or die "Can't open $file: $!";
-	$r->content_type("image/gif");
-	$r->send_fd(\*FH);
+        local *FH;
+        open FH, $file or die "Can't open $file: $!";
+        $r->content_type("image/gif");
+        $r->send_fd(\*FH);
     }
     else {
-	$r->content_type("text/plain");
-	$r->print("Graph of $thing failed!\n");
+        $r->content_type("text/plain");
+        $r->print("Graph of $thing failed!\n");
     }
     if ($Apache::Status::BGraphCache) {
-	$Apache::Status::BGraphCache{$file}++;
+        $Apache::Status::BGraphCache{$file}++;
     }
     else {
-	unlink $file;
+        unlink $file;
     }
 
     0;
@@ -730,10 +730,10 @@ sub B::Graph::TIEHANDLE {
     my($class, $r, $file) = @_;
 
     if ($file =~ /^([^<>|;]+)$/) {
-	$file = $1;
-    } 
+        $file = $1;
+    }
     else {
-	die "TAINTED data in THING=> ($file)";
+        die "TAINTED data in THING=> ($file)";
     }
 
     $ENV{PATH} = join ":", qw{/usr/bin /usr/local/bin};
@@ -745,8 +745,8 @@ sub B::Graph::TIEHANDLE {
     $pipe->autoflush(1);
 
     return bless {
-	graph => $pipe,
-	r => $r,
+                  graph => $pipe,
+                  r     => $r,
     }, $class;
 }
 
@@ -770,43 +770,43 @@ sub as_HTML {
     my @methods = sort keys %{$self->{'AUTOLOAD'}};
 
     if ($is_main) { 
-	@methods = grep { $_ ne "packages" } @methods;
-	unshift @methods, "packages";
+        @methods = grep { $_ ne "packages" } @methods;
+        unshift @methods, "packages";
     }
 
     for my $type (@methods) {
-	(my $dtype = uc $type) =~ s/E?S$//;
-	push @m, "<tr><td valign=\"top\"><b>$type</b></td>";
-	my @line = ();
+        (my $dtype = uc $type) =~ s/E?S$//;
+        push @m, "<tr><td valign=\"top\"><b>$type</b></td>";
+        my @line = ();
 
-	for (sort $self->_partdump(uc $type)) {
-	    s/([\000-\037\177])/ '^' . pack('c', ord($1) ^ 64)/eg; 
+        for (sort $self->_partdump(uc $type)) {
+            s/([\000-\037\177])/ '^' . pack('c', ord($1) ^ 64)/eg; 
 
-	    if ($type eq "scalars") {
-		no strict 'refs';
-		next unless defined eval { $$_ };
-	    }
+            if ($type eq "scalars") {
+                no strict 'refs';
+                next unless defined eval { $$_ };
+            }
 
-	    if ($type eq "packages") {
-		push @line, qq(<a href="$uri?$_">$_</a>);
-	    }
-	    elsif ($type eq "functions") {
-		if (has($r, "b")) {
-		    push @line, qq(<a href="$uri/$_/$dtype?cv_dump">$_</a>);
-		}
-		else {
-		    push @line, $_;
-		}
-	    }
-	    elsif ($do_dump and $can_dump{$type}) {
-		next if /_</;
-		push @line, qq(<a href="$uri/$_/$dtype?data_dump">$_</a>);
-	    }
-	    else {
-		push @line, $_;
-	    }
-	}
-	push @m, "<td>" . join(", ", @line) . "</td></tr>\n";
+            if ($type eq "packages") {
+                push @line, qq(<a href="$uri?$_">$_</a>);
+            }
+            elsif ($type eq "functions") {
+                if (has($r, "b")) {
+                    push @line, qq(<a href="$uri/$_/$dtype?cv_dump">$_</a>);
+                }
+                else {
+                    push @line, $_;
+                }
+            }
+            elsif ($do_dump and $can_dump{$type}) {
+                next if /_</;
+                push @line, qq(<a href="$uri/$_/$dtype?data_dump">$_</a>);
+            }
+            else {
+                push @line, $_;
+            }
+        }
+        push @m, "<td>" . join(", ", @line) . "</td></tr>\n";
     }
     push @m, "</table>";
 
