@@ -709,6 +709,13 @@ int modperl_response_handler_cgi(request_rec *r)
     /* flush output buffer after interpreter is putback */
     modperl_response_finish(r);
 
+    switch (rcfg->status) {
+      case HTTP_MOVED_TEMPORARILY:
+        /* set by modperl_cgi_header_parse */
+        retval = HTTP_MOVED_TEMPORARILY;
+        break;
+    }
+
     return retval;
 }
 

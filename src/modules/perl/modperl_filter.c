@@ -14,7 +14,10 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         const char *bodytext = NULL;
         int status = modperl_cgi_header_parse(r, (char *)buf, &bodytext);
 
-        if (status != OK) {
+        if (status == HTTP_MOVED_TEMPORARILY) {
+            return APR_SUCCESS; /* XXX: HTTP_MOVED_TEMPORARILY ? */
+        }
+        else if (status != OK) {
             ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO,
                          0, r->server, "%s did not send an HTTP header",
                          r->uri);
