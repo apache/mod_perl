@@ -1,4 +1,4 @@
-package TestFilter::context_stream;
+package TestFilter::out_str_ctx;
 
 # this is the same test as TestFilter::context, but uses the streaming
 # API
@@ -85,5 +85,5 @@ sub response {
 __DATA__
 
 SetHandler modperl
-PerlResponseHandler TestFilter::context::response
+PerlResponseHandler TestFilter::out_str_ctx::response
 

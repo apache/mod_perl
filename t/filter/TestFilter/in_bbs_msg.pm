@@ -1,4 +1,4 @@
-package TestFilter::input_msg;
+package TestFilter::in_bbs_msg;
 
 use strict;
 use warnings FATAL => 'all';
@@ -14,7 +14,7 @@ use Apache::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
 my $from_url = '/input_filter.html';
-my $to_url = '/TestFilter::input_msg::response';
+my $to_url = '/TestFilter::in_bbs_msg::response';
 
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
@@ -70,15 +70,15 @@ sub response {
 
 1;
 __END__
-<VirtualHost TestFilter::input_msg>
+<VirtualHost TestFilter::in_bbs_msg>
   # must be preloaded so the FilterConnectionHandler attributes will
   # be set by the time the filter is inserted into the filter chain
-  PerlModule TestFilter::input_msg
-  PerlInputFilterHandler TestFilter::input_msg
+  PerlModule TestFilter::in_bbs_msg
+  PerlInputFilterHandler TestFilter::in_bbs_msg
 
-  <Location /TestFilter::input_msg::response>
+  <Location /TestFilter::in_bbs_msg::response>
      SetHandler modperl
-     PerlResponseHandler TestFilter::input_msg::response
+     PerlResponseHandler TestFilter::in_bbs_msg::response
   </Location>
 
 </VirtualHost>

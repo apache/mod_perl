@@ -1,4 +1,4 @@
-package TestFilter::context;
+package TestFilter::out_bbs_ctx;
 
 # this is the same test as TestFilter::context_stream, but uses the
 # bucket brigade API
@@ -98,5 +98,5 @@ sub response {
 __DATA__
 
 SetHandler modperl
-PerlResponseHandler TestFilter::context::response
+PerlResponseHandler TestFilter::out_bbs_ctx::response
 

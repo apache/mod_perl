@@ -6,7 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 2;
 
-my $location = '/TestFilter::input_body';
+my $location = '/TestFilter::in_bbs_body';
 
 for my $x (1,2) {
     my $data = scalar reverse "ok $x\n";

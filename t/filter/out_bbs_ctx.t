@@ -16,7 +16,7 @@ my $expected = join "\n", $data, $sig;
 
 {
     # test the filtering of the mod_perl response handler
-    my $location = '/TestFilter::context_stream';
+    my $location = '/TestFilter::out_bbs_ctx';
     my $response = GET_BODY $location;
-    ok t_cmp($expected, $response, "context stream filter");
+    ok t_cmp($expected, $response, "context filter");
 }

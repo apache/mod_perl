@@ -1,4 +1,4 @@
-package TestFilter::lc;
+package TestFilter::out_str_lc;
 
 use strict;
 use warnings FATAL => 'all';
@@ -21,7 +21,7 @@ sub handler {
 __DATA__
 
 <Location /top_dir>
-  PerlOutputFilterHandler TestFilter::lc
+  PerlOutputFilterHandler TestFilter::out_str_lc
 </Location>
 
 Alias /top_dir @top_dir@
