@@ -12,6 +12,12 @@ Release:
 
 Available Patches:
 
+    * given "PerlSetVar Foo 0" $r->dir_config('Foo') returns undef
+      instead of zero
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=106909301704472&w=2
+        Status: fixed in 2.0, patch for 1.0 (untested) occurs late in 
+                the above thread
+
     * if the requested number of bytes was less
       than or equal to the available amount of input then the call
       would be successful, otherwise the buffer would come back
