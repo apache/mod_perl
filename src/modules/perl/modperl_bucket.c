@@ -85,22 +85,31 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     svbucket = (modperl_bucket_sv_t *)malloc(sizeof(*svbucket));
 
     bucket = apr_bucket_shared_make(bucket, svbucket, offset, len);
-
-    /* XXX: need to deal with PerlInterpScope */
-#ifdef USE_ITHREADS
-    svbucket->perl = aTHX;
-#endif
-    svbucket->sv = sv;
-
     if (!bucket) {
         free(svbucket);
         return NULL;
     }
 
-    (void)SvREFCNT_inc(svbucket->sv);
+    /* XXX: need to deal with PerlInterpScope */
+#ifdef USE_ITHREADS
+    svbucket->perl = aTHX;
+#endif
 
+    /* PADTMP SVs belong to perl and can't be stored away, since perl
+     * is going to reuse them, so we have no choice but to copy the
+     * data away, before storing sv */
+    if (SvPADTMP(sv)) {
+        STRLEN len;
+        char *pv = SvPV(sv, len);
+        svbucket->sv = newSVpvn(pv, len);
+    }
+    else {
+        svbucket->sv = sv;
+        (void)SvREFCNT_inc(svbucket->sv);
+    }
+    
     MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d\n",
-               (unsigned long)sv, SvREFCNT(sv));
+               (unsigned long)svbucket->sv, SvREFCNT(svbucket->sv));
 
     bucket->type = &modperl_bucket_sv_type;
     bucket->free = free;

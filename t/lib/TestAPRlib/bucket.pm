@@ -12,7 +12,7 @@ use APR::Bucket ();
 use APR::BucketType ();
 
 sub num_of_tests {
-    return 11;
+    return 13;
 }
 
 sub test {
@@ -70,6 +70,57 @@ sub test {
                  qr/the length argument can't be bigger than the total/,
                  'new($data, $offset, $len_too_big)');
     }
+
+    # modification of the source variable, affects the data
+    # inside the bucket
+    {
+        my $data = "A" x 10;
+        my $orig = $data;
+        my $b = APR::Bucket->new($data);
+        $data =~ s/^..../BBBB/;
+        $b->read(my $read);
+        ok !t_cmp($read, $orig,
+                 "data inside the bucket should get affected by " .
+                 "the changes to the Perl variable it's created from");
+    }
+
+
+    # APR::Bucket->new() with the argument PADTMP (which happens when
+    # some function is re-entered) and the same SV is passed to
+    # different buckets, which must be detected and copied away.
+    {
+        my @buckets = ();
+        my @data      = qw(ABCD EF);
+        my @received     = ();
+        for my $str (@data) {
+            my $b = func($str);
+            push @buckets, $b;
+        }
+
+        # the creating of buckets and reading from them is done
+        # separately on purpose
+        for my $b (@buckets) {
+            $b->read(my $out);
+            push @received, $out;
+            #Devel::Peek::Dump $out;
+        }
+
+        # here we used to get: two pv: "ef\0d"\0, "ef"\0, as you can see
+        # the first bucket had corrupted data.
+        my @expected = map { lc } @data;
+        ok t_cmp \@received, \@expected, "new(PADTMP SV)";
+
+        # this function will pass the same SV to new(), causing two
+        # buckets point to the same SV, and having the latest bucket's
+        # data override the previous one
+        sub func {
+            my $data = shift;
+            return APR::Bucket->new(lc $data);
+        }
+
+    }
+
+
 
     # remove
     {
