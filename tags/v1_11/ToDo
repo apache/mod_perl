@@ -1,0 +1,160 @@
+For some time, the mod_perl ToDo was a list of things that never was
+updated.  Meanwhile, Doug maintained his own checklist of things todo,
+didn't seem to make much sense.  This file is now Doug's messy little
+checklist, notes that might not make much sense to you, or you might
+misunderstand.  I'll try to change things so you can understand, you
+can help by asking about an item listed of interest or supply a new
+one to be added.  
+Or, I might just add:
+
+- make the ToDo file understandable 
+
+to the ToDo file and never remove it ;-)
+
+---------------------------------------------------------------------------
+SHORT TERM STUFF (this section should always be empty in a release version!)
+                 (well, close to it anyhow)
+---------------------------------------------------------------------------
+
+- Ralf's APACI Makefile.tmpl
+
+- Gerald's suggestion to avoid possible deadlock under win32
+
+---------------------------------------------------------------------------
+DOCUMENTATION (areas that *really* need some)
+---------------------------------------------------------------------------
+
+- HTTP Headers!!!!
+
+- Apache::exit/child_terminate
+
+---------------------------------------------------------------------------
+KNOWN BUGS
+---------------------------------------------------------------------------
+
+- find a way to prevent "httpd spinning" (bug in Perl, not mod_perl)
+
+- linkage problem w/ mod_auth_dbm (-ldbm)
+ Config.pm New: libs='-lsocket -lnsl -ldl -lm -lc -lcrypt -ldb'
+ Was:           libs='-lsocket -lnsl -ldb -ldl -lm -lc -lcrypt'
+ SunOS mailhost.cmc.net 5.5 Generic_103093-17 sun4m sparc sun4m
+             brian moore <bem@cmc.net>
+
+- sometimes w/ <Perl> we get: [warning] PerlSetVar->nelts = 1111992
+
+- perl_config should not av_shift ARRAY refs from
+  %Apache::ReadConfig::
+
+- die and AUTOLOADed DESTROY == empty $@ (Perl or mod_perl bug?)
+
+
+- ExtUtils::Embed/ExtUtils::Liblist clash sometime w/
+  PERL_STATIC_EXTS, like so: 
+ Unrecognized argument in LIBS ignored:
+ '/opt/oracle/product/7.3.3/lib/libclient.a' 
+
+ Note (probably harmless): No library found for -l:libcma.sl
+
+ -Wl,-E -Wl,-B,deferred -L/usr/local/lib
+ /home/web/perl5/lib/site_perl/portable/auto/DBD/Oracle/Oracle.a 
+ /home/  etc etc ...
+           mark rostron <useny036@IMATION.COM>
+           Brian Slesinsky <bslesins@best.com>
+
+---------------------------------------------------------------------------
+NEW STUFF
+---------------------------------------------------------------------------
+
+- PerlInitHandler - alias to first available
+  PerlCleanupHandler - register_cleanup
+
+- <Perl> in .htaccess (could also call known bug)
+
+- provide namespace protection for mod_include #perl's
+
+- change configuration during runtime?
+
+- have log_error/log_reason give file/line info of caller
+
+- 'make html'?
+
+- $Apache::ServerStarting in <Perl>
+
+- something with exec()?
+
+- Apache->http_message(501); #rc code returns a string
+
+- PerlFreshRestart, restarts on startup, should we stop that?
+
+- special treatment for nph- scripts?
+
+- fix Thread->new == linux<-SIGUSR1->Apache signal clash
+
+- win32:
+  + integrate with Perl 5.005's threading
+  + mod_include #perl support
+  + look at providing ASP (Active Server Plugin) support for NT users
+
+- overload %ENV magic so it's not setup unless asked for
+
+- "save stack" mechanism so we can go back to caching CV lookups
+
+- cleanup Makefile.PL!!!
+
+- SetHandler perl-dirty-script, mode which wipes out a script's
+  namespace so "dirty old CGI" scripts will work
+
+- improve the "stacked handlers" implementation, including:
+  + config merging of AV*'s
+
+  + allowing all array-like operations besides push_handlers,
+    pop_handlers, shift_handlers, unshift_handlers, splice_handlers, etc.
+
+  + allow push_handlers to have an additional argument, an array ref,
+    which will be passed to the handler as arguments, e.g.
+    $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
+
+- allow Perl*Handler's to have arguments in config files, e.g.:
+
+  (calls &FooPackage::handler($r, "One", "Two", "Three");
+
+- allow <Perl></Perl> configuration sections to have read access to internal
+  configuration structures (would be nice if we could tie a %namespace::) 
+
+---------------------------------------------------------------------------
+KNOWN MODULE BUGS
+---------------------------------------------------------------------------
+
+- can't multiple Apache::Include->virtual in a single request
+
+---------------------------------------------------------------------------
+NEW MODULE STUFF
+---------------------------------------------------------------------------
+
+- apache.pm: use apache '1.3b3';
+
+- have Apache::Status hunt for AUTOLOADing 
+
+- Apache::SawAmpersand
+
+- Apache::Status should list number of things
+
+- Apache::Constant's import should compile the constant sub
+
+- Apache::DProf as a Fixup
+
+- Apache::Include->virtual should update %ENV?
+
+- Apache->request vs. $_[0]
+
+- Apache::Registry should honor __END__ and __DATA__,
+  but how to get it right?
+
+---------------------------------------------------------------------------
+CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
+            these things at some point
+---------------------------------------------------------------------------
+
+- no longer need local $^W = 0; #shutup Cwd.pm, 
+         Ian Kallen <ian@gamespot.com>
+
