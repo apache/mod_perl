@@ -629,7 +629,8 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_ITERATE2("PerlAddVar", add_var, "PerlAddVar"),
     MP_CMD_DIR_TAKE2("PerlSetEnv", set_env, "PerlSetEnv"),
     MP_CMD_SRV_TAKE1("PerlPassEnv", pass_env, "PerlPassEnv"),
-    MP_CMD_SRV_RAW_ARGS("<Perl", perl, "NOT YET IMPLEMENTED"),
+    MP_CMD_SRV_RAW_ARGS_ON_READ("<Perl", perl, "Perl Code"),
+    MP_CMD_SRV_RAW_ARGS("Perl", perldo, "Perl Code"),
 	
     MP_CMD_DIR_RAW_ARGS_ON_READ("=pod", pod, "Start of POD"),
     MP_CMD_DIR_RAW_ARGS_ON_READ("=back", pod, "End of =over"),

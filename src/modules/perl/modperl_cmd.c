@@ -245,26 +245,24 @@ MP_CMD_SRV_DECLARE(init_handlers)
     return modperl_cmd_post_read_request_handlers(parms, mconfig, arg);
 }
 
-static const char *modperl_cmd_parse_args(pTHX_ apr_pool_t *p,
+static const char *modperl_cmd_parse_args(apr_pool_t *p,
                                           const char *args,
-                                          HV **hv)
+                                          apr_table_t **t)
 {
     const char *orig_args = args;
     char *pair, *key, *val;
-    *hv = newHV();
+    *t = apr_table_make(p, 2);
 
     while (*(pair = ap_getword(p, &args, ',')) != '\0') {
         key = ap_getword_nc(p, &pair, '=');
         val = pair;
 
         if (!(*key && *val)) {
-            SvREFCNT_dec(*hv);
-            *hv = Nullhv;
             return apr_pstrcat(p, "invalid args spec: ",
                                orig_args, NULL);
         }
 
-        hv_store(*hv, key, strlen(key), newSVpv(val,0), 0);
+        apr_table_set(*t, key, val);
     }
 
     return NULL;
@@ -273,21 +271,67 @@ static const char *modperl_cmd_parse_args(pTHX_ apr_pool_t *p,
 MP_CMD_SRV_DECLARE(perl)
 {
     apr_pool_t *p = parms->pool;
-    server_rec *s = parms->server;
     const char *endp = ap_strrchr_c(arg, '>');
     const char *errmsg;
-    modperl_handler_t *handler;
-    AV *args = Nullav;
-    HV *hv = Nullhv;
-    SV **handler_name;
+    char *code = "";
+    char line[MAX_STRING_LEN];
+    apr_table_t *args;
+    ap_directive_t **current = mconfig;
+
+    if (!endp) {
+        return modperl_cmd_unclosed_directive(parms);
+    }
+
+    arg = apr_pstrndup(p, arg, endp - arg);
+   
+    if ((errmsg = modperl_cmd_parse_args(p, arg, &args))) {
+        return errmsg;
+    }
+
+    while (!ap_cfg_getline(line, sizeof(line), parms->config_file)) {
+        /*XXX: Not sure how robust this is */
+        if (strEQ(line, "</Perl>")) {
+            break;
+        }
+        
+        /*XXX: Less than optimal */
+        code = apr_pstrcat(p, code, line, NULL);
+    }
+    
+    /* Here, we have to replace our current config node for the next pass */
+    if (!*current) {
+        *current = apr_pcalloc(p, sizeof(**current));
+    }
+    
+    (*current)->filename = parms->config_file->name;
+    (*current)->line_num = parms->config_file->line_number;
+    (*current)->directive = apr_pstrdup(p, "Perl");
+    (*current)->args = code;
+    (*current)->data = args;
+
+    return NULL;
+}
+
+#define MP_DEFAULT_PERLSECTION_HANDLER "Apache::PerlSection"
+#define MP_DEFAULT_PERLSECTION_PACKAGE "Apache::ReadConfig"
+
+MP_CMD_SRV_DECLARE(perldo)
+{
+    apr_pool_t *p = parms->pool;
+    server_rec *s = parms->server;
+    apr_table_t *options = NULL;
+    const char *handler_name = NULL;
+    modperl_handler_t *handler = NULL;
+    const char *package_name = NULL;
     int status = OK;
+    AV *args = Nullav;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     pTHX;
 #endif
 
-    if (endp == NULL) {
-        return modperl_cmd_unclosed_directive(parms);
+    if (!(arg && *arg)) {
+        return NULL;
     }
 
     /* we must init earlier than normal */
@@ -302,32 +346,46 @@ MP_CMD_SRV_DECLARE(perl)
     aTHX = scfg->mip->parent->perl;
 #endif
 
-    arg = apr_pstrndup(p, arg, endp - arg);
+    /* data will be set by a <Perl> section */
+    if ((options = parms->directive->data)) {
+        if (!(handler_name = apr_table_get(options, "handler"))) {
+            handler_name = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_HANDLER);
+            apr_table_set(options, "handler", handler_name);
+        }
+        
+        handler = modperl_handler_new(p, handler_name);
+            
+        if (!(package_name = apr_table_get(options, "package"))) {
+            package_name = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_PACKAGE);
+            apr_table_set(options, "package", package_name);
+        }
 
-    if ((errmsg = modperl_cmd_parse_args(aTHX_ p, arg, &hv))) {
-        return errmsg;
+        /* put the code about to be executed in the configured package */
+        arg = apr_pstrcat(p, "package ", package_name, ";", arg, NULL);
     }
 
-    if (!(handler_name = hv_fetch(hv, "handler", strlen("handler"), 0))) {
-        /* XXX: we will have a default handler in the future */
-        return "no <Perl> handler specified";
+    eval_pv(arg, FALSE);
+
+    if (SvTRUE(ERRSV)) {
+        return SvPVX(ERRSV);
     }
+    
+    if (handler) {
+        /*XXX: This will return a blessed APR::Table, but not a tied one ;-( */ 
+        modperl_handler_make_args(aTHX_ &args,
+                                  "Apache::CmdParms", parms,
+                                  "APR::Table", options,
+                                  NULL);
 
-    handler = modperl_handler_new(p, SvPVX(*handler_name));
+        status = modperl_callback(aTHX_ handler, p, NULL, s, args);
 
-    modperl_handler_make_args(aTHX_ &args,
-                              "Apache::CmdParms", parms,
-                              "HV", hv,
-                              NULL);
+        SvREFCNT_dec((SV*)args);
 
-    status = modperl_callback(aTHX_ handler, p, NULL, s, args);
-
-    SvREFCNT_dec((SV*)args);
-
-    if (status != OK) {
-        return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
-            apr_psprintf(p, "<Perl> handler %s failed with status=%d",
-                         handler->name, status);
+        if (status != OK) {
+            return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
+                apr_psprintf(p, "<Perl> handler %s failed with status=%d",
+                             handler->name, status);
+        }
     }
 
     return NULL;

@@ -30,9 +30,16 @@ sub configure_startup_pl {
     #XXX: issue for these is they need to happen after PerlSwitches
 
     #XXX: this should only be done for the modperl-2.0 tests
-    $self->postamble(<<'EOF');
-<Perl handler=ModPerl::Test::perl_section>
-    $Foo = 'bar';
+    my $htdocs = $self->{vars}{documentroot};
+    $self->postamble(<<"EOF");
+<Perl >
+push \@Alias, ['/perl_sections', '$htdocs'],
+\$Location{'/perl_sections'} = {
+	'PerlInitHandler' => 'ModPerl::Test::add_config',
+	'AuthType' => 'Basic',
+	'AuthName' => 'PerlSection',
+	'PerlAuthenHandler' => 'TestHooks::authen',
+	};
 </Perl>
 EOF
 
@@ -46,6 +53,11 @@ ServerTest per-server
 <Location /TestDirective::loadmodule>
     MyOtherTest value
 </Location>
+EOF
+
+	#XXX: this should only be done for the modperl-2.0 tests
+	$self->postamble(<<'EOF');
+	Perl $TestDirective::perl::worked="yes";
 EOF
 
     #XXX: this should only be done for the modperl-2.0 tests
