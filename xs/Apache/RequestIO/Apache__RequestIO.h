@@ -12,6 +12,13 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
         MARK++; \
     }
 
+#define mpxs_output_flush(r, rcfg) \
+    /* if ($|) */ \
+    if (IoFLUSH(PL_defoutgv)) { \
+        modperl_wbucket_flush(&rcfg->wbucket); \
+        ap_rflush(r); \
+    }
+
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
                                            SV **MARK, SV **SP)
 {
@@ -57,11 +64,7 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     
     mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
     
-    /* if ($|) */
-    if (IoFLUSH(PL_defoutgv)){
-        modperl_wbucket_flush(&rcfg->wbucket);
-        ap_rflush(r);
-    }
+    mpxs_output_flush(r, rcfg);
     
     return bytes;
 }  
