@@ -370,7 +370,7 @@ if ($vcpp and $win32_args{APACHE_SRC}) {
     (-d "$fixed_apsrc/src/include" ? $fixed_apsrc . '/src' :
      die "Cannot find the Apache include directory under $fixed_apsrc");
   $win32_auto = 1;
-  if (not defined $win32_args{INSTALL_DLL}) {
+  unless ($win32_args{INSTALL_DLL}) {
     my $w32_ap_mod = $fixed_apsrc . '/modules';
     $win32_args{INSTALL_DLL} = $w32_ap_mod if -d $w32_ap_mod;
   }
@@ -1371,6 +1371,12 @@ sub MY::top_targets {
 	$win32_args{INSTALL_DLL} .
 	  ($win32_args{APACHE_VERS} < 1315 ?
 	   '/ApacheModulePerl.dll' : '/mod_perl.so');
+        if (-d "$win32_args{APACHE_SRC}/libexec") {
+          my $libexec = win32_fix_path($win32_args{APACHE_SRC}) . '/libexec';
+          $string .= sprintf qq{\n\t\$(CP) "%s" "%s"}, 
+            "$win32_path{MODPERL_LIB}/mod_perl.lib", 
+              $libexec . '/mod_perl.lib';
+        }
       }
       return $string;
     }
@@ -2236,7 +2242,6 @@ sub win32_fix_path {
 sub win32_fix_path_dsp {
   local $_ = shift;
   tr!/!\\!;
-  s!^\w:!!;
   return $_;
 }
 
