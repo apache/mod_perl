@@ -568,6 +568,7 @@ sub generate {
 
     $self->get_functions;
     $self->get_structures;
+    $self->write_exp; #XXX if $^O eq 'aix'
 
     while (my($module, $functions) = each %{ $self->{XS} }) {
 #        my($root, $sub) = split '::', $module;
@@ -577,6 +578,28 @@ sub generate {
         $self->write_makefilepl($module);
         $self->write_xs($module, $functions);
         $self->write_pm($module);
+    }
+}
+
+sub write_exp {
+    my $self = shift;
+
+    my %files = (
+        modperl => $ModPerl::FunctionTable,
+        apache  => $Apache::FunctionTable,
+    );
+
+    while (my($name, $table) = each %files) {
+        my $file = join '/', $self->{XS_DIR}, "$name.exp";
+        open my $fh, '>', $file or die "open $file: $!";
+
+        print $fh "#!\n";
+
+        for my $entry (@$table) {
+            print $fh "$entry->{name}\n";
+        }
+
+        close $fh or die "close $file: $!";
     }
 }
 
