@@ -1,0 +1,82 @@
+#include "mod_perl.h"
+
+#define dHANDLE(name) GV *handle = gv_fetchpv(name, TRUE, SVt_PVIO)
+
+#define TIEHANDLE(handle,r) \
+modperl_io_handle_tie(aTHX_ handle, "Apache::RequestRec", (void *)r)
+
+#define TIED(handle) \
+modperl_io_handle_tied(aTHX_ handle, "Apache::RequestRec")
+
+MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
+{
+    sv_unmagic((SV*)handle, 'q');
+}
+
+MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
+                                     char *classname, void *ptr)
+{
+    SV *obj = modperl_ptr2obj(aTHX_ classname, ptr);
+    modperl_io_handle_untie(aTHX_ handle);
+    sv_magic((SV*)handle, obj, 'q', Nullch, 0);
+}
+
+MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
+{
+    MAGIC *mg;
+
+    if (SvMAGICAL(handle) && (mg = mg_find((SV*)handle, 'q'))) {
+	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
+
+	if (!strEQ(package, classname)) {
+	    MP_TRACE_g(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
+	    return TRUE;
+	}
+    }
+
+    return FALSE;
+}
+
+MP_INLINE GV *modperl_io_tie_stdout(pTHX_ request_rec *r)
+{
+#if defined(MP_IO_TIE_SFIO)
+    /* XXX */
+#elif defined(MP_IO_TIE_PERLIO)
+    /* XXX */
+#else
+    dHANDLE("STDOUT");
+
+    if (TIED(handle)) {
+        return handle;
+    }
+
+    IoFLUSH_off(PL_defoutgv); /* $|=0 */
+
+    MP_TRACE_g(MP_FUNC, "tie *STDOUT => Apache::RequestRec\n");
+
+    TIEHANDLE(handle, r);
+
+    return handle;
+#endif
+}
+
+MP_INLINE GV *modperl_io_tie_stdin(pTHX_ request_rec *r)
+{
+#if defined(MP_IO_TIE_SFIO)
+    /* XXX */
+#elif defined(MP_IO_TIE_PERLIO)
+    /* XXX */
+#else
+    dHANDLE("STDIN");
+
+    if (TIED(handle)) {
+        return handle;
+    }
+
+    MP_TRACE_g(MP_FUNC, "tie *STDIN => Apache::RequestRec\n");
+
+    TIEHANDLE(handle, r);
+
+    return handle;
+#endif
+}
