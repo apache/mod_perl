@@ -60,7 +60,7 @@ sub handler {
             my $query = Apache::MPM->query(Apache::MPMQ_IS_THREADED);
 
             ok t_cmp(Apache::MPMQ_STATIC,
-                    $query,
+                     $query,
                      "MPMQ_IS_THREADED ($mpm)");
 
             ok t_cmp($query,
