@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/22 00:35:29 $]
+   Last modified at [$Date: 2003/04/22 00:45:36 $]
 
 Release:
 --------
@@ -245,21 +245,10 @@ Open Issues or Core Enhancements:
 
 ----
 
-* Apache-Test assumes that any core file found under t/ was generated
-  by httpd, (and suggests the gdb invoking command) which is incorrect
-  in some cases. For example t/TEST -config, which is run by bin/perl,
-  may dump core as well.
-
-  Report: 
-  Status: no hurry
-
-----
-
-----
-
 * 
   Report: 
-  Status: 
+  Status:
+
 ----
 
 
