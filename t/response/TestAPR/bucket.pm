@@ -93,10 +93,12 @@ sub handler {
         t_debug("not empty");
         ok !$bb->is_empty;
 
-        # remove all buckets from bb and test that it's empty
-        for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-            $b->remove;
+        # delete all buckets from bb and test that it's empty
+        while (!$bb->is_empty) {
+            my $b = $bb->first;
+            $b->delete;
         }
+
         t_debug("empty");
         ok $bb->is_empty;
     }
