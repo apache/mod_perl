@@ -1,9 +1,6 @@
-#need apply patches/c-scan.pat against C-Scan-0.74
+#requires C::Scan 0.75+
 
-BEGIN {
-    #rather than use lib cos were gonna fork
-    $ENV{PERL5LIB} = "lib";
-}
+use lib qw(lib);
 
 use strict;
 use Apache::ParseSource ();
