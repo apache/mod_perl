@@ -113,6 +113,11 @@ CONFIG STUFF
 MISC BUGS
 ---------------------------------------------------------------------------
 
+- "$ENV{FOO} = 'foo'" is cleared from the %ENV array, but left in the
+  environ[], making it visible to subprocesses.
+  perl_util.c:perl_clear_env() only deletes from %ENV on purpose to
+  prevent other problems.  need to rethink this.
+
 - recursion triggered by internal_redirect() called by a pushed handler
 [Ashish Goyal <ashishg@linux-delhi.org>]
 
