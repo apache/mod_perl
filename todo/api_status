@@ -57,7 +57,7 @@ VP src/docs/2.0/api/Apache/ServerUtil.pod
 VV src/docs/2.0/api/Apache/SubProcess.pod
 -- src/docs/2.0/api/Apache/SubRequest.pod
 VV src/docs/2.0/api/Apache/URI.pod
--- src/docs/2.0/api/Apache/Util.pod
+VV src/docs/2.0/api/Apache/Util.pod
 -- src/docs/2.0/api/Apache/compat.pod
 -- src/docs/2.0/api/Apache/porting.pod
 

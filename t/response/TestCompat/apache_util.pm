@@ -52,7 +52,7 @@ sub handler {
     (my $esc_uri = $uri) =~ s/ /\%20/g;
     my $uri2 = $uri;
 
-    $uri = Apache::Util::escape_uri($uri);
+    $uri  = Apache::Util::escape_uri($uri);
     $uri2 = Apache::Util::escape_path($uri2, $r->pool);
 
     ok t_cmp($uri, $esc_uri, "Apache::Util::escape_uri");
