@@ -40,7 +40,12 @@ sub handler {
 
 1;
 __END__
-SetHandler perl-script
-<IfDefine PERL_USEITHREADS>
-    PerlInterpScope handler
-</IfDefine>
+<NoAutoConfig>
+<Location /TestApache__cgihandler>
+    <IfDefine PERL_USEITHREADS>
+        PerlInterpScope handler
+    </Ifdefine>
+    SetHandler perl-script
+    PerlResponseHandler TestApache::cgihandler
+</Location>
+</NoAutoConfig>
