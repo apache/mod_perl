@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+make sure that the custom pools and destroyed only once and only when
+all references went out of scope [Stas]
+
 ($r|$c)->add_(input|output)_filter(\&handler) now verify that the
 filter of the right kind is passed and will refuse to add a request
 filter as a connection filter and vice versa. The request filter

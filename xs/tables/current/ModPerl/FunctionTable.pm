@@ -6429,6 +6429,24 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'apr_pool_t *',
+    'name' => 'mpxs_apr_pool_parent_get',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'child_pool'
+      },
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'mpxs_apr_pool_DESTROY',
     'attr' => [
