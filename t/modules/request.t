@@ -125,7 +125,7 @@ sub upload_test {
     my $lines = 0;
     local *FH;
     open FH, $file or die "open $file $!";
-    ++$lines while (<FH>);
+    ++$lines while (my $dummy = <FH>);
     close FH;
     my(@headers);
     if ($Is_dougm) {
