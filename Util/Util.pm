@@ -101,7 +101,7 @@ Example:
  This would correctly translate the query string
  ``name=Fred+Flintstone&town=Bedrock'' into the hash: 
 
- data => 'Fred Flintstone',
+ name => 'Fred Flintstone',
  town => 'Bedrock'
 
 =item parsedate
