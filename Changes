@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+adjust test output (modules/{cgi,constants}) to make 5.7.0-dev
+Test::Harness happy
+
 fix $r->custom_response bug which was triggering core dumps if no
 ErrorDocuments were configured, thanks to Paul Hodges for the spot
 
