@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Apache::TestUtil::t_mkdir() now creates dirs which are
+writable/executable by the user who invokes it [Stas Bekman]
+
 Move the custom mod_perl 2.0 configuration bits out of the
 ModPerl::TestRun, where they don't belong, into a special config file
 which is included at the very end of httpd.conf [Stas Bekman]
