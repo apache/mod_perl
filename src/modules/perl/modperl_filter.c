@@ -251,7 +251,6 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_read_type_e block,
                                      apr_off_t readbytes)
 {
-
     apr_pool_t *p = MP_FILTER_POOL(f);
     modperl_filter_t *filter;
 
