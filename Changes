@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Handle correctly the situation when response HTTP headers are printed
+from the handler and the response body starts with \000, which is the
+case with some images like .ico. [Stas]
+
 Apache::PerlSections->dump() and store(filename) [Gozer]
 
 expose $c->keepalive related constants and $c->keepalives counter

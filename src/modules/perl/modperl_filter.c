@@ -115,22 +115,23 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     const char *work_buf = buf;
 
     /* reset the counter to 0 as early as possible and in one place,
-     * since this function will always either path the data out (and
+     * since this function will always either pass the data out (and
      * it has 'len' already) or return an error.
      */
-     wb->outcnt = 0;
+    wb->outcnt = 0;
 
     if (wb->header_parse) {
         request_rec *r = wb->r;
-        const char *bodytext = NULL;
+        const char *body;
         int status;
+
         /*
          * since wb->outbuf is persistent between requests, if the
          * current response is shorter than the size of wb->outbuf
          * it may include data from the previous request at the
          * end. When this function receives a pointer to
          * wb->outbuf as 'buf', modperl_cgi_header_parse may
-         * return that irrelevant data as part of 'bodytext'. So
+         * return that irrelevant data as part of 'body'. So
          * to avoid this risk, we create a new buffer of size 'len'
          * XXX: if buf wasn't 'const char *buf' we could simply do
          * buf[len] = '\0'
@@ -144,7 +145,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %d bytes [%s]\n", len,
                    apr_pstrmemdup(wb->pool, work_buf, len));
         
-        status = modperl_cgi_header_parse(r, (char *)work_buf, &bodytext);
+        status = modperl_cgi_header_parse(r, (char *)work_buf, &len, &body);
 
         wb->header_parse = 0; /* only once per-request */
 
@@ -156,15 +157,14 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
                          0, r->server, "%s did not send an HTTP header",
                          r->uri);
             r->status = status;
-            /* XXX: bodytext == NULL here */
+            /* XXX: body == NULL here */
             return APR_SUCCESS;
         }
-        else if (!bodytext) {
+        else if (!len) {
             return APR_SUCCESS;
         }
 
-        len -= (bodytext - work_buf);
-        work_buf = bodytext;
+        work_buf = body;
     }
 
     bb = apr_brigade_create(wb->pool, ba);

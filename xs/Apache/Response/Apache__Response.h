@@ -7,10 +7,10 @@
     STRLEN len; \
     const char *bodytext; \
     MP_CGI_HEADER_PARSER_OFF(rcfg); \
-    modperl_cgi_header_parse(r, SvPV(sv,len), &bodytext); \
-    if (bodytext) {\
+    SvPV_force(sv, len);            \
+    modperl_cgi_header_parse(r, SvPVX(sv), &len, &bodytext);        \
+    if (len) {\
         MP_CHECK_WBUCKET_INIT("$r->send_cgi_header"); \
-        len -= (bodytext - SvPVX(sv)); \
         modperl_wbucket_write(aTHX_ rcfg->wbucket, bodytext, &len); \
     } \
 }
