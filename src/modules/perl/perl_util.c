@@ -708,7 +708,8 @@ int perl_eval_ok(server_rec *s)
 
 int perl_sv_is_http_code(SV *errsv, int *status) 
 {
-    int i=0, http_code=0, retval = FALSE;
+    int retval = FALSE;
+    STRLEN i=0, http_code=0;
     char *errpv;
     char cpcode[4];
     dTHR;
