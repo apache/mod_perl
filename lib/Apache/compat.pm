@@ -302,8 +302,9 @@ sub tmpfile {
     my $r = Apache->request;
 
     unless ($r) {
-        die "cannot use Apache::File->tmpfile ".
-          "without 'SetHandler perl-script' or 'PerlOptions +GlobalRequest'";
+        die "cannot use Apache::File->tmpfile ",
+            "without 'SetHandler perl-script' ",
+            "or 'PerlOptions +GlobalRequest'";
     }
 
     while ($limit--) {
@@ -314,8 +315,8 @@ sub tmpfile {
         $r->pool->cleanup_register(sub { unlink $tmpfile });
 
         if ($fh) {
-	    return wantarray ? ($tmpfile, $fh) : $fh;
-	}
+            return wantarray ? ($tmpfile, $fh) : $fh;
+        }
     }
 }
 
