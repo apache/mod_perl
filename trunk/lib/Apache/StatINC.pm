@@ -2,14 +2,14 @@ package Apache::StatINC;
 
 use strict;
 
-$Apache::StatINC::VERSION = "1.05";
+$Apache::StatINC::VERSION = "1.06";
 
 my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 
 sub handler {
     my $r = shift;
     my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload")) eq "on");
-    my $DEBUG = (lc($r->dir_config("StatINCDebug")) eq "on");
+    my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug")) eq "on");
 
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
