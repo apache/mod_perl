@@ -371,7 +371,7 @@ sub clean_files {
 
     my @files = ();
     File::Find::find(sub { push @files, "$File::Find::dir/$_" if -f $_},
-                     "WrapXS");
+                     "WrapXS") if -d "WrapXS";
 
     push @files, map { "xs/$_.h" }
         qw(modperl_xs_typedefs modperl_xs_sv_convert);
