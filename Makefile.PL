@@ -29,7 +29,6 @@ use Apache::Build ();
 use Apache::TestReportPerl ();
 use Apache::TestSmokePerl ();
 use Apache::TestTrace;
-use Apache::TestMM qw(test);
 use ModPerl::TestRun ();
 use ModPerl::Code ();
 use ModPerl::MM ();
@@ -442,6 +441,30 @@ sub MY::clean {
     ModPerl::MM::add_dep(\$string, clean => 'modperl_src_clean');
     ModPerl::MM::add_dep(\$string, clean => 'test_clean');
     $string;
+}
+
+sub MY::test {
+
+    my $env = Apache::TestConfig->passenv_makestr();
+
+    my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
+PASSENV = $env
+EOF
+
+    return $preamble . <<'EOF';
+test_clean :
+	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
+	t/TEST -clean
+	
+run_tests : test_clean
+	$(PASSENV) \
+	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
+	t/TEST
+	cd ModPerl-Registry && make test
+
+test :: pure_all run_tests test_clean
+EOF
+
 }
 
 sub MY::postamble {
