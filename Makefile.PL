@@ -20,9 +20,9 @@ my $code  = ModPerl::Code->new;
 {
     use Getopt::Std;
     my %opts;
-    getopts('cm:', \%opts);
+    getopts('Ecm:', \%opts);
     configure()    if $opts{c};
-    make($opts{m}) if $opts{m};
+    make(\%opts) if $opts{m};
 }
 
 sub configure {
@@ -54,7 +54,8 @@ sub echo_cmd {
 }
 
 sub make {
-    my $target = shift;
+    my $opts = shift;
+    my $target = $opts->{m};
     return clean() if $target eq 'c';
     my $single_file = $target =~ /\.c$/ ? $target : "";
 
@@ -64,8 +65,11 @@ sub make {
 
     chdir $code->path;
 
+    my $flags = "-g -Wall";
+    $flags .= " -E" if $opts->{E};
+
     for ($single_file ? $single_file : $code->c_files) {
-        echo_cmd "$cc -g -Wall $ccopts @inc -c $_";
+        echo_cmd "$cc $flags $ccopts @inc -c $_";
         return if $single_file;
     }
 
