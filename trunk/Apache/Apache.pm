@@ -24,16 +24,14 @@ if (caller eq "CGI::Apache") {
     __PACKAGE__->mod_perl::boot($VERSION);
 }
 
-if($ENV{MOD_PERL} && perl_hook("Sections")) {
+BEGIN {
     *Apache::ReadConfig:: = \%ApacheReadConfig::;
+}
 
-    if(Apache::Constants::MODULE_MAGIC_NUMBER() >= 19971026) {
-	*Apache::httpd_conf = sub {
-	    shift;
-	    push @Apache::ReadConfig::PerlConfig,
-	    map "$_\n", @_;
-	};
-    }
+sub httpd_conf {
+    shift;
+    push @Apache::ReadConfig::PerlConfig,
+      map "$_\n", @_;
 }
 
 sub parse_args {
