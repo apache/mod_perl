@@ -42,4 +42,19 @@ void modperl_interp_pool_remove(modperl_interp_pool_t *mip,
 #define MP_dINTERP_SELECT(r, c, s) dNOOP
 #endif
 
+typedef apr_status_t (*modperl_interp_mip_walker_t)(pTHX_ 
+                                                    modperl_interp_pool_t *mip,
+                                                    void *data);
+
+void modperl_interp_mip_walk(PerlInterpreter *current_perl,
+                             PerlInterpreter *parent_perl,
+                             modperl_interp_pool_t *mip,
+                             modperl_interp_mip_walker_t walker,
+                             void *data);
+
+void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
+                                     server_rec *base_server,
+                                     modperl_interp_mip_walker_t walker,
+                                     void *data);
+
 #endif /* MODPERL_INTERP_H */
