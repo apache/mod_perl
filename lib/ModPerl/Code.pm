@@ -355,6 +355,7 @@ sub generate_flags {
     while (my($class, $opts) = each %{ $self->{flags} }) {
         my $i = 0;
         my @lookup = ();
+        my %lookup = ();
         my $lookup_proto = "";
         my @dumper;
         if ($flags_options{$class}) {
@@ -372,16 +373,14 @@ sub generate_flags {
         print $h_fh "\n#define ${class}Type $n\n";
         $n++;
 
+        my $max_len = 0;
         for my $f (@$opts) {
             my $x = sprintf "0x%08x", $i;
             my $flag = "${class}_f_$f";
             my $cmd  = $class . $f;
             my $name = canon_name($f);
-
-            if (@lookup) {
-                push @lookup, qq(   if (strEQ(str, "$name")) return $flag;);
-            }
-
+            $lookup{$name} = $flag;
+            $max_len = length $name if $max_len < length $name;
             print $h_fh <<EOF;
 
 /* $f */
@@ -398,7 +397,25 @@ EOF
             $i += $i || 1;
         }
         if (@lookup) {
-            print $c_fh join "\n", @lookup, "   return 0;\n}\n";
+            my $indent1 = " " x 4;
+            my $indent2 = " " x 8;
+            my %switch = ();
+            for (keys %lookup) {
+                if (/^(\w)/) {
+                    my $gap = " " x ($max_len - length $_);
+                    push @{ $switch{$1} }, 
+                        qq{if (strEQ(str, "$_"))$gap return $lookup{$_};};
+                }
+            }
+
+            push @lookup, '', $indent1 . "switch (*str) {";
+            for (keys %switch) {
+                push @lookup, $indent1 . "  case '$_':";
+                push @lookup, map { $indent2 . $_ } @{ $switch{$_} };
+            }
+            push @lookup, map { $indent1 . $_ } ("}\n", "return 0;\n}\n\n");
+
+            print $c_fh join "\n", @lookup;
             print $h_fh "$lookup_proto;\n";
         }
 
