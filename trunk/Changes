@@ -8,11 +8,15 @@ Changes - Apache mod_perl change logfile
 
 =item 1.20_01-dev
 
+fix refcount bug in %VirtualHost [] values, thanks to Pete Ehlke for
+the spot
+
 get rid of a warning in Apache::test [Joshua Chamas <joshua@chamas.com>]
 
 $r->read will now properly check the return value of
 ap_setup_client_block() and return undef if != OK,
-e.g. if LimitRequestBody is exceeded
+e.g. if LimitRequestBody is exceeded, thanks to Joshua Chamas for the
+spot and testing
 
 loosen module/cookie tests
 
