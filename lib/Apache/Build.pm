@@ -946,6 +946,36 @@ sub ap_includedir  {
     $self->{ap_includedir} = $d;
 }
 
+sub ap_exp_includedir {
+    my ($self) = @_;
+    
+    return $self->{ap_exp_includedir} if $self->{ap_exp_includedir};
+    
+    my $build_vars = File::Spec->catfile($self->{MP_AP_PREFIX}, 
+                                         qw(build config_vars.mk));
+    open my $vars, "<$build_vars" or die "Couldn't open $build_vars $!";
+    my $ap_exp_includedir;
+    while (<$vars>) {
+        if (/exp_includedir\s*=\s*(.*)/) {
+            $ap_exp_includedir = $1;
+            last;
+        }
+    }
+    
+    $self->{ap_exp_includedir} = $ap_exp_includedir;
+}
+
+sub install_headers_dir {
+    my ($self) = @_;
+    if ($self->should_build_apache) {
+        return $self->ap_exp_includedir();
+    }
+    else {
+        return $self->ap_includedir();
+    }
+}
+
+
 # where apr-config and apu-config reside
 sub apr_bindir {
     my ($self) = @_;
@@ -1605,11 +1635,12 @@ EOI
     }
 
     print $fh $self->canon_make_attr('lib', "@libs");
+    
+    print $fh $self->canon_make_attr('AP_INCLUDEDIR', 
+                                     $self->install_headers_dir());
 
-    for my $q (qw(LIBEXECDIR INCLUDEDIR)) {
-        print $fh $self->canon_make_attr("AP_$q",
-                                         $self->apxs(-q => $q));
-    }
+    print $fh $self->canon_make_attr('AP_LIBEXECDIR',
+                                     $self->apxs(-q => 'LIBEXECDIR'));
 
     my $xs_targ = $self->make_xs($fh);
 

@@ -78,7 +78,7 @@ ModPerl::BuildMM::WriteMakefile(
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
         PERL               => $build->perl_config('perlpath'),
         MOD_INSTALL        => ModPerl::BuildMM::mod_install(),
-        MODPERL_AP_INCLUDEDIR  => $build->ap_includedir(),
+        MODPERL_AP_INCLUDEDIR  => $build->install_headers_dir(),
         MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
     clean     => {
