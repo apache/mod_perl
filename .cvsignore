@@ -30,3 +30,4 @@ t/conf/LoadModule.conf
 t/docs/hooks.txt
 Log/Makefile
 Log/pm_to_blib
+apaci/find_source
