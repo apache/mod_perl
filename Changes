@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+introduce a custom modperl error message for failing filter handlers
+(previously 'unknown error' coming from rc=500 was logged) [Stas]
+
 $s->log->warn and other $s->log->foo are now logging to the right
 vhost server and not the global one. modperl_sv2server_rec was
 broken. [Stas]

@@ -924,6 +924,10 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
         return APR_SUCCESS;
       case DECLINED:
         return ap_get_brigade(f->next, bb, input_mode, block, readbytes);
+      case HTTP_INTERNAL_SERVER_ERROR:
+          /* XXX: later may introduce separate error codes for
+           * modperl_run_filter and modperl_run_filter_init */
+        return MODPERL_FILTER_ERROR;
       default:
         return status; /*XXX*/
     }
