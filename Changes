@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+if some code changes the current interpreter's tainted state to on,
+the return value from the handler callback will be tainted, and we
+fail to deal with that. So revert to coercing any return value, but
+undef (a special case for exit()). to IV, so that tainted values are
+handled correctly as well. [Stas]
+
 make sure that each handler callback starts with a pristine
 tainted-ness state, so that previous callback calls won't affect the
 consequent ones. Without this change any handler triggering eval or
