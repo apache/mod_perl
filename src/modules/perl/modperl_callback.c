@@ -173,23 +173,23 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     }
 
     switch (type) {
-      case MP_HANDLER_TYPE_DIR:
+      case MP_HANDLER_TYPE_PER_DIR:
         av = dcfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_per_dir_handler_desc(idx));
         break;
-      case MP_HANDLER_TYPE_SRV:
+      case MP_HANDLER_TYPE_PER_SRV:
         av = scfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_per_srv_handler_desc(idx));
         break;
-      case MP_HANDLER_TYPE_CONN:
+      case MP_HANDLER_TYPE_CONNECTION:
         av = scfg->connection_cfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_connection_handler_desc(idx));
         break;
-      case MP_HANDLER_TYPE_FILE:
+      case MP_HANDLER_TYPE_FILES:
         av = scfg->files_cfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_files_handler_desc(idx));
         break;
-      case MP_HANDLER_TYPE_PROC:
+      case MP_HANDLER_TYPE_PROCESS:
         av = scfg->process_cfg->handlers[idx];
         MP_TRACE_a_do(desc = modperl_process_handler_desc(idx));
         break;
@@ -222,16 +222,16 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
     handlers = (modperl_handler_t **)av->elts;
 
     switch (type) {
-      case MP_HANDLER_TYPE_DIR:
-      case MP_HANDLER_TYPE_SRV:
+      case MP_HANDLER_TYPE_PER_DIR:
+      case MP_HANDLER_TYPE_PER_SRV:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::RequestRec", r, NULL);
         break;
-      case MP_HANDLER_TYPE_CONN:
+      case MP_HANDLER_TYPE_CONNECTION:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::Connection", c, NULL);
         break;
-      case MP_HANDLER_TYPE_FILE:
+      case MP_HANDLER_TYPE_FILES:
           {
               apr_pool_t *pconf, *plog, *ptemp;
 
@@ -248,7 +248,7 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
                                         "Apache::Server", s, NULL);
           }
           break;
-      case MP_HANDLER_TYPE_PROC:
+      case MP_HANDLER_TYPE_PROCESS:
           {
               apr_pool_t *pconf;
 
@@ -292,29 +292,31 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
 
 int modperl_per_dir_callback(int idx, request_rec *r)
 {
-    return modperl_run_handlers(idx, r, NULL, r->server, MP_HANDLER_TYPE_DIR);
+    return modperl_run_handlers(idx, r, NULL, r->server,
+                                MP_HANDLER_TYPE_PER_DIR);
 }
 
 int modperl_per_srv_callback(int idx, request_rec *r)
 {
-    return modperl_run_handlers(idx, r, NULL, r->server, MP_HANDLER_TYPE_SRV);
+    return modperl_run_handlers(idx, r, NULL, r->server,
+                                MP_HANDLER_TYPE_PER_SRV);
 }
 
 int modperl_connection_callback(int idx, conn_rec *c)
 {
     return modperl_run_handlers(idx, NULL, c, c->base_server,
-                                MP_HANDLER_TYPE_CONN);
+                                MP_HANDLER_TYPE_CONNECTION);
 }
 
 void modperl_process_callback(int idx, apr_pool_t *p, server_rec *s)
 {
-    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_PROC, p);
+    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_PROCESS, p);
 }
 
 void modperl_files_callback(int idx,
                             apr_pool_t *pconf, apr_pool_t *plog,
                             apr_pool_t *ptemp, server_rec *s)
 {
-    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_FILE,
+    modperl_run_handlers(idx, NULL, NULL, s, MP_HANDLER_TYPE_FILES,
                          pconf, plog, ptemp);
 }
