@@ -25,9 +25,8 @@ sub handler {
 sub response {
     my $r = shift;
 
-    plan $r, tests => 1, todo => [1];
-    # XXX: see if we can fix filter handlers to restore the original
-    # $@ when the callback completes
+    plan $r, tests => 1;
+    # test that filters don't reset $@
     eval { i_do_not_exist_really_i_do_not() };
     # trigger the filter invocation, before using $@
     $r->print("# whatever");

@@ -54,6 +54,36 @@
     }                              \
     safefree(filter);
 
+/* Save the value of $@ if it was set */
+#define MP_FILTER_SAVE_ERRSV(tmpsv)                 \
+    if (SvTRUE(ERRSV)) {                            \
+        tmpsv = newSVsv(ERRSV);                     \
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT   \
+                  "Saving $@='%s'",                 \
+                   MP_FILTER_NAME(filter->f),       \
+                   SvPVX(tmpsv)                     \
+                   );                               \
+    }
+
+/* Restore previously saved value of $@, warning if a new error was generated */
+#define MP_FILTER_RESTORE_ERRSV(tmpsv)                  \
+    if (tmpsv) {                                        \
+        if (SvTRUE(ERRSV)) {                            \
+            Perl_warn(aTHX_ "%s", SvPVX(ERRSV));        \
+            MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT   \
+                       "error: %s",                     \
+                        MP_FILTER_NAME(filter->f),      \
+                        SvPVX(ERRSV)                    \
+                        );                              \
+        }                                               \
+        sv_setsv(ERRSV, tmpsv);                         \
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT       \
+                   "Restoring $@='%s'",                 \
+                   MP_FILTER_NAME(filter->f),           \
+                   SvPVX(tmpsv)                         \
+                   );                                   \
+    }
+
 /* this function is for tracing only, it's not optimized for performance */
 static int is_modperl_filter(ap_filter_t *f)
 {
@@ -432,6 +462,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
 int modperl_run_filter(modperl_filter_t *filter)
 {
     AV *args = Nullav;
+    SV *errsv = Nullsv;
     int status;
     modperl_handler_t *handler =
         ((modperl_filter_ctx_t *)filter->f->ctx)->handler;
@@ -443,6 +474,8 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     MP_dINTERP_SELECT(r, c, s);
 
+    MP_FILTER_SAVE_ERRSV(errsv);
+    
     modperl_handler_make_args(aTHX_ &args,
                               "Apache::Filter", filter->f,
                               "APR::Brigade",
@@ -503,6 +536,8 @@ int modperl_run_filter(modperl_filter_t *filter)
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", modperl_handler_name(handler), status);
     
+    MP_FILTER_RESTORE_ERRSV(errsv);
+ 
     return status;
 }
 
