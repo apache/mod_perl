@@ -94,7 +94,12 @@ $APACHE_SRC_DEFAULT = $@ ?
     '../apache_x.x/src'  :
     $Apache::MyConfig::Setup{Apache_Src} ; 
 
+#workaround bug in 5.8.0-RC1 where Cwd::cwd creates $ENV{IFS}
+#which makes apache configure fall apart on solaris
+my $ifs_exists = exists $ENV{IFS};
 my $PWD = cwd;
+delete $ENV{IFS} unless $ifs_exists;
+
 $ENV{APACHE_CWD} = $PWD;
 $ENV{PERL5LIB} = join ':', "$PWD/lib", $ENV{PERL5LIB};
 
