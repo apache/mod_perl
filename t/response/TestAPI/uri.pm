@@ -34,7 +34,7 @@ sub handler {
     ok $server eq join ':', $r->get_server_name, $r->get_server_port;
 
     my $curl = $r->construct_url;
-    my $parsed = APR::URI->parse($r, $curl);
+    my $parsed = APR::URI->parse($r->pool, $curl);
 
     ok $parsed->isa('APR::URI');
 
