@@ -6,6 +6,12 @@ static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
                        "> directive missing closing '>'", NULL);
 }
 
+static char *modperl_cmd_too_late(cmd_parms *parms)
+{
+    return apr_pstrcat(parms->pool, "mod_perl already running, "
+                       "too late for ", parms->cmd->name, NULL);
+}
+
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
                                 apr_pool_t *p)
 {
@@ -45,6 +51,9 @@ MP_CMD_SRV_DECLARE(trace)
 MP_CMD_SRV_DECLARE(switches)
 {
     MP_dSCFG(parms->server);
+    if (modperl_is_running()) {
+        return modperl_cmd_too_late(parms);
+    }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
     modperl_config_srv_argv_push(arg);
     return NULL;
