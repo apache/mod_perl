@@ -40,6 +40,10 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
   symbols from ap_/apr_ namespace they should use .exp files installed
   by httpd/apr/aprutil.
 
+* we have a dependency check problem when xs/*/*.h use code from
+  xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
+  dependant files
+
 * gcc 3.3 (from cvs 2003-07-28) supports a new option:
   -Wdeclaration-after-statement, which we need to enable in the
   maintainer mode, to catch any declarations after statements, since

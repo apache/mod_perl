@@ -6,10 +6,6 @@
   http://www.gossamer-threads.com/archive/mod_perl_C1/dev_F4/%5BMP2_BUG%5D_PerlPassEnv_issues_P70500/
 
 
-* we have a dependency check problem when xs/*/*.h use code from
-  xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
-  dependant files
-
 
 * most of the xs wrappers print no "Usage: " when wrong args/wrong
   number of args are passed, would be nice to add the usage message
