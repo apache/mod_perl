@@ -6,7 +6,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     CV *cv=Nullcv;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
-    int count, status;
+    int count, status = OK;
 
     if ((status = modperl_handler_resolve(aTHX_ &handler, p, s)) != OK) {
         return status;
@@ -45,28 +45,46 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             cv = modperl_mgv_cv(gv);
         }
         else {
-            char *name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 0);
-            MP_TRACE_h(MP_FUNC, "lookup of %s failed\n", name);
+            
+            const char *name;
+            modperl_mgv_t *symbol = handler->mgv_cv;
+            
+             /* XXX: need to validate *symbol */
+            if (symbol && symbol->name) {
+                name = modperl_mgv_as_string(aTHX_ symbol, p, 0);
+            }
+            else {
+                name = handler->name;
+            }
+            
+            MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed\n",
+                         modperl_pid_tid(p), modperl_server_desc(s, p), name);
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
+                         "lookup of '%s' failed\n", name);
+            status = HTTP_INTERNAL_SERVER_ERROR;
         }
     }
 
-    count = call_sv((SV*)cv, flags);
+    if (status == OK) {
+        count = call_sv((SV*)cv, flags);
 
-    SPAGAIN;
+        SPAGAIN;
 
-    if (count != 1) {
-        status = OK;
-    }
-    else {
-        status = POPi;
-        /* assume OK for non-http status codes and for 200 (HTTP_OK) */
-        if (((status > 0) && (status < 100)) ||
-            (status == 200) || (status > 600)) {
+        if (count != 1) {
             status = OK;
         }
-    }
+        else {
+            status = POPi;
+            /* assume OK for non-http status codes and for 200 (HTTP_OK) */
+            if (((status > 0) && (status < 100)) ||
+                (status == 200) || (status > 600)) {
+                status = OK;
+            }
+        }
 
-    PUTBACK;
+        PUTBACK;
+    }
+    
     FREETMPS;LEAVE;
 
     if (SvTRUE(ERRSV)) {
@@ -181,7 +199,8 @@ int modperl_callback_run_handlers(int idx, int type,
      * different handler e.g. jumping from 'modperl' to 'perl-script',
      * before calling push_handler */
     nelts = av->nelts;
-    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n", nelts, desc);
+    MP_TRACE_h(MP_FUNC, "[%s] running %d %s handlers\n",
+               modperl_pid_tid(p), nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<nelts; i++) {
@@ -248,6 +267,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
     SvREFCNT_dec((SV*)av_args);
 
+    /* PerlInterpScope handler */
 #ifdef USE_ITHREADS
     MP_dINTERP_PUTBACK(interp);
 #endif
