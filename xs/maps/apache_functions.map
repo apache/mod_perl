@@ -152,7 +152,7 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
  ap_get_server_built
  ap_get_server_version
  ap_psignature | | r,prefix
- ap_server_root_relative | mpxs_ | fname, p=NULL
+ ap_server_root_relative | mpxs_ | fname=NULL, p=NULL
 
 MODULE=Apache::Connection   PACKAGE=guess
  ap_get_remote_host

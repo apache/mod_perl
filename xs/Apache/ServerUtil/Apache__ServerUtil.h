@@ -46,6 +46,10 @@ static MP_INLINE char *mpxs_ap_server_root_relative(pTHX_
                                                     const char *fname,
                                                     apr_pool_t *p)
 {
+    if (!fname) {
+        fname = "";
+    }
+
     if (!p) {
         /* XXX: should do something better if called at request time
          * without a pool
