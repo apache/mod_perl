@@ -1,0 +1,163 @@
+important parts of the api that are missing
+in no particular order
+------------------------------------------
+
+tied filehandle interface:
+ -CLOSE, GETC, PRINTF, READLINE
+
+APR::Table tie mechanism:
+$r->headers_out->{KEY} is not currently supported
+might want to make this optional, disabled by default
+
+missing: APR::Table->do
+
+$r->finfo:
+need apr_finfo_t <-> struct stat conversion (might already be there,
+haven't looked close enough yet)
+
+$r->header_{in,out}:
+deprecated, but should be included in Apache::compat
+
+$r->no_cache:
+does not yet manage Pragma, Cache-control headers as 1.x did
+
+$r->pnotes:
+not yet implemented
+
+$r->subprocess_env:
+in void context should populate %ENV as 1.x does
+
+$r->chdir_file:
+not safe for threaded environments.  should at least unshift @INC with
+dirname $r->filename.  consider overriding open() to resolve relative
+filenames.
+
+$r->child_terminate:
+haven't looked into this, but clearly not an option with threaded
+mpms.  might consider knocking off the current PerlInterpreter
+instead.
+
+$r->log_reason:
+should be simple, see modperl_log.h
+
+Apache->module:
+not yet implemented
+
+Apache->server_root_relative:
+needs to default to current pool (pconf at startup, r->pool at request
+time)
+
+Apache::Util::*
+not very usable at the moment.
+also need to default to current pool (pconf at startup, r->pool at
+request time)
+missing: size_string()
+missing: validate_password() (now lives in APR)
+enhancements: consider jeff baker's more robust implementation of
+my_escape_html(), which should probably be made in apache-2.0 itself
+
+Apache->define:
+exists as Apache::exists_config_define, which should stay,
+Apache::compat could implement a wrapper.
+
+$r->document_root:
+cannot currently be modified.  requires locking since it is part of
+the per-server config structure which is shared between threads
+
+$r->send_fd:
+need to figure out howto map PerlIO <-> apr_file_t
+at the moment $r->send_fd is implement in Apache::compat, functions,
+but does not have the performance benefits of ap_send_fd()
+however, $r->sendfile is a new function that opens the file for you
+and calls ap_send_fd() underneath.
+
+$r->print:
+does not yet honor $|
+
+$r->{hard,reset,soft,kill}_timeout:
+do not exist in 2.0.  should be deprecated.  consider adding noops in
+Apache::compat
+
+$r->auth_{name,type}:
+ are not yet writable.  will also require locking.
+
+$r->get_basic_auth_pw:
+does not yet default AuthType and AuthName as 1.x does
+
+$r->as_string:
+not yet implemented
+
+Apache::{Server,Process} classes:
+require mutex lock for writing
+
+Apache->untaint:
+not yet implemented, required for Apache::Registry
+
+Apache->exit:
+not yet implemented
+maybe use die $r/PROPAGATE instead of tie-ing $@ ?
+
+Apache->import:
+not yet implemented, required for exit/warn overridding
+
+$r->current_callback:
+not yet implemented
+
+$r->{get,set,push}_handlers:
+need to deal properly with modification of the current handler phase
+we're running.
+
+$r->dir_config:
+depends on Perl{Set,Add}Var
+
+Apache->httpd_conf:
+depends on <Perl> sections
+
+$r->location:
+not yet implemented
+
+Apache->request:
+need to deal with subclass objects which are not a request_rec
+(e.g. HASH ref)
+
+$r->cgi_header_out:
+anything in 1.x land actually using it?
+
+Apache->gensym:
+>> Apache::compat ?
+
+$r->post_connection:
+alias not implemented
+
+$r->slurp_filename:
+optimized version not yet implemented (compat version exists in
+Apache::compat)
+
+$r->{stash,clear}_rgy_endav:
+not yet implemented, nor is any END block management
+
+Apache->unescape_url{_info}:
+not yet implemented.  should be moved to Apache::Util
+
+$r->content_language:
+deprecate in favor of $r->content_languages?
+would require that apache-2.0 is also rid of r->content_language usage
+
+apr_array_header_t:
+needs an interface, either methods and/or tied array interface
+
+Apache::perl_hook:
+should have this or something check if PerlOptions allows the given
+handler/feature to be used.
+
+mod_perl::import():
+not yet implemented
+
+Apache::FakeRequest:
+since APR can be used outside of httpd, and we can alloc request_rec
+and similar structures, it should be possible to bootstrap an
+inside-httpd interface and outside-httpd interface.  its not really
+worthwhile looking at until APR actually installs its *.so or *.a
+libraries somewhere apxs can find them.  and, there's a bunch of util
+functions (e.g. URI stuff) that is supposed to move from httpd into
+apr-util.

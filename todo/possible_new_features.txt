@@ -16,8 +16,6 @@ perl language features:
 
 - @ARGV magic, tie to query string
 
-- overload %ENV magic to call subprocess_env when a value is set 
-
 - sub handler : method ($) {}
   call $class->new($r) and pass the returned object as the first and
   only arg to the method handler
@@ -26,6 +24,8 @@ perl language features:
 
 optimization features:
 ---------------------
+
+- use 5.7.1+'s PerlIO rather than tied filehandles
 
 - copy-on-write SvPVX
 
@@ -42,15 +42,13 @@ optimization features:
   trigger)
 
 - use subpools per-callback/handler (might trim some memory bloat)
+  note: creating subpools requires a malloc mutex lock with threaded
+  mpms
 
 api:
 ---
 
-- Apache->http_message(501); #rc code returns a string
-
 - improve the "stacked handlers" implementation, including:
-  + config merging of AV*'s
-
   + allow push_handlers to have an additional argument, an array ref,
     which will be passed to the handler as arguments, e.g.
     $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);

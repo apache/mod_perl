@@ -4,9 +4,19 @@ b) only be in #ifdef MP_DEPRECATED
 c) be a form that was nothing like 1.xx (e.g. Apache::Leek)
 d) split off into something standalone on cpan
 
+- PerlSendHeader (implemented in 2.0 as "PerlOptions +ParseHeaders")
+  should have a compat wrapper
+
+- PerlTaintCheck, PerlWarn (implemented in 2.0 with PerlSwitches)
+  should have a compat wrapper
+
 - MaxModPerlRequestsPerChild
 
-- $r->seqno
+- $r->seqno, $r->sent_header, $r->cgi_env, $r->cgi_var,
+  $r->query_string, $r->basic_http_header, $r->new_read,
+  $r->write_client, $r->read_client_block, $r->translate_name
+
+- $r->content, $r->args in-a-list-context (exist in Apache::compat)
 
 - $Apache::Server::Starting, $Apache::Server::ReStarting
 
