@@ -23,7 +23,11 @@ sub handler {
 
     $tests += $lfs_tests unless LARGE_FILES_CONFLICT;
 
-    plan $r, tests => $tests, have 'APR::PerlIO';
+    eval { require APR::PerlIO };
+
+    plan $r, tests => $tests, have {
+        "This Perl build doesn't support PerlIO layers" =>
+            APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED() };
 
     my $vars = Apache::Test::config()->{vars};
     my $dir  = catfile $vars->{documentroot}, "perlio";
