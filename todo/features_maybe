@@ -12,12 +12,6 @@
   problem, by simply calling $subrequest->DESTROY 3 times or so in a
   raw, the server just hangs...
 
-* APR::BucketAlloc object returned by $r->connection->bucket_alloc
-  doesn't have a real package. It's OK for now, but when used outside
-  httpd, where that allocation should come from?
-  - Add glue for function: apr_bucket_alloc_create(pool);
-  not urgent for 2.0
-
 * 'apachectl configtest' will not test perl modules, unless <perl>
   section or PerlLoadModule has happeneded to be loaded (since by
   default we start perl in the post-config phase. A possible solution
