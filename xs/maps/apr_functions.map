@@ -444,7 +444,7 @@ MODULE=APR::String
 MODULE=APR::Util PACKAGE=guess
  apr_filename_of_pathname
  apr_password_get
- apr_password_validate
+ int:apr_password_validate | mpxs_
 -apr_snprintf
 -apr_vformatter
 -apr_vsnprintf
