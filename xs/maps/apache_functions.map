@@ -42,7 +42,6 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 !ap_content_type_tolower
  ap_get_status_line
  ap_is_initial_req
- ap_method_register
 >ap_method_registry_init
 >ap_process_request_internal
 ?ap_get_mime_headers
@@ -168,6 +167,9 @@ MODULE=Apache::ServerUtil   PACKAGE=guess   BOOT=1
  ap_psignature | | r,prefix
 ~ap_server_root_relative
 
+PACKAGE=Apache::Server
+ ap_method_register
+ 
 MODULE=Apache::Connection   PACKAGE=guess
 #XXX: thought this might be useful for protocol modules
 #however it is not exported on win32
