@@ -18,7 +18,7 @@ T_APR_TIME
 	sv_setnv($arg, (NV)($var / APR_USEC_PER_SEC));
 
 T_UVOBJ
-	sv_setref_uv($arg, \"${ntype}\", (UV)$var);
+	modperl_perl_sv_setref_uv(aTHX_ $arg, \"${ntype}\", (UV)$var);
 
 ######################################################################
 INPUT
