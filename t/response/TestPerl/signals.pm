@@ -24,9 +24,9 @@ sub handler {
 
     my $build = Apache::BuildConfig->new;
     my $static = $build->should_build_apache ? 1 : 0;
-    
+
     my $tests = $static ? 1 : 2;
-    
+
     plan $r, tests => $tests,
         need { "works only for prefork" => ($mpm eq 'prefork') };
 
