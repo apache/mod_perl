@@ -43,6 +43,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 !ap_content_type_tolower
  ap_get_status_line
  ap_is_initial_req
+ mpxs_Apache__RequestRec_no_cache
 
 #MODULE=Apache::RequestConfig
  ap_document_root
