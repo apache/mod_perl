@@ -37,10 +37,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
   owner: gozer
 
-* per-server cleanups core dump or are otherwise ineffective
-    Apache->server->process->pconf->cleanup_register(sub { ...  });
-  Report: geoff
-
 * Apache::SizeLimit
   o Need to port tools that restrict the memory size used by processes
     for prefork mpms and develop new ones for threaded mpms. Need to
