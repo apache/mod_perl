@@ -1031,7 +1031,7 @@ write_client(r, ...)
 	        buffer += HUGE_STRING_LEN;
 	    }
 	    if(sent < 0) {
-	        mod_perl_warn(r->server, "mod_perl: rwrite returned -1");
+	        mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
 	        break;
 	    }
 	    len -= sent;
@@ -1039,7 +1039,7 @@ write_client(r, ...)
         }
 #else
         if((sent = rwrite(buffer, len, r)) < 0) {
-	    mod_perl_warn(r->server, "mod_perl: rwrite returned -1");
+	    mod_perl_debug(r->server, "mod_perl: rwrite returned -1");
 	    break;
         }
         RETVAL += sent;

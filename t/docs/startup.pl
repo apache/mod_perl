@@ -45,17 +45,13 @@ $ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
 
 #test Apache::RegistryLoader
 {
-    use Cwd ();
     use Apache::RegistryLoader ();
     use DirHandle ();
     use strict;
     
-    local $^W = 0; #shutup line 164 Cwd.pm 
-
-    my $cwd = Cwd::getcwd;
     my $rl = Apache::RegistryLoader->new(trans => sub {
 	my $uri = shift; 
-	$cwd."/t/net${uri}";
+	$Apache::Server::CWD."/t/net${uri}";
     });
 
     my $d = DirHandle->new("t/net/perl");
@@ -63,6 +59,7 @@ $ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
     for my $file ($d->read) {
 	next if $file eq "hooks.pl"; 
 	next unless $file =~ /\.pl$/;
+	Apache->untaint($file);
 	my $status = $rl->handler("/perl/$file");
 	unless($status == 200) {
 	    die "pre-load of `/perl/$file' failed, status=$status\n";

@@ -132,6 +132,7 @@ sub status_inc {
     "</tr>";
 
     foreach $file (sort keys %INC) {
+	local $^W = 0;
 	next if $file =~ m:^/:;
 	next unless $file =~ m:\.pm:;
 	next unless $INC{$file}; #e.g. fake Apache/TieHandle.pm

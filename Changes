@@ -7,6 +7,14 @@ Changes - Apache mod_perl change logfile
 =over 3
 
 =item 1.13_01-dev
+ 
+TAINT_NOT just after perl_run(), otherwise 'make test' may choke (when
+it shouldn't): 
+   "Insecure dependency in eval while running with -T switch.
+   Callback called exit."
+[Salvador Ortiz]
+
+move "rwrite returned -1" message from warn level to debug level
 
 Makefile.PL fix for 'make test' and --enable-shared= modules
 

@@ -1,13 +1,10 @@
 use Apache ();
-use Cwd 'getcwd';
 my $tests = 0;
-my $pwd = getcwd;
 
 my $r = Apache->request;
 $r->content_type("text/html");
 $r->send_http_header;
-my $doc_root = "$pwd/../../docs";
-#Apache->untaint($doc_root);
+my $doc_root = $r->document_root;
 
 my $ht_access  = "$doc_root/.htaccess";
 my $hooks_file = "$doc_root/hooks.txt";
