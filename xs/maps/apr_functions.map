@@ -62,6 +62,8 @@ MODULE=APR::Socket
 !apr_socket_data_set
  apr_socket_opt_get
  apr_socket_opt_set
+ apr_socket_timeout_get | mpxs_ | ...
+ apr_socket_timeout_set
 -apr_sendfile
 -apr_sendv
 !apr_socket_from_file

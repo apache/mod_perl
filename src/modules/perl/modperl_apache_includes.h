@@ -32,6 +32,9 @@
 #include "apr_uri.h"
 #include "apr_date.h"
 #include "apr_buckets.h"
+#include "apr_time.h"
+#include "apr_network_io.h"
+
 #include "util_filter.h"
 
 #include "util_script.h"
@@ -54,11 +57,33 @@ typedef void * apr_thread_mutex_t;
 #define apr_time_from_sec(sec) ((apr_time_t)(sec) * APR_USEC_PER_SEC)
 #endif 
 
-#ifndef apr_socket_opt_get 
+
+/* pre-APR_0_9_0 (APACHE_2_0_40) */
+#if APR_MAJOR_VERSION == 0 && APR_MINOR_VERSION == 9 && \
+    APR_PATCH_VERSION == 0 && defined(APR_IS_DEV_VERSION)
+
+/* deprecated since APR_0_9_0 */
 #define apr_socket_opt_get apr_getsocketopt
-#endif
-#ifndef apr_socket_opt_set
 #define apr_socket_opt_set apr_setsocketopt
+
+#define modperl_apr_func_not_implemented(func, ver) \
+    { \
+        dTHX; \
+        Perl_croak(aTHX_ #func "() requires APR version " #ver " or higher"); \
+    }
+
+/* added in APACHE_2_0_40/APR_0_9_0 */
+apr_status_t apr_socket_timeout_get(apr_socket_t *sock, apr_interval_time_t *t)
+{
+    modperl_apr_func_not_implemented(timeout_get, 0.9.0);
+    return APR_ENOTIMPL;
+}
+apr_status_t apr_socket_timeout_set(apr_socket_t *sock, apr_interval_time_t t)
+{
+    modperl_apr_func_not_implemented(timeout_set, 0.9.0);
+    return APR_ENOTIMPL;
+}
+
 #endif
 
 #endif /* MODPERL_APACHE_INCLUDES_H */
