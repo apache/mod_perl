@@ -557,14 +557,27 @@ CHAR_P perl_cmd_opmask (cmd_parms *parms, void *dummy, char *arg)
 }
 #endif
 
+void perl_tainting_set(server_rec *s, int arg)
+{
+    dPSRV(s);
+    GV *gv;
+
+    cls->PerlTaintCheck = arg;
+    if(PERL_RUNNING()) {
+	gv = GvSV_init("Apache::__T");
+	if(arg) {
+	    SvREADONLY_off(GvSV(gv));
+	    GvSV_setiv(gv, TRUE);
+	    SvREADONLY_on(GvSV(gv));
+	    tainting = TRUE;
+	}
+    }
+}
+
 CHAR_P perl_cmd_tainting (cmd_parms *parms, void *dummy, int arg)
 {
-    dPSRV(parms->server);
     MP_TRACE_d(fprintf(stderr, "perl_cmd_tainting: %d\n", arg));
-    cls->PerlTaintCheck = arg;
-#ifdef PERL_SECTIONS
-    if(arg && PERL_RUNNING()) tainting = TRUE;
-#endif
+    perl_tainting_set(parms->server, arg);
     return NULL;
 }
 

@@ -93,7 +93,9 @@ while (($key,$val) = each %ENV) {
 }
 
 $r->print("TOTAL: ", scalar keys %ENV);
-
+unless ($Apache::__T) {
+    die "\$Apache::__T not set!";
+}
 if ($ENV{CONTENT_LENGTH}) {
     #$len = $ENV{CONTENT_LENGTH};
     my $content = $r->content;
