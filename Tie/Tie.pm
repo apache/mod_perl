@@ -30,7 +30,7 @@ Apache::Tie - Tie interfaces to Apache structures
     $table->set(From => 'dougm@perl.apache.org');
 
 Mod_perl have to be compiled with 'perl Makefile.PL PERL_TIE_TABLES=1'
-for this to work.
+or EVERYTHING=1 for this to work.
 
 =head1 DESCRIPTION
 
