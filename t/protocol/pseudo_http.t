@@ -18,7 +18,10 @@ my $login    = "stas";
 my $passgood = "foobar";
 my $passbad  = "foObaR";
 
-plan tests => 13, need_auth && need_access;
+# blocking socket bug fixed in 2.0.52
+my $ok = $^O !~ /^(Open|Net)BSD$/i || need_min_apache_version('2.0.52');
+
+plan tests => 13, need need_auth, need_access, $ok;
 
 {
     # supply correct credential when prompted for such and ask the
