@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+perl_startup will now call perl_init_i18nl10n(1), for 'use locale' 
+
 Makefile.PL will now set CFLAGS="$PERL_EXTRA_CFLAGS" with USE_APACI=1
 thanks to help from Vivek Khera
 
