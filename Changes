@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+the top level 'make test' now descend into the ModPerl-Registry dir
+to run 'make test' there [Stas]
+
 Apache::Test: don't inherit loading of the mod_perl object from the
 system-wide config, since we already add it [Stas]
 
