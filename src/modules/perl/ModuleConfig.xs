@@ -167,6 +167,7 @@ getline(parms, buff=Nullsv, len=MAX_STRING_LEN)
     RETVAL = newSV(0);
     l = (char *)palloc(parms->temp_pool, len);
     ret = !cfg_getline(l, len, cmd_infile);
+    if(!buff) buff = sv_newmortal();
 
     switch((ix = XSANY.any_i32)) {
 	case 0:
