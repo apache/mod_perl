@@ -7,6 +7,120 @@
 
 #ifdef USE_ITHREADS
 
+modperl_list_t *modperl_list_new(ap_pool_t *p)
+{
+    modperl_list_t *listp = 
+        (modperl_list_t *)ap_pcalloc(p, sizeof(*listp));
+    return listp;
+}
+
+void modperl_list_dump(modperl_list_t *listp)
+{
+    while (listp->next) {
+        modperl_interp_t *interp = (modperl_interp_t *)listp->data;
+        MP_TRACE_i(MP_FUNC, "listp==0x%lx, interp==0x%lx, requests=%d\n",
+                 (unsigned long)listp, (unsigned long)interp,
+                 interp->num_requests);
+        listp = listp->next;
+    }
+}
+
+modperl_list_t *modperl_list_last(modperl_list_t *list)
+{
+    while (list->next) {
+        list = list->next;
+    }
+
+    return list;
+}
+
+modperl_list_t *modperl_list_first(modperl_list_t *list)
+{
+    while (list->prev) {
+        list = list->prev;
+    }
+
+    return list;
+}
+
+modperl_list_t *
+modperl_list_append(modperl_list_t *list,
+                    modperl_list_t *new_list)
+{
+    modperl_list_t *last;
+
+    new_list->prev = new_list->next = NULL;
+
+    if (!list) {
+        return new_list;
+    }
+
+    last = modperl_list_last(list);
+
+    last->next = new_list;
+    new_list->prev = last;
+
+    return list;
+}
+
+modperl_list_t *
+modperl_list_prepend(modperl_list_t *list,
+                     modperl_list_t *new_list)
+{
+    new_list->prev = new_list->next = NULL;
+
+    if (!list) {
+        return new_list;
+    }
+
+    if (list->prev) {
+        list->prev->next = new_list;
+        new_list->prev = list->prev;
+    }
+
+    list->prev = new_list;
+    new_list->next = list;
+
+    return new_list;
+}
+
+modperl_list_t *
+modperl_list_remove(modperl_list_t *list,
+                    modperl_list_t *rlist)
+{
+    modperl_list_t *tmp = list;
+  
+    while (tmp) {
+        if (tmp != rlist) {
+            tmp = tmp->next;
+        }
+        else {
+            if (tmp->prev) {
+                tmp->prev->next = tmp->next;
+            }
+            if (tmp->next) {
+                tmp->next->prev = tmp->prev;
+            }
+            if (list == tmp) {
+                list = list->next;
+            }
+
+            break;
+	}
+    }
+
+#ifdef MP_TRACE
+    if (!tmp) {
+        /* should never happen */
+        MP_TRACE_i(MP_FUNC, "failed to find 0x%lx in list 0x%lx\n",
+                   (unsigned long)rlist, (unsigned long)list);
+        modperl_list_dump(list);
+    }
+#endif
+
+    return list;
+}
+
 modperl_interp_t *modperl_interp_new(ap_pool_t *p,
                                      modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
@@ -74,18 +188,9 @@ ap_status_t modperl_interp_cleanup(void *data)
 modperl_interp_t *modperl_interp_get(server_rec *s)
 {
     MP_dSCFG(s);
-    modperl_interp_t *head, *interp = NULL;
+    modperl_interp_t *interp = NULL;
     modperl_interp_pool_t *mip = scfg->mip;
-
-    if (!mip->head) {
-        /*
-         * XXX: no interp pool
-         * need to lock the interpreter during callbacks
-         * unless mpm is prefork
-         */
-        MP_TRACE_i(MP_FUNC, "no pool, returning parent\n");
-        return mip->parent;
-    }
+    modperl_list_t *head;
 
     MUTEX_LOCK(&mip->mip_lock);
 
@@ -96,7 +201,6 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
             MUTEX_UNLOCK(&mip->mip_lock);
             modperl_interp_pool_add(mip, interp);
             MP_TRACE_i(MP_FUNC, "cloned new interp\n");
-            return interp;
         }
         while (mip->size == mip->in_use) {
             MP_TRACE_i(MP_FUNC, "waiting for available interpreter\n");
@@ -104,31 +208,25 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
         }
     }
 
-    head = mip->head;
+    head = mip->idle;
+    mip->idle = modperl_list_remove(mip->idle, head);
+    mip->busy = modperl_list_append(mip->busy, head);
+
+    interp = (modperl_interp_t *)head->data;
 
     MP_TRACE_i(MP_FUNC, "head == 0x%lx, parent == 0x%lx\n",
                (unsigned long)head, (unsigned long)mip->parent);
 
-    while (head) {
-        if (!MpInterpIN_USE(head)) {
-            interp = head;
-            MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)\n",
-                       (unsigned long)interp,
-                       (unsigned long)interp->perl);
+    MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)\n",
+               (unsigned long)interp,
+               (unsigned long)interp->perl);
 #ifdef _PTHREAD_H
-            MP_TRACE_i(MP_FUNC, "pthread_self == 0x%lx\n",
-                       (unsigned long)pthread_self());
+    MP_TRACE_i(MP_FUNC, "pthread_self == 0x%lx\n",
+               (unsigned long)pthread_self());
 #endif
-            MpInterpIN_USE_On(interp);
-            mip->in_use++;
-            break;
-        }
-        else {
-            MP_TRACE_i(MP_FUNC, "0x%lx in use\n",
-                       (unsigned long)head);
-            head = head->next;
-        }
-    }
+
+    MpInterpIN_USE_On(interp);
+    mip->in_use++;
 
     /* XXX: this should never happen */
     if (!interp) {
@@ -145,11 +243,16 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
 ap_status_t modperl_interp_pool_destroy(void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
-    modperl_interp_t *interp;
 
-    while ((interp = mip->head)) {
-        modperl_interp_pool_remove(mip, interp);
-        modperl_interp_destroy(interp);
+    while (mip->idle) {
+        modperl_interp_destroy((modperl_interp_t *)mip->idle->data);
+        mip->size--;
+        mip->idle = mip->idle->next;
+    }
+
+    if (mip->busy) {
+        MP_TRACE_i(MP_FUNC, "ERROR: %d interpreters still in use\n",
+                   mip->in_use);
     }
 
     MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
@@ -168,15 +271,13 @@ ap_status_t modperl_interp_pool_destroy(void *data)
 void modperl_interp_pool_add(modperl_interp_pool_t *mip,
                              modperl_interp_t *interp)
 {
+    modperl_list_t *new_list = modperl_list_new(mip->ap_pool);
+
     MUTEX_LOCK(&mip->mip_lock);
 
-    if (mip->size == 0) {
-        mip->head = mip->tail = interp;
-    }
-    else {
-        mip->tail->next = interp;
-        mip->tail = interp;
-    }
+    interp->listp = new_list;
+    new_list->data = (void *)interp;
+    mip->idle = modperl_list_append(mip->idle, new_list);
 
     mip->size++;
     MP_TRACE_i(MP_FUNC, "added 0x%lx (size=%d)\n",
@@ -190,39 +291,7 @@ void modperl_interp_pool_remove(modperl_interp_pool_t *mip,
 {
     MUTEX_LOCK(&mip->mip_lock);
 
-    if (mip->head == interp) {
-        mip->head = interp->next;
-        interp->next = NULL;
-        MP_TRACE_i(MP_FUNC, "shifting head from 0x%lx to 0x%lx\n",
-                   (unsigned long)interp, (unsigned long)mip->head);
-    }
-    else if (mip->tail == interp) {
-        modperl_interp_t *tmp = mip->head;
-        /* XXX: implement a prev pointer */
-        while (tmp->next && tmp->next->next) {
-            tmp = tmp->next;
-        }
-
-        tmp->next = NULL;
-        mip->tail = tmp;
-        MP_TRACE_i(MP_FUNC, "popping tail 0x%lx, now 0x%lx\n",
-                   (unsigned long)interp, (unsigned long)mip->tail);
-    }
-    else {
-        modperl_interp_t *tmp = mip->head;
-
-        while (tmp && tmp->next != interp) {
-            tmp = tmp->next;
-        }
-
-        if (!tmp) {
-            MP_TRACE_i(MP_FUNC, "0x%lx not found\n",
-                       (unsigned long)interp);
-            MUTEX_UNLOCK(&mip->mip_lock);
-            return;
-        }
-        tmp->next = tmp->next->next;
-    }
+    mip->idle = modperl_list_remove(mip->idle, interp->listp);
 
     mip->size--;
     MP_TRACE_i(MP_FUNC, "removed 0x%lx (size=%d)\n",
@@ -273,6 +342,16 @@ ap_status_t modperl_interp_unselect(void *data)
     modperl_interp_pool_t *mip = interp->mip;
 
     MUTEX_LOCK(&mip->mip_lock);
+
+    /* remove from busy list, add back to idle */
+    /* XXX: sort list on interp->num_requests */
+    mip->busy = modperl_list_remove(mip->busy, interp->listp);
+    mip->idle = modperl_list_prepend(mip->idle, interp->listp);
+
+    if (!mip->busy) {
+        MP_TRACE_i(MP_FUNC, "all interpreters idle:\n");
+        MP_TRACE_i_do(modperl_list_dump(mip->idle));
+    }
 
     MpInterpIN_USE_Off(interp);
 
@@ -359,6 +438,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     }
 
     interp = modperl_interp_get(s ? s : r->server);
+    ++interp->num_requests; /* should only get here once per request */
 
     (void)ap_set_userdata((void *)interp, MP_INTERP_KEY,
                           modperl_interp_unselect,
