@@ -32,7 +32,7 @@ sub merge {
     # when DIR_MERGE is called twice for the same $base/$add during
     # the same request
     push @{ $new{$_} }, @{ $base->{$_}||[] } for keys %$base;
-    push @{ $new{$_} }, @{ $add->{$_} ||[]  } for keys %$add;
+    push @{ $new{$_} }, @{ $add->{$_} ||[] } for keys %$add;
 
     return bless \%new, ref($base);
 }
@@ -48,8 +48,6 @@ sub SERVER_MERGE {
     #warn "$class->SERVER_MERGE\n";
     merge(@_);
 }
-
-
 
 # this variable is of type ITERATE, so it'll get called as many times
 # as arguments, a single argument at a time. This function is called
