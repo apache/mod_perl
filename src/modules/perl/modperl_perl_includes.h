@@ -103,6 +103,10 @@
 #   define PERL_MAGIC_tied 'P'
 #endif
 
+#ifndef PERL_MAGIC_tiedscalar
+#   define PERL_MAGIC_tiedscalar 'p'
+#endif
+
 #ifndef PERL_MAGIC_ext
 #   define PERL_MAGIC_ext '~'
 #endif

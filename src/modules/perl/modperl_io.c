@@ -28,7 +28,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 
     modperl_io_handle_untie(aTHX_ handle);
 
-    sv_magic(TIEHANDLE_SV(handle), obj, 'q', Nullch, 0);
+    sv_magic(TIEHANDLE_SV(handle), obj, PERL_MAGIC_tiedscalar, Nullch, 0);
 
     SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
 
@@ -78,7 +78,7 @@ MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
     MAGIC *mg;
     SV *sv = TIEHANDLE_SV(handle);
 
-    if (SvMAGICAL(sv) && (mg = mg_find(sv, 'q'))) {
+    if (SvMAGICAL(sv) && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))) {
 	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
 
 	if (!strEQ(package, classname)) {
@@ -93,14 +93,14 @@ MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
 MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
 #ifdef MP_TRACE
-    if (mg_find(TIEHANDLE_SV(handle), 'q')) {
+    if (mg_find(TIEHANDLE_SV(handle), PERL_MAGIC_tiedscalar)) {
         MP_TRACE_r(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
                    GvNAME(handle), (unsigned long)handle,
                    SvREFCNT(TIEHANDLE_SV(handle)));
     }
 #endif
 
-    sv_unmagic(TIEHANDLE_SV(handle), 'q');
+    sv_unmagic(TIEHANDLE_SV(handle), PERL_MAGIC_tiedscalar);
 }
 
 MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)

@@ -354,13 +354,13 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 static void modperl_filter_mg_set(pTHX_ SV *obj, modperl_filter_t *filter)
 {
-    sv_magic(SvRV(obj), Nullsv, '~', NULL, -1);
+    sv_magic(SvRV(obj), Nullsv, PERL_MAGIC_ext, NULL, -1);
     SvMAGIC(SvRV(obj))->mg_ptr = (char *)filter;
 }
 
 modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
 {
-    MAGIC *mg = mg_find(SvRV(obj), '~');
+    MAGIC *mg = mg_find(SvRV(obj), PERL_MAGIC_ext);
     return mg ? (modperl_filter_t *)mg->mg_ptr : NULL;
 }
 
@@ -375,7 +375,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
         if (gv) {
             CV *cv = modperl_mgv_cv(gv);
             if (cv && SvMAGICAL(cv)) {
-                MAGIC *mg = mg_find((SV*)(cv), '~');
+                MAGIC *mg = mg_find((SV*)(cv), PERL_MAGIC_ext);
                 init_handler_pv_code = mg ? mg->mg_ptr : NULL;
             }
             else {
