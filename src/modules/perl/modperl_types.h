@@ -102,10 +102,16 @@ typedef struct {
 } modperl_per_request_config_t;
 
 typedef struct {
-    SV *obj;
-    CV *cv;
-    char *name;
+    SV *obj; /* object or classname if cv is a method */
+    SV *cv; /* subroutine reference or name */
+    char *name; /* orignal name from .conf if any */
+    int cvgen; /* XXX: for caching */
+    AV *args; /* XXX: switch to something lighter */
     int flags;
+    PerlInterpreter *perl; /* yuk: for cleanups */
 } modperl_handler_t;
+
+#define MP_HANDLER_TYPE_CHAR 1
+#define MP_HANDLER_TYPE_SV   2
 
 #endif /* MODPERL_TYPES_H */

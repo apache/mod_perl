@@ -22,7 +22,8 @@ void modperl_trace_level_set(char *level)
             return;
         }
     }
-    
+    MP_debug_level = 0x0;
+
     if (strEQ(level, "all")) {
         MP_debug_level = 0xffffffff;
     }
@@ -39,4 +40,6 @@ void modperl_trace_level_set(char *level)
     }
 
     MP_debug_level |= 0x80000000;
+
+    MP_TRACE_a_do(MP_TRACE_dump_flags());
 }
