@@ -5,3 +5,9 @@ Simple install:
 % make install
 
 See docs/user/install/install.pod for details.
+
+Simple config:
+
+LoadModule perl_module modules/mod_perl.so
+
+See docs/user/config/config.pod for details.
