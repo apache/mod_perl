@@ -48,8 +48,14 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
     modperl_srv_config_t *base_scfg =
       (modperl_srv_config_t *)
         ap_get_module_config(base_server->module_config, &perl_module);
-    PerlInterpreter *base_perl = modperl_startup(base_server, p);
+    PerlInterpreter *base_perl;
 
+    if (MpSrvPERL_OFF(base_scfg)) {
+        /* how silly */
+        return;
+    }
+
+    base_perl = modperl_startup(base_server, p);
     modperl_interp_init(base_server, p, base_perl);
     MpInterpBASE_On(base_scfg->mip->parent);
 
@@ -61,11 +67,15 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
             /* XXX: using getenv() just for testing here */
             char *do_alloc = getenv("MP_SRV_ALLOC_TEST");
             char *do_clone = getenv("MP_SRV_CLONE_TEST");
+            char *do_off = getenv("MP_SRV_OFF_TEST");
             if (do_alloc && strEQ(do_alloc, s->server_hostname)) {
                 MpSrvPERL_ALLOC_On(scfg);
             }
             if (do_clone && strEQ(do_clone, s->server_hostname)) {
                 MpSrvPERL_CLONE_On(scfg);
+            }
+            if (do_off && strEQ(do_off, s->server_hostname)) {
+                MpSrvPERL_OFF_On(scfg);
             }
         }
 
@@ -74,6 +84,11 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
             perl = modperl_startup(s, p);
             MP_TRACE_i(MP_FUNC, "modperl_startup() server=%s\n",
                        s->server_hostname);
+        }
+
+        if (MpSrvPERL_OFF(scfg)) {
+            scfg->mip = NULL;
+            continue;
         }
 
 #ifdef USE_ITHREADS
