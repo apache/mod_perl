@@ -162,6 +162,8 @@ apr_status_t modperl_interp_pool_destroy(void *data)
 
     modperl_env_unload();
 
+    modperl_perl_pp_unset_all();
+
     return APR_SUCCESS;
 }
 
