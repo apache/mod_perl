@@ -357,7 +357,6 @@ apr_lib.h
 apr_general.h
 apr_signal.h
 util_script.h
-util_date.h
 };
 
 sub h_wrap {
