@@ -26,10 +26,61 @@
 
 * die 404 (consider deprecating it)
 
-* mod_perl.pm::import
+* mod_perl::import
+  - Apache->import:
+   required for exit/warn overridding
 
-- Apache::test: tobe a compat stub around new test framework
+* Apache::test: tobe a compat stub around new test framework
 
-- Apache::src: tobe a compat stub around new build framework
+* Apache::src: tobe a compat stub around new build framework
 
+* hooks ordering is not implemented yet
+  Owner: geoff
+
+* tied filehandle interface:
+ -EOF, TELL, SEEK
+ -READLINE - proper implementation (see comment in Apache::compat)
+ need to attempt to fix that interface so it'll work with IPC::Open* family  
+
+* $r->finfo:
+  need apr_finfo_t <-> struct stat conversion (might already be there,
+  haven't looked close enough yet)
+
+* $r->chdir_file:
+  not safe for threaded environments.  should at least unshift @INC
+  with dirname $r->filename.  consider overriding open() to resolve
+  relative filenames.
+
+* $r->child_terminate:
+  haven't looked into this, but clearly not an option with threaded
+  mpms.  might consider knocking off the current PerlInterpreter
+  instead.
+
+* $r->log_reason:
+  should be simple, see modperl_log.h (currently aliased to log_error
+  in compat.pm)
+
+* APR::URI missing $uri->rpath
+
+* size_string() - can we use apr_strfsize ?
+
+* escape_html() - consider jeff baker's more robust implementation of
+  my_escape_html(), which should probably be made in apache-2.0 itself
+  (is there apache api? or just drop it)
+
+* $r->document_root:
+  cannot currently be modified.  requires locking since it is part of
+  the per-server config structure which is shared between threads
+
+* $r->send_fd:
+  need to figure out howto map PerlIO <-> apr_file_t
+  at the moment $r->send_fd is implement in Apache::compat, functions,
+  but does not have the performance benefits of ap_send_fd()
+  however, $r->sendfile is a new function that opens the file for you
+  and calls ap_send_fd() underneath. ap_send_fd() in APR doesn't work 
+  with fd's which aren't files and of unknown length, therefore it cannot 
+  be used for implementing 1.x compatible send_fd.
+  Solution: send_fd will require the length argument and there will be
+  no send_fd without the length argument as in mp1
+  Owner: stas
 

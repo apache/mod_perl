@@ -16,8 +16,6 @@ d) split off into something standalone on cpan
 
 - modules: 
   + Apache::SIG: dead
-  + Apache::StatINC: replace with or point to Apache::Reload
-                     or rewrite in C
   + Apache::Symbol: unknown
   + Apache::Leak: could be made useful
   + Apache::RedirectLogFix: dead

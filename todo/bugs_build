@@ -54,3 +54,9 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
 
 * mp2bug -- add the output of 'ldd httpd' to the report
 
+* source_scan won't create Wrap/Foo/Bar.xs if
+  xs/maps/modperl_functions.map defines only a boot section:
+  MODULE=APR::IO PACKAGE=APR::IO BOOT=1 
+  unless there is at least one function added to the .map file
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100702825506778&w=2
+

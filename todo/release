@@ -116,11 +116,69 @@
   STATUS: do the cleanup for all handlers, but provide a new config
   option so users can disable it if they know what they are doing.
 
-* Apache::SizeLimit and Apache::Resource
+* Apache::SizeLimit
+  o Need to port tools that restrict the memory size used by processes
+    for prefork mpms and develop new ones for threaded mpms. Need to
+    work out the details of the implementation of the garbage
+    collection thread for the threaded mpms as originally suggested by
+    doug.  The issue with threads is that there is no way to know the
+    thread's size, can we use B::Size and B::TerseSize?
+
+    prefork:
+        Apache::SizeLimit (???)
+        Apache::GTopLimit (???)
+    threaded:
+        Garbage Collector thread
+
+  => Ideally the tools should work transparently with threaded and
+  non-threaded mpms, but how?
+
+* Apache::Resource
 
 * It'd be nice to have PAUSE and the clients support packages with
   several versions, like mod_perl 1.0 and mod_perl 2.0, since once we
   release it any dependency on mod_perl will be resolved as mod_perl
   2.0, when mod_perl 1.0 may be required instead.
+
+* Set/Add overlapping in config which is not doing the right thing. See:
+  http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100622977803237&w=2
+  http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
+
+* Apache->server_root_relative:
+  needs to default to current pool (pconf at startup, r->pool at
+  request time) - solution: require the pool object to be passed. if a
+  user doesn't have one, make them create one, e.g.:
+  Apache::server_root_relative(APR::Pool->new, ....). Must make sure
+  that the returned SV has a copy of that string and doesn't rely on
+  anything that it's in pool, which will be now destroyed.
+
+* $r->cleanup_for_exec  needs to be added to Apache::compat as a noop.
+  Owner: stas
+
+* ht_time() - now requires a pool, temporarily renamed format_time for
+  1.x ht_time compat.  should we just leave as is or see if ht_time can
+  be changed to not require a pool?
+  Status: probably rename it back and just require the
+  pool. Apache::compat will override this method and if the pool
+  wasn't passed it'll create one behind the scenes (APR::Pool->new).
+
+* Apache::{Server,Process} classes:
+  require mutex lock for writing (e.g. $s->(error_fname|error_log)
+  Status: most likely some server/process datastructures aren't
+  supposed to be modified at request time. So instead of mutex
+  locking, we think we should simply have a flag that will be down
+  during the startup and will allow methods modifying $s/$proc structs
+  (the method will check that flag and if it's up it'll die). At the
+  beginning of child_end it'll raise the flag and lower it at the end
+  of child_exit.
+
+* push_handlers has a problem when called to add handlers to the
+  current phase (segfaults, see t/error/push_handlers.t) check that
+  get_handlers sees that added handler.
+
+* Apache::Reload
+  - needs to handle properly redefined subs warnings
+
+
 
 
