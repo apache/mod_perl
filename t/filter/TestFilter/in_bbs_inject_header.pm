@@ -19,7 +19,7 @@ package TestFilter::in_bbs_inject_header;
 # and in the middle, whichever way you prefer.
 
 use strict;
-use warnings;# FATAL => 'all';
+use warnings FATAL => 'all';
 
 use base qw(Apache::Filter);
 
@@ -42,6 +42,8 @@ my %headers = (
     'X-Extra-Header2' => 'Value 2',
     'X-Extra-Header3' => 'Value 3',
 );
+
+my $request_body = "This body shouldn't be seen by the filter";
 
 # returns 1 if a bucket with a header was inserted to the $bb's tail,
 # otherwise returns 0 (i.e. if there are no buckets to insert)
@@ -77,9 +79,6 @@ sub handler : FilterConnectionHandler {
 
     debug join '', "-" x 20 , " filter called ", "-" x 20;
 
-    use Data::Dumper;
-    warn Dumper $filter->ctx;
-
     my $ctx;
     unless ($ctx = $filter->ctx) {
         debug "filter context init";
@@ -97,15 +96,14 @@ sub handler : FilterConnectionHandler {
     # handling the HTTP request body
     if ($ctx->{done_with_headers}) {
         # XXX: when the bug in httpd filter will be fixed all the
-        # code in this branch will be replaced with $filter->remove;
+        # code in this branch will be replaced with:
+        #   $filter->remove;
+        #   return Apache::DECLINED;
         # at the moment (2.0.48) it doesn't work
         # so meanwhile tell the mod_perl filter core to pass-through
         # the brigade unmodified
         debug "passing the body through unmodified";
         return Apache::DECLINED;
-        #my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
-        #return $rv unless $rv == APR::SUCCESS;
-        #return Apache::OK;
     }
 
     # any custom HTTP header buckets to inject?
@@ -131,10 +129,11 @@ sub handler : FilterConnectionHandler {
 
         my $status = $bucket->read($data);
         debug "filter read:\n[$data]";
+        return $status unless $status == APR::SUCCESS;
 
-        if ($status != APR::SUCCESS) {
-            return $status;
-        }
+        # check that we really work only on the headers
+        die "This filter should not ever receive the request body, " .
+            "but HTTP headers" if ($data||'') eq $request_body;
 
         if ($data and $data =~ /^POST/) {
             # demonstrate how to add a header while processing other headers
@@ -186,10 +185,11 @@ sub handler : FilterConnectionHandler {
 sub response {
     my $r = shift;
 
+    my $data = ModPerl::Test::read_post($r);
+
     plan $r, tests => 2 + keys %headers;
 
-    my $data = ModPerl::Test::read_post($r);
-    ok t_cmp(8, length($data), "whatever");
+    ok t_cmp($request_body, $data);
 
     ok t_cmp($header1_val,
              $r->headers_in->get($header1_key),
@@ -212,7 +212,6 @@ __END__
   # be set by the time the filter is inserted into the filter chain
   PerlModule TestFilter::in_bbs_inject_header
   PerlInputFilterHandler TestFilter::in_bbs_inject_header
-
   <Location /TestFilter__in_bbs_inject_header>
      SetHandler modperl
      PerlResponseHandler TestFilter::in_bbs_inject_header::response

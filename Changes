@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
+make sure that connection filters won't be inserted as request filters [Stas]
+
 Prevent the 'Use of uninitialized value.' warning when
 ModPerl::Util::exit is used. [Stas]
 
