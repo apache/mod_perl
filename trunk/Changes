@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+$r->the_request can now be modified
+
 modules/request test fix
 [Rick Myers <rik@sumthin.nu>]
 
