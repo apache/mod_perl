@@ -4,7 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::CmdParms ();
-use Apache::Module ();
+use base qw(Apache::Module);
 
 use Apache::Test;
 use Apache::TestUtil;
@@ -48,11 +48,6 @@ sub TestCmdParms {
         $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
     
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
-}
-
-sub get_config {
-    my($self, $s) = (shift, shift);
-    Apache::Module::get_config($self, $s, @_);
 }
 
 ### response handler ###
