@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_02-dev
 
+backout modules/util validate_password tests, not everybody has crypt,
+thanks to Randy Kobes and Ed Loehr for spotting
+
 fix _AIX typo in dso_unload
 [Jens-Uwe Mager <jum@helios.de>]
 
