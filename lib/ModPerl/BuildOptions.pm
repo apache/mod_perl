@@ -55,7 +55,8 @@ sub init {
     }
 
     unless ($build->{MP_USE_DSO} or $build->{MP_USE_STATIC}) {
-        $build->{MP_USE_DSO} = $build->{MP_USE_STATIC} = 1;
+        # default to DSO
+        $build->{MP_USE_DSO} = 1;
     }
 
     $build->{MP_GENERATE_XS} = 1 unless exists $build->{MP_GENERATE_XS};
