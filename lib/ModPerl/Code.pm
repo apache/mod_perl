@@ -364,6 +364,7 @@ AP_INIT_ITERATE("$h_name", $name, NULL, \\
 
 EOF
             print $c_fh <<EOF;
+
 $protostr
 {
     $prototype->{cfg}->{get};
