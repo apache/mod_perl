@@ -573,6 +573,8 @@ static apr_status_t modperl_sys_term(void *data)
     MP_threads_started = 0;
     MP_post_post_config_phase = 0;
 
+    MP_PERL_FREE_THREAD_KEY_WORKAROUND;
+
     MP_TRACE_i(MP_FUNC, "mod_perl sys term\n");
 
     modperl_env_unload();

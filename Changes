@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_21-dev
 
+add a perl bug workaround: with USE_ITHREADS perl leaks pthread_key_t
+on every reload of libperl.{a,so} (it's allocated on the very first
+perl_alloc() and never freed). This becomes a problem on apache
+restart: if the OS limit is 1024, 1024 restarts later things will
+start crashing [Gisle Aas <gisle@ActiveState.com>, Stas]
+
 on Irix mod_perl.so needs to see the libperl.so symbols, which
 requires the -exports option immediately before -lperl.  [Gordon Lack
 <gml4410@ggr.co.uk>]
