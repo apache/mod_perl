@@ -120,8 +120,6 @@ sub test {
 
     }
 
-
-
     # remove
     {
         my $b = APR::Bucket->new("aaa");
