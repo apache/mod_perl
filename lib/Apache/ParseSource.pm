@@ -264,7 +264,7 @@ sub parse_enum {
         $name = $1;
     }
     $code =~ s:/\*.*?\*/::sg;
-    $code =~ s/\s*=\s*\d+//g;
+    $code =~ s/\s*=\s*\w+//g;
     $code =~ s/^[^\{]*\{//s;
     $code =~ s/\}[^;]*;?//s;
 
