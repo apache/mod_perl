@@ -304,17 +304,17 @@ sub flush_namespace {
     my $tab = \%{$package.'::'};
 
     for (keys %$tab) {
-	if(defined &{ $tab->{$_} }) {
+	if(*{ $tab->{$_} }{CODE}) {
 	    undef_cv_if_owner($package, \&{ $tab->{$_} });
 	} 
-        if(defined %{ $tab->{$_} }) {
-            %{ $tab->{$_} } = undef;
+        if(*{ $tab->{$_} }{HASH}) {
+            undef %{ $tab->{$_} };
         }
-        if(defined @{ $tab->{$_} }) {
-            @{ $tab->{$_} } = undef;
+        if(*{ $tab->{$_} }{ARRAY}) {
+            undef @{ $tab->{$_} };
         }
-        if(defined ${ $tab->{$_} }) {
-	    ${ $tab->{$_} } = undef;
+        if(*{ $tab->{$_} }{SCALAR}) {
+	    undef ${ $tab->{$_} };
         }
      }
 }
