@@ -14,5 +14,5 @@ my($res, $str);
 
 my $expected = "subreq is quite ok";
 my $received = GET_BODY_ASSERT "$location/one";
-ok t_cmp($expected, $received, "handler => filter => handler");
+ok t_cmp($received, $expected, "handler => filter => handler");
 
