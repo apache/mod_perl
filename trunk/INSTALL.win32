@@ -117,8 +117,10 @@ the command line. The arguments accepted include
 
 =item APACHE_SRC
 
-This gives the path to the Apache sources (eg, ..\apache_1.3.xx). It 
-is assumed that Apache has already been built in this directory.
+This can be one of two values: either the path to the Apache build
+directory (eg, ..\apache_1.3.xx), or to the installed Apache location
+(eg, \Apache). This is used to set the locations of ApacheCore.lib
+and the Apache header files.
 
 =item INSTALL_DLL
 

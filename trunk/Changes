@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+win32 enhancement: APACHE_SRC can be either the build or install tree
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 perl_destruct_level must always be 2 for DSO builds to prevent
 leaking on restarts, thanks to Paul G. Weiss for the spot
 
