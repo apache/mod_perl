@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+call (void)perl_request_rec(r) asap, instead of waiting till the
+response phase, e.g. so CGI.pm can be used before PerlHandler, without 
+having to call Apache->request($r);
+
 Apache::perl_hook() fixes for Perl*Api, thanks to Geoffrey Young for
 the spot
 

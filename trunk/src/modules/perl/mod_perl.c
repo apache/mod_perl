@@ -1284,6 +1284,8 @@ void perl_per_request_init(request_rec *r)
 	cfg->setup_env = 0; /* just once per-request */
     }
 
+    (void)perl_request_rec(r);
+
     if(callbacks_this_request++ > 0) return;
 
     /* PerlSetEnv */
