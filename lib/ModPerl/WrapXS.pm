@@ -620,7 +620,6 @@ my %typemap = (
     'apr_time_t'         => 'T_APR_TIME',
     'APR::Table'         => 'T_HASHOBJ',
     'APR::Pool'          => 'T_POOLOBJ',
-    'APR::OS::Thread'    => 'T_UVOBJ',
 );
 
 sub write_typemap {
