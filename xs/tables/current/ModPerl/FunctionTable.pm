@@ -6474,23 +6474,27 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'SV *',
     'name' => 'mpxs_APR__Brigade_flatten',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
     'args' => [
       {
         'type' => 'PerlInterpreter *',
         'name' => 'my_perl'
       },
       {
-        'type' => 'apr_bucket_brigade *',
-        'name' => 'bb'
+        'type' => 'I32',
+        'name' => 'items'
       },
       {
-        'type' => 'apr_pool_t *',
-        'name' => 'pool'
+        'type' => 'SV **',
+        'name' => 'mark'
       },
       {
-        'type' => 'SV *',
-        'name' => 'sv_len'
-      },
+        'type' => 'SV **',
+        'name' => 'sp'
+      }
     ]
   },
   {
