@@ -27,6 +27,8 @@ for (my $upload = $apr->upload; $upload; $upload = $upload->next) {
     my $filename = $upload->filename;
     my $name = $upload->name;
     my $type = $upload->type;
+    next unless $filename;
+
     print "$name $filename ($type)";
     if ($fh and $name) {
 	no strict;
@@ -35,17 +37,23 @@ for (my $upload = $apr->upload; $upload; $upload = $upload->next) {
 	}
     }
     print "\n";
+    close $fh;
 }
 
 my $first = $apr->upload->name;
 my $first_filename = $apr->upload->filename;
 my $first_fh = $apr->upload->fh;
-while (<$first_fh>) { }
+if ($first_fh) {
+    while (<$first_fh>) { }
+}
+close $first_fh;
 
 for my $upload ($apr->upload) {
     my $fh = $upload->fh;
     my $filename = $upload->filename;
     my $name = $upload->name;
+    next unless $filename;
+
     my($lines, $bytes);
     $lines = $bytes = 0;
 
@@ -70,7 +78,8 @@ for my $upload ($apr->upload) {
 	$bytes += length;
 	print OUT $_ if fileno OUT;
     }
-    close OUT;
+    close OUT if fileno OUT;
+    close $fh;
 
     my $info = $upload->info;
     while (my($k,$v) = each %$info) {
@@ -83,9 +92,9 @@ for my $upload ($apr->upload) {
 	while (my($k,$v) = each %$info) {
 	    print "INFO: $k => $v\n";
 	}
-	my $type = $apr->uploadInfo($first_filename, "content-type");
+	my $type = $apr->upload($first)->info("content-type");
 	unless ($type) {
-	    die "uploadInfo is broken";
+	    die "upload->info is broken";
 	} 
 	print "TYPE: $type\n";
 	print "-" x 40, $/;
