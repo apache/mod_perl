@@ -16,7 +16,7 @@
 #ifndef MODPERL_PERL_H
 #define MODPERL_PERL_H
 
-/* starting from 5.8.1 perl caches ppids, so we need to main our
+/* starting from 5.8.1 perl caches ppids, so we need to maintain our
  * own. some distros fetch fake 5.8.0 with changes from 5.8.1, so we
  * need to do that for those fake 5.8.0 as well. real 5.8.0 doesn't
  * have THREADS_HAVE_PIDS defined.
