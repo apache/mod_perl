@@ -101,6 +101,29 @@ apr_pool_t *modperl_server_pool(void)
     return server_pool;
 }
 
+static void set_taint_var(PerlInterpreter *perl)
+{
+    dTHXa(perl);
+    GV *gv;
+
+/* 5.7.3+ has a built-in special ${^TAINT}, backport it to 5.6.0+ */
+#if PERL_REVISION == 5 && \
+    (PERL_VERSION == 6 || (PERL_VERSION == 7 && PERL_SUBVERSION < 3))
+
+    gv = gv_fetchpv("\024AINT", GV_ADDMULTI, SVt_IV);
+    sv_setiv(GvSV(gv), PL_tainting);
+    SvREADONLY_on(GvSV(gv));
+#endif /* perl v < 5.7.3 */
+
+#ifdef MP_COMPAT_1X
+    gv = gv_fetchpv("Apache::__T", GV_ADDMULTI, SVt_PV);
+    sv_setiv(GvSV(gv), PL_tainting);
+    SvREADONLY_on(GvSV(gv));
+#endif /* MP_COMPAT_1X */
+    
+}
+
+
 PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 {
     AV *endav;
@@ -175,6 +198,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     apr_pool_cleanup_register(server_pool, cdata,
                               modperl_shutdown, apr_pool_cleanup_null);
 #endif
+
+    set_taint_var(perl);
     
     return perl;
 }
