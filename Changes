@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+fix Apache->request($r) to be set-able even w/: PerlOptions
+-GlobalRequest [Stas]
+
 Add Apache::Reload->unregister_module() to explicitely remove a
 module from Apache::Reload's monitoring list [Gozer]
 
