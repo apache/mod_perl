@@ -12,7 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
-a new function Apache::ServerUtil::server_shutdown_register_cleanup to
+a new function Apache::ServerUtil::server_shutdown_cleanup_register to
 register cleanups to be run at server shutdown. [Stas]
 
 $bb->cleanup is no more segfaulting (was segfaulting due to a broken

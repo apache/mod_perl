@@ -81,13 +81,13 @@ static apr_status_t mpxs_cleanup_run(void *data)
 /* this cleanups registered by this function are run only by the
  * parent interpreter */
 static MP_INLINE
-void mpxs_Apache__ServerUtil_server_shutdown_register_cleanup(pTHX_ SV *cv,
+void mpxs_Apache__ServerUtil_server_shutdown_cleanup_register(pTHX_ SV *cv,
                                                               SV *arg)
 {
     mpxs_cleanup2_t *data;
     apr_pool_t *p;
     
-    MP_CROAK_IF_POST_POST_CONFIG_PHASE("server_shutdown_register_cleanup");
+    MP_CROAK_IF_POST_POST_CONFIG_PHASE("server_shutdown_cleanup_register");
 
     p = modperl_server_user_pool();
     /* must use modperl_server_user_pool here to make sure that it's run

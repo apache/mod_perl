@@ -48,10 +48,10 @@ sub handler {
 
     server_root_relative_tests($r);
 
-    eval { Apache::ServerUtil::server_shutdown_register_cleanup(
+    eval { Apache::ServerUtil::server_shutdown_cleanup_register(
         sub { Apache::OK });
        };
-    my $sub = "server_shutdown_register_cleanup";
+    my $sub = "server_shutdown_cleanup_register";
     ok t_cmp $@, qr/Can't run '$sub' after server startup/,
         "can't register server_shutdown cleanup after server startup";
 
