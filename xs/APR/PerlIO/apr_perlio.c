@@ -31,7 +31,7 @@ typedef struct {
  */
 static IV PerlIOAPR_popped(PerlIO *f)
 {
-    PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
+    //PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
 
     return 0;
 }
@@ -41,12 +41,10 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
                               const char *mode, int fd, int imode,
                               int perm, PerlIO *f, int narg, SV **args)
 {
-    AV *av_arg;
     SV *arg = (narg > 0) ? *args : PerlIOArg;
     PerlIOAPR *st;
     const char *path;
     apr_int32_t apr_flag;
-    int len;
     apr_status_t rc;
     SV *sv;
     
@@ -105,7 +103,6 @@ static IV PerlIOAPR_fileno(PerlIO *f)
 static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
                              CLONE_PARAMS *param, int flags)
 {
-    Size_t count;
     apr_status_t rc;
  
     if ( (f = PerlIOBase_dup(aTHX_ f, o, param, flags)) ) {
@@ -264,6 +261,8 @@ static IV PerlIOAPR_eof(PerlIO *f)
         return 0;
       case APR_EOF:
         return 1;
+      default:
+        return -1;
     }
 }
 
