@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+significantly speedup the startup of threaded mpm test suite, by
+configuring only the minimal number of perl interprters to start [Stas]
+
 make APR::Socket::opt_(set|get) working (and change the previous
 behavior) [Stas]
 
