@@ -104,16 +104,16 @@ $  limit_req_fields
 <  base_server
 >  vhost_lookup_data
 <  local_addr
+<  local_ip
+<  local_host
 <  remote_addr
-<  remote_ip
+   remote_ip
 <  remote_host
 -  remote_logname
 <  aborted
    keepalive
 ?  double_reverse
    keepalives
-<  local_ip
-<  local_host
 <  id
 <  conn_config
    notes
