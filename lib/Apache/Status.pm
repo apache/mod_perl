@@ -514,6 +514,7 @@ sub noh_b_graph {
     mkdir $dir, 0755 unless -d $dir;
 
     (my $thing = $r->path_info) =~ s:^/::;
+    $thing =~ s{::}{-}g; # :: is not allowed in the filename on some OS
     my $type = "dot";
     my $file = "$dir/$thing.$$.gif";
     
