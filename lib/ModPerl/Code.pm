@@ -641,7 +641,7 @@ my %sources = (
 my @c_src_names = qw(interp tipool log config cmd options callback handler
                      gtop util io io_apache filter bucket mgv pcw global env
                      cgi perl perl_global perl_pp sys module svptr_table
-                     const constants apache_compat);
+                     const constants apache_compat error);
 my @h_src_names = qw(perl_unembed);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives flags xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names));
@@ -775,7 +775,7 @@ sub generate {
     #$self->generate_constants_pod();
 }
 
-my $constant_prefixes = join '|', qw{APR?};
+my $constant_prefixes = join '|', qw{APR? MODPERL_RC};
 
 sub generate_constants {
     my($self, $h_fh, $c_fh) = @_;
@@ -824,6 +824,7 @@ sub constants_lookup_code {
     my $postfix = lc $class;
     my $package = $class . '::';
     my $package_len = length $package;
+    my($first_let) = $class =~ /^(\w)/;
 
     my $func = canon_func(qw(constants lookup), $postfix);
     my $proto = "SV \*$func(pTHX_ const char *name)";
@@ -834,7 +835,7 @@ sub constants_lookup_code {
 
 $proto
 {
-    if (*name == 'A' && strnEQ(name, "$package", $package_len)) {
+    if (*name == '$first_let' && strnEQ(name, "$package", $package_len)) {
         name += $package_len;
     }
 
