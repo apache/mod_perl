@@ -198,7 +198,7 @@ sub My::DirIndex::handler {
     print "1..$x\n";
     my $i = 1;
     for my $e (@entries) {
-	print "ok $i ($e)\n";
+	print "ok $i #($e)\n";
 	++$i;
     }
     1;
