@@ -197,11 +197,17 @@ END {
     warn "END in modperl_extra.pl, pid=$$\n";
 }
 
-#For the tied %Location in <Perl > sections
+package Tie::PerlSection;
+
+# the following is needed for the tied %Location test in <Perl>
+# sections. Unfortunately it can't be defined in the section itself
+# due to the bug in perl:
+# http://rt.perl.org:80/rt3/Ticket/Display.html?id=29018
+
 use Tie::Hash;
-@Tie::PerlSection::ISA = qw(Tie::StdHash);
-sub Tie::PerlSection::FETCH {
-    my ($hash, $key) = @_;
+our @ISA = qw(Tie::StdHash);
+sub FETCH {
+    my($hash, $key) = @_;
     if ($key eq '/tied') {
         return 'TIED';
     }
