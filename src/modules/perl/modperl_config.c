@@ -178,8 +178,19 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 #ifdef MP_USE_GTOP
     scfg->gtop = modperl_gtop_new(p);
 #endif        
-    
-    modperl_config_srv_argv_push((char *)ap_server_argv0);
+
+    /* must copy ap_server_argv0, because otherwise any read/write of
+     * $0 corrupts process' argv[0] (visible with 'ps -ef' on most
+     * unices). This is due to the logic of calculating PL_origalen in
+     * perl_parse, which is later used in set_mg.c:Perl_magic_set() to
+     * truncate the argv[0] setting. remember that argv[0] passed to
+     * perl_parse() != process's real argv[0].
+     *
+     * as a copying side-effect, changing $0 now doesn't affect the
+     * way the process is seen from the outside.
+     */
+    modperl_config_srv_argv_push(apr_pstrmemdup(p, ap_server_argv0,
+                                                strlen(ap_server_argv0)));
 
     MP_TRACE_d(MP_FUNC, "new scfg: 0x%lx\n", (unsigned long)scfg);
 
