@@ -946,6 +946,13 @@ sub ap_includedir  {
     $self->{ap_includedir} = $d;
 }
 
+# This is necessary for static builds that needs to make a
+# difference between where the apache headers are (to build
+# against) and where they will be installed (to install our
+# own headers alongside)
+# 
+# ap_exp_includedir is where apache is going to install its
+# headers to
 sub ap_exp_includedir {
     my ($self) = @_;
     
