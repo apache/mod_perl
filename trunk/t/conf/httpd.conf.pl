@@ -156,9 +156,32 @@ for (qw(perl perl_xs)) {
     };
 }
 
-$Location{"/cgi-bin"} = {
+$LocationMatch{"/(cgi|slow)-bin"} = {
     SetHandler => "cgi-script",
     Options    => "ExecCGI",
+};
+
+sub My::Files::handler {
+    my $r = shift;
+    $r->send_http_header('text/plain');
+    printf "%s pulled out of thin air at %s",
+           $r->filename, scalar localtime $r->request_time;
+}
+
+sub My::Directory::handler {
+    my $r = shift;
+    $r->send_http_header('text/plain');
+    printf "%s says to take a hike", $r->filename =~ m:(\w+)/public:;
+}
+
+$FilesMatch{".(date|time)\$"} = {
+    SetHandler => 'perl-script',
+    PerlHandler => 'My::Files',
+};
+
+$DirectoryMatch{"public_html"} = {
+    SetHandler => 'perl-script',
+    PerlHandler => 'My::Directory',
 };
 
 #just make sure we can parse this
