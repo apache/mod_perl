@@ -36,7 +36,7 @@ eval {
 print "1..$tests\nok 1\n";
 print fetch($ua, "http://$net::httpserver$net::perldir/cgi.pl?PARAM=2");
 print fetch($ua, "http://$net::httpserver$net::perldir/cgi.pl?PARAM=%33");
-print upload($ua, "http://$net::httpserver$net::perldir/cgi.pl", "4 (fileupload)");
+print upload($ua, "http://$net::httpserver$net::perldir/cgi.pl", "4 #(fileupload)");
 if($test_mod_cgi) { 
     print fetch($ua, "http://$net::httpserver/cgi-bin/cgi.pl?PARAM=5");
 }
