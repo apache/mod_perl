@@ -435,14 +435,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 
     }
     elsif($USE_APACI) {
-	my $cmd = "./configure --activate-module=src/modules/perl/libperl.a";
-	if($USE_DSO) {
-	    $cmd .= " --enable-shared=perl";
-	}
-	if($APACI_ARGS) {
-	    $cmd .= " " . join " ", split(',', $APACI_ARGS);
-	}
-	system "(cd $APACHE_ROOT && $cmd)";
+	#take care of things later
     }
     else {
 	$conf = "src/Configuration";
@@ -726,6 +719,16 @@ sub init_tests_and_config {
 	$apaci_cfg->close if $apaci_cfg;
     }
 
+    if($USE_APACI) {
+	my $cmd = "./configure --activate-module=src/modules/perl/libperl.a";
+	if($USE_DSO) {
+	    $cmd .= " --enable-shared=perl";
+	}
+	if($APACI_ARGS) {
+	    $cmd .= " " . join " ", split(',', $APACI_ARGS);
+	}
+	system "(cd $APACHE_ROOT && $cmd)";
+    }
     #expand ./t to full path
     iedit "t/conf/httpd.conf", "s: \./t(\S*): $PWD/t\$1:";
 
