@@ -338,6 +338,13 @@ server_rec *perl_get_startup_server(void)
     return NULL;
 }
 
+static int sv_str_header(void *arg, const char *k, const char *v)
+{
+    SV *sv = (SV*)arg;
+    sv_catpvf(sv, "%s: %s\n", k, v);
+    return 1;
+}
+
 #if MODULE_MAGIC_NUMBER >= 19980806
 /*
  * ap_scan_script_header_err_core(r, buffer, getsfunc_SV, sv)
@@ -552,6 +559,24 @@ CLOSE(...)
     CODE:
     items = items;
     /*NOOP*/
+
+SV *
+as_string(r)
+    Apache r
+
+    CODE:
+    RETVAL = newSVpv(r->the_request,0);
+    sv_catpvn(RETVAL, "\n", 1);
+
+    table_do(sv_str_header, (void*)RETVAL, r->headers_in, NULL);
+    sv_catpvf(RETVAL, "\n%s %s\n", r->protocol, r->status_line);
+
+    table_do(sv_str_header, (void*)RETVAL, r->headers_out, NULL);
+    table_do(sv_str_header, (void*)RETVAL, r->err_headers_out, NULL);
+    sv_catpvn(RETVAL, "\n", 1);
+
+    OUTPUT:
+    RETVAL
 
 #httpd.h
      

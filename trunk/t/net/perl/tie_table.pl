@@ -65,6 +65,45 @@ test ++$i, $Seen{two};
 $r->notes->do(\&print_header, undef, qw(three));
 test ++$i, not exists $Seen{two};
 
+sub str_header {
+    my($av, $k, $v) = @_;
+    push @$av, "$k: $v";
+    1;
+}
+
+sub my_as_string {
+    my $r = shift;
+    my @retval = ();
+    push @retval, $r->the_request;
+
+    $r->headers_in->do(\&str_header, \@retval);
+    push @retval, "";
+
+    push @retval, join(" ", $r->protocol, $r->status_line);
+    for my $meth (qw(headers_out err_headers_out)) {
+	$r->$meth()->do(\&str_header, \@retval);
+    }
+    push @retval, "", "";
+    join "\n", grep { defined $_ } @retval;
+}
+
+use Benchmark;
+if(my_as_string($r) eq $r->as_string) {
+    print "as_string match\n";
+}
+else {
+    print "as_string MIS-match\n";
+    print "-" x 20, $/; 
+    print my_as_string($r);
+    print "-" x 20, $/; 
+    print $r->as_string;
+    print "-" x 20, $/; 
+}
+#timethese(1_000, { 
+#    Perl => sub {my $my_as_string = my_as_string($r)},
+#    C    => sub {my $as_string = $r->as_string;},
+#});
+
 for my $meth (qw{
     headers_in headers_out err_headers_out notes dir_config subprocess_env
     })

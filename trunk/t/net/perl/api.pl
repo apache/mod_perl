@@ -17,7 +17,7 @@ else {
 $r->subprocess_env; #test void context
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 48;
+my $tests = 49;
 my $is_win32 = WIN32;
 ++$tests unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -30,6 +30,8 @@ $r->content_type("text/plain");
 $r->content_languages([qw(en)]);
 $r->send_http_header;
 $r->print("1..$tests\n");
+test ++$i, $r->as_string;
+print $r->as_string;
 print "r == $r\n";
 test ++$i, $r->filename eq $0;
 test ++$i, -d $Apache::Server::CWD;

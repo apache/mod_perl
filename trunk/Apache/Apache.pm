@@ -197,29 +197,6 @@ sub send_cgi_header {
     }
 }
 
-sub as_string {
-    my($r) = @_;
-    my($k,$v,@retval);
-    my(%headers_in) = $r->headers_in;
-
-    push @retval, $r->the_request;
-    while(($k,$v) = each %headers_in) {
-	push @retval, "$k: $v";
-    }
-
-    push @retval, "";
-
-    push @retval, $r->status_line;
-    for (qw(err_headers_out headers_out)) {
-	my(%headers_out) = $r->$_();
-
-	while(($k,$v) = each %headers_out) {
-	    push @retval, "$k: $v";
-	}
-    }    
-    join "\n", grep { defined $_ } @retval, "";
-}
-
 sub TIEHANDLE {
     my($class, $r) = @_;
     $r ||= Apache->request;
