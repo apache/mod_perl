@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+
 #check which apr_ functions do not have access to a pool
 
 use lib qw(lib);
