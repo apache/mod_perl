@@ -63,7 +63,7 @@ sub handler {
         open my $fh, "perlio_this_file_cannot_exist";
         my $errno_string = "$!";
 
-        # non-existant file
+        # non-existent file
         my $file = "/this/file/does/not/exist";
         if (open my $fh, "<:APR", $file, $r) {
             t_debug "must not be able to open $file!";
