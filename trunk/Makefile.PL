@@ -763,6 +763,22 @@ EOT
     } else {
 	print "ok\n";
     }
+    print "Checking for HTML::HeadParser....";
+    eval {
+	require HTML::HeadParser;
+    };
+    if ($@) {
+	$no_lwp++;
+	$missing_modules++;
+	print "failed\n";
+	print <<EOT;
+$@
+The HTML-Parser package is needed (by libwww-perl) to run the test suite.
+EOT
+    sleep(2);  # Don't hurry too much
+    } else {
+	print "ok\n";
+    }
 }
 
 sub is_ssl {
