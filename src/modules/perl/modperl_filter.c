@@ -1088,7 +1088,10 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
     fprintf(fp, "dump of brigade 0x%lx\n",
             (unsigned long)bb);
 
-    APR_BRIGADE_FOREACH(bucket, bb) {
+    for (bucket = APR_BRIGADE_FIRST(bb);
+         bucket != APR_BRIGADE_SENTINEL(bb);
+         bucket = APR_BUCKET_NEXT(bucket))
+    {
         fprintf(fp, "   %d: bucket=%s(0x%lx), length=%ld, data=0x%lx\n",
                 i, bucket->type->name,
                 (unsigned long)bucket,
