@@ -1602,7 +1602,11 @@ sub MY::post_initialize {
 	my $to = '$(INST_ARCHLIB)/' . "auto/Apache/include/$_";
 	unless ($self->{PM}->{$from}) {
 	    $self->{PM}->{$from} = $to;
-	    system "$Config{touch} $from";
+#	    system "$Config{touch} $from";
+	    my @args = ($Config{perlpath}, '-MExtUtils::Command', 
+		        '-e', 'touch', $from);
+	    system(@args) == 0
+	        or die "system @args failed: $?";
 	}
     }
 
