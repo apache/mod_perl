@@ -32,9 +32,6 @@ static SV *size_string(size_t size)
     return sv;
 }
 
-#define IS_HIGHBIT_CHAR(b) \
-   ( (((unsigned char)(b)) > 126) && (((unsigned char)(b)) <= 255) )
-
 static SV *my_escape_html(char *s)
 {
     int i, j;
@@ -46,7 +43,7 @@ static SV *my_escape_html(char *s)
 	    j += 3;
 	else if (s[i] == '&')
 	    j += 4;
-        else if (s[i] == '"' || IS_HIGHBIT_CHAR(s[i]))
+        else if (s[i] == '"')
 	    j += 5;
 
     if (j == 0)
@@ -70,10 +67,6 @@ static SV *my_escape_html(char *s)
 	    memcpy(&SvPVX(x)[j], "&quot;", 6);
 	    j += 5;
 	}
-        else if (IS_HIGHBIT_CHAR(s[i])) {
-            sprintf(&SvPVX(x)[j], "&#%d;", (unsigned char)s[i]);
-            j += 5;
-        }
 	else
 	    SvPVX(x)[j] = s[i];
 
