@@ -63,6 +63,9 @@ MP_GLOBAL_DECL(pconf, apr_pool_t *);
 /* modperl_global_get_server_rec returns a thread un-safe object */
 MP_GLOBAL_DECL(server_rec, server_rec *);
 
+void modperl_global_anon_cnt_init(apr_pool_t *p);
+int modperl_global_anon_cnt_next(void);
+
 apr_status_t modperl_tls_create(apr_pool_t *p, modperl_tls_t **key);
 apr_status_t modperl_tls_get(modperl_tls_t *key, void **data);
 apr_status_t modperl_tls_set(modperl_tls_t *key, void *data);
