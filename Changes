@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+Apache::compat: $r->cgi_env, $r->cgi_var are now aliases to
+$r->subprocess_env [Stas]
+
 For Win32, generate .pdb files for debugging when built with
 MP_DEBUG. These will get installed into the same directory as
 the associated dll/so libs. As well, install mod_perl.lib

@@ -401,6 +401,9 @@ sub send_fd {
 
 sub is_main { !shift->main }
 
+# really old back-compat methods, they shouldn't be used in mp1
+*cgi_var = *cgi_env = \&Apache::RequestRec::subprocess_env;
+
 package Apache::File;
 
 use Fcntl ();
