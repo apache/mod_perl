@@ -151,6 +151,13 @@ extern "C" {
 #define AvFILLp(av)	((XPVAV*)  SvANY(av))->xav_fill
 #endif
 
+#ifdef eval_pv
+#define perl_eval_pv Perl_eval_pv
+#endif
+#ifdef eval_sv
+#define perl_eval_sv Perl_eval_sv
+#endif
+
 #define MP_EXISTS_ERROR(k) \
 ERRHV && hv_exists(ERRHV, k, strlen(k))
 
