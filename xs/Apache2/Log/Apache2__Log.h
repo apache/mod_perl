@@ -15,15 +15,15 @@
 
 static void mpxs_Apache2__Log_BOOT(pTHX)
 {
-    av_push(get_av("Apache::Log::Request::ISA", TRUE), 
-            newSVpv("Apache::Log", 11));
-    av_push(get_av("Apache::Log::Server::ISA", TRUE), 
-            newSVpv("Apache::Log", 11));
+    av_push(get_av("Apache2::Log::Request::ISA", TRUE), 
+            newSVpv("Apache2::Log", 12));
+    av_push(get_av("Apache2::Log::Server::ISA", TRUE), 
+            newSVpv("Apache2::Log", 12));
 }
 
 #define croak_inval_obj()                                       \
-    Perl_croak(aTHX_ "Argument is not an Apache::RequestRec "   \
-               "or Apache::ServerRec object")
+    Perl_croak(aTHX_ "Argument is not an Apache2::RequestRec "   \
+               "or Apache2::ServerRec object")
 
 static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
 {
@@ -36,11 +36,11 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     server_rec *s;
     request_rec *r = NULL;
 
-    if (SvROK(sv) && sv_isa(sv, "Apache::Log::Request")) {
+    if (SvROK(sv) && sv_isa(sv, "Apache2::Log::Request")) {
         r = INT2PTR(request_rec *, SvObjIV(sv));
         s = r->server;
     }
-    else if (SvROK(sv) && sv_isa(sv, "Apache::Log::Server")) {
+    else if (SvROK(sv) && sv_isa(sv, "Apache2::Log::Server")) {
         s = INT2PTR(server_rec *, SvObjIV(sv));
     }
     else {
@@ -93,11 +93,11 @@ static SV *mpxs_Apache2__Log_log(pTHX_ SV *sv, int logtype)
 
     switch (logtype) {
       case MP_LOG_REQUEST:
-        pclass = "Apache::Log::Request";
+        pclass = "Apache2::Log::Request";
         retval = (void *)modperl_sv2request_rec(aTHX_ sv);
         break;
       case MP_LOG_SERVER:
-        pclass = "Apache::Log::Server";
+        pclass = "Apache2::Log::Server";
         retval = (void *)modperl_sv2server_rec(aTHX_ sv);
         break;
       default:
@@ -274,7 +274,7 @@ static XS(MPXS_Apache2__Log_log_xerror)
  * $s->log_error
  * $r->warn
  * $s->warn
- * Apache::ServerRec::warn
+ * Apache2::ServerRec::warn
  */
 static XS(MPXS_Apache2__Log_log_error)
 {
@@ -287,11 +287,11 @@ static XS(MPXS_Apache2__Log_log_error)
     STRLEN n_a;
 
     if (items > 1) {
-        if (sv_isa(ST(0), "Apache::ServerRec")) {
+        if (sv_isa(ST(0), "Apache2::ServerRec")) {
             s = INT2PTR(server_rec *, SvObjIV(ST(0)));
         }
         else if ((r = modperl_xs_sv2request_rec(aTHX_ ST(0),
-                                                "Apache::RequestRec", cv))) {
+                                                "Apache2::RequestRec", cv))) {
             s = r->server;
         }
     }
