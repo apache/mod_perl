@@ -239,6 +239,15 @@ sub err_header_out {
         : scalar($r->table_get_set(scalar($r->err_headers_out), @_));
 }
 
+{
+    my $notes_sub = *Apache::RequestRec::notes{CODE};
+    *Apache::RequestRec::notes = sub {
+        my $r = shift;
+        return wantarray()
+            ?       ($r->table_get_set(scalar($r->$notes_sub), @_))
+            : scalar($r->table_get_set(scalar($r->$notes_sub), @_));
+    }
+}
 
 sub register_cleanup {
     shift->pool->cleanup_register(@_);
