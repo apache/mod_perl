@@ -404,11 +404,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
 
-#ifdef USE_ITHREADS
-    if (scfg->threaded_mpm) {
-        MP_THX_INTERP_SET(interp->perl, interp);
-    }
-#endif
+    MP_THX_INTERP_SET(interp->perl, interp);
 
     return interp;
 }
