@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.99_09-dev
+
 =item 1.99_08 - January 10, 2003
 
 Correct ModPerl::RegistryCooker to reset %INC, after compile for .pl
