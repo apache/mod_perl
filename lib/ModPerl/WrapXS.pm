@@ -113,8 +113,8 @@ $proto
 $attrs
 EOF
 
-        if ($dispatch || $orig_args) {
-            my $thx = "";
+        if ($dispatch || $orig_args || $func->{thx}) {
+            my $thx = $func->{thx} ? 'aTHX_ ' : "";
 
             if ($dispatch) {
                 $thx = 'aTHX_ ' if $dispatch =~ /^mpxs_/i;
