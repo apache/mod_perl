@@ -65,12 +65,13 @@ sub guess_prefix {
     my($name, $class) = ($entry->{name}, $entry->{class});
     my $prefix = "";
     $name =~ s/^DEFINE_//;
+    $name =~ s/^mpxs_//i;
 
     (my $guess = lc($entry->{class} || $entry->{module}) . '_') =~ s/::/_/g;
-    $guess =~ s/apache_/ap_/;
+    $guess =~ s/(apache)_/($1|ap)_{1,2}/;
 
-    if ($name =~ /^$guess/) {
-        $prefix = $guess;
+    if ($name =~ s/^($guess).*/$1/i) {
+        $prefix = $1;
     }
     else {
         if ($name =~ /^(apr?_)/) {
