@@ -23,3 +23,8 @@ src/Configuration
 t/docs/stacked
 t/docs/subr/index.html
 t/modules/ssi.t
+apaci/load_modules.pl
+t/httpd_conf
+t/perlsections.pl   
+t/conf/LoadModule.conf
+t/docs/hooks.txt
