@@ -15,6 +15,7 @@ typedef struct {
     apr_cmdtype_e  cmd_type;
 } exec_info;
 
+#undef FAILED /* win32 defines a macro with this name */
 #define FAILED(command) ((rc = command) != APR_SUCCESS)
 
 #define SET_TIMEOUT(fp) \
