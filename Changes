@@ -20,7 +20,7 @@ Apache::RequestRec methods changes [Stas]
 - readwrite => readonly:
 
     method_number, connection, canonical_filename, header_only, main,
-    method, next, prev, pool per_dir_config, request_config,
+    method, next, prev, pool, per_dir_config, request_config,
     proto_num, protocol, request_time, server, the_request,
     unparsed_uri
 
@@ -29,6 +29,7 @@ Apache::RequestRec methods changes [Stas]
     remaining - this method is not needed if the deprecated
                 $r->client_block methods aren't used, (use $r->read
                 $r->instead)
+    canonical_filename - it's a private member
 
 The func Apache::SubProcess::spawn_proc_prog is now a method:
 $r->spawn_proc_prog [Stas]
