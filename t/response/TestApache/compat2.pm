@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 44;
+    plan $r, tests => 45;
 
     $r->send_http_header('text/plain');
 
@@ -225,6 +225,11 @@ sub handler {
     my $ptime = Apache::Util::parsedate($fmtdate);
 
     ok t_cmp($time, $ptime, "Apache::Util::parsedate");
+
+    my $t = Apache::Table->new($r);
+    my $t_class = ref $t;
+
+    ok t_cmp('APR::Table', $t_class, "Apache::Table->new");
 
     #note these are not actually part of the tests
     #since i think on platforms where crypt is not supported,

@@ -472,5 +472,13 @@ sub Apache::URI::parse {
     APR::URI->parse($r->pool, $uri);
 }
 
+package Apache::Table;
+
+sub new {
+    my($class, $r, $nelts) = @_;
+    $nelts ||= 10;
+    APR::Table::make($r->pool, $nelts);
+}
+
 1;
 __END__
