@@ -25,10 +25,7 @@ Perl, available from: http://www.perl.com/CPAN/src/5.0/latest.tar.gz
 
 =item Binaries
 
-Jeffey Baker maintains the binary distribution of mod_perl available
-from: 
-
- http://www.perl.com/CPAN/authors/Jeffrey_Baker/
+See: http://perl.apache.org/distributions.html
 
 =item Setup the Perl side
 
@@ -87,7 +84,7 @@ $SERVER_ROOT/modules
 
 Add this line to httpd.conf:
 
- LoadModule perl_module modules/ApacheModulePerl
+ LoadModule perl_module modules/ApacheModulePerl.dll
 
 Be sure that 'C:\perl\bin' is in your path so apache can find perl.dll
 
