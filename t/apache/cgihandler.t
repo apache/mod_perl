@@ -2,19 +2,19 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestUtil;
 use Apache::TestRequest;
 
 plan tests => 2;
 
 my $location = "/TestApache__cgihandler";
-my $str;
 
-my $data = "1..3\nok 1\nok 2\nok 3\n";
+my $expected = "1..3\nok 1\nok 2\nok 3\n";
 
-$str = POST_BODY $location, content => $data;
+my $received = POST_BODY $location, content => $expected;
 
-ok $str eq $data;
+ok t_cmp $received, $expected, "POST cgihandler";
 
-$str = GET_BODY $location;
+$received = GET_BODY $location;
 
-ok $str eq $data;
+ok t_cmp $received, $expected, "GET cgihandler";
