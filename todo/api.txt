@@ -3,7 +3,8 @@ in no particular order
 ------------------------------------------
 
 tied filehandle interface:
- -CLOSE, READLINE
+ -CLOSE, OPEN, BINMODE, EOF, TELL, SEEK, FILENO
+ -READLINE - proper implementation (see comment in Apache::compat)
 
 $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
