@@ -16,7 +16,7 @@ else {
 
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 74;
+my $tests = 75;
 my $is_win32 = WIN32;
 $tests += 4 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -94,6 +94,7 @@ test ++$i, SERVER_VERSION =~ /mod_perl/;
 
 test ++$i, $r->last;
 test ++$i, $ENV{GATEWAY_INTERFACE};
+test ++$i, defined $ENV{KeyForPerlSetEnv};
 test ++$i, scalar $r->cgi_var('GATEWAY_INTERFACE');
 test ++$i, defined($r->seqno);
 test ++$i, $r->protocol;

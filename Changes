@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+make sure PerlSetEnv variables are visible after first access
+to each child [Geoff Young <geoff@modperlcookbook.org>]
+
 workaround Apache::Constants::AUTOLOAD problem with bleedperl
 
 the first flag argument to perl cannot start with space, since perl tries 

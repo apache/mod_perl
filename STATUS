@@ -21,15 +21,6 @@ Available Patches:
 	Status: 
           doc patch at http://marc.theaimsgroup.com/?l=apache-modperl&m=97450363501652&w=2
 
-    * PerlSetEnv scoping
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99148497206388&w=2
-	Status:
-          may be fixed here
-            http://marc.theaimsgroup.com/?l=apache-modperl&m=99473571809129&w=2
-          but that patch has this issue (I think)
-            http://marc.theaimsgroup.com/?l=apache-modperl&m=99565226811557&w=2
-          --Geoff
-
     * %LocationMatch <Perl> bug
         Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=98260537428737&w=2
 	Status:
