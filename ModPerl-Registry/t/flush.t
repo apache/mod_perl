@@ -6,11 +6,9 @@ use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY);
 
 plan tests => 1, have 'Compress::Zlib', 'deflate',
-    have_min_apache_version("2.0.49");
-
-#XXX which release the mod_deflate bug is fixed in? Apache/2.0.49? 
-# should probably submit a bug report and use the bug id here so
-# others can track the problem
+    have_min_apache_version("2.0.48");
+# it requires httpd 2.0.48 because of the bug in mod_deflate:
+# http://nagoya.apache.org/bugzilla/show_bug.cgi?id=22259
 
 require Compress::Zlib;
 
