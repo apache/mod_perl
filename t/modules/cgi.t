@@ -25,19 +25,19 @@ sok {
     my $url = "$location?PARAM=2";
     $res = GET $url;
     $str = $res->content;
-    t_cmp("ok 2", $str, "GET $url");
+    t_cmp($str, "ok 2", "GET $url");
 };
 
 sok {
     my $content = 'PARAM=%33';
     $str = POST_BODY $location, content => $content;
-    t_cmp("ok 3", $str, "POST $location\n$content");
+    t_cmp($str, "ok 3", "POST $location\n$content");
 };
 
 if (HAVE_LWP) {
     sok {
         $str = UPLOAD_BODY $location, content => 4;
-        t_cmp("ok 4", $str, 'file upload');
+        t_cmp($str, "ok 4", 'file upload');
     };
 }
 
@@ -52,7 +52,7 @@ sok {
 sok {
     my $header = 'X-Perl-Module';
     $res = GET $location;
-    t_cmp($module,
-          $res->header($header),
+    t_cmp($res->header($header),
+          $module,
           "$header header");
 };
