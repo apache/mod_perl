@@ -1,5 +1,22 @@
 #include "mod_perl.h"
 
+char *modperl_cmd_push_handlers(MpAV **handlers, char *name, ap_pool_t *p)
+{
+    modperl_handler_t *h = modperl_handler_new(p, (void*)name,
+                                               MP_HANDLER_TYPE_CHAR);
+    if (!*handlers) {
+        *handlers = ap_make_array(p, sizeof(modperl_handler_t), 1);
+        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+    }
+
+    /* XXX parse_handler if Perl is running */
+
+    *(modperl_handler_t **)ap_push_array(*handlers) = h;
+    MP_TRACE_d(MP_FUNC, "pushed handler: %s\n", h->name);
+
+    return NULL;
+}
+
 void *modperl_create_dir_config(ap_pool_t *p, char *dir)
 {
     return NULL;
@@ -20,7 +37,7 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 
     scfg->argv = ap_make_array(p, 2, sizeof(char *));
 
-    scfg_push_argv(ap_server_argv0);
+    scfg_push_argv((char *)ap_server_argv0);
 
     return scfg;
 }

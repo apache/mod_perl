@@ -49,12 +49,14 @@ my %directive_proto = (
                  {type => 'char', name => 'arg'}],
         cfg  => {get => 'MP_dSCFG(parms->server)',
                  name => 'scfg'},
+        scope => 'RSRC_CONF',
     },
     PerDir     => {
         args => [{type => 'cmd_parms', name => 'parms'},
                  {type => 'modperl_dir_config_t', name => 'dcfg'},
                  {type => 'char', name => 'arg'}],
         cfg  => {get => '', name => 'dcfg'},
+        scope => 'OR_ALL',
     },
 );
 
@@ -70,7 +72,7 @@ my %flags = (
     Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED)],
-    Handler => [qw(NONE METHOD)],
+    Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
 );
 
 sub new {
@@ -141,17 +143,27 @@ sub generate_handler_directives {
 
         for my $h (@$handlers) {
             my $name = canon_func('cmd', $h, 'handlers');
+            my $cmd_name = canon_define('cmd', $h, 'entry');
             my $protostr = canon_proto($prototype, $name);
 
             my $ix = $self->{handler_index}->{$class}->[$i++];
             my $av = "$prototype->{cfg}->{name}->handlers[$ix]";
 
             print $h_fh "$protostr;\n";
+
+            print $h_fh <<EOF;
+
+#define $cmd_name \\
+{"Perl${h}Handler", $name, NULL, \\
+ $prototype->{scope}, ITERATE, "Subroutine name"}
+
+EOF
             print $c_fh <<EOF;
 $protostr
 {
     $prototype->{cfg}->{get};
-    return modperl_cmd_push_handlers($av, arg, parms->pool);
+    MP_TRACE_d(MP_FUNC, "push \@%s, %s\n", parms->cmd->name, arg);
+    return modperl_cmd_push_handlers(&($av), arg, parms->pool);
 }
 EOF
         }
@@ -185,22 +197,34 @@ EOF
     }
 }
 
-my @trace = qw(d s h g c i m);
+my %trace = (
+#    'a' => 'all',
+    'd' => 'directive processing',
+    's' => 'perl sections',
+    'h' => 'handlers',
+    'm' => 'memory allocations',
+    'i' => 'interpreter pool management',
+    'g' => 'Perl runtime interaction',
+);
 
 sub generate_trace {
     my($self, $h_fh) = @_;
 
     my $i = 1;
+    my @trace = sort keys %trace;
     my $opts = join '', @trace;
+    my $tl = "MP_debug_level";
 
     print $h_fh <<EOF;
-extern U32 MP_debug_level;
+extern U32 $tl;
 
 #define MP_TRACE_OPTS "$opts"
 
 #ifdef MP_TRACE
-#define MP_TRACE_a if (MP_debug_level) modperl_trace
-#define MP_TRACE_a_do(exp) if (MP_debug_level) exp
+#define MP_TRACE_a if ($tl) modperl_trace
+#define MP_TRACE_a_do(exp) if ($tl) { \\
+exp; \\
+}
 #else
 #define MP_TRACE_a if (0) modperl_trace
 #define MP_TRACE_a_do(exp)
@@ -208,21 +232,31 @@ extern U32 MP_debug_level;
 
 EOF
 
+    my @dumper;
     for my $type (@trace) {
         my $define = "#define MP_TRACE_$type";
         my $define_do = join '_', $define, 'do';
 
         print $h_fh <<EOF;
 #ifdef MP_TRACE
-$define if (MP_debug_level & $i) modperl_trace
-$define_do(exp) if (MP_debug_level & $i) exp
+$define if ($tl & $i) modperl_trace
+$define_do(exp) if ($tl & $i) { \\
+exp; \\
+}
 #else
 $define if (0) modperl_trace
 $define_do(exp)
 #endif
 EOF
+        push @dumper,
+          qq{fprintf(stderr, " $type %s ($trace{$type})\\n", ($tl & $i) ? "On " : "Off");};
         $i += $i;
     }
+
+    print $h_fh join ' \\'."\n", 
+                     '#define MP_TRACE_dump_flags()',
+                     qq{fprintf(stderr, "mod_perl trace flags dump:\\n");},
+                     @dumper;
 }
 
 sub ins_underscore {
@@ -277,7 +311,7 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
-my @c_src_names = qw(interp log config gtop);
+my @c_src_names = qw(interp log config callback gtop);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives xsinit);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
 sub c_files { [map { "$_.c" } @c_names] }

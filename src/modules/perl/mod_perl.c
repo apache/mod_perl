@@ -79,6 +79,7 @@ static command_rec modperl_cmds[] = {
     MP_SRV_CMD_TAKE1("PerlInterpMinSpare", interp_min_spare,
                      "Min number of spare Perl interpreters"),
 #endif
+    MP_CMD_POST_READ_REQUEST_ENTRY,
     { NULL }, 
 }; 
 
