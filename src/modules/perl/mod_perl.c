@@ -428,6 +428,8 @@ static const command_rec modperl_cmds[] = {
 #ifdef MP_COMPAT_1X
     MP_CMD_DIR_ITERATE("PerlHandler", response_handlers,
                        "Subroutine name"),
+    MP_CMD_SRV_FLAG("PerlTaintCheck", taint_check,
+                    "Turn on -T switch"),
 #endif
     MP_CMD_ENTRIES,
     { NULL }, 

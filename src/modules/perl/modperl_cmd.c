@@ -84,6 +84,20 @@ MP_CMD_SRV_DECLARE(options)
     return NULL;
 }
 
+
+#ifdef MP_COMPAT_1X
+
+MP_CMD_SRV_DECLARE_FLAG(taint_check)
+{
+    if (on) {
+        return modperl_cmd_switches(parms, dummy, "-T");
+    }
+
+    return NULL;
+}
+
+#endif /* MP_COMPAT_1X */
+
 #ifdef USE_ITHREADS
 
 #define MP_INTERP_SCOPE_USAGE "PerlInterpScope must be one of "
