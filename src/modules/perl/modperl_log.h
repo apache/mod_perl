@@ -18,6 +18,6 @@
 
 void modperl_trace(char *func, const char *fmt, ...);
 
-void modperl_trace_level_set(char *level);
+void modperl_trace_level_set(const char *level);
 
 #endif /* MODPERL_LOG_H */
