@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+set the 'error-notes' table to the error message on
+HTTP_INTERNAL_SERVER_ERROR [Stas]
+
 fix the apxs build function to not handle empty lookups as errors
 [Randy Kobes, Steve Hay]
 
