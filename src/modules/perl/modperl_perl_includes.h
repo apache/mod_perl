@@ -1,5 +1,5 @@
-#ifndef MODPERL_PERL_INCLUDES
-#define MODPERL_PERL_INCLUDES
+#ifndef MODPERL_PERL_INCLUDES_H
+#define MODPERL_PERL_INCLUDES_H
 
 /* header files for Perl */
 
@@ -8,7 +8,15 @@
 #endif
 
 #define PERLIO_NOT_STDIO 0
-#define PERL_CORE
+
+/*
+ * sizeof(struct PerlInterpreter) changes #ifdef USE_LARGE_FILES
+ * apache-2.0 cannot be compiled with lfs because of sendfile.h
+ * the PERL_CORE optimization is a no-no in this case
+ */
+#if defined(USE_ITHREADS) && !defined(USE_LARGE_FILES)
+#   define PERL_CORE
+#endif
 
 #include "EXTERN.h"
 #include "perl.h"
@@ -31,4 +39,4 @@
 #undef dNOOP
 #define dNOOP extern int __attribute__ ((unused)) Perl___notused
 
-#endif /* MODPERL_PERL_INCLUDES */
+#endif /* MODPERL_PERL_INCLUDES_H */

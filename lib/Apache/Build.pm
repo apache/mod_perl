@@ -23,7 +23,8 @@ sub apxs {
     my $build = $self->build_config;
     my $apxs;
     my @trys = ($Apache::Build::APXS,
-		$build->{MP_APXS});
+                $build->{MP_APXS},
+                $ENV{MP_APXS});
 
     unless (IS_MOD_PERL_BUILD) {
 	#if we are building mod_perl via apxs, apxs should already be known
@@ -120,7 +121,7 @@ sub ap_ccopts {
 sub ccopts {
     my($self) = @_;
 
-    ExtUtils::Embed::ccopts() . $self->ap_ccopts;
+    $self->strip_lfs(ExtUtils::Embed::ccopts()) . $self->ap_ccopts;
 }
 
 sub perl_config {
@@ -788,10 +789,14 @@ sub inc {
     "@includes";
 }
 
-sub ccflags {
-    my $self = shift;
-    my $cflags = $Config{'ccflags'};
-    join ' ', $cflags, $self->apxs('-q' => 'CFLAGS');
+#XXX:
+sub strip_lfs {
+    my($self, $cflags) = @_;
+    return $cflags unless $Config{uselargefiles};
+    my $lf = $Config{ccflags_uselargefiles}
+      || '-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64';
+    $cflags =~ s/$lf//;
+    $cflags;
 }
 
 sub define {
