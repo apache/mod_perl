@@ -146,11 +146,28 @@ sub configure {
                     "no collision)\n";
             }
             else {
-                error "not ok";
-                error "cannot install mod_perl/$VERSION on top of $vstring",
-                    "use MP_INST_APACHE2=1 option " .
-                     "or to force installation delete:\n $old_modperl_pm";
-                exit 1;
+                print " not ok\n\n";
+                error <<EOI;
+Cannot install mod_perl/$VERSION on top of $vstring.
+Add the MP_INST_APACHE2=1 option or answer 'yes'
+to the next question
+EOI
+                my $prompt = "Is it OK to install relative to Apache2/?";
+                if ($build->prompt_y($prompt)) {
+                    $build->{MP_INST_APACHE2} = 1;
+                }
+                else {
+                    error <<EOI;
+
+The answer is 'No' => aborting...
+
+To build mod_perl 2 either add MP_INST_APACHE2=1 Makefile.PL option
+or first remove mod_perl $old_modperl_version files, including
+$old_modperl_pm
+
+EOI
+                    exit 1;
+                }
             }
         }
     }
