@@ -8,7 +8,7 @@ apr_strmatch_pattern apr_version_t
 
 #buckets
 
-<apr_bucket_type_t MODULE=APR::BucketType>
+<apr_bucket_type_t>
 <  name
 -  num_func
 -  destroy
@@ -18,7 +18,7 @@ apr_strmatch_pattern apr_version_t
 -  copy
 </apr_bucket_type_t>
 
-<apr_bucket MODULE=APR::Bucket>
+<apr_bucket>
 >  link
 <  type
 <  length
