@@ -35,13 +35,19 @@ MP_DECLARE_SRV_CMD(interp_min_spare);
 MP_DECLARE_SRV_CMD(interp_max_requests);
 MP_DECLARE_SRV_CMD(interp_lifetime);
 
-const char *modperl_interp_lifetime_desc(modperl_srv_config_t *scfg);
+const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime);
 
-#define modperl_interp_lifetime_connection(scfg) \
-(scfg->interp_lifetime == MP_INTERP_LIFETIME_CONNECTION)
+#define modperl_interp_lifetime_undef(dcfg) \
+(dcfg->interp_lifetime == MP_INTERP_LIFETIME_UNDEF)
+
+#define modperl_interp_lifetime_subrequest(dcfg) \
+(dcfg->interp_lifetime == MP_INTERP_LIFETIME_SUBREQUEST)
 
 #define modperl_interp_lifetime_request(scfg) \
 (scfg->interp_lifetime == MP_INTERP_LIFETIME_REQUEST)
+
+#define modperl_interp_lifetime_connection(scfg) \
+(scfg->interp_lifetime == MP_INTERP_LIFETIME_CONNECTION)
 
 #endif
 
@@ -52,6 +58,10 @@ const char *modperl_interp_lifetime_desc(modperl_srv_config_t *scfg);
 #define MP_SRV_CMD_ITERATE(name, item, desc) \
    AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
+
+#define MP_DIR_CMD_TAKE1(name, item, desc) \
+    AP_INIT_TAKE1( name, modperl_cmd_##item, NULL, \
+      OR_ALL, desc )
 
 #define modperl_request_config_init(r, rcfg) \
     if (!rcfg) { \

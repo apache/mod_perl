@@ -21,6 +21,12 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
 void *modperl_create_dir_config(apr_pool_t *p, char *dir)
 {
     modperl_dir_config_t *dcfg = modperl_dir_config_new(p);
+
+#ifdef USE_ITHREADS
+    /* defaults to per-server lifetime */
+    dcfg->interp_lifetime = MP_INTERP_LIFETIME_UNDEF;
+#endif
+
     return dcfg;
 }
 
@@ -226,31 +232,50 @@ MP_DECLARE_SRV_CMD(options)
 #ifdef USE_ITHREADS
 
 static const char *MP_interp_lifetime_desc[] = {
-    "none", "request", "connection",
+    "undef", "subrequest", "request", "connection",
 };
 
-const char *modperl_interp_lifetime_desc(modperl_srv_config_t *scfg)
+const char *modperl_interp_lifetime_desc(modperl_interp_lifetime_e lifetime)
 {
-    return MP_interp_lifetime_desc[scfg->interp_lifetime];
+    return MP_interp_lifetime_desc[lifetime];
 }
+
+#define MP_INTERP_LIFETIME_OPTS "PerlInterpLifetime must be one of "
+
+#define MP_INTERP_LIFETIME_DIR_OPTS \
+MP_INTERP_LIFETIME_OPTS "subrequest or request"
+
+#define MP_INTERP_LIFETIME_SRV_OPTS \
+MP_INTERP_LIFETIME_OPTS "subrequest, request or connection"
 
 MP_DECLARE_SRV_CMD(interp_lifetime)
 {
+    modperl_interp_lifetime_e *lifetime;
+    modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy;
     MP_dSCFG(parms->server);
+    int is_per_dir = parms->path ? 1 : 0;
+
+    lifetime = is_per_dir ? &dcfg->interp_lifetime : &scfg->interp_lifetime;
 
     switch (toLOWER(*arg)) {
+      case 's':
+        if (strcaseEQ(arg, "subrequest")) {
+            *lifetime = MP_INTERP_LIFETIME_SUBREQUEST;
+            break;
+        }
       case 'r':
         if (strcaseEQ(arg, "request")) {
-            scfg->interp_lifetime = MP_INTERP_LIFETIME_REQUEST;
+            *lifetime = MP_INTERP_LIFETIME_REQUEST;
             break;
         }
       case 'c':
-        if (strcaseEQ(arg, "connection")) {
-            scfg->interp_lifetime = MP_INTERP_LIFETIME_CONNECTION;
+        if (!is_per_dir && strcaseEQ(arg, "connection")) {
+            *lifetime = MP_INTERP_LIFETIME_CONNECTION;
             break;
         }
       default:
-        return "PerlInterpLifetime must be one of connection or request";
+        return is_per_dir ?
+            MP_INTERP_LIFETIME_DIR_OPTS : MP_INTERP_LIFETIME_SRV_OPTS;
     };
 
     return NULL;
