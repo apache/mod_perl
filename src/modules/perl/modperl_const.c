@@ -9,11 +9,11 @@ static int new_constsub(pTHX_ constants_lookup lookup,
                         const char *name)
 {
     int name_len = strlen(name);
-    GV **gvp = (GV **)hv_fetch(stash, name, name_len, FALSE);
+    GV **gvp = (GV **)hv_fetch(stash, name, name_len, TRUE);
     int val;
 
     /* dont redefine */
-    if (!(gvp && GvCV(*gvp))) {
+    if (!isGV(*gvp) || !GvCV(*gvp)) {
         CV *cv;
 
         val = (*lookup)(name);
@@ -23,13 +23,11 @@ static int new_constsub(pTHX_ constants_lookup lookup,
                 HvNAME(stash), name, val);
 #endif
 
-        cv = newCONSTSUB(stash, (char *)name, newSViv(val));
-
-        gvp = &CvGV(cv);
+        newCONSTSUB(stash, (char *)name, newSViv(val));
     }
     
     /* export into callers namespace */
-    if (gvp && caller_stash) {
+    if (caller_stash) {
         GV *alias = *(GV **)hv_fetch(caller_stash,
                                      (char *)name, name_len, TRUE);
 
