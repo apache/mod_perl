@@ -405,7 +405,12 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
     modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter);
 
-    /* XXX filters are VOID handlers.  should we ignore the status? */
+    /* XXX filter_init return status is propagated back to Apache over
+     * in C land, making it possible to use filter_init to return, say,
+     * BAD_REQUEST.  this implementation, however, ignores the return status
+     * even though we're trapping it here - modperl_filter_add_request sees
+     * the error and propagates it, but modperl_output_filter_add_request
+     * is void so the error is lost  */
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
