@@ -1099,8 +1099,11 @@ static char *my_signame(I32 num)
 static void per_request_cleanup(request_rec *r)
 {
     dPPREQ;
+
+#ifndef WIN32
     perl_request_sigsave **sigs;
     int i;
+#endif
 
     if(!cfg) {
 	return;
