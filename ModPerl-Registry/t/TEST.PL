@@ -21,6 +21,8 @@ use constant MIN_MAXCLIENTS => 2;
 use Cwd ();
 use File::Spec::Functions qw(splitpath splitdir catpath catdir rootdir);
 
+use Apache::Build;
+
 # subclass new_test_config to add some config vars which will be
 # replaced in generated httpd.conf
 sub new_test_config {
@@ -33,6 +35,11 @@ sub new_test_config {
     $self->{conf_opts}->{src_dir} = catdir $base, qw(src modules perl);
 
     $self->{conf_opts}->{maxclients} = MIN_MAXCLIENTS;
+
+    # timeout in secs (threaded mpms are extremely slow to startup,
+    # due to a slow perl_clone operation)
+    $self->{conf_opts}->{startup_timeout} =
+        Apache::Build->build_config->mpm_is_threaded() ? 180 : 90;
 
     return $self->SUPER::new_test_config;
 }
