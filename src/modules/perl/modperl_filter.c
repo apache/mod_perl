@@ -32,6 +32,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     bucket = apr_bucket_transient_create(buf, len);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
 
+    MP_TRACE_f(MP_FUNC, "buffer length=%d\n", len);
+
     return ap_pass_brigade(wb->filters, bb);
 }
 
@@ -145,6 +147,10 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode,
     SvREFCNT_dec((SV*)args);
 
     MP_TRACE_f(MP_FUNC, "%s returned %d\n", handler->name, status);
+
+    if (filter->mode == MP_OUTPUT_FILTER_MODE) {
+        modperl_output_filter_flush(filter);
+    }
 
     return status;
 }
@@ -335,8 +341,10 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
                    filter->eos ? "EOS" : "FLUSH");
         filter->rc = filter->eos ?
             send_eos(filter->f) : send_flush(filter->f);
-        apr_brigade_destroy(filter->bb);
-        filter->bb = NULL;
+        if (filter->bb) {
+            apr_brigade_destroy(filter->bb);
+            filter->bb = NULL;
+        }
         filter->flush = filter->eos = 0;
     }
 
