@@ -319,7 +319,9 @@ sub perl_config_lddlflags {
 
     if ($self->{MP_DEBUG}) {
         if (MSVC) {
-            $val =~ s/-release/-debug/;
+            unless ($val =~ s/-release/-debug/) {
+                $val .= ' -debug';
+            }
         }
     }
 
@@ -1058,8 +1060,11 @@ sub dynamic_link_default {
 sub dynamic_link_MSWin32 {
     my $self = shift;
     my $defs = $self->export_files_MSWin32;
+    my $symbols = $self->modperl_symbols_MSWin32;
     return $self->dynamic_link_header_default .
-           "\t$defs" . ' -out:$@';
+        "\t$defs" .
+        ($symbols ? ' \\' . "\n\t-pdb:$symbols" : '') .
+        ' -out:$@';
 }
 
 sub dynamic_link_aix {
@@ -1093,7 +1098,8 @@ sub apache_libs {
 
 sub modperl_libs_MSWin32 {
     my $self = shift;
-    #XXX: install/use mod_perl.lib for 3rd party xs modules
+    # mod_perl.lib will be installed into MP_AP_PREFIX/lib
+    # for use by 3rd party xs modules
     "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
@@ -1104,10 +1110,34 @@ sub modperl_libs {
     $libs->($self);
 }
 
+sub modperl_symbols_MSWin32 {
+    my $self = shift;
+    return "" unless $self->{MP_DEBUG};
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.pdb";
+}
+
+sub modperl_symbols {
+    my $self = shift;
+    my $symbols = \&{"modperl_symbols_$^O"};
+    return "" unless defined &$symbols;
+    $symbols->($self);
+}
+
 sub write_src_makefile {
     my $self = shift;
     my $code = ModPerl::Code->new;
     my $path = $code->path;
+
+    my $install = <<'EOI';
+install:
+# install mod_perl.so
+	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
+	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
+	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
+# install mod_perl .h files
+	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
+	$(MODPERL_CP) $(MODPERL_H_FILES) $(MODPERL_AP_INCLUDEDIR)
+EOI
 
     my $mf = $self->default_file('makefile');
 
@@ -1139,6 +1169,28 @@ sub write_src_makefile {
 
     while (my($type, $lib) = each %libs) {
         print $fh $self->canon_make_attr("lib_$type", $libs{$type});
+    }
+
+    if (my $symbols = $self->modperl_symbols) {
+        print $fh $self->canon_make_attr('lib_symbols', $symbols);
+        $install .= <<'EOI';
+# install mod_perl symbol file
+	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
+	$(MODPERL_TEST_F) $(MODPERL_LIB_SYMBOLS) && \
+	$(MODPERL_CP) $(MODPERL_LIB_SYMBOLS) $(MODPERL_AP_LIBEXECDIR)
+EOI
+    }
+
+    if (my $libs = $self->modperl_libs) {
+        print $fh $self->canon_make_attr('lib_location', $libs);
+        print $fh $self->canon_make_attr('ap_libdir', 
+                                         "$self->{MP_AP_PREFIX}/lib");
+        $install .= <<'EOI';
+# install mod_perl.lib
+	@$(MKPATH) $(MODPERL_AP_LIBDIR)
+	$(MODPERL_TEST_F) $(MODPERL_LIB_LOCATION) && \
+	$(MODPERL_CP) $(MODPERL_LIB_LOCATION) $(MODPERL_AP_LIBDIR)
+EOI
     }
 
     my $libperl = join '/',
@@ -1188,14 +1240,11 @@ all: lib
 
 lib: $(MODPERL_LIB)
 
-install:
-# install mod_perl.so
-	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
-	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
-	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
-# install mod_perl .h files
-	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
-	$(MODPERL_CP) $(MODPERL_H_FILES) $(MODPERL_AP_INCLUDEDIR)
+EOF
+
+    print $fh $install;
+
+    print $fh <<'EOF';
 
 .SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
@@ -1264,6 +1313,13 @@ sub otherldflags {
     my $flags = \&{"otherldflags_$^O"};
     return $self->otherldflags_default unless defined &$flags;
     $flags->($self);
+}
+
+sub otherldflags_MSWin32 {
+    my $self = shift;
+    my $flags = $self->otherldflags_default;
+    $flags .= ' -pdb:$(INST_ARCHAUTODIR)\$(BASEEXT).pdb' if $self->{MP_DEBUG};
+    $flags;
 }
 
 sub typemaps {
