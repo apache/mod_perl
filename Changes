@@ -16,7 +16,7 @@ fix modules/sandwich test
 
 apxs/aix port [Paul J. Reder <rederpj@raleigh.ibm.com>]
 
-preload Apache::Contstants::OPT_EXECCGI() for Apache::{Registry,PerlRun}
+preload Apache::Constants::OPT_EXECCGI() for Apache::{Registry,PerlRun}
 thanks to Chris Remshaw for spotting this w/ Apache::DProf
 
 Apache::SizeLimit now uses $r->child_terminate instead of Apache::exit(-2)
