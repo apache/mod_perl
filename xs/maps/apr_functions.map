@@ -164,7 +164,7 @@ MODULE=APR::Pool
 MODULE=APR::Lock
 !apr_lock_child_init
  apr_lock_t *:apr_lock_create | mpxs_ | \
-              SV *:CLASS, pool, type=0, mech, scope=1, fname="lock.file" | new
+              SV *:CLASS, pool, type=0, mech=APR_LOCK_DEFAULT, scope=1, fname="lock.file" | new
 -apr_lock_destroy
  apr_lock_DESTROY | | lock
  apr_lock_data_get
