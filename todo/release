@@ -4,7 +4,3 @@
 
 -- see also todo/api_status
 -- see also todo/release-checklist
-
-* document_root needs to be restored at the end of request
-  http://marc.theaimsgroup.com/?t=110842294700006&r=1&w=2
-  owner: joes

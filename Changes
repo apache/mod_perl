@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+if $r->document_root was modified, restore it at the end of request
+[joes]
+
 Apache::ServerRec method which set the non-integer fields in the
 server_rec, now copy the value from the perl scalar, so if it changes
 or goes out of scope the C struct is not affected. Using internal perl
