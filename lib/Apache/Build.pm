@@ -742,10 +742,23 @@ sub httpd_version {
 
     my $version;
 
-    while(<$fh>) {
-        next unless /^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/;
-        $version = $1;
-        last;
+    while (<$fh>) {
+        #now taking bets on how many friggin times this will change
+        #over the course of apache 2.0.  1.3 changed it at least a half
+        #dozen times.  hopefully it'll stay in the same file at least.
+        if (/^\#define\s+AP_SERVER_MAJORVERSION\s+\"(\d+)\"/) {
+            #XXX could be more careful here.  whatever.  see above.
+            my $major = $1;
+            my $minor = (split /\s+/, scalar(<$fh>))[-1];
+            my $patch = (split /\s+/, scalar(<$fh>))[-1];
+            $version = join '.', $major, $minor, $patch;
+            $version =~ s/\"//g;
+            last;
+        }
+        elseif (/^\#define\s+AP_SERVER_BASEREVISION\s+\"(.*)\"/) {
+            $version = $1;
+            last;
+        }
     }
 
     close $fh;
