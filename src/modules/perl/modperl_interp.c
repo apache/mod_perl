@@ -51,7 +51,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 #ifdef MP_USE_GTOP
         MP_dSCFG(mip->server);
         MP_TRACE_m_do(
-            modperl_gtop_do_proc_mem_before(MP_FUNC ": perl_clone");
+            modperl_gtop_do_proc_mem_before(MP_FUNC, "perl_clone");
         );
 #endif
 
@@ -99,7 +99,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 
 #ifdef MP_USE_GTOP
         MP_TRACE_m_do(
-            modperl_gtop_do_proc_mem_after(MP_FUNC ": perl_clone");
+            modperl_gtop_do_proc_mem_after(MP_FUNC, "perl_clone");
         );
 #endif
     }

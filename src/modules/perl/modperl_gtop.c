@@ -95,12 +95,12 @@ static void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
 }
 
 void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop, 
-                                  char *when, char *msg)
+                                  char *when, const char *func, char *msg)
 {
 #define ss_item(item) gtop->proc_mem_ss.item
 
-    fprintf(stderr, "%s %s: " ss_fmt "\n",
-            msg, when,
+    fprintf(stderr, "%s : %s %s: " ss_fmt "\n",
+            func, (msg ? msg : ""), when,
             ss_item(size),
             ss_item(vsize),
             ss_item(resident),
@@ -110,22 +110,22 @@ void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop,
 #undef ss_item
 }
 
-void modperl_gtop_report_proc_mem_diff(modperl_gtop_t *gtop, char *msg)
+void modperl_gtop_report_proc_mem_diff(modperl_gtop_t *gtop, const char *func, char *msg)
 {
     modperl_gtop_proc_mem_size_string(gtop, SS_TYPE_DIFF);
-    modperl_gtop_report_proc_mem(gtop, "diff", msg);
+    modperl_gtop_report_proc_mem(gtop, "diff", func, msg);
 }
 
-void modperl_gtop_report_proc_mem_before(modperl_gtop_t *gtop, char *msg)
+void modperl_gtop_report_proc_mem_before(modperl_gtop_t *gtop, const char *func, char *msg)
 {
     modperl_gtop_proc_mem_size_string(gtop, SS_TYPE_BEFORE);
-    modperl_gtop_report_proc_mem(gtop, "before", msg);
+    modperl_gtop_report_proc_mem(gtop, "before", func, msg);
 }
 
-void modperl_gtop_report_proc_mem_after(modperl_gtop_t *gtop, char *msg)
+void modperl_gtop_report_proc_mem_after(modperl_gtop_t *gtop, const char *func, char *msg)
 {
     modperl_gtop_proc_mem_size_string(gtop, SS_TYPE_AFTER);
-    modperl_gtop_report_proc_mem(gtop, "after", msg);
+    modperl_gtop_report_proc_mem(gtop, "after", func, msg);
 }
 
 #endif /* MP_USE_GTOP */

@@ -36,19 +36,19 @@ modperl_gtop_t *modperl_gtop_new(apr_pool_t *p);
 void modperl_gtop_get_proc_mem_before(modperl_gtop_t *gtop);
 void modperl_gtop_get_proc_mem_after(modperl_gtop_t *gtop);
 void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop, 
-                                  char *when, char *msg);
-void modperl_gtop_report_proc_mem_diff(modperl_gtop_t *gtop, char *msg);
-void modperl_gtop_report_proc_mem_before(modperl_gtop_t *gtop, char *msg);
-void modperl_gtop_report_proc_mem_after(modperl_gtop_t *gtop, char *msg);
+                                  char *when, const char *func, char *msg);
+void modperl_gtop_report_proc_mem_diff(modperl_gtop_t *gtop, const char* func, char *msg);
+void modperl_gtop_report_proc_mem_before(modperl_gtop_t *gtop, const char* func, char *msg);
+void modperl_gtop_report_proc_mem_after(modperl_gtop_t *gtop, const char* func, char *msg);
 
-#define modperl_gtop_do_proc_mem_before(msg) \
+#define modperl_gtop_do_proc_mem_before(func, msg) \
         modperl_gtop_get_proc_mem_before(scfg->gtop); \
-        modperl_gtop_report_proc_mem_before(scfg->gtop, msg)
+        modperl_gtop_report_proc_mem_before(scfg->gtop, func, msg)
 
-#define modperl_gtop_do_proc_mem_after(msg) \
+#define modperl_gtop_do_proc_mem_after(func, msg) \
         modperl_gtop_get_proc_mem_after(scfg->gtop); \
-        modperl_gtop_report_proc_mem_after(scfg->gtop, msg); \
-        modperl_gtop_report_proc_mem_diff(scfg->gtop, msg)
+        modperl_gtop_report_proc_mem_after(scfg->gtop, func, msg); \
+        modperl_gtop_report_proc_mem_diff(scfg->gtop, func, msg)
 
 #endif /* MP_USE_GTOP */
 
