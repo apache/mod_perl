@@ -50,7 +50,7 @@ sub can_compile {
 	$pr->{'mtime'} = -M _;
 	return wantarray ? (OK, $pr->{'mtime'}) : OK;
     }
-    $p->log_error("$filename not found or unable to stat");
+    $r->log_error("$filename not found or unable to stat");
     return NOT_FOUND;
 }
 
