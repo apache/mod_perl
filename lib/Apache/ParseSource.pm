@@ -226,9 +226,6 @@ sub generate_cscan_file {
     return $filename;
 }
 
-my $filemode = join '|',
-  qw{READ WRITE CREATE APPEND TRUNCATE BINARY EXCL BUFFERED DELONCLOSE};
-
 my %defines_wanted = (
     Apache => {
         common     => [qw{OK DECLINED DONE}],
@@ -248,10 +245,10 @@ my %defines_wanted = (
     APR => {
         common    => [qw{APR_SUCCESS}],
         error     => [qw{APR_E}],
-        filemode  => ["APR_($filemode)"],
         filepath  => [qw{APR_FILEPATH_}],
-        fileprot  => [qw{APR_FILEPROT_}],
         filetype  => [qw{APR_FILETYPE_}],
+        fopen     => [qw{APR_FOPEN_}],
+        fprot     => [qw{APR_FPROT_}],
         finfo     => [qw{APR_FINFO_}],
         flock     => [qw{APR_FLOCK_}],
         hook      => [qw{APR_HOOK_}],
