@@ -29,8 +29,8 @@ typedef struct {
  * filling the data in */
 static PerlIO *
 PerlIOApache_open(pTHX_ PerlIO_funcs *self, PerlIO_list_t *layers, IV n,
-		  const char *mode, int fd, int imode, int perm,
-		  PerlIO *f, int narg, SV **args)
+                  const char *mode, int fd, int imode, int perm,
+                  PerlIO *f, int narg, SV **args)
 {
     if (!f) {
         f = PerlIO_allocate(aTHX);
@@ -47,7 +47,7 @@ PerlIOApache_open(pTHX_ PerlIO_funcs *self, PerlIO_list_t *layers, IV n,
 /* this callback is used by pushed() and binmode() to add the layer */
 static IV
 PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
-		    PerlIO_funcs *tab)
+                    PerlIO_funcs *tab)
 {
     IV code;
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
@@ -108,7 +108,7 @@ PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANREAD) ||
         PerlIOBase(f)->flags & (PERLIO_F_EOF|PERLIO_F_ERROR)) {
-	return 0;
+        return 0;
     }
 
     total = modperl_request_read(aTHX_ r, (char*)vbuf, count);
@@ -130,7 +130,7 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     apr_status_t rv;
 
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANWRITE)) {
-	return 0;
+        return 0;
     }
     
     MP_CHECK_WBUCKET_INIT("print");
