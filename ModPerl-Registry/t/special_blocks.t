@@ -94,5 +94,5 @@ sub req {
     my($same_interp, $url) = @_;
     my $res = Apache::TestRequest::same_interp_do($same_interp,
                                                   \&GET, $url);
-    return $res ? $res->content : undef;
+    return $res->is_success ? $res->content : undef;
 }
