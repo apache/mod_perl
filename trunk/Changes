@@ -16,6 +16,7 @@ all changes without author attribution are by Doug MacEachern
 
 variable $Apache::Server::ConfigTestOnly is set to 1 if Apache
 is running in configuration test mode (httpd -t)
+(not unavailable under Win32)
 [Eric Cholet <cholet@logilune.com>]
 
 add PerlAddVar directive, like PerlSetVar, but uses ap_table_add
