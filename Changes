@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+get rid of warning in Apache::RedirectLogFix [Brian Moseley <ix@maz.org>]
+
 added $r->internal_redirect method
 
 Apache::TieHashTable class enhancements:
