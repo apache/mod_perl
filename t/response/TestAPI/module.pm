@@ -18,7 +18,7 @@ sub handler {
     my $r = shift;
 
     my $cfg = Apache::Test::config();
-    
+
     my $top_module = Apache::Module->top_module;
 
     my $module_count = 0;
@@ -65,7 +65,6 @@ sub handler {
     ok t_cmp(Apache::Module::loaded(''), 0,
              "Apache::Module::loaded('')");
 
-    
     ok t_cmp ref($top_module), 'Apache::Module', 'top_module';
 
     my $mmn_major = $cfg->{httpd_info}{MODULE_MAGIC_NUMBER_MAJOR};
