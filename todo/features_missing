@@ -18,6 +18,9 @@
   - Apache::CmdParms::{GETC,getline} needs compat mapping, similar to
     what Apache::Directive->as_string does, but one char or line at a time
 
+  - Automatic setting of cmd_args in @APACHE_MODULE_DIRECTIVE based on
+    function prototype
+
 * Apache::PerlSections missing features for backwards compatibility:
  - $Apache::ReadConfig::DocumentRoot
  - Apache::PerlSections->store(filename)
