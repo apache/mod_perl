@@ -17,7 +17,7 @@ in my modperl environment".
 =head1 SYNOPSIS
 
 If a Perl*Handler is prototyped with '$$', this handler will be
-invoked as method, being passed a class name or blessed object as it's
+invoked as method, being passed a class name or blessed object as its
 first argument and the blessed I<request_rec> as the second argument,
 e.g.
 
