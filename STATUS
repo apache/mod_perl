@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/12/12 08:30:47 $]
+   Last modified at [$Date: 2002/12/13 09:58:29 $]
 
 Release:
 --------
@@ -55,6 +55,28 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* we still have a problem with mod_perl starting from a
+  vhost. consider the following config:
+
+  PerlSwitches -I/foo/bar
+  <VirtualHost TestDirective::perlloadmodule6>
+     PerlLoadModule TestDirective::perlloadmodule6
+     ...
+  </VirtualHost>
+
+  The value set by PerlSwitches in the main server is ignored, because
+  it's not seen by mod_perl starting from vhost.
+  
+  overall, currently the early startup in vhost is a bunch of ugly
+  workaround, which I've added everytime I came up with a config that
+  wasn't working. Need to come up with a better design decisions.
+
+  once this is fixed. I want the perlloadmodule6 to be loaded before
+  all other perlloadmodule configs, because it tests an important
+  segfault when perlloadmodule happens to start mod_perl from within a
+  vhost. but because PerlSwitches from other tests are ignored, it
+  can't trigger the mod_perl startup in the test suite.
 
 * slurp_filename's C implementation.
 
