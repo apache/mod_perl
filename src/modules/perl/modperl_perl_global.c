@@ -19,7 +19,7 @@ hv_fetch_he(PL_modglobal, (char *)gkey->val, gkey->len, gkey->hash)
 (HV*)*hv_store(PL_modglobal, gkey->val, gkey->len, (SV*)newHV(), gkey->hash)
 
 #define MP_MODGLOBAL_ENT(key) \
-{key, "ModPerl::" key, (sizeof("ModPerl::")-1)+(sizeof(key)-1), 0}
+{key, "ModPerl::" key, MP_SSTRLEN("ModPerl::") + MP_SSTRLEN(key), 0}
 
 static modperl_modglobal_key_t MP_modglobal_keys[] = {
     MP_MODGLOBAL_ENT("END"),
