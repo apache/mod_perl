@@ -12,6 +12,29 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+it is invalid to return HTTP_INTERNAL_SERVER_ERROR or any other HTTP
+response code from modperl_wbucket_pass, therefore set the error code
+into r->status and return APR_SUCCESS. Untill now response handler
+with messed up response headers, were causing no response what so ever
+to the client.  LWP was assuming 500, and it was all fine, testing
+without LWP has immediately revealed that there was a problem in the
+handling of this case. [Stas]
+
+put the end to the 'Not a CODE reference' errors, instead provide an
+intelligent error message, hopefully telling which function can't be
+found.  at the same time improve the tracing to include the pid/tid of
+the server that has encountered this problem, to make it easier to
+debug. [Stas]
+
+mod_perl handler must be dupped for any mpm which runs within
+USE_ITHREAD.  Untill now there was a big problem with prefork mpm if
+any of its vhosts was using PerlOptions +(Parent|Clone) and happened
+to load handlers before the main server. When that was happening the
+main server will see that the handler was resolved (since it sees the
+handler struct from the vhost that loaded this module, instead of its
+own), which in fact it wasn't, causing the failure to run the handler
+with the infamous 'Not a CODE reference' error. [Stas]
+
 Make sure that the static mod_perl library is built after the dynamic
 (a requirement on win32) [Steve Hay <steve.hay@uk.radan.com>]
 
