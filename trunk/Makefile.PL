@@ -156,6 +156,7 @@ if(!$Is_Win32 and $ENV{RANDOM_PORT} and $$ > 8000 and $$ < 30000) {
     print "I'll use Port $PORT\n";
 }
 $PORT ||= $Port;
+$TARGET = "";
 $DO_HTTPD = $ENV{DO_HTTPD} || 0;
 $NO_HTTPD = $ENV{NO_HTTPD} || 0;
 $PREP_HTTPD = 0;
@@ -894,6 +895,9 @@ sub init_tests_and_config {
 	if($APACHE_PREFIX and $APACI_ARGS !~ /--prefix=/)  {
 	    $cmd .= " --prefix=$APACHE_PREFIX";
 	}
+	if ($APACI_ARGS =~ /--target=(\S+)/) {
+	    $TARGET = $1;
+	} 
 	if($ADD_MODULE) {
 	    for (split ",", $ADD_MODULE) {
 		if(/([a-zA-Z0-9][a-zA-Z0-9_]*)/) {
@@ -1086,6 +1090,8 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
     }
 }
 
+$TARGET ||= (is_ssl() ? "httpsd" : "httpd");
+
 WriteMakefile(
     #DIR => \@DIR,
     NAME    => "mod_perl",
@@ -1098,7 +1104,7 @@ WriteMakefile(
         APACHE_ROOT => $APACHE_ROOT,
         APACHE_SRC => $APACHE_SRC,
 	ARCHNAME => $Config{archname},
-	HTTPD => (is_ssl() ? "httpsd" : "httpd"),
+	HTTPD => $TARGET,
 	PORT => $PORT,
 	PWD => $PWD,
 	SHRPENV => $Config{shrpenv},
