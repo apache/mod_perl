@@ -455,6 +455,16 @@ EOF
     close $fh or die "failed to write $file: $!";
 }
 
+sub rebuild {
+    my $self = __PACKAGE__->build_config;
+    my @opts = map { qq[$_='$self->{$_}'] } sort grep /^MP_/,  keys %$self;
+    my $command = "perl Makefile.PL @opts";
+    print "Running: $command\n";
+    system $command;
+}
+# % perl -MApache::Build -erebuild
+*main::rebuild = \&rebuild if $0 eq '-e';
+
 #--- attribute access ---
 
 sub is_dynamic {
@@ -1028,10 +1038,26 @@ Apache::Build - Methods for locating and parsing bits of Apache source code
  use Apache::Build ();
  my $build = Apache::Build->new;
 
+ # rebuild mod_perl with build opts from the previous build
+ % cd modperl-2.0
+ % perl -MApache::Build -erebuild
+
 =head1 DESCRIPTION
 
 This module provides methods for locating and parsing bits of Apache
 source code.
+
+Since mod_perl remembers what build options were used to build it, you
+can use this knowledge to rebuild it using the same options. Simply
+chdir to the mod_perl source directory and run:
+
+  % cd modperl-2.0
+  % perl -MApache::Build -erebuild
+
+If you want to rebuild not yet installed, but already built mod_perl,
+run from its root directory:
+
+  % perl -Ilib -MApache::Build -erebuild
 
 =head1 METHODS
 
