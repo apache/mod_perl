@@ -1,7 +1,7 @@
 use Config;
 
 #my $embed_pm = '-MApache::ExtUtils=ldopts';
-my $embed_pm = '-MExtUtils::Embed'
+my $embed_pm = '-MExtUtils::Embed';
 my $ldopts = `$^X $embed_pm -e ldopts -- -std @ARGV`;
 
 if($^O eq "aix") {
