@@ -25,6 +25,7 @@ use ModPerl::Util ();
 use ModPerl::Global ();
 
 use File::Spec::Functions ();
+use File::Basename;
 
 use Apache::Const -compile => qw(:common &OPT_EXECCGI);
 
@@ -360,6 +361,11 @@ sub convert_script_to_compiled_handler {
 
     $self->strip_end_data_segment;
 
+    # handle the non-parsed handlers ala mod_cgi (though mod_cgi does
+    # some tricks removing the header_out and other filters, here we
+    # just call assbackwards which has the same effect).
+    my $base = File::Basename::basename($self->{FILENAME});
+    my $nph = substr($base, 0, 4) eq 'nph-' ? '$_[0]->assbackwards(1);' : "";
     my $script_name = $self->get_script_name || $0;
 
     my $eval = join '',
@@ -367,6 +373,7 @@ sub convert_script_to_compiled_handler {
                     $self->{PACKAGE}, ";",
                     "sub handler {",
                     "local \$0 = '$script_name';",
+                    $nph,
                     $line,
                     ${ $self->{CODE} },
                     "\n}"; # last line comment without newline?
