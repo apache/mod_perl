@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_02-dev
 
+remove $r->finfo usage from Apache::PerlRun, clearly finfo isn't as
+stable as it should be
+[Surat Singh Bhati <surat@indiamart.com>]
+
 Apache->server will now point the current VirtualHost when inside a
 <Perl> section, thanks to Robin Berjon for the spot
 
