@@ -286,7 +286,7 @@ sub handler {
 	no strict;
 	my $tab = \%{$package.'::'};
         foreach (keys %$tab) {
-	    undef &{$tab->{$_}};
+	    undef &{$tab->{$_}} if defined &{$tab->{$_}};
 	}
 	%$tab = ();
     }
