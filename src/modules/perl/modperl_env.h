@@ -8,10 +8,7 @@
 #define modperl_env_tie(mg_flags) \
     SvFLAGS((SV*)GvHV(PL_envgv)) |= mg_flags
 
-void modperl_env_request_populate(pTHX_ request_rec *r);
-
 void modperl_env_request_tie(pTHX_ request_rec *r);
-
 void modperl_env_request_untie(pTHX_ request_rec *r);
 
 #endif /* MODPERL_ENV_H */
