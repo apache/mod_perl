@@ -15,5 +15,6 @@ socket.t
 string.t
 table.t
 threadmutex.t
+uri.t
 util.t
 uuid.t
