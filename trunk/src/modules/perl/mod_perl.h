@@ -1098,6 +1098,7 @@ request_rec *sv2request_rec(SV *in, char *class, CV *cv);
 #define ApachePerlRun_name_with_virtualhost() \
     perl_get_sv("Apache::Registry::NameWithVirtualHost", FALSE) 
 
+char *mod_perl_set_opmask(request_rec *r, SV *sv);
 void mod_perl_init_opmask(server_rec *s, pool *p);
 void mod_perl_dump_opmask(void);
 #define dOPMask \

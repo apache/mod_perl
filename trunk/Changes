@@ -20,6 +20,8 @@ PerlRequire and <Perl></Perl>
    changes the default opmask generated from OPCODE_FILE
  -PERL_DEFAULT_OPMASK=1 disables PerlOpmask directive, forces default
    opmask on
+ -PERL_ORALL_OPMASK=1 enables $r->set_opmask method for per-directory masks
+ -new module Apache::Opcode for generating op_mask
 
 Fixed Apache::Util::ht_time test (util.t) so it doesn't fail without
 any reason
