@@ -30,7 +30,7 @@ sub handler {
     ok t_cmp $subr->uri, $uri, "uri";
 
     my $rc = $subr->run;
-    ok $rc, Apache::SERVER_ERROR, "rc";
+    ok t_cmp $rc, Apache::SERVER_ERROR, "rc";
 
     # test an explicit DESTROY (which happens automatically on the
     # scope exit)
