@@ -210,7 +210,8 @@ sub test {
 
 sub fetch {
     # Old code calls fetch() as a function, new code as a method
-    shift() if UNIVERSAL::isa($_[0], __PACKAGE__);
+    my $want_response;
+    $want_response = shift() if UNIVERSAL::isa($_[0], __PACKAGE__);
     my ($ua, $url) = (@_ == 1 ? ($UA, shift()) : @_);
     my $request = ref $url ? $url : {uri=>$url};
 
@@ -228,7 +229,7 @@ sub fetch {
     my $req = new HTTP::Request(@{$request}{'method','uri','headers','content'});
     my $response = $ua->request($req);
 
-    return wantarray ? ($response->content, $response) : $response->content;
+    return $want_response ? $response : $response->content;
 }
 
 sub simple_fetch {
