@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.23_01-dev
 
+fixed 'make clean' to remove FILES => passed to MakeMaker
+
 =item 1.23 - April 20, 2000
 
 create test files during Makefile.PL so 'make test' can be run as root
