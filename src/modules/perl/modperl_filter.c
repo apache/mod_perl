@@ -506,7 +506,7 @@ static int modperl_filter_register_request(request_rec *r,
 
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
-            addfunc(name, (void*)ctx, r, NULL);
+            addfunc(name, (void*)ctx, r, r->connection);
         }
 
         return OK;

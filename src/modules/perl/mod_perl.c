@@ -504,11 +504,11 @@ void modperl_register_hooks(apr_pool_t *p)
 
     ap_register_output_filter(MODPERL_OUTPUT_FILTER_NAME,
                               modperl_output_filter_handler,
-                              AP_FTYPE_CONTENT);
+                              AP_FTYPE_CONTENT_SET);
 
     ap_register_input_filter(MODPERL_INPUT_FILTER_NAME,
                              modperl_input_filter_handler,
-                             AP_FTYPE_CONTENT);
+                             AP_FTYPE_CONTENT_SET);
 
     ap_hook_pre_connection(modperl_hook_pre_connection,
                            NULL, NULL, APR_HOOK_FIRST);
