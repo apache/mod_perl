@@ -23,6 +23,8 @@
   Usage
   -----
 
+  [See file ../INSTALL.apaci for detailed description]
+
   o Build mod_perl statically with httpd 
     _inside_ the Apache source tree via APACI:
 

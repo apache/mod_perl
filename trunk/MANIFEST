@@ -4,6 +4,7 @@ Constants/Makefile.PL
 ModuleConfig/ModuleConfig.pm
 ModuleConfig/Makefile.PL
 INSTALL
+INSTALL.apaci
 SUPPORT
 INSTALL.win32
 MANIFEST
