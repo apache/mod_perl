@@ -9,6 +9,12 @@ config features:
 - allow <Perl></Perl> configuration sections to have read access to internal
   configuration structures (would be nice if we could tie a %namespace::) 
 
+- allow things like <Perl main> -- the code will be placed into 'main'
+  package. Of course any package can be specified and the default is
+  Apache::ReadConfig. That would place a little meme-fleck into
+  people's brains to remind them that the default package is
+  Apache::ReadConfig.
+
 - setuid/gid before running any Perl code
 
 - implement PerlINC (or similar) as a nicer interface for the working
