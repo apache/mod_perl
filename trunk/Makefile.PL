@@ -1989,6 +1989,9 @@ EOS
         $my_config{$_} = ${$_} for @other_hooks;
     }
 
+    #need this alias for Apache::src backwards compat
+    $my_config{'Apache_Src'} = $my_config{'APACHE_SRC'};
+
     my $my_config_dump = join ",\n",
         map { qq{'$_' => } .
               ($my_config{$_} =~ /^\d+$/ ? $my_config{$_} : qq{'$my_config{$_}'})
