@@ -1929,7 +1929,7 @@ dir_config(r, key=NULL, ...)
 	TABLE_GET_SET(c->vars, FALSE);
     }
     if (!SvTRUE(RETVAL)) {
-	s = r ? r->server : perl_get_startup_server();
+	s = r && r->server ? r->server : perl_get_startup_server();
 	if (s && s->module_config) {
 	    SvREFCNT_dec(RETVAL); /* in case above did newSV(0) */
 	    cs = (perl_server_config *)get_module_config(s->module_config, 
