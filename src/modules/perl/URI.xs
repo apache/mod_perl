@@ -46,19 +46,27 @@ DESTROY(uri)
     safefree(uri);
 
 Apache::URI
-parse(self, r, uri)
+parse(self, r, uri=NULL)
     SV *self
     Apache r
     const char *uri
 
+    PREINIT:
+    int self_uri = 0;
+
     CODE:
     self = self; /* -Wall */ 
     RETVAL = (Apache__URI)safemalloc(sizeof(XS_Apache__URI));
-    
+    if(!uri) {
+	uri = ap_construct_url(r->pool, r->uri, r);
+	self_uri = 1;
+    }
     (void)ap_parse_uri_components(r->pool, uri, &RETVAL->uri);
     RETVAL->pool = r->pool;
     RETVAL->r = r;
     RETVAL->path_info = NULL;
+    if(self_uri) 
+	RETVAL->uri.query = r->args;
 
     OUTPUT:
     RETVAL
