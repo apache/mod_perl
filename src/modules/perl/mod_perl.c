@@ -411,6 +411,11 @@ static void mod_perl_tie_scriptname(void)
     if(orig_inc) SvREFCNT_dec(orig_inc); \
     orig_inc = av_copy_array(GvAV(incgv))
 
+static void mp_dso_unload(void *data) 
+{ 
+    perl_is_running = 0; 
+} 
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -634,6 +639,10 @@ void perl_startup (server_rec *s, pool *p)
 
     saveINC;
     Apache__ServerStarting(FALSE);
+#if MODULE_MAGIC_NUMBER >= MMN_130
+    if(perl_module.dynamic_load_handle) 
+	register_cleanup(p, NULL, mp_dso_unload, NULL); 
+#endif
 }
 
 int mod_perl_sent_header(request_rec *r, int val)

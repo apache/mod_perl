@@ -836,6 +836,7 @@ sub init_tests_and_config {
 	    print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
 	}
         print $hf "   MMN => $mmn,\n";
+	print $hf "   USE_DSO => 1,\n" if $USE_DSO;
 	print $hf ");\n1;\n";
 	$hf->close;
 	$apaci_cfg->close if $apaci_cfg;
