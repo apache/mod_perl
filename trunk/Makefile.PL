@@ -717,8 +717,12 @@ sub init_tests_and_config {
     }
 
     if($USE_APACI and not $PREP_HTTPD and not $USE_APXS) {
-	my $cmd = "CC=\"$Config{cc}\" " .
-		  "./configure " .
+	my $cmd = "CC=\"$Config{cc}\" ";
+
+	if($PERL_EXTRA_CFLAGS) {
+	    $cmd .= qq(CFLAGS="$PERL_EXTRA_CFLAGS" );
+	}    
+	$cmd .= "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
 	if($USE_DSO) {
 	    $cmd .= " --enable-shared=perl";
