@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 3;
+plan tests => 5;
 
 my $location = "/TestCompat::request_body";
 
@@ -41,6 +41,35 @@ my $location = "/TestCompat::request_body";
         );
 }
 
+# encoding/decoding
+{
+    my %data = (
+        test => 'decoding',
+        body => '%DC%DC+%EC%2E+%D6%D6+%D6%2F',
+    );
+    ok t_cmp(
+        $data{body},
+        GET_BODY(query(%data)),
+        q{decoding}
+       );
+}
+
+
+# big POST
+{
+    my %data = (
+        test => 'big_input',
+        body => ('x' x 819_235),
+       );
+    my $content = join '=', %data;
+    ok t_cmp(
+        length($data{body}),
+        POST_BODY($location, content => $content),
+        q{big POST}
+       );
+}
+
+
 
 ### helper subs ###
 sub query {
@@ -48,18 +77,3 @@ sub query {
     "$location?" . join '&', map { "$_=$args{$_}" } keys %args;
 }
 
-# accepts multiline var where, the lines matching:
-# ^ok\n$  results in ok(1)
-# ^nok\n$ results in ok(0)
-# the rest is printed as is
-sub ok_nok {
-    for (split /\n/, shift) {
-        if (/^ok\n?$/) {
-            ok 1;
-        } elsif (/^nok\n?$/) {
-            ok 0;
-        } else {
-            print "$_\n";
-        }
-    }
-}

@@ -47,6 +47,8 @@ Apache::Server->log->info("$apr_mods APR:: modules loaded");
     $server->log->info("base server + $vhosts vhosts ready to run tests");
 }
 
+use constant IOBUFSIZE => 8192;
+
 sub ModPerl::Test::read_post {
     my $r = shift;
 
@@ -54,12 +56,16 @@ sub ModPerl::Test::read_post {
 
     return undef unless $r->should_client_block;
 
-    my $len = $r->headers_in->get('content-length');
-
+    my $data = '';
     my $buf;
-    $r->get_client_block($buf, $len);
+    while (my $read_len = $r->get_client_block($buf, IOBUFSIZE)) {
+        if ($read_len == -1) {
+            die "some error while reading with get_client_block";
+        }
+        $data .= $buf;
+    }
 
-    return $buf;
+    return $data;
 }
 
 sub ModPerl::Test::add_config {
