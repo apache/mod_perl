@@ -237,6 +237,11 @@ sub status_data_dump {
     \@retval;
 }
 
+sub cv_file {
+    my $obj = shift;
+    $obj->can('FILEGV') ? $obj->FILEGV->SV->PV : $obj->FILE;
+}
+
 sub status_cv_dump { 
     my($r,$q) = @_;
     return [] unless $is_installed{B};
@@ -247,7 +252,7 @@ sub status_cv_dump {
     my @retval = "Subroutine info for <b>$name</b> <pre>\n";
     my $script = $q->script_name;
     my $obj    = B::svref_2object(*$name{CODE});
-    my $file   = $obj->FILEGV->SV->PV;
+    my $file   = cv_file($obj);
     my $stash  = $obj->GV->STASH->NAME;
 
     push @retval, "File: ", 
