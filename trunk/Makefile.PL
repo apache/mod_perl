@@ -2410,6 +2410,7 @@ EOF
     malloc_check();
     uselargefiles_check();
     dynaloader_check();
+    shrplib_check();
 
     if ($USE_APXS and $Config{libs} =~ /($thrlib)/) {
         my $lib = $1;
@@ -2560,4 +2561,32 @@ EOF
  /* Added by Wayne Scott 
 
 EOF
+}
+
+sub shrplib_check {
+    return unless $Config{'useshrplib'} and
+      $Config{'useshrplib'} eq 'define';
+
+    my $libperl = $Config{'libperl'} || 'libperl.so';
+
+    for my $dir (qw(/lib /usr/lib /usr/local/lib)) {
+        next unless -e "$dir/$libperl";
+
+        my $coredir = "$Config{'archlibexp'}/CORE";
+        my $corelib = "$coredir/$libperl";
+
+        phat_warn(<<EOF);
+$dir/$libperl might override
+$corelib
+
+This may cause build or runtime errors with mod_perl.
+Consider removing $dir/$libperl, it should not be there.
+
+If your vendor has installed $libperl there, complain to them and install
+Perl from source if needed.
+
+$libperl should only exist in Perl version/arch directories, for example:
+$coredir
+EOF
+    }
 }
