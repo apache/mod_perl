@@ -21,8 +21,8 @@ for my $module (sort @modules) {
     my $hostport = Apache::TestRequest::hostport($config);
     t_debug("connecting to $hostport");
 
-    ok t_cmp($expected,
-             GET_BODY_ASSERT("http://$hostport/$path"),
+    ok t_cmp(GET_BODY_ASSERT("http://$hostport/$path"),
+             $expected,
              "testing PostConfig");
 }
 

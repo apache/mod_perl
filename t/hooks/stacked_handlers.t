@@ -11,4 +11,4 @@ my $location = "/TestHooks__stacked_handlers";
 my $expected = join "\n", qw(one two three), '';
 my $received = GET_BODY $location;
 
-ok t_cmp($expected, $received, "stacked_handlers");
+ok t_cmp($received, $expected, "stacked_handlers");
