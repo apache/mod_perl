@@ -62,11 +62,12 @@ my @xs_h_files = map catfile("xs", $_),
 my @exe_files =  map "bin/$_", qw(mp2doc mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
-    NAME      => 'mod_perl',
-    VERSION   => $VERSION,
-    EXE_FILES => \@exe_files,
-    DEFINE    => get_DEFINE(),
-    macro     => {
+    NAME          => 'mod_perl',
+    VERSION       => $VERSION,
+    ABSTRACT_FROM => 'lib/mod_perl.pm',
+    EXE_FILES     => \@exe_files,
+    DEFINE        => get_DEFINE(),
+    macro         => {
         MODPERL_SRC        => $code->path,
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
         MAKE_F             => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
