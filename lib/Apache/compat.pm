@@ -530,5 +530,12 @@ sub handler {
     return Apache::DECLINED;
 }
 
+package Apache::Connection;
+
+# auth_type and user records don't exist in 2.0 conn_rec struct
+# 'PerlOptions +GlobalRequest' is required
+sub auth_type { Apache->request->auth_type }
+sub user      { Apache->request->user      }
+
 1;
 __END__
