@@ -556,6 +556,7 @@ CLOSE(...)
     
     CODE:
     items = items;
+    ix = ix;
     /*NOOP*/
 
 Apache
@@ -564,7 +565,7 @@ TIEHANDLE(classname, r=NULL)
     Apache r
 
     CODE:
-    RETVAL = r ? r : perl_request_rec(NULL);
+    RETVAL = (r && classname) ? r : perl_request_rec(NULL);
 
     OUTPUT:
     RETVAL
@@ -583,7 +584,7 @@ OPEN(self, arg1, arg2=Nullsv)
 
     CODE:
     sv_unmagic((SV*)gv, 'q'); /* untie *STDOUT */
-    if (arg2) {
+    if (arg2 && self) {
         arg = newSVsv(arg1);
         sv_catsv(arg, arg2);
     }
@@ -980,7 +981,7 @@ read_client_block(r, buffer, bufsiz)
     r->read_length = 0;
 
     if (should_client_block(r)) {
-        SvUPGRADE(buffer, SVt_PV);
+        (void)SvUPGRADE(buffer, SVt_PV);
         SvGROW(buffer, bufsiz+1);
         nrd = get_client_block(r, SvPVX(buffer), bufsiz);
     }
@@ -1019,7 +1020,7 @@ get_client_block(r, buffer, bufsiz)
     long nrd = 0;
 
     PPCODE:
-    SvUPGRADE(buffer, SVt_PV);
+    (void)SvUPGRADE(buffer, SVt_PV);
     SvGROW(buffer, bufsiz+1);
     nrd = get_client_block(r, SvPVX(buffer), bufsiz);
     if ( nrd > 0 ) {
