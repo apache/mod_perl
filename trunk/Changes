@@ -22,6 +22,11 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+fix bug when PERL_MARK_WHERE was undefined spotted by Kermit Tensmeyer
+
+emulate pre-1.3b6 r->uri/r->proxyreq behavior for proxy requests
+inside the post_read_request_handler and add t/internal/proxy test 
+
 added additional installation document INSTALL.apaci which
 describes the new APACI stuff (including background information).
 [Ralf S. Engelschall <rse@engelschall.com>]

@@ -94,6 +94,7 @@ t/internal/headers.t
 t/internal/hooks.t
 t/internal/http-get.t
 t/internal/http-post.t
+t/internal/proxy.t
 t/internal/redirect.t
 t/internal/rwrite.t
 t/internal/stacked.t

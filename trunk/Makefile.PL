@@ -701,7 +701,10 @@ unless($Is_Win32 or -e "t/conf/httpd.conf") {
     conf_append("LockFile /tmp/mod_perl.lock") if $v >= 121;
     conf_append("PerlChildInitHandler My::child_init") if $My::child_init;
     conf_append("PerlChildExitHandler My::child_exit") if $My::child_exit;
-
+    conf_append("PerlTransHandler My::ProxyTest") 
+    if $callback_hooks{PERL_TRANS} and 
+    $callback_hooks{PERL_STACKED_HANDLERS} and
+    $mmn > 19980270;
     conf_append(<<EOF) if $callback_hooks{PERL_STACKED_HANDLERS}; 
 <Location /chain>
 SetHandler perl-script
