@@ -259,7 +259,7 @@ sub send_fd_length {
         $len = IOBUFSIZE;
     }
 
-    while (read($fh, $buff, $len)) {
+    while (CORE::read($fh, $buff, $len)) {
         $total_bytes_sent += $r->puts($buff);
     }
 
@@ -369,7 +369,7 @@ sub size_string {
     elsif ($size < 1048576) {
         $size = sprintf "%4dk", ($size + 512) / 1024;
     }
-    elsif (size < 103809024) {
+    elsif ($size < 103809024) {
         $size = sprintf "%4.1fM", $size / 1048576.0;
     }
     else {
