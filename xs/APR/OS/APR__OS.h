@@ -16,7 +16,7 @@
 static MP_INLINE U32 mpxs_APR__OS_current_thread_id(pTHX)
 {
 #if APR_HAS_THREADS
-    return apr_os_thread_current();
+    return (U32)apr_os_thread_current();
 #else
     return 0;
 #endif
