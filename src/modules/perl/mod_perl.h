@@ -442,7 +442,7 @@ if((add->flags & f) || (base->flags & f)) \
 #define MP_ENV_off(d)    (d->flags  &= ~MPf_ENV)
 #endif
 
-#define MP_ENV(d)       (d->SetupEnv == MPf_On)
+#define MP_ENV(d)       (d->SetupEnv != MPf_Off)
 #define MP_ENV_on(d)    (d->SetupEnv = MPf_On)
 #define MP_ENV_off(d)   (d->SetupEnv = MPf_Off)
 
