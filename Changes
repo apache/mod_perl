@@ -12,9 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
-Fix Apache::Status, to gracefully recover from failing to load
-Apache::Request when mp1's version is found. Previously it was
-affecting Apache::compat [Stas]
+Fix Apache::Status, to lookup the Apache::Request version without
+loading it. Only if a suitable (2.x) version is found -- load and use
+it. Previously loading the 1.x version was affecting Apache::compat.
+[Stas]
 
 Fix a bug in special blocks handling (like END), which until now was
 dropping on the floor all blocks but the last one (mainly affecting
