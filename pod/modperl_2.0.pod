@@ -681,7 +681,7 @@ Or even for a given location, for something like "dirty" cgi scripts:
     PerlInterpMaxRequests 1
     PerlInterpStart 1
     PerlInterpMax 1
-    PerlHandler Apache::Registry
+    PerlResponseHandler Apache::Registry
  </Location>
 
 Will use a fresh interpreter with its own namespace to handle each

@@ -161,10 +161,11 @@ runtime until we're sure we need to be there.
 
 Perl*Handlers are now "compiled", that is, the various forms of:
 
- PerlHandler MyModule (defaults to MyModule::handler or MyModule->handler)
- PerlHandler MyModule->handler
- PerlHandler $MyObject->handler
- PerlHandler 'sub { print "foo\n" }'
+ PerlResponseHandler MyModule->handler
+ # defaults to MyModule::handler or MyModule->handler
+ PerlResponseHandler MyModule
+ PerlResponseHandler $MyObject->handler
+ PerlResponseHandler 'sub { print "foo\n" }'
 
 are only parsed once, unlike 1.xx which parsed every time the handler
 was used.  there will also be an option to parse the handlers at
