@@ -94,6 +94,7 @@ sub handler {
             ok $fh->close;
         }
         else {
+            debug "open $file failed: $!";
             ok 0;
             debug "ok: cannot read from the closed fh";
             ok 1;
