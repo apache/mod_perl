@@ -31,7 +31,7 @@ sub handler : FilterConnectionHandler {
         return $rv;
     }
 
-    while (!$ctx_bb->empty) {
+    while (!$ctx_bb->is_empty) {
         my $bucket = $ctx_bb->first;
 
         $bucket->remove;

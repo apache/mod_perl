@@ -70,7 +70,7 @@ sub handler {
             last;
         }
 
-        last if $bb->empty;
+        last if $bb->is_empty;
 
         my $b = APR::Bucket::flush_create($c->bucket_alloc);
         $bb->insert_tail($b);

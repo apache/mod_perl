@@ -152,14 +152,14 @@ sub handler {
         ok $b->is_flush;
 
         t_debug("not empty");
-        ok !$bb->empty;
+        ok !$bb->is_empty;
 
         # remove all buckets from bb and test that it's empty
         for (my $b = $bb->first; $b; $b = $bb->next($b)) {
             $b->remove;
         }
         t_debug("empty");
-        ok $bb->empty;
+        ok $bb->is_empty;
     }
 
     # check for non-existing buckets first/next/last
