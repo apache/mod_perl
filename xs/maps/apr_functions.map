@@ -609,7 +609,7 @@ MODULE=APR::OS
 -apr_os_threadkey_put
 -apr_os_dso_handle_get
 -apr_os_dso_handle_put
- apr_os_thread_current | | mpxs_
+ apr_os_thread_current | mpxs_
 -apr_os_thread_equal
 -apr_os_global_mutex_get
 -apr_os_proc_mutex_get
