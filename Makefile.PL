@@ -56,11 +56,6 @@ $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
 
 use subs qw(iedit asrc);
 
-gen_script("t/net/perl/cgi.pl");
-gen_script("t/report");
-gen_script("apaci/find_source");
-write_version_h("src/modules/perl");
-
 if($] < 5.004_04) {
     print <<EOF;
 I see you're building with Perl $]
@@ -114,6 +109,9 @@ my(@do_clean) = qw{
    t/conf/srm.conf
    t/logs/httpd.pid
    src/modules/perl/mod_perl_version.h
+   t/net/perl/cgi.pl
+   t/report
+   apaci/find_source
 };
 #t/conf/httpd.conf
 #t/net/config.pl
@@ -125,6 +123,11 @@ unless ($Is_Win32) {
 }
 
 rmtree "t/docs/stacked", 0, 0;
+
+gen_script("t/net/perl/cgi.pl");
+gen_script("t/report");
+gen_script("apaci/find_source");
+write_version_h("src/modules/perl");
 
 my(@test_pre_init) = qq(
 test_pre_init:
@@ -498,7 +501,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    close MANI;
 
 	    cp "src/modules/perl/mod_perl_version.h",
-	       "$atopdir/mod_perl_version.h";
+	       "$atopdir/src/modules/perl/mod_perl_version.h";
 
 	    if($USE_APACI) {
 		open MANI, "MANIFEST" or die "open MANIFEST $!";
