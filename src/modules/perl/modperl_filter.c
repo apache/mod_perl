@@ -39,6 +39,8 @@ MP_INLINE static apr_status_t send_input_eos(modperl_filter_t *filter)
     apr_bucket *b = apr_bucket_eos_create(ba);
     APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
     ((modperl_filter_ctx_t *)filter->f->ctx)->sent_eos = 1;
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "write out: EOS bucket\n", MP_FILTER_NAME(filter->f));
     return APR_SUCCESS;
 }
 
@@ -47,6 +49,8 @@ MP_INLINE static apr_status_t send_input_flush(modperl_filter_t *filter)
     apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
     apr_bucket *b = apr_bucket_flush_create(ba);
     APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "write out: FLUSH bucket\n", MP_FILTER_NAME(filter->f));
     return APR_SUCCESS;
 }
 
@@ -653,16 +657,15 @@ MP_INLINE apr_status_t modperl_input_filter_flush(modperl_filter_t *filter)
         /* no data should be sent after EOS has been sent */
         return filter->rc;
     }
-    
-    if (filter->eos || filter->flush) {
-        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
-                   "write out: %s bucket\n",
-                   MP_FILTER_NAME(filter->f),
-                   filter->eos ? "EOS" : "FLUSH");
-        filter->rc = filter->eos ?
-            send_input_eos(filter) : send_input_flush(filter);
-        /* modperl_brigade_dump(filter->bb_out, stderr); */
-        filter->flush = filter->eos = 0;
+
+    if (filter->flush) {
+        filter->rc = send_input_flush(filter);
+        filter->flush = 0;
+    }
+
+    if (filter->eos) {
+        filter->rc = send_input_eos(filter);
+        filter->eos = 0;
     }
     
     return filter->rc;
