@@ -509,5 +509,14 @@ sub new {
     APR::Table::make($r->pool, $nelts);
 }
 
+package Apache::SIG;
+
+use Apache::Const -compile => 'DECLINED';
+
+sub handler {
+    # don't set the SIGPIPE
+    return Apache::DECLINED;
+}
+
 1;
 __END__

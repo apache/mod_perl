@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add an Apache::SIG backcompat stub to Apache::compat [Stas Bekman]
+
 fix the Apache::TestConfigPerl's run_apache_test_config() function
 where test packages are scanned for the magic APACHE_TEST_CONFIGURE
 and if found get require()'d. Apache2 needs to be run for mod_perl
@@ -74,7 +76,8 @@ add "Perl" directive for general use and for which <Perl> sections are
 stuffed into.
 [Philippe M. Chiasson <gozer@cpan.org>]
 
-rename overloaded LoadModule directive to PerlLoadModule
+rename overloaded LoadModule directive to PerlLoadModule and adjust
+the test naming
 
 =item 1.99_07 - September 25, 2002
 
