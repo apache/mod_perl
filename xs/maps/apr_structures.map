@@ -8,8 +8,8 @@ apr_strmatch_pattern apr_version_t
 
 #buckets
 
-<apr_bucket_type_t MODULE=APR::Bucket>
-   name
+<apr_bucket_type_t MODULE=APR::BucketType>
+<  name
 -  num_func
 -  destroy
 -  read
@@ -18,12 +18,12 @@ apr_strmatch_pattern apr_version_t
 -  copy
 </apr_bucket_type_t>
 
-<apr_bucket>
+<apr_bucket MODULE=APR::Bucket>
 >  link
-   type
-   length
-   start
-   data
+<  type
+<  length
+<  start
+<  data
 >  free
 >  list
 </apr_bucket>
