@@ -42,8 +42,6 @@ core modules:
 
 - Apache::ModuleConfig
 
-- Apache::Util
-
 - see also: xs/maps/apache_functions.map
 
 addon modules:

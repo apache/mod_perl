@@ -31,13 +31,17 @@ needs to default to current pool (pconf at startup, r->pool at request
 time)
 
 Apache::Util::*
-not very usable at the moment.
-also need to default to current pool (pconf at startup, r->pool at
-request time)
-missing: size_string()
-missing: validate_password() (now lives in APR)
-enhancements: consider jeff baker's more robust implementation of
+escape_path() - (was escape_uri) can be changed in apache not to require a
+pool
+
+size_string() - can we use apr_strfsize ?
+
+escape_html() -  consider jeff baker's more robust implementation of
 my_escape_html(), which should probably be made in apache-2.0 itself
+
+ht_time() - now requires a pool, temporarily renamed format_time for
+1.x ht_time compat.  should we just leave as is or see if ht_time can
+be changed to not require a pool?
 
 Apache->define:
 exists as Apache::exists_config_define, which should stay,
