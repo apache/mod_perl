@@ -985,7 +985,7 @@ void
 read_client_block(r, buffer, bufsiz)
     Apache	r
     SV    *buffer
-    int      bufsiz
+    STRLEN   bufsiz
 
     PREINIT:
     long nrd = 0, old_read_length;
@@ -1037,7 +1037,7 @@ void
 get_client_block(r, buffer, bufsiz)
     Apache	r
     SV    *buffer
-    int      bufsiz
+    STRLEN   bufsiz
 
     PREINIT:
     long nrd = 0;
