@@ -9,12 +9,16 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
+use Apache::Build;
+
 use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 2;
+    plan $r, tests => 2,
+        have { "getppid() is not implemented on Win32" 
+                   => !Apache::Build::WIN32() };
 
     {
         # 5.8.1 w/ ithreads has a bug where it caches ppid in PL_ppid,
