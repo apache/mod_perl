@@ -82,7 +82,9 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
+#ifdef USE_ITHREADS
     aTHX = perl;
+#endif
 
     perl_construct(perl);
 
