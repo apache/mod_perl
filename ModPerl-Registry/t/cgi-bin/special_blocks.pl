@@ -1,6 +1,7 @@
 #!perl -w
 
 # test BEGIN/END blocks
+use Apache::RequestRec ();
 
 use vars qw($query);
 $query = '' unless defined $query;
@@ -12,8 +13,7 @@ BEGIN {
 print "Content-type: text/plain\r\n\r\n";
 
 my $r = shift;
-my %args = $r->Apache::args;
-our $test = exists $args{test} ? $args{test} : '';
+our $test = $r->args || '';
 
 if ($test eq 'uncache') {
     # mark the script as non-cached for the next execution
@@ -21,7 +21,7 @@ if ($test eq 'uncache') {
     ModPerl::RegistryCooker::uncache_myself();
 }
 elsif ($test eq 'begin') {
-    print "begin ok" if $query eq 'test=begin';
+    print "begin ok" if $query eq 'begin';
     # reset the global
     $query = '';
 }
