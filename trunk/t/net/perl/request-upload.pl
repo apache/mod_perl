@@ -25,9 +25,15 @@ for ($apr->param) {
 for (my $upload = $apr->upload; $upload; $upload = $upload->next) {
     my $fh = $upload->fh;
     my $name = $upload->name;
-    unless ($fh and $name) {
-	#die "Apache::Upload broken";
+    my $type = $upload->type;
+    print "$name ($type)";
+    if ($fh and $name) {
+	no strict;
+	if (my $no = fileno($name)) {
+	    print " fileno => $no";
+	}
     }
+    print "\n";
 }
 
 my $first = $apr->upload->name;
@@ -37,6 +43,13 @@ for my $upload ($apr->upload) {
     my($lines, $bytes);
     $lines = $bytes = 0;
 
+    {
+	no strict;
+	if (fileno($name)) {
+	    $fh = *$name{IO};
+	    print "COMPAT: $fh\n";
+	} 
+    }
     while(<$fh>) {
 	++$lines;
 	$bytes += length;
