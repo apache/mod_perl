@@ -704,7 +704,7 @@ my %perl_config_pm_alias = (
 my $mm_replace = join '|', keys %perl_config_pm_alias;
 
 my @perl_config_pm =
-  (qw(cc cpprun rm ranlib lib_ext dlext obj_ext cccdlflags lddlflags),
+  (qw(cc cpprun rm ranlib lib_ext obj_ext cccdlflags lddlflags),
    values %perl_config_pm_alias);
 
 sub make_tools {
@@ -744,6 +744,7 @@ sub write_src_makefile {
     $self->make_tools($fh);
 
     print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
+    print $fh $self->canon_make_attr('dlext', 'so'); #always use .so
 
     print $fh $self->canon_make_attr('lib_shared',
                        "$self->{MP_LIBNAME}.$self->{MODPERL_DLEXT}");
