@@ -164,7 +164,7 @@ while (my($class, $groups) = each %defines_wanted) {
 }
 
 my %enums_wanted = (
-    Apache => { map { $_, 1 } qw(cmd_how) },
+    Apache => { map { $_, 1 } qw(cmd_how input_mode filter_type) },
     APR => { map { $_, 1 } qw(apr_shutdown_how) },
 );
 
@@ -225,7 +225,8 @@ sub handle_enum {
     my($name, $e) = $self->parse_enum($fh);
     return unless $name;
 
-    $name =~ s/_e$//;
+    $name =~ s/^ap_//;
+    $name =~ s/_(e|t)$//;
 
     my $class;
     for (keys %enums_wanted) {
