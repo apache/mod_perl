@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Apache::Test: Support <NoAutoConfig> </NoAutoConfig> blocks in .pm
+files, so we can have a full manual control over generated config
+sections. These sections are fully parsed and variables are
+substituted, including vhosts. [Stas]
+
 Another fix for the handling of the return status in
 ModPerl::RegistryCooker: reset the status to the original one only if
 it was changed by the script, otherwise return the execution status
