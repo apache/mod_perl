@@ -20,17 +20,13 @@ V: done completely
 -- src/docs/2.0/api/Apache/CmdParms.pod
 -- src/docs/2.0/api/Apache/Command.pod
 -- src/docs/2.0/api/Apache/Connection.pod
-
 +- src/docs/2.0/api/Apache/Const.pod
-
 -- src/docs/2.0/api/Apache/Directive.pod
 -- src/docs/2.0/api/Apache/Filter.pod
 -- src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/HookRun.pod
-
 +- src/docs/2.0/api/Apache/Log.pod
         log_pid
-
 -- src/docs/2.0/api/Apache/Module.pod
 -- src/docs/2.0/api/Apache/PerlSections.pod
 -- src/docs/2.0/api/Apache/Process.pod
@@ -51,13 +47,9 @@ V: done completely
 
 -- src/docs/2.0/api/ModPerl/BuildMM.pod
 ++ src/docs/2.0/api/ModPerl/Const.pod
-
 VV src/docs/2.0/api/ModPerl/Global.pod
-
 -- src/docs/2.0/api/ModPerl/MM.pod
-
 VV src/docs/2.0/api/ModPerl/MethodLookup.pod
-
 -- src/docs/2.0/api/ModPerl/PerlRun.pod
 -- src/docs/2.0/api/ModPerl/Registry.pod
 -- src/docs/2.0/api/ModPerl/RegistryBB.pod
@@ -71,25 +63,21 @@ VV src/docs/2.0/api/APR/Brigade.pod
 VP src/docs/2.0/api/APR/Bucket.pod
         data
         start
-        read (needs TAINT flag on, but utf-8 problem)
+        (read needs TAINT flag on, but utf8::decode problem)
 VV src/docs/2.0/api/APR/BucketAlloc.pod
 VV src/docs/2.0/api/APR/BucketType.pod
-
 +- src/docs/2.0/api/APR/Const.pod
 VV src/docs/2.0/api/APR/Date.pod
 VV src/docs/2.0/api/APR/Error.pod
-
 -- src/docs/2.0/api/APR/Finfo.pod
 VV src/docs/2.0/api/APR/IpSubnet.pod
 +V src/docs/2.0/api/APR/PerlIO.pod
-
-
+        (convert to use exceptions)
 VP src/docs/2.0/api/APR/Pool.pod
         cleanup_for_exec
-
+        (clean has some win32 problems)
 VP src/docs/2.0/api/APR/SockAddr.pod
         equal
-
 VP src/docs/2.0/api/APR/Socket.pod
         bind
         close
@@ -97,7 +85,6 @@ VP src/docs/2.0/api/APR/Socket.pod
         listen
         recvfrom
         sendto
-
 VV src/docs/2.0/api/APR/Table.pod
 VP src/docs/2.0/api/APR/ThreadMutex.pod
         DESTROY
@@ -106,8 +93,7 @@ VP src/docs/2.0/api/APR/ThreadMutex.pod
         pool_get
         trylock
         unlock
-
--- src/docs/2.0/api/APR/URI.pod
+VV src/docs/2.0/api/APR/URI.pod
 VP src/docs/2.0/api/APR/Util.pod
         filepath_name_get
         password_get
