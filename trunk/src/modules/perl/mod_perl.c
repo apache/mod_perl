@@ -969,9 +969,9 @@ int PERL_LOG_HOOK(request_rec *r)
 #endif
 
 #ifdef PERL_TRACE
-static char *sig_name(I32 num)
+static char *my_signame(I32 num)
 {
-#ifdef Perl_psig_name
+#ifdef psig_name
     return Perl_psig_name[num] ?
 	SvPV(Perl_psig_name[num],na) : "?";
 #else
@@ -1000,7 +1000,7 @@ static void per_request_cleanup(request_rec *r)
     for (i=0; i < cfg->sigsave->nelts; i++) {
 	MP_TRACE_g(fprintf(stderr, 
 			   "mod_perl: restoring SIG%s (%d) handler from: 0x%lx to: 0x%lx\n",
-			   sig_name(sigs[i]->signo), (int)sigs[i]->signo,
+			   my_signame(sigs[i]->signo), (int)sigs[i]->signo,
 			   (unsigned long)Perl_rsignal_state(sigs[i]->signo),
 			   (unsigned long)sigs[i]->h));
 	Perl_rsignal(sigs[i]->signo, sigs[i]->h);
