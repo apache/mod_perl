@@ -1,5 +1,7 @@
 package TestAPR::socket;
 
+# more tests in t/protocol/TestProtocol/echo_*.pm
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -24,7 +26,6 @@ sub handler {
     my $socket = $c->client_socket;
 
     ok $socket;
-
 
     # in microseconds
     my $orig_val = $socket->timeout_get();
