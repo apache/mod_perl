@@ -10,6 +10,14 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+fix source_scan to run with current httpd/apr
+
+add Apache::Directive->insert method to add dynamic configuration
+  
+add Apache::Directive->to_string method
+
+add support for pluggable <Perl> sections
+
 fix compilation probs with get_remote_host() that had a wrong
 prototype [Stas Bekman]
 
