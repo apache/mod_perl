@@ -7,7 +7,7 @@ use Test;
 use Apache::Const -compile => qw(DECLINED :http :common TAKE23);
 use Apache::Const; #defaults to :common
 
-plan tests => 10;
+plan tests => 11;
 
 ok AUTH_REQUIRED == 401;
 ok OK == 0;
@@ -28,3 +28,6 @@ eval { Apache::Const->import('-foobar') };
 
 ok $@;
 
+eval { Apache::Const::compile() };
+
+ok $@;
