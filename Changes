@@ -12,9 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_11-dev - 
 
-callbacks returning values which aren't integers or strings (which are
-to be coerced into integers) are now interpreted as errors. [Geoffrey
-Young]
+Add PerlMapToStorageHandler [Geoffrey Young]
 
 in the MP_MAINTAINER mode add the -Werror compilation flag when perl
 v5.6.2 or higher is used, so that we don't miss compilation
