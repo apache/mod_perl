@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+fix the modperl build, where httpd has been built against separate
+installations of apr-util and apr, where apr-util has been installed
+with a different includedir to apr. [Joe Orton]
+
 Fix $s->log->*, $s->log_error and $s->log_serror to again log into the
 vhost's error_log file (if there is one). [Stas]
 
