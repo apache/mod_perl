@@ -14,13 +14,10 @@ use APR::Const -compile => 'OVERLAP_TABLES_MERGE';
 my $filter_count;
 my $TABLE_SIZE = 20;
 
-use constant HAVE_APACHE_2_0_47 => have_min_apache_version('2.0.47');
-
 sub handler {
     my $r = shift;
 
-    my $tests = 21;
-    $tests += 2 if HAVE_APACHE_2_0_47;
+    my $tests = 23;
 
     plan $r, tests => $tests;
 
@@ -133,18 +130,15 @@ sub handler {
     ok @foo == 3;
     ok $bar[0] eq 'beer';
 
-    # BACK_COMPAT_MARKER: make back compat issues easy to find :)
-    if (HAVE_APACHE_2_0_47) {
-        $overlay->compress(APR::OVERLAP_TABLES_MERGE);
+    $overlay->compress(APR::OVERLAP_TABLES_MERGE);
 
-        # $add first, then $base
-        ok t_cmp($overlay->get('foo'),
-                 'three, one, two',
-                 "\$overlay->compress");
-        ok t_cmp($overlay->get('bar'),
-                 'beer',
-                 "\$overlay->compress");
-    }
+    # $add first, then $base
+    ok t_cmp($overlay->get('foo'),
+             'three, one, two',
+             "\$overlay->compress");
+    ok t_cmp($overlay->get('bar'),
+             'beer',
+             "\$overlay->compress");
 
     Apache::OK;
 }
