@@ -7,6 +7,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Connection ();
+use Apache::Filter ();
 use APR::Bucket ();
 use APR::Brigade ();
 use APR::Util ();
