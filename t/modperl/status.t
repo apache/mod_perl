@@ -9,7 +9,7 @@ use Apache2::Const -compile => qw(OK DECLINED
                                  NOT_FOUND SERVER_ERROR FORBIDDEN
                                  HTTP_OK);
 
-plan tests => 15;
+plan tests => 15, need 'HTML::HeadParser';
 
 my $base = "/TestModperl__status";
 

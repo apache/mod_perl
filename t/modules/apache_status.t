@@ -10,7 +10,7 @@ my $base_url = '/status/perl';
 my @opts = qw(script myconfig rgysubs section_config env isa_tree
               symdump inc inh_tree sig);
 
-plan tests => @opts + 3, need
+plan tests => @opts + 3, need 'HTML::HeadParser',
     { "CGI.pm (2.93 or higher) or Apache2::Request is needed" =>
           !!(eval { require CGI && $CGI::VERSION >= 2.93 } ||
              eval { require Apache2::Request })};

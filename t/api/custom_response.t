@@ -23,7 +23,7 @@ open my $fh, $file or die "Can't open $file: $!";
 my $data = do { binmode $fh; local $/; <$fh> };
 close $fh;
 
-plan tests => 4, need_lwp;
+plan tests => 4, need need_lwp, 'HTML::HeadParser';
 
 {
     # custom text response

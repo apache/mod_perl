@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 
-plan tests => 4;
+plan tests => 4, need 'HTML::HeadParser';
 
 my $location = "/TestHooks__access";
 

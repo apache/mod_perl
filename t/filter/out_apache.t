@@ -17,7 +17,7 @@ use File::Spec::Functions qw(catfile);
 my $path = catfile Apache::Test::vars('serverroot'),
     qw(logs error_log);
 
-plan tests => 2, need 'include';
+plan tests => 2, need 'include', 'HTML::HeadParser';
 
 my $module = 'filter_out_apache';
 my $config = Apache::Test::config();

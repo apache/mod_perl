@@ -14,7 +14,7 @@ my $config   = Apache::Test::config();
 my $hostport = Apache::TestRequest::hostport($config);
 t_debug("connecting to $hostport");
 
-plan tests => 3;
+plan tests => 3, need 'HTML::HeadParser';
 
 t_client_log_error_is_expected();
 ok t_cmp GET_RC("http://$hostport/nope"), NOT_FOUND;
