@@ -14,3 +14,12 @@
   should definitely be moved out from the main suite, as they cause
   the biggest overhead (due to perl_clone).
 
+- TestDirective::perlloadmodule6 should be the first perlloadmodule
+  test to run, so we can test how mod_perl starts from vhost (there
+  was a segfault before). But since other tests define PerlSwitches
+  TestDirective::perlloadmodule6 must be configured afer them. so if
+  we introduce new tests suites, this test needs to be moved there
+  (may be its own test suite or co-existing with other tests which
+  don't use PerlSwitches and trigger early server startup.
+
+
