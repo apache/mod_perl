@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+fixed $r->subprocess_env bug introduced in 1.12, spotted by Ken Williams
+
 '*CORE::GLOBAL::exit = \&Apache::exit' for 5.005-tobe+ Perls 
 
 perl_startup will now call perl_init_i18nl10n(1), for 'use locale' 

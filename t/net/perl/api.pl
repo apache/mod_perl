@@ -16,7 +16,7 @@ else {
 %ENV = $r->cgi_env;
 $r->subprocess_env; #test void context
 
-my $tests = 44;
+my $tests = 45;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 7);
@@ -52,6 +52,8 @@ test ++$i, $r->status_line;
 test ++$i, $r->method eq "GET";
 #test ++$i, $r->method_number
 
+$r->subprocess_env(SetKey => 'value');
+test ++$i, $r->subprocess_env('SetKey') eq 'value';
 my(%headers_in) = $r->headers_in;
 test ++$i, keys %headers_in;
 test ++$i, $r->header_in('UserAgent') || $r->header_in('User-Agent');
