@@ -144,6 +144,7 @@ MODULE=Apache::Directive
  DEFINE_lookup | MPXS_Apache__Directive_lookup | ...
 
 MODULE=Apache::CmdParms
+ ap_check_cmd_context
  mpxs_Apache__CmdParms_info
 
 MODULE=Apache::MPM    PACKAGE=Apache::MPM   BOOT=1

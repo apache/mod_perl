@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Move check_cmd_context from Apache::Command to Apache::CmdParms.
+[Gozer]
+
 Add :context group of constants for check_cmd_context().
 NOT_IN_VIRTUALHOST, NOT_IN_LIMIT, NOT_IN_DIRECTORY, NOT_IN_LOCATION,
 NOT_IN_FILES, NOT_IN_DIR_LOC_FILE & GLOBAL_ONLY [Gozer]
