@@ -6,7 +6,6 @@ lib/ModPerl/PerlRun.pm
 lib/ModPerl/Registry.pm
 lib/ModPerl/RegistryBB.pm
 lib/ModPerl/RegistryCooker.pm
-lib/ModPerl/RegistryNG.pm
 t/TEST.PL
 t/basic.t
 t/closure.t

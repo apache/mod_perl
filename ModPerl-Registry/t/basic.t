@@ -8,7 +8,6 @@ use Apache::TestRequest qw(GET_BODY HEAD);
 
 my %modules = 
     (registry    => 'ModPerl::Registry',
-     registry_ng => 'ModPerl::RegistryNG',
      registry_bb => 'ModPerl::RegistryBB',
      perlrun     => 'ModPerl::PerlRun',
     );

@@ -13,7 +13,7 @@ use File::Spec::Functions;
 # interpreter all the time (in case that the server is running more
 # than one interpreter)
 
-my @modules = qw(registry registry_ng registry_bb perlrun);
+my @modules = qw(registry registry_bb perlrun);
 
 plan tests => 6;
 

@@ -9,7 +9,6 @@ use Apache::TestRequest;
 
 my %modules = (
     registry    => 'ModPerl::Registry',
-    registry_ng => 'ModPerl::RegistryNG',
     registry_bb => 'ModPerl::RegistryBB',
     perlrun     => 'ModPerl::PerlRun',
 );
