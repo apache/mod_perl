@@ -18,8 +18,7 @@ Or use anoncvs (password is "anoncvs"):
  % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co apr-util
  % cd ..
  % ./buildconf
- % ./configure --prefix=$HOME/apache-2.0 \
-   --with-mpm=threaded --enable-so
+ % ./configure --prefix=$HOME/apache-2.0 --with-mpm=prefork
  % make && make install
 
 Once extracted, whenever you want to sync with the latest httpd-2.0
@@ -28,8 +27,7 @@ version and rebuild, run:
  % cd httpd-2.0
  % cvs up -dP
  % make distclean && ./buildconf
- % ./configure --prefix=$HOME/apache-2.0 \
-   --with-mpm=threaded --enable-so
+ % ./configure --prefix=$HOME/apache-2.0 --with-mpm=prefork
  % make && make install
 
 For bleeding edge Perl:
@@ -44,7 +42,7 @@ For bleeding edge Perl:
  % ln -s $HOME/bleedperl/bin/perl5.x.x $HOME/bleedperl/bin/perl
 
 or otherwise make sure that your perl was built with threads enabled if
-you want to use the threaded MPM.
+you want to use a threaded MPM.
 
 If you are re-building Perl after rsync-ing, make sure to cleanup:
 
@@ -185,7 +183,7 @@ those from C<MP_OPTIONS_FILE>.
 =head2 Configure and compile Apache
 
   % cd ../httpd-2.0
-  % ./configure --with-mpm=threaded
+  % ./configure --with-mpm=prefork
   % make
 
 =head2 Howto generate source tables
