@@ -20,7 +20,7 @@ my $tests = 65;
 my $is_win32 = WIN32;
 $tests += 2 unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
-my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
+my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && ($tests += 2);
 my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 9);
 
 my $i;
@@ -190,6 +190,7 @@ test ++$i, Apache->module("mod_perl.c");
 #just make sure we can call this one
 if($test_custom_response) {
     test ++$i, $r->custom_response(403, "no chance") || 1;
+    test ++$i, $r->custom_response(403) =~ /chance/;
 }
 
 if($test_get_set) {
