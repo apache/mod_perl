@@ -615,10 +615,3 @@ SV *modperl_perl_gensym(pTHX_ char *pack)
     return rv;
 }
 
-int modperl_sv_str_header(void *arg, const char *k, const char *v)
-{
-    SV *sv = (SV*)arg;
-    sv_catpvf(sv, "%s: %s\n", k, v);
-    return 1;
-}
-

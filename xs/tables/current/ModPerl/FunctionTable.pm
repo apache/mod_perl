@@ -3831,24 +3831,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'int',
-    'name' => 'modperl_sv_str_header',
-    'args' => [
-      {
-        'type' => 'void *',
-        'name' => 'arg'
-      },
-      {
-        'type' => 'const char *',
-        'name' => 'k'
-      },
-      {
-        'type' => 'const char *',
-        'name' => 'v'
-      },
-    ]
-  },
-  {
     'return_type' => 'apr_pool_t *',
     'name' => 'modperl_sv2pool',
     'args' => [
