@@ -54,7 +54,15 @@ sub my_import {
 sub WriteMakefile {
     my $build = build_config();
     my_import();
-    my @opts = (INC => $build->inc, CCFLAGS => $build->ap_ccopts);
+
+    my $inc = $build->inc;
+    if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
+	for (split /\s+/, $glue_inc) {
+	    $inc .= " -I$_";
+	}
+    }
+
+    my @opts = (INC => $inc, CCFLAGS => $build->ap_ccopts);
 
     my @typemaps;
     my $pwd = Cwd::fastcwd();

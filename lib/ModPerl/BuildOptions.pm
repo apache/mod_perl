@@ -145,3 +145,4 @@ PROMPT_DEFAULT	Accept default value for all would-be prompts
 OPTIONS_FILE	Read options from given file
 DYNAMIC		Build Apache::*.xs as dynamic extensions
 APXS            Path to apxs
+XS_GLUE_DIR     Directories containing extension glue
