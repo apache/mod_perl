@@ -371,7 +371,7 @@ sub convert_script_to_compiled_handler {
     return $rc unless $rc == Apache::OK;
 
     # convert the shebang line opts into perl code
-    $self->rewrite_shebang;
+    my $shebang = $self->shebang_to_perl;
 
     # mod_cgi compat, should compile the code while in its dir, so
     # relative require/open will work.
@@ -397,6 +397,7 @@ sub convert_script_to_compiled_handler {
                     "sub handler {",
                     "local \$0 = '$script_name';",
                     $nph,
+                    $shebang,
                     $line,
                     ${ $self->{CODE} },
                     "\n}"; # last line comment without newline?
@@ -553,13 +554,13 @@ sub read_script {
 }
 
 #########################################################################
-# func: rewrite_shebang
-# dflt: rewrite_shebang
+# func: shebang_to_perl
+# dflt: shebang_to_perl
 # desc: parse the shebang line and convert command line switches
 #       (defined in %switches) into a perl code.
 # args: $self - registry blessed object
-# rtrn: nothing
-# efct: the CODE field gets adjusted
+# rtrn: a Perl snippet to be put at the beginning of the CODE field
+#       by caller
 #########################################################################
 
 my %switches = (
@@ -572,12 +573,12 @@ my %switches = (
    'w' => sub { "use warnings;\n" },
 );
 
-sub rewrite_shebang {
+sub shebang_to_perl {
     my $self = shift;
     my($line) = ${ $self->{CODE} } =~ /^(.*)$/m;
     my @cmdline = split /\s+/, $line;
-    return unless @cmdline;
-    return unless shift(@cmdline) =~ /^\#!/;
+    return "" unless @cmdline;
+    return "" unless shift(@cmdline) =~ /^\#!/;
 
     my $prepend = "";
     for my $s (@cmdline) {
@@ -588,7 +589,8 @@ sub rewrite_shebang {
             $prepend .= $switches{$_}->();
         }
     }
-    ${ $self->{CODE} } =~ s/^/$prepend/ if $prepend;
+
+    return $prepend;
 }
 
 #########################################################################

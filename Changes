@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+ModPerl::RegistryCooker API change: s/rewrite_shebang/shebang_to_perl/
+the new API now returns the string to prepend before the rest of the
+script, instead of rewriting the content, which is both faster and
+doesn't mislead the perl debugger [Dominique Quatravaux
+<dom@idealx.com>]
+
 add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
 which mod_perl version is being used at request time.  [Geoffrey Young]
 
