@@ -212,6 +212,25 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     modperl_cleanup_data_t *cdata;
 #endif
 
+    if (MP_init_status != 2) {
+        server_rec *base_server = modperl_global_get_server_rec();
+        PerlInterpreter *base_perl;
+        modperl_config_srv_t *base_scfg;
+        
+        MP_init_status = 2; /* calls itself, so set the flag early */
+        base_perl = modperl_startup(base_server, p);
+        base_scfg = modperl_config_srv_get(base_server);
+        
+#ifdef USE_ITHREADS
+        /* a parent perl was allocated, mark it to be destroyed */
+        MpInterpBASE_On(base_scfg->mip->parent);
+#endif
+
+        if (base_server == s ) {
+            return base_perl;
+        }
+    }
+
 #ifdef MP_USE_GTOP
     MP_TRACE_m_do(
         modperl_gtop_do_proc_mem_before(MP_FUNC, "perl_parse");
@@ -422,13 +441,6 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 
     base_perl = modperl_startup(base_server, p);
 
-    MP_init_status = 2; /* only now mp has really started */
-
-#ifdef USE_ITHREADS
-    /* a parent perl was allocated, mark it to be destroyed */
-    MpInterpBASE_On(base_scfg->mip->parent);
-#endif
-    
     for (s=base_server->next; s; s=s->next) {
         if (modperl_init_vhost(s, p, base_server) != OK) {
             exit(1); /*XXX*/
