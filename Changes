@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+Apache::Registry will restore $r->status to the original value
+[Charles Levert <charles@comm.polymtl.ca>]
+
 warn aix-apxs-5.005_03 users of the patch needed for DynaLoader
 [Jens-Uwe Mager <jum@helios.de>]
 
