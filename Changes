@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+added proper support for {Location,Directory,Files}Match in <Perl> sections
+
 new Apache::ExtUtils::pm function to generate Foo.pm/Makefile.PL
 templates for modules with directive handlers
 

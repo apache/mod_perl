@@ -1087,6 +1087,14 @@ void perl_section_hash_walk(cmd_parms *cmd, void *cfg, HV *hv)
     perl_set_config_vectors(cmd, cfg, &core_module);
 } 
 
+#ifdef WIN32
+#define USE_ICASE REG_ICASE
+#else
+#define USE_ICASE 0
+#endif
+
+#define SECTION_NAME(n) (cmd->info ? (char *)cmd->info : n)
+
 #define TRACE_SECTION(n,v) \
     MP_TRACE_s(fprintf(stderr, "perl_section: <%s %s>\n", n, v))
 
@@ -1153,6 +1161,9 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     dSEC;
     int old_overrides = cmd->override;
     char *old_path = cmd->path;
+#ifdef PERL_TRACE
+    char *sname = SECTION_NAME("Location");
+#endif
 
     dSECiter_start
 
@@ -1170,12 +1181,15 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
     cmd->path = pstrdup(cmd->pool, getword_conf (cmd->pool, &key));
     cmd->override = OR_ALL|ACCESS_CONF;
 
-    if (!strcmp(cmd->path, "~")) {
+    if (cmd->info) { /* <LocationMatch> */
+	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
+    }
+    else if (!strcmp(cmd->path, "~")) {
 	cmd->path = getword_conf (cmd->pool, &key);
 	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
 
-    TRACE_SECTION("Location", cmd->path);
+    TRACE_SECTION(sname, cmd->path);
 
     perl_section_hash_walk(cmd, new_url_conf, tab);
 
@@ -1191,7 +1205,7 @@ CHAR_P perl_urlsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     cmd->path = old_path;
     cmd->override = old_overrides;
-    TRACE_SECTION_END("Location");
+    TRACE_SECTION_END(sname);
     return NULL;
 }
 
@@ -1200,6 +1214,9 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
     dSEC;
     int old_overrides = cmd->override;
     char *old_path = cmd->path;
+#ifdef PERL_TRACE
+    char *sname = SECTION_NAME("Directory");
+#endif
 
     dSECiter_start
 
@@ -1221,12 +1238,15 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
 #endif    
     cmd->override = OR_ALL|ACCESS_CONF;
 
-    if (!strcmp(cmd->path, "~")) {
+    if (cmd->info) { /* <DirectoryMatch> */
+	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED|USE_ICASE);
+    }
+    else if (!strcmp(cmd->path, "~")) {
 	cmd->path = getword_conf (cmd->pool, &key);
 	r = pregcomp(cmd->pool, cmd->path, REG_EXTENDED);
     }
 
-    TRACE_SECTION("Directory", cmd->path);
+    TRACE_SECTION(sname, cmd->path);
 
     perl_section_hash_walk(cmd, new_dir_conf, tab);
 
@@ -1239,7 +1259,7 @@ CHAR_P perl_dirsection (cmd_parms *cmd, void *dummy, HV *hv)
 
     cmd->path = old_path;
     cmd->override = old_overrides;
-    TRACE_SECTION_END("Directory");
+    TRACE_SECTION_END(sname);
     return NULL;
 }
 
@@ -1256,6 +1276,9 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     dSEC;
     int old_overrides = cmd->override;
     char *old_path = cmd->path;
+#ifdef PERL_TRACE
+    char *sname = SECTION_NAME("Files");
+#endif
 
     dSECiter_start
 
@@ -1274,7 +1297,10 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     if (!old_path)
 	cmd->override = OR_ALL|ACCESS_CONF;
 
-    if (!strcmp(cmd->path, "~")) {
+    if (cmd->info) { /* <FilesMatch> */
+        r = ap_pregcomp(cmd->pool, cmd->path, REG_EXTENDED|USE_ICASE);
+    }
+    else if (!strcmp(cmd->path, "~")) {
 	cmd->path = getword_conf (cmd->pool, &key);
 	if (old_path && cmd->path[0] != '/' && cmd->path[0] != '^')
 	    cmd->path = pstrcat(cmd->pool, "^", old_path, cmd->path, NULL);
@@ -1283,7 +1309,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     else if (old_path && cmd->path[0] != '/')
 	cmd->path = pstrcat(cmd->pool, old_path, cmd->path, NULL);
 
-    TRACE_SECTION("Files", cmd->path);
+    TRACE_SECTION(sname, cmd->path);
 
     perl_section_hash_walk(cmd, new_file_conf, tab);
 
@@ -1297,7 +1323,7 @@ CHAR_P perl_filesection (cmd_parms *cmd, void *dummy, HV *hv)
     add_file_conf((core_dir_config *)dummy, new_file_conf);
 
     dSECiter_stop
-    TRACE_SECTION_END("Files");
+    TRACE_SECTION_END(sname);
     cmd->path = old_path;
     cmd->override = old_overrides;
 
@@ -1349,16 +1375,24 @@ void perl_handle_command_hv(HV *hv, char *key, cmd_parms *cmd, void *config)
 {
     /* Emulate the handing of the begin token of the section */
     void *dummy = perl_set_config_vectors(cmd, config, &core_module);
-    if(strEQ(key, "Location")) 	
+    void *old_info = cmd->info;
+
+    if (strstr(key, "Match")) {
+	cmd->info = (void*)key;
+    }
+
+    if(strnEQ(key, "Location", 8))
 	perl_urlsection(cmd, dummy, hv);
-    else if(strEQ(key, "Directory")) 
+    else if(strnEQ(key, "Directory", 9)) 
 	perl_dirsection(cmd, dummy, hv);
     else if(strEQ(key, "VirtualHost")) 
 	perl_virtualhost_section(cmd, dummy, hv);
-    else if(strEQ(key, "Files")) 
+    else if(strnEQ(key, "Files", 5)) 
 	perl_filesection(cmd, (core_dir_config *)dummy, hv);
     else if(strEQ(key, "Limit")) 
 	perl_limit_section(cmd, dummy, hv);
+
+    cmd->info = old_info;
 }
 
 void perl_handle_command_av(AV *av, I32 n, char *key, cmd_parms *cmd, void *config)
@@ -1462,7 +1496,7 @@ void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg)
 
     MP_TRACE_s(fprintf(stderr, 
 		     "bootstrapping <Perl> sections: arg=%s, keys=%d\n", 
-		       arg, SvIV(nk)));
+		       arg, (int)SvIV(nk)));
     
     perl_sections_boot_module = arg;
     perl_sections_self_boot = 1;
@@ -1616,7 +1650,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 
 	    MP_TRACE_s(fprintf(stderr, 
 			     "`@%s' directive is %s, (%d elements)\n", 
-			     key, splain_args(c->args_how), AvFILL(av)+1));
+			     key, splain_args(c->args_how), (int)AvFILL(av)+1));
 
 	    switch (c->args_how) {
 		
