@@ -23,6 +23,8 @@ sub init {
     if ($build->{MP_DEBUG} and $build->{MP_USE_GTOP}) {
         $build->{MP_USE_GTOP} = 0 unless $build->find_dlfile('gtop');
     }
+
+    $build->{MP_USE_DSO} = 1 unless $build->{MP_USE_STATIC};
 }
 
 sub parse {
@@ -151,7 +153,8 @@ DEBUG		Turning on debugging (-g -lperld) and tracing
 MAINTAINER	Maintainer mode: DEBUG=1 -DAP_DEBUG -Wall ...
 CCOPTS		Add to compiler flags
 TRACE		Turn on tracing
-USE_DSO	 	Build mod_perl as a dso
+USE_DSO		Build mod_perl as a dso
+USE_STATIC	Build mod_perl static
 INST_APACHE2	Install *.pm relative to Apache2/ directory
 PROMPT_DEFAULT	Accept default value for all would-be prompts
 OPTIONS_FILE	Read options from given file
