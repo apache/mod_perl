@@ -5,13 +5,8 @@ use Apache::TestRequest qw(GET_BODY_ASSERT);
 use Apache::Test;
 use Apache::TestUtil;
 
-my $module   = 'TestModperl::merge';
-Apache::TestRequest::module($module);
-
-my $config   = Apache::Test::config();
-my $hostport = Apache::TestRequest::hostport($config);
-
-my $base = "http://$hostport";
+my $module = 'TestModperl::merge';
+my $url    = Apache::TestRequest::module2url($module, {path => '/merge3/'});
 
 # test multi-level merging (server-to-container-to-htaccess) for:
 #   PerlSetEnv
@@ -19,6 +14,5 @@ my $base = "http://$hostport";
 #   PerlSetVar
 #   PerlAddVar
 
-my $uri = "$base/merge3/";
-t_debug("connecting to $uri");
-print GET_BODY_ASSERT $uri;
+t_debug("connecting to $url");
+print GET_BODY_ASSERT $url;
