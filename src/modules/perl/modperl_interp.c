@@ -225,13 +225,12 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     apr_pool_t *server_pool = modperl_server_pool();
     pTHX;
     MP_dSCFG(s);
+    modperl_interp_pool_t *mip = 
+        (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
     MP_TRACE_i(MP_FUNC, "modperl_interp_init() server=%s\n",
                modperl_server_desc(s, p));
     
-    modperl_interp_pool_t *mip = 
-        (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
-
     if (scfg->threaded_mpm) {
         mip->tipool = modperl_tipool_new(p, scfg->interp_pool_cfg,
                                          &interp_pool_func, mip);
