@@ -63,12 +63,6 @@ EVERYTHING=1
 #can also enable via $Apache::ERRSV_CAN_BE_HTTP = 1;
 # ERRSV_CAN_BE_HTTP=1
 
-#if a `PerlModule' defines variables in the Apache::ReadConfig namespace
-#this feature will read them into apache's config as <Perl></Perl> does
-#but now there's no need to actually have <Perl></Perl> in httpd.conf
-#can also enable via PerlSetEnv PERL_SECTIONS_SELF_BOOT 1
-# PERL_SECTIONS_SELF_BOOT=1
-
 #enable the PerlRestartHandler which will be called during restart
 #this happens just before PerlFreshRestart does it's thang
 #PERL_RESTART_HANDLER=1
