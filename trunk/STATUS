@@ -55,6 +55,15 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * LWP used to be optional for running 'make test', now I get:
+
+         /home/stas/perl/5.6.0-ithread/bin/perl t/TEST 0
+         Can't locate LWP/UserAgent.pm in @INC ... 
+         ...
+         Must skip important tests without LWP...
+
+      but the test suite won't start
+
     * $r->print() ignores $,
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=102902480103484&w=2
     Status:
