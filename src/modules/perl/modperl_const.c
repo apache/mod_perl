@@ -106,5 +106,5 @@ XS(XS_modperl_const_compile)
         (void)modperl_const_compile(aTHX_ classname, arg, SvPV(ST(i), n_a));
     }
 
-    XSRETURN_YES;
+    XSRETURN_EMPTY;
 }
