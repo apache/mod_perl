@@ -34,7 +34,7 @@ sub handler : FilterRequestHandler {
             last;
         }
 
-        if (my $data = $bucket->read) {
+        if ($bucket->read(my $data)) {
             #warn"[$data]\n";
             $bucket = APR::Bucket->new(scalar reverse $data);
         }

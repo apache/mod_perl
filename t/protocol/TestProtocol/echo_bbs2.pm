@@ -36,7 +36,7 @@ sub handler {
             last;
         }
 
-        my $data = $bb_in->flatten;
+        next unless $bb_in->flatten(my $data);
         $bb->cleanup;
         #warn "read: [$data]\n";
         last if $data =~ /^[\r\n]+$/;

@@ -121,8 +121,7 @@ sub flatten_bb {
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
         $seen_eos++, last if $b->is_eos;
-        my $bdata = $b->read;
-        $bdata = '' unless defined $bdata;
+        $b->read(my $bdata);
         push @data, $bdata;
     }
     return (join('', @data), $seen_eos);

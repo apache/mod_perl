@@ -12,7 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
-provide a workaround for a bug in perl's newSVpvn, so that now
+APR::Socket::recv() now returns the length of the read data [Stas]
+
 APR::Bucket's read() returns "" instead of undef when there is no data
 to read. [Stas]
 
@@ -74,10 +75,13 @@ APR::Brigade [Stas]
   - destroy() now throws APR::Error exception (not returning rc)
   - rename empty => is_empty
   - added the method cleanup()
+  - flatten() now returns the number of bytes read (and passed the
+    buffer by the argument) and throws APR::Error exception
 
 APR::Bucket: [Stas]
-  - read() now returns read data and throws APR::Error exception (not
-    returning rc). The returned scalar is now TAINTED.
+  - read() now returns the length of the read data and throws
+    APR::Error exception (not returning rc). The returned scalar is
+    now TAINTED.
   - type->name now has a module APR::BucketType
   - type(), length(), start(), data() are now all readonly
   - new() fix a bug in offset handling

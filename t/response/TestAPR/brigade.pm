@@ -20,7 +20,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 10;
+    plan $r, tests => 13;
 
     # basic + pool + destroy
     {
@@ -59,7 +59,9 @@ sub handler {
         $bb1->concat($bb2);
         # bb1: 11, 12, 21, 22
         ok t_cmp(8, $bb1->length, "total data length in bb");
-        ok t_cmp("11122122", $bb1->flatten, "bb flatten");
+        my $len = $bb1->flatten(my $data);
+        ok t_cmp(8, $len, "bb flatten/len");
+        ok t_cmp("11122122", $data, "bb flatten/data");
         t_debug('$bb2 is empty');
         ok $bb2->is_empty;
 
@@ -67,9 +69,14 @@ sub handler {
         my $b = $bb1->first; # 11
         $b = $bb1->next($b); # 12
         my $bb3 = $bb1->split($b);
+
         # bb1: 11, bb3: 12, 21, 22
-        ok t_cmp("11",     $bb1->flatten, "bb flatten");
-        ok t_cmp("122122", $bb3->flatten, "bb flatten");
+        $len = $bb1->flatten($data);
+        ok t_cmp(2, $len, "bb1 flatten/len");
+        ok t_cmp("11", $data, "bb1 flatten/data");
+        $len = $bb3->flatten($data);
+        ok t_cmp(6, $len, "bb3 flatten/len");
+        ok t_cmp("122122", $data, "bb3 flatten/data");
     }
 
     Apache::OK;

@@ -63,7 +63,7 @@ sub inject_header_bucket {
 
     if (1) {
         # extra debug, wasting cycles
-        my $data = $bucket->read;
+        $bucket->read(my $data);
         debug "injected header: [$data]";
     }
     else {
@@ -166,7 +166,7 @@ sub handler : FilterConnectionHandler {
             last;
         }
 
-        my $data = $bucket->read;
+        $bucket->read(my $data);
         debug "filter read:\n[$data]";
 
         # check that we really work only on the headers

@@ -164,9 +164,9 @@ sub ModPerl::Test::read_post {
                 last;
             }
 
-            my $buf = $b->read;
+            $b->read(my $buf);
             warn "read_post: DATA bucket: [$buf]\n" if $debug;
-            $data .= $buf if length $buf;
+            $data .= $buf;
         }
 
     } while (!$seen_eos);
@@ -273,7 +273,8 @@ sub bb_dump {
 
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-        push @data, $b->type->name, $b->read;
+        $b->read(my $bdata);
+        push @data, $b->type->name, $bdata;
     }
 
     # send the sniffed info to STDERR so not to interfere with normal

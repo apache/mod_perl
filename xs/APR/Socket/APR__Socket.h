@@ -14,24 +14,22 @@
  */
 
 static MP_INLINE
-SV *mpxs_APR__Socket_recv(pTHX_ apr_socket_t *socket, apr_size_t len)
+apr_size_t mpxs_APR__Socket_recv(pTHX_ apr_socket_t *socket,
+                                 SV *buffer,
+                                 apr_size_t len)
 {
-    SV *buf = NEWSV(0, len);
-    apr_status_t rc = apr_socket_recv(socket, SvPVX(buf), &len);
+    apr_status_t rc;
 
-    if (len > 0) {
-        mpxs_sv_cur_set(buf, len);
-        SvTAINTED_on(buf);
-    } 
-    else if (rc == APR_EOF) {
-        sv_setpvn(buf, "", 0);
-    }
-    else if (rc != APR_SUCCESS) {
-        SvREFCNT_dec(buf);
-        modperl_croak(aTHX_ rc, "APR::Socket::recv");  
+    mpxs_sv_grow(buffer, len);
+    rc = apr_socket_recv(socket, SvPVX(buffer), &len);
+
+    if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
+        modperl_croak(aTHX_ rc, "APR::Socket::recv");
     }
     
-    return buf;
+    mpxs_sv_cur_set(buffer, len);
+    SvTAINTED_on(buffer);
+    return len;
 }
 
 static MP_INLINE

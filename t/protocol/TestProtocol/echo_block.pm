@@ -31,12 +31,8 @@ sub handler {
             or die "failed to set blocking mode";
     }
 
-    while (1) {
-        my $buff = $socket->recv(BUFF_LEN);
-        last unless length $buff; # EOF
-
-        my $wlen = $socket->send($buff);
-        last if $wlen != length $buff; # write failure?
+    while ($socket->recv(my $buff, BUFF_LEN)) {
+        $socket->send($buff);
     }
 
     Apache::OK;

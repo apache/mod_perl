@@ -47,8 +47,7 @@ sub handler {
                 last;
             }
 
-            my $data = $bucket->read;
-            if (length $data) {
+            if ($bucket->read(my $data)) {
                 last if $data =~ /^[\r\n]+$/;
                 $bucket = APR::Bucket->new(uc $data);
             }

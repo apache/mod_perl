@@ -32,7 +32,7 @@ sub handler {
         for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
             ok $bucket->type->name;
             ok $bucket->length == 2;
-            my $data = $bucket->read;
+            $bucket->read(my $data);
             ok (defined $data and $data eq 'ok');
         }
 

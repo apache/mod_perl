@@ -114,20 +114,20 @@ SV *mpxs_APR__Brigade_length(pTHX_ apr_bucket_brigade *bb,
 #define mp_xs_sv2_bb mp_xs_sv2_APR__Brigade
 
 static MP_INLINE
-SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
-                              SV **MARK, SV **SP)
+apr_size_t mpxs_APR__Brigade_flatten(pTHX_ I32 items,
+                                     SV **MARK, SV **SP)
 {
 
     apr_bucket_brigade *bb;
-    apr_size_t length;
-    apr_status_t status;
-    SV *data;
+    apr_size_t wanted;
+    apr_status_t rc;
+    SV *buffer;
 
-    mpxs_usage_va_1(bb, "$bb->flatten([$length])");
+    mpxs_usage_va_2(bb, buffer, "$bb->flatten($buf, [$wanted])");
 
-    if (items > 1) {
-        /* APR::Brigade->flatten($length); */
-        length = SvIV(*MARK);
+    if (items > 2) {
+        /* APR::Brigade->flatten($wanted); */
+        wanted = SvIV(*MARK);
     }
     else {
         /* APR::Brigade->flatten(); */
@@ -137,25 +137,21 @@ SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
          */
         apr_off_t actual;
         apr_brigade_length(bb, 1, &actual);
-        length = (apr_size_t)actual;
+        wanted = (apr_size_t)actual;
     }
 
-    data = newSV(0);
-    mpxs_sv_grow(data, length);
+    (void)SvUPGRADE(buffer, SVt_PV);
+    mpxs_sv_grow(buffer, wanted);
 
-    status = apr_brigade_flatten(bb, SvPVX(data), &length);
-    if (status != APR_SUCCESS) {
-        /* XXX croak?
-         * note that reading from an empty brigade will return
-         * an empty string, not undef, so there is a difference
-         */
-        return &PL_sv_undef;
+    rc = apr_brigade_flatten(bb, SvPVX(buffer), &wanted);
+    if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
+        modperl_croak(aTHX_ rc, "APR::Brigade::flatten");
     }
 
-    mpxs_sv_cur_set(data, length);
-    SvTAINTED_on(data);
+    mpxs_sv_cur_set(buffer, wanted);
+    SvTAINTED_on(buffer);
 
-    return data;
+    return wanted;
 }
 
 static MP_INLINE

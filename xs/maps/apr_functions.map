@@ -116,7 +116,7 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
  mpxs_APR__Bucket_remove         #APR_BUCKET_REMOVE
  #apr_bucket_read
- mpxs_APR__Bucket_read | | bucket, block=APR_BLOCK_READ
+ mpxs_APR__Bucket_read | | bucket, buffer, block=APR_BLOCK_READ
  #modperl_bucket_sv_create
  mpxs_APR__Bucket_new  | | classname, sv, offset=0, len=0
 >apr_bucket_alloc

@@ -35,34 +35,22 @@ static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
     return modperl_bucket_sv_create(aTHX_ sv, offset, len);
 }
 
-static MP_INLINE SV *mpxs_APR__Bucket_read(pTHX_
-                                           apr_bucket *bucket,
-                                           apr_read_type_e block)
+static MP_INLINE
+apr_size_t mpxs_APR__Bucket_read(pTHX_
+                                 apr_bucket *bucket,
+                                 SV *buffer,
+                                 apr_read_type_e block)
 {
-    SV *buf;
     apr_size_t len;
     const char *str;
     apr_status_t rc = apr_bucket_read(bucket, &str, &len, block);
-    
-    if (rc == APR_EOF) {
-        return newSVpvn("", 0);
+
+    if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
+        modperl_croak(aTHX_ rc, "APR::Bucket::read");
     }
 
-    if (rc != APR_SUCCESS) {
-        modperl_croak(aTHX_ rc, "APR::Bucket::read");  
-    }
-
-    /* XXX: bug in perl, newSVpvn(NULL, 0) doesn't produce "" sv */
-    if (len) {
-        buf = newSVpvn(str, len);
-    }
-    else {
-        buf = newSVpvn("", 0);
-    }
-    
-    SvTAINTED_on(buf);
-    
-    return buf;
+    sv_setpvn(buffer, (len ? str : ""), len);
+    return len;
 }
 
 static MP_INLINE int mpxs_APR__Bucket_is_eos(apr_bucket *bucket)
