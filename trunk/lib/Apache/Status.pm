@@ -345,6 +345,7 @@ sub b_terse_link {
 
 sub noh_b_terse {
     my $r = shift;
+    return unless eval { require B::Terse };
     $r->send_http_header("text/plain");
     no strict 'refs';
     my($arg, $name) = (split "/", $r->uri)[-2,-1];
@@ -368,6 +369,7 @@ sub b_terse_size_link {
 
 sub noh_b_terse_size {
     my $r = shift;
+    return unless eval { require B::TerseSize };
     $r->send_http_header("text/html");
     $r->print('<pre>');
     my($arg, $name) = (split "/", $r->uri)[-2,-1];
@@ -387,6 +389,7 @@ sub b_package_size_link {
 
 sub noh_b_package_size {
     my($r, $q) = @_;
+    return unless eval { require B::TerseSize };
     $r->send_http_header("text/html");
     $r->print('<pre>');
     no strict 'refs';
