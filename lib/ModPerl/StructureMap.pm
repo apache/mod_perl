@@ -84,15 +84,15 @@ sub parse {
 
     while ($fh->readline) {
         if (m:^(\W?)</?([^>]+)>:) {
+            my $args;
             $disabled = $1;
-            my $args = $2;
+            ($class, $args) = split /\s+/, $2, 2;
 
             %cur = ();
-            if ($args =~ /E=/) {
+            if ($args and $args =~ /E=/) {
                 %cur = $self->parse_keywords($args);
             }
 
-            $class = $cur{STRUCT} || $args;
             $self->{MODULES}->{$class} = $cur{MODULE} if $cur{MODULE};
 
             next;
