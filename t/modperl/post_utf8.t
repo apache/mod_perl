@@ -19,6 +19,8 @@ my $data = join '=', $data_ascii, $data_utf8;
 # we will skip the response any way if perl < 5.008
 utf8::encode($data) if $] >= 5.008;
 
+# Accept-Charset is not really needed, since we don't expect the
+# server side to send anything back but plain ASCII.
 print POST_BODY_ASSERT $location, content => $data,
     'Accept-Charset'  => "ISO-8859-1,UTF-8";
 
