@@ -267,6 +267,7 @@ package Apache::File;
 
 use Fcntl ();
 use Symbol ();
+use Carp ();
 
 sub new {
     my($class) = shift;
@@ -282,7 +283,19 @@ sub new {
 
 sub open {
     my($self) = shift;
-    open $self, shift, @_; # because of open's prototype
+
+    Carp::croak("no Apache::File object passed")
+          unless $self && ref($self);
+
+    # cannot forward @_ to open() because of its prototype
+    if (@_ > 1) {
+        my ($mode, $file) = @_;
+        open $self, $mode, $file;
+    }
+    else {
+        my $file = shift;
+        open $self, $file;
+    }
 }
 
 sub close {
