@@ -16,11 +16,15 @@ in the MP_MAINTAINER mode add the -Werror compilation flag when perl
 v5.6.2 or higher is used, so that we don't miss compilation
 warnings. [Stas]
 
+handlers returning status numbers as strings (e.g. "0") are working
+again (as they did before 1.99_10). [Geoffrey Young]
+
 fix the Makefile.PL option parser to support overriding of certain
 build options, in addition to appending to them (.e.g. now MP_LIBNAME
 is overridable) [Andrew Wyllie <wyllie@dilex.net>]
 
-make sure that connection filters won't be inserted as request filters [Stas]
+make sure that connection filters won't be inserted as request filters
+[Stas]
 
 Prevent the 'Use of uninitialized value.' warning when
 ModPerl::Util::exit is used. [Stas]
