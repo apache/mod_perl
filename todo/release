@@ -11,10 +11,6 @@
   off the current PerlInterpreter instead. so for now may just support
   prefork mpm.
 
-* docs/install/install.pod:=head2 Configuring mod_perl
-  should be rewritten to clearly explain how to build static and
-  dynamic mod_perl (each separately).
-
 * check other todo/features_missing items (some of them might be
   critical for 2.0 release, since missing methods might be a problem
   for migration)
