@@ -1473,7 +1473,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'int',
+    'return_type' => 'SV *',
     'name' => 'modperl_constants_lookup_apache',
     'args' => [
       {
@@ -1483,7 +1483,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'int',
+    'return_type' => 'SV *',
     'name' => 'modperl_constants_lookup_apr',
     'args' => [
       {

@@ -143,6 +143,12 @@ $Apache::ConstantsTable = {
       'HTTP_INSUFFICIENT_STORAGE',
       'HTTP_NOT_EXTENDED'
     ],
+    'config' => [
+      'DECLINE_CMD'
+    ],
+    'types' => [
+      'DIR_MAGIC_TYPE'
+    ],
     'filter_type' => [
       'AP_FTYPE_RESOURCE',
       'AP_FTYPE_CONTENT_SET',

@@ -1,27 +1,27 @@
 #include "mod_perl.h"
 #include "modperl_const.h"
 
-typedef int (*constants_lookup)(const char *);
+typedef SV *(*constants_lookup)(pTHX_ const char *);
 typedef const char ** (*constants_group_lookup)(const char *);
 
-static int new_constsub(pTHX_ constants_lookup lookup,
+static SV *new_constsub(pTHX_ constants_lookup lookup,
                         HV *caller_stash, HV *stash,
                         const char *name)
 {
     int name_len = strlen(name);
     GV **gvp = (GV **)hv_fetch(stash, name, name_len, TRUE);
-    int val;
+    SV *val;
 
     /* dont redefine */
     if (!isGV(*gvp) || !GvCV(*gvp)) {
-        val = (*lookup)(name);
+        val = (*lookup)(aTHX_ name);
 
 #if 0
         fprintf(stderr, "newCONSTSUB(%s, %s, %d)\n",
                 HvNAME(stash), name, val);
 #endif
 
-        newCONSTSUB(stash, (char *)name, newSViv(val));
+        newCONSTSUB(stash, (char *)name, val);
 #ifdef GvSHARED
         GvSHARED_on(*gvp);
 #endif
