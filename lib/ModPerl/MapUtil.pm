@@ -25,6 +25,7 @@ our @EXPORT_OK = qw(list_first disabled_reason
 
 our @ISA = qw(Exporter);
 
+#    '<' => 'auto-generated but gives only a read-only access'
 my %disabled_map = (
     '!' => 'disabled or not yet implemented',
     '~' => 'implemented but not auto-generated',

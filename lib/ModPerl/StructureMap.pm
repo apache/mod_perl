@@ -117,11 +117,18 @@ sub parse {
         }
 
         if (s/^(\W)\s*// or $disabled) {
-            $map->{$class}->{$_} = undef;
-            push @{ $self->{disabled}->{ $1 || '!' } }, "$class.$_";
+            # < denotes a read-only accessor
+            if ($1 && $1 eq '<') {
+                $map->{$class}->{$_} = 'ro';
+            }
+            else {
+                $map->{$class}->{$_} = undef;
+                push @{ $self->{disabled}->{ $1 || '!' } }, "$class.$_";
+            }
+
         }
         else {
-            $map->{$class}->{$_} = 1;
+            $map->{$class}->{$_} = 'rw';
         }
     }
 
