@@ -372,7 +372,7 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
                                      type);
 }
 
-#elif !defined(PERLIO_LAYERS) /* NOT PERLIO_LAYERS (5.6.1) */
+#elif !defined(PERLIO_LAYERS) && !defined(WIN32) /* NOT PERLIO_LAYERS (5.6.1) */
 
 static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
 {
