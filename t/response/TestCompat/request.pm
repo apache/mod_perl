@@ -16,7 +16,7 @@ use Apache::Constants qw(OK REMOTE_HOST);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 16;
+    plan $r, tests => 20;
 
     $r->send_http_header('text/plain');
 
@@ -69,6 +69,34 @@ sub handler {
                 my $got = $r->$sub_test($key);
                 ok t_cmp($exp, $got, "\$r->$sub_test unset()");
             }
+        }
+    }
+
+
+    # $r->notes
+    {
+        my $key = 'notes-test';
+        # get/set scalar context
+        {
+            my $val = 'ok';
+            $r->notes($key => $val);
+            ok t_cmp($r->notes->get($key), $val, "\$r->notes->get(\$key)");
+            ok t_cmp($r->notes($key),      $val, "\$r->notes(\$key)");
+        }
+
+        # unset
+        {
+            my $exp = undef;
+            $r->notes($key => $exp);
+            my $got = $r->notes($key);
+            ok t_cmp($exp, $got, "\$r->notes unset()");
+        }
+
+        # get/set list context
+        {
+            my @exp = qw(foo bar);
+            $r->notes->add($key => $_) for @exp;
+            ok t_cmp(\@exp, [ $r->notes($key) ], "\$r->notes in list context");
         }
     }
 
