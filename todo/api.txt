@@ -75,9 +75,6 @@ $r->{get,set,push}_handlers:
 need to deal properly with modification of the current handler phase
 we're running.
 
-Apache->httpd_conf:
-depends on <Perl> sections
-
 Apache->request:
 need to deal with subclass objects which are not a request_rec
 (e.g. HASH ref)

@@ -2,15 +2,11 @@ this file contains known missing features from 1.3, these are to be
 implemented unless otherwise noted.  there are more missing features
 listed in deprecated_features.txt
 
-- DirectiveHandlers
-
 - PerlCleanupHandler
 
 - PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
 
 - pod directives (=pod,=back,=cut) and __END__
-
-- <Perl> sections
 
 - modperl_include #perl
 
@@ -37,8 +33,6 @@ listed in deprecated_features.txt
 
 core modules:
 ------------
-
-- Apache::ModuleConfig
 
 - see also: xs/maps/apache_functions.map
 
