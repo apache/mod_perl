@@ -92,7 +92,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  ap_rflush
 PREFIX=ap_r
 ~ap_rwrite
-~ap_rprintf
+ ap_rprintf | mpxs_ | ...
 !ap_rputc
 ~ap_rputs
  ap_rvputs | mpxs_ | ... | puts

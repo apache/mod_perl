@@ -1,7 +1,8 @@
 #define mpxs_Apache__RequestRec_TIEHANDLE(stashsv, sv) \
 modperl_newSVsv_obj(aTHX_ stashsv, sv)
 
-#define mpxs_Apache__RequestRec_PRINT mpxs_Apache__RequestRec_print
+#define mpxs_Apache__RequestRec_PRINT  mpxs_Apache__RequestRec_print
+#define mpxs_Apache__RequestRec_PRINTF mpxs_ap_rprintf
 
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
@@ -55,6 +56,34 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     
     mpxs_output_flush(r, rcfg);
     
+    return bytes;
+}  
+
+static MP_INLINE
+apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
+{
+    modperl_config_req_t *rcfg;
+    request_rec *r;
+    apr_size_t bytes = 0;
+    SV *sv;
+
+    mpxs_usage_va(2, r, "$r->printf($fmt, ...)");
+    
+    rcfg = modperl_config_req_get(r);
+
+    /* XXX: we could have an rcfg->sprintf_buffer to reuse this SV
+     * across requests
+     */
+    sv = newSV(0);
+    modperl_perl_do_sprintf(aTHX_ sv, items, MARK);
+    bytes = SvCUR(sv);
+
+    modperl_wbucket_write(&rcfg->wbucket, SvPVX(sv), &bytes);
+    
+    mpxs_output_flush(r, rcfg);
+
+    SvREFCNT_dec(sv);
+
     return bytes;
 }  
 
