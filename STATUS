@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/30 02:39:45 $]
+   Last modified at [$Date: 2003/09/20 03:28:13 $]
 
 Release:
 --------
@@ -76,6 +76,14 @@ AIX     3.3 DSO Works with -berok to ignore linking errors (symbol
                 resolution).  Should replace -berok with a proper
                 symbol resolution at linking time, but I had not much
                 success with using this approach (dlopen fails).
+
+FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
+                5.1-RELEASE)
+                http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
+                It doesn't work with threaded perl/worker mpm,
+                seemingly because of the problems with threads on
+                FreeBSD (not sure what version).
+
 
 Needs Patch or Further Investigation:
 -------------------------------------
