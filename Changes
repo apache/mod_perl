@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+ensure @INC value from startup time is always properly saved
+
 pod support '=for apache/=end apache' replaced with:
  =over to apache
  #directives for apache

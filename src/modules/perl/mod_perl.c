@@ -435,6 +435,7 @@ static void mp_dso_unload(void *data)
 
 static void mp_server_notstarting(void *data) 
 {
+    saveINC;
     Apache__ServerStarting(FALSE);
 }
 
