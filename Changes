@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.14_01-dev
 
+add another dTHR so we build/run with threaded Perl again
+
 USE_APXS fixups:
  
  -use apaci/find_source instead of hard-coding files in apaci/configure
