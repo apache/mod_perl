@@ -1,15 +1,8 @@
 
 use CGI ();
-use CGI::Switch ();
 use strict;
 
-#hack for win32 because ApacheCore.dll does not export basic_http_header,
-#so CGI::Switch doesn't work, but mod_perl-win32 requires 5.004_02+ anyhow,
-#so there's no need for CGI::Switch
-
-my $class = $] >= 5.004 ? "CGI" : "CGI::Switch";
-
-my $r = $class->new;
+my $r = CGI->new;
 
 #warn "Running cgi.pl with $CGI::VERSION";
 
