@@ -116,11 +116,19 @@ Instructions for mod_perl 2.0 Release Manager
 7. Distribute to www.apache.org/dist/perl 
    and archive the old package under /www/archive.apache.org/dist/perl/
 
+  b. unpack the package, update symlinks to the tarball and unpacked distro:
+
    % cd /www/www.apache.org/dist/perl/
    % cp /www/perl.apache.org/dist/mod_perl-1.99_15.tar.gz* .
    % tar -xzvf mod_perl-1.99_15.tar.gz
    % mv mod_perl-1.99_13.tar.gz* /www/archive.apache.org/dist/perl/
    % rm -rf mod_perl-1.99_14
+
+  b. make sure that the files you just created are group rw so
+     all the dist admins can make changes:
+
+    % find /www/www.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
+    % find /www/www.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
 
 8. Announce the package
 
