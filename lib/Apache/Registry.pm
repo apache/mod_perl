@@ -43,8 +43,7 @@ sub handler {
 	    return FORBIDDEN;
  	}
 	if (-d _) {
-	    $r->log_reason("attempt to invoke directory as script", $filename);
-	    return FORBIDDEN;
+	    return DECLINED; 
 	}
 	unless (-x _ or $Is_Win32) {
 	    $r->log_reason("file permissions deny server execution",
