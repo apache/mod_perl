@@ -1791,7 +1791,7 @@ static int perl_hook_api(char *string)
     }
 
     /* XXX: assumes .xs is linked static */
-    return perl_get_cv(form("Apache::%s::bootstrap", name), FALSE);
+    return perl_get_cv(form("Apache::%s::bootstrap", name), FALSE) != Nullcv;
 }
 
 int perl_hook(char *name)
