@@ -60,7 +60,7 @@ sub handler {
     # HTTP 1.0
     ok t_cmp $r->proto_num, 1000, 't->proto_num';
 
-    ok t_cmp $r->hostname, $r->get_server_name, '$r->hostname';
+    ok t_cmp lc($r->hostname), lc($r->get_server_name), '$r->hostname';
 
     {
         my $old_hostname = $r->hostname("other.hostname");
