@@ -19,9 +19,8 @@ static void extra_apr_init(void)
         apr_pool_t *global_pool;
         apr_status_t rv = apr_pool_create(&global_pool, NULL);
         if (rv != APR_SUCCESS) {
-            ap_log_error(APLOG_MARK, APLOG_CRIT, rv, NULL,
-                         "Fatal error: unable to create global pool "
-                         "for use with by the scoreboard");
+            fprintf(stderr, "Fatal error: unable to create global pool "
+                    "for use with by the scoreboard");
         }
         /* XXX: mutex locking? */
         apr_hook_global_pool = global_pool;
