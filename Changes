@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add backcompat value of $Apache::Server::CWD [Stas Bekman]
+
 env var MOD_PERL_TRACE is working again [Stas Bekman]
 
 add a new test TestDirective::perlloadmodule2, which performs a more
