@@ -106,5 +106,5 @@ MODULE=Apache::SubProcess
 
 MODULE=Apache::Directive
  mpxs_Apache__Directive_insert
- mpxs_Apache__Directive_to_string
+ mpxs_Apache__Directive_as_string
 
