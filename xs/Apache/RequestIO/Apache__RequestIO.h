@@ -233,10 +233,7 @@ static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
     }
 
     if (len <= 0) {
-        sv_setpv(get_sv("!", TRUE),
-                 (char *)apr_psprintf(r->pool,
-                                      "The LENGTH argument can't be negative"));
-        return &PL_sv_undef;
+        Perl_croak(aTHX_ "The LENGTH argument can't be negative");
     }
 
     /* XXX: need to handle negative offset */
