@@ -11,6 +11,7 @@ use ModPerl::MapUtil qw(function_table xs_glue_dirs);
 use File::Path qw(rmtree mkpath);
 use Cwd qw(fastcwd);
 use Data::Dumper;
+use File::Spec::Functions qw(catfile);
 
 our $VERSION = '0.01';
 
@@ -220,7 +221,7 @@ EOF
 sub prepare {
     my $self = shift;
     $self->{DIR} = 'WrapXS';
-    $self->{XS_DIR} = join '/', fastcwd(), 'xs';
+    $self->{XS_DIR} = catfile fastcwd(), 'xs';
 
     if (-e $self->{DIR}) {
         rmtree([$self->{DIR}], 1, 1);
@@ -242,7 +243,7 @@ sub class_dir {
 
     my $dirname = $self->class_dirname($class);
     my $dir = ($dirname =~ m:/: and $dirname !~ m:^$self->{DIR}:) ?
-      join('/', $self->{DIR}, $dirname) : $dirname;
+      catfile($self->{DIR}, $dirname) : $dirname;
 
     mkpath [$dir], 1, 0755 unless -d $dir;
 
@@ -251,7 +252,7 @@ sub class_dir {
 
 sub class_file {
     my($self, $class, $file) = @_;
-    join '/', $self->class_dir($class), $file;
+    catfile $self->class_dir($class), $file;
 }
 
 sub cname {
@@ -544,7 +545,7 @@ sub write_typemap_h_file {
 
     $method = $method . '_code';
     my($h, $code) = $self->typemap->$method();
-    my $file = join '/', $self->{XS_DIR}, $h;
+    my $file = catfile $self->{XS_DIR}, $h;
 
     open my $fh, '>', $file or die "open $file: $!";
     print $fh $self->ModPerl::Code::noedit_warning_c(), "\n";
