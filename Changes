@@ -15,6 +15,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 introduce a custom modperl error message for failing filter handlers
 (previously 'unknown error' coming from rc=500 was logged) [Stas]
 
+Fix Apache::Log methods/functions to log into the vhost's error_log
+file (if there is one). ( $s->log->*, $s->log_error, $s->log_serror,
+Apache::ServerRec::warn, etc.). Apache::ServerRec can now export its
+warn function to override CORE::warn [Stas]
+
+Fix $s->log->*, $s->log_error and $s->log_serror to again log into the
+vhost's error_log file (if there is one). [Stas]
+
 $s->log->warn and other $s->log->foo are now logging to the right
 vhost server and not the global one. modperl_sv2server_rec was
 broken. [Stas]
@@ -45,9 +53,6 @@ is loaded instead of checking for the existence of a stash [Gozer]
 fix the modperl build, where httpd has been built against separate
 installations of apr-util and apr, where apr-util has been installed
 with a different includedir to apr. [Joe Orton]
-
-Fix $s->log->*, $s->log_error and $s->log_serror to again log into the
-vhost's error_log file (if there is one). [Stas]
 
 $Apache::Server::SaveConfig is now $Apache::PerlSections::Save
 [Geoffrey Young]
