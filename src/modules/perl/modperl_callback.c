@@ -138,6 +138,11 @@ int modperl_callback_run_handlers(int idx, int type,
       case MP_HANDLER_TYPE_PER_SRV:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::RequestRec", r, NULL);
+
+        /* only happens once per-request */
+        if (MpDirSETUP_ENV(dcfg)) {
+            modperl_env_request_populate(aTHX_ r);
+        }
         break;
       case MP_HANDLER_TYPE_CONNECTION:
         modperl_handler_make_args(aTHX_ &av_args,

@@ -96,12 +96,19 @@ my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLE AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET'],
     Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
-    Req => [qw(NONE SET_GLOBAL_REQUEST)],
+    Req => [qw(NONE SET_GLOBAL_REQUEST SETUP_ENV)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
 );
 
+$flags{DirSeen} = $flags{Dir};
+
 my %flags_options = map { $_,1 } qw(Srv Dir);
+
+my %flags_field = (
+    DirSeen => 'flags->opts_seen',
+    (map { $_, 'flags->opts' } keys %flags_options),
+);
 
 sub new {
     my $class = shift;
@@ -334,9 +341,9 @@ sub generate_flags {
         }
 
         my $flags = join $class, qw(Mp FLAGS);
+        my $field = $flags_field{$class} || 'flags';
 
-        print $h_fh "\n#define $flags(p) ",
-          ($flags_options{$class} ? '(p)->flags->opts' : '(p)->flags'), "\n";
+        print $h_fh "\n#define $flags(p) (p)->$field\n";
 
         $class = "Mp$class";
         print $h_fh "\n#define ${class}Type $n\n";
