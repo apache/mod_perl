@@ -174,7 +174,7 @@ information from configuration files to Perl modules or Registry scripts:
  PerlSetVar  SomeKey  SomeValue
 
 Perl modules or scripts retrieve configuration values using the
-C<$r->dir_config> method (see 'perldoc Apache').
+C<$r-E<gt>dir_config> method (see 'perldoc Apache').
 
 C<PerlSetVar> handles keys case-insensitively.
 
