@@ -360,7 +360,7 @@ my %class_pools = map {
     (my $f = "mpxs_${_}_pool") =~ s/:/_/g;
     $_, $f;
 } qw{
-   Apache::RequestRec Apache::Connection Apache::URI
+     Apache::RequestRec Apache::Connection Apache::URI APR::URI
 };
 
 sub class_pool : lvalue {
