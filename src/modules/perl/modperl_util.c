@@ -25,15 +25,88 @@ int modperl_require_module(pTHX_ const char *pv, int logfailure)
     return TRUE;
 }
 
-MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
+static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
 {
-    request_rec *r = NULL;
+    static char *r_keys[] = { "r", "_r", NULL };
+    HV *hv = (HV *)SvRV(in);
+    SV *sv = Nullsv;
+    int i;
 
-    if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
-        r = (request_rec *)SvIV((SV*)SvRV(sv));
+    for (i=0; r_keys[i]; i++) {
+        int klen = i + 1; /* assumes r_keys[] will never change */
+        SV **svp;
+
+        if ((svp = hv_fetch(hv, r_keys[i], klen, FALSE)) && (sv = *svp)) {
+            if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVHV)) {
+                /* dig deeper */
+                return modperl_hv_request_find(aTHX_ sv, classname, cv);
+            }
+            break;
+        }
     }
 
-    return r;
+    if (!sv) {
+        Perl_croak(aTHX_
+                   "method `%s' invoked by a `%s' object with no `r' key!",
+                   cv ? GvNAME(CvGV(cv)) : "unknown",
+                   HvNAME(SvSTASH(SvRV(in))));
+    }
+
+    return SvROK(sv) ? SvRV(sv) : sv;
+}
+
+MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
+{
+    return modperl_xs_sv2request_rec(aTHX_ sv, NULL, Nullcv);
+}
+
+request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
+{
+    SV *sv = Nullsv;
+    MAGIC *mg;
+
+    if (in == &PL_sv_undef) {
+        return NULL;
+    }
+
+    if (SvROK(in)) {
+        SV *rv = (SV*)SvRV(in);
+
+        switch (SvTYPE(rv)) {
+          case SVt_PVMG:
+            sv = rv;
+            break;
+          case SVt_PVHV:
+            sv = modperl_hv_request_find(aTHX_ in, classname, cv);
+            break;
+          default:
+            Perl_croak(aTHX_ "panic: unsupported request_rec type %d",
+                       SvTYPE(rv));
+        }
+    }
+
+    if (!sv) {
+        request_rec *r = NULL;
+        (void)modperl_tls_get_request_rec(&r);
+
+        if (!r) {
+            Perl_croak(aTHX_
+                       "Apache->%s called without setting Apache->request!",
+                       cv ? GvNAME(CvGV(cv)) : "unknown");
+        }
+
+        return r;
+    }
+
+    /* XXX: not checking sv_derived_from(sv, classname); for speed */
+    if ((mg = SvMAGIC(sv))) {
+        return MgTypeExt(mg) ? (request_rec *)mg->mg_ptr : NULL;
+    }
+    else {
+        return (request_rec *)SvIV(sv);
+    }
+
+    return NULL;
 }
 
 MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj)

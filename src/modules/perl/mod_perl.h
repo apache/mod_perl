@@ -49,4 +49,6 @@ int modperl_response_handler(request_rec *r);
  */
 #define MP_CODE_ATTRS(cv) (CvXSUBANY((CV*)cv).any_i32)
 
+#define MgTypeExt(mg) (mg->mg_type == '~')
+
 #endif /*  MOD_PERL_H */
