@@ -29,6 +29,7 @@ use Apache::Response ();
 use Apache::Util ();
 use Apache::Log ();
 use Apache::URI ();
+use APR::Date ();
 use APR::Table ();
 use APR::Pool ();
 use APR::URI ();
@@ -451,6 +452,8 @@ sub ht_time {
 
     return Apache::Util::format_time($t, $fmt, $gmt, $r->pool);
 }
+
+*parsedate = \&APR::Date::parse_http;
 
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;
