@@ -6,23 +6,23 @@
 IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 
 <request_rec>
-   pool
+<  pool
 <  connection
    server
-   next
-   prev
-   main
+<  next
+<  prev
+<  main
    the_request
    assbackwards
 ~  proxyreq
-   header_only
+<  header_only
    protocol
    proto_num
-   hostname
+<  hostname
    request_time
    status_line
    status
-   method
+<  method
 <  method_number
    allowed
    allowed_xmethods
