@@ -332,12 +332,29 @@ void *perl_create_server_config (pool *p, server_rec *s)
     return (void *)cls;
 }
 
+static char *sigsave[] = { "ALRM", NULL };
+
 perl_request_config *perl_create_request_config(pool *p, server_rec *s)
 {
+    int i;
     perl_request_config *cfg = 
 	(perl_request_config *)pcalloc(p, sizeof(perl_request_config));
     cfg->pnotes = Nullhv;
     cfg->setup_env = 0;
+
+    cfg->sigsave = make_array(p, 1, sizeof(perl_request_sigsave *));
+    for (i=0; sigsave[i]; i++) {
+	perl_request_sigsave *sig = 
+	    (perl_request_sigsave *)pcalloc(p, sizeof(perl_request_sigsave));
+	sig->signo = Perl_whichsig(sigsave[i]);
+	sig->h =  Perl_rsignal_state(sig->signo);
+	MP_TRACE_g(fprintf(stderr, 
+			   "mod_perl: saving SIG%s (%d) handler 0x%lx\n",
+			   sigsave[i], (int)sig->signo, (unsigned long)sig->h));
+	*(perl_request_sigsave **)push_array(cfg->sigsave) = sig;
+
+    }
+
     return cfg;
 }
 
