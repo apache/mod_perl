@@ -697,7 +697,7 @@ sub log_error {
     my $class = ref $self;
 
     $self->[REQ]->log_error("$$: $class: $msg");
-    $self->[REQ]->notes('error-notes', $msg);
+    $self->[REQ]->notes->set('error-notes' => $msg);
     $@{$self->[URI]} = $msg;
 }
 
