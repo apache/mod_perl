@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+in case a native apache response filter is configured outside the
+<Location> block with PerlSet*Filter directive, make sure that
+mod_perl doesn't try to add it as connection filter (previously was
+logging an error like: [error] a content filter was added without a
+request: includes) [Stas]
+
 replace the slow implementation of anon handlers using B::Deparse,
 with per-interpreter cache of compiled CODE refs (sort of emulating
 named subroutines for anonymous handlers) [Stas].

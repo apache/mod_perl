@@ -88,3 +88,14 @@ PerlChildExitHandler ModPerl::Test::exit_handler
 # for TestApache::util
 PerlPassEnv LC_CTYPE
 PerlPassEnv LC_TIME
+
+# see t/filter/out_apache.t
+<VirtualHost filter_out_apache>
+    <IfModule mod_include.c>
+        # this filter is on purpose configured outside the Location
+        PerlSetOutputFilter INCLUDES
+        <Location />
+            Options +Includes
+        </Location>
+    </IfModule>
+</VirtualHost>
