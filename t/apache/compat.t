@@ -2,22 +2,70 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+
+use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 2, \&have_lwp;
+plan tests => 11, todo => [5,7,9,11], \&have_lwp;
 
 my $location = "/TestApache::compat";
-my $str;
 
-my @data = (ok => '2');
-my %data = @data;
+# $r->send_http_header('text/plain');
+{
+    my @data = (test => 'content-type');
+    ok t_cmp(
+        "text/plain",
+        HEAD(query(@data))->content_type(),
+        q{$r->send_http_header('text/plain')}
+        );
+}
 
-$str = POST_BODY $location, \@data;
+# $r->content
+{
+    my @data = (test => 'content');
+    ok t_cmp(
+        "@data",
+        POST_BODY($location, \@data),
+        q{$r->content via POST}
+        );
+}
 
-ok $str eq "@data";
+# $r->Apache::args
+{
+    my @data = (test => 'args');
+    ok t_cmp(
+        "@data",
+        GET_BODY(query(@data)),
+        q{$r->Apache::args}
+        );
+}
 
-my $q = join '=', @data;
-$str = GET_BODY "$location?$q";
+# header_in
+t_header('in','get_scalar',q{scalar ctx: $r->header_in($key)});
+t_header('in','get_list',  q{list ctx: $r->header_in($key)});
+t_header('in','set',       q{$r->header_in($key => $val)});
+t_header('in','unset',     q{$r->header_in($key => undef)});
 
-ok $str eq "@data";
+# header_out
+t_header('out','get_scalar',q{scalar ctx: $r->header_out($key)});
+t_header('out','get_list',  q{list ctx: $r->header_out($key)});
+t_header('out','set',       q{$r->header_out($key => $val)});
+t_header('out','unset',     q{$r->header_out($key => undef)});
 
+
+
+### helper subs ###
+sub query {
+    my(%args) = (@_ % 2) ? %{+shift} : @_;
+    "$location?" . join '&', map { "$_=$args{$_}" } keys %args;
+}
+
+sub t_header{
+    my ($way, $what, $comment) = @_;
+    ok t_cmp(
+        "ok",
+        GET_BODY(query(test => 'header', way => $way, what => $what)),
+        $comment
+        );
+
+}
