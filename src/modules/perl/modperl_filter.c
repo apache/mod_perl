@@ -51,11 +51,6 @@ MP_INLINE apr_status_t modperl_wbucket_write(modperl_wbucket_t *wb,
 
 /* generic filter routines */
 
-static char *filter_classes[] = {
-    "Apache::InputFilter",
-    "Apache::OutputFilter",
-};
-
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_bucket_brigade *bb,
                                      modperl_filter_mode_e mode)
@@ -79,6 +74,18 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     return filter;
 }
 
+static void modperl_filter_mg_set(pTHX_ SV *obj, modperl_filter_t *filter)
+{
+    sv_magic(SvRV(obj), obj, '~', NULL, 0);
+    SvMAGIC(SvRV(obj))->mg_ptr = (char *)filter;
+}
+
+modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
+{
+    MAGIC *mg = mg_find(SvRV(obj), '~');
+    return mg ? (modperl_filter_t *)mg->mg_ptr : NULL;
+}
+
 int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode)
 {
     AV *args = Nullav;
@@ -94,9 +101,11 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode)
     MP_dINTERP_SELECT(r, c, s);
 
     modperl_handler_make_args(aTHX_ &args,
-                              filter_classes[filter->mode], filter,
+                              "Apache::Filter", filter->f,
                               "APR::Brigade", filter->bb,
                               NULL);
+
+    modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter);
 
     if (filter->mode == MP_INPUT_FILTER_MODE) {
         av_push(args, newSViv(mode));

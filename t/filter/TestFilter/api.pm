@@ -14,7 +14,7 @@ sub init_test_pm {
     my $filter = shift;
 
     {
-        package Apache::OutputFilter;
+        package Apache::Filter;
         #XXX: make part of standard api?
         unless (defined &PRINT) {
             *PRINT = \&print;
@@ -40,17 +40,15 @@ sub handler {
 
     ok $buffer eq $response_data;
 
-    my $f = $filter->f;
+    ok $filter->isa('Apache::Filter');
 
-    ok $f->isa('Apache::Filter');
-
-    my $frec = $f->frec;
+    my $frec = $filter->frec;
 
     ok $frec->isa('Apache::FilterRec');
 
     ok $frec->name;
 
-    my $r = $f->r;
+    my $r = $filter->r;
 
     ok $r->isa('Apache::RequestRec');
 

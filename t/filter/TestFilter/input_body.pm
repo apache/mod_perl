@@ -19,7 +19,7 @@ sub handler : InputFilterBody {
     my($filter, $bb, $mode) = @_;
 
     if ($bb->empty) {
-        my $rv = $filter->f->next->get_brigade($bb, $mode);
+        my $rv = $filter->next->get_brigade($bb, $mode);
 
         if ($rv != APR::SUCCESS) {
             return $rv;
