@@ -227,6 +227,12 @@ SSLCacheServerPath /tmp
 SSLCacheServerPort /tmp/gcache_port
 </IfModule>
 
+<IfModule mod_ssl.c>
+SSLDisable
+SSLCacheServerPath /tmp
+SSLCacheServerPort /tmp/gcache_port
+</IfModule>
+
 <Location /status>
 SetHandler server-status
 </Location>
