@@ -155,4 +155,8 @@ SV *modperl_perl_gensym(pTHX_ char *pack);
 
 void modperl_clear_symtab(pTHX_ HV *symtab);
 
+#ifdef MP_TRACE
+void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);
+#endif
+
 #endif /* MODPERL_UTIL_H */

@@ -734,3 +734,24 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     
     return newRV_noinc(sv);
 }
+
+#ifdef MP_TRACE
+/* XXX: internal debug function */
+/* any non-false value for MOD_PERL_TRACE/PerlTrace enables this function */
+void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
+{
+    int i;
+    const apr_array_header_t *array;
+    apr_table_entry_t *elts;
+
+    array = apr_table_elts(table);
+    elts  = (apr_table_entry_t *)array->elts;
+    modperl_trace(MP_FUNC, "Contents of table %s", name);
+    for (i = 0; i < array->nelts; i++) {
+        if (!elts[i].key || !elts[i].val) {
+            continue;
+        }
+        modperl_trace(MP_FUNC, "%s => %s", elts[i].key, elts[i].val);
+    }    
+}
+#endif
