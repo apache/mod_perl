@@ -136,13 +136,15 @@ __END__
     PerlProcessConnectionHandler TestProtocol::pseudo_http
 
     <Location TestProtocol::pseudo_http>
-        <IfModule mod_access.c>
-            Order Deny,Allow
-            Allow from @servername@
-            Require user stas
-            Satisfy any
-            # htpasswd -bc basic-auth stas foobar
-            AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
+        <IfModule @ACCESS_MODULE@>
+            <IfModule @AUTH_MODULE@>
+                Order Deny,Allow
+                Allow from @servername@
+                Require user stas
+                Satisfy any
+                # htpasswd -bc basic-auth stas foobar
+                AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
+            </IfModule>
         </IfModule>
     </Location>
 
