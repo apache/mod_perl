@@ -72,10 +72,6 @@ not yet implemented
 Apache::{Server,Process} classes:
 require mutex lock for writing
 
-Apache->exit:
-not yet implemented
-maybe use die $r/PROPAGATE instead of tie-ing $@ ?
-
 Apache->import:
 not yet implemented, required for exit/warn overridding
 
