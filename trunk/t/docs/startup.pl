@@ -66,7 +66,7 @@ if($net::callback_hooks{PERL_SAFE_STARTUP}) {
     }
 }
 else {
-    require "./t/docs/rl.pl";
+    require "docs/rl.pl";
 }
 #for testing perl mod_include's
 
@@ -82,7 +82,8 @@ sub PerlTransHandler::handler {-1}
 #for testing PERL_HANDLER_METHODS
 #see httpd.conf and t/docs/LoadClass.pm
 
-use LoadClass ();
+require "docs/LoadClass.pm";
+
 sub MyClass::method ($$) {
     my($class, $r) = @_;  
     #warn "$class->method called\n";
