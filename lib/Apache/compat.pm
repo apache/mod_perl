@@ -23,6 +23,7 @@ use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use Apache::Response ();
+use Apache::Log ();
 use APR::Table ();
 use APR::Pool ();
 use mod_perl ();
