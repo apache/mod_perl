@@ -85,6 +85,7 @@ void modperl_perl_init_ids_server(server_rec *s)
 
 void modperl_perl_destruct(PerlInterpreter *perl)
 {
+    char **orig_environ = NULL;
     dTHXa(perl);
 
     PERL_SET_CONTEXT(perl);
@@ -97,7 +98,20 @@ void modperl_perl_destruct(PerlInterpreter *perl)
      * at least, not if modperl is doing things right
      * this is a bug in Perl.
      */
+#   ifdef WIN32
+    /*
+     * PL_origenviron = environ; doesn't work under win32 service.
+     * we pull a different stunt here that has the same effect of
+     * tricking perl into _not_ freeing the real 'environ' array.
+     * instead temporarily swap with a dummy array we malloc
+     * here which is ok to let perl free.
+     */
+    orig_environ = environ;
+    environ = safemalloc(2 * sizeof(char *));
+    environ[0] = NULL;
+#   else
     PL_origenviron = environ;
+#   endif
 #endif
 
     if (PL_endav) {
@@ -113,4 +127,8 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 #ifndef WIN32
     perl_free(perl);
 #endif
+
+    if (orig_environ) {
+        environ = orig_environ;
+    }
 }
