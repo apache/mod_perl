@@ -752,6 +752,38 @@ sub httpd_version {
     $self->httpd_version_cache($dir, $version);
 }
 
+my %wanted_apr_config = map { $_, 1} qw(
+    HAS_THREADS HAS_DSO HAS_MMAP HAS_RANDOM HAS_SENDFILE
+    HAS_INLINE HAS_FORK
+);
+
+sub get_apr_config {
+    my $self = shift;
+
+    return $self->{apr_config} if $self->{apr_config};
+
+    my $dir = $self->ap_includedir;
+
+    my $header = "$dir/apr.h";
+    open my $fh, $header or do {
+        error "Unable to open $header: $!";
+        return undef;
+    };
+
+    my %cfg;
+    while (<$fh>) {
+        next unless s/^\#define\s+APR_((HAVE|HAS|USE)_\w+)/$1/;
+        chomp;
+        my($name, $val) = split /\s+/, $_, 2;
+        next unless $wanted_apr_config{$name};
+        $val =~ s/\s+$//;
+        next unless $val =~ /^\d+$/;
+        $cfg{$name} = $val;
+    }
+
+    $self->{apr_config} = \%cfg;
+}
+
 #--- generate Makefile ---
 
 sub canon_make_attr {
