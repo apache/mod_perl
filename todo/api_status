@@ -34,10 +34,10 @@ VV src/docs/2.0/api/Apache/FilterRec.pod
 -- src/docs/2.0/api/Apache/Reload.pod
 VV src/docs/2.0/api/Apache/RequestIO.pod
 -- src/docs/2.0/api/Apache/RequestRec.pod
--- src/docs/2.0/api/Apache/RequestUtil.pod
+VV src/docs/2.0/api/Apache/RequestUtil.pod
 -- src/docs/2.0/api/Apache/Response.pod
 -- src/docs/2.0/api/Apache/Server.pod
--- src/docs/2.0/api/Apache/ServerUtil.pod
++- src/docs/2.0/api/Apache/ServerUtil.pod
 -- src/docs/2.0/api/Apache/Status.pod
 -- src/docs/2.0/api/Apache/SubProcess.pod
 -- src/docs/2.0/api/Apache/SubRequest.pod
