@@ -1388,8 +1388,9 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
     {
 	dTHR;
 	if(SvTRUE(ERRSV)) {
-	    fprintf(stderr, "Apache::ReadConfig: %s\n", SvPV(ERRSV,na));
-	    return NULL;
+	    MP_TRACE_s(fprintf(stderr, 
+			       "Apache::ReadConfig: %s\n", SvPV(ERRSV,na)));
+	    return SvPV(ERRSV,na);
 	}
     }
 
