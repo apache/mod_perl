@@ -26,6 +26,7 @@ use Apache::Response ();
 use APR::Table ();
 use APR::Pool ();
 use mod_perl ();
+use Symbol ();
 
 BEGIN {
     $INC{'Apache.pm'} = __FILE__;
@@ -64,6 +65,10 @@ sub untaint {
 sub module {
     require Apache::Module;
     return Apache::Module::loaded($_[1]);
+}
+
+sub gensym {
+    return Symbol::gensym();
 }
 
 package Apache::Constants;
