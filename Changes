@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+for make test, skip configuring fastcgi if it's found in the global
+httpd.conf, as it causes crashes in the test suite [Stas]
+
 fix Makefile.PL arguments parser to support more than one MP_foo
 option on the same line (including .makepl_args.mod_perl2 file) [Stas]
 
