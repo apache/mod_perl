@@ -1,26 +1,23 @@
 use Apache ();
 use Apache::Constants qw(:server :common);
+use Apache::test;
 use strict;
 
 Apache->register_cleanup(sub {0});
+my $r = Apache->request;
+%ENV = $r->cgi_env;
 
-my $tests = 35;
+my $tests = 36;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
 my $test_custom_response = (MODULE_MAGIC_NUMBER >= 19980324) && $tests++;
+my $test_dir_config = $INC{'Apache/TestDirectives.pm'} && ($tests += 2);
 
 my $i;
-my $r = Apache->request;
+
 $r->content_type("text/plain");
 $r->content_languages([qw(en)]);
 $r->send_http_header;
 $r->print("1..$tests\n");
-
-sub test { 
-    Apache->request->
-	print(sprintf "%s", $_[1] ? "ok $_[0]\n" : "not ok $_[0]\n");
-}
-
-%ENV = $r->cgi_env;
 
 test ++$i, $r->filename eq $0;
 
@@ -117,8 +114,21 @@ if($test_get_set) {
     test ++$i, @$handlers == 0;
 }
 
+my $dc = $r->dir_config;
+test ++$i, not $dc;
 
-
-
-
+if($test_dir_config) {
+    my $cfg;
+    {
+	package Apache::TestDirectives;
+	$cfg = Apache->request->dir_config;
+    }
+    require Data::Dumper;
+    $r->print(Data::Dumper::Dumper($cfg));
+    test ++$i, ref($cfg) eq "HASH";
+    test ++$i, keys(%$cfg) >= 3;
+    unless ($cfg->{SetFromScript}) {
+	$cfg->{SetFromScript} = [$0,$$];
+    }
+}
 

@@ -619,19 +619,41 @@ CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
     return perl_pod_end_magic;
 }
 
-CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, void *dummy,
+CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, SV **data, char *one)
+{
+    return perl_cmd_perl_TAKE123(cmd, data, one, NULL, NULL);
+}
+
+CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two)
+{
+    return perl_cmd_perl_TAKE123(cmd, data, one, two, NULL);
+}
+
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
 				  char *one, char *two, char *three)
 {
     dSP;
     char *subname = (char *)cmd->info;
+    int count = 0;
 
     ENTER;SAVETMPS;
     PUSHMARK(sp);
+    XPUSHs(*data);
     PUSHif(one);PUSHif(two);PUSHif(three);
     PUTBACK;
-    (void)perl_call_pv(subname, G_EVAL | G_SCALAR);
+    count = perl_call_pv(subname, G_EVAL | G_SCALAR);
     SPAGAIN;
-    LEAVE;FREETMPS;
+#if 1
+    if(count == 1) {
+	SV *config = POPs;
+	if(config && SvROK(config) && data && *data) {
+	    ++SvREFCNT(config);
+	    SvREFCNT_dec(*data);
+	    *data = config;
+	}
+    }
+#endif
+    FREETMPS;LEAVE;
 
     if(perl_eval_ok(cmd->server) != OK) 
 	return SvPVX(ERRSV);

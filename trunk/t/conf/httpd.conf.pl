@@ -32,7 +32,12 @@ if($ENV{TEST_PERL_DIRECTIVES}) {
     #t/TestDirectives/TestDirectives.pm
     push @INC, map { "t/TestDirectives/blib/$_" } qw(arch lib);
     require Apache::TestDirectives;
-    $TestCmd = 'one two three';
+    $PerlConfig .= <<EOF;
+TestCmd one two
+AnotherCmd uno dos tres
+CmdIterate A B C D E F
+YAC yet another
+EOF
 }
 
 $My::config_is_perl = 1;

@@ -81,16 +81,20 @@ sub PerlTransHandler::handler {-1}
 #for testing PERL_HANDLER_METHODS
 #see httpd.conf and t/docs/LoadClass.pm
 
+use LoadClass ();
 sub MyClass::method ($$) {
     my($class, $r) = @_;  
-    warn "$class->method called\n";
+    #warn "$class->method called\n";
+    0;
 }
 
 sub BaseClass::handler ($$) {
     my($class, $r) = @_;  
-    warn "$class->handler called\n";
+    #warn "$class->handler called\n";
+    0;
 }
 
+$MyClass::Object = bless {}, "MyClass";
 @MyClass::ISA = qw(BaseClass);
 
 #testing child init/exit hooks
@@ -154,18 +158,5 @@ sub DESTROY {
 
 #prior to 1.3b1 (and the child_exit hook), this object's DESTROY method would not be invoked
 $global_object = Destruction->new;
-
-package This::Class;
-
-$My::Obj = bless {};
-
-sub method ($$) {
-    my($self, $r) = @_;
-    $r->send_http_header("text/plain");
-    print "$self isa ", ref($self), "\n";
-    $self->{called}++;
-    print map { "$_ = $self->{$_}\n" } keys %$self;
-    0;
-}
 
 1;

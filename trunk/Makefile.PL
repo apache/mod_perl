@@ -737,6 +737,7 @@ sub write_extra_tests {
 	$meth_test = <<'EOF';
 #see startup.pl
 PerlFixupHandler MyClass->method 
+PerlFixupHandler $MyClass::Object->method 
 PerlFixupHandler MyClass 
 PerlFixupHandler LoadClass
 PerlFixupHandler LoadClass->method

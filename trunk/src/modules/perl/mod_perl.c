@@ -1011,6 +1011,11 @@ void perl_per_request_init(request_rec *r)
     (void)acquire_mutex(mod_perl_mutex); 
     register_cleanup(r->pool, NULL, mod_perl_end_cleanup, mod_perl_noop);
 
+#ifdef WIN32
+    sv_setpvf(perl_get_sv("Apache::CurrentThreadId", TRUE), "0x%lx",
+	      (unsigned long)GetCurrentThreadId());
+#endif
+
     /* hookup stderr to error_log */
 #ifndef PERL_TRACE
     if(r->server->error_log) 

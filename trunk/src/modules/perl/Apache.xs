@@ -1680,7 +1680,7 @@ query_string(r, ...)
 #  void *per_dir_config;		/* Options set in config files, etc. */
 
 SV *
-dir_config(r, key, ...)
+dir_config(r, key=NULL, ...)
     Apache  r
     char *key
 
@@ -1688,8 +1688,26 @@ dir_config(r, key, ...)
     perl_dir_config *c;
 
     CODE:
-    c = get_module_config(r->per_dir_config, &perl_module);
-    TABLE_GET_SET(c->vars, FALSE);
+    if(key == NULL) {
+	SV *caller = perl_eval_pv("scalar caller", TRUE);
+	HV *xs_config = perl_get_hv("Apache::XS_ModuleConfig", TRUE);
+	SV **mod_ptr;
+	RETVAL = Nullsv;
+
+	if(caller) 
+	    mod_ptr = hv_fetch(xs_config, SvPVX(caller), SvCUR(caller), FALSE);
+
+	if(mod_ptr && *mod_ptr) {
+	    IV tmp = SvIV((SV*)SvRV(*mod_ptr));
+	    SV **data = get_module_config(r->per_dir_config, (void*)tmp);
+	    RETVAL = data ? SvREFCNT_inc(*data) : Nullsv; 
+	}
+	if(!RETVAL) XSRETURN_UNDEF;
+    }
+    else {
+        c = get_module_config(r->per_dir_config, &perl_module);
+        TABLE_GET_SET(c->vars, FALSE);
+    }
 
     OUTPUT:
     RETVAL

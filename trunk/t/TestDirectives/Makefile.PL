@@ -10,9 +10,17 @@ use strict;
 use Apache::src ();
 use Apache::ExtUtils ();
 
+require "./TestDirectives.pm";
+
 my $class = 'Apache::TestDirectives';
 
-my @directives = qw(TestCmd);
+my @directives = (
+   [TestCmd => "Two TestCmd args"],
+   [AnotherCmd => "Stuff for another command"],
+   [YAC => "Yet another comand"],
+   [CmdIterate => "No limit here"],
+);
+
 my $fh = IO::File->new(">TestDirectives.xs") or die $!;
 my $xs = Apache::ExtUtils->xs_cmd_table($class, \@directives);  
 print $fh $xs;
