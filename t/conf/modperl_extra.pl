@@ -21,6 +21,10 @@ use APR::Pool ();
 
 use ModPerl::Util (); #for CORE::GLOBAL::exit
 
+# would be nice to write a real test, but for now just see that we can
+# load it:
+use Apache::SizeLimit ();
+
 use Apache::Const -compile => ':common';
 use APR::Const    -compile => ':common';
 
