@@ -359,7 +359,7 @@ PACKAGE=Apache::RequestRec
  ap_hook_process_connection
  ap_hook_translate_name
  ap_hook_type_checker
- ap_hook_quick_handler
+!ap_hook_quick_handler
  ap_hook_map_to_storage
  ap_hook_create_request
  ap_hook_error_log
@@ -422,7 +422,7 @@ MODULE=Apache::HookRun   PACKAGE=guess
 >ap_run_get_mgmt_items
  ap_run_map_to_storage
 >ap_run_pre_mpm
- ap_run_quick_handler
+!ap_run_quick_handler
  ap_invoke_handler
  ap_die
 
