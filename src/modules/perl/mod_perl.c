@@ -28,7 +28,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     );
 #endif
 
-    argv = modperl_srv_config_argv_init(scfg, &argc);
+    argv = modperl_config_srv_argv_init(scfg, &argc);
 
     if (!(perl = perl_alloc())) {
         perror("perl_alloc");
@@ -71,7 +71,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
-    modperl_srv_config_t *base_scfg = modperl_srv_config_get(base_server);
+    modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
     PerlInterpreter *base_perl;
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
@@ -140,7 +140,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 #ifdef USE_ITHREADS
 static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 {
-    modperl_srv_config_t *base_scfg = modperl_srv_config_get(s);
+    modperl_config_srv_t *base_scfg = modperl_config_srv_get(s);
 #ifdef MP_TRACE
     char *base_name = modperl_server_desc(s, p);
 #endif /* MP_TRACE */
@@ -260,7 +260,7 @@ void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
 
-    modperl_request_config_init(r, rcfg);
+    modperl_config_req_init(r, rcfg);
 
     /* setup buffer for output */
     rcfg->wbucket.pool = r->pool;
@@ -299,10 +299,10 @@ int modperl_response_handler(request_rec *r)
 
 module AP_MODULE_DECLARE_DATA perl_module = {
     STANDARD20_MODULE_STUFF, 
-    modperl_create_dir_config, /* dir config creater */
-    modperl_merge_dir_config,  /* dir merger --- default is to override */
-    modperl_create_srv_config, /* server config */
-    modperl_merge_srv_config,  /* merge server config */
+    modperl_config_dir_create, /* dir config creater */
+    modperl_config_dir_merge,  /* dir merger --- default is to override */
+    modperl_config_srv_create, /* server config */
+    modperl_config_srv_merge,  /* merge server config */
     modperl_cmds,              /* table of config file commands       */
     modperl_register_hooks,    /* register hooks */
 };

@@ -207,7 +207,7 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
-    modperl_dir_config_t *dcfg = modperl_dir_config_get(rr);
+    modperl_config_dir_t *dcfg = modperl_config_dir_get(rr);
     const char *desc = NULL;
     modperl_interp_t *interp;
     apr_pool_t *p = NULL;

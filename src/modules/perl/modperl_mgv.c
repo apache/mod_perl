@@ -378,7 +378,7 @@ static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
     MP_dSCFG_dTHX;
 #endif
     int i;
-    modperl_dir_config_t *dir_cfg = (modperl_dir_config_t *)cfg;
+    modperl_config_dir_t *dir_cfg = (modperl_config_dir_t *)cfg;
 
     if (!dir_cfg) {
         return 1;
@@ -395,7 +395,7 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
                                      void *cfg, void *data)
 {
     int i;
-    modperl_srv_config_t *scfg = (modperl_srv_config_t *)cfg;
+    modperl_config_srv_t *scfg = (modperl_config_srv_t *)cfg;
     MP_dSCFG_dTHX;
 
     for (i=0; i < MP_PER_SRV_NUM_HANDLERS; i++) {

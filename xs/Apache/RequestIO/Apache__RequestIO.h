@@ -21,16 +21,16 @@ ap_rwrite(buf, len, r)
 static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
                                            SV **MARK, SV **SP)
 {
-    modperl_srv_config_t *scfg;
-    modperl_request_config_t *rcfg;
+    modperl_config_srv_t *scfg;
+    modperl_config_req_t *rcfg;
     apr_size_t bytes = 0;
     request_rec *r;
     dMP_TIMES;
 
     mpxs_usage_va_1(r, "$r->puts(...)");
 
-    rcfg = modperl_request_config_get(r);
-    scfg = modperl_srv_config_get(r->server);
+    rcfg = modperl_config_req_get(r);
+    scfg = modperl_config_srv_get(r->server);
 
     MP_START_TIMES();
 
