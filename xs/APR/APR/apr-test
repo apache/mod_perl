@@ -1,7 +1,5 @@
 #!perl
-BEGIN {
-    *ModPerl::XSLoader::BOOTSTRAP = sub () {1};
-}
+
 use Test;
 
 plan tests => 8;
