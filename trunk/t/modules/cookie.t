@@ -1,12 +1,7 @@
 use strict;
 use Apache::test;
-use Apache::src ();
 
 skip_test unless have_module "Apache::Cookie";
-
-unless (Apache::src->mmn_eq) { 
-    skip_test; 
-} 
 
 my $ua = LWP::UserAgent->new;
 

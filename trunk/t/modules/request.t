@@ -1,15 +1,10 @@
 use strict;
 use Apache::test;
-use Apache::src ();
 use Cwd qw(fastcwd);
 
 my $Is_dougm = (defined($ENV{USER}) && ($ENV{USER} eq "dougm"));
 
 skip_test unless have_module "Apache::Request", '0.20';
-
-unless (Apache::src->mmn_eq) {
-    skip_test;
-}
 
 require HTTP::Request::Common; 
 require CGI;
