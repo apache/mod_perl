@@ -932,7 +932,7 @@ sub new {
     my($sym) = gensym;
     my $cmd = WIN32 ?
         "$Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $filename |" :
-            "echo '\#include \"$filename\"' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
+        "echo '\#include \"$filename\"' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
     #my $cmd = "echo '\#include <$filename>' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";
 
     (open($sym, $cmd) or die "Cannot open pipe from `$cmd': $!")
