@@ -2,7 +2,36 @@
 
 /* helper funcs */
 
+#define MP_FILTER_NAME_FORMAT "   %s\n\n\t"
+
+#define MP_FILTER_NAME(f) \
+    ((modperl_filter_ctx_t *)f->ctx)->handler->name
+
+#define MP_FILTER_TYPE(filter) \
+    ((modperl_filter_ctx_t *)filter->f->ctx)->handler->attrs & \
+        MP_FILTER_CONNECTION_HANDLER  ? "connection" : "request"
+
+#define MP_FILTER_MODE(filter) \
+    (filter->mode == MP_INPUT_FILTER_MODE ? "input" : "output")
+
 #define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
+
+/* this function is for tracing only, it's not optimized for performance */
+static const char* next_filter_name(ap_filter_t *f)
+{
+    const char *name = f->frec->name;
+
+    /* frec->name is always lowercased */ 
+    if (ap_strcasecmp_match(name, MP_FILTER_CONNECTION_INPUT_NAME)  ||
+        ap_strcasecmp_match(name, MP_FILTER_CONNECTION_OUTPUT_NAME) ||
+        ap_strcasecmp_match(name, MP_FILTER_REQUEST_INPUT_NAME)     ||
+        ap_strcasecmp_match(name, MP_FILTER_REQUEST_OUTPUT_NAME) ) {
+        return ((modperl_filter_ctx_t *)f->ctx)->handler->name;
+    }
+    else {
+        return name;
+    }
+}
 
 MP_INLINE static apr_status_t send_input_eos(modperl_filter_t *filter)
 {
@@ -29,8 +58,9 @@ MP_INLINE static apr_status_t send_output_eos(ap_filter_t *f)
     apr_bucket *b = apr_bucket_eos_create(ba);
     APR_BRIGADE_INSERT_TAIL(bb, b);
     ((modperl_filter_ctx_t *)f->ctx)->sent_eos = 1;
-    MP_TRACE_f(MP_FUNC, "sending EOS bucket in separate bb\n");
-    return ap_pass_brigade(f, bb);
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "write out: EOS bucket in separate bb\n", MP_FILTER_NAME(f));
+    return ap_pass_brigade(f->next, bb);
 }
 
 MP_INLINE static apr_status_t send_output_flush(ap_filter_t *f)
@@ -40,7 +70,8 @@ MP_INLINE static apr_status_t send_output_flush(ap_filter_t *f)
                                                 ba);
     apr_bucket *b = apr_bucket_flush_create(ba);
     APR_BRIGADE_INSERT_TAIL(bb, b);
-    MP_TRACE_f(MP_FUNC, "sending FLUSH bucket in separate bb\n");
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "write out: FLUSH bucket in separate bb\n", MP_FILTER_NAME(f));
     return ap_pass_brigade(f, bb);
 }
 
@@ -109,7 +140,12 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         APR_BRIGADE_INSERT_TAIL(bb, bucket);
     }
         
-    MP_TRACE_f(MP_FUNC, "buffer length=%d\n", len);
+    MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %d bytes\n"
+               "\t\tfrom %s\n\t\tto %s filter handler\n",
+               len, 
+               (wb->r && wb->filters == &wb->r->output_filters)
+                   ? "response handler" : "current filter handler",
+               next_filter_name(*(wb->filters)));
 
     return ap_pass_brigade(*(wb->filters), bb);
 }
@@ -193,10 +229,12 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
         filter->bb_in  = bb;
         filter->bb_out = NULL;
     }
-    
-    MP_TRACE_f(MP_FUNC, "filter=0x%lx, mode=%s\n",
-               (unsigned long)filter,
-               mode == MP_INPUT_FILTER_MODE ? "input" : "output");
+
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "new: %s %s filter (0x%lx)\n",
+               MP_FILTER_NAME(f),
+               MP_FILTER_TYPE(filter), MP_FILTER_MODE(filter),
+               (unsigned long)filter);
 
     return filter;
 }
@@ -249,8 +287,6 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     SvREFCNT_dec((SV*)args);
 
-    MP_TRACE_f(MP_FUNC, "%s returned %d\n", handler->name, status);
-
     /* when the streaming filter is invoked it should be able to send
      * extra data, after the read in a while() loop is finished.
      * Therefore we need to postpone propogating the EOS bucket, up
@@ -277,6 +313,9 @@ int modperl_run_filter(modperl_filter_t *filter)
         MP_FAILURE_CROAK(modperl_output_filter_flush(filter));
     }
 
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "return: %d\n", handler->name, status);
+    
     return status;
 }
 
@@ -304,8 +343,9 @@ APR_BUCKET_IS_FLUSH(filter->bucket)
 MP_INLINE static int get_bucket(modperl_filter_t *filter)
 {
     if (!filter->bb_in || MP_FILTER_EMPTY(filter)) {
-        MP_TRACE_f(MP_FUNC, "%s filter bucket brigade is empty\n",
-               (filter->mode == MP_INPUT_FILTER_MODE ? "input" : "output"));
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                   "read in: bucket brigade is empty\n",
+                   MP_FILTER_NAME(filter->f));
         return 0;
     }
     
@@ -325,9 +365,9 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
     }
     
     if (MP_FILTER_IS_EOS(filter)) {
-        MP_TRACE_f(MP_FUNC, "%s filter received EOS bucket\n",
-                   (filter->mode == MP_INPUT_FILTER_MODE
-                    ? "input" : "output"));
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                   "read in: EOS bucket\n",
+                   MP_FILTER_NAME(filter->f));
 
         filter->seen_eos = 1;
         /* there should be only one EOS sent, modperl_filter_read will
@@ -336,10 +376,9 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
         return 0;
     }
     else if (MP_FILTER_IS_FLUSH(filter)) {
-        MP_TRACE_f(MP_FUNC, "%s filter received FLUSH bucket\n",
-                   (filter->mode == MP_INPUT_FILTER_MODE
-                    ? "input" : "output"));
-
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                   "read in: FLUSH bucket\n",
+                   MP_FILTER_NAME(filter->f));
         filter->flush = 1;
         return 0;
     }
@@ -372,14 +411,17 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
     
     /*modperl_brigade_dump(filter->bb_in, stderr);*/
 
-    MP_TRACE_f(MP_FUNC, "%s filter wants %d bytes\n",
-               (filter->mode == MP_INPUT_FILTER_MODE ? "input" : "output"),
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "wanted: %d bytes\n",
+               MP_FILTER_NAME(filter->f),
                wanted);
 
     if (filter->remaining) {
         if (filter->remaining >= wanted) {
-            MP_TRACE_f(MP_FUNC,
-                       "eating/returning %d of remaining %d leftover bytes\n",
+            MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                       "eating and returning %d of "
+                       "remaining %d leftover bytes\n",
+                       MP_FILTER_NAME(filter->f),
                        wanted, filter->remaining);
             sv_catpvn(buffer, filter->leftover, wanted);
             filter->leftover += wanted;
@@ -387,7 +429,9 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
             return wanted;
         }
         else {
-            MP_TRACE_f(MP_FUNC, "eating remaining %d leftover bytes\n",
+            MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                       "eating remaining %d leftover bytes\n",
+                       MP_FILTER_NAME(filter->f),
                        filter->remaining);
             sv_catpvn(buffer, filter->leftover, filter->remaining);
             len = filter->remaining;
@@ -410,14 +454,18 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
 
         if (filter->rc == APR_SUCCESS) {
             MP_TRACE_f(MP_FUNC,
-                       "bucket=%s(0x%lx) read returned %d bytes\n",
+                       MP_FILTER_NAME_FORMAT
+                       "read in: %s bucket with %d bytes (0x%lx)\n",
+                       MP_FILTER_NAME(filter->f),
                        filter->bucket->type->name,
-                       (unsigned long)filter->bucket,
-                       buf_len);
+                       buf_len,
+                       (unsigned long)filter->bucket);
         }
         else {
             MP_TRACE_f(MP_FUNC,
-                       "apr_bucket_read error: %s\n",
+                       MP_FILTER_NAME_FORMAT
+                       "read in: apr_bucket_read error: %s\n",
+                       MP_FILTER_NAME(filter->f),
                        modperl_apr_strerror(filter->rc));
             return len;
         }
@@ -439,8 +487,9 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
     }
 
     MP_TRACE_f(MP_FUNC,
-               "returning %d bytes from %d bucket%s "
-               "(%d bytes leftover)\n",
+               MP_FILTER_NAME_FORMAT
+               "return: %d bytes from %d bucket%s (%d bytes leftover)\n",
+               MP_FILTER_NAME(filter->f),
                len, num_buckets, ((num_buckets == 1) ? "" : "s"),
                filter->remaining);
 
@@ -460,7 +509,9 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
                                            filter->f->c->bucket_alloc);
         ap_get_brigade(filter->f->next, filter->bb_in,
                        filter->input_mode, filter->block, filter->readbytes);
-        MP_TRACE_f(MP_FUNC, "retrieving bb: 0x%lx\n",
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                   "retrieving bb: 0x%lx\n",
+                   MP_FILTER_NAME(filter->f),
                    (unsigned long)(filter->bb_in));
     }
 
@@ -505,7 +556,9 @@ MP_INLINE apr_status_t modperl_input_filter_flush(modperl_filter_t *filter)
     }
     
     if (filter->eos || filter->flush) {
-        MP_TRACE_f(MP_FUNC, "sending %s bucket\n",
+        MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+                   "write out: %s bucket\n",
+                   MP_FILTER_NAME(filter->f),
                    filter->eos ? "EOS" : "FLUSH");
         filter->rc = filter->eos ?
             send_input_eos(filter) : send_input_flush(filter);
@@ -536,7 +589,7 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
     }
 
     if (filter->eos) {
-        filter->rc = send_output_eos(filter->f->next);
+        filter->rc = send_output_eos(filter->f);
         if (filter->bb_in) {
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
@@ -556,7 +609,10 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
     char *copy = apr_pstrndup(filter->pool, buf, *len);
     apr_bucket *bucket = apr_bucket_transient_create(copy, *len, ba);
     /* MP_TRACE_f(MP_FUNC, "writing %d bytes: %s\n", *len, copy); */
-    MP_TRACE_f(MP_FUNC, "writing %d bytes:\n", *len);
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "write out: %d bytes:\n",
+               MP_FILTER_NAME(filter->f),
+               *len);
     APR_BRIGADE_INSERT_TAIL(filter->bb_out, bucket);
     /* modperl_brigade_dump(filter->bb_out, stderr); */
     return APR_SUCCESS;
@@ -578,7 +634,10 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
 
     if (((modperl_filter_ctx_t *)f->ctx)->sent_eos) {
         MP_TRACE_f(MP_FUNC,
-                   "EOS was already sent, passing through the brigade\n");
+                   MP_FILTER_NAME_FORMAT
+                   "write_out: EOS was already sent, "
+                   "passing through the brigade\n",
+                   MP_FILTER_NAME(f));
         return ap_pass_brigade(f->next, bb);
     }
     else {
@@ -608,7 +667,10 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
 
     if (((modperl_filter_ctx_t *)f->ctx)->sent_eos) {
         MP_TRACE_f(MP_FUNC,
-                   "EOS was already sent, passing through the brigade\n");
+                   MP_FILTER_NAME_FORMAT
+                   "write out: EOS was already sent, "
+                   "passing through the brigade\n",
+                   MP_FILTER_NAME(f));
         return ap_get_brigade(f->next, bb, input_mode, block, readbytes);
     }
     else {
@@ -690,6 +752,8 @@ static int modperl_filter_add_request(request_rec *r,
             while (f) {
                 const char *fname = f->frec->name;
 
+                /* XXX: I think this won't work as f->frec->name gets
+                 * lowercased when added to the chain */
                 if (*fname == 'M' && strEQ(fname, name)) {
                     modperl_handler_t *ctx_handler = 
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
@@ -793,7 +857,6 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
     Perl_croak(aTHX_ "unable to resolve handler 0x%lx\n",
                (unsigned long)callback);
 }
-
 
 void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
 {

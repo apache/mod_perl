@@ -193,12 +193,8 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
     mpxs_usage_va_1(modperl_filter, "$filter->remove()");
     f = modperl_filter->f;
 
-#ifdef MP_TRACE
-    {
-        modperl_filter_ctx_t *ctx = (modperl_filter_ctx_t *)(f->ctx);
-        MP_TRACE_f(MP_FUNC, "removing filter %s\n", ctx->handler->name);
-    }
-#endif
+    MP_TRACE_f(MP_FUNC, "   %s\n\n\tfilter removes itself\n",
+               ((modperl_filter_ctx_t *)f->ctx)->handler->name);
     
     if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
         ap_remove_input_filter(f);
