@@ -462,7 +462,7 @@ sub rebuild {
     print "Running: $command\n";
     system $command;
 }
-# % perl -MApache::Build -erebuild
+# % perl -MApache::Build -e rebuild
 *main::rebuild = \&rebuild if $0 eq '-e';
 
 #--- attribute access ---
@@ -1040,7 +1040,7 @@ Apache::Build - Methods for locating and parsing bits of Apache source code
 
  # rebuild mod_perl with build opts from the previous build
  % cd modperl-2.0
- % perl -MApache::Build -erebuild
+ % perl -MApache::Build -e rebuild
 
 =head1 DESCRIPTION
 
@@ -1052,12 +1052,12 @@ can use this knowledge to rebuild it using the same options. Simply
 chdir to the mod_perl source directory and run:
 
   % cd modperl-2.0
-  % perl -MApache::Build -erebuild
+  % perl -MApache::Build -e rebuild
 
 If you want to rebuild not yet installed, but already built mod_perl,
 run from its root directory:
 
-  % perl -Ilib -MApache::Build -erebuild
+  % perl -Ilib -MApache::Build -e rebuild
 
 =head1 METHODS
 
