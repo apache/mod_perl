@@ -54,8 +54,8 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  SV *:DEFINE_CLOSE    | | request_rec *:r
  SV *:DEFINE_UNTIE    | | request_rec *:r, int:refcnt
  mpxs_Apache__RequestRec_sendfile | | r, filename=r->filename, offset=0, len=0
- mpxs_Apache__RequestRec_read | | r, bufsv, len, offset=0
- SV *:DEFINE_READ | | request_rec *:r, SV *:bufsv, apr_size_t:len, apr_off_t:offset=0
+ mpxs_Apache__RequestRec_read | | r, buffer, len, offset=0
+ SV *:DEFINE_READ | | request_rec *:r, SV *:buffer, apr_size_t:len, apr_off_t:offset=0
  mpxs_Apache__RequestRec_write | | r, buffer, len=-1, offset=0
  mpxs_Apache__RequestRec_print | | ...
  apr_size_t:DEFINE_WRITE | | \
