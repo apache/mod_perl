@@ -21,38 +21,24 @@ use Apache::ServerUtil ();
 $Apache::Status::VERSION = '3.00'; # mod_perl 2.0
 
 use constant IS_WIN32 => ($^O eq "MSWin32");
-my $Is_Win32 = ($^O eq "MSWin32");
-
-my %is_installed = ();
-{
-    local $SIG{__DIE__};
-    %is_installed = map {
-	$_, (eval("require $_") || 0);
-    } qw (Data::Dumper Devel::Symdump B Apache::Request 
-        Apache::Peek Apache::Symbol);
-}
 
 our $newQ;
 
-if ($is_installed{"Apache::Request"}) {
+if (eval {require Apache::Request}) {
     $newQ ||= sub { Apache::Request->new(@_) };
 }
-else {
-    $is_installed{"CGI"} = eval("require CGI") || 0;
+elsif (eval {require CGI}) {
     $newQ ||= sub { CGI->new; };
 }
-
-my $CPAN_base = "http://cpan.org/modules/by-module/";
-
-my $install_symdump = <<EOF;
-Please install the <a href="$CPAN_base/Devel/">Devel::Symdump</a> module.
-EOF
+else {
+    die "Need CGI.pm or Apache::Request to operate";
+}
 
 my %status = (
     script    => "PerlRequire'd Files",
     inc       => "Loaded Modules",
     rgysubs   => "Compiled Registry Scripts",
-    'symdump' => "Symbol Table Dump",
+    symdump   => "Symbol Table Dump",
     inh_tree  => "Inheritance Tree",
     isa_tree  => "ISA Tree",	
     env       => "Environment",
@@ -67,6 +53,53 @@ delete $status{'sig'} if IS_WIN32;
 # XXX: needs porting
 if ($Apache::Server::SaveConfig) {
     $status{"section_config"} = "Perl Section Configuration";
+}
+
+my %requires = (
+    deparse     => ["StatusDeparse",     "B::Deparse",     0.59, ],
+    fathom      => ["StatusFathom",      "B::Fathom",      0.05, ],
+    symdump     => ["",                  "Devel::Symdump", 2.00, ],
+    dumper      => ["StatusDumper",      "Data::Dumper",   0,    ],
+    b           => ["",                  "B",              0,    ],
+    graph       => ["StatusGraph",       "B::Graph",       0.03, ],
+    lexinfo     => ["StatusLexInfo",     "B::LexInfo",     0,    ],
+    xref        => ["",                  "B::Xref",        0,    ],
+    terse       => ["StatusTerse",       "B::Terse",       0,    ],
+    tersesize   => ["StatusTerseSize",   "B::TerseSize",   0,    ],
+    packagesize => ["StatusPackageSize", "B::TerseSize",   0,    ],
+    peek        => ["StatusPeek",        "Apache::Peek",   0,    ], # XXX: version?
+);
+
+sub has {
+    my($r, $what) = @_;
+
+    return 0 unless exists $requires{$what};
+
+    my($opt, $module, $version) = @{ $requires{$what} };
+
+    (my $file = $module) =~ s|::|/|;
+    $file .= ".pm";
+
+    # if !$opt we skip the testing for the option
+    return 0 if $opt && !status_config($r, $opt);
+    return 0 unless eval { require $file };
+    return 0 unless $module->VERSION >= $version;
+
+    return 1;
+}
+
+use constant CPAN_SEARCH => 'http://search.cpan.org/search?mode=module&query';
+
+sub install_hint {
+    my ($module) = @_;
+    return qq{Please install the } .
+           qq{<a href="@{[CPAN_SEARCH]}=$module">$module</a> module.};
+}
+
+sub status_config {
+    my($r, $key) = @_;
+    return (lc($r->dir_config($key)) eq "on") ||
+        (lc($r->dir_config('StatusOptionsAll')) eq "on");
 }
 
 sub menu_item {
@@ -124,10 +157,10 @@ EOF
 sub symdump {
     my($r, $q, $package) = @_;
 
-    return $install_symdump unless $is_installed{"Devel::Symdump"};
+    return install_hint("Devel::Symdump") unless has($r, "symdump");
 
-    my $meth = "new";
-    $meth = "rnew" if lc($r->dir_config("StatusRdump")) eq "on";
+    my $meth = lc($r->dir_config("StatusRdump")) eq "on" 
+        ? "rnew" : "new";
     my $sob = Devel::Symdump->$meth($package);
     return $sob->Apache::Status::as_HTML($package, $r, $q);
 }
@@ -281,6 +314,7 @@ sub status_sig {
      (map {
 	 my $val = $SIG{$_} || "";
 	 if ($val and ref $val eq "CODE") {
+             # XXX: 2.0 doesn't have Apache::Symbol
 	     if (my $cv = Apache::Symbol->can('sv_name')) {
 		 $val = "\\&".  $cv->($val);
 	     }
@@ -297,19 +331,21 @@ sub status_myconfig {
 
 
 sub status_inh_tree {
-    return $is_installed{"Devel::Symdump"}
+    return has(shift, "symdump")
         ? ["<pre>", Devel::Symdump->inh_tree, "</pre>"]
-        : $install_symdump;
+        : install_hint("Devel::Symdump");
 }
 
-sub status_isa_tree { 
-    return $is_installed{"Devel::Symdump"}
+sub status_isa_tree {
+    return has(shift, "symdump")
         ? ["<pre>", Devel::Symdump->isa_tree, "</pre>"]
-        : $install_symdump;
+        : install_hint("Devel::Symdump");
 }
 
-sub status_data_dump { 
+sub status_data_dump {
     my($r, $q) = @_;
+
+    return install_hint('Data::Dumper') unless has($r, "dumper");
 
     my($name, $type) = (split "/", $r->uri)[-2,-1];
 
@@ -331,7 +367,7 @@ sub cv_file {
 
 sub status_cv_dump { 
     my($r, $q) = @_;
-    return [] unless $is_installed{B};
+    return [] unless has($r, "b");
 
     no strict 'refs';
     my($name, $type) = (split "/", $r->uri)[-2,-1];
@@ -366,28 +402,10 @@ sub status_cv_dump {
     \@retval;
 }
 
-sub status_config {
-    my($r, $key) = @_;
-    return (lc($r->dir_config($key)) eq "on") ||
-        (lc($r->dir_config('StatusOptionsAll')) eq "on");
-}
-
-sub b_graph_link {
-    my($r, $q, $name) = @_;
-
-    return unless status_config($r, "StatusGraph");
-    return unless eval { require B::Graph };
-
-    B::Graph->UNIVERSAL::VERSION('0.03');
-    my $script = $r->location;
-    return qq(\n<a href="$script/$name?noh_b_graph">OP Tree Graph</a>\n);
-}
-
 sub b_lexinfo_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusLexInfo");
-    return unless eval { require B::LexInfo };
+    return unless has($r, "lexinfo");
 
     my $script = $q->location;
     return qq(\n<a href="$script/$name?noh_b_lexinfo">Lexical Info</a>\n);
@@ -397,6 +415,7 @@ sub noh_b_lexinfo {
     my $r = shift;
 
     $r->content_type("text/plain");
+    return unless has($r, "lexinfo");
 
     no strict 'refs';
     my($name) = (split "/", $r->uri)[-1];
@@ -411,8 +430,7 @@ my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
 sub b_terse_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusTerse");
-    return unless eval { require B::Terse };
+    return unless has($r, "terse");
 
     my $script = $r->location;
     my @retval;
@@ -427,21 +445,22 @@ sub b_terse_link {
 sub noh_b_terse {
     my $r = shift;
 
-    return unless eval { require B::Terse };
-
     $r->content_type("text/plain");
+    return unless has($r, "terse");
 
     no strict 'refs';
     my($arg, $name) = (split "/", $r->uri)[-2,-1];
     $r->print("Syntax Tree Dump ($b_terse_exp{$arg}) for $name\n\n");
+
+    # XXX: blead perl dumps things to STDERR, though the same version
+    # works fine with 1.27
     B::Terse::compile($arg, $name)->();
 }
 
 sub b_terse_size_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusTerseSize");
-    return unless eval { require B::TerseSize };
+    return unless has($r, "tersesize");
 
     my $script = $r->location;
     my @retval;
@@ -456,9 +475,8 @@ sub b_terse_size_link {
 sub noh_b_terse_size {
     my $r = shift;
 
-    return unless eval { require B::TerseSize };
-
     $r->content_type("text/html");
+    return unless has($r, "tersesize");
 
     $r->print('<pre>');
     my($arg, $name) = (split "/", $r->uri)[-2,-1];
@@ -471,8 +489,7 @@ sub noh_b_terse_size {
 sub b_package_size_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusPackageSize");
-    return unless eval { require B::TerseSize };
+    return unless has($r, "packagesize");
 
     my $script = $r->location;
     qq(<a href="$script/$name?noh_b_package_size">Memory Usage</a>\n);
@@ -481,9 +498,9 @@ sub b_package_size_link {
 sub noh_b_package_size {
     my($r, $q) = @_;
 
-    return unless eval { require B::TerseSize };
-
     $r->content_type("text/html");
+    return unless has($r, "packagesize");
+
     $r->print('<pre>');
 
     no strict 'refs';
@@ -524,9 +541,7 @@ sub noh_b_package_size {
 sub b_deparse_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusDeparse");
-    return unless eval { require B::Deparse };
-    return unless $B::Deparse::VERSION >= 0.59;
+    return unless has($r, "deparse");
 
     my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_deparse">Deparse</a>\n);
@@ -536,6 +551,7 @@ sub noh_b_deparse {
     my $r = shift;
 
     $r->content_type("text/plain");
+    return unless has($r, "deparse");
 
     my $name = (split "/", $r->uri)[-1];
     $r->print("Deparse of $name\n\n");
@@ -548,9 +564,7 @@ sub noh_b_deparse {
 sub b_fathom_link {
     my($r, $q, $name) = @_;
 
-    return unless status_config($r, "StatusFathom");
-    return unless eval { require B::Fathom };
-    return unless $B::Fathom::VERSION >= 0.05;
+    return unless has($r, "fathom");
 
     my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_b_fathom">Fathom Score</a>\n);
@@ -560,6 +574,7 @@ sub noh_b_fathom {
     my $r = shift;
 
     $r->content_type("text/plain");
+    return unless has($r, "fathom");
 
     my $name = (split "/", $r->uri)[-1];
     $r->print("Fathom Score of $name\n\n");
@@ -571,8 +586,7 @@ sub noh_b_fathom {
 sub peek_link {
     my($r, $q, $name, $type) = @_;
 
-    return unless status_config($r, "StatusPeek");
-    return unless $is_installed{"Apache::Peek"};
+    return unless has($r, "peek");
 
     my $script = $r->location;
     return qq(\n<a href="$script/$name/$type?noh_peek">Peek Dump</a>\n);
@@ -582,6 +596,7 @@ sub noh_peek {
     my $r = shift;
 
     $r->content_type("text/plain");
+    return unless has($r, "peek");
 
     no strict 'refs';
     my($name, $type) = (split "/", $r->uri)[-2,-1];
@@ -593,7 +608,7 @@ sub noh_peek {
 sub xref_link {
     my($r, $q, $name) = @_;
 
-    return unless $is_installed{"B::Xref"};
+    return unless has($r, "xref");
 
     my $script = $r->location;
     return qq(\n<a href="$script/$name?noh_xref">Cross Reference Report</a>\n);
@@ -603,10 +618,10 @@ sub noh_xref {
     my $r = shift;
 
     $r->content_type("text/plain");
+    return unless has($r, "xref");
 
-    require B::Xref;
     (my $thing = $r->path_info) =~ s:^/::;
-    print "Xref of $thing\n";
+    $r->print("Xref of $thing\n");
     B::Xref::compile($thing)->();
 }
 
@@ -617,10 +632,19 @@ if ($Apache::Status::BGraphCache) {
 			  });
 }
 
+sub b_graph_link {
+    my($r, $q, $name) = @_;
+
+    return unless has($r, "graph");
+
+    my $script = $r->location;
+    return qq(\n<a href="$script/$name?noh_b_graph">OP Tree Graph</a>\n);
+}
+
 sub noh_b_graph {
     my $r = shift;
 
-    require B::Graph;
+    return unless has($r, "graph");
 
     untie *STDOUT;
 
@@ -699,7 +723,7 @@ sub as_HTML {
     my $uri = $r->uri;
     my $is_main = $package eq "main";
 
-    my $do_dump = status_config($r, "StatusDumper");
+    my $do_dump = has($r, "dumper");
 
     my @methods = sort keys %{$self->{'AUTOLOAD'}};
 
@@ -725,15 +749,14 @@ sub as_HTML {
 		push @line, qq(<a href="$uri?$_">$_</a>);
 	    }
 	    elsif ($type eq "functions") {
-		if ($is_installed{B}) {
+		if (has($r, "b")) {
 		    push @line, qq(<a href="$uri/$_/$dtype?cv_dump">$_</a>);
 		}
 		else {
 		    push @line, $_;
 		}
 	    }
-	    elsif ($do_dump and $can_dump{$type} and 
-		  $is_installed{"Data::Dumper"}) {
+	    elsif ($do_dump and $can_dump{$type}) {
 		next if /_</;
 		push @line, qq(<a href="$uri/$_/$dtype?data_dump">$_</a>);
 	    }
@@ -759,7 +782,7 @@ Apache::Status - Embedded interpreter status information
 =head1 SYNOPSIS
 
   <Location /perl-status>
-      SetHandler  perl-script
+      SetHandler modperl
       PerlResponseHandler Apache::Status
   </Location>
 
@@ -771,7 +794,7 @@ about the status of the Perl interpreter embedded in the server.
 Configure like so:
 
   <Location /perl-status>
-       SetHandler  perl-script
+       SetHandler modperl
        PerlResponseHandler Apache::Status
   </Location>
 
@@ -802,7 +825,7 @@ This single directive will enable all of the options described below.
 
 =item StatusDumper
 
-When browsing symbol tables, the values of arrays, hashes ans calars
+When browsing symbol tables, the values of arrays, hashes and scalars
 can be viewed via B<Data::Dumper> if this configuration variable is set
 to On:
 
