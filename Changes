@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Fix x86_64 warnings in modperl_restart_count_*, due to casting between
+integers and pointer types [Joe Orton]
+
 open_logs and post_config handlers require the Apache::OK return code
 or the server aborts, so we need to log an error in case the handler
 didn't fail but returned something different from Apache::OK [Stas]
