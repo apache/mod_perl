@@ -466,6 +466,21 @@ EOF
     ();
 }
 
+sub generate_largefiles {
+    my($self, $h_fh) = @_;
+
+    my $flags = $self->perl_config('ccflags_uselargefiles');
+
+    return unless $flags;
+
+    for my $flag (split /\s+/, $flags) {
+        my($name, $val) = split '=', $flag;
+        $val ||= '';
+        $name =~ s/^-D//;
+        print $h_fh "#define $name $val\n";
+    }
+}
+
 sub ins_underscore {
     $_[0] =~ s/([a-z])([A-Z])/$1_$2/g;
 }
@@ -526,6 +541,7 @@ my %sources = (
    generate_flags              => {h => 'modperl_flags.h',
                                    c => 'modperl_flags.c'},
    generate_trace              => {h => 'modperl_trace.h'},
+   generate_largefiles         => {h => 'modperl_largefiles.h'},
    generate_constants          => {h => 'modperl_constants.h',
                                    c => 'modperl_constants.c'},
 );
