@@ -23,7 +23,8 @@ my $apache_test_dir = File::Spec->catdir(Cwd::getcwd(), "Apache-Test", "lib");
 
 #to override MakeMaker MOD_INSTALL macro
 sub mod_install {
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) -MModPerl::BuildMM \\}."\n" .
+    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB) \\}."\n" .
+    qq{-I$apache_test_dir -MModPerl::BuildMM \\}."\n" .
     q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
 }
 
