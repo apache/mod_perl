@@ -540,7 +540,7 @@ EOF
 
     if ($build->should_build_apache) {
         ModPerl::MM::add_dep(\$string, pure_all => 'ap_build');
-        $string .= qq[\nap_build:\n\tcd "$build->{MP_AP_PREFIX}" && make\n];
+        $string .= qq[\nap_build: modperl_lib\n\tcd "$build->{MP_AP_PREFIX}" && make\n];
     }
     
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
