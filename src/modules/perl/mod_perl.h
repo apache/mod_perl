@@ -29,7 +29,31 @@
 
 #include "EXTERN.h"
 #include "perl.h"
+#ifdef PERL_OBJECT
+#define NO_XSLOCKS
+#endif
 #include "XSUB.h"
+
+#ifdef PERL_OBJECT
+#include <perlhost.h>
+#include "win32iop.h"
+#include <fcntl.h>
+
+#define PerlInterpreter CPerlHost
+
+#define perl_alloc() perl->PerlCreate() ? perl : NULL
+
+#define perl_parse(host, xsi, argc, argv, env) \
+  host->PerlParse(xsi, argc, argv, env);
+
+#define perl_run(host) \
+  host->PerlRun()
+
+#define perl_destruct(host) \
+  host->PerlDestroy()
+
+#define perl_free(host)
+#endif
 
 #ifndef MOD_PERL_VERSION
 #define MOD_PERL_VERSION "TRUE"
@@ -56,6 +80,9 @@
 #undef __attribute__
 
 #ifndef _INCLUDE_APACHE_FIRST
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "httpd.h" 
 #include "http_config.h" 
 #include "http_protocol.h" 
@@ -65,6 +92,9 @@
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 #ifndef dTHR

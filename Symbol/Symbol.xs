@@ -1,13 +1,11 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
-#ifdef __cplusplus
-}
-#endif
 
+#ifdef PERL_OBJECT
+#define sv_name(svp) svp
+#define undef(ref) 
+#else
 static void undef(SV *ref)
 {
     GV *gv;
@@ -65,6 +63,7 @@ static SV *sv_name(SV *svp)
 
     return RETVAL;
 }
+#endif
 
 MODULE = Apache::Symbol		PACKAGE = Apache::Symbol		
 
