@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_02-dev
 
+fix 'make test' @INC problem under NT, thanks to Dale Couch
+
 =item 1.15_01 - September 19, 1998
 
 USE_DSO=1 may be fixed on some platforms w/ current 1.3.2-dev

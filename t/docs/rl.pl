@@ -10,7 +10,8 @@
 	$Apache::Server::CWD."/t/net${uri}";
     });
 
-    my $d = DirHandle->new("t/net/perl");
+    my $path = Apache->server_root_relative("net/perl");
+    my $d = DirHandle->new($path) or die "Can't open $path $!";
 
     for my $file ($d->read) {
 	next if $file eq "hooks.pl"; 
@@ -18,7 +19,7 @@
 	Apache->untaint($file);
 	my $status = $rl->handler("/perl/$file");
 	unless($status == 200) {
-	    die "pre-load of `/perl/$file' failed, status=$status\n";
+	    warn "pre-load of `/perl/$file' failed, status=$status\n";
 	}
     }
 }
