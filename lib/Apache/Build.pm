@@ -1458,7 +1458,7 @@ sub dynamic_link_default {
 
     my $link = $self->dynamic_link_header_default . "\t" . '-o $@';
 
-    my $ranlib = "\t" . '$(MODPERL_RANLIB) $@';
+    my $ranlib = "\t" . '$(MODPERL_RANLIB) $@' . "\n";
 
     $link .= "\n" . $ranlib unless (DARWIN or OPENBSD);
 
