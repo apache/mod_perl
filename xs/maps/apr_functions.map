@@ -37,7 +37,9 @@ MODULE=APR::Socket
  apr_listen
  apr_connect
  apr_recv
+ apr_recvfrom
  apr_send
+ apr_sendto
  apr_shutdown
 
 MODULE=APR::Socket
@@ -322,6 +324,7 @@ MODULE=APR::UUID
  apr_get_groupname
  apr_get_home_directory
  apr_get_username
+ apr_get_user_passwd
  apr_get_userid
 
 !MODULE=APR::NetworkIO
