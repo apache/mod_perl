@@ -133,7 +133,7 @@ use()'d modules and flush the B<Apache::Registry> cache, enable with
 this command:
 
  PerlFreshRestart On  
- 
+
 =head1 ENVIRONMENT
 
 Under CGI the Perl hash C<%ENV> is magical in that it inherits
