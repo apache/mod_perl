@@ -84,3 +84,7 @@ PerlChildExitHandler ModPerl::Test::exit_handler
     SetHandler modperl
     PerlResponseHandler Apache::Status
 </Location>
+
+# for TestApache::util
+PerlPassEnv LC_CTYPE
+PerlPassEnv LC_TIME

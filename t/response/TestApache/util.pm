@@ -5,6 +5,16 @@ package TestApache::util;
 use strict;
 use warnings FATAL => 'all';
 
+# to fully test this test the following locale settings need to be run:
+#
+# some /^en_/ locale, e.g. /^en_GB*
+# LC_CTYPE=en_GB.UTF-8 LC_TIME=en_GB.UTF-8 t/TEST -verbose apache/util.t
+# LC_CTYPE=en_GB       LC_TIME=en_GB       t/TEST -verbose apache/util.t
+#
+# some non-/^en_/ locale, e.g. ru_RU
+# LC_CTYPE=ru_RU.UTF-8 LC_TIME=ru_RU.UTF-8 t/TEST -verbose apache/util.t
+# LC_CTYPE=ru_RU       LC_TIME=ru_RU       t/TEST -verbose apache/util.t
+
 # regex matching (LC_CTYPE) of strftime-like (LC_TIME) strings
 use locale;
 
@@ -18,11 +28,11 @@ use Apache::Test;
 
 use Apache::Const -compile => 'OK';
 
-# XXX: need to use PerlPassEnv to get these %ENV vars
-my $locale = $ENV{LANG} || $ENV{LC_TIME} || '';
-# XXX: will any en_XXX work with http_parse? try setlocale?
-# XXX: should we set $ENV{LANG} to en_US instead of skipping?
-my $parse_time_ok = $locale =~ /^en_/ ? 1 : 0;
+# those are passed via PerlPassEnv
+my $locale = $ENV{LC_TIME} || '';
+
+my $parse_time_ok  = $locale =~ /^en_/   ? 1 : 0;
+my $locale_is_utf8 = $locale =~ /UTF-8$/ ? 1 : 0;
 
 sub handler {
     my $r = shift;
@@ -96,6 +106,17 @@ sub time_cmp {
         ok t_cmp $ptime, $time, $comment;
     }
     else {
+        if ($locale_is_utf8) {
+            if (have_min_perl_version(5.008)) {
+                require Encode;
+                # perl doesn't know yet that $fmtdate is a utf8 string
+                $fmtdate = Encode::decode_utf8($fmtdate);
+            }
+            else {
+                skip "Skip locale $locale needs perl 5.8.0+", 0;
+                return;
+            }
+        }
         ok t_cmp $fmtdate, $fmtdate_re, $comment;
     }
 }
