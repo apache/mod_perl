@@ -1,41 +1,13 @@
-a (nearly) complete rewrite is underway for mod_perl-2.0
+a complete rewrite is underway for mod_perl-2.0
 
-more detailed design docs, etc., see the pod/ directory
+for more detailed design docs, etc., see the pod/ directory
 
-if you want to try building with an interpreter pool, you'll need Perl
-5.6.0 built like so:
-
-% ./Configure -des -Dusethreads
-
-mod_perl-2.0 will still work with an out-of-the-box Perl, but will
-only be useful if your mpm is prefork (which is much like 1.3.x)
-
-to build mod_perl static:
-NOTE: static linking untested for several months
-
-% perl Makefile.PL && make
-
-% cd ../httpd-2.0
-% ./configure --prefix=$HOME/apache-2.0 --with-mpm=threaded
-% patch -p1 < ../../modperl-2.0/patches/link-hack.pat
-% make
-
-to build mod_perl dynamic:
-
-build httpd with mod_so enabled:
-% cd httpd-2.0
-% ./configure --with-mpm=threaded --enable-so ...
-% make
-% make install
-
-#build libmodperl.so and extension .so's
-% perl Makefile.PL MP_GENERATE_XS=1 MP_USE_DSO=1 \
-MP_APXS=$apache_prefix/bin/apxs && make
+see pod/modperl_dev.pod for build instructions.
 
 as for httpd.conf, mine looks something like so at the moment:
 
 #if dynamic build
-LoadModule perl_module libexec/libmodperl.so
+LoadModule perl_module modules/libmodperl.so
 
 #same as using the MOD_PERL_TRACE environment variable
 PerlTrace all
@@ -63,4 +35,4 @@ there will be a compat layer in the future.
 
 see the examples/ directory for examples.
 
---dougm 03/26/01
+--dougm 04/03/01
