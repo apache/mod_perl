@@ -110,21 +110,13 @@ PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 {
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
     request_rec *r = st->r;
-    long total = 0;
 
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANREAD) ||
         PerlIOBase(f)->flags & (PERLIO_F_EOF|PERLIO_F_ERROR)) {
         return 0;
     }
 
-    total = modperl_request_read(aTHX_ r, (char*)vbuf, count);
-
-    if (total < 0) {
-        PerlIOBase(f)->flags |= PERLIO_F_ERROR;
-        /* modperl_request_read takes care of setting ERRSV */
-    }
-
-    return total;
+    return modperl_request_read(aTHX_ r, (char*)vbuf, count);
 }
 
 static SSize_t
@@ -259,8 +251,8 @@ MP_INLINE void modperl_io_apache_init(pTHX)
 MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
                                        char *buffer, Size_t len)
 {
-    long total = 0;
-    int wanted = len;
+    SSize_t total = 0;
+    Size_t wanted = len;
     int seen_eos = 0;
     char *tmp = buffer;
     apr_bucket_brigade *bb;
@@ -272,35 +264,22 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
     bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
     if (bb == NULL) {
         r->connection->keepalive = AP_CONN_CLOSE;
-        return -1;
+        Perl_croak(aTHX_ "failed to create bucket brigade");
     }
 
     do {
         apr_size_t read;
-        int rc;
+        apr_status_t rc;
 
         rc = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES,
                             APR_BLOCK_READ, len);
         if (rc != APR_SUCCESS) { 
-            char *error;
-            /* if we fail here, we want to just return and stop trying
-             * to read data from the client.
+            /* if we fail here, we want to stop trying to read data
+             * from the client.
              */
             r->connection->keepalive = AP_CONN_CLOSE;
             apr_brigade_destroy(bb);
-
-            if (SvTRUE(ERRSV)) {
-                STRLEN n_a;
-                error = SvPV(ERRSV, n_a);
-            }
-            else {
-                error = modperl_error_strerror(aTHX_ rc);
-            }
-            sv_setpv(ERRSV,
-                     (char *)apr_psprintf(r->pool, 
-                                          "failed to get bucket brigade: %s",
-                                          error));
-            return -1;
+            modperl_croak(aTHX_ rc, "Apache::RequestIO::read");
         }
 
         /* If this fails, it means that a filter is written
@@ -312,11 +291,11 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
             apr_brigade_destroy(bb);
             /* we can't tell which filter is broken, since others may
              * just pass data through */
-            sv_setpv(ERRSV, "Aborting read from client. "
-                     "One of the input filters is broken. "
-                     "It returned an empty bucket brigade for "
-                     "the APR_BLOCK_READ mode request");
-            return -1;
+            Perl_croak(aTHX_ "Apache::RequestIO::read: "
+                       "Aborting read from client. "
+                       "One of the input filters is broken. "
+                       "It returned an empty bucket brigade for "
+                       "the APR_BLOCK_READ mode request");
         }
 
         if (APR_BUCKET_IS_EOS(APR_BRIGADE_LAST(bb))) {
@@ -327,12 +306,9 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
         rc = apr_brigade_flatten(bb, tmp, &read);
         if (rc != APR_SUCCESS) {
             apr_brigade_destroy(bb);
-            sv_setpv(ERRSV,
-                     (char *)apr_psprintf(r->pool, 
-                                          "failed to read: %s",
-                                          modperl_error_strerror(aTHX_ rc)));
-            return -1;
+            modperl_croak(aTHX_ rc, "Apache::RequestIO::read");
         }
+        
         total += read;
         tmp   += read;
         len   -= read;
