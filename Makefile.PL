@@ -375,15 +375,6 @@ sub MY::tool_autosplit {
     '';
 }
 
-sub MY::post_initialize {
-    my $self = shift;
-
-    #up one from the Apache2/ subdir
-    #so it can be found for 'use Apache2 ()'
-    $self->{PM}->{'lib/Apache2.pm'} = "blib/lib/Apache2.pm";
-    '';
-}
-
 sub MY::manifypods {
     my $self = shift;
     my $ver = $self->{VERSION} || "";
