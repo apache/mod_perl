@@ -6,7 +6,7 @@ use warnings;
 
 use Config;
 use Cwd ();
-use File::Spec::Functions qw(catfile catdir canonpath rel2abs);
+use File::Spec::Functions qw(catfile catdir canonpath rel2abs devnull);
 use File::Basename;
 use ExtUtils::Embed ();
 
@@ -127,7 +127,8 @@ sub apxs {
         return defined $val ? ($val ? "$prefix/$val" : $prefix) : "";
     }
 
-    my $val = qx($apxs @_ 2>/dev/null);
+    my $devnull = devnull();
+    my $val = qx($apxs @_ 2>$devnull);
     chomp $val if defined $val; # apxs post-2.0.40 adds a new line
 
     unless ($val) {
