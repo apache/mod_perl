@@ -41,7 +41,7 @@ use Apache::Connection ();
 use Apache::Log ();
 
 use Apache::Const -compile => ':common';
-use APR::Const -compile => ':common';
+use APR::Const    -compile => ':common';
 
 use APR::Table ();
 
@@ -58,6 +58,17 @@ $ENV{MODPERL_EXTRA_PL} = __FILE__;
 
 my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
 my $apr_mods = scalar grep { /^APR/    } keys %INC;
+
+# test startup loglevel setting (under threaded mpms loglevel can be
+# changed only before threads are started) so here we test whether we
+# can still set it after restart
+{
+    use Apache::Const -compile => 'Apache::LOG_INFO';
+    my $s = Apache->server;
+    my $oldloglevel = $s->loglevel(Apache::LOG_INFO);
+    # restore
+    $s->loglevel($oldloglevel);
+}
 
 Apache::Log->info("$ap_mods Apache:: modules loaded");
 Apache::ServerRec->log->info("$apr_mods APR:: modules loaded");
