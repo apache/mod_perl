@@ -824,8 +824,9 @@ mod_perl_auth_name(r, val=NULL)
     char *val
 
 const char *
-auth_type(r)
+mod_perl_auth_type(r, val=NULL)
     Apache    r
+    char *val
 
 const char *
 document_root(r, ...)
@@ -887,6 +888,9 @@ get_basic_auth_pw(r)
     int ret;
 
     PPCODE:
+    if (!auth_type(r)) {
+        (void)mod_perl_auth_type(r, "Basic");
+    }
     ret = get_basic_auth_pw(r, &sent_pw);
     XPUSHs(sv_2mortal((SV*)newSViv(ret)));
     if(ret == OK)
