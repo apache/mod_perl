@@ -354,7 +354,7 @@ sub flush_namespace {
         if (defined &$fullname) {
             no warnings;
             local $^W = 0;
-            if (my $p = prototype $fullname) {
+            if (defined(my $p = prototype $fullname)) {
                 *{$fullname} = eval "sub ($p) {}";
             }
             else {

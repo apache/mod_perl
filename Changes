@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.27_01-dev
 
+eliminate warnings when flushing functions with empty () prototypes in
+Apache::PerlRun::flush_namespace [Yair Lenga <yair.lenga@citigroup.com>]
+
 fix Apache::Status to not use :: in filenames, which is not allowed on
 certain OSs [DH <crazyinsomniac@yahoo.com>]
 
