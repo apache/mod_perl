@@ -251,8 +251,16 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_read_type_e block,
                                      apr_off_t readbytes)
 {
+
     apr_pool_t *p = MP_FILTER_POOL(f);
-    modperl_filter_t *filter = apr_pcalloc(p, sizeof(*filter));
+    modperl_filter_t *filter;
+
+    /* we can't allocate memory from the pool here, since potentially
+     * a filter can be called hundreds of times during the same
+     * request/connection resulting in enormous memory demands
+     * (sizeof(*filter)*number of invocations)
+     */
+    Newz(0, filter, 1, modperl_filter_t);
 
     filter->mode = mode;
     filter->f = f;
@@ -369,6 +377,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     conn_rec    *c = f->c;
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
+    modperl_filter_t *filter = modperl_filter_new(f, NULL, mode, 0, 0, 0);
 
     MP_dINTERP_SELECT(r, c, s);    
 
@@ -378,14 +387,14 @@ static int modperl_run_filter_init(ap_filter_t *f,
                               "Apache::Filter", f,
                               NULL);
 
-    modperl_filter_mg_set(aTHX_ AvARRAY(args)[0],
-                          modperl_filter_new(f, NULL, mode, 0, 0, 0));
+    modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter);
 
     /* XXX filters are VOID handlers.  should we ignore the status? */
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
 
+    safefree(filter);
     SvREFCNT_dec((SV*)args);
 
     MP_INTERP_PUTBACK(interp);
@@ -792,6 +801,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
         filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE,
                                     0, 0, 0);
         status = modperl_run_filter(filter);
+        safefree(filter);
     }
     
     switch (status) {
@@ -825,6 +835,7 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
         filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE,
                                     input_mode, block, readbytes);
         status = modperl_run_filter(filter);
+        safefree(filter);
     }
     
     switch (status) {
