@@ -18,6 +18,7 @@ int modperl_sys_dlclose(void *handle)
 #elif defined(MP_SYS_DL_DYLD)
     return NSUnLinkModule(handle, FALSE);
 #elif defined(MP_SYS_DL_HPUX)
+#include <dl.h>
     shl_unload((shl_t)handle);
     return 1;
 #elif defined(MP_SYS_DL_WIN32)
