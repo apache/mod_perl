@@ -32,6 +32,7 @@ my %hooks = (
     ProcessConnection => 'process_connection',
     OpenLogs => 'open_logs',
     ChildInit => 'child_init',
+    PostConfig => 'post_config',
 );
 
 my %hook_proto = (
