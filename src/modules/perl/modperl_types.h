@@ -39,13 +39,6 @@ typedef struct {
     server_rec  *s;
 } modperl_rcs_t;
 
-typedef struct {
-    const char *file;
-#ifdef USE_ITHREADS
-    PerlInterpreter *perl;
-#endif
-} modperl_require_file_t;
-
 #ifdef USE_ITHREADS
 
 typedef struct modperl_list_t modperl_list_t;

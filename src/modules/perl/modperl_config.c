@@ -155,8 +155,7 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 
     scfg->PerlModule  = apr_array_make(p, 2, sizeof(char *));
     scfg->PerlRequire = apr_array_make(p, 2, sizeof(char *));
-    scfg->PerlPostConfigRequire =
-        apr_array_make(p, 1, sizeof(modperl_require_file_t *));
+    scfg->PerlPostConfigRequire = apr_array_make(p, 1, sizeof(char *));
 
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
@@ -444,57 +443,32 @@ int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
                                                modperl_config_srv_t *scfg,
                                                apr_pool_t *p)
 {
-    modperl_require_file_t **requires;
+    char **requires;
     int i;
     MP_PERL_CONTEXT_DECLARE;
 
-    MP_PERL_CONTEXT_STORE;
-    
-    requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
+    requires = (char **)scfg->PerlPostConfigRequire->elts;
     for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++){
-#ifdef USE_ITHREADS
-        aTHX = requires[i]->perl;
-#endif
-        if (modperl_require_file(aTHX_ requires[i]->file, TRUE)){
+        int retval;
+
+        MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
+        retval = modperl_require_file(aTHX_ requires[i], TRUE);
+        MP_PERL_CONTEXT_RESTORE;
+
+        if (retval) {
             MP_TRACE_d(MP_FUNC, "loaded Perl file: %s for server %s\n",
-                       requires[i]->file, modperl_server_desc(s, p));
+                       requires[i], modperl_server_desc(s, p));
         }
         else {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "Can't load Perl file: %s for server %s, exiting...",
-                         requires[i]->file, modperl_server_desc(s, p));
-            MP_PERL_CONTEXT_RESTORE;
+                         requires[i], modperl_server_desc(s, p));
+            
             return FALSE;
         }
     }
-    MP_PERL_CONTEXT_RESTORE;
 
     return TRUE;
-}
-
-/* In the case where files were added when interpreters were not yet started,
- * we need to go over the existing files and assign them the correct interpreter
- */
-int modperl_config_prepare_PerlPostConfigRequire(server_rec *s,
-                                                 modperl_config_srv_t *scfg,
-                                                 PerlInterpreter *perl,
-                                                 apr_pool_t *p)
-{
-#ifdef USE_ITHREADS
-    modperl_require_file_t **requires;
-    int i;
-
-    requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
-    for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++) {
-        if (!requires[i]->perl) {
-            MP_TRACE_d(MP_FUNC, "Late binding of %s to an interpreter",
-                   requires[i]->file);
-            requires[i]->perl = perl;
-        }
-    }
-#endif
-
-    return 1;
 }
 
 typedef struct {

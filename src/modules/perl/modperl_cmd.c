@@ -249,18 +249,10 @@ MP_CMD_SRV_DECLARE(post_config_requires)
 
     if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
         if (finfo.filetype != APR_NOFILE) {
-             modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
-#ifdef USE_ITHREADS
-            if (modperl_is_running()) {
-                require->perl = scfg->mip->parent->perl;
-            }
-#endif
-            require->file = arg;
-
             MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
 
-            *(modperl_require_file_t **)
-                apr_array_push(scfg->PerlPostConfigRequire) = require;
+            *(const char **)
+                apr_array_push(scfg->PerlPostConfigRequire) = arg;
         }
     }
     else {
