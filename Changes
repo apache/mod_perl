@@ -10,6 +10,12 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+remove the second-guessing code that was trying to guess the package
+name to load from the handler configuration (by stripping ::string and
+trying to load the package). fall back to using explicit PerlModule to
+load modules whose handler sub name is not called 'handler' + adjust
+tests. [Stas]
+
 set the magic taint flags before modules are required [Stas]
 
 make sure to set base server's mip before any of the

@@ -89,5 +89,6 @@ sub response {
 __DATA__
 
 SetHandler modperl
+PerlModule          TestFilter::out_str_ctx
 PerlResponseHandler TestFilter::out_str_ctx::response
 

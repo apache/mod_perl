@@ -40,6 +40,7 @@ sub check {
 
 1;
 __DATA__
+PerlModule              TestModperl::current_callback
 PerlHeaderParserHandler TestModperl::current_callback::headerparser
 PerlFixupHandler        TestModperl::current_callback::fixup
 PerlResponseHandler     TestModperl::current_callback

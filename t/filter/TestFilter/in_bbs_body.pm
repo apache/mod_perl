@@ -75,4 +75,5 @@ sub response {
 1;
 __DATA__
 SetHandler modperl
+PerlModule          TestFilter::in_bbs_body
 PerlResponseHandler TestFilter::in_bbs_body::response
