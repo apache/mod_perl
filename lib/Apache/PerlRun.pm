@@ -286,12 +286,23 @@ sub handler {
 	no strict;
 	my $tab = \%{$package.'::'};
         foreach (keys %$tab) {
-	    undef &{$tab->{$_}} if defined &{$tab->{$_}};
+	    if(defined &{$tab->{$_}}) {
+		undef_cv_if_owner($package, \&{$tab->{$_}});
+	    } 
 	}
 	%$tab = ();
     }
 
     return $rc;
+}
+
+sub undef_cv_if_owner {
+    return unless $INC{'B.pm'};
+    my($package, $cv) = @_;
+    my $obj    = B::svref_2object($cv);
+    my $stash  = $obj->GV->STASH->NAME;
+    return unless $package eq $stash;
+    undef &$cv;
 }
 
 1;

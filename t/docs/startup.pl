@@ -100,6 +100,8 @@ sub main::access { print ++$Access::Cnt }
 
 $ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not set!";
 
+sub Outside::imported {4}
+
 #will be redef'd during tests
 sub PerlTransHandler::handler {-1}
 
