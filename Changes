@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+Apache::exit fixed under Apache::PerlRun
+
 fix chdir_file() call in Apache::Registry so we go back to the original
 directory [Gerald Richter <richter@ecos.de>]
 
