@@ -452,7 +452,7 @@ Other modules can "plugin" a menu item like so:
         my($r,$q) = @_; #request and CGI objects
         my(@strings);
         push @strings,  "blobs of html";
-        return \@s;     #return an array ref
+        return \@strings;     #return an array ref
     }
  ) if Apache->module("Apache::Status"); #only if Apache::Status is loaded
 
