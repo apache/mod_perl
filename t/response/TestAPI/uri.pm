@@ -7,6 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
+use APR::Pool ();
 use APR::URI ();
 use Apache::URI ();
 use Apache::RequestRec ();
@@ -19,41 +20,99 @@ my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 15;
+    plan $r, tests => 22;
 
     $r->args('query');
 
-    my $uri = $r->parsed_uri;
+    # basic
+    {
+        my $uri = $r->parsed_uri;
 
-    ok $uri->isa('APR::URI');
+        ok $uri->isa('APR::URI');
 
-    ok $uri->path =~ m:^$location:;
+        ok t_cmp(qr/^$location/, $uri->path, "path");
 
-    my $up = $uri->unparse;
-    ok $up =~ m:^$location:;
+        my $up = $uri->unparse;
+        ok t_cmp(qr/^$location/, $up, "unparse");
+    }
 
-    my $server = $r->construct_server;
-    ok t_cmp($server,
-             join(':', $r->get_server_name, $r->get_server_port),
-             "construct_server/get_server_name/get_server_port");
+    # construct_server
+    {
+        my $server = $r->construct_server;
+        ok t_cmp($server,
+                 join(':', $r->get_server_name, $r->get_server_port),
+                 "construct_server/get_server_name/get_server_port");
+    }
+    {
+        my $hostname = "example.com";
+        my $server = $r->construct_server($hostname);
+        ok t_cmp($server,
+                 join(':', $hostname, $r->get_server_port),
+                 "construct_server($hostname)");
+    }
+    {
+        my $hostname = "example.com";
+        my $port     = "9097";
+        my $server = $r->construct_server($hostname, $port);
+        ok t_cmp($server,
+                 join(':', $hostname, $port),
+                 "construct_server($hostname, $port)");
 
-    my $curl = $r->construct_url;
-    my $parsed = APR::URI->parse($r->pool, $curl);
+    }
+    {
+        my $hostname = "example.com";
+        my $port     = "9097";
+        my $server = $r->construct_server($hostname, $port, $r->pool->new);
+        ok t_cmp($server,
+                 join(':', $hostname, $port),
+                 "construct_server($hostname, $port, new_pool)");
 
-    ok $parsed->isa('APR::URI');
+    }
 
-    $up = $parsed->unparse;
+    # construct_url
+    {
+        # if no args are passed then only $r->uri will be included (no
+        # query and no fragment fields)
+        my $curl = $r->construct_url;
+        t_debug("construct_url: $curl");
+        t_debug("r->uri: " . $r->uri);
+        my $parsed = APR::URI->parse($r->pool, $curl);
 
-    ok $up =~ m:$location:;
+        ok $parsed->isa('APR::URI');
 
-    #ok $parsed->query eq $r->args; #XXX?
+        my $up = $parsed->unparse;
+        ok t_cmp(qr/$location/, $up, "unparse");
 
-    my $path = '/foo/bar';
+        my $path = '/foo/bar';
 
-    $parsed->path($path);
+        $parsed->path($path);
 
-    ok $parsed->path eq $path;
+        ok t_cmp($path, $parsed->path, "parsed path");
+    }
+    {
+        # this time include args in the constructed url
+        my $fragment = "fragment";
+        $r->parsed_uri->fragment($fragment);
+        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args);
+        t_debug("construct_url: $curl");
+        t_debug("r->uri: ", $r->uri);
+        my $parsed = APR::URI->parse($r->pool, $curl);
 
+        my $up = $parsed->unparse;
+        ok t_cmp(qr/$location/, $up, 'construct_url($uri)');
+        ok t_cmp($r->args,  $parsed->query, "args vs query");
+    }
+    {
+        # this time include args and a pool object
+        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args, 
+                                     $r->pool->new);
+        t_debug("construct_url: $curl");
+        t_debug("r->uri: ", $r->uri);
+        my $up = APR::URI->parse($r->pool, $curl)->unparse;
+        ok t_cmp(qr/$location/, $up, 'construct_url($uri, $pool)');
+    }
+
+    # segfault test
     {
         # test the segfault in apr < 0.9.2 (fixed on mod_perl side)
         # passing only the /path
@@ -77,36 +136,44 @@ sub handler {
                  "but not 'scheme'");
     }
 
-    my $newr = Apache::RequestRec->new($r->connection, $r->pool);
-    my $url_string = "$path?query";
+    # parse_uri
+    {
+        my $path     = "/foo/bar";
+        my $query    = "query";
+        my $fragment = "fragment";
+        my $newr = Apache::RequestRec->new($r->connection, $r->pool);
+        my $url_string = "$path?$query#$fragment";
 
-    $newr->parse_uri($url_string);
+        # new request
+        $newr->parse_uri($url_string);
+        ok t_cmp($path, $newr->uri, "uri");
+        ok t_cmp($query, $newr->args, "args");
 
-    ok $newr->uri eq $path;
+        my $puri = $newr->parsed_uri;
+        ok t_cmp($path,     $puri->path,     "path");
+        ok t_cmp($query,    $puri->query,    "query");
+        ok t_cmp($fragment, $puri->fragment, "fragment");
 
-    ok $newr->args eq 'query';
+        my $port = 6767;
+        $puri->port($port);
+        $puri->scheme('ftp');
+        $puri->hostname('perl.apache.org');
 
-    my $puri = $newr->parsed_uri;
+        ok t_cmp($port, $puri->port, "port");
 
-    ok $puri->path eq $path;
+        ok t_cmp("ftp://perl.apache.org:$port$path?$query#$fragment",
+                 $puri->unparse, "unparse");
+    }
 
-    ok $puri->query eq 'query';
+    # unescape_url
+    {
+        my @c = qw(one two three);
+        my $url_string = join '%20', @c;
 
-    my @c = qw(one two three);
-    $url_string = join '%20', @c;
+        Apache::URI::unescape_url($url_string);
 
-    Apache::URI::unescape_url($url_string);
-
-    ok $url_string eq "@c";
-
-    my $port = 6767;
-    $puri->port($port);
-    $puri->scheme('ftp');
-    $puri->hostname('perl.apache.org');
-
-    ok $puri->port == $port;
-
-    ok $puri->unparse eq "ftp://perl.apache.org:$port$path?query";
+        ok $url_string eq "@c";
+    }
 
     Apache::OK;
 }
