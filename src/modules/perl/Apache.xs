@@ -444,10 +444,13 @@ mod_perl_stash_rgy_endav(r, sv=APACHE_REGISTRY_CURSTASH)
 I32
 module(sv, name)
     SV *sv
-    char *name
+    SV *name
 
     CODE:
-    RETVAL = (sv && perl_module_is_loaded(name));
+    if((*(SvEND(name) - 2) == '.') && (*(SvEND(name) - 1) == 'c'))
+        RETVAL = find_linked_module(SvPVX(name)) ? 1 : 0;
+    else
+        RETVAL = (sv && perl_module_is_loaded(SvPVX(name)));
 
     OUTPUT:
     RETVAL
