@@ -397,7 +397,7 @@ sub boot {
     my $str = "";
 
     if (my $boot = $self->typemap->{function_map}->{boot}->{$module}) {
-        $str = '    mpxs_' . $self->cname($module) . "_BOOT(aTHXo);\n";
+        $str = '    mpxs_' . $self->cname($module) . "_BOOT(aTHX);\n";
     }
 
     $str;

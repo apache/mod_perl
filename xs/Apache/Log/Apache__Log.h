@@ -1,4 +1,4 @@
-static void mpxs_Apache__Log_BOOT(pTHXo)
+static void mpxs_Apache__Log_BOOT(pTHX)
 {
     av_push(get_av("Apache::Log::Request::ISA",TRUE), 
             newSVpv("Apache::Log",11));

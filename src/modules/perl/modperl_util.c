@@ -292,7 +292,7 @@ char *modperl_server_desc(server_rec *s, apr_pool_t *p)
 #define dl_librefs "DynaLoader::dl_librefs"
 #define dl_modules "DynaLoader::dl_modules"
 
-void modperl_xs_dl_handles_clear(pTHXo)
+void modperl_xs_dl_handles_clear(pTHX)
 {
     AV *librefs = get_av(dl_librefs, FALSE);
     if (librefs) {

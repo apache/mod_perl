@@ -73,7 +73,7 @@ int modperl_require_file(pTHX_ const char *pv, int logfailure);
 
 char *modperl_server_desc(server_rec *s, apr_pool_t *p);
 
-void modperl_xs_dl_handles_clear(pTHXo);
+void modperl_xs_dl_handles_clear(pTHX);
 
 apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p);
 
