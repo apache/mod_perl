@@ -60,7 +60,7 @@ $r->post_connection(sub {
 #$r->warn("sequence number: " . $r->seqno);
 
 if($Apache::TestSIG) {
-    use Apache::SIG ();
+    require Apache::SIG;
     Apache::SIG->set;
 }
 
