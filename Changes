@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Apache::Reload: add support for watching and reloading modules only in
+specified sub-dirs [Harry Danilevsky <harry@deerfieldcapital.com>]
+
 enable APR.pm's linking for apr 0.9.2 and higher, which uses a new lib
 naming scheme, such as libapr-0.so.0.9.2, only if apr-config and
 apu-config scripts exist. [Stas Bekman]
