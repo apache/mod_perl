@@ -1,3 +1,7 @@
-See docs/user/install/install.pod
+Simple install:
 
+% perl Makefile.PL MP_AP_PREFIX=/usr/local/apache2
+% make && make test
+% make install
 
+See docs/user/install/install.pod for details.
