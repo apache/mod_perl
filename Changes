@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+warn if Perl is configured with -Duseshrplib and a libperl.so is found
+in a place where it should not be, example: /lib /usr/lib or /usr/local/lib
+
 fix potential segv in Apache::URI->rpath
 [Vyacheslav Zamyatin <slawa@w-m.ru>]
 
