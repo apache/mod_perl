@@ -5,15 +5,16 @@
 #to the mod_perl-x.xx source tree
 
 #EVERYTHING=1 will enable:
-#ALL_HOOKS=1 PERL_SSI=1 PERL_SECTIONS=1
-#PERL_STACKED_HANDLERS=1 PERL_METHOD_HANDLERS=1 PERL_TABLE_API=1
+#ALL_HOOKS=1 PERL_SSI=1 PERL_SECTIONS=1 PERL_STACKED_HANDLERS=1 
+#PERL_METHOD_HANDLERS=1 PERL_TABLE_API=1 PERL_DIRECTIVE_HANDLERS=1
+#PERL_LOG_API=1 PERL_URI_API=1 PERL_UTIL_API=1 PERL_FILE_API=1
 
 EVERYTHING=1
 
 #build against the first apache_x.xx source tree found, without prompts
 # DO_HTTPD=1
 
-#could tell Makfile.PL exactly where the source is
+#tell Makefile.PL exactly where the Apache source tree is
 # APACHE_SRC=/tmp/apache_x.xx/src
 
 #this would configure in mod_proxy, mod_unique_id, mod_info and mod_status

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+eg/makepl_args.mod_perl updated
+[Neil Conway <nconway@klamath.dyndns.org>]
+
 'make test' config fixes for mod_ssl
 [David Mitchell <davem@fdgroup.co.uk>, Mark Murphy <mark@opus.pass.wayne.edu>,
 Stephen Schaefer <stephen@networks.com>]
