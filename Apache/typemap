@@ -74,19 +74,7 @@ T_AvRV
 INPUT
 
 T_APACHEOBJ
-	if (SvROK($arg) && sv_derived_from($arg, \"${ntype}\")) {
-	    IV tmp = SvIV((SV*)SvRV($arg));
-	    $var = ($type) tmp;
-	}
-	else if((r = perl_request_rec(NULL))) {
-	    /*ok*/
-        }
-	else {
- 	    if(SvROK($arg))
-		 croak(\"$var is not of type ${ntype}\");
-	    else
-	         croak(\"Apache->%s called without setting Apache->request!\", GvNAME(CvGV(cv)));
-        }
+	r = sv2request_rec($arg, \"$ntype\", cv)
 
 T_PV_CONST
 	$var = ($type)SvPV($arg,na)

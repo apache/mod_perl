@@ -221,6 +221,44 @@ static void set_handlers(request_rec *r, SV *hook, SV *sv)
 }
 #endif
 
+static char *r_keys[] = { "_r", "r", NULL };
+
+static request_rec *sv2request_rec(SV *in, char *class, CV *cv)
+{
+    request_rec *r = NULL;
+    SV *sv = Nullsv;
+
+    if(SvROK(in) && (SvTYPE(SvRV(in)) == SVt_PVHV)) {
+	int i;
+	for (i=0; r_keys[i]; i++) {
+	    int klen = strlen(r_keys[i]);
+	    if(hv_exists((HV*)SvRV(in), r_keys[i], klen) &&
+	       (sv = *hv_fetch((HV*)SvRV(in), 
+			       r_keys[i], klen, FALSE)))
+		break;
+	}
+	if(!sv)
+	    croak("method `%s' invoked by a `%s' object with no `r' key!",
+		  GvNAME(CvGV(cv)), HvNAME(SvSTASH(SvRV(in))));
+    }
+
+    if(!sv) sv = in;
+    if(SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
+	if(sv_derived_from(sv, class))
+	    r = (request_rec *) SvIV((SV*)SvRV(sv));
+	else
+	    return NULL;
+    }
+    else if((r = perl_request_rec(NULL))) {
+	/*ok*/
+    } 
+    else {
+	croak("Apache->%s called without setting Apache->request!",
+	      GvNAME(CvGV(cv)));
+    }
+    return r;
+}
+
 #if MODULE_MAGIC_NUMBER < 19970909
 static void
 child_terminate(request_rec *r)
@@ -433,14 +471,12 @@ exit(...)
 
     CODE:
     /* $r->exit */
-    if((items > 1) && sv_isa(ST(0), "Apache")) {
-	IV tmp = SvIV((SV*)SvRV(ST(0)));
-	r = (Apache) tmp;
+    r = sv2request_rec(ST(0), "Apache", cv);
+
+    if(items > 1) {
         sts = (int)SvIV(ST(1));
     }
     else { /* Apache::exit() */
-	if(!sv_isa(ST(0), "Apache"))
-	    r = perl_request_rec(NULL);
 	if(SvTRUE(ST(0)) && SvIOK(ST(0)))
 	    sts = (int)SvIV(ST(0));
     }
@@ -748,11 +784,11 @@ server_root_relative(rsv, name="")
 
     PREINIT:
     pool *p;
+    request_rec *r;
 
     CODE:
-    if (SvROK(rsv) && sv_derived_from(rsv, "Apache")) {
-	IV tmp = SvIV((SV*)SvRV(rsv));
-	p = ((Apache)tmp)->pool;
+    if (SvROK(rsv) && (r = sv2request_rec(rsv, "Apache", cv))) {
+	p = r->pool;
     }
     else {
 	if(!(p = perl_get_startup_pool()))
@@ -966,10 +1002,8 @@ log_error(...)
     SV *sv = Nullsv;
 
     CODE:
-
-    if((items > 1) && sv_derived_from(ST(0), "Apache")) {
-	IV tmp = SvIV((SV*)SvRV(ST(0)));
-	s = ((Apache) tmp)->server;
+    if((items > 1) && (r = sv2request_rec(ST(0), "Apache", cv))) {
+	s = r->server;
 	i=1;
     }
     else if((items > 1) && sv_derived_from(ST(0), "Apache::Server")) {
@@ -984,8 +1018,6 @@ log_error(...)
 	}
     }
     else { 
-	if(!sv_isa(ST(0), "Apache"))
-	    r = perl_request_rec(NULL);
 	if(r) 
 	    s = r->server;
 	else
@@ -1100,11 +1132,11 @@ server(rsv)
     PREINIT:
     char *packname = "Apache::Server";
     server_rec *s;
+    request_rec *r;
 
     CODE:
-    if (SvROK(rsv) && sv_derived_from(rsv, "Apache")) {
-	IV tmp = SvIV((SV*)SvRV(rsv));
-	s = ((Apache)tmp)->server;
+    if (SvROK(rsv) && (r = sv2request_rec(rsv, "Apache", cv))) {
+	s = r->server;
     }
     else {
 	if(!(s = perl_get_startup_server()))

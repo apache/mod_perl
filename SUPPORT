@@ -14,13 +14,26 @@ list), send a mail message to I<majordomo@apache.org> with the body:
 (Thanks to Brian Behlendorf)
 (Thanks also to Mark A. Imbriaco who maintained the original list for 2 years)
 
-=item MAIL LIST ARCHIVE
+=item MAIL LIST ARCHIVES
 
-Thanks to James Cooper,
-there is a hypermail archive for this list at:
+There are several modperl list archives, choose your favorite:
+
+Thanks to Ken Williams:
+ 
+ http://forum.swarthmore.edu/epigone/modperl
+
+Thanks to James Cooper:
 
  http://outside.organic.com/mail-archives/modperl/
- 
+
+Thanks to Hank Leininger:
+
+ http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
+
+Thanks to FindMail:
+
+ http://www.findmail.com/listsaver/modperl/
+
 =back
 
 =head1 REPORTING PROBLEMS
