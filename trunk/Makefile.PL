@@ -561,6 +561,7 @@ if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
     }
     else {
 	$PERL_RUN_XS = 0;
+	$experimental{PERL_RUN_XS} = 0; 
 	print "Sorry, need 1.3.0+ for Apache::PerlRunXS\n";
     }
 }
