@@ -163,7 +163,12 @@ typedef struct modperl_handler_t modperl_handler_t;
 struct modperl_handler_t{
     modperl_mgv_t *mgv_obj;
     modperl_mgv_t *mgv_cv;
-    const char *name; /* original name from .conf if any */
+    /* could be:
+     * - a subroutine name
+     * - a subroutine source code as a string (anon subs)
+     * - NULL, when .cv is set (anon subs)
+     */
+    const char *name; 
     CV *cv;
     U8 flags;
     U32 attrs;
