@@ -19,6 +19,7 @@ mod_perl_cvs.pod
 mod_perl_tuning.pod
 cgi_to_mod_perl.pod
 mod_perl_traps.pod
+mod_perl_method_handlers.pod
 eg/makepl_args.mod_perl
 eg/perl_sections.txt
 eg/startup.pl

@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+Added mod_perl_method_handlers.pod file, a little article about using
+perl objects with modperl. [ ask@netcetera.dk ]
+
 Apache::Registry will now save END blocks just after the script is compiled,
 instead of after the subroutine call.  otherwise, if the client breaks the
 connection, the hard_timeout will jump out of perl_handler(), and the save 
