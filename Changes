@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Use a context-specific Perl_load_module() instead of load_module(), to
+avoid the problem with 'load_module' symbol resolution on certain
+platforms, where for some reason it doesn't get resolved at compile
+time to Perl_load_module_nocontext [Stas]
+
 Make it possible to disable mod_perl for the base server, but enable
 it for the virtual hosts [Stas]
 

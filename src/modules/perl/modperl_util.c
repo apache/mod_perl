@@ -748,9 +748,9 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
      * notice that B::Deparse is not CPAN-updatable.
      * 0.61 is available starting from 5.8.0
      */
-    load_module(PERL_LOADMOD_NOIMPORT,
-                newSVpvn("B::Deparse", 10),
-                newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
+    Perl_load_module(aTHX_ PERL_LOADMOD_NOIMPORT,
+                     newSVpvn("B::Deparse", 10),
+                     newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
 
     ENTER;
     SAVETMPS;
