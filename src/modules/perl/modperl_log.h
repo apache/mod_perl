@@ -22,24 +22,25 @@
 #define modperl_trace_level_set_apache(s, level) \
     modperl_trace_level_set(s->error_log, level);
 
-#define modperl_log_warn(s,msg) \
+#define modperl_log_warn(s, msg) \
     ap_log_error(APLOG_MARK, APLOG_WARNING, 0, s, "%s", msg)
 
-#define modperl_log_error(s,msg) \
+#define modperl_log_error(s, msg) \
     ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, "%s", msg)
 
-#define modperl_log_notice(s,msg) \
+#define modperl_log_notice(s, msg) \
     ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "%s", msg)
 
-#define modperl_log_debug(s,msg) \
+#define modperl_log_debug(s, msg) \
     ap_log_error(APLOG_MARK, APLOG_DEBUG, 0, s, "%s", msg)
 
-#define modperl_log_reason(r,msg,file) \
-    ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, \
-                 "access to %s failed for %s, reason: %s", \
-                 file, \
-                 ap_get_remote_host(r->connection, \
-                 r->per_dir_config, REMOTE_NAME, NULL), \
+#define modperl_log_reason(r, msg, file)                            \
+    ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,               \
+                 "access to %s failed for %s, reason: %s",          \
+                 file,                                              \
+                 ap_get_remote_host(r->connection,                  \
+                                    r->per_dir_config, REMOTE_NAME, \
+                                    NULL),                          \
                  msg)
 
 #endif /* MODPERL_LOG_H */
