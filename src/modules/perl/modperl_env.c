@@ -32,16 +32,37 @@ typedef struct {
 { k, sizeof(k)-1, v, sizeof(v)-1, 0 }
 
 static const modperl_env_ent_t modperl_env_const_vars[] = {
+#ifdef MP_COMPAT_1X
     MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
+#endif
+    MP_ENV_ENT("MOD_PERL", MP_VERSION_STRING),
     { NULL }
 };
+
+void modperl_env_default_populate(pTHX)
+{
+    HV *hv = ENVHV;
+    U32 mg_flags;
+    int i;
+
+    modperl_env_untie(mg_flags);
+
+    for (i = 0; modperl_env_const_vars[i].key; i++) {
+        const modperl_env_ent_t *ent = &modperl_env_const_vars[i];
+
+        hv_store(hv, ent->key, ent->klen,
+                 newSVpvn(ent->val, ent->vlen), ent->hash);
+    }
+
+    modperl_env_tie(mg_flags);
+}
 
 void modperl_env_request_populate(pTHX_ request_rec *r)
 {
     MP_dRCFG;
     HV *hv = ENVHV;
-    int i;
     U32 mg_flags;
+    int i;
     apr_array_header_t *array;
     apr_table_entry_t *elts;
 
@@ -67,14 +88,11 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
         modperl_env_hv_store(aTHX_ hv, &elts[i]);
     }    
 
-    for (i = 0; modperl_env_const_vars[i].key; i++) {
-        const modperl_env_ent_t *ent = &modperl_env_const_vars[i];
-
-        hv_store(hv, ent->key, ent->klen,
-                 newSVpvn(ent->val, ent->vlen), ent->hash);
-    }
-                 
     modperl_env_tie(mg_flags);
+
+#ifdef MP_COMPAT_1X
+    modperl_env_default_populate(aTHX); /* reset GATEWAY_INTERFACE */
+#endif
 
     MpReqSETUP_ENV_On(rcfg);
 }

@@ -9,6 +9,15 @@ use CGI ();
 sub handler {
     my $r = shift;
 
+    unless ($ENV{MOD_PERL}) {
+        die "\$ENV{MOD_PERL} is not set";
+    }
+
+    my $gw = $ENV{GATEWAY_INTERFACE} || '';
+    unless ($gw eq 'CGI-Perl/1.1') {
+        die "\$ENV{GATEWAY_INTERFACE} is not properly set ($gw)";
+    }
+
     if ($CGI::Q) {
         die "CGI.pm globals were not reset";
     }

@@ -13,6 +13,10 @@ eval { require TestFilter::input_msg };
 
 use APR::Table ();
 
+unless ($ENV{MOD_PERL}) {
+    die '$ENV{MOD_PERL} not set!';
+}
+
 my $ap_mods = scalar grep { /^Apache/ } keys %INC;
 my $apr_mods = scalar grep { /^APR/ } keys %INC;
 
