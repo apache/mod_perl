@@ -14,7 +14,7 @@ The Apache:: modules on CPAN:
    http://search.cpan.org/search?mode=module&query=Apache
 
 ... and of course the mod_perl mailinglist:
-   mail modperl-subscribe@apache.org < /dev/null
+   mail modperl-subscribe@perl.apache.org < /dev/null
 
 
 

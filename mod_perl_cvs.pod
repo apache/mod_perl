@@ -19,7 +19,7 @@ versions and configurations of Perl and Apache.  Patches are always
 welcome, simply testing the latest snapshots is just as, if not more
 helpful.
 
-It's recommended to subscribe to the I<modperl-cvs@apache.org> list,
+It's recommended to subscribe to the I<modperl-cvs@perl.apache.org> list,
 which is the place cvs commit logs and diffs are mailed to; at least
 if you're going to work on the code.
 

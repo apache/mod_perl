@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+Adjust the mailling list addresses
+'s|\@apache\.org|\@perl.apache.org|' [Stas Bekman <stas@stason.org>]
+
 Apache::PerlRun will now localize $SIG{__{DIE,WARN}__}
 thanks to Jon Coulter for the spot
 
