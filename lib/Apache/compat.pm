@@ -302,13 +302,14 @@ sub tmpfile {
     my $limit = 100;
     my $r = Apache->request;
     unless ($r) {
-        die "'PerlOptions +GlobalRequest' setting is required";
+        die "cannot use Apache::File->tmpfile ".
+          "without 'SetHandler perl-script' or 'PerlOptions +GlobalRequest'";
     }
     while ($limit--) {
         my $tmpfile = "$TMPDIR/${$}" . $TMPNAM++;
         my $fh = $class->new;
         sysopen($fh, $tmpfile, $Mode, $Perms);
-        $r->pool->cleanup_register(sub { unlink $tmpfile }) if $r;
+        $r->pool->cleanup_register(sub { unlink $tmpfile });
         if ($fh) {
 	    return wantarray ? ($tmpfile, $fh) : $fh;
 	}
