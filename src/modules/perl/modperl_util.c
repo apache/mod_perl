@@ -597,11 +597,13 @@ MP_INLINE int modperl_perl_module_loaded(pTHX_ const char *name)
     return (svp && *svp != &PL_sv_undef) ? 1 : 0;
 }
 
-#define SLURP_SUCCESS(action) \
-    if (rc != APR_SUCCESS) { \
-        SvREFCNT_dec(sv); \
-        Perl_croak(aTHX_ "Error " action " '%s': %s ", r->filename, \
-                   modperl_error_strerror(aTHX_ rc)); \
+#define SLURP_SUCCESS(action)                                           \
+    if (rc != APR_SUCCESS) {                                            \
+        SvREFCNT_dec(sv);                                               \
+        modperl_croak(aTHX_ rc,                                         \
+                      apr_psprintf(r->pool,                             \
+                                   "slurp_filename('%s') / " action,    \
+                                   r->filename));                       \
     }
 
 MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
