@@ -16,7 +16,8 @@
 #include "mod_perl.h"
 
 static const char *MP_error_strings[] = {
-    "exit was called", /* MODPERL_RC_EXIT */
+    "exit was called",           /* MODPERL_RC_EXIT */
+    "filter handler has failed", /* MODPERL_FILTER_ERROR */
 };
 
 #define MP_error_strings_size \
@@ -40,7 +41,7 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
     /* must copy the string and not return a pointer to the local
      * address. Using a single (per interpreter) static buffer.
      */
-    return Perl_form(aTHX_ "%s", ptr);
+    return Perl_form(aTHX_ "%s", ptr ? ptr : "unknown error");
 }
 
 

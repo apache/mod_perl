@@ -16,9 +16,12 @@
 #ifndef MODPERL_ERROR_H
 #define MODPERL_ERROR_H
 
-/* to check whether $@ is set by ModPerl::Util::exit */
-#define MODPERL_RC_EXIT APR_OS_START_USERERR + 0
+/*** mod_perl custom errors come here ***/
 
+/* to check whether $@ is set by ModPerl::Util::exit */
+#define MODPERL_RC_EXIT        APR_OS_START_USERERR + 0
+/* indicate the filter error problem */
+#define MODPERL_FILTER_ERROR   APR_OS_START_USERERR + 1
 
 /**
  * return the string representation of the error code 
