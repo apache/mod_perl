@@ -314,7 +314,7 @@ typedef enum {
     MP_GLOBAL_GVHV,
     MP_GLOBAL_GVAV,
     MP_GLOBAL_GVIO,
-    MP_GLOBAL_SVPV,
+    MP_GLOBAL_SVPV
 } modperl_perl_global_types_e;
 
 typedef struct {
