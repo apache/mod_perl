@@ -15,7 +15,7 @@ T_VPTR
 	sv_setiv($arg, PTR2IV($var));
 
 T_APR_TIME
-	sv_setnv($arg, (NV)($var / APR_USEC_PER_SEC));
+	sv_setnv($arg, (NV)(apr_time_sec($var)));
 
 T_UVOBJ
 	modperl_perl_sv_setref_uv(aTHX_ $arg, \"${ntype}\", (UV)$var);
@@ -58,7 +58,7 @@ T_VPTR
 	$var = INT2PTR($type,SvIV(SvROK($arg) ? SvRV($arg) : $arg))
 
 T_APR_TIME
-	$var = (apr_time_t)(SvNV($arg) * APR_USEC_PER_SEC)
+	$var = (apr_time_t)(apr_time_from_sec(SvNV($arg)))
 
 T_CHAR_LEN
         $var = (char *)SvPV($arg, ${var}_len)
