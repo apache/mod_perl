@@ -7,7 +7,7 @@ use Apache::TestRequest;
 use Apache::Build ();
 
 my $build = Apache::Build->build_config;
-plan tests => 2, have 'LWP',
+plan tests => 2, have have_lwp(),
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $location = "/TestModules__cgiupload";
