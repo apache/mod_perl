@@ -1,9 +1,14 @@
 #ifndef MODPERL_LOG_H
 #define MODPERL_LOG_H
 
-#define MP_FUNC __FUNCTION__ /* XXX: not every cc supports this
-                              * sort out later
-                              */
+#ifdef MP_TRACE
+/* XXX: not every cc supports this
+ * sort out later
+ */
+#   define MP_FUNC __FUNCTION__
+#else
+#   define MP_FUNC "MP_FUNC"
+#endif
 
 #include "modperl_trace.h"
 
