@@ -2,7 +2,6 @@ package Apache::ParseSource;
 
 use strict;
 use Apache::Build ();
-use Tie::IxHash ();
 use Config ();
 
 our $VERSION = '0.02';
@@ -438,6 +437,8 @@ sub canonsort {
     my $type = ref $$ref;
 
     return unless $type;
+
+    require Tie::IxHash;
 
     my $data = $$ref;
 
