@@ -88,8 +88,6 @@ modperl_config_req_t *modperl_config_req_new(request_rec *r)
     modperl_config_req_t *rcfg = 
         (modperl_config_req_t *)apr_pcalloc(r->pool, sizeof(*rcfg));
 
-    rcfg->wbucket.r = r;
-
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)rcfg);
 
     return rcfg;
