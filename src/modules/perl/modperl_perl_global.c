@@ -26,7 +26,7 @@ static modperl_modglobal_key_t MP_modglobal_keys[] = {
     { NULL },
 };
 
-void modperl_modglobal_hash_keys(void)
+void modperl_modglobal_hash_keys(pTHX)
 {
     modperl_modglobal_key_t *gkey = MP_modglobal_keys;
 

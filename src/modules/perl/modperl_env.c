@@ -41,7 +41,7 @@ static modperl_env_ent_t MP_env_const_vars[] = {
     { NULL }
 };
 
-void modperl_env_hash_keys(void)
+void modperl_env_hash_keys(pTHX)
 {
     modperl_env_ent_t *ent = MP_env_const_vars;
 
