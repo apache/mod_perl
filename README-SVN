@@ -17,6 +17,14 @@ and uses the following structure
 
   modperl/docs/trunk      # the mod_perl documentation project
 
+modperl/trunk includes the following svn:externals properties:
+
+  % cd modperl
+  % svn propedit svn:externals .
+  [vi pops up]
+  docs        https://svn.apache.org/repos/asf/perl/modperl/docs/trunk/src/docs/2.0
+  Apache-Test https://svn.apache.org/repos/asf/httpd/test/trunk/perl-framework/Apache-Test
+
 
 DEVELOPER ACCESS
 
