@@ -76,3 +76,31 @@
 #ifndef sv_objcount
 #define sv_objcount PL_sv_objcount
 #endif
+
+#ifndef sv_undef 
+#define sv_undef PL_sv_undef 
+#endif 
+#ifndef sv_yes 
+#define sv_yes PL_sv_yes 
+#endif 
+#ifndef sv_no 
+#define sv_no PL_sv_no 
+#endif 
+#ifndef na 
+#define na PL_na 
+#endif 
+#ifndef curcop 
+#define curcop PL_curcop 
+#endif 
+#ifndef curstash 
+#define curstash PL_curstash 
+#endif 
+#ifndef dowarn 
+#define dowarn PL_dowarn 
+#endif 
+#ifndef tainting 
+#define tainting PL_tainting 
+#endif 
+#ifndef stack_sp 
+#define stack_sp PL_stack_sp 
+#endif 

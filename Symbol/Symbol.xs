@@ -2,6 +2,11 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#include "patchlevel.h" 
+#if ((PATCHLEVEL >= 4) && (SUBVERSION >= 76)) || (PATCHLEVEL >= 5) 
+#define na PL_na 
+#endif 
+
 #ifdef PERL_OBJECT
 #define sv_name(svp) svp
 #define undef(ref) 
