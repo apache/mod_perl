@@ -135,6 +135,7 @@ my(@adirs, %seen, %mft_map, %vers_map, $src_dir, $vers, $conf, $ans);
     NONE => "", 
 );	     
 
+$LIBPERL = "DEFAULT";
 $USE_APACI = $USE_DSO = $USE_APXS = 0;
 $WITH_APXS = "";
 $APACI_ARGS = "";
@@ -443,7 +444,8 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	if($PERL_DEBUG) {
 	    my $lib = "$Config{archlibexp}/CORE/libperld$Config{lib_ext}";
 	    if (-e $lib) {
-		$libperl = " -- -lperld";
+		$LIBPERL = "-lperld";
+		$libperl = " -- $LIBPERL";
 	    }
 	    $PERL_EXTRA_CFLAGS .= " -g";
 	    $PERL_TRACE=1;
@@ -918,6 +920,13 @@ sub write_extra_tests {
     (map { "$PWD/$_\n" } qw(blib/lib blib/arch)),
     ");\n1;\n";
     close FH;
+
+    for my $f (qw(.htaccess hooks.txt)) {
+	open FH, ">t/docs/$f";
+	print FH " ";
+	close FH;
+	chmod 0666, "t/docs/$f";#make sure httpd can write to it
+    }
 
     if($PERL_SSI) {
 	cp "t/modules/ssi.test", "t/modules/ssi.t";
@@ -1742,11 +1751,12 @@ MOD_PERL_VERSION = $VERSION
 
 #   Perl interpreter to use 
 PERL = $^X
-
+LIBPERL = $LIBPERL
 PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
 PERL_STATIC_SRCS = @static_src
 
 EOF
+
     for (qw(PERL_SECTIONS PERL_SSI PERL_TRACE)) {
 	my $yes_no = $$_ ? "yes" : "no";
 	print $apaci_cfg "$_ = $yes_no\n";

@@ -66,6 +66,12 @@ echo "$display_prefix id: mod_perl/$param_MOD_PERL_VERSION" 1>&2
 #
 #   determine Perl interpreter and version
 #
+libperl="$param_LIBPERL"
+if [ ".$libperl" = .DEFAULT ]; then
+    perl_libperl=""
+else
+    perl_libperl=" -- $libperl"
+fi
 perl_interp="$param_PERL"
 if [ ".$perl_interp" = .DEFAULT ]; then
     if [ ".$PERL" != . ]; then
@@ -125,7 +131,7 @@ if($^O eq "hpux") {
 =cut
 print $ldopts;
 EOT
-perl_libs="`$perl_interp $tmpfile2`"
+perl_libs="`$perl_interp $tmpfile2 $perl_libperl`"
 perl_inc="`$perl_interp -MExtUtils::Embed -e perl_inc`"
 perl_privlibexp="`$perl_interp -MConfig -e 'print $Config{privlibexp}'`"
 perl_archlibexp="`$perl_interp -MConfig -e 'print $Config{archlibexp}'`"
