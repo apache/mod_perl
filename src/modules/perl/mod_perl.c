@@ -407,6 +407,10 @@ static void mod_perl_tie_scriptname(void)
 #define mod_perl_tie_scriptname()
 #endif
 
+#define saveINC \
+    if(orig_inc) SvREFCNT_dec(orig_inc); \
+    orig_inc = av_copy_array(GvAV(incgv))
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -515,7 +519,6 @@ void perl_startup (server_rec *s, pool *p)
     MP_TRACE_g(fprintf(stderr, "constructing perl interpreter...ok\n"));
     perl_construct(perl);
 
-
     status = perl_parse(perl, xs_init, argc, argv, NULL);
     if (status != OK) {
 	MP_TRACE_g(fprintf(stderr,"not ok, status=%d\n", status));
@@ -563,7 +566,12 @@ void perl_startup (server_rec *s, pool *p)
     mod_perl_mutex = create_mutex(NULL);
 #endif
 
-    status = perl_run(perl);
+    if ((status = perl_run(perl)) != OK) {
+	MP_TRACE_g(fprintf(stderr,"not ok, status=%d\n", status));
+	perror("run");
+	exit(1);
+    }
+    MP_TRACE_g(fprintf(stderr, "ok\n"));
 
     {
 	dTHR;
@@ -580,6 +588,19 @@ void perl_startup (server_rec *s, pool *p)
 	GvIMPORTED_CV_on(exitgp);
     }
 
+    if(PERL_STARTUP_DONE_CHECK && !getenv("PERL_STARTUP_DONE")) {
+	MP_TRACE_g(fprintf(stderr, 
+			   "mod_perl: PerlModule,PerlRequire postponed\n"));
+#ifndef WIN32
+	setenv("PERL_STARTUP_DONE", "1", 1);
+#else
+	SetEnvironmentVariable("PERL_STARTUP_DONE", "1");
+#endif
+	saveINC;
+	Apache__ServerStarting(FALSE);
+	return;
+    }
+
     ENTER_SAFE(s,p);
     MP_TRACE_g(mod_perl_dump_opmask());
 
@@ -591,13 +612,6 @@ void perl_startup (server_rec *s, pool *p)
 	    exit(1);
 	}
     }
-
-    if (status != OK) {
-	MP_TRACE_g(fprintf(stderr,"not ok, status=%d\n", status));
-	perror("run");
-	exit(1);
-    }
-    MP_TRACE_g(fprintf(stderr, "ok\n"));
 
     list = (char **)cls->PerlModule->elts;
     for(i = 0; i < cls->PerlModule->nelts; i++) {
@@ -618,8 +632,7 @@ void perl_startup (server_rec *s, pool *p)
 	MP_TRACE_g(fprintf(stderr, "mod_perl: cannot run END blocks encoutered at server startup without apache_1.3.0+\n"));
 #endif
 
-    orig_inc = av_copy_array(GvAV(incgv));
-
+    saveINC;
     Apache__ServerStarting(FALSE);
 }
 
