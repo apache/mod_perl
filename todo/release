@@ -10,6 +10,7 @@
 
 * $bb->cleanup segfaults (originally in TestProtocol::echo_bbs2
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
+  owner: gozer
 
 * the following methods/functions are using compat implementations in
   tests and should use the real 2.0 API: method_register,
@@ -119,6 +120,7 @@
 
 * Apache::Reload
   - needs to handle properly redefined subs warnings
+  owner: gozer
 
 * Apache->unescape_url{_info}:
   not yet implemented.  should be moved to Apache::Util
