@@ -11,5 +11,5 @@ PerlSwitches -T
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry
-    PerlOptions +ParseHeaders
+    PerlOptions +ParseHeaders +GlobalRequest
 </Directory>
