@@ -93,14 +93,8 @@ sub handler {
  	} else {
 	    $r->log_error("Apache::Registry::handler reading $filename")
 		if $Debug && $Debug & 4;
-	    my($sub);
-	    {
-		my $fh = Apache::gensym(__PACKAGE__);
-		open $fh, $filename;
-		local $/;
-		$sub = <$fh>;
-		$sub = parse_cmdline($sub);
-	    }
+	    my $sub = $r->slurp_filename;
+	    $sub = parse_cmdline($$sub);
 
 	    # compile this subroutine into the uniq package name
             $r->log_error("Apache::Registry::handler eval-ing") if $Debug && $Debug & 4;
@@ -138,7 +132,7 @@ sub handler {
 
 	my $cv = \&{"$package\::handler"};
 	eval { &{$cv}($r, @_) } if $r->seqno;
-	chdir $Apache::Server::CWD;
+	$r->chdir_file($Apache::Server::CWD);
 	$^W = $oldwarn;
 
 	my $errsv = "";

@@ -1,3 +1,15 @@
+#ifndef maxo
+#define maxo PL_maxo
+#endif
+#ifndef op_mask
+#define op_mask PL_op_mask
+#endif
+#ifndef op_name
+#define op_name PL_op_name
+#endif
+#ifndef op_desc
+#define op_desc PL_op_desc
+#endif
 #ifndef statcache
 #define statcache PL_statcache
 #endif

@@ -8,6 +8,19 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+new experimental options PERL_SAFE_STARTUP and PERL_DEFAULT_OPMASK
+when httpd is starting, opcodes will be disabled during PerlModule,
+PerlRequire and <Perl></Perl>
+ 
+ -PERL_SAFE_STARTUP=1 enables PerlOpmask directive
+   if PerlOpmask is "default", use mask generated from src/opcodes.txt
+   else it's a file to create the mask in the format of src/opcodes.txt
+   if no PerlOpmask, no opcodes are disabled
+ - 'make update_op_mask OPCODE_FILE=my_opcodes.txt && make'
+   changes the default opmask generated from OPCODE_FILE
+ -PERL_DEFAULT_OPMASK=1 disables PerlOpmask directive, forces default
+   opmask on
+
 Fixed Apache::Util::ht_time test (util.t) so it doesn't fail without
 any reason
 

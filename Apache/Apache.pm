@@ -4,8 +4,8 @@ use Exporter ();
 use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
-@Apache::EXPORT_OK = qw(system exit warn fork forkoption);
-$Apache::VERSION = "1.22";
+@Apache::EXPORT_OK = qw(exit warn fork forkoption);
+$Apache::VERSION = "1.23";
 
 *import = \&Exporter::import;
 
@@ -161,15 +161,12 @@ sub PRINTF {
     my $fmt = shift;
     $r->print(sprintf($fmt, @_));
 }
+*printf = \&PRINTF;
 
 sub WRITE {
     my($r, $buff, $length, $offset) = @_;
     my $send = substr($buff, $offset, $length);
     $r->print($send);
-}
-
-sub system {
-    print `@_`;
 }
 
 sub send_cgi_header {

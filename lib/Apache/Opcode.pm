@@ -2,7 +2,6 @@ package Apache::Opcode;
 
 use strict;
 use Opcode ();
-use MIME::Base64 ();
 
 my $Mask = read_opmask(\*DATA);
 

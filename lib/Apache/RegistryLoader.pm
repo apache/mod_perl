@@ -36,6 +36,15 @@ sub handler {
 
 #override Apache class methods called by Apache::Registry
 #normally only available at request-time via blessed request_rec pointer
+sub slurp_filename {
+    my $r = shift;
+    my $filename = $r->filename;
+    my $fh = Apache::gensym(__PACKAGE__);
+    open $fh, $filename;
+    local $/;
+    my $code = <$fh>;
+    return \$code;
+}
 
 sub get_server_name {}
 sub filename { shift->{filename} }

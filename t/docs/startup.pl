@@ -7,6 +7,9 @@ BEGIN {
     $Apache::ServerStarting or warn "Server is not starting !?\n";
 }
 
+use Apache ();
+use Apache::Registry ();
+
 #no mod_perl qw(Connection Server);
 
 eval {
@@ -49,30 +52,17 @@ if($ENV{PERL_TEST_NEW_READ}) {
 
 $ENV{KeyForPerlSetEnv} eq "OK" or warn "PerlSetEnv is broken\n";
 
-#test Apache::RegistryLoader
-{
-    use Apache::RegistryLoader ();
-    use DirHandle ();
-    use strict;
-    
-    my $rl = Apache::RegistryLoader->new(trans => sub {
-	my $uri = shift; 
-	$Apache::Server::CWD."/t/net${uri}";
-    });
-
-    my $d = DirHandle->new("t/net/perl");
-
-    for my $file ($d->read) {
-	next if $file eq "hooks.pl"; 
-	next unless $file =~ /\.pl$/;
-	Apache->untaint($file);
-	my $status = $rl->handler("/perl/$file");
-	unless($status == 200) {
-	    die "pre-load of `/perl/$file' failed, status=$status\n";
-	}
+%net::callback_hooks = ();
+require "./t/net/config.pl";
+if($net::callback_hooks{PERL_SAFE_STARTUP}) {
+    eval "open \$0";
+    unless ($@ =~ /open trapped by operation mask/) {
+	die "opmask not set";
     }
 }
-
+else {
+    require "./t/docs/rl.pl";
+}
 #for testing perl mod_include's
 
 $Access::Cnt = 0;

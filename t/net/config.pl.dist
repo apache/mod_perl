@@ -16,7 +16,6 @@ $perldir      = "/perl";
 
 {
     package main;
-    require LWP::UserAgent;
 
     # avoid -w warnings
     sub dummy_sub { 

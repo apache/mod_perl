@@ -192,6 +192,8 @@ PERL_RESTART_HANDLER
 PERL_TIE_SCRIPTNAME
 PERL_STASH_POST_DATA
 XS_IMPORT
+PERL_SAFE_STARTUP
+PERL_DEFAULT_OPMASK
 };
 
 my @mp_args = 
@@ -267,6 +269,11 @@ while($_ = shift) {
     }
     ${$k} = $v, next if defined ${$k};
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
+}
+
+if($experimental{PERL_DEFAULT_OPMASK} > 1) {
+    $experimental{PERL_SAFE_STARTUP} = 2;
+    $PERL_EXTRA_CFLAGS .= " -DPERL_SAFE_STARTUP=1";
 }
 
 $USE_APACI = 1 if $USE_DSO;
@@ -779,7 +786,11 @@ sub init_tests_and_config {
 	iedit "t/conf/httpd.conf", "s/^(Port) .*/\$1 $PORT/";
 	iedit "t/net/config.pl", "s/$Port/$PORT/;";
     }
-
+    if($experimental{PERL_SAFE_STARTUP} > 1) {
+	if($experimental{PERL_DEFAULT_OPMASK} < 2) {
+	    iedit "t/conf/httpd.conf", "s/^#(PerlOpmask)/\$1/";
+	}
+    }
     {
 	my $mmn = magic_number($APACHE_SRC) || 0;
 
@@ -789,13 +800,16 @@ sub init_tests_and_config {
 	my $apaci_cfg = APACI->init;
 
 	my($k,$v);
+	my(%all) = %callback_hooks;
+	while(($k,$v) = each %experimental) {
+	    $all{$k} = ($experimental{$k} > 1) ? 1 : 0;
+	}
 	print $hf "%callback_hooks = (\n";
-	while(($k,$v) = each %callback_hooks) {
+	while(($k,$v) = each %all) {
 	    print $hf "   $k => $v,\n";
 	    my $yes_no = $v ? "yes" : "no";
 	    print $apaci_cfg "$k = $yes_no\n" if $apaci_cfg;
 	}
-	print $hf "   PERL_RUN_XS => $PERL_RUN_XS,\n";
         print $hf "   MMN => $mmn,\n";
 	print $hf ");\n1;\n";
 	$hf->close;
@@ -1017,6 +1031,7 @@ WriteMakefile(
     #CCDLFLAGS => "$Config{ccdlflags} $EXTRA_CFLAGS", 
     DEFINE => $EXTRA_CFLAGS, 
     macro   => {
+	OPCODE_FILE => "src/opcodes.txt",
         APACHE_ROOT => $APACHE_ROOT,
         APACHE_SRC => $APACHE_SRC,
 	ARCHNAME => $Config{archname},
@@ -1105,6 +1120,14 @@ sub MY::top_targets {
 gen_exports:
 	$(PERL) -MExtUtils::testlib -MApache::Constants::Exports \
 	-e 'Apache::Constants::Exports->gen_ctags' > Exports.c
+
+gen_op_mask:
+	$(PERL) -MExtUtils::testlib -MApache::Opcode \
+	-e 'Apache::Opcode->gen_op_mask' -- $(OPCODE_FILE) > op_mask.c
+
+update_op_mask: gen_op_mask
+	@$(RM_F) $(APACHE_SRC)/modules/perl/mod_perl_opmask.o
+	$(CP) op_mask.c $(APACHE_SRC)/modules/perl/op_mask.c
 
 apxs_distclean:
 	(cd ./apaci && $(MAKE) distclean)
