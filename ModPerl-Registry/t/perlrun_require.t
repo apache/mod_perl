@@ -15,7 +15,7 @@ my $same_interp = Apache::TestRequest::same_interp_tie($url);
 for (1..2) {
     # should not fail on the second request
     my $res = get_body($same_interp, $url);
-    skip_not_same_intrep(
+    skip_not_same_interp(
         !defined($res),
         "1",
         $res,
@@ -39,7 +39,7 @@ sub get_body {
 # interpreter, which happens randomly and not an error.
 # the first argument is used to decide whether to skip the sub-test,
 # the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_intrep {
+sub skip_not_same_interp {
     my $skip_cond = shift;
     if ($skip_cond) {
         skip "Skip couldn't find the same interpreter";
