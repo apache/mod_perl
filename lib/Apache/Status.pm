@@ -15,6 +15,7 @@ use Apache::RequestIO ();
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 use Apache::ServerUtil ();
+use Apache::Const -compile => qw(OK);
 
 $Apache::Status::VERSION = '3.00'; # mod_perl 2.0
 
