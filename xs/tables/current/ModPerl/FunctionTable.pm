@@ -6427,7 +6427,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_apr_recv',
+    'name' => 'mpxs_apr_socket_recv',
     'attr' => [
       'static',
       '__inline__'
@@ -6453,7 +6453,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'mpxs_apr_send',
+    'name' => 'mpxs_apr_socket_send',
     'attr' => [
       'static',
       '__inline__'
