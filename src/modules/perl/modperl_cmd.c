@@ -1,5 +1,41 @@
 #include "mod_perl.h"
 
+#ifdef USE_ITHREADS
+
+/*
+ * perl context overriding and restoration is required when
+ * PerlOptions +Parent/+Clone is used in vhosts, and perl is used to
+ * at the server startup. So that <Perl> sections, PerlLoadModule,
+ * PerlModule and PerlRequire are all run using the right perl context
+ * and restore to the original context when they are done.
+ *
+ * As of perl-5.8.3 it's unfortunate that it uses PERL_GET_CONTEXT and
+ * doesn't rely on the passed pTHX internally. When and if perl is
+ * fixed to always use pTHX if available, this context switching mess
+ * can be removed.
+ */
+
+#define MP_PERL_DECLARE_CONTEXT \
+    PerlInterpreter *orig_perl; \
+    pTHX;
+
+/* XXX: .htaccess support cannot use this perl with threaded MPMs */
+#define MP_PERL_OVERRIDE_CONTEXT    \
+    orig_perl = PERL_GET_CONTEXT;   \
+    aTHX = scfg->mip->parent->perl; \
+    PERL_SET_CONTEXT(aTHX);
+
+#define MP_PERL_RESTORE_CONTEXT     \
+    PERL_SET_CONTEXT(orig_perl);
+
+#else
+
+#define MP_PERL_DECLARE_CONTEXT
+#define MP_PERL_OVERRIDE_CONTEXT
+#define MP_PERL_RESTORE_CONTEXT
+
+#endif
+
 static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
 {
     return apr_pstrcat(parms->pool, parms->cmd->name,
@@ -105,6 +141,7 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(modules)
 {
     MP_dSCFG(parms->server);
+    MP_PERL_DECLARE_CONTEXT;
 
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
@@ -113,27 +150,29 @@ MP_CMD_SRV_DECLARE(modules)
     }
 
     if (modperl_is_running()) {
-#ifdef USE_ITHREADS
-        /* XXX: .htaccess support cannot use this perl with threaded MPMs */
-        dTHXa(scfg->mip->parent->perl);
-#endif
-        MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
+        char *error = NULL;
 
+        MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
+        
+        MP_PERL_OVERRIDE_CONTEXT;
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
-            return SvPVX(ERRSV);
+            error = SvPVX(ERRSV);
         }
+        MP_PERL_RESTORE_CONTEXT;
+
+        return error;
     }
     else {
         MP_TRACE_d(MP_FUNC, "push PerlModule %s\n", arg);
         *(const char **)apr_array_push(scfg->PerlModule) = arg;
+        return NULL;
     }
-
-    return NULL;
 }
 
 MP_CMD_SRV_DECLARE(requires)
 {
     MP_dSCFG(parms->server);
+    MP_PERL_DECLARE_CONTEXT;
 
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
@@ -142,23 +181,23 @@ MP_CMD_SRV_DECLARE(requires)
     }
 
     if (modperl_is_running()) {
-#ifdef USE_ITHREADS
-        /* XXX: .htaccess support cannot use this perl with threaded MPMs */
-        dTHXa(scfg->mip->parent->perl);
-#endif
+        char *error = NULL;
 
         MP_TRACE_d(MP_FUNC, "load PerlRequire %s\n", arg);
 
+        MP_PERL_OVERRIDE_CONTEXT;
         if (!modperl_require_file(aTHX_ arg, FALSE)) {
-            return SvPVX(ERRSV);
+            error = SvPVX(ERRSV);
         }
+        MP_PERL_RESTORE_CONTEXT;
+
+        return error;
     }
     else {
         MP_TRACE_d(MP_FUNC, "push PerlRequire %s\n", arg);
         *(const char **)apr_array_push(scfg->PerlRequire) = arg;
+        return NULL;
     }
-
-    return NULL;
 }
 
 static MP_CMD_SRV_DECLARE2(handle_vars)
@@ -332,7 +371,7 @@ MP_CMD_SRV_DECLARE(perl)
         /*XXX: Less than optimal */
         code = apr_pstrcat(p, code, line, "\n", NULL);
     }
-    
+
     /* Here, we have to replace our current config node for the next pass */
     if (!*current) {
         *current = apr_pcalloc(p, sizeof(**current));
@@ -372,7 +411,7 @@ MP_CMD_SRV_DECLARE(perldo)
     int dollar_zero_tainted;
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
-    pTHX;
+    MP_PERL_DECLARE_CONTEXT;
 #endif
 
     if (!(arg && *arg)) {
@@ -386,10 +425,7 @@ MP_CMD_SRV_DECLARE(perldo)
         return "init mod_perl vhost failed";
     }
     
-#ifdef USE_ITHREADS
-    /* XXX: .htaccess support cannot use this perl with threaded MPMs */
-    aTHX = scfg->mip->parent->perl;
-#endif
+    MP_PERL_OVERRIDE_CONTEXT;
 
     /* data will be set by a <Perl> section */
     if ((options = parms->directive->data)) {
@@ -443,7 +479,9 @@ MP_CMD_SRV_DECLARE(perldo)
     if (SvTRUE(ERRSV)) {
         SV *strict;
         if ((strict = MP_STRICT_PERLSECTIONS_SV) && SvTRUE(strict)) {
-            return SvPVX(ERRSV);
+            char *error = SvPVX(ERRSV);
+            MP_PERL_RESTORE_CONTEXT;
+            return error;
         }
         else {
             modperl_log_warn(s, apr_psprintf(p, "Syntax error at %s:%d %s", 
@@ -473,12 +511,15 @@ MP_CMD_SRV_DECLARE(perldo)
         }
         
         if (status != OK) {
-            return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
+            char *error = SvTRUE(ERRSV) ? SvPVX(ERRSV) :
                 apr_psprintf(p, "<Perl> handler %s failed with status=%d",
                              handler->name, status);
+            MP_PERL_RESTORE_CONTEXT;
+            return error;
         }
     }
 
+    MP_PERL_RESTORE_CONTEXT;
     return NULL;
 }
 
@@ -515,7 +556,7 @@ MP_CMD_SRV_DECLARE(END)
     char line[MAX_STRING_LEN];
 
     while (!ap_cfg_getline(line, sizeof(line), parms->config_file)) {
-	/* soak up rest of the file */
+        /* soak up rest of the file */
     }
 
     return NULL;
