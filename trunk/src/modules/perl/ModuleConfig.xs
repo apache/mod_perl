@@ -109,7 +109,7 @@ get(self=Nullsv, obj, svkey=Nullsv)
 	    void *ptr = vector_from_sv(obj, &type);
 	    mod_perl_perl_dir_config *data = 
 		get_module_config(ptr, mod);
-	    if(data->obj) {
+	    if(data && data->obj) {
 		++SvREFCNT(data->obj);
 		RETVAL = data->obj;
 	    }
