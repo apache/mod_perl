@@ -102,7 +102,15 @@
 #include "perl_PL.h"
 #endif
 #else
+#define PERL_PATCHLEVEL_H_IMPLICIT /* ignore local_patches */
 #include "patchlevel.h"
+#undef PERL_PATCHLEVEL_H_IMPLICIT
+#ifndef PATCHLEVEL
+#define PATCHLEVEL PERL_VERSION
+#undef  SUBVERSION
+#define SUBVERSION PERL_SUBVERSION
+#endif
+
 #if ((PATCHLEVEL >= 4) && (SUBVERSION >= 76)) || (PATCHLEVEL >= 5)
 #include "perl_PL.h"
 #endif
@@ -343,6 +351,11 @@ mp_magic_setenv(key, val, 0)
 extern U32	mp_debug;
 
 #ifdef PERL_TRACE
+
+/* -Wall */
+#undef dNOOP
+#define dNOOP extern int __attribute__ ((unused)) Perl___notused
+
 #define MP_TRACE(a)   if (mp_debug)	 a
 #define MP_TRACE_d(a) if (mp_debug & 1)	 a /* directives */
 #define MP_TRACE_s(a) if (mp_debug & 2)	 a /* perl sections */
