@@ -17,7 +17,7 @@ static apr_status_t modperl_shutdown(void *data)
     perl_free(perl);
 
     if (handles) {
-        modperl_xs_dl_handles_close(handles);
+        modperl_xs_dl_handles_close(cdata->pool, handles);
     }
 
     return APR_SUCCESS;
