@@ -1,4 +1,4 @@
-=head1 NAME
+cvs=head1 NAME
 
 Changes - Apache mod_perl change logfile
 
@@ -9,6 +9,9 @@ all changes without author attribution are by Doug MacEachern
 =over 3
 
 =item 1.99_09-dev
+
+drop the glue code for apr_generate_random_bytes, since it's not
+available on all platforms. [Stas]
 
 Since non-threaded mpms don't use tipools in mips, don't create and
 destroy them. [Stas]

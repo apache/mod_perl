@@ -13,14 +13,6 @@ static MP_INLINE void mpxs_apr_strerror(pTHX_ SV *sv, SV *arg)
     mpxs_sv_cur_set(sv, strlen(ptr)); /*XXX*/
 }
 
-static MP_INLINE void mpxs_apr_generate_random_bytes(pTHX_ SV *sv, SV *arg)
-{
-    int len = (int)SvIV(arg);
-    mpxs_sv_grow(sv, len);
-    (void)apr_generate_random_bytes(SvPVX(sv), len);
-    mpxs_sv_cur_set(sv, len);
-}
-
 static XS(MPXS_apr_strerror)
 {
     dXSARGS;
@@ -28,13 +20,4 @@ static XS(MPXS_apr_strerror)
     mpxs_usage_items_1("status_code");
 
     mpxs_set_targ(mpxs_apr_strerror, ST(0));
-}
-
-static XS(MPXS_apr_generate_random_bytes)
-{
-    dXSARGS;
-
-    mpxs_usage_items_1("length");
-
-    mpxs_set_targ(mpxs_apr_generate_random_bytes, ST(0));
 }

@@ -6157,28 +6157,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'void',
-    'name' => 'mpxs_apr_generate_random_bytes',
-    'attr' => [
-      'static',
-      '__inline__'
-    ],
-    'args' => [
-      {
-        'type' => 'PerlInterpreter *',
-        'name' => 'my_perl'
-      },
-      {
-        'type' => 'SV *',
-        'name' => 'sv'
-      },
-      {
-        'type' => 'SV *',
-        'name' => 'arg'
-      }
-    ]
-  },
-  {
     'return_type' => 'apr_ipsubnet_t *',
     'name' => 'mpxs_apr_ipsubnet_create',
     'args' => [

@@ -8258,20 +8258,6 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_generate_random_bytes',
-    'args' => [
-      {
-        'type' => 'unsigned char *',
-        'name' => 'buf'
-      },
-      {
-        'type' => 'int',
-        'name' => 'length'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
     'name' => 'apr_get_groupid',
     'args' => [
       {
