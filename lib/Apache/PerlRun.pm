@@ -4,7 +4,7 @@ use strict;
 use vars qw($Debug);
 use Apache::Constants qw(:common OPT_EXECCGI);
 
-unless ($Apache::Registry::{NameWithVirtualHost}) {
+unless (defined $Apache::Registry::NameWithVirtualHost) {
     $Apache::Registry::NameWithVirtualHost = 1;
 }
 
