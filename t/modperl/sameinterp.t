@@ -24,7 +24,7 @@ for (1..2) {
         $expected++;
         my $res = req($same_interp, \&GET, $url, foo => 'bar');
         $skip++ unless defined $res;
-        skip_not_same_intrep(
+        skip_not_same_interp(
             $skip,
             $expected,
             defined $res && $res->content,
@@ -45,7 +45,7 @@ for (1..2) {
         my $content = join ' ', 'ok', $_ + 3;
         my $res = req($same_interp, \&POST, $url, content => $content);
         $skip++ unless defined $res;
-        skip_not_same_intrep(
+        skip_not_same_interp(
             $skip,
             $expected,
             defined $res && $res->content,
@@ -65,7 +65,7 @@ for (1..2) {
         $expected++;
         my $res = req($same_interp, \&HEAD, $url);
         $skip++ unless defined $res;
-        skip_not_same_intrep(
+        skip_not_same_interp(
             $skip,
             $same_interp,
             defined $res && $res->header(Apache::TestRequest::INTERP_KEY),
@@ -90,7 +90,7 @@ sub req {
 # interpreter, which happens randomly and not an error.
 # the first argument is used to decide whether to skip the sub-test,
 # the rest of the arguments are passed to 'ok t_cmp';
-sub skip_not_same_intrep {
+sub skip_not_same_interp {
     my $skip_cond = shift;
     if ($skip_cond) {
         skip "Skip couldn't find the same interpreter";
