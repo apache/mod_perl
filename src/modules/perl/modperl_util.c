@@ -120,8 +120,8 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
         return r;
     }
 
-    if ((mg = SvMAGIC(sv))) {
-        return MgTypeExt(mg) ? (request_rec *)mg->mg_ptr : NULL;
+    if ((mg = mg_find(sv, PERL_MAGIC_ext))) {
+        return (request_rec *)mg->mg_ptr;
     }
     else {
         if (classname && !sv_derived_from(in, classname)) {
