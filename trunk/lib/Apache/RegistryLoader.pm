@@ -13,7 +13,7 @@ sub new {
 }
 
 sub handler {
-    my($self, $uri, $filename) = @_;
+    my($self, $uri, $filename, $virthost) = @_;
 
     Apache::warn(__PACKAGE__.qq{ failed, reason: uri is a required parameter}),
 	return
@@ -51,6 +51,8 @@ sub handler {
 		   filename => $filename,
 		  } => ref($self) || $self;
 
+    $r->{virthost} = $virthost if defined $virthost;
+
     $r->SUPER::handler;
 }
 
@@ -66,7 +68,7 @@ sub slurp_filename {
     return \$code;
 }
 
-sub get_server_name {}
+sub get_server_name { shift->{virthost} }
 sub filename { shift->{filename} }
 sub uri { shift->{uri} }
 sub status {200}
@@ -79,7 +81,7 @@ sub stash_rgy_endav {}
 sub request {}
 sub seqno {0} 
 sub server { shift }
-sub is_virtual {0}
+sub is_virtual { exists shift->{virthost} }
 sub header_out {""}
 sub chdir_file {
     my($r, $file) = @_;
@@ -104,6 +106,8 @@ Apache::RegistryLoader - Compile Apache::Registry scripts at server startup
  my $r = Apache::RegistryLoader->new;
 
  $r->handler($uri, $filename);
+
+ $r->handler($uri, $filename, $virtual_hostname);
 
 =head1 DESCRIPTION
 

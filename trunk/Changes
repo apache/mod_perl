@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add virtualhost support to Apache::RegistryLoader
+[John Hughes <john@Calva.COM>]
+
 $Apache::Registry::NameWithVirtualHost fix
 [John Hughes <john@Calva.COM>]
 
