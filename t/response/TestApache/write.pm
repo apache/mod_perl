@@ -3,6 +3,11 @@ package TestApache::write;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
+use Apache::Const -compile => 'OK';
+
 use constant BUFSIZ => 512; #small for testing
 
 sub handler {
@@ -19,7 +24,7 @@ sub handler {
     $ok = "not ok 2\n";
     $r->write($ok, 5, 4);
 
-    0;
+    Apache::OK;
 }
 
 1;

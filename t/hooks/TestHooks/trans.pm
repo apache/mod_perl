@@ -5,6 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::TestConfig ();
 
+use Apache::RequestRec ();
+
+use Apache::Const -compile => qw(OK DECLINED);
+
 my %trans = (
     '/TestHooks/trans.pm' => sub {
         my $r = shift;

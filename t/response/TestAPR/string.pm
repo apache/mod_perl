@@ -5,9 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::Const -compile => 'OK';
 
 use APR::String ();
+
+use Apache::Const -compile => 'OK';
 
 my %size_string = (
     '-1'            => "  - ",

@@ -3,11 +3,11 @@ package TestAPR::base64;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => 'OK';
-
 use Apache::Test;
 
 use APR::Base64 ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

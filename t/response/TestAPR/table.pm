@@ -5,8 +5,9 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
 use APR::Table ();
+
+use Apache::Const -compile => 'OK';
 
 my $filter_count;
 my $TABLE_SIZE = 20;
@@ -104,7 +105,7 @@ sub my_filter {
     my ($key,$value) = @_;
     $filter_count++;
     unless ($key eq chr($value+97)) {
-        die "arguments I recieved are bogus($key,$value)";
+        die "arguments I received are bogus($key,$value)";
     }
     return 1;
 }
@@ -113,7 +114,7 @@ sub my_filter_stop {
     my ($key,$value) = @_;
     $filter_count++;
     unless ($key eq chr($value+97)) {
-        die "arguments I recieved are bogus($key,$value)";
+        die "arguments I received are bogus($key,$value)";
     }
     return 0 if ($filter_count == int($TABLE_SIZE)/2);
     return 1;

@@ -3,8 +3,11 @@ package TestModperl::endav;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Test;
 use ModPerl::Global ();
+
+use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

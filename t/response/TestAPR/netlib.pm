@@ -5,7 +5,12 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
+use Apache::Connection ();
+use Apache::RequestRec ();
+
 use APR::NetLib ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -26,7 +31,7 @@ sub handler {
 
     ok ! $ipsub->test($c->remote_addr);
 
-    0;
+    Apache::OK;
 }
 
 1;

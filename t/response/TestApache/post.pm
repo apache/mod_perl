@@ -3,6 +3,11 @@ package TestApache::post;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
+use Apache::Const -compile => 'OK';
+
 sub handler {
     my $r = shift;
     $r->content_type('text/plain');
@@ -11,7 +16,7 @@ sub handler {
 
     $r->puts(join ':', length($data), $data);
 
-    0;
+    Apache::OK;
 }
 
 1;

@@ -8,6 +8,8 @@ use Apache::TestUtil;
 
 use APR::Util ();
 
+use Apache::Const -compile => 'OK';
+
 sub handler {
     my $r = shift;
 
@@ -27,7 +29,7 @@ sub handler {
 
     ok $str eq 'passwords do not match';
 
-    0;
+    Apache::OK;
 }
 
 1;

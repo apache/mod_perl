@@ -5,8 +5,13 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::Filter);
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
+
+use Apache::Const -compile => 'OK';
+use APR::Const -compile => ':common';
 
 my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter::input_msg::response';

@@ -7,6 +7,8 @@ use Apache::Test;
 
 use APR::UUID ();
 
+use Apache::Const -compile => 'OK';
+
 sub handler {
     my $r = shift;
 
@@ -22,7 +24,7 @@ sub handler {
 
     ok $uuid eq $uuid_parsed->format;
 
-    0;
+    Apache::OK;
 }
 
 1;

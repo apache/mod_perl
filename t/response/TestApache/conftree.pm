@@ -5,7 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestConfig ();
+
 use Apache::Directive ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -18,7 +21,6 @@ sub handler {
     my $vars = $cfg->{vars};
 
     ok $vars;
-
 
     my $tree = Apache::Directive->conftree;
 
@@ -36,7 +38,7 @@ sub handler {
 
     ok $serverroot eq qq("$vars->{serverroot}");
 
-    0;
+    Apache::OK;
 }
 
 sub find_config_val {

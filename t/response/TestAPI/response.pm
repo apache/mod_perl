@@ -3,8 +3,12 @@ package TestAPI::response;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
 use Apache::Response ();
+
 use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

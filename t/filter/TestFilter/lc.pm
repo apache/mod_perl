@@ -5,6 +5,8 @@ use warnings FATAL => 'all';
 
 use Apache::Filter ();
 
+use Apache::Const -compile => 'OK';
+
 sub handler {
     my $filter = shift;
 
@@ -12,7 +14,7 @@ sub handler {
         $filter->print(lc $buffer);
     }
 
-    0;
+    Apache::OK;
 }
 
 1;

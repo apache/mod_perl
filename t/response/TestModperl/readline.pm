@@ -3,8 +3,12 @@ package TestModperl::readline;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Test;
+use Apache::RequestIO ();
 use Apache::compat (); #XXX
+
+use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

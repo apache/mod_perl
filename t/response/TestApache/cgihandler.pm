@@ -3,7 +3,10 @@ package TestApache::cgihandler;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => 'M_POST';
+use Apache::RequestRec ();
+use APR::Table ();
+
+use Apache::Const -compile => qw(OK M_POST);
 
 #test the 1.x style perl-script handler
 

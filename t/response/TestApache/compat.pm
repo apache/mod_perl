@@ -38,7 +38,7 @@ sub handler {
         $r->print("test $data{test}");
     }
 
-    Apache::OK;
+    OK;
 }
 
 sub ok    { $gr->print($_[0] ? "ok\n" : "nok\n"); }

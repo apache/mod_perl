@@ -3,9 +3,12 @@ package TestAPI::aplog;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Log ();
 use Apache::Test;
-use Apache::Const -compile => ':log';
+
+use Apache::Log ();
+use Apache::RequestRec ();
+
+use Apache::Const -compile => qw(OK :log);
 use APR::Const -compile => ':error';
 
 my @LogLevels = qw(emerg alert crit error warn notice info debug);

@@ -1,8 +1,12 @@
 package TestProtocol::echo;
 
 use strict;
+use warnings FATAL => 'all';
+
 use Apache::Connection ();
 use APR::Socket ();
+
+use Apache::Const -compile => 'OK';
 
 use constant BUFF_LEN => 1024;
 
@@ -14,7 +18,7 @@ sub handler {
 
     for (;;) {
         my($rlen, $wlen);
-        my $rlen = BUFF_LEN;
+        $rlen = BUFF_LEN;
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
         $wlen = $rlen;
@@ -22,7 +26,7 @@ sub handler {
         last if $wlen != $rlen;
     }
 
-    return 0;
+    Apache::OK;
 }
 
 1;

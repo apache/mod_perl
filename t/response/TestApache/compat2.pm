@@ -188,7 +188,7 @@ sub handler {
         }
     }
 
-    Apache::OK;
+    OK;
 }
 
 

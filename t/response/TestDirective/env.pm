@@ -3,9 +3,13 @@ package TestDirective::env;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => 'OK';
 use Apache::Test;
 use Apache::TestUtil;
+
+use Apache::RequestRec ();
+use APR::Table ();
+
+use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;

@@ -3,7 +3,11 @@ package TestModperl::env;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use APR::Table ();
+
 use Apache::Test;
+
 use Apache::Const -compile => 'OK';
 
 sub handler {

@@ -3,13 +3,13 @@ package TestApache::subprocess;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => 'OK';
-
 use Apache::Test;
 use Apache::TestUtil;
+
 use File::Spec::Functions qw(catfile catdir);
 
 eval { require Apache::SubProcess };
+use Apache::Const -compile => 'OK';
 
 my %scripts = (
      argv   => 'print STDOUT "@ARGV";',

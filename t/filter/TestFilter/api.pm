@@ -3,10 +3,14 @@ package TestFilter::api;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
 use Apache::Filter ();
 use Apache::FilterRec ();
 
 use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 my $response_data = "blah blah blah";
 

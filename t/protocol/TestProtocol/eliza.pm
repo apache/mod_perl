@@ -1,11 +1,17 @@
 package TestProtocol::eliza;
 
 use strict;
+use warnings FATAL => 'all';
+
 use Apache::Connection ();
 use APR::Socket ();
+
 require Chatbot::Eliza;
 
+use Apache::Const -compile => 'OK';
+
 use constant BUFF_LEN => 1024;
+
 my $mybot = new Chatbot::Eliza;
 
 sub handler {
@@ -16,7 +22,7 @@ sub handler {
     my $last = 0;
     for (;;) {
         my($rlen, $wlen);
-        my $rlen = BUFF_LEN;
+        $rlen = BUFF_LEN;
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
         chomp $buff;
@@ -26,7 +32,7 @@ sub handler {
         last if $last;
     }
 
-    return 0;
+    Apache::OK;
 }
 
 1;

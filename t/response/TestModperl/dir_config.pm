@@ -3,6 +3,11 @@ package TestModperl::dir_config;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::Server ();
+use Apache::ServerUtil ();
+use Apache::RequestUtil ();
+use APR::Table ();
+
 use Apache::Test;
 use Apache::TestUtil;
 

@@ -5,6 +5,9 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+
+use Apache::RequestRec ();
+use Apache::Server ();
 use Apache::ServerUtil ();
 
 use Apache::Const -compile => 'OK';

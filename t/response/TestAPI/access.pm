@@ -3,9 +3,11 @@ package TestAPI::access;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Const -compile => qw(:options :override :satisfy);
-use Apache::Access ();
 use Apache::Test;
+
+use Apache::Access ();
+
+use Apache::Const -compile => qw(OK :options :override :satisfy);
 
 sub handler {
     my $r = shift;
@@ -28,7 +30,7 @@ sub handler {
 
     ok $r->auth_type eq 'none';
 
-    ok ! $r->some_auth_required;
+    ok !$r->some_auth_required;
 
     Apache::OK;
 }

@@ -3,6 +3,11 @@ package TestApache::read;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
+use Apache::Const -compile => 'OK';
+
 use constant BUFSIZ => 512; #small for testing
 
 sub handler {
@@ -26,7 +31,7 @@ sub handler {
 
     $r->puts($buffer);
 
-    0;
+    Apache::OK;
 }
 
 1;

@@ -3,9 +3,12 @@ package TestAPI::r_subclass;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
 our @ISA = qw(Apache::RequestRec);
 
 use Apache::Test;
+
+use Apache::Const -compile => 'OK';
 
 sub new {
     my $class = shift;

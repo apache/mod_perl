@@ -3,6 +3,8 @@ package TestModperl::pnotes;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestUtil ();
+
 use Apache::Test;
 use Apache::TestUtil;
 

@@ -6,6 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
+use Apache::RequestRec ();
+use Apache::RequestUtil ();
+
 use Apache::Const -compile => 'OK';
 
 #this test module is only for testing fields in the request_rec

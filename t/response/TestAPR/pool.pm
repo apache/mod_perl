@@ -5,8 +5,9 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
 use APR::Pool ();
+
+use Apache::Const -compile => 'OK';
 
 sub cleanup {
     my $arg = shift;

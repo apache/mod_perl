@@ -3,6 +3,9 @@ package TestDirective::setupenv;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
 use Apache::Const -compile => 'OK';
 
 sub handler {

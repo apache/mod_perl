@@ -1,12 +1,15 @@
 package TestProtocol::echo_filter;
 
 use strict;
+use warnings FATAL => 'all';
+
 use Apache::Connection ();
 use APR::Bucket ();
 use APR::Brigade ();
-use APR::Const -compile => qw(SUCCESS EOF);
-use Apache::Const -compile => qw(MODE_GETLINE);
 use APR::Util ();
+
+use APR::Const -compile => qw(SUCCESS EOF);
+use Apache::Const -compile => qw(OK MODE_GETLINE);
 
 sub handler {
     my Apache::Connection $c = shift;
@@ -31,7 +34,7 @@ sub handler {
         $c->output_filters->pass_brigade($bb);
     }
 
-    return Apache::OK;
+    Apache::OK;
 }
 
 1;
