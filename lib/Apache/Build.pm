@@ -6,6 +6,8 @@ use warnings;
 use Config;
 use Cwd ();
 use ExtUtils::Embed ();
+use ModPerl::Code ();
+
 use constant is_win32 => $^O eq 'MSWin32';
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl.pm" } qw(. ..);
 
@@ -105,7 +107,6 @@ sub perl_config {
 
     return $Config{$key} ? $Config{$key} : '';
 }
-
 
 sub find_in_inc {
     my $name = shift;
@@ -280,6 +281,7 @@ sub new {
     my $self = bless {
         cwd => Cwd::fastcwd(),
         param_qr => qr([\s=]+),
+        MP_LIBNAME => 'libmodperl',
         @_,
     }, $class;
 
@@ -298,11 +300,12 @@ sub DESTROY {}
 my %default_files = (
     'build_config' => 'lib/Apache/BuildConfig.pm',
     'ldopts' => 'src/modules/perl/ldopts',
+    'makefile' => 'src/modules/perl/Makefile',
 );
 
 sub clean_files {
     my $self = shift;
-    map { $self->default_file($_) } keys %default_files;
+    [map { $self->default_file($_) } keys %default_files];
 }
 
 sub default_file {
@@ -562,6 +565,112 @@ sub httpd_version {
     close $fh;
 
     $self->httpd_version_cache($dir, $version);
+}
+
+#--- generate Makefile ---
+
+sub canon_make_attr {
+    my($self, $name) = (shift, shift);
+
+    my $attr = join '_', 'MODPERL', uc $name;
+    $self->{$attr} = "@_";
+    "$attr = $self->{$attr}\n\n";
+}
+
+my @perl_config_pm =
+  qw(cc ld ar rm ranlib lib_ext dlext cccdlflags lddlflags optimize);
+
+sub write_src_makefile {
+    my $self = shift;
+    my $code = ModPerl::Code->new;
+    my $path = $code->path;
+
+    my $mf = $self->default_file('makefile');
+
+    open my $fh, '>', $mf or die "open $mf: $!";
+
+    for (@perl_config_pm) {
+        print $fh $self->canon_make_attr($_, $self->perl_config($_));
+    }
+
+    print $fh $self->canon_make_attr('RM_F' => #XXX
+                                     $self->{MODPERL_RM} . ' -f');
+
+    print $fh $self->canon_make_attr('libname', $self->{MP_LIBNAME});
+
+    print $fh $self->canon_make_attr('lib_shared',
+                       "$self->{MP_LIBNAME}.$self->{MODPERL_DLEXT}");
+
+    print $fh $self->canon_make_attr('lib_static',
+                       "$self->{MP_LIBNAME}$self->{MODPERL_LIB_EXT}");
+
+    print $fh $self->canon_make_attr('xsubpp',
+                                     join '/', 
+                                     $self->perl_config('privlibexp'),
+                                    'xsubpp');
+
+    for my $method (qw(ccopts ldopts inc)) {
+        print $fh $self->canon_make_attr($method, $self->$method());
+    }
+
+    for my $method (qw(c_files o_files o_pic_files)) {
+        print $fh $self->canon_make_attr($method, @{ $code->$method() });
+    }
+
+    print $fh <<'EOF';
+
+MODPERL_LIB=$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT)
+
+all: lib
+
+lib: $(MODPERL_LIB)
+
+MODPERL_CCFLAGS = $(MODPERL_INC) $(MODPERL_CCOPTS) $(MODPERL_OPTIMIZE)
+
+MODPERL_CCFLAGS_SHLIB = $(MODPERL_CCFLAGS) $(MODPERL_CCCDLFLAGS)
+
+$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_O_FILES)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_AR) crv $@ $(MODPERL_O_FILES)
+	$(MODPERL_RANLIB) $@
+
+$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_O_PIC_FILES)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_LD) $(MODPERL_LDDLFLAGS) -o $@ \
+	$(MODPERL_O_PIC_FILES) $(MODPERL_LDOPTS)
+	$(MODPERL_RANLIB) $@
+
+.SUFFIXES: .xs .c .o .lo
+
+.c.lo:
+	$(MODPERL_CC) $(MODPERL_CCFLAGS_SHLIB) \
+	-c $< && mv $*.o $*.lo
+
+.c.o:
+	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $<
+
+.xs.c:
+	$(MODPERL_XSUBPP) $*.xs >$@
+
+.xs.o:
+	$(MODPERL_XSUBPP) $*.xs >$*.c
+	$(MODPERL_CC) $(MODPERL_CCFLAGS) -c $*.c
+
+.xs.lo:
+	$(MODPERL_XSUBPP) $*.xs >$*.c
+	$(MODPERL_CC) $(MP_CCFLAGS_SHLIB) -c $*.c && mv $*.o $*.lo
+
+clean:
+	$(MODPERL_RM_F) *.a *.so
+	$(MODPERL_RM_F) $(MODPERL_O_FILES)
+	$(MODPERL_RM_F) $(MODPERL_O_FILES)
+	$(MODPERL_RM_F) $(MODPERL_O_PIC_FILES)
+	$(MODPERL_RM_F) $(MODPERL_CLEAN_FILES)
+
+$(MODPERL_O_FILES): Makefile
+EOF
+
+    close $fh;
 }
 
 #--- generate MakeMaker parameter values ---

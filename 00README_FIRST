@@ -16,18 +16,33 @@ so:
 mod_perl-2.0 will still work with an out-of-the-box Perl, but will
 only be useful if your mpm is prefork (which is much like 1.3.x)
 
-in either case, in this directory run:
+to build mod_perl static:
 
-% perl Makefile.PL -c -ma
+% perl Makefile.PL && make libmodperl.a
 
 % cd ../apache-2.0/src
 % ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
 % patch -p1 < ../modperl-2.0/patches/link-hack.pat
 % make
 
+to build mod_perl dynamic:
+
+% perl Makefile.PL && make libmodperl.so
+
+(note the dso-link-hack.pat is need for my suse-6.1, might be
+different for your platform)
+
+% cd ../apache-2.0/src
+% ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
+% patch -p1 < ../modperl-2.0/patches/dso-link-hack.pat
+% make
+
 as for httpd.conf, mine looks something like so at the moment:
 
 #same as using the MOD_PERL_TRACE environment variable
+
+#if dynamic build
+LoadModule perl_module libexec/libmodperl.so
 
 PerlTrace all
 
@@ -40,4 +55,13 @@ PerlInterpMax 4
 
 PerlSwitches -T /home/dougm/test/startup.pl
 
---dougm 04/17
+it is possible to configure Perl*Handlers, but there is not yet an
+interface back into Apache, e.g.
+
+PerlLogHandler MyLog::handler
+
+sub MyLog::handler {
+    warn "hey, it works!";
+}
+
+--dougm 04/21

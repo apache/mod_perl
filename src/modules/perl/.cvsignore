@@ -6,3 +6,8 @@ modperl_directives.c
 modperl_trace.h
 modperl_xsinit.c
 ldopts
+Makefile
+*.lo
+*.o
+*.a
+*.so

@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use ExtUtils::Embed ();
+use ExtUtils::MakeMaker qw(WriteMakefile);
 
 use lib qw(lib);
 use Apache::Build ();
@@ -13,17 +14,20 @@ our $VERSION;
 my $build = Apache::Build->new;
 my $code  = ModPerl::Code->new;
 
-#quick hack until build system is complete
-#e.g.
-#perl Makefile.PL -c -ma MP_DEBUG=1 (configure and 'make all' debug mode)
-#perl Makefile.PL -mc    (make clean)
-{
-    use Getopt::Std;
-    my %opts;
-    getopts('Ecm:', \%opts);
-    configure()  if $opts{c};
-    make(\%opts) if $opts{m};
+if ($build->{MP_CPP}) {
+    make();
+    exit;
 }
+
+configure();
+
+WriteMakefile(
+    NAME => 'mod_perl',
+    VERSION => $VERSION,
+    clean => {
+        FILES => "@{ clean_files() }",
+    },
+);
 
 sub configure {
     system_sanity_check();
@@ -46,6 +50,8 @@ sub configure {
     $build->save_ldopts;
 
     $code->generate;
+
+    $build->write_src_makefile;
 }
 
 sub echo_cmd {
@@ -55,22 +61,17 @@ sub echo_cmd {
 }
 
 sub make {
-    my $opts = shift;
-    return clean() if $opts->{m} eq 'c';
-
     my $ccopts = $build->ccopts;
     my @inc = $build->inc;
-    my($cc, $ar) = map { $build->perl_config($_) } qw(cc ar);
+    my $cc = $build->perl_config('cc');
 
     chdir $code->path;
 
-    $ccopts .= " -E" if $opts->{E};
+    $ccopts .= " -E" if $build->{MP_CPP};
 
     for (sort { (stat $b)[9] <=> (stat $a)[9] } @{ $code->c_files }) {
         echo_cmd "$cc $ccopts @inc -c $_";
     }
-
-    echo_cmd "$ar crv libmodperl.a @{ $code->o_files }";
 
     chdir $build->cwd;
 }
@@ -81,17 +82,11 @@ sub echo_unlink {
     unlink $file;
 }
 
-sub clean {
-    for ($build->clean_files) {
-        echo_unlink $_;
-    }
+sub clean_files {
+    my $path = $code->path;
 
-    chdir $code->path;
-    my @files = $code->clean_files;
-    for (@files, <*.o>, <*.a>) {
-        echo_unlink $_;
-    }
-    chdir $build->cwd;
+    return [@{ $build->clean_files },
+      map { "$path/$_"} @{ $code->clean_files }];
 }
 
 sub set_modperl_version {
@@ -150,3 +145,39 @@ EOF
     }
 }
 
+sub MY::top_targets {
+    my $self = shift;
+    my $string = $self->MM::top_targets;
+    my $path = $code->path;
+
+    for (qw(SHARED STATIC)) {
+        $string .= <<EOF;
+
+$build->{"MODPERL_LIB_$_"}:
+	@(cd $path && \$(MAKE) \$\@);
+
+EOF
+    }
+
+    $string;
+}
+
+sub MY::clean {
+    my $self = shift;
+    my $string = $self->MM::clean(@_);
+    my $path = $code->path;
+    $string .= "\t-cd $path && \$(MAKE) clean\n";
+    $string;
+}
+
+sub MY::postamble {
+    my $i = 0;
+    print "you may now run:\n";
+
+    for (qw(SHARED STATIC)) {
+        print qq(make $build->{"MODPERL_LIB_$_"}\n);
+        print " - or - \n" unless $i++;
+    }
+
+    '';
+}
