@@ -70,7 +70,7 @@ void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
         char *filter_entry;
         STRLEN len;
         
-        tdata.filter = apr_hash_make(table->a.pool);
+        tdata.filter = apr_hash_make(apr_table_elts(table)->pool);
 
         while (MARK <= SP) {
             filter_entry = SvPV(*MARK, len);
