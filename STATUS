@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/02/26 09:32:53 $]
+   Last modified at [$Date: 2003/03/03 03:36:17 $]
 
 Release:
 --------
@@ -49,6 +49,17 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* 'SetHandler modperl' doesn't reset $|, so if anything turns it on
+  anywhere, it's going to stay that way. Meaning excessive flushing
+  probably causing a performance hit. I've tried to add the code to
+  reset it, but this requires getting a perl interpreter at the early
+  stage and it breaks several filter tests, which has relied before on
+  the coincidence that both the response handler and the filter were
+  run by the same interpreter (in particular this breaks the code
+  where push_handlers() uses a string as a handler, rather a CODE
+  reference, see t/filter/TestFilter/both_str_rec_add.pm, to
+  reproduce the problem, simply s/modperl/perl-script/)
 
 * child processes never run END blocks. a good example is
   Apache::TestUtil, which doesn't cleanup files and dirs it has
