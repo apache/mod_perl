@@ -16,7 +16,7 @@ my $r = shift;
 my $num = $r->args;
 
 $r->send_http_header("text/plain");
-print "1..2\n";
+print "1..2\n" if $num == 1;
 print "ok $num\n";
 
 delete $Apache::Registry->{+__PACKAGE__};
