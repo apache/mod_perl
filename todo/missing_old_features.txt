@@ -5,8 +5,6 @@ listed in deprecated_features.txt
 - anonymous handler (for push_handlers, add_input_filter, etc), see
   modperl_mgv.c: modperl_mgv_name_from_sv
 
-- PerlCleanupHandler
-
 - PerlModule, PerlRequire, Perl{Set,Add}Var in .htaccess is missing
 
 - modperl_include #perl
