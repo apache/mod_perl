@@ -95,6 +95,7 @@ $APACHE_SRC_DEFAULT = $@ ?
     $Apache::MyConfig::Setup{Apache_Src} ; 
 
 my $PWD = cwd;
+$ENV{APACHE_CWD} = $PWD;
 $ENV{PERL5LIB} = "$PWD/lib";
 
 my %SSL = (
@@ -1977,9 +1978,23 @@ sub write_my_config {
 EOS
     }
 
-    local *FH;
-# writing Configuration to Apache::MyConfig
+# preparing and writing Configuration to Apache::MyConfig
+    my %my_config = %callback_hooks;
+    my @other_hooks = qw(APACHE_SRC SSL_BASE APXS PERL_USELARGEFILES
+                         PERL_TRACE PERL_DEBUG APACI_ARGS APACHE_PREFIX
+                         DO_HTTPD NO_HTTPD PREP_HTTPD USE_APACI
+                         APACHE_HEADER_INSTALL PERL_STATIC_EXTS );
+    {
+        no strict 'refs';
+        $my_config{$_} = ${$_} for @other_hooks;
+    }
 
+    my $my_config_dump = join ",\n",
+        map { qq{'$_' => } .
+              ($my_config{$_} =~ /^\d+$/ ? $my_config{$_} : qq{'$my_config{$_}'})
+            } sort keys %my_config;
+
+    local *FH;
     open FH, '>lib/Apache/MyConfig.pm'  ||
 	die "Can't open lib/Apache/MyConfig.pm: $!";
     print FH <<EOT;
@@ -1989,20 +2004,8 @@ EOS
 package Apache::MyConfig;
 
 %Setup = (
-   'Apache_Src' => \'$APACHE_SRC\',
-   'SSL_BASE' => \'$SSL_BASE\',
-   'APXS' => \'$WITH_APXS\',
-   'PERL_USELARGEFILES' => \'$PERL_USELARGEFILES\',
-EOT
-
-  foreach my $key (sort @callback_hooks) {
-    print FH "   \'$key\' => \'$callback_hooks{$key}\',\n";
-  }
-
-  print FH <<EOT;
-   $string
+$my_config_dump
 );
-
 1;
 
 __END__
