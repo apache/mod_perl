@@ -16,26 +16,36 @@ my $to_url = '/TestFilter::input_msg::response';
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $readbytes) = @_;
 
-    if ($bb->empty) {
-        my $rv = $filter->next->get_brigade($bb, $mode, $readbytes);
+    my $ctx_bb = APR::Brigade->new($filter->c->pool);
 
-        if ($rv != APR::SUCCESS) {
-            return $rv;
-        }
+    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $readbytes);
+
+    if ($rv != APR::SUCCESS) {
+        return $rv;
     }
 
-    for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
+    while (!$ctx_bb->empty) {
         my $data;
-        my $status = $bucket->read($data);
+        my $bucket = $ctx_bb->first;
 
         $bucket->remove;
 
-        if ($data and $data =~ s,GET $from_url,GET $to_url,) {
-            $bb->insert_tail(APR::Bucket->new($data));
-        }
-        else {
+        if ($bucket->is_eos) {
             $bb->insert_tail($bucket);
+            last;
         }
+
+        my $status = $bucket->read($data);
+
+        if ($status != APR::SUCCESS) {
+            return $status;
+        }
+
+        if ($data and $data =~ s,GET $from_url,GET $to_url,) {
+            $bucket = APR::Bucket->new($data);
+        }
+
+        $bb->insert_tail($bucket);
     }
 
     Apache::OK;

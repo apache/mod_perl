@@ -15,28 +15,36 @@ use APR::Bucket ();
 sub handler : FilterRequestHandler {
     my($filter, $bb, $mode, $readbytes) = @_;
 
-    if ($bb->empty) {
-        my $rv = $filter->next->get_brigade($bb, $mode, $readbytes);
+    my $ctx_bb = APR::Brigade->new($filter->r->pool);
 
-        if ($rv != APR::SUCCESS) {
-            return $rv;
-        }
+    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $readbytes);
+
+    if ($rv != APR::SUCCESS) {
+        return $rv;
     }
 
-    while (!$bb->empty) {
-        my $bucket = $bb->first;
+    while (!$ctx_bb->empty) {
         my $data;
-        my $status = $bucket->read($data);
+        my $bucket = $ctx_bb->first;
 
         $bucket->remove;
+
+        if ($bucket->is_eos) {
+            $bb->insert_tail($bucket);
+            last;
+        }
+
+        my $status = $bucket->read($data);
+
+        if ($status != APR::SUCCESS) {
+            return $status;
+        }
 
         if ($data) {
             $bucket = APR::Bucket->new(scalar reverse $data);
         }
 
         $bb->insert_tail($bucket);
-
-        last if $bucket->is_eos;
     }
 
     Apache::OK;
