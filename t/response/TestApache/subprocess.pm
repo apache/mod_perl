@@ -43,9 +43,19 @@ sub handler {
     my $cfg = Apache::Test::config();
     my $vars = $cfg->{vars};
 
-    plan $r, tests => 4, need qw(APR::PerlIO Apache::SubProcess);
+    plan $r, tests => 5, need qw(APR::PerlIO Apache::SubProcess);
 
     my $target_dir = catfile $vars->{documentroot}, "util";
+
+    {
+        # test: passing argv + void context
+        my $script = catfile $target_dir, "argv.pl";
+        my @argv = qw(foo bar);
+        $r->spawn_proc_prog($perl, [$script, @argv]);
+        # can't really test if something is still returned since it
+        # will be no longer void context
+        ok 1;
+    }
 
     {
         # test: passing argv + scalar context
