@@ -1,9 +1,12 @@
 /* handy macros for RETVAL */
 
-#define get_set_PV(thing) \
+#define get_set_PVp(thing,p) \
     RETVAL = (char*)thing; \
     if(items > 1) \
-        (char*)thing = (ST(1) == &sv_undef) ? NULL : pstrdup(r->pool, SvPV(ST(1),na))
+        (char*)thing = (ST(1) == &sv_undef) ? NULL : pstrdup(p, SvPV(ST(1),na))
+
+#define get_set_PV(thing) \
+    get_set_PVp(thing,r->pool)
 
 #define get_set_IV(thing) \
     RETVAL = thing; \
