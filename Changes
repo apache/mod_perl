@@ -19,6 +19,8 @@ when perl is built with perlio enabled (5.8+) the new PerlIO Apache
 layer is used, so now one can push layers onto STDIN, STDOUT handles
 e.g. binmode(STDOUT, ':utf8'); [Stas]
 
+add ap_table_compress() to APR::Table [Geoffrey Young]
+
 alter stacked handler interface so that mod_perl follows Apache 
 as closely as possible with respect to VOID/RUN_FIRST/RUN_ALL
 handler types.  now, for phases where OK ends the Apache
