@@ -64,29 +64,29 @@ sub handler {
              'Apache->httpd_conf');
     $r->server->server_admin($admin);
 
-    ok t_cmp(canonpath($Apache::Server::CWD),
-             canonpath(Apache::Test::config()->{vars}->{serverroot}),
-             '$Apache::Server::CWD');
+    ok t_filepath_cmp(canonpath($Apache::Server::CWD),
+                      canonpath(Apache::Test::config()->{vars}->{serverroot}),
+                      '$Apache::Server::CWD');
 
-    ok t_cmp(canonpath($Apache::Server::CWD),
-             canonpath($r->server_root_relative),
-             '$r->server_root_relative()');
+    ok t_filepath_cmp(canonpath($Apache::Server::CWD),
+                      canonpath($r->server_root_relative),
+                      '$r->server_root_relative()');
 
-    ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
-             canonpath($r->server_root_relative('conf')),
-             "\$r->server_root_relative('conf')");
+    ok t_filepath_cmp(catfile($Apache::Server::CWD, 'conf'),
+                      canonpath($r->server_root_relative('conf')),
+                      "\$r->server_root_relative('conf')");
 
     # Apache->server_root_relative
     {
         Apache::compat::override_mp2_api('Apache::server_root_relative');
 
-        ok t_cmp(catfile($Apache::Server::CWD, 'conf'),
-                 canonpath(Apache->server_root_relative('conf')),
-                 "Apache->server_root_relative('conf')");
+        ok t_filepath_cmp(catfile($Apache::Server::CWD, 'conf'),
+                          canonpath(Apache->server_root_relative('conf')),
+                          "Apache->server_root_relative('conf')");
 
-        ok t_cmp(canonpath($Apache::Server::CWD),
-                 canonpath(Apache->server_root_relative),
-                 'Apache->server_root_relative()');
+        ok t_filepath_cmp(canonpath($Apache::Server::CWD),
+                          canonpath(Apache->server_root_relative),
+                          'Apache->server_root_relative()');
 
         Apache::compat::restore_mp2_api('Apache::server_root_relative');
     }

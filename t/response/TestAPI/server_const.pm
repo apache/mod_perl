@@ -28,9 +28,9 @@ sub handler {
 
     # test Apache::Server constant subroutines
 
-    ok t_cmp(canonpath($root),
-             canonpath(Apache::server_root),
-             'Apache::server_root()');
+    ok t_filepath_cmp(canonpath($root),
+                      canonpath(Apache::server_root),
+                      'Apache::server_root()');
      
 
     ok t_cmp($built,

@@ -71,18 +71,18 @@ sub handler {
 
     foreach my $p (keys %pools) {
 
-        ok t_cmp(catfile($serverroot, 'conf'),
-                 canonpath(Apache::server_root_relative($pools{$p},
-                     'conf')),
-                 "Apache:::server_root_relative($p, 'conf')");
+        ok t_filepath_cmp(catfile($serverroot, 'conf'),
+                          canonpath(Apache::server_root_relative($pools{$p},
+                              'conf')),
+                          "Apache:::server_root_relative($p, 'conf')");
     }
 
     # dig out the pool from valid objects
     foreach my $obj (keys %objects) {
 
-        ok t_cmp(catfile($serverroot, 'conf'),
-                 canonpath($objects{$obj}->server_root_relative('conf')),
-                 "$obj->server_root_relative('conf')");
+        ok t_filepath_cmp(catfile($serverroot, 'conf'),
+                          canonpath($objects{$obj}->server_root_relative('conf')),
+                          "$obj->server_root_relative('conf')");
     }
 
     # syntax - unrecognized objects don't segfault
@@ -96,26 +96,26 @@ sub handler {
     }
 
     # no file argument gives ServerRoot
-    ok t_cmp(canonpath($serverroot),
-             canonpath($r->server_root_relative),
-             '$r->server_root_relative()');
+    ok t_filepath_cmp(canonpath($serverroot),
+                      canonpath($r->server_root_relative),
+                      '$r->server_root_relative()');
 
-    ok t_cmp(canonpath($serverroot),
-             canonpath(Apache::server_root_relative($r->pool)),
-             'Apache::server_root_relative($r->pool)');
+    ok t_filepath_cmp(canonpath($serverroot),
+                      canonpath(Apache::server_root_relative($r->pool)),
+                      'Apache::server_root_relative($r->pool)');
 
     # Apache::server_root is also the ServerRoot constant
-    ok t_cmp(canonpath(Apache::server_root),
-             canonpath($r->server_root_relative),
-             'Apache::server_root');
+    ok t_filepath_cmp(canonpath(Apache::server_root),
+                      canonpath($r->server_root_relative),
+                      'Apache::server_root');
 
     {
         # absolute paths should resolve to themselves
         my $dir = $r->server_root_relative('logs');
 
-        ok t_cmp($r->server_root_relative($dir),
-                 $dir,
-                 "\$r->server_root_relative($dir)");
+        ok t_filepath_cmp($r->server_root_relative($dir),
+                          $dir,
+                          "\$r->server_root_relative($dir)");
     }
 
     t_debug('registering method FOO');
