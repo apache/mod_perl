@@ -73,6 +73,47 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
     return nrd;
 }
 
+/* alias */
+#define mpxs_Apache__RequestRec_READ mpxs_Apache__RequestRec_read
+
+static long mpxs_Apache__RequestRec_read(request_rec *r,
+                                         SV *buffer, int bufsiz,
+                                         int offset)
+{
+    dTHX; /*XXX*/
+    long nrd = 0, old_read_length;
+    int rc;
+
+    if (!r->read_length) {
+        if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
+            ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0,
+                         r->server,
+                         "mod_perl: ap_setup_client_block failed: %d", rc);
+            return 0;
+        }
+    }
+
+    old_read_length = r->read_length;
+    r->read_length = 0;
+
+    if (ap_should_client_block(r)) {
+        mpxs_sv_grow(buffer, bufsiz+SvCUR(buffer));
+        nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
+    }
+
+    r->read_length += old_read_length;
+
+    if (nrd > 0) {
+        mpxs_sv_cur_set(buffer, nrd+offset);
+        SvTAINTED_on(buffer);
+    } 
+    else {
+        sv_setsv(buffer, &PL_sv_undef);
+    }
+
+    return nrd;
+}
+
 static MP_INLINE
 apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
                                               const char *filename,
