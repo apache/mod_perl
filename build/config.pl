@@ -6,4 +6,4 @@ use lib "$Bin/../lib";
 
 use ModPerl::Config ();
 
-print ModPerl::Config::config_as_str();
+print ModPerl::Config::as_string();
