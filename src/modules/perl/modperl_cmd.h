@@ -27,6 +27,9 @@ MP_CMD_SRV_DECLARE(pass_env);
 MP_CMD_SRV_DECLARE(options);
 MP_CMD_SRV_DECLARE(init_handlers);
 MP_CMD_SRV_DECLARE(perl);
+MP_CMD_SRV_DECLARE(pod);
+MP_CMD_SRV_DECLARE(pod_cut);
+MP_CMD_SRV_DECLARE(END);
 MP_CMD_SRV_DECLARE(load_module);
 
 #ifdef MP_COMPAT_1X
@@ -106,5 +109,9 @@ MP_CMD_SRV_DECLARE(interp_scope);
 #define MP_CMD_DIR_FLAG(name, item, desc) \
     AP_INIT_FLAG( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
+
+#define MP_CMD_DIR_RAW_ARGS_ON_READ(name, item, desc) \
+    AP_INIT_RAW_ARGS( name, modperl_cmd_##item, NULL, \
+      OR_ALL|EXEC_ON_READ, desc )
 
 #endif /* MODPERL_CMD_H */

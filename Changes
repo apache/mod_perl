@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+add support for pod directives (=pod,=back,=cut) and __END__ directive
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 tweaks to support Test.pm 1.21 [Philippe M. Chiasson <gozer@cpan.org>]
 
 add $r->add_config method to add dynamic configuration at request time

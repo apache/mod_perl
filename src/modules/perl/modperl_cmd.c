@@ -333,6 +333,45 @@ MP_CMD_SRV_DECLARE(perl)
     return NULL;
 }
 
+#define MP_POD_FORMAT(s) \
+   (ap_strstr_c(s, "httpd") || ap_strstr_c(s, "apache"))
+
+MP_CMD_SRV_DECLARE(pod)
+{
+    char line[MAX_STRING_LEN];
+
+    if (arg && *arg && !(MP_POD_FORMAT(arg) || strstr("pod", arg))) {  
+        return "Unknown =back format";
+    }
+
+    while (!ap_cfg_getline(line, sizeof(line), parms->config_file)) {
+        if (strEQ(line, "=cut")) {
+            break;
+        }
+        if (strnEQ(line, "=over", 5) && MP_POD_FORMAT(line)) {
+            break;
+        }
+    }
+
+    return NULL;
+}
+
+MP_CMD_SRV_DECLARE(pod_cut)
+{
+    return "=cut without =pod";
+}
+
+MP_CMD_SRV_DECLARE(END)
+{
+    char line[MAX_STRING_LEN];
+
+    while (!ap_cfg_getline(line, sizeof(line), parms->config_file)) {
+	/* soak up rest of the file */
+    }
+
+    return NULL;
+}
+
 /*
  * XXX: the name of this directive may or may not stay.
  * need a way to note that a module has config directives.
