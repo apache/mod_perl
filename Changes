@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+require URI::URL to work with newer libwww-perl
+
 allow overriding of container directive handlers using the func parameter
 [Geoffrey Young <gyoung@laserlink.net>]
 
