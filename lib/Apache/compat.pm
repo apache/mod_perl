@@ -67,6 +67,8 @@ package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
 our $CWD = Apache->server_root_relative();
 
+our $AddPerlVersion = 1;
+
 package Apache;
 
 sub exit {
