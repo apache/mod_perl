@@ -308,7 +308,7 @@ The maximum number of requests an interpreter should serve, the
 interpreter is destroyed when the number is reached and replaced with
 a fresh clone.
 
-=item PerlInterpLifetime
+=item PerlInterpScope
 
 As mentioned, when a request in a threaded mpm is handled by mod_perl,
 an interpreter must be pulled from the interpreter pool.  The
@@ -317,25 +317,25 @@ until it is released back into the interpreter pool.
 By default, an interpreter will be held for the lifetime of the
 request, equivalent to this configuration:
 
- PerlInterpLifetime request
+ PerlInterpScope request
 
 For example, if a PerlAccessHandler is configured, an interpreter will
 selected before it is run and not released until after the logging
 phase.
 
 Intepreters will be shared across subrequests by default, however, it
-is possible configure the intepreter lifetime to be per-subrequest on
+is possible configure the intepreter scope to be per-subrequest on
 a per-directory basis:
 
- PerlInterpLifetime subrequest
+ PerlInterpScope subrequest
 
 With this configuration, an autoindex generated page for example would 
 select an interpreter for each item in the listing that is configured
 with a Perl*Handler.
 
-It is also possible to configure the lifetime to be per-handler:
+It is also possible to configure the scope to be per-handler:
 
- PerlInterpLifetime handler
+ PerlInterpScope handler
 
 With this configuration, an interpreter will be selected before
 PerlAccessHandlers are run, and putback immediately afterwards, before
@@ -347,11 +347,11 @@ run.
 For protocol handlers, the interpreter is held for the lifetime of the
 connection.  However, a C protocol module might hook into mod_perl
 (e.g. mod_ftp) and provide a request_rec.  In this case, the default
-lifetime is that of the request.  Should a mod_perl handler want to
+scope is that of the request.  Should a mod_perl handler want to
 maintain state for the lifetime of an ftp connection, it is possible
 to do so on a per-virtualhost basis:
 
- PerlInterpLifetime connection
+ PerlInterpScope connection
 
 =back
 
