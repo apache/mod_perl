@@ -160,14 +160,14 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    errmsg
 </command_rec>
 
-!<ap_filter_rec_t>
+<ap_filter_rec_t>
    name
 -  filter_func
-   ftype
+!  ftype
    next
 </ap_filter_rec_t>
 
-!<ap_filter_t>
+<ap_filter_t>
    frec
    ctx
    next
