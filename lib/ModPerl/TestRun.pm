@@ -54,6 +54,14 @@ package ModPerl::TestConfig;
 
 use base qw(Apache::TestConfig);
 
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    my $config = Apache::Build->build_config;
+    $self->{conf_opts}->{httpd} ||= $config->{httpd};
+    return $self;
+}
+
 # don't inherit LoadModule perl_module from the apache httpd.conf
 sub should_skip_module {
     my($self, $name) = @_;
