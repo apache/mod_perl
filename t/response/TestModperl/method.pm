@@ -8,21 +8,42 @@ use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
 
-sub handler : method {
-    my($class, $r) = @_;
+sub new {
+    my $class = shift;
 
-    plan $r, tests => 3;
+    bless {
+        perl_version => $],
+    }, $class;
+}
+
+sub handler : method {
+    my($self, $r) = @_;
+
+    my $tests = 3;
+
+    my $is_obj = ref($self);
+
+    if ($is_obj) {
+        $tests += 1;
+    }
+
+    plan $r, tests => $tests;
 
     ok t_cmp(2, scalar @_,
              '@_ == 2');
 
-    my $cmp_class = ref($class) || $class;
+    my $class = ref($self) || $self;
 
-    ok t_cmp($cmp_class, $cmp_class,
+    ok t_cmp($class, $class,
              'handler class');
 
-    ok t_cmp('/' . $cmp_class, $r->uri,
+    ok t_cmp('/' . $class, $r->uri,
              '$r->uri eq __PACKAGE__');
+
+    if ($is_obj) {
+        ok t_cmp($], $self->{perl_version},
+                 'object handler data');
+    }
 
     Apache::OK;
 }
