@@ -28,7 +28,8 @@ sub handler {
     debug "filter got called";
 
     my $c = $filter->c;
-    my $bb_ctx = APR::Brigade->new($c->pool, $c->bucket_alloc);
+    my $ba = $c->bucket_alloc;
+    my $bb_ctx = APR::Brigade->new($c->pool, $ba);
 
     my $ctx = $filter->ctx;
     $ctx->{invoked}++;
@@ -40,10 +41,10 @@ sub handler {
         if ($b->is_eos) {
             debug "got EOS";
             # flush the remainings and send a stats signature
-            $bb_ctx->insert_tail(APR::Bucket->new("$data\n")) if $data;
+            $bb_ctx->insert_tail(APR::Bucket->new($ba, "$data\n")) if $data;
             my $sig = join "\n", "received $ctx->{blocks} complete blocks",
                 "filter invoked $ctx->{invoked} times\n";
-            $bb_ctx->insert_tail(APR::Bucket->new($sig));
+            $bb_ctx->insert_tail(APR::Bucket->new($ba, $sig));
             $b->remove;
             $bb_ctx->insert_tail($b);
             last;
@@ -63,7 +64,7 @@ sub handler {
                 $ctx->{blocks} += $blocks;
             }
             if ($blocks) {
-                my $nb = APR::Bucket->new("#" x $blocks);
+                my $nb = APR::Bucket->new($ba, "#" x $blocks);
                 $bb_ctx->insert_tail($nb);
             }
         }

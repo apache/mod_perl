@@ -44,7 +44,7 @@ sub handler {
 
             if ($b->read(my $data)) {
                 last if $data =~ /^[\r\n]+$/;
-                my $nb = APR::Bucket->new(uc $data);
+                my $nb = APR::Bucket->new($bb->bucket_alloc, uc $data);
                 # head->...->$nb->$b ->...->tail
                 # XXX: the next 3 lines could be replaced with a
                 # wrapper function $b->replace($nb);

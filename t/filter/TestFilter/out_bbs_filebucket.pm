@@ -34,7 +34,7 @@ sub handler {
         last if $b->is_eos;
 
         if (my $len = $b->read(my $data)) {
-            my $nb = APR::Bucket->new(uc $data);
+            my $nb = APR::Bucket->new($bb->bucket_alloc, uc $data);
             $b->insert_before($nb);
             $b->delete;
             $b = $nb;

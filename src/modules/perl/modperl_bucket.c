@@ -30,22 +30,25 @@ static apr_status_t
 modperl_bucket_sv_read(apr_bucket *bucket, const char **str,
                        apr_size_t *len, apr_read_type_e block)
 {
-    modperl_bucket_sv_t *svbucket =
-        (modperl_bucket_sv_t *)bucket->data;
+    modperl_bucket_sv_t *svbucket = bucket->data;
     dTHXa(svbucket->perl);
-    STRLEN n_a;
-    char *pv = SvPV(svbucket->sv, n_a);
+    STRLEN svlen;
+    char *pv = SvPV(svbucket->sv, svlen);
 
     *str = pv + bucket->start;
     *len = bucket->length;
+
+    if (svlen < bucket->start + bucket->length) {
+        /* XXX log error? */
+        return APR_EGENERAL;
+    }
 
     return APR_SUCCESS;
 }
 
 static void modperl_bucket_sv_destroy(void *data)
 {
-    modperl_bucket_sv_t *svbucket = 
-        (modperl_bucket_sv_t *)data;
+    modperl_bucket_sv_t *svbucket = data;
     dTHXa(svbucket->perl);
 
     if (!apr_bucket_shared_destroy(svbucket)) {
@@ -59,7 +62,34 @@ static void modperl_bucket_sv_destroy(void *data)
 
     SvREFCNT_dec(svbucket->sv);
 
-    free(svbucket);
+    apr_bucket_free(svbucket);
+}
+
+static 
+apr_status_t modperl_bucket_sv_setaside(apr_bucket *bucket, apr_pool_t *pool)
+{
+    modperl_bucket_sv_t *svbucket = bucket->data;
+    dTHXa(svbucket->perl);
+    STRLEN svlen;
+    char *pv = SvPV(svbucket->sv, svlen);
+
+    if (svlen < bucket->start + bucket->length) {
+        /* XXX log error? */
+        return APR_EGENERAL;
+    }
+
+    pv = apr_pstrmemdup(pool, pv + bucket->start, bucket->length);
+    if (pv == NULL) {
+        return APR_ENOMEM;
+    }
+
+    bucket = apr_bucket_pool_make(bucket, pv, bucket->length, pool);
+    if (bucket == NULL) {
+        return APR_ENOMEM;
+    }
+
+    modperl_bucket_sv_destroy(svbucket);
+    return APR_SUCCESS;
 }
 
 static const apr_bucket_type_t modperl_bucket_sv_type = {
@@ -69,7 +99,7 @@ static const apr_bucket_type_t modperl_bucket_sv_type = {
 #endif
     modperl_bucket_sv_destroy,
     modperl_bucket_sv_read,
-    apr_bucket_setaside_notimpl,
+    modperl_bucket_sv_setaside,
     apr_bucket_shared_split,
     apr_bucket_shared_copy,
 };
@@ -82,11 +112,11 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
 {
     modperl_bucket_sv_t *svbucket; 
 
-    svbucket = (modperl_bucket_sv_t *)malloc(sizeof(*svbucket));
+    svbucket = apr_bucket_alloc(sizeof(*svbucket), bucket->list);
 
     bucket = apr_bucket_shared_make(bucket, svbucket, offset, len);
     if (!bucket) {
-        free(svbucket);
+        apr_bucket_free(svbucket);
         return NULL;
     }
 
@@ -112,18 +142,17 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
                (unsigned long)svbucket->sv, SvREFCNT(svbucket->sv));
 
     bucket->type = &modperl_bucket_sv_type;
-    bucket->free = free;
-
     return bucket;
 }
 
-apr_bucket *modperl_bucket_sv_create(pTHX_ SV *sv, apr_off_t offset,
-                                     apr_size_t len)
+apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv, 
+                                     apr_off_t offset, apr_size_t len)
 {
     apr_bucket *bucket;
 
-    bucket = (apr_bucket *)malloc(sizeof(*bucket));
+    bucket = apr_bucket_alloc(sizeof(*bucket), list);
     APR_BUCKET_INIT(bucket);
-
+    bucket->list = list;
+    bucket->free = apr_bucket_free;
     return modperl_bucket_sv_make(aTHX_ bucket, sv, offset, len);
 }

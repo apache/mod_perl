@@ -19,12 +19,12 @@ use Apache::Const -compile => 'OK';
 sub handler {
 
     my $r = shift;
-
+    my $ba = $r->connection->bucket_alloc;
     plan $r, tests => 13;
 
     # basic + pool + destroy
     {
-        my $bb = APR::Brigade->new($r->pool, $r->connection->bucket_alloc);
+        my $bb = APR::Brigade->new($r->pool, $ba);
 
         t_debug('$bb is defined');
         ok defined $bb;
@@ -47,13 +47,13 @@ sub handler {
 
     # concat / split / length / flatten
     {
-        my $bb1 = APR::Brigade->new($r->pool, $r->connection->bucket_alloc);
-        $bb1->insert_head(APR::Bucket->new("11"));
-        $bb1->insert_tail(APR::Bucket->new("12"));
+        my $bb1 = APR::Brigade->new($r->pool, $ba);
+        $bb1->insert_head(APR::Bucket->new($ba, "11"));
+        $bb1->insert_tail(APR::Bucket->new($ba, "12"));
 
-        my $bb2 = APR::Brigade->new($r->pool, $r->connection->bucket_alloc);
-        $bb2->insert_head(APR::Bucket->new("21"));
-        $bb2->insert_tail(APR::Bucket->new("22"));
+        my $bb2 = APR::Brigade->new($r->pool, $ba);
+        $bb2->insert_head(APR::Bucket->new($ba, "21"));
+        $bb2->insert_tail(APR::Bucket->new($ba, "22"));
 
         # concat
         $bb1->concat($bb2);

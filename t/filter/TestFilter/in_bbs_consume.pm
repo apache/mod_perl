@@ -48,7 +48,7 @@ sub handler {
 
     if ($seen_eos) {
         # flush the remainder
-        $bb->insert_tail(APR::Bucket->new($buffer));
+        $bb->insert_tail(APR::Bucket->new($ba, $buffer));
         $bb->insert_tail(APR::Bucket::eos_create($ba));
         debug "seen eos, sending: " . length($buffer) . " bytes";
     }

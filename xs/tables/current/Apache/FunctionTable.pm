@@ -7379,6 +7379,20 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
+    'name' => 'apr_bucket_setaside',
+    'args' => [
+      {
+        'type' => 'apr_bucket *',
+        'name' => 'data'
+      },
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'pool'
+      }
+    ]
+  },
+  {
+    'return_type' => 'apr_status_t',
     'name' => 'apr_bucket_setaside_noop',
     'args' => [
       {

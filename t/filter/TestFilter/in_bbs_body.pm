@@ -24,7 +24,7 @@ sub handler : FilterRequestHandler {
 
         if ($b->read(my $data)) {
             #warn"[$data]\n";
-            my $nb = APR::Bucket->new(scalar reverse $data);
+            my $nb = APR::Bucket->new($bb->bucket_alloc, scalar reverse $data);
             $b->insert_before($nb);
             $b->delete;
             $b = $nb;

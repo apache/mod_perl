@@ -14,5 +14,5 @@ my $content = join '', 'AA'..'ZZ', 1..99999;
 my $expected = lc $content;
 my $received = POST_BODY $location, content => $content;
 
-ok $expected eq $received;
+ok t_cmp $received, $expected, 'lc($in) eq $out';
 
