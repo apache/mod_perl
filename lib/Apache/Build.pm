@@ -636,7 +636,12 @@ sub httpd_version {
         return $v;
     }
 
-    open my $fh, "$dir/ap_release.h" or return undef;
+    my $header = "$dir/ap_release.h";
+    open my $fh, $header or do {
+        error "Unable to open $header: $!";
+        return undef;
+    };
+
     my $version;
 
     while(<$fh>) {
