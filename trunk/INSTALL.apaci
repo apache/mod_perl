@@ -68,7 +68,7 @@ was created for the Apache-side of mod_perl. The Apache-side consists of the C
 source files of mod_perl which have to be compiled into the C<httpd> program.
 They are usually copied to the subdirectory C<src/modules/perl/> in the Apache
 source tree. To integrate this subtree into the Apache build process a lot of
-ajustments were done by mod_perl's C<Makefile.PL> in the past. And
+adjustments were done by mod_perl's C<Makefile.PL> in the past. And
 additionally the C<Makefile.PL> controlled the Apache build process. The
 side-effect of this approach was that it is both an not very clean and
 especially captive way. Because it assumed mod_perl is the only third-party
@@ -114,10 +114,14 @@ tree:
  $ make install
  $ cd ..
 
+(The C<APACHE_SRC> set the path to your Apache source tree, the C<DO_HTTPD>
+option forces this path and only this path to be used and the C<USE_APACI>
+option triggers the new hybrid build environment.)
+
 =item B<3. Additionally prepare other third-party modules>
 
 Now you still have a chance to prepare more third-party modules.  For instance
-the PHP3 language can be added similarily to the above mod_perl procedure.
+the PHP3 language can be added similarly to the above mod_perl procedure.
 
 =item B<4. Build the Apache package>
 
@@ -131,6 +135,10 @@ Apache-side of mod_perl and any other prepared third-party modules:
      [...]
  $ make
  $ make install
+
+(The C<--prefix> option is usually always needed and the C<--activate-module>
+option activates mod_perl for the configuration process and thus also for the
+following build process.)
 
 =back
 
@@ -162,7 +170,7 @@ Yeah, right, you follow exactly the above steps but change step number
  $ make install
 
 As you can see only an additional C<--enable-shared=perl> option is needed.
-Anything else is done automatcially: C<mod_so> is automatically enabled, the
+Anything else is done automatically: C<mod_so> is automatically enabled, the
 Makefiles are adjusted automatically and even the C<install> target from APACI
 now additionally installs the C<libperl.so> into the Apache installation tree.
 And even more: The C<LoadModule> and C<AddModule> directives are automatically
@@ -182,5 +190,5 @@ although the hybrid build environment already provides this
 
  Ralf S. Engelschall
  rse@engelschall.com
- www.engelschall.com
+ rse@apache.org
 
