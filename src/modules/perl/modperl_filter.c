@@ -38,21 +38,21 @@
 /* allocate wbucket memory using malloc and not request pools, since
  * we may need many of these if the filter is invoked multiple
  * times */
-#define WBUCKET_INIT(wb, p, next_filter)                   \
-    if (!wb) {                                             \
-        wb = (modperl_wbucket_t *)safemalloc(sizeof(*wb)); \
-        wb->pool    = p;                                   \
-        wb->filters = &next_filter;                        \
-        wb->outcnt  = 0;                                   \
-        wb->r       = NULL;                                \
-        wb->header_parse = 0;                              \
+#define WBUCKET_INIT(filter)                                     \
+    if (!filter->wbucket) {                                      \
+        modperl_wbucket_t *wb =                                  \
+            (modperl_wbucket_t *)apr_pcalloc(filter->temp_pool,  \
+                                             sizeof(*wb));       \
+        wb->pool         = filter->pool;                         \
+        wb->filters      = &(filter->f->next);                   \
+        wb->outcnt       = 0;                                    \
+        wb->r            = NULL;                                 \
+        wb->header_parse = 0;                                    \
+        filter->wbucket  = wb;                                   \
     }
 
 #define FILTER_FREE(filter)        \
-    if (filter->wbucket) {         \
-        safefree(filter->wbucket); \
-    }                              \
-    safefree(filter);
+    apr_pool_destroy(filter->temp_pool);
 
 /* Save the value of $@ if it was set */
 #define MP_FILTER_SAVE_ERRSV(tmpsv)                 \
@@ -306,17 +306,26 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_off_t readbytes)
 {
     apr_pool_t *p = MP_FILTER_POOL(f);
+    apr_pool_t *temp_pool;
     modperl_filter_t *filter;
 
     /* we can't allocate memory from the pool here, since potentially
      * a filter can be called hundreds of times during the same
      * request/connection resulting in enormous memory demands
-     * (sizeof(*filter)*number of invocations)
+     * (sizeof(*filter)*number of invocations). so we use a sub-pool
+     * which will get destroyed at the end of each modperl_filter
+     * invocation.
      */
-    Newz(0, filter, 1, modperl_filter_t);
-
+    apr_status_t rv = apr_pool_create(&temp_pool, p);
+    if (rv != APR_SUCCESS) {
+        /* XXX: how do we handle the error? assert? */
+        return NULL;
+    }
+    filter = (modperl_filter_t *)apr_pcalloc(temp_pool, sizeof(*filter));
+                
     filter->mode = mode;
     filter->f = f;
+    filter->temp_pool = temp_pool;
     filter->pool = p;
     filter->wbucket = NULL;
 
@@ -808,7 +817,7 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
         filter->flush = 0;
     }
 
-    WBUCKET_INIT(filter->wbucket, filter->pool, filter->f->next);
+    WBUCKET_INIT(filter);
     filter->rc = modperl_wbucket_flush(filter->wbucket, add_flush_bucket);
     if (filter->rc != APR_SUCCESS) {
         return filter->rc;
@@ -848,7 +857,8 @@ MP_INLINE apr_status_t modperl_output_filter_write(pTHX_
                                                    const char *buf,
                                                    apr_size_t *len)
 {
-    WBUCKET_INIT(filter->wbucket, filter->pool, filter->f->next);
+    WBUCKET_INIT(filter);
+
     return modperl_wbucket_write(aTHX_ filter->wbucket, buf, len);
 }
 

@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+replace the memory allocation for modperl filter handlers to use a
+temporary subpool of the ap_filter_t object. previously using perl's
+safemalloc had problems on win32 (randonly my_perl == NULL) [Stas]
+
 Apache::Module remove_loaded_module re-added [Gozer]
 
 Disable Apache::HookRun::run_create_request -- it's already run
