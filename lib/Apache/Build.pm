@@ -1195,17 +1195,21 @@ sub otherldflags {
 }
 
 sub typemaps {
-    my $typemaps = [];
+    my $self = shift;
+    my @typemaps = ();
 
-    if (my $file = find_in_inc('typemap')) {
-        push @$typemaps, $file;
+    # XXX: could move here the code from ModPerl::BuildMM
+    return [] if IS_MOD_PERL_BUILD;
+
+    # for post install use
+    for (@INC) {
+        # make sure not to pick mod_perl 1.0 typemap
+        next if $self->{MP_INST_APACHE2} && $_ !~ /Apache2$/;
+        my $file = "$_/auto/Apache/typemap";
+        push @typemaps, $file if -e $file;
     }
 
-    if(IS_MOD_PERL_BUILD) {
-        push @$typemaps, '../Apache/typemap';
-    }
-
-    return $typemaps;
+    return \@typemaps;
 }
 
 sub includes {
