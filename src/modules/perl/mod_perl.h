@@ -128,4 +128,6 @@ typedef void MP_FUNC_T(modperl_table_modify_t) (apr_table_t *,
 /* we need to hook a few internal things before APR_HOOK_REALLY_FIRST */
 #define MODPERL_HOOK_REALLY_REALLY_FIRST (-20)
 
+APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
+
 #endif /*  MOD_PERL_H */

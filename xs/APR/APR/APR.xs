@@ -15,12 +15,6 @@
 
 #include "mod_perl.h"
 
-/* XXX: provide the missing symbol for APR::Pool as a tmp workaround  */
-#ifndef modperl_interp_unselect
-apr_status_t modperl_interp_unselect(void *data);
-apr_status_t modperl_interp_unselect(void *data) { return APR_SUCCESS; }
-#endif
-
 #ifdef MP_HAVE_APR_LIBS
 #   define APR_initialize apr_initialize
 #   define APR_terminate  apr_terminate

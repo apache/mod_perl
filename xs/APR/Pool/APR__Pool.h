@@ -202,6 +202,9 @@ typedef struct {
  * callback wrapper for Perl cleanup subroutines
  * @param data   internal storage
  */
+
+static APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
+
 static apr_status_t mpxs_cleanup_run(void *data)
 {
     int count;
@@ -233,12 +236,12 @@ static apr_status_t mpxs_cleanup_run(void *data)
     }
 
 #ifdef USE_ITHREADS
-    if (cdata->interp) {
+    if (cdata->interp && modperl_opt_interp_unselect) {
         /* this will decrement the interp refcnt until
          * there are no more references, in which case
          * the interpreter will be putback into the mip
          */
-        (void)modperl_interp_unselect(cdata->interp);
+        (void)modperl_opt_interp_unselect(cdata->interp);
     }
 #endif
 
