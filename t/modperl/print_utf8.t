@@ -6,29 +6,20 @@ use Apache::TestRequest;
 use Apache::TestUtil;
 
 # utf encode/decode was added only in 5.8.0
-# currently binmode is only available with perlio
+# XXX: currently binmode is only available with perlio (used on the
+# server side on the tied/perlio STDOUT)
 plan tests => 1, have have_min_perl_version(5.008), have_perl('perlio');
 
-#use bytes;
-#use utf8;
-
 my $location = "/TestModperl__print_utf8";
-
-my $received = GET_BODY_ASSERT $location;
-
-# the external stream already include wide-chars, but perl doesn't
-# know about it
-utf8::decode($received);
-
-binmode(STDOUT, ':utf8');
-
-
 my $expected = "Hello Ayhan \x{263A} perlio rules!";
 
-print "$expected\n";
-print "$received\n";
+my $res = GET $location;
+my $received = $res->content;
 
-#ok $expected eq $received;
+# response body includes wide-chars, but perl doesn't know about it
+utf8::decode($received) if ($res->header('Content-Type')||'') =~ /utf-8/i;
 
-ok t_cmp($expected, $received, 'UTF8 encoding');
+# needed for debugging print out of utf8 strings
+binmode(STDOUT, ':utf8');
+ok t_cmp($expected, $received, 'UTF8 response via tied/perlio STDOUT');
 
