@@ -12,6 +12,8 @@ use Apache::RequestIO ();
 use Apache::Filter ();
 use Apache::FilterRec ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK DECLINED);
 
 # this filter removes the next filter in chain and itself
@@ -91,7 +93,7 @@ sub response {
 
     $r->content_type('text/plain');
     if ($r->method_number == Apache::M_POST) {
-        $r->print("content: " . ModPerl::Test::read_post($r) ."\n");
+        $r->print("content: " . TestCommon::Utils::read_post($r) ."\n");
     }
 
     my $i=1;

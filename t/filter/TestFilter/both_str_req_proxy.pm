@@ -13,6 +13,8 @@ use Apache::Filter ();
 
 use Apache::TestTrace;
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 sub in_filter {
@@ -48,7 +50,7 @@ sub handler {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        $r->print(ModPerl::Test::read_post($r));
+        $r->print(TestCommon::Utils::read_post($r));
     }
 
     return Apache::OK;

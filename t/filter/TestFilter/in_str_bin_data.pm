@@ -12,6 +12,8 @@ use Apache::Filter ();
 
 use Apache::TestTrace;
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 sub pass_through {
@@ -29,7 +31,7 @@ sub handler {
     my $r = shift;
 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         my $length = length $data;
         debug "pass through $length bytes of $data\n";
         $r->print($data);

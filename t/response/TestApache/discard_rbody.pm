@@ -13,6 +13,8 @@ use Apache::Filter ();
 use APR::Brigade ();
 use APR::Error ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
@@ -38,7 +40,7 @@ sub handler {
     }
     elsif ($test eq 'all') {
         # consume all of the request body
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         die "failed to consume all the data" unless length($data) == 100000;
     }
 

@@ -38,6 +38,8 @@ use APR::Table ();
 
 use Apache::TestTrace;
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK DECLINED CONN_KEEPALIVE);
 use APR::Const    -compile => ':common';
 
@@ -237,7 +239,7 @@ sub response {
         $r->headers_out->set($key => $r->headers_in->get($key)||'');
     }
 
-    my $data = ModPerl::Test::read_post($r);
+    my $data = TestCommon::Utils::read_post($r);
     $r->print($data);
 
     Apache::OK;

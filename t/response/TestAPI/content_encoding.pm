@@ -8,6 +8,8 @@ use warnings FATAL => 'all';
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK DECLINED);
 
 sub handler {
@@ -15,7 +17,7 @@ sub handler {
 
     return Apache::DECLINED unless $r->method_number == Apache::M_POST;
 
-    my $data = ModPerl::Test::read_post($r);
+    my $data = TestCommon::Utils::read_post($r);
 
     require Compress::Zlib;
 

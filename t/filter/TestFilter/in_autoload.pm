@@ -30,9 +30,10 @@ sub handler {
 
 __DATA__
 <NoAutoConfig>
+  PerlModule TestCommon::Handlers
   <Location /TestFilter__in_autoload>
       SetHandler modperl
-      PerlResponseHandler    ModPerl::Test::pass_through_response_handler
+      PerlResponseHandler    TestCommon::Handlers::pass_through_response_handler
       # no PerlModule TestFilter::in_load on purpose
       PerlInputFilterHandler TestFilter::in_autoload
   </Location>

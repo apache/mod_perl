@@ -11,10 +11,11 @@ use Apache::RequestIO ();
 
 use base qw(Apache::Filter);
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant READ_SIZE  => 1024;
-
 
 # this filter is expected to be called once
 # it'll set a note, with the count
@@ -61,7 +62,7 @@ sub response {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        $r->print(ModPerl::Test::read_post($r));
+        $r->print(TestCommon::Utils::read_post($r));
     }
 
     my @keys = qw(init run);

@@ -22,6 +22,8 @@ use APR::Bucket ();
 use Apache::Test;
 use Apache::TestUtil;
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
@@ -76,7 +78,7 @@ sub response {
 
     plan $r, tests => 1;
 
-    my $received = ModPerl::Test::read_post($r);
+    my $received = TestCommon::Utils::read_post($r);
 
     ok t_cmp($received, $expected,
              "request filter must have upcased the data");

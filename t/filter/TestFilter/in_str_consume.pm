@@ -60,6 +60,8 @@ use Apache::TestTrace;
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant READ_BYTES_TOTAL => 105;
@@ -122,7 +124,7 @@ sub response {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
 
         # tell Apache to get rid of the rest of the request body
         # if we don't a client will get a broken pipe and may fail to

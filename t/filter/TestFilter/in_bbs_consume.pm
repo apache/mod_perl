@@ -14,6 +14,8 @@ use Apache::Filter ();
 
 use Apache::TestTrace;
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant READ_SIZE => 26;
@@ -87,7 +89,7 @@ sub response {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         $r->print($data);
     }
