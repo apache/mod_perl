@@ -39,7 +39,7 @@ sub MyTest5 {
 
 use Apache::RequestRec ();
 use Apache::RequestIO ();
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Module ();
 use Apache::Test;

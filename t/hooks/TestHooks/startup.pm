@@ -11,7 +11,7 @@ use Apache::Test;
 use Apache::TestTrace;
 
 use APR::Table;
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::RequestRec ();
 use Apache::RequestIO ();

@@ -42,7 +42,7 @@ sub handler {
 
     ok $r->connection->isa('Apache::Connection');
 
-    ok $r->server->isa('Apache::Server');
+    ok $r->server->isa('Apache::ServerRec');
 
     for (qw(next prev main)) {
         ok (! $r->$_()) || $r->$_()->isa('Apache::RequestRec');

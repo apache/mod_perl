@@ -3,7 +3,7 @@ package TestModperl::dir_config;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::RequestUtil ();
 use APR::Table ();
@@ -138,7 +138,7 @@ sub handler {
     {
         # base server test
         my $bs = Apache->server;
-        ok t_cmp('Apache::Server',
+        ok t_cmp('Apache::ServerRec',
                  ($bs && ref($bs)),
                  "base server's object retrieval");
 

@@ -37,7 +37,7 @@ no warnings 'redefine';
 use Apache::RequestRec ();
 use Apache::SubRequest ();
 use Apache::Connection ();
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Access ();
 use Apache::RequestIO ();
@@ -157,10 +157,10 @@ EOI
 
     'Apache::server_root_relative' => <<'EOI',
 {
-    require Apache::Server;
+    require Apache::ServerRec;
     require Apache::ServerUtil;
 
-    my $orig_sub = *Apache::Server::server_root_relative{CODE};
+    my $orig_sub = *Apache::ServerRec::server_root_relative{CODE};
     *Apache::server_root_relative = sub {
         my $class = shift;
         return Apache->server->server_root_relative(@_);

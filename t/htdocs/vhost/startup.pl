@@ -3,7 +3,7 @@ use strict;
 
 use Apache2;
 use Apache::ServerUtil ();
-use Apache::Server ();
+use Apache::ServerRec ();
 
 use File::Spec::Functions qw(catdir);
 

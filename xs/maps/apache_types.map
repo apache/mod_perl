@@ -1,6 +1,6 @@
 ##########  Apache types  ##########
 
-struct server_rec       | Apache::Server
+struct server_rec       | Apache::ServerRec
 struct server_addr_rec  | Apache::ServerAddr
 struct conn_rec         | Apache::Connection
 struct request_rec      | Apache::RequestRec

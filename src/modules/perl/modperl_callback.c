@@ -249,12 +249,12 @@ int modperl_callback_run_handlers(int idx, int type,
                                   "Apache::Pool", pconf,
                                   "Apache::Pool", plog,
                                   "Apache::Pool", ptemp,
-                                  "Apache::Server", s, NULL);
+                                  "Apache::ServerRec", s, NULL);
         break;
       case MP_HANDLER_TYPE_PROCESS:
         modperl_handler_make_args(aTHX_ &av_args,
                                   "Apache::Pool", pconf,
-                                  "Apache::Server", s, NULL);
+                                  "Apache::ServerRec", s, NULL);
         break;
     };
 

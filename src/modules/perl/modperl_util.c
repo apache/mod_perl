@@ -233,7 +233,7 @@ static apr_pool_t *modperl_sv2pool(pTHX_ SV *obj, CV *method)
             }
             break;
           case 'S':
-            if (strEQ(classname, "Server")) {
+            if (strEQ(classname, "ServerRec")) {
                 p = ((server_rec *)ptr)->process->pconf;
             }
             break;
@@ -713,7 +713,7 @@ char *modperl_file2package(apr_pool_t *p, const char *file)
 }
 
 /* this is used across server_root_relative() in the
- * Apache, Apache::Server, Apache::RequestRec, and 
+ * Apache, Apache::ServerRec, Apache::RequestRec, and 
  * Apache::Connection classes
  */
 SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname)

@@ -10,7 +10,7 @@ use Apache2 ();
 # XXX: temp workaround for t/filter/TestFilter/in_error.pm
 use APR::Error;
 
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Process ();
 
@@ -19,7 +19,7 @@ use Apache::Process ();
 # perl core libs
 my $pool = Apache->server->process->pool;
 my $project_root = canonpath
-    Apache::Server::server_root_relative($pool, "..");
+    Apache::ServerRec::server_root_relative($pool, "..");
 my (@a, @b, @c);
 for (@INC) {
     if (m|^\Q$project_root\E|) {
@@ -60,7 +60,7 @@ my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
 my $apr_mods = scalar grep { /^APR/    } keys %INC;
 
 Apache::Log->info("$ap_mods Apache:: modules loaded");
-Apache::Server->log->info("$apr_mods APR:: modules loaded");
+Apache::ServerRec->log->info("$apr_mods APR:: modules loaded");
 
 {
     my $server = Apache->server;

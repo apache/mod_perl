@@ -114,7 +114,7 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
 #define mpxs_Apache__RequestRec_log(sv) \
 mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_REQUEST)
 
-#define mpxs_Apache__Server_log(sv) \
+#define mpxs_Apache__ServerRec_log(sv) \
 mpxs_Apache__Log_log(aTHX_ sv, MP_LOG_SERVER)
 
 static MP_INLINE SV *modperl_perl_do_join(pTHX_ SV **mark, SV **sp)

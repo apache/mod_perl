@@ -5,14 +5,14 @@ use warnings FATAL => 'all';
 use APR::Error;
 
 use ModPerl::RegistryLoader ();
-use Apache::Server ();
+use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Process ();
 
 use DirHandle ();
 
 my $pool = Apache->server->process->pool;
-my $base_dir = Apache::Server::server_root_relative($pool, "cgi-bin");
+my $base_dir = Apache::ServerRec::server_root_relative($pool, "cgi-bin");
 
 # test the scripts pre-loading by explicitly specifying uri => filename
 my $rl = ModPerl::RegistryLoader->new(package => "ModPerl::Registry");
@@ -29,7 +29,7 @@ for my $file (qw(basic.pl env.pl)) {
     sub trans {
         my $uri = shift; 
         $uri =~ s|^/registry_bb/|cgi-bin/|;
-        return Apache::Server::server_root_relative($pool, $uri);
+        return Apache::ServerRec::server_root_relative($pool, $uri);
     }
 
     my $rl = ModPerl::RegistryLoader->new(
