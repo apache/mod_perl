@@ -111,6 +111,12 @@ MP_CMD_SRV_DECLARE_FLAG(send_header)
     return modperl_cmd_options(parms, mconfig, arg);
 }
 
+MP_CMD_SRV_DECLARE_FLAG(setup_env)
+{
+    char *arg = flag_on ? "+SetupEnv" : "-SetupEnv";
+    return modperl_cmd_options(parms, mconfig, arg);
+}
+
 #endif /* MP_COMPAT_1X */
 
 #ifdef USE_ITHREADS
