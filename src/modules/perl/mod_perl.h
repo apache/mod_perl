@@ -26,6 +26,9 @@ extern module MODULE_VAR_EXPORT perl_module;
 #include "modperl_flags.h"
 #include "modperl_hooks.h"
 
+#ifdef MP_USE_GTOP
+#include "modperl_gtop.h"
+#endif
 #include "modperl_types.h"
 #include "modperl_config.h"
 #include "modperl_callback.h"

@@ -44,6 +44,7 @@ struct modperl_interp_t {
 
 struct modperl_interp_pool_t {
     ap_pool_t *ap_pool;
+    server_rec *server;
     perl_mutex mip_lock;
     perl_cond available;
     modperl_interp_pool_config_t *cfg;
@@ -79,6 +80,9 @@ typedef struct {
     modperl_interp_pool_config_t *interp_pool_cfg;
 #else
     PerlInterpreter *perl;
+#endif
+#ifdef MP_USE_GTOP
+    modperl_gtop_t *gtop;
 #endif
     int flags;
 } modperl_srv_config_t;

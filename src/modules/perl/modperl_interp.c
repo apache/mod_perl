@@ -14,13 +14,24 @@ modperl_interp_t *modperl_interp_new(ap_pool_t *p,
     modperl_interp_t *interp = 
         (modperl_interp_t *)ap_pcalloc(p, sizeof(*interp));
     
-    if (mip) {
-        interp->mip = mip;
-    }
+    interp->mip = mip;
 
     if (perl) {
+#ifdef MP_USE_GTOP
+        MP_dSCFG(mip->server);
+        MP_TRACE_m_do(
+            modperl_gtop_do_proc_mem_before(MP_FUNC ": perl_clone");
+        );
+#endif
+
         interp->perl = perl_clone(perl, TRUE);
         MpInterpCLONED_On(interp);
+
+#ifdef MP_USE_GTOP
+        MP_TRACE_m_do(
+            modperl_gtop_do_proc_mem_after(MP_FUNC ": perl_clone");
+        );
+#endif
     }
 
     MP_TRACE_i(MP_FUNC, "0x%lx\n", (unsigned long)interp);
@@ -213,6 +224,7 @@ void modperl_interp_init(server_rec *s, ap_pool_t *p,
     int i;
 
     mip->ap_pool = p;
+    mip->server  = s;
     mip->cfg = scfg->interp_pool_cfg;
     mip->parent = modperl_interp_new(p, mip, NULL);
     aTHX = mip->parent->perl = perl;
