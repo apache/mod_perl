@@ -654,8 +654,8 @@ int modperl_response_handler_cgi(request_rec *r)
     MP_dDCFG;
     GV *h_stdin, *h_stdout;
     int retval;
-#ifdef USE_ITHREADS
     MP_dRCFG;
+#ifdef USE_ITHREADS
     pTHX;
     modperl_interp_t *interp;
 #endif
