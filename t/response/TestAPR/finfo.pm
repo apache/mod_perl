@@ -19,7 +19,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    my $tests = 3 + TestAPRlib::finfo::num_of_tests();
+    my $tests = 2 + TestAPRlib::finfo::num_of_tests();
     plan $r, tests => $tests;
 
     {
@@ -38,12 +38,7 @@ sub handler {
         ok $isa;
     }
 
-    {
-        my $finfo = APR::Finfo::stat(__FILE__, APR::FINFO_NORM, $r->pool);
-        t_debug "\$r->finfo(\$finfo)";
-        $r->finfo($finfo);
-        ok $r->finfo->fname;
-    }
+    # a test assigning to $r->finfo is in TestAPI::request_rec
 
     TestAPRlib::finfo::test();
 
