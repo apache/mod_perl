@@ -962,8 +962,8 @@ void PERL_CHILD_EXIT_HOOK(server_rec *s, pool *p)
 
 static int do_proxy (request_rec *r)
 {
-    return 
-	!(r->parsed_uri.scheme && r->parsed_uri.hostname
+    return r->parsed_uri.scheme &&
+	!(r->parsed_uri.hostname
 	  && strEQ(r->parsed_uri.scheme, ap_http_method(r))
 	  && ap_matches_request_vhost(r, r->parsed_uri.hostname,
 				      r->parsed_uri.port_str ? 
