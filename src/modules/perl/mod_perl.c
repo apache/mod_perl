@@ -745,10 +745,12 @@ apr_status_t modperl_response_finish(request_rec *r)
     return modperl_wbucket_flush(rcfg->wbucket);
 }
 
-static int modperl_response_handler_run(request_rec *r, int finish)
+static int modperl_response_handler_run(pTHX_ request_rec *r, int finish)
 {
     int retval;
 
+    IoFLUSH_off(PL_defoutgv); /* $|=0 */
+    
     modperl_response_init(r);
 
     retval = modperl_callback_per_dir(MP_RESPONSE_HANDLER, r);
@@ -769,11 +771,16 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 
 int modperl_response_handler(request_rec *r)
 {
+    dTHX;
+
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
+    
+    /* XXX: modperl_response_handler should select perl interpreter
+     * just like modperl_response_handler_cgi does */
 
-    return modperl_response_handler_run(r, TRUE);
+    return modperl_response_handler_run(aTHX_ r, TRUE);
 }
 
 int modperl_response_handler_cgi(request_rec *r)
@@ -816,7 +823,7 @@ int modperl_response_handler_cgi(request_rec *r)
 
     modperl_env_request_tie(aTHX_ r);
 
-    retval = modperl_response_handler_run(r, FALSE);
+    retval = modperl_response_handler_run(aTHX_ r, FALSE);
 
     modperl_io_handle_untie(aTHX_ h_stdout);
     modperl_io_handle_untie(aTHX_ h_stdin);
