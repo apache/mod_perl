@@ -22,7 +22,7 @@ g- src/docs/2.0/api/Apache/CmdParms.pod
 g- src/docs/2.0/api/Apache/Command.pod
 -- src/docs/2.0/api/Apache/Connection.pod
 +- src/docs/2.0/api/Apache/Const.pod
-g- src/docs/2.0/api/Apache/Directive.pod
+V- src/docs/2.0/api/Apache/Directive.pod
 VP src/docs/2.0/api/Apache/Filter.pod
         The whole TIE interface   
 VV src/docs/2.0/api/Apache/FilterRec.pod
