@@ -94,29 +94,30 @@ close CONF;
 # start ourselves a server to pound on
 #
 
+my $HttpdObj;
 Win32::Process::Create($HttpdObj,
                        $fullapache,
-                       "$apache -X -d $pwd/t",
+                       "$apache -X -d $pwd/t -f $pwd/t/conf/httpd.conf",
                        0,
                        NORMAL_PRIORITY_CLASS,
                        ".") || die ErrorReport();
 
-print "httpd listening on port $port\n";
-print "will write error_log to: t/logs/mod_perl_error_log\n";
-print "letting apache warm up...\n";
+print << "END";
+httpd listening on port $port
+will write error_log to: t/logs/mod_perl_error_log
+letting apache warm up...
+END
+
 sleep 2;
 print "done\n";
 
 #
 # Ok, start pounding
 #
-
 system "$fullperl t/TEST @ARGV";
 
-#
 # stop server again
-#
-$HttpdObj->Kill(-1);
+$HttpdObj->Kill(0);
 
 #
 # remove traces
@@ -126,6 +127,8 @@ print "letting apache cool down...\n";
 sleep 2;
 find(\&cleanup, '/tmp/');
 sub cleanup {/^(mod_perl|CGItemp)/ && unlink($_)}
+unlink $bak;
+unlink "$pwd/t/logs/mod_perl_httpd.pid";
 
 sub find_apache {
   my $apache;
