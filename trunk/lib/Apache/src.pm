@@ -258,7 +258,12 @@ sub otherldflags {
 	    push @ldflags, "-bI:" . $file;
 	}
 	my $httpdexp = $self->apxs("-q" => 'LIBEXECDIR') . "/httpd.exp";
-	push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
+	if (-e $httpdexp) {
+		push @ldflags, "-bI:$httpdexp";
+	} else {
+		$httpdexp = $self->dir . "/support/httpd.exp";
+		push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
+	}
     }
     return join(' ', @ldflags);
 }
