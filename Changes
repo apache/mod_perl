@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+@INC shrinking efforts: [Stas]
+1) when adding $ServerRoot don't add the trailing / (as it ends up
+twice when added by A-T w/o trailing /)
+2) add $ServerRoot/lib/perl only if it actually exists
+
 For static builds, we now run 'make clean' in httpd's source
 tree before running ./configure if the source tree has been
 configured before [Gozer]
