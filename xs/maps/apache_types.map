@@ -23,7 +23,12 @@ struct ap_directive_t   | Apache::Directive
 struct ap_conf_vector_t | Apache::ConfVector
 
 #system-ish stuff
+ap_mgmt_type_e          | IV
+ap_mgmt_value           | UNDEFINED
 ap_scoreboard_e         | IV
+struct process_score    | Apache::ScoreboardProcess
+struct worker_score     | Apache::ScoreboardWorker
+struct ap_pod_t         | Apache::POD
 ap_unix_identity_t      | UNDEFINED
 
 #filters

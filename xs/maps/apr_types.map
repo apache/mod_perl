@@ -2,6 +2,8 @@
 
 struct apr_xlate_t      | UNDEFINED
 struct apr_pool_t       | APR::Pool
+struct apr_sms_t        | UNDEFINED
+apr_abortfunc_t         | UNDEFINED
 
 #socket stuff
 struct apr_sockaddr_t   | APR::SockAddr
@@ -29,6 +31,7 @@ apr_bucket_pool             | UNDEFINED
 apr_bucket_heap             | UNDEFINED
 apr_bucket_mmap             | UNDEFINED
 apr_bucket_refcount         | UNDEFINED
+apr_bucket_list             | UNDEFINED
 #apr_bucket_simple           | UNDEFINED
 #apr_bucket_shared           | UNDEFINED
 
@@ -40,6 +43,7 @@ struct apr_uuid_t       | APR::UUID
 
 #crypto stuff
 struct apr_md5_ctx_t    | APR::MD5
+struct apr_md4_ctx_t    | APR::MD4
 struct apr_sha1_ctx_t   | APR::SHA1
 
 #getopt
@@ -49,6 +53,7 @@ struct apr_getopt_option_t    | APR::GetoptOption
 #dso
 struct apr_dso_handle_t       | UNDEFINED
 struct apr_dso_handle_sym_t   | UNDEFINED
+struct apr_os_dso_handle_t    | UNDEFINED
 
 #file stuff
 struct apr_file_t        | UNDEFINED
@@ -89,6 +94,8 @@ apr_os_lock_t        | NOTIMPL
 struct apr_lock_t    | APR::Lock
 apr_locktype_e       | IV
 apr_lockscope_e      | IV
+apr_readerwriter_e   | IV
+apr_lockmech_e_np    | IV
 
 #thread stuff
 struct apr_threadkey_t       | UNDEFINED
@@ -97,6 +104,8 @@ struct apr_os_thread_t       | UNDEFINED
 struct apr_thread_t          | UNDEFINED
 apr_thread_start_t           | UNDEFINED
 struct apr_threadattr_t      | UNDEFINED
+struct apr_thread_mutex_t    | UNDEFINED
+struct apr_thread_once_t     | UNDEFINED
 
 #signal stuff
 apr_signum_t                 | UNDEFINED
@@ -141,3 +150,5 @@ apr_vformatter_buff_t  | NOTIMPL
 #dbm stuff
 apr_datum_t            | NOTIMPL #sdbm
 struct apr_dbm_t       | NOTIMPL #sdbm
+struct apr_sdbm_t      | NOTIMPL
+struct apr_sdbm_datum_t| NOTIMPL
