@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-static MP_INLINE apr_os_thread_t mpxs_apr_os_thread_current(pTHX)
+static MP_INLINE U32 mpxs_APR__OS_current_thread_id(pTHX)
 {
 #if APR_HAS_THREADS
     return apr_os_thread_current();
