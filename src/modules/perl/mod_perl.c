@@ -255,6 +255,8 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
         MP_dSCFG(s);
         PerlInterpreter *perl = base_perl;
 
+        PERL_SET_CONTEXT(perl);
+
         MP_TRACE_d_do(MpSrv_dump_flags(scfg, s->server_hostname));
 
         /* if alloc flags is On, virtual host gets its own parent perl */
