@@ -148,7 +148,7 @@ sub ModPerl::Test::read_post {
 
         warn "read_post: bb $count\n" if $debug;
 
-        while (!$bb->empty) {
+        while (!$bb->is_empty) {
             my $b = $bb->first;
 
             $b->remove;
@@ -251,7 +251,7 @@ sub snoop {
         my $rv = $filter->next->pass_brigade($bb);
         return $rv unless $rv == APR::SUCCESS;
     }
-    #if ($bb->empty) {
+    #if ($bb->is_empty) {
     #    return -1;
     #}
 

@@ -12,13 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
-rename APR::NetLib -> APR::IpSubnet to match the class name [Stas]
+rename package APR::NetLib -> APR::IpSubnet to match the class name
+[Stas]
 
 APR::BucketType: [Stas]
   - name is readonly
 
 APR::Brigade [Stas]
   - destroy() now throws APR::Error exception (not returning rc)
+  - rename empty => is_empty
 
 APR::Bucket: [Stas]
   - read() now returns read data and throws APR::Error exception (not
