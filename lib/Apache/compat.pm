@@ -57,29 +57,68 @@ my %overridable_mp2_api = (
     'Apache::RequestRec::notes' => <<'EOI',
 {
     require Apache::RequestRec;
-    my $notes_sub = *Apache::RequestRec::notes{CODE};
+    my $orig_sub = *Apache::RequestRec::notes{CODE};
     *Apache::RequestRec::notes = sub {
         my $r = shift;
         return wantarray()
-            ?       ($r->table_get_set(scalar($r->$notes_sub), @_))
-            : scalar($r->table_get_set(scalar($r->$notes_sub), @_));
+            ?       ($r->table_get_set(scalar($r->$orig_sub), @_))
+            : scalar($r->table_get_set(scalar($r->$orig_sub), @_));
     };
-    $notes_sub;
+    $orig_sub;
 }
 EOI
 
     'Apache::RequestRec::finfo' => <<'EOI',
 {
     require APR::Finfo;
-    my $finfo_sub = *APR::Finfo::finfo{CODE};
+    my $orig_sub = *APR::Finfo::finfo{CODE};
     sub Apache::RequestRec::finfo {
         my $r = shift;
         stat $r->filename;
         \*_;
     }
-    $finfo_sub;
+    $orig_sub;
 }
 EOI
+
+    'Apache::Connection::local_addr' => <<'EOI',
+{
+    require Apache::Connection;
+    require Socket;
+    require APR::SockAddr;
+    my $orig_sub = *Apache::Connection::local_addr{CODE};
+    *Apache::Connection::local_addr = sub {
+        my $c = shift;
+        Socket::pack_sockaddr_in($c->$orig_sub->port,
+                                 Socket::inet_aton($c->$orig_sub->ip_get));
+    };
+    $orig_sub;
+}
+EOI
+
+    'Apache::Connection::remote_addr' => <<'EOI',
+{
+    require Apache::Connection;
+    require APR::SockAddr;
+    require Socket;
+    my $orig_sub = *Apache::Connection::remote_addr{CODE};
+    *Apache::Connection::remote_addr = sub {
+        my $c = shift;
+        if (@_) {
+            my $addr_in = shift;
+            my($port, $addr) = Socket::unpack_sockaddr_in($addr_in);
+            $c->$orig_sub->ip_set($addr);
+            $c->$orig_sub->port_set($port);
+        }
+        else {
+            Socket::pack_sockaddr_in($c->$orig_sub->port,
+                                     Socket::inet_aton($c->$orig_sub->ip_get));
+        }
+    };
+    $orig_sub;
+}
+EOI
+
 );
 
 my %overridden_mp2_api = ();
