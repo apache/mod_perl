@@ -73,7 +73,15 @@ const char *modperl_options_set(apr_pool_t *p, modperl_options_t *o,
 
         return error;
     }
-    
+#ifndef USE_ITHREADS
+    else {
+        if (MpSrvOPT_ITHREAD_ONLY(o)) {
+            return apr_pstrcat(p, "PerlOption `", str,
+                               "' requires an ithreads enabled Perl", NULL);
+        }
+    }
+#endif
+
     if (action == '-') {
         o->opts_remove |= opt;
         o->opts_add &= ~opt;
