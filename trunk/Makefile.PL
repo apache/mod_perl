@@ -628,6 +628,7 @@ unless($Is_Win32 or -e "t/conf/httpd.conf") {
     }
 
     {
+	my $mmn = magic_number($APACHE_SRC) unless $NO_HTTPD;
 	my $hf = FileHandle->new(">>t/net/config.pl") or 
 	    die "can't open t/net/config.pl";
 	my($k,$v);
@@ -635,6 +636,7 @@ unless($Is_Win32 or -e "t/conf/httpd.conf") {
 	while(($k,$v) = each %callback_hooks) {
 	    print $hf "   $k => $v,\n";
 	}
+        print $hf "   MMN => $mmn,\n";
 	print $hf ");\n1;\n";
 	$hf->close;
     }
