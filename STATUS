@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/10/13 00:37:05 $]
+   Last modified at [$Date: 2002/10/21 20:22:41 $]
 
 Release:
 --------
@@ -113,6 +113,17 @@ Open Issues or Core Enhancements:
   thread: http://mathforum.org/epigone/modperl-dev/staiblirroo
   Status: +1: Stas, Doug
           needs to be implemented
+
+----
+
+* Apache::PerlSections missing features for backwards compatibility:
+ - $Apache::Server::SaveConfig
+ - $Apache::ReadConfig::DocumentRoot
+ - $Apache::Server::StrictPerlSections
+ - Apache::PerlSections->store(filename)
+
+  Report: Philippe M. Chiasson <gozer@cpan.org>
+  Status: Philippe M. Chiasson <gozer@cpan.org> working on it
 
 ----
 
