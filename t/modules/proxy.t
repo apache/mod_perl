@@ -10,8 +10,8 @@ my $url    = Apache::TestRequest::module2url($module);
 
 t_debug("connecting to $url");
 
-plan tests => 1, (need_module('proxy') &&
-                  need_access);
+plan tests => 1, need need_module(qw(proxy proxy_http.c)),
+    need_access;
 
 my $expected = "ok";
 my $received = GET_BODY_ASSERT $url;
