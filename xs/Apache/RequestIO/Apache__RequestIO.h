@@ -308,7 +308,7 @@ int mpxs_Apache__RequestRec_FILENO(pTHX_ request_rec *r)
 }
 
 static MP_INLINE
-apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
+apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
                                               const char *filename,
                                               apr_off_t offset,
                                               apr_size_t len)
@@ -330,6 +330,22 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(request_rec *r,
         len = finfo.size;
     }
 
+    /* flush any buffered modperl output */
+    {
+        modperl_config_req_t *rcfg = modperl_config_req_get(r);
+        
+        MP_CHECK_WBUCKET_INIT("$r->rflush");
+        if (rcfg->wbucket->outcnt) {
+            MP_TRACE_o(MP_FUNC, "flushing %d bytes [%s]",
+                       rcfg->wbucket->outcnt,
+                       apr_pstrmemdup(rcfg->wbucket->pool,
+                                      rcfg->wbucket->outbuf,
+                                      rcfg->wbucket->outcnt));
+            MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE),
+                         "Apache::RequestIO::sendfile");
+        }
+    }
+    
     status = ap_send_fd(fp, r, offset, len, &nbytes);
 
     /* apr_file_close(fp); */ /* do not do this */
