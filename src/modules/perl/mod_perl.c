@@ -348,8 +348,11 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         base_server = modperl_global_get_server_rec();
     }
 
+    MP_TRACE_i(MP_FUNC, "Init vhost %s: s=0x%lx, base_s=0x%lx\n",
+               vhost, s, base_server);
+    
     if (base_server == s) {
-        MP_TRACE_i(MP_FUNC, "skipping vhost init for base server %s\n",
+        MP_TRACE_i(MP_FUNC, "base server is not vhost, skipping %s\n",
                    vhost);
         return OK;
     }
