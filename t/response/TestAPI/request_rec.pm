@@ -1,5 +1,8 @@
 package TestAPI::request_rec;
 
+use strict;
+use warnings FATAL => 'all';
+
 use Apache::Test;
 
 sub handler {
