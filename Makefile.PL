@@ -80,9 +80,7 @@ ModPerl::MM::WriteMakefile(
         MODPERL_LIBMAKE    => '$(MAKE) -f $(MODPERL_MAKEFILE)',
         PERL               => $build->perl_config('perlpath'),
         MOD_INSTALL        => ModPerl::MM::mod_install(),
-        APACHE_PREFIX      => $build->apxs('-q' => 'prefix'),
-        APACHE_LIBDIR      => $build->apxs('-q' => 'libexecdir'),
-        APACHE_INCLUDEDIR  => $build->apxs('-q' => 'includedir'),
+        MODPERL_AP_INCLUDEDIR  => $build->apxs('-q' => 'includedir'),
         MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
     clean => {
@@ -428,8 +426,8 @@ modperl_lib_install:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) install
 
 modperl_xs_h_install:
-	@$(MKPATH) $(APACHE_INCLUDEDIR)
-	$(CP) $(MODPERL_XS_H_FILES) $(APACHE_INCLUDEDIR)
+	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
+	$(CP) $(MODPERL_XS_H_FILES) $(MODPERL_AP_INCLUDEDIR)
 
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
