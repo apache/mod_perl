@@ -1,3 +1,5 @@
+#!perl -T
+
 use strict;
 use warnings FATAL => 'all';
 use Apache::Test;

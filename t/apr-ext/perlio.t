@@ -1,13 +1,11 @@
+#!perl -T
+
 use strict;
 use warnings FATAL => 'all';
 
 # XXX: this is pretty much the same test as
 # t/response/TestAPR/perlio.pm, but used outside mod_perl
-# consider
-# avoiding the code duplication.
-
-use blib;
-use Apache2;
+# consider avoiding the code duplication.
 
 use Apache::Test;
 use Apache::TestUtil;
