@@ -45,24 +45,24 @@ sub handler {
 
     # parse_http
     for my $date_str (@http_dates) {
-        ok t_cmp($date_msec, 
-                 APR::Date::parse_http($date_str),
-                "parse_http: $date_str");
+        ok t_cmp(APR::Date::parse_http($date_str),
+                 $date_msec, 
+                 "parse_http: $date_str");
         #t_debug "testing : parse_http: $date_str";
     }
 
     # parse_rfc
     for my $date_str (@rfc_dates) {
-        ok t_cmp($date_msec, 
-                 APR::Date::parse_rfc($date_str),
+        ok t_cmp(APR::Date::parse_rfc($date_str),
+                 $date_msec, 
                  "parse_rfc: $date_str");
         #t_debug "testing : parse_rfc: $date_str";
     }
 
     # parse_rfc (bogus formats)
     for my $date_str (@bogus_dates) {
-        ok t_cmp($bogus_date_msec,
-                 APR::Date::parse_rfc($date_str),
+        ok t_cmp(APR::Date::parse_rfc($date_str),
+                 $bogus_date_msec,
                  "parse_rfc: $date_str");
         #t_debug "testing : parse_rfc: $date_str";
     }

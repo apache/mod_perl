@@ -25,7 +25,7 @@ sub handler {
 
     ok $ip;
 
-    ok t_cmp($ip, $c->remote_addr->ip_get,
+    ok t_cmp($c->remote_addr->ip_get, $ip,
              "remote_ip eq remote_addr->ip_get");
 
     {

@@ -13,7 +13,7 @@ use APR::Const qw(:hook);
 plan tests => 5;
 
 ok ! defined &POLLIN;
-ok t_cmp (0, APR::SUCCESS, 'APR::SUCCESS');
-ok t_cmp (0x001, APR::POLLIN, 'APR::POLLIN');
-ok t_cmp (20, HOOK_LAST, 'HOOK_LAST');
-ok t_cmp (127, APR::UNKFILE, 'APR::UNKFILE');
+ok t_cmp (APR::SUCCESS, 0, 'APR::SUCCESS');
+ok t_cmp (APR::POLLIN, 0x001, 'APR::POLLIN');
+ok t_cmp (HOOK_LAST, 20, 'HOOK_LAST');
+ok t_cmp (APR::UNKFILE, 127, 'APR::UNKFILE');

@@ -32,8 +32,8 @@ sub handler {
     }
 
     # ok, that's 10 buckets of 20,000 = 200,000 characters
-    ok t_cmp(200000,
-             $bb->length,
+    ok t_cmp($bb->length,
+             200000,
              'APR::Brigade::length()');
 
     # syntax: require a $bb
@@ -48,7 +48,7 @@ sub handler {
     {
         my $len = $bb->flatten(my $data);
 
-        verify(200000, $len, $data, 1);
+        verify($len, 200000, $data, 1);
     }
 
     # flatten(0) returns 0 bytes
@@ -58,7 +58,7 @@ sub handler {
         t_debug('$bb->flatten(0) returns a defined value');
         ok (defined $data);
 
-        verify(0, $len, $data, 0);
+        verify($len, 0, $data, 0);
     }
 
 
@@ -67,19 +67,19 @@ sub handler {
     {
         # small
         my $len = $bb->flatten(my $data, 30);
-        verify(30, $len, $data, 1);
+        verify($len, 30, $data, 1);
     }
 
     {
         # large
         my $len = $bb->flatten(my $data, 190000);
-        verify(190000, $len, $data, 1);
+        verify($len, 190000, $data, 1);
     }
 
     {
         # more than enough
         my $len = $bb->flatten(my $data, 300000);
-        verify(200000, $len, $data, 1);
+        verify($len, 200000, $data, 1);
     }
 
     # fetch from a brigade with no data in it
@@ -89,20 +89,20 @@ sub handler {
         t_debug('empty brigade returns a defined value');
         ok (defined $data);
 
-        verify(0, $len, $data, 0);
+        verify($len, 0, $data, 0);
     }
 
     Apache::OK;
 }
 
 sub verify {
-    my($expected_len, $len, $data, $check_content) = @_;
+    my($len, $expected_len, $data, $check_content) = @_;
 
-    ok t_cmp($expected_len,
-             $len,
-             "\$bb->flatten(\$data, $len) returned $len bytes");
     ok t_cmp($len,
-             length($data),
+             $expected_len,
+             "\$bb->flatten(\$data, $len) returned $len bytes");
+    ok t_cmp(length($data),
+             $len,
              "\$bb->flatten(\$data, $len) returned all expected data");
 
     if ($check_content) {

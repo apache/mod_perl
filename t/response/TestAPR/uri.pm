@@ -61,10 +61,10 @@ sub handler {
 
     for my $method (keys %url) {
         no strict 'refs';
-        ok t_cmp($url{$method}[0], $parsed->$method, $method);
+        ok t_cmp($parsed->$method, $url{$method}[0], $method);
     }
 
-    ok t_cmp($hostinfo0, $parsed->hostinfo, "hostinfo");
+    ok t_cmp($parsed->hostinfo, $hostinfo0, "hostinfo");
 
     for my $method (keys %url) {
         no strict 'refs';
@@ -80,14 +80,14 @@ sub handler {
     # record, and it's populated when parse is called, but when
     # individual fields used to compose it are updated, it doesn't get
     # updated: so we see the old value here
-    ok t_cmp($hostinfo0, $parsed->hostinfo, "hostinfo");
+    ok t_cmp($parsed->hostinfo, $hostinfo0, "hostinfo");
 
     # - since 21 is the default port for ftp, unparse omits it
     # - if no flags are passed to unparse, APR::URI_UNP_OMITPASSWORD
     #   is passed by default -- it hides the password
     my $url1 = sprintf "%s://%s\@%s%s",
         map { $url{$_}[1] } grep !/^(password|port)$/, @keys_urls;
-    ok t_cmp($url1, $url_unparsed, "unparsed url");
+    ok t_cmp($url_unparsed, $url1, "unparsed url");
 
     # various unparse flags #
     {
@@ -104,7 +104,7 @@ sub handler {
             my $url_unparsed = $parsed->unparse(APR::URI_UNP_OMITSITEPART);
             my $url2 = sprintf "%s?%s#%s",
                 map { $url{$_}[1] } qw(path query fragment);
-            ok t_cmp($url2, $url_unparsed, "unparsed url: omit site");
+            ok t_cmp($url_unparsed, $url2, "unparsed url: omit site");
         }
 
         # this time the password should appear as XXXXXXXX
@@ -113,7 +113,7 @@ sub handler {
             my $url_unparsed = $parsed->unparse(0);
             my $url2 = sprintf "%s://%s:%s\@%s%s?%s#%s",
                 map { $url{$_}[1] } grep !/^port$/, @keys_urls;
-            ok t_cmp($url2, $url_unparsed, "unparsed url:reveal passwd");
+            ok t_cmp($url_unparsed, $url2, "unparsed url:reveal passwd");
         }
 
         # this time the user and the password should appear
@@ -121,7 +121,7 @@ sub handler {
             my $url_unparsed = $parsed->unparse(APR::URI_UNP_REVEALPASSWORD);
             my $url2 = sprintf "%s://%s:%s\@%s%s?%s#%s",
                 map { $url{$_}[1] } grep !/^port$/, @keys_urls;
-            ok t_cmp($url2, $url_unparsed, "unparsed url:reveal passwd");
+            ok t_cmp($url_unparsed, $url2, "unparsed url:reveal passwd");
         }
 
         # omit the user part / show password
@@ -130,7 +130,7 @@ sub handler {
                 APR::URI_UNP_OMITUSER|APR::URI_UNP_REVEALPASSWORD);
             my $url2 = sprintf "%s://:%s\@%s%s?%s#%s",
                 map { $url{$_}[1] } grep !/^(port|user)$/, @keys_urls;
-            ok t_cmp($url2, $url_unparsed, "unparsed url:  omit user");
+            ok t_cmp($url_unparsed, $url2, "unparsed url:  omit user");
         }
 
         # omit the path, query and fragment strings
@@ -139,7 +139,7 @@ sub handler {
                 APR::URI_UNP_OMITPATHINFO|APR::URI_UNP_REVEALPASSWORD);
             my $url2 = sprintf "%s://%s:%s\@%s", map { $url{$_}[1] }
                 grep !/^(port|path|query|fragment)$/, @keys_urls;
-            ok t_cmp($url2, $url_unparsed, "unparsed url: omit path");
+            ok t_cmp($url_unparsed, $url2, "unparsed url: omit path");
         }
 
         # omit the query and fragment strings
@@ -148,14 +148,14 @@ sub handler {
                 APR::URI_UNP_OMITQUERY|APR::URI_UNP_OMITPASSWORD);
             my $url2 = sprintf "%s://%s\@%s%s", map { $url{$_}[1] }
                 grep !/^(password|port|query|fragment)$/, @keys_urls;
-            ok t_cmp($url2, $url_unparsed, "unparsed url: omit query");
+            ok t_cmp($url_unparsed, $url2, "unparsed url: omit query");
         }
     }
 
     ### port_of_scheme ###
     while (my($scheme, $port) = each %default_ports) {
         my $apr_port = APR::URI::port_of_scheme($scheme);
-        ok t_cmp($port, $apr_port, "scheme: $scheme");
+        ok t_cmp($apr_port, $port, "scheme: $scheme");
     }
 
     Apache::OK;

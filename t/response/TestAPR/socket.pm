@@ -34,11 +34,11 @@ sub handler {
 
     my $new_val = 30_000_000; # 30 secs
     $socket->timeout_set($new_val);
-    ok t_cmp($new_val, $socket->timeout_get(), "timeout_get()");
+    ok t_cmp($socket->timeout_get(), $new_val, "timeout_get()");
 
     # reset the timeout
     $socket->timeout_set($orig_val);
-    ok t_cmp($orig_val, $socket->timeout_get(), "timeout_get()");
+    ok t_cmp($socket->timeout_get(), $orig_val, "timeout_get()");
 
     Apache::OK;
 }
