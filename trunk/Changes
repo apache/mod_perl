@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+support version parsing of 1.3.13-dev's httpd.h
+
 fix for 'sub handler : method {}' support when method is not found
 [Eric Cholet <cholet@logilune.com>]
 
