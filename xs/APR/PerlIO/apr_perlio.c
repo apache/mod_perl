@@ -158,12 +158,11 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
     }
     else if (rc != APR_SUCCESS) {
 #ifdef PERLIO_APR_DEBUG
-        char errbuf[120];
         /* XXX: need to figure way to map APR errno to normal errno,
          * so we can use SETERRNO to make the apr errors available to
          * Perl's $!  */
         Perl_croak(aTHX_ "failed to read from file: %s",
-                   apr_strerror(rc, errbuf, sizeof errbuf));
+                   modperl_apr_strerror(rc));
 #endif
         PerlIOBase(f)->flags |= PERLIO_F_ERROR;
         return -1;
