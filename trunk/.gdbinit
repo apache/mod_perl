@@ -2,8 +2,15 @@
 #some don't quite work, like dump_hv and hv_fetch, 
 #where's the bloody manpage for .gdbinit syntax?
 
-define httpd
+define thttpd
    run -X -d `pwd`/t
+   set $sv = perl_eval_pv("$Apache::ErrLog = '/tmp/mod_perl_error_log'",1)
+end
+
+define httpd
+   run -X -d `pwd`
+   set $sv = perl_eval_pv("$Apache::ErrLog = Apache->server_root_relative('logs/error_log')", 1)
+   #printf "error_log = %s\n", ((XPV*) ($sv)->sv_any )->xpv_pv
 end
 
 define STpvx
@@ -136,4 +143,34 @@ define hvINCval
    set $klen = strlen($arg0)
    set $sv = *Perl_hv_fetch($hv, $arg0, $klen, 0)
    printf "%s = `%s'\n", $arg0, ((XPV*) ($sv)->sv_any )->xpv_pv
+end
+
+define dump_any
+   set $sv = Perl_newSVpv("use Data::Dumper; Dumper \\",0)
+   set $void = Perl_sv_catpv($sv, $arg0)
+   set $dump = perl_eval_pv(((XPV*) ($sv)->sv_any )->xpv_pv, 1)
+   printf "%s = `%s'\n", $arg0, ((XPV*) ($dump)->sv_any )->xpv_pv
+end
+
+define dump_any_rv
+   set $rv = Perl_newRV((SV*)$arg0)
+   set $rvpv = perl_get_sv("main::DumpAnyRv", 1)
+   set $void = Perl_sv_setsv($rvpv, $rv)
+   set $sv = perl_eval_pv("use Data::Dumper; Dumper $::DumpAnyRv",1)
+   printf "`%s'\n", ((XPV*) ($sv)->sv_any )->xpv_pv
+end
+
+define sv_peek
+   set $pv = Perl_sv_peek((SV*)$arg0)
+   printf "%s\n", $pv
+end
+
+define caller
+   set $sv = perl_eval_pv("scalar caller", 1)
+   printf "caller = %s\n", ((XPV*) ($sv)->sv_any )->xpv_pv
+end
+
+define cluck
+   set $sv = perl_eval_pv("Carp::cluck(); `tail '$Apache::ErrLog'`", 1)
+   printf "%s\n", ((XPV*) ($sv)->sv_any )->xpv_pv
 end
