@@ -45,10 +45,6 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         }
     }
 
-    if (MpHandlerMETHOD(handler)) {
-        flags |= G_METHOD;
-    }
-
     count = call_sv((SV*)cv, flags);
 
     SPAGAIN;
