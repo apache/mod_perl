@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+Apache::Build now tries to use the new APR_BINDIR query string to find
+the location of apr-config. [Stas]
+
 new package Apache::porting to make it easier to port mp1 code to mp2
 [Stas]
 
