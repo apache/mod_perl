@@ -571,6 +571,18 @@ int perl_load_startup_script(server_rec *s, pool *p, char *script, I32 my_warn)
     return perl_eval_ok(s);
 } 
 
+void mp_magic_setenv(char *key, char *val, int is_tainted)
+{
+    int klen = strlen(key);
+    SV **ptr = hv_fetch(GvHV(envgv), key, klen, TRUE);
+    if (ptr) {
+	SvSetMagicSV(*ptr, newSVpv(val,0));
+	if (is_tainted) {
+	    SvTAINTED_on(*ptr);
+	}
+    }
+}
+
 array_header *perl_cgi_env_init(request_rec *r)
 {
     table *envtab = r->subprocess_env; 
