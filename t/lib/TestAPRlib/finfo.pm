@@ -10,7 +10,7 @@ use Apache::TestConfig;
 use constant WIN32 => Apache::TestConfig::WIN32;
 use constant OSX   => Apache::TestConfig::OSX;
 
-use constant APACHE_2_0_49 => have_apache_version('2.0.49');
+use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
 
 use File::Spec::Functions qw(catfile);
 use Fcntl qw(:mode);
@@ -92,7 +92,7 @@ sub test {
     # tests for stuff not in perl's stat
     {
         # BACK_COMPAT_MARKER - fixed as of 2.0.49.
-        if (WIN32 && !APACHE_2_0_49) {
+        if (WIN32 && !APACHE_2_0_49_PLUS) {
             skip "finfo.fname requires Apache 2.0.49 or later", 0;
         }
         else {
