@@ -52,7 +52,8 @@ MP_INLINE GV *modperl_io_tie_stdout(pTHX_ request_rec *r)
 
     IoFLUSH_off(PL_defoutgv); /* $|=0 */
 
-    MP_TRACE_g(MP_FUNC, "tie *STDOUT => Apache::RequestRec\n");
+    MP_TRACE_g(MP_FUNC, "tie *STDOUT(0x%lx) => Apache::RequestRec\n",
+               (unsigned long)handle);
 
     TIEHANDLE(handle, r);
 
@@ -73,7 +74,8 @@ MP_INLINE GV *modperl_io_tie_stdin(pTHX_ request_rec *r)
         return handle;
     }
 
-    MP_TRACE_g(MP_FUNC, "tie *STDIN => Apache::RequestRec\n");
+    MP_TRACE_g(MP_FUNC, "tie *STDIN(0x%lx) => Apache::RequestRec\n",
+               (unsigned long)handle);
 
     TIEHANDLE(handle, r);
 
