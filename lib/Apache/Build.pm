@@ -417,11 +417,8 @@ sub save_ldopts {
     chmod 0755, $file;
 }
 
-my $noedit_warning_hash;
-
 sub noedit_warning_hash {
-    $noedit_warning_hash ||=
-      ModPerl::Code::noedit_warning_hash(__PACKAGE__);
+    ModPerl::Code::noedit_warning_hash(__PACKAGE__);
 }
 
 sub save {

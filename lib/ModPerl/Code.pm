@@ -555,8 +555,6 @@ sub clean_files {
     [(map { "$_.c" } @c_names), (map { "$_.h" } @h_names)];
 }
 
-my %warnings;
-
 sub classname {
     my $self = shift || __PACKAGE__;
     ref($self) || $self;
@@ -564,12 +562,11 @@ sub classname {
 
 sub noedit_warning_c {
     my $class = classname(shift);
-    my $warning = \$warnings{C}->{$class};
-    return $$warning if $$warning;
+
     my $v = join '/', $class, $class->VERSION;
     my $trace = Apache::TestConfig::calls_trace();
     $trace =~ s/^/ * /mg;
-    $$warning = <<EOF;
+    return <<EOF;
 
 /*
  * *********** WARNING **************
@@ -586,10 +583,9 @@ EOF
 #non-Perl files, e.g. Makefile, typemap, etc.
 sub noedit_warning_hash {
     my $class = classname(shift);
-    my $warning = \$warnings{hash}->{$class};
-    return $$warning if $$warning;
-    ($$warning = noedit_warning_c($class)) =~ s/^/\# /mg;
-    $$warning;
+
+    (my $warning = noedit_warning_c($class)) =~ s/^/\# /mg;
+    return $warning;
 }
 
 sub init_file {
