@@ -122,17 +122,6 @@ int modperl_run_filter(modperl_filter_t *filter, ap_input_mode_t mode)
     return status;
 }
 
-MP_INLINE modperl_filter_t *modperl_sv2filter(pTHX_ SV *sv)
-{
-    modperl_filter_t *filter = NULL;
-
-    if (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG)) {
-        filter = (modperl_filter_t *)SvIV((SV*)SvRV(sv));
-    }
-
-    return filter;
-}
-
 /* output filters */
 
 MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
