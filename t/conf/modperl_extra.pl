@@ -209,7 +209,7 @@ sub test_server_shutdown_register_cleanup {
 
     # replace the sub with the following to get some visual debug
     # should log cnt:1 on -start, oncand cnt: 2 -stop followed by cnt: 1)
-    #Apache::ServerUtil::server_shutdown_register( sub {
+    #Apache::ServerUtil::server_shutdown_register_cleanup( sub {
     #    my $cnt = Apache::ServerUtil::restart_count();
     #    open my $fh, ">>/tmp/out" or die "$!";
     #    print $fh "cnt: $cnt\n";
