@@ -351,6 +351,33 @@ sub tmpfile {
 # the following functions now live in Apache::RequestRec
 # * mtime
 
+package Apache::Util;
+
+sub size_string {
+    my ($size) = shift;
+
+    if (!$size) {
+	$size = "   0k";
+    }
+    elsif ($size == -1) {
+        $size = "    -";
+    }
+    elsif ($size < 1024) {
+	$size = "   1k";
+    }
+    elsif ($size < 1048576) {
+	$size = sprintf "%4dk", ($size + 512) / 1024;
+    }
+    elsif (size < 103809024) {
+	$size = sprintf "%4.1fM", $size / 1048576.0;
+    }
+    else {
+	$size = sprintf "%4dM", ($size + 524288) / 1048576;
+    }
+
+    return $size;
+
+}
 
 1;
 __END__
