@@ -3,25 +3,37 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- <Perl> patch from Craig Lien <lien@rrnet.com>
+- Paul J. Reder's aix/dso port
+
+- modules/file #6
+
+- <Perl> patch from Salvador
+
+- Salvador's patch to avoid %ENV setup on subrequests
+
+- <Perl> patch for *Match from Craig Lien <lien@rrnet.com>
+
+- win32 table patch Trung Tran-Duc <trung.tranduc@prague.ixos.cz>
+
+- PATH patch Bertrand Demiddelaer <wing_co@hotmail.com>
+
+- sfio patches John Hughes <john@calva.com>
 
 - $r->set_handlers(PerlAuthenHandler => undef) stomps other config!?
 
-- %Files doesnt work, nor does @DirectoryIndex outside of %Location
+- fix $Apache::Server::Starting under dso
 
-- -Duseperlio w/o -Dusesfio, #ifndef PERLIO_IS_STDIO, #define PERLIO_IS_STDIO
+- push_handlers recursion bug spotted by Andreas
 
-- look at mysqlbug script
+- PerlSetEnv gets lost?
+
+- Apache::Include->virtual should return run() value, not status()
 
 - win32 socket bug (WSAStartup() needed for each thread?)
 
 - Makefile.PL should always push load_modules.pl for 'make test' 
 
-- ap_parse_htaccess like interface 
-
 - make PERL_STARTUP_DONE_CHECK=1 default for win32?
-
-- @PerlSetVar core dumps outside of %Location (Ask)
 
 - turn of strip of httpd in Apache's install.sh
 
