@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.18_01-dev
 
+fix so version info is not inserted too early (i.e. before Apache/x.x.x)
+
 new Apache::PerlRun::namespace_from() method, returns
 $r->uri - $r->path_info, can be overridden as Apache::RegistryNG does to
 return $r->filename instead

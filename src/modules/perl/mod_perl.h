@@ -455,9 +455,11 @@ if((add->flags & f) || (base->flags & f)) \
 #define MMN_131 19980713
 #define MMN_132 19980806
 #define MMN_136 19990320
-#if MODULE_MAGIC_NUMBER >= MMN_130
-#define HAVE_APACHE_V_130
-#endif
+#define HAS_MMN_130 HAS_MMN(MMN_130)
+#define HAS_MMN_131 HAS_MMN(MMN_131)
+#define HAS_MMN_132 HAS_MMN(MMN_132)
+#define HAS_MMN_136 HAS_MMN(MMN_136)
+
 #define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
 
 #if MODULE_MAGIC_NUMBER < MMN_130
@@ -1043,6 +1045,7 @@ SV *mod_perl_fetch_handlers(SV *self, SV *hook);
 int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers);
 
 /* plugin slots */
+void perl_module_init(server_rec *s, pool *p);
 void perl_startup(server_rec *s, pool *p);
 int perl_handler(request_rec *r);
 void perl_child_init(server_rec *, pool *);

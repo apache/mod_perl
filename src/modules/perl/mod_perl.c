@@ -188,7 +188,7 @@ static handler_rec perl_handlers [] = {
 
 module MODULE_VAR_EXPORT perl_module = {
     STANDARD_MODULE_STUFF,
-    perl_startup,                 /* initializer */
+    perl_module_init,                 /* initializer */
     perl_create_dir_config,    /* create per-directory config structure */
     perl_merge_dir_config,     /* merge per-directory config structures */
     perl_create_server_config, /* create per-server config structure */
@@ -484,7 +484,7 @@ void mp_check_version(void)
     exit(1);
 }
 
-#if !HAS_MMN(MMN_136)
+#if !HAS_MMN_136
 static void set_sigpipe(void)
 {
     char *dargs[] = { NULL };
@@ -492,6 +492,19 @@ static void set_sigpipe(void)
     perl_call_argv("Apache::SIG::set", G_DISCARD, dargs);
 }
 #endif
+
+void perl_module_init(server_rec *s, pool *p)
+{
+#if HAS_MMN_130
+    ap_add_version_component(MOD_PERL_STRING_VERSION);
+    if(PERL_RUNNING()) {
+	if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
+	    ap_add_version_component(form("Perl/%s", patchlevel));
+	}
+    }
+#endif
+    perl_startup(s, p);
+}
 
 void perl_startup (server_rec *s, pool *p)
 {
@@ -501,18 +514,6 @@ void perl_startup (server_rec *s, pool *p)
     dPSRV(s);
     SV *pool_rv, *server_rv;
     GV *gv, *shgv;
-    const char *ap_v = ap_get_server_version();
-
-#if MODULE_MAGIC_NUMBER >= 19980507
-    if (!strstr(ap_v, MOD_PERL_STRING_VERSION) && strnEQ(ap_v,"Apache/",7)) {
-	ap_add_version_component(MOD_PERL_STRING_VERSION);
-	if(PERL_RUNNING()) {
-	    if(perl_get_sv("Apache::Server::AddPerlVersion", FALSE)) {
-		ap_add_version_component(form("Perl/%s", patchlevel));
-	    }
-	}
-    }
-#endif
 
 #ifndef WIN32
     argv[0] = server_argv0;
@@ -542,7 +543,7 @@ void perl_startup (server_rec *s, pool *p)
     if(PERL_RUNNING() && PERL_STARTUP_IS_DONE) {
 	saveINC;
 	mp_check_version();
-#if !HAS_MMN(MMN_136)
+#if !HAS_MMN_136
 	set_sigpipe();
 #endif
     }

@@ -82,7 +82,7 @@ static void set_opset_bits(char *bitmap, SV *bitspec, int on, char *opname)
 
 static char *read_opmask(server_rec *s, pool *p, char *file)
 {
-#ifdef HAVE_APACHE_V_130
+#if HAS_MMN_130
     char opname[MAX_STRING_LEN];
     char *mask = (char *)ap_pcalloc(p, maxo);
     configfile_t *cfg = ap_pcfg_openfile(p, file);
@@ -106,7 +106,7 @@ static char *read_opmask(server_rec *s, pool *p, char *file)
 
 #else
     croak("Need Apache 1.3.0+ to use PerlOpmask directive");
-#endif /*HAVE_APACHE_V_130*/
+#endif /*HAS_MMN_130*/
 }
 
 static char *av2opmask(pool *p, AV *av)
