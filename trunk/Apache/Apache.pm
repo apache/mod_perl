@@ -5,7 +5,7 @@ use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
 @Apache::EXPORT_OK = qw(exit warn);
-$Apache::VERSION = "1.24";
+$Apache::VERSION = "1.25";
 
 *import = \&Exporter::import;
 

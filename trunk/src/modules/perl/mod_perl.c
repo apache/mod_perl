@@ -433,6 +433,42 @@ static void mp_dso_unload(void *data)
 } 
 #endif
 
+#define MP_APACHE_VERSION 1.25
+
+void mp_check_version(void)
+{
+    I32 i;
+    SV *namesv;
+    SV *version = perl_get_sv("Apache::VERSION", FALSE);
+    if(!version)
+	croak("Apache.pm failed to load!"); /*should never happen*/
+    if(SvNV(version) >= MP_APACHE_VERSION) /*no worries*/
+	return;
+
+    fprintf(stderr, "Apache.pm version %.02f or higher required!\n", 
+	    MP_APACHE_VERSION);
+    fprintf(stderr, "%s", form("%_ is only version %_\n", 
+			       *hv_fetch(GvHV(incgv), "Apache.pm", 9, FALSE),
+			       version));
+    fprintf(stderr, 
+	    "Perhaps you forgot to 'make install' or need to uninstall an old version?\n");
+
+    namesv = NEWSV(806, 0);
+    for(i=0; i<=AvFILL(GvAV(incgv)); i++) {
+	char *tryname;
+	PerlIO *tryrsfp = 0;
+	SV *dir = *av_fetch(GvAV(incgv), i, TRUE);
+	sv_setpvf(namesv, "%_/Apache.pm", dir);
+	tryname = SvPVX(namesv);
+	if((tryrsfp = PerlIO_open(tryname, "r"))) {
+	    fprintf(stderr, "Found: %s\n", tryname);
+	    PerlIO_close(tryrsfp);
+	}
+    }
+    SvREFCNT_dec(namesv);
+    exit(1);
+}
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -639,7 +675,7 @@ void perl_startup (server_rec *s, pool *p)
 	    exit(1);
 	}
     }
-
+    mp_check_version();
     LEAVE_SAFE;
 
     MP_TRACE_g(fprintf(stderr, 
