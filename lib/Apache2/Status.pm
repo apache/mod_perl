@@ -668,7 +668,7 @@ sub noh_xref {
 
 $Apache2::Status::BGraphCache ||= 0;
 if ($Apache2::Status::BGraphCache) {
-    Apache2->push_handlers(PerlChildExitHandler => sub {
+    Apache2->server->push_handlers(PerlChildExitHandler => sub {
         unlink keys %Apache2::Status::BGraphCache;
     });
 }
