@@ -182,12 +182,16 @@ void modperl_tipool_init(modperl_tipool_t *tipool)
 void modperl_tipool_destroy(modperl_tipool_t *tipool)
 {
     while (tipool->idle) {
+        modperl_list_t *listp;
+
         if (tipool->func->tipool_destroy) {
             (*tipool->func->tipool_destroy)(tipool, tipool->data,
                                             tipool->idle->data);
         }
         tipool->size--;
-        tipool->idle = tipool->idle->next;
+        listp = tipool->idle->next;
+        free(tipool->idle);
+        tipool->idle = listp;
     }
 
     if (tipool->busy) {
