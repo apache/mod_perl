@@ -19,7 +19,7 @@ my %status_lines = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => (scalar keys %status_lines) + 7;
+    plan $r, tests => (scalar keys %status_lines) + 8;
 
     ok $r->default_type;
 
@@ -32,6 +32,10 @@ sub handler {
     ok $r->get_limit_req_body || 1;
 
     ok $r->is_initial_req;
+
+    my $sig = $r->psignature("Here is the sig: ");
+    t_debug $sig;
+    ok $sig;
 
     my $pattern = qr!(?s)GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!;
 

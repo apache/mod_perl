@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+$r->psignature now lives in the package it belongs to:
+Apache::RequestUtil (previously lived in Apache::ServerUtil). [Stas]
+
 A few functions moved namespace from Apache:: to Apache::ServerUtil::
 (to make it easier to find the container of the function): [Stas]
   - exists_config_define
