@@ -4,20 +4,31 @@ of the apache2-rename-unstable branch.
 The general goals for this branch are:
 
  - remove Apache2.pm, withdrawing support for MP_INST_APACHE2.
- - rename all Apache::Foo -> Apache2::Foo
+ - rename all Apache::Foo -> Apache2::Foo,
+   including mod_perl -> mod_perl2
  - update Apache-Test.
  - update the 2.0 documentation.
  - merge with trunk, and resume the candidate process.
 
 This is an unstable branch, because the renaming
 process will impact all aspects of the codebase.
-The first set of code commits are expected to break 
-the build system; so we'll need to mark a few milestones
-to prepare for the trunk merge.  joes suggests these:
+The first set of code commits towards the actual renaming
+are expected to break the build system; so we'll need to 
+mark a few milestones to prepare for the trunk merge.  
+joes suggests these, s/TODO/DONE/ as each one is achieved:
 
 TODO: remove Apache2.pm and MP_INST_APACHE2.
+      This effort should not yield any test regressions.
+
 TODO: rename the modules, and bring the build 
-      system back to a compilable state.
+      system back to a compilable state.  This
+      effort will leave many of the tests broken.
+
+      joes volunteers to do this.
+
 TODO: correct Apache-Test and the mp2 test suite,
       so all tests pass again.
+
+      joes volunteers to do this.
+
 TODO: port the 2.0 documentation.
