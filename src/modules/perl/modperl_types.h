@@ -186,7 +186,6 @@ typedef struct {
     apr_pool_t *pool;
 } modperl_filter_t;
 
-typedef modperl_filter_t *  Apache__Filter;
 typedef modperl_filter_t *  Apache__OutputFilter;
 typedef modperl_filter_t *  Apache__InputFilter;
 
