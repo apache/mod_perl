@@ -27,18 +27,18 @@ sub apxs {
                 $ENV{MP_APXS});
 
     unless (IS_MOD_PERL_BUILD) {
-	#if we are building mod_perl via apxs, apxs should already be known
-	#these extra tries are for things built outside of mod_perl
-	#e.g. libapreq
-	push @trys,
-	which('apxs'),
-	'/usr/local/apache/bin/apxs';
+        #if we are building mod_perl via apxs, apxs should already be known
+        #these extra tries are for things built outside of mod_perl
+        #e.g. libapreq
+        push @trys,
+        which('apxs'),
+        '/usr/local/apache/bin/apxs';
     }
 
     for (@trys) {
-	next unless ($apxs = $_);
-	chomp $apxs;
-	last if -x $apxs;
+        next unless ($apxs = $_);
+        chomp $apxs;
+        last if -x $apxs;
     }
 
     return '' unless $apxs and -x $apxs;
@@ -56,8 +56,8 @@ sub which {
     my $name = shift;
 
     for (split ':', $ENV{PATH}) {
-	my $app = "$_/$name";
-	return $app if -x $app;
+        my $app = "$_/$name";
+        return $app if -x $app;
     }
 
     return '';
@@ -146,10 +146,10 @@ sub perl_config {
 sub find_in_inc {
     my $name = shift;
     for (@INC) {
-	my $file;
-	if (-e ($file = "$_/auto/Apache/$name")) {
-	    return $file;
-	}
+        my $file;
+        if (-e ($file = "$_/auto/Apache/$name")) {
+            return $file;
+        }
     }
 }
 
@@ -402,17 +402,17 @@ sub dir {
     if(IS_MOD_PERL_BUILD) {
         my $build = $self->build_config;
 
-	if ($dir = $build->{'dir'}) {
-	    for ($dir, "../$dir", "../../$dir") {
-		last if -d ($dir = $_);
-	    }
-	}
+        if ($dir = $build->{'dir'}) {
+            for ($dir, "../$dir", "../../$dir") {
+                last if -d ($dir = $_);
+            }
+        }
     }
 
     unless ($dir and -d $dir) {
-	for (@INC) {
-	    last if -d ($dir = "$_/auto/Apache/include");
-	}
+        for (@INC) {
+            last if -d ($dir = "$_/auto/Apache/include");
+        }
     }
 
     return $self->{dir} = $dir;
@@ -461,12 +461,12 @@ sub mmn_eq {
 
     my $instsrc;
     {
-	local @INC = grep { !/blib/ } @INC;
-	my $instdir;
+        local @INC = grep { !/blib/ } @INC;
+        my $instdir;
         for (@INC) { 
             last if -d ($instdir = "$_/auto/Apache/include");
         }
-	$instsrc = $class->new(dir => $instdir);
+        $instsrc = $class->new(dir => $instdir);
     }
     my $targsrc = $class->new($dir ? (dir => $dir) : ());
 
@@ -474,10 +474,10 @@ sub mmn_eq {
     my $targ_mmn = $targsrc->module_magic_number;
 
     unless ($inst_mmn && $targ_mmn) {
-	return 0;
+        return 0;
     }
     if ($inst_mmn == $targ_mmn) {
-	return 1;
+        return 1;
     }
     print "Installed MMN $inst_mmn does not match target $targ_mmn\n";
 
@@ -496,16 +496,16 @@ sub module_magic_number {
     #return $mcache{$d} if $mcache{$d};
     my $fh;
     for (qw(ap_mmn.h http_config.h)) {
-	last if open $fh, "$d/$_";
+        last if open $fh, "$d/$_";
     }
     return 0 unless $fh;
 
     my $n;
     my $mmn_pat = join '|', qw(MODULE_MAGIC_NUMBER_MAJOR MODULE_MAGIC_NUMBER);
     while(<$fh>) {
-	if(s/^\#define\s+($mmn_pat)\s+(\d+).*/$2/) {
-	   chomp($n = $_);
-	   last;
+        if(s/^\#define\s+($mmn_pat)\s+(\d+).*/$2/) {
+           chomp($n = $_);
+           last;
        }
     }
     close $fh;
@@ -755,11 +755,11 @@ sub otherldflags {
     my @ldflags = ();
 
     if ($^O eq 'aix') {
-	if (my $file = find_in_inc('mod_perl.exp')) {
-	    push @ldflags, '-bI:' . $file;
-	}
-	my $httpdexp = $self->apxs('-q' => 'LIBEXECDIR') . '/httpd.exp';
-	push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
+        if (my $file = find_in_inc('mod_perl.exp')) {
+            push @ldflags, '-bI:' . $file;
+        }
+        my $httpdexp = $self->apxs('-q' => 'LIBEXECDIR') . '/httpd.exp';
+        push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
     }
     return join(' ', @ldflags);
 }
@@ -768,11 +768,11 @@ sub typemaps {
     my $typemaps = [];
 
     if (my $file = find_in_inc('typemap')) {
-	push @$typemaps, $file;
+        push @$typemaps, $file;
     }
 
     if(IS_MOD_PERL_BUILD) {
-	push @$typemaps, '../Apache/typemap';
+        push @$typemaps, '../Apache/typemap';
     }
 
     return $typemaps;
@@ -801,7 +801,7 @@ sub includes {
     my $ssl_dir = "$src/../ssl/include";
     unless (-d $ssl_dir) {
         my $build = $self->build_config;
-	$ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
+        $ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
     }
     push @inc, $ssl_dir if -d $ssl_dir;
 
@@ -927,7 +927,7 @@ Example:
      'VERSION'     => '0.01', 
      'INC'         => Apache::Build->new->inc,
      'dynamic_lib' => {
-	 'OTHERLDFLAGS' => Apache::Build->new->otherldflags,
+         'OTHERLDFLAGS' => Apache::Build->new->otherldflags,
      },
  );
 

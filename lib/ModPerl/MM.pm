@@ -57,9 +57,9 @@ sub WriteMakefile {
 
     my $inc = $build->inc;
     if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
-	for (split /\s+/, $glue_inc) {
-	    $inc .= " -I$_";
-	}
+        for (split /\s+/, $glue_inc) {
+            $inc .= " -I$_";
+        }
     }
 
     my @opts = (INC => $inc, CCFLAGS => $build->ap_ccopts);

@@ -100,7 +100,7 @@ modperl_list_t *modperl_list_remove(modperl_list_t *list,
             }
 
             break;
-	}
+        }
     }
 
 #ifdef MP_TRACE
@@ -137,7 +137,7 @@ modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
             }
 
             break;
-	}
+        }
     }
 
     return list;
