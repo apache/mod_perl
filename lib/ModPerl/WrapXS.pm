@@ -483,6 +483,9 @@ sub write_pm {
     }
 
     my $base   = (split '::', $module)[0];
+    unless (-e "lib/$base/XSLoader.pm") {
+        $base = 'Apache';
+    }
     my $loader = join '::', $base, 'XSLoader';
 
     my $fh = $self->open_class_file($module, '.pm');
