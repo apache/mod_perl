@@ -29,6 +29,15 @@ before), and add the corresponding '!=' [Stas]
 if $r->document_root was modified, restore it at the end of request
 [joes]
 
+Syntax errors in <Perl> sections were not correctly caught and
+reported. [Gozer]
+                                                                                                                             
+when building mp2 EU::MM looks into Apache-Test/MANIFEST and complains
+about the missing Apache-Test/META.yml (which is indeed not included
+in the modperl package due to the PAUSE problems of dealing with more
+than one META.yml. Solution: Exclude Apache-Test/MANIFEST from
+mod_perl distribution package. [Stas]
+
 Apache::ServerRec method which set the non-integer fields in the
 server_rec, now copy the value from the perl scalar, so if it changes
 or goes out of scope the C struct is not affected. Using internal perl
