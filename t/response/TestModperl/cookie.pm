@@ -1,0 +1,54 @@
+package TestModperl::cookie;
+
+use strict;
+use warnings FATAL => 'all';
+
+use Apache::TestTrace;
+
+use Apache::RequestRec ();
+use Apache::RequestIO ();
+
+use Apache::Const -compile => 'OK';
+
+sub access {
+    my $r = shift;
+
+    my($key, $val) = cookie($r);
+    my $cookie_is_expected =
+        ($r->args eq 'header' or $r->args eq 'env') ? 1 : 0;
+    die "Can't get the cookie" if $cookie_is_expected && !defined $val;
+
+    return Apache::OK;
+}
+
+sub handler {
+    my $r = shift;
+
+    my($key, $val) = cookie($r);
+    $r->print($val) if defined $val;
+
+    return Apache::OK;
+}
+
+sub cookie {
+    my $r = shift;
+
+    my $header = $r->headers_in->{Cookie} || '';
+    my $env    = $ENV{HTTP_COOKIE} || $ENV{COOKIE} || ''; # from CGI::Cookie
+    debug "cookie (" .$r->args . "): header: [$header], env: [$env]";
+
+    return split '=', $r->args eq 'header' ? $header : $env;
+}
+
+1;
+
+__DATA__
+SetHandler perl-script
+PerlModule          TestModperl::cookie
+PerlInitHandler     Apache::TestHandler::same_interp_fixup
+PerlAccessHandler   TestModperl::cookie::access
+PerlResponseHandler TestModperl::cookie
+# PerlOptions +SetupEnv is needed here, because we want the mod_cgi
+# env to be set at the access phase. without it, perl-script sets it
+# only for the response phase
+PerlOptions +SetupEnv
