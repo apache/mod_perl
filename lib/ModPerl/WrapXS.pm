@@ -691,8 +691,8 @@ sub generate {
 
     $self->get_functions;
     $self->get_structures;
-    $self->write_export_file('exp'); #XXX if $^O eq 'aix'
-    $self->write_export_file('def'); #XXX if $^O eq 'Win32'
+    $self->write_export_file('exp') if Apache::Build::AIX;
+    $self->write_export_file('def') if Apache::Build::WIN32;
 
     while (my($module, $functions) = each %{ $self->{XS} }) {
 #        my($root, $sub) = split '::', $module;
