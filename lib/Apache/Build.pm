@@ -284,7 +284,7 @@ sub configure_apache {
 
     #XXX: -Wall and/or -Werror at httpd configure time breaks things
     local $ENV{CFLAGS} = join ' ', grep { ! /\-Wall|\-Werror/ } 
-        split /\s+/, $ENV{CFLAGS};
+        split /\s+/, $ENV{CFLAGS} || '';
     
     my $cd = qq(cd $self->{MP_AP_PREFIX});
     my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
