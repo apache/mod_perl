@@ -23,6 +23,7 @@ use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use APR::Table ();
+use APR::Pool ();
 use mod_perl ();
 
 BEGIN {
@@ -31,6 +32,7 @@ BEGIN {
     $INC{'Apache/Constants.pm'} = 1;
 
     $ENV{MOD_PERL} = $mod_perl::VERSION;
+    $ENV{GATEWAY_INTERFACE} = 'CGI-Perl/1.1';
 }
 
 package Apache;
@@ -53,6 +55,10 @@ sub import {
 }
 
 package Apache::RequestRec;
+
+sub register_cleanup {
+    shift->pool->cleanup_register(@_);
+}
 
 sub parse_args {
     my($r, $string) = @_;
@@ -88,18 +94,6 @@ sub content {
 
     return $buf unless wantarray;
     return $r->parse_args($buf)
-}
-
-our $Request;
-
-sub request {
-    my($r, $set) = @_;
-    $Request = $set if $set;
-
-    untie *STDOUT;
-    tie *STDOUT, 'Apache::RequestRec', $r;
-
-    $Request;
 }
 
 sub send_http_header {
