@@ -216,7 +216,7 @@ ap_remove_loaded_module
  mpxs_Apache__Module_get_config | | pmodule, s, v=NULL
 
 MODULE=Apache::Directive
- ap_directive_t *:DEFINE_conftree | | SV *:CLASS
+ ap_directive_t *:DEFINE_conftree
 !ap_add_node
 !ap_build_config
 !ap_build_cont_config

@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-#define mpxs_Apache__Directive_conftree(CLASS) \
-(CLASS ? ap_conftree : ap_conftree)
+#define mpxs_Apache__Directive_conftree() ap_conftree
 
 /* XXX: this is only useful for <Perl> at the moment */
 static MP_INLINE SV *mpxs_Apache__Directive_as_string(pTHX_

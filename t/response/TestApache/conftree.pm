@@ -26,7 +26,7 @@ sub handler {
 
     ok $vars;
 
-    my $tree = Apache::Directive->conftree;
+    my $tree = Apache::Directive::conftree();
 
     ok $tree;
 
@@ -82,7 +82,7 @@ sub test_node {
 
 sub traverse_tree {
     my ($sub, $data) = @_;
-    my $node = Apache::Directive->conftree;
+    my $node = Apache::Directive::conftree();
     while ($node) {
         $sub->($data, $node);
         if (my $kid = $node->first_child) {
