@@ -157,5 +157,16 @@ $Config{archlibexp} is:
 
 Rebuild httpd/mod_perl with PERL_DEBUG=1, let's see a new backtrace.
 
+
+=item SPINNING PROCESSES
+
+If a process is spinning (seemingly stuck in an endless loop, eating
+up all cpu), you can use gdb to find which Perl code is causing the
+spin:
+
+% gdb httpd <pid of spinning process>
+(gdb) source modperl_x.xx/.gdbinit
+(gdb) curinfo
+
 =back
 
