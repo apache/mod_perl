@@ -4,8 +4,21 @@
 
 -- see also todo/api_status
 
+* why APR::OS::thread_current returns an object and to get the tid,
+  you need to dereference it? that doesn't sounds too
+  intuitive. 
+  - change it to return the id right away?
+  - rename it to be current_thread_id
+  - update docs
+  owner: gozer
+
 * $r->log_reason:
   just add to compat
+  owner: stas
+
+* APR::Finfo constants: APR::FILETYPE_* and APR::FILEPROT_* will
+  probably be APR::FTYPE_* and APR::FPROT_*
+  will know exactly once libapr is fixed
   owner: stas
 
 * $r->document_root:
