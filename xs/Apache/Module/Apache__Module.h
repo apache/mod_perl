@@ -63,7 +63,8 @@ static MP_INLINE SV *mpxs_Apache__Module_get_config(pTHX_
         name = SvPV(pmodule, n_a);
     }
 
-    if (!(modp = apr_hash_get(scfg->modules, name, APR_HASH_KEY_STRING))) {
+    if (!(scfg->modules &&
+          (modp = apr_hash_get(scfg->modules, name, APR_HASH_KEY_STRING)))) {
         return &PL_sv_undef;
     }
 
