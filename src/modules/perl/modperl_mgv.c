@@ -291,7 +291,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         MP_TRACE_h(MP_FUNC,
                    "package %s not defined, attempting to load\n", name);
 
-        if (modperl_require_module(aTHX_ name)) {
+        if (modperl_require_module(aTHX_ name, FALSE)) {
             MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
             if (!(stash = gv_stashpv(name, FALSE))) {
                 MP_TRACE_h(MP_FUNC, "%s package still does not exist\n",
@@ -300,6 +300,8 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             }
         }
         else {
+            I32 errlen = 0;
+            char *errpv;
             int ix = ap_rind(name, ':');
             stash = Nullhv;
 
@@ -311,13 +313,22 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 char *try_package = apr_pstrndup(p, name, ix-1);
                 handler_name = apr_pstrdup(p, name + ix + 1);
 
-                if (modperl_require_module(aTHX_ try_package)) {
+                /* if this fails we want to log $@ from failure above */
+                errlen = SvCUR(ERRSV);
+                errpv  = apr_pstrndup(p, SvPVX(ERRSV), errlen);
+
+                if (modperl_require_module(aTHX_ try_package, FALSE)) {
                     MP_TRACE_h(MP_FUNC, "loaded %s package\n", try_package);
                     stash = gv_stashpv(try_package, FALSE);
                 }
             }
 
             if (!stash) {
+                if (errlen) {
+                    sv_setpvn(ERRSV, errpv, errlen);
+                }
+                (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
+                                    NULL, NULL);
                 MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
                 return 0;
             }
@@ -385,7 +396,7 @@ int modperl_mgv_require_module(pTHX_ modperl_mgv_t *symbol,
     char *package =
         modperl_mgv_as_string(aTHX_ symbol, p, 1);
 
-    if (modperl_require_module(aTHX_ package)) {
+    if (modperl_require_module(aTHX_ package, TRUE)) {
         MP_TRACE_h(MP_FUNC, "reloaded %s for server %s\n",
                    package, modperl_server_desc(s, p));
         return TRUE;
