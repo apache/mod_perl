@@ -3,6 +3,21 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- PerlRun $^W save/restore
+[Honza Pazdziora <adelton@informatics.muni.cz>]
+
+- Apache::FakeRequest::args doesnt behave right in a list context
+[Michael Finke <mfinke@apollo.screamdesign.com>]
+
+- auth stuff segfaults if AuthType isn't set \
+[Matt Sergeant <matt@sergeant.org>]
+
+- Registry.pm / bug [Peter Deister <deister@opus5.de>]
+
+- RegistryBB should return DECLINED instead of FORBIDDEN if -d
+
+- PERL_STATIC_EXTS doesnt work with USE_APACI=1
+
 - call (void)perl_request_rec(r) earlier to avoid 
   Can't call method "register_cleanup" on an
   undefined value at /usr/lib/perl5/5.00503/CGI.pm line 263
