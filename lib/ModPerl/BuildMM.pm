@@ -274,9 +274,7 @@ sub glue_pod {
     # it's possible that the .pm file is not existing
     # (e.g. ThreadMutex.pm is not created on unless
     # $apr_config->{HAS_THREADS})
-    return unless -e $pm;
-
-    die "glue_pod: can't find $dst" unless -e $dst;
+    return unless -e $pm && -e $dst;
 
     # have we already glued the doc?
     exit 0 unless -s $pm == -s $dst;
