@@ -167,7 +167,7 @@ sub generate_handler_hooks {
     my @register_hooks;
 
     while (my($class, $prototype) = each %{ $self->{hook_proto} }) {
-        my $callback = canon_func($class, 'callback');
+        my $callback = canon_func('callback', $class);
         my $return = $prototype->{ret} eq 'void' ? '' : 'return';
         my $i = -1;
 
