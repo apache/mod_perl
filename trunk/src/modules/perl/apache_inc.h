@@ -58,6 +58,7 @@ extern "C" {
 #include "http_request.h" 
 #include "util_script.h" 
 #include "http_conf_globals.h"
+#include "http_vhost.h"
 
 /* sfio */
 #if !defined(PERLIO_IS_STDIO) && defined(HASATTRIBUTE)
