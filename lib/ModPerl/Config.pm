@@ -6,7 +6,7 @@ use lib qw(Apache-Test/lib);
 use Apache::Build ();
 use Apache::TestConfig ();
 
-sub config_as_str{
+sub as_string {
     my $build_config = Apache::Build->build_config;
 
     my $cfg = '';
@@ -52,11 +52,11 @@ __END__
 
 =pod
 
-=head1 NAME - ModPerl::Config
+=head1 NAME
+
+ModPerl::Config - Functions to retrieve mod_perl specific env information.
 
 =head1 DESCRIPTION
-
-Functions to retrieve mod_perl specific env information.
 
 =cut
 

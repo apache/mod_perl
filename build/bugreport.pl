@@ -6,7 +6,7 @@ use lib "$Bin/../lib";
 
 use ModPerl::Config ();
 
-my $env = ModPerl::Config::config_as_str();
+my $env = ModPerl::Config::as_string();
 {
     local $/ = undef;
     my $template = <DATA>;
