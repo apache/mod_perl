@@ -51,7 +51,7 @@ my $conf = <<'EOC';
 PerlModule Apache::TestHandler
 <Location /apache/add_config>
   SetHandler perl-script
-  PerlHandler Apache::TestHandler::ok1
+  PerlResponseHandler Apache::TestHandler::ok1
 </Location>
 EOC
 Apache->server->add_config([split /\n/, $conf]);
