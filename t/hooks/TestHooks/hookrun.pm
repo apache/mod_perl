@@ -141,7 +141,6 @@ __END__
 <NoAutoConfig>
 <VirtualHost TestHooks::hookrun>
     PerlModule                 TestHooks::hookrun
-    PerlPostReadRequestHandler Apache::Reload
     PerlPostReadRequestHandler TestHooks::hookrun::post_read_request
     <Location /TestHooks__hookrun>
         SetHandler modperl
