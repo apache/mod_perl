@@ -18,7 +18,13 @@ Other contributors are mentioned below.
 
 =item 1.10_01-dev
 
-experimental: #ifdef PERL_OBJ_HANDLERS, mod_perl will thaw objects
+1.3b6 compat:
+- deal with ap_ API prefixing
+- t/modules/embperl will warn on failure:
+>>> NOTE: Be sure to rebuild HTML::Embperl against Apache 1.3b6+
+>>> Try 'make test' again after doing so.
+
+experimental: #ifdef PERL_OBJECT_HANDLERS, mod_perl will thaw objects
 from Perl*Handler strings such as `$Global::Object->method'
 
 $r->custom_response will now work under win32 with 1.3b6-dev+
