@@ -43,7 +43,7 @@ sub apxs {
 }
 
 sub apxs_cflags {
-    my $cflags = __PACKAGE__->apxs(-q => 'CFLAGS');
+    my $cflags = __PACKAGE__->apxs("-q" => 'CFLAGS');
     #$cflags =~ s/-D\w+=\".*\"//g; #get rid of -Ds with quotes
     $cflags =~ s/\"/\\\"/g;
     $cflags;
@@ -168,7 +168,7 @@ sub asrc {
     return $d if -e "$d/httpd.h";
     return "$d/include" if -e "$d/include/httpd.h";
     return "$d/main" if -e "$d/main/httpd.h";
-    return Apache::src->apxs(-q => 'INCLUDEDIR');
+    return Apache::src->apxs("-q" => 'INCLUDEDIR');
 }
 
 sub module_magic_number {
@@ -254,7 +254,7 @@ sub otherldflags {
 	if (my $file = find_in_inc("mod_perl.exp")) {
 	    push @ldflags, "-bI:" . $file;
 	}
-	my $httpdexp = $self->apxs(-q => 'LIBEXECDIR') . "/httpd.exp";
+	my $httpdexp = $self->apxs("-q" => 'LIBEXECDIR') . "/httpd.exp";
 	push @ldflags, "-bI:$httpdexp" if -e $httpdexp;
     }
     return join(' ', @ldflags);
@@ -289,7 +289,7 @@ sub inc {
 	$ssl_dir = "$Apache::MyConfig::Setup{SSL_BASE}/include";
     }
     push @inc, "-I$ssl_dir" if -d $ssl_dir;
-    my $ainc = $self->apxs(-q => 'INCLUDEDIR');
+    my $ainc = $self->apxs("-q" => 'INCLUDEDIR');
     push @inc, "-I$ainc" if -d $ainc;
     return "@inc";
 }
@@ -297,7 +297,7 @@ sub inc {
 sub ccflags {
     my $self = shift;
     my $cflags = $Config{'ccflags'};
-    join " ", $cflags, $self->apxs(-q => 'CFLAGS');
+    join " ", $cflags, $self->apxs("-q" => 'CFLAGS');
 }
 
 sub define {

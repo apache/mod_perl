@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+Apache::src fixup to quiet warnings under Perl 5.004. Thanks to Ken
+Williams for the spot. [ Ask Bjoern Hansen ]
+
 Apache::src::apxs fixups to quiet warnings if apxs doesnt exist or
 httpd is not dso enabled, thanks to Oleg Bartunov and Ville Skyttä for 
 spotting
