@@ -9,6 +9,7 @@
 
 /* aliases */
 
+typedef request_rec subrequest_rec;
 typedef apr_array_header_t MpAV;
 typedef apr_table_t        MpHV;
 

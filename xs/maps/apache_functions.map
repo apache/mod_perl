@@ -51,19 +51,25 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  ap_get_limit_xml_body
 >ap_core_translate
 
-MODULE=Apache::SubRequest   PACKAGE=guess
- ap_sub_req_lookup_file
- ap_sub_req_lookup_uri
- ap_sub_req_method_uri
- ap_sub_req_output_filter
- ap_set_sub_req_protocol
+MODULE=Apache::SubRequest   PACKAGE=Apache::RequestRec
+?ap_sub_req_output_filter
+>ap_set_sub_req_protocol
 -ap_finalize_sub_req_protocol
- ap_internal_redirect
- ap_internal_redirect_handler
+ ap_internal_redirect         | | r, new_uri
+ ap_internal_redirect_handler | | r, new_uri
 
-MODULE=Apache::SubRequest    PACKAGE=Apache::SubRequest
- ap_destroy_sub_req
- ap_run_sub_req
+subrequest_rec *:ap_sub_req_lookup_file | | \
+ r, new_file, next_filter=NULL | lookup_file
+
+subrequest_rec *:ap_sub_req_lookup_uri  | | \
+ r, new_file, next_filter=NULL | lookup_uri
+
+subrequest_rec *:ap_sub_req_method_uri  | | \
+ r, method, new_file, next_filter=NULL | lookup_method_uri
+
+PACKAGE=Apache::SubRequest   ISA=Apache::RequestRec
+ ap_destroy_sub_req  | | r | DESTROY
+ ap_run_sub_req      | | r | run
 
 MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  ap_discard_request_body
