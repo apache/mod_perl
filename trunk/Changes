@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+fix bug where top-level PerlSetEnv's would be lost after 1st request
+
 fix bug in Apache::ModuleConfig->get [Dave Hayes <dave@jetcafe.org>]
 
 fix rwrite error message [Eric Cholet <cholet@logilune.com>]
