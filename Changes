@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Another fix for the handling of the return status in
+ModPerl::RegistryCooker: reset the status to the original one only if
+it was changed by the script, otherwise return the execution status
+[Stas]
+
 prevent segfault in $r->print / $filter->print (in output filter) and
 related functions when they are called before the response phase
 [Stas]
