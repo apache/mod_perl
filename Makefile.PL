@@ -41,6 +41,10 @@ if (Apache::Build::REQUIRE_ITHREADS()) {
     unless (Apache::Build::HAS_ITHREADS()) {
 	die "your system requires an ithreads enabled Perl";
     }
+    # 5.6.x ithreads aren't good
+    unless ($] >= 5.008) {
+        die "Perl 5.8 or higher w/ ithreads is required. This is only Perl $]";
+    }
 }
 
 perl_version_check();
