@@ -77,6 +77,9 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
         len = modperl_output_filter_read(aTHX_ modperl_filter, buffer, wanted);
     }
 
+    /* must run any set magic */
+    SvSETMAGIC(buffer);
+    
     return len;
 }
 

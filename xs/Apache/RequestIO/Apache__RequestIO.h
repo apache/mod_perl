@@ -199,6 +199,9 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
         sv_setpvn(buffer, "", 0);
     }
 
+    /* must run any set magic */
+    SvSETMAGIC(buffer);
+
     return nrd;
 }
 
@@ -253,6 +256,9 @@ static SV *mpxs_Apache__RequestRec_read(pTHX_ request_rec *r,
     else {
         sv_setpvn(bufsv, "", 0);
     }
+
+    /* must run any set magic */
+    SvSETMAGIC(bufsv);
 
     return newSViv(total);
 }
