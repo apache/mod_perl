@@ -19,7 +19,7 @@
 
 #include "apr_lock.h"
 
-module MODULE_VAR_EXPORT perl_module;
+extern module MODULE_VAR_EXPORT perl_module;
 
 #include "modperl_flags.h"
 #include "modperl_hooks.h"
