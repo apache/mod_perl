@@ -50,9 +50,18 @@ sub handler {
        400 => '400 Bad Request',
        500 => '500 Internal Server Error',
     );
+
     plan $r, tests => (scalar keys %pools) +
-                      (scalar keys %objects) + 
-                      (scalar keys %status_lines) + 11;
+                      (scalar keys %objects) +
+                      (scalar keys %status_lines) + 12;
+
+    {
+        my $s = $r->server;
+        my @expected = qw(ModPerl::Test::exit_handler);
+        my @handlers =
+            @{ $s->get_handlers('PerlChildExitHandler') || []};
+        ok t_cmp(scalar(@handlers), scalar(@expected), "get_handlers");
+    }
 
     # syntax - an object or pool is required
     t_debug("Apache::server_root_relative() died");
