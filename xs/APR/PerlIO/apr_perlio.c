@@ -28,7 +28,6 @@ typedef struct {
     apr_pool_t *pool;
 } PerlIOAPR;
 
-
 static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg)
 {
     IV code = PerlIOBase_pushed(aTHX_ f, mode, arg);
@@ -39,7 +38,6 @@ static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg)
     }
     return code;
 }
-
 
 static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
                               PerlIO_list_t *layers, IV n,
@@ -147,7 +145,6 @@ static PerlIO *PerlIOAPR_dup(pTHX_ PerlIO *f, PerlIO *o,
     return NULL;
 }
 
-
 static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 {
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
@@ -159,8 +156,8 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
         return count;
     }
     else if (rc != APR_SUCCESS) {
-        char errbuf[120];
 #ifdef PERLIO_APR_DEBUG
+        char errbuf[120];
         /* XXX: need to figure way to map APR errno to normal errno,
          * so we can use SETERRNO to make the apr errors available to
          * Perl's $!  */
@@ -203,6 +200,7 @@ static IV PerlIOAPR_flush(pTHX_ PerlIO *f)
         return 0;
     }
 
+    PerlIOBase(f)->flags |= PERLIO_F_ERROR;
     return -1;
 }
 
@@ -225,7 +223,7 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
 
     /* Flush the fill buffer */
     if (PerlIO_flush(f) != 0) {
-	return -1;
+        return -1;
     }
         
     switch(whence) {
@@ -366,8 +364,6 @@ static IV PerlIOAPR_eof(pTHX_ PerlIO *f)
 
     return -1;
 }
-
-
 
 static PerlIO_funcs PerlIO_APR = {
     "APR",
