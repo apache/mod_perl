@@ -51,6 +51,18 @@
 
 #endif
 
+/* This ensures that a given directive is either in Server context
+ * or in a .htaccess file, usefull for things like PerlRequire
+ */
+#define MP_CHECK_SERVER_OR_HTACCESS_CONTEXT \
+    if (parms->path && (parms->override & ACCESS_CONF)) { \
+        ap_directive_t *d = parms->directive; \
+        return apr_psprintf(parms->pool, \
+                            "%s directive not allowed in a %s> block", \
+                            d->directive, \
+                            d->parent->directive); \
+    }
+
 static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
 {
     return apr_pstrcat(parms->pool, parms->cmd->name,
@@ -193,6 +205,8 @@ MP_CMD_SRV_DECLARE(modules)
     MP_dSCFG(parms->server);
     MP_PERL_DECLARE_CONTEXT;
 
+    MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
+    
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
     {
@@ -224,6 +238,8 @@ MP_CMD_SRV_DECLARE(requires)
     MP_dSCFG(parms->server);
     MP_PERL_DECLARE_CONTEXT;
 
+    MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
+    
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
     {
@@ -429,6 +445,8 @@ MP_CMD_SRV_DECLARE(perl)
     if (!endp) {
         return modperl_cmd_unclosed_directive(parms);
     }
+    
+    MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
 
     arg = apr_pstrndup(p, arg, endp - arg);
    
@@ -483,6 +501,8 @@ MP_CMD_SRV_DECLARE(perldo)
         return NULL;
     }
 
+    MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
+    
     /* we must init earlier than normal */
     modperl_run();
 

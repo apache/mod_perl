@@ -75,10 +75,6 @@
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
 
-- PerlModule, PerlRequire, <Perl> in .htaccess is missing
-  http://marc.theaimsgroup.com/?t=105370088700001&r=1&w=2
-  Owner: gozer
-
 - cgi emulation: %ENV management:
 
    - %ENV is currently only saved/restored for the perl-script

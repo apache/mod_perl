@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+PerlModule, PerlRequire, Perl and <Perl> is now supported in
+.htaccess. They will run for each request. [Gozer]
+
 removed support for httpd 2.0.46.  httpd 2.0.47 is now the minimum
 supported version.  [Geoffrey Young]
 

@@ -136,6 +136,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
     AP_INIT_FLAG( name, modperl_cmd_##item, NULL, \
       OR_ALL, desc )
 
+#define MP_CMD_DIR_RAW_ARGS(name, item, desc) \
+    AP_INIT_RAW_ARGS( name, modperl_cmd_##item, NULL, \
+      OR_ALL, desc )
+
 #define MP_CMD_DIR_RAW_ARGS_ON_READ(name, item, desc) \
     AP_INIT_RAW_ARGS( name, modperl_cmd_##item, NULL, \
       OR_ALL|EXEC_ON_READ, desc )
