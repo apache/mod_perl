@@ -2,7 +2,7 @@ use strict;
 use Apache::test;
 $|++;
 my $i = 0;
-my $tests = 7;
+my $tests = 8;
 
 my $r = shift;
 $r->send_http_header('text/plain');
@@ -61,6 +61,10 @@ my $html = <<EOF;
 </body>
 </html>
 EOF
+
+#XXX: this test could be more robust, but its better than nothing
+my $c = Apache::Util::escape_html("\x8b");
+test ++$i, $c =~ /^&\#\d{3,3}\;$/;
 
 my $txt = "No html tags in here at all";
 my $etxt = Apache::Util::escape_html($txt);
