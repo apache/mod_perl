@@ -489,7 +489,7 @@ MODULE=APR::UUID
  apr_current_userid
 
 MODULE=APR::NetLib
- apr_gethostname
+-apr_gethostname
  apr_getnameinfo
 -apr_getservbyname
  apr_parse_addr_port
@@ -551,7 +551,7 @@ MODULE=APR::Base64
  apr_base64_decode | MPXS_ | coded_src
  apr_base64_encode | MPXS_ | plain_src
  apr_base64_encode_len
- apr_base64_decode_len
+-apr_base64_decode_len
 -apr_base64_encode_binary
 -apr_base64_decode_binary
 
