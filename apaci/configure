@@ -89,7 +89,7 @@ echo "##  Makefile -- mod_perl stand-alone build environment Makefile" >>$my_mak
 echo "##" >>$my_makefileconf
 echo "" >>$my_makefileconf
 echo "#   provide some stuff Apache usually provides" >>$my_makefileconf
-echo "CFLAGS=$my_apxs_cflags" >>$my_makefileconf
+echo "CFLAGS=-DMOD_PERL $my_apxs_cflags" >>$my_makefileconf
 echo "INCLUDES=$my_apxs_includes" >>$my_makefileconf
 echo "RANLIB=ranlib" >>$my_makefileconf
 echo "LIBEXT=so" >>$my_makefileconf
