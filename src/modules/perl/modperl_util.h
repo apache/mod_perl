@@ -28,9 +28,6 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
 apr_pool_t *modperl_sv2pool(pTHX_ SV *obj);
 
-#define modperl_bless_request_rec(r) \
-modperl_ptr2obj("Apache", r)
-
 char *modperl_apr_strerror(apr_status_t rv);
 
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
