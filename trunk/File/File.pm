@@ -13,7 +13,7 @@ use mod_perl ();
 my $TMPNAM = 'aaaaaa';
 my $TMPDIR = $ENV{'TMPDIR'} || $ENV{'TEMP'} || '/tmp';
 ($TMPDIR) = $TMPDIR =~ /^([^<>|;*]+)$/; #untaint
-my $Mode = Fcntl::O_WRONLY()|Fcntl::O_EXCL()|Fcntl::O_CREAT();
+my $Mode = Fcntl::O_RDWR()|Fcntl::O_EXCL()|Fcntl::O_CREAT();
 my $Perms = 0600;
  
 sub tmpfile {
