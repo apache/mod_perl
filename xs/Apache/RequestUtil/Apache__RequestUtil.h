@@ -69,30 +69,47 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     apr_pool_create(&p, base_pool);
     r = apr_pcalloc(p, sizeof(request_rec));
 
-    r->pool = p;
+    r->pool       = p;
     r->connection = c;
-    r->server = s;
+    r->server     = s;
 
-    r->hostname = s->server_hostname;
-    r->request_config = ap_create_request_config(p);
-    r->per_dir_config = s->lookup_defaults;
-    r->method = "GET";
-    r->method_number = M_GET;
-    r->uri = "/";
-    r->filename = (char *)ap_server_root_relative(p, r->uri);
+    r->user            = NULL;
+    r->ap_auth_type    = NULL;
 
-    r->the_request = "UNKNOWN";
-    r->assbackwards = 1;
-    r->protocol = "UNKNOWN";
-
-    r->status = HTTP_OK;
-
-    r->headers_in = apr_table_make(p, 1);
-    r->headers_out = apr_table_make(p, 1);
+    r->allowed_methods = ap_make_method_list(p, 1);
+    
+    r->headers_in      = apr_table_make(p, 1);
+    r->subprocess_env  = apr_table_make(r->pool, 1);
+    r->headers_out     = apr_table_make(p, 1);
     r->err_headers_out = apr_table_make(p, 1);
-    r->notes = apr_table_make(p, 1);
+    r->notes           = apr_table_make(p, 1);
+
+    r->request_config = ap_create_request_config(p);
+
+    r->proto_output_filters = c->output_filters;
+    r->output_filters       = r->proto_output_filters;
+    r->proto_input_filters  = c->input_filters;
+    r->input_filters        = r->proto_input_filters;
 
     ap_run_create_request(r);
+    
+    r->per_dir_config = s->lookup_defaults;
+
+    r->sent_bodyct     = 0;
+    r->read_length     = 0;
+    r->read_body       = REQUEST_NO_BODY;
+    r->status          = HTTP_OK;
+    r->the_request     = "UNKNOWN";
+    
+    r->hostname = s->server_hostname;
+
+    r->method          = "GET";
+    r->method_number   = M_GET;
+    r->uri             = "/";
+    r->filename        = (char *)ap_server_root_relative(p, r->uri);
+
+    r->assbackwards    = 1;
+    r->protocol        = "UNKNOWN";
 
     return r;
 }
