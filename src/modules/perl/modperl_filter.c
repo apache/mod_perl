@@ -443,11 +443,11 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
 typedef ap_filter_t * MP_FUNC_T(filter_add_t) (const char *, void *,
                                                request_rec *, conn_rec *);
 
-static int modperl_filter_register_connection(conn_rec *c,
-                                              int idx,
-                                              const char *name,
-                                              filter_add_t addfunc,
-                                              const char *type)
+static int modperl_filter_add_connection(conn_rec *c,
+                                         int idx,
+                                         const char *name,
+                                         filter_add_t addfunc,
+                                         const char *type)
 {
     modperl_config_dir_t *dcfg =
         modperl_config_dir_get_defaults(c->base_server);
@@ -483,12 +483,12 @@ static int modperl_filter_register_connection(conn_rec *c,
     return DECLINED;
 }
 
-static int modperl_filter_register_request(request_rec *r,
-                                           int idx,
-                                           const char *name,
-                                           filter_add_t addfunc,
-                                           const char *type,
-                                           ap_filter_t *filters)
+static int modperl_filter_add_request(request_rec *r,
+                                      int idx,
+                                      const char *name,
+                                      filter_add_t addfunc,
+                                      const char *type,
+                                      ap_filter_t *filters)
 {
     MP_dDCFG;
     MpAV *av;
@@ -510,7 +510,7 @@ static int modperl_filter_register_request(request_rec *r,
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
 
                     if (modperl_handler_equal(ctx_handler, handlers[i])) {
-                        /* skip if modperl_filter_register_connection
+                        /* skip if modperl_filter_add_connection
                          * already registered this handler
                          * XXX: set a flag in the modperl_handler_t instead
                          */
@@ -546,42 +546,42 @@ static int modperl_filter_register_request(request_rec *r,
     return DECLINED;
 }
 
-void modperl_output_filter_register_connection(conn_rec *c)
+void modperl_output_filter_add_connection(conn_rec *c)
 {
-    modperl_filter_register_connection(c,
-                                       MP_OUTPUT_FILTER_HANDLER,
-                                       MP_FILTER_CONNECTION_OUTPUT_NAME,
-                                       ap_add_output_filter,
-                                       "OutputFilter");
+    modperl_filter_add_connection(c,
+                                  MP_OUTPUT_FILTER_HANDLER,
+                                  MP_FILTER_CONNECTION_OUTPUT_NAME,
+                                  ap_add_output_filter,
+                                  "OutputFilter");
 }
 
-void modperl_output_filter_register_request(request_rec *r)
+void modperl_output_filter_add_request(request_rec *r)
 {
-    modperl_filter_register_request(r,
-                                    MP_OUTPUT_FILTER_HANDLER,
-                                    MP_FILTER_REQUEST_OUTPUT_NAME,
-                                    ap_add_output_filter,
-                                    "OutputFilter",
-                                    r->connection->output_filters);
+    modperl_filter_add_request(r,
+                               MP_OUTPUT_FILTER_HANDLER,
+                               MP_FILTER_REQUEST_OUTPUT_NAME,
+                               ap_add_output_filter,
+                               "OutputFilter",
+                               r->connection->output_filters);
 }
 
-void modperl_input_filter_register_connection(conn_rec *c)
+void modperl_input_filter_add_connection(conn_rec *c)
 {
-    modperl_filter_register_connection(c,
-                                       MP_INPUT_FILTER_HANDLER,
-                                       MP_FILTER_CONNECTION_INPUT_NAME,
-                                       ap_add_input_filter,
-                                       "InputFilter");
+    modperl_filter_add_connection(c,
+                                  MP_INPUT_FILTER_HANDLER,
+                                  MP_FILTER_CONNECTION_INPUT_NAME,
+                                  ap_add_input_filter,
+                                  "InputFilter");
 }
 
-void modperl_input_filter_register_request(request_rec *r)
+void modperl_input_filter_add_request(request_rec *r)
 {
-    modperl_filter_register_request(r,
-                                    MP_INPUT_FILTER_HANDLER,
-                                    MP_FILTER_REQUEST_INPUT_NAME,
-                                    ap_add_input_filter,
-                                    "InputFilter",
-                                    r->connection->input_filters);
+    modperl_filter_add_request(r,
+                               MP_INPUT_FILTER_HANDLER,
+                               MP_FILTER_REQUEST_INPUT_NAME,
+                               ap_add_input_filter,
+                               "InputFilter",
+                               r->connection->input_filters);
 }
 
 void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
