@@ -25,7 +25,7 @@ apr_status_t modperl_handler_cleanup(void *data);
 void modperl_handler_cache_cv(pTHX_ modperl_handler_t *handler, CV *cv);
 
 int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
-                           char *class, char *name);
+                           char *package, char *name);
 
 void modperl_handler_unparse(modperl_handler_t *handler);
 
