@@ -10,10 +10,11 @@ package TestFilter::in_bbs_inject_header;
 # future invocation, so not to slow things.
 #
 # it becomes much trickier with keepalive connection, since Apache
-# provides no API to tell you whether a new request is coming in. The
-# only way to work around that is to install a connection output
-# filter and make it snoop on EOS bucket (when the response is
-# completed an EOS bucket is sent, regardless of the connection type).
+# provides no API to tell you whether a new request is coming in. We
+# use $c->keepalives to figure out when a new request is coming in, by
+# comparing the previously stored keepalives count, which gets
+# incremented by Apache when the HTTP response headers are generated.
+#
 #
 # the second task is a bit trickier, as the headers_in core httpd
 # filter is picky and it wants each header to arrive in a separate
@@ -31,7 +32,6 @@ use base qw(Apache::Filter);
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Connection ();
-use Apache::Server ();
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::Table ();
@@ -80,73 +80,50 @@ sub inject_header_bucket {
     return 1;
 }
 
-sub flag_request_reset : FilterConnectionHandler {
-    my($filter, $bb) = @_;
-
-    # we need this filter only when the connection is keepalive
-    unless ($filter->c->keepalive == Apache::CONN_KEEPALIVE) {
-        $filter->remove;
-        return Apache::DECLINED;
-    }
-
-    debug join '', "-" x 20 , " output filter called ", "-" x 20;
-
-    #ModPerl::TestFilterDebug::bb_dump("connection", "output", $bb);
-
-    for (my $b = $bb->first; $b; $b = $bb->next($b)) {
-        next unless $b->is_eos;
-        # end of request, the input filter may get a new request now,
-        # so it should be ready to parse headers again
-        debug "flagging the end of response";
-        $filter->c->notes->set(reset_request => 1);
-    }
-
-    return $filter->next->pass_brigade($bb);
-}
-
-# instead of using FilterInitHandler, you could register the output
-# filter explicitly in the configuration file. that will be more
-# efficient for a production site, as one will need to do it only if
-# they support KeepAlive configurations
-sub push_output_filter : FilterInitHandler {
+sub context {
     my $filter = shift;
 
-    # at this point we don't know whether the connection is going to
-    # be keepalive or not, since the relevant input headers weren't
-    # parsed yet. we know only after ap_http_header_filter was called.
-    # therefore we have no choice but to add the flagging output filter
-    # unless we know that the server is configured not to allow
-    # keep_alive connections
-    my $s = $filter->c->base_server;
-    if ($s->keep_alive && $s->keep_alive_timeout > 0) {
-        $filter->c->add_output_filter(\&flag_request_reset);
-    }
-
-    return Apache::OK;
-}
-
-sub handler : FilterConnectionHandler
-              FilterHasInitHandler(\&push_output_filter) {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
-
-    debug join '', "-" x 20 , " input filter called -", "-" x 20;
-
-    my $c = $filter->c;
-
     my $ctx = $filter->ctx;
+    my $c   = $filter->c;
     unless ($ctx) {
         debug "filter context init";
         $ctx = {
             buckets             => [],
             done_with_headers   => 0,
             seen_body_separator => 0,
+            keepalives          => $c->keepalives,
         };
 
         # since we are going to manipulate the reference stored in
         # ctx, it's enough to store it only once, we will get the same
         # reference in the following invocations of that filter
         $filter->ctx($ctx);
+        return $ctx;
     }
+
+    if ($c->keepalive == Apache::CONN_KEEPALIVE &&
+        $ctx->{done_with_headers} &&
+        $c->keepalives > $ctx->{keepalives}) {
+
+        debug "a new request resetting the input filter state";
+
+        $ctx->{buckets}             = [];
+        $ctx->{done_with_headers}   = 0;
+        $ctx->{seen_body_separator} = 0;
+        $ctx->{keepalives} = $c->keepalives;
+    }
+
+    return $ctx;
+
+}
+
+sub handler : FilterConnectionHandler {
+    my($filter, $bb, $mode, $block, $readbytes) = @_;
+
+    debug join '', "-" x 20 , " input filter called -", "-" x 20;
+
+    my $ctx = context($filter);
+    my $c = $filter->c;
 
     # reset the filter state, we start a new request
     if ($c->keepalive == Apache::CONN_KEEPALIVE &&
