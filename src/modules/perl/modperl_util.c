@@ -87,10 +87,6 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
     SV *sv = Nullsv;
     MAGIC *mg;
 
-    if (in == &PL_sv_undef) {
-        return NULL;
-    }
-
     if (SvROK(in)) {
         SV *rv = (SV*)SvRV(in);
 
