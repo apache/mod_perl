@@ -143,6 +143,7 @@ $CONFIG = "";
 $ADD_MODULE = "";
 $PERL_DIRECTIVE_HANDLERS = 0;
 $PERL_TIE_TABLES = 0;
+$PERL_LOG_API = 0;
 my %experimental = map { $_,1 } qw{
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
@@ -182,6 +183,7 @@ sub is_mp_arg {
    PERL_METHOD_HANDLERS
    PERL_DIRECTIVE_HANDLERS
    PERL_TIE_TABLES
+   PERL_LOG_API
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -258,7 +260,7 @@ for (keys %callback_alias) {
 
 if($EVERYTHING) {
     @callback_hooks{qw(PERL_STACKED_HANDLERS PERL_METHOD_HANDLERS)} = (1) x 2;
-    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS)) {
+    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS PERL_LOG_API)) {
        $$_ = 1;
     }
 }
@@ -266,26 +268,16 @@ if($EVERYTHING) {
 
 if($ALL_HOOKS) {
     for (@callback_hooks) {
-	next if /(Table|Handler)s?$/i;
+	next if /(Api|Table|Handler)s?$/i;
 	$callback_hooks{$_}++;
     }
 }
 
 if($DYNAMIC) {
-    $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = 1;
+    $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = $PERL_LOG_API = 1;
 }
 
 my @xs_modules = qw(Apache Apache::Constants);
-if($PERL_DIRECTIVE_HANDLERS) {
-    push @xs_modules, "Apache::ModuleConfig";
-    $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
-}
-if($PERL_TIE_TABLES) {
-    push @xs_modules, "Apache::Tie";
-    $callback_hooks{PERL_TIE_TABLES} = 1;
-}
-
-my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
 
 if($Is_Win32) {
     $NO_HTTPD = 1;
@@ -355,6 +347,11 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	if(($mmn < MMN_130) and $USE_APACI) { #1.3.0
 	    print "Sorry, need 1.3.0+ for USE_APACI\n";
 	    $USE_APACI = $USE_DSO = 0;
+	    
+	}
+	if(($mmn < MMN_130) and $PERL_LOG_API) { #1.3.0
+	    $PERL_LOG_API = 0;
+	    $cant_hook{PERL_LOG_API} = "(need 1.3.0 or higher)";
 	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
@@ -485,6 +482,21 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
     last if $APACHE_SRC;
 }
 
+if($PERL_DIRECTIVE_HANDLERS) {
+    push @xs_modules, "Apache::ModuleConfig";
+    $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
+}
+if($PERL_TIE_TABLES) {
+    push @xs_modules, "Apache::Tie";
+    $callback_hooks{PERL_TIE_TABLES} = 1;
+}
+if($PERL_LOG_API) {
+    push @xs_modules, "Apache::Log";
+    $callback_hooks{PERL_LOG_API} = 1;
+}
+
+my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
+
 if($DYNAMIC) {
     for (@xs_mod_snames) {
 	cp "src/modules/perl/${_}.xs", "${_}/${_}.xs" if $DYNAMIC;
@@ -545,7 +557,7 @@ if($APACHE_SRC or $USE_APXS) {
 	$why = ($cant_hook{$k} || "(enable with $k=1)") unless $v;
 	$k =~ s/([A-Z]+)/ucfirst(lc($1))/ge;
 	$k =~ s/_//g;
-	$k .= "Handler" unless $k =~ /(Table|Handler)s?$/;
+	$k .= "Handler" unless $k =~ /(Api|Table|Handler)s?$/;
 	push @mod_perl_hooks, $k;
 	print $k . '.' x (28 - length($k));
 	print $v ? "enabled\n" : "disabled $why\n";

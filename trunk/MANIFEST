@@ -3,6 +3,8 @@ Constants/Constants.pm
 Constants/Makefile.PL
 ModuleConfig/ModuleConfig.pm
 ModuleConfig/Makefile.PL
+Log/Makefile.PL
+Log/Log.pm
 CREDITS
 INSTALL
 INSTALL.apaci
@@ -55,6 +57,7 @@ src/modules/perl/mod_perl_version.h
 src/modules/perl/Constants.xs
 src/modules/perl/Apache.xs
 src/modules/perl/ModuleConfig.xs
+src/modules/perl/Log.xs
 src/modules/perl/Tie.xs
 src/modules/perl/ldopts
 src/modules/perl/mod_perl.c
@@ -81,6 +84,7 @@ t/modules/constants.t
 t/modules/eperl.t
 t/modules/embperl.t
 t/modules/httpdconf.t
+t/modules/log.t
 t/modules/psections.t
 t/modules/perlrun.t
 t/modules/include.t
@@ -104,6 +108,7 @@ t/internal/stacked.t
 #t/internal/resolver.t
 t/internal/taint.t
 t/internal/tie.t
+t/net/perl/log.pl
 t/net/perl/file_upload.cgi
 t/net/perl/tie_table.pl
 t/net/perl/qredirect.pl
