@@ -37,6 +37,10 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=106074969831522&w=2
   owner: gozer
 
+* $Apache::Server::StrictPerlSections should be 1 by default (and docs
+  updated)
+  owner: gozer
+
 * Fixing Apache->warn("foo")
 
   Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
