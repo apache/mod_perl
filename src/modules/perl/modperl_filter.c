@@ -470,6 +470,9 @@ static int modperl_filter_register_connection(conn_rec *c,
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
             addfunc(name, (void*)ctx, NULL, c);
+
+            MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
+                       type, handlers[i]->name);
         }
 
         return OK;
@@ -529,6 +532,9 @@ static int modperl_filter_register_request(request_rec *r,
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
             addfunc(name, (void*)ctx, r, r->connection);
+
+            MP_TRACE_h(MP_FUNC, "%s handler %s configured (%s)\n",
+                       type, handlers[i]->name, r->uri);
         }
 
         return OK;
