@@ -88,6 +88,7 @@ NEW STUFF
 
 - win32:
   + integrate with Perl 5.005's threading
+  + mod_include #perl support
   + look at providing ASP (Active Server Plugin) support for NT users
 
 - overload %ENV magic so it's not setup unless asked for

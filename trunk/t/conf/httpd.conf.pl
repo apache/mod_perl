@@ -7,6 +7,8 @@ AddType text/perl-module .pm
 
 Action text/perl-module /perl/action.pl
 
+PerlPassEnv TEST_PERL_DIRECTIVES
+
 #these three are passed to perl_parse(), 
 #which happens before <Perl> sections are processed
 #optionally, they can be inside <Perl>, however for testing we want
@@ -25,6 +27,13 @@ PerlSetEnv KeyForPerlSetEnv OK
 
 <Perl>
 #!perl
+
+if($ENV{TEST_PERL_DIRECTIVES}) {
+    #t/TestDirectives/TestDirectives.pm
+    push @INC, map { "t/TestDirectives/blib/$_" } qw(arch lib);
+    require Apache::TestDirectives;
+    $TestCmd = 'one two three';
+}
 
 $My::config_is_perl = 1;
 
