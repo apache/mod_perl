@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+Added APR::URI->rpath method. Returns the path of an uri minus
+path_info, if any. [Gozer]
+
 moved Apache::current_callback() to ModPerl::Util::current_callback
 where it belongs [Gozer]
 

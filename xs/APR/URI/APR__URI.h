@@ -70,3 +70,23 @@ char *mpxs_APR__URI_port(pTHX_ apr_uri_t *uri, SV *portsv)
     return port_str;
 }
 
+static MP_INLINE
+SV *mpxs_APR__URI_rpath(pTHX_ apr_uri_t *apr_uri)
+{
+    modperl_uri_t *uri = (modperl_uri_t *)apr_uri;
+    
+    if(uri->path_info) {
+        int uri_len = strlen(uri->uri.path);
+        int n = strlen(uri->path_info);
+        int set = uri_len - n;
+        if (set > 0) {
+            return newSVpv(uri->uri.path, set);
+        }
+    }
+    else {
+        if (uri->uri.path) {
+            return newSVpv(uri->uri.path, 0);
+        }
+    }
+    return Nullsv;
+}
