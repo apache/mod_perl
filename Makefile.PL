@@ -73,7 +73,14 @@ EOF
         generate_script($_);
     }
 
-    generate_xs($httpd_version) if $build->{MP_GENERATE_XS};
+    my $tables_dir = tables_dir($httpd_version);
+
+    unshift @INC, $tables_dir;
+
+    if ($build->{MP_GENERATE_XS}) {
+        print "generating XS code using $tables_dir...\n";
+        generate_xs($httpd_version);
+    }
 }
 
 sub post_configure {
@@ -97,7 +104,7 @@ sub post_configure {
     $build->save;
 }
 
-sub generate_xs {
+sub tables_dir {
     my $httpd_version = shift;
 
     my $tables_version = 'current';
@@ -105,10 +112,9 @@ sub generate_xs {
     #$httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
 
     my $tables_dir = "xs/tables/$tables_version";
-    unshift @INC, $tables_dir;
+}
 
-    print "generating XS code using $tables_dir...\n";
-
+sub generate_xs {
     require ModPerl::WrapXS;
 
     my $xs = ModPerl::WrapXS->new;
