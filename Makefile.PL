@@ -1809,6 +1809,27 @@ sub perl_version {
     $v;
 }
 
+#for linking third-party xs modules static built w/ MakeMaker's: 'make static' 
+#must have when the xs module is compiled with profiling `-pg -a' flags
+sub add_static_ar {
+    $PERL_STATIC_AR ||= "";
+    my $cur = $APACHE_SRC =~ /^../ ? "$PWD/" : "";
+    for (qw(blib/arch/auto arch/auto)) {
+	last if -d ($ar_dir = "$APACHE_SRC/modules/perl/$_");
+	$ar_dir = "";
+    }
+
+    finddepth(sub {
+	return unless /\.a$/;
+	(my $rel = $File::Find::dir) =~ s:$APACHE_SRC/?::;
+	(my $mod = $rel) =~ s:.*auto/::;
+	$mod =~ s,/,::,;
+	print "linking static $mod => $rel/$_\n";
+	$PERL_STATIC_AR .= $cur . "$File::Find::dir/$_ ";
+	$PERL_STATIC_EXTS .= "$mod ";
+    }, $ar_dir);
+}
+
 sub APACI::init {
     my $lib_cfg;
     if($USE_APXS) {
@@ -1834,10 +1855,16 @@ sub APACI::init {
     for (@xs_mod_snames) {
 	push @static_src, "$_.c";
     }
-    my $static_targets = <<EOF unless $DYNAMIC;
+
+    add_static_ar();
+
+    my $static_targets = "";
+    $static_targets = <<EOF unless $DYNAMIC;
 PERL_STATIC_EXTS = @xs_modules $PERL_STATIC_EXTS
 PERL_STATIC_SRCS = @static_src
 EOF
+
+    $static_targets .= "PERL_STATIC_AR = $PERL_STATIC_AR\n" if $PERL_STATIC_AR;
 
     print $apaci_cfg <<EOF;
 ##
