@@ -302,13 +302,14 @@ PerlHandler Apache::Death
 SetHandler perl-script
 </Location>
 
-#libapr
-<Location /apr-form-test>   
-SetHandler apr-form  
+#libapreq
+#LoadModule testapreq_module modules/libtestapreq.so
+<Location /apreq-form-test>   
+SetHandler apreq-form  
 </Location>   
-<Location /apr-upload-test>   
-SetHandler apr-upload 
+<Location /apreq-upload-test>   
+SetHandler apreq-upload 
 </Location>   
-<Location /apr-cookie-test>   
-SetHandler apr-cookie 
+<Location /apreq-cookie-test>   
+SetHandler apreq-cookie 
 </Location>   
