@@ -15,12 +15,12 @@ my $expected = "123\001456\000789";
 for my $location (@locations) {
     my $received = POST_BODY_ASSERT $location, content => $expected;
 
-    ok t_cmp(length($expected),
-             length($received),
+    ok t_cmp(length($received),
+             length($expected),
              "$location binary response length");
 
-    ok t_cmp($expected,
-             $received,
+    ok t_cmp($received,
+             $expected,
              "$location binary response data");
 }
 

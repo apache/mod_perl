@@ -16,4 +16,4 @@ my $data = "x" x $length;
 my $received = POST_BODY $location, content => $data;
 my $expected = "read $length chars";
 
-ok t_cmp($expected, $received, "input bbs filter underrun test")
+ok t_cmp($received, $expected, "input bbs filter underrun test")

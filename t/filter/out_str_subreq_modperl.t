@@ -17,5 +17,5 @@ my $subrequest  = "modperl subrequest\n";
 my $expected = join '', $content1, $subrequest, $content2, $filter;
 my $received = GET_BODY $location;
 
-ok t_cmp($expected, $received, 
+ok t_cmp($received, $expected,
     "testing filter-originated lookup_uri() call to modperl-served URI");

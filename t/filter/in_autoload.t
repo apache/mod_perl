@@ -13,5 +13,5 @@ my $data = "[Foo BaR] ";
 my $expected = lc $data;
 my $received = POST_BODY $location, content => $data;
 
-ok t_cmp($expected, $received, "input stream filter lc autoloaded")
+ok t_cmp($received, $expected, "input stream filter lc autoloaded")
 

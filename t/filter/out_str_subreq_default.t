@@ -20,5 +20,5 @@ my $received = GET_BODY $location;
 # Win32 fix for line endings
 $received =~ s{\r}{}g if Apache::TestConfig::WIN32;
 
-ok t_cmp($expected, $received, 
+ok t_cmp($received, $expected,
     "testing filter-originated lookup_uri() call to core served URI");

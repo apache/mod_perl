@@ -30,6 +30,6 @@ my $response_clear = Compress::Zlib::memGunzip($response_raw);
 my $expected = $response_orig;
 my $received = $response_clear;
 
-ok t_cmp($expected, $received, 
+ok t_cmp($received, $expected,
     "mixing httpd and mod_perl filters, while preserving order");
 
