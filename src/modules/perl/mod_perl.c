@@ -297,10 +297,11 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         }   
 #endif
         
-        if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
+        if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
-        if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
+
+        if (!modperl_config_apply_PerlModule(s, scfg, perl, p)) {
             return HTTP_INTERNAL_SERVER_ERROR;
         }
     }
