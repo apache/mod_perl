@@ -58,11 +58,13 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
         clone_flags |= CLONEf_CLONE_HOST;
 #endif
 
+        PERL_SET_CONTEXT(perl);
+
         interp->perl = perl_clone(perl, clone_flags);
 
         modperl_interp_clone_init(interp);
 
-        PERL_SET_CONTEXT(mip->parent->perl);
+        PERL_SET_CONTEXT(perl);
 
 #ifdef MP_USE_GTOP
         MP_TRACE_m_do(
