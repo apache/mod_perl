@@ -423,10 +423,10 @@ static PerlIO_funcs PerlIO_APR = {
     NULL,                       /* set_ptrcnt */
 };
 
-void apr_perlio_init(pTHX)
+void modperl_apr_perlio_init(pTHX)
 {
-    APR_REGISTER_OPTIONAL_FN(apr_perlio_apr_file_to_PerlIO);
-    APR_REGISTER_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
+    APR_REGISTER_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_PerlIO);
+    APR_REGISTER_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
 
     PerlIO_define_layer(aTHX_ &PerlIO_APR);
 }
@@ -437,8 +437,9 @@ void apr_perlio_init(pTHX)
 
 /* ***** PerlIO <=> apr_file_t helper functions ***** */
 
-PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
-                                      apr_perlio_hook_e type)
+PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
+                                              apr_pool_t *pool,
+                                              modperl_apr_perlio_hook_e type)
 {
     char *mode;
     const char *layers = ":APR";
@@ -450,14 +451,14 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
     }
     
     switch (type) {
-      case APR_PERLIO_HOOK_WRITE:
+      case MODPERL_APR_PERLIO_HOOK_WRITE:
         mode = "w";
         break;
-      case APR_PERLIO_HOOK_READ:
+      case MODPERL_APR_PERLIO_HOOK_READ:
         mode = "r";
         break;
       default:
-        Perl_croak(aTHX_ "unknown APR_PERLIO type: %d", type);
+        Perl_croak(aTHX_ "unknown MODPERL_APR_PERLIO type: %d", type);
     };
     
     PerlIO_apply_layers(aTHX_ f, mode, layers);
@@ -490,7 +491,8 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
     return f;
 }
 
-static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
+static SV *modperl_apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio,
+                                             modperl_apr_perlio_hook_e type)
 {
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
@@ -498,14 +500,14 @@ static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
     gv_IOadd(gv); 
 
     switch (type) {
-      case APR_PERLIO_HOOK_WRITE:
+      case MODPERL_APR_PERLIO_HOOK_WRITE:
           /* if IoIFP() is not assigned to it'll be never closed, see
            * Perl_io_close() */
         IoIFP(GvIOp(gv)) = IoOFP(GvIOp(gv)) = pio;
         IoFLAGS(GvIOp(gv)) |= IOf_FLUSH;
         IoTYPE(GvIOp(gv)) = IoTYPE_WRONLY;
         break;
-      case APR_PERLIO_HOOK_READ:
+      case MODPERL_APR_PERLIO_HOOK_READ:
         IoIFP(GvIOp(gv)) = pio;
         IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
@@ -514,12 +516,12 @@ static SV *apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio, apr_perlio_hook_e type)
     return sv_2mortal(retval);
 }
 
-SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
-                                apr_perlio_hook_e type)
+SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
+                                        apr_pool_t *pool,
+                                        modperl_apr_perlio_hook_e type)
 {
-    return apr_perlio_PerlIO_to_glob(aTHX_
-                                     apr_perlio_apr_file_to_PerlIO(aTHX_ file,
-                                                                   pool, type),
+    return modperl_apr_perlio_PerlIO_to_glob(aTHX_
+                                     modperl_apr_perlio_apr_file_to_PerlIO(aTHX_ file, pool, type),
                                      type);
 }
 
@@ -531,8 +533,8 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
 #define MP_IO_TYPE FILE
 #endif
 
-static MP_IO_TYPE *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
-                                                 apr_perlio_hook_e type)
+static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
+                                                 modperl_apr_perlio_hook_e type)
 {
     MP_IO_TYPE *retval;
     char *mode;
@@ -541,10 +543,10 @@ static MP_IO_TYPE *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     apr_status_t rc;
     
     switch (type) {
-      case APR_PERLIO_HOOK_WRITE:
+      case MODPERL_APR_PERLIO_HOOK_WRITE:
         mode = "w";
         break;
-      case APR_PERLIO_HOOK_READ:
+      case MODPERL_APR_PERLIO_HOOK_READ:
         mode = "r";
         break;
     };
@@ -581,8 +583,9 @@ static MP_IO_TYPE *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     return retval;
 }
 
-SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
-                                apr_perlio_hook_e type)
+SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, 
+                                        apr_pool_t *pool,
+                                        modperl_apr_perlio_hook_e type)
 {
     SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
     GV *gv = (GV*)SvRV(retval); 
@@ -590,14 +593,15 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
     gv_IOadd(gv); 
 
     switch (type) {
-      case APR_PERLIO_HOOK_WRITE:
+      case MODPERL_APR_PERLIO_HOOK_WRITE:
         IoIFP(GvIOp(gv)) = IoOFP(GvIOp(gv)) =
-            apr_perlio_apr_file_to_PerlIO(aTHX_ file, type);
+            modperl_apr_perlio_apr_file_to_PerlIO(aTHX_ file, type);
         IoFLAGS(GvIOp(gv)) |= IOf_FLUSH;
         IoTYPE(GvIOp(gv)) = IoTYPE_WRONLY;
         break;
-      case APR_PERLIO_HOOK_READ:
-        IoIFP(GvIOp(gv)) = apr_perlio_apr_file_to_PerlIO(aTHX_ file, type);
+      case MODPERL_APR_PERLIO_HOOK_READ:
+        IoIFP(GvIOp(gv)) = modperl_apr_perlio_apr_file_to_PerlIO(aTHX_ file,
+                                                                 type);
         IoTYPE(GvIOp(gv)) = IoTYPE_RDONLY;
         break;
     };
@@ -605,9 +609,9 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
     return sv_2mortal(retval);
 }
 
-void apr_perlio_init(pTHX)
+void modperl_apr_perlio_init(pTHX)
 {
-    APR_REGISTER_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
+    APR_REGISTER_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
 }
 
 #endif /* PERLIO_LAYERS */

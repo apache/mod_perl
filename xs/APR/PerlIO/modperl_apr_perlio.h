@@ -39,12 +39,12 @@
 #endif
 
 typedef enum {
-    APR_PERLIO_HOOK_READ,
-    APR_PERLIO_HOOK_WRITE
-} apr_perlio_hook_e;
+    MODPERL_APR_PERLIO_HOOK_READ,
+    MODPERL_APR_PERLIO_HOOK_WRITE
+} modperl_apr_perlio_hook_e;
 
 #ifndef MP_SOURCE_SCAN
-void apr_perlio_init(pTHX);
+void modperl_apr_perlio_init(pTHX);
 #endif
 
 /* The following functions can be used from other .so libs, they just
@@ -53,21 +53,23 @@ void apr_perlio_init(pTHX);
 #ifndef MP_SOURCE_SCAN
 
 #ifdef PERLIO_LAYERS
-PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
-                                      apr_perlio_hook_e type);
+PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, 
+                                              apr_pool_t *pool,
+                                              modperl_apr_perlio_hook_e type);
 APR_DECLARE_OPTIONAL_FN(PerlIO *,
-                        apr_perlio_apr_file_to_PerlIO,
+                        modperl_apr_perlio_apr_file_to_PerlIO,
                         (pTHX_ apr_file_t *file, apr_pool_t *pool,
-                         apr_perlio_hook_e type));
+                         modperl_apr_perlio_hook_e type));
 #endif /* PERLIO_LAYERS */
 
 
-SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, apr_pool_t *pool,
-                                apr_perlio_hook_e type);
+SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, 
+                                        apr_pool_t *pool,
+                                        modperl_apr_perlio_hook_e type);
 APR_DECLARE_OPTIONAL_FN(SV *,
-                        apr_perlio_apr_file_to_glob,
+                        modperl_apr_perlio_apr_file_to_glob,
                         (pTHX_ apr_file_t *file, apr_pool_t *pool,
-                         apr_perlio_hook_e type));
+                         modperl_apr_perlio_hook_e type));
 #endif /* MP_SOURCE_SCAN */
 
 #endif /* MODPERL_APR_PERLIO_H */

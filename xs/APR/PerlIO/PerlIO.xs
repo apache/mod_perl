@@ -21,4 +21,4 @@ MODULE = APR::PerlIO    PACKAGE = APR::PerlIO
 PROTOTYPES: disabled
 
 BOOT:
-    apr_perlio_init(aTHX);
+    modperl_apr_perlio_init(aTHX);
