@@ -102,6 +102,7 @@ MODULE=APR::Brigade
  mpxs_APR__Brigade_empty        #APR_BRIGADE_EMPTY
 
 MODULE=APR::Bucket
+ mpxs_APR__Bucket_is_flush       #APR_BUCKET_IS_FLUSH
  mpxs_APR__Bucket_is_eos         #APR_BUCKET_IS_EOS
  mpxs_APR__Bucket_insert_after   #APR_BUCKET_INSERT_AFTER
  mpxs_APR__Bucket_insert_before  #APR_BUCKET_INSERT_AFTER
