@@ -23,7 +23,7 @@ use Apache::Filter ();
 use Apache::Const -compile => qw(OK M_POST);
 
 sub handler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my $filter = shift;
 
     my $ctx = $filter->ctx;
 
@@ -33,7 +33,7 @@ sub handler {
         # brigades because the core input filter will split data in
         # 8kb chunks per brigade and we have sent 11k of data (1st bb:
         # 8kb, 2nd bb: ~3kb)
-        my $len = $filter->read($mode, $block, $readbytes, my $buffer, 1024);
+        my $len = $filter->read(my $buffer, 1024);
         #warn "FILTER READ: $len bytes\n";
         $filter->print("read just the first 1024b from the first brigade");
 

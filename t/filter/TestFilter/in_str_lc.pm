@@ -8,9 +8,9 @@ use Apache::Filter ();
 use Apache::Const -compile => qw(OK M_POST);
 
 sub handler {
-     my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my $filter = shift;
 
-    while ($filter->read($mode, $block, $readbytes, my $buffer, 1024)) {
+    while ($filter->read(my $buffer, 1024)) {
         #warn "FILTER READ: $buffer\n";
         $filter->print(lc $buffer);
     }

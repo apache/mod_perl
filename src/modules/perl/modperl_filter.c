@@ -94,7 +94,10 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
 
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_bucket_brigade *bb,
-                                     modperl_filter_mode_e mode)
+                                     modperl_filter_mode_e mode,
+                                     ap_input_mode_t input_mode,
+                                     apr_read_type_e block,
+                                     apr_off_t readbytes)
 {
     apr_pool_t *p = MP_FILTER_POOL(f);
     modperl_filter_t *filter = apr_pcalloc(p, sizeof(*filter));
@@ -109,6 +112,9 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
     if (mode == MP_INPUT_FILTER_MODE) {
         filter->bb_in  = NULL;
         filter->bb_out = bb;
+        filter->input_mode = input_mode;
+        filter->block = block;
+        filter->readbytes = readbytes;
     }
     else {
         filter->bb_in  = bb;
@@ -134,10 +140,7 @@ modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
     return mg ? (modperl_filter_t *)mg->mg_ptr : NULL;
 }
 
-int modperl_run_filter(modperl_filter_t *filter,
-                       ap_input_mode_t mode,
-                       apr_read_type_e block,
-                       apr_off_t readbytes)
+int modperl_run_filter(modperl_filter_t *filter)
 {
     AV *args = Nullav;
     int status;
@@ -162,9 +165,9 @@ int modperl_run_filter(modperl_filter_t *filter,
     modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter);
 
     if (filter->mode == MP_INPUT_FILTER_MODE) {
-        av_push(args, newSViv(mode));
-        av_push(args, newSViv(block));
-        av_push(args, newSViv(readbytes));
+        av_push(args, newSViv(filter->input_mode));
+        av_push(args, newSViv(filter->block));
+        av_push(args, newSViv(filter->readbytes));
     }
 
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
@@ -413,9 +416,6 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
 
 MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
                                                modperl_filter_t *filter,
-                                               ap_input_mode_t mode,
-                                               apr_read_type_e block,
-                                               apr_off_t readbytes,
                                                SV *buffer,
                                                apr_size_t wanted)
 {
@@ -425,7 +425,8 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
         /* This should be read only once per handler invocation! */
         filter->bb_in = apr_brigade_create(filter->pool,
                                            filter->f->c->bucket_alloc);
-        ap_get_brigade(filter->f->next, filter->bb_in, mode, block, readbytes);
+        ap_get_brigade(filter->f->next, filter->bb_in,
+                       filter->input_mode, filter->block, filter->readbytes);
         MP_TRACE_f(MP_FUNC, "retrieving bb: 0x%lx\n",
                    (unsigned long)(filter->bb_in));
     }
@@ -544,8 +545,9 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
         return ap_pass_brigade(f->next, bb);
     }
     else {
-        filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, 0, 0, 0);
+        filter = modperl_filter_new(f, bb, MP_OUTPUT_FILTER_MODE,
+                                    0, 0, 0);
+        status = modperl_run_filter(filter);
     }
     
     switch (status) {
@@ -560,7 +562,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
 
 apr_status_t modperl_input_filter_handler(ap_filter_t *f,
                                           apr_bucket_brigade *bb,
-                                          ap_input_mode_t mode,
+                                          ap_input_mode_t input_mode,
                                           apr_read_type_e block,
                                           apr_off_t readbytes)
 {
@@ -570,11 +572,12 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     if (((modperl_filter_ctx_t *)f->ctx)->sent_eos) {
         MP_TRACE_f(MP_FUNC,
                    "EOS was already sent, passing through the brigade\n");
-        return ap_get_brigade(f->next, bb, mode, block, readbytes);
+        return ap_get_brigade(f->next, bb, input_mode, block, readbytes);
     }
     else {
-        filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE);
-        status = modperl_run_filter(filter, mode, block, readbytes);
+        filter = modperl_filter_new(f, bb, MP_INPUT_FILTER_MODE,
+                                    input_mode, block, readbytes);
+        status = modperl_run_filter(filter);
     }
     
     switch (status) {

@@ -32,24 +32,12 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
                                                      SV **MARK, SV **SP)
 {
     modperl_filter_t *modperl_filter;
-    ap_input_mode_t mode = 0;
-    apr_read_type_e block = 0;
-    apr_off_t readbytes = 0;
     apr_size_t wanted, len=0;
     SV *buffer;
-    
-    if (items < 4) {
-        mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
-    }
-    else {
-        modperl_filter = mp_xs_sv2_modperl_filter(*MARK); MARK++;
-        mode           = (ap_input_mode_t)SvIV(*MARK); MARK++;
-        block          = (apr_read_type_e)SvIV(*MARK); MARK++;
-        readbytes      = (apr_off_t)SvIV(*MARK); MARK++;
-        buffer         = *MARK++;
-    }
+
+    mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
         
-    if (items == 3 || items == 6) {
+    if (items > 2) {
         wanted = SvIV(*MARK);
     }
     else {
@@ -57,8 +45,11 @@ static MP_INLINE apr_size_t mpxs_Apache__Filter_read(pTHX_ I32 items,
     }
 
     if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
-        len = modperl_input_filter_read(aTHX_ modperl_filter, mode,
-                                        block, readbytes, buffer, wanted);
+        /* XXX: if we ever will have a need to change the read
+         * discipline: (input_mode, block, readbytes) from the filter
+         * we can provide an accessor method to modify the values
+         * supplied by the filter chain */
+        len = modperl_input_filter_read(aTHX_ modperl_filter, buffer, wanted);
     }
     else {
         len = modperl_output_filter_read(aTHX_ modperl_filter, buffer, wanted);

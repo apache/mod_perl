@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+make $filter->read() in input streaming filters, use the same number
+of arguments as read() in the output filters. [Stas]
+
 Implement $r->add_input_filter and $r->add_output_filter
           $c->add_input_filter and $c->add_output_filter
 and add tests  [Stas]
