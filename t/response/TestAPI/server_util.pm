@@ -97,10 +97,10 @@ sub handler {
              canonpath(Apache::server_root_relative($r->pool)),
              'Apache::server_root_relative($r->pool)');
 
-    # Apache::server_root is also the ServerRoot constant
-    ok t_cmp(canonpath(Apache::server_root),
+    # Apache::Server::server_root is also the ServerRoot constant
+    ok t_cmp(canonpath(Apache::Server::server_root),
              canonpath($r->server_root_relative),
-             'Apache::server_root');
+             'Apache::Server::server_root');
 
     {
         # absolute paths should resolve to themselves

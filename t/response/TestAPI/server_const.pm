@@ -29,7 +29,7 @@ sub handler {
     # test Apache::Server constant subroutines
 
     ok t_cmp(canonpath($root),
-             canonpath(Apache::server_root),
+             canonpath(Apache::Server::server_root),
              'Apache::Server::server_root()');
      
 
