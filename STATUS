@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/08 00:00:02 $]
+   Last modified at [$Date: 2003/08/08 00:03:27 $]
 
 Release:
 --------
@@ -23,10 +23,6 @@ Release:
 
 Release Showstoppers:
 ---------------------
-
-* sync apr_ and ap_ API with mp2 API
-
-* write manpages
 
 Available Patches:
 ------------------
