@@ -17,6 +17,8 @@ use Apache::HookRun ();
 use Apache::Access ();
 use APR::Socket ();
 
+use Apache::TestTrace;
+
 use Apache::Const -compile => qw(OK DONE DECLINED);
 use APR::Const -compile => qw(SO_NONBLOCK);
 
