@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+make $r->connection->remote_ip set-able [Doug Bagley <doug@dejanews.com>]
+
 new experimental options PERL_SAFE_STARTUP and PERL_DEFAULT_OPMASK
 when httpd is starting, opcodes will be disabled during PerlModule,
 PerlRequire and <Perl></Perl>
