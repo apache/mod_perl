@@ -29,7 +29,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         s = (server_rec *)SvObjIV(sv);
     }
     else {
-        croak_inval_obj();
+        s = modperl_global_get_server_rec();
     }
 
     if ((lmask == APLOG_DEBUG) && (s->loglevel >= APLOG_DEBUG)) {
@@ -77,10 +77,6 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
     void *retval;
     char *pclass;
 
-    if (!SvROK(sv)) {
-        Perl_croak(aTHX_ "Argument is not a reference");
-    }
-
     switch (logtype) {
       case MP_LOG_REQUEST:
         pclass = "Apache::Log::Request";
@@ -88,7 +84,7 @@ static SV *mpxs_Apache__Log_log(pTHX_ SV *sv, int logtype)
         break;
       case MP_LOG_SERVER:
         pclass = "Apache::Log::Server";
-        retval = (void *)SvObjIV(sv);
+        retval = (void *)modperl_sv2server_rec(aTHX_ sv);
         break;
       default:
         croak_inval_obj();
@@ -205,7 +201,7 @@ static XS(MPXS_Apache__Log_log_xerror)
         r = modperl_xs_sv2request_rec(aTHX_ ST(0), NULL, cv);
         break;
       case 's':
-        s = (server_rec *)SvObjIV(ST(0));
+        s = modperl_sv2server_rec(aTHX_ ST(0));
         break;
       default:
         croak_inval_obj();
@@ -292,10 +288,10 @@ static XS(MPXS_Apache__Log_log_error)
     }
 
     switch (*GvNAME(CvGV(cv))) {
-        case 'w':
+      case 'w':
         modperl_log_warn(s, errstr);
         break;
-        default:
+      default:
         modperl_log_error(s, errstr);
         break;
     }
