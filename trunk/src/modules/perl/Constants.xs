@@ -134,12 +134,11 @@ static enum cmd_how autoload_args_how(char *name) {
     if (strEQ(name, "TAKE3"))
 	return TAKE3;
     
-    return -1;
+    return (enum cmd_how) -1;
 }
 
 static double
-constant(name)
-char *name;
+constant(char *name)
 {
     errno = 0;
     switch (*name) {

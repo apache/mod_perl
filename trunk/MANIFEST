@@ -20,6 +20,7 @@ INSTALL
 INSTALL.apaci
 SUPPORT
 INSTALL.win32
+INSTALL.activeperl
 MANIFEST
 ToDo
 Makefile.PL
@@ -73,6 +74,7 @@ Leak/Leak.pm
 Leak/Leak.xs
 Leak/Makefile.PL
 Leak/typemap
+src/modules/perl/apache_inc.h
 src/modules/perl/perl_PL.h
 src/modules/perl/Exports.c
 src/modules/perl/File.xs
