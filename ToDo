@@ -57,8 +57,6 @@ Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
 
 - Gerald's report of Embperl/sub-request/print breakage
 
-- looks like we need a per-server configuration merge routine
-
 - need turn of strip of httpd during 'make install'
 
 - SSIs executed using /bin/sh, not suexec as configured?
