@@ -19,7 +19,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 41;
+    plan $r, tests => 42;
 
     #Apache->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache->request;
@@ -96,6 +96,8 @@ sub handler {
     #content_languages
 
     #user
+
+    ok $r->ap_auth_type || 1;
 
     ok $r->no_cache || 1;
 
