@@ -53,8 +53,8 @@ sub handler {
 
     # insert_after / insert_before / is_eos / is_flush
     {
-        my $d1 = APR::Bucket->new("d1");
-        my $d2 = APR::Bucket->new("d2");
+        my $d1 = APR::Bucket->new($ba, "d1");
+        my $d2 = APR::Bucket->new($ba, "d2");
         my $f1 = APR::Bucket::flush_create($ba);
         my $f2 = APR::Bucket::flush_create($ba);
         my $e1 = APR::Bucket::eos_create($ba);
@@ -111,7 +111,7 @@ sub handler {
         ok t_cmp($bb->last,  undef, "no last bucket");
 
         ## now there is first
-        my $b = APR::Bucket->new("bbb");
+        my $b = APR::Bucket->new($ba, "bbb");
         $bb->insert_head($b);
         my $b_first = $bb->first;
         $b->read(my $read);
@@ -127,8 +127,8 @@ sub handler {
     # delete+destroy
     {
         my $bb = APR::Brigade->new($r->pool, $ba);
-        $bb->insert_head(APR::Bucket->new("a"));
-        $bb->insert_head(APR::Bucket->new("b"));
+        $bb->insert_head(APR::Bucket->new($ba, "a"));
+        $bb->insert_head(APR::Bucket->new($ba, "b"));
 
         my $b1 = $bb->first;
         $b1->remove;

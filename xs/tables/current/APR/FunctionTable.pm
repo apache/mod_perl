@@ -206,6 +206,10 @@ $APR::FunctionTable = [
         'name' => 'my_perl'
       },
       {
+        'type' => 'apr_bucket_alloc_t *',
+        'name' => 'list'
+      },
+      {
         'type' => 'SV *',
         'name' => 'sv'
       },

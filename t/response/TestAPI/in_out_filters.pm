@@ -1,3 +1,4 @@
+
 package TestAPI::in_out_filters;
 
 # testing: $r->input_filters and $r->output_filters
@@ -38,7 +39,7 @@ sub send_response_body {
     my $bb = APR::Brigade->new($r->pool,
                                $r->connection->bucket_alloc);
 
-    my $b = APR::Bucket->new($data);
+    my $b = APR::Bucket->new($r->connection->bucket_alloc, $data);
     $bb->insert_tail($b);
     $r->output_filters->fflush($bb);
     $bb->destroy;

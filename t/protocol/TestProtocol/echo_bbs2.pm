@@ -43,7 +43,7 @@ sub handler {
         last if $data =~ /^[\r\n]+$/;
 
         # transform data here
-        my $bucket = APR::Bucket->new(uc $data);
+        my $bucket = APR::Bucket->new($bb_in->bucket_alloc, uc $data);
         $bb_out->insert_tail($bucket);
 
         $c->output_filters->fflush($bb_out);

@@ -18,11 +18,17 @@
 #define mpxs_APR__Bucket_delete  apr_bucket_delete
 #define mpxs_APR__Bucket_destroy apr_bucket_destroy
 
-static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
-                                        apr_off_t offset, apr_size_t len)
+static apr_bucket *mpxs_APR__Bucket_new(pTHX_  SV *classname, apr_bucket_alloc_t *list,
+                                        SV *sv, apr_off_t offset, apr_size_t len)
 {
 
     apr_size_t full_len;
+
+    if (sv == Nullsv) {
+        sv = newSV(0);
+        SvUPGRADE(sv, SVt_PV);
+    }
+
     (void)SvPV(sv, full_len);
 
     if (len) {
@@ -35,7 +41,7 @@ static apr_bucket *mpxs_APR__Bucket_new(pTHX_ SV *classname, SV *sv,
         len = full_len - offset;
     }
     
-    return modperl_bucket_sv_create(aTHX_ sv, offset, len);
+    return modperl_bucket_sv_create(aTHX_ list, sv, offset, len);
 }
 
 static MP_INLINE

@@ -39,12 +39,12 @@ sub handler {
         my $tests = Apache::TestToString->finish;
 
         my $brigade = APR::Brigade->new($filter->r->pool, $ba);
-        my $b = APR::Bucket->new($tests);
+        my $b = APR::Bucket->new($ba, $tests);
 
         $brigade->insert_tail($b);
 
         my $ok = $brigade->first->type->name =~ /mod_perl/ ? 4 : 0;
-        $brigade->insert_tail(APR::Bucket->new("ok $ok\n"));
+        $brigade->insert_tail(APR::Bucket->new($ba, "ok $ok\n"));
 
         $brigade->insert_tail(APR::Bucket::eos_create($ba));
 

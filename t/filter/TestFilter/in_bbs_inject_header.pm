@@ -179,7 +179,7 @@ sub handler : FilterConnectionHandler {
         if ($data and $data =~ /^POST/) {
             # demonstrate how to add a header while processing other headers
             my $header = "$header1_key: $header1_val\n";
-            push @{ $ctx->{buckets} }, APR::Bucket->new($header);
+            push @{ $ctx->{buckets} }, APR::Bucket->new($c->bucket_alloc, $header);
             debug "queued header [$header]";
         }
         elsif ($data =~ /^[\r\n]+$/) {
@@ -197,7 +197,7 @@ sub handler : FilterConnectionHandler {
             # time to add extra headers:
             for my $key (keys %headers) {
                 my $header = "$key: $headers{$key}\n";
-                push @{ $ctx->{buckets} }, APR::Bucket->new($header);
+                push @{ $ctx->{buckets} }, APR::Bucket->new($c->bucket_alloc, $header);
                 debug "queued header [$header]";
             }
 

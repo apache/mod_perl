@@ -9,19 +9,23 @@ use Apache::Test;
 use Apache::TestUtil;
 use TestCommon::Utils;
 
+use APR::Pool ();
 use APR::Bucket ();
 use APR::BucketType ();
 
 sub num_of_tests {
-    return 16;
+    return 18;
 }
 
 sub test {
 
+    my $pool = APR::Pool->new();
+    my $ba = APR::Bucket::alloc_create($pool);
+
     # new: basic
     {
         my $data = "foobar";
-        my $b = APR::Bucket->new($data);
+        my $b = APR::Bucket->new($ba, $data);
 
         t_debug('$b is defined');
         ok defined $b;
@@ -40,7 +44,7 @@ sub test {
         my $data   = "foobartar";
         my $offset = 3;
         my $real = substr $data, $offset;
-        my $b = APR::Bucket->new($data, $offset);
+        my $b = APR::Bucket->new($ba, $data, $offset);
         my $rlen = $b->read(my $read);
         ok t_cmp($read, $real, 'new($data, $offset)/buffer');
         ok t_cmp($rlen, length($read), 'new($data, $offset)/len');
@@ -54,7 +58,7 @@ sub test {
         my $offset = 3;
         my $len    = 3;
         my $real = substr $data, $offset, $len;
-        my $b = APR::Bucket->new($data, $offset, $len);
+        my $b = APR::Bucket->new($ba, $data, $offset, $len);
         my $rlen = $b->read(my $read);
         ok t_cmp($read, $real, 'new($data, $offset, $len)/buffer');
         ok t_cmp($rlen, length($read), 'new($data, $offse, $lent)/len');
@@ -66,7 +70,7 @@ sub test {
         my $offset = 3;
         my $len    = 10;
         my $real = substr $data, $offset, $len;
-        my $b = eval { APR::Bucket->new($data, $offset, $len) };
+        my $b = eval { APR::Bucket->new($ba, $data, $offset, $len) };
         ok t_cmp($@,
                  qr/the length argument can't be bigger than the total/,
                  'new($data, $offset, $len_too_big)');
@@ -77,10 +81,10 @@ sub test {
     {
         my $data = "A" x 10;
         my $orig = $data;
-        my $b = APR::Bucket->new($data);
+        my $b = APR::Bucket->new($ba, $data);
         $data =~ s/^..../BBBB/;
         $b->read(my $read);
-        ok !t_cmp($read, $orig,
+        ok t_cmp($read, $data,
                  "data inside the bucket should get affected by " .
                  "the changes to the Perl variable it's created from");
     }
@@ -94,7 +98,7 @@ sub test {
         my @data      = qw(ABCD EF);
         my @received     = ();
         for my $str (@data) {
-            my $b = func($str);
+            my $b = func($ba, $str);
             push @buckets, $b;
         }
 
@@ -115,8 +119,9 @@ sub test {
         # buckets point to the same SV, and having the latest bucket's
         # data override the previous one
         sub func {
+            my $ba = shift;
             my $data = shift;
-            return APR::Bucket->new(lc $data);
+            return APR::Bucket->new($ba, lc $data);
         }
 
     }
@@ -124,7 +129,7 @@ sub test {
     # read data is tainted
     {
         my $data = "xxx";
-        my $b = APR::Bucket->new($data);
+        my $b = APR::Bucket->new($ba, $data);
         $b->read(my $read);
         ok t_cmp($read, $data, 'new($data)');
         ok TestCommon::Utils::is_tainted($read);
@@ -132,7 +137,7 @@ sub test {
 
     # remove/destroy
     {
-        my $b = APR::Bucket->new("aaa");
+        my $b = APR::Bucket->new($ba, "aaa");
         # remove $b when it's not attached to anything (not sure if
         # that should be an error)
         $b->remove;
@@ -144,6 +149,25 @@ sub test {
 
         # real remove from bb is tested in many other filter tests
     }
+
+    # setaside
+    {
+        my $data = "A" x 10;
+        my $orig = $data;
+        my $b = APR::Bucket->new($ba, $data);
+        my $status = $b->setaside($pool);
+        ok t_cmp $status, 0, "setaside status";
+        $data =~ s/^..../BBBB/;
+        $b->read(my $read);
+        ok !t_cmp($read, $data,
+                 "data inside the setaside bucket is uaffected by " .
+                 "changes to the Perl variable it's created from");
+        $b->destroy;
+    }
+
+
+    APR::Bucket::alloc_destroy($ba);
+
 }
 
 1;

@@ -78,7 +78,7 @@ sub handler {
     # in ctx
     for (split_buffer($buffer)) {
         if (length($_) == SIZE) {
-            $bb->insert_tail(APR::Bucket->new($_));
+            $bb->insert_tail(APR::Bucket->new($bb->bucket_alloc, $_));
         }
         else {
             $ctx .= $_;
@@ -87,7 +87,7 @@ sub handler {
 
     if ($seen_eos) {
         # flush the remainder
-        $bb->insert_tail(APR::Bucket->new($ctx));
+        $bb->insert_tail(APR::Bucket->new($bb->bucket_alloc, $ctx));
         $bb->insert_tail(APR::Bucket::eos_create($ba));
         debug "seen eos, flushing the remaining: " . length($ctx) . " bytes";
     }

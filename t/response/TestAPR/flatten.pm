@@ -28,7 +28,7 @@ sub handler {
     # now, let's put several buckets in it
     for (1 .. 10) {
         my $data = 'x' x 20000;
-        my $bucket = APR::Bucket->new($data);
+        my $bucket = APR::Bucket->new($ba, $data);
         $bb->insert_tail($bucket);
     }
 

@@ -32,7 +32,7 @@ sub handler : FilterConnectionHandler {
         if ($b->read(my $data)) {
             next unless $data =~ s|GET $from_url|GET $to_url|;
             debug "GET line rewritten to be:\n$data";
-            my $nb = APR::Bucket->new($data);
+            my $nb = APR::Bucket->new($bb->bucket_alloc, $data);
             $b->insert_before($nb);
             $b->delete;
             $b = $nb;
