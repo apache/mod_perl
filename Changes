@@ -88,7 +88,7 @@ failures. [Stas]
 Make sure that pnotes are destroyed after PerlCleanup handlers are
 finished and not before + test. [Stas]
 
-=item 1.99_12 - Decemeber 22, 2003
+=item 1.99_12 - December 22, 2003
 
 Restore a proper behavior of all Registry handlers, but PerlRun, not
 to reset %INC to forget any .pl files required during the script's
