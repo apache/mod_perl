@@ -114,4 +114,6 @@ t/perl/ithreads2.t
 t/response/TestPerl/ithreads.pm
 # incomplete
 t/apr-ext/perlio
+# PAUSE breaks if a dist has more than one META.yml
+Apache-Test/META.yml
 

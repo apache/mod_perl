@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_19-dev
 
+Ignore Apache-Test/META.yml in distribution tarballs until PAUSE
+is capable of handling multiple META.yml files in one distro [Gozer]
+
 modperl_exports.c now wraps all exported functions in a #ifndef
 function_name wrapper to help in weeding out functions that only
 make sense for certain Perl configurations (perlio, threads) [Gozer]
