@@ -77,16 +77,20 @@ sub parse {
 
     my @data = ();
     for (@$lines) {
-        # more than one entry on the same line
-        push @data, split /(?=MP_)/, $_;
-    }
-
-    for (@data) {
-        #XXX: this "parser" should be more robust
         chomp;
         s/^\s+//; s/\s+$//;
         next if /^\#/ || /^$/;
         last if /^__END__/;
+
+        # more than one entry on the same line (but make sure to leave
+        # -DMP_* alone)
+        push @data, split /(?=\WMP_)/, $_;
+    }
+
+    for (@data) {
+        #XXX: this "parser" should be more robust
+
+        s/^\s+//; s/\s+$//;
 
         $_ = "$continue $_" if $continue;
 
