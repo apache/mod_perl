@@ -1,6 +1,6 @@
 #include "mod_perl.h"
 
-int modperl_require_module(pTHX_ const char *pv)
+int modperl_require_module(pTHX_ const char *pv, int logfailure)
 {
     SV *sv;
 
@@ -15,7 +15,10 @@ int modperl_require_module(pTHX_ const char *pv)
     POPSTACK;
 
     if (SvTRUE(ERRSV)) {
-        (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR, NULL, NULL);
+        if (logfailure) {
+            (void)modperl_errsv(aTHX_ HTTP_INTERNAL_SERVER_ERROR,
+                                NULL, NULL);
+        }
         return FALSE;
     }
         
