@@ -142,7 +142,8 @@ __END__
                 Allow from @servername@
                 Require user stas
                 Satisfy any
-                # htpasswd -bc basic-auth stas foobar
+                # htpasswd -mbc basic-auth stas foobar
+                # using md5 password so it'll work on win32 too
                 AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
             </IfModule>
         </IfModule>
