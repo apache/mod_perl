@@ -19,8 +19,6 @@
  apr_rfc822_date
  apr_strftime
  apr_time_exp_gmt_get
- apr_explode_localtime
- apr_explode_time
  apr_time_ansi_put
  apr_time_exp_get
  apr_time_exp_gmt
@@ -311,7 +309,7 @@ MODULE=APR::Table
  apr_collapse_spaces
 -apr_cpystrn
  apr_fnmatch
- apr_is_fnmatch
+ apr_fnmatch_test
 -apr_psprintf
 -apr_pstrcat
 -apr_pstrcatv
@@ -465,7 +463,7 @@ MODULE=APR::Util PACKAGE=guess
 MODULE=APR::Signal
 -apr_signal
 #not available on all platforms
-!apr_signal_get_description
+!apr_signal_description_get
 -apr_signal_init
 -apr_setup_signal_thread
 !apr_signal_thread

@@ -7314,38 +7314,6 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'apr_status_t',
-    'name' => 'apr_explode_localtime',
-    'args' => [
-      {
-        'type' => 'apr_time_exp_t *',
-        'name' => 'result'
-      },
-      {
-        'type' => 'apr_time_t',
-        'name' => 'input'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
-    'name' => 'apr_explode_time',
-    'args' => [
-      {
-        'type' => 'apr_time_exp_t *',
-        'name' => 'result'
-      },
-      {
-        'type' => 'apr_time_t',
-        'name' => 'input'
-      },
-      {
-        'type' => 'apr_int32_t',
-        'name' => 'offs'
-      }
-    ]
-  },
-  {
-    'return_type' => 'apr_status_t',
     'name' => 'apr_file_append',
     'args' => [
       {
@@ -8787,16 +8755,6 @@ $Apache::FunctionTable = [
       {
         'type' => 'const apr_table_t *',
         'name' => 't'
-      }
-    ]
-  },
-  {
-    'return_type' => 'int',
-    'name' => 'apr_is_fnmatch',
-    'args' => [
-      {
-        'type' => 'const char *',
-        'name' => 'pattern'
       }
     ]
   },
@@ -11484,16 +11442,6 @@ $Apache::FunctionTable = [
   {
     'return_type' => 'const char *',
     'name' => 'apr_signal_description_get',
-    'args' => [
-      {
-        'type' => 'int',
-        'name' => 'signum'
-      }
-    ]
-  },
-  {
-    'return_type' => 'const char *',
-    'name' => 'apr_signal_get_description',
     'args' => [
       {
         'type' => 'int',
