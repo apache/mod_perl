@@ -13,8 +13,8 @@ compatibility between the many different flavors of Apache and Perl.
 And, compatibility across these versions and flavors is a more
 diffcult goal for mod_perl to reach that a typical Apache or Perl
 module, since mod_perl reaches a bit deeper into the corners of Apache
-and Perl internals than most.  Mentions of the idea to rewrite mod_perl as
-version 2.0 started surfacing in 1998, but never made it much further
+and Perl internals than most.  Discussions of the idea to rewrite
+mod_perl as version 2.0 started in 1998, but never made it much further
 than an idea.  When Apache 2.0 development was underway it became
 clear that a rewrite of mod_perl would be required to adjust to the
 new Apache architechure and API.
@@ -88,11 +88,10 @@ I<src/modules/mpm> directory:
 The I<prefork> module emulates 1.3.x's preforking model, where each
 request is handled by a different process.
 
-=item pthread/dexter
+=item threaded
 
-These two MPMs implement a hybrid multi-process multi-threaded
-approach based on the I<pthreads> standard, but each offers different
-fine-tuning configuration. 
+This MPMs implements a hybrid multi-process multi-threaded
+approach based on the I<pthreads> standard.
 
 =item os2/winnt/beos
 
@@ -101,7 +100,7 @@ model, with each based on native OS thread implementations.
 
 =item perchild
 
-The I<perchild> MPM is based on the I<dexter> MPM, but is extended
+The I<perchild> MPM is similar to the I<threaded> MPM, but is extended
 with a mechanism which allows mapping of requests to virtual hosts to
 a process running under the user id and group configured for that host.
 This provides a robust replacement for the I<suexec> mechanism.
@@ -193,7 +192,7 @@ configuration in the C<%Apache::ReadConfig::> namespace.  Both methods
 are rather kludgy, version 2.0 will provide a Perl interface to the
 Apache configuration tree.
 
-=head2 I/O Filtering
+=head2 Filtering
 
 Filtering of Perl modules output has been possible for years since
 tied filehandle support was added to Perl.  There are several modules, 
@@ -309,6 +308,51 @@ The maximum number of requests an interpreter should serve, the
 interpreter is destroyed when the number is reached and replaced with
 a fresh clone.
 
+=item PerlInterpLifetime
+
+As mentioned, when a request in a threaded mpm is handled by mod_perl,
+an interpreter must be pulled from the interpreter pool.  The
+interpreter is then only available to the thread that selected it,
+until it is released back into the interpreter pool.
+By default, an interpreter will be held for the lifetime of the
+request, equivalent to this configuration:
+
+ PerlInterpLifetime request
+
+For example, if a PerlAccessHandler is configured, an interpreter will
+selected before it is run and not released until after the logging
+phase.
+
+Intepreters will be shared across subrequests by default, however, it
+is possible configure the intepreter lifetime to be per-subrequest on
+a per-directory basis:
+
+ PerlInterpLifetime subrequest
+
+With this configuration, an autoindex generated page for example would 
+select an interpreter for each item in the listing that is configured
+with a Perl*Handler.
+
+It is also possible to configure the lifetime to be per-handler:
+
+ PerlInterpLifetime handler
+
+With this configuration, an interpreter will be selected before
+PerlAccessHandlers are run, and putback immediately afterwards, before
+Apache moves onto the authentication phase.  If a PerlFixupHandler is
+configured further down the chain, another interpreter will be
+selected and again putback afterwards, before PerlResponseHandler is
+run.
+
+For protocol handlers, the interpreter is held for the lifetime of the
+connection.  However, a C protocol module might hook into mod_perl
+(e.g. mod_ftp) and provide a request_rec.  In this case, the default
+lifetime is that of the request.  Should a mod_perl handler want to
+maintain state for the lifetime of an ftp connection, it is possible
+to do so on a per-virtualhost basis:
+
+ PerlInterpLifetime connection
+
 =back
 
 =head2 Issues with Threading
@@ -320,6 +364,13 @@ third-party C/C++ libraries are thread safe.  In the case of
 non-threadsafe extensions, if it is not possible to fix those
 routines, care will need to be taken to serialize calls into such
 functions (either at the xs or Perl level).
+
+Another issue is that "global" variables are only global to the
+interpreter in which they are created.  Some research has been done on
+the concept of I<solar> variables which are global across all
+interpreter instances.  It has not been decided if this feature would
+best fit built into the Perl core or as an extension, but fear not,
+the feature will be provided in one form or another.
 
 =head1 Thread Item Pool API
 
@@ -649,6 +700,24 @@ own sets of large-ish modules, used only in each host.  By tuning each
 host to have it's own pool, that host will continue to reuse the Perl
 allocations in their specific modules.
 
+In 1.x versions of mod_perl, configured Perl*Handlers which are not a
+fully qualified subroutine name are resolved at request time,
+loading the handler module from disk if needed.  In 2.x, configured
+Perl*Handlers are resolved at startup time.  By default, modules are
+not auto-loaded during startup-time resolution.  It is possible to
+configure this feature with:
+
+ PerlOptions +Autoload
+
+Consider this configuration:
+
+ PerlResponseHandler Apache::Magick
+
+In this case, I<Apache::Magick> is the package name, and the
+subroutine name will default to I<handler>.  If the I<Apache::Magick>
+module is not already loaded, B<PerlOptions +Autoload> will attempt to
+pull it in at startup time.
+
 =head1 Integration with 2.0 Filtering
 
 The mod_perl-2.0 interface to the Apache filter API is much simpler
@@ -658,19 +727,19 @@ are configured using the I<PerlFilterHandler> directive, for example:
  PerlFilterHandler Apache::ReverseFilter
 
 This simply registers the filter, which can then be turned on using
-the core I<AddFilter> directive:
+the core I<AddOutputFilter> directive:
 
  <Location /foo>
-    AddFilter Apache::ReverseFilter
+    AddOutputFilter Apache::ReverseFilter
  </Location>
 
 The I<Apache::ReverseFilter> handler will now be called for anything
-accessed in the I</foo> url space.  The I<AddFilter> directive takes
+accessed in the I</foo> url space.  The I<AddOutputFilter> directive takes
 any number of filters, for example, this configuration will first send 
 the output to I<mod_include>, which will in turn pass its output down
 to I<Apache::ReverseFilter>:
 
- AddFilter INCLUDE Apache::ReverseFilter
+ AddOutputFilter INCLUDE Apache::ReverseFilter
 
 For our example, I<Apache::ReverseFilter> simply reverses all of the
 output characters and then sends them downstream.  The first argument
@@ -700,6 +769,73 @@ builtins to reverse the upstream buffer:
 
  1;
 
+=head1 Perl interface to the APR and Apache API
+
+In 1.x, the Perl interface back into the Apache API and data
+structures was done piecemeal.  As functions and structure members
+were found to be useful or new features were added to the Apache API,
+the xs code was written for them here and there.
+
+The goal for 2.0 is to generate the majority of xs code and provide
+thin wrappers were needed to make the API more Perlish.  As part of
+this goal, nearly the entire APR and Apache API, along with their
+public data structures will covered from the get-go.  Certain
+functions and structures which are considered "private" to Apache or
+otherwise un-useful to Perl will not be glued.  The API behaves just
+as it did in 1.x, sosers of the API will not notice the difference,
+other than the addition of many new methods.  And in the case of
+I<APR>, it is possible to use I<APR> modules outside of Apache, for
+example:
+
+ % perl -MAPR -MAPR::UUID -le 'print APR::UUID->new->format'
+ b059a4b2-d11d-b211-bc23-d644b8ce0981
+
+The mod_perl generator is a custom suite of modules specifically tuned
+for gluing Apache and allows for complete control over I<everything>,
+providing many possibilities none of I<xsubpp>, I<swig> nor
+I<Inline.pm> are designed to do.  Advantages to generating the glue
+code include:
+
+=over 4
+
+=item *
+
+Not tied tightly to xsubpp
+
+=item *
+
+Easy adjustment to Apache 2.0 API/structure changes
+
+=item *
+
+Easy adjustment to Perl changes (e.g., Perl 6)
+
+=item *
+
+Ability to "discover" hookable third-party C modules.
+
+=item *
+
+Cleanly take advantage of features in newer Perls
+
+=item *
+
+Optimizations can happen across-the-board with one-shot
+
+=item *
+
+Possible to AUTOLOAD XSUBs
+
+=item *
+
+Documentation can be generated from code
+
+=item *
+
+Code can be generated from documentation
+
+=back
+
 =head1 Protocol Modules with mod_perl-2.0
 
 =head2 Apache::Echo
@@ -708,18 +844,17 @@ Apache 2.0 ships with an example protocol module, I<mod_echo>, which
 simply reads data from the client and echos it right back.  Here we'll 
 take a look at a Perl version of that module, called I<Apache::Echo>.
 A protocol handler is configured using the
-I<PerlProcessConnectionHandler> directive and we'll use an I<IfDefine> 
-section so it's only enabled via the command line and binds to a
-different Port B<8084>:
+I<PerlProcessConnectionHandler> directive and we'll use the I<Listen> 
+and I<VirtualHost> directives to bind to a non-standard port B<8084>:
 
- <IfDefine Apache::Echo>
-     Port 8084
+ Listen 8084
+ <VirtualHost _default_:8084>
      PerlProcessConnectionHandler Apache::Echo
- </IfDefine>
+ </VirtualHost>
 
-Apache::Echo is then enabled by starting Apache like so:
+Apache::Echo is then enabled when starting Apache:
 
- % httpd -DApache::Echo
+ % httpd
 
 And we give it a whirl:
 
@@ -736,39 +871,51 @@ declaration and of course, C<use strict;>.  As with all
 I<Perl*Handler>s, the subroutine name defaults to I<handler>.  However, 
 in the case of a protocol handler, the first argument is not a
 I<request_rec>, but a I<conn_rec> blessed into the
-I<Apache::Connection> class.  Right away we enter the echo loop, stopping if 
-the I<eof> method returns true, indicating that the client has
-disconnected.  Next the I<read> method is called with a maximum of
-1024 bytes placed in C<$buff> and returns the actual length read into
-C<$rlen>.  If no bytes were read we break out of the while loop.
-Otherwise, attempt to echo the data back using the I<write> method.
-The I<flush> method is called so the buffer is flushed to the client
-right away, otherwise the client would not see any data until the
-buffer was full (with around 8k or so worth).  Once the client has
-disconnected, the module returns B<OK>, telling Apache we have handled
-the connection:
+I<Apache::Connection> class.  We have direct access to the client
+socket via I<Apache::Connection>'s I<client_socket> method.  This
+returns an object blessed into the I<APR::Socket> class.
+
+Inside the echo loop, we attempt to read B<BUFF_LEN> bytes from the
+client socket into the C<$buff> buffer.  The C<$rlen> parameter will
+be set to the number of bytes actually read.  The I<APR::Socket>
+I<recv> method will return an I<apr_status_t> value, be we need only
+check the read length to break out of the loop if it is less than or
+equal to B<0> bytes. If we received some data, it is immediately
+echoed back to the client with the I<APR::Socket> I<send> method.
+If we were unable to echo back the same number of bytes read from the
+client, assume the connection was dropped and break out of the loop.
+Once the client has disconnected, the module returns B<Apache::OK>,
+telling Apache we have handled the connection:
 
  package Apache::Echo;
-
+ 
  use strict;
-
+ use Apache::Connection ();
+ use APR::Socket ();
+ 
+ use constant BUFF_LEN => 1024;
+ 
  sub handler {
      my Apache::Connection $c = shift;
-
-     while (!$c->eof) {
-         my $rlen = $c->read(my $buff, 1024);
-
-         last unless $rlen > 0 and $c->write($buff);
-
-         $c->flush;
+     my APR::Socket $socket = $c->client_socket;
+ 
+     my $buff;
+ 
+     for (;;) {
+         my($rlen, $wlen);
+         my $rlen = BUFF_LEN;
+         $socket->recv($buff, $rlen);
+         last if $rlen <= 0;
+         $wlen = $rlen;
+         $socket->send($buff, $wlen);
+         last if $wlen != $rlen;
      }
-
+ 
      return Apache::OK;
  }
-
+ 
  1;
  __END__
-
 
 =head2 Apache::CommandServer
 
@@ -789,37 +936,37 @@ authentication and authorization.  Protocol handlers need to take care
 of these tasks themselves, since we bypass the HTTP protocol handler.
 
 As with all I<PerlProcessConnectionHandlers>, we are passed an
-I<Apache::Connection> object as the first argument.  After every call
-to the I<write> method we want the client to see the data right away,
-so first I<autoflush> is turned on to take care of that for us.  Next, 
-the I<login> subroutine is called to check if access by this client
+I<Apache::Connection> object as the first argument.  Again, we will be
+directly accessing the client socket via the I<client_socket> method.
+The I<login> subroutine is called to check if access by this client
 should be allowed.  This routine makes up for what we lost with the 
 core HTTP protocol handler bypassed.  First we call the
-I<fake_request> method, which returns a I<request_rec> object, just
-like that which is passed into request time I<Perl*Handlers> and
-returned by the subrequest API methods, I<lookup_uri> and
-I<lookup_file>.  However, this "fake request" does not run handlers
-for any of the phases, it simply returns an object which we can use to 
-do that ourselves.  The C<__PACKAGE__> argument is given as our
-"location" for this request, mainly used for looking up configuration.
-For example, should we only wish to allow access to this server from
-certain locations:
+I<Apache::RequestRec> I<new> method, which returns a I<request_rec>
+object, just like that which is passed into request time
+I<Perl*Handlers> and returned by the subrequest API methods,
+I<lookup_uri> and I<lookup_file>.  However, this "fake request" does
+not run handlers for any of the phases, it simply returns an object
+which we can use to do that ourselves.  The C<location_merge> method
+is passed the "location" for this request, it will look up the
+<Location> section that matches the given name and merge it with the
+default server configuration.  For example, should we only wish to
+allow access to this server from certain locations:
 
     <Location Apache::CommandServer>
         deny from all
         allow from 10.*
     </Location>
 
-The I<fake_request> method only looks up the configuration, we still
-need to apply it.
+The I<location_merge> method only looks up and merges the
+configuration, we still need to apply it.
 This is done in I<for> loop, iterating over three methods:
-I<check_access>, I<check_user_id> and I<check_authz>.  These methods
-will call directly into the Apache functions that invoke module
-handlers for these phases and will return an integer status code, such 
-as B<OK>, B<DECLINED> or B<FORBIDDEN>.  If I<check_access> returns
-something other than B<OK> or B<DECLINED>, that status will be
+I<run_access_checker>, I<run_check_user_id> and I<run_auth_checker>.
+These methods will call directly into the Apache functions that invoke
+module handlers for these phases and will return an integer status
+code, such as B<OK>, B<DECLINED> or B<FORBIDDEN>.  If I<run_access_check>
+returns something other than B<OK> or B<DECLINED>, that status will be
 propagated up to the handler routine and then back up to Apache.
-Otherwise the access check passed and the loop will break unless
+Otherwise, the access check passed and the loop will break unless
 I<some_auth_required> returns true.  This would be false given the
 previous configuration example, but would be true in the presense of a 
 I<require> directive, such as:
@@ -838,26 +985,26 @@ table using the I<set_basic_credentials> method.  The I<Authenticate>
 field in this table is set to a base64 encoded value of the
 username:password pair, exactly the same format a browser would send
 for I<Basic authentication>.  Next time through the loop
-I<check_user_id> is called, which will in turn invoke any
+I<run_check_user_id> is called, which will in turn invoke any
 authentication handlers, such as I<mod_auth>.  When I<mod_auth> calls
 the I<ap_get_basic_auth_pw()> API function (as all Basic auth modules
 do), it will get back the username and password we injected.
 If we fail authentication a B<401> status code is returned which we
 propagate up.  Otherwise, authorization handlers are run via
-I<check_authz>.  Authorization handlers normally need the I<user>
+I<run_auth_checker>.  Authorization handlers normally need the I<user>
 field of the I<request_rec> for its checks and that field was filled
 in when I<mod_auth> called I<ap_get_basic_auth_pw()>.
 
 Provided login is a success, a welcome message is printed and main
-request loop entered.  Inside the loop the I<getline> method returns
+request loop entered.  Inside the loop the I<getline> function returns
 just one line of data, with newline characters stripped.  If the
 string sent by the client is in our command table, the command is then 
 invoked, otherwise a usage message is sent.  If the command does not
 return a true value, we break out of the loop.  Let's give it a try
 with this configuration:
 
- <IfDefine Apache::CommandServer>
-     Port 8085
+ Listen 8085
+ <VirtualHost _default_:8085>
      PerlProcessConnectionHandler Apache::CommandServer
 
      <Location Apache::CommandServer>
@@ -866,7 +1013,7 @@ with this configuration:
          satisfy any
          AuthUserFile /tmp/basic-auth
      </Location>
- </IfDefine>
+ </VirtualHost>
 
  % telnet localhost 8085
  Trying 127.0.0.1...
@@ -879,102 +1026,116 @@ with this configuration:
  motd
  Have a lot of fun...
  date
- Wed Sep 13 23:47:26 2000
+ Mon Mar 12 19:20:10 PST 2001
  who
- dougm    tty1     Sep  7 11:40
- dougm    ttyp0    Sep 12 11:38 (:0.0)
- dougm    ttyp1    Sep 12 15:50 (:0.0)
+ dougm    tty1     Mar 12 00:49
+ dougm    pts/0    Mar 12 11:23
+ dougm    pts/1    Mar 12 14:08
+ dougm    pts/2    Mar 12 17:09
  quit
  Connection closed by foreign host.
 
 =head2 Apache::CommandServer Source
 
  package Apache::CommandServer;
-
+ 
  use strict;
-
+ use Apache::Connection ();
+ use APR::Socket ();
+ 
  my @cmds = qw(motd date who quit);
  my %commands = map { $_, \&{$_} } @cmds;
-
+ 
  sub handler {
      my Apache::Connection $c = shift;
-
-     $c->autoflush(1);
-
+     my APR::Socket $socket = $c->client_socket;
+ 
      if ((my $rc = login($c)) != Apache::OK) {
-         $c->write("Access Denied\n");
+         $socket->send("Access Denied\n");
          return $rc;
      }
-
-     $c->write("Welcome to ", __PACKAGE__,
-               "\nAvailable commands: @cmds\n");
-
-     while (!$c->eof) {
+ 
+     $socket->send("Welcome to " . __PACKAGE__ .
+                   "\nAvailable commands: @cmds\n");
+ 
+     for (;;) {
          my $cmd;
-         next unless $cmd = $c->getline;
-
+         next unless $cmd = getline($socket);
+ 
          if (my $sub = $commands{$cmd}) {
-             last unless $sub->($c);
+             last unless $sub->($socket) == APR::SUCCESS;
          }
          else {
-             $c->write("Commands: @cmds\n");
+             $socket->send("Commands: @cmds\n");
          }
      }
-
+ 
      return Apache::OK;
  }
-
+ 
  sub login {
      my $c = shift;
-
-     my $r = $c->fake_request(__PACKAGE__);
-
-     for my $method (qw(check_access check_user_id check_authz)) {
+ 
+     my $r = Apache::RequestRec->new($c);
+     $r->location_merge(__PACKAGE__);
+ 
+     for my $method (qw(run_access_checker run_check_user_id run_auth_checker)) {
          my $rc = $r->$method();
-
+ 
          if ($rc != Apache::OK and $rc != Apache::DECLINED) {
              return $rc;
          }
-
+ 
          last unless $r->some_auth_required;
-
+ 
          unless ($r->user) {
-             my $username = prompt($c, "Login");
-             my $password = prompt($c, "Password");
-
+             my $socket = $c->client_socket;
+             my $username = prompt($socket, "Login");
+             my $password = prompt($socket, "Password");
+ 
              $r->set_basic_credentials($username, $password);
          }
      }
-
+ 
      return Apache::OK;
  }
-
- sub prompt {
-     my($c, $msg) = @_;
-     $c->write("$msg: ");
-     $c->getline;
+ 
+ sub getline {
+     my $socket = shift;
+     my $line;
+     $socket->recv($line, 1024);
+     return unless $line;
+     $line =~ s/[\r\n]*$//;
+     return $line;
  }
-
+ 
+ sub prompt {
+     my($socket, $msg) = @_;
+     $socket->send("$msg: ");
+     getline($socket);
+ }
+ 
  sub motd {
-     my $c = shift;
+     my $socket = shift;
      open my $fh, '/etc/motd' or return;
      local $/;
-     $c->write(<$fh>);
+     my $status = $socket->send(scalar <$fh>);
      close $fh;
+     return $status;
  }
-
+ 
  sub date {
-     my $c = shift;
-     $c->write(scalar localtime, "\n");
+     my $socket = shift;
+     $socket->send(scalar(localtime) . "\n");
  }
-
+ 
  sub who {
-     my $c = shift;
-     $c->write(`who`);
+     my $socket = shift;
+     $socket->send(scalar `who`);
  }
-
- sub quit {0}
-
+ 
+ sub quit {1}
+ 
  1;
  __END__
 
@@ -992,7 +1153,7 @@ The details of these optimizations will from the most part be hidden
 from mod_perl users, the exeception being that some will only be turned 
 on with configuration directives.  The explanation of these
 optimization ideas are best left for the live talk, a few which will
-be overviewed then include:
+be overviewed include:
 
 =over 4
 
