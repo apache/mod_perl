@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.99_06-dev
+
 =item 1.99_05 - August 20, 2002
 
 fix PerlOptions +ParseHeaders to only parse once per-request
