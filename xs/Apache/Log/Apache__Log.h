@@ -164,3 +164,21 @@ static XS(MPXS_Apache__Log_dispatch)
 
     XSRETURN_EMPTY;
 }
+
+static XS(MPXS_Apache_LOG_MARK)
+{
+    dXSARGS;
+    ax = ax; /* -Wall */;
+
+    mpxs_PPCODE({
+        COP *cop = PL_curcop;
+
+        if (items) {
+            Perl_croak(aTHX_ "usage %s::%s()", mpxs_cv_name());
+        }
+
+        EXTEND(SP, 2);
+        PUSHs_mortal_pv(CopFILE(cop));
+        PUSHs_mortal_iv(CopLINE(cop));
+    });
+}

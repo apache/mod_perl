@@ -14,7 +14,7 @@ sub handler {
     my $r = shift;
     my $s = $r->server;
 
-    plan $r, tests => (@LogLevels * 2) + 3;
+    plan $r, tests => (@LogLevels * 2) + 5;
 
     my $rlog = $r->log;
 
@@ -25,6 +25,10 @@ sub handler {
     ok $slog->isa('Apache::Log::Server');
 
     $rlog->info($package, " test in progress");
+
+    my($file, $line) = Apache::LOG_MARK;
+    ok $file eq __FILE__;
+    ok $line == __LINE__ - 2;
 
     for my $method (@LogLevels) {
         #wrap in sub {}, else Test.pm tries to run the return value of ->can
