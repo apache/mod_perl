@@ -1,15 +1,16 @@
 package Apache::StatINC;
-
 use strict;
 
-$Apache::StatINC::VERSION = "1.06";
+$Apache::StatINC::VERSION = "1.07";
 
 my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 
 sub handler {
     my $r = shift;
-    my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload") || '') eq "on");
+    my $do_undef = ref($r) && ((lc($r->dir_config("StatINC_UndefOnReload") ||
+								   $r->dir_config("UndefOnReload")) || '') eq "on");
     my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug") || '') eq "on");
+    $DEBUG = $r->dir_config("StatINC_Debug") if ref($r) && $r->dir_config("StatINC_Debug");
 
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
@@ -28,7 +29,7 @@ sub handler {
 	    delete $INC{$key};
 	    require $key;
 	    warn "Apache::StatINC: process $$ reloading $key\n"
-		  if $DEBUG;
+		  if $DEBUG > 0;
 	}
 	$Stat{$file} = $mtime;
     }
@@ -88,7 +89,7 @@ It will most likely help you to find the problem. Really.
 
 =over 4
 
-=item UndefOnReload
+=item StatINC_UndefOnReload
 
 Normally, StatINC will turn of warnings to avoid "Subroutine redefined" 
 warnings when it reloads a file.  However, this does not disable the 
@@ -97,14 +98,16 @@ Perl mandatory warning when re-defining C<constant> subroutines
 B<Apache::Symbol> I<undef_functions> method to avoid these mandatory
 warnings:
 
- PerlSetVar UndefOnReload On
+ PerlSetVar StatINC_UndefOnReload On
 
-=item StatINCDebug
+=item StatINC_Debug
 
 You can make StatINC tell when it reloads a module by setting this
 option to on.
 
- PerlSetVar StatINCDebug On
+ PerlSetVar StatINC_Debug 1
+
+The only used debug level is currently 1. 
 
 =back
 
@@ -114,7 +117,7 @@ mod_perl(3)
 
 =head1 AUTHOR
 
-Currently maintained by Ask Bjoern Hansen.
+Currently maintained by Ask Bjoern Hansen <ask@netcetera.dk>.
 Written by Doug MacEachern.
 
 
