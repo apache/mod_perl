@@ -284,6 +284,8 @@ unsigned get_server_port(const request_rec *r)
     return r->hostname ? ntohs(r->connection->local_addr.sin_port)
 	: port;
 }
+#define get_server_name(r) \
+    (r->hostname ? r->hostname : r->server->server_hostname) 
 #endif
 
 pool *perl_get_startup_pool(void)
@@ -783,6 +785,10 @@ allow_options(r)
 
 unsigned
 get_server_port(r)
+    Apache	r
+
+const char *
+get_server_name(r)
     Apache	r
 
 char *
