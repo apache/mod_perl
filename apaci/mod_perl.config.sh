@@ -142,9 +142,18 @@ for hook in \
     ACCESS AUTHEN AUTHZ TYPE FIXUP LOG INIT CLEANUP STACKED_HANDLERS SECTIONS \
     METHOD_HANDLERS SSI TRACE; do
     eval "val=\$param_PERL_${hook}"
-    if [ ".$val" = .no ]; then
-        perl_defs="$perl_defs -DNO_PERL_${hook}=1"
-    fi
+    case $hook in
+        TRACE ) 
+            if [ ".$val" = .yes ]; then
+                perl_defs="$perl_defs -DPERL_${hook}=1"
+            fi
+            ;;
+        * )
+            if [ ".$val" = .no ]; then
+                perl_defs="$perl_defs -DNO_PERL_${hook}=1"
+            fi
+            ;;
+    esac
 done
 IFS="$OIFS"
 
