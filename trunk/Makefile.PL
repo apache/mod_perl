@@ -683,6 +683,17 @@ write_my_config($APACHE_SRC);
 
 #checking for LWP code, borrowed from LWP's own Makefile.PL :-)
 unless ($Is_Win32) {
+    print "Checking CGI.pm VERSION..........";
+    eval {
+	require CGI;
+    };
+    if($CGI::VERSION >= 2.39) {
+	print "ok\n";
+    }
+    else {
+	print "I suggest upgrading from $CGI::VERSION to 2.39+\n";
+	sleep 2;
+    }
     print "Checking for LWP::UserAgent......";
     eval {
 	require LWP::UserAgent;
