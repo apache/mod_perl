@@ -673,6 +673,12 @@ CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, mod_perl_perl_dir_config *data, char 
     return perl_cmd_perl_TAKE123(cmd, data, one, two, NULL);
 }
 
+CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *data, int flag)
+{
+    char buf[2];
+    ap_snprintf(buf, sizeof(buf), "%d", flag);
+    return perl_cmd_perl_TAKE123(cmd, data, buf, NULL, NULL);
+}
 
 static SV *perl_bless_cmd_parms(cmd_parms *parms)
 {
@@ -685,13 +691,14 @@ static SV *perl_bless_cmd_parms(cmd_parms *parms)
 
 static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
 {
-    GV *gv; 
+    GV *gv;
+    int i;
 
     if(*sv && SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
 	return *sv;
 
-    /* return $class->new if $class->can("new") */
-    if((gv = gv_fetchmethod_autoload(class, "new", FALSE)) && isGV(gv)) {
+    /* return $class->DIR_CREATE if $class->can("DIR_CREATE") */
+    if((gv = gv_fetchmethod_autoload(class, PERL_DIR_CREATE, FALSE)) && isGV(gv)) {
 	int count;
 	dSP;
 
@@ -723,8 +730,6 @@ static SV *perl_perl_create_dir_config(SV **sv, HV *class, cmd_parms *parms)
     }
 }
 
-#define DIR_MERGE "dir_merge"
-
 void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 {
     GV *gv;
@@ -741,16 +746,16 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv)
 	return basesv;
 
     MP_TRACE_c(fprintf(stderr, "looking for method %s in package `%s'\n", 
-		       DIR_MERGE, SvCLASS(basesv)));
+		       PERL_DIR_MERGE, SvCLASS(basesv)));
 
-    if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), DIR_MERGE, FALSE)) && isGV(gv)) {
+    if((gv = gv_fetchmethod_autoload(SvSTASH(SvRV(basesv)), PERL_DIR_MERGE, FALSE)) && isGV(gv)) {
 	int count;
 	dSP;
 	new = (mod_perl_perl_dir_config *)
 	    palloc(p, sizeof(mod_perl_perl_dir_config));
 
 	MP_TRACE_c(fprintf(stderr, "calling %s->%s\n", 
-			   SvCLASS(basesv), DIR_MERGE));
+			   SvCLASS(basesv), PERL_DIR_MERGE));
 
 	ENTER;SAVETMPS;
 	PUSHMARK(sp);
@@ -803,8 +808,8 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
     PUSHMARK(sp);
     if(!has_empty_proto) {
 	SV *cmd_obj = perl_bless_cmd_parms(cmd);
-	XPUSHs(cmd_obj);
 	XPUSHs(obj);
+	XPUSHs(cmd_obj);
 	if(cmd->cmd->args_how != NO_ARGS) {
 	    PUSHif(one);PUSHif(two);PUSHif(three);
 	}

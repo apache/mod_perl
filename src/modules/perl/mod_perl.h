@@ -1096,6 +1096,7 @@ CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *on
 CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, mod_perl_perl_dir_config *d, char *one, char *two);
 CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *d,
 			     char *one, char *two, char *three);
+CHAR_P perl_cmd_perl_FLAG(cmd_parms *cmd, mod_perl_perl_dir_config *d, int flag);
 
 #define perl_cmd_perl_RAW_ARGS perl_cmd_perl_TAKE1
 #define perl_cmd_perl_NO_ARGS perl_cmd_perl_TAKE1
@@ -1108,6 +1109,13 @@ void *perl_perl_merge_dir_config(pool *p, void *basev, void *addv);
 
 void mod_perl_dir_env(perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);
+
+#define PERL_DIR_MERGE     "DIR_MERGE"
+#define PERL_DIR_CREATE    "DIR_CREATE"
+#define PERL_SERVER_MERGE  "SERVER_MERGE"
+#define PERL_SERVER_CREATE "SERVER_CREATE"
+#define PERL_DIR_CFG_T     0
+#define PERL_SERVER_CFG_T  1
 
 /* Apache.xs */
 
