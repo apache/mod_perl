@@ -42,12 +42,10 @@ use constant WIN32 => Apache::Build::WIN32;
 our $VERSION;
 
 my $build = Apache::Build->new(init => 1);
-
-perl_version_check($build);
-
 my $code  = ModPerl::Code->new;
 
 configure();
+perl_version_check($build);
 
 local %ModPerl::BuildMM::PM = (
     'lib/typemap' => 'blib/lib/Apache2/typemap',
@@ -325,6 +323,7 @@ sub set_modperl_version {
     $build->{VERSION} = $VERSION;
 }
 
+# needs to be run after configure() when apxs is setup
 sub perl_version_check {
     my $build = shift;
 
