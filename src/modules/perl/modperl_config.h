@@ -47,8 +47,8 @@ MP_DECLARE_SRV_CMD(interp_min_spare);
 
 #define MP_dDCFG \
    modperl_dir_config_t *dcfg = \
-      (modperl_dir_config_t *) \
-          ap_get_module_config(r->per_dir_config, &perl_module)   
+      (r ? (modperl_dir_config_t *) \
+              ap_get_module_config(r->per_dir_config, &perl_module) : NULL)
 
 #define MP_dSCFG(s) \
    modperl_srv_config_t *scfg = \
