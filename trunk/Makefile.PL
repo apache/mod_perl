@@ -347,7 +347,7 @@ while($_ = shift) {
     if ($k eq 'PREFIX') {
         require File::Spec;
         $MOD_PERL_PREFIX =
-          File::Spec->catfile($v, 'lib', 'site_perl',
+          File::Spec->catfile($v, $Config{'installstyle'}, 'site_perl',
                               $Config{'version'}, $Config{'archname'});
     }
 		
