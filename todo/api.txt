@@ -9,8 +9,6 @@ APR::Table tie mechanism:
 $r->headers_out->{KEY} is not currently supported
 might want to make this optional, disabled by default
 
-missing: APR::Table->do
-
 $r->finfo:
 need apr_finfo_t <-> struct stat conversion (might already be there,
 haven't looked close enough yet)
