@@ -524,7 +524,7 @@ static void mp_server_notstarting(void *data)
     if(!PERL_IS_DSO) \
         register_cleanup(p, NULL, mp_server_notstarting, mod_perl_noop) 
 
-#define MP_APACHE_VERSION "1.26"
+#define MP_APACHE_VERSION "1.27"
 
 void mp_check_version(void)
 {
