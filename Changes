@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Plug a memory leak with 'perl-script' not cleaning up the temp vars
+created during the override of STDIN/STDOUT to use the :Apache IO
+layer [Stas]
+
 libgtop config (needed for enabling MOD_PERL_TRACE=m) is now searched
 using the gnome packaging tools if available (pkg-config for gnome-2.x
 and gnome-config for gnome-1.x) [Stas]

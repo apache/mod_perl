@@ -880,6 +880,9 @@ int modperl_response_handler_cgi(request_rec *r)
         modperl_global_request_set(r);
     }
 
+    /* need to create a block around the IO setup so the temp vars
+     * will be automatically cleaned up when we are done with IO */
+    ENTER;SAVETMPS;
     h_stdin  = modperl_io_override_stdin(aTHX_ r);
     h_stdout = modperl_io_override_stdout(aTHX_ r);
 
@@ -893,6 +896,7 @@ int modperl_response_handler_cgi(request_rec *r)
 
     modperl_io_restore_stdin(aTHX_ h_stdin);
     modperl_io_restore_stdout(aTHX_ h_stdout);
+    FREETMPS;LEAVE;
 
 #ifdef USE_ITHREADS
     if (MpInterpPUTBACK(interp)) {
