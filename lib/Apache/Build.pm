@@ -285,6 +285,13 @@ sub configure_apache {
     my $cmd = qq(./configure $self->{MP_AP_CONFIGURE});
     debug "Running $cmd";
     system("$cd && $cmd") == 0 or die "httpd: $cmd failed";
+
+    # Got to build in srclib/* early to have generated files present.
+    my $srclib = File::Spec->catfile($self->{MP_AP_PREFIX}, 'srclib');
+    $cd = qq(cd $srclib);
+    $cmd = qq(make);
+    debug "Building srclib in $srclib";
+    system("$cd && $cmd") == 0 or die "srclib: $cmd failed";
 }
 
 #--- Perl Config stuff ---
