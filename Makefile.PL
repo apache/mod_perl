@@ -2072,16 +2072,24 @@ sub win32_inc_and_lib {
       unless ($win32_args{APACHE_SRC} = find_dir(\@dirs, 'apache source'));
   }
   $win32_args{APACHE_SRC} = win32_fix_path($win32_args{APACHE_SRC});
-  $win32_args{APACHE_SRC} .= '/src' unless $win32_args{APACHE_SRC} =~ /src$/;
-  $win32_path{APACHE_INC} = $win32_args{APACHE_SRC} .  '/include';
-  $win32_args{APACHE_VERS} = httpd_version($win32_path{APACHE_INC}, 1);
-  $win32_path{APACHE_LIB} = ($win32_args{DEBUG} == 1) ? 
-    $win32_args{APACHE_SRC} . 
-      ($win32_args{APACHE_VERS} < 1315 ? '/CoreD' : '/Debug') :
-	$win32_args{APACHE_SRC} . 
-	  ($win32_args{APACHE_VERS} < 1315 ? '/CoreR' : '/Release');
+  if (-d "$win32_args{APACHE_SRC}/libexec") {
+    $win32_path{APACHE_LIB} = $win32_args{APACHE_SRC} . '/libexec';
+    $win32_path{APACHE_INC} = $win32_args{APACHE_SRC} . '/include';
+  }
+  else {
+    $win32_args{APACHE_SRC} .= '/src' unless $win32_args{APACHE_SRC} =~ /src$/;
+    $win32_path{APACHE_INC} = $win32_args{APACHE_SRC} . '/include';
+    $win32_args{APACHE_VERS} = httpd_version($win32_path{APACHE_INC}, 1);
+    $win32_path{APACHE_LIB} = ($win32_args{DEBUG} == 1) ? 
+      $win32_args{APACHE_SRC} . 
+	($win32_args{APACHE_VERS} < 1315 ? '/CoreD' : '/Debug') :
+	  $win32_args{APACHE_SRC} . 
+	    ($win32_args{APACHE_VERS} < 1315 ? '/CoreR' : '/Release');
+  }
   die "Cannot find ApacheCore.lib under $win32_path{APACHE_LIB}\n"
     unless -f "$win32_path{APACHE_LIB}/ApacheCore.lib";
+  die "Cannot find httpd.h under $win32_path{APACHE_INC}\n"
+    unless -f "$win32_path{APACHE_INC}/httpd.h";
   
   if ($win32_args{INSTALL_DLL} ) {
     $win32_args{INSTALL_DLL} = 
