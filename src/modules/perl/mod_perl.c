@@ -650,8 +650,12 @@ void perl_startup (server_rec *s, pool *p)
 	TAINT_NOT; /* At this time all is safe */
     }
 
+#ifdef APACHE_PERL5LIB
+    perl_incpush(APACHE_PERL5LIB);
+#else
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,"lib/perl"),0));
+#endif
 
     /* *CORE::GLOBAL::exit = \&Apache::exit */
     if(gv_stashpv("CORE::GLOBAL", FALSE)) {
