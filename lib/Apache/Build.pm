@@ -79,6 +79,8 @@ sub httpd_is_source_tree {
     return $self->{httpd_is_source_tree}
         if exists $self->{httpd_is_source_tree};
 
+    # XXX: this $self->{MP_AP_PREFIX} || $self->{dir} is totally confusing
+    # we should have a single point of reference (refactoring is needed!)
     my $prefix = $self->{MP_AP_PREFIX} || $self->{dir};
     $self->{httpd_is_source_tree} = 
         defined $prefix && -d $prefix && -e "$prefix/CHANGES";
