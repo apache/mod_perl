@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+add APR::Brigade::pool() to allow access to the pool associated with
+the brigade  [Geoffrey Young]
+
 make 't/TEST -startup_timeout secs' working (previously user's value
 was ignored) [Stas]
 

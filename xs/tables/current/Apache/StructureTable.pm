@@ -1194,6 +1194,23 @@ $Apache::StructureTable = [
     ]
   },
   {
+    'type' => 'apr_bucket_brigade',
+    'elts' => [
+      {
+        'type' => 'apr_pool_t *',
+        'name' => 'p'
+      },
+      {
+        'type' => '_ANON 68',
+        'name' => 'link'
+      },
+      {
+        'type' => 'apr_bucket_alloc_t *',
+        'name' => 'bucket_alloc'
+      }
+    ]
+  },
+  {
     'type' => 'apr_bucket_alloc_t',
     'elts' => []
   },
