@@ -82,14 +82,14 @@ static MP_INLINE void mpxs_Apache2__Module_add(pTHX_
     server_rec *s;
 
     if (!(SvROK(cmds) && (SvTYPE(SvRV(cmds)) == SVt_PVAV))) {
-        Perl_croak(aTHX_ "Usage: Apache::Module::add(__PACKAGE__, [])");
+        Perl_croak(aTHX_ "Usage: Apache2::Module::add(__PACKAGE__, [])");
     }
 
     s = modperl_global_get_server_rec();
     error = modperl_module_add(s->process->pconf, s, package, cmds);
 
     if (error) {
-        Perl_croak(aTHX_ "Apache::Module::add(%s) failed : %s", 
+        Perl_croak(aTHX_ "Apache2::Module::add(%s) failed : %s", 
                    package, error);
     }
 

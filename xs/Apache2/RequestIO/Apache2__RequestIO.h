@@ -62,7 +62,7 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
     MP_CHECK_WBUCKET_INIT("$r->puts");
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
-                    "Apache::RequestIO::puts");
+                    "Apache2::RequestIO::puts");
 
     MP_END_TIMES();
     MP_PRINT_TIMES("r->puts");
@@ -91,9 +91,9 @@ SV *mpxs_Apache2__RequestRec_print(pTHX_ I32 items,
 
     MP_CHECK_WBUCKET_INIT("$r->print");
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
-                    "Apache::RequestIO::print");
+                    "Apache2::RequestIO::print");
 
-    mpxs_output_flush(r, rcfg, "Apache::RequestIO::print");
+    mpxs_output_flush(r, rcfg, "Apache2::RequestIO::print");
 
     return bytes ? newSVuv(bytes) : newSVpvn("0E0", 3);
 }  
@@ -123,9 +123,9 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
 
     MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                        SvPVX(sv), &bytes),
-                 "Apache::RequestIO::printf");
+                 "Apache2::RequestIO::printf");
 
-    mpxs_output_flush(r, rcfg, "Apache::RequestIO::printf");
+    mpxs_output_flush(r, rcfg, "Apache2::RequestIO::printf");
 
     return bytes;
 }  
@@ -156,7 +156,7 @@ apr_size_t mpxs_Apache2__RequestRec_write(pTHX_ request_rec *r,
     MP_CHECK_WBUCKET_INIT("$r->write");
     MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                        buf+offset, &wlen),
-                 "Apache::RequestIO::write");
+                 "Apache2::RequestIO::write");
 
     return wlen;
 }
@@ -179,7 +179,7 @@ void mpxs_Apache2__RequestRec_rflush(pTHX_ I32 items,
                apr_pstrmemdup(rcfg->wbucket->pool, rcfg->wbucket->outbuf,
                               rcfg->wbucket->outcnt));
     MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE),
-                 "Apache::RequestIO::rflush");
+                 "Apache2::RequestIO::rflush");
 }
 
 static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
@@ -328,7 +328,7 @@ apr_status_t mpxs_Apache2__RequestRec_sendfile(pTHX_ request_rec *r,
         if (GIMME_V == G_VOID) {
             modperl_croak(aTHX_ rc,
                           apr_psprintf(r->pool,
-                                       "Apache::RequestIO::sendfile('%s')",
+                                       "Apache2::RequestIO::sendfile('%s')",
                                        filename));
         }
         else {
@@ -357,7 +357,7 @@ apr_status_t mpxs_Apache2__RequestRec_sendfile(pTHX_ request_rec *r,
                                       rcfg->wbucket->outbuf,
                                       rcfg->wbucket->outcnt));
             MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE),
-                         "Apache::RequestIO::sendfile");
+                         "Apache2::RequestIO::sendfile");
         }
     }
 
@@ -366,7 +366,7 @@ apr_status_t mpxs_Apache2__RequestRec_sendfile(pTHX_ request_rec *r,
     /* apr_file_close(fp); */ /* do not do this */
 
     if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
-        modperl_croak(aTHX_ rc, "Apache::RequestIO::sendfile");
+        modperl_croak(aTHX_ rc, "Apache2::RequestIO::sendfile");
     }
 
     return rc;

@@ -23,7 +23,7 @@ static MP_INLINE int mpxs_ap_run_sub_req(pTHX_ request_rec *r)
     if (r->main) {
         modperl_config_req_t *rcfg = modperl_config_req_get(r->main);
         MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE),
-                     "Apache::SubRequest::run");
+                     "Apache2::SubRequest::run");
     }
 
     return ap_run_sub_req(r);

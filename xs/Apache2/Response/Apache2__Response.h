@@ -14,7 +14,7 @@
  */
 
 /* XXX: this should probably named $r->cgi_header_parse
- * and send_cgi_header an alias in Apache::compat
+ * and send_cgi_header an alias in Apache2::compat
  */
 #define mpxs_Apache2__RequestRec_send_cgi_header(r, sv) \
 { \
