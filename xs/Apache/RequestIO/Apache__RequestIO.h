@@ -157,8 +157,7 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
 
         /* only do this once per-request */
         if ((rc = ap_setup_client_block(r, REQUEST_CHUNKED_ERROR)) != OK) {
-            ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0,
-                         r->server,
+            ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server,
                          "mod_perl: ap_setup_client_block failed: %d", rc);
             return rc;
         }

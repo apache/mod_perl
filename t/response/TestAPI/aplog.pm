@@ -46,7 +46,7 @@ sub handler {
     $s->log_serror(Apache::LOG_MARK, Apache::LOG_DEBUG,
                    APR::ENOTIME, "log_serror test 2 ok");
 
-    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_DEBUG|Apache::LOG_NOERRNO,
+    $r->log_rerror(Apache::LOG_MARK, Apache::LOG_DEBUG,
                    APR::ENOTIME, "log_rerror test ok");
 
     $r->log_error('$r->log_error test ok');

@@ -39,19 +39,19 @@ void modperl_trace(const char *func, const char *fmt, ...);
 void modperl_trace_level_set(server_rec *s, const char *level);
 
 #define modperl_log_warn(s,msg) \
-    ap_log_error(APLOG_MARK, APLOG_WARNING|APLOG_NOERRNO, 0, s, "%s", msg)
+    ap_log_error(APLOG_MARK, APLOG_WARNING, 0, s, "%s", msg)
 
 #define modperl_log_error(s,msg) \
-    ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, s, "%s", msg)
+    ap_log_error(APLOG_MARK, APLOG_ERR, 0, s, "%s", msg)
 
 #define modperl_log_notice(s,msg) \
-    ap_log_error(APLOG_MARK, APLOG_NOERRNO|APLOG_NOTICE, 0, s, "%s", msg)
+    ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, s, "%s", msg)
 
 #define modperl_log_debug(s,msg) \
-    ap_log_error(APLOG_MARK, APLOG_NOERRNO|APLOG_DEBUG, 0, s, "%s", msg)
+    ap_log_error(APLOG_MARK, APLOG_DEBUG, 0, s, "%s", msg)
 
 #define modperl_log_reason(r,msg,file) \
-    ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r->server, \
+    ap_log_error(APLOG_MARK, APLOG_ERR, 0, r->server, \
                  "access to %s failed for %s, reason: %s", \
                  file, \
                  get_remote_host(r->connection, \
