@@ -3,10 +3,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- should $r->content unset $r->headers_in('content-length') ?
+- if $USE_APXS then install mod_perl headers files in `apxs -q INCLUDEDIR`
 
-- should $r->bytes_sent really wind down to last r->next?
-  Dirk Melchers <melchers@nureg.de>
+- should $r->content unset $r->headers_in('content-length') ?
 
 - perl_reload_inc problem [Nathan Sidwell <nathan@acm.org>]
 
