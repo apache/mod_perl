@@ -223,6 +223,27 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
 
 /* generic filter routines */
 
+/* all ap_filter_t filter cleanups should go here */
+static apr_status_t modperl_filter_f_cleanup(void *data)
+{
+    ap_filter_t *f            = (ap_filter_t *)data;
+    modperl_filter_ctx_t *ctx = (modperl_filter_ctx_t *)(f->ctx);
+
+    /* mod_perl filter ctx cleanup */
+    if (ctx->data){
+#ifdef USE_ITHREADS
+        dTHXa(ctx->perl);
+#endif
+        if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
+            SvREFCNT_dec(ctx->data);
+            ctx->data = NULL;
+        }
+        ctx->perl = NULL;
+    }
+    
+    return APR_SUCCESS;
+}
+
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_bucket_brigade *bb,
                                      modperl_filter_mode_e mode,
@@ -854,6 +875,11 @@ static int modperl_filter_add_connection(conn_rec *c,
 
             f = addfunc(name, (void*)ctx, NULL, c);
 
+            /* ap_filter_t filter cleanup */
+            apr_pool_cleanup_register(c->pool, (void *)f,
+                                      modperl_filter_f_cleanup,
+                                      apr_pool_cleanup_null);
+
             if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
                 handlers[i]->next) {
                 int status = modperl_run_filter_init(
@@ -952,6 +978,11 @@ static int modperl_filter_add_request(request_rec *r,
 
             f = addfunc(name, (void*)ctx, r, r->connection);
 
+            /* ap_filter_t filter cleanup */
+            apr_pool_cleanup_register(r->pool, (void *)f,
+                                      modperl_filter_f_cleanup,
+                                      apr_pool_cleanup_null);
+
             if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
                 handlers[i]->next) {
                 int status = modperl_run_filter_init(
@@ -1033,6 +1064,11 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
 
         ctx->handler = handler;
         f = addfunc(name, (void*)ctx, r, c);
+
+        /* ap_filter_t filter cleanup */
+        apr_pool_cleanup_register(pool, (void *)f,
+                                  modperl_filter_f_cleanup,
+                                  apr_pool_cleanup_null);
 
         /* has to resolve early so we can check for init functions */ 
         if (!modperl_mgv_resolve(aTHX_ handler, pool, handler->name, TRUE)) {

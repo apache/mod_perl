@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+fix a memory leak when $filter->ctx is used [Stas]
+
 fix buglet on Win32 (and potentially other non-Unix platforms)
 where not all files were being installed under a relative Apache2
 subdirectory when MP_INST_APACHE2 was specified [Randy Kobes].
