@@ -278,6 +278,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
 
 apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
 {
+    apr_status_t retval;
     MP_dRCFG;
 
     if (rcfg->pnotes) {
@@ -285,7 +286,9 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
         rcfg->pnotes = Nullhv;
     }
 
-    return APR_SUCCESS;
+    retval = modperl_callback_per_dir(MP_CLEANUP_HANDLER, r);
+    
+    return retval;
 }
 
 apr_status_t modperl_config_req_cleanup(void *data)
