@@ -34,11 +34,6 @@ my @add_files = qw{
     Apache-Test/META.yml
 };
 
-my @repos = qw(
-    Apache-Test
-    docs
-);
-
 sub get_svn_files {
     my @files;
 
