@@ -1725,6 +1725,10 @@ no_cache(r, ...)
 
     CODE: 
     get_set_IV(r->no_cache);
+    if (r->no_cache) {
+	ap_table_setn(r->headers_out, "Pragma", "no-cache");
+	ap_table_setn(r->headers_out, "Cache-control", "no-cache");
+    }
 
     OUTPUT:
     RETVAL

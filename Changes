@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+$r->no_cache(1) will now set the r->headers_out "Pragma" and
+"Cache-control" to "no-cache"
+
 `PerlSetEnv PERL5LIB ...' now works again, thanks to Stas for the spot
 
 Apache::test fix for Apache::Table
