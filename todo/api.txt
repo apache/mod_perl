@@ -40,10 +40,6 @@ ht_time() - now requires a pool, temporarily renamed format_time for
 1.x ht_time compat.  should we just leave as is or see if ht_time can
 be changed to not require a pool?
 
-Apache->define:
-exists as Apache::exists_config_define, which should stay,
-Apache::compat could implement a wrapper.
-
 $r->document_root:
 cannot currently be modified.  requires locking since it is part of
 the per-server config structure which is shared between threads

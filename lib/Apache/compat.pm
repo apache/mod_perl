@@ -99,6 +99,11 @@ sub gensym {
     return Symbol::gensym();
 }
 
+sub define {
+    shift if @_ == 2;
+    exists_config_define(@_);
+}
+
 package Apache::Constants;
 
 use Apache::Const ();

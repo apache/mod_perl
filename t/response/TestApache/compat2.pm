@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 46;
+    plan $r, tests => 47;
 
     $r->send_http_header('text/plain');
 
@@ -233,6 +233,10 @@ sub handler {
 
     ok t_cmp(!$r->main, $r->is_main,
              '$r->is_main');
+
+    ok t_cmp(Apache::exists_config_define('MODPERL2'),
+             Apache->define('MODPERL2'),
+             'Apache->define');
 
     #note these are not actually part of the tests
     #since i think on platforms where crypt is not supported,
