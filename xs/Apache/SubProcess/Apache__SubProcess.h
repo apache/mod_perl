@@ -122,6 +122,12 @@ static int modperl_spawn_proc_prog(pTHX_
 #define PUSH_FILE_GLOB_WRITE(fp) \
     PUSH_FILE_GLOB(fp, MODPERL_APR_PERLIO_HOOK_WRITE)
 
+#define CLOSE_SCRIPT_STD(stream)                \
+    rc = apr_file_close(stream);                \
+    if (rc != APR_SUCCESS) {                    \
+        XSRETURN_UNDEF;                         \
+    }
+
 static XS(MPXS_modperl_spawn_proc_prog)
 {
     dXSARGS;
@@ -180,22 +186,20 @@ static XS(MPXS_modperl_spawn_proc_prog)
             apr_file_to_glob =
                 APR_RETRIEVE_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
 
-            if (GIMME_V == G_SCALAR) {
+            if (GIMME_V == G_VOID) {
+                CLOSE_SCRIPT_STD(script_in);
+                CLOSE_SCRIPT_STD(script_out);
+                CLOSE_SCRIPT_STD(script_err);
+                XSRETURN_EMPTY;
+            }
+            else if (GIMME_V == G_SCALAR) {
                 /* XXX: need to do lots of error checking before
                  * putting the object on the stack
                  */
                 EXTEND(SP, 1);
                 PUSH_FILE_GLOB_READ(script_out);
-
-                rc = apr_file_close(script_in);
-                if (rc != APR_SUCCESS) {
-                    XSRETURN_UNDEF;
-                }
-
-                rc = apr_file_close(script_err);
-                if (rc != APR_SUCCESS) {
-                    XSRETURN_UNDEF;
-                }
+                CLOSE_SCRIPT_STD(script_in);
+                CLOSE_SCRIPT_STD(script_err);
             }
             else {
                 EXTEND(SP, 3);
