@@ -687,6 +687,8 @@ my $methods_compat = {
                           ''],
     SERVER_VERSION    => ['get_server_version',
                           ''],
+    can_stack_handlers=> [undef,
+                          'there is no more need for that method'],
 
     # Apache::RequestRec
     soft_timeout      => [undef,
