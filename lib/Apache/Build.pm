@@ -222,7 +222,7 @@ sub new {
         @_,
     }, $class;
 
-    if ($self->{debug}) {
+    if ($self->{debug} and $ENV{MP_USE_GTOP}) {
         $self->{use_gtop} = 1 if $self->find_dlfile('gtop');
     }
 
