@@ -9,8 +9,16 @@ my $doc_root = $r->document_root;
 my $ht_access  = "$doc_root/.htaccess";
 my $hooks_file = "$doc_root/hooks.txt";
 
-unlink $ht_access;
-unlink $hooks_file;
+sub wipe_file {
+    local *FH;
+    open FH, ">$_[0]";
+    print FH " ";
+    close FH;
+}
+
+for ($ht_access, $hooks_file) {
+    wipe_file($_);
+}
 
 local *FH;
 if(Apache::perl_hook("Authen")) {
