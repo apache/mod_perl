@@ -3,13 +3,14 @@ use warnings FATAL => 'all';
 
 use ModPerl::RegistryLoader ();
 use Apache::ServerUtil ();
+use Apache::Server ();
+use Apache::Process ();
 use APR::Pool ();
 
 use DirHandle ();
 
-my $pool = APR::Pool->new();
+my $pool = Apache->server->process->pool;
 my $base_dir = Apache::server_root_relative($pool, "cgi-bin");
-
 
 # test the scripts pre-loading by explicitly specifying uri => filename
 my $rl = ModPerl::RegistryLoader->new(package => "ModPerl::Registry");
