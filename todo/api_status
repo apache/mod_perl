@@ -78,7 +78,7 @@ VP src/docs/2.0/api/APR/Const.pod
         (this will never be complete, fill it in as we go)
 VV src/docs/2.0/api/APR/Date.pod
 VV src/docs/2.0/api/APR/Error.pod
--- src/docs/2.0/api/APR/Finfo.pod
+VV src/docs/2.0/api/APR/Finfo.pod
 VV src/docs/2.0/api/APR/IpSubnet.pod
 VV src/docs/2.0/api/APR/OS.pod
 +V src/docs/2.0/api/APR/PerlIO.pod
