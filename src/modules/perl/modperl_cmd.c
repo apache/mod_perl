@@ -256,8 +256,8 @@ MP_CMD_SRV_DECLARE(post_config_requires)
 
     if (APR_SUCCESS == apr_stat(&finfo, arg, APR_FINFO_TYPE, p)) {
         if (finfo.filetype != APR_NOFILE) {
-            MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
             modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
+            MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
             require->file = arg;
             require->dcfg = dcfg;
             
