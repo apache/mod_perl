@@ -8,7 +8,9 @@ o Perl interfaces to Apache/APR structures
 o Perl interfaces to Apache/APR API functions
 o I/O + filtering
 o protocol module support
-o <Perl> sections
+
+o <Perl> sections (+in progress, gozer is working on it)
+
 o directive handlers
 o cgi emulation, i.e. %ENV/END{}/@INC/exit() management
 o 1.x compat mode
