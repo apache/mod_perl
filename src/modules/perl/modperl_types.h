@@ -98,8 +98,11 @@ typedef struct {
 } modperl_dir_config_t;
 
 typedef struct {
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
     HV *pnotes;
-} modperl_per_request_config_t;
+} modperl_request_config_t;
 
 typedef struct {
     SV *obj; /* object or classname if cv is a method */

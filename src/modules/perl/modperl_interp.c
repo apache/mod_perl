@@ -102,8 +102,9 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
     while (head) {
         if (!MpInterpIN_USE(head)) {
             interp = head;
-            MP_TRACE_i(MP_FUNC, "selected 0x%lx\n",
-                       (unsigned long)interp);
+            MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)\n",
+                       (unsigned long)interp,
+                       (unsigned long)interp->perl);
 #ifdef _PTHREAD_H
             MP_TRACE_i(MP_FUNC, "pthread_self == 0x%lx\n",
                        (unsigned long)pthread_self());
@@ -247,12 +248,6 @@ void modperl_interp_init(server_rec *s, ap_pool_t *p,
     ap_register_cleanup(p, (void*)mip,
                         modperl_interp_pool_destroy, ap_null_cleanup);
 
-
-    /* XXX: should only bother selecting an interpreter
-     * if one is needed for the request
-     */
-    ap_hook_post_read_request(modperl_interp_select, NULL, NULL, HOOK_FIRST);
-
     scfg->mip = mip;
 }
 
@@ -288,26 +283,14 @@ ap_status_t modperl_interp_unselect(void *data)
     return APR_SUCCESS;
 }
 
-int modperl_interp_select(request_rec *r)
+modperl_interp_t *modperl_interp_select(request_rec *r)
 {
     modperl_interp_t *interp = modperl_interp_get(r->server);
 
-    /* XXX: stash interp pointer in r->per_request */
+    ap_register_cleanup(r->pool, (void*)interp,
+                        modperl_interp_unselect, ap_null_cleanup);
 
-    if (MpInterpPUTBACK(interp)) {
-        ap_register_cleanup(r->pool, (void*)interp,
-                            modperl_interp_unselect, ap_null_cleanup);
-    }
-
-    if (1) { /* testing concurrent callbacks into the Perl runtime(s) */
-        dTHXa(interp->perl);
-        SV *sv = get_sv("Apache::Server::Perl", TRUE);
-        sv_setref_pv(sv, Nullch, (void*)interp->perl);
-        eval_pv("printf STDERR qq(Perl == 0x%lx\n), "
-                "$$Apache::Server::Perl", TRUE);
-    }
-
-    return OK;
+    return interp;
 }
 
 #else
