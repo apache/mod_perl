@@ -51,6 +51,13 @@ static MP_INLINE char *mpxs_ap_server_root_relative(pTHX_
     return ap_server_root_relative(p, fname);
 }
 
+static MP_INLINE
+int mpxs_Apache__Server_is_perl_option_enabled(pTHX_ server_rec *s,
+                                               const char *name)
+{
+    return modperl_config_is_perl_option_enabled(aTHX_ NULL, s, name);
+}
+
 static void mpxs_Apache__ServerUtil_BOOT(pTHX)
 {
     newCONSTSUB(PL_defstash, "Apache::server_root",

@@ -248,3 +248,10 @@ SV *mpxs_Apache__RequestRec_as_string(pTHX_ request_rec *r)
     return svh.sv;
 }
 
+static MP_INLINE
+int mpxs_Apache__RequestRec_is_perl_option_enabled(pTHX_ request_rec *r,
+                                                   const char *name)
+{
+    return modperl_config_is_perl_option_enabled(aTHX_ r, r->server, name);
+}
+
