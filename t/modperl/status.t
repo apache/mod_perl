@@ -10,7 +10,7 @@ use Apache::Const -compile => qw(OK DECLINED
                                  NOT_FOUND SERVER_ERROR FORBIDDEN
                                  HTTP_OK);
 
-plan tests => 13;
+plan tests => 14;
 
 my $base = "/TestModperl__status";
 
@@ -133,6 +133,15 @@ my $base = "/TestModperl__status";
 
 {
     my $uri = join '?', $base, 'foo9bar';
+    my $code = GET_RC $uri;
+
+    ok t_cmp(Apache::HTTP_OK, 
+             $code,
+             $uri);
+}
+
+{
+    my $uri = join '?', $base, 'undef';
     my $code = GET_RC $uri;
 
     ok t_cmp(Apache::HTTP_OK, 
