@@ -65,13 +65,13 @@ __DATA__
                 Allow from @servername@
             </Proxy>
             ProxyRequests Off
-	    RewriteEngine On
+            RewriteEngine On
 
-	    ProxyPass        /TestFilter__both_str_req_proxy/ \
+            ProxyPass    /TestFilter__both_str_req_proxy/ \
             http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
-	    ProxyPassReverse /TestFilter__both_str_req_proxy/ \
+            ProxyPassReverse /TestFilter__both_str_req_proxy/ \
             http://@servername@:@port@/TestFilter__both_str_req_proxy_content/
-        </IfModule>
+    </IfModule>
     </IfModule>
 
     PerlModule TestFilter::both_str_req_proxy
