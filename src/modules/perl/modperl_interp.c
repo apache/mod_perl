@@ -212,16 +212,15 @@ apr_status_t modperl_interp_unselect(void *data)
  */
 #define MP_INTERP_KEY "MODPERL_INTERP"
 
-modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
+modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
-    modperl_config_dir_t *dcfg = modperl_config_dir_get(rr);
+    modperl_config_dir_t *dcfg = modperl_config_dir_get(r);
     const char *desc = NULL;
     modperl_interp_t *interp;
     apr_pool_t *p = NULL;
-    request_rec *r = rr;
-    int is_subrequest = (rr && rr->main) ? 1 : 0;
+    int is_subrequest = (r && r->main) ? 1 : 0;
     modperl_interp_lifetime_e lifetime;
 
     if (!scfg->threaded_mpm) {
@@ -250,10 +249,6 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
     /*
      * XXX: goto modperl_interp_get() if lifetime == handler ?
      */
-    if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
-        /* share 1 interpreter across sub-requests */
-        r = r->main;
-    }
 
     if (c && (lifetime == MP_INTERP_LIFETIME_CONNECTION)) {
         desc = "conn_rec pool";
@@ -269,14 +264,22 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
         p = c->pool;
     }
     else if (r) {
+        if (is_subrequest && (lifetime == MP_INTERP_LIFETIME_REQUEST)) {
+            /* share 1 interpreter across sub-requests */
+            p = r->main->pool;
+        }
+        else {
+            p = r->pool;
+        }
+
         desc = "request_rec pool";
-        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, r->pool);
+        (void)apr_pool_userdata_get((void **)&interp, MP_INTERP_KEY, p);
 
         if (interp) {
             MP_TRACE_i(MP_FUNC,
                        "found interp 0x%lx in %s 0x%lx (%s request for %s)\n",
-                       (unsigned long)interp, desc, (unsigned long)r->pool,
-                       (is_subrequest ? "sub" : "main"), rr->uri);
+                       (unsigned long)interp, desc, (unsigned long)p,
+                       (is_subrequest ? "sub" : "main"), r->uri);
             return interp;
         }
 
@@ -291,8 +294,6 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
                        (unsigned long)r->connection->pool);
             return interp;
         }
-
-        p = r->pool;
     }
 
     interp = modperl_interp_get(s ? s : r->server);
@@ -317,7 +318,7 @@ modperl_interp_t *modperl_interp_select(request_rec *rr, conn_rec *c,
                    "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
                    (unsigned long)interp, desc, (unsigned long)p,
                    (r ? (is_subrequest ? "sub" : "main") : "conn"),
-                   (r ? rr->uri : c->remote_ip));
+                   (r ? r->uri : c->remote_ip));
     }
 
     /* set context (THX) for this thread */
