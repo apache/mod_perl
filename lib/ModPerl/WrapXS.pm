@@ -256,6 +256,37 @@ $attrs
 
 EOF
             }
+            elsif ($access_mode eq 'r+w_startup_dup') {
+
+                my $convert = $cast !~ /\bchar\b/
+                    ? "mp_xs_sv2_$cast"
+                    : "SvPV_nolen";
+
+                $code = <<EOF;
+$type
+$name(obj, val=Nullsv)
+    $class obj
+    SV *val
+
+    PREINIT:
+    $preinit
+$attrs
+
+    CODE:
+    RETVAL = ($cast) obj->$name;
+
+    if (items > 1) {
+         SV *dup = get_sv("_modperl_private::server_rec_$name", TRUE);
+         MP_CROAK_IF_THREADS_STARTED("setting $name");
+         sv_setsv(dup, val);
+         obj->$name = ($cast)$convert(dup);
+    }
+
+    OUTPUT:
+    RETVAL
+
+EOF
+            }
             elsif ($access_mode eq 'rw_char_undef') {
                 my $pool = $e->{pool} 
                     or die "rw_char_undef accessors need pool";

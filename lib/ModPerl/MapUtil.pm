@@ -25,10 +25,13 @@ our @EXPORT_OK = qw(list_first disabled_reason
 
 our @ISA = qw(Exporter);
 
-# the mapping happens in lib/ModPerl/StructureMap.pm
+# the mapping happens in lib/ModPerl/StructureMap.pm: sub parse
 #    '<' => 'auto-generated but gives only a read-only access'
 #    '&' => 'RDWR accessor to a char* field, supporting undef arg'
-#    '$'  => 'RONLY accessor, with WRITE accessor before child_init'
+#    '$' => 'RONLY accessor, with WRITE accessor before child_init'
+#    '%' => like $, but makes sure that for the write accessor the
+#           original perl scalar can change or go away w/o affecting
+#           the object
 my %disabled_map = (
     '!' => 'disabled or not yet implemented',
     '~' => 'implemented but not auto-generated',
