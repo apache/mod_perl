@@ -603,6 +603,14 @@ sub write_lookup_method_file {
 
             push @{ $map{$name} }, [$module, $class];
         }
+
+        # pure XS wrappers don't have the information about the
+        # arguments they receive, since they manipulate the arguments
+        # stack directly. therefore for these methods we can't tell
+        # what are the objects they are invoked on
+        for my $xs (@{ $self->{newXS}->{$module} || []}) {
+            push @{ $map{$1} }, [$module, undef] if $xs->[0] =~ /.+::(.+)/;
+        }
     }
 
     local $Data::Dumper::Terse    = 1;
@@ -653,9 +661,130 @@ sub _get_modules {
 sub _get_objects {
     for my $method (sort keys %$methods) { 
         for my $item ( @{ $methods->{$method} }) {
+            next unless defined $item->[OBJECT];
             push @{ $objects->{$item->[OBJECT]} }, [$method, $item->[MODULE]];
         }
     }
+}
+
+# if there is only one replacement method in 2.0 API we can
+# automatically lookup it, up however if there are more than one
+# (e.g. new()), we need to use a fully qualified value here
+# of course the same if the package is not a mod_perl one.
+#
+# the first field represents the replacement method or undef if none
+# exists, the second field is for extra comments (e.g. when there is
+# no replacement method)
+my $methods_compat = {
+    # Apache::
+    gensym            => ['Symbol::gensym',
+                          'or use "open my $fh, $file"'],
+    module            => ['Apache::Module::loaded',
+                          ''],
+    define            => ['exists_config_define',
+                          ''],
+    httpd_conf        => ['add_config',
+                          ''],
+    SERVER_VERSION    => ['get_server_version',
+                          ''],
+
+    # Apache::RequestRec
+    soft_timeout      => [undef,
+                          'there is no more need for that method'],
+    hard_timeout      => [undef,
+                          'there is no more need for that method'],
+    kill_timeout      => [undef,
+                          'there is no more need for that method'],
+    reset_timeout     => [undef,
+                          'there is no more need for that method'],
+    send_http_header  => ['content_type',
+                          ''],
+    header_in         => ['headers_in',
+                          'this method works in mod_perl 1.0 too'],
+    header_out        => ['headers_out',
+                          'this method works in mod_perl 1.0 too'],
+    err_header_out    => ['err_headers_out',
+                          'this method works in mod_perl 1.0 too'],
+    register_cleanup  => ['cleanup_register',
+                          ''],
+    post_connection   => ['cleanup_register',
+                          ''],
+    content           => [undef, # XXX: Apache::Request::what?
+                          'use CGI.pm or Apache::Request instead'],
+    clear_rgy_endav   => ['special_list_clear',
+                          ''],
+    stash_rgy_endav   => [undef,
+                          ''],
+    run_rgy_endav     => ['special_list_call',
+                          'this method is no longer needed'],
+    seqno             => [undef,
+                          'internal to mod_perl 1.0'],
+    chdir_file        => [undef, # XXX: to be resolved
+                          'temporary unavailable till the issue with chdir' .
+                          ' in the threaded env is resolved'],
+    finfo             => [undef,
+                          'not in the Apache 2.0 API'],
+    log_reason        => ['log_error',
+                          'not in the Apache 2.0 API'],
+    slurp_filename    => [undef,
+                          'not in the mod_perl 2.0 API'],
+    READLINE          => [undef, # XXX: to be resolved
+                          ''],
+    send_fd_length    => [undef,
+                          'not in the Apache 2.0 API'],
+    send_fd           => ['sendfile',
+                          'requires an offset argument'],
+    is_main           => ['main',
+                          'not in the Apache 2.0 API'],
+    cgi_var           => ['subprocess_env',
+                          'subprocess_env can be used with mod_perl 1.0'],
+    cgi_env           => ['subprocess_env',
+                          'subprocess_env can be used with mod_perl 1.0'],
+    each_byterange    => [undef,
+                          'now handled internally by ap_byterange_filter'],
+    set_byterange     => [undef,
+                          'now handled internally by ap_byterange_filter'],
+
+    # Apache::File
+    open              => [undef,
+                          ''],
+    close             => [undef, # XXX: also defined in APR::Socket
+                          ''],
+    tmpfile           => [undef,
+                          'not in the Apache 2.0 API, ' .
+                          'use File::Temp instead'],
+
+    # Apache::Util
+    size_string       => ['format_size',
+                          ''],
+    escape_uri        => ['unescape_path',
+                          ''],
+    unescape_uri      => ['unescape_url',
+                          ''],
+    escape_html       => [undef, # XXX: will be ap_escape_html
+                          'ap_escape_html now requires a pool object'],
+    ht_time           => ['format_time',
+                          ''],
+    parsedate         => ['parse_http',
+                          ''],
+    validate_password => ['password_validate',
+                          ''],
+
+    # Apache::Table
+    #new               => ['make',
+    #                      ''], # XXX: there are other 'new' methods
+
+    # Apache::Connection
+    auth_type         => ['ap_auth_type',
+                          'now resides in the request object'],
+};
+
+sub avail_methods_compat {
+    return keys %$methods_compat;
+}
+
+sub avail_methods {
+    return keys %$methods;
 }
 
 sub preload_all_modules {
@@ -702,7 +831,23 @@ sub lookup_method {
     # strip the package name for the fully qualified method
     $method =~ s/.+:://;
 
-    unless (exists $methods->{$method}) {
+    if (exists $methods_compat->{$method}) {
+        my ($replacement, $comment) = @{$methods_compat->{$method}};
+        my $hint = "'$method' is not a part of the mod_perl 2.0 API\n";
+        $comment = length $comment ? " $comment\n" : "";
+
+        # some removed methods have no replacement
+        return $hint . "$comment" unless defined $replacement;
+
+        $hint .= "use '$replacement' instead. $comment";
+
+        # if fully qualified don't look up its container
+        return $hint if $replacement =~ /::/;
+
+        my ($modules_hint, @modules) = lookup_method($replacement, $object);
+        return $hint . $modules_hint;
+    }
+    elsif (!exists $methods->{$method}) {
         my $hint = "Don't know anything about method '$method'\n";
         return ($hint);
     }
@@ -772,7 +917,8 @@ sub lookup_module {
     my $hint = join '',
         ("\nModule '$module' contains the following XS methods:\n\n", 
          $banner,  sep(length($banner)),
-         map( { sprintf $format, $_->[0], $_->[1]} @{ $modules->{$module} }),
+         map( { sprintf $format, $_->[0], $_->[1]||'???'}
+             @{ $modules->{$module} }),
          sep(length($banner)));
 
     return ($hint, @methods);
