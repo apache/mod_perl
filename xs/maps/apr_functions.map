@@ -309,7 +309,8 @@ MODULE=APR::Table
 
 MODULE=APR::Finfo
 -apr_lstat
- apr_stat
+-apr_stat
+ mpxs_APR__Finfo_stat
 
 !MODULE=APR::String
  apr_collapse_spaces
