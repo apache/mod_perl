@@ -9,7 +9,7 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
-        modperl_wbucket_flush(&rcfg->wbucket); \
+        modperl_wbucket_flush(rcfg->wbucket); \
         ap_rflush(r); \
     }
 
@@ -27,7 +27,7 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
 
     MP_START_TIMES();
 
-    mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
+    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
 
     MP_END_TIMES();
     MP_PRINT_TIMES("r->puts");
@@ -54,7 +54,7 @@ apr_size_t mpxs_Apache__RequestRec_print(pTHX_ I32 items,
     
     rcfg = modperl_config_req_get(r);
     
-    mpxs_write_loop(modperl_wbucket_write, &rcfg->wbucket);
+    mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket);
     
     mpxs_output_flush(r, rcfg);
     
@@ -80,7 +80,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     modperl_perl_do_sprintf(aTHX_ sv, items, MARK);
     bytes = SvCUR(sv);
 
-    modperl_wbucket_write(&rcfg->wbucket, SvPVX(sv), &bytes);
+    modperl_wbucket_write(rcfg->wbucket, SvPVX(sv), &bytes);
     
     mpxs_output_flush(r, rcfg);
 
@@ -112,7 +112,7 @@ apr_ssize_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
         wlen = bufsiz;
     }
 
-    modperl_wbucket_write(&rcfg->wbucket, buf+offset, &wlen);
+    modperl_wbucket_write(rcfg->wbucket, buf+offset, &wlen);
 
     return wlen;
 }

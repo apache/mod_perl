@@ -433,7 +433,13 @@ static int modperl_hook_create_request(request_rec *r)
     if (r->main) {
         modperl_config_req_t *main_rcfg =
             modperl_config_req_get(r->main);
-        modperl_wbucket_flush(&main_rcfg->wbucket);
+
+        rcfg->wbucket = main_rcfg->wbucket;
+    }
+    else {
+        rcfg->wbucket =
+            (modperl_wbucket_t *)apr_palloc(r->pool,
+                                            sizeof(*rcfg->wbucket));
     }
 
     return OK;
@@ -553,11 +559,19 @@ static const command_rec modperl_cmds[] = {
 void modperl_response_init(request_rec *r)
 {
     MP_dRCFG;
+    MP_dDCFG;
+    modperl_wbucket_t *wb = rcfg->wbucket;
+
+    if (r->main) {
+        return;
+    }
 
     /* setup buffer for output */
-    rcfg->wbucket.pool = r->pool;
-    rcfg->wbucket.filters = &r->output_filters;
-    rcfg->wbucket.outcnt = 0;
+    wb->pool = r->pool;
+    wb->filters = &r->output_filters;
+    wb->outcnt = 0;
+    wb->header_parse = MpDirPARSE_HEADERS(dcfg) ? 1 : 0;
+    wb->r = r;
 }
 
 void modperl_response_finish(request_rec *r)
@@ -565,7 +579,7 @@ void modperl_response_finish(request_rec *r)
     MP_dRCFG;
 
     /* flush output buffer */
-    modperl_wbucket_flush(&rcfg->wbucket);
+    modperl_wbucket_flush(rcfg->wbucket);
 }
 
 static int modperl_response_handler_run(request_rec *r, int finish)
@@ -624,10 +638,6 @@ int modperl_response_handler_cgi(request_rec *r)
     /* default is +SetupEnv, skip if PerlOption -SetupEnv */
     if (MpDirSETUP_ENV(dcfg) || !MpDirSeenSETUP_ENV(dcfg)) {
         modperl_env_request_populate(aTHX_ r);
-    }
-
-    if (MpDirPARSE_HEADERS(dcfg)) {
-        rcfg->wbucket.header_parse = 1;
     }
 
     h_stdout = modperl_io_tie_stdout(aTHX_ r);
