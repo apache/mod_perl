@@ -421,7 +421,8 @@ Apache.xs cleanups:
  -move Apache::Server code from Apache.xs to Server.xs
  -remove Apache::fork stuff
  -remove max_request_per_client method (use Apache::Globals instead)
-
+ -make sure server is up before runtests()
+ 
 =item 1.15 - July 24, 1998
 
 new experimental XS implementation of Apache::PerlRun/Apache::Registry

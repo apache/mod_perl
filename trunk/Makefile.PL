@@ -149,7 +149,7 @@ $PERL_STATIC_EXTS = "";
 $PERL_EXTRA_CFLAGS = "";
 $SSLCacheServerPort = 8539;
 $SSL_BASE = ""; 
-$Port = 8529;
+$Port = $ENV{HTTP_PORT} || 8529;
 #so Doug can 'make test' different-builds@sametime/samebox
 if(!$Is_Win32 and $ENV{RANDOM_PORT} and $$ > 8000 and $$ < 30000) {
     $PORT ||= $$;
