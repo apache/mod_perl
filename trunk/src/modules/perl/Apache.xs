@@ -1847,6 +1847,7 @@ dir_config(r, key=NULL, ...)
     server_rec *s;
 
     CODE:
+    RETVAL = Nullsv;
     if(r && r->per_dir_config) {				   
 	c = (perl_dir_config *)get_module_config(r->per_dir_config, 
 						 &perl_module);
