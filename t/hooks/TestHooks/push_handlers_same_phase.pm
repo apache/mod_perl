@@ -49,7 +49,7 @@ sub real_response {
     # once running inside the response phase it shouldn't be possible
     # to switch from 'perl-script' to 'modperl' and vice versa
     eval { $r->handler("perl-script") };
-    ok t_cmp(qr/Can't switch from/, $@, 
+    ok t_cmp($@, qr/Can't switch from/,
              "can't switch from 'perl-script' to 'modperl' inside " .
              "the response phase");
 

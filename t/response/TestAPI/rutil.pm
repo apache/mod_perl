@@ -29,12 +29,10 @@ sub handler {
 
     my $pattern = qr!(?s)GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!;
 
-    ok t_cmp(
-        $pattern,
-        $r->as_string,
-        "test for the request_line, host, status, and few " .
-        " headers that should always be there"
-    );
+    ok t_cmp($r->as_string,
+             $pattern,
+             "test for the request_line, host, status, and few " .
+             " headers that should always be there");
 
     Apache::OK;
 }

@@ -73,8 +73,8 @@ sub handler {
         my $len    = 10;
         my $real = substr $data, $offset, $len;
         my $b = eval { APR::Bucket->new($data, $offset, $len) };
-        ok t_cmp(qr/the length argument can't be bigger than the total/,
-                 $@,
+        ok t_cmp($@,
+                 qr/the length argument can't be bigger than the total/,
                  'new($data, $offset, $len_too_big)');
     }
 

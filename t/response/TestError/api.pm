@@ -20,8 +20,9 @@ sub handler {
 
     # PerlOptions -GlobalRequest is in effect
     eval { Apache->request; };
-    ok t_cmp(qr/\$r object is not available/,
-        $@, "unavailable global $r object");
+    ok t_cmp($@, 
+             qr/\$r object is not available/,
+             "unavailable global $r object");
 
     return Apache::OK;
 }

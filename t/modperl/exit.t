@@ -18,12 +18,12 @@ plan tests => 3;
 {
     my $exit_excpt = ModPerl::EXIT;
     my $body = GET_BODY_ASSERT("$location?eval");
-    ok t_cmp(qr/^ModPerl::Util::exit: \($exit_excpt\) exit was called/,
-             $body,
+    ok t_cmp($body,
+             qr/^ModPerl::Util::exit: \($exit_excpt\) exit was called/,
              "exit in eval context");
 
-    ok !t_cmp(qr/must not be reached/,
-             $body,
+    ok !t_cmp($body,
+             qr/must not be reached/,
              "exit in eval context");
 
 }

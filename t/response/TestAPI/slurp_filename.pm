@@ -34,7 +34,7 @@ sub handler {
         my $data = $r->slurp_filename; # tainted
         my $received;
         eval { $received = eval $$data };
-        ok t_cmp(qr/Insecure dependency in eval/, $@,
+        ok t_cmp($@, qr/Insecure dependency in eval/,
                  "slurp filename tainted");
 
         ModPerl::Util::untaint($$data);
@@ -48,7 +48,7 @@ sub handler {
         my $data = slurp_filename_perl($r); # tainted
         my $received;
         eval { $received = eval $$data };
-        ok t_cmp(qr/Insecure dependency in eval/, $@,
+        ok t_cmp($@, qr/Insecure dependency in eval/,
                  "slurp filename (perl) tainted");
 
         ModPerl::Util::untaint($$data);

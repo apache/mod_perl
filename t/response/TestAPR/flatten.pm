@@ -39,8 +39,8 @@ sub handler {
     # syntax: require a $bb
     eval { APR::Brigade::flatten("") };
 
-    ok t_cmp(qr!usage: \$bb->flatten\(\$buf, \[\$wanted\]\)!,
-             $@,
+    ok t_cmp($@,
+             qr!usage: \$bb->flatten\(\$buf, \[\$wanted\]\)!,
              'APR::Brigade::flatten() requires a brigade');
 
     # flatten() will slurp up the entire brigade

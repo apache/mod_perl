@@ -27,5 +27,5 @@ $str = $res->content;
 ok $str;
 
 for my $pat (@patterns) {
-    ok t_cmp(qr{$pat}, $str, "/$pat/");
+    ok t_cmp($str, qr{$pat}, "/$pat/");
 }

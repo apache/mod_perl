@@ -14,10 +14,11 @@ sub handler {
     plan $r, tests => 15;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
-    
-    ok t_cmp(qr/t::conf::extra_last_conf::line_\d+$/, 
-             $TestDirective::perl::PACKAGE, '__PACKAGE__');
-    
+
+    ok t_cmp($TestDirective::perl::PACKAGE,
+             qr/t::conf::extra_last_conf::line_\d+$/,
+             '__PACKAGE__');
+
     my %Location;
     {
         no strict 'refs';
@@ -32,8 +33,8 @@ sub handler {
 
     ok t_cmp('yes', $TestDirective::perl::comments);
 
-    ok t_cmp(qr/extra.last.conf/, $TestDirective::perl::dollar_zero, '$0');
-    ok t_cmp(qr/extra.last.conf/, $TestDirective::perl::filename, '__FILE__');
+    ok t_cmp($TestDirective::perl::dollar_zero, qr/extra.last.conf/, '$0');
+    ok t_cmp($TestDirective::perl::filename, qr/extra.last.conf/, '__FILE__');
 
     # 3 would mean we are still counting lines from the context of the eval
     ok $TestDirective::perl::line > 3;
@@ -43,12 +44,12 @@ sub handler {
     ok t_cmp(1, $TestDirective::perl::Included, "Include");
 
     my $dump = Apache::PerlSections->dump;
-    ok t_cmp(qr/__END__/, $dump, "Apache::PerlSections->dump");
-    
+    ok t_cmp($dump, qr/__END__/, "Apache::PerlSections->dump");
+
     eval "package TestDirective::perldo::test;\nno strict;\n$dump";
     ok t_cmp("", $@, "PerlSections dump syntax check");
 
-    ok t_cmp(qr/perlsection.conf/, $TestDirective::perldo::test::Include);
+    ok t_cmp($TestDirective::perldo::test::Include, qr/perlsection.conf/);
 
     Apache::OK;
 }

@@ -30,5 +30,5 @@ ok t_cmp(1, !$res->header('Location'),
 ok t_cmp(200, $res->code,
          "status == 200");
 
-ok t_cmp(qr{welcome to}, $res->content,
+ok t_cmp($res->content, qr{welcome to},
          "content is index.html");

@@ -90,8 +90,8 @@ sub handler {
         my $obj = bless {}, 'Apache::Foo';
         eval { Apache::server_root_relative($obj, 'conf') };
 
-        ok t_cmp(qr/server_root_relative.*no .* key/,
-                 $@,
+        ok t_cmp($@,
+                 qr/server_root_relative.*no .* key/,
                  "Apache::server_root_relative(\$obj, 'conf')");
     }
 

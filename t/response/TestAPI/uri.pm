@@ -30,10 +30,10 @@ sub handler {
 
         ok $uri->isa('APR::URI');
 
-        ok t_cmp(qr/^$location/, $uri->path, "path");
+        ok t_cmp($uri->path, qr/^$location/, "path");
 
         my $up = $uri->unparse;
-        ok t_cmp(qr/^$location/, $up, "unparse");
+        ok t_cmp($up, qr/^$location/, "unparse");
     }
 
     # construct_server
@@ -81,7 +81,7 @@ sub handler {
         ok $parsed->isa('APR::URI');
 
         my $up = $parsed->unparse;
-        ok t_cmp(qr/$location/, $up, "unparse");
+        ok t_cmp($up, qr/$location/, "unparse");
 
         my $path = '/foo/bar';
 
@@ -99,7 +99,7 @@ sub handler {
         my $parsed = APR::URI->parse($r->pool, $curl);
 
         my $up = $parsed->unparse;
-        ok t_cmp(qr/$location/, $up, 'construct_url($uri)');
+        ok t_cmp($up, qr/$location/, 'construct_url($uri)');
         ok t_cmp($r->args,  $parsed->query, "args vs query");
     }
     {
@@ -109,7 +109,7 @@ sub handler {
         t_debug("construct_url: $curl");
         t_debug("r->uri: ", $r->uri);
         my $up = APR::URI->parse($r->pool, $curl)->unparse;
-        ok t_cmp(qr/$location/, $up, 'construct_url($uri, $pool)');
+        ok t_cmp($up, qr/$location/, 'construct_url($uri, $pool)');
     }
 
     # segfault test
