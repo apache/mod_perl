@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Registry: remove the misleading prefix "$$: $class:" in the logged
+error message, since not only registry errors will get logged if $@ is
+set [Stas]
+
 change t/REPORT to suggest to post bug reports to the modperl users
 list, to be consistent with the documentation [Stas]
 
