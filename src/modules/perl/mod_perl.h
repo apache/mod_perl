@@ -88,7 +88,7 @@ int modperl_perl_destruct_level(void);
 void xs_init(pTHX);
 
 void modperl_response_init(request_rec *r);
-void modperl_response_finish(request_rec *r);
+apr_status_t modperl_response_finish(request_rec *r);
 int modperl_response_handler(request_rec *r);
 int modperl_response_handler_cgi(request_rec *r);
 

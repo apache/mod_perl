@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+All response functions are now returning status and the callers check
+and croak on failure or progate them further. [Stas]
+
 Apache::Test: support two new shortcuts for skip functionality:
  - have_threads: checks whether both Apache and Perl support threads
  - under_construction: to print a consistent/clear skip reason

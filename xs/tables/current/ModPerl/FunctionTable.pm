@@ -3740,7 +3740,7 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'void',
+    'return_type' => 'apr_status_t',
     'name' => 'modperl_response_finish',
     'args' => [
       {

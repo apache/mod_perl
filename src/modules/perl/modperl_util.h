@@ -50,6 +50,13 @@
 #define MP_magical_tie(sv, mg_flags) \
     SvFLAGS((SV*)sv) |= mg_flags
 
+#define MP_FAILURE_CROAK(rc_run) do { \
+        apr_status_t rc = rc_run; \
+        if (rc != APR_SUCCESS) { \
+            Perl_croak(aTHX_ modperl_apr_strerror(rc)); \
+        } \
+    } while (0)
+        
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 

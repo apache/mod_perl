@@ -23,7 +23,7 @@ modperl_newSVsv_obj(aTHX_ stashsv, sv)
 #define mpxs_output_flush(r, rcfg) \
     /* if ($|) */ \
     if (IoFLUSH(PL_defoutgv)) { \
-        modperl_wbucket_flush(rcfg->wbucket); \
+        MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket)); \
         ap_rflush(r); \
     }
 
@@ -94,7 +94,8 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     modperl_perl_do_sprintf(aTHX_ sv, items, MARK);
     bytes = SvCUR(sv);
 
-    modperl_wbucket_write(aTHX_ rcfg->wbucket, SvPVX(sv), &bytes);
+    MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
+                                           SvPVX(sv), &bytes));
     
     mpxs_output_flush(r, rcfg);
 
@@ -126,8 +127,9 @@ apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
         wlen = bufsiz;
     }
 
-    modperl_wbucket_write(aTHX_ rcfg->wbucket, buf+offset, &wlen);
-
+    MP_FAILURE_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
+                                           buf+offset, &wlen));
+    
     return wlen;
 }
 
