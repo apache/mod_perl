@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+write_client will break out of it's loop if rwrite returns a -1 error 
+condition, which could cause spinning httpds otherwise
+[Eric Eisenhart <eric@sonic.net>]
+
 properly default $Apache::Registry::NameWithVirtualHost=1, 
 thanks to spot by Ryan A. Whelan
 

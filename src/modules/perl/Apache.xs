@@ -1018,10 +1018,11 @@ write_client(r, ...)
     RETVAL = 0;
 
     for(i = 1; i <= items - 1; i++) {
+	int sent = 0;
 	buffer = SvPV(ST(i), len);
 #ifdef APACHE_SSL
         while(len > 0) {
-            int sent = 0;
+            sent = 0;
 	    if(len < HUGE_STRING_LEN) {
 	        sent = rwrite(buffer, len, r);
 	    }
@@ -1029,11 +1030,19 @@ write_client(r, ...)
 	        sent = rwrite(buffer, HUGE_STRING_LEN, r);
 	        buffer += HUGE_STRING_LEN;
 	    }
+	    if(sent < 0) {
+	        mod_perl_warn(r->server, "mod_perl: rwrite returned -1");
+	        break;
+	    }
 	    len -= sent;
 	    RETVAL += sent;
         }
 #else
-        RETVAL += rwrite(buffer, len, r);
+        if((sent = rwrite(buffer, len, r)) < 0) {
+	    mod_perl_warn(r->server, "mod_perl: rwrite returned -1");
+	    break;
+        }
+        RETVAL += sent;
 #endif
     }
 
