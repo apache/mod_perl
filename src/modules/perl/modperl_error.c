@@ -50,7 +50,8 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
  * ""). for example trying to require a file in modperl_croak(), will
  * cause 'panic: POPSTACK' and the process will exit. Dave fixed that
  * in perl Change 23209 by davem@davem-percy on 2004/08/09 19:48:57,
- * which will hopefully appear in perl 5.8.6.
+ * which will hopefully appear in perl 5.8.6. for now workaround this
+ * perl bug by setting the taint mode off for the APR/Error loading.
  */
 
 /* croak with $@ as a APR::Error object
