@@ -584,7 +584,7 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_TAKE2("PerlSetEnv", set_env, "PerlSetEnv"),
     MP_CMD_SRV_TAKE1("PerlPassEnv", pass_env, "PerlPassEnv"),
     MP_CMD_SRV_RAW_ARGS("<Perl", perl, "NOT YET IMPLEMENTED"),
-    MP_CMD_SRV_TAKE1("LoadModule", load_module, "A Perl module"),
+    MP_CMD_SRV_RAW_ARGS("LoadModule", load_module, "A Perl module"),
 #ifdef MP_TRACE
     MP_CMD_SRV_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
