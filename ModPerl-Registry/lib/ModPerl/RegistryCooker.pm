@@ -76,6 +76,9 @@ use constant TRUE  => sub { 1 };
 use constant FALSE => sub { 0 };
 
 
+use constant NAMESPACE_ROOT => 'ModPerl::ROOT';
+
+
 #########################################################################
 # func: new
 # dflt: new
@@ -243,7 +246,7 @@ sub can_compile {
 
 sub namespace_root {
     my $self = shift;
-    join '::', 'ModPerl::ROOT', ref($self);
+    join '::', NAMESPACE_ROOT, ref($self);
 }
 
 #########################################################################
