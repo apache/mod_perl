@@ -457,7 +457,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		unlink "$atopdir/$_";
 		next if not m,.+\.(xs|c|h)$, and $USE_APACI;
 		next if $DYNAMIC and /\.xs$/;
-		print "cp $_ $atopdir/$_\n" if $USE_APACI;
+		#print "cp $_ $atopdir/$_\n" if $USE_APACI;
 		my $dest = "$atopdir/$_";
 		cp $_, $dest;
 		#$mani_src{$_}++;
@@ -888,7 +888,9 @@ SSLCacheServerPort $SSLCacheServerPort
 SSLCacheServerPath /tmp  
 EOF
     conf_append($StrongholdKey) if $StrongholdKey;
-
+    if(is_ssl() =~ /stronghold/i) {
+	iedit "t/conf/httpd.conf", "s:^SSL:#SSL:";
+    }
     #phooey!
     my $v = httpd_version($APACHE_SRC, 1);
     my $mmn = magic_number($APACHE_SRC) || 0;
