@@ -42,7 +42,7 @@ static struct {
     apr_pool_t *p = MP_boot_data.p; \
     server_rec *s = MP_boot_data.s
 
-#if defined(USE_ITHREADS) && defined(MP_PERL_5_6_1)
+#if defined(USE_ITHREADS) && defined(MP_PERL_5_6_x)
 #   define MP_REFGEN_FIXUP
 #endif
 
