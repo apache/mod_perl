@@ -136,7 +136,7 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
 }
 
 static MP_INLINE
-apr_status_t modperl_setup_client_block(request_rec *r)
+apr_status_t mpxs_setup_client_block(request_rec *r)
 {
     if (!r->read_length) {
         apr_status_t rc;
@@ -153,7 +153,7 @@ apr_status_t modperl_setup_client_block(request_rec *r)
     return APR_SUCCESS;
 }
 
-#define modperl_should_client_block(r) \
+#define mpxs_should_client_block(r) \
     (r->read_length || ap_should_client_block(r))
 
 /* alias */
@@ -167,11 +167,11 @@ static long mpxs_Apache__RequestRec_read(request_rec *r,
     long nrd = 0;
     int rc;
 
-    if ((rc = modperl_setup_client_block(r)) != APR_SUCCESS) {
+    if ((rc = mpxs_setup_client_block(r)) != APR_SUCCESS) {
         return 0;
     }
 
-    if (modperl_should_client_block(r)) {
+    if (mpxs_should_client_block(r)) {
         /* ap_should_client_block() will return 0 if r->read_length */
         mpxs_sv_grow(buffer, bufsiz+offset);
         nrd = ap_get_client_block(r, SvPVX(buffer)+offset, bufsiz);
