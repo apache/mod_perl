@@ -79,9 +79,7 @@ sub httpd_is_source_tree {
     return $self->{httpd_is_source_tree}
         if exists $self->{httpd_is_source_tree};
 
-    # XXX: this $self->{MP_AP_PREFIX} || $self->{dir} is totally confusing
-    # we should have a single point of reference (refactoring is needed!)
-    my $prefix = $self->{MP_AP_PREFIX} || $self->{dir};
+    my $prefix = $self->dir;
     $self->{httpd_is_source_tree} = 
         defined $prefix && -d $prefix && -e "$prefix/CHANGES";
 }
@@ -172,8 +170,7 @@ sub mpm_name {
 
     # building against the httpd source dir
     unless ($mpm_name and $self->httpd_is_source_tree) {
-        my $prefix = $self->{MP_AP_PREFIX} || $self->{dir};
-        my $config_vars_file = catfile $prefix, "build", "config_vars.mk";
+        my $config_vars_file = catfile $self->dir, "build", "config_vars.mk";
         if (open my $fh, $config_vars_file) {
             while (<$fh>) {
                 if (/MPM_NAME = (\w+)/) {
@@ -686,7 +683,7 @@ sub dir {
 #            last if -d ($dir = "$_/auto/Apache/include");
 #        }
 #    }
-    return $self->{dir} = canonpath rel2abs $dir;
+    return $self->{dir} = $dir ? canonpath(rel2abs $dir) : undef;
 }
 
 #--- finding apache *.h files ---
@@ -750,8 +747,7 @@ sub apr_config_path {
         if ($self->httpd_is_source_tree) {
             push @tries, grep { -d $_ }
                 map catdir($_, "srclib", "apr"),
-                grep defined $_,
-                map $self->{$_}, qw(dir MP_AP_PREFIX);
+                grep defined $_, $self->dir;
         }
         else {
             # APR_BINDIR was added only at httpd-2.0.46
@@ -1434,7 +1430,7 @@ sub includes {
         return \@inc;
     }
 
-    my $src  = $self->dir;
+    my $src = $self->dir;
     my $os = WIN32 ? 'win32' : 'unix';
     push @inc, $self->file_path("src/modules/perl", "xs");
 
