@@ -1,11 +1,30 @@
 package Apache::Opcode;
 
 use strict;
-use Opcode ();
 
 my $Mask = read_opmask(\*DATA);
 
+sub __NOTYET__handler {
+    my $r = shift;
+    my $mask;
+    if(my $opcodes = $r->dir_config("Opcodes")) {
+	my $file = $r->server_root_relative($opcodes);
+	if(-e $file) {
+	    $mask = $file;
+	}
+	else {
+	    my @opnames = split /\s+/, $opcodes;
+	    $mask = \@opnames;
+	}
+    }
+    else {
+	$mask = \$Mask;
+    }
+    return -1; #DECLINED
+}
+
 sub read_opmask {
+    require Opcode;
     my $fh = shift;
     my $mask;
     while (<$fh>) {

@@ -420,6 +420,11 @@ module(sv, name)
     OUTPUT:
     RETVAL
 
+char *
+mod_perl_set_opmask(r, sv)
+    Apache     r
+    SV *sv
+
 void
 untaint(...)
 
