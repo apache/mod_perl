@@ -87,6 +87,8 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
       case 'r':
         apr_flag = APR_READ;
         break;
+      default:
+        Perl_croak(aTHX_ "unknown open mode: %s", mode);
     }
 
     /* APR_BINARY:   we always do binary read and PerlIO is supposed
@@ -249,6 +251,8 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
       case 2:
         where = APR_END;
         break;
+      default:
+        Perl_croak(aTHX_ "unknown whence mode: %d", whence);
     }
 
     rc = apr_file_seek(st->file, where, &seek_offset);
@@ -451,6 +455,8 @@ PerlIO *apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, apr_pool_t *pool,
       case APR_PERLIO_HOOK_READ:
         mode = "r";
         break;
+      default:
+        Perl_croak(aTHX_ "unknown APR_PERLIO type: %d", type);
     };
     
     PerlIO_apply_layers(aTHX_ f, mode, layers);
