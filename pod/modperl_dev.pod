@@ -10,12 +10,12 @@ same directory.
 
 Or use anoncvs (password is "anoncvs"):
 
- % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic login
- % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co modperl-2.0
- % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co httpd-2.0
+ % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic login
+ % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co modperl-2.0
+ % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co httpd-2.0
  % cd httpd-2.0/srclib
- % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr
- % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr-util
+ % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co apr
+ % cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic co apr-util
  % cd ..
  % ./buildconf
  % ./configure --prefix=$HOME/apache-2.0 \
