@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Updated to the new Apache License Version 2.0 [Gozer]
+
 Drop the support for making GATEWAY_INTERFACE special. It's not needed
 as $ENV{MOD_PERL}, available in both mod_perl generations, should be
 used to test whether the code is running under mod_perl. [Stas]
