@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.21_02-dev
+=item 1.21_02 - March 6, 2000
 
 fix Makefile.PL if $USE_APXS && $PERL_DEBUG
 [Daniel Jacobowitz <drow@false.org>]
