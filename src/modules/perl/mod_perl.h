@@ -22,6 +22,7 @@
 #include "http_connection.h"
 
 #include "apr_lock.h"
+#include "apr_strings.h"
 
 extern module MODULE_VAR_EXPORT perl_module;
 
