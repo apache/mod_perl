@@ -27,7 +27,7 @@ my(%status) = (
    hooks => "Enabled mod_perl Hooks",
 );
 
-if($Apache::ReadConfig) {
+if($Apache::Server::SaveConfig) {
     $status{"section_config"} = "Perl Section Configuration";
 }
 
