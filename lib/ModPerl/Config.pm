@@ -59,9 +59,13 @@ sub as_string {
     # apr
     $cfg .= "\n\n*** (apr|apu)-config linking info\n\n";
     if (my $apr_bindir = $build_config->apr_bindir()) {
+        my @configs = $build_config->httpd_version_as_int =~ m/21\d+/
+            ? qw(apr-1 apu-1)
+            : qw(apr apu);
+
         my $ext = WIN32 ? '.bat' : '';
         my @libs = grep $_, map { -x $_ && qx{$_ --link-ld --libs} }
-            map { qq{$apr_bindir/$_-config$ext} } qw(apr apu);
+            map { qq{$apr_bindir/$_-config$ext} } @configs;
         chomp @libs;
         my $libs = join "\n", @libs;
         $cfg .= "$libs\n\n";

@@ -101,10 +101,14 @@ sub get_DEFINE {
     # top-level Makefile.PL overrides MY::pasthru, and defines DEFINE= which
     # overrides any local definition, not sure what's the right fix, for
     # now just define it here (should it define PASTHRU_DEFINE instead?)
+    my @configs = $build->httpd_version_as_int =~ m/21\d+/
+        ? qw(apr-1 apu-1)
+        : qw(apr apu);
+
     if (my $apr_bindir = $build->apr_bindir()) {
         my $ext = WIN32 ? '.bat' : '';
         my @apr_libs = grep $_, map { -x $_ && qx{$_ --link-ld} }
-            map { qq{$apr_bindir/$_-config$ext} } qw(apr apu);
+            map { qq{$apr_bindir/$_-config$ext} } @configs;
         $opt_define = '-DMP_HAVE_APR_LIBS' if @apr_libs;
     }
 

@@ -945,6 +945,10 @@ sub apr_config_path {
         $self->{apr_config_path} = $self->{MP_APR_CONFIG};
     }
 
+    my $config = $self->httpd_version_as_int =~ m/21\d+/
+                     ? 'apr-1-config'
+                     : 'apr-config';
+
     if (!$self->{apr_config_path}) {
         my @tries = ();
         if ($self->httpd_is_source_tree) {
@@ -960,7 +964,7 @@ sub apr_config_path {
                 if exists $self->{MP_AP_PREFIX} and -d $self->{MP_AP_PREFIX};
         }
 
-        @tries = map { catfile $_, "apr-config" } @tries;
+        @tries = map { catfile $_, $config } @tries;
         if (WIN32) {
             my $ext = '.bat';
             for (@tries) {
@@ -974,7 +978,7 @@ sub apr_config_path {
         }
     }
 
-    $self->{apr_config_path} ||= Apache::TestConfig::which('apr-config');
+    $self->{apr_config_path} ||= Apache::TestConfig::which($config);
 
     # apr_bindir makes sense only if httpd/apr is installed, if we are
     # building against the source tree we can't link against
