@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.13_01-dev
  
+register_cleanup to SvREFCNT_dec handler stacks, otherwise we leak
+during kill -USR1 when configuration is re-read
+
 TAINT_NOT just after perl_run(), otherwise 'make test' may choke (when
 it shouldn't): 
    "Insecure dependency in eval while running with -T switch.
