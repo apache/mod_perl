@@ -426,7 +426,8 @@ int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp)
 {
     /* for <IfDefine MODPERL2> and Apache->define("MODPERL2") */
-    *(char **)apr_array_push(ap_server_config_defines) = "MODPERL2";
+    *(char **)apr_array_push(ap_server_config_defines) =
+        apr_pstrdup(p, "MODPERL2");
 
     /* XXX: htf can we have PerlPreConfigHandler
      * without first configuring mod_perl ?
