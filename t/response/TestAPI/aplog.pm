@@ -41,8 +41,6 @@ sub handler {
         ok sub { $slog->can($method) };
     }
 
-    # this message shouldn't be logged (since it can be logged only
-    # during the startup)
     $s->log_serror(Apache::LOG_MARK, Apache::LOG_INFO|Apache::LOG_STARTUP,
                    APR::SUCCESS, "This log message comes with no header");
 
