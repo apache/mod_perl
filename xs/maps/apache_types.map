@@ -12,6 +12,8 @@ struct piped_log        | Apache::PipedLog
 struct module           | Apache::Module
 struct module_struct    | Apache::Module
 
+ap_conn_keepalive_e     | IV
+
 #config stuff
 struct command_rec      | Apache::Command
 enum cmd_how            | IV
