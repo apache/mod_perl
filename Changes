@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+adjust Makefile.PL to parse 1.3.13-dev's httpd.h
+
 Apache::Util functions $r->unescape_uri, $r->unescape_uri_info,
 $r->size_string are now documented [Eric Cholet <cholet@logilune.com>]
 
