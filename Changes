@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+open_logs and post_config handlers require the Apache::OK return code
+or the server aborts, so we need to log an error in case the handler
+didn't fail but returned something different from Apache::OK [Stas]
+
 new function ModPerl::Util::current_perl_id() which returns something
 like (.e.g 0x92ac760) (aTHX) under threaded mpm and 0 under
 non-threaded perl (0x0). Useful for debugging modperl under threaded
