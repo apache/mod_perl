@@ -3,14 +3,18 @@
 # make sure that we test under Taint mode
 PerlSwitches -T
 
+PerlModule Apache2
+
+PerlSwitches -Mlib=@ServerRoot@/../lib                  \
+             -Mlib=@ServerRoot@/../../Apache-Test/lib   \
+             -Mlib=@ServerRoot@/../../lib               \
+             -Mlib=@ServerRoot@/../../blib/lib/Apache2  \
+             -Mlib=@ServerRoot@/../../blib/arch/Apache2 \
+             -Mlib=@ServerRoot@/../../blib/lib          \
+             -Mlib=@ServerRoot@/../../blib/arch
+
 # run on startup
 PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
-
-PerlSwitches -Mlib=@ServerRoot@/../lib
-PerlSwitches -Mlib=@ServerRoot@/../../Apache-Test/lib
-PerlSwitches -Mlib=@ServerRoot@/../../lib
-PerlSwitches -Mlib=@ServerRoot@/../../blib/lib
-PerlSwitches -Mlib=@ServerRoot@/../../blib/arch
 
 #### DEVMODE: Remove in production ###
 PerlModule Apache::Reload
