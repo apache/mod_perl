@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+added Apache::Log module (enable with PERL_LOG_API=1 or EVERYTHING=1)
+
 add mod_perl_version.pm so CPAN.pm can 'install mod_perl' again
 
 ensure Apache::Server::CWD is untainted

@@ -28,3 +28,5 @@ t/httpd_conf
 t/perlsections.pl   
 t/conf/LoadModule.conf
 t/docs/hooks.txt
+Log/Makefile
+Log/pm_to_blib

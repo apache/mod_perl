@@ -38,7 +38,6 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
   + DONE
   + SUID access http://www.courtesan.com/sudo/
   + $ENV{PATH}/PerlSetEnv and PerlTaintCheck
-  + IO.so and -Xlinker -E "Salvador Fandiño" <fandino@usa.net>
 
 - PerlRun::handler in cgi_to_mod_perl.pod
 
@@ -237,8 +236,6 @@ KNOWN MODULE BUGS
 ---------------------------------------------------------------------------
 NEW MODULE STUFF
 ---------------------------------------------------------------------------
-
-- integrate Apache::Log
 
 - should Apache::Registry use filename instead of vhost_name+uri?
               Ben Laurie <ben@algroup.co.uk>
