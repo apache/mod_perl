@@ -2075,6 +2075,7 @@ sub win32_inc_and_lib {
   if (-d "$win32_args{APACHE_SRC}/libexec") {
     $win32_path{APACHE_LIB} = $win32_args{APACHE_SRC} . '/libexec';
     $win32_path{APACHE_INC} = $win32_args{APACHE_SRC} . '/include';
+    $win32_args{APACHE_VERS} = httpd_version($win32_path{APACHE_INC}, 1);
   }
   else {
     $win32_args{APACHE_SRC} .= '/src' unless $win32_args{APACHE_SRC} =~ /src$/;
