@@ -112,3 +112,16 @@ static XS(MPXS_modperl_filter_attributes)
 
     XSRETURN_EMPTY;
 }
+
+static MP_INLINE SV *mpxs_Apache__Filter_ctx(pTHX_
+                                             ap_filter_t *filter,
+                                             SV *data)
+{
+    modperl_filter_ctx_t *ctx = (modperl_filter_ctx_t *)(filter->ctx);
+
+    if (data != Nullsv) {
+        ctx->data = SvREFCNT_inc(data);
+    }
+
+    return ctx->data ? SvREFCNT_inc(ctx->data) : &PL_sv_undef;
+}
