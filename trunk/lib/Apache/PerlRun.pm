@@ -112,15 +112,17 @@ sub set_mtime {
 sub compile {
     my($pr, $eval) = @_;
     $eval ||= $pr->{'sub'};
-    my $r = $pr->{r};
-    $r->clear_rgy_endav;
-    $r->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
+    # don't use $r, but something else, so the script won't use
+    # inherited $r by mistake
+    my $_r = $pr->{r}; 
+    $_r->clear_rgy_endav;
+    $_r->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
     Apache->untaint($$eval);
     {
 	no strict; #so eval'd code doesn't inherit our bits
 	eval $$eval;
     }
-    $r->stash_rgy_endav;
+    $_r->stash_rgy_endav;
     return $pr->error_check;
 }
 
