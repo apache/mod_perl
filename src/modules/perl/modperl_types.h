@@ -178,8 +178,8 @@ typedef struct {
     char *leftover;
     apr_ssize_t remaining;
     modperl_wbucket_t wbucket;
-    ap_bucket *bucket;
-    ap_bucket_brigade *bb;
+    apr_bucket *bucket;
+    apr_bucket_brigade *bb;
     apr_status_t rc;
     modperl_filter_mode_e mode;
     apr_pool_t *pool;

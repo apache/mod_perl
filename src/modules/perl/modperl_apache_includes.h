@@ -17,7 +17,7 @@
 #include "apr_lock.h"
 #include "apr_strings.h"
 
-#include "ap_buckets.h"
+#include "apr_buckets.h"
 #include "util_filter.h"
 
 #endif /* MODPERL_APACHE_INCLUDES_H */

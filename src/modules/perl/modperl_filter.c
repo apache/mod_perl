@@ -5,9 +5,9 @@
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
                                             const char *buf, apr_ssize_t len)
 {
-    ap_bucket_brigade *bb = ap_brigade_create(wb->pool);
-    ap_bucket *bucket = ap_bucket_create_transient(buf, len);
-    AP_BRIGADE_INSERT_TAIL(bb, bucket);
+    apr_bucket_brigade *bb = apr_brigade_create(wb->pool);
+    apr_bucket *bucket = apr_bucket_create_transient(buf, len);
+    APR_BRIGADE_INSERT_TAIL(bb, bucket);
     return ap_pass_brigade(wb->filters, bb);
 }
 
@@ -57,7 +57,7 @@ static char *filter_classes[] = {
 };
 
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
-                                     ap_bucket_brigade *bb,
+                                     apr_bucket_brigade *bb,
                                      modperl_filter_mode_e mode)
 {
     apr_pool_t *p = mode == MP_INPUT_FILTER_MODE ?
@@ -132,25 +132,25 @@ MP_INLINE modperl_filter_t *modperl_sv2filter(pTHX_ SV *sv)
 
 MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
 {
-    ap_bucket_brigade *bb = ap_brigade_create(f->r->pool);
-    ap_bucket *b = ap_bucket_create_eos();
-    AP_BRIGADE_INSERT_TAIL(bb, b);
+    apr_bucket_brigade *bb = apr_brigade_create(f->r->pool);
+    apr_bucket *b = apr_bucket_create_eos();
+    APR_BRIGADE_INSERT_TAIL(bb, b);
     return ap_pass_brigade(f->next, bb);
 }
 
-/* unrolled AP_BRIGADE_FOREACH loop */
+/* unrolled APR_BRIGADE_FOREACH loop */
 
 #define MP_FILTER_SENTINEL(filter) \
-AP_BRIGADE_SENTINEL(filter->bb)
+APR_BRIGADE_SENTINEL(filter->bb)
 
 #define MP_FILTER_FIRST(filter) \
-AP_BRIGADE_FIRST(filter->bb)
+APR_BRIGADE_FIRST(filter->bb)
 
 #define MP_FILTER_NEXT(filter) \
-AP_BUCKET_NEXT(filter->bucket)
+APR_BUCKET_NEXT(filter->bucket)
 
 #define MP_FILTER_IS_EOS(filter) \
-AP_BUCKET_IS_EOS(filter->bucket)
+APR_BUCKET_IS_EOS(filter->bucket)
 
 MP_INLINE static int get_bucket(modperl_filter_t *filter)
 {
@@ -168,7 +168,7 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
     else if (filter->bucket != MP_FILTER_SENTINEL(filter)) {
         filter->bucket = MP_FILTER_NEXT(filter);
         if (filter->bucket == MP_FILTER_SENTINEL(filter)) {
-            ap_brigade_destroy(filter->bb);
+            apr_brigade_destroy(filter->bb);
             filter->bb = NULL;
             return 0;
         }
@@ -236,7 +236,7 @@ MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
 
         num_buckets++;
 
-        filter->rc = ap_bucket_read(filter->bucket, &buf, &buf_len, 0);
+        filter->rc = apr_bucket_read(filter->bucket, &buf, &buf_len, 0);
 
         if (filter->rc == APR_SUCCESS) {
             MP_TRACE_f(MP_FUNC,
@@ -247,7 +247,7 @@ MP_INLINE apr_ssize_t modperl_output_filter_read(pTHX_
         }
         else {
             MP_TRACE_f(MP_FUNC,
-                       "ap_bucket_read error: %s\n",
+                       "apr_bucket_read error: %s\n",
                        modperl_apr_strerror(filter->rc));
             return len;
         }
@@ -296,7 +296,7 @@ MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
     if (filter->eos) {
         MP_TRACE_f(MP_FUNC, "sending EOS bucket\n");
         filter->rc = send_eos(filter->f);
-        ap_brigade_destroy(filter->bb);
+        apr_brigade_destroy(filter->bb);
         filter->bb = NULL;
         filter->eos = 0;
     }
@@ -311,16 +311,16 @@ MP_INLINE apr_status_t modperl_output_filter_write(modperl_filter_t *filter,
     return modperl_wbucket_write(&filter->wbucket, buf, len);
 }
 
-#define AP_BRIGADE_IS_EOS(bb) \
-AP_BUCKET_IS_EOS(AP_BRIGADE_FIRST(bb))
+#define APR_BRIGADE_IS_EOS(bb) \
+APR_BUCKET_IS_EOS(APR_BRIGADE_FIRST(bb))
 
 apr_status_t modperl_output_filter_handler(ap_filter_t *f,
-                                           ap_bucket_brigade *bb)
+                                           apr_bucket_brigade *bb)
 {
     modperl_filter_t *filter;
     int status;
 
-    if (AP_BRIGADE_IS_EOS(bb)) {
+    if (APR_BRIGADE_IS_EOS(bb)) {
         /* XXX: see about preventing this in the first place */
         MP_TRACE_f(MP_FUNC, "first bucket is EOS, skipping callback\n");
         return ap_pass_brigade(f->next, bb);
@@ -359,9 +359,9 @@ void modperl_output_filter_register(request_rec *r)
     }
 }
 
-void modperl_brigade_dump(ap_bucket_brigade *bb, FILE *fp)
+void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
 {
-    ap_bucket *bucket;
+    apr_bucket *bucket;
     int i = 0;
 
     if (fp == NULL) {
@@ -371,7 +371,7 @@ void modperl_brigade_dump(ap_bucket_brigade *bb, FILE *fp)
     fprintf(fp, "dump of brigade 0x%lx\n",
             (unsigned long)bb);
 
-    AP_BRIGADE_FOREACH(bucket, bb) {
+    APR_BRIGADE_FOREACH(bucket, bb) {
         fprintf(fp, "   %d: bucket=%s(0x%lx), length=%ld, data=0x%lx\n",
                 i, bucket->type->name,
                 (unsigned long)bucket,
