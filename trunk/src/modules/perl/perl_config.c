@@ -1748,7 +1748,7 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 	    }
 	}
 
-	if((hv = GvHV((GV*)val))) {
+	if((hv = GvHV((GV*)val)) && HvKEYS(hv)) {
 	    perl_handle_command_hv(hv, key, parms, config);
 	}
 	else if((av = GvAV((GV*)val))) {	
