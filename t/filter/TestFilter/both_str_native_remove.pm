@@ -16,69 +16,69 @@ use Apache::Const -compile => qw(OK DECLINED);
 
 # this filter removes the next filter in chain and itself
 sub remove_includes {
-      my $f = shift;
+    my $f = shift;
 
-      my $args = $f->r->args || '';
-      if ($args eq 'remove') {
-          my $ff = $f->next;
-          $ff->remove if $ff && $ff->frec->name eq 'includes';
-      }
+    my $args = $f->r->args || '';
+    if ($args eq 'remove') {
+        my $ff = $f->next;
+        $ff->remove if $ff && $ff->frec->name eq 'includes';
+    }
 
-      $f->remove;
+    $f->remove;
 
-      return Apache::DECLINED;
+    return Apache::DECLINED;
 }
 
 # this filter removes the next filter in chain and itself
 sub remove_deflate {
-      my $f = shift;
+    my $f = shift;
 
-      my $args = $f->r->args || '';
-      if ($args eq 'remove') {
-          for (my $ff = $f->r->input_filters; $ff; $ff = $ff->next) {
-              if ($ff->frec->name eq 'deflate') {
-                  $ff->remove;
-                  last;
-              }
-          }
-      }
-      $f->remove;
+    my $args = $f->r->args || '';
+    if ($args eq 'remove') {
+        for (my $ff = $f->r->input_filters; $ff; $ff = $ff->next) {
+            if ($ff->frec->name eq 'deflate') {
+                $ff->remove;
+                last;
+            }
+        }
+    }
+    $f->remove;
 
-      return Apache::DECLINED;
+    return Apache::DECLINED;
 }
 
 # this filter appends the output filter list at eos
 sub print_out_flist {
-      my $f = shift;
+    my $f = shift;
 
-      unless ($f->ctx) {
-          $f->ctx(1);
-          $f->r->headers_out->unset('Content-Length');
-      }
+    unless ($f->ctx) {
+        $f->ctx(1);
+        $f->r->headers_out->unset('Content-Length');
+    }
 
-      while ($f->read(my $buffer, 1024)) {
-          $f->print($buffer);
-      }
+    while ($f->read(my $buffer, 1024)) {
+        $f->print($buffer);
+    }
 
-      if ($f->seen_eos) {
-          my $flist = join ',', get_flist($f->r->output_filters);
-          $f->print("output2: $flist\n");
-      }
+    if ($f->seen_eos) {
+        my $flist = join ',', get_flist($f->r->output_filters);
+        $f->print("output2: $flist\n");
+    }
 
-      return Apache::OK;
+    return Apache::OK;
 }
 
 sub store_in_flist {
-      my $f = shift;
-      my $r = $f->r;
+    my $f = shift;
+    my $r = $f->r;
 
-      unless ($f->ctx) {
-          my $x = $r->pnotes('INPUT_FILTERS') || [];
-          push @$x, join ',', get_flist($f->r->input_filters);
-          $r->pnotes('INPUT_FILTERS' => $x);
-      }
+    unless ($f->ctx) {
+        my $x = $r->pnotes('INPUT_FILTERS') || [];
+        push @$x, join ',', get_flist($f->r->input_filters);
+        $r->pnotes('INPUT_FILTERS' => $x);
+    }
 
-      return Apache::DECLINED;
+    return Apache::DECLINED;
 }
 
 
