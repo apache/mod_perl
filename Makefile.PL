@@ -6,7 +6,7 @@ use warnings FATAL => 'all';
 # directly or via the top level Makefile.PL
 $ENV{MOD_PERL_2_BUILD} = 1;
 
-my $min_httpd_version = '2.0.46';
+my $min_httpd_version = '2.0.47';
 my $min_httpd_version_static = '2.0.51';
 
 my($old_modperl_version, $old_modperl_pm);
