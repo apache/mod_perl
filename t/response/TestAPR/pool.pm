@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 75;
+    plan $r, tests => 76;
 
     ### native pools ###
 
@@ -414,7 +414,17 @@ sub handler {
     }
 
 
+    # a pool can be tagged, so when doing low level apr_pool tracing
+    # (when apr is compiled with -DAPR_POOL_DEBUG) it's possible to
+    # grep(1) for a certain tag, so it's a useful method
+    {
+        my $p = APR::Pool->new;
+        $p->tag("my pool");
 
+        # though there is no way we can get back the value to test,
+        # since there is no apr_pool_tag read accessor
+        ok 1;
+    }
 
 
 
