@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+Add a workaround for the 'rand' bug for perl 5.8.1 (compiled with
+either -DUSE_HASH_SEED or -DUSE_HASH_SEED_EXPLICIT, which is the
+default), causing all forked procs to produce the same rand
+sequence. [Stas]
+
 For Win32, add an INSTALL_LIB option to 'perl Makefile.PL' to
 allow one to specify where to install mod_perl.lib. If not
 given, this defaults to APACHE_SRC\libexec, if this exists.
