@@ -2,6 +2,10 @@
 # New features in mp2 #
 #######################
 
+* extend add_config to support add_config($multi_line_config). If the
+  passed argument is not a ref to an array, but a scalar should use
+  CR?LF to do the line split
+
 * PerlFooHandler -Bar is a NOOP when 'PerlOptions AutoLoad' is in
   effect, whereas it should prevent autloading.
   See:
