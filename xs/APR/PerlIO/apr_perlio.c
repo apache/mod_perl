@@ -525,15 +525,32 @@ static FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file,
     /* convert to the OS representation of file */
     rc = apr_os_file_get(&os_file, file); 
     if (rc != APR_SUCCESS) {
-        croak("filedes retrieval failed!");
+        Perl_croak(aTHX_ "filedes retrieval failed!");
     }
-    
-    fd = PerlLIO_dup(os_file); 
-    /* Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd); */
-    
-    if (!(retval = PerlIO_fdopen(fd, mode))) { 
+
+#ifdef PERLIO_APR_DEBUG
+    Perl_warn(aTHX_ "converting fd %d\n", os_file);
+#endif
+
+    /* let's try without the dup, it seems to work fine:
+
+       fd = PerlLIO_dup(os_file);
+       Perl_warn(aTHX_ "fd old: %d, new %d\n", os_file, fd);
+       if (!(retval = PerlIO_fdopen(fd, mode))) { 
+       ...
+       }
+
+       in any case if we later decide to dup, remember to:
+
+       apr_file_close(file);
+
+       after PerlIO_fdopen() or that fh will be leaked
+       
+    */
+
+    if (!(retval = PerlIO_fdopen(os_file, mode))) { 
         PerlLIO_close(fd);
-        croak("fdopen failed!");
+        Perl_croak(aTHX_ "fdopen failed!");
     } 
 
     return retval;
