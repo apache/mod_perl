@@ -5,6 +5,9 @@ package TestApache::util;
 use strict;
 use warnings FATAL => 'all';
 
+# regex matching (LC_CTYPE) of strftime-like (LC_TIME) strings
+use locale;
+
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Util ();
