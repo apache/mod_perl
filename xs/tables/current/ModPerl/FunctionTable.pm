@@ -3019,6 +3019,16 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'int',
+    'name' => 'modperl_map_to_storage_handler',
+    'args' => [
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
     'return_type' => 'void',
     'name' => 'modperl_mgv_append',
     'args' => [

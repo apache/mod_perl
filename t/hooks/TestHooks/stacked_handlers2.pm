@@ -22,17 +22,6 @@ sub ok {
     return Apache::OK;
 }
 
-sub ok_fileset { 
-
-    my $r = shift;
-
-    $r->filename(__FILE__);
-
-    callback($r);
-
-    return Apache::OK;
-}
-
 sub declined { 
 
     callback(shift);
@@ -85,6 +74,7 @@ sub handler {
 
     foreach my $callback (qw(PerlPostReadRequestHandler
                              PerlTransHandler
+                             PerlMapToStorageHandler
                              PerlHeaderParserHandler 
                              PerlAccessHandler 
                              PerlAuthenHandler 
@@ -151,7 +141,10 @@ __DATA__
     PerlPostReadRequestHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
 
     # 1 run, 1 left behind
-    PerlTransHandler TestHooks::stacked_handlers2::ok_fileset TestHooks::stacked_handlers2::server_error
+    PerlTransHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::server_error
+
+    # 1 run, 1 left behind
+    PerlMapToStorageHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::server_error
 
     <Location /TestHooks__stacked_handlers2>
         # all 4 run
