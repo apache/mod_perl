@@ -358,6 +358,9 @@ sub perl_version_check {
 sub apache_check {
     my $build = shift;
 
+    # XXX: need to fix that
+    return if WIN32;
+
     # we need to know where apr-config and apu-configs are
     # which sometimes aren't placed into the same dir with apxs/httpd
     unless ($build->apr_config_path) {
@@ -502,7 +505,7 @@ sub MY::test {
 
     my $env = Apache::TestConfig->passenv_makestr();
 
-    my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
+    my $preamble = WIN32 ? "" : <<EOF;
 PASSENV = $env
 EOF
 
