@@ -56,6 +56,29 @@ Apache->methods.
 
 =back
 
+=head2 Apache::Registry
+
+=over 4
+ 
+=item undefined subroutine &Apache::Registry::handler
+
+Interaction with certain modules causes the shortcut configuration to
+break, if you see this message change your configuration from this:
+
+ <Location /perl>
+ PerlHandler Apache::Registry
+ ...
+ </Location>
+
+To this:
+
+ PerlModule Apache::Registry
+ <Location /perl>
+ PerlHandler Apache::Registry::handler
+ ...
+ </Location>
+
+=back
 
 =head2 Using CGI.pm and CGI::*
 

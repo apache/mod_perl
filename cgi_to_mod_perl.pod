@@ -115,3 +115,6 @@ See L<mod_perl_traps>.
 
 Read the L<SUPPORT> file.
 
+=head1 SEE ALSO
+
+Apache::PerlRun(3)
