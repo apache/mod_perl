@@ -76,15 +76,33 @@ sub read {
     $_[1] ||= "";
     #$_[1] = " " x $bufsiz unless defined $_[1]; #XXX?
 
-    $r->hard_timeout("Apache->read");
+    if(my $rv = $r->setup_client_block) {
+	$r->log_error("Apache->read: setup_client_block returned $rv");
+	die $rv;
+    }
 
+    #XXX: must set r->read_length to 0 here,
+    #since this read() method may be called in loop
+    #in which case, the second time in, should_client_block() 
+    #thinks we've already read the request body and returns 0
+    $r->read_length(0); 
+
+    unless($r->should_client_block) {
+	my $rl = $r->read_length;
+	$r->log_error("Apache->read: should_client_block returned 0 (rl=$rl)");
+	return 0;
+    }
+
+    $r->hard_timeout("Apache->read");
+    
     while($bufsiz) {
-	$nrd = $r->read_client_block($buf, $bufsiz) || 0;
+	$nrd = $r->get_client_block($buf, $bufsiz) || 0;
 	if(defined $nrd and $nrd > 0) {
 	    $bufsiz -= $nrd;
 	    $_[1] .= $buf;
  	    #substr($_[1], $total, $nrd) = $buf;
 	    $total += $nrd;
+	    $r->reset_timeout;
 	    next if $bufsiz;
 	    last;
 	}
@@ -386,15 +404,9 @@ returned.  When called in a list context, a list of parsed I<key> =>
 I<value> pairs are returned.  *NOTE*: you can only ask for this once,
 as the entire body is read from the client.
 
-=item $r->read_client_block($buf, $bytes_to_read)
-
-Read from the entity body sent by the client.  Example of use:
-
-   $r->read_client_block($buf, $r->header_in('Content-length'));
-
 =item $r->read($buf, $bytes_to_read)
 
-This method uses read_client_block() to read data from the client, 
+This method is used to read data from the client, 
 looping until it gets all of C<$bytes_to_read> or a timeout happens.
 
 In addition, this method sets a timeout before reading with

@@ -18,6 +18,18 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+$r->read_client_block is deprecated
+
+re-implemented $r->read to properly use *client_block methods and call
+reset_timeout after each read in the loop
+
+added setup_client_block, should_client_block and get_client_block
+methods
+
+modules/cgi test will attempt a fileupload of perlfunc.pod to
+file_upload.cgi if HTTP::Request::Common is installed
+(libwww-perl-5.09+) and $CGI::VERSION >= 2.39
+
 make $r->connection->aborted work as documented again, thanks to spot
 by Jens Heunemann
 
