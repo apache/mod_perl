@@ -112,6 +112,10 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     scfg->PassEnv = apr_table_make(p, 2);
     scfg->SetEnv = apr_table_make(p, 2);
     
+#ifdef MP_USE_GTOP
+    scfg->gtop = modperl_gtop_new(p);
+#endif        
+    
     modperl_config_srv_argv_push((char *)ap_server_argv0);
 
     MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)scfg);
