@@ -21,6 +21,7 @@ ok t_cmp $received, $expected, "no timeout";
 
 # now get a timed out request
 $expected = "TIMEUP";
+sleep 1; # try to ensure a CPU context switch for the server
 print $socket "should timeout\n";
 chomp($received = <$socket> || '');
 ok t_cmp $received, $expected, "timed out";
