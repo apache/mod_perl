@@ -10,10 +10,6 @@ listed in deprecated_features.txt
 
 - PerlSetEnv, PerlPassEnv
 
-- PerlSetupEnv (PerlOptions +SetupEnv) currently only happens within
-  the perl-script handler; needs to happen earlier.  should only
-  default to On within the perl-script handler
-
 - PerlModule, PerlRequire: missing support for .htaccess as 1.x does.
 
 - pod directives (=pod,=back,=cut) and __END__

@@ -511,6 +511,11 @@ int modperl_response_handler_cgi(request_rec *r)
     }
 #endif
 
+    /* default is +SetupEnv, skip if PerlOption -SetupEnv */
+    if (MpDirSETUP_ENV(dcfg) || !MpDirSeenSETUP_ENV(dcfg)) {
+        modperl_env_request_populate(aTHX_ r);
+    }
+
     if (MpDirPARSE_HEADERS(dcfg)) {
         rcfg->wbucket.header_parse = 1;
     }

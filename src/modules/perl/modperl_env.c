@@ -36,18 +36,29 @@ static const modperl_env_ent_t modperl_env_const_vars[] = {
     { NULL }
 };
 
-static void modperl_env_request_populate(pTHX_ request_rec *r)
+void modperl_env_request_populate(pTHX_ request_rec *r)
 {
+    MP_dRCFG;
     HV *hv = GvHV(PL_envgv);
     int i;
     U32 mg_flags;
-    apr_array_header_t *array = apr_table_elts(r->subprocess_env);
-    apr_table_entry_t *elts = (apr_table_entry_t *)array->elts;
+    apr_array_header_t *array;
+    apr_table_entry_t *elts;
+
+
+    if (MpReqSETUP_ENV(rcfg)) {
+        return;
+    }
+
+    MP_TRACE_g(MP_FUNC, "populating environment for %s\n", r->uri);
 
     ap_add_common_vars(r);
     ap_add_cgi_vars(r);
 
     modperl_env_untie(mg_flags);
+
+    array = apr_table_elts(r->subprocess_env);
+    elts  = (apr_table_entry_t *)array->elts;
 
     for (i = 0; i < array->nelts; i++) {
 	if (!elts[i].key || !elts[i].val) {
@@ -64,6 +75,8 @@ static void modperl_env_request_populate(pTHX_ request_rec *r)
     }
                  
     modperl_env_tie(mg_flags);
+
+    MpReqSETUP_ENV_On(rcfg);
 }
 
 static int modperl_env_request_set(pTHX_ SV *sv, MAGIC *mg)
@@ -104,12 +117,6 @@ static int modperl_env_request_get(pTHX_ SV *sv, MAGIC *mg)
 
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
-    MP_dDCFG;
-
-    if (MpDirSETUP_ENV(dcfg)) {
-        modperl_env_request_populate(aTHX_ r);
-    }
-
     EnvMgObj = (char *)r;
 
     PL_vtbl_envelem.svt_set = MEMBER_TO_FPTR(modperl_env_request_set);
