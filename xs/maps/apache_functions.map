@@ -280,7 +280,7 @@ MODULE=Apache::Util
 !ap_rfc1413
  ap_escape_html
  #escape_uri
- ap_os_escape_path
+ ap_os_escape_path | | path, p, partial=TRUE | escape_path
 !ap_explode_recent_gmt
 !ap_explode_recent_localtime
 !ap_recent_ctime
