@@ -215,8 +215,13 @@ void modperl_perl_modglobal_dump(pTHX);
 #endif /* USE_ITHREADS */
 
 /* dumping hundreds of lines in the trace, makes it less useful. Get a
- * string chunk of MP_TRACE_STR_LEN or less. Not too long so it won't
- * wrap when posted in email */
+ * string chunk of MP_TRACE_STR_LEN bytes or less. Not too long so it
+ * won't wrap when posted in email. Notice that we copy 'count' bytes
+ * of the string even if count < MP_TRACE_STR_LEN, because the 'str'
+ * buffer doesn't necessarily have \0 terminator at 'count'. As this
+ * is for debug tracing, not to be used in production, it doesn't make
+ * any difference if it's not efficient.
+ */
 #define MP_TRACE_STR_LEN 35
 #define MP_TRACE_STR_TRUNC(p, str, count)                                \
     count < MP_TRACE_STR_LEN                                             \
