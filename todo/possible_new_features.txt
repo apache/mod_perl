@@ -77,6 +77,9 @@ api:
     which will be passed to the handler as arguments, e.g.
     $r->push_handlers("PerlHandler", \&some_sub, ['one', 'two', 'etc']);
 
+- might add an alias for $filter->connection (now we have $filter->c), to be
+  more intuitive since we have $r->connection.
+
 modules:
 -------
 
