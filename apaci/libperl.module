@@ -50,14 +50,24 @@ ConfigStart
         my_perl_libs="`egrep '^PERL_LIBS=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
         LIBS="$LIBS $my_perl_libs"
     fi
+
+    #   Perl support for SSI (mod_include)
     if [ ".`egrep '^PERL_SSI[ 	]*=[ 	]*yes' $my_outfile`" != . ]; then
-        echo "$my_prefix enabling Perl support for SSI (mod_include)"
-        CFLAGS="$CFLAGS -DUSE_PERL_SSI"
-        my_perl_inc="`egrep '^PERL_INC=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
-        INCLUDES="$INCLUDES -I\$(SRCDIR) $my_perl_inc"
-        if [ ".`egrep '^PERL_THREADS[ 	]*=[ 	]*yes' $my_config`" != . ]; then
-            echo "$my_prefix enabling Perl Thread support"
-            CFLAGS="$CFLAGS -DPERL_THREADS"
+        if [ ".$my_buildtype" = .DSO ]; then
+            echo ""
+            echo "** Error: Cannot build mod_include with Perl support (USE_PERL_SSI) **"
+            echo "** when mod_perl is compiled as DSO because of cross-module calls.  **"
+            echo "** Ignoring PERL_SSI flag now.                                      **"
+            echo ""
+        else
+            echo "$my_prefix enabling Perl support for SSI (mod_include)"
+            CFLAGS="$CFLAGS -DUSE_PERL_SSI"
+            my_perl_inc="`egrep '^PERL_INC=' $my_outfile | tail -1 | awk -F= '{ print $2 }'`"
+            INCLUDES="$INCLUDES -I\$(SRCDIR) $my_perl_inc"
+            if [ ".`egrep '^PERL_THREADS[ 	]*=[ 	]*yes' $my_config`" != . ]; then
+                echo "$my_prefix enabling Perl Thread support"
+                CFLAGS="$CFLAGS -DPERL_THREADS"
+            fi
         fi
     fi
 
