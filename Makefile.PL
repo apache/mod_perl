@@ -362,8 +362,12 @@ sub MY::clean {
 }
 
 sub MY::postamble {
-    return <<EOF;
+    return <<'EOF';
 mydist : manifest tardist
+
+cvs_tag :
+	cvs tag MODPERL_$(VERSION_SYM) .
+	@echo update mod_perl.pm VERSION now
 EOF
 }
 
