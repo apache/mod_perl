@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "../../APR/PerlIO/apr_perlio.h"
+#include "../../APR/PerlIO/modperl_apr_perlio.h"
 
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"

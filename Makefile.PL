@@ -57,7 +57,8 @@ local %ModPerl::BuildMM::PM = (
 # these h files need to be installed system-wide so 3rd party XS
 # extensions can use them
 my @xs_h_files = map catfile("xs", $_),
-    qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
+    qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h
+       APR/PerlIO/modperl_apr_perlio.h);
 
 my @exe_files =  map "bin/$_", qw(mp2doc mp2bug);
 

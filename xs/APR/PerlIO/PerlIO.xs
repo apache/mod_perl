@@ -14,7 +14,7 @@
  */
 
 #include "mod_perl.h"
-#include "apr_perlio.h"
+#include "modperl_apr_perlio.h"
 
 MODULE = APR::PerlIO    PACKAGE = APR::PerlIO
 

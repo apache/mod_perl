@@ -29,6 +29,6 @@ ModPerl::BuildMM::WriteMakefile(
     NAME         => 'APR::PerlIO',
     VERSION_FROM => 'PerlIO.pm',
     CCFLAGS      => $ccopts,
-    OBJECT       => 'PerlIO.o apr_perlio.o'
+    OBJECT       => 'PerlIO.o modperl_apr_perlio.o'
 );
 
