@@ -126,6 +126,10 @@ allowed in .htaccess files.
 
 =head1 RESTARTING
 
+=over 4
+
+=item PerlFreshRestart
+
 By default, if a server is restarted 
 (ala kill -USR1 `cat logs/httpd.pid`), Perl scripts and modules are
 not reloaded.  To reload B<PerlRequire>'s, B<PerlModule>'s, other
@@ -133,6 +137,20 @@ use()'d modules and flush the B<Apache::Registry> cache, enable with
 this command:
 
  PerlFreshRestart On  
+
+=item PERL_DESTRUCT_LEVEL
+
+With Apache versions 1.3.0 and higher, mod_perl will call the
+perl_destruct() Perl API function during the child exit phase.
+This will cause proper execution of B<END> blocks found during server
+startup along with invoking the B<DESTROY> method on global objects
+who are still alive.  It is possible that this operation may take a
+long time to finish, causing problems during a restart.  If your code
+does not contain and B<END> blocks or B<DESTROY> methods which need to
+be run during child server shutdown, this destruction can be avoided by
+setting the I<PERL_DESTRUCT_LEVEL> environment variable to C<-1>.
+
+=back
 
 =head1 ENVIRONMENT
 
