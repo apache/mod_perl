@@ -136,6 +136,21 @@ port(server, ...)
 #  char *virthost;		/* The name given in <VirtualHost> */
 
 int
+timeout(server, set=0)
+    Apache::Server	server
+    int set
+
+    CODE:
+    RETVAL = server->timeout;
+
+    if (set) {
+	server->timeout = set;
+    }
+
+    OUTPUT:
+    RETVAL
+
+int
 is_virtual(server)
     Apache::Server	server
 
