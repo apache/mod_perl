@@ -133,6 +133,10 @@ NEW STUFF
      } 
      else {
 
+- mod_perl C code symbols, should look at cleaning up names with a
+  common prefix, e.g. mp_, mod_perl_, mperl_ ?
+  also static-ize those functions we can 
+
 - remove Apache::Symbol::undef cruft, now that the mandatory const sub
   redefined warning is downgraded in 5.004_05-tobe
 
@@ -243,6 +247,8 @@ KNOWN MODULE BUGS
 ---------------------------------------------------------------------------
 NEW MODULE STUFF
 ---------------------------------------------------------------------------
+
+- integrate Apache::Log
 
 - should Apache::Registry use filename instead of vhost_name+uri?
               Ben Laurie <ben@algroup.co.uk>
