@@ -20,7 +20,7 @@ sub handler {
 
     ok !($r->allow_options & Apache::OPT_EXECCGI);
 
-    ok $r->allow_overrides & Apache::OR_LIMIT;
+    ok !($r->allow_overrides & Apache::OR_LIMIT);
 
     ok $r->satisfies == Apache::SATISFY_NOSPEC;
 
