@@ -21,7 +21,8 @@ typedef struct {
     apr_file_pipe_timeout_set(fp, \
                               (int)(r->server->timeout * APR_USEC_PER_SEC))
 
-static int modperl_spawn_proc_prog(request_rec *r,
+static int modperl_spawn_proc_prog(pTHX_
+                                   request_rec *r,
                                    const char *command,
                                    const char ***argv,
                                    apr_file_t **script_in,
@@ -76,22 +77,19 @@ static int modperl_spawn_proc_prog(request_rec *r,
     apr_pool_note_subprocess(p, procnew, kill_after_timeout);
 
     if (!(*script_in = procnew->in)) {
-        /* XXX: this needs to be Perl_croak(aTHX_ ...)
-         * or go away so we can compile with -DPERL_CORE
-         */
-        croak("broken program-in stream");
+        Perl_croak(aTHX_ "broken program-in stream");
         return APR_EBADF;
     }
     SET_TIMEOUT(*script_in);
 
     if (!(*script_out = procnew->out)) {
-        croak("broken program-out stream");
+        Perl_croak(aTHX_ "broken program-out stream");
         return APR_EBADF;
     }
     SET_TIMEOUT(*script_in);
 
     if (!(*script_err = procnew->err)) {
-        croak("broken program-err stream");
+        Perl_croak(aTHX_ "broken program-err stream");
         return APR_EBADF;
     }
     SET_TIMEOUT(*script_err);
@@ -157,7 +155,7 @@ static XS(MPXS_modperl_spawn_proc_prog)
                       i, argv[i] ? argv[i] : "NULL");
         }
 #endif
-        rc = modperl_spawn_proc_prog(r, command, &argv,
+        rc = modperl_spawn_proc_prog(aTHX_ r, command, &argv,
                                      &script_in, &script_out,
                                      &script_err);
 
