@@ -2,9 +2,6 @@ package TestAPR::uri;
 
 # Testing APR::URI (more tests in TestAPI::uri)
 
-# XXX: this test could use more sub-tests to test various flags to
-# unparse,
-
 use strict;
 use warnings FATAL => 'all';
 
@@ -14,7 +11,11 @@ use Apache::TestUtil;
 use APR::URI ();
 
 use Apache::Const -compile => 'OK';
-use APR::Const    -compile => qw(URI_UNP_REVEALPASSWORD);
+
+use APR::Const -compile => qw(URI_UNP_OMITSITEPART URI_UNP_OMITUSER
+                              URI_UNP_REVEALPASSWORD URI_UNP_OMITQUERY
+                              URI_UNP_OMITPASSWORD URI_UNP_OMITPATHINFO
+                             );
 
 my %default_ports = (
     ftp      => 21,
@@ -45,7 +46,7 @@ my @keys_hostinfo = qw(user password hostname port);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 22;
+    plan $r, tests => 27;
 
     ### parse ###
     my $url0 = sprintf "%s://%s:%s\@%s:%d%s?%s#%s",
@@ -88,12 +89,68 @@ sub handler {
         map { $url{$_}[1] } grep !/^(password|port)$/, @keys_urls;
     ok t_cmp($url1, $url_unparsed, "unparsed url");
 
-    # this time the password should appear
+    # various unparse flags #
     {
-        my $url_unparsed = $parsed->unparse(APR::URI_UNP_REVEALPASSWORD);
-        my $url2 = sprintf "%s://%s:%s\@%s%s",
-            map { $url{$_}[1] } grep !/^port$/, @keys_urls;
-        ok t_cmp($url2, $url_unparsed, "unparsed url");
+        # restore the query/fragment fields first
+        my $query_new = "my_query";
+        my $fragment_new = "my_fragment";
+        $parsed->query($query_new);
+        $parsed->fragment($fragment_new);
+        local $url{query}[1] = $query_new;
+        local $url{fragment}[1] = $fragment_new;
+
+        # omit the site part
+        {
+            my $url_unparsed = $parsed->unparse(APR::URI_UNP_OMITSITEPART);
+            my $url2 = sprintf "%s?%s#%s",
+                map { $url{$_}[1] } qw(path query fragment);
+            ok t_cmp($url2, $url_unparsed, "unparsed url: omit site");
+        }
+
+        # this time the password should appear as XXXXXXXX
+        {
+            local $url{password}[1] = "XXXXXXXX";
+            my $url_unparsed = $parsed->unparse(0);
+            my $url2 = sprintf "%s://%s:%s\@%s%s?%s#%s",
+                map { $url{$_}[1] } grep !/^port$/, @keys_urls;
+            ok t_cmp($url2, $url_unparsed, "unparsed url:reveal passwd");
+        }
+
+        # this time the user and the password should appear
+        {
+            my $url_unparsed = $parsed->unparse(APR::URI_UNP_REVEALPASSWORD);
+            my $url2 = sprintf "%s://%s:%s\@%s%s?%s#%s",
+                map { $url{$_}[1] } grep !/^port$/, @keys_urls;
+            ok t_cmp($url2, $url_unparsed, "unparsed url:reveal passwd");
+        }
+
+        # omit the user part / show password
+        {
+            my $url_unparsed = $parsed->unparse(
+                APR::URI_UNP_OMITUSER|APR::URI_UNP_REVEALPASSWORD);
+            my $url2 = sprintf "%s://:%s\@%s%s?%s#%s",
+                map { $url{$_}[1] } grep !/^(port|user)$/, @keys_urls;
+            ok t_cmp($url2, $url_unparsed, "unparsed url:  omit user");
+        }
+
+        # omit the path, query and fragment strings
+        {
+            my $url_unparsed = $parsed->unparse(
+                APR::URI_UNP_OMITPATHINFO|APR::URI_UNP_REVEALPASSWORD);
+            my $url2 = sprintf "%s://%s:%s\@%s", map { $url{$_}[1] }
+                grep !/^(port|path|query|fragment)$/, @keys_urls;
+            ok t_cmp($url2, $url_unparsed, "unparsed url: omit path");
+        }
+
+        # omit the query and fragment strings
+        {
+            $parsed->query("my_query");
+            my $url_unparsed = $parsed->unparse(
+                APR::URI_UNP_OMITQUERY|APR::URI_UNP_OMITPASSWORD);
+            my $url2 = sprintf "%s://%s\@%s%s", map { $url{$_}[1] }
+                grep !/^(password|port|query|fragment)$/, @keys_urls;
+            ok t_cmp($url2, $url_unparsed, "unparsed url: omit query");
+        }
     }
 
     ### port_of_scheme ###
