@@ -1888,21 +1888,18 @@ path_info(r, ...)
     OUTPUT:
     RETVAL
 
-void
+char *
 query_string(r, ...)
     Apache	r
 
-    PREINIT:
-    SV *sv = sv_newmortal();
+    CODE:
+    get_set_PVp(r->args,r->pool);
 
-    PPCODE: 
-    if(r->args)
-	sv_setpv(sv, r->args);
-    SvTAINTED_on(sv);
-    XPUSHs(sv);
+    OUTPUT:
+    RETVAL
 
-    if(items > 1)
-        r->args = pstrdup(r->pool, (char *)SvPV(ST(1),na));
+    CLEANUP:
+    if (ST(0) != &sv_undef) SvTAINTED_on(ST(0));
 
 #  /* Various other config info which may change with .htaccess files
 #   * These are config vectors, with one void* pointer for each module
