@@ -1,8 +1,9 @@
 This is mod_perl version 2.0-tobe
 
-Apache version 2.0.36 or higher is required.
+Apache version 2.0.39 or higher is required.
 
-Perl version 5.6.0 or higher is required.
+Perl version 5.6.0 or higher is required. Perl-5.8.0-RC2 if you build
+with 5.8.0 series.
 
 mod_perl is currently considered beta when used with the prefork MPM.
 
@@ -13,7 +14,7 @@ will be support in the future.
 
 docs are available in /docs. Currently they don't get installed on
 'make install'. Certain API documentation can be found in docs/api/.
-the online version is at http://perl.apache.org/release/.
+the online version is at http://perl.apache.org/release/docs).
 
 mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
 See the todo/ directory for what remains to be done.
