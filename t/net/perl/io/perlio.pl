@@ -24,6 +24,13 @@ else {
 
     print "perlio test...\n";
     print "\$^X is $^X\n" if $^X;
+
+    if($] >= 5.005) {
+	my $msg = "1234WRITEmethod";
+	syswrite STDOUT, $msg, 5, 4;
+	print " to STDOUT works with $]\n";
+    }
+
     my $loc = $r->location;
     print "<Location $loc>\n";
     my(@args);
