@@ -140,7 +140,7 @@ sub handler {
     }
     $r->print("</body></html>");
 
-    1;
+    Apache::OK;
 }
 
 sub header {
