@@ -53,6 +53,34 @@ static MP_INLINE apr_size_t mpxs_ap_rvputs(pTHX_ I32 items,
     return bytes;
 }
 
+/* alias */
+#define mpxs_Apache__RequestRec_WRITE mpxs_Apache__RequestRec_write
+
+static MP_INLINE
+apr_ssize_t mpxs_Apache__RequestRec_write(request_rec *r,
+                                          SV *buffer, apr_ssize_t bufsiz,
+                                          int offset)
+{
+    dTHX; /*XXX*/
+    apr_ssize_t wlen = bufsiz;
+    const char *buf;
+    STRLEN svlen;
+    MP_dRCFG;
+
+    buf = (const char *)SvPV(buffer, svlen);
+
+    if (bufsiz == -1) {
+        wlen = offset ? svlen - offset : svlen;
+    }
+    else {
+        wlen = bufsiz;
+    }
+
+    modperl_wbucket_write(&rcfg->wbucket, buf+offset, &wlen);
+
+    return wlen;
+}
+
 static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
                                                SV *buffer, int bufsiz)
 {

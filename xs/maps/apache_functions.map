@@ -79,7 +79,7 @@ MODULE=Apache::RequestIO   PACKAGE=Apache::RequestRec
  ap_should_client_block
  ap_rflush
 PREFIX=ap_r
- ap_rwrite | | r, buf, nbyte
+~ap_rwrite
 ~ap_rprintf
 !ap_rputc
 ~ap_rputs
