@@ -21,12 +21,6 @@ Available Patches:
 	Status: 
           doc patch at http://marc.theaimsgroup.com/?l=apache-modperl&m=97450363501652&w=2
 
-    * PVIV issues
-        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99905070209305&w=2
-	Status:
-          patch available
-            http://marc.theaimsgroup.com/?l=apache-modperl&m=99999116330145&w=2
-
     * mod_perl.h issues for Win32
         Report: http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=101253855721619&w=2
 	Status:
@@ -231,3 +225,16 @@ Documentation:
       production environment, as it adds quite a bit of bloat
 
     * docs: update CREDITS, cleanup install docs
+
+Patches unlikely to be applied:
+
+    * print() dereferencing issues
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=99905070209305&w=2
+	Status:
+          patch available
+            http://marc.theaimsgroup.com/?l=apache-modperl&m=99999116330145&w=2
+
+          the feature of print() dereferencing scalars should be deprecated.
+          therefor, i don't think this patch should be applied as it
+          would introduce overhead to support a deprecated feature.
+          user should simply dereference themselves, print $$foo; -dougm
