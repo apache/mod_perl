@@ -1072,6 +1072,7 @@ sub make_tools {
 
     require ExtUtils::MakeMaker;
     my $mm = bless { @mm_init_vars }, 'MM';
+    $mm->init_main;
     $mm->init_others;
 
     for (qw(rm_f mv ld ar cp test_f)) {
