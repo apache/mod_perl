@@ -80,21 +80,21 @@ SV *mpxs_Apache__RequestRec_print(pTHX_ I32 items,
 {
     modperl_config_req_t *rcfg;
     request_rec *r;
-    
+
     /* bytes must be called bytes */
     apr_size_t bytes = 0;
-    
+
     /* this also magically assings to r ;-) */
     mpxs_usage_va_1(r, "$r->print(...)");
-    
+
     rcfg = modperl_config_req_get(r);
 
     MP_CHECK_WBUCKET_INIT("$r->print");
     mpxs_write_loop(modperl_wbucket_write, rcfg->wbucket,
                     "Apache::RequestIO::print");
-    
+
     mpxs_output_flush(r, rcfg, "Apache::RequestIO::print");
-    
+
     return bytes ? newSVuv(bytes) : newSVpvn("0E0", 3);
 }  
 
@@ -107,7 +107,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     SV *sv;
 
     mpxs_usage_va(2, r, "$r->printf($fmt, ...)");
-    
+
     rcfg = modperl_config_req_get(r);
 
     /* XXX: we could have an rcfg->sprintf_buffer to reuse this SV
@@ -124,7 +124,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                        SvPVX(sv), &bytes),
                  "Apache::RequestIO::printf");
-    
+
     mpxs_output_flush(r, rcfg, "Apache::RequestIO::printf");
 
     return bytes;
@@ -157,7 +157,7 @@ apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
     MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket,
                                        buf+offset, &wlen),
                  "Apache::RequestIO::write");
-    
+
     return wlen;
 }
 
@@ -167,7 +167,7 @@ void mpxs_Apache__RequestRec_rflush(pTHX_ I32 items,
 {
     modperl_config_req_t *rcfg;
     request_rec *r;
-    
+
     /* this also magically assings to r ;-) */
     mpxs_usage_va_1(r, "$r->rflush()");
 
@@ -289,9 +289,9 @@ int mpxs_Apache__RequestRec_OPEN(pTHX_ SV *self,  SV *arg1, SV *arg2)
     STRLEN len;
     SV *arg;
     dHANDLE("STDOUT");
-    
+
     modperl_io_handle_untie(aTHX_ handle); /* untie *STDOUT */
- 
+
     if (arg2 && self) {
         arg = newSVsv(arg1);
         sv_catsv(arg, arg2);
@@ -348,7 +348,7 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
     /* flush any buffered modperl output */
     {
         modperl_config_req_t *rcfg = modperl_config_req_get(r);
-        
+
         MP_CHECK_WBUCKET_INIT("$r->rflush");
         if (rcfg->wbucket->outcnt) {
             MP_TRACE_o(MP_FUNC, "flushing %d bytes [%s]",
@@ -360,7 +360,7 @@ apr_status_t mpxs_Apache__RequestRec_sendfile(pTHX_ request_rec *r,
                          "Apache::RequestIO::sendfile");
         }
     }
-    
+
     rc = ap_send_fd(fp, r, offset, len, &nbytes);
 
     /* apr_file_close(fp); */ /* do not do this */

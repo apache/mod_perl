@@ -79,11 +79,11 @@ TestCommon::Utils - Common Test Utils
 =head1 Synopsis
 
   use TestCommon::Utils;
-  
+
   # test whether some SV is tainted
   $b->read(my $data);
   ok TestCommon::Utils::is_tainted($data);
-  
+
   my $data = TestCommon::Utils::read_post($r);
 
 =head1 Description

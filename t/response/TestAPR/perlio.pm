@@ -245,7 +245,7 @@ sub handler {
             ok t_cmp(length $apr_content,
                      length $perl_content,
                      "testing data size of $file");
-        
+
             open my $wfh, ">:APR", $out, $r->pool
                 or die "Cannot open $out for writing: $!";
             print $wfh $apr_content;

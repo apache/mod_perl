@@ -66,11 +66,11 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
                    "Apache::RequestRec object argument is required");
         /* XXX: try to get Apache->request? */
     }
-    
+
     /* this method also sets the right flags according to the
      * 'mode' */
     code = PerlIOBase_pushed(aTHX_ f, mode, Nullsv, tab);
-    
+
     return code;
 }
 
@@ -83,12 +83,12 @@ PerlIOApache_getarg(pTHX_ PerlIO *f, CLONE_PARAMS *param, int flags)
     if (!st->r) {
         Perl_croak(aTHX_ "an attempt to getarg from a stale io handle");
     }
-    
+
     sv = newSV(0);
     sv_setref_pv(sv, "Apache::RequestRec", (void*)(st->r));
 
     MP_TRACE_o(MP_FUNC, "retrieved request_rec obj: 0x%lx", st->r);
-    
+
     return sv;
 }
 
@@ -130,18 +130,18 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANWRITE)) {
         return 0;
     }
-    
+
     MP_CHECK_WBUCKET_INIT("print");
 
     MP_TRACE_o(MP_FUNC, "%4db [%s]", count,
                MP_TRACE_STR_TRUNC(rcfg->wbucket->pool, vbuf, count));
-        
+
     rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
     if (rv != APR_SUCCESS) {
         Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rv)); 
     }
     bytes += count;
-    
+
     return (SSize_t) bytes;
 }
 
@@ -308,7 +308,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
             apr_brigade_destroy(bb);
             modperl_croak(aTHX_ rc, "Apache::RequestIO::read");
         }
-        
+
         total += read;
         tmp   += read;
         len   -= read;
@@ -322,7 +322,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
          * for the filter to return more data than it was asked for in
          * the AP_MODE_READBYTES mode.
          */
-        
+
         apr_brigade_cleanup(bb);
 
     } while (len > 0 && !seen_eos);

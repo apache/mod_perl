@@ -36,7 +36,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
      * Callback called exit.
      */
     TAINT_NOT;
-    
+
     if ((status = modperl_handler_resolve(aTHX_ &handler, p, s)) != OK) {
         PL_tainted = tainted_orig;
         return status;
@@ -80,7 +80,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         else {
             const char *name;
             modperl_mgv_t *symbol = handler->mgv_cv;
-            
+
              /* XXX: need to validate *symbol */
             if (symbol && symbol->name) {
                 name = modperl_mgv_as_string(aTHX_ symbol, p, 0);
@@ -88,7 +88,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             else {
                 name = handler->name;
             }
-            
+
             MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed\n",
                        modperl_pid_tid(p),
                        modperl_server_desc(s, p), name);
@@ -122,7 +122,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
 
         PUTBACK;
     }
-    
+
     FREETMPS;LEAVE;
 
     if (SvTRUE(ERRSV)) {
@@ -254,14 +254,14 @@ int modperl_callback_run_handlers(int idx, int type,
     };
 
     modperl_callback_current_callback_set(desc);
-    
+
     MP_TRACE_h(MP_FUNC, "[%s] running %d %s handlers\n",
                modperl_pid_tid(p), av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
         status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
-        
+
         MP_TRACE_h(MP_FUNC, "callback '%s' returned %d\n",
                    modperl_handler_name(handlers[i]), status);
 

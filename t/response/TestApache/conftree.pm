@@ -15,9 +15,9 @@ sub handler {
     my $r = shift;
 
     my $cfg = Apache::Test::config();
-    
+
     my $node_count = node_count();
-    
+
     plan $r, tests => 8 + (5*$node_count);
 
     ok $cfg;
@@ -63,9 +63,9 @@ sub handler {
 
         ok !$vhost_failed;
     }
-    
+
     traverse_tree ( \&test_node );
-    
+
     Apache::OK;
 }
 
@@ -105,9 +105,9 @@ sub traverse_tree {
 
 sub node_count {
     my $node_count = 0;
-    
+
     traverse_tree( sub { ${$_[0]}++ }, \$node_count );
-    
+
     return $node_count;
 }
 1;

@@ -32,7 +32,7 @@ void ap_pcw_walk_location_config(apr_pool_t *pconf, server_rec *s,
         core_dir_config *conf =
             ap_get_module_config(urls[i], &core_module);
         void *dir_cfg = ap_get_module_config(urls[i], modp);     
-     
+
         if (!dir_cb(pconf, s, dir_cfg, conf->d, data)) {
             break;
         }

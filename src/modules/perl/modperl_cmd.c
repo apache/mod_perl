@@ -116,7 +116,7 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
                    "the filter attributes available)\n",
                    modperl_pid_tid(p), h->name);
     }
-    
+
     if (!*handlers) {
         *handlers = modperl_handler_array_new(p);
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
@@ -139,7 +139,7 @@ static char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
      * filters */
     MpHandlerFAKE_On(h);
     h->attrs = MP_FILTER_HTTPD_HANDLER;
-        
+
     if (!*handlers) {
         *handlers = modperl_handler_array_new(p);
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
@@ -206,7 +206,7 @@ MP_CMD_SRV_DECLARE(modules)
     MP_PERL_DECLARE_CONTEXT;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
-    
+
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
     {
@@ -217,7 +217,7 @@ MP_CMD_SRV_DECLARE(modules)
         char *error = NULL;
 
         MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
-        
+
         MP_PERL_OVERRIDE_CONTEXT;
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
             error = SvPVX(ERRSV);
@@ -239,7 +239,7 @@ MP_CMD_SRV_DECLARE(requires)
     MP_PERL_DECLARE_CONTEXT;
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
-    
+
     if (modperl_is_running() &&
         modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
     {
@@ -364,7 +364,7 @@ MP_CMD_SRV_DECLARE2(set_env)
 {
     MP_dSCFG(parms->server);
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
- 
+
 #ifdef ENV_IS_CASELESS /* i.e. WIN32 */
     /* we turn off env magic during hv_store later, so do this now,
      * else lookups on keys with lowercase characters will fails
@@ -389,7 +389,7 @@ MP_CMD_SRV_DECLARE(pass_env)
 {
     MP_dSCFG(parms->server);
     char *val = getenv(arg);
-    
+
 #ifdef ENV_IS_CASELESS /* i.e. WIN32 */
     /* we turn off env magic during hv_store later, so do this now,
      * else lookups on keys with lowercase characters will fails
@@ -397,7 +397,7 @@ MP_CMD_SRV_DECLARE(pass_env)
      */
     modperl_str_toupper((char *)arg);
 #endif
-    
+
     if (val) {
         apr_table_setn(scfg->PassEnv, arg, apr_pstrdup(parms->pool, val));
         MP_TRACE_d(MP_FUNC, "arg = %s, val = %s\n", arg, val);
@@ -479,11 +479,11 @@ MP_CMD_SRV_DECLARE(perl)
     if (!endp) {
         return modperl_cmd_unclosed_directive(parms);
     }
-    
+
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
 
     arg = apr_pstrndup(p, arg, endp - arg);
-   
+
     if ((errmsg = modperl_cmd_parse_args(p, arg, &args))) {
         return errmsg;
     }
@@ -494,7 +494,7 @@ MP_CMD_SRV_DECLARE(perl)
         if (strEQ(line, "</Perl>")) {
             break;
         }
-        
+
         /*XXX: Less than optimal */
         code = apr_pstrcat(p, code, line, "\n", NULL);
     }
@@ -503,7 +503,7 @@ MP_CMD_SRV_DECLARE(perl)
     if (!*current) {
         *current = apr_pcalloc(p, sizeof(**current));
     }
-    
+
     (*current)->filename = parms->config_file->name;
     (*current)->line_num = line_num;
     (*current)->directive = apr_pstrdup(p, "Perl");
@@ -536,14 +536,14 @@ MP_CMD_SRV_DECLARE(perldo)
     }
 
     MP_CHECK_SERVER_OR_HTACCESS_CONTEXT;
-    
+
     /* we must init earlier than normal */
     modperl_run();
 
     if (modperl_init_vhost(s, p, NULL) != OK) {
         return "init mod_perl vhost failed";
     }
-    
+
     MP_PERL_OVERRIDE_CONTEXT;
 
     /* data will be set by a <Perl> section */
@@ -557,13 +557,13 @@ MP_CMD_SRV_DECLARE(perldo)
             handler_name = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_HANDLER);
             apr_table_set(options, "handler", handler_name);
         }
-        
+
         handler = modperl_handler_new(p, handler_name);
-            
+
         if (!(pkg_base = apr_table_get(options, "package"))) {
             pkg_base = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_PACKAGE);
         }
-       
+
         pkg_namespace = modperl_file2package(p, directive->filename);
 
         pkg_name = apr_psprintf(p, "%s::%s::line_%d", 
@@ -581,7 +581,7 @@ MP_CMD_SRV_DECLARE(perldo)
         arg = apr_pstrcat(p, "package ", pkg_name, ";", line_header,
                           arg, NULL);
     }
-    
+
     {
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;SAVETMPS;
@@ -590,17 +590,17 @@ MP_CMD_SRV_DECLARE(perldo)
         eval_pv(arg, FALSE);
         FREETMPS;LEAVE;
     }
-    
+
     if (SvTRUE(ERRSV)) {
         MP_PERL_RESTORE_CONTEXT;
         return SvPVX(ERRSV);
     }
-    
+
     if (handler) {
         int status;
         SV *saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV;
         AV *args = Nullav;
-        
+
         modperl_handler_make_args(aTHX_ &args,
                                   "Apache::CmdParms", parms,
                                   "APR::Table", options,
@@ -613,7 +613,7 @@ MP_CMD_SRV_DECLARE(perldo)
         if (!(saveconfig && SvTRUE(saveconfig))) {
             modperl_package_unload(aTHX_ pkg_name);
         }
-        
+
         if (status != OK) {
             char *error = SvTRUE(ERRSV) ? SvPVX(ERRSV) :
                 apr_psprintf(p, "<Perl> handler %s failed with status=%d",
@@ -693,7 +693,7 @@ MP_CMD_SRV_DECLARE(set_input_filter)
     MP_dSCFG(parms->server);
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     char *filter;
-    
+
     if (!MpSrvENABLE(scfg)) {
         return apr_pstrcat(parms->pool,
                            "Perl is disabled for server ",
@@ -720,7 +720,7 @@ MP_CMD_SRV_DECLARE(set_output_filter)
     MP_dSCFG(parms->server);
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
     char *filter;
-    
+
     if (!MpSrvENABLE(scfg)) {
         return apr_pstrcat(parms->pool,
                            "Perl is disabled for server ",
@@ -785,7 +785,7 @@ MP_CMD_SRV_DECLARE_FLAG(setup_env)
 
 #define MP_INTERP_SCOPE_DIR_USAGE \
     MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_DIR_OPTS
- 
+
 #define MP_INTERP_SCOPE_SRV_OPTS \
     "connection, " MP_INTERP_SCOPE_DIR_OPTS
 

@@ -290,7 +290,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     if (SvTRUE(ERRSV)) {
         Perl_croak(aTHX_ SvPV_nolen(ERRSV));
     }
-    
+
     /* the return value is ignored by apr_pool_destroy anyway */
     return APR_SUCCESS;
 }

@@ -84,7 +84,7 @@ PTR_TBL_t *modperl_module_config_table_get(pTHX_ int create)
     PTR_TBL_t *table = NULL;
 
     SV *sv, **svp = modperl_module_config_hash_get(aTHX_ create);
-    
+
     if (!svp) {
         return NULL;
     }
@@ -170,7 +170,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     modperl_interp_t *interp;
     pTHX;
 #endif
-    
+
     /* if the module is loaded in vhost, base==NULL */
     tmp = (base && base->server) ? base : add;
 
@@ -178,7 +178,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         /* no directives for this module were encountered so far */
         return basev;
     }
-    
+
     s = tmp->server;
     is_startup = (p == s->process->pconf);
 
@@ -362,7 +362,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
     SV *obj = Nullsv;
     dSP;
-    
+
     if (s->is_virtual) {
         MP_dSCFG(s);
 
@@ -397,9 +397,9 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                 modules_alias = 1;
             }
         }
-        
+
     }
-    
+
     errmsg = modperl_module_config_create_obj(aTHX_ p, table, cfg, info,
                                               minfo->dir_create,
                                               parms, &obj);
@@ -602,7 +602,7 @@ static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
 
         PUTBACK;
         FREETMPS;LEAVE;
-        
+
         if (SvTRUE(ERRSV)) {
             errmsg = SvPVX(ERRSV);
         }

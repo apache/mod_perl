@@ -92,7 +92,7 @@ void modperl_handler_anon_init(pTHX_ apr_pool_t *p)
     /* init the counter to 0 */
     modperl_global_anon_cnt_init(p);
 }
- 
+
 /* allocate and populate the anon handler sub-struct */
 MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
 {
@@ -304,7 +304,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
         char *classname = va_arg(args, char *);
         void *ptr;
         SV *sv;
-            
+
         if (classname == NULL) {
             break;
         }

@@ -44,7 +44,7 @@ static int mpxs_apr_table_do_cb(void *data,
             return 1;
         }
     }
-    
+
     ENTER;
     SAVETMPS;
 
@@ -60,7 +60,7 @@ static int mpxs_apr_table_do_cb(void *data,
 
     FREETMPS;
     LEAVE;
-    
+
     /* rv of 0 aborts the traversal */
     return rv;
 }
@@ -71,9 +71,9 @@ int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
     apr_table_t *table;
     SV *sub;
     mpxs_table_do_cb_data_t tdata;
-    
+
     mpxs_usage_va_2(table, sub, "$table->do(sub, [@filter])");
-         
+
     tdata.cv = sub;
     tdata.filter = NULL;
 #ifdef USE_ITHREADS
@@ -83,7 +83,7 @@ int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
     if (items > 2) {
         char *filter_entry;
         STRLEN len;
-        
+
         tdata.filter = apr_hash_make(apr_table_elts(table)->pool);
 
         while (MARK <= SP) {
@@ -92,16 +92,16 @@ int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
             MARK++;
         }
     }
-  
+
     /* XXX: would be nice to be able to call apr_table_vdo directly, 
      * but I don't think it's possible to create/populate something 
      * that smells like a va_list with our list of filters specs
      */
-    
+
     apr_table_do(mpxs_apr_table_do_cb, (void *)&tdata, table, NULL);
-    
+
     /* Free tdata.filter or wait for the pool to go away? */
-    
+
     /* XXX: return return value of apr_table_do once we require newer httpd */
     return 1;
 }
@@ -137,13 +137,13 @@ static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(pTHX_ SV *tsv, SV *key)
     if (key == NULL) {
         mpxs_apr_table_iterix(rv) = 0; /* reset iterator index */
     }
-    
+
     if (mpxs_apr_table_iterix(rv) < apr_table_elts(t)->nelts) {
         return mpxs_apr_table_nextkey(t, rv);
     }
 
     mpxs_apr_table_iterix(rv) = 0;
-    
+
     return NULL;
 }
 
@@ -204,5 +204,5 @@ static XS(MPXS_apr_table_get)
             }
         }
     });
-    
+
 }

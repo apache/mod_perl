@@ -166,7 +166,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
 
         MP_TRACE_f(MP_FUNC, "\n\n\tparsing headers: %db [%s]\n", len,
                    MP_TRACE_STR_TRUNC(wb->pool, buf, len));
-        
+
         status = modperl_cgi_header_parse(r, (char *)buf, &len, &body);
 
         wb->header_parse = 0; /* only once per-request */
@@ -289,7 +289,7 @@ static apr_status_t modperl_filter_f_cleanup(void *data)
         }
         ctx->perl = NULL;
     }
-    
+
     return APR_SUCCESS;
 }
 
@@ -369,7 +369,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
                                         apr_pool_t *p)
 {
     char *init_handler_pv_code = NULL;
-    
+
     if (handler->mgv_cv) {
         GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv);
         if (gv) {
@@ -384,7 +384,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
             }
         }
     }
-    
+
     if (init_handler_pv_code) {
         char *package_name =
             modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 1);
@@ -395,7 +395,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
                                  init_handler_pv_code, NULL);
         SV *sv;
         modperl_handler_t *init_handler;
-        
+
         ENTER;SAVETMPS;
         sv = eval_pv(code, TRUE);
         /* fprintf(stderr, "code: %s\n", code); */
@@ -411,13 +411,13 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
                            "the FilterInitHandler attribute set",
                            modperl_handler_name(init_handler));
             }
-            
+
             handler->next = init_handler;
             return 1;
         }
         else {
             Perl_croak(aTHX_ "failed to eval code: %s", code);
-            
+
         }
     }
 
@@ -441,7 +441,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
     MP_TRACE_h(MP_FUNC, "running filter init handler %s\n",
                modperl_handler_name(handler));
-            
+
     modperl_handler_make_args(aTHX_ &args,
                               "Apache::Filter", f,
                               NULL);
@@ -465,7 +465,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", modperl_handler_name(handler), status);
-    
+
     return status;  
 }
 
@@ -486,7 +486,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     MP_dINTERP_SELECT(r, c, s);
 
     MP_FILTER_SAVE_ERRSV(errsv);
-    
+
     modperl_handler_make_args(aTHX_ &args,
                               "Apache::Filter", filter->f,
                               "APR::Brigade",
@@ -543,12 +543,12 @@ int modperl_run_filter(modperl_filter_t *filter)
     }
 
     MP_FILTER_RESTORE_ERRSV(errsv);
- 
+
     MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", modperl_handler_name(handler), status);
-    
+
     return status;
 }
 
@@ -581,7 +581,7 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
                    MP_FILTER_NAME(filter->f));
         return 0;
     }
-    
+
     if (!filter->bucket) {
         filter->bucket = MP_FILTER_FIRST(filter);
     }
@@ -596,7 +596,7 @@ MP_INLINE static int get_bucket(modperl_filter_t *filter)
         apr_brigade_cleanup(filter->bb_in);
         return 0;
     }
-    
+
     if (MP_FILTER_IS_EOS(filter)) {
         MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                    "read in: EOS bucket\n",
@@ -628,7 +628,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
 {
     int num_buckets = 0;
     apr_size_t len = 0;
-    
+
     (void)SvUPGRADE(buffer, SVt_PV);
     SvPOK_only(buffer);
     SvCUR(buffer) = 0;
@@ -641,7 +641,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
     if (filter->seen_eos) {
         return 0;
     }
-    
+
     /*modperl_brigade_dump(filter->bb_in, stderr);*/
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
@@ -771,7 +771,7 @@ MP_INLINE apr_size_t modperl_output_filter_read(pTHX_
 {
     apr_size_t len = 0;
     len = modperl_filter_read(aTHX_ filter, buffer, wanted);
-    
+
     if (filter->flush && len == 0) {
         /* if len > 0 then $filter->write will flush */
         apr_status_t rc = modperl_output_filter_flush(filter);
@@ -801,14 +801,14 @@ MP_INLINE apr_status_t modperl_input_filter_flush(modperl_filter_t *filter)
         filter->rc = send_input_eos(filter);
         filter->eos = 0;
     }
-    
+
     return filter->rc;
 }
 
 MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
 {
     int add_flush_bucket = FALSE;
-    
+
     if (((modperl_filter_ctx_t *)filter->f->ctx)->sent_eos) {
         /* no data should be sent after EOS has been sent */
         return filter->rc;
@@ -884,7 +884,7 @@ apr_status_t modperl_output_filter_handler(ap_filter_t *f,
         status = modperl_run_filter(filter);
         FILTER_FREE(filter);
     }
-    
+
     switch (status) {
       case OK:
         return APR_SUCCESS;
@@ -918,7 +918,7 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
         status = modperl_run_filter(filter);
         FILTER_FREE(filter);
     }
-    
+
     switch (status) {
       case OK:
         return APR_SUCCESS;
@@ -977,7 +977,7 @@ static int modperl_filter_add_connection(conn_rec *c,
                            "(connection)\n", type, handlers[i]->name);
                 continue;
             }
-            
+
             /* skip non-connection level filters, e.g. request filters
              * configured outside the resource container */
             if (!(handlers[i]->attrs & MP_FILTER_CONNECTION_HANDLER)) {
@@ -1008,7 +1008,7 @@ static int modperl_filter_add_connection(conn_rec *c,
                     return status;
                 }
             }
-            
+
             MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
                        type, handlers[i]->name);
         }
@@ -1116,7 +1116,7 @@ static int modperl_filter_add_request(request_rec *r,
                     return status;
                 }
             }
-            
+
             MP_TRACE_h(MP_FUNC, "%s handler %s configured (%s)\n",
                        type, handlers[i]->name, r->uri);
         }
@@ -1230,7 +1230,7 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                               : "Apache::Filter::add_output_filter");
             }
         }
-        
+
         MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
                    type, name);
 
@@ -1263,7 +1263,7 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
                 (long)bucket->length,
                 (unsigned long)bucket->data);
         /* fprintf(fp, "       : %s\n", (char *)bucket->data); */
-        
+
         i++;
     }
 #endif

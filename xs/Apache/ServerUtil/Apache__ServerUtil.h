@@ -77,7 +77,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     if (SvTRUE(ERRSV)) {
         Perl_croak(aTHX_ SvPV_nolen(ERRSV));
     }
-    
+
     /* the return value is ignored by apr_pool_destroy anyway */
     return APR_SUCCESS;
 }
@@ -90,7 +90,7 @@ void mpxs_Apache__ServerUtil_server_shutdown_cleanup_register(pTHX_ SV *cv,
 {
     mpxs_cleanup2_t *data;
     apr_pool_t *p;
-    
+
     MP_CROAK_IF_POST_POST_CONFIG_PHASE("server_shutdown_cleanup_register");
 
     p = modperl_server_user_pool();
@@ -103,7 +103,7 @@ void mpxs_Apache__ServerUtil_server_shutdown_cleanup_register(pTHX_ SV *cv,
 #ifdef USE_ITHREADS
     data->perl = aTHX;
 #endif /* USE_ITHREADS */
-    
+
     apr_pool_cleanup_register(p, data, mpxs_cleanup_run,
                               apr_pool_cleanup_null);
 }

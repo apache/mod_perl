@@ -47,7 +47,7 @@
 (unsigned long)modperl_thread_self()
 
 void modperl_trace_logfile_set(apr_file_t *logfile_new);
-    
+
 unsigned long modperl_debug_level(void);
 
 #ifdef WIN32

@@ -107,7 +107,7 @@ const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
     mpxs_usage_va_1(r, "$r->handler([$handler])");
 
     RETVAL = (const char *)r->handler;
-    
+
     if (items == 2) {
         if (SvPOK(*MARK)) {
             char *new_handler = SvPVX(*MARK);
@@ -116,7 +116,7 @@ const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
              * any affect */
             if (strEQ(modperl_callback_current_callback_get(),
                       "PerlResponseHandler")) {
-                
+
                 switch (*new_handler) {
                   case 'm':
                     if (strEQ(new_handler, "modperl") &&
@@ -134,7 +134,7 @@ const char *mpxs_Apache__RequestRec_handler(pTHX_  I32 items,
                     break;
                 }
             }
-            
+
             r->handler = (const char *)apr_pstrmemdup(r->pool, new_handler,
                                                       SvLEN(*MARK));
         }

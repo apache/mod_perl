@@ -57,7 +57,7 @@ static int modperl_spawn_proc_prog(pTHX_
     e_info.out_pipe  = APR_CHILD_BLOCK;
     e_info.err_pipe  = APR_CHILD_BLOCK;
     e_info.cmd_type  = APR_PROGRAM;
- 
+
     p = r->main ? r->main->pool : r->pool;
 
     *script_out = *script_in = *script_err = NULL;
@@ -126,11 +126,11 @@ static XS(MPXS_modperl_spawn_proc_prog)
 {
     dXSARGS;
     const char *usage = "Usage: spawn_proc_prog($r, $command, [\\@argv])";
-    
+
     if (items < 2) {
         Perl_croak(aTHX_ usage);
     }
-    
+
     SP -= items;
     {
         apr_file_t *script_in, *script_out, *script_err;
@@ -179,7 +179,7 @@ static XS(MPXS_modperl_spawn_proc_prog)
             /* XXX: apr_file_to_glob should be set once in the BOOT: section */
             apr_file_to_glob =
                 APR_RETRIEVE_OPTIONAL_FN(modperl_apr_perlio_apr_file_to_glob);
-            
+
             if (GIMME == G_SCALAR) {
                 /* XXX: need to do lots of error checking before
                  * putting the object on the stack

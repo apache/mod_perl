@@ -26,7 +26,7 @@ apr_size_t mpxs_APR__Socket_recv(pTHX_ apr_socket_t *socket,
     if (!(rc == APR_SUCCESS || rc == APR_EOF)) {
         modperl_croak(aTHX_ rc, "APR::Socket::recv");
     }
-    
+
     mpxs_sv_cur_set(buffer, len);
     SvTAINTED_on(buffer);
     return len;
@@ -105,13 +105,13 @@ apr_status_t mpxs_APR__Socket_poll(apr_socket_t *socket,
 {
     apr_pollfd_t fd;
     apr_int32_t nsds;
-    
+
     /* what to poll */
     fd.p         = pool;
     fd.desc_type = APR_POLL_SOCKET;
     fd.desc.s    = socket;
     fd.reqevents = reqevents;
     fd.rtnevents = 0; /* XXX: not really necessary to set this */
-    
+
     return apr_poll(&fd, 1, &nsds, timeout);
 }

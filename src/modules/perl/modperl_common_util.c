@@ -68,7 +68,7 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
 
     /* Prefetch magic requires perl 5.8 */
 #if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
-    
+
     sv_magic(hv, NULL, PERL_MAGIC_ext, Nullch, -1);
     SvMAGIC(hv)->mg_virtual = (MGVTBL *)&modperl_table_magic_prefetch;
     SvMAGIC(hv)->mg_flags |= MGf_COPY;

@@ -38,7 +38,7 @@ int modperl_require_module(pTHX_ const char *pv, int logfailure)
         }
         return FALSE;
     }
-        
+
     return TRUE;
 }
 
@@ -94,13 +94,13 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
  * Apache->request is not available, the returned global object might
  * be not thread-safe under threaded mpms, so use with care
  */
- 
+
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
 {
     if (SvOBJECT(sv) || (SvROK(sv) && (SvTYPE(SvRV(sv)) == SVt_PVMG))) {
         return (server_rec *)SvObjIV(sv);
     }
-    
+
     /* next see if we have Apache->request available */
     {
         request_rec *r = NULL;
@@ -109,7 +109,7 @@ MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
             return r->server;
         }
     }
-    
+
     /* modperl_global_get_server_rec is not thread safe w/o locking */
     return modperl_global_get_server_rec();
 }
@@ -329,15 +329,15 @@ static void modperl_av_remove_entry(pTHX_ AV *av, I32 index)
     for (i=0; i<=index; i++) {
         av_store(tmpav, i, SvREFCNT_inc(av_shift(av)));
     }
-    
+
     /* make size at the beginning of the array */
     av_unshift(av, index-1);
-    
+
     /* add stashed entries back */
     for (i=0; i<index; i++) {
         av_store(av, i, *av_fetch(tmpav, i, 0));
     }
-    
+
     sv_free((SV *)tmpav);
 }
 
@@ -348,11 +348,11 @@ static void modperl_package_unload_dynamic(pTHX_ const char *package,
     SV *libref = *av_fetch(librefs, dl_index, 0);
 
     modperl_sys_dlclose((void *)SvIV(libref));
-    
+
     /* remove package from @dl_librefs and @dl_modules */
     modperl_av_remove_entry(aTHX_ get_av(dl_librefs, 0), dl_index);
     modperl_av_remove_entry(aTHX_ get_av(dl_modules, 0), dl_index);
-    
+
     return;    
 }
 
@@ -361,7 +361,7 @@ static int modperl_package_is_dynamic(pTHX_ const char *package,
 {
    I32 i;
    AV *modules = get_av(dl_modules, FALSE);
-    
+
    for (i=0; i<av_len(modules); i++) {
         SV *module = *av_fetch(modules, i, 0);
         if (strEQ(package, SvPVX(module))) {
@@ -471,7 +471,7 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
                " running %d %s subs",
                (unsigned long)getpid(), MP_TRACEv_TID_ MP_TRACEv_PERLID_
                AvFILLp(subs)+1, name);
-    
+
     for (i=0; i<=AvFILLp(subs); i++) {
 	CV *cv = (CV*)ary[i];
 	SV *atsv = ERRSV;
@@ -520,7 +520,7 @@ MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
             retval = &PL_sv_undef;
         }
     }
-        
+
     return retval;
 }
 
@@ -608,7 +608,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     apr_status_t rc;
     apr_size_t size;
     apr_file_t *file;
-    
+
     size = r->finfo.size;
     sv = newSV(size);
 
@@ -630,7 +630,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     SLURP_SUCCESS("reading");
 
     MP_TRACE_o(MP_FUNC, "read %d bytes from '%s'\n", size, r->filename);
-    
+
     if (r->finfo.size != size) {
         SvREFCNT_dec(sv); 
         Perl_croak(aTHX_ "Error: read %d bytes, expected %d ('%s')",
@@ -639,7 +639,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
 
     rc = apr_file_close(file);
     SLURP_SUCCESS("closing");
-    
+
     SvPVX(sv)[size] = '\0';
     SvCUR_set(sv, size);
     SvPOK_on(sv);
@@ -650,7 +650,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     else {
         SvTAINTED_off(sv);
     }
-    
+
     return newRV_noinc(sv);
 }
 
@@ -689,7 +689,7 @@ char *modperl_file2package(apr_pool_t *p, const char *file)
             while (*(file+1) && MP_VALID_PATH_DELIM(*(file+1))) {
                 file++;
             }
- 
+
             /* path delim not until end of line */
             if (*(file+1)) {
                 *c = *(c+1) = ':';
@@ -700,7 +700,7 @@ char *modperl_file2package(apr_pool_t *p, const char *file)
             *c = '_';
         }
     }
-   
+
     return package;
 }
 
@@ -723,15 +723,15 @@ apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
     AV *av;
     apr_array_header_t *array;
     int i, av_size;
-    
+
     if (!(SvROK(avrv) && (SvTYPE(SvRV(avrv)) == SVt_PVAV))) {
         Perl_croak(aTHX_ "Not an array reference");
     }
-    
+
     av = (AV*)SvRV(avrv);
     av_size = av_len(av);
     array = apr_array_make(p, av_size+1, sizeof(char *));
-    
+
     for (i = 0; i <= av_size; i++) {
         SV *sv = *av_fetch(av, i, FALSE);
         char **entry = (char **)apr_array_push(array);
@@ -788,14 +788,14 @@ static void modperl_package_clear_stash(pTHX_ const char *package)
 void modperl_package_unload(pTHX_ const char *package)
 {
     I32 dl_index;
-    
+
     modperl_package_clear_stash(aTHX_ package);
     modperl_package_delete_from_inc(aTHX_ package);
-    
+
     if (modperl_package_is_dynamic(aTHX_ package, &dl_index)) {
         modperl_package_unload_dynamic(aTHX_ package, dl_index);
     }
-    
+
 }
 
 #define MP_RESTART_COUNT_KEY "mod_perl_restart_count"
@@ -809,7 +809,7 @@ void modperl_restart_count_inc(server_rec *base_server)
     void *data;
     int *counter;
     apr_pool_t *p = base_server->process->pool;
-    
+
     apr_pool_userdata_get(&data, MP_RESTART_COUNT_KEY, p);
     if (data) {
         counter = data;

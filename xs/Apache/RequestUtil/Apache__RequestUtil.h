@@ -63,7 +63,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     server_rec *s = c->base_server;
 
     /* see: httpd-2.0/server/protocol.c:ap_read_request */
-    
+
     if (!base_pool) {
         base_pool = c->pool;
     }
@@ -79,7 +79,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     r->ap_auth_type    = NULL;
 
     r->allowed_methods = ap_make_method_list(p, 1);
-    
+
     r->headers_in      = apr_table_make(p, 1);
     r->subprocess_env  = apr_table_make(r->pool, 1);
     r->headers_out     = apr_table_make(p, 1);
@@ -94,7 +94,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     r->input_filters        = r->proto_input_filters;
 
     ap_run_create_request(r);
-    
+
     r->per_dir_config = s->lookup_defaults;
 
     r->sent_bodyct     = 0;
@@ -102,7 +102,7 @@ request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     r->read_body       = REQUEST_NO_BODY;
     r->status          = HTTP_OK;
     r->the_request     = "UNKNOWN";
-    
+
     r->hostname = s->server_hostname;
 
     r->method          = "GET";
@@ -183,7 +183,7 @@ int mpxs_Apache__RequestRec_no_cache(pTHX_ request_rec *r, SV *flag)
     if (flag) {
         r->no_cache = (int)SvIV(flag);
     }
-    
+
     if (r->no_cache) {
         apr_table_setn(r->headers_out, "Pragma", "no-cache");
         apr_table_setn(r->headers_out, "Cache-control", "no-cache");
@@ -212,7 +212,7 @@ SV *mpxs_Apache__RequestRec_pnotes(pTHX_ request_rec *r, SV *key, SV *val)
     if (key) {
         STRLEN len;
         char *k = SvPV(key, len);
-        
+
         if (val) {
             retval = *hv_store(rcfg->pnotes, k, len,
                                SvREFCNT_inc(val), 0);
@@ -224,7 +224,7 @@ SV *mpxs_Apache__RequestRec_pnotes(pTHX_ request_rec *r, SV *key, SV *val)
     else {
         retval = newRV_inc((SV *)rcfg->pnotes);
     }
-    
+
     return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
 }
 
@@ -304,7 +304,7 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
                                                   SV *new_root)
 {
     const char *retval = ap_document_root(r);
-    
+
     if (new_root) {
         core_server_config *conf;
         MP_CROAK_IF_THREADS_STARTED("setting $r->document_root");
@@ -318,7 +318,7 @@ const char *mpxs_Apache__RequestRec_document_root(pTHX_ request_rec *r,
 
 static apr_status_t child_terminate(void *data) {
     apr_pool_t *pool = (apr_pool_t *)data;
-    
+
     /* On the first pass, re-register so we end up last */
     if (data) {
         apr_pool_cleanup_register(pool, NULL, child_terminate,

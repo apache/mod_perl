@@ -162,7 +162,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
                                            "Apache::RequestIO::_GEN_%ld",
                                            (long)PL_gensym++),
                                  TRUE, SVt_PVIO);
-        
+
         /* open my $oldout, ">&STDOUT" or die "Can't dup STDOUT: $!"; */
         status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE,
                               O_WRONLY, 0, Nullfp);
@@ -190,7 +190,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     IoFLUSH_off(handle); /* STDOUT's $|=0 */
 
     return handle_save;
-    
+
 }
 
 MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
@@ -208,14 +208,14 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
      */
     if (handle != (GV*)Nullsv) {
         SV *err = Nullsv;
-        
+
         MP_TRACE_o(MP_FUNC, "restoring STDIN");
 
         if (Perl_do_open9(aTHX_ handle_orig, "<&", 2, FALSE,
                           O_RDONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
             err = get_sv("!", TRUE);
         }
-        
+
         Perl_do_close(aTHX_ handle, FALSE);
         (void)hv_delete(gv_stashpv("Apache::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
@@ -248,21 +248,21 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
 
     /* close the overriding filehandle */
     Perl_do_close(aTHX_ handle_orig, FALSE);
-    
+
     /*
      * open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!";
      * close STDOUT_SAVED;
      */
     if (handle != (GV*)Nullsv) {
         SV *err = Nullsv;
-        
+
         MP_TRACE_o(MP_FUNC, "restoring STDOUT");
 
         if (Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE,
                           O_WRONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
             err = get_sv("!", TRUE);
         }
-        
+
         Perl_do_close(aTHX_ handle, FALSE);
         (void)hv_delete(gv_stashpv("Apache::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);

@@ -30,7 +30,7 @@ char *mpxs_apr_uri_unparse(pTHX_
         uptr->scheme = "";
     }
 #endif
-    
+
     return apr_uri_unparse(((modperl_uri_t *)uptr)->pool,
                            uptr, flags);
 }
@@ -74,7 +74,7 @@ static MP_INLINE
 SV *mpxs_APR__URI_rpath(pTHX_ apr_uri_t *apr_uri)
 {
     modperl_uri_t *uri = (modperl_uri_t *)apr_uri;
-    
+
     if (uri->path_info) {
         int uri_len = strlen(uri->uri.path);
         int n = strlen(uri->path_info);

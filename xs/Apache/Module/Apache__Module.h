@@ -20,7 +20,7 @@ static MP_INLINE int mpxs_Apache__Module_loaded(pTHX_ char *name)
     char nameptr[256];
     char *base;
     module *modp;
-    
+
     /* Does the module name have a '.' in it ? */
     if ((base = ap_strchr(name, '.'))) {
         int len = base - name;
@@ -80,14 +80,14 @@ static MP_INLINE void mpxs_Apache__Module_add(pTHX_
 {
     const char *error;
     server_rec *s;
-    
+
     if (!(SvROK(cmds) && (SvTYPE(SvRV(cmds)) == SVt_PVAV))) {
         Perl_croak(aTHX_ "Usage: Apache::Module::add(__PACKAGE__, [])");
     }
-    
+
     s = modperl_global_get_server_rec();
     error = modperl_module_add(s->process->pconf, s, package, cmds);
-    
+
     if (error) {
         Perl_croak(aTHX_ "Apache::Module::add(%s) failed : %s", 
                    package, error);
