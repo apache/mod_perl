@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+config/test fixups for libapreq/win32
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 skip modules/ssi test if mod_include is not installed
 
 Apache::test enhancements
