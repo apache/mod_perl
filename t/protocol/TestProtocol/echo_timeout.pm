@@ -22,7 +22,7 @@ sub handler {
 
     # starting from Apache 2.0.49 several platforms require you to set
     # the socket to a blocking IO mode
-    $c->client_socket->opt_set(APR::SO_NONBLOCK, 0);
+    $c->client_socket->opt_set(APR::Const::SO_NONBLOCK, 0);
 
     # set timeout (20 sec) so later we can do error checking on
     # read/write timeouts
@@ -32,7 +32,7 @@ sub handler {
         my $buff;
         my $rlen = eval { $socket->recv($buff, BUFF_LEN) };
         if ($@) {
-            die "timed out, giving up: $@" if $@ == APR::TIMEUP;
+            die "timed out, giving up: $@" if $@ == APR::Const::TIMEUP;
             die $@;
         }
 
@@ -40,7 +40,7 @@ sub handler {
 
         my $wlen = eval { $socket->send($buff) };
         if ($@) {
-            die "timed out, giving up: $@" if $@ == APR::TIMEUP;
+            die "timed out, giving up: $@" if $@ == APR::Const::TIMEUP;
             die $@;
         }
     }

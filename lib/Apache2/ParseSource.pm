@@ -227,7 +227,7 @@ sub generate_cscan_file {
 }
 
 my %defines_wanted = (
-    Apache2 => {
+    'Apache2::Const' => {
         common     => [qw{OK DECLINED DONE}],
         config     => [qw{DECLINE_CMD}],
         context    => [qw(NOT_IN_ GLOBAL_ONLY)],
@@ -273,7 +273,7 @@ while (my($class, $groups) = each %defines_wanted) {
 }
 
 my %enums_wanted = (
-    Apache2 => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
+    'Apache2::Const' => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
     APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
 );
 
@@ -305,7 +305,7 @@ sub get_constants {
 
     #maintain a few handy shortcuts from 1.xx
     #aliases are defined in ModPerl::Code
-    push @{ $constants{'Apache2'}->{common} },
+    push @{ $constants{'Apache2::Const'}->{common} },
       qw(NOT_FOUND FORBIDDEN AUTH_REQUIRED SERVER_ERROR REDIRECT);
 
     return \%constants;

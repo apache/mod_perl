@@ -90,7 +90,7 @@ my %overridable_mp2_api = (
         if (defined $newfile) {
             $old_filename = $r->$orig_sub($newfile);
             die "'$newfile' doesn't exist" unless -e $newfile;
-            $r->finfo(APR::Finfo::stat($newfile, APR::FINFO_NORM, $r->pool));
+            $r->finfo(APR::Finfo::stat($newfile, APR::Const::FINFO_NORM, $r->pool));
         }
         else {
             $old_filename = $r->$orig_sub();
@@ -570,7 +570,7 @@ sub content {
     my $seen_eos = 0;
     do {
         $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
-                                       APR::BLOCK_READ, IOBUFSIZE);
+                                       APR::Const::BLOCK_READ, IOBUFSIZE);
         while (!$bb->is_empty) {
             my $b = $bb->first;
 

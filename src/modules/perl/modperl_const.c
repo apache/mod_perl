@@ -64,12 +64,12 @@ int modperl_const_compile(pTHX_ const char *classname,
     constants_group_lookup group_lookup;
 
     if (strnEQ(classname, "APR", 3)) {
-        lookup       = modperl_constants_lookup_apr;
-        group_lookup = modperl_constants_group_lookup_apr;
+        lookup       = modperl_constants_lookup_apr_const;
+        group_lookup = modperl_constants_group_lookup_apr_const;
     }
     else if (strnEQ(classname, "Apache2", 7)) {
-        lookup       = modperl_constants_lookup_apache2;
-        group_lookup = modperl_constants_group_lookup_apache2;
+        lookup       = modperl_constants_lookup_apache2_const;
+        group_lookup = modperl_constants_group_lookup_apache2_const;
     }
     else {
         lookup       = modperl_constants_lookup_modperl;
@@ -116,7 +116,7 @@ XS(XS_modperl_const_compile)
     }
 
     classname = *(stashname + 1) == 'P'
-        ? "APR" 
+        ? "APR::Const" 
         : (*stashname == 'A' ? "Apache2::Const" : "ModPerl");
     arg = SvPV(ST(1),n_a);
 

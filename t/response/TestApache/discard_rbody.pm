@@ -36,7 +36,7 @@ sub handler {
         my $ba = $r->connection->bucket_alloc;
         my $bb = APR::Brigade->new($r->pool, $ba);
         $filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
-                              APR::BLOCK_READ, IOBUFSIZE);
+                              APR::Const::BLOCK_READ, IOBUFSIZE);
     }
     elsif ($test eq 'all') {
         # consume all of the request body

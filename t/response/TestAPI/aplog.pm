@@ -62,14 +62,14 @@ sub handler {
         t_server_log_warn_is_expected();
         $s->log_serror(Apache2::Log::LOG_MARK,
                        Apache2::Const::LOG_INFO|Apache2::Const::LOG_STARTUP,
-                       APR::SUCCESS, "This log message comes with no header");
+                       APR::Const::SUCCESS, "This log message comes with no header");
         ok t_cmp $logdiff->diff,
             qr/^This log message comes with no header$/m,
             '$s->log_serror(LOG_MARK, LOG_INFO|LOG_STARTUP...)';
 
         t_server_log_warn_is_expected();
         $s->log_serror(__FILE__, __LINE__, Apache2::Const::LOG_DEBUG,
-                       APR::SUCCESS, "log_serror test 1");
+                       APR::Const::SUCCESS, "log_serror test 1");
         ok t_cmp $logdiff->diff,
             qr/: log_serror test 1$/m,
             '$s->log_serror(__FILE__, __LINE__, LOG_DEBUG...)';
@@ -81,20 +81,20 @@ sub handler {
 
         t_server_log_warn_is_expected();
         $s->log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
-                       APR::EGENERAL, "log_serror test 2");
+                       APR::Const::EGENERAL, "log_serror test 2");
         ok t_cmp $logdiff->diff,
             qr/$egeneral: log_serror test 2/,
-            '$s->log_serror(LOG_MARK, LOG_DEBUG, APR::EGENERAL...)';
+            '$s->log_serror(LOG_MARK, LOG_DEBUG, APR::Const::EGENERAL...)';
     }
 
     # log_rerror
     t_server_log_error_is_expected();
     $r->log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_CRIT,
-                   APR::ENOTIME, "log_rerror test");
+                   APR::Const::ENOTIME, "log_rerror test");
     # can't match against the error string, since a locale may kick in
     ok t_cmp $logdiff->diff,
         qr/\[crit\] .*?: log_rerror test/,
-        '$r->log_rerror(LOG_MARK, LOG_CRIT, APR::ENOTIME...)';
+        '$r->log_rerror(LOG_MARK, LOG_CRIT, APR::Const::ENOTIME...)';
 
     # log_error
     {

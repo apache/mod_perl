@@ -22,16 +22,16 @@ sub test {
 
     ok $mutex;
 
-    ok t_cmp($mutex->lock, APR::SUCCESS,
-             'lock == APR::SUCCESS');
+    ok t_cmp($mutex->lock, APR::Const::SUCCESS,
+             'lock == APR::Const::SUCCESS');
 
 #XXX: don't get what we expect on win23
 #need to use APR_STATUS_IS_EBUSY ?
-#    ok t_cmp($mutex->trylock, APR::EBUSY,
-#             'trylock == APR::EBUSY');
+#    ok t_cmp($mutex->trylock, APR::Const::EBUSY,
+#             'trylock == APR::Const::EBUSY');
 
-    ok t_cmp($mutex->unlock, APR::SUCCESS,
-             'unlock == APR::SUCCESS');
+    ok t_cmp($mutex->unlock, APR::Const::SUCCESS,
+             'unlock == APR::Const::SUCCESS');
 
     # out-of-scope pool
     {
@@ -41,10 +41,10 @@ sub test {
         my $table = APR::Table::make(APR::Pool->new, 50);
         $table->set($_ => $_) for 'aa'..'za';
         # now test that we are still OK
-        ok t_cmp($mutex->lock, APR::SUCCESS,
-                 'lock == APR::SUCCESS');
-        ok t_cmp($mutex->unlock, APR::SUCCESS,
-                 'unlock == APR::SUCCESS');
+        ok t_cmp($mutex->lock, APR::Const::SUCCESS,
+                 'lock == APR::Const::SUCCESS');
+        ok t_cmp($mutex->unlock, APR::Const::SUCCESS,
+                 'unlock == APR::Const::SUCCESS');
     }
 
 }

@@ -40,7 +40,7 @@ sub test {
 
     my $pool = APR::Pool->new();
     # populate the finfo struct first
-    my $finfo = APR::Finfo::stat($file, APR::FINFO_NORM, $pool);
+    my $finfo = APR::Finfo::stat($file, APR::Const::FINFO_NORM, $pool);
 
     ok $finfo->isa('APR::Finfo');
 
@@ -65,13 +65,13 @@ sub test {
         }
 
         ok t_cmp($finfo->filetype,
-                 APR::FILETYPE_REG,
+                 APR::Const::FILETYPE_REG,
                  '$finfo->filetype()');
     }
 
     # stat() on out-of-scope pools
     {
-        my $finfo = APR::Finfo::stat($file, APR::FINFO_NORM, APR::Pool->new);
+        my $finfo = APR::Finfo::stat($file, APR::Const::FINFO_NORM, APR::Pool->new);
 
         # try to overwrite the temp pool data
         require APR::Table;
@@ -136,21 +136,21 @@ sub compare_with_perl {
 
         # match world bits
 
-        ok t_cmp($finfo->protection & APR::FPROT_WREAD,
+        ok t_cmp($finfo->protection & APR::Const::FPROT_WREAD,
                  $stat->{protection} & S_IROTH,
-                 '$finfo->protection() & APR::FPROT_WREAD');
+                 '$finfo->protection() & APR::Const::FPROT_WREAD');
 
-        ok t_cmp($finfo->protection & APR::FPROT_WWRITE,
+        ok t_cmp($finfo->protection & APR::Const::FPROT_WWRITE,
                  $stat->{protection} & S_IWOTH,
-                 '$finfo->protection() & APR::FPROT_WWRITE');
+                 '$finfo->protection() & APR::Const::FPROT_WWRITE');
 
         if (WIN32) {
             skip "different file semantics", 0;
         }
         else {
-            ok t_cmp($finfo->protection & APR::FPROT_WEXECUTE,
+            ok t_cmp($finfo->protection & APR::Const::FPROT_WEXECUTE,
                      $stat->{protection} & S_IXOTH,
-                     '$finfo->protection() & APR::FPROT_WEXECUTE');
+                     '$finfo->protection() & APR::Const::FPROT_WEXECUTE');
         }
     }
 }

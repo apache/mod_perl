@@ -42,12 +42,12 @@ sub overload_test {
     die "the exception should have been an APR::Error object"
         unless ref $@ eq 'APR::Error';
 
-    # == && != (expecting APR::EAGAIN error)
-    die "'==' overload is broken" unless $@ == APR::EAGAIN;
-    die "'==' overload is broken" unless APR::EAGAIN == $@;
+    # == && != (expecting APR::Const::EAGAIN error)
+    die "'==' overload is broken" unless $@ == APR::Const::EAGAIN;
+    die "'==' overload is broken" unless APR::Const::EAGAIN == $@;
     die "'==' overload is broken" unless $@ == $@;
-    die "'!=' overload is broken" unless $@ != APR::EACCES;
-    die "'!=' overload is broken" unless APR::EACCES != $@;
+    die "'!=' overload is broken" unless $@ != APR::Const::EACCES;
+    die "'!=' overload is broken" unless APR::Const::EACCES != $@;
     die "'!=' overload is broken" if     $@ != $@;
 
     # XXX: add more overload tests
@@ -102,7 +102,7 @@ sub eval_block_mp_error {
     # throw in some retry attempts
     my $tries = 0;
     RETRY: eval { mp_error($socket) };
-    if ($@ && ref($@) && $@ == APR::EAGAIN) {
+    if ($@ && ref($@) && $@ == APR::Const::EAGAIN) {
         if ($tries++ < 3) {
             goto RETRY;
         }
@@ -118,7 +118,7 @@ sub eval_block_mp_error {
 sub eval_string_mp_error {
     my($r, $socket) = @_;
     eval '$socket->recv(my $buffer, SIZE)';
-    if ($@ && ref($@) && $@ == APR::EAGAIN) {
+    if ($@ && ref($@) && $@ == APR::Const::EAGAIN) {
         $r->print("ok eval_string_mp_error");
     }
     else {

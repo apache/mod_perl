@@ -29,8 +29,8 @@ sub handler {
     my $c = shift;
     my $socket = $c->client_socket;
 
-    if ($socket->opt_get(APR::SO_NONBLOCK)) {
-        $socket->opt_set(APR::SO_NONBLOCK => 0);
+    if ($socket->opt_get(APR::Const::SO_NONBLOCK)) {
+        $socket->opt_set(APR::Const::SO_NONBLOCK => 0);
     }
 
     if ((my $rc = greet($c)) != Apache2::Const::OK) {

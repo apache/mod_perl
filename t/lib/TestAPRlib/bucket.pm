@@ -159,7 +159,7 @@ sub test {
         my $expected = $data;
         my $b = APR::Bucket->new($ba, $data);
         my $status = $b->setaside($pool);
-        ok t_cmp $status, APR::SUCCESS, "setaside status";
+        ok t_cmp $status, APR::Const::SUCCESS, "setaside status";
         $data =~ s/^..../BBBB/;
         $b->read(my $read);
         ok t_cmp $read, $expected,
@@ -190,7 +190,7 @@ sub test {
         my $orig = $data;
         my $b = APR::Bucket->new($ba, $data);
         my $status = $b->setaside(APR::Pool->new);
-        ok t_cmp $status, APR::SUCCESS, "setaside status";
+        ok t_cmp $status, APR::Const::SUCCESS, "setaside status";
 
         # try to overwrite the temp pool data
         my $table = APR::Table::make(APR::Pool->new, 50);

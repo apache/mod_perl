@@ -234,7 +234,7 @@ sub test {
         my $overlay2 = $overlay->copy($pool);
 
         # compress/merge
-        $overlay->compress(APR::OVERLAP_TABLES_MERGE);
+        $overlay->compress(APR::Const::OVERLAP_TABLES_MERGE);
         # $add first, then $base
         ok t_cmp($overlay->get('foo'),
                  'three, one, two',
@@ -244,7 +244,7 @@ sub test {
                  "\$overlay->compress/merge");
 
         # compress/set
-        $overlay->compress(APR::OVERLAP_TABLES_SET);
+        $overlay->compress(APR::Const::OVERLAP_TABLES_SET);
         # $add first, then $base
         ok t_cmp($overlay2->get('foo'),
                  'three',
@@ -265,7 +265,7 @@ sub test {
 
         $add->set(foo => 'three');
 
-        $base->overlap($add, APR::OVERLAP_TABLES_SET);
+        $base->overlap($add, APR::Const::OVERLAP_TABLES_SET);
 
         my @foo = $base->get('foo');
         my @bar = $base->get('bar');
@@ -286,7 +286,7 @@ sub test {
         $add->set(foo => 'three');
         $add->set(bar => 'beer');
 
-        $base->overlap($add, APR::OVERLAP_TABLES_MERGE);
+        $base->overlap($add, APR::Const::OVERLAP_TABLES_MERGE);
 
         my @foo = $base->get('foo');
         my @bar = $base->get('bar');

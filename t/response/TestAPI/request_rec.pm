@@ -151,7 +151,7 @@ sub handler {
 
     # finfo
     {
-        my $finfo = APR::Finfo::stat(__FILE__, APR::FINFO_NORM, $r->pool);
+        my $finfo = APR::Finfo::stat(__FILE__, APR::Const::FINFO_NORM, $r->pool);
         $r->finfo($finfo);
         # just one field test, all accessors are fully tested in
         # TestAPR::finfo

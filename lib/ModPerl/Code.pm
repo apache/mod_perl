@@ -577,6 +577,7 @@ sub generate_largefiles {
 
 sub ins_underscore {
     $_[0] =~ s/([a-z])([A-Z])/$1_$2/g;
+    $_[0] =~ s/::/_/g;
 }
 
 sub canon_uc {
@@ -832,7 +833,7 @@ sub constants_lookup_code {
 
     %alias = %shortcuts;
 
-    my $postfix = lc $class;
+    my $postfix = canon_lc(lc $class);
     my $package = $class . '::';
     my $package_len = length $package;
     my($first_let) = $class =~ /^(\w)/;
@@ -927,7 +928,7 @@ sub constants_group_lookup_code {
     my @tags;
     my @code;
 
-    $class = lc $class;
+    $class = canon_lc(lc $class);
     while (my($group, $constants) = each %$groups) {
 	push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;

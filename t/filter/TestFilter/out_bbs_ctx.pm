@@ -80,7 +80,7 @@ sub handler {
     $filter->ctx($ctx);
 
     my $rv = $filter->next->pass_brigade($bb_ctx);
-    return $rv unless $rv == APR::SUCCESS;
+    return $rv unless $rv == APR::Const::SUCCESS;
 
     return Apache2::Const::OK;
 }

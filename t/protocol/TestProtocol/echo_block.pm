@@ -24,12 +24,12 @@ sub handler {
 
     # starting from Apache 2.0.49 several platforms require you to set
     # the socket to a blocking IO mode
-    my $nonblocking = $socket->opt_get(APR::SO_NONBLOCK);
+    my $nonblocking = $socket->opt_get(APR::Const::SO_NONBLOCK);
     if ($nonblocking) {
-        $socket->opt_set(APR::SO_NONBLOCK, 0);
+        $socket->opt_set(APR::Const::SO_NONBLOCK, 0);
 
         # test that we really *are* in the blocking mode
-        !$socket->opt_get(APR::SO_NONBLOCK)
+        !$socket->opt_get(APR::Const::SO_NONBLOCK)
             or die "failed to set blocking mode";
     }
 
