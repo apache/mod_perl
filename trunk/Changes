@@ -8,7 +8,11 @@ Changes - Apache mod_perl change logfile
 
 =item 1.20_01-dev
 
-fix some problems with %ENV (e.g. SetEnv PATH cause mangled value)
+$r->read will now properly check the return value of
+ap_setup_client_block() and return undef if != OK,
+e.g. if LimitRequestBody is exceeded
+
+fix some problems with %ENV
 
 loosen module/cookie tests
 
