@@ -118,7 +118,7 @@ perl_ldflags="`$perl_interp $config_pm -e 'print $Config{ldflags}'`"
 perl_lddlflags="`$perl_interp $config_pm -e 'print $Config{lddlflags}'`"
 
 case "$os_version" in
-    aix*)  perl_lddlflags="$perl_lddlflags -bI:\$(APACHEEXT)/support/httpd.exp" ;;
+    aix*)  perl_lddlflags="$perl_lddlflags -bI:\$(APACHELIBEXEC)/httpd.exp" ;;
     * )    ;;
 esac
 
