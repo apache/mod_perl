@@ -18,6 +18,15 @@ Other contributors are mentioned below.
 
 =item 1.10_01-dev
 
+fix Makefile.PL for apache-1.2.6+ssl_1.16 
+[Stefano Santoro <ssantoro@voicetek.com>, Dan Peterson <pete@spry.com>]
+
+removed obsolete src/Makefile.tmpl and src/Makefile.tmpl-Ben-SSL files
+
+new module Apache::ExtUtils, currently with one method to generate xs
+code so Apache/Perl modules can add their own directives to Apache rather
+than use PerlSetVar (just some more rope, really)
+
 1.3b6 compat:
 - deal with ap_ API prefixing
 - t/modules/embperl will warn on failure:

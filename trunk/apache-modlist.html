@@ -85,6 +85,7 @@ RobotRules	bdpf	Enforce robot rules (robots.txt)	PARKER
 Sandwich	bmpf	Layered document (sandwich) maker	DOUGM
 VhostSandwich	bdpf	Virtual host layered document maker	MARKC
 SSI		bmpO	Implement server-side includes in Perl	KWILLIAM
+SSIChain	bmpO	SSI on other modules output		JANPAZ
 Stage		bdpf	Manage a document staging directory	ANDK
 TarGzip		c						ZENIN
 WDB		bdpf	Database query/edit tool using DBI	JROWE
@@ -101,7 +102,7 @@ AuthExpire	cmpO	Expire Basic auth credentials		DOUGM
 AuthenGSS	cdpf    Generic Security Service (RFC 2078)	DOUGM
 AuthenLDAP	i	LDAP authentication module		MARKK
 AuthNIS		bdpf	NIS authentication and authorization	DOUGM
-AuthenNT	bdpf	Authenticate against NT server		PARKER
+AuthenSmb	bdpf	Authenticate against NT server		PARKER
 BasicCookieAuth	cdpf	Accept cookie or basic auth creds	PMKANE
 DBILogin	bdpf	Authenticate to backend database 	JGROENVEL
 DCELogin	bdpf	Obtain a DCE login context		DOUGM
@@ -159,6 +160,7 @@ Mysql		bdpO	Persistent connection mgmt. for Mysql	NJENSEN
 
 * Interfaces and integration with various Apache C modules
 Constants	Rmcf	Constants defined in httpd.h		APML
+ExtUtils	bmpO	Utils for Apache:C/Perl glue		APML
 Include		Rmpf	mod_include + Apache::Registry handler	APML
 Global		cmcO	Access to server global variables	APML
 LogError	c	aplog_error interface			FLETCH

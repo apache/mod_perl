@@ -611,6 +611,26 @@ CHAR_P perl_pod_end_section (cmd_parms *cmd, void *dummy) {
     return perl_pod_end_magic;
 }
 
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, void *dummy,
+				  char *one, char *two, char *three)
+{
+    dSP;
+    char *subname = (char *)cmd->info;
+
+    ENTER;SAVETMPS;
+    PUSHMARK(sp);
+    PUSHif(one);PUSHif(two);PUSHif(three);
+    PUTBACK;
+    (void)perl_call_pv(subname, G_EVAL | G_SCALAR);
+    SPAGAIN;
+    LEAVE;FREETMPS;
+
+    if(perl_eval_ok(cmd->server) != OK) 
+	return SvPVX(ERRSV);
+    else
+	return NULL;
+}
+
 #ifdef PERL_SECTIONS
 
 CHAR_P perl_srm_command_loop(cmd_parms *parms, SV *sv)
