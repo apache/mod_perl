@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+properly default $Apache::Registry::NameWithVirtualHost=1, 
+thanks to spot by Ryan A. Whelan
+
 fix tied $r->err_headers_out cut-n-pasto [Peter Kaas <Peter.Kaas@lunatech.com>]
 
 Apache::read_client_block will now use safemalloc/safefree, rather

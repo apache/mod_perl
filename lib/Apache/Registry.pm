@@ -14,7 +14,7 @@ Apache->module('Apache::Debug') if $Apache::Registry::Debug;
 
 my $Is_Win32 = $^O eq "MSWin32";
 
-unless ($Apache::Registry::{NameWithVirtualHost}) {
+unless (defined $Apache::Registry::NameWithVirtualHost) {
     $Apache::Registry::NameWithVirtualHost = 1;
 }
 
