@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/08/22 23:16:41 $]
+   Last modified at [$Date: 2003/08/28 01:54:13 $]
 
 Release:
 --------
@@ -301,9 +301,24 @@ Open Issues or Core Enhancements:
 APR as external Perl glue
 -------------------------
 
-APR::Table now depends on modperl_hash_tie, so it can't be used
-outside mod_perl. should probably abstract this function into a new
-utils.c object that can be linked by APR.so.
+- APR::Table now depends on modperl_hash_tie, so it can't be used
+  outside mod_perl. should probably abstract this function into a new
+  utils.c object that can be linked by APR.so.
+
+  Status: see the next item
+
+- APR::PerlIO needs an equivalent of modperl_perl_gensym
+
+  Status: we need to abstract those function into a separate object,
+  which can be linked by APR.so. However I think we should probably
+  provide a static build and after that see how to do the linking
+  right. Otherwise we may have collisions with statically linked
+  symbols and the dynamic ones.
+
+  APR::Pool relies on interpreter management functions and therefore
+  can't be used outside mod_perl.
+
+  Status: 
 
 Documentation:
 --------------
