@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+add  /D "_MSWSOCK_" to ApacheModulePerl.dsp
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 removed modules/sandwich test
 
 Apache::RegistryBB returns DECLINED instead of FORBIDDEN if -d $r->finfo
