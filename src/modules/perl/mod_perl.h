@@ -69,6 +69,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 
 void modperl_init(server_rec *s, apr_pool_t *p);
 int modperl_run(apr_pool_t *p, server_rec *s);
+int modperl_is_running(void);
 int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
                       apr_pool_t *ptemp, server_rec *s);
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
