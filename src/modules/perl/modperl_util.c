@@ -443,6 +443,22 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
     return 0;
 }
 
+/* XXX: same as Perl_do_sprintf(); 
+ * but Perl_do_sprintf() is not part of the "public" api
+ */
+void modperl_perl_do_sprintf(pTHX_ SV *sv, I32 len, SV **sarg)
+{
+    STRLEN patlen;
+    char *pat = SvPV(*sarg, patlen);
+    bool do_taint = FALSE;
+
+    sv_vsetpvfn(sv, pat, patlen, Null(va_list*), sarg + 1, len - 1, &do_taint);
+    SvSETMAGIC(sv);
+    if (do_taint) {
+        SvTAINTED_on(sv);
+    }
+}
+
 void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
 {
     I32 i, oldscope = PL_scopestack_ix;
