@@ -247,7 +247,7 @@ static char *custom_response(request_rec *r, int status, char *string)
 
     if(conf->response_code_strings == NULL) {
         conf->response_code_strings = (char **)
-	  pcalloc(r->pool,
+	  pcalloc(perl_get_startup_pool(),
 		  sizeof(*conf->response_code_strings) * 
 		  RESPONSE_CODES);
     }
