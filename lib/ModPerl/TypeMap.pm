@@ -144,7 +144,7 @@ sub can_map {
     return 1 if $map->{argspec};
 
     for (@_) {
-        return unless $self->map_type($_);
+        return (0, $_) unless $self->map_type($_);
     }
 
     return 1;
@@ -230,8 +230,14 @@ sub map_function {
 
     $self->thx_fixup($func);
 
-    return unless $self->can_map($map, $func->{return_type},
-                                 map $_->{type}, @{ $func->{args} });
+    my($status, $failed_type) = 
+        $self->can_map($map, $func->{return_type},
+            map $_->{type}, @{ $func->{args} });
+
+    unless ($status) {
+        warn "unknown typemap: '$failed_type' (skipping $func->{name})\n";
+        return;
+    }
 
     my $type = $map->{return_type} || $func->{return_type} || 'void';
     my $map_type = $self->map_type($type);
