@@ -8,6 +8,17 @@ apr_status_t modperl_interp_cleanup(void *data);
 
 #ifdef USE_ITHREADS
 
+/*
+ * HvPMROOT will never be used by Perl with PL_modglobal.
+ * so we have stolen it as a quick way to stash the interp
+ * pointer.
+ */
+#define MP_THX_INTERP_GET(thx) \
+    (modperl_interp_t *)HvPMROOT(*Perl_Imodglobal_ptr(thx))
+
+#define MP_THX_INTERP_SET(thx, interp) \
+    HvPMROOT(*Perl_Imodglobal_ptr(thx)) = (PMOP*)interp
+
 const char *modperl_interp_scope_desc(modperl_interp_scope_e scope);
 
 void modperl_interp_clone_init(modperl_interp_t *interp);

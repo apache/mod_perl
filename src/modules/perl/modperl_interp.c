@@ -44,6 +44,7 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
         (modperl_interp_t *)apr_pcalloc(p, sizeof(*interp));
     
     interp->mip = mip;
+    interp->refcnt = 0; /* for use by APR::Pool->cleanup_register */
 
     if (perl) {
 #ifdef MP_USE_GTOP
@@ -232,6 +233,13 @@ apr_status_t modperl_interp_unselect(void *data)
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
 
+    if (interp->refcnt != 0) {
+        --interp->refcnt;
+        MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d\n",
+                   (unsigned long)interp, interp->refcnt);
+        return APR_SUCCESS;
+    }
+
     if (interp->request) {
         /* ithreads + a threaded mpm + PerlInterpScope handler */
         request_rec *r = interp->request;
@@ -242,6 +250,8 @@ apr_status_t modperl_interp_unselect(void *data)
 
     MpInterpIN_USE_Off(interp);
     MpInterpPUTBACK_Off(interp);
+
+    MP_THX_INTERP_SET(interp->perl, NULL);
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
@@ -393,6 +403,12 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
+
+#ifdef USE_ITHREADS
+    if (scfg->threaded_mpm) {
+        MP_THX_INTERP_SET(interp->perl, interp);
+    }
+#endif
 
     return interp;
 }

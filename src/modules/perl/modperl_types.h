@@ -43,6 +43,7 @@ struct modperl_interp_t {
     int num_requests;
     U8 flags;
     request_rec *request;
+    int refcnt;
 #ifdef MP_TRACE
     unsigned long tid;
 #endif
