@@ -35,4 +35,9 @@ typedef void * apr_thread_mutex_t;
  * which httpd release allows us to remove the compat code
  */
 
+/* ap_http_scheme is called ap_http_method in httpd 2.0 */
+#ifndef ap_http_scheme
+#define ap_http_scheme(r) ap_http_method(r)
+#endif
+
 #endif /* MODPERL_APACHE_COMPAT_H */
