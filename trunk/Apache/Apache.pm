@@ -548,7 +548,7 @@ Returns the value of a per-directory variable specified by the
 C<PerlSetVar> directive.
 
    # <Location /foo/bar>
-   # SetPerlVar  Key  Value
+   # PerlSetVar  Key  Value
    # </Location>
 
    my $val = $r->dir_config('Key');
