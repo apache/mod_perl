@@ -5,7 +5,8 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, ['Compress::Zlib', 'deflate', 'include'];
+plan tests => 1, have 'Compress::Zlib', 'deflate', 'include', 
+    have_min_apache_version("2.0.43");
 
 require Compress::Zlib;
 my $location = '/TestFilter__both_str_req_mix';
