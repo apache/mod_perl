@@ -2,6 +2,7 @@
 
 MODULE=ModPerl::Util
  mpxs_ModPerl__Util_untaint | | ...
+ DEFINE_exit | | int:status=0
 
 MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
