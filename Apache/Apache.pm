@@ -4,7 +4,7 @@ use Exporter ();
 use Apache::Constants qw(OK DECLINED);
 use Apache::SIG ();
 
-@Apache::EXPORT_OK = qw(exit warn fork forkoption);
+@Apache::EXPORT_OK = qw(exit warn);
 $Apache::VERSION = "1.24";
 
 *import = \&Exporter::import;
