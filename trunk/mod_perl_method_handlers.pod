@@ -73,7 +73,7 @@ In httpd.conf:
 
  <Location /obj-handler>
  SetHandler perl-script
- PerlHandler $My::Obj->method
+ PerlHandler '$My::Obj->method'
  </Location>
 
 In startup.pl or another PerlRequire'd file:
@@ -118,8 +118,9 @@ module to a object, and can now do a
 	 -elements  => 'wday hour min',
  );
 
-And then use $Client1::Datebar and $Client2::Datebar as PerlHandlers
-in my Apache configuration.
+And then use $Client1::Datebar and $Client2::Datebar as PerlHandlers in my
+Apache configuration. Remember to pass them in literal quotes ('') and not
+"" which will be interpolated!
 
 I've a webinterface system to our content-database. I've created
 objects to handle the administration of articles, banners, images and
