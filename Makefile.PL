@@ -65,9 +65,9 @@ my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
 
 ModPerl::BuildMM::WriteMakefile(
-    NAME => 'mod_perl',
-    VERSION => $VERSION,
-    macro => {
+    NAME      => 'mod_perl',
+    VERSION   => $VERSION,
+    macro     => {
         MODPERL_SRC        => $code->path,
         MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
         MAKE_F             => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
@@ -77,12 +77,12 @@ ModPerl::BuildMM::WriteMakefile(
         MODPERL_AP_INCLUDEDIR  => $build->apxs('-q' => 'INCLUDEDIR'),
         MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
-    clean => {
+    clean     => {
         FILES => "@{ clean_files() }",
     },
-    dist => {
+    dist      => {
         DIST_DEFAULT => 'mydist',
-	COMPRESS=> 'gzip -9f', SUFFIX=>'gz',
+	COMPRESS     => 'gzip -9f', SUFFIX=>'gz',
     },
 );
 
