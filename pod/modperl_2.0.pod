@@ -996,17 +996,29 @@ be overviewed then include:
 
 =over 4
 
-=item "Compiled" Perl*Handlers
+=item *
 
-=item Method calls faster than subroutine calls!
+"Compiled" Perl*Handlers
 
-=item `print' enhancements
+=item *
 
-=item Inlined Apache::*.xs calls
+Method calls faster than subroutine calls!
 
-=item Use of Apache Pools for memory allocations
+=item *
 
-=item Copy-on-write strings
+`print' enhancements
+
+=item *
+
+Inlined Apache::*.xs calls
+
+=item *
+
+Use of Apache Pools for memory allocations
+
+=item *
+
+Copy-on-write strings
 
 =back
 
@@ -1020,3 +1032,7 @@ The mod_perl homepage will announce mod_perl-2.0 developments as they
 become available.
 
 =back
+
+=head1 AUTHOR
+
+Doug MacEachern
