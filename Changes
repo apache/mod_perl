@@ -10,6 +10,20 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_06-dev
 
+fix compilation probs with get_remote_host() that had a wrong
+prototype [Stas Bekman]
+
+Apache::SubProcess now has a manpage [Stas Bekman]
+
+fix the Apache::SubProcess tests to work with perlio-disabled Perl
+[Stas Bekman]
+
+fix the filehandle leak in APR::PerlIO (both perlio-disabled and
+perlio-enabled Perl) [Stas Bekman]
+
+remove dup() when converting filehandles from apr_file_t to FILE*
+under perlio-disabled Perl (APR::PerlIO) [Stas Bekman]
+
 fix compilation if apache/apr do not have thread support
 
 =item 1.99_05 - August 20, 2002
