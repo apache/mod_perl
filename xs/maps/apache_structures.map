@@ -141,11 +141,11 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
 >  register_hooks
 </module>
 
-!<process_rec>
+<process_rec>
    pool
    pconf
-   argc
-   argv
+-  argc
+!  argv
    short_name
 </process_rec>
 
