@@ -810,16 +810,16 @@ void modperl_register_hooks(apr_pool_t *p)
 
 static const command_rec modperl_cmds[] = {  
     MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
-    MP_CMD_SRV_ITERATE("PerlModule", modules, "PerlModule"),
-    MP_CMD_SRV_ITERATE("PerlRequire", requires, "PerlRequire"),
+    MP_CMD_DIR_ITERATE("PerlModule", modules, "PerlModule"),
+    MP_CMD_DIR_ITERATE("PerlRequire", requires, "PerlRequire"),
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),
     MP_CMD_DIR_ITERATE2("PerlAddVar", add_var, "PerlAddVar"),
     MP_CMD_DIR_TAKE2("PerlSetEnv", set_env, "PerlSetEnv"),
     MP_CMD_SRV_TAKE1("PerlPassEnv", pass_env, "PerlPassEnv"),
-    MP_CMD_SRV_RAW_ARGS_ON_READ("<Perl", perl, "Perl Code"),
-    MP_CMD_SRV_RAW_ARGS("Perl", perldo, "Perl Code"),
+    MP_CMD_DIR_RAW_ARGS_ON_READ("<Perl", perl, "Perl Code"),
+    MP_CMD_DIR_RAW_ARGS("Perl", perldo, "Perl Code"),
 
     MP_CMD_DIR_TAKE1("PerlSetInputFilter", set_input_filter,
                      "filter[;filter]"),
