@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+add mod_perl_version.pm so CPAN.pm can 'install mod_perl' again
+
 ensure Apache::Server::CWD is untainted
 
 add support to compile with -DPERL_OBJECT (win32 + 5.004_72+)
