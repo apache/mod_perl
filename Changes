@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+$r->get_client_block is bogus in httpd-2.0.45 (and ealier), as it
+can't handle EOS buckets arriving in the same bucket brigade with
+data. so rewrite ModPerl::Test::read_post to use an explicit read
+through all bucket brigades till it sees eos and then it stops. The
+code is longer but it works correctly. [Stas]
+
 an attempt to resolve the binary compatibility problem in
 PerlIOAPR_seek API when APR_HAS_LARGE_FILES=0 [Stas]
 
