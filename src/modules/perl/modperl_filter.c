@@ -66,18 +66,11 @@
                    );                               \
     }
 
-/* Restore previously saved value of $@, warning if a new error was
- * generated */
+/* Restore previously saved value of $@. if there was a filter error
+ * it'd have been logged by modperl_errsv call following
+ * modperl_callback */
 #define MP_FILTER_RESTORE_ERRSV(tmpsv)                  \
     if (tmpsv) {                                        \
-        if (SvTRUE(ERRSV)) {                            \
-            Perl_warn(aTHX_ "%s", SvPVX(ERRSV));        \
-            MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT   \
-                       "error: %s",                     \
-                        MP_FILTER_NAME(filter->f),      \
-                        SvPVX(ERRSV)                    \
-                        );                              \
-        }                                               \
         sv_setsv(ERRSV, tmpsv);                         \
         MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT       \
                    "Restoring $@='%s'",                 \
@@ -542,13 +535,13 @@ int modperl_run_filter(modperl_filter_t *filter)
                      "Apache::Filter");
     }
 
+    MP_FILTER_RESTORE_ERRSV(errsv);
+ 
     MP_INTERP_PUTBACK(interp);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", modperl_handler_name(handler), status);
     
-    MP_FILTER_RESTORE_ERRSV(errsv);
- 
     return status;
 }
 
