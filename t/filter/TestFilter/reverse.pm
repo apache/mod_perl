@@ -9,7 +9,10 @@ sub handler {
     my $filter = shift;
 
     while ($filter->read(my $buffer, 1024)) {
-        $filter->print(scalar reverse $buffer);
+        for (split "\n", $buffer) {
+            $filter->print(scalar reverse $_);
+            $filter->print("\n");
+        }
     }
 
     0;
