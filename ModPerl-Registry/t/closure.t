@@ -118,9 +118,10 @@ my $path = catfile $cfg->{vars}->{serverroot}, 'cgi-bin', $file;
 
 sub sleep_and_touch_file {
     my $file = shift;
-    # need to wait at least 1 whole sec, so -M will notice the
+    # need to wait at least 1 whole sec, so utime() will notice the
     # difference. select() has better resolution than 1 sec as in
-    # sleep()
+    # sleep() so we are more likely to have the minimal waiting time,
+    # while fullfilling the purpose
     select undef, undef, undef, 1.00; # sure 1 sec
     my $now = time;
     utime $now, $now, $file;
