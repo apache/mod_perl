@@ -168,9 +168,11 @@ apr_status_t modperl_interp_pool_destroy(void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
 
-    modperl_tipool_destroy(mip->tipool);
-    mip->tipool = NULL;
-
+    if (mip->tipool) {
+        modperl_tipool_destroy(mip->tipool);
+        mip->tipool = NULL;
+    }
+    
     if (MpInterpBASE(mip->parent)) {
         /* multiple mips might share the same parent
          * make sure its only destroyed once
@@ -227,12 +229,12 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     modperl_interp_pool_t *mip = 
         (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
-    modperl_tipool_t *tipool = 
-        modperl_tipool_new(p, scfg->interp_pool_cfg,
-                           &interp_pool_func, mip);
-
-    mip->tipool = tipool;
-    mip->server  = s;
+    if (scfg->threaded_mpm) {
+        mip->tipool = modperl_tipool_new(p, scfg->interp_pool_cfg,
+                                         &interp_pool_func, mip);
+    }
+    
+    mip->server = s;
     mip->parent = modperl_interp_new(mip, NULL);
     aTHX = mip->parent->perl = perl;
     
@@ -496,7 +498,7 @@ void modperl_interp_mip_walk(PerlInterpreter *current_perl,
                              modperl_interp_mip_walker_t walker,
                              void *data)
 {
-    modperl_list_t *head = mip->tipool->idle;
+    modperl_list_t *head = mip->tipool ? mip->tipool->idle : NULL;
 
     if (!current_perl) {
         current_perl = PERL_GET_CONTEXT;
