@@ -12,24 +12,33 @@ static apr_bucket *mpxs_APR__Bucket_new(SV *classname, SV *sv,
     return modperl_bucket_sv_create(aTHX_ sv, offset, len);
 }
 
-static MP_INLINE const char *mpxs_APR__Bucket_read(apr_bucket *bucket,
-                                                   apr_ssize_t wanted)
+/* this is just so C::Scan will pickup the prototype */
+static MP_INLINE apr_status_t modperl_bucket_read(apr_bucket *bucket,
+                                                  const char **str,
+                                                  apr_size_t *len,
+                                                  apr_read_type_e block)
+{
+    return apr_bucket_read(bucket, str, len, block);
+}
+
+static MP_INLINE apr_status_t mpxs_modperl_bucket_read(pTHX_
+                                                       apr_bucket *bucket,
+                                                       SV *buffer,
+                                                       apr_read_type_e block)
 {
     int rc;
     apr_ssize_t len;
     const char *str;
 
-    rc = apr_bucket_read(bucket, &str, &len, wanted);
+    rc = modperl_bucket_read(bucket, &str, &len, block);
 
-    if ((rc != APR_SUCCESS) || !str) {
-        if (rc != APR_EOF) {
-            /* XXX: croak */
-        }
-        return NULL;
+    if ((rc != APR_SUCCESS) && (rc != APR_EOF)) {
+        /* XXX: croak ? */
     }
-    else {
-        return str;
-    }
+
+    sv_setpvn(buffer, str, len);
+
+    return rc;
 }
 
 static MP_INLINE int mpxs_APR__Bucket_is_eos(apr_bucket *bucket)
