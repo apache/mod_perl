@@ -172,7 +172,7 @@ MODULE=APR::Lock
  apr_lock_acquire
  apr_lock_release
  apr_lock_acquire_rw
- apr_lock_create_np
+-apr_lock_create_np
  apr_lock_tryacquire
 
 MODULE=APR::Table

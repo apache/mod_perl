@@ -26,9 +26,9 @@ struct ap_conf_vector_t | Apache::ConfVector
 ap_mgmt_type_e          | IV
 ap_mgmt_value           | UNDEFINED
 ap_scoreboard_e         | IV
-struct process_score    | Apache::ScoreboardProcess
-struct worker_score     | Apache::ScoreboardWorker
-struct ap_pod_t         | Apache::POD
+struct process_score    | UNDEFINED
+struct worker_score     | UNDEFINED
+struct ap_pod_t         | UNDEFINED
 ap_unix_identity_t      | UNDEFINED
 
 #filters
