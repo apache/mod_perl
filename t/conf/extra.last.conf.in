@@ -12,7 +12,7 @@ $Location{'/perl_sections'} = {
     };
 </Perl>
 
-<Perl>
+<Perl >
 package Tie::PerlSection;
 use Tie::Hash;
 @ISA = (Tie::StdHash);
