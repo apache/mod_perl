@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_14
+=item 1.99_14 - May 21, 2004
 
 APR::SockAddr::port() accessor is now read-only [Stas]
 
