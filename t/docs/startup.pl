@@ -1,4 +1,4 @@
-#! /usr/local/bin/perl
+#!perl
 
 unless (defined $ENV{MOD_PERL}) {
     die "\$ENV{MOD_PERL} not set!";
@@ -103,7 +103,10 @@ sub main::access { print ++$Access::Cnt }
 
 $ENV{GATEWAY_INTERFACE} =~ /^CGI-Perl/ or die "GATEWAY_INTERFACE not set!";
 
-sub Outside::imported {4}
+sub Outside::code {4}
+%Outside::hash = (one => 1);
+@Outside::array = qw(one);
+$Outside::scalar = 'one';
 
 #will be redef'd during tests
 sub PerlTransHandler::handler {-1}

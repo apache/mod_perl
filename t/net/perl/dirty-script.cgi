@@ -10,7 +10,10 @@ print "Content-type: text/plain\n\n";
 open FH, $0 or die $!;
 
 sub subroutine {}
-*imported = \&Outside::imported;
+*code_alias = \&Outside::code;
+*hash_alias = \%Outside::hash;
+*array_alias = \@Outside::array;
+*scalar_alias = \$Outside::scalar;
 
 push @array, 1;
 
