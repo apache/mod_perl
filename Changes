@@ -12,8 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
-$r->print() and print() now return 0E0 (zero but true) when the call
-was successful but for zero bytes.  [Geoffrey Young]
+$r->print() and tied print() now return 0E0 (zero but true) when the
+call was successful but for zero bytes.  [Geoffrey Young]
 
 a new function Apache::ServerUtil::server_shutdown_cleanup_register to
 register cleanups to be run at server shutdown. [Stas]
