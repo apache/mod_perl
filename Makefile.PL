@@ -129,6 +129,7 @@ $PREP_HTTPD = 0;
 $PERL_TRACE = 0;
 $ALL_HOOKS  = 0;
 $APACHE_SRC = "";
+$APACHE_PREFIX = "";
 $APACHE_HEADER_INSTALL = 1;
 $PERL_SECTIONS = 0;
 $PERL_SSI = 0;
@@ -150,7 +151,7 @@ PERL_TIE_SCRIPTNAME
 };
 
 my @mp_args = 
-    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE 
+    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE APACHE_PREFIX
        USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT);
 
@@ -222,7 +223,12 @@ while($_ = shift) {
 $USE_APACI = 1 if $USE_DSO;
 
 if($USE_APXS) {
-    $WITH_APXS = $USE_APXS if -e $USE_APXS;
+    if(-e $USE_APXS and !(-d _)) {
+        $WITH_APXS = $USE_APXS;
+    }
+    elsif($USE_APXS and $APACHE_PREFIX) {
+	$WITH_APXS = "$APACHE_PREFIX/sbin/apxs";
+    }
     print "Will configure via APXS";
     print " (apxs=$WITH_APXS)" if $WITH_APXS;
     print "\n";
@@ -729,6 +735,9 @@ sub init_tests_and_config {
 	if($APACI_ARGS) {
 	    $cmd .= " " . join " ", split(',', $APACI_ARGS);
 	}
+	if($APACHE_PREFIX and $APACI_ARGS !~ /--prefix=/)  {
+	    $cmd .= " --prefix=$APACHE_PREFIX";
+	}
 	print "(cd $APACHE_ROOT && $cmd)\n";
 	system "(cd $APACHE_ROOT && $cmd)";
     }
@@ -951,15 +960,25 @@ sub MY::clean {
 sub MY::install {
     my $self = shift;
     my $string = $self->MM::install;
-    return $string unless $USE_APXS;
-    $string =~ s/(pure_install\s+)(.*)/$1 apxs_install $2/;
+    my $add = "";
+    if($USE_APXS) {
+	$add = "apxs_install";
+    }
+    elsif($USE_APACI) {
+	if($APACI_ARGS =~ /--prefix=/ or $APACHE_PREFIX) {
+	    $add = "apaci_install";
+	}
+    }
+    if($add and !$NO_HTTPD and !$PREP_HTTPD) {
+	$string =~ s/(pure_install\s+)(.*)/$1 $add $2/;
+    }
     return $string;
 }
 
 sub MY::top_targets {
     my $self = shift;
     my $string = $self->MM::top_targets;
-    return $string unless $USE_APXS or $APACHE_SRC;
+    return $string unless $USE_APXS or $USE_APACI or $APACHE_SRC;
 
     if($USE_APACI and !$PREP_HTTPD) {
 	$string =~ s/(pure_all\s+::\s+)(.*)/$1 apaci_httpd $2/;
@@ -990,6 +1009,9 @@ apache_httpd: $(APACHE_SRC)/Makefile.tmpl
 
 apaci_httpd: 
 	(cd $(APACHE_ROOT) && $(MAKE))
+
+apaci_install: 
+	(cd $(APACHE_ROOT) && $(MAKE) install)
 
 tar_Apache:
 	(cd $(INSTALLSITELIB); \
