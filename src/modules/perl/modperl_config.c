@@ -166,8 +166,10 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 
     /* give a chance to MOD_PERL_TRACE env var to set PerlTrace. This
      * place is the earliest point in mod_perl configuration
-     * parsing */
-    modperl_trace_level_set(s, NULL);
+     * parsing, when we have the server object */
+    if (!s->is_virtual) {
+        modperl_trace_level_set(s, NULL);
+    }
     
 #ifdef USE_ITHREADS
 
