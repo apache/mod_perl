@@ -1,5 +1,7 @@
 use lib qw(../lib);
-use ModPerl::MM ();
+use ModPerl::BuildMM ();
 
-ModPerl::MM::WriteMakefile(NAME => "APR",
-                           VERSION => '0.01');
+ModPerl::BuildMM::WriteMakefile(
+    NAME => "APR",
+    VERSION => '0.01'
+);

@@ -31,7 +31,7 @@ use Apache::TestSmokePerl ();
 use Apache::TestTrace;
 use ModPerl::TestRun ();
 use ModPerl::Code ();
-use ModPerl::MM ();
+use ModPerl::BuildMM ();
 
 use constant WIN32 => Apache::Build::WIN32;
 
@@ -59,7 +59,7 @@ my @remote_makefile_dirs = WIN32() ? () :
 
 configure();
 
-local %ModPerl::MM::PM = (
+local %ModPerl::BuildMM::PM = (
     'lib/typemap' => 'blib/lib/Apache2/typemap',
     'lib/Apache2.pm' => 'blib/lib/Apache2.pm',
 );
@@ -69,7 +69,7 @@ local %ModPerl::MM::PM = (
 my @xs_h_files = map catfile("xs", $_),
     qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
 
-ModPerl::MM::WriteMakefile(
+ModPerl::BuildMM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
     DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
@@ -79,7 +79,7 @@ ModPerl::MM::WriteMakefile(
         MAKE_F             => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
         MODPERL_LIBMAKE    => '$(MAKE) -f $(MODPERL_MAKEFILE)',
         PERL               => $build->perl_config('perlpath'),
-        MOD_INSTALL        => ModPerl::MM::mod_install(),
+        MOD_INSTALL        => ModPerl::BuildMM::mod_install(),
         MODPERL_AP_INCLUDEDIR  => $build->apxs('-q' => 'INCLUDEDIR'),
         MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
@@ -177,7 +177,7 @@ sub configure {
         debug "unlink...$_" if -e $_ && unlink;
     }
 
-    #ModPerl::MM will use Apache::BuildConfig in subdir/Makefile.PL's
+    #ModPerl::BuildMM will use Apache::BuildConfig in subdir/Makefile.PL's
     $build->save;
 
     for my $util (qw(Report Smoke)) {
