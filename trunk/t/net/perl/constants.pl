@@ -6,6 +6,8 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
+eval { require Apache::Constants::Exports };
+
 use Apache::Constants ();
 use strict qw(vars);
 shift->send_http_header("text/plain");

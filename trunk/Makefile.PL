@@ -158,6 +158,7 @@ PERL_SECTIONS_SELF_BOOT
 PERL_RESTART_HANDLER
 PERL_TIE_SCRIPTNAME
 PERL_STASH_POST_DATA
+XS_IMPORT
 };
 
 my @mp_args = 
@@ -1030,6 +1031,10 @@ sub MY::top_targets {
     }
 
     $string .= <<'EOF';
+
+gen_exports:
+	$(PERL) -MExtUtils::testlib -MApache::Constants::Exports \
+	-e 'Apache::Constants::Exports->gen_ctags' > Exports.c
 
 apxs_distclean:
 	(cd ./apaci && $(MAKE) distclean)

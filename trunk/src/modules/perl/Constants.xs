@@ -9,6 +9,53 @@
 #define MOD_PERL_STRING_VERSION "mod_perl/x.xx"
 #endif
 
+#ifdef XS_IMPORT
+#include "Exports.c"
+
+static void export_cv(SV *class, SV *caller, char *sub)
+{
+    GV *gv;
+#if 0
+    fprintf(stderr, "*%s::%s = \\&%s::%s\n",
+	    SvPVX(caller), sub, SvPVX(class), sub);
+#endif
+    gv = gv_fetchpv(form("%_::%s", caller, sub), TRUE, SVt_PVCV);
+    GvCV(gv) = perl_get_cv(form("%_::%s", class, sub), TRUE);
+    GvIMPORTED_CV_on(gv);
+}
+
+static void my_import(SV *class, SV *caller, SV *sv)
+{
+    char *sym = SvPV(sv,na), **tags;
+    int i;
+
+    switch (*sym) {
+    case ':':
+	++sym;
+	tags = export_tags(sym);
+	for(i=0; tags[i]; i++) {
+	    export_cv(class, caller, tags[i]);
+	}
+	break;
+    case '$':
+    case '%':
+    case '*':
+    case '@':
+	croak("\"%s\" is not exported by the Apache::Constants module", sym);
+    case '&':
+	++sym;
+    default:
+	if(isALPHA(sym[0])) {
+	    export_cv(class, caller, sym);
+	    break;
+	}
+	else {
+	    croak("Can't export symbol: %s", sym);
+	}
+    }
+}
+#endif /*XS_IMPORT*/
+
 static CV *no_warn = Nullcv;
 
 CV *empty_anon_sub(void)
@@ -782,6 +829,23 @@ BOOT:
 	newCONSTSUB(stash, SvPVX(name), newSViv(val));
     }
 }
+
+#ifdef XS_IMPORT
+
+void
+import(class, ...)
+    SV *class
+
+    PREINIT:
+    I32 i = 0;
+    SV *caller = perl_eval_pv("scalar caller", TRUE);
+
+    CODE:
+    for(i=1; i<items; i++) {
+	my_import(class, caller, ST(i));
+    }
+
+#endif
 
 void
 __AUTOLOAD()

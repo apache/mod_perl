@@ -6,6 +6,14 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
+=item 1.13_01-dev
+
+experimental optimization for Apache::Constants if XS_IMPORT=1 is
+given to Makefile.PL:  
+drop heavy Exporter::import/@EXPORT/@EXPORT_OK/%EXPORT_TAGS for
+Apache::Constants::import written in C, shaves ~25K from resident
+memory
+
 =item 1.13 - July 13, 1998
 
 fix Makefile.PL setting of numeric $User/$Group for 'make test'
