@@ -97,9 +97,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
 
     MP_TRACE_o(MP_FUNC, "start");
 
-    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
-
-    /* STDIN could be closed or invalid */
+    /* if STDIN is open, dup it, to be restored at the end of response */
     if (handle && SvTYPE(handle) == SVt_PVGV &&
         IoTYPE(GvIO(handle)) != IoTYPE_CLOSED) {
         handle_save = gv_fetchpv(Perl_form(aTHX_
@@ -120,6 +118,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
         Perl_do_close(aTHX_ handle, TRUE);
     }
 
+    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
     status = Perl_do_open9(aTHX_ handle, "<:Apache", 8, FALSE, O_RDONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
@@ -141,9 +140,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
 
     MP_TRACE_o(MP_FUNC, "start");
 
-    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
-
-    /* STDOUT could be closed or invalid */
+    /* if STDOUT is open, dup it, to be restored at the end of response */
     if (handle && SvTYPE(handle) == SVt_PVGV &&
         IoTYPE(GvIO(handle)) != IoTYPE_CLOSED) {
         handle_save = gv_fetchpv(Perl_form(aTHX_
@@ -164,6 +161,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
         Perl_do_close(aTHX_ handle, TRUE);
     }
 
+    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
     status = Perl_do_open9(aTHX_ handle, ">:Apache", 8, FALSE, O_WRONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
