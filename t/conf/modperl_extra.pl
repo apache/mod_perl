@@ -17,8 +17,6 @@ use Apache::Log ();
 use Apache::Const -compile => ':common';
 use APR::Const -compile => ':common';
 
-eval { require TestFilter::input_msg };
-
 use APR::Table ();
 
 unless ($ENV{MOD_PERL}) {
