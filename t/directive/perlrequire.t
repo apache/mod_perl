@@ -8,11 +8,12 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest ();
 
-my %checks =
-    (
-     'default'                    => 'PerlRequired by Parent',
-     'TestDirective::perlrequire' => 'PerlRequired by VirtualHost',
-    );
+my %checks = (
+    'default'                    => 'PerlRequired by Parent',
+    'TestDirective::perlrequire' => 'PerlRequired by VirtualHost',
+);
+
+delete $checks{'TestDirective::perlrequire'} unless have_perl 'ithreads';
 
 plan tests => scalar keys %checks;
 
@@ -23,9 +24,7 @@ for my $module (sort keys %checks) {
     my $hostport = Apache::TestRequest::hostport($config);
     print "connecting to $hostport\n";
 
-    ok t_cmp(
-             $checks{$module},
+    ok t_cmp($checks{$module},
              $config->http_raw_get("/TestDirective::perlrequire", undef),
-             "testing PerlRequire in $module",
-            );
+             "testing PerlRequire in $module");
 }
