@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+avoid 'prototype mismatch' warnings in Apache::PerlRun::flush_namespace
+[Wenzhong Tang <Tang@appliant.com>]
+
 xsubpp now run with -nolinenumbers (5.004_04 bombs otherwise)
 
 DSO support for hpux with native cc
