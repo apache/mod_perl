@@ -2,7 +2,8 @@ use strict;
 use warnings FATAL => 'all';
 no warnings 'redefine';
 
-use lib map {($_, "../$_") } qw(lib Apache-Test/lib);
+use FindBin;
+use lib grep { -d } map "$FindBin::Bin/../$_", qw(lib Apache-Test/lib);
 
 use ModPerl::BuildMM ();
 use Apache::TestSmokePerl ();

@@ -1,9 +1,10 @@
 use strict;
 use warnings FATAL => 'all';
 
-use lib map {("../blib/$_", "../../blib/$_")} qw(lib arch);
+use FindBin;
 # test against the source lib for easier dev
-use lib map {("../$_", "../../$_")} qw(lib Apache-Test/lib);
+use lib "$FindBin::Bin/../lib";
+use lib grep { -d } map "$FindBin::Bin/../../$_", qw(lib Apache-Test/lib);
 
 use Apache::TestRunPerl ();
 
