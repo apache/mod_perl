@@ -12,7 +12,7 @@ my $location = '/TestDirective::setupenv';
 my $env = GET_BODY $location;
 
 ok $env;
-print $env;
+
 my %env;
 
 for my $line (split /\n/, $env) {
@@ -20,8 +20,6 @@ for my $line (split /\n/, $env) {
     my($key, $val) = split /=/, $line, 2;
     $env{$key} = $val || '';
 }
-use Data::Dumper;
-print Dumper \%env;
 
 ok t_cmp $location, $env{REQUEST_URI}, "testing REQUEST_URI";
 
