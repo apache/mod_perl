@@ -11,8 +11,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - sfio patch [Lupe Christoph <lupe@lupe-christoph.de>]
 
-- SetEnv PATH cause garbled value (is it mod_env or mod_perl?)
-
 - libapreq: Apache::Cookie format sync w/ CGI.pm
 
 - document Apache::File

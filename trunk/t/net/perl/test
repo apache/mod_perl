@@ -29,7 +29,7 @@ if(defined $Scalar) {
 $Scalar = 1;
 
 my $r = Apache->request;
-$ENV{PATH} = "/bin";
+local $ENV{PATH} = "/bin";
 use vars qw($is_xs);
 $is_xs = ($r->uri =~ /_xs/);
 
