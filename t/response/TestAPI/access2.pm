@@ -25,6 +25,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Access ();
+use Apache::RequestRec ();
 
 use Apache::TestTrace;
 
