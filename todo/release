@@ -22,11 +22,6 @@
   suite fails to start since it doesn't find APXS values in
   Apache/BuildConfig.pm
 
-* APR::Finfo constants: APR::FILETYPE_* and APR::FILEPROT_* will
-  probably be APR::FTYPE_* and APR::FPROT_*
-  will know exactly once libapr is fixed
-  owner: stas
-
 * $r->child_terminate:
   - a must to be able to port Apache::SizeLimit, which is a
     showstopper for many mp1 users wanting to move to mp2.
