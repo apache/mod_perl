@@ -1,0 +1,5 @@
+
+AuthName mod_perl
+AuthType Basic
+PerlAuthenHandler Apache::AuthenTest
+require valid-user
