@@ -17,7 +17,7 @@ else {
 $r->subprocess_env; #test void context
 my $is_xs = ($r->uri =~ /_xs/);
 
-my $tests = 46;
+my $tests = 48;
 my $is_win32 = WIN32;
 ++$tests unless $is_win32;
 my $test_get_set = Apache->can('set_handlers') && ($tests += 4);
@@ -137,6 +137,8 @@ $r->print(\$str);
 test ++$i, $r->module("Apache");
 test ++$i, not Apache->module("Not::A::Chance");
 test ++$i, Apache->module("Apache::Constants");
+test ++$i, not Apache->module("mod_nochance.c");
+test ++$i, Apache->module("mod_perl.c");
 
 #just make sure we can call this one
 if($test_custom_response) {

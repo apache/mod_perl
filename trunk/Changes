@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+tweak Apache->module so it can test for configured .c modules
+
 pushing out experimental stuff:
   EXPERIMENTAL=1 (enables all experiments, except PERL_DEFAULT_OPMASK)
   PERL_GET_SET_HANDLERS=1 if PERL_STACKED_HANDLERS
