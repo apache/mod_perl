@@ -8,7 +8,7 @@ use File::Spec::Functions qw(catfile);
 
 use TestCommon::SameInterp;
 
-plan tests => 3;
+plan tests => 3, need 'HTML::HeadParser';
 
 my $test_file = catfile Apache::Test::vars("serverroot"),
     qw(lib Apache Reload Test.pm);

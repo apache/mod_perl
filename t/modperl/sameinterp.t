@@ -10,7 +10,7 @@ use Apache::TestRequest;
 
 use TestCommon::SameInterp;
 
-plan tests => 12;
+plan tests => 12, need 'HTML::HeadParser';
 
 my $url = "/TestModperl__sameinterp";
 

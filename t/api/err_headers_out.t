@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 6;
+plan tests => 6, need 'HTML::HeadParser';
 
 my $location = '/TestAPI__err_headers_out';
 

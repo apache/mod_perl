@@ -12,7 +12,7 @@ my @patterns = (
     'mod_perl', #SERVER_SOFTWARE
 );
 
-plan tests => 2 + @patterns, ['include'];
+plan tests => 2 + @patterns, ['include', 'HTML::HeadParser'];
 
 my $location = "/includes-registry/test.spl";
 

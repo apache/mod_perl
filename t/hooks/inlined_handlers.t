@@ -6,7 +6,7 @@ use Apache::TestUtil;
 use Apache::TestRequest;
 use TestCommon::SameInterp;
 
-plan tests => 2;
+plan tests => 2, need 'HTML::HeadParser';
 
 my $location = "/TestHooks__inlined_handlers";
 
