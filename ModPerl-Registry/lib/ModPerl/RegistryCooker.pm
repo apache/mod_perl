@@ -188,11 +188,20 @@ sub run {
     my $rc = Apache::OK;
     my $cv = \&{"$package\::handler"};
 
+    my %orig_inc = %INC;
+
     { # run the code and preserve warnings setup when it's done
         no warnings;
         eval { $rc = $cv->($r, @_) };
         $self->[STATUS] = $rc;
         ModPerl::Global::special_list_call(END => $package);
+    }
+
+    # %INC cleanup in case .pl files do not declare package ...;
+    for (keys %INC) {
+	next if $orig_inc{$_};
+	next if /\.pm$/;
+	delete $INC{$_};
     }
 
     $self->flush_namespace;
@@ -366,20 +375,11 @@ sub convert_script_to_compiled_handler {
                     ${ $self->[CODE] },
                     "\n}"; # last line comment without newline?
 
-    my %orig_inc = %INC;
-
     my $rc = $self->compile(\$eval);
     return $rc unless $rc == Apache::OK;
     $self->debug(qq{compiled package \"$self->[PACKAGE]\"}) if DEBUG & D_NOISE;
 
     #$self->chdir_file("$Apache::Server::CWD/");
-
-    # %INC cleanup in case .pl files do not declare package ...;
-    for (keys %INC) {
-	next if $orig_inc{$_};
-	next if /\.pm$/;
-	delete $INC{$_};
-    }
 
 #    if(my $opt = $r->dir_config("PerlRunOnce")) {
 #	$r->child_terminate if lc($opt) eq "on";
