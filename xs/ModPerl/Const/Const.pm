@@ -12,7 +12,10 @@ use constant DL_GLOBAL =>
   $Config::Config{dlsrc} eq 'dl_dlopen.xs' ? 0x01 : 0x0;
 sub dl_load_flags { DL_GLOBAL }
 
-__PACKAGE__->bootstrap($VERSION);
+#only bootstrap for use outside of mod_perl
+unless (defined &Modperl::Const::compile) {
+    __PACKAGE__->bootstrap($VERSION);
+}
 
 sub import {
     my $class = shift;
