@@ -15,8 +15,8 @@ patience - mod_perl is considered alpha under NT and Windows9x.
 MSVC++ 5.0+, Apache version 1.3-dev or higher and Perl 5.004_02 or higher.
 
 As of version 1.24_01, mod_perl will build on Win32 ActivePerls
-based on Perl-5.6.0 (builds 6xx). It will not build on ActivePerl
-8xx builds at present due to the enabling of LARGE_FILES support.
+based on Perl-5.6.1 (builds 6xx). Versions 1.28_01 will build on
+ActivePerls 8xx, based on Perl-5.8.0.
 
 =back
 
