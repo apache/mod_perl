@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.28_01-dev
 
+For Win32, keep drive letters in mod_perl.dsp to fix bug, reported 
+by DH <crazyinsomniac@yahoo.com>, when compiling mod_perl in
+cases where Apache and Perl are on different drives [Randy Kobes]. 
+
 Add workaround to define statcache in Apache.xs so that
 one can build on Win32 ActivePerl 8xx with LARGE_FILES
 support [Randy Kobes]
