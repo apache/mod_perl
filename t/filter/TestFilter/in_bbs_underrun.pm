@@ -74,7 +74,7 @@ sub handler {
 
     # now create a bucket per chunk of SIZE size and put the remainder
     # in ctx
-    for (unpack "(A".SIZE.")*", $buffer) {
+    for (split_buffer($buffer)) {
         if (length($_) == SIZE) {
             $bb->insert_tail(APR::Bucket->new($_));
         }
@@ -96,6 +96,19 @@ sub handler {
     }
 
     return Apache::OK;
+}
+
+# split in words of SIZE chars and a remainder
+sub split_buffer {
+    my $buffer = shift;
+    if ($] < 5.007) {
+        my @words = $buffer =~ /(.{@{[SIZE]}}|.+)/g;
+        return @words;
+    }
+    else {
+        # available only since 5.7.x+
+        return unpack "(A" . SIZE . ")*", $buffer;
+    }
 }
 
 sub flatten_bb {
