@@ -1,0 +1,8 @@
+there is much ToDo for 2.0, this directory contains notes and test
+code.
+
+breakdown.txt - major components of mod_perl 
+Apache-class.txt - notes on Apache.{pm,xs}
+c-sources.txt - notes on the mod_perl .[ch] sources
+perl-modules.txt - notes on the mod_perl Apache::* modules
+xs-sources.txt - notes on the mod_perl xs interfaces

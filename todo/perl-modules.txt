@@ -1,0 +1,25 @@
+non-core, pure Perl modules
+---------------------------
+Apache::src
+Apache::httpd_conf
+Apache::test
+Apache::Debug
+Apache::ExtUtils
+Apache::FakeRequest
+Apache::Opcode
+Apache::PerlSections
+Apache::PerlRun
+Apache::Registry
+- loose dup code in Apache::Registry, use Apache::PerlRun methods
+Apache::RegistryLoader
+Apache::Resource
+Apache::SIG
+Apache::SizeLimit
+Apache::StatINC
+Apache::Symdump
+Apache::Symbol
+Apache::Leak
+Apache::RedirectLogFix
+Apache::Include
+Apache::Status
+Bundle::Apache

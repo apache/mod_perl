@@ -1,0 +1,155 @@
+Apache::Constants imports
+DECLINED
+OK
+
+tied filehandle interface
+CLOSE
+GETC
+PRINT
+PRINTF
+READ
+READLINE
+TIEHANDLE
+WRITE
+
+core request components
+-----------------------
+args - char * (no longer parse in array context)
+ query_string - remove
+ parse_args - remove
+bytes_sent - long
+content_encoding - char * 
+content_language - remove
+content_languages - array_header *
+content_type - char *
+err_header_out - remove
+err_headers_out - table *
+filename - char *
+finfo - struct stat 
+handler - char *
+header_in - remove
+header_only - int
+header_out - remove 
+headers_in - table * 
+headers_out - table *
+hostname - remove
+get_remote_host - char *
+get_remote_logname - char *
+is_initial_req - int
+is_main - int
+last - request_rec * 	
+main - request_rec * 	
+next - request_rec * 	
+prev - request_rec * 	
+use dualvar magic?
+status - int
+status_line - char *
+method - char *
+method_number - int
+no_cache - int 
+notes - table *
+path_info - char *
+protocol - char *
+proxyreq - int 
+request_time - time_t
+send_http_header - void
+subprocess_env - table *
+the_request - char *
+uri - char *
+server - server_rec *
+connection - conn_rec *
+
+basic_http_header - remove
+content - remove, use libapreq 
+
+server core functions
+---------------------
+chdir_file
+child_terminate
+custom_response
+internal_redirect
+internal_redirect_handler
+log_error
+log_reason
+warn
+lookup_file
+lookup_uri
+register_cleanup
+
+configuration
+-------------
+allow_options
+define
+document_root
+get_server_name
+get_server_port
+module
+server_root_relative
+satisfies
+
+I/O
+---
+send_fd
+print
+printf
+rflush
+read
+get_client_block
+setup_client_block
+should_client_block
+new_read - remove
+read_client_block - remove
+write_client - remove
+read_length - remove
+
+maybe Apache::Timeout class with these methods
+hard_timeout
+reset_timeout
+soft_timeout
+kill_timeout
+
+maybe Apache::Auth class with these methods
+auth_name
+auth_type
+note_basic_auth_failure
+get_basic_auth_pw
+some_auth_required
+requires
+as_string - move to Apache::Debug
+import - uh?
+
+translate_name - remove
+unescape_url - move to Apache::Util
+unescape_url_info - move to Apache::Util
+
+aux
+---
+slurp_filename
+stash_rgy_endav
+clear_rgy_endav
+taint - remove?
+untaint
+
+mod_perl specific
+-----------------
+current_callback
+get_handlers
+push_handlers
+set_handlers
+dir_config
+exit - maybe use die $r/PROPAGATE instead of tie-ing $@
+gensym
+httpd_conf - move elsewhere
+can_stack_handlers - remove
+cgi_env - remove ?
+cgi_header_out - change to use scan_script_header
+cgi_var - remove
+location
+request
+send_cgi_header
+sent_header - yuck
+seqno - remove
+set_opmask - move to Apache::Opcode
+perl_hook - remove?
+pnotes
+post_connection
