@@ -97,6 +97,8 @@ use constant IOBUFSIZE => 8192;
 use Apache::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
+# to enable debug start with: (or simply run with -trace=debug)
+# t/TEST -trace=debug -start
 sub ModPerl::Test::read_post {
     my $r = shift;
     my $debug = shift || 0;
@@ -107,12 +109,17 @@ sub ModPerl::Test::read_post {
     my $ba = $r->connection->bucket_alloc;
     my $bb = APR::Brigade->new($r->pool, $ba);
 
+    my $count = 0;
     do {
         my $rv = $filters->get_brigade($bb,
             Apache::MODE_READBYTES, APR::BLOCK_READ, IOBUFSIZE);
         if ($rv != APR::SUCCESS) {
             return $rv;
         }
+
+        $count++;
+
+        warn "read_post: bb $count\n" if $debug;
 
         while (!$bb->empty) {
             my $buf;
@@ -121,16 +128,16 @@ sub ModPerl::Test::read_post {
             $b->remove;
 
             if ($b->is_eos) {
-                warn "EOS bucket:\n" if $debug;
+                warn "read_post: EOS bucket:\n" if $debug;
                 $seen_eos++;
                 last;
             }
 
             my $status = $b->read($buf);
-            warn "DATA bucket: [$buf]\n" if $debug;
             if ($status != APR::SUCCESS) {
                 return $status;
             }
+            warn "read_post: DATA bucket: [$buf]\n" if $debug;
             push @data, $buf;
         }
 
