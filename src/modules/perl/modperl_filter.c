@@ -1,9 +1,54 @@
 #include "mod_perl.h"
 
+/* helper funcs */
+
+#define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
+
+MP_INLINE static apr_status_t send_input_eos(modperl_filter_t *filter)
+{
+    apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
+    apr_bucket *b = apr_bucket_eos_create(ba);
+    APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
+    ((modperl_filter_ctx_t *)filter->f->ctx)->sent_eos = 1;
+    return APR_SUCCESS;
+}
+
+MP_INLINE static apr_status_t send_input_flush(modperl_filter_t *filter)
+{
+    apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
+    apr_bucket *b = apr_bucket_flush_create(ba);
+    APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
+    return APR_SUCCESS;
+}
+
+MP_INLINE static apr_status_t send_output_eos(ap_filter_t *f)
+{
+    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
+                                                ba);
+    apr_bucket *b = apr_bucket_eos_create(ba);
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+    ((modperl_filter_ctx_t *)f->ctx)->sent_eos = 1;
+    MP_TRACE_f(MP_FUNC, "sending EOS bucket in separate bb\n");
+    return ap_pass_brigade(f, bb);
+}
+
+MP_INLINE static apr_status_t send_output_flush(ap_filter_t *f)
+{
+    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
+                                                ba);
+    apr_bucket *b = apr_bucket_flush_create(ba);
+    APR_BRIGADE_INSERT_TAIL(bb, b);
+    MP_TRACE_f(MP_FUNC, "sending FLUSH bucket in separate bb\n");
+    return ap_pass_brigade(f, bb);
+}
+
 /* simple buffer api */
 
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
-                                            const char *buf, apr_size_t len)
+                                            const char *buf, apr_size_t len,
+                                            int add_flush_bucket)
 {
     apr_bucket_alloc_t *ba = (*wb->filters)->c->bucket_alloc;
     apr_bucket_brigade *bb;
@@ -56,20 +101,39 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     bucket = apr_bucket_transient_create(work_buf, len, ba);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
 
+    if (add_flush_bucket) {
+        /* append the flush bucket rather then calling ap_rflush, to
+         * prevent a creation of yet another bb, which will cause an
+         * extra call for each filter in the chain */
+        apr_bucket *bucket = apr_bucket_flush_create(ba);
+        APR_BRIGADE_INSERT_TAIL(bb, bucket);
+    }
+        
     MP_TRACE_f(MP_FUNC, "buffer length=%d\n", len);
 
     return ap_pass_brigade(*(wb->filters), bb);
 }
 
-MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb)
+/* if add_flush_bucket is TRUE
+ *  and there is data to flush,
+ *       a flush bucket is added to the tail of bb with data
+ * otherwise
+ *       a flush bucket is sent in its own bb
+ */
+MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb,
+                                             int add_flush_bucket)
 {
     apr_status_t rv = APR_SUCCESS;
 
     if (wb->outcnt) {
-        rv = modperl_wbucket_pass(wb, wb->outbuf, wb->outcnt);
+        rv = modperl_wbucket_pass(wb, wb->outbuf, wb->outcnt,
+                                  add_flush_bucket);
         wb->outcnt = 0;
     }
-
+    else if (add_flush_bucket) {
+        rv = send_output_flush(*(wb->filters));
+    }
+    
     return rv;
 }
 
@@ -87,14 +151,14 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
     
     if ((len + wb->outcnt) > sizeof(wb->outbuf)) {
         apr_status_t rv;
-        if ((rv = modperl_wbucket_flush(wb)) != APR_SUCCESS) {
+        if ((rv = modperl_wbucket_flush(wb, FALSE)) != APR_SUCCESS) {
             return rv;
         }
     }
 
     if (len >= sizeof(wb->outbuf)) {
         *wlen = len;
-        return modperl_wbucket_pass(wb, buf, len);
+        return modperl_wbucket_pass(wb, buf, len, FALSE);
     }
     else {
         memcpy(&wb->outbuf[wb->outcnt], buf, len);
@@ -105,8 +169,6 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
 }
 
 /* generic filter routines */
-
-#define MP_FILTER_POOL(f) f->r ? f->r->pool : f->c->pool
 
 modperl_filter_t *modperl_filter_new(ap_filter_t *f,
                                      apr_bucket_brigade *bb,
@@ -223,46 +285,6 @@ int modperl_run_filter(modperl_filter_t *filter)
     return status;
 }
 
-/* output filters */
-
-MP_INLINE static apr_status_t send_input_eos(modperl_filter_t *filter)
-{
-    apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
-    apr_bucket *b = apr_bucket_eos_create(ba);
-    APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
-    ((modperl_filter_ctx_t *)filter->f->ctx)->sent_eos = 1;
-    return APR_SUCCESS;
-    
-}
-
-MP_INLINE static apr_status_t send_input_flush(modperl_filter_t *filter)
-{
-    apr_bucket_alloc_t *ba = filter->f->c->bucket_alloc;
-    apr_bucket *b = apr_bucket_flush_create(ba);
-    APR_BRIGADE_INSERT_TAIL(filter->bb_out, b);
-    return APR_SUCCESS;
-}
-
-MP_INLINE static apr_status_t send_output_eos(ap_filter_t *f)
-{
-    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
-    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
-                                                ba);
-    apr_bucket *b = apr_bucket_eos_create(ba);
-    APR_BRIGADE_INSERT_TAIL(bb, b);
-    ((modperl_filter_ctx_t *)f->ctx)->sent_eos = 1;
-    return ap_pass_brigade(f->next, bb);
-}
-
-MP_INLINE static apr_status_t send_output_flush(ap_filter_t *f)
-{
-    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
-    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
-                                                ba);
-    apr_bucket *b = apr_bucket_flush_create(ba);
-    APR_BRIGADE_INSERT_TAIL(bb, b);
-    return ap_pass_brigade(f->next, bb);
-}
 
 /* unrolled APR_BRIGADE_FOREACH loop */
 
@@ -501,26 +523,30 @@ MP_INLINE apr_status_t modperl_input_filter_flush(modperl_filter_t *filter)
 
 MP_INLINE apr_status_t modperl_output_filter_flush(modperl_filter_t *filter)
 {
+    int add_flush_bucket = FALSE;
+    
     if (((modperl_filter_ctx_t *)filter->f->ctx)->sent_eos) {
         /* no data should be sent after EOS has been sent */
         return filter->rc;
     }
 
-    filter->rc = modperl_wbucket_flush(&filter->wbucket);
+    if (filter->flush) {
+        add_flush_bucket = TRUE;
+        filter->flush = 0;
+    }
+
+    filter->rc = modperl_wbucket_flush(&filter->wbucket, add_flush_bucket);
     if (filter->rc != APR_SUCCESS) {
         return filter->rc;
     }
 
-    if (filter->eos || filter->flush) {
-        MP_TRACE_f(MP_FUNC, "sending %s bucket\n",
-                   filter->eos ? "EOS" : "FLUSH");
-        filter->rc = filter->eos ?
-            send_output_eos(filter->f) : send_output_flush(filter->f);
+    if (filter->eos) {
+        filter->rc = send_output_eos(filter->f->next);
         if (filter->bb_in) {
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
         }
-        filter->flush = filter->eos = 0;
+        filter->eos = 0;
     }
 
     return filter->rc;

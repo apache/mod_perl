@@ -742,7 +742,7 @@ apr_status_t modperl_response_finish(request_rec *r)
     MP_dRCFG;
 
     /* flush output buffer */
-    return modperl_wbucket_flush(rcfg->wbucket);
+    return modperl_wbucket_flush(rcfg->wbucket, FALSE);
 }
 
 static int modperl_response_handler_run(request_rec *r, int finish)

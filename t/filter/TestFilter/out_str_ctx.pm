@@ -65,6 +65,10 @@ sub response {
 
     $r->content_type('text/plain');
 
+    # just to make sure that print() flushes, or we would get the
+    # count wrong
+    local $| = 1;
+
     # make sure that
     # - we send big enough data so it won't fit into one buffer
     # - use chunk size which doesn't nicely fit into a buffer size, so
