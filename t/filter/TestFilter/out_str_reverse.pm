@@ -1,5 +1,9 @@
 package TestFilter::out_str_reverse;
 
+# this filter tests how the data can be set-aside between filter
+# invocations. here we collect a single line (which terminates with a
+# new line) before we apply the reversing transformation.
+
 use strict;
 use warnings FATAL => 'all';
 
@@ -9,18 +13,29 @@ use Apache::Filter ();
 
 use Apache::Const -compile => qw(OK M_POST);
 
-sub handler {
-    my $filter = shift;
+use constant BUFF_LEN => 2;
 
-    while ($filter->read(my $buffer, 1024)) {
-        for (split "\n", $buffer) {
-            $filter->print(scalar reverse $_);
-            $filter->print("\n");
+sub handler {
+    my $f = shift;
+    #warn "called\n";
+
+    my $leftover = $f->ctx;
+    while ($f->read(my $buffer, BUFF_LEN)) {
+        #warn "buffer: [$buffer]\n";
+        $buffer = $leftover . $buffer if defined $leftover;
+        $leftover = undef;
+        while ($buffer =~ /([^\r\n]*)([\r\n]*)/g) {
+            $leftover = $1, last unless $2;
+            $f->print(scalar(reverse $1), $2);
         }
     }
 
-    if ($filter->seen_eos) {
-        $filter->print("Reversed by mod_perl 2.0\n");
+    if ($f->seen_eos) {
+        $f->print(scalar reverse $leftover) if defined $leftover;
+        $f->print("Reversed by mod_perl 2.0\n");
+    }
+    else {
+        $f->ctx($leftover) if defined $leftover;
     }
 
     return Apache::OK;
@@ -31,9 +46,11 @@ sub response {
 
     $r->content_type('text/plain');
 
+    # unbuffer stdout, so we get the data split across several bbs
+    local $_ = 1; 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
-        $r->puts($data);
+        my $data = ModPerl::Test::read_post($r); 
+        $r->print($_) for grep length $_, split /(.{5})/, $data;
     }
 
     return Apache::OK;
