@@ -20,6 +20,22 @@ void mp_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
     SvTAINTED_on(*svp);
 }
 
+typedef struct {
+    const char *key;
+    I32 klen;
+    const char *val;
+    I32 vlen;
+    U32 hash;
+} mp_env_ent_t;
+
+#define MP_ENV_ENT(k,v) \
+{ k, sizeof(k)-1, v, sizeof(v)-1, 0 }
+
+static const mp_env_ent_t mp_env_const_vars[] = {
+    MP_ENV_ENT("GATEWAY_INTERFACE", "CGI-Perl/1.1"),
+    { NULL }
+};
+
 static void mp_env_request_populate(pTHX_ request_rec *r)
 {
     HV *hv = GvHV(PL_envgv);
@@ -37,6 +53,13 @@ static void mp_env_request_populate(pTHX_ request_rec *r)
         mp_env_hv_store(aTHX_ hv, &elts[i]);
     }    
 
+    for (i = 0; mp_env_const_vars[i].key; i++) {
+        const mp_env_ent_t *ent = &mp_env_const_vars[i];
+
+        hv_store(hv, ent->key, ent->klen,
+                 newSVpvn(ent->val, ent->vlen), ent->hash);
+    }
+                 
     modperl_env_tie(mg_flags);
 }
 
