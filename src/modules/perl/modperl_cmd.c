@@ -97,6 +97,14 @@ MP_CMD_SRV_DECLARE2(set_env)
     MP_dSCFG(parms->server);
     modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
  
+#ifdef ENV_IS_CASELESS /* i.e. WIN32 */
+    /* we turn off env magic during hv_store later, so do this now,
+     * else lookups on keys with lowercase characters will fails
+     * because Perl will uppercase them prior to lookup.
+     */
+    modperl_str_toupper((char *)arg1);
+#endif
+
     MP_TRACE_d(MP_FUNC, "arg1 = %s, arg2 = %s\n", arg1, arg2);
 
     if (!parms->path) {
