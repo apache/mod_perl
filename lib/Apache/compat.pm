@@ -110,6 +110,12 @@ sub log_error {
     Apache->server->log_error(@_);
 }
 
+sub httpd_conf {
+    shift;
+    my $err = Apache->server->add_config([split /\n/, join '', @_]);
+    die $err if $err;
+}
+
 package Apache::Constants;
 
 use Apache::Const ();

@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+add Apache->httpd_conf compat method
+[Philippe M. Chiasson <gozer@cpan.org>]
+
 add default <Perl> handler Apache::PerlSection.
 make <Perl> blocks to be EXEC_ON_READ so apache does not parse the contents.
 add "Perl" directive for general use and for which <Perl> sections are

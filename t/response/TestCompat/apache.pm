@@ -16,7 +16,7 @@ use Apache::Constants qw(OK DIR_MAGIC_TYPE);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 6;
+    plan $r, tests => 7;
 
     $r->send_http_header('text/plain');
 
@@ -39,6 +39,12 @@ sub handler {
 
     ok t_cmp("httpd/unix-directory", DIR_MAGIC_TYPE,
              'DIR_MAGIC_TYPE');
+
+    my $admin = $r->server->server_admin;
+    Apache->httpd_conf('ServerAdmin foo@bar.com');
+    ok t_cmp('foo@bar.com', $r->server->server_admin,
+             'Apache->httpd_conf');
+    $r->server->server_admin($admin);
 
     OK;
 }
