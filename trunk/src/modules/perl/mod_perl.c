@@ -411,6 +411,7 @@ static void mod_perl_tie_scriptname(void)
     if(orig_inc) SvREFCNT_dec(orig_inc); \
     orig_inc = av_copy_array(GvAV(incgv))
 
+#if MODULE_MAGIC_NUMBER >= MMN_130
 static void mp_dso_unload(void *data) 
 { 
     module *modp;
@@ -430,6 +431,7 @@ static void mp_dso_unload(void *data)
 	}
     }
 } 
+#endif
 
 void perl_startup (server_rec *s, pool *p)
 {
