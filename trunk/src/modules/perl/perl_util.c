@@ -232,24 +232,10 @@ SV *mod_perl_slurp_filename(request_rec *r)
     return newRV_noinc(insv);
 }
 
-#ifndef load_module
-#define load_module(flags, name, ver, imp) \
-{ \
-   OP *modname = newSVOP(OP_CONST, 0, name); \
-   modname->op_private |= OPpCONST_BARE; \
-   utilize(TRUE, start_subparse(FALSE,0), Nullop, modname, Nullop); \
-}
-#endif
-
 SV *mod_perl_tie_table(table *t)
 {
     HV *hv = newHV();
     SV *sv = sv_newmortal();
-
-    /*try to make this quick as possible*/  
-    if(!hv_exists(GvHV(incgv), "Apache/Table.pm", 15)) {
-	load_module(0, newSVpv("Apache::Table",0), Nullsv, Nullsv);
-    }
 
     sv_setref_pv(sv, "Apache::table", (void*)t);
     perl_tie_hash(hv, "Apache::Table", sv);

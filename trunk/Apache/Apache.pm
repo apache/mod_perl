@@ -7,6 +7,8 @@ use Apache::Constants qw(OK DECLINED);
 use Apache::Connection ();
 use Apache::Server ();
 
+eval { require Apache::Table; };
+
 @Apache::EXPORT_OK = qw(exit warn);
 
 *import = \&Exporter::import;

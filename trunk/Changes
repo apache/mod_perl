@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+Apache::Table is now loaded by default (if enabled), rather than
+autoloading when first needed
+
 $r->document_root can now be modified
 
 upgrade license to apache software license version 1.1
