@@ -56,8 +56,9 @@ sub handler {
              undef, $size, $atime, $mtime, $ctime) = stat $file;
 
         # skip certain tests on Win32 (and others?)
+        # atime is wrong on NTFS, but OK on FAT32
         my %skip =  WIN32 ?
-            (map {$_ => 1} qw(device inode user group) ) : ();
+            (map {$_ => 1} qw(device inode user group atime) ) : ();
 
         # compare stat fields between perl and apr_stat
         {
