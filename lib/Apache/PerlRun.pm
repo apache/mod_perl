@@ -162,9 +162,10 @@ sub namespace_from {
     $pr->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
 		  $uri) if $Debug && $Debug & 4;
 
-    my $script_name = $pr->path_info ?
-	substr($uri, 0, length($uri)-length($pr->path_info)) :
-	    $uri;
+    my $path_info = $pr->path_info;
+    my $script_name = $path_info && $uri =~ /$path_info$/ ?
+	substr($uri, 0, length($uri)-length($path_info)) :
+	$uri;
 
     if($Apache::Registry::NameWithVirtualHost) {
 	my $name = $pr->get_server_name;
