@@ -5,10 +5,12 @@
 =item MAIL LIST
 
 For comments, questions, bug-reports, announcements, etc., send mail
-to modperl@listproc.itribe.net
+to I<modperl@listproc.itribe.net>
 To subscribe to this list (which you must do to send mail to the
-list), send mail to listserv@listproc.itribe.net 
-with the string "subscribe modperl" in the body.   
+list), send a mail message to I<listserv@listproc.itribe.net> with the body:
+
+ subscribe modperl
+
 (Thanks to Mark A. Imbriaco)
 
 =item MAIL LIST ARCHIVE
@@ -53,7 +55,9 @@ Version of apache
 
 Server configuration details
 
-relevant sections of logs/error_log
+relevant sections of /tmp/mod_perl_error_log or logs/error_log
+
+If 'make test' fails, the output of 'make test TEST_VERBOSE=1'
 
 Depending on the nature of your problem, you may also be asked:
 

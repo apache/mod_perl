@@ -75,10 +75,8 @@ my $rc = [@common, @response];
    
 *Apache::Constants::EXPORT = \@common;
 
-eval { bootstrap Apache::Constants $Apache::Constants::VERSION; };
-if($@) {
-    die "$@\n" if exists $ENV{MOD_PERL};
-    warn "warning: can't `bootstrap Apache::Constants' outside of httpd\n";
+if(exists $ENV{MOD_PERL}) {
+    bootstrap Apache::Constants $Apache::Constants::VERSION;
 }
 
 sub AUTOLOAD {

@@ -111,7 +111,7 @@ XS_INIT = `$(EXTUTILS_EMBED) -e xsinit -- -std $(PERL_STATIC_EXTS) $(STATIC_EXTS
 CC=`$(PERL) -MConfig -e 'print $$Config{cc}'`
 
 # AUX_CFLAGS comes from higher level Makefile
-CFLAGS=-I. -I$(INCDIR) -I$(INCDIR)/regex $(AUX_CFLAGS) \
+CFLAGS=-I. -I$(INCDIR) -I$(INCDIR)/regex -I$(INCDIR)/../$(OSDIR) $(AUX_CFLAGS) \
 	$(APACHE_SSL) $(PERL_CCFLAGS) \
 	-DMOD_PERL_VERSION=\"$(MOD_PERL_VERSION)\" $(PERL_VERSION) \
 	$(INCLUDES)

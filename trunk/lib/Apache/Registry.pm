@@ -122,6 +122,7 @@ sub handler {
 	    compile($eval);
 	    if ($@) {
 		$r->log_error($@);
+		$@{$r->uri} = $@;
 		return SERVER_ERROR unless $Debug && $Debug & 2;
 		return Apache::Debug::dump($r, SERVER_ERROR);
 	    }
@@ -142,7 +143,7 @@ sub handler {
 	if($@) {
 	    $errsv = $@;
 	    $@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks
-	    $@{"Apache::Registry"} = $errsv if $Apache::ERRSV_CAN_BE_HTTP;
+	    $@{$r->uri} = $errsv;
 	}
 
 	if($errsv) {

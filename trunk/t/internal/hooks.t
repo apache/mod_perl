@@ -57,6 +57,7 @@ while(<HOOKS>) {
     chomp;
     next if $Seen{$_}++;
     print "ok $i\n"; $i++;
+    last if $i > $hook_tests;
 }
 close HOOKS;
 

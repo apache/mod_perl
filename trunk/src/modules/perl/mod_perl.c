@@ -61,7 +61,7 @@
 #define CORE_PRIVATE 
 #include "mod_perl.h"
 
-#ifdef MULTITHREAD
+#ifdef WIN32
 void *mod_perl_mutex = &mod_perl_mutex;
 #else
 void *mod_perl_dummy_mutex = &mod_perl_dummy_mutex;
@@ -83,8 +83,11 @@ static HV *stacked_handlers = Nullhv;
 static command_rec perl_cmds[] = {
 #ifdef PERL_SECTIONS
     { "<Perl>", perl_section, NULL, OR_ALL, RAW_ARGS, "Perl code" },
-    { "</Perl>", perl_end_section, NULL, OR_ALL, NO_ARGS, NULL },
+    { "</Perl>", perl_end_section, NULL, OR_ALL, NO_ARGS, "End Perl code" },
 #endif
+    { "=pod", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "Start of POD" },
+    { "=cut", perl_pod_end_section, NULL, OR_ALL, NO_ARGS, "End of POD" },
+    { "__END__", perl_config_END, NULL, OR_ALL, RAW_ARGS, "Stop reading config" },
     { "PerlFreshRestart", perl_cmd_fresh_restart,
       NULL,
       RSRC_CONF, FLAG, "Tell mod_perl to reload modules and flush Apache::Registry cache on restart" },
@@ -96,7 +99,7 @@ static command_rec perl_cmds[] = {
       RSRC_CONF, FLAG, "Turn on -w switch" },
     { "PerlScript", perl_cmd_require,
       NULL,
-      OR_ALL, ITERATE, "this directive is depreciated, use `PerlRequire'" },
+      OR_ALL, ITERATE, "this directive is deprecated, use `PerlRequire'" },
     { "PerlRequire", perl_cmd_require,
       NULL,
       OR_ALL, ITERATE, "A Perl script name, pulled in via require" },
@@ -198,7 +201,7 @@ module MODULE_VAR_EXPORT perl_module = {
     PERL_CHILD_INIT_HOOK,   /* child_init */
 #endif
 #if MODULE_MAGIC_NUMBER >= 19970728
-    PERL_CHILD_EXIT_HOOK,   /* child_exit */
+    NULL,   /* child_exit *//* mod_perl uses register_cleanup() */
 #endif
 #if MODULE_MAGIC_NUMBER >= 19970825
     PERL_POST_READ_REQUEST_HOOK,   /* post_read_request */
@@ -600,17 +603,32 @@ int perl_handler(request_rec *r)
     return status;
 }
 
-
 #ifdef PERL_CHILD_INIT
+
+typedef struct {
+    server_rec *server;
+    pool *pool;
+} server_hook_args;
+
+static void perl_child_exit_cleanup(void *data)
+{
+    server_hook_args *args = (server_hook_args *)data;
+    PERL_CHILD_EXIT_HOOK(args->server, args->pool);
+}
+
 void PERL_CHILD_INIT_HOOK(server_rec *s, pool *p)
 {
     char *hook = "PerlChildInitHandler";
     dSTATUS;
     dPSRV(s);
     request_rec *r = fake_request_rec(s, p, hook);
+    server_hook_args args;
+
+    args.server = s;
+    args.pool = p;
+    register_cleanup(p, &args, perl_child_exit_cleanup, null_cleanup);
 
     mod_perl_init_ids();
-
     PERL_CALLBACK(hook, cls->PerlChildInitHandler);
 }
 #endif
@@ -745,6 +763,12 @@ void mod_perl_end_cleanup(void *data)
 
     /* reset $/ */
     sv_setpvn(GvSV(gv_fetchpv("/", FALSE, SVt_PV)), "\n", 1);
+
+    {
+	dTHR;
+	/* %@ */
+	hv_clear(ERRHV);
+    }
 
     callbacks_this_request = 0;
 
@@ -1181,6 +1205,7 @@ callback:
     SPAGAIN;
 
     if(perl_eval_ok(r->server) != OK) {
+	MP_STORE_ERROR(r->uri, ERRSV);
 	if(!perl_sv_is_http_code(ERRSV, &status))
 	    status = SERVER_ERROR;
     }
@@ -1196,8 +1221,8 @@ callback:
 	    status = OK; 
 
 	if((status == SERVER_ERROR) && ERRSV_CAN_BE_HTTP) {
-	    if(ERRHV && hv_exists(__RGY_ERRHV)) {
-		SV *errsv = hv_delete(__RGY_ERRHV, G_SCALAR);
+	    SV *errsv = Nullsv;
+	    if(MP_EXISTS_ERROR(r->uri) && (errsv = MP_FETCH_ERROR(r->uri))) {
 		(void)perl_sv_is_http_code(errsv, &status);
 	    }
 	}
@@ -1242,7 +1267,6 @@ void perl_setup_env(request_rec *r)
 
     for (i = 0; i < arr->nelts; ++i) {
 	if (!elts[i].key || !elts[i].val) continue;
-	if (strnEQ("HTTP_AUTHORIZATION", elts[i].key, 18)) continue;
 	mp_setenv(elts[i].key, elts[i].val);
     }
     MP_TRACE_g(fprintf(stderr, "perl_setup_env...%d keys\n", i));

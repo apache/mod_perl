@@ -74,6 +74,10 @@ child_terminate(request_rec *r)
 #define DONE -2
 #endif
 
+#if MODULE_MAGIC_NUMBER < 19980317
+int basic_http_header(request_rec *r);
+#endif
+
 pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);
@@ -130,6 +134,7 @@ max_requests_per_child(...)
     croak("Apache->max_requests_per_child not supported under win32!");
 #else
     RETVAL = max_requests_per_child;
+    warn("use Apache::Globals->max_request_per_child, not Apache->");
 #endif
     OUTPUT:
     RETVAL
@@ -662,6 +667,12 @@ void
 print(r, ...)
     Apache	r
 
+    ALIAS:
+    Apache::PRINT = 1
+
+    PREINIT:
+    ix = ix; /* avoid -Wall warning */
+
     CODE:
     if(!mod_perl_sent_header(r, 0)) {
 	SV *sv = sv_newmortal();
@@ -703,14 +714,29 @@ write_client(r, ...)
     PREINIT:
     int i;
     char * buffer;
-    STRLEN n;
+    STRLEN len;
 
     CODE:
     RETVAL = 0;
 
     for(i = 1; i <= items - 1; i++) {
-	buffer = SvPV(ST(i), n);
-	RETVAL += SENDN_TO_CLIENT;
+	buffer = SvPV(ST(i), len);
+#ifdef APACHE_SSL
+        while(len > 0) {
+            int sent = 0;
+	    if(len < HUGE_STRING_LEN) {
+	        sent = rwrite(buffer, len, r);
+	    }
+	    else {
+	        sent = rwrite(buffer, HUGE_STRING_LEN, r);
+	        buffer += HUGE_STRING_LEN;
+	    }
+	    len -= sent;
+	    RETVAL += sent;
+        }
+#else
+        RETVAL += rwrite(buffer, len, r);
+#endif
     }
 
 #functions from http_request.c
@@ -1360,6 +1386,21 @@ content_language(r, ...)
     OUTPUT:
     RETVAL
 
+void
+content_languages(r, avrv=Nullsv)
+    Apache	r
+    SV *avrv
+
+    PREINIT:   
+    I32 gimme = GIMME_V;
+
+    CODE:
+    if(avrv && SvROK(avrv))
+        r->content_languages = avrv2array_header(avrv, r->pool);
+
+    if(gimme != G_VOID)
+        ST(0) = array_header2avrv(r->content_languages);
+				   
 int
 no_cache(r, ...)
     Apache	r
@@ -1746,7 +1787,11 @@ names(server)
     Apache::Server	server
 
     CODE:
+#if MODULE_MAGIC_NUMBER < 19980305
     RETVAL = server->names;
+#else
+    RETVAL = ""; /* XXX: fixme */			   
+#endif
 
     OUTPUT:
-
+    RETVAL				   

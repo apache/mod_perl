@@ -64,6 +64,35 @@ void perl_util_cleanup(void)
     set_ids = 0;
 }
 
+SV *array_header2avrv(array_header *arr)
+{
+    AV *av;
+    int i;
+
+    iniAV(av);
+    if(arr) {
+	for (i = 0; i < arr->nelts; i++) {
+	    av_push(av, newSVpv(((char **) arr->elts)[i], 0));
+	}
+    }
+    return newRV_noinc((SV*)av);
+}
+
+array_header *avrv2array_header(SV *avrv, pool *p)
+{
+    AV *av = (AV*)SvRV(avrv);
+    I32 i;
+    array_header *arr = make_array(p, AvFILL(av)-1, sizeof(char *));
+
+    for(i=0; i<=AvFILL(av); i++) {
+	SV *sv = *av_fetch(av, i, FALSE);    
+	char **new = (char **) push_array(arr);
+	*new = pstrdup(p, SvPV(sv,na));
+    }
+
+    return arr;
+}
+
 #ifdef PERL_SECTIONS
 void perl_tie_hash(HV *hv, char *class)
 {
@@ -571,8 +600,11 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size)
     d = dst;
     end = dst + dst_size - 1;
 
-    while ((d < end) && (*d++ = *src++))
-        ;	/* nop, the while does it all */
+    for (; d < end; ++d, ++src) {
+	if (!(*d = *src)) {
+	    return (d);
+	}
+    }
 
     *d = '\0';	/* always null terminate */
 

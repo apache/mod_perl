@@ -1,3 +1,7 @@
+<IfModule mod_dll.c>
+LoadModule perl_module modules/ApacheModulePerl.dll
+</IfModule>
+
 AddType text/x-server-parsed-html .shtml
 AddType text/perl-module .pm
 
@@ -112,7 +116,7 @@ for (qw(status info)) {
 $ErrorLog = "/tmp/mod_perl_error_log";
 $PidFile  = "/tmp/mod_perl_httpd.pid";
 
-$AccessConfig = $TypesConfig = $TransferLog = $ScoreBoardFile = "/dev/null";
+$AccessConfig = $TypesConfig = $ScoreBoardFile = "$dir/docs/null.txt";
 
 $LockFile = "/tmp/mod_perl.lock";
 

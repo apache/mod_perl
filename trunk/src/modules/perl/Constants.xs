@@ -1,12 +1,4 @@
-#if 0
-#include "httpd.h"
-#include "http_core.h"
-#include "http_config.h"
-#include "EXTERN.h"
-#include "perl.h"
-#include "XSUB.h"
-#endif
-
+#define CORE_PRIVATE
 #include "mod_perl.h"
 
 static CV *no_warn = Nullcv;
@@ -48,6 +40,43 @@ static void newCONSTSUB(HV *stash, char *name, SV *sv)
     LEAVE;
 }
 
+static enum cmd_how autoload_args_how(char *name) {
+    if (strEQ(name, "FLAG"))
+	return FLAG;
+
+    if (strEQ(name, "ITERATE"))
+	return ITERATE;
+
+    if (strEQ(name, "ITERATE2"))
+	return ITERATE2;
+
+    if (strEQ(name, "NO_ARGS"))
+	return NO_ARGS;
+
+    if (strEQ(name, "RAW_ARGS"))
+	return RAW_ARGS;
+
+    if (strEQ(name, "TAKE1"))
+	return TAKE1;
+
+    if (strEQ(name, "TAKE12"))
+	return TAKE12;
+
+    if (strEQ(name, "TAKE123"))
+	return TAKE123;
+
+    if (strEQ(name, "TAKE2"))
+	return TAKE2;
+
+    if (strEQ(name, "TAKE23"))
+	return TAKE23;
+
+    if (strEQ(name, "TAKE3"))
+	return TAKE3;
+    
+    return -1;
+}
+
 static double
 constant(name)
 char *name;
@@ -58,6 +87,12 @@ char *name;
 	if (strEQ(name, "AUTH_REQUIRED"))
 #ifdef AUTH_REQUIRED
 	    return AUTH_REQUIRED;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "ACCESS_CONF"))
+#ifdef ACCESS_CONF
+	    return ACCESS_CONF;
 #else
 	    goto not_there;
 #endif
@@ -529,6 +564,54 @@ if (strEQ(name, "CONTINUE"))
 #else
 	    goto not_there;
 #endif
+	if (strEQ(name, "OR_NONE"))
+#ifdef OR_NONE
+	    return OR_NONE;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_LIMIT"))
+#ifdef OR_LIMIT
+	    return OR_LIMIT;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_OPTIONS"))
+#ifdef OR_OPTIONS
+	    return OR_OPTIONS;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_FILEINFO"))
+#ifdef OR_FILEINFO
+	    return OR_FILEINFO;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_AUTHCFG"))
+#ifdef OR_AUTHCFG
+	    return OR_AUTHCFG;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_INDEXES"))
+#ifdef OR_INDEXES
+	    return OR_INDEXES;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_UNSET"))
+#ifdef OR_UNSET
+	    return OR_UNSET;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "OR_ALL"))
+#ifdef OR_ALL
+	    return OR_ALL;
+#else
+	    goto not_there;
+#endif
 	break;
     case 'P':
 	break;
@@ -538,6 +621,12 @@ if (strEQ(name, "CONTINUE"))
 	if (strEQ(name, "REDIRECT"))
 #ifdef REDIRECT
 	    return REDIRECT;
+#else
+	    goto not_there;
+#endif
+	if (strEQ(name, "RSRC_CONF"))
+#ifdef RSRC_CONF
+	    return RSRC_CONF;
 #else
 	    goto not_there;
 #endif
@@ -629,6 +718,8 @@ if (strEQ(name, "CONTINUE"))
 #else
 	    goto not_there;
 #endif
+    case 'T':
+	break;
     case 'U':
 	if (strEQ(name, "USE_LOCAL_COPY"))
 #ifdef USE_LOCAL_COPY
@@ -647,11 +738,18 @@ if (strEQ(name, "CONTINUE"))
 	break;
     case 'Z':
 	break;
-    }
+    default:
     errno = EINVAL;
     return 0;
+    }
 
 not_there:
+    {
+	enum cmd_how args_how = autoload_args_how(name);
+	if(((int)args_how) > -1) 
+	    return (double)args_how;
+    }
+
     errno = ENOENT;
     return 0;
 }
@@ -666,11 +764,17 @@ PROTOTYPES: DISABLE
 
 BOOT:
     items = items;
+{
+    AV *export = perl_get_av("Apache::Constants::EXPORT", FALSE);
+    HV *stash = gv_stashpvn(__PACKAGE__, __PACKAGE_LEN__, FALSE);
+    I32 i;
+    for(i=0; i<=AvFILL(export); i++) { 
+	SV *name = *av_fetch(export, i, 0);
+	double val = constant(SvPVX(name));
+	newCONSTSUB(stash, SvPVX(name), newSViv(val));
+    }
+}
 
-double
-constant(name)
-    char *name
-  
 void
 __AUTOLOAD()
 
@@ -701,7 +805,7 @@ SERVER_VERSION()
 char *
 SERVER_BUILT()
    CODE: 
-#if MODULE_MAGIC_NUMBER >= 19970912
+#if (MODULE_MAGIC_NUMBER >= 19970912) && !defined(WIN32)
    RETVAL = (char *)SERVER_BUILT;
 #else
    RETVAL = "unknown";

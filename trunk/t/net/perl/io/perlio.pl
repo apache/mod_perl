@@ -22,7 +22,7 @@ else {
     print "Content-type: text/plain\n\n";
 
     print "perlio test...\n";
-    print "\$^X is $^X\n";
+    print "\$^X is $^X\n" if $^X;
     my(@args);
 
     if (@args = split(/\+/, $ENV{QUERY_STRING})) {

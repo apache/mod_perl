@@ -5,6 +5,8 @@ use Apache::src;
 
 my $i = 0;
 
+skip_test if WIN32;
+
 print "1..6\n";
 
 my $src = Apache::src->new;

@@ -19,12 +19,10 @@ if (caller eq "CGI::Apache") {
     bootstrap Apache $Apache::VERSION;
 }
 else {
-    eval { bootstrap Apache $Apache::VERSION };
+    if(exists $ENV{MOD_PERL}) {
+	bootstrap Apache $Apache::VERSION;
+    }
     Apache::SIG->set;
-}
-if($@) {
-    die "$@\n" if exists $ENV{MOD_PERL};
-    warn "warning: can't `bootstrap Apache $Apache::VERSION' outside of httpd\n";
 }
 
 if($ENV{MOD_PERL} && perl_hook("Sections")) {
@@ -109,12 +107,16 @@ sub READLINE {
     $line;
 }
 
-*PRINT = \&print;
-
 sub PRINTF {
     my $r = shift;
     my $fmt = shift;
     $r->print(sprintf($fmt, @_));
+}
+
+sub WRITE {
+    my($r, $buff, $length, $offset) = @_;
+    my $send = substr($buff, $offset, $length);
+    $r->print($send);
 }
 
 sub send_cgi_header {
@@ -706,10 +708,11 @@ Get or set the content encoding.  Content encodings are string like
 "gzip" or "compress".  This correspond to the "Content-Encoding"
 header in the HTTP protocol.
 
-=item $r->content_language( [$newval] )
+=item $r->content_languages( [$array_ref] )
 
-Get or set the content language.  The content language corresponds to the
-"Content-Language" HTTP header and is a string like "en" or "no".
+Get or set the content languages.  The content language corresponds to the
+"Content-Language" HTTP header and is an array reference containing strings
+such as "en" or "no".
 
 =item $r->status( $integer )
 

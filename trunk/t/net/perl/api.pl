@@ -4,10 +4,11 @@ use strict;
 
 Apache->register_cleanup(sub {0});
 
-my $tests = 32;
+my $tests = 35;
 my $i;
 my $r = Apache->request;
 $r->content_type("text/plain");
+$r->content_languages([qw(en)]);
 $r->send_http_header;
 $r->print("1..$tests\n");
 
@@ -58,10 +59,10 @@ $r->header_out(ByeBye => undef);
 test ++$i, not $r->header_out("ByeBye");
 
 #content_encoding
-#content_language
+test ++$i, $r->content_languages;
 #no_cache
-#test ++$i, $r->uri;
-#test ++$i, $r->filename;
+test ++$i, $r->uri;
+test ++$i, $r->filename;
 #test ++$i, $r->path_info;
 #test ++$i, $r->query_string;
 

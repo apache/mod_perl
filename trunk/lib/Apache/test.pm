@@ -2,12 +2,12 @@ package Apache::test;
 
 use strict;
 use vars qw(@EXPORT $USE_THREAD);
-use LWP::UserAgent ();
 use Exporter ();
 use Config;
 *import = \&Exporter::import;
 
-@EXPORT = qw(test fetch simple_fetch have_module skip_test $USE_THREAD); 
+@EXPORT = qw(test fetch simple_fetch have_module skip_test 
+	     $USE_THREAD WIN32); 
 
 BEGIN { 
     if(not $ENV{MOD_PERL}) {
@@ -15,9 +15,17 @@ BEGIN {
     } 
 }
 
-$USE_THREAD = $Config{extensions} =~ /Thread/;
+$USE_THREAD = ($Config{extensions} =~ /Thread/) || $Config{usethreads};
 
-my $UA = LWP::UserAgent->new;
+my $Is_Win32 = ($^O eq "MSWin32");
+sub WIN32 () { $Is_Win32 };
+
+my $UA;
+
+eval {
+    require LWP::UserAgent;
+    $UA = LWP::UserAgent->new;
+};
 
 unless (defined &Apache::bootstrap) {
     *Apache::bootstrap = sub {};

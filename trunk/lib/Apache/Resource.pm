@@ -16,7 +16,7 @@ sub MB ($) {
 }
 
 sub DEFAULT_RLIMIT_DATA  () { 64 } #data (memory) size
-sub DEFAULT_RLIMIT_CPU   () { 60*3 } #cpu time in milliseconds
+sub DEFAULT_RLIMIT_CPU   () { 60*6 } #cpu time in milliseconds
 sub DEFAULT_RLIMIT_CORE  () { 0  } #core file size
 sub DEFAULT_RLIMIT_RSS   () { 16 } #resident set size
 sub DEFAULT_RLIMIT_FSIZE () { 10 } #file size 
@@ -146,6 +146,13 @@ can be limited.
 By default, C<PERL_RLIMIT_DATA> is set to 64 megabytes if it does
 not exist in the current environment. 
 
+=head1 DEFAULTS
+
+To set reasonable defaults for all RLIMITs, add this to your httpd.conf:
+
+ PerlSetEnv PERL_RLIMIT_DEFAULTS On
+ PerlModule Apache::Resource
+
 =head1 AUTHOR
 
 Doug MacEachern
@@ -155,3 +162,7 @@ Doug MacEachern
 BSD::Resource(3), setrlimit(2)
 
 =cut
+
+
+
+
