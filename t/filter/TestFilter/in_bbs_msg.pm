@@ -25,11 +25,7 @@ sub handler : FilterConnectionHandler {
     my $c = $filter->c;
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
-    my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
-
-    if ($rv != APR::SUCCESS) {
-        return $rv;
-    }
+    $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
 
     while (!$ctx_bb->is_empty) {
         my $bucket = $ctx_bb->first;

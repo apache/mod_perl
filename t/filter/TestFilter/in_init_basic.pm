@@ -41,8 +41,7 @@ sub transparent : FilterRequestHandler
     $filter->r->notes->set(run => $ctx->{run});
     $filter->ctx($ctx);
 
-    my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
-    return $rv unless $rv == APR::SUCCESS;
+    $filter->next->get_brigade($bb, $mode, $block, $readbytes);
 
     return Apache::OK;
 }

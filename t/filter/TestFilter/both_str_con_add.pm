@@ -63,21 +63,15 @@ sub handler {
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     for (;;) {
-        my $rv = $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
-        if ($rv != APR::SUCCESS && $rv != APR::EOF) {
-            my $error = APR::Error::strerror($rv);
-            warn __PACKAGE__ . ": get_brigade: $error\n";
-            last;
-        }
-
+        $c->input_filters->get_brigade($bb, Apache::MODE_GETLINE);
         last if $bb->is_empty;
 
-        # fflush is the equivalent of the following 3 lines of code:
-        #
-        # my $b = APR::Bucket::flush_create($c->bucket_alloc);
-        # $bb->insert_tail($b);
-        # $c->output_filters->pass_brigade($bb);
-        $c->output_filters->fflush($bb);
+        my $b = APR::Bucket::flush_create($c->bucket_alloc);
+        $bb->insert_tail($b);
+        $c->output_filters->pass_brigade($bb);
+        # fflush is the equivalent of the previous 3 lines of code:
+        # but it's tested elsewhere, here testing flush_create
+        # $c->output_filters->fflush($bb);
     }
 
     $bb->destroy;
