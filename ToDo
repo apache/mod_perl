@@ -3,17 +3,11 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
-- $VirtualHost{'111.22.33.55'} = [...]
+- SERVER_CREATE/SERVER_MERGE
 
 - stronghold patches [Todd R. Eigenschink <todd@tekinteractive.com>]
 
-- top-level PerlSetEnv isn't set for PerlChildInitHandler w/ 5.005_02
-
-- looks like we need a per-server configuration merge routine
-
 - Andrew Ford's Apache::FakeRequest patch
-
-- $r->finfo flaky?
 
 - sync ApacheModulePerl.dsp -> .mak, add Util.c, etc. sources
 
@@ -21,54 +15,11 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - sort out =pod configuration directives
 
-- CGI.pm & File-upload = memory leak? (Gerald Richter)
-
-- SSIs executed using /bin/sh, not suexec as configured?
-  Theo Van Dinter <felicity@kluge.net>
-
-- StatINC doesn't reimport the imported symbols?
-  Stas Bekman <sbekman@iil.intel.com>, 
-  Message-Id: <Pine.A41.3.96.981007170413.44288Q-100000@ilx374.iil.intel.com>
-- Look at Apache::ASP's handling of exported functions (for implementation
-  in Apache::StatINC) (same thing as above?) [ask]
-
-- Option to StatINC to make it possible to only watch chosen modules
-  [ask]
-
-- forking under Apache::Registry, exit vs CORE::exit 
-
-- files that have been created after the server's (child?) startup are
-  being reported with negative age with -M test under Apache::Registry. 
-  The workaround is to add $^T = time; at the beginning of the scripts. But
-  it would be much better if the Apache::Registry will do that 
-
-- turn of strip of httpd during 'make install'
-
-- 'make htmldoc' (Brian Moseley)
-
-- sfio/solaris problem
-Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
-
-- make 'make test_report' more useful
-
-- Apache::Registry should check return value of the subroutine,
-  e.g. for REDIRECT   
-
-- /perl/perl-status?sig dumps core under hpux 10.20
-   [David-Michael.Lincke@unisg.ch]
-
-- Gerald's report of Embperl/sub-request/print breakage
-
-- perl-status?mod_perl_hooks broken under win32?
-
-- rand() broken under win32!
-           Jeff Baker <jeff@godzilla.tamu.edu>
-
-- -Tw w/o PerlTaintCheck cause SEGV? Dave Hodgkinson <daveh@sift.co.uk>
-
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
+
+- forking under Apache::Registry, exit vs CORE::exit 
 
 - misc:
   + DONE
@@ -86,6 +37,21 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+
+- sfio/solaris problem
+Lupe Christoph <lupe@alanya.m.isar.de>, Don Hayward <don@mote.org>
+
+- Gerald's report of Embperl/sub-request/print breakage
+
+- looks like we need a per-server configuration merge routine
+
+- need turn of strip of httpd during 'make install'
+
+- SSIs executed using /bin/sh, not suexec as configured?
+  Theo Van Dinter <felicity@kluge.net>
+
+- /perl/perl-status?sig dumps core under hpux 10.20
+   [David-Michael.Lincke@unisg.ch]
 
 - USE_DSO=1 --> END blocks are run at startup time
 
@@ -160,6 +126,10 @@ KNOWN BUGS
 NEW STUFF
 ---------------------------------------------------------------------------
 
+- 'make htmldoc' (Brian Moseley)
+
+- make 'make test_report' more useful
+
 - hooks into Perl interactive debugger 
   (Graham TerMarsch <grahamt@activestate.com>)
 
@@ -171,13 +141,6 @@ NEW STUFF
   (Jason Riedy <ejr@cise.ufl.edu>)
 
 - PerlEngine On/Off [Vivek Khera <khera@kciLink.com>]
-
-- mod_perl C code symbols, should look at cleaning up names with a
-  common prefix, e.g. mp_, mod_perl_, mperl_ ?
-  also static-ize those functions we can 
-
-- remove Apache::Symbol::undef cruft, now that the mandatory const sub
-  redefined warning is downgraded in 5.004_05-tobe
 
 - perl_clear_env() should skip those found in PerlPassEnv?
 
@@ -208,10 +171,6 @@ NEW STUFF
 
 - change configuration during runtime?
 
-- have log_error/log_reason give file/line info of caller
-
-- 'make html'?
-
 - $Apache::ServerStarting in <Perl>
 
 - something with exec()?
@@ -230,6 +189,7 @@ NEW STUFF
   + ability to nmake w/o going into VC++
   + ability to disable Perl*Handler callback hooks
   + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
+  + fix perl-status?mod_perl_hooks
 
 - @ARGV magic, tie to query string
 
@@ -260,9 +220,26 @@ KNOWN MODULE BUGS
 
 - can't multiple Apache::Include->virtual in a single request
 
+- files that have been created after the server's (child?) startup are
+  being reported with negative age with -M test under Apache::Registry. 
+  The workaround is to add $^T = time; at the beginning of the scripts. But
+  it would be much better if the Apache::Registry will do that 
+
 ---------------------------------------------------------------------------
 NEW MODULE STUFF
 ---------------------------------------------------------------------------
+
+- StatINC doesn't reimport the imported symbols?
+  Stas Bekman <sbekman@iil.intel.com>, 
+  Message-Id: <Pine.A41.3.96.981007170413.44288Q-100000@ilx374.iil.intel.com>
+- Look at Apache::ASP's handling of exported functions (for implementation
+  in Apache::StatINC) (same thing as above?) [ask]
+
+- Option to StatINC to make it possible to only watch chosen modules
+  [ask]
+
+- Apache::Registry should check return value of the subroutine,
+  e.g. for REDIRECT   
 
 - should Apache::Registry use filename instead of vhost_name+uri?
               Ben Laurie <ben@algroup.co.uk>
@@ -291,6 +268,15 @@ CLEANUPS - "if it ain't broke, don't muck with it", but we should tidy
             these things at some point
 ---------------------------------------------------------------------------
 
+get rid of Apache->can_stack_handlers (since we have UNIVERSAL->can now)
+
+mod_perl C code symbols, should look at cleaning up names with a
+common prefix, e.g. mp_, mod_perl_, mperl_ ?
+also static-ize those functions we can 
+
+remove Apache::Symbol::undef cruft, now that the mandatory const sub
+redefined warning is downgraded in 5.004_05-tobe
+
 change cgi_header_out and send_cgi_header to use new
 ap_scan_script_header_err_core function 
 
@@ -304,6 +290,8 @@ use 5.005's newCONSTSUB in Constants.xs
 OPTIMIZATIONS
 ---------------------------------------------------------------------------
 
+- preloading of method cache
+
 - replace Apache::PerlRun with Apache::PerlRunXS
 
 - replace Apache::Registry with Apache::RegistryXS
@@ -316,3 +304,5 @@ OPTIMIZATIONS
 
 - in places where Apache did a pstrdup, don't use newSVpv(), use
   newSV()->sv_upgrade()->SvPVX/SvCUR_set to avoid another copy 
+
+- Apache::Constants::constant
