@@ -95,7 +95,7 @@ sub handler {
     {
         local $| = 0;
         ok t_cmp $r->print("# buffered\n"), 11, "buffered print";
-        ok t_cmp $r->print(), 0, "buffered print";
+        ok t_cmp $r->print(), "0E0", "buffered print";
 
         local $| = 1;
         my $string = "# not buffered\n";
