@@ -43,13 +43,6 @@ META: there is also the todo/ dir...
 
   o hooks ordering is not implemented yet
 
-- Apache::Request
-
-  o everybody wants it. There is a ported C version, but the perl glue
-    code won't be written until we know where the C version
-    goes. Currently it's a patch for the httpd-2.0 rep, but wasn't yet
-    accepted by httpd :( The patch is here http://www.apache.org/~joes/
-
 - Registry modules
 
   o An open issue with chdir, which is process-scoped. Arthur Bergman
