@@ -97,13 +97,6 @@ sub content {
     return $r->parse_args($buf)
 }
 
-sub send_http_header {
-    my($r, $type) = @_;
-    if ($type) {
-        $r->content_type($type);
-    }
-}
-
 sub clear_rgy_endav {
 }
 
