@@ -48,10 +48,28 @@ MP_CMD_SRV_DECLARE(trace)
     return NULL;
 }
 
+static int modperl_vhost_is_running(server_rec *s)
+{
+#ifdef USE_ITHREADS
+    MP_dSCFG(s);
+    int is_vhost = (s != modperl_global_get_server_rec());
+
+    if (is_vhost && scfg->mip) {
+        return TRUE;
+    }
+    else {
+        return FALSE;
+    }
+#else
+    return TRUE;
+#endif
+}
+
 MP_CMD_SRV_DECLARE(switches)
 {
-    MP_dSCFG(parms->server);
-    if (modperl_is_running()) {
+    server_rec *s = parms->server;
+    MP_dSCFG(s);
+    if (modperl_is_running() && modperl_vhost_is_running(s)) {
         return modperl_cmd_too_late(parms);
     }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
@@ -62,6 +80,12 @@ MP_CMD_SRV_DECLARE(switches)
 MP_CMD_SRV_DECLARE(modules)
 {
     MP_dSCFG(parms->server);
+
+    if (modperl_is_running() &&
+        modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
+    {
+        return "init mod_perl vhost failed";
+    }
 
     if (modperl_is_running()) {
 #ifdef USE_ITHREADS
@@ -85,6 +109,12 @@ MP_CMD_SRV_DECLARE(modules)
 MP_CMD_SRV_DECLARE(requires)
 {
     MP_dSCFG(parms->server);
+
+    if (modperl_is_running() &&
+        modperl_init_vhost(parms->server, parms->pool, NULL) != OK)
+    {
+        return "init mod_perl vhost failed";
+    }
 
     if (modperl_is_running()) {
 #ifdef USE_ITHREADS
@@ -262,6 +292,10 @@ MP_CMD_SRV_DECLARE(perl)
 
     /* we must init earlier than normal */
     modperl_run(p, s);
+
+    if (modperl_init_vhost(s, p, NULL) != OK) {
+        return "init mod_perl vhost failed";
+    }
 
 #ifdef USE_ITHREADS
     /* XXX: .htaccess support cannot use this perl with threaded MPMs */
