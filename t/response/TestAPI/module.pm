@@ -60,11 +60,13 @@ sub handler {
 
         # TestAPI::module::foo wasn't loaded but the stash exists
         $TestAPI::module::foo::test = 1;
-        ok !Apache::Module::loaded("TestAPI::module::foo");
+        ok t_cmp(Apache::Module::loaded('TestAPI::module::foo'), 0,
+                 "Apache::Module::loaded('TestAPI::module::foo')");
 
         # module TestAPI wasn't loaded but the stash exists, since
         # TestAPI::module was loaded
-        ok !Apache::Module::loaded("TestAPI");
+        ok t_cmp(Apache::Module::loaded('TestAPI'), 0,
+                 "Apache::Module::loaded('TestAPI')");
     }
 
     #bogus
