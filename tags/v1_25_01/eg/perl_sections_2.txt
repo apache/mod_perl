@@ -1,0 +1,150 @@
+
+From merlyn@stonehenge.com Thu Sep  3 05:44:02 1998
+Date: 27 Aug 1998 11:39:11 -0700
+From: Randal Schwartz <merlyn@stonehenge.com>
+To: modperl@apache.org
+Subject: configuring my new mod_perl server with <Perl> sections
+
+
+Doug and Lincoln (and maybe Rob)... there's still some part of your
+brain that's never made it into the docs about <Perl> sections.  I
+tried to get www.stonehenge.com configured entirely in Perl, and kept
+stumbling on "do I need a variable, a hash element, a listref, a
+hashref, a list of hashrefs, or WHAT???" as I looked at each command.
+Then I got to "SSLEnable" and threw my hands up.  No parameters!  What
+do I do with THAT?
+
+But, thank the maker for Apache->http_conf!  I can write stuff that
+looks a lot like my existing files, and then add a little Perl magic
+when needed.  In the main httpd.conf, I put:
+
+    <Perl>
+    do "/home/merlyn/lib/Apache/.httpd.pl";
+    </Perl>
+
+and a hint here... that file has to return 1, even though it's a do,
+because I'm also using Apache::StatINC (ugh!).  And here's the
+contents of that file:
+
+    ## configuration for www.stonehenge.com
+
+    package Apache::ReadConfig;	# in case that isn't set
+
+    for my $host (qw(w3.stonehenge.com:80 w3.stonehenge.com:443)) {
+      Apache->httpd_conf(<<"END");
+
+    Listen $host
+
+    <VirtualHost $host>
+
+    ServerAdmin webmaster\@stonehenge.com
+    DocumentRoot /WWW/stonehenge/htdocs
+    ServerName $host
+    DirectoryIndex index index.html Welcome.html
+    ErrorLog /WWW/stonehenge/logs/error_log
+    TransferLog /WWW/stonehenge/logs/access_log
+
+    @{[join "", map <<THIS, qw(/cgi-bin/ /cgi/)]}
+    ScriptAlias $_ /WWW/stonehenge/cgi-bin/
+    THIS
+
+    RewriteEngine on
+
+    @{[join "", map <<THIS, qw(htdocs cgi-bin)]}
+    <Directory /WWW/stonehenge/$_>
+    AllowOverride All
+    Options All
+    order allow,deny
+    allow from all
+    </Directory>
+    THIS
+
+    ProxyRequests On
+
+    Redirect /~merlyn/ http://$host/merlyn/
+
+    ErrorDocument 404 /cgi/404-handler
+
+    XbitHack full
+
+    <FilesMatch "^\\.|~\$">
+    deny from all
+    </FilesMatch>
+
+    AddType text/plain pod
+
+    @{[$host eq "w3.stonehenge.com:443" && <<THIS]}
+    SSLEnable
+    SSLRequireSSL
+    SSLLogFile logs/ssl_log
+    THIS
+
+    </VirtualHost>
+    END
+    }
+
+    "true";
+
+Notice that I'm configuring my SSL and non-SSL host nearly identically
+(that's the original reason for the <Perl> section), and I'm using
+*some* of the tricks you gave in the examples, but "inside out",
+because I'm starting with a text string and working my way towards
+httpd format, not a Perl variable.  This all could have been put
+inside the <Perl> section in httpd.conf, but I want separate RCS
+tracking for the two files. (I'm only a virtual webmaster, not the
+site webmaster. :)
+
+Anyway, for those of you that wanted Perl to do your configuration,
+but couldn't quite grok the <Perl> sections, try this hybrid approach.
+Just watch out for all $, @, and \ in your here-docs.
+
+-- 
+Name: Randal L. Schwartz / Stonehenge Consulting Services (503)777-0095
+Keywords: Perl training, UNIX[tm] consulting, video production, skiing, flying
+Email: <merlyn@stonehenge.com> Snail: (Call) PGP-Key: (finger merlyn@teleport.com)
+Web: <A HREF="http://www.stonehenge.com/merlyn/">My Home Page!</A>
+Quote: "I'm telling you, if I could have five lines in my .sig, I would!" -- me
+
+From dougm@pobox.com Thu Sep  3 05:44:34 1998
+Date: Fri, 28 Aug 1998 11:41:25 +0000
+From: Doug MacEachern <dougm@pobox.com>
+To: Randal Schwartz <merlyn@stonehenge.com>,
+    modperl@apache.org
+Subject: Re: configuring my new mod_perl server with <Perl> sections
+
+At 11:39 AM 8/27/98 -0700, Randal Schwartz wrote:
+>
+>Doug and Lincoln (and maybe Rob)... there's still some part of your
+>brain that's never made it into the docs about <Perl> sections.  I
+>tried to get www.stonehenge.com configured entirely in Perl, and kept
+>stumbling on "do I need a variable, a hash element, a listref, a
+>hashref, a list of hashrefs, or WHAT???" as I looked at each command.
+>Then I got to "SSLEnable" and threw my hands up.  No parameters!  What
+>do I do with THAT?
+
+I think $SSLEnable = 1 would work.  I have a plan to document how to
+represent all Apache configuration in Perl, will happen soonish.
+
+>But, thank the maker for Apache->http_conf!  I can write stuff that
+>looks a lot like my existing files, and then add a little Perl magic
+>when needed.  In the main httpd.conf, I put:
+
+Apache->httpd_conf (which just pushes into
+@Apache::ReadConfig::PerlConfig), came to life during the early 1.3bx
+stages, another area that needs better docs :-/
+
+cool, thanks for sharing this.  I just committed a tweak to Apache->module
+so you can test for .c modules too, so instead of this test:
+
+ @{[$host eq "w3.stonehenge.com:443" && <<THIS]}
+
+You can do this:
+ @{[Apache->module("apache_ssl.c") || Apache->module("mod_ssl.c") && <<THIS]}
+    SSLEnable
+    SSLRequireSSL
+    SSLLogFile logs/ssl_log
+    THIS
+
+Just like using the IfModule directive.
+
+-Doug
