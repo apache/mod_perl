@@ -61,3 +61,9 @@ EOM
 }
 
 runtests @tests;
+
+use File::Find;
+my $dir = -e "t" ? ".." : ".";
+find(sub { 
+     /core/ and die "uh,oh httpd dumped core!\n";
+}, $dir);

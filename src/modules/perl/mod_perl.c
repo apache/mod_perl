@@ -622,11 +622,12 @@ void PERL_CHILD_INIT_HOOK(server_rec *s, pool *p)
     dSTATUS;
     dPSRV(s);
     request_rec *r = fake_request_rec(s, p, hook);
-    server_hook_args args;
+    server_hook_args *args = 
+	(server_hook_args *)palloc(p, sizeof(server_hook_args));
 
-    args.server = s;
-    args.pool = p;
-    register_cleanup(p, &args, perl_child_exit_cleanup, null_cleanup);
+    args->server = s;
+    args->pool = p;
+    register_cleanup(p, args, perl_child_exit_cleanup, null_cleanup);
 
     mod_perl_init_ids();
     PERL_CALLBACK(hook, cls->PerlChildInitHandler);
