@@ -9,6 +9,10 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - <Perl>/%Apache::ReadConfig:: brokeness (My::configure() example, Eric Cholet)
 
+- Apache->push_handlers("PerlCleanupHandler", ...),
+  the handler isn't called unless there's already a CleanupHandler defined.
+  Jan-Pieter Cornet <johnpc@xs4all.net>
+
 ---------------------------------------------------------------------------
 DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------

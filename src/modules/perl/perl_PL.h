@@ -1,3 +1,6 @@
+#ifndef patchlevel
+#define patchlevel PL_patchlevel
+#endif
 #ifndef maxo
 #define maxo PL_maxo
 #endif

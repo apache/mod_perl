@@ -278,7 +278,9 @@ unsigned get_server_port(const request_rec *r)
     (r->hostname ? r->hostname : r->server->server_hostname) 
 #endif
 
-#if(MODULE_MAGIC_NUMBER >= MMN_131) && !defined(WIN32)
+#if MODULE_MAGIC_AT_LEAST(19981108, 1)
+#define mod_perl_define(sv,name) ap_exists_config_define(name)
+#elif(MODULE_MAGIC_NUMBER >= MMN_131) && !defined(WIN32)
 static int mod_perl_define(SV *sv, char *name)
 {
     char **defines;
