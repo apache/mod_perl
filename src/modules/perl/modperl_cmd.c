@@ -6,13 +6,13 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
     modperl_handler_t *h = modperl_handler_new(p, name);
 
     if (!*handlers) {
-        *handlers = apr_array_make(p, 1, sizeof(modperl_handler_t *));
+        *handlers = modperl_handler_array_new(p);
         MP_TRACE_d(MP_FUNC, "created handler stack\n");
     }
 
     /* XXX parse_handler if Perl is running */
 
-    *(modperl_handler_t **)apr_array_push(*handlers) = h;
+    modperl_handler_array_push(*handlers, h);
     MP_TRACE_d(MP_FUNC, "pushed handler: %s\n", h->name);
 
     return NULL;
