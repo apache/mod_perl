@@ -192,7 +192,7 @@ module MODULE_VAR_EXPORT perl_module = {
     perl_create_dir_config,    /* create per-directory config structure */
     perl_merge_dir_config,     /* merge per-directory config structures */
     perl_create_server_config, /* create per-server config structure */
-    NULL,                      /* merge per-server config structures */
+    perl_merge_server_config,  /* merge per-server config structures */
     perl_cmds,                 /* command table */
     perl_handlers,             /* handlers */
     PERL_TRANS_HOOK,           /* translate_handler */

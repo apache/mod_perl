@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+add per-server configuration merge
+
 `_' is no longer escaped in Apache::Registry package names
 
 fix $ENV{PATH} corruption
