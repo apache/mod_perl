@@ -10,8 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
-set r->notes("error-notes") to $@ when there is a compile error.
-[ Doug / Tom Mornini <tmornini@infomania.com>]
+set r->notes("error-notes") to $@ if $@ after a Perl*Handlers is run
+[Doug / Tom Mornini <tmornini@infomania.com>]
 
 added INSTALL.raven
 [Adam Qualset <adam@covalent.net>]
