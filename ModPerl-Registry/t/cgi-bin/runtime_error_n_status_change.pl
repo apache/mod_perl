@@ -1,4 +1,4 @@
 my $r = shift;
 $r->status(404);
-$r->send_http_header('text/plain');
+$r->print("Content-type: text/plain\n\n");
 $r->print(no_such_func());
