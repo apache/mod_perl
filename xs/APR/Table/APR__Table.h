@@ -1,6 +1,7 @@
 typedef struct {
     SV *cv;
     apr_table_t *filter; /*XXX: or maybe a mgv ? */
+    PerlInterpreter *perl;
 } mpxs_table_do_cb_data_t;
 
 typedef int (*mpxs_apr_table_do_cb_t)(void *, const char *, const char *);
@@ -8,10 +9,10 @@ typedef int (*mpxs_apr_table_do_cb_t)(void *, const char *, const char *);
 static int mpxs_apr_table_do_cb(void *data,
                                 const char *key, const char *val)
 {
-    dTHX; /*XXX*/
+    mpxs_table_do_cb_data_t *tdata = (mpxs_table_do_cb_data_t *)data;
+    dTHXa(tdata->perl);
     dSP;
     int rv = 0;
-    mpxs_table_do_cb_data_t *tdata = (mpxs_table_do_cb_data_t *)data;
 
     /* Skip completely if something is wrong */
     if (!(tdata && tdata->cv && key && val)) {
@@ -56,7 +57,10 @@ void mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
          
     tdata.cv = sub;
     tdata.filter = NULL;
-    
+#ifdef USE_ITHREADS
+    tdata.perl = aTHX;
+#endif
+
     if (items > 2) {
         STRLEN len;
         tdata.filter = apr_table_make(table->a.pool, items-2);
