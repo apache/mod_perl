@@ -561,6 +561,45 @@ CLOSE(...)
     items = items;
     /*NOOP*/
 
+Apache
+TIEHANDLE(classname, r=NULL)
+    SV *classname
+    Apache r
+
+    CODE:
+    RETVAL = r ? r : perl_request_rec(NULL);
+
+    OUTPUT:
+    RETVAL
+
+int
+OPEN(self, arg1, arg2=Nullsv)
+    SV *self
+    SV *arg1
+    SV *arg2
+
+    PREINIT:
+    char *name;
+    STRLEN len;
+    GV *gv = gv_fetchpv("STDOUT", TRUE, SVt_PVIO);
+    SV *arg;
+
+    CODE:
+    sv_unmagic((SV*)gv, 'q'); /* untie *STDOUT */
+    if (arg2) {
+        arg = newSVsv(arg1);
+        sv_catsv(arg, arg2);
+    }
+    else {
+        arg = arg1;
+    }
+
+    name = SvPV(arg, len);
+    RETVAL = do_open(gv, name, len, FALSE, O_RDONLY, 0, Nullfp);
+
+    OUTPUT:
+    RETVAL
+
 SV *
 as_string(r)
     Apache r

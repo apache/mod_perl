@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+added Apache::OPEN method for 5.6.0+ tied filehandle support
+
 Apache::Table is now loaded by default (if enabled), rather than
 autoloading when first needed
 

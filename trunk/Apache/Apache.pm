@@ -189,11 +189,6 @@ sub send_cgi_header {
     }
 }
 
-sub TIEHANDLE {
-    my($class, $r) = @_;
-    $r ||= Apache->request;
-}
-
 1;
 
 __END__
