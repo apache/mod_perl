@@ -42,6 +42,9 @@ my %users = (
 sub handler {
     my $r = shift;
 
+    # test: $r->some_auth_required;
+    return Apache::SERVER_ERROR unless $r->some_auth_required;
+
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
     return $rc if $rc != Apache::OK;
 
