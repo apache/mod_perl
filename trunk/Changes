@@ -18,11 +18,18 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+fixed broken modules/eperl test spotted by Tom Mornini
+
+fixed Makefile.PL bug spotted by Jon Drukman w/ PERL_CHILD_EXIT=1
+in fact, PerlChildInitHandler/PerlHandlerExitHandler are always
+enabled by default now with 1.3bx+
+
 added experimental get_handlers/set_handlers methods 
 (enable with PERL_GET_SET_HANDLERS=1)
 
 new module Apache::PerlRun, splits out Apache::Registry functionality
-and provides a `dirty-perl' handler (see pod)
+and provides a `dirty-perl' handler (see pod).  thanks to Stas Bekman
+for testing and suggestions.
 
 PERL_OBJECT_HANDLERS now enabled #ifdef PERL_METHOD_HANDLERS
 
