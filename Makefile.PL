@@ -212,7 +212,6 @@ sub clean_files {
 
     return [@{ $build->clean_files },
             <xs/*.exp>, <xs/*.def>,
-            qw(MANIFEST),
             map { "$path/$_"} @{ $code->clean_files }];
 }
 
