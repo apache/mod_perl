@@ -8,6 +8,9 @@ Instructions for mod_perl 2.0 Release Manager
 
   b) test that you can 'make install' and then run 'make test' again
 
+  c) remove LWP/UserAgent.pm and test whether we still 100% OK (then
+     put it back)
+
 2. once confident that the package is good, upload a release candidate
    to perl.apache.org/~username and post 24 hour-ish candidate alert
    to the modperl/dev list (may be longer to give most people a chance
