@@ -7,8 +7,6 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - make PERL_STARTUP_DONE_CHECK=1 default for win32?
 
-- dso double Server: version
-
 - method handlers broken?
 
 - @PerlSetVar core dumps outside of %Location (Ask)
