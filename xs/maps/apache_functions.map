@@ -204,7 +204,7 @@ MODULE=Apache::Module
 -ap_add_named_module
  ap_find_linked_module
 -ap_find_module_name
--ap_remove_loaded_module
+ap_remove_loaded_module
 -ap_remove_module
 >ap_single_module_configure
 >ap_setup_prelinked_modules
