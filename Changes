@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_21-dev
 
+pool arguments to startup and connection callbacks must be blessed
+into APR::Pool and not Apache::Pool class [joes]
+
 Make PerlSetEnv, PerlPassEnv and %ENV in PerlRequre, PerlModule,
 PerlConfigRequire and PerlPostConfigRequire affect each, so a change
 in one of these immediately seen in the others. [Pratik <pratiknaik
