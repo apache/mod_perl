@@ -31,6 +31,8 @@ $TestDirective::perl::line =  __LINE__;
 
 #Handle re-entrant <Perl> sections
 <Perl >
+    use File::Spec;
+    use Apache::TestUtil;
     my $file = File::Spec->catfile('@ServerRoot@', 'conf', 'perlsection.conf');
     my $conf = join "\n", qw(<Perl> $TestDirective::perl::Included++; </Perl>);
     Apache::TestUtil::t_write_file($file, $conf); 
