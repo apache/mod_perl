@@ -25,6 +25,11 @@ if (Apache::Build::REQUIRE_ITHREADS()) {
     }
 }
 
+if ($] < 5.006001) {
+    error "You are running Perl version $]\n" .
+        "We strongly suggest to upgrade to at least 5.6.1";
+}
+
 my $build = Apache::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
