@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_20-dev
 
+speed up the 'perl Makefile.PL' stage [Randy Kobes]:
+ - reduce the number of calls to build_config() of
+   Apache::Build within ModPerl::BuildMM
+ - cache the results of the calls to apxs_cflags, apxs_extra_cflags,
+   and apxs_extra_cppflags in Apache::Build
+ - in apxs of Apache::Build, return a cached result only when defined
+
 move ModPerl::Util::exit() into mod_perl.so, since it needs to work,
 even if ModPerl::Util wasn't loaded [Stas]
 

@@ -44,9 +44,11 @@ sub mod_install {
     q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
 }
 
+my $build;
+
 sub build_config {
     my $key = shift;
-    my $build = Apache::Build->build_config;
+    $build ||= Apache::Build->build_config;
     return $build unless $key;
     $build->{$key};
 }
@@ -68,7 +70,7 @@ sub my_import {
 sub WriteMakefile {
     my %args = @_;
 
-    my $build = build_config();
+    $build ||= build_config();
     ModPerl::MM::my_import(__PACKAGE__);
 
     my $inc = $build->inc;
@@ -133,7 +135,7 @@ my %always_dynamic = map { $_, 1 }
 
 sub ModPerl::BuildMM::MY::constants {
     my $self = shift;
-    my $build = build_config();
+    $build ||= build_config();
 
     #install everything relative to the Apache2/ subdir
     if ($build->{MP_INST_APACHE2}) {
@@ -301,7 +303,7 @@ sub glue_pod {
 
 sub ModPerl::BuildMM::MY::post_initialize {
     my $self = shift;
-    my $build = build_config();
+    $build ||= build_config();
     my $pm = $self->{PM};
 
     while (my($k, $v) = each %PM) {
@@ -343,10 +345,12 @@ sub ModPerl::BuildMM::MY::post_initialize {
     '';
 }
 
+my $apr_config;
+
 sub ModPerl::BuildMM::MY::libscan {
     my($self, $path) = @_;
 
-    my $apr_config = build_config()->get_apr_config();
+    $apr_config ||= $build->get_apr_config();
 
     if ($path =~ m/(Thread|Global)Mutex/) {
         return unless $apr_config->{HAS_THREADS};
