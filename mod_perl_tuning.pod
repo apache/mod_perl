@@ -360,8 +360,7 @@ First, in your F<startup.perl> file add the following code:
  sub My::SquidRemoteAddr ($) {
    my $r = shift;
  
-   my @ip = split(/,\s*/, $r->header_in('X-Forwarded-For'));
-   if (my $ip = pop(@ip)) {
+   if (my ($ip) = $r->header_in('X-Forwarded-For') =~ /([^,\s]+)$/) {
      $r->connection->remote_ip($ip);
    }
  
@@ -374,7 +373,11 @@ Next, add this to your F<httpd.conf> file:
 
 This will cause every request to have its C<remote_ip> address
 overridden by the value set in the C<X-Forwarded-For> header added by
-Squid.
+Squid.  Note that if you have multiple proxies between the client and
+the server, you want the IP address of the last machine before your
+accelerator.  This will be the right-most address in the
+X-Forwarded-For header (assuming the other proxies append their
+addresses to this same header, like Squid does.)
 
 If you use apache with mod_proxy at your frontend, you can use Ask
 Bjørn Hansen's mod_proxy_add_forward module from
