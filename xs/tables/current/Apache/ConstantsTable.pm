@@ -330,6 +330,17 @@ $Apache::ConstantsTable = {
       'APR_BUFFERED',
       'APR_DELONCLOSE'
     ],
+    'filetype' => [
+      'APR_NOFILE',
+      'APR_REG',
+      'APR_DIR',
+      'APR_CHR',
+      'APR_BLK',
+      'APR_PIPE',
+      'APR_LNK',
+      'APR_SOCK',
+      'APR_UNKFILE'
+    ],
     'error' => [
       'APR_ENOSTAT',
       'APR_ENOPOOL',
