@@ -67,7 +67,7 @@ delete $status{'hooks'} if $mod_perl::VERSION >= 1.9901;
 delete $status{'sig'} if IS_WIN32;
 
 # XXX: needs porting
-if ($Apache::Server::SaveConfig) {
+if ($Apache::PerlSections::Save) {
     $status{"section_config"} = "Perl Section Configuration";
 }
 

@@ -15,6 +15,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 Fix $s->log->*, $s->log_error and $s->log_serror to again log into the
 vhost's error_log file (if there is one). [Stas]
 
+$Apache::Server::SaveConfig is now $Apache::PerlSections::Save
+[Geoffrey Young]
 
 
 
