@@ -34,6 +34,10 @@ BEGIN {
     # $VERSION        : "1.099020"
     # int $VERSION    : 1.09902
     # $VERSION_TRIPLET: 1.99.20
+
+    # easy to parse request time  API version - use
+    # $mod_perl2::VERSION for more granularity
+    our $API_VERSION = 2;
 }
 
 $mod_perl::VERSION = $mod_perl2::VERSION;

@@ -159,6 +159,10 @@ EOI
                     exit 1;
         }
     }
+    else {
+        print "no prior mod_perl version found - good.\n";
+
+    }
 
     # On Win32, in order to decouple APR::* from mod_perl.so, we
     # make up a static library MP_APR_LIB of the symbols required from
@@ -456,7 +460,8 @@ sub set_modperl_version {
     }
     close $fh;
 
-    $build->{VERSION} = $VERSION;
+    $build->{VERSION}     = $VERSION;
+    $build->{API_VERSION} = $mod_perl2::API_VERSION;
 }
 
 # needs to be run after configure() when apxs is setup

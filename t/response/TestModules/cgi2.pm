@@ -18,6 +18,10 @@ sub handler {
         die "\$ENV{MOD_PERL} is not set";
     }
 
+    unless ($ENV{MOD_PERL_API_VERSION} == 2) {
+        die "\$ENV{MOD_PERL_API_VERSION} is not set";
+    }
+
     if ($CGI::Q) {
         die "CGI.pm globals were not reset";
     }
