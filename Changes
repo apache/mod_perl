@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Starting from ExtUtils::MakeMaker 6.22 it no longer generates
+pm_to_blib target, but pm_to_blib.ts, so needed to fix the glue_pod
+target, so install will work correctly [Stas]
+
 Apache::RequestUtil : $r->child_terminate() implemented for
 non-threaded MPMs. [Gozer]
 
