@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+Apache::Test: support two new shortcuts for skip functionality:
+ - have_threads: checks whether both Apache and Perl support threads
+ - under_construction: to print a consistent/clear skip reason
+[Stas]
+
 OPEN, CLOSE and FILENO implementation for Apache::RequestRec [Stas]
 
 Apache::Test: Support <NoAutoConfig> </NoAutoConfig> blocks in .pm
