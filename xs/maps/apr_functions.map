@@ -63,12 +63,12 @@ MODULE=APR::Socket
 -apr_sendv
  apr_socket_from_file
 
-!MODULE=APR::SocketAddr
- apr_sockaddr_info_get
- apr_sockaddr_ip_get
+MODULE=APR::SockAddr
+!apr_sockaddr_info_get
+ char *:apr_sockaddr_ip_get | mpxs_ | sockaddr
  apr_sockaddr_ip_set
  apr_sockaddr_port_set
- apr_sockaddr_port_get
+ apr_port_t:apr_sockaddr_port_get | mpxs_ | sockaddr
 
 MODULE=APR::Brigade
  apr_brigade_create | mpxs_ | SV *:CLASS, p, list | new
