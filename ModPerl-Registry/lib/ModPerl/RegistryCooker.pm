@@ -168,7 +168,7 @@ sub run {
     my $rc = Apache::OK;
     my $cv = \&{"$package\::handler"};
 
-    { # run the code, preserve warnings setup when it's done
+    { # run the code if $r->seqno, preserve warnings setup when it's done
         no warnings;
         eval { $rc = &{$cv}($r, @_) } if $r->seqno;
         $o->[STATUS] = $rc;
@@ -662,7 +662,7 @@ sub error_check {
 #########################################################################
 
 sub install_aliases {
-    my ($class, $rh_aliases) = @_;
+    my($class, $rh_aliases) = @_;
 
     no strict 'refs';
     while (my($k,$v) = each %$rh_aliases) {
@@ -677,7 +677,7 @@ sub install_aliases {
 
 ### helper methods
 
-sub debug{
+sub debug {
     my $o = shift;
     $o->[REQ]->log_error("$$: $o->[CLASS]: " . join '', @_);
 }
