@@ -788,7 +788,8 @@ sub file_path {
 
 sub freeze {
     require Data::Dumper;
-    local $Data::Dumper::Terse = 1;
+    local $Data::Dumper::Terse    = 1;
+    local $Data::Dumper::Sortkeys = 1;
     my $data = Data::Dumper::Dumper(shift);
     chomp $data;
     $data;
@@ -818,7 +819,10 @@ sub save {
     $file ||= $self->default_file('build_config');
     $file = $self->file_path($file);
 
-    (my $obj = $self->freeze) =~ s/^/    /;
+    my $obj = $self->freeze;
+    $obj =~ s/^\s{9}//mg;
+    $obj =~ s/^/    /;
+
     open my $fh, '>', $file or die "open $file: $!";
 
     #work around autosplit braindeadness
