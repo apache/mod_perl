@@ -1,4 +1,5 @@
 TEST
+SMOKE
 .gdb-test-start
 htdocs
 logs
