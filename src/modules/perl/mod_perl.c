@@ -50,8 +50,6 @@
  *
  */
 
-/* $Id$ */
-
 /* 
  * And so it was decided the camel should be given magical multi-colored
  * feathers so it could fly and journey to once unknown worlds.
@@ -1093,7 +1091,7 @@ API_EXPORT(int) perl_call_handler(SV *sv, request_rec *r, AV *args)
 		MP_TRACE_h(fprintf(stderr, "handler object %s isa %s\n",
 				   SvPVX(class),  HvNAME(SvSTASH((SV*)SvRV(obj)))));
 		SvREFCNT_dec(class);
-		class = newSVsv(obj);
+		class = obj;
 		stash = SvSTASH((SV*)SvRV(class));
 	    }
 	}
