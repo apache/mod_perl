@@ -69,8 +69,6 @@ MODULE=APR::Socket
 MODULE=APR::SockAddr
 !apr_sockaddr_info_get
  char *:apr_sockaddr_ip_get | mpxs_ | sockaddr
- apr_sockaddr_port_set
- apr_port_t:apr_sockaddr_port_get | mpxs_ | sockaddr
  apr_sockaddr_equal
 
 MODULE=APR::Brigade
