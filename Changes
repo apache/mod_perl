@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_17-dev
+=item 1.99_17 - October 22, 2004
 
 Implement Apache->unescape_url_info in Apache::compat and drop it
 from the official API for CGI::Util::unescape() as a suggested
