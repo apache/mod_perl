@@ -464,19 +464,29 @@ modperl_xs_h_install:
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
 
+EOF
+
+    # $(ECHO) was broken before 6.10_01
+    # XXX: if ever require 6.11 we can remove this workaround
+    require ExtUtils::MakeMaker;
+    my $say = ExtUtils::MakeMaker->VERSION > 6.10
+        ? '@$(ECHO)'
+        : '@$(PERL) -le "print shift"';
+
+    $string .= <<"EOF";
 modperl_banner:
-	@$(ECHO) "+--------------------------------------------------------------+"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "| For details on getting started with mod_perl 2, see:         |"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "|   http://perl.apache.org/docs/2.0/user/intro/start_fast.html |"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "| Found a bug?  File a bug report:                             |"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "|   http://perl.apache.org/bugs/                               |"
-	@$(ECHO) "|                                                              |"
-	@$(ECHO) "+--------------------------------------------------------------+"
+	$say "+--------------------------------------------------------------+"
+	$say "|                                                              |"
+	$say "| For details on getting started with mod_perl 2, see:         |"
+	$say "|                                                              |"
+	$say "|   http://perl.apache.org/docs/2.0/user/intro/start_fast.html |"
+	$say "|                                                              |"
+	$say "|                                                              |"
+	$say "| Found a bug?  File a bug report:                             |"
+	$say "|                                                              |"
+	$say "|   http://perl.apache.org/bugs/                               |"
+	$say "|                                                              |"
+	$say "+--------------------------------------------------------------+"
 
 EOF
 
