@@ -379,6 +379,7 @@ static void mod_perl_set_cwd(void)
 #ifdef PERL_TIE_SCRIPTNAME
 static I32 scriptname_val(IV ix, SV* sv)
 { 
+    dTHR;
     request_rec *r = perl_request_rec(NULL);
     if(r) 
 	sv_setpv(sv, r->filename);
