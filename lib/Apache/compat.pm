@@ -205,9 +205,7 @@ sub register_cleanup {
     shift->pool->cleanup_register(@_);
 }
 
-sub post_connection {
-    shift->connection->pool->cleanup_register(@_);
-}
+*post_connection = \&register_cleanup;
 
 sub get_remote_host {
     my($r, $type) = @_;

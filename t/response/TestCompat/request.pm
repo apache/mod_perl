@@ -16,7 +16,7 @@ use Apache::Constants qw(OK REMOTE_HOST);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 15;
+    plan $r, tests => 16;
 
     $r->send_http_header('text/plain');
 
@@ -80,6 +80,9 @@ sub handler {
     $r->post_connection(sub { OK });
     ok 1;
 
+    # register_cleanup
+    ok 1;
+    $r->register_cleanup(sub { OK });
 
     OK;
 }
