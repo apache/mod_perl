@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+adjust perl_clear_symtab() to deal properly bleedperl's version of
+cv_undef() (which broke modules with directive handlers)
+thanks to Geoffrey Young for the spot
+
 add $r->allowed method [Philippe Troin <phil@fifi.org>]
 
 fix 'make offsite-tar' [Geoffrey Young <gyoung@laserlink.net>]
