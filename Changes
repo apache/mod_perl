@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+add symbols to mod_perl.exp for aix/axkit
+
 add Apache::add_version_component() function
 
 make sure Apache::ExtUtils can be found when building inside of the
