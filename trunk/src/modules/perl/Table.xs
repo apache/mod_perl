@@ -58,7 +58,11 @@ static void table_modify(TiedTable *self, const char *key, SV *sv,
 
 }
 
-static void table_delete(table *tab, const char *key, const char *val)
+static void
+#ifdef WIN32
+_stdcall 
+#endif
+table_delete(table *tab, const char *key, const char *val)
 {
     table_unset(tab, val);
 }
