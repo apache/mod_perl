@@ -15,7 +15,9 @@ to the ToDo file and never remove it ;-)
 SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
-- $r cannot use many api methods during ChildInit/ChildExit -> SEGV
+
+- remove Apache::Symbol::undef cruft, now that the mandatory const sub
+  redefined warning is downgraded in 5.004_05-tobe
 
 - problems w/ CGI.pm 2.4x + modules/cgi 6-7
 	Ask Bjorn Hansen <ask@netcetera.dk>
@@ -27,14 +29,17 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - Gerald's report of Embperl/sub-request/print breakage
 
-- make sure SERVER_VERSION/SERVER_SUBVERSION, etc. is in sync w/ 1.3b7 changes
-
 - perl-status?mod_perl_hooks broken under win32?
 
 - rand() broken under win32!
            Jeff Baker <jeff@godzilla.tamu.edu>
 
 - APACI stuff:
+
+  o is .xs.c target broken?  {Apache,Constants}.c is not being
+    generated for some folks 
+
+  o building w/ threaded Perl
 
   o Support for the APXS variant of the new APACI stuff. Best would
     be a USE_APXS=1 similar to USE_APACI=1. The difference is that instead of
@@ -52,18 +57,12 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
     would be friendly, perhaps USE_DSO=1, which adds an --enable-shared=perl
     option, too.
 
-- $ENV{PATH}: don't let perl_clear_env() change it's value
-
-- PATH_INFO can break Apache::Registry
-	"Jeffrey W. Baker" <jwb@tamu.edu>
-
-- File::copy($file,*STDOUT) doesn't work 
+- File::copy($file,*STDOUT) doesn't work (pp_syswrite needs tie support)
 	Bill Coffman <coffman@value.net>
 
 - documentation
   + modperl.opensrc.org
   + PerlRun::handler
-  + Frank's FAQ update: http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz
   + DONE
   + SUID access http://www.courtesan.com/sudo/
   + $ENV{PATH}/PerlSetEnv and PerlTaintCheck
@@ -83,6 +82,7 @@ DOCUMENTATION (areas that *really* need some more or don't have any)
 ---------------------------------------------------------------------------
 KNOWN BUGS
 ---------------------------------------------------------------------------
+- $r cannot use many api methods during ChildInit/ChildExit -> SEGV
 
 - bytes_sent are not logged if header don't go through send_http_header(), 
   e.g CGI->header(-nph => 1, ...)

@@ -440,6 +440,8 @@ void perl_clear_env(void)
 	    continue;
 	else if((*key == 'T') && strnEQ(key, "TZ", 2))
 	    continue;
+	else if((*key == 'P') && strnEQ(key, "PATH", 4))
+	    continue;
 	(void)hv_delete(hv, key, klen, G_DISCARD);
     }
     sv_magic((SV*)hv, (SV*)envgv, 'E', Nullch, 0);

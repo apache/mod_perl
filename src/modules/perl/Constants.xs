@@ -5,6 +5,10 @@
 #define SERVER_BUILT "unknown"
 #endif
 
+#ifndef MOD_PERL_STRING_VERSION
+#define MOD_PERL_STRING_VERSION "mod_perl/x.xx"
+#endif
+
 static CV *no_warn = Nullcv;
 
 CV *empty_anon_sub(void)
@@ -827,7 +831,7 @@ SERVER_SUBVERSION()
 #ifdef SERVER_SUBVERSION
     RETVAL = SERVER_SUBVERSION;
 #else
-    RETVAL = "mod_perl/x.xx";
+    RETVAL = MOD_PERL_STRING_VERSION;
 #endif
    OUTPUT:
    RETVAL
