@@ -303,6 +303,19 @@ if($experimental{PERL_DEFAULT_OPMASK} > 1) {
 }
 
 $USE_APACI = 1 if $USE_DSO;
+if($USE_DSO or $USE_APXS and !$DO_HTTPD) {
+    print "*" x 65, $/;
+    print <<EOF;
+* WARNING: mod_perl as a DSO is known to fail on most platforms *
+*          We recommend linking mod_perl static instead         *
+EOF
+    print "*" x 65, $/;
+    my $ans = prompt("Continue?", "n");
+    if($ans =~ /^n$/i) {
+        print "Aborting build process\n";
+        exit;
+    }
+}
 
 if($USE_APXS) {
     if(-e $USE_APXS and !(-d _)) {
