@@ -1,3 +1,4 @@
+cmdparms.t
 env.t
 perlloadmodule.t
 pod.t
