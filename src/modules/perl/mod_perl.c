@@ -542,11 +542,17 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
  */
 static apr_status_t modperl_sys_init(void)
 {
+    int argc = 0;
+    char **argv = NULL, **env = NULL;
+
     MP_TRACE_i(MP_FUNC, "mod_perl sys init\n");
 
-#if 0 /*XXX*/
-    PERL_SYS_INIT(0, NULL);
+    /* not every OS uses those vars in PERL_SYS_INIT3 macro */
+    argc = argc; argv = argv; env = env;
 
+    PERL_SYS_INIT3(&argc, &argv, &env);
+
+#if 0 /*XXX*/
 #ifdef PTHREAD_ATFORK
     if (!ap_exists_config_define("PERL_PTHREAD_ATFORK_DONE")) {
         PTHREAD_ATFORK(Perl_atfork_lock,
@@ -581,9 +587,8 @@ static apr_status_t modperl_sys_term(void *data)
 
     modperl_perl_pp_unset_all();
 
-#if 0 /*XXX*/
     PERL_SYS_TERM();
-#endif
+
     return APR_SUCCESS;
 }
 
