@@ -114,6 +114,14 @@ if(defined &Apache::system and \&system == \&Apache::system) {
 test_exit(); # unless $ENV{CONTENT_LENGTH};
 
 sub test_exit {
+    if ($USE_THREAD) {
+	warn "XXX: need to fix exit in t/net/header.t w/ threads\n";
+    }
+    else {
+	exit;
+	die "shouldn't get this far!\n";
+    }
+
     exit;
     die "shouldn't get this far!\n";
 }
