@@ -13,7 +13,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 5;
+    plan $r, tests => 9;
 
     ok $r->pnotes;
 
@@ -29,6 +29,18 @@ sub handler {
 
     ok t_cmp('pnotes_bar', $r->pnotes()->{'pnotes_foo'},
              q{$r->pnotes()->{}});
+
+    # unset the entry (but the entry remains with undef value)
+    $r->pnotes('pnotes_foo', undef);
+    ok t_cmp($r->pnotes('pnotes_foo'), undef,
+             q{unset entry contents});
+    ok exists $r->pnotes->{'pnotes_foo'};
+
+    # now delete completely (possible only via the hash inteface)
+    delete $r->pnotes()->{'pnotes_foo'};
+    ok t_cmp($r->pnotes('pnotes_foo'), undef,
+             q{deleted entry contents});
+    ok !exists $r->pnotes->{'pnotes_foo'};
 
     Apache::OK;
 }
