@@ -9,11 +9,14 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+untaint Apache::File->tmpfile (if $ENV{TMPDIR,TEMP} are used)
+
 'make test' fixups:
 
  -for when other modules (e.g. auth, dirindex, type)
   come before mod_perl in the module list
  -exit graceful if LWP is still not installed
+ -skip module.t unless mod_{include,access} are configured
 
 loose @ISA 'DynaLoader' to avoid inheriting AutoLoader::AUTOLOAD
 

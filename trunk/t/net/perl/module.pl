@@ -4,7 +4,10 @@ use Apache::test;
 my $r = shift;
 $r->send_http_header('text/plain');
 
-unless(have_module "Apache::Module", '0.10') {
+unless(have_module "Apache::Module", '0.10' and
+       Apache->module('mod_include.c') and
+       Apache->module('mod_access.c'))
+{
     print "1..0\n";
     return;
 }
