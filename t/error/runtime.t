@@ -5,13 +5,32 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 1;
-
 my $location = "/TestError__runtime";
-my $res = GET($location);
-#t_debug($res->content);
-ok t_cmp(
-    500,
-    $res->code,
-    "500 error on runtime error",
+
+my @untrapped = qw(plain_mp_error            plain_non_mp_error
+                   die_hook_confess_mp_error die_hook_confess_non_mp_error
+                   die_hook_custom_mp_error  die_hook_custom_non_mp_error);
+my @trapped   = qw(eval_block_mp_error       eval_block_non_mp_error
+                   eval_string_mp_error      eval_block_non_error);
+
+plan tests => @untrapped + @trapped;
+
+for my $type (@untrapped) {
+    my $res = GET("$location?$type");
+    #t_debug($res->content);
+    ok t_cmp(
+        500,
+        $res->code,
+        "500 error on $type exception",
    );
+}
+
+for my $type (@trapped) {
+    my $body = GET_BODY("$location?$type");
+    ok t_cmp(
+        "ok $type",
+        $body,
+        "200 on $type exception",
+   );
+}
+
