@@ -832,7 +832,7 @@ EOF
 
     print $c_fh <<EOF
     };
-    Perl_croak(aTHX_ "unknown $class:: constant %s", name);
+    Perl_croak(aTHX_ "unknown $class\:: constant %s", name);
     return newSViv(MP_ENOCONST);
 }
 EOF
@@ -898,7 +898,7 @@ sub constants_group_lookup_code {
 
     print $c_fh <<EOF;
     };
-    Perl_croak_nocontext("unknown $class:: group `%s'", name);
+    Perl_croak_nocontext("unknown $class\:: group `%s'", name);
     return NULL;
 }
 EOF
