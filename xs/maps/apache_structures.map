@@ -234,7 +234,7 @@ $  limit_req_fields
 <cmd_parms>
 -  info
 <  override
-<  limited
+!  limited
 !  limited_xmethods
 !  xlimited
 !  config_file

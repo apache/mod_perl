@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::CmdParms->limited member replaced by is_method_limited()
+method [Gozer]
+
 Apache::Module changes [Gozer]
 - readwrite => readonly:
     cmds, next, name, module_index, minor_version, version

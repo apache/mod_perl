@@ -35,7 +35,7 @@ our @APACHE_MODULE_COMMANDS = (
     },
 );
 
-my @methods = qw(cmd context directive info limited override path
+my @methods = qw(cmd context directive info override path
                  pool server temp_pool);
 
 sub TestCmdParms {
@@ -46,6 +46,8 @@ sub TestCmdParms {
     }
     $srv_cfg->{$args}{check_ctx} = 
         $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
+    
+    $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
 }
 
 sub get_config {
@@ -59,7 +61,7 @@ sub handler : method {
     my $override;
     my $srv_cfg = $self->get_config($r->server);
 
-    plan $r, tests => 6 + ( 8 * keys(%$srv_cfg) );
+    plan $r, tests => 9 + ( 7 * keys(%$srv_cfg) );
 
     foreach my $cfg (values %$srv_cfg) {
         ok t_cmp(ref($cfg->{cmd}), 'Apache::Command', 'cmd');
@@ -68,7 +70,6 @@ sub handler : method {
         ok t_cmp(ref($cfg->{pool}), 'APR::Pool', 'pool');
         ok t_cmp(ref($cfg->{temp_pool}), 'APR::Pool', 'temp_pool');
         ok t_cmp(ref($cfg->{server}), 'Apache::ServerRec', 'server');
-        ok t_cmp($cfg->{limited}, -1, 'limited');
         ok t_cmp($cfg->{info}, 'cmd_data', 'cmd_data');
     }
 
@@ -85,6 +86,7 @@ sub handler : method {
         ok t_cmp($masked, $wanted, 'override bitmask');
         ok t_cmp($vhost->{path}, undef, 'path');
         ok t_cmp($vhost->{check_ctx}, undef, 'check_cmd_ctx');
+        ok $vhost->{limited};
     }
 
     # Location
@@ -103,6 +105,13 @@ sub handler : method {
         ok t_cmp($loc->{path}, '/TestDirective__cmdparms', 'path');
         ok t_cmp($loc->{check_ctx}, KEY .
                   ' cannot occur within <Location> section', 'check_cmd_ctx');
+        ok $loc->{limited};
+    }
+    
+    # Limit
+    {
+        my $limit = $srv_cfg->{Limit};
+        ok !$limit->{limited};
     }
 
     return Apache::OK;
@@ -119,3 +128,7 @@ TestCmdParms "Vhost"
 </Base>
 
 TestCmdParms "Location"
+
+<LimitExcept GET>
+    TestCmdParms "Limit"
+</LimitExcept>
