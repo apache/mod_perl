@@ -11,6 +11,32 @@ This document
 mod_perl C code follows the Apache style guide:
 http://dev.apache.org/styleguide.html
 
+=head2 Prefixes
+
+=over 4
+
+=item modperl_
+
+The prefix for mod_perl C API functions.
+
+=item MP_
+
+The prefix for mod_perl C macros.
+
+=item mpxs_
+
+The prefix for mod_perl XS utility functions.
+
+=item mp_xs_
+
+The prefix for mod_perl I<generated> XS utility functions.
+
+=item MPXS_
+
+The prefix for mod_perl XSUBs with an XS() prototype.
+
+=back
+
 =head1 XS code
 
 C code inside xs modules also follows the Apache style guide.
