@@ -690,7 +690,7 @@ void perl_startup (server_rec *s, pool *p)
     Apache__ServerStarting(FALSE);
 #if MODULE_MAGIC_NUMBER >= MMN_130
     if(perl_module.dynamic_load_handle) 
-	register_cleanup(p, NULL, mp_dso_unload, NULL); 
+	register_cleanup(p, NULL, mp_dso_unload, null_cleanup); 
 #endif
 }
 
