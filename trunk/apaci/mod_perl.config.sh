@@ -182,6 +182,11 @@ perl_static_objs_pic="`echo $param_PERL_STATIC_SRCS | sed -e 's:\.c:.lo:g'`"
 perl_defs=''
 perl_defs="$perl_defs -DMOD_PERL_VERSION=\\\"$param_MOD_PERL_VERSION\\\""
 perl_defs="$perl_defs -DMOD_PERL_STRING_VERSION=\\\"mod_perl/$param_MOD_PERL_VERSION\\\""
+
+if [ ".$param_MOD_PERL_PREFIX" != . ]; then
+	perl_defs="$perl_defs -DMOD_PERL_PREFIX=\\\"$param_MOD_PERL_PREFIX\\\""
+fi
+
 perl_defs="$perl_defs"
 OIFS="$IFS" IFS="$DIFS"
 for hook in \

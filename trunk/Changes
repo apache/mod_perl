@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+if PREFIX is given to Makefile.PL add it to @INC at startup
+[Philippe M . Chiasson <gozer@cpan.org>]
+
 add %Apache::MyConfig aliases for Apache::src backwards compat
 [Philippe M . Chiasson <gozer@cpan.org>]
 

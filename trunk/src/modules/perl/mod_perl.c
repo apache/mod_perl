@@ -765,6 +765,11 @@ void perl_startup (server_rec *s, pool *p)
 	TAINT_NOT; /* At this time all is safe */
     }
 
+#ifdef MOD_PERL_PREFIX
+	av_unshift(GvAV(incgv),1);
+	av_store(GvAV(incgv), 0, newSVpv(MOD_PERL_PREFIX,0));
+#endif
+	
 #ifdef APACHE_PERL5LIB
     perl_incpush(APACHE_PERL5LIB);
 #else

@@ -228,6 +228,7 @@ $PERL_FILE_API = 0;
 $PERL_CONNECTION_API = 1; #these two were split out late in the game
 $PERL_SERVER_API = 1;     #so they are on by default 
 $PERL_RUN_XS = 0;
+$MOD_PERL_PREFIX;
 
 my %experimental = map { $_,1 } qw{
 PERL_AUTOPRELOAD
@@ -336,6 +337,13 @@ while($_ = shift) {
     unless (/^(PERL|APACHE)/ or is_mp_arg($k)) {
 	push @mm_args, $_;
     }
+	
+	if($k eq 'PREFIX')
+		{
+		use File::Spec;
+		$MOD_PERL_PREFIX = File::Spec->catfile($v,'lib','site_perl',$Config{'version'},$Config{'archname'});
+		}
+		
     $v = 1 unless defined $v;
     if($experimental{$k}) {
 	$experimental{$k}++;
@@ -2271,6 +2279,13 @@ PERL = $^X
 LIBPERL = $LIBPERL
 
 $static_targets
+
+EOF
+
+print $apaci_cfg <<EOF if defined $MOD_PERL_PREFIX;
+
+# mod_perl installation prefix
+MOD_PERL_PREFIX = $MOD_PERL_PREFIX
 
 EOF
 
