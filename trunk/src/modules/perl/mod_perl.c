@@ -96,6 +96,11 @@ static command_rec perl_cmds[] = {
     { "PerlTaintCheck", perl_cmd_tainting,
       NULL,
       RSRC_CONF, FLAG, "Turn on -T switch" },
+#ifdef PERL_SAFE_STARTUP
+    { "PerlOpmask", perl_cmd_opmask,
+      NULL,
+      RSRC_CONF, TAKE1, "Opmask File" },
+#endif
     { "PerlWarn", perl_cmd_warn,
       NULL,
       RSRC_CONF, FLAG, "Turn on -w switch" },
@@ -516,8 +521,6 @@ void perl_startup (server_rec *s, pool *p)
     mod_perl_tie_scriptname();
     MP_TRACE_g(fprintf(stderr, "running perl interpreter..."));
 
-    ENTER;
-
     pool_rv = perl_get_sv("Apache::__POOL", TRUE);
     sv_setref_pv(pool_rv, Nullch, (void*)p);
     server_rv = perl_get_sv("Apache::__SERVER", TRUE);
@@ -568,6 +571,9 @@ void perl_startup (server_rec *s, pool *p)
 	GvIMPORTED_CV_on(exitgp);
     }
 
+    ENTER_SAFE(s,p);
+    MP_TRACE_g(mod_perl_dump_opmask());
+
     list = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {
 	if(perl_load_startup_script(s, p, list[i], TRUE) != OK) {
@@ -576,16 +582,6 @@ void perl_startup (server_rec *s, pool *p)
 	    exit(1);
 	}
     }
-
-    MP_TRACE_g(fprintf(stderr, 
-	     "mod_perl: %d END blocks encountered during server startup\n",
-	     endav ? (int)AvFILL(endav)+1 : 0));
-#if MODULE_MAGIC_NUMBER < 19970728
-    if(endav)
-	MP_TRACE_g(fprintf(stderr, "mod_perl: cannot run END blocks encoutered at server startup without apache_1.3b2+\n"));
-#endif
-
-    LEAVE;
 
     if (status != OK) {
 	MP_TRACE_g(fprintf(stderr,"not ok, status=%d\n", status));
@@ -602,6 +598,16 @@ void perl_startup (server_rec *s, pool *p)
 	    exit(1);
 	}
     }
+
+    LEAVE_SAFE;
+
+    MP_TRACE_g(fprintf(stderr, 
+	     "mod_perl: %d END blocks encountered during server startup\n",
+	     endav ? (int)AvFILL(endav)+1 : 0));
+#if MODULE_MAGIC_NUMBER < 19970728
+    if(endav)
+	MP_TRACE_g(fprintf(stderr, "mod_perl: cannot run END blocks encoutered at server startup without apache_1.3.0+\n"));
+#endif
 
     orig_inc = av_copy_array(GvAV(incgv));
 

@@ -10,6 +10,7 @@ static IV opset_len = 0;
 #define op_names_init()
 #define get_op_bitspec(op,f) Nullsv
 #define set_opset_bits(bitmap, bitspec, on, op)
+#define read_opmask(s,p,f) NULL
 
 #else
 
@@ -57,6 +58,35 @@ static void set_opset_bits(char *bitmap, SV *bitspec, int on, char *opname)
 	croak("mod_perl: invalid bitspec for \"%s\" (type %u)",
 		opname, (unsigned)SvTYPE(bitspec));
 }
+
+static char *read_opmask(server_rec *s, pool *p, char *file)
+{
+#ifdef HAVE_APACHE_V_130
+    char opname[MAX_STRING_LEN];
+    char *mask = (char *)ap_pcalloc(p, maxo);
+    configfile_t *cfg = ap_pcfg_openfile(p, file);
+
+    if(!cfg) {
+	ap_log_error(APLOG_MARK, APLOG_CRIT, s,
+		     "mod_perl: unable to PerlOpmask file %s", file);
+	exit(1);
+    }
+
+    op_names_init();
+    while (!(ap_cfg_getline(opname, MAX_STRING_LEN, cfg))) {
+	SV *bitspec;
+	if(*opname == '#') continue;
+	if((bitspec = get_op_bitspec(opname, TRUE))) {
+	    set_opset_bits(mask, bitspec, TRUE, opname);
+	}
+    }
+    return mask;
+
+#else
+    croak("Need Apache 1.3.0+ to use PerlOpmask directive");
+#endif /*HAVE_APACHE_V_130*/
+}
+
 #endif /*PERL_DEFAULT_OPMASK*/
 
 static void opmask_add(char *bitmask)
@@ -77,34 +107,6 @@ static void opmask_add(char *bitmask)
     }
 }
 
-static char *read_opmask(server_rec *s, pool *p, char *file)
-{
-#ifdef HAVE_APACHE_V_130
-    char line[MAX_STRING_LEN];
-    char *mask = (char *)ap_pcalloc(p, maxo);
-    configfile_t *cfg = ap_pcfg_openfile(p, file);
-
-    if(!cfg) {
-	ap_log_error(APLOG_MARK, APLOG_CRIT, s,
-		     "mod_perl: unable to PerlOpmask file %s", file);
-	exit(1);
-    }
-
-    op_names_init();
-    while (!(ap_cfg_getline(line, MAX_STRING_LEN, cfg))) {
-	SV *bitspec;
-	if(*line == '#') continue;
-	if((bitspec = get_op_bitspec(line, TRUE))
-	    set_opset_bits(mask, bitspec, TRUE, line);
-	/*fprintf(stderr, "Opmask |= `%s'\n", line);*/
-    }
-    return mask;
-
-#else
-    croak("Need Apache 1.3.0+ to use PerlOpmask directive");
-#endif /*MMN_130*/
-}
-
 #include "op_mask.c"
 
 static char *default_opmask = NULL;
@@ -117,6 +119,12 @@ static char *default_opmask = NULL;
 #define MP_DEFAULT_OPMASK !strcasecmp(cls->PerlOpmask, "default")
 #endif
 
+static void reset_default_opmask(void *data)
+{
+    char *mask = (char *)data;
+    mask = NULL;
+}
+
 void mod_perl_init_opmask(server_rec *s, pool *p)
 {
     dPSRV(s);
@@ -126,11 +134,20 @@ void mod_perl_init_opmask(server_rec *s, pool *p)
 	return;
 
     if(MP_DEFAULT_OPMASK) {
-	if(!default_opmask) 
+#if 0
+	if(!default_opmask) {
 	    default_opmask = uudecode(p, MP_op_mask);
-	local_opmask = default_opmask;
+	    register_cleanup(p, (void*)default_opmask, 
+			     reset_default_opmask, mod_perl_noop);
+	}
+#endif
+	local_opmask = uudecode(p, MP_op_mask);
+	MP_TRACE_g(fprintf(stderr, "mod_perl: using PerlOpmask %s\n",
+		   cls->PerlOpmask ? cls->PerlOpmask : "__DEFAULT__"));
     }
     else {
+	MP_TRACE_g(fprintf(stderr, "mod_perl: using PerlOpmask %s\n",
+		   cls->PerlOpmask));
 	local_opmask = read_opmask(s, p, 
 				   server_root_relative(p, cls->PerlOpmask));
     }
@@ -153,7 +170,7 @@ void mod_perl_dump_opmask(void)
 
 #else
 
-void mod_perl_init_opmask(pool *p)
+void mod_perl_init_opmask(server_rec *s, pool *p)
 {
 }
 

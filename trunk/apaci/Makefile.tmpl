@@ -40,10 +40,10 @@ MP_LIB=libperl.$(LIBEXT)
 
 #   the objects to use
 MP_OBJS=\
-   mod_perl.o perlxsi.o perl_config.o perl_util.o perlio.o \
+   mod_perl.o perlxsi.o perl_config.o perl_util.o perlio.o mod_perl_opmask.o \
    $(MP_STATIC_OBJS)
 MP_OBJS_PIC=\
-   mod_perl.lo perlxsi.lo perl_config.lo perl_util.lo perlio.lo \
+   mod_perl.lo perlxsi.lo perl_config.lo perl_util.lo perlio.lo mod_perl_opmask.lo \
    $(MP_STATIC_OBJS_PIC)
 
 all: lib

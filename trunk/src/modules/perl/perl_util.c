@@ -123,6 +123,24 @@ SV *mod_perl_gensym (char *pack)
     return rv;
 }
 
+SV *mod_perl_slurp_filename(request_rec *r)
+{
+    dTHR;
+    PerlIO *fp;
+    SV *insv;
+
+    ENTER;
+    save_item(rs);
+    sv_setsv(rs, &sv_undef); 
+
+    fp = PerlIO_open(r->filename, "r");
+    insv = newSV(r->finfo.st_size);
+    sv_gets(insv, fp, 0); /*slurp*/
+    PerlIO_close(fp);
+    LEAVE;
+    return newRV_noinc(insv);
+}
+
 SV *mod_perl_tie_table(table *t)
 {
     HV *hv;

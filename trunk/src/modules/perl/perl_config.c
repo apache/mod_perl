@@ -322,6 +322,7 @@ void *perl_create_server_config (pool *p, server_rec *s)
     cls->PerlTaintCheck = 0;
     cls->PerlWarn = 0;
     cls->FreshRestart = 0;
+    cls->PerlOpmask = NULL;
     PERL_POST_READ_REQUEST_CREATE(cls);
     PERL_TRANS_CREATE(cls);
     PERL_CHILD_INIT_CREATE(cls);
@@ -506,6 +507,20 @@ CHAR_P perl_cmd_require (cmd_parms *parms, void *dummy, char *arg)
 
     return NULL;
 }
+
+#ifdef PERL_SAFE_STARTUP
+CHAR_P perl_cmd_opmask (cmd_parms *parms, void *dummy, char *arg)
+{
+    dPSRV(parms->server);
+    MP_TRACE_d(fprintf(stderr, "perl_cmd_opmask: %s\n", arg));
+    cls->PerlOpmask = arg;
+#ifdef PERL_DEFAULT_MASK
+    return "Default Opmask is on, cannot re-configure";
+#else
+    return NULL;
+#endif
+}
+#endif
 
 CHAR_P perl_cmd_tainting (cmd_parms *parms, void *dummy, int arg)
 {
@@ -1333,7 +1348,10 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 
     sv_setpv(perl_get_sv("0", TRUE), cmd_filename);
 
+    ENTER_SAFE(parms->server, parms->pool);
+    MP_TRACE_g(mod_perl_dump_opmask());
     perl_eval_sv(code, G_DISCARD);
+    LEAVE_SAFE;
 
     {
 	dTHR;

@@ -212,23 +212,7 @@ void ApachePerlRun_compile(request_rec *r, SV *code_ref)
  * }
  */
 
-SV *ApachePerlRun_readscript(request_rec *r)
-{
-    dTHR;
-    PerlIO *fp;
-    SV *insv;
-
-    ENTER;
-    save_item(rs);
-    sv_setsv(rs, &sv_undef); 
-
-    fp = PerlIO_open(r->filename, "r");
-    insv = newSV(r->finfo.st_size);
-    sv_gets(insv, fp, 0); /*slurp*/
-    PerlIO_close(fp);
-    LEAVE;
-    return newRV_noinc(insv);
-}
+#define ApachePerlRun_readscript mod_perl_slurp_filename
 
 SV *ApachePerlRun_parse_cmdline(request_rec *r, SV *code)
 {

@@ -126,7 +126,7 @@ perlxsi.c:
 .xs.c:
 	$(PERL) $(PERL5LIB)/ExtUtils/xsubpp -typemap $(PERL5LIB)/ExtUtils/typemap $*.xs > $@
 
-PERLSRC=mod_perl.c perlxsi.c perl_config.c perl_util.c perlio.c $(STATIC_SRC)
+PERLSRC=mod_perl_opmask.c mod_perl.c perlxsi.c perl_config.c perl_util.c perlio.c $(STATIC_SRC)
 
 OBJS=$(PERLSRC:.c=.o)
 

@@ -376,6 +376,9 @@ if((add->flags & f) || (base->flags & f)) \
 /* once 1.3.0 is here, we can toss most of this junk */
 
 #define MMN_130 19980527
+#if MODULE_MAGIC_NUMBER >= MMN_130
+#define HAVE_APACHE_V_130
+#endif
 #define APACHE_SSL_12X (defined(APACHE_SSL) && (MODULE_MAGIC_NUMBER < MMN_130))
 
 #if MODULE_MAGIC_NUMBER >= 19980627
@@ -878,6 +881,7 @@ typedef struct {
     PERL_CMD_TYPE *PerlChildInitHandler;
     PERL_CMD_TYPE *PerlChildExitHandler;
     PERL_CMD_TYPE *PerlRestartHandler;
+    char *PerlOpmask;
 } perl_server_config;
 
 typedef struct {
@@ -982,6 +986,7 @@ array_header *avrv2array_header(SV *avrv, pool *p);
 table *hvrv2table(SV *rv);
 void mod_perl_untaint(SV *sv);
 SV *mod_perl_gensym (char *pack);
+SV *mod_perl_slurp_filename(request_rec *r);
 SV *mod_perl_tie_table(table *t);
 SV *perl_hvrv_magic_obj(SV *rv);
 void perl_tie_hash(HV *hv, char *class, SV *sv);
@@ -1045,6 +1050,7 @@ CHAR_P perl_cmd_setenv(cmd_parms *cmd, perl_dir_config *rec, char *key, char *va
 CHAR_P perl_cmd_env (cmd_parms *cmd, perl_dir_config *rec, int arg);
 CHAR_P perl_cmd_pass_env (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_sendheader (cmd_parms *cmd, perl_dir_config *rec, int arg);
+CHAR_P perl_cmd_opmask (cmd_parms *parms, void *dummy, char *arg);
 CHAR_P perl_cmd_tainting (cmd_parms *parms, void *dummy, int arg);
 CHAR_P perl_cmd_warn (cmd_parms *parms, void *dummy, int arg);
 CHAR_P perl_cmd_fresh_restart (cmd_parms *parms, void *dummy, int arg);
@@ -1091,3 +1097,26 @@ request_rec *sv2request_rec(SV *in, char *class, CV *cv);
 /* PerlRunXS.xs */
 #define ApachePerlRun_name_with_virtualhost() \
     perl_get_sv("Apache::Registry::NameWithVirtualHost", FALSE) 
+
+void mod_perl_init_opmask(server_rec *s, pool *p);
+void mod_perl_dump_opmask(void);
+#define dOPMask \
+if(!op_mask) Newz(0, op_mask, maxo, char); \
+else         Zero(op_mask, maxo, char)
+
+#ifdef PERL_SAFE_STARTUP
+
+#define ENTER_SAFE(s,p) \
+    dOPMask; \
+    ENTER; \
+    SAVEPPTR(op_mask); \
+    mod_perl_init_opmask(s,p)
+
+#define LEAVE_SAFE \
+    Zero(op_mask, maxo, char); \
+    LEAVE
+
+#else
+#define ENTER_SAFE(s,p)
+#define LEAVE_SAFE
+#endif

@@ -167,6 +167,7 @@ These are constants related to server version:
 
  MODULE_MAGIC_NUMBER
  SERVER_VERSION
+ SERVER_BUILT
 
 =back
 

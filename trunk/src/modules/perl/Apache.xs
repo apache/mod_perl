@@ -502,6 +502,10 @@ SV *
 mod_perl_gensym(pack="Apache::Symbol")
     char *pack
 
+SV *
+mod_perl_slurp_filename(r)
+    Apache r
+
 char *
 unescape_url(string)
 char *string

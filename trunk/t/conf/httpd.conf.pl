@@ -1,3 +1,5 @@
+#PerlOpmask default
+
 <IfModule mod_dll.c>
 LoadModule perl_module modules/ApacheModulePerl.dll
 </IfModule>
@@ -27,6 +29,8 @@ PerlSetEnv KeyForPerlSetEnv OK
 
 <Perl>
 #!perl
+use Apache ();
+use Apache::Registry ();
 
 if($ENV{TEST_PERL_DIRECTIVES}) {
     #t/TestDirectives/TestDirectives.pm
@@ -67,12 +71,9 @@ EOF
 
 $My::config_is_perl = 1;
 
-#use Apache::Constants qw(MODULE_MAGIC_NUMBER);
-use IO::Handle ();
-use Cwd qw(fastcwd);
-my $dir = join "/", fastcwd, "t";
+my $dir = $Apache::Server::CWD;
+$dir .= "/t" if -d "t";
 my $Is_Win32 = ($^O eq "MSWin32");
-#my $mmn = MODULE_MAGIC_NUMBER;
 
 sub prompt ($;$) {
     my($mess,$def) = @_;
