@@ -132,7 +132,7 @@ sub handler {
 
 	my $cv = \&{"$package\::handler"};
 	eval { &{$cv}($r, @_) } if $r->seqno;
-	chdir $Apache::Server::CWD;
+	$r->chdir_file("$Apache::Server::CWD/");
 	$^W = $oldwarn;
 
 	my $errsv = "";
