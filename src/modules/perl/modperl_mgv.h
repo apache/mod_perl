@@ -21,6 +21,10 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 void modperl_mgv_append(pTHX_ apr_pool_t *p, modperl_mgv_t *symbol,
                         const char *name);
 
+modperl_mgv_t *modperl_mgv_last(modperl_mgv_t *symbol);
+
+char *modperl_mgv_last_name(modperl_mgv_t *symbol);
+
 char *modperl_mgv_as_string(pTHX_ modperl_mgv_t *symbol,
                             apr_pool_t *p, int package);
 

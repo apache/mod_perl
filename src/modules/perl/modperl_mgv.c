@@ -327,6 +327,21 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     return 0;
 }
 
+modperl_mgv_t *modperl_mgv_last(modperl_mgv_t *symbol)
+{
+    while (symbol->next) {
+        symbol = symbol->next;
+    }
+
+    return symbol;
+}
+
+char *modperl_mgv_last_name(modperl_mgv_t *symbol)
+{
+    symbol = modperl_mgv_last(symbol);
+    return symbol->name;
+}
+
 char *modperl_mgv_as_string(pTHX_ modperl_mgv_t *symbol,
                             apr_pool_t *p, int package)
 {
