@@ -61,7 +61,9 @@ In any case, you need to 'make install' so the perl side of mod_perl
 will be installed.
 
 By default, all callback hooks except for PerlHandler are turned off.
-You may edit src/modules/perl/Makefile, or enable when running Makfile.PL
+You may edit src/modules/perl/Makefile, or enable when running
+Makefile.PL
+
 Possible arguments are:
 
   PERL_POST_READ_REQUEST
@@ -108,18 +110,22 @@ read in by Makefile.PL
 Example:
 
  % ls -1 .
- apache_1.3b3/
+ apache_1.3/
  makepl_args.mod_perl
- mod_perl-1.08/
+ mod_perl-1.12/
 
  % cat makepl_args.mod_perl
  EVERYTHING=1 DO_HTTPD=1
 
- % cd mod_perl-1.08
+ % cd mod_perl-1.12
  % perl Makefile.PL && make test && make install
 
 You'll see all options enabled and you will not be prompted for apache
-source location, it will default to ../apache_1.3b3
+source location, it will default to ../apache_1.3
+
+There is a sample makepl_args.mod_perl in the eg/ directory, in which
+you might find a few options to enable experimental features to play
+with too! :-)
 
 =item Installation of Apache header files
 

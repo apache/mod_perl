@@ -29,6 +29,9 @@ Apache::Tie - Tie interfaces to Apache structures
     my $table = $r->headers_out;
     $table->set(From => 'dougm@perl.apache.org');
 
+Mod_perl have to be compiled with 'perl Makefile.PL PERL_TIE_TABLES=1'
+for this to work.
+
 =head1 DESCRIPTION
 
 This module provides tied interfaces to Apache data structures.
