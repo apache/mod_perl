@@ -152,7 +152,7 @@ static IV PerlIOAPR_seek(pTHX_ PerlIO *f, Off_t offset, int whence)
     IV code;
     apr_off_t seek_offset = 0;
 
-#ifdef USE_LARGE_FILES
+#if MP_LARGE_FILES_PERL_ONLY
     if (offset != 0) {
         Perl_croak(aTHX_ "PerlIO::APR::seek with non-zero offset"
                    " not supported with -Duselargefiles");
