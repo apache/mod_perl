@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_03-dev
 
+removed the generated apaci/mod_perl.config from MANIFEST
+
 new variable $Apache::Server::StrictPerlSections, if true, will croak
 <Perl> section generates invalid Apache configuration syntax
 

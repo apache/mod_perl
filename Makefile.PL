@@ -131,6 +131,7 @@ my(@do_clean) = qw{
    t/report
    t/httpd
    apaci/find_source
+   apaci/mod_perl.config
 };
 #t/conf/httpd.conf
 #t/net/config.pl

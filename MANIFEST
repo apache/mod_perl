@@ -221,7 +221,6 @@ apaci/Makefile.tmpl
 apaci/README
 apaci/configure
 apaci/libperl.module
-apaci/mod_perl.config
 apaci/mod_perl.config.sh
 apaci/load_modules.pl.PL
 apaci/find_source.PL
