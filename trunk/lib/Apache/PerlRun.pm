@@ -158,7 +158,6 @@ sub namespace_from {
 
     my $uri = $pr->uri; 
 
-    $uri = "/__INDEX__" if $uri eq "/";
     $pr->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
 		  $uri) if $Debug && $Debug & 4;
 
@@ -171,6 +170,8 @@ sub namespace_from {
 	my $name = $pr->get_server_name;
 	$script_name = join "", $name, $script_name if $name;
     }
+
+    $script_name =~ s:/+$:/__INDEX__:;
 
     return $script_name;
 }
