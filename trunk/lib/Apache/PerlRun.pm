@@ -45,8 +45,7 @@ sub can_compile {
 	    return FORBIDDEN;
  	}
 	if (-d _) {
-	    $pr->log_reason("attempt to invoke directory as script", $filename);
-	    return FORBIDDEN;
+	    return DECLINED;
 	}
 	unless (-x _ or $Is_Win32) {
 	    $pr->log_reason("file permissions deny server execution",

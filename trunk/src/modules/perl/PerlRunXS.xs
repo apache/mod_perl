@@ -179,8 +179,7 @@ int ApachePerlRun_can_compile(request_rec *r)
 			"script not found or unable to stat");
     }
     if (S_ISDIR(r->finfo.st_mode)) {
-	log_scripterror(r, FORBIDDEN,
-			"attempt to invoke directory as script");
+	return DECLINED;
     }
     if (!can_exec(&r->finfo)) {
 	log_scripterror(r, FORBIDDEN,
