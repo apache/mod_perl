@@ -63,7 +63,7 @@ sub which {
 
 sub gtop_ldopts {
     my $xlibs = "-L/usr/X11/lib -L/usr/X11R6/lib -lXau";
-    return " -lgtop -lgtop_sysdeps -lgtop_common $xlibs";
+    return " -lgtop -lgtop_sysdeps -lgtop_common $xlibs -lintl";
 }
 
 sub ldopts {
