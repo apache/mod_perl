@@ -9,11 +9,11 @@ use Apache::TestRequest;
 
 use APR::Pool ();
 use APR::URI ();
-use Apache::URI ();
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
+use Apache2::URI ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
@@ -141,7 +141,7 @@ sub handler {
         my $path     = "/foo/bar";
         my $query    = "query";
         my $fragment = "fragment";
-        my $newr = Apache::RequestRec->new($r->connection, $r->pool);
+        my $newr = Apache2::RequestRec->new($r->connection, $r->pool);
         my $url_string = "$path?$query#$fragment";
 
         # new request
@@ -176,12 +176,12 @@ sub handler {
         my @c = qw(one two three);
         my $url_string = join '%20', @c;
 
-        Apache::URI::unescape_url($url_string);
+        Apache2::URI::unescape_url($url_string);
 
         ok $url_string eq "@c";
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -24,14 +24,12 @@ die '$ENV{MOD_PERL_API_VERSION} not set!'
 
 use File::Spec::Functions qw(canonpath catdir);
 
-use Apache2 ();
+use Apache2::ServerUtil ();
+use Apache2::ServerRec ();
+use Apache2::Process ();
+use Apache2::Log ();
 
-use Apache::ServerUtil ();
-use Apache::ServerRec ();
-use Apache::Process ();
-use Apache::Log ();
-
-use Apache::Const -compile => ':common';
+use Apache2::Const -compile => ':common';
 
 reorg_INC();
 
@@ -55,9 +53,9 @@ sub reorg_INC {
     # after Apache2 has pushed blib and core dirs including Apache2 on
     # top reorg @INC to have first devel libs, then blib libs, and
     # only then perl core libs
-    my $pool = Apache->server->process->pool;
+    my $pool = Apache2->server->process->pool;
     my $project_root = canonpath
-        Apache::ServerUtil::server_root_relative($pool, "..");
+        Apache2::ServerUtil::server_root_relative($pool, "..");
     my (@a, @b, @c);
     for (@INC) {
         if (m|^\Q$project_root\E|) {
@@ -75,13 +73,13 @@ sub reorg_INC {
 # run during config phase, so it's logged only once (even though it's
 # run the second time, but STDERR == /dev/null)
 sub startup_info {
-    my $ap_mods  = scalar grep { /^Apache/ } keys %INC;
+    my $ap_mods  = scalar grep { /^Apache2/ } keys %INC;
     my $apr_mods = scalar grep { /^APR/    } keys %INC;
 
-    Apache::Log->info("$ap_mods Apache:: modules loaded");
-    Apache::ServerRec->log->info("$apr_mods APR:: modules loaded");
+    Apache2::Log->info("$ap_mods Apache2:: modules loaded");
+    Apache2::ServerRec->log->info("$apr_mods APR:: modules loaded");
 
-    my $server = Apache->server;
+    my $server = Apache2->server;
     my $vhosts = 0;
     for (my $s = $server->next; $s; $s = $s->next) {
         $vhosts++;
@@ -96,27 +94,27 @@ sub test_add_config {
     my $conf = <<'EOC';
 # must use PerlModule here to check for segfaults
 PerlModule Apache::TestHandler
-<Location /apache/add_config>
+<Location /apache2/add_config>
   SetHandler perl-script
   PerlResponseHandler Apache::TestHandler::ok1
 </Location>
 EOC
-    Apache->server->add_config([split /\n/, $conf]);
+    Apache2->server->add_config([split /\n/, $conf]);
 
     # test a directive that triggers an early startup, so we get an
     # attempt to use perl's mip early
-    Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
+    Apache2->server->add_config(['<Perl >', '1;', '</Perl>']);
 }
 
 # need to run from config phase, since it registers PerlPostConfigHandler
 sub test_add_version_component {
-    Apache->server->push_handlers(
+    Apache2->server->push_handlers(
         PerlPostConfigHandler => \&add_my_version);
 
     sub add_my_version {
         my($conf_pool, $log_pool, $temp_pool, $s) = @_;
         $s->add_version_component("world domination series/2.0");
-        return Apache::OK;
+        return Apache2::OK;
     }
 }
 

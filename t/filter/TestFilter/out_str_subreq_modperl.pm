@@ -6,13 +6,13 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::SubRequest ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::SubRequest ();
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 # include the contents of a subrequest
 # in the filter, a la mod_include's 
@@ -48,7 +48,7 @@ sub include {
         $filter->ctx(1);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub subrequest {
@@ -58,7 +58,7 @@ sub subrequest {
     $r->content_type('text/plain');
     $r->print("modperl subrequest\n");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -73,7 +73,7 @@ sub response {
     $r->rflush;
     $r->print("more content\n");
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

@@ -6,19 +6,19 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestConfig;
 use Apache::TestUtil;
-use Apache::BuildConfig;
+use Apache2::BuildConfig;
 
-use Apache::Module ();
+use Apache2::Module ();
 use DynaLoader ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     my $cfg = Apache::Test::config();
 
-    my $top_module = Apache::Module::top_module();
+    my $top_module = Apache2::Module::top_module();
 
     my $module_count = 0;
     for (my $modp = $top_module; $modp; $modp = $modp->next) {
@@ -29,54 +29,54 @@ sub handler {
 
     plan $r, tests => $tests;
 
-    my $core = Apache::Module::find_linked_module('core.c');
+    my $core = Apache2::Module::find_linked_module('core.c');
     ok defined $core && $core->name eq 'core.c';
 
     #.c
-    ok t_cmp Apache::Module::loaded('mod_perl.c'), 1,
-        "Apache::Module::loaded('mod_perl.c')";
+    ok t_cmp Apache2::Module::loaded('mod_perl.c'), 1,
+        "Apache2::Module::loaded('mod_perl.c')";
 
-    ok t_cmp Apache::Module::loaded('Apache__Module_foo.c'), 0,
-        "Apache::Module::loaded('Apache__Module_foo.c')";
+    ok t_cmp Apache2::Module::loaded('Apache__Module_foo.c'), 0,
+        "Apache2::Module::loaded('Apache__Module_foo.c')";
 
     #.so
     {
-        my $build = Apache::BuildConfig->new;
+        my $build = Apache2::BuildConfig->new;
         my $expect = $build->should_build_apache ? 0 : 1;
-        ok t_cmp Apache::Module::loaded('mod_perl.so'), $expect,
-            "Apache::Module::loaded('mod_perl.so')";
+        ok t_cmp Apache2::Module::loaded('mod_perl.so'), $expect,
+            "Apache2::Module::loaded('mod_perl.so')";
     }
 
-    ok t_cmp Apache::Module::loaded('Apache__Module__foo.so'), 0,
-        "Apache::Module::loaded('Apache__Module_foo.so')";
+    ok t_cmp Apache2::Module::loaded('Apache__Module__foo.so'), 0,
+        "Apache2::Module::loaded('Apache__Module_foo.so')";
 
     #perl
     {
-        ok t_cmp Apache::Module::loaded('Apache::Module'), 1,
-            "Apache::Module::loaded('Apache::Module')";
+        ok t_cmp Apache2::Module::loaded('Apache2::Module'), 1,
+            "Apache2::Module::loaded('Apache2::Module')";
 
-        ok t_cmp Apache::Module::loaded('Apache__Module_foo'), 0,
-            "Apache::Module::loaded('Apache__Module_foo')";
+        ok t_cmp Apache2::Module::loaded('Apache__Module_foo'), 0,
+            "Apache2::Module::loaded('Apache__Module_foo')";
 
         # TestAPI::module::foo wasn't loaded but the stash exists
         $TestAPI::module::foo::test = 1;
-        ok t_cmp Apache::Module::loaded('TestAPI::module::foo'), 0,
-            "Apache::Module::loaded('TestAPI::module::foo')";
+        ok t_cmp Apache2::Module::loaded('TestAPI::module::foo'), 0,
+            "Apache2::Module::loaded('TestAPI::module::foo')";
 
         # module TestAPI wasn't loaded but the stash exists, since
         # TestAPI::module was loaded
-        ok t_cmp Apache::Module::loaded('TestAPI'), 0,
-            "Apache::Module::loaded('TestAPI')";
+        ok t_cmp Apache2::Module::loaded('TestAPI'), 0,
+            "Apache2::Module::loaded('TestAPI')";
     }
 
     #bogus
-    ok t_cmp Apache::Module::loaded('Apache__Module_foo.foo'), 0,
-        "Apache::Module::loaded('Apache__Module_foo.foo')";
+    ok t_cmp Apache2::Module::loaded('Apache__Module_foo.foo'), 0,
+        "Apache2::Module::loaded('Apache__Module_foo.foo')";
 
-    ok t_cmp Apache::Module::loaded(''), 0,
-        "Apache::Module::loaded('')";
+    ok t_cmp Apache2::Module::loaded(''), 0,
+        "Apache2::Module::loaded('')";
 
-    ok t_cmp ref($top_module), 'Apache::Module', 'top_module';
+    ok t_cmp ref($top_module), 'Apache2::Module', 'top_module';
 
     my $mmn_major = $cfg->{httpd_info}{MODULE_MAGIC_NUMBER_MAJOR};
     my $mmn_minor = $cfg->{httpd_info}{MODULE_MAGIC_NUMBER_MINOR};
@@ -88,10 +88,10 @@ sub handler {
         ok $modp->ap_api_minor_version <= $mmn_minor;
         ok $modp->module_index >= 0;
         my $cmds = $modp->cmds;
-        ok !defined($cmds) || ref($cmds) eq 'Apache::Command';
+        ok !defined($cmds) || ref($cmds) eq 'Apache2::Command';
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

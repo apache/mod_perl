@@ -6,14 +6,14 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Filter ();
+use Apache2::Filter ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED M_POST);
+use Apache2::Const -compile => qw(OK DECLINED M_POST);
 
 # make sure that if the input filter returns DECLINED without
 # reading/printing data the data flow is not broken
@@ -29,7 +29,7 @@ sub handler {
       $filter->r->notes->set(invoked => $ctx->{invoked});
       #warn "filter was invoked $ctx->{invoked} times\n";
 
-      return Apache::DECLINED;
+      return Apache2::DECLINED;
 }
 
 sub response {
@@ -39,7 +39,7 @@ sub response {
 
     $r->content_type('text/plain');
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         # consume the data so the input filter is invoked
         my $data = TestCommon::Utils::read_post($r);
         ok t_cmp(length $data, 20000, "the request body received ok");
@@ -54,7 +54,7 @@ sub response {
     my $invoked = $r->notes->get('invoked') || 0;
     ok $invoked > 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

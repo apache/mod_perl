@@ -24,12 +24,12 @@ use constant MIN_CLIENTS => 2;
 use File::Spec::Functions qw(catdir);
 use File::Basename qw(dirname);
 
-use Apache::Build;
+use Apache2::Build;
 
 # default timeout in secs (threaded mpms are extremely slow to
 # startup, due to a slow perl_clone operation)
 use constant DEFAULT_STARTUP_TIMEOUT =>
-    Apache::Build->build_config->mpm_is_threaded() ? 180 : 90;
+    Apache2::Build->build_config->mpm_is_threaded() ? 180 : 90;
 
 # subclass new_test_config to add some config vars which will be
 # replaced in generated httpd.conf

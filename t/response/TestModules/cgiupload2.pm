@@ -6,10 +6,10 @@ package TestModules::cgiupload2;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::compat ();
+use Apache2::compat ();
 use CGI ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -21,7 +21,7 @@ sub handler {
     my $file = $cgi->param('filename');
     $r->print(<$file>);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -6,11 +6,11 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::Connection ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::Connection ();
 
-use Apache::Const -compile => qw(OK REMOTE_HOST REMOTE_NAME
+use Apache2::Const -compile => qw(OK REMOTE_HOST REMOTE_NAME
     REMOTE_NOLOOKUP REMOTE_DOUBLE_REV);
 
 sub handler {
@@ -22,16 +22,16 @@ sub handler {
 
     ok $c->get_remote_host() || 1;
 
-    for (Apache::REMOTE_HOST, Apache::REMOTE_NAME,
-        Apache::REMOTE_NOLOOKUP, Apache::REMOTE_DOUBLE_REV) {
+    for (Apache2::REMOTE_HOST, Apache2::REMOTE_NAME,
+        Apache2::REMOTE_NOLOOKUP, Apache2::REMOTE_DOUBLE_REV) {
         ok $c->get_remote_host($_) || 1;
     }
 
-    ok $c->get_remote_host(Apache::REMOTE_HOST,
+    ok $c->get_remote_host(Apache2::REMOTE_HOST,
                            $r->per_dir_config) || 1;
-    ok $c->get_remote_host(Apache::REMOTE_HOST, $r->per_dir_config) || 1;
+    ok $c->get_remote_host(Apache2::REMOTE_HOST, $r->per_dir_config) || 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

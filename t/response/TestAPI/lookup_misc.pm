@@ -7,15 +7,15 @@ package TestAPI::lookup_misc;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
-use Apache::SubRequest ();
-use Apache::URI ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
+use Apache2::SubRequest ();
+use Apache2::URI ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $uri = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
@@ -25,7 +25,7 @@ sub handler {
     my %args = map { split '=', $_, 2 } split /;/, $r->args;
 
     if ($args{subreq} eq 'lookup_file') {
-        Apache::URI::unescape_url($args{file});
+        Apache2::URI::unescape_url($args{file});
         debug "lookup_file($args{file})";
         my $subr = $r->lookup_file($args{file});
         $subr->run;
@@ -40,7 +40,7 @@ sub handler {
     }
 
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 

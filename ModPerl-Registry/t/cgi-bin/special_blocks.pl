@@ -2,7 +2,7 @@
 
 # test BEGIN/END blocks
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 
 use vars qw($query);
 $query = '' unless defined $query;

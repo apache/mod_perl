@@ -8,7 +8,7 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test ();
 
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(OK M_POST DECLINED);
 
 use subs qw(ok debug);

@@ -4,13 +4,13 @@ use warnings;
 use lib qw(../lib);
 use ModPerl::BuildMM ();
 require ModPerl::Code;
-use Apache::Build ();
+use Apache2::Build ();
 use Config;
 use File::Spec::Functions;
 
-use constant WIN32   => Apache::Build::WIN32;
+use constant WIN32   => Apache2::Build::WIN32;
 use constant SOLARIS => $^O eq 'solaris';
-use constant BUILD_APREXT   => Apache::Build::BUILD_APREXT;
+use constant BUILD_APREXT   => Apache2::Build::BUILD_APREXT;
 
 my %args = (
     'NAME'         => 'APR',

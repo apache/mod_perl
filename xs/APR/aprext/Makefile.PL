@@ -4,7 +4,7 @@ use warnings;
 use lib qw(../lib);
 use ModPerl::BuildMM ();
 require ModPerl::Code;
-use Apache::Build ();
+use Apache2::Build ();
 
 my $build = ModPerl::BuildMM::build_config();
 
@@ -21,7 +21,7 @@ for (@names) {
 
 my @skip = qw(dynamic test);
 push @skip, q{static}
-    unless (Apache::Build::BUILD_APREXT);
+    unless (Apache2::Build::BUILD_APREXT);
 
 my %args = (NAME          => 'lib' . $build->{MP_APR_LIB},
             VERSION_FROM  => '../APR/APR.pm',

@@ -11,11 +11,11 @@ use warnings FATAL => 'all';
 
 use Apache::Test ();
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 use File::Spec::Functions qw(catfile);
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -23,7 +23,7 @@ sub handler {
     $r->content_type('text/plain');
     $r->puts($ApacheTest::PerlRequireTest::MAGIC || '');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 my %require_tests = 
@@ -75,7 +75,6 @@ __END__
     # use test system's @INC
     PerlSwitches -I@serverroot@
     PerlRequire "conf/modperl_inc.pl"
-    PerlModule Apache2
 
     PerlSwitches -I@documentroot@/testdirective/vh
     PerlRequire "ApacheTest/PerlRequireTest.pm"

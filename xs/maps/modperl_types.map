@@ -1,6 +1,6 @@
 ##########  mod_perl types  ##########
 
-struct modperl_filter_t | Apache::OutputFilter
+struct modperl_filter_t | Apache2::OutputFilter
 
 ##########  Perl types  ##########
 

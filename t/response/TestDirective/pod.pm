@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -19,7 +19,7 @@ sub handler {
     #XXX: How to test that __END__ works proprely without cloberring all the other tests?
     ok t_cmp '__END__', '__END__';
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

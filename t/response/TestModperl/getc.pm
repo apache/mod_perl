@@ -3,11 +3,11 @@ package TestModperl::getc;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
+use Apache2::RequestIO ();
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -22,7 +22,7 @@ sub handler {
 
     untie *STDIN;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

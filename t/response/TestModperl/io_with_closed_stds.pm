@@ -12,14 +12,14 @@ package TestModperl::io_with_closed_stds;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
-use Apache::RequestIO ();
-use Apache::SubRequest ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
+use Apache2::RequestIO ();
+use Apache2::SubRequest ();
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub fixup {
     my $r = shift;
@@ -32,7 +32,7 @@ sub fixup {
     close STDIN;
     close STDOUT;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub handler {
@@ -42,7 +42,7 @@ sub handler {
 
     ok 1;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub cleanup {
@@ -54,7 +54,7 @@ sub cleanup {
     close OLDIN;
     close OLDOUT;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -3,13 +3,13 @@ package TestModperl::env;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -80,7 +80,7 @@ sub handler {
         ok t_cmp($@, '', $key);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -5,31 +5,31 @@ use warnings FATAL => 'all';
 
 use ModPerl::Util ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
-my $package = 'Apache::Reload::Test';
+my $package = 'Apache2::Reload::Test';
 
 sub handler {
     my $r = shift;
 
     if ($r->args eq 'last') {
-        Apache::Reload->unregister_module($package);
+        Apache2::Reload->unregister_module($package);
         ModPerl::Util::unload_package($package);
         $r->print("unregistered OK");
-        return Apache::OK;
+        return Apache2::OK;
     }
 
     eval "use $package";
 
-    Apache::Reload::Test::run($r);
+    Apache2::Reload::Test::run($r);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;
 __END__
 
-PerlModule Apache::Reload
-PerlInitHandler Apache::TestHandler::same_interp_fixup Apache::Reload
+PerlModule Apache2::Reload
+PerlInitHandler Apache::TestHandler::same_interp_fixup Apache2::Reload
 PerlSetVar ReloadDebug Off
 PerlSetVar ReloadAll Off

@@ -8,15 +8,15 @@ package TestFilter::in_error;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
 use APR::Table ();
 
 use Apache::TestTrace;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub handler {
     my $filter = shift;
@@ -25,7 +25,7 @@ sub handler {
 
     die "This filter must die";
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub response {
@@ -43,7 +43,7 @@ sub response {
     $r->content_type('text/plain');
     $r->print("it shouldn't be printed, because the input filter has died");
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

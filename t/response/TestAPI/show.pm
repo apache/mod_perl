@@ -6,8 +6,8 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::MPM ();
-use Apache::Const -compile => 'OK';
+use Apache2::MPM ();
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -16,11 +16,11 @@ sub handler {
 
     my $mpm = Apache::Test::config->{server}->{mpm};
 
-    ok t_cmp(Apache::MPM->show(),
+    ok t_cmp(Apache2::MPM->show(),
              qr!$mpm!i,
-             'Apache::MPM->show()');
+             'Apache2::MPM->show()');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

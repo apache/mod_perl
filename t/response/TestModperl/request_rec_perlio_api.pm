@@ -6,21 +6,21 @@ package TestModperl::request_rec_perlio_api;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
-use Apache::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
 
 use Apache::Test;
 
 use File::Spec::Functions qw(catfile catdir);
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
     $r->args eq 'STDIN' ? test_STDIN($r) : test_STDOUT($r);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub test_STDIN {
@@ -93,8 +93,8 @@ sub test_STDOUT {
     # now close it completely and restore it, without using any dupped
     # filehandle
     close STDOUT;
-    open STDOUT, ">:Apache", $r 
-        or die "can't open STDOUT via :Apache layer : $!";
+    open STDOUT, ">:Apache2", $r 
+        or die "can't open STDOUT via :Apache2 layer : $!";
     print "next you reincarnate...";
 
 }

@@ -3,12 +3,12 @@ package TestModperl::subenv;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Table ();
 
 use Apache::Test;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
 
@@ -90,7 +90,7 @@ sub handler {
         ok ! $ENV{$key};              # still shouldn't affect %ENV
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub ok_true {

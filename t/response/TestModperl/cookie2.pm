@@ -5,10 +5,10 @@ use warnings FATAL => 'all';
 
 use Apache::TestTrace;
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub access {
     my $r = shift;
@@ -17,7 +17,7 @@ sub access {
     my($key, $val) = cookie($r);
     die "I shouldn't get the cookie" if $r->args eq 'env' && defined $val;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub handler {
@@ -26,7 +26,7 @@ sub handler {
     my($key, $val) = cookie($r);
     $r->print($val) if defined $val;
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub cookie {

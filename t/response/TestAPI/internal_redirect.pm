@@ -3,13 +3,13 @@ package TestAPI::internal_redirect;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::SubRequest ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::SubRequest ();
 
 use Apache::TestTrace;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub modperl {
     my $r = shift;
@@ -28,7 +28,7 @@ sub modperl {
         $r->internal_redirect("$redirect_uri?main=modperl");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub perl_script {
@@ -48,7 +48,7 @@ sub perl_script {
         $r->internal_redirect("$redirect_uri?main=perl-script");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 1;
 __DATA__

@@ -16,20 +16,20 @@ package ModPerl::Config;
 
 use strict;
 
-use Apache::Build ();
+use Apache2::Build ();
 use Apache::TestConfig ();
 use File::Spec ();
 
-use constant WIN32 => Apache::Build::WIN32;
+use constant WIN32 => Apache2::Build::WIN32;
 
 sub as_string {
-    my $build = Apache::Build->build_config;
+    my $build = Apache2::Build->build_config;
 
     my $cfg = '';
 
     $cfg .= "*** mod_perl version $mod_perl::VERSION\n\n";;
 
-    my $file = File::Spec->rel2abs($INC{'Apache/BuildConfig.pm'});
+    my $file = File::Spec->rel2abs($INC{'Apache2/BuildConfig.pm'});
     $cfg .= "*** using $file\n\n";
 
     # the widest key length

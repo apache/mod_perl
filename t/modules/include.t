@@ -13,7 +13,8 @@ my @patterns = (
     'footer',
 );
 
-plan tests => 2 + @patterns, ['include', 'CGI'];
+plan tests => 2 + @patterns, need need_module('include'),
+                                  need_min_module_version(CGI => 3.08);
 
 my $location = "/includes/test.shtml";
 

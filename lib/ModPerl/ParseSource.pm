@@ -16,9 +16,9 @@ package ModPerl::ParseSource;
 
 use strict;
 use Config ();
-use Apache::ParseSource ();
+use Apache2::ParseSource ();
 
-our @ISA = qw(Apache::ParseSource);
+our @ISA = qw(Apache2::ParseSource);
 our $VERSION = '0.01';
 
 sub includes {

@@ -13,7 +13,7 @@ use Apache::TestUtil;
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
 
-use Apache::Const -compile => qw(OK CRLF);
+use Apache2::Const -compile => qw(OK CRLF);
 
 #XXX: APR::LARGE_FILES_CONFLICT constant?
 #XXX: you can set to zero if largefile support is not enabled in Perl
@@ -21,9 +21,9 @@ use constant LARGE_FILES_CONFLICT => 1;
 
 # apr_file_dup has a bug on win32,
 # should be fixed in apr 0.9.4 / httpd-2.0.48
-require Apache::Build;
+require Apache2::Build;
 use constant APR_WIN32_FILE_DUP_BUG => 
-    Apache::Build::WIN32() && !have_min_apache_version('2.0.48');
+    Apache2::Build::WIN32() && !have_min_apache_version('2.0.48');
 
 sub handler {
     my $r = shift;
@@ -273,7 +273,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache2::CRLF),
                  $count,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -282,7 +282,7 @@ sub handler {
 
         open $wfh, ">:APR", $scratch, $r->pool
             or die "Cannot open $scratch for writing: $!";
-        print $wfh 'a' . ((('a' x 14) . Apache::CRLF) x $count);
+        print $wfh 'a' . ((('a' x 14) . Apache2::CRLF) x $count);
         close $wfh;
         open $rfh, "<:APR", $scratch, $r->pool
             or die "Cannot open $scratch for reading: $!";
@@ -291,7 +291,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache2::CRLF),
                  $count,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -304,7 +304,7 @@ sub handler {
             $text = <$rfh>;
         }
         close $rfh;
-        ok t_cmp(count_chars($text, Apache::CRLF),
+        ok t_cmp(count_chars($text, Apache2::CRLF),
                  0,
                  'testing for presence of \015\012');
         ok t_cmp(count_chars($text, "\n"),
@@ -340,7 +340,7 @@ sub handler {
 
     # cleanup: t_mkdir will remove the whole tree including the file
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub count_chars {

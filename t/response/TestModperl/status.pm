@@ -3,8 +3,8 @@ package TestModperl::status;
 use strict;
 use warnings;
 
-use Apache::RequestRec;
-use Apache::Const -compile => qw(DECLINED);
+use Apache2::RequestRec;
+use Apache2::Const -compile => qw(DECLINED);
 
 use ModPerl::Util;
 use Apache::TestUtil qw(t_server_log_error_is_expected);
@@ -14,7 +14,7 @@ sub handler {
     my $rc = shift->args;
 
     if ($rc eq 'die' ||
-        $rc eq Apache::DECLINED ||
+        $rc eq Apache2::DECLINED ||
         $rc =~ m/foo/) {
         t_server_log_error_is_expected();
     }

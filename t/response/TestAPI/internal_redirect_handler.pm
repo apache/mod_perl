@@ -7,11 +7,11 @@ package TestAPI::internal_redirect_handler;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::SubRequest ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::SubRequest ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $uri = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
@@ -31,7 +31,7 @@ sub handler {
         $r->internal_redirect_handler("$uri?main=1");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

@@ -1,27 +1,27 @@
 package TestFilter::out_str_api;
 
-# Test Apache::FilterRec and Apache::Filter accessors
+# Test Apache2::FilterRec and Apache2::Filter accessors
 
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Filter ();
-use Apache::FilterRec ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Filter ();
+use Apache2::FilterRec ();
 
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 my $response_data = "blah blah blah";
 
 #XXX: else pp_untie complains:
 #untie attempted while %d inner references still exist
-sub Apache::Filter::UNTIE {}
-sub Apache::Filter::PRINTF {}
+sub Apache2::Filter::UNTIE {}
+sub Apache2::Filter::PRINTF {}
 
 sub handler {
     my $filter = shift;
@@ -37,12 +37,12 @@ sub handler {
 
     ok t_cmp($data, $response_data, "response data");
 
-    ok $filter->isa('Apache::Filter');
+    ok $filter->isa('Apache2::Filter');
 
     {
         my $frec = $filter->frec;
 
-        ok $frec->isa('Apache::FilterRec');
+        ok $frec->isa('Apache2::FilterRec');
         ok t_cmp($frec->name, "modperl_request_output", '$frec->name');
 
         my $next = $filter->next;
@@ -59,7 +59,7 @@ sub handler {
 
     my $r = $filter->r;
 
-    ok $r->isa('Apache::RequestRec');
+    ok $r->isa('Apache2::RequestRec');
 
     my $path = '/' . Apache::TestRequest::module2path(__PACKAGE__);
     ok t_cmp($r->uri, $path, "path");
@@ -69,11 +69,11 @@ sub handler {
     # we have done the job
     $filter->remove;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub pass_through {
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 sub response {
@@ -82,7 +82,7 @@ sub response {
     $r->content_type('text/plain');
     $r->puts($response_data);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

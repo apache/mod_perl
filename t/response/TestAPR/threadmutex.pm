@@ -6,7 +6,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 use TestAPRlib::threadmutex;
 
@@ -18,7 +18,7 @@ sub handler {
 
     TestAPRlib::threadmutex::test();
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

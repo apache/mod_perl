@@ -12,11 +12,11 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
+use Apache2::RequestRec ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -72,7 +72,7 @@ sub handler {
 
     ok $s->limit_req_fields;
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

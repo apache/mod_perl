@@ -6,13 +6,13 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Connection ();
-use Apache::RequestRec ();
+use Apache2::Connection ();
+use Apache2::RequestRec ();
 use APR::Pool ();
 use APR::IpSubnet ();
 use APR::SockAddr ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -80,7 +80,7 @@ sub handler {
         ok $ipsub->test($c->remote_addr);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

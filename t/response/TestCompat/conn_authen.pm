@@ -4,7 +4,7 @@ package TestCompat::conn_authen;
 #   $r->connection->auth_type
 #   $r->connection->user
 # both records don't exist in 2.0 conn_rec and therefore require
-# 'PerlOptions +GlobalRequest' to retrieve those via Apache->request
+# 'PerlOptions +GlobalRequest' to retrieve those via Apache2->request
 
 use strict;
 use warnings FATAL => 'all';
@@ -12,7 +12,7 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(OK REMOTE_HOST);
 
 sub handler {
@@ -27,7 +27,7 @@ sub handler {
     # get_basic_auth_pw populates $r->user and $r->ap_auth_type
     my($rc, $sent_pw) = $r->get_basic_auth_pw;
 
-    return $rc if $rc != Apache::OK;
+    return $rc if $rc != Apache2::OK;
 
     $req_auth_type = $r->connection->auth_type || '';
 

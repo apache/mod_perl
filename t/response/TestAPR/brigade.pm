@@ -11,10 +11,10 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::RequestRec ();
+use Apache2::RequestRec ();
 use APR::Brigade ();
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
 
@@ -96,7 +96,7 @@ sub handler {
         ok t_cmp($data, "1112", "correct data");
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

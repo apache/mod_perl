@@ -9,7 +9,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::Build ();
+use Apache2::Build ();
 
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
@@ -18,7 +18,7 @@ use File::Spec::Functions qw(catfile);
 #XXX: you can set to zero if largefile support is not enabled in Perl
 use constant LARGE_FILES_CONFLICT => 1;
 
-my $build = Apache::Build->build_config;
+my $build = Apache2::Build->build_config;
 
 # XXX: only when apr-config is found APR will be linked against
 # libapr/libaprutil, probably need a more intuitive method for this

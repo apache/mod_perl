@@ -50,7 +50,7 @@ my $typemap = $check{types};
 my $function_map = $check{functions};
 my @missing;
 
-for my $entry (@$Apache::FunctionTable) {
+for my $entry (@$Apache2::FunctionTable) {
     my $func;
     my $name = $entry->{name};
     next if $unmapped{$name};

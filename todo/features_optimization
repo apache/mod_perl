@@ -7,7 +7,7 @@
   avoid the copy. If we do so, we need to be careful with method which
   take a pool argument, such as: 
   Apache::ServerUtil
-   - mpxs_Apache__ServerUtil_server_root_relative
+   - mpxs_Apache2__ServerUtil_server_root_relative
   Apache::URI:
   - ap_construct_server
   - ap_construct_url

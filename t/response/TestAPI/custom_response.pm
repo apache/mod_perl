@@ -6,9 +6,9 @@ package TestAPI::custom_response;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Response ();
+use Apache2::Response ();
 
-use Apache::Const -compile => qw(FORBIDDEN);
+use Apache2::Const -compile => qw(FORBIDDEN);
 
 sub handler {
     my $r = shift;
@@ -16,9 +16,9 @@ sub handler {
     my $how = $r->args || '';
     # warn "$how";
     # could be text or url
-    $r->custom_response(Apache::FORBIDDEN, $how);
+    $r->custom_response(Apache2::FORBIDDEN, $how);
 
-    return Apache::FORBIDDEN;
+    return Apache2::FORBIDDEN;
 }
 
 1;

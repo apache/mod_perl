@@ -3,13 +3,13 @@
 use lib qw(lib Apache-Test/lib);
 
 use strict;
-use Apache::ParseSource ();
+use Apache2::ParseSource ();
 use ModPerl::ParseSource ();
 use ModPerl::FunctionMap ();
 use ModPerl::WrapXS (); #XXX: we should not need to require this here
 
-my $p = Apache::ParseSource->new(prefixes => ModPerl::FunctionMap->prefixes,
-                                 @ARGV);
+my $p = Apache2::ParseSource->new(prefixes => ModPerl::FunctionMap->prefixes,
+                                  @ARGV);
 
 $p->parse;
 

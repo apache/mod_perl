@@ -6,15 +6,15 @@ package TestFilter::both_str_native_remove;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
-use Apache::Filter ();
-use Apache::FilterRec ();
+use Apache2::Filter ();
+use Apache2::FilterRec ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED M_POST);
+use Apache2::Const -compile => qw(OK DECLINED M_POST);
 
 # this filter removes the next filter in chain and itself
 sub remove_includes {
@@ -28,7 +28,7 @@ sub remove_includes {
 
     $f->remove;
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 # this filter removes the next filter in chain and itself
@@ -46,7 +46,7 @@ sub remove_deflate {
     }
     $f->remove;
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 # this filter appends the output filter list at eos
@@ -67,7 +67,7 @@ sub print_out_flist {
         $f->print("output2: $flist\n");
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub store_in_flist {
@@ -80,7 +80,7 @@ sub store_in_flist {
         $r->pnotes('INPUT_FILTERS' => $x);
     }
 
-    return Apache::DECLINED;
+    return Apache2::DECLINED;
 }
 
 
@@ -92,7 +92,7 @@ sub response {
     local $| = 0;
 
     $r->content_type('text/plain');
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         $r->print("content: " . TestCommon::Utils::read_post($r) ."\n");
     }
 
@@ -110,7 +110,7 @@ sub response {
     $r->rflush;     # this sends the data in the buffer + flush bucket
     $r->print('"SSI_TEST" -->x'."\n");
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 sub get_flist {

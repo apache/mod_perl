@@ -3,14 +3,14 @@ package TestError::runtime;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::Connection ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::Connection ();
 use APR::Socket ();
 
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 use APR::Const    -compile => qw(EACCES EAGAIN);
 
 use constant SIZE => 2048;
@@ -29,7 +29,7 @@ sub handler {
     no strict 'refs';
     $args->($r, $socket);
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub overload_test {

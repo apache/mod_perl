@@ -4,16 +4,16 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
-use Apache::Build ();
+use Apache2::Build ();
 
-my $build = Apache::Build->build_config;
+my $build = Apache2::Build->build_config;
 
 use constant HAVE_LWP => have_lwp();
 
 my $tests = 4;
 $tests += 1 if HAVE_LWP;
 
-plan tests => $tests, need need_min_module_version('CGI', 2.93),
+plan tests => $tests, need need_min_module_version('CGI', 3.08),
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $module = 'TestModules::cgi';

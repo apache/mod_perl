@@ -6,15 +6,15 @@ package TestFilter::out_str_ctx;
 use strict;
 use warnings;# FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
 
 use APR::Brigade ();
 use APR::Bucket ();
 
-use base qw(Apache::Filter);
+use base qw(Apache2::Filter);
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 use APR::Const -compile => ':common';
 
 use constant BLOCK_SIZE => 5003;
@@ -56,7 +56,7 @@ sub handler {
         $filter->ctx($ctx);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 
@@ -82,7 +82,7 @@ sub response {
         $r->rflush; # so the filter reads a chunk at a time
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

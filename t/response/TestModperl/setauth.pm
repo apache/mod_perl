@@ -3,12 +3,12 @@ package TestModperl::setauth;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::Access ();
+use Apache2::Access ();
 
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => 'OK';
+use Apache2::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
@@ -22,7 +22,7 @@ sub handler {
 
     ok t_cmp($r->auth_type(), 'Basic', 'default auth_type');
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

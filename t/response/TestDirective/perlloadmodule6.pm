@@ -6,41 +6,41 @@ package TestDirective::perlloadmodule6;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::CmdParms ();
-use Apache::Module ();
-use Apache::ServerUtil ();
+use Apache2::CmdParms ();
+use Apache2::Module ();
+use Apache2::ServerUtil ();
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 use constant KEY => "MyTest6";
 
 my @directives = ({ name => +KEY },);
 
-Apache::Module::add(__PACKAGE__, \@directives);
+Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub MyTest6 {
     my($self, $parms, $arg) = @_;
     $self->{+KEY} = $arg;
     unless ($parms->path) {
-        my $srv_cfg = Apache::Module::get_config($self, $parms->server);
+        my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
         $srv_cfg->{+KEY} = $arg;
     }
 }
 
 ### response handler ###
 
-use Apache::RequestRec ();
-use Apache::RequestIO ();
-use Apache::ServerRec ();
-use Apache::ServerUtil ();
-use Apache::Module ();
+use Apache2::RequestRec ();
+use Apache2::RequestIO ();
+use Apache2::ServerRec ();
+use Apache2::ServerUtil ();
+use Apache2::Module ();
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache::Const -compile => qw(OK);
+use Apache2::Const -compile => qw(OK);
 
 sub get_config {
-    Apache::Module::get_config(__PACKAGE__, @_);
+    Apache2::Module::get_config(__PACKAGE__, @_);
 }
 
 sub handler {
@@ -61,7 +61,7 @@ sub handler {
 
     ok t_cmp($srv_cfg->{+KEY}, "Vhost", "Section");
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 1;

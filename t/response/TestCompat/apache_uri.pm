@@ -10,7 +10,7 @@ use warnings FATAL => 'all';
 use Apache::TestUtil;
 use Apache::Test;
 
-use Apache::compat ();
+use Apache2::compat ();
 use Apache::Constants qw(OK);
 
 sub handler {
@@ -24,9 +24,9 @@ sub handler {
                          query fragment port);
         my $test_uri = 'http://foo:bar@perl.apache.org:80/docs?args#frag';
 
-        # Apache::URI->parse internally returns an object blessed into
+        # Apache2::URI->parse internally returns an object blessed into
         # APR::URI and all the methods are called on that object
-        for my $uri ($r->parsed_uri, Apache::URI->parse($r, $test_uri)) {
+        for my $uri ($r->parsed_uri, Apache2::URI->parse($r, $test_uri)) {
             t_debug("URI=" . $uri->unparse);
             no strict 'refs';
             # just check that methods are call-able, the actual
@@ -40,7 +40,7 @@ sub handler {
     }
 
     {
-        Apache::compat::override_mp2_api('APR::URI::unparse');
+        Apache2::compat::override_mp2_api('APR::URI::unparse');
         # test the segfault in apr < 0.9.2 (fixed on mod_perl side)
         # passing only the /path
         my $parsed = $r->parsed_uri;
@@ -49,7 +49,7 @@ sub handler {
         $parsed->port($r->get_server_port);
         #$parsed->scheme('http'); # compat defaults to 'http' like apache-1.3 did
         ok t_cmp($parsed->unparse, $r->construct_url);
-        Apache::compat::restore_mp2_api('APR::URI::unparse');
+        Apache2::compat::restore_mp2_api('APR::URI::unparse');
     }
 
     OK;

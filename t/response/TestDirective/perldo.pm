@@ -5,8 +5,8 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
-use Apache::Const -compile => 'OK';
-use Apache::PerlSections;
+use Apache2::Const -compile => 'OK';
+use Apache2::PerlSections;
 
 sub handler {
     my $r = shift;
@@ -43,15 +43,15 @@ sub handler {
 
     ok t_cmp($TestDirective::perl::Included, 1, "Include");
 
-    my $dump = Apache::PerlSections->dump;
-    ok t_cmp($dump, qr/__END__/, "Apache::PerlSections->dump");
+    my $dump = Apache2::PerlSections->dump;
+    ok t_cmp($dump, qr/__END__/, "Apache2::PerlSections->dump");
 
     eval "package TestDirective::perldo::test;\nno strict;\n$dump";
     ok t_cmp($@, "", "PerlSections dump syntax check");
 
     ok t_cmp($TestDirective::perldo::test::Include, qr/perlsection.conf/);
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

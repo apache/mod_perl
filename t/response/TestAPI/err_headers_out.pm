@@ -8,11 +8,11 @@ package TestAPI::err_headers_out;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestRec ();
-use Apache::RequestUtil ();
+use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 use APR::Table ();
 
-use Apache::Const -compile => qw(OK NOT_FOUND);
+use Apache2::Const -compile => qw(OK NOT_FOUND);
 
 sub handler {
     my $r = shift;
@@ -23,7 +23,7 @@ sub handler {
     # this header will make it to the client only on 2xx response
     $r->headers_out->add('X-headers_out' => "headers_out");
 
-    return $r->args eq "404" ? Apache::NOT_FOUND : Apache::OK;
+    return $r->args eq "404" ? Apache2::NOT_FOUND : Apache2::OK;
 }
 
 1;

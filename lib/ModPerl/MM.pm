@@ -53,13 +53,6 @@ sub override_eu_mm_mv_all_methods {
     };
 }
 
-#to override MakeMaker MOD_INSTALL macro
-sub mod_install {
-    # adding -MApache2 here so 3rd party modules could use this macro,
-    q{$(PERL) -I$(INST_LIB) -I$(PERL_LIB)  -MApache2 -MModPerl::MM \\}."\n" .
-    q{-e "ModPerl::MM::install({@ARGV},'$(VERBINST)',0,'$(UNINST)');"}."\n";
-}
-
 sub add_dep {
     my($string, $targ, $add) = @_;
     $$string =~ s/($targ\s+::)/$1 $add/;
@@ -77,25 +70,10 @@ sub add_dep_after {
 
 sub build_config {
     my $key = shift;
-    require Apache::Build;
-    my $build = Apache::Build->build_config;
+    require Apache2::Build;
+    my $build = Apache2::Build->build_config;
     return $build unless $key;
     $build->{$key};
-}
-
-#strip the Apache2/ subdir so things are install where they should be
-sub install {
-    my $hash = shift;
-
-    if (build_config('MP_INST_APACHE2')) {
-        while (my($k,$v) = each %$hash) {
-            delete $hash->{$k};
-            $k =~ s{[/\\:]Apache2$}{};
-            $hash->{$k} = $v;
-        }
-    }
-
-    ExtUtils::Install::install($hash, @_);
 }
 
 #the parent WriteMakefile moves MY:: methods into a different class
@@ -117,7 +95,7 @@ sub my_import {
 
 my @default_opts = qw(CCFLAGS LIBS INC OPTIMIZE LDDLFLAGS TYPEMAPS);
 my @default_dlib_opts = qw(OTHERLDFLAGS);
-my @default_macro_opts = qw(MOD_INSTALL);
+my @default_macro_opts = ();
 my $b = build_config();
 my %opts = (
     CCFLAGS      => sub { $b->{MODPERL_CCOPTS}                        },
@@ -127,7 +105,6 @@ my %opts = (
     LDDLFLAGS    => sub { $b->perl_config('lddlflags');               },
     TYPEMAPS     => sub { $b->typemaps;                               },
     OTHERLDFLAGS => sub { $b->otherldflags;                           },
-    MOD_INSTALL  => \&ModPerl::MM::mod_install,
 );
 
 sub get_def_opt {
@@ -177,21 +154,6 @@ sub WriteMakefile {
 
 #### MM overrides ####
 
-sub ModPerl::MM::MY::constants {
-    my $self = shift;
-
-    my $build = build_config();
-
-    #install everything relative to the Apache2/ subdir
-    if ($build->{MP_INST_APACHE2}) {
-        $self->{INST_ARCHLIB} .= '/Apache2';
-        $self->{INST_LIB} .= '/Apache2';
-    }
-
-    $self->MM::constants;
-}
-
-
 sub ModPerl::MM::MY::post_initialize {
     my $self = shift;
 
@@ -200,22 +162,6 @@ sub ModPerl::MM::MY::post_initialize {
 
     while (my($k, $v) = each %PM) {
         if (-e $k) {
-            $pm->{$k} = $v;
-        }
-    }
-
-    #not everything in MakeMaker uses INST_LIB
-    #so we have do fixup a few PMs to make sure *everything*
-    #gets installed into Apache2/
-    if ($build->{MP_INST_APACHE2}) {
-        while (my($k, $v) = each %$pm) {
-            #move everything to the Apache2/ subdir
-            #unless already specified with \$(INST_LIB)
-            #or already in Apache2/
-            unless ($v =~ /Apache2/) {
-                $v =~ s|(blib/lib)|$1/Apache2|;
-            }
-
             $pm->{$k} = $v;
         }
     }

@@ -72,7 +72,7 @@ static apr_status_t modperl_shutdown(void *data)
 #endif
 
 static const char *MP_xs_loaders[] = {
-    "Apache", "APR", NULL,
+    "Apache2", "APR", NULL,
 };
 
 #define MP_xs_loader_name "%s::XSLoader::BOOTSTRAP"
@@ -175,7 +175,7 @@ static void set_taint_var(PerlInterpreter *perl)
 
 #ifdef MP_COMPAT_1X
     {
-        GV *gv = gv_fetchpv("Apache::__T", GV_ADDMULTI, SVt_PV);
+        GV *gv = gv_fetchpv("Apache2::__T", GV_ADDMULTI, SVt_PV);
         sv_setiv(GvSV(gv), PL_tainting);
         SvREADONLY_on(GvSV(gv));
     }
@@ -816,7 +816,7 @@ void modperl_register_hooks(apr_pool_t *p)
     APR_REGISTER_OPTIONAL_FN(modperl_interp_unselect);
 #endif
 
-    /* for <IfDefine MODPERL2> and Apache->define("MODPERL2") */
+    /* for <IfDefine MODPERL2> and Apache2->define("MODPERL2") */
     *(char **)apr_array_push(ap_server_config_defines) =
         apr_pstrdup(p, "MODPERL2");
 

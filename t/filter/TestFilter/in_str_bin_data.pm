@@ -6,15 +6,15 @@ package TestFilter::in_str_bin_data;
 use strict;
 use warnings FATAL => 'all';
 
-use Apache::RequestIO ();
-use Apache::RequestRec ();
-use Apache::Filter ();
+use Apache2::RequestIO ();
+use Apache2::RequestRec ();
+use Apache2::Filter ();
 
 use Apache::TestTrace;
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK M_POST);
+use Apache2::Const -compile => qw(OK M_POST);
 
 sub pass_through {
     my $f = shift;
@@ -24,20 +24,20 @@ sub pass_through {
         $f->print($buffer);
     }
 
-    return Apache::OK;
+    return Apache2::OK;
 }
 
 sub handler {
     my $r = shift;
 
-    if ($r->method_number == Apache::M_POST) {
+    if ($r->method_number == Apache2::M_POST) {
         my $data = TestCommon::Utils::read_post($r);
         my $length = length $data;
         debug "pass through $length bytes of $data\n";
         $r->print($data);
     }
 
-    Apache::OK;
+    Apache2::OK;
 }
 
 1;

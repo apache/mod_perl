@@ -17,7 +17,7 @@ package ModPerl::BuildOptions;
 use strict;
 use warnings;
 
-use Apache::Build ();
+use Apache2::Build ();
 use Apache::TestTrace;
 my $param_qr = qr([\s=]+);
 
@@ -116,7 +116,7 @@ sub parse {
             if ($key eq 'MP_AP_PREFIX') {
                 $val = File::Spec->canonpath(File::Spec->rel2abs($val));
 
-                if (Apache::Build::WIN32()) {
+                if (Apache2::Build::WIN32()) {
                     # MP_AP_PREFIX may not contain spaces
                     require Win32;
                     $val = Win32::GetShortPathName($val);
@@ -225,10 +225,9 @@ CCOPTS         1    Add to compiler flags
 TRACE          0    Turn on tracing
 USE_DSO        0    Build mod_perl as a dso
 USE_STATIC     0    Build mod_perl static
-INST_APACHE2   0    Install *.pm relative to Apache2/ directory
 PROMPT_DEFAULT 0    Accept default value for all would-be prompts
 OPTIONS_FILE   0    Read options from given file
-STATIC_EXTS    0    Build Apache::*.xs as static extensions
+STATIC_EXTS    0    Build Apache2::*.xs as static extensions
 APXS           0    Path to apxs
 AP_DESTDIR     0    Destination for Apache specific mod_perl bits
 AP_PREFIX      0    Apache installation or source tree prefix
