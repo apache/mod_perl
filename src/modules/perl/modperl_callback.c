@@ -122,28 +122,13 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         else {
             SV *status_sv = POPs;
 
-            if (SvIOK(status_sv)) {
-                /* normal IV return (e.g., Apache::OK) */
-                status = SvIVX(status_sv);
-            }
-            else if (status_sv == &PL_sv_undef) {
+            if (status_sv == &PL_sv_undef) {
                 /* ModPerl::Util::exit() and Perl_croak internally
                  * arrange to return PL_sv_undef with G_EVAL|G_SCALAR */
                 status = OK; 
             }
-            else if (SvPOK(status_sv)) {
-                /* PV return that ought to be treated as IV ("0") */
-                status = SvIVx(status_sv);
-                MP_TRACE_h(MP_FUNC,
-                           "coercing handler %s's return value '%s' into %d",
-                           handler->name, SvPV_nolen(status_sv), status);
-            }
             else {
-                /* any other return types are considered as errors */
-                status = HTTP_INTERNAL_SERVER_ERROR;
-                ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
-                             "handler %s didn't return a valid return value!",
-                             handler->name);
+                status = SvIVx(status_sv);
             }
         }
 
