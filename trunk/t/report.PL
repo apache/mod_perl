@@ -11,8 +11,8 @@ my $src = Apache::src->new;
 my $ap_v = $src->httpd_version;
 my $ap_mmn = $src->module_magic_number;
 
-my $mp_version = MM->parse_version(-e "Makefile.PL" ? 
-	"Makefile.PL" : "../Makefile.PL");
+my $mp_version = MM->parse_version(-e "lib/mod_perl.pm" ? 
+	"lib/mod_perl.pm" : "../lib/mod_perl.pm");
 
 my $msg = Mail::Send->new(
 	To => 'modperl-cvs@apache.org',
