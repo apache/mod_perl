@@ -740,19 +740,24 @@ sub typemaps {
     return $typemaps;
 }
 
-sub inc {
+sub includes {
     my $self = shift;
     my $src  = $self->dir;
     my $os = is_win32 ? 'win32' : 'unix';
-    my @inc = ();
+    my @inc = $self->file_path("src/modules/perl");
+
+    my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
+    if (-d $ainc) {
+        push @inc, $ainc;
+        return \@inc;
+    }
 
     for ("$src/modules/perl", "$src/include",
          "$src/srclib/apr/include",
          "$src/srclib/apr-util/include",
-         "$src/os/$os",
-         $self->file_path("src/modules/perl"))
+         "$src/os/$os")
       {
-          push @inc, "-I$_" if -d $_;
+          push @inc, $_ if -d $_;
       }
 
     my $ssl_dir = "$src/../ssl/include";
@@ -760,12 +765,14 @@ sub inc {
         my $build = $self->build_config;
 	$ssl_dir = join '/', $self->{MP_SSL_BASE} || '', 'include';
     }
-    push @inc, "-I$ssl_dir" if -d $ssl_dir;
+    push @inc, $ssl_dir if -d $ssl_dir;
 
-    my $ainc = $self->apxs('-q' => 'INCLUDEDIR');
-    push @inc, "-I$ainc" if -d $ainc;
+    return \@inc;
+}
 
-    return "@inc";
+sub inc {
+    my @includes = map { "-I$_" } @{ shift->includes };
+    "@includes";
 }
 
 sub ccflags {

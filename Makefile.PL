@@ -33,12 +33,17 @@ sub configure {
     system_sanity_check();
     set_modperl_version();
 
-    for my $path ($build->find) {
-        $build->dir($path);
-        my $mmn = $build->module_magic_number;
-        my $v   = $build->httpd_version;
-        next unless $v;
-        last if $build->prompt_y("Configure mod_perl with $path?");
+    if ($build->{MP_APXS}) {
+        print "Using $build->{MP_APXS}\n";
+    }
+    else {
+        for my $path ($build->find) {
+            $build->dir($path);
+            my $mmn = $build->module_magic_number;
+            my $v   = $build->httpd_version;
+            next unless $v;
+            last if $build->prompt_y("Configure mod_perl with $path?");
+        }
     }
 
     my $httpd_version = $build->httpd_version;
