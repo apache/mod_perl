@@ -344,6 +344,14 @@ void perl_restart(server_rec *s, pool *p)
 
 U32 mp_debug = 0;
 
+static void mod_perl_set_cwd(void)
+{
+    char *name = "Apache::Server::CWD";
+    GV *gv = gv_fetchpv(name, GV_ADDMULTI, SVt_PV);
+    SV *cwd = perl_eval_pv("require Cwd; Cwd::fastcwd()", TRUE);
+    sv_setsv(GvSV(gv), cwd);
+}
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -459,7 +467,7 @@ void perl_startup (server_rec *s, pool *p)
 
     perl_clear_env();
     mod_perl_pass_env(p, cls);
-
+    mod_perl_set_cwd();
     MP_TRACE_g(fprintf(stderr, "running perl interpreter..."));
 
     ENTER;
@@ -499,6 +507,7 @@ void perl_startup (server_rec *s, pool *p)
     status = perl_run(perl);
 
     av_push(GvAV(incgv), newSVpv(server_root_relative(p,""),0));
+    av_push(GvAV(incgv), newSVpv(server_root_relative(p,"lib/perl"),0));
 
     list = (char **)cls->PerlRequire->elts;
     for(i = 0; i < cls->PerlRequire->nelts; i++) {

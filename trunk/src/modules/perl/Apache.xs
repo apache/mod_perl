@@ -228,6 +228,8 @@ static request_rec *sv2request_rec(SV *in, char *class, CV *cv)
     request_rec *r = NULL;
     SV *sv = Nullsv;
 
+    if(in == &sv_undef) return NULL;
+
     if(SvROK(in) && (SvTYPE(SvRV(in)) == SVt_PVHV)) {
 	int i;
 	for (i=0; r_keys[i]; i++) {
@@ -618,6 +620,18 @@ DESTROY(r=Nullsv)
 
 #httpd.h
      
+void
+chdir_file(r, file=r->filename)
+    Apache r
+    const char *file
+
+    CODE:
+    chdir_file(file);
+
+SV *
+mod_perl_gensym(pack="Apache::Symbol")
+    char *pack
+
 char *
 unescape_url(string)
 char *string

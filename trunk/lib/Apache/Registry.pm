@@ -2,9 +2,6 @@ package Apache::Registry;
 use Apache ();
 #use strict; #eval'd scripts will inherit hints
 use Apache::Constants qw(:common &OPT_EXECCGI &REDIRECT);
-use FileHandle ();
-use File::Basename ();
-use Cwd ();
 
 #$Id$
 $Apache::Registry::VERSION = (qw$Revision$)[1];
@@ -84,9 +81,7 @@ sub handler {
 	$r->log_error("Apache::Registry::handler package $package")
 	   if $Debug && $Debug & 4;
 
-
-	my $cwd = Cwd::fastcwd();
-	chdir File::Basename::dirname($r->filename);
+	$r->chdir_file;
 
 	if (
 	    exists $Apache::Registry->{$package}{'mtime'}
@@ -99,7 +94,8 @@ sub handler {
 		if $Debug && $Debug & 4;
 	    my($sub);
 	    {
-		my $fh = FileHandle->new($filename);
+		my $fh = Apache::gensym(__PACKAGE__);
+		open $fh, $filename;
 		local $/;
 		$sub = <$fh>;
 		$sub = parse_cmdline($sub);
@@ -137,10 +133,7 @@ sub handler {
 
 	my $cv = \&{"$package\::handler"};
 	eval { &{$cv}($r, @_) } if $r->seqno;
-	{
-	    local $^W = 0; #shutup Cwd.pm
-	    chdir $cwd;
-	}
+	chdir $Apache::Server::CWD;
 	$^W = $oldwarn;
 
 	my $errsv = "";
