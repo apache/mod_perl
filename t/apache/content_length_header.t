@@ -36,26 +36,40 @@ foreach my $method qw(GET HEAD) {
 
     {
         # if the response handler sends no data, and sets no C-L header,
-        # the client doesn't get C-L header for HEAD requests due to 
-        # special processing.  GET requests get a C-L of zero.
+        # the client doesn't get C-L header at all.
+        #
+        # in 2.0 GET requests get a C-L of zero, while HEAD requests do
+        # not due to special processing.
         my $uri = $location;
         my $res = $method->($uri);
+
+        my $cl      = have_min_apache_version(2.1) ? undef : 0;
+        my $head_cl = have_min_apache_version(2.1) ? $cl : undef;
+           
         ok t_cmp $res->code, 200, "$method $uri code";
         ok t_cmp ($res->header('Content-Length'),
-                  $method eq 'GET' ? 0 : undef,
+                  $method eq 'GET' ? $cl : $head_cl,
                   "$method $uri C-L header");
         ok t_cmp $res->content, "", "$method $uri content";
     }
 
     {
-        # if the response handler sends no data, and sets C-L header,
-        # the client doesn't get C-L header for HEAD requests due to 
-        # special processing.  GET requests get a C-L of zero.
+        # if the response handler sends no data and sets C-L header,
+        # the client should receive the set content length.  in 2.1
+        # this is the way it happens.  see protocol.c -r1.150 -r1.151
+        #
+        # in 2.0 the client doesn't get C-L header for HEAD requests
+        # due to special processing, and GET requests get a calculated
+        # C-L of zero.
         my $uri = "$location?set_content_length";
         my $res = $method->($uri);
+
+        my $cl      = have_min_apache_version(2.1) ? 25 : 0;
+        my $head_cl = have_min_apache_version(2.1) ? $cl : undef;
+           
         ok t_cmp $res->code, 200, "$method $uri code";
         ok t_cmp ($res->header('Content-Length'),
-                  $method eq 'GET' ? 0 : undef,
+                  $method eq 'GET' ? $cl : $head_cl,
                   "$method $uri C-L header");
         ok t_cmp $res->content, "", "$method $uri content";
     }
