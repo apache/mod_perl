@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+allow overriding of container directive handlers using the func parameter
+[Geoffrey Young <gyoung@laserlink.net>]
+
 enable directive handler support for TAKE13
 [Geoffrey Young <gyoung@laserlink.net>]
 

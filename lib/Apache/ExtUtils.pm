@@ -148,7 +148,7 @@ sub xs_cmd_table {
 	}
 	$name ||= $sub;
 	my $realname = $name;
-	if($name =~ s/[\<\>]//g) {
+       if ($name =~ s/[\<\>]//g && !$cmd->{func}) {
 	    if($name =~ s:^/::) {
 		$name .= "_END";
 	    }
