@@ -6,8 +6,9 @@ Changes - Apache mod_perl change logfile
 
 =over 3
 
-
 =item 1.17_01-dev
+
+ensure Apache.pm is loaded (at least attempted) before checking $VERSION
 
 do not undef subroutines when flushing Apache::PerlRun::handler
 namespace unless subroutine lives in that namespace, i.e. not imported

@@ -445,15 +445,17 @@ static void mp_server_notstarting(void *data)
     if(!PERL_IS_DSO) \
         register_cleanup(p, NULL, mp_server_notstarting, mod_perl_noop) 
 
-#define MP_APACHE_VERSION 1.25
+#define MP_APACHE_VERSION 1.26
 
 void mp_check_version(void)
 {
     I32 i;
     SV *namesv;
-    SV *version = perl_get_sv("Apache::VERSION", FALSE);
+    SV *version;
 
-    if(!version)
+    require_Apache(NULL);
+
+    if(!(version = perl_get_sv("Apache::VERSION", FALSE)))
 	croak("Apache.pm failed to load!"); /*should never happen*/
     if(SvNV(version) >= MP_APACHE_VERSION) /*no worries*/
 	return;
