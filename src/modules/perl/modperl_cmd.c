@@ -288,6 +288,8 @@ MP_CMD_SRV_DECLARE(perl)
 
     status = modperl_callback(aTHX_ handler, p, NULL, s, args);
 
+    SvREFCNT_dec((SV*)args);
+
     if (status != OK) {
         return SvTRUE(ERRSV) ? SvPVX(ERRSV) :
             apr_psprintf(p, "<Perl> handler %s failed with status=%d",
