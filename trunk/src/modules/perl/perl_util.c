@@ -852,11 +852,16 @@ void mod_perl_mark_where(char *where, SV *sub)
 	name = perl_sv_name(sub);
 
     sv_setpv(GvSV(CopFILEGV(curcop)), "");
-    sv_catpvf(GvSV(CopFILEGV(curcop)), "%s subroutine `%_'", where, name);
+    if (name) {
+        sv_catpvf(GvSV(CopFILEGV(curcop)), "%s subroutine `%_'", where, name);
+        SvREFCNT_dec(name);
+    }
+    else {
+        sv_catpvf(GvSV(CopFILEGV(curcop)), "%s subroutine <unknown>", where);
+    }
+    
     CopLINE_set(curcop, 1);
 
-    if(name)
-	SvREFCNT_dec(name);
 }
 #endif
 
