@@ -130,9 +130,10 @@ int modperl_response_handler_cgi(request_rec *r);
 
 #define MgTypeExt(mg) (mg->mg_type == '~')
 
-typedef void MP_FUNC_T(modperl_table_modify_t) (apr_table_t *,
-                                                const char *,
-                                                const char *);
+typedef void MP_FUNC_T(modperl_var_modify_t) (apr_table_t *,
+                                              apr_table_t *,
+                                              const char *,
+                                              const char *);
 
 /* we need to hook a few internal things before APR_HOOK_REALLY_FIRST */
 #define MODPERL_HOOK_REALLY_REALLY_FIRST (-20)

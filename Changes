@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_17-dev
 
+get PerlSetVar and PerlAddVar multi-level merges to (finally) work
+properly.  [Rici Lake <rici ricilake.net>]
+
 MP_AP_BUILD configure option removed. Now implicit when MP_USE_STATIC
 is specified [Gozer]
 

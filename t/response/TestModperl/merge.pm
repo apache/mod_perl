@@ -88,9 +88,6 @@ sub handler {
 
     if ($uri =~ m/(merge3)/) {
         $hash = $1;
-
-        # skip .htaccess merges for now - they are still broken
-        plan tests => 10, under_construction;
     } elsif ($uri =~ m/(merge2)/) {
         $hash = $1;
     } else {

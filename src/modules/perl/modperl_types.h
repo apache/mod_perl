@@ -127,7 +127,6 @@ typedef enum {
 
 typedef struct {
     MpHV *setvars;
-    MpHV *addvars;
     MpHV *configvars;
     MpHV *SetEnv;
     MpHV *PassEnv;
@@ -159,7 +158,6 @@ typedef struct {
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpHV *SetEnv;
     MpHV *setvars;
-    MpHV *addvars;
     MpHV *configvars;
     modperl_options_t *flags;
 #ifdef USE_ITHREADS
