@@ -416,6 +416,10 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
         return 0;
     }
 
+    if (!hash) {
+	PERL_HASH(hash, key, klen);
+    }
+
     entry = ((HE**)xhv->xhv_array)[hash & (I32)xhv->xhv_max];
 
     for (; entry; entry = HeNEXT(entry)) {
