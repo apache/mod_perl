@@ -45,9 +45,6 @@ MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj);
 
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr);
 
-MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
-                                        const char *classname, UV uv);
-
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
 
 int modperl_require_module(pTHX_ const char *pv, int logfailure);
@@ -60,8 +57,6 @@ void **modperl_xs_dl_handles_get(pTHX);
 void modperl_xs_dl_handles_close(void **handles);
 
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data);
-
-MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p);
 
 MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src);
 

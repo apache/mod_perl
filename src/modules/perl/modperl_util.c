@@ -179,14 +179,6 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
     return sv;
 }
 
-/* XXX: sv_setref_uv does not exist in 5.6.x */
-MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
-                                        const char *classname, UV uv)
-{
-    sv_setuv(newSVrv(rv, classname), uv);
-    return rv;
-}
-
 static apr_pool_t *modperl_sv2pool(pTHX_ SV *obj, CV *method)
 {
     apr_pool_t *p = NULL;
@@ -373,13 +365,6 @@ modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data)
     cdata->pool = p;
     cdata->data = data;
     return cdata;
-}
-
-MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
-{
-    modperl_uri_t *uri = (modperl_uri_t *)apr_pcalloc(p, sizeof(*uri));
-    uri->pool = p;
-    return uri;
 }
 
 MP_INLINE void modperl_perl_av_push_elts_ref(pTHX_ AV *dst, AV *src)

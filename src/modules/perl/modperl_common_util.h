@@ -78,6 +78,11 @@ MP_INLINE SV *modperl_hash_tie(pTHX_ const char *classname,
 MP_INLINE void *modperl_hash_tied_object(pTHX_ const char *classname,
                                          SV *tsv);
 
+MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
+                                        const char *classname, UV uv);
+
+MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p);
+
 SV *modperl_perl_gensym(pTHX_ char *pack);
 
 #endif /* MODPERL_COMMON_UTIL_H */
