@@ -45,10 +45,10 @@ my %hook_proto = (
 
 $hook_proto{PerDir} = $hook_proto{PerSrv};
 
-my $dcfg_get = 
-  'modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy';
-
 my $scfg_get = 'MP_dSCFG(parms->server)';
+
+my $dcfg_get = "$scfg_get;\n" .
+  'modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy';
 
 my %directive_proto = (
     PerSrv     => {
@@ -83,7 +83,7 @@ while (my($k,$v) = each %directive_proto) {
 
 my %flags = (
     Srv => [qw(NONE PERL_TAINT_CHECK PERL_WARN FRESH_RESTART
-               PERL_CLONE PERL_ALLOC UNSET)],
+               PERL_CLONE PERL_ALLOC PERL_OFF UNSET)],
     Dir => [qw(NONE INCPUSH SENDHDR SENTHDR ENV CLEANUP RCLEANUP)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON)],
@@ -223,6 +223,11 @@ EOF
 $protostr
 {
     $prototype->{cfg}->{get};
+    if (MpSrvPERL_OFF(scfg)) {
+        return ap_pstrcat(parms->pool,
+                          "Perl is disabled for server ",
+                          parms->server->server_hostname, NULL);
+    }
     MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
     return modperl_cmd_push_handlers(&($av), arg, parms->pool);
 }
