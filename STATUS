@@ -64,6 +64,9 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * make sure that DO_HTTPD=1 and PREP_HTTPD=1 aren't passed at the same time
+    http://marc.theaimsgroup.com/?t=110053652600001&r=1&w=2
+
     * ACL support
         Report: 
             http://marc.theaimsgroup.com/?t=105042055700005&r=1&w=2
