@@ -5,7 +5,7 @@ use Apache::src;
 
 my $i = 0;
 
-# skip_test if WIN32;
+skip_test if (WIN32 and !Apache::src->mmn_eq);
 
 print "1..6\n";
 
