@@ -352,8 +352,14 @@ static void mod_perl_set_cwd(void)
 {
     char *name = "Apache::Server::CWD";
     GV *gv = gv_fetchpv(name, GV_ADDMULTI, SVt_PV);
-    SV *cwd = perl_eval_pv("require Cwd; Cwd::fastcwd()", TRUE);
-    sv_setsv(GvSV(gv), cwd);
+    char *pwd = getenv("PWD");
+
+    if(pwd) 
+	sv_setpv(GvSV(gv), pwd);
+    else
+	sv_setsv(GvSV(gv), 
+		 perl_eval_pv("require Cwd; Cwd::fastcwd()", TRUE));
+
     mod_perl_untaint(GvSV(gv));
 }
 
