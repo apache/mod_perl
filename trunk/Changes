@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.21_01-dev
 
+Renamed the Apache::StatINC parameters to StatINC_<something>. Changed
+StatINC_Debug to take a number as parameter instead of "on" to support
+"debug levels" <ask@netcetera.dk>
+
 =item 1.21 - July 2, 1999
 
 fix refcount bug in %VirtualHost [] values, thanks to Pete Ehlke for
