@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Apache::Filter: [Stas]
+  - remove unneeded methods: remove_input_filter() and
+    remove_output_filter()
+  - frec() accessor is made read-only
+  - fflush(), get_brigade() and pass_brigade() now throw exceptions if
+    called in the void context
+
 Apache::FilterRec: [Stas]
   - remove the next() accessor since it's not used by Apache at the
     moment
@@ -56,7 +63,7 @@ APR::Brigade [Stas]
 
 APR::Bucket: [Stas]
   - read() now returns read data and throws APR::Error exception (not
-    returning rc)
+    returning rc). The returned scalar is now TAINTED.
   - type->name now has a module APR::BucketType
   - type(), length(), start(), data() are now all readonly
   - new() fix a bug in offset handling
