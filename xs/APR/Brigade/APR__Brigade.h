@@ -60,3 +60,9 @@ void mpxs_APR__Brigade_concat(apr_bucket_brigade *a,
     APR_BRIGADE_CONCAT(a, b);
 }
 
+static MP_INLINE
+int mpxs_APR__Brigade_empty(apr_bucket_brigade *brigade)
+{
+    return APR_BRIGADE_EMPTY(brigade);
+}
+
