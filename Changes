@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_20-dev
 
+APR::Bucket::alloc_create moved  to APR::BucketAlloc::new
+APR::Bucket::alloc_destroy moved to APR::BucketAlloc::destroy [Stas]
+
 prefork handlers optimisation: don't dup the handler struct unless
 this is a threaded-mpm [Stas]
 

@@ -123,10 +123,6 @@ MODULE=APR::Bucket
  mpxs_APR__Bucket_new  | | classname, list, sv, offset=0, len=0
  void:DEFINE_destroy | | apr_bucket:bucket
  void:DEFINE_delete  | | apr_bucket:bucket
->apr_bucket_alloc
-~ apr_bucket_alloc_create
- mpxs_APR__Bucket_alloc_create
- apr_bucket_alloc_destroy
 ~apr_bucket_setaside
  mpxs_APR__Bucket_setaside
 >apr_bucket_free
@@ -162,6 +158,12 @@ MODULE=APR::Bucket
 !apr_bucket_simple_copy
 !apr_bucket_destroy_noop
 !apr_bucket_setaside_noop
+
+MODULE=APR::BucketAlloc
+>apr_bucket_alloc
+~apr_bucket_alloc_create
+ mpxs_APR__BucketAlloc_new
+ void:DEFINE_destroy | | apr_bucket_alloc_t *:ba
 
 MODULE=APR::Pool
 -apr_pool_num_bytes | | p, recurse=0 #only available with -DAPR_POOL_DEBUG
