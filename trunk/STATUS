@@ -21,6 +21,13 @@ Available Patches:
 
 Needs Patch or Further Investigation
 
+    * $r->print() ignores $\
+        Report: http://marc.theaimsgroup.com/?l=apache-modperl&m=102874705105904&w=2
+        Status:
+          not sure what to do with this, just sv_catpvn(sv, $\, 1) in Apache.xs's print()?
+          does that handle everything? (assuming I can figure out how to dig out 
+          what's in $\)  is this really important? --Geoff
+
     * make test fails when a wrong combination of URI and LWP are
       installed. (e.g. lwp 5.64 and URI 1.09). LWP's Makefile.PL
       requires the right URI version, but certain binary distributors
