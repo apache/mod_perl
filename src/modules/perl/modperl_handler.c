@@ -34,15 +34,12 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
 
 #ifdef USE_ITHREADS
     if (p && !MpHandlerPARSED(handler) && !MpHandlerDYNAMIC(handler)) {
-        MP_dSCFG(s);
-        if (scfg->threaded_mpm) {
-            /*
-             * cannot update the handler structure at request time without
-             * locking, so just copy it
-             */
-            handler = *handp = modperl_handler_dup(p, handler);
-            duped = 1;
-        }
+        /*
+         * cannot update the handler structure at request time without
+         * locking, so just copy it
+         */
+        handler = *handp = modperl_handler_dup(p, handler);
+        duped = 1;
     }
 #endif
 
