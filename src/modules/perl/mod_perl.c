@@ -368,6 +368,12 @@ static int modperl_hook_create_request(request_rec *r)
 
     modperl_config_req_init(r, rcfg);
 
+    if (r->main) {
+        modperl_config_req_t *main_rcfg =
+            modperl_config_req_get(r->main);
+        modperl_wbucket_flush(&main_rcfg->wbucket);
+    }
+
     return OK;
 }
 
