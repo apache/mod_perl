@@ -180,11 +180,9 @@ PerlHandler Apache::Status
 
 ErrorLog logs/error_log
 PidFile logs/httpd.pid
-AccessConfig /dev/null
 ResourceConfig conf/srm.conf
-TypesConfig /dev/null
-TransferLog /dev/null
-ScoreBoardFile /dev/null
+#mod_ssl has a problem with /dev/null
+TypesConfig conf/dev-null
 
 AddType text/x-server-parsed-html .shtml
 AddType text/html .html
@@ -274,8 +272,13 @@ SSLCacheServerPort /tmp/gcache_port
 </IfModule>
 
 <IfModule mod_ssl.c>
-SSLDisable
+SSLEngine Off
 SSLSessionCache none
+
+SSLRandomSeed startup builtin
+SSLRandomSeed connect builtin
+#SSLLog      logs/ssl_engine_log
+#SSLLogLevel info
 </IfModule>
 
 <Location /status>
