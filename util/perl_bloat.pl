@@ -1,12 +1,24 @@
 #!/usr/bin/perl -w
 
+# perlbloat.pl 'some perlcode' 'more perl code'
+# perlbloat.pl Foo/Bar.pm Bar/Tar.pm
+# perlbloat.pl Foo::Bar Bar::Tar
+
+no warnings;
+
 use GTop ();
 
 my $gtop = GTop->new;
-my $before = $gtop->proc_mem($$)->size;
 
+my $total = 0;
 for (@ARGV) {
-    if (eval "require $_") {
+
+    my $code = $_;
+    file2package($_) if /\S+\.pm$/;
+
+    my $before = $gtop->proc_mem($$)->size;
+
+    if (eval "require $_" ) {
         eval {
             $_->import;
         };
@@ -15,11 +27,17 @@ for (@ARGV) {
         eval $_;
         die $@ if $@;
     }
+
+    my $after = $gtop->proc_mem($$)->size;
+    printf "%-30s added %s\n", $_, GTop::size_string($after - $before);
+    $total += $after - $before;
 }
 
-my $after = $gtop->proc_mem($$)->size;
+print "-" x 46, "\n";
+printf "Total added %30s\n", GTop::size_string($total);
 
-printf "@ARGV added %s\n", GTop::size_string($after - $before);
-
-
+sub file2package {
+    $_[0] =~ s|/|::|g;
+    $_[0] =~ s|\.pm$||;
+}
 
