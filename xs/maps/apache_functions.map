@@ -49,7 +49,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 >ap_rgetline_core
 ?ap_get_request_note
 ?ap_register_request_note
- ap_set_content_type
+~ap_set_content_type
 
 #MODULE=Apache::RequestConfig
  ap_document_root
