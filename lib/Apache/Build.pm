@@ -187,6 +187,18 @@ sub apxs_cflags {
     $cflags;
 }
 
+sub apxs_extra_cflags {
+    my $flags = __PACKAGE__->apxs('-q' => 'EXTRA_CFLAGS');
+    $flags =~ s/\"/\\\"/g;
+    $flags;
+}
+
+sub apxs_extra_cppflags {
+    my $flags = __PACKAGE__->apxs('-q' => 'EXTRA_CPPFLAGS');
+    $flags =~ s/\"/\\\"/g;
+    $flags;
+}
+
 my %threaded_mpms = map { $_ => 1}
         qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
 sub mpm_is_threaded {
@@ -1584,16 +1596,77 @@ sub inc {
     "@includes";
 }
 
+### Picking the right LFS support flags for mod_perl, by Joe Orton ###
+#
+# on Unix systems where by default off_t is a "long", a 32-bit integer,
+# there are two different ways to get "large file" support, i.e. the
+# ability to manipulate files bigger than 2Gb:
+#
+# 1) you compile using -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64.  This
+# makes sys/types.h expose off_t as a "long long", a 64-bit integer, and
+# changes the size of a few other types too.  The C library headers
+# automatically arrange to expose a correct implementation of functions
+# like lseek() which take off_t parameters.
+#
+# 2) you compile using -D_LARGEFILE64_SOURCE, and use what is called the
+# "transitional" interface.  This means that the system headers expose a
+# new type, "off64_t", which is a long long, but the size of off_t is not
+# changed.   A bunch of new functions like lseek64() are exposed by the C 
+# library headers, which take off64_t parameters in place of off_t.
+#
+# Perl built with -Duselargefiles uses approach (1).
+#
+# APR HEAD uses (2) by default. APR 0.9 does not by default use either
+# approach, but random users can take a httpd-2.0.49 tarball, and do:
+#
+#   export CPPFLAGS="-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
+#   ./configure
+#
+# to build a copy of apr/httpd which uses approach (1), though this
+# isn't really a supported configuration.
+#
+# The problem that mod_perl has to work around is when you take a
+# package built with approach (1), i.e. Perl, and any package which was
+# *not* built with (1), i.e. APR, and want to interface between
+# them. [1]
+#
+# So what you want to know is whether APR was built using approach (1)
+# or not.  APR_HAS_LARGE_FILES in HEAD just tells you whether APR was
+# built using approach (2) or not, which isn't useful in solving this
+# problem.
+#
+# [1]: In some cases, it may be OK to interface between packages which
+# use (1) and packages which use (2).  APR HEAD is currently not such a
+# case, since the size of apr_ino_t is still changing when
+# _FILE_OFFSET_BITS is defined.
+#
+# If you want to see how this matters, get some httpd function to do at
+# the very beginning of main():
+#
+#   printf("sizeof(request_rec) = %lu, sizeof(apr_finfo_t) = %ul",
+#          sizeof(request_rec), sizeof(apr_finfo_t));
+#
+# and then put the same printf in mod_perl somewhere, and see the
+# differences. This is why it is a really terribly silly idea to ever
+# use approach (1) in anything other than an entirely self-contained
+# application.
+#
 # there is no conflict if both libraries either have or don't have
 # large files support enabled
 sub has_large_files_conflict {
     my $self = shift;
-    my $apr_config = $self->get_apr_config();
 
-    my $perl = $Config{uselargefiles} ? 1 : 0;
-    my $apr  = $apr_config->{HAS_LARGE_FILES} ? 1 : 0;
+    my $apxs_flags = join $self->apxs_extra_cflags, $self->apxs_extra_cppflags;
+    my $apr_lfs64  = $apxs_flags      =~ /-D_FILE_OFFSET_BITS=64/;
+    my $perl_lfs64 = $Config{ccflags} =~ /-D_FILE_OFFSET_BITS=64/;
 
-    return $perl ^ $apr;
+    # XXX: we don't really deal with the case where APR was built with
+    # -D_FILE_OFFSET_BITS=64 but perl wasn't, since currently we strip
+    # only perl's ccflags, not apr's flags. the reason we don't deal
+    # with it is that we didn't have such a case yet, but may need to
+    # deal with it later
+
+    return $perl_lfs64 ^ $apr_lfs64;
 }
 
 # if perl is built with uselargefiles, but apr not, the build won't
