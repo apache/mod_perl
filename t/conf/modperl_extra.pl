@@ -213,7 +213,6 @@ sub FETCH {
 package ModPerl::TestFilterDebug;
 
 use base qw(Apache::Filter);
-use Apache::FilterRec ();
 use APR::Brigade ();
 use APR::Bucket ();
 use APR::BucketType ();
