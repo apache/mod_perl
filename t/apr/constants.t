@@ -4,6 +4,7 @@ use warnings FATAL => 'all';
 
 use Test;
 
+use Apache2 ();
 use APR::Const -compile => qw(:common POLLIN);
 use APR::Const qw(:hook);
 

@@ -3,6 +3,8 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestRequest;
+
+use Apache2 ();
 use Apache::Const ':common';
 
 plan tests => 3;
