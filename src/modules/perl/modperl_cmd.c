@@ -67,7 +67,7 @@ static MP_CMD_SRV_DECLARE2(handle_vars)
     const char *name = parms->cmd->name;
 
     modperl_table_modify_t func =
-        strEQ(name, "PerlSetVar") ? apr_table_set : apr_table_add;
+        strEQ(name, "PerlSetVar") ? apr_table_setn : apr_table_addn;
 
     func(dcfg->vars, arg1, arg2);
 
@@ -77,6 +77,7 @@ static MP_CMD_SRV_DECLARE2(handle_vars)
     /* make available via Apache->server->dir_config */
     if (!parms->path) {
         func(scfg->vars, arg1, arg2);
+
         MP_TRACE_d(MP_FUNC, "%s SRV: arg1 = %s, arg2 = %s\n",
                    name, arg1, arg2);
     }
