@@ -7,6 +7,6 @@ use FindBin;
 use lib "$FindBin::Bin/../Apache-Test/lib";
 use lib "$FindBin::Bin/../lib";
 
-use Apache::TestSmoke ();
+use Apache::TestSmokePerl ();
 
-Apache::TestSmoke->new(@ARGV)->run;
+Apache::TestSmokePerl->new(@ARGV)->run;
