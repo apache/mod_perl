@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.23_01-dev
+=item 1.24 - May 16, 2000
 
 'sub handler : method {}' is now treated as a method handler
 
