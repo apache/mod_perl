@@ -25,7 +25,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
          * XXX: if buf wasn't 'const char *buf' we could simply do
          * buf[len] = '\0'
          */
-        if (len < strlen(buf)) {
+        /* MP_IOBUFSIZE is the size of wb->outbuf */
+        if (buf == wb->outbuf && len < MP_IOBUFSIZE) {
             work_buf = (char *)apr_pcalloc(wb->pool, sizeof(char*)*len);
             memcpy((void*)work_buf, buf, len);
         }
