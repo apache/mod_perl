@@ -85,10 +85,32 @@ static void modperl_env_table_populate(pTHX_ apr_table_t *table)
     modperl_env_tie(mg_flags);
 }
 
+/* list of environment variables to pass by default */
+static const char *MP_env_pass_defaults[] = {
+    "PATH", "TZ", NULL
+};
+
 void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s)
 {
     /* XXX: propagate scfg->SetEnv to environ */
     MP_dSCFG(s);
+    int i = 0;
+
+    for (i=0; MP_env_pass_defaults[i]; i++) {
+        const char *key = MP_env_pass_defaults[i];
+        char *val;
+
+        if (apr_table_get(scfg->SetEnv, key) ||
+            apr_table_get(scfg->PassEnv, key))
+        {
+            continue; /* already configured */
+        }
+
+        if ((val = getenv(key))) {
+            apr_table_set(scfg->PassEnv, key, val);
+        }
+    }
+
     modperl_env_table_populate(aTHX_ scfg->SetEnv);
     modperl_env_table_populate(aTHX_ scfg->PassEnv);
 }
