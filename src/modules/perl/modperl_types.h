@@ -1,6 +1,12 @@
 #ifndef MODPERL_TYPES_H
 #define MODPERL_TYPES_H
 
+#ifdef AP_IOBUFSIZE
+#   define MP_IOBUFSIZE AP_IOBUFSIZE
+#else
+#   define MP_IOBUFSIZE 8192
+#endif
+
 /* aliases */
 
 typedef apr_array_header_t MpAV;
@@ -148,7 +154,7 @@ typedef struct {
 
 typedef struct {
     int outcnt;
-    char outbuf[IOBUFSIZE];
+    char outbuf[MP_IOBUFSIZE];
     apr_pool_t *pool;
     ap_filter_t *filters;
 } modperl_wbucket_t;
