@@ -718,6 +718,18 @@ my %shortcuts = (
      REDIRECT => 'HTTP_MOVED_TEMPORARILY',
 );
 
+my %ifdef = map { $_, 1 } qw(APLOG_TOCLIENT);
+
+sub constants_ifdef {
+    my $name = shift;
+
+    if ($ifdef{$name}) {
+        return ("#ifdef $name\n", "#endif /* $name */\n");
+    }
+
+    ("", "");
+}
+
 sub constants_lookup_code {
     my($h_fh, $c_fh, $constants, $class) = @_;
 
@@ -761,10 +773,13 @@ EOF
         print $c_fh "      case '$key':\n";
 
         for my $name (@$names) {
+            my @ifdef = constants_ifdef($alias{$name});
             print $c_fh <<EOF;
+$ifdef[0]
           if (strEQ(name, "$name")) {
               return $alias{$name};
           }
+$ifdef[1]
 EOF
         }
         print $c_fh "      break;\n";
@@ -806,8 +821,11 @@ sub constants_group_lookup_code {
 	push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
 	print $c_fh "\nstatic const char *$name [] = { \n",
-          (map { s/^($constant_prefixes)_?//o;
-                 qq(   "$_",\n) } @$constants), "   NULL,\n};\n";
+          (map {
+              my @ifdef = constants_ifdef($_);
+              s/^($constant_prefixes)_?//o;
+              qq($ifdef[0]   "$_",\n$ifdef[1])
+          } @$constants), "   NULL,\n};\n";
     }
 
     my %switch;
