@@ -49,8 +49,6 @@ perl language features:
 optimization features:
 ---------------------
 
-- use 5.7.1+'s PerlIO rather than tied filehandles
-
 - copy-on-write SvPVX
 
 - hook Perl malloc into apr_pool
