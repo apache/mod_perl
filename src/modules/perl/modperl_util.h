@@ -21,6 +21,13 @@
 #define SvObjIV(o) SvIV((SV*)SvRV(o))
 #define MgObjIV(m) SvIV((SV*)SvRV(m->mg_obj))
 
+#define MP_magical_untie(sv, mg_flags) \
+    mg_flags = SvMAGICAL((SV*)sv); \
+    SvMAGICAL_off((SV*)sv)
+
+#define MP_magical_tie(sv, mg_flags) \
+    SvFLAGS((SV*)sv) |= mg_flags
+
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
 
