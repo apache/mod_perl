@@ -3,8 +3,9 @@
  * for protocol module helpers
  */
 
-static MP_INLINE request_rec *mpxs_Apache__RequestRec_new(SV *classname,
-                                                          conn_rec *c)
+static MP_INLINE
+request_rec *mpxs_Apache__RequestRec_new(SV *classname,
+                                         conn_rec *c)
 {
     apr_pool_t *p;
     request_rec *r;
@@ -39,8 +40,9 @@ static MP_INLINE request_rec *mpxs_Apache__RequestRec_new(SV *classname,
     return r;
 }
 
-static MP_INLINE int mpxs_Apache__RequestRec_location_merge(request_rec *r,
-                                                            char *location)
+static MP_INLINE
+int mpxs_Apache__RequestRec_location_merge(request_rec *r,
+                                           char *location)
 {
     apr_pool_t *p = r->pool;
     server_rec *s = r->server;
@@ -71,10 +73,10 @@ static MP_INLINE int mpxs_Apache__RequestRec_location_merge(request_rec *r,
     return 0;
 }
 
-static MP_INLINE void
-mpxs_Apache__RequestRec_set_basic_credentials(request_rec *r,
-                                              char *username,
-                                              char *password)
+static MP_INLINE
+void mpxs_Apache__RequestRec_set_basic_credentials(request_rec *r,
+                                                   char *username,
+                                                   char *password)
 {
     char encoded[1024];
     int elen;

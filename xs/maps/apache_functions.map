@@ -46,10 +46,10 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
  ap_is_initial_req
 
  #protocol module helpers
- int:DEFINE_location_merge | | request_rec *:r, char *:location
- void:DEFINE_set_basic_credentials | | request_rec *:r, char *:username, char *:password
+ mpxs_Apache__RequestRec_location_merge
+ mpxs_Apache__RequestRec_set_basic_credentials
 PACKAGE=Apache::RequestRec
- request_rec *:DEFINE_new | | SV *:classname, conn_rec *:c
+ mpxs_Apache__RequestRec_new
 
 #MODULE=Apache::RequestConfig
  ap_document_root
