@@ -5,11 +5,19 @@
 =item MAIL LIST
 
 For comments, questions, bug-reports, announcements, etc., send mail
-to I<modperl@apache.org>
+to I<modperl@apache.org>.
 To subscribe to this list (which you must do to send mail to the
 list), send a mail message to I<majordomo@apache.org> with the body:
 
  subscribe modperl
+
+Please note that mails on the mailinglist go out with a reply-to
+header, so you have to be subscribed to get the answers.
+
+We also have a mailinglist just for announcements. Subscribe my
+sending a message to I<majordomo@apache.org> with the body:
+
+ subscribe modperl-announce
 
 (Thanks to Brian Behlendorf)
 (Thanks also to Mark A. Imbriaco who maintained the original list for 2 years)
@@ -136,6 +144,4 @@ $Config{archlibexp} is:
 Rebuild httpd/mod_perl with PERL_DEBUG=1, let's see a new backtrace.
 
 =back
-
-
 
