@@ -8,6 +8,12 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+pushing out experimental stuff:
+  EXPERIMENTAL=1 (enables all experiments, except PERL_DEFAULT_OPMASK)
+  PERL_GET_SET_HANDLERS=1 if PERL_STACKED_HANDLERS
+  PERL_MARK_WHERE=1, PERL_TIE_SCRIPTNAME=1 if PERL_TRACE
+  PERL_SECTIONS_SELF_BOOT=1 if PERL_SECTIONS
+
 new $r->server->next method
 
 removed use of Term::ReadLine in Makefile.PL to make it work on

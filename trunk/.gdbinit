@@ -22,11 +22,11 @@ define TOPs
 end
 
 define curstash
-   print ((XPVHV*) (curstash)->sv_any)->xhv_name
+   print ((XPVHV*) (Perl_curstash)->sv_any)->xhv_name
 end
 
 define defstash
-   print ((XPVHV*) (defstash)->sv_any)->xhv_name
+   print ((XPVHV*) (Perl_defstash)->sv_any)->xhv_name
 end
 
 define curcopfile

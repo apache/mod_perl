@@ -170,26 +170,12 @@ hv_store(ERRHV, k, strlen(k), v, FALSE)
 #define PERL_DESTRUCT_LEVEL 0
 #endif
 
-#ifndef PERL_SECTIONS_SELF_BOOT
-#define PERL_SECTIONS_SELF_BOOT getenv("PERL_SECTIONS_SELF_BOOT")
-#endif
-
 #ifndef DO_INTERNAL_REDIRECT
 #define DO_INTERNAL_REDIRECT perl_get_sv("Apache::DoInternalRedirect", FALSE)
 #endif
 
 #ifdef PERL_RESTART_HANDLER
 #undef NO_PERL_RESTART
-#endif
-
-#ifdef PERL_MARK_WHERE
-#define MARK_WHERE(w,s) \
-   ENTER; \
-   mod_perl_mark_where(w,s)
-#define UNMARK_WHERE LEAVE
-#else
-#define MARK_WHERE(w,s) mod_perl_noop(NULL)
-#define UNMARK_WHERE mod_perl_noop(NULL)
 #endif
 
 typedef request_rec * Apache;
@@ -261,6 +247,12 @@ extern U32	mp_debug;
 #define MP_TRACE_h(a) if (mp_debug & 4)	 a /* handlers */
 #define MP_TRACE_g(a) if (mp_debug & 8)	 a /* globals and allocation */
 #define MP_TRACE_c(a) if (mp_debug & 16) a /* directive handlers */
+#ifndef PERL_MARK_WHERE
+#define PERL_MARK_WHERE
+#endif
+#ifndef PERL_TIE_SCRIPTNAME
+#define PERL_TIE_SCRIPTNAME
+#endif
 #else
 #define MP_TRACE(a)
 #define MP_TRACE_d(a) 
@@ -268,6 +260,16 @@ extern U32	mp_debug;
 #define MP_TRACE_h(a) 
 #define MP_TRACE_g(a) 
 #define MP_TRACE_c(a)
+#endif
+
+#ifdef PERL_MARK_WHERE
+#define MARK_WHERE(w,s) \
+   ENTER; \
+   mod_perl_mark_where(w,s)
+#define UNMARK_WHERE LEAVE
+#else
+#define MARK_WHERE(w,s) mod_perl_noop(NULL)
+#define UNMARK_WHERE mod_perl_noop(NULL)
 #endif
 
 /* cut down on some noise in source */
@@ -364,6 +366,12 @@ if((add->flags & f) || (base->flags & f)) \
 #ifndef NO_PERL_SSI
 #undef  PERL_SSI
 #define PERL_SSI
+#endif
+
+#ifdef PERL_SECTIONS
+#ifndef PERL_SECTIONS_SELF_BOOT
+#define PERL_SECTIONS_SELF_BOOT 1
+#endif
 #endif
 
 #ifdef APACHE_SSL
@@ -497,6 +505,11 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
 }
 
 #ifdef PERL_STACKED_HANDLERS
+
+#ifndef PERL_GET_SET_HANDLERS
+#define PERL_GET_SET_HANDLERS
+#endif
+
 #define PERL_TAKE ITERATE
 #define PERL_CMD_INIT  Nullav
 #define PERL_CMD_TYPE  AV

@@ -141,7 +141,7 @@ $LIBPERL = "DEFAULT";
 $USE_APACI = $USE_DSO = $USE_APXS = 0;
 $WITH_APXS = "";
 $APACI_ARGS = "";
-$EVERYTHING = 0;
+$EVERYTHING = $EXPERIMENTAL = 0;
 $PERL_DEBUG = "";
 $PERL_DESTRUCT_LEVEL = "";
 $PERL_STATIC_EXTS = "";
@@ -177,6 +177,7 @@ $PERL_UTIL_API = 0;
 $PERL_CONNECTION_API = 1; #these two were split out late in the game
 $PERL_SERVER_API = 1;     #so they are on by default 
 $PERL_RUN_XS = 0;
+
 my %experimental = map { $_,1 } qw{
 PERL_RUN_XS
 PERL_GET_SET_HANDLERS
@@ -194,7 +195,7 @@ PERL_ORALL_OPMASK
 };
 
 my @mp_args = 
-    qw(EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE APACHE_PREFIX
+    qw(EXPERIMENTAL EVERYTHING DO_HTTPD NO_HTTPD CONFIG ADD_MODULE APACHE_PREFIX
        USE_APACI USE_DSO USE_APXS WITH_APXS APACI_ARGS PREP_HTTPD
        ALL_HOOKS ADD_VERSION STATIC DYNAMIC PORT XS_IMPORT);
 
@@ -268,6 +269,14 @@ while($_ = shift) {
     $callback_hooks{$k} = $v if exists $callback_hooks{$k};
 }
 
+if($EXPERIMENTAL) {
+    for (keys %experimental) {
+        next if $_ eq "PERL_DEFAULT_OPMASK"; #have to *really* ask for this one
+        next if $experimental{$_}++ > 1;
+	$PERL_EXTRA_CFLAGS .= " -D$_=1";
+    }
+}
+
 if($experimental{PERL_DEFAULT_OPMASK} > 1) {
     $experimental{PERL_SAFE_STARTUP} = 2;
     $PERL_EXTRA_CFLAGS .= " -DPERL_SAFE_STARTUP=1";
@@ -312,7 +321,6 @@ if($EVERYTHING) {
        $$_ = 1;
     }
 }
-
 
 if($ALL_HOOKS) {
     for (@callback_hooks) {
@@ -543,7 +551,7 @@ if($PERL_TIE_TABLES) {
     push @xs_modules, "Apache::Tie";
     $callback_hooks{PERL_TIE_TABLES} = 1;
 }
-if($PERL_RUN_XS) {
+if($PERL_RUN_XS or $experimental{PERL_RUN_XS} > 1) {
     my $mmn    = $USE_APXS ? MMN_130 : magic_number($APACHE_SRC);
     if($mmn >= MMN_130) {
 	push @xs_modules, "Apache::PerlRunXS";
