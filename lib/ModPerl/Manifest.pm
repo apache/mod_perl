@@ -54,10 +54,10 @@ sub get_svn_files {
                 push @files, $dir ? "$dir/$file" : $file;
              }
         }
+        close $fh;
 
-    close $fh;
     }}, $cwd);
-    
+
     return @files;
 }
 
