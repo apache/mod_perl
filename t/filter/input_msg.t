@@ -3,6 +3,7 @@ use Apache::TestConfig ();
 
 my $module = 'TestFilter::input_msg';
 
+Apache::TestRequest::scheme('http'); #force http for t/TEST -ssl
 Apache::TestRequest::module($module);
 
 my $config = Apache::TestConfig->thaw;
