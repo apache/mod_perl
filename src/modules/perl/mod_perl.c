@@ -70,13 +70,12 @@ static void modperl_boot(pTHX_ void *data)
     /* outside mod_perl this is done by ModPerl::Const.xs */
     newXS("ModPerl::Const::compile", XS_modperl_const_compile, __FILE__);
 
-#ifdef MP_PERL_5_6_x
     /* make sure DynaLoader is loaded before XSLoader
-     * to workaround bug in 5.6.1 that can trigger a segv
+     * - to workaround bug in 5.6.1 that can trigger a segv
      * when using modperl as a dso
+     * - also needed when <Perl> sections are loaded from +Parent vhost
      */
     modperl_require_module(aTHX_ "DynaLoader", FALSE);
-#endif
 
     IoFLUSH_on(PL_stderrgv); /* unbuffer STDERR */
 }
