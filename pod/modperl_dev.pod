@@ -26,8 +26,8 @@ Once extracted, whenever you want to sync with the latest httpd-2.0
 version and rebuild, run:
 
  % cd httpd-2.0
- % cvs up
- % make testclean && ./buildconf
+ % cvs up -dP
+ % make distclean && ./buildconf
  % ./configure --prefix=$HOME/apache-2.0 \
    --with-mpm=threaded --enable-so
  % make && make install
