@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_04-dev
 
+proxy support fixed wrt RFC2068, thanks to Benjamin Elijah
+Griffin for the spot
+
 set Apache::Resource::DEFAULT_RLIMIT_AS (address space) to 64Mb
 [Kevin Murphy <kevin@boojiboy.eorbit.net>]
 
