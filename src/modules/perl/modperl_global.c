@@ -153,7 +153,7 @@ apr_status_t modperl_tls_get(modperl_tls_t *key, void **data)
 #if MP_THREADED
     return apr_threadkey_private_get(data, key);
 #else
-    *data = modperl_global_get(key);
+    *data = modperl_global_get((modperl_global_t *)key);
     return APR_SUCCESS;
 #endif
 }
@@ -163,6 +163,7 @@ apr_status_t modperl_tls_set(modperl_tls_t *key, void *data)
 #if MP_THREADED
     return apr_threadkey_private_set(data, key);
 #else
+    modperl_global_set((modperl_global_t *)key, data);
     return APR_SUCCESS;
 #endif
 }
