@@ -86,6 +86,7 @@ void modperl_perl_init_ids_server(server_rec *s)
 void modperl_perl_destruct(PerlInterpreter *perl)
 {
     char **orig_environ = NULL;
+    PTR_TBL_t *module_commands; 
     dTHXa(perl);
 
     PERL_SET_CONTEXT(perl);
@@ -116,6 +117,10 @@ void modperl_perl_destruct(PerlInterpreter *perl)
 
     if (PL_endav) {
         modperl_perl_call_list(aTHX_ PL_endav, "END");
+    }
+
+    if ((module_commands = modperl_module_config_table_get(perl, FALSE))) {
+        modperl_svptr_table_destroy(perl, module_commands);
     }
 
     perl_destruct(perl);
