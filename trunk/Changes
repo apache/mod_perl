@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.12_01-dev
 
+add PERL_TIE_TABLES and PERL_DIRECTIVE_HANDLERS to EVERYTHING=1 group
+
 add some casts to avoid warnings from const char changes in 1.3.1-dev
 
 write_client will break out of it's loop if rwrite returns a -1 error 

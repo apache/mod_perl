@@ -255,7 +255,7 @@ for (keys %callback_alias) {
 
 if($EVERYTHING) {
     @callback_hooks{qw(PERL_STACKED_HANDLERS PERL_METHOD_HANDLERS)} = (1) x 2;
-    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS)) {
+    for(qw(ALL_HOOKS PERL_SSI PERL_SECTIONS PERL_TIE_TABLES PERL_DIRECTIVE_HANDLERS)) {
        $$_ = 1;
     }
 }
