@@ -25,7 +25,7 @@ sub new_test_config {
     my ($volume, $dir, $file) = splitpath Cwd::cwd(), 1;
     my @dir = grep {length} splitdir $dir;
     $dir = catdir @dir[0..($#dir-2)]; # remove two last dir segments
-    my $base = rootdir() . catpath $volume, $dir, $file;
+    my $base = catpath $volume, rootdir(), $dir, $file;
 
     $self->{conf_opts}->{maxclients} = 2;
 
