@@ -57,9 +57,9 @@ build commands with them.
 =back
 
 Taking these four features together provides a way to integrate mod_perl into
-Apache in a very clean and smooth way. No patching of the Apache source tree
+Apache in a very clean and smooth way. I<No patching of the Apache source tree
 is needed in the standard situation and even not only the source tree itself
-is needed in the APXS situation.
+is needed in the APXS situation>.
 
 =head1 DESCRIPTION
 
@@ -75,28 +75,55 @@ especially captive way. Because it assumed mod_perl is the only third-party
 modules which has to be integrated into Apache. This is very problematic.
 
 The new approach described below avoids these problems. It only prepares the
-C<src/modules/perl/> subtree inside the Apache source tree C<WITHOUT>
+C<src/modules/perl/> subtree inside the Apache source tree I<without>
 adjusting or editing anything else. This way no conflicts can occur. Instead
 mod_perl is activated (and then configures itself) when the Apache source tree
 is configured via standard APACI calls later.
 
 =head1 THE GAME ITSELF
 
-There are three typical ways to build Apache with the new hybrid build
+There are various ways available to build Apache with the new hybrid build
 environment:
 
-=head2 Build mod_perl as static object inside the Apache source tree via APACI
+=head2 The all-in-one way
 
-This is the standard situation: Statically building mod_perl into the C<httpd>
-binary of Apache. Follow these steps
+If your goal is just to build and install Apache 1.3 with mod_perl out of
+their source trees and have no special interests in further adjusting or
+enhancing Apache do the following:
+
+ $ gunzip <apache_1.3.X.tar.gz | tar xvf -
+ $ gunzip <mod_perl-1.X.tar.gz | tar xvf -
+ $ cd mod_perl-1.X
+ $ perl Makefile.PL \
+     APACHE_PREFIX=/path/to/install/of/apache
+     APACHE_SRC=../apache-1.3.X/src
+     DO_HTTPD=1 \
+     USE_APACI=1 \
+     EVERYTHING=1 \
+     APACI_ARGS='[...]' \
+     [...]
+ $ make 
+ $ make install
+
+This builds Apache statically with mod_perl, installs Apache under
+C</path/to/install/of/apache/> and mod_perl into the C<site_lib> hierarchy of
+your existing Perl installation. All in one step.
+
+=head2 The flexible way 
+
+This is the standard situation when you want to be flexible while building:
+Statically building mod_perl into the C<httpd> binary of Apache but via
+different steps, so you have a chance for other third-party Apache modules,
+etc.
 
 =over 3
 
 =item B<1. Prepare the Apache 1.3 source tree>
 
-The first step is the extract the Apache 1.3 distribution:
+The first step is the extract the distributions:
 
  $ gunzip <apache_1.3.X.tar.gz | tar xvf -
+ $ gunzip <mod_perl-1.X.tar.gz | tar xvf -
 
 =item B<2. Install mod_perl's Perl-side and prepare the Apache-side>
 
@@ -109,14 +136,21 @@ tree:
      APACHE_SRC=../apache_1.3.X/src \
      DO_HTTPD=1 \
      USE_APACI=1 \
+     PREP_HTTPD=1 \
+     EVERYTHING=1 \
      [...]
  $ make
  $ make install
  $ cd ..
 
 (The C<APACHE_SRC> set the path to your Apache source tree, the C<DO_HTTPD>
-option forces this path and only this path to be used and the C<USE_APACI>
-option triggers the new hybrid build environment.)
+option forces this path and only this path to be used, the C<USE_APACI> option
+triggers the new hybrid build environment and the C<PREP_HTTPD> forces only a
+preparation of the C<APACHE_SRC/modules/perl/> tree but no automatic builds.)
+
+This now prepares the Apache-side of mod_perl in the Apache source tree but
+don't touches anything else inside it. It then just builds the Perl-side of
+mod_perl and installs it into the Perl installation hierarchy.
 
 =item B<3. Additionally prepare other third-party modules>
 
@@ -130,7 +164,7 @@ Apache-side of mod_perl and any other prepared third-party modules:
 
  $ cd apache_1.3.X
  $ ./configure \
-     --prefix=/path/to/apache \
+     --prefix=/path/to/install/of/apache \
      --activate-module=src/modules/perl/libperl.a \
      [...]
  $ make
@@ -138,7 +172,7 @@ Apache-side of mod_perl and any other prepared third-party modules:
 
 (The C<--prefix> option is usually always needed and the C<--activate-module>
 option activates mod_perl for the configuration process and thus also for the
-following build process.)
+build process.)
 
 =back
 
@@ -146,7 +180,13 @@ Now bask in the glow and be happy to received a mod_perl-aware Apache 1.3
 system without having to mangle the Apache source tree for mod_perl plus the
 freedom of being able to adding more third-party modules.
 
-=head2 Build mod_perl as dynamic shared object inside the Apache source tree via APACI
+=head1 EXPERIMENTAL
+
+With Apache 1.3 there is support for building modules as Dynamic Shared
+Objects (DSO).  So there is support for DSO in mod_perl now, too.  I<BUT THIS
+IS STILL EXPERIMENTAL, SO BE WARNED!>
+
+=head2 Build mod_perl as DSO inside Apache source tree via APACI
 
 We already said that the new mod_perl build environment is a hybrid one. What
 does it mean? It means for instance that the same C<src/modules/perl/> stuff
@@ -157,43 +197,49 @@ Apache issues the name has to be C<libperl.so>. Don't confuse this with
 the real C<libperl.a> or even C<libperl.so> from the Perl installation)
 all you have to do is to add one single option to the above steps.
 
-Yeah, right, you follow exactly the above steps but change step number 
-4 to the following:
+You have two options here, dependend on which way you choose above: If you
+choose the all-in-one way above then add 
 
- $ cd apache_1.3.X
- $ ./configure \
-     --prefix=/path/to/apache \
-     --activate-module=src/modules/perl/libperl.a \
-     --enable-shared=perl
+  USE_DSO=1
+
+to the mod_perl/Makefile.PL options. If you choose the flexible way then
+add
+
+  --enable-shared=perl
+
+to the Apache/configure options.
+
+As you can see only an additional C<USE_DSO=1> or C<--enable-shared=perl>
+option is needed.  Anything else is done automatically: C<mod_so> is
+automatically enabled, the Makefiles are adjusted automatically and even the
+C<install> target from APACI now additionally installs the C<libperl.so> into
+the Apache installation tree.  And even more: The C<LoadModule> and
+C<AddModule> directives are automatically added to the C<httpd.conf> file. 
+
+=head2 Build mod_perl as DSO outside Apache source tree via APXS
+
+Above we've seen how to build mod_perl as DSO I<inside> the Apache source
+tree. But there is a nifty alternative: Building mod_perl as DSO I<outside>
+the Apache source tree via the new Apache 1.3 support tool C<apxs> (APache
+eXtension). The advantage is obvious: You can extend an already installed
+Apache with mod_perl even if you don't have the sources (for instance you
+installed an Apache binary package from your vendor).
+
+Here are the steps:
+
+ $ gunzip <mod_perl-1.X.tar.gz | tar xvf -
+ $ cd mod_perl-1.X
+ $ perl Makefile.PL \
+     USE_APXS=1 \
+     WITH_APXS=/path/to/bin/apxs
+     EVERYTHING=1 \
      [...]
- $ make
+ $ make 
  $ make install
 
-As you can see only an additional C<--enable-shared=perl> option is needed.
-Anything else is done automatically: C<mod_so> is automatically enabled, the
-Makefiles are adjusted automatically and even the C<install> target from APACI
-now additionally installs the C<libperl.so> into the Apache installation tree.
-And even more: The C<LoadModule> and C<AddModule> directives are automatically
-added to the C<httpd.conf> file. 
-
-Do you still think the hybrid build environment and/or APACI is not
-impressive? Shame on you!
-
-=head2 Build mod_perl as dynamic shared object outside the Apache source tree via APXS
-
-(I<Support currently still not added to top-level 
-Makefile.PL, but already useable manually!>)
-
-In short:
-
- $ cd apaci
- $ ./configure --with-apxs=/path/to/apache/sbin/apxs \
-               --with-perl=/path/to/bin/perl
- $ make
- $ make install
-
-This will build the DSO C<libperl.so> B<outside> the Apache source
-tree with the new Apache 1.3 support tool C<apxs>.
+This will build the DSO C<libperl.so> B<outside> the Apache source tree with
+the new Apache 1.3 support tool C<apxs> and installs it into the existing
+Apache hierarchy.
 
 =head1 AUTHOR
 
