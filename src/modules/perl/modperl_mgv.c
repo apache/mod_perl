@@ -298,12 +298,11 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                        "package %s not in %INC, attempting to load '%s'\n",
                        name, filename);
 
-            if (modperl_require_module(aTHX_ name, FALSE)) {
+            if (modperl_require_module(aTHX_ name, logfailure)) {
                 MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
             }
             else {
-                MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
-                return 0;
+                Perl_croak(aTHX_ "failed to load %s package\n", name);
             }
         }
         else {
@@ -318,8 +317,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
      * module was loaded, preventing from loading the module
      */
     if (!(stash || (stash = gv_stashpv(name, FALSE)))) {
-        MP_TRACE_h(MP_FUNC, "package %s seems to be loaded, "
-                   "but can't find its stash\n", name);
+        MP_TRACE_h(MP_FUNC, "%s's stash is not found\n", name);
         return 0;
     }
 
@@ -346,6 +344,14 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         return 1;
     }
 
+    /* at least modperl_hash_handlers needs to verify that an
+     * autoloaded-marked handler needs to be loaded, since it doesn't
+     * check success failure, and handlers marked to be autoloaded are
+     * the same as PerlModule and the failure should be fatal */
+    if (MpHandlerAUTOLOAD(handler)) {
+        Perl_croak(aTHX_ "failed to resolve handler %s\n", name);
+    }
+    
 #ifdef MP_TRACE
     /* complain only if the class was actually loaded/created */
     if (stash) {
@@ -417,7 +423,8 @@ int modperl_mgv_require_module(pTHX_ modperl_mgv_t *symbol,
 }
 #endif
 
-/* precompute the hash(es) for handler names */
+/* precompute the hash(es) for handler names, preload handlers
+ * configured to be autoloaded */
 static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
                                   MpAV *entry, void *data)
 {
