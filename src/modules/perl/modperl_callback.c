@@ -1,7 +1,7 @@
 #include "mod_perl.h"
 
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
-                     server_rec *s, AV *args)
+                     request_rec *r, server_rec *s, AV *args)
 {
     CV *cv=Nullcv;
     I32 flags = G_EVAL|G_SCALAR;
@@ -168,7 +168,7 @@ int modperl_callback_run_handlers(int idx, int type,
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
-        if ((status = modperl_callback(aTHX_ handlers[i], p, s, av_args)) != OK) {
+        if ((status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args)) != OK) {
             status = modperl_errsv(aTHX_ status, r, s);
         }
 

@@ -11,7 +11,7 @@
 #define ap_hook_log    ap_hook_log_transaction
 
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
-                     server_rec *s, AV *args);
+                     request_rec *r, server_rec *s, AV *args);
 
 int modperl_callback_run_handlers(int idx, int type,
                                   request_rec *r, conn_rec *c, server_rec *s,
