@@ -424,7 +424,7 @@ void perl_run_endav(char *s)
 static I32
 errgv_empty_set(IV ix, SV* sv)
 { 
-    sv_setpv(sv, "");
+    sv_setsv(sv, &sv_no);
     return TRUE;
 }
 
