@@ -17,7 +17,8 @@ our $VERSION = '1.99';
 
 use Apache::compat ();
 
-use Apache::Response;
+use Apache::Response ();
+use Apache::RequestRec ();
 use Apache::Log;
 use Apache::Const -compile => qw(:common &OPT_EXECCGI);
 use File::Spec::Functions ();
@@ -169,9 +170,9 @@ sub run {
     my $rc = Apache::OK;
     my $cv = \&{"$package\::handler"};
 
-    { # run the code if $r->seqno, preserve warnings setup when it's done
+    { # run the code and preserve warnings setup when it's done
         no warnings;
-        eval { $rc = &{$cv}($r, @_) } if $r->seqno;
+        eval { $rc = &{$cv}($r, @_) };
         $o->[STATUS] = $rc;
         ModPerl::Global::special_list_call(END => $package);
     }
