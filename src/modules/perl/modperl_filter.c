@@ -95,6 +95,12 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     apr_bucket *bucket;
     const char *work_buf = buf;
 
+    /* reset the counter to 0 as early as possible and in one place,
+     * since this function will always either path the data out (and
+     * it has 'len' already) or return an error.
+     */
+     wb->outcnt = 0;
+
     if (wb->header_parse) {
         request_rec *r = wb->r;
         const char *bodytext = NULL;
@@ -181,7 +187,6 @@ MP_INLINE apr_status_t modperl_wbucket_flush(modperl_wbucket_t *wb,
     if (wb->outcnt) {
         rv = modperl_wbucket_pass(wb, wb->outbuf, wb->outcnt,
                                   add_flush_bucket);
-        wb->outcnt = 0;
     }
     else if (add_flush_bucket) {
         rv = send_output_flush(*(wb->filters));
