@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use constant GvSHARED => 0; #$^V gt v5.7.0;
+use Apache::TestTrace;
 use Apache::Build ();
 use ModPerl::Code ();
 use ModPerl::TypeMap ();
@@ -223,11 +224,13 @@ sub prepare {
     $self->{DIR} = 'WrapXS';
     $self->{XS_DIR} = catdir fastcwd(), 'xs';
 
+    my $verbose = $Apache::TestTrace::Level eq 'debug' ? 1 : 0;
+
     if (-e $self->{DIR}) {
-        rmtree([$self->{DIR}], 1, 1);
+        rmtree([$self->{DIR}], $verbose, 1);
     }
 
-    mkpath [$self->{DIR}], 1, 0755;
+    mkpath [$self->{DIR}], $verbose, 0755;
 }
 
 sub class_dirname {
@@ -245,7 +248,10 @@ sub class_dir {
     my $dir = ($dirname =~ m:/: and $dirname !~ m:^$self->{DIR}:) ?
       catdir($self->{DIR}, $dirname) : $dirname;
 
-    mkpath [$dir], 1, 0755 unless -d $dir;
+    unless (-d $dir) {
+        mkpath [$dir], 0, 0755;
+        debug "mkdir.....$dir";
+    }
 
     $dir;
 }
@@ -272,7 +278,7 @@ sub open_class_file {
     my $name = $self->class_file($class, $file);
 
     open my $fh, '>', $name or die "open $name: $!";
-    print "writing...$name\n";
+    debug "writing...$name";
 
     return $fh;
 }

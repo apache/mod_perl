@@ -6,6 +6,7 @@ use mod_perl ();
 use Apache::Build ();
 
 use Apache::TestConfig ();
+use Apache::TestTrace;
 
 our $VERSION = '0.01';
 our @ISA = qw(Apache::Build);
@@ -627,7 +628,7 @@ sub init_file {
     }
 
     my $file = "$self->{path}/$name";
-    warn "generating...$file\n";
+    debug "generating...$file";
     unlink $file;
     open my $fh, '>>', $file or die "open $file: $!";
     print $fh @preamble, noedit_warning_c();
@@ -659,7 +660,6 @@ sub generate {
     }
 
     for my $method (reverse sort keys %sources) {
-        print "$method...";
         my($h_fh, $c_fh) = map {
             $self->fh($sources{$method}->{$_});
         } qw(h c);
@@ -670,13 +670,13 @@ sub generate {
         if ($c_add) {
             print $c_fh $c_add;
         }
-        print "done\n";
+        debug "$method...done";
     }
 
     $self->postamble;
 
     my $xsinit = "$self->{path}/modperl_xsinit.c";
-    warn "generating...$xsinit\n";
+    debug "generating...$xsinit";
 
     #create bootstrap method for static xs modules
     my $static_xs = [keys %{ $build->{XS} }];
