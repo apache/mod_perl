@@ -28,7 +28,8 @@ typedef struct {
     apr_pool_t *pool;
 } PerlIOAPR;
 
-static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg, PerlIO_funcs *tab)
+static IV PerlIOAPR_pushed(pTHX_ PerlIO *f, const char *mode,
+                           SV *arg, PerlIO_funcs *tab)
 {
     IV code = PerlIOBase_pushed(aTHX_ f, mode, arg, tab);
     if (*PerlIONext(f)) {
