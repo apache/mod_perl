@@ -31,6 +31,7 @@ PerlSetEnv KeyForPerlSetEnv OK
 #!perl
 use Apache ();
 use Apache::Registry ();
+use Apache::RegistryNG ();
 
 Apache::Server->register_cleanup(sub { 
     warn "Apache::Server registered cleanup called for $$\n";
@@ -121,7 +122,7 @@ for (qw(/perl /cgi-bin /dirty-perl /perl_xs)) {
 
 my @mod_perl = (
     SetHandler  => "perl-script",
-    PerlHandler => "Apache::Registry",
+    PerlHandler => "Apache::RegistryNG",
     Options     => "ExecCGI",
 );
 
