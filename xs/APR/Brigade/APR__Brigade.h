@@ -1,8 +1,9 @@
 static MP_INLINE
 apr_bucket_brigade *mpxs_apr_brigade_create(pTHX_ SV *CLASS,
-                                            apr_pool_t *p)
+                                            apr_pool_t *p,
+                                            apr_bucket_alloc_t *ba)
 {
-    return apr_brigade_create(p);
+    return apr_brigade_create(p, ba);
 }
 
 #define get_brigade(brigade, fetch) \

@@ -14,7 +14,8 @@ my $to_url = '/TestFilter::input_msg::response';
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
-    my $ctx_bb = APR::Brigade->new($filter->c->pool);
+    my $c = $filter->c;
+    my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
 

@@ -13,7 +13,9 @@ use APR::Bucket ();
 sub handler : FilterRequestHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
 
-    my $ctx_bb = APR::Brigade->new($filter->r->pool);
+    my $ba = $filter->r->connection->bucket_alloc;
+
+    my $ctx_bb = APR::Brigade->new($filter->r->pool, $ba);
 
     my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
 

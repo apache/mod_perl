@@ -5,6 +5,7 @@
 MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
                                             const char *buf, apr_ssize_t len)
 {
+    apr_bucket_alloc_t *ba = (*wb->filters)->c->bucket_alloc;
     apr_bucket_brigade *bb;
     apr_bucket *bucket;
 
@@ -28,8 +29,8 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
         }
     }
 
-    bb = apr_brigade_create(wb->pool);
-    bucket = apr_bucket_transient_create(buf, len);
+    bb = apr_brigade_create(wb->pool, ba);
+    bucket = apr_bucket_transient_create(buf, len, ba);
     APR_BRIGADE_INSERT_TAIL(bb, bucket);
 
     MP_TRACE_f(MP_FUNC, "buffer length=%d\n", len);
@@ -162,16 +163,20 @@ int modperl_run_filter(modperl_filter_t *filter,
 
 MP_INLINE static apr_status_t send_eos(ap_filter_t *f)
 {
-    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f));
-    apr_bucket *b = apr_bucket_eos_create();
+    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
+                                                ba);
+    apr_bucket *b = apr_bucket_eos_create(ba);
     APR_BRIGADE_INSERT_TAIL(bb, b);
     return ap_pass_brigade(f->next, bb);
 }
 
 MP_INLINE static apr_status_t send_flush(ap_filter_t *f)
 {
-    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f));
-    apr_bucket *b = apr_bucket_flush_create();
+    apr_bucket_alloc_t *ba = f->c->bucket_alloc;
+    apr_bucket_brigade *bb = apr_brigade_create(MP_FILTER_POOL(f),
+                                                ba);
+    apr_bucket *b = apr_bucket_flush_create(ba);
     APR_BRIGADE_INSERT_TAIL(bb, b);
     return ap_pass_brigade(f->next, bb);
 }
