@@ -60,7 +60,7 @@
 /* check whether the response phase has been initialized already */
 #define MP_CHECK_WBUCKET_INIT(func) \
     if (!rcfg->wbucket) { \
-        Perl_croak(aTHX_ func "can't be called before the response phase"); \
+        Perl_croak(aTHX_ func " can't be called before the response phase"); \
     }
 
 /* turn off cgi header parsing. in case we are already inside
