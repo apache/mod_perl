@@ -45,6 +45,8 @@ sub handler {
         my $ok = $brigade->first->type->name =~ /mod_perl/ ? 4 : 0;
         $brigade->insert_tail(APR::Bucket->new("ok $ok\n"));
 
+        $brigade->insert_tail(APR::Bucket::eos_create($ba));
+
         $filter->next->pass_brigade($brigade);
 
         $filter->ctx(1); # flag that we have run this already
