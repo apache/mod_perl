@@ -290,10 +290,11 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 }
                 else {
                     /* however, if require has failed and the error
-                     * wasn't "Can't locate ...", we did find the
-                     * package, and there is a problem with it
+                     * wasn't "Can't locate ... in @INC", we did find
+                     * the package, and there is a problem with it
                      */
-                    if (strnNE(SvPVX(ERRSV), "Can't locate", 12)) {
+                    if (!(strnEQ(SvPVX(ERRSV), "Can't locate", 12)
+                        && ap_strstr(SvPVX(ERRSV), "in @INC"))) {
                         errlen = SvCUR(ERRSV);
                         errpv  = apr_pstrndup(p, SvPVX(ERRSV), errlen);
                     }
