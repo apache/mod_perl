@@ -231,6 +231,7 @@ INSTALL.simple
 INSTALL.simple.ssl
 INSTALL.simple.stronghold
 INSTALL.simple.mod_ssl
+META.yml
 t/docs/subr/.exists
 PerlRunXS/Makefile.PL
 PerlRunXS/PerlRunXS.pm
