@@ -260,6 +260,16 @@ EOF
         my $names = $switch{$key};
         print $c_fh "      case '$key':\n";
 
+        #support $r->push_handlers(PerlHandler => ...)
+        if ($key eq 'H') {
+            print $c_fh <<EOF;
+          if (strEQ(name, "Handler")) {
+              *type = $ix{'Response'}->{type};
+              return $ix{'Response'}->{name};
+          }
+EOF
+        }
+
         for my $name (@$names) {
             my $n = length($name);
             print $c_fh <<EOF;
