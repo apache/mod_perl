@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+Removed Apache::Command method soak_end_container [Gozer]
+
 Removed Apache::Module methods (dynamic_load_handle and
 find_module_name) [Gozer]
 

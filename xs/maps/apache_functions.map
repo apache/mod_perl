@@ -278,7 +278,7 @@ MODULE=Apache::Filter PACKAGE=guess
 MODULE=Apache::Command
  command_rec *:DEFINE_next | | command_rec *:cmd
  ap_check_cmd_context
- ap_soak_end_container
+-ap_soak_end_container
 -ap_set_int_slot
 -ap_set_file_slot
 -ap_set_flag_slot
