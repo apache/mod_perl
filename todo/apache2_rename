@@ -28,6 +28,7 @@ TODO: correct Apache-Test and the mp2 test suite,
       so all tests pass again.
 
       joes volunteers to do this.
+      geoff got the test suite at least running... lots more work to do, though.
 
 TODO: remove Apache2.pm and MP_INST_APACHE2.
       This effort should not yield any test regressions.
