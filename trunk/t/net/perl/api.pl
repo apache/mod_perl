@@ -27,6 +27,7 @@ my $i;
 
 $r->content_type("text/plain");
 $r->content_languages([qw(en)]);
+$r->no_cache(1);
 $r->send_http_header;
 
 $r->print("1..$tests\n");
