@@ -9,7 +9,6 @@ use Apache::TestTrace;
 
 use APR::Pool ();
 use APR::Table ();
-use APR::Table ();
 
 sub num_of_tests {
     return 65;
