@@ -2,10 +2,9 @@ use strict;
 use warnings FATAL => 'all';
 
 use ModPerl::RegistryLoader ();
-use Apache::ServerUtil ();
 use Apache::Server ();
+use Apache::ServerUtil ();
 use Apache::Process ();
-use APR::Pool ();
 
 use DirHandle ();
 
