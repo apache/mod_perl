@@ -185,9 +185,10 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 static void package2filename(apr_pool_t *p, const char *package,
                              char **filename, int *len)
 {
-    *filename = apr_palloc(p, (strlen(package)+4)*sizeof(char));
     const char *s;
     char *d;
+
+    *filename = apr_palloc(p, (strlen(package)+4)*sizeof(char));
 
     for (s = package, d = *filename; *s; s++, d++) {
         if (*s == ':' && s[1] == ':') {
