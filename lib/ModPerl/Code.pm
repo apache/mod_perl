@@ -14,7 +14,7 @@ my %handlers = (
                       Access Authen Authz
                       Type Fixup Response
                       Log Cleanup)],
-    Connection => [qw(PreConnection PostConnection)],
+    Connection => [qw(PreConnection ProcessConnection)],
 );
 
 my %hooks = (
@@ -27,7 +27,9 @@ my %hooks = (
     Authz => 'auth_checker',
     Type => 'type_checker',
     Fixup => 'fixups',
-    Log => 'log_transaction'
+    Log => 'log_transaction',
+    PreConnection => 'pre_connection',
+    ProcessConnection => 'process_connection',
 );
 
 my %hook_proto = (
