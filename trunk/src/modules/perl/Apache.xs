@@ -669,6 +669,10 @@ unescape_url_info(url)
     register char * trans = url ;
     char digit ;
 
+    if (!url || !*url) {
+        XSRETURN_UNDEF;
+    }
+
     RETVAL = url;
 
     while (*url != '\0') {
