@@ -8,15 +8,18 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+Apache::TieHashTable class enhancements:
+
+ -get() in list context will return all values found for the given key
+ -merge() and add() will accept an array reference of values
+ -new method do()
+
 add -DMOD_PERL to apaci/configure for USE_APXS=1
 [Andrea Borgia <bab0069@iperbole.bologna.it>]
 
 set LD_RUN_PATH in Makefile.PL [Tom Hughes <tom@compton.demon.co.uk>]
 
 add =pod config support for '={begin,for} apache ... =end apache'
-
-Apache::TieHashTable->get in list context will return all values found for
-the given key
 
 move mod_perl_cleanup_av outside of #ifdef PERL_DIRECTIVE_HANDLERS to
 cure compile problem spotted by David-Michael Lincke

@@ -6,7 +6,7 @@ my $r = shift;
 $r->send_http_header("text/plain");
 
 my $i = 0;
-my $tests = 27;
+my $tests = 30;
 print "1..$tests\n";
 
 my $headers_in = $r->headers_in;
@@ -46,6 +46,24 @@ $r->notes->add(three => "tre");
 my(@notes) = $r->notes->get("three");
 print "\@notes = @notes\n";
 test ++$i, @notes == 2;
+
+use vars qw(%Seen);
+
+sub print_header {
+    my($k,$v) = @_;
+    print "DO: $k => $v\n";
+    $Seen{$k}++; 
+    1;
+}
+
+%Seen = (); 
+$r->notes->do(\&print_header);
+test ++$i, $Seen{three} == 2;
+test ++$i, $Seen{two};
+
+%Seen = ();
+$r->notes->do(\&print_header, undef, qw(three));
+test ++$i, not exists $Seen{two};
 
 for my $meth (qw{
     headers_in headers_out err_headers_out notes dir_config subprocess_env

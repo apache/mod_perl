@@ -18,8 +18,8 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
 
 - ap_log_error -> ap_log_rerror
 
-From: andreas.koenig@kulturbox.de (Andreas J. Koenig)
-Subject: Bug in <Perl> sections
+- PerlInitHandler - alias to first available
+  PerlCleanupHandler - register_cleanup
 
 - make 'make test_report' more useful
 
@@ -161,9 +161,6 @@ NEW STUFF
 
 - make 'PerlSetVar $Foo value' work like 'local $Foo = value' 
   for the given location
-
-- PerlInitHandler - alias to first available
-  PerlCleanupHandler - register_cleanup
 
 - <Perl> in .htaccess (could also call known bug)
 
