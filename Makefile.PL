@@ -896,6 +896,7 @@ WriteMakefile(
     #CCDLFLAGS => "$Config{ccdlflags} $EXTRA_CFLAGS", 
     DEFINE => $EXTRA_CFLAGS, 
     macro   => {
+        APACHE_ROOT => $APACHE_ROOT,
         APACHE_SRC => $APACHE_SRC,
 	ARCHNAME => $Config{archname},
 	PERL_VERSION => $]+0,
@@ -945,7 +946,10 @@ sub MY::top_targets {
     my $string = $self->MM::top_targets;
     return $string unless $USE_APXS or $APACHE_SRC;
 
-    if($APACHE_SRC) {
+    if($USE_APACI) {
+	$string =~ s/(pure_all\s+::\s+)(.*)/$1 apaci_httpd $2/;
+    }
+    elsif($APACHE_SRC) {
 	return $string unless -f "$APACHE_SRC/$Configuration";
 	my $asrc = asrc($APACHE_SRC, "http_main.c");
 	if(-e "$asrc/http_main.c" and !$NO_HTTPD) {
@@ -965,6 +969,9 @@ apxs_install: apxs_libperl
 
 apache_httpd: $(APACHE_SRC)/Makefile.tmpl
 	(cd $(APACHE_SRC) && $(MAKE) CC="$(CC)";)
+
+apaci_httpd: 
+	(cd $(APACHE_ROOT) && $(MAKE) CC="$(CC)";)
 
 tar_Apache:
 	(cd $(INSTALLSITELIB); \
