@@ -260,7 +260,7 @@ MODULE=APR::Table
  apr_strnatcasecmp
  apr_strnatcmp
 -apr_tokenize_to_argv
- apr_strfsize
+-apr_strfsize
 -apr_strtok
 -apr_itoa
 -apr_ltoa
