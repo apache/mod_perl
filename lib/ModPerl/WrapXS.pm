@@ -652,7 +652,7 @@ sub export_file_format_exp {
 
 sub export_file_header_def {
     my $self = shift;
-    "LIBRARY\n\nEXPORTS\n\n";
+    "LIBRARY\n\nEXPORTS\n\nperl_module\n";
 }
 
 sub export_file_format_def {
