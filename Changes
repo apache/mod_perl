@@ -91,7 +91,7 @@ Perl(Input|Output)FilterHandler handlers are now always AutoLoaded, as
 if '+' prefix was used. This must be performed to get the access to
 filter attributes long before the filter itself is executed. [Stas]
 
-APR.xs has been reimplemented.  The problem with the previous
+APR/Pool.xs has been reimplemented.  The problem with the previous
 implementation is that a dead perl pool object could hijack a newly
 created pool, which didn't belong to that object, but which happened
 to be allocated at the same memory location. The problem is that
