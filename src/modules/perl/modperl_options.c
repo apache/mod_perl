@@ -65,21 +65,23 @@ modperl_options_t *modperl_options_merge(apr_pool_t *p,
     memcpy((char *)conf, (const char *)base, sizeof(*base));
 
     if (add->opts & add->unset) {
-	/* there was no explicit setting of add->opts, so we merge
-	 * preserve the invariant (opts_add & opts_remove) == 0
-	 */
-	conf->opts_add = (conf->opts_add & ~add->opts_remove) | add->opts_add;
-	conf->opts_remove = (conf->opts_remove & ~add->opts_add)
-	                    | add->opts_remove;
-	conf->opts = (conf->opts & ~conf->opts_remove) | conf->opts_add;
+        /* there was no explicit setting of add->opts, so we merge
+         * preserve the invariant (opts_add & opts_remove) == 0
+         */
+        conf->opts_add =
+            (conf->opts_add & ~add->opts_remove) | add->opts_add;
+        conf->opts_remove =
+            (conf->opts_remove & ~add->opts_add) | add->opts_remove;
+        conf->opts =
+            (conf->opts & ~conf->opts_remove) | conf->opts_add;
     }
     else {
-	/* otherwise we just copy, because an explicit opts setting
-	 * overrides all earlier +/- modifiers
-	 */
-	conf->opts = add->opts;
-	conf->opts_add = add->opts_add;
-	conf->opts_remove = add->opts_remove;
+        /* otherwise we just copy, because an explicit opts setting
+         * overrides all earlier +/- modifiers
+         */
+        conf->opts = add->opts;
+        conf->opts_add = add->opts_add;
+        conf->opts_remove = add->opts_remove;
     }
 
     return conf;
