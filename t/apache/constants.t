@@ -6,10 +6,10 @@ use Test;
 
 use Apache2 ();
 use Apache::Const -compile => qw(DECLINED :http :common TAKE23 &OPT_EXECCGI
-                                 DECLINE_CMD DIR_MAGIC_TYPE);
+                                 DECLINE_CMD DIR_MAGIC_TYPE CRLF);
 use Apache::Const; #defaults to :common
 
-plan tests => 15;
+plan tests => 16;
 
 ok REDIRECT == 302;
 ok AUTH_REQUIRED == 401;
@@ -20,6 +20,9 @@ ok Apache::HTTP_GONE == 410;
 ok Apache::OPT_EXECCGI;
 ok Apache::DECLINE_CMD eq "\x07\x08";
 ok Apache::DIR_MAGIC_TYPE eq "httpd/unix-directory";
+# will fail on EBCDIC
+# kudos to mod_perl if someone actually reports it
+ok Apache::CRLF eq "\015\012";
 
 ok ! defined &M_GET;
 Apache::Const->import('M_GET');
