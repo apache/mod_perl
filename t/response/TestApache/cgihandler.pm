@@ -9,7 +9,8 @@ use Apache::Const -compile => 'M_POST';
 
 sub handler {
     my $r = shift;
-    $r->content_type('text/plain');
+
+    $ENV{FOO} = 2;
 
     if ($r->method_number == Apache::M_POST) {
         my $ct = $r->headers_in->get('content-length');
@@ -19,8 +20,10 @@ sub handler {
     }
     else {
         print "1..3\n";
-        print "ok 1\n", "ok ", "2\n";
-        print "ok 3\n";
+        print "ok 1\n", "ok ", "$ENV{FOO}\n";
+        my $foo = $r->subprocess_env->get('FOO');
+        $foo++;
+        print "ok $foo\n";
     }
 
     Apache::OK;
