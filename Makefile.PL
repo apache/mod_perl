@@ -50,12 +50,12 @@ sub configure {
     printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
       $httpd_version, $VERSION, $^V;
 
-    $build->save;
-    $build->save_ldopts;
-
     $code->generate;
 
     $build->write_src_makefile;
+
+    $build->save;
+    $build->save_ldopts;
 
     printf "Will build mod_perl %s as %s\n",
       $build->is_dynamic ? "shared" : "static",
