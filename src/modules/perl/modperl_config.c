@@ -19,6 +19,8 @@ modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p)
 void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
 {
     modperl_srv_config_t *scfg = modperl_srv_config_new(p);
+
+#ifdef USE_ITHREADS
     scfg->interp_pool_cfg = 
         (modperl_interp_pool_config_t *)
         ap_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
@@ -29,6 +31,8 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
     scfg->interp_pool_cfg->min_spare = 3;
     scfg->interp_pool_cfg->max = 5;
 
+#endif /* USE_ITHREADS */
+
     return scfg;
 }
 
@@ -37,14 +41,16 @@ mrg->item = add->item ? add->item : base->item
 
 void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
 {
+#if 0
     modperl_srv_config_t
         *base = (modperl_srv_config_t *)basev,
         *add  = (modperl_srv_config_t *)addv,
         *mrg  = modperl_srv_config_new(p);
 
-    merge_item(mip);
-
     return mrg;
+#else
+    return basev;
+#endif
 }
 
 #define MP_CONFIG_BOOTSTRAP(parms) \
@@ -56,6 +62,7 @@ MP_DECLARE_SRV_CMD(trace)
     return NULL;
 }
 
+#ifdef USE_ITHREADS
 
 #define MP_IMP_INTERP_POOL_CFG(item) \
 const char *modperl_cmd_interp_##item(cmd_parms *parms, \
@@ -74,3 +81,5 @@ MP_IMP_INTERP_POOL_CFG(start);
 MP_IMP_INTERP_POOL_CFG(max);
 MP_IMP_INTERP_POOL_CFG(max_spare);
 MP_IMP_INTERP_POOL_CFG(min_spare);
+
+#endif /* USE_ITHREADS */

@@ -23,7 +23,7 @@ void modperl_startup(server_rec *s, ap_pool_t *p)
 
     perl_run(perl);
 
-    modperl_interp_pool_init(s, p, perl);
+    modperl_interp_init(s, p, perl);
 }
 
 void modperl_init(server_rec *s, ap_pool_t *p)
@@ -46,17 +46,13 @@ void modperl_register_hooks(void)
 {
     /* XXX: should be pre_config hook or 1.xx logic */
     ap_hook_open_logs(modperl_hook_init, NULL, NULL, HOOK_MIDDLE);
-
-    /* XXX: should only bother selecting an interpreter
-     * if one is needed for the request
-     */
-    ap_hook_post_read_request(modperl_interp_select, NULL, NULL, HOOK_FIRST);
 }
 
 static command_rec modperl_cmds[] = {  
 #ifdef MP_TRACE
     MP_SRV_CMD_TAKE1("PerlTrace", trace, "Trace level"),
 #endif
+#ifdef USE_ITHREADS
     MP_SRV_CMD_TAKE1("PerlInterpStart", interp_start,
                      "Number of Perl interpreters to start"),
     MP_SRV_CMD_TAKE1("PerlInterpMax", interp_max,
@@ -65,6 +61,7 @@ static command_rec modperl_cmds[] = {
                      "Max number of spare Perl interpreters"),
     MP_SRV_CMD_TAKE1("PerlInterpMinSpare", interp_min_spare,
                      "Min number of spare Perl interpreters"),
+#endif
     { NULL }, 
 }; 
 

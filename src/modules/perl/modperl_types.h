@@ -23,6 +23,8 @@ typedef ap_pool_t    * Apache__Pool;
 
 /* mod_perl structures */
 
+#ifdef USE_ITHREADS
+
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 
@@ -51,6 +53,8 @@ struct modperl_interp_pool_t {
     modperl_interp_t *head, *tail;
 };
 
+#endif /* USE_ITHREADS */
+
 typedef struct {
     MpAV *handlers[MP_PROCESS_NUM_HANDLERS];
 } modperl_process_config_t;
@@ -70,8 +74,12 @@ typedef struct {
     MpAV *handlers[MP_PER_SRV_NUM_HANDLERS];
     modperl_process_config_t *process_cfg;
     modperl_connection_config_t *connection_cfg;
+#ifdef USE_ITHREADS
     modperl_interp_pool_t *mip;
     modperl_interp_pool_config_t *interp_pool_cfg;
+#else
+    PerlInterpreter *perl;
+#endif
     int flags;
 } modperl_srv_config_t;
 
