@@ -1,8 +1,5 @@
 #!/usr/local/bin/perl
 
-# This script is run Test::Harness on the tests found under the
-# "t" directory.
-
 # First we check if we already are within the "t" directory
 if (-d "t") {
     # try to move into test directory

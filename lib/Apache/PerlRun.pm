@@ -1,12 +1,36 @@
 package Apache::PerlRun;
 
 use strict;
+use vars qw($Debug);
 use Apache::Constants qw(:common OPT_EXECCGI);
 use File::Basename ();
 use IO::File ();
 use Cwd ();
 
+unless ($Apache::Registry::{NameWithVirtualHost}) {
+    $Apache::Registry::NameWithVirtualHost = 1;
+}
+
+$Debug ||= 0;
 my $Is_Win32 = $^O eq "MSWin32";
+
+@Apache::PerlRun::ISA = qw(Apache);
+
+sub new {
+    my($class, $r) = @_;
+    return $r unless ref($r) eq "Apache";
+    if(ref $r) {
+	$r->request($r);
+    }
+    else {
+	$r = Apache->request;
+    }
+    my $filename = $r->filename;
+    $r->log_error("Apache::PerlRun->new for $filename in process $$")
+	if $Debug && $Debug & 4;
+
+    bless $r, $class;
+}
 
 sub can_compile {
     my($r) = @_;
@@ -33,7 +57,8 @@ sub can_compile {
 }
 
 sub compile {
-    my $eval = shift;
+    my($r, $eval) = @_;
+    $r->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
     Apache->untaint($$eval);
     {
 	no strict; #so eval'd code doesn't inherit our bits
@@ -42,7 +67,11 @@ sub compile {
 }
 
 sub namespace {
-    my($r) = @_;
+    my($r, $root) = @_;
+
+    $r->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
+		  $r->uri) if $Debug && $Debug & 4;
+
     my $script_name = $r->path_info ?
 	substr($r->uri, 0, length($r->uri)-length($r->path_info)) :
 	    $r->uri;
@@ -64,26 +93,76 @@ sub namespace {
 			   "::" . ($2 ? sprintf("_%2x",unpack("C",$2)) : "")
 			  ]egx;
 
-    return "Apache::ROOT$script_name";
+    $Apache::Registry::curstash = $script_name if 
+	scalar(caller) eq "Apache::Registry";
+
+    $root ||= "Apache::ROOT";
+
+    $r->log_error("Apache::PerlRun->namespace: package $root$script_name")
+	if $Debug && $Debug & 4;
+
+    return $root.$script_name;
 }
 
 sub readscript {
     my $r = shift;
-    my $fh = IO::File->new($r->filename);
+    my $filename = $r->filename;
+    $r->log_error("Apache::PerlRun->readscript $filename")
+	    if $Debug && $Debug & 4;
+    my $fh = IO::File->new($filename);
     local $/;
     my $code = <$fh>;
-    #$code = parse_cmdline($code);
     return \$code;
 }
 
-sub status {
+sub error_check {
     my $r = shift;
     if ($@) {
-	$r->log_error($@);
+	$r->log_error("PerlRun: `$@'");
 	$@{$r->uri} = $@;
+	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return SERVER_ERROR;
     }
     return OK;
+}
+
+sub chdir_file {
+    my $r = shift;
+    my $cwd = Cwd::fastcwd();
+    chdir File::Basename::dirname($r->filename);
+    *0 = \$r->filename;
+    return $cwd;
+}
+
+#XXX not good enough yet
+my(%switches) = (
+   'T' => sub {
+       Apache::warn("Apache::PerlRun: T switch ignored, ".
+		    "enable with 'PerlTaintCheck On'\n")
+	   unless $Apache::__T; "";
+   },
+   'w' => sub { 'BEGIN {$^W = 1;}; $^W = 1;' },
+);
+
+sub parse_cmdline {
+    my($r, $sub) = @_;
+    my($line) = $$sub =~ /^(.*)$/m;
+    my(@cmdline) = split /\s+/, $line;
+    return $sub unless @cmdline;
+    return $sub unless shift(@cmdline) =~ /^\#!/;
+    my($s, @s, $prepend);
+    $prepend = "";
+    for $s (@cmdline) {
+	next unless $s =~ s/^-//;
+	last if substr($s,0,1) eq "-";
+	for (split //, $s) {
+	    next unless $switches{$_};
+	    #print STDERR "parsed `$_' switch\n";
+	    $prepend .= &{$switches{$_}};
+	}
+    }
+    $$sub =~ s/^/$prepend/ if $prepend;
+    return $sub;
 }
 
 sub handler {
@@ -94,10 +173,9 @@ sub handler {
 
     my $package = namespace($r);
     my $code = readscript($r);
+    parse_cmdline($r, $code);
 
-    my $cwd = Cwd::fastcwd();
-    chdir File::Basename::dirname($r->filename);
-    *0 = \$r->filename;
+    my $cwd = chdir_file($r);
 
     my $eval = join '',
 		    'package ',
@@ -106,7 +184,7 @@ sub handler {
 		    "\n#line 1 ", $r->filename, "\n",
 		    $$code,
                     "\n";
-    compile(\$eval);
+    compile($r, \$eval);
 
     chdir $cwd;
 
@@ -115,7 +193,7 @@ sub handler {
 	%{$package.'::'} = ();
     }
 
-    return status($r);
+    return error_check($r);
 }
 
 1;

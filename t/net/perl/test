@@ -43,7 +43,8 @@ sub reset_scalar {
 $r->post_connection(sub {
     my $r = shift;
     unless(Apache::test::WIN32()) { #XXX
-	$r->uri =~ /test/i or die "post_connection can't see \$r->uri!\n";
+	my $loc = $r->uri;
+	$loc =~ /test/i or die "post_connection can't see \$r->uri! ($loc)\n";
     }
     #$r->warn("post connection handler called for ", $r->uri);
     return 0;

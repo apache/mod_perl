@@ -633,7 +633,6 @@ CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two)
 static SV *perl_perl_create_dir_config(SV **sv, HV *class)
 {
     GV *gv; 
-    SV *obj = Nullsv;
 
     if(SvTRUE(*sv) && SvROK(*sv) && sv_isobject(*sv))
 	return *sv;
@@ -690,14 +689,11 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **data,
     PUTBACK;
     count = perl_call_sv((SV*)cv, G_EVAL | G_SCALAR);
     SPAGAIN;
-#if 0
+#if 1
     if(count == 1) {
-	SV *config = POPs;
-	if(config && SvROK(config) && data && *data) {
-	    ++SvREFCNT(config);
-	    SvREFCNT_dec(*data);
-	    *data = config;
-	}
+	char *retval = POPp;
+	if(strEQ(retval, DECLINE_CMD))
+	    return DECLINE_CMD;
     }
 #endif
     FREETMPS;LEAVE;

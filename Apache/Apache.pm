@@ -67,7 +67,8 @@ sub cgi_var {
     return $val;
 }
 
-*READ = \&read;
+*READ = \&read unless defined &READ;
+
 sub read {
     my($r, $bufsiz) = @_[0,2];
     my($nrd, $buf, $total);
@@ -75,6 +76,34 @@ sub read {
     $buf = "";
     $_[1] ||= "";
     #$_[1] = " " x $bufsiz unless defined $_[1]; #XXX?
+
+    $r->hard_timeout("Apache->read");
+
+    while($bufsiz) {
+	$nrd = $r->read_client_block($buf, $bufsiz) || 0;
+	if(defined $nrd and $nrd > 0) {
+	    $bufsiz -= $nrd;
+	    $_[1] .= $buf;
+ 	    #substr($_[1], $total, $nrd) = $buf;
+	    $total += $nrd;
+	    next if $bufsiz;
+	    last;
+	}
+	else {
+	    $_[1] = undef;
+	    last;
+	}
+    }
+    $r->kill_timeout;
+    return $total;
+}
+
+sub new_read {
+    my($r, $bufsiz) = @_[0,2];
+    my($nrd, $buf, $total);
+    $nrd = $total = 0;
+    $buf = "";
+    $_[1] ||= "";
 
     if(my $rv = $r->setup_client_block) {
 	$r->log_error("Apache->read: setup_client_block returned $rv");
@@ -115,7 +144,7 @@ sub read {
     return $total;
 }
 
-sub GETC { my $c; shift->read($c,1); $c; }
+sub GETC { my $c; shift->READ($c,1); $c; }
 
 #shouldn't use <STDIN> anyhow, but we'll be nice
 sub READLINE { 

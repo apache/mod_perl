@@ -32,6 +32,7 @@ use subs qw(_prompt iedit asrc);
 
 gen_script("t/net/perl/cgi.pl");
 gen_script("t/report");
+write_version_h("src/modules/perl");
 
 if($] < 5.004_04) {
     print <<EOF;
@@ -1367,6 +1368,16 @@ sub dirent_kludge {
 
 #endif
 
+EOF
+    close FH;
+}
+
+sub write_version_h {
+    my $d = shift;
+    local *FH;
+    open FH, ">$d/mod_perl_version.h" or die "can't write $d/mod_perl_version.h $!";
+    print FH <<EOF;
+#define MOD_PERL_STRING_VERSION "mod_perl/$VERSION"
 EOF
     close FH;
 }
