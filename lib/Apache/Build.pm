@@ -1359,6 +1359,8 @@ EOF
 
 #when we use a bit of MakeMaker, make it use our values for these vars
 my %perl_config_pm_alias = (
+    ABSPERL      => 'perlpath',
+    ABSPERLRUN   => 'perlpath',
     PERL         => 'perlpath',
     PERLRUN      => 'perlpath',
     PERL_LIB     => 'privlibexp',
@@ -1367,9 +1369,8 @@ my %perl_config_pm_alias = (
 
 my $mm_replace = join '|', keys %perl_config_pm_alias;
 
-my @perl_config_pm =
-  (qw(cc cpprun rm ranlib lib_ext obj_ext cccdlflags lddlflags optimize),
-   values %perl_config_pm_alias);
+my @perl_config_pm = (values(%perl_config_pm_alias), qw(cc cpprun
+    rm ranlib lib_ext obj_ext cccdlflags lddlflags optimize));
 
 sub mm_replace {
     my $val = shift;
