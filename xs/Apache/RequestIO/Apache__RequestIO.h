@@ -106,11 +106,11 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     mpxs_Apache__RequestRec_write(aTHX_ r, buffer, bufsiz, offset)
 
 static MP_INLINE
-apr_ssize_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
-                                          SV *buffer, apr_ssize_t bufsiz,
-                                          int offset)
+apr_size_t mpxs_Apache__RequestRec_write(pTHX_ request_rec *r,
+                                         SV *buffer, apr_size_t bufsiz,
+                                         int offset)
 {
-    apr_ssize_t wlen = bufsiz;
+    apr_size_t wlen = bufsiz;
     const char *buf;
     STRLEN svlen;
     MP_dRCFG;
