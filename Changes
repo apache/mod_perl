@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+Apache::Util functions $r->unescape_uri, $r->unescape_uri_info,
+$r->size_string are now documented [Eric Cholet <cholet@logilune.com>]
+
 $r->request_time is now documented [Jeffrey W. Baker <jwbaker@acm.org>]
 
 Look for the makepl_args.mod_perl file as .makepl_args.mod_perl in
