@@ -17,7 +17,6 @@ sub handler {
 
     $r->content_type('text/plain; charset=UTF-8');
 
-    # must be non-$r->print(), so we go through the tied STDOUT
     # \x{263A} == :-)
     $r->print("\$r->print() just works \x{263A}");
 
