@@ -12,7 +12,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, test => 4;
+    plan $r, tests => 4;
 
     #just to make sure we dont segv with bogus values
     my $not = 'NoSuchPackage';

@@ -46,7 +46,7 @@ sub response {
         $r->puts($data);
     }
     else {
-        $r->puts("1..1\nok 1\n");
+        $r->puts("1..3\nok 1\n");
     }
 
     Apache::OK;
