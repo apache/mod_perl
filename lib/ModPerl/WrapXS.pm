@@ -786,6 +786,16 @@ sub avail_methods {
     return keys %$methods;
 }
 
+sub avail_modules {
+    my %modules = ();
+    for my $method (keys %$methods) {
+        for my $item ( @{ $methods->{$method} }) {
+            $modules{$item->[MODULE]}++;
+        }
+    }
+    return keys %modules;
+}
+
 sub preload_all_modules {
     _get_modules() unless $modules;
     eval "require $_" for keys %$modules;
