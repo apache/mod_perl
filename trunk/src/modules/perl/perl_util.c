@@ -593,33 +593,44 @@ array_header *perl_cgi_env_init(request_rec *r)
     return table_elts(envtab);
 }
 
+#define untie_env  sv_unmagic((SV*)GvHV(envgv), 'E')
+#define tie_env    sv_magic((SV*)GvHV(envgv), (SV*)envgv, 'E', Nullch, 0)
+#define delete_env(ken, klen) \
+    (void)hv_delete(GvHV(envgv), key, klen, G_DISCARD)
+
 void perl_clear_env(void)
 {
-    char *key; 
-    I32 klen; 
+    char *key;
+    I32 klen;
     SV *val;
     HV *hv = (HV*)GvHV(envgv);
 
-    sv_unmagic((SV*)hv, 'E');
+    untie_env;
     if(!hv_exists(hv, "MOD_PERL", 8)) {
-	hv_store(hv, "MOD_PERL", 8, 
-		 newSVpv(MOD_PERL_STRING_VERSION,0), FALSE);
-	hv_store(hv, "GATEWAY_INTERFACE", 17, 
-		 newSVpv("CGI-Perl/1.1",0), FALSE);
+        hv_store(hv, "MOD_PERL", 8,
+                 newSVpv("mod_perl/1.17_01-dev",0), FALSE);
+        hv_store(hv, "GATEWAY_INTERFACE", 17,
+                 newSVpv("CGI-Perl/1.1",0), FALSE);
     }
-    (void)hv_iterinit(hv); 
-    while ((val = hv_iternextsv(hv, (char **) &key, &klen))) { 
-	if((*key == 'G') && strEQ(key, "GATEWAY_INTERFACE"))
+    (void)hv_iterinit(hv);
+    while ((val = hv_iternextsv(hv, (char **) &key, &klen))) {
+        if((*key == 'G') && strEQ(key, "GATEWAY_INTERFACE"))
+            continue;
+        else if((*key == 'M') && strnEQ(key, "MOD_PERL", 8))
+            continue;
+        else if((*key == 'T') && strnEQ(key, "TZ", 2))
+            continue;
+        else if((*key == 'P') && strEQ(key, "PATH"))
+            continue;
+	else if((*key == 'H') && strnEQ(key, "HTTP_", 5)) {
+	    tie_env;
+	    delete_env(key, klen);
+	    untie_env;
 	    continue;
-	else if((*key == 'M') && strnEQ(key, "MOD_PERL", 8))
-	    continue;
-	else if((*key == 'T') && strnEQ(key, "TZ", 2))
-	    continue;
-	else if((*key == 'P') && strEQ(key, "PATH"))
-	    continue;
-	(void)hv_delete(hv, key, klen, G_DISCARD);
+	}
+	delete_env(key, klen);
     }
-    sv_magic((SV*)hv, (SV*)envgv, 'E', Nullch, 0);
+    tie_env;
 }
 
 void mod_perl_init_ids(void)  /* $$, $>, $), etc */

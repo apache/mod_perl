@@ -337,6 +337,7 @@ perl_request_config *perl_create_request_config(pool *p, server_rec *s)
     perl_request_config *cfg = 
 	(perl_request_config *)pcalloc(p, sizeof(perl_request_config));
     cfg->pnotes = Nullhv;
+    cfg->setup_env = 0;
     return cfg;
 }
 
