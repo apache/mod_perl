@@ -4,7 +4,8 @@ BEGIN {
     $Is_Win32 = ($^O eq "MSWin32");
     $Is_Cygwin = ($^O =~ m/cygwin/g);
     if($Is_Win32) {
-	require 5.004_02;
+        require 5.004_02;
+        require Win32;
     } elsif($Is_Cygwin) {
     require 5.005_03;
     } else {
@@ -2231,11 +2232,12 @@ sub find_dir {
 
 # fix a path for Win32 Makefile
 sub win32_fix_path {
-  local $_ = shift;
-  $_ = File::Spec->rel2abs($_) if not File::Spec->file_name_is_absolute($_);
-  tr!\\!/!;
-  s!/$!!;
-  return $_;
+  my $path = shift;
+  $path = File::Spec->rel2abs($path) if not File::Spec->file_name_is_absolute($path);
+  $path = Win32::GetShortPathName($path) if $path =~ / /;
+  $path =~ tr!\\!/!;
+  $path =~ s!/$!!;
+  return $path;
 }
 
 # fix a path for mod_perl.dsp
