@@ -12,8 +12,6 @@ $r->read will now properly check the return value of
 ap_setup_client_block() and return undef if != OK,
 e.g. if LimitRequestBody is exceeded
 
-fix some problems with %ENV
-
 loosen module/cookie tests
 
 fix bug in register_cleanup() [Chip Turner <chip@ZFx.com>]

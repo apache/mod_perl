@@ -256,6 +256,8 @@ if(arg) \
 #define HV_SvTAINTED_on(hv,key,klen) \
     SvTAINTED_on(*hv_fetch(hv, key, klen, 0)) 
 
+#if 0
+
 #define mp_setenv(key, val) \
 mp_magic_setenv(key, val, 1)
 
@@ -267,6 +269,28 @@ mp_magic_setenv(key, val, 0)
     char *val = getenv(key); \
     mp_magic_setenv(key, val?val:"", 0); \
 }
+
+#else
+
+#define mp_setenv(key, val) \
+{ \
+    int klen = strlen(key); \
+    hv_store(GvHV(envgv), key, klen, newSVpv(val,0), FALSE); \
+    HV_SvTAINTED_on(GvHV(envgv), key, klen); \
+    my_setenv(key, val); \
+}
+
+#define mp_SetEnv(key, val) \
+    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val,0), FALSE); \
+    my_setenv(key, val)
+
+#define mp_PassEnv(key) \
+{ \
+    char *val = getenv(key); \
+    hv_store(GvHV(envgv), key, strlen(key), newSVpv(val?val:"",0), FALSE); \
+}
+
+#endif
 
 #define mp_debug mod_perl_debug_flags
 
