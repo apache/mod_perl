@@ -143,6 +143,7 @@ my %defines_wanted = (
         log        => [qw(APLOG_)],
     },
     APR => {
+        table     => [qw{APR_OVERLAP_TABLES_}],
         poll      => [qw{APR_POLL}],
         common    => [qw{APR_SUCCESS}],
         error     => [qw{APR_E}],
