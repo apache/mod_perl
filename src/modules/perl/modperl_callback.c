@@ -59,7 +59,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     else {
         status = POPi;
         /* assume OK for non-http status codes and for 200 (HTTP_OK) */
-        if ((status < 100) || (status == 200) || (status > 600)) {
+        if (((status > 0) && (status < 100)) ||
+            (status == 200) || (status > 600)) {
             status = OK;
         }
     }
