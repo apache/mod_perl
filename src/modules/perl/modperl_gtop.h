@@ -28,7 +28,7 @@ typedef struct {
     modperl_gtop_proc_mem_ss proc_mem_ss;
 } modperl_gtop_t;
 
-modperl_gtop_t *modperl_gtop_new(ap_pool_t *p);
+modperl_gtop_t *modperl_gtop_new(apr_pool_t *p);
 void modperl_gtop_get_proc_mem_before(modperl_gtop_t *gtop);
 void modperl_gtop_get_proc_mem_after(modperl_gtop_t *gtop);
 void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop, 

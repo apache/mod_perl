@@ -23,14 +23,14 @@ my %hooks = map { $_, canon_lc($_) }
 my %hook_proto = (
     Process    => {
         ret  => 'void',
-        args => [{type => 'ap_pool_t', name => 'p'},
+        args => [{type => 'apr_pool_t', name => 'p'},
                  {type => 'server_rec', name => 's'}],
     },
     Files      => {
         ret  => 'void',
-        args => [{type => 'ap_pool_t', name => 'pconf'},
-                 {type => 'ap_pool_t', name => 'plog'},
-                 {type => 'ap_pool_t', name => 'ptemp'},
+        args => [{type => 'apr_pool_t', name => 'pconf'},
+                 {type => 'apr_pool_t', name => 'plog'},
+                 {type => 'apr_pool_t', name => 'ptemp'},
                  {type => 'server_rec', name => 's'}],
     },
     PerSrv     => {
@@ -227,14 +227,14 @@ $protostr
 {
     $prototype->{cfg}->{get};
     if (!MpSrvENABLED(scfg)) {
-        return ap_pstrcat(parms->pool,
-                          "Perl is disabled for server ",
-                          parms->server->server_hostname, NULL);
+        return apr_pstrcat(parms->pool,
+                           "Perl is disabled for server ",
+                           parms->server->server_hostname, NULL);
     }
     if (!$flag(scfg)) {
-        return ap_pstrcat(parms->pool,
-                          "$h_name is disabled for server ",
-                          parms->server->server_hostname, NULL);
+        return apr_pstrcat(parms->pool,
+                           "$h_name is disabled for server ",
+                           parms->server->server_hostname, NULL);
     }
     MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
     return modperl_cmd_push_handlers(&($av), arg, parms->pool);

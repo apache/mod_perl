@@ -5,45 +5,45 @@
 static int modperl_gtop_size_string(size_t size, char *size_string)
 {
     if (size == (size_t)-1) {
-        ap_snprintf(size_string, MP_GTOP_SSS, "-");
+        apr_snprintf(size_string, MP_GTOP_SSS, "-");
     }
     else if (!size) {
-        ap_snprintf(size_string, MP_GTOP_SSS, "0k");
+        apr_snprintf(size_string, MP_GTOP_SSS, "0k");
     }
     else if (size < 1024) {
-	ap_snprintf(size_string, MP_GTOP_SSS, "1k");
+	apr_snprintf(size_string, MP_GTOP_SSS, "1k");
     }
     else if (size < 1048576) {
-	ap_snprintf(size_string, MP_GTOP_SSS, "%dk",
+	apr_snprintf(size_string, MP_GTOP_SSS, "%dk",
                     (size + 512) / 1024);
     }
     else if (size < 103809024) {
-	ap_snprintf(size_string, MP_GTOP_SSS, "%.1fM",
+	apr_snprintf(size_string, MP_GTOP_SSS, "%.1fM",
                     size / 1048576.0);
     }
     else {
-	ap_snprintf(size_string, MP_GTOP_SSS, "%dM",
+	apr_snprintf(size_string, MP_GTOP_SSS, "%dM",
                     (size + 524288) / 1048576);
     }
 
     return 1;
 }
 
-static ap_status_t modperl_gtop_exit(void *data)
+static apr_status_t modperl_gtop_exit(void *data)
 {
     glibtop_close();
     return APR_SUCCESS;
 }
 
-modperl_gtop_t *modperl_gtop_new(ap_pool_t *p)
+modperl_gtop_t *modperl_gtop_new(apr_pool_t *p)
 {
     modperl_gtop_t *gtop = 
-        (modperl_gtop_t *)ap_pcalloc(p, sizeof(*gtop));
+        (modperl_gtop_t *)apr_pcalloc(p, sizeof(*gtop));
 
     gtop->pid = getpid();
     glibtop_init();
-    ap_register_cleanup(p, NULL,
-                        modperl_gtop_exit, ap_null_cleanup);
+    apr_register_cleanup(p, NULL,
+                         modperl_gtop_exit, apr_null_cleanup);
 
     return gtop;
 }
