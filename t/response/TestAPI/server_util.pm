@@ -74,18 +74,19 @@ sub handler {
 
     foreach my $p (keys %pools) {
 
-        ok t_filepath_cmp(canonpath(Apache::server_root_relative($pools{$p},
-                              'conf')),
-                          catfile($serverroot, 'conf'),
-                          "Apache:::server_root_relative($p, 'conf')");
+        ok t_filepath_cmp(
+            canonpath(Apache::server_root_relative($pools{$p},'conf')),
+            catfile($serverroot, 'conf'),
+            "Apache:::server_root_relative($p, 'conf')");
     }
 
     # dig out the pool from valid objects
     foreach my $obj (keys %objects) {
 
-        ok t_filepath_cmp(canonpath($objects{$obj}->server_root_relative('conf')),
-                          catfile($serverroot, 'conf'),
-                          "$obj->server_root_relative('conf')");
+        ok t_filepath_cmp(
+            canonpath($objects{$obj}->server_root_relative('conf')),
+            catfile($serverroot, 'conf'),
+            "$obj->server_root_relative('conf')");
     }
 
     # syntax - unrecognized objects don't segfault
