@@ -76,6 +76,22 @@ MP_TRACE_f(MP_FUNC, "applied %s attribute to %s handler\n", attribute, \
 #define trace_attr()
 #endif
 
+/* we can't eval at this stage, since the package is not compiled yet,
+ * we are still parsing the source.
+ */
+#define MODPERL_FILTER_ATTACH_ATTR_CODE(cv, string, len)   \
+{                                                     \
+    char *str;                                        \
+    len -= 2;        /* s/ \( | \) //x       */       \
+    string++;        /* skip the opening '(' */       \
+    New(0, str, len+1, char);                         \
+    Copy(string, str, len+1, char);                   \
+    str[len] = '\0'; /* remove the closing ')' */     \
+    sv_magic(cv, Nullsv, '~', NULL, -1);              \
+    SvMAGIC(cv)->mg_ptr = str;                        \
+}
+    
+
 static XS(MPXS_modperl_filter_attributes)
 {
     dXSARGS;
@@ -101,6 +117,22 @@ static XS(MPXS_modperl_filter_attributes)
                 trace_attr();
                 continue;
             }
+          case 'I':
+            if (strEQ(pv, "InitHandler")) {
+                *attrs |= MP_FILTER_INIT_HANDLER;
+                trace_attr();
+                continue;
+            }
+          case 'H':
+            if (strnEQ(pv, "HasInitHandler", 14)) {
+                STRLEN code_len;
+                pv += 14; /* skip over the attr name */
+                code_len = len - (pv - attribute);
+                MODPERL_FILTER_ATTACH_ATTR_CODE(SvRV(ST(1)), pv, code_len);
+                *attrs |= MP_FILTER_HAS_INIT_HANDLER;
+                trace_attr();
+                continue;
+            }
           case 'R':
             if (strEQ(pv, "RequestHandler")) {
                 *attrs |= MP_FILTER_REQUEST_HANDLER;
@@ -108,6 +140,7 @@ static XS(MPXS_modperl_filter_attributes)
                 continue;
             }
           default:
+            /* XXX: there could be more than one attr to pass through */
             XPUSHs_mortal_pv(attribute);
             XSRETURN(1);
         }

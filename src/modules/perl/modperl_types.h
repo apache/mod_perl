@@ -158,13 +158,16 @@ struct modperl_mgv_t {
     modperl_mgv_t *next;
 };
 
-typedef struct {
+typedef struct modperl_handler_t modperl_handler_t;
+
+struct modperl_handler_t{
     modperl_mgv_t *mgv_obj;
     modperl_mgv_t *mgv_cv;
-    const char *name; /* orignal name from .conf if any */
+    const char *name; /* original name from .conf if any */
     U8 flags;
     U32 attrs;
-} modperl_handler_t;
+    modperl_handler_t *next;
+};
 
 #define MP_HANDLER_TYPE_CHAR 1
 #define MP_HANDLER_TYPE_SV   2

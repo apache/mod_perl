@@ -99,13 +99,6 @@ would be nice for Perl{Input,Output}FilterHandler to work with the
 modperl {get,set,push}_handlers api just like other Perl*Handlers
 
 
-Other issues
------------------------
-- Currently there is no way to MIX & MATCH mod-perl FILTERS declared
-  via "PerlOutputFilterHandler" with APACHE standard ones.
-
-- we also may need filter_init hook
-
 tie handle interface
 --------------------
 both input/output filters should provide a tiehandle and/or perlio

@@ -253,6 +253,102 @@ modperl_filter_t *modperl_filter_mg_get(pTHX_ SV *obj)
     return mg ? (modperl_filter_t *)mg->mg_ptr : NULL;
 }
 
+/* eval "package Foo; \&init_handler" */
+int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
+                                        apr_pool_t *p)
+{
+    char *init_handler_pv_code;
+    char *package_name;
+    CV *cv;
+    MAGIC *mg;
+    
+    if (handler->mgv_cv) {
+        GV *gv;
+        if ((gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv))) {
+            cv = modperl_mgv_cv(gv);
+            package_name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p, 1);
+            /* fprintf(stderr, "PACKAGE: %s\n", package_name ); */
+        }
+    }
+
+    if (cv && SvMAGICAL(cv)) {
+        mg = mg_find((SV*)(cv), '~');
+        init_handler_pv_code = mg ? mg->mg_ptr : NULL;
+    }
+    else {
+        /* XXX: should we complain in such a case? */
+        return 0;
+    }
+    
+    if (init_handler_pv_code) {
+        /* eval the code in the parent handler's package's context */
+        char *code = apr_pstrcat(p, "package ", package_name, ";",
+                                 init_handler_pv_code, NULL);
+        SV *sv = eval_pv(code, TRUE);
+        char *init_handler_name;
+
+        /* fprintf(stderr, "code: %s\n", code); */
+        
+        if ((init_handler_name = modperl_mgv_name_from_sv(aTHX_ p, sv))) {
+            modperl_handler_t *init_handler =
+                modperl_handler_new(p, apr_pstrdup(p, init_handler_name));
+
+            MP_TRACE_h(MP_FUNC, "found init handler %s\n",
+                       init_handler->name);
+
+            if (! init_handler->attrs & MP_FILTER_INIT_HANDLER) {
+                Perl_croak(aTHX_ "handler %s doesn't have "
+                           "the FilterInitHandler attribute set",
+                           init_handler->name);
+            }
+            
+            handler->next = init_handler;
+            return 1;
+        }
+        else {
+            Perl_croak(aTHX_ "failed to eval code: %s", code);
+            
+        }
+    }
+
+    return 1;
+}
+
+static int modperl_run_filter_init(ap_filter_t *f,
+                                   modperl_handler_t *handler) 
+{
+    AV *args = Nullav;
+    int status;
+
+    request_rec *r = f->r;
+    conn_rec    *c = f->c;
+    server_rec  *s = r ? r->server : c->base_server;
+    apr_pool_t  *p = r ? r->pool : c->pool;
+
+    MP_TRACE_h(MP_FUNC, "running filter init handler %s\n", handler->name);
+            
+    MP_dINTERP_SELECT(r, c, s);
+    
+    modperl_handler_make_args(aTHX_ &args,
+                              "Apache::Filter", f,
+                              NULL);
+
+    /* XXX: do we need it? */
+    /* modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter); */
+
+    if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
+        status = modperl_errsv(aTHX_ status, r, s);
+    }
+
+    SvREFCNT_dec((SV*)args);
+
+    MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
+               "return: %d\n", handler->name, status);
+    
+    return status;  
+}
+
+
 int modperl_run_filter(modperl_filter_t *filter)
 {
     AV *args = Nullav;
@@ -691,7 +787,6 @@ apr_status_t modperl_input_filter_handler(ap_filter_t *f,
     }
 }
 
-
 static int modperl_filter_add_connection(conn_rec *c,
                                          int idx,
                                          const char *name,
@@ -705,6 +800,7 @@ static int modperl_filter_add_connection(conn_rec *c,
     if ((av = dcfg->handlers_per_dir[idx])) {
         modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
         int i;
+        ap_filter_t *f;
 
         for (i=0; i<av->nelts; i++) {
             modperl_filter_ctx_t *ctx;
@@ -726,8 +822,17 @@ static int modperl_filter_add_connection(conn_rec *c,
 
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(c->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
-            addfunc(name, (void*)ctx, NULL, c);
 
+            f = addfunc(name, (void*)ctx, NULL, c);
+
+            if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
+                handlers[i]->next) {
+                int status = modperl_run_filter_init(f, handlers[i]->next);
+                if (status != OK) {
+                    return status;
+                }
+            }
+            
             MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
                        type, handlers[i]->name);
         }
@@ -799,8 +904,17 @@ static int modperl_filter_add_request(request_rec *r,
 
             ctx = (modperl_filter_ctx_t *)apr_pcalloc(r->pool, sizeof(*ctx));
             ctx->handler = handlers[i];
-            addfunc(name, (void*)ctx, r, r->connection);
 
+            f = addfunc(name, (void*)ctx, r, r->connection);
+
+            if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
+                handlers[i]->next) {
+                int status = modperl_run_filter_init(f, handlers[i]->next);
+                if (status != OK) {
+                    return status;
+                }
+            }
+            
             MP_TRACE_h(MP_FUNC, "%s handler %s configured (%s)\n",
                        type, handlers[i]->name, r->uri);
         }
@@ -861,11 +975,26 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
     char *handler_name;
 
     if ((handler_name = modperl_mgv_name_from_sv(aTHX_ pool, callback))) {
+        ap_filter_t *f;
+        modperl_handler_t *handler =
+            modperl_handler_new(pool, apr_pstrdup(pool, handler_name));
         modperl_filter_ctx_t *ctx =
             (modperl_filter_ctx_t *)apr_pcalloc(pool, sizeof(*ctx));
-        ctx->handler = modperl_handler_new(pool,
-                                           apr_pstrdup(pool, handler_name));
-        addfunc(name, (void*)ctx, r, c);
+
+        ctx->handler = handler;
+        f = addfunc(name, (void*)ctx, r, c);
+
+        /* has to resolve early so we can check for init functions */ 
+        if (!modperl_mgv_resolve(aTHX_ handler, pool, handler->name, TRUE)) {
+            Perl_croak(aTHX_ "unable to resolve handler %s\n", handler->name);
+        }
+
+        if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER && handler->next) {
+            int status = modperl_run_filter_init(f, handler->next);
+            if (status != OK) {
+                /* XXX */
+            }
+        }
         
         MP_TRACE_h(MP_FUNC, "%s handler %s configured (connection)\n",
                    type, name);

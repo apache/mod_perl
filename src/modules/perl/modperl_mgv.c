@@ -181,6 +181,13 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 }
 #endif
 
+/* currently used for complex filters attributes parsing */
+/* XXX: may want to generalize it for any handlers */
+#define MODPERL_MGV_DEEP_RESOLVE(handler, p) \
+    if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER) { \
+        modperl_filter_resolve_init_handler(aTHX_ handler, p); \
+    }
+
 int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                         apr_pool_t *p, const char *name, int logfailure)
 {
@@ -247,6 +254,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 modperl_mgv_compile(aTHX_ p, HvNAME(GvSTASH(CvGV(cv))));
             modperl_mgv_append(aTHX_ p, handler->mgv_cv, GvNAME(CvGV(cv)));
             MpHandlerPARSED_On(handler);
+            MODPERL_MGV_DEEP_RESOLVE(handler, p);
             return 1;
         }
     }
@@ -288,6 +296,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s\n",
                    handler_name, HvNAME(stash),
                    MpHandlerMETHOD(handler) ? "method" : "function");
+        MODPERL_MGV_DEEP_RESOLVE(handler, p);
         return 1;
     }
 
