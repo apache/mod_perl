@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+fix %Apache::ReadConfig:: processing for PerlRequire'd files
+[Salvador Ortiz Garcia <sog@msg.com.mx>]
+
 $r->get_basic_auth_pw will default $r->auth_type to "Basic" if not
 already set
 
