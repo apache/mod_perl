@@ -15,7 +15,7 @@ use APR::Brigade ();
 use APR::Bucket ();
 use Apache::Filter ();
 
-use Apache::Const -compile => qw(OK DECLINED MODE_READBYTES);
+use Apache::Const -compile => qw(OK M_POST DECLINED MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
 use constant IOBUFSIZE => 8192;

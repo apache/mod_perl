@@ -14,7 +14,7 @@ use Apache::FilterRec ();
 
 use TestCommon::Utils ();
 
-use Apache::Const -compile => qw(OK DECLINED);
+use Apache::Const -compile => qw(OK DECLINED M_POST);
 
 # this filter removes the next filter in chain and itself
 sub remove_includes {
