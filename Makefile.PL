@@ -382,6 +382,10 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		$cant_hook{$_} = "(need 1.3.0 or higher)";
 	    }
 	}
+	if($USE_DSO and $PERL_SSI) {
+	    $PERL_SSI=0;
+	    $cant_hook{PERL_SSI} = "(doesn't work w/ USE_DSO=1)";
+	}
 	unless ($DO_HTTPD or $NO_HTTPD) {
 	    $ans = _prompt("Shall I build httpd in $adir for you?", "y");
 	    ++$NO_HTTPD unless $ans =~ /^y$/i;
