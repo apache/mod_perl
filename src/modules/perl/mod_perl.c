@@ -673,6 +673,12 @@ int modperl_response_handler_cgi(request_rec *r)
         return DECLINED;
     }
 
+    /* 
+     * need to do this incase we are inside a subrequest,
+     * since header_parser hook is not run in subrequests.
+     */
+    modperl_global_request_cfg_set(r);
+
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
     aTHX = interp->perl;
