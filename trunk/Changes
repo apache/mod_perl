@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+:common Apache::Constants are compiled at bootstrap time, so CVs are
+shared and AUTOLOAD is avoided, which was known to cause a spin
+while loading SERVER_ERROR for particular Perl errors
+
 <Perl> sections now use 1.3.7-dev's cmd_parms->context to cure many
 known, old bugs, e.g. @DirectoryIndex outside of %Location, .htaccess
 and many more  [Salvador Ortiz Garcia <sog@msg.com.mx>]
