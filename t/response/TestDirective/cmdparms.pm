@@ -21,6 +21,7 @@ use Apache::Const -compile => qw(
     OR_LIMIT
     OR_OPTIONS
     RSRC_CONF
+    NOT_IN_LOCATION
 );
 
 use constant KEY => "TestCmdParms";
@@ -52,6 +53,7 @@ sub TestCmdParms {
     foreach my $method (@methods) {
         $srv_cfg->{$args}{$method} = $parms->$method();
     }
+    $srv_cfg->{$args}{check_ctx} = $parms->check_cmd_context(Apache::NOT_IN_LOCATION);
 }
 
 sub get_config {
@@ -62,10 +64,10 @@ sub get_config {
 ### response handler ###
 sub handler : method {
     my ($self, $r) = @_;
-    
+    my $override; 
     my $srv_cfg = $self->get_config($r->server);
     
-    plan $r, tests => 4 + ( 8 * keys(%$srv_cfg) );
+    plan $r, tests => 6 + ( 8 * keys(%$srv_cfg) );
     
     foreach my $cfg (values %$srv_cfg) {
         ok t_cmp (ref($cfg->{cmd}), 'Apache::Command', 'cmd');
@@ -87,6 +89,7 @@ sub handler : method {
     
     ok t_cmp ($vhost->{override}, $override, 'override');
     ok t_cmp ($vhost->{path}, undef, 'path');
+    ok t_cmp ($vhost->{check_ctx}, undef, 'check_cmd_ctx');
     
     my $loc = $srv_cfg->{Location};
     
@@ -99,7 +102,7 @@ sub handler : method {
     
     ok t_cmp ($loc->{override}, $override, 'override');
     ok t_cmp ($loc->{path}, '/TestDirective__cmdparms', 'path');
-
+    ok t_cmp ($loc->{check_ctx}, KEY . ' cannot occur within <Location> section', 'check_cmd_ctx');
     return Apache::OK;
 }
 
