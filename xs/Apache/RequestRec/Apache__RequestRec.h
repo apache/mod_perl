@@ -53,3 +53,9 @@ SV *mpxs_Apache__RequestRec_subprocess_env(pTHX_ request_rec *r,
     return modperl_table_get_set(aTHX_ r->subprocess_env,
                                  key, val, TRUE);
 }
+
+static MP_INLINE
+apr_finfo_t *mpxs_Apache__RequestRec_finfo(request_rec *r)
+{
+    return &r->finfo;
+}

@@ -302,9 +302,6 @@ MODULE=APR::Finfo
 -apr_lstat
  apr_stat
 
-PACKAGE=Apache::RequestRec
- mpxs_Apache__RequestRec_finfo
-
 !MODULE=APR::String
  apr_collapse_spaces
 -apr_cpystrn
