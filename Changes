@@ -10,7 +10,39 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+added Apache::MPM_IS_THREADED constant
+
+added compat function for Apache::Constants::SERVER_VERSION
+
+added Apache::Constants::export stub for compat
+
+added noop stubs for timeout functions removed from 2.0:
+$r->{soft,hard,reset,kill}_timeout
+
+turned on PerlOptions +GlobalRequest by default for perl-script handler
+unless it is explicitly turned off with PerlOptions -GlobalRequest
+
+added APR::OS::thread_current function
+
+added support for 1.x $r->subprocess_env functionality
+
+added support for $r->push_handlers(PerlHandler => ...)
+
+added support for $r->proxyreq to detect proxy requests
+
+$r->content_type($val) now calls ap_set_content_type underneath
+
 add the err_header_out() wrapper to Apache::compat + corresponding tests
+[Stas Bekman]
+
+fix $r->dir_config lookup of values set in the server context
+
+added Apache::REDIRECT shortcut constant
+
+various fixes for method handlers
+
+use Apache::ServerUtil in Apache::compat so Apache->server works in compat
+mode [Dave Rolsky <autarch@urth.org>]
 
 add Apache::Util::unescape_uri alias to Apache::unescape_url in Apache::compat
 
