@@ -111,6 +111,7 @@
 #define aTHXo_
 #define CopFILEGV(cop) cop->cop_filegv
 #define CopLINE(cop)   cop->cop_line
+#define CopLINE_set(c,l) (CopLINE(c) = (l))
 #define SAVECOPFILE(cop) SAVESPTR(CopFILEGV(curcop));
 #define SAVECOPLINE(cop) SAVEI16(CopLINE(cop))
 #endif
