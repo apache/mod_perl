@@ -853,6 +853,8 @@ my $methods_compat = {
                           ''],
     escape_uri        => ['unescape_path',
                           ''],
+    escape_url        => ['escape_path',
+                          'and requires a pool object'],
     unescape_uri      => ['unescape_url',
                           ''],
     unescape_url_info => [undef,
