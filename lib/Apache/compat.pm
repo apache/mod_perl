@@ -205,7 +205,7 @@ sub post_connection {
 sub get_remote_host {
     my($r, $type) = @_;
     $type = Apache::REMOTE_NAME unless defined $type;
-    $r->connection->get_remote_host($type, $r->dir_config);
+    $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
 sub parse_args {

@@ -4321,7 +4321,7 @@ $ModPerl::FunctionTable = [
         'name' => 'type'
       },
       {
-        'type' => 'apr_table_t *',
+        'type' => 'ap_conf_vector_t *',
         'name' => 'dir_config'
       }
     ]

@@ -70,8 +70,8 @@ sub handler {
     }
 
     ok $c->get_remote_host(Apache::REMOTE_HOST, 
-        $c->base_server->dir_config) || 1;
-    ok $c->get_remote_host(Apache::REMOTE_HOST, $r->dir_config) || 1;
+                           $r->per_dir_config) || 1;
+    ok $c->get_remote_host(Apache::REMOTE_HOST, $r->per_dir_config) || 1;
 
     Apache::OK;
 }
