@@ -1390,13 +1390,17 @@ tar_Apache:
 
 offsite-tar:
 	$(CP) MANIFEST MANIFEST.orig
-	$(PERL) -e 'for (<$(APACHE_SRC)/*.h>) {' \
-	-e 'system "$(CP) $$_ src/";' \
+	echo src/Makefile.config >> MANIFEST
+	$(CP) $(APACHE_SRC)/Makefile.config src/Makefile.config
+	mkdir "src/include"
+	$(PERL) -e 'for (<$(APACHE_SRC)/include/*.h>) {' \
+	-e 'system "$(CP) $$_ src/include/";' \
 	-e 's,^$(APACHE_SRC),,;' \
 	-e 'system "echo src$$_ >> MANIFEST";' \
 	-e '}' 
 	$(MAKE) dist
-	$(RM_F) src/*.h
+	$(RM_RF) src/include/
+	$(RM) src/Makefile.config
 	$(MV) MANIFEST.orig MANIFEST
 
 EOF
