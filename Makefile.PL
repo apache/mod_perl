@@ -2020,7 +2020,7 @@ EOF
 
     gdbm_check();
 
-    if ($USE_DSO and $] < 5.005_56 and 
+    if (($USE_DSO or $USE_APXS) and $] < 5.005_56 and 
 	$^O eq 'solaris' and $Config{'usemymalloc'} eq 'y') 
       {
 	  phat_warn(<<EOF);
