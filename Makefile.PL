@@ -113,7 +113,7 @@ sub configure {
 
     if ($build->{MP_GENERATE_XS}) {
         print "generating XS code using $tables_dir...\n";
-        generate_xs($httpd_version);
+        xs_generate($httpd_version);
     }
 }
 
@@ -148,7 +148,7 @@ sub tables_dir {
     my $tables_dir = "xs/tables/$tables_version";
 }
 
-sub generate_xs {
+sub xs_generate {
     require ModPerl::WrapXS;
 
     my $xs = ModPerl::WrapXS->new;
