@@ -534,7 +534,7 @@ sub httpd_version {
         return $v;
     }
 
-    open my $fh, "$dir/httpd.h" or return undef;
+    open my $fh, "$dir/ap_release.h" or return undef;
     my $version;
 
     while(<$fh>) {
