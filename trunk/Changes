@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+fixed refcnt bug in $r->current_callback
+
 some Apache::Constants updates (see the .pod) and new export() method
 
 ensure @INC value from startup time is always properly saved
