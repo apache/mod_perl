@@ -60,3 +60,40 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 
     va_end(args);
 }
+
+#define set_desc(dtype) \
+    MP_TRACE_a_do(if (desc) *desc = modperl_handler_desc_##dtype(idx))
+
+MpAV *modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
+                                      modperl_config_srv_t *scfg,
+                                      modperl_config_req_t *rcfg,
+                                      int type, int idx,
+                                      const char **desc)
+{
+    MpAV *av = NULL;
+
+    switch (type) {
+      case MP_HANDLER_TYPE_PER_DIR:
+        av = dcfg->handlers[idx];
+        set_desc(per_dir);
+        break;
+      case MP_HANDLER_TYPE_PER_SRV:
+        av = scfg->handlers[idx];
+        set_desc(per_srv);
+        break;
+      case MP_HANDLER_TYPE_CONNECTION:
+        av = scfg->connection_cfg->handlers[idx];
+        set_desc(connection);
+        break;
+      case MP_HANDLER_TYPE_FILES:
+        av = scfg->files_cfg->handlers[idx];
+        set_desc(files);
+        break;
+      case MP_HANDLER_TYPE_PROCESS:
+        av = scfg->process_cfg->handlers[idx];
+        set_desc(process);
+        break;
+    };
+
+    return av;
+}

@@ -113,7 +113,7 @@ sub handler_desc {
     my($self, $h_add, $c_add) = @_;
     local $" = ",\n";
     while (my($class, $h) = each %{ $self->{handler_index_desc} }) {
-        my $func = canon_func($class, 'handler', 'desc');
+        my $func = canon_func('handler', 'desc', $class);
         my $array = join '_', 'MP', $func;
         my $proto = "const char *$func(int idx)";
 

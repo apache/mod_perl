@@ -114,28 +114,8 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
         return DECLINED;
     }
 
-    switch (type) {
-      case MP_HANDLER_TYPE_PER_DIR:
-        av = dcfg->handlers[idx];
-        MP_TRACE_a_do(desc = modperl_per_dir_handler_desc(idx));
-        break;
-      case MP_HANDLER_TYPE_PER_SRV:
-        av = scfg->handlers[idx];
-        MP_TRACE_a_do(desc = modperl_per_srv_handler_desc(idx));
-        break;
-      case MP_HANDLER_TYPE_CONNECTION:
-        av = scfg->connection_cfg->handlers[idx];
-        MP_TRACE_a_do(desc = modperl_connection_handler_desc(idx));
-        break;
-      case MP_HANDLER_TYPE_FILES:
-        av = scfg->files_cfg->handlers[idx];
-        MP_TRACE_a_do(desc = modperl_files_handler_desc(idx));
-        break;
-      case MP_HANDLER_TYPE_PROCESS:
-        av = scfg->process_cfg->handlers[idx];
-        MP_TRACE_a_do(desc = modperl_process_handler_desc(idx));
-        break;
-    };
+    av = modperl_handler_lookup_handlers(dcfg, scfg, NULL,
+                                         type, idx, &desc);
 
     if (!av) {
         MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
