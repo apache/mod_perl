@@ -54,33 +54,48 @@ sub import {
 
 package Apache::RequestRec;
 
-sub table_set_get {
+sub table_get_set {
     my($r, $table) = (shift, shift);
     my($key, $value) = @_;
 
     if (1 == @_) {
-        return $table->{$key};
+        return wantarray() 
+            ?       ($table->get($key))
+            : scalar($table->get($key));
     }
     elsif (2 == @_) {
-        return $table->{$key} = $value;
+        if (defined $value) {
+            return wantarray() 
+                ?        ($table->set($key, $value))
+                :  scalar($table->set($key, $value));
+        }
+        else {
+            return wantarray() 
+                ?       ($table->unset($key))
+                : scalar($table->unset($key));
+        }
     }
     elsif (0 == @_) {
         return $table;
     }
     else {
         my $name = (caller(1))[3];
-        warn "Usage: $name([key [,val]])";
+        warn "Usage: \$r->$name([key [,val]])";
     }
 }
 
 sub header_out {
     my $r = shift;
-    return $r->table_set_get(scalar $r->headers_out, @_);
+    return wantarray() 
+        ?       ($r->table_get_set(scalar($r->headers_out), @_))
+        : scalar($r->table_get_set(scalar($r->headers_out), @_));
 }
 
 sub header_in {
     my $r = shift;
-    return $r->table_set_get(scalar $r->headers_in, @_);
+    return wantarray() 
+        ?       ($r->table_get_set(scalar($r->headers_in), @_))
+        : scalar($r->table_get_set(scalar($r->headers_in), @_));
 }
 
 sub register_cleanup {
