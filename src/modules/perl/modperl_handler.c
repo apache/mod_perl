@@ -14,6 +14,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
         ++name;
         /* XXX: currently a noop; should disable autoload of given handler
          * if PerlOptions +AutoLoad is configured
+         * see: modperl_hash_handlers in modperl_mgv.c
          */
         MpHandlerAUTOLOAD_Off(handler);
         break;
