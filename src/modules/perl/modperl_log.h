@@ -1,6 +1,9 @@
 #ifndef MODPERL_LOG_H
 #define MODPERL_LOG_H
 
+#define MP_STRINGIFY(n) MP_STRINGIFY_HELPER(n)
+#define MP_STRINGIFY_HELPER(n) #n
+
 #ifdef MP_TRACE
 #   if defined(__GNUC__)
 #      if (__GNUC__ > 2)
@@ -9,7 +12,7 @@
 #         define MP_FUNC __FUNCTION__
 #      endif
 #   else
-#      define MP_FUNC NULL
+#      define MP_FUNC __FILE__ ":" MP_STRINGIFY(__LINE__)
 #   endif
 #else
 #   define MP_FUNC NULL
