@@ -9,15 +9,11 @@ my $module = "TestDirective::perlloadmodule3";
 my $config   = Apache::Test::config();
 my $base_hostport = Apache::TestRequest::hostport($config);
 
-Apache::TestRequest::module($module);
-my $hostport = Apache::TestRequest::hostport($config);
+# XXX: probably a good idea to split into more sub-tests, that test
+# smaller portions of information, but requires a more elaborate
+# logic. Alternatively could use diff($expected, $received).
 
-# XXX: probably a good idea to split into more tests, that test
-# smaller portions of information, but requires a more elaborated
-# logic.
-
-# XXX: this subtest fails when lwp is not installed, need to investigate
-plan tests => 3, todo => [1];
+plan tests => 3;
 
 t_debug("connecting to $base_hostport");
 {
@@ -40,6 +36,9 @@ EOI
     my $received = GET_BODY $location;
     ok t_cmp($expected, $received, "server merge");
 }
+
+Apache::TestRequest::module($module);
+my $hostport = Apache::TestRequest::hostport($config);
 
 t_debug("connecting to $hostport");
 {
