@@ -21,8 +21,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
 APIs [joes].
 
-move all Apache:: constants to Apache2::Const.  for example, Apache:OK
-is now Apache2::Const::OK.  [Geoffrey Young]
+move all Apache:: constants to Apache2::Const and all APR:: constants
+to APR::Const.  for example, Apache:OK is now Apache2::Const::OK and
+APR::SUCCESS is now APR::Const::SUCCESS.  [Geoffrey Young]
 
 remove MP_INST_APACHE2 installation option and Apache2.pm - all
 mod_perl related files will now be installed so they are visible

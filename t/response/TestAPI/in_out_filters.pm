@@ -56,7 +56,7 @@ sub read_request_body {
     my $count = 0;
     do {
         $r->input_filters->get_brigade($bb, Apache2::Const::MODE_READBYTES,
-                                       APR::BLOCK_READ, IOBUFSIZE);
+                                       APR::Const::BLOCK_READ, IOBUFSIZE);
 
         $count++;
 

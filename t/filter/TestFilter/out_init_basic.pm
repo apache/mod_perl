@@ -52,7 +52,7 @@ sub transparent : FilterRequestHandler
     $filter->ctx($ctx);
 
     my $rv = $filter->next->pass_brigade($bb);
-    return $rv unless $rv == APR::SUCCESS;
+    return $rv unless $rv == APR::Const::SUCCESS;
 
     #warn "**** filter is exiting\n";
 

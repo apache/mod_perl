@@ -30,7 +30,7 @@ sub handler {
     t_write_file($file, "cleanup2 is ok");
 
     my $status = $r->sendfile($file);
-    die "sendfile has failed" unless $status == APR::SUCCESS;
+    die "sendfile has failed" unless $status == APR::Const::SUCCESS;
 
     $r->pool->cleanup_register(\&cleanup, $file);
 

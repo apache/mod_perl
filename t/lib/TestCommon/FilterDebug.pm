@@ -32,14 +32,14 @@ sub snoop {
     if (defined $mode) {
         # input filter
         my $rv = $filter->next->get_brigade($bb, $mode, $block, $readbytes);
-        return $rv unless $rv == APR::SUCCESS;
+        return $rv unless $rv == APR::Const::SUCCESS;
         bb_dump($type, $stream, $bb);
     }
     else {
         # output filter
         bb_dump($type, $stream, $bb);
         my $rv = $filter->next->pass_brigade($bb);
-        return $rv unless $rv == APR::SUCCESS;
+        return $rv unless $rv == APR::Const::SUCCESS;
     }
     #if ($bb->is_empty) {
     #    return -1;

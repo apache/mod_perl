@@ -668,7 +668,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             }
             else {
                 cmd->args_how =
-                    SvIV(modperl_constants_lookup_apache2(aTHX_ SvPV(val, len)));
+                    SvIV(modperl_constants_lookup_apache2_const(aTHX_ SvPV(val, len)));
             }
         }
 
@@ -694,7 +694,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
             }
             else {
                 cmd->req_override =
-                    SvIV(modperl_constants_lookup_apache2(aTHX_ SvPV(val, len)));
+                    SvIV(modperl_constants_lookup_apache2_const(aTHX_ SvPV(val, len)));
             }
         }
 

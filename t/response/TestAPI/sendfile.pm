@@ -36,7 +36,7 @@ sub handler {
     else {
         my $rc = $r->sendfile($args);
         # warn APR::Error::strerror($rc);
-        return $rc unless $rc == APR::SUCCESS;
+        return $rc unless $rc == APR::Const::SUCCESS;
     }
 
     # XXX: can't quite test bogus offset and/or len, since ap_send_fd

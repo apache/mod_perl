@@ -12,7 +12,7 @@ $Apache2::ConstantsTable = {
       'MODPERL_RC_EXIT'
     ]
   },
-  'Apache2' => {
+  'Apache2::Const' => {
     'types' => [
       'DIR_MAGIC_TYPE'
     ],
@@ -228,7 +228,7 @@ $Apache2::ConstantsTable = {
       'TAKE13'
     ]
   },
-  'APR' => {
+  'APR::Const' => {
     'uri' => [
       'APR_URI_FTP_DEFAULT_PORT',
       'APR_URI_SSH_DEFAULT_PORT',

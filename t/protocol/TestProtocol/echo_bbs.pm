@@ -26,15 +26,15 @@ sub handler {
 
     # starting from Apache 2.0.49 several platforms require you to set
     # the socket to a blocking IO mode
-    $c->client_socket->opt_set(APR::SO_NONBLOCK, 0);
+    $c->client_socket->opt_set(APR::Const::SO_NONBLOCK, 0);
 
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     while (1) {
         debug "asking new line";
         my $rc = $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
-        last if $rc == APR::EOF;
-        die APR::Error::strerror($rc) unless $rc == APR::SUCCESS;
+        last if $rc == APR::Const::EOF;
+        die APR::Error::strerror($rc) unless $rc == APR::Const::SUCCESS;
 
         for (my $b = $bb->first; $b; $b = $bb->next($b)) {
 

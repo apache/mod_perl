@@ -542,8 +542,8 @@ sub read_script {
         $self->log_error("$@");
 
         if (ref $@ eq 'APR::Error') {
-            return Apache2::Const::FORBIDDEN if $@ == APR::EACCES;
-            return Apache2::Const::NOT_FOUND if $@ == APR::ENOENT;
+            return Apache2::Const::FORBIDDEN if $@ == APR::Const::EACCES;
+            return Apache2::Const::NOT_FOUND if $@ == APR::Const::ENOENT;
         }
         else {
             return Apache2::Const::SERVER_ERROR;

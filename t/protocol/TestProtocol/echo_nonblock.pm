@@ -21,7 +21,7 @@ sub handler {
     my $c = shift;
     my $socket = $c->client_socket;
 
-    $socket->opt_set(APR::SO_NONBLOCK, 1);
+    $socket->opt_set(APR::Const::SO_NONBLOCK, 1);
 
     my $counter = 0;
     my $timeout = 0;
@@ -37,18 +37,18 @@ sub handler {
         }
         $counter++;
 
-        my $rc = $socket->poll($c->pool, $timeout, APR::POLLIN);
-        if ($rc == APR::SUCCESS) {
+        my $rc = $socket->poll($c->pool, $timeout, APR::Const::POLLIN);
+        if ($rc == APR::Const::SUCCESS) {
             my $buf;
             my $len = eval { $socket->recv($buf, BUFF_LEN) };
             if ($@) {
                 die $@ unless ref $@ eq 'APR::Error'
-                    && $@ == APR::ECONNABORTED; # rethrow
+                    && $@ == APR::Const::ECONNABORTED; # rethrow
                 # ECONNABORTED is not an application error
                 # XXX: we don't really test that we always get this
                 # condition, since it depends on the timing of the
                 # client closing the socket. may be it'd be possible
-                # to make sure that APR::ECONNABORTED was received
+                # to make sure that APR::Const::ECONNABORTED was received
                 # when $counter == 2 if we have slept enough, but how
                 # much is enough is unknown
                 debug "caught '104: Connection reset by peer' error";
@@ -60,7 +60,7 @@ sub handler {
             debug "sending: $buf";
             $socket->send($buf);
         }
-        elsif ($rc == APR::TIMEUP) {
+        elsif ($rc == APR::Const::TIMEUP) {
             debug "timeout";
             $socket->send("TIMEUP\n");
         }

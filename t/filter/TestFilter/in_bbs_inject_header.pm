@@ -155,7 +155,7 @@ sub handler : FilterConnectionHandler {
     # normal HTTP headers processing
     my $ctx_bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
     my $rv = $filter->next->get_brigade($ctx_bb, $mode, $block, $readbytes);
-    return $rv unless $rv == APR::SUCCESS;
+    return $rv unless $rv == APR::Const::SUCCESS;
 
     while (!$ctx_bb->is_empty) {
         my $b = $ctx_bb->first;
