@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+if PERL_DESTRUCT_LEVEL < 0, skip perl_destruct(), etc. in perl_shutdown()
+
 add CLOSE method for tied *STD{OUT,IN}
 
 add config for mod_ssl and 'make test' [Lupe Christoph <lupe@alanya.m.isar.de>]

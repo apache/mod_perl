@@ -253,16 +253,23 @@ static void seqno_check_max(request_rec *r, int seqno)
 void perl_shutdown (server_rec *s, pool *p)
 {
     char *pdl = NULL;
-    /* execute END blocks we suspended during perl_startup() */
-    perl_run_endav("perl_shutdown"); 
 
     if((pdl = getenv("PERL_DESTRUCT_LEVEL")))
 	perl_destruct_level = atoi(pdl);
     else
 	perl_destruct_level = PERL_DESTRUCT_LEVEL;
 
+    if(perl_destruct_level < 0) {
+	MP_TRACE_g(fprintf(stderr, 
+			   "skipping destruction of Perl interpreter\n"));
+	return;
+    }
+
+    /* execute END blocks we suspended during perl_startup() */
+    perl_run_endav("perl_shutdown"); 
+
     MP_TRACE_g(fprintf(stderr, 
-		     "destructing and freeing perl interpreter..."));
+		     "destructing and freeing Perl interpreter..."));
 
     perl_util_cleanup();
 
