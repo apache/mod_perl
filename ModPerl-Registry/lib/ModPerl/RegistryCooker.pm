@@ -60,7 +60,6 @@ use constant MTIME     => 3;
 use constant PACKAGE   => 4;
 use constant CODE      => 5;
 use constant STATUS    => 6;
-use constant CLASS     => 7;
 
 #########################################################################
 # OS specific constants
@@ -96,13 +95,12 @@ sub new {
 #########################################################################
 # func: init
 # dflt: init
-# desc: initializes the data object's fields: CLASS REQ FILENAME URI
+# desc: initializes the data object's fields: REQ FILENAME URI
 # args: $r - Apache::Request object
 # rtrn: nothing
 #########################################################################
 
 sub init {
-    $_[0]->[CLASS]    = ref $_[0];
     $_[0]->[REQ]      = $_[1];
     $_[0]->[URI]      = $_[1]->uri;
     $_[0]->[FILENAME] = $_[1]->filename;
@@ -205,7 +203,7 @@ sub can_compile {
     my $r = $o->[REQ];
 
     unless (-r $r->finfo && -s _) {
-        xlog_error($r, "$$: $o->[FILENAME] not found or unable to stat");
+        $o->log_error("$o->[FILENAME] not found or unable to stat");
 	return Apache::NOT_FOUND;
     }
 
@@ -230,6 +228,24 @@ sub can_compile {
     return Apache::OK;
 
 }
+#########################################################################
+# func: namespace_root
+# dflt: namespace_root_common
+# desc: define the namespace root for storing compiled scripts
+# args: $o - registry blessed object
+# rtrn: the namespace root
+#########################################################################
+
+*namespace_root = \&namespace_root_common;
+
+sub namespace_root_common {
+    'ModPerl::RegistryROOT';
+}
+
+sub namespace_root_local {
+    my $o = shift;
+    join '::', ref($o), 'ROOT';
+}
 
 #########################################################################
 # func: make_namespace
@@ -249,10 +265,10 @@ sub make_namespace {
     $package =~ s/([^A-Za-z0-9_])/sprintf("_%2x", unpack("C", $1))/eg;
 
     # make sure that the sub-package doesn't start with a digit
-    $package = "_$package";
+    $package =~ s/^(\d)/_$1/;
 
     # prepend root
-    $package = $o->[CLASS] . "::Cache::$package";
+    $package = $o->namespace_root() . "::$package";
 
     $o->[PACKAGE] = $package;
 
@@ -276,7 +292,7 @@ sub namespace_from_filename {
     my ($volume, $dirs, $file) = 
         File::Spec::Functions::splitpath($o->[FILENAME]);
     my @dirs = File::Spec::Functions::splitdir($dirs);
-    return join '_', ($volume||''), @dirs, $file;
+    return join '_', grep { defined && length } $volume, @dirs, $file;
 }
 
 # return a package name based on $r->uri only
@@ -356,6 +372,28 @@ sub convert_script_to_compiled_handler {
 }
 
 #########################################################################
+# func: cache_table
+# dflt: cache_table_common
+# desc: return a symbol table for caching compiled scripts in
+# args: $o - registry blessed object (or the class name)
+# rtrn: symbol table
+#########################################################################
+
+*cache_table = \&cache_table_common;
+
+sub cache_table_common {
+    \%ModPerl::RegistryCache;
+}
+
+
+sub cache_table_local {
+    my $o = shift;
+    my $class = ref($o) || $o;
+    no strict 'refs';
+    \%$class;
+}
+
+#########################################################################
 # func: cache_it
 # dflt: cache_it
 # desc: mark the package as cached by storing its modification time
@@ -365,38 +403,9 @@ sub convert_script_to_compiled_handler {
 
 sub cache_it {
     my $o = shift;
-    no strict 'refs';
-    ${ $o->[CLASS] }->{ $o->[PACKAGE] }{mtime} = $o->[MTIME];
+    $o->cache_table->{ $o->[PACKAGE] }{mtime} = $o->[MTIME];
 }
 
-#########################################################################
-# func: uncache_myself
-# dflt: uncache_myself
-# desc: unmark the package as cached by forgetting its modification time
-# args: none
-# rtrn: nothing
-# note: this is a function and not a method, it should be called from
-#       the registry script, and using the caller() method we figure
-#       out the package the script was compiled into
-
-#########################################################################
-
-sub uncache_myself {
-    my $package = scalar caller;
-    # guess the registry class from the first two package segments
-    # XXX: this will break if someone creates a registry class which
-    # is not X::Y, but this function was written for the tests.
-    my($class) = $package =~ /([^:]+::[^:]+)/;
-    warn "cannot figure out class name from $package", 
-        return unless defined $class;
-    no strict 'refs';
-    if (exists ${$class}->{$package} && exists ${$class}->{$package}{mtime}) {
-        delete ${$class}->{$package}{mtime};
-    }
-    else {
-        warn "cannot find ${class}->{$package}{mtime}";
-    }
-}
 
 #########################################################################
 # func: is_cached
@@ -409,8 +418,7 @@ sub uncache_myself {
 
 sub is_cached {
     my $o = shift;
-    no strict 'refs';
-    exists ${$o->[CLASS]}->{ $o->[PACKAGE] }{mtime};
+    exists $o->cache_table->{ $o->[PACKAGE] }{mtime};
 }
 
 
@@ -431,9 +439,8 @@ sub is_cached {
 sub should_compile_if_modified {
     my $o = shift;
     $o->[MTIME] ||= -M $o->[REQ]->finfo;
-    no strict 'refs';
     !($o->is_cached && 
-      ${$o->[CLASS]}->{ $o->[PACKAGE] }{mtime} <= $o->[MTIME]);
+      $o->cache_table->{ $o->[PACKAGE] }{mtime} <= $o->[MTIME]);
 }
 
 # return false if the package is cached already
@@ -591,7 +598,6 @@ sub chdir_file_normal {
 
 sub get_mark_line {
     my $o = shift;
-    # META: shouldn't this be $o->[CLASS]?
     $ModPerl::Registry::MarkLine ? "\n#line 1 $o->[FILENAME]\n" : "";
 }
 
@@ -649,7 +655,7 @@ sub compile {
 sub error_check {
     my $o = shift;
     if ($@ and substr($@,0,4) ne " at ") {
-	xlog_error($o->[REQ], "$$: $o->[CLASS]: `$@'");
+	$o->log_error($@);
 	$@{$o->[REQ]->uri} = $@;
 	#$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return Apache::SERVER_ERROR;
@@ -685,13 +691,54 @@ sub install_aliases {
 
 sub debug {
     my $o = shift;
-    $o->[REQ]->log_error("$$: $o->[CLASS]: " . join '', @_);
+    my $class = ref $o;
+    $o->[REQ]->log_error("$$: $class: " . join '', @_);
 }
 
-sub xlog_error {
-    my($r, $msg) = @_;
-    $r->log_error($msg);
-    $r->notes('error-notes', $msg);
+sub log_error {
+    my($o, $msg) = @_;
+    my $class = ref $o;
+
+    $o->[REQ]->log_error("$$: $class: $msg");
+    $o->[REQ]->notes('error-notes', $msg);
+}
+
+#########################################################################
+# func: uncache_myself
+# dflt: uncache_myself
+# desc: unmark the package as cached by forgetting its modification time
+# args: none
+# rtrn: nothing
+# note: this is a function and not a method, it should be called from
+#       the registry script, and using the caller() method we figure
+#       out the package the script was compiled into
+
+#########################################################################
+
+# this is a function should be called from the registry script, and
+# using the caller() method we figure out the package the script was
+# compiled into and trying to uncache it.
+#
+# it's currently used only for testing purposes and not a part of the
+# public interface. it expects to find the compiled package in the
+# symbol table cache returned by cache_table_common(), if you override
+# cache_table() to point to another function, this function will fail.
+sub uncache_myself {
+    my $package = scalar caller;
+    my($class) = __PACKAGE__->cache_table_common();
+
+    unless (defined $class) {
+        Apache->warn("$$: cannot figure out cache symbol table for $package");
+        return;
+    }
+
+    if (exists $class->{$package} && exists $class->{$package}{mtime}) {
+        Apache->warn("$$: uncaching $package\n") if DEBUG & D_COMPILE;
+        delete $class->{$package}{mtime};
+    }
+    else {
+        Apache->warn("$$: cannot find $package in cache");
+    }
 }
 
 1;
