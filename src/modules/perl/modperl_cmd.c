@@ -8,8 +8,11 @@ static char *modperl_cmd_unclosed_directive(cmd_parms *parms)
 
 static char *modperl_cmd_too_late(cmd_parms *parms)
 {
-    return apr_pstrcat(parms->pool, "mod_perl is already running, "
-                       "too late for ", parms->cmd->name, NULL);
+    return apr_psprintf(parms->pool,
+                        "mod_perl is already running, too late for %s (%s:%d)",
+                        parms->cmd->name,
+                        parms->directive->filename,
+                        parms->directive->line_num);
 }
 
 char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
