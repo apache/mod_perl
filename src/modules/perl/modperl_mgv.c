@@ -21,16 +21,16 @@
  * need config structures to be free of Perl structures
  */
 
-#define modperl_mgv_new_w_name(mgv, p, n, copy) \
-mgv = modperl_mgv_new(p); \
-mgv->len = strlen(n); \
-mgv->name = (copy ? apr_pstrndup(p, n, mgv->len) : n)
+#define modperl_mgv_new_w_name(mgv, p, n, copy)         \
+    mgv = modperl_mgv_new(p);                           \
+    mgv->len = strlen(n);                               \
+    mgv->name = (copy ? apr_pstrndup(p, n, mgv->len) : n)
 
-#define modperl_mgv_new_name(mgv, p, n) \
-modperl_mgv_new_w_name(mgv, p, n, 1)
+#define modperl_mgv_new_name(mgv, p, n)         \
+    modperl_mgv_new_w_name(mgv, p, n, 1)
 
-#define modperl_mgv_new_namen(mgv, p, n) \
-modperl_mgv_new_w_name(mgv, p, n, 0)
+#define modperl_mgv_new_namen(mgv, p, n)        \
+    modperl_mgv_new_w_name(mgv, p, n, 0)
 
 int modperl_mgv_equal(modperl_mgv_t *mgv1,
                       modperl_mgv_t *mgv2)
@@ -55,13 +55,13 @@ modperl_mgv_t *modperl_mgv_new(apr_pool_t *p)
     return (modperl_mgv_t *)apr_pcalloc(p, sizeof(modperl_mgv_t));
 }
 
-#define modperl_mgv_get_next(mgv) \
-    if (mgv->name) { \
-        mgv->next = modperl_mgv_new(p); \
-        mgv = mgv->next; \
+#define modperl_mgv_get_next(mgv)               \
+    if (mgv->name) {                            \
+        mgv->next = modperl_mgv_new(p);         \
+        mgv = mgv->next;                        \
     }
 
-#define modperl_mgv_hash(mgv) \
+#define modperl_mgv_hash(mgv)                   \
     PERL_HASH(mgv->hash, mgv->name, mgv->len)
  /* MP_TRACE_h(MP_FUNC, "%s...hash=%ld\n", mgv->name, mgv->hash) */
 
@@ -173,8 +173,8 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
 
 /* currently used for complex filters attributes parsing */
 /* XXX: may want to generalize it for any handlers */
-#define MODPERL_MGV_DEEP_RESOLVE(handler, p) \
-    if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER) { \
+#define MODPERL_MGV_DEEP_RESOLVE(handler, p)                   \
+    if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER) {         \
         modperl_filter_resolve_init_handler(aTHX_ handler, p); \
     }
 
