@@ -139,6 +139,19 @@ sub httpd_version {
 
 my $Is_Win32 = ($^O eq "MSWin32");
 
+sub typemaps {
+    my $typemaps = [];
+    
+    for (@INC) {
+	my $file;
+	if (-e ($file = "$_/auto/Apache/typemap")) {
+	    push @$typemaps, $file;
+	    last;
+	}
+    }
+    return $typemaps;
+}
+
 sub inc {
     my $self = shift;
     my $src  = $self->dir;

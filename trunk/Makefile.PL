@@ -140,6 +140,7 @@ $DYNAMIC = 0;
 $CONFIG = "";
 $ADD_MODULE = "";
 $PERL_DIRECTIVE_HANDLERS = 0;
+$PERL_TIE_TABLES = 0;
 my %experimental = map { $_,1 } qw{
 PERL_GET_SET_HANDLERS
 PERL_MARK_WHERE
@@ -176,6 +177,7 @@ sub is_mp_arg {
    PERL_STACKED_HANDLERS 
    PERL_METHOD_HANDLERS
    PERL_DIRECTIVE_HANDLERS
+   PERL_TIE_TABLES
 };
 
 $callback_alias{PERL_INIT} = "PERL_HEADER_PARSER";
@@ -236,9 +238,13 @@ if($EVERYTHING) {
 
 if($ALL_HOOKS) {
     for (@callback_hooks) {
-	next if /Handlers?$/i;
+	next if /(Table|Handler)s?$/i;
 	$callback_hooks{$_}++;
     }
+}
+
+if($DYNAMIC) {
+    $PERL_DIRECTIVE_HANDLERS = $PERL_TIE_TABLES = 1;
 }
 
 my @xs_modules = qw(Apache Apache::Constants);
@@ -246,6 +252,11 @@ if($PERL_DIRECTIVE_HANDLERS) {
     push @xs_modules, "Apache::ModuleConfig";
     $callback_hooks{PERL_DIRECTIVE_HANDLERS} = 1;
 }
+if($PERL_TIE_TABLES) {
+    push @xs_modules, "Apache::Tie";
+    $callback_hooks{PERL_TIE_TABLES} = 1;
+}
+
 my @xs_mod_snames = map { (my $s = $_) =~ s/.*:://; $s } @xs_modules;
 
 if($Is_Win32) {
@@ -481,7 +492,7 @@ if($APACHE_SRC) {
 	$why = ($cant_hook{$k} || "(enable with $k=1)") unless $v;
 	$k =~ s/([A-Z]+)/ucfirst(lc($1))/ge;
 	$k =~ s/_//g;
-	$k .= "Handler" unless $k =~ /Handlers?$/;
+	$k .= "Handler" unless $k =~ /(Table|Handler)s?$/;
 	push @mod_perl_hooks, $k;
 	print $k . '.' x (28 - length($k));
 	print $v ? "enabled\n" : "disabled $why\n";
@@ -957,7 +968,7 @@ sub MY::post_initialize {
     $My::self = $self;
 
     finddepth(\&wanted, $APACHE_SRC);
-
+    $self->{PM}{"Apache/typemap"} = '$(INST_ARCHLIB)/' . "auto/Apache/typemap";
     '';
 }
 

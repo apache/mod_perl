@@ -103,8 +103,18 @@ SV *mod_perl_gensym (char *pack)
     return rv;
 }
 
-#ifdef PERL_SECTIONS
-void perl_tie_hash(HV *hv, char *class)
+SV *mod_perl_tie_table(table *t)
+{
+    HV *hv;
+    SV *sv = sv_newmortal();
+    iniHV(hv);
+    sv_setref_pv(sv, "Apache::Table", (void*)t);
+    perl_require_module("Apache::Tie", NULL);
+    perl_tie_hash(hv, "Apache::TieHashTable", sv);
+    return newRV_noinc((SV*)hv);
+}
+
+void perl_tie_hash(HV *hv, char *class, SV *sv)
 {
     dSP;
     SV *obj, *varsv = (SV*)hv;
@@ -114,8 +124,11 @@ void perl_tie_hash(HV *hv, char *class)
     SAVETMPS;
     PUSHMARK(sp);
     XPUSHs(sv_2mortal(newSVpv(class,0)));
+    if(sv) XPUSHs(sv);
     PUTBACK;
     perl_call_method(methname, G_EVAL | G_SCALAR);
+    if(SvTRUE(ERRSV)) warn("perl_tie_hash: %s", SvPV(ERRSV,na));
+
     SPAGAIN;
 
     obj = POPs;
@@ -126,7 +139,6 @@ void perl_tie_hash(HV *hv, char *class)
     FREETMPS;
     LEAVE; 
 }
-#endif
 
 /* execute END blocks */
 

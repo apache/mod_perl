@@ -16,3 +16,6 @@ test ++$i, $cfg->{FromNew};
 unless ($cfg->{SetFromScript}) {
     $cfg->{SetFromScript} = [$0,$$];
 }
+
+my $scfg = Apache::ModuleConfig->get($r->server, "Apache::TestDirectives");
+$r->print(Data::Dumper::Dumper($scfg));

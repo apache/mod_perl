@@ -18,6 +18,14 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+new Apache::Tie module, provides Apache::TieHashTable for a proper
+interface to Apache table structures.  The following methods, called
+in a scalar context with no "key" argument, will return a HASH
+reference, where HASH is tied to Apache::TieHashTable:
+headers_in, headers_out, err_headers_out, notes, dir_config, subprocess_env
+enable with PERL_TIE_TABLES=1
+see also: t/net/perl/tie_table.pl
+
 remove Cwd::fastcwd usage from Apache::Registry, use
 $Apache::Server::CWD set at server startup instead
 
@@ -29,9 +37,6 @@ replace Apache::Registry use of IO::File w/ Apache::gensym
 new function Apache::gensym (xsub, does same as Symbol::gensym)
 
 add $ServerRoot/lib/perl to @INC at startup
-
-overload the get_basic_auth_pw function so we can change AuthType on
-the fly via $r->connection->auth_type
 
 add code to deal with 1.3b7-dev's SERVER_SUBVERSION replacement
 

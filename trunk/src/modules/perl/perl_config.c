@@ -1178,7 +1178,7 @@ void perl_section_hash_init(char *name, I32 dotie)
     curstash = gv_stashpv(PERL_SECTIONS_PACKAGE, GV_ADDWARN);
     gv = GvHV_init(name);
     if(dotie && !perl_sections_self_boot)
-	perl_tie_hash(GvHV(gv), "Tie::IxHash");
+	perl_tie_hash(GvHV(gv), "Tie::IxHash", Nullsv);
     LEAVE;
 }
 

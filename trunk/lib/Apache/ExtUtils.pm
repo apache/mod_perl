@@ -136,7 +136,7 @@ static mod_perl_perl_dir_config *newPerlConfig(pool *p)
 	(mod_perl_perl_dir_config *)
 	    palloc(p, sizeof (mod_perl_perl_dir_config));
     cld->obj = Nullsv;
-    cld->class = NULL;
+    cld->class = "$class";
     return cld;
 }
 

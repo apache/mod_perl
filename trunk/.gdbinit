@@ -4,7 +4,7 @@
 
 define thttpd
    run -X -d `pwd`/t
-   set $sv = perl_eval_pv("$Apache::ErrLog = '/tmp/mod_perl_error_log'",1)
+#   set $sv = perl_eval_pv("$Apache::ErrLog = '/tmp/mod_perl_error_log'",1)
 end
 
 define httpd

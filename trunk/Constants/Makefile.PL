@@ -8,6 +8,7 @@ $apache_1_3_inc = join ' ', map {
 } qw(include main os/unix);
 
 WriteMakefile(
+    'TYPEMAPS' => ["../Apache/typemap"],
     NAME	=> "Apache::Constants",
     VERSION_FROM => "Constants.pm",
     INC => '-I../src -I../src/modules/perl -I$(APACHE_SRC) -I../$(APACHE_SRC) '.$apache_1_3_inc .

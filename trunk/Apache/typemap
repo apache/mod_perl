@@ -4,8 +4,9 @@ Apache::CmdParms	T_PTROBJ
 Apache::SubRequest	T_PTROBJ
 Apache::Connection	T_PTROBJ
 Apache::Server		T_PTROBJ
-Apache::conf_vector	T_PTROBJ
 Apache::ModuleConfig    T_PTROBJ
+Apache::Table		T_PTROBJ
+Apache::TieHashTable	T_PTROBJ
 pid_t			T_IV
 Apache::Scoreboard      O_HvRV
 
@@ -32,7 +33,7 @@ Apache::Scoreboard      O_HvRV
 
 HV *		T_HvRV
 AV *		T_AvRV
-const char *		T_PV_CONST
+const char *		T_PV
 
 ######################################################################
 OUTPUT

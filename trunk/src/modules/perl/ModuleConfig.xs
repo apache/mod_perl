@@ -53,15 +53,20 @@
 #define CORE_PRIVATE
 #include "mod_perl.h"
 
-static void *vector_from_sv (SV *sv)
+#define MP_TYPE_DIR 1
+#define MP_TYPE_SRV 2
+
+static void *vector_from_sv (SV *sv, int *type)
 {
 
     if(sv_derived_from(sv, "Apache") && SvROK(sv)) {
 	request_rec *r = (request_rec *) SvIV((SV*)SvRV(sv));
+	*type = MP_TYPE_DIR;
 	return r->per_dir_config;
     }
     else if(sv_derived_from(sv, "Apache::Server") && SvROK(sv)) {
 	server_rec *s = (server_rec *) SvIV((SV*)SvRV(sv));
+	*type = MP_TYPE_SRV;
 	return s->module_config;
     }
     else {
@@ -97,7 +102,8 @@ get(self, obj, svkey=Nullsv)
 
 	if(mod_ptr && *mod_ptr) {
 	    IV tmp = SvIV((SV*)SvRV(*mod_ptr));
-	    void *ptr = vector_from_sv(obj);
+	    int type = 0;
+	    void *ptr = vector_from_sv(obj, &type);
 	    mod_perl_perl_dir_config *data = 
 		get_module_config(ptr, (module *)tmp);
 	    RETVAL = data->obj ? SvREFCNT_inc(data->obj) : Nullsv; 
