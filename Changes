@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+Apache::perl_hook() fixes for Perl*Api, thanks to Geoffrey Young for
+the spot
+
 save/restore $^W in Apache::PerlRun
 [Honza Pazdziora <adelton@informatics.muni.cz>]
 

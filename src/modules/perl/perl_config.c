@@ -1773,6 +1773,27 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 
 #endif /* PERL_SECTIONS */
 
+static int perl_hook_api(char *string)
+{
+    char name[56];
+    char *s;
+
+    ap_cpystrn(name, string, sizeof(name));
+    if (!(s = (char *)strstr(name, "Api"))) {
+	return -1;
+    }
+    *s = '\0';
+
+    if (strEQ(name, "Uri")) {
+	/* s/^Uri$/URI/ */
+	name[1] = toUPPER(name[1]);
+	name[2] = toUPPER(name[2]);
+    }
+
+    /* XXX: assumes .xs is linked static */
+    return perl_get_cv(form("Apache::%s::bootstrap", name), FALSE);
+}
+
 int perl_hook(char *name)
 {
     switch (*name) {
@@ -1823,6 +1844,13 @@ int perl_hook(char *name)
 #else
 	return 0;    
 #endif
+	    if (strEQ(name, "DirectiveHandlers")) 
+#ifdef PERL_DIRECTIVE_HANDLERS
+		return 1;
+#else
+	return 0;    
+#endif
+
 	break;
 	case 'F':
 	    if (strEQ(name, "Fixup")) 
@@ -1876,6 +1904,13 @@ int perl_hook(char *name)
 	return 0;    
 #endif
 	break;
+	case 'R':
+	    if (strEQ(name, "Restart")) 
+#ifdef PERL_RESTART
+		return 1;
+#else
+	return 0;    
+#endif
 	case 'S':
 	    if (strEQ(name, "SSI")) 
 #ifdef PERL_SSI
@@ -1911,6 +1946,7 @@ int perl_hook(char *name)
 #endif
 	break;
     }
-    return -1;
+
+    return perl_hook_api(name);
 }
 

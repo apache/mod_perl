@@ -25,7 +25,7 @@ sub hook {
 
     (my $try = $hook) =~ s/^Perl//;
     $try =~ s/Handler$//;
-    return Apache::perl_hook($try);
+    return Apache::perl_hook($try) > 0;
 }
 
 sub import {
