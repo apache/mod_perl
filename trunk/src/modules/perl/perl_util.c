@@ -68,6 +68,7 @@ SV *array_header2avrv(array_header *arr)
 {
     AV *av;
     int i;
+    dTHR;
 
     iniAV(av);
     if(arr) {

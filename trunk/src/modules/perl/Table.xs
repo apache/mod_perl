@@ -32,6 +32,7 @@ static int Apache_table_do(TableDo *td, const char *key, const char *val)
 static void table_modify(TiedTable *self, const char *key, SV *sv, 
 			 void (*tabfunc) (table *, const char *, const char *))
 {
+    dTHR;
     const char *val;
 
     if(!self->table) return;

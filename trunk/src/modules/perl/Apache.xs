@@ -209,6 +209,7 @@ static SV *get_handlers(request_rec *r, char *hook)
 
 static void set_handlers(request_rec *r, SV *hook, SV *sv)
 {
+    dTHR;
     perl_handler_table *tab = perl_handler_lookup(SvPV(hook,na));
     if(tab && tab->set_func) 
         (*tab->set_func)(tab, r, sv);

@@ -864,6 +864,7 @@ not_there:
 /* this is kinda ugly, but wtf */
 static void boot_ConstSubs(char *tag) 
 {
+    dTHR;
     HV *stash = gv_stashpvn(__PACKAGE__, __PACKAGE_LEN__, FALSE);
     I32 i;
 #ifdef XS_IMPORT

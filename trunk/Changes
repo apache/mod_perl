@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.17_01-dev
 
+5.005_54+usethreads port [Brian P Millett <bpm@ec-group.com>]
+
 fix -w command line logic for Apache::Registry
 [Honza Pazdziora <adelton@informatics.muni.cz>]
 
