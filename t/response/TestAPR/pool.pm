@@ -16,7 +16,7 @@ use Apache::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 64;
+    plan $r, tests => 66;
 
     ### native pools ###
 
@@ -343,7 +343,7 @@ sub handler {
         $r->notes->clear;
     }
 
-    # cleanup_register using a anon sub callback
+    # cleanup_register using an anon sub callback
     {
         {
             my $p = APR::Pool->new;
@@ -353,6 +353,22 @@ sub handler {
 
         my @notes = $r->notes->get('cleanup');
         ok t_cmp('anon sub', $notes[0], "anon callback");
+
+        $r->notes->clear;
+    }
+
+    # registered callbacks are run in reversed order LIFO
+    {
+        {
+            my $p = APR::Pool->new;
+
+            $p->cleanup_register(\&add_cleanup, [$r, 'first']);
+            $p->cleanup_register(\&add_cleanup, [$r, 'second']);
+        }
+
+        my @notes = $r->notes->get('cleanup');
+        ok t_cmp('second', $notes[0], "two cleanup functions");
+        ok t_cmp('first',  $notes[1], "two cleanup functions");
 
         $r->notes->clear;
     }
