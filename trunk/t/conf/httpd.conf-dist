@@ -275,8 +275,7 @@ SSLCacheServerPort /tmp/gcache_port
 
 <IfModule mod_ssl.c>
 SSLDisable
-SSLCacheServerPath /tmp
-SSLCacheServerPort /tmp/gcache_port
+SSLSessionCache none
 </IfModule>
 
 <Location /status>

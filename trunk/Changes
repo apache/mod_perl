@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+update mod_ssl config for 'make test'
+[Stas Bekman <sbekman@stason.org>]
+
 reset the stack pointer after calling perl_require_module() in
 perl_call_handler().  this fix will most likely cure the reports of
 "Can't upgrade that kind of scalar at ..."
