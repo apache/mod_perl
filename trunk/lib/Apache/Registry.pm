@@ -54,12 +54,14 @@ sub handler {
 
 	my $mtime = -M _;
 
+	my $uri = $r->uri;
+	$uri = "/__INDEX__" if $uri eq "/";
 	# turn into a package name
 	$r->log_error(sprintf "Apache::Registry::handler examining %s",
-		      $r->uri) if $Debug && $Debug & 4;
+		      $uri) if $Debug && $Debug & 4;
 	my $script_name = $r->path_info ?
-	    substr($r->uri, 0, length($r->uri)-length($r->path_info)) :
-		$r->uri;
+	    substr($uri, 0, length($uri)-length($r->path_info)) :
+		$uri;
 
 	if($Apache::Registry::NameWithVirtualHost) {
 	    my $name = $r->get_server_name;
@@ -121,7 +123,7 @@ sub handler {
 	    $r->stash_rgy_endav($script_name);
 	    if ($@) {
 		$r->log_error($@);
-		$@{$r->uri} = $@;
+		$@{$uri} = $@;
 		return SERVER_ERROR unless $Debug && $Debug & 2;
 		return Apache::Debug::dump($r, SERVER_ERROR);
 	    }
@@ -139,7 +141,7 @@ sub handler {
 	if($@) {
 	    $errsv = $@;
 	    $@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks
-	    $@{$r->uri} = $errsv;
+	    $@{$uri} = $errsv;
 	}
 
 	if($errsv) {
