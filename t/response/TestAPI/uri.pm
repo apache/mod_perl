@@ -30,7 +30,7 @@ sub handler {
     my $up = $uri->unparse;
     ok $up =~ m:^$location:;
 
-    my $curl = $r->construct_url($r->uri, $r->pool);
+    my $curl = $r->construct_url;
     my $parsed = APR::URI->parse($r, $curl);
 
     ok $parsed->isa('APR::URI');
