@@ -6,7 +6,7 @@ d) split off into something standalone on cpan
 
 - MaxModPerlRequestsPerChild
 
-- $r->seqno, $r->sent_header, $r->cgi_env, $r->cgi_var,
+- $r->seqno, $r->sent_header, 
   $r->query_string, $r->basic_http_header, $r->new_read,
   $r->write_client, $r->read_client_block, $r->translate_name
 
