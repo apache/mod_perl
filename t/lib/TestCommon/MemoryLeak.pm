@@ -1,4 +1,4 @@
-package ModPerl::TestMemoryLeak;
+package TestCommon::MemoryLeak;
 
 # handy functions to measure memory leaks. since it measures the total
 # memory size of the process and not just perl leaks, you get your
@@ -7,11 +7,11 @@ package ModPerl::TestMemoryLeak;
 # For example to test TestAPR::Pool::handler for leaks, add to its
 # top:
 #
-#  ModPerl::TestMemoryLeak::start();
+#  TestCommon::MemoryLeak::start();
 #
 # and just before returning from the handler add:
 #
-#  ModPerl::TestMemoryLeak::end();
+#  TestCommon::MemoryLeak::end();
 #
 # now start the server with only worker server
 #

@@ -1,4 +1,4 @@
-package ModPerl::TestTiePerlSection;
+package TestCommon::TiePerlSection;
 
 use strict;
 use warnings FATAL => 'all';
