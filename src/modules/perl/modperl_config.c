@@ -15,8 +15,19 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 #define merge_item(item) \
 mrg->item = add->item ? add->item : base->item
 
+#define merge_handlers(merge_flag, array) \
+    if (merge_flag(mrg)) { \
+        mrg->array = modperl_handler_array_merge(p, \
+                                                 base->array, \
+                                                 add->array); \
+    } \
+    else { \
+        merge_item(array); \
+    }
+
 void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
 {
+    int i;
     modperl_config_dir_t
         *base = (modperl_config_dir_t *)basev,
         *add  = (modperl_config_dir_t *)addv,
@@ -29,15 +40,12 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(interp_lifetime);
 #endif
 
-    { /* XXX: should do a proper merge of the arrays */
-      /* XXX: and check if Perl*Handler is disabled */
-        int i;
-        for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
-            merge_item(handlers_per_dir[i]);
-        }
-    }
-
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
+
+    /* XXX: check if Perl*Handler is disabled */
+    for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
+        merge_handlers(MpDirMERGE_HANDLERS, handlers_per_dir[i]);
+    }
 
     return mrg;
 }
@@ -132,6 +140,7 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 /* XXX: this is not complete */
 void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
 {
+    int i;
     modperl_config_srv_t
         *base = (modperl_config_srv_t *)basev,
         *add  = (modperl_config_srv_t *)addv,
@@ -151,24 +160,21 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
 
     merge_item(argv);
 
-    { /* XXX: should do a proper merge of the arrays */
-      /* XXX: and check if Perl*Handler is disabled */
-        int i;
-        for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
-            merge_item(handlers_per_srv[i]);
-        }
-        for (i=0; i < MP_HANDLER_NUM_FILES; i++) {
-            merge_item(handlers_files[i]);
-        }
-        for (i=0; i < MP_HANDLER_NUM_PROCESS; i++) {
-            merge_item(handlers_process[i]);
-        }
-        for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
-            merge_item(handlers_connection[i]);
-        }
-    }
-
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
+
+    /* XXX: check if Perl*Handler is disabled */
+    for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
+        merge_handlers(MpSrvMERGE_HANDLERS, handlers_per_srv[i]);
+    }
+    for (i=0; i < MP_HANDLER_NUM_FILES; i++) {
+        merge_handlers(MpSrvMERGE_HANDLERS, handlers_files[i]);
+    }
+    for (i=0; i < MP_HANDLER_NUM_PROCESS; i++) {
+        merge_handlers(MpSrvMERGE_HANDLERS, handlers_process[i]);
+    }
+    for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
+        merge_handlers(MpSrvMERGE_HANDLERS, handlers_connection[i]);
+    }
 
     return mrg;
 }

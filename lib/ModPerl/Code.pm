@@ -89,8 +89,9 @@ while (my($k,$v) = each %directive_proto) {
 #XXX: allow disabling of PerDir hooks on a PerDir basis
 my @hook_flags = (map { canon_uc($_) } keys %hooks);
 my %flags = (
-    Srv => [qw(NONE CLONE PARENT ENABLED AUTOLOAD), @hook_flags, 'UNSET'],
-    Dir => [qw(NONE SEND_HEADER SETUP_ENV UNSET)],
+    Srv => [qw(NONE CLONE PARENT ENABLED AUTOLOAD MERGE_HANDLERS),
+            @hook_flags, 'UNSET'],
+    Dir => [qw(NONE SEND_HEADER SETUP_ENV MERGE_HANDLERS UNSET)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC)],
 );

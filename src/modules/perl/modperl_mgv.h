@@ -3,6 +3,9 @@
 
 modperl_mgv_t *modperl_mgv_new(apr_pool_t *p);
 
+int modperl_mgv_equal(modperl_mgv_t *mgv1,
+                      modperl_mgv_t *mgv2);
+
 modperl_mgv_t *modperl_mgv_compile(pTHX_ apr_pool_t *p, const char *name);
 
 char *modperl_mgv_name_from_sv(pTHX_ apr_pool_t *p, SV *sv);
