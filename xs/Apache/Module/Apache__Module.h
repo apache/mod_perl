@@ -6,7 +6,7 @@ static MP_INLINE int mpxs_Apache__Module_loaded(pTHX_ char *name)
     char nameptr[256];
     char *base;
     module *modp;
-
+    
     /* Does the module name have a '.' in it ? */
     if ((base = ap_strchr(name, '.'))) {
         int len = base - name;
@@ -64,19 +64,19 @@ static MP_INLINE SV *mpxs_Apache__Module_get_config(pTHX_
     }
 
     if (!(modp = apr_hash_get(scfg->modules, name, APR_HASH_KEY_STRING))) {
-        return Nullsv;
+        return &PL_sv_undef;
     }
 
     if (!(ptr = ap_get_module_config(v, modp))) {
-        return Nullsv;
+        return &PL_sv_undef;
     }
 
     if (!(table = modperl_module_config_table_get(aTHX_ FALSE))) {
-        return Nullsv;
+        return &PL_sv_undef;
     }
 
     if (!(obj = modperl_svptr_table_fetch(aTHX_ table, ptr))) {
-        return Nullsv;
+        return &PL_sv_undef;
     }
 
     return SvREFCNT_inc(obj);
