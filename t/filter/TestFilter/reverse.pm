@@ -18,7 +18,10 @@ sub handler {
             $filter->print("\n");
         }
     }
-    $filter->print("Reversed by mod_perl 2.0\n");
+
+    if ($filter->seen_eos) {
+        $filter->print("Reversed by mod_perl 2.0\n");
+    }
 
     return Apache::OK;
 }
