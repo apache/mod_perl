@@ -15,6 +15,16 @@ typedef struct {
     request_rec *r;
 } PerlIOApache;
 
+/* not too long so it won't wrap when posted in email */
+#define IO_DUMP_LENGTH 35
+/* dumping hundreds of lines in the trace, makes it hard to read. Get
+ * a string chunk of IO_DUMP_LENGTH or less */
+#define IO_DUMP_FIRST_CHUNK(p, str, count)       \
+    count < IO_DUMP_LENGTH                       \
+        ? (char *)str                            \
+        : (char *)apr_psprintf(p, "%s...",       \
+                               apr_pstrmemdup(p, str, IO_DUMP_LENGTH))
+
 /* _open just allocates the layer, _pushed does the real job of
  * filling the data in */
 static PerlIO *
@@ -114,7 +124,8 @@ PerlIOApache_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
         total = ap_get_client_block(r, vbuf, count);
 
         MP_TRACE_o(MP_FUNC, "wanted %db, read %db [%s]",
-                   count, total, (char *)vbuf);
+                   count, total,
+                   IO_DUMP_FIRST_CHUNK(r->pool, vbuf, total));
 
         if (total < 0) {
             /*
@@ -143,7 +154,8 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     
     MP_CHECK_WBUCKET_INIT("print");
 
-    MP_TRACE_o(MP_FUNC, "%d bytes [%s]", count, (char *)vbuf);
+    MP_TRACE_o(MP_FUNC, "%4db [%s]", count,
+               IO_DUMP_FIRST_CHUNK(rcfg->wbucket->pool, vbuf, count));
         
     rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
     if (rv != APR_SUCCESS) {
@@ -174,9 +186,12 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
 
     MP_CHECK_WBUCKET_INIT("flush");
 
-    MP_TRACE_o(MP_FUNC, "%d bytes [%s]", rcfg->wbucket->outcnt,
-               apr_pstrmemdup(rcfg->wbucket->pool, rcfg->wbucket->outbuf,
-                              rcfg->wbucket->outcnt));
+    MP_TRACE_o(MP_FUNC, "%4db [%s]", rcfg->wbucket->outcnt,
+               IO_DUMP_FIRST_CHUNK(rcfg->wbucket->pool,
+                                   apr_pstrmemdup(rcfg->wbucket->pool,
+                                                  rcfg->wbucket->outbuf,
+                                                  rcfg->wbucket->outcnt),
+                                   rcfg->wbucket->outcnt));
 
     MP_FAILURE_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE));
 
