@@ -578,9 +578,9 @@ static void mod_perl_boot(void *data)
     perl_require_module("DynaLoader", NULL);
 }
 
-static void mod_perl_xs_init(void)
+static void mod_perl_xs_init(pTHX)
 {
-    xs_init();
+    xs_init(aTHX);
 
     /* XXX: in 5.7.2+ we can call the body of mod_perl_boot here
      * but in 5.6.1 the Perl runtime is not properly setup yet

@@ -168,6 +168,8 @@
 #ifndef PERL_IS_5_6
 #define pTHX_
 #define aTHXo_
+#define aTHX
+#define pTHX
 #define CopFILEGV(cop) cop->cop_filegv
 #define CopLINE(cop)   cop->cop_line
 #define CopLINE_set(c,l) (CopLINE(c) = (l))
