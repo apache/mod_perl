@@ -9,4 +9,9 @@ int modperl_const_compile(pTHX_ const char *classname,
 
 XS(XS_modperl_const_compile);
 
+#define MP_newModPerlConstXS(name) \
+   newXS(name "::Const::compile", \
+         CvXSUB(get_cv("ModPerl::Const::compile", TRUE)), \
+         __FILE__)
+
 #endif /* MODPERL_CONST_H */
