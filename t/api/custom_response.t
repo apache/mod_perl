@@ -20,7 +20,7 @@ my $file = catfile Apache::Test::vars('documentroot'),
     qw(api custom_response.txt);
 
 open my $fh, $file or die "Can't open $file: $!";
-my $data = do { local $/; <$fh> };
+my $data = do { binmode $fh; local $/; <$fh> };
 close $fh;
 
 plan tests => 4, need_lwp;
