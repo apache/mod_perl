@@ -1303,7 +1303,7 @@ apaci_install:
 	(cd $(APACHE_ROOT) && $(MAKE) install)
 
 tar_Apache:
-	(cd $(INSTALLSITELIB); \
+	(cd $(INSTALLSITELIB)/$(ARCHNAME); \
 	     $(TAR) -cf $(PWD)/Apache.tar mod_perl.pm Apache.pm Apache $(ARCHNAME)/auto/Apache; )
 
 offsite-tar:
