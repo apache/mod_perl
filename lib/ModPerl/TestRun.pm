@@ -26,7 +26,7 @@ use base qw(Apache::TestConfig);
 sub should_skip_module {
     my($self, $name) = @_;
 
-    $name eq 'mod_perl.c' ? 1 : $self->SUPER::should_load_module($name);
+    $name eq 'mod_perl.c' ? 1 : $self->SUPER::should_skip_module($name);
 }
 
 1;
