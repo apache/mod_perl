@@ -583,9 +583,9 @@ int modperl_is_running(void)
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp)
 {
-    /* XXX: htf can we have PerlPreConfigHandler
-     * without first configuring mod_perl ?
-     */
+    /* we can't have PerlPreConfigHandler without first configuring mod_perl */
+
+    /* perl 5.8.1+ */
     modperl_hash_seed_init(p);
 
     return OK;
