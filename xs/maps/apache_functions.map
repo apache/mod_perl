@@ -147,12 +147,12 @@ MODULE=Apache::Connection   PACKAGE=guess
 >ap_update_vhost_given_ip
  ap_new_connection
 
-!MODULE=Apache::Log   PACKAGE=guess
- ap_log_assert
+MODULE=Apache::Log   PACKAGE=guess
+?ap_log_assert
  ap_log_error
- ap_log_perror
+-ap_log_perror
  ap_log_pid
- ap_log_rerror
+~ap_log_rerror
 >ap_open_stderr_log
 >ap_open_logs
 
