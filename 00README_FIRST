@@ -37,11 +37,10 @@ different for your platform)
 
 as for httpd.conf, mine looks something like so at the moment:
 
-#same as using the MOD_PERL_TRACE environment variable
-
 #if dynamic build
 LoadModule perl_module libexec/libmodperl.so
 
+#same as using the MOD_PERL_TRACE environment variable
 PerlTrace all
 
 #only with -Dusethreads
