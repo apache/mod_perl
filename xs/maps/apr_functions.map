@@ -125,7 +125,8 @@ MODULE=APR::Bucket
 >apr_bucket_alloc
  apr_bucket_alloc_create
  apr_bucket_alloc_destroy
- apr_bucket_setaside
+~apr_bucket_setaside
+ mpxs_APR__Bucket_setaside
 >apr_bucket_free
 !apr_bucket_copy_notimpl
 !apr_bucket_shared_copy
