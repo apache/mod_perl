@@ -9,7 +9,7 @@ Changes - Apache mod_perl change logfile
 =item 1.21_01-dev
 
 Tweak Apache::content to comply with media-types embedded in content-types
-(RFC 2068 section 14.18) <cholet@logilune.com>
+(RFC 2616 section 3.7) <cholet@logilune.com>
 
 Removed and added a few modules from the Bundle file. <ask@netcetera.dk>
 
