@@ -6,6 +6,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 require Exporter;
 require DynaLoader;
 require AutoLoader;
+use Data::Dumper 'Dumper';
 
 @ISA = qw(Exporter DynaLoader);
 # Items to export into callers namespace by default. Note: do not export
@@ -16,11 +17,36 @@ require AutoLoader;
 );
 $VERSION = '0.01';
 
-bootstrap Apache::TestDirectives $VERSION;
+if($ENV{MOD_PERL}) {
+    bootstrap Apache::TestDirectives $VERSION;
+}
 
-sub TestCmd {
-    my($one, $two, $three) = @_;
+sub TestCmd ($$$) {
+    my($cfg, $one, $two, $three) = @_;
+    #@_ == 2 or die "prototype check failed!";
     warn "TestCmd called with args: `$one', `$two', `$three'\n";
+    $cfg->{TestCmd} = [$one,$two];
+    warn Dumper($cfg), $/;
+    return $cfg;
+}
+
+sub AnotherCmd {
+    my($cfg, @data) = @_;
+    $cfg->{AnotherCmd} = [@data];
+    warn Dumper($cfg), $/;
+    $cfg->{YAC} = [@data];
+    return $cfg;
+}
+
+sub CmdIterate (@) {
+    my($cfg, @data) = @_;
+    warn "$cfg->ITERATE: @data\n";
+}
+
+sub YAC {
+    my($cfg, @data) = @_;
+    warn Dumper($cfg), $/;
+    #return $cfg;
 }
 
 # Preloaded methods go here.

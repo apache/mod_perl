@@ -6,7 +6,8 @@ package LoadClass;
 
 sub method ($$) {
     my($class, $r) = @_;  
-    warn "$class->method called\n";
+    #warn "$class->method called\n";
+    0;
 }
 
 1;

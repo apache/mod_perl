@@ -923,8 +923,12 @@ CHAR_P perl_cmd_type_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg
 CHAR_P perl_cmd_fixup_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_handler_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
 CHAR_P perl_cmd_log_handlers (cmd_parms *parms, perl_dir_config *rec, char *arg);
-CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, void *dummy,
-				  char *one, char *two, char *three);
+CHAR_P perl_cmd_perl_TAKE1(cmd_parms *cmd, SV **data, char *one);
+CHAR_P perl_cmd_perl_TAKE2(cmd_parms *cmd, SV **data, char *one, char *two);
+CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, SV **config,
+			     char *one, char *two, char *three);
+#define perl_cmd_perl_TAKE3   perl_cmd_perl_TAKE123
+#define perl_cmd_perl_ITERATE perl_cmd_perl_TAKE1
 
 void mod_perl_dir_env(perl_dir_config *cld);
 void mod_perl_pass_env(pool *p, perl_server_config *cls);
