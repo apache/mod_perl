@@ -10,7 +10,9 @@ use Apache::Const -compile => qw(OK);
 sub handler {
     my Apache::Connection $c = shift;
 
-    $c->notes->set(preconnection => 'ok');
+    my $ip = $c->remote_ip;
+
+    $c->notes->set(preconnection => $ip);
 
     return Apache::OK;
 }

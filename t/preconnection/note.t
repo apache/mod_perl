@@ -7,12 +7,14 @@ use Apache::TestRequest;
 
 my $module = "TestPreConnection::note";
 Apache::TestRequest::module($module);
-my $hostport = Apache::TestRequest::hostport(Apache::Test::config());
+my $config = Apache::Test::config();
+my $hostport = Apache::TestRequest::hostport($config);
 my $location = "http://$hostport/" . Apache::TestRequest::module2path($module);
+my $remote_addr = $config->{vars}->{remote_addr};
 t_debug("connecting to $location");
 plan tests => 1;
 
 ok t_cmp(
-    'ok', 
-    GET_BODY($location),
+    $remote_addr,
+    GET_BODY_ASSERT($location),
     "connection notes");
