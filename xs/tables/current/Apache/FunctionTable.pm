@@ -1356,11 +1356,6 @@ $Apache::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'ap_get_server_version',
-    'args' => []
-  },
-  {
-    'return_type' => 'const char *',
     'name' => 'ap_get_status_line',
     'args' => [
       {
