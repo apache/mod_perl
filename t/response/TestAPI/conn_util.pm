@@ -11,7 +11,7 @@ use Apache::RequestUtil ();
 use Apache::Connection ();
 
 use Apache::Const -compile => qw(OK REMOTE_HOST REMOTE_NAME
-    REMOTE_NOLOOKUP REMOTE_DOUBLE_REV CONN_CLOSE);
+    REMOTE_NOLOOKUP REMOTE_DOUBLE_REV);
 
 sub handler {
     my $r = shift;
