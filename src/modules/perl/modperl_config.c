@@ -164,10 +164,19 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 
     ap_mpm_query(AP_MPMQ_IS_THREADED, &scfg->threaded_mpm);
 
-    /* give a chance to MOD_PERL_TRACE env var to set PerlTrace. This
-     * place is the earliest point in mod_perl configuration
-     * parsing, when we have the server object */
     if (!s->is_virtual) {
+
+        /* Must store the global server record as early as possible,
+         * because if mod_perl happens to be started from within a
+         * vhost (e.g., PerlLoadModule) the base server record won't
+         * be availalbe to vhost and things will blow up
+         */
+        modperl_init_globals(s, p);
+
+        /* give a chance to MOD_PERL_TRACE env var to set
+         * PerlTrace. This place is the earliest point in mod_perl
+         * configuration parsing, when we have the server object
+         */
         modperl_trace_level_set(s, NULL);
     }
     
