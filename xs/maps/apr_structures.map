@@ -2,7 +2,7 @@
 
 IGNORE: apr_pool_t apr_os_ apr_vformatter_buff_t apr_pool_t \
 apr_table_t apr_in_addr_t apr_bucket_ apr_md5_ctx_t apr_sha1_ctx_t \
-apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t
+apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
 
 #buckets
 

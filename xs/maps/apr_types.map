@@ -15,6 +15,9 @@ struct hostent          | UNDEFINED
 apr_shutdown_how_e      | UNDEFINED
 apr_interface_e         | UNDEFINED
 
+#netlib stuff
+struct apr_ipsubnet_t   | APR::IpSubnet
+
 #bucket stuff
 struct apr_bucket           | APR::Bucket
 struct apr_bucket_brigade   | APR::Brigade
