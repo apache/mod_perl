@@ -182,15 +182,8 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 
     rc = apr_file_read(st->file, vbuf, &count);
 
-#ifdef MP_TRACE
-    {
-        char *trace_buf = (char *)apr_pcalloc(st->pool,
-                                                   sizeof(char*)*count);
-        memcpy((void*)trace_buf, vbuf, count);
-        trace_buf[count] = '\0';
-        MP_TRACE_o(MP_FUNC, "count %d, [%s]", (int)count, (char*) trace_buf);
-    }
-#endif
+    MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
+               MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
     
     if (rc == APR_EOF) {
         PerlIOBase(f)->flags |= PERLIO_F_EOF;
@@ -209,7 +202,8 @@ static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
 
-    MP_TRACE_o(MP_FUNC, "count %d, [%s]", (int)count, (char*) vbuf);
+    MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
+               MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
     
     rc = apr_file_write(st->file, vbuf, &count);
     if (rc == APR_SUCCESS) {
