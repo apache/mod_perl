@@ -67,11 +67,14 @@ static apr_table_t *merge_table_config_vars(apr_pool_t *p,
      *
      * unfortunately, there is no set of apr functions to do this for us - 
      * apr_compress_table would be ok, except it always merges mulit-valued
-     * keys into one, regardless of the merge flag, which is no good - we
-     * need separate entries, not a single comma-delimted entry.
+     * keys into one, regardless of the APR_OVERLAP_TABLES flag.  that is,
+     * regardless of whether newer entries are set or merged into existing
+     * entries, the entire table is _always_ compressed.  this is no good -
+     * we need separate entries for existing keys, not a single (compressed)
+     * entry.
      *
-     * fortunately, the logic here is simple - first, (re)set the base (parent)
-     * table where a PerlSetVar entry exists in the child (add) configuration.
+     * fortunately, the logic here is simple.  first, (re)set the base (parent)
+     * table where a PerlSetVar entry exists in the add (child) configuration.
      * then, just overlay the PerlAddVar configuration into it.
      */
 
