@@ -90,13 +90,6 @@
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=100622977803237&w=2
   http://marc.theaimsgroup.com/?t=97984528900002&r=1&w=2
 
-* ht_time() - now requires a pool, temporarily renamed format_time for
-  1.x ht_time compat.  should we just leave as is or see if ht_time can
-  be changed to not require a pool?
-  Status: probably rename it back and just require the
-  pool. Apache::compat will override this method and if the pool
-  wasn't passed it'll create one behind the scenes (APR::Pool->new).
-
 * Apache::{Server,Process} classes:
   require mutex lock for writing (e.g. $s->(error_fname|error_log)
   Status: most likely some server/process datastructures aren't

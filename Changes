@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+ht_time w/o the pool is now available only via override/restore compat
+API. format_time, has been renamed back to ht_time, and the default
+values for fmt, time and gmt are now supported. [Stas]
+
 it's now possible to push new handlers into the same phase that is
 running at the moment [Stas].
 
