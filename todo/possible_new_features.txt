@@ -19,6 +19,7 @@ config features:
 - implement PerlINC (or similar) as a nicer interface for the working
   PerlSwitches -Mlib=/home/dev1/lib/perl, to set different @INC for
   different virtual hosts.
+  See the thread: http://marc.theaimsgroup.com/?t=100554858800001&r=1&w=2
 
 - a possible implementation of PerlOptions +Inherit, similar to
   +Parent but which allows virtual hosts to inherit everything that
@@ -97,6 +98,10 @@ modules:
 
   if MP_APACHE_COMPAT Makefile.PL option is true. But this adds bloat,
   so this is just an option to consider.
+
+- Apache::File->tmpfile now lives only in compat. Consider adding
+  APR::File->mktemp (apr_file_mktemp) and a perlio layer
+  defined in terms of apr_file_t to use it.
 
 
 new modules:
