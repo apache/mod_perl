@@ -410,8 +410,6 @@ sub write_pm {
         $file = "$tdir/$subdir/$file";
     }
 
-    open my $pm, '>', $file or die "open $file: $!";
-
     # sort the hashes (including nested ones) for a consistent dump
     canonsort(\$data);
 
@@ -422,7 +420,7 @@ sub write_pm {
     my $version = $self->VERSION;
     my $date = scalar localtime;
 
-    print $pm <<EOF;
+    my $new_content = << "EOF";
 package $name;
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -435,7 +433,31 @@ $dump
 
 1;
 EOF
-    close $pm;
+
+    my $old_content = '';
+    if (-e $file) {
+        open my $pm, '<', $file or die "open $file: $!";
+        local $/ = undef; # slurp the file
+        $old_content = <$pm>;
+        close $pm;
+    }
+
+    my $overwrite = 1;
+    if ($old_content) {
+        # strip the date line, which will never be the same before
+        # comparing
+        my $table_header = qr{^\#\s!.*};
+        (my $old = $old_content) =~ s/$table_header//mg;
+        (my $new = $new_content) =~ s/$table_header//mg;
+        $overwrite = 0 if $old eq $new;
+    }
+
+    if ($overwrite) {
+        open my $pm, '>', $file or die "open $file: $!";
+        print $pm $new_content;
+        close $pm;
+    }
+
 }
 
 # canonsort(\$data);
