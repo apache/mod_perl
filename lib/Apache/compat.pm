@@ -21,6 +21,7 @@ use strict;
 use Apache::RequestRec ();
 use Apache::Connection ();
 use Apache::Server ();
+use Apache::ServerUtil ();
 use Apache::Access ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
