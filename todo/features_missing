@@ -63,8 +63,6 @@
   should be simple, see modperl_log.h (currently aliased to log_error
   in compat.pm)
 
-* APR::URI missing $uri->rpath
-
 * size_string() - can we use apr_strfsize ?
 
 * escape_html() - consider jeff baker's more robust implementation of

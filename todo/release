@@ -4,6 +4,30 @@
 
 -- see also todo/api_status
 
+* rewrite the tests/docs not to remove the bucket until it was read
+  from
+
+* APR::URI missing $uri->rpath (was in mp1)
+
+* Apache::RequestRec's $r->content_languages is missing (was in mp1)
+
+* check other todo/features_missing items (some of them might be
+  critical for 2.0 release, since missing methods might be a problem
+  for migration)
+
+* pools that go out of scope:
+
+  perl -MApache2 -MAPR::Pool -MAPR::PerlIO -le '; 
+  open my $fh, "<:APR", "/tmp/xxx", APR::Pool->new; print <$fh>'
+  APR::PerlIO::read: (9) Bad file descriptor at -e li
+
+  first of all, try to never allow passing temp pools, e.g in the
+  above example, we can check that the pool object doesn't have the
+  TEMP flag on.
+
+  but that does really solve the problem. So we aren't sure how to
+  deal with that.
+
 * $bb->cleanup segfaults (originally in TestProtocol::echo_bbs2
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108967266419527&w=2
   owner: gozer
