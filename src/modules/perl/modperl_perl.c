@@ -33,6 +33,24 @@ static modperl_perl_core_global_t MP_perl_core_global_entries[] = {
     { NULL },
 };
 
+XS(XS_ModPerl__Util_exit); /* prototype to pass -Wmissing-prototypes */
+XS(XS_ModPerl__Util_exit)
+{
+    dXSARGS;
+    int status;
+    if (items < 0 || items > 1) {
+        Perl_croak(aTHX_ "Usage: ModPerl::Util::exit(status=0)");
+    }
+    if (items < 1)
+        status = 0; /* default: 0 */
+    else {
+        status = (int)SvIV(ST(0));
+    }
+    modperl_perl_exit(aTHX_ status);
+    
+    XSRETURN_EMPTY;
+}
+
 void modperl_perl_core_global_init(pTHX)
 {
     modperl_perl_core_global_t *cglobals = MP_perl_core_global_entries;
@@ -43,6 +61,8 @@ void modperl_perl_core_global_init(pTHX)
         GvIMPORTED_CV_on(gv);
         cglobals++;
     }
+
+    newXS("ModPerl::Util::exit", XS_ModPerl__Util_exit, __FILE__);
 }
 
 static void modperl_perl_ids_get(modperl_perl_ids_t *ids)

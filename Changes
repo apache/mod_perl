@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_20-dev
 
+move ModPerl::Util::exit() into mod_perl.so, since it needs to work,
+even if ModPerl::Util wasn't loaded [Stas]
+
+
+
 =item 1.99_19 - December 23, 2004
 
 $r->hostname is now writable [Gozer]
