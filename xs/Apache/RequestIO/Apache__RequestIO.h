@@ -68,8 +68,9 @@ static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,
     return nrd;
 }
 
-static MP_INLINE SV *mpxs_Apache__RequestRec_TIEHANDLE(SV *classname,
-                                                       SV *obj)
+static MP_INLINE
+request_rec *mpxs_Apache__RequestRec_TIEHANDLE(SV *classname,
+                                               request_rec *r)
 {
-    return obj;
+    return r;
 }
