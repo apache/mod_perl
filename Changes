@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+Apache::SubRequest->run(1) allows ap_send_http_headers() to output for
+subrequests
+
 Apache::{Registry,PerlRun} will now log an error if $filename is NOT_FOUND
 thanks to Martin Wood for the spot
 

@@ -2027,10 +2027,15 @@ DESTROY(r)
 	    "Apache::SubRequest::DESTROY(0x%lx)\n", (unsigned long)r));
 
 int
-run(r)
+run(r, allow_send_header=0)
     Apache::SubRequest r
+    int allow_send_header
 
     CODE:
+    if (allow_send_header) {
+        r->assbackwards = 0;
+    }
+
     RETVAL = run_sub_req(r);
 
     OUTPUT:

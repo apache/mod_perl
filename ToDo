@@ -27,12 +27,9 @@ POSSIBLE NEW FEATURES
 
 - add Filter::Call support to Apache::RegistryNG (or subclass of)
 
-- Perl{Eval,Do} directives [Salvador Ortiz Garcia <sog@msg.com.mx>]
+- PerlEval directive [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
 - add srand stuff ?
-
-- Apache::SubRequest->run(1) allows ap_send_http_headers() to output
-  for subrequests
 
 - allow $r->server->uid($new_uid) ?
   [Rob Giseburt <rob@eatech.net>]
