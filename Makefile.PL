@@ -71,6 +71,9 @@ ModPerl::MM::WriteMakefile(
     clean => {
         FILES => "@{ clean_files() }",
     },
+    dist => {
+        DIST_DEFAULT => 'mydist',
+    },
 );
 
 post_configure();
@@ -209,7 +212,8 @@ sub clean_files {
 
     return [@{ $build->clean_files },
             <xs/*.exp>, <xs/*.def>,
-      map { "$path/$_"} @{ $code->clean_files }];
+            qw(MANIFEST),
+            map { "$path/$_"} @{ $code->clean_files }];
 }
 
 sub set_modperl_version {
@@ -358,7 +362,9 @@ sub MY::clean {
 }
 
 sub MY::postamble {
-    '';
+    return <<EOF;
+mydist : manifest tardist
+EOF
 }
 
 sub MY::tool_autosplit {
@@ -389,4 +395,13 @@ sub MY::pasthru {
     "\t".'PERL="$(PERL)"\\',
     "\t".'DEFINE="$(DEFINE)"',
     "";
+}
+
+sub MY::dist_basics {
+    my $self = shift;
+    my $str = $self->MM::dist_basics;
+
+    $str =~ s/-MExtUtils(::Manifest=mkmanifest)/-Ilib -MModPerl$1/;
+
+    $str;
 }
