@@ -5,8 +5,8 @@ inaccurate at times. Feel free to contribute.
 
 =head1 Installing
 
-Download the httpd-2.0 and modperl-2.0 tarballs, and extract them
-in the same directory.
+Download the httpd-2.0 and modperl-2.0 tarballs, and extract them in the
+same directory.
 
 Or use anoncvs (password is "anoncvs"):
 
@@ -17,7 +17,7 @@ Or use anoncvs (password is "anoncvs"):
  % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr
  % cvs -d :pserver:anoncvs@www.apache.org:/home/cvspublic co apr-util
  % cd ..
- % buildconf
+ % ./buildconf
  % ./configure --prefix=$HOME/apache-2.0 \
    --with-mpm=threaded --enable-so
  % make && make install
