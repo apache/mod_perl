@@ -1635,6 +1635,9 @@ callback:
     if(perl_eval_ok(r->server) != OK) {
 	dTHRCTX;
 	MP_STORE_ERROR(r->uri, ERRSV);
+    if (r->notes) {
+        ap_table_set(r->notes, "error-notes", SvPVX(ERRSV));
+    }
 	if(!perl_sv_is_http_code(ERRSV, &status))
 	    status = SERVER_ERROR;
     }
