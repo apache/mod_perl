@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+add support for libgtop 2.5.0+ (maintenance mode) [Stas]
+
 APR::Socket::timeout_set now croaks on failure [Stas]
 
 significantly speedup the startup of threaded mpm test suite, by

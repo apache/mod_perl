@@ -25,7 +25,9 @@
 #include <glibtop.h>
 #include <glibtop/open.h>
 #include <glibtop/close.h>
+#ifndef GTOP_2_5_PLUS
 #include <glibtop/xmalloc.h>
+#endif
 #include <glibtop/parameter.h>
 #include <glibtop/union.h>
 #include <glibtop/sysdeps.h>
