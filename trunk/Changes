@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+DSO support for hpux with native cc
+
 document Apache->server->register_cleanup
 [Perrin Harkins <perrin@primenet.com>]
 
