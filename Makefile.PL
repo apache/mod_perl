@@ -293,6 +293,8 @@ sub set_modperl_version {
 	last if /^=item/;
     }
     close $fh;
+
+    $build->{VERSION} = $VERSION;
 }
 
 sub perl_version_check {
