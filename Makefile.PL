@@ -1,3 +1,4 @@
+#! /usr/local/bin/perl
 BEGIN { 
     $Is_Win32 = ($^O eq "MSWin32");
     if($Is_Win32) {
@@ -885,6 +886,10 @@ sub init_tests_and_config {
 	    $cmd .= qq(CFLAGS="$PERL_EXTRA_CFLAGS" );
 	}    
 	
+	if ($USE_DSO) {		# override apache's notion of this flag
+	  $cmd .= qq(LDFLAGS_SHLIB_EXPORT="$Config{ccdlflags}" );
+	}
+
 	$cmd .= "./configure " .
 		  "--activate-module=src/modules/perl/libperl.a";
 
