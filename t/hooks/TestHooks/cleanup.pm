@@ -17,7 +17,7 @@ use Apache::RequestUtil ();
 use Apache::Const -compile => qw(OK DECLINED);
 
 sub get_file {
-    catfile Apache::Test::config->{vars}->{documentroot}, "hooks", "cleanup";
+    catfile Apache::Test::vars("documentroot"), "hooks", "cleanup";
 }
 
 sub handler {

@@ -10,9 +10,7 @@ use File::Spec::Functions qw(catfile catdir);
 use constant SIZE  => 10;
 use constant TRIES => 20;
 
-my $vars = Apache::Test::config->{vars};
-my $dir  = catdir $vars->{documentroot}, "hooks";
-my $file = catfile $dir, "cleanup";
+my $file = catfile Apache::Test::vars("documentroot"), "hooks", "cleanup";
 
 plan tests => 2;
 
