@@ -36,6 +36,8 @@ PerlRequire docs/init.pl
 
 PerlRequire docs/startup.pl
 
+PerlRequire docs/stacked.pl
+
 PerlTransHandler PerlTransHandler
 
 
@@ -274,4 +276,9 @@ PerlSetupEnv Off
 <Location /death>
 PerlHandler Apache::Death
 SetHandler perl-script
+</Location>
+
+<Location /chain>
+SetHandler perl-script
+PerlHandler Stacked::one Stacked::two Stacked::three Stacked::four
 </Location>

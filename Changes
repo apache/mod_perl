@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_02-dev
 
+enabled Apache::ModuleConfig on win32
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
+win32 support for Apache::src [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 =item 1.25_01 - July 6, 2001
 
 add symbols to mod_perl.exp for aix/axkit

@@ -11,3 +11,5 @@ perl_cmd_perl_TAKE123
 perl_perl_cmd_cleanup
 hvrv2table
 perl_call_handler
+perl_clear_symtab
+perl_get_startup_pool

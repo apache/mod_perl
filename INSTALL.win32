@@ -151,6 +151,10 @@ After this, running
 
 will complete the installation.
 
+This latter method of building mod_perl will also install the
+Apache and mod_perl header files, which can then be accessed
+through the Apache::src module.
+
 =head1 CONFIGURATION
 
 Add this line to httpd.conf:

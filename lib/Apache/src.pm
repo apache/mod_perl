@@ -91,7 +91,7 @@ sub new {
 
 sub mmn_eq {
     my($class, $dir) = @_;
-    return 1 if $Is_Win32; #just assume, till Apache::src works under win32 
+#    return 1 if $Is_Win32; #just assume, till Apache::src works under win32 
     my $instsrc;
     {
 	local @INC = grep { !/blib/ } @INC;
