@@ -1,5 +1,7 @@
 =item 1.99_02-dev
 
+fix ModPerl::Util::exit to clear $@ before calling Perl_croak [dougm]
+
 fix 'PerlOptions +GlobalRequest' when used within subrequests [dougm]
 
 get rid of some "subroutine redefined" warnings in ModPerl::MM that
