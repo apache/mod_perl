@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+INSTALL.raven update [Adam Qualset <adam@covalent.net>]
+
 backed out $Apache::Server::ConfigTestOnly until proper Apache support
 is in place
 
