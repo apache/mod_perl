@@ -1064,6 +1064,7 @@ typedef struct {
 typedef struct {
     HV *pnotes;
     int setup_env;
+    table *dir_env;
     array_header *sigsave;
 } perl_request_config;
 

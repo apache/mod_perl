@@ -1388,6 +1388,14 @@ void perl_per_request_init(request_rec *r)
 	cfg->setup_env = 0; /* just once per-request */
     }
 
+    if (cfg->dir_env != cld->env) {
+        /* PerlSetEnv
+         * update only if the table changes across a request
+         */
+        mod_perl_dir_env(r, cld);
+        cfg->dir_env = cld->env;
+    }
+
     if(callbacks_this_request++ > 0) return;
 
     if (!r->main) {
@@ -1397,9 +1405,6 @@ void perl_per_request_init(request_rec *r)
 	 */
 	(void)perl_request_rec(r);
     }
-
-    /* PerlSetEnv */
-    mod_perl_dir_env(r, cld);
 
     /* SetEnv PERL5LIB */
     if (!MP_INCPUSH(cld)) {
