@@ -17,39 +17,6 @@ modperl_mgv_new_w_name(mgv, p, n, 1)
 #define modperl_mgv_new_namen(mgv, p, n) \
 modperl_mgv_new_w_name(mgv, p, n, 0)
 
-/*
- * similar to hv_fetch_ent, but takes string key and key len rather than SV
- * also skips magic and utf8 fu, since we are only dealing with symbol tables
- */
-static HE *S_hv_fetch_he(pTHX_ HV *hv,
-                         register char *key,
-                         register I32 klen,
-                         register U32 hash)
-{
-    register XPVHV *xhv;
-    register HE *entry;
-
-    xhv = (XPVHV *)SvANY(hv);
-    if (!xhv->xhv_array) {
-        return 0;
-    }
-    entry = ((HE**)xhv->xhv_array)[hash & (I32) xhv->xhv_max];
-
-    for (; entry; entry = HeNEXT(entry)) {
-        if (HeHASH(entry) != hash)
-            continue;
-        if (HeKLEN(entry) != klen)
-            continue;
-        if (HeKEY(entry) != key && memNE(HeKEY(entry),key,klen))
-            continue;
-        return entry;
-    }
-
-    return 0;
-}
-
-#define hv_fetch_he(hv,k,l,h) S_hv_fetch_he(aTHX_ hv,k,l,h)
-
 int modperl_mgv_equal(modperl_mgv_t *mgv1,
                       modperl_mgv_t *mgv2)
 {
