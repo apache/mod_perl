@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_10-dev
 
+allow init filter handlers to call other methods than just $f->ctx [Stas]
+
 Fix Apache::Reload to gracefully handle the case with empty Touchfiles
 [Dmitri Tikhonov <dmitri@netilla.com>]
 

@@ -302,6 +302,10 @@ $ModPerl::FunctionTable = [
         'name' => 'name'
       },
       {
+        'type' => 'modperl_filter_mode_e',
+        'name' => 'mode'
+      },
+      {
         'type' => 'modperl_filter_add_t',
         'name' => 'addfunc'
       },

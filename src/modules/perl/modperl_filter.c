@@ -315,6 +315,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
 }
 
 static int modperl_run_filter_init(ap_filter_t *f,
+                                   modperl_filter_mode_e mode,
                                    modperl_handler_t *handler) 
 {
     AV *args = Nullav;
@@ -333,8 +334,8 @@ static int modperl_run_filter_init(ap_filter_t *f,
                               "Apache::Filter", f,
                               NULL);
 
-    /* XXX: do we need it? */
-    /* modperl_filter_mg_set(aTHX_ AvARRAY(args)[0], filter); */
+    modperl_filter_mg_set(aTHX_ AvARRAY(args)[0],
+                          modperl_filter_new(f, NULL, mode, 0, 0, 0));
 
     if ((status = modperl_callback(aTHX_ handler, p, r, s, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
@@ -827,7 +828,11 @@ static int modperl_filter_add_connection(conn_rec *c,
 
             if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
                 handlers[i]->next) {
-                int status = modperl_run_filter_init(f, handlers[i]->next);
+                int status = modperl_run_filter_init(
+                    f,
+                    (idx == MP_INPUT_FILTER_HANDLER
+                     ? MP_INPUT_FILTER_MODE : MP_OUTPUT_FILTER_MODE),
+                    handlers[i]->next);
                 if (status != OK) {
                     return status;
                 }
@@ -909,7 +914,11 @@ static int modperl_filter_add_request(request_rec *r,
 
             if (handlers[i]->attrs & MP_FILTER_HAS_INIT_HANDLER &&
                 handlers[i]->next) {
-                int status = modperl_run_filter_init(f, handlers[i]->next);
+                int status = modperl_run_filter_init(
+                    f,
+                    (idx == MP_INPUT_FILTER_HANDLER
+                     ? MP_INPUT_FILTER_MODE : MP_OUTPUT_FILTER_MODE),
+                    handlers[i]->next);
                 if (status != OK) {
                     return status;
                 }
@@ -968,6 +977,7 @@ void modperl_input_filter_add_request(request_rec *r)
 
 void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 const char *name,
+                                modperl_filter_mode_e mode,
                                 modperl_filter_add_t addfunc,
                                 SV *callback, const char *type)
 {
@@ -990,7 +1000,7 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
         }
 
         if (handler->attrs & MP_FILTER_HAS_INIT_HANDLER && handler->next) {
-            int status = modperl_run_filter_init(f, handler->next);
+            int status = modperl_run_filter_init(f, mode, handler->next);
             if (status != OK) {
                 /* XXX */
             }
