@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_02-dev
 
+Documenting the new PerlAddVar httpd.conf directive
+[Stas Bekman <sbekman@stason.org>]
+
 new Apache::test::static_modules() method
 [Ken Williams <ken@forum.swarthmore.edu>]
 

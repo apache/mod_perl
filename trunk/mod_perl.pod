@@ -167,15 +167,38 @@ existing environment variable to Perl's C<%ENV>:
 
 =item CONFIGURATION
 
-The C<PerlSetVar> directive provides a simple mechanism for passing
-information from configuration files to Perl modules or Registry scripts:
+The C<PerlSetVar> and C<PerlAddVar> directives provide a simple
+mechanism for passing information from configuration files to Perl
+modules or Registry scripts.
+
+The C<PerlSetVar> directive allows you to set a key/value pair.
 
  PerlSetVar  SomeKey  SomeValue
 
 Perl modules or scripts retrieve configuration values using the
-C<$r-E<gt>dir_config> method (see 'perldoc Apache').
+C<$r-E<gt>dir_config> method.
 
-C<PerlSetVar> handles keys case-insensitively.
+  $SomeValue = $r->dir_config('SomeKey');
+
+The C<PerlAddVar> directive allows you to emulate Perl arrays:
+
+ PerlAddVar  SomeKey  FirstValue
+ PerlAddVar  SomeKey  SecondValue
+ ...         ...      ...
+ PerlAddVar  SomeKey  Nth-Value
+
+In the Perl modules the values are extracted using the
+C<$r-E<gt>dir_config-E<gt>get> method.
+
+  @array = $r->dir_config->get('SomeKey');
+
+Alternatively in your code you can extend the setting with:
+
+  $r->dir_config->add(SomeKey => 'Bar');
+
+C<PerlSetVar> and C<PerlAddVar> handle keys case-insensitively.
+
+
 
 =item GATEWAY_INTERFACE
 

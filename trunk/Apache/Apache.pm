@@ -589,6 +589,29 @@ Will return a I<HASH> reference blessed into the
 I<Apache::Table> class when called in a scalar context with no
 "key" argument. See I<Apache::Table>.
 
+
+=item $r->dir_config->get( $key )
+
+Returns the value of a per-directory array variable specified by the
+C<PerlAddVar> directive.
+
+   # <Location /foo/bar>
+   # PerlAddVar  Key  Value1
+   # PerlAddVar  Key  Value2
+   # </Location>
+
+   my @val = $r->dir_config->get('Key');
+
+Alternatively in your code you can extend the setting with:
+
+  $r->dir_config->add(Key => 'Value3');
+
+Keys are case-insensitive.
+
+Will return a I<HASH> reference blessed into the
+I<Apache::Table> class when called in a scalar context with no
+"key" argument. See I<Apache::Table>.
+
 =item $r->requires
 
 Returns an array reference of hash references, containing information
