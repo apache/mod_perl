@@ -5,6 +5,7 @@ use lib qw(../lib);
 use ModPerl::BuildMM ();
 use Apache::Build ();
 use Config;
+use File::Spec::Functions;
 
 use constant WIN32   => Apache::Build::WIN32;
 use constant SOLARIS => $^O eq 'solaris';
@@ -30,6 +31,9 @@ if (my $apr_bindir = $build->apr_bindir()) {
 if (WIN32) {
     $libs =~ s{/libpath:}{-L}g;
     $libs =~ s{(\w+)\.lib}{-l$1}g;
+    # include the static aprext.lib
+    my $aprext = catdir $build->{cwd}, qw(blib arch Apache2 auto aprext);
+    $libs .= qq{ -L"$aprext" -laprext };
 }
 
 if (SOLARIS && $libs) {
@@ -68,7 +72,7 @@ for (@names) {
     $src{$cfile} = "$srcdir/$cfile";
 }
 
-$args{OBJECT} = "APR.o @obj";
+$args{OBJECT} = WIN32 ? "APR.o" : "APR.o @obj";
 $args{clean}  = { FILES => "@clean" };
 
 ModPerl::BuildMM::WriteMakefile(%args);
