@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.22_01-dev
 
+reset the stack pointer after calling perl_require_module() in
+perl_call_handler().  this fix will most likely cure the reports of
+"Can't upgrade that kind of scalar at ..."
+[Ben Cottrell <benco@stockmaster.com>]
+
 workaround use of Perl api functions that are no longer public with
 Perl 5.6.0 + win32, thanks to Randy Kobes for spotting
 
