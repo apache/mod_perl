@@ -101,7 +101,7 @@ MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
     modperl_mgv_t *anon = 
         (modperl_mgv_t *)apr_pcalloc(p, sizeof(*anon));
 
-    anon->name = apr_psprintf(p, "%d", modperl_global_anon_cnt_next());
+    anon->name = apr_psprintf(p, "anon%d", modperl_global_anon_cnt_next());
     anon->len  = strlen(anon->name);
     PERL_HASH(anon->hash, anon->name, anon->len);
 
@@ -144,7 +144,7 @@ MP_INLINE CV *modperl_handler_anon_get(pTHX_ modperl_mgv_t *anon)
 
     if ((he = hv_fetch_he(hv, anon->name, anon->len, anon->hash))) {
         sv = HeVAL(he);
-        MP_TRACE_h(MP_FUNC, "anonsub get '%s'", anon->name);
+        MP_TRACE_h(MP_FUNC, "anonsub gets name '%s'", anon->name);
     }
     else {
         Perl_croak(aTHX_ "can't find ANONSUB's '%s' entry", anon->name);
@@ -184,7 +184,13 @@ const char *modperl_handler_name(modperl_handler_t *handler)
 {
     /* a handler containing an anonymous sub doesn't have a normal sub
      * name */
-    return handler->name ? handler->name : "anonymous sub";
+    if (handler->name) {
+        return handler->name;
+    }
+    else {
+        /* anon sub stores the internal modperl name in mgv_obj */
+        return handler->mgv_obj->name;
+    }
 }
 
 
@@ -205,7 +211,8 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
     }
 #endif
 
-    MP_TRACE_h_do(MpHandler_dump_flags(handler, handler->name));
+    MP_TRACE_h_do(MpHandler_dump_flags(handler,
+                                       modperl_handler_name(handler)));
 
     if (!MpHandlerPARSED(handler)) {
         apr_pool_t *rp = duped ? p : s->process->pconf;
@@ -216,7 +223,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
                    "attempting to resolve using %s pool 0x%lx\n",
                    modperl_pid_tid(p),
                    modperl_server_desc(s, p),
-                   handler->name,
+                   modperl_handler_name(handler),
                    duped ? "current" : "server conf",
                    (unsigned long)rp);
 
@@ -234,7 +241,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
 modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
                                        modperl_handler_t *h)
 {
-    MP_TRACE_h(MP_FUNC, "dup handler %s\n", h->name);
+    MP_TRACE_h(MP_FUNC, "dup handler %s\n", modperl_handler_name(h));
     return modperl_handler_new(p, h->name);
 }
 

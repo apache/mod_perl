@@ -451,7 +451,8 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
             }
 #endif
             MP_TRACE_h(MP_FUNC, "%s already resolved in server %s\n",
-                       handler->name, modperl_server_desc(s, p));
+                       modperl_handler_name(handler),
+                       modperl_server_desc(s, p));
         }
         else {
             if (MpSrvAUTOLOAD(scfg)) {
