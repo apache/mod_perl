@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 
 BEGIN {
-    our $VERSION = "1.9911";
+    our $VERSION = "1.9912";
 }
 
 1;
