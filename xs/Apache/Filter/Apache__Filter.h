@@ -292,9 +292,47 @@ void mpxs_Apache__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
 }
 
 static MP_INLINE
-void mpxs_Apache__Filter_fflush(pTHX_ ap_filter_t *filter,
-                                apr_bucket_brigade *brigade)
+apr_status_t mpxs_Apache__Filter_fflush(pTHX_ ap_filter_t *filter,
+                                        apr_bucket_brigade *brigade)
 {
-    MP_RUN_CROAK(ap_fflush(filter, brigade),
-                 "Apache::Filter::fflush");
+    apr_status_t rc = ap_fflush(filter, brigade);
+    /* if users don't bother to check the success, do it on their
+     * behalf */
+    if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "Apache::Filter::fflush");
+    }
+
+    return rc;
+}
+
+static MP_INLINE
+apr_status_t mpxs_Apache__Filter_get_brigade(pTHX_
+                                             ap_filter_t *f,
+                                             apr_bucket_brigade *bb,
+                                             ap_input_mode_t mode,
+                                             apr_read_type_e block,
+                                             apr_off_t readbytes)
+{
+    apr_status_t rc = ap_get_brigade(f, bb, mode, block, readbytes);
+    /* if users don't bother to check the success, do it on their
+     * behalf */
+    if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "Apache::Filter::get_brigade");
+    }
+
+    return rc;
+}
+
+static MP_INLINE
+apr_status_t mpxs_Apache__Filter_pass_brigade(pTHX_ ap_filter_t *f,
+                                              apr_bucket_brigade *bb)
+{
+    apr_status_t rc = ap_pass_brigade(f, bb);
+    /* if users don't bother to check the success, do it on their
+     * behalf */
+    if (GIMME_V == G_VOID && rc != APR_SUCCESS) {
+        modperl_croak(aTHX_ rc, "Apache::Filter::pass_brigade");
+    }
+
+    return rc;
 }
