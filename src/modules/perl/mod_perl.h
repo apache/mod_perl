@@ -4,8 +4,12 @@
 #include "dirent.h"
 #endif
 
+#ifndef IS_MODULE
 #define IS_MODULE
+#endif
+#ifndef SHARED_MODULE
 #define SHARED_MODULE
+#endif
 
 #ifdef PERL_THREADS
 #define _INCLUDE_APACHE_FIRST
