@@ -212,8 +212,8 @@ sub inc {
     my $src  = $self->dir;
     my $main = $self->main;
     my $os = $Is_Win32 ? "win32" : "unix";
-    my @inc = ("-I$src", "-I$src/modules/perl", "-I$main");
-    for ("src/regex", "$src/os/$os") {
+    my @inc = (); 
+    for ($src, "$src/modules/perl", $main, "$src/regex", "$src/os/$os") {
 	push @inc, "-I$_" if -d $_;
     }
     my $ssl_dir = "$src/../ssl/include";

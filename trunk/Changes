@@ -10,8 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
-- Don't assume $uri =~ /$path_info$/ in Apache::Registry/PerlRun
-  [Jonas Liljegren <jonas@paranormal.o.se>]
+ensure that all -I directories printed by Apache::src actually exist
+
+don't assume $uri =~ /$path_info$/ in Apache::Registry/PerlRun
+[Jonas Liljegren <jonas@paranormal.o.se>]
 
 /D "_WINSOCK2API_" for 1.3.9/win32 [Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
 
@@ -25,7 +27,7 @@ Apache->server->dir_config or $r->server->dir_config.
 $r->dir_config merges them with per-directory variables.
 [Eric Cholet <cholet@logilune.com>]
 
-documentation type [David Harris <dharris@drh.net>]
+documentation typo [David Harris <dharris@drh.net>]
 
 add $r->server->uid and $r->server->gid [Eric Cholet <cholet@logilune.com>]
 
