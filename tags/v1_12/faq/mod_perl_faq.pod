@@ -1,0 +1,395 @@
+=head1 NAME
+
+Mod_perl_faq - frequently asked questions about mod_perl ($Date$)
+
+=head1 DESCRIPTION
+
+Mod_perl allows an Apache Web Server to directly execute perl code.  This
+document is designed to answer questions that arise when designing new
+applications, and converting existing applications, to run in the mod_perl
+environment.
+
+=head1 QUESTIONS & ANSWERS
+
+=head2 What is mod_perl?
+
+The Apache/Perl integration project brings together the full power of the
+Perl programming language and the Apache HTTP server.  This is achieved by
+linking the Perl runtime library into the server and providing an
+object-oriented Perl interface to the server's C language API.
+
+Mod_perl is a bundle of software.  One part of the bundle is designed to
+be compiled and linked together with Apache and Perl.  The remainder is
+perl code that provides the object-oriented interface to the "perl-enabled"
+web server.
+
+The primary advantages of mod_perl are power and speed.  You have full
+access to the inner-workings of the web server and can intervene at any
+stage of request-processing.  This allows for customized processing of (to
+name just a few of the phases) URI->filename translation, authentication,
+response generation and logging.  There is very little run-time overhead.
+In particular, it is not necessary to start a separate process, as is
+often done with web-server extensions.  The most wide-spread such
+extension mechanism, the Common Gateway Interface (CGI), can be replaced
+entirely with perl-code that handles the response generation phase of
+request processing.  Mod_perl includes a general purpose module for this
+purpose (Apache::Registry) that can transparently run existing perl CGI
+scripts.
+
+=head2 Where can I get mod_perl?
+
+Mod_perl can be found at
+http://www.perl.com/CPAN/modules/by-module/Apache/
+
+=head2 What else do I need?
+
+=over 4
+
+=item Perl
+
+http://www.perl.com/CPAN/src/latest.tar.gz
+
+=item Apache
+
+http://www.apache.org/dist/
+
+=back
+
+=head2 How do I install it?
+
+Here is the easiest way to proceed.  Let's assume you have the latest
+version of perl (5.004) installed.  Unpack the Apache and Mod_perl
+tarballs next to one another under a common directory: e.g.
+
+  % cd /usr/local/src
+  % zcat apache_1.2.0.tar.gz | tar xf -
+  % zcat mod_perl-0.98_12.tar.gz | tar xf -
+
+You probably do not need to change anything in the apache configuration
+before compiling.  Only if you want to enable additional non-standard
+modules do you need to edit apache_1.2.0/src/Configuration.  There is no
+need to set CC, CFLAGS, etc., because mod_perl will override them with the
+values that were used to compile your perl.
+
+Now go to the mod_perl directory and follow the instructions in the
+INSTALL file there.  If "make test" and "make install" are successful, you
+will find the new web server in apache_1.2.0/src/httpd.  Move it to a
+suitable location, make sure it has access to the correct configuration
+files, and fire it up.
+
+=head2 What documentation should I read?
+
+The mod_perl documentation in mod_perl.pod.  After you have installed
+mod_perl you can read it with the command: C<perldoc mod_perl>.
+
+If you are using mod_perl to extend the server functionality, you will
+need to read C<perldoc Apache> and the Apache API notes, which can be
+found in apache_1.2.0/htdocs/manual/misc/API.html.
+
+Existing (perl-) CGI scripts should run as-is under mod_perl.  There are a
+number of reasons why they may need to be adjusted, and these are
+discussed later in this FAQ.  If you are developing a new CGI script it is
+probably best to use CGI.pm.  It is part of the standard perl distribution
+and its documentation can be read with the command: C<perldoc CGI>.
+
+=head2 How do I run CGI scripts under mod_perl?
+
+Refer to L<mod_perl_cgi> for tips on writing and converting CGI
+scripts for mod_perl.
+
+=head2 How do I access the Apache API from mod_perl?
+
+Interfacing with Apache is discussed in L<mod_perl_api>.
+
+=head2 How secure are mod_perl scripts?
+
+Because mod_perl runs within an httpd child process, it runs with the
+user-id and group-id specified in the httpd.conf file.  This user/group
+should have the lowest possible privileges.  It should only have access
+to world readable files.  Even so, careless scripts can give away
+information.  You would not want your /etc/passwd file to be readable over
+the net, for instance.
+
+If you turn on tainting checks, perl can help you to avoid the pitfalls of
+using data received from the net.  Setting the C<-T> switch on the first line
+of the script is not sufficient to enable tainting checks under mod_perl.
+You have to include the directive C<PerlTaintCheck On> in the httpd.conf
+file.
+
+=head2 What if my script needs higher privileges?
+
+You will have to start a new process that runs under a suitable user-id
+(or group-id).  If all requests handled by the script will need the higher
+privileges, you might as well write it as a suid CGI script.  Read the
+documentation about suEXEC in Apache-1.2.
+
+Alternatively, pre-process the request with mod_perl and fork a suid
+helper process to handle the privileged part of the task.
+
+=head2 Why is httpd using so much memory?
+
+Read the section on "Memory Consumption" in the mod_perl.pod.
+
+Make sure that your scripts are not leaking memory.  Global variables
+stay around indefinitely, lexical variables (declared with my()) are
+destroyed when they go out of scope, provided there are no references
+to them from outside of that scope.
+
+To get information about the modules that have been loaded and their
+symbol-tables, use the Apache::Status module.  It is enabled by adding
+these lines to a configuration file (e.g. access.conf);
+
+  <Location /perl-status>
+  SetHandler  perl-script
+  PerlHandler Apache::Status
+  </Location>
+
+Then look at the URL http://www.your.host/perl-status
+
+Joel Wagner reports that calling an undefined subroutine in a module
+can cause a tight loop that consumes all memory.  Here is a way to
+catch such errors.  Define an autoload subroutine
+
+  sub UNIVERSAL::AUTOLOAD {
+  	  my $class = shift;
+  	  warn "$class can't `$UNIVERSAL::AUTOLOAD'!\n";
+  }
+
+It will produce a nice error in error_log, giving the line number of
+the call and the name of the undefined subroutine.
+
+=head2 Do I have to restart the server when I change my Perl code?
+
+Apache::Registry checks the timestamp of scripts that it has loaded
+and reloads them if they change.  This does not happen for other
+handlers, unless you program it yourself.  One way to do this is in a
+PerlInitHandler.  If you define
+
+  sub MY::init {
+      delete $INC{"YourModule.pm"};
+      require YourModule;
+  }
+
+as an init handler, it will unconditionally reload YourModule at the
+start of each request, which may be useful while you are developing a
+new module.  It can be made more efficient by storing the timestamp of
+the file in a global variable and only reloading when necessary.
+
+=head2 So how do I use mod_perl in conjunction with ErrorDocument?
+
+Andreas Koenig writes:
+
+=over 4
+
+=item *
+
+Set up your testing engine:
+
+LWP comes with debugging capabilities that are sometimes better than
+your browser, sometimes your browser is the better testing
+device. Make sure you can call lwp-request from the command line and
+have your browser ready before you start. I find the C<-x> switch
+(extended debugging) and the C<-d> switch (do not display content) most
+useful.
+
+=item *
+
+Test your server with
+
+    lwp-request -xd http://your.server/test/file.not_there
+
+Carefully examine if the status is 404 and if the headers look good.
+
+If you try 'lwp-request -es', the HTML output will not be the one you
+are sending, instead lwp-request will send its own cooked HTML text
+(as of version libwww-perl-5.09). Check the real text either with the
+C<-x> switch or with telnet or your browser.
+
+=item *
+
+Set up your Errordocument configuration in the testing area. I have
+this in my .htaccess file:
+
+    ErrorDocument 404 /perl/errors/err404-01
+
+The /perl/ directory is configured to
+
+    <Location /perl>
+    SetHandler perl-script
+    PerlHandler Apache::Registry::handler
+    Options ExecCGI
+    </Location>
+
+I have no PerlSendHeader and no PerlNewSendHeader directive in any
+configuration file.
+
+=item *
+
+Repeat step 2 (Test your server)
+
+=item *
+
+Write your error handler in mod_perl. You have to be prepared that you
+have to tell both apache *and* the browser the right thing. Basically
+you have to tell the browser what the error is, but you have to
+pretend to apache that everything was OK. If you tell apache the error
+condition, it will handle the situation on its own and add some
+unwanted stuff to the output that goes to the browser.
+
+The following works fine for me:
+
+    my $r = Apache->request;
+    $r->content_type('text/html; charset=ISO-8859-1');
+    $r->send_http_header;
+    $r->status(200);
+    ...send other HTML stuff...
+
+At the time of the send_http_header we have an error condition of type
+404--this is what gets sent to the browser. After that I set status to
+200 to silence the apache engine.
+
+I was not successful in trying to do the same with CGI.pm, but I
+didn't try very hard.
+
+=item *
+
+Repeat step 2 (Test your server)
+
+=item *
+
+The above is tested with mod_perl/0.98 and 0.99
+
+=item *
+
+Open questions I could not find documentation for (except RTFS): what
+exactly is PerlSendHeaders and PerlNewSendHeaders. What is the default
+setting for those? How do these cooperate with CGI.pm, Apache.pm,
+Apache::Registry?
+
+=back
+
+=head2 How can I reference private library modules?
+
+The best place to put library modules is in the site_perl directory
+(usually /usr/lib/perl/site_perl), where perl will find them without
+further ado.  Local policy may prevent this, in which case you have to
+tell the perl interpreter where to find them by adding your private
+directory to the @INC array.
+
+There are various ways to do this.  One way is to add
+
+  use lib '/my/perl/lib';
+
+to each script that needs modules from /my/perl/lib.
+
+Alternatively, you can arrange for all the modules that might be
+needed to be loaded when the server starts up.  Put a PerlRequire
+directive into one of the httpd config files that pulls in a small
+module containing the relevant C<use>-statements.  There is an example
+of this in L<mod_perl_tuning>.
+
+=head2 How can I pass arguments to a SSI script?
+
+Following the documentation, I have put the following in the html
+file:
+
+  <!--#perl sub="Apache::Include" arg="/perl/ssi.pl" -->
+
+I want to send an argument to the ssi.pl script.  How?
+
+It won't work with Apache::Include.  Instead of a script, define a
+subroutine that's pulled in with PerlRequire or PerlModule, like so:
+
+  sub My::ssi {
+     my($r, $one, $two, $three) = @_;
+     ...
+  }
+
+In the html file:
+
+  <!--#perl sub="My::ssi" arg="one" arg="two" arg="three" -->
+
+=head2 Why is image-file loading so slow when testing with httpd -X ?
+
+If you use Netscape while your server is running in single-process
+mode, the "KeepAlive" feature gets in the way.  Netscape tries to open
+multiple connections and keep them open.  Because there is only one
+server process listening, each connection has to time-out before the
+next succeeds.  Turn off KeepAlive in httpd.conf to avoid this effect.
+
+=head2 What can cause a subroutine to suddenly become undefined?
+
+If you sometimes see error messages like this:
+
+  [Thu Sep 11 11:03:06 1997] Undefined subroutine
+  &Apache::ROOT::perl::script1::sub_foo called at
+  /some/path/perl/script2 line 42.
+
+despite the fact that script2 normally works just fine, it looks like
+you have a namespace problem in a library file.  If sub_foo is located
+in a file that is pulled in by 'require' and both script1 and script2
+require it, you need to be sure that the file containing sub_foo sets
+a package name.  Otherwise, sub_foo gets defined in the namespace that
+is active the first time it is required, and the next require is a
+no-op because that file is already in %INC.
+
+The solution is simple, set up your require'd file something along
+these lines:
+
+  package SomeName;
+
+  sub sub_foo {...}
+
+Now, have scripts call SomeName::sub_foo() instead of sub_foo().
+
+=head2 What could be causing sporadic errors "in cleanup"?
+
+Some people have seen error messages such as this:
+
+   [Fri Sep 26 10:50:08 1997]      (in cleanup) no dbproc key in hash
+   at /usr/lib/perl5/site_perl/Apache/Registry.pm line 119.
+
+Doug writes:
+
+"I have yet to figure out why, but there have been a few arbitrary
+cases where Perl (in mod_perl) _insists_ on finding and/or calling a
+DESTROY method for an object.  Defining an empty sub DESTROY has been
+the bandaid for these few cases."
+
+If the specific error message gives you a hint about which object is
+causing difficulty, put the C<sub DESTROY { }> in the module that
+defines that object class.
+
+=head2 How can I test that my script is running under mod_perl?
+
+There are 2 environment variables you can test.
+
+  exists $ENV{"MOD_PERL"}   # if running under mod_perl
+
+  $ENV{"GATEWAY_INTERFACE"} eq "CGI-Perl/1.1"
+
+The MOD_PERL variable gets set immediately when the perl interpreter
+starts up, whereas GATEWAY_INTERFACE may not be set yet when BEGIN
+blocks are being processed.
+
+=head2 Where can I get help that I did not find in here?
+
+There is a mailing-list dedicated to mod_perl.  It is archived at
+http://outside.organic.com/mail-archives/modperl/ and at
+http://forum.swarthmore.edu/epigone/modperl (which has a search
+engine) and also at
+http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
+(threaded and indexed).
+
+You can subscribe to the list by sending a mail with the line C<subscribe
+modperl> to C<majordomo@apache.org>.
+
+The mod_perl homepage http://perl.apache.org/ has links to other
+mod_perl resources.
+
+The pod source of this FAQ is available at
+http://www.ping.de/~fdc/mod_perl/mod_perl_faq.tar.gz
+
+=head2 Where do I send suggestions and corrections concerning this FAQ?
+
+mailto:fdc@cliwe.ping.de
