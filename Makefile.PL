@@ -344,6 +344,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 		next unless m,^src/modules/perl/,; chomp;
 		#print "rm -f $adir/$_\n";
 		unlink "$atopdir/$_";
+		next if not m,.+\.(xs|c|h)$, and $USE_APACI;
 		print "cp $_ $atopdir/$_\n" if $USE_APACI;
 		my $dest = "$atopdir/$_";
 		cp $_, $dest;
@@ -393,7 +394,7 @@ for $adir (sort {$modified{$b} <=> $modified{$a}} @adirs) {
 	    if $PERL_DESTRUCT_LEVEL;
 
 
-	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf)) {
+	unless(-e "src/Configuration" and (-M "src/Configuration" < -M $conf) and not $USE_APACI) {
 	    unless(-e $conf) {
 		cp "$conf.tmpl", $conf;
 	    }
@@ -494,7 +495,7 @@ if($APACHE_SRC) {
     setup_for_static();
 
     iedit "$APACHE_SRC/modules/perl/Makefile",
-    "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!";
+    "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!" unless $USE_APACI;
 
     for (@callback_hooks) {
 	($k,$v) = ($_,$callback_hooks{$_});
