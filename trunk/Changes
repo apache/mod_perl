@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+fix compilation for win32 w/ apache 1.3.22+
+[Randy Kobes <randy@theoryx5.uwinnipeg.ca>]
+
 fix multiple %LocationMatch in <Perl> sections bug
 [Salvador Ortiz Garcia <sog@msg.com.mx>]
 

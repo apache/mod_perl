@@ -1089,8 +1089,10 @@ typedef struct {
 extern module MODULE_VAR_EXPORT perl_module;
 
 /* a couple for -Wall sanity sake */
+#ifndef WIN32
 int translate_name (request_rec *);
 int log_transaction (request_rec *r);
+#endif
 
 /* mod_perl prototypes */
 
