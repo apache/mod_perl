@@ -221,7 +221,7 @@ MODULE=Apache::Filter PACKAGE=guess
  ap_get_brigade | | \
                filter, bucket, mode=AP_MODE_READBYTES, \
                block=APR_BLOCK_READ, \
-               readbytes=0
+               readbytes=8192
  ap_pass_brigade
 !ap_register_input_filter
 !ap_register_output_filter
