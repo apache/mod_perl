@@ -94,7 +94,7 @@ XS(XS_modperl_const_compile)
     dXSARGS;
 
     if (items < 2) {
-	Perl_croak(aTHX_ "Usage: %s->compile(...)");
+	Perl_croak(aTHX_ "Usage: %s->compile(...)", stashname);
     }
 
     classname = *(stashname + 1) == 'P' ? "APR" : "Apache";
