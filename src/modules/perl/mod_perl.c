@@ -1222,7 +1222,7 @@ int perl_handler_ismethod(HV *pclass, char *sub)
     }
 
 #ifdef CVf_METHOD
-    if (CvFLAGS(cv) & CVf_METHOD) {
+    if (cv && (CvFLAGS(cv) & CVf_METHOD)) {
         is_method = 1;
     }
 #endif
