@@ -16,7 +16,7 @@ ok $socket;
 
 for my $str (@test_strings) {
     print $socket "$str\n";
-    chomp(my $reply = <$socket>);
+    chomp(my $reply = <$socket>||'');
     $str = lc $str;
     $str =~ s/modperl/mod_perl/;
     ok t_cmp($str, $reply);
