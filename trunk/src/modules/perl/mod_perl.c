@@ -88,7 +88,7 @@ static command_rec perl_cmds[] = {
     { "</Perl>", perl_end_section, NULL, OR_ALL, NO_ARGS, "End Perl code" },
 #endif
     { "=pod", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "Start of POD" },
-    { "=end", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "End of =begin" },
+    { "=back", perl_pod_section, NULL, OR_ALL, RAW_ARGS, "End of =over" },
     { "=cut", perl_pod_end_section, NULL, OR_ALL, NO_ARGS, "End of POD" },
     { "__END__", perl_config_END, NULL, OR_ALL, RAW_ARGS, "Stop reading config" },
     { "PerlFreshRestart", perl_cmd_fresh_restart,

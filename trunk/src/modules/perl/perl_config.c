@@ -652,6 +652,7 @@ CHAR_P perl_config_END (cmd_parms *parms, void *dummy, const char *arg)
     return NULL;   
 }
 
+#if 0
 #define APACHE_POD_FORMAT(s) \
  (strnEQ(s, "httpd", 5) || strnEQ(s, "apache", 6))
 
@@ -678,6 +679,29 @@ CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
 
     return NULL;   
 }
+#else
+#define APACHE_POD_FORMAT(s) \
+ (strstr(s, "httpd") || strstr(s, "apache"))
+
+CHAR_P perl_pod_section (cmd_parms *parms, void *dummy, const char *arg)
+{
+    char line[MAX_STRING_LEN];
+
+    if(arg && strlen(arg) && !(APACHE_POD_FORMAT(arg) || strstr(arg, "pod"))) 
+	return "Unknown =back format";
+
+    while (!(cfg_getline (line, sizeof(line), cmd_infile))) {
+	if(strnEQ(line, "=cut", 4))
+	    break;
+	if(strnEQ(line, "=over", 5)) {
+	    if(APACHE_POD_FORMAT(line)) 
+		break;
+	}
+    }
+
+    return NULL;   
+}
+#endif
 
 static const char perl_pod_end_magic[] = "=cut without =pod";
 
@@ -871,8 +895,7 @@ CHAR_P perl_cmd_perl_TAKE123(cmd_parms *cmd, mod_perl_perl_dir_config *data,
 
     if(xsmod && 
        (sdata = get_module_config(cmd->server->module_config, xsmod))) {
-	void *sobj = 
-	    perl_perl_create_srv_config(&sdata->obj, CvSTASH(cv), cmd);
+	(void)perl_perl_create_srv_config(&sdata->obj, CvSTASH(cv), cmd);
 	set_module_config(cmd->server->module_config, xsmod, sdata);
     }
 
