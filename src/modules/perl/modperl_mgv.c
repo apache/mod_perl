@@ -186,7 +186,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 {
     CV *cv;
     GV *gv;
-    HV *stash=Nullhv;
+    HV *stash = Nullhv;
     char *handler_name = "handler";
     char *tmp;
 
