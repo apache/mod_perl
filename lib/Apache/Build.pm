@@ -440,6 +440,7 @@ sub find {
                      $self->default_dir,
                      '../httpd-2.0')
       {
+          next unless $src_dir;
           next unless (-d $src_dir || -l $src_dir);
           next if $seen{$src_dir}++;
           push @dirs, $src_dir;
