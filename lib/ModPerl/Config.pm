@@ -28,7 +28,7 @@ sub as_string {
     my $command = '';
 
     # httpd opts
-    my $test_config = Apache::TestConfig->new;
+    my $test_config = Apache::TestConfig->new({thaw=>1});
     if (my $httpd = $test_config->{vars}->{httpd}) {
         $command = "$httpd -V";
         $cfg .= "\n\n*** $command\n";
