@@ -12,7 +12,8 @@ Perl:
   Perl version 5.6.1 or higher is required. mod_perl builds with 5.6.0,
   but is not supported if you have problems using it.
 
-  Perl version 5.8.0 is required for threaded MPMs.
+  Perl version 5.8.0 or higher is required for threaded MPMs (worker,
+  winnt, etc.).
 
 *** Status ***
 
@@ -25,14 +26,19 @@ will be support in the future.
 
 *** Documentation ***
 
-Documentation are available in docs/. Currently they don't get
-installed on 'make install'. Certain API documentation can be found in
-docs/api/.  The online version is at http://perl.apache.org/docs/.
+Documentation can be found in the docs/ directory. Currently they
+don't get installed on 'make install'. Certain API documentation can
+be found in docs/api/.  The online version is at
+http://perl.apache.org/docs/2.0/.
 
 *** Todo ***
 
 mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
-See the STATUS file and todo/ directory for what remains to be done.
+See the files in the todo/ directory for what remains to be done. Some
+of those features will be implemented after 2.0 is released. The goal
+is to empty the file todo/release and document/test/verify the API
+that's going to be supported by 2.0. More API will be supported post
+2.0 release.
 
 *** Support ***
 
