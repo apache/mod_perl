@@ -7,6 +7,8 @@ package TestDirective::perlmodule;
 use strict;
 use warnings FATAL => 'all';
 
+use Apache2 ();
+
 use Apache::Test ();
 use Apache::Const -compile => 'OK';
 use File::Spec::Functions qw(catfile);
