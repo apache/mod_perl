@@ -94,12 +94,12 @@ ap_set_content_length(r, clength=r->finfo.st_size)
     long clength
 
 void
-ap_set_last_modified(r, mtime=r->finfo.st_mtime)
+ap_set_last_modified(r, mtime=0)
     Apache r
     time_t mtime
 
     CODE:
-    ap_update_mtime(r, mtime);
+    if(mtime) ap_update_mtime(r, mtime);
     ap_set_last_modified(r);
 
 void
