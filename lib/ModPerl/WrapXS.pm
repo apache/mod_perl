@@ -15,7 +15,7 @@ use Data::Dumper;
 our $VERSION = '0.01';
 
 my(@xs_includes) = ('mod_perl.h',
-                    map "modperl_xs_$_.h", qw(util typedefs sv_convert));
+                    map "modperl_xs_$_.h", qw(sv_convert util typedefs));
 
 sub new {
     my $class = shift;

@@ -58,10 +58,6 @@ static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
     return newRV_noinc((SV*)av); 
 }
 
-/* XXX: should be part of generation */
-#undef mp_xs_sv2_r
-#define mp_xs_sv2_r(sv) modperl_sv2request_rec(aTHX_ sv)
-
 static MP_INLINE
 void mpxs_ap_allow_methods(pTHX_ I32 items, SV **MARK, SV **SP)
 {
