@@ -2,7 +2,7 @@ package Apache::Debug;
 use Cwd 'fastcwd';
 
 use vars qw($VERSION);
-$VERSION = (qw$Revision$)[1];
+$VERSION = "1.61";
 
 sub import {
     local $^W = 0;

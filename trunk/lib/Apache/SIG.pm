@@ -1,7 +1,7 @@
 package Apache::SIG;
 
 use strict;
-$Apache::SIG::VERSION = (qw$Revision$)[1];
+$Apache::SIG::VERSION = '1.91';
 
 $Apache::SIG::PipeKey ||= 'SIGPIPE';
 

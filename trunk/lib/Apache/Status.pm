@@ -1,7 +1,7 @@
 package Apache::Status;
 use strict;
 
-$Apache::Status::VERSION = (qw$Revision$)[1];
+$Apache::Status::VERSION = '2.00';
 
 my %is_installed = ();
 
