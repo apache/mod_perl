@@ -11,7 +11,7 @@ if you want to try building with an interpreter pool, you'll need Perl
 5.6.0 with patches/perl_no_get_context.pat applied and Perl built like 
 so:
 
-% ./Configure -des -Dusethreads -Accflags=-DPERL_NO_GET_CONTEXT
+% ./Configure -des -Dusethreads
 
 mod_perl-2.0 will still work with an out-of-the-box Perl, but will
 only be useful if your mpm is prefork (which is much like 1.3.x)
