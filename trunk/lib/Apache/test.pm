@@ -15,6 +15,11 @@ BEGIN {
 	eval { require "net/config.pl"; }; #for 'make test'
 	$PERL_DIR = $net::perldir;
     } 
+    # Validate that the OS knows the name of the server in $net::httpserver     
+    # if 'localhost' is not defined, the tests wouldn't pass
+    (my $hostname) = ($net::httpserver =~ /(.*?):/);
+    warn qq{\n*** [Crucial] You must define "$hostname" (e.g. in /etc/hosts) in order for 'make test' to pass\n}  
+      unless gethostbyname $hostname;
 }
 
 $PERL_DIR = $ENV{PERL_DIR} if exists $ENV{PERL_DIR};
