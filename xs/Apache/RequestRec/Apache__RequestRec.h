@@ -7,7 +7,7 @@ const char *mpxs_Apache__RequestRec_content_type(pTHX_ request_rec *r,
     if (type) {
         STRLEN len;
         const char *val = SvPV(type, len);
-        ap_set_content_type(r, apr_pmemdup(r->pool, val, len));
+        ap_set_content_type(r, apr_pmemdup(r->pool, val, len+1));
     }
 
     return retval;
