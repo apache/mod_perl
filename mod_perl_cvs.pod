@@ -48,7 +48,7 @@ Here's a config file for the client (cvsup) to sync modperl sources.
  *default tag=.
  # comment out the above if you want the raw cvs files
 
- *default host=apache.org
+ *default host=perl.apache.org
  *default prefix=/path/on/this/machine/to/install/
  # a subdir for modperl will appear here ^^^
 
