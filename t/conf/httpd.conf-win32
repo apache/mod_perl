@@ -21,8 +21,6 @@ DocumentRoot "./t/docs"
 
 LoadModule perl_module modules/ApacheModulePerl.dll
 
-PerlRequire docs/startup.pl
-
 #-Tw
 
 PerlTaintCheck On
@@ -34,7 +32,7 @@ PerlSetEnv KeyForPerlSetEnv OK
 
 PerlSetVar KeyForPerlSetVar OK
 
-
+PerlRequire docs/startup.pl
 
 PerlTransHandler PerlTransHandler
 
