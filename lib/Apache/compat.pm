@@ -142,6 +142,14 @@ sub header_in {
         : scalar($r->table_get_set(scalar($r->headers_in), @_));
 }
 
+sub err_header_out {
+    my $r = shift;
+    return wantarray() 
+        ?       ($r->table_get_set(scalar($r->err_headers_out), @_))
+        : scalar($r->table_get_set(scalar($r->err_headers_out), @_));
+}
+
+
 sub register_cleanup {
     shift->pool->cleanup_register(@_);
 }

@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_02-dev
 
+add the err_header_out() wrapper to Apache::compat + corresponding tests
+
 add Apache::Util::unescape_uri alias to Apache::unescape_url in Apache::compat
 
 change Apache::unescape_url to return the escaped url as 1.x does
