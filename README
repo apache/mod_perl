@@ -11,10 +11,22 @@ Apache:
   http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
 
 Perl: 
-  Perl version 5.6.1 or higher is required. 
+  Dynamic mod_perl (DSO):
 
-  Perl version 5.8.0 or higher is required for threaded MPMs (worker,
-  winnt, etc.).
+    + prefork mpm:
+      - Perl version 5.6.1 or higher
+
+    + non-prefork mpm:
+      - Perl with    ithreads support version 5.8.0 or higher
+
+  Static mod_perl:
+
+    + prefork mpm:
+      - Perl with    ithreads support version 5.6.1 or higher
+      - Perl without ithreads support version 5.8.2 or higher
+
+    + non-prefork mpm:
+      - Perl with    ithreads support version 5.8.0 or higher
 
 *** Status ***
 
