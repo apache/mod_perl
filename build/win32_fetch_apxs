@@ -14,9 +14,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Spec::Functions;
-use Archive::Tar;
 use File::Path;
-use LWP::Simple;
 use ExtUtils::MakeMaker qw(prompt);
 use Cwd;
 
@@ -61,6 +59,9 @@ END
 my $ans = prompt('Install apxs now?', 'yes');
 exit 0 unless $ans =~ /^y/i;
 
+require LWP::Simple;
+LWP::Simple->import(qw(is_success getstore));
+
 my $file = 'apxs_win32.tar.gz';
 unless (-e $file) {
     my $remote = 'http://perl.apache.org/dist/win32-bin/' . $file;
@@ -70,6 +71,7 @@ unless (-e $file) {
     print " done!\n";
 }
 
+require Archive::Tar;
 my $cwd = getcwd;
 my $dir = 'apxs';
 my $arc = Archive::Tar->new($file, 1);
