@@ -98,8 +98,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
     MP_TRACE_o(MP_FUNC, "start");
 
-    /* open my $oldout, ">&STDIN" or die "Can't dup STDIN: $!"; */
-    status = Perl_do_open(aTHX_ handle_save, ">&STDIN", 7, FALSE, O_RDONLY,
+    /* open my $oldout, "<&STDIN" or die "Can't dup STDIN: $!"; */
+    status = Perl_do_open(aTHX_ handle_save, "<&STDIN", 7, FALSE, O_RDONLY,
                           0, Nullfp);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to dup STDIN: %_", get_sv("!", TRUE));
@@ -166,7 +166,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
 
     /* Perl_do_close(aTHX_ handle_orig, FALSE); */
 
-    /* open STDIN, ">&STDIN_SAVED" or die "Can't dup STDIN_SAVED: $!"; */
+    /* open STDIN, "<&STDIN_SAVED" or die "Can't dup STDIN_SAVED: $!"; */
     status = Perl_do_open9(aTHX_ handle_orig, "<&", 2, FALSE, O_RDONLY,
                            0, Nullfp, (SV*)handle, 1);
     if (status == 0) {
