@@ -1,39 +1,21 @@
 #include "mod_perl.h"
 
-static void require_module(pTHX_ const char *pv)
-{
-    SV* sv;
-    dSP;
-    PUSHSTACKi(PERLSI_REQUIRE);
-    PUTBACK;
-    sv = sv_newmortal();
-    sv_setpv(sv, "require ");
-    sv_catpv(sv, pv);
-    eval_sv(sv, G_DISCARD);
-    SPAGAIN;
-    POPSTACK;
-}
-
-modperl_handler_t *modperl_handler_new(apr_pool_t *p, void *h, int type)
+modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
 {
     modperl_handler_t *handler = 
         (modperl_handler_t *)apr_pcalloc(p, sizeof(*handler));
 
-    switch (type) {
-      case MP_HANDLER_TYPE_SV:
-        handler->cv = SvREFCNT_inc((SV*)h);
-        MpHandlerPARSED_On(handler);
-        break;
-      case MP_HANDLER_TYPE_CHAR:
-        handler->name = (char *)h;
-        MP_TRACE_h(MP_FUNC, "new handler %s\n", handler->name);
-        break;
-    };
-
-    apr_pool_cleanup_register(p, (void*)handler,
-                         modperl_handler_cleanup, apr_pool_cleanup_null);
+    handler->name = name;
+    MP_TRACE_h(MP_FUNC, "new handler %s\n", handler->name);
 
     return handler;
+}
+
+modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
+                                       modperl_handler_t *h)
+{
+    MP_TRACE_h(MP_FUNC, "dup handler %s\n", h->name);
+    return modperl_handler_new(p, h->name);
 }
 
 void modperl_handler_make_args(pTHX_ AV *av, ...)
@@ -60,220 +42,30 @@ void modperl_handler_make_args(pTHX_ AV *av, ...)
     va_end(args);
 }
 
-apr_status_t modperl_handler_cleanup(void *data)
+int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
+                     AV *args)
 {
-    modperl_handler_t *handler = (modperl_handler_t *)data;
-    modperl_handler_unparse(handler);
-    return APR_SUCCESS;
-}
-
-void modperl_handler_cache_cv(pTHX_ modperl_handler_t *handler, CV *cv)
-{
-    if (1) {
-        /* XXX: figure out how to invalidate cache
-         * e.g. if subroutine is redefined
-         */
-        handler->cv = SvREFCNT_inc((SV*)cv);
-        /* handler->cvgen = MP_sub_generation; */;
-    }
-    else {
-        handler->cv = Perl_newSVpvf(aTHX_ "%s::%s",
-                                    HvNAME(GvSTASH(CvGV(cv))),
-                                    GvNAME(CvGV(cv)));
-    }
-    MP_TRACE_h(MP_FUNC, "caching %s::%s\n",
-               HvNAME(GvSTASH(CvGV(cv))),
-               GvNAME(CvGV(cv)));
-}
-
-int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
-                           char *package, char *name)
-{
-    CV *cv;
-    GV *gv;
-    HV *stash = gv_stashpv(package, FALSE);
-
-    if (!stash) {
-        MP_TRACE_h(MP_FUNC, "package %s not defined, attempting to load\n",
-                   package);
-        require_module(aTHX_ package);
-        if (SvTRUE(ERRSV)) {
-            MP_TRACE_h(MP_FUNC, "failed to load %s package\n", package);
-            return 0;
-        }
-        else {
-            MP_TRACE_h(MP_FUNC, "loaded %s package\n", package);
-            if (!(stash = gv_stashpv(package, FALSE))) {
-                MP_TRACE_h(MP_FUNC, "%s package still does not exist\n",
-                           package);
-                return 0;
-            }
-        }
-    }
-
-    if ((gv = gv_fetchmethod(stash, name)) && (cv = GvCV(gv))) {
-        if (CvFLAGS(cv) & CVf_METHOD) { /* sub foo : method {}; */
-            MpHandlerMETHOD_On(handler);
-            handler->obj = newSVpv(package, 0);
-            handler->cv = newSVpv(name, 0);
-        }
-        else {
-            modperl_handler_cache_cv(aTHX_ handler, cv);
-        }
-
-        MpHandlerPARSED_On(handler);
-        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s\n",
-                   name, HvNAME(stash),
-                   MpHandlerMETHOD(handler) ? "method" : "function");
-
-        return 1;
-    }
-    
-    MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
-               name, HvNAME(stash));
-
-    return 0;
-}
-
-void modperl_handler_unparse(modperl_handler_t *handler)
-{
-    dTHXa(handler->perl);
-    int was_parsed = handler->args || handler->cv || handler->obj;
-
-    if (!MpHandlerPARSED(handler)) {
-        if (was_parsed) {
-            MP_TRACE_h(MP_FUNC, "handler %s was parsed, but not flagged\n",
-                       handler->name);
-        }
-        else {
-            MP_TRACE_h(MP_FUNC, "handler %s was never parsed\n", handler->name);
-            return;
-        }
-    }
-
-    MpHandlerFLAGS(handler) = 0;
-    handler->cvgen = 0;
-
-#if 0
-    if (handler->args) {
-        av_clear(handler->args);
-        SvREFCNT_dec((SV*)handler->args);
-        handler->args = Nullav;
-    }
-#endif
-    if (handler->cv) {
-        SvREFCNT_dec(handler->cv);
-        handler->cv = Nullsv;
-    }
-    if (handler->obj) {
-        SvREFCNT_dec(handler->obj);
-        handler->obj = Nullsv;
-    }
-
-    MP_TRACE_h(MP_FUNC, "%s unparsed\n", handler->name);
-}
-
-int modperl_handler_parse(pTHX_ modperl_handler_t *handler)
-{
-    char *name = handler->name;
-    char *tmp;
-    CV *cv;
-
-#ifdef USE_ITHREADS
-    handler->perl = aTHX;
-#endif
-
-    if (strnEQ(name, "sub ", 4)) {
-        handler->cv = eval_pv(name, FALSE);
-        MP_TRACE_h(MP_FUNC, "handler is anonymous\n");
-        if (!SvTRUE(handler->cv) || SvTRUE(ERRSV)) {
-            MP_TRACE_h(MP_FUNC, "eval failed: %s\n", SvPVX(ERRSV));
-            handler->cv = Nullsv;
-            return 0;
-        }
-        SvREFCNT_inc(handler->cv);
-        MpHandlerANON_On(handler);
-        MpHandlerPARSED_On(handler);
-        return 1;
-    }
-    
-    if ((tmp = strstr(name, "->"))) {
-        char package[256]; /*XXX*/
-        int package_len = strlen(name) - strlen(tmp);
-        apr_cpystrn(package, name, package_len+1);
-
-        MpHandlerMETHOD_On(handler);
-        handler->cv = newSVpv(&tmp[2], 0);
-
-        if (*package == '$') {
-            SV *obj = eval_pv(package, FALSE);
-
-            if (SvTRUE(obj)) {
-                handler->obj = SvREFCNT_inc(obj);
-                if (SvROK(obj) && sv_isobject(obj)) {
-                    MpHandlerOBJECT_On(handler);
-                    MP_TRACE_h(MP_FUNC, "handler object %s isa %s\n",
-                               package, HvNAME(SvSTASH((SV*)SvRV(obj))));
-                }
-                else {
-                    MP_TRACE_h(MP_FUNC, "%s is not an object, pv=%s\n",
-                               package, SvPV_nolen(obj));
-                }
-            }
-            else {
-                MP_TRACE_h(MP_FUNC, "failed to thaw %s\n", package);
-                return 0;
-            }
-        }
-
-        if (!handler->obj) {
-            handler->obj = newSVpv(package, package_len);
-            MP_TRACE_h(MP_FUNC, "handler method %s isa %s\n",
-                       SvPVX(handler->cv), package);
-        }
-
-        MpHandlerPARSED_On(handler);
-        return 1;
-    }
-
-    if ((cv = get_cv(name, FALSE))) {
-        modperl_handler_cache_cv(aTHX_ handler, cv);
-        MpHandlerPARSED_On(handler);
-        return 1;
-    }
-
-    if (modperl_handler_lookup(aTHX_ handler, name, "handler")) {
-        return 1;
-    }
-
-    return 0;
-}
-
-int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p)
-{
+    CV *cv=Nullcv;
+    I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status;
 
 #ifdef USE_ITHREADS
-    if (p) {
-        /* under ithreads, each handler needs to get_cv() from the
-         * selected interpreter so the proper CvPADLIST is used
-         * XXX: this should probably be reworked so threads can cache
-         * parsed handlers
+    if (p && !MpHandlerPARSED(handler)) {
+        /*
+         * cannot update the handler structure at request time without
+         * locking, so just copy it
          */
-        modperl_handler_t *new_handler = 
-            modperl_handler_new(p, (void*)handler->name,
-                                MP_HANDLER_TYPE_CHAR);
-
-        new_handler->args = handler->args;
-        handler->args = Nullav;
-        handler = new_handler;
+        handler = modperl_handler_dup(p, handler);
     }
 #endif
 
+    MP_TRACE_h_do(MpHandler_dump_flags(handler, handler->name));
+
     if (!MpHandlerPARSED(handler)) {
-        if (!modperl_handler_parse(aTHX_ handler)) {
-            MP_TRACE_h(MP_FUNC, "failed to parse handler `%s'\n",
+        MpHandlerAUTOLOAD_On(handler);
+        if (!modperl_mgv_resolve(aTHX_ handler, p, handler->name)) {
+            MP_TRACE_h(MP_FUNC, "failed to resolve handler `%s'\n",
                        handler->name);
             return HTTP_INTERNAL_SERVER_ERROR;
         }
@@ -283,25 +75,40 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p)
     PUSHMARK(SP);
 
     if (MpHandlerMETHOD(handler)) {
-        XPUSHs(handler->obj);
+        GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_obj);
+        XPUSHs(modperl_mgv_sv(gv));
     }
 
-    if (handler->args) {
-        I32 items = AvFILLp(handler->args) + 1;
+    if (args) {
+        I32 items = AvFILLp(args) + 1;
 
         EXTEND(SP, items);
-        Copy(AvARRAY(handler->args), SP + 1, items, SV*);
+        Copy(AvARRAY(args), SP + 1, items, SV*);
         SP += items;
     }
 
     PUTBACK;
 
-    if (MpHandlerMETHOD(handler)) {
-        count = call_method(SvPVX(handler->cv), G_EVAL|G_SCALAR);
+    if (MpHandlerANON(handler)) {
+        SV *sv = eval_pv(handler->name, TRUE); /* XXX: cache */
+        cv = (CV*)SvRV(sv);
     }
     else {
-        count = call_sv(handler->cv, G_EVAL|G_SCALAR);
+        GV *gv = modperl_mgv_lookup(aTHX_ handler->mgv_cv);
+        if (gv) {
+            cv = modperl_mgv_cv(gv);
+        }
+        else {
+            char *name = modperl_mgv_as_string(aTHX_ handler->mgv_cv, p);
+            MP_TRACE_h(MP_FUNC, "lookup of %s failed\n", name);
+        }
     }
+
+    if (MpHandlerMETHOD(handler)) {
+        flags |= G_METHOD;
+    }
+
+    count = call_sv((SV*)cv, flags);
 
     SPAGAIN;
 
@@ -316,7 +123,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p)
     FREETMPS;LEAVE;
 
     if (SvTRUE(ERRSV)) {
-        MP_TRACE_h(MP_FUNC, "$@ = %s\n", SvPVX(ERRSV));
+        MP_TRACE_h(MP_FUNC, "$@ = %s", SvPVX(ERRSV));
         status = HTTP_INTERNAL_SERVER_ERROR;
     }
 
@@ -422,30 +229,27 @@ int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
           break;
       case MP_HANDLER_TYPE_PROC:
           {
-              apr_pool_t *p;
+              apr_pool_t *pconf;
 
               va_start(args, type);
-              p = va_arg(args, apr_pool_t *);
+              pconf = va_arg(args, apr_pool_t *);
               va_end(args);
 
+              if (!p) {
+                  p = pconf;
+              }
+
               modperl_handler_make_args(aTHX_ av_args,
-                                        "Apache::Pool", p,
+                                        "Apache::Pool", pconf,
                                         "Apache::Server", s, NULL);
           }
           break;
     };
 
     for (i=0; i<av->nelts; i++) {
-#ifdef USE_ITHREADS
-        if (!handlers[i]->perl) {
-            handlers[i]->perl = aTHX;
-        }
-#endif
-        handlers[i]->args = av_args;
-        if ((status = modperl_callback(aTHX_ handlers[i], p)) != OK) {
+        if ((status = modperl_callback(aTHX_ handlers[i], p, av_args)) != OK) {
             status = modperl_errsv(aTHX_ status, r, s);
         }
-        handlers[i]->args = Nullav;
 
         MP_TRACE_h(MP_FUNC, "%s returned %d\n",
                    handlers[i]->name, status);

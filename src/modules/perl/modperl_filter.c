@@ -81,6 +81,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 int modperl_run_filter(modperl_filter_t *filter)
 {
+    AV *args;
     int status;
     modperl_handler_t *handler =
         ((modperl_filter_ctx_t *)filter->f->ctx)->handler;
@@ -94,25 +95,23 @@ int modperl_run_filter(modperl_filter_t *filter)
     pTHX;
     modperl_interp_t *interp = NULL;
     interp = modperl_interp_select(r, c, s);
-    handler->perl = aTHX = interp->perl;
+    aTHX = interp->perl;
     PERL_SET_CONTEXT(aTHX);
 #endif
 
-    handler->args = newAV();
+    args = newAV();
 
-    modperl_handler_make_args(aTHX_ handler->args,
+    modperl_handler_make_args(aTHX_ args,
                               filter_classes[filter->mode], filter,
                               NULL);
 
-    if ((status = modperl_callback(aTHX_ handler, p)) != OK) {
+    if ((status = modperl_callback(aTHX_ handler, p, args)) != OK) {
         status = modperl_errsv(aTHX_ status, r, s);
     }
 
-    SvREFCNT_dec((SV*)handler->args);
-    handler->args = Nullav;
+    SvREFCNT_dec((SV*)args);
 
     MP_TRACE_f(MP_FUNC, "%s returned %d\n", handler->name, status);
-
 
     return status;
 }

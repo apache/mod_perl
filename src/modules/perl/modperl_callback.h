@@ -16,22 +16,15 @@
 #define MP_HANDLER_TYPE_PROC 4
 #define MP_HANDLER_TYPE_FILE 5
 
-modperl_handler_t *modperl_handler_new(apr_pool_t *p, void *h, int type);
+modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name);
+
+modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
+                                       modperl_handler_t *h);
 
 void modperl_handler_make_args(pTHX_ AV *avp, ...);
 
-apr_status_t modperl_handler_cleanup(void *data);
-
-void modperl_handler_cache_cv(pTHX_ modperl_handler_t *handler, CV *cv);
-
-int modperl_handler_lookup(pTHX_ modperl_handler_t *handler,
-                           char *package, char *name);
-
-void modperl_handler_unparse(modperl_handler_t *handler);
-
-int modperl_handler_parse(pTHX_ modperl_handler_t *handler);
-
-int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p);
+int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
+                     AV *args);
 
 int modperl_run_handlers(int idx, request_rec *r, conn_rec *c,
                          server_rec *s, int type, ...);

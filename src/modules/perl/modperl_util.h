@@ -18,4 +18,6 @@ char *modperl_apr_strerror(apr_status_t rv);
 
 int modperl_errsv(pTHX_ int status, request_rec *r, server_rec *s);
 
+int modperl_require_module(pTHX_ const char *pv);
+
 #endif /* MODPERL_UTIL_H */
