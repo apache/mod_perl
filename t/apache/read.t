@@ -15,7 +15,7 @@ my $socket = Apache::TestRequest::vhost_socket('default');
 
 $socket->autoflush(1);
 
-my $file = '../pod/modperl_2.0.pod';
+my $file = '../Makefile';
 
 open(my $fh, $file) or die "open $file: $!";
 

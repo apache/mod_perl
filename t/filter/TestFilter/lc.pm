@@ -18,8 +18,8 @@ sub handler {
 1;
 __DATA__
 
-<Location /pod>
+<Location /top_dir>
   PerlOutputFilterHandler TestFilter::lc
 </Location>
 
-Alias /pod @top_dir@/pod
+Alias /top_dir @top_dir@
