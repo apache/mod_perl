@@ -828,21 +828,20 @@ int PERL_LOG_HOOK(request_rec *r)
 {
     dSTATUS;
     dPPDIR;
-    int rstatus;
     PERL_CALLBACK("PerlLogHandler", cld->PerlLogHandler);
-    rstatus = status;
-#ifdef PERL_CLEANUP
-    PERL_CALLBACK("PerlCleanupHandler", cld->PerlCleanupHandler);
-#endif
-    return rstatus;
+    return status;
 }
 #endif
 
 void mod_perl_end_cleanup(void *data)
 {
     request_rec *r = (request_rec *)data;
-    MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
+    dSTATUS;
+    dPPDIR;
 
+    PERL_CALLBACK("PerlCleanupHandler", cld->PerlCleanupHandler);
+
+    MP_TRACE_g(fprintf(stderr, "perl_end_cleanup..."));
     perl_run_rgy_endav(r->uri);
 
     /* clear %ENV */

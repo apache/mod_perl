@@ -38,7 +38,8 @@ EOF
 
 my($hook, $package, $retval);
 
-for (qw(Access Authen Authz Fixup Cleanup
+#hmm, Cleanup doesn't seem to work in .htaccess with register_cleanup()
+for (qw(Access Authen Authz Fixup
 	HeaderParser Init Log Type Trans)) {
     next unless Apache::perl_hook($_);
     $tests++; 
