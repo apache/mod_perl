@@ -54,4 +54,11 @@ typedef void * apr_thread_mutex_t;
 #define apr_time_from_sec(sec) ((apr_time_t)(sec) * APR_USEC_PER_SEC)
 #endif 
 
+#ifndef apr_socket_opt_get 
+#define apr_socket_opt_get apr_getsocketopt
+#endif
+#ifndef apr_socket_opt_set
+#define apr_socket_opt_set apr_setsocketopt
+#endif
+
 #endif /* MODPERL_APACHE_INCLUDES_H */
