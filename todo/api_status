@@ -18,8 +18,7 @@ V: done completely
 #########################################################
 -- src/docs/2.0/api/Apache.pod
 VV src/docs/2.0/api/Apache/Access.pod
-g- src/docs/2.0/api/Apache/CmdParms.pod
-        info
+VP src/docs/2.0/api/Apache/CmdParms.pod
         context
 VV src/docs/2.0/api/Apache/Command.pod
 VP src/docs/2.0/api/Apache/Connection.pod
