@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/01/15 05:22:53 $]
+   Last modified at [$Date: 2003/02/20 00:41:51 $]
 
 Release:
 --------
@@ -49,6 +49,10 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* child processes never run END blocks. a good example is
+  Apache::TestUtil, which doesn't cleanup files and dirs it has
+  created, because the END block is not run.
 
 * Currently modperl_filter_add_{connection|request} check the filter
   handler function attrs before accepting the filter. If the module
