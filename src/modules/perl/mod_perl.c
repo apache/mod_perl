@@ -59,8 +59,11 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
     }
 
     base_perl = modperl_startup(base_server, p);
+
+#ifdef USE_ITHREADS
     modperl_interp_init(base_server, p, base_perl);
     MpInterpBASE_On(base_scfg->mip->parent);
+#endif
 
     for (s=base_server->next; s; s=s->next) {
         MP_dSCFG(s);
@@ -75,12 +78,13 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
                        s->server_hostname);
         }
 
+#ifdef USE_ITHREADS
+
         if (!MpSrvENABLED(scfg)) {
             scfg->mip = NULL;
             continue;
         }
 
-#ifdef USE_ITHREADS
         /* if alloc flags is On or clone flag is On,
          *  virtual host gets its own mip
          */
@@ -102,7 +106,9 @@ void modperl_init(server_rec *base_server, ap_pool_t *p)
              */
             scfg->mip = base_scfg->mip;
         }
-#endif
+
+#endif /* USE_ITHREADS */
+
     }
 }
 
