@@ -5,6 +5,10 @@ package Apache::HelloWorld;
 #  PerlResponseHandler Apache::HelloWorld
 #</Location>
 
+use strict;
+use Apache::RequestRec (); #for $r->content_type
+use Apache::RequestIO ();  #for $r->puts
+
 sub handler {
     my $r = shift;
 
