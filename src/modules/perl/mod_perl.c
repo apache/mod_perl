@@ -280,6 +280,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
             newSVpv(ap_server_root_relative(p, "lib/perl"), 0));
 #endif /* MP_COMPAT_1X */
 
+    /* things to be done only in the main server */
     if (!s->is_virtual) {
         modperl_handler_anon_init(aTHX_ p);
     }
@@ -496,6 +497,8 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
  */
 static apr_status_t modperl_sys_init(void)
 {
+    MP_TRACE_i(MP_FUNC, "mod_perl sys init\n");
+
 #if 0 /*XXX*/
     PERL_SYS_INIT(0, NULL);
 
@@ -523,6 +526,8 @@ static apr_status_t modperl_sys_term(void *data)
 {
     MP_init_status = 0;
 
+    MP_TRACE_i(MP_FUNC, "mod_perl sys term\n");
+
     modperl_env_unload();
 
     modperl_perl_pp_unset_all();
@@ -540,13 +545,15 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
         return OK;
     }
 
+    MP_TRACE_i(MP_FUNC, "mod_perl hook init\n");
+
     MP_init_status = 1; /* now starting */
 
     apr_pool_create(&server_pool, pconf);
     apr_pool_tag(server_pool, "mod_perl server pool");
 
     modperl_sys_init();
-    apr_pool_cleanup_register(pconf, NULL,
+    apr_pool_cleanup_register(server_pool, NULL,
                               modperl_sys_term, apr_pool_cleanup_null);
 
     modperl_init(s, pconf);
