@@ -4,8 +4,3 @@
 
 -- see also todo/api_status
 -- see also todo/release-checklist
-
-* there was a report about PerlRun leaking memory. the reporter didn't
-  give any more details, but I suspect that it's due to
-  ModPerl::Util::unload_package() which perfectly fits the timing when
-  the leak was introduced (when PerlRun started to use unload_package).
