@@ -24,6 +24,10 @@ sub server     { return shift->{'parms'}->server() }
 sub directives { return shift->{'directives'} ||= [] }
 sub package    { return shift->{'args'}->{'package'} }
 
+my @saved;
+sub save       { return $Apache::Server::SaveConfig }
+sub saved      { return @saved }
+
 sub handler : method {
     my($self, $parms, $args) = @_;
 
@@ -31,20 +35,24 @@ sub handler : method {
         $self = $self->new('parms' => $parms, 'args' => $args);
     }
 
+    if ($self->save) {
+        push @saved, $self->package;
+    }
+
     my $special = $self->SPECIAL_NAME;
 
     for my $entry ($self->symdump()) {
         if ($entry->[0] !~ /$special/) {
-            $self->dump(@$entry);
+            $self->dump_any(@$entry);
         }
     }
 
     {
         no strict 'refs';
-        my $package = $self->package;
-
-        $self->dump_special(${"${package}::$special"},
-          @{"${package}::$special"} );
+        foreach my $package ($self->package) {
+            $self->dump_special(${"${package}::$special"},
+              @{"${package}::$special"} );
+        }
     }
 
     $self->post_config();
@@ -89,7 +97,7 @@ sub dump_special {
     $self->add_config(@data);
 }
 
-sub dump {
+sub dump_any {
     my($self, $name, $entry) = @_;
     my $type = ref $entry;
 
@@ -175,6 +183,18 @@ sub post_config {
     my($self) = @_;
     my $errmsg = $self->server->add_config($self->directives);
     die $errmsg if $errmsg;
+}
+
+sub dump {
+    my $class = shift;
+    require Apache::PerlSections::Dump;
+    return Apache::PerlSections::Dump->dump(@_);
+}
+
+sub store {
+    my $class = shift;
+    require Apache::PerlSections::Dump;
+    return Apache::PerlSections::Dump->store(@_);
 }
 
 1;

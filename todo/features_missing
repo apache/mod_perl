@@ -2,12 +2,6 @@
 # mp1 missing features #
 ########################
 
-* Apache::PerlSections->dump 
-  It does exist, but it's a completely internal function, not dumping existing configuration
-  as it used to be in 1.x. (needed by Apache::Status, for instance). Need to be implemented
-  and the existing dump method must be moved out of the way
- 
-
 * directive handlers are supported but need some work for 1.x compat
   - Apache::ModuleConfig->get needs a compat method mapping to
     Apache::Module->get_config
