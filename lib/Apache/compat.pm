@@ -112,5 +112,39 @@ sub slurp_filename {
     return \$data;
 }
 
+use constant IOBUFSIZE => 8192;
+
+#XXX: howto convert PerlIO to apr_file_t
+#so we can use the real ap_send_fd function
+#2.0 ap_send_fd() also has an additional offset parameter
+
+sub send_fd_length {
+    my($r, $fh, $length) = @_;
+
+    my $buff;
+    my $total_bytes_sent = 0;
+    my $len;
+
+    return 0 if $length == 0;
+
+    if (($length > 0) && ($total_bytes_send + IOBUFSIZE) > $length) {
+        $len = $length - $total_bytes_sent;
+    }
+    else {
+        $len = IOBUFSIZE;
+    }
+
+    while (read($fh, $buff, $len)) {
+        $total_bytes_sent += $r->puts($buff);
+    }
+
+    $total_bytes_sent;
+}
+
+sub send_fd {
+    my($r, $fh) = @_;
+    $r->send_fd_length($fh, -1);
+}
+
 1;
 __END__

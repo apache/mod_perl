@@ -94,7 +94,7 @@ MODULE=Apache::Response   PACKAGE=guess
  ap_rationalize_mtime
  ap_update_mtime
  ap_send_error_response
- ap_send_fd
+~ap_send_fd
  ap_send_mmap
  ap_send_size
  ap_set_keepalive
