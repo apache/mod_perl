@@ -94,7 +94,7 @@ sub find_includes {
     my @includes;
     my $unwanted = join '|', qw(ap_listen internal version
                                 apr_optional mod_include mod_cgi mod_proxy
-                                mod_ssl ssl_);
+                                mod_ssl ssl_ apr_anylock apr_rmm);
 
     for my $dir (@dirs) {
         File::Find::finddepth({
