@@ -20,7 +20,6 @@ MODULE=Apache::RequestRec   PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_proxyreq       | | r, val=Nullsv
  mpxs_Apache__RequestRec_subprocess_env | | r, key=NULL, val=Nullsv
  mpxs_Apache__RequestRec_finfo | | r, finfo=NULL
- SV *:DEFINE_server_root_relative | | SV *:p, const char *:fname=""
  mpxs_Apache__RequestRec_handler | | ...
 
 
@@ -79,15 +78,15 @@ MODULE=Apache::ServerUtil   PACKAGE=guess
 
 MODULE=Apache::ServerUtil  PACKAGE=Apache::ServerRec
  SV *:DEFINE_dir_config | | server_rec *:s, char *:key=NULL, SV *:sv_val=Nullsv
- SV *:DEFINE_server_root_relative | | SV *:p, const char *:fname=""
+
+MODULE=Apache::ServerUtil PACKAGE=Apache::ServerUtil
+ mpxs_Apache__ServerUtil_server_root_relative | | p, fname=NULL
 
 PACKAGE=Apache
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
- SV *:DEFINE_server_root_relative | | SV *:p, const char *:fname=""
 
 MODULE=Apache::Connection
  mpxs_Apache__Connection_client_socket | | c, s=NULL
- SV *:DEFINE_server_root_relative | | SV *:p, const char *:fname=""
 
 MODULE=Apache::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES

@@ -27,28 +27,9 @@ sub new {
 }
 
 sub handler {
-
     my $r = shift;
 
-    my %pools = ( 
-        '$r->pool'                       => $r->pool, 
-        '$r->connection->pool'           => $r->connection->pool,
-        '$r->server->process->pool'      => $r->server->process->pool,
-        '$r->server->process->pconf'     => $r->server->process->pconf,
-        'Apache->server->process->pconf' => Apache->server->process->pconf,
-        'APR::Pool->new'                 => APR::Pool->new,
-    );
-
-    my %objects = ( 
-        '$r'                   => $r,
-        '$r->connection'       => $r->connection,
-        '$r->server'           => $r->server,
-        '__PACKAGE__->new($r)' => __PACKAGE__->new($r),
-    );
-
-    plan $r, tests => 12     +
-        (scalar keys %pools) +
-        (scalar keys %objects);
+    plan $r, tests => 15;
 
     {
         my $s = $r->server;
@@ -58,71 +39,6 @@ sub handler {
         ok t_cmp(scalar(@handlers), scalar(@expected), "get_handlers");
     }
 
-    # syntax - an object or pool is required
-    t_debug("Apache::server_root_relative() died");
-    eval { my $dir = Apache::server_root_relative() };
-    t_debug("\$\@: $@");
-    ok $@;
-
-    t_debug("Apache->server_root_relative() died");
-    eval { my $dir = Apache->server_root_relative() };
-    ok $@;
-
-    # syntax - first argument must be an object, not a class
-    t_debug("Apache->server_root_relative('conf') died");
-    eval { my $dir = Apache->server_root_relative('conf') };
-    ok $@;
-
-    foreach my $p (keys %pools) {
-
-        ok t_filepath_cmp(
-            canonpath(Apache::server_root_relative($pools{$p},'conf')),
-            catfile($serverroot, 'conf'),
-            "Apache:::server_root_relative($p, 'conf')");
-    }
-
-    # dig out the pool from valid objects
-    foreach my $obj (keys %objects) {
-
-        ok t_filepath_cmp(
-            canonpath($objects{$obj}->server_root_relative('conf')),
-            catfile($serverroot, 'conf'),
-            "$obj->server_root_relative('conf')");
-    }
-
-    # syntax - unrecognized objects don't segfault
-    {
-        my $obj = bless {}, 'Apache::Foo';
-        eval { Apache::server_root_relative($obj, 'conf') };
-
-        ok t_cmp($@,
-                 qr/server_root_relative.*no .* key/,
-                 "Apache::server_root_relative(\$obj, 'conf')");
-    }
-
-    # no file argument gives ServerRoot
-    ok t_filepath_cmp(canonpath($r->server_root_relative),
-                      canonpath($serverroot),
-                      '$r->server_root_relative()');
-
-    ok t_filepath_cmp(canonpath(Apache::server_root_relative($r->pool)),
-                      canonpath($serverroot),
-                      'Apache::server_root_relative($r->pool)');
-
-    # Apache::server_root is also the ServerRoot constant
-    ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
-                      canonpath($r->server_root_relative),
-                      'Apache::ServerUtil::server_root');
-
-    {
-        # absolute paths should resolve to themselves
-        my $dir = $r->server_root_relative('logs');
-
-        ok t_filepath_cmp($r->server_root_relative($dir),
-                          $dir,
-                          "\$r->server_root_relative($dir)");
-    }
-
     t_debug('Apache::ServerUtil::exists_config_define');
     ok Apache::ServerUtil::exists_config_define('MODPERL2');
     ok ! Apache::ServerUtil::exists_config_define('FOO');
@@ -130,7 +46,75 @@ sub handler {
     t_debug('registering method FOO');
     ok $r->server->method_register('FOO');
 
+    server_root_relative_tests($r);
+
     Apache::OK;
+}
+
+
+# 11 sub-tests
+sub server_root_relative_tests {
+    my $r = shift;
+
+    my %pools = (
+        '$r->pool'                       => $r->pool,
+        '$r->connection->pool'           => $r->connection->pool,
+        '$r->server->process->pool'      => $r->server->process->pool,
+        '$r->server->process->pconf'     => $r->server->process->pconf,
+        'Apache->server->process->pconf' => Apache->server->process->pconf,
+        'APR::Pool->new'                 => APR::Pool->new,
+    );
+
+    # syntax - an object or pool is required
+    t_debug("Apache::ServerUtil::server_root_relative() died");
+    eval { my $dir = Apache::ServerUtil::server_root_relative() };
+    t_debug("\$\@: $@");
+    ok $@;
+
+    foreach my $p (keys %pools) {
+        # we will leak memory here when calling the function with a
+        # pool whose life is longer than of $r, but it doesn't matter
+        # for the test
+        ok t_filepath_cmp(
+            canonpath(Apache::ServerUtil::server_root_relative($pools{$p},
+                                                               'conf')),
+            catfile($serverroot, 'conf'),
+            "Apache::ServerUtil:::server_root_relative($p, 'conf')");
+    }
+
+    # syntax - unrecognized objects don't segfault
+    {
+        my $obj = bless {}, 'Apache::Foo';
+        eval { Apache::ServerUtil::server_root_relative($obj, 'conf') };
+
+        ok t_cmp($@,
+                 qr/p is not of type APR::Pool/,
+                 "Apache::ServerUtil::server_root_relative(\$obj, 'conf')");
+    }
+
+    # no file argument gives ServerRoot
+    {
+        my $server_root_relative = 
+            Apache::ServerUtil::server_root_relative($r->pool);
+
+        ok t_filepath_cmp(canonpath($server_root_relative),
+                          canonpath($serverroot),
+                          'server_root_relative($pool)');
+
+        # Apache::ServerUtil::server_root is also the ServerRoot constant
+        ok t_filepath_cmp(canonpath(Apache::ServerUtil::server_root),
+                          canonpath($server_root_relative),
+                          'Apache::ServerUtil::server_root');
+
+    }
+
+    {
+        # absolute paths should resolve to themselves
+        my $dir1 = Apache::ServerUtil::server_root_relative($r->pool, 'logs');
+        my $dir2 = Apache::ServerUtil::server_root_relative($r->pool, $dir1);
+
+        ok t_filepath_cmp($dir1, $dir2, "absolute path");
+    }
 }
 
 1;

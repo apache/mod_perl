@@ -34,15 +34,15 @@ no warnings 'redefine';
 #   PerlResponseHandler Apache::Registry
 #</Location>
 
-use Apache::RequestRec ();
-use Apache::SubRequest ();
 use Apache::Connection ();
 use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Access ();
+use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use Apache::Response ();
+use Apache::SubRequest ();
 use Apache::Util ();
 use Apache::Log ();
 use Apache::URI ();
@@ -54,7 +54,9 @@ use APR::Util ();
 use APR::Brigade ();
 use APR::Bucket ();
 use mod_perl ();
+
 use Symbol ();
+use File::Spec ();
 
 BEGIN {
     $INC{'Apache.pm'} = __FILE__;
@@ -155,21 +157,6 @@ EOI
 }
 EOI
 
-    'Apache::server_root_relative' => <<'EOI',
-{
-    require Apache::ServerRec;
-    require Apache::ServerUtil;
-
-    my $orig_sub = *Apache::ServerRec::server_root_relative{CODE};
-    *Apache::server_root_relative = sub {
-        my $class = shift;
-        return Apache->server->server_root_relative(@_);
-    };
-    $orig_sub;
-}
-
-EOI
-
     'Apache::Util::ht_time' => <<'EOI',
 {
     require Apache::Util;
@@ -259,6 +246,11 @@ our $CWD = Apache::ServerUtil::server_root;
 our $AddPerlVersion = 1;
 
 package Apache;
+
+sub server_root_relative {
+    my $class = shift;
+    File::Spec->catfile(Apache::ServerUtil::server_root, @_);
+}
 
 sub exit {
     require ModPerl::Util;
@@ -510,6 +502,11 @@ sub content {
 
     return $data unless wantarray;
     return $r->parse_args($data);
+}
+
+sub server_root_relative {
+    my $r = shift;
+    File::Spec->catfile(Apache::ServerUtil::server_root, @_);
 }
 
 sub clear_rgy_endav {

@@ -64,31 +64,28 @@ sub handler {
              'Apache->httpd_conf');
     Apache->httpd_conf("ServerAdmin $admin");
 
-    ok t_filepath_cmp(canonpath(Apache::Test::config()->{vars}->{serverroot}),
-                      canonpath($Apache::Server::CWD),
-                      '$Apache::Server::CWD');
-
-    ok t_filepath_cmp(canonpath($r->server_root_relative),
-                      canonpath($Apache::Server::CWD),
-                      '$r->server_root_relative()');
-
-    ok t_filepath_cmp(canonpath($r->server_root_relative('conf')),
-                      catfile($Apache::Server::CWD, 'conf'),
-                      "\$r->server_root_relative('conf')");
-
-    # Apache->server_root_relative
+    # (Apache||$r)->server_root_relative
     {
-        Apache::compat::override_mp2_api('Apache::server_root_relative');
+        my $server_root = Apache::Test::config()->{vars}->{serverroot};
+        ok t_filepath_cmp(canonpath($Apache::Server::CWD),
+                          canonpath($server_root),
+                          '$server_root');
+
+        ok t_filepath_cmp(canonpath($r->server_root_relative),
+                          canonpath($server_root),
+                          '$r->server_root_relative()');
+
+        ok t_filepath_cmp(canonpath($r->server_root_relative('conf')),
+                          catfile($server_root, 'conf'),
+                          "\$r->server_root_relative('conf')");
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative('conf')),
-                          catfile($Apache::Server::CWD, 'conf'),
+                          catfile($server_root, 'conf'),
                           "Apache->server_root_relative('conf')");
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative),
-                          canonpath($Apache::Server::CWD),
+                          canonpath($server_root),
                           'Apache->server_root_relative()');
-
-        Apache::compat::restore_mp2_api('Apache::server_root_relative');
     }
 
     OK;

@@ -96,8 +96,6 @@ void modperl_clear_symtab(pTHX_ HV *symtab);
 
 char *modperl_file2package(apr_pool_t *p, const char *file);
 
-SV *modperl_server_root_relative(pTHX_ SV *sv, const char *fname);
-
 /**
  * convert a compiled *CV ref to its original source code
  * @param p       pool object (with a shortest possible life scope)

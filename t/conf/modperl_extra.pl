@@ -19,7 +19,7 @@ use Apache::Process ();
 # perl core libs
 my $pool = Apache->server->process->pool;
 my $project_root = canonpath
-    Apache::ServerRec::server_root_relative($pool, "..");
+    Apache::ServerUtil::server_root_relative($pool, "..");
 my (@a, @b, @c);
 for (@INC) {
     if (m|^\Q$project_root\E|) {
