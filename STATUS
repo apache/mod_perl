@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/06/21 22:25:48 $]
+   Last modified at [$Date: 2002/08/15 15:22:02 $]
 
 Release:
 --------
@@ -31,9 +31,19 @@ Available Patches:
 ------------------
 
 * Fixing Apache->warn("foo")
-  Report: Message-ID: <3D11A4E5.6010202@stason.org>
+
+  Report: http://mathforum.org/epigone/modperl-dev/noxtramcay/3D11A4E5.6010202@stason.org
+  Thread: http://mathforum.org/epigone/modperl-dev/noxtramcay
   Status: pending Apache::Log compat issues, this and other methods
           might be dropped.
+----
+
+* The Apache::Scoreboard XS implemenation with tests is awaiting to be
+  committed
+
+  Report: http://mathforum.org/epigone/modperl-dev/zehporbreh/Pine.LNX.4.44.0204062240010.11967-100000@hope.stason.org
+  Status: waiting for Doug's review
+
 ----
 
 * 
@@ -70,9 +80,21 @@ Open Issues or Core Enhancements:
 
 ----
 
+* we need a bug reporting utility that can be used post-install, which
+  should be similar to t/REPORT
+
+  Report: http://mathforum.org/epigone/modperl-dev/staiblirroo/3CB544D7.8040109@stason.org
+  thread: http://mathforum.org/epigone/modperl-dev/staiblirroo
+  Status: +1: Stas, Doug
+          needs to be implemented
+
+----
+
 * 
   Report: 
   Status: 
+----
+
 
 Documentation:
 --------------
