@@ -66,7 +66,7 @@ CV *empty_anon_sub(void)
                   block_end(block_start(TRUE), newOP(OP_STUB,0)));
 }
    
-static void newCONSTSUB(HV *stash, char *name, SV *sv)
+static void my_newCONSTSUB(HV *stash, char *name, SV *sv)
 {
 #ifdef dTHR
     dTHR;
@@ -838,7 +838,7 @@ static void boot_ConstSubs(char *tag)
 #endif
 	char *name = EXP_NAME;
 	double val = constant(name);
-	newCONSTSUB(stash, name, newSViv(val));
+	my_newCONSTSUB(stash, name, newSViv(val));
     }
 }
 
@@ -884,7 +884,7 @@ __AUTOLOAD()
     if(errno != 0) 
 	croak("Your vendor has not defined Apache::Constants macro `%s'", name);
     else 
-        newCONSTSUB(stash, name, newSViv(val));
+        my_newCONSTSUB(stash, name, newSViv(val));
 
 const char *
 SERVER_VERSION()

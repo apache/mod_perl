@@ -44,6 +44,22 @@
 #endif
 #include "XSUB.h"
 
+
+/* patchlevel.h causes a -Wall warning, 
+ * plus chance that another patchlevel.h might be in -I paths
+ * so try to avoid it if possible 
+ */ 
+#ifdef PERL_VERSION
+#if PERL_VERSION >= 500476
+#include "perl_PL.h"
+#endif
+#else
+#include "patchlevel.h"
+#if ((PATCHLEVEL >= 4) && (SUBVERSION >= 76)) || (PATCHLEVEL >= 5)
+#include "perl_PL.h"
+#endif
+#endif /*PERL_VERSION*/
+
 #ifdef PERL_OBJECT
 #include <perlhost.h>
 #include "win32iop.h"
