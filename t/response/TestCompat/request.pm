@@ -75,6 +75,8 @@ sub handler {
 
     # $r->notes
     {
+        Apache::compat::override_mp2_api('Apache::RequestRec::notes');
+
         my $key = 'notes-test';
         # get/set scalar context
         {
@@ -98,6 +100,10 @@ sub handler {
             $r->notes->add($key => $_) for @exp;
             ok t_cmp(\@exp, [ $r->notes($key) ], "\$r->notes in list context");
         }
+
+        # restore the real 2.0 notes() method, now that we are done
+        # with the compat one
+        Apache::compat::restore_mp2_api('Apache::RequestRec::notes');
     }
 
     # get_remote_host()

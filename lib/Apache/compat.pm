@@ -50,6 +50,86 @@ BEGIN {
     $INC{'Apache/Table.pm'} = __FILE__;
 }
 
+# api => "overriding code"
+# the overriding code, needs to "return" the original CODE reference
+# when eval'ed , so that it can be restored later
+my %overridable_mp2_api = (
+    'Apache::RequestRec::notes' => <<'EOI',
+{
+    require Apache::RequestRec;
+    my $notes_sub = *Apache::RequestRec::notes{CODE};
+    *Apache::RequestRec::notes = sub {
+        my $r = shift;
+        return wantarray()
+            ?       ($r->table_get_set(scalar($r->$notes_sub), @_))
+            : scalar($r->table_get_set(scalar($r->$notes_sub), @_));
+    };
+    $notes_sub;
+}
+EOI
+
+    'Apache::RequestRec::finfo' => <<'EOI',
+{
+    require APR::Finfo;
+    my $finfo_sub = *APR::Finfo::finfo{CODE};
+    sub Apache::RequestRec::finfo {
+        my $r = shift;
+        stat $r->filename;
+        \*_;
+    }
+    $finfo_sub;
+}
+EOI
+);
+
+my %overridden_mp2_api = ();
+
+# this function enables back-compatible APIs which can't coexist with
+# mod_perl 2.0 APIs with the same name and therefore it should be
+# avoided if possible.
+#
+# it expects a list of fully qualified functions, like
+# "Apache::RequestRec::finfo"
+sub override_mp2_api {
+    my (@subs) = @_;
+
+    for my $sub (@subs) {
+        unless (exists $overridable_mp2_api{$sub}) {
+            die __PACKAGE__ . ": $sub is not overridable";
+        }
+        if (exists $overridden_mp2_api{$sub}) {
+            warn __PACKAGE__ . ": $sub has been already overridden";
+            next;
+        }
+        $overridden_mp2_api{$sub} = eval $overridable_mp2_api{$sub};
+        unless (exists $overridden_mp2_api{$sub} &&
+                ref($overridden_mp2_api{$sub}) eq 'CODE') {
+            die "overriding $sub didn't return a CODE ref";
+        }
+    }
+}
+
+# restore_mp2_api does the opposite of override_mp2_api(), it removes
+# the overriden API and restores the original mod_perl 2.0 API
+sub restore_mp2_api {
+    my (@subs) = @_;
+
+    for my $sub (@subs) {
+        unless (exists $overridable_mp2_api{$sub}) {
+            die __PACKAGE__ . ": $sub is not overridable";
+        }
+        unless (exists $overridden_mp2_api{$sub}) {
+            warn __PACKAGE__ . ": can't restore $sub, " .
+                "as it has not been overridden";
+            next;
+        }
+        my $original_sub = delete $overridden_mp2_api{$sub};
+        no warnings 'redefine';
+        no strict 'refs';
+        *$sub = $original_sub;
+    }
+}
+
 sub request {
     my $what = shift;
 
@@ -249,15 +329,6 @@ sub err_header_out {
         : scalar($r->table_get_set(scalar($r->err_headers_out), @_));
 }
 
-{
-    my $notes_sub = *Apache::RequestRec::notes{CODE};
-    *Apache::RequestRec::notes = sub {
-        my $r = shift;
-        return wantarray()
-            ?       ($r->table_get_set(scalar($r->$notes_sub), @_))
-            : scalar($r->table_get_set(scalar($r->$notes_sub), @_));
-    }
-}
 
 sub register_cleanup {
     shift->pool->cleanup_register(@_);
@@ -345,12 +416,6 @@ sub seqno {
 
 sub chdir_file {
     #XXX resolve '.' in @INC to basename $r->filename
-}
-
-sub finfo {
-    my $r = shift;
-    stat $r->filename;
-    \*_;
 }
 
 *log_reason = \&log_error;
