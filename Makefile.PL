@@ -103,8 +103,8 @@ sub configure {
     }
 
     if (Apache::Build::is_win32()) {
-        #Makefile.PL's in WrapXS/ just need to pass the -e libmodperl.lib test
-        #the real libmodperl.lib will be in place when WrapXS/ dll's are
+        #Makefile.PL's in WrapXS/ just need to pass the -e mod_perl.lib test
+        #the real mod_perl.lib will be in place when WrapXS/ dll's are
         #actually linked
         my $lib = "src/modules/perl/$build->{MP_LIBNAME}.lib";
         unless (-e $lib) {
