@@ -707,7 +707,7 @@ sub noh_b_graph {
 
     untie *STDOUT;
 
-    my $dir = File::Spec->catfile(Apache::ServerUtil::server_root,
+    my $dir = File::Spec->catfile(Apache::ServerUtil::server_root(),
         ($r->dir_config("GraphDir") || "logs/b_graphs"));
 
     mkdir $dir, 0755 unless -d $dir;
