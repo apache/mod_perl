@@ -13,17 +13,25 @@ sub config_as_str{
 
     $cfg .= "*** using $INC{'Apache/BuildConfig.pm'}\n";
 
+    # mod_perl opts
     $cfg .= "*** Makefile.PL options:\n";
     $cfg .= join '',
         map {sprintf "    %-20s => %s\n", $_, $build_config->{$_}}
             grep /^MP_/, sort keys %$build_config;
 
-    my $test_config = Apache::TestConfig->new;
-    my $httpd = $test_config->{vars}->{httpd};
-    my $command = "$httpd -V";
-    $cfg .= "\n\n*** $command\n";
-    $cfg .= qx{$command};
+    my $command = '';
 
+    # httpd opts
+    my $test_config = Apache::TestConfig->new;
+    if (my $httpd = $test_config->{vars}->{httpd}) {
+        $command = "$httpd -V";
+        $cfg .= "\n\n*** $command\n";
+        $cfg .= qx{$command};
+    } else {
+        $cfg .= "\n\n*** The httpd binary was not found\n";
+    }
+
+    # perl opts
     my $perl = $build_config->{MODPERL_PERLPATH};
     $command = "$perl -V";
     $cfg .= "\n\n*** $command\n";
