@@ -12,7 +12,7 @@
  * PERLIO_LAYERS is available in 5.7.1
  */
 
-#ifdef PERLIO_LAYERS /* 5.7.2+ */
+#if defined(PERLIO_LAYERS) && defined(PERLIO_K_MULTIARG) /* 5.7.2+ */
 
 /**********************************************************************
  * The PerlIO APR layer.
@@ -377,7 +377,7 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
                                      type);
 }
 
-#else /* NOT PERLIO_LAYERS (5.6.1) */
+#elif !defined(PERLIO_LAYERS) /* NOT PERLIO_LAYERS (5.6.1) */
 
 FILE *apr_perlio_apr_file_to_FILE(pTHX_ apr_file_t *file, int type)
 {
@@ -445,6 +445,13 @@ SV *apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
 void apr_perlio_init(pTHX)
 {
     APR_REGISTER_OPTIONAL_FN(apr_perlio_apr_file_to_glob);
+}
+
+#else
+
+void apr_perlio_init(pTHX)
+{
+    Perl_croak(aTHX_ "APR::PerlIO not usable with this version of Perl");
 }
 
 #endif /* PERLIO_LAYERS */
