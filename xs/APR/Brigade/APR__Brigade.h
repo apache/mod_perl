@@ -106,7 +106,7 @@ SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
     apr_bucket_brigade *bb;
     apr_size_t length;
     apr_status_t status;
-    SV *data = newSV(0);
+    SV *data;
 
     mpxs_usage_va_1(bb, "$bb->flatten([$length])");
 
@@ -125,6 +125,7 @@ SV *mpxs_APR__Brigade_flatten(pTHX_ I32 items,
         length = (apr_size_t)actual;
     }
 
+    data = newSV(0);
     mpxs_sv_grow(data, length);
 
     status = apr_brigade_flatten(bb, SvPVX(data), &length);
