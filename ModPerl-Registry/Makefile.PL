@@ -1,4 +1,4 @@
-require 5.6.1;
+require 5.6.0;
 
 use ExtUtils::MakeMaker;
 
