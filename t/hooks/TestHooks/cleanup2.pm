@@ -14,6 +14,7 @@ use File::Spec::Functions qw(catdir);
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
+use APR::Pool ();
 
 use Apache::Const -compile => qw(OK DECLINED);
 use APR::Const    -compile => 'SUCCESS';
@@ -31,17 +32,17 @@ sub handler {
     my $status = $r->sendfile($file);
     die "sendfile has failed" unless $status == APR::SUCCESS;
 
-    $r->push_handlers(PerlCleanupHandler => \&cleanup);
+    $r->pool->cleanup_register(\&cleanup, $file);
 
     return Apache::OK;
 }
 
 sub cleanup {
-    my $r = shift;
+    my $file_arg = shift;
 
     debug_sub "called";
-    die "Can't find file: $file" unless -e $file;
-    unlink $file or die "failed to unlink $file";
+    die "Can't find file: $file_arg" unless -e $file_arg;
+    unlink $file_arg or die "failed to unlink $file_arg";
 
     return Apache::OK;
 }
