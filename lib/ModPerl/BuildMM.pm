@@ -351,6 +351,7 @@ sub ModPerl::BuildMM::MY::libscan {
     return '' if $path =~ m/\.(pl|cvsignore)$/;
     return '' if (basename dirname $path) eq 'CVS';
     return '' if $path =~ m/~$/;
+    return '' if $path =~ /\B\.svn\b/;
 
     $path;
 }
