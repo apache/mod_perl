@@ -119,6 +119,7 @@ t/modules/status.t
 t/modules/symbol.t
 t/internal/api.t
 t/internal/auth.t
+t/internal/dirmagic.t
 t/internal/error.t
 t/internal/headers.t
 t/internal/hooks.t
@@ -166,6 +167,7 @@ lib/Apache/Include.pm
 lib/Apache/Status.pm
 lib/Bundle/Apache.pm
 t/docs/auth/.htaccess
+t/docs/dirmagic/cal.txt
 t/docs/null.txt
 t/docs/error.txt
 t/docs/env.iphtml

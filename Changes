@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+add DIR_MAGIC_TYPE to perl_handlers[] table for directory indexing
+modules
+
 Apache::Log optimizations:
   ${r,s}->log->$method() will now accept a CODE ref as it's first
   argument, which is only called when LogLevel >= $method

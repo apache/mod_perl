@@ -15,7 +15,7 @@ print "1..2\n";
 my $response = $ua->request($request, undef, undef);
 
 test ++$i, $response->is_success;
-print $response->as_string;
+#print $response->as_string;
 $ua->creds(qw(bad one));
 
 $response = $ua->request($request, undef, undef);
