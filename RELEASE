@@ -64,13 +64,7 @@ Instructions for mod_perl 2.0 Release Manager
          /www/perl.apache.org/dist/old
     % rm -rf /www/perl.apache.org/dist/mod_perl-1.99_10
 
-  d. make sure that the files you just created are group rw so
-     all the dist admins can make changes:
-
-    % find /www/perl.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
-    % find /www/perl.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
-
-  e. update the version and release date
+  d. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
      automatically updated within 6 hours. Alternatively you can do a
      manual update by logging into www.apache.org and running:
@@ -79,15 +73,7 @@ Instructions for mod_perl 2.0 Release Manager
 
 5. Upload the package to CPAN
 
-6. Announce the package
-
-  a. post ... to the modperl, announce lists
-  Subject: [ANNOUNCE]: mod_perl 1.99_12 
-     include 
-  - MD5 sig (as it comes from CPAN upload announce).
-  - the latest Changes
-
-7. Tarball signing
+6. Tarball signing
 
   (depending on whether you use GPG or PGP, pick the first or the
   second set of the commands):
@@ -113,9 +99,28 @@ Instructions for mod_perl 2.0 Release Manager
 
     % pgpv mod_perl-1.99_12.tar.gz.asc
 
-8. Distribute to www.apache.org/dist/perl
+  d. make sure that the files you just created are group rw so
+     all the dist admins can make changes:
 
-   a. TBD
+    % find /www/perl.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
+    % find /www/perl.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
+
+7. Distribute to www.apache.org/dist/perl 
+   and archive the old package under /www/archive.apache.org/dist/perl/
+
+   % cd /www/www.apache.org/dist/perl/
+   % cp /www/perl.apache.org/dist/mod_perl-1.99_12.tar.gz* .
+   % tar -xzvf mod_perl-1.99_12.tar.gz
+   % mv mod_perl-1.99_10.tar.gz* /www/archive.apache.org/dist/perl/
+   % rm -rf mod_perl-1.99_11
+
+8. Announce the package
+
+  a. post ... to the modperl, announce lists
+  Subject: [ANNOUNCE]: mod_perl 1.99_12 
+     include 
+  - MD5 sig (as it comes from CPAN upload announce).
+  - the latest Changes
 
 9. Prepare for the next cycle
 
