@@ -67,7 +67,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    err
 </apr_proc_t>
 
-!<apr_exploded_time_t>
+!<apr_time_exp_t>
    tm_usec
    tm_sec
    tm_min
@@ -79,7 +79,7 @@ apr_uuid_t apr_datum_t apr_mmap_t apr_hdtr_t apr_ipsubnet_t
    tm_yday
    tm_isdst
    tm_gmtoff
-</apr_exploded_time_t>
+</apr_time_exp_t>
 
 #generic data structures
 
