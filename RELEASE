@@ -116,7 +116,7 @@ Instructions for mod_perl 2.0 Release Manager
 7. Distribute to www.apache.org/dist/perl 
    and archive the old package under /www/archive.apache.org/dist/perl/
 
-  b. unpack the package, update symlinks to the tarball and unpacked distro:
+  a. unpack the package, update symlinks to the tarball and unpacked distro:
 
    % cd /www/www.apache.org/dist/perl/
    % cp /www/perl.apache.org/dist/mod_perl-1.99_15.tar.gz* .
