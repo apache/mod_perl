@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2003/04/08 00:24:27 $]
+   Last modified at [$Date: 2003/04/09 04:00:05 $]
 
 Release:
 --------
@@ -49,6 +49,15 @@ Available Patches:
 
 Needs Patch or Further Investigation:
 -------------------------------------
+
+* we have shared lib loading problems on the following platforms:
+
+    OpenBSD - needs investigation
+
+    AIX - works only for some versions with -berok to ignore linking
+    errors (symbol resolution).  Should replace -berok with a proper
+    symbol resolution at linking time, but I had not much success with
+    using this approach (dlopen fails).
 
 * we have a dependency check problem when xs/*/*.h use code from
   xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
