@@ -264,6 +264,23 @@ sub request {
     $r;
 }
 
+{
+    require Apache::Module;
+    my $orig_sub = *Apache::Module::top_module{CODE};
+    *Apache::Module::top_module = sub {
+        $orig_sub->();
+    };
+}
+
+{
+    require Apache::Module;
+    my $orig_sub = *Apache::Module::get_config{CODE};
+    *Apache::Module::get_config = sub {
+        shift if $_[0] eq 'Apache::Module';
+        $orig_sub->(@_);
+    };
+}
+
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
 our $CWD = Apache::ServerUtil::server_root;

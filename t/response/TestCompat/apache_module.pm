@@ -19,9 +19,7 @@ our @APACHE_MODULE_COMMANDS = (
 
 sub TestCompatApacheModuleParms {
     my($self, $parms, $args) = @_;
-    Apache::compat::override_mp2_api('Apache::Module::get_config');
     my $config = Apache::Module->get_config($self, $parms->server);
-    Apache::compat::restore_mp2_api('Apache::Module::get_config');
     $config->{data} = $args;
 }
 
@@ -30,14 +28,10 @@ sub handler : method {
 
     plan $r, tests => 2;
      
-    Apache::compat::override_mp2_api('Apache::Module::top_module');
     my $top_module = Apache::Module->top_module();
-    Apache::compat::restore_mp2_api('Apache::Module::top_module');
     ok t_cmp (ref($top_module), 'Apache::Module');
 
-    Apache::compat::override_mp2_api('Apache::Module::get_config');
     my $config = Apache::Module->get_config($self, $r->server);
-    Apache::compat::restore_mp2_api('Apache::Module::get_config');
     ok t_cmp ($config->{data}, 'Test');
     
     OK;
