@@ -10,6 +10,35 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+Add a capability to tune the test configuration sections ordering
+in Apache::TestConfigPerl [Stas Bekman]
+
+fix the complaining code about late PerlSwitches when PerlLoadModule
+is used before it [Stas Bekman]
+
+add various tests that exercise PerlLoadModule and vhosts
+[Stas Bekman]
+
+handle correctly PerlLoadModules (directives) with vhosts:
+  - handle gracefully cases when things are undef/NULL
+  - handle the case when scfg==NULL, by stealing the base_servers's config
+[Stas Bekman]
+
+make mod_perl work with vhosts when the server is started prior to
+  post_config():
+  - call modperl_init_globals as early as possible, because the main server
+    record is needed during the configuration parsing, for perlloadmodule
+    and vhosts
+  - also make sure that we are using a real base_server, when dealing
+    with modperl_init, and if not retrieve it from the global record
+[Stas Bekman]
+
+prevent segfaults, when scfg is NULL in Apache::Module->get_config();
+[Stas Bekman]
+
+ensure that a core file is a file indeed, before complaining [Philippe
+M. Chiasson <gozer@cpan.org>]
+
 add $r->as_string [Geoffrey Young]
 
 add backcompat vars: $Apache::Server::CWD and
