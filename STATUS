@@ -225,13 +225,6 @@ Known bugs unlikely to be fixed:
 	Status:
           does anybody actually use nph script anymore?
 
-    * /perl/perl-status?sig dumps core under hpux 10.20 [David-Michael.Lincke@unisg.ch]
-        Report: ?
-
-	Status:
-          can't reproduce, can't fix.  perl-status?sig is not very
-          useful info anyhow.
-
     * perl_config should not av_shift ARRAY refs from %Apache::ReadConfig::
         Report: ?
 
