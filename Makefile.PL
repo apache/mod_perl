@@ -56,6 +56,7 @@ sub echo_cmd {
 sub make {
     my $target = shift;
     return clean() if $target eq 'c';
+    my $single_file = $target =~ /\.c$/ ? $target : "";
 
     my $ccopts = ExtUtils::Embed::ccopts();
     my @inc = $build->inc;
@@ -63,8 +64,9 @@ sub make {
 
     chdir $code->path;
 
-    for ($code->c_files) {
+    for ($single_file ? $single_file : $code->c_files) {
         echo_cmd "$cc -g -Wall $ccopts @inc -c $_";
+        return if $single_file;
     }
 
     my @objs = $code->o_files;
