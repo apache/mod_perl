@@ -160,9 +160,6 @@ not the complete URI [Andrei A. Voropaev <andrei@securities.com>]
 fixed the failure of t/modules/file test in 'make test' suit by untainting
 the $ENV{PATH} in ./t/net/perl/file.pl [Stas Bekman <sbekman@iname.com>]
 
-added the Apache::GTopLimit to MANIFEST and thus to distribution [Stas
-Bekman <sbekman@iname.com>]
-
 Apache::RegistryLoader::handler was rewritten to allow a better
 diagnostics of scripts preloading problems. [Stas Bekman 
 <sbekman@iname.com>]

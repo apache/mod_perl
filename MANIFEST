@@ -56,7 +56,6 @@ lib/Apache/RegistryNG.pm
 lib/Apache/RegistryBB.pm
 lib/Apache/RegistryLoader.pm
 lib/Apache/Resource.pm
-lib/Apache/GTopLimit.pm
 #lib/Apache/Safe.pm
 lib/Apache/SIG.pm
 lib/Apache/SizeLimit.pm
