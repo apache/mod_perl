@@ -1744,7 +1744,15 @@ CHAR_P perl_section (cmd_parms *parms, void *dummy, const char *arg)
 
     ENTER_SAFE(parms->server, parms->pool);
     MP_TRACE_g(mod_perl_dump_opmask());
-    perl_eval_sv(code, G_DISCARD);
+
+    {
+        SV *server_sv = perl_get_sv("Apache::__SERVER", FALSE);
+        IV ptr = SvIVX(SvRV(server_sv));
+        SvIVX(SvRV(server_sv)) = (IV)parms->server;
+        perl_eval_sv(code, G_DISCARD);
+        SvIVX(SvRV(server_sv)) = (IV)ptr;
+    }
+
     LEAVE_SAFE;
 
     {
