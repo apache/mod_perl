@@ -64,19 +64,26 @@ local %ModPerl::MM::PM = (
     'lib/Apache2.pm' => 'blib/lib/Apache2.pm',
 );
 
+# these h files need to be installed system-wide so 3rd party XS
+# extensions can use them
+my @xs_h_files = map catfile("xs", $_),
+    qw(modperl_xs_sv_convert.h modperl_xs_typedefs.h modperl_xs_util.h);
+
 ModPerl::MM::WriteMakefile(
     NAME => 'mod_perl',
     VERSION => $VERSION,
     DIR     => get_dirs_with_makefile(@remote_makefile_dirs),
     macro => {
-        MODPERL_SRC      => $code->path,
-        MODPERL_MAKEFILE => basename($build->default_file('makefile')),
-        MAKE_F           => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
-        MODPERL_LIBMAKE  => '$(MAKE) -f $(MODPERL_MAKEFILE)',
-        PERL             => $build->perl_config('perlpath'),
-        MOD_INSTALL      => ModPerl::MM::mod_install(),
-        APACHE_PREFIX    => $build->apxs('-q' => 'prefix'),
-        APACHE_LIBDIR    => $build->apxs('-q' => 'libexecdir'),
+        MODPERL_SRC        => $code->path,
+        MODPERL_MAKEFILE   => basename($build->default_file('makefile')),
+        MAKE_F             => '$(MAKE) ' . (WIN32 ? '/f' : '-f'),
+        MODPERL_LIBMAKE    => '$(MAKE) -f $(MODPERL_MAKEFILE)',
+        PERL               => $build->perl_config('perlpath'),
+        MOD_INSTALL        => ModPerl::MM::mod_install(),
+        APACHE_PREFIX      => $build->apxs('-q' => 'prefix'),
+        APACHE_LIBDIR      => $build->apxs('-q' => 'libexecdir'),
+        APACHE_INCLUDEDIR  => $build->apxs('-q' => 'includedir'),
+        MODPERL_XS_H_FILES => join(" \\\n\t", @xs_h_files),
     },
     clean => {
         FILES => "@{ clean_files() }",
@@ -420,6 +427,10 @@ modperl_lib:
 modperl_lib_install:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) install
 
+modperl_xs_h_install:
+	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
+	$(CP) $(MODPERL_XS_H_FILES) $(APACHE_INCLUDEDIR)
+
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MODPERL_LIBMAKE) clean
 
@@ -432,6 +443,7 @@ sub MY::install {
     my $self = shift;
     my $string = $self->MM::install(@_);
     ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
+    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
     $string;
 }
 
