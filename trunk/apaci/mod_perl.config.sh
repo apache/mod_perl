@@ -118,7 +118,14 @@ perl_ldflags="`$perl_interp $config_pm -e 'print $Config{ldflags}'`"
 perl_lddlflags="`$perl_interp $config_pm -e 'print $Config{lddlflags}'`"
 
 case "$os_version" in
-    aix*)  perl_lddlflags="$perl_lddlflags -bI:\$(APACHELIBEXEC)/httpd.exp" ;;
+    aix*)
+	case "$perl_cc" in
+	*gcc*)
+		XLINKER="-Xlinker "
+		;;
+	esac
+    	perl_lddlflags="$perl_lddlflags $XLINKER-bI:\$(APACHELIBEXEC)/httpd.exp"
+	;;
     * )    ;;
 esac
 
@@ -150,7 +157,7 @@ perl_libs="`$perl_interp $tmpfile2 $perl_libperl`"
 if test $build_type = OBJ
 then
 	case "$os_version" in
-	    aix*)  perl_libs="$perl_libs -bE:\$(SRCDIR)/modules/perl/mod_perl.exp" ;;
+	    aix*)  perl_libs="$perl_libs $XLINKER-bE:\$(SRCDIR)/modules/perl/mod_perl.exp" ;;
 	    * )    ;;
 	esac
 fi
