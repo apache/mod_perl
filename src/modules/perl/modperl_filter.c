@@ -130,8 +130,9 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
             ap_log_error(APLOG_MARK, APLOG_WARNING,
                          0, r->server, "%s did not send an HTTP header",
                          r->uri);
+            r->status = status;
             /* XXX: bodytext == NULL here */
-            return status;
+            return APR_SUCCESS;
         }
         else if (!bodytext) {
             return APR_SUCCESS;
