@@ -4,7 +4,7 @@ mod_perl_style - style guide for mod_perl code
 
 =head1 DESCRIPTION
 
-This document 
+This document
 
 =head1 C code
 
@@ -91,11 +91,13 @@ functions)
 
 Avoid indirect method calls, e.g.
 
- don't say:
+don't say:
+
  new CGI::Cookie
 
- say:
- CGI::Cookie->new 
+say:
+
+ CGI::Cookie->new
 
 =back
 
@@ -105,15 +107,15 @@ Avoid indirect method calls, e.g.
 
 =item Avoid inherting from certain modules
 
-Exporter 
+Exporter.
 To avoid inherting B<AutoLoader::AUTOLOAD>
 
- instead of this:
+instead of this:
 
   @MyClass::ISA = qw(Exporter);
- 
- use this:
- 
+
+use this:
+
   *import = \&Exporter::import;
 
 
@@ -125,6 +127,6 @@ To avoid inherting B<AutoLoader::AUTOLOAD>
 
 =item %main::
 
-stay away from main::
+stay away from main:: to avoid namespace clashes
 
 =back
