@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.25_02-dev
+
 =item 1.25_01 - July 6, 2001
 
 add symbols to mod_perl.exp for aix/axkit
