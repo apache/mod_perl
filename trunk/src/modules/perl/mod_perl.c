@@ -546,7 +546,7 @@ void perl_startup (server_rec *s, pool *p)
 
     /* *CORE::GLOBAL::exit = \&Apache::exit */
     if(gv_stashpv("CORE::GLOBAL", FALSE)) {
-        GV *exitgp = gv_fetchpv("CORE::GLOBAL::exit", TRUE, SVt_PVCV);
+	GV *exitgp = gv_fetchpv("CORE::GLOBAL::exit", TRUE, SVt_PVCV);
 	GvCV(exitgp) = perl_get_cv("Apache::exit", TRUE);
 	GvIMPORTED_CV_on(exitgp);
     }

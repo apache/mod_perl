@@ -1178,7 +1178,7 @@ subprocess_env(r, key=NULL, ...)
     I32 gimme = GIMME_V;
  
     CODE:
-    if(gimme == G_VOID) {
+    if((items == 1) && (gimme == G_VOID)) {
         (void)perl_cgi_env_init(r);
         XSRETURN_UNDEF;
     }
