@@ -279,6 +279,7 @@ sub generate_flags {
         $n++;
 
         for my $f (@$opts) {
+            my $x = sprintf "0x%08x", $i;
             my $flag = "${class}_f_$f";
             my $cmd  = $class . $f;
             my $name = canon_name($f);
@@ -290,7 +291,7 @@ sub generate_flags {
             print $h_fh <<EOF;
 
 /* $f */
-#define $flag $i
+#define $flag $x
 #define $cmd(p)  ($flags(p) & $flag)
 #define ${cmd}_On(p)  ($flags(p) |= $flag)
 #define ${cmd}_Off(p) ($flags(p) &= ~$flag)
@@ -298,7 +299,7 @@ sub generate_flags {
 EOF
             push @dumper,
               qq{fprintf(stderr, " $name %s\\n", \\
-                         ($flags(p) & $i) ? "On " : "Off");};
+                         ($flags(p) & $x) ? "On " : "Off");};
 
             $i += $i || 1;
         }
