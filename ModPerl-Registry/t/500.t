@@ -5,12 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-use constant HAVE_MIN_APACHE_2_0_42 => have_min_apache_version("2.0.42");
-
-my $tests = 5;
-$tests += 2 if HAVE_MIN_APACHE_2_0_42;
-
-plan tests => $tests;
+plan tests => 7;
 
 {
     # the script changes the status before the run-time error happens,
