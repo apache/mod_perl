@@ -45,6 +45,8 @@ my $build = Apache::Build->new(init => 1);
 
 perl_version_check($build);
 
+apache_check($build);
+
 my $code  = ModPerl::Code->new;
 
 configure();
@@ -344,6 +346,17 @@ sub perl_version_check {
         error "5.7.x development versions of Perl are no longer supported\n" .
             "Upgrade to 5.8.0 or higher";
         exit 1;
+    }
+}
+
+sub apache_check {
+    my $build = shift;
+
+    # we need to know where apr-config and apu-configs are
+    # which sometimes aren't placed into the same dir with apxs/httpd
+    unless ($build->apr_config_path) {
+        die "can't find 'apr-config', please pass " .
+            "MP_APR_CONFIG=/full/path/to/apr-config to 'perl Makefile.PL'";
     }
 }
 
