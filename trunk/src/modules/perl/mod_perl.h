@@ -934,6 +934,7 @@ void mod_perl_destroy_handler(void *data);
 SV *array_header2avrv(array_header *arr);
 array_header *avrv2array_header(SV *avrv, pool *p);
 table *hvrv2table(SV *rv);
+void mod_perl_untaint(SV *sv);
 SV *mod_perl_gensym (char *pack);
 SV *mod_perl_tie_table(table *t);
 SV *perl_hvrv_magic_obj(SV *rv);
