@@ -54,6 +54,7 @@ my @c_scan_defines = (
     'CORE_PRIVATE',   #so we get all of apache
     'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
     '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
+    'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
 );
 
 sub scan {
