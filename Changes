@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_01-dev
 
+add %Apache::MyConfig aliases for Apache::src backwards compat
+[Philippe M . Chiasson <gozer@cpan.org>]
+
 $r->custom_response($code, undef) will now unset the current CustomResponse
 [Geoffrey Young <gyoung@laserlink.net>]
 

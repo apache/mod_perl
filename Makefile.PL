@@ -1987,7 +1987,7 @@ sub write_my_config {
                          PERL_TRACE PERL_DEBUG APACI_ARGS
                          APACHE_PREFIX DO_HTTPD NO_HTTPD PREP_HTTPD
                          USE_APACI APACHE_HEADER_INSTALL
-                         PERL_STATIC_EXTS PERL_SSI PERL_SECTIONS);
+                         PERL_STATIC_EXTS PERL_SSI PERL_SECTIONS USE_APXS WITH_APXS);
     {
         no strict 'refs';
         $my_config{$_} = ${$_} for @other_hooks;
@@ -2000,6 +2000,7 @@ sub write_my_config {
 
     #need this alias for Apache::src backwards compat
     $my_config{'Apache_Src'} = $my_config{'APACHE_SRC'};
+    $my_config{'APXS'} = delete $my_config{'WITH_APXS'};
 
     my $my_config_dump = join ",\n",
         map { qq{'$_' => } .
