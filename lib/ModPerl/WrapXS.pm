@@ -378,6 +378,17 @@ sub isa_str {
     $str;
 }
 
+sub boot {
+    my($self, $module) = @_;
+    my $str = "";
+
+    if (my $boot = $self->typemap->{function_map}->{boot}->{$module}) {
+        $str = '    mpxs_' . $self->cname($module) . "_BOOT(aTHXo);\n";
+    }
+
+    $str;
+}
+
 sub write_xs {
     my($self, $module, $functions) = @_;
 
@@ -428,6 +439,7 @@ EOF
 
     print $fh "PROTOTYPES: disabled\n\n";
     print $fh "BOOT:\n";
+    print $fh $self->boot($module);
     print $fh "    items = items; /* -Wall */\n\n";
 
     if (my $newxs = $self->{newXS}->{$module}) {
