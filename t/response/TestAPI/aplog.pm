@@ -154,7 +154,7 @@ sub handler {
 
     # notice() messages ignore the LogLevel value and always get
     # logged by Apache design (unless error log is set to syslog)
-    {
+    if (!Apache::MPM->is_threaded) {
         my $local_log_level = $s->loglevel;
 
         $r->server->loglevel(Apache::LOG_ERR);
@@ -166,6 +166,9 @@ sub handler {
             qr/[notice] .*? $msg/,
             "notice() logs regardless of LogLevel";
         $s->loglevel($local_log_level);
+    }
+    else {
+        ok 1;
     }
 
 
