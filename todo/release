@@ -4,6 +4,9 @@
 
 -- see also todo/api_status
 
+* consider changing the allocation method in APR::Bucket::new from
+  malloc/free to bucket_alloc, like all other buckets do
+
 * revamp directive handlers, expose modperl_module_add, fix
   PerlLoadModule, etc.
   owner: geoff
