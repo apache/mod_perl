@@ -118,5 +118,5 @@ sub handler {
 
 
 1;
-__DATA__
-PerlModule Apache::SubProcess
+
+
