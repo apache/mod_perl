@@ -161,7 +161,7 @@ char *mod_perl_auth_name(request_rec *r, char *val)
 #endif
 }
 
-void mod_perl_dir_env(perl_dir_config *cld)
+void mod_perl_dir_env(request_rec *r, perl_dir_config *cld)
 {
     if(MP_HASENV(cld)) {
 	array_header *arr = table_elts(cld->env);
@@ -172,6 +172,7 @@ void mod_perl_dir_env(perl_dir_config *cld)
 	    MP_TRACE_d(fprintf(stderr, "mod_perl_dir_env: %s=`%s'",
 			     elts[i].key, elts[i].val));
 	    mp_setenv(elts[i].key, elts[i].val);
+	    ap_table_setn(r->subprocess_env, elts[i].key, elts[i].val);
 	}
 	MP_HASENV_off(cld); /* just doit once per-request */
     }

@@ -1273,15 +1273,6 @@ void perl_per_request_init(request_rec *r)
     else
 	MP_SENTHDR_on(cld);
 
-    /* SetEnv PERL5LIB */
-    if(!MP_INCPUSH(cld)) {
-	char *path = (char *)table_get(r->subprocess_env, "PERL5LIB");
-	if(path) {
-	    perl_incpush(path);
-	    MP_INCPUSH_on(cld);
-	}
-    }
-
     if(!cfg) {
 	cfg = perl_create_request_config(r->pool, r->server);
 	set_module_config(r->request_config, &perl_module, cfg);
@@ -1291,10 +1282,20 @@ void perl_per_request_init(request_rec *r)
 	cfg->setup_env = 0; /* just once per-request */
     }
 
-    /* PerlSetEnv */
-    mod_perl_dir_env(cld);
-
     if(callbacks_this_request++ > 0) return;
+
+    /* PerlSetEnv */
+    mod_perl_dir_env(r, cld);
+
+    /* SetEnv PERL5LIB */
+    if (!MP_INCPUSH(cld)) {
+	char *path = (char *)table_get(r->subprocess_env, "PERL5LIB");
+
+	if (path) {
+	    perl_incpush(path);
+	    MP_INCPUSH_on(cld);
+	}
+    }
 
     {
 	dPSRV(r->server);
