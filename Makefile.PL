@@ -120,10 +120,10 @@ sub configure {
     system_sanity_check();
 
     if ($build->{MP_APXS}) {
-        debug "Using APXS => $build->{MP_APXS}\n";
+        debug "Using APXS => $build->{MP_APXS}";
     }
     elsif ($build->{MP_AP_PREFIX} and -e $build->apxs(-q => 'INCLUDEDIR')) {
-        debug "Using Apache prefix => $build->{MP_AP_PREFIX}\n";
+        debug "Using Apache prefix => $build->{MP_AP_PREFIX}";
     }
     else {
         for my $path ($build->find) {
