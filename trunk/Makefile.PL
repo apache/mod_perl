@@ -42,10 +42,11 @@ $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
     local *FH;
     open FH, "Changes";
     while(<FH>) {
-	if(/=item.*-dev/) {
+	if(/^=item.*-dev/) {
 	    $VERSION .= "-dev";
 	    last;
 	}
+	last if /^=item/;
     }
     close FH;
 }

@@ -25,13 +25,16 @@ notice
 info
 debug
 };
-my $tests = @methods;
+my $tests = @methods * 2;
 print "1..$tests\n";
 for my $method (@methods)
 {
-    $rlog->$method("Apache->method $method ", "OK");
-    $slog->$method("Apache::Server->method $method ", "OK");
+    if(defined $ENV{USER} and $ENV{USER} eq "dougm") {
+	$rlog->$method("Apache->method $method ", "OK");
+	$slog->$method("Apache::Server->method $method ", "OK");
+    }
     print "method $method OK\n";
-    test ++$i, 1;
+    test ++$i, $rlog->can($method);
+    test ++$i, $slog->can($method);
 }
 

@@ -42,7 +42,7 @@ DocumentRoot ./t/docs
 PerlTaintCheck On
 PerlWarn On
 
-PerlPassEnv TERM EDITOR NOCHANCE
+PerlPassEnv TERM EDITOR NOCHANCE USER
 PerlSetEnv KeyForPerlSetEnv OK
 PerlSetVar KeyForPerlSetVar OK
  
