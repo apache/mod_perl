@@ -40,6 +40,9 @@ sub import {
 }
 
 sub untaint {
+    shift;
+    require ModPerl::Util;
+    ModPerl::Util::untaint(@_);
 }
 
 sub module {

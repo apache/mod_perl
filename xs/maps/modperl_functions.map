@@ -1,5 +1,8 @@
 #modperl specfic functions
 
+MODULE=ModPerl::Util
+ mpxs_ModPerl__Util_untaint | | ...
+
 MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
  mpxs_ModPerl__Global_special_list_clear
