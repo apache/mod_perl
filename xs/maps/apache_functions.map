@@ -179,10 +179,12 @@ MODULE=Apache::Log   PACKAGE=guess
 ?ap_log_assert
 ~ap_log_error
 -ap_log_perror
- ap_log_pid
 ~ap_log_rerror
 >ap_open_stderr_log
 >ap_open_logs
+
+PACKAGE=Apache::Log    PREFIX=ap_
+ ap_log_pid
 
 MODULE=Apache::Module
  module *:DEFINE_top_module | | SV *:CLASS

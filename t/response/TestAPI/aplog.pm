@@ -67,6 +67,9 @@ sub handler {
     if ($s->error_fname) {
         #XXX: does not work under t/TEST -ssl
         $slog->debug(sub { die "set loglevel no workie" });
+
+        t_server_log_error_is_expected();
+        Apache::Log::log_pid($r->pool, $s->error_fname);
     }
 
     $s->loglevel(Apache::LOG_DEBUG);
