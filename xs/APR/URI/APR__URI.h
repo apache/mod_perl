@@ -75,7 +75,7 @@ SV *mpxs_APR__URI_rpath(pTHX_ apr_uri_t *apr_uri)
 {
     modperl_uri_t *uri = (modperl_uri_t *)apr_uri;
     
-    if(uri->path_info) {
+    if (uri->path_info) {
         int uri_len = strlen(uri->uri.path);
         int n = strlen(uri->path_info);
         int set = uri_len - n;
