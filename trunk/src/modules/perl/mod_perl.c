@@ -569,6 +569,28 @@ void perl_module_init(server_rec *s, pool *p)
     perl_startup(s, p);
 }
 
+static void mod_perl_boot(void *data)
+{
+    /* make sure DynaLoader is loaded before XSLoader
+     * to workaround bug in 5.6.1 that can trigger a segv
+     * when using modperl as a dso
+     */
+    perl_require_module("DynaLoader", NULL);
+}
+
+static void mod_perl_xs_init(void)
+{
+    xs_init();
+
+    /* XXX: in 5.7.2+ we can call the body of mod_perl_boot here
+     * but in 5.6.1 the Perl runtime is not properly setup yet
+     * so we have to pull this stunt to delay
+     */
+#ifdef SAVEDESTRUCTOR_X
+    SAVEDESTRUCTOR_X(mod_perl_boot, 0);
+#endif
+}
+
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -677,7 +699,7 @@ void perl_startup (server_rec *s, pool *p)
     MP_TRACE_g(fprintf(stderr, "constructing perl interpreter...ok\n"));
     perl_construct(perl);
 
-    status = perl_parse(perl, xs_init, argc, argv, NULL);
+    status = perl_parse(perl, mod_perl_xs_init, argc, argv, NULL);
     if (status != OK) {
 	MP_TRACE_g(fprintf(stderr,"not ok, status=%d\n", status));
 	perror("parse");
