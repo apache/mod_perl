@@ -57,17 +57,6 @@ static void modperl_hash_seed_init(apr_pool_t *p)
 
         MP_init_hash_seed_set = TRUE;
     }
-    
-    rv = apr_env_get(&s, "PERL_HASH_SEED_DEBUG", p);
-    if (rv == APR_SUCCESS) {
-        if (s) {
-            int i = atoi(s);
-            if (i == 1) {
-                fprintf(stderr, "\nmod_perl: using init hash seed: %"UVuf"\n",
-                        MP_init_hash_seed);
-            }
-        }
-    }
 #endif
 }
 
@@ -619,6 +608,11 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     modperl_init_clones(s, pconf);
 #endif
 
+#ifdef MP_NEED_HASH_SEED_FIXUP
+    ap_log_error(APLOG_MARK, APLOG_INFO, 0, s,
+                 "mod_perl: using Perl HASH_SEED: %"UVuf, MP_init_hash_seed);
+#endif
+    
     return OK;
 }
 
