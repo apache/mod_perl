@@ -1,5 +1,5 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/11/29 08:31:09 $]
+   Last modified at [$Date: 2002/11/29 08:36:21 $]
 
 Release:
 --------
@@ -68,7 +68,11 @@ Needs Patch or Further Investigation:
 * xs/APR/APR/Makefile.PL
   - linking against -lapr and -lapr-util to support new goofy apr version
     scheme and the old one and windows
-  
+
+* Quite a few people reported problems with TestHooks during 'make test'
+  - http://marc.theaimsgroup.com/?t=102985405500008&r=1&w=2
+
+
 Open Issues or Core Enhancements:
 ---------------------------------
 
@@ -120,7 +124,7 @@ Open Issues or Core Enhancements:
  - Apache::PerlSections->store(filename)
 
   Report: Philippe M. Chiasson <gozer@cpan.org>
-  Status: Philippe M. Chiasson <gozer@cpan.org> working on it
+  Status: Philippe M. Chiasson <gozer@cpan.org> is working on it
 
 ----
 
@@ -133,6 +137,7 @@ Open Issues or Core Enhancements:
 Documentation:
 --------------
 
+  -- see: modperl-docs/src/docs/2.0/TODO
 
 Patches unlikely to be applied:
 -------------------------------
