@@ -104,7 +104,9 @@ PERL=/usr/bin/perl
 PERL_STATIC_EXTS =
 PERL5LIB=`$(PERL) -MConfig -e 'print $$Config{privlibexp}'`
 EXTUTILS_EMBED = $(PERL) -MExtUtils::Embed
-PERL_CFG_CCFLAGS = `$(PERL) -MConfig -e 'print $$Config{ccflags}'`
+#CONFIG_PM=-MConfig
+CONFIG_PM='-MApache::ExtUtils=%Config'
+PERL_CFG_CCFLAGS = `$(PERL) $(CONFIG_PM) -e 'print $$Config{ccflags}'`
 PERL_CFG_ARCHLIB = `$(PERL) -MConfig -e 'print $$Config{archlibexp}'`
 
 PERL_CCFLAGS = -I$(PERL_CFG_ARCHLIB)/CORE $(PERL_CFG_CCFLAGS) $(PERL_HOOKS) $(TRACE)
