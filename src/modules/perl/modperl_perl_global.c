@@ -170,11 +170,56 @@ modperl_perl_global_avcv_restore(pTHX_ modperl_perl_global_avcv_t *avcv)
     *avcv->av = avcv->origav;
 }
 
+/*
+ * newHVhv is not good enough since it does not copy magic.
+ * XXX: 5.8.0+ newHVhv has some code thats faster than hv_iternext
+ */
+static HV *copyENV(pTHX_ HV *ohv)
+{
+    HE *entry, *hv_eiter;
+    I32 hv_riter;
+    register HV *hv;
+    STRLEN hv_max = HvMAX(ohv);
+    STRLEN hv_fill = HvFILL(ohv);
+
+    hv = newHV();
+    while (hv_max && hv_max + 1 >= hv_fill * 2) {
+	hv_max = hv_max / 2;	/* Is always 2^n-1 */
+    }
+
+    HvMAX(hv) = hv_max;
+
+    if (!hv_fill) {
+	return hv;
+    }
+
+    hv_riter = HvRITER(ohv);	/* current root of iterator */
+    hv_eiter = HvEITER(ohv);	/* current entry of iterator */
+	
+    hv_iterinit(ohv);
+    while ((entry = hv_iternext(ohv))) {
+        SV *sv = newSVsv(HeVAL(entry));
+        modperl_envelem_tie(sv, HeKEY(entry), HeKLEN(entry));
+        hv_store(hv, HeKEY(entry), HeKLEN(entry),
+                 sv, HeHASH(entry));
+    }
+
+    HvRITER(ohv) = hv_riter;
+    HvEITER(ohv) = hv_eiter;
+
+    hv_magic(hv, Nullgv, 'E');    
+
+    TAINT_NOT;
+
+    return hv;
+}
+
 static void
 modperl_perl_global_gvhv_save(pTHX_ modperl_perl_global_gvhv_t *gvhv)
 {
-    U32 mg_flags;
     HV *hv = GvHV(gvhv->gv);
+#if 0
+    U32 mg_flags;
     MAGIC *mg = SvMAGIC(hv);
 
     /*
@@ -201,6 +246,9 @@ modperl_perl_global_gvhv_save(pTHX_ modperl_perl_global_gvhv_t *gvhv)
         /* XXX: maybe newHVhv should do this? */
         hv_magic(gvhv->tmphv, Nullgv, mg->mg_type);
     }
+#else
+    gvhv->tmphv = copyENV(aTHX_ hv);
+#endif
 
     gvhv->orighv = hv;
     GvHV(gvhv->gv) = gvhv->tmphv;

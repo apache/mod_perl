@@ -7,13 +7,14 @@ use Apache::RequestRec ();
 use APR::Table ();
 
 use Apache::Test;
+use Apache::TestUtil;
 
 use Apache::Const -compile => 'OK';
 
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 20;
+    plan $r, tests => 20 + keys(%ENV);
 
     my $env = $r->subprocess_env;
 
@@ -59,6 +60,13 @@ sub handler {
 
     ok $ENV{SERVER_SOFTWARE};
     ok $env->get('SERVER_SOFTWARE');
+
+    #Make sure each key can be deleted
+
+    for my $key (sort keys %ENV) {
+        eval { delete $ENV{$key}; };
+        ok t_cmp('', $@, $key);
+    }
 
     Apache::OK;
 }

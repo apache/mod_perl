@@ -15,6 +15,7 @@ void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
     else {
         SV *sv = newSVpv(elt->val, 0);
         hv_store(hv, elt->key, klen, sv, FALSE);
+        modperl_envelem_tie(sv, elt->key, klen);
         svp = &sv;
     }
 
@@ -143,8 +144,10 @@ void modperl_env_default_populate(pTHX)
     modperl_env_untie(mg_flags);
 
     while (ent->key) {
+        SV *sv = newSVpvn(ent->val, ent->vlen);
         hv_store(hv, ent->key, ent->klen,
-                 newSVpvn(ent->val, ent->vlen), ent->hash);
+                 sv, ent->hash);
+        modperl_envelem_tie(sv, ent->key, ent->klen);
         ent++;
     }
 

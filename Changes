@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+fix delete $ENV{$key} bug
+
 fix parse_args compat method to support non-ascii characters
 [Walery Studennikov <despair@sama.ru>]
 
