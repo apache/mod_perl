@@ -692,7 +692,9 @@ sub write_export_file {
     while (my($name, $table) = each %files) {
         my $handles = $self->open_export_files($name, $ext);
 
+	my %seen; #only write header once if this is a single file
         for my $fh (values %$handles) {
+            next if $seen{$fh}++;
             print $fh $self->$header();
         }
 
@@ -708,7 +710,9 @@ sub write_export_file {
             print $fh $self->$format($name);
         }
 
+        %seen = (); #only close handle once if this is a single file
         for my $fh (values %$handles) {
+            next if $seen{$fh}++;
             close $fh;
         }
     }
