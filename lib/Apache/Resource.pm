@@ -64,13 +64,12 @@ sub install_rlimit ($$$) {
     return if $@;
 
     unless ($soft) {
-	my $defval = \&{"DEFAULT_RLIMIT_${name}"};
-	if (defined &$defval) {
-	    $soft = $defval->();
-	}
-	else {
-	    warn "can't find default for `$defval'\n";
-	}
+        my $defval = \&{"DEFAULT_RLIMIT_${name}"};
+        if (defined &$defval) {
+            $soft = $defval->();
+        } else {
+            warn "can't find default for `$defval'\n";
+        }
     }
 
     $hard ||= $soft;
@@ -84,16 +83,16 @@ sub install_rlimit ($$$) {
 
 sub handler {
     while (my($k, $v) = each %ENV) {
-	next unless $k =~ /^PERL_RLIMIT_(\w+)$/;
-	$k = $1;
-	next if $k eq "DEFAULTS";
-	my($soft, $hard) = split ":", $v, 2;
-	$hard ||= $soft;
+        next unless $k =~ /^PERL_RLIMIT_(\w+)$/;
+        $k = $1;
+        next if $k eq "DEFAULTS";
+        my($soft, $hard) = split ":", $v, 2;
+        $hard ||= $soft;
 
-	my $set = install_rlimit $k, $soft, $hard;
-	debug "not " unless $set;
-	debug "ok\n";
-	debug $@ if $@;
+        my $set = install_rlimit $k, $soft, $hard;
+        debug "not " unless $set;
+        debug "ok\n";
+        debug $@ if $@;
     }
 
     Apache::OK;
@@ -101,8 +100,8 @@ sub handler {
 
 sub default_handler {
     while (my($k, $v) = each %Apache::Resource::) {
-	next unless $k =~ s/^DEFAULT_/PERL_/;
-	$ENV{$k} = "";
+        next unless $k =~ s/^DEFAULT_/PERL_/;
+        $ENV{$k} = "";
     }
     handler();
 }
@@ -110,16 +109,16 @@ sub default_handler {
 sub status_rlimit {
     my $lim = get_rlimits();
     my @retval = ("<table border=1><tr>",
-		  (map "<th>$_</th>", qw(Resource Soft Hard)),
-		  "</tr>");
+                  (map "<th>$_</th>", qw(Resource Soft Hard)),
+                  "</tr>");
 
     for my $res (keys %$lim) {
-	my $val = eval "&BSD::Resource::${res}()";
-	my($soft, $hard) = getrlimit $val;
-	(my $limit = $res) =~ s/^RLIMIT_//;
-	($soft, $hard) = ("$soft " . BM($soft), "$hard ". BM($hard))
+        my $val = eval "&BSD::Resource::${res}()";
+        my($soft, $hard) = getrlimit $val;
+        (my $limit = $res) =~ s/^RLIMIT_//;
+        ($soft, $hard) = ("$soft " . BM($soft), "$hard ". BM($hard))
             if $is_mb{$limit};
-	push @retval,
+        push @retval,
             "<tr>", (map { "<td>$_</td>" } $res, $soft, $hard), "</tr>\n";
     }
 
@@ -131,12 +130,12 @@ sub status_rlimit {
 
 if ($ENV{MOD_PERL}) {
     if ($ENV{PERL_RLIMIT_DEFAULTS}) {
-	Apache->server->push_handlers(
+        Apache->server->push_handlers(
             PerlChildInitHandler => \&default_handler);
     }
 
     Apache::Status->menu_item(rlimit => "Resource Limits",
-                              \&status_rlimit)
+            \&status_rlimit)
           if Apache::Module::loaded("Apache::Status");
 }
 
