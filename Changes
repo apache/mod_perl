@@ -12,12 +12,6 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_20-dev
 
-APR::Bucket::alloc_create moved  to APR::BucketAlloc::new
-APR::Bucket::alloc_destroy moved to APR::BucketAlloc::destroy [Stas]
-
-prefork handlers optimisation: don't dup the handler struct unless
-this is a threaded-mpm [Stas]
-
 deal with a situation where an object is used to construct another
 object, but it's then auto-DESTROYed by perl rendering the object that
 used it corrupted. the solution is to make the newly created objects
@@ -34,6 +28,13 @@ Adjusted:
 - APR::URI: parse
 - Apache::RequestUtil: new
 - APR::Pool: new
+- APR::BucketAlloc: new
+
+APR::Bucket::alloc_create moved  to APR::BucketAlloc::new
+APR::Bucket::alloc_destroy moved to APR::BucketAlloc::destroy [Stas]
+
+prefork handlers optimisation: don't dup the handler struct unless
+this is a threaded-mpm [Stas]
 
 speed up the 'perl Makefile.PL' stage [Randy Kobes]:
  - reduce the number of calls to build_config() of
