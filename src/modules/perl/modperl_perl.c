@@ -121,10 +121,13 @@ void modperl_perl_destruct(PerlInterpreter *perl)
     perl_destruct(perl);
 
     /* XXX: big bug in 5.6.1 fixed in 5.7.2+
-     * XXX: see CLONEf_CLONE_HOST perl_clone() flag
      * XXX: try to find a workaround for 5.6.1
      */
-#ifndef WIN32
+#if defined(WIN32) && !defined(CLONEf_CLONE_HOST)
+#   define MP_NO_PERL_FREE
+#endif
+
+#ifndef MP_NO_PERL_FREE
     perl_free(perl);
 #endif
 
