@@ -12,6 +12,18 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_15-dev
 
+APR::URI: [Stas]
+  - removed accessors
+    o is_initialized() (internal apr_uri flag)
+    o  dns_looked_up() and dns_resolved() (they are not 
+       used by apache/apr)
+  - all remaining accessors now accept undef value, which unsets the
+    field
+
+Extended WrapXS code to support a new type of accessor: char * which
+accepts undef to set the C pointer to NULL and as such unset the
+member of the struct. [Stas]
+
 Exception error messages now include the error id along with the error
 message (as they did in first place). [Stas]
 
