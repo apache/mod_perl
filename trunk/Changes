@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.14_01-dev
 
+alias Apache::Util unescape_uri -> Apache::unescape_url
+
+alias Apache::Log emerg -> emergency, crit -> critical
+
 deal with PL_ renaming in 5.004_76+
 
 fixes to support to apache_1.3.0+ssl_1.19 [Salvador Ortiz]

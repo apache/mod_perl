@@ -6,8 +6,12 @@ use vars qw($VERSION @ISA @EXPORT_OK %EXPORT_TAGS);
 use Exporter ();
 use DynaLoader ();
 
+*unescape_uri = \&Apache::unescape_url;
+*unescape_uri_info = \&Apache::unescape_url_info;
+
 @ISA = qw(Exporter DynaLoader);
-@EXPORT_OK = qw(escape_html escape_uri parsedate ht_time);
+@EXPORT_OK = qw(escape_html escape_uri unescape_uri unescape_uri_info 
+		parsedate ht_time);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 $VERSION = '0.01';
 

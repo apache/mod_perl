@@ -16,9 +16,9 @@ if($@) {
 my $rlog = $r->log;
 my $slog = $r->server->log;
 my @methods = qw{
-emergency
+emerg
 alert
-critical
+crit
 error
 warn
 notice
