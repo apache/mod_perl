@@ -764,8 +764,6 @@ my $methods_compat = {
                           ''],
     escape_html       => [undef, # XXX: will be ap_escape_html
                           'ap_escape_html now requires a pool object'],
-    ht_time           => ['format_time',
-                          ''],
     parsedate         => ['parse_http',
                           ''],
     validate_password => ['password_validate',
