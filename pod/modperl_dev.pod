@@ -34,7 +34,9 @@ version and rebuild, run:
 
 For bleeding edge Perl:
 
- % rsync -auvz rsync://ftp.linux.activestate.com/perl-current/ perl-current
+ # (--delete to ensure a clean state)
+ % rsync -acvz --delete --force \
+   rsync://ftp.linux.activestate.com/perl-current/ perl-current
  % cd perl-current
  % ./Configure -des -Dprefix=$HOME/bleedperl \
    -Dusethreads -Doptimize='-g' -Dusedevel
