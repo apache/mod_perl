@@ -199,7 +199,7 @@ sub generate_handler_hooks {
             if (my $hook = $hooks{$handler}) {
                 next if $not_ap_hook{$hook};
                 push @register_hooks,
-                  "    ap_hook_$hook($name, NULL, NULL, APR_HOOK_LAST);";
+                  "    ap_hook_$hook($name, NULL, NULL, APR_HOOK_FIRST);";
             }
 
             my($protostr, $pass) = canon_proto($prototype, $name);
