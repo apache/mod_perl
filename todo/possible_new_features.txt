@@ -24,6 +24,8 @@ config features:
   modules and code into foo.pl and running it from the base server and
   all virtual hosts.
 
+-  PerlModule can be made more efficent using Perl_load_module
+
 perl language features:
 ----------------------
 
