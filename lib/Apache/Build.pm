@@ -409,7 +409,7 @@ sub dir {
 	}
     }
 
-    unless ($dir) {
+    unless ($dir and -d $dir) {
 	for (@INC) {
 	    last if -d ($dir = "$_/auto/Apache/include");
 	}
