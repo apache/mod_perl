@@ -110,7 +110,7 @@ sub handler {
         my @expected = qw(1_SetValue 2_AddValue 3_AddValue);
 
         ok t_cmp(\@expected, \@received,
-                 "testing PerlAddVar ITERATE2 in $s");
+                 "testing PerlAddVar ITERATE2 in \$s");
     }
 
     {

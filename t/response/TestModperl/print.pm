@@ -16,7 +16,7 @@ sub handler {
 
     ok 2;
 
-    printf "ok %d", 3;
+    printf "ok %d\n", 3;
 
     Apache::OK;
 }
