@@ -769,3 +769,53 @@ void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
     }    
 }
 #endif
+
+#define MP_VALID_PKG_CHAR(c) (isalnum(c) ||(c) == '_')
+#define MP_VALID_PATH_DELIM(c) ((c) == '/' || (c) =='\\')
+char *modperl_file2package(apr_pool_t *p, const char *file)
+{
+    char *package;
+    char *c;
+    const char *f;
+    int len = strlen(file)+1;
+
+    /* First, skip invalid prefix characters */
+    while (!MP_VALID_PKG_CHAR(*file)) {
+        file++;
+        len--;
+    }
+
+    /* Then figure out how big the package name will be like */
+    for (f = file; *f; f++) {
+        if (MP_VALID_PATH_DELIM(*f)) {
+            len++;
+        }
+    }
+
+    package = apr_pcalloc(p, len);
+
+    /* Then, replace bad characters with '_' */
+    for (c = package; *file; c++, file++) {
+        if (MP_VALID_PKG_CHAR(*file)) {
+            *c = *file;
+        }
+        else if (MP_VALID_PATH_DELIM(*file)) {
+
+            /* Eliminate subsequent duplicate path delim */
+            while (*(file+1) && MP_VALID_PATH_DELIM(*(file+1))) {
+                file++;
+            }
+ 
+            /* path delim not until end of line */
+            if (*(file+1)) {
+                *c = *(c+1) = ':';
+                c++;
+            }
+        }
+        else {
+            *c = '_';
+        }
+    }
+   
+    return package;
+}

@@ -361,8 +361,11 @@ MP_CMD_SRV_DECLARE(perldo)
     apr_table_t *options = NULL;
     const char *handler_name = NULL;
     modperl_handler_t *handler = NULL;
-    const char *package_name = NULL;
+    const char *pkg_base = NULL;
+    const char *pkg_namespace = NULL;
+    const char *pkg_name = NULL;
     const char *line_header = NULL;
+    ap_directive_t *directive = parms->directive;
     int status = OK;
     AV *args = Nullav;
     SV *dollar_zero = Nullsv;
@@ -397,17 +400,25 @@ MP_CMD_SRV_DECLARE(perldo)
         
         handler = modperl_handler_new(p, handler_name);
             
-        if (!(package_name = apr_table_get(options, "package"))) {
-            package_name = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_PACKAGE);
-            apr_table_set(options, "package", package_name);
+        if (!(pkg_base = apr_table_get(options, "package"))) {
+            pkg_base = apr_pstrdup(p, MP_DEFAULT_PERLSECTION_PACKAGE);
         }
+       
+        pkg_namespace = modperl_file2package(p, directive->filename);
+
+        pkg_name = apr_psprintf(p, "%s::%s::line_%d", 
+                                    pkg_base, 
+                                    pkg_namespace, 
+                                    directive->line_num);
+
+        apr_table_set(options, "package", pkg_name);
 
         line_header = apr_psprintf(p, "\n#line %d %s\n", 
-                                   parms->directive->line_num,
-                                   parms->directive->filename);
+                                   directive->line_num,
+                                   directive->filename);
 
         /* put the code about to be executed in the configured package */
-        arg = apr_pstrcat(p, "package ", package_name, ";", line_header,
+        arg = apr_pstrcat(p, "package ", pkg_name, ";", line_header,
                           arg, NULL);
     }
 
@@ -421,7 +432,7 @@ MP_CMD_SRV_DECLARE(perldo)
 
     ENTER;
     save_item(dollar_zero);
-    sv_setpv(dollar_zero, parms->directive->filename);
+    sv_setpv(dollar_zero, directive->filename);
     eval_pv(arg, FALSE);
     LEAVE;
 
@@ -436,8 +447,8 @@ MP_CMD_SRV_DECLARE(perldo)
         }
         else {
             modperl_log_warn(s, apr_psprintf(p, "Syntax error at %s:%d %s", 
-                                             parms->directive->filename, 
-                                             parms->directive->line_num, 
+                                             directive->filename, 
+                                             directive->line_num, 
                                              SvPVX(ERRSV)));
 
         }
@@ -455,7 +466,7 @@ MP_CMD_SRV_DECLARE(perldo)
         SvREFCNT_dec((SV*)args);
 
         if (!(saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV) || !SvTRUE(saveconfig)) {
-            HV *symtab = (HV*)gv_stashpv(package_name, FALSE);
+            HV *symtab = (HV*)gv_stashpv(pkg_name, FALSE);
             if (symtab) {
                 modperl_clear_symtab(aTHX_ symtab);
             }

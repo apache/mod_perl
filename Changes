@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+<Perl> are now evaluating code into one distinct namespace per
+container, similar to ModPerl::Registry scripts. [Philippe M. Chiasson]
+
 Fix ModPerl::MM::WriteMakefile to use the MODPERL_CCOPTS entry from
 Apache::BuildConfig, as it contains some flags added by mod_perl,
 which aren't in perl_ccopts and ap_ccopts. [Stas]
