@@ -32,4 +32,4 @@ ran 2 PerlOutputFilterHandler handlers!;
 
 chomp(my $received = GET_BODY_ASSERT $location);
 
-ok t_cmp($expected, $received, "stacked_handlers");
+ok t_cmp($received, $expected, "stacked_handlers");

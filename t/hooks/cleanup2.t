@@ -25,7 +25,7 @@ plan tests => 2;
     my $location = "/TestHooks__cleanup2";
     my $expected = 'cleanup2 is ok';
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "register req cleanup");
+    ok t_cmp($received, $expected, "register req cleanup");
 }
 
 {

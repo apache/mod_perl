@@ -17,4 +17,4 @@ my $location = "/TestHooks__push_handlers";
 my $expected = join "\n", @strings, '';
 my $received = GET_BODY $location;
 
-ok t_cmp($expected, $received, "push_handlers ways");
+ok t_cmp($received, $expected, "push_handlers ways");

@@ -20,7 +20,7 @@ plan tests => 2;
     my $location = "/TestHooks__cleanup";
     my $expected = 'ok';
     my $received = GET_BODY $location;
-    ok t_cmp($expected, $received, "register req cleanup");
+    ok t_cmp($received, $expected, "register req cleanup");
 }
 
 {
@@ -42,7 +42,7 @@ plan tests => 2;
         my $received = <$fh> || '';
         close $fh;
         my $expected = "cleanup ok";
-        ok t_cmp($expected, $received, "verify req cleanup execution");
+        ok t_cmp($received, $expected, "verify req cleanup execution");
 
         # XXX: while Apache::TestUtil fails to cleanup by itself
         unlink $file;
