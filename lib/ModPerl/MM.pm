@@ -111,34 +111,18 @@ sub WriteMakefile {
     my $build = build_config();
     my_import(__PACKAGE__);
 
-    my $inc = $build->inc;
-    if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
-        for (split /\s+/, $glue_inc) {
-            $inc .= " -I$_";
-        }
-    }
-
     my $libs = join ' ', $build->apache_libs, $build->modperl_libs;
     my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
 
     my @opts = (
-        INC       => $inc,
+        INC       => $build->inc,
         CCFLAGS   => $ccflags,
         OPTIMIZE  => $build->perl_config('optimize'),
         LDDLFLAGS => $build->perl_config('lddlflags'),
         LIBS      => $libs,
+        TYPEMAPS  => $build->typemaps,
         dynamic_lib => { OTHERLDFLAGS => $build->otherldflags },
     );
-
-    my @typemaps;
-    my $pwd = Cwd::fastcwd();
-    for ('xs', $pwd, "$pwd/..") {
-        my $typemap = $build->file_path("$_/typemap");
-        if (-e $typemap) {
-            push @typemaps, $typemap;
-        }
-    }
-    push @opts, TYPEMAPS => \@typemaps if @typemaps;
 
     ExtUtils::MakeMaker::WriteMakefile(@opts, @_);
 }
