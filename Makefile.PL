@@ -399,7 +399,7 @@ sub MY::dist_basics {
     my $self = shift;
     my $str = $self->MM::dist_basics;
 
-    $str =~ s/\"-MExtUtils(::Manifest=mkmanifest)/-Ilib \"-MModPerl$1/;
+    $str =~ s/(\"?)-MExtUtils(::Manifest=mkmanifest)/-Ilib $1-MModPerl$2/;
 
     $str;
 }
