@@ -15,6 +15,8 @@ sub handler {
 
     plan tests => 4;
 
+    my $ba = $filter->r->connection->bucket_alloc;
+
     #should only have 1 bucket from the response() below
     for (my $bucket = $bb->first; $bucket; $bucket = $bb->next($bucket)) {
         ok $bucket->type->name;
@@ -25,7 +27,7 @@ sub handler {
 
     my $tests = Apache::TestToString->finish;
 
-    my $brigade = APR::Brigade->new($filter->r->pool);
+    my $brigade = APR::Brigade->new($filter->r->pool, $ba);
     my $bucket = APR::Bucket->new($tests);
 
     $brigade->insert_tail($bucket);

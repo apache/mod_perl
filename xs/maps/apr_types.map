@@ -23,6 +23,7 @@ struct apr_ipsubnet_t   | APR::IpSubnet
 #bucket stuff
 struct apr_bucket           | APR::Bucket
 struct apr_bucket_brigade   | APR::Brigade
+struct apr_bucket_alloc_t   | APR::BucketAlloc
 apr_brigade_flush           | UNDEFINED
 struct apr_bucket_type_t    | APR::BucketType
 apr_read_type_e             | IV

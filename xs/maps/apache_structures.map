@@ -114,6 +114,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    notes
    input_filters
    output_filters
+   bucket_alloc
 </conn_rec>
 
 !<server_addr_rec>
