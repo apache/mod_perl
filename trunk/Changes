@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.26_01-dev
 
+fix get_set_PVp() to properly set NULL values when passing in undef
+thanks to Lyle Brooks for the spot
+[Stephen Clouse <stephenc@theiqgroup.com>]
+
 Apache::Registry errors are now saved in $r->notes('error-notes')
 [Jesse Erlbaum <jesse@vm.com>]
 
