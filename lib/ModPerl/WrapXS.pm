@@ -364,6 +364,13 @@ sub open_class_file {
     return $fh;
 }
 
+sub module_version {
+    local $_ = shift;
+    require mod_perl;
+    # XXX: for now APR gets its libapr-0.9 version
+    return /^APR/ ? "0.009000" : "$mod_perl::VERSION";
+}
+
 sub write_makefilepl {
     my($self, $class) = @_;
 
@@ -381,6 +388,8 @@ sub write_makefilepl {
     $deps = Dumper $deps;
 
     my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
+    require mod_perl;
+    my $version = module_version($class);
 
     print $fh <<EOF;
 $noedit_warning
@@ -390,7 +399,7 @@ use ModPerl::BuildMM ();
 
 ModPerl::BuildMM::WriteMakefile(
     'NAME'    => '$class',
-    'VERSION' => '0.01',
+    'VERSION' => '$version',
     'depend'  => $deps,
 );
 EOF
@@ -583,6 +592,7 @@ sub write_pm {
     my $fh = $self->open_class_file($module, '.pm');
     my $noedit_warning = $self->ModPerl::Code::noedit_warning_hash();
     my $use_apr = ($module =~ /^APR::\w+$/) ? 'use APR ();' : '';
+    my $version = module_version($module);
 
     print $fh <<EOF;
 $noedit_warning
@@ -595,7 +605,7 @@ use warnings FATAL => 'all';
 $isa
 $use_apr
 use $loader ();
-our \$VERSION = '0.01';
+our \$VERSION = '$version';
 $loader\::load __PACKAGE__;
 
 $code
@@ -1093,7 +1103,7 @@ sub write_module_versions_file {
     require mod_perl;
     $len += length '$::VERSION';
     for (@modules) {
-        my $ver = /^APR/ ? "0.900000" : "$mod_perl::VERSION";
+        my $ver = module_version($_);
         printf $fh "package %s;\n%-${len}s = %s;\n\n",
             $_, '$'.$_."::VERSION", $ver;
     }

@@ -15,7 +15,7 @@
 package APR;
 
 use DynaLoader ();
-our $VERSION = '0.01';
+our $VERSION = '0.009000';
 our @ISA = qw(DynaLoader);
 
 #dlopen("APR.so", RTDL_GLOBAL); so we only need to link libapr.a once
