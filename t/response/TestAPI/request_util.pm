@@ -8,6 +8,8 @@ use Apache::TestUtil;
 
 use Apache::RequestUtil ();
 use Apache::MPM ();
+use Apache::Log ();
+use APR::Pool ();
 
 use Apache::Const -compile => 'OK';
 
@@ -27,7 +29,7 @@ sub handler {
     my $document_root = $r->document_root;
 
     ok $document_root;
-    
+
     if (!Apache::MPM->is_threaded) {
         ok t_cmp($document_root, $r->document_root('/tmp/foo'));
         ok t_cmp('/tmp/foo', $r->document_root($document_root));
@@ -38,7 +40,7 @@ sub handler {
                  "document_root is read-only under threads");
         ok 1;
     }
-    
+
     ok $r->get_server_name;
 
     ok $r->get_server_port;
@@ -51,7 +53,7 @@ sub handler {
     t_debug $sig;
     ok $sig;
 
-    my $pattern = 
+    my $pattern =
         qr!(?s)GET /TestAPI__request_util.*Host:.*200 OK.*Content-Type:!;
 
     ok t_cmp($r->as_string,
@@ -70,7 +72,13 @@ sub handler {
         ok t_cmp($@, qr/Can't run.*in a threaded mpm/, "child_terminate");
     }
     else {
+        t_server_log_error_is_expected();
         ok $r->child_terminate() || 1;
+        $r->pool->cleanup_register(
+            sub {
+                my $r = shift;
+                $r->log_error("Process $$ terminates itself\n");
+            }, $r);
     }
 
     Apache::OK;
