@@ -1,7 +1,48 @@
 #define CORE_PRIVATE 
 #include "mod_perl.h" 
 
-MODULE = Apache::Server  PACKAGE = Apache::Server
+typedef struct {
+    request_rec *r;
+    SV *cv;
+    int refcnt;
+} srv_cleanup_t;
+
+static void srv_cleanup_handler(void *data)
+{
+    srv_cleanup_t *srv = (srv_cleanup_t*)data;
+    (void)acquire_mutex(mod_perl_mutex);
+    perl_call_handler(srv->cv, srv->r, Nullav);
+    if(srv->refcnt) SvREFCNT_dec(srv->cv);
+    (void)release_mutex(mod_perl_mutex);
+}
+
+static void ApacheServer_register_cleanup(SV *self, SV *cv)
+{
+    pool *p = perl_get_startup_pool();
+    server_rec *s;
+    srv_cleanup_t *srv = (srv_cleanup_t *)palloc(p, sizeof(srv_cleanup_t));
+
+    if(SvROK(self) && sv_derived_from(self, "Apache::Server")) 
+        s = (server_rec *)SvIV((SV*)SvRV(self));
+    else 
+	s = perl_get_startup_server();
+    srv->r = mp_fake_request_rec(s, p, "Apache::Server::register_cleanup");
+    srv->cv = cv;
+    if(SvREFCNT(srv->cv) == 1) {
+	srv->refcnt = 1;
+	SvREFCNT_inc(srv->cv);
+    }
+    else
+	srv->refcnt = 0;
+    register_cleanup(p, srv, srv_cleanup_handler, mod_perl_noop);
+}
+
+MODULE = Apache::Server  PACKAGE = Apache::Server   PREFIX = ApacheServer_
+
+void
+ApacheServer_register_cleanup(self, cv)
+    SV *self
+    SV *cv
 
 PROTOTYPES: DISABLE
 

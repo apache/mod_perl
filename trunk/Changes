@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+added Apache::Server->register_cleanup method
+
 DYNAMIC=1 works again
 
 Apache::PerlRun will now save/restore %INC to cure problem with
