@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Apache::Build ();
+use Apache::TestTrace;
 my $param_qr = qr([\s=]+);
 
 use constant VERBOSE => 1;
@@ -21,8 +22,9 @@ sub init {
     parse_file($build);
     parse_argv($build);
 
-    if ($build->{MP_DEBUG} and $build->{MP_USE_GTOP}) {
-        $build->{MP_USE_GTOP} = 0 unless $build->find_dlfile('gtop');
+    if ($build->{MP_DEBUG} and $build->{MP_USE_GTOP} and !$build->find_gtop) {
+        error "Can't find libgtop, resetting MP_USE_GTOP=0";
+        $build->{MP_USE_GTOP} = 0;
     }
 
     unless ($build->{MP_USE_DSO} or $build->{MP_USE_STATIC}) {

@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+libgtop config (needed for enabling MOD_PERL_TRACE=m) is now searched
+using the gnome packaging tools if available (pkg-config for gnome-2.x
+and gnome-config for gnome-1.x) [Stas]
+
 Prevent a problem where an autovivified package (stash) prevents from
 modperl_mgv to load the file with that package (until now it was
 checking whether the stash existed already and skipped the loading if
