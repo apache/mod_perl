@@ -4,6 +4,7 @@ struct server_rec       | Apache::Server
 struct server_addr_rec  | Apache::ServerAddr
 struct conn_rec         | Apache::Connection
 struct request_rec      | Apache::RequestRec
+struct subrequest_rec   | Apache::SubRequest
 struct process_rec      | Apache::Process
 struct uri_components   | Apache::URI
 struct ap_method_list_t | Apache::MethodList

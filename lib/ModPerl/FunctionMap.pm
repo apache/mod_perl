@@ -134,6 +134,9 @@ sub parse {
             unless ($package eq 'guess') {
                 $cur{CLASS} = $package;
             }
+            if ($cur{ISA}) {
+                $self->{isa}->{ $cur{MODULE} }->{$package} = delete $cur{ISA};
+            }
         }
         else {
             $cur{CLASS} = $cur{MODULE};

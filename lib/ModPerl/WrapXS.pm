@@ -334,6 +334,23 @@ sub make_prefix {
     $class_prefix . $name;
 }
 
+sub isa_str {
+    my($self, $module) = @_;
+    my $str = "";
+
+    if (my $isa = $self->typemap->{function_map}->{isa}->{$module}) {
+        while (my($sub, $base) = each %$isa) {
+#XXX cannot set isa in the BOOT: section because XSLoader local-ises
+#ISA during bootstrap
+#            $str .= qq{    av_push(get_av("$sub\::ISA", TRUE),
+#                                   newSVpv("$base",0));}
+            $str .= qq{\@$sub\::ISA = '$base';\n}
+        }
+    }
+
+    $str;
+}
+
 sub write_xs {
     my($self, $module, $functions) = @_;
 
@@ -398,12 +415,14 @@ EOF
 sub write_pm {
     my($self, $module) = @_;
 
+    my $isa = $self->isa_str($module);
+
     my $fh = $self->open_class_file($module, '.pm');
     print $fh <<EOF;
 $self->{noedit_warning_hash}
 
 package $module;
-
+$isa
 use XSLoader ();
 XSLoader::load __PACKAGE__;
 
