@@ -8,12 +8,15 @@ char *modperl_coderef2text(pTHX_ apr_pool_t *p, CV *cv)
     int count;
     SV *bdeparse;
     char *text;
-
-    /* B::Deparse >= 0.61 needed for blessed code references */
-
+    
+    /* B::Deparse >= 0.61 needed for blessed code references.
+     * 0.6 works fine for non-blessed code refs.
+     * notice that B::Deparse is not CPAN-updatable.
+     * 0.61 is available starting from 5.8.0
+     */
     load_module(PERL_LOADMOD_NOIMPORT,
                 newSVpvn("B::Deparse", 10),
-                newSVnv(0.61));
+                newSVnv(SvOBJECT((SV*)cv) ? 0.61 : 0.60));
 
     ENTER;
     SAVETMPS;
