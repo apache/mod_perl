@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_22-dev
 
+add the escape_url entry in the ModPerl::MethodLookup knowledgebase
+[Stas]
+
 Apache::SubProcess::spawn_proc_prog now can be called in a void
 context, in which case all the communication std pipes will be closed
 [Stas]
