@@ -228,7 +228,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     SPAGAIN;
 
     if (count == 1) {
-        POPs; /* the return value is ignored */
+        (void)POPs; /* the return value is ignored */
     }
 
     PUTBACK;
