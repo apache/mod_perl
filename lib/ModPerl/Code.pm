@@ -799,7 +799,10 @@ my %shortcuts = (
 
 #backwards compat with older httpd/apr
 #XXX: remove once we require newer httpd/apr
-my %ifdef = map { $_, 1 } qw(APLOG_TOCLIENT APR_LIMIT_NOFILE);
+my %ifdef = map { $_, 1 } 
+    qw(APLOG_TOCLIENT APR_LIMIT_NOFILE), # added in ???
+    qw(AP_MPMQ_STARTING AP_MPMQ_RUNNING AP_MPMQ_STOPPING 
+       AP_MPMQ_MPM_STATE); # added in 2.0.49
 
 sub constants_ifdef {
     my $name = shift;
