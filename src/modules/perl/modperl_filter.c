@@ -144,11 +144,6 @@ MP_INLINE apr_status_t modperl_wbucket_write(pTHX_ modperl_wbucket_t *wb,
     apr_size_t len = *wlen;
     *wlen = 0;
 
-    if (!wb) {
-        /* the response is not initialized yet */
-        Perl_croak(aTHX_ "can't be called before the response phase");
-    }
-    
     if ((len + wb->outcnt) > sizeof(wb->outbuf)) {
         apr_status_t rv;
         if ((rv = modperl_wbucket_flush(wb, FALSE)) != APR_SUCCESS) {
