@@ -42,6 +42,8 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
     sv_magic((SV*)handle, obj, 'q', Nullch, 0);
     sv_magic((SV*)GvIOp(handle), obj, 'q', Nullch, 0);
 
+    SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
+
     MP_TRACE_g(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
                GvNAME(handle), (unsigned long)handle, classname,
                SvREFCNT((SV*)handle));
