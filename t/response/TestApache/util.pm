@@ -86,7 +86,7 @@ sub handler {
     Apache::OK;
 }
 
-my $fmtdate_ptn = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;
+my $fmtdate_re = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;
 sub time_cmp {
     my($fmtdate, $time, $comment, $exact_match) = @_;
 
@@ -96,7 +96,7 @@ sub time_cmp {
         ok t_cmp $ptime, $time, $comment;
     }
     else {
-        ok t_cmp $fmtdate_ptn, $fmtdate, $comment;
+        ok t_cmp $fmtdate, $fmtdate_re, $comment;
     }
 }
 
