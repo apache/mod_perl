@@ -8,6 +8,9 @@ Changes - Apache mod_perl change logfile
 
 =item 1.19_01-dev
 
+change Apache::File->tmpfile flags from O_WRONLY to O_RDWR
+[Chuck O'Donnell <cao@milf18.bus.net>]
+
 fix Apache::RegistryBB when $r->filename NOT_FOUND 
 [Frank D. Cringle <fdc@cliwe.ping.de>]
 
