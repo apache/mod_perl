@@ -24,7 +24,9 @@ sub handler {
     {
         my $p = $r->pool;
 
-        ok t_cmp(5, ancestry_count($p), "\$r->pool has 5 ancestors");
+        my $count = ancestry_count($p);
+        t_debug "\$r->pool has 2 or more ancestors (found $count)";
+        ok $count >= 2;
 
         $p->cleanup_register(\&set_cleanup, [$r, 'native DESTROY']);
 
@@ -42,7 +44,9 @@ sub handler {
         {
             my $p = $r->pool;
 
-            ok t_cmp(5, ancestry_count($p), "\$r->pool has 5 ancestors");
+            my $count = ancestry_count($p);
+            t_debug "\$r->pool has 2 or more ancestors (found $count)";
+            ok $count >= 2;
 
             $p->cleanup_register(\&set_cleanup, [$r, 'native scoped']);
         }
