@@ -14,7 +14,9 @@ sub auth_any {
     return $res if $res != Apache::OK;
 
     unless($r->user and $sent_pw) {
-	$r->note_basic_auth_failure;
+        # testing $r->note_auth_failure:
+        # AuthType Basic + note_auth_failure == note_basic_auth_failure;
+	$r->note_auth_failure;
 	return Apache::HTTP_UNAUTHORIZED;
     }
 
