@@ -21,6 +21,12 @@ $Location{'/perl_sections_saved'} = {
 $TestDirective::perl::comments="yes";
 </Perl>
 
+<Perl >
+$Apache::Server::SaveConfig = 1;
+$TestDirective::perl::filename = __FILE__;
+$TestDirective::perl::line =  __LINE__;
+</Perl>
+
 ### --------------------------------- ###
 Perl $TestDirective::perl::worked="yes";
 

@@ -310,6 +310,7 @@ MP_CMD_SRV_DECLARE(perl)
     char line[MAX_STRING_LEN];
     apr_table_t *args;
     ap_directive_t **current = mconfig;
+    int line_num;
 
     if (!endp) {
         return modperl_cmd_unclosed_directive(parms);
@@ -321,6 +322,7 @@ MP_CMD_SRV_DECLARE(perl)
         return errmsg;
     }
 
+    line_num = parms->config_file->line_number+1;
     while (!ap_cfg_getline(line, sizeof(line), parms->config_file)) {
         /*XXX: Not sure how robust this is */
         if (strEQ(line, "</Perl>")) {
@@ -337,7 +339,7 @@ MP_CMD_SRV_DECLARE(perl)
     }
     
     (*current)->filename = parms->config_file->name;
-    (*current)->line_num = parms->config_file->line_number;
+    (*current)->line_num = line_num;
     (*current)->directive = apr_pstrdup(p, "Perl");
     (*current)->args = code;
     (*current)->data = args;
@@ -360,6 +362,7 @@ MP_CMD_SRV_DECLARE(perldo)
     const char *handler_name = NULL;
     modperl_handler_t *handler = NULL;
     const char *package_name = NULL;
+    const char *line_header = NULL;
     int status = OK;
     AV *args = Nullav;
 #ifdef USE_ITHREADS
@@ -397,8 +400,13 @@ MP_CMD_SRV_DECLARE(perldo)
             apr_table_set(options, "package", package_name);
         }
 
+        line_header = apr_psprintf(p, "\n#line %d %s\n", 
+                                   parms->directive->line_num,
+                                   parms->directive->filename);
+
         /* put the code about to be executed in the configured package */
-        arg = apr_pstrcat(p, "package ", package_name, ";", arg, NULL);
+        arg = apr_pstrcat(p, "package ", package_name, ";", line_header,
+                          arg, NULL);
     }
 
     eval_pv(arg, FALSE);
