@@ -1858,7 +1858,7 @@ aborted(conn)
     Apache::Connection	conn
 
     CODE:
-    RETVAL = conn->aborted;
+    RETVAL = conn->aborted || (conn->client && (conn->client->fd < 0));
 
     OUTPUT:
     RETVAL
