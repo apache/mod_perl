@@ -923,7 +923,7 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 	}
 	else {
 	    MP_TRACE_h(fprintf(stderr, "`%s' push_handlers() stack is empty\n", hook));
-	    return DECLINED;
+	    return NO_HANDLERS;
 	}
 	do_clear = TRUE;
 	MP_TRACE_h(fprintf(stderr, 
@@ -945,7 +945,8 @@ int perl_run_stacked_handlers(char *hook, request_rec *r, AV *handlers)
 			 (int)AvFILL(handlers)+1, r->uri)); 
     }
     for(i=0; i<=AvFILL(handlers); i++) {
-	MP_TRACE_h(fprintf(stderr, "calling &{%s->[%d]}\n", hook, (int)i));
+	MP_TRACE_h(fprintf(stderr, "calling &{%s->[%d]} (%d total)\n", 
+			   hook, (int)i, (int)AvFILL(handlers)+1));
 
 	if(!(sub = *av_fetch(handlers, i, FALSE))) {
 	    MP_TRACE_h(fprintf(stderr, "sub not defined!\n"));

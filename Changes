@@ -18,6 +18,9 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+swap order of stacked handlers so dynamic ones (push_handlers) are
+invoked after server .conf configured handlers
+
 replace uses of SvPVX() with SvPV() to prevent possible core dump if
 called with a non-string value
 
