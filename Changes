@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.99_19-dev
+=item 1.99_19 - December 23, 2004
 
 $r->hostname is now writable [Gozer]
 
