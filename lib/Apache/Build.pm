@@ -1618,7 +1618,8 @@ BEGIN {
 }
 EOF
 
-    my $content = join "\n\n", 'package Apache2;', $fixup, "1;";
+    my $content = join "\n\n", noedit_warning_hash(),
+        'package Apache2;', $fixup, "1;";
     my $file = catfile qw(lib Apache2.pm);
     open my $fh, '>', $file or die "Can't open $file: $!";
     print $fh $content;
