@@ -60,8 +60,8 @@ MODULE=APR::Socket
 !apr_socket_addr_get
 !apr_socket_data_get
 !apr_socket_data_set
- apr_getsocketopt
- apr_setsocketopt
+ apr_socket_opt_get
+ apr_socket_opt_set
 -apr_sendfile
 -apr_sendv
 !apr_socket_from_file
