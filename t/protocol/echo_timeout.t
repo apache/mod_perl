@@ -5,11 +5,11 @@ use Test;
 use Apache::TestUtil;
 use Apache::TestRequest ();
 
-my @test_strings = qw(hello world);
+my @test_strings = qw(good bye cruel world);
 
 plan tests => 1 + @test_strings;
 
-my $socket = Apache::TestRequest::vhost_socket('TestProtocol::echo');
+my $socket = Apache::TestRequest::vhost_socket('TestProtocol::echo_timeout');
 
 ok $socket;
 

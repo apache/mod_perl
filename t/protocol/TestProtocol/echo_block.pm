@@ -1,4 +1,9 @@
-package TestProtocol::echo;
+package TestProtocol::echo_block;
+
+# this test reads from/writes to the socket doing blocking IO
+#
+# see TestProtocol::echo_timeout for how to do the same with
+# nonblocking IO but using the timeout
 
 use strict;
 use warnings FATAL => 'all';
@@ -27,14 +32,15 @@ sub handler {
             or die "failed to set non-blocking mode";
     }
 
-    my $buff;
+    my ($buff, $rlen, $wlen);
     for (;;) {
-        my($rlen, $wlen);
         $rlen = BUFF_LEN;
         $socket->recv($buff, $rlen);
         last if $rlen <= 0;
+
         $wlen = $rlen;
         $socket->send($buff, $wlen);
+
         last if $wlen != $rlen;
     }
 
