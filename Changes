@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_13-dev
 
+Fix the STDIN/OUT overriding process to handle gracefully cases, when
+either or both are closed/bogus (the problem was only with useperlio
+enabled perl) [Stas]
+
 copy apr_table_compress logic from later httpd versions in case mod_perl
 is built against 2.0.46, as mod_perl now requires it internally.  users
 should be aware that 2.0.47 may become the oldest supported httpd version 
