@@ -24,12 +24,13 @@ for ($apr->param) {
 
 for (my $upload = $apr->upload; $upload; $upload = $upload->next) {
     my $fh = $upload->fh;
+    my $filename = $upload->filename;
     my $name = $upload->name;
     my $type = $upload->type;
-    print "$name ($type)";
+    print "$name $filename ($type)";
     if ($fh and $name) {
 	no strict;
-	if (my $no = fileno($name)) {
+	if (my $no = fileno($filename)) {
 	    print " fileno => $no";
 	}
     }
@@ -37,16 +38,21 @@ for (my $upload = $apr->upload; $upload; $upload = $upload->next) {
 }
 
 my $first = $apr->upload->name;
+my $first_filename = $apr->upload->filename;
+my $first_fh = $apr->upload->fh;
+while (<$first_fh>) { }
+
 for my $upload ($apr->upload) {
     my $fh = $upload->fh;
+    my $filename = $upload->filename;
     my $name = $upload->name;
     my($lines, $bytes);
     $lines = $bytes = 0;
 
     {
 	no strict;
-	if (fileno($name)) {
-	    $fh = *$name{IO};
+	if (fileno($filename)) {
+	    $fh = *$filename{IO};
 	    print "COMPAT: $fh\n";
 	} 
     }
@@ -66,12 +72,18 @@ for my $upload ($apr->upload) {
 	while (my($k,$v) = each %$info) {
 	    print "INFO: $k => $v\n";
 	}
-	my $type = $apr->uploadInfo($first, "content-type");
+	my $type = $apr->uploadInfo($first_filename, "content-type");
+	unless ($type) {
+	    die "uploadInfo is broken";
+	} 
 	print "TYPE: $type\n";
 	print "-" x 40, $/;
     }
     my $wanted = $upload->size;
+    unless ($bytes == $wanted) {
+	die "wanted $wanted bytes, got $bytes bytes";
+    }
     print "Server: Lines: $lines\n";
-    print "$name bytes=$bytes,wanted=$wanted\n";
+    print "$filename bytes=$bytes,wanted=$wanted\n";
 }
 
