@@ -63,17 +63,16 @@ void modperl_env_clear(pTHX)
 
 void modperl_env_default_populate(pTHX)
 {
+    modperl_env_ent_t *ent = MP_env_const_vars;
     HV *hv = ENVHV;
     U32 mg_flags;
-    int i;
 
     modperl_env_untie(mg_flags);
 
-    for (i = 0; MP_env_const_vars[i].key; i++) {
-        const modperl_env_ent_t *ent = &MP_env_const_vars[i];
-
+    while (ent->key) {
         hv_store(hv, ent->key, ent->klen,
                  newSVpvn(ent->val, ent->vlen), ent->hash);
+        ent++;
     }
 
     modperl_env_tie(mg_flags);
