@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+(undocumented) $Apache::ReadConfig variable renamed $Apache::Server::SaveConfig
+
 SERVER_CREATE/SERVER_MERGE methods implemented for directive handlers
 
 new-ish xs modules added to win32 build: Apache::Log, Apache::File,
