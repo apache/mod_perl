@@ -95,7 +95,7 @@ sub handler {
     my @c = qw(one two three);
     $url_string = join '%20', @c;
 
-    Apache::unescape_url($url_string);
+    Apache::URI::unescape_url($url_string);
 
     ok $url_string eq "@c";
 

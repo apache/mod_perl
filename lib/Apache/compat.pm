@@ -417,7 +417,7 @@ sub get_remote_host {
     $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
-#XXX: should port 1.x's Apache::unescape_url_info
+#XXX: should port 1.x's Apache::URI::unescape_url_info
 sub parse_args {
     my($r, $string) = @_;
     return () unless defined $string and $string;
@@ -648,7 +648,7 @@ sub size_string {
     return $size;
 }
 
-*unescape_uri = \&Apache::unescape_url;
+*unescape_uri = \&Apache::URI::unescape_url;
 
 sub escape_uri {
     my $path = shift;

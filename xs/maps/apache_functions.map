@@ -282,11 +282,12 @@ MODULE=Apache::Util
 !ap_recent_rfc822_date
 
 MODULE=Apache::URI   PACKAGE=guess
- char *:ap_unescape_url | mpxs_ | SV *:url
  ap_parse_uri
  ap_construct_url    | | r, uri=r->uri, p=r->pool
  ap_construct_server | | r, hostname=ap_get_server_name(r), \
                          port=ap_get_server_port(r), p=r->pool
+PACKAGE=Apache::URI
+ char *:ap_unescape_url | mpxs_ | SV *:url
 
 PACKAGE=Apache::RequestRec
  mpxs_Apache__RequestRec_parsed_uri
