@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+fix segfault when using Limit in <Perl> sections
+[Müller Joachim <Joachim.Mueller@arbeitsamt.de>]
+
 make $c->remote_host writeable [Joshua Chamas <joshua@chamas.com>]
 
 add per-server PerlSetVar variables, accessed using
