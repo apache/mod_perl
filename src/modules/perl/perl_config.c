@@ -152,7 +152,7 @@ char *mod_perl_auth_name(request_rec *r, char *val)
     if(val) {
 	conf->auth_name = pstrdup(r->pool, val);
 	set_module_config(r->per_dir_config, &core_module, (void*)conf); 
-	MP_TRACE(fprintf(stderr, "mod_perl: setting auth_name to %s\n", conf->auth_name));
+	MP_TRACE_g(fprintf(stderr, "mod_perl: setting auth_name to %s\n", conf->auth_name));
     }
 
     return conf->auth_name;
