@@ -112,4 +112,21 @@
 #   define environ (*_NSGetEnviron())
 #endif
 
+/* sv_copypv was added in perl 5.7.3 */
+#ifndef sv_copypv
+#  define sv_copypv(dsv, ssv)     \
+    STMT_START {                  \
+        STRLEN len;               \
+        char *s;                  \
+        s = SvPV(ssv, len);       \
+        sv_setpvn(dsv, s, len);   \
+        if (SvUTF8(ssv)) {        \
+            SvUTF8_on(dsv);       \
+        }                         \
+        else {                    \
+            SvUTF8_off(dsv);      \
+        }                         \
+    } STMT_END
+#endif
+
 #endif /* MODPERL_PERL_INCLUDES_H */
