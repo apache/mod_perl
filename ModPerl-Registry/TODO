@@ -6,14 +6,10 @@ RegistryCooker:
 
 ### bugs ###
 
-- prototyping sub handler($$) segfaults on request
-
 - consider not to use $$ in debug tracing. Not all platforms give out
   a different pid for different threads.
 
 ### missing features ###
-
-- need to properly handle HEAD requests 
 
 - need to port $Apache::__T, to test against when user supplies -T flag.
 
@@ -53,10 +49,6 @@ RegistryCooker:
 
 ### optimizations ###
 
-- $o->[CLASS] of the subclass is known at compile time, so should
-  create the subs using $o->[CLASS] on the fly for each subclass
-  which wants them
-
 - currently the default is to strip __DATA__|__END__ and everything
   after that, which incurs a little overhead because of the s/// on
   the contents of the file. This "feature" wasn't in 1.x, so may
@@ -88,7 +80,7 @@ RegistryCooker:
 
 - could also try to privide an optional workaround for the problem
   with libs collisions as explained here:
-  http://perl.apache.org/guide/porting.html#Name_collisions_with_Modules_and
+  http://perl.apache.org/docs/1.0/guide/porting.html#Name_collisions_with_Modules_and
 
 - It's a known kludge with mod_perl scripts coming from mod_cgi which
   use -M for file mtime comparisons, but are not aware of the fact
