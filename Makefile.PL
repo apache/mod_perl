@@ -10,7 +10,7 @@ use ModPerl::Code ();
 
 our $VERSION;
 
-my $build = Apache::Build->new;
+my $build = Apache::Build->new(debug => 1);
 my $code  = ModPerl::Code->new;
 
 #quick hack until build system is complete
@@ -43,6 +43,7 @@ sub configure {
       $httpd_version, $VERSION, $^V;
 
     $build->save;
+    $build->save_ldopts;
 
     $code->generate;
 }
@@ -57,17 +58,16 @@ sub make {
     my $opts = shift;
     return clean() if $opts->{m} eq 'c';
 
-    my $ccopts = ExtUtils::Embed::ccopts();
+    my $ccopts = $build->ccopts;
     my @inc = $build->inc;
     my($cc, $ar) = map { $build->perl_config($_) } qw(cc ar);
 
     chdir $code->path;
 
-    my $flags = "-g -Wall";
-    $flags .= " -E" if $opts->{E};
+    $ccopts .= " -E" if $opts->{E};
 
     for (sort { (stat $b)[9] <=> (stat $a)[9] } @{ $code->c_files }) {
-        echo_cmd "$cc $flags $ccopts @inc -c $_";
+        echo_cmd "$cc $ccopts @inc -c $_";
     }
 
     echo_cmd "$ar crv libmodperl.a @{ $code->o_files }";
