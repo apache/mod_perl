@@ -68,6 +68,8 @@ static SV *sv_name(SV *svp)
 
 MODULE = Apache::Symbol		PACKAGE = Apache::Symbol		
 
+PROTOTYPES: DISABLE
+
 void
 undef(sv)
     SV *sv

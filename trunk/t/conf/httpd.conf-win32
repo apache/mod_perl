@@ -48,11 +48,26 @@ PerlScript docs/startup.pl
 
 Alias /perl/ ./t/net/perl/
 
+Alias /dirty-perl/ ./t/net/perl/
 
 ScriptAlias /cgi-bin/ ./t/net/perl/
 
 #ScriptAlias /cgi-bin/ ./t/net/perl/
 
+<Location /dirty-perl>
+Options +ExecCGI
+SetHandler perl-script
+PerlHandler Apache::PerlRun
+PerlSendHeader On
+</Location>
+
+<Location /perl/noenv>
+SetHandler perl-script
+PerlHandler Apache::Registry::handler
+Options +ExecCGI
+PerlSendHeader       Off
+PerlSetupEnv Off
+</Location>
 
 <Location /perl>
 

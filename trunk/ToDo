@@ -16,6 +16,9 @@ SHORT TERM STUFF (this section should always be empty in a release version!)
                  (well, close to it anyhow)
 ---------------------------------------------------------------------------
 
+- rand() broken under win32!
+           Jeff Baker <jeff@godzilla.tamu.edu>
+
 - Ralf's APACI Makefile.tmpl
 
 ---------------------------------------------------------------------------
@@ -91,7 +94,10 @@ NEW STUFF
 - win32:
   + integrate with Perl 5.005's threading
   + mod_include #perl support
+  + ability to nmake w/o going into VC++
+  + ability to disable Perl*Handler callback hooks
   + look at providing ASP (Active Server Plugin) support for NT users
+  + get rid of dup between t/conf/httpd.conf-dist/httpd.conf-win32
 
 - overload %ENV magic so it's not setup unless asked for
 
@@ -99,8 +105,7 @@ NEW STUFF
 
 - cleanup Makefile.PL!!!
 
-- SetHandler perl-dirty-script, mode which wipes out a script's
-  namespace so "dirty old CGI" scripts will work
+- loose dup code in Apache::Registry, use Apache::PerlRun functions
 
 - improve the "stacked handlers" implementation, including:
   + config merging of AV*'s

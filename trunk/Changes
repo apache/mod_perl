@@ -18,6 +18,14 @@ Other contributors are mentioned below.
 
 =item 1.11_01-dev
 
+added experimental get_handlers/set_handlers methods 
+(enable with PERL_GET_SET_HANDLERS=1)
+
+new module Apache::PerlRun, splits out Apache::Registry functionality
+and provides a `dirty-perl' handler (see pod)
+
+PERL_OBJECT_HANDLERS now enabled #ifdef PERL_METHOD_HANDLERS
+
 widen scope of mutex lock under win32 to avoid possible deadlock
 [Gerald Richter <richter@ecos.de>]
 
