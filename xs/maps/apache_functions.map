@@ -35,8 +35,8 @@
 # for details see: %ModPerl::MapUtil::disabled_map
 
 MODULE=Apache::RequestUtil   PACKAGE=guess
- >ap_finalize_request_protocol
- ap_default_port_for_request
+>ap_finalize_request_protocol
+?ap_default_port_for_request
  ap_default_port_for_scheme
  ap_default_type
  ap_get_server_name
@@ -48,7 +48,7 @@ MODULE=Apache::RequestUtil   PACKAGE=guess
 #MODULE=Apache::RequestConfig
  ap_document_root
  ap_get_limit_req_body
- ap_get_limit_xml_body
+?ap_get_limit_xml_body
 >ap_core_translate
 
 MODULE=Apache::SubRequest   PACKAGE=Apache::RequestRec
