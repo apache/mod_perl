@@ -80,10 +80,13 @@ mpxs_usage_va(2, obj, msg); \
 arg = *MARK++
 
 /* XXX: we probably shouldn't croak here */
-#define mpxs_write_loop(func,obj) \
+#define mpxs_write_loop(func, obj) \
     while (MARK <= SP) { \
         apr_ssize_t wlen; \
         char *buf = SvPV(*MARK, wlen); \
+        MP_TRACE_f(MP_FUNC, "   %s\n\n\tbuffer out: %d bytes\n", \
+                  ((modperl_filter_ctx_t *)obj->f->ctx)->handler->name, \
+                  wlen); \
         apr_status_t rv = func(aTHX_ obj, buf, &wlen); \
         if (rv != APR_SUCCESS) { \
             Perl_croak(aTHX_ modperl_apr_strerror(rv)); \
