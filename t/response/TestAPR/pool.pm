@@ -16,15 +16,15 @@ sub cleanup {
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 3;
+    plan $r, tests => 2;
 
     my $p = APR::Pool->new;
 
     ok $p->isa('APR::Pool');
 
-    my $num_bytes = $p->num_bytes;
-
-    ok $num_bytes;
+#only available with -DAPR_POOL_DEBUG
+#    my $num_bytes = $p->num_bytes;
+#    ok $num_bytes;
 
     $p->cleanup_register(\&cleanup, 33);
 
