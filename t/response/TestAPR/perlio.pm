@@ -13,7 +13,7 @@ use Apache::TestUtil;
 use Fcntl ();
 use File::Spec::Functions qw(catfile);
 
-use Apache::Const -compile => 'OK';
+use Apache::Const -compile => qw(OK CRLF);
 
 #XXX: APR::LARGE_FILES_CONFLICT constant?
 #XXX: you can set to zero if largefile support is not enabled in Perl
@@ -28,7 +28,7 @@ use constant APR_WIN32_FILE_DUP_BUG =>
 sub handler {
     my $r = shift;
 
-    my $tests = 11;
+    my $tests = 22;
     $tests += 3 unless LARGE_FILES_CONFLICT;
     $tests += 1 unless APR_WIN32_FILE_DUP_BUG;
 
@@ -221,6 +221,115 @@ sub handler {
 
     }
 
+    # tests reading and writing text and binary files
+    {
+        for my $file ('MoonRise.jpeg', 'redrum.txt') {
+            my $in = catfile $dir, $file; 
+            my $out = catfile $dir, "$file.out";
+            my ($apr_content, $perl_content);
+            open my $rfh, "<:APR", $in, $r->pool
+                or die "Cannot open $in for reading: $!";
+            {
+                local $/;
+                $apr_content = <$rfh>;
+            }
+            close $rfh;
+            open my $pfh, "<", $in
+                or die "Cannot open $in for reading: $!";
+            binmode($pfh);
+            {
+                local $/;
+                $perl_content = <$pfh>;
+            }
+            close $pfh;
+            ok t_cmp(length $perl_content,
+                     length $apr_content,
+                     "testing data size of $file");
+        
+            open my $wfh, ">:APR", $out, $r->pool
+                or die "Cannot open $out for writing: $!";
+            print $wfh $apr_content;
+            close $wfh;
+            ok t_cmp(-s $in,
+                     -s $out,
+                     "testing file size of $file");
+            unlink $out;
+        }
+    }
+
+    # tests for various CRLF and utf-8 issues
+    {
+        my $scratch = catfile $dir, 'scratch.dat';
+        my $text;
+        my $count = 2000;
+        open my $wfh, ">:crlf", $scratch
+            or die "Cannot open $scratch for writing: $!";
+        print $wfh 'a' . ((('a' x 14) . "\n") x $count);
+        close $wfh;
+        open my $rfh, "<:APR", $scratch, $r->pool
+            or die "Cannot open $scratch for reading: $!";
+        {
+            local $/;
+            $text = <$rfh>;
+        }
+        close $rfh;
+        ok t_cmp($count,
+                 count_chars($text, Apache::CRLF),
+                 'testing for presence of \015\012');
+        ok t_cmp($count,
+                 count_chars($text, "\n"),
+                 'testing for presence of \n');
+
+        open $wfh, ">:APR", $scratch, $r->pool
+            or die "Cannot open $scratch for writing: $!";
+        print $wfh 'a' . ((('a' x 14) . Apache::CRLF) x $count);
+        close $wfh;
+        open $rfh, "<:APR", $scratch, $r->pool
+            or die "Cannot open $scratch for reading: $!";
+        {
+            local $/;
+            $text = <$rfh>;
+        }
+        close $rfh;
+        ok t_cmp($count,
+                 count_chars($text, Apache::CRLF),
+                 'testing for presence of \015\012');
+        ok t_cmp($count,
+                 count_chars($text, "\n"),
+                 'testing for presence of \n');
+        open $rfh, "<:crlf", $scratch
+            or die "Cannot open $scratch for reading: $!";
+        {
+            local $/;
+            $text = <$rfh>;
+        }
+        close $rfh;
+        ok t_cmp(0,
+                 count_chars($text, Apache::CRLF),
+                 'testing for presence of \015\012');
+        ok t_cmp($count,
+                 count_chars($text, "\n"),
+                 'testing for presence of \n');
+
+        my $utf8 = "\x{042F} \x{0432}\x{0430}\x{0441} \x{043B}\x{044E}";
+        open $wfh, ">:APR", $scratch, $r->pool
+            or die "Cannot open $scratch for writing: $!";
+        binmode($wfh, ':utf8');
+        print $wfh $utf8;
+        close $wfh;
+        open $rfh, "<:APR", $scratch, $r->pool
+            or die "Cannot open $scratch for reading: $!";
+        binmode($rfh, ':utf8');
+        {
+            local $/;
+            $text = <$rfh>;
+        }
+        close $rfh;
+        ok t_cmp($utf8,
+                 $text,
+                 'utf8 binmode test');
+        unlink $scratch;
+    }
 
     # XXX: need tests 
     # - for stdin/out/err as they are handled specially
@@ -232,6 +341,13 @@ sub handler {
     # cleanup: t_mkdir will remove the whole tree including the file
 
     Apache::OK;
+}
+
+sub count_chars {
+    my($text, $chars) = @_;
+    my $seen = 0;
+    $seen++ while $text =~ /$chars/g;
+    return $seen;
 }
 
 1;
