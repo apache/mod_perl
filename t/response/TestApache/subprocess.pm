@@ -12,7 +12,7 @@ use IO::Select ();
 use Apache::Const -compile => 'OK';
 
 use Config;
-use constant PERLIO_5_8_IS_ENABLED => $Config{useperlio} && $] > 5.7;
+use constant PERLIO_5_8_IS_ENABLED => $Config{useperlio} && $] >= 5.007;
 
 my %scripts = (
      argv   => 'print STDOUT "@ARGV";',
