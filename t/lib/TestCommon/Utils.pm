@@ -3,16 +3,14 @@ package TestCommon::Utils;
 use strict;
 use warnings FATAL => 'all';
 
-BEGIN {
-    # perl 5.8.0 (only) croaks on eval {} block at compile time when
-    # it thinks the application is setgid. workaround: shutdown
-    # compile time errors for this function
-    local $SIG{__DIE__} = sub { };
-    # perl 5.6.x only triggers taint protection on strings which are
-    # at least one char long
-    sub is_tainted {
-        return ! eval { eval join '', '#', map substr($_, 0, 0), @_; 1};
-    }
+# perl 5.6.x only triggers taint protection on strings which are at
+# least one char long
+sub is_tainted {
+    return ! eval {
+        eval join '', '#',
+            map defined() ? substr($_, 0, 0) : (), @_;
+        1;
+    };
 }
 
 1;
@@ -49,9 +47,10 @@ Various handy testing utils
 
 =head2 is_tainted()
 
-  is_tainted($data)
+  is_tainted(@data);
 
-returns I<TRUE> if C<$data> is tainted, I<FALSE> otherwise
+returns I<TRUE> if at least one element in C<@data> is tainted,
+I<FALSE> otherwise.
 
 
 
