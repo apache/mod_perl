@@ -34,20 +34,10 @@ for my $file (qw(basic.pl env.pl)) {
         trans   => \&trans,
     );
 
-    my %skip = map { $_ => 1 } 
-        qw(lib.pl perlrun_require.pl syntax_error.pl runtime_error.pl
-           use_error.pl missing_headers.pl r_inherited.pl);
-    my $dh = DirHandle->new($base_dir) or die $!;
-    for my $file ($dh->read) {
-        next unless $file =~ /\.pl$/;
-        next if exists $skip{$file};
+    my @preload = qw(basic.pl env.pl require.pl special_blocks.pl
+        redirect.pl 206.pl content_type.pl);
 
-        # skip these as they are knowlingly generate warnings
-        next if $file =~ /^(closure.pl|not_executable.pl)$/;
-
-        # these files shouldn't be preloaded
-        next if $file =~ /^(local-conf.pl)$/;
-
+    for my $file (@preload) {
         $rl->handler("/registry_bb/$file");
     }
 }
