@@ -1109,6 +1109,7 @@ cgi_env(r, ...)
 
     PREINIT:
     char *key = NULL;
+    I32 gimme = GIMME_V;
 
     PPCODE:
     if(items > 1) {
@@ -1117,15 +1118,16 @@ cgi_env(r, ...)
 	    table_set(r->subprocess_env, key, SvPV(ST(2),na));
     }
 
-    if(GIMME == G_ARRAY) {
+    if((gimme == G_ARRAY) || (gimme == G_VOID)) {
         int i;
         array_header *arr  = perl_cgi_env_init(r);
         table_entry *elts = (table_entry *)arr->elts;
-
-	for (i = 0; i < arr->nelts; ++i) {
-	    if (!elts[i].key) continue;
-	    PUSHelt(elts[i].key, elts[i].val, 0);
-	}
+        if(gimme == G_ARRAY) {
+	    for (i = 0; i < arr->nelts; ++i) {
+	        if (!elts[i].key) continue;
+	        PUSHelt(elts[i].key, elts[i].val, 0);
+	    }
+        }
     }
     else if(key) {
 	char *value = table_get(r->subprocess_env, key);
@@ -1253,6 +1255,17 @@ next(r)
  	ST(0) = perl_bless_request_rec((request_rec *)r->next);
     else
         ST(0) = &sv_undef;
+
+Apache
+last(r)
+    Apache   r
+
+    CODE:
+    for(RETVAL=r; RETVAL->next; RETVAL=RETVAL->next)
+        continue;
+
+    OUTPUT:
+    RETVAL
 
 int
 is_initial_req(r)
