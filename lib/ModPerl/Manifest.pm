@@ -90,9 +90,7 @@ __DATA__
 patches/
 #very few will have Chatbot::Eliza installed
 eliza
-# segfaults with blead perl
-t/filter/TestFilter/out_str_req_mix.pm
-t/filter/out_str_req_mix.t
 # incomplete
 t/error/push_handlers.t
 t/response/TestError/push_handlers.pm
+t/apr-ext/perlio
