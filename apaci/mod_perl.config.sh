@@ -147,6 +147,13 @@ if($^O eq "hpux") {
 print $ldopts;
 EOT
 perl_libs="`$perl_interp $tmpfile2 $perl_libperl`"
+if test $build_type = OBJ
+then
+	case "$os_version" in
+	    aix*)  perl_libs="$perl_libs -bE:\$(SRCDIR)/modules/perl/mod_perl.exp" ;;
+	    * )    ;;
+	esac
+fi
 perl_inc="`$perl_interp -MConfig -e 'print "$Config{archlibexp}/CORE"'`"
 perl_privlibexp="`$perl_interp -MConfig -e 'print $Config{privlibexp}'`"
 perl_archlibexp="`$perl_interp -MConfig -e 'print $Config{archlibexp}'`"

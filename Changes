@@ -10,6 +10,8 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+static+apaci fixes for aix [Jens-Uwe Mager <jum@helios.de>]
+
 fix bug in Perl{Set,Add}Var so $r->dir_config->get('key') sees the
 same values as $r->dir_config('key'), thanks to Geoffrey Young for the spot
 
