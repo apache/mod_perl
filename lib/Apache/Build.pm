@@ -689,8 +689,6 @@ my @perl_config_pm =
 sub make_tools {
     my($self, $fh) = @_;
 
-    #XXX win32
-
     for (@perl_config_pm) {
         print $fh $self->canon_make_attr($_, $self->perl_config($_));
     }
@@ -700,10 +698,13 @@ sub make_tools {
         }
     }
 
-    print $fh $self->canon_make_attr('RM_F' => #XXX
-                                     $self->{MODPERL_RM} . ' -f');
+    require ExtUtils::MakeMaker;
+    my $mm = bless {}, 'MM';
+    $mm->init_others;
 
-    print $fh $self->canon_make_attr(MV => 'mv');
+    for (qw(RM_F MV)) {
+        print $fh $self->canon_make_attr($_ => $mm->{$_});
+    }
 }
 
 sub write_src_makefile {
