@@ -1,19 +1,13 @@
 use warnings;
 use strict;
 
-# XXX: add the warning/error expected prints
-
 use Apache::Test ();
 use Apache::TestUtil;
 use File::Spec::Functions qw(catfile catdir);
 
-#my $dir;# = catdir Apache::Test::vars('serverroot'), 'cgi-bin';
-#BEGIN { $dir = catdir Apache::Test::vars('serverroot'), 'cgi-bin' }
-#use lib $dir;
-#my $require = catfile $dir, 'perlrun_nondecl.pl';
-
 use lib catdir Apache::Test::vars('serverroot'), 'cgi-bin';
-my $require = catfile Apache::Test::vars('serverroot'), 'cgi-bin', 'perlrun_nondecl.pl';
+my $require = catfile Apache::Test::vars('serverroot'), 'cgi-bin', 
+    'perlrun_nondecl.pl';
 
 # require a module w/ package declaration (it doesn't get reloaded
 # because it declares the package). But we still have a problem with
