@@ -249,31 +249,37 @@ static XS(MPXS_Apache__Log_log_error)
     SV *sv = Nullsv;
     STRLEN n_a;
 
-    if ((items > 1) &&
-        (r = modperl_xs_sv2request_rec(aTHX_ ST(0),
-                                       "Apache::RequestRec", cv)))
-    {
-        s = r->server;
-        i=1;
-    }
-    else if ((items > 1) && sv_isa(ST(0), "Apache::Server")) {
-        s = (server_rec *)SvObjIV(ST(0));
-        i=1;    
-    }
-    else {
-        if (r) {
+    /*
+     * we support the following:
+     * Apache::warn
+     * Apache->warn
+     * $r->warn
+     * $r->log_error
+     * Apache::Server->log_error
+     * $s->log_error
+     * Apache::Server->warn
+     * $s->warn
+     */
+
+    if (items > 1) {
+        if ((r = modperl_xs_sv2request_rec(aTHX_ ST(0),
+                                           "Apache::RequestRec", cv)))
+        {
             s = r->server;
         }
-        else {
-#if 0
-            /*XXX*/
-            s = perl_get_startup_server();
-#endif
+        else if (sv_isa(ST(0), "Apache::Server")) {
+            s = (server_rec *)SvObjIV(ST(0));
+        }
+        else if (SvPOK(ST(0)) && strEQ(SvPVX(ST(0)), "Apache::Server")) {
+            s = modperl_global_get_server_rec();
         }
     }
-
-    if (!s) {
-        Perl_croak(aTHX_ "%s::%s no server_rec!", mpxs_cv_name());
+              
+    if (s) {
+        i=1;
+    }
+    else {
+        s = modperl_global_get_server_rec();
     }
 
     if (items > 1+i) {
