@@ -108,7 +108,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    aborted
    keepalive
 ?  double_reverse
->  keepalives
+   keepalives
    local_ip
    local_host
    id
