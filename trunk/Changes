@@ -8,6 +8,8 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
+=item 1.24_02-dev
+
 =item 1.24_01 - October 10, 2000
 
 fix bug in $r->args that treats ?0 as the empty string instead of zero,
