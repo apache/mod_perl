@@ -17,16 +17,16 @@ for (1..2) {
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
     ok $same_interp;
 
-    my $value = 1;
+    my $expected = 1;
     my $skip  = 0;
     # test GET over the same same_interp
     for (1..2) {
-        $value++;
+        $expected++;
         my $res = req($same_interp, \&GET, $url, foo => 'bar');
         $skip++ unless defined $res;
         skip_not_same_intrep(
             $skip,
-            $value,
+            $expected,
             defined $res && $res->content,
             "GET over the same interp"
         );
@@ -38,16 +38,16 @@ for (1..2) {
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
     ok $same_interp;
 
-    my $value = 1;
+    my $expected = 1;
     my $skip  = 0;
     for (1..2) {
-        $value++;
+        $expected++;
         my $content = join ' ', 'ok', $_ + 3;
         my $res = req($same_interp, \&POST, $url, content => $content);
         $skip++ unless defined $res;
         skip_not_same_intrep(
             $skip,
-            $value,
+            $expected,
             defined $res && $res->content,
             "POST over the same interp"
         );
@@ -59,10 +59,10 @@ for (1..2) {
     my $same_interp = Apache::TestRequest::same_interp_tie($url);
     ok $same_interp;
 
-    my $value = 1;
+    my $expected = 1;
     my $skip  = 0;
     for (1..2) {
-        $value++;
+        $expected++;
         my $res = req($same_interp, \&HEAD, $url);
         $skip++ unless defined $res;
         skip_not_same_intrep(
