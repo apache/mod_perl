@@ -5,13 +5,10 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
-use Apache::TestConfig;
 use Apache::TestUtil;
-use Apache::BuildConfig;
-use Apache::Command;
 
+use Apache::Command ();
 use Apache::Module ();
-use DynaLoader ();
 
 use Apache::Const -compile => qw(OK ITERATE OR_ALL);
 
