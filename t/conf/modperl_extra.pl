@@ -62,23 +62,51 @@ Apache->server->add_config(['<Perl >', '1;', '</Perl>']);
 
 use constant IOBUFSIZE => 8192;
 
+use Apache::Const -compile => qw(MODE_READBYTES);
+use APR::Const    -compile => qw(BLOCK_READ);
+
 sub ModPerl::Test::read_post {
     my $r = shift;
+    my $debug = shift || 0;
 
-    $r->setup_client_block;
+    my @data = ();
+    my $seen_eos = 0;
+    my $filters = $r->input_filters();
+    my $ba = $r->connection->bucket_alloc;
+    my $bb = APR::Brigade->new($r->pool, $ba);
 
-    return undef unless $r->should_client_block;
-
-    my $data = '';
-    my $buf;
-    while (my $read_len = $r->get_client_block($buf, IOBUFSIZE)) {
-        if ($read_len == -1) {
-            die "some error while reading with get_client_block";
+    do {
+        my $rv = $filters->get_brigade($bb,
+            Apache::MODE_READBYTES, APR::BLOCK_READ, IOBUFSIZE);
+        if ($rv != APR::SUCCESS) {
+            return $rv;
         }
-        $data .= $buf;
-    }
 
-    return $data;
+        while (!$bb->empty) {
+            my $buf;
+            my $b = $bb->first;
+
+            $b->remove;
+
+            if ($b->is_eos) {
+                warn "EOS bucket:\n" if $debug;
+                $seen_eos++;
+                last;
+            }
+
+            my $status = $b->read($buf);
+            warn "DATA bucket: [$buf]\n" if $debug;
+            if ($status != APR::SUCCESS) {
+                return $status;
+            }
+            push @data, $buf;
+        }
+
+        $bb->destroy;
+
+    } while (!$seen_eos);
+
+    return join '', @data;
 }
 
 sub ModPerl::Test::add_config {
