@@ -139,10 +139,6 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
     }
 #endif
 
-    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
-               av->nelts, desc);
-    handlers = (modperl_handler_t **)av->elts;
-
     switch (type) {
       case MP_HANDLER_TYPE_PER_DIR:
       case MP_HANDLER_TYPE_PER_SRV:
@@ -188,6 +184,10 @@ int modperl_callback_run_handlers(int idx, request_rec *r, conn_rec *c,
           }
           break;
     };
+
+    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n",
+               av->nelts, desc);
+    handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
         if ((status = modperl_callback(aTHX_ handlers[i], p, s, av_args)) != OK) {
