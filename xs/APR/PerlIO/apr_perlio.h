@@ -15,6 +15,14 @@
 #include "apr_optional.h"
 #endif
 
+/* 5.6.0 */
+#ifndef IoTYPE_RDONLY
+#define IoTYPE_RDONLY '<'
+#endif
+#ifndef IoTYPE_WRONLY
+#define IoTYPE_WRONLY '>'
+#endif
+
 typedef enum {
     APR_PERLIO_HOOK_READ,
     APR_PERLIO_HOOK_WRITE
