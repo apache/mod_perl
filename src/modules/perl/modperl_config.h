@@ -1,6 +1,16 @@
 #ifndef MODPERL_CONFIG_H
 #define MODPERL_CONFIG_H
 
+void *modperl_create_dir_config(ap_pool_t *p, char *dir);
+
+void *modperl_merge_dir_config(ap_pool_t *p, void *base, void *add);
+
+modperl_srv_config_t *modperl_srv_config_new(ap_pool_t *p);
+
+void *modperl_create_srv_config(ap_pool_t *p, server_rec *s);
+
+void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv);
+
 char *modperl_cmd_push_handlers(MpAV *handlers, char *name, ap_pool_t *p);
 
 #define MP_dRCFG \

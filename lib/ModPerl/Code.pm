@@ -272,7 +272,7 @@ my %sources = (
    generate_trace              => {h => 'modperl_trace.h'},
 );
 
-my @c_src_names = qw(interp log);
+my @c_src_names = qw(interp log config);
 my @g_c_names = map { "modperl_$_" } qw(hooks directives);
 my @c_names   = ('mod_perl', (map "modperl_$_", @c_src_names), @g_c_names);
 sub c_files { map { "$_.c" } @c_names }
