@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+<Perl> sections will now report configuration syntax errors
+
 USE_DSO=1 should work now
 
 added Apache::SubRequest->bytes_sent method
