@@ -356,7 +356,7 @@ mpxs_apr_pool_parent_get(pTHX_ apr_pool_t *child_pool)
     else {
         MP_POOL_TRACE(MP_FUNC, "pool (0x%lx) has no parents",
                       (unsigned long)child_pool);
-        return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
+        return &PL_sv_undef;
     }
 }
 
