@@ -49,16 +49,16 @@ sub handler {
         require threads::shared;
         my $counter_priv          = 1;
         my $counter_shar : shared = 1;
-        my $thr = threads->new(sub : locked {
-                                   my $tid = threads->self->tid; 
+        my $thr = threads->new(sub {
+                                   my $tid = threads->self->tid;
                                    debug "2nd TID is $tid" if defined $tid;
                                    $counter_priv += $counter_priv for 1..10;
+                                   lock $counter_shar;
                                    $counter_shar += $counter_shar for 1..10;
-                                   return 2;
                                });
         $counter_priv += $counter_priv for 1..10;
         $counter_shar += $counter_shar for 1..10;
-        my $ret = $thr->join;
+        $thr->join;
         ok t_cmp(2**20, $counter_shar, "shared counter");
         ok t_cmp(2**10, $counter_priv, "private counter");
     }
