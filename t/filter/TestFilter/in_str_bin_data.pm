@@ -1,7 +1,7 @@
 package TestFilter::in_str_bin_data;
 
-# test that $r->print correctly handles binary data (e.g. doesn't
-# truncate on "\0" if there is more data after it)
+# test that $r->print and $f->print handle binary data correctly
+# (e.g. doesn't truncate on "\0" if there is more data after it)
 
 use strict;
 use warnings FATAL => 'all';

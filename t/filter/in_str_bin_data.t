@@ -22,8 +22,5 @@ for my $location (@locations) {
     ok t_cmp($expected,
              $received,
              "$location binary response data");
-    open my $fh, ">>/tmp/dat" or die $!;
-    print $fh "$received\n";
-    close $fh;
 }
 
