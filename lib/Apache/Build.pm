@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use Config;
 use Cwd ();
+use File::Spec ();
 use ExtUtils::Embed ();
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
@@ -66,14 +67,9 @@ sub apxs_cflags {
 }
 
 sub which {
-    my $name = shift;
-
-    for (split ':', $ENV{PATH}) {
-        my $app = "$_/$name";
-        return $app if -x $app;
+    foreach (map { File::Spec->catfile($_, $_[0]) } File::Spec->path) {
+	return $_ if -x;
     }
-
-    return '';
 }
 
 #--- Perl Config stuff ---
