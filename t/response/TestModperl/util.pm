@@ -18,7 +18,7 @@ sub handler {
 
     plan $r, tests => 1;
 
-    ok t_cmp ModPerl::Util::current_perl_id(), qr/0x\d+/,
+    ok t_cmp ModPerl::Util::current_perl_id(), qr/0x\w+/,
         "perl interpreter id";
 
     Apache::OK;
