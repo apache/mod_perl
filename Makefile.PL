@@ -2,7 +2,7 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
-my $min_httpd_version = '2.0.35';
+my $min_httpd_version = '2.0.36';
 
 my($old_modperl_version, $old_modperl_pm);
 
