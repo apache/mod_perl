@@ -21,8 +21,7 @@ use File::Path qw(mkpath);
 
 use Apache::Const -compile => 'OK';
 
-my $dir = catdir Apache::Test::config()->{vars}->{documentroot}, 'hooks',
-    'startup';
+my $dir = catdir Apache::Test::vars("documentroot"), 'hooks', 'startup';
 
 sub open_logs {
     my($conf_pool, $log_pool, $temp_pool, $s) = @_;
