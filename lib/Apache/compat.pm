@@ -19,6 +19,7 @@ use strict;
 #</Location>
 
 use Apache::RequestRec ();
+use Apache::SubRequest ();
 use Apache::Connection ();
 use Apache::Server ();
 use Apache::ServerUtil ();
