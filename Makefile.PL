@@ -2,6 +2,19 @@ use 5.006;
 use strict;
 use warnings FATAL => 'all';
 
+my($old_modperl_version, $old_modperl_pm);
+
+BEGIN {
+    eval {
+        require mod_perl;
+        if ($mod_perl::VERSION < 1.99) {
+            $old_modperl_version = $mod_perl::VERSION;
+        }
+        $old_modperl_pm = delete $INC{'mod_perl.pm'};
+        %mod_perl:: = ();
+    };
+}
+
 use lib qw(lib Apache-Test/lib);
 
 use Config;
@@ -63,6 +76,25 @@ ModPerl::MM::WriteMakefile(
 post_configure();
 
 sub configure {
+    set_modperl_version();
+
+    if ($old_modperl_version) {
+        $old_modperl_version =~ s/(\d\d)(\d\d)/$1_$2/;
+        my $vstring = "mod_perl/$old_modperl_version";
+        print "$vstring installation detected...";
+
+        if ($build->{MP_INST_APACHE2}) {
+            print "ok (installing relative to Apache2/)\n";
+        }
+        else {
+            print "not ok\n";
+            error "cannot install mod_perl/$VERSION on top of $vstring",
+                  "use MP_INST_APACHE2=1 option " .
+                  "or to force installation delete:\n $old_modperl_pm";
+            die "\n";
+        }
+    }
+
     if (Apache::Build::is_win32()) {
         #Makefile.PL's in WrapXS/ just need to pass the -e libmodperl.lib test
         #the real libmodperl.lib will be in place when WrapXS/ dll's are
@@ -76,7 +108,6 @@ sub configure {
     }
 
     system_sanity_check();
-    set_modperl_version();
 
     if ($build->{MP_APXS}) {
         print "Using APXS => $build->{MP_APXS}\n";
@@ -140,7 +171,8 @@ sub post_configure {
         $build->{"MODPERL_LIB"};
 
     if ($build->{MP_INST_APACHE2}) {
-        print "Will install Apache Perl modules into Apache2/\n";
+        print "Will install Apache Perl modules relative to Apache2/\n";
+        print "Don't forget to 'use Apache2 ();' in a startup script\n";
     }
 
     $build->save;
