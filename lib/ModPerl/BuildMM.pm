@@ -271,7 +271,11 @@ sub glue_pod {
     die "expecting 3 arguments: pm, pod, dst" unless @ARGV == 3;
     my($pm, $pod, $dst) = @ARGV;
 
-    die "glue_pod: can't find $pm"  unless -e $pm;
+    # it's possible that the .pm file is not existing
+    # (e.g. ThreadMutex.pm is not created on unless
+    # $apr_config->{HAS_THREADS})
+    return unless -e $pm;
+
     die "glue_pod: can't find $dst" unless -e $dst;
 
     # have we already glued the doc?
