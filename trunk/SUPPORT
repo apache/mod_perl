@@ -77,11 +77,13 @@ Please send mail to modperl@apache.org
 
 Always include this information:
 
-Output of C<perl -v; perl -V>
+Output of C<perl -V>
 
 Version of mod_perl
 
 Version of apache
+
+Options given to mod_perl's Makefile.PL
 
 Server configuration details
 
@@ -135,6 +137,10 @@ While the process is spinning, send it a I<USR1> signal:
 Sometimes gdb can make heads or tails of the core file, try this:
  
  % gdb -core core
+
+or
+
+ % gdb httpd core
 
 If the dump is happening in libperl a -DDEBUGGING enabled libperl
 would help show us what's really happening. 
