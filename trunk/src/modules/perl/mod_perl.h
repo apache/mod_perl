@@ -943,6 +943,7 @@ char *mod_perl_auth_name(request_rec *r, char *val);
 void *perl_merge_dir_config(pool *p, void *basev, void *addv);
 void *perl_create_dir_config(pool *p, char *dirname);
 void *perl_create_server_config(pool *p, server_rec *s);
+void perl_perl_cmd_cleanup(void *data);
 
 void perl_section_self_boot(cmd_parms *parms, void *dummy, const char *arg);
 CHAR_P perl_section (cmd_parms *cmd, void *dummy, CHAR_P arg);

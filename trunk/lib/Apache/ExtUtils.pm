@@ -140,6 +140,7 @@ static mod_perl_perl_dir_config *newPerlConfig(pool *p)
 	    palloc(p, sizeof (mod_perl_perl_dir_config));
     cld->obj = Nullsv;
     cld->class = "$class";
+    register_cleanup(p, cld, perl_perl_cmd_cleanup, null_cleanup);
     return cld;
 }
 

@@ -17,6 +17,9 @@ my $Is_Win32 = $^O eq "MSWin32";
 unless (defined $Apache::Registry::NameWithVirtualHost) {
     $Apache::Registry::NameWithVirtualHost = 1;
 }
+unless (defined $Apache::Registry::MarkLine) {
+    $Apache::Registry::MarkLine = 1;
+}
 
 sub handler {
     my $r = shift;
@@ -109,13 +112,16 @@ sub handler {
 	    }
 	    $r->clear_rgy_endav($script_name);
 
+	    my $line = $Apache::Registry::MarkLine ?
+		"\n#line 1 $filename\n" : "";
+ 
 	    my $eval = join(
 			    '',
 			    'package ',
 			    $package,
  			    ';use Apache qw(exit);',
  			    'sub handler {',
- 			    "\n#line 1 $filename\n",
+			    $line,
 			    $sub,
 			    "\n}", # last line comment without newline?
 			   );
