@@ -11,6 +11,8 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use APR::Table ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => 'OK';
 
 my $expected_ascii = "I love you, (why lying?), but I belong to another";
@@ -33,7 +35,7 @@ sub handler {
     plan $r, tests => 2,
         need need_min_perl_version(5.008), need_perl('perlio');
 
-    my $received = ModPerl::Test::read_post($r) || "";
+    my $received = TestCommon::Utils::read_post($r) || "";
 
     # workaround for perl-5.8.0, which doesn't decode correctly a
     # tainted variable

@@ -11,6 +11,8 @@ use Apache::RequestIO ();
 
 use Apache::Filter ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK DECLINED M_POST);
 
 # make sure that if the input filter returns DECLINED without
@@ -39,7 +41,7 @@ sub response {
 
     if ($r->method_number == Apache::M_POST) {
         # consume the data so the input filter is invoked
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         ok t_cmp(length $data, 20000, "the request body received ok");
     }
 

@@ -11,6 +11,8 @@ use Apache::RequestIO ();
 
 use base qw(Apache::Filter);
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant READ_SIZE  => 1024;
@@ -66,7 +68,7 @@ sub response {
 
     my $data;
     if ($r->method_number == Apache::M_POST) {
-        $data = ModPerl::Test::read_post($r);
+        $data = TestCommon::Utils::read_post($r);
     }
 
     $r->print('init ', $r->notes->get('init'), "\n");

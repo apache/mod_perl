@@ -7,6 +7,8 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 sub handler {
@@ -26,7 +28,7 @@ sub response {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         #warn "HANDLER READ: $data\n";
         $r->print($data);
     }

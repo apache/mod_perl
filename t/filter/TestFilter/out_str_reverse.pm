@@ -11,6 +11,8 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 
 use constant BUFF_LEN => 2;
@@ -49,7 +51,7 @@ sub response {
     # unbuffer stdout, so we get the data split across several bbs
     local $_ = 1; 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r); 
+        my $data = TestCommon::Utils::read_post($r); 
         $r->print($_) for grep length $_, split /(.{5})/, $data;
     }
 

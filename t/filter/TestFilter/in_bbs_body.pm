@@ -10,6 +10,8 @@ use Apache::RequestIO ();
 use APR::Brigade ();
 use APR::Bucket ();
 
+use TestCommon::Utils ();
+
 use Apache::Const -compile => qw(OK M_POST);
 use APR::Const -compile => ':common';
 
@@ -40,7 +42,7 @@ sub response {
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache::M_POST) {
-        my $data = ModPerl::Test::read_post($r);
+        my $data = TestCommon::Utils::read_post($r);
         $r->puts($data);
     }
     else {
