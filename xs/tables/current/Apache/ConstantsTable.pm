@@ -134,6 +134,7 @@ $Apache::ConstantsTable = {
       'HTTP_UNPROCESSABLE_ENTITY',
       'HTTP_LOCKED',
       'HTTP_FAILED_DEPENDENCY',
+      'HTTP_UPGRADE_REQUIRED',
       'HTTP_INTERNAL_SERVER_ERROR',
       'HTTP_NOT_IMPLEMENTED',
       'HTTP_BAD_GATEWAY',
@@ -242,11 +243,15 @@ $Apache::ConstantsTable = {
       'APR_SO_DEBUG',
       'APR_SO_NONBLOCK',
       'APR_SO_REUSEADDR',
+      'APR_SO_TIMEOUT',
       'APR_SO_SNDBUF',
       'APR_SO_RCVBUF',
       'APR_SO_DISCONNECTED'
     ],
     'shutdown_how' => [
+      'APR_SHUTDOWN_READ',
+      'APR_SHUTDOWN_WRITE',
+      'APR_SHUTDOWN_READWRITE',
       'APR_SHUTDOWN_READ',
       'APR_SHUTDOWN_WRITE',
       'APR_SHUTDOWN_READWRITE'
@@ -264,6 +269,12 @@ $Apache::ConstantsTable = {
       'APR_POLLNVAL'
     ],
     'lockmech' => [
+      'APR_LOCK_FCNTL',
+      'APR_LOCK_FLOCK',
+      'APR_LOCK_SYSVSEM',
+      'APR_LOCK_PROC_PTHREAD',
+      'APR_LOCK_POSIXSEM',
+      'APR_LOCK_DEFAULT',
       'APR_LOCK_FCNTL',
       'APR_LOCK_FLOCK',
       'APR_LOCK_SYSVSEM',
@@ -333,7 +344,10 @@ $Apache::ConstantsTable = {
       'APR_FILEPATH_NOTRELATIVE',
       'APR_FILEPATH_NOTABSOLUTE',
       'APR_FILEPATH_NATIVE',
-      'APR_FILEPATH_TRUENAME'
+      'APR_FILEPATH_TRUENAME',
+      'APR_FILEPATH_ENCODING_UNKNOWN',
+      'APR_FILEPATH_ENCODING_LOCALE',
+      'APR_FILEPATH_ENCODING_UTF8'
     ],
     'filemode' => [
       'APR_READ',
@@ -380,6 +394,9 @@ $Apache::ConstantsTable = {
       'APR_EINCOMPLETE',
       'APR_EABOVEROOT',
       'APR_EBADPATH',
+      'APR_EPATHWILD',
+      'APR_ESYMNOTFOUND',
+      'APR_EPROC_UNKNOWN',
       'APR_EOF',
       'APR_EINIT',
       'APR_ENOTIMPL',
