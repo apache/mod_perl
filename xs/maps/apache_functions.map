@@ -260,7 +260,7 @@ MODULE=Apache::Util
  ap_os_escape_path
 
 MODULE=Apache::URI   PACKAGE=guess
- ap_unescape_url | mpxs_ | SV *:url
+ char *:ap_unescape_url | mpxs_ | SV *:url
  ap_parse_uri
  ap_construct_url    | | r, uri=r->uri, p=r->pool
  ap_construct_server | | r, hostname=ap_get_server_name(r), \

@@ -24,7 +24,7 @@ my %string_size = (
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 33;
+    plan $r, tests => 35;
 
     $r->send_http_header('text/plain');
 
@@ -187,6 +187,17 @@ sub handler {
             ok t_cmp($v, Apache::Util::size_string($k));
         }
     }
+
+    my $uri = "http://foo.com/a%20file.html";
+    my $uri2 = $uri;
+
+    ok t_cmp(Apache::unescape_url($uri),
+             Apache::Util::unescape_uri($uri2),
+             "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
+
+    ok t_cmp($uri,
+             $uri2,
+             "Apache::URI::unescape_uri vs Apache::Util::unescape_uri");
 
     OK;
 }

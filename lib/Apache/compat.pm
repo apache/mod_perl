@@ -26,6 +26,7 @@ use Apache::RequestIO ();
 use Apache::RequestUtil ();
 use Apache::Response ();
 use Apache::Log ();
+use Apache::URI ();
 use APR::Table ();
 use APR::Pool ();
 use APR::URI ();
@@ -383,6 +384,8 @@ sub size_string {
 
     return $size;
 }
+
+*unescape_uri = \&Apache::unescape_url;
 
 sub Apache::URI::parse {
     my($class, $r, $uri) = @_;
