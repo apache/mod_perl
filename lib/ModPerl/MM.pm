@@ -50,7 +50,9 @@ sub my_import {
     my $stash = \%{__PACKAGE__ . '::MY::'};
     for my $sym (keys %$stash) {
         next unless *{$stash->{$sym}}{CODE};
-        *{"MY::$sym"} = *{$stash->{$sym}}{CODE};
+        my $name = "MY::$sym";
+        undef &$name if defined &$name;
+        *$name = *{$stash->{$sym}}{CODE};
     }
 }
 

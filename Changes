@@ -1,5 +1,8 @@
 =item 1.99_02-dev
 
+get rid of some "subroutine redefined" warnings in ModPerl::MM that
+show up with newer bleedperls. [dougm]
+
 a few fixes for Apache::compat [Dave Rolsky <autarch@urth.org>]
 
 =item 1.99_01 - April 6, 2002
