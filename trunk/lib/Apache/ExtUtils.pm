@@ -37,6 +37,7 @@ sub Config_pm_fixup {
     my %config_fixups = (
        ccdlflags => sub { s/-R\s+/-R/; },
        ccflags => sub {
+           s/-D_GNU_SOURCE//;
            unless ($Apache::MyConfig::Setup{PERL_USELARGEFILES}) {
                s/-D_LARGEFILE_SOURCE\s+-D_FILE_OFFSET_BITS=\d+//;
            }
