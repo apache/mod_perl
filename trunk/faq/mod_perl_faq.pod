@@ -375,10 +375,14 @@ blocks are being processed.
 =head2 Where can I get help that I did not find in here?
 
 There is a mailing-list dedicated to mod_perl.  It is archived at
-http://outside.organic.com/mail-archives/modperl/
+http://outside.organic.com/mail-archives/modperl/ and at
+http://forum.swarthmore.edu/epigone/modperl (which has a search
+engine) and also at
+http://www.progressive-comp.com/Lists/?l=apache-modperl&r=1#apache-modperl
+(threaded and indexed).
 
 You can subscribe to the list by sending a mail with the line C<subscribe
-modperl> to C<listserv@listproc.itribe.net>.
+modperl> to C<majordomo@apache.org>.
 
 The mod_perl homepage http://perl.apache.org/ has links to other
 mod_perl resources.
