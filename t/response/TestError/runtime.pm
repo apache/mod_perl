@@ -85,7 +85,7 @@ sub eval_block_mp_error {
 
 sub eval_string_mp_error {
     my($r, $socket) = @_;
-    eval "\$socket->recv(SIZE)";
+    eval '$socket->recv(my $buffer, SIZE)';
     if ($@ && ref($@) && $@ == APR::TIMEUP) {
         $r->print("ok eval_string_mp_error");
     }
@@ -121,7 +121,7 @@ sub non_mp_error {
 # fails because of the timeout set earlier in the handler
 sub mp_error {
     my $socket = shift;
-    $socket->recv(SIZE);
+    $socket->recv(my $buffer, SIZE);
 }
 
 1;

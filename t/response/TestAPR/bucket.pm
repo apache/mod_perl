@@ -20,7 +20,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 26;
+    plan $r, tests => 29;
 
     my $ba = $r->connection->bucket_alloc;
 
@@ -47,8 +47,9 @@ sub handler {
         my $offset = 3;
         my $real = substr $data, $offset;
         my $b = APR::Bucket->new($data, $offset);
-        my $read = $b->read;
-        ok t_cmp($real, $read, 'new($data, $offset)');
+        my $rlen = $b->read(my $read);
+        ok t_cmp($real, $read, 'new($data, $offset)/buffer');
+        ok t_cmp(length($read), $rlen, 'new($data, $offset)/len');
         ok t_cmp($offset, $b->start, 'offset');
 
     }
@@ -60,8 +61,9 @@ sub handler {
         my $len    = 3;
         my $real = substr $data, $offset, $len;
         my $b = APR::Bucket->new($data, $offset, $len);
-        my $read = $b->read;
-        ok t_cmp($real, $read, 'new($data, $offset, $len)');
+        my $rlen = $b->read(my $read);
+        ok t_cmp($real, $read, 'new($data, $offset, $len)/buffer');
+        ok t_cmp(length($read), $rlen, 'new($data, $offse, $lent)/len');
     }
 
     # new: offset+ too big len
@@ -97,7 +99,9 @@ sub handler {
         ok t_cmp(0, $b->length, "eos b->length");
 
         # buckets with no data to read should return an empty string
-        ok t_cmp("", $b->read, "eos b->read");
+        my $rlen = $b->read(my $read);
+        ok t_cmp("", $read, 'eos b->read/buffer');
+        ok t_cmp(0, $rlen, 'eos b->read/len');
     }
 
     # flush_create
@@ -137,14 +141,16 @@ sub handler {
         ### now test
 
         my $b = $bb->first;
-        ok t_cmp("d1", $b->read, "d1 bucket");
+        $b->read(my $read);
+        ok t_cmp("d1", $read, "d1 bucket");
 
         $b = $bb->next($b);
         t_debug("is_flush");
         ok $b->is_flush;
 
         $b = $bb->next($b);
-        ok t_cmp("d2", $b->read, "d2 bucket");
+        $b->read($read);
+        ok t_cmp("d2", $read, "d2 bucket");
 
         $b = $bb->last();
         t_debug("is_eos");
@@ -176,7 +182,8 @@ sub handler {
         my $b = APR::Bucket->new("bbb");
         $bb->insert_head($b);
         my $b_first = $bb->first;
-        ok t_cmp("bbb", $b->read, "first bucket");
+        $b->read(my $read);
+        ok t_cmp("bbb", $read, "first bucket");
 
         # but there is no prev
         ok t_cmp(undef, $bb->prev($b_first),  "no prev bucket");

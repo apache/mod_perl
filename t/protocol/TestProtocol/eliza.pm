@@ -19,10 +19,7 @@ sub handler {
     my APR::Socket $socket = $c->client_socket;
 
     my $last = 0;
-    while (1) {
-        my $buff = $socket->recv(BUFF_LEN);
-        last unless length $buff; # EOF
-
+    while ($socket->recv(my $buff, BUFF_LEN)) {
         # \r is sent instead of \n if the client is talking over telnet
         $buff =~ s/[\r\n]*$//;
         $last++ if $buff eq "Good bye, Eliza";

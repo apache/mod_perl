@@ -38,7 +38,7 @@ sub handler : FilterConnectionHandler {
             last;
         }
 
-        my $data = $bucket->read;
+        $bucket->read(my $data);
         debug "FILTER READ:\n$data";
 
         if ($data and $data =~ s,GET $from_url,GET $to_url,) {

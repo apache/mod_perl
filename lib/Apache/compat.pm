@@ -501,8 +501,8 @@ sub content {
                 last;
             }
 
-            my $buf = $b->read;
-            $data .= $buf if length $buf;
+            $b->read(my $buf);
+            $data .= $buf;
         }
     } while (!$seen_eos);
 

@@ -29,20 +29,20 @@ sub handler {
     $socket->timeout_set(20_000_000);
 
     while (1) {
-        my $buff = eval { $socket->recv(BUFF_LEN) };
+        my $buff;
+        my $rlen = eval { $socket->recv($buff, BUFF_LEN) };
         if ($@) {
             die "timed out, giving up: $@" if $@ == APR::TIMEUP;
             die $@;
         }
 
-        last unless length $buff; # EOF
+        last unless $rlen; # EOF
 
         my $wlen = eval { $socket->send($buff) };
         if ($@) {
             die "timed out, giving up: $@" if $@ == APR::TIMEUP;
             die $@;
         }
-        last if $wlen != length $buff; # write failure?
     }
 
     Apache::OK;

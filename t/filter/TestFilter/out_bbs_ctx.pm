@@ -43,8 +43,7 @@ sub handler {
             last;
         }
 
-        my $bdata = $bucket->read;
-        if (defined $bdata) {
+        if ($bucket->read(my $bdata)) {
             $data .= $bdata;
             my $len = length $data;
 
