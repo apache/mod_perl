@@ -130,7 +130,7 @@ sub handler {
         # $add first, then $base
         ok t_cmp($overlay->get('foo'),
                  'three, one, two',
-                 "$overlay->compress");
+                 "\$overlay->compress");
         ok t_cmp($overlay->get('bar'),
                  'beer',
                  "\$overlay->compress");
