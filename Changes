@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.25_02-dev
 
+Apache->server will now point the current VirtualHost when inside a
+<Perl> section, thanks to Robin Berjon for the spot
+
 allow per-server and per-location PerlSetEnv to be properly merged
 when a per-server handler is configured, thanks to Michael Barry for
 the spot
