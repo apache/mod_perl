@@ -16,6 +16,13 @@ use Apache::Const -compile => qw(OK MODE_GETLINE);
 sub handler {
     my Apache::Connection $c = shift;
 
+    # XXX: workaround to a problem on some platforms (solaris, bsd,
+    # etc), where Apache 2.0.49+ forgets to set the blocking mode on
+    # the socket
+    require APR::Socket;
+    BEGIN { use APR::Const -compile => qw(SO_NONBLOCK); }
+    $c->client_socket->opt_set(APR::SO_NONBLOCK => 0);
+
     my $bb = APR::Brigade->new($c->pool, $c->bucket_alloc);
 
     for (;;) {
