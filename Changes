@@ -8,6 +8,8 @@ Changes - Apache mod_perl change logfile
 
 =item 1.15_01-dev
 
+added :override :args_how tags to Apache::Constants
+
 add DIR_MAGIC_TYPE to perl_handlers[] table for directory indexing
 modules
 

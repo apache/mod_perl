@@ -1124,7 +1124,7 @@ sub MY::top_targets {
     $string .= <<'EOF';
 
 gen_exports:
-	$(PERL) -MExtUtils::testlib -MApache::Constants::Exports \
+	$(PERL) -I./lib -MExtUtils::testlib -MApache::Constants::Exports \
 	-e 'Apache::Constants::Exports->gen_ctags' > Exports.c
 
 gen_op_mask:
