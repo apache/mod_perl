@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_08-dev
 
+fix post_connection compat method to behave as it did in 1.x
+[Geoff Young <geoff@modperlcookbook.org>]
+
 add support for setting $r->auth_name and $r->auth_type
 [Philippe M. Chiasson <gozer@cpan.org>]
 
