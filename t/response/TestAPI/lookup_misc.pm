@@ -11,6 +11,7 @@ use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::Filter ();
 use Apache::SubRequest ();
+use Apache::URI ();
 
 use Apache::TestTrace;
 
@@ -24,6 +25,7 @@ sub handler {
     my %args = map { split '=', $_, 2 } split /;/, $r->args;
 
     if ($args{subreq} eq 'lookup_file') {
+        Apache::URI::unescape_url($args{file});
         debug "lookup_file($args{file})";
         my $subr = $r->lookup_file($args{file});
         $subr->run;
