@@ -131,6 +131,12 @@ This gives the location of where to install mod_perl.so
 (eg, \Apache\modules). If not given, a value of APACHE_SRC\modules
 will be used, if this directory exists.
 
+=item INSTALL_LIB
+
+This gives the location of where to install mod_perl.lib
+(eg, \Apache\libexec). If not given, a value of APACHE_SRC\libexec
+will be used, if this directory exists.
+
 =item DEBUG
 
 If true (DEBUG=1), a Debug version will be built (this assumes
