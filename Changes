@@ -10,8 +10,15 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.99_09-dev
 
+add PerlCleanupHandler implementation + test [Stas]
+
+Apache::Test now can run 'make test' under 'root', without permission
+problems (e.g. when files need to be written), it'll chown all the
+files under t/ to the user chosen to run the server with, before
+running the tests and will restore the permissions at the end. [Stas]
+
 die when Apache->request returns nothing ('PerlOptions -GlobalRequest'
-or 'SetHandler modperl' [Stas]
+or 'SetHandler modperl') [Stas]
 
 New Apache::Directive methods: as_hash(), lookup() + tests + docs
 [Philippe M. Chiasson <gozer@cpan.org>]
