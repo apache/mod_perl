@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+Apache::ExtUtils will now generate and END routine to call
+ap_remove_module() [Christopher Chan-N <uichannui@tiny.org>]
+
 rename Apache::{PerlRun,RegistryNG}::update_mtime to set_mtime, so
 Apache::update_mtime is not overridden
 thanks to Michael Blakeley for the spot

@@ -5,7 +5,7 @@ use Exporter ();
 use IO::File ();
 use File::Copy ();
 
-$Apache::ExtUtils::VERSION = '1.03';
+$Apache::ExtUtils::VERSION = '1.04';
 
 my @config_export = qw(%Config ldopts ccopts);
 @Apache::ExtUtils::EXPORT = qw(command_table);
@@ -255,6 +255,13 @@ BOOT:
     add_module(&XS_${modname});
     stash_mod_pointer("$class", &XS_${modname});
 
+void
+END()
+
+    CODE:
+    if (find_linked_module("$class")) {
+        remove_module(&XS_${modname});
+    }
 EOF
 }
 
