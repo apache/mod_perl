@@ -1,12 +1,13 @@
 mod_perl 2.0 STATUS:                                       -*-text-*-
-   Last modified at [$Date: 2002/06/20 18:31:16 $]
+   Last modified at [$Date: 2002/06/21 22:25:48 $]
 
 Release:
 --------
 
-   1.99_04-dev: In development
-   1.99_03-dev: Released Jun 16, 2002
-   1.99_02-dev: Released Jun 01, 2002
+   1.99_05-dev: In development
+   1.99_04    : Released Jun 21, 2002
+   1.99_03    : Released Jun 16, 2002
+   1.99_02    : Released Jun 01, 2002
    1.99_01    : Released Apr 06, 2002
 
 
