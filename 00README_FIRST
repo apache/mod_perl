@@ -1,10 +1,43 @@
 a (nearly) complete rewrite is underway for mod_perl-2.0
 
-the module is not usable yet
+the module is not usable yet, at least not the way 1.xx is
 
 what you see here is just a start on the new build/glue infrastructure
 
 more detailed design docs, etc. will follow along with updates here
 and on the list
 
--dougm 04/12
+if you want to try building with an interpreter pool, you'll need Perl
+5.6.0 with patches/perl_no_get_context.pat applied and Perl built like 
+so:
+
+% ./Configure -des -Dusethreads -Accflags=-DPERL_NO_GET_CONTEXT
+
+mod_perl-2.0 will still work with an out-of-the-box Perl, but will
+only be useful if your mpm is prefork (which is much like 1.3.x)
+
+in either case, in this directory run:
+
+% perl Makefile.PL -c -ma
+
+% cd ../apache-2.0/src
+% ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
+% patch -p1 < ../modperl-2.0/patches/link-hack.pat
+% make
+
+as for httpd.conf, mine looks something like so at the moment:
+
+#same as using the MOD_PERL_TRACE environment variable
+
+PerlTrace all
+
+#only with -Dusethreads
+PerlInterpStart 3
+PerlInterpMax 4
+
+#PerlRequire/PerlModule/etc will return, in the meantime, this
+#directive passes arbitrary command line switches to perl
+
+PerlSwitches -T /home/dougm/test/startup.pl
+
+--dougm 04/17
