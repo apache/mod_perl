@@ -28,7 +28,9 @@ sub handler {
     my $r = shift;
     my $s = $r->server;
 
-    plan $r, tests => (@LogLevels * 2) + 19;
+    my $orig_log_level = $s->loglevel;
+
+    plan $r, tests => (@LogLevels * 2) + 20;
 
     my $logdiff = TestCommon::LogDiff->new($path);
 
@@ -110,7 +112,7 @@ sub handler {
             qr/\[error\] \$s->log_error test/,
             '$s->log_error(...)';
     }
-    
+
     # log_reason
     {
         t_server_log_error_is_expected();
@@ -118,7 +120,7 @@ sub handler {
         ok t_cmp $logdiff->diff,
             qr/\[error\] access to.*failed.*reason: \$r->log_reason test/,
             '$r->log_reason(msg)';
-        
+
         t_server_log_error_is_expected();
         $r->log_reason('$r->log_reason filename test','filename');
         ok t_cmp $logdiff->diff,
@@ -150,6 +152,23 @@ sub handler {
         ok 1;
     }
 
+    # notice() messages ignore the LogLevel value and always get
+    # logged by Apache design (unless error log is set to syslog)
+    {
+        my $local_log_level = $s->loglevel;
+
+        $r->server->loglevel(Apache::LOG_ERR);
+        my $ignore = $logdiff->diff; # reset fh
+        # notice < error
+        my $msg = "This message should appear with LogLevel=error!";
+        $r->log->notice($msg);
+        ok t_cmp $logdiff->diff,
+            qr/[notice] .*? $msg/,
+            "notice() logs regardless of LogLevel";
+        $s->loglevel($local_log_level);
+    }
+
+
     t_server_log_warn_is_expected();
     $s->warn('$s->warn test');
     ok t_cmp $logdiff->diff,
@@ -178,6 +197,9 @@ sub handler {
     ok t_cmp $logdiff->diff,
         qr/\[warn\] warn test/,
         'overriden via export warn()';
+
+    # restore the orig LogLevel
+    $s->loglevel($orig_log_level);
 
     Apache::OK;
 }
