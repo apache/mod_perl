@@ -77,7 +77,7 @@
 
 - PerlModule, PerlRequire, <Perl> in .htaccess is missing
   http://marc.theaimsgroup.com/?t=105370088700001&r=1&w=2
-  Owner: geoff
+  Owner: gozer
 
 - cgi emulation: %ENV management:
 
