@@ -58,6 +58,11 @@ sub handler {
 
     # open() failure test
     {
+        # workaround for locale setups where the error message may be
+        # in a different language
+        open my $fh, "perlio_this_file_cannot_exist";
+        my $errno_string = "$!";
+
         # non-existant file
         my $file = "/this/file/does/not/exist";
         if (open my $fh, "<:APR", $file, $r) {
@@ -66,7 +71,7 @@ sub handler {
             close $fh;
         }
         else {
-            ok t_cmp('No such file or directory',
+            ok t_cmp($errno_string,
                      "$!",
                      "expected failure");
         }
