@@ -300,12 +300,12 @@ void modperl_xs_dl_handles_clear(pTHX)
     }
 }
 
-apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
+void **modperl_xs_dl_handles_get(pTHX)
 {
     I32 i;
     AV *librefs = get_av(dl_librefs, FALSE);
     AV *modules = get_av(dl_modules, FALSE);
-    apr_array_header_t *handles;
+    void **handles;
 
     if (!librefs) {
 	MP_TRACE_g(MP_FUNC,
@@ -319,7 +319,7 @@ apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
         return NULL;
     }
 
-    handles = apr_array_make(p, AvFILL(librefs)-1, sizeof(void *));
+    handles = (void **)malloc(sizeof(void *) * (AvFILL(librefs)+2));
 
     for (i=0; i<=AvFILL(librefs); i++) {
 	void *handle;
@@ -337,17 +337,19 @@ apr_array_header_t *modperl_xs_dl_handles_get(pTHX_ apr_pool_t *p)
 	MP_TRACE_g(MP_FUNC, "%s dl handle == 0x%lx\n",
                    SvPVX(module_sv), (unsigned long)handle);
 	if (handle) {
-	    *(void **)apr_array_push(handles) = handle;
+	    handles[i] = handle;
 	}
     }
 
     av_clear(modules);
     av_clear(librefs);
 
+    handles[i] = (void *)0;
+
     return handles;
 }
 
-void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles)
+void modperl_xs_dl_handles_close(void **handles)
 {
     int i;
 
@@ -355,15 +357,12 @@ void modperl_xs_dl_handles_close(apr_pool_t *p, apr_array_header_t *handles)
 	return;
     }
 
-    for (i=0; i < handles->nelts; i++) {
-        apr_dso_handle_t *dso = NULL;
-        void *handle = ((void **)handles->elts)[i];
-
-        MP_TRACE_g(MP_FUNC, "close 0x%lx\n", (unsigned long)handle);
-
-        apr_os_dso_handle_put(&dso, (apr_os_dso_handle_t )handle, p);
-        apr_dso_unload(dso);
+    for (i=0; handles[i]; i++) {
+        MP_TRACE_g(MP_FUNC, "close 0x%lx\n", (unsigned long)handles[i]);
+        modperl_sys_dlclose(handles[i]);
     }
+
+    free(handles);
 }
 
 modperl_cleanup_data_t *modperl_cleanup_data_new(apr_pool_t *p, void *data)

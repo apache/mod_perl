@@ -5,18 +5,16 @@ static apr_status_t modperl_shutdown(void *data)
 {
     modperl_cleanup_data_t *cdata = (modperl_cleanup_data_t *)data;
     PerlInterpreter *perl = (PerlInterpreter *)cdata->data;
-    apr_array_header_t *handles;
+    void **handles;
 
-    handles = modperl_xs_dl_handles_get(aTHX_ cdata->pool);
+    handles = modperl_xs_dl_handles_get(aTHX);
 
     MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
                (unsigned long)perl);
 
     modperl_perl_destruct(perl);
 
-    if (handles) {
-        modperl_xs_dl_handles_close(cdata->pool, handles);
-    }
+    modperl_xs_dl_handles_close(handles);
 
     modperl_env_unload();
 

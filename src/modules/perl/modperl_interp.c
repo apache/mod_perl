@@ -80,8 +80,7 @@ modperl_interp_t *modperl_interp_new(apr_pool_t *p,
 
 void modperl_interp_destroy(modperl_interp_t *interp)
 {
-    apr_pool_t *p = NULL;
-    apr_array_header_t *handles;
+    void **handles;
     dTHXa(interp->perl);
 
     PERL_SET_CONTEXT(interp->perl);
@@ -93,21 +92,11 @@ void modperl_interp_destroy(modperl_interp_t *interp)
         MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
     }
 
-    /* we cant use interp->mip->ap_pool without locking
-     * apr_pool_create() will mutex lock for us
-     * XXX: could roll something without using apr_pool_t
-     * to avoid locking
-     */
-    (void)apr_pool_create(&p, NULL);
-    handles = modperl_xs_dl_handles_get(aTHX_ p);
+    handles = modperl_xs_dl_handles_get(aTHX);
 
     modperl_perl_destruct(interp->perl);
 
-    if (handles) {
-        modperl_xs_dl_handles_close(p, handles);
-    }
-
-    apr_pool_destroy(p);
+    modperl_xs_dl_handles_close(handles);
 }
 
 apr_status_t modperl_interp_cleanup(void *data)
