@@ -182,7 +182,12 @@ sub restore_mp2_api {
                 "as it has not been overridden";
             next;
         }
-        my $original_sub = delete $overridden_mp2_api{$sub};
+        # XXX: 5.8.2+ can't delete and assign at once - gives:
+        #    Attempt to free unreferenced scalar
+        # after perl_clone. the 2 step works ok. to reproduce:
+        # t/TEST -maxclients 1 perl/ithreads2.t compat/request.t
+        my $original_sub = $overridden_mp2_api{$sub};
+        delete $overridden_mp2_api{$sub};
         no warnings 'redefine';
         no strict 'refs';
         *$sub = $original_sub;
