@@ -592,16 +592,20 @@ sub open_export_files {
     my($self, $name, $ext) = @_;
 
     my $dir = $self->{XS_DIR};
+    my %handles;
 
-    my $exp_file = "$dir/$name.$ext";
-    my $exp_file_inline = "$dir/${name}_inline.$ext";
+    for my $type ("", "_inline", "_ithreads") {
+        my $file = "$dir/$name$type.$ext";
 
-    open my $exp_fh, '>', $exp_file or
-      die "open $exp_file: $!";
-    open my $exp_inline_fh, '>', $exp_file_inline or
-      die "open $exp_file_inline: $!";
+        open my $fh, '>', $file or
+          die "open $file: $!";
 
-    return($exp_fh, $exp_inline_fh);
+        (my $fh_name = $type) =~ s/^_//;
+        $fh_name ||= 'default';
+        $handles{$fh_name} = $fh;
+    }
+
+    \%handles;
 }
 
 sub func_is_static {
@@ -640,17 +644,23 @@ sub export_file_format_def {
     "   $val\n";
 }
 
-#C::Scan doesnt always pickup static __inline__ of mpxs_ functions
-#certain functions are only defined #ifdef USE_ITHREADS
-#XXX might need a modperl_ithreads.{def,exp} if any xs modules reference
-#these functions
-
-my $skip_exports = join '|', qw{
-mpxs_
+my $ithreads_exports = join '|', qw{
 modperl_cmd_interp_
 modperl_interp_ modperl_list_ modperl_tipool_
-modperl_mgv_
 };
+
+sub export_func_handle {
+    my($self, $entry, $handles) = @_;
+
+    if ($self->func_is_inline($entry)) {
+        return $handles->{inline};
+    }
+    elsif ($entry->{name} =~ /^($ithreads_exports)/) {
+        return $handles->{ithreads};
+    }
+
+    $handles->{default};
+}
 
 sub write_export_file {
     my($self, $ext) = @_;
@@ -664,23 +674,25 @@ sub write_export_file {
     my $format = \&{"export_file_format_$ext"};
 
     while (my($name, $table) = each %files) {
-        my($exp_fh, $exp_inline_fh) =
-          $self->open_export_files($name, $ext);
+        my $handles = $self->open_export_files($name, $ext);
 
-        for my $fh ($exp_fh, $exp_inline_fh) {
+        for my $fh (values %$handles) {
             print $fh $self->$header();
         }
 
         for my $entry (@$table) {
             next if $self->func_is_static($entry);
             my $name = $entry->{name};
-            next if $name =~ /^($skip_exports)/o;
-            my $fh = $self->func_is_inline($entry) ?
-              $exp_inline_fh : $exp_fh;
+
+            #C::Scan doesnt always pickup static __inline__
+            next if $name =~ /^mpxs_/o;
+
+            my $fh = $self->export_func_handle($entry, $handles);
+
             print $fh $self->$format($name);
         }
 
-        for my $fh ($exp_fh, $exp_inline_fh) {
+        for my $fh (values %$handles) {
             close $fh;
         }
     }
