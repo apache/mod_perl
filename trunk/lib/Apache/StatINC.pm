@@ -8,8 +8,8 @@ my %Stat = ($INC{"Apache/StatINC.pm"} => time);
 
 sub handler {
     my $r = shift;
-    my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload")) eq "on");
-    my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug")) eq "on");
+    my $do_undef = ref($r) && (lc($r->dir_config("UndefOnReload") || '') eq "on");
+    my $DEBUG = ref($r) && (lc($r->dir_config("StatINCDebug") || '') eq "on");
 
     while(my($key,$file) = each %INC) {
 	local $^W = 0;
