@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+If none of MP_APXS, MP_AP_PREFIX and MP_USE_STATIC were specified when
+configuring Makefile.PL, we now prompt for APXS path first and only if
+that fails ask for MP_AP_PREFIX. This is a requirement to get 'make
+test' find httpd. [Stas]
+
 Dynamically prompt and add MP_INST_APACHE2=1 when installing on
 systems with mod_perl 1 preinstalled. [Stas]
 
