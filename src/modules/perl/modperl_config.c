@@ -4,6 +4,8 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 {
     modperl_config_dir_t *dcfg = modperl_config_dir_new(p);
 
+    dcfg->location = dir;
+    
 #ifdef USE_ITHREADS
     /* defaults to per-server scope */
     dcfg->interp_scope = MP_INTERP_SCOPE_UNDEF;
@@ -60,6 +62,8 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
 
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
 
+    merge_item(location);
+    
     merge_table_overlap_item(SetVar);
 
     /* XXX: check if Perl*Handler is disabled */

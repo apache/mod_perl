@@ -179,3 +179,20 @@ int mpxs_Apache__RequestRec_no_cache(request_rec *r, SV *flag)
 
 #define mpxs_Apache__RequestRec_dir_config(r, key, sv_val) \
     modperl_dir_config(aTHX_ r, r->server, key, sv_val)
+
+static MP_INLINE
+SV *mpxs_Apache__RequestRec_location(request_rec *r)
+{
+    dTHX; /* XXX */
+
+    if (r->per_dir_config) {				   
+        MP_dDCFG;
+        char *location;
+        
+        if ((location = dcfg->location)) {
+            return newSVpv(location, 0); 
+        }
+    }
+    
+    return &PL_sv_undef;
+}
