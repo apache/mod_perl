@@ -10,13 +10,13 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
     apr_bucket *bucket;
     const char *work_buf = buf;
     
-    if (wb->header_parse) {
+    if (wb->header_parse && !wb->r->content_type) {
         request_rec *r = wb->r;
         const char *bodytext = NULL;
         int status;
         /*
-         * since wb->outcnt is persistent between requests, if the
-         * current response is shorter than the size of wb->outcnt
+         * since wb->outbuf is persistent between requests, if the
+         * current response is shorter than the size of wb->outbuf
          * it may include data from the previous request at the
          * end. When this function receives a pointer to
          * wb->outbuf as 'buf', modperl_cgi_header_parse may

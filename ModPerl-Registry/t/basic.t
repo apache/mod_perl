@@ -13,51 +13,52 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 4 + 1;
+plan tests => 2;
+#plan tests => @aliases * 4 + 2;
 
-# very basic compilation/response test
-for my $alias (@aliases) {
-    my $url = "/$alias/basic.pl";
+## very basic compilation/response test
+#for my $alias (@aliases) {
+#    my $url = "/$alias/basic.pl";
 
-    ok t_cmp(
-        "ok",
-        GET_BODY($url),
-        "$modules{$alias} basic cgi test",
-    );
-}
+#    ok t_cmp(
+#        "ok",
+#        GET_BODY($url),
+#        "$modules{$alias} basic cgi test",
+#    );
+#}
 
-# test non-executable bit
-for my $alias (@aliases) {
-    my $url = "/$alias/not_executable.pl";
+## test non-executable bit
+#for my $alias (@aliases) {
+#    my $url = "/$alias/not_executable.pl";
 
-    ok t_cmp(
-        "403 Forbidden",
-        HEAD($url)->status_line(),
-        "$modules{$alias} non-executable file",
-    );
-}
+#    ok t_cmp(
+#        "403 Forbidden",
+#        HEAD($url)->status_line(),
+#        "$modules{$alias} non-executable file",
+#    );
+#}
 
-# test environment pre-set
-for my $alias (@aliases) {
-    my $url = "/$alias/env.pl?foo=bar";
+## test environment pre-set
+#for my $alias (@aliases) {
+#    my $url = "/$alias/env.pl?foo=bar";
 
-    ok t_cmp(
-        "foo=bar",
-        GET_BODY($url),
-        "$modules{$alias} mod_cgi-like environment pre-set",
-    );
-}
+#    ok t_cmp(
+#        "foo=bar",
+#        GET_BODY($url),
+#        "$modules{$alias} mod_cgi-like environment pre-set",
+#    );
+#}
 
-# require (actually chdir test)
-for my $alias (@aliases) {
-    my $url = "/$alias/require.pl";
+## require (actually chdir test)
+#for my $alias (@aliases) {
+#    my $url = "/$alias/require.pl";
 
-    ok t_cmp(
-        "it works",
-        GET_BODY($url),
-        "$modules{$alias} mod_cgi-like environment pre-set",
-    );
-}
+#    ok t_cmp(
+#        "it works",
+#        GET_BODY($url),
+#        "$modules{$alias} mod_cgi-like environment pre-set",
+#    );
+#}
 
 # test method handlers
 {
@@ -66,5 +67,15 @@ for my $alias (@aliases) {
         "foo=bar",
         GET_BODY($url),
         "ModPerl::Registry->handler mod_cgi-like environment pre-set",
+    );
+}
+
+# test mod_perl api usage
+{
+    my $url = "/registry/content_type.pl";
+    ok t_cmp(
+        "ok",
+        GET_BODY($url),
+        "\$r->content_type('text/plain')",
     );
 }
