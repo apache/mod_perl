@@ -170,15 +170,21 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
 
 apr_pool_t *modperl_sv2pool(pTHX_ SV *obj)
 {
-    char *classname;
+    apr_pool_t *p = NULL;
+    char *classname = NULL;
+    IV ptr = 0;
 
-    if (!(SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVMG))) {
-        return NULL;
+    if ((SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVMG))) {
+        ptr = SvObjIV(obj);
+        classname = SvCLASS(obj);
+    }
+    else {
+        STRLEN len;
+        classname = SvPV(obj, len);
     }
 
-    classname = SvCLASS(obj);
-
     if (*classname != 'A') {
+        /* XXX: could be a subclass */
         return NULL;
     }
 
@@ -187,25 +193,37 @@ apr_pool_t *modperl_sv2pool(pTHX_ SV *obj)
         switch (*classname) {
           case 'P':
             if (strEQ(classname, "Pool")) {
-                return (apr_pool_t *)SvObjIV(obj);
+                p = (apr_pool_t *)ptr;
             }
+            break;
           default:
-            return NULL;
+            break;
         };
     }
     else if (strnEQ(classname, "Apache::", 8)) {
         classname += 8;
         switch (*classname) {
+          case 'C':
+            if (strEQ(classname, "Connection")) {
+                p = ptr ? ((conn_rec *)ptr)->pool : NULL;
+            }
+            break;
           case 'R':
             if (strEQ(classname, "RequestRec")) {
-                return ((request_rec *)SvObjIV(obj))->pool;
+                p = ptr ? ((request_rec *)ptr)->pool : NULL;
             }
+            break;
+          case 'S':
+            if (strEQ(classname, "Server")) {
+                p = ptr ? ((server_rec *)ptr)->process->pconf : NULL;
+            }
+            break;
           default:
-            return NULL;
+            break;
         };
     }
 
-    return NULL;
+    return p ? p : modperl_global_get_pconf();
 }
 
 char *modperl_apr_strerror(apr_status_t rv)
