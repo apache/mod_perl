@@ -60,7 +60,7 @@ sub handler {
         $r->subprocess_env->set(SubProcess => $value);
         my $out = Apache::SubProcess::spawn_proc_prog($r, $command);
         ok t_cmp($value,
-                 <$out>,
+                 scalar(<$out>),
                  "passing env via subprocess_env"
                 );
     }
@@ -73,7 +73,7 @@ sub handler {
             Apache::SubProcess::spawn_proc_prog($r, $command);
         print $in $value;
         ok t_cmp($value,
-                 <$out>,
+                 scalar(<$out>),
                  "testing subproc's stdin -> stdout + list context"
                 );
     }
@@ -86,7 +86,7 @@ sub handler {
             Apache::SubProcess::spawn_proc_prog($r, $command);
         print $in $value;
         ok t_cmp($value,
-                 <$err>,
+                 scalar(<$err>),
                  "testing subproc's stdin -> stderr + list context"
                 );
     }
