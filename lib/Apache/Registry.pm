@@ -225,11 +225,10 @@ Apache::Registry - Run unaltered CGI scrips under mod_perl
  PerlModule Apache::Registry
 
  <Location /perl>
- SetHandler perl-script
- PerlHandler Apache::Registry
- Options ExecCGI 
- ...
- </Directory>
+   SetHandler perl-script
+   PerlHandler Apache::Registry
+   Options ExecCGI 
+ </Location>
 
 =head1 DESCRIPTION
 
