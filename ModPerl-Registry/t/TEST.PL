@@ -38,7 +38,9 @@ sub new_test_config {
     $self->{conf_opts}->{src_dir} = catdir $mp2_root_dir,
         qw(src modules perl);
 
-    $self->{conf_opts}->{startup_timeout} ||= DEFAULT_STARTUP_TIMEOUT;
+    $self->{conf_opts}->{startup_timeout} ||=
+        $ENV{APACHE_TEST_STARTUP_TIMEOUT} ||
+        DEFAULT_STARTUP_TIMEOUT;
 
     $self->{conf_opts}->{maxclients} ||= MIN_MAXCLIENTS;
 
