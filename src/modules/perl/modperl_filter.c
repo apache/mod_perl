@@ -336,7 +336,7 @@ void modperl_output_filter_register(request_rec *r)
     MP_dDCFG;
     MpAV *av;
 
-    if ((av = dcfg->handlers[MP_OUTPUT_FILTER_HANDLER])) {
+    if ((av = dcfg->handlers_per_dir[MP_OUTPUT_FILTER_HANDLER])) {
         modperl_handler_t **handlers = (modperl_handler_t **)av->elts;
         int i;
 

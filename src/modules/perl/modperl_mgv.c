@@ -384,8 +384,8 @@ static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
         return 1;
     }
 
-    for (i=0; i < MP_PER_DIR_NUM_HANDLERS; i++) {
-        modperl_hash_handlers(aTHX_ p, s, dir_cfg->handlers[i], data);
+    for (i=0; i < MP_HANDLER_NUM_PER_DIR; i++) {
+        modperl_hash_handlers(aTHX_ p, s, dir_cfg->handlers_per_dir[i], data);
     }
 
     return 1;
@@ -398,24 +398,24 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
     modperl_config_srv_t *scfg = (modperl_config_srv_t *)cfg;
     MP_dSCFG_dTHX;
 
-    for (i=0; i < MP_PER_SRV_NUM_HANDLERS; i++) {
+    for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->handlers[i], data);
+                              scfg->handlers_per_srv[i], data);
     }
 
-    for (i=0; i < MP_PROCESS_NUM_HANDLERS; i++) {
+    for (i=0; i < MP_HANDLER_NUM_PROCESS; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->process_cfg->handlers[i], data);
+                              scfg->handlers_process[i], data);
     }
 
-    for (i=0; i < MP_CONNECTION_NUM_HANDLERS; i++) {
+    for (i=0; i < MP_HANDLER_NUM_CONNECTION; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->connection_cfg->handlers[i], data);
+                              scfg->handlers_connection[i], data);
     }
 
-    for (i=0; i < MP_FILES_NUM_HANDLERS; i++) {
+    for (i=0; i < MP_HANDLER_NUM_FILES; i++) {
         modperl_hash_handlers(aTHX_ p, s,
-                              scfg->files_cfg->handlers[i], data);
+                              scfg->handlers_files[i], data);
     }
 
     return 1;

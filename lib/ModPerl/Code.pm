@@ -71,8 +71,7 @@ my %directive_proto = (
 );
 
 for my $class (qw(Process Connection Files)) {
-    my $lc_class = lc $class;
-    $directive_proto{$class}->{cfg}->{name} = "scfg->${lc_class}_cfg";
+    $directive_proto{$class}->{cfg}->{name} = 'scfg';
     $directive_proto{$class}->{cfg}->{get} = $scfg_get;
 
     for (qw(args scope)) {
@@ -82,6 +81,9 @@ for my $class (qw(Process Connection Files)) {
 
 while (my($k,$v) = each %directive_proto) {
     $directive_proto{$k}->{ret} = 'const char *';
+    my $handlers = join '_', 'handlers', canon_lc($k);
+    $directive_proto{$k}->{handlers} =
+      join '->', $directive_proto{$k}->{cfg}->{name}, $handlers;
 }
 
 #XXX: allow disabling of PerDir hooks on a PerDir basis
@@ -144,7 +146,7 @@ sub generate_handler_index {
         my $handler_type = canon_define('HANDLER_TYPE', $class);
 
         print $h_fh "\n#define ",
-          canon_define($class, 'num_handlers'), " $n\n\n";
+          canon_define('HANDLER_NUM', $class), " $n\n\n";
 
         print $h_fh "#define $handler_type $type\n\n";
 
@@ -271,7 +273,7 @@ sub generate_handler_directives {
             my $protostr = canon_proto($prototype, $name);
             my $flag = 'MpSrv' . canon_uc($h);
             my $ix = $self->{handler_index}->{$class}->[$i++];
-            my $av = "$prototype->{cfg}->{name}->handlers[$ix]";
+            my $av = "$prototype->{handlers} [$ix]";
 
             print $h_fh "$protostr;\n";
 
