@@ -64,7 +64,7 @@ MODULE=APR::Socket
 MODULE=APR::Brigade
  apr_brigade_create | mpxs_ | SV *:CLASS, p | new
  apr_brigade_destroy
- apr_brigade_partition
+!apr_brigade_partition
  apr_brigade_printf
  apr_brigade_putstrs
  apr_brigade_split
