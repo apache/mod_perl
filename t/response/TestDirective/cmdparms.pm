@@ -62,14 +62,14 @@ sub handler : method {
     plan $r, tests => 6 + ( 8 * keys(%$srv_cfg) );
 
     foreach my $cfg (values %$srv_cfg) {
-        ok t_cmp (ref($cfg->{cmd}), 'Apache::Command', 'cmd');
-        ok t_cmp (ref($cfg->{context}), 'Apache::ConfVector', 'context');
-        ok t_cmp (ref($cfg->{directive}), 'Apache::Directive', 'directive');
-        ok t_cmp (ref($cfg->{pool}), 'APR::Pool', 'pool');
-        ok t_cmp (ref($cfg->{temp_pool}), 'APR::Pool', 'temp_pool');
-        ok t_cmp (ref($cfg->{server}), 'Apache::ServerRec', 'server');
-        ok t_cmp ($cfg->{limited}, -1, 'limited');
-        ok t_cmp ($cfg->{info}, 'cmd_data', 'cmd_data');
+        ok t_cmp(ref($cfg->{cmd}), 'Apache::Command', 'cmd');
+        ok t_cmp(ref($cfg->{context}), 'Apache::ConfVector', 'context');
+        ok t_cmp(ref($cfg->{directive}), 'Apache::Directive', 'directive');
+        ok t_cmp(ref($cfg->{pool}), 'APR::Pool', 'pool');
+        ok t_cmp(ref($cfg->{temp_pool}), 'APR::Pool', 'temp_pool');
+        ok t_cmp(ref($cfg->{server}), 'Apache::ServerRec', 'server');
+        ok t_cmp($cfg->{limited}, -1, 'limited');
+        ok t_cmp($cfg->{info}, 'cmd_data', 'cmd_data');
     }    
 
     my $vhost = $srv_cfg->{Vhost};
@@ -79,9 +79,9 @@ sub handler : method {
                 Apache::OR_FILEINFO |
                 Apache::OR_OPTIONS;
 
-    ok t_cmp ($vhost->{override}, $override, 'override');
-    ok t_cmp ($vhost->{path}, undef, 'path');
-    ok t_cmp ($vhost->{check_ctx}, undef, 'check_cmd_ctx');
+    ok t_cmp($vhost->{override}, $override, 'override');
+    ok t_cmp($vhost->{path}, undef, 'path');
+    ok t_cmp($vhost->{check_ctx}, undef, 'check_cmd_ctx');
 
     my $loc = $srv_cfg->{Location};
 
@@ -92,9 +92,9 @@ sub handler : method {
                 Apache::OR_OPTIONS  |
                 Apache::OR_LIMIT;
 
-    ok t_cmp ($loc->{override}, $override, 'override');
-    ok t_cmp ($loc->{path}, '/TestDirective__cmdparms', 'path');
-    ok t_cmp ($loc->{check_ctx}, KEY . 
+    ok t_cmp($loc->{override}, $override, 'override');
+    ok t_cmp($loc->{path}, '/TestDirective__cmdparms', 'path');
+    ok t_cmp($loc->{check_ctx}, KEY . 
               ' cannot occur within <Location> section', 'check_cmd_ctx');
 
     return Apache::OK;
