@@ -12,8 +12,8 @@ use File::Spec::Functions qw(catfile);
 use Apache::Const -compile => 'OK';
 use constant HAVE_PERLIO => eval { require APR::PerlIO };
 
-#XXX: feel free to enable if largefile support is not enabled in Perl
 #XXX: APR::LARGE_FILES_CONFLICT constant?
+#XXX: you can set to zero if largefile support is not enabled in Perl
 use constant LARGE_FILES_CONFLICT => 1;
 
 sub handler {
@@ -197,7 +197,7 @@ sub handler {
 
         # buffer up
         $oldfh = select($wfh); $| = 0; select($oldfh);
-        print $wfh $expected; # must be flushed to disk immediately
+        print $wfh $expected; # should be buffered up and not flushed
 
         ok t_cmp(undef,
                  scalar(<$rfh>),
