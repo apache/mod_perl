@@ -6,7 +6,7 @@ use Apache::TestUtil;
 use Apache::TestRequest;
 use File::Spec::Functions qw(catfile);
 
-plan tests => 2;
+plan tests => 3;
 
 my $module   = 'TestModules::reload';
 my $location = '/' . Apache::TestRequest::module2path($module);
@@ -58,6 +58,18 @@ t_write_file(test_file(), $header, $modified);
         $expected,
         $received,
         "Reload"
+    );
+}
+
+{
+    my $expected = "unregistered OK";
+    my $received = get_body($same_interp, \&GET, $location . '?last' );
+    $skip++ unless defined $received;
+    skip_not_same_interp(
+        $skip,
+        $expected,
+        $received,
+        "Unregister"
     );
 }
 

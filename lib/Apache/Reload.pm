@@ -66,6 +66,12 @@ sub register_module {
     }
 }
 
+sub unregister_module {
+    my($class, $package) = @_;
+    my $module = package_to_module($package);
+    delete $INCS{$module};
+}
+
 # the first argument is:
 # $c if invoked as 'PerlPreConnectionHandler'
 # $r if invoked as 'PerlInitHandler'
