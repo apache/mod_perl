@@ -124,6 +124,23 @@ NOTE: source_scan.pl is a HEAVY process, do not be alarmed.
 
 % perl util/source_scan.pl apxs $apache_prefix/bin/apxs
 
+=head1 Support
+
+Discussion of mod_perl-2.0 currently takes place on the
+dev@perl.apache.org list.
+Any problems/questions should be report to that list, be sure to
+include:
+
+=over 4
+
+=item perl -V
+
+=item httpd -V
+
+=item Makefile.PL options
+
+=back
+
 =head1 mod_perl configuration directives
 
 =head2 Installing handlers
