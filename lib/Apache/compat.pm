@@ -357,7 +357,7 @@ sub slurp_filename {
 #XXX: would like to have a proper implementation
 #that reads line-by-line as defined by $/
 #the best way will probably be to use perlio in 5.8.0
-#anything else would be more effort that it is worth
+#anything else would be more effort than it is worth
 sub READLINE {
     my $r = shift;
     my $line;
