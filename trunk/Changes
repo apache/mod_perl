@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.21_01-dev
 
+allow Apache::PerlRun::handler to be subclassed
+[Yasushi Nakajima <sey@jkc.co.jp>]
+
 fix $r->connection->remote_ip for SGI performance patches (#ifdef SGI_BOOST)
 [Artem Veremey <scimitar@mail.ru>]
 

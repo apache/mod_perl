@@ -261,9 +261,16 @@ sub set_script_name {
     *0 = \$pr->filename;
 }
 
-sub handler {
-    my $r = shift;
-    my $pr = Apache::PerlRun->new($r);
+sub handler ($$) {
+    my($class, $r);
+    if (@_ >= 2) {
+	($class, $r) = (shift, shift);
+    }
+    else {
+	($class, $r) = (__PACKAGE__, shift);
+    }
+
+    my $pr = $class->new($r);
     my $rc = $pr->can_compile;
     return $rc unless $rc == OK;
 
