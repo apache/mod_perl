@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_18-dev
 
+Apache::SizeLimit ported [Perrin Harkins <perrin elem.com>]
+
 create a new subpool modperl_server_user_pool (from
 modperl_server_pool), which is handed to users via
 Apache::ServerUtil::base_server_pool(). This ensures that
