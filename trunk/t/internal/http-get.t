@@ -3,7 +3,7 @@
 # Check GET via HTTP.
 #
 
-my $num_tests = 7;
+my $num_tests = 8;
 my(@test_scripts) = qw(test perl-status);
 %get_only = map { $_,1 } qw(perl-status);
 
@@ -45,12 +45,16 @@ foreach $s (@test_scripts) {
     test ++$i, ($str =~ /^QUERY_STRING=query$/m); 
 }
 
+#test PerlSetupEnv Off
+test ++$i, fetch("/perl/noenv/test.pl") !~ /SERVER_SOFTWARE/m;
+
 print "pounding a bit...\n";
 for (1..3) {
     test ++$i, ($ua->request($request, undef, undef)->is_success);
 }
 
-
 # avoid -w warning
 $dummy = $net::httpserver;
 $dummy = $net::perldir;
+
+

@@ -230,11 +230,17 @@ void *perl_merge_dir_config (pool *p, void *basev, void *addv)
     new->vars = overlay_tables(p, add->vars, base->vars);
     new->env = overlay_tables(p, add->env, base->env);
 
+    new->SendHeader = (add->SendHeader != MPf_None) ?
+	add->SendHeader : base->SendHeader;
+
+    new->SetupEnv = (add->SetupEnv != MPf_None) ?
+	add->SetupEnv : base->SetupEnv;
+
     /* merge flags */
     MP_FMERGE(new,add,base,MPf_INCPUSH);
     MP_FMERGE(new,add,base,MPf_HASENV);
-    MP_FMERGE(new,add,base,MPf_ENV);
-    MP_FMERGE(new,add,base,MPf_SENDHDR);
+    /*MP_FMERGE(new,add,base,MPf_ENV);*/
+    /*MP_FMERGE(new,add,base,MPf_SENDHDR);*/
     MP_FMERGE(new,add,base,MPf_SENTHDR);
     MP_FMERGE(new,add,base,MPf_CLEANUP);
     MP_FMERGE(new,add,base,MPf_RCLEANUP);
@@ -294,6 +300,8 @@ void *perl_create_dir_config (pool *p, char *dirname)
     cld->vars = make_table(p, 5); 
     cld->env  = make_table(p, 5); 
     cld->flags = MPf_ENV;
+    cld->SendHeader = MPf_None;
+    cld->SetupEnv = MPf_On;
     cld->PerlHandler = PERL_CMD_INIT;
     PERL_DISPATCH_CREATE(cld);
     PERL_AUTHEN_CREATE(cld);

@@ -7,7 +7,7 @@ use Config;
 *import = \&Exporter::import;
 
 @EXPORT = qw(test fetch simple_fetch have_module skip_test 
-	     $USE_THREAD WIN32); 
+	     $USE_THREAD WIN32 grab); 
 
 BEGIN { 
     if(not $ENV{MOD_PERL}) {
@@ -179,6 +179,63 @@ run_tests:
 
 $my_test;
 
+}
+
+sub grab {
+    require IO::Socket;
+    my(@args) = @_;
+    @args = @ARGV unless @args;
+
+    unless (@args > 0) { 
+	die "usage: grab host:port path";
+    }
+
+    my($host, $port) = split ":", shift @args;
+    $port ||= 80;
+    my $url = shift @args || "/";
+
+    my $remote = IO::Socket::INET->new(Proto     => "tcp",
+				       PeerAddr  => $host,
+				       PeerPort  => $port,
+				       );
+    unless ($remote) {
+	die "cannot connect to http daemon on $host"; 
+    }
+    $remote->autoflush(1);
+    print $remote "GET $url HTTP/1.0\n\n";
+    my $response_line = 0;
+    my $header_terminator = 0;
+    my @msg = ();
+
+    while ( <$remote> ) {
+	#e.g. HTTP/1.1 200 OK
+	if(m:^(HTTP/\d+\.\d+)[ \t]+(\d+)[ \t]*([^\012]*):i) {
+	    push @msg, $_;
+	    $response_line = 1;
+	}
+	elsif(/^([a-zA-Z0-9_\-]+)\s*:\s*(.*)/) {
+	    push @msg, $_;
+	}
+	elsif(/^\015?\012$/) {
+	    $header_terminator = 1;
+	    push @msg, $_;
+	}
+
+	print;
+    }
+    close $remote;
+
+    print "~" x 40, "\n", "Diagnostics:\n";
+    if ($response_line and $header_terminator) {
+	print " HTTP response is valid:\n";
+    }
+    else {
+	print "     GET -> http://$host:$port$url\n";
+	print " >>> No response line\n" unless $response_line;
+	print " >>> No header terminator\n" unless $header_terminator;
+	print " *** HTTP response is malformed\n";
+    }
+    print "-" x 40, "\n", @msg, "-" x 40, "\n";
 }
 
 1;

@@ -201,6 +201,10 @@ extern U32	mp_debug;
 
 /* per-directory flags */
 
+#define MPf_On   1
+#define MPf_Off -1
+#define MPf_None 0
+
 #define MPf_INCPUSH	0x00000100 /* use lib split ":", $ENV{PERL5LIB} */
 #define MPf_SENDHDR	0x00000200 /* is PerlSendHeader On? */
 #define MPf_SENTHDR	0x00000400 /* has PerlSendHeader sent the headers? */
@@ -218,17 +222,29 @@ if((add->flags & f) || (base->flags & f)) \
 #define MP_INCPUSH_on(d)  (d->flags |= MPf_INCPUSH)
 #define MP_INCPUSH_off(d)  (d->flags  &= ~MPf_INCPUSH)
 
+#if 0
 #define MP_SENDHDR(d)    (d->flags & MPf_SENDHDR)
 #define MP_SENDHDR_on(d)  (d->flags |= MPf_SENDHDR)
 #define MP_SENDHDR_off(d)  (d->flags  &= ~MPf_SENDHDR)
+#endif
+
+#define MP_SENDHDR(d)     (d->SendHeader == MPf_On)
+#define MP_SENDHDR_on(d)  (d->SendHeader = MPf_On)
+#define MP_SENDHDR_off(d) (d->SendHeader = MPf_Off)
 
 #define MP_SENTHDR(d)    (d->flags & MPf_SENTHDR)
 #define MP_SENTHDR_on(d)  (d->flags |= MPf_SENTHDR)
 #define MP_SENTHDR_off(d)  (d->flags  &= ~MPf_SENTHDR)
 
+#if 0
 #define MP_ENV(d)       (d->flags & MPf_ENV)
 #define MP_ENV_on(d)     (d->flags |= MPf_ENV)
 #define MP_ENV_off(d)    (d->flags  &= ~MPf_ENV)
+#endif
+
+#define MP_ENV(d)       (d->SetupEnv == MPf_On)
+#define MP_ENV_on(d)    (d->SetupEnv = MPf_On)
+#define MP_ENV_off(d)   (d->SetupEnv = MPf_Off)
 
 #define MP_HASENV(d)    (d->flags & MPf_HASENV)
 #define MP_HASENV_on(d)  (d->flags |= MPf_HASENV)
@@ -385,7 +401,6 @@ char *ap_cpystrn(char *dst, const char *src, size_t dst_size);
 
 #define PERL_CALLBACK(h,name) \
 PERL_SET_CUR_HOOK(h); \
-(void)acquire_mutex(mod_perl_mutex); \
 status = perl_run_stacked_handlers(h, r, Nullav); \
 if((status != OK) && (status != DECLINED)) { \
     MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status)); \
@@ -393,7 +408,6 @@ if((status != OK) && (status != DECLINED)) { \
 else if(AvTRUE(name)) { \
     status = perl_run_stacked_handlers(h, r, name); \
 } \
-(void)release_mutex(mod_perl_mutex); \
 MP_TRACE_h(fprintf(stderr, "%s handlers returned %d\n", h, status))
 
 
@@ -754,6 +768,8 @@ typedef struct {
     table *env;
     table *vars;
     U32 flags;
+    int SendHeader;
+    int SetupEnv;
 } perl_dir_config;
 
 typedef struct {

@@ -11,6 +11,13 @@ umm, we use this to test mod_perl
 
 =cut
 
+#we do this to test that `PerlSendHeader Off' will work
+<Files ~ "\.pl$">
+   PerlHandler          Apache::Registry
+   PerlSendHeader       On
+   Options              ExecCGI
+</Files>
+
 #make sure all regex stuff works
 #BrowserMatch Mozilla/2 nokeepalive
 
@@ -51,6 +58,15 @@ ErrorDocument 500 /perl/server_error.pl
 SetHandler perl-script
 PerlHandler Apache::Registry::handler
 Options +ExecCGI
+PerlSendHeader       Off
+</Location>
+
+<Location /perl/noenv>
+SetHandler perl-script
+PerlHandler Apache::Registry::handler
+Options +ExecCGI
+PerlSendHeader       Off
+PerlSetupEnv Off
 </Location>
 
 <Location /cgi-bin>

@@ -46,7 +46,7 @@ module MODULE_VAR_EXPORT XS_${modname} = {
     NULL,   /* [1] post read_request handling */
 };
 
-MODULE = $modname		PACKAGE = $modname
+MODULE = $class		PACKAGE = $class
 
 BOOT:
     add_module(&XS_${modname});
