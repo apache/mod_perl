@@ -8,6 +8,10 @@ Changes - Apache mod_perl change logfile
 
 =item 1.16_01-dev
 
+Apache::Registry will now allow DirectoryIndex to work even when
+ExecCGI is off. [ Ari Jolma <ajolma@ahti.hut.fi> / Ask Bjoern Hansen
+<ask@netcetera.dk> ]
+
 added HTTP_OK to Apache::Constants :http export tag
 
 fixed bug in Apache::ModuleConfig->getline

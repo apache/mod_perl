@@ -3,7 +3,7 @@ use Apache ();
 #use strict; #eval'd scripts will inherit hints
 use Apache::Constants qw(:common &OPT_EXECCGI &REDIRECT);
 
-$Apache::Registry::VERSION = '2.00';
+$Apache::Registry::VERSION = '2.01';
 
 $Apache::Registry::Debug ||= 0;
 # 1 => log recompile in errorlog
@@ -37,14 +37,14 @@ sub handler {
 	if $Debug && $Debug & 4;
 
     if (-r $filename && -s _) {
+	if (-d _) {
+	    return DECLINED; 
+	}
 	if (!($r->allow_options & OPT_EXECCGI)) {
 	    $r->log_reason("Options ExecCGI is off in this directory",
 			   $filename);
 	    return FORBIDDEN;
  	}
-	if (-d _) {
-	    return DECLINED; 
-	}
 	unless (-x _ or $Is_Win32) {
 	    $r->log_reason("file permissions deny server execution",
 			   $filename);
