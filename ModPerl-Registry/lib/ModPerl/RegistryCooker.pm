@@ -16,9 +16,6 @@ no warnings qw(redefine); # XXX, this should go away in production!
 our $VERSION = '1.99';
 
 use Apache::compat ();
-# META: Should not use Apache::compat, the following methods need to
-# be implemented:
-# $r->slurp_filename
 
 use Apache::Response;
 use Apache::Log;
@@ -27,26 +24,9 @@ use File::Spec::Functions ();
 use ModPerl::Util ();
 use ModPerl::Global ();
 
-#########################################################################
-# issues
-#
-#########################################################################
-
-# META: who sets this? What's the default?
 unless (defined $ModPerl::Registry::MarkLine) {
     $ModPerl::Registry::MarkLine = 1;
 }
-
-### Optimizations
-#
-# - $o->[CLASS] of the subclass is known at compile time, so should
-#   create the subs using $o->[CLASS] on the fly for each subclass
-#   which wants them
-
-### TODO
-#
-# - who handles END/BEGIN/,CHECK,INIT) blocks?
-# - see META's accross the file
 
 #########################################################################
 # debug constants
@@ -58,9 +38,9 @@ use constant D_WARN    => 2;
 use constant D_COMPILE => 4;
 use constant D_NOISE   => 8;
 
-# can override the debug level in httpd.conf with:
+# the debug level can be overriden on the main server level of
+# httpd.conf with:
 #   PerlSetVar ModPerl::RegistryCooker::DEBUG 4
-# on the server level 
 use Apache::ServerUtil ();
 use constant DEBUG =>
     defined Apache->server->dir_config('ModPerl::RegistryCooker::DEBUG')
@@ -96,26 +76,6 @@ use constant FALSE => sub { 0 };
 
 
 #########################################################################
-# install the aliases into $class
-#
-#########################################################################
-
-sub install_aliases {
-    my ($class, $rh_aliases) = @_;
-
-    no strict 'refs';
-    while (my($k,$v) = each %$rh_aliases) {
-        if (my $sub = *{$v}{CODE}){
-            #warn "$class: ok: $k => $v";
-            *{ $class . "::$k" } = $sub;
-        }
-        else {
-            die "$class: $k aliasing failed; sub $v doesn't exist";
-        }
-    }
-}
-
-#########################################################################
 # func: new
 # dflt: new
 # args: $class - class to bless into
@@ -128,7 +88,6 @@ sub new {
     my($class, $r) = @_;
     my $o = bless [], $class;
     $o->init($r);
-    #$o->debug("$$: init class: $class");
     return $o;
 }
 
@@ -160,7 +119,6 @@ sub init {
 #       __PACKAGE__, which is tied to the file)
 #########################################################################
 
-# META: prototyping ($$) segfaults on request
 sub handler {
     my $class = (@_ >= 2) ? shift : __PACKAGE__;
     my $r = shift;
@@ -219,7 +177,6 @@ sub run {
 
     $o->flush_namespace;
 
-    # META: handle!
     #$o->chdir_file("$Apache::Server::CWD/");
 
     if ( ($rc = $o->error_check) != Apache::OK) {
@@ -291,9 +248,6 @@ sub make_namespace {
     # make sure that the sub-package doesn't start with a digit
     $package = "_$package";
 
-    # META: ??? explain
-    $ModPerl::Registry::curstash = $package;
-
     # prepend root
     $package = $o->[CLASS] . "::Cache::$package";
 
@@ -331,12 +285,6 @@ sub namespace_from_uri {
 	substr($o->[URI], 0, length($o->[URI]) - length($path_info)) :
 	$o->[URI];
 
-    # META: do we handle this?
-    # if ($ModPerl::Registry::NameWithVirtualHost && $o->[REQ]->server->is_virtual) {
-    #	  my $name = $o->[REQ]->get_server_name;
-    #	  $script_name = join "", $name, $script_name if $name;
-    # }
-
     $script_name =~ s:/+$:/__INDEX__:;
 
     return $script_name;
@@ -365,10 +313,7 @@ sub convert_script_to_compiled_handler {
     # relative require/open will work.
     $o->chdir_file;
 
-# META: what's this?
-#    # compile this subroutine into the uniq package name
-#    $o->debug("handler eval-ing") if DEBUG & D_NOISE;
-#    undef &{"$o->[PACKAGE]\::handler"};# unless $Debug && $Debug & 4; #avoid warnings
+#    undef &{"$o->[PACKAGE]\::handler"}; unless DEBUG & D_NOISE; #avoid warnings
 #    $o->[PACKAGE]->can('undef_functions') && $o->[PACKAGE]->undef_functions;
 
     my $line = $o->get_mark_line;
@@ -385,22 +330,18 @@ sub convert_script_to_compiled_handler {
 
     my %orig_inc = %INC;
 
-#warn "[-- $eval --]";
     my $rc = $o->compile(\$eval);
     $o->debug(qq{compiled package \"$o->[PACKAGE]\"}) if DEBUG & D_NOISE;
 
-    # META: handle!
     #$o->chdir_file("$Apache::Server::CWD/");
 
-    # %INC cleanup
-    #in case .pl files do not declare package ...;
+    # %INC cleanup in case .pl files do not declare package ...;
     for (keys %INC) {
 	next if $orig_inc{$_};
 	next if /\.pm$/;
 	delete $INC{$_};
     }
 
-# META: $r->child_terminate is not implemented 
 #    if(my $opt = $r->dir_config("PerlRunOnce")) {
 #	$r->child_terminate if lc($opt) eq "on";
 #    }
@@ -516,9 +457,8 @@ sub flush_namespace_normal {
 
     for (keys %$tab) {
         my $fullname = join '::', $o->[PACKAGE], $_;
-        #code/hash/array/scalar might be imported
-        #make sure the gv does not point elsewhere
-        #before undefing each
+        # code/hash/array/scalar might be imported make sure the gv
+        # does not point elsewhere before undefing each
         if (%$fullname) {
             *{$fullname} = {};
             undef %$fullname;
@@ -528,7 +468,7 @@ sub flush_namespace_normal {
             undef @$fullname;
         }
         if ($$fullname) {
-            my $tmp; #argh, no such thing as an anonymous scalar
+            my $tmp; # argh, no such thing as an anonymous scalar
             *{$fullname} = \$tmp;
             undef $$fullname;
         }
@@ -581,8 +521,8 @@ sub read_script {
 
 my %switches = (
    'T' => sub {
-       Apache::warn("T switch ignored, ".
-		    "enable with 'PerlTaintCheck On'\n")
+       Apache::warn("T switch is ignored, ".
+		    "enable with 'PerlSwitches -T' in httpd.conf\n")
 	   unless $Apache::__T; "";
    },
    'w' => sub { "use warnings;\n" },
@@ -601,7 +541,6 @@ sub rewrite_shebang {
 	last if substr($s,0,1) eq "-";
 	for (split //, $s) {
 	    next unless exists $switches{$_};
-	    #print STDERR "parsed `$_' switch\n";
 	    $prepend .= &{$switches{$_}};
 	}
     }
@@ -633,8 +572,6 @@ sub set_script_name {
 
 sub chdir_file_normal {
     my($o, $dir) = @_;
-    # META: not implemented
-    # META: see todo/api.txt unsafe!
     # $o->[REQ]->chdir_file($dir ? $dir : $o->[FILENAME]);
 }
 
@@ -708,10 +645,34 @@ sub error_check {
     if ($@ and substr($@,0,4) ne " at ") {
 	$o->[REQ]->log_error("$$: $o->[CLASS]: `$@'");
 	$@{$o->[REQ]->uri} = $@;
-	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
+	#$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return Apache::SERVER_ERROR;
     }
     return Apache::OK;
+}
+
+
+#########################################################################
+# func: install_aliases
+# dflt: install_aliases
+# desc: install the method aliases into $class
+# args: $class - the class to install the methods into
+#       $rh_aliases - a ref to a hash with aliases mapping
+# rtrn: nothing
+#########################################################################
+
+sub install_aliases {
+    my ($class, $rh_aliases) = @_;
+
+    no strict 'refs';
+    while (my($k,$v) = each %$rh_aliases) {
+        if (my $sub = *{$v}{CODE}){
+            *{ $class . "::$k" } = $sub;
+        }
+        else {
+            die "$class: $k aliasing failed; sub $v doesn't exist";
+        }
+    }
 }
 
 ### helper methods
@@ -727,10 +688,9 @@ __END__
 
 =head1 NAME
 
-ModPerl::RegistryCooker - 
+ModPerl::RegistryCooker - A Base Class of all mod_perl Registry Modules
 
 =head1 SYNOPSIS
-
 
 
 =head1 DESCRIPTION
