@@ -1101,7 +1101,7 @@ EOF
     cp "lib/mod_perl_hooks.pm.PL", "lib/mod_perl_hooks.pm"; 
 
     if ($Is_Win32) {
-      my @args = ($^X, ' -spi.bak ', ' -e ', "\"s/sub mod_perl::hooks.*/sub mod_perl::hooks { qw($hooks) }/\"", 'lib/mod_perl_hooks.pm');
+      my @args = ($^X, '-spi.bak ', ' -e ', "\"s/sub mod_perl::hooks.*/sub mod_perl::hooks { qw($hooks) }/\"", 'lib/mod_perl_hooks.pm');
       system(@args) == 0 or die "@args failed\n";
     }
     iedit "lib/mod_perl_hooks.pm", 
