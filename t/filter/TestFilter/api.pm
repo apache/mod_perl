@@ -6,19 +6,9 @@ use warnings FATAL => 'all';
 use Apache::Filter ();
 use Apache::FilterRec ();
 
-use Test;
+use Apache::Test;
 
 my $response_data = "blah blah blah";
-
-sub init_test_pm {
-    my $filter = shift;
-
-    tie *STDOUT, $filter;
-
-    $Test::TESTOUT = \*STDOUT;
-    $Test::planned = 0;
-    $Test::ntest = 1;
-}
 
 #XXX: else pp_untie complains:
 #untie attempted while %d inner references still exist
@@ -29,7 +19,7 @@ sub handler {
 
     $filter->read(my $buffer); #slurp everything;
 
-    init_test_pm($filter);
+    tie *STDOUT, $filter;
 
     plan tests => 6;
 
@@ -51,7 +41,7 @@ sub handler {
 
     untie *STDOUT;
 
-    0;
+    Apache::OK;
 }
 
 sub response {
