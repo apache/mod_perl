@@ -6,7 +6,7 @@ use warnings;
 
 use Config;
 use Cwd ();
-use File::Spec::Functions qw(catfile catdir);
+use File::Spec::Functions qw(catfile catdir canonpath rel2abs);
 use File::Basename;
 use ExtUtils::Embed ();
 
@@ -686,8 +686,7 @@ sub dir {
 #            last if -d ($dir = "$_/auto/Apache/include");
 #        }
 #    }
-
-    return $self->{dir} = $dir;
+    return $self->{dir} = canonpath rel2abs $dir;
 }
 
 #--- finding apache *.h files ---
