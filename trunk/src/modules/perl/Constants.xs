@@ -813,22 +813,42 @@ not_there:
 #define __PACKAGE_LEN__ 17
 #define __AUTOLOAD__ "Apache::Constants::AUTOLOAD"
 
+/* this is kinda ugly, but wtf */
+static void boot_ConstSubs(char *tag) 
+{
+    HV *stash = gv_stashpvn(__PACKAGE__, __PACKAGE_LEN__, FALSE);
+    I32 i;
+#ifdef XS_IMPORT
+    char **export = export_tags(tag);
+
+    for (i=0; export[i]; i++) {
+#define EXP_NAME export[i]
+
+#else
+    HV *exp_tags = perl_get_hv("Apache::Constants::EXPORT_TAGS", TRUE); 
+    SV **avrv = hv_fetch(exp_tags, tag, strlen(tag), FALSE);
+    AV *export;
+    if(avrv)
+	export = (AV*)SvRV(*avrv);
+    else 
+	return;
+#define EXP_NAME SvPV(*av_fetch(export, i, 0),na)
+
+    for(i=0; i<=AvFILL(export); i++) { 
+#endif
+	char *name = EXP_NAME;
+	double val = constant(name);
+	newCONSTSUB(stash, name, newSViv(val));
+    }
+}
+
 MODULE = Apache::Constants PACKAGE = Apache::Constants
  
 PROTOTYPES: DISABLE
 
 BOOT:
     items = items;
-{
-    AV *export = perl_get_av("Apache::Constants::EXPORT", FALSE);
-    HV *stash = gv_stashpvn(__PACKAGE__, __PACKAGE_LEN__, FALSE);
-    I32 i;
-    for(i=0; i<=AvFILL(export); i++) { 
-	SV *name = *av_fetch(export, i, 0);
-	double val = constant(SvPVX(name));
-	newCONSTSUB(stash, SvPVX(name), newSViv(val));
-    }
-}
+    boot_ConstSubs("common");
 
 #ifdef XS_IMPORT
 
