@@ -694,8 +694,15 @@ sub init_tests_and_config {
     cp "t/conf/httpd.conf-dist", "t/conf/httpd.conf";
     chmod 0644, "t/conf/httpd.conf";
 
-    $User  = $Is_Win32 ? "nobody" : (getpwuid($>) || $>);
-    $Group = $Is_Win32 ? "nogroup" : (getgrgid($)) || $)); 
+    $uid = $>;
+    $gid = $);
+
+    #use only first value if $) contains more than one
+    $gid =~ s/^(\d+).*$/$1/;
+
+    $User  = $Is_Win32 ? "nobody" : (getpwuid($uid) || "#$uid");
+    $Group = $Is_Win32 ? "nogroup" : (getgrgid($gid) || "#$gid");
+
     if($User eq "root") {
 	my $other = (getpwnam('nobody'))[0];
 	$User = $other if $other;

@@ -220,6 +220,8 @@ or
 
  -Xlinker -E
 
+This problem is only known to be caused by installing gnu ld under Solaris.
+
 =back
 
 
