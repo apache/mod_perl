@@ -730,6 +730,37 @@ sub make_tools {
     }
 }
 
+sub dynamic_link_header_default {
+    return <<'EOF';
+$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_LD) $(MODPERL_LDDLFLAGS) \
+	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS) \
+EOF
+}
+
+sub dynamic_link_default {
+    my $self = shift;
+    return $self->dynamic_link_header_default . <<'EOF';
+	-o $@
+	$(MODPERL_RANLIB) $@
+EOF
+}
+
+sub dynamic_link_MSWin32 {
+    my $self = shift;
+    return $self->dynamic_link_header_default . <<'EOF';
+	-out:$@
+EOF
+}
+
+sub dynamic_link {
+    my $self = shift;
+    my $link = \&{"dynamic_link_$^O"};
+    $link = \&dynamic_link_default unless defined &$link;
+    $link->($self);
+}
+
 sub write_src_makefile {
     my $self = shift;
     my $code = ModPerl::Code->new;
@@ -787,17 +818,6 @@ all: lib
 
 lib: $(MODPERL_LIB)
 
-$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_OBJS)
-	$(MODPERL_RM_F) $@
-	$(MODPERL_AR) crv $@ $(MODPERL_OBJS)
-	$(MODPERL_RANLIB) $@
-
-$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
-	$(MODPERL_RM_F) $@
-	$(MODPERL_LD) $(MODPERL_LDDLFLAGS) -o $@ \
-	$(MODPERL_PIC_OBJS) $(MODPERL_LDOPTS)
-	$(MODPERL_RANLIB) $@
-
 .SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
 .c.lo:
@@ -834,7 +854,14 @@ $(MODPERL_OBJS): $(MODPERL_H_FILES) Makefile
 $(MODPERL_PIC_OBJS): $(MODPERL_H_FILES) Makefile
 $(MODPERL_LIB): $(MODPERL_LIBPERL)
 
+$(MODPERL_LIBNAME)$(MODPERL_LIB_EXT): $(MODPERL_OBJS)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_AR) crv $@ $(MODPERL_OBJS)
+	$(MODPERL_RANLIB) $@
+
 EOF
+
+    print $fh $self->dynamic_link;
 
     print $fh @$xs_targ;
 
