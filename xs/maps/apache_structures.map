@@ -1,6 +1,6 @@
 ##########  Apache structures  ##########
 
-IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
+IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 
 <request_rec>
    pool
@@ -28,7 +28,6 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    bytes_sent
    mtime
 >  chunked
->  boundary
 >  range
 >  clength
    remaining
@@ -58,11 +57,14 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    args
 ~  finfo
 ~  parsed_uri
+   used_path_info
    per_dir_config
    request_config
 !  htaccess
    output_filters
    input_filters
+   proto_output_filters
+   proto_input_filters
 ?  eos_sent
 </request_rec>
 
@@ -114,6 +116,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
    notes
    input_filters
    output_filters
+   sbh
    bucket_alloc
 </conn_rec>
 
@@ -201,6 +204,7 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error
 !<ap_unix_identity_t>
    uid
    gid
+   userdir
 </ap_unix_identity_t>
 
 !<unixd_config_rec>
