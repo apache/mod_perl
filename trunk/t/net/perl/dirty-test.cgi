@@ -1,3 +1,4 @@
+#!perl
 
 unshift @INC, 
        -e "dirty-lib" ? '.' :

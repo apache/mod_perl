@@ -1,4 +1,4 @@
-
+#!perl
 use Apache::test;
 
 my $r = shift;

@@ -1,3 +1,4 @@
+#!/bin/sh
 ##
 ##  mod_perl.config.sh -- mod_perl configuration transformation script
 ##  Written by Ralf S. Engelschall <rse@apache.org>

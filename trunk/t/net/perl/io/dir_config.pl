@@ -1,3 +1,4 @@
+#!perl
 use strict;
 use Apache::test;
 use Data::Dumper ();
