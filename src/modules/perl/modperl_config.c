@@ -136,19 +136,36 @@ void *modperl_create_srv_config(ap_pool_t *p, server_rec *s)
 #define merge_item(item) \
 mrg->item = add->item ? add->item : base->item
 
+/* XXX: this is not complete */
 void *modperl_merge_srv_config(ap_pool_t *p, void *basev, void *addv)
 {
-#if 0
     modperl_srv_config_t
         *base = (modperl_srv_config_t *)basev,
         *add  = (modperl_srv_config_t *)addv,
         *mrg  = modperl_srv_config_new(p);
-#endif
 
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv);
 
-    return addv;
+#ifdef USE_ITHREADS
+    merge_item(mip);
+    merge_item(interp_pool_cfg);
+#else
+    merge_item(perl);
+#endif
+
+    merge_item(files_cfg);
+    merge_item(process_cfg);
+    merge_item(connection_cfg);
+
+    { /* XXX: should do a proper merge of the arrays */
+        int i;
+        for (i=0; i<MP_PER_SRV_NUM_HANDLERS; i++) {
+            merge_item(handlers[i]);
+        }
+    }
+
+    return mrg;
 }
 
 #define MP_CONFIG_BOOTSTRAP(parms) \
@@ -174,7 +191,6 @@ MP_DECLARE_SRV_CMD(trace)
 MP_DECLARE_SRV_CMD(switches)
 {
     MP_dSCFG(parms->server);
-    MP_SRV_CMD_CHECK;
     scfg_push_argv(arg);
     return NULL;
 }
@@ -187,8 +203,6 @@ const char *modperl_cmd_interp_##item(cmd_parms *parms, \
 { \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \
-    const char *err = ap_check_cmd_context(parms, GLOBAL_ONLY); \
-    if (err) return err; \
     scfg->interp_pool_cfg->##item = item; \
     MP_TRACE_d(MP_FUNC, "%s %d\n", parms->cmd->name, item); \
     return NULL; \
