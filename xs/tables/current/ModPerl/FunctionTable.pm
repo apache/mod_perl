@@ -4718,6 +4718,16 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
+    'name' => 'modperl_default_port__handler',
+    'args' => [
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]
+  },
+  {
+    'return_type' => 'int',
     'name' => 'modperl_type_handler',
     'args' => [
       {
