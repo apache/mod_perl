@@ -738,7 +738,7 @@ sub make_tools {
     my $mm = bless {}, 'MM';
     $mm->init_others;
 
-    for (qw(rm_f mv ld ar)) {
+    for (qw(rm_f mv ld ar cp test_f)) {
         my $val = $mm->{"\U$_"};
         if ($val) {
             mm_replace(\$val);
@@ -858,6 +858,11 @@ sub write_src_makefile {
                                      $self->{MODPERL_LIB_SHARED} :
                                      $self->{MODPERL_LIB_STATIC});
 
+    for my $q (qw(LIBEXECDIR)) {
+        print $fh $self->canon_make_attr("AP_$q",
+                                         $self->apxs(-q => $q));
+    }
+
     my $xs_targ = $self->make_xs($fh);
 
     print $fh <<'EOF';
@@ -872,6 +877,10 @@ MODPERL_PIC_OBJS = $(MODPERL_O_PIC_FILES) $(MODPERL_XS_O_PIC_FILES)
 all: lib
 
 lib: $(MODPERL_LIB)
+
+install:
+	$(MODPERL_TEST_F) $(MODPERL_LIB_SHARED) && \
+	$(MODPERL_CP) $(MODPERL_LIB_SHARED) $(MODPERL_AP_LIBEXECDIR)
 
 .SUFFIXES: .xs .c $(MODPERL_OBJ_EXT) .lo .i .s
 
