@@ -55,7 +55,6 @@ static void modperl_bucket_sv_free(void *e)
 static const apr_bucket_type_t modperl_bucket_sv_type = {
     "mod_perl SV bucket", 4,
     modperl_bucket_sv_destroy,
-    modperl_bucket_sv_free,
     modperl_bucket_sv_read,
     apr_bucket_setaside_notimpl,
     apr_bucket_shared_split,
@@ -67,8 +66,9 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
                                           SV *sv,
                                           int offset, int len)
 {
-    modperl_bucket_sv_t *svbucket = 
-        (modperl_bucket_sv_t *)safemalloc(sizeof(*svbucket));
+    modperl_bucket_sv_t *svbucket; 
+
+    Newz(0, svbucket, 1, modperl_bucket_sv_t);
 
     bucket = apr_bucket_shared_make(bucket, svbucket, offset, offset+len);
 
@@ -79,7 +79,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     svbucket->sv = sv;
 
     if (!bucket) {
-        safefree(svbucket);
+        Safefree(svbucket);
         return NULL;
     }
 
@@ -88,6 +88,8 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d\n",
                (unsigned long)sv, SvREFCNT(sv));
 
+    bucket->free = modperl_bucket_sv_free;
+
     bucket->type = &modperl_bucket_sv_type;
 
     return bucket;
@@ -95,7 +97,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
 
 apr_bucket *modperl_bucket_sv_create(pTHX_ SV *sv, int offset, int len)
 {
-    apr_bucket *bucket = (apr_bucket *)calloc(1, sizeof(*bucket));
+    apr_bucket *bucket = (apr_bucket *)safemalloc(sizeof(*bucket));
     APR_BUCKET_INIT(bucket);
     return modperl_bucket_sv_make(aTHX_ bucket, sv, offset, len);
 }
