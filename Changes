@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_20-dev
 
+Perl, <Perl> and PerlPostConfigRequires were leaking some memory at
+startup. Use parms->temp_pool instead of parms->pool for temporary
+memory allocations. [Gozer]
+
 deal with a situation where an object is used to construct another
 object, but it's then auto-DESTROYed by perl rendering the object that
 used it corrupted. the solution is to make the newly created objects
