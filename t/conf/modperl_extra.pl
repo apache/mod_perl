@@ -5,6 +5,7 @@ use Apache::Server ();
 use Apache::Connection ();
 
 use Apache::Const -compile => ':common';
+use APR::Const -compile => ':common';
 
 use APR::Table ();
 
