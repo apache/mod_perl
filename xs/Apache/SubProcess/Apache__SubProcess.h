@@ -115,12 +115,15 @@ static XS(MPXS_modperl_spawn_proc_prog)
         const char **argv;
         int i;
         AV *av_argv;
+        I32 len=-1, av_items=0;
         request_rec *r = modperl_xs_sv2request_rec(aTHX_ ST(0), NULL, cv);
         const char *command = (const char *)SvPV_nolen(ST(1));
 
         if (items == 3) {
             if (SvROK(ST(2)) && SvTYPE(SvRV(ST(2))) == SVt_PVAV) {
                 av_argv = (AV*)SvREFCNT_inc(SvRV(ST(2)));
+                len = AvFILLp(av_argv);
+                av_items = len+1;
             }
             else {
                 Perl_croak(aTHX_ usage);
@@ -129,21 +132,21 @@ static XS(MPXS_modperl_spawn_proc_prog)
         else {
             av_argv = newAV();
         }
-        
+
         /* ap_os_create_privileged_process expects ARGV as char
          * **argv, with terminating NULL and the program itself as a
          * first item.
          */
-        argv = apr_palloc(r->pool,
-                          (3 + av_len(av_argv)) * sizeof(char *));
+        argv = apr_palloc(r->pool, (av_items + 2) * sizeof(char *));
         argv[0] = command;
-        for (i = 0; i <= av_len(av_argv); i++) {
+        for (i = 0; i <= len; i++) {
             argv[i+1] = (const char *)SvPV_nolen(AvARRAY(av_argv)[i]);
         }
         argv[i+1] = NULL;
 #if 0
-        for (i=0; i<=av_len(av_argv)+2; i++) {
-            Perl_warn(aTHX_ "arg: %d %s\n", i, argv[i]);
+        for (i=0; i<=len+2; i++) {
+            Perl_warn(aTHX_ "arg: %d %s\n",
+                      i, argv[i] ? argv[i] : "NULL");
         }
 #endif
         rc = modperl_spawn_proc_prog(r, command, &argv,
