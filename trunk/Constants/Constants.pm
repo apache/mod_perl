@@ -147,6 +147,7 @@ the Apache B<get_remote_host> method:
 This is the full set of HTTP response codes:
 (NOTE: not all implemented here)
 
+ HTTP_OK
  HTTP_METHOD_NOT_ALLOWED
  HTTP_NOT_ACCEPTABLE
  HTTP_LENGTH_REQUIRED
