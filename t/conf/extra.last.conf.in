@@ -3,7 +3,7 @@ PerlModule Apache::Module
 
 ### --------------------------------- ###
 <Perl >
-push @Alias, ['/perl_sections', '@DocumentRoot@'],
+push @Alias, ['/perl_sections', '@DocumentRoot@'];
 $Location{'/perl_sections'} = {
 	'PerlInitHandler' => 'ModPerl::Test::add_config',
 	'AuthType' => 'Basic',
