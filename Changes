@@ -10,6 +10,13 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.30_01-dev
 
+for some reason .pm files during the modperl build see $ENV{PERL5LIB}
+set in Makefile.PL, which is used for generating Makefiles, as
+"PERL5LIB=/path:/another/path" instead of "/path:/another/path"
+essentially rendering this env var useless. I'm not sure why, may be
+MakeMaker kicks in somewhere. Trying to workaround by
+s/PERL5LIB/PERL5LIB_ENV/, using anything that's not PERL5LIB. [Stas]
+
 change $INC{$key} = undef; to delete $INC{$key}; in PerlFreshRestart
 [Geoffrey Young]
 
