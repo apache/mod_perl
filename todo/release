@@ -9,25 +9,6 @@
   ModPerl::Util::unload_package() which perfectly fits the timing when
   the leak was introduced (when PerlRun started to use unload_package).
 
-* take a look at this:
-Index: t/response/TestAPI/rflush.pm
-===================================================================
---- t/response/TestAPI/rflush.pm        (revision 122914)
-+++ t/response/TestAPI/rflush.pm        (working copy)
-@@ -36,6 +36,10 @@
-
-     $r->content_type('text/plain');
-
-+# XXX: perlio needs to be tested with cases:
-+# my $oldfh = select(STDOUT); $| = 1; select($oldfh);
-+# and see if the print is unbuffered
-+
-     # print is now unbuffered
-     local $| = 1;
-     $r->print("<foo"); # this sends the data in the buffer + flush bucket
-
-
-
 * we need to deal with a situation where an object is used to
   construct another object, but it's then auto-DESTROYed by perl
   rendering the object that used it corrupted.
