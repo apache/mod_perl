@@ -532,8 +532,8 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     ap_add_version_component(pconf,
                              Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
     modperl_mgv_hash_handlers(pconf, s);
-    modperl_modglobal_hash_keys();
-    modperl_env_hash_keys();
+    modperl_modglobal_hash_keys(aTHX);
+    modperl_env_hash_keys(aTHX);
 #ifdef USE_ITHREADS
     modperl_init_clones(s, pconf);
 #endif

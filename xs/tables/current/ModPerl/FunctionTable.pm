@@ -1591,7 +1591,12 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'void',
     'name' => 'modperl_env_hash_keys',
-    'args' => []
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      }
+    ]
   },
   {
     'return_type' => 'void',
@@ -3104,7 +3109,12 @@ $ModPerl::FunctionTable = [
   {
     'return_type' => 'void',
     'name' => 'modperl_modglobal_hash_keys',
-    'args' => []
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      }
+    ]
   },
   {
     'return_type' => 'modperl_modglobal_key_t *',

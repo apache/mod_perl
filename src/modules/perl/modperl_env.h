@@ -14,7 +14,7 @@
 #define modperl_envelem_tie(sv, key, klen) \
     sv_magic(sv, Nullsv, 'e', key, klen)
 
-void modperl_env_hash_keys(void);
+void modperl_env_hash_keys(pTHX);
 
 void modperl_env_clear(pTHX);
 
