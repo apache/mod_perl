@@ -630,8 +630,6 @@ MP_CMD_SRV_DECLARE(END)
  */
 MP_CMD_SRV_DECLARE(load_module)
 {
-    apr_pool_t *p = parms->pool;
-    server_rec *s = parms->server;
     const char *errmsg;
 
     MP_TRACE_d(MP_FUNC, "PerlLoadModule %s\n", arg);
@@ -643,7 +641,7 @@ MP_CMD_SRV_DECLARE(load_module)
         return errmsg;
     }
 
-    return modperl_module_add(p, s, arg);
+    return NULL;
 }
 
 /* propogate filters insertion ala SetInputFilter */

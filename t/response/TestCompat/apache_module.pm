@@ -11,11 +11,13 @@ use Apache::Test;
 use Apache::compat ();
 use Apache::Constants qw(OK);
 
-our @APACHE_MODULE_COMMANDS = (
+my @directives = (
     {
         name => 'TestCompatApacheModuleParms',
     },
 );
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 sub TestCompatApacheModuleParms {
     my($self, $parms, $args) = @_;

@@ -566,13 +566,6 @@ static apr_status_t modperl_module_remove(void *data)
     return APR_SUCCESS;
 }
 
-static AV *modperl_module_cmds_get(pTHX_ module *modp)
-{
-    char *name = Perl_form(aTHX_ "%s::%s", modp->name,
-                           "APACHE_MODULE_COMMANDS");
-    return get_av(name, FALSE);
-}
-
 static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
                                             const char *name, SV **retval)
 {
@@ -633,7 +626,7 @@ static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
 }
 
 static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
-                                           module *modp)
+                                           module *modp, SV *mod_cmds)
 {
     const char *errmsg;
     apr_array_header_t *cmds;
@@ -643,12 +636,8 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     dTHXa(scfg->mip->parent->perl);
-#endif
-
-    if (!(module_cmds = modperl_module_cmds_get(aTHX_ modp))) {
-        return apr_pstrcat(p, "module ", modp->name,
-                           " does not define @APACHE_MODULE_COMMANDS", NULL);
-    }
+#endif 
+    module_cmds = (AV*)SvRV(mod_cmds);
 
     fill = AvFILL(module_cmds);
     cmds = apr_array_make(p, fill+1, sizeof(command_rec));
@@ -788,7 +777,7 @@ static modperl_mgv_t *modperl_module_fetch_method(pTHX_
 }
 
 const char *modperl_module_add(apr_pool_t *p, server_rec *s,
-                               const char *name)
+                               const char *name, SV *mod_cmds)
 {
     MP_dSCFG(s);
 #ifdef USE_ITHREADS
@@ -834,7 +823,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
 
     modp->cmds = NULL;
 
-    if ((errmsg = modperl_module_add_cmds(p, s, modp))) {
+    if ((errmsg = modperl_module_add_cmds(p, s, modp, mod_cmds))) {
         return errmsg;
     }
 
@@ -851,7 +840,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
         scfg->modules = apr_hash_make(p);
     }
 
-    apr_hash_set(scfg->modules, name, APR_HASH_KEY_STRING, modp);
+    apr_hash_set(scfg->modules, apr_pstrdup(p, name), APR_HASH_KEY_STRING, modp);
 
 #ifdef USE_ITHREADS
     /* 

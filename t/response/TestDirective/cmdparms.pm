@@ -27,13 +27,15 @@ use Apache::Const -compile => qw(
 
 use constant KEY => "TestCmdParms";
 
-our @APACHE_MODULE_COMMANDS = (
+my @directives = (
     {
         name        => +KEY,
         cmd_data    => 'cmd_data',
         errmsg      => 'errmsg',
     },
 );
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 my @methods = qw(cmd context directive info override path
                  pool server temp_pool);

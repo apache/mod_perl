@@ -16,12 +16,14 @@ use Apache::ServerUtil ();
 use Apache::Const -compile => qw(OK);
 
 
-our @APACHE_MODULE_COMMANDS = (
+my @directives = (
     { name => 'MyPlus' },
     { name => 'MyList' },
     { name => 'MyAppend' },
     { name => 'MyOverride' },
 );
+
+Apache::Module::add(__PACKAGE__, \@directives);
 
 sub MyPlus     { set_val('MyPlus',     @_) }
 sub MyAppend   { set_val('MyAppend',   @_) }

@@ -73,3 +73,25 @@ int mpxs_Apache__Module_ap_api_minor_version(pTHX_ module *mod)
 {
     return mod->minor_version;
 }
+
+static MP_INLINE void mpxs_Apache__Module_add(pTHX_ 
+                                              char *package,
+                                              SV *cmds)
+{
+    const char *error;
+    server_rec *s;
+    
+    if (!(SvROK(cmds) && (SvTYPE(SvRV(cmds)) == SVt_PVAV))) {
+        Perl_croak(aTHX_ "Usage: Apache::Module::add(__PACKAGE__, [])");
+    }
+    
+    s = modperl_global_get_server_rec();
+    error = modperl_module_add(s->process->pconf, s, package, cmds);
+    
+    if (error) {
+        Perl_croak(aTHX_ "Apache::Module::add(%s) failed : %s", 
+                   package, error);
+    }
+
+    return;
+}

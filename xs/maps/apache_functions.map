@@ -212,6 +212,7 @@ ap_remove_loaded_module
 >ap_show_modules
 >ap_register_hooks
  mpxs_Apache__Module_loaded
+ mpxs_Apache__Module_add
  #ap_get_module_config
  mpxs_Apache__Module_get_config | | pmodule, s, v=NULL
  mpxs_Apache__Module_ap_api_major_version
