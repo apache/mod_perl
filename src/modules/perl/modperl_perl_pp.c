@@ -7,7 +7,7 @@ static enum opcode MP_pp_map[] = {
     OP_REQUIRE
 };
 
-typedef OP * MP_FUNC_T(modperl_pp_t)(pTHX);
+typedef OP * (*modperl_pp_t)(pTHX);
 
 static modperl_pp_t MP_PERL_ppaddr[MP_OP_max];
 
