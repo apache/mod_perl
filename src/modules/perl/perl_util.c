@@ -143,6 +143,17 @@ request_rec *sv2request_rec(SV *in, char *class, CV *cv)
     return r;
 }
 
+pool *perl_get_util_pool(void)
+{
+    request_rec *r = NULL;
+
+    if((r = perl_request_rec(NULL)))
+        return r->pool;
+    else
+        return perl_get_startup_pool();
+    return NULL;
+}
+
 pool *perl_get_startup_pool(void)
 {
     SV *sv = perl_get_sv("Apache::__POOL", FALSE);

@@ -10,17 +10,7 @@
 #define DEFAULT_TIME_FORMAT "%a, %d %b %Y %H:%M:%S %Z"
 
 #define parsedate ap_parseHTTPdate
- 
-static pool *util_pool(void)
-{
-    request_rec *r = NULL;
-
-    if((r = perl_request_rec(NULL)))
-        return r->pool;
-    else
-        return perl_get_startup_pool();
-    return NULL;
-}
+#define util_pool() perl_get_util_pool()
 
 static SV *size_string(size_t size)
 {
