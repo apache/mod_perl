@@ -164,6 +164,14 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
     return sv;
 }
 
+/* XXX: sv_setref_uv does not exist in 5.6.x */
+MP_INLINE SV *modperl_perl_sv_setref_uv(pTHX_ SV *rv,
+                                        const char *classname, UV uv)
+{
+    sv_setuv(newSVrv(rv, classname), uv);
+    return rv;
+}
+
 apr_pool_t *modperl_sv2pool(pTHX_ SV *obj)
 {
     apr_pool_t *p = NULL;
