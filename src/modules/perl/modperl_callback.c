@@ -22,23 +22,21 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
-    int tainted_orig = PL_tainted;
 
     /* handler callbacks shouldn't affect each other's taintedness
-     * state, so start every callback with a clear record and restore
-     * at the end. one of the main problems we are trying to solve is
-     * that when modperl_croak called (which calls perl's
-     * croak(Nullch) to throw an error object) it leaves the
-     * interprter in the tainted state (which supposedly will be fixed
-     * in 5.8.6) which later affects other callbacks that call eval,
-     * etc, which triggers perl crash with:
-     * Insecure dependency in eval while running setgid.
-     * Callback called exit.
+     * state, so start every callback with a clear tainted status
+     * before and after the callback one of the main problems we are
+     * trying to solve is that when modperl_croak called (which calls
+     * perl's croak(Nullch) to throw an error object) it leaves the
+     * interpreter in the tainted state which later affects other
+     * callbacks that call eval, etc., which triggers perl crash with:
+     * Insecure dependency in eval while running setgid.  Callback
+     * called exit.
      */
     TAINT_NOT;
 
     if ((status = modperl_handler_resolve(aTHX_ &handler, p, s)) != OK) {
-        PL_tainted = tainted_orig;
+        TAINT_NOT;
         return status;
     }
 
@@ -136,7 +134,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
         }
     }
 
-    PL_tainted = tainted_orig;
+    TAINT_NOT;
 
     return status;
 }
