@@ -195,7 +195,8 @@ sub run {
     }
 
     { # run the code and preserve warnings setup when it's done
-        no warnings;
+        no warnings FATAL => 'all';
+        #local $^W = 0;
         eval { $cv->($r, @_) };
         ModPerl::Global::special_list_call(END => $package);
     }
@@ -512,6 +513,10 @@ sub flush_namespace_normal {
 
     no strict 'refs';
     my $tab = \%{ $self->{PACKAGE} . '::' };
+
+    # below we assign to a symbol first before undef'ing it, to avoid
+    # nuking aliases. If we undef directly we may undef not only the
+    # alias but the original function as well
 
     for (keys %$tab) {
         my $fullname = join '::', $self->{PACKAGE}, $_;
