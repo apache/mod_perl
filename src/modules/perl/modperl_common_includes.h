@@ -19,6 +19,7 @@
 /* header files which are independet of Apache/mod_perl */
 
 #include "modperl_apr_includes.h"
+#include "modperl_apr_compat.h"
 #include "modperl_perl_includes.h"
 #include "modperl_common_types.h"
 

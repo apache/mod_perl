@@ -250,7 +250,8 @@ my %defines_wanted = (
         error     => [qw{APR_E}],
         filemode  => ["APR_($filemode)"],
         filepath  => [qw{APR_FILEPATH_}],
-        fileperms => [qw{APR_\w(READ|WRITE|EXECUTE)}],
+        fileprot  => [qw{APR_FILEPROT_}],
+        filetype  => [qw{APR_FILETYPE_}],
         finfo     => [qw{APR_FINFO_}],
         flock     => [qw{APR_FLOCK_}],
         hook      => [qw{APR_HOOK_}],
@@ -276,7 +277,7 @@ while (my($class, $groups) = each %defines_wanted) {
 
 my %enums_wanted = (
     Apache => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
-    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech apr_filetype) },
+    APR => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
 );
 
 my $defines_unwanted = join '|', qw{

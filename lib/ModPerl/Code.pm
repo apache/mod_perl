@@ -656,7 +656,7 @@ my @g_h_names = map { "modperl_$_" } qw(hooks directives flags trace
                                         largefiles);
 my @h_names = (@c_names, map { "modperl_$_" } @h_src_names,
                qw(types time apache_includes perl_includes apr_includes
-                  common_includes common_types));
+                  apr_compat common_includes common_types));
 sub h_files { [map { "$_.h" } @h_names, @g_h_names] }
 
 sub clean_files {
