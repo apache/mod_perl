@@ -266,8 +266,6 @@ sub destructor {
 sub first_class {
     my($self, $func) = @_;
 
-    return $func->{return_type} if $func->{return_type} =~ /::/;
-
     for my $e (@{ $func->{args} }) {
         next unless $e->{type} =~ /::/;
         #there are alot of util functions that take an APR::Pool
