@@ -773,12 +773,11 @@ static void modperl_package_clear_stash(pTHX_ const char *package)
             key = hv_iterkey(he, &len);
             if (MP_SAFE_STASH(key, len)) {
                 SV *val = hv_iterval(stash, he);
-                char *this_stash = HvNAME(GvSTASH(val));
                 /* The safe thing to do is to skip over stash entries
                  * that don't come from the package we are trying to
                  * unload
                  */
-                if (strcmp(this_stash, package) == 0) {
+                if (GvSTASH(val) == stash) {
                     hv_delete(stash, key, len, G_DISCARD);
                 }
             }

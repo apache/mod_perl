@@ -24,6 +24,7 @@ my $initial = <<'EOF';
 sub simple { 'simple' }
 use constant const => 'const';
 sub prototype($) { 'prototype' }
+sub promised;
 EOF
 
 my $modified = <<'EOF';
