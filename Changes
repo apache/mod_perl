@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_14-dev
 
+Fix a bug in special blocks handling (like END), which until now was
+dropping on the floor all blocks but the last one (mainly affecting
+registry handlers). [Stas]
+
 The filter streaming API print() function, now correctly handles a
 binary data [Stas]
 

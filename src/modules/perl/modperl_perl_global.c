@@ -135,7 +135,7 @@ static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
     AvARRAY(av)[AvFILLp(av)--] = &PL_sv_undef;
 
     /* push @{ $PL_modglobal{$key}{$package} }, $cv */
-    av_store(mav, AvFILLp(av)+1, sv);
+    av_store(mav, AvFILLp(mav)+1, sv);
 
     return 1;
 }
