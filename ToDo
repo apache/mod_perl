@@ -40,9 +40,6 @@ POSSIBLE NEW FEATURES
 
 - replace Apache::StatINC with Apache::ModuleReload?
 
-- ken w's Apache::PerlRun patch to change Apache class relationship
-  from is-a to has-a
-
 - ken w's Apache::test patch
 
 - CHECK blocks? [Michael J Schout <mschout@gkg.net>]
@@ -118,6 +115,9 @@ CONFIG STUFF
 ---------------------------------------------------------------------------
 MISC BUGS
 ---------------------------------------------------------------------------
+
+- Apache->request($r) digs the request_rec out of $r regardless of the 
+  type/class, e.g. Apache->request(bless {r => $r}, 'My::Apache')
 
 - $r->finfo problem with HTML::Mason::ApacheHandler
   [Shane Adams <shane@viralon.com>]

@@ -19,32 +19,22 @@ unless (defined $Apache::Registry::MarkLine) {
 $Debug ||= 0;
 my $Is_Win32 = $^O eq "MSWin32";
 
-@Apache::PerlRun::ISA = qw(Apache);
-
 sub new {
     my($class, $r) = @_;
-    return $r unless ref($r) eq "Apache";
-    if(ref $r) {
-	$r->request($r);
-    }
-    else {
-	$r = Apache->request;
-    }
     my $filename = $r->filename;
     $r->warn("Apache::PerlRun->new for $filename in process $$")
 	if $Debug && $Debug & 4;
 
-    bless {
-	'_r' => $r,
-    }, $class;
+    return bless {r=>$r}, $class;
 }
 
 sub can_compile {
     my($pr) = @_;
-    my $filename = $pr->filename;
-    if (-r $filename && -s _) {
-	if (!($pr->allow_options & OPT_EXECCGI)) {
-	    $pr->log_reason("Options ExecCGI is off in this directory",
+    my $r = $pr->{r};
+    my $filename = $r->filename;
+    if (-r $r->finfo && -s _) {
+	if (!($r->allow_options & OPT_EXECCGI)) {
+	    $r->log_reason("Options ExecCGI is off in this directory",
 			   $filename);
 	    return FORBIDDEN;
  	}
@@ -52,7 +42,7 @@ sub can_compile {
 	    return DECLINED;
 	}
 	unless (-x _ or $Is_Win32) {
-	    $pr->log_reason("file permissions deny server execution",
+	    $r->log_reason("file permissions deny server execution",
 			   $filename);
 	    return FORBIDDEN;
 	}
@@ -65,8 +55,7 @@ sub can_compile {
 }
 
 sub mark_line {
-    my($pr) = @_;
-    my $filename = $pr->filename;
+    my $filename = shift->{r}->filename;
     return $Apache::Registry::MarkLine ?
 	"\n#line 1 $filename\n" : "";
 }
@@ -115,26 +104,28 @@ sub set_mtime {
 sub compile {
     my($pr, $eval) = @_;
     $eval ||= $pr->{'sub'};
-    $pr->clear_rgy_endav;
-    $pr->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
+    my $r = $pr->{r};
+    $r->clear_rgy_endav;
+    $r->log_error("Apache::PerlRun->compile") if $Debug && $Debug & 4;
     Apache->untaint($$eval);
     {
 	no strict; #so eval'd code doesn't inherit our bits
 	eval $$eval;
     }
-    $pr->stash_rgy_endav;
+    $r->stash_rgy_endav;
     return $pr->error_check;
 }
 
 sub run {
     my $pr = shift;
     my $package = $pr->{'namespace'};
+    my $r = $pr->{r};
 
     my $rc = OK;
     my $cv = \&{"$package\::handler"};
 
     my $oldwarn = $^W;
-    eval { $rc = &{$cv}($pr, @_) } if $pr->seqno;
+    eval { $rc = &{$cv}($r, @_) } if $r->seqno;
     $pr->{status} = $rc;
     $^W = $oldwarn;
 
@@ -142,11 +133,11 @@ sub run {
     if($@) {
 	$errsv = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks
-	$@{$pr->uri} = $errsv;
+	$@{$r->uri} = $errsv;
     }
 
     if($errsv) {
-	$pr->log_error($errsv);
+	$r->log_error($errsv);
 	return SERVER_ERROR;
     }
 
@@ -154,24 +145,25 @@ sub run {
 }
 
 sub status {
-    shift->{'_r'}->status;
+    shift->{r}->status;
 }
 
 sub namespace_from {
     my($pr) = @_;
+    my $r = $pr->{r};
 
-    my $uri = $pr->uri; 
+    my $uri = $r->uri;
 
-    $pr->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
+    $r->log_error(sprintf "Apache::PerlRun->namespace escaping %s",
 		  $uri) if $Debug && $Debug & 4;
 
-    my $path_info = $pr->path_info;
+    my $path_info = $r->path_info;
     my $script_name = $path_info && $uri =~ /$path_info$/ ?
 	substr($uri, 0, length($uri)-length($path_info)) :
 	$uri;
 
-    if ($Apache::Registry::NameWithVirtualHost && $pr->server->is_virtual) {
-	my $name = $pr->get_server_name;
+    if ($Apache::Registry::NameWithVirtualHost && $r->server->is_virtual) {
+	my $name = $r->get_server_name;
 	$script_name = join "", $name, $script_name if $name;
     }
 
@@ -201,7 +193,7 @@ sub namespace {
  
     $root ||= "Apache::ROOT";
 
-    $pr->log_error("Apache::PerlRun->namespace: package $root$script_name")
+    $pr->{r}->log_error("Apache::PerlRun->namespace: package $root$script_name")
 	if $Debug && $Debug & 4;
 
     $pr->{'namespace'} = $root.$script_name;
@@ -210,13 +202,13 @@ sub namespace {
 
 sub readscript {
     my $pr = shift;
-    $pr->{'code'} = $pr->slurp_filename;
+    $pr->{'code'} = $pr->{r}->slurp_filename;
 }
 
 sub error_check {
     my $pr = shift;
     if ($@ and substr($@,0,4) ne " at ") {
-	$pr->log_error("PerlRun: `$@'");
+	$pr->{r}->log_error("PerlRun: `$@'");
 	$@{$pr->uri} = $@;
 	$@ = ''; #XXX fix me, if we don't do this Apache::exit() breaks	
 	return SERVER_ERROR;
@@ -258,12 +250,12 @@ sub parse_cmdline {
 
 sub chdir_file {
     my($pr, $dir) = @_;
-    $pr->{'_r'}->chdir_file($dir ? $dir : $pr->filename);
+    my $r = $pr->{r};
+    $r->chdir_file($dir ? $dir : $r->filename);
 }
 
 sub set_script_name {
-    my($pr) = @_;
-    *0 = \$pr->filename;
+    *0 = \(shift->{r}->filename);
 }
 
 sub handler ($$) {
@@ -419,3 +411,4 @@ perl(1), mod_perl(3), Apache::Registry(3)
 
 Doug MacEachern
 
+=cut

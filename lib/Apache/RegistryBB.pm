@@ -16,7 +16,7 @@ use Apache::RegistryNG ();
 
 #skip -x, OPT_EXEC, etc. checks
 sub can_compile {
-    my $r = shift;
+    my $r = shift->{r};
     unless (-r $r->finfo) {
 	$r->log_reason("file does not exist");
 	return NOT_FOUND;

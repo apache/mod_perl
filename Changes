@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.24_01-dev
 
+change Apache::PerlRun's Apache class relationship from is-a to has-a
+[Ken Williams <ken@forum.swarthmore.edu>]
+
 Apache::SubRequest->run(1) allows ap_send_http_headers() to output for
 subrequests
 
