@@ -505,7 +505,7 @@ sub MY::test {
 
     my $env = Apache::TestConfig->passenv_makestr();
 
-    my $preamble = WIN32 ? "" : <<EOF;
+    my $preamble = Apache::TestConfig::WIN32 ? "" : <<EOF;
 PASSENV = $env
 EOF
 
