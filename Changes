@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.999_22
+=item 1.999_22-dev
 
 Fix broken MP_STATIC_EXTS=1 build. [Gozer]
 
