@@ -1981,9 +1981,10 @@ EOS
 # preparing and writing Configuration to Apache::MyConfig
     my %my_config = %callback_hooks;
     my @other_hooks = qw(APACHE_SRC SSL_BASE APXS PERL_USELARGEFILES
-                         PERL_TRACE PERL_DEBUG APACI_ARGS APACHE_PREFIX
-                         DO_HTTPD NO_HTTPD PREP_HTTPD USE_APACI
-                         APACHE_HEADER_INSTALL PERL_STATIC_EXTS );
+                         PERL_TRACE PERL_DEBUG APACI_ARGS
+                         APACHE_PREFIX DO_HTTPD NO_HTTPD PREP_HTTPD
+                         USE_APACI APACHE_HEADER_INSTALL
+                         PERL_STATIC_EXTS PERL_SSI PERL_SECTIONS);
     {
         no strict 'refs';
         $my_config{$_} = ${$_} for @other_hooks;
