@@ -38,6 +38,7 @@ use Apache::Connection ();
 use Apache::ServerRec ();
 use Apache::ServerUtil ();
 use Apache::Access ();
+use Apache::Module ();
 use Apache::RequestRec ();
 use Apache::RequestIO ();
 use Apache::RequestUtil ();
@@ -265,7 +266,6 @@ sub request {
 }
 
 {
-    require Apache::Module;
     my $orig_sub = *Apache::Module::top_module{CODE};
     *Apache::Module::top_module = sub {
         $orig_sub->();
@@ -273,7 +273,6 @@ sub request {
 }
 
 {
-    require Apache::Module;
     my $orig_sub = *Apache::Module::get_config{CODE};
     *Apache::Module::get_config = sub {
         shift if $_[0] eq 'Apache::Module';
