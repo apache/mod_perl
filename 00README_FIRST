@@ -21,7 +21,7 @@ to build mod_perl static:
 
 % cd ../apache-2.0/src
 % ./configure --prefix=$HOME/apache-2.0 --with-mpm=mpmt_pthread
-% patch -p1 < ../modperl-2.0/patches/link-hack.pat
+% patch -p1 < ../../modperl-2.0/patches/link-hack.pat
 % make
 
 to build mod_perl dynamic:
