@@ -58,7 +58,7 @@ my $srcdir = '../../../src/modules/perl';
 
 # link the following into APR.so so other APR:: modules can be used
 # outside of httpd
-my @names = map { "modperl_$_" } (qw(error),
+my @names = map { "modperl_$_" } (qw(error bucket),
                                   map { "common_$_" } qw(util log));
 my(@obj, @clean, %src);
 for (@names) {
