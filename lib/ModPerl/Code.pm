@@ -17,6 +17,19 @@ my %handlers = (
     Connection => [qw(PreConnection PostConnection)],
 );
 
+my %hooks = (
+    ChildInit => 'child_init',
+    PostReadRequest => 'post_read_request',
+    Trans => 'translate_name',
+    HeaderParser => 'header_parser',
+    Access => 'access_checker',
+    Authen => 'check_user_id',
+    Authz => 'auth_checker',
+    Type => 'type_checker',
+    Fixup => 'fixups',
+    Log => 'log_transaction'
+);
+
 my %hook_proto = (
     Process    => {
         ret  => 'void',
@@ -42,6 +55,9 @@ my %hook_proto = (
 
 $hook_proto{PerDir} = $hook_proto{PerSrv};
 
+my $dcfg_get = 
+  'modperl_dir_config_t *dcfg = (modperl_dir_config_t *)dummy';
+
 my %directive_proto = (
     PerSrv     => {
         args => [{type => 'cmd_parms', name => 'parms'},
@@ -53,15 +69,15 @@ my %directive_proto = (
     },
     PerDir     => {
         args => [{type => 'cmd_parms', name => 'parms'},
-                 {type => 'modperl_dir_config_t', name => 'dcfg'},
+                 {type => 'void', name => 'dummy'},
                  {type => 'char', name => 'arg'}],
-        cfg  => {get => '', name => 'dcfg'},
+        cfg  => {get => $dcfg_get, name => 'dcfg'},
         scope => 'OR_ALL',
     },
 );
 
 while (my($k,$v) = each %directive_proto) {
-    $directive_proto{$k}->{ret} = 'char *';
+    $directive_proto{$k}->{ret} = 'const char *';
 }
 
 for (qw(Process Connection Files)) {
@@ -88,6 +104,30 @@ sub new {
 
 sub path { shift->{path} }
 
+sub handler_desc {
+    my($self, $h_add, $c_add) = @_;
+    local $" = ",\n";
+    while (my($class, $h) = each %{ $self->{handler_index_desc} }) {
+        my $func = canon_func($class, 'handler', 'desc');
+        my $array = join '_', 'MP', $func;
+        my $proto = "const char *$func(int idx)";
+
+        $$h_add .= "$proto;\n";
+
+        $$c_add .= <<EOF;
+static const char * $array [] = {
+@{ [ map { $_ ? qq(    "$_") : '    NULL' } @$h, '' ] }
+};
+
+$proto
+{
+    return $array [idx];
+}
+
+EOF
+    }
+}
+
 sub generate_handler_index {
     my($self, $h_fh) = @_;
 
@@ -101,6 +141,7 @@ sub generate_handler_index {
         for my $name (@$handlers) {
             my $define = canon_define($name, 'handler');
             $self->{handler_index}->{$class}->[$i] = $define;
+            $self->{handler_index_desc}->{$class}->[$i] = "Perl${name}Handler";
             print $h_fh "#define $define $i\n";
             $i++;
         }
@@ -110,6 +151,8 @@ sub generate_handler_index {
 sub generate_handler_hooks {
     my($self, $h_fh, $c_fh) = @_;
 
+    my @register_hooks;
+
     while (my($class, $prototype) = each %{ $self->{hook_proto} }) {
         my $callback = canon_func($class, 'callback');
         my $return = $prototype->{ret} eq 'void' ? '' : 'return';
@@ -117,6 +160,11 @@ sub generate_handler_hooks {
 
         for my $handler (@{ $self->{handlers}{$class} }) {
             my $name = canon_func($handler, 'handler');
+
+            if (my $hook = $hooks{$handler}) {
+                push @register_hooks,
+                  "    ap_hook_$hook($name, NULL, NULL, HOOK_LAST);";
+            }
 
             my($protostr, $pass) = canon_proto($prototype, $name);
             my $ix = $self->{handler_index}->{$class}->[$i++];
@@ -132,10 +180,21 @@ $protostr
 EOF
         }
     }
+
+    local $" = "\n";
+    my $hooks_proto = 'void modperl_register_handler_hooks(void)';
+    my $h_add = "$hooks_proto;\n";
+    my $c_add = "$hooks_proto {\n@register_hooks\n}\n";
+
+    $self->handler_desc(\$h_add, \$c_add);
+
+    return ($h_add, $c_add);
 }
 
 sub generate_handler_directives {
     my($self, $h_fh, $c_fh) = @_;
+
+    my @cmd_entries;
 
     while (my($class, $handlers) = each %{ $self->{handlers} }) {
         my $prototype = $self->{directive_proto}->{$class};
@@ -151,6 +210,8 @@ sub generate_handler_directives {
 
             print $h_fh "$protostr;\n";
 
+            push @cmd_entries, $cmd_name;
+
             print $h_fh <<EOF;
 
 #define $cmd_name \\
@@ -162,12 +223,16 @@ EOF
 $protostr
 {
     $prototype->{cfg}->{get};
-    MP_TRACE_d(MP_FUNC, "push \@%s, %s\n", parms->cmd->name, arg);
+    MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
     return modperl_cmd_push_handlers(&($av), arg, parms->pool);
 }
 EOF
         }
     }
+
+    my $h_add =  '#define MP_CMD_ENTRIES \\' . "\n" . join ', \\'."\n", @cmd_entries;
+
+    return ($h_add, "");
 }
 
 sub generate_flags {
@@ -388,9 +453,16 @@ sub generate {
     }
 
     for my $method (reverse sort keys %sources) {
-        $self->$method(map {
+        my($h_fh, $c_fh) = map {
             $self->fh($sources{$method}->{$_});
-        } qw(h c));
+        } qw(h c);
+        my($h_add, $c_add) = $self->$method($h_fh, $c_fh);
+        if ($h_add) {
+            print $h_fh $h_add;
+        }
+        if ($c_add) {
+            print $c_fh $c_add;
+        }
     }
 
     $self->postamble;
