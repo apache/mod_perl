@@ -104,16 +104,13 @@ is_virtual(server)
     OUTPUT:
     RETVAL
 
-char *
+void
 names(server)
     Apache::Server	server
 
     CODE:
 #if MODULE_MAGIC_NUMBER < 19980305
-    RETVAL = server->names;
+    ST(0) = sv_2mortal(newSVpv(server->names,0));
 #else
-    RETVAL = ""; /* XXX: fixme */			   
+    ST(0) = array_header2avrv(server->names);
 #endif
-
-    OUTPUT:
-    RETVAL				   
