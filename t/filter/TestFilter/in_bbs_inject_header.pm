@@ -205,6 +205,8 @@ sub handler : FilterConnectionHandler {
             # the separator header will be sent as a last header
             # so we send one newly added header and push the separator
             # to the end of the queue
+            # XXX: this is broken: the bucket must be set-aside before
+            # it can be stashed away (missing $b->setaside wrapper)
             push @{ $ctx->{buckets} }, $b;
             debug "queued header [$data]";
             inject_header_bucket($bb, $ctx);
