@@ -20,7 +20,7 @@ my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 22;
+    plan $r, tests => 24;
 
     $r->args('query');
 
@@ -146,13 +146,18 @@ sub handler {
 
         # new request
         $newr->parse_uri($url_string);
+        $newr->path_info('/bar');
         ok t_cmp($newr->uri, $path, "uri");
         ok t_cmp($newr->args, $query, "args");
+        ok t_cmp($newr->path_info, '/bar', "path_info");
 
         my $puri = $newr->parsed_uri;
         ok t_cmp($puri->path,     $path,     "path");
         ok t_cmp($puri->query,    $query,    "query");
         ok t_cmp($puri->fragment, $fragment, "fragment");
+        
+        #rpath
+        ok t_cmp($puri->rpath, '/foo', "rpath");
 
         my $port = 6767;
         $puri->port($port);
