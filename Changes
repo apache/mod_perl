@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_21-dev
 
+on Irix mod_perl.so needs to see the libperl.so symbols, which
+requires the -exports option immediately before -lperl.  [Gordon Lack
+<gml4410@ggr.co.uk>]
+
 pool arguments to startup and connection callbacks must be blessed
 into APR::Pool and not Apache::Pool class [joes]
 
