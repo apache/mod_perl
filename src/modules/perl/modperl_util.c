@@ -367,7 +367,7 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
                                SV *tsv, void *p)
 {
     SV *hv = (SV*)newHV();
-    SV *rsv = newSViv(0);
+    SV *rsv = sv_newmortal();
 
     sv_setref_pv(rsv, classname, p);
     sv_magic(hv, rsv, PERL_MAGIC_tied, Nullch, 0);
