@@ -367,7 +367,7 @@ sub reset_timeout {}
 sub cleanup_for_exec {}
 
 sub current_callback {
-    return Apache::current_callback();
+    return ModPerl::Util::current_callback();
 }
 
 sub send_http_header {
