@@ -637,10 +637,17 @@ static int modperl_hook_pre_connection(conn_rec *c, void *csd)
     return OK;
 }
 
-static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
-                                    apr_pool_t *ptemp, server_rec *s)
+static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
+                                         apr_pool_t *ptemp, server_rec *s)
 {
-#ifdef USE_ITHREADS
+    /* in the threaded environment, no server_rec/process_rec
+     * modifications should be done beyond this point */
+    if (modperl_threaded_mpm()) {
+        MP_threads_started = 1;
+    }
+
+    MP_post_post_config_phase = 1;
+    #ifdef USE_ITHREADS
     MP_dSCFG(s);
     dTHXa(scfg->mip->parent->perl);
 #endif
@@ -678,20 +685,6 @@ static int modperl_hook_post_config(apr_pool_t *pconf, apr_pool_t *plog,
     ap_log_error(APLOG_MARK, APLOG_INFO, 0, s,
                  "mod_perl: using Perl HASH_SEED: %"UVuf, MP_init_hash_seed);
 #endif
-    
-    return OK;
-}
-
-static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
-                                         apr_pool_t *ptemp, server_rec *s)
-{
-    /* in the threaded environment, no server_rec/process_rec
-     * modifications should be done beyond this point */
-    if (modperl_threaded_mpm()) {
-        MP_threads_started = 1;
-    }
-
-    MP_post_post_config_phase = 1;
     
     return OK;
 }
@@ -809,9 +802,6 @@ void modperl_register_hooks(apr_pool_t *p)
 
     ap_hook_open_logs(modperl_hook_init,
                       NULL, NULL, APR_HOOK_FIRST);
-
-    ap_hook_post_config(modperl_hook_post_config,
-                        NULL, NULL, APR_HOOK_FIRST);
 
     ap_hook_post_config(modperl_hook_post_config_last,
                         NULL, NULL, APR_HOOK_REALLY_LAST);
