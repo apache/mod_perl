@@ -42,27 +42,6 @@
     Apache->server->process->pconf->cleanup_register(sub { ...  });
   Report: geoff
 
-
-* Looks like there is an issue with filter configuration, I've noticed that:
-
-   PerlInputFilterHandler MyApache::InputFilterGET2HEAD
-
-  silently ignores the filter, whereas:
-  ^^^^^^^^^^^^^^^^
-   PerlInputFilterHandler +MyApache::InputFilterGET2HEAD
-
-  calls the filter. figure out:
-
-  - why the loading doesn't happen
-  - why the error doesn't happen (probably both connected)
-
-* Currently modperl_filter_add_{connection|request} check the filter
-  handler function attrs before accepting the filter. If the module
-  wasn't preloaded the check fails and filter handler is skipped. We
-  could have this issue documented (which is OK, but might raise too
-  many questions), but we could also always preload the filter
-  handlers. To test see TestFilter::input_msg
-
 * child processes never run END blocks. a good example is
   Apache::TestUtil, which doesn't cleanup files and dirs it has
   created, because the END block is not run.

@@ -80,8 +80,6 @@ sub response {
 __END__
 <NoAutoConfig>
 <VirtualHost TestFilter::in_bbs_msg>
-  # must be preloaded so the FilterConnectionHandler attributes will
-  # be set by the time the filter is inserted into the filter chain
   PerlModule TestFilter::in_bbs_msg
   PerlInputFilterHandler TestFilter::in_bbs_msg
 
