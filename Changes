@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.99_12-dev
 
+Fix a compilation error in APX.xs when MP_HAVE_APR_LIBS is not defined
+[Fred Moyer <fred@taperfriendlymusic.org>]
+
 fix a memory leak when $filter->ctx is used [Stas]
 
 fix buglet on Win32 (and potentially other non-Unix platforms)
