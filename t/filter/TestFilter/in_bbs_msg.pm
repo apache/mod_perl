@@ -14,7 +14,7 @@ use Apache::Const -compile => 'OK';
 use APR::Const -compile => ':common';
 
 my $from_url = '/input_filter.html';
-my $to_url = '/TestFilter::in_bbs_msg::response';
+my $to_url = '/TestFilter__in_bbs_msg';
 
 sub handler : FilterConnectionHandler {
     my($filter, $bb, $mode, $block, $readbytes) = @_;
@@ -76,7 +76,7 @@ __END__
   PerlModule TestFilter::in_bbs_msg
   PerlInputFilterHandler TestFilter::in_bbs_msg
 
-  <Location /TestFilter::in_bbs_msg::response>
+  <Location /TestFilter__in_bbs_msg>
      SetHandler modperl
      PerlResponseHandler TestFilter::in_bbs_msg::response
   </Location>

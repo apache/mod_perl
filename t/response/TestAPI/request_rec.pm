@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use Apache::TestRequest;
 
 use Apache::RequestRec ();
 use Apache::RequestUtil ();
@@ -117,9 +118,8 @@ sub handler {
 
     ok $r->filename;
 
-    ok t_cmp('/' . __PACKAGE__,
-             $r->location,
-             "location");
+    my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
+    ok t_cmp($location, $r->location, "location");
 
     my $mtime = (stat __FILE__)[9];
     $r->mtime($mtime);

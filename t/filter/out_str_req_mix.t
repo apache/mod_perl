@@ -7,7 +7,7 @@ use Apache::TestUtil;
 
 plan tests => 1, ['include'];
 
-my $location = '/TestFilter::out_str_req_mix';
+my $location = '/TestFilter__out_str_req_mix';
 
 my $content = '<!--#include virtual="/includes/REMOVEclear.shtml" -->';
 

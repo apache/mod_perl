@@ -145,7 +145,7 @@ __END__
     MyList     "VHost"
     MyAppend   "VHost"
     MyOverride "VHost"
-    <Location /TestDirective::perlloadmodule3>
+    <Location /TestDirective__perlloadmodule3>
         MyPlus 3
         MyList     "Dir"
         MyAppend   "Dir"
@@ -153,7 +153,7 @@ __END__
         SetHandler modperl
         PerlResponseHandler TestDirective::perlloadmodule3
     </Location>
-    <Location /TestDirective::perlloadmodule3/subdir>
+    <Location /TestDirective__perlloadmodule3/subdir>
         MyPlus 1
         MyList     "SubDir"
         MyAppend   "SubDir"

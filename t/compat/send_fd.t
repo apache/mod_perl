@@ -8,7 +8,7 @@ plan tests => 3;
 
 my $config = Apache::Test::config();
 
-my $url = '/TestCompat::send_fd';
+my $url = '/TestCompat__send_fd';
 
 my $data = GET_BODY($url);
 

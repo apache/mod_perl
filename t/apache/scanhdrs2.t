@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 5;
 
-my $module = 'TestApache::scanhdrs2';
+my $module = 'TestApache__scanhdrs2';
 my $location = "/$module";
 
 my $redirect = 'http://perl.apache.org/';

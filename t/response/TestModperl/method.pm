@@ -5,6 +5,7 @@ use warnings FATAL => 'all';
 
 use Apache::Test;
 use Apache::TestUtil;
+use Apache::TestRequest;
 
 use Apache::Const -compile => 'OK';
 
@@ -37,8 +38,10 @@ sub handler : method {
     ok t_cmp($class, $class,
              'handler class');
 
-    ok t_cmp('/' . $class, $r->uri,
-             '$r->uri eq __PACKAGE__');
+    ok t_cmp(
+        '/' . Apache::TestRequest::module2path($class), 
+        $r->uri,
+        '$r->uri eq $location');
 
     if ($is_obj) {
         ok t_cmp($], $self->{perl_version},

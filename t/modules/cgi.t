@@ -11,7 +11,7 @@ plan tests => 5, have 'LWP',
     {"MP_COMPAT_1X is disabled" => $build->{MP_COMPAT_1X}};
 
 my $module = 'TestModules::cgi';
-my $location = "/$module";
+my $location = '/' . Apache::TestRequest::module2path($module);
 
 my($res, $str);
 

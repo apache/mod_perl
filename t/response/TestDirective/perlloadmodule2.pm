@@ -102,10 +102,10 @@ __END__
 
     MyMergeTest one two
 </Base>
-<Location /TestDirective::perlloadmodule2>
+<Location /TestDirective__perlloadmodule2>
     MyMergeTest three four
 </Location>
-<Location /TestDirective::perlloadmodule2/subdir>
+<Location /TestDirective__perlloadmodule2/subdir>
    MyMergeTest five
    MyMergeTest six
 </Location>

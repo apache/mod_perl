@@ -10,7 +10,7 @@ use Apache::TestRequest;
 
 plan tests => 12;
 
-my $url = "/TestModperl::sameinterp";
+my $url = "/TestModperl__sameinterp";
 
 # test the tie and re-tie
 for (1..2) {

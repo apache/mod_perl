@@ -57,7 +57,7 @@ sub handler {
     # test for the request_line, status_ling, and few 
     # headers that should always be there
     ok $r->as_string =~ 
-        m!GET /TestAPI::rutil.*Host:.*200 OK.*Content-Type:!s;
+        m!GET /TestAPI__rutil.*Host:.*200 OK.*Content-Type:!s;
 
     Apache::OK;
 }

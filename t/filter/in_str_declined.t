@@ -3,7 +3,7 @@ use warnings FATAL => 'all';
 
 use Apache::TestRequest;
 
-my $location = '/TestFilter::in_str_declined';
+my $location = '/TestFilter__in_str_declined';
 
 my $chunk = "1234567890";
 my $data = $chunk x 2000;

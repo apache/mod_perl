@@ -7,6 +7,7 @@ use Apache::RequestRec ();
 our @ISA = qw(Apache::RequestRec);
 
 use Apache::Test;
+use Apache::TestRequest;
 
 use Apache::Const -compile => 'OK';
 
@@ -16,7 +17,7 @@ sub new {
     bless { r => $r }, $class;
 }
 
-my $location = '/' . __PACKAGE__;
+my $location = '/' . Apache::TestRequest::module2path(__PACKAGE__);
 
 sub handler {
     my $r = __PACKAGE__->new(shift);

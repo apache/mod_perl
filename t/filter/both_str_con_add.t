@@ -9,7 +9,7 @@ my @test_strings = qw(MODPERL 2.0 RULES);
 
 plan tests => 1 + @test_strings;
 
-my $module = "TestFilter::both_str_con_add";
+my $module = "TestFilter__both_str_con_add";
 my $socket = Apache::TestRequest::vhost_socket($module);
 
 ok $socket;

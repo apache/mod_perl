@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my $location = '/TestFilter::in_str_lc';
+my $location = '/TestFilter__in_str_lc';
 
 my $chunk = "[Foo BaR] ";
 my $data = $chunk x 250;

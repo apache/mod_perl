@@ -85,7 +85,7 @@ __END__
 <VirtualHost TestDirective::perlloadmodule4>
     # here perlloadmodule sets scfg on behalf of the base server
     MyTest4 "Vhost"
-    <Location /TestDirective::perlloadmodule4>
+    <Location /TestDirective__perlloadmodule4>
         MyTest4 "Dir"
         SetHandler modperl
         PerlResponseHandler TestDirective::perlloadmodule4

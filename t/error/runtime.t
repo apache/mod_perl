@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my $location = "/TestError::runtime";
+my $location = "/TestError__runtime";
 my $res = GET($location);
 #t_debug($res->content);
 ok t_cmp(

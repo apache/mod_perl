@@ -9,7 +9,7 @@ use Apache::TestRequest;
 # at least on FreeBSD, so it fails, skip for now.
 plan tests => 1, under_construction;
 
-my $location = "/TestError::push_handlers";
+my $location = "/TestError__push_handlers";
 my $expected = "ok";
 my $received = GET_BODY $location;
 

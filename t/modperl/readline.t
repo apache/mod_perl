@@ -7,7 +7,7 @@ use Apache::TestUtil;
 
 plan tests => 2;
 
-my $location = "/TestModperl::readline";
+my $location = "/TestModperl__readline";
 
 my $expect = join "\n", map { $_ x 24 } 'a'..'e';
 

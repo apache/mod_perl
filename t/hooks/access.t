@@ -6,7 +6,7 @@ use Apache::TestRequest;
 
 plan tests => 4;
 
-my $location = "/TestHooks::access";
+my $location = "/TestHooks__access";
 
 ok ! GET_OK $location;
 

@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 3;
 
-my $location = "/TestApache::send_cgi_header";
+my $location = "/TestApache__send_cgi_header";
 my $res = GET $location;
 
 ok t_cmp('X-Bar',
