@@ -289,8 +289,6 @@ sub map_structure {
 
     return unless $class = $self->map_type($stype);
 
-    use Apache::TestTrace;
-
     for my $e (@{ $struct->{elts} }) {
         my($name, $type) = ($e->{name}, $e->{type});
         my $rtype;
