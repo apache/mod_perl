@@ -214,4 +214,14 @@ void modperl_perl_modglobal_dump(pTHX);
 #define MP_TRACEv__PERLID
 #endif /* USE_ITHREADS */
 
+/* dumping hundreds of lines in the trace, makes it less useful. Get a
+ * string chunk of MP_TRACE_STR_LEN or less. Not too long so it won't
+ * wrap when posted in email */
+#define MP_TRACE_STR_LEN 35
+#define MP_TRACE_STR_TRUNC(p, str, count)                                \
+    count < MP_TRACE_STR_LEN                                             \
+        ? (char *)apr_pstrmemdup(p, str, count)                          \
+        : (char *)apr_psprintf(p, "%s...",                               \
+                               apr_pstrmemdup(p, str, MP_TRACE_STR_LEN))
+
 #endif /* MODPERL_UTIL_H */
