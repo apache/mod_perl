@@ -28,23 +28,27 @@ static unsigned long modperl_interp_address(pTHX)
 #endif
 }
 
-static MP_INLINE
-void modperl_env_hv_store(pTHX_ HV *hv, apr_table_entry_t *elt)
+#define MP_ENV_HV_STORE(hv, key, val) STMT_START {              \
+        I32 klen = strlen(key);                                 \
+        SV **svp = hv_fetch(hv, key, klen, FALSE);              \
+                                                                \
+        if (svp) {                                              \
+            sv_setpv(*svp, val);                                \
+        }                                                       \
+        else {                                                  \
+            SV *sv = newSVpv(val, 0);                           \
+            hv_store(hv, key, klen, sv, FALSE);                 \
+            modperl_envelem_tie(sv, key, klen);                 \
+            svp = &sv;                                          \
+        }                                                       \
+        MP_TRACE_e(MP_FUNC, "$ENV{%s} = \"%s\";", key, val);    \
+                                                                \
+        SvTAINTED_on(*svp);                                     \
+    } STMT_END
+
+void modperl_env_hv_store(pTHX_ const char *key, const char *val)
 {
-    I32 klen = strlen(elt->key);
-    SV **svp = hv_fetch(hv, elt->key, klen, FALSE);
-
-    if (svp) {
-        sv_setpv(*svp, elt->val);
-    }
-    else {
-        SV *sv = newSVpv(elt->val, 0);
-        hv_store(hv, elt->key, klen, sv, FALSE);
-        modperl_envelem_tie(sv, elt->key, klen);
-        svp = &sv;
-    }
-
-    SvTAINTED_on(*svp);
+    MP_ENV_HV_STORE(ENVHV, key, val);
 }
 
 static MP_INLINE
@@ -98,6 +102,9 @@ void modperl_env_clear(pTHX)
     modperl_env_tie(mg_flags);
 }
 
+#define MP_ENV_HV_STORE_TABLE_ENTRY(hv, elt)    \
+    MP_ENV_HV_STORE(hv, elt.key, elt.val);
+
 static void modperl_env_table_populate(pTHX_ apr_table_t *table)
 {
     HV *hv = ENVHV;
@@ -115,9 +122,7 @@ static void modperl_env_table_populate(pTHX_ apr_table_t *table)
         if (!elts[i].key || !elts[i].val) {
             continue;
         }
-        modperl_env_hv_store(aTHX_ hv, &elts[i]);
-
-        MP_TRACE_e(MP_FUNC, "$ENV{%s} = \"%s\";", elts[i].key, elts[i].val);
+        MP_ENV_HV_STORE_TABLE_ENTRY(hv, elts[i]);
     }    
 
     modperl_env_tie(mg_flags);
@@ -141,11 +146,58 @@ static void modperl_env_table_unpopulate(pTHX_ apr_table_t *table)
             continue;
         }
         modperl_env_hv_delete(aTHX_ hv, elts[i].key);
-
         MP_TRACE_e(MP_FUNC, "delete $ENV{%s};", elts[i].key);
-    }    
+    }
 
     modperl_env_tie(mg_flags);
+}
+
+/* see the comment in modperl_env_sync_env_hash2table */
+static void modperl_env_sync_table(pTHX_ apr_table_t *table)
+{
+    int i;
+    const apr_array_header_t *array;
+    apr_table_entry_t *elts;
+    HV *hv = ENVHV;
+    SV **svp;
+    
+    array = apr_table_elts(table);
+    elts  = (apr_table_entry_t *)array->elts;
+    
+    for (i = 0; i < array->nelts; i++) {
+        if (!elts[i].key) {
+            continue;
+        }
+        svp = hv_fetch(hv, elts[i].key, strlen(elts[i].key), FALSE);
+        if (svp) {
+            apr_table_set(table, elts[i].key, SvPV_nolen(*svp));
+            MP_TRACE_e(MP_FUNC, "(Set|Pass)Env '%s' '%s'", elts[i].key,
+                       SvPV_nolen(*svp));
+        }
+    }    
+    TAINT_NOT; /* SvPV_* causes the taint issue */
+}
+
+/* Make per-server PerlSetEnv and PerlPassEnv in sync with %ENV at
+ * config time (if perl is running), by copying %ENV values to the
+ * PerlSetEnv and PerlPassEnv tables (only for keys which are already
+ * in those tables)
+ */
+void modperl_env_sync_srv_env_hash2table(pTHX_ apr_pool_t *p,
+                                         modperl_config_srv_t *scfg)
+{
+    MP_TRACE_d(MP_FUNC, "******* scfg==0x%lx, scfg->SetEnv==0x%lx\n",
+               (unsigned long)scfg, (unsigned long)scfg->SetEnv);
+    modperl_env_sync_table(aTHX_ scfg->SetEnv);
+    modperl_env_sync_table(aTHX_ scfg->PassEnv);
+}
+
+void modperl_env_sync_dir_env_hash2table(pTHX_ apr_pool_t *p,
+                                         modperl_config_dir_t *dcfg)
+{
+    MP_TRACE_d(MP_FUNC, "******* dcfg==0x%lx, dcfg->SetEnv==0x%lx\n",
+               (unsigned long)dcfg, (unsigned long)dcfg->SetEnv);
+    modperl_env_sync_table(aTHX_ dcfg->SetEnv);
 }
 
 /* list of environment variables to pass by default */

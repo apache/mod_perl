@@ -165,6 +165,11 @@ typedef struct {
 #endif
 } modperl_config_dir_t;
 
+typedef struct {
+    const char *file;
+    modperl_config_dir_t *dcfg;
+} modperl_require_file_t;
+
 typedef struct modperl_mgv_t modperl_mgv_t;
 
 struct modperl_mgv_t {

@@ -21,6 +21,8 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 
     dcfg->location = dir;
 
+    MP_TRACE_d(MP_FUNC, "dir %s\n", dir);
+    
 #ifdef USE_ITHREADS
     /* defaults to per-server scope */
     dcfg->interp_scope = MP_INTERP_SCOPE_UNDEF;
@@ -107,8 +109,9 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
         *add  = (modperl_config_dir_t *)addv,
         *mrg  = modperl_config_dir_new(p);
 
-    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
-               (unsigned long)basev, (unsigned long)addv);
+    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx, mrg==0x%lx\n", 
+               (unsigned long)basev, (unsigned long)addv,
+               (unsigned long)mrg);
 
 #ifdef USE_ITHREADS
     merge_item(interp_scope);
@@ -155,7 +158,8 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
 
     scfg->PerlModule  = apr_array_make(p, 2, sizeof(char *));
     scfg->PerlRequire = apr_array_make(p, 2, sizeof(char *));
-    scfg->PerlPostConfigRequire = apr_array_make(p, 1, sizeof(char *));
+    scfg->PerlPostConfigRequire =
+        apr_array_make(p, 1, sizeof(modperl_require_file_t *));
 
     scfg->argv = apr_array_make(p, 2, sizeof(char *));
 
@@ -280,8 +284,9 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
         *add  = (modperl_config_srv_t *)addv,
         *mrg  = modperl_config_srv_new(p);
 
-    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx\n", 
-               (unsigned long)basev, (unsigned long)addv);
+    MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx, mrg==0x%lx\n", 
+               (unsigned long)basev, (unsigned long)addv,
+               (unsigned long)mrg);
 
     merge_item(modules);
     merge_item(PerlModule);
@@ -443,26 +448,28 @@ int modperl_config_apply_PerlPostConfigRequire(server_rec *s,
                                                modperl_config_srv_t *scfg,
                                                apr_pool_t *p)
 {
-    char **requires;
+    modperl_require_file_t **requires;
     int i;
     MP_PERL_CONTEXT_DECLARE;
 
-    requires = (char **)scfg->PerlPostConfigRequire->elts;
+    requires = (modperl_require_file_t **)scfg->PerlPostConfigRequire->elts;
     for (i = 0; i < scfg->PerlPostConfigRequire->nelts; i++){
         int retval;
 
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
-        retval = modperl_require_file(aTHX_ requires[i], TRUE);
+        retval = modperl_require_file(aTHX_ requires[i]->file, TRUE);
+        modperl_env_sync_srv_env_hash2table(aTHX_ p, scfg);
+        modperl_env_sync_dir_env_hash2table(aTHX_ p, requires[i]->dcfg);
         MP_PERL_CONTEXT_RESTORE;
 
         if (retval) {
             MP_TRACE_d(MP_FUNC, "loaded Perl file: %s for server %s\n",
-                       requires[i], modperl_server_desc(s, p));
+                       requires[i]->file, modperl_server_desc(s, p));
         }
         else {
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "Can't load Perl file: %s for server %s, exiting...",
-                         requires[i], modperl_server_desc(s, p));
+                         requires[i]->file, modperl_server_desc(s, p));
             
             return FALSE;
         }
