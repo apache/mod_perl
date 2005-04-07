@@ -7337,7 +7337,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'request_rec *',
-    'name' => 'mpxs_Apache2_request',
+    'name' => 'mpxs_Apache2__RequestUtil_request',
     'args' => [
       {
         'type' => 'PerlInterpreter *',

@@ -4,7 +4,7 @@ package TestCompat::conn_authen;
 #   $r->connection->auth_type
 #   $r->connection->user
 # both records don't exist in 2.0 conn_rec and therefore require
-# 'PerlOptions +GlobalRequest' to retrieve those via Apache2->request
+# 'PerlOptions +GlobalRequest' to retrieve those via Apache2::RequestUtil->request
 
 use strict;
 use warnings FATAL => 'all';

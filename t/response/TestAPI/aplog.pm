@@ -186,15 +186,15 @@ sub handler {
         Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
             qr/\[warn\] Apache2::ServerRec::warn test/,
-            'Apache2::ServerRec::warn() w/o Apache2->request ';
+            'Apache2::ServerRec::warn() w/o Apache2::RequestUtil->request ';
 
-        Apache2->request($r);
+        Apache2::RequestUtil->request($r);
         t_server_log_warn_is_expected();
         # this uses the global $r to get $s internally
         Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
             qr/\[warn\] Apache2::ServerRec::warn test/,
-            'Apache2::ServerRec::warn() w/ Apache2->request ';
+            'Apache2::ServerRec::warn() w/ Apache2::RequestUtil->request ';
     }
 
     t_server_log_warn_is_expected();

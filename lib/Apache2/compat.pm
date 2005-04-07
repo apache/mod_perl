@@ -281,7 +281,7 @@ sub restore_mp2_api {
 sub request {
     my $what = shift;
 
-    my $r = Apache2->request;
+    my $r = Apache2::RequestUtil->request;
 
     unless ($r) {
         die "cannot use $what ",
@@ -400,7 +400,7 @@ sub warn {
 sub httpd_conf {
     shift;
     my $obj;
-    eval { $obj = Apache2->request };
+    eval { $obj = Apache2::RequestUtil->request };
     $obj = Apache2->server if $@;
     my $err = $obj->add_config([split /\n/, join '', @_]);
     die $err if $err;
@@ -476,7 +476,7 @@ sub send_http_header {
     $r->content_type($type);
 }
 
-#we support Apache2->request; this is needed to support $r->request
+#we support Apache2::RequestUtil->request; this is needed to support $r->request
 #XXX: seems sorta backwards
 *request = \&Apache2::request;
 
@@ -846,8 +846,8 @@ package Apache2::Connection;
 
 # auth_type and user records don't exist in 2.0 conn_rec struct
 # 'PerlOptions +GlobalRequest' is required
-sub auth_type { shift; Apache2->request->ap_auth_type(@_) }
-sub user      { shift; Apache2->request->user(@_)      }
+sub auth_type { shift; Apache2::RequestUtil->request->ap_auth_type(@_) }
+sub user      { shift; Apache2::RequestUtil->request->user(@_)      }
 
 1;
 __END__
