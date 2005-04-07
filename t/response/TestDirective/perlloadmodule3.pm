@@ -103,7 +103,7 @@ sub handler {
     my $srv_cfg = get_config($s);
 
     if ($s->is_virtual) {
-        $secs{"1: Main Server"}  = get_config(Apache2->server);
+        $secs{"1: Main Server"}  = get_config(Apache2::ServerUtil->server);
         $secs{"2: Virtual Host"} = $srv_cfg;
         $secs{"3: Location"}     = $dir_cfg;
     }

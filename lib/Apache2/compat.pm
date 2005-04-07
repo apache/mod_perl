@@ -389,7 +389,7 @@ sub define {
 }
 
 sub log_error {
-    Apache2->server->log_error(@_);
+    Apache2::ServerUtil->server->log_error(@_);
 }
 
 sub warn {
@@ -401,7 +401,7 @@ sub httpd_conf {
     shift;
     my $obj;
     eval { $obj = Apache2::RequestUtil->request };
-    $obj = Apache2->server if $@;
+    $obj = Apache2::ServerUtil->server if $@;
     my $err = $obj->add_config([split /\n/, join '', @_]);
     die $err if $err;
 }
@@ -411,17 +411,17 @@ sub can_stack_handlers { 1; }
 
 sub push_handlers {
     shift;
-    Apache2->server->push_handlers(@_);
+    Apache2::ServerUtil->server->push_handlers(@_);
 }
 
 sub set_handlers {
     shift;
-    Apache2->server->set_handlers(@_);
+    Apache2::ServerUtil->server->set_handlers(@_);
 }
 
 sub get_handlers {
     shift;
-    Apache2->server->get_handlers(@_);
+    Apache2::ServerUtil->server->get_handlers(@_);
 }
 
 package Apache::Constants;

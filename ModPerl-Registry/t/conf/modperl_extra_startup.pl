@@ -9,7 +9,7 @@ use Apache2::Process ();
 
 use DirHandle ();
 
-my $proc = Apache2->server->process;
+my $proc = Apache2::ServerUtil->server->process;
 my $pool = $proc->pool;
 
 # can't use catfile with server_root as it contains unix dir

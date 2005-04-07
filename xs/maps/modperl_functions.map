@@ -85,7 +85,7 @@ MODULE=Apache2::ServerUtil PACKAGE=Apache2::ServerUtil
  mpxs_Apache2__ServerUtil_server_shutdown_cleanup_register | | cv, arg=Nullsv
  int:DEFINE_restart_count
 
-PACKAGE=Apache2
+MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
 
 MODULE=Apache2::Connection

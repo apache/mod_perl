@@ -137,7 +137,7 @@ sub handler {
 
     {
         # base server test
-        my $bs = Apache2->server;
+        my $bs = Apache2::ServerUtil->server;
         ok t_cmp(($bs && ref($bs)),
                  'Apache2::ServerRec',
                  "base server's object retrieval");

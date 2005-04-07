@@ -1,5 +1,5 @@
 # the handler is configured in modperl_extra.pl via
-# Apache2->server->add_config
+# Apache2::ServerUtil->server->add_config
 
 use Apache::Test;
 use Apache::TestUtil;

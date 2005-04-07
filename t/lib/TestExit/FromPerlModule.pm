@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => qw(all);
 
 use Apache2::ServerRec;
+use Apache2::ServerUtil;
 use Apache2::Log;
 use Apache2::Const -compile => qw(OK);
 
@@ -15,6 +16,6 @@ sub exit_handler {
     Apache2::Const::OK;
 }
 
-Apache2->server->push_handlers(PerlChildExitHandler => \&exit_handler);
+Apache2::ServerUtil->server->push_handlers(PerlChildExitHandler => \&exit_handler);
 
 1;

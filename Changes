@@ -33,11 +33,13 @@ less than 1.999_22.  [Geoffrey Young]
 
 add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
 which mod_perl version is being used at request time.  [Geoffrey Young]
+
+rename Apache->request() to Apache2::RequestUtil->request(), and
+Apache->server() to Apache2::ServerUtil->server()
+[Geoffrey Young]
+
 Make sure that CPAN shell doesn't triple over usage of
 $ExtUtils::MakeMaker::VERSION [Randy Kobes]
-
-rename Apache->request() to Apache2::RequestUtil->request()
-[Geoffrey Young]
 
 make sure not to use apr_os_thread_current in debug mode when libapr 
 wasn't built with threads support [Stas]
@@ -47,7 +49,7 @@ Apache2::RequestRec->new now sets $r->request_time [Stas]
 remove CGI.pm and Apache::Request dependencies from Apache2::Status
 since they weren't used at all [Geoffrey Young]
 
-Fixes for Apache::Reload's touchfile feature (return Apache::OK
+Fixes for Apache2::Reload's touchfile feature (return Apache2::Const::OK
 instead of 1) [Chris Warren <chwarren@cisco.com>]
 
 cygwin fixes: [Nick *** <doink123@abv.bg>]
@@ -78,7 +80,7 @@ scripts anyway), and thus works on acl-based filesystems. Also
 replaced the -r check with a proper error handling when the file is
 read in. [Damon Buckwalter <buckwad@gmail.com>]
 
-Apache::RequestUtil::slurp_filename now throws an APR::Error exception
+Apache2::RequestUtil::slurp_filename now throws an APR::Error exception
 object (before it was just croaking). [Stas]
 
 fix APR::Error's overload of '==' (it was always returning true
@@ -87,7 +89,7 @@ before), and add the corresponding '!=' [Stas]
 if $r->document_root was modified, restore it at the end of request
 [joes]
 
-Apache::ServerRec method which set the non-integer fields in the
+Apache2::ServerRec method which set the non-integer fields in the
 server_rec, now copy the value from the perl scalar, so if it changes
 or goes out of scope the C struct is not affected. Using internal perl
 variables to preserve the value, since using the server pool to
@@ -96,7 +98,7 @@ allocate the memory will mean a memory leak [Stas]
 add the escape_url entry in the ModPerl::MethodLookup knowledgebase
 [Stas]
 
-Apache::SubProcess::spawn_proc_prog now can be called in a void
+Apache2::SubProcess::spawn_proc_prog now can be called in a void
 context, in which case all the communication std pipes will be closed
 [Stas]
 
@@ -122,7 +124,7 @@ casted from/to IVs. Use PTR2IV/INT2PTR instead. [Gozer]
 Perl -Duse64bit fix. apr_size_t pointers can't just be generically
 casted from/to UVs. Use PTR2UV/INT2PTR instead. [Gozer]
 
-fix a bug in Apache::Build::dir: If the right directory isn't found in
+fix a bug in Apache2::Build::dir: If the right directory isn't found in
 the for loop $dir still contains a > value, so the ||= has no
 effect. [Nick Wellnhofer <wellnhofer@aevum.de>]
 

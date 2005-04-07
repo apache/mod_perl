@@ -92,7 +92,7 @@ sub test_apache_status {
 # can still set it after restart
 sub test_loglevel {
     use Apache2::Const -compile => 'LOG_INFO';
-    my $s = Apache2->server;
+    my $s = Apache2::ServerUtil->server;
     my $oldloglevel = $s->loglevel(Apache2::Const::LOG_INFO);
     # restore
     $s->loglevel($oldloglevel);

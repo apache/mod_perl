@@ -98,11 +98,11 @@ sub handler {
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative('conf')),
                           catfile($server_root, 'conf'),
-                          "Apache2->server_root_relative('conf')");
+                          "Apache2::ServerUtil->server_root_relative('conf')");
 
         ok t_filepath_cmp(canonpath(Apache->server_root_relative),
                           canonpath($server_root),
-                          'Apache2->server_root_relative()');
+                          'Apache2::ServerUtil->server_root_relative()');
 
         my $path = catfile(Apache2::ServerUtil::server_root, 'logs');
         ok t_filepath_cmp(canonpath(Apache->server_root_relative($path)),
