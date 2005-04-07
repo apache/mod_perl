@@ -149,7 +149,7 @@ Please nuke the prior mod_perl installation from your site_lib,
 use a different perl to run the installation process, or use the
 PREFIX option when creating your Makefile.  see
 
-  http://perl.apache.org/somelinkwellwritelater
+  http://perl.apache.org/docs/2.0/rename.html
 
 for more details.
 
