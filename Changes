@@ -18,6 +18,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
      1.99_XX. Please read the below changes carefully.
     ***************************************************
 
+fix a bug when a non-threaded perl is used and anonymous sub is pushed
+at the server startup (the CV wasn't surviving) [Stas]
+
 s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
 APIs.  so, Apache::RequestRec is now Apache2::RequestRec,
 Apache::compat is now Apache2::compat, and so on. [joes]
