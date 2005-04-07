@@ -67,12 +67,18 @@ sub server_root_relative_tests {
     my $r = shift;
 
     my %pools = (
-        '$r->pool'                       => $r->pool,
-        '$r->connection->pool'           => $r->connection->pool,
-        '$r->server->process->pool'      => $r->server->process->pool,
-        '$r->server->process->pconf'     => $r->server->process->pconf,
-        'Apache2->server->process->pconf' => Apache2->server->process->pconf,
-        'APR::Pool->new'                 => APR::Pool->new,
+        '$r->pool'                                    =>
+            $r->pool,
+        '$r->connection->pool'                        =>
+            $r->connection->pool,
+        '$r->server->process->pool'                   =>
+            $r->server->process->pool,
+        '$r->server->process->pconf'                  =>
+            $r->server->process->pconf,
+        'Apache2::ServerUtil->server->process->pconf' =>
+            Apache2::ServerUtil->server->process->pconf,
+        'APR::Pool->new'                              =>
+            APR::Pool->new,
     );
 
     # syntax - an object or pool is required

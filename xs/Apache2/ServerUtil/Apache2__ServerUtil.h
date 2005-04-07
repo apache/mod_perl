@@ -149,7 +149,7 @@ SV *mpxs_Apache2__ServerRec_get_handlers(pTHX_ server_rec *s,
 #define mpxs_Apache2__ServerRec_dir_config(s, key, sv_val) \
     modperl_dir_config(aTHX_ NULL, s, key, sv_val)
 
-#define mpxs_Apache2_server(classname) modperl_global_get_server_rec()
+#define mpxs_Apache2__ServerUtil_server(classname) modperl_global_get_server_rec()
 
 static MP_INLINE
 int mpxs_Apache2__ServerRec_is_perl_option_enabled(pTHX_ server_rec *s,

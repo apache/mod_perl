@@ -53,7 +53,7 @@ sub reorg_INC {
     # after Apache2 has pushed blib and core dirs including Apache2 on
     # top reorg @INC to have first devel libs, then blib libs, and
     # only then perl core libs
-    my $pool = Apache2->server->process->pool;
+    my $pool = Apache2::ServerUtil->server->process->pool;
     my $project_root = canonpath
         Apache2::ServerUtil::server_root_relative($pool, "..");
     my (@a, @b, @c);
@@ -79,7 +79,7 @@ sub startup_info {
     Apache2::Log->info("$ap_mods Apache2:: modules loaded");
     Apache2::ServerRec->log->info("$apr_mods APR:: modules loaded");
 
-    my $server = Apache2->server;
+    my $server = Apache2::ServerUtil->server;
     my $vhosts = 0;
     for (my $s = $server->next; $s; $s = $s->next) {
         $vhosts++;
@@ -99,16 +99,16 @@ PerlModule Apache::TestHandler
   PerlResponseHandler Apache::TestHandler::ok1
 </Location>
 EOC
-    Apache2->server->add_config([split /\n/, $conf]);
+    Apache2::ServerUtil->server->add_config([split /\n/, $conf]);
 
     # test a directive that triggers an early startup, so we get an
     # attempt to use perl's mip early
-    Apache2->server->add_config(['<Perl >', '1;', '</Perl>']);
+    Apache2::ServerUtil->server->add_config(['<Perl >', '1;', '</Perl>']);
 }
 
 # need to run from config phase, since it registers PerlPostConfigHandler
 sub test_add_version_component {
-    Apache2->server->push_handlers(
+    Apache2::ServerUtil->server->push_handlers(
         PerlPostConfigHandler => \&add_my_version);
 
     sub add_my_version {
