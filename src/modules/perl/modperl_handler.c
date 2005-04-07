@@ -49,6 +49,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
  *    PerlTransHandler 'sub { ... }'
  * B) run-time perl code
  *    $r->push_handlers(PerlTransHandler => sub { .... });
+ *    $s->push_handlers(PerlTransHandler => sub { .... });
  *
  * In the case of non-threaded perl, we just compile A or grab B and
  * store it in the mod_perl struct and call it when it's used. No
@@ -169,6 +170,7 @@ modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
 #else
     /* it's safe to cache and later use the cv, since the same perl
      * interpeter is always used */
+    SvREFCNT_inc((SV*)cv);
     handler->cv   = cv;
     handler->name = NULL;
 
