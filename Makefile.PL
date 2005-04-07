@@ -9,14 +9,13 @@ $ENV{MOD_PERL_2_BUILD} = 1;
 use constant MIN_HTTPD_VERSION_DYNAMIC => '2.0.47';
 use constant MIN_HTTPD_VERSION_STATIC  => '2.0.51';
 
-my($old_modperl_version, $old_modperl_pm, $apache2_pm);
+my($old_modperl_version, $old_modperl_pm);
 
 BEGIN {
     eval {
-        require Apache2;
-        $apache2_pm = 1;
         require mod_perl;
-        if ($mod_perl::VERSION < 1.999_22) {
+        my $old_mp2 = eval { require Apache2 };
+        if ($mod_perl::VERSION < 1.999_22 && $old_mp2) {
             $old_modperl_version = $mod_perl::VERSION;
             $old_modperl_pm = delete $INC{'mod_perl.pm'};
         }
@@ -160,7 +159,7 @@ EOI
         }
     }
     else {
-        print "no prior mod_perl version found - good.\n";
+        print "no conflicting prior mod_perl version found - good.\n";
 
     }
 
