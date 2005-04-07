@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 our @ISA = qw(Apache2::RequestRec);
 
 use Apache::Test;
@@ -24,7 +25,7 @@ sub handler {
 
     plan $r, tests => 5;
 
-    eval { my $gr = Apache2->request; };
+    eval { my $gr = Apache2::RequestUtil->request; };
     ok $@;
 
     ok $r->uri eq $location;

@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache2::RequestRec ();
+use Apache2::RequestUtil ();
 use Apache2::RequestIO ();
 
 use Apache::Test;
@@ -19,7 +20,7 @@ sub handler {
     $r->content_type('text/plain');
 
     # PerlOptions -GlobalRequest is in effect
-    eval { my $gr = Apache2->request; };
+    eval { my $gr = Apache2::RequestUtil->request; };
     ok t_cmp($@, 
              qr/\$r object is not available/,
              "unavailable global $r object");

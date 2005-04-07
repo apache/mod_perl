@@ -54,11 +54,11 @@ sub handler {
     }
 
     ### object-less logging
-    # set Apache2->request($r) instead of using
+    # set Apache2::RequestUtil->request($r) instead of using
     #   PerlOptions +GlobalRequest
     # in order to make sure that the above tests work fine,
     # w/o having the global request set
-    Apache2->request($r);
+    Apache2::RequestUtil->request($r);
     for my $m (@methods2) {
         eval "$m(q[$m])";
         ok t_cmp $logdiff->diff, qr/\Q$m/, $m;

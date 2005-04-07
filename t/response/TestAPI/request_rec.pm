@@ -26,18 +26,18 @@ sub handler {
 
     plan $r, tests => 54;
 
-    #Apache2->request($r); #PerlOptions +GlobalRequest takes care
-    my $gr = Apache2->request;
+    #Apache2::RequestUtil->request($r); #PerlOptions +GlobalRequest takes care
+    my $gr = Apache2::RequestUtil->request;
 
     ok $$gr == $$r;
 
     my $newr = Apache2::RequestRec->new($r->connection, $r->pool);
-    Apache2->request($newr);
-    $gr = Apache2->request;
+    Apache2::RequestUtil->request($newr);
+    $gr = Apache2::RequestUtil->request;
 
     ok $$gr == $$newr;
 
-    Apache2->request($r);
+    Apache2::RequestUtil->request($r);
 
     ok $r->pool->isa('APR::Pool');
 

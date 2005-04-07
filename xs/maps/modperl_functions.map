@@ -38,13 +38,14 @@ MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_location_merge
  mpxs_Apache2__RequestRec_set_basic_credentials
  mpxs_Apache2__RequestRec_no_cache | | r, flag=Nullsv
+
 PACKAGE=Apache2::RequestRec
  mpxs_Apache2__RequestRec_new | | classname, c, base_pool_sv=Nullsv
  SV *:DEFINE_dir_config | | request_rec *:r, char *:key=NULL, SV *:sv_val=Nullsv
  SV *:DEFINE_slurp_filename | | request_rec *:r, int:tainted=1
 
-PACKAGE=Apache2
- mpxs_Apache2_request | | classname, svr=Nullsv
+MODULE=Apache2::RequestUtil   PACKAGE=Apache2::RequestUtil
+ mpxs_Apache2__RequestUtil_request | | classname, svr=Nullsv
 
 MODULE=Apache2::RequestIO   PACKAGE=Apache2::RequestRec
  SV *:DEFINE_TIEHANDLE    | | SV *:stashsv, SV *:sv=Nullsv

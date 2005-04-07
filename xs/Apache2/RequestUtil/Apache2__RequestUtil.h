@@ -129,7 +129,7 @@ SV *mpxs_Apache2__RequestRec_new(pTHX_ SV *classname,
 }
 
 static MP_INLINE
-request_rec *mpxs_Apache2_request(pTHX_ SV *classname, SV *svr)
+request_rec *mpxs_Apache2__RequestUtil_request(pTHX_ SV *classname, SV *svr)
 {
     /* ignore classname */
     return modperl_global_request(aTHX_ svr);
