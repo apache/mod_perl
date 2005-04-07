@@ -67,6 +67,7 @@ my @exe_files =  map "bin/$_", qw(mp2bug);
 ModPerl::BuildMM::WriteMakefile(
     NAME          => 'mod_perl2',
     VERSION       => '2.0.0-RC5',
+    DISTNAME      => 'mod_perl',
     NO_META       => 1,
     ABSTRACT_FROM => 'lib/mod_perl2.pm',
     EXE_FILES     => \@exe_files,
@@ -776,7 +777,7 @@ Apache-Test/META.yml:
 
 tag :
 	svn copy . https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
-	@$(ECHO) update mod_perl.pm VERSION now
+	@$(ECHO) update mod_perl2.pm VERSION now
 EOF
 
     return $string;
