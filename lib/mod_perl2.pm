@@ -48,5 +48,5 @@ __END__
 
 =head1 NAME
 
-mod_perl2 - Embed a Perl interpreter in the Apache/2.x HTTP server
+mod_perl - Embed a Perl interpreter in the Apache/2.x HTTP server
 
