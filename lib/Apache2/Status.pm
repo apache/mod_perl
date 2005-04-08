@@ -82,7 +82,9 @@ sub has {
     # if !$opt we skip the testing for the option
     return 0 if $opt && !status_config($r, $opt);
     return 0 unless eval { require $file };
-    return 0 unless $module->VERSION && $module->VERSION >= $version;
+    my $mod_ver = $module->VERSION;
+    $mod_ver =~ s/_.*//; # handle dev versions like 2.121_02
+    return 0 unless $mod_ver && $mod_ver >= $version;
 
     return 1;
 }

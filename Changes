@@ -38,6 +38,9 @@ rename Apache->request() to Apache2::RequestUtil->request(), and
 Apache->server() to Apache2::ServerUtil->server()
 [Geoffrey Young]
 
+fix Apache2::Status which was bailing out on trying to load modules
+with dev versions like 2.121_02 [Stas]
+
 When parsing Makefile.PL MP_* options, handle correctly the MP_FOO=0
 entries [Philip M. Gollucci <pgollucci@p6m7g8.com>]
 
