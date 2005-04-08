@@ -121,8 +121,8 @@ void modperl_perl_init_ids_server(server_rec *s)
     modperl_perl_ids_t ids;
     modperl_perl_ids_get(&ids);
 #ifdef USE_ITHREADS
-     modperl_interp_mip_walk_servers(NULL, s,
-                                     modperl_perl_init_ids_mip,
+    modperl_interp_mip_walk_servers(NULL, s,
+                                    modperl_perl_init_ids_mip,
                                     (void*)&ids);
 #else
     modperl_perl_init_ids(aTHX_ &ids);
