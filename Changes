@@ -53,9 +53,6 @@ at the server startup (the CV wasn't surviving) [Stas]
 Make sure that CPAN shell doesn't triple over usage of
 $ExtUtils::MakeMaker::VERSION [Randy Kobes]
 
-make sure not to use apr_os_thread_current in debug mode when libapr 
-wasn't built with threads support [Stas]
-
 Apache2::RequestRec->new now sets $r->request_time [Stas]
 
 remove CGI.pm and Apache::Request dependencies from Apache2::Status
