@@ -38,6 +38,9 @@ rename Apache->request() to Apache2::RequestUtil->request(), and
 Apache->server() to Apache2::ServerUtil->server()
 [Geoffrey Young]
 
+init the anonsub hash for base perl and each vhost +Parent (previously
+was init'ed only for the base perl) [Stas]
+
 fix a bug when a non-threaded perl is used and anonymous sub is pushed
 at the server startup (the CV wasn't surviving) [Stas]
 
