@@ -119,13 +119,14 @@ MP_INLINE void modperl_handler_anon_add(pTHX_ modperl_mgv_t *anon, CV *cv)
     HV *hv;
 
     if (!(he && (hv = (HV*)HeVAL(he)))) {
-        Perl_croak(aTHX_ "can't find ANONSUB top entry (get)");
+        Perl_croak(aTHX_ "modperl_handler_anon_add: "
+                   "can't find ANONSUB top entry (get)");
     }
 
     SvREFCNT_inc(cv);
     if (!(*hv_store(hv, anon->name, anon->len, (SV*)cv, anon->hash))) {
         SvREFCNT_dec(cv);
-        Perl_croak(aTHX_ "hv_store of '%s' has failed!", anon->name);
+        Perl_croak(aTHX_ "hv_store of anonsub '%s' has failed!", anon->name);
     }
 
     MP_TRACE_h(MP_FUNC, "anonsub '%s' added", anon->name);
@@ -140,7 +141,8 @@ MP_INLINE CV *modperl_handler_anon_get(pTHX_ modperl_mgv_t *anon)
     SV *sv;
 
     if (!(he && (hv = (HV*)HeVAL(he)))) {
-        Perl_croak(aTHX_ "can't find ANONSUB top entry (get)");
+        Perl_croak(aTHX_ "modperl_handler_anon_get: "
+                   "can't find ANONSUB top entry (get)");
     }
 
     if ((he = hv_fetch_he(hv, anon->name, anon->len, anon->hash))) {

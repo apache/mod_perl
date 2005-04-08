@@ -314,10 +314,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     }
 #endif /* MP_COMPAT_1X */
 
-    /* things to be done only in the main server */
-    if (!s->is_virtual) {
-        modperl_handler_anon_init(aTHX_ p);
-    }
+    /* base perl and each vhost +Parent should have this init'ed */
+    modperl_handler_anon_init(aTHX_ p);
 
     if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
         exit(1);
