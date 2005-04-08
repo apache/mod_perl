@@ -101,7 +101,7 @@ sub parse {
 
         if (/^MP_/) {
             my($key, $val) = split $param_qr, $_, 2;
-            $val ||= "";
+            $val ||= "" unless defined $val && $val eq '0';
             $continue = $val =~ s/\\$// ? $key : "";
 
             if (!$table->{$key} and $opts & UNKNOWN_FATAL) {

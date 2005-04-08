@@ -38,6 +38,9 @@ rename Apache->request() to Apache2::RequestUtil->request(), and
 Apache->server() to Apache2::ServerUtil->server()
 [Geoffrey Young]
 
+When parsing Makefile.PL MP_* options, handle correctly the MP_FOO=0
+entries [Philip M. Gollucci <pgollucci@p6m7g8.com>]
+
 init the anonsub hash for base perl and each vhost +Parent (previously
 was init'ed only for the base perl) [Stas]
 
