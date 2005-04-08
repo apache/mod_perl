@@ -18,8 +18,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
      1.99_XX. Please read the below changes carefully.
     ***************************************************
 
-fix a bug when a non-threaded perl is used and anonymous sub is pushed
-at the server startup (the CV wasn't surviving) [Stas]
+remove MP_INST_APACHE2 installation option and Apache2.pm - all
+mod_perl related files will now be installed so they are visible
+via standard @INC.  also, refuse to install over mod_perl 2 versions
+less than 1.999_22.  [Geoffrey Young]
 
 s/Apache::/Apache2::/g and s/mod_perl/mod_perl2/g in all module
 APIs.  so, Apache::RequestRec is now Apache2::RequestRec,
@@ -29,17 +31,15 @@ move all Apache:: constants to Apache2::Const and all APR:: constants
 to APR::Const.  for example, Apache:OK is now Apache2::Const::OK and
 APR::SUCCESS is now APR::Const::SUCCESS.  [Geoffrey Young]
 
-remove MP_INST_APACHE2 installation option and Apache2.pm - all
-mod_perl related files will now be installed so they are visible
-via standard @INC.  also, refuse to install over mod_perl 2 versions
-less than 1.999_22.  [Geoffrey Young]
-
 add $ENV{MOD_PERL_API_VERSION} as something that clearly distinguishes
 which mod_perl version is being used at request time.  [Geoffrey Young]
 
 rename Apache->request() to Apache2::RequestUtil->request(), and
 Apache->server() to Apache2::ServerUtil->server()
 [Geoffrey Young]
+
+fix a bug when a non-threaded perl is used and anonymous sub is pushed
+at the server startup (the CV wasn't surviving) [Stas]
 
 Make sure that CPAN shell doesn't triple over usage of
 $ExtUtils::MakeMaker::VERSION [Randy Kobes]
