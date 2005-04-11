@@ -6,6 +6,7 @@ use warnings FATAL => 'all';
 use APR::Brigade ();
 use APR::Bucket ();
 use Apache2::Filter ();
+use Apache2::Connection ();
 
 use Apache2::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
