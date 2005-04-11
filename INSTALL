@@ -7,7 +7,6 @@ Simple install:
 Simple config:
 
   LoadModule perl_module modules/mod_perl.so
-  PerlModule Apache2
   #PerlModule Apache::compat
   # your config comes here
 

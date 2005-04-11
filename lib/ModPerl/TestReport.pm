@@ -22,8 +22,10 @@ use base qw(Apache::TestReportPerl);
 my @interesting_packages = qw(
     CGI
     Apache2::Request
-    mod_perl
+    mod_perl2
     LWP
+    Apache2
+    mod_perl
 );
 
 # we want to see only already installed packages, so skip over

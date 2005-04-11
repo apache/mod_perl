@@ -19,7 +19,7 @@ use warnings FATAL => 'all';
 
 use FindBin;
 
-use constant IS_MOD_PERL_BUILD => -e "$FindBin::Bin/../lib/mod_perl.pm";
+use constant IS_MOD_PERL_BUILD => -e "$FindBin::Bin/../lib/mod_perl2.pm";
 
 if (IS_MOD_PERL_BUILD) {
     unshift @INC, "$FindBin::Bin/../lib";

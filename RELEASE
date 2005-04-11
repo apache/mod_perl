@@ -149,7 +149,7 @@ Instructions for mod_perl 2.0 Release Manager
 
 9. Prepare for the next cycle
 
-  a. increment version in lib/mod_perl.pm
+  a. increment version in lib/mod_perl2.pm
 
   b. edit ./Changes:
      - start a new item with incremented version + '-dev'
@@ -171,5 +171,5 @@ Instructions for mod_perl 2.0 Release Manager
 
   e. commit the changed files
 
-     % svn ci Changes lib/mod_perl.pm STATUS RELEASE
+     % svn ci Changes lib/mod_perl2.pm STATUS RELEASE
 
