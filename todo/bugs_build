@@ -33,7 +33,9 @@ FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
                 http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
                 It doesn't work with threaded perl/worker mpm,
                 seemingly because of the problems with threads on
-                FreeBSD (not sure what version).
+                FreeBSD (not sure what version). But reported to work
+                on FreeBSD 5.3+ when linked with libpthread and not
+                the older libc_r library.
 
 HPUX11i     DSO
                 PA-RISC2.0-thread-multi-LP64
