@@ -11,6 +11,9 @@ use warnings FATAL => 'all';
 use Apache2::RequestRec ();
 use Apache2::RequestIO ();
 use Apache2::Filter ();
+use Apache2::Connection ();
+use APR::Brigade ();
+use APR::Bucket ();
 
 use Apache::TestTrace;
 
