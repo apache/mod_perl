@@ -19,7 +19,7 @@ Instructions for mod_perl 2.0 Release Manager
      build laying around.
 
 2. once confident that the package is good, upload a release candidate
-   to perl.apache.org/~username and post 24 hour-ish candidate alert
+   to people.apache.org/~username and post 24 hour-ish candidate alert
    to the modperl/dev list (may be longer to give most people a chance
    to catch up). no need to tag this package
 
