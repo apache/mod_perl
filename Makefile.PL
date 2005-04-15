@@ -13,8 +13,8 @@ my($old_modperl_version, $old_modperl_pm);
 
 BEGIN {
     eval {
-        require mod_perl;
         my $old_mp2 = eval { require Apache2 };
+        require mod_perl;
         if ($mod_perl::VERSION < 1.999_22 && $old_mp2) {
             $old_modperl_version = $mod_perl::VERSION;
             $old_modperl_pm = delete $INC{'mod_perl.pm'};
