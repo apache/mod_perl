@@ -189,7 +189,7 @@ sub exit_if_too_big {
 # to exit if the CGI causes the process to grow too big.
 sub setmax {
     $MAX_PROCESS_SIZE = shift;
-    my $r = shift || Apache2->request();
+    my $r = shift || Apache2::RequestUtil->request();
     unless ($r->pnotes('size_limit_cleanup')) {
         $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
@@ -198,7 +198,7 @@ sub setmax {
 
 sub setmin {
     $MIN_SHARE_SIZE = shift;
-    my $r = shift || Apache2->request();
+    my $r = shift || Apache2::RequestUtil->request();
     unless ($r->pnotes('size_limit_cleanup')) {
         $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
@@ -207,7 +207,7 @@ sub setmin {
 
 sub setmax_unshared {
     $MAX_UNSHARED_SIZE = shift;
-    my $r = shift || Apache2->request();
+    my $r = shift || Apache2::RequestUtil->request();
     unless ($r->pnotes('size_limit_cleanup')) {
         $r->pool->cleanup_register(\&exit_if_too_big, $r);
         $r->pnotes('size_limit_cleanup', 1);
