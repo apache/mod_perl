@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+fix the pod2man'ification part of 'make install' (using POD2MAN_EXE
+instead of POD2MAN Makefile macro) [Stas]
 
 
 =item 1.999_22
