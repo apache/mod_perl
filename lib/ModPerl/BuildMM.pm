@@ -234,6 +234,8 @@ sub ModPerl::BuildMM::MY::postamble {
         }
 
         while (my($pm, $blib) = each %pms) {
+            $pm   =~ s|/\./|/|g; # clean the path
+            $blib =~ s|/\./|/|g; # clean the path
             my @segm = splitdir $blib;
             for my $i (1..2) {
                 # try APR.pm and APR/Bucket.pm
