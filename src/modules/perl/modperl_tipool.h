@@ -76,7 +76,7 @@ void modperl_tipool_putback_data(modperl_tipool_t *tipool, void *data,
 #define modperl_tipool_lock(tipool) \
     MP_TRACE_i(MP_FUNC, "about to lock tipool in thread 0x%lx\n", MP_TIDF); \
     MUTEX_LOCK(&tipool->tiplock); \
-    MP_TRACE_i(MP_FUNC, "aquired tipool lock\n")
+    MP_TRACE_i(MP_FUNC, "acquired tipool lock\n")
 
 #define modperl_tipool_unlock(tipool) \
     MP_TRACE_i(MP_FUNC, "about to unlock tipool in thread 0x%lx\n", MP_TIDF); \
