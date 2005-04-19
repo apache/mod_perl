@@ -224,7 +224,7 @@ void modperl_tipool_add(modperl_tipool_t *tipool, void *data)
 
     listp->data = data;
 
-    /* assuming tipool->tiplock has already been aquired */
+    /* assuming tipool->tiplock has already been acquired */
 
     tipool->idle = modperl_list_append(tipool->idle, listp);
 
@@ -236,7 +236,7 @@ void modperl_tipool_add(modperl_tipool_t *tipool, void *data)
 
 void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp)
 {
-    /* assuming tipool->tiplock has already been aquired */
+    /* assuming tipool->tiplock has already been acquired */
 
     tipool->idle = modperl_list_remove(tipool->idle, listp);
 
