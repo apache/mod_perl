@@ -1598,16 +1598,16 @@ EOI
     if (!$self->should_build_apache) {
         $install .= <<'EOI';
 # install mod_perl.so
-	@$(MKPATH) $(MODPERL_AP_LIBEXECDIR)
+	@$(MKPATH) $(DESTDIR)$(MODPERL_AP_LIBEXECDIR)
 	$(MODPERL_TEST_F) $(MODPERL_LIB_DSO) && \
-	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(MODPERL_AP_LIBEXECDIR)
+	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(DESTDIR)$(MODPERL_AP_LIBEXECDIR)
 EOI
     }
     
     $install .= <<'EOI';
 # install mod_perl .h files
-	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
-	$(MODPERL_CP) $(MODPERL_H_FILES) $(MODPERL_AP_INCLUDEDIR)
+	@$(MKPATH) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
+	$(MODPERL_CP) $(MODPERL_H_FILES) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
 EOI
 
     my $mf = $self->default_file('makefile');

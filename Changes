@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+restore the DESTDIR support partially nuked by the apache2 rename
+branch [Torsten Förtsch <torsten.foertsch gmx.net>]
+
 add APR::Status to provide functions corresponding to the
 APR_STATUS_IS_* macros of apr_errno.h, especially those composites
 like APR_STATUS_IS_EAGAIN(s) which are satisfied by more than one

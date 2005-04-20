@@ -628,7 +628,7 @@ ap_build: modperl_lib
 	cd "$build->{MP_AP_PREFIX}" && make
     
 ap_install: ap_build
-	cd "$build->{MP_AP_PREFIX}" && make install
+	cd "$build->{MP_AP_PREFIX}" && make DESTDIR=$(DESTDIR) install
 EOF
     }
     
@@ -652,11 +652,11 @@ modperl_lib:
 	cd "$(MODPERL_SRC)" && $(MAKE)
 
 modperl_lib_install:
-	cd "$(MODPERL_SRC)" && $(MAKE) install
+	cd "$(MODPERL_SRC)" && $(MAKE) DESTDIR=$(DESTDIR) install
 
 modperl_xs_h_install:
-	@$(MKPATH) $(MODPERL_AP_INCLUDEDIR)
-	$(CP) $(MODPERL_XS_H_FILES) $(MODPERL_AP_INCLUDEDIR)
+	@$(MKPATH) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
+	$(CP) $(MODPERL_XS_H_FILES) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
 
 modperl_src_clean:
 	cd "$(MODPERL_SRC)" && $(MAKE) clean
