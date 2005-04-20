@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+add APR::Status to provide functions corresponding to the
+APR_STATUS_IS_* macros of apr_errno.h, especially those composites
+like APR_STATUS_IS_EAGAIN(s) which are satisfied by more than one
+specific error condition. Presently only APR_STATUS_IS_EAGAIN is
+provided [Randy Kobes]
+
 fix the generation of the manpages for .pm files from sub-projects
 like ModPerl-Registry (previously was creating manpage files like
 .::ModPerl::PerlRun.3) [Stas]
