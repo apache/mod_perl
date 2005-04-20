@@ -646,3 +646,6 @@ MODULE=APR::OS
 -apr_os_proc_mutex_put
 -apr_os_shm_get
 -apr_os_shm_put
+
+MODULE=APR::Status      PREFIX=mpxs_APR__STATUS_
+ int:DEFINE_is_EAGAIN | | apr_status_t:rc

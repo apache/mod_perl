@@ -12,6 +12,7 @@ use Apache::TestUtil;
 
 use Apache2::Const -compile => qw(OK);
 use APR::Const    -compile => qw(EACCES EAGAIN);
+use APR::Status ();
 
 use constant SIZE => 2048;
 
@@ -43,8 +44,7 @@ sub overload_test {
         unless ref $@ eq 'APR::Error';
 
     # == && != (expecting APR::Const::EAGAIN error)
-    die "'==' overload is broken" unless $@ == APR::Const::EAGAIN;
-    die "'==' overload is broken" unless APR::Const::EAGAIN == $@;
+    die "APR::Status is broken"   unless APR::Status::is_EAGAIN($@);
     die "'==' overload is broken" unless $@ == $@;
     die "'!=' overload is broken" unless $@ != APR::Const::EACCES;
     die "'!=' overload is broken" unless APR::Const::EACCES != $@;
@@ -102,7 +102,7 @@ sub eval_block_mp_error {
     # throw in some retry attempts
     my $tries = 0;
     RETRY: eval { mp_error($socket) };
-    if ($@ && ref($@) && $@ == APR::Const::EAGAIN) {
+    if ($@ && ref($@) && APR::Status::is_EAGAIN($@)) {
         if ($tries++ < 3) {
             goto RETRY;
         }
@@ -118,7 +118,7 @@ sub eval_block_mp_error {
 sub eval_string_mp_error {
     my($r, $socket) = @_;
     eval '$socket->recv(my $buffer, SIZE)';
-    if ($@ && ref($@) && $@ == APR::Const::EAGAIN) {
+    if ($@ && ref($@) && APR::Status::is_EAGAIN($@)) {
         $r->print("ok eval_string_mp_error");
     }
     else {
