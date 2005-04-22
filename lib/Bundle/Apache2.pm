@@ -38,7 +38,9 @@ Compress::Zlib        - Used in testing
 
 Devel::Symdump        - Symbol table browsing with Apache::Status
 
-CGI  2.87             - Used in testing (it's in core, but some vendors exclude it)
+CGI  3.08             - Used in testing (it's in core, but some vendors exclude it)
+
+IPC::Run3             - Used in testing
 
 Bundle::ApacheTest    - Needs for testing
 
