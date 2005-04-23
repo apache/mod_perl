@@ -24,13 +24,19 @@ __END__
 
 Bundle::Apache2 - Install Apache mod_perl2 and related modules
 
+
+
 =head1 SYNOPSIS
 
 C<perl -MCPAN -e 'install Bundle::Apache2'>
 
+
+
 =head1 CONTENTS
 
-LWP                   - Used in testing
+Bundle::ApacheTest    - Needs for testing
+
+CGI  3.08             - Used in testing (it's in core, but some vendors exclude it)
 
 Chatbot::Eliza        - Used in testing
 
@@ -38,11 +44,12 @@ Compress::Zlib        - Used in testing
 
 Devel::Symdump        - Symbol table browsing with Apache::Status
 
-CGI  3.08             - Used in testing (it's in core, but some vendors exclude it)
-
 IPC::Run3             - Used in testing
 
-Bundle::ApacheTest    - Needs for testing
+LWP                   - Used in testing
+
+
+
 
 =head1 DESCRIPTION
 
@@ -52,6 +59,8 @@ Asking CPAN.pm to install a bundle means to install the bundle itself
 along with all the modules contained in the CONTENTS section
 above. Modules that are up to date are not installed, of course.
 
+
+
 =head1 AUTHOR
 
-Doug MacEachern, Stas Bekman
+mod_perl 2 development team
