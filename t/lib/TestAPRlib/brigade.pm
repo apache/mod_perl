@@ -1,4 +1,4 @@
-package TestAPR::brigade;
+package TestAPRlib::brigade;
 
 # testing APR::Brigade in this tests.
 # Other tests do that too:
@@ -11,25 +11,25 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use Apache2::RequestRec ();
+use APR::Pool ();
 use APR::Brigade ();
+use APR::Bucket ();
+use APR::BucketAlloc ();
 
 use Apache2::Const -compile => 'OK';
 
-use TestAPRlib::brigade;
+sub num_of_tests {
+    return 14;
+}
 
-sub handler {
+sub test {
 
-    my $r = shift;
-    my $ba = $r->connection->bucket_alloc;
-
-    plan $r, tests => 14 + TestAPRlib::brigade::num_of_tests();
-
-    TestAPRlib::brigade::test();
+    my $p = APR::Pool->new();
+    my $ba   = APR::BucketAlloc->new($p);
 
     # basic + pool + destroy
     {
-        my $bb = APR::Brigade->new($r->pool, $ba);
+        my $bb = APR::Brigade->new($p, $ba);
 
         t_debug('$bb is defined');
         ok defined $bb;
@@ -52,11 +52,11 @@ sub handler {
 
     # concat / split / length / flatten
     {
-        my $bb1 = APR::Brigade->new($r->pool, $ba);
+        my $bb1 = APR::Brigade->new($p, $ba);
         $bb1->insert_head(APR::Bucket->new($ba, "11"));
         $bb1->insert_tail(APR::Bucket->new($ba, "12"));
 
-        my $bb2 = APR::Brigade->new($r->pool, $ba);
+        my $bb2 = APR::Brigade->new($p, $ba);
         $bb2->insert_head(APR::Bucket->new($ba, "21"));
         $bb2->insert_tail(APR::Bucket->new($ba, "22"));
 
