@@ -44,6 +44,8 @@ Compress::Zlib        - Used in testing
 
 Devel::Symdump        - Symbol table browsing with Apache::Status
 
+HTML::HeadParser      - Used in testing
+
 IPC::Run3             - Used in testing
 
 LWP                   - Used in testing
