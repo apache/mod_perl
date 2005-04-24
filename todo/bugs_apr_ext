@@ -23,25 +23,4 @@
   desirable.
 
 * modules that we need to add tests for in apr-ext:
-  APR::Date
-  APR::Const
-  APR::URI
-  APR::Base64
-  APR::String
-  APR::Error
-  APR::XSLoader
-  APR::PerlIO
-  APR::OS
-  APR::Socket
-  APR::Brigade
-  APR::Finfo
-  APR::Util
-  APR::Bucket
-  APR::NetLib
-  APR::ThreadMutex
-  APR::SockAddr
-
-  I think that it's enough to just load them, since most of them are
-  already thoroughly tested under mod_perl. Then if we find some
-  running-outside-mod_perl specific bugs we can write specific tests
-  for those.
+  APR::IpSubnet
