@@ -38,6 +38,8 @@ unless (defined &ModPerl::Const::compile) {
     __PACKAGE__->bootstrap($VERSION);
 }
 
+sub CLONE_SKIP { 1 } # mp2 API is not perl-ithread-clonable
+
 sub import {
     my $class = shift;
     my $arg;

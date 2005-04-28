@@ -639,6 +639,8 @@ use $loader ();
 our \$VERSION = '$version';
 $loader\::load __PACKAGE__;
 
+sub CLONE_SKIP { 1 } # mp2 API is not perl-ithread-clonable
+
 $code
 
 1;

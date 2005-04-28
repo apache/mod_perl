@@ -9,8 +9,12 @@ use Config;
 
 use constant HAS_ITHREADS => ($] >= 5.008001 && $Config{useithreads});
 
-plan tests => 1, need
-    {"perl 5.8.1 or higher w/ithreads enabled is required" => HAS_ITHREADS};
+#plan tests => 1, need
+#    {"perl 5.8.1 or higher w/ithreads enabled is required" => HAS_ITHREADS};
+
+# XXX: this test can not be run as it is, since $r is no longer
+# cloned, need to review if the problem is still relevant
+plan tests => 1, under_construction;
 
 {
     # the order of prints on the server side is not important here,

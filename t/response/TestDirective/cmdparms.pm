@@ -52,13 +52,26 @@ sub TestCmdParms {
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');    
 }
 
-### response handler ###
+
 sub handler : method {
+    my($self, $r) = @_;
+
+    plan $r, tests => 1;
+
+    ok 1;
+
+    return Apache2::Const::OK;
+}
+
+### response handler ###
+sub handler1 : method {
     my($self, $r) = @_;
     my $override;
     my $srv_cfg = $self->get_config($r->server);
 
     plan $r, tests => 9 + ( 7 * keys(%$srv_cfg) );
+
+    warn "wHOAH!\n";
 
     foreach my $cfg (values %$srv_cfg) {
         ok t_cmp(ref($cfg->{cmd}), 'Apache2::Command', 'cmd');

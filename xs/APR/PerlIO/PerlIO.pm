@@ -26,5 +26,6 @@ use APR ();
 use APR::XSLoader ();
 APR::XSLoader::load __PACKAGE__;
 
+sub CLONE_SKIP { 1 } # mp2 API is not perl-ithread-clonable
 
 1;

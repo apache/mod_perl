@@ -30,5 +30,7 @@ unless (defined &APR::XSLoader::BOOTSTRAP) {
     *APR::XSLoader::BOOTSTRAP = sub () { 1 };
 }
 
+sub CLONE_SKIP { 1 } # mp2 API is not perl-ithread-clonable
+
 1;
 __END__

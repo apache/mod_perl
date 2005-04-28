@@ -18,6 +18,22 @@
 use strict;
 use warnings FATAL => 'all';
 
+BEGIN {
+    # must be run first, so that Test::Builder will be threads-aware
+    use Config;
+    require threads if $] >= 5.008 && $Config{useithreads};
+}
+
+# XXX: May be this should go into Apache::Test, so other mod_perl test
+# suites won't suffer from the same problems.
+use Test::Builder;
+my $Test = Test::Builder->new;
+# under mod_perl we don't want Test::Builder to run the END block
+$Test->no_ending(1);
+# setup T-B's STD handlers early so that it won't mess up with PerlIO
+# layers (which is a death under threads)
+$Test->reset;
+
 die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
 die '$ENV{MOD_PERL_API_VERSION} not set!' 
     unless $ENV{MOD_PERL_API_VERSION} == 2;

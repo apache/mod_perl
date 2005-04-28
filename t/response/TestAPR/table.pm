@@ -13,8 +13,11 @@ use TestAPRlib::table;
 sub handler {
     my $r = shift;
 
+    # this buffers the ok's and will flush them out on sub's end
+    my $x = Apache::TestToStringRequest->new($r);
+
     my $tests = TestAPRlib::table::num_of_tests();
-    plan $r, tests => $tests;
+    plan tests => $tests;
 
     TestAPRlib::table::test();
 

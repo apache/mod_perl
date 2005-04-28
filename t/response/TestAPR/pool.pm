@@ -18,7 +18,10 @@ use TestAPRlib::pool;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 4 + TestAPRlib::pool::num_of_tests();
+    # this buffers the ok's and will flush them out on sub's end
+    my $x = Apache::TestToStringRequest->new($r);
+
+    plan tests => 4 + TestAPRlib::pool::num_of_tests();
 
     ### native pools ###
 

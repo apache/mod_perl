@@ -23,4 +23,6 @@ our @ISA = qw(ModPerl::Const);
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
+sub CLONE_SKIP { 1 } # mp2 API is not perl-ithread-clonable
+
 1;

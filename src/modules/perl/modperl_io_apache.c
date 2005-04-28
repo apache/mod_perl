@@ -151,6 +151,8 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
     modperl_config_req_t *rcfg;
 
+    MP_TRACE_o(MP_FUNC, "try request_rec obj: 0x%lx", st->r);
+
     if (!st->r) {
         Perl_warn(aTHX_ "an attempt to flush a stale IO handle");
         return -1;
@@ -199,11 +201,32 @@ PerlIOApache_close(pTHX_ PerlIO *f)
 static IV
 PerlIOApache_popped(pTHX_ PerlIO *f)
 {
-    /* XXX: just temp for tracing */
-    MP_TRACE_o(MP_FUNC, "done");
-    return PerlIOBase_popped(aTHX_ f);
+    IV code = PerlIOBase_popped(aTHX_ f);
+    PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
+
+    MP_TRACE_o(MP_FUNC, "done with request_rec obj: 0x%lx", st->r);
+    /* prevent possible bugs where a stale r will be attempted to be
+     * reused (e.g. dupped filehandle) */
+    st->r = NULL;
+
+    return code;
 }
 
+static PerlIO *
+PerlIOApache_dup(pTHX_ PerlIO *f, PerlIO *o, CLONE_PARAMS *param, int flags)
+{
+    //return NULL;
+    //int *x = (int *)NULL;
+    //int y = *x;
+    //y=y;
+    
+    PerlIOApache *st = PerlIOSelf(o, PerlIOApache);
+    MP_TRACE_o(MP_FUNC, "duped: 0x%lx", st->r);
+    f = PerlIOBase_dup(aTHX_ f, o, param, flags);
+    //st->r = NULL;
+    
+    return f;
+}
 
 static PerlIO_funcs PerlIO_Apache = {
     sizeof(PerlIO_funcs),
@@ -216,7 +239,7 @@ static PerlIO_funcs PerlIO_Apache = {
     PerlIOBase_binmode,
     PerlIOApache_getarg,
     PerlIOApache_fileno,
-    PerlIOBase_dup,
+    PerlIOApache_dup,
     PerlIOApache_read,
     PerlIOBase_unread,
     PerlIOApache_write,

@@ -11,6 +11,9 @@ use Apache2::Connection ();
 use Apache2::Const -compile => qw(MODE_READBYTES);
 use APR::Const    -compile => qw(SUCCESS BLOCK_READ);
 
+use Config;
+use constant THREADS_OK => $] >= 5.008 && $Config{useithreads};
+
 use constant IOBUFSIZE => 8192;
 
 # perl 5.6.x only triggers taint protection on strings which are at
