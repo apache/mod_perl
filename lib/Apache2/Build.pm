@@ -40,7 +40,7 @@ use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
 use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant PERL_HAS_ITHREADS =>
     $Config{useithreads} && ($Config{useithreads} eq 'define');
-use constant BUILD_APREXT => WIN32();
+use constant BUILD_APREXT => WIN32() || CYGWIN();
 
 use ModPerl::Code ();
 use ModPerl::BuildOptions ();
@@ -462,6 +462,10 @@ sub ldopts {
 
     if ($self->{MP_USE_GTOP}) {
         $ldopts .= $self->gtop_ldopts;
+    }
+
+    if (CYGWIN && $self->is_dynamic) {
+        $ldopts .= join ' ', '', $self->apru_link_flags;
     }
 
     $config->{ldflags} = $ldflags; #reset
@@ -1050,7 +1054,9 @@ sub apru_link_flags {
 
     return @apru_link_flags if @apru_link_flags;
 
-    for ($self->apr_config_path, $self->apu_config_path) {
+    # first use apu_config_path and then apr_config_path in order to
+    # resolve the symbols right during linking
+    for ($self->apu_config_path, $self->apr_config_path) {
         if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
             chomp $link;
             if ($self->httpd_is_source_tree) {
@@ -1538,6 +1544,11 @@ sub modperl_libs_MSWin32 {
     "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
+sub modperl_libs_cygwin {
+     my $self = shift;
+     "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}";
+}
+
 sub modperl_libs {
     my $self = shift;
     my $libs = \&{"modperl_libs_$^O"};
@@ -1564,6 +1575,20 @@ sub mp_apr_lib_MSWin32 {
     $lib =~ s[^lib(\w+)$Config{lib_ext}$][$1];
     $dir = Win32::GetShortPathName($dir);
     return qq{ -L$dir -l$lib };
+}
+
+sub mp_apr_lib_cygwin {
+    my $self = shift;
+    my ($dir, $lib) = $self->mp_apr_blib();
+    $lib =~ s[^lib(\w+)$Config{lib_ext}$][$1];
+    my $libs = "-L$dir -l$lib";
+
+    # This is ugly, but is the only way to prevent the "undefined
+    # symbols" error
+    $libs .= join ' ', '', $self->apru_link_flags,
+        '-L' . catdir($self->perl_config('archlibexp'), 'CORE'), '-lperl';
+
+    $libs;
 }
 
 # linking used for the aprext lib used to build APR/APR::*
@@ -1798,6 +1823,17 @@ sub otherldflags_MSWin32 {
     my $self = shift;
     my $flags = $self->otherldflags_default;
     $flags .= ' -pdb:$(INST_ARCHAUTODIR)\$(BASEEXT).pdb' if $self->{MP_DEBUG};
+    $flags;
+}
+
+sub otherldflags_cygwin {
+    my $self = shift;
+    my $flags = $self->otherldflags_default;
+
+    unless ($self->{MP_STATIC_EXTS}) {
+        $flags .= join ' ', $self->apru_link_flags;
+    }
+
     $flags;
 }
 

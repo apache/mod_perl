@@ -12,6 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+improving DSO support on cygwin. The problem with cygwin is that it
+behaves like windows (it's a posix layer over windows after
+all). That's why we need to supply all symbols during linking time
+just like on win32, by adding -lapr-0 -laprutil-0 and -lhttpd. On
+windows, Apache supplies all the three libraries and it's easy to
+link, but on cygwin apache doesn't play nice and doesn't supply
+libhttpd. This change adds libapr and libaprutil. [Nick ***
+<doink123@abv.bg>]
+
 improve the diagnostics when detecting mp2 < 1.999022, tell the user
 which files and/or dirs need to be removed [Stas]
 
