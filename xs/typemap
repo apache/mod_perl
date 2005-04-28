@@ -6,10 +6,20 @@ const char_len *        T_CONST_CHAR_LEN
 ######################################################################
 OUTPUT
 T_POOLOBJ
-	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+        {
+            SV *rv = sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+            if ($var) {
+                MP_CLONE_INSERT_OBJ("APR::Pool", rv);
+            }   
+        }   
 
 T_APACHEOBJ
-	sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+        {
+            SV *rv = sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+            if ($var) {
+                MP_CLONE_INSERT_OBJ("APR::Pool", rv);
+            }   
+        }   
 
 T_HASHOBJ
 	$arg = modperl_hash_tie(aTHX_ \"${ntype}\", $arg, $var);

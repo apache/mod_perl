@@ -23,20 +23,6 @@ typedef struct {
 #endif
 } mpxs_pool_account_t;
 
-/* XXX: this implementation has a problem with perl ithreads. if a
- * custom pool is allocated, and then a thread is spawned we now have
- * two copies of the pool object, each living in a different perl
- * interpreter, both pointing to the same memory address of the apr
- * pool.
- *
- * need to write a CLONE class method could properly clone the
- * thread's copied object, but it's tricky:
- * - it needs to call parent_get() on the copied object and allocate a
- *   new pool from that parent's pool
- * - it needs to reinstall any registered cleanup callbacks (can we do
- *   that?) may be we can skip those?
- */
-
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"
 static
@@ -216,6 +202,8 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         if (parent_pool) {
             mpxs_add_pool_magic(rv, parent_pool_obj);
         }
+
+        MP_CLONE_INSERT_OBJ("APR::Pool", rv);
         
         return rv;
     }
@@ -351,7 +339,7 @@ mpxs_apr_pool_parent_get(pTHX_ apr_pool_t *child_pool)
     apr_pool_t *parent_pool = apr_pool_parent_get(child_pool);
 
     if (parent_pool) {
-        return SvREFCNT_inc(mp_xs_APR__Pool_2obj(parent_pool));
+        return SvREFCNT_inc(mp_xs_APR__Pool_2obj(aTHX_ parent_pool));
     }
     else {
         MP_POOL_TRACE(MP_FUNC, "pool (0x%lx) has no parents",
@@ -368,9 +356,20 @@ static MP_INLINE void mpxs_apr_pool_DESTROY(pTHX_ SV *obj)
 {
     SV *sv = SvRV(obj);
 
+    MP_CLONE_DELETE_OBJ("APR::Pool", obj);
+
     if (MP_APR_POOL_SV_HAS_OWNERSHIP(sv)) {
+        //Perl_warn(aTHX_ "APR::Pool %p: DESTROY %p => %p", aTHX_ obj, sv);
         apr_pool_t *p = mpxs_sv_object_deref(obj, apr_pool_t);
         apr_pool_destroy(p);
+
     }
+
+    if (MP_APR_POOL_SV_HAS_OWNERSHIP(sv)) {
+        /* do *not* merge this with the next conditional */
+
+    }
+
 }
 
+#define mpxs_APR__Pool_CLONE(class) MP_CLONE_DO_CLONE("APR::Pool", class)

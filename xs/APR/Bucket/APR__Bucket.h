@@ -78,6 +78,11 @@ static MP_INLINE int mpxs_APR__Bucket_is_eos(apr_bucket *bucket)
     return APR_BUCKET_IS_EOS(bucket);
 }
 
+static MP_INLINE int mpxs_APR__Bucket_is_eoc(apr_bucket *bucket)
+{
+    return APR_BUCKET_IS_EOC(bucket);
+}
+
 static MP_INLINE int mpxs_APR__Bucket_is_flush(apr_bucket *bucket)
 {
     return APR_BUCKET_IS_FLUSH(bucket);

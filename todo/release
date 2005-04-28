@@ -44,3 +44,91 @@ test suite was successful (needed to make cpan/plus installers
 happy). Not sure what's the best solution here.
 
 ---------------
+
+Making mp2 API perl-thread-safe
+owner: stas
+
+Status:
+
+V = done
+N = creates no objects
+- = not started
++ = in progress
+
+1) 
+
+-- APR::Bucket
+-- APR::BucketType
+V- APR::Pool
+-- APR::SockAddr
+-- APR::Socket
+V- APR::Table
+-- APR::UUID
+
+2)
+
+-- APR::Brigade xs/APR/Brigade/APR__Brigade.h:    SV *bb_sv = sv_setref_pv(NEWSV(0, 0), "APR::Brigade", (void*)bb);
+-- APR::BucketAlloc xs/APR/BucketAlloc/APR__BucketAlloc.h: SV *ba_sv = sv_setref_pv(NEWSV(0, 0), "APR::BucketAlloc", (void*)ba);
+-- APR::Error (not sure about this one, should probably handle as well)
+-- APR::Finfo xs/APR/Finfo/APR__Finfo.h:    finfo_sv = sv_setref_pv(NEWSV(0, 0), "APR::Finfo", (void*)finfo);
+-- APR::IpSubnet xs/APR/IpSubnet/APR__IpSubnet.h:    ipsub_sv = sv_setref_pv(NEWSV(0, 0), "APR::IpSubnet", (void*)ipsub);
+-- APR::ThreadMutex xs/APR/ThreadMutex/APR__ThreadMutex.h:    mutex_sv = sv_setref_pv(NEWSV(0, 0), "APR::ThreadMutex", (void*)mutex);
+-- APR::URI xs/APR/URI/APR__URI.h:    uri_sv = sv_setref_pv(NEWSV(0, 0), "APR::URI", (void*)uri);
+
+3)
+
+-- Apache::CmdParms
+-- Apache::Command
+-- Apache::Connection
+-- Apache::Directive
+-- Apache::Filter
+-- Apache::FilterRec
+-- Apache::ServerRec
+-- Apache::SubRequest
+-- Apache::Module
+-- Apache::Process
+
+4)
+-- Apache::Log xs/Apache/Log/Apache__Log.h:    sv_setref_pv(svretval, pclass, (void*)retval);
+-- Apache::RequestRec
+     src/modules/perl/modperl_io.c:    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
+     src/modules/perl/modperl_io.c:    sv_setref_pv(sv, "Apache::RequestRec", (void*)r);
+     src/modules/perl/modperl_io_apache.c:    sv_setref_pv(sv, "Apache::RequestRec", (void*)(st->r));
+     xs/Apache/RequestUtil/Apache__RequestUtil.h:    r_sv = sv_setref_pv(NEWSV(0, 0), "Apache::RequestRec", (void*)r);
+
+
+4) The following too (needs more detailed lookthrough):
+
+V- src/modules/perl/modperl_util.c:    sv_setref_pv(sv, classname, ptr);
+V- src/modules/perl/modperl_common_util.c:    sv_setref_pv(rsv, classname, p);
+V- xs/typemap:   sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+V- xs/typemap:   sv_setref_pv($arg, \"${ntype}\", (void*)$var);
+
+XXX: also grep for sv_bless
+
++ need to add DESTROY and CLONE methods to all the classes that we
+have the objects blessed into
+
+None of the following classes is used to bless object and therefore
+they require no special CLONE handling:
+
+N- Apache::Access
+N- Apache::HookRun
+N- Apache::MPM
+N- Apache::RequestIO
+N- Apache::RequestUtil
+N- Apache::Response
+N- Apache::ServerUtil
+N- Apache::SubProcess
+N- Apache::URI
+N- Apache::Util
+N- APR::Base64
+N- APR::Date
+N- APR::OS
+N- APR::String
+N- APR::Util
+N- ModPerl::Global
+N- ModPerl::Util
+
+
+

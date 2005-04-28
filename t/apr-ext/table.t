@@ -2,6 +2,7 @@
 
 use strict;
 use warnings FATAL => 'all';
+use Test::More ();
 use Apache::Test;
 
 use TestAPRlib::table;
