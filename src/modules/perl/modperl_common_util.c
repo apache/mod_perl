@@ -64,9 +64,8 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
     SV *hv = (SV*)newHV();
     SV *rsv = sv_newmortal();
 
-    SV *rv = sv_setref_pv(rsv, classname, p);
-    MP_CLONE_INSERT_OBJ("APR::Table", rv);
-    
+    sv_setref_pv(rsv, classname, p);
+
     /* Prefetch magic requires perl 5.8 */
 #if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
 

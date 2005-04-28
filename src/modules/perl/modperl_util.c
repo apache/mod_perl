@@ -192,15 +192,11 @@ MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj)
 MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
 {
     SV *sv = newSV(0);
-    SV *rv;
-    
+
     MP_TRACE_h(MP_FUNC, "sv_setref_pv(%s, 0x%lx)\n",
                classname, (unsigned long)ptr);
-    rv = sv_setref_pv(sv, classname, ptr);
-    if (ptr) {
-        MP_CLONE_INSERT_OBJ(classname, rv);
-    }
-    
+    sv_setref_pv(sv, classname, ptr);
+
     return sv;
 }
 

@@ -499,15 +499,8 @@ EOF
             $define = "mp_xs_${ptype}_2obj";
 
             $code .= <<EOF;
-MP_INLINE SV *$define(pTHX_ void *ptr);
-MP_INLINE SV *$define(pTHX_ void *ptr)
-{
-    SV *rv = sv_setref_pv(sv_newmortal(), "$class", ptr);
-    if (ptr) {
-        MP_CLONE_INSERT_OBJ("$class", rv);
-    }
-    return rv;
-}
+#define $define(ptr) \\
+sv_setref_pv(sv_newmortal(), "$class", (void*)ptr)
 
 EOF
 

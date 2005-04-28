@@ -5,14 +5,11 @@ package TestAPRlib::table;
 use strict;
 use warnings FATAL => 'all';
 
-use Test::More ();
 use Apache::Test;
 use Apache::TestUtil;
 
 use APR::Table ();
 use APR::Pool ();
-
-use TestCommon::Utils;
 
 use APR::Const -compile => ':table';
 
@@ -20,36 +17,17 @@ use constant TABLE_SIZE => 20;
 our $filter_count;
 
 sub num_of_tests {
-    my $runs = 1;
-    $runs += 3 if TestCommon::Utils::THREADS_OK;
-
     my $tests = 56;
+
     # tied hash values() for a table w/ multiple values for the same
     # key
     $tests += 2 if $] >= 5.008;
 
-    return $tests * $runs;
+    return $tests;
 }
 
 sub test {
-    test_set();
 
-    return unless TestCommon::Utils::THREADS_OK;
-
-    require threads;
-    our $p = APR::Pool->new;
-    my $threads = 2;
-
-    threads->new(\&test_set)->join for 1..$threads;
-    test_set(); # parent again
-
-    # XXX: at the moment serializing each run, since ok's gets
-    # interleaved with other otput when multple threads run at the
-    # same time
-    #$_->join() for threads->list();
-}
-
-sub test_set {
     $filter_count = 0;
     my $pool = APR::Pool->new();
     my $table = APR::Table::make($pool, TABLE_SIZE);

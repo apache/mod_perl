@@ -174,7 +174,6 @@ mpxs_APR__Pool_clear
 ~apr_pool_destroy
  DEFINE_destroy | mpxs_apr_pool_DESTROY | SV *:obj
  DEFINE_DESTROY | mpxs_apr_pool_DESTROY | SV *:obj
- DEFINE_CLONE | | SV *:class
 >apr_pool_destroy_debug
  SV *:DEFINE_new | mpxs_apr_pool_create | SV *:parent_pool_obj
 -apr_pool_create_ex
@@ -247,8 +246,6 @@ MODULE=APR::ThreadMutex   PREFIX=apr_thread_mutex_
  apr_proc_mutex_unlock
 
 MODULE=APR::Table
- DEFINE_CLONE | | SV *:class
- DEFINE_DESTROY | | SV *:obj
  apr_table_clear
 ~apr_table_copy
  mpxs_APR__Table_copy

@@ -17,23 +17,18 @@
 #define mpxs_APR__Table_DELETE  apr_table_unset
 #define mpxs_APR__Table_CLEAR   apr_table_clear
 
-/* redefine the key method */
-#undef MP_CLONE_KEY_COMMON
-#define MP_CLONE_KEY_COMMON(obj)                        \
-    modperl_hash_tied_object(aTHX_ "APR::Table", obj)
-    
 #define MPXS_DO_TABLE_N_MAGIC_RETURN(call)                              \
     apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);                          \
     apr_table_t *t = call;                                              \
     SV *t_sv = modperl_hash_tie(aTHX_ "APR::Table", Nullsv, t);         \
     mpxs_add_pool_magic(t_sv, p_sv);                                    \
-    MP_CLONE_INSERT_OBJ("APR::Table", t_sv);                            \
     return t_sv;
 
 static MP_INLINE SV *mpxs_APR__Table_make(pTHX_ SV *p_sv, int nelts)
 {
     MPXS_DO_TABLE_N_MAGIC_RETURN(apr_table_make(p, nelts));
 }
+
 
 static MP_INLINE SV *mpxs_APR__Table_copy(pTHX_ apr_table_t *base, SV *p_sv)
 {
@@ -197,6 +192,7 @@ static MP_INLINE const char *mpxs_APR__Table_FETCH(pTHX_ SV *tsv,
     }
 }
 
+
 MP_STATIC XS(MPXS_apr_table_get)
 {
     dXSARGS;
@@ -235,8 +231,3 @@ MP_STATIC XS(MPXS_apr_table_get)
     });
 
 }
-
-#define mpxs_APR__Table_CLONE(class) MP_CLONE_DO_CLONE("APR::Table", class)
-
-#define mpxs_APR__Table_DESTROY(obj) MP_CLONE_DELETE_OBJ("APR::Table", obj);
-

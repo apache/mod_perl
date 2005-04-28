@@ -29,12 +29,6 @@ use Apache2::ServerRec ();
 use Apache2::Process ();
 use Apache2::Log ();
 
-use TestCommon::Utils;
-# XXX: must be loaded before Test::Builder gets loaded (via A-T or
-# Test::More) so it'll get the threads right.
-require threads if TestCommon::Utils::THREADS_OK;
-# XXX: need to do the same for t/TEST for apr-ext tests
-
 use Apache2::Const -compile => ':common';
 
 reorg_INC();

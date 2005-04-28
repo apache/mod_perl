@@ -3,9 +3,7 @@ package TestAPRlib::pool;
 use strict;
 use warnings FATAL => 'all';
 
-use TestCommon::Utils;
-
-use Apache::Test; # for a shared test counter under ithreads
+use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestTrace;
 
@@ -13,28 +11,11 @@ use APR::Pool ();
 use APR::Table ();
 
 sub num_of_tests {
-    my $runs = 1;
-    $runs += 3 if TestCommon::Utils::THREADS_OK;
-
-    return $runs * 75;
+    return 75;
 }
 
 sub test {
-    test_set();
 
-    return unless TestCommon::Utils::THREADS_OK;
-
-    require threads;
-    our $p = APR::Pool->new;
-    my $threads = 2;
-
-    threads->new(\&test_set)->join for 1..$threads;
-    test_set(); # parent again
-
-    #$_->join() for threads->list();
-}
-
-sub test_set {
     my $pool = APR::Pool->new();
     my $table = APR::Table::make($pool, 2);
 
@@ -426,8 +407,6 @@ sub test_set {
         #ok $num_bytes;
 
     }
-
-    return undef; # a must for thread callback
 }
 
 # returns how many ancestor generations the pool has (parent,
