@@ -7,12 +7,12 @@ use Apache2::RequestRec ();
 use Apache2::RequestIO ();
 use Apache2::Connection ();
 use APR::Socket ();
+use APR::Status ();
 
 use Apache::TestUtil;
 
 use Apache2::Const -compile => qw(OK);
-use APR::Const    -compile => qw(EACCES EAGAIN);
-use APR::Status ();
+use APR::Const     -compile => qw(EACCES);
 
 use constant SIZE => 2048;
 
@@ -43,7 +43,7 @@ sub overload_test {
     die "the exception should have been an APR::Error object"
         unless ref $@ eq 'APR::Error';
 
-    # == && != (expecting APR::Const::EAGAIN error)
+    # == && != (expecting an EAGAIN error)
     die "APR::Status is broken"   unless APR::Status::is_EAGAIN($@);
     die "'==' overload is broken" unless $@ == $@;
     die "'!=' overload is broken" unless $@ != APR::Const::EACCES;
