@@ -1505,7 +1505,7 @@ sub dynamic_link_MSWin32 {
     return $self->dynamic_link_header_default .
         "\t$defs" .
         ($symbols ? ' \\' . "\n\t-pdb:$symbols" : '') .
-        " -out:$@\n\n";
+        ' -out:$@' . "\n\n";
 }
 
 sub dynamic_link_aix {
