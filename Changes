@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+fix Apache2::Build::dynamic_link_MSWin32 to generate a new line after
+dynamic_link code in Makefile [Nick *** <doink123@abv.bg>]
+
 fix a warning in Apache2::Build::build_config() when building
 with MP_STATIC_EXTS=1 [Nick *** <doink123@abv.bg>]
 
