@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_23-dev
 
+fix a warning in Apache2::Build::build_config() when building
+with MP_STATIC_EXTS=1 [Nick *** <doink123@abv.bg>]
+
 improving DSO support on cygwin. The problem with cygwin is that it
 behaves like windows (it's a posix layer over windows after
 all). That's why we need to supply all symbols during linking time
