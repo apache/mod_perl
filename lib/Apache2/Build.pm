@@ -783,7 +783,7 @@ sub build_config {
     my $self = shift;
     my $bpm_mtime = 0;
 
-    $bpm_mtime = (stat $INC{$bpm})[9] if $INC{$bpm};
+    $bpm_mtime = (stat _)[9] if $INC{$bpm} && -e $INC{$bpm};
 
     if (-e "lib/$bpm" and (stat _)[9] > $bpm_mtime) {
         #reload if Makefile.PL has regenerated
