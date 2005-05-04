@@ -73,15 +73,15 @@ PerlModule TestExit::FromPerlModule
 # </sandbox-friendly>
 
 <Location /status/perl>
-#    PerlSetVar StatusOptionsAll On
-#    PerlSetVar StatusDumper On
-#    PerlSetVar StatusPeek On
-#    PerlSetVar StatusLexInfo On
-#    PerlSetVar StatusDeparse On
-#    PerlSetVar StatusDeparseOptions "-p -sC"
-#    PerlSetVar StatusTerse On
-#    PerlSetVar StatusTerseSize On
-#    PerlSetVar StatusTerseSizeMainSummary On
+    PerlSetVar StatusOptionsAll On
+    PerlSetVar StatusDumper On
+    PerlSetVar StatusPeek On
+    PerlSetVar StatusLexInfo On
+    PerlSetVar StatusDeparse On
+    PerlSetVar StatusDeparseOptions "-p -sC"
+    PerlSetVar StatusTerse On
+    PerlSetVar StatusTerseSize On
+    PerlSetVar StatusTerseSizeMainSummary On
     SetHandler modperl
     PerlResponseHandler Apache2::Status
 </Location>

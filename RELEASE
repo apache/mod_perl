@@ -1,7 +1,7 @@
 Instructions for mod_perl 2.0 Release Manager
 
 1. 'make dist' - to make sure nothing is missing from the manifest,
-   etc. Now test this generated package mod_perl-2.0.0-RC6.tar.gz (not
+   etc. Now test this generated package mod_perl-2.0.0-RC5.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.
@@ -31,6 +31,7 @@ Instructions for mod_perl 2.0 Release Manager
   a. edit ./Changes:
      - remove '-dev' 
      - add release date
+     - temp: change VERSION in Makefile.PL to RC6 (while doing RC series)
 
   b. check ./README and ./Makefile.PL
      - make sure supported httpd versions (dso & static) are current
