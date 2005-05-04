@@ -1,7 +1,7 @@
 Instructions for mod_perl 2.0 Release Manager
 
 1. 'make dist' - to make sure nothing is missing from the manifest,
-   etc. Now test this generated package mod_perl-2.0.0-RC6.tar.gz (not
+   etc. Now test this generated package mod_perl-2.0.0-RC5.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.
