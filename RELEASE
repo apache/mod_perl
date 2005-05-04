@@ -174,6 +174,6 @@ Instructions for mod_perl 2.0 Release Manager
 
   e. commit the changed files
 
-     % svn ci -m "start 1.999_25-dev cycle" Changes lib/mod_perl2.pm \
+     % svn ci -m "start 1.999_24-dev cycle" Changes lib/mod_perl2.pm \
        STATUS RELEASE
 
