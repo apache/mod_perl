@@ -99,7 +99,7 @@ Instructions for mod_perl 2.0 Release Manager
   b. upload the generated sig file to www.apache.org:
 
     % scp mod_perl-2.0.0-RC6.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
-    % perl www.apache.org
+    % ssh www.apache.org
     % cd /www/perl.apache.org/dist/
     % chmod 0664 mod_perl-2.0.0-RC6.tar.gz.asc
     % ln -sf mod_perl-2.0.0-RC6.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
