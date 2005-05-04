@@ -10,6 +10,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 1.999_24-dev
+
+
+
+
+
 =item 1.999_23 - May 3, 2005
 
 fix Apache2::Build::dynamic_link_MSWin32 to generate a new line after
