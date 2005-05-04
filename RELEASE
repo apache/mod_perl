@@ -31,6 +31,7 @@ Instructions for mod_perl 2.0 Release Manager
   a. edit ./Changes:
      - remove '-dev' 
      - add release date
+     - temp: change VERSION in Makefile.PL to RC6 (while doing RC series)
 
   b. check ./README and ./Makefile.PL
      - make sure supported httpd versions (dso & static) are current
