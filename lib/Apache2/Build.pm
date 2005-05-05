@@ -1059,6 +1059,12 @@ sub apru_link_flags {
     for ($self->apu_config_path, $self->apr_config_path) {
         if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
             chomp $link;
+
+            # Change '/path/to/libanything.la' to '-L/path/to -lanything'
+            if (CYGWIN) {
+                $link =~ s|(\S*)/lib([^.\s]+)\.\S+|-L$1 -l$2|g;
+            }
+
             if ($self->httpd_is_source_tree) {
                 my @libs;
                 while ($link =~ m/-L(\S+)/g) {
@@ -1546,7 +1552,9 @@ sub modperl_libs_MSWin32 {
 
 sub modperl_libs_cygwin {
      my $self = shift;
-     "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}";
+     return $self->is_dynamic
+         ? "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}"
+         : $self->modperl_static_libs_cygwin;
 }
 
 sub modperl_libs {
@@ -1554,6 +1562,33 @@ sub modperl_libs {
     my $libs = \&{"modperl_libs_$^O"};
     return "" unless defined &$libs;
     $libs->($self);
+}
+
+my $modperl_static_libs_cygwin = '';
+sub modperl_static_libs_cygwin {
+    my $self = shift;
+
+    return $modperl_static_libs_cygwin if $modperl_static_libs_cygwin;
+
+    my $dyna_filepath = catdir $self->perl_config('archlibexp'),
+        'auto/DynaLoader/DynaLoader.a';
+    my $modperl_path  = "$self->{cwd}/src/modules/perl";
+    # Create symlink to mod_perl.a, but copy DynaLoader.a, because
+    # when running make clean the real DynaLoader.a may get deleted.
+    my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
+    my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
+    qx{ln -s $src $dst};
+    qx{cp $dyna_filepath $modperl_path/libDynaLoader.a};
+
+    $modperl_static_libs_cygwin = join ' ',
+        "-L$modperl_path",
+        "-l$self->{MP_LIBNAME}",
+        '-lDynaLoader',
+        $self->apru_link_flags,
+        '-L' . catdir($self->perl_config('archlibexp'), 'CORE'),
+        '-lperl';
+
+    $modperl_static_libs_cygwin;
 }
 
 # returns the directory and name of the aprext lib built under blib/ 
@@ -1831,7 +1866,7 @@ sub otherldflags_cygwin {
     my $flags = $self->otherldflags_default;
 
     unless ($self->{MP_STATIC_EXTS}) {
-        $flags .= join ' ', $self->apru_link_flags;
+        $flags .= join ' ', '', $self->apru_link_flags;
     }
 
     $flags;
