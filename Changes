@@ -12,6 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+link Apache2::* and ModPerl::* to mod_perl.a and DynaLoader.a, but
+-lmod_perl and -lDynaLoader don't work, and we can't supply the full
+paths, because MakeMaker doesn't allow this. I workaround this by
+making a symlink to mod_perl.a (called libmod_perl.a) and copy
+DynaLoader.a to libDynaLoader.a (I don't create a symlink, because,
+when running make clean, the real DynaLoader.a may get deleted).  The
+APR::* extensions are not affected, because in both cases we link them
+against aprext.  Also other small fixes are added. [Nick ***
+<doink123@abv.bg>]
 
 
 
