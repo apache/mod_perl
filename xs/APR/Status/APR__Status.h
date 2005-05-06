@@ -16,3 +16,5 @@
 #include "apr_errno.h"
 
 #define mpxs_APR__Status_is_EAGAIN APR_STATUS_IS_EAGAIN
+#define mpxs_APR__Status_is_EACCES APR_STATUS_IS_EACCES
+#define mpxs_APR__Status_is_ENOENT APR_STATUS_IS_ENOENT

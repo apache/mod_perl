@@ -649,3 +649,5 @@ MODULE=APR::OS
 
 MODULE=APR::Status      PREFIX=mpxs_APR__STATUS_
  int:DEFINE_is_EAGAIN | | apr_status_t:rc
+ int:DEFINE_is_EACCES | | apr_status_t:rc
+ int:DEFINE_is_ENOENT | | apr_status_t:rc
