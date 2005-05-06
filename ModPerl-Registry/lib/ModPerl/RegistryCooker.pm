@@ -34,6 +34,7 @@ use Apache2::Log ();
 use Apache2::Access ();
 
 use APR::Table ();
+use APR::Status ();
 
 use ModPerl::Util ();
 use ModPerl::Global ();
@@ -41,7 +42,6 @@ use ModPerl::Global ();
 use File::Spec::Functions ();
 use File::Basename;
 
-use APR::Const     -compile => qw(EACCES ENOENT);
 use Apache2::Const  -compile => qw(:common &OPT_EXECCGI);
 use ModPerl::Const -compile => 'EXIT';
 
@@ -542,8 +542,8 @@ sub read_script {
         $self->log_error("$@");
 
         if (ref $@ eq 'APR::Error') {
-            return Apache2::Const::FORBIDDEN if $@ == APR::Const::EACCES;
-            return Apache2::Const::NOT_FOUND if $@ == APR::Const::ENOENT;
+            return Apache2::Const::FORBIDDEN if APR::Status::is_EACCES($@);
+            return Apache2::Const::NOT_FOUND if APR::Status::is_ENOENT($@);
         }
         else {
             return Apache2::Const::SERVER_ERROR;
