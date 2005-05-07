@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+add APR::Status::is_(EACCES|ENOENT), and use in ModPerl::RegistryCooker
+to return, as appropriate, Apache2::Const::(FORBIDDEN|NOT_FOUND),
+based on $@. Also remove a check in modperl_slurp_filename
+of src/modules/perl/modperl_util.c to enable $@ to be set when
+opening or reading a file fails. This fixes a bug on Win32, revealed
+in 404.t and redirect.t of the ModPerl-Registry tests, as reported
+by Steve Hay and Markus Wichitill [Stas, Randy Kobes]
+
 link Apache2::* and ModPerl::* to mod_perl.a and DynaLoader.a, but
 -lmod_perl and -lDynaLoader don't work, and we can't supply the full
 paths, because MakeMaker doesn't allow this. I workaround this by
