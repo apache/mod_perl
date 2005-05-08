@@ -126,8 +126,9 @@ sub configure {
     set_modperl_version();
 
     if ($old_modperl_version) {
-        $old_modperl_version =~ s/(\d\d\d?)(\d\d)/$1_$2/;
-        my $vstring = "mod_perl/$old_modperl_version";
+        (my $old_modperl_version_str = $old_modperl_version)
+            =~ s/(\d\d\d?)(\d\d)/$1_$2/;
+        my $vstring = "mod_perl/$old_modperl_version_str";
         print "$vstring installation detected...";
 
         my $prefix;
