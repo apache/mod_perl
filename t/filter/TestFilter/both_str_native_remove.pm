@@ -12,6 +12,8 @@ use Apache2::RequestIO ();
 use Apache2::Filter ();
 use Apache2::FilterRec ();
 
+use APR::Table ();
+
 use TestCommon::Utils ();
 
 use Apache2::Const -compile => qw(OK DECLINED M_POST);
