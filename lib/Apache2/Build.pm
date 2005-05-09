@@ -1110,6 +1110,15 @@ sub apru_config_path {
                 push @tries, grep -d $_,
                     map catdir($base, "srclib", $_), qw(apr apr-util);
             }
+
+            # Check for MP_AP_CONFIGURE="--with-apr[-util]=DIR|FILE"
+            my $what_long = ($what eq 'apu') ? 'apr-util' : 'apr';
+            if ($self->{MP_AP_CONFIGURE} &&
+                $self->{MP_AP_CONFIGURE} =~ /--with-${what_long}=(\S+)/) {
+                my $dir = $1;
+                $dir =~ s/$config$// unless -d $dir;
+                push @tries, grep -d $_, $dir, catdir $dir, 'bin';
+            }
         }
         else {
             push @tries, grep length,
