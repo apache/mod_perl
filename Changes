@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+Fix a warning triggered by `ln` on Cygwin, when running perl
+Makefile.PL for a second time without previously running make
+clean. [Nick *** <doink123@abv.bg>]
+
 When compiling a static mod_perl and
 MP_AP_CONFIGURE="--with-apr=/some/path" argument is given, Apache will
 use the apr-config at the given path, but mod_perl was using the

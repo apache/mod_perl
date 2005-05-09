@@ -1586,7 +1586,7 @@ sub modperl_static_libs_cygwin {
     # when running make clean the real DynaLoader.a may get deleted.
     my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
     my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
-    qx{ln -s $src $dst};
+    qx{ln -s $src $dst} unless -e $dst;
     qx{cp $dyna_filepath $modperl_path/libDynaLoader.a};
 
     $modperl_static_libs_cygwin = join ' ',
