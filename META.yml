@@ -11,8 +11,6 @@ no_index:
         - C::Preprocessed   
           # Fake packages
         - Apache::Status::_version
-        - TestMore::testmorepm
-        - TestMore::testpm
         - perlrun_decl
           # Apache::compat redefines
         - Apache
