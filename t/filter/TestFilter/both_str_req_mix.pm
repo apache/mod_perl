@@ -138,7 +138,7 @@ __DATA__
         # PerlSetInputFilter is only useful for preserving the
         # insertion order of filters with the same priority
         SetInputFilter     DEFLATE
-        #PerlInputFilterHandler ModPerl::TestFilterDebug::snoop_request
+        #PerlInputFilterHandler TestCommon::FilterDebug::snoop_request
         PerlInputFilterHandler TestFilter::both_str_req_mix::in_adjust
         PerlInputFilterHandler TestFilter::both_str_req_mix::transparent
 
@@ -147,7 +147,7 @@ __DATA__
         PerlOutputFilterHandler TestFilter::both_str_req_mix::out_adjust_before_ssi
         PerlSetOutputFilter INCLUDES
         PerlOutputFilterHandler TestFilter::both_str_req_mix::out_adjust_after_ssi
-        #PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_request
+        #PerlOutputFilterHandler TestCommon::FilterDebug::snoop_request
         PerlSetOutputFilter DEFLATE
 
         SetHandler modperl

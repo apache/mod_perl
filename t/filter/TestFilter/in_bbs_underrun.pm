@@ -150,4 +150,4 @@ SetHandler modperl
 PerlModule          TestFilter::in_bbs_underrun
 PerlResponseHandler TestFilter::in_bbs_underrun::response
 PerlInputFilterHandler TestFilter::in_bbs_underrun::handler
-#PerlInputFilterHandler ModPerl::TestFilterDebug::snoop_request
+#PerlInputFilterHandler TestCommon::FilterDebug::snoop_request

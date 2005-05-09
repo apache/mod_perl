@@ -1,4 +1,4 @@
-package ModPerl::TestFilterDebug;
+package TestCommon::FilterDebug;
 
 use strict;
 use warnings FATAL => 'all';
@@ -12,10 +12,11 @@ use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Const -compile => ':common';
 
 # to use these functions add any or all of these filter handlers
-# PerlInputFilterHandler  ModPerl::TestFilterDebug::snoop_request
-# PerlInputFilterHandler  ModPerl::TestFilterDebug::snoop_connection
-# PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_request
-# PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_connection
+# PerlModule              TestCommon::FilterDebug
+# PerlInputFilterHandler  TestCommon::FilterDebug::snoop_request
+# PerlInputFilterHandler  TestCommon::FilterDebug::snoop_connection
+# PerlOutputFilterHandler TestCommon::FilterDebug::snoop_request
+# PerlOutputFilterHandler TestCommon::FilterDebug::snoop_connection
 #
 
 sub snoop_connection : FilterConnectionHandler { snoop("connection", @_) }
