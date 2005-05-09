@@ -42,7 +42,7 @@ use ModPerl::Global ();
 use File::Spec::Functions ();
 use File::Basename;
 
-use Apache2::Const  -compile => qw(:common &OPT_EXECCGI);
+use Apache2::Const -compile => qw(:common &OPT_EXECCGI);
 use ModPerl::Const -compile => 'EXIT';
 
 unless (defined $ModPerl::Registry::MarkLine) {
