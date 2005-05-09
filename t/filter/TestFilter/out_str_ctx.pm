@@ -9,9 +9,6 @@ use warnings;# FATAL => 'all';
 use Apache2::RequestRec ();
 use Apache2::RequestIO ();
 
-use APR::Brigade ();
-use APR::Bucket ();
-
 use base qw(Apache2::Filter);
 
 use Apache2::Const -compile => qw(OK M_POST);
