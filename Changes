@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+Show MP_APU_CONFIG as an argument to Makefile.PL in the Usage
+menu. [Nick *** <doink123@abv.bg>]
+
 Makefile.PL: fix the pre-rename mp2 install diagnostics code, to use
 the mp version of 1.999xx and not 1.999_xx, as the latter is
 unsuitable for numerical comparison [Stas].
