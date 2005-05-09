@@ -143,6 +143,6 @@ __DATA__
 SetHandler modperl
 PerlModule          TestFilter::in_str_consume
 PerlResponseHandler TestFilter::in_str_consume::response
-#PerlInputFilterHandler  ModPerl::TestFilterDebug::snoop_request
+#PerlInputFilterHandler  TestCommon::FilterDebug::snoop_request
 PerlInputFilterHandler  TestFilter::in_str_consume::handler
-#PerlInputFilterHandler  ModPerl::TestFilterDebug::snoop_request
+#PerlInputFilterHandler  TestCommon::FilterDebug::snoop_request
