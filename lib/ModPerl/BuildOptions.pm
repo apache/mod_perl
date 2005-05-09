@@ -233,6 +233,7 @@ AP_DESTDIR     0    Destination for Apache specific mod_perl bits
 AP_PREFIX      0    Apache installation or source tree prefix
 AP_CONFIGURE   0    Apache ./configure arguments
 APR_CONFIG     0    Path to apr-config
+APU_CONFIG     0    Path to apu-config
 XS_GLUE_DIR    1    Directories containing extension glue
 INCLUDE_DIR    1    Add directories to search for header files
 GENERATE_XS    0    Generate XS code based on httpd version
