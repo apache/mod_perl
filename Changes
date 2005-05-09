@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+When compiling a static mod_perl and
+MP_AP_CONFIGURE="--with-apr=/some/path" argument is given, Apache will
+use the apr-config at the given path, but mod_perl was using the
+default at "srclib/apr/.libs". Fix that [Nick *** <doink123@abv.bg>]
+
 Show MP_APU_CONFIG as an argument to Makefile.PL in the Usage
 menu. [Nick *** <doink123@abv.bg>]
 
