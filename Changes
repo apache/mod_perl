@@ -26,7 +26,8 @@ menu. [Nick *** <doink123@abv.bg>]
 
 Makefile.PL: fix the pre-rename mp2 install diagnostics code, to use
 the mp version of 1.999xx and not 1.999_xx, as the latter is
-unsuitable for numerical comparison [Stas].
+unsuitable for numerical comparison, also fix the name of the reported
+conflicting directory [Stas].
 
 add APR::Status::is_(EACCES|ENOENT), and use in ModPerl::RegistryCooker
 to return, as appropriate, Apache2::Const::(FORBIDDEN|NOT_FOUND),
