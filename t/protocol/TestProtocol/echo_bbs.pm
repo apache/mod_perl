@@ -19,7 +19,8 @@ use APR::Error ();
 use Apache::TestTrace;
 
 use Apache2::Const -compile => qw(OK MODE_GETLINE);
-use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
+use APR::Const    -compile => qw(SUCCESS SO_NONBLOCK);
+use APR::Status ();
 
 sub handler {
     my $c = shift;
@@ -33,7 +34,7 @@ sub handler {
     while (1) {
         debug "asking new line";
         my $rc = $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
-        last if $rc == APR::Const::EOF;
+        last if APR::Status::is_EOF($rc);
         die APR::Error::strerror($rc) unless $rc == APR::Const::SUCCESS;
 
         for (my $b = $bb->first; $b; $b = $bb->next($b)) {

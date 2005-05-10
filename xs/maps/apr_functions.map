@@ -648,6 +648,9 @@ MODULE=APR::OS
 -apr_os_shm_put
 
 MODULE=APR::Status      PREFIX=mpxs_APR__STATUS_
- int:DEFINE_is_EAGAIN | | apr_status_t:rc
- int:DEFINE_is_EACCES | | apr_status_t:rc
- int:DEFINE_is_ENOENT | | apr_status_t:rc
+ int:DEFINE_is_EAGAIN       | | apr_status_t:rc
+ int:DEFINE_is_EACCES       | | apr_status_t:rc
+ int:DEFINE_is_ENOENT       | | apr_status_t:rc
+ int:DEFINE_is_EOF          | | apr_status_t:rc
+ int:DEFINE_is_ECONNABORTED | | apr_status_t:rc
+ int:DEFINE_is_TIMEUP       | | apr_status_t:rc
