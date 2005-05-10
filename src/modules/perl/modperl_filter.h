@@ -83,7 +83,7 @@ MP_INLINE apr_status_t modperl_output_filter_write(pTHX_
                                                    const char *buf,
                                                    apr_size_t *len);
 
-void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp);
+void modperl_brigade_dump(apr_bucket_brigade *bb, apr_file_t *file);
 
 /* input filters */
 apr_status_t modperl_input_filter_handler(ap_filter_t *f,

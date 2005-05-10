@@ -78,8 +78,8 @@ $ModPerl::FunctionTable = [
         'name' => 'bb'
       },
       {
-        'type' => 'FILE *',
-        'name' => 'fp'
+        'type' => 'apr_file_t *',
+        'name' => 'file'
       }
     ]
   },
