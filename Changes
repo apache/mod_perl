@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+fix modperl_brigade_dump to use apr_file_printf() instead of
+fprintf(), which doesn't work everywhere [Stas]
+
 Fix a warning triggered by `ln` on Cygwin, when running perl
 Makefile.PL for a second time without previously running make
 clean. [Nick *** <doink123@abv.bg>]

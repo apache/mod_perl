@@ -642,7 +642,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
         return 0;
     }
 
-    /*modperl_brigade_dump(filter->bb_in, stderr);*/
+    /* modperl_brigade_dump(filter->bb_in, NULL); */
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "wanted: %db\n",
@@ -850,7 +850,7 @@ MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
                MP_FILTER_NAME(filter->f), *len,
                MP_TRACE_STR_TRUNC(filter->pool, copy, *len));
     APR_BRIGADE_INSERT_TAIL(filter->bb_out, bucket);
-    /* modperl_brigade_dump(filter->bb_out, stderr); */
+    /* modperl_brigade_dump(filter->bb_out, NULL); */
     return APR_SUCCESS;
 }
 
@@ -1241,28 +1241,28 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                (unsigned long)callback);
 }
 
-void modperl_brigade_dump(apr_bucket_brigade *bb, FILE *fp)
+void modperl_brigade_dump(apr_bucket_brigade *bb, apr_file_t *file)
 {
     apr_bucket *bucket;
     int i = 0;
 #ifndef WIN32
-    if (fp == NULL) {
-        fp = stderr;
+    if (file == NULL) {
+        file = modperl_global_get_server_rec()->error_log;
     }
 
-    fprintf(fp, "dump of brigade 0x%lx\n",
-            (unsigned long)bb);
+    apr_file_printf(file, "dump of brigade 0x%lx\n", (unsigned long)bb);
 
     for (bucket = APR_BRIGADE_FIRST(bb);
          bucket != APR_BRIGADE_SENTINEL(bb);
          bucket = APR_BUCKET_NEXT(bucket))
     {
-        fprintf(fp, "   %d: bucket=%s(0x%lx), length=%ld, data=0x%lx\n",
-                i, bucket->type->name,
-                (unsigned long)bucket,
-                (long)bucket->length,
-                (unsigned long)bucket->data);
-        /* fprintf(fp, "       : %s\n", (char *)bucket->data); */
+        apr_file_printf(file,
+                        "   %d: bucket=%s(0x%lx), length=%ld, data=0x%lx\n",
+                        i, bucket->type->name,
+                        (unsigned long)bucket,
+                        (long)bucket->length,
+                        (unsigned long)bucket->data);
+        /* apr_file_printf(file, "       : %s\n", (char *)bucket->data); */
 
         i++;
     }
