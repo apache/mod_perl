@@ -12,7 +12,8 @@ use Apache2::Connection ();
 use APR::Socket ();
 
 use Apache2::Const -compile => 'OK';
-use APR::Const     -compile => qw(TIMEUP SO_NONBLOCK);
+use APR::Const     -compile => qw(SO_NONBLOCK);
+use APR::Status ();
 
 use constant BUFF_LEN => 1024;
 
@@ -32,7 +33,7 @@ sub handler {
         my $buff;
         my $rlen = eval { $socket->recv($buff, BUFF_LEN) };
         if ($@) {
-            die "timed out, giving up: $@" if $@ == APR::Const::TIMEUP;
+            die "timed out, giving up: $@" if APR::Status::is_TIMEUP($@);
             die $@;
         }
 
@@ -40,7 +41,7 @@ sub handler {
 
         my $wlen = eval { $socket->send($buff) };
         if ($@) {
-            die "timed out, giving up: $@" if $@ == APR::Const::TIMEUP;
+            die "timed out, giving up: $@" if APR::Status::is_TIMEUP($@);
             die $@;
         }
     }

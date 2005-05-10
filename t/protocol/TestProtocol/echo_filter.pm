@@ -13,7 +13,8 @@ use APR::Error ();
 
 use base qw(Apache2::Filter);
 
-use APR::Const    -compile => qw(SUCCESS EOF SO_NONBLOCK);
+use APR::Const    -compile => qw(SUCCESS SO_NONBLOCK);
+use APR::Status ();
 use Apache2::Const -compile => qw(OK MODE_GETLINE);
 
 use constant BUFF_LEN => 1024;
@@ -39,7 +40,7 @@ sub handler {
 
     while (1) {
         my $rc = $c->input_filters->get_brigade($bb, Apache2::Const::MODE_GETLINE);
-        last if $rc == APR::Const::EOF;
+        last if APR::Status::is_EOF($rc);
         die APR::Error::strerror($rc) unless $rc == APR::Const::SUCCESS;
 
         # fflush is the equivalent of the following 3 lines of code:
