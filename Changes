@@ -12,6 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+ModPerl::RegistryCooker::chdir_file_normal() now chdirs to the current
+script's directory or the specified directory as an argument, as it
+was planned in first place. Therefore switch ModPerl::Registry and
+ModPerl::PerlRun to us NOP for this method call. If chdir_file is
+mapped to chdir_file_normal(), then run() and
+convert_script_to_compiled_handler() now call chdir to the script's
+directory and at before returning go back to the server root. [Stas]
+
 prevent undef warnings in catfile() calls in Apache2::Build when
 called from the ModPerl-Registry tree [Stas]
 
