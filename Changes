@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+introduce ModPerl::RegistryPrefork and ModPerl::PerlRunPrefork, which
+behave the same as ModPerl::Registry and ModPerl::PerlRun,
+respectively, but chdir to the script's directory like mod_cgi
+does. These two new handlers will refuse to load under threaded MPMs
+where chdir can't be used as it will affect all running threads [Stas]
+
 ModPerl::RegistryCooker::chdir_file_normal() now chdirs to the current
 script's directory or the specified directory as an argument, as it
 was planned in first place. Therefore switch ModPerl::Registry and
