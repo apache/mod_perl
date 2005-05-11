@@ -109,11 +109,12 @@ sub find_apxs_util {
     my $self = shift;
 
     $apxs = ''; # not found
-
     my @trys = ($Apache2::Build::APXS,
                 $self->{MP_APXS},
-                $ENV{MP_APXS},
-                catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs');
+                $ENV{MP_APXS});
+
+    push @trys, catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs' 
+        if exists $self->{MP_AP_PREFIX};
 
     if (WIN32) {
         my $ext = '.bat';
@@ -234,12 +235,12 @@ sub caller_package {
     return ($arg and ref($arg) eq __PACKAGE__) ? $arg : __PACKAGE__;
 }
 
-my %threaded_mpms = map { $_ => 1}
+my %threaded_mpms = map { $_ => 1 }
         qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
 sub mpm_is_threaded {
     my $self = shift;
     my $mpm_name = $self->mpm_name();
-    return $threaded_mpms{$mpm_name};
+    return $threaded_mpms{$mpm_name} || 0;
 }
 
 sub mpm_name {
@@ -253,16 +254,19 @@ sub mpm_name {
     my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
 
     # building against the httpd source dir
-    unless ($mpm_name and $self->httpd_is_source_tree) {
-        my $config_vars_file = catfile $self->dir, "build", "config_vars.mk";
-        if (open my $fh, $config_vars_file) {
-            while (<$fh>) {
-                if (/MPM_NAME = (\w+)/) {
-                    $mpm_name = $1;
-                    last;
+    unless (($mpm_name and $self->httpd_is_source_tree)) {
+        if ($self->dir) {
+            my $config_vars_file = catfile $self->dir,
+                "build", "config_vars.mk";
+            if (open my $fh, $config_vars_file) {
+                while (<$fh>) {
+                    if (/MPM_NAME = (\w+)/) {
+                        $mpm_name = $1;
+                        last;
+                    }
                 }
+                close $fh;
             }
-            close $fh;
         }
     }
 
