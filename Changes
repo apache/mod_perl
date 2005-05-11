@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+prevent undef warnings in catfile() calls in Apache2::Build when
+called from the ModPerl-Registry tree [Stas]
+
 fix modperl_brigade_dump to use apr_file_printf() instead of
 fprintf(), which doesn't work everywhere [Stas]
 
