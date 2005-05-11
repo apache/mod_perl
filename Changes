@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+make sure that the build picks up the include directories based on the
+apxs queries and only search the httpd source if $self->{MP_AP_PREFIX}
+was set. Earlier it was always picking the headers from the httpd
+source if it was available, which was resulting in the wrong headers
+if the installed httpd was different than the source that was found
+[Stas]
+
 introduce ModPerl::RegistryPrefork and ModPerl::PerlRunPrefork, which
 behave the same as ModPerl::Registry and ModPerl::PerlRun,
 respectively, but chdir to the script's directory like mod_cgi
