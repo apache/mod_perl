@@ -106,7 +106,7 @@ sub parse {
 
             if (!$table->{$key} and $opts & UNKNOWN_FATAL) {
                 my $usage = usage();
-                die "Unknown Option: $key\nUsage:\n$usage";
+                die "Unknown Option: $key\nUsage:\n$usage\n";
             }
 
             if ($key eq 'MP_APXS') {
