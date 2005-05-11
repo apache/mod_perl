@@ -940,7 +940,8 @@ sub dir {
 
     return $self->{dir} if $self->{dir};
 
-    if (IS_MOD_PERL_BUILD) {
+    # be careful with the guesswork, or may pick up some wrong headers
+    if (IS_MOD_PERL_BUILD && $self->{MP_AP_PREFIX}) {
         my $build = $self->build_config;
 
         if (my $bdir = $build->{'dir'}) {
@@ -1927,7 +1928,6 @@ sub includes {
         die "Can't find the mod_perl include dir (reason: $reason)";
     }
 
-    my $src = $self->dir;
     my $os = WIN32 ? 'win32' : 'unix';
     push @inc, $self->file_path("src/modules/perl", "xs");
 
@@ -1951,13 +1951,16 @@ sub includes {
         }
     }
 
-    for ("$src/modules/perl", "$src/include",
-         "$src/srclib/apr/include",
-         "$src/srclib/apr-util/include",
-         "$src/os/$os")
-      {
-          push @inc, $_ if -d $_;
-      }
+    if ($self->{MP_AP_PREFIX}) {
+        my $src = $self->dir;
+        for ("$src/modules/perl", "$src/include",
+             "$src/srclib/apr/include",
+             "$src/srclib/apr-util/include",
+             "$src/os/$os")
+            {
+                push @inc, $_ if -d $_;
+            }
+    }
 
     return \@inc;
 }
