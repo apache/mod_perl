@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+More APR::Status wrappers:  [Stas, Randy Kobes]
+- is_EOF
+- is_ECONNABORTED
+- is_ECONNRESET
+- is_TIMEUP
+
 make sure that the build picks up the include directories based on the
 apxs queries and only search the httpd source if $self->{MP_AP_PREFIX}
 was set. Earlier it was always picking the headers from the httpd
