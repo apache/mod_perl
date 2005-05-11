@@ -42,8 +42,12 @@ sub handler {
             my $buf;
             my $len = eval { $socket->recv($buf, BUFF_LEN) };
             if ($@) {
+                # rethrow
                 die $@ unless ref $@ eq 'APR::Error'
-                    && APR::Status::is_ECONNABORTED($@); # rethrow
+                    && (APR::Status::is_ECONNABORTED($@) ||
+                        APR::Status::is_ECONNRESET($@));
+                # ECONNABORTED == 103
+                # ECONNRESET   == 104
                 # ECONNABORTED is not an application error
                 # XXX: we don't really test that we always get this
                 # condition, since it depends on the timing of the
