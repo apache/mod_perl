@@ -7,10 +7,11 @@ our $VERSION = '0.01';
 
 use base qw(ModPerl::Registry);
 
-use Apache2::MPM ();
-
-die "This package can't be used under threaded MPMs"
-    if Apache2::MPM->is_threaded;
+if ($ENV{MOD_PERL}) {
+    require Apache2::MPM;
+    die "This package can't be used under threaded MPMs"
+        if Apache2::MPM->is_threaded;
+}
 
 sub handler : method {
     my $class = (@_ >= 2) ? shift : __PACKAGE__;
