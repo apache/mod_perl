@@ -1005,14 +1005,14 @@ sub ap_includedir  {
 # difference between where the apache headers are (to build
 # against) and where they will be installed (to install our
 # own headers alongside)
-# 
+#
 # ap_exp_includedir is where apache is going to install its
 # headers to
 sub ap_exp_includedir {
     my ($self) = @_;
-    
+
     return $self->{ap_exp_includedir} if $self->{ap_exp_includedir};
-    
+
     my $build_vars = File::Spec->catfile($self->{MP_AP_PREFIX}, 
                                          qw(build config_vars.mk));
     open my $vars, "<$build_vars" or die "Couldn't open $build_vars $!";
@@ -1023,7 +1023,7 @@ sub ap_exp_includedir {
             last;
         }
     }
-    
+
     $self->{ap_exp_includedir} = $ap_exp_includedir;
 }
 
