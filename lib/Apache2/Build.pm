@@ -24,6 +24,7 @@ use File::Spec::Functions qw(catfile catdir canonpath rel2abs devnull
                              catpath splitpath);
 use File::Basename;
 use ExtUtils::Embed ();
+use File::Copy ();
 
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl2.pm" } qw(. ..);
 
@@ -1590,8 +1591,12 @@ sub modperl_static_libs_cygwin {
     # when running make clean the real DynaLoader.a may get deleted.
     my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
     my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
+    # perl's link() on Cygwin seems to copy mod_perl.a to
+    # libmod_perl.a, but at this stage mod_perl.a is still a dummy lib
+    # and at the end we get nothing. whereas `ln -s` seems to create
+    # something like the shortcut on windows and it works.
     qx{ln -s $src $dst} unless -e $dst;
-    qx{cp $dyna_filepath $modperl_path/libDynaLoader.a};
+    File::Copy::copy($dyna_filepath, "$modperl_path/libDynaLoader.a");
 
     $modperl_static_libs_cygwin = join ' ',
         "-L$modperl_path",
