@@ -113,3 +113,8 @@
 * mpxs_Apache2__RequestRec_GETC in Apache_RequestIO.h is out to be
   reimplemented similar to read() w/o using the deprecated
   client_block interface
+
+* Segfaults under Apache::Reload (could be uncovering a bug in mp):
+  http://marc.theaimsgroup.com/?t=111145169900002&r=1&w=2
+  owner: gozer
+-                           
