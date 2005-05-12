@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 1.999_24-dev
 
+Reintroduce a pure-Perl version of ModPerl::Util::unload_package()
+The problematic XS version is now called unload_package_xs() and
+not used by default [Gozer]
+
 More APR::Status wrappers:  [Stas, Randy Kobes]
 - is_EOF
 - is_ECONNABORTED

@@ -7,7 +7,7 @@ MODULE=ModPerl::Util
  mpxs_ModPerl__Util_untaint | | ...
  SV *:DEFINE_current_perl_id
  char *:DEFINE_current_callback 
- DEFINE_unload_package | | const char *:package
+ DEFINE_unload_package_xs | | const char *:package
 
 MODULE=ModPerl::Global
  mpxs_ModPerl__Global_special_list_call
