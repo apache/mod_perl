@@ -56,17 +56,17 @@ Instructions for mod_perl 2.0 Release Manager
 
   a. upload to www.apache.org:/www/perl.apache.org/dist/
 
-    %  scp mod_perl-2.0.0-RC7.tar.gz perl.apache.org:/www/perl.apache.org/dist/
+    %  scp mod_perl-2.0.0.tar.gz perl.apache.org:/www/perl.apache.org/dist/
 
   b. ssh to perl.apache.org, unpack the package, update symlinks to the
      tar ball and unpacked distro:
 
     % ssh perl.apache.org
     % cd /www/perl.apache.org/dist/
-    % ln -sf mod_perl-2.0.0-RC7.tar.gz mod_perl-2.0-current.tar.gz
-    % tar -xzvf mod_perl-2.0.0-RC7.tar.gz
+    % ln -sf mod_perl-2.0.0.tar.gz mod_perl-2.0-current.tar.gz
+    % tar -xzvf mod_perl-2.0.0.tar.gz
     % rm /www/perl.apache.org/dist/mod_perl-2.0-current
-    % ln -sf  mod_perl-2.0.0-RC7 mod_perl-2.0-current
+    % ln -sf  mod_perl-2.0.0 mod_perl-2.0-current
 
   c. archive older releases (keep current + one prior release)
 
@@ -92,27 +92,27 @@ Instructions for mod_perl 2.0 Release Manager
 
   a. sign your local copy of the tarball:
 
-    % gpg --detach-sign --armor mod_perl-2.0.0-RC7.tar.gz
+    % gpg --detach-sign --armor mod_perl-2.0.0.tar.gz
 
-    % pgps -b --armor mod_perl-2.0.0-RC7.tar.gz
+    % pgps -b --armor mod_perl-2.0.0.tar.gz
 
   b. upload the generated sig file to www.apache.org:
 
-    % scp mod_perl-2.0.0-RC7.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
+    % scp mod_perl-2.0.0.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
     % ssh www.apache.org
     % cd /www/perl.apache.org/dist/
-    % chmod 0664 mod_perl-2.0.0-RC7.tar.gz.asc
-    % ln -sf mod_perl-2.0.0-RC7.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
+    % chmod 0664 mod_perl-2.0.0.tar.gz.asc
+    % ln -sf mod_perl-2.0.0.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
 
   c. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
 
-    http://perl.apache.org/dist/mod_perl-2.0.0-RC7.tar.gz.asc
-    http://perl.apache.org/dist/mod_perl-2.0.0-RC7.tar.gz
+    http://perl.apache.org/dist/mod_perl-2.0.0.tar.gz.asc
+    http://perl.apache.org/dist/mod_perl-2.0.0.tar.gz
 
-    % gpg --verify mod_perl-2.0.0-RC7.tar.gz.asc
+    % gpg --verify mod_perl-2.0.0.tar.gz.asc
 
-    % pgpv mod_perl-2.0.0-RC7.tar.gz.asc
+    % pgpv mod_perl-2.0.0.tar.gz.asc
 
   d. make sure that the files you just created are group rw so
      all the dist admins can make changes:
@@ -126,8 +126,8 @@ Instructions for mod_perl 2.0 Release Manager
   a. unpack the package, update symlinks to the tarball and unpacked distro:
 
    % cd /www/www.apache.org/dist/perl/
-   % cp /www/perl.apache.org/dist/mod_perl-2.0.0-RC7.tar.gz* .
-   % tar -xzvf mod_perl-2.0.0-RC7.tar.gz
+   % cp /www/perl.apache.org/dist/mod_perl-2.0.0.tar.gz* .
+   % tar -xzvf mod_perl-2.0.0.tar.gz
    % mv mod_perl-2.0.0-RC5.tar.gz* /www/archive.apache.org/dist/perl/
    % rm -rf mod_perl-2.0.0-RC5
 
@@ -141,11 +141,11 @@ Instructions for mod_perl 2.0 Release Manager
 8. Announce the package
 
   a. post ... to the modperl, announce lists
-  Subject: [ANNOUNCE] mod_perl 2.0.0-RC7 
+  Subject: [ANNOUNCE] mod_perl 2.0.0 
      include 
   - link at perl.apache.org:
-    http://apache.org/dist/perl/mod_perl-2.0.0-RC7.tar.gz
-    http://apache.org/dist/perl/mod_perl-2.0.0-RC7.tar.gz.asc (pgp sig)
+    http://apache.org/dist/perl/mod_perl-2.0.0.tar.gz
+    http://apache.org/dist/perl/mod_perl-2.0.0.tar.gz.asc (pgp sig)
   - MD5 sig (as it comes from CPAN upload announce).
   - the latest Changes
 
@@ -156,7 +156,7 @@ Instructions for mod_perl 2.0 Release Manager
   b. edit ./Changes:
      - start a new item with incremented version + '-dev'
 
-  =item 1.999_25-dev
+  =item 2.000_00-dev
 
   c. add a release entry in STATUS
 
@@ -174,6 +174,6 @@ Instructions for mod_perl 2.0 Release Manager
 
   e. commit the changed files
 
-     % svn ci -m "start 1.999_24-dev cycle" Changes lib/mod_perl2.pm \
+     % svn ci -m "start 2.000_00-dev cycle" Changes lib/mod_perl2.pm \
        STATUS RELEASE
 

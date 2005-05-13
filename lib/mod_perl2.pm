@@ -18,7 +18,7 @@ use 5.006;
 use strict;
 
 BEGIN {
-    our $VERSION = "1.999024";
+    our $VERSION = "2.000000";
     our $VERSION_TRIPLET;
 
     if ($VERSION =~ /(\d+)\.(\d\d\d)(\d+)/) {
@@ -31,9 +31,10 @@ BEGIN {
         die "bad version: $VERSION";
     }
 
-    # $VERSION        : "1.099020"
-    # int $VERSION    : 1.09902
-    # $VERSION_TRIPLET: 1.99.20
+    # for example this gives us:
+    # $VERSION        : "2.000020"
+    # int $VERSION    : 2.00002
+    # $VERSION_TRIPLET: 2.0.20
 
     # easy to parse request time  API version - use
     # $mod_perl2::VERSION for more granularity

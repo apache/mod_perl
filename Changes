@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.999_24-dev
+=item 2.000_00-dev
 
 Reintroduce a pure-Perl version of ModPerl::Util::unload_package()
 The problematic XS version is now called unload_package_xs() and
