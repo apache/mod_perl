@@ -67,7 +67,7 @@ my @exe_files =  map "bin/$_", qw(mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
     NAME          => 'mod_perl2',
-    VERSION_FROM  => "lib/mod_perl2.pm",
+    VERSION       => $VERSION,
     DISTNAME      => 'mod_perl',
     NO_META       => 1,
     ABSTRACT_FROM => 'lib/mod_perl2.pm',
