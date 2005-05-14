@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.000_00-dev
 
+fix the ap_install target in the top-level Makefile (used for static
+build) [Stas]
+
 Reintroduce a pure-Perl version of ModPerl::Util::unload_package()
 The problematic XS version is now called unload_package_xs() and
 not used by default [Gozer]

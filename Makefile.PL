@@ -641,12 +641,12 @@ EOF
         $string .= <<"EOF";
 ap_build: modperl_lib
 	cd "$build->{MP_AP_PREFIX}" && make
-    
+
 ap_install: ap_build
-	cd "$build->{MP_AP_PREFIX}" && make DESTDIR=$(DESTDIR) install
+	cd "$build->{MP_AP_PREFIX}" && make DESTDIR=\$(DESTDIR) install
 EOF
     }
-    
+
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
     $string .= <<'EOF';
