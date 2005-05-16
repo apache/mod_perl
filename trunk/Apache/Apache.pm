@@ -467,6 +467,12 @@ Lookup the remote user's system name.  Might return I<undef> if the
 remote system is not running an RFC 1413 server or if the configuration
 directive B<IdentityCheck> is not turned on.
 
+=item $r-E<gt>user( [$user] )
+
+If an authentication check was successful, the authentication handler
+caches the user name here. Sets the user name to the optional first
+argument.
+
 =back
 
 More information about the client can be obtained from the
@@ -554,14 +560,12 @@ always undefined.
 
 =item $c-E<gt>user( [$user] )
 
-If an authentication check was successful, the authentication handler
-caches the user name here. Sets the user name to the optional first
-argument.
+Deprecated, use C<$r-E<gt>user> instead.
 
 =item $c-E<gt>auth_type
 
-Returns the authentication scheme that successfully authenticate
-C<$c-E<gt>user>, if any.
+Returns the authentication scheme used to successfully authenticate
+C<$r-E<gt>user>, if any.
 
 =item $c-E<gt>aborted
 
