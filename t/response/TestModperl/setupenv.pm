@@ -190,7 +190,9 @@ __DATA__
     PerlPostReadRequestHandler TestModperl::setupenv::subenv_one
 
     # SetEnv is affected by +SetupEnv
-    SetEnv SRV_SETENV server
+    <IfModule mod_env.c>
+        SetEnv SRV_SETENV server
+    </IfModule>
 
     # PerlSetEnv is not affected by +SetupEnv or -SetupEnv
     # it is entirely separate and always set if configured
@@ -210,8 +212,9 @@ __DATA__
         PerlResponseHandler TestModperl::setupenv::noenv
 
         PerlFixupHandler TestModperl::setupenv::subenv_two
-
-        SetEnv DIR_SETENV mpdefault
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV mpdefault
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV mpdefault
     </Location>
 
@@ -226,7 +229,9 @@ __DATA__
 
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV mpsetup
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV mpsetup
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV mpsetup
     </Location>
 
@@ -242,7 +247,9 @@ __DATA__
         PerlHeaderParserHandler TestModperl::setupenv::subenv_void
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV mpvoid
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV mpvoid
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV mpvoid
     </Location>
 
@@ -260,7 +267,9 @@ __DATA__
         PerlHeaderParserHandler TestModperl::setupenv::subenv_void
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV mpsetupvoid
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV mpsetupvoid
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV mpsetupvoid
     </Location>
 
@@ -272,7 +281,9 @@ __DATA__
 
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV psdefault
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV psdefault
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV psdefault
     </Location>
 
@@ -286,7 +297,9 @@ __DATA__
 
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV psnosetup
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV psnosetup
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV psnosetup
     </Location>
 
@@ -302,7 +315,9 @@ __DATA__
         PerlHeaderParserHandler TestModperl::setupenv::subenv_void
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV psvoid
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV psvoid
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV psvoid
     </Location>
 
@@ -318,7 +333,9 @@ __DATA__
         PerlHeaderParserHandler TestModperl::setupenv::subenv_void
         PerlFixupHandler TestModperl::setupenv::subenv_two
 
-        SetEnv DIR_SETENV psnosetupvoid
+        <IfModule mod_env.c>
+            SetEnv DIR_SETENV psnosetupvoid
+        </IfModule>
         PerlSetEnv DIR_PERLSETENV psnosetupvoid
     </Location>
 </VirtualHost>
