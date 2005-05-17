@@ -26,7 +26,7 @@ my @locations = ("${url}_mpdefault",
 # this requires keepalives and a per-connection interpreter
 # to make certain we can plan in one request and test in another
 # which requires LWP
-unless (need_lwp()) {
+unless (need_lwp() && need_module('mod_env')) {
     plan tests => 63, 0;
 }
 

@@ -30,7 +30,7 @@ use File::Spec::Functions;
 use File::Spec;
 use DirHandle ();
 use File::Copy 'cp';
-use File::Basename 'basename';
+use File::Basename qw(basename dirname);
 use File::Find ();
 
 use Apache2::Build ();
@@ -67,7 +67,7 @@ my @exe_files =  map "bin/$_", qw(mp2bug);
 
 ModPerl::BuildMM::WriteMakefile(
     NAME          => 'mod_perl2',
-    VERSION       => '2.0.0-RC5',
+    VERSION       => $VERSION,
     DISTNAME      => 'mod_perl',
     NO_META       => 1,
     ABSTRACT_FROM => 'lib/mod_perl2.pm',
@@ -126,8 +126,9 @@ sub configure {
     set_modperl_version();
 
     if ($old_modperl_version) {
-        $old_modperl_version =~ s/(\d\d\d?)(\d\d)/$1_$2/;
-        my $vstring = "mod_perl/$old_modperl_version";
+        (my $old_modperl_version_str = $old_modperl_version)
+            =~ s/(\d\d\d?)(\d\d)/$1_$2/;
+        my $vstring = "mod_perl/$old_modperl_version_str";
         print "$vstring installation detected...";
 
         my $prefix;
@@ -143,17 +144,15 @@ sub configure {
                 "no collision)\n";
         }
         else {
-            my @files = ();
-            my @dirs = ();
-            push @files, $old_Apache2_pm if $old_Apache2_pm;
-            push @dirs, $path
-                if $path =~ /Apache2/ or $old_modperl_version > 1.99;
-
             my $note = '';
-            if (@files || @dirs) {
-                $note  = "Problematic\n";
-                $note .= "files: @files\n" if @files;
-                $note .= "dirs: @dirs\n"   if @dirs;
+            if ($old_Apache2_pm) {
+                $note .= "Conflicting file: $old_Apache2_pm\n";
+            }
+            if ($path =~ /Apache2/ or $old_modperl_version > 1.99) {
+                my $dir = dirname $path;
+                # was it installed into the top-level?
+                $dir = catdir $dir, 'Apache' unless $path =~ /Apache2/;
+                $note .= "Conflicting dir: $dir\n" if -d $dir;
             }
 
             print " not ok\n\n";
@@ -164,7 +163,7 @@ due to a major API change between mod_perl 1.999_21 and 1.999_22.
 $note
 Please nuke the prior mod_perl installation from your site_lib,
 use a different perl to run the installation process, or use the
-PREFIX option when creating your Makefile.  see
+PREFIX option when creating your Makefile.  See:
 
   http://perl.apache.org/docs/2.0/rename.html
 
@@ -642,12 +641,12 @@ EOF
         $string .= <<"EOF";
 ap_build: modperl_lib
 	cd "$build->{MP_AP_PREFIX}" && make
-    
+
 ap_install: ap_build
-	cd "$build->{MP_AP_PREFIX}" && make DESTDIR=$(DESTDIR) install
+	cd "$build->{MP_AP_PREFIX}" && make DESTDIR=\$(DESTDIR) install
 EOF
     }
-    
+
     ModPerl::MM::add_dep(\$string, pure_all => 'modperl_lib');
 
     $string .= <<'EOF';

@@ -2,11 +2,9 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
-use Apache::TestUtil;
+use Apache::TestUtil qw(t_cmp t_catfile_apache t_client_log_error_is_expected);
 use Apache::TestRequest;
 use Apache::TestConfig ();
-
-use Apache::TestUtil qw(t_catfile_apache);
 
 my %modules = (
     registry    => 'ModPerl::Registry',

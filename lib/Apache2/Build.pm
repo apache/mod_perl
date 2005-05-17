@@ -24,6 +24,7 @@ use File::Spec::Functions qw(catfile catdir canonpath rel2abs devnull
                              catpath splitpath);
 use File::Basename;
 use ExtUtils::Embed ();
+use File::Copy ();
 
 use constant IS_MOD_PERL_BUILD => grep { -e "$_/lib/mod_perl2.pm" } qw(. ..);
 
@@ -109,11 +110,12 @@ sub find_apxs_util {
     my $self = shift;
 
     $apxs = ''; # not found
-
     my @trys = ($Apache2::Build::APXS,
                 $self->{MP_APXS},
-                $ENV{MP_APXS},
-                catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs');
+                $ENV{MP_APXS});
+
+    push @trys, catfile $self->{MP_AP_PREFIX}, 'bin', 'apxs' 
+        if exists $self->{MP_AP_PREFIX};
 
     if (WIN32) {
         my $ext = '.bat';
@@ -234,12 +236,12 @@ sub caller_package {
     return ($arg and ref($arg) eq __PACKAGE__) ? $arg : __PACKAGE__;
 }
 
-my %threaded_mpms = map { $_ => 1}
+my %threaded_mpms = map { $_ => 1 }
         qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
 sub mpm_is_threaded {
     my $self = shift;
     my $mpm_name = $self->mpm_name();
-    return $threaded_mpms{$mpm_name};
+    return $threaded_mpms{$mpm_name} || 0;
 }
 
 sub mpm_name {
@@ -253,16 +255,19 @@ sub mpm_name {
     my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
 
     # building against the httpd source dir
-    unless ($mpm_name and $self->httpd_is_source_tree) {
-        my $config_vars_file = catfile $self->dir, "build", "config_vars.mk";
-        if (open my $fh, $config_vars_file) {
-            while (<$fh>) {
-                if (/MPM_NAME = (\w+)/) {
-                    $mpm_name = $1;
-                    last;
+    unless (($mpm_name and $self->httpd_is_source_tree)) {
+        if ($self->dir) {
+            my $config_vars_file = catfile $self->dir,
+                "build", "config_vars.mk";
+            if (open my $fh, $config_vars_file) {
+                while (<$fh>) {
+                    if (/MPM_NAME = (\w+)/) {
+                        $mpm_name = $1;
+                        last;
+                    }
                 }
+                close $fh;
             }
-            close $fh;
         }
     }
 
@@ -783,7 +788,7 @@ sub build_config {
     my $self = shift;
     my $bpm_mtime = 0;
 
-    $bpm_mtime = (stat $INC{$bpm})[9] if $INC{$bpm};
+    $bpm_mtime = (stat _)[9] if $INC{$bpm} && -e $INC{$bpm};
 
     if (-e "lib/$bpm" and (stat _)[9] > $bpm_mtime) {
         #reload if Makefile.PL has regenerated
@@ -935,7 +940,8 @@ sub dir {
 
     return $self->{dir} if $self->{dir};
 
-    if (IS_MOD_PERL_BUILD) {
+    # be careful with the guesswork, or may pick up some wrong headers
+    if (IS_MOD_PERL_BUILD && $self->{MP_AP_PREFIX}) {
         my $build = $self->build_config;
 
         if (my $bdir = $build->{'dir'}) {
@@ -1000,14 +1006,14 @@ sub ap_includedir  {
 # difference between where the apache headers are (to build
 # against) and where they will be installed (to install our
 # own headers alongside)
-# 
+#
 # ap_exp_includedir is where apache is going to install its
 # headers to
 sub ap_exp_includedir {
     my ($self) = @_;
-    
+
     return $self->{ap_exp_includedir} if $self->{ap_exp_includedir};
-    
+
     my $build_vars = File::Spec->catfile($self->{MP_AP_PREFIX}, 
                                          qw(build config_vars.mk));
     open my $vars, "<$build_vars" or die "Couldn't open $build_vars $!";
@@ -1018,7 +1024,7 @@ sub ap_exp_includedir {
             last;
         }
     }
-    
+
     $self->{ap_exp_includedir} = $ap_exp_includedir;
 }
 
@@ -1059,6 +1065,12 @@ sub apru_link_flags {
     for ($self->apu_config_path, $self->apr_config_path) {
         if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
             chomp $link;
+
+            # Change '/path/to/libanything.la' to '-L/path/to -lanything'
+            if (CYGWIN) {
+                $link =~ s|(\S*)/lib([^.\s]+)\.\S+|-L$1 -l$2|g;
+            }
+
             if ($self->httpd_is_source_tree) {
                 my @libs;
                 while ($link =~ m/-L(\S+)/g) {
@@ -1103,6 +1115,15 @@ sub apru_config_path {
             for my $base (grep defined $_, $self->dir) {
                 push @tries, grep -d $_,
                     map catdir($base, "srclib", $_), qw(apr apr-util);
+            }
+
+            # Check for MP_AP_CONFIGURE="--with-apr[-util]=DIR|FILE"
+            my $what_long = ($what eq 'apu') ? 'apr-util' : 'apr';
+            if ($self->{MP_AP_CONFIGURE} &&
+                $self->{MP_AP_CONFIGURE} =~ /--with-${what_long}=(\S+)/) {
+                my $dir = $1;
+                $dir =~ s/$config$// unless -d $dir;
+                push @tries, grep -d $_, $dir, catdir $dir, 'bin';
             }
         }
         else {
@@ -1505,7 +1526,7 @@ sub dynamic_link_MSWin32 {
     return $self->dynamic_link_header_default .
         "\t$defs" .
         ($symbols ? ' \\' . "\n\t-pdb:$symbols" : '') .
-        ' -out:$@';
+        ' -out:$@' . "\n\n";
 }
 
 sub dynamic_link_aix {
@@ -1546,7 +1567,9 @@ sub modperl_libs_MSWin32 {
 
 sub modperl_libs_cygwin {
      my $self = shift;
-     "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}";
+     return $self->is_dynamic
+         ? "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}"
+         : $self->modperl_static_libs_cygwin;
 }
 
 sub modperl_libs {
@@ -1554,6 +1577,37 @@ sub modperl_libs {
     my $libs = \&{"modperl_libs_$^O"};
     return "" unless defined &$libs;
     $libs->($self);
+}
+
+my $modperl_static_libs_cygwin = '';
+sub modperl_static_libs_cygwin {
+    my $self = shift;
+
+    return $modperl_static_libs_cygwin if $modperl_static_libs_cygwin;
+
+    my $dyna_filepath = catdir $self->perl_config('archlibexp'),
+        'auto/DynaLoader/DynaLoader.a';
+    my $modperl_path  = "$self->{cwd}/src/modules/perl";
+    # Create symlink to mod_perl.a, but copy DynaLoader.a, because
+    # when running make clean the real DynaLoader.a may get deleted.
+    my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
+    my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
+    # perl's link() on Cygwin seems to copy mod_perl.a to
+    # libmod_perl.a, but at this stage mod_perl.a is still a dummy lib
+    # and at the end we get nothing. whereas `ln -s` seems to create
+    # something like the shortcut on windows and it works.
+    qx{ln -s $src $dst} unless -e $dst;
+    File::Copy::copy($dyna_filepath, "$modperl_path/libDynaLoader.a");
+
+    $modperl_static_libs_cygwin = join ' ',
+        "-L$modperl_path",
+        "-l$self->{MP_LIBNAME}",
+        '-lDynaLoader',
+        $self->apru_link_flags,
+        '-L' . catdir($self->perl_config('archlibexp'), 'CORE'),
+        '-lperl';
+
+    $modperl_static_libs_cygwin;
 }
 
 # returns the directory and name of the aprext lib built under blib/ 
@@ -1831,7 +1885,7 @@ sub otherldflags_cygwin {
     my $flags = $self->otherldflags_default;
 
     unless ($self->{MP_STATIC_EXTS}) {
-        $flags .= join ' ', $self->apru_link_flags;
+        $flags .= join ' ', '', $self->apru_link_flags;
     }
 
     $flags;
@@ -1874,7 +1928,6 @@ sub includes {
         die "Can't find the mod_perl include dir (reason: $reason)";
     }
 
-    my $src = $self->dir;
     my $os = WIN32 ? 'win32' : 'unix';
     push @inc, $self->file_path("src/modules/perl", "xs");
 
@@ -1898,13 +1951,16 @@ sub includes {
         }
     }
 
-    for ("$src/modules/perl", "$src/include",
-         "$src/srclib/apr/include",
-         "$src/srclib/apr-util/include",
-         "$src/os/$os")
-      {
-          push @inc, $_ if -d $_;
-      }
+    if ($self->{MP_AP_PREFIX}) {
+        my $src = $self->dir;
+        for ("$src/modules/perl", "$src/include",
+             "$src/srclib/apr/include",
+             "$src/srclib/apr-util/include",
+             "$src/os/$os")
+            {
+                push @inc, $_ if -d $_;
+            }
+    }
 
     return \@inc;
 }

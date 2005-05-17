@@ -12,8 +12,8 @@ use APR::Error ();
 use Apache::TestTrace;
 
 use Apache2::Const -compile => 'OK';
-use APR::Const    -compile => qw(SO_NONBLOCK TIMEUP SUCCESS POLLIN
-                                 ECONNABORTED);
+use APR::Const    -compile => qw(SO_NONBLOCK SUCCESS POLLIN);
+use APR::Status ();
 
 use constant BUFF_LEN => 1024;
 
@@ -42,8 +42,12 @@ sub handler {
             my $buf;
             my $len = eval { $socket->recv($buf, BUFF_LEN) };
             if ($@) {
+                # rethrow
                 die $@ unless ref $@ eq 'APR::Error'
-                    && $@ == APR::Const::ECONNABORTED; # rethrow
+                    && (APR::Status::is_ECONNABORTED($@) ||
+                        APR::Status::is_ECONNRESET($@));
+                # ECONNABORTED == 103
+                # ECONNRESET   == 104
                 # ECONNABORTED is not an application error
                 # XXX: we don't really test that we always get this
                 # condition, since it depends on the timing of the
@@ -60,7 +64,7 @@ sub handler {
             debug "sending: $buf";
             $socket->send($buf);
         }
-        elsif ($rc == APR::Const::TIMEUP) {
+        elsif (APR::Status::is_TIMEUP($rc)) {
             debug "timeout";
             $socket->send("TIMEUP\n");
         }

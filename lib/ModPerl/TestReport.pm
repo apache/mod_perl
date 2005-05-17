@@ -21,6 +21,7 @@ use base qw(Apache::TestReportPerl);
 
 my @interesting_packages = qw(
     CGI
+    ExtUtils::MakeMaker
     Apache2::Request
     mod_perl2
     LWP

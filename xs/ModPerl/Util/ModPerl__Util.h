@@ -35,7 +35,7 @@ static MP_INLINE void mpxs_ModPerl__Util_untaint(pTHX_ I32 items,
 #define mpxs_ModPerl__Util_current_callback \
     modperl_callback_current_callback_get
 
-#define mpxs_ModPerl__Util_unload_package(pkg) \
+#define mpxs_ModPerl__Util_unload_package_xs(pkg) \
     modperl_package_unload(aTHX_ pkg)
 
 /* ModPerl::Util::exit lives in mod_perl.so, see modperl_perl.c */

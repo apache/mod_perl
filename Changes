@@ -10,7 +10,93 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 1.999_23-dev
+=item 2.000_00-dev
+
+fix the ap_install target in the top-level Makefile (used for static
+build) [Stas]
+
+Reintroduce a pure-Perl version of ModPerl::Util::unload_package()
+The problematic XS version is now called unload_package_xs() and
+not used by default [Gozer]
+
+More APR::Status wrappers:  [Stas, Randy Kobes]
+- is_EOF
+- is_ECONNABORTED
+- is_ECONNRESET
+- is_TIMEUP
+
+make sure that the build picks up the include directories based on the
+apxs queries and only search the httpd source if $self->{MP_AP_PREFIX}
+was set. Earlier it was always picking the headers from the httpd
+source if it was available, which was resulting in the wrong headers
+if the installed httpd was different than the source that was found
+[Stas]
+
+introduce ModPerl::RegistryPrefork and ModPerl::PerlRunPrefork, which
+behave the same as ModPerl::Registry and ModPerl::PerlRun,
+respectively, but chdir to the script's directory like mod_cgi
+does. These two new handlers will refuse to load under threaded MPMs
+where chdir can't be used as it will affect all running threads [Stas]
+
+ModPerl::RegistryCooker::chdir_file_normal() now chdirs to the current
+script's directory or the specified directory as an argument, as it
+was planned in first place. Therefore switch ModPerl::Registry and
+ModPerl::PerlRun to us NOP for this method call. If chdir_file is
+mapped to chdir_file_normal(), then run() and
+convert_script_to_compiled_handler() now call chdir to the script's
+directory and at before returning go back to the server root. [Stas]
+
+prevent undef warnings in catfile() calls in Apache2::Build when
+called from the ModPerl-Registry tree [Stas]
+
+fix modperl_brigade_dump to use apr_file_printf() instead of
+fprintf(), which doesn't work everywhere [Stas]
+
+Fix a warning triggered by `ln` on Cygwin, when running perl
+Makefile.PL for a second time without previously running make
+clean. [Nick *** <doink123@abv.bg>]
+
+When compiling a static mod_perl and
+MP_AP_CONFIGURE="--with-apr=/some/path" argument is given, Apache will
+use the apr-config at the given path, but mod_perl was using the
+default at "srclib/apr/.libs". Fix that [Nick *** <doink123@abv.bg>]
+
+Show MP_APU_CONFIG as an argument to Makefile.PL in the Usage
+menu. [Nick *** <doink123@abv.bg>]
+
+Makefile.PL: fix the pre-rename mp2 install diagnostics code, to use
+the mp version of 1.999xx and not 1.999_xx, as the latter is
+unsuitable for numerical comparison, also fix the name of the reported
+conflicting directory [Stas].
+
+add APR::Status::is_(EACCES|ENOENT), and use in ModPerl::RegistryCooker
+to return, as appropriate, Apache2::Const::(FORBIDDEN|NOT_FOUND),
+based on $@. Also remove a check in modperl_slurp_filename
+of src/modules/perl/modperl_util.c to enable $@ to be set when
+opening or reading a file fails. This fixes a bug on Win32, revealed
+in 404.t and redirect.t of the ModPerl-Registry tests, as reported
+by Steve Hay and Markus Wichitill [Stas, Randy Kobes]
+
+link Apache2::* and ModPerl::* to mod_perl.a and DynaLoader.a, but
+-lmod_perl and -lDynaLoader don't work, and we can't supply the full
+paths, because MakeMaker doesn't allow this. I workaround this by
+making a symlink to mod_perl.a (called libmod_perl.a) and copy
+DynaLoader.a to libDynaLoader.a (I don't create a symlink, because,
+when running make clean, the real DynaLoader.a may get deleted).  The
+APR::* extensions are not affected, because in both cases we link them
+against aprext.  Also other small fixes are added. [Nick ***
+<doink123@abv.bg>]
+
+
+
+
+=item 1.999_23 - May 3, 2005
+
+fix Apache2::Build::dynamic_link_MSWin32 to generate a new line after
+dynamic_link code in Makefile [Nick *** <doink123@abv.bg>]
+
+fix a warning in Apache2::Build::build_config() when building
+with MP_STATIC_EXTS=1 [Nick *** <doink123@abv.bg>]
 
 improving DSO support on cygwin. The problem with cygwin is that it
 behaves like windows (it's a posix layer over windows after
@@ -41,7 +127,7 @@ fix the pod2man'ification part of 'make install' (using POD2MAN_EXE
 instead of POD2MAN Makefile macro) [Stas]
 
 
-=item 1.999_22
+=item 1.999_22 - April 14, 2005
 
     ******************** IMPORTANT ********************
     this version of mod_perl is completely incompatible

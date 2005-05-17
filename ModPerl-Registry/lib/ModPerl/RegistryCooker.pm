@@ -26,6 +26,7 @@ use warnings FATAL => 'all';
 
 our $VERSION = '1.99';
 
+use Apache2::ServerUtil ();
 use Apache2::Response ();
 use Apache2::RequestRec ();
 use Apache2::RequestUtil ();
@@ -34,15 +35,15 @@ use Apache2::Log ();
 use Apache2::Access ();
 
 use APR::Table ();
+use APR::Status ();
 
 use ModPerl::Util ();
 use ModPerl::Global ();
 
 use File::Spec::Functions ();
-use File::Basename;
+use File::Basename ();
 
-use APR::Const     -compile => qw(EACCES ENOENT);
-use Apache2::Const  -compile => qw(:common &OPT_EXECCGI);
+use Apache2::Const -compile => qw(:common &OPT_EXECCGI);
 use ModPerl::Const -compile => 'EXIT';
 
 unless (defined $ModPerl::Registry::MarkLine) {
@@ -62,7 +63,6 @@ use constant D_NOISE   => 8;
 # the debug level can be overriden on the main server level of
 # httpd.conf with:
 #   PerlSetVar ModPerl::RegistryCooker::DEBUG 4
-use Apache2::ServerUtil ();
 use constant DEBUG => 0;
 #XXX: below currently crashes the server on win32
 #    defined Apache2->server->dir_config('ModPerl::RegistryCooker::DEBUG')
@@ -235,7 +235,7 @@ sub run {
 
     $self->flush_namespace;
 
-    #XXX: $self->chdir_file("$Apache2::Server::CWD/");
+    $self->chdir_file(Apache2::ServerUtil::server_root());
 
     return $rc;
 }
@@ -406,7 +406,7 @@ sub convert_script_to_compiled_handler {
     return $rc unless $rc == Apache2::Const::OK;
     $self->debug(qq{compiled package \"$self->{PACKAGE}\"}) if DEBUG & D_NOISE;
 
-    #$self->chdir_file("$Apache2::Server::CWD/");
+    $self->chdir_file(Apache2::ServerUtil::server_root());
 
 #    if(my $opt = $r->dir_config("PerlRunOnce")) {
 #        $r->child_terminate if lc($opt) eq "on";
@@ -542,8 +542,8 @@ sub read_script {
         $self->log_error("$@");
 
         if (ref $@ eq 'APR::Error') {
-            return Apache2::Const::FORBIDDEN if $@ == APR::Const::EACCES;
-            return Apache2::Const::NOT_FOUND if $@ == APR::Const::ENOENT;
+            return Apache2::Const::FORBIDDEN if APR::Status::is_EACCES($@);
+            return Apache2::Const::NOT_FOUND if APR::Status::is_ENOENT($@);
         }
         else {
             return Apache2::Const::SERVER_ERROR;
@@ -618,7 +618,9 @@ sub get_script_name {
 
 sub chdir_file_normal {
     my($self, $dir) = @_;
-    # $self->{REQ}->chdir_file($dir ? $dir : $self->{FILENAME});
+    $dir ||= File::Basename::dirname($self->{FILENAME});
+    $self->debug("chdir $dir") if DEBUG & D_NOISE;
+    chdir $dir or die "Can't chdir to $dir: $!";
 }
 
 #########################################################################

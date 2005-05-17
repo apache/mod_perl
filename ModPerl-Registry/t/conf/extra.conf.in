@@ -38,7 +38,9 @@ PerlModule ModPerl::Util
 Alias /registry/         @ServerRoot@/cgi-bin/
 Alias /registry_bb/      @ServerRoot@/cgi-bin/
 Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
+Alias /registry_prefork/ @ServerRoot@/cgi-bin/
 Alias /perlrun/          @ServerRoot@/cgi-bin/
+Alias /perlrun_prefork/  @ServerRoot@/cgi-bin/
 Alias /nph/              @ServerRoot@/cgi-bin/
 Alias /registry_modperl_handler/  @ServerRoot@/cgi-bin/
 
@@ -79,6 +81,24 @@ PerlModule ModPerl::Registry
     SetHandler perl-script
     Options +ExecCGI
     PerlResponseHandler ModPerl::Registry
+</Location>
+
+# don't preload ModPerl::RegistryPrefork as it won't load under
+# threaded MPMs
+<Location /registry_prefork>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::RegistryPrefork
+    PerlOptions +ParseHeaders
+</Location>
+
+# don't preload ModPerl::PerlRunPrefork as it won't load under
+# threaded MPMs
+<Location /perlrun_prefork>
+    SetHandler perl-script
+    Options +ExecCGI
+    PerlResponseHandler ModPerl::PerlRunPrefork
+    PerlOptions +ParseHeaders
 </Location>
 
 PerlModule ModPerl::PerlRun
