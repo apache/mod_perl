@@ -532,6 +532,9 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
     modperl_global_init_server_rec(pconf, s);
 
     modperl_tls_create_request_rec(pconf);
+
+    /* init the counter to 0 */
+    modperl_global_anon_cnt_init(pconf);
 }
 
 /*
