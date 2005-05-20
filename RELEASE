@@ -1,7 +1,7 @@
 Instructions for mod_perl 2.0 Release Manager
 
 1. 'make dist' - to make sure nothing is missing from the manifest,
-   etc. Now test this generated package mod_perl-2.0.0-RC6.tar.gz (not
+   etc. Now test this generated package mod_perl-2.0.0-RC7.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.
@@ -31,7 +31,7 @@ Instructions for mod_perl 2.0 Release Manager
   a. edit ./Changes:
      - remove '-dev' 
      - add release date
-     - temp: change VERSION in Makefile.PL to RC7 (while doing RC series)
+     - temp: change VERSION in Makefile.PL to RC8 (while doing RC series)
 
   b. check ./README and ./Makefile.PL
      - make sure supported httpd versions (dso & static) are current
@@ -52,7 +52,7 @@ Instructions for mod_perl 2.0 Release Manager
 
   g. test the final package again at least once
 
-4. Release the package and update links (e.g. mod_perl-2.0.0-RC7.tar.gz)
+4. Release the package and update links (e.g. mod_perl-2.0.0-RC8.tar.gz)
 
   a. upload to www.apache.org:/www/perl.apache.org/dist/
 
@@ -70,11 +70,11 @@ Instructions for mod_perl 2.0 Release Manager
 
   c. archive older releases (keep current + one prior release)
 
-    % mv /www/perl.apache.org/dist/mod_perl-2.0.0-RC5.tar.gz \
+    % mv /www/perl.apache.org/dist/mod_perl-2.0.0-RC6.tar.gz \
          /www/perl.apache.org/dist/old
-    % mv /www/perl.apache.org/dist/mod_perl-2.0.0-RC5.tar.gz.asc \
+    % mv /www/perl.apache.org/dist/mod_perl-2.0.0-RC6.tar.gz.asc \
          /www/perl.apache.org/dist/old
-    % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.0-RC5
+    % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.0-RC6
 
   d. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
@@ -128,8 +128,8 @@ Instructions for mod_perl 2.0 Release Manager
    % cd /www/www.apache.org/dist/perl/
    % cp /www/perl.apache.org/dist/mod_perl-2.0.0.tar.gz* .
    % tar -xzvf mod_perl-2.0.0.tar.gz
-   % mv mod_perl-2.0.0-RC5.tar.gz* /www/archive.apache.org/dist/perl/
-   % rm -rf mod_perl-2.0.0-RC5
+   % mv mod_perl-2.0.0-RC6.tar.gz* /www/archive.apache.org/dist/perl/
+   % rm -rf mod_perl-2.0.0-RC6
 
   b. make sure that the files you just created are group rw so
 
@@ -163,11 +163,11 @@ Instructions for mod_perl 2.0 Release Manager
   d. update this file versions to make it easy to copy-n-paste things
      on the next release:
 
-   perl -pi -e 's/_25/_26/g' RELEASE
+   perl -pi -e 's/_26/_27/g' RELEASE
+   perl -pi -e 's/RC8/RC8/g' RELEASE
    perl -pi -e 's/RC7/RC8/g' RELEASE
    perl -pi -e 's/RC6/RC7/g' RELEASE
    perl -pi -e 's/RC5/RC6/g' RELEASE
-   perl -pi -e 's/RC4/RC5/g' RELEASE
 
      now reload this file and bump up the last number of the first
      two commands.
