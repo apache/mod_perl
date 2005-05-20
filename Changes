@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.000_00-dev
+=item 2.000_00 - May 20, 2005
 
 fix global anon_cnt double-initialization bug that was causing
 startup segfaults on OSX. [Gozer]
