@@ -791,7 +791,7 @@ Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
 tag :
-	svn copy . https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
+	svn copy  https://svn.apache.org/repos/asf/perl/modperl/trunk  https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
 	@$(ECHO) update mod_perl2.pm VERSION now
 EOF
 
