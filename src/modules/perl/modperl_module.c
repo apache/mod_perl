@@ -194,9 +194,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 #ifdef USE_ITHREADS
         /* XXX: breaks prefork
            modperl_interp_unselect(interp); */
-        if (orig_perl) {
-            MP_PERL_CONTEXT_RESTORE;
-        }
+        MP_PERL_CONTEXT_RESTORE;
 #endif
         return addv;
     }
@@ -249,9 +247,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 #ifdef USE_ITHREADS
     /* XXX: breaks prefork
        modperl_interp_unselect(interp); */
-    if (orig_perl) {
-        MP_PERL_CONTEXT_RESTORE;
-    }
+    MP_PERL_CONTEXT_RESTORE;
 #endif
     
     return (void *)mrg;
