@@ -12,10 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
-Fix a bug in custom directive implementation, where a custom directive
-placed into a dir container was causing a global perl context change
-which was leading to a segfault in any handler called
-thereafter. [Stas]
+Fix a bug in custom directive implementation, where the code called
+from modperl_module_config_merge() was setting the global context
+after selecting the new interpreter which was leading to a segfault in
+any handler called thereafter, whose context was different
+beforehand. [Stas]
+
 
 
 =item 2.0.0 - May 20, 2005

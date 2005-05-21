@@ -1,7 +1,11 @@
 package TestDirective::perlloadmodule7;
 
-# in this test we test an early mod_perl startup caused by an
-# EXEC_ON_READ directive in vhost.
+# this test was written to reproduce a segfault under worker
+# due to a bug in custom directive implementation, where
+# the code called from modperl_module_config_merge() was setting the
+# global context after selecting the new interpreter which was leading
+# to a segfault in any handler called thereafter, whose context was
+# different beforehand.
 
 use strict;
 use warnings FATAL => 'all';
@@ -10,15 +14,21 @@ use Apache2::Module ();
 
 use Apache2::Const -compile => qw(OK);
 
-use constant KEY => "MyTest7";
+use constant KEY1 => "MyTest7_1";
+use constant KEY2 => "MyTest7_2";
 
-my @directives = ({ name => +KEY },);
+my @directives = ({ name => +KEY1 }, { name => +KEY2 });
 
 Apache2::Module::add(__PACKAGE__, \@directives);
 
-sub MyTest7 {
+sub MyTest7_1 {
     my($self, $parms, $arg) = @_;
-    $self->{+KEY} = $arg;
+    $self->{+KEY1} = $arg;
+}
+
+sub MyTest7_2 {
+    my($self, $parms, $arg) = @_;
+    $self->{+KEY2} = $arg;
 }
 
 ### response handler ###
@@ -48,8 +58,9 @@ __END__
 # APACHE_TEST_CONFIG_ORDER 950
 PerlLoadModule TestDirective::perlloadmodule7
 
+MyTest7_1 test
 <Location /TestDirective__perlloadmodule7>
-    MyTest7 test
+    MyTest7_2 test
     SetHandler modperl
     PerlResponseHandler TestDirective::perlloadmodule7
 </Location>
