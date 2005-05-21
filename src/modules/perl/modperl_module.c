@@ -192,7 +192,8 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     if (!base_obj || (base_obj == add_obj)) {
 #ifdef USE_ITHREADS
-        modperl_interp_unselect(interp);
+        /* XXX: breaks prefork
+           modperl_interp_unselect(interp); */
         if (orig_perl) {
             MP_PERL_CONTEXT_RESTORE;
         }
@@ -246,7 +247,8 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-    modperl_interp_unselect(interp);
+    /* XXX: breaks prefork
+       modperl_interp_unselect(interp); */
     if (orig_perl) {
         MP_PERL_CONTEXT_RESTORE;
     }
