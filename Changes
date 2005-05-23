@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+in mod_perl callbacks merge error-notes entries rather than store just
+the newest error [Mark <mark@immermail.com>]
+
 Expose Apache2::Const::EXEC_ON_READ (added to the :override group)
 [Stas]
 
