@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+Expose Apache2::Const::EXEC_ON_READ (added to the :override group)
+[Stas]
+
 Fix a bug in custom directive implementation, where the code called
 from modperl_module_config_merge() was setting the global context
 after selecting the new interpreter which was leading to a segfault in
