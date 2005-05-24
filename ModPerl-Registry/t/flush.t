@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET_BODY);
 
-plan tests => 1, need 'deflate',
+plan tests => 1, need 'deflate', 'mod_alias.c',
     need_min_module_version("Compress::Zlib", "1.09"),
     need_min_apache_version("2.0.48");
 # it requires httpd 2.0.48 because of the bug in mod_deflate:

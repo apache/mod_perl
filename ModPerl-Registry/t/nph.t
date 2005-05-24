@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 6;
+plan tests => 6, need 'mod_alias.c';
 
 my $url = "/nph/nph-foo.pl";
 
