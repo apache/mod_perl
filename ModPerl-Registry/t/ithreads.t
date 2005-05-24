@@ -9,7 +9,7 @@ use Config;
 
 use constant HAS_ITHREADS => ($] >= 5.008001 && $Config{useithreads});
 
-plan tests => 1, need
+plan tests => 1, need 'mod_alias.c',
     {"perl 5.8.1 or higher w/ithreads enabled is required" => HAS_ITHREADS};
 
 {

@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 1;
+plan tests => 1, need 'mod_alias.c';
 
 {
     t_client_log_error_is_expected();

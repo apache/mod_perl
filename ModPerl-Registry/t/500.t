@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 7;
+plan tests => 7, need 'mod_alias.c';
 
 {
     # the script changes the status before the run-time error happens,

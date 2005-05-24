@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 10;
+plan tests => 10, need 'mod_alias.c';
 
 my $url = "/registry/304.pl";
 

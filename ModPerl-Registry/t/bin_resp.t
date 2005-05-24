@@ -7,7 +7,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 2;
+plan tests => 2, need 'mod_alias.c';
 
 # 2 sub-tests
 {

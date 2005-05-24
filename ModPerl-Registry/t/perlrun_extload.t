@@ -6,7 +6,7 @@ use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 use TestCommon::SameInterp;
 
-plan tests => 2;
+plan tests => 2, need 'mod_alias.c';
 
 my $url = "/same_interp/perlrun/perlrun_extload.pl";
 my $same_interp = Apache::TestRequest::same_interp_tie($url);

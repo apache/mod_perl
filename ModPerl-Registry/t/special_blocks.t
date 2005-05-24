@@ -16,7 +16,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 4;
+plan tests => @aliases * 4, need 'mod_alias.c';
 
 {
     # PerlRun always run BEGIN/END since it's never cached
