@@ -4,13 +4,16 @@ PerlPostConfigRequire @ServerRoot@/conf/post_config_startup.pl
 
 ### --------------------------------- ###
 <Perl >
-push @Alias, ['/perl_sections', '@DocumentRoot@'];
-$Location{'/perl_sections'} = {
-    'PerlInitHandler' => 'ModPerl::Test::add_config',
-    'AuthType' => 'Basic',
-    'AuthName' => 'PerlSection',
-    'PerlAuthenHandler' => 'TestHooks::authen_basic',
+use Apache::Test ();
+if (Apache::Test::have_module('mod_alias.c')) {
+    push @Alias, ['/perl_sections', '@DocumentRoot@'];
+    $Location{'/perl_sections'} = {
+        'PerlInitHandler' => 'ModPerl::Test::add_config',
+        'AuthType' => 'Basic',
+        'AuthName' => 'PerlSection',
+        'PerlAuthenHandler' => 'TestHooks::authen_basic',
     };
+}
 </Perl>
 
 <Perl >
@@ -47,14 +50,17 @@ $TestDirective::perl::line =  __LINE__;
 
 #Deprecated access to Apache2::ReadConfig:: still works
 <Perl >
-push @Apache2::ReadConfig::Alias, 
-    ['/perl_sections_readconfig', '@DocumentRoot@'];
-$Apache2::ReadConfig::Location{'/perl_sections_readconfig'} = {
-    'PerlInitHandler'   => 'ModPerl::Test::add_config',
-    'AuthType'          => 'Basic',
-    'AuthName'          => 'PerlSection',
-    'PerlAuthenHandler' => 'TestHooks::authen_basic',
+use Apache::Test ();
+if (Apache::Test::have_module('mod_alias.c')) {
+    push @Apache2::ReadConfig::Alias, 
+        ['/perl_sections_readconfig', '@DocumentRoot@'];
+    $Apache2::ReadConfig::Location{'/perl_sections_readconfig'} = {
+        'PerlInitHandler'   => 'ModPerl::Test::add_config',
+        'AuthType'          => 'Basic',
+        'AuthName'          => 'PerlSection',
+        'PerlAuthenHandler' => 'TestHooks::authen_basic',
     };
+}
 </Perl>
 
 ### --------------------------------- ###

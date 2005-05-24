@@ -30,5 +30,6 @@ __DATA__
 <Location /top_dir>
   PerlOutputFilterHandler TestFilter::out_str_lc
 </Location>
-
-Alias /top_dir @top_dir@
+<IfModule mod_alias.c>
+    Alias /top_dir @top_dir@
+</IfModule>
