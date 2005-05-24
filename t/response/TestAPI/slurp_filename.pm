@@ -22,7 +22,7 @@ EOI
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 5;
+    plan $r, tests => 5, need 'mod_alias';
 
     {
         my $data = $r->slurp_filename(0); # untainted
@@ -69,7 +69,9 @@ sub slurp_filename_perl {
 1;
 __END__
 <NoAutoConfig>
-    Alias /slurp/ @DocumentRoot@/api/
+    <IfModule mod_alias.c>
+        Alias /slurp/ @DocumentRoot@/api/
+    </IfModule>
     <Location /slurp/>
         SetHandler modperl
         PerlResponseHandler TestAPI::slurp_filename

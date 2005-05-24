@@ -6,7 +6,7 @@ use Apache::TestRequest;
 use Apache::TestUtil;
 use Apache::TestConfig ();
 
-plan tests => 1;
+plan tests => 1, need 'mod_alias';
 
 my $location = '/TestFilter__out_str_subreq_default';
 
