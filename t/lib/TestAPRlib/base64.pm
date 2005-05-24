@@ -20,7 +20,7 @@ sub test {
     my $encoded = APR::Base64::encode($str);
 
     t_debug("encoded string: $encoded");
-    ok $encoded;
+    ok t_cmp($encoded, 'MTIzNDVxd2VydCFAIyQl', 'encode');
 
     ok t_cmp(APR::Base64::encode_len(length $str),
              length $encoded,
