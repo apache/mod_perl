@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+fix a bug in ModPerl::RegistryCooker: now stripping __(END|DATA)__
+only at the beginning of the line [Stas]
+
 APR::Base64 : [Torsten Foertsch <torsten.foertsch@gmx.net>]
 - fix encode_len() to return the length without accounting for the
 terminating '\0' as the C API does. 
