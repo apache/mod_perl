@@ -203,7 +203,9 @@ PerlModule ModPerl::RegistryBB
 # XXX: would be nice to have Apache-Test support a new 'tmp' token
 # (similar to t_logs) which will map onto t/tmp by default and provide
 # a new -tmp option to override this default
-SetEnv TMPDIR @t_logs@
+<IfModule mod_env.c>
+    SetEnv TMPDIR @t_logs@
+</IfModule>
 # </sandbox-friendly>
 
 
