@@ -33,9 +33,7 @@ my @interesting_packages = qw(
 # modules that are about to be installed
 my @skip_dirs = qw(
     blib/lib
-    blib/lib/Apache2
     blib/arch
-    blib/arch/Apache2
     lib
 );
 my $skip_dir_str = join '|', map { s|/|[/\\\\]|g; $_ } @skip_dirs;
@@ -43,8 +41,6 @@ my $skip_dir_pat = qr|[/\\]($skip_dir_str)[/\\]*$|;
 
 sub packages {
 
-    # search in Apache2/ subdirs too
-    eval { require Apache2 };
     my @inc = grep !/$skip_dir_pat/, @INC;
 
     my %packages = ();
