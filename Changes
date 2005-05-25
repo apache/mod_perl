@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+fix ModPerl::TestReport used by t/REPORT and mp2bug to use
+ExtUtils::MakeMaker's MM->parse_version to get the interesting
+packages version number, w/o trying to load them (which may fail if
+the environment is not right) [Stas]
+
 fix a bug in ModPerl::RegistryCooker: now stripping __(END|DATA)__
 only at the beginning of the line [Stas]
 

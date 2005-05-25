@@ -19,6 +19,8 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::TestReportPerl);
 
+use ExtUtils::MakeMaker ();
+
 my @interesting_packages = qw(
     CGI
     ExtUtils::MakeMaker
@@ -52,11 +54,7 @@ sub packages {
         for my $dir (@inc) {
             my $path = "$dir/$filename";
             if (-e $path) {
-                no warnings 'redefine';
-                my $ver = eval { require $path;
-                                 delete $INC{$path};
-                                 $package->VERSION;
-                         };
+                my $ver = MM->parse_version($path);
                 # two versions could be installed (one under Apache2/)
                 push @{ $packages{$package} }, $ver if $ver;
             }
