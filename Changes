@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+If running Makefile.PL unnatended (STDIN isn't a terminal or
+MP_PROMPT_DEFAULT=1), break out of potentially infinite prompt
+loops [Gozer]
+
 fix ModPerl::TestReport used by t/REPORT and mp2bug to use
 ExtUtils::MakeMaker's MM->parse_version to get the interesting
 packages version number, w/o trying to load them (which may fail if
