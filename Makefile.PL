@@ -49,6 +49,8 @@ our $VERSION;
 my $build = Apache2::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
+sub UNATTENDED() { $build->{MP_PROMPT_DEFAULT} || ! -t STDIN }
+
 win32_fetch_apxs() if WIN32;
 
 configure();
@@ -251,7 +253,7 @@ EOI
         }
         until ($ok) {
             my $ask = "Please provide the location of the Apache directory:";
-            my $ans = $build->prompt($ask);
+            my $ans = $build->prompt($ask) || "";
             # strip leading/closing spaces
             $ans =~ s/^\s*|\s*$//g;
             if (defined $ans and -d $ans) {
@@ -260,6 +262,7 @@ EOI
             }
             else {
                 error "Can't find dir '$ans'";
+                last if UNATTENDED;
             }
         }
     }
@@ -345,7 +348,7 @@ EOI
     my $prompt = "\nPlease provide a full path to 'apxs' executable\n" .
         "(press Enter if you don't have it installed):";
     while (1) {
-        my $ans = $build->prompt($prompt);
+        my $ans = $build->prompt($prompt) || "";
 
         print "\n\n";
 
