@@ -259,7 +259,8 @@ EOI
                 $ok++;
             }
             else {
-                error "Can't find dir '$ans'";            }
+                error "Can't find dir '$ans'";
+            }
         }
     }
 
