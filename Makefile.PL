@@ -1621,11 +1621,8 @@ sub MY::post_initialize {
 sub MY::postamble {
 
     return <<'EOF';
-cvs_export :
-	cvs -d $(CVSROOT) export -rv$(VERSION_SYM) -d$(DISTVNAME) .
-
-cvs_tag :
-	cvs -d $(CVSROOT) tag v$(VERSION_SYM) modperl
+tag :
+	svn copy https://svn.apache.org/repos/asf/perl/modperl/branches/1.x  https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
 	@echo update mod_perl.pm VERSION now
 
 EOF
