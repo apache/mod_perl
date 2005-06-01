@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+The pure-perl ModPerl::Util::unload_package implementation was
+accidently deleting sub-stashes [Gozer]
+
 If running Makefile.PL unnatended (STDIN isn't a terminal or
 MP_PROMPT_DEFAULT=1), break out of potentially infinite prompt
 loops [Gozer]
