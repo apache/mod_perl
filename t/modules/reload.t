@@ -16,7 +16,7 @@ my $test_file = catfile Apache::Test::vars("serverroot"),
 my $module   = 'TestModules::reload';
 my $location = '/' . Apache::TestRequest::module2path($module);
 
-my @tests = qw(simple const prototype);
+my @tests = qw(simple const prototype subpackage);
 
 my $header = join '', <DATA>;
 
@@ -95,7 +95,9 @@ package Apache2::Reload::Test;
 
 use Apache2::Reload;
 
-our @methods = qw(simple const prototype);
+our @methods = qw(simple const prototype subpackage);
+
+sub subpackage { return Apache2::Reload::Test::SubPackage::subpackage() } 
 
 sub run {
     my $r = shift;
