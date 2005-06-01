@@ -1,6 +1,5 @@
 \.tar.gz$
-\bCVS\b
-\.cvsignore$
+\b\.svn\b
 pm_to_blib$
 ^MANIFEST\.
 Makefile$
