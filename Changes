@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+Fix the "No library found" warnings when building on win32 without
+apxs and MP_AP_PREFIX [Nick *** <doink123@abv.bg>]
+
 The pure-perl ModPerl::Util::unload_package implementation was
 accidently deleting sub-stashes [Gozer]
 

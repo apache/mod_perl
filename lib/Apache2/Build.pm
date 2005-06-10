@@ -1546,7 +1546,7 @@ sub dynamic_link {
 
 sub apache_libs_MSWin32 {
     my $self = shift;
-    my $prefix = $self->apxs(-q => 'PREFIX');
+    my $prefix = $self->apxs(-q => 'PREFIX') || $self->dir;
     my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
     "@libs";
 }
