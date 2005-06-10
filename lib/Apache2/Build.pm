@@ -932,7 +932,7 @@ sub dir {
         for (qw(ap_includedir)) {
             delete $self->{$_};
         }
-        if ($dir =~ m:^../:) {
+        if ($dir =~ m:^\.\.[/\\]:) {
             $dir = "$self->{cwd}/$dir";
         }
         $self->{dir} = $dir;

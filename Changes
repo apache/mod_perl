@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.1-dev
 
+Fix a broken regexp in Apache2::Build::dir() on win32 that would
+incorrectly attempt to fully-qualify paths like c:/some/path
+[Nick *** <doink123@abv.bg>]
+
 Fix the "No library found" warnings when building on win32 without
 apxs and MP_AP_PREFIX [Nick *** <doink123@abv.bg>]
 
