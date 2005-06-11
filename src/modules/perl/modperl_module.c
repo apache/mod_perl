@@ -166,8 +166,8 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     PTR_TBL_t *table;
     SV *mrg_obj = Nullsv, *base_obj, *add_obj;
 #ifdef USE_ITHREADS
-    MP_PERL_CONTEXT_DECLARE;
     modperl_interp_t *interp;
+    MP_PERL_CONTEXT_DECLARE;
 #endif
 
     /* if the module is loaded in vhost, base==NULL */
