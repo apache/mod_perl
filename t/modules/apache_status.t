@@ -10,7 +10,7 @@ my $base_url = '/status/perl';
 my @opts = qw(script myconfig rgysubs section_config env isa_tree
               symdump inc inh_tree sig);
 
-plan tests => @opts + 3, need 'HTML::HeadParser',
+plan tests => @opts + 5, need 'HTML::HeadParser',
     { "CGI.pm (2.93 or higher) or Apache2::Request is needed" =>
           !!(eval { require CGI && $CGI::VERSION >= 2.93 } ||
              eval { require Apache2::Request })};
@@ -40,4 +40,14 @@ plan tests => @opts + 3, need 'HTML::HeadParser',
 for my $opt (@opts) {
     my $url = "$base_url?$opt";
     ok GET_BODY_ASSERT $url;
+}
+
+# B::Terse has an issue with XS, but Apache::Status shouldn't crash on
+# that
+{
+    # Syntax Tree Dump: syntax and execution order options
+    for (qw(slow exec)) {
+        my $url = "$base_url/$_/Apache2::Const::OK?noh_b_terse";
+        ok GET_OK $url;
+    }
 }
