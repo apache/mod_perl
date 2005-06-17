@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.1-dev
+=item 2.0.1 - June 17, 2005
 
 B::Terse has problems with XS code, so adjust Apache::Status to eval
 {} the code doing Syntax Tree Dump: syntax and execution order options
