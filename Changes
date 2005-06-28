@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+RPM Friendly builds : [Gozer]
+- make dist tarballs can now be built directly into RPMs with rpmbuild
+- Added a new target 'make rpm' to directly build rpms from a checkout
+
 
 
 =item 2.0.1 - June 17, 2005

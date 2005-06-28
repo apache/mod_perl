@@ -31,6 +31,7 @@ our @EXPORT_OK = qw(mkmanifest);
 #anything else to be added should go here:
 my @add_files = qw{
     MANIFEST
+    mod_perl.spec
     Apache-Test/META.yml
 };
 
