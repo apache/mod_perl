@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+filter flushing now doesn't croak on connection reset
+(ECONNRESET/ECONNABORTED), but just logs the event on the 'info'
+level. [Stas]
+
 RPM Friendly builds : [Gozer]
 - make dist tarballs can now be built directly into RPMs with rpmbuild
 - Added a new target 'make rpm' to directly build rpms from a checkout
