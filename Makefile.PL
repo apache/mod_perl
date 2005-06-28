@@ -789,7 +789,18 @@ sub MY::postamble {
     my $string = $self->ModPerl::BuildMM::MY::postamble;
 
     $string .= <<'EOF';
-mydist : Apache-Test/META.yml manifest tardist
+mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
+
+rpm: dist
+	@[ -d $(PWD)/rpm ] || mkdir $(PWD)/rpm
+	rpmbuild -ta --define "_rpmdir $(PWD)/rpm" \
+                 --define "_srcrpmdir $(PWD)/rpm" \
+                 $(DISTVNAME).tar.gz
+	@mv $(PWD)/rpm/*/*.rpm $(PWD)/rpm/
+	@rm -rf $(PWD)/rpm/*/
+    
+mod_perl.spec: build/make_rpm_spec
+	$(PERL) build/make_rpm_spec
 
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
