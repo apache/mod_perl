@@ -47,8 +47,8 @@ my $skip = $same_interp ? 0 : 1;
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Initial"
     );
 }
@@ -63,8 +63,8 @@ touch_mtime($test_file);
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Reload"
     );
 }
@@ -76,8 +76,8 @@ touch_mtime($test_file);
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Unregister"
     );
 }
