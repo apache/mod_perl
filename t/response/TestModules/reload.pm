@@ -17,6 +17,7 @@ sub handler {
     if ($r->args eq 'last') {
         Apache2::Reload->unregister_module($package);
         ModPerl::Util::unload_package($package);
+        $pass = 0;
         $r->print("unregistered OK");
         return Apache2::Const::OK;
     }
