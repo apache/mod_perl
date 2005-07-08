@@ -320,8 +320,17 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             MpHandlerMETHOD_On(handler);
         }
 
+        if (!stash) {
+            return 0;
+        }
+        
+        
         if (MpHandlerMETHOD(handler) && !handler->mgv_obj) {
-            modperl_mgv_new_name(handler->mgv_obj, p, HvNAME(stash));
+            char *name = HvNAME(stash);
+            if (!name) {
+                name = "";
+            }
+            modperl_mgv_new_name(handler->mgv_obj, p, name);
         }
 
         handler->attrs = (U32)MP_CODE_ATTRS(cv);
