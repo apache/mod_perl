@@ -124,7 +124,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
         status = Perl_do_open(aTHX_ handle_save, "<&STDIN", 7, FALSE,
                               O_RDONLY, 0, Nullfp);
         if (status == 0) {
-            Perl_croak(aTHX_ "Failed to dup STDIN: %_", get_sv("!", TRUE));
+            Perl_croak(aTHX_ "Failed to dup STDIN: %" SVf, get_sv("!", TRUE));
         }
 
         /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
@@ -137,7 +137,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
     status = Perl_do_open9(aTHX_ handle, "<:Apache2", 9, FALSE, O_RDONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
-        Perl_croak(aTHX_ "Failed to open STDIN: %_", get_sv("!", TRUE));
+        Perl_croak(aTHX_ "Failed to open STDIN: %" SVf, get_sv("!", TRUE));
     }
 
     MP_TRACE_o(MP_FUNC, "end\n");
@@ -167,7 +167,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
         status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE,
                               O_WRONLY, 0, Nullfp);
         if (status == 0) {
-            Perl_croak(aTHX_ "Failed to dup STDOUT: %_", get_sv("!", TRUE));
+            Perl_croak(aTHX_ "Failed to dup STDOUT: %" SVf, get_sv("!", TRUE));
         }
 
         /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
@@ -180,7 +180,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
     status = Perl_do_open9(aTHX_ handle, ">:Apache2", 9, FALSE, O_WRONLY,
                            0, Nullfp, sv, 1);
     if (status == 0) {
-        Perl_croak(aTHX_ "Failed to open STDOUT: %_", get_sv("!", TRUE));
+        Perl_croak(aTHX_ "Failed to open STDOUT: %" SVf, get_sv("!", TRUE));
     }
 
     MP_TRACE_o(MP_FUNC, "end\n");
@@ -221,7 +221,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {
-            Perl_croak(aTHX_ "Failed to restore STDIN: %_", err);
+            Perl_croak(aTHX_ "Failed to restore STDIN: %" SVf, err);
         }
     }
 
@@ -243,7 +243,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
      */
     if (GvIOn(handle_orig) && IoOFP(GvIOn(handle_orig)) &&
         (PerlIO_flush(IoOFP(GvIOn(handle_orig))) == -1)) {
-        Perl_croak(aTHX_ "Failed to flush STDOUT: %_", get_sv("!", TRUE));
+        Perl_croak(aTHX_ "Failed to flush STDOUT: %" SVf, get_sv("!", TRUE));
     }
 
     /* close the overriding filehandle */
@@ -268,7 +268,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {
-            Perl_croak(aTHX_ "Failed to restore STDOUT: %_", err);
+            Perl_croak(aTHX_ "Failed to restore STDOUT: %" SVf, err);
         }
     }
 
