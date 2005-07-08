@@ -176,8 +176,21 @@ sub handler {
         my $def = [qw(fr)];       #default value
         my $l   = [qw(fr us cn)]; #new value
 
-        ok t_cmp $r->content_languages, $def, '$r->content_languages';
-        ok t_cmp $r->content_languages($l), $def, '$r->content_languages';
+        if (have_module('mod_mime')) {
+            ok t_cmp $r->content_languages, $def, '$r->content_languages';
+        }
+        else {
+            skip "Need mod_mime", 0;
+        }
+
+        my $old = $r->content_languages($l);
+        if (have_module('mod_mime')) {
+            ok t_cmp $old, $def, '$r->content_languages';
+        }
+        else {
+            skip "Need mod_mime", 0;
+        }
+
         ok t_cmp $r->content_languages, $l, '$r->content_languages';
 
         eval { $r->content_languages({}) };
@@ -238,5 +251,13 @@ sub handler {
 
 1;
 __END__
-PerlOptions +GlobalRequest
-DefaultLanguage fr
+<NoAutoConfig>
+<Location /TestAPI__request_rec>
+    PerlOptions +GlobalRequest
+    <IfModule mod_mime.c>
+        DefaultLanguage fr
+    </IfModule>
+    SetHandler modperl
+    PerlResponseHandler TestAPI::request_rec
+</Location>
+</NoAutoConfig>

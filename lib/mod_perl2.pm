@@ -18,7 +18,7 @@ use 5.006;
 use strict;
 
 BEGIN {
-    our $VERSION = "2.000000";
+    our $VERSION = "2.000002";
     our $VERSION_TRIPLET;
 
     if ($VERSION =~ /(\d+)\.(\d\d\d)(\d+)/) {

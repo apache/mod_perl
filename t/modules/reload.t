@@ -8,7 +8,7 @@ use File::Spec::Functions qw(catfile);
 
 use TestCommon::SameInterp;
 
-plan tests => 3, need 'HTML::HeadParser';
+plan tests => 3, need 'HTML::HeadParser', 0;
 
 my $test_file = catfile Apache::Test::vars("serverroot"),
     qw(lib Apache2 Reload Test.pm);
@@ -16,7 +16,7 @@ my $test_file = catfile Apache::Test::vars("serverroot"),
 my $module   = 'TestModules::reload';
 my $location = '/' . Apache::TestRequest::module2path($module);
 
-my @tests = qw(simple const prototype);
+my @tests = qw(simple const prototype subpackage);
 
 my $header = join '', <DATA>;
 
@@ -47,8 +47,8 @@ my $skip = $same_interp ? 0 : 1;
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Initial"
     );
 }
@@ -63,8 +63,8 @@ touch_mtime($test_file);
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Reload"
     );
 }
@@ -76,8 +76,8 @@ touch_mtime($test_file);
     $skip++ unless defined $received;
     same_interp_skip_not_found(
         $skip,
-        $expected,
         $received,
+        $expected,
         "Unregister"
     );
 }
@@ -95,7 +95,9 @@ package Apache2::Reload::Test;
 
 use Apache2::Reload;
 
-our @methods = qw(simple const prototype);
+our @methods = qw(simple const prototype subpackage);
+
+sub subpackage { return Apache2::Reload::Test::SubPackage::subpackage() } 
 
 sub run {
     my $r = shift;

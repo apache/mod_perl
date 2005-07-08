@@ -13,14 +13,18 @@
  * limitations under the License.
  */
 
+/* apr_base64_encode_len and apr_base64_encode_binary give length that
+ * includes the terminating '\0' */
+#define mpxs_APR__Base64_encode_len(len) apr_base64_encode_len(len) - 1;
+    
 static MP_INLINE void mpxs_apr_base64_encode(pTHX_ SV *sv, SV *arg)
 {
     STRLEN len;
     int encoded_len;
     char *data = SvPV(arg, len);
-    mpxs_sv_grow(sv, apr_base64_encode_len(len));
+    mpxs_sv_grow(sv, apr_base64_encode_len(len) - 1);
     encoded_len = apr_base64_encode_binary(SvPVX(sv), data, len);
-    mpxs_sv_cur_set(sv, encoded_len);
+    mpxs_sv_cur_set(sv, encoded_len - 1);
 }
 
 static MP_INLINE void mpxs_apr_base64_decode(pTHX_ SV *sv, SV *arg)

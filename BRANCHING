@@ -1,0 +1,47 @@
+This doc explains how to create/work/re-merge svn branches
+
+#######################################
+### make a new branch               ###
+#######################################
+
+we will create a branch clone-skip-unstable
+
+tag before the branch:
+
+  svn copy https://svn.apache.org/repos/asf/perl/modperl/trunk \
+    https://svn.apache.org/repos/asf/perl/modperl/tags/pre-clone-skip \
+    -m "tag before branching for CLONE_SKIP support"
+
+branch:
+
+  svn copy https://svn.apache.org/repos/asf/perl/modperl/trunk \
+    https://svn.apache.org/repos/asf/perl/modperl/branches/clone-skip-unstable \
+    -m "branching to provide CLONE_SKIP support"
+
+check out:
+
+  svn co https://svn.apache.org/repos/asf/perl/modperl/branches/clone-skip-unstable mp2-clone-skip-unstable
+
+change externals to point to the new A-T branch (if one was done)
+
+  svn propedit svn:externals .
+
+#######################################
+### sync the branch with the trunk  ###
+#######################################
+
+the branch was created @r165203
+
+  svn co https://svn.apache.org/repos/asf/perl/modperl/branches/clone-skip-unstable \
+         mp2-clone-skip-unstable
+  cd mp2-clone-skip-unstable
+  svn propset merge-point 165203 .
+  build/svn.remerge
+
+now resolve any conflicts and commit the changes
+
+
+#######################################
+### merge the branch into the trunk ###
+#######################################
+

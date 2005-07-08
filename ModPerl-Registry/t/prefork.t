@@ -19,8 +19,8 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => 1*@aliases, need {
-    "can't run under threaded MPMs" => !$mpm_is_threaded };
+plan tests => 1*@aliases, need 'mod_alias.c',
+    { "can't run under threaded MPMs" => !$mpm_is_threaded };
 
 my $script = "prefork.pl";
 

@@ -10,7 +10,73 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.000_00-dev
+=item 2.0.2-dev
+
+t/modules/reload.t would fail if run more than 3 times, breaking
+smokes [Gozer]
+
+filter flushing now doesn't croak on connection reset
+(ECONNRESET/ECONNABORTED), but just logs the event on the 'info'
+level. [Stas]
+
+RPM Friendly builds : [Gozer]
+- make dist tarballs can now be built directly into RPMs with rpmbuild
+- Added a new target 'make rpm' to directly build rpms from a checkout
+
+
+
+=item 2.0.1 - June 17, 2005
+
+B::Terse has problems with XS code, so adjust Apache::Status to eval
+{} the code doing Syntax Tree Dump: syntax and execution order options
+[Stas]
+
+Fix a broken regexp in Apache2::Build::dir() on win32 that would
+incorrectly attempt to fully-qualify paths like c:/some/path
+[Nick *** <doink123@abv.bg>]
+
+Fix the "No library found" warnings when building on win32 without
+apxs and MP_AP_PREFIX [Nick *** <doink123@abv.bg>]
+
+The pure-perl ModPerl::Util::unload_package implementation was
+accidently deleting sub-stashes [Gozer]
+
+If running Makefile.PL unnatended (STDIN isn't a terminal or
+MP_PROMPT_DEFAULT=1), break out of potentially infinite prompt
+loops [Gozer]
+
+fix ModPerl::TestReport used by t/REPORT and mp2bug to use
+ExtUtils::MakeMaker's MM->parse_version to get the interesting
+packages version number, w/o trying to load them (which may fail if
+the environment is not right) [Stas]
+
+fix a bug in ModPerl::RegistryCooker: now stripping __(END|DATA)__
+only at the beginning of the line [Stas]
+
+APR::Base64 : [Torsten Foertsch <torsten.foertsch@gmx.net>]
+- fix encode_len() to return the length without accounting for the
+terminating '\0' as the C API does. 
+- fix encode() to create the string of the correct length (previously
+was creating one too many)
+
+in mod_perl callbacks merge error-notes entries rather than store just
+the newest error [Mark <mark@immermail.com>]
+
+Expose Apache2::Const::EXEC_ON_READ (added to the :override group)
+[Stas]
+
+Fix a bug in custom directive implementation, where the code called
+from modperl_module_config_merge() was setting the global context
+after selecting the new interpreter which was leading to a segfault in
+any handler called thereafter, whose context was different
+beforehand. [Stas]
+
+
+
+=item 2.0.0 - May 20, 2005
+
+fix global anon_cnt double-initialization bug that was causing
+startup segfaults on OSX. [Gozer]
 
 fix the ap_install target in the top-level Makefile (used for static
 build) [Stas]

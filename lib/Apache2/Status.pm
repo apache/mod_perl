@@ -497,7 +497,11 @@ sub noh_b_terse {
 
     # XXX: blead perl dumps things to STDERR, though the same version
     # works fine with 1.27
-    B::Terse::compile($arg, $name)->();
+    # B::Concise couldn't parse XS code before perl patch 24681 (perl 5.9.3)
+    eval { B::Terse::compile($arg, $name)->() };
+    if ($@) {
+        $r->print("B::Terse has failed: $@");
+    }
 }
 
 sub b_terse_size_link {

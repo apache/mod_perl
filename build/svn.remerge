@@ -1,0 +1,24 @@
+#!/bin/bash
+# automatic SVN merging
+
+root=`svn info . | sed -n '/^URL/{s,/branches/.*,,;s/^URL: //;p}'`
+trunk=${root}/trunk
+
+# svn 1.2.x supports "svn info URL".  Without that, a stupid
+# ls command is needed to find the current revision of the trunk
+#next=`svn info $trunk | sed -n '/^Revision: /{s/.*: //g;p}'`
+
+next=`svn ls --verbose $root | sed -n '/ trunk/{s/^ *//g;s/ .*//g;p}'`
+last=`svn propget merge-point .`
+
+echo "$0: merging from trunk from r$last to r$next"
+
+echo + svn merge -r$last:$next $trunk .
+svn merge -r$last:$next $trunk .
+echo + svn propset merge-point $next
+svn propset merge-point $next .
+last=$((last + 1))
+echo Merge r$last to r$next from trunk: > clog
+echo >> clog
+echo + svn log -r$last:$next $trunk
+svn log -r$last:$next $trunk | sed '/^------/,/^$/d' >> clog

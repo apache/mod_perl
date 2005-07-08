@@ -16,6 +16,9 @@ sub unload_package_pp {
     # alias but the original function as well
 
     for (keys %$tab) {
+        #Skip sub stashes
+        next if /::$/;
+
         my $fullname = join '::', $package, $_;
         # code/hash/array/scalar might be imported make sure the gv
         # does not point elsewhere before undefing each

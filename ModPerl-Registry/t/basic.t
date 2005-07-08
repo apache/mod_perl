@@ -14,7 +14,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 5 + 3;
+plan tests => @aliases * 5 + 3, need 'mod_alias.c';
 
 my $vars = Apache::Test::config()->{vars};
 my $script_file = t_catfile_apache $vars->{serverroot}, 'cgi-bin', 'basic.pl';

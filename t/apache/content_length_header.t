@@ -5,7 +5,10 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 12 * 2 + 3;
+my $skip = skip_reason('investigating 2.1 C-L behaviors')
+    if have_min_apache_version(2.1);
+
+plan tests => 12 * 2 + 3, $skip;
 
 my $location = "/TestApache__content_length_header";
 

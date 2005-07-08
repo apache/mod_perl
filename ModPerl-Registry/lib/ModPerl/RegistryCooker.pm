@@ -645,7 +645,7 @@ sub get_mark_line {
 #########################################################################
 
 sub strip_end_data_segment {
-    ${ +shift->{CODE} } =~ s/__(END|DATA)__(.*)//s;
+    ${ +shift->{CODE} } =~ s/^__(END|DATA)__(.*)//ms;
 }
 
 

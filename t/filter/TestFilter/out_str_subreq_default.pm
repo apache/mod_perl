@@ -72,7 +72,10 @@ PerlModule              TestFilter::out_str_subreq_default
 PerlResponseHandler     TestFilter::out_str_subreq_default::response
 PerlOutputFilterHandler TestFilter::out_str_subreq_default::include
 
-Alias /default_subrequest @DocumentRoot@/filter
+<IfModule mod_alias.c>
+    Alias /default_subrequest @DocumentRoot@/filter
+</IfModule>
+
 <Location /default_subrequest>
-  SetHandler default-handler
+    SetHandler default-handler
 </Location>

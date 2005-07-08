@@ -169,7 +169,7 @@ APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
 #ifdef USE_ITHREADS
 
 #define MP_PERL_CONTEXT_DECLARE                 \
-    PerlInterpreter *orig_perl;                 \
+    PerlInterpreter *orig_perl = NULL;          \
     pTHX;
 
 #define MP_PERL_CONTEXT_STORE                   \
@@ -184,7 +184,9 @@ APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
     MP_PERL_CONTEXT_OVERRIDE(new_perl)
 
 #define MP_PERL_CONTEXT_RESTORE                 \
-    PERL_SET_CONTEXT(orig_perl);
+    if (orig_perl) {                            \
+        PERL_SET_CONTEXT(orig_perl);            \
+    }
 
 #else /* #ifdef USE_ITHREADS */
 

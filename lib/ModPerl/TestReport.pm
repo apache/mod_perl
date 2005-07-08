@@ -19,6 +19,8 @@ use warnings FATAL => 'all';
 
 use base qw(Apache::TestReportPerl);
 
+use ExtUtils::MakeMaker ();
+
 my @interesting_packages = qw(
     CGI
     ExtUtils::MakeMaker
@@ -33,9 +35,7 @@ my @interesting_packages = qw(
 # modules that are about to be installed
 my @skip_dirs = qw(
     blib/lib
-    blib/lib/Apache2
     blib/arch
-    blib/arch/Apache2
     lib
 );
 my $skip_dir_str = join '|', map { s|/|[/\\\\]|g; $_ } @skip_dirs;
@@ -43,8 +43,6 @@ my $skip_dir_pat = qr|[/\\]($skip_dir_str)[/\\]*$|;
 
 sub packages {
 
-    # search in Apache2/ subdirs too
-    eval { require Apache2 };
     my @inc = grep !/$skip_dir_pat/, @INC;
 
     my %packages = ();
@@ -56,11 +54,7 @@ sub packages {
         for my $dir (@inc) {
             my $path = "$dir/$filename";
             if (-e $path) {
-                no warnings 'redefine';
-                my $ver = eval { require $path;
-                                 delete $INC{$path};
-                                 $package->VERSION;
-                         };
+                my $ver = MM->parse_version($path);
                 # two versions could be installed (one under Apache2/)
                 push @{ $packages{$package} }, $ver if $ver;
             }

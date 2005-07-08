@@ -21,6 +21,9 @@ my $passbad  = "foObaR";
 # blocking socket bug fixed in 2.0.52
 my $ok = $^O !~ /^(Open|Net)BSD$/i || need_min_apache_version('2.0.52');
 
+# but not in 2.1?  hmph.
+$ok = skip_reason('skipping on httpd 2.1') if have_min_apache_version('2.1');
+
 plan tests => 13, need need_auth, need_access, $ok;
 
 {

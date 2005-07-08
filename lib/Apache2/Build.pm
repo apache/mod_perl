@@ -932,7 +932,7 @@ sub dir {
         for (qw(ap_includedir)) {
             delete $self->{$_};
         }
-        if ($dir =~ m:^../:) {
+        if ($dir =~ m:^\.\.[/\\]:) {
             $dir = "$self->{cwd}/$dir";
         }
         $self->{dir} = $dir;
@@ -1546,7 +1546,7 @@ sub dynamic_link {
 
 sub apache_libs_MSWin32 {
     my $self = shift;
-    my $prefix = $self->apxs(-q => 'PREFIX');
+    my $prefix = $self->apxs(-q => 'PREFIX') || $self->dir;
     my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
     "@libs";
 }

@@ -49,6 +49,8 @@ our $VERSION;
 my $build = Apache2::Build->new(init => 1);
 my $code  = ModPerl::Code->new;
 
+sub UNATTENDED() { $build->{MP_PROMPT_DEFAULT} || ! -t STDIN }
+
 win32_fetch_apxs() if WIN32;
 
 configure();
@@ -251,7 +253,7 @@ EOI
         }
         until ($ok) {
             my $ask = "Please provide the location of the Apache directory:";
-            my $ans = $build->prompt($ask);
+            my $ans = $build->prompt($ask) || "";
             # strip leading/closing spaces
             $ans =~ s/^\s*|\s*$//g;
             if (defined $ans and -d $ans) {
@@ -259,7 +261,9 @@ EOI
                 $ok++;
             }
             else {
-                error "Can't find dir '$ans'";            }
+                error "Can't find dir '$ans'";
+                last if UNATTENDED;
+            }
         }
     }
 
@@ -344,7 +348,7 @@ EOI
     my $prompt = "\nPlease provide a full path to 'apxs' executable\n" .
         "(press Enter if you don't have it installed):";
     while (1) {
-        my $ans = $build->prompt($prompt);
+        my $ans = $build->prompt($prompt) || "";
 
         print "\n\n";
 
@@ -785,13 +789,24 @@ sub MY::postamble {
     my $string = $self->ModPerl::BuildMM::MY::postamble;
 
     $string .= <<'EOF';
-mydist : Apache-Test/META.yml manifest tardist
+mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
+
+rpm: dist
+	@[ -d $(PWD)/rpm ] || mkdir $(PWD)/rpm
+	rpmbuild -ta --define "_rpmdir $(PWD)/rpm" \
+                 --define "_srcrpmdir $(PWD)/rpm" \
+                 $(DISTVNAME).tar.gz
+	@mv $(PWD)/rpm/*/*.rpm $(PWD)/rpm/
+	@rm -rf $(PWD)/rpm/*/
+    
+mod_perl.spec: build/make_rpm_spec
+	$(PERL) build/make_rpm_spec
 
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
 tag :
-	svn copy . https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
+	svn copy  https://svn.apache.org/repos/asf/perl/modperl/trunk  https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
 	@$(ECHO) update mod_perl2.pm VERSION now
 EOF
 

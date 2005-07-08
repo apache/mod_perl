@@ -103,7 +103,7 @@ static MP_INLINE void mpxs_APR__Bucket_remove(apr_bucket *bucket)
 static MP_INLINE
 apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
 {
-    apr_pool_t *p   = mp_xs_sv2_APR__Pool(p_sv);
+    apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     apr_bucket *b = mp_xs_sv2_APR__Bucket(b_sv);
     apr_status_t rc = apr_bucket_setaside(b, p);
 

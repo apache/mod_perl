@@ -35,16 +35,18 @@ PerlModule ModPerl::Util
 #############################
 ### Normal registry setup ###
 #############################
-Alias /registry/         @ServerRoot@/cgi-bin/
-Alias /registry_bb/      @ServerRoot@/cgi-bin/
-Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
-Alias /registry_prefork/ @ServerRoot@/cgi-bin/
-Alias /perlrun/          @ServerRoot@/cgi-bin/
-Alias /perlrun_prefork/  @ServerRoot@/cgi-bin/
-Alias /nph/              @ServerRoot@/cgi-bin/
-Alias /registry_modperl_handler/  @ServerRoot@/cgi-bin/
+<IfModule mod_alias.c>
+    Alias /registry/         @ServerRoot@/cgi-bin/
+    Alias /registry_bb/      @ServerRoot@/cgi-bin/
+    Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
+    Alias /registry_prefork/ @ServerRoot@/cgi-bin/
+    Alias /perlrun/          @ServerRoot@/cgi-bin/
+    Alias /perlrun_prefork/  @ServerRoot@/cgi-bin/
+    Alias /nph/              @ServerRoot@/cgi-bin/
+    Alias /registry_modperl_handler/  @ServerRoot@/cgi-bin/
 
-ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
+    ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
+</IfModule>
 
 PerlModule ModPerl::RegistryBB
 <Location /registry_bb>
@@ -112,11 +114,12 @@ PerlModule ModPerl::PerlRun
 #######################################
 ### Same interpreter registry setup ###
 #######################################
-
-Alias /same_interp/registry/         @ServerRoot@/cgi-bin/
-Alias /same_interp/registry_bb/      @ServerRoot@/cgi-bin/
-Alias /same_interp/registry_oo_conf/ @ServerRoot@/cgi-bin/
-Alias /same_interp/perlrun/          @ServerRoot@/cgi-bin/
+<IfModule mod_alias.c>
+    Alias /same_interp/registry/         @ServerRoot@/cgi-bin/
+    Alias /same_interp/registry_bb/      @ServerRoot@/cgi-bin/
+    Alias /same_interp/registry_oo_conf/ @ServerRoot@/cgi-bin/
+    Alias /same_interp/perlrun/          @ServerRoot@/cgi-bin/
+</IfModule>
 
 PerlModule Apache::TestHandler
 
@@ -157,8 +160,10 @@ PerlModule Apache::TestHandler
 </Location>
 
 ### the 404 test ###
+<IfModule mod_alias.c>
+    Alias /error_document/ @ServerRoot@/cgi-bin/
+</IfModule>
 
-Alias /error_document/ @ServerRoot@/cgi-bin/
 <Location /error_document>
     ErrorDocument 404 /error_document/404.pl
     SetHandler perl-script
@@ -167,8 +172,9 @@ Alias /error_document/ @ServerRoot@/cgi-bin/
 </Location>
 
 ### deflate tests ###
-
-Alias /registry_bb_deflate/ @ServerRoot@/cgi-bin/
+<IfModule mod_alias.c>
+    Alias /registry_bb_deflate/ @ServerRoot@/cgi-bin/
+</IfModule>
 
 #PerlOutputFilterHandler ModPerl::TestFilterDebug::snoop_connection
 PerlModule ModPerl::RegistryBB
@@ -197,7 +203,9 @@ PerlModule ModPerl::RegistryBB
 # XXX: would be nice to have Apache-Test support a new 'tmp' token
 # (similar to t_logs) which will map onto t/tmp by default and provide
 # a new -tmp option to override this default
-SetEnv TMPDIR @t_logs@
+<IfModule mod_env.c>
+    SetEnv TMPDIR @t_logs@
+</IfModule>
 # </sandbox-friendly>
 
 

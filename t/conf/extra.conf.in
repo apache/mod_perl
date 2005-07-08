@@ -26,9 +26,9 @@ ServerSignature On
 # Adjust PerlInterpMax and PerlInterpMaxSpare if the requirements change
 <IfDefine PERL_USEITHREADS>
     PerlInterpStart         1
-    PerlInterpMax           2
+    PerlInterpMax           30
     PerlInterpMinSpare      1
-    PerlInterpMaxSpare      2
+    PerlInterpMaxSpare      30
 </IfDefine>
 
 # make sure that we test under Taint and warnings mode enabled
@@ -39,7 +39,9 @@ PerlModule TestExit::FromPerlModule
 
 #for t/modules/include.t
 <Directory @ServerRoot@/htdocs/includes>
-    AddOutputFilter INCLUDES .shtml
+    <IfModule mod_mime.c>
+        AddOutputFilter INCLUDES .shtml
+    </IfModule>
     # #virtual include of a script that sets content type is
     # considered the same as #cmd by mod_include, 
     # therefore can't use IncludesNOEXEC here
@@ -51,7 +53,9 @@ PerlModule TestExit::FromPerlModule
     Options +ExecCGI +IncludesNoExec
     PerlResponseHandler ModPerl::Registry
     PerlOptions +ParseHeaders +GlobalRequest
-    AddOutputFilter INCLUDES .spl
+    <IfModule mod_mime.c>
+        AddOutputFilter INCLUDES .spl
+    </IfModule>
 </Directory>
 
 <IfModule mod_perl.c>
