@@ -43,7 +43,7 @@ apr_size_t mpxs_apr_socket_send(pTHX_ apr_socket_t *socket,
         if (buf_len < SvIV(sv_len)) {
             Perl_croak(aTHX_ "the 3rd arg (%d) is bigger than the "
                        "length (%d) of the 2nd argument",
-                       SvIV(sv_len), buf_len);
+                       (int)SvIV(sv_len), buf_len);
         }
         buf_len = SvIV(sv_len);
     }
