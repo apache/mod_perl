@@ -532,6 +532,9 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
     modperl_global_init_server_rec(pconf, s);
 
     modperl_tls_create_request_rec(pconf);
+
+    /* init the counter to 0 */
+    modperl_global_anon_cnt_init(pconf);
 }
 
 /*
@@ -692,9 +695,17 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
     }
 #endif
 
+#if PERL_REVISION == 5 && PERL_VERSION < 9
+#define MP_PERL_VERSION_STAMP "Perl/v%vd"
+#else
+#define MP_PERL_VERSION_STAMP "Perl/%" SVf
+#endif
+    
     ap_add_version_component(pconf, MP_VERSION_STRING);
     ap_add_version_component(pconf,
-                             Perl_form(aTHX_ "Perl/v%vd", PL_patchlevel));
+                             Perl_form(aTHX_ MP_PERL_VERSION_STAMP,
+                                       PL_patchlevel));
+
     modperl_mgv_hash_handlers(pconf, s);
     modperl_modglobal_hash_keys(aTHX);
     modperl_env_hash_keys(aTHX);

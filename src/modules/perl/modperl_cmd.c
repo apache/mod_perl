@@ -554,6 +554,9 @@ MP_CMD_SRV_DECLARE(perldo)
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;SAVETMPS;
         save_scalar(gv); /* local $0 */
+#if PERL_REVISION == 5 && PERL_VERSION >= 9
+        TAINT_NOT; /* XXX: temp workaround, see my p5p post */
+#endif
         sv_setpv_mg(GvSV(gv), directive->filename);
         eval_sv(code, G_SCALAR|G_KEEPERR);
         SvREFCNT_dec(code);
