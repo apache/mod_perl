@@ -95,7 +95,7 @@ MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_
                     return mg->mg_obj;
                 }
                 else {
-                    Perl_warn(aTHX_ "Not a tied hash: (magic=%c)", mg);
+                    Perl_warn(aTHX_ "Not a tied hash: (magic=%c)", mg->mg_type);
                 }
             }
             else {
