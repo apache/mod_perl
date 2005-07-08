@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Multiple fixes to make mod_perl 2.0 work with blead-perl (5.9.3+)
+[Stas]
+
 t/modules/reload.t would fail if run more than 3 times, breaking
 smokes [Gozer]
 
