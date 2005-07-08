@@ -136,7 +136,7 @@ request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
             break;
           default:
             Perl_croak(aTHX_ "panic: unsupported request_rec type %d",
-                       SvTYPE(rv));
+                       (int)SvTYPE(rv));
         }
     }
 
@@ -408,7 +408,7 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
     register HE *entry;
 
     xhv = (XPVHV *)SvANY(hv);
-    if (!xhv->xhv_array) {
+    if (!HvARRAY(hv)) {
         return 0;
     }
 
@@ -422,7 +422,7 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
 	PERL_HASH(hash, key, klen);
     }
 
-    entry = ((HE**)xhv->xhv_array)[hash & (I32)xhv->xhv_max];
+    entry = ((HE**)HvARRAY(hv))[hash & (I32)xhv->xhv_max];
 
     for (; entry; entry = HeNEXT(entry)) {
         if (HeHASH(entry) != hash) {
@@ -633,7 +633,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     if (r->finfo.size != size) {
         SvREFCNT_dec(sv); 
         Perl_croak(aTHX_ "Error: read %d bytes, expected %d ('%s')",
-                   size, r->finfo.size, r->filename);
+                   size, (apr_size_t)r->finfo.size, r->filename);
     }
 
     rc = apr_file_close(file);
