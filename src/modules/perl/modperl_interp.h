@@ -27,12 +27,28 @@ apr_status_t modperl_interp_cleanup(void *data);
  * HvPMROOT will never be used by Perl with PL_modglobal.
  * so we have stolen it as a quick way to stash the interp
  * pointer.
+ *
+ * However in 5.9.3 HvPMROOT was completely removed, so we have moved
+ * to use another struct member that's hopefully won't be used by
+ * anybody else. But if we can find a better place to store the
+ * pointer to the current mod_perl interpreter object it'd be a much
+ * cleaner solution. of course it must be really fast.
  */
+#ifndef HvPMROOT
+#define MP_THX_INTERP_GET(thx)                                  \
+    (modperl_interp_t *) ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_magic
+#else
 #define MP_THX_INTERP_GET(thx) \
     (modperl_interp_t *)HvPMROOT(*Perl_Imodglobal_ptr(thx))
+#endif
 
-#define MP_THX_INTERP_SET(thx, interp) \
+#ifndef HvPMROOT
+#define MP_THX_INTERP_SET(thx, interp)                          \
+    ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_magic = (MAGIC*)interp
+#else
+#define MP_THX_INTERP_SET(thx, interp)                          \
     HvPMROOT(*Perl_Imodglobal_ptr(thx)) = (PMOP*)interp
+#endif
 
 const char *modperl_interp_scope_desc(modperl_interp_scope_e scope);
 
