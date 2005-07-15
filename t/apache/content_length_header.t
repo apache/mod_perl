@@ -5,8 +5,9 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-my $skip = skip_reason('investigating 2.1 C-L behaviors')
-    if have_min_apache_version(2.1);
+my $skip = have_min_apache_version(2.1) ?
+    skip_reason('investigating 2.1 C-L behaviors') :
+    1;
 
 plan tests => 12 * 2 + 3, $skip;
 
