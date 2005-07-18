@@ -19,6 +19,7 @@ use warnings;
 
 use ModPerl::RegistryCooker ();
 use Apache2::ServerUtil ();
+use Apache2::Log ();
 use APR::Pool ();
 
 use Carp;
@@ -153,7 +154,7 @@ sub load_package {
 
 sub warn {
     my $self = shift;
-    Apache2->warn(__PACKAGE__ . ": @_\n");
+    Apache2::Log->warn(__PACKAGE__ . ": @_\n");
 }
 
 1;
