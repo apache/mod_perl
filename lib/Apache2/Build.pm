@@ -1049,7 +1049,7 @@ sub apr_bindir {
 
 sub apr_generation {
     my($self) = @_;
-    return $self->httpd_version_as_int =~ m/21\d+/ ? 1 : 0;
+    return $self->httpd_version_as_int =~ m/2[1-9]\d+/ ? 1 : 0;
 }
 
 # returns an array of apr/apu linking flags (--link-ld --libs) if found
