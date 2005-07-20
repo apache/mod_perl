@@ -26,6 +26,7 @@ use File::Find;
 use Apache2::Build ();
 use ModPerl::MM;
 use constant WIN32 => Apache2::Build::WIN32;
+use constant CYGWIN => Apache2::Build::CYGWIN;
 
 our %PM; #add files to installation
 
@@ -91,14 +92,16 @@ sub WriteMakefile {
         # usual. This is done for APR in xs/APR/APR/Makefile.PL.
         my $name = $args{NAME};
         if ($name =~ /^APR::\w+$/) {
-            @libs = ($build->apache_libs, $build->mp_apr_lib);
+            # For cygwin compatibility, the order of the libs should be
+            # <mod_perl libs> <apache libs>
+            @libs = ($build->mp_apr_lib, $build->apache_libs);
         }
         else {
-            @libs = ($build->apache_libs, $build->modperl_libs);
+            @libs = ($build->modperl_libs, $build->apache_libs);
         }
     }
     else {
-        @libs = ($build->apache_libs, $build->modperl_libs);
+        @libs = ($build->modperl_libs, $build->apache_libs);
     }
     $libs = join ' ', @libs;
 
@@ -250,7 +253,8 @@ sub ModPerl::BuildMM::MY::postamble {
                     "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
 
                 # Win32 doesn't normally install man pages
-                next if WIN32;
+                # and Cygwin doesn't allow '::' in file names
+                next if WIN32 || CYGWIN;
 
                 # manify while we're at it
                 my (undef, $man, undef) = $blib =~ m!(blib/lib/)(.*)(\.pm)!;

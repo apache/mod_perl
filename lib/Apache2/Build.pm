@@ -308,11 +308,30 @@ sub configure_apache {
     $self->{'httpd'} ||= $httpd;
     push @Apache::TestMM::Argv, ('httpd' => $self->{'httpd'});
 
-    my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
-    my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
+    my $mplibpath = '';
+    my $ldopts = $self->ldopts;
+    
+    if (CYGWIN) {
+        # Cygwin's httpd port links its modules into httpd2core.dll, instead of httpd.exe.
+        # In this case, we have a problem, because libtool doesn't want to include
+        # static libs (.a) into a dynamic lib (.dll). Workaround this by setting
+        # mod_perl.a as a linker argument (including all other flags and libs).
+        my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
+        
+        $ldopts = join ' ', 
+            '--export-all-symbols',
+            "$self->{cwd}/src/modules/perl/$mplib",
+            $ldopts;
+        
+        $ldopts =~ s/(\S+)/-Wl,$1/g;
+        
+    } else {
+        my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
+        $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
+    }
 
     local $ENV{BUILTIN_LIBS} = $mplibpath;
-    local $ENV{AP_LIBS} = $self->ldopts;
+    local $ENV{AP_LIBS} = $ldopts;
     local $ENV{MODLIST} = 'perl';
 
     #XXX: -Wall and/or -Werror at httpd configure time breaks things
@@ -467,10 +486,6 @@ sub ldopts {
 
     if ($self->{MP_USE_GTOP}) {
         $ldopts .= $self->gtop_ldopts;
-    }
-
-    if (CYGWIN && $self->is_dynamic) {
-        $ldopts .= join ' ', '', $self->apru_link_flags;
     }
 
     $config->{ldflags} = $ldflags; #reset
@@ -802,7 +817,7 @@ sub build_config {
     }
 
     return bless {}, (ref($self) || $self) if $@;
-    return Apache2::BuildConfig::->new;
+    return Apache2::BuildConfig->new;
 }
 
 sub new {
@@ -1122,7 +1137,7 @@ sub apru_config_path {
             if ($self->{MP_AP_CONFIGURE} &&
                 $self->{MP_AP_CONFIGURE} =~ /--with-${what_long}=(\S+)/) {
                 my $dir = $1;
-                $dir =~ s/$config$// unless -d $dir;
+                $dir = dirname $dir if -f $dir;
                 push @tries, grep -d $_, $dir, catdir $dir, 'bin';
             }
         }
@@ -1537,6 +1552,21 @@ sub dynamic_link_aix {
         "\t" . '$(MODPERL_RANLIB) $@';
 }
 
+sub dynamic_link_cygwin {
+    my $self = shift;
+    return <<'EOF';
+$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_CC) -shared -o $@ \
+	-Wl,--out-implib=$(MODPERL_LIBNAME).dll.a \
+	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--stack,8388608 \
+	$(MODPERL_PIC_OBJS) \
+	$(MODPERL_LDDLFLAGS) $(MODPERL_LDOPTS) \
+	$(MODPERL_AP_LIBS)
+	$(MODPERL_RANLIB) $@
+EOF
+}
+
 sub dynamic_link {
     my $self = shift;
     my $link = \&{"dynamic_link_$^O"};
@@ -1544,11 +1574,44 @@ sub dynamic_link {
     $link->($self);
 }
 
+# Returns the link flags for the apache shared core library
+my $apache_corelib_cygwin;
+sub apache_corelib_cygwin {
+    return $apache_corelib_cygwin if $apache_corelib_cygwin;
+    
+    my $self = shift;
+    my $mp_src = "$self->{cwd}/src/modules/perl";
+    my $core = 'httpd2core';
+    
+    # There's a problem with user-installed perl on cygwin.
+    # MakeMaker doesn't know about the .dll.a libs and warns
+    # about missing -lhttpd2core. "Fix" it by copying
+    # the lib and adding .a suffix.
+    # For the static build create a soft link, because libhttpd2core.dll.a
+    # doesn't exist at this time.
+    if ($self->is_dynamic) {
+        my $libpath = $self->apxs(-q => 'exp_libdir');
+        File::Copy::copy("$libpath/lib$core.dll.a", "$mp_src/lib$core.a");
+    } else {
+        my $libpath = catdir($self->{MP_AP_PREFIX}, '.libs');
+        mkdir $libpath unless -d $libpath;
+        qx{touch $libpath/lib$core.dll.a && \
+        ln -fs $libpath/lib$core.dll.a $mp_src/lib$core.a};
+    }
+    
+    $apache_corelib_cygwin = "-L$mp_src -l$core";
+}
+
 sub apache_libs_MSWin32 {
     my $self = shift;
     my $prefix = $self->apxs(-q => 'PREFIX') || $self->dir;
     my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
     "@libs";
+}
+
+sub apache_libs_cygwin {
+    my $self = shift;
+    join ' ', $self->apache_corelib_cygwin, $self->apru_link_flags;
 }
 
 sub apache_libs {
@@ -1560,16 +1623,13 @@ sub apache_libs {
 
 sub modperl_libs_MSWin32 {
     my $self = shift;
-    # mod_perl.lib will be installed into MP_AP_PREFIX/lib
-    # for use by 3rd party xs modules
     "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
 sub modperl_libs_cygwin {
      my $self = shift;
-     return $self->is_dynamic
-         ? "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}"
-         : $self->modperl_static_libs_cygwin;
+     return '' unless $self->is_dynamic;
+     return "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}";
 }
 
 sub modperl_libs {
@@ -1579,35 +1639,23 @@ sub modperl_libs {
     $libs->($self);
 }
 
-my $modperl_static_libs_cygwin = '';
-sub modperl_static_libs_cygwin {
+sub modperl_libpath_MSWin32 {
     my $self = shift;
+    # mod_perl.lib will be installed into MP_AP_PREFIX/lib
+    # for use by 3rd party xs modules
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
+}
 
-    return $modperl_static_libs_cygwin if $modperl_static_libs_cygwin;
+sub modperl_libpath_cygwin {
+    my $self = shift;
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.dll.a";
+}
 
-    my $dyna_filepath = catdir $self->perl_config('archlibexp'),
-        'auto/DynaLoader/DynaLoader.a';
-    my $modperl_path  = "$self->{cwd}/src/modules/perl";
-    # Create symlink to mod_perl.a, but copy DynaLoader.a, because
-    # when running make clean the real DynaLoader.a may get deleted.
-    my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
-    my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
-    # perl's link() on Cygwin seems to copy mod_perl.a to
-    # libmod_perl.a, but at this stage mod_perl.a is still a dummy lib
-    # and at the end we get nothing. whereas `ln -s` seems to create
-    # something like the shortcut on windows and it works.
-    qx{ln -s $src $dst} unless -e $dst;
-    File::Copy::copy($dyna_filepath, "$modperl_path/libDynaLoader.a");
-
-    $modperl_static_libs_cygwin = join ' ',
-        "-L$modperl_path",
-        "-l$self->{MP_LIBNAME}",
-        '-lDynaLoader',
-        $self->apru_link_flags,
-        '-L' . catdir($self->perl_config('archlibexp'), 'CORE'),
-        '-lperl';
-
-    $modperl_static_libs_cygwin;
+sub modperl_libpath {
+    my $self = shift;
+    my $libpath = \&{"modperl_libpath_$^O"};
+    return "" unless defined &$libpath;
+    $libpath->($self);
 }
 
 # returns the directory and name of the aprext lib built under blib/ 
@@ -1639,7 +1687,7 @@ sub mp_apr_lib_cygwin {
 
     # This is ugly, but is the only way to prevent the "undefined
     # symbols" error
-    $libs .= join ' ', '', $self->apru_link_flags,
+    $libs .= join ' ', '',
         '-L' . catdir($self->perl_config('archlibexp'), 'CORE'), '-lperl';
 
     $libs;
@@ -1682,7 +1730,7 @@ EOI
 	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(DESTDIR)$(MODPERL_AP_LIBEXECDIR)
 EOI
     }
-    
+
     $install .= <<'EOI';
 # install mod_perl .h files
 	@$(MKPATH) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
@@ -1731,7 +1779,7 @@ EOI
 EOI
     }
 
-    if (my $libs = $self->modperl_libs) {
+    if ($self->is_dynamic && (my $libs = $self->modperl_libpath)) {
         print $fh $self->canon_make_attr('lib_location', $libs);
 
         print $fh $self->canon_make_attr('ap_libdir',
@@ -1877,17 +1925,6 @@ sub otherldflags_MSWin32 {
     my $self = shift;
     my $flags = $self->otherldflags_default;
     $flags .= ' -pdb:$(INST_ARCHAUTODIR)\$(BASEEXT).pdb' if $self->{MP_DEBUG};
-    $flags;
-}
-
-sub otherldflags_cygwin {
-    my $self = shift;
-    my $flags = $self->otherldflags_default;
-
-    unless ($self->{MP_STATIC_EXTS}) {
-        $flags .= join ' ', '', $self->apru_link_flags;
-    }
-
     $flags;
 }
 
