@@ -9,6 +9,7 @@ use Config;
 use File::Spec::Functions;
 
 use constant WIN32   => Apache2::Build::WIN32;
+use constant CYGWIN  => Apache2::Build::CYGWIN;
 use constant SOLARIS => $^O eq 'solaris';
 use constant BUILD_APREXT   => Apache2::Build::BUILD_APREXT;
 
@@ -30,7 +31,13 @@ if (WIN32) {
 
 if (BUILD_APREXT) {
     my $mp_apr_lib = $build->mp_apr_lib;
-    $libs .= qq{ $mp_apr_lib };
+
+    if (CYGWIN) {
+        # For Cygwin compatibility, set $mp_apr_lib before the apru flags
+        $libs = qq{ $mp_apr_lib } . $libs;
+    } else {
+        $libs .= qq{ $mp_apr_lib };
+    }
 }
 
 if (SOLARIS && $libs) {

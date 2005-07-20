@@ -17,8 +17,8 @@ my $subrequest  = "default-handler subrequest\n";
 
 my $expected = join '', $content1, $subrequest, $content2, $filter;
 my $received = GET_BODY $location;
-# Win32 fix for line endings
-$received =~ s{\r}{}g if Apache::TestConfig::WIN32;
+# Win32 and Cygwin fix for line endings
+$received =~ s{\r}{}g if Apache::TestConfig::WIN32 || Apache::TestConfig::CYGWIN;
 
 ok t_cmp($received, $expected,
     "testing filter-originated lookup_uri() call to core served URI");
