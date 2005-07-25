@@ -389,8 +389,9 @@ sub post_configure {
     }
 
     if ($build->is_dynamic) {
-        warning "You'll need to add the following to httpd.conf:",
-                " LoadModule perl_module modules/$build->{MODPERL_LIB_DSO}\n";
+       my $dir = $build->{APXS_LIBEXECDIR} || 'modules';
+       warning "You'll need to add the following to httpd.conf:",
+               "LoadModule perl_module $dir/$build->{MODPERL_LIB_DSO}\n";
     }
 
     $build->save;
