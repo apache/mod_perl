@@ -71,6 +71,7 @@ HPUX11i     DSO
   by default gcc doesn't complain about them. Probably need to wait
   till gcc-3.3.2 and enable it then.
   http://gcc.gnu.org/cgi-bin/cvsweb.cgi/gcc/gcc/ChangeLog.diff?r1=2.639&r2=2.640&f=h
+[pgollucci volunteers]
 
 
 * Testing:
@@ -78,6 +79,7 @@ HPUX11i     DSO
   -- shouldn't forget to test with perlio enabled and disabled
 
 * mp2bug -- add the output of 'ldd httpd' to the report
+[pgollucci volunteers]
 
 * source_scan won't create Wrap/Foo/Bar.xs if
   xs/maps/modperl_functions.map defines only a boot section:
