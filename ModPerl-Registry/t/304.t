@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 10, need 'mod_alias.c';
+plan tests => 10, need [qw(mod_alias.c HTML::HeadParser)];
 
 my $url = "/registry/304.pl";
 
