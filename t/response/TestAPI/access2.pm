@@ -98,9 +98,7 @@ __DATA__
 
     <IfModule @ACCESS_MODULE@>
         # needed to test $r->satisfies
-        Order Deny,Allow
-        Deny from all
-        Allow from @servername@
+        Allow from All
     </IfModule>
     AuthType Basic
     AuthName "Access"
