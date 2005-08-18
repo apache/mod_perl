@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+croak in case a filter returns DECLINED after calling $f->read (as it
+is not supposed to happen) [Stas]
+
 another round of cygwin fixes [Nick *** <doink123@abv.bg>]
 
 Multiple fixes to make mod_perl 2.0 work with blead-perl (5.9.3+)
