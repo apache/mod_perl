@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+When using Apache2::Reload andReloadDebug is set to 'On' 
+sort the output alphabetically [pgollucci]
+
 croak in case a filter returns DECLINED after calling $f->read (as it
 is not supposed to happen) [Stas]
 
