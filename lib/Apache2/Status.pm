@@ -42,11 +42,7 @@ my %status = (
     env       => "Environment",
     sig       => "Signal Handlers",
     myconfig  => "Perl Configuration",
-    hooks     => "Enabled mod_perl Hooks",
 );
-# XXX: is $status{hooks} supported with any mp2 version?
-# If not, why not just remove it from the above initialization?
-delete $status{'hooks'} if $mod_perl2::VERSION >= 1.9901;
 delete $status{'sig'} if IS_WIN32;
 
 # XXX: needs porting
@@ -195,22 +191,6 @@ sub status_section_config {
     my($r) = @_;
     require Apache2::PerlSections;
     ["<pre>", Apache2::PerlSections->dump, "</pre>"];
-}
-
-sub status_hooks {
-    my($r) = @_;
-    # XXX: hooks list access doesn't exist yet in 2.0
-    require mod_perl;
-    require mod_perl_hooks;
-    my @retval = qw(<table>);
-    my @list = mod_perl::hooks();
-    for my $hook (sort @list) {
-        my $on_off = 
-            mod_perl::hook($hook) ? "<b>Enabled</b>" : "<i>Disabled</i>";
-        push @retval, "<tr><td>$hook</td><td>$on_off</td></tr>\n";
-    }
-    push @retval, qw(</table>);
-    \@retval;
 }
 
 sub status_inc {
