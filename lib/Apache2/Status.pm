@@ -556,7 +556,9 @@ sub noh_b_package_size {
     my $script = $r->location;
     $r->print("Memory Usage for package $package\n\n");
     my($subs, $opcount, $opsize) = B::TerseSize::package_size($package);
-    $r->print("Totals: $opsize bytes | $opcount OPs\n\n");
+    my $Kb = sprintf "%.2f", $opsize / 1024;
+    my $Mb = sprintf "%.2f", $Kb / 1000;
+    $r->print("Totals: $opsize bytes, $Kb Kb, $Mb Mb | $opcount OPs\n\n");
 
     my $nlen = 0;
     my @keys = map {
