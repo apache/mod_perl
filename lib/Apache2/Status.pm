@@ -66,7 +66,7 @@ my %requires = (
     terse       => ["StatusTerse",       "B::Terse",       0,    ],
     tersesize   => ["StatusTerseSize",   "B::TerseSize",   0,    ],
     packagesize => ["StatusPackageSize", "B::TerseSize",   0,    ],
-    peek        => ["StatusPeek",        "Apache2::Peek",   0,    ], # XXX: version?
+    peek        => ["StatusPeek",        "Apache::Peek",   1.03, ],
 );
 
 sub has {
@@ -649,7 +649,7 @@ sub noh_peek {
     my($name, $type) = (split "/", $r->uri)[-2,-1];
     $type =~ s/^FUNCTION$/CODE/;
     $r->print("Peek Dump of $name $type\n\n");
-    Apache2::Peek::Dump(*{$name}{$type});
+    Apache::Peek::Dump(*{$name}{$type});
 }
 
 sub xref_link {
