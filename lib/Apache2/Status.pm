@@ -129,7 +129,7 @@ sub handler {
         my $uri = $r->uri;
         $r->print('<p>');
         $r->print(
-            map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } sort { lc $a cmp lc $b } keys %status
+            map { qq[<a href="$uri?$_">$status{$_}</a><br />\n] } sort { lc $a cmp lc $b } keys %status
         );
         $r->print('</p>');
     }
@@ -145,28 +145,30 @@ sub header {
     $r->content_type("text/html");
     my $v = $^V ? sprintf "v%vd", $^V : $];
     $r->print(<<"EOF");
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-  <title>Apache2::Status</title>
-  <style type="text/css">
-  body {
-    color: #000;
-    background-color: #fff;
-  }
-  p.hdr {
-    background-color: #ddd;
-    border: 2px outset;
-    padding: 3px;
-    width: 99%;
-  }
-  </style>
-</head>
-<body>
-<p class="hdr">
-  Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>,<br>
-  running since $start
-</p>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Apache2::Status $Apache2::Status::VERSION</title>
+    <style type="text/css">
+      body {
+        color: #000;
+        background-color: #fff;
+      }
+      p.hdr {
+        background-color: #ddd;
+        border: 2px outset;
+        padding: 3px;
+        width: 99%;
+     }
+   </style>
+  </head>
+  <body>
+    <p class="hdr">
+      Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>,<br />
+      running since $start
+    </p>
 EOF
 
 }
@@ -223,7 +225,7 @@ sub status_inc {
         );
     }
     push @retval, "</table>\n";
-    push @retval, "<p><b>\@INC</b> = <br>", join "<br>\n", @INC, "";
+    push @retval, "<p><b>\@INC</b> = <br />", join "<br />\n", @INC, "";
     \@retval;
 }
 
@@ -298,7 +300,7 @@ sub status_rgysubs {
         push @retval, "<h4>$handler:</h4>\n<p>\n";
         for (sort @{ $handlers{$handler} }) {
             my $full = join '::', $root, $handler, $_;
-            push @retval, qq(<a href="$uri?$full">$_</a>\n), "<br>";
+            push @retval, qq(<a href="$uri?$full">$_</a>\n), "<br />";
         }
         push @retval, "</p>\n";
     }
