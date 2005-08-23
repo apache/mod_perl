@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Several fixes to Apache2::Status
+[pgollucci]
+
 When using Apache2::Reload and ReloadDebug is set to 'On', 
 sort the output alphabetically [pgollucci]
 
