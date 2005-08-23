@@ -133,7 +133,7 @@ sub handler {
         my $uri = $r->uri;
         $r->print('<p>');
         $r->print(
-            map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
+            map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } sort { lc $a cmp lc $b } keys %status
         );
         $r->print('</p>');
     }
