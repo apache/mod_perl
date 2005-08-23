@@ -468,7 +468,7 @@ sub noh_b_lexinfo {
     $r->print(${ $lexi->dumper($info) });
 }
 
-my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
+my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution', basic => 'syntax');
 
 sub b_terse_link {
     my($r, $name) = @_;
@@ -477,7 +477,7 @@ sub b_terse_link {
 
     my $script = $r->location;
     my @retval;
-    for (qw(exec slow)) {
+    for (qw(exec basic)) {
         my $exp = "$b_terse_exp{$_} order";
         push @retval,
             qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree Dump ($exp)</a>\n);
@@ -498,9 +498,10 @@ sub noh_b_terse {
     # XXX: blead perl dumps things to STDERR, though the same version
     # works fine with 1.27
     # B::Concise couldn't parse XS code before perl patch 24681 (perl 5.9.3)
-    eval { B::Terse::compile($arg, $name)->() };
+    # B::Terse is deprecated and just a wrapper around B::Concise now adays
+    eval { B::Concise::compile("-terse", "-$arg", $name)->() };
     if ($@) {
-        $r->print("B::Terse has failed: $@");
+        $r->print("B::Concise has failed: $@");
     }
 }
 
