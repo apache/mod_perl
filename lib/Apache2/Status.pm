@@ -28,7 +28,7 @@ use File::Spec ();
 
 use Apache2::Const -compile => qw(OK);
 
-$Apache2::Status::VERSION = '3.00'; # mod_perl 2.0
+$Apache2::Status::VERSION = '4.00'; # mod_perl 2.0
 
 use constant IS_WIN32 => ($^O eq "MSWin32");
 
