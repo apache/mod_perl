@@ -62,7 +62,7 @@ my %requires = (
     b           => ["",                  "B",              0,    ],
     graph       => ["StatusGraph",       "B::Graph",       0.03, ],
     lexinfo     => ["StatusLexInfo",     "B::LexInfo",     0,    ],
-    xref        => ["",                  "B::Xref",        0,    ],
+    xref        => ["StatusXref",        "B::Xref",        1.01, ],
     terse       => ["StatusTerse",       "B::Terse",       0,    ],
     tersesize   => ["StatusTerseSize",   "B::TerseSize",   0,    ],
     packagesize => ["StatusPackageSize", "B::TerseSize",   0,    ],
@@ -434,8 +434,8 @@ sub status_cv_dump {
     push @retval, "Prototype: ", $proto || "none", "\n";
     push @retval, "XSUB: ",      $obj->XSUB ? "yes" : "no", "\n";
     push @retval, peek_link($r, $name, $type);
-    #push @retval, xref_link($r, $name);
     push @retval, b_graph_link($r, $name);
+    push @retval, xref_link($r, $name) if has($r, "xref");
     push @retval, b_lexinfo_link($r, $name);
     push @retval, b_terse_link($r, $name);
     push @retval, b_terse_size_link($r, $name);
