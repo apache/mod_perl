@@ -707,9 +707,15 @@ sub noh_b_graph {
     my $file = "$dir/$thing.$$.gif";
 
     unless (-e $file) {
-        tie *STDOUT, "B::Graph", $r, $file;
-        B::Graph::compile("-$type", $thing)->();
-        (tied *STDOUT)->{graph}->close;
+        my $rv = tie *STDOUT, "B::Graph", $r, $file;
+        unless ($rv) {
+            $r->content_type("text/plain");
+            $r->print("dot not found\n");
+        }
+        else {
+            B::Graph::compile("-$type", $thing)->();
+            (tied *STDOUT)->{graph}->close;
+        }
     }
 
     if (-s $file) {
@@ -745,13 +751,17 @@ sub B::Graph::TIEHANDLE {
 
     require IO::File;
     my $pipe = IO::File->new("|$dot -Tgif -o $file");
-    $pipe or die "can't open pipe to dot $!";
-    $pipe->autoflush(1);
+    $pipe && $pipe->autoflush(1);
 
-    return bless {
-                  graph => $pipe,
-                  r     => $r,
-    }, $class;
+    if ($pipe) {
+        return bless {
+            graph => $pipe,
+            r     => $r,
+        }, $class;
+    }
+    else {
+        return;
+    }
 }
 
 sub B::Graph::PRINT {
