@@ -435,7 +435,7 @@ sub status_cv_dump {
     push @retval, "XSUB: ",      $obj->XSUB ? "yes" : "no", "\n";
     push @retval, peek_link($r, $name, $type);
     push @retval, b_graph_link($r, $name);
-    push @retval, xref_link($r, $name) if has($r, "xref");
+    push @retval, xref_link($r, $name);
     push @retval, b_lexinfo_link($r, $name);
     push @retval, b_terse_link($r, $name);
     push @retval, b_terse_size_link($r, $name);
