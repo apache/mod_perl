@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Fix an undefined warning in DSO builds when not using MP_APXS.
+[Nikolay Ananiev <ananiev@thegdb.com>]
+
 When running Makefile.PL with the MP_MAINTAINER=1 option
 add -Wdeclaration-after-statement if we are using gcc
 version 3.3.2 or higher and its not already part of the ccopts.
