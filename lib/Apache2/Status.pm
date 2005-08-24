@@ -45,7 +45,6 @@ my %status = (
 );
 delete $status{'sig'} if IS_WIN32;
 
-# XXX: needs porting
 if ($Apache2::PerlSections::Save) {
     $status{"section_config"} = "Perl Section Configuration";
 }
