@@ -576,14 +576,14 @@ sub has_gcc_version {
 }
 
 sub cmp_tuples {
-    my($a, $b) = @_;
+    my($num_a, $num_b) = @_;
 
-    while (@$a && @$b) {
-        my $cmp = shift @$a <=> shift @$b;
+    while (@$num_a && @$num_b) {
+        my $cmp = shift @$num_a <=> shift @$num_b;
         return $cmp if $cmp;
     }
 
-    return @$a <=> @$b;
+    return @$num_a <=> @$num_b;
 }
     
 sub perl_ccopts {
