@@ -562,7 +562,6 @@ sub ap_ccopts {
 }
 
 sub has_gcc_version {
-
     my $self = shift;
     my $requested_version = shift;
 
@@ -577,7 +576,6 @@ sub has_gcc_version {
 }
 
 sub cmp_tuples {
-
     my($a, $b) = @_;
 
     while (@$a && @$b) {
