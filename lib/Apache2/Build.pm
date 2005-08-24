@@ -523,6 +523,12 @@ sub ap_ccopts {
             $ccopts .= " $Wall -DAP_DEBUG";
             $ccopts .= " -DAP_HAVE_DESIGNATED_INITIALIZER";
         }
+
+        if ($self->has_gcc_version('3.3.2') && 
+            $ccopts !~ /declaration-after-statement/) {
+            debug "Adding -Wdeclaration-after-statement to ccopts";
+            $ccopts .= " -Wdeclaration-after-statement";
+        }
     }
 
     if ($self->{MP_COMPAT_1X}) {
@@ -555,6 +561,33 @@ sub ap_ccopts {
     $ccopts;
 }
 
+sub has_gcc_version {
+
+    my $self = shift;
+    my $requested_version = shift;
+
+    my $has_version = $self->perl_config('gccversion');
+
+    return 0 unless $has_version;
+
+    my @tuples = split /\./, $has_version, 3;
+    my @r_tuples = split /\./, $requested_version, 3;
+    
+    return cmp_tuples(\@tuples, \@r_tuples) == 1;
+}
+
+sub cmp_tuples {
+
+    my($a, $b) = @_;
+
+    while (@$a && @$b) {
+        my $cmp = shift @$a <=> shift @$b;
+        return $cmp if $cmp;
+    }
+
+    return @$a <=> @$b;
+}
+    
 sub perl_ccopts {
     my $self = shift;
 
