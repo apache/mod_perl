@@ -9,6 +9,7 @@ use APR::Socket ();
 require Chatbot::Eliza;
 
 use Apache2::Const -compile => 'OK';
+use APR::Const     -compile => 'SO_NONBLOCK';
 
 use constant BUFF_LEN => 1024;
 
