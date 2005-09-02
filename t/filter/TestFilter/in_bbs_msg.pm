@@ -19,7 +19,7 @@ my $from_url = '/input_filter.html';
 my $to_url = '/TestFilter__in_bbs_msg';
 
 sub handler : FilterConnectionHandler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my ($filter, $bb, $mode, $block, $readbytes) = @_;
 
     debug "FILTER CALLED";
 

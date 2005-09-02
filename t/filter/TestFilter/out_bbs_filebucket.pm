@@ -21,7 +21,7 @@ use APR::Const    -compile => qw(SUCCESS);
 use constant BLOCK_SIZE => 5003;
 
 sub handler {
-    my($filter, $bb) = @_;
+    my ($filter, $bb) = @_;
 
     debug "FILTER INVOKED";
 

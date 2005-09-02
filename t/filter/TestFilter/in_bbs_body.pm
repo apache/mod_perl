@@ -16,7 +16,7 @@ use Apache2::Const -compile => qw(OK M_POST);
 use APR::Const -compile => ':common';
 
 sub handler : FilterRequestHandler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my ($filter, $bb, $mode, $block, $readbytes) = @_;
 
     $filter->next->get_brigade($bb, $mode, $block, $readbytes);
 
