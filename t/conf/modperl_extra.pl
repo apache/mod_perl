@@ -112,7 +112,7 @@ sub test_add_version_component {
         PerlPostConfigHandler => \&add_my_version);
 
     sub add_my_version {
-        my($conf_pool, $log_pool, $temp_pool, $s) = @_;
+        my ($conf_pool, $log_pool, $temp_pool, $s) = @_;
         $s->add_version_component("world domination series/2.0");
         return Apache2::Const::OK;
     }
