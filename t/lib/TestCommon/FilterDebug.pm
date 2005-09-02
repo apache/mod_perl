@@ -24,7 +24,7 @@ sub snoop_request    : FilterRequestHandler    { snoop("request",    @_) }
 
 sub snoop {
     my $type = shift;
-    my($filter, $bb, $mode, $block, $readbytes) = @_; # filter args
+    my ($filter, $bb, $mode, $block, $readbytes) = @_; # filter args
 
     # $mode, $block, $readbytes are passed only for input filters
     my $stream = defined $mode ? "input" : "output";
@@ -50,7 +50,7 @@ sub snoop {
 }
 
 sub bb_dump {
-    my($type, $stream, $bb) = @_;
+    my ($type, $stream, $bb) = @_;
 
     my @data;
     for (my $b = $bb->first; $b; $b = $bb->next($b)) {
@@ -69,7 +69,7 @@ sub bb_dump {
     }
 
     my $c = 1;
-    while (my($btype, $data) = splice @data, 0, 2) {
+    while (my ($btype, $data) = splice @data, 0, 2) {
         print STDERR "    o bucket $c: $btype\n";
         print STDERR "[$data]\n";
         $c++;

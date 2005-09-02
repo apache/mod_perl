@@ -24,7 +24,7 @@ sub num_of_tests {
 sub test {
 
     t_debug("size_string");
-    while (my($k, $v) = each %size_string) {
+    while (my ($k, $v) = each %size_string) {
         ok t_cmp($v, APR::String::format_size($k));
     }
 }

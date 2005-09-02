@@ -34,7 +34,7 @@ sub test {
     {
         ok ! APR::Util::password_validate("one", "two");
 
-        while (my($mode, $hash) = each %hashes) {
+        while (my ($mode, $hash) = each %hashes) {
             t_debug($mode);
             if ($mode eq 'crypt' && !CRYPT_WORKS) {
                 t_debug("crypt is not supported on $^O");
