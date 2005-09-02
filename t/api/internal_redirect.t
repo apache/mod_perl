@@ -20,7 +20,7 @@ my %map = (
 
 plan tests => scalar keys %map;
 
-while (my($key, $val) = each %map) {
+while (my ($key, $val) = each %map) {
     my $expected = "internal redirect: $key";
     my $received = GET_BODY_ASSERT $val;
     ok t_cmp($received, $expected);
