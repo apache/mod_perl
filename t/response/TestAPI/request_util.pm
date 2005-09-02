@@ -65,7 +65,7 @@ sub handler {
              "test for the request_line, host, status, and few " .
              "headers that should always be there");
 
-    while (my($code, $line) = each %status_lines) {
+    while (my ($code, $line) = each %status_lines) {
         ok t_cmp(Apache2::RequestUtil::get_status_line($code),
                  $line,
                  "Apache2::RequestUtil::get_status_line($code)");

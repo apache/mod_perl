@@ -13,7 +13,7 @@ sub handler {
 
     $ENV{QS} = $r->args if $r->args;
 
-    while (my($key, $val) = each %ENV) {
+    while (my ($key, $val) = each %ENV) {
         next unless $key and $val;
         $r->puts("$key=$val\n");
     }

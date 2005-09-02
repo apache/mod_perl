@@ -94,7 +94,7 @@ sub handler {
 }
 
 sub ok_true {
-    my($r, $key) = @_;
+    my ($r, $key) = @_;
 
     my $env = $r->subprocess_env;
     ok $env->get($key);
@@ -103,7 +103,7 @@ sub ok_true {
 }
 
 sub ok_false {
-    my($r, $key) = @_;
+    my ($r, $key) = @_;
 
     my $env = $r->subprocess_env;
     ok ! $env->get($key);

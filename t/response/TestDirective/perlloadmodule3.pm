@@ -34,7 +34,7 @@ sub DIR_MERGE    { merge(@_) }
 sub SERVER_MERGE { merge(@_) }
 
 sub set_val {
-    my($key, $self, $parms, $arg) = @_;
+    my ($key, $self, $parms, $arg) = @_;
     $self->{$key} = $arg;
     unless ($parms->path) {
         my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
@@ -43,7 +43,7 @@ sub set_val {
 }
 
 sub push_val {
-    my($key, $self, $parms, $arg) = @_;
+    my ($key, $self, $parms, $arg) = @_;
     push @{ $self->{$key} }, $arg;
     unless ($parms->path) {
         my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
@@ -52,7 +52,7 @@ sub push_val {
 }
 
 sub merge {
-    my($base, $add) = @_;
+    my ($base, $add) = @_;
 
     my %mrg = ();
     for my $key (keys %$base, %$add) {
@@ -93,7 +93,7 @@ sub get_config {
 }
 
 sub handler {
-    my($r) = @_;
+    my ($r) = @_;
     my %secs = ();
 
     $r->content_type('text/plain');

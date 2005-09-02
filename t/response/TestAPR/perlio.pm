@@ -344,7 +344,7 @@ sub handler {
 }
 
 sub count_chars {
-    my($text, $chars) = @_;
+    my ($text, $chars) = @_;
     my $seen = 0;
     $seen++ while $text =~ /$chars/g;
     return $seen;

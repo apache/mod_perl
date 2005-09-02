@@ -35,7 +35,7 @@ my @directives = (
 Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub DIR_CREATE {
-    my($class, $parms) = @_;
+    my ($class, $parms) = @_;
 
     bless {
 	path => $parms->path || "/",
@@ -43,7 +43,7 @@ sub DIR_CREATE {
 }
 
 sub merge {
-    my($base, $add) = @_;
+    my ($base, $add) = @_;
 
     my %new = ();
 
@@ -66,7 +66,7 @@ sub DIR_MERGE {
 #}
 
 sub SERVER_CREATE {
-    my($class, $parms) = @_;
+    my ($class, $parms) = @_;
     debug "$class->SERVER_CREATE\n";
     return bless {
 	name => __PACKAGE__,
@@ -74,30 +74,30 @@ sub SERVER_CREATE {
 }
 
 sub MyTest {
-    my($self, $parms, @args) = @_;
+    my ($self, $parms, @args) = @_;
     $self->{MyTest} = \@args;
     $self->{MyTestInfo} = $parms->info;
 }
 
 sub MyOtherTest {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     $self->{MyOtherTest} = $arg;
     $self->{MyOtherTestInfo} = $parms->info;
 }
 
 sub ServerTest {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     my $srv_cfg = $self->get_config($parms->server);
     $srv_cfg->{ServerTest} = $arg;
 }
 
 sub get_config {
-    my($self, $s) = (shift, shift);
+    my ($self, $s) = (shift, shift);
     Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler : method {
-    my($self, $r) = @_;
+    my ($self, $r) = @_;
 
     my $s = $r->server;
     my $dir_cfg = $self->get_config($s, $r->per_dir_config);

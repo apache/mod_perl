@@ -34,7 +34,7 @@ sub handler {
 }
 
 sub overload_test {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
 
     eval { mp_error($socket) };
 
@@ -57,47 +57,47 @@ sub overload_test {
 }
 
 sub plain_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     t_server_log_error_is_expected();
     mp_error($socket);
 }
 
 sub plain_non_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     t_server_log_error_is_expected();
     non_mp_error($socket);
 }
 
 sub die_hook_confess_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     local $SIG{__DIE__} = \&APR::Error::confess;
     t_server_log_error_is_expected();
     mp_error($socket);
 }
 
 sub die_hook_confess_non_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     local $SIG{__DIE__} = \&APR::Error::confess;
     t_server_log_error_is_expected();
     non_mp_error($socket);
 }
 
 sub die_hook_custom_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     local $SIG{__DIE__} = sub { die "custom die hook: $_[0]" };
     t_server_log_error_is_expected();
     mp_error($socket);
 }
 
 sub die_hook_custom_non_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     local $SIG{__DIE__} = sub { die "custom die hook: $_[0]" };
     t_server_log_error_is_expected();
     non_mp_error($socket);
 }
 
 sub eval_block_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
 
     # throw in some retry attempts
     my $tries = 0;
@@ -116,7 +116,7 @@ sub eval_block_mp_error {
 }
 
 sub eval_string_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     eval '$socket->recv(my $buffer, SIZE)';
     if ($@ && ref($@) && APR::Status::is_EAGAIN($@)) {
         $r->print("ok eval_string_mp_error");
@@ -127,7 +127,7 @@ sub eval_string_mp_error {
 }
 
 sub eval_block_non_mp_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     eval { non_mp_error($socket) };
     if ($@ && !ref($@)) {
         $r->print("ok eval_block_non_mp_error");
@@ -138,7 +138,7 @@ sub eval_block_non_mp_error {
 }
 
 sub eval_block_non_error {
-    my($r, $socket) = @_;
+    my ($r, $socket) = @_;
     eval { 1; };
     if ($@) {
         die "eval eval_block_non_mp_error has failed";

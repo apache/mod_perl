@@ -40,7 +40,7 @@ sub APACHE_TEST_CONFIGURE {
 
     # create two different PerlRequireTest.pm packages to be loaded by
     # vh and main interpreters, on the fly before the tests start
-    while (my($test, $magic) = each %require_tests) {
+    while (my ($test, $magic) = each %require_tests) {
         my $content = <<EOF;
 package ApacheTest::PerlRequireTest;
 \$ApacheTest::PerlRequireTest::MAGIC = '$magic';

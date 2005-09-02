@@ -28,7 +28,7 @@ sub ok3 {
 }
 
 sub subrequest {
-    my($r, $sub) = @_;
+    my ($r, $sub) = @_;
     (my $uri = join '::', __PACKAGE__, $sub) =~ s!::!__!g;
     $r->lookup_uri($uri)->run;
 }

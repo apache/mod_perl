@@ -20,13 +20,13 @@ my @directives = (
 Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub TestCompatApacheModuleParms {
-    my($self, $parms, $args) = @_;
+    my ($self, $parms, $args) = @_;
     my $config = Apache2::Module->get_config($self, $parms->server);
     $config->{data} = $args;
 }
 
 sub handler : method {
-    my($self, $r) = @_;
+    my ($self, $r) = @_;
 
     plan $r, tests => 2;
 

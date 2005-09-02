@@ -46,7 +46,7 @@ sub handler {
         qr/... TestAPI::aplog test in progress/,
         '$r->log->info';
 
-    my($file, $line) = Apache2::Log::LOG_MARK;
+    my ($file, $line) = Apache2::Log::LOG_MARK;
     ok $file eq __FILE__;
     ok $line == __LINE__ - 2;
 

@@ -29,7 +29,7 @@ my @directives = ({ name => +KEY },);
 Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub MyTest5 {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     $self->{+KEY} = $arg;
     unless ($parms->path) {
         my $srv_cfg = Apache2::Module::get_config($self, $parms->server);
@@ -54,7 +54,7 @@ sub get_config {
 }
 
 sub handler {
-    my($r) = @_;
+    my ($r) = @_;
     my %secs = ();
 
     $r->content_type('text/plain');
