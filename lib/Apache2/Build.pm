@@ -154,7 +154,7 @@ sub ap_destdir {
     return $path unless $self->{MP_AP_DESTDIR};
 
     if (WIN32) {
-        my($dest_vol, $dest_dir) = splitpath $self->{MP_AP_DESTDIR}, 1;
+        my ($dest_vol, $dest_dir) = splitpath $self->{MP_AP_DESTDIR}, 1;
         my $real_dir = (splitpath $path)[1];
 
         $path = catpath $dest_vol, catdir($dest_dir, $real_dir), '';
@@ -434,7 +434,7 @@ sub gtop_ldopts_old {
     my $self = shift;
     my $xlibs = "";
 
-    my($path) = $self->find_dlfile('Xau', @Xlib);
+    my ($path) = $self->find_dlfile('Xau', @Xlib);
     if ($path) {
         $xlibs = "-L$path -lXau";
     }
@@ -455,7 +455,7 @@ sub gtop_ccopts {
 }
 
 sub ldopts {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $config = tied %Config;
     my $ldflags = $config->{ldflags};
@@ -508,7 +508,7 @@ my $Wall =
 $Wall .= " -Werror" if $] >= 5.006002;
 
 sub ap_ccopts {
-    my($self) = @_;
+    my ($self) = @_;
     my $ccopts = "-DMOD_PERL";
 
     if ($self->{MP_USE_GTOP}) {
@@ -576,7 +576,7 @@ sub has_gcc_version {
 }
 
 sub cmp_tuples {
-    my($num_a, $num_b) = @_;
+    my ($num_a, $num_b) = @_;
 
     while (@$num_a && @$num_b) {
         my $cmp = shift @$num_a <=> shift @$num_b;
@@ -622,7 +622,7 @@ sub ccopts_hpux {
 # XXX: there could be more, but this is just for cosmetics
 my %cflags_dups = map { $_ => 1 } qw(-D_GNU_SOURCE -D_REENTRANT);
 sub ccopts {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $cflags = $self->perl_ccopts . ExtUtils::Embed::perl_inc() .
                  $self->ap_ccopts;
@@ -648,7 +648,7 @@ sub ldopts_prefix {
 }
 
 sub perl_config_optimize {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     $val ||= $Config{optimize};
 
@@ -660,7 +660,7 @@ sub perl_config_optimize {
 }
 
 sub perl_config_ld {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     $val ||= $Config{ld};
 
@@ -668,7 +668,7 @@ sub perl_config_ld {
 }
 
 sub perl_config_lddlflags {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     if ($self->{MP_DEBUG}) {
         if (MSVC) {
@@ -709,7 +709,7 @@ sub perl_config_lddlflags {
 }
 
 sub perl_config {
-    my($self, $key) = @_;
+    my ($self, $key) = @_;
 
     my $val = $Config{$key} || '';
 
@@ -738,14 +738,14 @@ sub libpth {
 }
 
 sub find_dlfile {
-    my($self, $name) = (shift, shift);
+    my ($self, $name) = (shift, shift);
 
     require DynaLoader;
     require AutoLoader; #eek
 
     my $found = 0;
     my $loc = "";
-    my(@path) = ($self->libpth, @_);
+    my (@path) = ($self->libpth, @_);
 
     for (@path) {
         if ($found = DynaLoader::dl_findfile($_, "-l$name")) {
@@ -758,7 +758,7 @@ sub find_dlfile {
 }
 
 sub find_dlfile_maybe {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
 
     my $path = $self->libpth;
 
@@ -773,7 +773,7 @@ sub find_dlfile_maybe {
 }
 
 sub lib_check {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
     return unless $self->perl_config('libs') =~ /$name/;
 
     return if $self->find_dlfile($name);
@@ -792,24 +792,24 @@ EOF
 #--- user interaction ---
 
 sub prompt {
-    my($self, $q, $default) = @_;
+    my ($self, $q, $default) = @_;
     return $default if $self->{MP_PROMPT_DEFAULT};
     require ExtUtils::MakeMaker;
     ExtUtils::MakeMaker::prompt($q, $default);
 }
 
 sub prompt_y {
-    my($self, $q) = @_;
+    my ($self, $q) = @_;
     $self->prompt($q, 'y') =~ /^y/i;
 }
 
 sub prompt_n {
-    my($self, $q) = @_;
+    my ($self, $q) = @_;
     $self->prompt($q, 'n') =~ /^n/i;
 }
 
 sub phat_warn {
-    my($self, $msg, $abort) = @_;
+    my ($self, $msg, $abort) = @_;
     my $level = $abort ? 'ERROR' : 'WARNING';
     warn <<EOF;
 ************* $level *************
@@ -881,7 +881,7 @@ sub clean_files {
 }
 
 sub default_file {
-    my($self, $name, $override) = @_;
+    my ($self, $name, $override) = @_;
     my $key = join '_', 'file', $name;
     $self->{$key} ||= ($override || $default_files{$name});
 }
@@ -902,7 +902,7 @@ sub freeze {
 }
 
 sub save_ldopts {
-    my($self, $file) = @_;
+    my ($self, $file) = @_;
 
     $file ||= $self->default_file('ldopts', $file);
     my $ldopts = $self->ldopts;
@@ -918,7 +918,7 @@ sub noedit_warning_hash {
 }
 
 sub save {
-    my($self, $file) = @_;
+    my ($self, $file) = @_;
 
     delete $INC{$bpm};
 
@@ -972,7 +972,7 @@ sub default_dir {
 }
 
 sub dir {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
 
     if ($dir) {
         for (qw(ap_includedir)) {
@@ -1034,7 +1034,7 @@ sub find {
 }
 
 sub ap_includedir  {
-    my($self, $d) = @_;
+    my ($self, $d) = @_;
 
     return $self->{ap_includedir}
       if $self->{ap_includedir} and -d $self->{ap_includedir};
@@ -1094,7 +1094,7 @@ sub apr_bindir {
 }
 
 sub apr_generation {
-    my($self) = @_;
+    my ($self) = @_;
     return $self->httpd_version_as_int =~ m/2[1-9]\d+/ ? 1 : 0;
 }
 
@@ -1102,7 +1102,7 @@ sub apr_generation {
 # an empty array otherwise
 my @apru_link_flags = ();
 sub apru_link_flags {
-    my($self) = @_;
+    my ($self) = @_;
 
     return @apru_link_flags if @apru_link_flags;
 
@@ -1252,7 +1252,7 @@ sub apr_includedir {
 #--- parsing apache *.h files ---
 
 sub mmn_eq {
-    my($class, $dir) = @_;
+    my ($class, $dir) = @_;
 
     return 1 if WIN32; #just assume, till Apache2::Build works under win32
 
@@ -1318,20 +1318,20 @@ sub fold_dots {
 }
 
 sub httpd_version_as_int {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
     my $v = $self->httpd_version($dir);
     fold_dots($v);
 }
 
 sub httpd_version_cache {
-    my($self, $dir, $v) = @_;
+    my ($self, $dir, $v) = @_;
     return '' unless $dir;
     $self->{httpd_version}->{$dir} = $v if $v;
     $self->{httpd_version}->{$dir};
 }
 
 sub httpd_version {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
 
     return unless $dir = $self->ap_includedir($dir);
 
@@ -1403,7 +1403,7 @@ sub get_apr_config {
     while (<$fh>) {
         next unless s/^\#define\s+APR_((HAVE|HAS|USE)_\w+)/$1/;
         chomp;
-        my($name, $val) = split /\s+/, $_, 2;
+        my ($name, $val) = split /\s+/, $_, 2;
         next unless $wanted_apr_config{$name};
         $val =~ s/\s+$//;
         next unless $val =~ /^\d+$/;
@@ -1416,7 +1416,7 @@ sub get_apr_config {
 #--- generate Makefile ---
 
 sub canon_make_attr {
-    my($self, $name) = (shift, shift);
+    my ($self, $name) = (shift, shift);
 
     my $attr = join '_', 'MODPERL', uc $name;
     $self->{$attr} = "@_";
@@ -1439,7 +1439,7 @@ sub xsubpp {
 }
 
 sub make_xs {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
 
     print $fh $self->canon_make_attr(xsubpp => $self->xsubpp);
 
@@ -1448,7 +1448,7 @@ sub make_xs {
     my @files;
     my @xs_targ;
 
-    while (my($name, $xs) = each %{ $self->{XS} }) {
+    while (my ($name, $xs) = each %{ $self->{XS} }) {
         #Foo/Bar.xs => Foo_Bar.c
         (my $c = $xs) =~ s:.*?WrapXS/::;
         $c =~ s:/:_:g;
@@ -1504,7 +1504,7 @@ sub mm_replace {
 my @mm_init_vars = (BASEEXT => '');
 
 sub make_tools {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
 
     for (@perl_config_pm) {
         print $fh $self->canon_make_attr($_, $self->perl_config($_));
@@ -1796,7 +1796,7 @@ EOI
     #XXX short-term compat for Apache::TestConfigPerl
     $libs{shared} = $libs{dso};
 
-    while (my($type, $lib) = each %libs) {
+    while (my ($type, $lib) = each %libs) {
         print $fh $self->canon_make_attr("lib_$type", $libs{$type});
     }
 
@@ -2117,7 +2117,7 @@ sub has_large_files_conflict {
 # will have to make sure to prevent any operations that may rely on
 # effects created by uselargefiles, e.g. Off_t=8 instead of Off_t=4)
 sub strip_lfs {
-    my($self, $cflags) = @_;
+    my ($self, $cflags) = @_;
     return $cflags unless $self->has_large_files_conflict();
 
     my $lf = $Config{ccflags_uselargefiles}
