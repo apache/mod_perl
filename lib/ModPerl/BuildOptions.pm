@@ -27,7 +27,7 @@ use constant UNKNOWN_FATAL => 2;
 use File::Spec;
 
 sub init {
-    my($self, $build) = @_;
+    my ($self, $build) = @_;
 
     #@ARGV should override what's in .makepl_args.mod_perl2
     #but @ARGV might also override the default MP_OPTS_FILE
@@ -68,7 +68,7 @@ sub init {
 }
 
 sub parse {
-    my($self, $lines, $opts) = @_;
+    my ($self, $lines, $opts) = @_;
 
     $opts = VERBOSE|UNKNOWN_FATAL unless defined $opts;
     my $table = table();
@@ -100,7 +100,7 @@ sub parse {
         }
 
         if (/^MP_/) {
-            my($key, $val) = split $param_qr, $_, 2;
+            my ($key, $val) = split $param_qr, $_, 2;
             $val ||= "" unless defined $val && $val eq '0';
             $continue = $val =~ s/\\$// ? $key : "";
 
@@ -185,7 +185,7 @@ sub usage {
 }
 
 sub parse_table {
-    my($fh) = @_;
+    my ($fh) = @_;
     my %table;
     local $_;
 
@@ -194,7 +194,7 @@ sub parse_table {
         s/^\s+//; s/\s+$//;
         next if /^\#/ || /^$/;
         last if /^__END__/;
-        my($key, $append, $val) = split /\s+/, $_, 3;
+        my ($key, $append, $val) = split /\s+/, $_, 3;
         $table{'MP_' . $key} = { append => $append, val => $val };
     }
 

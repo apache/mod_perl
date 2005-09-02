@@ -153,7 +153,7 @@ sub ModPerl::BuildMM::MY::constants {
         #skip .xs -> .so if we are linking static
         my $name = $self->{NAME};
         unless ($always_dynamic{$name}) {
-            if (my($xs) = keys %{ $self->{XS} }) {
+            if (my ($xs) = keys %{ $self->{XS} }) {
                 $self->{HAS_LINK_CODE} = 0;
                 print "$name will be linked static\n";
                 #propagate static xs module to src/modules/perl/Makefile
@@ -236,7 +236,7 @@ sub ModPerl::BuildMM::MY::postamble {
             }
         }
 
-        while (my($pm, $blib) = each %pms) {
+        while (my ($pm, $blib) = each %pms) {
             $pm   =~ s|/\./|/|g; # clean the path
             $blib =~ s|/\./|/|g; # clean the path
             my @segm = splitdir $blib;
@@ -286,7 +286,7 @@ sub ModPerl::BuildMM::MY::postamble {
 sub glue_pod {
 
     die "expecting 3 arguments: pm, pod, dst" unless @ARGV == 3;
-    my($pm, $pod, $dst) = @ARGV;
+    my ($pm, $pod, $dst) = @ARGV;
 
     # it's possible that the .pm file is not existing
     # (e.g. ThreadMutex.pm is not created on unless
@@ -317,7 +317,7 @@ sub ModPerl::BuildMM::MY::post_initialize {
     $build ||= build_config();
     my $pm = $self->{PM};
 
-    while (my($k, $v) = each %PM) {
+    while (my ($k, $v) = each %PM) {
         if (-e $k) {
             $pm->{$k} = $v;
         }
@@ -335,7 +335,7 @@ sub ModPerl::BuildMM::MY::post_initialize {
 my $apr_config;
 
 sub ModPerl::BuildMM::MY::libscan {
-    my($self, $path) = @_;
+    my ($self, $path) = @_;
 
     $apr_config ||= $build->get_apr_config();
 
