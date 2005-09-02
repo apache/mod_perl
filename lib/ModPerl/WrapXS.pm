@@ -30,7 +30,7 @@ use File::Spec::Functions qw(catfile catdir);
 
 our $VERSION = '0.01';
 
-my(@xs_includes) = ('mod_perl.h',
+my (@xs_includes) = ('mod_perl.h',
                     map "modperl_xs_$_.h", qw(sv_convert util typedefs));
 
 my @global_structs = qw(perl_module);
@@ -57,9 +57,9 @@ sub includes { shift->{includes} }
 
 sub function_list {
     my $self = shift;
-    my(@list) = @{ function_table() };
+    my (@list) = @{ function_table() };
 
-    while (my($name, $val) = each %{ $self->typemap->function_map }) {
+    while (my ($name, $val) = each %{ $self->typemap->function_map }) {
         #entries that do not exist in C::Scan generated tables
         next unless $name =~ /^DEFINE_/;
         push @list, $val;
@@ -77,7 +77,7 @@ sub get_functions {
         #print "FAILED to map $entry->{name}\n" unless $func;
         next unless $func;
 
-        my($name, $module, $class, $args) =
+        my ($name, $module, $class, $args) =
           @{ $func } { qw(perl_name module class args) };
 
         $self->{XS}->{ $module } ||= [];
@@ -101,7 +101,7 @@ sub get_functions {
         my $proto = join "\n",
           (map "    $_->{type} $_->{name}", @$args), "";
 
-        my($dispatch, $orig_args) =
+        my ($dispatch, $orig_args) =
           @{ $func } {qw(dispatch orig_args)};
 
         if ($dispatch =~ /^MPXS_/) {
@@ -195,7 +195,7 @@ sub get_structures {
         my $class = $struct->{class};
 
         for my $e (@{ $struct->{elts} }) {
-            my($name, $default, $type, $access_mode) =
+            my ($name, $default, $type, $access_mode) =
               @{$e}{qw(name default type access_mode)};
 
             (my $cast = $type) =~ s/:/_/g;
@@ -346,15 +346,15 @@ sub prepare {
 }
 
 sub class_dirname {
-    my($self, $class) = @_;
-    my($base, $sub) = split '::', $class;
+    my ($self, $class) = @_;
+    my ($base, $sub) = split '::', $class;
     return "$self->{DIR}/$base" unless $sub; #Apache2 | APR
     return $sub if $sub eq $self->{DIR}; #WrapXS
     return "$base/$sub";
 }
 
 sub class_dir {
-    my($self, $class) = @_;
+    my ($self, $class) = @_;
 
     my $dirname = $self->class_dirname($class);
     my $dir = ($dirname =~ m:/: and $dirname !~ m:^$self->{DIR}:) ?
@@ -369,18 +369,18 @@ sub class_dir {
 }
 
 sub class_file {
-    my($self, $class, $file) = @_;
+    my ($self, $class, $file) = @_;
     catfile $self->class_dir($class), $file;
 }
 
 sub cname {
-    my($self, $class) = @_;
+    my ($self, $class) = @_;
     $class =~ s/:/_/g;
     $class;
 }
 
 sub open_class_file {
-    my($self, $class, $file) = @_;
+    my ($self, $class, $file) = @_;
 
     if ($file =~ /^\./) {
         my $sub = (split '::', $class)[-1];
@@ -403,7 +403,7 @@ sub module_version {
 }
 
 sub write_makefilepl {
-    my($self, $class) = @_;
+    my ($self, $class) = @_;
 
     my $fh = $self->open_class_file($class, 'Makefile.PL');
 
@@ -439,7 +439,7 @@ EOF
 }
 
 sub mod_h {
-    my($self, $module, $complete) = @_;
+    my ($self, $module, $complete) = @_;
 
     my $dirname = $self->class_dirname($module);
     my $cname = $self->cname($module);
@@ -455,10 +455,10 @@ sub mod_h {
 }
 
 sub mod_pm {
-    my($self, $module, $complete) = @_;
+    my ($self, $module, $complete) = @_;
 
     my $dirname = $self->class_dirname($module);
-    my($base, $sub) = split '::', $module;
+    my ($base, $sub) = split '::', $module;
     my $mod_pm = "$dirname/${sub}_pm";
 
     for ($self->{XS_DIR}, @{ $self->{glue_dirs} }) {
@@ -488,18 +488,18 @@ sub needs_prefix {
 }
 
 sub make_prefix {
-    my($name, $class) = @_;
+    my ($name, $class) = @_;
     my $class_prefix = class_mpxs_prefix($class);
     return $name if $name =~ /^$class_prefix/;
     $class_prefix . $name;
 }
 
 sub isa_str {
-    my($self, $module) = @_;
+    my ($self, $module) = @_;
     my $str = "";
 
     if (my $isa = $self->typemap->{function_map}->{isa}->{$module}) {
-        while (my($sub, $base) = each %$isa) {
+        while (my ($sub, $base) = each %$isa) {
 #XXX cannot set isa in the BOOT: section because XSLoader local-ises
 #ISA during bootstrap
 #            $str .= qq{    av_push(get_av("$sub\::ISA", TRUE),
@@ -512,7 +512,7 @@ sub isa_str {
 }
 
 sub boot {
-    my($self, $module) = @_;
+    my ($self, $module) = @_;
     my $str = "";
 
     if (my $boot = $self->typemap->{function_map}->{boot}->{$module}) {
@@ -525,7 +525,7 @@ sub boot {
 my $notshared = join '|', qw(TIEHANDLE); #not sure why yet
 
 sub attrs {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
     my $str = "";
     return $str if $name =~ /$notshared$/o;
     $str = "    ATTRS: unique\n" if GvUNIQUE;
@@ -533,7 +533,7 @@ sub attrs {
 }
 
 sub write_xs {
-    my($self, $module, $functions) = @_;
+    my ($self, $module, $functions) = @_;
 
     my $fh = $self->open_class_file($module, '.xs');
     print $fh $self->ModPerl::Code::noedit_warning_c(), "\n";
@@ -602,7 +602,7 @@ EOF
 }
 
 sub write_pm {
-    my($self, $module) = @_;
+    my ($self, $module) = @_;
 
     my $isa = $self->isa_str($module);
 
@@ -665,7 +665,7 @@ sub write_typemap {
 
     my %entries = ();
     my $max_key_len = 0;
-    while (my($type, $class) = each %$map) {
+    while (my ($type, $class) = each %$map) {
         $class ||= $type;
         next if $seen{$type}++ || $typemap->special($class);
 
@@ -687,10 +687,10 @@ sub write_typemap {
 }
 
 sub write_typemap_h_file {
-    my($self, $method) = @_;
+    my ($self, $method) = @_;
 
     $method = $method . '_code';
-    my($h, $code) = $self->typemap->$method();
+    my ($h, $code) = $self->typemap->$method();
     my $file = catfile $self->{XS_DIR}, $h;
 
     open my $fh, '>', $file or die "open $file: $!";
@@ -703,7 +703,7 @@ sub write_lookup_method_file {
     my $self = shift;
 
     my %map = ();
-    while (my($module, $functions) = each %{ $self->{XS} }) {
+    while (my ($module, $functions) = each %{ $self->{XS} }) {
         my $last_prefix = "";
         for my $func (@$functions) {
             my $class = $func->{class};
@@ -1162,8 +1162,8 @@ sub generate {
     $self->write_export_file('exp') if Apache2::Build::AIX;
     $self->write_export_file('def') if Apache2::Build::WIN32;
 
-    while (my($module, $functions) = each %{ $self->{XS} }) {
-#        my($root, $sub) = split '::', $module;
+    while (my ($module, $functions) = each %{ $self->{XS} }) {
+#        my ($root, $sub) = split '::', $module;
 #        if (-e "$self->{XS_DIR}/$root/$sub/$sub.xs") {
 #            $module = join '::', $root, "Wrap$sub";
 #        }
@@ -1186,7 +1186,7 @@ sub generate {
 my %multi_export = map { $_, 1 } qw(exp);
 
 sub open_export_files {
-    my($self, $name, $ext) = @_;
+    my ($self, $name, $ext) = @_;
 
     my $dir = $self->{XS_DIR};
     my %handles;
@@ -1219,7 +1219,7 @@ sub open_export_files {
 }
 
 sub func_is_static {
-    my($self, $entry) = @_;
+    my ($self, $entry) = @_;
     if (my $attr = $entry->{attr}) {
         return 1 if grep { $_ eq 'static' } @$attr;
     }
@@ -1231,7 +1231,7 @@ sub func_is_static {
 }
 
 sub func_is_inline {
-    my($self, $entry) = @_;
+    my ($self, $entry) = @_;
     if (my $attr = $entry->{attr}) {
         return 1 if grep { $_ eq '__inline__' } @$attr;
     }
@@ -1244,7 +1244,7 @@ sub export_file_header_exp {
 }
 
 sub export_file_format_exp {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
     "$val\n";
 }
 
@@ -1254,7 +1254,7 @@ sub export_file_header_def {
 }
 
 sub export_file_format_def {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
     "   $val\n";
 }
 
@@ -1268,7 +1268,7 @@ modperl_mgv_require_module$
 };
 
 sub export_func_handle {
-    my($self, $entry, $handles) = @_;
+    my ($self, $entry, $handles) = @_;
 
     if ($self->func_is_inline($entry)) {
         return $handles->{inline};
@@ -1281,7 +1281,7 @@ sub export_func_handle {
 }
 
 sub write_export_file {
-    my($self, $ext) = @_;
+    my ($self, $ext) = @_;
 
     my %files = (
         modperl => $ModPerl::FunctionTable,
@@ -1292,7 +1292,7 @@ sub write_export_file {
     my $header = \&{"export_file_header_$ext"};
     my $format = \&{"export_file_format_$ext"};
 
-    while (my($key, $table) = each %files) {
+    while (my ($key, $table) = each %files) {
         my $handles = $self->open_export_files($key, $ext);
 
 	my %seen; #only write header once if this is a single file
@@ -1334,7 +1334,7 @@ sub stats {
 
     my %stats;
 
-    while (my($module, $functions) = each %{ $self->{XS} }) {
+    while (my ($module, $functions) = each %{ $self->{XS} }) {
         $stats{$module} += @$functions;
         if (my $newxs = $self->{newXS}->{$module}) {
             $stats{$module} += @$newxs;
@@ -1345,7 +1345,7 @@ sub stats {
 }
 
 sub generate_exports {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
 
     if (!$build->should_build_apache) {
         print $fh <<"EOF";

@@ -80,7 +80,7 @@ sub check_exists {
 
     my @missing;
 
-    while (my($type, $elts) = each %{ $self->{map} }) {
+    while (my ($type, $elts) = each %{ $self->{map} }) {
         for my $name (keys %$elts) {
             next if exists $structures{$type}->{$name};
             push @missing, "$type.$name";
@@ -91,9 +91,9 @@ sub check_exists {
 }
 
 sub parse {
-    my($self, $fh, $map) = @_;
+    my ($self, $fh, $map) = @_;
 
-    my($disabled, $class);
+    my ($disabled, $class);
     my %cur;
 
     while ($fh->readline) {
