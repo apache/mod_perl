@@ -17,7 +17,7 @@ my %expected = (
 
 plan tests => 2 + scalar(@{ $expected{mixed} }) + scalar(@{ $expected{perl} });
 
-while (my($k, $v) = each %expected) {
+while (my ($k, $v) = each %expected) {
     my @expected = @$v;
     my $elements = scalar @expected;
     my $received = GET_BODY "$location?$k";
