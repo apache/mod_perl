@@ -23,7 +23,7 @@ use APR::Const -compile => ':common';
 use constant BLOCK_SIZE => 5003;
 
 sub handler {
-    my($filter, $bb) = @_;
+    my ($filter, $bb) = @_;
 
     debug "filter got called";
 

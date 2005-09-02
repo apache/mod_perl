@@ -24,7 +24,7 @@ use Apache2::Const -compile => qw(OK M_POST);
 use constant READ_SIZE => 26;
 
 sub handler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my ($filter, $bb, $mode, $block, $readbytes) = @_;
     my $ba = $filter->r->connection->bucket_alloc;
     my $seen_eos = 0;
     my $satisfied = 0;

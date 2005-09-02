@@ -119,7 +119,7 @@ sub context {
 }
 
 sub handler : FilterConnectionHandler {
-    my($filter, $bb, $mode, $block, $readbytes) = @_;
+    my ($filter, $bb, $mode, $block, $readbytes) = @_;
 
     debug join '', "-" x 20 , " input filter called -", "-" x 20;
 
