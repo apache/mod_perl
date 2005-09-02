@@ -76,7 +76,7 @@ my $keywords = join '|', qw(MODULE PACKAGE PREFIX BOOT);
 sub guess_prefix {
     my $entry = shift;
 
-    my($name, $class) = ($entry->{name}, $entry->{class});
+    my ($name, $class) = ($entry->{name}, $entry->{class});
     my $prefix = "";
     $name =~ s/^DEFINE_//;
     $name =~ s/^mpxs_//i;
@@ -101,7 +101,7 @@ sub guess_prefix {
 }
 
 sub parse {
-    my($self, $fh, $map) = @_;
+    my ($self, $fh, $map) = @_;
     my %cur;
     my $disabled = 0;
 
@@ -125,7 +125,7 @@ sub parse {
             next;
         }
 
-        my($name, $dispatch, $argspec, $alias) = split /\s*\|\s*/;
+        my ($name, $dispatch, $argspec, $alias) = split /\s*\|\s*/;
         my $return_type;
 
         if ($name =~ s/^([^:]+)://) {
@@ -200,7 +200,7 @@ sub prefixes {
     my $map = $self->get;
     my %prefix;
 
-    while (my($name, $ent) = each %$map) {
+    while (my ($name, $ent) = each %$map) {
         next unless $ent->{prefix};
         $prefix{ $ent->{prefix} }++;
     }

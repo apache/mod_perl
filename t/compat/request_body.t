@@ -73,7 +73,7 @@ my $location = "/TestCompat__request_body";
 
 ### helper subs ###
 sub query {
-    my(%args) = (@_ % 2) ? %{+shift} : @_;
+    my (%args) = (@_ % 2) ? %{+shift} : @_;
     "$location?" . join '&', map { "$_=$args{$_}" } keys %args;
 }
 

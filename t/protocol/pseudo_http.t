@@ -55,13 +55,13 @@ plan tests => 13, need need_auth, need_access, $ok;
 }
 
 sub expect {
-    my($socket, $expect, $action) = @_;
+    my ($socket, $expect, $action) = @_;
     chomp(my $recv = <$socket> || '');
     ok t_cmp($recv, $expect, $action);
 }
 
 sub expect_reply {
-    my($socket, $expect, $reply, $action) = @_;
+    my ($socket, $expect, $reply, $action) = @_;
     chomp(my $recv = <$socket> || '');
     ok t_cmp($recv, $expect, $action);
     t_debug("send: $reply");

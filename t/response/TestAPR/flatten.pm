@@ -99,7 +99,7 @@ sub handler {
 # this sub runs 3 sub-tests with a false $check_content
 # and 4 otherwise
 sub verify {
-    my($len, $expected_len, $data, $check_content) = @_;
+    my ($len, $expected_len, $data, $check_content) = @_;
 
     ok t_cmp($len,
              $expected_len,

@@ -26,6 +26,7 @@ use File::Find;
 use Apache2::Build ();
 use ModPerl::MM;
 use constant WIN32 => Apache2::Build::WIN32;
+use constant CYGWIN => Apache2::Build::CYGWIN;
 
 our %PM; #add files to installation
 
@@ -91,14 +92,16 @@ sub WriteMakefile {
         # usual. This is done for APR in xs/APR/APR/Makefile.PL.
         my $name = $args{NAME};
         if ($name =~ /^APR::\w+$/) {
-            @libs = ($build->apache_libs, $build->mp_apr_lib);
+            # For cygwin compatibility, the order of the libs should be
+            # <mod_perl libs> <apache libs>
+            @libs = ($build->mp_apr_lib, $build->apache_libs);
         }
         else {
-            @libs = ($build->apache_libs, $build->modperl_libs);
+            @libs = ($build->modperl_libs, $build->apache_libs);
         }
     }
     else {
-        @libs = ($build->apache_libs, $build->modperl_libs);
+        @libs = ($build->modperl_libs, $build->apache_libs);
     }
     $libs = join ' ', @libs;
 
@@ -150,7 +153,7 @@ sub ModPerl::BuildMM::MY::constants {
         #skip .xs -> .so if we are linking static
         my $name = $self->{NAME};
         unless ($always_dynamic{$name}) {
-            if (my($xs) = keys %{ $self->{XS} }) {
+            if (my ($xs) = keys %{ $self->{XS} }) {
                 $self->{HAS_LINK_CODE} = 0;
                 print "$name will be linked static\n";
                 #propagate static xs module to src/modules/perl/Makefile
@@ -233,7 +236,7 @@ sub ModPerl::BuildMM::MY::postamble {
             }
         }
 
-        while (my($pm, $blib) = each %pms) {
+        while (my ($pm, $blib) = each %pms) {
             $pm   =~ s|/\./|/|g; # clean the path
             $blib =~ s|/\./|/|g; # clean the path
             my @segm = splitdir $blib;
@@ -250,7 +253,8 @@ sub ModPerl::BuildMM::MY::postamble {
                     "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";
 
                 # Win32 doesn't normally install man pages
-                next if WIN32;
+                # and Cygwin doesn't allow '::' in file names
+                next if WIN32 || CYGWIN;
 
                 # manify while we're at it
                 my (undef, $man, undef) = $blib =~ m!(blib/lib/)(.*)(\.pm)!;
@@ -282,7 +286,7 @@ sub ModPerl::BuildMM::MY::postamble {
 sub glue_pod {
 
     die "expecting 3 arguments: pm, pod, dst" unless @ARGV == 3;
-    my($pm, $pod, $dst) = @ARGV;
+    my ($pm, $pod, $dst) = @ARGV;
 
     # it's possible that the .pm file is not existing
     # (e.g. ThreadMutex.pm is not created on unless
@@ -313,7 +317,7 @@ sub ModPerl::BuildMM::MY::post_initialize {
     $build ||= build_config();
     my $pm = $self->{PM};
 
-    while (my($k, $v) = each %PM) {
+    while (my ($k, $v) = each %PM) {
         if (-e $k) {
             $pm->{$k} = $v;
         }
@@ -331,7 +335,7 @@ sub ModPerl::BuildMM::MY::post_initialize {
 my $apr_config;
 
 sub ModPerl::BuildMM::MY::libscan {
-    my($self, $path) = @_;
+    my ($self, $path) = @_;
 
     $apr_config ||= $build->get_apr_config();
 

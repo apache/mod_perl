@@ -18,7 +18,7 @@ sub new {
 }
 
 sub handler : method {
-    my($self, $r) = @_;
+    my ($self, $r) = @_;
 
     my $tests = 3;
 

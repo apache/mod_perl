@@ -54,17 +54,17 @@ sub override_eu_mm_mv_all_methods {
 }
 
 sub add_dep {
-    my($string, $targ, $add) = @_;
+    my ($string, $targ, $add) = @_;
     $$string =~ s/($targ\s+::)/$1 $add/;
 }
 
 sub add_dep_before {
-    my($string, $targ, $before_targ, $add) = @_;
+    my ($string, $targ, $before_targ, $add) = @_;
     $$string =~ s/($targ\s+::.*?) ($before_targ)/$1 $add $2/;
 }
 
 sub add_dep_after {
-    my($string, $targ, $after_targ, $add) = @_;
+    my ($string, $targ, $after_targ, $add) = @_;
     $$string =~ s/($targ\s+::.*?$after_targ)/$1 $add/;
 }
 
@@ -160,7 +160,7 @@ sub ModPerl::MM::MY::post_initialize {
     my $build = build_config();
     my $pm = $self->{PM};
 
-    while (my($k, $v) = each %PM) {
+    while (my ($k, $v) = each %PM) {
         if (-e $k) {
             $pm->{$k} = $v;
         }

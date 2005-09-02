@@ -28,7 +28,7 @@ use File::Spec ();
 
 use Apache2::Const -compile => qw(OK);
 
-$Apache2::Status::VERSION = '3.00'; # mod_perl 2.0
+$Apache2::Status::VERSION = '4.00'; # mod_perl 2.0
 
 use constant IS_WIN32 => ($^O eq "MSWin32");
 
@@ -42,14 +42,9 @@ my %status = (
     env       => "Environment",
     sig       => "Signal Handlers",
     myconfig  => "Perl Configuration",
-    hooks     => "Enabled mod_perl Hooks",
 );
-# XXX: is $status{hooks} supported with any mp2 version?
-# If not, why not just remove it from the above initialization?
-delete $status{'hooks'} if $mod_perl2::VERSION >= 1.9901;
 delete $status{'sig'} if IS_WIN32;
 
-# XXX: needs porting
 if ($Apache2::PerlSections::Save) {
     $status{"section_config"} = "Perl Section Configuration";
 }
@@ -62,19 +57,19 @@ my %requires = (
     b           => ["",                  "B",              0,    ],
     graph       => ["StatusGraph",       "B::Graph",       0.03, ],
     lexinfo     => ["StatusLexInfo",     "B::LexInfo",     0,    ],
-    xref        => ["",                  "B::Xref",        0,    ],
+    xref        => ["StatusXref",        "B::Xref",        1.01, ],
     terse       => ["StatusTerse",       "B::Terse",       0,    ],
     tersesize   => ["StatusTerseSize",   "B::TerseSize",   0,    ],
     packagesize => ["StatusPackageSize", "B::TerseSize",   0,    ],
-    peek        => ["StatusPeek",        "Apache2::Peek",   0,    ], # XXX: version?
+    peek        => ["StatusPeek",        "Apache::Peek",   1.03, ],
 );
 
 sub has {
-    my($r, $what) = @_;
+    my ($r, $what) = @_;
 
     return 0 unless exists $requires{$what};
 
-    my($opt, $module, $version) = @{ $requires{$what} };
+    my ($opt, $module, $version) = @{ $requires{$what} };
 
     (my $file = $module) =~ s|::|/|;
     $file .= ".pm";
@@ -98,13 +93,13 @@ sub install_hint {
 }
 
 sub status_config {
-    my($r, $key) = @_;
+    my ($r, $key) = @_;
     return (lc($r->dir_config($key)) eq "on") ||
         (lc($r->dir_config('StatusOptionsAll')) eq "on");
 }
 
 sub menu_item {
-    my($self, $key, $val, $sub) = @_;
+    my ($self, $key, $val, $sub) = @_;
     $status{$key} = $val;
     no strict;
     no warnings 'redefine';
@@ -112,7 +107,7 @@ sub menu_item {
 }
 
 sub handler {
-    my($r) = @_;
+    my ($r) = @_;
     my $qs = $r->args || "";
     my $sub = "status_$qs";
     no strict 'refs';
@@ -133,7 +128,7 @@ sub handler {
         my $uri = $r->uri;
         $r->print('<p>');
         $r->print(
-            map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
+            map { qq[<a href="$uri?$_">$status{$_}</a><br />\n] } sort { lc $a cmp lc $b } keys %status
         );
         $r->print('</p>');
     }
@@ -149,34 +144,36 @@ sub header {
     $r->content_type("text/html");
     my $v = $^V ? sprintf "v%vd", $^V : $];
     $r->print(<<"EOF");
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
-<head>
-  <title>Apache2::Status</title>
-  <style type="text/css">
-  body {
-    color: #000;
-    background-color: #fff;
-  }
-  p.hdr {
-    background-color: #ddd;
-    border: 2px outset;
-    padding: 3px;
-    width: 99%;
-  }
-  </style>
-</head>
-<body>
-<p class="hdr">
-  Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>,<br>
-  running since $start
-</p>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Apache2::Status $Apache2::Status::VERSION</title>
+    <style type="text/css">
+      body {
+        color: #000;
+        background-color: #fff;
+      }
+      p.hdr {
+        background-color: #ddd;
+        border: 2px outset;
+        padding: 3px;
+        width: 99%;
+     }
+   </style>
+  </head>
+  <body>
+    <p class="hdr">
+      Embedded Perl version <b>$v</b> for <b>$srv</b> process <b>$$</b>,<br />
+      running since $start
+    </p>
 EOF
 
 }
 
 sub symdump {
-    my($r, $package) = @_;
+    my ($r, $package) = @_;
 
     return install_hint("Devel::Symdump") unless has($r, "symdump");
 
@@ -187,34 +184,18 @@ sub symdump {
 }
 
 sub status_symdump {
-    my($r) = @_;
+    my ($r) = @_;
     [symdump($r, 'main')];
 }
 
 sub status_section_config {
-    my($r) = @_;
+    my ($r) = @_;
     require Apache2::PerlSections;
     ["<pre>", Apache2::PerlSections->dump, "</pre>"];
 }
 
-sub status_hooks {
-    my($r) = @_;
-    # XXX: hooks list access doesn't exist yet in 2.0
-    require mod_perl;
-    require mod_perl_hooks;
-    my @retval = qw(<table>);
-    my @list = mod_perl::hooks();
-    for my $hook (sort @list) {
-        my $on_off = 
-            mod_perl::hook($hook) ? "<b>Enabled</b>" : "<i>Disabled</i>";
-        push @retval, "<tr><td>$hook</td><td>$on_off</td></tr>\n";
-    }
-    push @retval, qw(</table>);
-    \@retval;
-}
-
 sub status_inc {
-    my($r) = @_;
+    my ($r) = @_;
 
     my $uri = $r->uri;
     my @retval = (
@@ -243,12 +224,12 @@ sub status_inc {
         );
     }
     push @retval, "</table>\n";
-    push @retval, "<p><b>\@INC</b> = <br>", join "<br>\n", @INC, "";
+    push @retval, "<p><b>\@INC</b> = <br />", join "<br />\n", @INC, "";
     \@retval;
 }
 
 sub status_script {
-    my($r) = @_;
+    my ($r) = @_;
 
     my @retval = (
         '<table border="1">',
@@ -267,7 +248,7 @@ sub status_script {
 my $RegistryCache;
 
 sub registry_cache {
-    my($self, $cache) = @_;
+    my ($self, $cache) = @_;
 
     # XXX: generalize
 
@@ -276,7 +257,7 @@ sub registry_cache {
 }
 
 sub get_packages_per_handler {
-    my($root, $stash) = @_;
+    my ($root, $stash) = @_;
 
     my %handlers = ();
     my @packages = get_packages($stash);
@@ -288,7 +269,7 @@ sub get_packages_per_handler {
 }
 
 sub get_packages {
-    my($stash) = @_;
+    my ($stash) = @_;
 
     no strict 'refs';
     my @packages = ();
@@ -300,7 +281,7 @@ sub get_packages {
 }
 
 sub status_rgysubs {
-    my($r) = @_;
+    my ($r) = @_;
 
     local $_;
     my $uri = $r->uri;
@@ -318,7 +299,7 @@ sub status_rgysubs {
         push @retval, "<h4>$handler:</h4>\n<p>\n";
         for (sort @{ $handlers{$handler} }) {
             my $full = join '::', $root, $handler, $_;
-            push @retval, qq(<a href="$uri?$full">$_</a>\n), "<br>";
+            push @retval, qq(<a href="$uri?$full">$_</a>\n), "<br />";
         }
         push @retval, "</p>\n";
     }
@@ -385,11 +366,11 @@ sub status_isa_tree {
 }
 
 sub status_data_dump {
-    my($r) = @_;
+    my ($r) = @_;
 
     return install_hint('Data::Dumper') unless has($r, "dumper");
 
-    my($name, $type) = (split "/", $r->uri)[-2,-1];
+    my ($name, $type) = (split "/", $r->uri)[-2,-1];
 
     no strict 'refs';
     my @retval = "<p>\nData Dump of $name $type\n</p>\n<pre>\n";
@@ -409,11 +390,11 @@ sub cv_file {
 }
 
 sub status_cv_dump { 
-    my($r) = @_;
+    my ($r) = @_;
     return [] unless has($r, "b");
 
     no strict 'refs';
-    my($name, $type) = (split "/", $r->uri)[-2,-1];
+    my ($name, $type) = (split "/", $r->uri)[-2,-1];
     # could be another child, which doesn't have this symbol table?
     return unless *$name{CODE}; 
 
@@ -434,8 +415,8 @@ sub status_cv_dump {
     push @retval, "Prototype: ", $proto || "none", "\n";
     push @retval, "XSUB: ",      $obj->XSUB ? "yes" : "no", "\n";
     push @retval, peek_link($r, $name, $type);
-    #push @retval, xref_link($r, $name);
     push @retval, b_graph_link($r, $name);
+    push @retval, xref_link($r, $name);
     push @retval, b_lexinfo_link($r, $name);
     push @retval, b_terse_link($r, $name);
     push @retval, b_terse_size_link($r, $name);
@@ -446,7 +427,7 @@ sub status_cv_dump {
 }
 
 sub b_lexinfo_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "lexinfo");
 
@@ -461,23 +442,23 @@ sub noh_b_lexinfo {
     return unless has($r, "lexinfo");
 
     no strict 'refs';
-    my($name) = (split "/", $r->uri)[-1];
+    my ($name) = (split "/", $r->uri)[-1];
     $r->print("Lexical Info for $name\n\n");
     my $lexi = B::LexInfo->new;
     my $info = $lexi->cvlexinfo($name);
     $r->print(${ $lexi->dumper($info) });
 }
 
-my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution');
+my %b_terse_exp = ('slow' => 'syntax', 'exec' => 'execution', basic => 'syntax');
 
 sub b_terse_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "terse");
 
     my $script = $r->location;
     my @retval;
-    for (qw(exec slow)) {
+    for (qw(exec basic)) {
         my $exp = "$b_terse_exp{$_} order";
         push @retval,
             qq(\n<a href="$script/$_/$name?noh_b_terse">Syntax Tree Dump ($exp)</a>\n);
@@ -492,20 +473,21 @@ sub noh_b_terse {
     return unless has($r, "terse");
 
     no strict 'refs';
-    my($arg, $name) = (split "/", $r->uri)[-2,-1];
+    my ($arg, $name) = (split "/", $r->uri)[-2,-1];
     $r->print("Syntax Tree Dump ($b_terse_exp{$arg}) for $name\n\n");
 
     # XXX: blead perl dumps things to STDERR, though the same version
     # works fine with 1.27
     # B::Concise couldn't parse XS code before perl patch 24681 (perl 5.9.3)
-    eval { B::Terse::compile($arg, $name)->() };
+    # B::Terse is deprecated and just a wrapper around B::Concise now adays
+    eval { B::Concise::compile("-terse", "-$arg", $name)->() };
     if ($@) {
-        $r->print("B::Terse has failed: $@");
+        $r->print("B::Concise has failed: $@");
     }
 }
 
 sub b_terse_size_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "tersesize");
 
@@ -526,7 +508,7 @@ sub noh_b_terse_size {
     return unless has($r, "tersesize");
 
     $r->print('<pre>');
-    my($arg, $name) = (split "/", $r->uri)[-2,-1];
+    my ($arg, $name) = (split "/", $r->uri)[-2,-1];
     my $uri = $r->location;
     my $link = qq{<a href="$uri/$name/CODE?cv_dump">$name</a>};
     $r->print("Syntax Tree Size ($b_terse_exp{$arg} order) for $link\n\n");
@@ -534,7 +516,7 @@ sub noh_b_terse_size {
 }
 
 sub b_package_size_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "packagesize");
 
@@ -543,7 +525,7 @@ sub b_package_size_link {
 }
 
 sub noh_b_package_size {
-    my($r) = @_;
+    my ($r) = @_;
 
     $r->content_type("text/html");
     return unless has($r, "packagesize");
@@ -551,11 +533,13 @@ sub noh_b_package_size {
     $r->print('<pre>');
 
     no strict 'refs';
-    my($package) = (split "/", $r->uri)[-1];
+    my ($package) = (split "/", $r->uri)[-1];
     my $script = $r->location;
     $r->print("Memory Usage for package $package\n\n");
-    my($subs, $opcount, $opsize) = B::TerseSize::package_size($package);
-    $r->print("Totals: $opsize bytes | $opcount OPs\n\n");
+    my ($subs, $opcount, $opsize) = B::TerseSize::package_size($package);
+    my $Kb = sprintf "%.2f", $opsize / 1024;
+    my $Mb = sprintf "%.2f", $Kb / 1000;
+    $r->print("Totals: $opsize bytes, $Kb Kb, $Mb Mb | $opcount OPs\n\n");
 
     my $nlen = 0;
     my @keys = map {
@@ -586,7 +570,7 @@ sub noh_b_package_size {
 }
 
 sub b_deparse_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "deparse");
 
@@ -609,7 +593,7 @@ sub noh_b_deparse {
 }
 
 sub b_fathom_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "fathom");
 
@@ -631,7 +615,7 @@ sub noh_b_fathom {
 }
 
 sub peek_link {
-    my($r, $name, $type) = @_;
+    my ($r, $name, $type) = @_;
 
     return unless has($r, "peek");
 
@@ -646,14 +630,14 @@ sub noh_peek {
     return unless has($r, "peek");
 
     no strict 'refs';
-    my($name, $type) = (split "/", $r->uri)[-2,-1];
+    my ($name, $type) = (split "/", $r->uri)[-2,-1];
     $type =~ s/^FUNCTION$/CODE/;
     $r->print("Peek Dump of $name $type\n\n");
-    Apache2::Peek::Dump(*{$name}{$type});
+    Apache::Peek::Dump(*{$name}{$type});
 }
 
 sub xref_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "xref");
 
@@ -680,7 +664,7 @@ if ($Apache2::Status::BGraphCache) {
 }
 
 sub b_graph_link {
-    my($r, $name) = @_;
+    my ($r, $name) = @_;
 
     return unless has($r, "graph");
 
@@ -706,9 +690,15 @@ sub noh_b_graph {
     my $file = "$dir/$thing.$$.gif";
 
     unless (-e $file) {
-        tie *STDOUT, "B::Graph", $r, $file;
-        B::Graph::compile("-$type", $thing)->();
-        (tied *STDOUT)->{graph}->close;
+        my $rv = tie *STDOUT, "B::Graph", $r, $file;
+        unless ($rv) {
+            $r->content_type("text/plain");
+            $r->print("dot not found\n");
+        }
+        else {
+            B::Graph::compile("-$type", $thing)->();
+            (tied *STDOUT)->{graph}->close;
+        }
     }
 
     if (-s $file) {
@@ -730,7 +720,7 @@ sub noh_b_graph {
 }
 
 sub B::Graph::TIEHANDLE {
-    my($class, $r, $file) = @_;
+    my ($class, $r, $file) = @_;
 
     if ($file =~ /^([^<>|;]+)$/) {
         $file = $1;
@@ -744,13 +734,17 @@ sub B::Graph::TIEHANDLE {
 
     require IO::File;
     my $pipe = IO::File->new("|$dot -Tgif -o $file");
-    $pipe or die "can't open pipe to dot $!";
-    $pipe->autoflush(1);
+    $pipe && $pipe->autoflush(1);
 
-    return bless {
-                  graph => $pipe,
-                  r     => $r,
-    }, $class;
+    if ($pipe) {
+        return bless {
+            graph => $pipe,
+            r     => $r,
+        }, $class;
+    }
+    else {
+        return;
+    }
 }
 
 sub B::Graph::PRINT {
@@ -762,7 +756,7 @@ sub B::Graph::PRINT {
 my %can_dump = map {$_,1} qw(scalars arrays hashes);
 
 sub as_HTML {
-    my($self, $package, $r) = @_;
+    my ($self, $package, $r) = @_;
 
     my @m = qw(<table>);
     my $uri = $r->uri;

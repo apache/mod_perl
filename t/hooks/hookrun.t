@@ -20,6 +20,6 @@ ok t_cmp $ret->code, 500, '$r->die';
 
 my $body = GET_BODY_ASSERT "http://$hostport/$path?normal";
 for my $line (split /\n/, $body) {
-    my($phase, $value) = split /:/, $line;
+    my ($phase, $value) = split /:/, $line;
     ok t_cmp $value, 1, "$phase";
 }

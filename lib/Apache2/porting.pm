@@ -38,7 +38,8 @@ my %avail_methods = map { $_ => 1 }
 # XXX: unfortunately it doesn't seem to be possible to install
 # *UNIVERSAL::AUTOLOAD at the server startup, httpd segfaults,
 # child_init seems to be the first stage where it works.
-Apache2->server->push_handlers(PerlChildInitHandler => \&porting_autoload);
+Apache2::ServerUtil->server->push_handlers(
+    PerlChildInitHandler => \&porting_autoload);
 
 sub porting_autoload {
     *UNIVERSAL::AUTOLOAD = sub {

@@ -37,7 +37,7 @@ $TouchTime = time;
 
 sub import {
     my $class = shift;
-    my($package, $file) = (caller)[0,1];
+    my ($package, $file) = (caller)[0,1];
 
     $class->register_module($package, $file);
 }
@@ -57,7 +57,7 @@ sub module_to_package {
 }
 
 sub register_module {
-    my($class, $package, $file) = @_;
+    my ($class, $package, $file) = @_;
     my $module = package_to_module($package);
 
     if ($file) {
@@ -71,7 +71,7 @@ sub register_module {
 }
 
 sub unregister_module {
-    my($class, $package) = @_;
+    my ($class, $package) = @_;
     my $module = package_to_module($package);
     delete $INCS{$module};
 }
@@ -131,7 +131,9 @@ sub handler {
 
     my $ReloadDirs = ref($o) && $o->dir_config("ReloadDirectories");
     my @watch_dirs = split(/\s+/, $ReloadDirs||'');
-    while (my($key, $file) = each %Apache2::Reload::INCS) {
+    foreach my $key (sort { $a cmp $b } keys %Apache2::Reload::INCS) {
+        my $file = $Apache2::Reload::INCS{$key};
+
         next unless defined $file;
         next if @watch_dirs && !grep { $file =~ /^$_/ } @watch_dirs;
         warn "Apache2::Reload: Checking mtime of $key\n" if $DEBUG;

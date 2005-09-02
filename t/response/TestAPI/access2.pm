@@ -51,12 +51,12 @@ sub handler {
     die "wanted satisfies=" . Apache2::Const::SATISFY_ALL . ", got $satisfies"
         unless $r->satisfies() == Apache2::Const::SATISFY_ALL;
 
-    my($rc, $sent_pw) = $r->get_basic_auth_pw;
+    my ($rc, $sent_pw) = $r->get_basic_auth_pw;
     return $rc if $rc != Apache2::Const::OK;
 
     # extract just the requirement entries
     my %require = 
-        map { my($k, $v) = split /\s+/, $_->{requirement}, 2; ($k, $v||'') }
+        map { my ($k, $v) = split /\s+/, $_->{requirement}, 2; ($k, $v||'') }
         @{ $r->requires };
     debug \%require;
 
@@ -98,9 +98,7 @@ __DATA__
 
     <IfModule @ACCESS_MODULE@>
         # needed to test $r->satisfies
-        Order Deny,Allow
-        Deny from all
-        Allow from @servername@
+        Allow from All
     </IfModule>
     AuthType Basic
     AuthName "Access"

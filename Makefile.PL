@@ -389,8 +389,17 @@ sub post_configure {
     }
 
     if ($build->is_dynamic) {
-        warning "You'll need to add the following to httpd.conf:",
-                " LoadModule perl_module modules/$build->{MODPERL_LIB_DSO}\n";
+        warning
+            "You'll need to add the following to httpd.conf:",            "",
+            "  LoadModule perl_module modules/$build->{MODPERL_LIB_DSO}", "",
+            "depending on your build, mod_perl might not live in",
+            "the modules/ directory.\n";
+        if ($build->{MP_APXS}) {
+            warning 
+                "Check the results of",                                   "",
+                "  \$ $build->{MP_APXS} -q LIBEXECDIR",                   "",
+                "and adjust the LoadModule directive accordingly.\n";
+        }
     }
 
     $build->save;

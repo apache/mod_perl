@@ -5,7 +5,8 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest qw(GET);
 
-plan tests => 2, need 'mod_alias.c', need_min_module_version CGI => 3.08;
+plan tests => 2, need [qw(mod_alias.c HTML::HeadParser)],
+    need_min_module_version CGI => 3.08;
 
 my $url = "/registry/cgi.pl";
 my $res = GET $url;

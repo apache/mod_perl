@@ -11,7 +11,7 @@ use warnings FATAL => 'all';
 use Tie::Hash;
 our @ISA = qw(Tie::StdHash);
 sub FETCH {
-    my($hash, $key) = @_;
+    my ($hash, $key) = @_;
     if ($key eq '/tied') {
         return 'TIED';
     }

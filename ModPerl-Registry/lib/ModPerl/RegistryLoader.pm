@@ -19,6 +19,7 @@ use warnings;
 
 use ModPerl::RegistryCooker ();
 use Apache2::ServerUtil ();
+use Apache2::Log ();
 use APR::Pool ();
 
 use Carp;
@@ -38,7 +39,7 @@ sub new {
 }
 
 sub handler {
-    my($self, $uri, $filename, $virthost) = @_;
+    my ($self, $uri, $filename, $virthost) = @_;
 
     # set the inheritance rules at run time
     @ISA = $self->{package};
@@ -142,7 +143,7 @@ sub slurp_filename {
 }
 
 sub load_package {
-    my($self, $package) = @_;
+    my ($self, $package) = @_;
 
     croak "package to load wasn't specified" unless defined $package;
 
@@ -153,7 +154,7 @@ sub load_package {
 
 sub warn {
     my $self = shift;
-    Apache2->warn(__PACKAGE__ . ": @_\n");
+    Apache2::Log->warn(__PACKAGE__ . ": @_\n");
 }
 
 1;

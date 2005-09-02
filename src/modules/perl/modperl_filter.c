@@ -544,6 +544,15 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     if (filter->mode == MP_INPUT_FILTER_MODE) {
         if (filter->bb_in) {
+            if (status == DECLINED) {
+                /* make sure the filter doesn't try to make mod_perl
+                 * pass the bucket brigade through after it called
+                 * $f->read(), since it causes a pre-fetch of the
+                 * bb */
+                modperl_croak(aTHX_ MODPERL_FILTER_ERROR,
+                              "a filter calling $f->read "
+                              "must return OK and not DECLINED");
+            }
             /* in the streaming mode filter->bb_in is populated on the
              * first modperl_input_filter_read, so it must be
              * destroyed at the end of the filter invocation

@@ -185,7 +185,7 @@ sub find_includes {
 }
 
 sub find_includes_wanted {
-    my($wanted, $unwanted, @dirs) = @_;
+    my ($wanted, $unwanted, @dirs) = @_;
     my @includes = ();
     for my $dir (@dirs) {
         File::Find::finddepth({
@@ -265,8 +265,8 @@ my %defines_wanted = (
 );
 
 my %defines_wanted_re;
-while (my($class, $groups) = each %defines_wanted) {
-    while (my($group, $wanted) = each %$groups) {
+while (my ($class, $groups) = each %defines_wanted) {
+    while (my ($group, $wanted) = each %$groups) {
         my $pat = join '|', @$wanted;
         $defines_wanted_re{$class}->{$group} = $pat; #qr{^($pat)};
     }
@@ -282,10 +282,10 @@ HTTP_VERSION APR_EOL_STR APLOG_MARK APLOG_NOERRNO APR_SO_TIMEOUT
 };
 
 sub get_constants {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $includes = $self->find_includes;
-    my(%constants, %seen);
+    my (%constants, %seen);
 
     for my $file (@$includes) {
         open my $fh, $file or die "open $file: $!";
@@ -312,15 +312,15 @@ sub get_constants {
 }
 
 sub handle_constant {
-    my($self, $constants) = @_;
+    my ($self, $constants) = @_;
     my $keys = keys %defines_wanted_re; #XXX broken bleedperl ?
 
     return if /^($defines_unwanted)/o;
 
-    while (my($class, $groups) = each %defines_wanted_re) {
+    while (my ($class, $groups) = each %defines_wanted_re) {
         my $keys = keys %$groups; #XXX broken bleedperl ?
 
-        while (my($group, $re) = each %$groups) {
+        while (my ($group, $re) = each %$groups) {
             next unless /^($re)/;
             push @{ $constants->{$class}->{$group} }, $_;
             return;
@@ -329,9 +329,9 @@ sub handle_constant {
 }
 
 sub handle_enum {
-    my($self, $fh, $constants) = @_;
+    my ($self, $fh, $constants) = @_;
 
-    my($name, $e) = $self->parse_enum($fh);
+    my ($name, $e) = $self->parse_enum($fh);
     return unless $name;
 
     $name =~ s/^ap_//;
@@ -351,7 +351,7 @@ sub handle_enum {
 
 #this should win an award for worlds lamest parser
 sub parse_enum {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
     my $code = $_;
     my @e;
 
@@ -404,7 +404,7 @@ sub get_functions {
     my @functions;
 
     for my $entry (@$fdecls) {
-        my($rtype, $name, $args) = @$entry;
+        my ($rtype, $name, $args) = @$entry;
         next unless $name =~ $wanted;
         next if $seen{$name}++;
         my @attr;
@@ -461,7 +461,7 @@ sub get_structs {
     my @structures;
     my $sx = qr(^struct\s+);
 
-    while (my($type, $elts) = each %$typedef_structs) {
+    while (my ($type, $elts) = each %$typedef_structs) {
         next unless $type =~ $wanted or $type =~ /($other)$/o;
 
         $type =~ s/$sx//;
@@ -512,12 +512,12 @@ sub write_constants_pm {
 }
 
 sub write_pm {
-    my($self, $file, $name, $data) = @_;
+    my ($self, $file, $name, $data) = @_;
 
     require Data::Dumper;
     local $Data::Dumper::Indent = 1;
 
-    my($subdir) = (split '::', $name)[0];
+    my ($subdir) = (split '::', $name)[0];
 
     my $tdir = 'xs/tables/current';
     if (-d "$tdir/$subdir") {

@@ -9,7 +9,7 @@ use Apache2::Log;
 use Apache2::Const -compile => qw(OK);
 
 sub exit_handler {
-    my($p, $s) = @_;
+    my ($p, $s) = @_;
 
     $s->log->info("Child process pid=$$ is exiting - server push");
 

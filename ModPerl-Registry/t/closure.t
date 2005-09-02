@@ -17,7 +17,7 @@ use File::Spec::Functions;
 
 my @modules = qw(registry registry_bb perlrun);
 
-plan tests => 6, need 'mod_alias.c';
+plan tests => 6, need [qw(mod_alias.c HTML::HeadParser)];
 
 my $cfg = Apache::Test::config();
 

@@ -9,6 +9,23 @@ someone has asked to make $r->request_time settable
 
 -------------
 
+The following items need more work in order to work with blead-perl:
+
+http://svn.apache.org/viewcvs?rev=209859&view=rev
+perl blead fix: in 5.9.3 HvPMROOT was completely removed, temporary
+using Perl_Imodglobal_ptr(thx)))->xmg_magic (which fails on perl_clone
+from ithreads, but otherwise works). this must be replaced with a
+better solution once we find it.
+
+http://svn.apache.org/viewcvs?rev=209861&view=rev
+blead perl temp fix: some recent change introduced tainting problems,
+will remove the workaround once blead perl is fixed
+
+
+
+
+-------------
+
 MP_STATIC_EXTS=1 must link all extensions but APR.so. At the moment
 the following are not linked:
 

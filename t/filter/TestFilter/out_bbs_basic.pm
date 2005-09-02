@@ -18,7 +18,7 @@ use Apache2::Const -compile => 'OK';
 sub Apache::TestToString::PRINTF {}
 
 sub handler {
-    my($filter, $bb) = @_;
+    my ($filter, $bb) = @_;
 
     unless ($filter->ctx) {
 

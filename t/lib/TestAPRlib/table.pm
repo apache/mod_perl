@@ -213,7 +213,7 @@ sub test_set {
         $table->add("first"  => 3);
 
         my $i = 0;
-        while (my($a,$b) = each %$table) {
+        while (my ($a,$b) = each %$table) {
             my $key = ("first", "second")[$i % 2];
             my $val = ++$i;
 
@@ -373,7 +373,7 @@ sub test_set {
 }
 
 sub my_filter {
-    my($key, $value) = @_;
+    my ($key, $value) = @_;
     $filter_count++;
     unless ($key eq chr($value+97)) {
         die "arguments I received are bogus($key,$value)";
@@ -382,7 +382,7 @@ sub my_filter {
 }
 
 sub my_filter_stop {
-    my($key, $value) = @_;
+    my ($key, $value) = @_;
     $filter_count++;
     unless ($key eq chr($value+97)) {
         die "arguments I received are bogus($key,$value)";

@@ -28,14 +28,15 @@ AIX   4.3.3 DSO reported to work with mod_perl_1.99_12 and
                 but doesn't start with worker:
                 http://marc.theaimsgroup.com/?t=106894906200003&r=1&w=2
 
-FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE and
-                5.1-RELEASE)
+FreeBSD ??  DSO Works with non-threaded perl (4.8-RELEASE-5.2-RELEASE, 6.0-CURRENT)
                 http://marc.theaimsgroup.com/?l=apache-modperl&m=106399870822612&w=2
-                It doesn't work with threaded perl/worker mpm,
-                seemingly because of the problems with threads on
-                FreeBSD (not sure what version). But reported to work
-                on FreeBSD 5.3+ when linked with libpthread and not
-                the older libc_r library.
+                The following combo is known to work:
+                  http://gossamer-threads.com/lists/modperl/modperl/82887  
+                  FreeBSD 5.4-RELEASE
+                  gcc 3.4.2
+                  perl 5.8.7 WITH ithreads
+                  httpd 2.0.54 apr IS THREADED (worker mpm)
+                  mod_perl2.0.1 
 
 HPUX11i     DSO
                 PA-RISC2.0-thread-multi-LP64
@@ -64,19 +65,12 @@ HPUX11i     DSO
   xs/modperl_xs*.h, when the latter change 'make' won't rebuild the
   dependant files
 
-* gcc 3.3 (from cvs 2003-07-28) supports a new option:
-  -Wdeclaration-after-statement, which we need to enable in the
-  maintainer mode, to catch any declarations after statements, since
-  by default gcc doesn't complain about them. Probably need to wait
-  till gcc-3.3.2 and enable it then.
-  http://gcc.gnu.org/cgi-bin/cvsweb.cgi/gcc/gcc/ChangeLog.diff?r1=2.639&r2=2.640&f=h
-
-
 * Testing:
   Need to put Philippe's smoking test into the core
   -- shouldn't forget to test with perlio enabled and disabled
 
 * mp2bug -- add the output of 'ldd httpd' to the report
+[pgollucci volunteers]
 
 * source_scan won't create Wrap/Foo/Bar.xs if
   xs/maps/modperl_functions.map defines only a boot section:

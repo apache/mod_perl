@@ -65,7 +65,7 @@ sub handler {
 
     # escape_path
     {
-        my($uri, $received, $expected);
+        my ($uri, $received, $expected);
 
         $uri = "a 'long' file?.html";
         ($expected = $uri) =~ s/([\s?;])/sprintf "%%%x", ord $1/ge;
@@ -98,7 +98,7 @@ sub handler {
 
 my $fmtdate_re = qr/^\w+, \d\d \w+ \d\d\d\d \d\d:\d\d:\d\d/;
 sub time_cmp {
-    my($fmtdate, $time, $comment, $exact_match) = @_;
+    my ($fmtdate, $time, $comment, $exact_match) = @_;
 
     if ($parse_time_ok && $exact_match) {
         my $ptime = APR::Date::parse_http($fmtdate);

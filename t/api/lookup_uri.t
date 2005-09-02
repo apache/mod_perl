@@ -19,7 +19,7 @@ my %opts = (
 
 plan tests => scalar keys %opts;
 
-while (my($filter, $runs) = each %opts) {
+while (my ($filter, $runs) = each %opts) {
     my $args = "subreq=lookup_uri;filter=$filter";
     my $prefix = "pre+" x $runs->[PREFIX];
     my $suffix = "+suf" x $runs->[SUFFIX];

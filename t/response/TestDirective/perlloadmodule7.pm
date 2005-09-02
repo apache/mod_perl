@@ -22,12 +22,12 @@ my @directives = ({ name => +KEY1 }, { name => +KEY2 });
 Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub MyTest7_1 {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     $self->{+KEY1} = $arg;
 }
 
 sub MyTest7_2 {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     $self->{+KEY2} = $arg;
 }
 
@@ -42,7 +42,7 @@ use Apache::TestUtil;
 use Apache2::Const -compile => qw(OK);
 
 sub handler {
-    my($r) = @_;
+    my ($r) = @_;
 
     plan $r, tests => 1;
 

@@ -24,7 +24,7 @@ my @directives = (
 Apache2::Module::add(__PACKAGE__, \@directives);
 
 sub merge {
-    my($base, $add) = @_;
+    my ($base, $add) = @_;
 
     my %new = ();
 
@@ -56,7 +56,7 @@ sub SERVER_MERGE {
 # only during the server startup and when the directive appears in the
 # .htaccess files
 sub MyMergeTest {
-    my($self, $parms, $arg) = @_;
+    my ($self, $parms, $arg) = @_;
     #warn "MyMergeTest: @{[$parms->path||'']}\n\t$arg\n";
     push @{ $self->{MyMergeTest} }, $arg;
 
@@ -71,12 +71,12 @@ sub MyMergeTest {
 }
 
 sub get_config {
-    my($self, $s) = (shift, shift);
+    my ($self, $s) = (shift, shift);
     Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler : method {
-    my($self, $r) = @_;
+    my ($self, $r) = @_;
 
     $r->content_type('text/plain');
 

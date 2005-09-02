@@ -16,7 +16,7 @@ my %modules = (
 
 my @aliases = sort keys %modules;
 
-plan tests => @aliases * 4, need 'mod_alias.c';
+plan tests => @aliases * 4, need [qw(mod_alias.c HTML::HeadParser)];
 
 {
     # PerlRun always run BEGIN/END since it's never cached

@@ -17,7 +17,7 @@ my %env;
 
 for my $line (split /\n/, $env) {
     next unless $line =~ /=/;
-    my($key, $val) = split /=/, $line, 2;
+    my ($key, $val) = split /=/, $line, 2;
     $env{$key} = $val || '';
 }
 

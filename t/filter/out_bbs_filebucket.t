@@ -16,7 +16,7 @@ my @sizes = qw(1 100 500 1000 5000);
 plan tests => 2 * scalar @sizes;
 
 for my $size (@sizes) {
-    my($file, $data) = write_file($size);
+    my ($file, $data) = write_file($size);
     my $received = GET_BODY "$url?$file";
 
     my $received_size = length $received;

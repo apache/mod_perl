@@ -7,7 +7,7 @@ use Apache::TestRequest qw(GET_BODY HEAD);
 
 use Apache::TestUtil qw(t_catfile_apache);
 
-plan tests => 4, need 'mod_alias.c', need_lwp;
+plan tests => 4, need [qw(mod_alias.c HTML::HeadParser)], need_lwp;
 
 # need LWP to handle redirects
 my $base_url = "/registry/redirect.pl";

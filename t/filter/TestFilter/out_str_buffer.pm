@@ -40,7 +40,7 @@ sub flatten_bb {
 }
 
 sub handler {
-    my($filter, $bb) = @_;
+    my ($filter, $bb) = @_;
 
     my $ctx = $filter->ctx;
 
@@ -52,7 +52,7 @@ sub handler {
 
     my $data = exists $ctx->{data} ? $ctx->{data} : '';
     $ctx->{invoked}++;
-    my($bdata, $seen_eos) = flatten_bb($bb);
+    my ($bdata, $seen_eos) = flatten_bb($bb);
     $bdata =~ s/-//g;
     $data .= $bdata if $bdata;
 

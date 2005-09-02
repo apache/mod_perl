@@ -12,6 +12,28 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Fix an undefined warning in DSO builds when not using MP_APXS.
+[Nikolay Ananiev <ananiev@thegdb.com>]
+
+When running Makefile.PL with the MP_MAINTAINER=1 option
+add -Wdeclaration-after-statement if we are using gcc
+version 3.3.2 or higher and its not already part of the ccopts.
+[Philip M. Gollucci, Gozer]
+
+Several fixes to Apache2::Status
+[Philip M. Gollucci]
+
+When using Apache2::Reload and ReloadDebug is set to 'On', 
+sort the output alphabetically [Philip M. Gollucci]
+
+croak in case a filter returns DECLINED after calling $f->read (as it
+is not supposed to happen) [Stas]
+
+another round of cygwin fixes [Nick *** <doink123@abv.bg>]
+
+Multiple fixes to make mod_perl 2.0 work with blead-perl (5.9.3+)
+[Stas]
+
 t/modules/reload.t would fail if run more than 3 times, breaking
 smokes [Gozer]
 

@@ -103,7 +103,7 @@ unless (defined $ModPerl::RegistryCooker::NameWithVirtualHost) {
 #########################################################################
 
 sub new {
-    my($class, $r) = @_;
+    my ($class, $r) = @_;
     my $self = bless {}, $class;
     $self->init($r);
     return $self;
@@ -575,7 +575,7 @@ my %switches = (
 
 sub shebang_to_perl {
     my $self = shift;
-    my($line) = ${ $self->{CODE} } =~ /^(.*)$/m;
+    my ($line) = ${ $self->{CODE} } =~ /^(.*)$/m;
     my @cmdline = split /\s+/, $line;
     return "" unless @cmdline;
     return "" unless shift(@cmdline) =~ /^\#!/;
@@ -617,7 +617,7 @@ sub get_script_name {
 *chdir_file = \&NOP;
 
 sub chdir_file_normal {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
     $dir ||= File::Basename::dirname($self->{FILENAME});
     $self->debug("chdir $dir") if DEBUG & D_NOISE;
     chdir $dir or die "Can't chdir to $dir: $!";
@@ -662,7 +662,7 @@ sub strip_end_data_segment {
 #########################################################################
 
 sub compile {
-    my($self, $eval) = @_;
+    my ($self, $eval) = @_;
 
     $self->debug("compiling $self->{FILENAME}") if DEBUG && D_COMPILE;
 
@@ -711,10 +711,10 @@ sub error_check {
 #########################################################################
 
 sub install_aliases {
-    my($class, $rh_aliases) = @_;
+    my ($class, $rh_aliases) = @_;
 
     no strict 'refs';
-    while (my($k,$v) = each %$rh_aliases) {
+    while (my ($k,$v) = each %$rh_aliases) {
         if (my $sub = *{$v}{CODE}){
             *{ $class . "::$k" } = $sub;
         }
@@ -733,7 +733,7 @@ sub debug {
 }
 
 sub log_error {
-    my($self, $msg) = @_;
+    my ($self, $msg) = @_;
     my $class = ref $self;
 
     $self->{REQ}->log_error($msg);
@@ -763,7 +763,7 @@ sub log_error {
 # cache_table() to point to another function, this function will fail.
 sub uncache_myself {
     my $package = scalar caller;
-    my($class) = __PACKAGE__->cache_table_common();
+    my ($class) = __PACKAGE__->cache_table_common();
 
     unless (defined $class) {
         Apache2->warn("$$: cannot figure out cache symbol table for $package");

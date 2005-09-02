@@ -154,7 +154,7 @@ sub ap_destdir {
     return $path unless $self->{MP_AP_DESTDIR};
 
     if (WIN32) {
-        my($dest_vol, $dest_dir) = splitpath $self->{MP_AP_DESTDIR}, 1;
+        my ($dest_vol, $dest_dir) = splitpath $self->{MP_AP_DESTDIR}, 1;
         my $real_dir = (splitpath $path)[1];
 
         $path = catpath $dest_vol, catdir($dest_dir, $real_dir), '';
@@ -308,11 +308,30 @@ sub configure_apache {
     $self->{'httpd'} ||= $httpd;
     push @Apache::TestMM::Argv, ('httpd' => $self->{'httpd'});
 
-    my $mplib = "$self->{MP_LIBNAME}$Config{lib_ext}";
-    my $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
+    my $mplibpath = '';
+    my $ldopts = $self->ldopts;
+    
+    if (CYGWIN) {
+        # Cygwin's httpd port links its modules into httpd2core.dll, instead of httpd.exe.
+        # In this case, we have a problem, because libtool doesn't want to include
+        # static libs (.a) into a dynamic lib (.dll). Workaround this by setting
+        # mod_perl.a as a linker argument (including all other flags and libs).
+        my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
+        
+        $ldopts = join ' ', 
+            '--export-all-symbols',
+            "$self->{cwd}/src/modules/perl/$mplib",
+            $ldopts;
+        
+        $ldopts =~ s/(\S+)/-Wl,$1/g;
+        
+    } else {
+        my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
+        $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
+    }
 
     local $ENV{BUILTIN_LIBS} = $mplibpath;
-    local $ENV{AP_LIBS} = $self->ldopts;
+    local $ENV{AP_LIBS} = $ldopts;
     local $ENV{MODLIST} = 'perl';
 
     #XXX: -Wall and/or -Werror at httpd configure time breaks things
@@ -415,7 +434,7 @@ sub gtop_ldopts_old {
     my $self = shift;
     my $xlibs = "";
 
-    my($path) = $self->find_dlfile('Xau', @Xlib);
+    my ($path) = $self->find_dlfile('Xau', @Xlib);
     if ($path) {
         $xlibs = "-L$path -lXau";
     }
@@ -436,7 +455,7 @@ sub gtop_ccopts {
 }
 
 sub ldopts {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $config = tied %Config;
     my $ldflags = $config->{ldflags};
@@ -469,10 +488,6 @@ sub ldopts {
         $ldopts .= $self->gtop_ldopts;
     }
 
-    if (CYGWIN && $self->is_dynamic) {
-        $ldopts .= join ' ', '', $self->apru_link_flags;
-    }
-
     $config->{ldflags} = $ldflags; #reset
 
     # on Irix mod_perl.so needs to see the libperl.so symbols, which
@@ -493,7 +508,7 @@ my $Wall =
 $Wall .= " -Werror" if $] >= 5.006002;
 
 sub ap_ccopts {
-    my($self) = @_;
+    my ($self) = @_;
     my $ccopts = "-DMOD_PERL";
 
     if ($self->{MP_USE_GTOP}) {
@@ -507,6 +522,12 @@ sub ap_ccopts {
             #same as --with-maintainter-mode
             $ccopts .= " $Wall -DAP_DEBUG";
             $ccopts .= " -DAP_HAVE_DESIGNATED_INITIALIZER";
+        }
+
+        if ($self->has_gcc_version('3.3.2') && 
+            $ccopts !~ /declaration-after-statement/) {
+            debug "Adding -Wdeclaration-after-statement to ccopts";
+            $ccopts .= " -Wdeclaration-after-statement";
         }
     }
 
@@ -540,6 +561,31 @@ sub ap_ccopts {
     $ccopts;
 }
 
+sub has_gcc_version {
+    my $self = shift;
+    my $requested_version = shift;
+
+    my $has_version = $self->perl_config('gccversion');
+
+    return 0 unless $has_version;
+
+    my @tuples = split /\./, $has_version, 3;
+    my @r_tuples = split /\./, $requested_version, 3;
+    
+    return cmp_tuples(\@tuples, \@r_tuples) == 1;
+}
+
+sub cmp_tuples {
+    my ($num_a, $num_b) = @_;
+
+    while (@$num_a && @$num_b) {
+        my $cmp = shift @$num_a <=> shift @$num_b;
+        return $cmp if $cmp;
+    }
+
+    return @$num_a <=> @$num_b;
+}
+    
 sub perl_ccopts {
     my $self = shift;
 
@@ -576,7 +622,7 @@ sub ccopts_hpux {
 # XXX: there could be more, but this is just for cosmetics
 my %cflags_dups = map { $_ => 1 } qw(-D_GNU_SOURCE -D_REENTRANT);
 sub ccopts {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $cflags = $self->perl_ccopts . ExtUtils::Embed::perl_inc() .
                  $self->ap_ccopts;
@@ -602,7 +648,7 @@ sub ldopts_prefix {
 }
 
 sub perl_config_optimize {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     $val ||= $Config{optimize};
 
@@ -614,7 +660,7 @@ sub perl_config_optimize {
 }
 
 sub perl_config_ld {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     $val ||= $Config{ld};
 
@@ -622,7 +668,7 @@ sub perl_config_ld {
 }
 
 sub perl_config_lddlflags {
-    my($self, $val) = @_;
+    my ($self, $val) = @_;
 
     if ($self->{MP_DEBUG}) {
         if (MSVC) {
@@ -663,7 +709,7 @@ sub perl_config_lddlflags {
 }
 
 sub perl_config {
-    my($self, $key) = @_;
+    my ($self, $key) = @_;
 
     my $val = $Config{$key} || '';
 
@@ -692,14 +738,14 @@ sub libpth {
 }
 
 sub find_dlfile {
-    my($self, $name) = (shift, shift);
+    my ($self, $name) = (shift, shift);
 
     require DynaLoader;
     require AutoLoader; #eek
 
     my $found = 0;
     my $loc = "";
-    my(@path) = ($self->libpth, @_);
+    my (@path) = ($self->libpth, @_);
 
     for (@path) {
         if ($found = DynaLoader::dl_findfile($_, "-l$name")) {
@@ -712,7 +758,7 @@ sub find_dlfile {
 }
 
 sub find_dlfile_maybe {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
 
     my $path = $self->libpth;
 
@@ -727,7 +773,7 @@ sub find_dlfile_maybe {
 }
 
 sub lib_check {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
     return unless $self->perl_config('libs') =~ /$name/;
 
     return if $self->find_dlfile($name);
@@ -746,24 +792,24 @@ EOF
 #--- user interaction ---
 
 sub prompt {
-    my($self, $q, $default) = @_;
+    my ($self, $q, $default) = @_;
     return $default if $self->{MP_PROMPT_DEFAULT};
     require ExtUtils::MakeMaker;
     ExtUtils::MakeMaker::prompt($q, $default);
 }
 
 sub prompt_y {
-    my($self, $q) = @_;
+    my ($self, $q) = @_;
     $self->prompt($q, 'y') =~ /^y/i;
 }
 
 sub prompt_n {
-    my($self, $q) = @_;
+    my ($self, $q) = @_;
     $self->prompt($q, 'n') =~ /^n/i;
 }
 
 sub phat_warn {
-    my($self, $msg, $abort) = @_;
+    my ($self, $msg, $abort) = @_;
     my $level = $abort ? 'ERROR' : 'WARNING';
     warn <<EOF;
 ************* $level *************
@@ -802,7 +848,7 @@ sub build_config {
     }
 
     return bless {}, (ref($self) || $self) if $@;
-    return Apache2::BuildConfig::->new;
+    return Apache2::BuildConfig->new;
 }
 
 sub new {
@@ -835,7 +881,7 @@ sub clean_files {
 }
 
 sub default_file {
-    my($self, $name, $override) = @_;
+    my ($self, $name, $override) = @_;
     my $key = join '_', 'file', $name;
     $self->{$key} ||= ($override || $default_files{$name});
 }
@@ -856,7 +902,7 @@ sub freeze {
 }
 
 sub save_ldopts {
-    my($self, $file) = @_;
+    my ($self, $file) = @_;
 
     $file ||= $self->default_file('ldopts', $file);
     my $ldopts = $self->ldopts;
@@ -872,7 +918,7 @@ sub noedit_warning_hash {
 }
 
 sub save {
-    my($self, $file) = @_;
+    my ($self, $file) = @_;
 
     delete $INC{$bpm};
 
@@ -926,7 +972,7 @@ sub default_dir {
 }
 
 sub dir {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
 
     if ($dir) {
         for (qw(ap_includedir)) {
@@ -988,7 +1034,7 @@ sub find {
 }
 
 sub ap_includedir  {
-    my($self, $d) = @_;
+    my ($self, $d) = @_;
 
     return $self->{ap_includedir}
       if $self->{ap_includedir} and -d $self->{ap_includedir};
@@ -1048,15 +1094,15 @@ sub apr_bindir {
 }
 
 sub apr_generation {
-    my($self) = @_;
-    return $self->httpd_version_as_int =~ m/21\d+/ ? 1 : 0;
+    my ($self) = @_;
+    return $self->httpd_version_as_int =~ m/2[1-9]\d+/ ? 1 : 0;
 }
 
 # returns an array of apr/apu linking flags (--link-ld --libs) if found
 # an empty array otherwise
 my @apru_link_flags = ();
 sub apru_link_flags {
-    my($self) = @_;
+    my ($self) = @_;
 
     return @apru_link_flags if @apru_link_flags;
 
@@ -1122,7 +1168,7 @@ sub apru_config_path {
             if ($self->{MP_AP_CONFIGURE} &&
                 $self->{MP_AP_CONFIGURE} =~ /--with-${what_long}=(\S+)/) {
                 my $dir = $1;
-                $dir =~ s/$config$// unless -d $dir;
+                $dir = dirname $dir if -f $dir;
                 push @tries, grep -d $_, $dir, catdir $dir, 'bin';
             }
         }
@@ -1206,7 +1252,7 @@ sub apr_includedir {
 #--- parsing apache *.h files ---
 
 sub mmn_eq {
-    my($class, $dir) = @_;
+    my ($class, $dir) = @_;
 
     return 1 if WIN32; #just assume, till Apache2::Build works under win32
 
@@ -1272,20 +1318,20 @@ sub fold_dots {
 }
 
 sub httpd_version_as_int {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
     my $v = $self->httpd_version($dir);
     fold_dots($v);
 }
 
 sub httpd_version_cache {
-    my($self, $dir, $v) = @_;
+    my ($self, $dir, $v) = @_;
     return '' unless $dir;
     $self->{httpd_version}->{$dir} = $v if $v;
     $self->{httpd_version}->{$dir};
 }
 
 sub httpd_version {
-    my($self, $dir) = @_;
+    my ($self, $dir) = @_;
 
     return unless $dir = $self->ap_includedir($dir);
 
@@ -1357,7 +1403,7 @@ sub get_apr_config {
     while (<$fh>) {
         next unless s/^\#define\s+APR_((HAVE|HAS|USE)_\w+)/$1/;
         chomp;
-        my($name, $val) = split /\s+/, $_, 2;
+        my ($name, $val) = split /\s+/, $_, 2;
         next unless $wanted_apr_config{$name};
         $val =~ s/\s+$//;
         next unless $val =~ /^\d+$/;
@@ -1370,7 +1416,7 @@ sub get_apr_config {
 #--- generate Makefile ---
 
 sub canon_make_attr {
-    my($self, $name) = (shift, shift);
+    my ($self, $name) = (shift, shift);
 
     my $attr = join '_', 'MODPERL', uc $name;
     $self->{$attr} = "@_";
@@ -1393,7 +1439,7 @@ sub xsubpp {
 }
 
 sub make_xs {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
 
     print $fh $self->canon_make_attr(xsubpp => $self->xsubpp);
 
@@ -1402,7 +1448,7 @@ sub make_xs {
     my @files;
     my @xs_targ;
 
-    while (my($name, $xs) = each %{ $self->{XS} }) {
+    while (my ($name, $xs) = each %{ $self->{XS} }) {
         #Foo/Bar.xs => Foo_Bar.c
         (my $c = $xs) =~ s:.*?WrapXS/::;
         $c =~ s:/:_:g;
@@ -1458,7 +1504,7 @@ sub mm_replace {
 my @mm_init_vars = (BASEEXT => '');
 
 sub make_tools {
-    my($self, $fh) = @_;
+    my ($self, $fh) = @_;
 
     for (@perl_config_pm) {
         print $fh $self->canon_make_attr($_, $self->perl_config($_));
@@ -1537,6 +1583,21 @@ sub dynamic_link_aix {
         "\t" . '$(MODPERL_RANLIB) $@';
 }
 
+sub dynamic_link_cygwin {
+    my $self = shift;
+    return <<'EOF';
+$(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
+	$(MODPERL_RM_F) $@
+	$(MODPERL_CC) -shared -o $@ \
+	-Wl,--out-implib=$(MODPERL_LIBNAME).dll.a \
+	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--stack,8388608 \
+	$(MODPERL_PIC_OBJS) \
+	$(MODPERL_LDDLFLAGS) $(MODPERL_LDOPTS) \
+	$(MODPERL_AP_LIBS)
+	$(MODPERL_RANLIB) $@
+EOF
+}
+
 sub dynamic_link {
     my $self = shift;
     my $link = \&{"dynamic_link_$^O"};
@@ -1544,11 +1605,44 @@ sub dynamic_link {
     $link->($self);
 }
 
+# Returns the link flags for the apache shared core library
+my $apache_corelib_cygwin;
+sub apache_corelib_cygwin {
+    return $apache_corelib_cygwin if $apache_corelib_cygwin;
+    
+    my $self = shift;
+    my $mp_src = "$self->{cwd}/src/modules/perl";
+    my $core = 'httpd2core';
+    
+    # There's a problem with user-installed perl on cygwin.
+    # MakeMaker doesn't know about the .dll.a libs and warns
+    # about missing -lhttpd2core. "Fix" it by copying
+    # the lib and adding .a suffix.
+    # For the static build create a soft link, because libhttpd2core.dll.a
+    # doesn't exist at this time.
+    if ($self->is_dynamic) {
+        my $libpath = $self->apxs(-q => 'exp_libdir');
+        File::Copy::copy("$libpath/lib$core.dll.a", "$mp_src/lib$core.a");
+    } else {
+        my $libpath = catdir($self->{MP_AP_PREFIX}, '.libs');
+        mkdir $libpath unless -d $libpath;
+        qx{touch $libpath/lib$core.dll.a && \
+        ln -fs $libpath/lib$core.dll.a $mp_src/lib$core.a};
+    }
+    
+    $apache_corelib_cygwin = "-L$mp_src -l$core";
+}
+
 sub apache_libs_MSWin32 {
     my $self = shift;
     my $prefix = $self->apxs(-q => 'PREFIX') || $self->dir;
     my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
     "@libs";
+}
+
+sub apache_libs_cygwin {
+    my $self = shift;
+    join ' ', $self->apache_corelib_cygwin, $self->apru_link_flags;
 }
 
 sub apache_libs {
@@ -1560,16 +1654,13 @@ sub apache_libs {
 
 sub modperl_libs_MSWin32 {
     my $self = shift;
-    # mod_perl.lib will be installed into MP_AP_PREFIX/lib
-    # for use by 3rd party xs modules
     "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
 }
 
 sub modperl_libs_cygwin {
      my $self = shift;
-     return $self->is_dynamic
-         ? "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}"
-         : $self->modperl_static_libs_cygwin;
+     return '' unless $self->is_dynamic;
+     return "-L$self->{cwd}/src/modules/perl -l$self->{MP_LIBNAME}";
 }
 
 sub modperl_libs {
@@ -1579,35 +1670,23 @@ sub modperl_libs {
     $libs->($self);
 }
 
-my $modperl_static_libs_cygwin = '';
-sub modperl_static_libs_cygwin {
+sub modperl_libpath_MSWin32 {
     my $self = shift;
+    # mod_perl.lib will be installed into MP_AP_PREFIX/lib
+    # for use by 3rd party xs modules
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.lib";
+}
 
-    return $modperl_static_libs_cygwin if $modperl_static_libs_cygwin;
+sub modperl_libpath_cygwin {
+    my $self = shift;
+    "$self->{cwd}/src/modules/perl/$self->{MP_LIBNAME}.dll.a";
+}
 
-    my $dyna_filepath = catdir $self->perl_config('archlibexp'),
-        'auto/DynaLoader/DynaLoader.a';
-    my $modperl_path  = "$self->{cwd}/src/modules/perl";
-    # Create symlink to mod_perl.a, but copy DynaLoader.a, because
-    # when running make clean the real DynaLoader.a may get deleted.
-    my $src = catfile $modperl_path, "$self->{MP_LIBNAME}.a";
-    my $dst = catfile $modperl_path, "lib$self->{MP_LIBNAME}.a";
-    # perl's link() on Cygwin seems to copy mod_perl.a to
-    # libmod_perl.a, but at this stage mod_perl.a is still a dummy lib
-    # and at the end we get nothing. whereas `ln -s` seems to create
-    # something like the shortcut on windows and it works.
-    qx{ln -s $src $dst} unless -e $dst;
-    File::Copy::copy($dyna_filepath, "$modperl_path/libDynaLoader.a");
-
-    $modperl_static_libs_cygwin = join ' ',
-        "-L$modperl_path",
-        "-l$self->{MP_LIBNAME}",
-        '-lDynaLoader',
-        $self->apru_link_flags,
-        '-L' . catdir($self->perl_config('archlibexp'), 'CORE'),
-        '-lperl';
-
-    $modperl_static_libs_cygwin;
+sub modperl_libpath {
+    my $self = shift;
+    my $libpath = \&{"modperl_libpath_$^O"};
+    return "" unless defined &$libpath;
+    $libpath->($self);
 }
 
 # returns the directory and name of the aprext lib built under blib/ 
@@ -1639,7 +1718,7 @@ sub mp_apr_lib_cygwin {
 
     # This is ugly, but is the only way to prevent the "undefined
     # symbols" error
-    $libs .= join ' ', '', $self->apru_link_flags,
+    $libs .= join ' ', '',
         '-L' . catdir($self->perl_config('archlibexp'), 'CORE'), '-lperl';
 
     $libs;
@@ -1682,7 +1761,7 @@ EOI
 	$(MODPERL_CP) $(MODPERL_LIB_DSO) $(DESTDIR)$(MODPERL_AP_LIBEXECDIR)
 EOI
     }
-    
+
     $install .= <<'EOI';
 # install mod_perl .h files
 	@$(MKPATH) $(DESTDIR)$(MODPERL_AP_INCLUDEDIR)
@@ -1717,7 +1796,7 @@ EOI
     #XXX short-term compat for Apache::TestConfigPerl
     $libs{shared} = $libs{dso};
 
-    while (my($type, $lib) = each %libs) {
+    while (my ($type, $lib) = each %libs) {
         print $fh $self->canon_make_attr("lib_$type", $libs{$type});
     }
 
@@ -1731,7 +1810,7 @@ EOI
 EOI
     }
 
-    if (my $libs = $self->modperl_libs) {
+    if ($self->is_dynamic && (my $libs = $self->modperl_libpath)) {
         print $fh $self->canon_make_attr('lib_location', $libs);
 
         print $fh $self->canon_make_attr('ap_libdir',
@@ -1877,17 +1956,6 @@ sub otherldflags_MSWin32 {
     my $self = shift;
     my $flags = $self->otherldflags_default;
     $flags .= ' -pdb:$(INST_ARCHAUTODIR)\$(BASEEXT).pdb' if $self->{MP_DEBUG};
-    $flags;
-}
-
-sub otherldflags_cygwin {
-    my $self = shift;
-    my $flags = $self->otherldflags_default;
-
-    unless ($self->{MP_STATIC_EXTS}) {
-        $flags .= join ' ', '', $self->apru_link_flags;
-    }
-
     $flags;
 }
 
@@ -2049,7 +2117,7 @@ sub has_large_files_conflict {
 # will have to make sure to prevent any operations that may rely on
 # effects created by uselargefiles, e.g. Off_t=8 instead of Off_t=4)
 sub strip_lfs {
-    my($self, $cflags) = @_;
+    my ($self, $cflags) = @_;
     return $cflags unless $self->has_large_files_conflict();
 
     my $lf = $Config{ccflags_uselargefiles}

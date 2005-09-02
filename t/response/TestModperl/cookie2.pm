@@ -14,7 +14,7 @@ sub access {
     my $r = shift;
 
     $r->subprocess_env if $r->args eq 'subprocess_env';
-    my($key, $val) = cookie($r);
+    my ($key, $val) = cookie($r);
     die "I shouldn't get the cookie" if $r->args eq 'env' && defined $val;
 
     return Apache2::Const::OK;
@@ -23,7 +23,7 @@ sub access {
 sub handler {
     my $r = shift;
 
-    my($key, $val) = cookie($r);
+    my ($key, $val) = cookie($r);
     $r->print($val) if defined $val;
 
     return Apache2::Const::OK;

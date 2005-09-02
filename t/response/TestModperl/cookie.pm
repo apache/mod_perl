@@ -16,7 +16,7 @@ sub access {
     # setup CGI variables early
     $r->subprocess_env() if $r->args eq 'env';
 
-    my($key, $val) = cookie($r);
+    my ($key, $val) = cookie($r);
     my $cookie_is_expected =
         ($r->args eq 'header' or $r->args eq 'env') ? 1 : 0;
     die "Can't get the cookie" if $cookie_is_expected && !defined $val;
@@ -27,7 +27,7 @@ sub access {
 sub handler {
     my $r = shift;
 
-    my($key, $val) = cookie($r);
+    my ($key, $val) = cookie($r);
     $r->print($val) if defined $val;
 
     return Apache2::Const::OK;
