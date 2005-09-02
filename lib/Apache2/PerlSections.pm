@@ -30,7 +30,7 @@ use constant SPECIAL_NAME => 'PerlConfig';
 use constant SPECIAL_PACKAGE => 'Apache2::ReadConfig';
 
 sub new {
-    my($package, @args) = @_;
+    my ($package, @args) = @_;
     return bless { @args }, ref($package) || $package;
 }
 
@@ -43,7 +43,7 @@ sub save       { return $Apache2::PerlSections::Save }
 sub saved      { return @saved }
 
 sub handler : method {
-    my($self, $parms, $args) = @_;
+    my ($self, $parms, $args) = @_;
 
     unless (ref $self) {
         $self = $self->new('parms' => $parms, 'args' => $args);
@@ -75,7 +75,7 @@ sub handler : method {
 }
 
 sub symdump {
-    my($self) = @_;
+    my ($self) = @_;
 
     unless ($self->{symbols}) {
         no strict;
@@ -107,12 +107,12 @@ sub symdump {
 }
 
 sub dump_special {
-    my($self, @data) = @_;
+    my ($self, @data) = @_;
     $self->add_config(@data);
 }
 
 sub dump_any {
-    my($self, $name, $entry) = @_;
+    my ($self, $name, $entry) = @_;
     my $type = ref $entry;
 
     if ($type eq 'ARRAY') {
@@ -127,7 +127,7 @@ sub dump_any {
 }
 
 sub dump_hash {
-    my($self, $name, $hash) = @_;
+    my ($self, $name, $hash) = @_;
 
     for my $entry (sort keys %{ $hash || {} }) {
         my $item = $hash->{$entry};
@@ -145,7 +145,7 @@ sub dump_hash {
 }
 
 sub dump_section {
-    my($self, $name, $loc, $hash) = @_;
+    my ($self, $name, $loc, $hash) = @_;
 
     $self->add_config("<$name $loc>\n");
 
@@ -157,7 +157,7 @@ sub dump_section {
 }
 
 sub dump_array {
-    my($self, $name, $entries) = @_;
+    my ($self, $name, $entries) = @_;
 
     for my $entry (@$entries) {
         $self->dump_entry($name, $entry);
@@ -165,7 +165,7 @@ sub dump_array {
 }
 
 sub dump_entry {
-    my($self, $name, $entry) = @_;
+    my ($self, $name, $entry) = @_;
     my $type = ref $entry;
 
     if ($type eq 'SCALAR') {
@@ -192,14 +192,14 @@ sub dump_entry {
 }
 
 sub add_config {
-    my($self, $config) = @_;
+    my ($self, $config) = @_;
     return unless defined $config;
     chomp($config);
     push @{ $self->directives }, $config;
 }
 
 sub post_config {
-    my($self) = @_;
+    my ($self) = @_;
     my $errmsg = $self->parms->add_config($self->directives);
     die $errmsg if $errmsg;
 }
