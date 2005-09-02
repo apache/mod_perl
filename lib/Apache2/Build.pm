@@ -322,6 +322,7 @@ sub configure_apache {
 
         $ldopts = join ' ',
             '--export-all-symbols',
+            '--enable-auto-image-base',
             "$self->{cwd}/src/modules/perl/$mplib",
             $ldopts;
 
@@ -1592,7 +1593,8 @@ $(MODPERL_LIBNAME).$(MODPERL_DLEXT): $(MODPERL_PIC_OBJS)
 	$(MODPERL_RM_F) $@
 	$(MODPERL_CC) -shared -o $@ \
 	-Wl,--out-implib=$(MODPERL_LIBNAME).dll.a \
-	-Wl,--export-all-symbols -Wl,--enable-auto-import -Wl,--stack,8388608 \
+	-Wl,--export-all-symbols -Wl,--enable-auto-import \
+	-Wl,--enable-auto-image-base -Wl,--stack,8388608 \
 	$(MODPERL_PIC_OBJS) \
 	$(MODPERL_LDDLFLAGS) $(MODPERL_LDOPTS) \
 	$(MODPERL_AP_LIBS)
