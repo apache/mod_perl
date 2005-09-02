@@ -42,7 +42,7 @@ my $url = "/registry/304.pl";
         'Thu Juk 99 00:00:00 9999 FUK'  => "bogus If-Modified-Since #2",
     );
     my $received = '<html><head></head><body>Test</body></html>';
-    while ( my($if_modified_since, $debug) = each %dates) {
+    while ( my ($if_modified_since, $debug) = each %dates) {
         my $res = GET($url, 'If-Modified-Since' => $if_modified_since);
         t_debug "If-Modified-Since $if_modified_since";
         ok t_cmp(
