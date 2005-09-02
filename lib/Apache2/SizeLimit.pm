@@ -87,7 +87,7 @@ BEGIN {
 
 # return process size (in KB)
 sub linux_size_check {
-    my($size, $resident, $share) = (0, 0, 0);
+    my ($size, $resident, $share) = (0, 0, 0);
 
     my $file = "/proc/self/statm";
     if (open my $fh, "<$file") {
@@ -159,7 +159,7 @@ sub exit_if_too_big {
 
     $START_TIME ||= time;
 
-    my($size, $share) = $HOW_BIG_IS_IT->();
+    my ($size, $share) = $HOW_BIG_IS_IT->();
 
     if (($MAX_PROCESS_SIZE  && $size > $MAX_PROCESS_SIZE) ||
         ($MIN_SHARE_SIZE    && $share < $MIN_SHARE_SIZE)  ||
