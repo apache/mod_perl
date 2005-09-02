@@ -123,7 +123,7 @@ sub getline {
 }
 
 sub prompt {
-    my($socket, $msg) = @_;
+    my ($socket, $msg) = @_;
 
     $socket->send("$msg:\n");
     getline($socket);
