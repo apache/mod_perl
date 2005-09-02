@@ -310,21 +310,23 @@ sub configure_apache {
 
     my $mplibpath = '';
     my $ldopts = $self->ldopts;
-    
+
     if (CYGWIN) {
-        # Cygwin's httpd port links its modules into httpd2core.dll, instead of httpd.exe.
-        # In this case, we have a problem, because libtool doesn't want to include
-        # static libs (.a) into a dynamic lib (.dll). Workaround this by setting
-        # mod_perl.a as a linker argument (including all other flags and libs).
+        # Cygwin's httpd port links its modules into httpd2core.dll,
+        # instead of httpd.exe. In this case, we have a problem,
+        # because libtool doesn't want to include static libs (.a)
+        # into a dynamic lib (.dll). Workaround this by setting
+        # mod_perl.a as a linker argument (including all other flags
+        # and libs).
         my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
-        
-        $ldopts = join ' ', 
+
+        $ldopts = join ' ',
             '--export-all-symbols',
             "$self->{cwd}/src/modules/perl/$mplib",
             $ldopts;
-        
+
         $ldopts =~ s/(\S+)/-Wl,$1/g;
-        
+
     } else {
         my $mplib  = "$self->{MP_LIBNAME}$Config{lib_ext}";
         $mplibpath = catfile($self->{cwd}, qw(src modules perl), $mplib);
@@ -334,13 +336,13 @@ sub configure_apache {
     local $ENV{AP_LIBS} = $ldopts;
     local $ENV{MODLIST} = 'perl';
 
-    #XXX: -Wall and/or -Werror at httpd configure time breaks things
+    # XXX: -Wall and/or -Werror at httpd configure time breaks things
     local $ENV{CFLAGS} = join ' ', grep { ! /\-Wall|\-Werror/ } 
         split /\s+/, $ENV{CFLAGS} || '';
 
     my $cd = qq(cd $self->{MP_AP_PREFIX});
 
-    #We need to clean the httpd tree before configuring it
+    # We need to clean the httpd tree before configuring it
     if (-f File::Spec->catfile($self->{MP_AP_PREFIX}, 'Makefile')) {
         my $cmd = qq(make clean);
         debug "Running $cmd";
@@ -1609,11 +1611,11 @@ sub dynamic_link {
 my $apache_corelib_cygwin;
 sub apache_corelib_cygwin {
     return $apache_corelib_cygwin if $apache_corelib_cygwin;
-    
+
     my $self = shift;
     my $mp_src = "$self->{cwd}/src/modules/perl";
     my $core = 'httpd2core';
-    
+
     # There's a problem with user-installed perl on cygwin.
     # MakeMaker doesn't know about the .dll.a libs and warns
     # about missing -lhttpd2core. "Fix" it by copying
@@ -1629,7 +1631,7 @@ sub apache_corelib_cygwin {
         qx{touch $libpath/lib$core.dll.a && \
         ln -fs $libpath/lib$core.dll.a $mp_src/lib$core.a};
     }
-    
+
     $apache_corelib_cygwin = "-L$mp_src -l$core";
 }
 
