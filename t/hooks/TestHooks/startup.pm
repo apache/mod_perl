@@ -24,7 +24,7 @@ use Apache2::Const -compile => 'OK';
 my $dir = catdir Apache::Test::vars("documentroot"), 'hooks', 'startup';
 
 sub open_logs {
-    my($conf_pool, $log_pool, $temp_pool, $s) = @_;
+    my ($conf_pool, $log_pool, $temp_pool, $s) = @_;
 
     # main server
     run("open_logs", $s);
@@ -41,7 +41,7 @@ sub open_logs {
 }
 
 sub post_config {
-    my($conf_pool, $log_pool, $temp_pool, $s) = @_;
+    my ($conf_pool, $log_pool, $temp_pool, $s) = @_;
 
     # main server
     run("post_config", $s);
@@ -58,7 +58,7 @@ sub post_config {
 }
 
 sub run {
-    my($phase, $s) = @_;
+    my ($phase, $s) = @_;
 
     my $val = $s->dir_config->{PostConfig} or die "Can't read PostConfig var";
 

@@ -10,7 +10,7 @@ use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED);
 sub auth_any {
     my $r = shift;
 
-    my($res, $sent_pw) = $r->get_basic_auth_pw;
+    my ($res, $sent_pw) = $r->get_basic_auth_pw;
     return $res if $res != Apache2::Const::OK;
 
     unless($r->user and $sent_pw) {
@@ -30,7 +30,7 @@ sub handler {
 
     return Apache2::Const::HTTP_UNAUTHORIZED unless $user;
 
-    my($u, @allowed) = split /\s+/, $r->requires->[0]->{requirement};
+    my ($u, @allowed) = split /\s+/, $r->requires->[0]->{requirement};
 
     return Apache2::Const::HTTP_UNAUTHORIZED unless grep { $_ eq $user } @allowed;
 

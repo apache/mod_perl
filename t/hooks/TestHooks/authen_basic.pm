@@ -10,7 +10,7 @@ use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR);
 sub handler {
     my $r = shift;
 
-    my($rc, $sent_pw) = $r->get_basic_auth_pw;
+    my ($rc, $sent_pw) = $r->get_basic_auth_pw;
 
     return $rc if $rc != Apache2::Const::OK;
 
