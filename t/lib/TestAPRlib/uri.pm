@@ -154,7 +154,7 @@ sub test {
     }
 
     ### port_of_scheme ###
-    while (my($scheme, $port) = each %default_ports) {
+    while (my ($scheme, $port) = each %default_ports) {
         my $apr_port = APR::URI::port_of_scheme($scheme);
         ok t_cmp($apr_port, $port, "scheme: $scheme");
     }

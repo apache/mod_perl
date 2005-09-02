@@ -31,7 +31,7 @@ sub same_interp_skip_not_found {
         skip "Skip couldn't find the same interpreter", 0;
     }
     else {
-        my($package, $filename, $line) = caller;
+        my ($package, $filename, $line) = caller;
         # trick ok() into reporting the caller filename/line when a
         # sub-test fails in sok()
         return eval <<EOE;
@@ -149,7 +149,7 @@ rest of the arguments are passed to 'ok t_cmp'.
 This wrapper is smart enough to report the correct line number as if
 ok() was run in the test file itself and not in the wrapper, by doing:
 
-  my($package, $filename, $line) = caller;
+  my ($package, $filename, $line) = caller;
   return eval <<EOE;
   #line $line $filename
       ok &t_cmp;
