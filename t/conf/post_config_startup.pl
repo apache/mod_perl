@@ -81,7 +81,7 @@ sub test_apache_status {
     Apache2::Status->menu_item(
        'test_menu' => "Test Menu Entry",
        sub {
-           my($r) = @_;
+           my ($r) = @_;
            return ["This is just a test entry"];
        }
     ) if Apache2::Module::loaded('Apache2::Status');
@@ -130,7 +130,7 @@ sub test_server_shutdown_cleanup_register {
 }
 
 sub ModPerl::Test::exit_handler {
-    my($p, $s) = @_;
+    my ($p, $s) = @_;
 
     $s->log->info("Child process pid=$$ is exiting");
 
