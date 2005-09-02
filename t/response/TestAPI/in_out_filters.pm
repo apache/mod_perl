@@ -34,7 +34,7 @@ sub handler {
 }
 
 sub send_response_body {
-    my($r, $data) = @_;
+    my ($r, $data) = @_;
 
     my $bb = APR::Brigade->new($r->pool,
                                $r->connection->bucket_alloc);

@@ -31,7 +31,7 @@ sub APACHE_TEST_CONFIGURE {
 
     my $target_dir = catdir $vars->{documentroot}, "util";
 
-    while (my($file, $code) = each %scripts) {
+    while (my ($file, $code) = each %scripts) {
         $file = catfile $target_dir, "$file.pl";
         $self->write_perlscript($file, "$code\n");
     }
@@ -138,7 +138,7 @@ sub handler {
 
 
 sub read_data {
-    my($fh) = @_;
+    my ($fh) = @_;
     my @data = ();
     my $sel = IO::Select->new($fh);
 

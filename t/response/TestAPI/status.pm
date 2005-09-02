@@ -17,7 +17,7 @@ sub handler {
 
     $r->content_type('text/plain');
 
-    my($code, $string) = split /=/, $r->args || '';
+    my ($code, $string) = split /=/, $r->args || '';
 
     if ($string) {
         $r->status(200); # status_line should override status

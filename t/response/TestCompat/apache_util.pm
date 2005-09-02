@@ -42,7 +42,7 @@ sub handler {
 
     # size_string()
     {
-        while (my($k, $v) = each %string_size) {
+        while (my ($k, $v) = each %string_size) {
             ok t_cmp($v, Apache::Util::size_string($k));
         }
     }

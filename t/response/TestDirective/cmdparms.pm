@@ -41,7 +41,7 @@ my @methods = qw(cmd context directive info override path
                  pool server temp_pool);
 
 sub TestCmdParms {
-    my($self, $parms, $args) = @_;
+    my ($self, $parms, $args) = @_;
     my $srv_cfg = $self->get_config($parms->server);
     foreach my $method (@methods) {
         $srv_cfg->{$args}{$method} = $parms->$method();
@@ -54,7 +54,7 @@ sub TestCmdParms {
 
 ### response handler ###
 sub handler : method {
-    my($self, $r) = @_;
+    my ($self, $r) = @_;
     my $override;
     my $srv_cfg = $self->get_config($r->server);
 

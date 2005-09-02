@@ -45,12 +45,12 @@ sub register_perl {
 }
 
 sub get_config {
-    my($self, $s) = (shift, shift);
+    my ($self, $s) = (shift, shift);
     Apache2::Module::get_config($self, $s, @_);
 }
 
 sub handler {
-    my($r) = @_;
+    my ($r) = @_;
 
     my $args = $r->args || '';
 
