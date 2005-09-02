@@ -37,7 +37,7 @@ $TouchTime = time;
 
 sub import {
     my $class = shift;
-    my($package, $file) = (caller)[0,1];
+    my ($package, $file) = (caller)[0,1];
 
     $class->register_module($package, $file);
 }
@@ -57,7 +57,7 @@ sub module_to_package {
 }
 
 sub register_module {
-    my($class, $package, $file) = @_;
+    my ($class, $package, $file) = @_;
     my $module = package_to_module($package);
 
     if ($file) {
@@ -71,7 +71,7 @@ sub register_module {
 }
 
 sub unregister_module {
-    my($class, $package) = @_;
+    my ($class, $package) = @_;
     my $module = package_to_module($package);
     delete $INCS{$module};
 }
