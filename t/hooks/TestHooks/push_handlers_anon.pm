@@ -50,7 +50,7 @@ __DATA__
     use Apache::TestRequest;
     Apache::TestRequest::module('TestHooks::push_handlers_anon');
     my $hostport = Apache::TestRequest::hostport(Apache::Test::config());
-    my($host, $port) = split ':', $hostport;
+    my ($host, $port) = split ':', $hostport;
     my $s = Apache2::ServerUtil->server;
     my $vs = $s->next;
     for (; $vs; $vs = $vs->next) {
