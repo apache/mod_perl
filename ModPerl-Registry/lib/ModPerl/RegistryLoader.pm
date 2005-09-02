@@ -39,7 +39,7 @@ sub new {
 }
 
 sub handler {
-    my($self, $uri, $filename, $virthost) = @_;
+    my ($self, $uri, $filename, $virthost) = @_;
 
     # set the inheritance rules at run time
     @ISA = $self->{package};
@@ -143,7 +143,7 @@ sub slurp_filename {
 }
 
 sub load_package {
-    my($self, $package) = @_;
+    my ($self, $package) = @_;
 
     croak "package to load wasn't specified" unless defined $package;
 
