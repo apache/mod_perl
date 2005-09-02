@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+On cygwin some dlls might happen to be with identical base addresses
+and if you try to load both of them you'll get an error and you'll
+have to use the rebase utility to fix them.  this fix should prevent
+this.  [Nikolay Ananiev <ananiev@thegdb.com>]
+
 Fix an undefined warning in DSO builds when not using MP_APXS.
 [Nikolay Ananiev <ananiev@thegdb.com>]
 
