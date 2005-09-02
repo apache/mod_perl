@@ -398,7 +398,7 @@ sub typedef_hash {
 }
 
 sub typedef_structs {
-  my($typehash, $structs) = @_;
+  my ($typehash, $structs) = @_;
   my %structs;
   for (0 .. $#$structs) {
     my $in = $structs->[$_];
@@ -411,7 +411,7 @@ sub typedef_structs {
     my $name = parse_struct($in, \%structs);
     $structs{$key} = defined($name) ? $structs{$name} : undef;
   }
-  while (my($key, $text) = each %$typehash) {
+  while (my ($key, $text) = each %$typehash) {
     my $name = parse_struct($text->[0], \%structs);
     $structs{$key} = defined($name) ? $structs{$name} : undef;
   }
@@ -419,8 +419,8 @@ sub typedef_structs {
 }
 
 sub parse_struct {
-  my($in, $structs) = @_;
-  my($b, $e, $chunk, $vars, $struct, $structname);
+  my ($in, $structs) = @_;
+  my ($b, $e, $chunk, $vars, $struct, $structname);
   return "$1 $2" if $in =~ /
     ^ \s* (struct | union) \s+ (\w+) \s* $
   /x;
@@ -453,7 +453,7 @@ sub parse_struct {
 
 sub parse_vars {
   my $in = shift;
-  my($vars, $type, $word, $id, $post, $func);
+  my ($vars, $type, $word, $id, $post, $func);
 
   while ($in =~ /\G\s*([\[;,(]|\*+|:\s*\d+|\S+?\b|$)\s*/gc) {
     $word = $1;
@@ -514,7 +514,7 @@ unless ($vars) {
 }
 
 sub vdecl_hash {
-  my($vdecls, $mdecls) = @_;
+  my ($vdecls, $mdecls) = @_;
   my %vdecl_hash;
   for (@$vdecls, @$mdecls) {
     next if /[()]/;	# ignore functions, and function pointers
@@ -556,7 +556,7 @@ sub functions_in {		# The arg is text without type declarations.
       $b1 = length $chunk, last unless defined $b1;
     }
     if ($e - $b - $b1 > 0) {
-      my($isvar, $isfunc) = (1, 1);
+      my ($isvar, $isfunc) = (1, 1);
       substr ($chunk, 0, $b1) = '';
       if ($chunk =~ /,/) {	# Contains multiple declarations.
 	push @mdecls, $b + $b1, $e;
@@ -940,7 +940,7 @@ sub new {
     my $addincludes = "";
     $addincludes = "-I" . join(" -I", @$Includes)
       if defined $Includes and @$Includes;
-    my($sym) = gensym;
+    my ($sym) = gensym;
     my $cmd = WIN32 ?
         "$Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $filename |" :
         "echo '\#include \"$filename\"' | $Cpp->{cppstdin} $Defines $addincludes $Cpp->{cppflags} $Cpp->{cppminus} |";

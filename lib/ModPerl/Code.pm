@@ -125,7 +125,7 @@ for my $class (qw(Process Connection PreConnection Files)) {
     }
 }
 
-while (my($k,$v) = each %directive_proto) {
+while (my ($k,$v) = each %directive_proto) {
     $directive_proto{$k}->{ret} = 'const char *';
     my $handlers = join '_', 'handlers', canon_lc($k);
     $directive_proto{$k}->{handlers} =
@@ -168,9 +168,9 @@ sub new {
 sub path { shift->{path} }
 
 sub handler_desc {
-    my($self, $h_add, $c_add) = @_;
+    my ($self, $h_add, $c_add) = @_;
     local $" = ",\n";
-    while (my($class, $h) = each %{ $self->{handler_index_desc} }) {
+    while (my ($class, $h) = each %{ $self->{handler_index_desc} }) {
         my $func = canon_func('handler', 'desc', $class);
         my $array = join '_', 'MP', $func;
         my $proto = "const char *$func(int idx)";
@@ -192,11 +192,11 @@ EOF
 }
 
 sub generate_handler_index {
-    my($self, $h_fh) = @_;
+    my ($self, $h_fh) = @_;
 
     my $type = 1;
 
-    while (my($class, $handlers) = each %{ $self->{handlers} }) {
+    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
         my $i = 0;
         my $n = @$handlers;
         my $handler_type = canon_define('HANDLER_TYPE', $class);
@@ -220,11 +220,11 @@ sub generate_handler_index {
 }
 
 sub generate_handler_hooks {
-    my($self, $h_fh, $c_fh) = @_;
+    my ($self, $h_fh, $c_fh) = @_;
 
     my @register_hooks;
 
-    while (my($class, $prototype) = each %{ $self->{hook_proto} }) {
+    while (my ($class, $prototype) = each %{ $self->{hook_proto} }) {
         my $callback = canon_func('callback', $class);
         my $return = $prototype->{ret} eq 'void' ? '' : 'return';
         my $i = -1;
@@ -243,7 +243,7 @@ sub generate_handler_hooks {
                   "    ap_hook_$hook($name, NULL, NULL, $order);";
             }
 
-            my($protostr, $pass) = canon_proto($prototype, $name);
+            my ($protostr, $pass) = canon_proto($prototype, $name);
             my $ix = $self->{handler_index}->{$class}->[$i];
 
             if ($callback =~ m/modperl_callback_per_(dir|srv)/) {
@@ -275,10 +275,10 @@ EOF
 }
 
 sub generate_handler_find {
-    my($self, $h_fh, $c_fh) = @_;
+    my ($self, $h_fh, $c_fh) = @_;
 
     my $proto = 'int modperl_handler_lookup(const char *name, int *type)';
-    my(%ix, %switch);
+    my (%ix, %switch);
 
     print $h_fh "$proto;\n";
 
@@ -292,7 +292,7 @@ $proto
     switch (*name) {
 EOF
 
-    while (my($class, $handlers) = each %{ $self->{handlers} }) {
+    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
         my $i = 0;
 
         for my $name (@$handlers) {
@@ -334,11 +334,11 @@ EOF
 }
 
 sub generate_handler_directives {
-    my($self, $h_fh, $c_fh) = @_;
+    my ($self, $h_fh, $c_fh) = @_;
 
     my @cmd_entries;
 
-    while (my($class, $handlers) = each %{ $self->{handlers} }) {
+    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
         my $prototype = $self->{directive_proto}->{$class};
         my $i = 0;
 
@@ -391,7 +391,7 @@ EOF
 }
 
 sub generate_flags {
-    my($self, $h_fh, $c_fh) = @_;
+    my ($self, $h_fh, $c_fh) = @_;
 
     my $n = 1;
 
@@ -399,7 +399,7 @@ sub generate_flags {
 
     print $h_fh "\n#define MP_SYS_$dlsrc 1\n";
 
-    while (my($class, $opts) = each %{ $self->{flags} }) {
+    while (my ($class, $opts) = each %{ $self->{flags} }) {
         my @lookup = ();
         my %lookup = ();
         my $lookup_proto = "";
@@ -499,7 +499,7 @@ my %trace = (
 );
 
 sub generate_trace {
-    my($self, $h_fh) = @_;
+    my ($self, $h_fh) = @_;
 
     my $v     = $self->{build}->{VERSION};
     my $api_v = $self->{build}->{API_VERSION};
@@ -560,7 +560,7 @@ EOF
 }
 
 sub generate_largefiles {
-    my($self, $h_fh) = @_;
+    my ($self, $h_fh) = @_;
 
     my $flags = $self->perl_config('ccflags_uselargefiles');
 
@@ -568,7 +568,7 @@ sub generate_largefiles {
 
     for my $flag (split /\s+/, $flags) {
         next if $flag =~ /^-/; # skip -foo flags
-        my($name, $val) = split '=', $flag;
+        my ($name, $val) = split '=', $flag;
         $val ||= '';
         $name =~ s/^-D//;
         print $h_fh "#define $name $val\n";
@@ -619,8 +619,8 @@ sub canon_args {
 }
 
 sub canon_proto {
-    my($prototype, $name) = @_;
-    my($in,$pass) = canon_args($prototype);
+    my ($prototype, $name) = @_;
+    my ($in,$pass) = canon_args($prototype);
 
     local $" = ', ';
 
@@ -710,12 +710,12 @@ sub noedit_warning_hash {
 }
 
 sub init_file {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
 
     return unless $name;
     return if $self->{init_files}->{$name}++;
 
-    my(@preamble);
+    my (@preamble);
     if ($name =~ /\.h$/) {
         (my $d = uc $name) =~ s/\./_/;
         push @preamble, "#ifndef $d\n#define $d\n";
@@ -735,7 +735,7 @@ sub init_file {
 }
 
 sub fh {
-    my($self, $name) = @_;
+    my ($self, $name) = @_;
     return unless $name;
     $self->{fh}->{$name};
 }
@@ -749,7 +749,7 @@ sub postamble {
 }
 
 sub generate {
-    my($self, $build) = @_;
+    my ($self, $build) = @_;
 
     $self->{build} = $build;
 
@@ -760,10 +760,10 @@ sub generate {
     }
 
     for my $method (reverse sort keys %sources) {
-        my($h_fh, $c_fh) = map {
+        my ($h_fh, $c_fh) = map {
             $self->fh($sources{$method}->{$_});
         } qw(h c);
-        my($h_add, $c_add) = $self->$method($h_fh, $c_fh);
+        my ($h_add, $c_add) = $self->$method($h_fh, $c_fh);
         if ($h_add) {
             print $h_fh $h_add;
         }
@@ -788,7 +788,7 @@ sub generate {
 my $constant_prefixes = join '|', qw{APR? MODPERL_RC};
 
 sub generate_constants {
-    my($self, $h_fh, $c_fh) = @_;
+    my ($self, $h_fh, $c_fh) = @_;
 
     require Apache2::ConstantsTable;
 
@@ -827,16 +827,16 @@ sub constants_ifdef {
 }
 
 sub constants_lookup_code {
-    my($h_fh, $c_fh, $constants, $class) = @_;
+    my ($h_fh, $c_fh, $constants, $class) = @_;
 
-    my(%switch, %alias);
+    my (%switch, %alias);
 
     %alias = %shortcuts;
 
     my $postfix = canon_lc(lc $class);
     my $package = $class . '::';
     my $package_len = length $package;
-    my($first_let) = $class =~ /^(\w)/;
+    my ($first_let) = $class =~ /^(\w)/;
 
     my $func = canon_func(qw(constants lookup), $postfix);
     my $proto = "SV \*$func(pTHX_ const char *name)";
@@ -906,9 +906,9 @@ EOF
 }
 
 sub generate_constants_lookup {
-    my($h_fh, $c_fh) = @_;
+    my ($h_fh, $c_fh) = @_;
 
-    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
+    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
         my $constants = [map { @$_ } values %$groups];
 
         constants_lookup_code($h_fh, $c_fh, $constants, $class);
@@ -916,20 +916,20 @@ sub generate_constants_lookup {
 }
 
 sub generate_constants_group_lookup {
-    my($h_fh, $c_fh) = @_;
+    my ($h_fh, $c_fh) = @_;
 
-    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
+    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
         constants_group_lookup_code($h_fh, $c_fh, $class, $groups);
     }
 }
 
 sub constants_group_lookup_code {
-    my($h_fh, $c_fh, $class, $groups) = @_;
+    my ($h_fh, $c_fh, $class, $groups) = @_;
     my @tags;
     my @code;
 
     $class = canon_lc(lc $class);
-    while (my($group, $constants) = each %$groups) {
+    while (my ($group, $constants) = each %$groups) {
 	push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
 	print $c_fh "\nstatic const char *$name [] = { \n",
@@ -974,7 +974,7 @@ EOF
 my %seen_const = ();
 # generates APR::Const and Apache2::Const manpages in ./tmp/
 sub generate_constants_pod {
-    my($self) = @_;
+    my ($self) = @_;
 
     my %data = ();
     generate_constants_group_lookup_doc(\%data);
@@ -1026,9 +1026,9 @@ EOF
 }
 
 sub generate_constants_lookup_doc {
-    my($data) = @_;
+    my ($data) = @_;
 
-    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
+    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
         my $constants = [map { @$_ } values %$groups];
 
         constants_lookup_code_doc($constants, $class, $data);
@@ -1036,19 +1036,19 @@ sub generate_constants_lookup_doc {
 }
 
 sub generate_constants_group_lookup_doc {
-    my($data) = @_;
+    my ($data) = @_;
 
-    while (my($class, $groups) = each %$Apache2::ConstantsTable) {
+    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
         constants_group_lookup_code_doc($class, $groups, $data);
     }
 }
 
 sub constants_group_lookup_code_doc {
-    my($class, $groups, $data) = @_;
+    my ($class, $groups, $data) = @_;
     my @tags;
     my @code;
 
-    while (my($group, $constants) = each %$groups) {
+    while (my ($group, $constants) = each %$groups) {
         $data->{$class}{$group} = [
             map {
                 my @ifdef = constants_ifdef($_);
@@ -1061,9 +1061,9 @@ sub constants_group_lookup_code_doc {
 }
 
 sub constants_lookup_code_doc {
-    my($constants, $class, $data) = @_;
+    my ($constants, $class, $data) = @_;
 
-    my(%switch, %alias);
+    my (%switch, %alias);
 
     %alias = %shortcuts;
 
@@ -1095,7 +1095,7 @@ sub constants_lookup_code_doc {
 }
 
 sub generate_exports {
-    my($self, $c_fh) = @_;
+    my ($self, $c_fh) = @_;
     require ModPerl::WrapXS;
     ModPerl::WrapXS->generate_exports($c_fh);
 }
