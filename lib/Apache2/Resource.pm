@@ -55,7 +55,7 @@ my %is_mb = map {$_, 1} qw{DATA RSS STACK FSIZE CORE MEMLOCK AS};
 sub debug { print STDERR @_ if $Debug }
 
 sub install_rlimit ($$$) {
-    my($res, $soft, $hard) = @_;
+    my ($res, $soft, $hard) = @_;
 
     my $name = $res;
 
@@ -82,11 +82,11 @@ sub install_rlimit ($$$) {
 }
 
 sub handler {
-    while (my($k, $v) = each %ENV) {
+    while (my ($k, $v) = each %ENV) {
         next unless $k =~ /^PERL_RLIMIT_(\w+)$/;
         $k = $1;
         next if $k eq "DEFAULTS";
-        my($soft, $hard) = split ":", $v, 2;
+        my ($soft, $hard) = split ":", $v, 2;
         $hard ||= $soft;
 
         my $set = install_rlimit $k, $soft, $hard;
@@ -99,7 +99,7 @@ sub handler {
 }
 
 sub default_handler {
-    while (my($k, $v) = each %Apache2::Resource::) {
+    while (my ($k, $v) = each %Apache2::Resource::) {
         next unless $k =~ s/^DEFAULT_/PERL_/;
         $ENV{$k} = "";
     }
@@ -114,7 +114,7 @@ sub status_rlimit {
 
     for my $res (keys %$lim) {
         my $val = eval "&BSD::Resource::${res}()";
-        my($soft, $hard) = getrlimit $val;
+        my ($soft, $hard) = getrlimit $val;
         (my $limit = $res) =~ s/^RLIMIT_//;
         ($soft, $hard) = ("$soft " . BM($soft), "$hard ". BM($hard))
             if $is_mb{$limit};
