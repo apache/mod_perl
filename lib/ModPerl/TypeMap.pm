@@ -42,7 +42,7 @@ sub new {
 my %special = map { $_, 1 } qw(UNDEFINED NOTIMPL CALLBACK);
 
 sub special {
-    my($self, $class) = @_;
+    my ($self, $class) = @_;
     return $special{$class};
 }
 
@@ -50,19 +50,19 @@ sub function_map  { shift->{function_map}->get  }
 sub structure_map { shift->{structure_map}->get }
 
 sub parse {
-    my($self, $fh, $map) = @_;
+    my ($self, $fh, $map) = @_;
 
     while ($fh->readline) {
         if (/E=/) {
             my %args = $self->parse_keywords($_);
-            while (my($key,$val) = each %args) {
+            while (my ($key,$val) = each %args) {
                 push @{ $self->{$key} }, $val;
             }
             next;
         }
 
         my @aliases;
-        my($type, $class) = (split /\s*\|\s*/, $_)[0,1];
+        my ($type, $class) = (split /\s*\|\s*/, $_)[0,1];
         $class ||= 'UNDEFINED';
 
         if ($type =~ s/^(struct|typedef)\s+(.*)/$2/) {
@@ -106,17 +106,17 @@ iovec struct.rlimit Sigfunc in_addr_t
 };
 
 sub should_ignore {
-    my($self, $type) = @_;
+    my ($self, $type) = @_;
     return 1 if $type =~ /^($ignore)/o;
 }
 
 sub is_callback {
-    my($self, $type) = @_;
+    my ($self, $type) = @_;
     return 1 if $type =~ /\(/ and $type =~ /\)/; #XXX: callback
 }
 
 sub exists {
-    my($self, $type) = @_;
+    my ($self, $type) = @_;
 
     return 1 if $self->is_callback($type) || $self->should_ignore($type);
 
@@ -126,7 +126,7 @@ sub exists {
 }
 
 sub map_type {
-    my($self, $type) = @_;
+    my ($self, $type) = @_;
     my $class = $self->get->{$type};
 
     return unless $class and ! $self->special($class);
@@ -140,7 +140,7 @@ sub map_type {
 }
 
 sub null_type {
-    my($self, $type) = @_;
+    my ($self, $type) = @_;
     my $class = $self->get->{$type};
 
     if ($class =~ /^[INU]V/) {
@@ -165,7 +165,7 @@ sub can_map {
 }
 
 sub map_arg {
-    my($self, $arg) = @_;
+    my ($self, $arg) = @_;
 
     my $map_type = $self->map_type($arg->{type});
     die "unknown typemap: '$arg->{type}'" unless defined $map_type;
@@ -179,7 +179,7 @@ sub map_arg {
 }
 
 sub map_args {
-    my($self, $func) = @_;
+    my ($self, $func) = @_;
 
     my $entry = $self->function_map->{ $func->{name} };
     my $argspec = $entry->{argspec};
@@ -191,7 +191,7 @@ sub map_args {
         for my $arg (@$argspec) {
             my $default;
             ($arg, $default) = split /=/, $arg, 2;
-            my($type, $name) = split ':', $arg, 2;
+            my ($type, $name) = split ':', $arg, 2;
 
             if ($type and $name) {
                 push @$args, {
@@ -224,7 +224,7 @@ sub map_args {
 #this is needed for modperl-only functions
 #unlike apache/apr functions which are remapped to a mpxs_ function
 sub thx_fixup {
-    my($self, $func) = @_;
+    my ($self, $func) = @_;
 
     my $first = $func->{args}->[0];
 
@@ -237,14 +237,14 @@ sub thx_fixup {
 }
 
 sub map_function {
-    my($self, $func) = @_;
+    my ($self, $func) = @_;
 
     my $map = $self->function_map->{ $func->{name} };
     return unless $map;
 
     $self->thx_fixup($func);
 
-    my($status, $failed_type) = 
+    my ($status, $failed_type) = 
         $self->can_map($map, $func->{return_type},
             map $_->{type}, @{ $func->{args} });
 
@@ -282,15 +282,15 @@ sub map_function {
 }
 
 sub map_structure {
-    my($self, $struct) = @_;
+    my ($self, $struct) = @_;
 
-    my($class, @elts);
+    my ($class, @elts);
     my $stype = $struct->{type};
 
     return unless $class = $self->map_type($stype);
 
     for my $e (@{ $struct->{elts} }) {
-        my($name, $type) = ($e->{name}, $e->{type});
+        my ($name, $type) = ($e->{name}, $e->{type});
         my $rtype;
 
         # ro/rw/r+w_startup/undef(disabled)
@@ -317,12 +317,12 @@ sub map_structure {
 }
 
 sub destructor {
-    my($self, $prefix) = @_;
+    my ($self, $prefix) = @_;
     $self->function_map->{$prefix . 'DESTROY'};
 }
 
 sub first_class {
-    my($self, $func) = @_;
+    my ($self, $func) = @_;
 
     for my $e (@{ $func->{args} }) {
         next unless $e->{type} =~ /::/;
@@ -338,7 +338,7 @@ sub first_class {
 sub check {
     my $self = shift;
 
-    my(@types, @missing, %seen);
+    my (@types, @missing, %seen);
 
     require Apache2::StructureTable;
     for my $entry (@$Apache2::StructureTable) {
@@ -396,7 +396,7 @@ my %class_pools = map {
 };
 
 sub class_pool : lvalue {
-    my($self, $class) = @_;
+    my ($self, $class) = @_;
     $class_pools{$class};
 }
 
@@ -416,7 +416,7 @@ util_script.h
 };
 
 sub h_wrap {
-    my($self, $file, $code) = @_;
+    my ($self, $file, $code) = @_;
 
     $file = 'modperl_xs_' . $file;
 
@@ -468,7 +468,7 @@ sub sv_convert_code {
     my %seen;
     my $code = "";
 
-    while (my($ctype, $ptype) = each %$map) {
+    while (my ($ctype, $ptype) = each %$map) {
         next if $self->special($ptype);
         next if $ctype =~ /\s/;
         my $class = $ptype;
