@@ -99,7 +99,7 @@ sub maniskip {
     }
 
     my $sub = "\$matches = "
-        . "sub { my(\$arg)=\@_; return 1 if "
+        . "sub { my (\$arg)=\@_; return 1 if "
         . join (" || ",  (map {s!/!\\/!g; "\$arg =~ m/$_/o"} @skip), 0)
         . " }";
 

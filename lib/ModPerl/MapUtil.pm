@@ -114,9 +114,9 @@ sub map_files {
     my $self = shift;
     my $package = ref($self) || $self;
 
-    my($wanted) = $package =~ /($map_classes)/io;
+    my ($wanted) = $package =~ /($map_classes)/io;
 
-    my(@dirs) = (($MapDir || './xs'), ModPerl::MapUtil::xs_glue_dirs());
+    my (@dirs) = (($MapDir || './xs'), ModPerl::MapUtil::xs_glue_dirs());
 
     my @files;
 
@@ -143,11 +143,11 @@ sub map_files {
 }
 
 sub parse_keywords {
-    my($self, $line) = @_;
+    my ($self, $line) = @_;
     my %words;
 
     for my $pair (split /\s+/, $line) {
-        my($key, $val) = split /=/, $pair;
+        my ($key, $val) = split /=/, $pair;
 
         unless ($key and $val) {
             die "parse error ($ModPerl::MapUtil::MapFile line $.)";
@@ -160,7 +160,7 @@ sub parse_keywords {
 }
 
 sub parse_map_files {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $map = {};
 
