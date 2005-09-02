@@ -85,7 +85,7 @@ my %overridable_mp2_api = (
     require APR::Finfo;
     my $orig_sub = *Apache2::RequestRec::filename{CODE};
     *Apache2::RequestRec::filename = sub {
-        my($r, $newfile) = @_;
+        my ($r, $newfile) = @_;
         my $old_filename;
         if (defined $newfile) {
             $old_filename = $r->$orig_sub($newfile);
@@ -153,7 +153,7 @@ EOI
         my $c = shift;
         if (@_) {
             my $addr_in = shift;
-            my($port, $addr) = Socket::unpack_sockaddr_in($addr_in);
+            my ($port, $addr) = Socket::unpack_sockaddr_in($addr_in);
             $c->$orig_sub->ip_set($addr);
             $c->$orig_sub->port_set($port);
         }
@@ -195,7 +195,7 @@ EOI
     require APR::URI;
     my $orig_sub = *APR::URI::unparse{CODE};
     *APR::URI::unparse = sub {
-        my($uri, $flags) = @_;
+        my ($uri, $flags) = @_;
 
         if (defined $uri->hostname && !defined $uri->scheme) {
             # we do this only for back compat, the new APR::URI is
@@ -321,7 +321,7 @@ sub warn {
 package Apache;
 
 sub unescape_url_info {
-    my($class, $string) = @_;
+    my ($class, $string) = @_;
     Apache2::URI::unescape_url($string);
     $string =~ tr/+/ /;
     $string;
@@ -481,8 +481,8 @@ sub send_http_header {
 *request = \&Apache2::request;
 
 sub table_get_set {
-    my($r, $table) = (shift, shift);
-    my($key, $value) = @_;
+    my ($r, $table) = (shift, shift);
+    my ($key, $value) = @_;
 
     if (1 == @_) {
         return wantarray() 
@@ -539,13 +539,13 @@ sub register_cleanup {
 *post_connection = \&register_cleanup;
 
 sub get_remote_host {
-    my($r, $type) = @_;
+    my ($r, $type) = @_;
     $type = Apache2::Const::REMOTE_NAME unless defined $type;
     $r->connection->get_remote_host($type, $r->per_dir_config);
 }
 
 sub parse_args {
-    my($r, $string) = @_;
+    my ($r, $string) = @_;
     return () unless defined $string and $string;
 
     return map {
@@ -599,7 +599,7 @@ sub server_root_relative {
 }
 
 sub clear_rgy_endav {
-    my($r, $script_name) = @_;
+    my ($r, $script_name) = @_;
     require ModPerl::Global;
     my $package = 'Apache2::ROOT' . $script_name;
     ModPerl::Global::special_list_clear(END => $package);
@@ -646,7 +646,7 @@ sub READLINE {
 #2.0 ap_send_fd() also has an additional offset parameter
 
 sub send_fd_length {
-    my($r, $fh, $length) = @_;
+    my ($r, $fh, $length) = @_;
 
     my $buff;
     my $total_bytes_sent = 0;
@@ -671,7 +671,7 @@ sub send_fd_length {
 }
 
 sub send_fd {
-    my($r, $fh) = @_;
+    my ($r, $fh) = @_;
     $r->send_fd_length($fh, -1);
 }
 
@@ -687,7 +687,7 @@ use Symbol ();
 use Carp ();
 
 sub new {
-    my($class) = shift;
+    my ($class) = shift;
     my $fh = Symbol::gensym;
     my $self = bless $fh, ref($class)||$class;
     if (@_) {
@@ -699,7 +699,7 @@ sub new {
 }
 
 sub open {
-    my($self) = shift;
+    my ($self) = shift;
 
     Carp::croak("no Apache2::File object passed")
           unless $self && ref($self);
@@ -716,7 +716,7 @@ sub open {
 }
 
 sub close {
-    my($self) = shift;
+    my ($self) = shift;
     CORE::close $self;
 }
 
@@ -761,7 +761,7 @@ sub tmpfile {
 package Apache::Util;
 
 sub size_string {
-    my($size) = @_;
+    my ($size) = @_;
 
     if (!$size) {
         $size = "   0k";
@@ -818,7 +818,7 @@ sub escape_html {
 *validate_password = \&APR::Util::password_validate;
 
 sub Apache2::URI::parse {
-    my($class, $r, $uri) = @_;
+    my ($class, $r, $uri) = @_;
 
     $uri ||= $r->construct_url;
 
@@ -828,7 +828,7 @@ sub Apache2::URI::parse {
 package Apache::Table;
 
 sub new {
-    my($class, $r, $nelts) = @_;
+    my ($class, $r, $nelts) = @_;
     $nelts ||= 10;
     APR::Table::make($r->pool, $nelts);
 }
