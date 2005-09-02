@@ -34,7 +34,7 @@ sort the output alphabetically [Philip M. Gollucci]
 croak in case a filter returns DECLINED after calling $f->read (as it
 is not supposed to happen) [Stas]
 
-another round of cygwin fixes [Nick *** <doink123@abv.bg>]
+another round of cygwin fixes [Nikolay Ananiev <ananiev@thegdb.com>]
 
 Multiple fixes to make mod_perl 2.0 work with blead-perl (5.9.3+)
 [Stas]
@@ -60,10 +60,10 @@ B::Terse has problems with XS code, so adjust Apache::Status to eval
 
 Fix a broken regexp in Apache2::Build::dir() on win32 that would
 incorrectly attempt to fully-qualify paths like c:/some/path
-[Nick *** <doink123@abv.bg>]
+[Nikolay Ananiev <ananiev@thegdb.com>]
 
 Fix the "No library found" warnings when building on win32 without
-apxs and MP_AP_PREFIX [Nick *** <doink123@abv.bg>]
+apxs and MP_AP_PREFIX [Nikolay Ananiev <ananiev@thegdb.com>]
 
 The pure-perl ModPerl::Util::unload_package implementation was
 accidently deleting sub-stashes [Gozer]
@@ -147,15 +147,15 @@ fprintf(), which doesn't work everywhere [Stas]
 
 Fix a warning triggered by `ln` on Cygwin, when running perl
 Makefile.PL for a second time without previously running make
-clean. [Nick *** <doink123@abv.bg>]
+clean. [Nikolay Ananiev <ananiev@thegdb.com>]
 
 When compiling a static mod_perl and
 MP_AP_CONFIGURE="--with-apr=/some/path" argument is given, Apache will
 use the apr-config at the given path, but mod_perl was using the
-default at "srclib/apr/.libs". Fix that [Nick *** <doink123@abv.bg>]
+default at "srclib/apr/.libs". Fix that [Nikolay Ananiev <ananiev@thegdb.com>]
 
 Show MP_APU_CONFIG as an argument to Makefile.PL in the Usage
-menu. [Nick *** <doink123@abv.bg>]
+menu. [Nikolay Ananiev <ananiev@thegdb.com>]
 
 Makefile.PL: fix the pre-rename mp2 install diagnostics code, to use
 the mp version of 1.999xx and not 1.999_xx, as the latter is
@@ -177,8 +177,8 @@ making a symlink to mod_perl.a (called libmod_perl.a) and copy
 DynaLoader.a to libDynaLoader.a (I don't create a symlink, because,
 when running make clean, the real DynaLoader.a may get deleted).  The
 APR::* extensions are not affected, because in both cases we link them
-against aprext.  Also other small fixes are added. [Nick ***
-<doink123@abv.bg>]
+against aprext.  Also other small fixes are added. [Nikolay Ananiev
+<ananiev@thegdb.com>]
 
 
 
@@ -186,10 +186,10 @@ against aprext.  Also other small fixes are added. [Nick ***
 =item 1.999_23 - May 3, 2005
 
 fix Apache2::Build::dynamic_link_MSWin32 to generate a new line after
-dynamic_link code in Makefile [Nick *** <doink123@abv.bg>]
+dynamic_link code in Makefile [Nikolay Ananiev <ananiev@thegdb.com>]
 
 fix a warning in Apache2::Build::build_config() when building
-with MP_STATIC_EXTS=1 [Nick *** <doink123@abv.bg>]
+with MP_STATIC_EXTS=1 [Nikolay Ananiev <ananiev@thegdb.com>]
 
 improving DSO support on cygwin. The problem with cygwin is that it
 behaves like windows (it's a posix layer over windows after
@@ -197,8 +197,8 @@ all). That's why we need to supply all symbols during linking time
 just like on win32, by adding -lapr-0 -laprutil-0 and -lhttpd. On
 windows, Apache supplies all the three libraries and it's easy to
 link, but on cygwin apache doesn't play nice and doesn't supply
-libhttpd. This change adds libapr and libaprutil. [Nick ***
-<doink123@abv.bg>]
+libhttpd. This change adds libapr and libaprutil. [Nikolay Ananiev
+<ananiev@thegdb.com>]
 
 improve the diagnostics when detecting mp2 < 1.999022, tell the user
 which files and/or dirs need to be removed [Stas]
@@ -271,7 +271,7 @@ since they weren't used at all [Geoffrey Young]
 Fixes for Apache2::Reload's touchfile feature (return Apache2::Const::OK
 instead of 1) [Chris Warren <chwarren@cisco.com>]
 
-cygwin fixes: [Nick *** <doink123@abv.bg>]
+cygwin fixes: [Nikolay Ananiev <ananiev@thegdb.com>]
 - doesn't like XS wrapper starting with 'static'
 - need to compile everything with -DCYGWIN
 
