@@ -55,34 +55,40 @@ BEGIN {
 
         $HOW_BIG_IS_IT = \&solaris_2_6_size_check;
 
-    } elsif (LINUX) {
+    }
+    elsif (LINUX) {
         if ( eval { require Linux::Smaps } and Linux::Smaps->new($$) ) {
             $HOW_BIG_IS_IT = \&linux_smaps_size_check_first_time;
         } else {
             $USE_SMAPS = 0;
             $HOW_BIG_IS_IT = \&linux_size_check;
         }
-    } elsif (BSD_LIKE) {
+    }
+    elsif (BSD_LIKE) {
 
         # will getrusage work on all BSDs?  I should hope so.
         if ( eval { require BSD::Resource } ) {
             $HOW_BIG_IS_IT = \&bsd_size_check;
-        } else {
+        }
+        else {
             die "you must install BSD::Resource for Apache2::SizeLimit " .
                 "to work on your platform.";
         }
 
 #  Currently unsupported for mp2 because of threads...
-#     } elsif (WIN32) {
+#     }
+#      elsif (WIN32) {
 # 
 #         if ( eval { require Win32::API } ) {
 #             $HOW_BIG_IS_IT = \&win32_size_check;
-#         } else {
+#         }
+#          else {
 #             die "you must install Win32::API for Apache2::SizeLimit " .
 #                 "to work on your platform.";
 #         }
 
-    } else {
+    }
+    else {
 
         die "Apache2::SizeLimit not implemented on $^O";
 
@@ -114,7 +120,8 @@ sub linux_size_check {
     if (open my $fh, "<$file") {
         ($size, $resident, $share) = split /\s/, scalar <$fh>;
         close $fh;
-    } else {
+    }
+    else {
         error_log("Fatal Error: couldn't access $file");
     }
 
@@ -196,7 +203,8 @@ sub exit_if_too_big {
             error_log($msg);
 
             $r->child_terminate();
-        } else {    # this is the main httpd, whose parent is init?
+        }
+        else {    # this is the main httpd, whose parent is init?
             my $msg = "main process too big, SIZE=$size KB ";
             $msg .= " SHARE=$share KB" if $share;
             error_log($msg);
@@ -242,7 +250,8 @@ sub handler {
         # we want to operate in a cleanup handler
         if (ModPerl::Util::current_callback() eq 'PerlCleanupHandler') {
             exit_if_too_big($r);
-        } else {
+        }
+        else {
             $r->pool->cleanup_register(\&exit_if_too_big, $r);
         }
     }
