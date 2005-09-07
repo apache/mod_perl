@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Add support for the newer Smaps (/proc/self/statm) on Linux
+systems that support it (i.e. linux-2.6.13-rc4-mm1)
+to accurately count the amount of shared memory.
+[Torsten Foertsch <torsten.foertsch gmx.net>]
+
 On cygwin some dlls might happen to be with identical base addresses
 and if you try to load both of them you'll get an error and you'll
 have to use the rebase utility to fix them.  this fix should prevent
