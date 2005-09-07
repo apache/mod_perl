@@ -59,7 +59,8 @@ BEGIN {
     elsif (LINUX) {
         if ( eval { require Linux::Smaps } and Linux::Smaps->new($$) ) {
             $HOW_BIG_IS_IT = \&linux_smaps_size_check_first_time;
-        } else {
+        }
+        else {
             $USE_SMAPS = 0;
             $HOW_BIG_IS_IT = \&linux_size_check;
         }
