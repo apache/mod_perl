@@ -40,6 +40,12 @@ the branch was created @r165203
 
 now resolve any conflicts and commit the changes
 
+from now on, all you need to do is to run:
+
+    build/svn.remerge
+
+as it automatically sets the merge-point during the last run
+
 
 #######################################
 ### merge the branch into the trunk ###
