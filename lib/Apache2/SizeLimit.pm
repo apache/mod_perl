@@ -34,13 +34,14 @@ use constant BSD_LIKE => $^O =~ /(bsd|aix|darwin)/i;
 
 use Apache2::Const -compile => qw(OK DECLINED);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 our $CHECK_EVERY_N_REQUESTS = 1;
 our $REQUEST_COUNT          = 1;
 our $MAX_PROCESS_SIZE       = 0;
 our $MIN_SHARE_SIZE         = 0;
 our $MAX_UNSHARED_SIZE      = 0;
+our $USE_SMAPS              = 1;
 
 our ($HOW_BIG_IS_IT, $START_TIME);
 
@@ -55,9 +56,12 @@ BEGIN {
         $HOW_BIG_IS_IT = \&solaris_2_6_size_check;
 
     } elsif (LINUX) {
-
-        $HOW_BIG_IS_IT = \&linux_size_check;
-
+        if ( eval { require Linux::Smaps } and Linux::Smaps->new($$) ) {
+            $HOW_BIG_IS_IT = \&linux_smaps_size_check_first_time;
+        } else {
+            $USE_SMAPS = 0;
+            $HOW_BIG_IS_IT = \&linux_size_check;
+        }
     } elsif (BSD_LIKE) {
 
         # will getrusage work on all BSDs?  I should hope so.
@@ -83,6 +87,23 @@ BEGIN {
         die "Apache2::SizeLimit not implemented on $^O";
 
     }
+}
+
+sub linux_smaps_size_check_first_time {
+
+    if ($USE_SMAPS) {
+        $HOW_BIG_IS_IT = \&linux_smaps_size_check;
+    } else {
+        $HOW_BIG_IS_IT = \&linux_size_check;
+    }
+
+    goto &$HOW_BIG_IS_IT;
+}
+
+sub linux_smaps_size_check {
+
+    my $s = Linux::Smaps->new($$)->all;
+    return ($s->size, $s->shared_cleani + $s->shared_dirty);
 }
 
 # return process size (in KB)
