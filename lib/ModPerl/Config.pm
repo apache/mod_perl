@@ -48,11 +48,13 @@ sub as_string {
 
     # httpd opts
     my $test_config = Apache::TestConfig->new({thaw=>1});
+
     if (my $httpd = $test_config->{vars}->{httpd}) {
         $command = "$httpd -V";
         $cfg .= "\n\n*** $command\n";
         $cfg .= qx{$command};
-    } else {
+    } 
+    else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
     }
 
