@@ -36,7 +36,7 @@ C<perl -MCPAN -e 'install Bundle::Apache2'>
 
 Bundle::ApacheTest    - Needs for testing
 
-CGI  3.10             - Used in testing (it's in core, but some vendors exclude it)
+CGI  3.11             - Used in testing (it's in core, but some vendors exclude it)
 
 Chatbot::Eliza        - Used in testing
 
