@@ -766,9 +766,10 @@ EOF
     print $fh <<'EOF';
 
 use base qw(Exporter);
+use mod_perl2;
 
 our @EXPORT = qw(print_method print_module print_object);
-
+our $VERSION = $mod_perl2::VERSION;
 use constant MODULE => 0;
 use constant OBJECT  => 1;
 

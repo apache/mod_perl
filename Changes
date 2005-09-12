@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Correctly set the version of ModPerl::MethodLookup, previously,
+it was not set because of the way it was Generating via ModPerl::WrapXS.
+[Philip M. Gollucci]
+
 Improve the detection of whether or not we are in an mp2 build tree.
 This allows usage of ExtUtils::MakeMaker options such as PREFIX to
 not break the probe of mp2 build trees.
