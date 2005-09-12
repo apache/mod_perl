@@ -210,6 +210,7 @@ sub status_inc {
         next if $file =~ m:^/:;
         next unless $file =~ m:\.pm:;
         next unless $INC{$file}; #e.g. fake Apache2/TieHandle.pm
+        next if $module eq 'mod_perl';
 
         no strict 'refs';
         (my $module = $file) =~ s,/,::,g;
