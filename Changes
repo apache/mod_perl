@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Improve the detection of whether or not we are in an mp2 build tree.
+This allows usage of ExtUtils::MakeMaker options such as PREFIX to
+not break the probe of mp2 build trees.
+[Stas, Philip M. Gollucci]
+
 Add support for the newer Smaps (/proc/self/statm) on Linux
 systems that support it (i.e. linux-2.6.13-rc4-mm1)
 to accurately count the amount of shared memory.
