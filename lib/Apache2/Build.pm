@@ -26,7 +26,8 @@ use File::Basename;
 use ExtUtils::Embed ();
 use File::Copy ();
 
-use constant IS_MOD_PERL_BUILD => grep { -e "$_/Makefile.PL" && -e "$_/lib/mod_perl2.pm" } qw(. ..);
+use constant IS_MOD_PERL_BUILD => grep 
+    { -e "$_/Makefile.PL" && -e "$_/lib/mod_perl2.pm" } qw(. ..);
 
 use constant AIX     => $^O eq 'aix';
 use constant DARWIN  => $^O eq 'darwin';
