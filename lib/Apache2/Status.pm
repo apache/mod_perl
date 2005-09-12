@@ -210,11 +210,11 @@ sub status_inc {
         next if $file =~ m:^/:;
         next unless $file =~ m:\.pm:;
         next unless $INC{$file}; #e.g. fake Apache2/TieHandle.pm
-        next if $module eq 'mod_perl';
 
         no strict 'refs';
         (my $module = $file) =~ s,/,::,g;
         $module =~ s,\.pm$,,;
+        next if $module eq 'mod_perl';
         my $v = ${"$module\:\:VERSION"} || '0.00';
         push @retval, (
             "<tr>", 
