@@ -69,9 +69,6 @@ HPUX11i     DSO
   Need to put Philippe's smoking test into the core
   -- shouldn't forget to test with perlio enabled and disabled
 
-* mp2bug -- add the output of 'ldd httpd' to the report
-[pgollucci volunteers]
-
 * source_scan won't create Wrap/Foo/Bar.xs if
   xs/maps/modperl_functions.map defines only a boot section:
   MODULE=APR::IO PACKAGE=APR::IO BOOT=1 
