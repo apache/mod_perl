@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+Add the output of ldd(unix/cygwin) and otool -L (darwin)
+for httpd to the mp2bug report script.
+[Philip M. Gollucci]
+
 Prevent tools such as Apache2::Status's Loaded Modules screen
 from displaying erroneous information about mod_perl.pm being loaded.
 [Stas, Philip M. Gollucci]
