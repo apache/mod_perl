@@ -59,7 +59,7 @@ sub as_string {
 
         if (DARWIN) {
             my $otool = Apache::TestConfig::which('otool');
-            $command = " -L $otool" if $otool;
+            $command = "$otool -L $httpd" if $otool;
         }
         elsif (!WIN32) {
             my $ldd = Apache::TestConfig::which('ldd');
