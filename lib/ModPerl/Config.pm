@@ -21,7 +21,6 @@ use Apache::TestConfig ();
 use File::Spec ();
 
 use constant WIN32 => Apache2::Build::WIN32;
-use constant DARWIN => Apache2::Build::DARWIN;
 
 sub as_string {
     my $build = Apache2::Build->build_config;
@@ -55,21 +54,7 @@ sub as_string {
         $cfg .= "\n\n*** $command\n";
         $cfg .= qx{$command};
 
-        my $command;
-
-        if (DARWIN) {
-            my $otool = Apache::TestConfig::which('otool');
-            $command = "$otool -L $httpd" if $otool;
-        }
-        elsif (!WIN32) {
-            my $ldd = Apache::TestConfig::which('ldd');
-            $command = "$ldd $httpd" if $ldd;
-        }
-
-        if ($command) {
-            $cfg .= "\n*** $command\n";
-            $cfg .= qx{$command};
-        }
+        $cfg .= Apache::TestConfig::ldd_as_string($httpd);
     } 
     else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
