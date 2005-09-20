@@ -61,17 +61,18 @@ sub dump_array {
 sub dump_hash {
     my ($self, $name, $entry) = @_;
     for my $elem (sort keys %{$entry}) {
-        $self->add_config(Data::Dumper->Dump([$entry->{$elem}], ["\$$name"."{'$elem'}"])); 
+        $self->add_config(Data::Dumper->Dump([$entry->{$elem}],
+                                             ["\$$name"."{'$elem'}"]));
     }
-    
+
 }
 
 sub dump_entry {
     my ($self, $name, $entry) = @_;
-    
+
     return if not defined $entry;
     my $type = ref($entry);
-    
+
     if ($type eq 'SCALAR') {
         $self->add_config(Data::Dumper->Dump([$$entry],[$name]));
     }
@@ -85,7 +86,7 @@ sub dump_entry {
 
 sub dump_special {
     my ($self, @data) = @_;
-    
+
     my @dump = grep { defined } @data;
     return unless @dump;
 
