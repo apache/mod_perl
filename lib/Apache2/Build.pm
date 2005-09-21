@@ -573,6 +573,9 @@ sub has_gcc_version {
 
     return 0 unless $has_version;
 
+    #Only interested in leading version digits
+    $has_version =~ s/^([0-9.]+).*/$1/;
+
     my @tuples = split /\./, $has_version, 3;
     my @r_tuples = split /\./, $requested_version, 3;
     
