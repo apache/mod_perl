@@ -12,7 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
-Fix a cirtical but trivial but that would cause MP_MAINTAINER=1
+Fix a cirtical bug trivial but that would cause MP_MAINTAINER=1
 or MP_TRACE=1 builds to fail if not building against a threaded APR.
 Functions such as apr_os_thread_current() would not be linked in,
 but were expected to be.
