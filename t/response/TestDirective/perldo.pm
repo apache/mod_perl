@@ -11,7 +11,7 @@ use Apache2::PerlSections;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 15;
+    plan $r, tests => 16;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
 
@@ -39,7 +39,8 @@ sub handler {
     # 3 would mean we are still counting lines from the context of the eval
     ok $TestDirective::perl::line > 3;
 
-    ok t_cmp($0, "-e", '$0');
+    ok !t_cmp($0, '-e', '$0');
+    ok t_cmp($0, qr/httpd/, '$0');
 
     ok t_cmp($TestDirective::perl::Included, 1, "Include");
 

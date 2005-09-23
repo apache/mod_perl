@@ -387,7 +387,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
          * needed by the Perl callback.
          */
         if (!scfg) {
-            scfg = modperl_config_srv_new(p);
+            scfg = modperl_config_srv_new(p, s);
             modperl_set_module_config(s->module_config, scfg);
             scfg->server = s;
         }

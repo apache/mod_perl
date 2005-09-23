@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+$0 Fixes : [Gozer]
+- Setting $0 works on Linux again
+- HP-UX and *BSDes show the correct process name instead of '-e'
+ 
 Fix a cirtical but trivial bug that would cause MP_MAINTAINER=1
 or MP_TRACE=1 builds to fail if not building against a threaded APR.
 Functions such as apr_os_thread_current() would not be linked in,

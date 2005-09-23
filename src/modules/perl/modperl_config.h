@@ -20,7 +20,7 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir);
 
 void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv);
 
-modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p);
+modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p, server_rec *s);
 
 modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p);
 

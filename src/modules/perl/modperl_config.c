@@ -147,7 +147,7 @@ modperl_config_req_t *modperl_config_req_new(request_rec *r)
     return rcfg;
 }
 
-modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
+modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p, server_rec *s)
 {
     modperl_config_srv_t *scfg = (modperl_config_srv_t *)
         apr_pcalloc(p, sizeof(*scfg));
@@ -173,18 +173,9 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p)
     scfg->gtop = modperl_gtop_new(p);
 #endif        
 
-    /* must copy ap_server_argv0, because otherwise any read/write of
-     * $0 corrupts process' argv[0] (visible with 'ps -ef' on most
-     * unices). This is due to the logic of calculating PL_origalen in
-     * perl_parse, which is later used in set_mg.c:Perl_magic_set() to
-     * truncate the argv[0] setting. remember that argv[0] passed to
-     * perl_parse() != process's real argv[0].
-     *
-     * as a copying side-effect, changing $0 now doesn't affect the
-     * way the process is seen from the outside.
-     */
-    modperl_config_srv_argv_push(apr_pstrmemdup(p, ap_server_argv0,
-                                                strlen(ap_server_argv0)));
+    /* make sure httpd's argv[0] is the first argument so $0 is
+     * correctly connected to the real thing */
+    modperl_config_srv_argv_push(s->process->argv[0]);
 
     MP_TRACE_d(MP_FUNC, "new scfg: 0x%lx\n", (unsigned long)scfg);
 
@@ -233,7 +224,7 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc)
 
 void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
 {
-    modperl_config_srv_t *scfg = modperl_config_srv_new(p);
+    modperl_config_srv_t *scfg = modperl_config_srv_new(p, s);
 
     if (!s->is_virtual) {
 
@@ -282,7 +273,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     modperl_config_srv_t
         *base = (modperl_config_srv_t *)basev,
         *add  = (modperl_config_srv_t *)addv,
-        *mrg  = modperl_config_srv_new(p);
+        *mrg  = modperl_config_srv_new(p, add->server);
 
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx, mrg==0x%lx\n", 
                (unsigned long)basev, (unsigned long)addv,
