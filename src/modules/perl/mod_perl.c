@@ -271,6 +271,13 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     PL_reentrant_buffer->_crypt_struct.current_saltbits = 0;
 #endif
 
+    /* We need to reset $0 to argv[0] (httpd) since perl_parse() will
+     * have set it to '-e'. Being magic-aware ensures that some
+     * OS-specific magic will happen (i.e. setproctitle() on *BSDs)
+     */
+    PL_origalen = strlen(argv[0]) + 1;
+    sv_setpv_mg(get_sv("0",0), argv[0]);
+
     perl_run(perl);
 
 #ifdef USE_ITHREADS
