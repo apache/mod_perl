@@ -100,7 +100,7 @@ SV *modperl_apr_array_header2avrv(pTHX_ apr_array_header_t *array);
 apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
                                                   SV *avrv);
 void modperl_package_unload(pTHX_ const char *package);
-#if defined(MP_TRACE) && defined(APR_HAS_THREADS)
+#if defined(MP_TRACE) && APR_HAS_THREADS
 #define MP_TRACEf_TID   "/tid 0x%lx"
 #define MP_TRACEv_TID   (unsigned long)apr_os_thread_current()
 #define MP_TRACEv_TID_  MP_TRACEv_TID,
