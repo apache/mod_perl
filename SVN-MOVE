@@ -40,10 +40,3 @@ so it can be applied/edited easily.
 * cvs2svn [cvs]embperl:
   Move to [svn]/perl/embperl/trunk (with tags/branches there too)
 
-* cvs2svn [cvs]modperl (aka modperl-1.x)
-  Move to [svn]/perl/modperl/branches/1/
-  Tags along with mp2 tags in [svn]/perl/modperl/tags/
-
-  and then update the snapshot (apmail/bin/taritup)
-  make_svn_snapshot "perl/modperl/branches/1" "modperl-1.0" 
-
