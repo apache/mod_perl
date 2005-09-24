@@ -6,15 +6,15 @@ Instructions for mod_perl 2.0 Release Manager
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.
 
-  a) nuke any preinstalled mod_perl libs and run 'make test'
+  a. nuke any preinstalled mod_perl libs and run 'make test'
 
-  b) test that you can 'make install' and then run 'make test' again
+  b. test that you can 'make install' and then run 'make test' again
 
-  c) test whether we still 100% OK on systems with no LWP:
+  c. test whether we still 100% OK on systems with no LWP:
 
      % APACHE_TEST_PRETEND_NO_LWP=1 make test
 
-  d) build and test as root. double check that you have started from a
+  d. build and test as root. double check that you have started from a
      fresh source, without having any stale dirs from the previous
      build laying around.
 
@@ -177,3 +177,7 @@ Instructions for mod_perl 2.0 Release Manager
      % svn ci -m "start 2.0.3-dev cycle" Changes lib/mod_perl2.pm \
        STATUS RELEASE
 
+10. Old Versions
+ 
+    Remind other Developers to delete versions older then the prior release
+    from CPAN.  Old releases can always be found on BackPan. 
