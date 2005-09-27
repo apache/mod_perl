@@ -1,5 +1,8 @@
 package TestCommon::LogDiff;
 
+use strict;
+use warnings FATAL => 'all';
+
 use POSIX ();
 
 sub new {
@@ -8,7 +11,7 @@ sub new {
 
     open my $fh, "<$path" or die "Can't open $path: $!";
     seek $fh, 0, POSIX::SEEK_END();
-    $pos = tell $fh;
+    my $pos = tell $fh;
 
     my %self = (
         path => $path,
