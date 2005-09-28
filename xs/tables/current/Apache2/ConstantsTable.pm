@@ -227,7 +227,12 @@ $Apache2::ConstantsTable = {
       'TAKE23',
       'TAKE123',
       'TAKE13'
-    ]
+    ],
+    'proxy' => [
+      'PROXYREQ_REVERSE',
+      'PROXYREQ_NONE',
+      'PROXYREQ_PROXY',
+    ],
   },
   'APR::Const' => {
     'uri' => [
@@ -459,7 +464,7 @@ $Apache2::ConstantsTable = {
     ],
     'common' => [
       'APR_SUCCESS'
-    ]
+    ],
   }
 };
 

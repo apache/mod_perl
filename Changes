@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.2-dev
 
+add :proxy import tag to Apache2::Const which exposes new
+constants PROXYREQ_NONE, PROXYREQ_PROXY, and PROXYREQ_REVERSE
+[Geoffrey Young]
+
 $0 Fixes : [Gozer]
 - Setting $0 works on Linux again
 - HP-UX and *BSDes show the correct process name instead of '-e'

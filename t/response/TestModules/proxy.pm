@@ -11,7 +11,7 @@ use Apache2::RequestIO ();
 
 my $uri_real = "/TestModules__proxy_real";
 
-use Apache2::Const -compile => qw(DECLINED OK);
+use Apache2::Const -compile => qw(DECLINED OK PROXYREQ_REVERSE);
 
 sub proxy {
     my $r = shift;
@@ -23,7 +23,7 @@ sub proxy {
     my $real_url = sprintf "http://%s:%d%s",
         $s->server_hostname, $s->port, $uri_real;
 
-    $r->proxyreq(1);
+    $r->proxyreq(Apache2::Const::PROXYREQ_REVERSE);
     $r->uri($real_url);
     $r->filename("proxy:$real_url");
     $r->handler('proxy-server');
