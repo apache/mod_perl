@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 
 # -compile puts constants into the Apache2:: namespace
-use Apache2::Const -compile => qw(:http :common :mpmq
+use Apache2::Const -compile => qw(:http :common :mpmq :proxy
                                   TAKE23 &OPT_EXECCGI
                                   DECLINE_CMD DIR_MAGIC_TYPE 
                                   CRLF);
@@ -15,7 +15,7 @@ use Apache2::Const -compile => qw(:http :common :mpmq
 # caller namespace.  also defaults to :common
 use Apache2::Const;
 
-plan tests => 17;
+plan tests => 18;
 
 ok t_cmp(REDIRECT, 302, 'REDIRECT');
 
@@ -36,6 +36,10 @@ ok t_cmp(Apache2::Const::DIR_MAGIC_TYPE,
 ok t_cmp(Apache2::Const::MPMQ_MAX_SPARE_DAEMONS, 
          9,
          'Apache2::Const::MPMQ_MAX_SPARE_DAEMONS');
+
+ok t_cmp(Apache2::Const::PROXYREQ_REVERSE,
+         2,
+         'Apache2::Const::PROXYREQ_REVERSE');
 
 # the rest of the tests don't fit into the t_cmp() meme
 # for one reason or anothre...
