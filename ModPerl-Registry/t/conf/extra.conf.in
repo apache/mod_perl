@@ -37,6 +37,8 @@ PerlModule ModPerl::Util
 #############################
 <IfModule mod_alias.c>
     Alias /registry/         @ServerRoot@/cgi-bin/
+    Alias /dirindex/         @ServerRoot@/cgi-bin/
+    Alias /dirindex2/        @ServerRoot@/cgi-bin/
     Alias /registry_bb/      @ServerRoot@/cgi-bin/
     Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
     Alias /registry_prefork/ @ServerRoot@/cgi-bin/
@@ -64,6 +66,16 @@ PerlModule ModPerl::Registry
     PerlResponseHandler ModPerl::Registry
     PerlOptions +ParseHeaders
 </Location>
+
+<IfModule mod_dir.c>
+    <Location /dirindex>
+        AddHandler perl-script .pl
+        Options +ExecCGI
+        PerlResponseHandler ModPerl::Registry
+        PerlOptions +ParseHeaders
+        DirectoryIndex cgi.pl
+    </Location>
+</IfModule>
 
 <Location /registry_modperl_handler>
     SetHandler modperl
