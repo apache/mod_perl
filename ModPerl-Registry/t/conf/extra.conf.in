@@ -38,7 +38,6 @@ PerlModule ModPerl::Util
 <IfModule mod_alias.c>
     Alias /registry/         @ServerRoot@/cgi-bin/
     Alias /dirindex/         @ServerRoot@/cgi-bin/
-    Alias /dirindex2/        @ServerRoot@/cgi-bin/
     Alias /registry_bb/      @ServerRoot@/cgi-bin/
     Alias /registry_oo_conf/ @ServerRoot@/cgi-bin/
     Alias /registry_prefork/ @ServerRoot@/cgi-bin/
