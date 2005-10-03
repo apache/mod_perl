@@ -480,11 +480,11 @@ sub set_modperl_version {
 
     open my $fh, 'Changes';
     while (<$fh>) {
-	if (/^=item.*-dev/) {
-	    $VERSION .= '-dev';
-	    last;
-	}
-	last if /^=item/;
+ 	    if (/^=item.*-dev/) {
+	        $VERSION .= '-dev';
+	        last;
+	    }
+	    last if /^=item/;
     }
     close $fh;
 
