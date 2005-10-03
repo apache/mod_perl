@@ -4,7 +4,9 @@ Instructions for mod_perl 2.0 Release Manager
    etc. Now test this generated package mod_perl-2.0.2.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
-   unpacking the package each time afresh.
+   unpacking the package each time afresh.  
+   Note, in step 3a, removing the "-dev" line changes the package version
+   name.  i.e. (2.0.2-dev to 2.0.2)
 
   a. nuke any preinstalled mod_perl libs and run 'make test'
 
