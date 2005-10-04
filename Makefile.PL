@@ -89,7 +89,7 @@ ModPerl::BuildMM::WriteMakefile(
     },
     dist      => {
         DIST_DEFAULT => 'mydist',
-	COMPRESS     => 'gzip -9f', SUFFIX=>'gz',
+        COMPRESS     => 'gzip -9f', SUFFIX=>'gz',
     },
 );
 
@@ -547,17 +547,17 @@ sub system_sanity_check {
 
     my $ccflags = $build->perl_config('ccflags');
     for (split /\s+/, $ccflags) {
-	next unless s/^-I//;
-	my $header = "$_/ap_mmn.h";
-	if (-e $header) {
-	    $build->phat_warn(<<EOF);
+        next unless s/^-I//;
+        my $header = "$_/ap_mmn.h";
+        if (-e $header) {
+            $build->phat_warn(<<EOF);
 Apache headers found in unexpected location: ``$_'', suggestions:
    *) Remove via ``rpm -e apache''
    *) Remove by hand
    *) Complain to your os vendor about their poor layout choice
    *) Complain to your sysadmin about their poor layout choice
 EOF
-	}
+        }
     }
 
     $build->lib_check('gdbm');
