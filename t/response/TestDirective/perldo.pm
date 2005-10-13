@@ -40,7 +40,8 @@ sub handler {
     ok $TestDirective::perl::line > 3;
 
     ok !t_cmp($0, '-e', '$0');
-    ok t_cmp($0, qr/httpd|apache\.exe/i, '$0');
+    my $target = Apache::Test::vars('target');
+    ok t_cmp($0, qr/$target/i, '$0');
 
     ok t_cmp($TestDirective::perl::Included, 1, "Include");
 
