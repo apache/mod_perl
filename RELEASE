@@ -7,6 +7,12 @@ Instructions for mod_perl 2.0 Release Manager
      $ cd mod_perl-docs
      $ grep $USER src/dist/KEYS
 
+    note that the KEYS file itself contains all the instructions you
+    need on how to add your key.  if you need further help on gpg
+    (like how to create a key in the first place) you can look here
+
+      http://people.apache.org/~geoff/gpghowto.html
+
 1. 'make dist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package mod_perl-2.0.2.tar.gz (not
    the current build) with as many
