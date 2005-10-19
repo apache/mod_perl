@@ -1,5 +1,12 @@
 Instructions for mod_perl 2.0 Release Manager
 
+0.  make sure your public key is in the KEYS file in the mod_perl docs.
+    you should only need to do this if this is your first time playing
+    Release Manager
+
+     $ cd mod_perl-docs
+     $ grep $USER src/dist/KEYS
+
 1. 'make dist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package mod_perl-2.0.2.tar.gz (not
    the current build) with as many
