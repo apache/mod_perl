@@ -155,6 +155,7 @@ Instructions for mod_perl 2.0 Release Manager
 8. Announce the package
 
   a. post ... to the modperl, announce lists
+  Note, to post to announce@, you must be sending for an apache.org address.
   Subject: [ANNOUNCE] mod_perl 2.0.3 
      include 
   - link at perl.apache.org:
