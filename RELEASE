@@ -13,6 +13,11 @@ Instructions for mod_perl 2.0 Release Manager
 
       http://people.apache.org/~geoff/gpghowto.html
 
+    Double check that  
+        http://perl.apache.org/dist/KEYS 
+        http://www.apache.org/dist/perl/KEYS
+    are symlinks in the filesystem.  If not, contact pmc@.
+
 1. 'make dist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package mod_perl-2.0.3.tar.gz (not
    the current build) with as many
