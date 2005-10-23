@@ -21,18 +21,19 @@ Instructions for mod_perl 2.0 Release Manager
    the current build) with as many
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.  
-   Note, in step 3a, removing the "-dev" line changes the package version
-   name.  i.e. (2.0.3-dev to 2.0.3)
 
-  a. nuke any preinstalled mod_perl libs and run 'make test'
+  a. edit ./Changes 
+     - change -dev to -rc\d+  starting with -rc1
 
-  b. test that you can 'make install' and then run 'make test' again
+  b. nuke any preinstalled mod_perl libs and run 'make test'
 
-  c. test whether we still 100% OK on systems with no LWP:
+  c. test that you can 'make install' and then run 'make test' again
+
+  d. test whether we still 100% OK on systems with no LWP:
 
      % APACHE_TEST_PRETEND_NO_LWP=1 make test
 
-  d. build and test as root. double check that you have started from a
+  e. build and test as root. double check that you have started from a
      fresh source, without having any stale dirs from the previous
      build laying around.
 
@@ -47,7 +48,7 @@ Instructions for mod_perl 2.0 Release Manager
    package to be released
 
   a. edit ./Changes:
-     - remove '-dev' 
+     - remove -rc\d+
      - add release date
 
   b. check ./README and ./Makefile.PL

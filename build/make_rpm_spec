@@ -6,7 +6,7 @@ require "lib/mod_perl2.pm";
 my $dev_build = is_dev_build();
 my $release   = $dev_build ? svn_release() : 1;
 my $version   = $mod_perl2::VERSION_TRIPLET;
-my $path      = $dev_build ? "mod_perl-$version-dev" : "mod_perl-$version";
+my $path      = $dev_build ? "mod_perl-$version-$dev_build" : "mod_perl-$version";
 my $tarname   = "$path.tar.gz";
 
 my $httpd_ver = min_httpd_ver();
@@ -135,8 +135,8 @@ sub is_dev_build {
     my $dev;
     open my $fh, 'Changes';
     while (<$fh>) {
-        if (/^=item.*-dev/) {
-            $dev = 1;
+        if (/^=item.*-(dev|rc\d+)/) {
+            $dev = $1;
             last;
         }
         last if /^=item/;
