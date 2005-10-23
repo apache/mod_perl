@@ -54,6 +54,10 @@
   they all seem to fall through the data, thus not really flushing
   anything. this can be easily reproduced with MyApache::FilterSnoop.
 
+  See also
+  http://www.gossamer-threads.com/lists/modperl/dev/84744?search_string=%23%7C%2C%20flushing%2C%20etc;#84743
+  for a related $| but not the same issue.
+
 * Apache::Log compat issues:
 
   Apache->warn, Apache::warn, Apache::Server->warn and
