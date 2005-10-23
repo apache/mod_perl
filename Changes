@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+When using Apache2::PerlSections->dump, the configuration 
+would print out in the correct order, but when the configuration was 
+passed off to Apache the ordering was lost.
+[Scott Wessels <swessels@usgn.net>]
 
 =item 2.0.2 - October 20, 2005
 
