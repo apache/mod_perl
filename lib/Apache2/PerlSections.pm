@@ -129,7 +129,7 @@ sub dump_any {
 sub dump_hash {
     my ($self, $name, $hash) = @_;
 
-    for my $entry (sort keys %{ $hash || {} }) {
+    for my $entry (keys %{ $hash || {} }) {
         my $item = $hash->{$entry};
         my $type = ref($item);
 
@@ -149,7 +149,7 @@ sub dump_section {
 
     $self->add_config("<$name $loc>\n");
 
-    for my $entry (sort keys %{ $hash || {} }) {
+    for my $entry (keys %{ $hash || {} }) {
         $self->dump_entry($entry, $hash->{$entry});
     }
 
