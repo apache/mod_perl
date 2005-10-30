@@ -16,8 +16,18 @@ Instructions for mod_perl 2.0 Release Manager
     Copy the KEYS file into place:
     % scp KEYS www.apache.org:/www/www.apache.org/dist/perl/KEYS
 
-    Ask the PMC to verify that you have the appropriate CPAN permissions
-    on dev@.
+    If this is your first release, ask someone with APML karma on PAUSE 
+    to verify you have the appropriate permissions.  Likely someone on 
+    the PMC can do this.
+
+    a. login into https://pause.perl.org
+    b. menu click: Select Mailinglist/Action
+    c. choose APML and share_perms and click go
+    d. click 3.1 Make somebody else co-maintainer
+    e. choose the modules to give the perms to
+       type the username of the new co-maintainer
+    f. if you happen to know that packages were added this release,
+       make sure you give the correct permissions to them.
 
 1. 'make dist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package mod_perl-2.0.3.tar.gz (not
