@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Require B::Size and B::TerseSize v0.06 for Apache2::Status
+options StatusTerse and StatusTerseSize which has now been 
+updated to support the new mod_perl2 api post RC5.
+[Philip M. Gollucci]
+
 When using Apache2::PerlSections->dump, the configuration 
 would print out in the correct order, but when the configuration was 
 passed off to Apache the ordering was lost.
