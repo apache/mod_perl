@@ -22,7 +22,6 @@ sub unload_package_pp {
         my $fullname = join '::', $package, $_;
         # code/hash/array/scalar might be imported make sure the gv
         # does not point elsewhere before undefing each
-        eval {
             if (%$fullname) {
                 *{$fullname} = {};
                 undef %$fullname;
@@ -48,11 +47,13 @@ sub unload_package_pp {
                 undef &$fullname;
             }
             if (*{$fullname}{IO}) {
-                if (fileno $fullname) {
-                    close $fullname;
-                }
+                local $@;
+                eval {
+                    if (fileno $fullname) {
+                        close $fullname;
+                    }
+                };
             }
-        };
     }
 
     #Wipe from %INC
