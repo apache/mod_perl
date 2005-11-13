@@ -22,38 +22,38 @@ sub unload_package_pp {
         my $fullname = join '::', $package, $_;
         # code/hash/array/scalar might be imported make sure the gv
         # does not point elsewhere before undefing each
-            if (%$fullname) {
-                *{$fullname} = {};
-                undef %$fullname;
+        if (%$fullname) {
+            *{$fullname} = {};
+            undef %$fullname;
+        }
+        if (@$fullname) {
+            *{$fullname} = [];
+            undef @$fullname;
+        }
+        if ($$fullname) {
+            my $tmp; # argh, no such thing as an anonymous scalar
+            *{$fullname} = \$tmp;
+            undef $$fullname;
+        }
+        if (defined &$fullname) {
+            no warnings;
+            local $^W = 0;
+            if (defined(my $p = prototype $fullname)) {
+                *{$fullname} = eval "sub ($p) {}";
             }
-            if (@$fullname) {
-                *{$fullname} = [];
-                undef @$fullname;
+            else {
+                *{$fullname} = sub {};
             }
-            if ($$fullname) {
-                my $tmp; # argh, no such thing as an anonymous scalar
-                *{$fullname} = \$tmp;
-                undef $$fullname;
-            }
-            if (defined &$fullname) {
-                no warnings;
-                local $^W = 0;
-                if (defined(my $p = prototype $fullname)) {
-                    *{$fullname} = eval "sub ($p) {}";
+            undef &$fullname;
+        }
+        if (*{$fullname}{IO}) {
+            local $@;
+            eval {
+                if (fileno $fullname) {
+                    close $fullname;
                 }
-                else {
-                    *{$fullname} = sub {};
-                }
-                undef &$fullname;
-            }
-            if (*{$fullname}{IO}) {
-                local $@;
-                eval {
-                    if (fileno $fullname) {
-                        close $fullname;
-                    }
-                };
-            }
+            };
+        }
     }
 
     #Wipe from %INC
