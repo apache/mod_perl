@@ -44,23 +44,13 @@ __DATA__
 <VirtualHost TestHooks::push_handlers_anon>
     PerlModule            TestHooks::push_handlers_anon
     <Perl >
-    # want to push a handler for a vhost, via $s, but the only way to
-    # get $s for vhost is to traverse the vhosts list
-    use Apache::Test;
-    use Apache::TestRequest;
-    Apache::TestRequest::module('TestHooks::push_handlers_anon');
-    my $hostport = Apache::TestRequest::hostport(Apache::Test::config());
-    my ($host, $port) = split ':', $hostport;
     my $s = Apache2::ServerUtil->server;
-    my $vs = $s->next;
-    for (; $vs; $vs = $vs->next) {
-        last if $port == $vs->port
-    }
-    $vs->push_handlers(PerlFixupHandler => 
+
+    $s->push_handlers(PerlFixupHandler => 
                        sub { &TestHooks::push_handlers_anon::add_note });
-    $vs->push_handlers(PerlFixupHandler => 
+    $s->push_handlers(PerlFixupHandler => 
                        \&TestHooks::push_handlers_anon::add_note       );
-    $vs->push_handlers(PerlFixupHandler =>
+    $s->push_handlers(PerlFixupHandler =>
                       "TestHooks::push_handlers_anon::add_note"        );
     </Perl>
 

@@ -63,6 +63,16 @@ if (Apache::Test::have_module('mod_alias.c')) {
 }
 </Perl>
 
+<Perl >
+$TestDirective::perl::base_server = Apache2::ServerUtil->server;
+</Perl>
+
+<VirtualHost perlsections>
+  <Perl >
+    $TestDirective::perl::vhost_server = Apache2::ServerUtil->server;
+  </Perl>
+</VirtualHost>
+
 ### --------------------------------- ###
 Perl $TestDirective::perl::worked="yes";
 
