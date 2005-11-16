@@ -11,7 +11,7 @@ use Apache2::PerlSections;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 16;
+    plan $r, tests => 17;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
 
@@ -52,7 +52,12 @@ sub handler {
     ok t_cmp($@, "", "PerlSections dump syntax check");
 
     ok t_cmp($TestDirective::perldo::test::Include, qr/perlsection.conf/);
-
+    
+    #Check for correct Apache2::ServerUtil->server behavior
+    my $bport = $TestDirective::perl::base_server->port;
+    my $vport = $TestDirective::perl::vhost_server->port;
+    ok defined $bport && defined $vport && $vport != $bport;
+    
     Apache2::Const::OK;
 }
 
