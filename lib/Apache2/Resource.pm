@@ -130,7 +130,8 @@ sub status_rlimit {
 
 if ($ENV{MOD_PERL}) {
     if ($ENV{PERL_RLIMIT_DEFAULTS}) {
-        Apache2->server->push_handlers(
+        require Apache2::ServerUtil;
+        Apache2::ServerUtil->server->push_handlers(
             PerlChildInitHandler => \&default_handler);
     }
 
