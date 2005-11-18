@@ -12,9 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
-Calling Apache2::ServerUtil->server in <Perl> sections now
-returns the server into which the <Perl> section was defined
-[Gozer]
+Added Apache2::PerlSections->server, returning the server
+into which the <Perl> section is defined [Gozer]
 
 Require B::Size and B::TerseSize v0.06 for Apache2::Status
 options StatusTerse and StatusTerseSize which has now been 

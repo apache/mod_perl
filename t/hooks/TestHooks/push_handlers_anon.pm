@@ -44,7 +44,7 @@ __DATA__
 <VirtualHost TestHooks::push_handlers_anon>
     PerlModule            TestHooks::push_handlers_anon
     <Perl >
-    my $s = Apache2::ServerUtil->server;
+    my $s = Apache2::PerlSections->server;
 
     $s->push_handlers(PerlFixupHandler => 
                        sub { &TestHooks::push_handlers_anon::add_note });
