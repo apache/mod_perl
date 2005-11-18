@@ -485,6 +485,8 @@ MP_CMD_SRV_DECLARE(perl)
 #define MP_DEFAULT_PERLSECTION_PACKAGE "Apache2::ReadConfig"
 #define MP_PERLSECTIONS_SAVECONFIG_SV \
     get_sv("Apache2::PerlSections::Save", FALSE)
+#define MP_PERLSECTIONS_SERVER_SV \
+    get_sv("Apache2::PerlSections::Server", TRUE)
 
 MP_CMD_SRV_DECLARE(perldo)
 {
@@ -550,7 +552,7 @@ MP_CMD_SRV_DECLARE(perldo)
     }
 
     {
-        server_rec *old_s = modperl_global_get_server_rec();
+        SV *server = MP_PERLSECTIONS_SERVER_SV;
         SV *code = newSVpv(arg, 0);
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;SAVETMPS;
@@ -558,11 +560,10 @@ MP_CMD_SRV_DECLARE(perldo)
 #if PERL_REVISION == 5 && PERL_VERSION >= 9
         TAINT_NOT; /* XXX: temp workaround, see my p5p post */
 #endif
-        modperl_global_set_server_rec(s);
+        sv_setref_pv(server, "Apache2::ServerRec", (void*)s);
         sv_setpv_mg(GvSV(gv), directive->filename);
         eval_sv(code, G_SCALAR|G_KEEPERR);
         SvREFCNT_dec(code);
-        modperl_global_set_server_rec(old_s);
         modperl_env_sync_srv_env_hash2table(aTHX_ p, scfg);
         modperl_env_sync_dir_env_hash2table(aTHX_ p, dcfg);
         FREETMPS;LEAVE;

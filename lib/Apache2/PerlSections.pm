@@ -40,6 +40,7 @@ sub package    { return shift->{'args'}->{'package'} }
 
 my @saved;
 sub save       { return $Apache2::PerlSections::Save }
+sub server     { return $Apache2::PerlSections::Server }
 sub saved      { return @saved }
 
 sub handler : method {
