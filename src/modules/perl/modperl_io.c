@@ -121,8 +121,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
                                  TRUE, SVt_PVIO);
 
         /* open my $oldout, "<&STDIN" or die "Can't dup STDIN: $!"; */
-        status = Perl_do_open(aTHX_ handle_save, "<&STDIN", 7, FALSE,
-                              O_RDONLY, 0, Nullfp);
+        status = do_open(handle_save, "<&STDIN", 7, FALSE,
+                         O_RDONLY, 0, Nullfp);
         if (status == 0) {
             Perl_croak(aTHX_ "Failed to dup STDIN: %" SVf, get_sv("!", TRUE));
         }
@@ -130,12 +130,12 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
         /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
          * have file descriptors, so STDIN must be closed before it can
          * be reopened */
-        Perl_do_close(aTHX_ handle, TRUE);
+        do_close(handle, TRUE);
     }
 
     sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
-    status = Perl_do_open9(aTHX_ handle, "<:Apache2", 9, FALSE, O_RDONLY,
-                           0, Nullfp, sv, 1);
+    status = do_open9(handle, "<:Apache2", 9, FALSE, O_RDONLY,
+                      0, Nullfp, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STDIN: %" SVf, get_sv("!", TRUE));
     }
@@ -164,8 +164,8 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
                                  TRUE, SVt_PVIO);
 
         /* open my $oldout, ">&STDOUT" or die "Can't dup STDOUT: $!"; */
-        status = Perl_do_open(aTHX_ handle_save, ">&STDOUT", 8, FALSE,
-                              O_WRONLY, 0, Nullfp);
+        status = do_open(handle_save, ">&STDOUT", 8, FALSE,
+                         O_WRONLY, 0, Nullfp);
         if (status == 0) {
             Perl_croak(aTHX_ "Failed to dup STDOUT: %" SVf, get_sv("!", TRUE));
         }
@@ -173,12 +173,12 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
         /* similar to PerlIO::scalar, the PerlIO::Apache layer doesn't
          * have file descriptors, so STDOUT must be closed before it can
          * be reopened */
-        Perl_do_close(aTHX_ handle, TRUE);
+        do_close(handle, TRUE);
     }
 
     sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
-    status = Perl_do_open9(aTHX_ handle, ">:Apache2", 9, FALSE, O_WRONLY,
-                           0, Nullfp, sv, 1);
+    status = do_open9(handle, ">:Apache2", 9, FALSE, O_WRONLY,
+                      0, Nullfp, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STDOUT: %" SVf, get_sv("!", TRUE));
     }
@@ -200,7 +200,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
     MP_TRACE_o(MP_FUNC, "start");
 
     /* close the overriding filehandle */
-    Perl_do_close(aTHX_ handle_orig, FALSE);
+    do_close(handle_orig, FALSE);
 
     /*
      * open STDIN, "<&STDIN_SAVED" or die "Can't dup STDIN_SAVED: $!";
@@ -211,12 +211,12 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
 
         MP_TRACE_o(MP_FUNC, "restoring STDIN");
 
-        if (Perl_do_open9(aTHX_ handle_orig, "<&", 2, FALSE,
-                          O_RDONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
+        if (do_open9(handle_orig, "<&", 2, FALSE,
+                     O_RDONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
             err = get_sv("!", TRUE);
         }
 
-        Perl_do_close(aTHX_ handle, FALSE);
+        do_close(handle, FALSE);
         (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
@@ -247,7 +247,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
     }
 
     /* close the overriding filehandle */
-    Perl_do_close(aTHX_ handle_orig, FALSE);
+    do_close(handle_orig, FALSE);
 
     /*
      * open STDOUT, ">&STDOUT_SAVED" or die "Can't dup STDOUT_SAVED: $!";
@@ -258,12 +258,12 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
 
         MP_TRACE_o(MP_FUNC, "restoring STDOUT");
 
-        if (Perl_do_open9(aTHX_ handle_orig, ">&", 2, FALSE,
-                          O_WRONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
+        if (do_open9(handle_orig, ">&", 2, FALSE,
+                     O_WRONLY, 0, Nullfp, (SV*)handle, 1) == 0) {
             err = get_sv("!", TRUE);
         }
 
-        Perl_do_close(aTHX_ handle, FALSE);
+        do_close(handle, FALSE);
         (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
