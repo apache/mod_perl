@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Perl_do_open/close fixes to make mod_perl 2.0 compile with
+blead-perl@25889+ (5.9.3+) [Stas]
+
 Added Apache2::PerlSections->server, returning the server
 into which the <Perl> section is defined [Gozer]
 
