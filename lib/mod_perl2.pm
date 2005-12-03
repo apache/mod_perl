@@ -16,7 +16,6 @@ package mod_perl2;
 
 use 5.006;
 use strict;
-use File::Spec::Functions;
 
 BEGIN {
     our $VERSION = "2.000003";
@@ -49,7 +48,7 @@ BEGIN {
 # startup you are protected against loading mod_perl.pm
 # (either 1.0 or 1.99) at a later time by accident.
 $mod_perl::VERSION = $mod_perl2::VERSION;
-$INC{"mod_perl.pm"} = File::Spec::Functions::devnull(); 
+$INC{"mod_perl.pm"} = __FILE__;
 
 1;
 __END__

@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Back out r280262 which was causing Apache2::Reload to misbehave.
+[JT Smith <jt@plainblack.com>]
+
 Perl_do_open/close fixes to make mod_perl 2.0 compile with
 blead-perl@25889+ (5.9.3+) [Stas]
 
