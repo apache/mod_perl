@@ -524,8 +524,7 @@ sub ap_ccopts {
         $self->{MP_DEBUG} = 1;
         if ($self->perl_config('gccversion')) {
             #same as --with-maintainter-mode
-            $ccopts .= " $Wall -DAP_DEBUG";
-            $ccopts .= " -DAP_HAVE_DESIGNATED_INITIALIZER";
+            $ccopts .= " $Wall";
         }
 
         if ($self->has_gcc_version('3.3.2') && 

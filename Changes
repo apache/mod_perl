@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+remove -DAP_HAVE_DESIGNATED_INITIALIZER and -DAP_DEBUG from
+MP_MAINTAINER mode to avoid collisions [Joe Orton]
+
 Back out r280262 which was causing Apache2::Reload to misbehave.
 [JT Smith <jt@plainblack.com>]
 
