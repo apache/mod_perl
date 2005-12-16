@@ -227,7 +227,8 @@ sub apxs_extra_cflags {
 
 sub apxs_extra_cppflags {
     my $who = caller_package(shift);
-    my $flags = $who->apxs('-q' => 'EXTRA_CPPFLAGS');
+    my $flags = $who->apxs('-q' => 'EXTRA_CPPFLAGS') ." ".
+        $who->apxs('-q' => 'NOTEST_CPPFLAGS');
     $flags =~ s/\"/\\\"/g;
     $flags;
 }
