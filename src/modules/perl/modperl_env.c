@@ -15,8 +15,13 @@
 
 #include "mod_perl.h"
 
-#define EnvMgObj SvMAGIC((SV*)ENVHV)->mg_ptr
-#define EnvMgLen SvMAGIC((SV*)ENVHV)->mg_len
+#define EnvMgOK  ((SV*)ENVHV && SvMAGIC((SV*)ENVHV))
+#define EnvMgObj (EnvMgOK ? SvMAGIC((SV*)ENVHV)->mg_ptr : NULL)
+#define EnvMgLen (EnvMgOK ? SvMAGIC((SV*)ENVHV)->mg_len : 0)
+#define EnvMgObjSet(val){ \
+    if (EnvMgOK) SvMAGIC((SV*)ENVHV)->mg_ptr = (char *)val;}
+#define EnvMgLenSet(val) {\
+    if (EnvMgOK) SvMAGIC((SV*)ENVHV)->mg_len = val;}
 
 /* XXX: move to utils? */
 static unsigned long modperl_interp_address(pTHX)
@@ -401,8 +406,8 @@ void modperl_env_request_unpopulate(pTHX_ request_rec *r)
 
 void modperl_env_request_tie(pTHX_ request_rec *r)
 {
-    EnvMgObj = (char *)r;
-    EnvMgLen = -1;
+    EnvMgObjSet(r);
+    EnvMgLenSet(-1);
 
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     MP_TRACE_e(MP_FUNC, "[%s/0x%lx] tie %%ENV, $r\n\t (%s%s)",
@@ -414,7 +419,7 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
 
 void modperl_env_request_untie(pTHX_ request_rec *r)
 {
-    EnvMgObj = NULL;
+    EnvMgObjSet(NULL);
 
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     MP_TRACE_e(MP_FUNC, "[%s/0x%lx] untie %%ENV; # from r\n\t (%s%s)",
