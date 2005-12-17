@@ -6,7 +6,8 @@ use Apache::TestRequest qw(GET);
 
 plan tests => 1;
 
-my $url = '/TestModperl__local_env';
+my $module = 'TestModperl::local_env';
+my $url = Apache::TestRequest::module2url($module);
 
 my $failed;
 foreach (1..25) {
