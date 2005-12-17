@@ -528,7 +528,8 @@ sub ap_ccopts {
             $ccopts .= " $Wall";
         }
 
-        if ($self->has_gcc_version('3.3.2') && 
+        if (!OPENBSD &&
+            $self->has_gcc_version('3.3.2') && 
             $ccopts !~ /declaration-after-statement/) {
             debug "Adding -Wdeclaration-after-statement to ccopts";
             $ccopts .= " -Wdeclaration-after-statement";
