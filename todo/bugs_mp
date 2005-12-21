@@ -2,6 +2,24 @@
 # mod_perl bugs #
 #################
 
+* PerlIOApache_flush() 
+  Setting local $| = 0 doesn't work with regular print statements under ModPerl::*
+  
+  http://p6m7g8.net/MP2/84625
+  http://www.gossamer-threads.com/lists/modperl/dev/85365
+  [pgollucci volunteers]
+
+* $r->rflush doesn't work. see:
+  http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
+  I also see a weird behavior where it does sends FLUSH buckets but
+  they all seem to fall through the data, thus not really flushing
+  anything. this can be easily reproduced with MyApache::FilterSnoop.
+
+  See also
+  http://www.gossamer-threads.com/lists/modperl/dev/84744?search_string=%23%7C%2C%20flushing%2C%20etc;#84743
+  for a related $| but not the same issue.
+  [pgollucci volunteers]
+
 * early pool destruction issues
   http://marc.theaimsgroup.com/?l=apache-modperl-dev&m=108872944815382&w=2
 
@@ -29,7 +47,6 @@
   possible solution: add a new field to the map files, which will be
   used as a usage message whenever an argument error occurs.
 
-
 * 'SetHandler modperl' doesn't reset $|, so if anything turns it on
   anywhere, it's going to stay that way. Meaning excessive flushing
   probably causing a performance hit. I've tried to add the code to
@@ -48,15 +65,6 @@
   tied objects.
 
 
-* $r->rflush doesn't work. see:
-  http://marc.theaimsgroup.com/?l=apache-modperl&m=103847990813285&w=2
-  I also see a weird behavior where it does sends FLUSH buckets but
-  they all seem to fall through the data, thus not really flushing
-  anything. this can be easily reproduced with MyApache::FilterSnoop.
-
-  See also
-  http://www.gossamer-threads.com/lists/modperl/dev/84744?search_string=%23%7C%2C%20flushing%2C%20etc;#84743
-  for a related $| but not the same issue.
 
 * Apache::Log compat issues:
 
