@@ -80,6 +80,8 @@
 * mod_perl::import
   - Apache->import:
    required for exit/warn overridding
+  - use mod_perl2 qw(2.0 MethodHandlers Authen Authz [...]);
+   used to be able to specify what optionnal feature were required
 
 * Apache::test: tobe a compat stub around new test framework
 
