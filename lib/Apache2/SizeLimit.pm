@@ -189,25 +189,29 @@ sub exit_if_too_big {
     $START_TIME ||= time;
 
     my ($size, $share) = $HOW_BIG_IS_IT->();
+    my $unshared = $size - $share;
 
-    if (($MAX_PROCESS_SIZE  && $size > $MAX_PROCESS_SIZE) ||
-        ($MIN_SHARE_SIZE    && $share < $MIN_SHARE_SIZE)  ||
-        ($MAX_UNSHARED_SIZE && ($size - $share) > $MAX_UNSHARED_SIZE)) {
+    my $kill_size     = $MAX_PROCESS_SIZE  && $size > $MAX_PROCESS_SIZE;
+    my $kill_share    = $MIN_SHARE_SIZE    && $share < $MIN_SHARE_SIZE;
+    my $kill_unshared = $MAX_UNSHARED_SIZE && $unshared > $MAX_UNSHARED_SIZE;
 
+    if ($kill_size || $kill_share || $kill_unshared) {
         # wake up! time to die.
         if (WIN32 || ( getppid > 1 )) {
             # this is a child httpd
             my $e   = time - $START_TIME;
-            my $msg = "httpd process too big, exiting at SIZE=$size KB ";
-            $msg .= " SHARE=$share KB " if $share;
+            my $msg = "httpd process too big, exiting at SIZE=$size/$MAX_PROCESS_SIZE KB ";
+            $msg .= " SHARE=$share/$MIN_SHARE_SIZE KB " if $share;
+            $msg .= " UNSHARED=$unshared/$MAX_UNSHARED_SIZE KB " if $unshared;
             $msg .= " REQUESTS=$REQUEST_COUNT LIFETIME=$e seconds";
             error_log($msg);
 
             $r->child_terminate();
         }
         else {    # this is the main httpd, whose parent is init?
-            my $msg = "main process too big, SIZE=$size KB ";
-            $msg .= " SHARE=$share KB" if $share;
+            my $msg = "main process too big, SIZE=$size/$MAX_PROCESS_SIZE KB ";
+            $msg .= " SHARE=$share/$MIN_SHARE_SIZE KB" if $share;
+            $msg .= " UNSHARED=$unshared/$MAX_UNSHARED_SIZE KB" if $unshared;
             error_log($msg);
         }
     }
