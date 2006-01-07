@@ -2,13 +2,16 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
-use Apache::TestUtil qw(t_cmp t_write_perl_script);
+use Apache::TestUtil qw(
+                        t_cmp t_write_perl_script 
+                        t_client_log_error_is_expected
+                       );
 use Apache::TestRequest qw(GET);
 
 use File::Spec::Functions qw(catfile);
 
 plan tests => 4, need need_module(qw(alias)),
-                      need_cgi,
+                      need_cgi;
                       need_min_module_version CGI => 3.16,
                       skip_reason('fatalsToBrowser known not to work');
 
@@ -25,6 +28,8 @@ foreach my $base (qw(cgi-bin registry)) {
     ok t_cmp($res->code,
              200,
              "error intercepted");
+
+    t_client_log_error_is_expected();
 
     ok t_cmp($res->content,
              qr/uninitiated_scalar/,
