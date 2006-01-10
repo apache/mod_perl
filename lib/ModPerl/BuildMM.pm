@@ -193,6 +193,7 @@ sub ModPerl::BuildMM::MY::postamble {
     # allow 'make -j'
     require ExtUtils::MakeMaker;
     my $mm_ver = $ExtUtils::MakeMaker::VERSION;
+    $mm_ver =~ s/_.*//; # handle dev versions like 6.30_01
     my $pm_to_blib = ($mm_ver >= 6.22 && $mm_ver <= 6.25)
         ? "pm_to_blib.ts"
         : "pm_to_blib";
