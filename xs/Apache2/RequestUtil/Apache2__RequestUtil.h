@@ -302,10 +302,11 @@ int mpxs_Apache2__RequestRec_is_perl_option_enabled(pTHX_ request_rec *r,
 }
 
 static MP_INLINE
-void mpxs_Apache2__RequestRec_add_config(pTHX_ request_rec *r, SV *lines, int override)
+void mpxs_Apache2__RequestRec_add_config(pTHX_ request_rec *r, SV *lines,
+                                         int override, char *path)
 {
     const char *errmsg = modperl_config_insert_request(aTHX_ r, lines,
-                                                       override);
+                                                       override, path);
     if (errmsg) {
         Perl_croak(aTHX_ "$r->add_config() has failed: %s", errmsg);
     }

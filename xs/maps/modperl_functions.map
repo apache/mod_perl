@@ -30,7 +30,7 @@ MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_location
  mpxs_Apache2__RequestRec_as_string
  mpxs_Apache2__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
- mpxs_Apache2__RequestRec_add_config | | r, lines, override=OR_AUTHCFG 
+ mpxs_Apache2__RequestRec_add_config | | r, lines, override=OR_AUTHCFG, path=NULL
  mpxs_Apache2__RequestRec_document_root | | r, new_root=Nullsv
  mpxs_Apache2__RequestRec_child_terminate
 
