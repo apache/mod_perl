@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Add perl API corresponding to User and Group directives in httpd.conf: 
+Apache2::ServerUtil->user_id and Apache2::ServerUtil->group_id
+[Stas]
+
 Apache2::Reload now first unloads all modified modules before
 trying to reload them. This way, inter-module dependencies
 are more likely to be correctly satisfied when reloaded
