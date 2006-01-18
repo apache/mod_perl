@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+$r->add_config() can now take an optionnal 3rd argument that
+specifies what pseudo <Location $path> the configuration is
+evaluated into [Torsten Foertsch <torsten.foertsch@gmx.net>]
+
 remove -DAP_HAVE_DESIGNATED_INITIALIZER and -DAP_DEBUG from
 MP_MAINTAINER mode to avoid collisions [Joe Orton]
 

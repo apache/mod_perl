@@ -578,16 +578,21 @@ const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines)
 const char *modperl_config_insert_request(pTHX_
                                           request_rec *r,
                                           SV *lines,
-                                          int override)
+                                          int override,
+                                          char *path)
 {
     const char *errmsg;
     ap_conf_vector_t *dconf = ap_create_per_dir_config(r->pool);
 
     /* The path argument of "/" is only required to be non-NULL
        and "/" is as good a default as anything else */
+    if (!path) {
+        path = "/";
+    }
+
     errmsg = modperl_config_insert(aTHX_
                                    r->server, r->pool, r->pool,
-                                   override, "/",
+                                   override, path,
                                    dconf, lines);
 
     if (errmsg) {
