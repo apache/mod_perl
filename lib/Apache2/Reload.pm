@@ -131,6 +131,8 @@ sub handler {
 
     my $ReloadDirs = ref($o) && $o->dir_config("ReloadDirectories");
     my @watch_dirs = split(/\s+/, $ReloadDirs||'');
+    
+    my @changed;
     foreach my $key (sort { $a cmp $b } keys %Apache2::Reload::INCS) {
         my $file = $Apache2::Reload::INCS{$key};
 
@@ -155,13 +157,24 @@ sub handler {
         }
 
         if ($mtime > $Stat{$file}) {
-            my $package = module_to_package($key);
-            ModPerl::Util::unload_package($package);
-            require $key;
-            warn("Apache2::Reload: process $$ reloading $package from $key\n")
-                    if $DEBUG;
+            push @changed, $key;
         }
         $Stat{$file} = $mtime;
+    }
+    
+    #First, let's unload all changed modules
+    foreach my $module (@changed) {
+        my $package = module_to_package($module);
+        ModPerl::Util::unload_package($package);
+    }
+    
+    #Then, let's reload them all, so that module dependencies can satisfy
+    #themselves in the correct order.
+    foreach my $module (@changed) {
+        my $package = module_to_package($module);
+        require $module;
+        warn("Apache2::Reload: process $$ reloading $package from $module\n")
+            if $DEBUG;
     }
 
     return Apache2::Const::OK;
