@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Apache2::Reload now first unloads all modified modules before
+trying to reload them. This way, inter-module dependencies
+are more likely to be correctly satisfied when reloaded
+[Javier Uruen Val <juruen@warp.es>, Gozer]
+
 $r->add_config() can now take an optionnal 3rd argument that
 specifies what pseudo <Location $path> the configuration is
 evaluated into [Torsten Foertsch <torsten.foertsch@gmx.net>]
