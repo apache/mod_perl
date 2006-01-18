@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 
+#if !defined(OS2) && !defined(WIN32) && !defined(BEOS)  && !defined(NETWARE)
+#include "unixd.h"
+#endif
+
 #define mpxs_Apache2__ServerUtil_restart_count modperl_restart_count
 
 #define mpxs_Apache2__ServerRec_method_register(s, methname)     \
@@ -150,6 +154,14 @@ SV *mpxs_Apache2__ServerRec_get_handlers(pTHX_ server_rec *s,
     modperl_dir_config(aTHX_ NULL, s, key, sv_val)
 
 #define mpxs_Apache2__ServerUtil_server(classname) modperl_global_get_server_rec()
+
+#if !defined(OS2) && !defined(WIN32) && !defined(BEOS)  && !defined(NETWARE)
+#define mpxs_Apache2__ServerUtil_user_id(classname)  unixd_config.user_id
+#define mpxs_Apache2__ServerUtil_group_id(classname) unixd_config.group_id
+#else
+#define mpxs_Apache2__ServerUtil_user_id(classname)  0
+#define mpxs_Apache2__ServerUtil_group_id(classname) 0
+#endif
 
 static MP_INLINE
 int mpxs_Apache2__ServerRec_is_perl_option_enabled(pTHX_ server_rec *s,

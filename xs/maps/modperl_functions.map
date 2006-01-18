@@ -87,6 +87,8 @@ MODULE=Apache2::ServerUtil PACKAGE=Apache2::ServerUtil
 
 MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
  server_rec *:DEFINE_server | | SV *:classname=Nullsv
+ uid_t:DEFINE_user_id       | | SV *:classname=Nullsv
+ gid_t:DEFINE_group_id      | | SV *:classname=Nullsv
 
 MODULE=Apache2::Connection
  mpxs_Apache2__Connection_client_socket | | c, s=NULL
