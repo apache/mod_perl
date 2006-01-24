@@ -62,6 +62,11 @@ sub run {
 
     my $val = $s->dir_config->{PostConfig} or die "Can't read PostConfig var";
 
+    # make sure that these are set at the earliest possible time
+    die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
+    die '$ENV{MOD_PERL_API_VERSION} not set!'
+        unless $ENV{MOD_PERL_API_VERSION} == 2;
+
     my $port = $s->port;
     my $file = catfile $dir, "$phase-$port";
 
