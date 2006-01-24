@@ -67,6 +67,13 @@ if (Apache::Test::have_module('mod_alias.c')) {
 $TestDirective::perl::base_server = Apache2::PerlSections->server;
 </Perl>
 
+<Perl >
+# make sure that these are set at the earliest possible time
+die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
+die '$ENV{MOD_PERL_API_VERSION} not set!'
+    unless $ENV{MOD_PERL_API_VERSION} == 2;
+</Perl>
+
 <VirtualHost perlsections>
   <Perl >
     $TestDirective::perl::vhost_server = Apache2::PerlSections->server;
