@@ -137,7 +137,7 @@ my @hook_flags = (map { canon_uc($_) } keys %hooks);
 my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLE AUTOLOAD MERGE_HANDLERS),
-            @hook_flags, 'UNSET'],
+            @hook_flags, 'UNSET','INHERIT_SWITCHES'],
     Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
     Req => [qw(NONE SET_GLOBAL_REQUEST PARSE_HEADERS SETUP_ENV 
                CLEANUP_REGISTERED PERL_SET_ENV_DIR PERL_SET_ENV_SRV)],

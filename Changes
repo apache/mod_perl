@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Fix 'PerlSwitches +inherit' that got broken somewhere along
+the way to 2.0. You can also use 'PerlOptions +InheritSwitches'
+for the same result. [Gozer]
+
 Add perl API corresponding to User and Group directives in httpd.conf: 
 Apache2::ServerUtil->user_id and Apache2::ServerUtil->group_id
 [Stas]

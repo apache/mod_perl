@@ -156,7 +156,13 @@ MP_CMD_SRV_DECLARE(switches)
         return modperl_cmd_too_late(parms);
     }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
-    modperl_config_srv_argv_push(arg);
+
+    if(0 == strncasecmp(arg, "+inherit", 8)) {
+        modperl_cmd_options(parms, mconfig, "+InheritSwitches");
+    }
+    else {
+        modperl_config_srv_argv_push(arg);
+    }
     return NULL;
 }
 
