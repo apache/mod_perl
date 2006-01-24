@@ -302,9 +302,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
     merge_item(perl);
 #endif
 
-    if (add->argv->nelts == 2 &&
-        strEQ(((char **)add->argv->elts)[1], "+inherit"))
-    {
+    if (MpSrvINHERIT_SWITCHES(add)) {
         /* only inherit base PerlSwitches if explicitly told to */
         mrg->argv = base->argv;
     }
