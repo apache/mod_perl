@@ -157,7 +157,7 @@ MP_CMD_SRV_DECLARE(switches)
     }
     MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
 
-    if (0 == strncasecmp(arg, "+inherit", 8)) {
+    if (!strncasecmp(arg, "+inherit", 8)) {
         modperl_cmd_options(parms, mconfig, "+InheritSwitches");
     }
     else {
