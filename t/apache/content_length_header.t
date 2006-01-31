@@ -65,7 +65,7 @@ foreach my $method qw(GET HEAD) {
         my $res = $method->($uri);
 
         my $cl      = 0;
-        my $head_cl = have_min_apache_version(2.3) ? 25 : undef;
+        my $head_cl = have_min_apache_version("2.2.1") ? 25 : undef;
            
         ok t_cmp $res->code, 200, "$method $uri code";
         ok t_cmp ($res->header('Content-Length'),
