@@ -1377,8 +1377,14 @@ sub httpd_version {
             my $major = $1;
             my $minor = (split /\s+/, scalar(<$fh>))[-1];
             my $patch = (split /\s+/, scalar(<$fh>))[-1];
-            my $string = (split /\s+/, scalar(<$fh>))[-1];
-            $version = join '.', $major, $minor, "$patch$string";
+
+            my ($define, $macro, $dev) = (split /\s+/, scalar(<$fh>));
+            
+            if ($macro =~ /AP_SERVER_DEVBUILD_BOOLEAN/ && $dev eq '1') {
+                $dev = "-dev";
+            }
+
+            $version = join '.', $major, $minor, "$patch$dev";
             $version =~ s/\"//g;
             last;
         }
