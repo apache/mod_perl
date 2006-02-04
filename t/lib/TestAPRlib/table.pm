@@ -307,11 +307,16 @@ sub test {
     # - copy
     # - overlay
     {
-        my $table = APR::Table::make(APR::Pool->new, 10);
-        $table->set($_ => $_) for 1..20;
-        ok t_cmp $table->get(20), 20, "no segfault";
+        {
+            my $table = APR::Table::make(APR::Pool->new, 10);
+            $table->set($_ => $_) for 1..20;
+            ok t_cmp $table->get(20), 20, "no segfault";
+        }
 
-        my $table_copy = $table->copy(APR::Pool->new);
+        my $pool = APR::Pool->new;
+        my $table = APR::Table::make($pool, 10);
+        $table->set($_ => $_) for 1..20;
+        my $table_copy = $table->copy($pool->new);
         {
             # verify that the temp pool used to create $table_copy was
             # not freed, by allocating a new table to fill with a
@@ -325,9 +330,12 @@ sub test {
         }
         ok t_cmp $table_copy->get(20), 20, "no segfault/valid data";
 
-        my $table2 = APR::Table::make(APR::Pool->new, 1);
+        my $table2 = APR::Table::make($pool, 1);
         $table2->set($_**2 => $_**2) for 1..20;
-        my $overlay = $table_copy->overlay($table2, APR::Pool->new);
+        my $table2_copy = APR::Table::make($pool, 1);
+        $table2_copy->set($_ => $_) for 1..20;
+        
+        my $overlay = $table2_copy->overlay($table2, $pool->new);
         {
             # see the comment for above's:
             # $table_copy = $table->copy(APR::Pool->new);
