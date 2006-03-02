@@ -195,14 +195,7 @@ Instructions for mod_perl 2.0 Release Manager
   d. update this file versions to make it easy to copy-n-paste things
      on the next release:
    
-   perl -pi -e 's/2.0.3/2.0.4/g' RELEASE
-   perl -pi -e 's/2.0.2/2.0.3/g' RELEASE
-   perl -pi -e 's/2.0.1/2.0.2/g' RELEASE
-   perl -pi -e 's/2.0.0/2.0.1/g' RELEASE
-   perl -ni -e 'print unless /2.0.0/' RELEASE
-   
-     now reload this file and bump up the last number of the first
-     command.
+   $ perl -pi -e 's/(\d+)\.(\d+)\.(\d+)/join(".", $1, $2, $3+1)/eg' RELEASE
 
   e. commit the changed files
 
