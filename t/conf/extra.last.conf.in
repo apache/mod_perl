@@ -104,8 +104,10 @@ PerlSetVar TestDirective__pod_cut_worked yes
 
 #This used to trigger a segfault on startup
 #See http://thread.gmane.org/gmane.comp.apache.mod-perl/22750
+<IfDefine PERL_USEITHREADS>
 <VirtualHost inherit>
    PerlSwitches +inherit
    PerlOptions +Parent
    Perl 1
 </VirtualHost>
+</IfDefine>
