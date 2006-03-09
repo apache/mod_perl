@@ -246,6 +246,7 @@ $  limit_req_fields
 <  cmd
 <  context
 !  err_directive
+-  override_opts
 </cmd_parms>
 
 !<ap_mgmt_item_t>

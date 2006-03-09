@@ -40,4 +40,15 @@ typedef void * apr_thread_mutex_t;
 #define ap_http_scheme(r) ap_http_method(r)
 #endif
 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || AP_SERVER_MINORVERSION_NUMBER>=2
+#define MP_HTTPD_HAS_OVERRIDE_OPTS
+#endif
+
+#define MP_HTTPD_OVERRIDE_OPTS_UNSET (-1)
+#define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
+                                        OPT_ALL | \
+                                        OPT_INCNOEXEC | \
+                                        OPT_SYM_OWNER | \
+                                        OPT_MULTI)
+
 #endif /* MODPERL_APACHE_COMPAT_H */

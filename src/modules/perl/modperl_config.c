@@ -498,6 +498,7 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
                                   apr_pool_t *ptmp,
                                   int override,
                                   char *path,
+                                  int override_options,
                                   ap_conf_vector_t *conf,
                                   SV *lines)
 {
@@ -513,6 +514,14 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
     parms.override = override;
     parms.path = path;
     parms.pool = p;
+#ifdef MP_HTTPD_HAS_OVERRIDE_OPTS
+    if (override_options == MP_HTTPD_OVERRIDE_OPTS_UNSET) {
+        parms.override_opts = MP_HTTPD_OVERRIDE_OPTS_DEFAULT;
+    }
+    else {
+        parms.override_opts = override_options;
+    }
+#endif
 
     if (ptmp) {
         parms.temp_pool = ptmp;
@@ -559,6 +568,11 @@ const char *modperl_config_insert_parms(pTHX_ cmd_parms *parms,
                                  parms->temp_pool,
                                  parms->override, 
                                  parms->path,
+#ifdef MP_HTTPD_HAS_OVERRIDE_OPTS
+                                 parms->override_opts,
+#else
+                                 MP_HTTPD_OVERRIDE_OPTS_UNSET,
+#endif
                                  parms->context,
                                  lines);
 }
@@ -570,6 +584,7 @@ const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines)
     apr_pool_t *p = s->process->pconf;
 
     return modperl_config_insert(aTHX_ s, p, NULL, override, NULL,
+                                 MP_HTTPD_OVERRIDE_OPTS_UNSET,
                                  s->lookup_defaults, lines);
 }
 
@@ -577,20 +592,24 @@ const char *modperl_config_insert_request(pTHX_
                                           request_rec *r,
                                           SV *lines,
                                           int override,
-                                          char *path)
+                                          char *path,
+                                          int override_options)
 {
     const char *errmsg;
     ap_conf_vector_t *dconf = ap_create_per_dir_config(r->pool);
 
-    /* The path argument of "/" is only required to be non-NULL
-       and "/" is as good a default as anything else */
     if (!path) {
+        /* pass a non-NULL path if nothing else given and for compatibility */
         path = "/";
+    }
+    else if (!*path) {
+        /* an empty string says a NULL pointer should be used here */
+        path = NULL;
     }
 
     errmsg = modperl_config_insert(aTHX_
                                    r->server, r->pool, r->pool,
-                                   override, path,
+                                   override, path, override_options,
                                    dconf, lines);
 
     if (errmsg) {

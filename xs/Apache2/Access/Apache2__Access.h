@@ -80,8 +80,8 @@ static MP_INLINE void mpxs_insert_auth_cfg(pTHX_ request_rec *r,
     errmsg =
         modperl_config_insert_request(aTHX_ r,
                                       newRV_noinc((SV*)config),
-                                      OR_AUTHCFG,
-                                      NULL);
+                                      OR_AUTHCFG, NULL, 
+                                      MP_HTTPD_OVERRIDE_OPTS_UNSET);
 
     if (errmsg) {
         Perl_warn(aTHX_ "Can't change %s to '%s'\n", directive, val);
@@ -140,4 +140,16 @@ MP_STATIC XS(MPXS_ap_get_basic_auth_pw)
             PUSHs(&PL_sv_undef);
         }
     });
+}
+
+static MP_INLINE
+int mpxs_Apache2__RequestRec_allow_override_opts(pTHX_ request_rec *r)
+{
+#ifdef MP_HTTPD_HAS_OVERRIDE_OPTS
+    core_dir_config *cfg = ap_get_module_config(r->per_dir_config, 
+                                                &core_module);
+    return cfg->override_opts;
+#else
+    return MP_HTTPD_OVERRIDE_OPTS_DEFAULT;
+#endif
 }
