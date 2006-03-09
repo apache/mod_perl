@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Added support for httpd-2.2's new override_opts in Apache2::Access.
+Calls to add_config() now accept an override_opts value as the 4th
+argument. [Torsten Foertsch <torsten.foertsch@gmx.net>, Gozer]
+
 Fix 'PerlSwitches +inherit' that got broken somewhere along
 the way to 2.0. You can also use 'PerlOptions +InheritSwitches'
 for the same result. [Gozer]

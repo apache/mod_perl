@@ -30,7 +30,7 @@ MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_location
  mpxs_Apache2__RequestRec_as_string
  mpxs_Apache2__RequestRec_pnotes | | r, key=Nullsv, val=Nullsv
- mpxs_Apache2__RequestRec_add_config | | r, lines, override=OR_AUTHCFG, path=NULL
+ mpxs_Apache2__RequestRec_add_config | | r, lines, override=OR_AUTHCFG, path=NULL, override_options=MP_HTTPD_OVERRIDE_OPTS_UNSET
  mpxs_Apache2__RequestRec_document_root | | r, new_root=Nullsv
  mpxs_Apache2__RequestRec_child_terminate
 
@@ -152,6 +152,10 @@ MODULE=Apache2::CmdParms
  ap_method_is_limited
  mpxs_Apache2__CmdParms_info
  mpxs_Apache2__CmdParms_add_config
+ mpxs_Apache2__CmdParms_override_opts
 
 MODULE=Apache2::MPM    PACKAGE=Apache2::MPM   BOOT=1
  mpxs_Apache2__MPM_query
+
+MODULE=Apache2::Access   PACKAGE=guess
+ mpxs_Apache2__RequestRec_allow_override_opts
