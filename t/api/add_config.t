@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 
 my $module = 'TestAPI::add_config';
-my $url    = Apache::TestRequest::module2url($module);
+my $url    = Apache::TestRequest::module2url($module) . "/";
 
 t_debug("connecting to $url");
 print GET_BODY_ASSERT $url;
