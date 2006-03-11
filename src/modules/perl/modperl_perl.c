@@ -72,7 +72,7 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
     ids->uid  = getuid();
     ids->euid = geteuid(); 
     ids->gid  = getgid(); 
-    ids->gid  = getegid(); 
+    ids->egid  = getegid(); 
 
     MP_TRACE_r(MP_FUNC, 
                "pid=%d, "
