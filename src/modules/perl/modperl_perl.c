@@ -79,13 +79,14 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 #ifdef MP_MAINTAIN_PPID
                "ppid=%d, "
 #endif
-               "uid=%d, euid=%d, gid=%d, egid=%d\n",
+               "uid=%" Uid_t_f ", euid=%" Uid_t_f ", "
+               "gid=%" Gid_t_f ", egid=%" Gid_t_f "\n",
                (int)ids->pid,
 #ifdef MP_MAINTAIN_PPID
                (int)ids->ppid,
 #endif
-               (int)ids->uid, (int)ids->euid,
-               (int)ids->gid, (int)ids->egid);
+               ids->uid, ids->euid,
+               ids->gid, ids->egid);
 #endif /* #ifndef WIN32 */
 }
 
