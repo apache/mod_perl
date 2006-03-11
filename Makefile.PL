@@ -290,7 +290,7 @@ EOI
         exit(1);
     }
 
-    printf "Configuring Apache/%s mod_perl2/%s Perl/v%vd\n",
+    printf "Configuring Apache/%s mod_perl/%s Perl/v%vd\n",
         $httpd_version, $VERSION, $^V;
 
     my $apr_config = $build->get_apr_config; #cache it
