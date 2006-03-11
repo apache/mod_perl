@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Corrected a typo that would cause the corruption of $), the
+effective group id as Perl sees it [Gozer]
+
 Added support for httpd-2.2's new override_opts in Apache2::Access.
 Calls to add_config() now accept an override_opts value as the 4th
 argument. [Torsten Foertsch <torsten.foertsch@gmx.net>, Gozer]
