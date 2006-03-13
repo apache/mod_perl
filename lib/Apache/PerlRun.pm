@@ -189,14 +189,14 @@ sub namespace {
     my $script_name = $pr->namespace_from;
 
     # Escape everything into valid perl identifiers
-    $script_name =~ s/([^A-Za-z0-9_\/])/sprintf("_%2x",unpack("C",$1))/eg;
+    $script_name =~ s/([^A-Za-z0-9_\/])/sprintf("_%02x",unpack("C",$1))/eg;
 
     # second pass cares for slashes and words starting with a digit
     $script_name =~ s{
 			  (/+)       # directory
 			  (\d?)      # package's first character
 			 }[
-			   "::" . (length $2 ? sprintf("_%2x",unpack("C",$2)) : "")
+			   "::" . (length $2 ? sprintf("_%02x",unpack("C",$2)) : "")
 			  ]egx;
 
     $Apache::Registry::curstash = $script_name;
