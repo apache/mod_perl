@@ -828,3 +828,29 @@ int modperl_restart_count(void)
                           modperl_global_get_server_rec()->process->pool);
     return data ? *(int *)data : 0;
  }
+
+SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val, request_rec *r) {
+    SV *retval = Nullsv;
+
+    if (!*pnotes) {
+        *pnotes = newHV();
+    }
+
+    if (key) {
+        STRLEN len;
+        char *k = SvPV(key, len);
+
+        if (val) {
+            retval = *hv_store(*pnotes, k, len, SvREFCNT_inc(val), 0);
+        }
+        else if (hv_exists(*pnotes, k, len)) {
+            retval = *hv_fetch(*pnotes, k, len, FALSE);
+        }
+    }
+    else {
+        retval = newRV_inc((SV *)*pnotes);
+    }
+
+    return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+}
+ 

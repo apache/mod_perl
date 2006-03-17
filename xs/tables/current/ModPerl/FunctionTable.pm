@@ -4413,6 +4413,32 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'SV *',
+    'name' => 'modperl_pnotes',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'HV **',
+        'name' => 'pnotes'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'key'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'val'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
+      }
+    ]    
+  }.
+  {
     'return_type' => 'int',
     'name' => 'modperl_post_config_handler',
     'args' => [
