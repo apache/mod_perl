@@ -13,12 +13,16 @@ use constant CYGWIN  => Apache2::Build::CYGWIN;
 use constant SOLARIS => $^O eq 'solaris';
 use constant BUILD_APREXT   => Apache2::Build::BUILD_APREXT;
 
-my %args = (
-    'NAME'         => 'APR',
-    'VERSION_FROM' => 'APR.pm',
-);
+my %args;
+
+%args = map { split /=/, $_ } @ARGV;
+
+$args{NAME}         = 'APR';
+$args{VERSION_FROM} = 'APR.pm';
 
 my $libs = '';
+$libs = delete $args{LIBS} if $args{LIBS};
+
 my $build = ModPerl::BuildMM::build_config();
 
 my @apru_link_flags = $build->apru_link_flags;
@@ -53,7 +57,9 @@ if (SOLARIS && $libs) {
 
     # -R makes sure that these paths will be used
     $extralddflags =~ s{-L(\S+)}{-L$1 -R$1}g;
-    $args{LDDLFLAGS} = $extralddflags . " " . $build->perl_config('lddlflags');
+    $args{LDDLFLAGS} = "" unless exists $args{LDDLFLAGS};
+    $args{LDDLFLAGS} = join " ", $args{LDDLFLAGS}, $extralddflags,
+        $build->perl_config('lddlflags');
 
     # -R are now copied to LDDFLAGS, but leave -L's in LIBS --
     # EU::MM needs it.

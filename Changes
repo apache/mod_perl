@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Make sure that LIBS and other MakeMaker command line flags are not
+ignored by the top level Makefile.PL and xs/APR/APR/Makefile.PL [Stas]
+
 Corrected a typo that would cause the corruption of $), the
 effective group id as Perl sees it [Gozer]
 
