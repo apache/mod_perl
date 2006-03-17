@@ -4437,7 +4437,7 @@ $ModPerl::FunctionTable = [
         'name' => 'r'
       }
     ]    
-  }.
+  },
   {
     'return_type' => 'int',
     'name' => 'modperl_post_config_handler',
