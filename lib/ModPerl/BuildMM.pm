@@ -75,7 +75,9 @@ sub WriteMakefile {
     $build ||= build_config();
     ModPerl::MM::my_import(__PACKAGE__);
 
-    my $inc = $build->inc;
+    my $inc;
+    $inc = $args{INC} if $args{INC};
+    $inc = " " . $build->inc;
     if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
         for (split /\s+/, $glue_inc) {
             $inc .= " -I$_";
@@ -84,6 +86,7 @@ sub WriteMakefile {
 
     my $libs;
     my @libs = ();
+    push @libs, $args{LIBS} if $args{LIBS};
     if (Apache2::Build::BUILD_APREXT) {
         # in order to decouple APR/APR::* from mod_perl.so,
         # link these modules against the static MP_APR_LIB lib,
@@ -105,18 +108,33 @@ sub WriteMakefile {
     }
     $libs = join ' ', @libs;
 
-    my $ccflags = $build->perl_ccopts . $build->ap_ccopts;
+    my $ccflags;
+    $ccflags = $args{CCFLAGS} if $args{CCFLAGS};
+    $ccflags = " " . $build->perl_ccopts . $build->ap_ccopts;
+
+    my $optimize;
+    $optimize = $args{OPTIMIZE} if $args{OPTIMIZE};
+    $optimize = " " . $build->perl_config('optimize');
+
+    my $lddlflags;
+    $lddlflags = $args{LDDLFLAGS} if $args{LDDLFLAGS};
+    $lddlflags = " " . $build->perl_config('lddlflags');
+
+    my %dynamic_lib;
+    %dynamic_lib = %{ $args{dynamic_lib}||{} } if $args{dynamic_lib};
+    $dynamic_lib{OTHERLDFLAGS} = $build->otherldflags;
 
     my @opts = (
-        INC       => $inc,
-        CCFLAGS   => $ccflags,
-        OPTIMIZE  => $build->perl_config('optimize'),
-        LDDLFLAGS => $build->perl_config('lddlflags'),
-        LIBS      => $libs,
-        dynamic_lib => { OTHERLDFLAGS => $build->otherldflags },
+        INC         => $inc,
+        CCFLAGS     => $ccflags,
+        OPTIMIZE    => $optimize,
+        LDDLFLAGS   => $lddlflags,
+        LIBS        => $libs,
+        dynamic_lib => \%dynamic_lib,
     );
 
     my @typemaps;
+    push @typemaps, $args{TYPEMAPS} if $args{TYPEMAPS};
     my $pwd = Cwd::fastcwd();
     for ('xs', $pwd, "$pwd/..") {
         my $typemap = $build->file_path("$_/typemap");
