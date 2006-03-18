@@ -174,7 +174,11 @@ int mpxs_Apache2__ServerRec_is_perl_option_enabled(pTHX_ server_rec *s,
 static MP_INLINE
 void mpxs_Apache2__ServerRec_add_config(pTHX_ server_rec *s, SV *lines)
 {
-    const char *errmsg = modperl_config_insert_server(aTHX_ s, lines);
+    const char *errmsg;
+
+    MP_CROAK_IF_POST_POST_CONFIG_PHASE("$s->add_config");
+
+    errmsg = modperl_config_insert_server(aTHX_ s, lines);
     if (errmsg) {
         Perl_croak(aTHX_ "$s->add_config() has failed: %s", errmsg);
     }

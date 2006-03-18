@@ -12,9 +12,15 @@ use Apache::Test;
 
 use ModPerl::Util ();
 use Apache2::compat ();
-use Apache::Constants qw(DIR_MAGIC_TYPE :common :response);
+use Apache::Constants qw(DIR_MAGIC_TYPE OPT_EXECCGI :common :response);
 
 use File::Spec::Functions qw(catfile canonpath);
+
+sub fixup {
+    my $r = shift;
+    Apache->httpd_conf('Options +ExecCGI');
+    OK;
+}
 
 sub handler {
     my $r = shift;
@@ -75,11 +81,8 @@ sub handler {
     ok t_cmp(OK, "0",
              'OK');
 
-    my $admin = $r->server->server_admin;
-    Apache->httpd_conf('ServerAdmin foo@bar.com');
-    ok t_cmp($r->server->server_admin, 'foo@bar.com',
-             'Apache->httpd_conf');
-    Apache->httpd_conf("ServerAdmin $admin");
+    my $exec_cgi = $r->allow_options & Apache2::Const::OPT_EXECCGI;
+    ok t_cmp($exec_cgi, Apache2::Const::OPT_EXECCGI, 'Apache->httpd_conf');
 
     # (Apache||$r)->server_root_relative
     {
@@ -124,4 +127,7 @@ sub handler {
 
 __END__
 # so we can test whether send_httpd_header() works fine
-PerlOptions +ParseHeaders
+PerlOptions +ParseHeaders +GlobalRequest
+AllowOverride Options
+PerlModule TestCompat::apache
+PerlFixupHandler TestCompat::apache::fixup

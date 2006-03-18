@@ -53,16 +53,6 @@ sub map2storage {
     };
     $r->pnotes(add_config2 => "$@");
 
-    eval {
-        my $directory = join '/', ('', $r->document_root,
-                                   'TestAPI__add_config');
-        $r->add_config(["<Directory $directory>",
-                      'AllowOverride All Options'.$o,
-                      '</Directory>'
-                      ], -1, '');
-    };
-    $r->pnotes(add_config4 => "$@");
-
     return Apache2::Const::DECLINED;
 }
 
@@ -74,6 +64,11 @@ sub fixup {
                        Apache2::Const::OPT_EXECCGI);
     };
     $r->pnotes(add_config3 => "$@");
+
+    eval {
+        $r->server->add_config(['ServerAdmin foo@bar.com']);
+    };
+    $r->pnotes(add_config4 => "$@");
 
     return Apache2::Const::DECLINED;
 }
@@ -87,7 +82,7 @@ sub handler : method {
     ok t_cmp $r->pnotes('add_config1'), qr/.+\n/;
     ok t_cmp $r->pnotes('add_config2'), (APACHE22 ? qr/.+\n/ : '');
     ok t_cmp $r->pnotes('add_config3'), '';
-    ok t_cmp $r->pnotes('add_config4'), '';
+    ok t_cmp $r->pnotes('add_config4'), qr/after server startup/;
 
     my $default_opts = 0;
     unless (APACHE22) {
@@ -115,6 +110,9 @@ __END__
         PerlModule TestAPI::add_config
         AccessFileName htaccess
         SetHandler modperl
+        <Directory @DocumentRoot@>
+            AllowOverride All
+        </Directory>
         PerlResponseHandler TestAPI::add_config
         PerlMapToStorageHandler TestAPI::add_config::map2storage
         PerlFixupHandler TestAPI::add_config::fixup

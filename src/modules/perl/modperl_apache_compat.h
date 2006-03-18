@@ -44,6 +44,8 @@ typedef void * apr_thread_mutex_t;
 #define MP_HTTPD_HAS_OVERRIDE_OPTS
 #endif
 
+#define MP_HTTPD_OVERRIDE_HTACCESS (OR_LIMIT|OR_OPTIONS|OR_FILEINFO|OR_AUTHCFG|OR_INDEXES)
+
 #define MP_HTTPD_OVERRIDE_OPTS_UNSET (-1)
 #define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
                                         OPT_ALL | \
