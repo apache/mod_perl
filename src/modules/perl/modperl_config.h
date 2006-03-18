@@ -26,6 +26,8 @@ modperl_config_dir_t *modperl_config_dir_new(apr_pool_t *p);
 
 modperl_config_req_t *modperl_config_req_new(request_rec *r);
 
+modperl_config_con_t *modperl_config_con_new(conn_rec *c);
+
 void *modperl_config_srv_create(apr_pool_t *p, server_rec *s);
 
 void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv);
@@ -78,6 +80,19 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 #define MP_dRCFG \
     modperl_config_req_t *rcfg = modperl_config_req_get(r)
 
+#define modperl_config_con_init(c, ccfg)                 \
+    if (!ccfg) {                                         \
+        ccfg = modperl_config_con_new(c);                \
+        modperl_set_module_config(c->conn_config, ccfg); \
+    }
+
+#define modperl_config_con_get(c)                               \
+    (c ? (modperl_config_con_t *)                               \
+     modperl_get_module_config(c->conn_config) : NULL)
+
+#define MP_dCCFG \
+    modperl_config_con_t *ccfg = modperl_config_con_get(c)
+    
 #define modperl_config_dir_get(r)                               \
     (r ? (modperl_config_dir_t *)                               \
      modperl_get_module_config(r->per_dir_config) : NULL)

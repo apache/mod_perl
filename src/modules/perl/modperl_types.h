@@ -258,7 +258,7 @@ typedef struct {
 } modperl_config_req_t;
 
 typedef struct {
-    MpAV *handlers_connection[MP_HANDLER_NUM_CONNECTION];
+    HV *pnotes;
 } modperl_config_con_t;
 
 typedef struct {
