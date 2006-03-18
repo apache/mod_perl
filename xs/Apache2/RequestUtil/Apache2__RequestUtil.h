@@ -217,7 +217,7 @@ SV *mpxs_Apache2__RequestRec_pnotes(pTHX_ request_rec *r, SV *key, SV *val)
         return &PL_sv_undef;
     }
 
-    return modperl_pnotes(aTHX_ &rcfg->pnotes, key, val, r);
+    return modperl_pnotes(aTHX_ &rcfg->pnotes, key, val, r, NULL);
 }
 
 #define mpxs_Apache2__RequestRec_dir_config(r, key, sv_val) \

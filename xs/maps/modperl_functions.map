@@ -93,6 +93,9 @@ MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
 MODULE=Apache2::Connection
  mpxs_Apache2__Connection_client_socket | | c, s=NULL
 
+MODULE=Apache2::ConnectionUtil   PACKAGE=guess
+ mpxs_Apache2__Connection_pnotes | | c, key=Nullsv, val=Nullsv
+
 MODULE=Apache2::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES
 

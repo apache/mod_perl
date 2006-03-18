@@ -1493,6 +1493,16 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'modperl_config_con_t *',
+    'name' => 'modperl_config_con_new',
+    'args' => [
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      }
+    ]
+  },
+  {
     'return_type' => 'apr_status_t',
     'name' => 'modperl_config_request_cleanup',
     'args' => [
@@ -6229,6 +6239,28 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'ap_conf_vector_t *',
         'name' => 'dir_config'
+      }
+    ]
+  },
+  {
+    'return_type' => 'SV *',
+    'name' => 'mpxs_Apache2__Connection_pnotes',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'key'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'val'
       }
     ]
   },

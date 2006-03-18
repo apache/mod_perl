@@ -147,6 +147,16 @@ modperl_config_req_t *modperl_config_req_new(request_rec *r)
     return rcfg;
 }
 
+modperl_config_con_t *modperl_config_con_new(conn_rec *c)
+{
+    modperl_config_con_t *ccfg = 
+        (modperl_config_con_t *)apr_pcalloc(c->pool, sizeof(*ccfg));
+
+    MP_TRACE_d(MP_FUNC, "0x%lx\n", (unsigned long)ccfg);
+
+    return ccfg;
+}
+
 modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p, server_rec *s)
 {
     modperl_config_srv_t *scfg = (modperl_config_srv_t *)

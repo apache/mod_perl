@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Added $r->connection->pnotes, identical to $r->pnotes, but
+for the entire lifetime of the connection
+[Geoffrey Young, Gozer]
+
 Fixed problems with add_config() and thread-safety: [Gozer]
 - $s->add_config is not allowed anymore after server startup
 - $r->add_config can only affect configuration for the current
