@@ -602,10 +602,6 @@ const char *modperl_config_insert_request(pTHX_
         /* pass a non-NULL path if nothing else given and for compatibility */
         path = "/";
     }
-    else if (!*path) {
-        /* an empty string says a NULL pointer should be used here */
-        path = NULL;
-    }
 
     errmsg = modperl_config_insert(aTHX_
                                    r->server, r->pool, r->pool,
