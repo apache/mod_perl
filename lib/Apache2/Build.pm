@@ -1117,7 +1117,7 @@ sub apru_link_flags {
     # first use apu_config_path and then apr_config_path in order to
     # resolve the symbols right during linking
     for ($self->apu_config_path, $self->apr_config_path) {
-        if (my $link = $_ && -x $_ && qx{$_ --link-ld --libs}) {
+        if (my $link = $_ && -x $_ && qx{$_ --link-ld --ldflags --libs}) {
             chomp $link;
 
             # Change '/path/to/libanything.la' to '-L/path/to -lanything'
