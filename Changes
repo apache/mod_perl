@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Make sure that additional library paths are included in the build flags
+so that mod_perl will use the same versions of libraries that APR does.
+[Mike Smith <mike@mailchannels.com>]
+
 Added $r->connection->pnotes, identical to $r->pnotes, but
 for the entire lifetime of the connection
 [Geoffrey Young, Gozer]
