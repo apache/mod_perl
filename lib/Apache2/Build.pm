@@ -1383,6 +1383,9 @@ sub httpd_version {
             if ($macro =~ /AP_SERVER_DEVBUILD_BOOLEAN/ && $dev eq '1') {
                 $dev = "-dev";
             }
+            else {
+                $dev = "";   
+            }
 
             $version = join '.', $major, $minor, "$patch$dev";
             $version =~ s/\"//g;
