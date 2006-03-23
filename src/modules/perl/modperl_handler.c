@@ -88,7 +88,7 @@ void modperl_handler_anon_init(pTHX_ apr_pool_t *p)
     modperl_modglobal_key_t *gkey =
         modperl_modglobal_lookup(aTHX_ "ANONSUB");
     MP_TRACE_h(MP_FUNC, "init $PL_modglobal{ANONSUB} = []");
-    MP_MODGLOBAL_STORE_HV(gkey);
+    (void)MP_MODGLOBAL_STORE_HV(gkey);
 }
 
 /* allocate and populate the anon handler sub-struct */
