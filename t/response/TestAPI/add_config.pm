@@ -53,6 +53,11 @@ sub map2storage {
     };
     $r->pnotes(add_config2 => "$@");
 
+    eval {
+        $r->add_config(['AllowOverride Options=FollowSymLinks'], -1);
+    };
+    $r->pnotes(followsymlinks => "$@");
+
     return Apache2::Const::DECLINED;
 }
 
@@ -77,26 +82,25 @@ sub handler : method {
     my ($self, $r) = @_;
     my $cf = $self->get_config($r->server);
 
-    plan $r, tests => 7;
+    plan $r, tests => 8;
 
     ok t_cmp $r->pnotes('add_config1'), qr/.+\n/;
     ok t_cmp $r->pnotes('add_config2'), (APACHE22 ? qr/.+\n/ : '');
     ok t_cmp $r->pnotes('add_config3'), '';
     ok t_cmp $r->pnotes('add_config4'), qr/after server startup/;
+    ok t_cmp $r->pnotes('followsymlinks'), (APACHE22 ? '': qr/.*\n/);
 
-    my $default_opts = 0;
-    unless (APACHE22) {
-        $default_opts = Apache2::Const::OPT_UNSET |
-                        Apache2::Const::OPT_INCNOEXEC |
-                        Apache2::Const::OPT_MULTI;
-    }
-   
-    my $expect = $default_opts | Apache2::Const::OPT_ALL 
-                               | Apache2::Const::OPT_SYM_OWNER;
+    my $expect =  Apache2::Const::OPT_ALL |
+                  Apache2::Const::OPT_UNSET |
+                  Apache2::Const::OPT_INCNOEXEC |
+                  Apache2::Const::OPT_MULTI |
+                  Apache2::Const::OPT_SYM_OWNER;
 
     ok t_cmp $cf->{override_opts}, $expect;
-    ok t_cmp $r->allow_override_opts, $expect;
     ok t_cmp $r->allow_options, Apache2::Const::OPT_EXECCGI;
+
+    my $opts = APACHE22 ? Apache2::Const::OPT_SYM_LINKS : $expect;
+    ok t_cmp $r->allow_override_opts, $opts;
 
     return Apache2::Const::OK;
 }
