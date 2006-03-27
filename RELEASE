@@ -114,6 +114,11 @@ Instructions for mod_perl 2.0 Release Manager
 
     % /home/perlwww/apache.org/modperl-docs/bin/site_build
 
+  e. update our projects.apache.org doap file with the new release
+     version and date
+
+    % vi modperl-docs/doap_Perl.rdf
+
 5. Upload the package to CPAN
 
 6. Tarball signing
