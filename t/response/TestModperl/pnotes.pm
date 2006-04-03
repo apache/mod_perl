@@ -19,8 +19,8 @@ sub handler {
     Apache::Test::init_test_pm($r);
     
     Test::_reset_globals() if Test->can('_reset_globals');
-    $Test::ntest   = 1 + (22 * ($r->args - 1));
-    $Test::planned = 22;
+    $Test::ntest   = 1 + (26 * ($r->args - 1));
+    $Test::planned = 26;
 
     my $c = $r->connection;
 
@@ -82,6 +82,28 @@ sub handler {
         ok t_cmp($o->pnotes('pnotes_foo'), undef,
                  "deleted $type contents");
         ok !exists $o->pnotes->{'pnotes_foo'};
+
+        # test blessed references, like DBI
+        # DBD::DBM ships with DBI...
+        if (have_module(qw(DBI DBD::DBM))) {
+          my $dbh = DBI->connect('dbi:DBM:');
+
+          $o->pnotes(DBH => $dbh);
+
+          my $pdbh = $o->pnotes('DBH');
+
+          ok t_cmp(ref($pdbh), 'DBI::db', "ref($type->pnotes('DBH'))");
+
+          my $quote = $pdbh->quote("quoth'me");
+
+          # see the DBI manpage for why quote() returns the string
+          # wrapped in ' marks
+          ok t_cmp($quote, "'quoth\\'me'", '$pdbh->quote() works');
+        }
+        else {
+          skip ('skipping $dbh retrival test - no DBI or DBD::DBM');
+          skip ('skipping $dbh->quote() test - no DBI or DBD::DBM');
+        } 
     }
 
     # set pnotes so we can test unset on later connections
