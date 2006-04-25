@@ -59,6 +59,14 @@ END
 my $ans = prompt('Install apxs now?', 'yes');
 exit 0 unless $ans =~ /^y/i;
 
+my $prog;
+for my $trial(qw(Apache.exe httpd.exe)) {
+    next unless -e File::Spec->catfile($prefix, 'bin', $trial);
+    $prog = $trial;
+    last;
+}
+die "Could not determine the Apache2 binary name" unless $prog;
+
 require LWP::Simple;
 LWP::Simple->import(qw(is_success getstore));
 
@@ -81,7 +89,9 @@ die "Unpacking $file failed" unless (-d $dir);
 print "chdir $dir\n";
 chdir $dir or die "chdir to $dir failed: $!";
 
-my @args = ($^X, 'Configure.pl', "--with-apache2=$prefix");
+my @args = ($^X, 'Configure.pl',
+	    "--with-apache2=$prefix",
+	    "--with-apache-prog=$prog");
 print "@args\n";
 system(@args) == 0 or die "system @args failed: $?";
 
