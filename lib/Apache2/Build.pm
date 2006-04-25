@@ -1656,7 +1656,11 @@ sub apache_corelib_cygwin {
 sub apache_libs_MSWin32 {
     my $self = shift;
     my $prefix = $self->apxs(-q => 'PREFIX') || $self->dir;
-    my @libs = map { "$prefix/lib/lib$_.lib" } qw(apr aprutil httpd);
+    my $lib = catdir $prefix, 'lib';
+    opendir(my $dir, $lib) or die qq{Cannot opendir $lib: $!};
+    my @libs = map {catfile($lib, $_)}
+        grep /^lib(apr|aprutil|httpd)\b\S*?\.lib$/, readdir $dir;
+    closedir $dir;
     "@libs";
 }
 
