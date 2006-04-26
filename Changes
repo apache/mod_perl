@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Updates for Win32 to allow building and testing on Apache/2.2:
+- use httpd.exe as the Apache binary name when installing apxs
+- use new apr library names (libapr-1.lib and libaprutil.lib)
+[Randy Kobes]
+
 Make sure that additional library paths are included in the build flags
 so that mod_perl will use the same versions of libraries that APR does.
 [Mike Smith <mike@mailchannels.com>]
