@@ -30,7 +30,7 @@ $libs .= join ' ', @apru_link_flags if @apru_link_flags;
 
 if (WIN32) {
     $libs =~ s{/libpath:}{-L}g;
-    $libs =~ s{(\w+)\.lib}{-l$1}g;
+    $libs =~ s{(\S+)\.lib}{-l$1}g;
 }
 
 if (BUILD_APREXT) {
