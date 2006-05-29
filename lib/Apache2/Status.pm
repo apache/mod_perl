@@ -548,7 +548,8 @@ sub noh_b_package_size {
         $_;
     } (sort { $subs->{$b}->{size} <=> $subs->{$a}->{size} } keys %$subs);
 
-    my $clen = length $subs->{$keys[0]}->{count};
+    my $clen = $subs->{$keys[0]}->{count} ?
+        length $subs->{$keys[0]}->{count} : 0;
     my $slen = length $subs->{$keys[0]}->{size};
 
     for my $name (@keys) {

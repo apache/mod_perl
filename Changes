@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Apache2::Status was expecting B::TerseSize to return
+an op count for things that it didn't causing
+requests like http://localhost/perl-status/main?noh_b_package_size
+to cause 405s
+[Philip M. Gollucci]
+
 Updates for Win32 to allow building and testing on Apache/2.2:
 - use httpd.exe as the Apache binary name when installing apxs
 - use new apr library names (libapr-1.lib and libaprutil-1.lib)
