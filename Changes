@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Require B::Size 0.07 and B::TerseSize 0.07 for Apache2::Status
+[Philip M. Gollucci]
+
 Apache2::Status was expecting B::TerseSize to return
 an op count for things that it didn't causing
 requests like http://localhost/perl-status/main?noh_b_package_size
