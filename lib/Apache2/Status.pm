@@ -59,8 +59,8 @@ my %requires = (
     lexinfo     => ["StatusLexInfo",     "B::LexInfo",     0,    ],
     xref        => ["StatusXref",        "B::Xref",        1.01, ],
     terse       => ["StatusTerse",       "B::Terse",       0,    ],
-    tersesize   => ["StatusTerseSize",   "B::TerseSize",   0.06, ],
-    packagesize => ["StatusPackageSize", "B::TerseSize",   0.06, ],
+    tersesize   => ["StatusTerseSize",   "B::TerseSize",   0.07, ],
+    packagesize => ["StatusPackageSize", "B::TerseSize",   0.07, ],
     peek        => ["StatusPeek",        "Apache::Peek",   1.03, ],
 );
 
