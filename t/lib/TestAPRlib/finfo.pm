@@ -18,6 +18,7 @@ use constant WIN32 => Apache::TestConfig::WIN32;
 use constant OSX   => Apache::TestConfig::OSX;
 
 use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
+use constant APACHE_2_2_PLUS    => have_min_apache_version('2.2.0');
 
 use APR::Const -compile => qw(SUCCESS FINFO_NORM FILETYPE_REG
                               FPROT_WREAD FPROT_WWRITE
@@ -145,14 +146,25 @@ sub compare_with_perl {
 
         # match world bits
 
-        ok t_cmp($finfo->protection & APR::Const::FPROT_WREAD,
-                 $stat->{protection} & S_IROTH,
-                 '$finfo->protection() & APR::Const::FPROT_WREAD');
-
-        ok t_cmp($finfo->protection & APR::Const::FPROT_WWRITE,
-                 $stat->{protection} & S_IWOTH,
-                 '$finfo->protection() & APR::Const::FPROT_WWRITE');
-
+        # on Win32, there's a bug in the apr library supplied
+        # with Apache/2.2 that causes the following two tests
+        # to fail. This is slated to be fixed after apr-1.2.7.
+        if (WIN32 and APACHE_2_2_PLUS) {
+            skip "broken apr stat on Win32", 0;
+        }
+        else {
+            ok t_cmp($finfo->protection & APR::Const::FPROT_WREAD,
+                     $stat->{protection} & S_IROTH,
+                     '$finfo->protection() & APR::Const::FPROT_WREAD');
+	}
+        if (WIN32 and APACHE_2_2_PLUS) {
+            skip "broken apr stat on Win32", 0;
+        }
+        else {
+            ok t_cmp($finfo->protection & APR::Const::FPROT_WWRITE,
+                     $stat->{protection} & S_IWOTH,
+                     '$finfo->protection() & APR::Const::FPROT_WWRITE');
+	}
         if (WIN32) {
             skip "different file semantics", 0;
         }
