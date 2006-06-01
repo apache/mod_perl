@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+gcc 4.x compile error:
+if using MP_MAINTAINER=1 and -Dusemymalloc=n (to perl)
+PERL_SYS_INT3() is #defined away.
+[Philip M. Gollucci]
+
 Require B::Size 0.07 and B::TerseSize 0.07 for Apache2::Status
 [Philip M. Gollucci]
 
