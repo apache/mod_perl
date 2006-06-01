@@ -550,19 +550,15 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
  */
 static apr_status_t modperl_sys_init(void)
 {
-#ifdef MYMALLOC
     int argc = 0;
     char **argv = NULL, **env = NULL;
-#endif /* MYMALLOC */
 
     MP_TRACE_i(MP_FUNC, "mod_perl sys init\n");
 
-#ifdef MYMALLOC
     /* not every OS uses those vars in PERL_SYS_INIT3 macro */
     argc = argc; argv = argv; env = env;
 
     PERL_SYS_INIT3(&argc, &argv, &env);
-#endif /* MYMALLOC */
 
 #if 0 /*XXX*/
 #ifdef PTHREAD_ATFORK
