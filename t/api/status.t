@@ -29,6 +29,10 @@ my $location = "/TestAPI__status";
     # it also tries to set status (to a different value), but it
     # should be ignored by Apache, since status_line is supposed to
     # override status. the handler also sets a custom code message
+    #   modules/http/http_filters.c r372958
+    #   httpd 'zaps' the status_line if it doesn't match the status
+    #   as of 2.2.1 (not released) so 2.2.2 (released)
+
     my $code = 499; # not in HTTP/1.1
     my $message = "FooBared";
     my $res = GET "$location?$code=$message";

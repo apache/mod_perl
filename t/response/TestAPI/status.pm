@@ -20,7 +20,9 @@ sub handler {
     my ($code, $string) = split /=/, $r->args || '';
 
     if ($string) {
-        $r->status(200); # status_line should override status
+        # status_line must be valid and match status
+        # or it is 'zapped' by httpd as of 2.2.1
+        $r->status($code); 
         $r->status_line("$code $string");
     }
     else {
