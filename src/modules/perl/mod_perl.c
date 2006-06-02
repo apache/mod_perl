@@ -559,9 +559,9 @@ static apr_status_t modperl_sys_init(void)
     argc = argc; argv = argv; env = env;
 
 #ifdef WIN32
-    (void)PERL_SYS_INIT3(&argc, &argv, &env);
-#else
     PERL_SYS_INIT3(&argc, &argv, &env);
+#else
+    (void)PERL_SYS_INIT3(&argc, &argv, &env);
 #endif /* WIN32 */
 
 #if 0 /*XXX*/
