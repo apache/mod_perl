@@ -30,7 +30,11 @@ sub num_of_tests {
 
 sub test {
 
-    my $file = __FILE__;
+    # for the file to be tested, use the httpd.conf generated
+    # by testing, so that it has a ctime that won't (usually)
+    # encounter a bug in Win32's stat() function for files that
+    # span across DST season boundaries.
+    my $file = catfile Apache::Test::vars->{t_dir}, 'conf', 'httpd.conf';
 
     # On Win32, touch the file to ensure it is in the same Daylight Saving
     # Time season as the current time to workaround a bug in Win32's stat()
@@ -44,8 +48,8 @@ sub test {
     # instead.
     #
     if (WIN32) {
-        my $now = time;
-        utime $now, $now, $file;
+        #my $now = time;
+        #utime $now, $now, $file;
     }
 
     my $pool = APR::Pool->new();
