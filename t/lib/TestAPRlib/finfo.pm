@@ -48,8 +48,8 @@ sub test {
     # instead.
     #
     if (WIN32) {
-        #my $now = time;
-        #utime $now, $now, $file;
+        my $now = time;
+        utime $now, $now, $file;
     }
 
     my $pool = APR::Pool->new();
