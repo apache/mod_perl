@@ -36,22 +36,6 @@ sub test {
     # span across DST season boundaries.
     my $file = catfile Apache::Test::vars->{t_dir}, 'conf', 'httpd.conf';
 
-    # On Win32, touch the file to ensure it is in the same Daylight Saving
-    # Time season as the current time to workaround a bug in Win32's stat()
-    # which APR::Finfo allows for, otherwise the two disagree.
-    #
-    # With perl-5.8.0 on Win32, the syntax
-    #   utime undef, undef, $file;
-    # causes an uninitialized warning to be emitted,
-    # so use the equivalent
-    #   utime $now, $now, $file;
-    # instead.
-    #
-    if (WIN32) {
-        my $now = time;
-        utime $now, $now, $file;
-    }
-
     my $pool = APR::Pool->new();
     # populate the finfo struct first
     my $finfo = APR::Finfo::stat($file, APR::Const::FINFO_NORM, $pool);
