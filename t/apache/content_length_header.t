@@ -65,7 +65,25 @@ foreach my $method qw(GET HEAD) {
         my $res = $method->($uri);
 
         my $cl      = 0;
-        my $head_cl = have_min_apache_version("2.0.56") ? 25 : undef;
+        my $head_cl;
+
+        ## 2.2.1, 2.0.56, 2.0.57 were not released
+        ## but we use the versions the changes went into
+        ## to protect against wierd SVN checkout building.
+        ## XXX: I'm starting to think this test is more
+        ## trouble then its worth.
+        if (have_min_apache_version("2.2.1")) { 
+          $head_cl = 25;
+        }
+        elsif (have_min_apache_version("2.2.0")) {
+          # $head_cl = undef; # avoid warnings
+        }
+        elsif (have_min_apache_version("2.0.56")) { 
+          $head_cl = 25;
+        }
+        else {
+          # $head_cl = undef; # avoid warnings
+        }
 
         ok t_cmp $res->code, 200, "$method $uri code";
         ok t_cmp ($res->header('Content-Length'),
