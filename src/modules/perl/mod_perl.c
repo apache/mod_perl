@@ -558,11 +558,7 @@ static apr_status_t modperl_sys_init(void)
     /* not every OS uses those vars in PERL_SYS_INIT3 macro */
     argc = argc; argv = argv; env = env;
 
-#ifdef WIN32
     PERL_SYS_INIT3(&argc, &argv, &env);
-#else
-    (void)PERL_SYS_INIT3(&argc, &argv, &env);
-#endif /* WIN32 */
 
 #if 0 /*XXX*/
 #ifdef PTHREAD_ATFORK

@@ -12,9 +12,6 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
-Fix "value computed not used" gcc 4.1.x compile errors
-[Philip M. Gollucci]
-
 Require B::Size 0.07 and B::TerseSize 0.07 for Apache2::Status
 [Philip M. Gollucci]
 
