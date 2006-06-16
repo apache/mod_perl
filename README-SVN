@@ -31,7 +31,9 @@ DEVELOPER ACCESS
 assuming you have already been granted commit access to the repository,
 you should follow the following steps to checkout mod_perl
 
-  $ ssh svn.apache.org svnpasswd
+Change your password via:
+https://svn.apache.org/change-password
+
   $ svn checkout https://svn.apache.org/repos/asf/perl/modperl/trunk/ mod_perl-2.0
 
 if you want to test that your commit access is working, this file is
