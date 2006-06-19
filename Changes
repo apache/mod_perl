@@ -39,9 +39,6 @@ Fixed problems with add_config() and thread-safety: [Gozer]
 - $r->add_config can only affect configuration for the current
   request, just like .htaccess files do
 
-$s->add_config is not allowed at request time anymore. $r->add_config
-can only affect configuration f
-
 Make sure that LIBS and other MakeMaker command line flags are not
 ignored by the top level Makefile.PL and xs/APR/APR/Makefile.PL [Stas]
 
