@@ -79,7 +79,7 @@ const char *modperl_options_set(apr_pool_t *p, modperl_options_t *o,
             modperl_options_t dummy;
             MpOptionsTypeSrv_set(&dummy);
 
-            if (flags_lookup(&dummy, str) != -1) {
+            if (flags_lookup(&dummy, str) == -1) {
                 error = apr_pstrcat(p, error,
                                     " (only allowed per-server)",
                                     NULL);
