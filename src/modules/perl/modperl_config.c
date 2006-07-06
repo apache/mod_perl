@@ -646,7 +646,7 @@ int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
     /*  }                         */
 
     if (r) {
-        if ((flag = modperl_flags_lookup_dir(name))) {
+        if ((flag = modperl_flags_lookup_dir(name)) != -1) {
             MP_dDCFG;
             return MpDirFLAGS(dcfg) & flag ? 1 : 0;
         }
@@ -655,7 +655,7 @@ int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
         }
     }
     else {
-        if ((flag = modperl_flags_lookup_srv(name))) {
+        if ((flag = modperl_flags_lookup_srv(name)) != -1) {
             return MpSrvFLAGS(scfg) & flag ? 1 : 0;
         }
         else {

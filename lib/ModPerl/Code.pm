@@ -460,7 +460,7 @@ EOF
                 push @lookup, $indent1 . "  case '$_':";
                 push @lookup, map { $indent2 . $_ } @{ $switch{$_} };
             }
-            push @lookup, map { $indent1 . $_ } ("}\n", "return 0;\n}\n\n");
+            push @lookup, map { $indent1 . $_ } ("}\n", "return -1;\n}\n\n");
 
             print $c_fh join "\n", @lookup;
             print $h_fh "$lookup_proto;\n";
