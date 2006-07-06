@@ -47,6 +47,14 @@ HPUX11i     DSO
                 http://marc.theaimsgroup.com/?l=apache-modperl&m=108334017416318&w=2
                 Static works OK!
 
+* Does not compile with bleedperl (5.9.x) due to modperl_error.c and Perl_croak()
+  on FreeBSD.  This is a PERL bug, but p5p and myself, and not sure where the problem is yet.
+
+* gcc 4.x and higher compiles break under -Werror
+[pgollucci volunteers]
+
+* AAA changes in httpd break httpd 2.3.x+ (svn trunk) builds terribly on all platforms.
+
 * Need to cleanup functions only needed for certain build flavors
   (perlio/threads/etc) out of lib/ModPerl/WrapXS.pm:$ithread_exports
   and use the newer, simpler #ifdef technique (see modperl_io_apache_init
