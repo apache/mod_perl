@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+PerlOptions None was previously incorrectly reported as invalid
+inside <VirtualHost> or <Directory> blocks.
+[Philip M. Gollucci]
+
 Require B::Size 0.07 and B::TerseSize 0.07 for Apache2::Status
 [Philip M. Gollucci]
 
