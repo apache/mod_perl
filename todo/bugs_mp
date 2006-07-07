@@ -2,6 +2,10 @@
 # mod_perl bugs #
 #################
 
+* local %ENV doesn't work, see t/modperl/local_ent.
+
+* PerlOptions None needs to be implemented, see t/modperl/perl_options2.t
+
 * PerlIOApache_flush() 
   Setting local $| = 0 doesn't work with regular print statements under ModPerl::*
   
