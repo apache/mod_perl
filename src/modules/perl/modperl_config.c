@@ -638,7 +638,6 @@ int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
                                           server_rec *s, const char *name)
 {
     U32 flag;
-    MP_dSCFG(s);
 
     /* XXX: should we test whether perl is disabled for this server? */
     /*  if (!MpSrvENABLE(scfg)) { */
@@ -656,6 +655,7 @@ int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
     }
     else {
         if ((flag = modperl_flags_lookup_srv(name)) != -1) {
+            MP_dSCFG(s);
             return MpSrvFLAGS(scfg) & flag ? 1 : 0;
         }
         else {
