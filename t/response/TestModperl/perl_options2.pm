@@ -60,8 +60,8 @@ sub handler {
 __DATA__
 <NoAutoConfig>
 <VirtualHost TestModperl::perl_options2>
+    PerlOptions None +Response
     <Location /TestModperl__perl_options2>
-        PerlOptions None +Response
         SetHandler modperl
         PerlResponseHandler TestModperl::perl_options2
     </Location>
