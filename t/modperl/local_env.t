@@ -4,7 +4,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestRequest qw(GET);
 
-plan tests => 1, skip_reason('local %ENV is still broken');
+plan tests => 1;
 
 my $module = 'TestModperl::local_env';
 my $url = Apache::TestRequest::module2url($module);
