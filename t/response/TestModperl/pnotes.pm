@@ -12,7 +12,6 @@ use Apache::TestUtil;
 use Apache2::Const -compile => 'OK';
 
 sub handler {
-
     my $r = shift;
 
     # make it ok to call ok() here while plan()ing elsewhere
