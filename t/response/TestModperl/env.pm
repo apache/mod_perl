@@ -54,12 +54,8 @@ sub handler {
     }
 
     ok ! $ENV{FOO};
+    skip "r->subprocess_env + local() doesnt fully work yet", 1;
     #ok ! $env->get('FOO');
-    #XXX: keys in the original subprocess_env are restored
-    #     but new ones added to the local %ENV are not removed
-    #     after the local %ENV goes out of scope
-    #skip "r->subprocess_env + local() doesnt fully work yet", 1;
-    ok 1; #the skip() message is just annoying
 
     {
         my $key = 'SERVER_SOFTWARE';
