@@ -30,7 +30,7 @@ use Config;
 use constant WIN32    => $^O eq 'MSWin32';
 use constant SOLARIS  => $^O eq 'solaris';
 use constant LINUX    => $^O eq 'linux';
-use constant BSD_LIKE => $^O =~ /(bsd|aix|darwin)/i;
+use constant BSD_LIKE => $^O =~ /(bsd|aix)/i;
 
 use Apache2::Const -compile => qw(OK DECLINED);
 
