@@ -12,9 +12,6 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
-local %ENV now works
-[Gozer, Philip M. Gollucci]
-
 PerlOptions None was previously incorrectly reported as invalid
 inside <VirtualHost> or <Directory> blocks.
 [Philip M. Gollucci]
