@@ -1570,7 +1570,7 @@ rehttpd:   kill_httpd start_httpd
 
 run_tests:
 	$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
-
+    cd Apache-SizeLimit ; $(MAKE) test
 ),
 
 $my_test,
