@@ -55,7 +55,6 @@ lib/Apache/RegistryBB.pm
 lib/Apache/RegistryLoader.pm
 lib/Apache/Resource.pm
 lib/Apache/SIG.pm
-lib/Apache/SizeLimit.pm
 lib/Apache/StatINC.pm
 lib/Apache/Symdump.pm
 lib/Apache/Constants/Exports.pm
@@ -238,4 +237,14 @@ t/docs/subr/.exists
 PerlRunXS/Makefile.PL
 PerlRunXS/PerlRunXS.pm
 src/modules/perl/PerlRunXS.xs
-
+Apache-SizeLimit/Changes
+Apache-SizeLimit/INSTALL
+Apache-SizeLimit/LICENSE
+Apache-SizeLimit/MANIFEST
+Apache-SizeLimit/Makefile.PL
+Apache-SizeLimit/README
+Apache-SizeLimit/lib/Apache/SizeLimit.pm
+Apache-SizeLimit/t/apache/all.t
+Apache-SizeLimit/t/pod.t
+Apache-SizeLimit/t/response/TestApache/basic.pm
+Apache-SizeLimit/t/response/TestApache/deprecated.pm
