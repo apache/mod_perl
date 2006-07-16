@@ -1546,13 +1546,13 @@ test:	pure_all start_httpd run_tests kill_httpd
     TEST_VERBOSE=0
 
 kill_httpd:
-    kill `cat t/logs/httpd.pid`
+	kill `cat t/logs/httpd.pid`
 	@$(RM_F) t/conf/srm.conf
 	@$(RM_F) t/logs/mod_perl.lock*
 	$(RM_F) t/logs/httpd.pid
 	$(RM_F) t/logs/error_log
 
- start_httpd: test_pre_init
+start_httpd: test_pre_init
 	@(cd t/conf; test -f httpd.conf || cp httpd.conf-dist httpd.conf)
 	@(cd t/net; test -f config.pl || cp config.pl.dist config.pl)
 	@$(TOUCH) t/conf/srm.conf
@@ -1564,12 +1564,12 @@ kill_httpd:
 	@echo done
 
 start_httpd_fork:
-    $(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -d `pwd`/t
+	$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -d `pwd`/t
 
 rehttpd:   kill_httpd start_httpd
 
 run_tests:
-    $(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
+	$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
 
 ),
 
@@ -1578,7 +1578,7 @@ $my_test,
 q(
 
 test_report:
-    $(MAKE) test | t/report
+	$(MAKE) test | t/report
 );
 }
 
