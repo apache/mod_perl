@@ -1531,7 +1531,7 @@ test:	run_tests
 
 q(
 
-test:	pure_all start_httpd run_tests kill_httpd
+test:	pure_all start_httpd run_tests kill_httpd run_apache_sizelimit_tests
 
 );
     my $have_so = $USE_DSO || ($APACI_ARGS =~ /--enable-shared=/);
@@ -1570,6 +1570,8 @@ rehttpd:   kill_httpd start_httpd
 
 run_tests:
 	$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
+
+run_apache_sizelimit_tests:
 	@(echo ; echo ; echo)
 	cd Apache-SizeLimit ; $(MAKE) test
 ),
