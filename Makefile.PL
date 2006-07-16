@@ -1525,13 +1525,13 @@ EOF
     $script .= ".win32" if $Is_Win32;
     my $my_test = $Is_Win32 ? q(
 
-  test:	run_tests
+test:	run_tests
 
 ) :
 
 q(
 
-  test:	pure_all start_httpd run_tests kill_httpd
+test:	pure_all start_httpd run_tests kill_httpd
 
 );
     my $have_so = $USE_DSO || ($APACI_ARGS =~ /--enable-shared=/);
@@ -1545,14 +1545,14 @@ q(
     q(
     TEST_VERBOSE=0
 
-  kill_httpd:
-kill `cat t/logs/httpd.pid`
+kill_httpd:
+    kill `cat t/logs/httpd.pid`
 	@$(RM_F) t/conf/srm.conf
 	@$(RM_F) t/logs/mod_perl.lock*
 	$(RM_F) t/logs/httpd.pid
 	$(RM_F) t/logs/error_log
 
-  start_httpd: test_pre_init
+ start_httpd: test_pre_init
 	@(cd t/conf; test -f httpd.conf || cp httpd.conf-dist httpd.conf)
 	@(cd t/net; test -f config.pl || cp config.pl.dist config.pl)
 	@$(TOUCH) t/conf/srm.conf
@@ -1563,13 +1563,13 @@ kill `cat t/logs/httpd.pid`
 	@sleep 2
 	@echo done
 
-  start_httpd_fork:
-$(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -d `pwd`/t
+start_httpd_fork:
+    $(APACHE_SRC)/$(HTTPD) -f `pwd`/t/conf/httpd.conf -d `pwd`/t
 
-  rehttpd:   kill_httpd start_httpd
+rehttpd:   kill_httpd start_httpd
 
-  run_tests:
-$(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
+run_tests:
+    $(FULLPERL) $(MP_TEST_SCRIPT) $(TEST_VERBOSE)
 
 ),
 
@@ -1577,8 +1577,8 @@ $my_test,
 
 q(
 
-  test_report:
-$(MAKE) test | t/report
+test_report:
+    $(MAKE) test | t/report
 );
 }
 
