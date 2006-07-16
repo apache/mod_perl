@@ -10,6 +10,11 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.30_01-dev
 
+Pull in the new Apache-SizeLimit from
+http://svn.apache.org/repos/asf/perl/Apache-SizeLimit/trunk
+and obsolete the previous lib/Apache/SizeLimit.pm.
+[Philip M. Gollucci]
+
 Fix an Apache::(Registry|PerlRun) bug caused by special characters
 in the url [kolya@mail.ru]
 
