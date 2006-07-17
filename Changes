@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Multi-line $PerlConfig is now working [Gozer]
+
 PerlOptions None was previously incorrectly reported as invalid
 inside <VirtualHost> or <Directory> blocks.
 [Philip M. Gollucci]

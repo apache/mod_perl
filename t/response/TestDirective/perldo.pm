@@ -4,6 +4,7 @@ use strict;
 use warnings FATAL => 'all';
 
 use Apache::Test;
+use Apache::TestRequest;
 use Apache::TestUtil;
 use Apache2::Const -compile => 'OK';
 use Apache2::PerlSections;
@@ -11,7 +12,7 @@ use Apache2::PerlSections;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 17;
+    plan $r, tests => 22;
 
     ok t_cmp('yes', $TestDirective::perl::worked);
 
@@ -57,6 +58,16 @@ sub handler {
     my $bport = $TestDirective::perl::base_server->port;
     my $vport = $TestDirective::perl::vhost_server->port;
     ok defined $bport && defined $vport && $vport != $bport;
+    
+    foreach my $url (qw(scalar scalar1 scalar2)) {
+        my $res = GET "/perl_sections_perlconfig_$url/";
+        ok t_cmp($res->is_success, 1, '$PerlConfig');
+    }
+    
+    foreach my $url (qw(array1 array2)) {
+        my $res = GET "/perl_sections_perlconfig_$url/";
+        ok t_cmp($res->is_success, 1, '@PerlConfig');
+    }
     
     Apache2::Const::OK;
 }
