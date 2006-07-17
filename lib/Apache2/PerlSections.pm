@@ -65,8 +65,11 @@ sub handler : method {
     {
         no strict 'refs';
         foreach my $package ($self->package) {
-            $self->dump_special(${"${package}::$special"},
-              @{"${package}::$special"} );
+            my @config = map { split /\n/ } 
+                            grep { defined } 
+                                (@{"${package}::$special"}, 
+                                 ${"${package}::$special"});
+            $self->dump_special(@config);
         }
     }
 
@@ -193,10 +196,12 @@ sub dump_entry {
 }
 
 sub add_config {
-    my ($self, $config) = @_;
-    return unless defined $config;
-    chomp($config);
-    push @{ $self->directives }, $config;
+    my ($self, @config) = @_;
+    foreach my $config (@config) {
+        return unless defined $config;
+        chomp($config);
+        push @{ $self->directives }, $config;
+    }
 }
 
 sub post_config {

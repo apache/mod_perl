@@ -111,3 +111,23 @@ PerlSetVar TestDirective__pod_cut_worked yes
    Perl 1
 </VirtualHost>
 </IfDefine>
+
+#Single-line $PerlConfig
+<Perl>
+  $PerlConfig = "Alias /perl_sections_perlconfig_scalar @DocumentRoot@";
+</Perl>
+
+#Multi-line $PerlConfig
+<Perl>
+  $PerlConfig = "Alias /perl_sections_perlconfig_scalar1 @DocumentRoot@
+                 Alias /perl_sections_perlconfig_scalar2 @DocumentRoot@
+                ";
+</Perl>
+
+#@PerlConfig
+<Perl>
+  @PerlConfig = ("Alias /perl_sections_perlconfig_array1 @DocumentRoot@",
+                 "Alias /perl_sections_perlconfig_array2 @DocumentRoot@",
+                );
+</Perl>
+
