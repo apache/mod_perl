@@ -8,8 +8,6 @@ use Apache::TestRequest;
 plan tests => 2;
 
 {
-    # this registers and performs cleanups, but we test whether the
-    # cleanup was run only in the next sub-test
     my $location = "/TestHooks__error";
     my $expected = qr/^Error: Undefined subroutine/;
     my $received = GET_BODY $location;
@@ -17,8 +15,6 @@ plan tests => 2;
 }
 
 {
-    # this registers and performs cleanups, but we test whether the
-    # cleanup was run only in the next sub-test
     my $error_seed_text = 'seed_text';
     my $location = "/TestHooks__error?$error_seed_text";
     my $expected = qr/^Error: \Q$error_seed_text\E, Undefined subroutine/;
