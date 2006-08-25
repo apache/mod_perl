@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Fix bug concerning 'error-notes' having no value on 
+errordocument redirect.
+[Guy Albertelli II <guy@albertelli.com>]
+
 Multi-line $PerlConfig is now working [Gozer]
 
 PerlOptions None was previously incorrectly reported as invalid

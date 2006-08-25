@@ -130,7 +130,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
 
     if (status == HTTP_INTERNAL_SERVER_ERROR) {
         if (r && r->notes) {
-            apr_table_mergen(r->notes, "error-notes", SvPV_nolen(ERRSV));
+            apr_table_merge(r->notes, "error-notes", SvPV_nolen(ERRSV));
         }
     }
 
