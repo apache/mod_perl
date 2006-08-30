@@ -119,12 +119,12 @@ sub configure {
     # mod_perl test suite relies on having Apache-Test bundled with
     # the mod_perl source, since any pre-installed version may not do
     # the right thing
-		foreach my $sub_pkg (qw(Apache-Test Apache-SizeLimit)) {
+    foreach my $sub_pkg (qw(Apache-Test Apache-SizeLimit)) {
         unless (-d $sub_pkg) {
             error "Can't find a sub-directory $sub_pkg. " .
                 "Make sure that you are using a complete source distribution";
             exit 1;
-        } 
+        }
     }
 
     set_modperl_version();
