@@ -70,7 +70,7 @@ sub test_apache_size_limit {
     if ($@) {
         # unsupported platform
         die $@ unless $@ =~ /Apache2::SizeLimit not implemented on/
-            or $@ =~ /You must install BSD::Resource/;
+            or $@ =~ /you must install BSD::Resource/;
     }
 }
 
