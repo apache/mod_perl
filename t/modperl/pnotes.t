@@ -10,7 +10,7 @@ my $url    = Apache::TestRequest::module2url($module);
 
 t_debug("connecting to $url");
 
-plan tests => (26 * 3);
+plan tests => (26 * 3), need_lwp;
 
 # first with keepalives
 Apache::TestRequest::user_agent(reset => 1, keep_alive => 1);
