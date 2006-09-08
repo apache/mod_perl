@@ -12,7 +12,7 @@ use File::Spec::Functions qw(catfile);
 
 plan tests => 4, need need_module(qw(alias)),
                       need_cgi,
-                      need_min_module_version CGI => 3.22,
+                      need_min_module_version CGI => 99.99,
                       skip_reason('fatalsToBrowser known not to work');
 
 my $file = catfile(Apache::Test::vars('serverroot'),
