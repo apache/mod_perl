@@ -119,10 +119,12 @@ sub configure {
     # mod_perl test suite relies on having Apache-Test bundled with
     # the mod_perl source, since any pre-installed version may not do
     # the right thing
-    unless (-d "Apache-Test") {
-        error "Can't find a sub-directory Apache-Test. " .
-            "Make sure that you are using a complete source distribution";
-        exit 1;
+    foreach my $dir (qw(Apache-Test Apache-SizeLimit)) {
+        unless (-d $dir) {
+            error "Can't find a sub-directory $dir. " .
+                "Make sure that you are using a complete source distribution";
+            exit 1;
+        }
     }
 
     set_modperl_version();
@@ -225,6 +227,7 @@ EOI
 
     if ($build->{MP_APXS}) {
         debug "Using APXS => $build->{MP_APXS}";
+        $ENV{MP_APXS} = $build->{MP_APXS}; # for Apache-SizeLimit
     }
     elsif ($build->{MP_AP_PREFIX}) {
         if (my $reason = $build->ap_prefix_invalid) {
