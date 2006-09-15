@@ -114,20 +114,26 @@ PerlSetVar TestDirective__pod_cut_worked yes
 
 #Single-line $PerlConfig
 <Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
   $PerlConfig = "Alias /perl_sections_perlconfig_scalar @DocumentRoot@";
+}
 </Perl>
 
 #Multi-line $PerlConfig
 <Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
   $PerlConfig = "Alias /perl_sections_perlconfig_scalar1 @DocumentRoot@
                  Alias /perl_sections_perlconfig_scalar2 @DocumentRoot@
                 ";
+}
 </Perl>
 
 #@PerlConfig
 <Perl>
+if (Apache::Test::have_module('mod_alias.c')) {
   @PerlConfig = ("Alias /perl_sections_perlconfig_array1 @DocumentRoot@",
                  "Alias /perl_sections_perlconfig_array2 @DocumentRoot@",
                 );
+}
 </Perl>
 

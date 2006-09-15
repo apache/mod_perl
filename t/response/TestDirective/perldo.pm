@@ -12,7 +12,7 @@ use Apache2::PerlSections;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 22;
+    plan $r, tests => 22, need_module('mod_alias'); 
 
     ok t_cmp('yes', $TestDirective::perl::worked);
 
