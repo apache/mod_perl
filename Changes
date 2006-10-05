@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+When using MP_AP_PREFIX on WIN32 make sure that its
+a valid directory.
+[Nikolay Ananiev <ananiev@thegdb.com>]
+
 Fix bug concerning 'error-notes' having no value on 
 errordocument redirect.
 [Guy Albertelli II <guy@albertelli.com>]
