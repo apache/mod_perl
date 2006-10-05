@@ -121,6 +121,11 @@ sub parse {
                     require Win32;
                     $val = Win32::GetShortPathName($val);
                 }
+
+                if (!$val || !-d $val) {
+                    error "MP_AP_PREFIX must point to a valid directory.";
+                    die "\n";
+                }
             }
 
             if ($table->{$key}->{append}){
