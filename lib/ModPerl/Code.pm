@@ -778,6 +778,16 @@ sub generate {
     my $xsinit = "$self->{path}/modperl_xsinit.c";
     debug "generating...$xsinit";
 
+    # There's a possibility that $Config{static_ext} may contain spaces
+    # and ExtUtils::Embed::xsinit won't handle the situation right. In
+    # this case we'll get buggy "boot_" statements in modperl_xsinit.c.
+    # Fix this by cleaning the @Extensions array.
+
+    # Loads @Extensions if not loaded
+    ExtUtils::Embed::static_ext(); 
+
+    @ExtUtils::Embed::Extensions = grep{$_} @ExtUtils::Embed::Extensions;
+
     #create bootstrap method for static xs modules
     my $static_xs = [keys %{ $build->{XS} }];
     ExtUtils::Embed::xsinit($xsinit, 1, $static_xs);
