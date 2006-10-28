@@ -78,10 +78,17 @@ Instructions for mod_perl 2.0 Release Manager
   e. tag
      % make tag
 
-  f. create the final package
+  f. Update the svn:externals in the new tag
+     (you can't propedit remotely yet in svn)
+     svn co https://svn.apache.org/repos/asf/perl/tags/2_0_2
+     svn propedit svn:xternals 2_0_2
+     Update the Apache-Test line to the tag you previously created.
+     svn ci
+
+  g. create the final package
      % make dist
 
-  g. test the final package again at least once
+  h. test the final package again at least once
 
 4. Release the package and update links (e.g. mod_perl-2.0.3.tar.gz)
 
