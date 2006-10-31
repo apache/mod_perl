@@ -11,7 +11,7 @@ use Apache::TestConfig ();
 use Apache::TestUtil;
 use Apache::Test;
 
-use constant WIN32 => Apache::TestConfig::WIN32 || Apache::TestConfig::CYGWIN;
+use constant WIN32 => Apache::TestConfig::WIN32;
 
 use Apache2::Const -compile => 'OK';
 
