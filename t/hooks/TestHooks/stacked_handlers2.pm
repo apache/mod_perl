@@ -45,6 +45,17 @@ sub server_error {
     return Apache2::Const::SERVER_ERROR;
 }
 
+sub push_handlers {
+
+    my $r = shift;
+
+    $r->push_handlers(PerlFixupHandler => \&ok);
+
+    callback($r);
+
+    return Apache2::Const::OK;
+}
+
 sub callback {
 
     my $obj = shift;
@@ -167,8 +178,9 @@ __DATA__
         # 1 run, 1 left behind
         PerlTypeHandler  TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers3::server_error
 
-        # all 2 run
+        # all 4 run
         PerlFixupHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
+        PerlFixupHandler TestHooks::stacked_handlers2::push_handlers
 
         # 2 run, 2 left behind
         PerlResponseHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2 

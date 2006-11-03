@@ -13,7 +13,7 @@ my @patterns = (
     'footer',
 );
 
-plan tests => 2 + @patterns, need need_module('include', 'mod_mime'),
+plan tests => 2 + @patterns, need need_module('mod_include', 'mod_mime'),
     need_min_module_version(CGI => 3.08);
 
 my $location = "/includes/test.shtml";

@@ -26,7 +26,7 @@ ran 2 PerlAccessHandler handlers
 ran 2 PerlAuthenHandler handlers
 ran 2 PerlAuthzHandler handlers
 ran 1 PerlTypeHandler handlers
-ran 2 PerlFixupHandler handlers
+ran 4 PerlFixupHandler handlers
 ran 2 PerlResponseHandler handlers
 ran 2 PerlOutputFilterHandler handlers!;
 

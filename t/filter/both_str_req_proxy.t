@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, need need_module(qw(proxy proxy_http.c)),
+plan tests => 1, need need_module(qw(mod_proxy proxy_http.c)),
     need_access;
 
 my $data = join ' ', 'A'..'Z', 0..9;
