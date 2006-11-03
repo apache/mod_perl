@@ -10,7 +10,7 @@ use Apache::TestRequest qw(GET);
 
 use File::Spec::Functions qw(catfile);
 
-plan tests => 4, need need_module(qw(alias)),
+plan tests => 4, need need_module(qw(mod_alias)),
                       need_cgi,
                       need_min_module_version CGI => 99.99,
                       skip_reason('fatalsToBrowser known not to work');
