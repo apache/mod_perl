@@ -80,10 +80,9 @@ Instructions for mod_perl 2.0 Release Manager
 
   f. Update the svn:externals in the new tag
      (you can't propedit remotely yet in svn)
-     svn co https://svn.apache.org/repos/asf/perl/tags/2_0_3
-     svn propedit svn:xternals 2_0_3
+     svn co https://svn.apache.org/repos/asf/perl/tags/2_0_2
+     svn propedit svn:xternals 2_0_2
      Update the Apache-Test line to the tag you previously created.
-     Update the docs line to the current tag.
      svn ci
 
   g. create the final package
