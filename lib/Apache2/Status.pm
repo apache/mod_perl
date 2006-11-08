@@ -217,11 +217,14 @@ sub status_inc {
         $module =~ s,\.pm$,,;
         next if $module eq 'mod_perl';
         my $v = ${"$module\:\:VERSION"} || '0.00';
+        my $mtime = -e $INC{$file} ? scalar localtime((stat $INC{$file})[9]) :
+            'N/A';
+
         push @retval, (
             "<tr>", 
             (map "<td>$_</td>", 
                 qq(<a href="$uri?$module">$module</a>),
-                $v, scalar localtime((stat $INC{$file})[9]), $INC{$file}),
+                $v, $mtime, $INC{$file}),
             "</tr>\n"
         );
     }
