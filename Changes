@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.3-dev
 
+Prevent things in %INC that are not stat() able
+from breaking Apache2::Status 'Loaded Modules'
+under fatal warnings.
+[Philip M. Gollucci <pgollucci@p6m7g8.com>]
+
 When using MP_AP_PREFIX on WIN32 make sure that its
 a valid directory.
 [Nikolay Ananiev <ananiev@thegdb.com>]
