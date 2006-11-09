@@ -55,6 +55,8 @@ Instructions for mod_perl 2.0 Release Manager
    to the modperl/dev list (may be longer to give most people a chance
    to catch up). no need to tag this package
 
+   Subject: [RELEASE CANDIDATE]: mod_perl-2.0.3 RC\d+
+
 2a. if problems are detected during stage 2, repeat stages 1 and 2.
 
 3. when the package has been reported to be good, prepare a new
