@@ -40,26 +40,16 @@ sub get_svn_files {
     my @files;
 
     my $cwd = Cwd::cwd();
-
-    finddepth({ follow => 1, wanted => sub {
-        return unless $_ eq 'entries';
-        return unless $File::Find::dir =~ /\.svn$/;
-
-        my $dir = dirname $File::Find::dir;
-        $dir =~ s,^$cwd/?,,;
-
-        open my $fh, $_ or die "open $_: $!";
-        while (my $line = <$fh>) {
-             if ($line =~ /name\s*=\s*"([^"]*)"/) {
-                my $file = $1;
-                next if $file eq 'svn:this_dir';
-                next if !$file or -d "../$file" or $file =~ /^\./;
-                push @files, $dir ? "$dir/$file" : $file;
-             }
+    my @lines = `svn status -v`	;
+    foreach my $line (@lines) {
+        chomp $line;
+        if ($line =~ /(?:\d+)\s+(?:\d+)\s+(?:\w+)\s+(.*)\s*/) {
+            my $file = $1;
+            if (-e $file && ! -d $file) {
+                push @files, $1 if -e $1;
+            }
         }
-        close $fh;
-
-    }}, $cwd);
+    }
 
     # files to add which aren't under svn
     push @files, qw(lib/ModPerl/DummyVersions.pm);
