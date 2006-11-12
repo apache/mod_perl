@@ -1,4 +1,4 @@
-This is mod_perl version 2.0-tobe
+This is mod_perl version 2.0
 
 *** Prerequisites ***
 
@@ -42,7 +42,7 @@ http://perl.apache.org/docs/2.0/.
 
 *** Todo ***
 
-mod_perl-2.0-tobe is not 100% feature complete with the 1.xx version.
+mod_perl-2.0 is not 100% feature complete with the 1.xx version.
 See the files in the todo/ directory for what remains to be done. Some
 of those features will be implemented after 2.0 is released. The goal
 is to empty the file todo/release and document/test/verify the API
