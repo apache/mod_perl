@@ -111,7 +111,7 @@ sub linux_smaps_size_check_first_time {
 sub linux_smaps_size_check {
 
     my $s = Linux::Smaps->new($$)->all;
-    return ($s->size, $s->shared_cleani + $s->shared_dirty);
+    return ($s->size, $s->shared_clean + $s->shared_dirty);
 }
 
 # return process size (in KB)
