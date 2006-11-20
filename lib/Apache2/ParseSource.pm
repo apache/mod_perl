@@ -314,12 +314,12 @@ sub get_constants {
 
 sub handle_constant {
     my ($self, $constants) = @_;
-    my $keys = keys %defines_wanted_re; #XXX broken bleedperl ?
+    my $keys = keys %defines_wanted_re;
 
     return if /^($defines_unwanted)/o;
 
     while (my ($class, $groups) = each %defines_wanted_re) {
-        my $keys = keys %$groups; #XXX broken bleedperl ?
+        my $keys = keys %$groups;
 
         while (my ($group, $re) = each %$groups) {
             next unless /^($re)/;
