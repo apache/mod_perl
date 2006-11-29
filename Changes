@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.4-dev
+
 =item 2.0.3 November 28, 2006
 
 Prevent things in %INC that are not stat() able
