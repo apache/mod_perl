@@ -82,8 +82,8 @@ Instructions for mod_perl 2.0 Release Manager
 
   f. Update the svn:externals in the new tag
      (you can't propedit remotely yet in svn)
-     svn co https://svn.apache.org/repos/asf/perl/tags/2_0_3
-     svn propedit svn:xternals 2_0_3
+     svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_3
+     svn propedit svn:externals 2_0_3
      Update the Apache-Test line to the tag you previously created.
      Update the docs line to the current tag.
      svn ci
@@ -111,11 +111,11 @@ Instructions for mod_perl 2.0 Release Manager
 
   c. archive older releases (keep current + one prior release)
 
-    % mv /www/perl.apache.org/dist/mod_perl-2.0.0.tar.gz \
+    % mv /www/perl.apache.org/dist/mod_perl-2.0.1.tar.gz \
          /www/perl.apache.org/dist/old
-    % mv /www/perl.apache.org/dist/mod_perl-2.0.0.tar.gz.asc \
+    % mv /www/perl.apache.org/dist/mod_perl-2.0.1.tar.gz.asc \
          /www/perl.apache.org/dist/old
-    % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.0
+    % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.1
 
   d. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
@@ -174,8 +174,8 @@ Instructions for mod_perl 2.0 Release Manager
    % cd /www/www.apache.org/dist/perl/
    % cp /www/perl.apache.org/dist/mod_perl-2.0.3.tar.gz* .
    % tar -xzvf mod_perl-2.0.3.tar.gz
-   % mv mod_perl-2.0.0.tar.gz* /www/archive.apache.org/dist/perl/
-   % rm -rf mod_perl-2.0.0
+   % mv mod_perl-2.0.1.tar.gz* /www/archive.apache.org/dist/perl/
+   % rm -rf mod_perl-2.0.1
 
   b. make sure that the files you just created are group rw so
 
@@ -203,7 +203,7 @@ Instructions for mod_perl 2.0 Release Manager
   b. edit ./Changes:
      - start a new item with incremented version + '-dev'
 
-  =item 2.0.3-dev
+  =item 2.0.4-dev
 
   c. add a release entry in STATUS
 
