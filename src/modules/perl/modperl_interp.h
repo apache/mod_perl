@@ -44,8 +44,15 @@ apr_status_t modperl_interp_cleanup(void *data);
 #endif
 
 #ifndef HvPMROOT
+# if PERL_REVISION == 5 && \
+    ((PERL_VERSION == 9 && PERL_SUBVERSION > 4) || \
+    PERL_VERSION > 9)
+#define MP_THX_INTERP_SET(thx, interp)                          \
+    ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_u.xmg_magic = (MAGIC*)interp
+# else
 #define MP_THX_INTERP_SET(thx, interp)                          \
     ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_magic = (MAGIC*)interp
+# endif
 #else
 #define MP_THX_INTERP_SET(thx, interp)                          \
     HvPMROOT(*Perl_Imodglobal_ptr(thx)) = (PMOP*)interp
