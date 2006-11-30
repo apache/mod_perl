@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Fixes to get bleed-ithread (5.9.5+) to comile again.
+
 =item 2.0.3 November 28, 2006
 
 Prevent things in %INC that are not stat() able

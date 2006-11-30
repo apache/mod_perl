@@ -584,6 +584,15 @@ static apr_status_t modperl_sys_init(void)
 
 static apr_status_t modperl_sys_term(void *data)
 {
+    /* PERL_SYS_TERM() needs 'my_perl' as of 5.9.5 */
+#ifdef USE_ITHREADS
+# if PERL_REVISION == 5 && \
+  ((PERL_VERSION == 9 && PERL_SUBVERSION > 4) || \
+   PERL_VERSION > 9)
+    modperl_cleanup_data_t *cdata = (modperl_cleanup_data_t *)data;
+    PerlInterpreter *my_perl = (PerlInterpreter *)cdata->data;
+# endif
+#endif
     MP_init_status = 0;
     MP_threads_started = 0;
     MP_post_post_config_phase = 0;
