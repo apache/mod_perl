@@ -36,8 +36,15 @@ apr_status_t modperl_interp_cleanup(void *data);
  * cleaner solution. of course it must be really fast.
  */
 #ifndef HvPMROOT
+# if PERL_REVISION == 5 && \
+    ((PERL_VERSION == 9 && PERL_SUBVERSION > 4) || \
+    PERL_VERSION > 9)
 #define MP_THX_INTERP_GET(thx)                                  \
-    (modperl_interp_t *) ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_magic
+    (modperl_interp_t *) ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_u.xmg_magic
+# else
+#define MP_THX_INTERP_GET(thx)                                  \
+      (modperl_interp_t *) ((XPVMG*)SvANY(*Perl_Imodglobal_ptr(thx)))->xmg_magic
+# endif
 #else
 #define MP_THX_INTERP_GET(thx) \
     (modperl_interp_t *)HvPMROOT(*Perl_Imodglobal_ptr(thx))
