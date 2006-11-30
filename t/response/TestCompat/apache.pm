@@ -128,6 +128,5 @@ sub handler {
 __END__
 # so we can test whether send_httpd_header() works fine
 PerlOptions +ParseHeaders +GlobalRequest
-AllowOverride Options
 PerlModule TestCompat::apache
 PerlFixupHandler TestCompat::apache::fixup
