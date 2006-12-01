@@ -590,7 +590,7 @@ static apr_status_t modperl_sys_term(void *data)
   ((PERL_VERSION == 9 && PERL_SUBVERSION > 4) || \
    PERL_VERSION > 9)
     modperl_cleanup_data_t *cdata = (modperl_cleanup_data_t *)data;
-    PerlInterpreter *my_perl = (PerlInterpreter *)cdata->data;
+    PerlInterpreter *my_perl = cdata == NULL ? NULL : (PerlInterpreter *)cdata->data;
 # endif
 #endif
     MP_init_status = 0;
