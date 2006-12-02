@@ -12,7 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
-Fixes to get bleed-ithread (5.9.5+) to comile again.
+-march=pentium4 or anything with an = in it in CCFLAGS or @ARGV
+that gets passed to xs/APR/APR/Makefile.PL broke the @ARGV
+parsing.  I.E. FreeBSD port builds when users had CPUTYPE
+set in /etc/make.conf.
+[Philip M. Gollucci <pgollucci@p6m7g8.com>]
+
+Fixes to get bleed-ithread (5.9.5+) to comile again. 
+[Philip M. Gollucci <pgollucci@p6m7g8.com>]
 
 =item 2.0.3 November 28, 2006
 
