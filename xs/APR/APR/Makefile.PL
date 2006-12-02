@@ -15,7 +15,7 @@ use constant BUILD_APREXT   => Apache2::Build::BUILD_APREXT;
 
 my %args;
 
-%args = map { split /=/, $_ } @ARGV;
+%args = map { split /=/, $_, 2 } @ARGV;
 
 $args{NAME}         = 'APR';
 $args{VERSION_FROM} = 'APR.pm';
