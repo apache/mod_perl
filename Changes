@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Prevent Apache2::PerSections::symdump() from returning invalid
+httpd.conf snippets like 'Alias undef'
+[Philip M. Gollucci <pgollucci@p6m78g.com>]
+
 Require B-Size 0.9 for Apache2::Status which fixes
 Can't call method "script_name" on an undefined value
 [Philip M. Gollucci <pgollucci@p6m78g.com>]
