@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Prevent direct use of _deprecated_ Apache2::ReadConfig in
+<Perl> sections with httpd Alias directives from 
+incorrectly generating
+'The Alias directive in xxxxx at line y will probably never match'
+messages.
+[Philip M. Gollucci <pgollucci@p6m78g.com>]
+
 Prevent Apache2::PerSections::symdump() from returning invalid
 httpd.conf snippets like 'Alias undef'
 [Philip M. Gollucci <pgollucci@p6m78g.com>]
