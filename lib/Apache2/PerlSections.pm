@@ -79,6 +79,8 @@ sub handler : method {
     Apache2::Const::OK;
 }
 
+my %directives_seen_hack;
+
 sub symdump {
     my ($self) = @_;
 
@@ -99,7 +101,10 @@ sub symdump {
                     push @{$self->{symbols}}, [$key, $ENTRY];
                 }
                 if (defined $val && defined *ENTRY{ARRAY}) {
-                    push @{$self->{symbols}}, [$key, \@ENTRY];
+                    unless (exists $directives_seen_hack{"$key$val"}) {
+                        $directives_seen_hack{"$key$val"} = 1;
+                        push @{$self->{symbols}}, [$key, \@ENTRY];
+                    }
                 }
                 if (defined $val && defined *ENTRY{HASH} && $key !~ /::/) {
                     push @{$self->{symbols}}, [$key, \%ENTRY];
