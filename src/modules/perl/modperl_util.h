@@ -157,7 +157,7 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
 
 #define MP_PERL_VERSION_AT_MOST(r, v, s)                                 \
    (PERL_REVISION == r &&                                                \
-   (PERL_VERSION == v-1 || (PERL_VERSION == v && PERL_SUBVERSION =< s)))
+   (PERL_VERSION < v || (PERL_VERSION == v && PERL_SUBVERSION =< s)))
 
 #define MP_PERL_VERSION(r, v, s)                                         \
   (PERL_REVISION == r && PERL_VERSION == v && PERL_SUBVERSION == s)
