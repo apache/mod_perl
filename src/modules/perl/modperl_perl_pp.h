@@ -17,7 +17,10 @@
 #ifndef MODPERL_PERL_PP_H
 #define MODPERL_PERL_PP_H
 
-#if defined(USE_ITHREADS) && defined(MP_PERL_5_6_x)
+#define MP_PERL_BRANCH(r, v)                                             \
+    (PERL_REVISION == r && PERL_VERSION == v)
+
+#if defined(USE_ITHREADS) && MP_PERL_BRANCH(5, 6)
 #   define MP_REFGEN_FIXUP
 #endif
 

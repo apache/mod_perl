@@ -1,4 +1,3 @@
-
 /* Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -78,6 +77,18 @@
 #define MP_magical_tie(sv, mg_flags) \
     SvFLAGS((SV*)sv) |= mg_flags
 
+/* some wrapper macros to detect perl versions 
+ * and prevent code clutter */
+#define MP_PERL_VERSION_AT_LEAST(r, v, s)                                \
+    (PERL_REVISION == r &&                                               \
+    ((PERL_VERSION == v && PERL_SUBVERSION > s-1) || PERL_VERSION > v))
+
+#define MP_PERL_VERSION_AT_MOST(r, v, s)                                 \
+   (PERL_REVISION == r &&                                                \
+   (PERL_VERSION < v || (PERL_VERSION == v && PERL_SUBVERSION < s+1)))
+
+#define MP_PERL_VERSION(r, v, s)                                         \
+  (PERL_REVISION == r && PERL_VERSION == v && PERL_SUBVERSION == s)
 
 /* tie %hash */
 MP_INLINE SV *modperl_hash_tie(pTHX_ const char *classname,

@@ -29,7 +29,7 @@
 
 #ifdef USE_ITHREADS
 
-#ifdef MP_PERL_5_6_x
+#if MP_PERL_BRANCH(5, 6)
 #   define my_sv_dup(s, p) sv_dup(s)
 
 typedef struct {

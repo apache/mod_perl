@@ -165,8 +165,7 @@ static void set_taint_var(PerlInterpreter *perl)
     dTHXa(perl);
 
 /* 5.7.3+ has a built-in special ${^TAINT}, backport it to 5.6.0+ */
-#if PERL_REVISION == 5 && \
-    (PERL_VERSION == 6 || (PERL_VERSION == 7 && PERL_SUBVERSION < 3))
+#if MP_PERL_VERSION_AT_MOST(5, 7, 2)
     {
         GV *gv = gv_fetchpv("\024AINT", GV_ADDMULTI, SVt_IV);
         sv_setiv(GvSV(gv), PL_tainting);
@@ -266,7 +265,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     PL_endav = Nullav;
 
 /* This was fixed in 5.9.0/5.8.1 (17775), but won't compile after 19122 */
-#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 0 && \
+#if MP_PERL_VERSION(5, 8, 0) && \
     defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
     /* workaround perl5.8.0/glibc bug */
     PL_reentrant_buffer->_crypt_struct.current_saltbits = 0;
@@ -585,13 +584,9 @@ static apr_status_t modperl_sys_init(void)
 static apr_status_t modperl_sys_term(void *data)
 {
     /* PERL_SYS_TERM() needs 'my_perl' as of 5.9.5 */
-#ifdef USE_ITHREADS
-# if PERL_REVISION == 5 && \
-  ((PERL_VERSION == 9 && PERL_SUBVERSION > 4) || \
-   PERL_VERSION > 9)
+#if MP_PERL_VERSION_AT_LEAST(5, 9, 5) && defined(USE_ITHREADS)
     modperl_cleanup_data_t *cdata = (modperl_cleanup_data_t *)data;
     PerlInterpreter *my_perl = cdata == NULL ? NULL : (PerlInterpreter *)cdata->data;
-# endif
 #endif
     MP_init_status = 0;
     MP_threads_started = 0;
@@ -712,10 +707,10 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
     }
 #endif
 
-#if PERL_REVISION == 5 && PERL_VERSION < 9
-#define MP_PERL_VERSION_STAMP "Perl/v%vd"
-#else
+#if MP_PERL_VERSION_AT_LEAST(5, 9, 0)
 #define MP_PERL_VERSION_STAMP "Perl/%" SVf
+#else
+#define MP_PERL_VERSION_STAMP "Perl/v%vd"
 #endif
     
     ap_add_version_component(pconf, MP_VERSION_STRING);

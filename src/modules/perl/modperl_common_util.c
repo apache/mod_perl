@@ -23,9 +23,8 @@
 
 #include "modperl_common_util.h"
 
-
 /* Prefetch magic requires perl 5.8 */
-#if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
+#if MP_PERL_VERSION_AT_LEAST(5, 8, 0)
 
 /* A custom MGVTBL with mg_copy slot filled in allows us to FETCH a
  * table entry immediately during iteration.  For multivalued keys
@@ -68,7 +67,7 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
     sv_setref_pv(rsv, classname, p);
 
     /* Prefetch magic requires perl 5.8 */
-#if ((PERL_REVISION == 5) && (PERL_VERSION >= 8))
+#if MP_PERL_VERSION_AT_LEAST(5, 8, 0)
 
     sv_magicext(hv, NULL, PERL_MAGIC_ext, NULL, Nullch, -1);
     SvMAGIC(hv)->mg_virtual = (MGVTBL *)&modperl_table_magic_prefetch;
