@@ -95,7 +95,7 @@ sub symdump {
                 #We don't want to pick up stashes...
                 next if ($key =~ /::$/);
                 local (*ENTRY) = $val;
-                if (defined $val && defined *ENTRY{SCALAR} defined $ENTRY) {
+                if (defined $val && defined *ENTRY{SCALAR} && defined $ENTRY) {
                     push @{$self->{symbols}}, [$key, $ENTRY];
                 }
                 if (defined $val && defined *ENTRY{ARRAY}) {
