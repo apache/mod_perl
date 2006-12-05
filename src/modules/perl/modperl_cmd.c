@@ -564,7 +564,7 @@ MP_CMD_SRV_DECLARE(perldo)
         GV *gv = gv_fetchpv("0", TRUE, SVt_PV);
         ENTER;SAVETMPS;
         save_scalar(gv); /* local $0 */
-#if PERL_REVISION == 5 && PERL_VERSION >= 9
+#if MP_PERL_VERSION_AT_LEAST(5, 9, 0)
         TAINT_NOT; /* XXX: temp workaround, see my p5p post */
 #endif
         sv_setref_pv(server, "Apache2::ServerRec", (void*)s);

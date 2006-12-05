@@ -24,7 +24,7 @@
  * from living in the gv to the GvIOp(gv), so we have to deal
  * with both to support 5.6.x
  */
-#if ((PERL_REVISION == 5) && (PERL_VERSION >= 7))
+#if MP_PERL_VERSION_AT_LEAST(5, 7, 0)
 #   define TIEHANDLE_SV(handle) (SV*)GvIOp((SV*)handle)
 #else
 #   define TIEHANDLE_SV(handle) (SV*)handle

@@ -22,7 +22,7 @@
  * need to do that for those fake 5.8.0 as well. real 5.8.0 doesn't
  * have THREADS_HAVE_PIDS defined.
  */
-#if PERL_REVISION == 5 && PERL_VERSION >= 8 && THREADS_HAVE_PIDS
+#if MP_PERL_VERSION_AT_LEAST(5, 8, 0) && THREADS_HAVE_PIDS
 #define MP_MAINTAIN_PPID
 #endif
 

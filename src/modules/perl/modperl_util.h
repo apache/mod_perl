@@ -149,17 +149,4 @@ int  modperl_restart_count(void);
 SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
                    request_rec *r, conn_rec *c);
 
-/* some wrapper macros to detect perl versions 
- * and prevent code clutter */
-#define MP_PERL_VERSION_AT_LEAST(r, v, s)                                \
-    (PERL_REVISION == r &&                                               \
-    ((PERL_VERSION == v && PERL_SUBVERSION >= s) || PERL_VERSION > v))
-
-#define MP_PERL_VERSION_AT_MOST(r, v, s)                                 \
-   (PERL_REVISION == r &&                                                \
-   (PERL_VERSION < v || (PERL_VERSION == v && PERL_SUBVERSION =< s)))
-
-#define MP_PERL_VERSION(r, v, s)                                         \
-  (PERL_REVISION == r && PERL_VERSION == v && PERL_SUBVERSION == s)
-
 #endif /* MODPERL_UTIL_H */

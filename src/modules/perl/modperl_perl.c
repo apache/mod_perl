@@ -200,8 +200,7 @@ void modperl_perl_call_endav(pTHX)
      }
 }
 
-#if !(PERL_REVISION == 5 && ( PERL_VERSION < 8 ||    \
-    (PERL_VERSION == 8 && PERL_SUBVERSION == 0))) && \
+#if !(MP_PERL_VERSION_AT_MOST(5, 8, 0)) && \
     (defined(USE_HASH_SEED) || defined(USE_HASH_SEED_EXPLICIT))
 #define MP_NEED_HASH_SEED_FIXUP
 #endif
@@ -258,7 +257,7 @@ void modperl_hash_seed_set(pTHX)
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
     if (MP_init_hash_seed_set) {
-#if PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION == 1
+#if MP_PERL_VERSION(5, 8, 1)
         PL_hash_seed       = MP_init_hash_seed;
         PL_hash_seed_set   = MP_init_hash_seed_set;
 #else
