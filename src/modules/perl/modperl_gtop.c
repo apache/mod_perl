@@ -31,7 +31,7 @@ static int modperl_gtop_size_string(size_t size, char *size_string)
     }
     else if (size < 1048576) {
         apr_snprintf(size_string, MP_GTOP_SSS, "%dk",
-                     (size + 512) / 1024);
+                     (int)(size + 512) / 1024);
     }
     else if (size < 103809024) {
         apr_snprintf(size_string, MP_GTOP_SSS, "%.1fM",
@@ -39,7 +39,7 @@ static int modperl_gtop_size_string(size_t size, char *size_string)
     }
     else {
         apr_snprintf(size_string, MP_GTOP_SSS, "%dM",
-                     (size + 524288) / 1048576);
+                     (int)(size + 524288) / 1048576);
     }
 
     return 1;

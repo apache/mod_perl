@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+a minor compilation warning resolved in modperl_gtop_size_string
+[Stas]
+
 Prevent direct use of _deprecated_ Apache2::ReadConfig in
 <Perl> sections with httpd Alias directives from 
 incorrectly generating
