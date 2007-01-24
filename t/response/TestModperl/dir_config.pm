@@ -16,7 +16,7 @@ use Apache2::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 14;
+    plan $r, tests => 15;
 
     #Apache2::RequestRec::dir_config tests
 
@@ -27,6 +27,13 @@ sub handler {
     # object test
     my $dir_config = $r->dir_config;
     ok defined $dir_config && ref($dir_config) eq 'APR::Table';
+
+    # make sure trying to get something that's not defined
+    # doesn't blow up
+    my $undef = $r->dir_config('EDOESNOTEXIST');
+
+    ok t_cmp($undef, undef,
+             'no PerlSetVar to get data from');
 
     # PerlAddVar ITERATE2 test
     {
