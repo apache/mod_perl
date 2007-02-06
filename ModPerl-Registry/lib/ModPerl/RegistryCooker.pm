@@ -546,9 +546,8 @@ sub read_script {
             return Apache2::Const::FORBIDDEN if APR::Status::is_EACCES($@);
             return Apache2::Const::NOT_FOUND if APR::Status::is_ENOENT($@);
         }
-        else {
-            return Apache2::Const::SERVER_ERROR;
-        }
+
+        return Apache2::Const::SERVER_ERROR;
     }
 
     return Apache2::Const::OK;
