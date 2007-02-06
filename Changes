@@ -12,6 +12,13 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+fix ModPerl::RegistryCooker::read_script to handle all possible
+errors, previously there was a case where Apache2::Const::OK was
+returned on an error.  [Eivind Eklund <eeklund@gmail.com>]
+
+a minor compilation warning resolved in modperl_handler_new_from_sv
+[Stas]
+
 a minor compilation warning resolved in modperl_gtop_size_string
 [Stas]
 
