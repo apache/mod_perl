@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Make $r->the_request() writeable
+[Fred Moyer <fred@redhotpenguin.com>]
+
 fix ModPerl::RegistryCooker::read_script to handle all possible
 errors, previously there was a case where Apache2::Const::OK was
 returned on an error.  [Eivind Eklund <eeklund@gmail.com>]
