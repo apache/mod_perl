@@ -24,7 +24,7 @@ use APR::Const    -compile => qw(FINFO_NORM);
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 54;
+    plan $r, tests => 55;
 
     #Apache2::RequestUtil->request($r); #PerlOptions +GlobalRequest takes care
     my $gr = Apache2::RequestUtil->request;
@@ -126,6 +126,13 @@ sub handler {
 
         ok t_cmp $r->the_request, "GET $base_uri$path_info?$args HTTP/1.0",
             '$r->the_request';
+
+        {
+            my $new_request = "GET $base_uri$path_info?$args&foo=bar HTTP/1.0";
+            my $old_request = $r->the_request($new_request); 
+            ok t_cmp $r->the_request, $new_request, '$r->the_request rw';
+            $r->the_request($old_request);
+        }
 
         ok $r->filename;
 
