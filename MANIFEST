@@ -37,13 +37,13 @@ Leak/typemap
 Log/Log.pm
 Log/Makefile.PL
 MANIFEST
-META.yml
 Makefile.PL
 ModuleConfig/Makefile.PL
 ModuleConfig/ModuleConfig.pm
 PerlRunXS/Makefile.PL
 PerlRunXS/PerlRunXS.pm
 README
+RELEASE
 STATUS
 SUPPORT
 Server/Makefile.PL

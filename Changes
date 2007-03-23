@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.30_01-dev
+=item 1.30-dev
 
 SECURITY: CVE-2007-1349 (cve.mitre.org)
 fix unescaped variable interpolation in Apache::PerlRun

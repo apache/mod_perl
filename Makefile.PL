@@ -69,8 +69,8 @@ $VERSION = $mod_perl::VERSION = $mod_perl::VERSION;
     local *FH;
     open FH, "Changes";
     while (<FH>) {
-        if (/^=item.*-dev/) {
-            $VERSION .= "-dev";
+        if (/^=item.*-(dev|rc\d+)/) {
+            $VERSION .= "-$1";
             last;
         }
         last if /^=item/;
