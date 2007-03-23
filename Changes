@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.30_01-dev
 
+fix unescaped variable interpolation in regular expression
+[Randal L. Schwartz <merlyn@stonehenge.com>, Fred Moyer <fred@redhotpenguin.com>]
+
 Pull in the new Apache-SizeLimit from
 http://svn.apache.org/repos/asf/perl/Apache-SizeLimit/trunk
 and obsolete the previous lib/Apache/SizeLimit.pm.
