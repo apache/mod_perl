@@ -48,6 +48,8 @@ Alias /perl/ ./t/net/perl/
 
 Alias /dirty-perl/ ./t/net/perl/
 
+Alias /ng-perl/ ./t/net/perl/
+
 ScriptAlias /cgi-bin/ ./t/net/perl/
 
 #ScriptAlias /cgi-bin/ ./t/net/perl/
@@ -56,6 +58,13 @@ ScriptAlias /cgi-bin/ ./t/net/perl/
 Options +ExecCGI
 SetHandler perl-script
 PerlHandler Apache::PerlRun
+PerlSendHeader On
+</Location>
+
+<Location /dirty-perl>
+Options +ExecCGI
+SetHandler perl-script
+PerlHandler Apache::RegistryNG
 PerlSendHeader On
 </Location>
 
