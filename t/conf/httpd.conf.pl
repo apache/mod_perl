@@ -120,7 +120,7 @@ $ServerName = "localhost";
 
 push @AddType, ["text/x-server-parsed-html" => ".shtml"];
  
-for (qw(/perl /cgi-bin /dirty-perl /perl_xs)) {
+for (qw(/perl /cgi-bin /dirty-perl /perl_xs /ng-perl)) {
     push @Alias, [$_ => "$dir/net/perl/"];
 }
 
@@ -137,6 +137,13 @@ $Location{"/dirmagic"} = {
 $Location{"/dirty-perl"} = { 
     SetHandler => "perl-script",
     PerlHandler => "Apache::PerlRun",
+    Options => "+ExecCGI ",
+    PerlSendHeader => "On",
+};
+
+$Location{"/ng-perl"} = { 
+    SetHandler => "perl-script",
+    PerlHandler => "Apache::RegistryNG",
     Options => "+ExecCGI ",
     PerlSendHeader => "On",
 };
