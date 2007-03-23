@@ -12,6 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+*) SECURITY: CVE-2007-1349 (cve.mitre.org)
 fix unescaped variable interprolation in regular expression
 [Randal L. Schwartz <merlyn@stonehenge.com>, Fred Moyer <fred@redhotpenguin.com>]
 
