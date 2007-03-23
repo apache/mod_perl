@@ -10,7 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.30_01-dev
 
-fix unescaped variable interpolation in regular expression
+SECURITY: CVE-2007-1349 (cve.mitre.org)
+fix unescaped variable interpolation in Apache::PerlRun
+regular expression to prevent regex engine tampering.
+reported by Alex Solovey
 [Randal L. Schwartz <merlyn@stonehenge.com>, Fred Moyer <fred@redhotpenguin.com>]
 
 Pull in the new Apache-SizeLimit from
