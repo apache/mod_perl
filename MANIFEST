@@ -199,6 +199,7 @@ t/modules/module.t
 t/modules/perlrun.t
 t/modules/perlrunxs.t
 t/modules/psections.t
+t/modules/regex.t
 t/modules/request.t
 t/modules/sandwich.t
 t/modules/src.t
