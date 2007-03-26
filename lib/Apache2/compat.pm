@@ -310,7 +310,7 @@ sub request {
 
 package Apache::Server;
 # XXX: is that good enough? see modperl/src/modules/perl/mod_perl.c:367
-our $CWD = Apache2::ServerUtil::server_root;
+our $CWD = Apache2::ServerUtil::server_root();
 
 our $AddPerlVersion = 1;
 
@@ -344,7 +344,7 @@ sub server_root_relative {
          return File::Spec->catfile(@_);
     }
     else {
-        File::Spec->catfile(Apache2::ServerUtil::server_root, @_);
+        File::Spec->catfile(Apache2::ServerUtil::server_root(), @_);
     }
 }
 
@@ -596,7 +596,7 @@ sub content {
 
 sub server_root_relative {
     my $r = shift;
-    File::Spec->catfile(Apache2::ServerUtil::server_root, @_);
+    File::Spec->catfile(Apache2::ServerUtil::server_root(), @_);
 }
 
 sub clear_rgy_endav {
