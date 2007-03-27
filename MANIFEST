@@ -1,15 +1,4 @@
 .gdbinit
-Apache-SizeLimit/Changes
-Apache-SizeLimit/INSTALL
-Apache-SizeLimit/LICENSE
-Apache-SizeLimit/MANIFEST
-Apache-SizeLimit/Makefile.PL
-Apache-SizeLimit/README
-Apache-SizeLimit/lib/Apache/SizeLimit.pm
-Apache-SizeLimit/t/apache/all.t
-Apache-SizeLimit/t/pod.t
-Apache-SizeLimit/t/response/TestApache/basic.pm
-Apache-SizeLimit/t/response/TestApache/deprecated.pm
 Apache/Apache.pm
 Apache/Makefile.PL
 Apache/typemap
@@ -97,6 +86,7 @@ lib/Apache/RegistryLoader.pm
 lib/Apache/RegistryNG.pm
 lib/Apache/Resource.pm
 lib/Apache/SIG.pm
+lib/Apache/SizeLimit.pm
 lib/Apache/StatINC.pm
 lib/Apache/Status.pm
 lib/Apache/Symdump.pm
