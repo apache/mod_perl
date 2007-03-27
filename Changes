@@ -16,6 +16,9 @@ regular expression to prevent regex engine tampering.
 reported by Alex Solovey
 [Randal L. Schwartz <merlyn@stonehenge.com>, Fred Moyer <fred@redhotpenguin.com>]
 
+sync Apache-SizeLimit with latest version from CPAN (0.91)
+[Philip M. Gollucci, Philippe M. Chiasson]
+
 Fix an Apache::(Registry|PerlRun) bug caused by special characters
 in the url [kolya@mail.ru]
 
