@@ -14,7 +14,7 @@ Instructions for mod_perl 1.x Release Manager
       http://people.apache.org/~geoff/gpghowto.html
 
     Copy the KEYS file into place:
-    % scp KEYS www.apache.org:/www/www.apache.org/dist/perl/KEYS
+    % scp KEYS perl.apache.org:/www/www.apache.org/dist/perl/KEYS
 
     If this is your first release, ask someone with APML karma on PAUSE 
     to verify you have the appropriate permissions.  Likely someone on 
@@ -80,7 +80,7 @@ Instructions for mod_perl 1.x Release Manager
 
 4. Release the package and update links (e.g. mod_perl-1.31.tar.gz)
 
-  a. upload to www.apache.org:/www/perl.apache.org/dist/
+  a. upload to perl.apache.org:/www/perl.apache.org/dist/
 
     %  scp mod_perl-1.31.tar.gz perl.apache.org:/www/perl.apache.org/dist/
 
@@ -105,7 +105,7 @@ Instructions for mod_perl 1.x Release Manager
   d. update the version and release date
      modperl-docs/src/download/index_top.html and commit. It'll be
      automatically updated within 6 hours. Alternatively you can do a
-     manual update by logging into www.apache.org and running:
+     manual update by logging into perl.apache.org and running:
 
     % /home/perlwww/apache.org/modperl-docs/bin/site_build
 
@@ -127,10 +127,10 @@ Instructions for mod_perl 1.x Release Manager
 
     % pgps -b --armor mod_perl-1.31.tar.gz
 
-  b. upload the generated sig file to www.apache.org:
+  b. upload the generated sig file to perl.apache.org:
 
     % scp mod_perl-1.31.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
-    % ssh www.apache.org
+    % ssh perl.apache.org
     % cd /www/perl.apache.org/dist/
     % chmod 0664 mod_perl-1.31.tar.gz.asc
     % ln -sf mod_perl-1.31.tar.gz.asc mod_perl-1.1-current.tar.gz.asc
@@ -151,7 +151,7 @@ Instructions for mod_perl 1.x Release Manager
     % find /www/perl.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
     % find /www/perl.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
 
-7. Distribute to www.apache.org/dist/perl 
+7. Distribute to perl.apache.org/dist/perl 
    and archive the old package under /www/archive.apache.org/dist/perl/
 
   a. unpack the package, update symlinks to the tarball and unpacked distro:
@@ -159,8 +159,8 @@ Instructions for mod_perl 1.x Release Manager
    % cd /www/www.apache.org/dist/perl/
    % cp /www/perl.apache.org/dist/mod_perl-1.31.tar.gz* .
    % tar -xzvf mod_perl-1.31.tar.gz
-   % mv mod_perl-1.30.tar.gz* /www/archive.apache.org/dist/perl/
-   % rm -rf mod_perl-1.30
+   % mv mod_perl-1.29.tar.gz* /www/archive.apache.org/dist/perl/
+   % rm -rf mod_perl-1.29
 
   b. make sure that the files you just created are group rw so
 
