@@ -2315,7 +2315,10 @@ sub win32_fix_dsp {
         elsif (/ADD CPP/) {
             my $apache_inc = win32_fix_path_dsp($win32_path{APACHE_INC});
             s!/I "\\Perl\\lib\\CORE"!/I "$apache_inc" /I "$apache_inc/../os/win32" /I "$perl_inc"!;
-            s!(/D "WIN32")!$1 /D "EAPI" ! if $win32_args{EAPI}; 
+            s!(/D "WIN32")!$1 /D "EAPI" ! if $win32_args{EAPI};
+            if ($] < 5.008006) {
+	        s!(/D "_MSWSOCK_")!/D "_WINSOCK2API_" $1!;
+	    }
             print NEWDSP $_;
         }
         else {
