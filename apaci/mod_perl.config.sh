@@ -131,6 +131,11 @@ case "$os_version" in
 	esac
     	perl_lddlflags="$perl_lddlflags $XLINKER-bI:\$(APACHELIBEXEC)/httpd.exp"
 	;;
+    
+    cygwin*)
+	perl_ld="gcc -shared"
+	;;
+	
     * )    ;;
 esac
 
@@ -152,6 +157,18 @@ if ($ARGV[0] eq "DSO" and $^O eq "hpux" and $Config{ld} =~ /ld$/) {
 	(my $repl = $cp) =~ s/,/ /g;
 	$ldopts =~ s/\Q$cp/$repl/;
     }
+}
+
+# add httpd.dll for cygwin
+if($ARGV[0] eq 'DSO' && $^O eq cygwin) {
+    chomp $ldopts;
+    $ldopts .= join (' ', '', 
+        '-Wl,--out-implib=libperl.dll.a',
+        '-Wl,--export-all-symbols',
+        '-Wl,--enable-auto-import',
+        '-Wl,--stack,8388608',
+        '-Wl,--enable-auto-image-base',
+        '-lhttpd');
 }
 
 print $ldopts;

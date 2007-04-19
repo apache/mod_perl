@@ -22,6 +22,18 @@ my_makefiletmpl="Makefile.tmpl"
 my_sourcedir="../src/modules/perl"
 my_sourcefiles="`./find_source`"
 my_typemapdir="../Apache"
+my_soext=""
+my_os=`uname`
+
+case $my_os in
+    CYGWIN*)
+        my_soext="dll"
+    ;;
+    
+    *)
+        my_soext="so"
+    ;;
+esac
 
 #   find APXS
 my_apxs=""
@@ -94,7 +106,7 @@ echo "#   provide some stuff Apache usually provides" >>$my_makefileconf
 echo "AP_CFLAGS=-DMOD_PERL $my_apxs_cflags" >>$my_makefileconf
 echo "INCLUDES=$my_apxs_includes" >>$my_makefileconf
 echo "RANLIB=ranlib" >>$my_makefileconf
-echo "LIBEXT=so" >>$my_makefileconf
+echo "LIBEXT=$my_soext" >>$my_makefileconf
 echo "APACHEEXT=$my_apxs_sourcedir/src" >>$my_makefileconf
 echo "APACHELIBEXEC=$my_apxs_libexec" >>$my_makefileconf
 echo "BASEEXT=mod_perl" >>$my_makefileconf

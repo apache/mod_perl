@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.31-dev
 
+Fix shared libary extensions on Win32 to be .dll not .so
+[Nikolay Ananiev <ananiev@thegdb.com>]
+
 Patch to mod_perl.dsp to remove /D _WINSOCK2API_ on Win32
 for perl >= 5.8.6 [Steve Hay]
 
