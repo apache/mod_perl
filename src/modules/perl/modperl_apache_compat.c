@@ -27,3 +27,45 @@
  * and don't forget to insert comments explaining exactly
  * which httpd release allows us to remove the compat code
  */
+
+/* pre-APACHE_2.2.4 */
+#if ! AP_MODULE_MAGIC_AT_LEAST(20051115,4)
+
+#define modperl_warn_fallback_http_function(ver, fallback) \
+    { \
+        dTHX; \
+        Perl_warn(aTHX_ "%s() not available until httpd/%s " \
+                        "falling back to %s()", \
+                  __func__, ver, fallback); \
+    }
+
+/* added in APACHE_2.2.4 */
+AP_DECLARE(const char *) ap_get_server_description(void) {
+    modperl_warn_fallback_http_function("2.2.4", "ap_get_server_version");
+    return ap_get_server_version();
+}
+
+AP_DECLARE(const char *) ap_get_server_banner(void) {
+    modperl_warn_fallback_http_function("2.2.4", "ap_get_server_version");
+    return ap_get_server_version();
+}
+
+#endif /* pre-APACHE_2.2.4 */
+
+/* since-APACHE-2.3.0 */
+#if AP_MODULE_MAGIC_AT_LEAST(20060905,0)
+#define modperl_warn_deprecated_http_function(ver, fallback) \
+    { \
+        dTHX; \
+        Perl_warn(aTHX_ "%s() is deprecated since httpd/%s " \
+                        "try using %s() instead", \
+                  __func__, ver, fallback); \
+    }
+
+AP_DECLARE(const char *) ap_get_server_version(void) {
+    modperl_warn_deprecated_http_function("2.3.0",
+        "ap_get_server_(description|banner)");
+    return ap_get_server_banner();
+}
+
+#endif /* since-APACHE-2.3.0 */

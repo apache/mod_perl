@@ -24,7 +24,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 3;
+    plan $r, tests => 5;
 
     # test Apache2::ServerUtil constant subroutines
 
@@ -36,9 +36,19 @@ sub handler {
              $built,
              'Apache2::ServerUtil::get_server_built()');
 
-    ok t_cmp(Apache2::ServerUtil::get_server_version,
+    ok t_cmp(Apache2::ServerUtil::get_server_description,
              $version,
+             'Apache2::ServerUtil::get_server_description()');
+
+    my $server_version = Apache2::ServerUtil::get_server_version;
+    ok t_cmp($version,
+             qr/^$server_version/,
              'Apache2::ServerUtil::get_server_version()');
+
+    my $server_banner = Apache2::ServerUtil::get_server_banner;
+    ok t_cmp($version,
+             qr/^$server_banner/,
+             'Apache2::ServerUtil::get_server_banner()');
 
     Apache2::Const::OK;
 }

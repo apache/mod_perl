@@ -12,6 +12,19 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Catch up with some httpd API changes
+  2.2.4: 
+   The full server version information is now included in the error log at
+startup as well as server status reports, irrespective of the setting
+of the ServerTokens directive. ap_get_server_version() is now
+deprecated, and is replaced by ap_get_server_banner() and
+ap_get_server_description(). [Jeff Trawick]
+
+  2.3.0:
+ap_get_server_version() has been removed. Third-party modules must
+now use ap_get_server_banner() or ap_get_server_description().
+[Gozer]
+
 fixed Apache2::compat Apache2::ServerUtil::server_root() resolution
 issues [Joshua Hoblitt]
 

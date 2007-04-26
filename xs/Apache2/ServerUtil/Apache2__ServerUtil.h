@@ -195,4 +195,10 @@ static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
 
     newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_version",
                 newSVpv(ap_get_server_version(), 0));
+
+    newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_banner",
+                newSVpv(ap_get_server_banner(), 0));
+
+    newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_description",
+                newSVpv(ap_get_server_description(), 0));
 }
