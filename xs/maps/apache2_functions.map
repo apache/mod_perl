@@ -176,6 +176,8 @@ MODULE=Apache2::ServerUtil   PACKAGE=guess
 !ap_get_local_host
 ~ap_get_server_built
 ~ap_get_server_version
+~ap_get_server_banner
+~ap_get_server_description
 ~ap_server_root
 
 
