@@ -28,7 +28,7 @@ modperl/trunk includes the following svn:externals properties:
 
 DEVELOPER ACCESS
 
-assuming you have already been granted commit access to the repository,
+assuming that you have already been granted commit access to the repository,
 you should follow the following steps to checkout mod_perl
 
 Change your password via:
