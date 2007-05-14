@@ -428,16 +428,16 @@ MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
         break;
       case MP_HANDLER_ACTION_PUSH:
         if (ravp) {
-        if (!*ravp) {
-            if (*avp) {
-                /* merge with existing configured handlers */
-                *ravp = apr_array_copy(p, *avp);
+            if (!*ravp) {
+                if (*avp) {
+                    /* merge with existing configured handlers */
+                    *ravp = apr_array_copy(p, *avp);
+                }
+                else {
+                    /* no request handlers have been previously pushed or set */
+                    *ravp = modperl_handler_array_new(p);
+                }
             }
-            else {
-                /* no request handlers have been previously pushed or set */
-                *ravp = modperl_handler_array_new(p);
-            }
-        }
         }
         else if (!*avp) {
             /* directly modify the configuration at startup time */
