@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Don't waste an extra interpreter anymore under threaded MPMs when using a 
+modperl handler [Torsten Foertsch] 
+
 Fix a bug that could cause a crash when using $r->push_handlers() multiple
 times for a phase that has no configured handlers [Torsten Foertsch]
 

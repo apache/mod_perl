@@ -1015,6 +1015,7 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
+    MP_dRCFG;
     apr_status_t retval;
 
 #ifdef USE_ITHREADS
@@ -1029,6 +1030,9 @@ int modperl_response_handler(request_rec *r)
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
     aTHX = interp->perl;
+    if (MpInterpPUTBACK(interp)) {
+        rcfg->interp = interp;
+    }
 #endif
 
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
@@ -1041,6 +1045,7 @@ int modperl_response_handler(request_rec *r)
 #ifdef USE_ITHREADS
     if (MpInterpPUTBACK(interp)) {
         /* PerlInterpScope handler */
+        rcfg->interp = NULL;
         modperl_interp_unselect(interp);
     }
 #endif
