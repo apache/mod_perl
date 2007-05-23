@@ -413,6 +413,7 @@ apr_hash.h
 apr_lib.h
 apr_general.h
 apr_signal.h
+apr_thread_rwlock.h
 util_script.h
 };
 
