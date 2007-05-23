@@ -397,9 +397,9 @@ MODULE=APR::String
  apr_thread_cond_pool_get
  apr_thread_cond_timedwait
 
--MODULE=APR::ThreadRWLock
- apr_thread_rwlock_create
- apr_thread_rwlock_destroy
+MODULE=APR::ThreadRWLock   PREFIX=apr_thread_rwlock_
+ SV *:apr_thread_rwlock_create | mpxs_ | SV *:classname, SV *:p_sv | new
+ void:apr_thread_rwlock_destroy | | | apr_thread_rwlock_DESTROY
  apr_thread_rwlock_rdlock
  apr_thread_rwlock_tryrdlock
  apr_thread_rwlock_trywrlock

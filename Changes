@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Expose apr_thread_rwlock_t with the APR::ThreadRWLock module
+[Torsten Foertsch]
+
 Don't waste an extra interpreter anymore under threaded MPMs when using a 
 modperl handler [Torsten Foertsch] 
 
