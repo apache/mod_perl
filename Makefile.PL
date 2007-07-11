@@ -543,11 +543,6 @@ unless ($NO_HTTPD && !$PREP_HTTPD) {
     }
 }
 
-if ($PERL_EXTRA_CFLAGS) {
-    $PERL_EXTRA_CFLAGS = join(" ", split(",",  $PERL_EXTRA_CFLAGS));
-    $PERL_EXTRA_CFLAGS =~ s/\s+/ /g;
-}
-
 if ($PERL_DEBUG) {
     my $lib = "$Config{archlibexp}/CORE/libperld$Config{lib_ext}";
     if (-e $lib) {
