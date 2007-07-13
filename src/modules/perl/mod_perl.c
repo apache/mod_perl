@@ -277,13 +277,8 @@ void perl_shutdown (server_rec *s, pool *p)
 
     mp_request_rec = 0;
 
-    av_undef(orig_inc);
-    SvREFCNT_dec((SV*)orig_inc);
-    orig_inc = Nullav;
-
-    av_undef(cleanup_av);
-    SvREFCNT_dec((SV*)cleanup_av);
-    cleanup_av = Nullav;
+    MP_safe_av_undef(orig_inc)
+    MP_safe_av_undef(cleanup_av)
 
 #ifdef PERL_STACKED_HANDLERS
     hv_undef(stacked_handlers);
@@ -1159,9 +1154,7 @@ void mod_perl_end_cleanup(void *data)
     perl_clear_env();
 
     /* reset @INC */
-    av_undef(GvAV(incgv));
-    SvREFCNT_dec(GvAV(incgv));
-    GvAV(incgv) = Nullav;
+    MP_safe_av_undef(GvAV(incgv))
     GvAV(incgv) = av_copy_array(orig_inc);
 
     /* reset $/ */

@@ -301,6 +301,13 @@ if(arg) \
 
 #define av_copy_array(av) av_make(av_len(av)+1, AvARRAY(av))  
 
+#define MP_safe_av_undef(av) \
+if (av != Nullav) { \
+    av_undef(av); \
+    SvREFCNT_dec((SV*)av); \
+    av = Nullav; \
+}
+
 #ifndef newRV_noinc
 #define newRV_noinc(sv)	((Sv = newRV(sv)), --SvREFCNT(SvRV(Sv)), Sv)
 #endif
