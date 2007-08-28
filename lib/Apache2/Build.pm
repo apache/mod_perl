@@ -1592,7 +1592,10 @@ sub dynamic_link_MSWin32 {
     return $self->dynamic_link_header_default .
         "\t$defs" .
         ($symbols ? ' \\' . "\n\t-pdb:$symbols" : '') .
-        ' -out:$@' . "\n\n";
+        ' -out:$@' . "\n\t" .
+        'if exist $(MODPERL_MANIFEST_LOCATION)' . " \\\n\t" .
+        'mt /nologo /manifest $(MODPERL_MANIFEST_LOCATION)' . " \\\n\t" .
+        '/outputresource:$@;2' . "\n\n";
 }
 
 sub dynamic_link_aix {
@@ -1838,6 +1841,12 @@ EOI
     if ($self->is_dynamic && (my $libs = $self->modperl_libpath)) {
         print $fh $self->canon_make_attr('lib_location', $libs);
 
+        # Visual Studio 8 on Win32 uses manifest files
+        if (WIN32) {
+            (my $manifest = $libs) =~ s/\.lib$/.so.manifest/;
+            print $fh $self->canon_make_attr('manifest_location', $manifest);
+	}
+
         print $fh $self->canon_make_attr('ap_libdir',
             $self->ap_destdir(catdir $self->{MP_AP_PREFIX}, 'lib')
         );
@@ -1938,7 +1947,7 @@ EOF
 clean:
 	$(MODPERL_RM_F) *.a *.so *.xsc \
 	$(MODPERL_LIBNAME).exp $(MODPERL_LIBNAME).lib \
-	*$(MODPERL_OBJ_EXT) *.lo *.i *.s *.pdb \
+	*$(MODPERL_OBJ_EXT) *.lo *.i *.s *.pdb *.manifest \
 	$(MODPERL_CLEAN_FILES) \
 	$(MODPERL_XS_CLEAN_FILES)
 
