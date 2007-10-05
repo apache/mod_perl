@@ -45,6 +45,7 @@ PerlModule ModPerl::Util
     Alias /perlrun_prefork/  @ServerRoot@/cgi-bin/
     Alias /nph/              @ServerRoot@/cgi-bin/
     Alias /registry_modperl_handler/  @ServerRoot@/cgi-bin/
+    Alias /rewrite_env/      @ServerRoot@/cgi-bin/
 
     ScriptAlias /cgi-bin/ @ServerRoot@/cgi-bin/
 </IfModule>
@@ -218,5 +219,21 @@ PerlModule ModPerl::RegistryBB
     SetEnv TMPDIR @t_logs@
 </IfModule>
 # </sandbox-friendly>
+
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+    RewriteLogLevel 9
+    RewriteLog @ServerRoot@/logs/rewrite_log
+    RewriteRule /rewritetest /rewrite_env/env_val.pl?REWRITE_TEST [E=REWRITE_TEST:GOTCHA,PT,NS,L]
+
+    <Location /rewrite_env>
+        SetHandler perl-script
+        PerlResponseHandler ModPerl::Registry
+        Options +ExecCGI
+        PerlOptions +ParseHeaders
+    </Location>
+</IfModule>
 
 
