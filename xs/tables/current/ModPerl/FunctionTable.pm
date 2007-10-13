@@ -8199,6 +8199,20 @@ $ModPerl::FunctionTable = [
         'name' => 'func'
       }
     ]
+  },
+  {
+    'return_type' => 'modperl_interp_t *',
+    'name' => 'mpxs_ModPerl__Interpreter_current',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      }
+    ]
   }
 ];
 
