@@ -895,11 +895,9 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
         else if (hv_exists(*pnotes, k, len)) {
             retval = *hv_fetch(*pnotes, k, len, FALSE);
         }
-    }
-    else {
-        retval = newRV_inc((SV *)*pnotes);
-    }
 
-    return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+        return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+    }
+    return newRV_inc((SV *)*pnotes);
 }
  

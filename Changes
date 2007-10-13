@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Fix a bug that would prevent pnotes from being cleaned up proprely
+at the end of the request [Torsten Foertsch]
+
 On Win32, embed the manifest file, if present, in mod_perl.so,
 so as to work with VC 8 [Steve Hay, Randy Kobes]
 
