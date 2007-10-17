@@ -101,7 +101,6 @@ struct modperl_tipool_t {
 struct modperl_interp_pool_t {
     server_rec *server;
     modperl_tipool_t *tipool;
-    modperl_tipool_config_t *tipool_cfg;
     modperl_interp_t *parent; /* from which to perl_clone() */
 };
 
