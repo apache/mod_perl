@@ -856,33 +856,32 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
     return APR_SUCCESS;   
 }
 
+MP_INLINE
+static void *modperl_pnotes_cleanup_data(pTHX_ HV **pnotes, apr_pool_t *p) {
+#ifdef USE_ITHREADS
+    modperl_cleanup_pnotes_data_t *cleanup_data = apr_palloc(p, sizeof(*cleanup_data));
+    cleanup_data->pnotes = pnotes;
+    cleanup_data->perl = aTHX;
+    return cleanup_data;
+#else
+    return pnotes;
+#endif
+}
+
 SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val, 
                    request_rec *r, conn_rec *c) {
     SV *retval = Nullsv;
 
     if (!*pnotes) {
-        *pnotes = newHV();
+	apr_pool_t *pool = r ? r->pool : c->pool;
+	void *cleanup_data;
+	*pnotes = newHV();
 
-        /* XXX: It would be nice to be able to do this with r->pnotes, but
-         * it's currently impossible, as modperl_config.c:modperl_config_request_cleanup()
-         * is responsible for running the CleanupHandlers, and it's cleanup callback is
-         * registered very early. If we register our cleanup here, we'll be running 
-         * *before* the CleanupHandlers, and they might still want to use pnotes...
-         */
-        if (c && !r) {
-            apr_pool_t *pool = r ? r->pool : c->pool;
-#ifdef USE_ITHREADS
-            modperl_cleanup_pnotes_data_t *cleanup_data = 
-                apr_palloc(pool, sizeof(*cleanup_data));
-            cleanup_data->pnotes = pnotes;
-            cleanup_data->perl = aTHX;
-#else
-            void *cleanup_data = pnotes;
-#endif
-            apr_pool_cleanup_register(pool, cleanup_data,
-                                      modperl_cleanup_pnotes,
-                                      apr_pool_cleanup_null);
-        }
+        cleanup_data = modperl_pnotes_cleanup_data(aTHX_ pnotes, pool);
+
+	apr_pool_cleanup_register(pool, cleanup_data,
+				  modperl_cleanup_pnotes,
+				  apr_pool_cleanup_null);
     }
 
     if (key) {
@@ -895,11 +894,9 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
         else if (hv_exists(*pnotes, k, len)) {
             retval = *hv_fetch(*pnotes, k, len, FALSE);
         }
-    }
-    else {
-        retval = newRV_inc((SV *)*pnotes);
-    }
 
-    return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+        return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
+    }
+    return newRV_inc((SV *)*pnotes);
 }
  

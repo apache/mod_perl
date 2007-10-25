@@ -42,9 +42,15 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r);
 
 apr_status_t modperl_config_req_cleanup(void *data);
 
+/* use a subpool here to ensure that a PerlCleanupHandler is run before
+ * any other pool cleanup - suppools are destroyed first. Particularly a
+ * PerlCleanupHandler must run before request pnotes are dropped.
+ */
 #define modperl_config_req_cleanup_register(r, rcfg)           \
     if (r && !MpReqCLEANUP_REGISTERED(rcfg)) {                 \
-        apr_pool_cleanup_register(r->pool,                     \
+        apr_pool_t *p;					       \
+        apr_pool_create(&p, r->pool);			       \
+        apr_pool_cleanup_register(p,			       \
                                   (void*)r,                    \
                                   modperl_config_req_cleanup,  \
                                   apr_pool_cleanup_null);      \
