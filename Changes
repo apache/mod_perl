@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+PerlCleanupHandler are now registered with a subpool of $r->pool,
+instead of $r->pool itself, ensuring they run _before_ any other
+$r->pool cleanups [Torsten Foertsch]
+
 Fix a bug that would prevent pnotes from being cleaned up proprely
 at the end of the request [Torsten Foertsch]
 
