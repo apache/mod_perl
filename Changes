@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Expose modperl_interp_pool_t via ModPerl::InterpPool, modperl_tipool_t
+via ModPerl::TiPool and modperl_tipool_config_t via ModPerl::TiPoolConfig
+[Torsten Foertsch]
+
 Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 PerlCleanupHandler are now registered with a subpool of $r->pool,

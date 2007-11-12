@@ -3366,6 +3366,93 @@ $Apache2::StructureTable = [
         'name' => 'tid'
       }
     ]
+  },
+  {
+    'type' => 'modperl_interp_pool_t',
+    'elts' => [
+      {
+        'type' => 'server_rec *',
+        'name' => 'server'
+      },
+      {
+        'type' => 'modperl_tipool_t *',
+        'name' => 'tipool'
+      },
+      {
+        'type' => 'modperl_tipool_config_t *',
+        'name' => 'tipool_cfg'
+      },
+      {
+        'type' => 'modperl_interp_t *',
+        'name' => 'parent'
+      }
+    ]
+  },
+  {
+    'type' => 'modperl_tipool_t',
+    'elts' => [
+      {
+        'type' => 'perl_mutex',
+        'name' => 'tiplock'
+      },
+      {
+        'type' => 'perl_cond',
+        'name' => 'available'
+      },
+      {
+        'type' => 'modperl_list_t *',
+        'name' => 'idle'
+      },
+      {
+        'type' => 'modperl_list_t *',
+        'name' => 'busy'
+      },
+      {
+        'type' => 'int',
+        'name' => 'in_use'
+      },
+      {
+        'type' => 'int',
+        'name' => 'size'
+      },
+      {
+        'type' => 'void *',
+        'name' => 'data'
+      },
+      {
+        'type' => 'modperl_tipool_config_t *',
+        'name' => 'cfg'
+      },
+      {
+        'type' => 'modperl_tipool_vtbl_t *',
+        'name' => 'func'
+      }
+    ]
+  },
+  {
+    'type' => 'modperl_tipool_config_t',
+    'elts' => [
+      {
+        'type' => 'int',
+        'name' => 'start'
+      },
+      {
+        'type' => 'int',
+        'name' => 'min_spare'
+      },
+      {
+        'type' => 'int',
+        'name' => 'max_spare'
+      },
+      {
+        'type' => 'int',
+        'name' => 'max'
+      },
+      {
+        'type' => 'int',
+        'name' => 'max_requests'
+      }
+    ]
   }
 ];
 

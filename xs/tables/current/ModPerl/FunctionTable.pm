@@ -8211,6 +8211,10 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'PerlInterpreter *',
         'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'class'
       }
     ]
   }
