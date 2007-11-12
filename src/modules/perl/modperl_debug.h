@@ -20,7 +20,6 @@
 #include "mod_perl.h"
 
 char *modperl_server_desc(server_rec *s, apr_pool_t *p);
-MP_INLINE char *modperl_pid_tid(apr_pool_t *p);
 
 #ifdef MP_TRACE
 void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name);

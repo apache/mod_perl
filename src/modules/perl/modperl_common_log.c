@@ -16,6 +16,7 @@
 
 #include "modperl_common_includes.h"
 #include "modperl_common_log.h"
+#include "modperl_debug.h"
 
 #undef getenv /* from XSUB.h */
 
@@ -48,7 +49,17 @@ void modperl_trace(const char *func, const char *fmt, ...)
         return;
     }
 
-    if (func) {
+    if (modperl_threaded_mpm()) {
+        apr_file_printf(logfile, "[%lu/%lu] ", (unsigned long)getpid(),
+			modperl_threads_started()
+			? (unsigned long)apr_os_thread_current()
+			: 0);
+    }
+    else {
+        apr_file_printf(logfile, "[%lu] ", (unsigned long)getpid());
+    }
+
+    if (func && *func) {
         apr_file_printf(logfile, "%s: ", func);
     }
 
