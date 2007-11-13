@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+PerlInterpScope is now more advisory. Using $(c|r)->pnotes will bind
+the current interpreter to that object for it's lifetime.
+$(c|r)->pnotes_kill() can be used to prematurely drop pnotes and
+remove this binding. [Torsten Foertsch]
+
 Now correctly invokes PerlCleanupHandlers, even if they are the only
 handler type configured for that request [Torsten Foertsch]
 

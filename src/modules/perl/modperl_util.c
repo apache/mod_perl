@@ -828,59 +828,51 @@ int modperl_restart_count(void)
                           modperl_global_get_server_rec()->process->pool);
     return data ? *(int *)data : 0;
  }
-
-#ifdef USE_ITHREADS
-typedef struct {
-    HV **pnotes;
-    PerlInterpreter *perl;
-} modperl_cleanup_pnotes_data_t;
-#endif
  
 static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
-    HV **pnotes = data;
+    modperl_pnotes_t *pnotes = data;
 
-    if (*pnotes) {
 #ifdef USE_ITHREADS
-        modperl_cleanup_pnotes_data_t *cleanup_data = data;
-        dTHXa(cleanup_data->perl);
-        pnotes = cleanup_data->pnotes;
-#else
-        pnotes = data;
+	dTHXa(pnotes->interp->perl);
 #endif
-        SvREFCNT_dec(*pnotes);
-        *pnotes = Nullhv;
-    }
-
+	SvREFCNT_dec(pnotes->pnotes);
+	pnotes->pnotes = NULL;
+	pnotes->pool = NULL;
+#ifdef USE_ITHREADS
+	MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)\n",
+               pnotes->interp);
+    modperl_interp_unselect(pnotes->interp);
+    pnotes->interp = NULL;
+#endif
     return APR_SUCCESS;   
 }
 
-MP_INLINE
-static void *modperl_pnotes_cleanup_data(pTHX_ HV **pnotes, apr_pool_t *p) {
-#ifdef USE_ITHREADS
-    modperl_cleanup_pnotes_data_t *cleanup_data = apr_palloc(p, sizeof(*cleanup_data));
-    cleanup_data->pnotes = pnotes;
-    cleanup_data->perl = aTHX;
-    return cleanup_data;
-#else
-    return pnotes;
-#endif
+void modperl_pnotes_kill(void *data) {
+    modperl_pnotes_t *pnotes = data;
+
+    if( !pnotes->pnotes ) return;
+
+    apr_pool_cleanup_kill(pnotes->pool, pnotes, modperl_cleanup_pnotes);
+    modperl_cleanup_pnotes(pnotes);
 }
 
-SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val, 
-                   request_rec *r, conn_rec *c) {
+SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
+                   apr_pool_t *pool) {
     SV *retval = Nullsv;
 
-    if (!*pnotes) {
-	apr_pool_t *pool = r ? r->pool : c->pool;
-	void *cleanup_data;
-	*pnotes = newHV();
-
-        cleanup_data = modperl_pnotes_cleanup_data(aTHX_ pnotes, pool);
-
-	apr_pool_cleanup_register(pool, cleanup_data,
-				  modperl_cleanup_pnotes,
-				  apr_pool_cleanup_null);
+    if (!pnotes->pnotes) {
+        pnotes->pool = pool;
+#ifdef USE_ITHREADS
+        pnotes->interp = MP_THX_INTERP_GET(aTHX);
+        pnotes->interp->refcnt++;
+        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",
+                   pnotes->interp, pnotes->interp->refcnt);
+#endif
+        pnotes->pnotes = newHV();
+        apr_pool_cleanup_register(pool, pnotes,
+                                  modperl_cleanup_pnotes,
+                                  apr_pool_cleanup_null);
     }
 
     if (key) {
@@ -888,14 +880,14 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
         char *k = SvPV(key, len);
 
         if (val) {
-            retval = *hv_store(*pnotes, k, len, SvREFCNT_inc(val), 0);
+            retval = *hv_store(pnotes->pnotes, k, len, SvREFCNT_inc(val), 0);
         }
-        else if (hv_exists(*pnotes, k, len)) {
-            retval = *hv_fetch(*pnotes, k, len, FALSE);
+        else if (hv_exists(pnotes->pnotes, k, len)) {
+            retval = *hv_fetch(pnotes->pnotes, k, len, FALSE);
         }
 
         return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
     }
-    return newRV_inc((SV *)*pnotes);
+    return newRV_inc((SV *)pnotes->pnotes);
 }
  

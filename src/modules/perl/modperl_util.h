@@ -134,7 +134,9 @@ void modperl_package_unload(pTHX_ const char *package);
 void modperl_restart_count_inc(server_rec *base_server);
 int  modperl_restart_count(void);
 
-SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
-                   request_rec *r, conn_rec *c);
+void modperl_pnotes_kill(void *data);
+
+SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
+		   apr_pool_t *pool );
 
 #endif /* MODPERL_UTIL_H */
