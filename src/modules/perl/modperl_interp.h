@@ -77,8 +77,7 @@ apr_status_t modperl_interp_unselect(void *data);
 modperl_interp_t *modperl_interp_pool_get(apr_pool_t *p);
 
 void modperl_interp_pool_set(apr_pool_t *p,
-                             modperl_interp_t *interp,
-                             int cleanup);
+                             modperl_interp_t *interp);
 
 modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
                                              server_rec *s);
@@ -93,7 +92,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     aTHX = interp->perl
 
 #define MP_INTERP_PUTBACK(interp) \
-    if (interp && MpInterpPUTBACK(interp)) { \
+    if (interp) { \
         modperl_interp_unselect(interp); \
     }
 

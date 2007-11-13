@@ -75,6 +75,8 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
          * there are no more references, in which case                  \
          * the interpreter will be putback into the mip                 \
          */                                                             \
+        MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)",	\
+		   acct->interp);					\
         (void)modperl_opt_interp_unselect(acct->interp);                \
     }                                                                   \
 } STMT_END
@@ -97,6 +99,8 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
      */                                                                 \
     if ((acct->interp = MP_THX_INTERP_GET(aTHX))) {                     \
         acct->interp->refcnt++;                                         \
+        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",	\
+		   acct->interp, acct->interp->refcnt);                 \
     }                                                                   \
 } STMT_END
 
@@ -152,7 +156,7 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
     apr_pool_t *parent_pool = mpxs_sv_object_deref(parent_pool_obj, apr_pool_t);
     apr_pool_t *child_pool  = NULL;
 
-    MP_POOL_TRACE(MP_FUNC, "parent pool 0x%lx\n", (unsigned long)parent_pool);
+    MP_POOL_TRACE(MP_FUNC, "parent pool 0x%lx", (unsigned long)parent_pool);
     (void)apr_pool_create(&child_pool, parent_pool);
 
 #if APR_POOL_DEBUG
@@ -176,11 +180,11 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         apr_pool_t *pp;
 
         while ((pp = apr_pool_parent_get(p))) {
-            MP_POOL_TRACE(MP_FUNC, "parent 0x%lx, child 0x%lx\n",
+            MP_POOL_TRACE(MP_FUNC, "parent 0x%lx, child 0x%lx",
                     (unsigned long)pp, (unsigned long)p);
 
             if (apr_pool_is_ancestor(pp, p)) {
-                MP_POOL_TRACE(MP_FUNC, "0x%lx is a subpool of 0x%lx\n",
+                MP_POOL_TRACE(MP_FUNC, "0x%lx is a subpool of 0x%lx",
                         (unsigned long)p, (unsigned long)pp);
             }
             p = pp;
@@ -303,6 +307,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
          * there are no more references, in which case
          * the interpreter will be putback into the mip
          */
+        MP_TRACE_i(MP_FUNC, "calling interp_unselect(0x%lx)", cdata->interp);
         (void)modperl_opt_interp_unselect(cdata->interp);
     }
 #endif
@@ -337,6 +342,8 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
      */
     if ((data->interp = MP_THX_INTERP_GET(data->perl))) {
         data->interp->refcnt++;
+        MP_TRACE_i(MP_FUNC, "(0x%lx)->refcnt incremented to %ld",
+		   data->interp, data->interp->refcnt);
     }
 #endif
 

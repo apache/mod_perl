@@ -374,9 +374,26 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
 apr_status_t modperl_config_req_cleanup(void *data)
 {
     request_rec *r = (request_rec *)data;
-    MP_dTHX;
+    apr_status_t rc;
 
-    return modperl_config_request_cleanup(aTHX_ r);
+#ifdef USE_ITHREADS
+    pTHX;
+    modperl_interp_t *interp = modperl_interp_select(r, NULL, r->server);
+
+    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
+	       interp, interp->refcnt);
+    aTHX = interp->perl;
+#endif
+
+    rc = modperl_config_request_cleanup(aTHX_ r);
+
+#ifdef USE_ITHREADS
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
+	       interp, interp->refcnt);
+    modperl_interp_unselect(interp);
+#endif
+
+    return rc;
 }
 
 void *modperl_get_perl_module_config(ap_conf_vector_t *cv)

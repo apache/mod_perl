@@ -392,6 +392,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
     PERL_SET_CONTEXT(perl);
+    MP_THX_INTERP_SET(perl, base_scfg->mip->parent);
 
 #endif /* USE_ITHREADS */
 
@@ -467,6 +468,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     /* after other parent perls were started in vhosts, make sure that
      * the context is set to the base_perl */
     PERL_SET_CONTEXT(base_perl);
+    MP_THX_INTERP_SET(base_perl, base_scfg->mip->parent);
 #endif
 
 }
@@ -612,8 +614,6 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
         return OK;
     }
 
-    MP_TRACE_i(MP_FUNC, "mod_perl hook init\n");
-
     MP_init_status = 1; /* now starting */
 
     modperl_restart_count_inc(s);
@@ -737,6 +737,14 @@ static int modperl_hook_create_request(request_rec *r)
 {
     MP_dRCFG;
 
+#ifdef USE_ITHREADS
+    if (modperl_threaded_mpm()) {
+        MP_TRACE_i(MP_FUNC, "setting userdata MODPERL_R in pool %#lx to %lx",
+                   (unsigned long)r->pool, (unsigned long)r);
+      (void)apr_pool_userdata_set((void *)r, "MODPERL_R", NULL, r->pool);
+    }
+#endif
+
     modperl_config_req_init(r, rcfg);
 
     /* set the default for cgi header parsing On as early as possible
@@ -751,6 +759,12 @@ static int modperl_hook_create_request(request_rec *r)
 
 static int modperl_hook_post_read_request(request_rec *r)
 {
+#ifdef USE_ITHREADS
+    MP_TRACE_i(MP_FUNC, "%s %s:%d%s",
+               r->method, r->connection->local_addr->hostname,
+               r->connection->local_addr->port, r->unparsed_uri);
+#endif
+
     /* if 'PerlOptions +GlobalRequest' is outside a container */
     modperl_global_request_cfg_set(r);
 
@@ -1015,7 +1029,6 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
-    MP_dRCFG;
     apr_status_t retval;
 
 #ifdef USE_ITHREADS
@@ -1029,10 +1042,9 @@ int modperl_response_handler(request_rec *r)
 
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
+    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
+               interp, interp->refcnt);
     aTHX = interp->perl;
-    if (MpInterpPUTBACK(interp)) {
-        rcfg->interp = interp;
-    }
 #endif
 
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
@@ -1043,11 +1055,9 @@ int modperl_response_handler(request_rec *r)
     retval = modperl_response_handler_run(r, TRUE);
 
 #ifdef USE_ITHREADS
-    if (MpInterpPUTBACK(interp)) {
-        /* PerlInterpScope handler */
-        rcfg->interp = NULL;
-        modperl_interp_unselect(interp);
-    }
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
+               interp, interp->refcnt);
+    modperl_interp_unselect(interp);
 #endif
 
     return retval;
@@ -1070,10 +1080,9 @@ int modperl_response_handler_cgi(request_rec *r)
 
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
+    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld\n",
+               interp, interp->refcnt);
     aTHX = interp->perl;
-    if (MpInterpPUTBACK(interp)) {
-        rcfg->interp = interp;
-    }
 #endif
 
     modperl_perl_global_request_save(aTHX_ r);
@@ -1107,11 +1116,9 @@ int modperl_response_handler_cgi(request_rec *r)
     FREETMPS;LEAVE;
 
 #ifdef USE_ITHREADS
-    if (MpInterpPUTBACK(interp)) {
-        /* PerlInterpScope handler */
-        modperl_interp_unselect(interp);
-        rcfg->interp = NULL;
-    }
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+               interp, interp->refcnt);
+    modperl_interp_unselect(interp);
 #endif
 
     /* flush output buffer after interpreter is putback */

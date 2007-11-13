@@ -52,13 +52,14 @@ struct modperl_list_t {
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 typedef struct modperl_tipool_t modperl_tipool_t;
+typedef struct modperl_config_con_t modperl_config_con_t;
 
 struct modperl_interp_t {
     modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
     int num_requests;
     U8 flags;
-    request_rec *request;
+    modperl_config_con_t *ccfg;
     int refcnt;
 #ifdef MP_TRACE
     unsigned long tid;
@@ -257,9 +258,12 @@ typedef struct {
 #endif
 } modperl_config_req_t;
 
-typedef struct {
+struct modperl_config_con_t {
     HV *pnotes;
-} modperl_config_con_t;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
+};
 
 typedef struct {
     apr_pool_t *pool;
