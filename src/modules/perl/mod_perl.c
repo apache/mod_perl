@@ -746,6 +746,7 @@ static int modperl_hook_create_request(request_rec *r)
 #endif
 
     modperl_config_req_init(r, rcfg);
+    modperl_config_req_cleanup_register(r, rcfg);
 
     /* set the default for cgi header parsing On as early as possible
      * so $r->content_type in any phase after header_parser could turn

@@ -201,14 +201,6 @@ int modperl_callback_run_handlers(int idx, int type,
     }
 #endif
 
-    /* XXX: would like to do this in modperl_hook_create_request()
-     * but modperl_interp_select() is what figures out if
-     * PerlInterpScope eq handler, in which case we do not register
-     * a cleanup.  modperl_hook_create_request() is also currently always
-     * run even if modperl isn't handling any part of the request
-     */
-    modperl_config_req_cleanup_register(r, rcfg);
-
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:
         modperl_handler_make_args(aTHX_ &av_args,
