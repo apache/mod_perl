@@ -21,8 +21,6 @@ use Apache::TestUtil;
 use Apache::TestRequest;
 Apache::TestRequest::user_agent(keep_alive => 1);
 
-use TestCommon::SameInterp;
-
 plan tests => 3, need 'HTML::HeadParser';
 
 my $module   = 'TestModperl::cookie';
