@@ -486,7 +486,7 @@ void perl_reload_inc(server_rec *s, pool *sp)
 
     hv_iterinit(hash);
     while ((entry = hv_iternext(hash))) {
-	ap_table_setn(reload, HeKEY(entry), "1");
+	ap_table_set(reload, HeKEY(entry), "1");
     }
 
     {
