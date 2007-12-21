@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Apache2::Reload has been moved to an externally maintained
+CPAN distribution [Fred Moyer <fred@redhotpenguin.com>]
+
 PerlCleanupHandler are now registered with a subpool of $r->pool,
 instead of $r->pool itself, ensuring they run _before_ any other
 $r->pool cleanups [Torsten Foertsch]
