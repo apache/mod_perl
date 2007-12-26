@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Refactor tests to use keepalives instead of same_interp [Gozer, Phred]
+
 Apache2::Reload has been moved to an externally maintained
 CPAN distribution [Fred Moyer <fred@redhotpenguin.com>]
 

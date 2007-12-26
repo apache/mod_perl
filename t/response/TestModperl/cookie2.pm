@@ -44,6 +44,5 @@ sub cookie {
 __DATA__
 SetHandler modperl
 PerlModule          TestModperl::cookie2
-PerlInitHandler     Apache::TestHandler::same_interp_fixup
 PerlAccessHandler   TestModperl::cookie2::access
 PerlResponseHandler TestModperl::cookie2
