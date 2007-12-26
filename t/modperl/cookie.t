@@ -40,8 +40,6 @@ my %cookies = (
 
 my @tests_ordered = qw(header env nocookie);
 
-t_debug "getting the same interp ID for $location";
-
 GET $location;
 
 for my $test (@tests_ordered) {
