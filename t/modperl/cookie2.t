@@ -14,7 +14,7 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
-use TestCommon::SameInterp;
+Apache::TestRequest::user_agent(keep_alive => 1);
 
 plan tests => 3, need 'HTML::HeadParser';
 
@@ -30,21 +30,14 @@ my %expected =
 
 my @tests_ordered = qw(header subprocess_env env);
 
-t_debug "getting the same interp ID for $location";
-my $same_interp = Apache::TestRequest::same_interp_tie($location);
-
-my $skip = $same_interp ? 0 : 1;
 for my $test (@tests_ordered) {
     my $cookie = "key=$test";
 
-    my $received = same_interp_req_body($same_interp, \&GET,
-                                        "$location?$test",
-                                        Cookie => $cookie);
-    $skip++ unless defined $received;
-    same_interp_skip_not_found(
-        $skip,
-        $received,
+    my $received = GET "$location?$test", Cookie => $cookie;
+
+    ok t_cmp(
+        $received->content,
         $expected{$test},
-        "perl-script+SetupEnv/cookie: $test"
+        "perl-script+SetupEnv/cookie: $test",
     );
 }
