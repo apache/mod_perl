@@ -23,5 +23,3 @@ sub handler {
 }
 
 1;
-__END__
-PerlFixupHandler Apache::TestHandler::same_interp_fixup
