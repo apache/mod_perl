@@ -59,7 +59,7 @@ static MP_INLINE
 apr_interval_time_t mpxs_apr_socket_timeout_get(pTHX_ I32 items,
                                                 SV **MARK, SV **SP)
 {
-    apr_interval_time_t	t;
+    apr_interval_time_t t;
     APR__Socket APR__Socket;
 
     /* this also magically assings to APR_Socket ;-) */

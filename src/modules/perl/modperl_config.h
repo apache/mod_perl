@@ -48,9 +48,9 @@ apr_status_t modperl_config_req_cleanup(void *data);
  */
 #define modperl_config_req_cleanup_register(r, rcfg)           \
     if (r && !MpReqCLEANUP_REGISTERED(rcfg)) {                 \
-        apr_pool_t *p;					       \
-        apr_pool_create(&p, r->pool);			       \
-        apr_pool_cleanup_register(p,			       \
+        apr_pool_t *p;                           \
+        apr_pool_create(&p, r->pool);                   \
+        apr_pool_cleanup_register(p,                   \
                                   (void*)r,                    \
                                   modperl_config_req_cleanup,  \
                                   apr_pool_cleanup_null);      \

@@ -265,10 +265,10 @@ void **modperl_xs_dl_handles_get(pTHX)
     void **handles;
 
     if (!librefs) {
-	MP_TRACE_r(MP_FUNC,
+        MP_TRACE_r(MP_FUNC,
                    "Could not get @%s for unloading.\n",
                    dl_librefs);
-	return NULL;
+        return NULL;
     }
 
     if (!(AvFILL(librefs) >= 0)) {
@@ -279,23 +279,23 @@ void **modperl_xs_dl_handles_get(pTHX)
     handles = (void **)malloc(sizeof(void *) * (AvFILL(librefs)+2));
 
     for (i=0; i<=AvFILL(librefs); i++) {
-	void *handle;
-	SV *handle_sv = *av_fetch(librefs, i, FALSE);
-	SV *module_sv = *av_fetch(modules, i, FALSE);
+        void *handle;
+        SV *handle_sv = *av_fetch(librefs, i, FALSE);
+        SV *module_sv = *av_fetch(modules, i, FALSE);
 
-	if(!handle_sv) {
-	    MP_TRACE_r(MP_FUNC,
+        if(!handle_sv) {
+            MP_TRACE_r(MP_FUNC,
                        "Could not fetch $%s[%d]!\n",
                        dl_librefs, (int)i);
-	    continue;
-	}
-	handle = INT2PTR(void *, SvIV(handle_sv));
+            continue;
+        }
+        handle = INT2PTR(void *, SvIV(handle_sv));
 
-	MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx\n",
+        MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx\n",
                    SvPVX(module_sv), (unsigned long)handle);
-	if (handle) {
-	    handles[i] = handle;
-	}
+        if (handle) {
+            handles[i] = handle;
+        }
     }
 
     av_clear(modules);
@@ -311,7 +311,7 @@ void modperl_xs_dl_handles_close(void **handles)
     int i;
 
     if (!handles) {
-	return;
+        return;
     }
 
     for (i=0; handles[i]; i++) {
@@ -415,12 +415,12 @@ HE *modperl_perl_hv_fetch_he(pTHX_ HV *hv,
 
 #ifdef HvREHASH
     if (HvREHASH(hv)) {
-	PERL_HASH_INTERNAL(hash, key, klen);
+        PERL_HASH_INTERNAL(hash, key, klen);
     }
     else
 #endif
     if (!hash) {
-	PERL_HASH(hash, key, klen);
+        PERL_HASH(hash, key, klen);
     }
 
     entry = ((HE**)HvARRAY(hv))[hash & (I32)xhv->xhv_max];
@@ -476,20 +476,20 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
                AvFILLp(subs)+1, name);
 
     for (i=0; i<=AvFILLp(subs); i++) {
-	CV *cv = (CV*)ary[i];
-	SV *atsv = ERRSV;
+        CV *cv = (CV*)ary[i];
+        SV *atsv = ERRSV;
 
-	PUSHMARK(PL_stack_sp);
-	call_sv((SV*)cv, G_EVAL|G_DISCARD);
+        PUSHMARK(PL_stack_sp);
+        call_sv((SV*)cv, G_EVAL|G_DISCARD);
 
-	if (SvCUR(atsv)) {
+        if (SvCUR(atsv)) {
             Perl_sv_catpvf(aTHX_ atsv, "%s failed--call queue aborted",
                            name);
-	    while (PL_scopestack_ix > oldscope) {
-		LEAVE;
+            while (PL_scopestack_ix > oldscope) {
+                LEAVE;
             }
             Perl_croak(aTHX_ "%s", SvPVX(atsv));
-	}
+        }
     }
 }
 
@@ -873,15 +873,15 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
     SV *retval = Nullsv;
 
     if (!*pnotes) {
-	apr_pool_t *pool = r ? r->pool : c->pool;
-	void *cleanup_data;
-	*pnotes = newHV();
+        apr_pool_t *pool = r ? r->pool : c->pool;
+        void *cleanup_data;
+        *pnotes = newHV();
 
         cleanup_data = modperl_pnotes_cleanup_data(aTHX_ pnotes, pool);
 
-	apr_pool_cleanup_register(pool, cleanup_data,
-				  modperl_cleanup_pnotes,
-				  apr_pool_cleanup_null);
+        apr_pool_cleanup_register(pool, cleanup_data,
+                                  modperl_cleanup_pnotes,
+                                  apr_pool_cleanup_null);
     }
 
     if (key) {

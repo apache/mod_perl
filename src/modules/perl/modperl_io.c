@@ -80,12 +80,12 @@ MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
     SV *sv = TIEHANDLE_SV(handle);
 
     if (SvMAGICAL(sv) && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))) {
-	char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
+        char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
 
-	if (!strEQ(package, classname)) {
-	    MP_TRACE_r(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
-	    return TRUE;
-	}
+        if (!strEQ(package, classname)) {
+            MP_TRACE_r(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
+            return TRUE;
+        }
     }
 
     return FALSE;

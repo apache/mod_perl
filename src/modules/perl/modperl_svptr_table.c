@@ -55,8 +55,8 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
     CLONE_PARAMS parms;
 
     Newz(0, tbl, 1, PTR_TBL_t);
-    tbl->tbl_max	= source->tbl_max;
-    tbl->tbl_items	= source->tbl_items;
+    tbl->tbl_max        = source->tbl_max;
+    tbl->tbl_items        = source->tbl_items;
     Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t *);
 
     dst_ary = tbl->tbl_ary;
@@ -67,13 +67,13 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
     parms.stashes = newAV();
 
     for (i=0; i < source->tbl_max; i++, dst_ary++, src_ary++) {
-	PTR_TBL_ENT_t *src_ent, *dst_ent=NULL;
+        PTR_TBL_ENT_t *src_ent, *dst_ent=NULL;
 
-	if (!*src_ary) {
-	    continue;
+        if (!*src_ary) {
+            continue;
         }
 
-	for (src_ent = *src_ary;
+        for (src_ent = *src_ary;
              src_ent;
              src_ent = src_ent->next)
         {
@@ -110,13 +110,13 @@ void modperl_svptr_table_destroy(pTHX_ PTR_TBL_t *tbl)
     PTR_TBL_ENT_t **ary = tbl->tbl_ary;
 
     for (i=0; i < tbl->tbl_max; i++, ary++) {
-	PTR_TBL_ENT_t *ent;
+        PTR_TBL_ENT_t *ent;
 
-	if (!*ary) {
-	    continue;
+        if (!*ary) {
+            continue;
         }
 
-	for (ent = *ary; ent; ent = ent->next) {
+        for (ent = *ary; ent; ent = ent->next) {
             if (!ent->newval) {
                 continue;
             }
@@ -143,13 +143,13 @@ void modperl_svptr_table_delete(pTHX_ PTR_TBL_t *tbl, void *key)
     entry = *oentry;
 
     for (; entry; oentry = &entry->next, entry = *oentry) {
-	if (entry->oldval == key) {
+        if (entry->oldval == key) {
             *oentry = entry->next;
             SvREFCNT_dec((SV*)entry->newval);
             Safefree(entry);
             tbl->tbl_items--;
-	    return;
-	}
+            return;
+        }
     }
 }
 
@@ -168,8 +168,8 @@ modperl_svptr_table_new(pTHX)
 {
     PTR_TBL_t *tbl;
     Newz(0, tbl, 1, PTR_TBL_t);
-    tbl->tbl_max	= 511;
-    tbl->tbl_items	= 0;
+    tbl->tbl_max        = 511;
+    tbl->tbl_items        = 0;
     Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t*);
     return tbl;
 }
@@ -184,8 +184,8 @@ modperl_svptr_table_fetch(pTHX_ PTR_TBL_t *tbl, void *sv)
     assert(tbl);
     tblent = tbl->tbl_ary[hash & tbl->tbl_max];
     for (; tblent; tblent = tblent->next) {
-	if (tblent->oldval == sv)
-	    return tblent->newval;
+        if (tblent->oldval == sv)
+            return tblent->newval;
     }
     return (void*)NULL;
 }
@@ -205,10 +205,10 @@ modperl_svptr_table_store(pTHX_ PTR_TBL_t *tbl, void *oldv, void *newv)
     assert(tbl);
     otblent = &tbl->tbl_ary[hash & tbl->tbl_max];
     for (tblent = *otblent; tblent; i=0, tblent = tblent->next) {
-	if (tblent->oldval == oldv) {
-	    tblent->newval = newv;
-	    return;
-	}
+        if (tblent->oldval == oldv) {
+            tblent->newval = newv;
+            return;
+        }
     }
     Newz(0, tblent, 1, PTR_TBL_ENT_t);
     tblent->oldval = oldv;
@@ -217,7 +217,7 @@ modperl_svptr_table_store(pTHX_ PTR_TBL_t *tbl, void *oldv, void *newv)
     *otblent = tblent;
     tbl->tbl_items++;
     if (i && tbl->tbl_items > tbl->tbl_max)
-	modperl_svptr_table_split(aTHX_ tbl);
+        modperl_svptr_table_split(aTHX_ tbl);
 }
 
 /* double the hash bucket size of an existing ptr table */
@@ -235,20 +235,20 @@ modperl_svptr_table_split(pTHX_ PTR_TBL_t *tbl)
     tbl->tbl_max = --newsize;
     tbl->tbl_ary = ary;
     for (i=0; i < oldsize; i++, ary++) {
-	PTR_TBL_ENT_t **curentp, **entp, *ent;
-	if (!*ary)
-	    continue;
-	curentp = ary + oldsize;
-	for (entp = ary, ent = *ary; ent; ent = *entp) {
-	    if ((newsize & PTR2UV(ent->oldval)) != i) {
-		*entp = ent->next;
-		ent->next = *curentp;
-		*curentp = ent;
-		continue;
-	    }
-	    else
-		entp = &ent->next;
-	}
+        PTR_TBL_ENT_t **curentp, **entp, *ent;
+        if (!*ary)
+            continue;
+        curentp = ary + oldsize;
+        for (entp = ary, ent = *ary; ent; ent = *entp) {
+            if ((newsize & PTR2UV(ent->oldval)) != i) {
+                *entp = ent->next;
+                ent->next = *curentp;
+                *curentp = ent;
+                continue;
+            }
+            else
+                entp = &ent->next;
+        }
     }
 }
 
