@@ -22,7 +22,7 @@ sub handler {
     if ($string) {
         # status_line must be valid and match status
         # or it is 'zapped' by httpd as of 2.2.1
-        $r->status($code); 
+        $r->status($code);
         $r->status_line("$code $string");
     }
     else {

@@ -47,7 +47,7 @@ sub TestCmdParms {
     foreach my $method (@methods) {
         $srv_cfg->{$args}{$method} = $parms->$method();
     }
-    $srv_cfg->{$args}{check_ctx} = 
+    $srv_cfg->{$args}{check_ctx} =
         $parms->check_cmd_context(Apache2::Const::NOT_IN_LOCATION);
 
     $srv_cfg->{$args}{limited} = $parms->method_is_limited('GET');

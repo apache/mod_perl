@@ -3,7 +3,7 @@ package TestPerl::ithreads_eval;
 # reproducing a bug in perl ithreads: [perl #34341]
 # https://rt.perl.org/rt3/Ticket/Display.html?id=34341
 #
-# $thr->join triggers the following leak: 
+# $thr->join triggers the following leak:
 # - due to to local $0, (its second MAGIC's MG_OBJ,
 #   you can see it in the output of Dump $0). This leak was first
 #   spotted in the RegistryCooker.pm which localizes $0

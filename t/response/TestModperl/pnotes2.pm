@@ -41,37 +41,37 @@ sub handler {
 
     if(!defined $r->args) {
     } elsif($r->args == 1) {
-	$r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
     } elsif($r->args == 2) {
-	$r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
     } elsif($r->args == 3) {
-	$r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
-	$r->pnotes(x2 => 2);
+        $r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->pnotes(x2 => 2);
     } elsif($r->args == 4) {
-	$r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
-	$r->pnotes->{x2} = 2;
+        $r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->pnotes->{x2} = 2;
     } elsif($r->args == 5) {
-	$r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
-	$r->pnotes->{x2} = 2;
+        $r->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->pnotes->{x2} = 2;
     } elsif($r->args == 6) {
-	$r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
-	$r->pnotes(x2 => 2);
+        $r->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->pnotes(x2 => 2);
     } elsif($r->args == 7) {
-	$r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
     } elsif($r->args == 8) {
-	$r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
     } elsif($r->args == 9) {
-	$r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
-	$r->connection->pnotes(x2 => 2);
+        $r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->connection->pnotes(x2 => 2);
     } elsif($r->args == 10) {
-	$r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
-	$r->connection->pnotes->{x2} = 2;
+        $r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->connection->pnotes->{x2} = 2;
     } elsif($r->args == 11) {
-	$r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
-	$r->connection->pnotes->{x2} = 2;
+        $r->connection->pnotes(x1 => TestModerl::pnotes2::x->new(\&line));
+        $r->connection->pnotes->{x2} = 2;
     } elsif($r->args == 12) {
-	$r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
-	$r->connection->pnotes(x2 => 2);
+        $r->connection->pnotes->{x1} = TestModerl::pnotes2::x->new(\&line);
+        $r->connection->pnotes(x2 => 2);
     }
 
     $r->content_type('text/plain');

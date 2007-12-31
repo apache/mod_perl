@@ -1,6 +1,6 @@
 package TestHooks::push_handlers_same_phase;
 
-# test that we 
+# test that we
 # - can push handlers into the same phase that is currently running
 # - cannot switch 'perl-script' to 'modperl' and vice versa once
 #   inside the response phase

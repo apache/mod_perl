@@ -16,7 +16,7 @@ sub handler {
 
     # make it ok to call ok() here while plan()ing elsewhere
     Apache::Test::init_test_pm($r);
-    
+
     Test::_reset_globals() if Test->can('_reset_globals');
     $Test::ntest   = 1 + (26 * ($r->args - 1));
     $Test::planned = 26;
@@ -102,7 +102,7 @@ sub handler {
         else {
           skip ('skipping $dbh retrival test - no DBI or DBD::DBM');
           skip ('skipping $dbh->quote() test - no DBI or DBD::DBM');
-        } 
+        }
     }
 
     # set pnotes so we can test unset on later connections

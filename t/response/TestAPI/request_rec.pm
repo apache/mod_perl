@@ -129,7 +129,7 @@ sub handler {
 
         {
             my $new_request = "GET $base_uri$path_info?$args&foo=bar HTTP/1.0";
-            my $old_request = $r->the_request($new_request); 
+            my $old_request = $r->the_request($new_request);
             ok t_cmp $r->the_request, $new_request, '$r->the_request rw';
             $r->the_request($old_request);
         }

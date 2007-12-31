@@ -104,7 +104,7 @@ sub handler {
     }
     {
         # this time include args and a pool object
-        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args, 
+        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args,
                                      $r->pool->new);
         t_debug("construct_url: $curl");
         t_debug("r->uri: ", $r->uri);
@@ -167,7 +167,7 @@ sub handler {
         ok t_cmp($puri->port, $port, "port");
 
         ok t_cmp($puri->unparse,
-                 "ftp://perl.apache.org:$port$path?$query#$fragment", 
+                 "ftp://perl.apache.org:$port$path?$query#$fragment",
                  "unparse");
     }
 

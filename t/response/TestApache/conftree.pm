@@ -45,7 +45,7 @@ sub handler {
     #XXX: This test isn't so good, but its quite problematic to try
     #and _really_ compare $cfg and $tree...
     {
-        my %vhosts = map { 
+        my %vhosts = map {
             $cfg->{vhosts}{$_}{name} => { %{$cfg->{vhosts}{$_}}, index => $_ }
         } keys %{$cfg->{vhosts}};
 
@@ -55,7 +55,7 @@ sub handler {
 
         my $vhost_failed;
         for my $vhost ($tree->lookup("VirtualHost")) {
-            unless (exists $vhosts{$vhost->{'ServerName'} 
+            unless (exists $vhosts{$vhost->{'ServerName'}
                 || $vhost->{'PerlProcessConnectionHandler'}}) {
                 $vhost_failed++;
             }
@@ -87,7 +87,7 @@ sub traverse_tree {
         $sub->($data, $node);
         if (my $kid = $node->first_child) {
             $node = $kid;
-        } 
+        }
         elsif (my $next = $node->next) {
             $node = $next;
         }

@@ -34,7 +34,7 @@ sub decline {
 
 # this filter ignores all the data that comes through, though on the
 # last invocation it prints how many times the filter 'decline' was called
-# which it could count by itself, but we want to test that 
+# which it could count by itself, but we want to test that
 # 'return Apache2::Const::DECLINED' works properly in output filters
 sub black_hole {
     my $filter = shift;

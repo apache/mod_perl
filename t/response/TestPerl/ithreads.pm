@@ -62,9 +62,9 @@ sub handler {
 
         $counter_priv += $counter_priv for 1..10;
         {
-	    lock $counter_shar;
-	    $counter_shar += $counter_shar for 1..10;
-	}
+            lock $counter_shar;
+            $counter_shar += $counter_shar for 1..10;
+        }
 
         $thr->join;
         ok t_cmp($counter_shar, 2**20, "shared counter");

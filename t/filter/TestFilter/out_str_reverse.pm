@@ -49,9 +49,9 @@ sub response {
     $r->content_type('text/plain');
 
     # unbuffer stdout, so we get the data split across several bbs
-    local $_ = 1; 
+    local $_ = 1;
     if ($r->method_number == Apache2::Const::M_POST) {
-        my $data = TestCommon::Utils::read_post($r); 
+        my $data = TestCommon::Utils::read_post($r);
         $r->print($_) for grep length $_, split /(.{5})/, $data;
     }
 

@@ -15,7 +15,7 @@ use Apache2::Filter ();
 use Apache2::Const -compile => qw(OK);
 
 # include the contents of a subrequest
-# in the filter, a la mod_include's 
+# in the filter, a la mod_include's
 # <!--#include virtual="/subrequest" -->
 
 sub include {

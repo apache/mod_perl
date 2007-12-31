@@ -486,18 +486,18 @@ sub table_get_set {
     my ($key, $value) = @_;
 
     if (1 == @_) {
-        return wantarray() 
+        return wantarray()
             ?       ($table->get($key))
             : scalar($table->get($key));
     }
     elsif (2 == @_) {
         if (defined $value) {
-            return wantarray() 
+            return wantarray()
                 ?        ($table->set($key, $value))
                 :  scalar($table->set($key, $value));
         }
         else {
-            return wantarray() 
+            return wantarray()
                 ?       ($table->unset($key))
                 : scalar($table->unset($key));
         }
@@ -513,21 +513,21 @@ sub table_get_set {
 
 sub header_out {
     my $r = shift;
-    return wantarray() 
+    return wantarray()
         ?       ($r->table_get_set(scalar($r->headers_out), @_))
         : scalar($r->table_get_set(scalar($r->headers_out), @_));
 }
 
 sub header_in {
     my $r = shift;
-    return wantarray() 
+    return wantarray()
         ?       ($r->table_get_set(scalar($r->headers_in), @_))
         : scalar($r->table_get_set(scalar($r->headers_in), @_));
 }
 
 sub err_header_out {
     my $r = shift;
-    return wantarray() 
+    return wantarray()
         ?       ($r->table_get_set(scalar($r->err_headers_out), @_))
         : scalar($r->table_get_set(scalar($r->err_headers_out), @_));
 }

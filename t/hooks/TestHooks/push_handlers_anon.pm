@@ -46,9 +46,9 @@ __DATA__
     <Perl >
     my $s = Apache2::PerlSections->server;
 
-    $s->push_handlers(PerlFixupHandler => 
+    $s->push_handlers(PerlFixupHandler =>
                        sub { &TestHooks::push_handlers_anon::add_note });
-    $s->push_handlers(PerlFixupHandler => 
+    $s->push_handlers(PerlFixupHandler =>
                        \&TestHooks::push_handlers_anon::add_note       );
     $s->push_handlers(PerlFixupHandler =>
                       "TestHooks::push_handlers_anon::add_note"        );

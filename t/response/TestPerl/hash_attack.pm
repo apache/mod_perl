@@ -92,7 +92,7 @@ sub attack {
         $stash->{$s}++;
         debug sprintf "%2d: %5s, %10s, %s", $c, $s, $h, scalar(%$stash);
         push @keys, $s;
-        debug "The hash collision attack has been successful" 
+        debug "The hash collision attack has been successful"
             if Internals::HvREHASH(%$stash);
     } continue {
         $s++;

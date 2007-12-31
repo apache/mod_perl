@@ -19,7 +19,7 @@ use APR::Pool ();
 use Apache2::Const -compile => qw(OK DECLINED);
 use APR::Const    -compile => 'SUCCESS';
 
-my $file = catfile Apache::Test::config->{vars}->{documentroot}, 
+my $file = catfile Apache::Test::config->{vars}->{documentroot},
     "hooks", "cleanup2";
 
 sub handler {

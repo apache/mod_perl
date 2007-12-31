@@ -334,7 +334,7 @@ sub test {
         $table2->set($_**2 => $_**2) for 1..20;
         my $table2_copy = APR::Table::make($pool, 1);
         $table2_copy->set($_ => $_) for 1..20;
-        
+
         my $overlay = $table2_copy->overlay($table2, $pool->new);
         {
             # see the comment for above's:

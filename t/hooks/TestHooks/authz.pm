@@ -16,8 +16,8 @@ sub auth_any {
     unless($r->user and $sent_pw) {
         # testing $r->note_auth_failure:
         # AuthType Basic + note_auth_failure == note_basic_auth_failure;
-	$r->note_auth_failure;
-	return Apache2::Const::HTTP_UNAUTHORIZED;
+        $r->note_auth_failure;
+        return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
     return Apache2::Const::OK;
