@@ -15,4 +15,3 @@
  */
 
 #define mpxs_APR__Error_strerror(rc) modperl_error_strerror(aTHX_ rc)
-

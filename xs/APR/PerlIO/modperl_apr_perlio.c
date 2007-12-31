@@ -86,7 +86,7 @@ static PerlIO *PerlIOAPR_open(pTHX_ PerlIO_funcs *self,
     switch (*mode) {
       case 'a':
         apr_flag = APR_APPEND | APR_CREATE;
-        break; 
+        break;
       case 'w':
         apr_flag = APR_WRITE | APR_CREATE | APR_TRUNCATE;
         break;
@@ -184,7 +184,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
         return count;
     }
     else if (rc != APR_SUCCESS) {
-        modperl_croak(aTHX_ rc, "APR::PerlIO::read");  
+        modperl_croak(aTHX_ rc, "APR::PerlIO::read");
     }
 
     return count;
@@ -294,7 +294,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
         apr_file_name_get(&new_path, st->file);
     }
 
-    rc = apr_os_file_get(&os_file, st->file); 
+    rc = apr_os_file_get(&os_file, st->file);
     if (rc != APR_SUCCESS) {
         Perl_croak(aTHX_ "filedes retrieval failed!");
     }
@@ -408,7 +408,7 @@ static PerlIO_funcs PerlIO_APR = {
     PerlIOAPR_read,
     PerlIOBase_unread,
     PerlIOAPR_write,
-    PerlIOAPR_seek, 
+    PerlIOAPR_seek,
     PerlIOAPR_tell,
     PerlIOAPR_close,
     PerlIOAPR_flush,            /* flush */
@@ -475,7 +475,7 @@ PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
         apr_os_file_t os_file;
 
         /* convert to the OS representation of file */
-        rc = apr_os_file_get(&os_file, file); 
+        rc = apr_os_file_get(&os_file, file);
         if (rc != APR_SUCCESS) {
             croak("filedes retrieval failed!");
         }
@@ -495,10 +495,10 @@ PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
 static SV *modperl_apr_perlio_PerlIO_to_glob(pTHX_ PerlIO *pio,
                                              modperl_apr_perlio_hook_e type)
 {
-    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
-    GV *gv = (GV*)SvRV(retval); 
+    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO");
+    GV *gv = (GV*)SvRV(retval);
 
-    gv_IOadd(gv); 
+    gv_IOadd(gv);
 
     switch (type) {
       case MODPERL_APR_PERLIO_HOOK_WRITE:
@@ -553,7 +553,7 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     };
 
     /* convert to the OS representation of file */
-    rc = apr_os_file_get(&os_file, file); 
+    rc = apr_os_file_get(&os_file, file);
     if (rc != APR_SUCCESS) {
         Perl_croak(aTHX_ "filedes retrieval failed!");
     }
@@ -564,7 +564,7 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
 
        fd = PerlLIO_dup(os_file);
        MP_TRACE_o(MP_FUNC, "fd old: %d, new %d\n", os_file, fd);
-       if (!(retval = PerlIO_fdopen(fd, mode))) { 
+       if (!(retval = PerlIO_fdopen(fd, mode))) {
        ...
        }
 
@@ -576,22 +576,22 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
 
     */
 
-    if (!(retval = PerlIO_fdopen(os_file, mode))) { 
+    if (!(retval = PerlIO_fdopen(os_file, mode))) {
         PerlLIO_close(fd);
         Perl_croak(aTHX_ "fdopen failed!");
-    } 
+    }
 
     return retval;
 }
 
-SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, 
+SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
                                         apr_pool_t *pool,
                                         modperl_apr_perlio_hook_e type)
 {
-    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO"); 
-    GV *gv = (GV*)SvRV(retval); 
+    SV *retval = modperl_perl_gensym(aTHX_ "APR::PerlIO");
+    GV *gv = (GV*)SvRV(retval);
 
-    gv_IOadd(gv); 
+    gv_IOadd(gv);
 
     switch (type) {
       case MODPERL_APR_PERLIO_HOOK_WRITE:
@@ -616,4 +616,3 @@ void modperl_apr_perlio_init(pTHX)
 }
 
 #endif /* PERLIO_LAYERS */
-

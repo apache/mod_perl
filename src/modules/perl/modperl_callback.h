@@ -45,7 +45,7 @@ int modperl_callback_run_handlers(int idx, int type,
                                   apr_pool_t *ptemp,
                                   modperl_hook_run_mode_e run_mode);
 
-int modperl_callback_per_dir(int idx, request_rec *r, 
+int modperl_callback_per_dir(int idx, request_rec *r,
                              modperl_hook_run_mode_e run_mode);
 
 int modperl_callback_per_srv(int idx, request_rec *r,

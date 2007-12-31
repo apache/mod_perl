@@ -16,9 +16,9 @@
 
 static void mpxs_Apache2__Log_BOOT(pTHX)
 {
-    av_push(get_av("Apache2::Log::Request::ISA", TRUE), 
+    av_push(get_av("Apache2::Log::Request::ISA", TRUE),
             newSVpv("Apache2::Log", 12));
-    av_push(get_av("Apache2::Log::Server::ISA", TRUE), 
+    av_push(get_av("Apache2::Log::Server::ISA", TRUE),
             newSVpv("Apache2::Log", 12));
 }
 
@@ -54,7 +54,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         line = CopLINE(cop); /* (caller)[2] */
     }
 
-    if ((s->loglevel >= lmask) && 
+    if ((s->loglevel >= lmask) &&
         SvROK(msg) && (SvTYPE(SvRV(msg)) == SVt_PVCV)) {
         dSP;
         ENTER;SAVETMPS;

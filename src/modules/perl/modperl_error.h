@@ -25,7 +25,7 @@
 #define MODPERL_FILTER_ERROR   APR_OS_START_USERERR + 1
 
 /**
- * return the string representation of the error code 
+ * return the string representation of the error code
  * @param rc   error code
  * @return     the error string
  *
@@ -34,7 +34,7 @@
  * called again (which could happen indirectly). If unsure, copy.
  */
 char *modperl_error_strerror(pTHX_ apr_status_t rc);
-        
+
 void modperl_croak(pTHX_ apr_status_t rc, const char* func);
 
 #define MP_RUN_CROAK(rc_run, func) STMT_START                \

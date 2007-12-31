@@ -40,7 +40,7 @@
  */
 
 MP_INLINE static
-int modperl_table_magic_copy(pTHX_ SV *sv, MAGIC *mg, SV *nsv, 
+int modperl_table_magic_copy(pTHX_ SV *sv, MAGIC *mg, SV *nsv,
                              const char *name, int namelen)
 {
     /* prefetch the value whenever we're iterating over the keys */
@@ -53,11 +53,11 @@ int modperl_table_magic_copy(pTHX_ SV *sv, MAGIC *mg, SV *nsv,
 }
 
 
-static const MGVTBL modperl_table_magic_prefetch = {0, 0, 0, 0, 0, 
+static const MGVTBL modperl_table_magic_prefetch = {0, 0, 0, 0, 0,
                                                     modperl_table_magic_copy};
 #endif /* End of prefetch magic */
 
-MP_INLINE SV *modperl_hash_tie(pTHX_ 
+MP_INLINE SV *modperl_hash_tie(pTHX_
                                const char *classname,
                                SV *tsv, void *p)
 {
@@ -81,7 +81,7 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
                                  gv_stashpv(classname, TRUE)));
 }
 
-MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_ 
+MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_
                                           const char *classname,
                                           SV *tsv)
 {
@@ -115,7 +115,7 @@ MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_
     return &PL_sv_undef;
 }
 
-MP_INLINE void *modperl_hash_tied_object(pTHX_ 
+MP_INLINE void *modperl_hash_tied_object(pTHX_
                                          const char *classname,
                                          SV *tsv)
 {
@@ -133,7 +133,7 @@ SV *modperl_perl_gensym(pTHX_ char *pack)
 {
     GV *gv = newGVgen(pack);
     SV *rv = newRV((SV*)gv);
-    (void)hv_delete(gv_stashpv(pack, TRUE), 
+    (void)hv_delete(gv_stashpv(pack, TRUE),
                     GvNAME(gv), GvNAMELEN(gv), G_DISCARD);
     return rv;
 }

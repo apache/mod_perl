@@ -75,7 +75,7 @@ MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
         r->method_number = M_GET;
 
         /* We already read the message body (if any), so don't allow
-         * the redirected request to think it has one.  We can ignore 
+         * the redirected request to think it has one.  We can ignore
          * Transfer-Encoding, since we used REQUEST_CHUNKED_ERROR.
          */
         apr_table_unset(r->headers_in, "Content-Length");

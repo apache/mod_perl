@@ -55,7 +55,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
                                      PerlInterpreter *perl)
 {
     UV clone_flags = CLONEf_KEEP_PTR_TABLE;
-    modperl_interp_t *interp = 
+    modperl_interp_t *interp =
         (modperl_interp_t *)malloc(sizeof(*interp));
 
     memset(interp, '\0', sizeof(*interp));
@@ -244,7 +244,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     apr_pool_t *server_pool = modperl_server_pool();
     pTHX;
     MP_dSCFG(s);
-    modperl_interp_pool_t *mip = 
+    modperl_interp_pool_t *mip =
         (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
     MP_TRACE_i(MP_FUNC, "server=%s\n", modperl_server_desc(s, p));
@@ -412,7 +412,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
      * else scope must be per-connection
      */
 
-    scope = (dcfg && !modperl_interp_scope_undef(dcfg)) ? 
+    scope = (dcfg && !modperl_interp_scope_undef(dcfg)) ?
         dcfg->interp_scope :
         (r ? scfg->interp_scope : MP_INTERP_SCOPE_CONNECTION);
 
@@ -448,7 +448,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                            "looking for interp in main request for %s...%s\n",
                            main_r->uri, interp ? "found" : "not found");
                 main_r = main_r->main;
-            }                
+            }
         }
         else {
             p = r->pool;

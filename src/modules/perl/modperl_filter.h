@@ -25,9 +25,9 @@
 
 #define MP_FILTER_CONNECTION_HANDLER 0x01
 #define MP_FILTER_REQUEST_HANDLER    0x02
-#define MP_FILTER_HAS_INIT_HANDLER   0x04 
-#define MP_FILTER_INIT_HANDLER       0x08 
-#define MP_FILTER_HTTPD_HANDLER      0x10 
+#define MP_FILTER_HAS_INIT_HANDLER   0x04
+#define MP_FILTER_INIT_HANDLER       0x08
+#define MP_FILTER_HTTPD_HANDLER      0x10
 
 typedef ap_filter_t * MP_FUNC_T(modperl_filter_add_t) (const char *, void *,
                                                        request_rec *,
@@ -101,7 +101,7 @@ MP_INLINE apr_size_t modperl_input_filter_read(pTHX_
                                                modperl_filter_t *filter,
                                                SV *buffer,
                                                apr_size_t wanted);
-    
+
 MP_INLINE apr_status_t modperl_input_filter_write(pTHX_
                                                   modperl_filter_t *filter,
                                                   const char *buf,

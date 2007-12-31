@@ -21,12 +21,12 @@ SV *mpxs_APR__Finfo_stat(pTHX_ const char *fname, apr_int32_t wanted,
     apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     apr_finfo_t *finfo = (apr_finfo_t *)apr_pcalloc(p, sizeof(apr_finfo_t));
     SV *finfo_sv;
-    
+
     MP_RUN_CROAK(apr_stat(finfo, fname, wanted, p),
                  "APR::Finfo::stat");
 
     finfo_sv = sv_setref_pv(NEWSV(0, 0), "APR::Finfo", (void*)finfo);
     mpxs_add_pool_magic(finfo_sv, p_sv);
-    
+
     return finfo_sv;
 }

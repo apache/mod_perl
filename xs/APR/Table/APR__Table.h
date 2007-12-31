@@ -91,8 +91,8 @@ static int mpxs_apr_table_do_cb(void *data,
     return rv;
 }
 
-static MP_INLINE 
-int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP) 
+static MP_INLINE
+int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
 {
     apr_table_t *table;
     SV *sub;
@@ -119,8 +119,8 @@ int mpxs_apr_table_do(pTHX_ I32 items, SV **MARK, SV **SP)
         }
     }
 
-    /* XXX: would be nice to be able to call apr_table_vdo directly, 
-     * but I don't think it's possible to create/populate something 
+    /* XXX: would be nice to be able to call apr_table_vdo directly,
+     * but I don't think it's possible to create/populate something
      * that smells like a va_list with our list of filters specs
      */
 
@@ -154,7 +154,7 @@ static MP_INLINE const char *mpxs_APR__Table_NEXTKEY(pTHX_ SV *tsv, SV *key)
                    "first argument not an APR::Table object");
     }
 
-    t = INT2PTR(apr_table_t *, SvIVX(SvRV(rv))); 
+    t = INT2PTR(apr_table_t *, SvIVX(SvRV(rv)));
 
     if (apr_is_empty_table(t)) {
         return NULL;

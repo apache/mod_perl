@@ -62,7 +62,7 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc)
  *   line - set to the callers line number
  *   func - set to the function name
  */
-void modperl_croak(pTHX_ apr_status_t rc, const char* func) 
+void modperl_croak(pTHX_ apr_status_t rc, const char* func)
 {
     HV *stash;
     HV *data;
@@ -78,7 +78,7 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     }
 
     if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));   
+        Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));
     }
 
     stash = gv_stashpvn("APR::Error", 10, FALSE);
@@ -91,5 +91,5 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     sv_setiv(*hv_fetch(data, "line", 4, 1), CopLINE(PL_curcop));
     sv_setpv(*hv_fetch(data, "func", 4, 1), func);
 
-    Perl_croak(aTHX_ Nullch);   
+    Perl_croak(aTHX_ Nullch);
 }

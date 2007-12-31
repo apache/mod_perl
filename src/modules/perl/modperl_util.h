@@ -27,7 +27,7 @@
     }
 
 /* turn off cgi header parsing. in case we are already inside
- *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, MP_HOOK_RUN_FIRST); 
+ *     modperl_callback_per_dir(MP_RESPONSE_HANDLER, r, MP_HOOK_RUN_FIRST);
  * but haven't sent any data yet, it's too late to change
  * MpReqPARSE_HEADERS, so change the wbucket's private flag directly
  */
@@ -35,7 +35,7 @@
     MpReqPARSE_HEADERS_Off(rcfg); \
     if (rcfg->wbucket) { \
         rcfg->wbucket->header_parse = 0; \
-    } 
+    }
 
 MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv);
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv);
@@ -81,7 +81,7 @@ void modperl_perl_exit(pTHX_ int status);
 
 MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
                                  char *key, SV *sv_val);
-    
+
 SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
                           SV *sv_val, int do_taint);
 

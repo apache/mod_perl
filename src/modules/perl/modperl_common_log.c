@@ -30,7 +30,7 @@ unsigned long MP_debug_level = 0;
 
 unsigned long modperl_debug_level(void)
 {
-    return debug_level;  
+    return debug_level;
 }
 
 void modperl_trace_logfile_set(apr_file_t *logfile_new)

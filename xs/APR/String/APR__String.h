@@ -21,5 +21,5 @@ SV *mpxs_APR__String_strfsize(pTHX_ apr_off_t size)
 
     apr_strfsize(size, buff);
 
-    return newSVpvn(buff, 4);    
+    return newSVpvn(buff, 4);
 }

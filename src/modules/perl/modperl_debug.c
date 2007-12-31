@@ -59,7 +59,7 @@ void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
                 len = tmp_len;
             }
         }
-    }    
+    }
     /* dump the table with keys aligned */
     fmt = Perl_form(aTHX_ "%%-%ds => %%s", len);
 
@@ -68,7 +68,7 @@ void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
             continue;
         }
         modperl_trace(MP_FUNC, fmt, elts[i].key, elts[i].val);
-    }    
+    }
     modperl_trace(MP_FUNC, "");
 }
 #endif
@@ -97,4 +97,3 @@ void modperl_perl_modglobal_dump(pTHX)
 
 }
 #endif
-

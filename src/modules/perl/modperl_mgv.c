@@ -156,7 +156,7 @@ MP_INLINE GV *modperl_mgv_lookup_autoload(pTHX_ modperl_mgv_t *symbol,
         return gv;
     }
 
-    /* 
+    /*
      * this VirtualHost has its own parent interpreter
      * must require the module again with this server's THX
      */
@@ -324,8 +324,8 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         if (!stash) {
             return 0;
         }
-        
-        
+
+
         if (MpHandlerMETHOD(handler) && !handler->mgv_obj) {
             char *name = HvNAME(stash);
             if (!name) {
@@ -452,7 +452,7 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
 #ifdef USE_ITHREADS
             if ((MpSrvPARENT(scfg) && MpSrvAUTOLOAD(scfg))
                 && !modperl_mgv_lookup(aTHX_ handler->mgv_cv)) {
-                /* 
+                /*
                  * this VirtualHost has its own parent interpreter
                  * must require the module again with this server's THX
                  */

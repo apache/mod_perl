@@ -24,7 +24,7 @@ void modperl_module_config_table_set(pTHX_ PTR_TBL_t *table);
 const char *modperl_module_add(apr_pool_t *p, server_rec *s,
                                const char *name, SV *mod_cmds);
 
-SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s, 
+SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s,
                                   ap_conf_vector_t *v);
 
 #endif /* MODPERL_MODULE_H */
