@@ -53,12 +53,12 @@ static void modperl_bucket_sv_destroy(void *data)
     dTHXa(svbucket->perl);
 
     if (!apr_bucket_shared_destroy(svbucket)) {
-        MP_TRACE_f(MP_FUNC, "bucket refcnt=%d\n",
+        MP_TRACE_f(MP_FUNC, "bucket refcnt=%d",
                    ((apr_bucket_refcount *)svbucket)->refcount);
         return;
     }
 
-    MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d\n",
+    MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d",
                (unsigned long)svbucket->sv, SvREFCNT(svbucket->sv));
 
     SvREFCNT_dec(svbucket->sv);
@@ -139,7 +139,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
         (void)SvREFCNT_inc(svbucket->sv);
     }
 
-    MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d\n",
+    MP_TRACE_f(MP_FUNC, "sv=0x%lx, refcnt=%d",
                (unsigned long)svbucket->sv, SvREFCNT(svbucket->sv));
 
     bucket->type = &modperl_bucket_sv_type;

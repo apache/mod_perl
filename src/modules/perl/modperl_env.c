@@ -232,13 +232,13 @@ void modperl_env_configure_server(pTHX_ apr_pool_t *p, server_rec *s)
         }
     }
 
-    MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
+    MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s]"
                "\n\t@ENV{keys scfg->SetEnv} = values scfg->SetEnv;",
                modperl_pid_tid(p), modperl_interp_address(aTHX),
                modperl_server_desc(s, p));
     modperl_env_table_populate(aTHX_ scfg->SetEnv);
 
-    MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
+    MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s]"
                "\n\t@ENV{keys scfg->PassEnv} = values scfg->PassEnv;",
                modperl_pid_tid(p), modperl_interp_address(aTHX),
                modperl_server_desc(s, p));
@@ -270,7 +270,7 @@ void modperl_env_configure_request_dir(pTHX_ request_rec *r)
          * collisions with per-server PerlSetEnv entries are
          * resolved via the nature of a Perl hash
          */
-        MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
+        MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s]"
                    "\n\t@ENV{keys dcfg->SetEnv} = values dcfg->SetEnv;",
                    modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                    modperl_server_desc(r->server, r->pool));
@@ -303,7 +303,7 @@ void modperl_env_configure_request_srv(pTHX_ request_rec *r)
      */
 
     if (!apr_is_empty_table(scfg->SetEnv)) {
-        MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
+        MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s]"
                    "\n\t@ENV{keys scfg->SetEnv} = values scfg->SetEnv;",
                    modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                    modperl_server_desc(r->server, r->pool));
@@ -313,7 +313,7 @@ void modperl_env_configure_request_srv(pTHX_ request_rec *r)
     }
 
     if (!apr_is_empty_table(scfg->PassEnv)) {
-        MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
+        MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s]"
                    "\n\t@ENV{keys scfg->PassEnv} = values scfg->PassEnv;",
                    modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                    modperl_server_desc(r->server, r->pool));
@@ -363,7 +363,7 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
      * phases from populating %ENV with new subprocess_env table entries
      */
 
-    MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s%s]"
+    MP_TRACE_e(MP_FUNC, "\t[%s/0x%lx/%s%s]"
                "\n\t@ENV{keys r->subprocess_env} = values r->subprocess_env;",
                modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                modperl_server_desc(r->server, r->pool), r->uri);
@@ -411,7 +411,7 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
     EnvMgLenSet(-1);
 
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
-    MP_TRACE_e(MP_FUNC, "[%s/0x%lx] tie %%ENV, $r\n\t (%s%s)",
+    MP_TRACE_e(MP_FUNC, "[%s/0x%lx] tie %%ENV, $r\t (%s%s)",
                modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                modperl_server_desc(r->server, r->pool), r->uri);
     SvGMAGICAL_on((SV*)ENVHV);
@@ -423,7 +423,7 @@ void modperl_env_request_untie(pTHX_ request_rec *r)
     EnvMgObjSet(NULL);
 
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
-    MP_TRACE_e(MP_FUNC, "[%s/0x%lx] untie %%ENV; # from r\n\t (%s%s)",
+    MP_TRACE_e(MP_FUNC, "[%s/0x%lx] untie %%ENV; # from r\t (%s%s)",
                modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                modperl_server_desc(r->server, r->pool), r->uri);
     SvGMAGICAL_off((SV*)ENVHV);

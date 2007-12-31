@@ -38,7 +38,7 @@ static void mpxs_Apache2__MPM_BOOT(pTHX)
     apr_status_t retval = ap_mpm_query(AP_MPMQ_IS_THREADED, &mpm_query_info);
 
     if (retval == APR_SUCCESS) {
-        MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->is_threaded() as %i\n",
+        MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->is_threaded() as %i",
                    mpm_query_info);
 
         newCONSTSUB(PL_defstash, "Apache2::MPM::is_threaded",
@@ -46,13 +46,13 @@ static void mpxs_Apache2__MPM_BOOT(pTHX)
     }
     else {
         /* assign false (0) to sub if ap_mpm_query didn't succeed */
-        MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->is_threaded() as 0\n");
+        MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->is_threaded() as 0");
 
         newCONSTSUB(PL_defstash, "Apache2::MPM::is_threaded",
                     newSViv(0));
     }
 
-    MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->show() as %s\n",
+    MP_TRACE_g(MP_FUNC, "defined Apache2::MPM->show() as %s",
                ap_show_mpm());
 
     newCONSTSUB(PL_defstash, "Apache2::MPM::show",

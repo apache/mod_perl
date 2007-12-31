@@ -194,7 +194,7 @@ MP_INLINE SV *modperl_ptr2obj(pTHX_ char *classname, void *ptr)
 {
     SV *sv = newSV(0);
 
-    MP_TRACE_h(MP_FUNC, "sv_setref_pv(%s, 0x%lx)\n",
+    MP_TRACE_h(MP_FUNC, "sv_setref_pv(%s, 0x%lx)",
                classname, (unsigned long)ptr);
     sv_setref_pv(sv, classname, ptr);
 
@@ -266,7 +266,7 @@ void **modperl_xs_dl_handles_get(pTHX)
 
     if (!librefs) {
         MP_TRACE_r(MP_FUNC,
-                   "Could not get @%s for unloading.\n",
+                   "Could not get @%s for unloading.",
                    dl_librefs);
         return NULL;
     }
@@ -285,13 +285,13 @@ void **modperl_xs_dl_handles_get(pTHX)
 
         if(!handle_sv) {
             MP_TRACE_r(MP_FUNC,
-                       "Could not fetch $%s[%d]!\n",
+                       "Could not fetch $%s[%d]!",
                        dl_librefs, (int)i);
             continue;
         }
         handle = INT2PTR(void *, SvIV(handle_sv));
 
-        MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx\n",
+        MP_TRACE_r(MP_FUNC, "%s dl handle == 0x%lx",
                    SvPVX(module_sv), (unsigned long)handle);
         if (handle) {
             handles[i] = handle;
@@ -315,7 +315,7 @@ void modperl_xs_dl_handles_close(void **handles)
     }
 
     for (i=0; handles[i]; i++) {
-        MP_TRACE_r(MP_FUNC, "close 0x%lx\n", (unsigned long)handles[i]);
+        MP_TRACE_r(MP_FUNC, "close 0x%lx", (unsigned long)handles[i]);
         modperl_sys_dlclose(handles[i]);
     }
 
@@ -629,7 +629,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     rc = apr_file_read(file, SvPVX(sv), &size);
     SLURP_SUCCESS("reading");
 
-    MP_TRACE_o(MP_FUNC, "read %d bytes from '%s'\n", size, r->filename);
+    MP_TRACE_o(MP_FUNC, "read %d bytes from '%s'", size, r->filename);
 
     if (r->finfo.size != size) {
         SvREFCNT_dec(sv);

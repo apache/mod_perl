@@ -33,7 +33,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 
     SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
 
-    MP_TRACE_r(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d\n",
+    MP_TRACE_r(MP_FUNC, "tie *%s(0x%lx) => %s, REFCNT=%d",
                GvNAME(handle), (unsigned long)handle, classname,
                SvREFCNT(TIEHANDLE_SV(handle)));
 }
@@ -83,7 +83,7 @@ MP_INLINE int modperl_io_handle_tied(pTHX_ GV *handle, char *classname)
         char *package = HvNAME(SvSTASH((SV*)SvRV(mg->mg_obj)));
 
         if (!strEQ(package, classname)) {
-            MP_TRACE_r(MP_FUNC, "%s tied to %s\n", GvNAME(handle), package);
+            MP_TRACE_r(MP_FUNC, "%s tied to %s", GvNAME(handle), package);
             return TRUE;
         }
     }
@@ -95,7 +95,7 @@ MP_INLINE void modperl_io_handle_untie(pTHX_ GV *handle)
 {
 #ifdef MP_TRACE
     if (mg_find(TIEHANDLE_SV(handle), PERL_MAGIC_tiedscalar)) {
-        MP_TRACE_r(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d\n",
+        MP_TRACE_r(MP_FUNC, "untie *%s(0x%lx), REFCNT=%d",
                    GvNAME(handle), (unsigned long)handle,
                    SvREFCNT(TIEHANDLE_SV(handle)));
     }
@@ -141,7 +141,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdin(pTHX_ request_rec *r)
         Perl_croak(aTHX_ "Failed to open STDIN: %" SVf, get_sv("!", TRUE));
     }
 
-    MP_TRACE_o(MP_FUNC, "end\n");
+    MP_TRACE_o(MP_FUNC, "end");
 
     return handle_save;
 }
@@ -184,7 +184,7 @@ MP_INLINE GV *modperl_io_perlio_override_stdout(pTHX_ request_rec *r)
         Perl_croak(aTHX_ "Failed to open STDOUT: %" SVf, get_sv("!", TRUE));
     }
 
-    MP_TRACE_o(MP_FUNC, "end\n");
+    MP_TRACE_o(MP_FUNC, "end");
 
     /* XXX: shouldn't we preserve the value STDOUT had before it was
      * overridden? */
@@ -226,7 +226,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
         }
     }
 
-    MP_TRACE_o(MP_FUNC, "end\n");
+    MP_TRACE_o(MP_FUNC, "end");
 }
 
 MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
@@ -273,5 +273,5 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
         }
     }
 
-    MP_TRACE_o(MP_FUNC, "end\n");
+    MP_TRACE_o(MP_FUNC, "end");
 }

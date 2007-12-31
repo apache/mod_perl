@@ -63,26 +63,26 @@ void modperl_tipool_putback_data(modperl_tipool_t *tipool, void *data,
 #define modperl_tipool_wait(tipool) \
     while (tipool->size == tipool->in_use) { \
         MP_TRACE_i(MP_FUNC, \
-                   "waiting for available tipool item in thread 0x%lx\n", \
+                   "waiting for available tipool item in thread 0x%lx", \
                    MP_TIDF); \
-        MP_TRACE_i(MP_FUNC, "(%d items in use, %d alive)\n", \
+        MP_TRACE_i(MP_FUNC, "(%d items in use, %d alive)", \
                    tipool->in_use, tipool->size); \
         COND_WAIT(&tipool->available, &tipool->tiplock); \
     }
 
 #define modperl_tipool_broadcast(tipool) \
-    MP_TRACE_i(MP_FUNC, "broadcast available tipool item\n"); \
+    MP_TRACE_i(MP_FUNC, "broadcast available tipool item"); \
     COND_SIGNAL(&tipool->available)
 
 #define modperl_tipool_lock(tipool) \
-    MP_TRACE_i(MP_FUNC, "about to lock tipool in thread 0x%lx\n", MP_TIDF); \
+    MP_TRACE_i(MP_FUNC, "about to lock tipool in thread 0x%lx", MP_TIDF); \
     MUTEX_LOCK(&tipool->tiplock); \
-    MP_TRACE_i(MP_FUNC, "acquired tipool lock\n")
+    MP_TRACE_i(MP_FUNC, "acquired tipool lock")
 
 #define modperl_tipool_unlock(tipool) \
-    MP_TRACE_i(MP_FUNC, "about to unlock tipool in thread 0x%lx\n", MP_TIDF); \
+    MP_TRACE_i(MP_FUNC, "about to unlock tipool in thread 0x%lx", MP_TIDF); \
     MUTEX_UNLOCK(&tipool->tiplock); \
-    MP_TRACE_i(MP_FUNC, "released tipool lock\n")
+    MP_TRACE_i(MP_FUNC, "released tipool lock")
 
 #endif /* USE_ITHREADS */
 

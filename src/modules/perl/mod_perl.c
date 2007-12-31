@@ -61,7 +61,7 @@ static apr_status_t modperl_shutdown(void *data)
 
     handles = modperl_xs_dl_handles_get(aTHX);
 
-    MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "destroying interpreter=0x%lx",
                (unsigned long)perl);
 
     modperl_perl_destruct(perl);
@@ -217,11 +217,11 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         const char *desc = modperl_server_desc(s, p);
         if (base_server == s) {
             MP_TRACE_i(MP_FUNC,
-                       "starting the parent perl for the base server\n", desc);
+                       "starting the parent perl for the base server", desc);
         }
         else {
             MP_TRACE_i(MP_FUNC,
-                       "starting the parent perl for vhost %s\n", desc);
+                       "starting the parent perl for vhost %s", desc);
         }
     }
 #endif
@@ -292,7 +292,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     set_taint_var(perl);
 
-    MP_TRACE_i(MP_FUNC, "constructed interpreter=0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "constructed interpreter=0x%lx",
                (unsigned long)perl);
 
 #ifdef MP_USE_GTOP
@@ -351,7 +351,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     const char *vhost = modperl_server_desc(s, p);
 
     if (!scfg) {
-        MP_TRACE_i(MP_FUNC, "server %s has no mod_perl config\n", vhost);
+        MP_TRACE_i(MP_FUNC, "server %s has no mod_perl config", vhost);
         return OK;
     }
 
@@ -359,11 +359,11 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         base_server = modperl_global_get_server_rec();
     }
 
-    MP_TRACE_i(MP_FUNC, "Init vhost %s: s=0x%lx, base_s=0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "Init vhost %s: s=0x%lx, base_s=0x%lx",
                vhost, s, base_server);
 
     if (base_server == s) {
-        MP_TRACE_i(MP_FUNC, "base server is not vhost, skipping %s\n",
+        MP_TRACE_i(MP_FUNC, "base server is not vhost, skipping %s",
                    vhost);
         return OK;
     }
@@ -379,14 +379,14 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
 #ifdef USE_ITHREADS
 
     if (scfg->mip) {
-        MP_TRACE_i(MP_FUNC, "server %s already initialized\n", vhost);
+        MP_TRACE_i(MP_FUNC, "server %s already initialized", vhost);
         return OK;
     }
 
     /* the base server could have mod_perl callbacks disabled, but it
      * still needs perl to drive the vhosts */
     if (!MpSrvENABLE(scfg) && s->is_virtual) {
-        MP_TRACE_i(MP_FUNC, "mod_perl disabled for server %s\n", vhost);
+        MP_TRACE_i(MP_FUNC, "mod_perl disabled for server %s", vhost);
         scfg->mip = NULL;
         return OK;
     }
@@ -401,7 +401,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     if (MpSrvPARENT(scfg)) {
         perl = modperl_startup(s, p);
         MP_TRACE_i(MP_FUNC,
-                   "created parent interpreter for VirtualHost %s\n",
+                   "created parent interpreter for VirtualHost %s",
                    modperl_server_desc(s, p));
     }
     else {
@@ -427,7 +427,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
          * need to point to the base mip here if this vhost
          * doesn't have its own
          */
-        MP_TRACE_i(MP_FUNC, "%s mip inherited from %s\n",
+        MP_TRACE_i(MP_FUNC, "%s mip inherited from %s",
                    vhost, modperl_server_desc(base_server, p));
         scfg->mip = base_scfg->mip;
     }
@@ -491,7 +491,7 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 #endif /* MP_TRACE */
 
     if (!modperl_threaded_mpm()) {
-        MP_TRACE_i(MP_FUNC, "no clones created for non-threaded mpm\n");
+        MP_TRACE_i(MP_FUNC, "no clones created for non-threaded mpm");
         return;
     }
 
@@ -500,7 +500,7 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 #ifdef MP_TRACE
         char *name = modperl_server_desc(s, p);
 
-        MP_TRACE_i(MP_FUNC, "PerlInterpScope set to %s for %s\n",
+        MP_TRACE_i(MP_FUNC, "PerlInterpScope set to %s for %s",
                    modperl_interp_scope_desc(scfg->interp_scope), name);
 #else
         char *name = NULL;
@@ -510,18 +510,18 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
 #ifdef MP_TRACE
             if (scfg->mip == base_scfg->mip) {
                 MP_TRACE_i(MP_FUNC,
-                           "%s interp pool inherited from %s\n",
+                           "%s interp pool inherited from %s",
                            name, base_name);
             }
             else {
                 MP_TRACE_i(MP_FUNC,
-                           "%s interp pool already initialized\n",
+                           "%s interp pool already initialized",
                            name);
             }
 #endif /* MP_TRACE */
         }
         else {
-            MP_TRACE_i(MP_FUNC, "initializing interp pool for %s\n",
+            MP_TRACE_i(MP_FUNC, "initializing interp pool for %s",
                        name);
             modperl_tipool_init(scfg->mip->tipool);
         }
@@ -533,7 +533,7 @@ void modperl_init_globals(server_rec *s, apr_pool_t *pconf)
 {
     ap_mpm_query(AP_MPMQ_IS_THREADED, &MP_threaded_mpm);
 
-    MP_TRACE_g(MP_FUNC, "mod_perl globals are configured\n");
+    MP_TRACE_g(MP_FUNC, "mod_perl globals are configured");
 
     modperl_global_init_pconf(pconf, pconf);
     modperl_global_init_server_rec(pconf, s);
@@ -553,7 +553,7 @@ static apr_status_t modperl_sys_init(void)
     int argc = 0;
     char **argv = NULL, **env = NULL;
 
-    MP_TRACE_i(MP_FUNC, "mod_perl sys init\n");
+    MP_TRACE_i(MP_FUNC, "mod_perl sys init");
 
     /* not every OS uses those vars in PERL_SYS_INIT3 macro */
     argc = argc; argv = argv; env = env;
@@ -594,7 +594,7 @@ static apr_status_t modperl_sys_term(void *data)
 
     MP_PERL_FREE_THREAD_KEY_WORKAROUND;
 
-    MP_TRACE_i(MP_FUNC, "mod_perl sys term\n");
+    MP_TRACE_i(MP_FUNC, "mod_perl sys term");
 
     modperl_env_unload();
 
@@ -612,7 +612,7 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
         return OK;
     }
 
-    MP_TRACE_i(MP_FUNC, "mod_perl hook init\n");
+    MP_TRACE_i(MP_FUNC, "mod_perl hook init");
 
     MP_init_status = 1; /* now starting */
 
