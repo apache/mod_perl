@@ -8,7 +8,7 @@ use Apache::TestUtil;
 # -compile puts constants into the Apache2:: namespace
 use Apache2::Const -compile => qw(:http :common :mpmq :proxy
                                   TAKE23 &OPT_EXECCGI
-                                  DECLINE_CMD DIR_MAGIC_TYPE 
+                                  DECLINE_CMD DIR_MAGIC_TYPE
                                   CRLF);
 
 # without -compile, constants are in the
@@ -29,11 +29,11 @@ ok t_cmp(Apache2::Const::DECLINED, -1, 'Apache2::Const::DECLINED');
 
 ok t_cmp(Apache2::Const::HTTP_GONE, 410, 'Apache2::Const::HTTP_GONE');
 
-ok t_cmp(Apache2::Const::DIR_MAGIC_TYPE, 
+ok t_cmp(Apache2::Const::DIR_MAGIC_TYPE,
          'httpd/unix-directory',
          'Apache2::Const::DIR_MAGIC_TYPE');
 
-ok t_cmp(Apache2::Const::MPMQ_MAX_SPARE_DAEMONS, 
+ok t_cmp(Apache2::Const::MPMQ_MAX_SPARE_DAEMONS,
          9,
          'Apache2::Const::MPMQ_MAX_SPARE_DAEMONS');
 

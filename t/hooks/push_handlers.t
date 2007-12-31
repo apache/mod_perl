@@ -7,7 +7,7 @@ use Apache::TestRequest;
 
 plan tests => 1;
 
-my @refs = qw(conf conf1 conf2 coderef 
+my @refs = qw(conf conf1 conf2 coderef
              full_coderef coderef1 coderef2 coderef3);
 my @anon = qw(anonymous anonymous1 coderef4 anonymous3);
 

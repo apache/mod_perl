@@ -10,7 +10,7 @@ plan tests => 8, need need_auth, 'mod_alias.c', 'HTML::HeadParser';
 my @auth = (Authorization => 'Basic ZG91Z206Zm9v'); #dougm:foo
 
 
-foreach my $location ("/perl_sections/index.html", 
+foreach my $location ("/perl_sections/index.html",
                       "/perl_sections_readconfig/index.html") {
 
     sok {

@@ -9,7 +9,7 @@ use warnings FATAL => 'all';
 # this test we call $r->subprocess_env, which adds them on demand, and
 # we are able to get the cookie via %ENV.
 #
-# the last sub-test makes sure that mod_cgi env vars don't persist 
+# the last sub-test makes sure that mod_cgi env vars don't persist
 # and are properly re-set at the end of each request.
 #
 # since the test is run against the same interpreter we also test that

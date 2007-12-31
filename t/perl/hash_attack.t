@@ -7,7 +7,7 @@ use Apache::TestTrace;
 
 use Apache::TestRequest 'GET_BODY_ASSERT';
 
-plan tests => 1, 
+plan tests => 1,
     need { "relevant only for perl 5.8.2 and higher" => ($] >= 5.008002) };
 
 my $expected = "ok";
