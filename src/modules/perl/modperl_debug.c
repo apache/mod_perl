@@ -93,7 +93,7 @@ void modperl_perl_modglobal_dump(pTHX)
         MP_TRACE_g(MP_FUNC, "| %s => 0x%lx", key, val);
     }
 
-    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------\n");
+    MP_TRACE_g(MP_FUNC, "|-------- PL_modglobal --------");
 
 }
 #endif

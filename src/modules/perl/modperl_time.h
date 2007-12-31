@@ -44,7 +44,7 @@
         double stime = \
              (double)(end_time.tms_stime - start_time.tms_stime)/MP_HZ; \
         if (utime || stime) { \
-            MP_TRACE_t(MP_FUNC, "%s %5.2f user %5.2f sys\n", \
+            MP_TRACE_t(MP_FUNC, "%s %5.2f user %5.2f sys", \
                        label, utime, stime); \
         } \
     })

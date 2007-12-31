@@ -152,7 +152,7 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
     apr_pool_t *parent_pool = mpxs_sv_object_deref(parent_pool_obj, apr_pool_t);
     apr_pool_t *child_pool  = NULL;
 
-    MP_POOL_TRACE(MP_FUNC, "parent pool 0x%lx\n", (unsigned long)parent_pool);
+    MP_POOL_TRACE(MP_FUNC, "parent pool 0x%l", (unsigned long)parent_pool);
     (void)apr_pool_create(&child_pool, parent_pool);
 
 #if APR_POOL_DEBUG
@@ -176,11 +176,11 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         apr_pool_t *pp;
 
         while ((pp = apr_pool_parent_get(p))) {
-            MP_POOL_TRACE(MP_FUNC, "parent 0x%lx, child 0x%lx\n",
+            MP_POOL_TRACE(MP_FUNC, "parent 0x%lx, child 0x%lx",
                     (unsigned long)pp, (unsigned long)p);
 
             if (apr_pool_is_ancestor(pp, p)) {
-                MP_POOL_TRACE(MP_FUNC, "0x%lx is a subpool of 0x%lx\n",
+                MP_POOL_TRACE(MP_FUNC, "0x%lx is a subpool of 0x%lx",
                         (unsigned long)p, (unsigned long)pp);
             }
             p = pp;

@@ -81,7 +81,7 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
                "ppid=%d, "
 #endif
                "uid=%" Uid_t_f ", euid=%" Uid_t_f ", "
-               "gid=%" Gid_t_f ", egid=%" Gid_t_f "\n",
+               "gid=%" Gid_t_f ", egid=%" Gid_t_f,
                (int)ids->pid,
 #ifdef MP_MAINTAIN_PPID
                (int)ids->ppid,

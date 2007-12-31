@@ -32,7 +32,7 @@ static MP_INLINE apr_size_t mpxs_Apache2__Filter_print(pTHX_ I32 items,
 
     mpxs_usage_va_1(modperl_filter, "$filter->print(...)");
 
-    MP_TRACE_f(MP_FUNC, "from %s\n",
+    MP_TRACE_f(MP_FUNC, "from %s",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);
     if (modperl_filter->mode == MP_OUTPUT_FILTER_MODE) {
         mpxs_write_loop(modperl_output_filter_write,
@@ -57,7 +57,7 @@ static MP_INLINE apr_size_t mpxs_Apache2__Filter_read(pTHX_ I32 items,
 
     mpxs_usage_va_2(modperl_filter, buffer, "$filter->read(buf, [len])");
 
-    MP_TRACE_f(MP_FUNC, "from %s\n",
+    MP_TRACE_f(MP_FUNC, "from %s",
                ((modperl_filter_ctx_t *)modperl_filter->f->ctx)->handler->name);
 
     if (items > 2) {
@@ -93,7 +93,7 @@ static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
 
 #ifdef MP_TRACE
 #define trace_attr()                                                       \
-    MP_TRACE_f(MP_FUNC, "applied %s attribute to %s handler\n", attribute, \
+    MP_TRACE_f(MP_FUNC, "applied %s attribute to %s handler", attribute, \
                HvNAME(stash))
 #else
 #define trace_attr()
@@ -295,7 +295,7 @@ void mpxs_Apache2__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
     if (!modperl_filter) {
         f = INT2PTR(ap_filter_t *, SvIV(SvRV(*MARK)));
         MP_TRACE_f(MP_FUNC,
-                   "   %s\n\n\t non-modperl filter removes itself\n",
+                   "   %s\n\n\t non-modperl filter removes itself",
                    f->frec->name);
 
         /* the filter can reside in only one chain. hence we try to
@@ -310,7 +310,7 @@ void mpxs_Apache2__Filter_remove(pTHX_ I32 items, SV **MARK, SV **SP)
 
     f = modperl_filter->f;
 
-    MP_TRACE_f(MP_FUNC, "   %s\n\n\tfilter removes itself\n",
+    MP_TRACE_f(MP_FUNC, "   %s\n\n\tfilter removes itself",
                ((modperl_filter_ctx_t *)f->ctx)->handler->name);
 
     if (modperl_filter->mode == MP_INPUT_FILTER_MODE) {
