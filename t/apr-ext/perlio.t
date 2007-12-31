@@ -25,7 +25,7 @@ my $build = Apache2::Build->build_config;
 # prerequisite
 # also need to check whether we build against the source tree, in
 # which case we APR.so won't be linked against libapr/libaprutil
-my $has_apr_config = $build->{apr_config_path} && 
+my $has_apr_config = $build->{apr_config_path} &&
     !$build->httpd_is_source_tree;
 
 my $has_perlio_layers = 0;
@@ -230,11 +230,11 @@ unless (LARGE_FILES_CONFLICT) {
 }
 
 
-# XXX: need tests 
+# XXX: need tests
 # - for stdin/out/err as they are handled specially
 
 # XXX: tmpfile is missing:
-# consider to use 5.8's syntax: 
+# consider to use 5.8's syntax:
 #   open $fh, "+>", undef;
 
 # cleanup: t_mkdir will remove the whole tree including the file

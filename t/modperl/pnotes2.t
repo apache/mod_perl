@@ -22,7 +22,7 @@ for my $i (1..12) {
     $u="$url?$i"; $ok=GET_BODY $u;
     select undef, undef, undef, 0.2;  # give it time to write the logfile
     ok t_cmp scalar(grep {
-	/pnotes are destroyed after cleanup passed/;
+        /pnotes are destroyed after cleanup passed/;
     } t_finish_error_log_watch), 1, $u;
 }
 

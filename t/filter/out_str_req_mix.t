@@ -15,5 +15,5 @@ my $expected = 'This is a clear text';
 my $received = POST_BODY $location, content => $content;
 $received =~ s{\r?\n$}{};
 
-ok t_cmp($expected, $received, 
+ok t_cmp($expected, $received,
     "mixing output httpd and mod_perl filters, while preserving order");

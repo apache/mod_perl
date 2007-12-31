@@ -72,13 +72,13 @@ foreach my $method qw(GET HEAD) {
         ## to protect against wierd SVN checkout building.
         ## XXX: I'm starting to think this test is more
         ## trouble then its worth.
-        if (have_min_apache_version("2.2.1")) { 
+        if (have_min_apache_version("2.2.1")) {
           $head_cl = 25;
         }
         elsif (have_min_apache_version("2.2.0")) {
           # $head_cl = undef; # avoid warnings
         }
-        elsif (have_min_apache_version("2.0.56")) { 
+        elsif (have_min_apache_version("2.0.56")) {
           $head_cl = 25;
         }
         else {

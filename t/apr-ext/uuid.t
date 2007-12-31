@@ -16,7 +16,7 @@ use Apache2::Build ();
 #######
 # my $build = Apache2::Build->build_config;
 #
-# my $has_apr_config = $build->{apr_config_path} && 
+# my $has_apr_config = $build->{apr_config_path} &&
 #    !$build->httpd_is_source_tree;
 # plan tests => TestAPRlib::uuid::num_of_tests(),
 #    need {"the build couldn't find apr-config" => $has_apr_config};

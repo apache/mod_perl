@@ -5,9 +5,9 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest ();
 
-my @test_strings = ('Hello Eliza', 
-                    'How are you?', 
-                    'Why do I have core dumped?', 
+my @test_strings = ('Hello Eliza',
+                    'How are you?',
+                    'Why do I have core dumped?',
                     'I feel like writing some tests today, what about you?',
                     'Good bye, Eliza');
 
