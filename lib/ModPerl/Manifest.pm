@@ -40,7 +40,7 @@ sub get_svn_files {
     my @files;
 
     my $cwd = Cwd::cwd();
-    my @lines = `svn status -v`	;
+    my @lines = `svn status -v` ;
     foreach my $line (@lines) {
         chomp $line;
         if ($line =~ /(?:\d+)\s+(?:\d+)\s+(?:\w+)\s+(.*)\s*/) {

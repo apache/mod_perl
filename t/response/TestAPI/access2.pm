@@ -55,7 +55,7 @@ sub handler {
     return $rc if $rc != Apache2::Const::OK;
 
     # extract just the requirement entries
-    my %require = 
+    my %require =
         map { my ($k, $v) = split /\s+/, $_->{requirement}, 2; ($k, $v||'') }
         @{ $r->requires };
     debug \%require;

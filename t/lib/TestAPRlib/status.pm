@@ -15,7 +15,7 @@ sub num_of_tests {
     return 2;
 }
 
-sub test {    
+sub test {
     ok APR::Status::is_EAGAIN(APR::Const::EAGAIN);
     ok ! APR::Status::is_EAGAIN(APR::Const::ENOPOLL);
 }

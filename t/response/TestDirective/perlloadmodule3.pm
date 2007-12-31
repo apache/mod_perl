@@ -112,7 +112,7 @@ sub handler {
         $secs{"2: Location"}     = $dir_cfg;
      }
 
-    $r->printf("Processing by %s.\n", 
+    $r->printf("Processing by %s.\n",
         $s->is_virtual ? "virtual host" : "main server");
 
     for my $sec (sort keys %secs) {

@@ -144,7 +144,7 @@ sub compare_with_perl {
             ok t_cmp($finfo->protection & APR::Const::FPROT_WREAD,
                      $stat->{protection} & S_IROTH,
                      '$finfo->protection() & APR::Const::FPROT_WREAD');
-	}
+        }
         if (WIN32 and APACHE_2_2_PLUS) {
             skip "broken apr stat on Win32", 0;
         }
@@ -152,7 +152,7 @@ sub compare_with_perl {
             ok t_cmp($finfo->protection & APR::Const::FPROT_WWRITE,
                      $stat->{protection} & S_IWOTH,
                      '$finfo->protection() & APR::Const::FPROT_WWRITE');
-	}
+        }
         if (WIN32) {
             skip "different file semantics", 0;
         }

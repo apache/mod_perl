@@ -1,6 +1,6 @@
 package TestHooks::stacked_handlers2;
 
-# this test exercises the execution of the stacked handlers 
+# this test exercises the execution of the stacked handlers
 # connection, translation, authen, authz, type, and response
 # phases should end for the first handler that returns OK
 
@@ -17,28 +17,28 @@ use APR::Table;
 
 use Apache2::Const -compile => qw(OK DECLINED AUTH_REQUIRED SERVER_ERROR);
 
-sub ok { 
+sub ok {
 
     callback(shift);
 
     return Apache2::Const::OK;
 }
 
-sub declined { 
+sub declined {
 
     callback(shift);
 
     return Apache2::Const::DECLINED;
 }
 
-sub auth_required { 
+sub auth_required {
 
     callback(shift);
 
     return Apache2::Const::AUTH_REQUIRED;
 }
 
-sub server_error { 
+sub server_error {
 
     callback(shift);
 
@@ -88,9 +88,9 @@ sub handler {
     foreach my $callback (qw(PerlPostReadRequestHandler
                              PerlTransHandler
                              PerlMapToStorageHandler
-                             PerlHeaderParserHandler 
-                             PerlAccessHandler 
-                             PerlAuthenHandler 
+                             PerlHeaderParserHandler
+                             PerlAccessHandler
+                             PerlAuthenHandler
                              PerlAuthzHandler
                              PerlTypeHandler
                              PerlFixupHandler
@@ -165,14 +165,14 @@ __DATA__
         PerlHeaderParserHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok
 
         # all 2 run
-        PerlAccessHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok 
+        PerlAccessHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
 
         # 2 run, 1 left behind
-        PerlAuthenHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok 
+        PerlAuthenHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok
         PerlAuthenHandler TestHooks::stacked_handlers2::auth_required
 
         # 2 run, 1 left behind
-        PerlAuthzHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok 
+        PerlAuthzHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok
         PerlAuthzHandler TestHooks::stacked_handlers2::auth_required
 
         # 1 run, 1 left behind
@@ -183,7 +183,7 @@ __DATA__
         PerlFixupHandler TestHooks::stacked_handlers2::push_handlers
 
         # 2 run, 2 left behind
-        PerlResponseHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2 
+        PerlResponseHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2
         PerlResponseHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::server_error
 
         SetHandler modperl

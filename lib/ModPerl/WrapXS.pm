@@ -289,7 +289,7 @@ $attrs
 EOF
             }
             elsif ($access_mode eq 'rw_char_undef') {
-                my $pool = $e->{pool} 
+                my $pool = $e->{pool}
                     or die "rw_char_undef accessors need pool";
                 $pool .= '(obj)';
 # XXX: not sure where val=$default is coming from, but for now use
@@ -778,7 +778,7 @@ my $modules;
 my $objects;
 
 sub _get_modules {
-    for my $method (sort keys %$methods) { 
+    for my $method (sort keys %$methods) {
         for my $item ( @{ $methods->{$method} }) {
             push @{ $modules->{$item->[MODULE]} }, [$method, $item->[OBJECT]];
         }
@@ -786,7 +786,7 @@ sub _get_modules {
 }
 
 sub _get_objects {
-    for my $method (sort keys %$methods) { 
+    for my $method (sort keys %$methods) {
         for my $item ( @{ $methods->{$method} }) {
             next unless defined $item->[OBJECT];
             push @{ $objects->{$item->[OBJECT]} }, [$method, $item->[MODULE]];
@@ -945,7 +945,7 @@ sub print_method {
     my @args = @_ ? @_ : @ARGV;
     while (@args) {
          my $method = shift @args;
-         my $object = (@args && 
+         my $object = (@args &&
              (ref($args[0]) || $args[0] =~ /^(Apache2|ModPerl|APR)/))
              ? shift @args
              : undef;
@@ -1065,7 +1065,7 @@ sub lookup_module {
     my $format = "%-${max_len}s %s\n";
     my $banner = sprintf($format, "Method", "Invoked on object type");
     my $hint = join '',
-        ("\nModule '$module' contains the following XS methods:\n\n", 
+        ("\nModule '$module' contains the following XS methods:\n\n",
          $banner,  sep(length($banner)),
          map( { sprintf $format, $_->[0], $_->[1]||'???'}
              @{ $modules->{$module} }),
@@ -1225,10 +1225,10 @@ sub func_is_static {
     if (my $attr = $entry->{attr}) {
         return 1 if grep { $_ eq 'static' } @$attr;
     }
-    
+
     #C::Scan doesnt always pickup static __inline__
     return 1 if $entry->{name} =~ /^mpxs_/o;
-    
+
     return 0;
 }
 
@@ -1297,7 +1297,7 @@ sub write_export_file {
     while (my ($key, $table) = each %files) {
         my $handles = $self->open_export_files($key, $ext);
 
-	my %seen; #only write header once if this is a single file
+        my %seen; #only write header once if this is a single file
         for my $fh (values %$handles) {
             next if $seen{$fh}++;
             print $fh $self->$header();
@@ -1356,14 +1356,14 @@ const void *modperl_ugly_hack = NULL;
 EOF
         return;
     }
-    
+
     print $fh <<"EOF";
-/* 
+/*
  * This is indeed a ugly hack!
  * See also src/modules/perl/mod_perl.c for modperl_ugly_hack
  * If we don't build such a list of exported API functions, the over-zealous
  * linker can and will remove the unused functions completely. In order to
- * avoid this, we create this object and modperl_ugly_hack to create a 
+ * avoid this, we create this object and modperl_ugly_hack to create a
  * dependency between all the exported API and mod_perl.c
  */
 const void *modperl_ugly_hack = NULL;

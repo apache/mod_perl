@@ -52,7 +52,7 @@ sub handler {
 
     ok t_cmp($s->is_perl_option_enabled('Response'), 1,
              "Response is off under PerlOptions None");
-           
+
     return Apache2::Const::OK;
 }
 

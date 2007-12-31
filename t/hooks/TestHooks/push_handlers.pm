@@ -17,7 +17,7 @@ sub handler {
     $r->handler("modperl");
 
     $r->push_handlers(PerlResponseHandler => \&coderef);
-    $r->push_handlers(PerlResponseHandler => 
+    $r->push_handlers(PerlResponseHandler =>
         \&TestHooks::push_handlers::full_coderef);
 
     $r->push_handlers(PerlResponseHandler =>

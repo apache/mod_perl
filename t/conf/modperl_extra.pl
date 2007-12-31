@@ -19,7 +19,7 @@ use strict;
 use warnings FATAL => 'all';
 
 die '$ENV{MOD_PERL} not set!' unless $ENV{MOD_PERL};
-die '$ENV{MOD_PERL_API_VERSION} not set!' 
+die '$ENV{MOD_PERL_API_VERSION} not set!'
     unless $ENV{MOD_PERL_API_VERSION} == 2;
 
 use File::Spec::Functions qw(canonpath catdir);

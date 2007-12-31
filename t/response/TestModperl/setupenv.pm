@@ -321,7 +321,7 @@ __DATA__
         PerlSetEnv DIR_PERLSETENV psvoid
     </Location>
 
-    # equivalent to modperl handler with $r->subprocess_env() - 
+    # equivalent to modperl handler with $r->subprocess_env() -
     # CGI variables are there, but not subprocess_env entries
     # that are populated after the void call
     <Location /TestModperl__setupenv_psnosetupvoid>

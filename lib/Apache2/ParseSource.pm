@@ -79,7 +79,7 @@ my @c_scan_defines = (
 
 
 # some types c-scan failing to resolve
-push @c_scan_defines, map { "$_=void" } 
+push @c_scan_defines, map { "$_=void" }
     qw(PPADDR_t PerlExitListEntry modperl_tipool_vtbl_t);
 
 sub scan {

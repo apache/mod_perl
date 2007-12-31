@@ -245,7 +245,7 @@ sub map_function {
 
     $self->thx_fixup($func);
 
-    my ($status, $failed_type) = 
+    my ($status, $failed_type) =
         $self->can_map($map, $func->{return_type},
             map $_->{type}, @{ $func->{args} });
 

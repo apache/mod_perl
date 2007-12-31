@@ -68,7 +68,7 @@ my %hook_proto = (
     },
     PerSrv     => {
         ret  => 'int',
-        args => [{type => 'request_rec', name => 'r'}, 
+        args => [{type => 'request_rec', name => 'r'},
                  {type => 'dummy', name => 'MP_HOOK_RUN_ALL'}],
     },
     Connection => {
@@ -140,7 +140,7 @@ my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLE AUTOLOAD MERGE_HANDLERS),
             @hook_flags, 'UNSET','INHERIT_SWITCHES'],
     Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
-    Req => [qw(NONE SET_GLOBAL_REQUEST PARSE_HEADERS SETUP_ENV 
+    Req => [qw(NONE SET_GLOBAL_REQUEST PARSE_HEADERS SETUP_ENV
                CLEANUP_REGISTERED PERL_SET_ENV_DIR PERL_SET_ENV_SRV)],
     Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC FAKE)],
@@ -451,7 +451,7 @@ EOF
             for (keys %lookup) {
                 if (/^(\w)/) {
                     my $gap = " " x ($max_len - length $_);
-                    push @{ $switch{$1} }, 
+                    push @{ $switch{$1} },
                         qq{if (strEQ(str, "$_"))$gap return $lookup{$_};};
                 }
             }
@@ -468,7 +468,7 @@ EOF
         }
 
         delete $dumper{None}; #NONE
-        print $h_fh join ' \\'."\n", 
+        print $h_fh join ' \\'."\n",
           "#define ${class}_dump_flags(p, str)",
                      qq{modperl_trace(NULL, "$class flags dump (%s):", str);},
                      map $dumper{$_}, sort keys %dumper;
@@ -552,7 +552,7 @@ EOF
         $i += $i;
     }
 
-    print $h_fh join ' \\'."\n", 
+    print $h_fh join ' \\'."\n",
                      '#define MP_TRACE_dump_flags()',
                      qq{modperl_trace(NULL, "mod_perl trace flags dump:");},
                      @dumper;
@@ -785,7 +785,7 @@ sub generate {
     # Fix this by cleaning the @Extensions array.
 
     # Loads @Extensions if not loaded
-    ExtUtils::Embed::static_ext(); 
+    ExtUtils::Embed::static_ext();
 
     @ExtUtils::Embed::Extensions = grep{$_} @ExtUtils::Embed::Extensions;
 
@@ -820,9 +820,9 @@ my %shortcuts = (
 
 #backwards compat with older httpd/apr
 #XXX: remove once we require newer httpd/apr
-my %ifdef = map { $_, 1 } 
+my %ifdef = map { $_, 1 }
     qw(APLOG_TOCLIENT APR_LIMIT_NOFILE), # added in ???
-    qw(AP_MPMQ_STARTING AP_MPMQ_RUNNING AP_MPMQ_STOPPING 
+    qw(AP_MPMQ_STARTING AP_MPMQ_RUNNING AP_MPMQ_STOPPING
        AP_MPMQ_MPM_STATE), # added in 2.0.49
     qw(APR_FPROT_USETID APR_FPROT_GSETID
        APR_FPROT_WSTICKY APR_FOPEN_LARGEFILE); # added in 2.0.50?
@@ -887,7 +887,7 @@ $ifdef[0]
           if (strEQ(name, "$name")) {
 EOF
 
-            if ($name eq 'DECLINE_CMD' || 
+            if ($name eq 'DECLINE_CMD' ||
                 $name eq 'DIR_MAGIC_TYPE' ||
                 $name eq 'CRLF') {
                 print $c_fh <<EOF;
@@ -941,9 +941,9 @@ sub constants_group_lookup_code {
 
     $class = canon_lc(lc $class);
     while (my ($group, $constants) = each %$groups) {
-	push @tags, $group;
+        push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
-	print $c_fh "\nstatic const char *$name [] = { \n",
+        print $c_fh "\nstatic const char *$name [] = { \n",
           (map {
               my @ifdef = constants_ifdef($_);
               s/^($constant_prefixes)_?//o;
@@ -965,12 +965,12 @@ sub constants_group_lookup_code {
     print $c_fh "\n$proto\n{\n", "   switch (*name) {\n";
 
     for my $key (sort keys %switch) {
-	my $val = $switch{$key};
-	print $c_fh "\tcase '$key':\n";
-	for my $group (@$val) {
+        my $val = $switch{$key};
+        print $c_fh "\tcase '$key':\n";
+        for my $group (@$val) {
             my $name = join '_', 'MP_constants', $class, $group;
-	    print $c_fh qq|\tif(strEQ("$group", name))\n\t   return $name;\n|;
-	}
+            print $c_fh qq|\tif(strEQ("$group", name))\n\t   return $name;\n|;
+        }
         print $c_fh "      break;\n";
     }
 

@@ -65,7 +65,7 @@ sub packages {
     my @lines = "*** Packages of interest status:\n";
 
     for my $package (sort @interesting_packages) {
-        my $vers = exists $packages{$package} 
+        my $vers = exists $packages{$package}
             ? join ", ", sort @{ $packages{$package} }
             : "-";
         push @lines, sprintf "%-${max_len}s: %s", $package, $vers;

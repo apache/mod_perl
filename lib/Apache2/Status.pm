@@ -201,7 +201,7 @@ sub status_inc {
     my $uri = $r->uri;
     my @retval = (
         '<table border="1">',
-        "<tr>", 
+        "<tr>",
         (map "<td><b>$_</b></td>", qw(Package Version Modified File)),
         "</tr>\n"
     );
@@ -221,8 +221,8 @@ sub status_inc {
             'N/A';
 
         push @retval, (
-            "<tr>", 
-            (map "<td>$_</td>", 
+            "<tr>",
+            (map "<td>$_</td>",
                 qq(<a href="$uri?$module">$module</a>),
                 $v, $mtime, $INC{$file}),
             "</tr>\n"
@@ -243,7 +243,7 @@ sub status_script {
 
     foreach my $file (sort keys %INC) {
         next if $file =~ m:\.(pm|al|ix)$:;
-        push @retval, 
+        push @retval,
             qq(<tr><td>$file</td><td>$INC{$file}</td></tr>\n);
     }
     push @retval, "</table>";
@@ -394,14 +394,14 @@ sub cv_file {
     $obj->can('FILEGV') ? $obj->FILEGV->SV->PV : $obj->FILE;
 }
 
-sub status_cv_dump { 
+sub status_cv_dump {
     my ($r) = @_;
     return [] unless has($r, "b");
 
     no strict 'refs';
     my ($name, $type) = (split "/", $r->uri)[-2,-1];
     # could be another child, which doesn't have this symbol table?
-    return unless *$name{CODE}; 
+    return unless *$name{CODE};
 
     my @retval = "<p>Subroutine info for <b>$name</b></p>\n<pre>\n";
     my $obj    = B::svref_2object(*$name{CODE});
@@ -409,7 +409,7 @@ sub status_cv_dump {
     my $stash  = $obj->GV->STASH->NAME;
     my $script = $r->location;
 
-    push @retval, "File: ", 
+    push @retval, "File: ",
         (-e $file ? qq(<a href="file:$file">$file</a>) : $file), "\n";
 
     my $cv    = $obj->GV->CV;
@@ -563,11 +563,11 @@ sub noh_b_package_size {
         }
         elsif ($name =~ /^\*(\w+)\{(\w+)\}/) {
             my $link = qq(<a href="$script/$package\::$1/$2?data_dump">);
-            $r->printf("$link%-${nlen}s</a> %${slen}d bytes\n", 
+            $r->printf("$link%-${nlen}s</a> %${slen}d bytes\n",
                        $name, $stats->{size});
         }
         else {
-            my $link = 
+            my $link =
                 qq(<a href="$script/slow/$package\::$name?noh_b_terse_size">);
             $r->printf("$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n",
                        $name, $stats->{size}, $stats->{count});
@@ -592,7 +592,7 @@ sub noh_b_deparse {
 
     my $name = (split "/", $r->uri)[-1];
     $r->print("Deparse of $name\n\n");
-    my $deparse = B::Deparse->new(split /\s+/, 
+    my $deparse = B::Deparse->new(split /\s+/,
                                   $r->dir_config('StatusDeparseOptions')||"");
     my $body = $deparse->coderef2text(\&{$name});
     $r->print("sub $name $body");
@@ -615,7 +615,7 @@ sub noh_b_fathom {
 
     my $name = (split "/", $r->uri)[-1];
     $r->print("Fathom Score of $name\n\n");
-    my $fathom = B::Fathom->new(split /\s+/, 
+    my $fathom = B::Fathom->new(split /\s+/,
                                 $r->dir_config('StatusFathomOptions')||"");
     $r->print($fathom->fathom(\&{$name}));
 }
@@ -772,7 +772,7 @@ sub as_HTML {
 
     my @methods = sort keys %{$self->{'AUTOLOAD'}};
 
-    if ($is_main) { 
+    if ($is_main) {
         @methods = grep { $_ ne "packages" } @methods;
         unshift @methods, "packages";
     }
@@ -783,7 +783,7 @@ sub as_HTML {
         my @line = ();
 
         for (sort $self->_partdump(uc $type)) {
-            s/([\000-\037\177])/ '^' . pack('c', ord($1) ^ 64)/eg; 
+            s/([\000-\037\177])/ '^' . pack('c', ord($1) ^ 64)/eg;
 
             if ($type eq "scalars") {
                 no strict 'refs';

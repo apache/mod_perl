@@ -267,7 +267,7 @@ sub ModPerl::BuildMM::MY::postamble {
                 my $podpath = catfile $doc_root, $pod;
                 next unless -r $podpath;
 
-                push @target, 
+                push @target,
                     '$(FULLPERL) -I$(INST_LIB) ' .
                     "-I$apache_test_dir -MModPerl::BuildMM " .
                     "-e ModPerl::BuildMM::glue_pod $pm $podpath $blib";

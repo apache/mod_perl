@@ -19,7 +19,7 @@ print "Content-type: text/plain\n\n";
     # original function's prototype doesn't match the aliases prototype.
     # see decl_proto()
     BEGIN { t_server_log_warn_is_expected()
-                if perlrun_decl->can("decl_proto"); 
+                if perlrun_decl->can("decl_proto");
     }
     use perlrun_decl;
 

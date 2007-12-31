@@ -56,7 +56,7 @@ sub as_string {
         $cfg .= qx{$command};
 
         $cfg .= Apache::TestConfig::ldd_as_string($httpd);
-    } 
+    }
     else {
         $cfg .= "\n\n*** The httpd binary was not found\n";
     }

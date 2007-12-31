@@ -31,7 +31,7 @@ sub handler {
     # ok 4 (gets input from the fixup handler via notes)
     {
         my $note = $r->notes->get("fixup") || '';
-        my $ok = $note =~ 
+        my $ok = $note =~
             /\$r->printf can't be called before the response phase/;
         $r->print("not ") unless $ok;
         $r->print("ok 4\n");

@@ -66,9 +66,9 @@ sub handler : method {
     {
         no strict 'refs';
         foreach my $package ($self->package) {
-            my @config = map { split /\n/ } 
-                            grep { defined } 
-                                (@{"${package}::$special"}, 
+            my @config = map { split /\n/ }
+                            grep { defined }
+                                (@{"${package}::$special"},
                                  ${"${package}::$special"});
             $self->dump_special(@config);
         }
@@ -89,7 +89,7 @@ sub symdump {
 
         $self->{symbols} = [];
 
-        #XXX: Here would be a good place to warn about NOT using 
+        #XXX: Here would be a good place to warn about NOT using
         #     Apache2::ReadConfig:: directly in <Perl> sections
         foreach my $pack ($self->package, $self->SPECIAL_PACKAGE) {
             #XXX: Shamelessly borrowed from Devel::Symdump;
