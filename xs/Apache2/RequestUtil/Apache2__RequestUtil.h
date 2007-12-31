@@ -81,7 +81,7 @@ SV *mpxs_Apache2__RequestRec_new(pTHX_ SV *classname,
     r->server     = s;
 
     r->request_time = apr_time_now();
-    
+
     r->user            = NULL;
     r->ap_auth_type    = NULL;
 
@@ -125,7 +125,7 @@ SV *mpxs_Apache2__RequestRec_new(pTHX_ SV *classname,
     if (base_pool_sv) {
         mpxs_add_pool_magic(r_sv, base_pool_sv);
     }
-    
+
     return r_sv;
 }
 
@@ -320,7 +320,7 @@ const char *mpxs_Apache2__RequestRec_document_root(pTHX_ request_rec *r,
         struct mp_docroot_info *di;
         core_server_config *conf;
         MP_CROAK_IF_THREADS_STARTED("setting $r->document_root");
-        conf = ap_get_module_config(r->server->module_config, 
+        conf = ap_get_module_config(r->server->module_config,
                                     &core_module);
         di = apr_palloc(r->pool, sizeof *di);
         di->docroot = &conf->ap_document_root;
@@ -340,7 +340,7 @@ static apr_status_t child_terminate(void *data) {
     /* On the first pass, re-register so we end up last */
     if (data) {
         apr_pool_cleanup_register(pool, NULL, child_terminate,
-                                  apr_pool_cleanup_null);    
+                                  apr_pool_cleanup_null);
     }
     else {
         exit(0);

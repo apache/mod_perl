@@ -75,7 +75,7 @@ int mpxs_Apache2__Module_ap_api_minor_version(pTHX_ module *mod)
     return mod->minor_version;
 }
 
-static MP_INLINE void mpxs_Apache2__Module_add(pTHX_ 
+static MP_INLINE void mpxs_Apache2__Module_add(pTHX_
                                               char *package,
                                               SV *cmds)
 {
@@ -90,7 +90,7 @@ static MP_INLINE void mpxs_Apache2__Module_add(pTHX_
     error = modperl_module_add(s->process->pconf, s, package, cmds);
 
     if (error) {
-        Perl_croak(aTHX_ "Apache2::Module::add(%s) failed : %s", 
+        Perl_croak(aTHX_ "Apache2::Module::add(%s) failed : %s",
                    package, error);
     }
 

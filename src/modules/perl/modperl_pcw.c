@@ -32,7 +32,7 @@ void ap_pcw_walk_location_config(apr_pool_t *pconf, server_rec *s,
     for (i = 0; i < sconf->sec_url->nelts; i++) {
         core_dir_config *conf =
             ap_get_module_config(urls[i], &core_module);
-        void *dir_cfg = ap_get_module_config(urls[i], modp);     
+        void *dir_cfg = ap_get_module_config(urls[i], modp);
 
         if (!dir_cb(pconf, s, dir_cfg, conf->d, data)) {
             break;
@@ -82,9 +82,9 @@ void ap_pcw_walk_default_config(apr_pool_t *pconf, server_rec *s,
                                 module *modp,
                                 ap_pcw_dir_cb_t dir_cb, void *data)
 {
-    core_dir_config *conf = 
+    core_dir_config *conf =
         ap_get_module_config(s->lookup_defaults, &core_module);
-    void *dir_cfg = 
+    void *dir_cfg =
         ap_get_module_config(s->lookup_defaults, modp);
 
     dir_cb(pconf, s, dir_cfg, conf->d, data);
@@ -108,7 +108,7 @@ void ap_pcw_walk_config(apr_pool_t *pconf, server_rec *s,
                         ap_pcw_dir_cb_t dir_cb, ap_pcw_srv_cb_t srv_cb)
 {
     for (; s; s = s->next) {
-        core_dir_config *dconf = 
+        core_dir_config *dconf =
             ap_get_module_config(s->lookup_defaults,
                                  &core_module);
 

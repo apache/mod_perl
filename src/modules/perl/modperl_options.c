@@ -52,10 +52,10 @@ static const char *type_lookup(modperl_options_t *o)
 
 modperl_options_t *modperl_options_new(apr_pool_t *p, int type)
 {
-    modperl_options_t *options = 
+    modperl_options_t *options =
         (modperl_options_t *)apr_pcalloc(p, sizeof(*options));
 
-    options->opts = options->unset = 
+    options->opts = options->unset =
         (type == MpSrvType ? MpSrv_f_UNSET : MpDir_f_UNSET);
 
     return options;

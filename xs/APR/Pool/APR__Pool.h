@@ -64,7 +64,7 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
     mg_free(acct->sv);                                              \
     SvIVX(acct->sv) = 0;                                            \
 } STMT_END
-    
+
 #ifdef USE_ITHREADS
 
 #define MP_APR_POOL_SV_DROPS_OWNERSHIP(acct) STMT_START {               \
@@ -217,7 +217,7 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
         if (parent_pool) {
             mpxs_add_pool_magic(rv, parent_pool_obj);
         }
-        
+
         return rv;
     }
 }
@@ -374,4 +374,3 @@ static MP_INLINE void mpxs_apr_pool_DESTROY(pTHX_ SV *obj)
         apr_pool_destroy(p);
     }
 }
-

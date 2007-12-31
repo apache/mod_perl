@@ -55,7 +55,7 @@ extern module AP_MODULE_DECLARE_DATA perl_module;
 
 /* apr largefile support is enabled, perl support is disabled */
 #if (!defined(USE_LARGE_FILES)) && APR_HAS_LARGE_FILES
-#define MP_LARGE_FILES_APR_ONLY   
+#define MP_LARGE_FILES_APR_ONLY
 #endif
 
 /* conflict due to not have either both perl and apr
@@ -103,7 +103,7 @@ int modperl_post_post_config_phase(void);
         Perl_croak(aTHX_ "Can't run '%s' in the threaded "      \
                    "environment after server startup", what);   \
     }
-  
+
 #define MP_CROAK_IF_THREADED_MPM(what)                          \
     if (modperl_threaded_mpm()) {                               \
         Perl_croak(aTHX_ "Can't run '%s' in a threaded mpm",    \
@@ -122,7 +122,7 @@ void modperl_init(server_rec *s, apr_pool_t *p);
 void modperl_init_globals(server_rec *s, apr_pool_t *pconf);
 int modperl_run(void);
 int modperl_is_running(void);
-int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
+int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
                       apr_pool_t *ptemp, server_rec *s);
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp);

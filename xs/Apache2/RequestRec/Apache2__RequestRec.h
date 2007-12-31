@@ -35,10 +35,10 @@ static MP_INLINE
 SV *mpxs_Apache2__RequestRec_content_languages(pTHX_ request_rec *r,
                                               SV *languages)
 {
-    SV *retval = modperl_apr_array_header2avrv(aTHX_ 
+    SV *retval = modperl_apr_array_header2avrv(aTHX_
                                                r->content_languages);
     if (languages) {
-        r->content_languages = modperl_avrv2apr_array_header(aTHX_ 
+        r->content_languages = modperl_avrv2apr_array_header(aTHX_
                                                              r->pool,
                                                              languages);
     }
@@ -52,11 +52,11 @@ int mpxs_Apache2__RequestRec_proxyreq(pTHX_ request_rec *r, SV *val)
 
     if (!val && !r->proxyreq &&
         r->parsed_uri.scheme &&
-	!(r->parsed_uri.hostname && 
+	!(r->parsed_uri.hostname &&
 	  strEQ(r->parsed_uri.scheme, ap_http_scheme(r)) &&
 	  ap_matches_request_vhost(r, r->parsed_uri.hostname,
-                                   r->parsed_uri.port_str ? 
-                                   r->parsed_uri.port : 
+                                   r->parsed_uri.port_str ?
+                                   r->parsed_uri.port :
                                    ap_default_port(r))))
     {
         retval = r->proxyreq = 1;
@@ -146,5 +146,3 @@ const char *mpxs_Apache2__RequestRec_handler(pTHX_  I32 items,
 
     return RETVAL;
 }
-
-

@@ -130,7 +130,7 @@ static void modperl_env_table_populate(pTHX_ apr_table_t *table)
             continue;
         }
         MP_ENV_HV_STORE_TABLE_ENTRY(hv, elts[i]);
-    }    
+    }
 
     modperl_env_tie(mg_flags);
 }
@@ -167,10 +167,10 @@ static void modperl_env_sync_table(pTHX_ apr_table_t *table)
     apr_table_entry_t *elts;
     HV *hv = ENVHV;
     SV **svp;
-    
+
     array = apr_table_elts(table);
     elts  = (apr_table_entry_t *)array->elts;
-    
+
     for (i = 0; i < array->nelts; i++) {
         if (!elts[i].key) {
             continue;
@@ -181,7 +181,7 @@ static void modperl_env_sync_table(pTHX_ apr_table_t *table)
             MP_TRACE_e(MP_FUNC, "(Set|Pass)Env '%s' '%s'", elts[i].key,
                        SvPV_nolen(*svp));
         }
-    }    
+    }
     TAINT_NOT; /* SvPV_* causes the taint issue */
 }
 
@@ -255,7 +255,7 @@ void modperl_env_configure_request_dir(pTHX_ request_rec *r)
     MP_dRCFG;
     MP_dDCFG;
 
-    /* populate %ENV and r->subprocess_env with per-directory 
+    /* populate %ENV and r->subprocess_env with per-directory
      * PerlSetEnv entries.
      *
      * note that per-server PerlSetEnv entries, as well as
@@ -267,7 +267,7 @@ void modperl_env_configure_request_dir(pTHX_ request_rec *r)
         apr_table_t *setenv_copy;
 
         /* add per-directory PerlSetEnv entries to %ENV
-         * collisions with per-server PerlSetEnv entries are 
+         * collisions with per-server PerlSetEnv entries are
          * resolved via the nature of a Perl hash
          */
         MP_TRACE_e(MP_FUNC, "\n\t[%s/0x%lx/%s]"
@@ -295,8 +295,8 @@ void modperl_env_configure_request_srv(pTHX_ request_rec *r)
     MP_dRCFG;
     MP_dSCFG(r->server);
 
-    /* populate %ENV and r->subprocess_env with per-server PerlSetEnv 
-     * and PerlPassEnv entries.  
+    /* populate %ENV and r->subprocess_env with per-server PerlSetEnv
+     * and PerlPassEnv entries.
      *
      * although both are setup in %ENV in modperl_request_configure_server
      * %ENV will be reset via modperl_env_request_unpopulate.
@@ -356,7 +356,7 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
      * normally, %ENV is only populated once per request (if at all) -
      * just prior to content generation if +SetupEnv.
      *
-     * however, in the $r->subprocess_env() case it will be called 
+     * however, in the $r->subprocess_env() case it will be called
      * more than once - once for each void call, and once again just
      * prior to content generation.  while costly, the multiple
      * passes are required, otherwise void calls would prohibit later
@@ -382,7 +382,7 @@ void modperl_env_request_populate(pTHX_ request_rec *r)
 
     /* don't set up CGI variables again this request.
      * this also triggers modperl_env_request_unpopulate, which
-     * resets %ENV between requests - see modperl_config_request_cleanup 
+     * resets %ENV between requests - see modperl_config_request_cleanup
      */
     MpReqSETUP_ENV_On(rcfg);
 }

@@ -119,6 +119,6 @@ apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
      * by modperl_bucket_sv_setaside) if the pool goes out of scope,
      * copying the data to the heap.
      */
-    
+
     return rc;
 }

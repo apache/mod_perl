@@ -98,7 +98,7 @@ PerlIOApache_fileno(pTHX_ PerlIO *f)
 {
     /* XXX: we could return STDIN => 0, STDOUT => 1, but that wouldn't
      * be correct, as the IO goes through the socket, may be we should
-     * return the filedescriptor of the socket? 
+     * return the filedescriptor of the socket?
      *
      * -1 in this case indicates that the layer cannot provide fileno
      */
@@ -139,7 +139,7 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
 
     rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
     if (rv != APR_SUCCESS) {
-        Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rv)); 
+        Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rv));
     }
     bytes += count;
 
@@ -224,7 +224,7 @@ static PerlIO_funcs PerlIO_Apache = {
     NULL,                       /* can't seek on STD{IN|OUT}, fail on call*/
     NULL,                       /* can't tell on STD{IN|OUT}, fail on call*/
     PerlIOApache_close,
-    PerlIOApache_flush,        
+    PerlIOApache_flush,
     PerlIOApache_noop_fail,     /* fill */
     PerlIOBase_eof,
     PerlIOBase_error,
@@ -274,7 +274,7 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
 
         rc = ap_get_brigade(r->input_filters, bb, AP_MODE_READBYTES,
                             APR_BLOCK_READ, len);
-        if (rc != APR_SUCCESS) { 
+        if (rc != APR_SUCCESS) {
             /* if we fail here, we want to stop trying to read data
              * from the client.
              */
@@ -335,7 +335,3 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
 
     return total;
 }
-
-
-
-

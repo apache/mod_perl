@@ -53,7 +53,7 @@ static apr_status_t modperl_gtop_exit(void *data)
 
 modperl_gtop_t *modperl_gtop_new(apr_pool_t *p)
 {
-    modperl_gtop_t *gtop = 
+    modperl_gtop_t *gtop =
         (modperl_gtop_t *)apr_pcalloc(p, sizeof(*gtop));
 
     gtop->pid = getpid();
@@ -83,8 +83,8 @@ void modperl_gtop_get_proc_mem_after(modperl_gtop_t *gtop)
 #define SS_TYPE_AFTER  2
 #define SS_TYPE_DIFF   3
 
-/* 
- * XXX: this is pretty ugly, 
+/*
+ * XXX: this is pretty ugly,
  * but avoids allocating buffers for the size string
  */
 static void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
@@ -110,7 +110,7 @@ static void modperl_gtop_proc_mem_size_string(modperl_gtop_t *gtop, int type)
 #undef ss_call
 }
 
-void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop, 
+void modperl_gtop_report_proc_mem(modperl_gtop_t *gtop,
                                   char *when, const char *func, char *msg)
 {
 #define ss_item(item) gtop->proc_mem_ss.item

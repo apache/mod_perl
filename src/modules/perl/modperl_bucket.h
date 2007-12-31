@@ -17,7 +17,7 @@
 #ifndef MODPERL_BUCKET_H
 #define MODPERL_BUCKET_H
 
-apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv, 
+apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv,
                                      apr_off_t offset, apr_size_t len);
 
 #endif /* MODPERL_BUCKET_H */

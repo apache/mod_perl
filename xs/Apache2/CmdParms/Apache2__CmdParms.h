@@ -25,7 +25,7 @@ SV *mpxs_Apache2__CmdParms_info(pTHX_ cmd_parms *parms)
         return newSVpv(data, 0);
     }
 
-    return &PL_sv_undef;    
+    return &PL_sv_undef;
 }
 
 static MP_INLINE

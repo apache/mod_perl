@@ -77,7 +77,7 @@
 #define MP_magical_tie(sv, mg_flags) \
     SvFLAGS((SV*)sv) |= mg_flags
 
-/* some wrapper macros to detect perl versions 
+/* some wrapper macros to detect perl versions
  * and prevent code clutter */
 #define MP_PERL_VERSION_AT_LEAST(r, v, s)                                \
     (PERL_REVISION == r &&                                               \
@@ -95,7 +95,7 @@ MP_INLINE SV *modperl_hash_tie(pTHX_ const char *classname,
                                SV *tsv, void *p);
 
 /* tied %hash */
-MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_ 
+MP_INLINE SV *modperl_hash_tied_object_rv(pTHX_
                                           const char *classname,
                                           SV *tsv);
 /* tied %hash */
@@ -110,4 +110,3 @@ MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p);
 SV *modperl_perl_gensym(pTHX_ char *pack);
 
 #endif /* MODPERL_COMMON_UTIL_H */
-

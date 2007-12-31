@@ -97,7 +97,7 @@ SV *mpxs_Apache2__RequestRec_print(pTHX_ I32 items,
     mpxs_output_flush(r, rcfg, "Apache2::RequestIO::print");
 
     return bytes ? newSVuv(bytes) : newSVpvn("0E0", 3);
-}  
+}
 
 static MP_INLINE
 apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
@@ -129,7 +129,7 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
     mpxs_output_flush(r, rcfg, "Apache2::RequestIO::printf");
 
     return bytes;
-}  
+}
 
 /* alias */
 #define mpxs_Apache2__RequestRec_WRITE(r, buffer, len, offset) \
@@ -252,7 +252,7 @@ static SV *mpxs_Apache2__RequestRec_read(pTHX_ request_rec *r,
 
     if (total > 0) {
         mpxs_sv_cur_set(buffer, offset+total);
-    } 
+    }
     else {
         sv_setpvn(buffer, "", 0);
     }

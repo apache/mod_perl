@@ -37,16 +37,16 @@ static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
 
         hv = newHV();
 
-        hv_store(hv, "method_mask", 11, 
+        hv_store(hv, "method_mask", 11,
                  newSViv((IV)reqs[x].method_mask), 0);
 
-        hv_store(hv, "requirement", 11, 
+        hv_store(hv, "requirement", 11,
                  newSVpv(reqs[x].requirement,0), 0);
 
         av_push(av, newRV_noinc((SV*)hv));
     }
 
-    return newRV_noinc((SV*)av); 
+    return newRV_noinc((SV*)av);
 }
 
 static MP_INLINE
@@ -81,7 +81,7 @@ static MP_INLINE void mpxs_insert_auth_cfg(pTHX_ request_rec *r,
     errmsg =
         modperl_config_insert_request(aTHX_ r,
                                       newRV_noinc((SV*)config),
-                                      OR_AUTHCFG, NULL, 
+                                      OR_AUTHCFG, NULL,
                                       MP_HTTPD_OVERRIDE_OPTS_UNSET);
 
     if (errmsg) {
@@ -147,7 +147,7 @@ static MP_INLINE
 int mpxs_Apache2__RequestRec_allow_override_opts(pTHX_ request_rec *r)
 {
 #ifdef MP_HTTPD_HAS_OVERRIDE_OPTS
-    core_dir_config *cfg = ap_get_module_config(r->per_dir_config, 
+    core_dir_config *cfg = ap_get_module_config(r->per_dir_config,
                                                 &core_module);
     return cfg->override_opts;
 #else

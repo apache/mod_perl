@@ -218,7 +218,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
         }
 
         do_close(handle, FALSE);
-        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
+        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE),
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {
@@ -230,7 +230,7 @@ MP_INLINE void modperl_io_perlio_restore_stdin(pTHX_ GV *handle)
 }
 
 MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
-{ 
+{
     GV *handle_orig = gv_fetchpv("STDOUT", FALSE, SVt_PVIO);
 
     MP_TRACE_o(MP_FUNC, "start");
@@ -265,7 +265,7 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
         }
 
         do_close(handle, FALSE);
-        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE), 
+        (void)hv_delete(gv_stashpv("Apache2::RequestIO", TRUE),
                         GvNAME(handle), GvNAMELEN(handle), G_DISCARD);
 
         if (err != Nullsv) {

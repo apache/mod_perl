@@ -109,7 +109,7 @@
 #ifndef APR_FOPEN_READ
 #define APR_FOPEN_READ        APR_READ
 #endif
-#ifndef APR_FOPEN_WRITE 
+#ifndef APR_FOPEN_WRITE
 #define APR_FOPEN_WRITE       APR_WRITE
 #endif
 #ifndef APR_FOPEN_CREATE
@@ -124,16 +124,16 @@
 #ifndef APR_FOPEN_BINARY
 #define APR_FOPEN_BINARY      APR_BINARY
 #endif
-#ifndef APR_FOPEN_EXCL 
+#ifndef APR_FOPEN_EXCL
 #define APR_FOPEN_EXCL        APR_EXCL
 #endif
-#ifndef APR_FOPEN_BUFFERED 
+#ifndef APR_FOPEN_BUFFERED
 #define APR_FOPEN_BUFFERED    APR_BUFFERED
 #endif
 #ifndef APR_FOPEN_DELONCLOSE
 #define APR_FOPEN_DELONCLOSE  APR_DELONCLOSE
 #endif
-#ifndef APR_FOPEN_XTHREAD 
+#ifndef APR_FOPEN_XTHREAD
 #define APR_FOPEN_XTHREAD     APR_XTHREAD
 #endif
 #ifndef APR_FOPEN_SHARELOCK
