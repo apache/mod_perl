@@ -13,6 +13,9 @@ all changes without author attribution are by Doug MacEachern
 Avoid possible segfault when PerlFreshRestart is On.
 [Michael Rendell <michael@cs.mun.ca>]
 
+Prevent segfault when running with perl >= 5.9.3
+[Steve Hay]
+
 Fix shared libary extensions on Win32 to be .dll not .so
 [Nikolay Ananiev <ananiev@thegdb.com>]
 
