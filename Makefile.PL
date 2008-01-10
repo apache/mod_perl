@@ -178,7 +178,7 @@ gen_script("apaci/load_modules.pl");
 write_version_h("src/modules/perl");
 
 my(@test_pre_init) = qq(
-  test_pre_init:
+test_pre_init:
 );
 
 # Automatic setup support
@@ -1535,10 +1535,10 @@ test:	pure_all start_httpd run_tests kill_httpd
 
     join '', @test_pre_init,
         qq(
-    MP_TEST_SCRIPT=$script
+MP_TEST_SCRIPT=$script
 ),
     q(
-    TEST_VERBOSE=0
+TEST_VERBOSE=0
 
 kill_httpd:
 	kill `cat t/logs/httpd.pid`
