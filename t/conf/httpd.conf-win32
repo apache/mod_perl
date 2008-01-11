@@ -61,7 +61,7 @@ PerlHandler Apache::PerlRun
 PerlSendHeader On
 </Location>
 
-<Location /dirty-perl>
+<Location /ng-perl>
 Options +ExecCGI
 SetHandler perl-script
 PerlHandler Apache::RegistryNG
