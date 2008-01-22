@@ -18,13 +18,9 @@ plan tests => @opts + 5, need 'HTML::HeadParser',
 {
     my $url = "$base_url";
     my $body = GET_BODY_ASSERT $url;
-    (my $pver = $]) =~ s/00//;
-    $pver =~ s/(\d\.\d)(.*)/"$1." . ($2 ? int($2) : 0)/e;
-    #t_debug $body;
-    t_debug $pver;
-    # expecting: Embedded Perl version v5.8.2 for ...
-    ok $body =~ /$pver/;
-
+    # expecting: Embedded Perl version <b>v5.8.2</b> for ...
+    my $pver = $^V ? sprintf "v%vd", $^V : $];
+    ok t_cmp($body, qr[Embedded Perl version <b>$pver</b> for]);
     # menu_item, part 1
     # expecting: Test Entry
     ok $body =~ /Test Menu Entry/;
