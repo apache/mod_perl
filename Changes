@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Fix erratic behaviour when filters were used with Perl 5.10
+[Gozer]
+
 Fix problems with redefinitions of perl_free as free and perl_malloc
 as malloc on Win32, as described at
  http://marc.info/?l=apache-modperl&m=119896407510526&w=2

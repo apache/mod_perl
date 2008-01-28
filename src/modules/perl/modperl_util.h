@@ -149,4 +149,6 @@ int  modperl_restart_count(void);
 SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
                    request_rec *r, conn_rec *c);
 
+U16 *modperl_code_attrs(pTHX_ CV *cv);
+
 #endif /* MODPERL_UTIL_H */

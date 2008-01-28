@@ -86,9 +86,9 @@ static MP_INLINE apr_size_t mpxs_Apache2__Filter_read(pTHX_ I32 items,
     return len;
 }
 
-static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
+static MP_INLINE U16 *modperl_filter_attributes(pTHX_ SV *package, SV *cvrv)
 {
-    return (U32 *)&MP_CODE_ATTRS(SvRV(cvrv));
+    return modperl_code_attrs(aTHX_ (CV*)SvRV(cvrv));
 }
 
 #ifdef MP_TRACE
@@ -118,7 +118,7 @@ static MP_INLINE U32 *modperl_filter_attributes(SV *package, SV *cvrv)
 MP_STATIC XS(MPXS_modperl_filter_attributes)
 {
     dXSARGS;
-    U32 *attrs = modperl_filter_attributes(ST(0), ST(1));
+    U16 *attrs = modperl_filter_attributes(aTHX_ ST(0), ST(1));
     I32 i;
 #ifdef MP_TRACE
     HV *stash = gv_stashsv(ST(0), TRUE);

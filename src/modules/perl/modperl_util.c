@@ -899,3 +899,14 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
     }
     return newRV_inc((SV *)*pnotes);
 }
+
+U16 *modperl_code_attrs(pTHX_ CV *cv) {
+    MAGIC *mg;    
+
+    if (!SvMAGICAL(cv)) {
+       sv_magic((SV*)cv, Nullsv, PERL_MAGIC_ext, NULL, -1); 
+    }
+
+    mg = mg_find((SV*)cv, PERL_MAGIC_ext);
+    return &(mg->mg_private);
+}
