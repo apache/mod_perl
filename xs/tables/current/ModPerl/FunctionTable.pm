@@ -1239,6 +1239,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'U16 *',
+    'name' => 'modperl_code_attrs',
+    'args' => [
+     {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'CV *',
+        'name' => 'cv'
+      }
+    ]
+  },
+  {
     'return_type' => 'int',
     'name' => 'modperl_config_apply_PerlModule',
     'args' => [

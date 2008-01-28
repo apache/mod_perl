@@ -271,7 +271,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     }
     else {
         if ((cv = get_cv(name, FALSE))) {
-            handler->attrs = (U32)MP_CODE_ATTRS(cv);
+            handler->attrs = *modperl_code_attrs(aTHX_ cv);
             handler->mgv_cv =
                 modperl_mgv_compile(aTHX_ p, HvNAME(GvSTASH(CvGV(cv))));
             modperl_mgv_append(aTHX_ p, handler->mgv_cv, GvNAME(CvGV(cv)));
@@ -334,7 +334,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
             modperl_mgv_new_name(handler->mgv_obj, p, name);
         }
 
-        handler->attrs = (U32)MP_CODE_ATTRS(cv);
+        handler->attrs = *modperl_code_attrs(aTHX_ cv);
         /* note: this is the real function after @ISA lookup */
         handler->mgv_cv = modperl_mgv_compile(aTHX_ p, HvNAME(GvSTASH(gv)));
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);

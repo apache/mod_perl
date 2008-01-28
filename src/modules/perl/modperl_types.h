@@ -195,7 +195,7 @@ struct modperl_handler_t {
     const char *name;
     CV *cv;
     U8 flags;
-    U32 attrs;
+    U16 attrs;
     modperl_handler_t *next;
 };
 
