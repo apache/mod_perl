@@ -5044,6 +5044,30 @@ $ModPerl::FunctionTable = [
     'args' => []
   },
   {
+    'return_type' => 'modperl_interp_t *',
+    'name' => 'modperl_thx_interp_get',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'thx',
+      },
+    ],
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_thx_interp_set',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'thx',
+      },
+      {
+        'type' => 'modperl_interp_t *',
+        'name' => 'interp',
+      },
+    ],
+  },
+  {
     'return_type' => 'void',
     'name' => 'modperl_tipool_add',
     'args' => [

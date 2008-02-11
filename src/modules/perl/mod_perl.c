@@ -835,6 +835,7 @@ void modperl_register_hooks(apr_pool_t *p)
 
 #ifdef USE_ITHREADS
     APR_REGISTER_OPTIONAL_FN(modperl_interp_unselect);
+    APR_REGISTER_OPTIONAL_FN(modperl_thx_interp_get);
 #endif
 
     /* for <IfDefine MODPERL2> and Apache2->define("MODPERL2") */

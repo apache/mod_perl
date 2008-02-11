@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.4-dev
 
+Fix a crash when spawning Perl threads under Perl 5.10
+[Gozer]
+
 Fix erratic behaviour when filters were used with Perl 5.10
 [Gozer]
 
