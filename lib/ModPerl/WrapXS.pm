@@ -597,6 +597,7 @@ EOF
 
     if ($module eq 'APR::Pool') {
         print $fh "    modperl_opt_interp_unselect = APR_RETRIEVE_OPTIONAL_FN(modperl_interp_unselect);\n\n";
+        print $fh "    modperl_opt_thx_interp_get  = APR_RETRIEVE_OPTIONAL_FN(modperl_thx_interp_get);\n\n";
     }
 
     close $fh;

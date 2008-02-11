@@ -42,6 +42,7 @@ typedef struct {
 #include "apr_optional.h"
 static
 APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
+APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
 #endif
 
 #define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) mpxs_pool_is_custom(sv)
@@ -95,8 +96,10 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
     /* make sure interpreter is not putback into the mip                \
      * until this cleanup has run.                                      \
      */                                                                 \
-    if ((acct->interp = MP_THX_INTERP_GET(aTHX))) {                     \
-        acct->interp->refcnt++;                                         \
+    if (modperl_opt_thx_interp_get) {                                   \
+        if ((acct->interp = modperl_opt_thx_interp_get(aTHX))) {        \
+            acct->interp->refcnt++;                                     \
+        }                                                               \
     }                                                                   \
 } STMT_END
 
@@ -335,8 +338,10 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
     /* make sure interpreter is not putback into the mip
      * until this cleanup has run.
      */
-    if ((data->interp = MP_THX_INTERP_GET(data->perl))) {
-        data->interp->refcnt++;
+    if (modperl_opt_thx_interp_get) {
+        if ((data->interp = modperl_opt_thx_interp_get(data->perl))) {
+            data->interp->refcnt++;
+        }
     }
 #endif
 

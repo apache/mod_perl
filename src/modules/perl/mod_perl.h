@@ -149,6 +149,7 @@ typedef void MP_FUNC_NONSTD_T(modperl_var_modify_t) (apr_table_t *,
 #define MODPERL_HOOK_REALLY_REALLY_FIRST (-20)
 
 APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
+APR_DECLARE_OPTIONAL_FN(modperl_interp_t *,modperl_thx_interp_get,(PerlInterpreter *));
 
 /*
  * perl context overriding and restoration is required when

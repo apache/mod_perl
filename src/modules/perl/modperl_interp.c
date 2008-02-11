@@ -291,7 +291,7 @@ apr_status_t modperl_interp_unselect(void *data)
     MpInterpIN_USE_Off(interp);
     MpInterpPUTBACK_Off(interp);
 
-    MP_THX_INTERP_SET(interp->perl, NULL);
+    modperl_thx_interp_set(interp->perl, NULL);
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
@@ -506,7 +506,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
 
-    MP_THX_INTERP_SET(interp->perl, interp);
+    modperl_thx_interp_set(interp->perl, interp);
 
     return interp;
 }
@@ -573,6 +573,24 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 
         s = s->next;
     }
+}
+
+#define MP_THX_INTERP_KEY "modperl2::thx_interp_key"
+modperl_interp_t *modperl_thx_interp_get(PerlInterpreter *thx)
+{
+    modperl_interp_t *interp;
+    dTHXa(thx);
+    SV **svp = hv_fetch(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), 0);
+    if (!svp) return;
+    interp = INT2PTR(modperl_interp_t *, SvIV(*svp));
+    return interp;
+}
+
+void modperl_thx_interp_set(PerlInterpreter *thx, modperl_interp_t *interp)
+{
+    dTHXa(thx);
+    hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), newSViv(PTR2IV(interp)), 0);
+    return;
 }
 
 #else
