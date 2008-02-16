@@ -40,7 +40,6 @@ typedef struct {
 
 #ifndef MP_SOURCE_SCAN
 #include "apr_optional.h"
-static
 APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
 APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
 #endif
