@@ -595,7 +595,7 @@ EOF
         }
     }
 
-    if ($module eq 'APR::Pool') {
+    if ($module eq 'APR::Pool' &amp;&amp; Apache2::Build::PERL_HAS_ITHREADS) {
         print $fh "    modperl_opt_interp_unselect = APR_RETRIEVE_OPTIONAL_FN(modperl_interp_unselect);\n\n";
         print $fh "    modperl_opt_thx_interp_get  = APR_RETRIEVE_OPTIONAL_FN(modperl_thx_interp_get);\n\n";
     }

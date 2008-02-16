@@ -39,9 +39,11 @@ typedef struct {
  */
 
 #ifndef MP_SOURCE_SCAN
+#ifdef USE_ITHREADS
 #include "apr_optional.h"
 APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
 APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
+#endif
 #endif
 
 #define MP_APR_POOL_SV_HAS_OWNERSHIP(sv) mpxs_pool_is_custom(sv)
