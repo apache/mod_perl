@@ -321,6 +321,10 @@ sub warn {
 
 package Apache;
 
+sub request {
+    return Apache2::compat::request(@_);
+}
+
 sub unescape_url_info {
     my ($class, $string) = @_;
     Apache2::URI::unescape_url($string);
