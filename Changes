@@ -38,7 +38,7 @@ PerlCleanupHandler are now registered with a subpool of $r->pool,
 instead of $r->pool itself, ensuring they run _before_ any other
 $r->pool cleanups [Torsten Foertsch]
 
-Fix a bug that would prevent pnotes from being cleaned up proprely
+Fix a bug that would prevent pnotes from being cleaned up properly
 at the end of the request [Torsten Foertsch]
 
 On Win32, embed the manifest file, if present, in mod_perl.so,
