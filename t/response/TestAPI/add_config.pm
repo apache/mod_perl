@@ -58,6 +58,14 @@ sub map2storage {
     };
     $r->pnotes(followsymlinks => "$@");
 
+    eval {
+        my $path="/a/path/to/somewhere";
+        $r->add_config(['PerlResponseHandler '.__PACKAGE__], -1, $path);
+        # now overwrite the path in place to see if the location pointer
+        # is really copied: see modperl_config_dir_create
+        $path=~tr[a-z][n-za-m];
+    };
+
     return Apache2::Const::DECLINED;
 }
 
@@ -82,7 +90,7 @@ sub handler : method {
     my ($self, $r) = @_;
     my $cf = $self->get_config($r->server);
 
-    plan $r, tests => 8;
+    plan $r, tests => 9;
 
     ok t_cmp $r->pnotes('add_config1'), qr/.+\n/;
     ok t_cmp $r->pnotes('add_config2'), (APACHE22 ? qr/.+\n/ : '');
@@ -102,6 +110,8 @@ sub handler : method {
     my $opts = APACHE22 ? Apache2::Const::OPT_SYM_LINKS : $expect;
     ok t_cmp $r->allow_override_opts, $opts;
 
+    ok t_cmp $r->location, '/a/path/to/somewhere';
+
     return Apache2::Const::OK;
 }
 
@@ -117,7 +127,6 @@ __END__
         <Directory @DocumentRoot@>
             AllowOverride All
         </Directory>
-        PerlResponseHandler TestAPI::add_config
         PerlMapToStorageHandler TestAPI::add_config::map2storage
         PerlFixupHandler TestAPI::add_config::fixup
     </VirtualHost>

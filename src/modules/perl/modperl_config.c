@@ -518,7 +518,7 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
     parms.limited = -1;
     parms.server = s;
     parms.override = override;
-    parms.path = path;
+    parms.path = apr_pstrdup(p, path);
     parms.pool = p;
 #ifdef MP_HTTPD_HAS_OVERRIDE_OPTS
     if (override_options == MP_HTTPD_OVERRIDE_OPTS_UNSET) {
