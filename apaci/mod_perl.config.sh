@@ -121,6 +121,7 @@ perl_cccdlflags="`$perl_config 'cccdlflags'`"
 perl_ld="`$perl_config 'ld'`"
 perl_ldflags="`$perl_config 'ldflags'`"
 perl_lddlflags="`$perl_config 'lddlflags'`"
+perl_dlext="`$perl_config 'dlext'`"
 
 case "$os_version" in
     aix*)
@@ -244,6 +245,7 @@ echo "PERL_INC=$perl_inc"
 echo "PERL_LD=$perl_ld"
 echo "PERL_LDFLAGS=$perl_ldflags"
 echo "PERL_LDDLFLAGS=$perl_lddlflags"
+echo "PERL_DLEXT=$perl_dlext"
 echo "PERL_LIBS=$perl_libs $perl_static_ar"
 echo "PERL_XSINIT=$perl_xsinit"
 echo "PERL_XSUBPP=$perl_xsubpp"

@@ -56,7 +56,7 @@ libperl.a: $(MP_OBJS)
 	$(MP_AR) crv $@ $(MP_OBJS)
 	$(MP_RANLIB) $@
 
-libperl.$(LIBEXT): $(MP_OBJS_PIC)
+libperl.$(PERL_DLEXT): $(MP_OBJS_PIC)
 	$(MP_RM) $@
 	$(MP_LD) $(MP_LDFLAGS_SHLIB) -o $@ $(MP_OBJS_PIC) $(MP_LIBS)
 
