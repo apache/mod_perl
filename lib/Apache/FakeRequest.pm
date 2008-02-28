@@ -23,7 +23,7 @@ my @methods = qw{
   filename get_basic_auth_pw get_remote_host
   get_remote_logname handler hard_timeout
   header_in header_only header_out
-  headers_in headers_out hostname import
+  headers_in headers_out hostname
   internal_redirect_handler is_initial_req is_main
   kill_timeout log_error log_reason
   lookup_file lookup_uri main
@@ -68,6 +68,7 @@ sub args {
     parse_args(wantarray, $r->{args});
 }
 
+sub import { shift->elem('import', @_) if ref $_[0] }
 
 {
     my @code;
