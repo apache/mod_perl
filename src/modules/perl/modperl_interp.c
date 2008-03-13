@@ -581,7 +581,7 @@ modperl_interp_t *modperl_thx_interp_get(PerlInterpreter *thx)
     modperl_interp_t *interp;
     dTHXa(thx);
     SV **svp = hv_fetch(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), 0);
-    if (!svp) return;
+    if (!svp) return NULL;
     interp = INT2PTR(modperl_interp_t *, SvIV(*svp));
     return interp;
 }
