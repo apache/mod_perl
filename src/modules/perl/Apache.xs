@@ -1325,7 +1325,7 @@ subprocess_env(r, key=NULL, ...)
 	table_entry *elts = (table_entry *)arr->elts;
 	SP -= items;
 	for (i = 0; i < arr->nelts; ++i) {
-	    if (!elts[i].key) continue;
+	    if (!elts[i].key || !elts[i].val) continue;
 	    PUSHelt(elts[i].key, elts[i].val, 0);
 	}
 	PUTBACK;
