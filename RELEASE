@@ -75,18 +75,24 @@ Instructions for mod_perl 2.0 Release Manager
      % make -n tag
 
   d. commit Changes README Makefile.PL
-     % svn ci Changes README Makefile.PL
+     % svn ci -m "Releasing 2.0.5" Changes README Makefile.PL
 
   e. tag
      % make tag
 
   f. Update the svn:externals in the new tag
      (you can't propedit remotely yet in svn)
-     svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_5
-     svn propedit svn:externals 2_0_5
-     Update the Apache-Test line to the tag you previously created.
+     % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_5
+     % svn propedit svn:externals 2_0_5
+     Update the Apache-Test line to current revision
+     % svn info https://svn.apache.org/repos/asf/perl/Apache-Test/trunk | grep "Last Changed Rev"
      Update the docs line to the current tag.
-     svn ci
+     It should look like:
+     % svn propget svn:externals 2_0_5
+       Apache-Test -r 608229 https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
+       docs https://svn.apache.org/repos/asf/perl/modperl/docs/tags/2_0_5/src/docs/2.0
+
+     % svn ci -m "Releasing 2.0.5"
 
   g. create the final package
      % make dist
@@ -95,7 +101,7 @@ Instructions for mod_perl 2.0 Release Manager
 
 4. Release the package and update links (e.g. mod_perl-2.0.5.tar.gz)
 
-  a. upload to www.apache.org:/www/perl.apache.org/dist/
+  a. upload to perl.apache.org:/www/perl.apache.org/dist/
 
     %  scp mod_perl-2.0.5.tar.gz perl.apache.org:/www/perl.apache.org/dist/
 
@@ -117,17 +123,20 @@ Instructions for mod_perl 2.0 Release Manager
          /www/perl.apache.org/dist/old
     % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.3
 
-  d. update the version and release date
-     modperl-docs/src/download/index_top.html and commit. It'll be
-     automatically updated within 6 hours. Alternatively you can do a
-     manual update by logging into www.apache.org and running:
+  d. update the version and release date in the docs:
+    % vi modperl-docs/src/download/index_top.html 
+    % vi modperl-docs/doap_Perl.rdf
+
+     and commit.
+    % svn ci -m "Releasing 2.0.5" \
+          modperl-docs/src/download/index_top.html \
+          modperl-docs/doap_Perl.rdf
+     
+     It'll be automatically updated within 6 hours. Alternatively
+     you can do a manual update by logging into www.apache.org and
+     running:
 
     % /home/perlwww/apache.org/modperl-docs/bin/site_build
-
-  e. update our projects.apache.org doap file with the new release
-     version and date
-
-    % vi modperl-docs/doap_Perl.rdf
 
 5. Upload the package to CPAN
 
@@ -142,10 +151,10 @@ Instructions for mod_perl 2.0 Release Manager
 
     % pgps -b --armor mod_perl-2.0.5.tar.gz
 
-  b. upload the generated sig file to www.apache.org:
+  b. upload the generated sig file to perl.apache.org:
 
     % scp mod_perl-2.0.5.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
-    % ssh www.apache.org
+    % ssh perl.apache.org
     % cd /www/perl.apache.org/dist/
     % chmod 0664 mod_perl-2.0.5.tar.gz.asc
     % ln -sf mod_perl-2.0.5.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
@@ -163,8 +172,8 @@ Instructions for mod_perl 2.0 Release Manager
   d. make sure that the files you just created are group rw so
      all the dist admins can make changes:
 
-    % find /www/perl.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
-    % find /www/perl.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
+    % find /www/perl.apache.org/dist/ -user $USER -type f -print0 | xargs -0 chmod 0664 
+    % find /www/perl.apache.org/dist/ -user $USER -type d -print0 | xargs -0 chmod 0775 
 
 7. Distribute to www.apache.org/dist/perl 
    and archive the old package under /www/archive.apache.org/dist/perl/
@@ -181,8 +190,8 @@ Instructions for mod_perl 2.0 Release Manager
 
      all the dist admins can make changes:
 
-    % find /www/www.apache.org/dist/ -user $USER -type f -exec chmod 0664 {} \; 
-    % find /www/www.apache.org/dist/ -user $USER -type d -exec chmod 0775 {} \; 
+    % find /www/www.apache.org/dist/perl/ -user $USER -type f -print0 | xargs -0 chmod 0664
+    % find /www/www.apache.org/dist/perl/ -user $USER -type d -print0 | xargs -0 chmod 0775 
 
 8. Announce the package
 
@@ -210,7 +219,7 @@ Instructions for mod_perl 2.0 Release Manager
   d. update this file versions to make it easy to copy-n-paste things
      on the next release:
    
-   $ perl -pi -e 's/(\d+)\.(\d+)\.(\d+)/join(".", $1, $2, $3+1)/eg' RELEASE
+   $ perl -pi -e 's/(\d+)([._])(\d+)(\2)(\d+)/join($2, $1, $3, $5+1)/eg' RELEASE
 
   e. commit the changed files
 
@@ -220,4 +229,4 @@ Instructions for mod_perl 2.0 Release Manager
 10. Old Versions
  
     Remind other Developers to delete versions older then the prior release
-    from CPAN.  Old releases can always be found on BackPan. 
+    from CPAN.  Old releases can always be found on BACKPAN. 
