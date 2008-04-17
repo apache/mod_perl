@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.4-dev
+=item 2.0.4 April 16, 2008
 
 Fix $r->location corruption under certain conditions
 [Gozer]
