@@ -896,7 +896,7 @@ void modperl_register_hooks(apr_pool_t *p)
                           NULL, NULL, MODPERL_HOOK_REALLY_REALLY_FIRST);
 
     ap_hook_child_init(modperl_hook_child_init,
-                       NULL, NULL, APR_HOOK_FIRST);
+                       NULL, NULL, MODPERL_HOOK_REALLY_REALLY_FIRST);
 
     modperl_register_handler_hooks();
 }
