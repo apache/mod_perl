@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Fix compilation when using a non-threaded APR.
+[Gozer, Philip M. Gollucci]
+
 Make sure mod_perl's own ChildInitHandlers are run before user
 supplied ones. This fixes the incorrectly reported value of $$
 at ChildInit time [Gozer]
