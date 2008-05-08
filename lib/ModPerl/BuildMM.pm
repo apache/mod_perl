@@ -359,7 +359,7 @@ sub ModPerl::BuildMM::MY::libscan {
 
     $apr_config ||= $build->get_apr_config();
 
-    if ($path =~ m/(Thread|Global)Mutex/) {
+    if ($path =~ m/(Thread|Global)(Mutex|RWLock)/) { 
         return unless $apr_config->{HAS_THREADS};
     }
 
