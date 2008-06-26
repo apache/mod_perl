@@ -252,7 +252,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     modperl_interp_unselect(interp);
     MP_PERL_CONTEXT_RESTORE;
 #endif
-    
+
     return (void *)mrg;
 }
 
@@ -665,7 +665,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 #ifdef USE_ITHREADS
     MP_dSCFG(s);
     dTHXa(scfg->mip->parent->perl);
-#endif 
+#endif
     module_cmds = (AV*)SvRV(mod_cmds);
 
     fill = AvFILL(module_cmds);
@@ -790,7 +790,7 @@ static modperl_mgv_t *modperl_module_fetch_method(pTHX_
     HV *stash = gv_stashpv(modp->name, FALSE);
     GV *gv = gv_fetchmethod_autoload(stash, method, FALSE);
 
-    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'...%sfound\n", 
+    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'...%sfound\n",
                method, modp->name,
                MP_isGV(gv) ? "" : "not ");
 
@@ -827,7 +827,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     /* use this slot for our context */
     modp->dynamic_load_handle = minfo;
 
-    /* 
+    /*
      * XXX: we should lookup here if the Perl methods exist,
      * and set these pointers only if they do.
      */
@@ -872,7 +872,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     apr_hash_set(scfg->modules, apr_pstrdup(p, name), APR_HASH_KEY_STRING, modp);
 
 #ifdef USE_ITHREADS
-    /* 
+    /*
      * if the Perl module is loaded in the base server and a vhost
      * has configuration directives from that module, but no mod_perl.c
      * directives, scfg == NULL when modperl_module_cmd_take123 is run.
@@ -890,7 +890,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     return NULL;
 }
 
-SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s, 
+SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s,
                                   ap_conf_vector_t *v)
 {
     MP_dSCFG(s);

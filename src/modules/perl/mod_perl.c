@@ -215,7 +215,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
     {
         server_rec *base_server = modperl_global_get_server_rec();
         const char *desc = modperl_server_desc(s, p);
-        if (base_server == s) {        
+        if (base_server == s) {
             MP_TRACE_i(MP_FUNC,
                        "starting the parent perl for the base server\n", desc);
         }
@@ -410,7 +410,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
         /* virtual host w/ +Clone gets its own mip */
         if (MpSrvCLONE(scfg)) {
             modperl_interp_init(s, p, perl);
-        }   
+        }
 #endif
 
         if (!modperl_config_apply_PerlRequire(s, scfg, perl, p)) {
@@ -478,7 +478,7 @@ static int modperl_post_config_require(server_rec *s, apr_pool_t *p)
     for (; s; s=s->next) {
         MP_dSCFG(s);
         if (!modperl_config_apply_PerlPostConfigRequire(s, scfg, p)) {
-            return FALSE;   
+            return FALSE;
         }
     }
     return TRUE;
@@ -607,7 +607,7 @@ static apr_status_t modperl_sys_term(void *data)
     return APR_SUCCESS;
 }
 
-int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog, 
+int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
                       apr_pool_t *ptemp, server_rec *s)
 {
     if (MP_IS_STARTING || MP_IS_RUNNING) {
@@ -712,7 +712,7 @@ static int modperl_hook_post_config_last(apr_pool_t *pconf, apr_pool_t *plog,
 #else
 #define MP_PERL_VERSION_STAMP "Perl/v%vd"
 #endif
-    
+
     ap_add_version_component(pconf, MP_VERSION_STRING);
     ap_add_version_component(pconf,
                              Perl_form(aTHX_ MP_PERL_VERSION_STAMP,
@@ -773,7 +773,7 @@ static int modperl_hook_post_read_request(request_rec *r)
 }
 
 static int modperl_hook_header_parser(request_rec *r)
-{    
+{
     /* if 'PerlOptions +GlobalRequest' is inside a container */
     modperl_global_request_cfg_set(r);
 
@@ -915,7 +915,7 @@ void modperl_register_hooks(apr_pool_t *p)
     modperl_register_handler_hooks();
 }
 
-static const command_rec modperl_cmds[] = {  
+static const command_rec modperl_cmds[] = {
     MP_CMD_SRV_ITERATE("PerlSwitches", switches, "Perl Switches"),
     MP_CMD_DIR_ITERATE("PerlModule", modules, "PerlModule"),
     MP_CMD_DIR_ITERATE("PerlRequire", requires, "PerlRequire"),
@@ -971,8 +971,8 @@ static const command_rec modperl_cmds[] = {
                     "Turn on -w switch"),
 #endif
     MP_CMD_ENTRIES,
-    { NULL }, 
-}; 
+    { NULL },
+};
 
 void modperl_response_init(request_rec *r)
 {
@@ -1150,7 +1150,7 @@ const void *modperl_suck_in_ugly_hack(void)
 }
 
 module AP_MODULE_DECLARE_DATA perl_module = {
-    STANDARD20_MODULE_STUFF, 
+    STANDARD20_MODULE_STUFF,
     modperl_config_dir_create, /* dir config creater */
     modperl_config_dir_merge,  /* dir merger --- default is to override */
     modperl_config_srv_create, /* server config */

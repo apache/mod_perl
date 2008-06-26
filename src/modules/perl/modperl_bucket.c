@@ -66,7 +66,7 @@ static void modperl_bucket_sv_destroy(void *data)
     apr_bucket_free(svbucket);
 }
 
-static 
+static
 apr_status_t modperl_bucket_sv_setaside(apr_bucket *bucket, apr_pool_t *pool)
 {
     modperl_bucket_sv_t *svbucket = bucket->data;
@@ -111,7 +111,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
                                           apr_off_t offset,
                                           apr_size_t len)
 {
-    modperl_bucket_sv_t *svbucket; 
+    modperl_bucket_sv_t *svbucket;
 
     svbucket = apr_bucket_alloc(sizeof(*svbucket), bucket->list);
 
@@ -146,7 +146,7 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
     return bucket;
 }
 
-apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv, 
+apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv,
                                      apr_off_t offset, apr_size_t len)
 {
     apr_bucket *bucket;

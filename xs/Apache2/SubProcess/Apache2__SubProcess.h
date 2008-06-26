@@ -68,7 +68,7 @@ static int modperl_spawn_proc_prog(pTHX_
     if (FAILED(apr_procattr_create(&procattr, p)) ||
         FAILED(apr_procattr_io_set(procattr, e_info.in_pipe,
                                    e_info.out_pipe, e_info.err_pipe)) ||
-        FAILED(apr_procattr_dir_set(procattr, 
+        FAILED(apr_procattr_dir_set(procattr,
                                     ap_make_dirstr_parent(r->pool,
                                                           r->filename))) ||
         FAILED(apr_procattr_cmdtype_set(procattr, e_info.cmd_type)))

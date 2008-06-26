@@ -344,7 +344,7 @@ static void modperl_av_remove_entry(pTHX_ AV *av, I32 index)
     sv_free((SV *)tmpav);
 }
 
-static void modperl_package_unload_dynamic(pTHX_ const char *package, 
+static void modperl_package_unload_dynamic(pTHX_ const char *package,
                                            I32 dl_index)
 {
     AV *librefs = get_av(dl_librefs, 0);
@@ -356,7 +356,7 @@ static void modperl_package_unload_dynamic(pTHX_ const char *package,
     modperl_av_remove_entry(aTHX_ get_av(dl_librefs, 0), dl_index);
     modperl_av_remove_entry(aTHX_ get_av(dl_modules, 0), dl_index);
 
-    return;    
+    return;
 }
 
 static int modperl_package_is_dynamic(pTHX_ const char *package,
@@ -449,7 +449,7 @@ void modperl_str_toupper(char *str)
     }
 }
 
-/* XXX: same as Perl_do_sprintf(); 
+/* XXX: same as Perl_do_sprintf();
  * but Perl_do_sprintf() is not part of the "public" api
  */
 void modperl_perl_do_sprintf(pTHX_ SV *sv, I32 len, SV **sarg)
@@ -496,7 +496,7 @@ void modperl_perl_exit(pTHX_ int status)
 {
     ENTER;
     SAVESPTR(PL_diehook);
-    PL_diehook = Nullsv; 
+    PL_diehook = Nullsv;
     modperl_croak(aTHX_ MODPERL_RC_EXIT, "ModPerl::Util::exit");
 }
 
@@ -505,7 +505,7 @@ MP_INLINE SV *modperl_dir_config(pTHX_ request_rec *r, server_rec *s,
 {
     SV *retval = &PL_sv_undef;
 
-    if (r && r->per_dir_config) {				   
+    if (r && r->per_dir_config) {
         MP_dDCFG;
         retval = modperl_table_get_set(aTHX_ dcfg->configvars,
                                        key, sv_val, FALSE);
@@ -531,31 +531,31 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
 {
     SV *retval = &PL_sv_undef;
 
-    if (table == NULL) { 
+    if (table == NULL) {
         /* do nothing */
     }
-    else if (key == NULL) { 
+    else if (key == NULL) {
         retval = modperl_hash_tie(aTHX_ "APR::Table",
-                                  Nullsv, (void*)table); 
+                                  Nullsv, (void*)table);
     }
     else if (!sv_val) { /* no val was passed */
-        char *val; 
-        if ((val = (char *)apr_table_get(table, key))) { 
-            retval = newSVpv(val, 0); 
-        } 
-        else { 
-            retval = newSV(0); 
-        } 
-        if (do_taint) { 
-            SvTAINTED_on(retval); 
-        } 
+        char *val;
+        if ((val = (char *)apr_table_get(table, key))) {
+            retval = newSVpv(val, 0);
+        }
+        else {
+            retval = newSV(0);
+        }
+        if (do_taint) {
+            SvTAINTED_on(retval);
+        }
     }
     else if (!SvOK(sv_val)) { /* val was passed in as undef */
-        apr_table_unset(table, key); 
+        apr_table_unset(table, key);
     }
-    else { 
+    else {
         apr_table_set(table, key, SvPV_nolen(sv_val));
-    } 
+    }
 
     return retval;
 }
@@ -631,7 +631,7 @@ MP_INLINE SV *modperl_slurp_filename(pTHX_ request_rec *r, int tainted)
     MP_TRACE_o(MP_FUNC, "read %d bytes from '%s'\n", size, r->filename);
 
     if (r->finfo.size != size) {
-        SvREFCNT_dec(sv); 
+        SvREFCNT_dec(sv);
         Perl_croak(aTHX_ "Error: read %d bytes, expected %d ('%s')",
                    size, (apr_size_t)r->finfo.size, r->filename);
     }
@@ -705,10 +705,10 @@ char *modperl_file2package(apr_pool_t *p, const char *file)
 
 SV *modperl_apr_array_header2avrv(pTHX_ apr_array_header_t *array)
 {
-    AV *av = newAV(); 
+    AV *av = newAV();
 
     if (array) {
-        int i; 
+        int i;
         for (i = 0; i < array->nelts; i++) {
             av_push(av, newSVpv(((char **)array->elts)[i], 0));
         }
@@ -741,7 +741,7 @@ apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
 }
 
 /* Remove a package from %INC */
-static void modperl_package_delete_from_inc(pTHX_ const char *package)  
+static void modperl_package_delete_from_inc(pTHX_ const char *package)
 {
     int len;
     char *filename = package2filename(package, &len);
@@ -752,7 +752,7 @@ static void modperl_package_delete_from_inc(pTHX_ const char *package)
 /* Destroy a package's stash */
 #define MP_STASH_SUBSTASH(key, len) ((len >= 2) &&                  \
                                      (key[len-1] == ':') &&         \
-                                     (key[len-2] == ':'))   
+                                     (key[len-2] == ':'))
 #define MP_STASH_DEBUGGER(key, len) ((len >= 2) &&                  \
                                      (key[0] == '_') &&             \
                                      (key[1] == '<'))
@@ -818,7 +818,7 @@ void modperl_restart_count_inc(server_rec *base_server)
         *counter = 1;
         apr_pool_userdata_set(counter, MP_RESTART_COUNT_KEY,
                               apr_pool_cleanup_null, p);
-    }    
+    }
 }
 
 int modperl_restart_count(void)
@@ -828,7 +828,7 @@ int modperl_restart_count(void)
                           modperl_global_get_server_rec()->process->pool);
     return data ? *(int *)data : 0;
  }
- 
+
 static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
     modperl_pnotes_t *pnotes = data;
@@ -845,7 +845,7 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
     modperl_interp_unselect(pnotes->interp);
     pnotes->interp = NULL;
 #endif
-    return APR_SUCCESS;   
+    return APR_SUCCESS;
 }
 
 void modperl_pnotes_kill(void *data) {
@@ -890,4 +890,3 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
     }
     return newRV_inc((SV *)pnotes->pnotes);
 }
- 

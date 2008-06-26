@@ -27,4 +27,3 @@ SV *mpxs_APR__BucketAlloc_new(pTHX_ SV *CLASS, SV *p_sv)
     mpxs_add_pool_magic(ba_sv, p_sv);
     return ba_sv;
 }
-

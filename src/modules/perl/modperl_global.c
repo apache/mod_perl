@@ -185,11 +185,11 @@ int modperl_global_anon_cnt_next(void)
 {
     int next;
     /* XXX: inline lock/unlock? */
-    modperl_global_lock(&MP_global_anon_cnt); 
+    modperl_global_lock(&MP_global_anon_cnt);
 
     next = ++*(int *)(MP_global_anon_cnt.data);
 
-    modperl_global_unlock(&MP_global_anon_cnt); 
+    modperl_global_unlock(&MP_global_anon_cnt);
 
     return next;
 }
@@ -250,7 +250,7 @@ typedef struct {
 
 static apr_status_t modperl_tls_reset(void *data)
 {
-    modperl_tls_cleanup_data_t *cdata = 
+    modperl_tls_cleanup_data_t *cdata =
         (modperl_tls_cleanup_data_t *)data;
     return modperl_tls_set(cdata->key, cdata->data);
 }

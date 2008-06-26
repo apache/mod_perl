@@ -35,8 +35,8 @@ static MP_INLINE SV *mpxs_Apache2__Directive_as_string(pTHX_
 
 
 /* Adds an entry to a hash, vivifying hash/array for multiple entries */
-static void hash_insert(pTHX_ HV *hash, const char *key, 
-                        int keylen, const char *args, 
+static void hash_insert(pTHX_ HV *hash, const char *key,
+                        int keylen, const char *args,
                         int argslen, SV *value)
 {
     HV *subhash;
@@ -73,7 +73,7 @@ static void hash_insert(pTHX_ HV *hash, const char *key,
 }
 
 static MP_INLINE SV *mpxs_Apache2__Directive_as_hash(pTHX_
-                                                    ap_directive_t *tree)      
+                                                    ap_directive_t *tree)
 {
     const char *directive;
     int directive_len;
@@ -103,12 +103,12 @@ static MP_INLINE SV *mpxs_Apache2__Directive_as_hash(pTHX_
             }
 
             subtree = mpxs_Apache2__Directive_as_hash(aTHX_ tree->first_child);
-            hash_insert(aTHX_ hash, directive, directive_len, 
+            hash_insert(aTHX_ hash, directive, directive_len,
                         args, args_len, subtree);
         }
         else {
-            hash_insert(aTHX_ hash, directive, directive_len, 
-                        args, args_len, Nullsv);   
+            hash_insert(aTHX_ hash, directive, directive_len,
+                        args, args_len, Nullsv);
         }
 
         tree = tree->next;

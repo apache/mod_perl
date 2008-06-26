@@ -99,7 +99,7 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 
 #define MP_dCCFG \
     modperl_config_con_t *ccfg = modperl_config_con_get(c)
-    
+
 #define modperl_config_dir_get(r)                               \
     (r ? (modperl_config_dir_t *)                               \
      modperl_get_module_config(r->per_dir_config) : NULL)
@@ -157,7 +157,7 @@ const char *modperl_config_insert(pTHX_ server_rec *s,
                                   ap_conf_vector_t *conf,
                                   SV *lines);
 
-const char *modperl_config_insert_parms(pTHX_ cmd_parms *parms, 
+const char *modperl_config_insert_parms(pTHX_ cmd_parms *parms,
                                         SV *lines);
 
 const char *modperl_config_insert_server(pTHX_ server_rec *s, SV *lines);

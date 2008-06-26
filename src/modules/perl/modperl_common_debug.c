@@ -17,4 +17,3 @@
 /* This file must not contain any symbols from apache/mod_perl
  *  (apr and perl are OK) */
 #include "modperl_common_includes.h"
-

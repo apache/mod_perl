@@ -33,7 +33,7 @@
 
 modperl_list_t *modperl_list_new()
 {
-    modperl_list_t *listp = 
+    modperl_list_t *listp =
         (modperl_list_t *)malloc(sizeof(*listp));
     memset(listp, '\0', sizeof(*listp));
     return listp;
@@ -277,7 +277,7 @@ modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
 
     /* XXX: this should never happen */
     if (!head) {
-        MP_TRACE_i(MP_FUNC, "PANIC: no items available, %d of %d in use\n", 
+        MP_TRACE_i(MP_FUNC, "PANIC: no items available, %d of %d in use\n",
                    tipool->in_use, tipool->size);
         abort();
     }

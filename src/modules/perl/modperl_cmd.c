@@ -242,7 +242,7 @@ MP_CMD_SRV_DECLARE(requires)
 }
 
 MP_CMD_SRV_DECLARE(config_requires)
-{    
+{
     /* we must init earlier than normal */
     modperl_run();
 
@@ -540,14 +540,14 @@ MP_CMD_SRV_DECLARE(perldo)
 
         pkg_namespace = modperl_file2package(p, directive->filename);
 
-        pkg_name = apr_psprintf(p, "%s::%s::line_%d", 
-                                    pkg_base, 
-                                    pkg_namespace, 
+        pkg_name = apr_psprintf(p, "%s::%s::line_%d",
+                                    pkg_base,
+                                    pkg_namespace,
                                     directive->line_num);
 
         apr_table_set(options, "package", pkg_name);
 
-        line_header = apr_psprintf(p, "\n#line %d %s\n", 
+        line_header = apr_psprintf(p, "\n#line %d %s\n",
                                    directive->line_num,
                                    directive->filename);
 
@@ -620,7 +620,7 @@ MP_CMD_SRV_DECLARE(pod)
 {
     char line[MAX_STRING_LEN];
 
-    if (arg && *arg && !(MP_POD_FORMAT(arg) || strstr("pod", arg))) {  
+    if (arg && *arg && !(MP_POD_FORMAT(arg) || strstr("pod", arg))) {
         return "Unknown =back format";
     }
 

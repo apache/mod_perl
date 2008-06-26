@@ -43,9 +43,9 @@ XS(XS_ModPerl__Util_exit)
         Perl_croak(aTHX_ "Usage: ModPerl::Util::exit(status=0)");
     }
     /* default: 0 */
-    status = items < 1 ? 0 : (int)SvIV(ST(0)); 
+    status = items < 1 ? 0 : (int)SvIV(ST(0));
     modperl_perl_exit(aTHX_ status);
-    
+
     XSRETURN_EMPTY;
 }
 
@@ -71,11 +71,11 @@ static void modperl_perl_ids_get(modperl_perl_ids_t *ids)
 #endif
 #ifndef WIN32
     ids->uid  = getuid();
-    ids->euid = geteuid(); 
-    ids->gid  = getgid(); 
-    ids->egid  = getegid(); 
+    ids->euid = geteuid();
+    ids->gid  = getgid();
+    ids->egid  = getegid();
 
-    MP_TRACE_r(MP_FUNC, 
+    MP_TRACE_r(MP_FUNC,
                "pid=%d, "
 #ifdef MP_MAINTAIN_PPID
                "ppid=%d, "
@@ -134,7 +134,7 @@ void modperl_perl_init_ids_server(server_rec *s)
 void modperl_perl_destruct(PerlInterpreter *perl)
 {
     char **orig_environ = NULL;
-    PTR_TBL_t *module_commands; 
+    PTR_TBL_t *module_commands;
     dTHXa(perl);
 
     PERL_SET_CONTEXT(perl);
@@ -211,7 +211,7 @@ static bool MP_init_hash_seed_set = FALSE;
 #endif
 
 /* see modperl_hash_seed_set() */
-void modperl_hash_seed_init(apr_pool_t *p) 
+void modperl_hash_seed_init(apr_pool_t *p)
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
     char *s;
@@ -253,7 +253,7 @@ void modperl_hash_seed_init(apr_pool_t *p)
  * it randomizes if perl was compiled with ccflags -DUSE_HASH_SEED
  * or -DUSE_HASH_SEED_EXPLICIT, in which case we need to tell perl
  * to use the same seed everywhere */
-void modperl_hash_seed_set(pTHX) 
+void modperl_hash_seed_set(pTHX)
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
     if (MP_init_hash_seed_set) {

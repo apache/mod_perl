@@ -111,7 +111,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
             if (status_sv == &PL_sv_undef) {
                 /* ModPerl::Util::exit() and Perl_croak internally
                  * arrange to return PL_sv_undef with G_EVAL|G_SCALAR */
-                status = OK; 
+                status = OK;
             }
             else {
                 status = SvIVx(status_sv);
@@ -283,7 +283,7 @@ int modperl_callback_run_handlers(int idx, int type,
                 break;
             }
             /* the normal case:
-             *   OK and DECLINED continue 
+             *   OK and DECLINED continue
              *   errors end the phase
              */
             else if ((status != OK) && (status != DECLINED)) {
@@ -330,7 +330,7 @@ int modperl_callback_run_handlers(int idx, int type,
         else {
             /* the rare case.
              * MP_HOOK_VOID handlers completely ignore the return status
-             * Apache should handle whatever mod_perl returns, 
+             * Apache should handle whatever mod_perl returns,
              * so there is no need to mess with the status
              */
         }
@@ -369,7 +369,7 @@ int modperl_callback_per_dir(int idx, request_rec *r,
                                          NULL, NULL, NULL, run_mode);
 }
 
-int modperl_callback_per_srv(int idx, request_rec *r, 
+int modperl_callback_per_srv(int idx, request_rec *r,
                              modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx,
@@ -378,7 +378,7 @@ int modperl_callback_per_srv(int idx, request_rec *r,
                                          NULL, NULL, NULL, run_mode);
 }
 
-int modperl_callback_connection(int idx, conn_rec *c, 
+int modperl_callback_connection(int idx, conn_rec *c,
                                 modperl_hook_run_mode_e run_mode)
 {
     return modperl_callback_run_handlers(idx,

@@ -85,7 +85,7 @@ static int is_modperl_filter(ap_filter_t *f)
 {
     const char *name = f->frec->name;
 
-    /* frec->name is always lowercased */ 
+    /* frec->name is always lowercased */
     if (!strcasecmp(name, MP_FILTER_CONNECTION_INPUT_NAME)  ||
         !strcasecmp(name, MP_FILTER_CONNECTION_OUTPUT_NAME) ||
         !strcasecmp(name, MP_FILTER_REQUEST_INPUT_NAME)     ||
@@ -211,7 +211,7 @@ MP_INLINE apr_status_t modperl_wbucket_pass(modperl_wbucket_t *wb,
 
     MP_TRACE_f(MP_FUNC, "\n\n\twrite out: %db [%s]\n"
                "\t\tfrom %s\n\t\tto %s filter handler\n",
-               len, 
+               len,
                MP_TRACE_STR_TRUNC(wb->pool, buf, len),
                ((wb->r && wb->filters == &wb->r->output_filters)
                    ? "response handler" : "current filter handler"),
@@ -427,7 +427,7 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
 
 static int modperl_run_filter_init(ap_filter_t *f,
                                    modperl_filter_mode_e mode,
-                                   modperl_handler_t *handler) 
+                                   modperl_handler_t *handler)
 {
     AV *args = Nullav;
     int status;
@@ -438,7 +438,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     apr_pool_t  *p = r ? r->pool : c->pool;
     modperl_filter_t *filter = modperl_filter_new(f, NULL, mode, 0, 0, 0);
 
-    MP_dINTERP_SELECT(r, c, s);    
+    MP_dINTERP_SELECT(r, c, s);
 
     MP_TRACE_h(MP_FUNC, "running filter init handler %s\n",
                modperl_handler_name(handler));
@@ -467,7 +467,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d\n", modperl_handler_name(handler), status);
 
-    return status;  
+    return status;
 }
 
 
@@ -1096,7 +1096,7 @@ static int modperl_filter_add_request(request_rec *r,
                 /* XXX: I think this won't work as f->frec->name gets
                  * lowercased when added to the chain */
                 if (*fname == 'M' && strEQ(fname, name)) {
-                    modperl_handler_t *ctx_handler = 
+                    modperl_handler_t *ctx_handler =
                         ((modperl_filter_ctx_t *)f->ctx)->handler;
 
                     if (modperl_handler_equal(ctx_handler, handlers[i])) {
@@ -1215,7 +1215,7 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                   modperl_filter_f_cleanup,
                                   apr_pool_cleanup_null);
 
-        /* has to resolve early so we can check for init functions */ 
+        /* has to resolve early so we can check for init functions */
         if (!modperl_mgv_resolve(aTHX_ handler, pool, handler->name, TRUE)) {
             Perl_croak(aTHX_ "unable to resolve handler %s\n",
                        modperl_handler_name(handler));

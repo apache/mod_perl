@@ -193,7 +193,7 @@ struct modperl_handler_t {
      * - a subroutine name for named subs
      * - NULL for anon subs
      */
-    const char *name; 
+    const char *name;
     CV *cv;
     U8 flags;
     U32 attrs;

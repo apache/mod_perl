@@ -17,7 +17,7 @@
 /* apr_base64_encode_len and apr_base64_encode_binary give length that
  * includes the terminating '\0' */
 #define mpxs_APR__Base64_encode_len(len) (apr_base64_encode_len(len) - 1)
-    
+
 static MP_INLINE void mpxs_apr_base64_encode(pTHX_ SV *sv, SV *arg)
 {
     STRLEN len;

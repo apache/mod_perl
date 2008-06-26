@@ -18,7 +18,7 @@
 
 modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
 {
-    modperl_handler_t *handler = 
+    modperl_handler_t *handler =
         (modperl_handler_t *)apr_pcalloc(p, sizeof(*handler));
 
     switch (*name) {
@@ -71,7 +71,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
  * when perl_clone is called, each clone will clone that CV value, but
  * we will still be able to find it, since we stored it in the
  * hash. so we retrieve the CV value, whatever it is and we run it.
- * 
+ *
  * that explanation can be written and run in perl:
  *
  * use threads;
@@ -96,7 +96,7 @@ MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
 {
     /* re-use modperl_mgv_t entry which is otherwise is not used
      * by anon handlers */
-    modperl_mgv_t *anon = 
+    modperl_mgv_t *anon =
         (modperl_mgv_t *)apr_pcalloc(p, sizeof(*anon));
 
     anon->name = apr_psprintf(p, "anon%d", modperl_global_anon_cnt_next());
@@ -155,7 +155,7 @@ MP_INLINE CV *modperl_handler_anon_get(pTHX_ modperl_mgv_t *anon)
 static
 modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
 {
-    modperl_handler_t *handler = 
+    modperl_handler_t *handler =
         (modperl_handler_t *)apr_pcalloc(p, sizeof(*handler));
     MpHandlerPARSED_On(handler);
     MpHandlerANON_On(handler);
@@ -359,7 +359,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
  * $r->push/set at request time will create entries in r->request_config
  * push will first merge with configured handlers, unless an entry
  * in r->request_config already exists.  in this case, push or set has
- * already been called for the given handler, 
+ * already been called for the given handler,
  * r->request_config entries then override those in r->per_dir_config
  */
 

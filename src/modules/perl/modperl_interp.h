@@ -100,7 +100,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
 apr_status_t modperl_interp_pool_destroy(void *data);
 
-typedef apr_status_t (*modperl_interp_mip_walker_t)(pTHX_ 
+typedef apr_status_t (*modperl_interp_mip_walker_t)(pTHX_
                                                     modperl_interp_pool_t *mip,
                                                     void *data);
 

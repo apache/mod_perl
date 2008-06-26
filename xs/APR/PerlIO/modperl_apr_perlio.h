@@ -19,7 +19,7 @@
 
 #ifdef PERLIO_LAYERS
 #include "perliol.h"
-#else 
+#else
 #include "iperlsys.h"
 #endif
 
@@ -54,7 +54,7 @@ void modperl_apr_perlio_init(pTHX);
 #ifndef MP_SOURCE_SCAN
 
 #ifdef PERLIO_LAYERS
-PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file, 
+PerlIO *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
                                               apr_pool_t *pool,
                                               modperl_apr_perlio_hook_e type);
 APR_DECLARE_OPTIONAL_FN(PerlIO *,
@@ -64,7 +64,7 @@ APR_DECLARE_OPTIONAL_FN(PerlIO *,
 #endif /* PERLIO_LAYERS */
 
 
-SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file, 
+SV *modperl_apr_perlio_apr_file_to_glob(pTHX_ apr_file_t *file,
                                         apr_pool_t *pool,
                                         modperl_apr_perlio_hook_e type);
 APR_DECLARE_OPTIONAL_FN(SV *,

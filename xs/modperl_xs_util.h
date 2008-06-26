@@ -73,7 +73,7 @@
 
 #define mpxs_sv_object_deref(sv, type)                  \
     (mpxs_sv_is_object(sv) ?                            \
-        INT2PTR(type *, SvIVX((SV*)SvRV(sv))) : NULL) 
+        INT2PTR(type *, SvIVX((SV*)SvRV(sv))) : NULL)
 
 #define mpxs_sv2_obj(obj, sv)                   \
     (obj = mp_xs_sv2_##obj(sv))

@@ -62,15 +62,15 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle);
 #if defined(MP_IO_TIE_SFIO)
     /* XXX */
 #elif defined(MP_IO_TIE_PERLIO)
-#define modperl_io_override_stdin  modperl_io_perlio_override_stdin  
-#define modperl_io_override_stdout modperl_io_perlio_override_stdout  
-#define modperl_io_restore_stdin   modperl_io_perlio_restore_stdin  
-#define modperl_io_restore_stdout  modperl_io_perlio_restore_stdout  
+#define modperl_io_override_stdin  modperl_io_perlio_override_stdin
+#define modperl_io_override_stdout modperl_io_perlio_override_stdout
+#define modperl_io_restore_stdin   modperl_io_perlio_restore_stdin
+#define modperl_io_restore_stdout  modperl_io_perlio_restore_stdout
 #else
-#define modperl_io_override_stdin  modperl_io_tie_stdin  
-#define modperl_io_override_stdout modperl_io_tie_stdout  
-#define modperl_io_restore_stdin   modperl_io_handle_untie  
-#define modperl_io_restore_stdout  modperl_io_handle_untie  
+#define modperl_io_override_stdin  modperl_io_tie_stdin
+#define modperl_io_override_stdout modperl_io_tie_stdout
+#define modperl_io_restore_stdin   modperl_io_handle_untie
+#define modperl_io_restore_stdout  modperl_io_handle_untie
 #endif
 
 
