@@ -23,3 +23,10 @@ mpxs_apr_sockaddr_ip_get(pTHX_ apr_sockaddr_t *sockaddr)
 
     return addr;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

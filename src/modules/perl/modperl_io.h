@@ -75,3 +75,10 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle);
 
 
 #endif /* MODPERL_IO_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

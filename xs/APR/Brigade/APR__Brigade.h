@@ -171,3 +171,10 @@ void mpxs_APR__Brigade_destroy(pTHX_ apr_bucket_brigade *bb)
 {
     MP_RUN_CROAK(apr_brigade_destroy(bb), "APR::Brigade::destroy");
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

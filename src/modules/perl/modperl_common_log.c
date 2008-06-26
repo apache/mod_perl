@@ -101,3 +101,10 @@ void modperl_trace_level_set(apr_file_t *logfile, const char *level)
 
     MP_TRACE_any_do(MP_TRACE_dump_flags());
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

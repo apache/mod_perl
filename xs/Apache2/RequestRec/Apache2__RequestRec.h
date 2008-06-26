@@ -146,3 +146,10 @@ const char *mpxs_Apache2__RequestRec_handler(pTHX_  I32 items,
 
     return RETVAL;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -67,3 +67,10 @@ int modperl_sys_dlclose(void *handle)
     return 0;
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

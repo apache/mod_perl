@@ -202,3 +202,10 @@ static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
     newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_description",
                 newSVpv(ap_get_server_description(), 0));
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

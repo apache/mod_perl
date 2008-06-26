@@ -372,3 +372,10 @@ apr_status_t mpxs_Apache2__RequestRec_sendfile(pTHX_ request_rec *r,
 
     return rc;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

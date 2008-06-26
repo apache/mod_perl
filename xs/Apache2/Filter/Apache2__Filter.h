@@ -366,3 +366,10 @@ apr_status_t mpxs_Apache2__Filter_pass_brigade(pTHX_ ap_filter_t *f,
 
     return rc;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

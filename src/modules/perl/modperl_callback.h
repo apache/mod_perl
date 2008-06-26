@@ -66,3 +66,10 @@ int modperl_callback_files(int idx,
                            modperl_hook_run_mode_e run_mode);
 
 #endif /* MODPERL_CALLBACK_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

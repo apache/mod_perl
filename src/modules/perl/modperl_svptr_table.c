@@ -300,3 +300,10 @@ modperl_svptr_table_free(pTHX_ PTR_TBL_t *tbl)
     Safefree(tbl->tbl_ary);
     Safefree(tbl);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

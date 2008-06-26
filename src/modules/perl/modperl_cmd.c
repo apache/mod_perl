@@ -834,3 +834,10 @@ MP_CMD_INTERP_POOL_IMP(min_spare);
 MP_CMD_INTERP_POOL_IMP(max_requests);
 
 #endif /* USE_ITHREADS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -28,3 +28,10 @@ SV *mpxs_apr_thread_mutex_create(pTHX_ SV *classname, SV *p_sv,
     mpxs_add_pool_magic(mutex_sv, p_sv);
     return mutex_sv;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

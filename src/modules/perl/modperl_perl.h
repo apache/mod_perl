@@ -48,3 +48,10 @@ void modperl_hash_seed_init(apr_pool_t *p);
 void modperl_hash_seed_set(pTHX);
 
 #endif /* MODPERL_PERL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

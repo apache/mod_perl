@@ -401,3 +401,10 @@ void modperl_tipool_putback(modperl_tipool_t *tipool,
 }
 
 #endif /* USE_ITHREADS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

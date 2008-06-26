@@ -288,3 +288,10 @@ typedef enum {
 } modperl_hook_run_mode_e;
 
 #endif /* MODPERL_TYPES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

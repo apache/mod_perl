@@ -140,3 +140,10 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
 		   apr_pool_t *pool );
 
 #endif /* MODPERL_UTIL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

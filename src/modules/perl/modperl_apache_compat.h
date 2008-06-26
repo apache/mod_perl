@@ -72,3 +72,10 @@ AP_DECLARE(const char *) ap_get_server_version(void);
                                         OPT_MULTI)
 
 #endif /* MODPERL_APACHE_COMPAT_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

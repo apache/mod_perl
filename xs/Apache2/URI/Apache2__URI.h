@@ -38,3 +38,10 @@ static MP_INLINE char *mpxs_ap_unescape_url(pTHX_ SV *url)
 
     return SvPVX(url);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

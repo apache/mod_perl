@@ -26,3 +26,10 @@ typedef struct {
 } modperl_uri_t;
 
 #endif /* MODPERL_COMMON_TYPES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

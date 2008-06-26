@@ -931,3 +931,10 @@ SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s,
 
     return obj;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

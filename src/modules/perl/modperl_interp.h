@@ -125,3 +125,10 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 #endif /* USE_ITHREADS */
 
 #endif /* MODPERL_INTERP_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

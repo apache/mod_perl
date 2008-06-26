@@ -142,3 +142,10 @@
 #endif
 
 #endif /* MODPERL_PERL_INCLUDES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

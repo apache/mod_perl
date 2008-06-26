@@ -85,3 +85,10 @@ int modperl_handler_perl_add_handlers(pTHX_
                                       modperl_handler_action_e action);
 
 #endif /* MODPERL_HANDLER_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

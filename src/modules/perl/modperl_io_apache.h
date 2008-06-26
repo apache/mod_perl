@@ -58,3 +58,10 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
                                        char *buffer, Size_t len);
 
 #endif /* MODPERL_IO_APACHE_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

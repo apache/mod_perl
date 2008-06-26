@@ -153,3 +153,10 @@
 #endif
 
 #endif /* MODPERL_APR_COMPAT_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

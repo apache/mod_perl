@@ -116,3 +116,10 @@ apr_status_t mpxs_APR__Socket_poll(apr_socket_t *socket,
 
     return apr_poll(&fd, 1, &nsds, timeout);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

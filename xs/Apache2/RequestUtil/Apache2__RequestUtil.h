@@ -367,3 +367,10 @@ void mpxs_Apache2__RequestRec_child_terminate(pTHX_ request_rec *r)
     apr_pool_cleanup_register(r->pool, r->pool, child_terminate,
                               apr_pool_cleanup_null);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -216,3 +216,10 @@ MP_STATIC XS(MPXS_modperl_spawn_proc_prog)
 
     PUTBACK;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

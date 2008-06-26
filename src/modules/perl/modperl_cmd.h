@@ -148,3 +148,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
       OR_ALL|EXEC_ON_READ, desc )
 
 #endif /* MODPERL_CMD_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

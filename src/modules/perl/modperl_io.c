@@ -275,3 +275,10 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
 
     MP_TRACE_o(MP_FUNC, "end\n");
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

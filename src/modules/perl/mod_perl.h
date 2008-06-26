@@ -200,3 +200,10 @@ APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
 #endif /* end of #ifdef USE_ITHREADS */
 
 #endif /*  MOD_PERL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

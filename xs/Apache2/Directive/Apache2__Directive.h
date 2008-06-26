@@ -194,3 +194,10 @@ MP_STATIC XS(MPXS_Apache2__Directive_lookup)
         }
     });
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

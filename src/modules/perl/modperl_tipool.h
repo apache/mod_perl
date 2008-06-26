@@ -87,3 +87,10 @@ void modperl_tipool_putback_data(modperl_tipool_t *tipool, void *data,
 #endif /* USE_ITHREADS */
 
 #endif /* MODPERL_TIPOOL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -677,3 +677,10 @@ int modperl_config_is_perl_option_enabled(pTHX_ request_rec *r,
     }
 
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */
