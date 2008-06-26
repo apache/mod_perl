@@ -32,7 +32,7 @@ sub handler {
 #This one shouldn't be touched
 package Apache2::Reload::Test::SubPackage;
 
-sub subpackage { 
+sub subpackage {
     if ($TestModules::reload::pass == '2') {
         return 'subpackage';
     }

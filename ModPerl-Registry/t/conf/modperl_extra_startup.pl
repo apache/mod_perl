@@ -31,7 +31,7 @@ for my $file (qw(basic.pl env.pl)) {
 # test the scripts pre-loading by using trans sub
 {
     sub trans {
-        my $uri = shift; 
+        my $uri = shift;
         $uri =~ s|^/registry_bb/|cgi-bin/|;
         return Apache2::ServerUtil::server_root_relative($pool, $uri);
     }

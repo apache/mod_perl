@@ -1845,7 +1845,7 @@ EOI
         if (WIN32) {
             (my $manifest = $libs) =~ s/\.lib$/.so.manifest/;
             print $fh $self->canon_make_attr('manifest_location', $manifest);
-	}
+        }
 
         print $fh $self->canon_make_attr('ap_libdir',
             $self->ap_destdir(catdir $self->{MP_AP_PREFIX}, 'lib')

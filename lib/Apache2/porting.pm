@@ -32,7 +32,7 @@ our $AUTOLOAD;
 # - removed and replaced methods
 # - hinting the package names in which methods reside
 
-my %avail_methods = map { $_ => 1 } 
+my %avail_methods = map { $_ => 1 }
     (ModPerl::MethodLookup::avail_methods(),
      ModPerl::MethodLookup::avail_methods_compat());
 

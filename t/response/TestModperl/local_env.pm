@@ -22,16 +22,16 @@ sub handler {
 
     my %copy_ENV = %ENV;  ## this is not a deep copy;
 
-    ok t_cmp($ENV{MOD_PERL_API_VERSION}, 2, 
+    ok t_cmp($ENV{MOD_PERL_API_VERSION}, 2,
       "\$ENV{MOD_PERL_API_VERSION} is 2 before local \%ENV");
 
     {
       local %ENV;
 
-      ok t_cmp($ENV{MOD_PERL_API_VERSION}, undef, 
+      ok t_cmp($ENV{MOD_PERL_API_VERSION}, undef,
           "\$ENV{MOD_PERL_API_VERSION} is undef after local \%ENV");
 
-      ok t_cmp(scalar keys %ENV, 0, 
+      ok t_cmp(scalar keys %ENV, 0,
           "\%ENV has 0 keys after local");
 
       $ENV{LOCAL} = 1;

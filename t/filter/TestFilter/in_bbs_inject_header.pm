@@ -188,7 +188,7 @@ sub handler : FilterConnectionHandler {
             # normally the body will start coming in the next call to
             # get_brigade, so if your filter only wants to work with
             # the headers, it can decline all other invocations if that
-            # flag is set. However since in this test we need to send 
+            # flag is set. However since in this test we need to send
             # a few extra bucket brigades, we will turn another flag
             # 'done_with_headers' when 'seen_body_separator' is on and
             # all headers were sent out
@@ -232,7 +232,7 @@ sub response {
 
     # propogate the input headers and the input back to the client
     # as we need to do the validations on the client side
-    $r->headers_out->set($header1_key => 
+    $r->headers_out->set($header1_key =>
                          $r->headers_in->get($header1_key)||'');
 
     for my $key (sort keys %headers) {

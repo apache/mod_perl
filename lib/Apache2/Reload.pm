@@ -88,8 +88,8 @@ sub handler {
 
     my $TouchFile = ref($o) && $o->dir_config("ReloadTouchFile");
 
-    my $ConstantRedefineWarnings = ref($o) && 
-        (lc($o->dir_config("ReloadConstantRedefineWarnings") || '') eq 'off') 
+    my $ConstantRedefineWarnings = ref($o) &&
+        (lc($o->dir_config("ReloadConstantRedefineWarnings") || '') eq 'off')
             ? 0 : 1;
 
     my $TouchModules;
@@ -109,9 +109,9 @@ sub handler {
     }
     else {
         *Apache2::Reload::INCS = \%INCS;
-        my $ExtraList = 
-                $TouchModules || 
-                (ref($o) && $o->dir_config("ReloadModules")) || 
+        my $ExtraList =
+                $TouchModules ||
+                (ref($o) && $o->dir_config("ReloadModules")) ||
                 '';
         my @extra = split /\s+/, $ExtraList;
         foreach (@extra) {
@@ -132,7 +132,7 @@ sub handler {
 
     my $ReloadDirs = ref($o) && $o->dir_config("ReloadDirectories");
     my @watch_dirs = split(/\s+/, $ReloadDirs||'');
-    
+
     my @changed;
     foreach my $key (sort { $a cmp $b } keys %Apache2::Reload::INCS) {
         my $file = $Apache2::Reload::INCS{$key};
@@ -162,13 +162,13 @@ sub handler {
         }
         $Stat{$file} = $mtime;
     }
-    
+
     #First, let's unload all changed modules
     foreach my $module (@changed) {
         my $package = module_to_package($module);
         ModPerl::Util::unload_package($package);
     }
-    
+
     #Then, let's reload them all, so that module dependencies can satisfy
     #themselves in the correct order.
     foreach my $module (@changed) {

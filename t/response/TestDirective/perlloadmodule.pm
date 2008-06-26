@@ -38,7 +38,7 @@ sub DIR_CREATE {
     my ($class, $parms) = @_;
 
     bless {
-	path => $parms->path || "/",
+        path => $parms->path || "/",
     }, $class;
 }
 
@@ -48,7 +48,7 @@ sub merge {
     my %new = ();
 
     @new{keys %$base, keys %$add} =
-	(values %$base, values %$add);
+        (values %$base, values %$add);
 
     return bless \%new, ref($base);
 }
@@ -69,7 +69,7 @@ sub SERVER_CREATE {
     my ($class, $parms) = @_;
     debug "$class->SERVER_CREATE\n";
     return bless {
-	name => __PACKAGE__,
+        name => __PACKAGE__,
     }, $class;
 }
 

@@ -26,7 +26,7 @@ sub handler {
     Apache2::Const::OK;
 }
 
-my %require_tests = 
+my %require_tests =
     (
      main => 'PerlRequired by Parent',
      vh   => 'PerlRequired by VirtualHost',

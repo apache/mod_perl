@@ -40,7 +40,7 @@ sub handler : method {
 
     ok t_cmp(
         $r->uri,
-        '/' . Apache::TestRequest::module2path($class), 
+        '/' . Apache::TestRequest::module2path($class),
         '$r->uri eq $location');
 
     if ($is_obj) {

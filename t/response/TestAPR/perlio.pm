@@ -22,7 +22,7 @@ use constant LARGE_FILES_CONFLICT => 1;
 # apr_file_dup has a bug on win32,
 # should be fixed in apr 0.9.4 / httpd-2.0.48
 require Apache2::Build;
-use constant APR_WIN32_FILE_DUP_BUG => 
+use constant APR_WIN32_FILE_DUP_BUG =>
     Apache2::Build::WIN32() && !have_min_apache_version('2.0.48');
 
 sub handler {
@@ -224,7 +224,7 @@ sub handler {
     # tests reading and writing text and binary files
     {
         for my $file ('MoonRise.jpeg', 'redrum.txt') {
-            my $in = catfile $dir, $file; 
+            my $in = catfile $dir, $file;
             my $out = catfile $dir, "$file.out";
             my ($apr_content, $perl_content);
             open my $rfh, "<:APR", $in, $r->pool
@@ -331,11 +331,11 @@ sub handler {
         unlink $scratch;
     }
 
-    # XXX: need tests 
+    # XXX: need tests
     # - for stdin/out/err as they are handled specially
 
     # XXX: tmpfile is missing:
-    # consider to use 5.8's syntax: 
+    # consider to use 5.8's syntax:
     #   open $fh, "+>", undef;
 
     # cleanup: t_mkdir will remove the whole tree including the file

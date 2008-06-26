@@ -18,7 +18,7 @@ package TestCommon::MemoryLeak;
 #  % t/TEST -maxclients 1 -start
 #
 # of course use maxclients 1 only if your test be handled with one
-# client, e.g. proxy tests need at least two clients. 
+# client, e.g. proxy tests need at least two clients.
 #
 # Now repeat the same test several times (more than 3)
 #

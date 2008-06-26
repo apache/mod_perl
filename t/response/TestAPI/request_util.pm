@@ -40,7 +40,7 @@ sub handler {
     }
     else {
         eval { $r->document_root('/tmp/foo') };
-        ok t_cmp($@, qr/Can't run.*in the threaded env/, 
+        ok t_cmp($@, qr/Can't run.*in the threaded env/,
                  "document_root is read-only under threads");
         ok 1;
     }

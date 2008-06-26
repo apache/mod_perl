@@ -326,7 +326,7 @@ sub make_namespace {
 sub namespace_from_filename {
     my $self = shift;
 
-    my ($volume, $dirs, $file) = 
+    my ($volume, $dirs, $file) =
         File::Spec::Functions::splitpath($self->{FILENAME});
     my @dirs = File::Spec::Functions::splitdir($dirs);
     return join '_', grep { defined && length } $volume, @dirs, $file;
@@ -341,7 +341,7 @@ sub namespace_from_uri {
         ? substr($self->{URI}, 0, length($self->{URI}) - length($path_info))
         : $self->{URI};
 
-    if ($ModPerl::RegistryCooker::NameWithVirtualHost && 
+    if ($ModPerl::RegistryCooker::NameWithVirtualHost &&
         $self->{REQ}->server->is_virtual) {
         my $name = $self->{REQ}->get_server_name;
         $script_name = join "", $name, $script_name if $name;
@@ -486,7 +486,7 @@ sub is_cached {
 sub should_compile_if_modified {
     my $self = shift;
     $self->{MTIME} ||= -M $self->{REQ}->my_finfo;
-    !($self->is_cached && 
+    !($self->is_cached &&
       $self->cache_table->{ $self->{PACKAGE} }{mtime} <= $self->{MTIME});
 }
 
@@ -610,7 +610,7 @@ sub get_script_name {
 # dflt: NOP
 # desc: chdirs into $dir
 # args: $self - registry blessed object
-#       $dir - a dir 
+#       $dir - a dir
 # rtrn: nothing (?or success/failure?)
 #########################################################################
 
@@ -670,9 +670,9 @@ sub compile {
     ModPerl::Global::special_list_clear(   END => $self->{PACKAGE});
 
     {
-        # let the code define its own warn and strict level 
+        # let the code define its own warn and strict level
         no strict;
-        no warnings FATAL => 'all'; # because we use FATAL 
+        no warnings FATAL => 'all'; # because we use FATAL
         eval $$eval;
     }
 

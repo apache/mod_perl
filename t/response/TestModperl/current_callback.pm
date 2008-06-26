@@ -33,7 +33,7 @@ sub headerparser { check('HeaderParser') }
 sub check {
     my $expected = 'Perl' . shift() . 'Handler';
     my $callback = ModPerl::Util::current_callback();
-    die "expecting $expected callback, instead got $callback" 
+    die "expecting $expected callback, instead got $callback"
         unless $callback eq $expected;
     #warn "in callback: $callback\n";
     return Apache2::Const::OK;

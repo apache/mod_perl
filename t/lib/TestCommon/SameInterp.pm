@@ -100,7 +100,7 @@ normally one runs:
 
 in the same_interp framework one runs
 
-  my $res = Apache::TestRequest::same_interp_do($same_interp, 
+  my $res = Apache::TestRequest::same_interp_do($same_interp,
       \&GET, $url, @data);
 
 but if there is a failure to find the same interpreter we get an

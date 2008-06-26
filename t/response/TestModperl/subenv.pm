@@ -32,7 +32,7 @@ sub handler {
         ok ! $ENV{$key};               # %ENV not populated yet
     }
 
-    # subprocess_env in void context with no arguments 
+    # subprocess_env in void context with no arguments
     # populates the same as +SetEnv
     {
         my $env = $r->subprocess_env;

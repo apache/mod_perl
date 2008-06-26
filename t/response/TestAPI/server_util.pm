@@ -110,7 +110,7 @@ sub server_root_relative_tests {
 
     # no file argument gives ServerRoot
     {
-        my $server_root_relative = 
+        my $server_root_relative =
             Apache2::ServerUtil::server_root_relative($r->pool);
 
         ok t_filepath_cmp(canonpath($server_root_relative),

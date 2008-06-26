@@ -80,7 +80,7 @@ BEGIN {
 #  Currently unsupported for mp2 because of threads...
 #     }
 #      elsif (WIN32) {
-# 
+#
 #         if ( eval { require Win32::API } ) {
 #             $HOW_BIG_IS_IT = \&win32_size_check;
 #         }

@@ -18,7 +18,7 @@ sub handler {
 
     # %ENV
     ok t_cmp(env_get('srv1'),
-             'env_dir1', 
+             'env_dir1',
              '%ENV per-dir override per-srv');
 
     ok t_cmp(env_get('srv2'),
