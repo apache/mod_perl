@@ -52,9 +52,9 @@ int mpxs_Apache2__RequestRec_proxyreq(pTHX_ request_rec *r, SV *val)
 
     if (!val && !r->proxyreq &&
         r->parsed_uri.scheme &&
-	!(r->parsed_uri.hostname &&
-	  strEQ(r->parsed_uri.scheme, ap_http_scheme(r)) &&
-	  ap_matches_request_vhost(r, r->parsed_uri.hostname,
+        !(r->parsed_uri.hostname &&
+          strEQ(r->parsed_uri.scheme, ap_http_scheme(r)) &&
+          ap_matches_request_vhost(r, r->parsed_uri.hostname,
                                    r->parsed_uri.port_str ?
                                    r->parsed_uri.port :
                                    ap_default_port(r))))

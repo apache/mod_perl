@@ -122,7 +122,7 @@ MP_STATIC XS(MPXS_Apache2__Directive_lookup)
     dXSARGS;
 
     if (items < 2 || items > 3) {
-	    Perl_croak(aTHX_
+            Perl_croak(aTHX_
                        "Usage: Apache2::Directive::lookup(self, key, [args])");
     }
 
@@ -137,20 +137,20 @@ MP_STATIC XS(MPXS_Apache2__Directive_lookup)
         char *key = (char *)SvPV_nolen(ST(1));
         int scalar_context = (G_SCALAR == GIMME_V);
 
-	    if (SvROK(ST(0)) && sv_derived_from(ST(0), "Apache2::Directive")) {
-	        IV tmp = SvIV((SV*)SvRV(ST(0)));
-	        tree = INT2PTR(Apache2__Directive,tmp);
-	    }
-	    else {
-	        tree = ap_conftree;
+            if (SvROK(ST(0)) && sv_derived_from(ST(0), "Apache2::Directive")) {
+                IV tmp = SvIV((SV*)SvRV(ST(0)));
+                tree = INT2PTR(Apache2__Directive,tmp);
+            }
+            else {
+                tree = ap_conftree;
             }
 
-	    if (items < 3) {
-	        value = NULL;
+            if (items < 3) {
+                value = NULL;
             }
-	    else {
-	        value = (char *)SvPV_nolen(ST(2));
-	    }
+            else {
+                value = (char *)SvPV_nolen(ST(2));
+            }
 
         while (tree) {
             directive = tree->directive;

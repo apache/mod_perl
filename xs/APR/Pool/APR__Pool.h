@@ -75,8 +75,8 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
          * there are no more references, in which case                  \
          * the interpreter will be putback into the mip                 \
          */                                                             \
-        MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)",	\
-		   acct->interp);					\
+        MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)",       \
+                   acct->interp);                                       \
         (void)modperl_opt_interp_unselect(acct->interp);                \
     }                                                                   \
 } STMT_END
@@ -99,8 +99,8 @@ APR_OPTIONAL_FN_TYPE(modperl_interp_unselect) *modperl_opt_interp_unselect;
      */                                                                 \
     if ((acct->interp = MP_THX_INTERP_GET(aTHX))) {                     \
         acct->interp->refcnt++;                                         \
-        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",	\
-		   acct->interp, acct->interp->refcnt);                 \
+        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",   \
+                   acct->interp, acct->interp->refcnt);                 \
     }                                                                   \
 } STMT_END
 
@@ -343,7 +343,7 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
     if ((data->interp = MP_THX_INTERP_GET(data->perl))) {
         data->interp->refcnt++;
         MP_TRACE_i(MP_FUNC, "(0x%lx)->refcnt incremented to %ld",
-		   data->interp, data->interp->refcnt);
+                   data->interp, data->interp->refcnt);
     }
 #endif
 

@@ -381,7 +381,7 @@ apr_status_t modperl_config_req_cleanup(void *data)
     modperl_interp_t *interp = modperl_interp_select(r, NULL, r->server);
 
     MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
-	       interp, interp->refcnt);
+               interp, interp->refcnt);
     aTHX = interp->perl;
 #endif
 
@@ -389,7 +389,7 @@ apr_status_t modperl_config_req_cleanup(void *data)
 
 #ifdef USE_ITHREADS
     MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-	       interp, interp->refcnt);
+               interp, interp->refcnt);
     modperl_interp_unselect(interp);
 #endif
 
