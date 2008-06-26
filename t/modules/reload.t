@@ -72,7 +72,7 @@ touch_mtime($test_file);
 
 {
     my $expected = "unregistered OK";
-    my $received = same_interp_req_body($same_interp, \&GET, 
+    my $received = same_interp_req_body($same_interp, \&GET,
                                         $location . '?last' );
     $skip++ unless defined $received;
     same_interp_skip_not_found(
@@ -98,7 +98,7 @@ use Apache2::Reload;
 
 our @methods = qw(simple const prototype subpackage);
 
-sub subpackage { return Apache2::Reload::Test::SubPackage::subpackage() } 
+sub subpackage { return Apache2::Reload::Test::SubPackage::subpackage() }
 
 sub run {
     my $r = shift;

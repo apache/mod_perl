@@ -12,17 +12,17 @@ my $module = 'TestPerl::ithreads3';
 
 sub u {Apache::TestRequest::module2url($module, {path=>$_[0]})}
 sub t {
-  my $rc;
-  eval {
-    local $SIG{ALRM}=sub {die "Timeout\n"};
-    alarm 2;
+    my $rc;
     eval {
-      $rc=GET_BODY u(shift);
+        local $SIG{ALRM}=sub {die "Timeout\n"};
+        alarm 2;
+        eval {
+            $rc=GET_BODY u(shift);
+        };
+        alarm 0;
     };
     alarm 0;
-  };
-  alarm 0;
-  return $rc;
+    return $rc;
 }
 
 t_debug("connecting to ".u(''));
@@ -34,7 +34,3 @@ ok t_cmp t('/modperl?2'), 5, 'modperl 2';
 
 ok t_cmp t('/perl-script?3'), 3, 'perl-script 3';
 ok t_cmp t('/modperl?3'), 3, 'modperl 3';
-
-# Local Variables: #
-# mode: cperl #
-# End: #
