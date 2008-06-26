@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 use Apache::TestUtil;
 use Apache::TestRequest 'GET_BODY_ASSERT';
 
