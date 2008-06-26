@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestDirective::perlrequire;
 
 # Test whether vhost with 'PerlOptions +Parent', which doesn't inherit

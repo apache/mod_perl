@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestVhost::config;
 
 # Test whether under threaded mpms (and not) a vhost with 'PerlOptions

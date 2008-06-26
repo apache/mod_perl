@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 #check which apr_ functions do not have access to a pool
 

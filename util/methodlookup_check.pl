@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 # this script checks whether all XS methods are known to ModPerl::MethodLookup
 

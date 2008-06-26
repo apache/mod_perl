@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestHooks::inlined_handlers;
 
 # this test exercises httpd.conf inlined one-liner handlers, like:

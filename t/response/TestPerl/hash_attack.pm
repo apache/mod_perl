@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestPerl::hash_attack;
 
 # if the rehashing of the keys in the stash happens due to the hash attack,
