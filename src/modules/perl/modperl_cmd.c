@@ -47,13 +47,13 @@ char *modperl_cmd_push_handlers(MpAV **handlers, const char *name,
 
     if (!*handlers) {
         *handlers = modperl_handler_array_new(p);
-        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+        MP_TRACE_d(MP_FUNC, "created handler stack");
     }
 
     /* XXX parse_handler if Perl is running */
 
     modperl_handler_array_push(*handlers, h);
-    MP_TRACE_d(MP_FUNC, "pushed handler: %s\n", h->name);
+    MP_TRACE_d(MP_FUNC, "pushed handler: %s", h->name);
 
     return NULL;
 }
@@ -71,22 +71,22 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
         MP_TRACE_h(MP_FUNC,
                    "warning: filter handler %s will be not autoloaded. "
                    "Unless the module defining this handler is explicitly "
-                   "preloaded, filter attributes will be ignored.\n");
+                   "preloaded, filter attributes will be ignored.");
     }
     else {
         MpHandlerAUTOLOAD_On(h);
         MP_TRACE_h(MP_FUNC,
                    "filter handler %s will be autoloaded (to make "
-                   "the filter attributes available)\n", h->name);
+                   "the filter attributes available)", h->name);
     }
 
     if (!*handlers) {
         *handlers = modperl_handler_array_new(p);
-        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+        MP_TRACE_d(MP_FUNC, "created handler stack");
     }
 
     modperl_handler_array_push(*handlers, h);
-    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s\n", h->name);
+    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s", h->name);
 
     return NULL;
 }
@@ -105,18 +105,18 @@ static char *modperl_cmd_push_httpd_filter_handlers(MpAV **handlers,
 
     if (!*handlers) {
         *handlers = modperl_handler_array_new(p);
-        MP_TRACE_d(MP_FUNC, "created handler stack\n");
+        MP_TRACE_d(MP_FUNC, "created handler stack");
     }
 
     modperl_handler_array_push(*handlers, h);
-    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s\n", h->name);
+    MP_TRACE_d(MP_FUNC, "pushed httpd filter handler: %s", h->name);
 
     return NULL;
 }
 
 
 #define MP_CMD_SRV_TRACE \
-    MP_TRACE_d(MP_FUNC, "%s %s\n", parms->cmd->name, arg)
+    MP_TRACE_d(MP_FUNC, "%s %s", parms->cmd->name, arg)
 
 #define MP_CMD_SRV_CHECK \
 MP_CMD_SRV_TRACE; \
@@ -154,7 +154,7 @@ MP_CMD_SRV_DECLARE(switches)
     if (modperl_vhost_is_running(s)) {
         return modperl_cmd_too_late(parms);
     }
-    MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
+    MP_TRACE_d(MP_FUNC, "arg = %s", arg);
 
     if (!strncasecmp(arg, "+inherit", 8)) {
         modperl_cmd_options(parms, mconfig, "+InheritSwitches");
@@ -182,7 +182,7 @@ MP_CMD_SRV_DECLARE(modules)
     if (modperl_is_running()) {
         char *error = NULL;
 
-        MP_TRACE_d(MP_FUNC, "load PerlModule %s\n", arg);
+        MP_TRACE_d(MP_FUNC, "load PerlModule %s", arg);
 
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
@@ -197,7 +197,7 @@ MP_CMD_SRV_DECLARE(modules)
         return error;
     }
     else {
-        MP_TRACE_d(MP_FUNC, "push PerlModule %s\n", arg);
+        MP_TRACE_d(MP_FUNC, "push PerlModule %s", arg);
         *(const char **)apr_array_push(scfg->PerlModule) = arg;
         return NULL;
     }
@@ -220,7 +220,7 @@ MP_CMD_SRV_DECLARE(requires)
     if (modperl_is_running()) {
         char *error = NULL;
 
-        MP_TRACE_d(MP_FUNC, "load PerlRequire %s\n", arg);
+        MP_TRACE_d(MP_FUNC, "load PerlRequire %s", arg);
 
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_file(aTHX_ arg, FALSE)) {
@@ -235,7 +235,7 @@ MP_CMD_SRV_DECLARE(requires)
         return error;
     }
     else {
-        MP_TRACE_d(MP_FUNC, "push PerlRequire %s\n", arg);
+        MP_TRACE_d(MP_FUNC, "push PerlRequire %s", arg);
         *(const char **)apr_array_push(scfg->PerlRequire) = arg;
         return NULL;
     }
@@ -259,7 +259,7 @@ MP_CMD_SRV_DECLARE(post_config_requires)
     MP_dSCFG(parms->server);
 
     modperl_require_file_t *require = apr_pcalloc(p, sizeof(*require));
-    MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s\n", arg);
+    MP_TRACE_d(MP_FUNC, "push PerlPostConfigRequire for %s", arg);
     require->file = arg;
     require->dcfg = dcfg;
 
@@ -293,7 +293,7 @@ static const char *modperl_cmd_modvar(modperl_var_modify_t varfunc,
 {
     varfunc(dcfg->configvars, dcfg->setvars, arg1, arg2);
 
-    MP_TRACE_d(MP_FUNC, "%s DIR: arg1 = %s, arg2 = %s\n",
+    MP_TRACE_d(MP_FUNC, "%s DIR: arg1 = %s, arg2 = %s",
                parms->cmd->name, arg1, arg2);
 
     /* make available via Apache2->server->dir_config */
@@ -301,7 +301,7 @@ static const char *modperl_cmd_modvar(modperl_var_modify_t varfunc,
         MP_dSCFG(parms->server);
         varfunc(scfg->configvars, scfg->setvars, arg1, arg2);
 
-        MP_TRACE_d(MP_FUNC, "%s SRV: arg1 = %s, arg2 = %s\n",
+        MP_TRACE_d(MP_FUNC, "%s SRV: arg1 = %s, arg2 = %s",
                    parms->cmd->name, arg1, arg2);
     }
 
@@ -333,7 +333,7 @@ MP_CMD_SRV_DECLARE2(set_env)
     modperl_str_toupper((char *)arg1);
 #endif
 
-    MP_TRACE_d(MP_FUNC, "arg1 = %s, arg2 = %s\n", arg1, arg2);
+    MP_TRACE_d(MP_FUNC, "arg1 = %s, arg2 = %s", arg1, arg2);
 
     if (!parms->path) {
         /* will be propagated to environ */
@@ -373,10 +373,10 @@ MP_CMD_SRV_DECLARE(pass_env)
             modperl_env_hv_store(aTHX_ arg, val);
             MP_PERL_CONTEXT_RESTORE;
         }
-        MP_TRACE_d(MP_FUNC, "arg = %s, val = %s\n", arg, val);
+        MP_TRACE_d(MP_FUNC, "arg = %s, val = %s", arg, val);
     }
     else {
-        MP_TRACE_d(MP_FUNC, "arg = %s: not found via getenv()\n", arg);
+        MP_TRACE_d(MP_FUNC, "arg = %s: not found via getenv()", arg);
     }
 
     return NULL;
@@ -391,7 +391,7 @@ MP_CMD_SRV_DECLARE(options)
     apr_pool_t *p = parms->temp_pool;
     const char *error;
 
-    MP_TRACE_d(MP_FUNC, "arg = %s\n", arg);
+    MP_TRACE_d(MP_FUNC, "arg = %s", arg);
     if ((error = modperl_options_set(p, opts, arg)) && !is_per_dir) {
         /* maybe a per-directory option outside of a container */
         if (modperl_options_set(p, dcfg->flags, arg) == NULL) {
@@ -661,7 +661,7 @@ MP_CMD_SRV_DECLARE(load_module)
 {
     const char *errmsg;
 
-    MP_TRACE_d(MP_FUNC, "PerlLoadModule %s\n", arg);
+    MP_TRACE_d(MP_FUNC, "PerlLoadModule %s", arg);
 
     /* we must init earlier than normal */
     modperl_run();
@@ -823,7 +823,7 @@ const char *modperl_cmd_interp_##xitem(cmd_parms *parms, \
     MP_dSCFG(parms->server); \
     int item = atoi(arg); \
     scfg->interp_pool_cfg->xitem = item; \
-    MP_TRACE_d(MP_FUNC, "%s %d\n", parms->cmd->name, item); \
+    MP_TRACE_d(MP_FUNC, "%s %d", parms->cmd->name, item); \
     return NULL; \
 }
 

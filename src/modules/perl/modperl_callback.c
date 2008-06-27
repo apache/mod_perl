@@ -88,7 +88,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                 name = handler->name;
             }
 
-            MP_TRACE_h(MP_FUNC, "[%s] lookup of %s failed\n",
+            MP_TRACE_h(MP_FUNC, "[%s] lookup of %s failed",
                        modperl_server_desc(s, p), name);
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "lookup of '%s' failed", name);
@@ -162,7 +162,7 @@ int modperl_callback_run_handlers(int idx, int type,
     AV *av_args = Nullav;
 
     if (!MpSrvENABLE(scfg)) {
-        MP_TRACE_h(MP_FUNC, "PerlOff for server %s:%u\n",
+        MP_TRACE_h(MP_FUNC, "PerlOff for server %s:%u",
                    s->server_hostname, s->port);
         return DECLINED;
     }
@@ -178,7 +178,7 @@ int modperl_callback_run_handlers(int idx, int type,
                                           type, idx, FALSE, &desc);
 
     if (!(avp && (av = *avp))) {
-        MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)\n",
+        MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)",
                    desc, r ? r->uri : "");
         return DECLINED;
     }
@@ -186,7 +186,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef USE_ITHREADS
     if (r || c) {
         interp = modperl_interp_select(r, c, s);
-        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         aTHX = interp->perl;
         /* if you ask why PERL_SET_CONTEXT is omitted here the answer is
@@ -248,13 +248,13 @@ int modperl_callback_run_handlers(int idx, int type,
 
     modperl_callback_current_callback_set(desc);
 
-    MP_TRACE_h(MP_FUNC, "running %d %s handlers\n", av->nelts, desc);
+    MP_TRACE_h(MP_FUNC, "running %d %s handlers", av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
         status = modperl_callback(aTHX_ handlers[i], p, r, s, av_args);
 
-        MP_TRACE_h(MP_FUNC, "callback '%s' returned %d\n",
+        MP_TRACE_h(MP_FUNC, "callback '%s' returned %d",
                    modperl_handler_name(handlers[i]), status);
 
         /* follow Apache's lead and let OK terminate the phase for
@@ -292,7 +292,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
-                               "uncalled %s handlers\n",
+                               "uncalled %s handlers",
                                status, av->nelts-i-1, desc);
                 }
 #endif
@@ -309,7 +309,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "OK ends the %s stack, "
-                               "leaving %d uncalled %s handlers\n",
+                               "leaving %d uncalled %s handlers",
                                desc, av->nelts-i-1, desc);
                 }
 #endif
@@ -320,7 +320,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef MP_TRACE
                 if (i+1 != av->nelts) {
                     MP_TRACE_h(MP_FUNC, "error status %d leaves %d "
-                               "uncalled %s handlers\n",
+                               "uncalled %s handlers",
                                status, av->nelts-i-1, desc);
                 }
 #endif
@@ -352,7 +352,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
 #ifdef USE_ITHREADS
     if (r || c) {
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         modperl_interp_unselect(interp);
     }

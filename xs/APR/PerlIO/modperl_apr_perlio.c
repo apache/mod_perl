@@ -176,7 +176,7 @@ static SSize_t PerlIOAPR_read(pTHX_ PerlIO *f, void *vbuf, Size_t count)
 
     rc = apr_file_read(st->file, vbuf, &count);
 
-    MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
+    MP_TRACE_o(MP_FUNC, "%db [%s]", (int)count,
                MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
 
     if (rc == APR_EOF) {
@@ -195,7 +195,7 @@ static SSize_t PerlIOAPR_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     PerlIOAPR *st = PerlIOSelf(f, PerlIOAPR);
     apr_status_t rc;
 
-    MP_TRACE_o(MP_FUNC, "%db [%s]\n", (int)count,
+    MP_TRACE_o(MP_FUNC, "%db [%s]", (int)count,
                MP_TRACE_STR_TRUNC(st->pool, (char *)vbuf, (int)count));
 
     rc = apr_file_write(st->file, vbuf, &count);
@@ -563,7 +563,7 @@ static MP_IO_TYPE *modperl_apr_perlio_apr_file_to_PerlIO(pTHX_ apr_file_t *file,
     /* let's try without the dup, it seems to work fine:
 
        fd = PerlLIO_dup(os_file);
-       MP_TRACE_o(MP_FUNC, "fd old: %d, new %d\n", os_file, fd);
+       MP_TRACE_o(MP_FUNC, "fd old: %d, new %d", os_file, fd);
        if (!(retval = PerlIO_fdopen(fd, mode))) {
        ...
        }

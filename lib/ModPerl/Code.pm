@@ -380,7 +380,7 @@ $protostr
                            "$h_name is disabled for server ",
                            parms->server->server_hostname, NULL);
     }
-    MP_TRACE_d(MP_FUNC, "push \@%s, %s\\n", parms->cmd->name, arg);
+    MP_TRACE_d(MP_FUNC, "push \@%s, %s", parms->cmd->name, arg);
     return $cmd_push(&($av), arg, parms->pool);
 }
 EOF

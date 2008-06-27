@@ -64,7 +64,7 @@ modperl_mgv_t *modperl_mgv_new(apr_pool_t *p)
 
 #define modperl_mgv_hash(mgv)                   \
     PERL_HASH(mgv->hash, mgv->name, mgv->len)
- /* MP_TRACE_h(MP_FUNC, "%s...hash=%ld\n", mgv->name, mgv->hash) */
+ /* MP_TRACE_h(MP_FUNC, "%s...hash=%ld", mgv->name, mgv->hash) */
 
 modperl_mgv_t *modperl_mgv_compile(pTHX_ apr_pool_t *p,
                                    register const char *name)
@@ -245,24 +245,24 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 if (SvROK(obj) && sv_isobject(obj)) {
                     stash = SvSTASH(SvRV(obj));
                     MpHandlerOBJECT_On(handler);
-                    MP_TRACE_h(MP_FUNC, "handler object %s isa %s\n",
+                    MP_TRACE_h(MP_FUNC, "handler object %s isa %s",
                                package, HvNAME(stash));
                 }
                 else {
-                    MP_TRACE_h(MP_FUNC, "%s is not an object, pv=%s\n",
+                    MP_TRACE_h(MP_FUNC, "%s is not an object, pv=%s",
                                package, SvPV_nolen(obj));
                     return 0;
                 }
             }
             else {
-                MP_TRACE_h(MP_FUNC, "failed to thaw %s\n", package);
+                MP_TRACE_h(MP_FUNC, "failed to thaw %s", package);
                 return 0;
             }
         }
 
         if (!stash) {
             if ((stash = gv_stashpvn(package, package_len, FALSE))) {
-                MP_TRACE_h(MP_FUNC, "handler method %s isa %s\n",
+                MP_TRACE_h(MP_FUNC, "handler method %s isa %s",
                            name, HvNAME(stash));
             }
         }
@@ -282,11 +282,11 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
     if (!stash && MpHandlerAUTOLOAD(handler)) {
         if (!modperl_perl_module_loaded(aTHX_ name)) { /* not in %INC */
             MP_TRACE_h(MP_FUNC,
-                       "package %s not in %INC, attempting to load it\n",
+                       "package %s not in %INC, attempting to load it",
                        name);
 
             if (modperl_require_module(aTHX_ name, logfailure)) {
-                MP_TRACE_h(MP_FUNC, "loaded %s package\n", name);
+                MP_TRACE_h(MP_FUNC, "loaded %s package", name);
             }
             else {
                 if (logfailure) {
@@ -295,13 +295,13 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
                 }
                 else {
                     /* the caller handles the error checking */
-                    MP_TRACE_h(MP_FUNC, "failed to load %s package\n", name);
+                    MP_TRACE_h(MP_FUNC, "failed to load %s package", name);
                     return 0;
                 }
             }
         }
         else {
-            MP_TRACE_h(MP_FUNC, "package %s seems to be loaded\n", name);
+            MP_TRACE_h(MP_FUNC, "package %s seems to be loaded", name);
         }
     }
 
@@ -310,7 +310,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
      * module was loaded, preventing from loading the module
      */
     if (!(stash || (stash = gv_stashpv(name, FALSE)))) {
-        MP_TRACE_h(MP_FUNC, "%s's stash is not found\n", name);
+        MP_TRACE_h(MP_FUNC, "%s's stash is not found", name);
         return 0;
     }
 
@@ -338,7 +338,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);
 
         MpHandlerPARSED_On(handler);
-        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s\n",
+        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s",
                    handler_name, HvNAME(stash),
                    MpHandlerMETHOD(handler) ? "method" : "function");
         MODPERL_MGV_DEEP_RESOLVE(handler, p);
@@ -356,7 +356,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 #ifdef MP_TRACE
     /* complain only if the class was actually loaded/created */
     if (stash) {
-        MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'\n",
+        MP_TRACE_h(MP_FUNC, "`%s' not found in class `%s'",
                    handler_name, name);
     }
 #endif
@@ -415,7 +415,7 @@ int modperl_mgv_require_module(pTHX_ modperl_mgv_t *symbol,
         modperl_mgv_as_string(aTHX_ symbol, p, 1);
 
     if (modperl_require_module(aTHX_ package, TRUE)) {
-        MP_TRACE_h(MP_FUNC, "reloaded %s for server %s\n",
+        MP_TRACE_h(MP_FUNC, "reloaded %s for server %s",
                    package, modperl_server_desc(s, p));
         return TRUE;
     }
@@ -457,7 +457,7 @@ static void modperl_hash_handlers(pTHX_ apr_pool_t *p, server_rec *s,
                                            s, p);
             }
 #endif
-            MP_TRACE_h(MP_FUNC, "%s already resolved in server %s\n",
+            MP_TRACE_h(MP_FUNC, "%s already resolved in server %s",
                        modperl_handler_name(handler),
                        modperl_server_desc(s, p));
         }

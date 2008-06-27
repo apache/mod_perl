@@ -123,7 +123,7 @@ modperl_list_t *modperl_list_remove(modperl_list_t *list,
 #ifdef MP_TRACE
     if (!tmp) {
         /* should never happen */
-        MP_TRACE_i(MP_FUNC, "failed to find 0x%lx in list 0x%lx\n",
+        MP_TRACE_i(MP_FUNC, "failed to find 0x%lx in list 0x%lx",
                    (unsigned long)rlist, (unsigned long)list);
     }
 #endif
@@ -189,7 +189,7 @@ void modperl_tipool_init(modperl_tipool_t *tipool)
         modperl_tipool_add(tipool, item);
     }
 
-    MP_TRACE_i(MP_FUNC, "start=%d, max=%d, min_spare=%d, max_spare=%d\n",
+    MP_TRACE_i(MP_FUNC, "start=%d, max=%d, min_spare=%d, max_spare=%d",
                tipool->cfg->start, tipool->cfg->max,
                tipool->cfg->min_spare, tipool->cfg->max_spare);
 
@@ -211,7 +211,7 @@ void modperl_tipool_destroy(modperl_tipool_t *tipool)
     }
 
     if (tipool->busy) {
-        MP_TRACE_i(MP_FUNC, "ERROR: %d items still in use\n",
+        MP_TRACE_i(MP_FUNC, "ERROR: %d items still in use",
                    tipool->in_use);
     }
 
@@ -231,7 +231,7 @@ void modperl_tipool_add(modperl_tipool_t *tipool, void *data)
 
     tipool->size++;
 
-    MP_TRACE_i(MP_FUNC, "added 0x%lx (size=%d)\n",
+    MP_TRACE_i(MP_FUNC, "added 0x%lx (size=%d)",
                (unsigned long)listp, tipool->size);
 }
 
@@ -242,7 +242,7 @@ void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp)
     tipool->idle = modperl_list_remove(tipool->idle, listp);
 
     tipool->size--;
-    MP_TRACE_i(MP_FUNC, "removed 0x%lx (size=%d)\n",
+    MP_TRACE_i(MP_FUNC, "removed 0x%lx (size=%d)",
                (unsigned long)listp, tipool->size);
 }
 
@@ -255,7 +255,7 @@ modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
     if (tipool->size == tipool->in_use) {
         if (tipool->size < tipool->cfg->max) {
             MP_TRACE_i(MP_FUNC,
-                       "no idle items, size %d < %d max\n",
+                       "no idle items, size %d < %d max",
                        tipool->size, tipool->cfg->max);
             if (tipool->func->tipool_rgrow) {
                 void * item =
@@ -277,7 +277,7 @@ modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
 
     /* XXX: this should never happen */
     if (!head) {
-        MP_TRACE_i(MP_FUNC, "PANIC: no items available, %d of %d in use\n",
+        MP_TRACE_i(MP_FUNC, "PANIC: no items available, %d of %d in use",
                    tipool->in_use, tipool->size);
         abort();
     }
@@ -318,14 +318,14 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
 
 #ifdef MP_TRACE
     if (!tipool->busy && tipool->func->tipool_dump) {
-        MP_TRACE_i(MP_FUNC, "all items idle:\n");
+        MP_TRACE_i(MP_FUNC, "all items idle:");
         MP_TRACE_i_do((*tipool->func->tipool_dump)(tipool,
                                                    tipool->data,
                                                    tipool->idle));
     }
 #endif
 
-    MP_TRACE_i(MP_FUNC, "0x%lx now available (%d in use, %d running)\n",
+    MP_TRACE_i(MP_FUNC, "0x%lx now available (%d in use, %d running)",
                (unsigned long)listp->data, tipool->in_use, tipool->size);
 
     if (tipool->in_use == (tipool->cfg->max - 1)) {
@@ -341,11 +341,11 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
 
     if (max_spare) {
         MP_TRACE_i(MP_FUNC,
-                   "shrinking pool: max_spare=%d, only %d of %d in use\n",
+                   "shrinking pool: max_spare=%d, only %d of %d in use",
                    tipool->cfg->max_spare, tipool->in_use, tipool->size);
     }
     else if (max_requests) {
-        MP_TRACE_i(MP_FUNC, "shrinking pool: max requests %d reached\n",
+        MP_TRACE_i(MP_FUNC, "shrinking pool: max requests %d reached",
                    tipool->cfg->max_requests);
     }
 
@@ -370,7 +370,7 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
                                                   tipool->data);
 
                 MP_TRACE_i(MP_FUNC,
-                           "growing pool: min_spare=%d, %d of %d in use\n",
+                           "growing pool: min_spare=%d, %d of %d in use",
                            tipool->cfg->min_spare, tipool->in_use,
                            tipool->size);
 

@@ -120,7 +120,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 #endif
     }
 
-    MP_TRACE_i(MP_FUNC, "0x%lx / perl: 0x%lx / parent perl: 0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "0x%lx / perl: 0x%lx / parent perl: 0x%lx",
                (unsigned long)interp, (unsigned long)interp->perl,
                (unsigned long)perl);
 
@@ -134,11 +134,11 @@ void modperl_interp_destroy(modperl_interp_t *interp)
 
     PERL_SET_CONTEXT(interp->perl);
 
-    MP_TRACE_i(MP_FUNC, "interp == 0x%lx / perl: 0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "interp == 0x%lx / perl: 0x%lx",
                (unsigned long)interp, (unsigned long)interp->perl);
 
     if (MpInterpIN_USE(interp)) {
-        MP_TRACE_i(MP_FUNC, "*error - still in use!*\n");
+        MP_TRACE_i(MP_FUNC, "*error - still in use!*");
     }
 
     handles = modperl_xs_dl_handles_get(aTHX);
@@ -166,16 +166,16 @@ modperl_interp_t *modperl_interp_get(server_rec *s)
     head = modperl_tipool_pop(mip->tipool);
     interp = (modperl_interp_t *)head->data;
 
-    MP_TRACE_i(MP_FUNC, "head == 0x%lx, parent == 0x%lx\n",
+    MP_TRACE_i(MP_FUNC, "head == 0x%lx, parent == 0x%lx",
                (unsigned long)head, (unsigned long)mip->parent);
 
-    MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)\n",
+    MP_TRACE_i(MP_FUNC, "selected 0x%lx (perl==0x%lx)",
                (unsigned long)interp,
                (unsigned long)interp->perl);
 
 #ifdef MP_TRACE
     interp->tid = MP_TIDF;
-    MP_TRACE_i(MP_FUNC, "thread == 0x%lx\n", interp->tid);
+    MP_TRACE_i(MP_FUNC, "thread == 0x%lx", interp->tid);
 #endif
 
     MpInterpIN_USE_On(interp);
@@ -196,7 +196,7 @@ apr_status_t modperl_interp_pool_destroy(void *data)
         /* multiple mips might share the same parent
          * make sure its only destroyed once
          */
-        MP_TRACE_i(MP_FUNC, "parent == 0x%lx\n",
+        MP_TRACE_i(MP_FUNC, "parent == 0x%lx",
                    (unsigned long)mip->parent);
 
         modperl_interp_destroy(mip->parent);
@@ -208,7 +208,7 @@ apr_status_t modperl_interp_pool_destroy(void *data)
 static void *interp_pool_grow(modperl_tipool_t *tipool, void *data)
 {
     modperl_interp_pool_t *mip = (modperl_interp_pool_t *)data;
-    MP_TRACE_i(MP_FUNC, "adding new interpreter to the pool\n");
+    MP_TRACE_i(MP_FUNC, "adding new interpreter to the pool");
     return (void *)modperl_interp_new(mip, mip->parent->perl);
 }
 
@@ -223,7 +223,7 @@ static void interp_pool_dump(modperl_tipool_t *tipool, void *data,
 {
     while (listp) {
         modperl_interp_t *interp = (modperl_interp_t *)listp->data;
-        MP_TRACE_i(MP_FUNC, "listp==0x%lx, interp==0x%lx, requests=%d\n",
+        MP_TRACE_i(MP_FUNC, "listp==0x%lx, interp==0x%lx, requests=%d",
                  (unsigned long)listp, (unsigned long)interp,
                  interp->num_requests);
         listp = listp->next;
@@ -247,7 +247,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     modperl_interp_pool_t *mip =
         (modperl_interp_pool_t *)apr_pcalloc(p, sizeof(*mip));
 
-    MP_TRACE_i(MP_FUNC, "server=%s\n", modperl_server_desc(s, p));
+    MP_TRACE_i(MP_FUNC, "server=%s", modperl_server_desc(s, p));
 
     if (modperl_threaded_mpm()) {
         mip->tipool = modperl_tipool_new(p, scfg->interp_pool_cfg,
@@ -271,7 +271,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
 #ifdef MP_TRACE
 static apr_status_t modperl_interp_pool_cleanup(void *data)
 {
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                data, ((modperl_interp_t*)data)->refcnt);
 
     return modperl_interp_unselect(data);
@@ -286,11 +286,11 @@ apr_status_t modperl_interp_unselect(void *data)
     if (interp == mip->parent) return APR_SUCCESS;
 
     ap_assert(interp && MpInterpIN_USE(interp));
-    MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d\n",
+    MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d",
                (unsigned long)interp, interp->refcnt);
     if (interp->refcnt != 0) {
         --interp->refcnt;
-        MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use\n",
+        MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use",
                    (unsigned long)interp, interp->refcnt);
         return APR_SUCCESS;
     }
@@ -302,7 +302,7 @@ apr_status_t modperl_interp_unselect(void *data)
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
-    MP_TRACE_i(MP_FUNC, "interp=0x%lx freed, tipool(size=%ld, in_use=%ld)\n",
+    MP_TRACE_i(MP_FUNC, "interp=0x%lx freed, tipool(size=%ld, in_use=%ld)",
                (unsigned long)interp, mip->tipool->size, mip->tipool->in_use);
 
     return APR_SUCCESS;
@@ -350,7 +350,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 
     if (is_startup) {
         if (scfg) {
-            MP_TRACE_i(MP_FUNC, "using parent interpreter at startup\n");
+            MP_TRACE_i(MP_FUNC, "using parent interpreter at startup");
 
             if (!scfg->mip) {
                 /* we get here if directive handlers are invoked
@@ -366,11 +366,11 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
                 interp = modperl_interp_get(s);
                 modperl_interp_pool_set(p, interp);
 
-                MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx\n",
+                MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx",
                            (unsigned long)interp, (unsigned long)p);
             }
             else {
-                MP_TRACE_i(MP_FUNC, "found interp 0x%lx in pconf pool 0x%lx\n",
+                MP_TRACE_i(MP_FUNC, "found interp 0x%lx in pconf pool 0x%lx",
                            (unsigned long)interp, (unsigned long)p);
             }
         }
@@ -397,7 +397,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
         request_rec *r;
         apr_pool_userdata_get((void **)&r, "MODPERL_R", p);
         ap_assert(r);
-        MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx\n",
+        MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx",
                    (unsigned long)r->pool, (unsigned long)r);
         return modperl_interp_select(r, NULL, s);
     }
@@ -416,7 +416,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     if (!modperl_threaded_mpm()) {
         MP_TRACE_i(MP_FUNC,
-                   "using parent 0x%lx for non-threaded mpm (%s:%d)\n",
+                   "using parent 0x%lx for non-threaded mpm (%s:%d)",
                    (unsigned long)scfg->mip->parent,
                    s->server_hostname, s->port);
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
@@ -433,7 +433,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         ccfg->interp->refcnt++;
 
         MP_TRACE_i(MP_FUNC,
-                   "found interp 0x%lx in con config, refcnt incremented to %d\n",
+                   "found interp 0x%lx in con config, refcnt incremented to %d",
                    (unsigned long)ccfg->interp, ccfg->interp->refcnt);
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(ccfg->interp->perl);
@@ -458,7 +458,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp->ccfg = ccfg;
 
     MP_TRACE_i(MP_FUNC,
-               "pulled interp 0x%lx from mip, num_requests is %d\n",
+               "pulled interp 0x%lx from mip, num_requests is %d",
                (unsigned long)interp, interp->num_requests);
 
     /*
@@ -471,7 +471,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         dcfg->interp_scope :
         (r ? scfg->interp_scope : MP_INTERP_SCOPE_CONNECTION);
 
-    MP_TRACE_i(MP_FUNC, "scope is per-%s\n",
+    MP_TRACE_i(MP_FUNC, "scope is per-%s",
                modperl_interp_scope_desc(scope));
 
     if (scope != MP_INTERP_SCOPE_HANDLER) {
@@ -514,7 +514,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         interp->refcnt++;
 
         MP_TRACE_i(MP_FUNC,
-                   "registered unselect cleanup for interp 0x%lx in %s\n",
+                   "registered unselect cleanup for interp 0x%lx in %s",
                    (unsigned long)interp, desc);
     }
 

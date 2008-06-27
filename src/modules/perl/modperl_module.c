@@ -120,7 +120,7 @@ static apr_status_t modperl_module_config_obj_cleanup(void *data)
 
     modperl_svptr_table_delete(aTHX_ cleanup->table, cleanup->ptr);
 
-    MP_TRACE_c(MP_FUNC, "deleting ptr 0x%lx from table 0x%lx\n",
+    MP_TRACE_c(MP_FUNC, "deleting ptr 0x%lx from table 0x%lx",
                (unsigned long)cleanup->ptr,
                (unsigned long)cleanup->table);
 
@@ -193,7 +193,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     if (!base_obj || (base_obj == add_obj)) {
 #ifdef USE_ITHREADS
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         modperl_interp_unselect(interp);
         MP_PERL_CONTEXT_RESTORE;
@@ -212,7 +212,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         int count;
         dSP;
 
-        MP_TRACE_c(MP_FUNC, "calling %s->%s\n",
+        MP_TRACE_c(MP_FUNC, "calling %s->%s",
                    SvCLASS(base_obj), modperl_mgv_last_name(method));
 
         ENTER;SAVETMPS;
@@ -247,7 +247,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                interp, interp->refcnt);
     modperl_interp_unselect(interp);
     MP_PERL_CONTEXT_RESTORE;
@@ -298,7 +298,7 @@ modperl_module_config_create_obj(pTHX_
         return NULL;
     }
 
-    MP_TRACE_c(MP_FUNC, "%s cfg=0x%lx for %s.%s\n",
+    MP_TRACE_c(MP_FUNC, "%s cfg=0x%lx for %s.%s",
                method, (unsigned long)cfg,
                mname, parms->cmd->name);
 
@@ -419,7 +419,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
 
     if (errmsg) {
 #ifdef USE_ITHREADS
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         modperl_interp_unselect(interp);
 #endif
@@ -427,7 +427,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     }
 
     if (obj) {
-        MP_TRACE_c(MP_FUNC, "found per-dir obj=0x%lx for %s.%s\n",
+        MP_TRACE_c(MP_FUNC, "found per-dir obj=0x%lx for %s.%s",
                    (unsigned long)obj,
                    info->modp->name, cmd->name);
     }
@@ -444,7 +444,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                                                parms, &srv_obj);
         if (errmsg) {
 #ifdef USE_ITHREADS
-            MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+            MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                        interp, interp->refcnt);
             modperl_interp_unselect(interp);
 #endif
@@ -452,7 +452,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         }
 
         if (srv_obj) {
-            MP_TRACE_c(MP_FUNC, "found per-srv obj=0x%lx for %s.%s\n",
+            MP_TRACE_c(MP_FUNC, "found per-srv obj=0x%lx for %s.%s",
                        (unsigned long)srv_obj,
                        info->modp->name, cmd->name);
         }
@@ -490,7 +490,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     }
 
 #ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                interp, interp->refcnt);
     modperl_interp_unselect(interp);
 #endif
@@ -790,7 +790,7 @@ static modperl_mgv_t *modperl_module_fetch_method(pTHX_
     HV *stash = gv_stashpv(modp->name, FALSE);
     GV *gv = gv_fetchmethod_autoload(stash, method, FALSE);
 
-    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'...%sfound\n",
+    MP_TRACE_c(MP_FUNC, "looking for method %s in package `%s'...%sfound",
                method, modp->name,
                MP_isGV(gv) ? "" : "not ");
 
@@ -881,7 +881,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
      */
     if (!modperl_interp_pool_get(p)) {
         /* for vhosts */
-        MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx\n",
+        MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx",
                    (unsigned long)scfg->mip->parent, (unsigned long)p);
         modperl_interp_pool_set(p, scfg->mip->parent);
     }

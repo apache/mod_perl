@@ -38,7 +38,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
 
     handler->cv = NULL;
     handler->name = name;
-    MP_TRACE_h(MP_FUNC, "new handler %s\n", handler->name);
+    MP_TRACE_h(MP_FUNC, "new handler %s", handler->name);
 
     return handler;
 }
@@ -172,7 +172,7 @@ modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
     handler->cv   = cv;
     handler->name = NULL;
 
-    MP_TRACE_h(MP_FUNC, "new cached cv anon handler\n");
+    MP_TRACE_h(MP_FUNC, "new cached cv anon handler");
 #endif
 
     return handler;
@@ -220,7 +220,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
 
         MP_TRACE_h(MP_FUNC,
                    "[%s] handler %s hasn't yet been resolved, "
-                   "attempting to resolve using %s pool 0x%lx\n",
+                   "attempting to resolve using %s pool 0x%lx",
                    modperl_server_desc(s, p),
                    modperl_handler_name(handler),
                    duped ? "current" : "server conf",
@@ -240,7 +240,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
 modperl_handler_t *modperl_handler_dup(apr_pool_t *p,
                                        modperl_handler_t *h)
 {
-    MP_TRACE_h(MP_FUNC, "dup handler %s\n", modperl_handler_name(h));
+    MP_TRACE_h(MP_FUNC, "dup handler %s", modperl_handler_name(h));
     return modperl_handler_new(p, h->name);
 }
 
@@ -275,12 +275,12 @@ MpAV *modperl_handler_array_merge(apr_pool_t *p, MpAV *base_a, MpAV *add_a)
     for (i=0; i<base_a->nelts; i++) {
         for (j=0; j<add_a->nelts; j++) {
             if (modperl_handler_equal(base_h[i], add_h[j])) {
-                MP_TRACE_d(MP_FUNC, "both base and new config contain %s\n",
+                MP_TRACE_d(MP_FUNC, "both base and new config contain %s",
                            add_h[j]->name);
             }
             else {
                 modperl_handler_array_push(mrg_a, add_h[j]);
-                MP_TRACE_d(MP_FUNC, "base does not contain %s\n",
+                MP_TRACE_d(MP_FUNC, "base does not contain %s",
                            add_h[j]->name);
             }
         }
@@ -529,7 +529,7 @@ int modperl_handler_push_handlers(pTHX_ apr_pool_t *p,
         return TRUE;
     }
 
-    MP_TRACE_h(MP_FUNC, "unable to push_handler 0x%lx\n",
+    MP_TRACE_h(MP_FUNC, "unable to push_handler 0x%lx",
                (unsigned long)sv);
 
     return FALSE;
@@ -568,7 +568,7 @@ SV *modperl_handler_perl_get_handlers(pTHX_ MpAV **handp, apr_pool_t *p)
             }
 
             if (!modperl_mgv_resolve(aTHX_ handler, p, handler->name, TRUE)) {
-                MP_TRACE_h(MP_FUNC, "failed to resolve handler %s\n",
+                MP_TRACE_h(MP_FUNC, "failed to resolve handler %s",
                            handler->name);
             }
 
