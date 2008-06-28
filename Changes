@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Fix a problem that could make APR::XSLoader and Apache2::XSLoader
+load the wrong shared library. [Torsten Foertsch]
+
 Fix compilation when using a non-threaded APR.
 [Gozer, Philip M. Gollucci]
 
