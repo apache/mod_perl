@@ -28,7 +28,9 @@ BEGIN {
 
 sub load {
     return unless BOOTSTRAP;
-    XSLoader::load(@_);
+    # do not change the next line and do not insert anything below it in this
+    # function. XSLoader::load depends on it.
+    goto &XSLoader::load;
 }
 
 1;
