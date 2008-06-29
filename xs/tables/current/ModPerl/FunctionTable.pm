@@ -1240,6 +1240,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'U16 *',
+    'name' => 'modperl_code_attrs',
+    'args' => [
+     {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'CV *',
+        'name' => 'cv'
+      }
+    ]
+  },
+  {
     'return_type' => 'int',
     'name' => 'modperl_config_apply_PerlModule',
     'args' => [
@@ -5039,6 +5053,30 @@ $ModPerl::FunctionTable = [
     'return_type' => 'int',
     'name' => 'modperl_threads_started',
     'args' => []
+  },
+  {
+    'return_type' => 'modperl_interp_t *',
+    'name' => 'modperl_thx_interp_get',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'thx',
+      },
+    ],
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_thx_interp_set',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'thx',
+      },
+      {
+        'type' => 'modperl_interp_t *',
+        'name' => 'interp',
+      },
+    ],
   },
   {
     'return_type' => 'void',

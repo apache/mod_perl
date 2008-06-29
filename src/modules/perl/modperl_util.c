@@ -864,7 +864,7 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
     if (!pnotes->pnotes) {
         pnotes->pool = pool;
 #ifdef USE_ITHREADS
-        pnotes->interp = MP_THX_INTERP_GET(aTHX);
+        pnotes->interp = modperl_thx_interp_get(aTHX);
         pnotes->interp->refcnt++;
         MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",
                    pnotes->interp, pnotes->interp->refcnt);
@@ -889,6 +889,17 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
         return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
     }
     return newRV_inc((SV *)pnotes->pnotes);
+}
+
+U16 *modperl_code_attrs(pTHX_ CV *cv) {
+    MAGIC *mg;    
+
+    if (!SvMAGICAL(cv)) {
+       sv_magic((SV*)cv, Nullsv, PERL_MAGIC_ext, NULL, -1); 
+    }
+
+    mg = mg_find((SV*)cv, PERL_MAGIC_ext);
+    return &(mg->mg_private);
 }
 
 /*

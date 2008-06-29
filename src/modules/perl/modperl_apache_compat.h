@@ -22,6 +22,7 @@
 #if !APR_HAS_THREADS
 typedef unsigned long apr_os_thread_t;
 typedef void * apr_thread_mutex_t;
+typedef void * apr_thread_rwlock_t;
 #endif
 
 /* back compat adjustements for older Apache versions

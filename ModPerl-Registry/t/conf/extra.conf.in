@@ -21,12 +21,6 @@ PerlSwitches -I@ServerRoot@/../lib                  \
 # run on startup
 PerlRequire @ServerRoot@/conf/modperl_extra_startup.pl
 
-#### DEVMODE: Remove in production ###
-PerlModule Apache2::Reload
-PerlInitHandler Apache2::Reload
-PerlSetVar ReloadAll Off
-PerlSetVar ReloadModules "ModPerl::*"
-
 PerlSetVar ModPerl::RegistryCooker::DEBUG 2
 
 PerlModule ModPerl::RegistryCooker

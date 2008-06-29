@@ -197,7 +197,7 @@ int modperl_callback_run_handlers(int idx, int type,
         /* Child{Init,Exit}, OpenLogs */
         aTHX = scfg->mip->parent->perl;
         PERL_SET_CONTEXT(aTHX);
-        MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
+        modperl_thx_interp_set(scfg->mip->parent->perl, scfg->mip->parent);
     }
 #endif
 

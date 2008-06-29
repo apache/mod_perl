@@ -138,11 +138,6 @@ apr_status_t modperl_response_finish(request_rec *r);
 int modperl_response_handler(request_rec *r);
 int modperl_response_handler_cgi(request_rec *r);
 
-/* betting on Perl*Handlers not using CvXSUBANY
- * mod_perl reuses this field for handler attributes
- */
-#define MP_CODE_ATTRS(cv) (CvXSUBANY((CV*)cv).any_i32)
-
 #define MgTypeExt(mg) (mg->mg_type == '~')
 
 typedef void MP_FUNC_NONSTD_T(modperl_var_modify_t) (apr_table_t *,
@@ -153,7 +148,10 @@ typedef void MP_FUNC_NONSTD_T(modperl_var_modify_t) (apr_table_t *,
 /* we need to hook a few internal things before APR_HOOK_REALLY_FIRST */
 #define MODPERL_HOOK_REALLY_REALLY_FIRST (-20)
 
+#ifdef USE_ITHREADS
 APR_DECLARE_OPTIONAL_FN(apr_status_t,modperl_interp_unselect,(void *));
+APR_DECLARE_OPTIONAL_FN(modperl_interp_t *,modperl_thx_interp_get,(PerlInterpreter *));
+#endif
 
 /*
  * perl context overriding and restoration is required when

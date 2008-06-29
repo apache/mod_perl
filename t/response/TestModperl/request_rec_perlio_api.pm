@@ -39,10 +39,13 @@ sub test_STDIN {
         # lose any chars when we restore it to the POST stream
         open my $stdin, "<&STDIN" or die "Can't dup STDIN: $!";
 
+        # this module reads the first few bytes from its .pm file. If these
+        # are changed remember to change the expected bytes in
+        # t/modperl/request_rec_perlio_api.t as well.
         open STDIN, "<", __FILE__
             or die "failed to open STDIN as 'in memory' file : $!";
         my $data;
-        read STDIN, $data, length("# please");
+        read STDIN, $data, length("# please insert nothing before this line");
         print STDOUT $data;
         close STDIN;
 

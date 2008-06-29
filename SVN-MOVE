@@ -8,14 +8,6 @@ move of modperl projects to SVN:
   Reviewed by: 
   ...
 
-* svn:externals  Apache-Test/ and docs/ doesn't work breakages:
-
-  - svn diff doesn't work
-  - svn tagging or branching doesn't work
-
-* the details of svn propedit svn:ignore and other propedit features
-  don't appear commit messages
-
 * commit messages should trim the unrelated crap in the file path
   e.g. currently we get:
 
@@ -36,7 +28,3 @@ so it can be applied/edited easily.
   Proposed Subject format:
 
   $svn_id $first_subdir/$first_file ($trunk)
-
-* cvs2svn [cvs]embperl:
-  Move to [svn]/perl/embperl/trunk (with tags/branches there too)
-

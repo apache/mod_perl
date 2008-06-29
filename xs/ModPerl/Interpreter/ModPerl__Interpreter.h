@@ -17,7 +17,7 @@
 static MP_INLINE
 modperl_interp_t *mpxs_ModPerl__Interpreter_current(pTHX_ SV *class)
 {
-    return MP_THX_INTERP_GET(aTHX);
+    return modperl_thx_interp_get(aTHX);
 }
 
 /*

@@ -56,7 +56,7 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
 
     Newz(0, tbl, 1, PTR_TBL_t);
     tbl->tbl_max        = source->tbl_max;
-    tbl->tbl_items      = source->tbl_items;
+    tbl->tbl_items        = source->tbl_items;
     Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t *);
 
     dst_ary = tbl->tbl_ary;
@@ -169,7 +169,7 @@ modperl_svptr_table_new(pTHX)
     PTR_TBL_t *tbl;
     Newz(0, tbl, 1, PTR_TBL_t);
     tbl->tbl_max        = 511;
-    tbl->tbl_items      = 0;
+    tbl->tbl_items        = 0;
     Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t*);
     return tbl;
 }

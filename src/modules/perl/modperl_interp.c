@@ -298,7 +298,7 @@ apr_status_t modperl_interp_unselect(void *data)
     interp->ccfg->interp = NULL;
     MpInterpIN_USE_Off(interp);
 
-    MP_THX_INTERP_SET(interp->perl, NULL);
+    modperl_thx_interp_set(interp->perl, NULL);
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
@@ -378,7 +378,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(interp->perl);
         /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(interp->perl, interp);
+        modperl_thx_interp_set(interp->perl, interp);
 
         return interp;
     }
@@ -389,7 +389,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
          * is not necessary */
         /* PERL_SET_CONTEXT(scfg->mip->parent->perl); */
         /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
+        modperl_thx_interp_set(scfg->mip->parent->perl, scfg->mip->parent);
 
         return scfg->mip->parent;
     }
@@ -422,7 +422,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
         PERL_SET_CONTEXT(scfg->mip->parent->perl);
         /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
+        modperl_thx_interp_set(scfg->mip->parent->perl, scfg->mip->parent);
         return scfg->mip->parent;
     }
 
@@ -437,7 +437,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                    (unsigned long)ccfg->interp, ccfg->interp->refcnt);
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(ccfg->interp->perl);
-        /* MP_THX_INTERP_SET is not called here because the interp
+        /* modperl_thx_interp_set is not called here because the interp
          * already belongs to the perl interpreter
          */
         return ccfg->interp;
@@ -450,7 +450,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
     /* let the perl interpreter point back to its interp */
-    MP_THX_INTERP_SET(interp->perl, interp);
+    modperl_thx_interp_set(interp->perl, interp);
 
     /* make sure ccfg is initialized */
     modperl_config_con_init(c, ccfg);
@@ -583,6 +583,24 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 
         s = s->next;
     }
+}
+
+#define MP_THX_INTERP_KEY "modperl2::thx_interp_key"
+modperl_interp_t *modperl_thx_interp_get(PerlInterpreter *thx)
+{
+    modperl_interp_t *interp;
+    dTHXa(thx);
+    SV **svp = hv_fetch(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), 0);
+    if (!svp) return NULL;
+    interp = INT2PTR(modperl_interp_t *, SvIV(*svp));
+    return interp;
+}
+
+void modperl_thx_interp_set(PerlInterpreter *thx, modperl_interp_t *interp)
+{
+    dTHXa(thx);
+    (void)hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), newSViv(PTR2IV(interp)), 0);
+    return;
 }
 
 #else

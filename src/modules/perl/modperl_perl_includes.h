@@ -53,7 +53,6 @@
 #   define uid_t perl_uid_t
 #   define gid_t perl_gid_t
 #   ifdef exit
-#      define perl_exit exit
 #      undef exit
 #   endif
 #endif
@@ -68,11 +67,9 @@
 
 #if defined(WIN32) && defined(USE_LARGE_FILES)
 #   ifdef malloc
-#      define perl_malloc malloc
 #      undef malloc
 #   endif
 #   ifdef free
-#      define perl_free free
 #      undef free
 #   endif
 #endif

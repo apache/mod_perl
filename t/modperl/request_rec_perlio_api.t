@@ -15,9 +15,13 @@ plan tests => 2, need { "perl $]: TIEd IO is used instead of PerlIO"
 
 
 {
+    # t/response/TestModperl/request_rec_perlio_api.pm reads the first few
+    # bytes from the .pm file itself. If these are changed remember to change
+    # the expected bytes here as well.
     my $content  = join "", 'a'..'j', 'k'..'t';
     my $location = "$uri?STDIN";
-    my $expected = join "", 'a'..'j', "# please", 'k'..'t';
+    my $expected = join("", 'a'..'j',
+                        "# please insert nothing before this line", 'k'..'t');
     my $received = POST_BODY_ASSERT $location, content => $content;
     ok t_cmp($received, $expected, "STDIN tests");
 }

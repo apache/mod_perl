@@ -392,7 +392,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
     PERL_SET_CONTEXT(perl);
-    MP_THX_INTERP_SET(perl, base_scfg->mip->parent);
+    modperl_thx_interp_set(perl, base_scfg->mip->parent);
 
 #endif /* USE_ITHREADS */
 
@@ -468,7 +468,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     /* after other parent perls were started in vhosts, make sure that
      * the context is set to the base_perl */
     PERL_SET_CONTEXT(base_perl);
-    MP_THX_INTERP_SET(base_perl, base_scfg->mip->parent);
+    modperl_thx_interp_set(base_perl, base_scfg->mip->parent);
 #endif
 
 }
@@ -613,6 +613,8 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
     if (MP_IS_STARTING || MP_IS_RUNNING) {
         return OK;
     }
+
+    MP_TRACE_i(MP_FUNC, "mod_perl hook init");
 
     MP_init_status = 1; /* now starting */
 
@@ -850,6 +852,7 @@ void modperl_register_hooks(apr_pool_t *p)
 
 #ifdef USE_ITHREADS
     APR_REGISTER_OPTIONAL_FN(modperl_interp_unselect);
+    APR_REGISTER_OPTIONAL_FN(modperl_thx_interp_get);
 #endif
 
     /* for <IfDefine MODPERL2> and Apache2->define("MODPERL2") */
@@ -910,7 +913,7 @@ void modperl_register_hooks(apr_pool_t *p)
                           NULL, NULL, MODPERL_HOOK_REALLY_REALLY_FIRST);
 
     ap_hook_child_init(modperl_hook_child_init,
-                       NULL, NULL, APR_HOOK_FIRST);
+                       NULL, NULL, MODPERL_HOOK_REALLY_REALLY_FIRST);
 
     modperl_register_handler_hooks();
 }

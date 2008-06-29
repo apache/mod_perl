@@ -102,7 +102,7 @@ apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
                                                   SV *avrv);
 void modperl_package_unload(pTHX_ const char *package);
 #if defined(MP_TRACE) && defined(USE_ITHREADS)
-#define MP_TRACEf_PERLID   "perl id 0x%lx"
+#define MP_TRACEf_PERLID   "/perl id 0x%lx"
 #define MP_TRACEv_PERLID   (unsigned long)my_perl
 #define MP_TRACEv_PERLID_  MP_TRACEv_PERLID,
 #define MP_TRACEv__PERLID  ,MP_TRACEv_PERLID
@@ -138,6 +138,8 @@ void modperl_pnotes_kill(void *data);
 
 SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
                    apr_pool_t *pool );
+
+U16 *modperl_code_attrs(pTHX_ CV *cv);
 
 #endif /* MODPERL_UTIL_H */
 
