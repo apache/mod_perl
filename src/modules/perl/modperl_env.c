@@ -43,7 +43,7 @@ static unsigned long modperl_interp_address(pTHX)
         }                                                       \
         else {                                                  \
             SV *sv = newSVpv(val, 0);                           \
-            hv_store(hv, key, klen, sv, FALSE);                 \
+            (void)hv_store(hv, key, klen, sv, FALSE);           \
             modperl_envelem_tie(sv, key, klen);                 \
             svp = &sv;                                          \
         }                                                       \
@@ -62,7 +62,7 @@ void modperl_env_hv_delete(pTHX_ HV *hv, char *key)
 {
     I32 klen = strlen(key);
     if (hv_exists(hv, key, klen)) {
-        hv_delete(hv, key, strlen(key), G_DISCARD);
+        (void)hv_delete(hv, key, strlen(key), G_DISCARD);
     }
 }
 
@@ -335,8 +335,8 @@ void modperl_env_default_populate(pTHX)
 
     while (ent->key) {
         SV *sv = newSVpvn(ent->val, ent->vlen);
-        hv_store(hv, ent->key, ent->klen,
-                 sv, ent->hash);
+        (void)hv_store(hv, ent->key, ent->klen,
+                       sv, ent->hash);
         MP_TRACE_e(MP_FUNC, "$ENV{%s} = \"%s\";", ent->key, ent->val);
         modperl_envelem_tie(sv, ent->key, ent->klen);
         ent++;
