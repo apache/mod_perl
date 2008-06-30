@@ -46,13 +46,13 @@ static void hash_insert(pTHX_ HV *hash, const char *key,
     if (value) {
         if (!hash_ent) {
             subhash = newHV();
-            hv_store(hash, key, keylen, newRV_noinc((SV *)subhash), 0);
+            (void)hv_store(hash, key, keylen, newRV_noinc((SV *)subhash), 0);
         }
         else {
             subhash = (HV *)SvRV(*hash_ent);
         }
 
-        hv_store(subhash, args, argslen, value, 0);
+        (void)hv_store(subhash, args, argslen, value, 0);
     }
     else {
         if (hash_ent) {
@@ -62,12 +62,13 @@ static void hash_insert(pTHX_ HV *hash, const char *key,
             else {
                 args_array = newAV();
                 av_push(args_array, newSVsv(*hash_ent));
-                hv_store(hash, key, keylen, newRV_noinc((SV *)args_array), 0);
+                (void)hv_store(hash, key, keylen,
+                               newRV_noinc((SV *)args_array), 0);
             }
             av_push(args_array, newSVpv(args, argslen));
         }
         else {
-            hv_store(hash, key, keylen, newSVpv(args, argslen), 0);
+            (void)hv_store(hash, key, keylen, newSVpv(args, argslen), 0);
         }
     }
 }

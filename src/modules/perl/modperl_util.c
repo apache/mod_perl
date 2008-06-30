@@ -745,7 +745,7 @@ static void modperl_package_delete_from_inc(pTHX_ const char *package)
 {
     int len;
     char *filename = package2filename(package, &len);
-    hv_delete(GvHVn(PL_incgv), filename, len, G_DISCARD);
+    (void)hv_delete(GvHVn(PL_incgv), filename, len, G_DISCARD);
     free(filename);
 }
 
@@ -775,7 +775,7 @@ static void modperl_package_clear_stash(pTHX_ const char *package)
                  * unload
                  */
                 if (GvSTASH(val) == stash) {
-                    hv_delete(stash, key, len, G_DISCARD);
+                    (void)hv_delete(stash, key, len, G_DISCARD);
                 }
             }
         }

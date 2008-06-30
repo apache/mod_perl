@@ -37,11 +37,11 @@ static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
 
         hv = newHV();
 
-        hv_store(hv, "method_mask", 11,
-                 newSViv((IV)reqs[x].method_mask), 0);
+        (void)hv_store(hv, "method_mask", 11,
+                       newSViv((IV)reqs[x].method_mask), 0);
 
-        hv_store(hv, "requirement", 11,
-                 newSVpv(reqs[x].requirement,0), 0);
+        (void)hv_store(hv, "requirement", 11,
+                       newSVpv(reqs[x].requirement,0), 0);
 
         av_push(av, newRV_noinc((SV*)hv));
     }
