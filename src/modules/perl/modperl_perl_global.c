@@ -272,8 +272,8 @@ static HV *copyENV(pTHX_ HV *ohv)
     while ((entry = hv_iternext(ohv))) {
         SV *sv = newSVsv(HeVAL(entry));
         modperl_envelem_tie(sv, HeKEY(entry), HeKLEN(entry));
-        hv_store(hv, HeKEY(entry), HeKLEN(entry),
-                 sv, HeHASH(entry));
+        (void)hv_store(hv, HeKEY(entry), HeKLEN(entry),
+                       sv, HeHASH(entry));
     }
 
     HvRITER(ohv) = hv_riter;
