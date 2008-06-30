@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.5-dev
+=item 2.0.5-threading1 (Rev 672738)
 
 PerlInterpScope is now more advisory. Using $(c|r)->pnotes will bind
 the current interpreter to that object for it's lifetime.
@@ -28,6 +28,8 @@ via ModPerl::TiPool and modperl_tipool_config_t via ModPerl::TiPoolConfig
 [Torsten Foertsch]
 
 Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
+
+=item 2.0.5-dev
 
 Fix a problem that could make APR::XSLoader and Apache2::XSLoader
 load the wrong shared library. [Torsten Foertsch]
