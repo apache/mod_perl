@@ -481,7 +481,7 @@ sub set_modperl_version {
     open my $fh, 'Changes';
     while (<$fh>) {
         if (/^=item\s+\Q$VERSION\E-(\w+)/) {
-            $VERSION .= "-$1";
+            $VERSION .= "$1";
             last;
         }
         last if /^=item/;
