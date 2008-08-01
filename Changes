@@ -31,6 +31,10 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.5-dev
 
+Make sure Apache2::RequestIO::read doesn't clear the buffer on end of
+file and handle negative offsets and offsets that are larger than
+the current string length. [Torsten Foertsch]
+
 Fix a problem that could make APR::XSLoader and Apache2::XSLoader
 load the wrong shared library. [Torsten Foertsch]
 

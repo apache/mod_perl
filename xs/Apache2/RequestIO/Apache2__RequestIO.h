@@ -235,27 +235,36 @@ static SV *mpxs_Apache2__RequestRec_read(pTHX_ request_rec *r,
                                          apr_off_t offset)
 {
     SSize_t total;
+    STRLEN blen;
 
     if (!SvOK(buffer)) {
         sv_setpvn(buffer, "", 0);
     }
 
+    (void)SvPV_force(buffer, blen); /* make it a valid PV */
+
     if (len <= 0) {
         Perl_croak(aTHX_ "The LENGTH argument can't be negative");
     }
 
-    /* XXX: need to handle negative offset */
-    /* XXX: need to pad with \0 if offset > size of the buffer */
+    /* handle negative offset */
+    if (offset < 0) {
+	if (-offset > (int)blen) Perl_croak(aTHX_ "Offset outside string");
+        offset += blen;
+    }
 
     mpxs_sv_grow(buffer, len+offset);
+
+    /* need to pad with \0 if offset > size of the buffer */
+    if (offset > SvCUR(buffer)) {
+        Zero(SvEND(buffer), offset - SvCUR(buffer), char);
+    }
+
     total = modperl_request_read(aTHX_ r, SvPVX(buffer)+offset, len);
 
-    if (total > 0) {
-        mpxs_sv_cur_set(buffer, offset+total);
-    }
-    else {
-        sv_setpvn(buffer, "", 0);
-    }
+    /* modperl_request_read can return only >=0. So it's safe to do this. */
+    /* if total==0 we need to set the buffer length in case it is larger */
+    mpxs_sv_cur_set(buffer, offset+total);
 
     /* must run any set magic */
     SvSETMAGIC(buffer);
