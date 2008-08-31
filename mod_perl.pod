@@ -36,8 +36,9 @@ type check, fixup and logger stages of a request.
 
 =head1 FAQ
 
-The mod_perl FAQ is maintained by Frank Cringle
-E<lt>fdc@cliwe.ping.deE<gt>: http://perl.apache.org/faq/
+The mod_perl FAQ that used to be maintained by Frank Cringle
+E<lt>fdc@cliwe.ping.deE<gt>, had been merged into the mod_perl
+documentation that can be found http://perl.apache.org/docs/
 
 =head1 Apache/Perl API
 
