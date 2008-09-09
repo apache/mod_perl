@@ -36,7 +36,7 @@
         dTHX; \
         Perl_warn(aTHX_ "%s() not available until httpd/%s " \
                         "falling back to %s()", \
-                  __func__, ver, fallback); \
+                  MP_FUNC, ver, fallback); \
     }
 
 /* added in APACHE_2.2.4 */
@@ -59,7 +59,7 @@ AP_DECLARE(const char *) ap_get_server_banner(void) {
         dTHX; \
         Perl_warn(aTHX_ "%s() is deprecated since httpd/%s " \
                         "try using %s() instead", \
-                  __func__, ver, fallback); \
+                  MP_FUNC, ver, fallback); \
     }
 
 AP_DECLARE(const char *) ap_get_server_version(void) {
