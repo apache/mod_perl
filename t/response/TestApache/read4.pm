@@ -19,12 +19,15 @@ my @expected = ("123foo",
                 "123456".("\0"x(1000-length("123456")))."bar",
                 "123f",
                 "23f\0\0o",
-                qr/Can't coerce readonly REF to string in/,
+                qr/\bread-?only\b/,
                 $^V,
                 "ARo",
-                qr/Modification of a read-only value attempted/,
+                qr/\bread-?only\b/,
                 ".........",
-                "\0\0ar",
+                # Reading into $1 (the test above) eats up input since perl
+                # 5.10. This was also the version that blessed $^V as a
+                # "version" object.
+                (ref $^V ? "\0\0ar" : "\0\0bar"),
                 "12",
                 "");
 
