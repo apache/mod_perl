@@ -1016,7 +1016,9 @@ static int modperl_response_handler_run(request_rec *r, int finish)
 int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
+#ifdef USE_ITHREADS
     MP_dRCFG;
+#endif
     apr_status_t retval;
 
 #ifdef USE_ITHREADS
