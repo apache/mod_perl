@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.31-dev
 
+On Win32, mod_perl.h needs to include <malloc.h> before the perl
+headers, at least when built with USE_ITHREADS
+[Steve Hay]
+
 Win32 needs PERL_SYS_INIT/PERL_SYS_TERM calls when built with
 USE_ITHREADS [sic--that's different to USE_THREADS]. In fact,
 they ought to be always called if they are defined

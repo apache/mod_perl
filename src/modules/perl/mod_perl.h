@@ -61,6 +61,7 @@
 #include <iperlsys.h>
 #else
 #include "dirent.h"
+#include <malloc.h>
 #endif
 #endif
 
