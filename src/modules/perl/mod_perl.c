@@ -289,7 +289,7 @@ void perl_shutdown (server_rec *s, pool *p)
     perl_destruct(perl);
     perl_free(perl);
 
-#ifdef USE_THREADS
+#ifdef PERL_SYS_TERM
     PERL_SYS_TERM();
 #endif
 
@@ -678,10 +678,8 @@ void perl_startup (server_rec *s, pool *p)
 	MP_TRACE_g(fprintf(stderr, "'%s' ", argv[i]));
     MP_TRACE_g(fprintf(stderr, "..."));
 
-#ifdef USE_THREADS
-# ifdef PERL_SYS_INIT
-    PERL_SYS_INIT(&argc,&argv);
-# endif
+#ifdef PERL_SYS_INIT
+    PERL_SYS_INIT(&argc,(char***)&argv);
 #endif
 
 #ifndef perl_init_i18nl10n
