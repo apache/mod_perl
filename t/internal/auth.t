@@ -28,6 +28,7 @@ package Apache::UserAgent;
 @creds = qw(dougm mod_perl);  
 
 sub get_basic_credentials { shift->creds }
+sub credentials { shift->creds }
 
 sub creds {
     shift;
