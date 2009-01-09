@@ -80,6 +80,7 @@ Instructions for mod_perl 2.0 Release Manager
   e. tag
      % make tag
 
+  XXXX: This needs to be fixed, and updated, developer beware its outdated and possibly wrong
   f. Update the svn:externals in the new tag
      (you can't propedit remotely yet in svn)
      % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_5
