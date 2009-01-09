@@ -29,8 +29,6 @@ END {
 
 test_apache_resource();
 
-test_apache_size_limit();
-
 test_apache_status();
 
 test_loglevel();
@@ -59,19 +57,6 @@ sub test_apache_resource {
     return unless eval { require BSD::Resource };
 
     require Apache2::Resource;
-}
-
-sub test_apache_size_limit {
-    # would be nice to write a real test, but for now just see that we
-    # can load it for non-threaded mpms on supported platforms
-    require Apache2::MPM;
-    return if Apache2::MPM->is_threaded;
-    eval { require Apache2::SizeLimit };
-    if ($@) {
-        # unsupported platform
-        die $@ unless $@ =~ /Apache2::SizeLimit not implemented on/
-            or $@ =~ /you must install BSD::Resource/;
-    }
 }
 
 sub test_apache_status {
