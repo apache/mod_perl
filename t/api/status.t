@@ -38,6 +38,6 @@ my $location = "/TestAPI__status";
     my $res = GET "$location?$code=$message";
     ok t_cmp $res->code, $code, "code";
     ok t_cmp $res->message, $message, "code message";
-    ok t_cmp $res->content, "", "content";
+    ok t_cmp $res->content, "", "forcefail";
 }
 
