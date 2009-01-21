@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "mod_perl.h"
+#include "mod_perl_h"
 
 /* make sure that mod_perl won't try to start itself, while it's
  * already starting. If the flag's value is 1 * it's still starting,
