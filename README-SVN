@@ -22,9 +22,10 @@ modperl/trunk includes the following svn:externals properties:
   % cd modperl
   % svn propedit svn:externals .
   [vi pops up]
-  docs        https://svn.apache.org/repos/asf/perl/modperl/docs/trunk/src/docs/2.0
-  Apache-Test https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
-
+Apache-Test https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
+Apache-Reload https://svn.apache.org/repos/asf/perl/Apache-Reload/trunk
+Apache-SizeLimit https://svn.apache.org/repos/asf/perl/Apache-SizeLimit/trunk
+docs        https://svn.apache.org/repos/asf/perl/modperl/docs/trunk/src/docs/2.0
 
 DEVELOPER ACCESS
 
@@ -55,20 +56,4 @@ for svn information in general.
 svn for cvs users (including migration tools):
 
   http://svnbook.red-bean.com/en/1.0/apa.html
-
-
-
-OTHER NOTES:
-
---------
-
-To rescue changed files under apr/httpd cvs checkouts (i.e. to get
-'cvs diff' working), one needs to switch to anoncvs:
-
- % cd httpd-2.0
- % find . | grep Root | xargs perl -pi -e \
-'s|\w+\@cvs.apache.org:/home/cvs|:pserver:anoncvs\@cvs.apache.org:/home/cvspublic|'
-
---------
-
 
