@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Add NOTICE file to the distribution. [Joe Schaefer]
+
 Make sure Apache2::RequestIO::read doesn't clear the buffer on end of
 file and handle negative offsets and offsets that are larger than
 the current string length. [Torsten Foertsch]
