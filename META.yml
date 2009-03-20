@@ -8,7 +8,7 @@ no_index:
         - Apache-Test
     package:
           # Internally redefined module
-        - C::Preprocessed   
+        - C::Preprocessed
           # Fake packages
         - Apache::Status::_version
         - perlrun_decl
