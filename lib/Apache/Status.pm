@@ -72,7 +72,7 @@ sub handler {
 	$r->print(symdump($r, $newQ->($r), $qs));
     }
     else {
-	my $uri = $r->uri;
+	my $uri = $r->location;
 	$r->print(
  	    map { qq[<a href="$uri?$_">$status{$_}</a><br>\n] } keys %status
         );
@@ -140,7 +140,7 @@ sub status_hooks {
 sub status_inc {
     my($r,$q) = @_;
     my(@retval, $module, $v, $file);
-    my $uri = $r->uri;
+    my $uri = $r->location;
     push @retval, "<table border=1>";
     push @retval, 
     "<tr>", 
@@ -198,7 +198,7 @@ sub status_rgysubs {
     my($r,$q) = @_;
     my(@retval);
     local $_;
-    my $uri = $r->uri;
+    my $uri = $r->location;
     my $cache = __PACKAGE__->registry_cache;
     push @retval, "<b>Click on package name to see its symbol table</b><p>\n";
     foreach (sort keys %$cache) {

@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.31-dev
 
+Fix XSS vulnerability in Apache::Status reported by 
+Richard J. Brain, CVE-2009-0796
+[Fred Moyer]
+
 On Win32, mod_perl.h needs to include <malloc.h> before the perl
 headers, at least when built with USE_ITHREADS
 [Steve Hay]
