@@ -2,7 +2,7 @@ package Apache::Status;
 use strict;
 use mod_perl ();
 
-$Apache::Status::VERSION = '2.03';
+$Apache::Status::VERSION = '2.04';
 
 my %is_installed = ();
 my $Is_Win32 = ($^O eq "MSWin32");
