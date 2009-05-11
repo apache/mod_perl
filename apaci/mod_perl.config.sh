@@ -133,6 +133,12 @@ case "$os_version" in
     	perl_lddlflags="$perl_lddlflags $XLINKER-bI:\$(APACHELIBEXEC)/httpd.exp"
 	;;
     
+    darwin*)
+    # OS X has .bundle's, .so's and .dylib's, but we need to normalize
+    # to .so, so keep it simple, and blindly normalize
+    perl_dlext="`echo $perl_dlext | sed -e's/bundle/so/' | sed -e's/dylib/so/'`"
+    ;;
+
     cygwin*)
 	perl_ld="gcc -shared"
 	;;
