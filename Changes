@@ -8,7 +8,7 @@ all changes without author attribution are by Doug MacEachern
 
 =over 3
 
-=item 1.31-dev
+=item 1.31 May 11, 2009
 
 Fix static APACI build on Mac OS X. [Gozer]
 
