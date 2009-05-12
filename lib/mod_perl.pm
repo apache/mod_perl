@@ -4,7 +4,7 @@ use strict;
 use DynaLoader ();
 
 BEGIN {
-    $mod_perl::VERSION = "1.31";
+    $mod_perl::VERSION = "1.32";
 }
 
 sub boot {
