@@ -102,14 +102,14 @@ Instructions for mod_perl 2.0 Release Manager
 
 4. Release the package and update links (e.g. mod_perl-2.0.5.tar.gz)
 
-  a. upload to perl.apache.org:/www/perl.apache.org/dist/
+  a. upload to people.apache.org:/www/perl.apache.org/dist/
 
-    %  scp mod_perl-2.0.5.tar.gz perl.apache.org:/www/perl.apache.org/dist/
+    %  scp mod_perl-2.0.5.tar.gz people.apache.org:/www/perl.apache.org/dist/
 
-  b. ssh to perl.apache.org, unpack the package, update symlinks to the
+  b. ssh to people.apache.org, unpack the package, update symlinks to the
      tar ball and unpacked distro:
 
-    % ssh perl.apache.org
+    % ssh people.apache.org
     % cd /www/perl.apache.org/dist/
     % ln -sf mod_perl-2.0.5.tar.gz mod_perl-2.0-current.tar.gz
     % tar -xzvf mod_perl-2.0.5.tar.gz
@@ -152,10 +152,10 @@ Instructions for mod_perl 2.0 Release Manager
 
     % pgps -b --armor mod_perl-2.0.5.tar.gz
 
-  b. upload the generated sig file to perl.apache.org:
+  b. upload the generated sig file to people.apache.org:
 
-    % scp mod_perl-2.0.5.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
-    % ssh perl.apache.org
+    % scp mod_perl-2.0.5.tar.gz.asc people.apache.org:/www/perl.apache.org/dist/
+    % ssh people.apache.org
     % cd /www/perl.apache.org/dist/
     % chmod 0664 mod_perl-2.0.5.tar.gz.asc
     % ln -sf mod_perl-2.0.5.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
