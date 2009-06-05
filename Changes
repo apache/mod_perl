@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.32-dev
 
+Work around a gcc optimization specific bug which
+cuased seg faults on FreeBSD 7.x during mod_perl startup.
+[Tim Zingelman <zingelman@fnal.gov>]
+
 =item 1.31 May 11, 2009
 
 Fix static APACI build on Mac OS X. [Gozer]

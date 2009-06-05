@@ -596,6 +596,7 @@ static void mod_perl_xs_init(pTHX)
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+    char **temp_argv=argv;
     char **entries, *dstr;
     int status, i, argc=1;
     dPSRV(s);
@@ -679,7 +680,7 @@ void perl_startup (server_rec *s, pool *p)
     MP_TRACE_g(fprintf(stderr, "..."));
 
 #ifdef PERL_SYS_INIT
-    PERL_SYS_INIT(&argc,(char***)&argv);
+    PERL_SYS_INIT(&argc,(char***)&temp_argv);
 #endif
 
 #ifndef perl_init_i18nl10n
