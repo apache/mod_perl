@@ -593,10 +593,15 @@ static void mod_perl_xs_init(pTHX)
 #endif
 }
 
+/*
+ * XXX: temp_argv is required to work around a bug in gcc
+ *      present in at least FreeBSD 7.x which causes
+ *      sefaults during mod_perl startup.
+ */
 void perl_startup (server_rec *s, pool *p)
 {
     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-    char **temp_argv=argv;
+    char **temp_argv = argv;
     char **entries, *dstr;
     int status, i, argc=1;
     dPSRV(s);
