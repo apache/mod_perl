@@ -12,8 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
-Fix a typo in ModPerl::BuildMM and introduce lexically scoped loop
-variables in ModPerl::MM::WriteMakefile(). [Torsten Foertsch]
+"MODPERL_INC= now correctly supported as an argument to Makefile.PL"
+[Torsten Foertsch]
 
 Fix an XSS issue in Apache2::Status reported by Richard J. Brain
 <richard@procheckup.com>. [Torsten Foertsch]
