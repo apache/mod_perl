@@ -77,9 +77,9 @@ sub WriteMakefile {
     $build ||= build_config();
     ModPerl::MM::my_import(__PACKAGE__);
 
-    my $inc;
+    my $inc = $args{INC} || '';
     $inc = $args{INC} if $args{INC};
-    $inc = " " . $build->inc;
+    $inc .= " " . $build->inc;
     if (my $glue_inc = $build->{MP_XS_GLUE_DIR}) {
         for (split /\s+/, $glue_inc) {
             $inc .= " -I$_";

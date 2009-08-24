@@ -31,6 +31,9 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.5-dev
 
+Fix a typo in ModPerl::BuildMM and introduce lexically scoped loop
+variables in ModPerl::MM::WriteMakefile(). [Torsten Foertsch]
+
 Fix an XSS issue in Apache2::Status reported by Richard J. Brain
 <richard@procheckup.com>. [Torsten Foertsch]
 

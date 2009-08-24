@@ -2069,6 +2069,7 @@ sub includes {
 }
 
 sub inc {
+    local $_;
     my @includes = map { "-I$_" } @{ shift->includes };
     "@includes";
 }
