@@ -132,22 +132,22 @@ sub WriteMakefile {
     my_import(__PACKAGE__);
 
     # set top-level WriteMakefile's values if weren't set already
-    for (@default_opts) {
-        $args{$_} = get_def_opt($_) unless exists $args{$_}; # already defined
+    for my $o (@default_opts) {
+        $args{$o} = get_def_opt($o) unless exists $args{$o}; # already defined
     }
 
     # set dynamic_lib-level WriteMakefile's values if weren't set already
     $args{dynamic_lib} ||= {};
     my $dlib = $args{dynamic_lib};
-    for (@default_dlib_opts) {
-        $dlib->{$_} = get_def_opt($_) unless exists $dlib->{$_};
+    for my $o (@default_dlib_opts) {
+        $dlib->{$o} = get_def_opt($o) unless exists $dlib->{$o};
     }
 
     # set macro-level WriteMakefile's values if weren't set already
     $args{macro} ||= {};
     my $macro = $args{macro};
-    for (@default_macro_opts) {
-        $macro->{$_} = get_def_opt($_) unless exists $macro->{$_};
+    for my $o (@default_macro_opts) {
+        $macro->{$o} = get_def_opt($o) unless exists $macro->{$o};
     }
 
     ExtUtils::MakeMaker::WriteMakefile(%args);
