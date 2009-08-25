@@ -589,7 +589,7 @@ modperl_interp_t *modperl_thx_interp_get(PerlInterpreter *thx)
 void modperl_thx_interp_set(PerlInterpreter *thx, modperl_interp_t *interp)
 {
     dTHXa(thx);
-    hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), newSViv(PTR2IV(interp)), 0);
+    (void)hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), newSViv(PTR2IV(interp)), 0);
     return;
 }
 
