@@ -404,10 +404,12 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
         FREETMPS;LEAVE;
 
         if (init_handler) {
+            modperl_mgv_resolve(aTHX_ init_handler, p, init_handler->name, 1);
+
             MP_TRACE_h(MP_FUNC, "found init handler %s",
                        modperl_handler_name(init_handler));
 
-            if (!init_handler->attrs & MP_FILTER_INIT_HANDLER) {
+            if (!(init_handler->attrs & MP_FILTER_INIT_HANDLER)) {
                 Perl_croak(aTHX_ "handler %s doesn't have "
                            "the FilterInitHandler attribute set",
                            modperl_handler_name(init_handler));
