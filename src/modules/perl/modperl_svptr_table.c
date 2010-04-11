@@ -62,7 +62,7 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
     dst_ary = tbl->tbl_ary;
     src_ary = source->tbl_ary;
 
-    Zero(&parms, 0, CLONE_PARAMS);
+    Zero(&parms, 1, CLONE_PARAMS);
     parms.flags = 0;
     parms.stashes = newAV();
 
