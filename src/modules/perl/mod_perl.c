@@ -1008,7 +1008,7 @@ apr_status_t modperl_response_finish(request_rec *r)
     return modperl_wbucket_flush(rcfg->wbucket, FALSE);
 }
 
-static int modperl_response_handler_run(request_rec *r, int finish)
+static int modperl_response_handler_run(request_rec *r)
 {
     int retval;
 
@@ -1020,20 +1020,13 @@ static int modperl_response_handler_run(request_rec *r, int finish)
         r->handler = r->content_type; /* let http_core or whatever try */
     }
 
-    if (finish) {
-        apr_status_t rc = modperl_response_finish(r);
-        if (rc != APR_SUCCESS) {
-            retval = rc;
-        }
-    }
-
     return retval;
 }
 
 int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
-    apr_status_t retval;
+    apr_status_t retval, rc;
 
 #ifdef USE_ITHREADS
     pTHX;
@@ -1056,7 +1049,11 @@ int modperl_response_handler(request_rec *r)
         modperl_env_request_populate(aTHX_ r);
     }
 
-    retval = modperl_response_handler_run(r, TRUE);
+    retval = modperl_response_handler_run(r);
+    rc = modperl_response_finish(r);
+    if (rc != APR_SUCCESS) {
+        retval = rc;
+    }
 
 #ifdef USE_ITHREADS
     MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
@@ -1109,7 +1106,7 @@ int modperl_response_handler_cgi(request_rec *r)
 
     modperl_env_request_tie(aTHX_ r);
 
-    retval = modperl_response_handler_run(r, FALSE);
+    retval = modperl_response_handler_run(r);
 
     modperl_env_request_untie(aTHX_ r);
 

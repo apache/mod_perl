@@ -404,10 +404,12 @@ int modperl_filter_resolve_init_handler(pTHX_ modperl_handler_t *handler,
         FREETMPS;LEAVE;
 
         if (init_handler) {
+            modperl_mgv_resolve(aTHX_ init_handler, p, init_handler->name, 1);
+
             MP_TRACE_h(MP_FUNC, "found init handler %s",
                        modperl_handler_name(init_handler));
 
-            if (!init_handler->attrs & MP_FILTER_INIT_HANDLER) {
+            if (!(init_handler->attrs & MP_FILTER_INIT_HANDLER)) {
                 Perl_croak(aTHX_ "handler %s doesn't have "
                            "the FilterInitHandler attribute set",
                            modperl_handler_name(init_handler));
@@ -654,8 +656,13 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
     apr_size_t len = 0;
 
     (void)SvUPGRADE(buffer, SVt_PV);
-    SvPOK_only(buffer);
     SvCUR(buffer) = 0;
+
+    /* calling SvPOK_only here may leave buffer an invalid state since
+     * SvPVX may be NULL. But it's very likely that something is copied.
+     * So, we turn the POK flag on here. Later we check if SvPVX is NULL
+     * and turn the flag off again if so. */
+    SvPOK_only(buffer);
 
     /* sometimes the EOS bucket arrives in the same brigade with other
      * buckets, so that particular read() will not return 0 and will
@@ -682,6 +689,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
                        wanted,
                        MP_TRACE_STR_TRUNC(filter->pool, filter->leftover, wanted),
                        filter->remaining);
+            SvGROW(buffer, wanted+1);
             sv_catpvn(buffer, filter->leftover, wanted);
             filter->leftover += wanted;
             filter->remaining -= wanted;
@@ -692,6 +700,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
                        "eating remaining %db",
                        MP_FILTER_NAME(filter->f),
                        filter->remaining);
+            SvGROW(buffer, filter->remaining+1);
             sv_catpvn(buffer, filter->leftover, filter->remaining);
             len = filter->remaining;
             filter->remaining = 0;
@@ -728,6 +737,7 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
         if (buf_len) {
             if ((SvCUR(buffer) + buf_len) >= wanted) {
                 int nibble = wanted - SvCUR(buffer);
+                SvGROW(buffer, SvCUR(buffer)+nibble+1);
                 sv_catpvn(buffer, buf, nibble);
                 filter->leftover = (char *)buf+nibble;
                 filter->remaining = buf_len - nibble;
@@ -736,9 +746,14 @@ MP_INLINE static apr_size_t modperl_filter_read(pTHX_
             }
             else {
                 len += buf_len;
+                SvGROW(buffer, SvCUR(buffer)+buf_len+1);
                 sv_catpvn(buffer, buf, buf_len);
             }
         }
+    }
+
+    if (!SvPVX(buffer)) {
+        SvPOK_off(buffer);
     }
 
     MP_TRACE_f(MP_FUNC,

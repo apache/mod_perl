@@ -31,6 +31,17 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.5-dev
 
+Make sure standard file descriptors are preserved by the perl-script
+handler [Torsten Foertsch]
+
+Fix the filter init handler attribute check in 
+modperl_filter_resolve_init_handler() [Torsten Foertsch]
+
+Make sure buffer is a valid SV in modperl_filter_read() [Torsten Foertsch]
+
+Move modperl_response_finish() out of modperl_response_handler_run in
+mod_perl.c [Torsten Foertsch]
+
 "MODPERL_INC= now correctly supported as an argument to Makefile.PL"
 [Torsten Foertsch]
 
