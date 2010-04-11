@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Make sure standard file descriptors are preserved by the perl-script
+handler [Torsten Foertsch]
+
 Fix the filter init handler attribute check in 
 modperl_filter_resolve_init_handler() [Torsten Foertsch]
 
