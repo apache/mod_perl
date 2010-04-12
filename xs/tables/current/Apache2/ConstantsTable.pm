@@ -232,7 +232,6 @@ $Apache2::ConstantsTable = {
       'PROXYREQ_REVERSE',
       'PROXYREQ_NONE',
       'PROXYREQ_PROXY',
-      'PROXYREQ_RESPONSE',
     ],
   },
   'APR::Const' => {
