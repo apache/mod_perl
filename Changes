@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Export PROXYREQ_RESPONSE, a missing PROXYREQ_* constant [Gozer]
+
 Make sure standard file descriptors are preserved by the perl-script
 handler [Torsten Foertsch]
 
