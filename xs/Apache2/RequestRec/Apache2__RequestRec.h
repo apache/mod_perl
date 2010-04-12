@@ -59,7 +59,7 @@ int mpxs_Apache2__RequestRec_proxyreq(pTHX_ request_rec *r, SV *val)
                                    r->parsed_uri.port :
                                    ap_default_port(r))))
     {
-        retval = r->proxyreq = 1;
+        retval = r->proxyreq = PROXYREQ_PROXY;
         r->uri = r->unparsed_uri;
         /* else mod_proxy will segfault */
         r->filename = apr_pstrcat(r->pool, "modperl-proxy:", r->uri, NULL);
