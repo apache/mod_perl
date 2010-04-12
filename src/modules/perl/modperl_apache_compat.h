@@ -72,8 +72,4 @@ AP_DECLARE(const char *) ap_get_server_version(void);
                                         OPT_SYM_OWNER | \
                                         OPT_MULTI)
 
-#ifndef PROXYREQ_RESPONSE
-#define PROXYREQ_RESPONSE (3)
-#endif
-
 #endif /* MODPERL_APACHE_COMPAT_H */
