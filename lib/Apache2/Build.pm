@@ -511,7 +511,7 @@ my $Wall =
 
 # perl v5.6.1 and earlier produces lots of warnings, so we can't use
 # -Werror with those versions.
-$Wall .= " -Werror" if $] >= 5.006002;
+#$Wall .= " -Werror" if $] >= 5.006002;
 
 sub ap_ccopts {
     my ($self) = @_;
