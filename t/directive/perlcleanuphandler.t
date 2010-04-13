@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest 'GET_BODY';
 
-plan tests => 3;
+plan tests => 3, need_lwp;
 
 my $module = 'TestDirective::perlcleanuphandler';
 
