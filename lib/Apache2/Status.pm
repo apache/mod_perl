@@ -95,8 +95,8 @@ sub install_hint {
 
 sub status_config {
     my ($r, $key) = @_;
-    return (lc($r->dir_config($key)) eq "on") ||
-        (lc($r->dir_config('StatusOptionsAll')) eq "on");
+    return (lc($r->dir_config($key) || '') eq "on") ||
+        (lc($r->dir_config('StatusOptionsAll') || '') eq "on");
 }
 
 sub menu_item {
