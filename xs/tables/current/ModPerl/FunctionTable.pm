@@ -5981,6 +5981,24 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'int',
+    'name' => 'mpxs_APR__Socket_sock_get',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'apr_socket_t *',
+        'name' => 'socket'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_APR__String_strfsize',
     'args' => [
