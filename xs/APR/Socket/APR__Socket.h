@@ -116,3 +116,14 @@ apr_status_t mpxs_APR__Socket_poll(apr_socket_t *socket,
 
     return apr_poll(&fd, 1, &nsds, timeout);
 }
+
+static MP_INLINE int mpxs_APR__Socket_sock_get(pTHX_ apr_socket_t *sock)
+{
+#ifdef WIN32
+    return -1;			/* not implemented */
+#else
+    apr_os_sock_t s;
+    apr_os_sock_get(&s, sock);
+    return s;
+#endif
+}
