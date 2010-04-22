@@ -55,7 +55,7 @@ MODULE=APR::Socket
 !apr_socket_shutdown
 -apr_socket_inherit_set
 -apr_socket_inherit_unset
- mpxs_APR__Socket_sock_get | | apr_socket_t *:socket
+ mpxs_APR__Socket_fileno | | apr_socket_t *:socket
 
 MODULE=APR::Socket
  apr_socket_close

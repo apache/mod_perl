@@ -5993,7 +5993,7 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'int',
-    'name' => 'mpxs_APR__Socket_sock_get',
+    'name' => 'mpxs_APR__Socket_fileno',
     'attr' => [
       'static',
       '__inline__'
