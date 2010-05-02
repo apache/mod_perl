@@ -556,8 +556,10 @@ MP_CMD_SRV_DECLARE(perldo)
                           arg, NULL);
     }
 
+#ifdef USE_ITHREADS
     MP_TRACE_i(MP_FUNC, "using interp %lx to execute perl section:\n%s",
                scfg->mip->parent, arg);
+#endif
 
     {
         SV *server = MP_PERLSECTIONS_SERVER_SV;

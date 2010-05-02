@@ -10,7 +10,6 @@ use Apache2::RequestUtil ();
 use Apache2::Connection ();
 use Apache2::ConnectionUtil ();
 use APR::Pool ();
-use ModPerl::Interpreter ();
 use ModPerl::Util ();
 use APR::Table ();
 use Apache2::Const -compile => 'OK', 'DECLINED';
@@ -24,12 +23,21 @@ use Apache2::Const -compile => 'OK', 'DECLINED';
     sub DESTROY {my $f=shift @{$_[0]}; $f->(@{$_[0]});}
 }
 
+sub current_interp {
+    use Config;
+    if ($Config{useithreads} and
+        $Config{useithreads} eq 'define') {
+        require ModPerl::Interpreter;
+        ModPerl::Interpreter::current();
+    }
+}
+
 sub init {
     my $r=shift;
 
     return Apache2::Const::DECLINED unless( $r->is_initial_req );
 
-    my $interp=ModPerl::Interpreter::current;
+    my $interp=current_interp;
     $r->connection->notes->{interp}=join(':', $$interp, $interp->num_requests);
     $r->connection->notes->{refcnt}=$interp->refcnt;
 
@@ -41,7 +49,7 @@ sub add {
 
     return Apache2::Const::DECLINED unless( $r->is_initial_req );
 
-    my $interp=ModPerl::Interpreter::current;
+    my $interp=current_interp;
     $r->connection->notes->{interp}.=','.join(':', $$interp, $interp->num_requests);
     $r->connection->notes->{refcnt}.=','.$interp->refcnt;
 

@@ -3,6 +3,8 @@
 # for mapping see %ModPerl::MapUtil::disabled_map in
 # lib/ModPerl/MapUtil.pm
 
+#_if_ do {use Apache2::Build; Apache2::Build::PERL_HAS_ITHREADS}
+
 <modperl_interp_t>
 <  mip
 <  perl
@@ -38,3 +40,5 @@
 <  max
 <  max_requests
 </modperl_tipool_config_t>
+
+#_end_
