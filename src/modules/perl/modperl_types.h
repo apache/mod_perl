@@ -82,7 +82,7 @@ typedef struct {
                         modperl_list_t *listp);
 } modperl_tipool_vtbl_t;
 
-typedef struct modperl_tipool_config_t {
+struct modperl_tipool_config_t {
     int start; /* number of items to create at startup */
     int min_spare; /* minimum number of spare items */
     int max_spare; /* maximum number of spare items */
