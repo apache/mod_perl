@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Implement a mini-preprocess language for map-files in xs/maps.
+[Torsten Foertsch]
+
 Implement APR::Socket::fileno [Torsten Foertsch]
 
 Export PROXYREQ_RESPONSE, a missing PROXYREQ_* constant [Gozer]
