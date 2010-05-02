@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -86,13 +87,59 @@ package ModPerl::MapBase;
 *function_table = \&ModPerl::MapUtil::function_table;
 *structure_table = \&ModPerl::MapUtil::structure_table;
 
+my @condition;
+
 sub readline {
     my $fh = shift;
 
     while (<$fh>) {
         chomp;
         s/^\s+//; s/\s+$//;
-        s/^\#.*//;
+
+        # this implements
+        # #_if_ cmd
+        # ...
+        # #_else_
+        # #_end_
+        if (/^\s*#\s*_(if|unless|els(?:e|if)|end)_(?:\s(.+))?/) {
+            my ($cmd, $param) = ($1, $2);
+            if ($cmd eq 'if') {
+                unshift @condition, 0+!!eval $param;
+            }
+            elsif ($cmd eq 'elsif') {
+                die "parse error ($ModPerl::MapUtil::MapFile line $.)".
+                    " #_elsif_ without #_if_"
+                    unless @condition;
+                if ($condition[0] == 0) {
+                    $condition[0]+=!!eval $param;
+                } else {
+                    $condition[0]++;
+                }
+            }
+            elsif ($cmd eq 'else') {
+                die "parse error ($ModPerl::MapUtil::MapFile line $.)".
+                    " #_elsif_ without #_if_"
+                    unless @condition;
+                $condition[0]+=1;
+            }
+            elsif ($cmd eq 'unless') {
+                unshift @condition, 0+!eval $param;
+            }
+            elsif ($cmd eq 'end') {
+                shift @condition;
+            }
+        }
+        next if @condition and $condition[0] != 1;
+
+        if (/^\s*#\s*_(eval)_(?:\s(.+))?/) {
+            my ($cmd, $param) = ($1, $2);
+            if ($cmd eq 'eval') {
+                eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                die $@ if $@;
+            }
+            next;
+        }
+
         s/\s*\#.*//;
 
         next unless $_;
@@ -169,6 +216,7 @@ sub parse_map_files {
         open my $fh, $file or die "open $file: $!";
         local $ModPerl::MapUtil::MapFile = $file;
         bless $fh, __PACKAGE__;
+        @condition=();          # see readline() above
         $self->parse($fh, $map);
         close $fh;
     }
