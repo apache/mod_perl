@@ -4,8 +4,10 @@ installdirs:  site
 distribution_type: module
 no_index:
     directory:
-          # A-T has its own CPAN distro
+          # A-T and others have their own CPAN distros
         - Apache-Test
+        - Apache-Reload
+        - Apache-SizeLimit
     package:
           # Internally redefined module
         - C::Preprocessed
