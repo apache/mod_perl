@@ -1,0 +1,70 @@
+This is mod_perl version 2.0
+
+*** Prerequisites ***
+
+Apache:
+  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.2.8.
+  Static mod_perl:           Apache 2.0.51 - 2.2.8.
+
+  Newer Apache versions may work with this version of mod_perl.  If
+  not, the svn version likely will, which can be obtained from:
+  http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
+
+Perl: 
+  Dynamic mod_perl (DSO):
+
+    + prefork mpm:
+      - Perl version 5.6.1 or higher
+
+    + non-prefork mpm:
+      - Perl with    ithreads support version 5.8.0 or higher
+
+  Static mod_perl:
+
+    + prefork mpm:
+      - Perl with    ithreads support version 5.6.1 or higher
+      - Perl without ithreads support version 5.8.2 or higher
+
+    + non-prefork mpm:
+      - Perl with    ithreads support version 5.8.0 or higher
+
+*** Status ***
+
+mod_perl is currently considered beta.
+
+
+*** Documentation ***
+
+Documentation can be found in the docs/ directory. Currently they
+don't get installed on 'make install'. Certain API documentation can
+be found in docs/api/.  The online version is at
+http://perl.apache.org/docs/2.0/.
+
+*** Todo ***
+
+mod_perl-2.0 is not 100% feature complete with the 1.xx version.
+See the files in the todo/ directory for what remains to be done. Some
+of those features will be implemented after 2.0 is released. The goal
+is to empty the file todo/release and document/test/verify the API
+that's going to be supported by 2.0. More API will be supported post
+2.0 release.
+
+*** Support ***
+
+For comments, questions, bug-reports, etc., join the mod_perl users
+list by sending mail to modperl-subscribe@perl.apache.org.
+
+When reporting bugs please follow the instructions at:
+http://perl.apache.org/docs/2.0/user/help/help.html#Reporting_Problems
+
+For announcements join the mod_perl announce list by sending mail to
+announce-subscribe@perl.apache.org.
+
+*** Developers ***
+
+Development discussion takes place on dev (at) perl.apache.org
+
+*** Authors ***
+
+mod_perl-2.0 was designed and written by Doug MacEachern, with
+contributions from many others (see Changes files).
