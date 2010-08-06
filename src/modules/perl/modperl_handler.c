@@ -260,7 +260,7 @@ int modperl_handler_equal(modperl_handler_t *h1, modperl_handler_t *h2)
 MpAV *modperl_handler_array_merge(apr_pool_t *p, MpAV *base_a, MpAV *add_a)
 {
     int i, j;
-    modperl_handler_t **base_h, **add_h, **mrg_h;
+    modperl_handler_t **base_h, **add_h;
     MpAV *mrg_a;
 
     if (!add_a) {
@@ -273,7 +273,6 @@ MpAV *modperl_handler_array_merge(apr_pool_t *p, MpAV *base_a, MpAV *add_a)
 
     mrg_a = apr_array_copy(p, base_a);
 
-    mrg_h  = (modperl_handler_t **)mrg_a->elts;
     base_h = (modperl_handler_t **)base_a->elts;
     add_h  = (modperl_handler_t **)add_a->elts;
 
