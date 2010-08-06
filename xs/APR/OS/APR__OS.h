@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-static MP_INLINE U32 mpxs_APR__OS_current_thread_id(pTHX)
+static MP_INLINE unsigned long mpxs_APR__OS_current_thread_id(pTHX)
 {
 #if APR_HAS_THREADS
-    return (U32)apr_os_thread_current();
+    return (unsigned long)apr_os_thread_current();
 #else
     return 0;
 #endif
