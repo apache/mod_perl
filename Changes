@@ -31,6 +31,8 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.5-dev
 
+Run tests on bundled pure perl Apache::* modules [Gozer, Phred]
+
 Implement a mini-preprocess language for map-files in xs/maps.
 [Torsten Foertsch]
 

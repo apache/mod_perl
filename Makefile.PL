@@ -785,7 +785,16 @@ run_tests : test_clean
 	$(PASSENV) \
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
 	t/TEST -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
-	cd ModPerl-Registry && $(MAKE) test
+	$(MAKE) -k run_subtests
+
+run_subtests ::
+	$(MAKE) -C ModPerl-Registry test
+
+run_subtests ::
+	$(MAKE) -C Apache-Reload test
+
+run_subtests ::
+	$(MAKE) -C Apache-SizeLimit test
 
 test :: pure_all run_tests test_clean
 EOF
