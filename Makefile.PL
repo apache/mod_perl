@@ -725,20 +725,23 @@ EOF
 sub MY::install {
     my $self = shift;
     my $string = $self->MM::install(@_);
-    ModPerl::MM::add_dep(\$string, pure_install => 'ap_install') 
-        if $build->should_build_apache;
-    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
-    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
-    # ModPerl::MM::add_dep(\$string, pure_install => 'aprext_install')
-    #    if BUILD_APREXT;
 
-    ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
-          if $apache_test_install;
+    for my $kind ('', '_site', '_vendor') {
+        ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'ap_install')
+	    if $build->should_build_apache;
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'modperl_lib_install');
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'modperl_xs_h_install');
+	# ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'aprext_install')
+	#    if BUILD_APREXT;
 
-    ModPerl::MM::add_dep_after(\$string, qw(install doc_install modperl_banner));
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'nuke_Apache__test')
+	    if $apache_test_install;
 
-    # glue_pods target must come first
-    ModPerl::MM::add_dep(\$string, pure_install => 'glue_pods');
+	ModPerl::MM::add_dep_after(\$string, "install$kind", "doc${kind}_install", 'modperl_banner');
+
+	# glue_pods target must come first
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'glue_pods');
+    }
 
     $string;
 }
