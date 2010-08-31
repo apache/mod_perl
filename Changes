@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Make sure perl is built either with multiplicity and ithreads or without
+both [Theory, Torsten]
+
 Support for "install_vendor" and "install_site" make targets [Torsten]
 
 Run tests on bundled pure perl Apache::* modules [Gozer, Phred]

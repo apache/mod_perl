@@ -540,6 +540,19 @@ sub perl_version_check {
             "Upgrade to Perl 5.8.0 or higher";
         exit 1;
     }
+
+    if ($Config{usemultiplicity} xor $Config{usethreads}) {
+        error "mod_perl does not currently support multiplicity without ".
+	      "ithreads.";
+        if ($build->mpm_is_threaded()) {
+	    error "Please recompile Perl with -Duseithreads and ".
+	          "-Dusemultiplicity";
+        } else {
+	    error "Please recompile Perl with either -Duseithreads and ".
+	          "-Dusemultiplicity or -Uuseithreads and -Uusemultiplicity";
+	}
+        exit 1;
+    }
 }
 
 sub system_sanity_check {
