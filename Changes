@@ -12,6 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Look for a usable apxs in $ENV{PATH} if all other options fail, then prompt the user for one.
+[Phred]
+
+Work around bootstrap warnings when Apache2::BuildConfig has not been created yet.
+[Phred]
+
+Remove Apache::test compatibility (part of mod_perl 1.2.7), that code causes build issues and is 4 versions out of date.
+[Phred]
+
 Make sure perl is built either with multiplicity and ithreads or without
 both [Theory, Torsten]
 
