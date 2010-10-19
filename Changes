@@ -31,6 +31,18 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.5-dev
 
+Look for a usable apxs in $ENV{PATH} if all other options fail, then prompt the user for one.
+[Phred]
+
+Work around bootstrap warnings when Apache2::BuildConfig has not been created yet.
+[Phred]
+
+Remove Apache::test compatibility (part of mod_perl 1.2.7), that code causes build issues and is 4 versions out of date.
+[Phred]
+
+Make sure perl is built either with multiplicity and ithreads or without
+both [Theory, Torsten]
+
 Support for "install_vendor" and "install_site" make targets [Torsten]
 
 Run tests on bundled pure perl Apache::* modules [Gozer, Phred]

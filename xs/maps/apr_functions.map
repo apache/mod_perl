@@ -55,7 +55,9 @@ MODULE=APR::Socket
 !apr_socket_shutdown
 -apr_socket_inherit_set
 -apr_socket_inherit_unset
+#_if_ $^O !~ /mswin/i
  mpxs_APR__Socket_fileno | | apr_socket_t *:socket
+#_end_
 
 MODULE=APR::Socket
  apr_socket_close
@@ -627,7 +629,11 @@ MODULE=APR::OS
 -apr_os_exp_time_get
 -apr_os_file_get
 -apr_os_imp_time_get
+#_if_ $^O !~ /mswin/i
 ~apr_os_sock_get
+#_else_
+-apr_os_sock_get
+#_end_
 -apr_os_thread_get
 -apr_os_threadkey_get
 -apr_os_sock_make
