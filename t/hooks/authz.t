@@ -16,6 +16,10 @@ ok $rc == 401;
 
 ok GET_OK $location, username => 'dougm', password => 'foo';
 
+# since LWP 5.815, the user agent retains credentials
+# tell Apache::TestRequest to reinitialize its global agent
+Apache::TestRequest::user_agent(reset => 1);
+
 ok ! GET_OK $location, username => 'jobbob', password => 'whatever';
 
 
