@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+Authentication tests fail with LWP 5.815 and later
+[Doug Schrag]
+
+Concise test won't perform unless StatusTerse is set to ON
+[Doug Schrag]
+
 Look for a usable apxs in $ENV{PATH} if all other options fail, then prompt the user for one.
 [Phred]
 
