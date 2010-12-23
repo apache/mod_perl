@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-dev
 
+PerlIOApache_write() now throws an APR::Error object, rather than just a string
+error, if modperl_wbucket_write() fails.
+[Steve Hay]
+
 Authentication tests fail with LWP 5.815 and later
 [Doug Schrag]
 
