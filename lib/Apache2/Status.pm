@@ -179,7 +179,8 @@ sub symdump {
 
     return install_hint("Devel::Symdump") unless has($r, "symdump");
 
-    my $meth = lc($r->dir_config("StatusRdump")) eq "on"
+    # lc generates a (FATAL) warning if $r->dir_config is undef
+    my $meth = lc($r->dir_config("StatusRdump") || '') eq "on"
         ? "rnew" : "new";
     my $sob = Devel::Symdump->$meth($package);
     return $sob->Apache2::Status::as_HTML($package, $r);

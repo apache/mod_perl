@@ -83,7 +83,7 @@ PerlModule TestExit::FromPerlModule
 #    PerlSetVar StatusLexInfo On
 #    PerlSetVar StatusDeparse On
 #    PerlSetVar StatusDeparseOptions "-p -sC"
-#    PerlSetVar StatusTerse On
+    PerlSetVar StatusTerse On
 #    PerlSetVar StatusTerseSize On
 #    PerlSetVar StatusTerseSizeMainSummary On
     SetHandler modperl

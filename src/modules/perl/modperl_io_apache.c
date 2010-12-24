@@ -126,7 +126,6 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     PerlIOApache *st = PerlIOSelf(f, PerlIOApache);
     modperl_config_req_t *rcfg = modperl_config_req_get(st->r);
     apr_size_t bytes = 0;
-    apr_status_t rv;
 
     if (!(PerlIOBase(f)->flags & PERLIO_F_CANWRITE)) {
         return 0;
@@ -137,10 +136,9 @@ PerlIOApache_write(pTHX_ PerlIO *f, const void *vbuf, Size_t count)
     MP_TRACE_o(MP_FUNC, "%4db [%s]", count,
                MP_TRACE_STR_TRUNC(rcfg->wbucket->pool, vbuf, count));
 
-    rv = modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count);
-    if (rv != APR_SUCCESS) {
-        Perl_croak(aTHX_ modperl_error_strerror(aTHX_ rv));
-    }
+    MP_RUN_CROAK(modperl_wbucket_write(aTHX_ rcfg->wbucket, vbuf, &count),
+                 ":Apache2 IO write");
+
     bytes += count;
 
     return (SSize_t) bytes;
