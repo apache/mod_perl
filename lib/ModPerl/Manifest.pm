@@ -52,7 +52,7 @@ sub get_svn_files {
     }
 
     # files to add which aren't under svn
-    push @files, qw(lib/ModPerl/DummyVersions.pm);
+    push @files, qw(lib/ModPerl/DummyVersions.pm lib/ModPerl/MethodLookup.pm);
 
     return @files;
 }
