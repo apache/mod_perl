@@ -30,7 +30,7 @@ my $location = "/TestApache__content_length_header";
 # are using HEAD requests in the wild
 #   http://bugzilla.mozilla.org/show_bug.cgi?id=245447
 
-foreach my $method qw(GET HEAD) {
+foreach my $method (qw(GET HEAD)) {
 
     no strict qw(refs);
 
