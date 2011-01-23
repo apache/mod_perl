@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5-rc1
 
+Perpare modperl for the upcoming perl 5.14 [Torsten Foertsch]
+
 Add lib/ModPerl/MethodLookup.pm to MANIFEST via lib/ModPerl/Manifest.pm
 RT #48103 reported by MARKLE@cpan.org
 [Fred Moyer]
