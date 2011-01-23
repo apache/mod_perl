@@ -10,7 +10,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.5-dev
+=item 2.0.5-rc1
+
+Add lib/ModPerl/MethodLookup.pm to MANIFEST via lib/ModPerl/Manifest.pm
+RT #48103 reported by MARKLE@cpan.org
+[Fred Moyer]
 
 PerlIOApache_write() now throws an APR::Error object, rather than just a string
 error, if modperl_wbucket_write() fails.
