@@ -51,7 +51,7 @@ static void new_constsub(pTHX_ constants_lookup lookup,
             gv_init(alias, caller_stash, name, name_len, TRUE);
         }
 
-        GvCV(alias) = GvCV(*gvp);
+        GvCV_set(alias, GvCV(*gvp));
     }
 }
 
