@@ -47,4 +47,11 @@ void modperl_hash_seed_init(apr_pool_t *p);
 
 void modperl_hash_seed_set(pTHX);
 
+#ifndef GvCV_set
+#    define GvCV_set(gv, cv) (GvCV(gv)=(cv))
+#endif
+#ifndef GvGP_set
+#    define GvGP_set(gv, gp) (GvGP(gv)=(gp))
+#endif
+
 #endif /* MODPERL_PERL_H */
