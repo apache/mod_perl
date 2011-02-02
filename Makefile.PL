@@ -21,6 +21,7 @@ BEGIN {
             $old_Apache2_pm = delete $INC{'Apache2.pm'};
         }
     };
+
 }
 
 use lib qw(lib Apache-Test/lib);
@@ -540,6 +541,19 @@ sub perl_version_check {
             "Upgrade to Perl 5.8.0 or higher";
         exit 1;
     }
+
+    if ($Config{usemultiplicity} xor $Config{usethreads}) {
+        error "mod_perl does not currently support multiplicity without ".
+	      "ithreads.";
+        if ($build->mpm_is_threaded()) {
+	    error "Please recompile Perl with -Duseithreads and ".
+	          "-Dusemultiplicity";
+        } else {
+	    error "Please recompile Perl with either -Duseithreads and ".
+	          "-Dusemultiplicity or -Uuseithreads and -Uusemultiplicity";
+	}
+        exit 1;
+    }
 }
 
 sub system_sanity_check {
@@ -615,13 +629,6 @@ package MY;
 use Config;
 use constant WIN32 => $^O eq 'MSWin32';
 use constant BUILD_APREXT => Apache2::Build::BUILD_APREXT;
-
-my $apache_test_install;
-BEGIN {
-    $apache_test_install = -e 'Apache-Test';
-    use lib './Apache-Test';
-    require 'install-pl' if $apache_test_install;
-}
 
 sub MY::top_targets {
     my $self = shift;
@@ -716,29 +723,26 @@ modperl_banner:
 
 EOF
 
-    $string .= Apache::Test::install::nuke_Apache__test_target()
-        if $apache_test_install;
-
     $string;
 }
 
 sub MY::install {
     my $self = shift;
     my $string = $self->MM::install(@_);
-    ModPerl::MM::add_dep(\$string, pure_install => 'ap_install') 
-        if $build->should_build_apache;
-    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_lib_install');
-    ModPerl::MM::add_dep(\$string, pure_install => 'modperl_xs_h_install');
-    # ModPerl::MM::add_dep(\$string, pure_install => 'aprext_install')
-    #    if BUILD_APREXT;
 
-    ModPerl::MM::add_dep(\$string, pure_install => 'nuke_Apache__test')
-          if $apache_test_install;
+    for my $kind ('', '_site', '_vendor') {
+        ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'ap_install')
+	    if $build->should_build_apache;
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'modperl_lib_install');
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'modperl_xs_h_install');
+	# ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'aprext_install')
+	#    if BUILD_APREXT;
 
-    ModPerl::MM::add_dep_after(\$string, qw(install doc_install modperl_banner));
+	ModPerl::MM::add_dep_after(\$string, "install$kind", "doc${kind}_install", 'modperl_banner');
 
-    # glue_pods target must come first
-    ModPerl::MM::add_dep(\$string, pure_install => 'glue_pods');
+	# glue_pods target must come first
+	ModPerl::MM::add_dep(\$string, "pure${kind}_install" => 'glue_pods');
+    }
 
     $string;
 }

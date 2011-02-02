@@ -66,6 +66,24 @@ sub init {
     $build->{MP_COMPAT_1X} = 1
         unless exists $build->{MP_COMPAT_1X} && !$build->{MP_COMPAT_1X};
 
+    # make a last ditch effort to find apxs in $ENV{PATH}
+    if (!$build->{MP_AP_PREFIX} && !$build->{MP_APXS}) {
+
+        my @paths = split(/:/, $ENV{PATH});
+        my $potential_apxs;
+        while (!$potential_apxs) {
+
+            last if scalar(@paths) == 0; # don't loop endlessly
+            $potential_apxs = File::Spec->catfile(shift @paths, 'apxs');
+            if (-e $potential_apxs && -x $potential_apxs) {
+
+                $build->{MP_APXS} = $potential_apxs;
+                print "MP_APXS unspecified, using $potential_apxs\n\n";
+            } else {
+                undef $potential_apxs;
+            }
+        }
+    }
 }
 
 sub parse {
