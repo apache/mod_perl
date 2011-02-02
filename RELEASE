@@ -14,7 +14,7 @@ Instructions for mod_perl 2.0 Release Manager
       http://people.apache.org/~geoff/gpghowto.html
 
     Copy the KEYS file into place:
-    % scp KEYS www.apache.org:/www/www.apache.org/dist/perl/KEYS
+    % scp KEYS people.apache.org:/www/www.apache.org/dist/perl/KEYS
 
     If this is your first release, ask someone with APML karma on PAUSE 
     to verify you have the appropriate permissions.  Likely someone on 
@@ -29,7 +29,7 @@ Instructions for mod_perl 2.0 Release Manager
     f. if you happen to know that packages were added this release,
        make sure you give the correct permissions to them.
 
-1. 'make dist' - to make sure nothing is missing from the manifest,
+1. 'make mydist' - to make sure nothing is missing from the manifest,
    etc. Now test this generated package mod_perl-2.0.5.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
