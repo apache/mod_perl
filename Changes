@@ -12,7 +12,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.5 February 7, 2011
 
-Perpare modperl for the upcoming perl 5.14 [Torsten Foertsch]
+The mod_perl PMC dedicates this release of mod_perl to Randy Kobes, who
+passed away in September 2010.  Randy was a member of the mod_perl project 
+management committee and a co-author of the mod_perl Developer's Cookbook.
+His work helped many Windows mod_perl users. His work with ppm files, and
+Win32 perl users will be sorely missed. He was kind, bright, and always
+willing to lend a hand on the mod_perl user's list.
+
+Prepare modperl for the upcoming perl 5.14 [Torsten Foertsch]
 
 Add lib/ModPerl/MethodLookup.pm to MANIFEST via lib/ModPerl/Manifest.pm
 RT #48103 reported by MARKLE@cpan.org
