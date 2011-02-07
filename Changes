@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.5-rc1
+=item 2.0.5 February 7, 2011
 
 Perpare modperl for the upcoming perl 5.14 [Torsten Foertsch]
 
