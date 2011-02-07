@@ -3,8 +3,8 @@ This is mod_perl version 2.0
 *** Prerequisites ***
 
 Apache:
-  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.2.8.
-  Static mod_perl:           Apache 2.0.51 - 2.2.8.
+  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.2.17.
+  Static mod_perl:           Apache 2.0.51 - 2.2.17.
 
   Newer Apache versions may work with this version of mod_perl.  If
   not, the svn version likely will, which can be obtained from:
