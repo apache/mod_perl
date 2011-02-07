@@ -80,6 +80,7 @@ Instructions for mod_perl 2.0 Release Manager
   e. tag
      % make tag
 
+  XXXX: See BRANCHING for the steps to include the proper tagged externals
   XXXX: This needs to be fixed, and updated, developer beware its outdated and possibly wrong
   f. Update the svn:externals in the new tag
      (you can't propedit remotely yet in svn)
@@ -102,7 +103,8 @@ Instructions for mod_perl 2.0 Release Manager
 
 4. Release the package and update links (e.g. mod_perl-2.0.5.tar.gz)
 
-  a. upload to people.apache.org:/www/perl.apache.org/dist/
+  a. upload to people.apache.org:/www/perl.apache.org/dist/ - ask the PMC
+     chair to give you the needed permissions if you do not have them.
 
     %  scp mod_perl-2.0.5.tar.gz people.apache.org:/www/perl.apache.org/dist/
 
