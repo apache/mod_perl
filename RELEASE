@@ -141,6 +141,8 @@ Instructions for mod_perl 2.0 Release Manager
 
     % /home/perlwww/apache.org/modperl-docs/bin/site_build
 
+     You may need to sudo -H -u perlwww to cleanup any svn locks.
+
 5. Upload the package to CPAN
 
 6. Tarball signing
