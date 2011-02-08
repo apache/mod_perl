@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.6-dev
+
 =item 2.0.5 February 7, 2011
 
 The mod_perl PMC dedicates this release of mod_perl to Randy Kobes, who
