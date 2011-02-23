@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Take a lesson from rt.cpan.org #66085 and pass LD_LIBRARY_PATH if mod_env
+is present.  Should prevent test failures on some platforms.
+[Fred Moyer]
+
+
 =item 2.0.5 February 7, 2011
 
 The mod_perl PMC dedicates this release of mod_perl to Randy Kobes, who

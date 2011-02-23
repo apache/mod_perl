@@ -73,6 +73,10 @@ PerlModule TestExit::FromPerlModule
 </IfModule>
 <IfModule mod_env.c>
     SetEnv TMPDIR @t_logs@
+
+    # pass ld_library_path for non standard lib locations
+    # [rt.cpan.org #66085]
+    PassEnv LD_LIBRARY_PATH
 </IfModule>
 # </sandbox-friendly>
 
