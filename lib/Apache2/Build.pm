@@ -27,6 +27,42 @@ use File::Basename;
 use ExtUtils::Embed ();
 use File::Copy ();
 
+BEGIN {				# check for a sane ExtUtils::Embed
+    unless ($ENV{MP_USE_MY_EXTUTILS_EMBED}) {
+	my ($version, $path)=(ExtUtils::Embed->VERSION,
+			      $INC{q{ExtUtils/Embed.pm}});
+	my $msg=<<"EOF";
+I have found ExtUtils::Embed $version at
+
+  $path
+
+This is probably not the right one for this perl version. Please make sure
+there is only one version of this module installed and that it is the one
+that comes with this perl version.
+
+If you insist on using the ExtUtils::Embed as is set the environment
+variable MP_USE_MY_EXTUTILS_EMBED=1 and try again.
+
+EOF
+	if (eval {require Module::CoreList}) {
+	    my $req=$Module::CoreList::version{$]}->{q/ExtUtils::Embed/};
+	    die "Please repair your Module::CoreList" unless $req;
+	    unless ($version eq $req) {
+		$msg.=("Details: expecting ExtUtils::Embed $req ".
+		       "(according to Module::CoreList)\n\n");
+		die $msg;
+	    }
+	}
+	else {
+	    my $req=$Config{privlib}.'/ExtUtils/Embed.pm';
+	    unless ($path eq $req) {
+		$msg.="Details: expecting ExtUtils::Embed at $req\n\n";
+		die $msg;
+	    }
+	}
+    }
+}
+
 use constant IS_MOD_PERL_BUILD => grep 
     { -e "$_/Makefile.PL" && -e "$_/lib/mod_perl2.pm" } qw(. ..);
 
