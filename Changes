@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Check for the right ExtUtils::Embed version during build [Torsten Foertsch]
+
 Take a lesson from rt.cpan.org #66085 and pass LD_LIBRARY_PATH if mod_env
 is present.  Should prevent test failures on some platforms.
 [Fred Moyer]
