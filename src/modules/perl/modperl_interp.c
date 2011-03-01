@@ -406,7 +406,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
-    MP_dSCFG(s);
+    MP_dSCFG((s ? s : r ? r->server : NULL));
     MP_dDCFG;
     modperl_config_con_t *ccfg;
     const char *desc = NULL;

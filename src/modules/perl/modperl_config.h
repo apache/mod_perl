@@ -36,7 +36,7 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv);
 char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc);
 
 #define modperl_config_srv_argv_push(arg)               \
-    *(const char **)apr_array_push(scfg->argv) = arg
+    *(const char **)apr_array_push(scfg->argv) = (arg)
 
 apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r);
 
@@ -49,9 +49,9 @@ apr_status_t modperl_config_req_cleanup(void *data);
 #define modperl_config_req_cleanup_register(r, rcfg)           \
     if (r && !MpReqCLEANUP_REGISTERED(rcfg)) {                 \
         apr_pool_t *p;                                         \
-        apr_pool_create(&p, r->pool);                          \
+        apr_pool_create(&p, (r)->pool);                        \
         apr_pool_cleanup_register(p,                           \
-                                  (void*)r,                    \
+                                  (void*)(r),                  \
                                   modperl_config_req_cleanup,  \
                                   apr_pool_cleanup_null);      \
         MpReqCLEANUP_REGISTERED_On(rcfg);                      \
@@ -64,25 +64,25 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 #   define modperl_get_module_config(v)         \
     modperl_get_perl_module_config(v)
 
-#   define modperl_set_module_config(v, c)      \
-    modperl_set_perl_module_config(v, c)
+#   define modperl_set_module_config((v), c)    \
+    modperl_set_perl_module_config((v), (c))
 #else
 #   define modperl_get_module_config(v)         \
-    ap_get_module_config(v, &perl_module)
+    ap_get_module_config((v), &perl_module)
 
 #   define modperl_set_module_config(v, c)      \
-    ap_set_module_config(v, &perl_module, c)
+    ap_set_module_config((v), &perl_module, (c))
 #endif
 
 #define modperl_config_req_init(r, rcfg)                    \
-    if (!rcfg) {                                            \
-        rcfg = modperl_config_req_new(r);                   \
-        modperl_set_module_config(r->request_config, rcfg); \
+    if (!(rcfg)) {                                          \
+        (rcfg) = modperl_config_req_new(r);                 \
+        modperl_set_module_config((r)->request_config, (rcfg)); \
     }
 
 #define modperl_config_req_get(r)                               \
     (r ? (modperl_config_req_t *)                               \
-     modperl_get_module_config(r->request_config) : NULL)
+     modperl_get_module_config((r)->request_config) : NULL)
 
 #define MP_dRCFG \
     modperl_config_req_t *rcfg = modperl_config_req_get(r)
@@ -90,23 +90,23 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 #define modperl_config_con_init(c, ccfg)                 \
     if (!ccfg) {                                         \
         ccfg = modperl_config_con_new(c);                \
-        modperl_set_module_config(c->conn_config, ccfg); \
+        modperl_set_module_config((c)->conn_config, (ccfg));    \
     }
 
 #define modperl_config_con_get(c)                               \
     (c ? (modperl_config_con_t *)                               \
-     modperl_get_module_config(c->conn_config) : NULL)
+     modperl_get_module_config((c)->conn_config) : NULL)
 
 #define MP_dCCFG \
     modperl_config_con_t *ccfg = modperl_config_con_get(c)
 
 #define modperl_config_dir_get(r)                               \
     (r ? (modperl_config_dir_t *)                               \
-     modperl_get_module_config(r->per_dir_config) : NULL)
+     modperl_get_module_config((r)->per_dir_config) : NULL)
 
 #define modperl_config_dir_get_defaults(s)              \
     (modperl_config_dir_t *)                            \
-        modperl_get_module_config(s->lookup_defaults)
+    modperl_get_module_config((s)->lookup_defaults)
 
 #define MP_dDCFG \
     modperl_config_dir_t *dcfg = modperl_config_dir_get(r)
@@ -124,6 +124,17 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
     PERL_SET_CONTEXT(aTHX)
 #else
 #   define MP_dSCFG_dTHX dTHXa(scfg->perl)
+#endif
+
+/* hopefully this macro will not need to be used often */
+#ifdef USE_ITHREADS
+#   define MP_dTHX                                                   \
+    modperl_interp_t *interp = modperl_interp_select(r, NULL, NULL); \
+    dTHXa(interp->perl)
+#   define MP_uTHX modperl_interp_unselect(interp)
+#else
+#   define MP_dTHX dNOOP
+#   define MP_uTHX dNOOP
 #endif
 
 int modperl_config_apply_PerlModule(server_rec *s,
