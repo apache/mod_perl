@@ -777,7 +777,7 @@ PASSENV = $env
 EOF
     }
 
-    return $preamble . <<'EOF';
+    $preamble .= <<'EOF';
 TEST_VERBOSE = 0
 TEST_FILES =
 
@@ -797,12 +797,19 @@ run_subtests ::
 run_subtests ::
 	$(MAKE) -C Apache-Reload test
 
+EOF
+
+    $preamble .= <<'EOF' unless $build->mpm_is_threaded();
 run_subtests ::
 	$(MAKE) -C Apache-SizeLimit test
 
+EOF
+
+    $preamble .= <<'EOF';
 test :: pure_all run_tests test_clean
 EOF
 
+    return $preamble;
 }
 
 sub MY::postamble {
