@@ -185,6 +185,13 @@ void mpxs_Apache2__ServerRec_add_config(pTHX_ server_rec *s, SV *lines)
     }
 }
 
+#define mpxs_Apache2__ServerRec_get_server_banner         \
+    ap_get_server_banner()
+#define mpxs_Apache2__ServerRec_get_server_description    \
+    ap_get_server_description()
+#define mpxs_Apache2__ServerRec_get_server_version        \
+    ap_get_server_version()
+
 static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
 {
     newCONSTSUB(PL_defstash, "Apache2::ServerUtil::server_root",
@@ -192,13 +199,4 @@ static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
 
     newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_built",
                 newSVpv(ap_get_server_built(), 0));
-
-    newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_version",
-                newSVpv(ap_get_server_version(), 0));
-
-    newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_banner",
-                newSVpv(ap_get_server_banner(), 0));
-
-    newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_description",
-                newSVpv(ap_get_server_description(), 0));
 }
