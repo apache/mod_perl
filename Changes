@@ -31,6 +31,11 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.6-dev
 
+Bugfix: Apache2::ServerUtil::get_server{description,banner,version} cannot
+be declared as perl constants or they won't reflect added version components
+if Apache2::ServerUtil is loaded before the PostConfig phase. Now, they
+are ordinary perl functions. [Torsten Foertsch]
+
 Check for the right ExtUtils::Embed version during build [Torsten Foertsch]
 
 Take a lesson from rt.cpan.org #66085 and pass LD_LIBRARY_PATH if mod_env
