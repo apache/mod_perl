@@ -24,7 +24,7 @@ sub handler {
 
     my $r = shift;
 
-    plan $r, tests => 5;
+    plan $r, tests => 6;
 
     # test Apache2::ServerUtil constant subroutines
 
@@ -36,19 +36,21 @@ sub handler {
              $built,
              'Apache2::ServerUtil::get_server_built()');
 
-    ok t_cmp(Apache2::ServerUtil::get_server_description,
-             $version,
+    my $server_descr = Apache2::ServerUtil::get_server_description;
+    ok t_cmp($server_descr, qr/^\Q$version\E/,
              'Apache2::ServerUtil::get_server_description()');
 
-    my $server_version = Apache2::ServerUtil::get_server_version;
-    ok t_cmp($version,
-             qr/^$server_version/,
-             'Apache2::ServerUtil::get_server_version()');
+    # added via $s->add_version_component in t/conf/modperl_extra.pl
+    ok t_cmp($server_descr, qr!\bworld domination series/2\.0\b!,
+             'Apache2::ServerUtil::get_server_description() -- component');
 
-    my $server_banner = Apache2::ServerUtil::get_server_banner;
-    ok t_cmp($version,
-             qr/^$server_banner/,
+    # assuming ServerTokens Full (default) the banner equals description
+    ok t_cmp(Apache2::ServerUtil::get_server_banner, $server_descr,
              'Apache2::ServerUtil::get_server_banner()');
+
+    # version is just an alias for banner
+    ok t_cmp(Apache2::ServerUtil::get_server_version, $server_descr,
+             'Apache2::ServerUtil::get_server_version()');
 
     Apache2::Const::OK;
 }
