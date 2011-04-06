@@ -19,7 +19,14 @@ my $location = '/TestAPI__err_headers_out';
 
     ok t_cmp $res->code, 200, "OK";
 
-    local $HTTP::Headers::TRANSLATE_UNDERSCORE;
+    # HTTP::Headers 6.00 makes the next 2 tests fail. When the response comes
+    # in the header name is stored as "x-err_headers_out". But when it is to
+    # be read below it is referred as "x-err-headers-out" and hence not found.
+    local $HTTP::Headers::TRANSLATE_UNDERSCORE=
+	$HTTP::Headers::TRANSLATE_UNDERSCORE;
+    undef $HTTP::Headers::TRANSLATE_UNDERSCORE
+	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION==6.00;
+
     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
         "X-err_headers_out: made it";
 
@@ -37,7 +44,14 @@ my $location = '/TestAPI__err_headers_out';
 
     ok t_cmp $res->code, 404, "not found";
 
-    local $HTTP::Headers::TRANSLATE_UNDERSCORE;
+    # HTTP::Headers 6.00 makes this test fail. When the response comes in
+    # the header name is stored as "x-err_headers_out". But when it is to
+    # be read below it is referred as "x-err-headers-out" and hence not found.
+    local $HTTP::Headers::TRANSLATE_UNDERSCORE=
+	$HTTP::Headers::TRANSLATE_UNDERSCORE;
+    undef $HTTP::Headers::TRANSLATE_UNDERSCORE
+	if defined HTTP::Headers->VERSION and HTTP::Headers->VERSION==6.00;
+
     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
         "X-err_headers_out: made it";
 
