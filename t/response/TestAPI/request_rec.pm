@@ -57,8 +57,9 @@ sub handler {
 
     ok $r->protocol =~ /http/i;
 
-    # HTTP 1.0
-    ok t_cmp $r->proto_num, 1000, 't->proto_num';
+    # LWP >=6.00 uses HTTP/1.1, other HTTP/1.0
+    ok t_cmp $r->proto_num, 1000+substr($r->the_request, -1),
+	't->proto_num';
 
     ok t_cmp lc($r->hostname), lc($r->get_server_name), '$r->hostname';
 
@@ -124,7 +125,12 @@ sub handler {
 
         ok t_cmp $r->args, $args, '$r->args';
 
-        ok t_cmp $r->the_request, "GET $base_uri$path_info?$args HTTP/1.0",
+	# LWP uses HTTP/1.1 since 6.00
+        ok t_cmp $r->the_request, qr!GET
+				     \x20
+				     \Q$base_uri$path_info\E\?\Q$args\E
+				     \x20
+				     HTTP/1\.\d!x,
             '$r->the_request';
 
         {
