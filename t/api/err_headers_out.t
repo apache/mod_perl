@@ -19,6 +19,7 @@ my $location = '/TestAPI__err_headers_out';
 
     ok t_cmp $res->code, 200, "OK";
 
+    local $HTTP::Headers::TRANSLATE_UNDERSCORE;
     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
         "X-err_headers_out: made it";
 
@@ -36,6 +37,7 @@ my $location = '/TestAPI__err_headers_out';
 
     ok t_cmp $res->code, 404, "not found";
 
+    local $HTTP::Headers::TRANSLATE_UNDERSCORE;
     ok t_cmp $res->header('X-err_headers_out'), "err_headers_out",
         "X-err_headers_out: made it";
 
