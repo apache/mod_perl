@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Fixed a few issues that came up with LWP 6.00:
+- t/response/TestAPI/request_rec.pm assumes HTTP/1.0 but LWP 6 uses 1.1
+- t/api/err_headers_out.t fails due to a bug somewhere in LWP 6
+- t/filter/TestFilter/out_str_reverse.pm sends the wrong content-length header
+[Torsten Foertsch]
+
 Bugfix: Apache2::ServerUtil::get_server{description,banner,version} cannot
 be declared as perl constants or they won't reflect added version components
 if Apache2::ServerUtil is loaded before the PostConfig phase. Now, they
