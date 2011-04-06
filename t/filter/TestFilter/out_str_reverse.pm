@@ -16,12 +16,21 @@ use TestCommon::Utils ();
 use Apache2::Const -compile => qw(OK M_POST);
 
 use constant BUFF_LEN => 2;
+use constant signature => "Reversed by mod_perl 2.0\n";
 
 sub handler {
     my $f = shift;
     #warn "called\n";
 
     my $leftover = $f->ctx;
+
+    # We are about to change the length of the response body. Hence, we
+    # have to adjust the content-length header.
+    unless (defined $leftover) { # 1st invocation
+	$f->r->headers_out->{'Content-Length'}+=length signature
+	    if exists $f->r->headers_out->{'Content-Length'};
+    }
+
     while ($f->read(my $buffer, BUFF_LEN)) {
         #warn "buffer: [$buffer]\n";
         $buffer = $leftover . $buffer if defined $leftover;
@@ -34,7 +43,7 @@ sub handler {
 
     if ($f->seen_eos) {
         $f->print(scalar reverse $leftover) if defined $leftover;
-        $f->print("Reversed by mod_perl 2.0\n");
+        $f->print(signature);
     }
     else {
         $f->ctx($leftover) if defined $leftover;
