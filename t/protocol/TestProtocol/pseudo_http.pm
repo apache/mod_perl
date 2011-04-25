@@ -165,6 +165,8 @@ __END__
           AuthUserFile @ServerRoot@/htdocs/protocols/basic-auth
       </IfModule>
 
+      AuthName TestProtocol::pseudo_http
+      AuthType Basic
       Require user stas
       Satisfy any
 
