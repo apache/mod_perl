@@ -121,7 +121,7 @@ __END__
 # APACHE_TEST_CONFIG_ORDER 950
 <NoAutoConfig>
     <VirtualHost TestAPI::add_config>
-        PerlModule TestAPI::add_config
+        PerlLoadModule TestAPI::add_config
         AccessFileName htaccess
         SetHandler modperl
         <Directory @DocumentRoot@>
