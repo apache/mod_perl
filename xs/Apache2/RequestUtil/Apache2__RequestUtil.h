@@ -154,12 +154,6 @@ int mpxs_Apache2__RequestRec_location_merge(request_rec *r,
                                                     &core_module);
 
         if (strEQ(entry->d, location)) {
-            if (!entry->ap_auth_type) {
-                entry->ap_auth_type = "Basic";
-            }
-            if (!entry->ap_auth_name) {
-                entry->ap_auth_name = apr_pstrdup(p, location);
-            }
             r->per_dir_config =
                 ap_merge_per_dir_configs(p, s->lookup_defaults, sec[i]);
             return 1;
