@@ -759,8 +759,6 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 
 static void modperl_module_insert(module *modp)
 {
-    module *m;
-
     /*
      * insert after mod_perl, rather the top of the list.
      * (see ap_add_module; does not insert into ap_top_module list if
@@ -768,14 +766,8 @@ static void modperl_module_insert(module *modp)
      * this way, modperl config merging happens before this module.
      */
 
-    for (m = ap_top_module; m; m=m->next) {
-        if (m == &perl_module) {
-            module *next = m->next;
-            m->next = modp;
-            modp->next = next;
-            break;
-        }
-    }
+    modp->next = perl_module.next;
+    perl_module.next = modp;
 }
 
 #define MP_isGV(gv) (gv && isGV(gv))
