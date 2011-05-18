@@ -169,8 +169,9 @@ PerlIOApache_flush(pTHX_ PerlIO *f)
                                   rcfg->wbucket->outbuf,
                                   rcfg->wbucket->outcnt));
 
-    MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, FALSE),
-                 ":Apache2 IO flush");
+    MP_RUN_CROAK_RESET_OK(st->r->server,
+                          modperl_wbucket_flush(rcfg->wbucket, FALSE),
+                          ":Apache2 IO flush");
 
     return 0;
 }

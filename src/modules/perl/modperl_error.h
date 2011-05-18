@@ -45,4 +45,20 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func);
         }                                                    \
     } STMT_END
 
+#define MP_RUN_CROAK_RESET_OK(s, rc_run, func) STMT_START               \
+    {                                                                   \
+        apr_status_t rc = rc_run;                                       \
+        if (rc != APR_SUCCESS) {                                        \
+            if (APR_STATUS_IS_ECONNRESET(rc) ||                         \
+                APR_STATUS_IS_ECONNABORTED(rc)) {                       \
+                ap_log_error(APLOG_MARK, APLOG_INFO, 0, s,              \
+                             "%s got: %s", func,                        \
+                             modperl_error_strerror(aTHX_ rc));         \
+            }                                                           \
+            else {                                                      \
+                modperl_croak(aTHX_ rc, func);                          \
+            }                                                           \
+        }                                                               \
+    } STMT_END
+
 #endif /* MODPERL_ERROR_H */
