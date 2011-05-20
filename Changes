@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Perl 5.14 brought a few changes in Perl_sv_dup() that made a threaded apache
+segfault while cloning interpreters.
+[Torsten Foertsch]
+
 PerlIOApache_flush() and mpxs_Apache2__RequestRec_rflush() now no longer throw
 exceptions when modperl_wbucket_flush() fails if the failure was just a reset
 connection or an aborted connection. The failure is simply logged to the error
