@@ -179,8 +179,9 @@ void mpxs_Apache2__RequestRec_rflush(pTHX_ I32 items,
                rcfg->wbucket->outcnt,
                apr_pstrmemdup(rcfg->wbucket->pool, rcfg->wbucket->outbuf,
                               rcfg->wbucket->outcnt));
-    MP_RUN_CROAK(modperl_wbucket_flush(rcfg->wbucket, TRUE),
-                 "Apache2::RequestIO::rflush");
+    MP_RUN_CROAK_RESET_OK(r->server,
+                          modperl_wbucket_flush(rcfg->wbucket, TRUE),
+                          "Apache2::RequestIO::rflush");
 }
 
 static MP_INLINE long mpxs_ap_get_client_block(pTHX_ request_rec *r,

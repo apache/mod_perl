@@ -472,24 +472,6 @@ static int modperl_run_filter_init(ap_filter_t *f,
     return status;
 }
 
-
-#define MP_RUN_CROAK_RESET_OK(func)                                     \
-    {                                                                   \
-        apr_status_t rc = func(filter);                                 \
-        if (rc != APR_SUCCESS) {                                        \
-            if (APR_STATUS_IS_ECONNRESET(rc) ||                         \
-                APR_STATUS_IS_ECONNABORTED(rc)) {                       \
-                ap_log_error(APLOG_MARK, APLOG_INFO, 0, s,              \
-                             "Apache2::Filter internal flush got: %s",  \
-                             modperl_error_strerror(aTHX_ rc));         \
-            }                                                           \
-            else {                                                      \
-                modperl_croak(aTHX_ rc,                                 \
-                              "Apache2::Filter internal flush");        \
-            }                                                           \
-        }                                                               \
-    }
-
 int modperl_run_filter(modperl_filter_t *filter)
 {
     AV *args = Nullav;
@@ -563,10 +545,12 @@ int modperl_run_filter(modperl_filter_t *filter)
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
         }
-        MP_RUN_CROAK_RESET_OK(modperl_input_filter_flush);
+        MP_RUN_CROAK_RESET_OK(s, modperl_input_filter_flush(filter),
+                              "Apache2::Filter internal flush");
     }
     else {
-        MP_RUN_CROAK_RESET_OK(modperl_output_filter_flush);
+        MP_RUN_CROAK_RESET_OK(s, modperl_output_filter_flush(filter),
+                              "Apache2::Filter internal flush");
     }
 
     MP_FILTER_RESTORE_ERRSV(errsv);

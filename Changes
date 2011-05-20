@@ -31,6 +31,13 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.6-dev
 
+PerlIOApache_flush() and mpxs_Apache2__RequestRec_rflush() now no longer throw
+exceptions when modperl_wbucket_flush() fails if the failure was just a reset
+connection or an aborted connection. The failure is simply logged to the error
+log instead. This should fix cases of httpd.exe crashing when users press the
+Stop button in their web browsers.
+[Steve Hay]
+
 Fixed a few issues that came up with LWP 6.00:
 - t/response/TestAPI/request_rec.pm assumes HTTP/1.0 but LWP 6 uses 1.1
 - t/api/err_headers_out.t fails due to a bug somewhere in LWP 6
