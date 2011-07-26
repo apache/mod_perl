@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.32-dev
 
+RT 40918, fix issue with sigils in perl binary path
+[Slave Rezic <SREZIC@cpan.org>]
+
 Work around a gcc optimization specific bug which
 cuased seg faults on FreeBSD 7.x during mod_perl startup.
 [Tim Zingelman <zingelman@fnal.gov>]

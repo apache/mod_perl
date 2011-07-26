@@ -786,7 +786,7 @@ if ($APACHE_SRC or $USE_APXS) {
     setup_for_static() unless $USE_APXS;
 
     iedit "$APACHE_SRC/modules/perl/Makefile",
-        "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!" unless $USE_APACI or $USE_APXS;
+        "BEGIN { require Config; Config->import } s!^PERL\\s*=.*!PERL=\$Config{'perlpath'}!" unless $USE_APACI or $USE_APXS;
 
     for (@callback_hooks) {
         ($k,$v) = ($_,$callback_hooks{$_});
