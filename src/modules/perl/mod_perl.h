@@ -1026,6 +1026,14 @@ else { \
 #define PERL_HEADER_PARSER_CREATE(s)
 #endif
 
+#ifndef GvCV_set
+#define GvCV_set(gv, cv) (GvCV(gv) = (cv))
+#endif
+
+#ifndef GvCV_set
+#define CvGV_set(gv, cv) (CvVG(gv) = (cv))
+#endif
+
 typedef struct {
     array_header *PerlPassEnv;
     array_header *PerlRequire;

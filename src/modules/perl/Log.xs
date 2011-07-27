@@ -10,7 +10,7 @@
 static void perl_cv_alias(char *to, char *from)
 {
     GV *gp = gv_fetchpv(to, TRUE, SVt_PVCV);
-    GvCV(gp) = perl_get_cv(from, TRUE);
+    GvCV_set(gp, perl_get_cv(from, TRUE));
 }
 
 static void ApacheLog(int level, SV *sv, SV *msg)

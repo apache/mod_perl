@@ -20,7 +20,7 @@ static void export_cv(SV *pclass, SV *caller, char *sub)
 	    SvPVX(caller), sub, SvPVX(pclass), sub);
 #endif
     gv = gv_fetchpv(form("%_::%s", caller, sub), TRUE, SVt_PVCV);
-    GvCV(gv) = perl_get_cv(form("%_::%s", pclass, sub), TRUE);
+    GvCV_set(gv, perl_get_cv(form("%_::%s", pclass, sub), TRUE));
     GvIMPORTED_CV_on(gv);
 }
 

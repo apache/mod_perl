@@ -1720,7 +1720,7 @@ void perl_clear_symtab(HV *symtab)
 	if((cv = GvCV((GV*)val)) && (GvSTASH((GV*)val) == GvSTASH(CvGV(cv)))) {
             GV *gv = CvGV(cv);
             cv_undef(cv);
-            CvGV(cv) = gv;
+            CvGV_set(cv, gv);
             GvCVGEN(gv) = 1; /* invalidate method cache */
         }
     }
