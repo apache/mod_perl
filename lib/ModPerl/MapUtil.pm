@@ -103,15 +103,28 @@ sub readline {
         # #_end_
         if (/^\s*#\s*_(if|unless|els(?:e|if)|end)_(?:\s(.+))?/) {
             my ($cmd, $param) = ($1, $2);
+            if (defined $param) {
+                while ($param=~s!\\$!!) {
+                    my $l=<$fh>;
+                    die "$ModPerl::MapUtil::MapFile($.): unexpected EOF\n"
+                        unless defined $l;
+                    chomp $l;
+                    $param.=$l;
+                }
+            }
             if ($cmd eq 'if') {
-                unshift @condition, 0+!!eval $param;
+                unshift @condition,
+                    0+!!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                die $@ if $@;
             }
             elsif ($cmd eq 'elsif') {
                 die "parse error ($ModPerl::MapUtil::MapFile line $.)".
                     " #_elsif_ without #_if_"
                     unless @condition;
                 if ($condition[0] == 0) {
-                    $condition[0]+=!!eval $param;
+                    $condition[0]+=
+                        !!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                    die $@ if $@;
                 } else {
                     $condition[0]++;
                 }
@@ -123,7 +136,9 @@ sub readline {
                 $condition[0]+=1;
             }
             elsif ($cmd eq 'unless') {
-                unshift @condition, 0+!eval $param;
+                unshift @condition,
+                    0+!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                die $@ if $@;
             }
             elsif ($cmd eq 'end') {
                 shift @condition;
@@ -133,6 +148,15 @@ sub readline {
 
         if (/^\s*#\s*_(eval)_(?:\s(.+))?/) {
             my ($cmd, $param) = ($1, $2);
+            if (defined $param) {
+                while ($param=~s!\\$!!) {
+                    my $l=<$fh>;
+                    die "$ModPerl::MapUtil::MapFile($.): unexpected EOF\n"
+                        unless defined $l;
+                    chomp $l;
+                    $param.=$l;
+                }
+            }
             if ($cmd eq 'eval') {
                 eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
                 die $@ if $@;
