@@ -27,7 +27,11 @@ void ap_pcw_walk_location_config(apr_pool_t *pconf, server_rec *s,
                                  ap_pcw_dir_cb_t dir_cb, void *data)
 {
     int i;
-    ap_conf_vector_t **urls = (ap_conf_vector_t **)sconf->sec_url->elts;
+    ap_conf_vector_t **urls;
+
+    if( !sconf->sec_url ) return;
+
+    urls = (ap_conf_vector_t **)sconf->sec_url->elts;
 
     for (i = 0; i < sconf->sec_url->nelts; i++) {
         core_dir_config *conf =
@@ -46,7 +50,11 @@ void ap_pcw_walk_directory_config(apr_pool_t *pconf, server_rec *s,
                                   ap_pcw_dir_cb_t dir_cb, void *data)
 {
     int i;
-    ap_conf_vector_t **dirs = (ap_conf_vector_t **)sconf->sec_dir->elts;
+    ap_conf_vector_t **dirs;
+
+    if( !sconf->sec_dir ) return;
+
+    dirs = (ap_conf_vector_t **)sconf->sec_dir->elts;
 
     for (i = 0; i < sconf->sec_dir->nelts; i++) {
         core_dir_config *conf =
@@ -65,7 +73,11 @@ void ap_pcw_walk_files_config(apr_pool_t *pconf, server_rec *s,
                               ap_pcw_dir_cb_t dir_cb, void *data)
 {
     int i;
-    ap_conf_vector_t **dirs = (ap_conf_vector_t **)dconf->sec_file->elts;
+    ap_conf_vector_t **dirs;
+
+    if( !dconf->sec_file ) return;
+
+    dirs = (ap_conf_vector_t **)dconf->sec_file->elts;
 
     for (i = 0; i < dconf->sec_file->nelts; i++) {
         core_dir_config *conf =

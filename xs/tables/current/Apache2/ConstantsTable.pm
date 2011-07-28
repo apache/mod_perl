@@ -53,6 +53,7 @@ $Apache2::ConstantsTable = {
       'OPT_EXECCGI',
       'OPT_UNSET',
       'OPT_INCNOEXEC',
+      'OPT_INC_WITH_EXEC',
       'OPT_SYM_OWNER',
       'OPT_MULTI',
       'OPT_ALL'

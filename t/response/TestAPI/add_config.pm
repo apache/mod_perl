@@ -100,7 +100,8 @@ sub handler : method {
 
     my $expect =  Apache2::Const::OPT_ALL |
                   Apache2::Const::OPT_UNSET |
-                  Apache2::Const::OPT_INCNOEXEC |
+                  (defined &Apache2::Const::OPT_INCNOEXEC
+                   ? Apache2::Const::OPT_INCNOEXEC() : 0) |
                   Apache2::Const::OPT_MULTI |
                   Apache2::Const::OPT_SYM_OWNER;
 

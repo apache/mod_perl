@@ -115,6 +115,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
    AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
 
+#define MP_CMD_SRV_ITERATE_ON_READ(name, item, desc) \
+   AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF|EXEC_ON_READ, desc )
+
 #define MP_CMD_SRV_ITERATE2(name, item, desc) \
    AP_INIT_ITERATE2( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )

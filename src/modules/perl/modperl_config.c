@@ -479,7 +479,13 @@ typedef struct {
     PerlInterpreter *perl;
 } svav_param_t;
 
-static void *svav_getstr(void *buf, size_t bufsiz, void *param)
+static
+#if AP_MODULE_MAGIC_AT_LEAST(20110329,0)
+apr_status_t
+#else
+void *
+#endif
+svav_getstr(void *buf, size_t bufsiz, void *param)
 {
     svav_param_t *svav_param = (svav_param_t *)param;
     dTHXa(svav_param->perl);
@@ -488,7 +494,11 @@ static void *svav_getstr(void *buf, size_t bufsiz, void *param)
     STRLEN n_a;
 
     if (svav_param->ix > AvFILL(av)) {
+#if AP_MODULE_MAGIC_AT_LEAST(20110329,0)
+        return APR_EOF;
+#else
         return NULL;
+#endif
     }
 
     sv = AvARRAY(av)[svav_param->ix++];
@@ -496,7 +506,11 @@ static void *svav_getstr(void *buf, size_t bufsiz, void *param)
 
     apr_cpystrn(buf, SvPVX(sv), bufsiz);
 
+#if AP_MODULE_MAGIC_AT_LEAST(20110329,0)
+    return APR_SUCCESS;
+#else
     return buf;
+#endif
 }
 
 const char *modperl_config_insert(pTHX_ server_rec *s,

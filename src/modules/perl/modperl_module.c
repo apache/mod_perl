@@ -832,7 +832,10 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
 
     modperl_module_insert(modp);
 
-    ap_add_loaded_module(modp, p);
+    if ((errmsg = mp_add_loaded_module(modp, p, modp->name))) {
+        perl_module.next = modp->next;
+        return errmsg;
+    }
 
     apr_pool_cleanup_register(p, modp, modperl_module_remove,
                               apr_pool_cleanup_null);
