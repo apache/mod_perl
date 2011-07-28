@@ -264,4 +264,4 @@ GENERATE_XS    0    Generate XS code based on httpd version
 LIBNAME        0    Name of the modperl dso library (default is  mod_perl)
 COMPAT_1X      0    Compile-time mod_perl 1.0 backcompat (default is  on)
 APR_LIB        0    Lib used to build APR::* on Win32 (default is aprext)
-
+NONTHREADED_OK 0    Using a non-threaded perl is okay with httpd >=2.3

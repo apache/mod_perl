@@ -275,18 +275,24 @@ sub caller_package {
     return ($arg and ref($arg) eq __PACKAGE__) ? $arg : __PACKAGE__;
 }
 
-my %threaded_mpms = map { $_ => 1 }
-        qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
+my %threaded_mpms;
+undef @threaded_mpms{qw(worker winnt beos mpmt_os2 netware leader perchild
+			threadpool dynamic)};
 sub mpm_is_threaded {
     my $self = shift;
     my $mpm_name = $self->mpm_name();
-    return $threaded_mpms{$mpm_name} || 0;
+    return exists $threaded_mpms{$mpm_name} ? 1 : 0;
 }
 
 sub mpm_name {
     my $self = shift;
 
     return $self->{mpm_name} if $self->{mpm_name};
+
+    if ($self->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/) {
+	delete $threaded_mpms{dynamic} if $self->mp_nonthreaded_ok;
+	return $self->{mpm_name} = 'dynamic' if ($1*1000+$2)*1000+$3>=2003000;
+    }
 
     # XXX: hopefully apxs will work on win32 one day
     return $self->{mpm_name} = 'winnt' if WIN32;
