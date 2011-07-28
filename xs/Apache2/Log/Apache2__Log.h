@@ -48,13 +48,13 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
         s = modperl_global_get_server_rec();
     }
 
-    if ((lmask == APLOG_DEBUG) && (s->loglevel >= APLOG_DEBUG)) {
+    if ((lmask >= APLOG_DEBUG) && (mp_loglevel(s) >= APLOG_DEBUG)) {
         COP *cop = PL_curcop;
         file = CopFILE(cop); /* (caller)[1] */
         line = CopLINE(cop); /* (caller)[2] */
     }
 
-    if ((s->loglevel >= lmask) &&
+    if ((mp_loglevel(s) >= lmask) &&
         SvROK(msg) && (SvTYPE(SvRV(msg)) == SVt_PVCV)) {
         dSP;
         ENTER;SAVETMPS;
@@ -72,10 +72,12 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     }
 
     if (r) {
-        ap_log_rerror(file, line, level, 0, r, "%s", str);
+        ap_log_rerror(file, line, mp_module_index_ level, 0, r,
+		      "%s", str);
     }
     else {
-        ap_log_error(file, line, level, 0, s, "%s", str);
+        ap_log_error(file, line, mp_module_index_ level, 0, s,
+		     "%s", str);
     }
 
     if (svstr) {
@@ -258,10 +260,12 @@ MP_STATIC XS(MPXS_Apache2__Log_log_xerror)
     msgstr = SvPV(msgsv, n_a);
 
     if (r) {
-        ap_log_rerror(file, line, level, status, r, "%s", msgstr);
+        ap_log_rerror(file, line, mp_module_index_ level, status, r,
+		      "%s", msgstr);
     }
     else {
-        ap_log_error(file, line, level, status, s, "%s", msgstr);
+        ap_log_error(file, line, mp_module_index_ level, status, s,
+		     "%s", msgstr);
     }
 
     SvREFCNT_dec(msgsv);

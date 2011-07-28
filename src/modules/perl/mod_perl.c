@@ -653,6 +653,10 @@ int modperl_is_running(void)
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp)
 {
+#if AP_MODULE_MAGIC_AT_LEAST(20110329,0)
+    ap_reserve_module_slots_directive("PerlLoadModule");
+#endif
+
     /* we can't have PerlPreConfigHandler without first configuring mod_perl */
 
     /* perl 5.8.1+ */

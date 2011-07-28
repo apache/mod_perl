@@ -825,7 +825,8 @@ my %ifdef = map { $_, 1 }
     qw(AP_MPMQ_STARTING AP_MPMQ_RUNNING AP_MPMQ_STOPPING
        AP_MPMQ_MPM_STATE), # added in 2.0.49
     qw(APR_FPROT_USETID APR_FPROT_GSETID
-       APR_FPROT_WSTICKY APR_FOPEN_LARGEFILE); # added in 2.0.50?
+       APR_FPROT_WSTICKY APR_FOPEN_LARGEFILE), # added in 2.0.50?
+    qw(OPT_INCNOEXEC OPT_INC_WITH_EXEC);
 
 sub constants_ifdef {
     my $name = shift;
