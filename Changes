@@ -10,6 +10,9 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.32-dev
 
+Post RT 64999 typo spot in CvGV macro
+[Salvador Ortiz Garcia <sog@msg.com.mx>]
+
 RT 64999, perl 5.14 compatibility, GvCV and GvGP lvalue changes in perl core
 [Todd Wade <sendwade@hotmail.com>]
 
