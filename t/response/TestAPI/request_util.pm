@@ -24,7 +24,8 @@ sub handler {
 
     plan $r, tests => (scalar keys %status_lines) + 11;
 
-    ok $r->default_type;
+    # default_type() is gone as of httpd 2.3.2-dev
+    ok !defined(&Apache2::RequestRec::default_type) || $r->default_type;
 
     my $document_root = $r->document_root;
 
