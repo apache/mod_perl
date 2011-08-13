@@ -1031,7 +1031,7 @@ else { \
 #endif
 
 #ifndef CvGV_set
-#define CvGV_set(gv, cv) (CvGV(gv) = (cv))
+#define CvGV_set(cv, gv) (CvGV(cv) = (gv))
 #endif
 
 typedef struct {

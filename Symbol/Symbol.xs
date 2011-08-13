@@ -2,6 +2,10 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#ifndef CvGV_set
+# define CvGV_set(cv, val) (CvGV(cv) = val)
+#endif
+
 #ifdef PERL_OBJECT
 #define sv_name(svp) svp
 #define undef(ref) 
