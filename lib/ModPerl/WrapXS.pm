@@ -155,9 +155,16 @@ EOF
 
             my $retval = $return_type eq 'void' ?
               ["", ""] : ["RETVAL = ", "OUTPUT:\n    RETVAL\n"];
-
+            
+            my $avoid_warning = "";
+            if (@$args and not $passthru) {
+                $avoid_warning = "    /* avoiding -Wall warnings */\n";
+                $avoid_warning .= join "\n",
+                    (map "    $_->{name} = $_->{name};", @$args), "";
+            }
             $code .= <<EOF;
     CODE:
+$avoid_warning
     $retval->[0]$dispatch($thx$parms);
 
     $retval->[1]
