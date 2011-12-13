@@ -439,13 +439,13 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
 void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
-    modperl_config_srv_t *base_scfg;
     PerlInterpreter *base_perl;
-
-    base_scfg = modperl_config_srv_get(base_server);
+#ifdef MP_TRACE
+    modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
                                    base_server->server_hostname));
+#endif /* MP_TRACE */
 
 #ifndef USE_ITHREADS
     if (modperl_threaded_mpm()) {
