@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Apache 2.4 and onwards doesn't require linking the MPM module directly in
+the httpd binary anymore. APXS lost the MPM_NAME query, so we can't assume
+a given MPM anymore. Introduce a fake MPM 'dynamic' to represent this. 
+[Torsten Foertsch, Gozer]
+
 Perl 5.14 brought a few changes in Perl_sv_dup() that made a threaded apache
 segfault while cloning interpreters.
 [Torsten Foertsch]
