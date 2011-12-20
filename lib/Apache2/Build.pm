@@ -1572,8 +1572,11 @@ sub make_tools {
 
     require ExtUtils::MakeMaker;
     my $mm = bless { @mm_init_vars }, 'MM';
-    $mm->init_main;
-    $mm->init_others;
+
+    # Fake initialize MakeMaker
+    foreach my $m (qw(init_main init_others init_tools)) {
+        $mm->$m() if $mm->can($m);
+    }
 
     for (qw(rm_f mv ld ar cp test_f)) {
         my $val = $mm->{"\U$_"};
