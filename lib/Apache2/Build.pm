@@ -276,7 +276,8 @@ sub caller_package {
 }
 
 my %threaded_mpms = map { $_ => 1 }
-        qw(worker winnt beos mpmt_os2 netware leader perchild threadpool);
+        qw(worker winnt beos mpmt_os2 netware leader perchild threadpool
+           dynamic);
 sub mpm_is_threaded {
     my $self = shift;
     my $mpm_name = $self->mpm_name();
@@ -291,7 +292,15 @@ sub mpm_name {
     # XXX: hopefully apxs will work on win32 one day
     return $self->{mpm_name} = 'winnt' if WIN32;
 
-    my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+    my $mpm_name;
+
+    # httpd >= 2.3
+    if ($self->httpd_version_as_int =~ m/^2[3-9]\d+/) {
+        $mpm_name = 'dynamic';
+    }
+    else {
+        $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+    }
 
     # building against the httpd source dir
     unless (($mpm_name and $self->httpd_is_source_tree)) {
