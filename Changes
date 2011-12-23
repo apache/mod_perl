@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Discover apr-2-config from Apache 2.4 onwards. [Gozer]
+
 Apache 2.4 and onwards doesn't require linking the MPM module directly in
 the httpd binary anymore. APXS lost the MPM_NAME query, so we can't assume
 a given MPM anymore. Introduce a fake MPM 'dynamic' to represent this. 
