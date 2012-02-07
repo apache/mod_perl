@@ -297,8 +297,8 @@ modperl_module_config_create_obj(pTHX_
     }
 
     MP_TRACE_c(MP_FUNC, "%s cfg=0x%lx for %s.%s",
-               method, (unsigned long)cfg,
-               mname, parms->cmd->name);
+               method ? modperl_mgv_last_name(method) : "NULL",
+               (unsigned long)cfg, mname, parms->cmd->name);
 
     /* used by merge functions to get a Perl interp */
     cfg->server = parms->server;
