@@ -399,14 +399,14 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
         ap_assert(r);
         MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx",
                    (unsigned long)r->pool, (unsigned long)r);
-        return modperl_interp_select(r, NULL, s);
+        return modperl_interp_select(r, NULL, NULL);
     }
 }
 
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
-    MP_dSCFG((s ? s : r ? r->server : NULL));
+    MP_dSCFG((r ? s=r->server : s ? s : NULL));
     MP_dDCFG;
     modperl_config_con_t *ccfg;
     const char *desc = NULL;
@@ -443,7 +443,10 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         return ccfg->interp;
     }
 
-    interp = modperl_interp_get(s ? s : r->server);
+    MP_TRACE_i(MP_FUNC,
+               "fetching interp for (%s:%d)", s->server_hostname, s->port);
+    interp = modperl_interp_get(s);
+    MP_TRACE_i(MP_FUNC, "  --> got %pp", interp);
     ++interp->num_requests; /* should only get here once per request */
     interp->refcnt = 0;
 
