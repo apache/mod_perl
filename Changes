@@ -31,6 +31,17 @@ Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
 
 =item 2.0.6-dev
 
+Discover apr-2-config from Apache 2.4 onwards. [Gozer]
+
+Apache 2.4 and onwards doesn't require linking the MPM module directly in
+the httpd binary anymore. APXS lost the MPM_NAME query, so we can't assume
+a given MPM anymore. Introduce a fake MPM 'dynamic' to represent this. 
+[Torsten Foertsch, Gozer]
+
+Perl 5.14 brought a few changes in Perl_sv_dup() that made a threaded apache
+segfault while cloning interpreters.
+[Torsten Foertsch]
+
 PerlIOApache_flush() and mpxs_Apache2__RequestRec_rflush() now no longer throw
 exceptions when modperl_wbucket_flush() fails if the failure was just a reset
 connection or an aborted connection. The failure is simply logged to the error

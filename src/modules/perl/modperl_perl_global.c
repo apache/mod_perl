@@ -338,6 +338,9 @@ modperl_perl_global_gvhv_restore(pTHX_ modperl_perl_global_gvhv_t *gvhv)
      */
     MP_magical_untie(gvhv->tmphv, mg_flags);
     SvREFCNT_dec(gvhv->tmphv);
+
+    /* avoiding -Wall warning */
+    mg_flags = mg_flags;
 }
 
 static void

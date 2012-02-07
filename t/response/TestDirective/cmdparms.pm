@@ -135,6 +135,8 @@ TestCmdParms "Vhost"
 
 TestCmdParms "Location"
 
-<LimitExcept GET>
-    TestCmdParms "Limit"
-</LimitExcept>
+<Directory />
+    <LimitExcept GET>
+        TestCmdParms "Limit"
+    </LimitExcept>
+</Directory>
