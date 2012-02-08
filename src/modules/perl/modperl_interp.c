@@ -285,7 +285,7 @@ apr_status_t modperl_interp_unselect(void *data)
 
     if (interp == mip->parent) return APR_SUCCESS;
 
-    ap_assert(interp && MpInterpIN_USE(interp));
+    MP_ASSERT(interp && MpInterpIN_USE(interp));
     MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d",
                (unsigned long)interp, interp->refcnt);
     if (interp->refcnt != 0) {
@@ -385,7 +385,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
     else {
         request_rec *r;
         apr_pool_userdata_get((void **)&r, "MODPERL_R", p);
-        ap_assert(r);
+        MP_ASSERT(r);
         MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx",
                    (unsigned long)r->pool, (unsigned long)r);
         return modperl_interp_select(r, NULL, NULL);
@@ -490,7 +490,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
             }
         }
 
-        ap_assert(p);
+        MP_ASSERT(p);
 
 #ifdef MP_TRACE
         apr_pool_cleanup_register(p, (void *)interp,
