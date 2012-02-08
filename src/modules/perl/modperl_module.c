@@ -168,7 +168,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     SV *mrg_obj = Nullsv, *base_obj, *add_obj;
 #ifdef USE_ITHREADS
     modperl_interp_t *interp;
-    MP_PERL_CONTEXT_DECLARE;
+    pTHX;
 #endif
 
     /* if the module is loaded in vhost, base==NULL */
@@ -184,7 +184,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
 #ifdef USE_ITHREADS
     interp = modperl_interp_pool_select(p, s);
-    MP_PERL_CONTEXT_STORE_OVERRIDE(interp->perl);
+    aTHX = interp->perl;
 #endif
 
     table = modperl_module_config_table_get(aTHX_ TRUE);
@@ -196,7 +196,6 @@ static void *modperl_module_config_merge(apr_pool_t *p,
         MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         modperl_interp_unselect(interp);
-        MP_PERL_CONTEXT_RESTORE;
 #endif
         return addv;
     }
@@ -250,7 +249,6 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                interp, interp->refcnt);
     modperl_interp_unselect(interp);
-    MP_PERL_CONTEXT_RESTORE;
 #endif
 
     return (void *)mrg;
