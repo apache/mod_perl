@@ -345,10 +345,10 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
                                              server_rec *s)
 {
     int is_startup = (p == s->process->pconf);
-    MP_dSCFG(s);
     modperl_interp_t *interp = NULL;
 
     if (is_startup) {
+        MP_dSCFG(s);
         if (scfg) {
             MP_TRACE_i(MP_FUNC, "using parent interpreter at startup");
 
@@ -381,17 +381,6 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
         modperl_thx_interp_set(interp->perl, interp);
 
         return interp;
-    }
-    else if (!modperl_threaded_mpm()) {
-        MP_TRACE_i(MP_FUNC, "using parent interpreter in non-threaded mode\n");
-
-        /* since we are not running in threaded mode PERL_SET_CONTEXT
-         * is not necessary */
-        /* PERL_SET_CONTEXT(scfg->mip->parent->perl); */
-        /* let the perl interpreter point back to its interp */
-        modperl_thx_interp_set(scfg->mip->parent->perl, scfg->mip->parent);
-
-        return scfg->mip->parent;
     }
     else {
         request_rec *r;

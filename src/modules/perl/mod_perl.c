@@ -740,11 +740,9 @@ static int modperl_hook_create_request(request_rec *r)
     MP_dRCFG;
 
 #ifdef USE_ITHREADS
-    if (modperl_threaded_mpm()) {
-        MP_TRACE_i(MP_FUNC, "setting userdata MODPERL_R in pool %#lx to %lx",
-                   (unsigned long)r->pool, (unsigned long)r);
-      (void)apr_pool_userdata_set((void *)r, "MODPERL_R", NULL, r->pool);
-    }
+    MP_TRACE_i(MP_FUNC, "setting userdata MODPERL_R in pool %#lx to %lx",
+               (unsigned long)r->pool, (unsigned long)r);
+    (void)apr_pool_userdata_set((void *)r, "MODPERL_R", NULL, r->pool);
 #endif
 
     modperl_config_req_init(r, rcfg);
