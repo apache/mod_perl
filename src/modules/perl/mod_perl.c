@@ -740,6 +740,14 @@ static int modperl_hook_create_request(request_rec *r)
     MP_dRCFG;
 
 #ifdef USE_ITHREADS
+    /* XXX: this is necessary to make modperl_interp_pool_select() work
+     * which is used at runtime only to merge dir-configs by
+     * modperl_module_config_merge().
+     *
+     * Since most requests won't need it it would be good to add some logic
+     * (cheaper logic in terms of CPU cycles) to identify those cases and
+     * avoid the hash operation.
+     */
     MP_TRACE_i(MP_FUNC, "setting userdata MODPERL_R in pool %#lx to %lx",
                (unsigned long)r->pool, (unsigned long)r);
     (void)apr_pool_userdata_set((void *)r, "MODPERL_R", NULL, r->pool);
