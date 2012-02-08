@@ -49,14 +49,27 @@ void modperl_trace(const char *func, const char *fmt, ...)
         return;
     }
 
+    /* for more information on formatting codes see
+       http://apr.apache.org/docs/apr/1.4/group__apr__lib.html#gad2cd3594aeaafd45931d1034965f48c1
+     */
     if (modperl_threaded_mpm()) {
-        apr_file_printf(logfile, "[%lu/%lu] ", (unsigned long)getpid(),
-                        modperl_threads_started()
-                        ? (unsigned long)apr_os_thread_current()
-                        : 0);
+        if (modperl_threads_started()) {
+            apr_file_printf(logfile, "[pid=%lu, tid=%pt, perl=%pp] ",
+                            (unsigned long)getpid(),
+                            (void*)apr_os_thread_current(), PERL_GET_CONTEXT);
+        }
+        else {
+            apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
+                            (unsigned long)getpid(), PERL_GET_CONTEXT);
+        }
     }
     else {
-        apr_file_printf(logfile, "[%lu] ", (unsigned long)getpid());
+#ifdef USE_ITHREADS
+        apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
+                        (unsigned long)getpid(), PERL_GET_CONTEXT);
+#else
+        apr_file_printf(logfile, "[pid=%lu] ", (unsigned long)getpid());
+#endif
     }
 
     if (func && *func) {
