@@ -439,8 +439,9 @@ static int modperl_run_filter_init(ap_filter_t *f,
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
     modperl_filter_t *filter = modperl_filter_new(f, NULL, mode, 0, 0, 0);
+    MP_pINTERP;
 
-    MP_dINTERP_SELECT(r, c, s);
+    MP_dINTERP(r, c, s);
 
     MP_TRACE_h(MP_FUNC, "running filter init handler %s",
                modperl_handler_name(handler));
@@ -484,8 +485,9 @@ int modperl_run_filter(modperl_filter_t *filter)
     conn_rec    *c = filter->f->c;
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
+    MP_pINTERP;
 
-    MP_dINTERP_SELECT(r, c, s);
+    MP_dINTERP(r, c, s);
 
     MP_FILTER_SAVE_ERRSV(errsv);
 

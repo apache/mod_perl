@@ -20,9 +20,15 @@
 #include "mod_perl.h"
 
 #ifdef MP_DEBUG
-#define MP_ASSERT(exp) ap_assert(exp)
+#  define MP_ASSERT(exp) ap_assert(exp)
 #else
-#define MP_ASSERT(exp) ((void)0)
+#  define MP_ASSERT(exp) ((void)0)
+#endif
+
+#ifdef USE_ITHREADS
+#  define MP_ASSERT_CONTEXT(perl) MP_ASSERT((perl) == PERL_GET_CONTEXT)
+#else
+#  define MP_ASSERT_CONTEXT(perl) ((void)0)
 #endif
 
 char *modperl_server_desc(server_rec *s, apr_pool_t *p);

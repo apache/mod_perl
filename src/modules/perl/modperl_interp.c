@@ -38,12 +38,7 @@ void modperl_interp_clone_init(modperl_interp_t *interp)
 
     MpInterpCLONED_On(interp);
 
-    PERL_SET_CONTEXT(aTHX);
-
-    /* XXX: hack for bug fixed in 5.6.1 */
-    if (PL_scopestack_ix == 0) {
-        ENTER;
-    }
+    MP_ASSERT_CONTEXT(aTHX);
 
     /* clear @DynaLoader::dl_librefs so we only dlclose() those
      * which are opened by the clone
@@ -79,14 +74,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 
         interp->perl = perl_clone(perl, clone_flags);
 
-#if MP_PERL_VERSION(5, 8, 0) && \
-    defined(USE_REENTRANT_API) && defined(HAS_CRYPT_R) && defined(__GLIBC__)
-        {
-            dTHXa(interp->perl);
-            /* workaround 5.8.0 bug */
-            PL_reentrant_buffer->_crypt_struct.current_saltbits = 0;
-        }
-#endif
+        MP_ASSERT_CONTEXT(interp->perl);
 
         {
             PTR_TBL_t *source = modperl_module_config_table_get(perl, FALSE);
@@ -101,7 +89,9 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 
         /*
          * we keep the PL_ptr_table past perl_clone so it can be used
-         * within modperl_svptr_table_clone.
+         * within modperl_svptr_table_clone. Perl_sv_dup() uses it.
+         * Don't confuse our svptr_table with Perl's ptr_table. They
+         * are different things, although they use the same type.
          */
         if ((clone_flags & CLONEf_KEEP_PTR_TABLE)) {
             dTHXa(interp->perl);
@@ -405,8 +395,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     if (!modperl_threaded_mpm()) {
         MP_TRACE_i(MP_FUNC,
-                   "using parent 0x%lx for non-threaded mpm (%s:%d)",
-                   (unsigned long)scfg->mip->parent,
+                   "using parent 0x%pp (perl=0x%pp) non-threaded mpm (%s:%d)",
+                   scfg->mip->parent, scfg->mip->parent->perl,
                    s->server_hostname, s->port);
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
         PERL_SET_CONTEXT(scfg->mip->parent->perl);
@@ -578,20 +568,20 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 }
 
 #define MP_THX_INTERP_KEY "modperl2::thx_interp_key"
-modperl_interp_t *modperl_thx_interp_get(PerlInterpreter *thx)
+modperl_interp_t *modperl_thx_interp_get(pTHX)
 {
     modperl_interp_t *interp;
-    dTHXa(thx);
-    SV **svp = hv_fetch(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), 0);
+    SV **svp = hv_fetch(PL_modglobal, MP_THX_INTERP_KEY,
+                        strlen(MP_THX_INTERP_KEY), 0);
     if (!svp) return NULL;
     interp = INT2PTR(modperl_interp_t *, SvIV(*svp));
     return interp;
 }
 
-void modperl_thx_interp_set(PerlInterpreter *thx, modperl_interp_t *interp)
+void modperl_thx_interp_set(pTHX_ modperl_interp_t *interp)
 {
-    dTHXa(thx);
-    (void)hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY), newSViv(PTR2IV(interp)), 0);
+    (void)hv_store(PL_modglobal, MP_THX_INTERP_KEY, strlen(MP_THX_INTERP_KEY),
+                   newSViv(PTR2IV(interp)), 0);
     return;
 }
 

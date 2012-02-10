@@ -51,16 +51,51 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s);
 
-#define MP_dINTERP_SELECT(r, c, s) \
-    pTHX; \
-    modperl_interp_t *interp = NULL; \
-    interp = modperl_interp_select(r, c, s); \
+#define MP_pINTERP pTHX; modperl_interp_t *interp = NULL
+
+#define MP_dINTERP(r, c, s)                                             \
+    interp = modperl_interp_select(r, c, s);                            \
     aTHX = interp->perl
 
-#define MP_INTERP_PUTBACK(interp) \
-    if (interp) { \
-        modperl_interp_unselect(interp); \
-    }
+#ifdef MP_DEBUG
+#define MP_dINTERP_POOL(p, s)                                           \
+    MP_TRACE_i(MP_FUNC, "selecting interp: p=%pp, s=%pp", (p), (s));    \
+    interp = modperl_interp_pool_select(p, s);                          \
+    MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d",                 \
+               interp, interp->refcnt);                                 \
+    aTHX = interp->perl
+#else  /* MP_DEBUG */
+#define MP_dINTERP_POOL(p, s)                                           \
+    interp = modperl_interp_pool_select(p, s);                          \
+    aTHX = interp->perl
+#endif
+
+#ifdef MP_DEBUG
+#define MP_INTERP_PUTBACK(interp)                                       \
+    MP_TRACE_i(MP_FUNC, "unselecting interp: (0x%pp)->refcnt=%ld",      \
+               (interp), (interp)->refcnt);                             \
+    modperl_interp_unselect(interp);                                    \
+    interp = NULL;                                                      \
+    aTHX = NULL;                                                        \
+    PERL_SET_CONTEXT(NULL)
+#else  /* MP_DEBUG */
+#define MP_INTERP_PUTBACK(interp)                                       \
+    modperl_interp_unselect(interp)
+#endif
+
+# if 1
+/* ideally we should be able to reset interp and aTHX to NULL after
+ * unselecting the interpreter. Unfortunately that does not work, yet */
+#undef MP_INTERP_PUTBACK
+#define MP_INTERP_PUTBACK(interp)                                       \
+    MP_TRACE_i(MP_FUNC, "unselecting interp: (0x%pp)->refcnt=%ld",      \
+               (interp), (interp)->refcnt);                             \
+    modperl_interp_unselect(interp)
+# endif  /* 0 */
+
+#define MP_INTERP_REFCNT_inc(interp) (interp)->refcnt++
+
+#define MP_INTERP_REFCNT_dec(interp) MP_INTERP_PUTBACK(interp)
 
 #define MP_aTHX aTHX
 
@@ -82,9 +117,17 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
                                      void *data);
 #else
 
-#define MP_dINTERP_SELECT(r, c, s) dNOOP
+#define MP_pINTERP dNOOP
+
+#define MP_dINTERP(r, c, s) NOOP
+
+#define MP_dINTERP_POOL(p, s) NOOP
 
 #define MP_INTERP_PUTBACK(interp) NOOP
+
+#define MP_INTERP_REFCNT_inc(interp) NOOP
+
+#define MP_INTERP_REFCNT_dec(interp) NOOP
 
 #define MP_aTHX 0
 

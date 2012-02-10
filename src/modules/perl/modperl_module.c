@@ -118,6 +118,8 @@ static apr_status_t modperl_module_config_obj_cleanup(void *data)
         (config_obj_cleanup_t *)data;
     dTHXa(cleanup->perl);
 
+    MP_ASSERT_CONTEXT(aTHX);
+
     modperl_svptr_table_delete(aTHX_ cleanup->table, cleanup->ptr);
 
     MP_TRACE_c(MP_FUNC, "deleting ptr 0x%lx from table 0x%lx",
@@ -166,10 +168,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     int is_startup;
     PTR_TBL_t *table;
     SV *mrg_obj = Nullsv, *base_obj, *add_obj;
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp;
-    pTHX;
-#endif
+    MP_pINTERP;
 
     /* if the module is loaded in vhost, base==NULL */
     tmp = (base && base->server) ? base : add;
@@ -182,21 +181,14 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     s = tmp->server;
     is_startup = (p == s->process->pconf);
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_pool_select(p, s);
-    aTHX = interp->perl;
-#endif
+    MP_dINTERP_POOL(p, s);
 
     table = modperl_module_config_table_get(aTHX_ TRUE);
     base_obj = modperl_svptr_table_fetch(aTHX_ table, base);
     add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
     if (!base_obj || (base_obj == add_obj)) {
-#ifdef USE_ITHREADS
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-                   interp, interp->refcnt);
-        modperl_interp_unselect(interp);
-#endif
+        MP_INTERP_PUTBACK(interp);
         return addv;
     }
 
@@ -243,13 +235,10 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     if (!is_startup) {
         modperl_module_config_obj_cleanup_register(aTHX_ p, table, mrg);
+        /* MP_INTERP_REFCNT_inc(interp); */
     }
 
-#ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    modperl_interp_unselect(interp);
-#endif
+    MP_INTERP_PUTBACK(interp);
 
     return (void *)mrg;
 }
