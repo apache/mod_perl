@@ -126,17 +126,6 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 #   define MP_dSCFG_dTHX dTHXa(scfg->perl)
 #endif
 
-/* hopefully this macro will not need to be used often */
-#ifdef USE_ITHREADS
-#   define MP_dTHX                                                   \
-    modperl_interp_t *interp = modperl_interp_select(r, NULL, NULL); \
-    dTHXa(interp->perl)
-#   define MP_uTHX modperl_interp_unselect(interp)
-#else
-#   define MP_dTHX dNOOP
-#   define MP_uTHX dNOOP
-#endif
-
 int modperl_config_apply_PerlModule(server_rec *s,
                                     modperl_config_srv_t *scfg,
                                     PerlInterpreter *perl, apr_pool_t *p);
