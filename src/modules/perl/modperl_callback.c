@@ -147,10 +147,7 @@ int modperl_callback_run_handlers(int idx, int type,
                                   apr_pool_t *ptemp,
                                   modperl_hook_run_mode_e run_mode)
 {
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp = NULL;
-#endif
+    MP_dINTERP;
     MP_dSCFG(s);
     MP_dDCFG;
     MP_dRCFG;
@@ -183,23 +180,7 @@ int modperl_callback_run_handlers(int idx, int type,
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    if (r || c) {
-        interp = modperl_interp_select(r, c, s);
-        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
-                   interp, interp->refcnt);
-        aTHX = interp->perl;
-        /* if you ask why PERL_SET_CONTEXT is omitted here the answer is
-         * it is done in modperl_interp_select
-         */
-    }
-    else {
-        /* Child{Init,Exit}, OpenLogs */
-        aTHX = scfg->mip->parent->perl;
-        PERL_SET_CONTEXT(aTHX);
-        modperl_thx_interp_set(scfg->mip->parent->perl, scfg->mip->parent);
-    }
-#endif
+    MP_INTERPa(r, c, s);
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:
@@ -350,13 +331,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
     SvREFCNT_dec((SV*)av_args);
 
-#ifdef USE_ITHREADS
-    if (r || c) {
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-                   interp, interp->refcnt);
-        modperl_interp_unselect(interp);
-    }
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     return status;
 }

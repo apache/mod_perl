@@ -103,7 +103,9 @@ PTR_TBL_t *modperl_module_config_table_get(pTHX_ int create)
 }
 
 typedef struct {
-    PerlInterpreter *perl;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
     PTR_TBL_t *table;
     void *ptr;
 } config_obj_cleanup_t;
@@ -116,15 +118,17 @@ static apr_status_t modperl_module_config_obj_cleanup(void *data)
 {
     config_obj_cleanup_t *cleanup =
         (config_obj_cleanup_t *)data;
-    dTHXa(cleanup->perl);
-
+#ifdef USE_ITHREADS
+    dTHXa(cleanup->interp->perl);
     MP_ASSERT_CONTEXT(aTHX);
+#endif
 
     modperl_svptr_table_delete(aTHX_ cleanup->table, cleanup->ptr);
 
-    MP_TRACE_c(MP_FUNC, "deleting ptr 0x%lx from table 0x%lx",
-               (unsigned long)cleanup->ptr,
-               (unsigned long)cleanup->table);
+    MP_TRACE_c(MP_FUNC, "deleting ptr %pp from table %pp",
+               cleanup->ptr, cleanup->table);
+
+    MP_INTERP_PUTBACK(cleanup->interp, aTHX);
 
     return APR_SUCCESS;
 }
@@ -140,7 +144,8 @@ static void modperl_module_config_obj_cleanup_register(pTHX_
     cleanup->table = table;
     cleanup->ptr = ptr;
 #ifdef USE_ITHREADS
-    cleanup->perl = aTHX;
+    cleanup->interp = modperl_thx_interp_get(aTHX);
+    MP_INTERP_REFCNT_inc(cleanup->interp);
 #endif
 
     apr_pool_cleanup_register(p, cleanup,
@@ -168,7 +173,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     int is_startup;
     PTR_TBL_t *table;
     SV *mrg_obj = Nullsv, *base_obj, *add_obj;
-    MP_pINTERP;
+    MP_dINTERP;
 
     /* if the module is loaded in vhost, base==NULL */
     tmp = (base && base->server) ? base : add;
@@ -181,14 +186,14 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     s = tmp->server;
     is_startup = (p == s->process->pconf);
 
-    MP_dINTERP_POOL(p, s);
+    MP_INTERP_POOLa(p, s);
 
     table = modperl_module_config_table_get(aTHX_ TRUE);
     base_obj = modperl_svptr_table_fetch(aTHX_ table, base);
     add_obj  = modperl_svptr_table_fetch(aTHX_ table, add);
 
     if (!base_obj || (base_obj == add_obj)) {
-        MP_INTERP_PUTBACK(interp);
+        MP_INTERP_PUTBACK(interp, aTHX);
         return addv;
     }
 
@@ -235,10 +240,9 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     if (!is_startup) {
         modperl_module_config_obj_cleanup_register(aTHX_ p, table, mrg);
-        /* MP_INTERP_REFCNT_inc(interp); */
     }
 
-    MP_INTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     return (void *)mrg;
 }
@@ -353,10 +357,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     modperl_module_cfg_t *srv_cfg;
     int modules_alias = 0;
 
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp = modperl_interp_pool_select(p, s);
-    dTHXa(interp->perl);
-#endif
+    MP_dINTERP_POOLa(p, s);
 
     int count;
     PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
@@ -405,11 +406,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                                               parms, &obj);
 
     if (errmsg) {
-#ifdef USE_ITHREADS
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-                   interp, interp->refcnt);
-        modperl_interp_unselect(interp);
-#endif
+        MP_INTERP_PUTBACK(interp, aTHX);
         return errmsg;
     }
 
@@ -430,11 +427,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                                                minfo->srv_create,
                                                parms, &srv_obj);
         if (errmsg) {
-#ifdef USE_ITHREADS
-            MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-                       interp, interp->refcnt);
-            modperl_interp_unselect(interp);
-#endif
+            MP_INTERP_PUTBACK(interp, aTHX);
             return errmsg;
         }
 
@@ -476,11 +469,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         retval = SvPVX(ERRSV);
     }
 
-#ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    modperl_interp_unselect(interp);
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     if (modules_alias) {
         MP_dSCFG(s);
@@ -649,10 +638,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
     command_rec *cmd;
     AV *module_cmds;
     I32 i, fill;
-#ifdef USE_ITHREADS
-    MP_dSCFG(s);
-    dTHXa(scfg->mip->parent->perl);
-#endif
+    MP_dINTERPa(NULL, NULL, s);
     module_cmds = (AV*)SvRV(mod_cmds);
 
     fill = AvFILL(module_cmds);
@@ -669,6 +655,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         cmd = apr_array_push(cmds);
 
         if ((errmsg = modperl_module_cmd_fetch(aTHX_ obj, "name", &val))) {
+            MP_INTERP_PUTBACK(interp, aTHX);
             return errmsg;
         }
 
@@ -689,6 +676,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
         }
 
         if (!modperl_module_cmd_lookup(cmd)) {
+            MP_INTERP_PUTBACK(interp, aTHX);
             return apr_psprintf(p,
                                 "no command function defined for args_how=%d",
                                 cmd->args_how);
@@ -741,6 +729,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 
     modp->cmds = (command_rec *)cmds->elts;
 
+    MP_INTERP_PUTBACK(interp, aTHX);
     return NULL;
 }
 
@@ -788,9 +777,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
                                const char *name, SV *mod_cmds)
 {
     MP_dSCFG(s);
-#ifdef USE_ITHREADS
-    dTHXa(scfg->mip->parent->perl);
-#endif
+    MP_dINTERPa(NULL, NULL, s);
     const char *errmsg;
     module *modp = (module *)apr_pcalloc(p, sizeof(*modp));
     modperl_module_info_t *minfo =
@@ -832,6 +819,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     modp->cmds = NULL;
 
     if ((errmsg = modperl_module_add_cmds(p, s, modp, mod_cmds))) {
+        MP_INTERP_PUTBACK(interp, aTHX);
         return errmsg;
     }
 
@@ -866,6 +854,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     }
 #endif
 
+    MP_INTERP_PUTBACK(interp, aTHX);
     return NULL;
 }
 

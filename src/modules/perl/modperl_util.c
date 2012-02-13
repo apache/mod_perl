@@ -833,18 +833,14 @@ static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
     modperl_pnotes_t *pnotes = data;
 
-#ifdef USE_ITHREADS
-        dTHXa(pnotes->interp->perl);
-#endif
-        SvREFCNT_dec(pnotes->pnotes);
-        pnotes->pnotes = NULL;
-        pnotes->pool = NULL;
-#ifdef USE_ITHREADS
-        MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)",
-               pnotes->interp);
-    modperl_interp_unselect(pnotes->interp);
-    pnotes->interp = NULL;
-#endif
+    dTHXa(pnotes->interp->perl);
+    MP_ASSERT_CONTEXT(aTHX);
+
+    SvREFCNT_dec(pnotes->pnotes);
+    pnotes->pnotes = NULL;
+    pnotes->pool = NULL;
+
+    MP_INTERP_PUTBACK(pnotes->interp, aTHX);
     return APR_SUCCESS;
 }
 

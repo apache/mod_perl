@@ -196,8 +196,9 @@ static MP_INLINE SV *mpxs_Apache2__Filter_ctx(pTHX_
         }
 
 #ifdef USE_ITHREADS
-        if (!ctx->perl) {
-            ctx->perl = aTHX;
+        if (!ctx->interp) {
+            ctx->interp = modperl_thx_interp_get(aTHX);
+            MP_INTERP_REFCNT_inc(ctx->interp);
         }
 #endif
         ctx->data = SvREFCNT_inc(data);

@@ -1033,22 +1033,13 @@ int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
     apr_status_t retval, rc;
-
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp;
-#endif
+    MP_dINTERP;
 
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_select(r, r->connection, r->server);
-    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    aTHX = interp->perl;
-#endif
+    MP_INTERPa(r, r->connection, r->server);
 
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
     if (MpDirSETUP_ENV(dcfg)) {
@@ -1061,11 +1052,7 @@ int modperl_response_handler(request_rec *r)
         retval = rc;
     }
 
-#ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    modperl_interp_unselect(interp);
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     return retval;
 }
@@ -1076,21 +1063,13 @@ int modperl_response_handler_cgi(request_rec *r)
     GV *h_stdin, *h_stdout;
     apr_status_t retval, rc;
     MP_dRCFG;
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp;
-#endif
+    MP_dINTERP;
 
     if (!strEQ(r->handler, "perl-script")) {
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_select(r, r->connection, r->server);
-    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    aTHX = interp->perl;
-#endif
+    MP_INTERPa(r, r->connection, r->server);
 
     modperl_perl_global_request_save(aTHX_ r);
 
@@ -1122,11 +1101,7 @@ int modperl_response_handler_cgi(request_rec *r)
     modperl_io_restore_stdout(aTHX_ h_stdout);
     FREETMPS;LEAVE;
 
-#ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-               interp, interp->refcnt);
-    modperl_interp_unselect(interp);
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     /* flush output buffer after interpreter is putback */
     rc = modperl_response_finish(r);
