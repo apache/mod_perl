@@ -118,14 +118,6 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 #define MP_dSCFG(s)                                             \
     modperl_config_srv_t *scfg = modperl_config_srv_get(s)
 
-#ifdef USE_ITHREADS
-#   define MP_dSCFG_dTHX            \
-    dTHXa(scfg->mip->parent->perl); \
-    PERL_SET_CONTEXT(aTHX)
-#else
-#   define MP_dSCFG_dTHX dTHXa(scfg->perl)
-#endif
-
 int modperl_config_apply_PerlModule(server_rec *s,
                                     modperl_config_srv_t *scfg,
                                     PerlInterpreter *perl, apr_pool_t *p);
