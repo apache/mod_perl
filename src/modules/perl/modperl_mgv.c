@@ -476,10 +476,7 @@ static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
 {
     int i;
     modperl_config_dir_t *dir_cfg = (modperl_config_dir_t *)cfg;
-#ifdef USE_ITHREADS
-    MP_dSCFG(s);
-    MP_dSCFG_dTHX;
-#endif
+    dTHXa(data);
 
     if (!dir_cfg) {
         return 1;
@@ -497,7 +494,7 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
 {
     int i;
     modperl_config_srv_t *scfg = (modperl_config_srv_t *)cfg;
-    MP_dSCFG_dTHX;
+    dTHXa(data);
 
     for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
         modperl_hash_handlers(aTHX_ p, s,
@@ -524,9 +521,16 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
 
 void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
 {
-    ap_pcw_walk_config(p, s, &perl_module, NULL,
+    MP_dINTERPa(NULL, NULL, s);
+    ap_pcw_walk_config(p, s, &perl_module,
+#ifdef USE_ITHREADS
+                       aTHX,
+#else
+                       NULL,
+#endif
                        modperl_hash_handlers_dir,
                        modperl_hash_handlers_srv);
+    MP_INTERP_PUTBACK(interp, aTHX);
 }
 
 /*
