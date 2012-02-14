@@ -55,7 +55,8 @@ void modperl_perl_core_global_init(pTHX)
 
     while (cglobals->name) {
         GV *gv = gv_fetchpv(cglobals->core_name, TRUE, SVt_PVCV);
-        GvCV_set(gv, get_cv(cglobals->sub_name, TRUE));
+        GvCV_set(gv,
+                 MUTABLE_CV(SvREFCNT_inc(get_cv(cglobals->sub_name, TRUE))));
         GvIMPORTED_CV_on(gv);
         cglobals++;
     }
