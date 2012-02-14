@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Fix a few REFCNT bugs.
+Patch submitted by: Niko Tyni <ntyni@debian.org>
+Reviewed by: Torsten Foertsch
+
 Correct the initialization of the build config in ModPerl::MM. The global
 variable was only being set once on loading the module, which was before
 Apache2::BuildConfig.pm had been written, leading to cwd and MP_LIBNAME
