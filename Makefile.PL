@@ -241,6 +241,8 @@ EOI
         }
     }
 
+    $build->{$_} and $ENV{$_} = $build->{$_} for (qw/MP_APXS MP_AP_PREFIX/);
+
     unless ($build->{MP_APXS} or $build->{MP_AP_PREFIX}) {
         my $ok = 0;
         for my $path ($build->find) {
