@@ -216,8 +216,10 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         server_rec *base_server = modperl_global_get_server_rec();
         const char *desc = modperl_server_desc(s, p);
         if (base_server == s) {
+            MP_init_status = 1; /* temporarily reset MP_init_status */
             MP_TRACE_i(MP_FUNC,
                        "starting the parent perl for the base server", desc);
+            MP_init_status = 2;
         }
         else {
             MP_TRACE_i(MP_FUNC,
