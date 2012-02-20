@@ -241,6 +241,8 @@ EOI
         }
     }
 
+    $build->{$_} and $ENV{$_} = $build->{$_} for (qw/MP_APXS MP_AP_PREFIX/);
+
     unless ($build->{MP_APXS} or $build->{MP_AP_PREFIX}) {
         my $ok = 0;
         for my $path ($build->find) {
@@ -789,24 +791,23 @@ run_tests : test_clean
 	$(PASSENV) \
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
 	t/TEST -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
-	$(MAKE) -k run_subtests
 
 run_subtests ::
-	$(MAKE) -C ModPerl-Registry test
+	cd ModPerl-Registry && $(MAKE) test
 
 run_subtests ::
-	$(MAKE) -C Apache-Reload test
+	cd Apache-Reload && $(MAKE) test
 
 EOF
 
     $preamble .= <<'EOF' unless $build->mpm_is_threaded();
 run_subtests ::
-	$(MAKE) -C Apache-SizeLimit test
+	cd Apache-SizeLimit && $(MAKE) test
 
 EOF
 
     $preamble .= <<'EOF';
-test :: pure_all run_tests test_clean
+test :: pure_all run_tests run_subtests
 EOF
 
     return $preamble;
