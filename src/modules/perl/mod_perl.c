@@ -443,12 +443,12 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
     PerlInterpreter *base_perl;
-#ifdef MP_TRACE
+#if defined(MP_TRACE) || defined(USE_ITHREADS)
     modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
+#endif
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
                                    base_server->server_hostname));
-#endif /* MP_TRACE */
 
 #ifndef USE_ITHREADS
     if (modperl_threaded_mpm()) {
