@@ -52,6 +52,7 @@ my $code  = ModPerl::Code->new;
 
 sub UNATTENDED() { $build->{MP_PROMPT_DEFAULT} || ! -t STDIN }
 
+# may populate $build->{MP_APXS}
 win32_fetch_apxs() if WIN32;
 
 configure();
@@ -623,6 +624,8 @@ sub win32_fetch_apxs {
     my $script = catfile($build->{cwd}, 'build', 'win32_fetch_apxs');
     my @args = ($^X, $script, "--with-apache2=$prefix");
     system(@args) == 0 or die "system @args failed: $?";
+    my $apxs = catfile($prefix, 'bin', 'apxs.bat');
+    $build->{MP_APXS} = $apxs if -e $apxs;
 }
 
 
