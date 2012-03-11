@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Fix a race condition in our tipool management.
+See http://www.gossamer-threads.com/lists/modperl/dev/104026
+Patch submitted by: SalusaSecondus <salusa@nationstates.net>
+Reviewed by: Torsten Foertsch
+
 Ensure that MP_APXS is set when building on Win32 with MP_AP_PREFIX,
 otherwise the bundled Reload and SizeLimit builds will fail to find a
 properly configured Test environment.
