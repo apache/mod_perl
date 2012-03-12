@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.6-dev
 
+Do not stringify $@ upon exception propagation. [Torsten Foertsch] 
+
 Fix a race condition in our tipool management.
 See http://www.gossamer-threads.com/lists/modperl/dev/104026
 Patch submitted by: SalusaSecondus <salusa@nationstates.net>
