@@ -78,7 +78,7 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
     }
 
     if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ "%s", SvPV_nolen(ERRSV));
+        Perl_croak(aTHX_ Nullch);
     }
 
     stash = gv_stashpvn("APR::Error", 10, FALSE);
