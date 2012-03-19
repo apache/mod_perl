@@ -53,6 +53,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     mpxs_cleanup2_t *cdata = (mpxs_cleanup2_t *)data;
 #ifdef USE_ITHREADS
     dTHXa(cdata->perl);
+    PERL_SET_CONTEXT(aTHX);
 #endif
     dSP;
 
@@ -63,6 +64,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     }
     PUTBACK;
 
+    save_gp(PL_errgv, 1);       /* local *@ */
     count = call_sv(cdata->cv, G_SCALAR|G_EVAL);
 
     SPAGAIN;
@@ -71,16 +73,17 @@ static apr_status_t mpxs_cleanup_run(void *data)
         (void)POPs; /* the return value is ignored */
     }
 
+    if (SvTRUE(ERRSV)) {
+        Perl_warn(aTHX_ "Apache2::ServerUtil: cleanup died: %s",
+                  SvPV_nolen(ERRSV));
+    }
+
     PUTBACK;
     FREETMPS;LEAVE;
 
     SvREFCNT_dec(cdata->cv);
     if (cdata->arg) {
         SvREFCNT_dec(cdata->arg);
-    }
-
-    if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ Nullch);
     }
 
     /* the return value is ignored by apr_pool_destroy anyway */
