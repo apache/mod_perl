@@ -98,20 +98,29 @@ sub test_perl_ithreads {
 }
 
 sub test_server_shutdown_cleanup_register {
-    # we can't really test the functionality since it happens at
-    # server shutdown, when the test suite has finished its run
-    # so just check that we can register the cleanup and that it
-    # doesn't segfault
-    Apache2::ServerUtil::server_shutdown_cleanup_register(sub { Apache2::Const::OK });
+    Apache2::ServerUtil::server_shutdown_cleanup_register sub {
+       warn <<'EOF';
+*** done with server_shutdown_cleanup_register                               ***
+********************************************************************************
+EOF
+    };
 
-    # replace the sub with the following to get some visual debug
-    # should log cnt:1 on -start, oncand cnt: 2 -stop followed by cnt: 1)
-    #Apache2::ServerUtil::server_shutdown_cleanup_register( sub {
-    #    my $cnt = Apache2::ServerUtil::restart_count();
-    #    open my $fh, ">>/tmp/out" or die "$!";
-    #    print $fh "cnt: $cnt\n";
-    #    close $fh;
-    #});
+    Apache2::ServerUtil::server_shutdown_cleanup_register sub {
+       die "testing server_shutdown_cleanup_register\n";
+    };
+
+    Apache2::ServerUtil::server_shutdown_cleanup_register sub {
+        warn <<'EOF';
+********************************************************************************
+*** This is a test for Apache2::ServerUtil::server_shutdown_cleanup_register ***
+*** Following a line consisting only of * characters there should be a line  ***
+*** containing                                                               ***
+***     "cleanup died: testing server_shutdown_cleanup_register".            ***
+*** The next line should then read                                           ***
+***     "done with server_shutdown_cleanup_register"                         ***
+********************************************************************************
+EOF
+    };
 }
 
 sub ModPerl::Test::exit_handler {

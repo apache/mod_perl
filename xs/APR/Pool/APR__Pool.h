@@ -285,12 +285,18 @@ static apr_status_t mpxs_cleanup_run(void *data)
     }
     PUTBACK;
 
+    save_gp(PL_errgv, 1);       /* local *@ */
     count = call_sv(cdata->cv, G_SCALAR|G_EVAL);
 
     SPAGAIN;
 
     if (count == 1) {
         (void)POPs; /* the return value is ignored */
+    }
+
+    if (SvTRUE(ERRSV)) {
+        Perl_warn(aTHX_ "APR::Pool: cleanup died: %s", 
+                  SvPV_nolen(ERRSV));
     }
 
     PUTBACK;
@@ -310,10 +316,6 @@ static apr_status_t mpxs_cleanup_run(void *data)
         (void)modperl_opt_interp_unselect(cdata->interp);
     }
 #endif
-
-    if (SvTRUE(ERRSV)) {
-        Perl_croak(aTHX_ Nullch);
-    }
 
     /* the return value is ignored by apr_pool_destroy anyway */
     return APR_SUCCESS;
