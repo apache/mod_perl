@@ -11,7 +11,7 @@ use APR::Pool ();
 use APR::Table ();
 
 sub num_of_tests {
-    return 76;
+    return 77;
 }
 
 sub test {
@@ -363,11 +363,13 @@ sub test {
 
         my @warnings;
         local $SIG{__WARN__} = sub {push @warnings, @_};
+        local $@="to be preserved";
         undef $p;
 
         ok t_cmp(\@warnings,
                  [map "APR::Pool: cleanup died: $_\n", 2, 1],
                  "exceptions thrown by cleanups");
+        ok t_cmp($@, "to be preserved", '$@ is preserved');
     }
 
     ### $p->clear ###
