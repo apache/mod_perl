@@ -53,9 +53,11 @@ static apr_status_t mpxs_cleanup_run(void *data)
     mpxs_cleanup2_t *cdata = (mpxs_cleanup2_t *)data;
 #ifdef USE_ITHREADS
     dTHXa(cdata->perl);
-    PERL_SET_CONTEXT(aTHX);
 #endif
     dSP;
+#ifdef USE_ITHREADS
+    PERL_SET_CONTEXT(aTHX);
+#endif
 
     ENTER;SAVETMPS;
     PUSHMARK(SP);
