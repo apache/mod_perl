@@ -10,7 +10,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.6-dev
+=item 2.0.6-rc4
+
+Move code after declarations to keep MSVC++ compiler happy. [Steve Hay]
 
 Adopt modperl_pcw.c changes from httpd24 branch. [Torsten Foertsch]
 
