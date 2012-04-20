@@ -51,7 +51,11 @@ static void new_constsub(pTHX_ constants_lookup lookup,
             gv_init(alias, caller_stash, name, name_len, TRUE);
         }
 
+#ifdef MUTABLE_CV
         GvCV_set(alias, MUTABLE_CV(SvREFCNT_inc(GvCV(*gvp))));
+#else
+        GvCV_set(alias, (CV*)(SvREFCNT_inc(GvCV(*gvp))));
+#endif
     }
 }
 
