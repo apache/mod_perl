@@ -10,6 +10,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.7-dev
+
 =item 2.0.6 April 24, 2012
 
 Preserve 5.8 compatibility surrounding use of MUTABLE_CV [Adam Prime]
