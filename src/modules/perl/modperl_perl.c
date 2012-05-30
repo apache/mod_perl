@@ -101,6 +101,7 @@ static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 {
     sv_setiv(GvSV(gv_fetchpv("$", TRUE, SVt_PV)), ids->pid);
 
+#if !MP_PERL_VERSION_AT_LEAST(5, 16, 0)
 #ifndef WIN32
     PL_uid  = ids->uid;
     PL_euid = ids->euid;
@@ -109,6 +110,7 @@ static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 #endif
 #ifdef MP_MAINTAIN_PPID
     PL_ppid = ids->ppid;
+#endif
 #endif
 }
 

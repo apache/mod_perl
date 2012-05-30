@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.7-dev
 
+Fix breakage caused by removal of PL_uid et al from perl 5.16.0. Patch from
+rt.cpan.org #77129. [Zefram]
+
 =item 2.0.6 April 24, 2012
 
 Preserve 5.8 compatibility surrounding use of MUTABLE_CV [Adam Prime]
