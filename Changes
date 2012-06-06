@@ -10,6 +10,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.8-dev
+
+Add branch release tag to 'make tag' target. [Phred]
+
 =item 2.0.7 June 5, 2012
 
 Fix breakage caused by removal of PL_uid et al from perl 5.16.0. Patch from
