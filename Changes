@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.8-dev
 
+Remove all uses of deprecated core perl symbols. [Steve Hay]
+
 Add branch release tag to 'make tag' target. [Phred]
 
 =item 2.0.7 June 5, 2012
