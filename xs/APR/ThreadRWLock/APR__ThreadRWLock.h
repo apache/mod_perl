@@ -23,7 +23,7 @@ SV *mpxs_apr_thread_rwlock_create(pTHX_ SV *classname, SV *p_sv)
     apr_thread_rwlock_t *rwlock = NULL;
     SV *rwlock_sv;
     (void)apr_thread_rwlock_create(&rwlock, p);
-    rwlock_sv = sv_setref_pv(NEWSV(0, 0), "APR::ThreadRWLock", (void*)rwlock);
+    rwlock_sv = sv_setref_pv(newSV(0), "APR::ThreadRWLock", (void*)rwlock);
     mpxs_add_pool_magic(rwlock_sv, p_sv);
     return rwlock_sv;
 }

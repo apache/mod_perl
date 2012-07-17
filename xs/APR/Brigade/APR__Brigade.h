@@ -28,7 +28,7 @@ SV *mpxs_apr_brigade_create(pTHX_ SV *CLASS, SV *p_sv,
 {
     apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);
     apr_bucket_brigade *bb = apr_brigade_create(p, ba);
-    SV *bb_sv = sv_setref_pv(NEWSV(0, 0), "APR::Brigade", (void*)bb);
+    SV *bb_sv = sv_setref_pv(newSV(0), "APR::Brigade", (void*)bb);
     mpxs_add_pool_magic(bb_sv, p_sv);
     return bb_sv;
 }

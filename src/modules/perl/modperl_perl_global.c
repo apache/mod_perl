@@ -69,7 +69,7 @@ static void modperl_perl_global_init(pTHX_ modperl_perl_globals_t *globals)
  *     return $PL_modglobal{$key}{$package} = [];
  * }
  * else {
- *     return $Nullav; # a null pointer in C of course :)
+ *     return (AV *)NULL; # a null pointer in C of course :)
  * }
  */
 static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
@@ -84,7 +84,7 @@ static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
             hv = MP_MODGLOBAL_STORE_HV(gkey);
         }
         else {
-            return Nullav;
+            return (AV *)NULL;
         }
     }
 
@@ -96,7 +96,7 @@ static AV *modperl_perl_global_avcv_fetch(pTHX_ modperl_modglobal_key_t *gkey,
             return (AV*)*hv_store(hv, package, packlen, (SV*)newAV(), 0);
         }
         else {
-            return Nullav;
+            return (AV *)NULL;
         }
     }
 }
@@ -202,7 +202,7 @@ static int modperl_perl_global_avcv_set(pTHX_ SV *sv, MAGIC *mg)
 
 static MGVTBL modperl_vtbl_global_avcv_t = {
     0,
-    MEMBER_TO_FPTR(modperl_perl_global_avcv_set),
+    modperl_perl_global_avcv_set,
     0, 0, 0,
 };
 
@@ -211,7 +211,7 @@ static void modperl_perl_global_avcv_tie(pTHX_ modperl_modglobal_key_e key,
 {
     if (!SvMAGIC((SV*)av)) {
         MAGIC *mg;
-        Newz(702, mg, 1, MAGIC);
+        Newxz(mg, 1, MAGIC);
         mg->mg_virtual = &modperl_vtbl_global_avcv_t;
         mg->mg_ptr = (char *)&MP_modglobal_keys[key];
         mg->mg_len = -1; /* prevent free() of mg->mg_ptr */
@@ -279,7 +279,7 @@ static HV *copyENV(pTHX_ HV *ohv)
     HvRITER(ohv) = hv_riter;
     HvEITER(ohv) = hv_eiter;
 
-    hv_magic(hv, Nullgv, 'E');
+    hv_magic(hv, (GV *)NULL, 'E');
 
     TAINT_NOT;
 
@@ -316,7 +316,7 @@ modperl_perl_global_gvhv_save(pTHX_ modperl_perl_global_gvhv_t *gvhv)
     if (mg && mg->mg_type && !SvMAGIC(gvhv->tmphv)) {
         /* propagate SvMAGIC(hv) to SvMAGIC(gvhv->tmphv) */
         /* XXX: maybe newHVhv should do this? */
-        hv_magic(gvhv->tmphv, Nullgv, mg->mg_type);
+        hv_magic(gvhv->tmphv, (GV *)NULL, mg->mg_type);
     }
 #else
     gvhv->tmphv = copyENV(aTHX_ hv);

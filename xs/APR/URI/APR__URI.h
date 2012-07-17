@@ -45,7 +45,7 @@ SV *mpxs_apr_uri_parse(pTHX_ SV *classname, SV *p_sv, const char *uri_string)
 
     (void)apr_uri_parse(p, uri_string, &uri->uri);
 
-    uri_sv = sv_setref_pv(NEWSV(0, 0), "APR::URI", (void*)uri);
+    uri_sv = sv_setref_pv(newSV(0), "APR::URI", (void*)uri);
     mpxs_add_pool_magic(uri_sv, p_sv);
 
     return uri_sv;
@@ -91,5 +91,5 @@ SV *mpxs_APR__URI_rpath(pTHX_ apr_uri_t *apr_uri)
             return newSVpv(uri->uri.path, 0);
         }
     }
-    return Nullsv;
+    return (SV *)NULL;
 }

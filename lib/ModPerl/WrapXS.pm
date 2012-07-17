@@ -272,7 +272,7 @@ EOF
 
                 $code = <<EOF;
 $type
-$name(obj, val=Nullsv)
+$name(obj, val=(SV *)NULL)
     $class obj
     SV *val
 
@@ -300,10 +300,10 @@ EOF
                     or die "rw_char_undef accessors need pool";
                 $pool .= '(obj)';
 # XXX: not sure where val=$default is coming from, but for now use
-# hardcoded Nullsv
+# hardcoded (SV *)NULL
                 $code = <<EOF;
 $type
-$name(obj, val_sv=Nullsv)
+$name(obj, val_sv=(SV *)NULL)
     $class obj
     SV *val_sv
 

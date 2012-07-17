@@ -64,7 +64,7 @@ int modperl_const_compile(pTHX_ const char *classname,
                           const char *name)
 {
     HV *stash = gv_stashpv(classname, TRUE);
-    HV *caller_stash = Nullhv;
+    HV *caller_stash = (HV *)NULL;
     constants_lookup lookup;
     constants_group_lookup group_lookup;
 

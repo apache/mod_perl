@@ -317,7 +317,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
         switch (*classname) {
           case 'A':
             if (strEQ(classname, "APR::Table")) {
-                sv = modperl_hash_tie(aTHX_ classname, Nullsv, ptr);
+                sv = modperl_hash_tie(aTHX_ classname, (SV *)NULL, ptr);
                 break;
             }
           case 'I':
@@ -608,7 +608,7 @@ int modperl_handler_perl_add_handlers(pTHX_
                                       modperl_handler_action_e action)
 {
     I32 i;
-    AV *av = Nullav;
+    AV *av = (AV *)NULL;
     MpAV **handlers =
         modperl_handler_get_handlers(r, c, s,
                                      p, name, action);

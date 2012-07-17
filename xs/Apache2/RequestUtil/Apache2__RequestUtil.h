@@ -120,7 +120,7 @@ SV *mpxs_Apache2__RequestRec_new(pTHX_ SV *classname,
     r->assbackwards    = 1;
     r->protocol        = "UNKNOWN";
 
-    r_sv = sv_setref_pv(NEWSV(0, 0), "Apache2::RequestRec", (void*)r);
+    r_sv = sv_setref_pv(newSV(0), "Apache2::RequestRec", (void*)r);
 
     if (base_pool_sv) {
         mpxs_add_pool_magic(r_sv, base_pool_sv);

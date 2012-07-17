@@ -108,7 +108,7 @@ void mpxs_Apache2__ServerUtil_server_shutdown_cleanup_register(pTHX_ SV *cv,
      * before parent perl is destroyed */
     data = (mpxs_cleanup2_t *)apr_pcalloc(p, sizeof(*data));
     data->cv   = SvREFCNT_inc(cv);
-    data->arg  = arg ? SvREFCNT_inc(arg) : Nullsv;
+    data->arg  = arg ? SvREFCNT_inc(arg) : (SV *)NULL;
     data->p    = p;
 #ifdef USE_ITHREADS
     data->perl = aTHX;

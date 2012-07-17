@@ -58,10 +58,10 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
     PTR_TBL_ENT_t **src_ary, **dst_ary;
     CLONE_PARAMS parms;
 
-    Newz(0, tbl, 1, PTR_TBL_t);
+    Newxz(tbl, 1, PTR_TBL_t);
     tbl->tbl_max        = source->tbl_max;
     tbl->tbl_items        = source->tbl_items;
-    Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t *);
+    Newxz(tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t *);
 
     dst_ary = tbl->tbl_ary;
     src_ary = source->tbl_ary;
@@ -82,11 +82,11 @@ PTR_TBL_t *modperl_svptr_table_clone(pTHX_ PerlInterpreter *proto_perl,
              src_ent = src_ent->next)
         {
             if (dst_ent == NULL) {
-                Newz(0, dst_ent, 1, PTR_TBL_ENT_t);
+                Newxz(dst_ent, 1, PTR_TBL_ENT_t);
                 *dst_ary = dst_ent;
             }
             else {
-                Newz(0, dst_ent->next, 1, PTR_TBL_ENT_t);
+                Newxz(dst_ent->next, 1, PTR_TBL_ENT_t);
                 dst_ent = dst_ent->next;
             }
 
@@ -170,10 +170,10 @@ PTR_TBL_t *
 modperl_svptr_table_new(pTHX)
 {
     PTR_TBL_t *tbl;
-    Newz(0, tbl, 1, PTR_TBL_t);
+    Newxz(tbl, 1, PTR_TBL_t);
     tbl->tbl_max        = 511;
     tbl->tbl_items        = 0;
-    Newz(0, tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t*);
+    Newxz(tbl->tbl_ary, tbl->tbl_max + 1, PTR_TBL_ENT_t*);
     return tbl;
 }
 
@@ -213,7 +213,7 @@ modperl_svptr_table_store(pTHX_ PTR_TBL_t *tbl, void *oldv, void *newv)
             return;
         }
     }
-    Newz(0, tblent, 1, PTR_TBL_ENT_t);
+    Newxz(tblent, 1, PTR_TBL_ENT_t);
     tblent->oldval = oldv;
     tblent->newval = newv;
     tblent->next = *otblent;
@@ -262,7 +262,7 @@ modperl_svptr_table_clear(pTHX_ PTR_TBL_t *tbl)
 {
     register PTR_TBL_ENT_t **array;
     register PTR_TBL_ENT_t *entry;
-    register PTR_TBL_ENT_t *oentry = Null(PTR_TBL_ENT_t*);
+    register PTR_TBL_ENT_t *oentry = (PTR_TBL_ENT_t *)NULL;
     UV riter = 0;
     UV max;
 

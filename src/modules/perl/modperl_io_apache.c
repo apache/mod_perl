@@ -70,7 +70,7 @@ PerlIOApache_pushed(pTHX_ PerlIO *f, const char *mode, SV *arg,
 
     /* this method also sets the right flags according to the
      * 'mode' */
-    code = PerlIOBase_pushed(aTHX_ f, mode, Nullsv, tab);
+    code = PerlIOBase_pushed(aTHX_ f, mode, (SV *)NULL, tab);
 
     return code;
 }

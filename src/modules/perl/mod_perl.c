@@ -262,7 +262,7 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
 
     /* suspend END blocks to be run at server shutdown */
     endav = PL_endav;
-    PL_endav = Nullav;
+    PL_endav = (AV *)NULL;
 
 /* This was fixed in 5.9.0/5.8.1 (17775), but won't compile after 19122 */
 #if MP_PERL_VERSION(5, 8, 0) && \

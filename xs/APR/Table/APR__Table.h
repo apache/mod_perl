@@ -21,7 +21,7 @@
 #define MPXS_DO_TABLE_N_MAGIC_RETURN(call)                              \
     apr_pool_t *p = mp_xs_sv2_APR__Pool(p_sv);                          \
     apr_table_t *t = call;                                              \
-    SV *t_sv = modperl_hash_tie(aTHX_ "APR::Table", Nullsv, t);         \
+    SV *t_sv = modperl_hash_tie(aTHX_ "APR::Table", (SV *)NULL, t);     \
     mpxs_add_pool_magic(t_sv, p_sv);                                    \
     return t_sv;
 

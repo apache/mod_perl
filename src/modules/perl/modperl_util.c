@@ -62,7 +62,7 @@ static SV *modperl_hv_request_find(pTHX_ SV *in, char *classname, CV *cv)
 {
     static char *r_keys[] = { "r", "_r", NULL };
     HV *hv = (HV *)SvRV(in);
-    SV *sv = Nullsv;
+    SV *sv = (SV *)NULL;
     int i;
 
     for (i=0; r_keys[i]; i++) {
@@ -117,12 +117,12 @@ MP_INLINE server_rec *modperl_sv2server_rec(pTHX_ SV *sv)
 
 MP_INLINE request_rec *modperl_sv2request_rec(pTHX_ SV *sv)
 {
-    return modperl_xs_sv2request_rec(aTHX_ sv, NULL, Nullcv);
+    return modperl_xs_sv2request_rec(aTHX_ sv, NULL, (CV *)NULL);
 }
 
 request_rec *modperl_xs_sv2request_rec(pTHX_ SV *in, char *classname, CV *cv)
 {
-    SV *sv = Nullsv;
+    SV *sv = (SV *)NULL;
     MAGIC *mg;
 
     if (SvROK(in)) {
@@ -177,7 +177,7 @@ MP_INLINE SV *modperl_newSVsv_obj(pTHX_ SV *stashsv, SV *obj)
 
     if (!obj) {
         obj = stashsv;
-        stashsv = Nullsv;
+        stashsv = (SV *)NULL;
     }
 
     newobj = newSVsv(obj);
@@ -458,7 +458,7 @@ void modperl_perl_do_sprintf(pTHX_ SV *sv, I32 len, SV **sarg)
     char *pat = SvPV(*sarg, patlen);
     bool do_taint = FALSE;
 
-    sv_vsetpvfn(sv, pat, patlen, Null(va_list*), sarg + 1, len - 1, &do_taint);
+    sv_vsetpvfn(sv, pat, patlen, (va_list *)NULL, sarg + 1, len - 1, &do_taint);
     SvSETMAGIC(sv);
     if (do_taint) {
         SvTAINTED_on(sv);
@@ -497,7 +497,7 @@ void modperl_perl_exit(pTHX_ int status)
 {
     ENTER;
     SAVESPTR(PL_diehook);
-    PL_diehook = Nullsv;
+    PL_diehook = (SV *)NULL;
     modperl_croak(aTHX_ MODPERL_RC_EXIT, "ModPerl::Util::exit");
 }
 
@@ -537,7 +537,7 @@ SV *modperl_table_get_set(pTHX_ apr_table_t *table, char *key,
     }
     else if (key == NULL) {
         retval = modperl_hash_tie(aTHX_ "APR::Table",
-                                  Nullsv, (void*)table);
+                                  (SV *)NULL, (void*)table);
     }
     else if (!sv_val) { /* no val was passed */
         char *val;
@@ -735,7 +735,7 @@ apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
     for (i = 0; i <= av_size; i++) {
         SV *sv = *av_fetch(av, i, FALSE);
         char **entry = (char **)apr_array_push(array);
-        *entry = apr_pstrdup(p, SvPV(sv, PL_na));
+        *entry = apr_pstrdup(p, SvPV_nolen(sv));
     }
 
     return array;
@@ -850,7 +850,7 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
         pnotes = data;
 #endif
         SvREFCNT_dec(*pnotes);
-        *pnotes = Nullhv;
+        *pnotes = (HV *)NULL;
     }
 
     return APR_SUCCESS;
@@ -870,7 +870,7 @@ static void *modperl_pnotes_cleanup_data(pTHX_ HV **pnotes, apr_pool_t *p) {
 
 SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
                    request_rec *r, conn_rec *c) {
-    SV *retval = Nullsv;
+    SV *retval = (SV *)NULL;
 
     if (!*pnotes) {
         apr_pool_t *pool = r ? r->pool : c->pool;
@@ -904,7 +904,7 @@ U16 *modperl_code_attrs(pTHX_ CV *cv) {
     MAGIC *mg;    
 
     if (!SvMAGICAL(cv)) {
-       sv_magic((SV*)cv, Nullsv, PERL_MAGIC_ext, NULL, -1); 
+       sv_magic((SV*)cv, (SV *)NULL, PERL_MAGIC_ext, NULL, -1); 
     }
 
     mg = mg_find((SV*)cv, PERL_MAGIC_ext);
