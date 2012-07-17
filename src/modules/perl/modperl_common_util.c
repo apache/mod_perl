@@ -69,13 +69,13 @@ MP_INLINE SV *modperl_hash_tie(pTHX_
     /* Prefetch magic requires perl 5.8 */
 #if MP_PERL_VERSION_AT_LEAST(5, 8, 0)
 
-    sv_magicext(hv, NULL, PERL_MAGIC_ext, NULL, Nullch, -1);
+    sv_magicext(hv, NULL, PERL_MAGIC_ext, NULL, (char *)NULL, -1);
     SvMAGIC(hv)->mg_virtual = (MGVTBL *)&modperl_table_magic_prefetch;
     SvMAGIC(hv)->mg_flags |= MGf_COPY;
 
 #endif /* End of prefetch magic */
 
-    sv_magic(hv, rsv, PERL_MAGIC_tied, Nullch, 0);
+    sv_magic(hv, rsv, PERL_MAGIC_tied, (char *)NULL, 0);
 
     return SvREFCNT_inc(sv_bless(sv_2mortal(newRV_noinc(hv)),
                                  gv_stashpv(classname, TRUE)));

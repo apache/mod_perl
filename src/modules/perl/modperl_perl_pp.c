@@ -48,7 +48,7 @@ static OP *modperl_pp_srefgen(pTHX)
         SvPADTMP_off(sv);
     }
     else {
-        sv = Nullsv;
+        sv = (SV *)NULL;
     }
 
     /* o = Perl_pp_srefgen(aTHX) */
@@ -72,9 +72,9 @@ static OP *modperl_pp_require(pTHX)
 
 static modperl_pp_t MP_ppaddr[] = {
 #ifdef MP_REFGEN_FIXUP
-    MEMBER_TO_FPTR(modperl_pp_srefgen),
+    modperl_pp_srefgen,
 #endif
-    MEMBER_TO_FPTR(modperl_pp_require)
+    modperl_pp_require
 };
 
 void modperl_perl_pp_set(modperl_perl_opcode_e idx)

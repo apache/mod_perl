@@ -627,17 +627,17 @@ static int modperl_env_magic_get(pTHX_ SV *sv, MAGIC *mg)
 /* override %ENV virtual tables with our own */
 static MGVTBL MP_vtbl_env = {
     0,
-    MEMBER_TO_FPTR(modperl_env_magic_set_all),
+    modperl_env_magic_set_all,
     0,
-    MEMBER_TO_FPTR(modperl_env_magic_clear_all),
+    modperl_env_magic_clear_all,
     0
 };
 
 static MGVTBL MP_vtbl_envelem = {
     0,
-    MEMBER_TO_FPTR(modperl_env_magic_set),
+    modperl_env_magic_set,
     0,
-    MEMBER_TO_FPTR(modperl_env_magic_clear),
+    modperl_env_magic_clear,
     0
 };
 

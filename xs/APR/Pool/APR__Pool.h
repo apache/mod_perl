@@ -60,7 +60,7 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
     MAGIC *mg = mg_find(acct->sv, PERL_MAGIC_ext);                  \
     if (mg && mg->mg_obj) {                                         \
         sv_2mortal(mg->mg_obj);                                     \
-        mg->mg_obj = Nullsv;                                        \
+        mg->mg_obj = (SV *)NULL;                                        \
         mg->mg_flags &= ~MGf_REFCOUNTED;                            \
     }                                                               \
     mg_free(acct->sv);                                              \
@@ -87,7 +87,7 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
     acct->perl = aTHX;                                                  \
     SvIVX(acct_sv) = PTR2IV(pool);                                      \
                                                                         \
-    sv_magic(acct_sv, Nullsv, PERL_MAGIC_ext,                           \
+    sv_magic(acct_sv, (SV *)NULL, PERL_MAGIC_ext,                           \
              MP_APR_POOL_NEW, sizeof(MP_APR_POOL_NEW));                 \
                                                                         \
     apr_pool_cleanup_register(pool, (void *)acct,                       \
@@ -113,7 +113,7 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
     acct->sv = acct_sv;                                                 \
     SvIVX(acct_sv) = PTR2IV(pool);                                      \
                                                                         \
-    sv_magic(acct_sv, Nullsv, PERL_MAGIC_ext,                           \
+    sv_magic(acct_sv, (SV *)NULL, PERL_MAGIC_ext,                           \
               MP_APR_POOL_NEW, sizeof(MP_APR_POOL_NEW));                \
                                                                         \
     apr_pool_cleanup_register(pool, (void *)acct,                       \
@@ -193,7 +193,7 @@ static MP_INLINE SV *mpxs_apr_pool_create(pTHX_ SV *parent_pool_obj)
 #endif
 
     {
-        SV *rv = sv_setref_pv(NEWSV(0, 0), "APR::Pool", (void*)child_pool);
+        SV *rv = sv_setref_pv(newSV(0), "APR::Pool", (void*)child_pool);
         SV *sv = SvRV(rv);
 
         /* Each newly created pool must be destroyed only once. Calling
@@ -334,7 +334,7 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
         (mpxs_cleanup_t *)apr_pcalloc(p, sizeof(*data));
 
     data->cv = SvREFCNT_inc(cv);
-    data->arg = arg ? SvREFCNT_inc(arg) : Nullsv;
+    data->arg = arg ? SvREFCNT_inc(arg) : (SV *)NULL;
     data->p = p;
 #ifdef USE_ITHREADS
     data->perl = aTHX;

@@ -355,7 +355,7 @@ modperl_filter_t *modperl_filter_new(ap_filter_t *f,
 
 static void modperl_filter_mg_set(pTHX_ SV *obj, modperl_filter_t *filter)
 {
-    sv_magic(SvRV(obj), Nullsv, PERL_MAGIC_ext, NULL, -1);
+    sv_magic(SvRV(obj), (SV *)NULL, PERL_MAGIC_ext, NULL, -1);
     SvMAGIC(SvRV(obj))->mg_ptr = (char *)filter;
 }
 
@@ -431,7 +431,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
                                    modperl_filter_mode_e mode,
                                    modperl_handler_t *handler)
 {
-    AV *args = Nullav;
+    AV *args = (AV *)NULL;
     int status;
 
     request_rec *r = f->r;
@@ -474,8 +474,8 @@ static int modperl_run_filter_init(ap_filter_t *f,
 
 int modperl_run_filter(modperl_filter_t *filter)
 {
-    AV *args = Nullav;
-    SV *errsv = Nullsv;
+    AV *args = (AV *)NULL;
+    SV *errsv = (SV *)NULL;
     int status;
     modperl_handler_t *handler =
         ((modperl_filter_ctx_t *)filter->f->ctx)->handler;

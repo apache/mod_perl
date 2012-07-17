@@ -289,7 +289,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
     const char *new_path = NULL;
     apr_os_file_t os_file;
 
-    if (!PL_dirty) {
+    if (PL_phase != PERL_PHASE_DESTRUCT) {
         /* if this is called during perl_destruct we are in trouble */
         apr_file_name_get(&new_path, st->file);
     }
@@ -304,7 +304,7 @@ static IV PerlIOAPR_close(pTHX_ PerlIO *f)
                new_path ? new_path : "(UNKNOWN)");
 #endif
 
-    if (PL_dirty) {
+    if (PL_phase == PERL_PHASE_DESTRUCT) {
         /* there should not be any PerlIOAPR handles open
          * during perl_destruct
          */

@@ -109,7 +109,7 @@ static MP_INLINE SV *mpxs_Apache2__Directive_as_hash(pTHX_
         }
         else {
             hash_insert(aTHX_ hash, directive, directive_len,
-                        args, args_len, Nullsv);
+                        args, args_len, (SV *)NULL);
         }
 
         tree = tree->next;

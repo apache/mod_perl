@@ -107,10 +107,10 @@ static MP_INLINE U16 *modperl_filter_attributes(pTHX_ SV *package, SV *cvrv)
         char *str;                                              \
         len -= 2;           /* s/ \( | \) //x       */          \
         string++;           /* skip the opening '(' */          \
-        New(0, str, len+1, char);                               \
+        Newx(str, len+1, char);                               \
         Copy(string, str, len+1, char);                         \
         str[len] = '\0';    /* remove the closing ')' */        \
-        sv_magic(cv, Nullsv, '~', NULL, -1);                    \
+        sv_magic(cv, (SV *)NULL, '~', NULL, -1);                    \
         SvMAGIC(cv)->mg_ptr = str;                              \
     }
 
@@ -186,7 +186,7 @@ static MP_INLINE SV *mpxs_Apache2__Filter_ctx(pTHX_
      * (and it can contain any references)
      */
 
-    if (data != Nullsv) {
+    if (data != (SV *)NULL) {
         if (ctx->data) {
             if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
                 /* release the previously stored SV so we don't leak
