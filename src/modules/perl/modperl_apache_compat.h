@@ -74,6 +74,10 @@ AP_DECLARE(const char *) ap_get_server_version(void);
                                         OPT_ALL | \
                                         OPT_SYM_OWNER | \
                                         OPT_MULTI)
+#define mp_add_loaded_module(modp, pool, name) \
+  ap_add_loaded_module((modp), (pool), (name))
+
+
 #else
 /* 2.2 API */
 #define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
@@ -81,6 +85,10 @@ AP_DECLARE(const char *) ap_get_server_version(void);
                                         OPT_INCNOEXEC | \
                                         OPT_SYM_OWNER | \
                                         OPT_MULTI)
+#define mp_add_loaded_module(modp, pool, name) \
+  ap_add_loaded_module((modp), (pool))
+
+
 #endif
 
 #ifndef PROXYREQ_RESPONSE
