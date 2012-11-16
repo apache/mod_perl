@@ -115,8 +115,16 @@ sub scan {
 
 sub include_dirs {
     my $self = shift;
-    ($self->config->apxs('-q' => 'INCLUDEDIR'),
-     $self->config->mp_include_dir);
+    my $inc = $self->config->apxs('-q' => 'INCLUDEDIR');
+    my @dirs = ($inc, $self->config->mp_include_dir);
+    my $aprinc = $self->config->apxs('-q' => 'APR_INCLUDEDIR');
+
+    unless ($aprinc eq $inc) {
+        # Add APR include directory if different to httpd includedir
+        push @dirs, $aprinc;
+    }
+
+    @dirs;
 }
 
 sub includes { shift->config->includes }
