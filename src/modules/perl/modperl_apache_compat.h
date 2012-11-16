@@ -93,6 +93,8 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 #define mp_loglevel(s) ((s)->loglevel)
 #define mp_module_index_
 
+#define ap_unixd_config unixd_config
+
 #endif
 
 #ifndef PROXYREQ_RESPONSE
