@@ -247,6 +247,7 @@ my %defines_wanted = (
         mpmq       => [qw{AP_MPMQ_}],
         options    => [qw{OPT_}],
         override   => [qw{OR_ EXEC_ON_READ ACCESS_CONF RSRC_CONF}],
+        proxy      => [qw{PROXYREQ_}],
         platform   => [qw{CRLF CR LF}],
         remotehost => [qw{REMOTE_}],
         satisfy    => [qw{SATISFY_}],
