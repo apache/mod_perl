@@ -77,6 +77,8 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 #define mp_add_loaded_module(modp, pool, name) \
   ap_add_loaded_module((modp), (pool), (name))
 
+#define mp_loglevel(s) ((s)->log.level)
+#define mp_module_index_ perl_module.module_index,
 
 #else
 /* 2.2 API */
@@ -88,6 +90,8 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 #define mp_add_loaded_module(modp, pool, name) \
   ap_add_loaded_module((modp), (pool))
 
+#define mp_loglevel(s) ((s)->loglevel)
+#define mp_module_index_
 
 #endif
 
