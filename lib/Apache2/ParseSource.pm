@@ -139,7 +139,8 @@ sub find_includes {
                                     apr_optional mod_include mod_cgi
                                     mod_proxy mod_ssl ssl_ apr_anylock
                                     apr_rmm ap_config mod_log_config
-                                    mod_perl modperl_ apreq);
+                                    mod_perl modperl_ apreq mod_cache
+                                    mod_serf mod_dav);
         $unwanted = qr|^$unwanted|;
         my $wanted = '';
 
@@ -280,6 +281,9 @@ my %enums_wanted = (
 
 my $defines_unwanted = join '|', qw{
 HTTP_VERSION APR_EOL_STR APLOG_MARK APLOG_NOERRNO APR_SO_TIMEOUT
+APR_HOOK_PROBES_ENABLED APR_HOOK_INT_DCL_UD
+APLOG_MAX_LOGLEVEL
+APR_BEGIN_DECLS APR_END_DECLS
 };
 
 sub get_constants {
