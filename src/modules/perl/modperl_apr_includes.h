@@ -35,5 +35,10 @@
 #include "apr_general.h"
 #include "apr_uuid.h"
 #include "apr_env.h"
+#include "apu_version.h"
+#if APU_MAJOR_VERSION > 1 \
+    || (APU_MAJOR_VERSION == 1 && APU_MINOR_VERSION > 3)
+#include "apu_errno.h"
+#endif
 
 #endif /* MODPERL_APR_INCLUDES_H */
