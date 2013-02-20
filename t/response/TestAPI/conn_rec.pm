@@ -32,20 +32,20 @@ sub handler {
 
     ok $c->local_addr->isa('APR::SockAddr');
 
-    ok $c->remote_addr->isa('APR::SockAddr');
+    ok $c->client_addr->isa('APR::SockAddr');
 
-    # remote_ip
+    # client_ip
     {
-        my $remote_ip_org = $c->remote_ip;
-        my $remote_ip_new = "10.10.10.255";
-        ok $remote_ip_org;
+        my $client_ip_org = $c->client_ip;
+        my $client_ip_new = "10.10.10.255";
+        ok $client_ip_org;
 
-        $c->remote_ip($remote_ip_new);
-        ok t_cmp $c->remote_ip, $remote_ip_new;
+        $c->client_ip($client_ip_new);
+        ok t_cmp $c->client_ip, $client_ip_new;
 
         # restore
-        $c->remote_ip($remote_ip_org);
-        ok t_cmp $c->remote_ip, $remote_ip_org;
+        $c->client_ip($client_ip_org);
+        ok t_cmp $c->client_ip, $client_ip_org;
     }
 
     ok $c->remote_host || 1;
