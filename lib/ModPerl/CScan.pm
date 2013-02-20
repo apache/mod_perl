@@ -136,6 +136,8 @@ my $recipes
       vdecl_hash => { filter => [ \&vdecl_hash, 'vdecls', 'mdecls' ], },
       parsed_fdecls => { filter => [ \&do_declarations, 'fdecls',
                                      'typedef_hash', 'keywords'], },
+      parsed_inlines => { filter => [ \&do_declarations, 'inlines',
+                                     'typedef_hash', 'keywords'], },
       keywords_rex => { filter => [ sub { my @k = keys %{ shift() };
                                           local $" = '|';
                                           my $r = "(?:@k)";

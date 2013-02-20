@@ -411,6 +411,8 @@ sub get_functions {
     my $c = $self->{c};
 
     my $fdecls = $c->get($key);
+    my $inlines = $c->get('parsed_inlines');
+    push @{$fdecls}, @{$inlines};
 
     my %seen;
     my $wanted = $self->wanted_functions;
