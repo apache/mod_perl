@@ -100,11 +100,18 @@ static MP_INLINE
 const char *mpxs_Apache2__RequestRec_auth_type(pTHX_ request_rec *r,
                                               char *type)
 {
+    const char *ret = NULL;
+
     if (type) {
         mpxs_insert_auth_cfg(aTHX_ r, "AuthType", type);
     }
 
-    return ap_auth_type(r);
+    ret = ap_auth_type(r);
+    if (!ret) {
+        return "none";
+    }
+
+    return ret;
 }
 
 static MP_INLINE
