@@ -17,6 +17,22 @@
 #include "mod_perl.h"
 #include "modperl_const.h"
 
+
+/* FIXME: To define extern perl_module to something so Const.so can be
+ * loaded later. Without this code, loading Const.so fails with 
+ * undefined_symbol: perl_module.
+ */
+module AP_MODULE_DECLARE_DATA perl_module = {
+    STANDARD20_MODULE_STUFF,
+    NULL, /* dir config creater */
+    NULL,  /* dir merger --- default is to override */
+    NULL, /* server config */
+    NULL,  /* merge server config */
+    NULL,              /* table of config file commands       */
+    NULL,    /* register hooks */
+};
+
+
 MODULE = ModPerl::Const    PACKAGE = ModPerl::Const
 
 PROTOTYPES: disable
