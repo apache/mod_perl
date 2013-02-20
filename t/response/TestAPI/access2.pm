@@ -33,16 +33,38 @@ use Apache2::RequestRec ();
 use Apache::TestTrace;
 
 use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED SERVER_ERROR
-                                 M_POST :satisfy);
+                                  AUTHZ_GRANTED AUTHZ_DENIED M_POST :satisfy
+                                  AUTHZ_DENIED_NO_USER);
 
 my $users  = "goo bar";
-my $groups = "bar tar";
+my $groups = "xar tar";
 my %users = (
     goo => "goopass",
     bar => "barpass",
 );
 
-sub handler {
+sub authz_handler {
+    my $self = shift;
+    my $r = shift;
+    my $requires = shift;
+
+    if (!$r->user) {
+        return Apache2::Const::AUTHZ_DENIED_NO_USER;
+    }
+
+    return Apache2::Const::SERVER_ERROR unless
+        $requires eq $users or $requires eq $groups;
+
+    my @require_args = split(/\s+/, $requires);
+    if (grep {$_ eq $r->user} @require_args) {
+        return Apache2::Const::AUTHZ_GRANTED;
+    }
+
+    return Apache2::Const::AUTHZ_DENIED;
+}
+
+sub authn_handler {
+    my $self = shift;
     my $r = shift;
 
     die '$r->some_auth_required failed' unless $r->some_auth_required;
@@ -54,29 +76,9 @@ sub handler {
     my ($rc, $sent_pw) = $r->get_basic_auth_pw;
     return $rc if $rc != Apache2::Const::OK;
 
-    # extract just the requirement entries
-    my %require =
-        map { my ($k, $v) = split /\s+/, $_->{requirement}, 2; ($k, $v||'') }
-        @{ $r->requires };
-    debug \%require;
-
-    # silly (we don't check user/pass here), just checking when
-    # the Limit options are getting through
     if ($r->method_number == Apache2::Const::M_POST) {
-        if (exists $require{"valid-user"}) {
-            return Apache2::Const::OK;
-        }
-        else {
-            return Apache2::Const::SERVER_ERROR;
-        }
+        return Apache2::Const::OK;
     }
-    else {
-        # non-POST requests shouldn't see the Limit enclosed entry
-        return Apache2::Const::SERVER_ERROR if exists $require{"valid-user"};
-    }
-
-    return Apache2::Const::SERVER_ERROR unless $require{user}  eq $users;
-    return Apache2::Const::SERVER_ERROR unless $require{group} eq $groups;
 
     my $user = $r->user;
     my $pass = $users{$user} || '';
@@ -90,9 +92,12 @@ sub handler {
 
 1;
 __DATA__
+
 <NoAutoConfig>
+PerlAddAuthzProvider my-user TestAPI::access2->authz_handler
+PerlAddAuthzProvider my-group TestAPI::access2->authz_handler
 <Location /TestAPI__access2>
-    PerlAuthenHandler TestAPI::access2
+    PerlAuthenHandler TestAPI::access2->authn_handler
     PerlResponseHandler Apache::TestHandler::ok1
     SetHandler modperl
 
@@ -102,8 +107,8 @@ __DATA__
     </IfModule>
     AuthType Basic
     AuthName "Access"
-    Require user goo bar
-    Require group bar tar
+    Require my-user goo bar
+    Require my-group xar tar
     <Limit POST>
        Require valid-user
     </Limit>
