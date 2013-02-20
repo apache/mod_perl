@@ -255,6 +255,7 @@ my %defines_wanted = (
         remotehost => [qw{REMOTE_}],
         satisfy    => [qw{SATISFY_}],
         types      => [qw{DIR_MAGIC_TYPE}],
+        auth       => [qw{AUTHN_ AUTHZ AP_AUTH_ AUTH_ AUTHZ_}],
     },
     'APR::Const' => {
         common    => [qw{APR_SUCCESS}],
@@ -287,7 +288,7 @@ while (my ($class, $groups) = each %defines_wanted) {
 }
 
 my %enums_wanted = (
-    'Apache2::Const' => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
+    'Apache2::Const' => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive authn_status authz_status) },
     'APR::Const' => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
 );
 

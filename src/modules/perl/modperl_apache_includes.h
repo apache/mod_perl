@@ -43,4 +43,9 @@
 APLOG_USE_MODULE(perl);
 #endif
 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+#include "mod_auth.h"
+#endif
+
 #endif /* MODPERL_APACHE_INCLUDES_H */

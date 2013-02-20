@@ -37,6 +37,7 @@
 
 MODULE=Apache2::RequestUtil
  ap_get_status_line
+ ap_register_auth_provider | mpxs_ | ...
 
 MODULE=Apache2::RequestUtil   PACKAGE=guess
  ap_psignature | | r, prefix
@@ -541,3 +542,6 @@ MODULE=Apache2::MPM   PACKAGE=Apache2::MPM   BOOT=1
 ?ap_mpm_set_pidfile
 ?ap_mpm_set_scoreboard
 ?ap_listen_pre_config
+
+MODULE=Apache2::Provider
+ ap_register_provider
