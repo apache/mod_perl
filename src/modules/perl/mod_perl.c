@@ -911,6 +911,8 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_ITERATE("PerlRequire", requires, "PerlRequire"),
     MP_CMD_SRV_ITERATE("PerlConfigRequire", config_requires, "PerlConfigRequire"),
     MP_CMD_SRV_ITERATE("PerlPostConfigRequire", post_config_requires, "PerlPostConfigRequire"),
+    MP_CMD_SRV_TAKE2("PerlAddAuthzProvider", authz_provider, "PerlAddAuthzProvider"),
+    MP_CMD_SRV_TAKE2("PerlAddAuthnProvider", authn_provider, "PerlAddAuthnProvider"),
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),

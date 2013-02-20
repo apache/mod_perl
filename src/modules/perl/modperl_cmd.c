@@ -417,6 +417,30 @@ MP_CMD_SRV_DECLARE(init_handlers)
     return modperl_cmd_post_read_request_handlers(parms, mconfig, arg);
 }
 
+MP_CMD_SRV_DECLARE2(authz_provider)
+{
+    apr_pool_t *p = parms->server->process->pool;
+    char *name = apr_pstrdup(p, arg1);
+    char *cb = apr_pstrdup(p, arg2);
+
+    modperl_register_auth_provider_name(p, AUTHZ_PROVIDER_GROUP, name,
+                                        AUTHZ_PROVIDER_VERSION, cb, NULL,
+                                        AP_AUTH_INTERNAL_PER_CONF);
+    return NULL;
+}
+
+MP_CMD_SRV_DECLARE2(authn_provider)
+{
+    apr_pool_t *p = parms->server->process->pool;
+    char *name = apr_pstrdup(p, arg1);
+    char *cb = apr_pstrdup(p, arg2);
+
+    modperl_register_auth_provider_name(p, AUTHN_PROVIDER_GROUP, name,
+                                        AUTHN_PROVIDER_VERSION, cb, NULL,
+                                        AP_AUTH_INTERNAL_PER_CONF);
+    return NULL;
+}
+
 static const char *modperl_cmd_parse_args(apr_pool_t *p,
                                           const char *args,
                                           apr_table_t **t)

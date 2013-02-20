@@ -151,4 +151,18 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
 
 U16 *modperl_code_attrs(pTHX_ CV *cv);
 
+apr_status_t
+modperl_register_auth_provider(apr_pool_t *pool, const char *provider_group,
+                               const char *provider_name,
+                               const char *provider_version, SV *callback1,
+                               SV *callback2, int type);
+
+apr_status_t
+modperl_register_auth_provider_name(apr_pool_t *pool,
+                                    const char *provider_group,
+                                    const char *provider_name,
+                                    const char *provider_version,
+                                    const char *callback1,
+                                    const char *callback2, int type);
+
 #endif /* MODPERL_UTIL_H */
