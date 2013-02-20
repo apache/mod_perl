@@ -584,7 +584,7 @@ MP_CMD_SRV_DECLARE(perldo)
     if (handler) {
         int status;
         SV *saveconfig = MP_PERLSECTIONS_SAVECONFIG_SV;
-        AV *args = Nullav;
+        AV *args = (AV *)NULL;
 
         modperl_handler_make_args(aTHX_ &args,
                                   "Apache2::CmdParms", parms,

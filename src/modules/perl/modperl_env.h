@@ -28,7 +28,7 @@
     MP_magical_tie(ENVHV, mg_flags)
 
 #define modperl_envelem_tie(sv, key, klen) \
-    sv_magic(sv, Nullsv, 'e', key, klen)
+    sv_magic(sv, (SV *)NULL, 'e', key, klen)
 
 void modperl_env_hash_keys(pTHX);
 

@@ -55,7 +55,13 @@ void modperl_perl_core_global_init(pTHX)
 
     while (cglobals->name) {
         GV *gv = gv_fetchpv(cglobals->core_name, TRUE, SVt_PVCV);
-        GvCV_set(gv, get_cv(cglobals->sub_name, TRUE));
+#ifdef MUTABLE_CV
+        GvCV_set(gv,
+                 MUTABLE_CV(SvREFCNT_inc(get_cv(cglobals->sub_name, TRUE))));
+#else
+        GvCV_set(gv,
+                 (CV*)(SvREFCNT_inc(get_cv(cglobals->sub_name, TRUE))));
+#endif
         GvIMPORTED_CV_on(gv);
         cglobals++;
     }
@@ -95,6 +101,7 @@ static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 {
     sv_setiv(GvSV(gv_fetchpv("$", TRUE, SVt_PV)), ids->pid);
 
+#if !MP_PERL_VERSION_AT_LEAST(5, 16, 0)
 #ifndef WIN32
     PL_uid  = ids->uid;
     PL_euid = ids->euid;
@@ -103,6 +110,7 @@ static void modperl_perl_init_ids(pTHX_ modperl_perl_ids_t *ids)
 #endif
 #ifdef MP_MAINTAIN_PPID
     PL_ppid = ids->ppid;
+#endif
 #endif
 }
 

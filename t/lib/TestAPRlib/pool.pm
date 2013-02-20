@@ -11,7 +11,7 @@ use APR::Pool ();
 use APR::Table ();
 
 sub num_of_tests {
-    return 75;
+    return 77;
 }
 
 sub test {
@@ -333,21 +333,44 @@ sub test {
     {
         my $p = APR::Pool->new;
         $p->cleanup_register('TestAPR::pool::some_non_existing_sub', 1);
-        eval { $p->destroy };
-        ok t_cmp($@,
+
+        my @warnings;
+        local $SIG{__WARN__} = sub {push @warnings, @_};
+        $p->destroy;
+
+        ok t_cmp($warnings[0],
                  qr/Undefined subroutine/,
                  "non existing function");
     }
     {
         my $p = APR::Pool->new;
         $p->cleanup_register(\&non_existing1, 1);
-        eval { $p->destroy };
-        ok t_cmp($@,
+
+        my @warnings;
+        local $SIG{__WARN__} = sub {push @warnings, @_};
+        $p->destroy;
+
+        ok t_cmp($warnings[0],
                  qr/Undefined subroutine/,
                  "non existing function");
     }
 
+    # cleanups throwing exceptions
+    {
+        my $p = APR::Pool->new;
+        $p->cleanup_register(sub {die "1\n"}, 1);
+        $p->cleanup_register(sub {die "2\n"}, 1);
 
+        my @warnings;
+        local $SIG{__WARN__} = sub {push @warnings, @_};
+        local $@="to be preserved";
+        undef $p;
+
+        ok t_cmp(\@warnings,
+                 [map "APR::Pool: cleanup died: $_\n", 2, 1],
+                 "exceptions thrown by cleanups");
+        ok t_cmp($@, "to be preserved", '$@ is preserved');
+    }
 
     ### $p->clear ###
     {

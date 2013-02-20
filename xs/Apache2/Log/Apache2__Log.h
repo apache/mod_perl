@@ -31,7 +31,7 @@ static void mpxs_ap_log_error(pTHX_ int level, SV *sv, SV *msg)
     char *file = NULL;
     int line = 0;
     char *str;
-    SV *svstr = Nullsv;
+    SV *svstr = (SV *)NULL;
     STRLEN n_a;
     int lmask = level & APLOG_LEVELMASK;
     server_rec *s;
@@ -219,7 +219,7 @@ MP_STATIC XS(MPXS_Apache2__Log_LOG_MARK)
 MP_STATIC XS(MPXS_Apache2__Log_log_xerror)
 {
     dXSARGS;
-    SV *msgsv = Nullsv;
+    SV *msgsv = (SV *)NULL;
     STRLEN n_a;
     request_rec *r = NULL;
     server_rec *s = NULL;
@@ -288,7 +288,7 @@ MP_STATIC XS(MPXS_Apache2__Log_log_error)
     server_rec *s = NULL;
     int i = 0;
     char *errstr = NULL;
-    SV *sv = Nullsv;
+    SV *sv = (SV *)NULL;
     STRLEN n_a;
 
     if (items > 1) {

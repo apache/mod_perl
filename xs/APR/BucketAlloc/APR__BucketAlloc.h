@@ -23,7 +23,7 @@ SV *mpxs_APR__BucketAlloc_new(pTHX_ SV *CLASS, SV *p_sv)
 {
     apr_pool_t *p          = mp_xs_sv2_APR__Pool(p_sv);
     apr_bucket_alloc_t *ba = apr_bucket_alloc_create(p);
-    SV *ba_sv = sv_setref_pv(NEWSV(0, 0), "APR::BucketAlloc", (void*)ba);
+    SV *ba_sv = sv_setref_pv(newSV(0), "APR::BucketAlloc", (void*)ba);
     mpxs_add_pool_magic(ba_sv, p_sv);
     return ba_sv;
 }

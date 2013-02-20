@@ -10,7 +10,54 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.6-dev
+=item 2.0.8-dev
+
+Remove all uses of deprecated core perl symbols. [Steve Hay]
+
+Add branch release tag to 'make tag' target. [Phred]
+
+=item 2.0.7 June 5, 2012
+
+Fix breakage caused by removal of PL_uid et al from perl 5.16.0. Patch from
+rt.cpan.org #77129. [Zefram]
+
+=item 2.0.6 April 24, 2012
+
+Preserve 5.8 compatibility surrounding use of MUTABLE_CV [Adam Prime]
+
+Move code after declarations to keep MSVC++ compiler happy. [Steve Hay]
+
+Adopt modperl_pcw.c changes from httpd24 branch. [Torsten Foertsch]
+
+Pool cleanup functions must not longjmp. Catch these exceptions and turn
+them into warnings. [Torsten Foertsch] 
+
+Fix a race condition in our tipool management.
+See http://www.gossamer-threads.com/lists/modperl/dev/104026
+Patch submitted by: SalusaSecondus <salusa@nationstates.net>
+Reviewed by: Torsten Foertsch
+
+Ensure that MP_APXS is set when building on Win32 with MP_AP_PREFIX,
+otherwise the bundled Reload and SizeLimit builds will fail to find a
+properly configured Test environment.
+[Steve Hay]
+
+Fix a few REFCNT bugs.
+Patch submitted by: Niko Tyni <ntyni@debian.org>
+Reviewed by: Torsten Foertsch
+
+Correct the initialization of the build config in ModPerl::MM. The global
+variable was only being set once on loading the module, which was before
+Apache2::BuildConfig.pm had been written, leading to cwd and MP_LIBNAME
+being unset when writing the Reload and SizeLimit makefiles.
+[Steve Hay]
+
+Discover apr-2-config from Apache 2.4 onwards. [Gozer]
+
+Apache 2.4 and onwards doesn't require linking the MPM module directly in
+the httpd binary anymore. APXS lost the MPM_NAME query, so we can't assume
+a given MPM anymore. Introduce a fake MPM 'dynamic' to represent this. 
+[Torsten Foertsch, Gozer]
 
 Perl 5.14 brought a few changes in Perl_sv_dup() that made a threaded apache
 segfault while cloning interpreters.

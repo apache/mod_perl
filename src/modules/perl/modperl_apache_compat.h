@@ -66,39 +66,36 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 #define MP_HTTPD_OVERRIDE_HTACCESS (OR_LIMIT|OR_OPTIONS|OR_FILEINFO|OR_AUTHCFG|OR_INDEXES)
 
 #define MP_HTTPD_OVERRIDE_OPTS_UNSET (-1)
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
 
-#if AP_SERVER_MAJORVERSION_NUMBER>2 || AP_SERVER_MINORVERSION_NUMBER>=3
 /* 2.4 API */
-
+#define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
+                                        OPT_ALL | \
+                                        OPT_SYM_OWNER | \
+                                        OPT_MULTI)
 #define mp_add_loaded_module(modp, pool, name) \
   ap_add_loaded_module((modp), (pool), (name))
 
 #define mp_loglevel(s) ((s)->log.level)
 #define mp_module_index_ perl_module.module_index,
 
-#define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
-                                        OPT_ALL | \
-                                        OPT_SYM_OWNER | \
-                                        OPT_MULTI)
-
 #else
 /* 2.2 API */
-
+#define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
+                                        OPT_ALL | \
+                                        OPT_INCNOEXEC | \
+                                        OPT_SYM_OWNER | \
+                                        OPT_MULTI)
 #define mp_add_loaded_module(modp, pool, name) \
   ap_add_loaded_module((modp), (pool))
 
 #define mp_loglevel(s) ((s)->loglevel)
 #define mp_module_index_
 
-#define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
-                                        OPT_ALL | \
-                                        OPT_INCNOEXEC | \
-                                        OPT_SYM_OWNER | \
-                                        OPT_MULTI)
-
 #define ap_unixd_config unixd_config
 
-#endif
+#endif /* 2.4 vs. 2.2 API */
 
 #ifndef PROXYREQ_RESPONSE
 #define PROXYREQ_RESPONSE (3)

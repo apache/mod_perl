@@ -135,7 +135,7 @@ MP_STATIC XS(MPXS_modperl_spawn_proc_prog)
     const char *usage = "Usage: spawn_proc_prog($r, $command, [\\@argv])";
 
     if (items < 2) {
-        Perl_croak(aTHX_ usage);
+        Perl_croak(aTHX_ "%s", usage);
     }
 
     SP -= items;
@@ -144,7 +144,7 @@ MP_STATIC XS(MPXS_modperl_spawn_proc_prog)
         apr_status_t rc;
         const char **argv;
         int i=0;
-        AV *av_argv = Nullav;
+        AV *av_argv = (AV *)NULL;
         I32 len=-1, av_items=0;
         request_rec *r = modperl_xs_sv2request_rec(aTHX_ ST(0), NULL, cv);
         const char *command = (const char *)SvPV_nolen(ST(1));
@@ -156,7 +156,7 @@ MP_STATIC XS(MPXS_modperl_spawn_proc_prog)
                 av_items = len+1;
             }
             else {
-                Perl_croak(aTHX_ usage);
+                Perl_croak(aTHX_ "%s", usage);
             }
         }
 

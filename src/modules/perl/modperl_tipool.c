@@ -328,9 +328,9 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
     MP_TRACE_i(MP_FUNC, "0x%lx now available (%d in use, %d running)",
                (unsigned long)listp->data, tipool->in_use, tipool->size);
 
+    modperl_tipool_broadcast(tipool);
     if (tipool->in_use == (tipool->cfg->max - 1)) {
         /* hurry up, another thread may be blocking */
-        modperl_tipool_broadcast(tipool);
         modperl_tipool_unlock(tipool);
         return;
     }

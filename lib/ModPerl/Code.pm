@@ -826,7 +826,7 @@ my %ifdef = map { $_, 1 }
        AP_MPMQ_MPM_STATE), # added in 2.0.49
     qw(APR_FPROT_USETID APR_FPROT_GSETID
        APR_FPROT_WSTICKY APR_FOPEN_LARGEFILE), # added in 2.0.50?
-    qw(OPT_INCNOEXEC OPT_INC_WITH_EXEC);
+    qw(OPT_INCNOEXEC OPT_INC_WITH_EXEC); # added/removed in 2.4
 
 sub constants_ifdef {
     my $name = shift;
@@ -890,7 +890,8 @@ EOF
 
             if ($name eq 'DECLINE_CMD' ||
                 $name eq 'DIR_MAGIC_TYPE' ||
-                $name eq 'CRLF') {
+                $name eq 'CRLF' ||
+                $name eq 'CRLF_ASCII') {
                 print $c_fh <<EOF;
               return newSVpv($alias{$name}, 0);
 EOF

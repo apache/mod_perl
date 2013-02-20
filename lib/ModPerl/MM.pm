@@ -69,10 +69,12 @@ sub add_dep_after {
     $$string =~ s/($targ\s+::.*?$after_targ)/$1 $add/;
 }
 
+my $build;
+
 sub build_config {
     my $key = shift;
     require Apache2::Build;
-    my $build = Apache2::Build->build_config;
+    $build ||= Apache2::Build->build_config;
     return $build unless $key;
     $build->{$key};
 }
@@ -97,15 +99,14 @@ sub my_import {
 my @default_opts = qw(CCFLAGS LIBS INC OPTIMIZE LDDLFLAGS TYPEMAPS);
 my @default_dlib_opts = qw(OTHERLDFLAGS);
 my @default_macro_opts = ();
-my $b = build_config();
 my %opts = (
-    CCFLAGS      => sub { $b->{MODPERL_CCOPTS}                        },
-    LIBS         => sub { join ' ', $b->apache_libs, $b->modperl_libs },
-    INC          => sub { $b->inc;                                    },
-    OPTIMIZE     => sub { $b->perl_config('optimize');                },
-    LDDLFLAGS    => sub { $b->perl_config('lddlflags');               },
-    TYPEMAPS     => sub { $b->typemaps;                               },
-    OTHERLDFLAGS => sub { $b->otherldflags;                           },
+    CCFLAGS      => sub { $build->{MODPERL_CCOPTS}                            },
+    LIBS         => sub { join ' ', $build->apache_libs, $build->modperl_libs },
+    INC          => sub { $build->inc;                                        },
+    OPTIMIZE     => sub { $build->perl_config('optimize');                    },
+    LDDLFLAGS    => sub { $build->perl_config('lddlflags');                   },
+    TYPEMAPS     => sub { $build->typemaps;                                   },
+    OTHERLDFLAGS => sub { $build->otherldflags;                               },
 );
 
 sub get_def_opt {
@@ -128,7 +129,7 @@ sub WriteMakefile {
         $eu_mm_mv_all_methods_overriden++;
     }
 
-    my $build = build_config();
+    $build ||= build_config();
     my_import(__PACKAGE__);
 
     # set top-level WriteMakefile's values if weren't set already
@@ -158,7 +159,7 @@ sub WriteMakefile {
 sub ModPerl::MM::MY::post_initialize {
     my $self = shift;
 
-    my $build = build_config();
+    $build ||= build_config();
     my $pm = $self->{PM};
 
     while (my ($k, $v) = each %PM) {

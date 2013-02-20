@@ -19,7 +19,7 @@
 int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                      request_rec *r, server_rec *s, AV *args)
 {
-    CV *cv = Nullcv;
+    CV *cv = (CV *)NULL;
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
@@ -28,8 +28,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
      * state, so start every callback with a clear tainted status
      * before and after the callback one of the main problems we are
      * trying to solve is that when modperl_croak called (which calls
-     * perl's croak(Nullch) to throw an error object) it leaves the
-     * interpreter in the tainted state which later affects other
+     * perl's croak((char *)NULL) to throw an error object) it leaves
+     * the interpreter in the tainted state which later affects other
      * callbacks that call eval, etc., which triggers perl crash with:
      * Insecure dependency in eval while running setgid.  Callback
      * called exit.
@@ -160,7 +160,7 @@ int modperl_callback_run_handlers(int idx, int type,
     MpAV *av, **avp;
     int i, status = OK;
     const char *desc = NULL;
-    AV *av_args = Nullav;
+    AV *av_args = (AV *)NULL;
 
     if (!MpSrvENABLE(scfg)) {
         MP_TRACE_h(MP_FUNC, "PerlOff for server %s:%u",

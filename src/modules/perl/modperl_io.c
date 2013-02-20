@@ -29,7 +29,7 @@ MP_INLINE void modperl_io_handle_tie(pTHX_ GV *handle,
 
     modperl_io_handle_untie(aTHX_ handle);
 
-    sv_magic(TIEHANDLE_SV(handle), obj, PERL_MAGIC_tiedscalar, Nullch, 0);
+    sv_magic(TIEHANDLE_SV(handle), obj, PERL_MAGIC_tiedscalar, (char *)NULL, 0);
 
     SvREFCNT_dec(obj); /* since sv_magic did SvREFCNT_inc */
 
@@ -117,7 +117,7 @@ modperl_io_perlio_override_stdhandle(pTHX_ request_rec *r, int mode)
 
     sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
     status = do_open9(handle, mode == O_RDONLY ? "<:Apache2" : ">:Apache2",
-                      9, FALSE, mode, 0, Nullfp, sv, 1);
+                      9, FALSE, mode, 0, (PerlIO *)NULL, sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STD%s: %" SVf,
                    mode == O_RDONLY ? "IN" : "OUT", get_sv("!", TRUE));

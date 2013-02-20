@@ -25,7 +25,7 @@ static apr_bucket *mpxs_APR__Bucket_new(pTHX_  SV *classname, apr_bucket_alloc_t
 
     apr_size_t full_len;
 
-    if (sv == Nullsv) {
+    if (sv == (SV *)NULL) {
         sv = newSV(0);
         (void)SvUPGRADE(sv, SVt_PV);
     }
