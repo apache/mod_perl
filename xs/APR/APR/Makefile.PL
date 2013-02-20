@@ -66,6 +66,8 @@ if (SOLARIS && $libs) {
     $libs =~ s{-R\S+}{}g;
 }
 
+# FIXME: This should be done automatically somewhere in Apache2::Build
+$libs .= qq{ -laprutil-1 };
 $args{LIBS} = [$libs] if $libs;
 
 my $srcdir = '../../../src/modules/perl';
