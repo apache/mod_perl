@@ -73,6 +73,9 @@ my @c_scan_defines = (
     'CORE_PRIVATE',   #so we get all of apache
     'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
     '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
+    '_BYTESWAP_H', #c-scan chokes on byteswap.h
+    '_BITS_BYTESWAP_H', #c-scan chokes on byteswap.h
+    'Expat_INCLUDED', #c-scan chokes on expath.h
  #   'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
     'apr_table_do_callback_fn_t=void', #c-scan chokes on function pointers
 );
