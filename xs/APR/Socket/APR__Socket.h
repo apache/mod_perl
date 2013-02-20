@@ -118,10 +118,10 @@ apr_status_t mpxs_APR__Socket_poll(apr_socket_t *socket,
 }
 
 #ifndef WIN32
-static MP_INLINE int mpxs_APR__Socket_fileno(pTHX_ apr_socket_t *sock)
+static MP_INLINE int mpxs_APR__Socket_fileno(pTHX_ apr_socket_t *socket)
 {
     apr_os_sock_t s;
-    apr_os_sock_get(&s, sock);
+    apr_os_sock_get(&s, socket);
     return s;
 }
 #endif
