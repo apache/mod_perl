@@ -205,3 +205,14 @@ static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
     newCONSTSUB(PL_defstash, "Apache2::ServerUtil::get_server_built",
                 newSVpv(ap_get_server_built(), 0));
 }
+
+static MP_INLINE
+int mpxs_Apache2__ServerRec_loglevel(pTHX_ server_rec *s, int loglevel)
+{
+    if (loglevel) {
+        s->log.level = loglevel;
+    }
+
+    return s->log.level;
+}
+

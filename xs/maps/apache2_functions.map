@@ -168,6 +168,7 @@ MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerRec BOOT=1
  int:DEFINE_method_register | | server_rec *:s, const char *:methname
 ~add_version_component
  void:DEFINE_add_version_component | | server_rec *:s, const char *:component
+ mpxs_Apache2__ServerRec_loglevel | | server_rec *:s, loglevel=NULL
 
 MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
  ap_exists_config_define
