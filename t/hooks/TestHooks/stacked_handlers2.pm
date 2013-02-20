@@ -24,6 +24,17 @@ sub ok {
     return Apache2::Const::OK;
 }
 
+sub ok_authen {
+
+    my $r = shift;
+    callback($r);
+
+    $r->user("user");
+    $r->ap_auth_type("Basic");
+
+    return Apache2::Const::OK;
+}
+
 sub declined {
 
     callback(shift);
@@ -168,7 +179,7 @@ __DATA__
         PerlAccessHandler TestHooks::stacked_handlers2::ok TestHooks::stacked_handlers2::ok
 
         # 2 run, 1 left behind
-        PerlAuthenHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok
+        PerlAuthenHandler TestHooks::stacked_handlers2::declined TestHooks::stacked_handlers2::ok_authen
         PerlAuthenHandler TestHooks::stacked_handlers2::auth_required
 
         # 2 run, 1 left behind
