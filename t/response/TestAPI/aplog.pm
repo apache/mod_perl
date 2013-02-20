@@ -59,6 +59,9 @@ sub handler {
 
     # log_serror
     {
+        my $orig_log_level = $s->loglevel;
+
+        $s->loglevel(Apache2::Const::LOG_DEBUG);
         t_server_log_warn_is_expected();
         $s->log_serror(Apache2::Log::LOG_MARK,
                        Apache2::Const::LOG_INFO|Apache2::Const::LOG_STARTUP,
@@ -85,6 +88,7 @@ sub handler {
         ok t_cmp $logdiff->diff,
             qr/$egeneral: log_serror test 2/,
             '$s->log_serror(LOG_MARK, LOG_DEBUG, APR::Const::EGENERAL...)';
+        $s->loglevel($orig_log_level);
     }
 
     # log_rerror
