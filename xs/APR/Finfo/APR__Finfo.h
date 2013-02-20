@@ -25,7 +25,7 @@ SV *mpxs_APR__Finfo_stat(pTHX_ const char *fname, apr_int32_t wanted,
     MP_RUN_CROAK(apr_stat(finfo, fname, wanted, p),
                  "APR::Finfo::stat");
 
-    finfo_sv = sv_setref_pv(NEWSV(0, 0), "APR::Finfo", (void*)finfo);
+    finfo_sv = sv_setref_pv(newSV(0), "APR::Finfo", (void*)finfo);
     mpxs_add_pool_magic(finfo_sv, p_sv);
 
     return finfo_sv;

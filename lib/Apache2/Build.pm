@@ -275,9 +275,9 @@ sub caller_package {
     return ($arg and ref($arg) eq __PACKAGE__) ? $arg : __PACKAGE__;
 }
 
-my %threaded_mpms;
-undef @threaded_mpms{qw(worker winnt beos mpmt_os2 netware leader perchild
-			threadpool dynamic)};
+my %threaded_mpms = map { $_ => 1 }
+        qw(worker winnt beos mpmt_os2 netware leader perchild threadpool
+           dynamic);
 sub mpm_is_threaded {
     my $self = shift;
     my $mpm_name = $self->mpm_name();
@@ -297,7 +297,15 @@ sub mpm_name {
     # XXX: hopefully apxs will work on win32 one day
     return $self->{mpm_name} = 'winnt' if WIN32;
 
-    my $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+    my $mpm_name;
+
+    # httpd >= 2.3
+    if ($self->httpd_version_as_int =~ m/^2[3-9]\d+/) {
+        $mpm_name = 'dynamic';
+    }
+    else {
+        $mpm_name = $self->apxs('-q' => 'MPM_NAME');
+    }
 
     # building against the httpd source dir
     unless (($mpm_name and $self->httpd_is_source_tree)) {
@@ -1150,7 +1158,18 @@ sub apr_bindir {
 
 sub apr_generation {
     my ($self) = @_;
-    return $self->httpd_version_as_int =~ m/2[1-9]\d+/ ? 1 : 0;
+
+    my $httpd_v = $self->httpd_version_as_int;
+
+    if ($httpd_v =~ m/2[4-9]\d+/) {
+        return 2;
+    }
+    elsif ($httpd_v =~ m/2[1-3]\d+/) {
+        return 1;
+    }
+    else {
+        return;
+    }
 }
 
 # returns an array of apr/apu linking flags (--link-ld --libs) if found
@@ -1210,7 +1229,8 @@ sub apru_config_path {
         $self->{$key} = $self->{$mp_key};
     }
 
-    my $config = $self->apr_generation ? "$what-1-config" : "$what-config";
+    my $apr_generation = $self->apr_generation;
+    my $config = $apr_generation ? "$what-${apr_generation}-config" : "$what-config";
 
     if (!$self->{$key}) {
         my @tries = ();
@@ -1578,8 +1598,11 @@ sub make_tools {
 
     require ExtUtils::MakeMaker;
     my $mm = bless { @mm_init_vars }, 'MM';
-    $mm->init_main;
-    $mm->init_others;
+
+    # Fake initialize MakeMaker
+    foreach my $m (qw(init_main init_others init_tools)) {
+        $mm->$m() if $mm->can($m);
+    }
 
     for (qw(rm_f mv ld ar cp test_f)) {
         my $val = $mm->{"\U$_"};

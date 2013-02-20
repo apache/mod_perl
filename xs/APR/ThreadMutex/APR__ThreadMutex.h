@@ -24,7 +24,7 @@ SV *mpxs_apr_thread_mutex_create(pTHX_ SV *classname, SV *p_sv,
     apr_thread_mutex_t *mutex = NULL;
     SV *mutex_sv;
     (void)apr_thread_mutex_create(&mutex, flags, p);
-    mutex_sv = sv_setref_pv(NEWSV(0, 0), "APR::ThreadMutex", (void*)mutex);
+    mutex_sv = sv_setref_pv(newSV(0), "APR::ThreadMutex", (void*)mutex);
     mpxs_add_pool_magic(mutex_sv, p_sv);
     return mutex_sv;
 }

@@ -50,7 +50,7 @@ MODULE=APR::Socket
 ~apr_socket_recv
  mpxs_APR__Socket_recv
  apr_socket_recvfrom
- apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=Nullsv
+ apr_socket_send | mpxs_ | sock, SV *:buf, SV *:len=(SV *)NULL
  apr_socket_sendto
 !apr_socket_shutdown
 -apr_socket_inherit_set
@@ -187,7 +187,7 @@ mpxs_APR__Pool_clear
 !apr_pool_cleanup_kill
 !apr_pool_cleanup_run
 -apr_pool_cleanup_null
- apr_pool_cleanup_register | mpxs_ | p, SV *:cv, SV *:arg=Nullsv
+ apr_pool_cleanup_register | mpxs_ | p, SV *:cv, SV *:arg=(SV *)NULL
 !apr_pool_note_subprocess
 -apr_palloc
 >apr_palloc_debug
@@ -271,7 +271,7 @@ MODULE=APR::Table
  void:DEFINE_STORE | | apr_table_t *:t, const char *:key, const char *:value
  void:DEFINE_DELETE | | apr_table_t *:t, const char *:key
  void:DEFINE_CLEAR | | apr_table_t *:t
- const char *:DEFINE_FIRSTKEY | mpxs_APR__Table_NEXTKEY | SV *:tsv, SV *:key=Nullsv
+ const char *:DEFINE_FIRSTKEY | mpxs_APR__Table_NEXTKEY | SV *:tsv, SV *:key=(SV *)NULL
  mpxs_APR__Table_NEXTKEY | | SV *:tsv, SV *:key=&PL_sv_undef
  mpxs_APR__Table_FETCH
  mpxs_APR__Table_EXISTS
@@ -593,7 +593,7 @@ MODULE=APR::URI
  apr_uri_unparse | mpxs_ | \
                   uptr, flags=APR_URI_UNP_OMITPASSWORD | unparse
  #special case to set both uri->port and uri->port_str
- mpxs_APR__URI_port | | uri, portsv=Nullsv
+ mpxs_APR__URI_port | | uri, portsv=(SV *)NULL
  mpxs_APR__URI_rpath
  apr_uri_port_of_scheme
 

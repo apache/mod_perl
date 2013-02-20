@@ -496,11 +496,19 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
         set_interp(p);
 
+#if AP_MODULE_MAGIC_AT_LEAST(20111130, 0)
+        MP_TRACE_i(MP_FUNC,
+                   "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
+                   (unsigned long)interp, desc, (unsigned long)p,
+                   (r ? (is_subrequest ? "sub" : "main") : "conn"),
+                   (r ? r->uri : c->client_ip));
+#else
         MP_TRACE_i(MP_FUNC,
                    "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
                    (unsigned long)interp, desc, (unsigned long)p,
                    (r ? (is_subrequest ? "sub" : "main") : "conn"),
                    (r ? r->uri : c->remote_ip));
+#endif
     }
 
     /* set context (THX) for this thread */

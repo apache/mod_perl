@@ -165,7 +165,7 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     server_rec *s;
     int is_startup;
     PTR_TBL_t *table;
-    SV *mrg_obj = Nullsv, *base_obj, *add_obj;
+    SV *mrg_obj = (SV *)NULL, *base_obj, *add_obj;
 #ifdef USE_ITHREADS
     modperl_interp_t *interp;
     MP_PERL_CONTEXT_DECLARE;
@@ -297,8 +297,8 @@ modperl_module_config_create_obj(pTHX_
     }
 
     MP_TRACE_c(MP_FUNC, "%s cfg=0x%lx for %s.%s",
-               method, (unsigned long)cfg,
-               mname, parms->cmd->name);
+               method ? modperl_mgv_last_name(method) : "NULL",
+               (unsigned long)cfg, mname, parms->cmd->name);
 
     /* used by merge functions to get a Perl interp */
     cfg->server = parms->server;
@@ -371,7 +371,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
 
     int count;
     PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
-    SV *obj = Nullsv;
+    SV *obj = (SV *)NULL;
     dSP;
 
     if (s->is_virtual) {
@@ -584,7 +584,7 @@ static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
 
     if (*retval) {
         SvREFCNT_dec(*retval);
-        *retval = Nullsv;
+        *retval = (SV *)NULL;
     }
 
     if (sv_isobject(obj)) {
@@ -654,7 +654,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
     cmds = apr_array_make(p, fill+1, sizeof(command_rec));
 
     for (i=0; i<=fill; i++) {
-        SV *val = Nullsv;
+        SV *val = (SV *)NULL;
         STRLEN len;
         SV *obj = AvARRAY(module_cmds)[i];
         modperl_module_cmd_data_t *info = modperl_module_cmd_data_new(p);
@@ -727,7 +727,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 
         if (val) {
             SvREFCNT_dec(val);
-            val = Nullsv;
+            val = (SV *)NULL;
         }
     }
 
@@ -832,10 +832,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
 
     modperl_module_insert(modp);
 
-    if ((errmsg = mp_add_loaded_module(modp, p, modp->name))) {
-        perl_module.next = modp->next;
-        return errmsg;
-    }
+    mp_add_loaded_module(modp, p, modp->name);
 
     apr_pool_cleanup_register(p, modp, modperl_module_remove,
                               apr_pool_cleanup_null);

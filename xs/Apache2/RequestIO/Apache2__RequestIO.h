@@ -312,7 +312,7 @@ int mpxs_Apache2__RequestRec_OPEN(pTHX_ SV *self,  SV *arg1, SV *arg2)
     }
 
     name = SvPV(arg, len);
-    return do_open(handle, name, len, FALSE, O_RDONLY, 0, Nullfp);
+    return do_open(handle, name, len, FALSE, O_RDONLY, 0, (PerlIO *)NULL);
 }
 
 static MP_INLINE

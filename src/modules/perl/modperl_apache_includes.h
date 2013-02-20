@@ -39,4 +39,8 @@
 
 #include "util_script.h"
 
+#if !defined(MP_IN_XS) && AP_MODULE_MAGIC_AT_LEAST(20100606, 0)
+APLOG_USE_MODULE(perl);
+#endif
+
 #endif /* MODPERL_APACHE_INCLUDES_H */

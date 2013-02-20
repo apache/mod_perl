@@ -138,11 +138,11 @@ GV *modperl_mgv_lookup(pTHX_ modperl_mgv_t *symbol)
             }
         }
         else {
-            return Nullgv;
+            return (GV *)NULL;
         }
     }
 
-    return Nullgv;
+    return (GV *)NULL;
 }
 
 #ifdef USE_ITHREADS
@@ -184,7 +184,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 {
     CV *cv;
     GV *gv;
-    HV *stash = Nullhv;
+    HV *stash = (HV *)NULL;
     char *handler_name = "handler";
     char *tmp;
 
@@ -241,7 +241,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
 
             handler->mgv_obj = modperl_mgv_compile(aTHX_ p, package + 1);
             gv = modperl_mgv_lookup(aTHX_ handler->mgv_obj);
-            obj = gv ? GvSV(gv) : Nullsv;
+            obj = gv ? GvSV(gv) : (SV *)NULL;
 
             if (SvTRUE(obj)) {
                 if (SvROK(obj) && sv_isobject(obj)) {

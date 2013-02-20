@@ -155,9 +155,16 @@ EOF
 
             my $retval = $return_type eq 'void' ?
               ["", ""] : ["RETVAL = ", "OUTPUT:\n    RETVAL\n"];
-
+            
+            my $avoid_warning = "";
+            if (@$args and not $passthru) {
+                $avoid_warning = "    /* avoiding -Wall warnings */\n";
+                $avoid_warning .= join "\n",
+                    (map "    $_->{name} = $_->{name};", @$args), "";
+            }
             $code .= <<EOF;
     CODE:
+$avoid_warning
     $retval->[0]$dispatch($thx$parms);
 
     $retval->[1]
@@ -265,7 +272,7 @@ EOF
 
                 $code = <<EOF;
 $type
-$name(obj, val=Nullsv)
+$name(obj, val=(SV *)NULL)
     $class obj
     SV *val
 
@@ -293,10 +300,10 @@ EOF
                     or die "rw_char_undef accessors need pool";
                 $pool .= '(obj)';
 # XXX: not sure where val=$default is coming from, but for now use
-# hardcoded Nullsv
+# hardcoded (SV *)NULL
                 $code = <<EOF;
 $type
-$name(obj, val_sv=Nullsv)
+$name(obj, val_sv=(SV *)NULL)
     $class obj
     SV *val_sv
 

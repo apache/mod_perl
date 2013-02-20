@@ -45,7 +45,7 @@ sub num_cmp_not { $_[0]->{rc} != $_[1] }
 $Carp::CarpInternal{+__PACKAGE__}++;
 
 # XXX: Carp::(confess|cluck) see no calls stack when Perl_croak is
-# called with Nullch (which is the way exception objects are
+# called with (char *)NULL (which is the way exception objects are
 # returned), so we fixup it here (doesn't quite work for croak
 # caller).
 sub cluck {

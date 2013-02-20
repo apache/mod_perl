@@ -52,6 +52,7 @@ my $code  = ModPerl::Code->new;
 
 sub UNATTENDED() { $build->{MP_PROMPT_DEFAULT} || ! -t STDIN }
 
+# may populate $build->{MP_APXS}
 win32_fetch_apxs() if WIN32;
 
 configure();
@@ -240,6 +241,8 @@ EOI
             prompt_for_apxs($build);
         }
     }
+
+    $build->{$_} and $ENV{$_} = $build->{$_} for (qw/MP_APXS MP_AP_PREFIX/);
 
     unless ($build->{MP_APXS} or $build->{MP_AP_PREFIX}) {
         my $ok = 0;
@@ -621,6 +624,8 @@ sub win32_fetch_apxs {
     my $script = catfile($build->{cwd}, 'build', 'win32_fetch_apxs');
     my @args = ($^X, $script, "--with-apache2=$prefix");
     system(@args) == 0 or die "system @args failed: $?";
+    my $apxs = catfile($prefix, 'bin', 'apxs.bat');
+    $build->{MP_APXS} = $apxs if -e $apxs;
 }
 
 
@@ -789,24 +794,23 @@ run_tests : test_clean
 	$(PASSENV) \
 	$(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) \
 	t/TEST -bugreport -verbose=$(TEST_VERBOSE) $(TEST_FILES)
-	$(MAKE) -k run_subtests
 
 run_subtests ::
-	$(MAKE) -C ModPerl-Registry test
+	cd ModPerl-Registry && $(MAKE) test
 
 run_subtests ::
-	$(MAKE) -C Apache-Reload test
+	cd Apache-Reload && $(MAKE) test
 
 EOF
 
     $preamble .= <<'EOF' unless $build->mpm_is_threaded();
 run_subtests ::
-	$(MAKE) -C Apache-SizeLimit test
+	cd Apache-SizeLimit && $(MAKE) test
 
 EOF
 
     $preamble .= <<'EOF';
-test :: pure_all run_tests test_clean
+test :: pure_all run_tests run_subtests
 EOF
 
     return $preamble;
