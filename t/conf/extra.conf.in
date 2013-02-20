@@ -1,5 +1,6 @@
 # needed to test $r->psignature
 ServerSignature On
+DefaultRuntimeDir run/
 
 # The following tests require more than one interpreter during the
 # same request:
