@@ -93,7 +93,7 @@ sub handler {
                    APR::Const::ENOTIME, "log_rerror test");
     # can't match against the error string, since a locale may kick in
     ok t_cmp $logdiff->diff,
-        qr/\[crit\] .*?: log_rerror test/,
+        qr/\[\w*:crit\] \[pid[^]]+\] .*?: \[[^]]+\] log_rerror test/,
         '$r->log_rerror(LOG_MARK, LOG_CRIT, APR::Const::ENOTIME...)';
 
     # log_error
@@ -101,13 +101,13 @@ sub handler {
         t_server_log_error_is_expected();
         $r->log_error('$r->log_error test');
         ok t_cmp $logdiff->diff,
-            qr/\[error\] \$r->log_error test/,
+            qr/\[\w*:error\] \[pid[^]]+\] \$r->log_error test/,
             '$r->log_error(...)';
 
         t_server_log_error_is_expected();
         $s->log_error('$s->log_error test');
         ok t_cmp $logdiff->diff,
-            qr/\[error\] \$s->log_error test/,
+            qr/\[\w*:error\] \[pid[^]]+\] \$s->log_error test/,
             '$s->log_error(...)';
     }
 
@@ -116,13 +116,13 @@ sub handler {
         t_server_log_error_is_expected();
         $r->log_reason('$r->log_reason test');
         ok t_cmp $logdiff->diff,
-            qr/\[error\] access to.*failed.*reason: \$r->log_reason test/,
+            qr/\[\w*:error\] \[pid[^]]+\] access to.*failed.*reason: \$r->log_reason test/,
             '$r->log_reason(msg)';
 
         t_server_log_error_is_expected();
         $r->log_reason('$r->log_reason filename test','filename');
         ok t_cmp $logdiff->diff,
-            qr/\[error\] access to filename failed.*\$r->log_reason filename test/,
+            qr/\[\w*:error\] \[pid[^]]+\] access to filename failed.*\$r->log_reason filename test/,
             '$r->log_reason(msg, filename)';
     }
 
@@ -177,7 +177,7 @@ sub handler {
     t_server_log_warn_is_expected();
     $s->warn('$s->warn test');
     ok t_cmp $logdiff->diff,
-        qr/\[warn\] \$s->warn test/,
+        qr/\[\w*:warn\] \[pid[^]]+\] \$s->warn test/,
         '$s->warn()';
 
     {
@@ -185,7 +185,7 @@ sub handler {
         # this uses global server to get $s internally
         Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
-            qr/\[warn\] Apache2::ServerRec::warn test/,
+            qr/\[\w*:warn\] \[pid[^]]+\] Apache2::ServerRec::warn test/,
             'Apache2::ServerRec::warn() w/o Apache2::RequestUtil->request ';
 
         Apache2::RequestUtil->request($r);
@@ -193,14 +193,14 @@ sub handler {
         # this uses the global $r to get $s internally
         Apache2::ServerRec::warn("Apache2::ServerRec::warn test");
         ok t_cmp $logdiff->diff,
-            qr/\[warn\] Apache2::ServerRec::warn test/,
+            qr/\[\w*:warn\] \[pid[^]]+\] Apache2::ServerRec::warn test/,
             'Apache2::ServerRec::warn() w/ Apache2::RequestUtil->request ';
     }
 
     t_server_log_warn_is_expected();
     warn "warn test";
     ok t_cmp $logdiff->diff,
-        qr/\[warn\] warn test/,
+        qr/\[\w*:warn\] \[pid[^]]+\] warn test/,
         'overriden via export warn()';
 
     Apache2::Const::OK;
