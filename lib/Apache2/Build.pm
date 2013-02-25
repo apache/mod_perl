@@ -2212,7 +2212,8 @@ sub has_large_files_conflict {
     # with it is that we didn't have such a case yet, but may need to
     # deal with it later
 
-    return $perl_lfs64 ^ $apr_lfs64;
+    return 0;
+    # $perl_lfs64 ^ $apr_lfs64;
 }
 
 # if perl is built with uselargefiles, but apr not, the build won't
