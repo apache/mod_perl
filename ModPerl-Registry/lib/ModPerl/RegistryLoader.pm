@@ -22,6 +22,8 @@ use ModPerl::RegistryCooker ();
 use Apache2::ServerUtil ();
 use Apache2::Log ();
 use APR::Pool ();
+use APR::Finfo ();
+use APR::Const -compile=>qw(FINFO_NORM);
 
 use Carp;
 use File::Spec ();
@@ -110,8 +112,11 @@ sub handler {
 
 sub get_server_name { return $_[0]->{virthost} if exists $_[0]->{virthost} }
 sub filename { shift->{filename} }
-sub status { Apache2::Const::HTTP_OK }
-sub my_finfo    { shift->{filename} }
+sub status   { Apache2::Const::HTTP_OK }
+sub pool     { shift->{pool}||=APR::Pool->new() }
+sub finfo    { $_[0]->{finfo}||=APR::Finfo::stat($_[0]->{filename},
+                                                 APR::Const::FINFO_NORM,
+                                                 $_[0]->pool); }
 sub uri      { shift->{uri} }
 sub path_info {}
 sub allow_options { Apache2::Const::OPT_EXECCGI } #will be checked again at run-time

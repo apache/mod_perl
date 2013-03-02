@@ -1,7 +1,7 @@
 #!perl -w
 
 BEGIN {
-    use Apache::TestUtil;
+    use Apache::TestUtil qw/t_server_log_warn_is_expected/;
     t_server_log_warn_is_expected();
 }
 
@@ -16,7 +16,7 @@ my $counter = 0;
 counter();
 
 sub counter {
-    #warn "$$";
+    #warn "$$: counter=$counter";
     print ++$counter;
 }
 

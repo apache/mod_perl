@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.8-dev
 
+use APR::Finfo instead of Perl's stat() in ModPerl::RegistryCooker to
+generate HTTP code 404 even if the requested filename contains newlines
+[Torsten]
+
 Remove all uses of deprecated core perl symbols. [Steve Hay]
 
 Add branch release tag to 'make tag' target. [Phred]
