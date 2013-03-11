@@ -5,10 +5,11 @@ package TestPerl::hash_attack;
 # and fixup handlers in this test). Moreover it must not fail to find
 # that entry on the subsequent requests.
 #
-# the hash attack is detected when HV_MAX_LENGTH_BEFORE_SPLIT keys
-# find themselves in the same hash bucket, in which case starting from
-# 5.8.2 the hash will rehash all its keys using a random hash seed
-# (PL_new_hash_seed, set in mod_perl or via PERL_HASH_SEED environment
+# the hash attack is detected when HV_MAX_LENGTH_BEFORE_REHASH keys find
+# themselves in the same hash bucket on splitting (which happens when the
+# number of keys crosses the threshold of a power of 2), in which case
+# starting from 5.8.2 the hash will rehash all its keys using a random hash
+# seed (PL_new_hash_seed, set in mod_perl or via PERL_HASH_SEED environment
 # variable)
 #
 # Prior to the attack condition hashes use the PL_hash_seed, which is
@@ -29,7 +30,7 @@ use Math::BigInt;
 
 use constant MASK_U32  => 2**32;
 use constant HASH_SEED => 0; # 5.8.2: always zero before the rehashing
-use constant THRESHOLD => 14; #define HV_MAX_LENGTH_BEFORE_SPLIT
+use constant THRESHOLD => 14; #define HV_MAX_LENGTH_BEFORE_REHASH
 use constant START     => "a";
 
 # create conditions which will trigger a rehash on the current stash
@@ -74,9 +75,9 @@ sub attack {
     my $bits = $keys ? log($keys)/log(2) : 0;
     $bits = $min_bits if $min_bits > $bits;
 
-    $bits = int($bits) < $bits ? int($bits) + 1 : int($bits);
-    # need to add 2 bits to cover the internal split cases
-    $bits += 2;
+    $bits = ceil($bits);
+    # need to add 3 bits to cover the internal split cases
+    $bits += 3;
     my $mask = 2**$bits-1;
     debug "mask: $mask ($bits)";
 
@@ -90,13 +91,21 @@ sub attack {
         next unless ($h & $mask) == 0;
         $c++;
         $stash->{$s}++;
-        debug sprintf "%2d: %5s, %10s, %s", $c, $s, $h, scalar(%$stash);
+        debug sprintf "%2d: %5s, %08x %s", $c, $s, $h, scalar(%$stash);
         push @keys, $s;
         debug "The hash collision attack has been successful"
             if Internals::HvREHASH(%$stash);
     } continue {
         $s++;
     }
+
+    # Now add more keys until we reach a power of 2, to force the number
+    # of buckets to be doubled (at which point the longest chain is checked).
+    $keys = scalar keys %$stash;
+    $bits = log($keys)/log(2);
+    my $limit = 2 ** ceil($bits);
+    debug "pad keys from $keys to $limit";
+    $stash->{$s++}++ while keys(%$stash) <= $limit;
 
     # this verifies that the attack was mounted successfully. If
     # HvREHASH is on it is. Otherwise the sequence wasn't successful.
@@ -106,6 +115,12 @@ sub attack {
     debug "ending attack";
 
     return @keys;
+}
+
+# least integer >= n
+sub ceil {
+    my $value = shift;
+    return int($value) < $value ? int($value) + 1 : int($value);
 }
 
 # trying to provide the fastest equivalent of C macro's PERL_HASH in

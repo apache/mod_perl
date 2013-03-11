@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.8-dev
 
+Fix t/perl/hash_attack.t to work with Perl 5.14.4, 5.16.3 etc, which
+contain a fix for CVE-2013-1667 (memory exhaustion with arbitrary hash
+keys). This resolves rt.perl.org #116863, from where the patch was taken.
+[Hugo van der Sanden]
+
 use APR::Finfo instead of Perl's stat() in ModPerl::RegistryCooker to
 generate HTTP code 404 even if the requested filename contains newlines
 [Torsten]
