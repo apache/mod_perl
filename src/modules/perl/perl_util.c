@@ -670,6 +670,7 @@ void mod_perl_init_ids(void)  /* $$, $>, $), etc */
     if(set_ids++) return;
     sv_setiv(GvSV(gv_fetchpv("$", TRUE, SVt_PV)), (I32)getpid());
 #ifndef WIN32
+#if (PERL_REVISION == 5) && (PERL_VERSION <= 15)
     uid  = (int)getuid(); 
     euid = (int)geteuid(); 
     gid  = (int)getgid(); 
@@ -677,6 +678,7 @@ void mod_perl_init_ids(void)  /* $$, $>, $), etc */
     MP_TRACE_g(fprintf(stderr, 
 		     "perl_init_ids: uid=%d, euid=%d, gid=%d, egid=%d\n",
 		     uid, euid, gid, egid));
+#endif
 #endif
 }
 

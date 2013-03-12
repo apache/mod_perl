@@ -10,6 +10,10 @@ all changes without author attribution are by Doug MacEachern
 
 =item 1.32-dev
 
+Fix breakage caused by removal of PL_uid et al from perl 5.16.0. Patch from
+RT 79977.
+[Andreas Koenig <andreas.koenig.7os6VVqR@franz.ak.mind.de>]
+
 Post RT 64999 typo spot in CvGV macro
 [Salvador Ortiz Garcia <sog@msg.com.mx>]
 
