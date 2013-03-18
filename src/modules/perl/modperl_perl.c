@@ -265,12 +265,17 @@ void modperl_hash_seed_set(pTHX)
 {
 #ifdef MP_NEED_HASH_SEED_FIXUP
     if (MP_init_hash_seed_set) {
-#if MP_PERL_VERSION(5, 8, 1)
-        PL_hash_seed       = MP_init_hash_seed;
+#if MP_PERL_VERSION_AT_LEAST(5, 17, 6)
+        memcpy(&PL_hash_seed, &MP_init_hash_seed,
+                sizeof(PL_hash_seed) > sizeof(MP_init_hash_seed) ?
+                    sizeof(MP_init_hash_seed) : sizeof(PL_hash_seed));
         PL_hash_seed_set   = MP_init_hash_seed_set;
-#else
+#elif MP_PERL_VERSION_AT_LEAST(5, 8, 2)
         PL_rehash_seed     = MP_init_hash_seed;
         PL_rehash_seed_set = MP_init_hash_seed_set;
+#else
+        PL_hash_seed       = MP_init_hash_seed;
+        PL_hash_seed_set   = MP_init_hash_seed_set;
 #endif
     }
 #endif
