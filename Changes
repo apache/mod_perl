@@ -12,6 +12,11 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.8-dev
 
+Perl 5.16.3's fix for a rehash-based DoS makes it more difficult to invoke
+the workaround for the old hash collision attack, which breaks mod_perl's
+t/perl/hash_attack.t. Patch from rt.cpan.org #83916 improves the fix
+previously applied as revision 1455340. [Zefram]
+
 On Perl 5.17.6 and above, hash seeding has changed, and HvREHASH has
 disappeared. Patch to update mod_perl accordingly from rt.cpan.org #83921.
 [Zefram]

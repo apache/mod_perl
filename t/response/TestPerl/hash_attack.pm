@@ -30,7 +30,7 @@ use Math::BigInt;
 
 use constant MASK_U32  => 2**32;
 use constant HASH_SEED => 0; # 5.8.2: always zero before the rehashing
-use constant THRESHOLD => 14; #define HV_MAX_LENGTH_BEFORE_REHASH
+use constant THRESHOLD => 14; #define HV_MAX_LENGTH_BEFORE_(SPLIT|REHASH)
 use constant START     => "a";
 
 # create conditions which will trigger a rehash on the current stash
@@ -57,6 +57,8 @@ sub handler {
     $r->print("ok");
     return Apache2::Const::OK;
 }
+
+sub buckets { scalar(%{$_[0]}) =~ m#/([0-9]+)\z# ? 0+$1 : 8 }
 
 sub attack {
     my $stash = shift;
@@ -99,13 +101,23 @@ sub attack {
         $s++;
     }
 
-    # Now add more keys until we reach a power of 2, to force the number
-    # of buckets to be doubled (at which point the longest chain is checked).
-    $keys = scalar keys %$stash;
-    $bits = log($keys)/log(2);
-    my $limit = 2 ** ceil($bits);
-    debug "pad keys from $keys to $limit";
-    $stash->{$s++}++ while keys(%$stash) <= $limit;
+    # If the rehash hasn't been triggered yet, it's being delayed until the
+    # next bucket split.  Add keys until a split occurs.
+    unless (Internals::HvREHASH(%$stash)) {
+        debug "Will add padding keys until hash split";
+        my $old_buckets = buckets($stash);
+        while (buckets($stash) == $old_buckets) {
+            next if exists $stash->{$s};
+            $h = hash($s);
+            $c++;
+            $stash->{$s}++;
+            debug sprintf "%2d: %5s, %08x %s", $c, $s, $h, scalar(%$stash);
+            push @keys, $s;
+            debug "The hash collision attack has been successful"
+                if Internals::HvREHASH(%$stash);
+            $s++;
+        }
+    }
 
     # this verifies that the attack was mounted successfully. If
     # HvREHASH is on it is. Otherwise the sequence wasn't successful.
