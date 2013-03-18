@@ -12,6 +12,10 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.8-dev
 
+Restore build with Perl 5.8.1, 5.8.2 etc: take care to use
+$Config{useithreads} rather than $Config{usethreads}, and supply definitions
+of Newx and Newxz as necessary. [Steve Hay]
+
 On Perl 5.17.9, t/apache/read2.t fails because an "uninitialized value"
 warning is generated for the buffer being autovivified. This is because
 the sv_setpvn() that's meant to vivify the buffer doesn't perform set
