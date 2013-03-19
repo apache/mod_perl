@@ -11,22 +11,16 @@ Apache:
   http://perl.apache.org/download/source.html#Development_mod_perl_2_0_Source_Distribution
 
 Perl: 
-  Dynamic mod_perl (DSO):
+  Any stable version of Perl currently in support by the Perl community,
+  as described in recent Perl distributions' "perlpolicy.pod" document.
 
-    + prefork mpm:
-      - Perl version 5.6.1 or higher
+  Newer Perl versions may work with this version of mod_perl.  If not,
+  the svn version likely will (see above).
 
-    + non-prefork mpm:
-      - Perl with    ithreads support version 5.8.0 or higher
-
-  Static mod_perl:
-
-    + prefork mpm:
-      - Perl with    ithreads support version 5.6.1 or higher
-      - Perl without ithreads support version 5.8.2 or higher
-
-    + non-prefork mpm:
-      - Perl with    ithreads support version 5.8.0 or higher
+  Many older Perl versions also work with this version of mod_perl:
+  Perls back to version 5.8.2 (and possibly earlier in some build
+  configurations) are currently believed to work, but this is not
+  guaranteed to be the case, either now or in the future.
 
 *** Status ***
 
