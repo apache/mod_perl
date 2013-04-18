@@ -1,5 +1,6 @@
 name:         mod_perl
 version_from: lib/mod_perl2.pm
+version: 2.0.8
 installdirs:  site
 distribution_type: module
 no_index:

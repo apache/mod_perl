@@ -37,6 +37,7 @@ Instructions for mod_perl 2.0 Release Manager
 
   a. edit ./Changes 
      - change -dev to -rc\d+  starting with -rc1
+     - edit META.yml to the rc\d version above in the version key
 
   b. nuke any preinstalled mod_perl libs and run 'make test'
 
