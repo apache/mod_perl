@@ -66,6 +66,7 @@ Instructions for mod_perl 2.0 Release Manager
   a. edit ./Changes:
      - remove -rc\d+
      - add release date
+     - edit META.yml to remove the -rc\d+ from the version key
 
   b. check ./README and ./Makefile.PL
      - make sure supported httpd versions (dso & static) are current
