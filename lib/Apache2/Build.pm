@@ -75,6 +75,7 @@ use constant OPENBSD => $^O eq 'openbsd';
 use constant WIN32   => $^O eq 'MSWin32';
 
 use constant MSVC => WIN32() && ($Config{cc} eq 'cl');
+use constant DMAKE => WIN32() && ($Config{make} eq 'dmake');
 
 use constant REQUIRE_ITHREADS => grep { $^O eq $_ } qw(MSWin32);
 use constant PERL_HAS_ITHREADS =>
@@ -1978,6 +1979,11 @@ lib: $(MODPERL_LIB)
 EOF
 
     print $fh $install;
+
+    print $fh <<'EOF' if DMAKE;
+
+.USESHELL :
+EOF
 
     print $fh <<'EOF';
 
