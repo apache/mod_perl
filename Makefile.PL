@@ -821,7 +821,14 @@ sub MY::postamble {
 
     my $string = $self->ModPerl::BuildMM::MY::postamble;
 
-    $string .= <<'EOF';
+    if (WIN32) {
+        $string .= <<'EOF';
+mydist : Apache-Test/META.yml manifest tardist
+
+EOF
+    }
+    else {
+        $string .= <<'EOF';
 mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
 
 rpm: dist
@@ -835,6 +842,10 @@ rpm: dist
 mod_perl.spec: build/make_rpm_spec
 	$(PERL) build/make_rpm_spec
 
+EOF
+    }
+
+    $string .= <<'EOF';
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
