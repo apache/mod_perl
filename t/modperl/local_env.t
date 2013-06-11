@@ -5,8 +5,6 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-plan tests => 1, skip_reason('local %ENV is still broken');
-
 my $module = 'TestModperl::local_env';
 my $url    = Apache::TestRequest::module2url($module);
 
