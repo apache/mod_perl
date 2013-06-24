@@ -54,4 +54,11 @@ void modperl_hash_seed_set(pTHX);
 #    define GvGP_set(gv, gp) (GvGP(gv)=(gp))
 #endif
 
+#ifndef Newx
+#    define Newx(v,n,t) New(0,v,n,t)
+#endif
+#ifndef Newxz
+#    define Newxz(v,n,t) Newz(0,v,n,t)
+#endif
+
 #endif /* MODPERL_PERL_H */
