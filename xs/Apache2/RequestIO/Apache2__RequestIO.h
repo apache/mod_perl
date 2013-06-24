@@ -227,6 +227,10 @@ apr_status_t mpxs_setup_client_block(request_rec *r)
 #define mpxs_should_client_block(r) \
     (r->read_length || ap_should_client_block(r))
 
+#ifndef sv_setpvn_mg
+#   define sv_setpvn_mg sv_setpvn
+#endif
+
 /* alias */
 #define mpxs_Apache2__RequestRec_READ(r, buffer, len, offset) \
     mpxs_Apache2__RequestRec_read(aTHX_ r, buffer, len, offset)
@@ -239,7 +243,7 @@ static SV *mpxs_Apache2__RequestRec_read(pTHX_ request_rec *r,
     STRLEN blen;
 
     if (!SvOK(buffer)) {
-        sv_setpvn(buffer, "", 0);
+        sv_setpvn_mg(buffer, "", 0);
     }
 
     (void)SvPV_force(buffer, blen); /* make it a valid PV */

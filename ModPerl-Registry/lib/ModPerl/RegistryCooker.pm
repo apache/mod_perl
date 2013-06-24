@@ -36,6 +36,7 @@ use Apache2::Log ();
 use Apache2::Access ();
 
 use APR::Table ();
+use APR::Finfo ();
 use APR::Status ();
 
 use ModPerl::Util ();
@@ -45,6 +46,7 @@ use File::Spec::Functions ();
 use File::Basename ();
 
 use Apache2::Const -compile => qw(:common &OPT_EXECCGI);
+use APR::Const -compile => qw(FILETYPE_REG);
 use ModPerl::Const -compile => 'EXIT';
 
 unless (defined $ModPerl::Registry::MarkLine) {
@@ -256,9 +258,10 @@ sub can_compile {
     my $self = shift;
     my $r = $self->{REQ};
 
-    return Apache2::Const::DECLINED if -d $r->my_finfo;
+    return Apache2::Const::DECLINED
+        unless $r->finfo->filetype==APR::Const::FILETYPE_REG;
 
-    $self->{MTIME} = -M _;
+    $self->{MTIME} = $r->finfo->mtime;
 
     if (!($r->allow_options & Apache2::Const::OPT_EXECCGI)) {
         $r->log_error("Options ExecCGI is off in this directory",
@@ -485,9 +488,9 @@ sub is_cached {
 # wasn't modified
 sub should_compile_if_modified {
     my $self = shift;
-    $self->{MTIME} ||= -M $self->{REQ}->my_finfo;
+    $self->{MTIME} ||= $self->{REQ}->finfo->mtime;
     !($self->is_cached &&
-      $self->cache_table->{ $self->{PACKAGE} }{mtime} <= $self->{MTIME});
+      $self->cache_table->{ $self->{PACKAGE} }{mtime} == $self->{MTIME});
 }
 
 # return false if the package is cached already
@@ -777,15 +780,6 @@ sub uncache_myself {
     else {
         Apache2->warn("$$: cannot find $package in cache");
     }
-}
-
-
-# XXX: should go away when finfo() is ported to 2.0 (don't want to
-# depend on compat.pm)
-sub Apache2::RequestRec::my_finfo {
-    my $r = shift;
-    stat $r->filename;
-    \*_;
 }
 
 
