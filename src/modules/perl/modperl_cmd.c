@@ -419,7 +419,7 @@ MP_CMD_SRV_DECLARE(init_handlers)
 
 MP_CMD_SRV_DECLARE2(authz_provider)
 {
-    apr_pool_t *p = parms->server->process->pool;
+    apr_pool_t *p = parms->pool;
     char *name = apr_pstrdup(p, arg1);
     char *cb = apr_pstrdup(p, arg2);
 
@@ -431,7 +431,7 @@ MP_CMD_SRV_DECLARE2(authz_provider)
 
 MP_CMD_SRV_DECLARE2(authn_provider)
 {
-    apr_pool_t *p = parms->server->process->pool;
+    apr_pool_t *p = parms->pool;
     char *name = apr_pstrdup(p, arg1);
     char *cb = apr_pstrdup(p, arg2);
 
