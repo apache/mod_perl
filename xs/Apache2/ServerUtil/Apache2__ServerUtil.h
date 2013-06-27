@@ -206,6 +206,8 @@ static void mpxs_Apache2__ServerUtil_BOOT(pTHX)
                 newSVpv(ap_get_server_built(), 0));
 }
 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
 static MP_INLINE
 int mpxs_Apache2__ServerRec_loglevel(pTHX_ server_rec *s, int loglevel)
 {
@@ -215,4 +217,5 @@ int mpxs_Apache2__ServerRec_loglevel(pTHX_ server_rec *s, int loglevel)
 
     return s->log.level;
 }
+#endif
 
