@@ -1,4 +1,4 @@
-package TestAPI::access2;
+package TestAPI::access2_24;
 
 # testing $r->requires
 # in the POST test it returns:
