@@ -911,6 +911,9 @@ U16 *modperl_code_attrs(pTHX_ CV *cv) {
     return &(mg->mg_private);
 }
 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+
 static apr_hash_t *global_authz_providers = NULL;
 static apr_hash_t *global_authn_providers = NULL;
 
@@ -1213,3 +1216,5 @@ apr_status_t modperl_register_auth_provider_name(apr_pool_t *pool,
     return register_auth_provider(pool, provider_group, provider_name_dup,
                                   provider_version, ab, type);
 }
+
+#endif /* httpd-2.4 */

@@ -151,6 +151,8 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
 
 U16 *modperl_code_attrs(pTHX_ CV *cv);
 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
 apr_status_t
 modperl_register_auth_provider(apr_pool_t *pool, const char *provider_group,
                                const char *provider_name,
@@ -164,5 +166,6 @@ modperl_register_auth_provider_name(apr_pool_t *pool,
                                     const char *provider_version,
                                     const char *callback1,
                                     const char *callback2, int type);
+#endif
 
 #endif /* MODPERL_UTIL_H */
