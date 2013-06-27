@@ -8,6 +8,7 @@ $ENV{MOD_PERL_2_BUILD} = 1;
 
 use constant MIN_HTTPD_VERSION_DYNAMIC => '2.0.47';
 use constant MIN_HTTPD_VERSION_STATIC  => '2.0.51';
+use constant MIN_HTTPD_24_VERSION => '2.4.0';
 
 my($old_modperl_version, $old_modperl_pm, $old_Apache2_pm);
 
@@ -412,9 +413,13 @@ sub post_configure {
 sub tables_dir {
     my $httpd_version = shift;
 
-    my $tables_version = 'current';
-    #XXX: support versioning
-    #$httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
+    my $tables_version='';
+    if ($httpd_version lt MIN_HTTPD_24_VERSION) {
+        $tables_version='current';
+    }
+    else {
+        $tables_version='current24';
+    }
 
     my $tables_dir = "xs/tables/$tables_version";
 }
