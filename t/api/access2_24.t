@@ -5,7 +5,7 @@ use Apache::Test;
 use Apache::TestUtil;
 use Apache::TestRequest;
 
-if (!have_min_apache_version("2.4.0")) {
+if (have_min_apache_version("2.4.0")) {
 
 plan tests => 6, need need_lwp, need_auth, need_access, 'HTML::HeadParser';
 
@@ -30,5 +30,3 @@ ok POST_OK $location, username => 'bar', password => 'goopass1',
     content => "a";
 
 }
-
-
