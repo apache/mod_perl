@@ -42,8 +42,11 @@ MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE(config_requires);
 MP_CMD_SRV_DECLARE(post_config_requires);
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
 MP_CMD_SRV_DECLARE2(authz_provider);
 MP_CMD_SRV_DECLARE2(authn_provider);
+#endif
 MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE2(set_env);
