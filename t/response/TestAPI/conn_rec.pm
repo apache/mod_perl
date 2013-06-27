@@ -15,6 +15,8 @@ use Apache2::Connection ();
 
 use Apache2::Const -compile => qw(OK CONN_CLOSE);
 
+use constant APACHE24   => have_min_apache_version('2.4.0');
+
 sub handler {
     my $r = shift;
 
@@ -32,20 +34,39 @@ sub handler {
 
     ok $c->local_addr->isa('APR::SockAddr');
 
-    ok $c->client_addr->isa('APR::SockAddr');
+    if (APACHE24) {
+        ok $c->client_addr->isa('APR::SockAddr');
 
-    # client_ip
-    {
-        my $client_ip_org = $c->client_ip;
-        my $client_ip_new = "10.10.10.255";
-        ok $client_ip_org;
+        # client_ip
+        {
+            my $client_ip_org = $c->client_ip;
+            my $client_ip_new = "10.10.10.255";
+            ok $client_ip_org;
 
-        $c->client_ip($client_ip_new);
-        ok t_cmp $c->client_ip, $client_ip_new;
+            $c->client_ip($client_ip_new);
+            ok t_cmp $c->client_ip, $client_ip_new;
 
-        # restore
-        $c->client_ip($client_ip_org);
-        ok t_cmp $c->client_ip, $client_ip_org;
+            # restore
+            $c->client_ip($client_ip_org);
+            ok t_cmp $c->client_ip, $client_ip_org;
+        }
+    }
+    else {
+        ok $c->remote_addr->isa('APR::SockAddr');
+        # remote_ip
+        {
+            my $remote_ip_org = $c->remote_ip;
+            my $remote_ip_new = "10.10.10.255";
+            ok $remote_ip_org;
+ 
+            $c->remote_ip($remote_ip_new);
+            ok t_cmp $c->remote_ip, $remote_ip_new;
+
+ 
+            # restore
+            $c->remote_ip($remote_ip_org);
+            ok t_cmp $c->remote_ip, $remote_ip_org;
+        }
     }
 
     ok $c->remote_host || 1;
