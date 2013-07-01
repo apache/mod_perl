@@ -37,7 +37,14 @@
 
 MODULE=Apache2::RequestUtil
  ap_get_status_line
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
  ap_register_auth_provider | mpxs_ | ...
+#_end_
 
 MODULE=Apache2::RequestUtil   PACKAGE=guess
  ap_psignature | | r, prefix
@@ -169,7 +176,14 @@ MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerRec BOOT=1
  int:DEFINE_method_register | | server_rec *:s, const char *:methname
 ~add_version_component
  void:DEFINE_add_version_component | | server_rec *:s, const char *:component
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
  mpxs_Apache2__ServerRec_loglevel | | server_rec *:s, loglevel=NULL
+#_end_
 
 MODULE=Apache2::ServerUtil   PACKAGE=Apache2::ServerUtil
  ap_exists_config_define
@@ -543,5 +557,12 @@ MODULE=Apache2::MPM   PACKAGE=Apache2::MPM   BOOT=1
 ?ap_mpm_set_scoreboard
 ?ap_listen_pre_config
 
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
 MODULE=Apache2::Provider
  ap_register_provider
+#_end_
