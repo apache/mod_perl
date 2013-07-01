@@ -21,6 +21,9 @@ MODULE=Apache2::RequestRec   PACKAGE=Apache2::RequestRec
  mpxs_Apache2__RequestRec_finfo | | r, finfo=NULL
  mpxs_Apache2__RequestRec_handler | | ...
  mpxs_Apache2__RequestRec_content_languages | | r, languages=(SV *)NULL
+,
+MODULE=Apache2::ServerRec   PACKAGE=Apache2::ServerRec
+ mpxs_Apache2__ServerRec_is_virtual       | | server_rec *:s, val=(SV *)NULL
 
 MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_push_handlers
