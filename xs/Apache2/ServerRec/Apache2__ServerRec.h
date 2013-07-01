@@ -16,4 +16,17 @@
 
 #if AP_SERVER_MAJORVERSION_NUMBER>2 || AP_SERVER_MINORVERSION_NUMBER>=3
 #define loglevel log.level
+
+static MP_INLINE
+int mpxs_Apache2__ServerRec_is_virtual(pTHX_ server_rec *s, SV *val)
+{
+    int retval = s->is_virtual;
+
+    if (val) {
+        s->is_virtual = SvIV(val);
+    }
+
+    return retval;
+}
+
 #endif

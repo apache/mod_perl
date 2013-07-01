@@ -99,7 +99,7 @@ $  port
 %  error_fname
 $  error_log
 $  loglevel
-<  is_virtual
+~  is_virtual
 <  module_config
 <  lookup_defaults
 <  addrs
