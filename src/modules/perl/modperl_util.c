@@ -938,19 +938,20 @@ static authz_status perl_check_authorization(request_rec *r,
     authz_status ret = AUTHZ_DENIED;
     int count;
     AV *args = Nullav;
+    char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
 
     if (global_authz_providers == NULL) {
         return ret;
     }
 
-    const char *key = apr_table_get(r->notes, AUTHZ_PROVIDER_NAME_NOTE);
-    auth_callback *ab = apr_hash_get(global_authz_providers, key,
-                                     APR_HASH_KEY_STRING);
+    key = apr_table_get(r->notes, AUTHZ_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authz_providers, key, APR_HASH_KEY_STRING);
     if (ab == NULL) {
         return ret;
     }
-
-    MP_dTHX;
 
     if (ab->cb1 == NULL) {
         if (ab->cb1_handler == NULL) {
@@ -965,7 +966,6 @@ static authz_status perl_check_authorization(request_rec *r,
         return ret;
     }
 
-    dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
@@ -992,23 +992,23 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
     SV *ret_sv;
     char *ret = NULL;
     int count;
+    void *key;
+    auth_callback *ab;
+    modperl_interp_t *interp = modperl_interp_pool_select(cmd->server->process->pool,
+                                                          cmd->server);
+    dTHXa(interp->perl);
+    dSP;
 
     if (global_authz_providers == NULL) {
         return ret;
     }
 
-    void *key;
     apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
-    auth_callback *ab = apr_hash_get(global_authz_providers, (char *) key,
-                                     APR_HASH_KEY_STRING);
+    ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb2 == NULL) {
         return ret;
     }
 
-    modperl_interp_t *interp = modperl_interp_pool_select(cmd->server->process->pool,
-                                                          cmd->server);
-    dTHXa(interp->perl);
-    dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
@@ -1040,19 +1040,21 @@ static authn_status perl_check_password(request_rec *r, const char *user,
     authn_status ret = AUTH_DENIED;
     int count;
     AV *args = Nullav;
+    char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
 
     if (global_authn_providers == NULL) {
         return ret;
     }
 
-    const char *key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
-    auth_callback *ab = apr_hash_get(global_authn_providers, key,
+    key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authn_providers, key,
                                      APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb1) {
         return ret;
     }
-
-    MP_dTHX;
 
     if (ab->cb1 == NULL) {
         if (ab->cb1_handler == NULL) {
@@ -1068,7 +1070,6 @@ static authn_status perl_check_password(request_rec *r, const char *user,
         return ret;
     }
 
-    dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
@@ -1095,21 +1096,22 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
     authn_status ret = AUTH_USER_NOT_FOUND;
     int count;
     SV *rh;
+    char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
 
     if (global_authn_providers == NULL) {
         return ret;
     }
 
-    const char *key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
-    auth_callback *ab = apr_hash_get(global_authn_providers, key,
-                                     APR_HASH_KEY_STRING);
+    key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authn_providers, key, APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb2) {
         return ret;
     }
 
-    MP_dTHX;
     rh = sv_2mortal(newSVpv("", 0));
-    dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
@@ -1122,8 +1124,9 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
     SPAGAIN;
 
     if (count == 1) {
+        char *tmp;
         ret = (authn_status) POPi;
-        char *tmp = SvPV_nolen(rh);
+        *tmp = SvPV_nolen(rh);
         if (*tmp != '\0') {
             *rethash = apr_pstrdup(r->pool, tmp);
         }
