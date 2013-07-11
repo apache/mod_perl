@@ -19,6 +19,8 @@ for (@names) {
     $src{$cfile} = "$srcdir/$cfile";
 }
 
+push @obj, q{modperl_dummy.o};
+
 my @skip = qw(dynamic test);
 push @skip, q{static}
     unless (Apache2::Build::BUILD_APREXT);
