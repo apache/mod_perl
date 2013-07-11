@@ -50,7 +50,7 @@ AP_DECLARE(const char *) ap_get_server_banner(void);
 #if AP_MODULE_MAGIC_AT_LEAST(20060905,0)
 
 /* removed in APACHE-2.3.0 */
-AP_DECLARE(const char *) ap_get_server_version(void);
+const char * ap_get_server_version(void);
 
 #endif /* since-APACHE-2.3.0 */
 
