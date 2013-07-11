@@ -62,7 +62,7 @@ AP_DECLARE(const char *) ap_get_server_banner(void) {
                   MP_FUNC, ver, fallback); \
     }
 
-AP_DECLARE(const char *) ap_get_server_version(void) {
+const char * ap_get_server_version(void) {
     modperl_warn_deprecated_http_function("2.3.0",
         "ap_get_server_(description|banner)");
     return ap_get_server_banner();
