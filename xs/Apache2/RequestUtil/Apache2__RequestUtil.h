@@ -355,11 +355,17 @@ void mpxs_Apache2__RequestRec_child_terminate(pTHX_ request_rec *r)
 static MP_INLINE
 apr_status_t mpxs_ap_register_auth_provider(pTHX_ I32 items, SV **MARK, SV **SP)
 {
+    apr_pool_t *pool;
+    const char *provider_group;
+    const char *provider_name;
+    const char *provider_version;
+    SV *callback1;
+    SV *callback2 = NULL;
+    int type;
+
     if (items != 7)
        Perl_croak(aTHX_ "pool, provider_group, provider_name, "
                         "provider_version, callback1, callback2, type");
-
-    apr_pool_t *pool;
 
     if (SvROK(*MARK) && sv_derived_from(*MARK, "APR::Pool")) {
         IV tmp = SvIV((SV*)SvRV(*MARK));
@@ -375,20 +381,20 @@ apr_status_t mpxs_ap_register_auth_provider(pTHX_ I32 items, SV **MARK, SV **SP)
         }
 
     MARK++;
-    const char *provider_group = (const char *)SvPV_nolen(*MARK);
+    provider_group = (const char *)SvPV_nolen(*MARK);
     MARK++;
-    const char *provider_name = (const char *)SvPV_nolen(*MARK);
+    provider_name = (const char *)SvPV_nolen(*MARK);
     MARK++;
-    const char *provider_version = (const char *)SvPV_nolen(*MARK);
+    provider_version = (const char *)SvPV_nolen(*MARK);
     MARK++;
-    SV *callback1 = newSVsv(*MARK);
+    callback1 = newSVsv(*MARK);
     MARK++;
-    SV *callback2 = NULL;
+    callback2 = NULL;
     if (SvROK(*MARK)) {
         callback2 = newSVsv(*MARK);
     }
     MARK++;
-    int type = (int)SvIV(*MARK);
+    type = (int)SvIV(*MARK);
 
     return modperl_register_auth_provider(pool, provider_group, provider_name,
                                           provider_version, callback1,
