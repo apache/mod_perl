@@ -34,7 +34,6 @@
 #include "http_core.h"
 #include "http_vhost.h"
 #include "ap_mpm.h"
-#include "ap_provider.h"
 
 #include "util_filter.h"
 
@@ -46,6 +45,7 @@ APLOG_USE_MODULE(perl);
 
 #if AP_SERVER_MAJORVERSION_NUMBER>2 || \
     (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+#include "ap_provider.h"
 #include "mod_auth.h"
 #endif
 
