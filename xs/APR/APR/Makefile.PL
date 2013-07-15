@@ -25,19 +25,21 @@ $libs = delete $args{LIBS} if $args{LIBS};
 
 my $build = ModPerl::BuildMM::build_config();
 
-my @apru_link_flags = $build->apru_link_flags;
-$libs .= join ' ', @apru_link_flags if @apru_link_flags;
-
-if (WIN32) {
-    $libs =~ s{/libpath:}{-L}g;
-    $libs =~ s{(\S+)\.lib}{-l$1}g;
+if (WIN32 || CYGWIN) {
+    $libs .= $build->apache_libs;
+}
+else {
+    my @apru_link_flags = $build->apru_link_flags;
+    $libs .= join ' ', @apru_link_flags if @apru_link_flags;
+    # FIXME: This should be done automatically somewhere in Apache2::Build
+    $libs .= qq{ -laprutil-1 };
 }
 
 if (BUILD_APREXT) {
     my $mp_apr_lib = $build->mp_apr_lib;
 
     if (CYGWIN) {
-        # For Cygwin compatibility, set $mp_apr_lib before the apru flags
+        # For Cygwin compatibility, set $mp_apr_lib before the apache libs
         $libs = qq{ $mp_apr_lib } . $libs;
     } else {
         $libs .= qq{ $mp_apr_lib };
@@ -66,8 +68,6 @@ if (SOLARIS && $libs) {
     $libs =~ s{-R\S+}{}g;
 }
 
-# FIXME: This should be done automatically somewhere in Apache2::Build
-$libs .= qq{ -laprutil-1 };
 $args{LIBS} = [$libs] if $libs;
 
 my $srcdir = '../../../src/modules/perl';
