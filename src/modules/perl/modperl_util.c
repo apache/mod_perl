@@ -938,7 +938,7 @@ static authz_status perl_check_authorization(request_rec *r,
     authz_status ret = AUTHZ_DENIED;
     int count;
     AV *args = Nullav;
-    char *key;
+    const char *key;
     auth_callback *ab;
     MP_dTHX;
     dSP;
@@ -994,10 +994,7 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
     int count;
     void *key;
     auth_callback *ab;
-    modperl_interp_t *interp = modperl_interp_pool_select(cmd->server->process->pool,
-                                                          cmd->server);
-    dTHXa(interp->perl);
-    dSP;
+    modperl_interp_t *interp = NULL;
 
     if (global_authz_providers == NULL) {
         return ret;
@@ -1009,6 +1006,9 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
         return ret;
     }
 
+    modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
+    dTHXa(interp->perl);
+    dSP;
     ENTER;
     SAVETMPS;
     PUSHMARK(SP);
@@ -1040,7 +1040,7 @@ static authn_status perl_check_password(request_rec *r, const char *user,
     authn_status ret = AUTH_DENIED;
     int count;
     AV *args = Nullav;
-    char *key;
+    const char *key;
     auth_callback *ab;
     MP_dTHX;
     dSP;
@@ -1096,7 +1096,7 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
     authn_status ret = AUTH_USER_NOT_FOUND;
     int count;
     SV *rh;
-    char *key;
+    const char *key;
     auth_callback *ab;
     MP_dTHX;
     dSP;
@@ -1124,9 +1124,8 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
     SPAGAIN;
 
     if (count == 1) {
-        char *tmp;
+        const char *tmp = SvPV_nolen(rh);
         ret = (authn_status) POPi;
-        *tmp = SvPV_nolen(rh);
         if (*tmp != '\0') {
             *rethash = apr_pstrdup(r->pool, tmp);
         }
