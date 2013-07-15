@@ -34,6 +34,7 @@
 #include "http_core.h"
 #include "http_vhost.h"
 #include "ap_mpm.h"
+#include "ap_provider.h"
 
 #include "util_filter.h"
 
