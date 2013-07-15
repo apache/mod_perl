@@ -994,43 +994,44 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
     int count;
     void *key;
     auth_callback *ab;
-    modperl_interp_t *interp = NULL;
+    modperl_interp_t *interp = modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
+    if (interp) {
+        dTHXa(interp->perl);
+        dSP;
 
-    if (global_authz_providers == NULL) {
-        return ret;
-    }
+        if (global_authz_providers == NULL) {
+            return ret;
+        }
 
-    apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
-    ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
-    if (ab == NULL || ab->cb2 == NULL) {
-        return ret;
-    }
+        apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
+        ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
+        if (ab == NULL || ab->cb2 == NULL) {
+            return ret;
+        }
 
-    modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
-    dTHXa(interp->perl);
-    dSP;
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
-    XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
-    PUTBACK;
-    count = call_sv(ab->cb2, G_SCALAR);
-    SPAGAIN;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(SP);
+        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
+        XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
+        PUTBACK;
+        count = call_sv(ab->cb2, G_SCALAR);
+        SPAGAIN;
 
-    if (count == 1) {
-        ret_sv = POPs;
-        if (SvOK(ret_sv)) {
-            char *tmp = SvPV_nolen(ret_sv);
-            if (*tmp != '\0') {
-                ret = apr_pstrdup(cmd->pool, tmp);
+        if (count == 1) {
+            ret_sv = POPs;
+            if (SvOK(ret_sv)) {
+                char *tmp = SvPV_nolen(ret_sv);
+                if (*tmp != '\0') {
+                    ret = apr_pstrdup(cmd->pool, tmp);
+                }
             }
         }
-    }
 
-    PUTBACK;
-    FREETMPS;
-    LEAVE;
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+    }
     return ret;
 }
 
