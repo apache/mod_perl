@@ -994,21 +994,26 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
     int count;
     void *key;
     auth_callback *ab;
-    modperl_interp_t *interp = modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
+    modperl_interp_t *interp;
+
+    if (global_authz_providers == NULL) {
+        return ret;
+    }
+
+    apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
+    ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
+    if (ab == NULL || ab->cb2 == NULL) {
+        return ret;
+    }
+
+#ifdef USE_ITHREADS
+    interp = modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
     if (interp) {
         dTHXa(interp->perl);
+#else
+    {
+#endif
         dSP;
-
-        if (global_authz_providers == NULL) {
-            return ret;
-        }
-
-        apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
-        ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
-        if (ab == NULL || ab->cb2 == NULL) {
-            return ret;
-        }
-
         ENTER;
         SAVETMPS;
         PUSHMARK(SP);
