@@ -93,6 +93,7 @@ sub handler {
 __DATA__
 
 <NoAutoConfig>
+<IfModule mod_version.c>
 <IfVersion < 2.3.0>
 <Location /TestAPI__access2>
     PerlAuthenHandler TestAPI::access2
@@ -121,4 +122,5 @@ __DATA__
     </IfModule>
 </Location>
 </IfVersion>
+</IfModule>
 </NoAutoConfig>
