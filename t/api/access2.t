@@ -30,5 +30,8 @@ ok POST_OK $location, username => 'bar', password => 'goopass1',
     content => "a";
 
 }
+else {
 
+plan tests => 1, need {"mod_perl is not compiled with httpd-2.2" => 0};
 
+}
