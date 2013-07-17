@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#define AP_DECLARE_EXPORT
 #include "mod_perl.h"
 
 /* back compat adjustements for older Apache versions
@@ -62,7 +63,7 @@ AP_DECLARE(const char *) ap_get_server_banner(void) {
                   MP_FUNC, ver, fallback); \
     }
 
-const char * ap_get_server_version(void) {
+AP_DECLARE(const char *) ap_get_server_version(void) {
     modperl_warn_deprecated_http_function("2.3.0",
         "ap_get_server_(description|banner)");
     return ap_get_server_banner();
