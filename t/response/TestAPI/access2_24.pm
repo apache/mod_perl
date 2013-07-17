@@ -94,6 +94,7 @@ sub authn_handler {
 __DATA__
 
 <NoAutoConfig>
+<IfModule mod_version.c>
 <IfVersion > 2.4.1>
 
 PerlAddAuthzProvider my-user TestAPI::access2_24->authz_handler
@@ -125,4 +126,5 @@ PerlAddAuthzProvider my-group TestAPI::access2_24->authz_handler
     </IfModule>
 </Location>
 </IfVersion>
+</IfModule>
 </NoAutoConfig>
