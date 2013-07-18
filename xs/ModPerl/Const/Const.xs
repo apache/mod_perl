@@ -17,10 +17,11 @@
 #include "mod_perl.h"
 #include "modperl_const.h"
 
-
+#ifndef WIN32
 /* FIXME: To define extern perl_module to something so Const.so can be
  * loaded later. Without this code, loading Const.so fails with 
- * undefined_symbol: perl_module.
+ * undefined_symbol: perl_module. (Windows does not need this since it
+ * explicitly links against mod_perl.lib anyway.)
  */
 module AP_MODULE_DECLARE_DATA perl_module = {
     STANDARD20_MODULE_STUFF,
@@ -31,7 +32,7 @@ module AP_MODULE_DECLARE_DATA perl_module = {
     NULL,              /* table of config file commands       */
     NULL,    /* register hooks */
 };
-
+#endif
 
 MODULE = ModPerl::Const    PACKAGE = ModPerl::Const
 
