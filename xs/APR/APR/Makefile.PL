@@ -25,14 +25,12 @@ $libs = delete $args{LIBS} if $args{LIBS};
 
 my $build = ModPerl::BuildMM::build_config();
 
-if (WIN32 || CYGWIN) {
-    $libs .= $build->apache_libs;
-}
-else {
-    my @apru_link_flags = $build->apru_link_flags;
-    $libs .= join ' ', @apru_link_flags if @apru_link_flags;
-    # FIXME: This should be done automatically somewhere in Apache2::Build
-    $libs .= qq{ -laprutil-1 };
+my @apru_link_flags = $build->apru_link_flags;
+$libs .= join ' ', @apru_link_flags if @apru_link_flags;
+
+if (WIN32) {
+    $libs =~ s{/libpath:}{-L}g;
+    $libs =~ s{(\S+)\.lib}{-l$1}g;
 }
 
 if (BUILD_APREXT) {
