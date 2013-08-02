@@ -775,8 +775,24 @@ sub MY::test {
             $ap_bindir = File::Spec->catdir($build->{MP_AP_PREFIX}, 'bin')
                 if $build->{MP_AP_PREFIX};
         }
+        my $modperl_libexecdir = '';
+        if ($build->is_dynamic) {
+            # need to add the location of mod_perl.so to the PATH
+            my $lib = $build->modperl_libpath() || '';
+            if ($lib) {
+                $modperl_libexecdir = File::Basename::dirname($lib);
+            }
+            else {
+                $modperl_libexecdir = File::Spec->catdir($build->{cwd},
+                                                         'src/modules/perl')
+                    if $build->{cwd};
+            }
+        }
+        my $extra_path = '';
+        $extra_path .= ";$ap_bindir" if $ap_bindir;
+        $extra_path .= ";$modperl_libexecdir" if $modperl_libexecdir;
         $preamble = <<EOF;
-PATH = \$(PATH);$ap_bindir
+PATH = \$(PATH)$extra_path
 EOF
     }
     else {
