@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestProtocol::echo_timeout;
 
 # this test reads from/writes to the socket doing nonblocking IO but

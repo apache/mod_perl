@@ -1,4 +1,5 @@
 #!perl -w
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 BEGIN {
     use Apache::TestUtil qw/t_server_log_warn_is_expected/;

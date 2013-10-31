@@ -1,4 +1,4 @@
-
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestAPI::in_out_filters;
 
 # testing: $r->input_filters and $r->output_filters

@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestDirective::perlmodule;
 
 # This test is similar to TestDirective::perlrequire. Here we test

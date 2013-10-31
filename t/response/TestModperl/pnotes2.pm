@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestModperl::pnotes2;
 
 use strict;
@@ -82,8 +83,3 @@ sub handler {
 
 1;
 __END__
-
-# Local Variables: #
-# mode: cperl #
-# cperl-indent-level: 4 #
-# End: #
