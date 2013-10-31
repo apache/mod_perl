@@ -174,4 +174,4 @@ MODULE=Apache2::Access   PACKAGE=guess
  mpxs_Apache2__RequestRec_allow_override_opts
 
 MODULE=ModPerl::Interpreter
- mpxs_ModPerl__Interpreter_current
+ mpxs_ModPerl__Interpreter_current | | class=Nullsv
