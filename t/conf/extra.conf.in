@@ -94,9 +94,13 @@ PerlModule TestExit::FromPerlModule
     PerlResponseHandler Apache2::Status
 </Location>
 
-# for TestApache2::util
+# for TestApache::util
 PerlPassEnv LC_CTYPE
 PerlPassEnv LC_TIME
+
+# for TestCompat::apache_file
+PerlPassEnv TMPDIR
+PerlPassEnv TEMP
 
 # see t/filter/out_apache.t
 <VirtualHost filter_out_apache>
