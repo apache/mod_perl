@@ -51,9 +51,9 @@ void modperl_trace(const char *func, const char *fmt, ...)
 
     if (modperl_threaded_mpm()) {
         apr_file_printf(logfile, "[%lu/%lu] ", (unsigned long)getpid(),
-			modperl_threads_started()
-			? (unsigned long)apr_os_thread_current()
-			: 0);
+                        modperl_threads_started()
+                        ? (unsigned long)apr_os_thread_current()
+                        : 0);
     }
     else {
         apr_file_printf(logfile, "[%lu] ", (unsigned long)getpid());

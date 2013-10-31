@@ -137,7 +137,7 @@ int  modperl_restart_count(void);
 void modperl_pnotes_kill(void *data);
 
 SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
-		   apr_pool_t *pool );
+                   apr_pool_t *pool );
 
 U16 *modperl_code_attrs(pTHX_ CV *cv);
 
