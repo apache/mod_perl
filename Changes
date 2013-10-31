@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-dev
 
+Now correctly invokes PerlCleanupHandlers, even if they are the only
+handler type configured for that request [Torsten Foertsch]
+
 For threaded MPMs, change interpreter managment to a new, reference-counted
 allocation model. [Torsten Foertsch]
 
