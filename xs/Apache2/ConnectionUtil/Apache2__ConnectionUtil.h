@@ -24,7 +24,7 @@ SV *mpxs_Apache2__Connection_pnotes(pTHX_ conn_rec *c, SV *key, SV *val)
     if (!ccfg) {
         return &PL_sv_undef;
     }
-    
+
     return modperl_pnotes(aTHX_ &ccfg->pnotes, key, val, c->pool);
 }
 

@@ -381,7 +381,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 			   (unsigned long)interp, (unsigned long)p);
 	    }
 	}
-	
+
 	/* set context (THX) for this thread */
 	PERL_SET_CONTEXT(interp->perl);
 	/* let the perl interpreter point back to its interp */
