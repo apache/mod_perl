@@ -1088,7 +1088,7 @@ int modperl_response_handler_cgi(request_rec *r)
 
 #ifdef USE_ITHREADS
     interp = modperl_interp_select(r, r->connection, r->server);
-    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
                interp, interp->refcnt);
     aTHX = interp->perl;
 #endif
@@ -1124,7 +1124,7 @@ int modperl_response_handler_cgi(request_rec *r)
     FREETMPS;LEAVE;
 
 #ifdef USE_ITHREADS
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                interp, interp->refcnt);
     modperl_interp_unselect(interp);
 #endif

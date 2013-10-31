@@ -186,7 +186,7 @@ int modperl_callback_run_handlers(int idx, int type,
 #ifdef USE_ITHREADS
     if (r || c) {
         interp = modperl_interp_select(r, c, s);
-        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         aTHX = interp->perl;
         /* if you ask why PERL_SET_CONTEXT is omitted here the answer is
@@ -352,7 +352,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
 #ifdef USE_ITHREADS
     if (r || c) {
-        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                    interp, interp->refcnt);
         modperl_interp_unselect(interp);
     }

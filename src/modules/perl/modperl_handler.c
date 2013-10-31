@@ -221,7 +221,7 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
 
         MP_TRACE_h(MP_FUNC,
                    "[%s] handler %s hasn't yet been resolved, "
-                   "attempting to resolve using %s pool 0x%lx\n",
+                   "attempting to resolve using %s pool 0x%lx",
                    modperl_server_desc(s, p),
                    modperl_handler_name(handler),
                    duped ? "current" : "server conf",

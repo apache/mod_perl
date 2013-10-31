@@ -271,7 +271,7 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
 #ifdef MP_TRACE
 static apr_status_t modperl_interp_pool_cleanup(void *data)
 {
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
                data, ((modperl_interp_t*)data)->refcnt);
 
     return modperl_interp_unselect(data);
@@ -286,7 +286,7 @@ apr_status_t modperl_interp_unselect(void *data)
     if (interp == mip->parent) return APR_SUCCESS;
 
     ap_assert(interp && MpInterpIN_USE(interp));
-    MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d\n",
+    MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d",
                (unsigned long)interp, interp->refcnt);
     if (interp->refcnt != 0) {
         --interp->refcnt;
@@ -302,7 +302,7 @@ apr_status_t modperl_interp_unselect(void *data)
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
 
-    MP_TRACE_i(MP_FUNC, "interp=0x%lx freed, tipool(size=%ld, in_use=%ld)\n",
+    MP_TRACE_i(MP_FUNC, "interp=0x%lx freed, tipool(size=%ld, in_use=%ld)",
                (unsigned long)interp, mip->tipool->size, mip->tipool->in_use);
 
     return APR_SUCCESS;
@@ -440,7 +440,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         ccfg->interp->refcnt++;
 
         MP_TRACE_i(MP_FUNC,
-                   "found interp 0x%lx in con config, refcnt incremented to %d\n",
+                   "found interp 0x%lx in con config, refcnt incremented to %d",
                    (unsigned long)ccfg->interp, ccfg->interp->refcnt);
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(ccfg->interp->perl);
@@ -465,7 +465,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp->ccfg = ccfg;
 
     MP_TRACE_i(MP_FUNC,
-               "pulled interp 0x%lx from mip, num_requests is %d\n",
+               "pulled interp 0x%lx from mip, num_requests is %d",
                (unsigned long)interp, interp->num_requests);
 
     /*
@@ -521,7 +521,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         interp->refcnt++;
 
         MP_TRACE_i(MP_FUNC,
-                   "registered unselect cleanup for interp 0x%lx in %s\n",
+                   "registered unselect cleanup for interp 0x%lx in %s",
                    (unsigned long)interp, desc);
     }
 
