@@ -625,9 +625,3 @@ apr_status_t modperl_interp_cleanup(void *data)
 }
 
 #endif /* USE_ITHREADS */
-
-/*
- * Local Variables:
- * c-basic-offset: 4
- * End:
- */
