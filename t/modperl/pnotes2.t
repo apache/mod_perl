@@ -26,8 +26,3 @@ for my $i (1..12) {
         /pnotes are destroyed after cleanup passed/;
     } t_finish_error_log_watch), 1, $u;
 }
-
-# Local Variables: #
-# mode: cperl #
-# cperl-indent-level: 4 #
-# End: #
