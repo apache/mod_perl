@@ -157,3 +157,10 @@ apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv,
     bucket->free = apr_bucket_free;
     return modperl_bucket_sv_make(aTHX_ bucket, sv, offset, len);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

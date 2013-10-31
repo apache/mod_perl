@@ -389,3 +389,10 @@ static MP_INLINE void mpxs_apr_pool_DESTROY(pTHX_ SV *obj)
         apr_pool_destroy(p);
     }
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

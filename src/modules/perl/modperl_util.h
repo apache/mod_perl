@@ -159,3 +159,10 @@ modperl_register_auth_provider_name(apr_pool_t *pool,
 #endif
 
 #endif /* MODPERL_UTIL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

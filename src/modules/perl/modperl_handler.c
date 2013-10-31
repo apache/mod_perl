@@ -627,3 +627,10 @@ int modperl_handler_perl_add_handlers(pTHX_
 
     return TRUE;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

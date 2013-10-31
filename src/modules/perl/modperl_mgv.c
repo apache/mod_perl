@@ -528,3 +528,10 @@ void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
                        modperl_hash_handlers_dir,
                        modperl_hash_handlers_srv);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

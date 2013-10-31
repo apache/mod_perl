@@ -55,3 +55,10 @@ MP_STATIC XS(MPXS_apr_base64_decode)
 
     mpxs_set_targ(mpxs_apr_base64_decode, ST(0));
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

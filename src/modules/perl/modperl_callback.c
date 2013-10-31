@@ -413,3 +413,10 @@ int modperl_callback_files(int idx,
                                          NULL, NULL, s,
                                          pconf, plog, ptemp, run_mode);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

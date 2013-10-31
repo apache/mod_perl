@@ -46,3 +46,10 @@ int mpxs_Apache2__CmdParms_override_opts(pTHX_ cmd_parms *parms)
     return MP_HTTPD_OVERRIDE_OPTS_DEFAULT;
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

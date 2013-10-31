@@ -198,3 +198,10 @@ APR_DECLARE_OPTIONAL_FN(modperl_interp_t *,modperl_thx_interp_get,(PerlInterpret
 #endif /* end of #ifdef USE_ITHREADS */
 
 #endif /*  MOD_PERL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

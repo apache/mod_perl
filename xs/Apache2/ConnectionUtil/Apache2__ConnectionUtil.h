@@ -41,3 +41,10 @@ void mpxs_Apache2__Connection_pnotes_kill(pTHX_ conn_rec *c)
 
     modperl_pnotes_kill(&ccfg->pnotes);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

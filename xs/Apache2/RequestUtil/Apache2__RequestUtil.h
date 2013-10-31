@@ -413,3 +413,9 @@ apr_status_t mpxs_ap_register_auth_provider(pTHX_ I32 items, SV **MARK, SV **SP)
                                           callback2, type);
 }
 
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

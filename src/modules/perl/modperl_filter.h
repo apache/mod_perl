@@ -114,3 +114,10 @@ void modperl_filter_runtime_add(pTHX_ request_rec *r, conn_rec *c,
                                 SV *callback, const char *type);
 
 #endif /* MODPERL_FILTER_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -23,3 +23,10 @@ SV *mpxs_APR__String_strfsize(pTHX_ apr_off_t size)
 
     return newSVpvn(buff, 4);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

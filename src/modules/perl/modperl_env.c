@@ -647,3 +647,10 @@ void modperl_env_unload(void)
     StructCopy(&MP_PERL_vtbl_env, &PL_vtbl_env, MGVTBL);
     StructCopy(&MP_PERL_vtbl_envelem, &PL_vtbl_envelem, MGVTBL);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

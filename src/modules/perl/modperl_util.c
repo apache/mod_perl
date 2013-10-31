@@ -1224,3 +1224,10 @@ apr_status_t modperl_register_auth_provider_name(apr_pool_t *pool,
 }
 
 #endif /* httpd-2.4 */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -70,3 +70,10 @@ AP_DECLARE(const char *) ap_get_server_version(void) {
 }
 
 #endif /* since-APACHE-2.3.0 */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

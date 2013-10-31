@@ -62,3 +62,10 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func);
     } STMT_END
 
 #endif /* MODPERL_ERROR_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

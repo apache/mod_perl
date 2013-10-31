@@ -28,3 +28,10 @@ void modperl_perl_modglobal_dump(pTHX);
 #endif
 
 #endif /* MODPERL_DEBUG_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

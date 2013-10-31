@@ -30,3 +30,10 @@ SV *mpxs_APR__Finfo_stat(pTHX_ const char *fname, apr_int32_t wanted,
 
     return finfo_sv;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

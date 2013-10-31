@@ -338,3 +338,10 @@ MP_STATIC XS(MPXS_Apache2__Log_log_error)
 
     XSRETURN_EMPTY;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

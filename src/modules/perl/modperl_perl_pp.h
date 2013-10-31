@@ -41,3 +41,10 @@ void modperl_perl_pp_unset(modperl_perl_opcode_e idx);
 void modperl_perl_pp_unset_all(void);
 
 #endif /* MODPERL_PERL_PP_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

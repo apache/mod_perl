@@ -40,3 +40,10 @@ static MP_INLINE void mpxs_ModPerl__Util_untaint(pTHX_ I32 items,
     modperl_package_unload(aTHX_ pkg)
 
 /* ModPerl::Util::exit lives in mod_perl.so, see modperl_perl.c */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -1291,3 +1291,10 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, apr_file_t *file)
     }
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

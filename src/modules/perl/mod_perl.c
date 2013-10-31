@@ -1165,3 +1165,10 @@ module AP_MODULE_DECLARE_DATA perl_module = {
     modperl_cmds,              /* table of config file commands       */
     modperl_register_hooks,    /* register hooks */
 };
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */
