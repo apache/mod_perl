@@ -4460,7 +4460,17 @@ $ModPerl::FunctionTable = [
         'type' => 'request_rec *',
         'name' => 'r'
       }
-    ]    
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'void *',
+        'name' => 'cl_data'
+      }
+    ]
   },
   {
     'return_type' => 'int',
@@ -6321,6 +6331,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache2__Connection_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_Apache2__Directive_as_hash',
     'attr' => [
@@ -7124,6 +7148,20 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'SV *',
         'name' => 'val'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache2__RequestRec_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
       }
     ]
   },

@@ -25,5 +25,19 @@ SV *mpxs_Apache2__Connection_pnotes(pTHX_ conn_rec *c, SV *key, SV *val)
         return &PL_sv_undef;
     }
     
-    return modperl_pnotes(aTHX_ &ccfg->pnotes, key, val, NULL, c);
+    return modperl_pnotes(aTHX_ &ccfg->pnotes, key, val, c->pool);
+}
+
+static MP_INLINE
+void mpxs_Apache2__Connection_pnotes_kill(pTHX_ conn_rec *c)
+{
+    MP_dCCFG;
+
+    modperl_config_con_init(c, ccfg);
+
+    if (!ccfg) {
+        return;
+    }
+
+    modperl_pnotes_kill(&ccfg->pnotes);
 }

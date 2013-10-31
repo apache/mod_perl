@@ -40,6 +40,7 @@ MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_location
  mpxs_Apache2__RequestRec_as_string
  mpxs_Apache2__RequestRec_pnotes | | r, key=(SV *)NULL, val=(SV *)NULL
+ mpxs_Apache2__RequestRec_pnotes_kill | | r
  mpxs_Apache2__RequestRec_add_config | | r, lines, override=MP_HTTPD_OVERRIDE_HTACCESS, path=NULL, override_options=MP_HTTPD_OVERRIDE_OPTS_UNSET
  mpxs_Apache2__RequestRec_document_root | | r, new_root=(SV *)NULL
  mpxs_Apache2__RequestRec_child_terminate
@@ -105,6 +106,7 @@ MODULE=Apache2::Connection
 
 MODULE=Apache2::ConnectionUtil   PACKAGE=guess
  mpxs_Apache2__Connection_pnotes | | c, key=(SV *)NULL, val=(SV *)NULL
+ mpxs_Apache2__Connection_pnotes_kill | | c
 
 MODULE=Apache2::Filter
  modperl_filter_attributes | MPXS_ | ... | MODIFY_CODE_ATTRIBUTES

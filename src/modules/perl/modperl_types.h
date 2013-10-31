@@ -246,6 +246,14 @@ typedef struct {
 
 typedef struct {
     HV *pnotes;
+    apr_pool_t *pool;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
+} modperl_pnotes_t;
+
+typedef struct {
+    modperl_pnotes_t pnotes;
     SV *global_request_obj;
     U8 flags;
     int status;
@@ -253,13 +261,10 @@ typedef struct {
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
     modperl_perl_globals_t perl_globals;
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp;
-#endif
 } modperl_config_req_t;
 
 struct modperl_config_con_t {
-    HV *pnotes;
+    modperl_pnotes_t pnotes;
 #ifdef USE_ITHREADS
     modperl_interp_t *interp;
 #endif
