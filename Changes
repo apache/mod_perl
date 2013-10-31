@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-dev
 
+For threaded MPMs, change interpreter managment to a new, reference-counted
+allocation model. [Torsten Foertsch]
+
 Expose modperl_interp_pool_t via ModPerl::InterpPool, modperl_tipool_t
 via ModPerl::TiPool and modperl_tipool_config_t via ModPerl::TiPoolConfig
 [Torsten Foertsch]

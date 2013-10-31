@@ -61,7 +61,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
     memset(interp, '\0', sizeof(*interp));
 
     interp->mip = mip;
-    interp->refcnt = 0; /* for use by APR::Pool->cleanup_register */
+    interp->refcnt = 0;
 
     if (perl) {
 #ifdef MP_USE_GTOP
@@ -268,32 +268,42 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     scfg->mip = mip;
 }
 
+#ifdef MP_TRACE
+static apr_status_t modperl_interp_pool_cleanup(void *data)
+{
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+	       data, ((modperl_interp_t*)data)->refcnt);
+
+    return modperl_interp_unselect(data);
+}
+#endif
+
 apr_status_t modperl_interp_unselect(void *data)
 {
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
 
+    if (interp == mip->parent) return APR_SUCCESS;
+
+    ap_assert(interp && MpInterpIN_USE(interp));
+    MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d\n",
+	       (unsigned long)interp, interp->refcnt);
     if (interp->refcnt != 0) {
         --interp->refcnt;
-        MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d",
+        MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use",
                    (unsigned long)interp, interp->refcnt);
         return APR_SUCCESS;
     }
 
-    if (interp->request) {
-        /* ithreads + a threaded mpm + PerlInterpScope handler */
-        request_rec *r = interp->request;
-        MP_dRCFG;
-        modperl_config_request_cleanup(interp->perl, r);
-        MpReqCLEANUP_REGISTERED_Off(rcfg);
-    }
-
+    interp->ccfg->interp = NULL;
     MpInterpIN_USE_Off(interp);
-    MpInterpPUTBACK_Off(interp);
 
     modperl_thx_interp_set(interp->perl, NULL);
 
     modperl_tipool_putback_data(mip->tipool, data, interp->num_requests);
+
+    MP_TRACE_i(MP_FUNC, "interp=0x%lx freed, tipool(size=%ld, in_use=%ld)\n",
+	       (unsigned long)interp, mip->tipool->size, mip->tipool->in_use);
 
     return APR_SUCCESS;
 }
@@ -321,13 +331,9 @@ modperl_interp_t *modperl_interp_pool_get(apr_pool_t *p)
 }
 
 void modperl_interp_pool_set(apr_pool_t *p,
-                             modperl_interp_t *interp,
-                             int cleanup)
+                             modperl_interp_t *interp)
 {
-    /* same as get_interp but optional cleanup  */
-    (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY,
-                                cleanup ? modperl_interp_unselect : NULL,
-                                p);
+    (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY, NULL, p);
 }
 
 /*
@@ -342,53 +348,77 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
     MP_dSCFG(s);
     modperl_interp_t *interp = NULL;
 
-    if (scfg && (is_startup || !modperl_threaded_mpm())) {
-        MP_TRACE_i(MP_FUNC, "using parent interpreter at %s",
-                   is_startup ? "startup" : "request time (non-threaded MPM)");
+    if (is_startup) {
+	if (scfg) {
+	    MP_TRACE_i(MP_FUNC, "using parent interpreter at startup");
 
-        if (!scfg->mip) {
-            /* we get here if directive handlers are invoked
-             * before server merge.
-             */
-            modperl_init_vhost(s, p, NULL);
-            if (!scfg->mip) {
-                /* FIXME: We get here if global "server_rec" == s, scfg->mip
-                 * is not created then. I'm not sure if that's bug or 
-                 * bad/good design decicision. For now just return NULL.
-                 */
-                return NULL;
-            }
-        }
+	    if (!scfg->mip) {
+		/* we get here if directive handlers are invoked
+		 * before server merge.
+		 */
+		modperl_init_vhost(s, p, NULL);
+                if (!scfg->mip) {
+                    /* FIXME: We get here if global "server_rec" == s, scfg->mip
+                     * is not created then. I'm not sure if that's bug or 
+                     * bad/good design decicision. For now just return NULL.
+                     */
+                    return NULL;
+                }
+	    }
 
-        interp = scfg->mip->parent;
+	    interp = scfg->mip->parent;
+	}
+	else {
+	    if (!(interp = modperl_interp_pool_get(p))) {
+		interp = modperl_interp_get(s);
+		modperl_interp_pool_set(p, interp);
+
+		MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx",
+			   (unsigned long)interp, (unsigned long)p);
+	    }
+	    else {
+		MP_TRACE_i(MP_FUNC, "found interp 0x%lx in pconf pool 0x%lx",
+			   (unsigned long)interp, (unsigned long)p);
+	    }
+	}
+	
+	/* set context (THX) for this thread */
+	PERL_SET_CONTEXT(interp->perl);
+	/* let the perl interpreter point back to its interp */
+	MP_THX_INTERP_SET(interp->perl, interp);
+
+	return interp;
+    }
+    else if (!modperl_threaded_mpm()) {
+	MP_TRACE_i(MP_FUNC, "using parent interpreter in non-threaded mode");
+
+	/* since we are not running in threaded mode PERL_SET_CONTEXT
+	 * is not necessary */
+	/* PERL_SET_CONTEXT(scfg->mip->parent->perl); */
+	/* let the perl interpreter point back to its interp */
+	MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
+
+	return scfg->mip->parent;
     }
     else {
-        if (!(interp = modperl_interp_pool_get(p))) {
-            interp = modperl_interp_get(s);
-            modperl_interp_pool_set(p, interp, TRUE);
-
-            MP_TRACE_i(MP_FUNC, "set interp in request time pool 0x%lx",
-                       (unsigned long)p);
-        }
-        else {
-            MP_TRACE_i(MP_FUNC, "found interp in request time pool 0x%lx",
-                       (unsigned long)p);
-        }
+	request_rec *r;
+	apr_pool_userdata_get((void **)&r, "MODPERL_R", p);
+	ap_assert(r);
+	MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx",
+		   (unsigned long)r->pool, (unsigned long)r);
+	return modperl_interp_select(r, NULL, s);
     }
-
-    return interp;
 }
 
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
     MP_dSCFG(s);
-    MP_dRCFG;
-    modperl_config_dir_t *dcfg = modperl_config_dir_get(r);
+    MP_dDCFG;
+    modperl_config_con_t *ccfg;
     const char *desc = NULL;
     modperl_interp_t *interp = NULL;
     apr_pool_t *p = NULL;
-    int is_subrequest = (r && r->main) ? 1 : 0;
     modperl_interp_scope_e scope;
 
     if (!modperl_threaded_mpm()) {
@@ -397,21 +427,46 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                    (unsigned long)scfg->mip->parent,
                    s->server_hostname, s->port);
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
-        PERL_SET_CONTEXT(scfg->mip->parent->perl);
+	PERL_SET_CONTEXT(scfg->mip->parent->perl);
+	/* let the perl interpreter point back to its interp */
+	MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
         return scfg->mip->parent;
     }
 
-    if (rcfg && rcfg->interp) {
-        /* if scope is per-handler and something selected an interpreter
-         * before modperl_callback_run_handlers() and is still holding it,
-         * e.g. modperl_response_handler_cgi(), that interpreter will
-         * be here
-         */
+    if(!c) c = r->connection;
+    ccfg = modperl_config_con_get(c);
+
+    if (ccfg && ccfg->interp) {
+        ccfg->interp->refcnt++;
+
         MP_TRACE_i(MP_FUNC,
-                   "found interp 0x%lx in request config\n",
-                   (unsigned long)rcfg->interp);
-        return rcfg->interp;
+                   "found interp 0x%lx in con config, refcnt incremented to %d\n",
+                   (unsigned long)ccfg->interp, ccfg->interp->refcnt);
+	/* set context (THX) for this thread */
+	PERL_SET_CONTEXT(ccfg->interp->perl);
+	/* MP_THX_INTERP_SET is not called here because the interp
+	 * already belongs to the perl interpreter
+	 */
+        return ccfg->interp;
     }
+
+    interp = modperl_interp_get(s ? s : r->server);
+    ++interp->num_requests; /* should only get here once per request */
+    interp->refcnt = 0;
+
+    /* set context (THX) for this thread */
+    PERL_SET_CONTEXT(interp->perl);
+    /* let the perl interpreter point back to its interp */
+    MP_THX_INTERP_SET(interp->perl, interp);
+
+    /* make sure ccfg is initialized */
+    modperl_config_con_init(c, ccfg);
+    ccfg->interp = interp;
+    interp->ccfg = ccfg;
+
+    MP_TRACE_i(MP_FUNC,
+	       "pulled interp 0x%lx from mip, num_requests is %d\n",
+	       (unsigned long)interp, interp->num_requests);
 
     /*
      * if a per-dir PerlInterpScope is specified, use it.
@@ -426,102 +481,49 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     MP_TRACE_i(MP_FUNC, "scope is per-%s",
                modperl_interp_scope_desc(scope));
 
-    /*
-     * XXX: goto modperl_interp_get() if scope == handler ?
-     */
+    if (scope != MP_INTERP_SCOPE_HANDLER) {
+	desc = NULL;
+        if (c && (scope == MP_INTERP_SCOPE_CONNECTION || !r)) {
+	    p = c->pool;
+	    desc = "connection";
+	}
+	else if (r) {
+	    request_rec *main_r = r->main;
 
-    if (c && (scope == MP_INTERP_SCOPE_CONNECTION)) {
-        desc = "conn_rec pool";
-        get_interp(c->pool);
+	    if (main_r && (scope == MP_INTERP_SCOPE_REQUEST)) {
+		/* share 1 interpreter across sub-requests */
+		for(; main_r; main_r = main_r->main) {
+		    p = main_r->pool;
+		}
+		desc = "main request";
+	    }
+	    else {
+		p = r->pool;
+		desc = scope == MP_INTERP_SCOPE_REQUEST
+                       ? "main request"
+		       : "sub request";
+	    }
+	}
 
-        if (interp) {
-            MP_TRACE_i(MP_FUNC,
-                       "found interp 0x%lx in %s 0x%lx\n",
-                       (unsigned long)interp, desc, (unsigned long)c->pool);
-            return interp;
-        }
+	ap_assert(p);
 
-        p = c->pool;
-    }
-    else if (r) {
-        if (is_subrequest && (scope == MP_INTERP_SCOPE_REQUEST)) {
-            /* share 1 interpreter across sub-requests */
-            request_rec *main_r = r->main;
-
-            while (main_r && !interp) {
-                p = main_r->pool;
-                get_interp(p);
-                MP_TRACE_i(MP_FUNC,
-                           "looking for interp in main request for %s...%s\n",
-                           main_r->uri, interp ? "found" : "not found");
-                main_r = main_r->main;
-            }
-        }
-        else {
-            p = r->pool;
-            get_interp(p);
-        }
-
-        desc = "request_rec pool";
-
-        if (interp) {
-            MP_TRACE_i(MP_FUNC,
-                       "found interp 0x%lx in %s 0x%lx (%s request for %s)\n",
-                       (unsigned long)interp, desc, (unsigned long)p,
-                       (is_subrequest ? "sub" : "main"), r->uri);
-            return interp;
-        }
-
-        /* might have already been set by a ConnectionHandler */
-        get_interp(r->connection->pool);
-
-        if (interp) {
-            desc = "r->connection pool";
-            MP_TRACE_i(MP_FUNC,
-                       "found interp 0x%lx in %s 0x%lx\n",
-                       (unsigned long)interp, desc,
-                       (unsigned long)r->connection->pool);
-            return interp;
-        }
-    }
-
-    interp = modperl_interp_get(s ? s : r->server);
-    ++interp->num_requests; /* should only get here once per request */
-
-    if (scope == MP_INTERP_SCOPE_HANDLER) {
-        /* caller is responsible for calling modperl_interp_unselect() */
-        interp->request = r;
-        MpReqCLEANUP_REGISTERED_On(rcfg);
-        MpInterpPUTBACK_On(interp);
-    }
-    else {
-        if (!p) {
-            /* should never happen */
-            MP_TRACE_i(MP_FUNC, "no pool");
-            return NULL;
-        }
-
-        set_interp(p);
-
-#if AP_MODULE_MAGIC_AT_LEAST(20111130, 0)
-        MP_TRACE_i(MP_FUNC,
-                   "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
-                   (unsigned long)interp, desc, (unsigned long)p,
-                   (r ? (is_subrequest ? "sub" : "main") : "conn"),
-                   (r ? r->uri : c->client_ip));
+#ifdef MP_TRACE
+	apr_pool_cleanup_register(p, (void *)interp,
+				  modperl_interp_pool_cleanup,
+				  modperl_interp_pool_cleanup);
 #else
-        MP_TRACE_i(MP_FUNC,
-                   "set interp 0x%lx in %s 0x%lx (%s request for %s)\n",
-                   (unsigned long)interp, desc, (unsigned long)p,
-                   (r ? (is_subrequest ? "sub" : "main") : "conn"),
-                   (r ? r->uri : c->remote_ip));
+	apr_pool_cleanup_register(p, (void *)interp,
+				  modperl_interp_unselect,
+				  modperl_interp_unselect);
 #endif
+
+	/* add a reference for the registered cleanup */
+	interp->refcnt++;
+
+	MP_TRACE_i(MP_FUNC,
+		   "registered unselect cleanup for interp 0x%lx in %s\n",
+		   (unsigned long)interp, desc);
     }
-
-    /* set context (THX) for this thread */
-    PERL_SET_CONTEXT(interp->perl);
-
-    modperl_thx_interp_set(interp->perl, interp);
 
     return interp;
 }
@@ -623,3 +625,9 @@ apr_status_t modperl_interp_cleanup(void *data)
 }
 
 #endif /* USE_ITHREADS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * End:
+ */

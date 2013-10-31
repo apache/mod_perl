@@ -184,17 +184,20 @@ int modperl_callback_run_handlers(int idx, int type,
     }
 
 #ifdef USE_ITHREADS
-    if (r && !c && modperl_interp_scope_connection(scfg)) {
-        c = r->connection;
-    }
     if (r || c) {
         interp = modperl_interp_select(r, c, s);
+        MP_TRACE_i(MP_FUNC, "just selected: (0x%lx)->refcnt=%ld\n",
+                   interp, interp->refcnt);
         aTHX = interp->perl;
+        /* if you ask why PERL_SET_CONTEXT is omitted here the answer is
+         * it is done in modperl_interp_select
+         */
     }
     else {
         /* Child{Init,Exit}, OpenLogs */
         aTHX = scfg->mip->parent->perl;
         PERL_SET_CONTEXT(aTHX);
+        MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
     }
 #endif
 
@@ -355,8 +358,13 @@ int modperl_callback_run_handlers(int idx, int type,
 
     SvREFCNT_dec((SV*)av_args);
 
-    /* PerlInterpScope handler */
-    MP_INTERP_PUTBACK(interp);
+#ifdef USE_ITHREADS
+    if (r || c) {
+        MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+                   interp, interp->refcnt);
+        modperl_interp_unselect(interp);
+    }
+#endif
 
     return status;
 }

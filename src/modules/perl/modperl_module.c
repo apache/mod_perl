@@ -193,8 +193,9 @@ static void *modperl_module_config_merge(apr_pool_t *p,
 
     if (!base_obj || (base_obj == add_obj)) {
 #ifdef USE_ITHREADS
-        /* XXX: breaks prefork
-           modperl_interp_unselect(interp); */
+	MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+		   interp, interp->refcnt);
+	modperl_interp_unselect(interp);
         MP_PERL_CONTEXT_RESTORE;
 #endif
         return addv;
@@ -246,8 +247,9 @@ static void *modperl_module_config_merge(apr_pool_t *p,
     }
 
 #ifdef USE_ITHREADS
-    /* XXX: breaks prefork
-       modperl_interp_unselect(interp); */
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+	       interp, interp->refcnt);
+    modperl_interp_unselect(interp);
     MP_PERL_CONTEXT_RESTORE;
 #endif
 
@@ -416,6 +418,11 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                                               parms, &obj);
 
     if (errmsg) {
+#ifdef USE_ITHREADS
+	MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+		   interp, interp->refcnt);
+	modperl_interp_unselect(interp);
+#endif
         return errmsg;
     }
 
@@ -436,6 +443,11 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
                                                minfo->srv_create,
                                                parms, &srv_obj);
         if (errmsg) {
+#ifdef USE_ITHREADS
+	    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+		       interp, interp->refcnt);
+	    modperl_interp_unselect(interp);
+#endif
             return errmsg;
         }
 
@@ -476,6 +488,12 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     if (SvTRUE(ERRSV)) {
         retval = SvPVX(ERRSV);
     }
+
+#ifdef USE_ITHREADS
+    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld\n",
+	       interp, interp->refcnt);
+    modperl_interp_unselect(interp);
+#endif
 
     if (modules_alias) {
         MP_dSCFG(s);
@@ -855,7 +873,9 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
      */
     if (!modperl_interp_pool_get(p)) {
         /* for vhosts */
-        modperl_interp_pool_set(p, scfg->mip->parent, FALSE);
+        MP_TRACE_i(MP_FUNC, "set interp 0x%lx in pconf pool 0x%lx\n",
+		   (unsigned long)scfg->mip->parent, (unsigned long)p);
+        modperl_interp_pool_set(p, scfg->mip->parent);
     }
 #endif
 
@@ -903,3 +923,9 @@ SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s,
 
     return obj;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * End:
+ */
