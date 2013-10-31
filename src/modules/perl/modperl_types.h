@@ -40,6 +40,8 @@ typedef struct {
     server_rec  *s;
 } modperl_rcs_t;
 
+typedef struct modperl_config_con_t modperl_config_con_t;
+
 #ifdef USE_ITHREADS
 
 typedef struct modperl_list_t modperl_list_t;
@@ -52,7 +54,7 @@ struct modperl_list_t {
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 typedef struct modperl_tipool_t modperl_tipool_t;
-typedef struct modperl_config_con_t modperl_config_con_t;
+typedef struct modperl_tipool_config_t modperl_tipool_config_t;
 
 struct modperl_interp_t {
     modperl_interp_pool_t *mip;
@@ -80,13 +82,13 @@ typedef struct {
                         modperl_list_t *listp);
 } modperl_tipool_vtbl_t;
 
-typedef struct {
+struct modperl_tipool_config_t {
     int start; /* number of items to create at startup */
     int min_spare; /* minimum number of spare items */
     int max_spare; /* maximum number of spare items */
     int max; /* maximum number of items */
     int max_requests; /* maximum number of requests per item */
-} modperl_tipool_config_t;
+};
 
 struct modperl_tipool_t {
     perl_mutex tiplock;

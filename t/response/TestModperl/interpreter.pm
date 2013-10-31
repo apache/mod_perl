@@ -7,10 +7,6 @@ use warnings FATAL => 'all';
 use Apache::Test;
 use Apache::TestUtil;
 
-use ModPerl::Interpreter ();
-use ModPerl::InterpPool ();
-use ModPerl::TiPool ();
-use ModPerl::TiPoolConfig ();
 use Apache2::MPM ();
 
 use Apache2::Const -compile => 'OK';
@@ -20,7 +16,14 @@ sub handler {
 
     my $is_threaded=Apache2::MPM->is_threaded;
 
-    plan $r, tests => $is_threaded?17:5;
+    plan $r, tests => $is_threaded?17:5, need
+        need_threads,
+        {"perl >= 5.8.1 is required (this is $])" => ($] >= 5.008001)};
+
+    require ModPerl::Interpreter;
+    require ModPerl::InterpPool;
+    require ModPerl::TiPool;
+    require ModPerl::TiPoolConfig;
 
     my $interp = ModPerl::Interpreter->current;
 
