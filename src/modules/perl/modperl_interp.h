@@ -51,51 +51,46 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s);
 
-#define MP_pINTERP pTHX; modperl_interp_t *interp = NULL
+#define MP_dINTERP pTHX; modperl_interp_t *interp = NULL
 
-#define MP_dINTERP(r, c, s)                                             \
-    interp = modperl_interp_select(r, c, s);                            \
+#define MP_INTERPa(r, c, s)                                             \
+    MP_TRACE_i(MP_FUNC, "selecting interp: r=%pp, c=%pp, s=%pp",        \
+               (r), (c), (s));                                          \
+    interp = modperl_interp_select((r), (c), (s));                      \
+    MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d, perl=%pp",       \
+               interp, interp->refcnt, interp->perl);                   \
     aTHX = interp->perl
 
-#ifdef MP_DEBUG
-#define MP_dINTERP_POOL(p, s)                                           \
+#define MP_dINTERPa(r, c, s)                                            \
+    MP_dINTERP;                                                         \
+    MP_INTERPa((r), (c), (s))
+
+#define MP_INTERP_POOLa(p, s)                                           \
     MP_TRACE_i(MP_FUNC, "selecting interp: p=%pp, s=%pp", (p), (s));    \
-    interp = modperl_interp_pool_select(p, s);                          \
+    interp = modperl_interp_pool_select((p), (s));                      \
     MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d",                 \
                interp, interp->refcnt);                                 \
     aTHX = interp->perl
-#else  /* MP_DEBUG */
-#define MP_dINTERP_POOL(p, s)                                           \
-    interp = modperl_interp_pool_select(p, s);                          \
-    aTHX = interp->perl
-#endif
+
+#define MP_dINTERP_POOLa(p, s)                                          \
+    MP_dINTERP;                                                         \
+    MP_INTERP_POOLa((p), (s))
 
 #ifdef MP_DEBUG
-#define MP_INTERP_PUTBACK(interp)                                       \
+#define MP_INTERP_PUTBACK(interp, thx)                                  \
     MP_TRACE_i(MP_FUNC, "unselecting interp: (0x%pp)->refcnt=%ld",      \
                (interp), (interp)->refcnt);                             \
     modperl_interp_unselect(interp);                                    \
     interp = NULL;                                                      \
-    aTHX = NULL;                                                        \
-    PERL_SET_CONTEXT(NULL)
+    if( thx ) thx = NULL
 #else  /* MP_DEBUG */
-#define MP_INTERP_PUTBACK(interp)                                       \
+#define MP_INTERP_PUTBACK(interp, thx)                                  \
     modperl_interp_unselect(interp)
 #endif
 
-# if 1
-/* ideally we should be able to reset interp and aTHX to NULL after
- * unselecting the interpreter. Unfortunately that does not work, yet */
-#undef MP_INTERP_PUTBACK
-#define MP_INTERP_PUTBACK(interp)                                       \
-    MP_TRACE_i(MP_FUNC, "unselecting interp: (0x%pp)->refcnt=%ld",      \
-               (interp), (interp)->refcnt);                             \
-    modperl_interp_unselect(interp)
-# endif  /* 0 */
-
 #define MP_INTERP_REFCNT_inc(interp) (interp)->refcnt++
 
-#define MP_INTERP_REFCNT_dec(interp) MP_INTERP_PUTBACK(interp)
+#define MP_INTERP_REFCNT_dec(interp) MP_INTERP_PUTBACK(interp, NULL)
 
 #define MP_aTHX aTHX
 
@@ -117,13 +112,17 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
                                      void *data);
 #else
 
-#define MP_pINTERP dNOOP
+#define MP_dINTERP dNOOP
 
-#define MP_dINTERP(r, c, s) NOOP
+#define MP_INTERPa(r, c, s) NOOP
 
-#define MP_dINTERP_POOL(p, s) NOOP
+#define MP_dINTERPa(r, c, s) NOOP
 
-#define MP_INTERP_PUTBACK(interp) NOOP
+#define MP_INTERP_POOLa(p, s) NOOP
+
+#define MP_dINTERP_POOLa(p, s) NOOP
+
+#define MP_INTERP_PUTBACK(interp, thx) NOOP
 
 #define MP_INTERP_REFCNT_inc(interp) NOOP
 

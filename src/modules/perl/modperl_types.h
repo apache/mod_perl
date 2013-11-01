@@ -243,7 +243,9 @@ typedef struct {
     int sent_eos;
     SV *data;
     modperl_handler_t *handler;
-    PerlInterpreter *perl;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
 } modperl_filter_ctx_t;
 
 typedef struct {

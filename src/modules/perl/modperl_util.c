@@ -836,6 +836,9 @@ typedef struct {
 } modperl_cleanup_pnotes_data_t;
 #endif
  
+/* XXX: This function was highly conflicted in threading vs. httpd24,
+ * so this manually merged version may not be correct.
+ */
 static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
     HV **pnotes = data;
@@ -844,6 +847,7 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
 #ifdef USE_ITHREADS
         modperl_cleanup_pnotes_data_t *cleanup_data = data;
         dTHXa(cleanup_data->perl);
+        MP_ASSERT_CONTEXT(aTHX);
         pnotes = cleanup_data->pnotes;
 #else
         pnotes = data;
@@ -852,6 +856,9 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
         *pnotes = (HV *)NULL;
     }
 
+#ifdef USE_ITHREADS
+    MP_INTERP_PUTBACK(cleanup_data, aTHX);
+#endif
     return APR_SUCCESS;
 }
 
