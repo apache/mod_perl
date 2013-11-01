@@ -285,7 +285,7 @@ apr_status_t modperl_interp_unselect(void *data)
 
     if (interp == mip->parent) return APR_SUCCESS;
 
-    ap_assert(interp && MpInterpIN_USE(interp));
+    MP_ASSERT(interp && MpInterpIN_USE(interp));
     MP_TRACE_i(MP_FUNC, "unselect(interp=0x%lx): refcnt=%d",
                (unsigned long)interp, interp->refcnt);
     if (interp->refcnt != 0) {
@@ -345,10 +345,10 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
                                              server_rec *s)
 {
     int is_startup = (p == s->process->pconf);
-    MP_dSCFG(s);
     modperl_interp_t *interp = NULL;
 
     if (is_startup) {
+        MP_dSCFG(s);
         if (scfg) {
             MP_TRACE_i(MP_FUNC, "using parent interpreter at startup");
 
@@ -389,31 +389,20 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
 
         return interp;
     }
-    else if (!modperl_threaded_mpm()) {
-        MP_TRACE_i(MP_FUNC, "using parent interpreter in non-threaded mode");
-
-        /* since we are not running in threaded mode PERL_SET_CONTEXT
-         * is not necessary */
-        /* PERL_SET_CONTEXT(scfg->mip->parent->perl); */
-        /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(scfg->mip->parent->perl, scfg->mip->parent);
-
-        return scfg->mip->parent;
-    }
     else {
         request_rec *r;
         apr_pool_userdata_get((void **)&r, "MODPERL_R", p);
-        ap_assert(r);
+        MP_ASSERT(r);
         MP_TRACE_i(MP_FUNC, "found userdata MODPERL_R in pool %#lx as %lx",
                    (unsigned long)r->pool, (unsigned long)r);
-        return modperl_interp_select(r, NULL, s);
+        return modperl_interp_select(r, NULL, NULL);
     }
 }
 
 modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                                         server_rec *s)
 {
-    MP_dSCFG(s);
+    MP_dSCFG((r ? s=r->server : s ? s : NULL));
     MP_dDCFG;
     modperl_config_con_t *ccfg;
     const char *desc = NULL;
@@ -450,7 +439,10 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         return ccfg->interp;
     }
 
-    interp = modperl_interp_get(s ? s : r->server);
+    MP_TRACE_i(MP_FUNC,
+               "fetching interp for (%s:%d)", s->server_hostname, s->port);
+    interp = modperl_interp_get(s);
+    MP_TRACE_i(MP_FUNC, "  --> got %pp", interp);
     ++interp->num_requests; /* should only get here once per request */
     interp->refcnt = 0;
 
@@ -505,7 +497,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
             }
 	}
 
-        ap_assert(p);
+        MP_ASSERT(p);
 
 #ifdef MP_TRACE
         apr_pool_cleanup_register(p, (void *)interp,
