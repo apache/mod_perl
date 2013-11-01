@@ -356,13 +356,12 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     modperl_module_info_t *minfo = MP_MODULE_INFO(info->modp);
     modperl_module_cfg_t *srv_cfg;
     int modules_alias = 0;
-
+    int count;
+    PTR_TBL_t *table;
+    SV *obj = (SV *)NULL;
     MP_dINTERP_POOLa(p, s);
 
-    int count;
-    PTR_TBL_t *table = modperl_module_config_table_get(aTHX_ TRUE);
-    SV *obj = (SV *)NULL;
-    dSP;
+    table = modperl_module_config_table_get(aTHX_ TRUE);
 
     if (s->is_virtual) {
         MP_dSCFG(s);
@@ -438,32 +437,35 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
         }
     }
 
-    ENTER;SAVETMPS;
-    PUSHMARK(SP);
-    EXTEND(SP, 2);
+    {
+        dSP;
+        ENTER;SAVETMPS;
+        PUSHMARK(SP);
+        EXTEND(SP, 2);
 
-    PUSHs(obj);
-    PUSHs(modperl_bless_cmd_parms(parms));
+        PUSHs(obj);
+        PUSHs(modperl_bless_cmd_parms(parms));
 
-    if (cmd->args_how != NO_ARGS) {
-        PUSH_STR_ARG(one);
-        PUSH_STR_ARG(two);
-        PUSH_STR_ARG(three);
-    }
-
-    PUTBACK;
-    count = call_method(info->func_name, G_EVAL|G_SCALAR);
-    SPAGAIN;
-
-    if (count == 1) {
-        SV *sv = POPs;
-        if (SvPOK(sv) && strEQ(SvPVX(sv), DECLINE_CMD)) {
-            retval = DECLINE_CMD;
+        if (cmd->args_how != NO_ARGS) {
+            PUSH_STR_ARG(one);
+            PUSH_STR_ARG(two);
+            PUSH_STR_ARG(three);
         }
-    }
 
-    PUTBACK;
-    FREETMPS;LEAVE;
+        PUTBACK;
+        count = call_method(info->func_name, G_EVAL|G_SCALAR);
+        SPAGAIN;
+
+        if (count == 1) {
+            SV *sv = POPs;
+            if (SvPOK(sv) && strEQ(SvPVX(sv), DECLINE_CMD)) {
+                retval = DECLINE_CMD;
+            }
+        }
+
+        PUTBACK;
+        FREETMPS;LEAVE;
+    }
 
     if (SvTRUE(ERRSV)) {
         retval = SvPVX(ERRSV);
@@ -777,11 +779,12 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
                                const char *name, SV *mod_cmds)
 {
     MP_dSCFG(s);
-    MP_dINTERPa(NULL, NULL, s);
     const char *errmsg;
-    module *modp = (module *)apr_pcalloc(p, sizeof(*modp));
-    modperl_module_info_t *minfo =
-        (modperl_module_info_t *)apr_pcalloc(p, sizeof(*minfo));
+    module *modp;
+    modperl_module_info_t *minfo;
+    MP_dINTERPa(NULL, NULL, s);
+    modp = (module *)apr_pcalloc(p, sizeof(*modp));
+    minfo = (modperl_module_info_t *)apr_pcalloc(p, sizeof(*minfo));
 
     /* STANDARD20_MODULE_STUFF */
     modp->version       = MODULE_MAGIC_NUMBER_MAJOR;

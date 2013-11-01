@@ -413,7 +413,6 @@ void modperl_env_request_tie(pTHX_ request_rec *r)
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     MP_TRACE_e(MP_FUNC, "[0x%lx] tie %%ENV, $r\t (%s%s)",
                modperl_interp_address(aTHX),
-               modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                modperl_server_desc(r->server, r->pool), r->uri);
     SvGMAGICAL_on((SV*)ENVHV);
 #endif
@@ -426,7 +425,6 @@ void modperl_env_request_untie(pTHX_ request_rec *r)
 #ifdef MP_PERL_HV_GMAGICAL_AWARE
     MP_TRACE_e(MP_FUNC, "[0x%lx] untie %%ENV; # from r\t (%s%s)",
                modperl_interp_address(aTHX),
-               modperl_pid_tid(r->pool), modperl_interp_address(aTHX),
                modperl_server_desc(r->server, r->pool), r->uri);
     SvGMAGICAL_off((SV*)ENVHV);
 #endif

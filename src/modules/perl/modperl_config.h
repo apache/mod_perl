@@ -62,9 +62,9 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 
 #if defined(MP_IN_XS) && defined(WIN32)
 #   define modperl_get_module_config(v)         \
-    modperl_get_perl_module_config(v)
+    modperl_get_perl_module_config((v))
 
-#   define modperl_set_module_config((v), c)      \
+#   define modperl_set_module_config(v, c)      \
     modperl_set_perl_module_config((v), (c))
 #else
 #   define modperl_get_module_config(v)         \
@@ -95,7 +95,7 @@ void modperl_set_perl_module_config(ap_conf_vector_t *cv, void *cfg);
 
 #define modperl_config_con_get(c)                               \
     (c ? (modperl_config_con_t *)                               \
-     modperl_get_module_config((C)->conn_config) : NULL)
+     modperl_get_module_config((c)->conn_config) : NULL)
 
 #define MP_dCCFG \
     modperl_config_con_t *ccfg = modperl_config_con_get(c)

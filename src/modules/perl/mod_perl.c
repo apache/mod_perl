@@ -394,7 +394,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
     PERL_SET_CONTEXT(perl);
-    MP_THX_INTERP_SET(perl, base_scfg->mip->parent);
+    modperl_thx_interp_set(perl, base_scfg->mip->parent);
 
 #endif /* USE_ITHREADS */
 
@@ -470,7 +470,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     /* after other parent perls were started in vhosts, make sure that
      * the context is set to the base_perl */
     PERL_SET_CONTEXT(base_perl);
-    MP_THX_INTERP_SET(base_perl, base_scfg->mip->parent);
+    modperl_thx_interp_set(base_perl, base_scfg->mip->parent);
 #endif
 
 }

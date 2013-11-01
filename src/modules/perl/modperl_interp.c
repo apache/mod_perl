@@ -383,7 +383,7 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(interp->perl);
         /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(interp->perl, interp);
+        modperl_thx_interp_set(interp->perl, interp);
 
         return interp;
     }
@@ -422,7 +422,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         /* XXX: if no VirtualHosts w/ PerlOptions +Parent we can skip this */
         PERL_SET_CONTEXT(interp->perl);
         /* let the perl interpreter point back to its interp */
-        MP_THX_INTERP_SET(interp->perl, interp);
+        modperl_thx_interp_set(interp->perl, interp);
 
         MP_TRACE_i(MP_FUNC,
                    "using parent 0x%pp (perl=0x%pp) for %s:%d refcnt set to %d",
@@ -442,7 +442,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
                    (unsigned long)ccfg->interp, ccfg->interp->refcnt);
         /* set context (THX) for this thread */
         PERL_SET_CONTEXT(ccfg->interp->perl);
-        /* MP_THX_INTERP_SET is not called here because the interp
+        /* modperl_thx_interp_set() is not called here because the interp
          * already belongs to the perl interpreter
          */
         return ccfg->interp;
@@ -458,7 +458,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
     /* let the perl interpreter point back to its interp */
-    MP_THX_INTERP_SET(interp->perl, interp);
+    modperl_thx_interp_set(interp->perl, interp);
 
     /* make sure ccfg is initialized */
     modperl_config_con_init(c, ccfg);
