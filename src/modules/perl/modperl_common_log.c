@@ -52,21 +52,27 @@ void modperl_trace(const char *func, const char *fmt, ...)
     /* for more information on formatting codes see
        http://apr.apache.org/docs/apr/1.4/group__apr__lib.html#gad2cd3594aeaafd45931d1034965f48c1
      */
+
+    /* PERL_GET_CONTEXT yields nonsense until the first interpreter is
+     * created. Hence the modperl_is_running() question. */
     if (modperl_threaded_mpm()) {
         if (modperl_threads_started()) {
             apr_file_printf(logfile, "[pid=%lu, tid=%pt, perl=%pp] ",
                             (unsigned long)getpid(),
-                            (void*)apr_os_thread_current(), PERL_GET_CONTEXT);
+                            (void*)apr_os_thread_current(),
+                            modperl_is_running() ? PERL_GET_CONTEXT : NULL);
         }
         else {
             apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
-                            (unsigned long)getpid(), PERL_GET_CONTEXT);
+                            (unsigned long)getpid(),
+                            modperl_is_running() ? PERL_GET_CONTEXT : NULL);
         }
     }
     else {
 #ifdef USE_ITHREADS
         apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
-                        (unsigned long)getpid(), PERL_GET_CONTEXT);
+                        (unsigned long)getpid(),
+                        modperl_is_running() ? PERL_GET_CONTEXT : NULL);
 #else
         apr_file_printf(logfile, "[pid=%lu] ", (unsigned long)getpid());
 #endif

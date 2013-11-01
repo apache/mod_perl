@@ -345,9 +345,15 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 #define set_desc(dtype)                                 \
     if (desc) *desc = modperl_handler_desc_##dtype(idx)
 
+/* We should be able to use PERL_GET_CONTEXT here. The rcfg condition
+ * makes sure there is a request being processed. The action > GET part
+ * means it is a $r->set_handlers or $r->push_handlers operation. This
+ * can only happen if called by perl code.
+ */
 #define check_modify(dtype)                                     \
     if ((action > MP_HANDLER_ACTION_GET) && rcfg) {             \
-        MP_dSCFG_dTHX;                                          \
+        dTHXa(PERL_GET_CONTEXT);                                \
+        MP_ASSERT(aTHX+0);                                      \
         Perl_croak(aTHX_ "too late to modify %s handlers",      \
                    modperl_handler_desc_##dtype(idx));          \
     }
