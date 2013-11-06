@@ -1001,11 +1001,17 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
     }
 
     {
+        /* PerlAddAuthzProvider currently does not support an optional second
+         * handler, so ab->cb2 should always be NULL above and we will never get
+         * here. If such support is added in the future then this code will be
+         * reached, but cannot succeed in the absence of an interpreter. The
+         * second handler would be called at init to check a Require line for
+         * errors, but in the current design there is no interpreter available
+         * at that time.
+         */
         MP_dINTERP_POOLa(cmd->pool, cmd->server);
         if (!interp) {
-            MP_TRACE_d(MP_FUNC, "require handler is not currently supported "
-                                "in this context");
-	    return NULL;
+	    return "Require handler is not currently supported in this context";
 	}
 
         {
