@@ -57,9 +57,15 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     MP_TRACE_i(MP_FUNC, "selecting interp: r=%pp, c=%pp, s=%pp",        \
                (r), (c), (s));                                          \
     interp = modperl_interp_select((r), (c), (s));                      \
-    MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d, perl=%pp",       \
-               interp, interp->refcnt, interp->perl);                   \
-    aTHX = interp->perl
+    if (interp) {                                                       \
+        MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d, perl=%pp",   \
+                   interp, interp->refcnt, interp->perl);               \
+        aTHX = interp->perl;                                            \
+    }                                                                   \
+    else {                                                              \
+        MP_TRACE_i(MP_FUNC, "  --> failed");                            \
+    }                                                                   \
+    NOOP
 
 #define MP_dINTERPa(r, c, s)                                            \
     MP_dINTERP;                                                         \
@@ -68,9 +74,15 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 #define MP_INTERP_POOLa(p, s)                                           \
     MP_TRACE_i(MP_FUNC, "selecting interp: p=%pp, s=%pp", (p), (s));    \
     interp = modperl_interp_pool_select((p), (s));                      \
-    MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d",                 \
-               interp, interp->refcnt);                                 \
-    aTHX = interp->perl
+    if (interp) {                                                       \
+        MP_TRACE_i(MP_FUNC, "  --> got (0x%pp)->refcnt=%d",             \
+                   interp, interp->refcnt);                             \
+        aTHX = interp->perl;                                            \
+    }                                                                   \
+    else {                                                              \
+        MP_TRACE_i(MP_FUNC, "  --> failed");                            \
+    }                                                                   \
+    NOOP
 
 #define MP_dINTERP_POOLa(p, s)                                          \
     MP_dINTERP;                                                         \
