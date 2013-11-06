@@ -984,52 +984,61 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
                                            const char *require_line,
                                            const void **parsed_require_line)
 {
-    SV *ret_sv;
     char *ret = NULL;
-    int count;
     void *key;
     auth_callback *ab;
-    MP_dINTERP_POOLa(cmd->server->process->pool, cmd->server);
 
-    if (global_authz_providers == NULL) {
-        MP_INTERP_PUTBACK(interp, aTHX);
-        return ret;
+    if (global_authz_providers == NULL ||
+        apr_hash_count(global_authz_providers) == 0)
+    {
+        return NULL;
     }
 
     apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
     ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb2 == NULL) {
-        MP_INTERP_PUTBACK(interp, aTHX);
-        return ret;
+        return NULL;
     }
 
     {
-        dSP;
-        ENTER;
-        SAVETMPS;
-        PUSHMARK(SP);
-        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
-        XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
-        PUTBACK;
-        count = call_sv(ab->cb2, G_SCALAR);
-        SPAGAIN;
+        MP_dINTERP_POOLa(cmd->pool, cmd->server);
+        if (!interp) {
+            MP_TRACE_d(MP_FUNC, "require handler is not currently supported "
+                                "in this context");
+	    return NULL;
+	}
 
-        if (count == 1) {
-            ret_sv = POPs;
-            if (SvOK(ret_sv)) {
-                char *tmp = SvPV_nolen(ret_sv);
-                if (*tmp != '\0') {
-                    ret = apr_pstrdup(cmd->pool, tmp);
+        {
+            SV *ret_sv;
+            int count;
+            dSP;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
+            XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
+            PUTBACK;
+            count = call_sv(ab->cb2, G_SCALAR);
+            SPAGAIN;
+
+            if (count == 1) {
+                ret_sv = POPs;
+                if (SvOK(ret_sv)) {
+                    char *tmp = SvPV_nolen(ret_sv);
+                    if (*tmp != '\0') {
+                        ret = apr_pstrdup(cmd->pool, tmp);
+                    }
                 }
             }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
         }
 
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
+        MP_INTERP_PUTBACK(interp, aTHX);
     }
-
-    MP_INTERP_PUTBACK(interp, aTHX);
     return ret;
 }
 
