@@ -1116,52 +1116,63 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
                                         const char *realm, char **rethash)
 {
     authn_status ret = AUTH_USER_NOT_FOUND;
-    int count;
-    SV *rh;
     const char *key;
     auth_callback *ab;
-    MP_dINTERPa(r, NULL, NULL);
 
-    if (global_authn_providers == NULL) {
-        MP_INTERP_PUTBACK(interp, aTHX);
-        return ret;
+    if (global_authn_providers == NULL ||
+        apr_hash_count(global_authn_providers) == 0)
+    {
+        return AUTH_GENERAL_ERROR;
     }
 
     key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
     ab = apr_hash_get(global_authn_providers, key, APR_HASH_KEY_STRING);
-    if (ab == NULL || ab->cb2) {
-        MP_INTERP_PUTBACK(interp, aTHX);
-        return ret;
+    if (ab == NULL || ab->cb2 == NULL) {
+        return AUTH_GENERAL_ERROR;
     }
 
-    rh = sv_2mortal(newSVpv("", 0));
     {
-        dSP;
-        ENTER;
-        SAVETMPS;
-        PUSHMARK(SP);
-        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
-        XPUSHs(sv_2mortal(newSVpv(user, 0)));
-        XPUSHs(sv_2mortal(newSVpv(realm, 0)));
-        XPUSHs(newRV_noinc(rh));
-        PUTBACK;
-        count = call_sv(ab->cb2, G_SCALAR);
-        SPAGAIN;
+        /* PerlAddAuthnProvider currently does not support an optional second
+         * handler, so ab->cb2 should always be NULL above and we will never get
+         * here. If such support is added in the future then this code will be
+         * reached. Unlike the PerlAddAuthzProvider case, the second handler here
+         * would be called during request_rec processing to obtain a password hash
+         * for the realm so there should be no problem grabbing an interpreter.
+         */
+        MP_dINTERPa(r, NULL, NULL);
 
-        if (count == 1) {
-            const char *tmp = SvPV_nolen(rh);
-            ret = (authn_status) POPi;
-            if (*tmp != '\0') {
-                *rethash = apr_pstrdup(r->pool, tmp);
+        {
+            SV* rh = sv_2mortal(newSVpv("", 0));
+            int count;
+            dSP;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+            XPUSHs(sv_2mortal(newSVpv(user, 0)));
+            XPUSHs(sv_2mortal(newSVpv(realm, 0)));
+            XPUSHs(newRV_noinc(rh));
+            PUTBACK;
+            count = call_sv(ab->cb2, G_SCALAR);
+            SPAGAIN;
+
+            if (count == 1) {
+                const char *tmp = SvPV_nolen(rh);
+                ret = (authn_status) POPi;
+                if (*tmp != '\0') {
+                    *rethash = apr_pstrdup(r->pool, tmp);
+                }
             }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
         }
 
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
+        MP_INTERP_PUTBACK(interp, aTHX);
     }
 
-    MP_INTERP_PUTBACK(interp, aTHX);
     return ret;
 }
 
