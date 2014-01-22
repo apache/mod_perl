@@ -16,7 +16,7 @@ open(my $spec, ">mod_perl.spec") || die "Can't open mod_perl.spec $!";
 print $spec <<"EOF";
 %define         _version $mod_perl2::VERSION_TRIPLET
 %define         _release $release
-%define         _source http://perl.apache.org/dist/$tarname
+%define         _source http://apache.org/dist/perl/$tarname
 %define         _dirname $path
 %define         _httpd_min_ver $httpd_ver
 %define         _perl_min_ver 5.6.1

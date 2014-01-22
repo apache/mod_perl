@@ -49,7 +49,7 @@ but a development port is available. You can either
 - install apxs by answering "yes" at the prompt below,
 - quit now, run the "fetch_win32_apxs.pl" script in the build/ directory 
   to fetch and install the utilities, and then rebuild mod_perl,
-- quit now, and from http://perl.apache.org/dist/win32-bin/ grab 
+- quit now, and from http://apache.org/dist/perl/win32-bin/ grab 
   apxs_win32.tar.gz; when unpacked, this contains a README explaining 
   how to install the utilities. Afterwards, rebuild mod_perl.
 ----------------------------------------------------------------------
@@ -72,7 +72,7 @@ LWP::Simple->import(qw(is_success getstore));
 
 my $file = 'apxs_win32.tar.gz';
 unless (-e $file) {
-    my $remote = 'http://perl.apache.org/dist/win32-bin/' . $file;
+    my $remote = 'http://apache.org/dist/perl/win32-bin/' . $file;
     print "Fetching $remote ... ";
     die "Download of $remote failed" 
         unless (is_success(getstore($remote, $file)));
