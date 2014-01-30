@@ -277,7 +277,7 @@ apr_status_t modperl_interp_unselect(void *data)
     MP_TRACE_i(MP_FUNC, "unselect(interp=%pp): refcnt=%d",
                interp, interp->refcnt);
 
-    if (interp->refcnt != 0) {
+    if (interp->refcnt > 1) {
         --interp->refcnt;
         MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use",
                    (unsigned long)interp, interp->refcnt);
