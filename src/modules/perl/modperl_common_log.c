@@ -57,9 +57,9 @@ void modperl_trace(const char *func, const char *fmt, ...)
      * created. Hence the modperl_is_running() question. */
     if (modperl_threaded_mpm()) {
         if (modperl_threads_started()) {
+            apr_os_thread_t tid = apr_os_thread_current();
             apr_file_printf(logfile, "[pid=%lu, tid=%pt, perl=%pp] ",
-                            (unsigned long)getpid(),
-                            (void*)apr_os_thread_current(),
+                            (unsigned long)getpid(), &tid,
                             modperl_is_running() ? PERL_GET_CONTEXT : NULL);
         }
         else {
