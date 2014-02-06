@@ -149,18 +149,21 @@ sub read_data {
     #
     # PerlIO-based pipe fh on the other hand does the select
     # internally via apr_wait_for_io_or_timeout() in
-    # apr_file_read(). But you cannot call select() on the
+    # apr_file_read() (on *nix, but not on Win32).
+    # But you cannot call select() on the
     # PerlIO-based, because its fileno() returns (-1), remember that
     # apr_file_t is an opaque object, and on certain platforms
     # fileno() is different from unix
     #
     # so we use the following wrapper: if we are under perlio we just
-    # go ahead and read the data, if we are under non-perlio we first
+    # go ahead and read the data, but with a short sleep first on Win32;
+    # if we are under non-perlio we first
     # select for a few secs. (XXX: is 10 secs enough?)
     #
     # btw: we use perlIO only for perl 5.7+
     #
     if (APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED() || $sel->can_read(10)) {
+        sleep(1) if $^O eq 'MSWin32' && APR::PerlIO::PERLIO_LAYERS_ARE_ENABLED();
         @data = wantarray ? (<$fh>) : <$fh>;
     }
 
