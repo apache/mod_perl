@@ -22,7 +22,7 @@ our $VERSION = '0.009000';
 
 # The PerlIO layer is available only since 5.8.0 (5.7.2@13534)
 use Config;
-use constant PERLIO_LAYERS_ARE_ENABLED => $Config{useperlio} && $] >= 5.00703;
+use constant PERLIO_LAYERS_ARE_ENABLED => $Config{useperlio} && $] >= 5.007003;
 
 use APR ();
 use APR::XSLoader ();
