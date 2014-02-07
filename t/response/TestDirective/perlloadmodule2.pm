@@ -83,7 +83,7 @@ sub handler : method {
 
     my $s = $r->server;
 
-    if ($r->args eq 'srv') {
+    if (defined $r->args and $r->args eq 'srv') {
         my $srv_cfg = $self->get_config($s);
         $r->print("srv: @{ $srv_cfg->{MyMergeTest}||[] }");
     }
