@@ -17,5 +17,5 @@ ok $socket;
 for (@test_strings) {
     print $socket "$_\n";
     chomp(my $reply = <$socket>||'');
-    ok t_cmp($_, $reply);
+    ok t_cmp($reply, $_);
 }
