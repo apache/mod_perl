@@ -509,19 +509,44 @@ sub perl_version_check {
     $perl_version =~ s/5.00(\d)(?:00(\d))?/"5.$1." . ($2||0)/e;
     my $perl_threads = Apache2::Build::PERL_HAS_ITHREADS ? "w/" : "w/o";
     my $perl_string = "Using Perl $perl_version $perl_threads ithreads";
-    my $mpm = $build->mpm_name();
+    my $httpd_version = $build->httpd_version;
+    my $mpm = "";
+    my $build_threaded = 0;
+
+    # For httpd-2.4, we can't use mpm_is_threaded(), because MPMs are loadable
+    # modules. We therefore treat httpd as a whole project as threaded. It is
+    # still possible to disable threading by using MP_NO_THREADS=1
+    if ($httpd_version lt MIN_HTTPD_24_VERSION) {
+        $build_threaded = $build->mpm_is_threaded();
+        $mpm = $build->mpm_name();
+    }
+    else {
+        if ($build->{MP_NO_THREADS}) {
+            $build_threaded = 0;
+        }
+        else {
+            $build_threaded = 1;
+        }
+    }
 
     # certain mpms require perl 5.8.0+ w/ithreads
-    if ($build->mpm_is_threaded()) {
+    if ($build_threaded) {
         my @fail;
         push @fail, "Perl 5.8 or higher"
             unless $] >= 5.008;
         push @fail, "Perl built with ithreads (build perl with -Duseithreads)"
             unless Apache2::Build::PERL_HAS_ITHREADS();
         if (@fail) {
-            error "$perl_string and '$mpm' mpm httpd.",
-                "Failed requirements:",
-                join "", map {"  - $_\n"} @fail;
+            if ($httpd_version lt MIN_HTTPD_24_VERSION) {
+                error "$perl_string and '$mpm' mpm httpd.",
+                    "Failed requirements:",
+                    join "", map {"  - $_\n"} @fail;
+            }
+            else {
+                error "$perl_string and httpd-2.4.",
+                    "Failed requirements:",
+                    join "", map {"  - $_\n"} @fail;
+            }
             exit 1;
         }
     }
@@ -531,8 +556,14 @@ sub perl_version_check {
         if ($build->should_build_apache && !Apache2::Build::PERL_HAS_ITHREADS) {
             # before 5.8.2, perl_shutdown is incomplete
             if ($] < 5.008_002) {
-                error "static $mpm mpm requires a threaded ".
-                      "perl 5.6.1-5.8.1 or any perl 5.8.2+";
+                if ($httpd_version lt MIN_HTTPD_24_VERSION) {
+                    error "static $mpm mpm requires a threaded ".
+                        "perl 5.6.1-5.8.1 or any perl 5.8.2+";
+                }
+                else {
+                    error "httpd-2.4 requires a threaded ".
+                        "perl 5.6.1-5.8.1 or any perl 5.8.2+";
+                }
                 exit 1;
             }
         }
@@ -553,7 +584,7 @@ sub perl_version_check {
     if ($Config{usemultiplicity} xor $Config{useithreads}) {
         error "mod_perl does not currently support multiplicity without ".
 	      "ithreads.";
-        if ($build->mpm_is_threaded()) {
+        if ($build_threaded) {
 	    error "Please recompile Perl with -Duseithreads and ".
 	          "-Dusemultiplicity";
         } else {
