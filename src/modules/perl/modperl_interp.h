@@ -104,6 +104,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
 #define MP_INTERP_REFCNT_dec(interp) MP_INTERP_PUTBACK(interp, NULL)
 
+#define MP_HAS_INTERP(interp) (interp != NULL)
+
 #define MP_aTHX aTHX
 
 apr_status_t modperl_interp_pool_destroy(void *data);
@@ -139,6 +141,8 @@ void modperl_interp_mip_walk_servers(PerlInterpreter *current_perl,
 #define MP_INTERP_REFCNT_inc(interp) NOOP
 
 #define MP_INTERP_REFCNT_dec(interp) NOOP
+
+#define MP_HAS_INTERP(interp) (1)
 
 #define MP_aTHX 0
 

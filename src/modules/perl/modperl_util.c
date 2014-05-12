@@ -1010,7 +1010,7 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
          * at that time.
          */
         MP_dINTERP_POOLa(cmd->pool, cmd->server);
-        if (!interp) {
+        if (!MP_HAS_INTERP(interp)) {
 	    return "Require handler is not currently supported in this context";
 	}
 
