@@ -69,15 +69,17 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
      */
     if (*name == '-') {
         MP_TRACE_h(MP_FUNC,
-                   "warning: filter handler %s will be not autoloaded. "
+                   "[%s] warning: filter handler %s will be not autoloaded. "
                    "Unless the module defining this handler is explicitly "
-                   "preloaded, filter attributes will be ignored.\n");
+                   "preloaded, filter attributes will be ignored.\n",
+                   modperl_pid_tid(p), h->name);
     }
     else {
         MpHandlerAUTOLOAD_On(h);
         MP_TRACE_h(MP_FUNC,
-                   "filter handler %s will be autoloaded (to make "
-                   "the filter attributes available)\n", h->name);
+                   "[%s] filter handler %s will be autoloaded (to make "
+                   "the filter attributes available)\n",
+                   modperl_pid_tid(p), h->name);
     }
 
     if (!*handlers) {

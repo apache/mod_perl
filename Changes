@@ -12,12 +12,6 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-dev
 
-Expose modperl_interp_pool_t via ModPerl::InterpPool, modperl_tipool_t
-via ModPerl::TiPool and modperl_tipool_config_t via ModPerl::TiPoolConfig
-[Torsten Foertsch]
-
-Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
-
 Fix t/compat/apache_file.t on Windows. Apache::File->tmpfile() wants TMPDIR
 or TEMP from the environment, or else defaults to /tmp. The latter is no
 good on Windows, so make sure the environment variables are passed through.

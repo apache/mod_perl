@@ -470,8 +470,9 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
     I32 i, oldscope = PL_scopestack_ix;
     SV **ary = AvARRAY(subs);
 
-    MP_TRACE_g(MP_FUNC, MP_TRACEf_PERLID
-               " running %d %s subs", MP_TRACEv_PERLID_
+    MP_TRACE_g(MP_FUNC, "pid %lu" MP_TRACEf_TID MP_TRACEf_PERLID
+               " running %d %s subs",
+               (unsigned long)getpid(), MP_TRACEv_TID_ MP_TRACEv_PERLID_
                AvFILLp(subs)+1, name);
 
     for (i=0; i<=AvFILLp(subs); i++) {
