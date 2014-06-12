@@ -12,3 +12,29 @@
 <  refcnt
 -  tid
 </modperl_interp_t>
+
+<modperl_interp_pool_t>
+<  server
+<  tipool
+<  parent
+</modperl_interp_pool_t>
+
+<modperl_tipool_t>
+-  tiplock
+-  available
+-  idle
+-  busy
+<  in_use
+<  size
+-  data
+<  cfg
+-  func
+</modperl_tipool_t>
+
+<modperl_tipool_config_t>
+<  start
+<  min_spare
+<  max_spare
+<  max
+<  max_requests
+</modperl_tipool_config_t>
