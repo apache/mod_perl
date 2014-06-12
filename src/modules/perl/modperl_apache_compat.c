@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#define AP_DECLARE_EXPORT
 #include "mod_perl.h"
 
 /* back compat adjustements for older Apache versions

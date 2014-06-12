@@ -21,6 +21,7 @@ use Apache2::Const -compile => qw(
 
 use constant KEY        => "TestAddConfig";
 use constant APACHE22   => have_min_apache_version('2.2.0');
+use constant APACHE24   => have_min_apache_version('2.4.0');
 
 my @directives = (
     {
@@ -53,10 +54,13 @@ sub map2storage {
     };
     $r->pnotes(add_config2 => "$@");
 
-    eval {
-        $r->add_config(['AllowOverride Options=FollowSymLinks'], -1);
-    };
-    $r->pnotes(followsymlinks => "$@");
+    # We can set AllowOverride only from .htacces in 2.4.0+
+    if (!APACHE24) {
+        eval {
+            $r->add_config(['AllowOverride Options=FollowSymLinks'], -1);
+        };
+        $r->pnotes(followsymlinks => "$@");
+    }
 
     eval {
         my $path="/a/path/to/somewhere";
@@ -96,7 +100,12 @@ sub handler : method {
     ok t_cmp $r->pnotes('add_config2'), (APACHE22 ? qr/.+\n/ : '');
     ok t_cmp $r->pnotes('add_config3'), '';
     ok t_cmp $r->pnotes('add_config4'), qr/after server startup/;
-    ok t_cmp $r->pnotes('followsymlinks'), (APACHE22 ? '': qr/.*\n/);
+    if (!APACHE24) {
+        ok t_cmp $r->pnotes('followsymlinks'), (APACHE22 ? '': qr/.*\n/);
+    }
+    else {
+        ok 1;
+    }
 
     my $expect =  Apache2::Const::OPT_ALL |
                   Apache2::Const::OPT_UNSET |
@@ -109,7 +118,12 @@ sub handler : method {
     ok t_cmp $r->allow_options, Apache2::Const::OPT_EXECCGI;
 
     my $opts = APACHE22 ? Apache2::Const::OPT_SYM_LINKS : $expect;
-    ok t_cmp $r->allow_override_opts, $opts;
+    if (!APACHE24) {
+        ok t_cmp $r->allow_override_opts, $opts;
+    }
+    else {
+        ok 1;
+    }
 
     ok t_cmp $r->location, '/a/path/to/somewhere';
 

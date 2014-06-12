@@ -351,6 +351,13 @@ modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
              * before server merge.
              */
             modperl_init_vhost(s, p, NULL);
+            if (!scfg->mip) {
+                /* FIXME: We get here if global "server_rec" == s, scfg->mip
+                 * is not created then. I'm not sure if that's bug or 
+                 * bad/good design decicision. For now just return NULL.
+                 */
+                return NULL;
+            }
         }
 
         interp = scfg->mip->parent;

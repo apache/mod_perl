@@ -66,9 +66,9 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 #define MP_HTTPD_OVERRIDE_HTACCESS (OR_LIMIT|OR_OPTIONS|OR_FILEINFO|OR_AUTHCFG|OR_INDEXES)
 
 #define MP_HTTPD_OVERRIDE_OPTS_UNSET (-1)
-
 #if AP_SERVER_MAJORVERSION_NUMBER>2 || \
     (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+
 /* 2.4 API */
 #define MP_HTTPD_OVERRIDE_OPTS_DEFAULT (OPT_UNSET | \
                                         OPT_ALL | \
@@ -95,7 +95,7 @@ AP_DECLARE(const char *) ap_get_server_version(void);
 
 #define ap_unixd_config unixd_config
 
-#endif
+#endif /* 2.4 vs. 2.2 API */
 
 #ifndef PROXYREQ_RESPONSE
 #define PROXYREQ_RESPONSE (3)

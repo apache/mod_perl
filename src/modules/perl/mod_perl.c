@@ -653,6 +653,10 @@ int modperl_is_running(void)
 int modperl_hook_pre_config(apr_pool_t *p, apr_pool_t *plog,
                             apr_pool_t *ptemp)
 {
+#if AP_MODULE_MAGIC_AT_LEAST(20110329,0)
+    ap_reserve_module_slots_directive("PerlLoadModule");
+#endif
+
     /* we can't have PerlPreConfigHandler without first configuring mod_perl */
 
     /* perl 5.8.1+ */
@@ -907,6 +911,11 @@ static const command_rec modperl_cmds[] = {
     MP_CMD_DIR_ITERATE("PerlRequire", requires, "PerlRequire"),
     MP_CMD_SRV_ITERATE("PerlConfigRequire", config_requires, "PerlConfigRequire"),
     MP_CMD_SRV_ITERATE("PerlPostConfigRequire", post_config_requires, "PerlPostConfigRequire"),
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+    MP_CMD_SRV_TAKE2("PerlAddAuthzProvider", authz_provider, "PerlAddAuthzProvider"),
+    MP_CMD_SRV_TAKE2("PerlAddAuthnProvider", authn_provider, "PerlAddAuthnProvider"),
+#endif
     MP_CMD_DIR_ITERATE("PerlOptions", options, "Perl Options"),
     MP_CMD_DIR_ITERATE("PerlInitHandler", init_handlers, "Subroutine name"),
     MP_CMD_DIR_TAKE2("PerlSetVar", set_var, "PerlSetVar"),

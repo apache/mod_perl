@@ -6,13 +6,16 @@ use warnings FATAL => 'all';
 use Apache2::Connection ();
 
 use Apache::TestTrace;
+use Apache::Test;
+use Apache::TestUtil;
 
 use Apache2::Const -compile => qw(OK);
+use constant APACHE24   => have_min_apache_version('2.4.0');
 
 sub handler {
     my Apache2::Connection $c = shift;
 
-    my $ip = $c->remote_ip;
+    my $ip = APACHE24 ? $c->client_ip : $c->remote_ip;
 
     debug "ip: $ip";
 
