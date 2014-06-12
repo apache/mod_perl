@@ -1,6 +1,9 @@
 ##########  mod_perl types  ##########
 
 struct modperl_filter_t | Apache2::OutputFilter
+struct modperl_interp_t | ModPerl::Interpreter
+modperl_interp_pool_t * | IV
+PerlInterpreter *       | IV
 
 ##########  Perl types  ##########
 
