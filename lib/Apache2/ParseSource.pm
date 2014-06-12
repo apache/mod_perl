@@ -73,6 +73,9 @@ my @c_scan_defines = (
     'CORE_PRIVATE',   #so we get all of apache
     'MP_SOURCE_SCAN', #so we can avoid some c-scan barfing
     '_NETINET_TCP_H', #c-scan chokes on netinet/tcp.h
+    '_BYTESWAP_H', #c-scan chokes on byteswap.h
+    '_BITS_BYTESWAP_H', #c-scan chokes on byteswap.h
+    'Expat_INCLUDED', #c-scan chokes on expath.h
  #   'APR_OPTIONAL_H', #c-scan chokes on apr_optional.h
     'apr_table_do_callback_fn_t=void', #c-scan chokes on function pointers
 );
@@ -252,6 +255,7 @@ my %defines_wanted = (
         remotehost => [qw{REMOTE_}],
         satisfy    => [qw{SATISFY_}],
         types      => [qw{DIR_MAGIC_TYPE}],
+        auth       => [qw{AUTHN_ AUTHZ AP_AUTH_ AUTH_ AUTHZ_}],
     },
     'APR::Const' => {
         common    => [qw{APR_SUCCESS}],
@@ -284,7 +288,7 @@ while (my ($class, $groups) = each %defines_wanted) {
 }
 
 my %enums_wanted = (
-    'Apache2::Const' => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive) },
+    'Apache2::Const' => { map { $_, 1 } qw(cmd_how input_mode filter_type conn_keepalive authn_status authz_status) },
     'APR::Const' => { map { $_, 1 } qw(apr_shutdown_how apr_read_type apr_lockmech) },
 );
 
@@ -411,6 +415,8 @@ sub get_functions {
     my $c = $self->{c};
 
     my $fdecls = $c->get($key);
+    my $inlines = $c->get('parsed_inlines');
+    push @{$fdecls}, @{$inlines};
 
     my %seen;
     my $wanted = $self->wanted_functions;
@@ -533,7 +539,16 @@ sub write_pm {
 
     my ($subdir) = (split '::', $name)[0];
 
-    my $tdir = 'xs/tables/current';
+    my $tdir = '';
+    my $build = Apache2::Build->new(init => 1);
+    my $httpd_version = $build->httpd_version;
+    if ($httpd_version lt '2.4.0') {
+        $tdir='xs/tables/current';
+    }
+    else {
+        $tdir='xs/tables/current24';
+    }
+
     if (-d "$tdir/$subdir") {
         $file = "$tdir/$subdir/$file";
     }

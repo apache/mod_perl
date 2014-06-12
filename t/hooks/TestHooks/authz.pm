@@ -8,6 +8,7 @@ use Apache2::Access ();
 use Apache2::Const -compile => qw(OK HTTP_UNAUTHORIZED);
 
 sub auth_any {
+    my $self = shift;
     my $r = shift;
 
     my ($res, $sent_pw) = $r->get_basic_auth_pw;
@@ -30,9 +31,7 @@ sub handler {
 
     return Apache2::Const::HTTP_UNAUTHORIZED unless $user;
 
-    my ($u, @allowed) = split /\s+/, $r->requires->[0]->{requirement};
-
-    return Apache2::Const::HTTP_UNAUTHORIZED unless grep { $_ eq $user } @allowed;
+    return Apache2::Const::HTTP_UNAUTHORIZED unless "dougm" eq $user;
 
     Apache2::Const::OK;
 }
@@ -43,6 +42,6 @@ require user dougm
 AuthType Basic
 AuthName simple
 PerlModule          TestHooks::authz
-PerlAuthenHandler   TestHooks::authz::auth_any
+PerlAuthenHandler   TestHooks::authz->auth_any
 PerlResponseHandler Apache::TestHandler::ok1
 SetHandler modperl

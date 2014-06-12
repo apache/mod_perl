@@ -15,7 +15,7 @@ sub handler {
 
     plan $r, tests => 2;
 
-    ok t_cmp($r->auth_type(), undef, 'auth_type');
+     ok t_cmp($r->auth_type(), "none", 'auth_type');
 
     t_server_log_error_is_expected();
     $r->get_basic_auth_pw();

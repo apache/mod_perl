@@ -133,7 +133,7 @@ TestCmdParms "Vhost"
 </Base>
 
 TestCmdParms "Location"
-
-<LimitExcept GET>
-    TestCmdParms "Limit"
-</LimitExcept>
+#FIXME! httpd 2.4 does not allow LimitExcept here
+#<LimitExcept GET>
+    #TestCmdParms "Limit"
+#</LimitExcept>

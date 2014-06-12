@@ -2,6 +2,20 @@
 
 # for mapping see %ModPerl::MapUtil::disabled_map in
 # lib/ModPerl/MapUtil.pm
+# the mapping happens in lib/ModPerl/StructureMap.pm: sub parse
+#    '<' => 'auto-generated but gives only a read-only access'
+#    '&' => 'RDWR accessor to a char* field, supporting undef arg'
+#    '$' => 'RONLY accessor, with WRITE accessor before child_init'
+#    '%' => like $, but makes sure that for the write accessor the
+#           original perl scalar can change or go away w/o affecting
+#           the object
+# my %disabled_map = (
+#     '!' => 'disabled or not yet implemented',
+#     '~' => 'implemented but not auto-generated',
+#     '-' => 'likely never be available to Perl',
+#     '>' => '"private" to apache',
+#     '?' => 'unclassified',
+# );
 
 IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 
@@ -69,6 +83,15 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
    proto_output_filters
    proto_input_filters
 ?  eos_sent
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  useragent_addr
+   useragent_ip
+#_end_
 </request_rec>
 
 <server_rec>
@@ -78,11 +101,28 @@ IGNORE: ap_LINK_ ap_filter_func ap_bucket_error ap_listen_rec core_net_rec
 -  defn_line_number
 %  server_admin
 %  server_hostname
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+%  server_scheme
+#_end_
 $  port
 %  error_fname
 $  error_log
 $  loglevel
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+~  is_virtual
+#_else_
 <  is_virtual
+#_end_
 <  module_config
 <  lookup_defaults
 <  addrs
@@ -97,6 +137,14 @@ $  keep_alive
 $  limit_req_line
 $  limit_req_fieldsize
 $  limit_req_fields
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+   context
+#_end_
 </server_rec>
 
 <conn_rec>
@@ -104,6 +152,15 @@ $  limit_req_fields
 <  base_server
 >  vhost_lookup_data
 <  local_addr
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  client_addr
+   client_ip
+#_end_
 <  local_ip
 <  local_host
 <  remote_addr
@@ -121,6 +178,15 @@ $  limit_req_fields
    output_filters
 <  sbh
 <  bucket_alloc
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+<  log
+<  log_id
+#_end_
 </conn_rec>
 
 !<server_addr_rec>

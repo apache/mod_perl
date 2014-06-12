@@ -13,6 +13,7 @@ use Apache2::RequestRec ();
 use APR::SockAddr ();
 
 use Apache2::Const -compile => 'OK';
+use constant APACHE24   => have_min_apache_version('2.4.0');
 
 sub handler {
     my $r = shift;
@@ -21,10 +22,15 @@ sub handler {
     plan $r, tests => 4;
 
     my $local  = $c->local_addr;
-    my $remote = $c->remote_addr;
+    my $remote = APACHE24 ? $c->client_addr : $c->remote_addr;
 
     ok t_cmp($local->ip_get,  $c->local_ip,  "local ip");
-    ok t_cmp($remote->ip_get, $c->remote_ip, "remote ip");
+    if (APACHE24) {
+        ok t_cmp($remote->ip_get, $c->client_ip, "client ip");
+    }
+    else {
+        ok t_cmp($remote->ip_get, $c->remote_ip, "remote ip");
+    }
 
     $r->subprocess_env;
     ok t_cmp($local->port,  $ENV{SERVER_PORT}, "local port");

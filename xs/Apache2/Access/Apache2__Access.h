@@ -19,7 +19,12 @@ static MP_INLINE SV *mpxs_ap_requires(pTHX_ request_rec *r)
     AV *av;
     HV *hv;
     register int x;
-    const apr_array_header_t *reqs_arr = ap_requires(r);
+    const apr_array_header_t *reqs_arr = 
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || AP_SERVER_MINORVERSION_NUMBER>=3
+        0;
+#else
+        ap_requires(r);
+#endif
     require_line *reqs;
 
     if (!reqs_arr) {
@@ -95,11 +100,18 @@ static MP_INLINE
 const char *mpxs_Apache2__RequestRec_auth_type(pTHX_ request_rec *r,
                                               char *type)
 {
+    const char *ret = NULL;
+
     if (type) {
         mpxs_insert_auth_cfg(aTHX_ r, "AuthType", type);
     }
 
-    return ap_auth_type(r);
+    ret = ap_auth_type(r);
+    if (!ret) {
+        return "none";
+    }
+
+    return ret;
 }
 
 static MP_INLINE

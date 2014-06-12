@@ -46,7 +46,14 @@ my $function_table = [];
 
 sub function_table {
     return $function_table if @$function_table;
-    push @INC, "xs/tables/current";
+    my $build = Apache2::Build->new(init => 1);
+    my $httpd_version = $build->httpd_version;
+    if ($httpd_version lt '2.4.0' || ! -d "xs/tables/current24") {
+        push @INC, "xs/tables/current";
+    }
+    else {
+        push @INC, "xs/tables/current24";
+    }
     require Apache2::FunctionTable;
     require ModPerl::FunctionTable;
     require APR::FunctionTable;
@@ -103,15 +110,28 @@ sub readline {
         # #_end_
         if (/^\s*#\s*_(if|unless|els(?:e|if)|end)_(?:\s(.+))?/) {
             my ($cmd, $param) = ($1, $2);
+            if (defined $param) {
+                while ($param=~s!\\$!!) {
+                    my $l=<$fh>;
+                    die "$ModPerl::MapUtil::MapFile($.): unexpected EOF\n"
+                        unless defined $l;
+                    chomp $l;
+                    $param.=$l;
+                }
+            }
             if ($cmd eq 'if') {
-                unshift @condition, 0+!!eval $param;
+                unshift @condition,
+                    0+!!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                die $@ if $@;
             }
             elsif ($cmd eq 'elsif') {
                 die "parse error ($ModPerl::MapUtil::MapFile line $.)".
                     " #_elsif_ without #_if_"
                     unless @condition;
                 if ($condition[0] == 0) {
-                    $condition[0]+=!!eval $param;
+                    $condition[0]+=
+                        !!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                    die $@ if $@;
                 } else {
                     $condition[0]++;
                 }
@@ -123,7 +143,9 @@ sub readline {
                 $condition[0]+=1;
             }
             elsif ($cmd eq 'unless') {
-                unshift @condition, 0+!eval $param;
+                unshift @condition,
+                    0+!eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
+                die $@ if $@;
             }
             elsif ($cmd eq 'end') {
                 shift @condition;
@@ -133,6 +155,15 @@ sub readline {
 
         if (/^\s*#\s*_(eval)_(?:\s(.+))?/) {
             my ($cmd, $param) = ($1, $2);
+            if (defined $param) {
+                while ($param=~s!\\$!!) {
+                    my $l=<$fh>;
+                    die "$ModPerl::MapUtil::MapFile($.): unexpected EOF\n"
+                        unless defined $l;
+                    chomp $l;
+                    $param.=$l;
+                }
+            }
             if ($cmd eq 'eval') {
                 eval "#line $. $ModPerl::MapUtil::MapFile\n".$param;
                 die $@ if $@;

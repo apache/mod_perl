@@ -910,3 +910,319 @@ U16 *modperl_code_attrs(pTHX_ CV *cv) {
     mg = mg_find((SV*)cv, PERL_MAGIC_ext);
     return &(mg->mg_private);
 }
+
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+
+static apr_hash_t *global_authz_providers = NULL;
+static apr_hash_t *global_authn_providers = NULL;
+
+typedef struct {
+    SV *cb1;
+    SV *cb2;
+    modperl_handler_t *cb1_handler;
+    modperl_handler_t *cb2_handler;
+} auth_callback;
+
+static apr_status_t cleanup_perl_global_providers(void *ctx)
+{
+    global_authz_providers = NULL;
+    global_authn_providers = NULL;
+    return APR_SUCCESS;
+}
+
+static authz_status perl_check_authorization(request_rec *r,
+                                             const char *require_args,
+                                             const void *parsed_require_args)
+{
+    authz_status ret = AUTHZ_DENIED;
+    int count;
+    AV *args = Nullav;
+    const char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
+
+    if (global_authz_providers == NULL) {
+        return ret;
+    }
+
+    key = apr_table_get(r->notes, AUTHZ_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authz_providers, key, APR_HASH_KEY_STRING);
+    if (ab == NULL) {
+        return ret;
+    }
+
+    if (ab->cb1 == NULL) {
+        if (ab->cb1_handler == NULL) {
+            return ret;
+        }
+
+        modperl_handler_make_args(aTHX_ &args, "Apache2::RequestRec", r,
+                                  "PV", require_args, NULL);
+        ret = modperl_callback(aTHX_ ab->cb1_handler, r->pool, r, r->server,
+                               args);
+        SvREFCNT_dec((SV*)args);
+        return ret;
+    }
+
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+    XPUSHs(sv_2mortal(newSVpv(require_args, 0)));
+    PUTBACK;
+    count = call_sv(ab->cb1, G_SCALAR);
+    SPAGAIN;
+
+    if (count == 1) {
+        ret = (authz_status) POPi;
+    }
+
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return ret;
+}
+
+static const char *perl_parse_require_line(cmd_parms *cmd,
+                                           const char *require_line,
+                                           const void **parsed_require_line)
+{
+    SV *ret_sv;
+    char *ret = NULL;
+    int count;
+    void *key;
+    auth_callback *ab;
+    modperl_interp_t *interp;
+
+    if (global_authz_providers == NULL) {
+        return ret;
+    }
+
+    apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
+    ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
+    if (ab == NULL || ab->cb2 == NULL) {
+        return ret;
+    }
+
+#ifdef USE_ITHREADS
+    interp = modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
+    if (interp) {
+        dTHXa(interp->perl);
+#else
+    {
+#endif
+        dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(SP);
+        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
+        XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
+        PUTBACK;
+        count = call_sv(ab->cb2, G_SCALAR);
+        SPAGAIN;
+
+        if (count == 1) {
+            ret_sv = POPs;
+            if (SvOK(ret_sv)) {
+                char *tmp = SvPV_nolen(ret_sv);
+                if (*tmp != '\0') {
+                    ret = apr_pstrdup(cmd->pool, tmp);
+                }
+            }
+        }
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+    }
+    return ret;
+}
+
+static authn_status perl_check_password(request_rec *r, const char *user,
+                                        const char *password)
+{
+    authn_status ret = AUTH_DENIED;
+    int count;
+    AV *args = Nullav;
+    const char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
+
+    if (global_authn_providers == NULL) {
+        return ret;
+    }
+
+    key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authn_providers, key,
+                                     APR_HASH_KEY_STRING);
+    if (ab == NULL || ab->cb1) {
+        return ret;
+    }
+
+    if (ab->cb1 == NULL) {
+        if (ab->cb1_handler == NULL) {
+            return ret;
+        }
+
+        modperl_handler_make_args(aTHX_ &args, "Apache2::RequestRec", r,
+                                  "PV", user,
+                                  "PV", password, NULL);
+        ret = modperl_callback(aTHX_ ab->cb1_handler, r->pool, r, r->server,
+                               args);
+        SvREFCNT_dec((SV*)args);
+        return ret;
+    }
+
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+    XPUSHs(sv_2mortal(newSVpv(user, 0)));
+    XPUSHs(sv_2mortal(newSVpv(password, 0)));
+    PUTBACK;
+    count = call_sv(ab->cb1, G_SCALAR);
+    SPAGAIN;
+
+    if (count == 1) {
+        ret = (authn_status) POPi;
+    }
+
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return ret;
+}
+
+static authn_status perl_get_realm_hash(request_rec *r, const char *user,
+                                        const char *realm, char **rethash)
+{
+    authn_status ret = AUTH_USER_NOT_FOUND;
+    int count;
+    SV *rh;
+    const char *key;
+    auth_callback *ab;
+    MP_dTHX;
+    dSP;
+
+    if (global_authn_providers == NULL) {
+        return ret;
+    }
+
+    key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
+    ab = apr_hash_get(global_authn_providers, key, APR_HASH_KEY_STRING);
+    if (ab == NULL || ab->cb2) {
+        return ret;
+    }
+
+    rh = sv_2mortal(newSVpv("", 0));
+    ENTER;
+    SAVETMPS;
+    PUSHMARK(SP);
+    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+    XPUSHs(sv_2mortal(newSVpv(user, 0)));
+    XPUSHs(sv_2mortal(newSVpv(realm, 0)));
+    XPUSHs(newRV_noinc(rh));
+    PUTBACK;
+    count = call_sv(ab->cb2, G_SCALAR);
+    SPAGAIN;
+
+    if (count == 1) {
+        const char *tmp = SvPV_nolen(rh);
+        ret = (authn_status) POPi;
+        if (*tmp != '\0') {
+            *rethash = apr_pstrdup(r->pool, tmp);
+        }
+    }
+
+    PUTBACK;
+    FREETMPS;
+    LEAVE;
+    return ret;
+}
+
+static const authz_provider authz_perl_provider = { perl_check_authorization,
+                                                    perl_parse_require_line };
+
+static const authn_provider authn_perl_provider = { perl_check_password,
+                                                    perl_get_realm_hash };
+
+static apr_status_t register_auth_provider(apr_pool_t *pool,
+                                           const char *provider_group,
+                                           const char *provider_name,
+                                           const char *provider_version,
+                                           auth_callback *ab, int type)
+{
+    void *provider_ = NULL;
+
+    if (global_authz_providers == NULL) {
+        global_authz_providers = apr_hash_make(pool);
+        global_authn_providers = apr_hash_make(pool);
+        /* We have to use pre_cleanup here, otherwise this cleanup method
+         * would be called after another cleanup method which unloads
+         * mod_perl module.
+         */
+        apr_pool_pre_cleanup_register(pool, NULL,
+                                      cleanup_perl_global_providers);
+    }
+
+    if (strcmp(provider_group, AUTHZ_PROVIDER_GROUP) == 0) {
+        provider_ = (void *) &authz_perl_provider;
+        apr_hash_set(global_authz_providers, provider_name,
+                     APR_HASH_KEY_STRING, ab);
+    }
+    else {
+        provider_ = (void *) &authn_perl_provider;
+        apr_hash_set(global_authn_providers, provider_name,
+                     APR_HASH_KEY_STRING, ab);
+    }
+
+    return ap_register_auth_provider(pool, provider_group, provider_name,
+                                     provider_version, provider_, type);
+
+}
+
+apr_status_t modperl_register_auth_provider(apr_pool_t *pool,
+                                            const char *provider_group,
+                                            const char *provider_name,
+                                            const char *provider_version,
+                                            SV *callback1, SV *callback2,
+                                            int type)
+{
+    char *provider_name_dup;
+    auth_callback *ab = NULL;
+
+    provider_name_dup = apr_pstrdup(pool, provider_name);
+    ab = apr_pcalloc(pool, sizeof(auth_callback));
+    ab->cb1 = callback1;
+    ab->cb2 = callback2;
+
+    return register_auth_provider(pool, provider_group, provider_name_dup,
+                                  provider_version, ab, type);
+}
+
+apr_status_t modperl_register_auth_provider_name(apr_pool_t *pool,
+                                                 const char *provider_group,
+                                                 const char *provider_name,
+                                                 const char *provider_version,
+                                                 const char *callback1,
+                                                 const char *callback2,
+                                                 int type)
+{
+    char *provider_name_dup;
+    auth_callback *ab = NULL;
+
+    provider_name_dup = apr_pstrdup(pool, provider_name);
+    ab = apr_pcalloc(pool, sizeof(auth_callback));
+    ab->cb1_handler = modperl_handler_new(pool, callback1);
+    if (callback2) {
+        ab->cb2_handler = modperl_handler_new(pool, callback2);
+    }
+
+    return register_auth_provider(pool, provider_group, provider_name_dup,
+                                  provider_version, ab, type);
+}
+
+#endif /* httpd-2.4 */

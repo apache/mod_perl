@@ -891,6 +891,15 @@ EOF
             if ($name eq 'DECLINE_CMD' ||
                 $name eq 'DIR_MAGIC_TYPE' ||
                 $name eq 'CRLF' ||
+                $name eq 'AUTHN_PROVIDER_GROUP' ||
+                $name eq 'AUTHZ_PROVIDER_GROUP' ||
+                $name eq 'AUTHN_PROVIDER_VERSION' ||
+                $name eq 'AUTHZ_PROVIDER_VERSION' ||
+                $name eq 'AUTHN_DEFAULT_PROVIDER' ||
+                $name eq 'AUTHN_PROVIDER_NAME_NOTE' ||
+                $name eq 'AUTHZ_PROVIDER_NAME_NOTE' ||
+                $name eq 'AUTHN_PREFIX' ||
+                $name eq 'AUTHZ_PREFIX' ||
                 $name eq 'CRLF_ASCII') {
                 print $c_fh <<EOF;
               return newSVpv($alias{$name}, 0);

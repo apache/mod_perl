@@ -21,6 +21,9 @@ sub handler {
         return Apache2::Const::HTTP_UNAUTHORIZED;
     }
 
+    $r->user("user");
+    $r->ap_auth_type("Digest");
+
     return Apache2::Const::OK;
 }
 

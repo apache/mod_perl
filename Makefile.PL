@@ -8,6 +8,7 @@ $ENV{MOD_PERL_2_BUILD} = 1;
 
 use constant MIN_HTTPD_VERSION_DYNAMIC => '2.0.47';
 use constant MIN_HTTPD_VERSION_STATIC  => '2.0.51';
+use constant MIN_HTTPD_24_VERSION => '2.4.0';
 
 my($old_modperl_version, $old_modperl_pm, $old_Apache2_pm);
 
@@ -412,9 +413,13 @@ sub post_configure {
 sub tables_dir {
     my $httpd_version = shift;
 
-    my $tables_version = 'current';
-    #XXX: support versioning
-    #$httpd_version =~ /-dev$/ ? 'current' : $httpd_version;
+    my $tables_version='';
+    if ($httpd_version lt MIN_HTTPD_24_VERSION) {
+        $tables_version='current';
+    }
+    else {
+        $tables_version='current24';
+    }
 
     my $tables_dir = "xs/tables/$tables_version";
 }
@@ -770,8 +775,24 @@ sub MY::test {
             $ap_bindir = File::Spec->catdir($build->{MP_AP_PREFIX}, 'bin')
                 if $build->{MP_AP_PREFIX};
         }
+        my $modperl_libexecdir = '';
+        if ($build->is_dynamic) {
+            # need to add the location of mod_perl.so to the PATH
+            my $lib = $build->modperl_libpath() || '';
+            if ($lib) {
+                $modperl_libexecdir = File::Basename::dirname($lib);
+            }
+            else {
+                $modperl_libexecdir = File::Spec->catdir($build->{cwd},
+                                                         'src/modules/perl')
+                    if $build->{cwd};
+            }
+        }
+        my $extra_path = '';
+        $extra_path .= ";$ap_bindir" if $ap_bindir;
+        $extra_path .= ";$modperl_libexecdir" if $modperl_libexecdir;
         $preamble = <<EOF;
-PATH = \$(PATH);$ap_bindir
+PATH = \$(PATH)$extra_path
 EOF
     }
     else {

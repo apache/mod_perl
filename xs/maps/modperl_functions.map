@@ -22,6 +22,16 @@ MODULE=Apache2::RequestRec   PACKAGE=Apache2::RequestRec
  mpxs_Apache2__RequestRec_handler | | ...
  mpxs_Apache2__RequestRec_content_languages | | r, languages=(SV *)NULL
 
+#_if_ do {                                                                  \
+          Apache2::Build->build_config                                      \
+	      ->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/                     \
+          ? ($1*1000+$2)*1000+$3                                            \
+          : die "Cannot get httpd version";                                 \
+      } > 2003000
+MODULE=Apache2::ServerRec   PACKAGE=Apache2::ServerRec
+ mpxs_Apache2__ServerRec_is_virtual       | | server_rec *:s, val=(SV *)NULL
+#_end_
+
 MODULE=Apache2::RequestUtil   PACKAGE=guess
  mpxs_Apache2__RequestRec_push_handlers
  mpxs_Apache2__RequestRec_set_handlers

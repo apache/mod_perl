@@ -42,6 +42,11 @@ MP_CMD_SRV_DECLARE(modules);
 MP_CMD_SRV_DECLARE(requires);
 MP_CMD_SRV_DECLARE(config_requires);
 MP_CMD_SRV_DECLARE(post_config_requires);
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
+    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
+MP_CMD_SRV_DECLARE2(authz_provider);
+MP_CMD_SRV_DECLARE2(authn_provider);
+#endif
 MP_CMD_SRV_DECLARE2(set_var);
 MP_CMD_SRV_DECLARE2(add_var);
 MP_CMD_SRV_DECLARE2(set_env);
@@ -114,6 +119,10 @@ MP_CMD_SRV_DECLARE(interp_scope);
 #define MP_CMD_SRV_ITERATE(name, item, desc) \
    AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
       RSRC_CONF, desc )
+
+#define MP_CMD_SRV_ITERATE_ON_READ(name, item, desc) \
+   AP_INIT_ITERATE( name, modperl_cmd_##item, NULL, \
+      RSRC_CONF|EXEC_ON_READ, desc )
 
 #define MP_CMD_SRV_ITERATE2(name, item, desc) \
    AP_INIT_ITERATE2( name, modperl_cmd_##item, NULL, \

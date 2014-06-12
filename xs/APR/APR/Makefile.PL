@@ -37,7 +37,7 @@ if (BUILD_APREXT) {
     my $mp_apr_lib = $build->mp_apr_lib;
 
     if (CYGWIN) {
-        # For Cygwin compatibility, set $mp_apr_lib before the apru flags
+        # For Cygwin compatibility, set $mp_apr_lib before the apache libs
         $libs = qq{ $mp_apr_lib } . $libs;
     } else {
         $libs .= qq{ $mp_apr_lib };

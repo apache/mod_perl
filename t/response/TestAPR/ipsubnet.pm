@@ -13,6 +13,7 @@ use APR::IpSubnet ();
 use APR::SockAddr ();
 
 use Apache2::Const -compile => 'OK';
+use constant APACHE24   => have_min_apache_version('2.4.0');
 
 sub handler {
     my $r = shift;
@@ -21,24 +22,30 @@ sub handler {
 
     plan $r, tests => 8;
 
-    my $ip = $c->remote_ip;
+    my $ip = APACHE24 ? $c->client_ip : $c->remote_ip;
 
     ok $ip;
 
-    ok t_cmp($c->remote_addr->ip_get, $ip,
-             "remote_ip eq remote_addr->ip_get");
+    if (APACHE24) {
+        ok t_cmp($c->client_addr->ip_get, $ip,
+                "client_ip eq client_addr->ip_get");
+    }
+    else {
+        ok t_cmp($c->remote_addr->ip_get, $ip,
+                "remote_ip eq remote_addr->ip_get");
+    }
 
     {
         my $ipsub = APR::IpSubnet->new($p, $ip);
 
-        ok $ipsub->test($c->remote_addr);
+        ok $ipsub->test(APACHE24 ? $c->client_addr : $c->remote_addr);
     }
 
     # use IP mask
     {
         my $ipsub = APR::IpSubnet->new($p, $ip, "255.0.0.0");
 
-        ok $ipsub->test($c->remote_addr);
+        ok $ipsub->test(APACHE24 ? $c->client_addr : $c->remote_addr);
     }
 
     # fail match
@@ -49,7 +56,7 @@ sub handler {
             (my $mismatch = $ip) =~ s/(?<=\.)(\d+)$/$1 == 255 ? $1-1 : $1+1/e;
             t_debug($mismatch);
             my $ipsub = APR::IpSubnet->new($p, $mismatch, $mismatch);
-            ok ! $ipsub->test($c->remote_addr);
+            ok ! $ipsub->test(APACHE24 ? $c->client_addr : $c->remote_addr);
         }
         else {
             # XXX: similar ipv6 trick?
@@ -77,7 +84,7 @@ sub handler {
         my $table = APR::Table::make(APR::Pool->new, 50);
         $table->set($_ => $_) for 'aa'..'za';
         # now test that we are still OK
-        ok $ipsub->test($c->remote_addr);
+        ok $ipsub->test(APACHE24 ? $c->client_addr : $c->remote_addr);
     }
 
     Apache2::Const::OK;

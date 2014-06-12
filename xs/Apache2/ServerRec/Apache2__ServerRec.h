@@ -14,39 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef MODPERL_APACHE_INCLUDES_H
-#define MODPERL_APACHE_INCLUDES_H
+#if AP_SERVER_MAJORVERSION_NUMBER>2 || AP_SERVER_MINORVERSION_NUMBER>=3
+#define loglevel log.level
 
-/* header files for Apache */
+static MP_INLINE
+int mpxs_Apache2__ServerRec_is_virtual(pTHX_ server_rec *s, SV *val)
+{
+    int retval = s->is_virtual;
 
-#ifndef CORE_PRIVATE
-#define CORE_PRIVATE
+    if (val) {
+        s->is_virtual = SvIV(val);
+    }
+
+    return retval;
+}
+
 #endif
-
-#include "ap_mmn.h"
-#include "httpd.h"
-#include "http_config.h"
-#include "http_log.h"
-#include "http_protocol.h"
-#include "http_main.h"
-#include "http_request.h"
-#include "http_connection.h"
-#include "http_core.h"
-#include "http_vhost.h"
-#include "ap_mpm.h"
-
-#include "util_filter.h"
-
-#include "util_script.h"
-
-#if !defined(MP_IN_XS) && AP_MODULE_MAGIC_AT_LEAST(20100606, 0)
-APLOG_USE_MODULE(perl);
-#endif
-
-#if AP_SERVER_MAJORVERSION_NUMBER>2 || \
-    (AP_SERVER_MAJORVERSION_NUMBER == 2 && AP_SERVER_MINORVERSION_NUMBER>=3)
-#include "ap_provider.h"
-#include "mod_auth.h"
-#endif
-
-#endif /* MODPERL_APACHE_INCLUDES_H */

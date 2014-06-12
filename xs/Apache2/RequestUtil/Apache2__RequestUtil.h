@@ -349,3 +349,55 @@ void mpxs_Apache2__RequestRec_child_terminate(pTHX_ request_rec *r)
     apr_pool_cleanup_register(r->pool, r->pool, child_terminate,
                               apr_pool_cleanup_null);
 }
+
+
+
+static MP_INLINE
+apr_status_t mpxs_ap_register_auth_provider(pTHX_ I32 items, SV **MARK, SV **SP)
+{
+    apr_pool_t *pool;
+    const char *provider_group;
+    const char *provider_name;
+    const char *provider_version;
+    SV *callback1;
+    SV *callback2 = NULL;
+    int type;
+
+    if (items != 7)
+       Perl_croak(aTHX_ "pool, provider_group, provider_name, "
+                        "provider_version, callback1, callback2, type");
+
+    if (SvROK(*MARK) && sv_derived_from(*MARK, "APR::Pool")) {
+        IV tmp = SvIV((SV*)SvRV(*MARK));
+            if (tmp == 0) {
+                Perl_croak(aTHX_ "invalid pool object (already destroyed?)");
+            }
+        pool = INT2PTR(APR__Pool, tmp);
+    }
+    else {
+        Perl_croak(aTHX_ SvROK(*MARK) ?
+                       "pool is not of type APR::Pool" :
+                       "pool is not a blessed reference");
+        }
+
+    MARK++;
+    provider_group = (const char *)SvPV_nolen(*MARK);
+    MARK++;
+    provider_name = (const char *)SvPV_nolen(*MARK);
+    MARK++;
+    provider_version = (const char *)SvPV_nolen(*MARK);
+    MARK++;
+    callback1 = newSVsv(*MARK);
+    MARK++;
+    callback2 = NULL;
+    if (SvROK(*MARK)) {
+        callback2 = newSVsv(*MARK);
+    }
+    MARK++;
+    type = (int)SvIV(*MARK);
+
+    return modperl_register_auth_provider(pool, provider_group, provider_name,
+                                          provider_version, callback1,
+                                          callback2, type);
+}
+
