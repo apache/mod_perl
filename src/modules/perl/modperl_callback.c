@@ -88,7 +88,8 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                 name = handler->name;
             }
 
-            MP_TRACE_h(MP_FUNC, "[%s] lookup of %s failed",
+            MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed",
+                       modperl_pid_tid(p),
                        modperl_server_desc(s, p), name);
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "lookup of '%s' failed", name);
@@ -253,7 +254,8 @@ int modperl_callback_run_handlers(int idx, int type,
 
     modperl_callback_current_callback_set(desc);
 
-    MP_TRACE_h(MP_FUNC, "running %d %s handlers", av->nelts, desc);
+    MP_TRACE_h(MP_FUNC, "[%s] running %d %s handlers",
+               modperl_pid_tid(p), av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {

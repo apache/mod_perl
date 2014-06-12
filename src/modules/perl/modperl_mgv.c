@@ -211,12 +211,14 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         handler->name    = NULL;
         handler->mgv_obj = modperl_handler_anon_next(aTHX_ p);
         modperl_handler_anon_add(aTHX_ handler->mgv_obj, cv);
-        MP_TRACE_h(MP_FUNC, "new anon handler");
+        MP_TRACE_h(MP_FUNC, "[%s] new anon handler",
+                   modperl_pid_tid(p));
 #else
         SvREFCNT_inc(cv);
         handler->cv      = cv;
         handler->name    = NULL;
-        MP_TRACE_h(MP_FUNC, "new cached-cv anon handler");
+        MP_TRACE_h(MP_FUNC, "[%s] new cached-cv anon handler",
+                   modperl_pid_tid(p));
 #endif
 
         FREETMPS;LEAVE;
@@ -338,7 +340,8 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);
 
         MpHandlerPARSED_On(handler);
-        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s",
+        MP_TRACE_h(MP_FUNC, "[%s] found `%s' in class `%s' as a %s",
+                   modperl_pid_tid(p),
                    handler_name, HvNAME(stash),
                    MpHandlerMETHOD(handler) ? "method" : "function");
         MODPERL_MGV_DEEP_RESOLVE(handler, p);
