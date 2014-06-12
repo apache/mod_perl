@@ -39,8 +39,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
     /* not necessary due to apr_pcalloc */
     /* handler->cv = NULL; */
     handler->name = name;
-    MP_TRACE_h(MP_FUNC, "[%s] new handler %s",
-               modperl_pid_tid(p), handler->name);
+    MP_TRACE_h(MP_FUNC, "new handler %s", handler->name);
 
     return handler;
 }
@@ -105,8 +104,7 @@ MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
     anon->len  = strlen(anon->name);
     PERL_HASH(anon->hash, anon->name, anon->len);
 
-    MP_TRACE_h(MP_FUNC, "[%s] new anon handler: '%s'",
-               modperl_pid_tid(p), anon->name);
+    MP_TRACE_h(MP_FUNC, "new anon handler: '%s'", anon->name);
     return anon;
 }
 
@@ -175,8 +173,7 @@ modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
     handler->cv   = cv;
     handler->name = NULL;
 
-    MP_TRACE_h(MP_FUNC, "[%s] new cached cv anon handler",
-               modperl_pid_tid(p));
+    MP_TRACE_h(MP_FUNC, "new cached cv anon handler");
 #endif
 
     return handler;
@@ -223,9 +220,8 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
         MpHandlerAUTOLOAD_On(handler);
 
         MP_TRACE_h(MP_FUNC,
-                   "[%s %s] handler %s hasn't yet been resolved, "
+                   "[%s] handler %s hasn't yet been resolved, "
                    "attempting to resolve using %s pool 0x%lx\n",
-                   modperl_pid_tid(p),
                    modperl_server_desc(s, p),
                    modperl_handler_name(handler),
                    duped ? "current" : "server conf",
