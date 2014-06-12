@@ -3333,6 +3333,39 @@ $Apache2::StructureTable = [
         'name' => 'suexec_enabled'
       }
     ]
+  },
+  {
+    'type' => 'modperl_interp_t',
+    'elts' => [
+      {
+        'type' => 'modperl_interp_pool_t *',
+        'name' => 'mip'
+      },
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'perl'
+      },
+      {
+        'type' => 'int',
+        'name' => 'num_requests'
+      },
+      {
+        'type' => 'U8',
+        'name' => 'flags'
+      },
+      {
+        'type' => 'modperl_config_con_t *',
+        'name' => 'ccfg'
+      },
+      {
+        'type' => 'int',
+        'name' => 'refcnt'
+      },
+      {
+        'type' => 'unsigned long',
+        'name' => 'tid'
+      }
+    ]
   }
 ];
 
