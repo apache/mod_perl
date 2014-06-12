@@ -56,3 +56,10 @@ void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s);
 GvCV(sv)
 
 #endif /* MODPERL_MGV_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

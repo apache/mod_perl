@@ -69,17 +69,15 @@ char *modperl_cmd_push_filter_handlers(MpAV **handlers,
      */
     if (*name == '-') {
         MP_TRACE_h(MP_FUNC,
-                   "[%s] warning: filter handler %s will be not autoloaded. "
+                   "warning: filter handler %s will be not autoloaded. "
                    "Unless the module defining this handler is explicitly "
-                   "preloaded, filter attributes will be ignored.\n",
-                   modperl_pid_tid(p), h->name);
+                   "preloaded, filter attributes will be ignored.");
     }
     else {
         MpHandlerAUTOLOAD_On(h);
         MP_TRACE_h(MP_FUNC,
-                   "[%s] filter handler %s will be autoloaded (to make "
-                   "the filter attributes available)\n",
-                   modperl_pid_tid(p), h->name);
+                   "filter handler %s will be autoloaded (to make "
+                   "the filter attributes available)", h->name);
     }
 
     if (!*handlers) {
@@ -587,6 +585,11 @@ MP_CMD_SRV_DECLARE(perldo)
                           arg, NULL);
     }
 
+#ifdef USE_ITHREADS
+    MP_TRACE_i(MP_FUNC, "using interp %lx to execute perl section:\n%s",
+               scfg->mip->parent, arg);
+#endif
+
     {
         SV *server = MP_PERLSECTIONS_SERVER_SV;
         SV *code = newSVpv(arg, 0);
@@ -862,3 +865,10 @@ MP_CMD_INTERP_POOL_IMP(min_spare);
 MP_CMD_INTERP_POOL_IMP(max_requests);
 
 #endif /* USE_ITHREADS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 # test the situation where a native apache response filter is
 # configured outside the <Location> block with PerlSet*Filter
 # directive. In this case we need to make sure that mod_perl doesn't

@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -142,7 +143,7 @@ my %flags = (
     Dir => [qw(NONE PARSE_HEADERS SETUP_ENV MERGE_HANDLERS GLOBAL_REQUEST UNSET)],
     Req => [qw(NONE SET_GLOBAL_REQUEST PARSE_HEADERS SETUP_ENV
                CLEANUP_REGISTERED PERL_SET_ENV_DIR PERL_SET_ENV_SRV)],
-    Interp => [qw(NONE IN_USE PUTBACK CLONED BASE)],
+    Interp => [qw(NONE IN_USE CLONED BASE)],
     Handler => [qw(NONE PARSED METHOD OBJECT ANON AUTOLOAD DYNAMIC FAKE)],
 );
 

@@ -63,3 +63,10 @@ void modperl_env_init(void);
 void modperl_env_unload(void);
 
 #endif /* MODPERL_ENV_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

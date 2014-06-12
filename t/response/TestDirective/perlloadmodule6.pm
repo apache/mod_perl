@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestDirective::perlloadmodule6;
 
 # in this test we test an early mod_perl startup caused by an

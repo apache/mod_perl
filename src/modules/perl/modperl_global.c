@@ -303,3 +303,10 @@ void modperl_tls_reset_cleanup_##gname(apr_pool_t *p,    \
 }
 
 MP_TLS_IMPL(request_rec, request_rec *)
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

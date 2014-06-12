@@ -211,14 +211,12 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         handler->name    = NULL;
         handler->mgv_obj = modperl_handler_anon_next(aTHX_ p);
         modperl_handler_anon_add(aTHX_ handler->mgv_obj, cv);
-        MP_TRACE_h(MP_FUNC, "[%s] new anon handler",
-                   modperl_pid_tid(p));
+        MP_TRACE_h(MP_FUNC, "new anon handler");
 #else
         SvREFCNT_inc(cv);
         handler->cv      = cv;
         handler->name    = NULL;
-        MP_TRACE_h(MP_FUNC, "[%s] new cached-cv anon handler",
-                   modperl_pid_tid(p));
+        MP_TRACE_h(MP_FUNC, "new cached-cv anon handler");
 #endif
 
         FREETMPS;LEAVE;
@@ -340,8 +338,7 @@ int modperl_mgv_resolve(pTHX_ modperl_handler_t *handler,
         modperl_mgv_append(aTHX_ p, handler->mgv_cv, handler_name);
 
         MpHandlerPARSED_On(handler);
-        MP_TRACE_h(MP_FUNC, "[%s] found `%s' in class `%s' as a %s",
-                   modperl_pid_tid(p),
+        MP_TRACE_h(MP_FUNC, "found `%s' in class `%s' as a %s",
                    handler_name, HvNAME(stash),
                    MpHandlerMETHOD(handler) ? "method" : "function");
         MODPERL_MGV_DEEP_RESOLVE(handler, p);
@@ -479,10 +476,7 @@ static int modperl_hash_handlers_dir(apr_pool_t *p, server_rec *s,
 {
     int i;
     modperl_config_dir_t *dir_cfg = (modperl_config_dir_t *)cfg;
-#ifdef USE_ITHREADS
-    MP_dSCFG(s);
-    MP_dSCFG_dTHX;
-#endif
+    dTHXa(data);
 
     if (!dir_cfg) {
         return 1;
@@ -500,7 +494,7 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
 {
     int i;
     modperl_config_srv_t *scfg = (modperl_config_srv_t *)cfg;
-    MP_dSCFG_dTHX;
+    dTHXa(data);
 
     for (i=0; i < MP_HANDLER_NUM_PER_SRV; i++) {
         modperl_hash_handlers(aTHX_ p, s,
@@ -527,7 +521,21 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
 
 void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
 {
-    ap_pcw_walk_config(p, s, &perl_module, NULL,
+    MP_dINTERPa(NULL, NULL, s);
+    ap_pcw_walk_config(p, s, &perl_module,
+#ifdef USE_ITHREADS
+                       aTHX,
+#else
+                       NULL,
+#endif
                        modperl_hash_handlers_dir,
                        modperl_hash_handlers_srv);
+    MP_INTERP_PUTBACK(interp, aTHX);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

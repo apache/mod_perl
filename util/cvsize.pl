@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 #get an idea of how much space the XS interface will eat
 #build/source_scan.pl must be run first

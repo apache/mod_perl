@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestProtocol::echo_bbs2;
 
 # similar to TestProtocol::echo_bbs but here re-using one bucket

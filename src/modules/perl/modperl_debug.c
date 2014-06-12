@@ -21,28 +21,6 @@ char *modperl_server_desc(server_rec *s, apr_pool_t *p)
     return apr_psprintf(p, "%s:%u", s->server_hostname, s->port);
 }
 
-/* used in debug traces */
-MP_INLINE char *modperl_pid_tid(apr_pool_t *p)
-{
-    if (modperl_threaded_mpm()) {
-        return apr_psprintf(p, "%lu"
-#if APR_HAS_THREADS
-                            "/%lu"
-#endif /* APR_HAS_THREADS */
-                            , (unsigned long)getpid()
-#if APR_HAS_THREADS
-                            , modperl_threads_started()
-                            ? (unsigned long)apr_os_thread_current()
-                            : 0
-#endif /* APR_HAS_THREADS */
-            );
-    }
-    else {
-        return apr_psprintf(p, "%lu", (unsigned long)getpid());
-    }
-}
-
-    
 #ifdef MP_TRACE
 void modperl_apr_table_dump(pTHX_ apr_table_t *table, char *name)
 {
@@ -97,3 +75,10 @@ void modperl_perl_modglobal_dump(pTHX)
 
 }
 #endif
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

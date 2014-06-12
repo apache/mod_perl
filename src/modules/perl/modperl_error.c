@@ -93,3 +93,10 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func)
 
     Perl_croak(aTHX_ (char *)NULL);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

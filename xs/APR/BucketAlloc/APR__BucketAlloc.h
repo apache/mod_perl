@@ -27,3 +27,10 @@ SV *mpxs_APR__BucketAlloc_new(pTHX_ SV *CLASS, SV *p_sv)
     mpxs_add_pool_magic(ba_sv, p_sv);
     return ba_sv;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

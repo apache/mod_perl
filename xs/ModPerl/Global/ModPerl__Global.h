@@ -60,3 +60,10 @@ MP_INLINE int mpxs_ModPerl__Global_special_list_register(pTHX_
     return mpxs_special_list_do(aTHX_ name, package,
                                 modperl_perl_global_avcv_register);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -219,3 +219,9 @@ int mpxs_Apache2__ServerRec_loglevel(pTHX_ server_rec *s, int loglevel)
 }
 #endif
 
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -89,3 +89,10 @@ void modperl_perl_global_avcv_clear(pTHX_ modperl_modglobal_key_t *gkey,
                                     const char *package, I32 packlen);
 
 #endif
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

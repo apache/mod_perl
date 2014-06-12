@@ -27,3 +27,10 @@ modperl_options_t *modperl_options_merge(apr_pool_t *p,
                                          modperl_options_t *new);
 
 #endif /* MODPERL_OPTIONS_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

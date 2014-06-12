@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 use strict;
 use warnings FATAL => 'all';
 
@@ -16,7 +17,7 @@ plan tests => 2, need { "perl $]: TIEd IO is used instead of PerlIO"
 {
     my $content  = join "", 'a'..'j', 'k'..'t';
     my $location = "$uri?STDIN";
-    my $expected = join "", 'a'..'j', "package", 'k'..'t';
+    my $expected = join "", 'a'..'j', "# please", 'k'..'t';
     my $received = POST_BODY_ASSERT $location, content => $content;
     ok t_cmp($received, $expected, "STDIN tests");
 }

@@ -196,8 +196,9 @@ static MP_INLINE SV *mpxs_Apache2__Filter_ctx(pTHX_
         }
 
 #ifdef USE_ITHREADS
-        if (!ctx->perl) {
-            ctx->perl = aTHX;
+        if (!ctx->interp) {
+            ctx->interp = modperl_thx_interp_get(aTHX);
+            MP_INTERP_REFCNT_inc(ctx->interp);
         }
 #endif
         ctx->data = SvREFCNT_inc(data);
@@ -366,3 +367,10 @@ apr_status_t mpxs_Apache2__Filter_pass_brigade(pTHX_ ap_filter_t *f,
 
     return rc;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

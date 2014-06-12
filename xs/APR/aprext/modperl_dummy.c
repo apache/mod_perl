@@ -30,3 +30,22 @@ module AP_MODULE_DECLARE_DATA perl_module = {
     NULL,              /* table of config file commands       */
     NULL,    /* register hooks */
 };
+
+/* FIXME: These functions are called from modperl_trace() in libaprext.lib
+ * but are normally defined in mod_perl.c which can't be included.
+ */
+
+int modperl_is_running(void)
+{
+    return 0;
+}
+
+int modperl_threads_started(void)
+{
+    return 0;
+}
+
+int modperl_threaded_mpm(void)
+{
+    return 0;
+}

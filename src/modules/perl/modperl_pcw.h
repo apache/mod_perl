@@ -51,3 +51,10 @@ void ap_pcw_walk_config(apr_pool_t *pconf, server_rec *s,
                         ap_pcw_dir_cb_t dir_cb, ap_pcw_srv_cb_t srv_cb);
 
 #endif /* MODPERL_PCW_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

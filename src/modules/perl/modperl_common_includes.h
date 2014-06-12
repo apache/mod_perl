@@ -25,3 +25,10 @@
 #include "modperl_common_types.h"
 
 #endif /* MODPERL_COMMON_INCLUDES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

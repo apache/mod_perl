@@ -40,6 +40,8 @@ typedef struct {
     server_rec  *s;
 } modperl_rcs_t;
 
+typedef struct modperl_config_con_t modperl_config_con_t;
+
 #ifdef USE_ITHREADS
 
 typedef struct modperl_list_t modperl_list_t;
@@ -52,13 +54,14 @@ struct modperl_list_t {
 typedef struct modperl_interp_t modperl_interp_t;
 typedef struct modperl_interp_pool_t modperl_interp_pool_t;
 typedef struct modperl_tipool_t modperl_tipool_t;
+typedef struct modperl_tipool_config_t modperl_tipool_config_t;
 
 struct modperl_interp_t {
     modperl_interp_pool_t *mip;
     PerlInterpreter *perl;
     int num_requests;
     U8 flags;
-    request_rec *request;
+    modperl_config_con_t *ccfg;
     int refcnt;
 #ifdef MP_TRACE
     unsigned long tid;
@@ -79,13 +82,13 @@ typedef struct {
                         modperl_list_t *listp);
 } modperl_tipool_vtbl_t;
 
-typedef struct {
+struct modperl_tipool_config_t {
     int start; /* number of items to create at startup */
     int min_spare; /* minimum number of spare items */
     int max_spare; /* maximum number of spare items */
     int max; /* maximum number of items */
     int max_requests; /* maximum number of requests per item */
-} modperl_tipool_config_t;
+};
 
 struct modperl_tipool_t {
     perl_mutex tiplock;
@@ -240,11 +243,21 @@ typedef struct {
     int sent_eos;
     SV *data;
     modperl_handler_t *handler;
-    PerlInterpreter *perl;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
 } modperl_filter_ctx_t;
 
 typedef struct {
     HV *pnotes;
+    apr_pool_t *pool;
+#ifdef USE_ITHREADS
+    modperl_interp_t *interp;
+#endif
+} modperl_pnotes_t;
+
+typedef struct {
+    modperl_pnotes_t pnotes;
     SV *global_request_obj;
     U8 flags;
     int status;
@@ -252,14 +265,14 @@ typedef struct {
     MpAV *handlers_per_dir[MP_HANDLER_NUM_PER_DIR];
     MpAV *handlers_per_srv[MP_HANDLER_NUM_PER_SRV];
     modperl_perl_globals_t perl_globals;
+} modperl_config_req_t;
+
+struct modperl_config_con_t {
+    modperl_pnotes_t pnotes;
 #ifdef USE_ITHREADS
     modperl_interp_t *interp;
 #endif
-} modperl_config_req_t;
-
-typedef struct {
-    HV *pnotes;
-} modperl_config_con_t;
+};
 
 typedef struct {
     apr_pool_t *pool;
@@ -279,3 +292,10 @@ typedef enum {
 } modperl_hook_run_mode_e;
 
 #endif /* MODPERL_TYPES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

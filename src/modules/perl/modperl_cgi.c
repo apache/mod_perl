@@ -101,3 +101,10 @@ MP_INLINE int modperl_cgi_header_parse(request_rec *r, char *buffer,
 
     return status;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

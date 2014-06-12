@@ -74,3 +74,10 @@ APR_DECLARE_OPTIONAL_FN(SV *,
 #endif /* MP_SOURCE_SCAN */
 
 #endif /* MODPERL_APR_PERLIO_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

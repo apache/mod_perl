@@ -77,6 +77,8 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
          * there are no more references, in which case                  \
          * the interpreter will be putback into the mip                 \
          */                                                             \
+        MP_TRACE_i(MP_FUNC, "DO: calling interp_unselect(0x%lx)",       \
+                   acct->interp);					\
         (void)modperl_opt_interp_unselect(acct->interp);                \
     }                                                                   \
 } STMT_END
@@ -100,6 +102,8 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
     if (modperl_opt_thx_interp_get) {                                   \
         if ((acct->interp = modperl_opt_thx_interp_get(aTHX))) {        \
             acct->interp->refcnt++;                                     \
+            MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",   \
+                       acct->interp, acct->interp->refcnt);                 \
         }                                                               \
     }                                                                   \
 } STMT_END
@@ -313,6 +317,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
          * there are no more references, in which case
          * the interpreter will be putback into the mip
          */
+        MP_TRACE_i(MP_FUNC, "calling interp_unselect(0x%lx)", cdata->interp);
         (void)modperl_opt_interp_unselect(cdata->interp);
     }
 #endif
@@ -344,6 +349,8 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
     if (modperl_opt_thx_interp_get) {
         if ((data->interp = modperl_opt_thx_interp_get(data->perl))) {
             data->interp->refcnt++;
+            MP_TRACE_i(MP_FUNC, "(0x%lx)->refcnt incremented to %ld",
+                       data->interp, data->interp->refcnt);
         }
     }
 #endif
@@ -382,3 +389,10 @@ static MP_INLINE void mpxs_apr_pool_DESTROY(pTHX_ SV *obj)
         apr_pool_destroy(p);
     }
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

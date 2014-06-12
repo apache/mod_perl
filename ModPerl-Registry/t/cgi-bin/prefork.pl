@@ -1,4 +1,5 @@
 #!perl -w
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 # test that prefork runs from the directory the script lives in
 

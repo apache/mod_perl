@@ -16,6 +16,7 @@
 
 #include "modperl_common_includes.h"
 #include "modperl_common_log.h"
+#include "modperl_debug.h"
 
 #undef getenv /* from XSUB.h */
 
@@ -48,7 +49,36 @@ void modperl_trace(const char *func, const char *fmt, ...)
         return;
     }
 
-    if (func) {
+    /* for more information on formatting codes see
+       http://apr.apache.org/docs/apr/1.4/group__apr__lib.html#gad2cd3594aeaafd45931d1034965f48c1
+     */
+
+    /* PERL_GET_CONTEXT yields nonsense until the first interpreter is
+     * created. Hence the modperl_is_running() question. */
+    if (modperl_threaded_mpm()) {
+        if (modperl_threads_started()) {
+            apr_os_thread_t tid = apr_os_thread_current();
+            apr_file_printf(logfile, "[pid=%lu, tid=%pt, perl=%pp] ",
+                            (unsigned long)getpid(), &tid,
+                            modperl_is_running() ? PERL_GET_CONTEXT : NULL);
+        }
+        else {
+            apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
+                            (unsigned long)getpid(),
+                            modperl_is_running() ? PERL_GET_CONTEXT : NULL);
+        }
+    }
+    else {
+#ifdef USE_ITHREADS
+        apr_file_printf(logfile, "[pid=%lu, perl=%pp] ",
+                        (unsigned long)getpid(),
+                        modperl_is_running() ? PERL_GET_CONTEXT : NULL);
+#else
+        apr_file_printf(logfile, "[pid=%lu] ", (unsigned long)getpid());
+#endif
+    }
+
+    if (func && *func) {
         apr_file_printf(logfile, "%s: ", func);
     }
 
@@ -90,3 +120,10 @@ void modperl_trace_level_set(apr_file_t *logfile, const char *level)
 
     MP_TRACE_any_do(MP_TRACE_dump_flags());
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

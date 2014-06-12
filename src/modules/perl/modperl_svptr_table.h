@@ -55,3 +55,10 @@ void
 modperl_svptr_table_free(pTHX_ PTR_TBL_t *tbl);
 
 #endif /* MODPERL_SVPTR_TABLE_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

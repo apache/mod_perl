@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestAPI::slurp_filename;
 
 # test slurp_filename()'s taintness options and that it works properly

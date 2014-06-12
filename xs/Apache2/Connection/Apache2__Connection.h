@@ -40,3 +40,10 @@ const char *mpxs_Apache2__Connection_get_remote_host(pTHX_ conn_rec *c,
 {
     return ap_get_remote_host(c, (void *)dir_config, type, NULL);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

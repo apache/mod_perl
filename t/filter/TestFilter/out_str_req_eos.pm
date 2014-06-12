@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestFilter::out_str_req_eos;
 
 # here we test how EOS is passed from one streaming filter to another,

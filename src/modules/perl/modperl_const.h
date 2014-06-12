@@ -31,3 +31,10 @@ XS(XS_modperl_const_compile);
          __FILE__)
 
 #endif /* MODPERL_CONST_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

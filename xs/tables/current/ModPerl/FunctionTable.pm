@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package ModPerl::FunctionTable;
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -4424,19 +4425,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
-    'name' => 'modperl_pid_tid',
-    'attr' => [
-      '__inline__'
-    ],
-    'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'p'
-      }
-    ]
-  },
-  {
     'return_type' => 'SV *',
     'name' => 'modperl_pnotes',
     'args' => [
@@ -4460,7 +4448,17 @@ $ModPerl::FunctionTable = [
         'type' => 'request_rec *',
         'name' => 'r'
       }
-    ]    
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'modperl_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'void *',
+        'name' => 'cl_data'
+      }
+    ]
   },
   {
     'return_type' => 'int',
@@ -6321,6 +6319,20 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache2__Connection_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'conn_rec *',
+        'name' => 'c'
+      }
+    ]
+  },
+  {
     'return_type' => 'SV *',
     'name' => 'mpxs_Apache2__Directive_as_hash',
     'attr' => [
@@ -7124,6 +7136,20 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'SV *',
         'name' => 'val'
+      }
+    ]
+  },
+  {
+    'return_type' => 'void',
+    'name' => 'mpxs_Apache2__RequestRec_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'request_rec *',
+        'name' => 'r'
       }
     ]
   },
@@ -8253,6 +8279,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'mpxs_special_list_do_t',
         'name' => 'func'
+      }
+    ]
+  },
+  {
+    'return_type' => 'modperl_interp_t *',
+    'name' => 'mpxs_ModPerl__Interpreter_current',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'class'
       }
     ]
   }

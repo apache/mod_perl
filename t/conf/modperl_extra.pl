@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 ##########################################################
 ### IMPORTANT: only things that must be run absolutely ###
 ### during the config phase should be in this file     ###

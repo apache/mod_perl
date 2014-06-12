@@ -152,3 +152,10 @@ MP_INLINE modperl_uri_t *modperl_uri_new(apr_pool_t *p)
     uri->pool = p;
     return uri;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

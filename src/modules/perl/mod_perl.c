@@ -216,8 +216,10 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         server_rec *base_server = modperl_global_get_server_rec();
         const char *desc = modperl_server_desc(s, p);
         if (base_server == s) {
+            MP_init_status = 1; /* temporarily reset MP_init_status */
             MP_TRACE_i(MP_FUNC,
                        "starting the parent perl for the base server", desc);
+            MP_init_status = 2;
         }
         else {
             MP_TRACE_i(MP_FUNC,
@@ -392,6 +394,7 @@ int modperl_init_vhost(server_rec *s, apr_pool_t *p,
     }
 
     PERL_SET_CONTEXT(perl);
+    modperl_thx_interp_set(perl, base_scfg->mip->parent);
 
 #endif /* USE_ITHREADS */
 
@@ -440,12 +443,12 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
 {
     server_rec *s;
     PerlInterpreter *base_perl;
-#ifdef MP_TRACE
+#if defined(MP_TRACE) || defined(USE_ITHREADS)
     modperl_config_srv_t *base_scfg = modperl_config_srv_get(base_server);
+#endif
 
     MP_TRACE_d_do(MpSrv_dump_flags(base_scfg,
                                    base_server->server_hostname));
-#endif /* MP_TRACE */
 
 #ifndef USE_ITHREADS
     if (modperl_threaded_mpm()) {
@@ -467,6 +470,7 @@ void modperl_init(server_rec *base_server, apr_pool_t *p)
     /* after other parent perls were started in vhosts, make sure that
      * the context is set to the base_perl */
     PERL_SET_CONTEXT(base_perl);
+    modperl_thx_interp_set(base_perl, base_scfg->mip->parent);
 #endif
 
 }
@@ -612,8 +616,6 @@ int modperl_hook_init(apr_pool_t *pconf, apr_pool_t *plog,
         return OK;
     }
 
-    MP_TRACE_i(MP_FUNC, "mod_perl hook init");
-
     MP_init_status = 1; /* now starting */
 
     modperl_restart_count_inc(s);
@@ -741,7 +743,22 @@ static int modperl_hook_create_request(request_rec *r)
 {
     MP_dRCFG;
 
+#ifdef USE_ITHREADS
+    /* XXX: this is necessary to make modperl_interp_pool_select() work
+     * which is used at runtime only to merge dir-configs by
+     * modperl_module_config_merge().
+     *
+     * Since most requests won't need it it would be good to add some logic
+     * (cheaper logic in terms of CPU cycles) to identify those cases and
+     * avoid the hash operation.
+     */
+    MP_TRACE_i(MP_FUNC, "setting userdata MODPERL_R in pool %#lx to %lx",
+               (unsigned long)r->pool, (unsigned long)r);
+    (void)apr_pool_userdata_set((void *)r, "MODPERL_R", NULL, r->pool);
+#endif
+
     modperl_config_req_init(r, rcfg);
+    modperl_config_req_cleanup_register(r, rcfg);
 
     /* set the default for cgi header parsing On as early as possible
      * so $r->content_type in any phase after header_parser could turn
@@ -755,6 +772,12 @@ static int modperl_hook_create_request(request_rec *r)
 
 static int modperl_hook_post_read_request(request_rec *r)
 {
+#ifdef USE_ITHREADS
+    MP_TRACE_i(MP_FUNC, "%s %s:%d%s",
+               r->method, r->connection->local_addr->hostname,
+               r->connection->local_addr->port, r->unparsed_uri);
+#endif
+
     /* if 'PerlOptions +GlobalRequest' is outside a container */
     modperl_global_request_cfg_set(r);
 
@@ -1018,27 +1041,14 @@ static int modperl_response_handler_run(request_rec *r)
 int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
-#ifdef USE_ITHREADS
-    MP_dRCFG;
-#endif
     apr_status_t retval, rc;
-
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp;
-#endif
+    MP_dINTERP;
 
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_select(r, r->connection, r->server);
-    aTHX = interp->perl;
-    if (MpInterpPUTBACK(interp)) {
-        rcfg->interp = interp;
-    }
-#endif
+    MP_INTERPa(r, r->connection, r->server);
 
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
     if (MpDirSETUP_ENV(dcfg)) {
@@ -1051,13 +1061,7 @@ int modperl_response_handler(request_rec *r)
         retval = rc;
     }
 
-#ifdef USE_ITHREADS
-    if (MpInterpPUTBACK(interp)) {
-        /* PerlInterpScope handler */
-        rcfg->interp = NULL;
-        modperl_interp_unselect(interp);
-    }
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     return retval;
 }
@@ -1068,22 +1072,13 @@ int modperl_response_handler_cgi(request_rec *r)
     GV *h_stdin, *h_stdout;
     apr_status_t retval, rc;
     MP_dRCFG;
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp;
-#endif
+    MP_dINTERP;
 
     if (!strEQ(r->handler, "perl-script")) {
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_select(r, r->connection, r->server);
-    aTHX = interp->perl;
-    if (MpInterpPUTBACK(interp)) {
-        rcfg->interp = interp;
-    }
-#endif
+    MP_INTERPa(r, r->connection, r->server);
 
     modperl_perl_global_request_save(aTHX_ r);
 
@@ -1115,13 +1110,7 @@ int modperl_response_handler_cgi(request_rec *r)
     modperl_io_restore_stdout(aTHX_ h_stdout);
     FREETMPS;LEAVE;
 
-#ifdef USE_ITHREADS
-    if (MpInterpPUTBACK(interp)) {
-        /* PerlInterpScope handler */
-        modperl_interp_unselect(interp);
-        rcfg->interp = NULL;
-    }
-#endif
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     /* flush output buffer after interpreter is putback */
     rc = modperl_response_finish(r);
@@ -1159,3 +1148,10 @@ module AP_MODULE_DECLARE_DATA perl_module = {
     modperl_cmds,              /* table of config file commands       */
     modperl_register_hooks,    /* register hooks */
 };
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

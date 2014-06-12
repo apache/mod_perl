@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestAPI::internal_redirect_handler;
 
 # $r->internal_redirect_handler() is the same as

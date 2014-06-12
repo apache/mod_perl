@@ -470,9 +470,8 @@ void modperl_perl_call_list(pTHX_ AV *subs, const char *name)
     I32 i, oldscope = PL_scopestack_ix;
     SV **ary = AvARRAY(subs);
 
-    MP_TRACE_g(MP_FUNC, "pid %lu" MP_TRACEf_TID MP_TRACEf_PERLID
-               " running %d %s subs",
-               (unsigned long)getpid(), MP_TRACEv_TID_ MP_TRACEv_PERLID_
+    MP_TRACE_g(MP_FUNC, MP_TRACEf_PERLID
+               " running %d %s subs", MP_TRACEv_PERLID_
                AvFILLp(subs)+1, name);
 
     for (i=0; i<=AvFILLp(subs); i++) {
@@ -830,56 +829,44 @@ int modperl_restart_count(void)
     return data ? *(int *)data : 0;
  }
 
-#ifdef USE_ITHREADS
-typedef struct {
-    HV **pnotes;
-    PerlInterpreter *perl;
-} modperl_cleanup_pnotes_data_t;
-#endif
- 
 static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
-    HV **pnotes = data;
+    modperl_pnotes_t *pnotes = data;
 
-    if (*pnotes) {
-#ifdef USE_ITHREADS
-        modperl_cleanup_pnotes_data_t *cleanup_data = data;
-        dTHXa(cleanup_data->perl);
-        pnotes = cleanup_data->pnotes;
-#else
-        pnotes = data;
-#endif
-        SvREFCNT_dec(*pnotes);
-        *pnotes = (HV *)NULL;
-    }
+    dTHXa(pnotes->interp->perl);
+    MP_ASSERT_CONTEXT(aTHX);
 
+    SvREFCNT_dec(pnotes->pnotes);
+    pnotes->pnotes = NULL;
+    pnotes->pool = NULL;
+
+    MP_INTERP_PUTBACK(pnotes->interp, aTHX);
     return APR_SUCCESS;
 }
 
-MP_INLINE
-static void *modperl_pnotes_cleanup_data(pTHX_ HV **pnotes, apr_pool_t *p) {
-#ifdef USE_ITHREADS
-    modperl_cleanup_pnotes_data_t *cleanup_data = apr_palloc(p, sizeof(*cleanup_data));
-    cleanup_data->pnotes = pnotes;
-    cleanup_data->perl = aTHX;
-    return cleanup_data;
-#else
-    return pnotes;
-#endif
+void modperl_pnotes_kill(void *data) {
+    modperl_pnotes_t *pnotes = data;
+
+    if( !pnotes->pnotes ) return;
+
+    apr_pool_cleanup_kill(pnotes->pool, pnotes, modperl_cleanup_pnotes);
+    modperl_cleanup_pnotes(pnotes);
 }
 
-SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
-                   request_rec *r, conn_rec *c) {
+SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
+                   apr_pool_t *pool) {
     SV *retval = (SV *)NULL;
 
-    if (!*pnotes) {
-        apr_pool_t *pool = r ? r->pool : c->pool;
-        void *cleanup_data;
-        *pnotes = newHV();
-
-        cleanup_data = modperl_pnotes_cleanup_data(aTHX_ pnotes, pool);
-
-        apr_pool_cleanup_register(pool, cleanup_data,
+    if (!pnotes->pnotes) {
+        pnotes->pool = pool;
+#ifdef USE_ITHREADS
+        pnotes->interp = modperl_thx_interp_get(aTHX);
+        pnotes->interp->refcnt++;
+        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",
+                   pnotes->interp, pnotes->interp->refcnt);
+#endif
+        pnotes->pnotes = newHV();
+        apr_pool_cleanup_register(pool, pnotes,
                                   modperl_cleanup_pnotes,
                                   apr_pool_cleanup_null);
     }
@@ -889,15 +876,15 @@ SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
         char *k = SvPV(key, len);
 
         if (val) {
-            retval = *hv_store(*pnotes, k, len, SvREFCNT_inc(val), 0);
+            retval = *hv_store(pnotes->pnotes, k, len, SvREFCNT_inc(val), 0);
         }
-        else if (hv_exists(*pnotes, k, len)) {
-            retval = *hv_fetch(*pnotes, k, len, FALSE);
+        else if (hv_exists(pnotes->pnotes, k, len)) {
+            retval = *hv_fetch(pnotes->pnotes, k, len, FALSE);
         }
 
         return retval ? SvREFCNT_inc(retval) : &PL_sv_undef;
     }
-    return newRV_inc((SV *)*pnotes);
+    return newRV_inc((SV *)pnotes->pnotes);
 }
 
 U16 *modperl_code_attrs(pTHX_ CV *cv) {
@@ -940,21 +927,23 @@ static authz_status perl_check_authorization(request_rec *r,
     AV *args = Nullav;
     const char *key;
     auth_callback *ab;
-    MP_dTHX;
-    dSP;
+    MP_dINTERPa(r, NULL, NULL);
 
     if (global_authz_providers == NULL) {
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
     key = apr_table_get(r->notes, AUTHZ_PROVIDER_NAME_NOTE);
     ab = apr_hash_get(global_authz_providers, key, APR_HASH_KEY_STRING);
     if (ab == NULL) {
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
     if (ab->cb1 == NULL) {
         if (ab->cb1_handler == NULL) {
+            MP_INTERP_PUTBACK(interp, aTHX);
             return ret;
         }
 
@@ -963,25 +952,31 @@ static authz_status perl_check_authorization(request_rec *r,
         ret = modperl_callback(aTHX_ ab->cb1_handler, r->pool, r, r->server,
                                args);
         SvREFCNT_dec((SV*)args);
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
-    XPUSHs(sv_2mortal(newSVpv(require_args, 0)));
-    PUTBACK;
-    count = call_sv(ab->cb1, G_SCALAR);
-    SPAGAIN;
+    {
+        dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(SP);
+        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+        XPUSHs(sv_2mortal(newSVpv(require_args, 0)));
+        PUTBACK;
+        count = call_sv(ab->cb1, G_SCALAR);
+        SPAGAIN;
 
-    if (count == 1) {
-        ret = (authz_status) POPi;
+        if (count == 1) {
+            ret = (authz_status) POPi;
+        }
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
     }
 
-    PUTBACK;
-    FREETMPS;
-    LEAVE;
+    MP_INTERP_PUTBACK(interp, aTHX);
     return ret;
 }
 
@@ -989,53 +984,66 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
                                            const char *require_line,
                                            const void **parsed_require_line)
 {
-    SV *ret_sv;
     char *ret = NULL;
-    int count;
     void *key;
     auth_callback *ab;
-    modperl_interp_t *interp;
 
-    if (global_authz_providers == NULL) {
-        return ret;
+    if (global_authz_providers == NULL ||
+        apr_hash_count(global_authz_providers) == 0)
+    {
+        return NULL;
     }
 
     apr_pool_userdata_get(&key, AUTHZ_PROVIDER_NAME_NOTE, cmd->temp_pool);
     ab = apr_hash_get(global_authz_providers, (char *) key, APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb2 == NULL) {
-        return ret;
+        return NULL;
     }
 
-#ifdef USE_ITHREADS
-    interp = modperl_interp_pool_select(cmd->server->process->pool, cmd->server);
-    if (interp) {
-        dTHXa(interp->perl);
-#else
     {
-#endif
-        dSP;
-        ENTER;
-        SAVETMPS;
-        PUSHMARK(SP);
-        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
-        XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
-        PUTBACK;
-        count = call_sv(ab->cb2, G_SCALAR);
-        SPAGAIN;
+        /* PerlAddAuthzProvider currently does not support an optional second
+         * handler, so ab->cb2 should always be NULL above and we will never get
+         * here. If such support is added in the future then this code will be
+         * reached, but cannot succeed in the absence of an interpreter. The
+         * second handler would be called at init to check a Require line for
+         * errors, but in the current design there is no interpreter available
+         * at that time.
+         */
+        MP_dINTERP_POOLa(cmd->pool, cmd->server);
+        if (!MP_HAS_INTERP(interp)) {
+	    return "Require handler is not currently supported in this context";
+	}
 
-        if (count == 1) {
-            ret_sv = POPs;
-            if (SvOK(ret_sv)) {
-                char *tmp = SvPV_nolen(ret_sv);
-                if (*tmp != '\0') {
-                    ret = apr_pstrdup(cmd->pool, tmp);
+        {
+            SV *ret_sv;
+            int count;
+            dSP;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::CmdParms", cmd)));
+            XPUSHs(sv_2mortal(newSVpv(require_line, 0)));
+            PUTBACK;
+            count = call_sv(ab->cb2, G_SCALAR);
+            SPAGAIN;
+
+            if (count == 1) {
+                ret_sv = POPs;
+                if (SvOK(ret_sv)) {
+                    char *tmp = SvPV_nolen(ret_sv);
+                    if (*tmp != '\0') {
+                        ret = apr_pstrdup(cmd->pool, tmp);
+                    }
                 }
             }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
         }
 
-        PUTBACK;
-        FREETMPS;
-        LEAVE;
+        MP_INTERP_PUTBACK(interp, aTHX);
     }
     return ret;
 }
@@ -1048,10 +1056,10 @@ static authn_status perl_check_password(request_rec *r, const char *user,
     AV *args = Nullav;
     const char *key;
     auth_callback *ab;
-    MP_dTHX;
-    dSP;
+    MP_dINTERPa(r, NULL, NULL);
 
     if (global_authn_providers == NULL) {
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
@@ -1059,11 +1067,13 @@ static authn_status perl_check_password(request_rec *r, const char *user,
     ab = apr_hash_get(global_authn_providers, key,
                                      APR_HASH_KEY_STRING);
     if (ab == NULL || ab->cb1) {
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
     if (ab->cb1 == NULL) {
         if (ab->cb1_handler == NULL) {
+            MP_INTERP_PUTBACK(interp, aTHX);
             return ret;
         }
 
@@ -1073,26 +1083,32 @@ static authn_status perl_check_password(request_rec *r, const char *user,
         ret = modperl_callback(aTHX_ ab->cb1_handler, r->pool, r, r->server,
                                args);
         SvREFCNT_dec((SV*)args);
+        MP_INTERP_PUTBACK(interp, aTHX);
         return ret;
     }
 
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
-    XPUSHs(sv_2mortal(newSVpv(user, 0)));
-    XPUSHs(sv_2mortal(newSVpv(password, 0)));
-    PUTBACK;
-    count = call_sv(ab->cb1, G_SCALAR);
-    SPAGAIN;
+    {
+        dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(SP);
+        XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+        XPUSHs(sv_2mortal(newSVpv(user, 0)));
+        XPUSHs(sv_2mortal(newSVpv(password, 0)));
+        PUTBACK;
+        count = call_sv(ab->cb1, G_SCALAR);
+        SPAGAIN;
 
-    if (count == 1) {
-        ret = (authn_status) POPi;
+        if (count == 1) {
+            ret = (authn_status) POPi;
+        }
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
     }
 
-    PUTBACK;
-    FREETMPS;
-    LEAVE;
+    MP_INTERP_PUTBACK(interp, aTHX);
     return ret;
 }
 
@@ -1100,46 +1116,63 @@ static authn_status perl_get_realm_hash(request_rec *r, const char *user,
                                         const char *realm, char **rethash)
 {
     authn_status ret = AUTH_USER_NOT_FOUND;
-    int count;
-    SV *rh;
     const char *key;
     auth_callback *ab;
-    MP_dTHX;
-    dSP;
 
-    if (global_authn_providers == NULL) {
-        return ret;
+    if (global_authn_providers == NULL ||
+        apr_hash_count(global_authn_providers) == 0)
+    {
+        return AUTH_GENERAL_ERROR;
     }
 
     key = apr_table_get(r->notes, AUTHN_PROVIDER_NAME_NOTE);
     ab = apr_hash_get(global_authn_providers, key, APR_HASH_KEY_STRING);
-    if (ab == NULL || ab->cb2) {
-        return ret;
+    if (ab == NULL || ab->cb2 == NULL) {
+        return AUTH_GENERAL_ERROR;
     }
 
-    rh = sv_2mortal(newSVpv("", 0));
-    ENTER;
-    SAVETMPS;
-    PUSHMARK(SP);
-    XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
-    XPUSHs(sv_2mortal(newSVpv(user, 0)));
-    XPUSHs(sv_2mortal(newSVpv(realm, 0)));
-    XPUSHs(newRV_noinc(rh));
-    PUTBACK;
-    count = call_sv(ab->cb2, G_SCALAR);
-    SPAGAIN;
+    {
+        /* PerlAddAuthnProvider currently does not support an optional second
+         * handler, so ab->cb2 should always be NULL above and we will never get
+         * here. If such support is added in the future then this code will be
+         * reached. Unlike the PerlAddAuthzProvider case, the second handler here
+         * would be called during request_rec processing to obtain a password hash
+         * for the realm so there should be no problem grabbing an interpreter.
+         */
+        MP_dINTERPa(r, NULL, NULL);
 
-    if (count == 1) {
-        const char *tmp = SvPV_nolen(rh);
-        ret = (authn_status) POPi;
-        if (*tmp != '\0') {
-            *rethash = apr_pstrdup(r->pool, tmp);
+        {
+            SV* rh = sv_2mortal(newSVpv("", 0));
+            int count;
+            dSP;
+
+            ENTER;
+            SAVETMPS;
+            PUSHMARK(SP);
+            XPUSHs(sv_2mortal(modperl_ptr2obj(aTHX_ "Apache2::RequestRec", r)));
+            XPUSHs(sv_2mortal(newSVpv(user, 0)));
+            XPUSHs(sv_2mortal(newSVpv(realm, 0)));
+            XPUSHs(newRV_noinc(rh));
+            PUTBACK;
+            count = call_sv(ab->cb2, G_SCALAR);
+            SPAGAIN;
+
+            if (count == 1) {
+                const char *tmp = SvPV_nolen(rh);
+                ret = (authn_status) POPi;
+                if (*tmp != '\0') {
+                    *rethash = apr_pstrdup(r->pool, tmp);
+                }
+            }
+
+            PUTBACK;
+            FREETMPS;
+            LEAVE;
         }
+
+        MP_INTERP_PUTBACK(interp, aTHX);
     }
 
-    PUTBACK;
-    FREETMPS;
-    LEAVE;
     return ret;
 }
 
@@ -1226,3 +1259,10 @@ apr_status_t modperl_register_auth_provider_name(apr_pool_t *pool,
 }
 
 #endif /* httpd-2.4 */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

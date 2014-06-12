@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestModperl::print_utf8_2;
 
 # testing the utf8-encoded response via direct $r->print, which does the

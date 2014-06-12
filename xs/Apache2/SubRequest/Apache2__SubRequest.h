@@ -31,3 +31,10 @@ static MP_INLINE int mpxs_ap_run_sub_req(pTHX_ request_rec *r)
 
     return ap_run_sub_req(r);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

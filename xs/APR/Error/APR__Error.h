@@ -15,3 +15,10 @@
  */
 
 #define mpxs_APR__Error_strerror(rc) modperl_error_strerror(aTHX_ rc)
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */
