@@ -16,3 +16,10 @@
 
 #define mpxs_Apache2__Command_next(cmd) \
 (++cmd, ((cmd && cmd->name) ? cmd : NULL))
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

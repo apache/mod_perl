@@ -21,3 +21,10 @@ apr_bucket *modperl_bucket_sv_create(pTHX_ apr_bucket_alloc_t *list, SV *sv,
                                      apr_off_t offset, apr_size_t len);
 
 #endif /* MODPERL_BUCKET_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

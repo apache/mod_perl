@@ -28,3 +28,10 @@ SV *modperl_module_config_get_obj(pTHX_ SV *pmodule, server_rec *s,
                                   ap_conf_vector_t *v);
 
 #endif /* MODPERL_MODULE_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

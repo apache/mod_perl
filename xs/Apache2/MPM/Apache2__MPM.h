@@ -58,3 +58,10 @@ static void mpxs_Apache2__MPM_BOOT(pTHX)
     newCONSTSUB(PL_defstash, "Apache2::MPM::show",
                 newSVpv(ap_show_mpm(), 0));
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

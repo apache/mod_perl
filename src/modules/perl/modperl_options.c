@@ -148,3 +148,10 @@ modperl_options_t *modperl_options_merge(apr_pool_t *p,
 
     return conf;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

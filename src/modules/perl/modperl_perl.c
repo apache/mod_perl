@@ -280,3 +280,10 @@ void modperl_hash_seed_set(pTHX)
     }
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

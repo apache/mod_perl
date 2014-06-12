@@ -113,3 +113,10 @@ void modperl_perl_pp_unset_all(void)
         modperl_perl_pp_unset(i);
     }
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

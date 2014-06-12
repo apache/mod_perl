@@ -88,8 +88,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
                 name = handler->name;
             }
 
-            MP_TRACE_h(MP_FUNC, "[%s %s] lookup of %s failed",
-                       modperl_pid_tid(p),
+            MP_TRACE_h(MP_FUNC, "[%s] lookup of %s failed",
                        modperl_server_desc(s, p), name);
             ap_log_error(APLOG_MARK, APLOG_ERR, 0, s,
                          "lookup of '%s' failed", name);
@@ -148,10 +147,7 @@ int modperl_callback_run_handlers(int idx, int type,
                                   apr_pool_t *ptemp,
                                   modperl_hook_run_mode_e run_mode)
 {
-#ifdef USE_ITHREADS
-    pTHX;
-    modperl_interp_t *interp = NULL;
-#endif
+    MP_dINTERP;
     MP_dSCFG(s);
     MP_dDCFG;
     MP_dRCFG;
@@ -184,28 +180,7 @@ int modperl_callback_run_handlers(int idx, int type,
         return DECLINED;
     }
 
-#ifdef USE_ITHREADS
-    if (r && !c && modperl_interp_scope_connection(scfg)) {
-        c = r->connection;
-    }
-    if (r || c) {
-        interp = modperl_interp_select(r, c, s);
-        aTHX = interp->perl;
-    }
-    else {
-        /* Child{Init,Exit}, OpenLogs */
-        aTHX = scfg->mip->parent->perl;
-        PERL_SET_CONTEXT(aTHX);
-    }
-#endif
-
-    /* XXX: would like to do this in modperl_hook_create_request()
-     * but modperl_interp_select() is what figures out if
-     * PerlInterpScope eq handler, in which case we do not register
-     * a cleanup.  modperl_hook_create_request() is also currently always
-     * run even if modperl isn't handling any part of the request
-     */
-    modperl_config_req_cleanup_register(r, rcfg);
+    MP_INTERPa(r, c, s);
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:
@@ -254,8 +229,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
     modperl_callback_current_callback_set(desc);
 
-    MP_TRACE_h(MP_FUNC, "[%s] running %d %s handlers",
-               modperl_pid_tid(p), av->nelts, desc);
+    MP_TRACE_h(MP_FUNC, "running %d %s handlers", av->nelts, desc);
     handlers = (modperl_handler_t **)av->elts;
 
     for (i=0; i<av->nelts; i++) {
@@ -357,8 +331,7 @@ int modperl_callback_run_handlers(int idx, int type,
 
     SvREFCNT_dec((SV*)av_args);
 
-    /* PerlInterpScope handler */
-    MP_INTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     return status;
 }
@@ -415,3 +388,10 @@ int modperl_callback_files(int idx,
                                          NULL, NULL, s,
                                          pconf, plog, ptemp, run_mode);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

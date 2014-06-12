@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestDirective::perlloadmodule4;
 
 # XXX: the package is 99% the same as perlloadlmodule5 and 6, just the

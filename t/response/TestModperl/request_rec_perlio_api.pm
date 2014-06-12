@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestModperl::request_rec_perlio_api;
 
 # this test is relevant only when the PerlIO STDIN/STDOUT are used (when
@@ -41,7 +42,7 @@ sub test_STDIN {
         open STDIN, "<", __FILE__
             or die "failed to open STDIN as 'in memory' file : $!";
         my $data;
-        read STDIN, $data, length("package");
+        read STDIN, $data, length("# please");
         print STDOUT $data;
         close STDIN;
 

@@ -23,3 +23,10 @@
 #define mpxs_APR__Status_is_ECONNABORTED APR_STATUS_IS_ECONNABORTED
 #define mpxs_APR__Status_is_ECONNRESET   APR_STATUS_IS_ECONNRESET
 #define mpxs_APR__Status_is_TIMEUP       APR_STATUS_IS_TIMEUP
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

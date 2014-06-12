@@ -58,3 +58,10 @@ void modperl_trace(const char *func, const char *fmt, ...);
 void modperl_trace_level_set(apr_file_t *logfile, const char *level);
 
 #endif /* MODPERL_COMMON_LOG_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

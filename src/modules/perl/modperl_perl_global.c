@@ -494,3 +494,10 @@ void modperl_perl_global_request_restore(pTHX_ request_rec *r)
                                 MP_perl_global_entries);
 
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

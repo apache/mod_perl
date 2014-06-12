@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 
 # this script creates a diff against SVN
 # and against /dev/null for all files in ARGV

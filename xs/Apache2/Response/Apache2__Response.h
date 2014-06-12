@@ -39,3 +39,10 @@ mpxs_Apache2__RequestRec_set_last_modified(request_rec *r, apr_time_t mtime)
     }
     ap_set_last_modified(r);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

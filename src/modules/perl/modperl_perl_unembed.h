@@ -43,3 +43,10 @@
 #undef list
 
 #endif /* MODPERL_PERL_UNEMBED_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

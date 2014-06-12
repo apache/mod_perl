@@ -624,3 +624,10 @@ void modperl_apr_perlio_init(pTHX)
 }
 
 #endif /* PERLIO_LAYERS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

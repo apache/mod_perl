@@ -96,3 +96,10 @@ static MP_INLINE void mpxs_Apache2__Module_add(pTHX_
 
     return;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

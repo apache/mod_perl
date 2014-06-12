@@ -184,7 +184,7 @@ modperl_svptr_table_fetch(pTHX_ PTR_TBL_t *tbl, void *sv)
 {
     PTR_TBL_ENT_t *tblent;
     UV hash = PTR2UV(sv);
-    assert(tbl);
+    MP_ASSERT(tbl);
     tblent = tbl->tbl_ary[hash & tbl->tbl_max];
     for (; tblent; tblent = tblent->next) {
         if (tblent->oldval == sv)
@@ -205,7 +205,7 @@ modperl_svptr_table_store(pTHX_ PTR_TBL_t *tbl, void *oldv, void *newv)
     UV hash = PTR2UV(oldv);
     bool i = 1;
 
-    assert(tbl);
+    MP_ASSERT(tbl);
     otblent = &tbl->tbl_ary[hash & tbl->tbl_max];
     for (tblent = *otblent; tblent; i=0, tblent = tblent->next) {
         if (tblent->oldval == oldv) {
@@ -303,3 +303,10 @@ modperl_svptr_table_free(pTHX_ PTR_TBL_t *tbl)
     Safefree(tbl->tbl_ary);
     Safefree(tbl);
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

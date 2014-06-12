@@ -12,6 +12,29 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-dev
 
+Make sure modperl_interp_select uses r->server rather than the passed s
+parameter to find the interpreter pool to pull an interpreter from. This
+fixes an issue with vhosts with a separate interpreter pool and runtime
+dir-config merges that used to pull the interpreter from the wrong pool.
+[Torsten Foertsch]
+
+PerlInterpScope is now more advisory. Using $(c|r)->pnotes will bind
+the current interpreter to that object for it's lifetime.
+$(c|r)->pnotes_kill() can be used to prematurely drop pnotes and
+remove this binding. [Torsten Foertsch]
+
+Now correctly invokes PerlCleanupHandlers, even if they are the only
+handler type configured for that request [Torsten Foertsch]
+
+For threaded MPMs, change interpreter managment to a new, reference-counted
+allocation model. [Torsten Foertsch]
+
+Expose modperl_interp_pool_t via ModPerl::InterpPool, modperl_tipool_t
+via ModPerl::TiPool and modperl_tipool_config_t via ModPerl::TiPoolConfig
+[Torsten Foertsch]
+
+Expose modperl_interp_t via ModPerl::Interpreter [Torsten Foertsch]
+
 Fix t/compat/apache_file.t on Windows. Apache::File->tmpfile() wants TMPDIR
 or TEMP from the environment, or else defaults to /tmp. The latter is no
 good on Windows, so make sure the environment variables are passed through.

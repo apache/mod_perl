@@ -334,3 +334,10 @@ MP_INLINE SSize_t modperl_request_read(pTHX_ request_rec *r,
 
     return total;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -39,8 +39,7 @@ modperl_handler_t *modperl_handler_new(apr_pool_t *p, const char *name)
     /* not necessary due to apr_pcalloc */
     /* handler->cv = NULL; */
     handler->name = name;
-    MP_TRACE_h(MP_FUNC, "[%s] new handler %s",
-               modperl_pid_tid(p), handler->name);
+    MP_TRACE_h(MP_FUNC, "new handler %s", handler->name);
 
     return handler;
 }
@@ -105,8 +104,7 @@ MP_INLINE modperl_mgv_t *modperl_handler_anon_next(pTHX_ apr_pool_t *p)
     anon->len  = strlen(anon->name);
     PERL_HASH(anon->hash, anon->name, anon->len);
 
-    MP_TRACE_h(MP_FUNC, "[%s] new anon handler: '%s'",
-               modperl_pid_tid(p), anon->name);
+    MP_TRACE_h(MP_FUNC, "new anon handler: '%s'", anon->name);
     return anon;
 }
 
@@ -175,8 +173,7 @@ modperl_handler_t *modperl_handler_new_anon(pTHX_ apr_pool_t *p, CV *cv)
     handler->cv   = cv;
     handler->name = NULL;
 
-    MP_TRACE_h(MP_FUNC, "[%s] new cached cv anon handler",
-               modperl_pid_tid(p));
+    MP_TRACE_h(MP_FUNC, "new cached cv anon handler");
 #endif
 
     return handler;
@@ -223,9 +220,8 @@ int modperl_handler_resolve(pTHX_ modperl_handler_t **handp,
         MpHandlerAUTOLOAD_On(handler);
 
         MP_TRACE_h(MP_FUNC,
-                   "[%s %s] handler %s hasn't yet been resolved, "
-                   "attempting to resolve using %s pool 0x%lx\n",
-                   modperl_pid_tid(p),
+                   "[%s] handler %s hasn't yet been resolved, "
+                   "attempting to resolve using %s pool 0x%lx",
                    modperl_server_desc(s, p),
                    modperl_handler_name(handler),
                    duped ? "current" : "server conf",
@@ -349,9 +345,15 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
 #define set_desc(dtype)                                 \
     if (desc) *desc = modperl_handler_desc_##dtype(idx)
 
+/* We should be able to use PERL_GET_CONTEXT here. The rcfg condition
+ * makes sure there is a request being processed. The action > GET part
+ * means it is a $r->set_handlers or $r->push_handlers operation. This
+ * can only happen if called by perl code.
+ */
 #define check_modify(dtype)                                     \
     if ((action > MP_HANDLER_ACTION_GET) && rcfg) {             \
-        MP_dSCFG_dTHX;                                          \
+        dTHXa(PERL_GET_CONTEXT);                                \
+        MP_ASSERT(aTHX+0);                                      \
         Perl_croak(aTHX_ "too late to modify %s handlers",      \
                    modperl_handler_desc_##dtype(idx));          \
     }
@@ -631,3 +633,10 @@ int modperl_handler_perl_add_handlers(pTHX_
 
     return TRUE;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

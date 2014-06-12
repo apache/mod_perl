@@ -175,3 +175,9 @@ MP_INLINE void modperl_io_perlio_restore_stdout(pTHX_ GV *handle)
     modperl_io_perlio_restore_stdhandle(aTHX_ O_WRONLY);
 }
 
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

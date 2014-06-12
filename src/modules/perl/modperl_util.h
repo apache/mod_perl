@@ -101,20 +101,8 @@ SV *modperl_apr_array_header2avrv(pTHX_ apr_array_header_t *array);
 apr_array_header_t *modperl_avrv2apr_array_header(pTHX_ apr_pool_t *p,
                                                   SV *avrv);
 void modperl_package_unload(pTHX_ const char *package);
-#if defined(MP_TRACE) && APR_HAS_THREADS
-#define MP_TRACEf_TID   "/tid 0x%lx"
-#define MP_TRACEv_TID   (unsigned long)apr_os_thread_current()
-#define MP_TRACEv_TID_  MP_TRACEv_TID,
-#define MP_TRACEv__TID  ,MP_TRACEv_TID
-#else
-#define MP_TRACEf_TID
-#define MP_TRACEv_TID
-#define MP_TRACEv_TID_
-#define MP_TRACEv__TID
-#endif /* APR_HAS_THREADS */
-
 #if defined(MP_TRACE) && defined(USE_ITHREADS)
-#define MP_TRACEf_PERLID   "/perl id 0x%lx"
+#define MP_TRACEf_PERLID   "perl id 0x%lx"
 #define MP_TRACEv_PERLID   (unsigned long)my_perl
 #define MP_TRACEv_PERLID_  MP_TRACEv_PERLID,
 #define MP_TRACEv__PERLID  ,MP_TRACEv_PERLID
@@ -146,8 +134,10 @@ void modperl_package_unload(pTHX_ const char *package);
 void modperl_restart_count_inc(server_rec *base_server);
 int  modperl_restart_count(void);
 
-SV *modperl_pnotes(pTHX_ HV **pnotes, SV *key, SV *val,
-                   request_rec *r, conn_rec *c);
+void modperl_pnotes_kill(void *data);
+
+SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
+                   apr_pool_t *pool );
 
 U16 *modperl_code_attrs(pTHX_ CV *cv);
 
@@ -169,3 +159,10 @@ modperl_register_auth_provider_name(apr_pool_t *pool,
 #endif
 
 #endif /* MODPERL_UTIL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -145,3 +145,10 @@ void modperl_gtop_report_proc_mem_after(modperl_gtop_t *gtop, const char *func, 
 }
 
 #endif /* MP_USE_GTOP */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

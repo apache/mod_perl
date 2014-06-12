@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 # perl/ithreads is a similar test but is running from the global perl
 # interpreter pool. whereas this test is running against a
 # virtual host with its own perl interpreter pool (+Parent)

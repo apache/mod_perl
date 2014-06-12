@@ -125,3 +125,10 @@ static MP_INLINE int mpxs_APR__Socket_fileno(pTHX_ apr_socket_t *socket)
     return s;
 }
 #endif
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

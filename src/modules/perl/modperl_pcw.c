@@ -140,3 +140,10 @@ void ap_pcw_walk_config(apr_pool_t *pconf, server_rec *s,
         }
     }
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

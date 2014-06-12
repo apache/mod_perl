@@ -122,3 +122,10 @@ apr_status_t mpxs_APR__Bucket_setaside(pTHX_ SV *b_sv, SV *p_sv)
 
     return rc;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

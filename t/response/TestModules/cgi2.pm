@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestModules::cgi2;
 
 # this handler doesn't use the :Apache layer, so CGI.pm needs to do

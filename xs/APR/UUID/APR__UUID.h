@@ -49,3 +49,10 @@ MP_STATIC XS(MPXS_apr_uuid_format)
 }
 
 #define apr_uuid_DESTROY(uuid) safefree(uuid)
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

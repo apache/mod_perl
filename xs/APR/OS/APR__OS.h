@@ -22,3 +22,10 @@ static MP_INLINE unsigned long mpxs_APR__OS_current_thread_id(pTHX)
     return 0;
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

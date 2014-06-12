@@ -28,3 +28,10 @@ int modperl_sys_is_dir(pTHX_ SV *sv);
 int modperl_sys_dlclose(void *handle);
 
 #endif /* MODPERL_SYS_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

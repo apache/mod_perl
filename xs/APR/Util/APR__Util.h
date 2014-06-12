@@ -19,3 +19,10 @@ static MP_INLINE int mpxs_apr_password_validate(pTHX_ const char *passwd,
 {
     return apr_password_validate(passwd, hash) == APR_SUCCESS;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

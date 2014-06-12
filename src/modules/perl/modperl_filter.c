@@ -282,13 +282,14 @@ static apr_status_t modperl_filter_f_cleanup(void *data)
     /* mod_perl filter ctx cleanup */
     if (ctx->data){
 #ifdef USE_ITHREADS
-        dTHXa(ctx->perl);
+        dTHXa(ctx->interp->perl);
+        MP_ASSERT_CONTEXT(aTHX);
 #endif
         if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
             SvREFCNT_dec(ctx->data);
             ctx->data = NULL;
         }
-        ctx->perl = NULL;
+        MP_INTERP_PUTBACK(ctx->interp, aTHX);
     }
 
     return APR_SUCCESS;
@@ -440,7 +441,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     apr_pool_t  *p = r ? r->pool : c->pool;
     modperl_filter_t *filter = modperl_filter_new(f, NULL, mode, 0, 0, 0);
 
-    MP_dINTERP_SELECT(r, c, s);
+    MP_dINTERPa(r, c, s);
 
     MP_TRACE_h(MP_FUNC, "running filter init handler %s",
                modperl_handler_name(handler));
@@ -464,7 +465,7 @@ static int modperl_run_filter_init(ap_filter_t *f,
     FILTER_FREE(filter);
     SvREFCNT_dec((SV*)args);
 
-    MP_INTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d", modperl_handler_name(handler), status);
@@ -485,7 +486,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
 
-    MP_dINTERP_SELECT(r, c, s);
+    MP_dINTERPa(r, c, s);
 
     MP_FILTER_SAVE_ERRSV(errsv);
 
@@ -555,7 +556,7 @@ int modperl_run_filter(modperl_filter_t *filter)
 
     MP_FILTER_RESTORE_ERRSV(errsv);
 
-    MP_INTERP_PUTBACK(interp);
+    MP_INTERP_PUTBACK(interp, aTHX);
 
     MP_TRACE_f(MP_FUNC, MP_FILTER_NAME_FORMAT
                "return: %d", modperl_handler_name(handler), status);
@@ -1291,3 +1292,10 @@ void modperl_brigade_dump(apr_bucket_brigade *bb, apr_file_t *file)
     }
 #endif
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

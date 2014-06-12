@@ -1,3 +1,4 @@
+# please insert nothing before this line: -*- mode: cperl; cperl-indent-level: 4; cperl-continued-statement-offset: 4; indent-tabs-mode: nil -*-
 package TestHooks::push_handlers_anon;
 
 # in addition to other anon sub handler tests in push_handlers*, here

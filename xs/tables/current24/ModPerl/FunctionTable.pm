@@ -4476,19 +4476,6 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
-    'return_type' => 'char *',
-    'name' => 'modperl_pid_tid',
-    'attr' => [
-      '__inline__'
-    ],
-    'args' => [
-      {
-        'type' => 'apr_pool_t *',
-        'name' => 'p'
-      }
-    ]
-  },
-  {
     'return_type' => 'SV *',
     'name' => 'modperl_pnotes',
     'args' => [
@@ -8556,6 +8543,24 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'mpxs_special_list_do_t',
         'name' => 'func'
+      }
+    ]
+  },
+  {
+    'return_type' => 'modperl_interp_t *',
+    'name' => 'mpxs_ModPerl__Interpreter_current',
+    'attr' => [
+      'static',
+      '__inline__'
+    ],
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'class'
       }
     ]
   }

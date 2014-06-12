@@ -50,3 +50,10 @@ APLOG_USE_MODULE(perl);
 #endif
 
 #endif /* MODPERL_APACHE_INCLUDES_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

@@ -81,3 +81,10 @@ void modperl_tls_reset_cleanup_##gname(apr_pool_t *p, type data)
 MP_TLS_DECL(request_rec, request_rec *);
 
 #endif /* MODPERL_GLOBAL_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */

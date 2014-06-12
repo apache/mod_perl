@@ -93,3 +93,10 @@ SV *mpxs_APR__URI_rpath(pTHX_ apr_uri_t *apr_uri)
     }
     return (SV *)NULL;
 }
+
+/*
+ * Local Variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ */
