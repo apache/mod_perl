@@ -33,6 +33,13 @@ my %args = (NAME          => 'lib' . $build->{MP_APR_LIB},
             clean         => { FILES => "@clean" },
 	   );
 
+my $ccopts = $build->ccopts;
+
+# avoid referencing &perl_module outside of mod_perl
+$ccopts .= ' -DMP_IN_XS';
+
+$args{CCFLAGS} = $ccopts;
+
 ModPerl::BuildMM::WriteMakefile(%args);
 
 # avoid redefined warnings from imported postamble symbol from
