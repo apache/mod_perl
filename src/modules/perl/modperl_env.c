@@ -37,12 +37,13 @@ static unsigned long modperl_interp_address(pTHX)
 #define MP_ENV_HV_STORE(hv, key, val) STMT_START {              \
         I32 klen = strlen(key);                                 \
         SV **svp = hv_fetch(hv, key, klen, FALSE);              \
+        SV *sv;                                                 \
                                                                 \
         if (svp) {                                              \
             sv_setpv(*svp, val);                                \
         }                                                       \
         else {                                                  \
-            SV *sv = newSVpv(val, 0);                           \
+            sv = newSVpv(val, 0);                               \
             (void)hv_store(hv, key, klen, sv, FALSE);           \
             modperl_envelem_tie(sv, key, klen);                 \
             svp = &sv;                                          \
