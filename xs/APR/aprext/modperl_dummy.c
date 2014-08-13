@@ -16,21 +16,6 @@
 
 #include "mod_perl.h"
 
-/* FIXME: To define extern perl_module to something so libaprext.lib can be
- * linked without error when building against httpd-2.4+. (The symbol is
- * referenced by modperl_apache_compat.h for httpd-2.4+, so must be defined
- * somewhere in that case.)
- */
-module AP_MODULE_DECLARE_DATA perl_module = {
-    STANDARD20_MODULE_STUFF,
-    NULL, /* dir config creater */
-    NULL,  /* dir merger --- default is to override */
-    NULL, /* server config */
-    NULL,  /* merge server config */
-    NULL,              /* table of config file commands       */
-    NULL,    /* register hooks */
-};
-
 /* FIXME: These functions are called from modperl_trace() in libaprext.lib
  * but are normally defined in mod_perl.c which can't be included.
  */
