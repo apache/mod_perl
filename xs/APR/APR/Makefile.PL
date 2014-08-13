@@ -25,6 +25,13 @@ $libs = delete $args{LIBS} if $args{LIBS};
 
 my $build = ModPerl::BuildMM::build_config();
 
+my $ccopts = $build->ccopts;
+
+# avoid referencing &perl_module outside of mod_perl
+$ccopts .= ' -DMP_IN_XS';
+
+$args{CCFLAGS} = $ccopts;
+
 my @apru_link_flags = $build->apru_link_flags;
 $libs .= join ' ', @apru_link_flags if @apru_link_flags;
 
