@@ -25,6 +25,9 @@ if ($build->has_large_files_conflict) {
         : '';
 }
 
+# avoid referencing &perl_module outside of mod_perl
+$ccopts .= ' -DMP_IN_XS';
+
 ModPerl::BuildMM::WriteMakefile(
     NAME         => 'APR::PerlIO',
     VERSION_FROM => 'PerlIO.pm',
