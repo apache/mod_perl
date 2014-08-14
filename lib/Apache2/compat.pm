@@ -150,7 +150,12 @@ EOI
     require Apache2::Connection;
     require APR::SockAddr;
     require Socket;
-    my $orig_sub = *Apache2::Connection::remote_addr{CODE};
+    my $orig_sub;
+    if (defined *Apache2::Connection::client_addr{CODE}) { # httpd-2.4
+        $orig_sub = *Apache2::Connection::client_addr{CODE};
+    } else { # httpd-2.2
+        $orig_sub = *Apache2::Connection::remote_addr{CODE};
+    }
     *Apache2::Connection::remote_addr = sub {
         my $c = shift;
         if (@_) {
