@@ -218,8 +218,10 @@ PerlModule ModPerl::RegistryBB
 <IfModule mod_rewrite.c>
 
     RewriteEngine On
-    RewriteLogLevel 9
-    RewriteLog @ServerRoot@/logs/rewrite_log
+    <IfVersion < 2.4.0>
+        RewriteLogLevel 9
+        RewriteLog @ServerRoot@/logs/rewrite_log
+    </IfVersion>
     RewriteRule /rewritetest /rewrite_env/env_val.pl?REWRITE_TEST [E=REWRITE_TEST:GOTCHA,PT,NS,L]
 
     <Location /rewrite_env>
