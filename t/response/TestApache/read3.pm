@@ -20,8 +20,6 @@ my $expected = "foobar"x2000;
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 1;
-
     # test to read data up to end of file is signaled
     my $data = '';
     my $where = 0;
@@ -30,6 +28,10 @@ sub handler {
         $len = $r->read($data, 100, $where);
         $where += $len;
     } while ($len > 0);
+
+    # only print the plan out after reading to avoid chances of a deadlock
+    # see http://mail-archives.apache.org/mod_mbox/perl-dev/201408.mbox/%3C20140809104131.GA3670@estella.local.invalid%3E
+    plan $r, tests => 1;
 
     ok t_cmp($data, $expected, "reading up to end of file");
 

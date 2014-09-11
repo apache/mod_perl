@@ -20,8 +20,6 @@ my $expected = "foobar";
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 1;
-
     # test the case where the buffer to be filled has set magic
     # attached. which is the case when one passes an non-existing hash
     # entry value. it's not autovivified when passed to the function
@@ -29,6 +27,10 @@ sub handler {
     # the autovivication in this particular case.
     my $data;
     my $len = $r->read($data->{buffer}, $r->headers_in->{'Content-Length'});
+
+    # only print the plan out after reading to avoid chances of a deadlock
+    # see http://mail-archives.apache.org/mod_mbox/perl-dev/201408.mbox/%3C20140809104131.GA3670@estella.local.invalid%3E
+    plan $r, tests => 1;
 
     ok t_cmp($data->{buffer},
              $expected,
