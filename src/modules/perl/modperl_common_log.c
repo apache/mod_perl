@@ -53,6 +53,7 @@ void modperl_trace(const char *func, const char *fmt, ...)
        http://apr.apache.org/docs/apr/1.4/group__apr__lib.html#gad2cd3594aeaafd45931d1034965f48c1
      */
 
+#ifndef MP_IN_XS
     /* PERL_GET_CONTEXT yields nonsense until the first interpreter is
      * created. Hence the modperl_is_running() question. */
     if (modperl_threaded_mpm()) {
@@ -77,6 +78,7 @@ void modperl_trace(const char *func, const char *fmt, ...)
         apr_file_printf(logfile, "[pid=%lu] ", (unsigned long)getpid());
 #endif
     }
+#endif
 
     if (func && *func) {
         apr_file_printf(logfile, "%s: ", func);
