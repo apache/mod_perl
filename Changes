@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-dev
 
+Don't call modperl_threaded_mpm() et al. from XS code. Fixes Debian Bug
+#765174. [Niko Tyni <ntyni@debian.org>]
+
 Make sure modperl_interp_select uses r->server rather than the passed s
 parameter to find the interpreter pool to pull an interpreter from. This
 fixes an issue with vhosts with a separate interpreter pool and runtime
