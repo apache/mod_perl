@@ -3,8 +3,8 @@ This is mod_perl version 2.0
 *** Prerequisites ***
 
 Apache:
-  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.2.22.
-  Static mod_perl:           Apache 2.0.51 - 2.2.22.
+  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.4.10.
+  Static mod_perl:           Apache 2.0.51 - 2.4.10.
 
   Newer Apache versions may work with this version of mod_perl.  If
   not, the svn version likely will, which can be obtained from:
@@ -26,6 +26,11 @@ Perl:
 
 mod_perl is currently considered stable.
 
+Four test scripts are currently known to fail with Apache 2.4.x on Windows:
+  t/protocol/echo_block.t (Fails tests 2-3)
+  t/protocol/echo_nonblock.t (Fails test 2)
+  t/protocol/echo_timeout.t (Fails tests 2-5)
+  t/protocol/pseudo_http.t (Fails tests 3-8 and 11-13)
 
 *** Documentation ***
 
