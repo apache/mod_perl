@@ -273,14 +273,21 @@ apr_status_t modperl_interp_unselect(void *data)
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
 
-    MP_ASSERT(interp && MpInterpIN_USE(interp));
+    MP_ASSERT(interp && MpInterpIN_USE(interp) && interp->refcnt > 0);
     MP_TRACE_i(MP_FUNC, "unselect(interp=%pp): refcnt=%d",
                interp, interp->refcnt);
 
-    if (interp->refcnt > 1) {
-        --interp->refcnt;
+    --interp->refcnt;
+
+    if (interp->refcnt > 0) {
         MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use",
                    (unsigned long)interp, interp->refcnt);
+        return APR_SUCCESS;
+    }
+
+    if (!MpInterpIN_USE(interp)){
+        MP_TRACE_i(MP_FUNC, "interp=0x%pp, refcnt=%d -- interp already not in use",
+                   interp, interp->refcnt);
         return APR_SUCCESS;
     }
 
