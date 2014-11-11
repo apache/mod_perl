@@ -63,6 +63,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         aTHX = interp->perl;                                            \
     }                                                                   \
     else {                                                              \
+        aTHX = NULL;                                                    \
         MP_TRACE_i(MP_FUNC, "  --> failed");                            \
     }                                                                   \
     NOOP
@@ -80,6 +81,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         aTHX = interp->perl;                                            \
     }                                                                   \
     else {                                                              \
+        aTHX = NULL;                                                    \
         MP_TRACE_i(MP_FUNC, "  --> failed");                            \
     }                                                                   \
     NOOP
