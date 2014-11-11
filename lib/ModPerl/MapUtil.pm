@@ -46,7 +46,7 @@ my $function_table = [];
 
 sub function_table {
     return $function_table if @$function_table;
-    my $build = Apache2::Build->new(init => 1);
+    my $build = Apache2::Build->new();
     my $httpd_version = $build->httpd_version;
     if ($httpd_version lt '2.4.0' || ! -d "xs/tables/current24") {
         push @INC, "xs/tables/current";
