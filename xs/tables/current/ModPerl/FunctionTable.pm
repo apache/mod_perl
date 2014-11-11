@@ -8130,6 +8130,24 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'SV *',
+    'name' => 'mpxs_apr_thread_rwlock_create',
+    'args' => [
+      {
+        'type' => 'PerlInterpreter *',
+        'name' => 'my_perl'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'classname'
+      },
+      {
+        'type' => 'SV *',
+        'name' => 'p_sv'
+      }
+    ]
+  },
+  {
+    'return_type' => 'SV *',
     'name' => 'mpxs_apr_uri_parse',
     'args' => [
       {
