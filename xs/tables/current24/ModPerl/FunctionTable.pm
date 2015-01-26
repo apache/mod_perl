@@ -4506,6 +4506,16 @@ $ModPerl::FunctionTable = [
     ]
   },
   {
+    'return_type' => 'void',
+    'name' => 'modperl_pnotes_kill',
+    'args' => [
+      {
+        'type' => 'void *',
+        'name' => 'cl_data'
+      }
+    ]
+  },
+  {
     'return_type' => 'int',
     'name' => 'modperl_post_config_handler',
     'args' => [
