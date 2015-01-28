@@ -890,7 +890,7 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
 U16 *modperl_code_attrs(pTHX_ CV *cv) {
     MAGIC *mg;    
 
-    if (!SvMAGICAL(cv)) {
+    if (!(SvMAGICAL(cv) && (mg = mg_find((SV*)cv, PERL_MAGIC_ext)))) {
        sv_magic((SV*)cv, (SV *)NULL, PERL_MAGIC_ext, NULL, -1); 
     }
 
