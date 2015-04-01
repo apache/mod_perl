@@ -79,7 +79,7 @@
 /* avoiding -Wall warning */
 
 #undef dNOOP
-#define dNOOP extern int __attribute__ ((unused)) Perl___notused
+#define dNOOP extern int __attribute__ ((unused)) Perl___notused___modperl
 
 #ifndef G_METHOD
 #   define G_METHOD 64
