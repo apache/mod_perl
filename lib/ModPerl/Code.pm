@@ -135,7 +135,7 @@ while (my ($k,$v) = each %directive_proto) {
 }
 
 #XXX: allow disabling of PerDir hooks on a PerDir basis
-my @hook_flags = (map { canon_uc($_) } keys %hooks);
+my @hook_flags = sort(map { canon_uc($_) } keys %hooks);
 my @ithread_opts = qw(CLONE PARENT);
 my %flags = (
     Srv => ['NONE', @ithread_opts, qw(ENABLE AUTOLOAD MERGE_HANDLERS),
@@ -172,7 +172,8 @@ sub path { shift->{path} }
 sub handler_desc {
     my ($self, $h_add, $c_add) = @_;
     local $" = ",\n";
-    while (my ($class, $h) = each %{ $self->{handler_index_desc} }) {
+    foreach my $class (sort keys %{ $self->{handler_index_desc} }) {
+        my $h = $self->{handler_index_desc}->{$class};
         my $func = canon_func('handler', 'desc', $class);
         my $array = join '_', 'MP', $func;
         my $proto = "const char *$func(int idx)";
@@ -198,7 +199,8 @@ sub generate_handler_index {
 
     my $type = 1;
 
-    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
+    foreach my $class (sort keys %{ $self->{handlers} }) {
+        my $handlers = $self->{handlers}->{$class};
         my $i = 0;
         my $n = @$handlers;
         my $handler_type = canon_define('HANDLER_TYPE', $class);
@@ -226,7 +228,8 @@ sub generate_handler_hooks {
 
     my @register_hooks;
 
-    while (my ($class, $prototype) = each %{ $self->{hook_proto} }) {
+    foreach my $class (sort keys %{ $self->{hook_proto} }) {
+        my $prototype = $self->{hook_proto}->{$class};
         my $callback = canon_func('callback', $class);
         my $return = $prototype->{ret} eq 'void' ? '' : 'return';
         my $i = -1;
@@ -294,7 +297,8 @@ $proto
     switch (*name) {
 EOF
 
-    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
+    foreach my $class (sort keys %{ $self->{handlers} }) {
+        my $handlers = $self->{handlers}->{$class};
         my $i = 0;
 
         for my $name (@$handlers) {
@@ -340,7 +344,8 @@ sub generate_handler_directives {
 
     my @cmd_entries;
 
-    while (my ($class, $handlers) = each %{ $self->{handlers} }) {
+    foreach my $class (sort keys %{ $self->{handlers} }) {
+        my $handlers = $self->{handlers}->{$class};
         my $prototype = $self->{directive_proto}->{$class};
         my $i = 0;
 
@@ -401,7 +406,8 @@ sub generate_flags {
 
     print $h_fh "\n#define MP_SYS_$dlsrc 1\n";
 
-    while (my ($class, $opts) = each %{ $self->{flags} }) {
+    foreach my $class (sort keys %{ $self->{flags} }) {
+        my $opts = $self->{flags}->{$class};
         my @lookup = ();
         my %lookup = ();
         my $lookup_proto = "";
@@ -449,7 +455,7 @@ EOF
             my $indent1 = " " x 4;
             my $indent2 = " " x 8;
             my %switch = ();
-            for (keys %lookup) {
+            for (sort keys %lookup) {
                 if (/^(\w)/) {
                     my $gap = " " x ($max_len - length $_);
                     push @{ $switch{$1} },
@@ -458,7 +464,7 @@ EOF
             }
 
             push @lookup, '', $indent1 . "switch (*str) {";
-            for (keys %switch) {
+            for (sort keys %switch) {
                 push @lookup, $indent1 . "  case '$_':";
                 push @lookup, map { $indent2 . $_ } @{ $switch{$_} };
             }
@@ -744,7 +750,7 @@ sub fh {
 
 sub postamble {
     my $self = shift;
-    for my $name (keys %{ $self->{fh} }) {
+    for my $name (sort keys %{ $self->{fh} }) {
         next unless my $av = $self->{postamble}->{$name};
         print { $self->fh($name) } @$av;
     }
@@ -791,7 +797,7 @@ sub generate {
     @ExtUtils::Embed::Extensions = grep{$_} @ExtUtils::Embed::Extensions;
 
     #create bootstrap method for static xs modules
-    my $static_xs = [keys %{ $build->{XS} }];
+    my $static_xs = [sort keys %{ $build->{XS} }];
     ExtUtils::Embed::xsinit($xsinit, 1, $static_xs);
 
     #$self->generate_constants_pod();
@@ -931,8 +937,9 @@ EOF
 sub generate_constants_lookup {
     my ($h_fh, $c_fh) = @_;
 
-    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
-        my $constants = [map { @$_ } values %$groups];
+    foreach my $class (sort keys %$Apache2::ConstantsTable) {
+        my $groups = $Apache2::ConstantsTable->{$class};
+        my $constants = [sort map { @$_ } values %$groups];
 
         constants_lookup_code($h_fh, $c_fh, $constants, $class);
     }
@@ -941,7 +948,8 @@ sub generate_constants_lookup {
 sub generate_constants_group_lookup {
     my ($h_fh, $c_fh) = @_;
 
-    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
+    foreach my $class (sort keys %$Apache2::ConstantsTable) {
+        my $groups = $Apache2::ConstantsTable->{$class};
         constants_group_lookup_code($h_fh, $c_fh, $class, $groups);
     }
 }
@@ -952,7 +960,8 @@ sub constants_group_lookup_code {
     my @code;
 
     $class = canon_lc(lc $class);
-    while (my ($group, $constants) = each %$groups) {
+    foreach my $group (sort keys %$groups) {
+        my $constants = $groups->{$group};
         push @tags, $group;
         my $name = join '_', 'MP_constants', $class, $group;
         print $c_fh "\nstatic const char *$name [] = { \n",
@@ -1008,7 +1017,7 @@ sub generate_constants_pod {
 
     require File::Path;
     my $file = "Const.pod";
-    for my $class (keys %data) {
+    for my $class (sort keys %data) {
         my $path = catdir "tmp", $class;
         File::Path::mkpath($path, 0, 0755);
         my $filepath = catfile $path, $file;
@@ -1051,8 +1060,9 @@ EOF
 sub generate_constants_lookup_doc {
     my ($data) = @_;
 
-    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
-        my $constants = [map { @$_ } values %$groups];
+    foreach my $class (sort keys %$Apache2::ConstantsTable) {
+        my $groups = $Apache2::ConstantsTable->{$class};
+        my $constants = [sort map { @$_ } values %$groups];
 
         constants_lookup_code_doc($constants, $class, $data);
     }
@@ -1061,7 +1071,8 @@ sub generate_constants_lookup_doc {
 sub generate_constants_group_lookup_doc {
     my ($data) = @_;
 
-    while (my ($class, $groups) = each %$Apache2::ConstantsTable) {
+    foreach my $class (sort keys %$Apache2::ConstantsTable) {
+        my $groups = $Apache2::ConstantsTable->{$class};
         constants_group_lookup_code_doc($class, $groups, $data);
     }
 }

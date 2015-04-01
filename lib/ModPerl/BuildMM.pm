@@ -257,7 +257,8 @@ sub ModPerl::BuildMM::MY::postamble {
             }
         }
 
-        while (my ($pm, $blib) = each %pms) {
+        foreach my $pm (sort keys %pms) {
+            my $blib = $pms{$pm};
             $pm   =~ s|/\./|/|g; # clean the path
             $blib =~ s|/\./|/|g; # clean the path
             my @segm = splitdir $blib;

@@ -51,7 +51,7 @@ sub MY::postamble {
 
     $string .= join '', map {
         "$_: $src{$_}\n\t\$(CP) $src{$_} .\n";
-    } keys %src;
+    } sort keys %src;
 
     # BSD make needs an empty target, even if the target is specified in .PHONY
     $string .= "\ndynamic ::\n";

@@ -74,7 +74,7 @@ sub get_functions {
     my $self = shift;
     my $typemap = $self->typemap;
 
-    for my $entry (@{ $self->function_list() }) {
+    for my $entry (sort { $a->{name} cmp $b->{name} } @{ $self->function_list() }) {
         my $func = $typemap->map_function($entry);
         #print "FAILED to map $entry->{name}\n" unless $func;
         next unless $func;
@@ -508,7 +508,8 @@ sub isa_str {
     my $str = "";
 
     if (my $isa = $self->typemap->{function_map}->{isa}->{$module}) {
-        while (my ($sub, $base) = each %$isa) {
+        foreach my $sub (sort keys %$isa) {
+            my $base = $isa->{$sub};
 #XXX cannot set isa in the BOOT: section because XSLoader local-ises
 #ISA during bootstrap
 #            $str .= qq{    av_push(get_av("$sub\::ISA", TRUE),
@@ -713,7 +714,8 @@ sub write_lookup_method_file {
     my $self = shift;
 
     my %map = ();
-    while (my ($module, $functions) = each %{ $self->{XS} }) {
+    foreach my $module (sort keys %{ $self->{XS} }) {
+        my $functions = $self->{XS}->{$module};
         my $last_prefix = "";
         for my $func (@$functions) {
             my $class = $func->{class};
@@ -937,7 +939,7 @@ sub avail_modules {
 
 sub preload_all_modules {
     _get_modules() unless $modules;
-    eval "require $_" for keys %$modules;
+    eval "require $_" for sort keys %$modules;
 }
 
 sub _print_func {
@@ -1033,7 +1035,7 @@ sub lookup_method {
             my %modules = map { $_->[MODULE] => 1 } @items;
             # remove dups if any (e.g. $s->add_input_filter and
             # $r->add_input_filter are loaded by the same Apache2::Filter)
-            my @modules = keys %modules;
+            my @modules = sort keys %modules;
             my $hint;
             if (@modules == 1) {
                 $hint = "To use method '$method' add:\n\tuse $modules[0] ();\n";
@@ -1146,7 +1148,7 @@ sub write_module_versions_file {
 
     require mod_perl2;
     $len += length '$::VERSION';
-    for (@modules) {
+    for (sort @modules) {
         my $ver = module_version($_);
         printf $fh "package %s;\n%-${len}s = %s;\n\n",
             $_, '$'.$_."::VERSION", $ver;
@@ -1173,7 +1175,8 @@ sub generate {
     $self->write_export_file('exp') if Apache2::Build::AIX;
     $self->write_export_file('def') if Apache2::Build::WIN32;
 
-    while (my ($module, $functions) = each %{ $self->{XS} }) {
+    foreach my $module (sort keys %{ $self->{XS} }) {
+        my $functions = $self->{XS}->{$module};
 #        my ($root, $sub) = split '::', $module;
 #        if (-e "$self->{XS_DIR}/$root/$sub/$sub.xs") {
 #            $module = join '::', $root, "Wrap$sub";
@@ -1303,7 +1306,8 @@ sub write_export_file {
     my $header = \&{"export_file_header_$ext"};
     my $format = \&{"export_file_format_$ext"};
 
-    while (my ($key, $table) = each %files) {
+    foreach my $key (sort keys %files) {
+        my $table = $files{$key};
         my $handles = $self->open_export_files($key, $ext);
 
         my %seen; #only write header once if this is a single file

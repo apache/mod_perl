@@ -938,7 +938,7 @@ my %default_files = (
 
 sub clean_files {
     my $self = shift;
-    [map { $self->default_file($_) } keys %default_files];
+    [sort map { $self->default_file($_) } keys %default_files];
 }
 
 sub default_file {
@@ -1524,7 +1524,8 @@ sub make_xs {
     my @files;
     my @xs_targ;
 
-    while (my ($name, $xs) = each %{ $self->{XS} }) {
+    foreach my $name (sort keys %{ $self->{XS} }) {
+        my $xs = $self->{XS}->{$name};
         #Foo/Bar.xs => Foo_Bar.c
         (my $c = $xs) =~ s:.*?WrapXS/::;
         $c =~ s:/:_:g;
@@ -1568,7 +1569,7 @@ my $mm_replace = join '|', keys %perl_config_pm_alias;
 my %perl_config_pm_alias_values = reverse %perl_config_pm_alias;
 my @perl_config_pm_alias_values = keys %perl_config_pm_alias_values;
 
-my @perl_config_pm = (@perl_config_pm_alias_values, qw(cc cpprun
+my @perl_config_pm = sort(@perl_config_pm_alias_values, qw(cc cpprun
     rm ranlib lib_ext obj_ext cccdlflags lddlflags optimize));
 
 sub mm_replace {
@@ -1883,7 +1884,8 @@ EOI
     #XXX short-term compat for Apache::TestConfigPerl
     $libs{shared} = $libs{dso};
 
-    while (my ($type, $lib) = each %libs) {
+    foreach my $type (sort keys %libs) {
+        my $lib = $libs{$type};
         print $fh $self->canon_make_attr("lib_$type", $libs{$type});
     }
 
@@ -1937,7 +1939,7 @@ EOI
     }
 
     my @libs;
-    for my $type (map { uc } keys %libs) {
+    for my $type (sort map { uc } keys %libs) {
         next unless $self->{"MP_USE_$type"};
         # on win32 mod_perl.lib must come after mod_perl.so
         $type eq 'STATIC'
