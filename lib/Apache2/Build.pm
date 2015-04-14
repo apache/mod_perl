@@ -616,6 +616,9 @@ sub ap_ccopts {
     my $extra_cppflags = $self->apxs_extra_cppflags;
     $ccopts .= " " . $extra_cppflags;
 
+    # Make sure the evil AP_DEBUG is not defined when building mod_perl
+    $ccopts =~ s/ ?-DAP_DEBUG\b//;
+
     $ccopts;
 }
 
