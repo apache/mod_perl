@@ -873,16 +873,8 @@ sub MY::postamble {
 
     my $string = $self->ModPerl::BuildMM::MY::postamble;
 
-    if (WIN32) {
+    if (!WIN32) {
         $string .= <<'EOF';
-mydist : Apache-Test/META.yml manifest tardist
-
-EOF
-    }
-    else {
-        $string .= <<'EOF';
-mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
-
 rpm: dist
 	@[ -d $(PWD)/rpm ] || mkdir $(PWD)/rpm
 	rpmbuild -ta --define "_rpmdir $(PWD)/rpm" \
@@ -891,13 +883,15 @@ rpm: dist
 	@mv $(PWD)/rpm/*/*.rpm $(PWD)/rpm/
 	@rm -rf $(PWD)/rpm/*/
     
-mod_perl.spec: build/make_rpm_spec
-	$(PERL) build/make_rpm_spec
-
 EOF
     }
 
     $string .= <<'EOF';
+mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
+
+mod_perl.spec: build/make_rpm_spec
+	$(PERL) build/make_rpm_spec
+
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
