@@ -47,7 +47,8 @@ sub get_svn_files {
         if ($line =~ /(?:\d+)\s+(?:\d+)\s+(?:\w+)\s+(.*)\s*/) {
             my $file = $1;
             if (-e $file && ! -d $file) {
-                push @files, $1 if -e $1;
+                $file =~ s{\\}{/}g;
+                push @files, $file;
             }
         }
     }
