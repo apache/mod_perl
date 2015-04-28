@@ -460,7 +460,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     interp = modperl_interp_get(s);
     MP_TRACE_i(MP_FUNC, "  --> got %pp (perl=%pp)", interp, interp->perl);
     ++interp->num_requests; /* should only get here once per request */
-    interp->refcnt = 0;
+    interp->refcnt = 1;
 
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
