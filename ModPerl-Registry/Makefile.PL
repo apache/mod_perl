@@ -14,7 +14,7 @@ use Apache::TestMM qw(test clean);
 
 # prerequisites
 my %require = (
-    "Apache::Test" => "", # any version will do?
+    "Apache::Test" => "0", # any version will do?
 );
 
 my @scripts = qw(t/TEST t/SMOKE);
