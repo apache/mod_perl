@@ -8,7 +8,8 @@ use Apache::TestRequest;
 
 if (!have_min_apache_version("2.4.0")) {
 
-plan tests => 6, need need_lwp, need_auth, need_access, 'HTML::HeadParser';
+plan tests => 6, need need_lwp, need_auth, need_access, 'mod_version.c',
+    'HTML::HeadParser';
 
 my $location = "/TestAPI__access2";
 
