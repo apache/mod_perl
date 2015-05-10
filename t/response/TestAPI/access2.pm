@@ -45,9 +45,7 @@ my %users = (
 
 sub handler {
     my $r = shift;
-	print 'xxxxx\n';
     die '$r->some_auth_required failed' unless $r->some_auth_required;
-	
 
     my $satisfies = $r->satisfies;
     die "wanted satisfies=" . Apache2::Const::SATISFY_ALL . ", got $satisfies"
