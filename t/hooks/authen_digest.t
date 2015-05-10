@@ -6,7 +6,7 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 7, need need_lwp, need_auth, 'HTML::HeadParser';
+plan tests => 7, need need_lwp, 'auth_digest', 'HTML::HeadParser';
 
 my $location = '/TestHooks__authen_digest';
 
