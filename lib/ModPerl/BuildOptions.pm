@@ -21,6 +21,7 @@ use warnings;
 
 use Apache2::Build ();
 use Apache::TestTrace;
+use Config ();
 my $param_qr = qr([\s=]+);
 
 use constant VERBOSE => 1;
@@ -29,7 +30,7 @@ use constant UNKNOWN_FATAL => 2;
 use File::Spec;
 
 sub init {
-    my ($self, $build) = @_;
+    my ($class, $build) = @_;
 
     #@ARGV should override what's in .makepl_args.mod_perl2
     #but @ARGV might also override the default MP_OPTS_FILE
@@ -67,28 +68,30 @@ sub init {
     $build->{MP_COMPAT_1X} = 1
         unless exists $build->{MP_COMPAT_1X} && !$build->{MP_COMPAT_1X};
 
-    # make a last ditch effort to find apxs in $ENV{PATH}
+    # try to find apxs
     if (!$build->{MP_AP_PREFIX} && !$build->{MP_APXS}) {
+        $build->find_apxs_util();
 
-        my @paths = split(/:/, $ENV{PATH});
-        my $potential_apxs;
-        while (!$potential_apxs) {
-
-            last if scalar(@paths) == 0; # don't loop endlessly
-            $potential_apxs = File::Spec->catfile(shift @paths, 'apxs');
-            if (-e $potential_apxs && -x $potential_apxs) {
-
-                $build->{MP_APXS} = $potential_apxs;
-                print "MP_APXS unspecified, using $potential_apxs\n\n";
-            } else {
-                undef $potential_apxs;
+        # make a last ditch effort to find apxs in $ENV{PATH}
+        if (!$build->{MP_APXS}) {
+            my @paths = split(/$Config::Config{path_sep}/, $ENV{PATH});
+            my $potential_apxs;
+            while (!$potential_apxs) {
+                last if scalar(@paths) == 0; # don't loop endlessly
+                $potential_apxs = File::Spec->catfile(shift @paths, 'apxs');
+                $potential_apxs .= '.bat' if Apache2::Build::WIN32();
+                if (-e $potential_apxs && -x $potential_apxs) {
+                    $build->{MP_APXS} = $potential_apxs;
+                } else {
+                    undef $potential_apxs;
+                }
             }
         }
     }
 }
 
 sub parse {
-    my ($self, $lines, $opts) = @_;
+    my ($build, $lines, $opts) = @_;
 
     $opts = VERBOSE|UNKNOWN_FATAL unless defined $opts;
     my $table = table();
@@ -149,10 +152,10 @@ sub parse {
             }
 
             if ($table->{$key}->{append}){
-                $self->{$key} = join " ", grep $_, $self->{$key}, $val;
+                $build->{$key} = join " ", grep $_, $build->{$key}, $val;
             }
             else {
-                $self->{$key} = $val;
+                $build->{$key} = $val;
             }
 
             print "   $key = $val\n" if $opts & VERBOSE;
@@ -166,17 +169,17 @@ sub parse {
 }
 
 sub parse_file {
-    my $self = shift;
+    my $build = shift;
 
     my $fh;
     my @dirs = qw(./ ../ ./. ../.);
     push @dirs, "$ENV{HOME}/." if exists $ENV{HOME};
     my @files = map { $_ . 'makepl_args.mod_perl2' } @dirs;
-    unshift @files, $self->{MP_OPTIONS_FILE} if $self->{MP_OPTIONS_FILE};
+    unshift @files, $build->{MP_OPTIONS_FILE} if $build->{MP_OPTIONS_FILE};
 
     for my $file (@files) {
         if (open $fh, $file) {
-            $self->{MP_OPTIONS_FILE} = $file;
+            $build->{MP_OPTIONS_FILE} = $file;
             last;
         }
         $fh = undef;
@@ -184,22 +187,22 @@ sub parse_file {
 
     return unless $fh;
 
-    print "Reading Makefile.PL args from $self->{MP_OPTIONS_FILE}\n";
-    my $unknowns = parse($self, [<$fh>]);
+    print "Reading Makefile.PL args from $build->{MP_OPTIONS_FILE}\n";
+    my $unknowns = parse($build, [<$fh>]);
     push @ARGV, @$unknowns if $unknowns;
 
     close $fh;
 }
 
 sub parse_argv {
-    my $self = shift;
+    my $build = shift;
     return unless @ARGV;
 
     my @args = @ARGV;
     @ARGV = ();
 
     print "Reading Makefile.PL args from \@ARGV\n";
-    my $unknowns = parse($self, \@args);
+    my $unknowns = parse($build, \@args);
     push @ARGV, @$unknowns if $unknowns;
 }
 

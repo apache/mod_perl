@@ -143,13 +143,15 @@ sub httpd_is_source_tree {
         defined $prefix && -d $prefix && -e "$prefix/CHANGES";
 }
 
-# try to find the apxs utility, set $apxs to the path if found,
+# try to find the apxs utility, set $self->{MP_APXS} to the path if found,
 # otherwise to ''
-my $apxs; # undef so we know we haven't tried to set it yet
 sub find_apxs_util {
     my $self = shift;
 
-    $apxs = ''; # not found
+    if (not defined $self->{MP_APXS}) {
+        $self->{MP_APXS} = ''; # not found
+    }
+
     my @trys = ($Apache2::Build::APXS,
                 $self->{MP_APXS},
                 $ENV{MP_APXS});
@@ -179,7 +181,7 @@ sub find_apxs_util {
         next unless ($apxs_try = $_);
         chomp $apxs_try;
         if (-x $apxs_try) {
-            $apxs = $apxs_try;
+            $self->{MP_APXS} = $apxs_try;
             last;
         }
     }
@@ -209,7 +211,7 @@ sub ap_destdir {
 sub apxs {
     my $self = shift;
 
-    $self->find_apxs_util() unless defined $apxs;
+    $self->find_apxs_util() unless defined $self->{MP_APXS};
 
     my $is_query = (@_ == 2) && ($_[0] eq '-q');
 
@@ -223,7 +225,7 @@ sub apxs {
         }
     }
 
-    unless ($apxs) {
+    unless ($self->{MP_APXS}) {
         my $prefix = $self->{MP_AP_PREFIX} || "";
         return '' unless -d $prefix and $is_query;
         my $val = $apxs_query{$_[1]};
@@ -231,15 +233,15 @@ sub apxs {
     }
 
     my $devnull = devnull();
-    my $val = qx($apxs @_ 2>$devnull);
+    my $val = qx($self->{MP_APXS} @_ 2>$devnull);
     chomp $val if defined $val;
 
     unless ($val) {
         # do we have an error or is it just an empty value?
-        my $error = qx($apxs @_ 2>&1);
+        my $error = qx($self->{MP_APXS} @_ 2>&1);
         chomp $error if defined $error;
         if ($error) {
-            error "'$apxs @_' failed:";
+            error "'$self->{MP_APXS} @_' failed:";
             error $error;
         }
         else {
@@ -921,6 +923,7 @@ sub new {
     my $self = bless {
         cwd        => Cwd::fastcwd(),
         MP_LIBNAME => 'mod_perl',
+        MP_APXS    => undef, # so we know we haven't tried to set it yet
         @_,
     }, $class;
 

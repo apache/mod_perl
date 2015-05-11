@@ -227,14 +227,14 @@ EOI
         : MIN_HTTPD_VERSION_DYNAMIC;
 
     if ($build->{MP_APXS}) {
-        debug "Using APXS => $build->{MP_APXS}";
+        print "Using APXS => $build->{MP_APXS}\n";
     }
     elsif ($build->{MP_AP_PREFIX}) {
         if (my $reason = $build->ap_prefix_invalid) {
             error "invalid MP_AP_PREFIX: $reason";
             exit 1;
         }
-        debug "Using Apache prefix => $build->{MP_AP_PREFIX}";
+        print "Using Apache prefix => $build->{MP_AP_PREFIX}\n";
     }
     else {
         unless ($build->{MP_USE_STATIC}) {
