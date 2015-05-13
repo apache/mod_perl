@@ -114,6 +114,7 @@ t/response/TestPerl/ithreads_args.pm
 t/response/TestPerl/ithreads_eval.pm
 # broken/out-dated
 t/perl/ithreads3.t
+t/response/TestPerl/ithreads3.pm
 # incomplete
 t/apr-ext/perlio
 # PAUSE breaks if a dist has more than one META.yml. the top-level
