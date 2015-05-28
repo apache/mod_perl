@@ -47,10 +47,21 @@ __END__
   <VirtualHost TestModules::proxy>
     <IfModule mod_proxy.c>
         <Proxy http://@servername@:@port@/*>
-            <IfModule @ACCESS_MODULE@>
-                Order Deny,Allow
-                Deny from all
-                Allow from @servername@
+            <IfModule mod_version.c>
+                <IfVersion < 2.3.0>
+                    <IfModule @ACCESS_MODULE@>
+                        Order Deny,Allow
+                        Deny from all
+                        Allow from @servername@
+                    </IfModule>
+                </IfVersion>
+                <IfVersion > 2.4.1>
+                    <IfModule mod_access_compat.c>
+                        Order Deny,Allow
+                        Deny from all
+                        Allow from @servername@
+                    </IfModule>
+                </IfVersion>
             </IfModule>
         </Proxy>
 

@@ -155,9 +155,19 @@ __END__
 
   <Location TestProtocol::pseudo_http>
 
-      <IfModule @ACCESS_MODULE@>
-          Order Deny,Allow
-          Allow from @servername@
+      <IfModule mod_version.c>
+          <IfVersion < 2.3.0>
+              <IfModule @ACCESS_MODULE@>
+                  Order Deny,Allow
+                  Allow from @servername@
+              </IfModule>
+          </IfVersion>
+          <IfVersion > 2.4.1>
+              <IfModule mod_access_compat.c>
+                  Order Deny,Allow
+                  Allow from @servername@
+              </IfModule>
+          </IfVersion>
       </IfModule>
 
       <IfModule @AUTH_MODULE@>
@@ -169,7 +179,16 @@ __END__
       AuthName TestProtocol::pseudo_http
       AuthType Basic
       Require user stas
-      Satisfy any
+      <IfModule mod_version.c>
+          <IfVersion < 2.3.0>
+              Satisfy any
+          </IfVersion>
+          <IfVersion > 2.4.1>
+              <IfModule mod_access_compat.c>
+                  Satisfy any
+              </IfModule>
+          </IfVersion>
+      </IfModule>
 
   </Location>
 

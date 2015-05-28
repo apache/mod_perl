@@ -6,8 +6,9 @@ use Apache::Test;
 use Apache::TestRequest;
 use Apache::TestUtil;
 
-plan tests => 1, need need_module(qw(mod_proxy proxy_http.c)),
-    need_access;
+my @modules = qw(mod_proxy proxy_http.c);
+push @modules, 'mod_access_compat.c' if have_min_apache_version("2.4.0");
+plan tests => 1, need need_module(@modules), need_access;
 
 my $data = join ' ', 'A'..'Z', 0..9;
 my $expected = lc $data; # that's what the input filter does

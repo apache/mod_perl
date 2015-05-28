@@ -104,7 +104,7 @@ PerlAddAuthzProvider my-group TestAPI::access2_24->authz_handler
     PerlResponseHandler Apache::TestHandler::ok1
     SetHandler modperl
 
-    <IfModule @ACCESS_MODULE@>
+    <IfModule mod_access_compat.c>
         # needed to test $r->satisfies
         Allow from All
     </IfModule>
@@ -115,7 +115,9 @@ PerlAddAuthzProvider my-group TestAPI::access2_24->authz_handler
     <Limit POST>
        Require valid-user
     </Limit>
-    Satisfy All
+    <IfModule mod_access_compat.c>
+        Satisfy All
+    </IfModule>
     <IfModule @AUTH_MODULE@>
         # htpasswd -mbc auth-users goo foo
         # htpasswd -mb auth-users bar mar
