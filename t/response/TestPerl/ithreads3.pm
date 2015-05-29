@@ -86,7 +86,7 @@ __END__
         PerlInterpMax           3
         PerlInterpMinSpare      1
         PerlInterpMaxSpare      3
-        PerlInterpScope         handler
+        # PerlInterpScope         handler
     </IfDefine>
 
     # use test system's @INC

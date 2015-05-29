@@ -795,58 +795,6 @@ MP_CMD_SRV_DECLARE_FLAG(setup_env)
 
 #ifdef USE_ITHREADS
 
-#define MP_INTERP_SCOPE_USAGE "PerlInterpScope must be one of "
-
-#define MP_INTERP_SCOPE_DIR_OPTS \
-    "handler, subrequest or request"
-
-#define MP_INTERP_SCOPE_DIR_USAGE \
-    MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_DIR_OPTS
-
-#define MP_INTERP_SCOPE_SRV_OPTS \
-    "connection, " MP_INTERP_SCOPE_DIR_OPTS
-
-#define MP_INTERP_SCOPE_SRV_USAGE \
-    MP_INTERP_SCOPE_USAGE MP_INTERP_SCOPE_SRV_OPTS
-
-MP_CMD_SRV_DECLARE(interp_scope)
-{
-    modperl_interp_scope_e *scope;
-    modperl_config_dir_t *dcfg = (modperl_config_dir_t *)mconfig;
-    MP_dSCFG(parms->server);
-    int is_per_dir = parms->path ? 1 : 0;
-
-    scope = is_per_dir ? &dcfg->interp_scope : &scfg->interp_scope;
-
-    switch (toLOWER(*arg)) {
-      case 'h':
-        if (strcaseEQ(arg, "handler")) {
-            *scope = MP_INTERP_SCOPE_HANDLER;
-            break;
-        }
-      case 's':
-        if (strcaseEQ(arg, "subrequest")) {
-            *scope = MP_INTERP_SCOPE_SUBREQUEST;
-            break;
-        }
-      case 'r':
-        if (strcaseEQ(arg, "request")) {
-            *scope = MP_INTERP_SCOPE_REQUEST;
-            break;
-        }
-      case 'c':
-        if (!is_per_dir && strcaseEQ(arg, "connection")) {
-            *scope = MP_INTERP_SCOPE_CONNECTION;
-            break;
-        }
-      default:
-        return is_per_dir ?
-             MP_INTERP_SCOPE_DIR_USAGE : MP_INTERP_SCOPE_SRV_USAGE;
-    };
-
-    return NULL;
-}
-
 #define MP_CMD_INTERP_POOL_IMP(xitem) \
 const char *modperl_cmd_interp_##xitem(cmd_parms *parms, \
                                       void *mconfig, const char *arg) \

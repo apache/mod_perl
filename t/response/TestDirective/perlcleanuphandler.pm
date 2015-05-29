@@ -44,7 +44,7 @@ __END__
         PerlInterpMax           1
         PerlInterpMinSpare      0
         PerlInterpMaxSpare      1
-        PerlInterpScope         connection
+        # PerlInterpScope         connection
     </IfDefine>
 
     KeepAlive On

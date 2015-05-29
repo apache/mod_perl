@@ -182,9 +182,9 @@ __DATA__
 
     KeepAlive On
 
-    <IfDefine PERL_USEITHREADS>
-        PerlInterpScope connection
-    </Ifdefine>
+#    <IfDefine PERL_USEITHREADS>
+#        PerlInterpScope connection
+#    </Ifdefine>
 
     PerlModule TestModperl::setupenv
 

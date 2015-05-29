@@ -24,11 +24,6 @@ void *modperl_config_dir_create(apr_pool_t *p, char *dir)
 
     MP_TRACE_d(MP_FUNC, "dir %s", dir);
 
-#ifdef USE_ITHREADS
-    /* defaults to per-server scope */
-    dcfg->interp_scope = MP_INTERP_SCOPE_UNDEF;
-#endif
-
     return dcfg;
 }
 
@@ -113,10 +108,6 @@ void *modperl_config_dir_merge(apr_pool_t *p, void *basev, void *addv)
     MP_TRACE_d(MP_FUNC, "basev==0x%lx, addv==0x%lx, mrg==0x%lx",
                (unsigned long)basev, (unsigned long)addv,
                (unsigned long)mrg);
-
-#ifdef USE_ITHREADS
-    merge_item(interp_scope);
-#endif
 
     mrg->flags = modperl_options_merge(p, base->flags, add->flags);
 
@@ -262,8 +253,6 @@ void *modperl_config_srv_create(apr_pool_t *p, server_rec *s)
         (modperl_tipool_config_t *)
         apr_pcalloc(p, sizeof(*scfg->interp_pool_cfg));
 
-    scfg->interp_scope = MP_INTERP_SCOPE_REQUEST;
-
     /* XXX: determine reasonable defaults */
     scfg->interp_pool_cfg->start = 3;
     scfg->interp_pool_cfg->max_spare = 3;
@@ -308,7 +297,6 @@ void *modperl_config_srv_merge(apr_pool_t *p, void *basev, void *addv)
 
 #ifdef USE_ITHREADS
     merge_item(interp_pool_cfg);
-    merge_item(interp_scope);
 #else
     merge_item(perl);
 #endif

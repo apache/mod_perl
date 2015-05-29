@@ -23,15 +23,6 @@
 
 #ifdef USE_ITHREADS
 
-static const char *MP_interp_scope_desc[] = {
-    "undef", "handler", "subrequest", "request", "connection",
-};
-
-const char *modperl_interp_scope_desc(modperl_interp_scope_e scope)
-{
-    return MP_interp_scope_desc[scope];
-}
-
 void modperl_interp_clone_init(modperl_interp_t *interp)
 {
     dTHXa(interp->perl);
@@ -258,16 +249,6 @@ void modperl_interp_init(server_rec *s, apr_pool_t *p,
     scfg->mip = mip;
 }
 
-#ifdef MP_TRACE
-static apr_status_t modperl_interp_pool_cleanup(void *data)
-{
-    MP_TRACE_i(MP_FUNC, "unselecting: (0x%lx)->refcnt=%ld",
-               data, ((modperl_interp_t*)data)->refcnt);
-
-    return modperl_interp_unselect(data);
-}
-#endif
-
 apr_status_t modperl_interp_unselect(void *data)
 {
     modperl_interp_t *interp = (modperl_interp_t *)data;
@@ -413,7 +394,6 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     const char *desc = NULL;
     modperl_interp_t *interp = NULL;
     apr_pool_t *p = NULL;
-    modperl_interp_scope_e scope;
 
     /* What does the following condition mean?
      * (r || c): if true we are at runtime. There is some kind of request
@@ -475,63 +455,6 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
     MP_TRACE_i(MP_FUNC,
                "pulled interp %pp (perl=%pp) from mip, num_requests is %d",
                interp, interp->perl, interp->num_requests);
-
-    /*
-     * if a per-dir PerlInterpScope is specified, use it.
-     * else if r != NULL use per-server PerlInterpScope
-     * else scope must be per-connection
-     */
-
-    scope = (dcfg && !modperl_interp_scope_undef(dcfg)) ?
-        dcfg->interp_scope :
-        (r ? scfg->interp_scope : MP_INTERP_SCOPE_CONNECTION);
-
-    MP_TRACE_i(MP_FUNC, "scope is per-%s",
-               modperl_interp_scope_desc(scope));
-
-    if (scope != MP_INTERP_SCOPE_HANDLER) {
-        desc = NULL;
-        if (c && (scope == MP_INTERP_SCOPE_CONNECTION || !r)) {
-            p = c->pool;
-            desc = "connection";
-        }
-        else if (r) {
-            request_rec *main_r = r->main;
-
-            if (main_r && (scope == MP_INTERP_SCOPE_REQUEST)) {
-                /* share 1 interpreter across sub-requests */
-                for(; main_r; main_r = main_r->main) {
-                    p = main_r->pool;
-                }
-                desc = "main request";
-            }
-            else {
-                p = r->pool;
-                desc = scope == MP_INTERP_SCOPE_REQUEST
-                       ? "main request"
-                       : "sub request";
-            }
-	}
-
-        MP_ASSERT(p);
-
-#ifdef MP_TRACE
-        apr_pool_cleanup_register(p, (void *)interp,
-                                  modperl_interp_pool_cleanup,
-                                  modperl_interp_pool_cleanup);
-#else
-        apr_pool_cleanup_register(p, (void *)interp,
-                                  modperl_interp_unselect,
-                                  modperl_interp_unselect);
-#endif
-
-        /* add a reference for the registered cleanup */
-        interp->refcnt++;
-
-        MP_TRACE_i(MP_FUNC,
-                   "registered unselect cleanup for interp 0x%lx in %s",
-                   (unsigned long)interp, desc);
-    }
 
     return interp;
 }
