@@ -10,6 +10,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+Remove PerlInterpScope. This has not been working properly with threaded
+MPMs with httpd-2.4.x and the use-case of this directive was questionable.
+
 =item 2.0.9-rc1
 
 Add support for Apache httpd-2.4.x. [Torsten Foertsch, Jan Kaluza,

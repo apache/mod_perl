@@ -121,7 +121,6 @@ static apr_bucket *modperl_bucket_sv_make(pTHX_
         return NULL;
     }
 
-    /* XXX: need to deal with PerlInterpScope */
 #ifdef USE_ITHREADS
     svbucket->perl = aTHX;
 #endif

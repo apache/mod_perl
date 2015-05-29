@@ -503,9 +503,6 @@ static void modperl_init_clones(server_rec *s, apr_pool_t *p)
         MP_dSCFG(s);
 #ifdef MP_TRACE
         char *name = modperl_server_desc(s, p);
-
-        MP_TRACE_i(MP_FUNC, "PerlInterpScope set to %s for %s",
-                   modperl_interp_scope_desc(scfg->interp_scope), name);
 #else
         char *name = NULL;
 #endif /* MP_TRACE */
@@ -973,8 +970,6 @@ static const command_rec modperl_cmds[] = {
                      "Min number of spare Perl interpreters"),
     MP_CMD_SRV_TAKE1("PerlInterpMaxRequests", interp_max_requests,
                      "Max number of requests per Perl interpreters"),
-    MP_CMD_DIR_TAKE1("PerlInterpScope", interp_scope,
-                     "Scope of a Perl interpreter"),
 #endif
 #ifdef MP_COMPAT_1X
     MP_CMD_DIR_FLAG("PerlSendHeader", send_header,
