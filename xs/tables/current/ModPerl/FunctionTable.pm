@@ -675,24 +675,6 @@ $ModPerl::FunctionTable = [
   },
   {
     'return_type' => 'const char *',
-    'name' => 'modperl_cmd_interp_scope',
-    'args' => [
-      {
-        'type' => 'cmd_parms *',
-        'name' => 'parms'
-      },
-      {
-        'type' => 'void *',
-        'name' => 'mconfig'
-      },
-      {
-        'type' => 'const char *',
-        'name' => 'arg'
-      }
-    ]
-  },
-  {
-    'return_type' => 'const char *',
     'name' => 'modperl_cmd_interp_start',
     'args' => [
       {
@@ -3243,16 +3225,6 @@ $ModPerl::FunctionTable = [
       {
         'type' => 'int',
         'name' => 'cleanup'
-      }
-    ]
-  },
-  {
-    'return_type' => 'const char *',
-    'name' => 'modperl_interp_scope_desc',
-    'args' => [
-      {
-        'type' => 'modperl_interp_scope_e',
-        'name' => 'scope'
       }
     ]
   },
