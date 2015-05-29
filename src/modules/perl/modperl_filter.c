@@ -283,7 +283,7 @@ static apr_status_t modperl_filter_f_cleanup(void *data)
     if (ctx->data){
 #ifdef USE_ITHREADS
         dTHXa(ctx->interp->perl);
-        MP_ASSERT_CONTEXT(aTHX);
+//         MP_ASSERT_CONTEXT(aTHX);
 #endif
         if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
             SvREFCNT_dec(ctx->data);
@@ -535,7 +535,7 @@ int modperl_run_filter(modperl_filter_t *filter)
                  * pass the bucket brigade through after it called
                  * $f->read(), since it causes a pre-fetch of the
                  * bb */
-                modperl_croak(aTHX_ MODPERL_FILTER_ERROR,
+                MP_CROAK_PUTBACK(MODPERL_FILTER_ERROR,
                               "a filter calling $f->read "
                               "must return OK and not DECLINED");
             }
@@ -546,11 +546,11 @@ int modperl_run_filter(modperl_filter_t *filter)
             apr_brigade_destroy(filter->bb_in);
             filter->bb_in = NULL;
         }
-        MP_RUN_CROAK_RESET_OK(s, modperl_input_filter_flush(filter),
+        MP_RUN_CROAK_RESET_OK_PUTBACK(s, modperl_input_filter_flush(filter),
                               "Apache2::Filter internal flush");
     }
     else {
-        MP_RUN_CROAK_RESET_OK(s, modperl_output_filter_flush(filter),
+        MP_RUN_CROAK_RESET_OK_PUTBACK(s, modperl_output_filter_flush(filter),
                               "Apache2::Filter internal flush");
     }
 

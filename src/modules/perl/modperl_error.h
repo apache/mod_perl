@@ -37,10 +37,33 @@ char *modperl_error_strerror(pTHX_ apr_status_t rc);
 
 void modperl_croak(pTHX_ apr_status_t rc, const char* func);
 
+#define MP_PUTBACK_IF_USED() STMT_START                                 \
+    {                                                                   \
+        modperl_interp_t *interp = modperl_thx_interp_get(aTHX);        \
+        if (interp && interp->refcnt > 1) {                             \
+            modperl_interp_unselect(interp);                            \
+        }                                                               \
+    } STMT_END
+
+#define MP_CROAK_PUTBACK(rc, func) STMT_START                           \
+    {                                                                   \
+        MP_PUTBACK_IF_USED();                                           \
+        modperl_croak(aTHX_ rc, func);                                  \
+    } STMT_END
+
 #define MP_RUN_CROAK(rc_run, func) STMT_START                \
     {                                                        \
         apr_status_t rc = rc_run;                            \
         if (rc != APR_SUCCESS) {                             \
+            modperl_croak(aTHX_ rc, func);                   \
+        }                                                    \
+    } STMT_END
+
+#define MP_RUN_CROAK_PUTBACK(rc_run, func) STMT_START        \
+    {                                                        \
+        apr_status_t rc = rc_run;                            \
+        if (rc != APR_SUCCESS) {                             \
+            MP_PUTBACK_IF_USED();                            \
             modperl_croak(aTHX_ rc, func);                   \
         }                                                    \
     } STMT_END
@@ -56,6 +79,23 @@ void modperl_croak(pTHX_ apr_status_t rc, const char* func);
                              modperl_error_strerror(aTHX_ rc));         \
             }                                                           \
             else {                                                      \
+                modperl_croak(aTHX_ rc, func);                          \
+            }                                                           \
+        }                                                               \
+    } STMT_END
+
+#define MP_RUN_CROAK_RESET_OK_PUTBACK(s, rc_run, func) STMT_START       \
+    {                                                                   \
+        apr_status_t rc = rc_run;                                       \
+        if (rc != APR_SUCCESS) {                                        \
+            if (APR_STATUS_IS_ECONNRESET(rc) ||                         \
+                APR_STATUS_IS_ECONNABORTED(rc)) {                       \
+                ap_log_error(APLOG_MARK, APLOG_INFO, 0, s,              \
+                             "%s got: %s", func,                        \
+                             modperl_error_strerror(aTHX_ rc));         \
+            }                                                           \
+            else {                                                      \
+                MP_PUTBACK_IF_USED();                                   \
                 modperl_croak(aTHX_ rc, func);                          \
             }                                                           \
         }                                                               \
