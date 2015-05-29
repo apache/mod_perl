@@ -33,9 +33,6 @@ Four test scripts are currently known to fail with Apache 2.4.x on Windows:
   t/protocol/echo_timeout.t (Fails tests 2-5)
   t/protocol/pseudo_http.t (Fails tests 3-8 and 11-13)
 
-In addition, t/modules/proxy.t currently fails with both Apache 2.2.x and
-2.4.x on Windows.
-
 *** Documentation ***
 
 Documentation can be found in the docs/ directory. Currently they
