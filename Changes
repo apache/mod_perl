@@ -10,10 +10,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.9-rc2
+
 Remove PerlInterpScope. This has not been working properly with threaded
 MPMs with httpd-2.4.x and the use-case of this directive was questionable.
+[Jan Kaluza]
 
-=item 2.0.9-rc1
+Allow running the test suite with httpd-2.4.x when mod_access_compat is not
+loaded. [Steve Hay]
 
 Add support for Apache httpd-2.4.x. [Torsten Foertsch, Jan Kaluza,
 Steve Hay, Gozer]
