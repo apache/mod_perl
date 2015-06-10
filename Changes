@@ -10,7 +10,14 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.9-rc2
+=item 2.0.9-rc3
+
+Fix t/api/aplog.t for apr-1.5.2. [Steve Hay]
+
+Note that Perl 5.22.x is currently not supported. This is logged as
+CPAN RT#101962 and will hopefully be addressed in 2.0.10. [Steve Hay]
+
+Fix unthreaded build, which was broken in 2.0.9-rc2. [Steve Hay]
 
 Remove PerlInterpScope. This has not been working properly with threaded
 MPMs with httpd-2.4.x and the use-case of this directive was questionable.
