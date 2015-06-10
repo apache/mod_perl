@@ -83,7 +83,7 @@ sub handler {
 
         # the APR_EGENERAL error string changed for APR 1.0
         my $egeneral = have_min_apache_version('2.1.0')
-           ? "Internal error"
+           ? qr/Internal error(?: \(specific information not available\))?/
            : "Error string not specified yet";
 
         t_server_log_warn_is_expected();
