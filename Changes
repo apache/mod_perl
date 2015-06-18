@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.9-rc3
 
+Add note to README about MP_INLINE problem when building with GCC 5.
+[Niko Tyni <ntyni@debian.org>]
+
 Fix t/api/aplog.t for apr-1.5.2. [Steve Hay]
 
 Note that Perl 5.22.x is currently not supported. This is logged as
