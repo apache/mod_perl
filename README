@@ -25,6 +25,14 @@ Perl:
   configurations) are currently believed to work, but this is not
   guaranteed to be the case, either now or in the future.
 
+C compiler:
+  The mod_perl source currently uses GNU89 inline semantics on GCC, but
+  GCC 5 defaults to newer C99 semantics.  If you see MP_INLINE related
+  warnings during the build and missing symbols when starting the test
+  suite, adding "-fgnu89-inline" to MP_CCOPTS may help.
+  There are also some reports of this happening with the Clang compiler,
+  where the corresponding option to try is "-std=gnu89".
+
 *** Status ***
 
 mod_perl is currently considered stable.
