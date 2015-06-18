@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.9-rc3
+=item 2.0.9 June 18, 2015
 
 Add note to README about MP_INLINE problem when building with GCC 5.
 [Niko Tyni <ntyni@debian.org>]
