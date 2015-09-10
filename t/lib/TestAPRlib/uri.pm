@@ -88,7 +88,7 @@ sub test {
     # - if no flags are passed to unparse, APR::Const::URI_UNP_OMITPASSWORD
     #   is passed by default -- it hides the password
     my $url1 = sprintf "%s://%s\@%s%s",
-        map { $url{$_}[1] } grep !/^(password|port)$/, @keys_urls;
+        map { $url{$_}[1] } qw(scheme user hostname path);
     ok t_cmp($url_unparsed, $url1, "unparsed url");
 
     # various unparse flags #

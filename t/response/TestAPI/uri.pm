@@ -105,7 +105,7 @@ sub handler {
     }
     {
         # this time include args and a pool object
-        my $curl = $r->construct_url(sprintf "%s?%s", $r->uri, $r->args,
+        my $curl = $r->construct_url(sprintf("%s?%s", $r->uri, $r->args),
                                      $r->pool->new);
         t_debug("construct_url: $curl");
         t_debug("r->uri: ", $r->uri);
