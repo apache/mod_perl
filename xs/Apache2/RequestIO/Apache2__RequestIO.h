@@ -111,6 +111,14 @@ apr_size_t mpxs_ap_rprintf(pTHX_ I32 items, SV **MARK, SV **SP)
 
     rcfg = modperl_config_req_get(r);
 
+    /* Reduce items by 1 for threaded builds since it otherwise includes
+     * the thread context, which shouldn't be included in the count of
+     * arguments being given to the sprintf() call.
+     */
+#ifdef USE_ITHREADS
+    --items;
+#endif
+
     /* XXX: we could have an rcfg->sprintf_buffer to reuse this SV
      * across requests
      */
