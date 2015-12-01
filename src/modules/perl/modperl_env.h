@@ -28,7 +28,7 @@
     MP_magical_tie(ENVHV, mg_flags)
 
 #define modperl_envelem_tie(sv, key, klen) \
-    sv_magic(sv, (SV *)NULL, 'e', key, klen)
+    sv_magicext(sv, (SV *)NULL, PERL_MAGIC_envelem, &MP_vtbl_envelem, key, klen)
 
 void modperl_env_hash_keys(pTHX);
 
@@ -58,9 +58,12 @@ void modperl_env_request_tie(pTHX_ request_rec *r);
 
 void modperl_env_request_untie(pTHX_ request_rec *r);
 
-void modperl_env_init(void);
+void modperl_env_init(pTHX);
 
-void modperl_env_unload(void);
+void modperl_env_unload(pTHX);
+
+MGVTBL MP_vtbl_env;
+MGVTBL MP_vtbl_envelem;
 
 #endif /* MODPERL_ENV_H */
 
