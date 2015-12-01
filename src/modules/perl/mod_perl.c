@@ -262,6 +262,8 @@ PerlInterpreter *modperl_startup(server_rec *s, apr_pool_t *p)
         exit(1);
     }
 
+    modperl_env_init(aTHX);
+
     /* suspend END blocks to be run at server shutdown */
     endav = PL_endav;
     PL_endav = (AV *)NULL;
@@ -576,9 +578,6 @@ static apr_status_t modperl_sys_init(void)
     /* modifies PL_ppaddr */
     modperl_perl_pp_set_all();
 
-    /* modifies PL_vtbl_env{elem} */
-    modperl_env_init();
-
     return APR_SUCCESS;
 }
 
@@ -596,8 +595,6 @@ static apr_status_t modperl_sys_term(void *data)
     MP_PERL_FREE_THREAD_KEY_WORKAROUND;
 
     MP_TRACE_i(MP_FUNC, "mod_perl sys term");
-
-    modperl_env_unload();
 
     modperl_perl_pp_unset_all();
 

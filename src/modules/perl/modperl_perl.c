@@ -181,6 +181,8 @@ void modperl_perl_destruct(PerlInterpreter *perl)
         }
     }
 
+    modperl_env_unload(perl);
+
     perl_destruct(perl);
 
     /* XXX: big bug in 5.6.1 fixed in 5.7.2+

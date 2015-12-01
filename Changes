@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.10-dev
 
+Add support for Perl 5.22.x. [Niko Tyni <ntyni@iki.fi>, Steve Hay]
+
 =item 2.0.9 June 18, 2015
 
 Add note to README about MP_INLINE problem when building with GCC 5.

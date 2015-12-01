@@ -15,7 +15,7 @@ use Apache2::Const -compile => 'OK';
 sub handler {
     my $r = shift;
 
-    plan $r, tests => 23 + keys(%ENV);
+    plan $r, tests => 23 + 3 * keys(%ENV);
 
     my $env = $r->subprocess_env;
 
@@ -75,6 +75,8 @@ sub handler {
     for my $key (sort keys %ENV) {
         eval { delete $ENV{$key}; };
         ok t_cmp($@, '', $key);
+        ok t_cmp($ENV{$key}, undef, "ENV{$key} is empty");
+        ok t_cmp($env->get($key), undef, "subprocess_env($key) is empty");
     }
 
     Apache2::Const::OK;
