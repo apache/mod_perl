@@ -12,6 +12,12 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.10-dev
 
+Automatically select the appropriate c89 option when modperl is being
+built with either gcc 5 or clang. [Klaus S. Madsen <ksm@jobindex.dk>]
+
+Fix non-threaded Perl 5.22.x build and tests. [Klaus S. Madsen
+<ksm@jobindex.dk>]
+
 Add support for Perl 5.22.x. [Niko Tyni <ntyni@iki.fi>, Steve Hay]
 
 =item 2.0.9 June 18, 2015
