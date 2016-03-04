@@ -654,8 +654,6 @@ void modperl_env_init(pTHX)
     MAGIC *mg;
 
     /* Find the 'E' magic on %ENV */
-    if (!my_perl)
-        return;
     if (!PL_envgv)
         return;
     if (!SvRMAGICAL(ENVHV))
@@ -685,8 +683,6 @@ void modperl_env_unload(pTHX)
     MAGIC *mg;
 
     /* Find the 'E' magic on %ENV */
-    if (!my_perl)
-        return;
     if (!PL_envgv)
         return;
     if (!SvRMAGICAL(ENVHV))

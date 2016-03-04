@@ -181,7 +181,7 @@ void modperl_perl_destruct(PerlInterpreter *perl)
         }
     }
 
-    modperl_env_unload(perl);
+    modperl_env_unload(aTHX);
 
     perl_destruct(perl);
 
