@@ -611,6 +611,14 @@ sub ap_ccopts {
         $ccopts .= " -DMP_TRACE";
     }
 
+    if ($self->has_gcc_version('5.0.0') && $ccopts !~ /-fgnu89-inline/) {
+        $ccopts .= " -fgnu89-inline";
+    }
+
+    if ($self->has_clang && $ccopts !~ /-std=gnu89/) {
+        $ccopts .= " -std=gnu89";
+    }
+
     # make sure apr.h can be safely included
     # for example Perl's included -D_GNU_SOURCE implies
     # -D_LARGEFILE64_SOURCE on linux, but this won't happen on
@@ -639,6 +647,16 @@ sub has_gcc_version {
     my @r_tuples = split /\./, $requested_version, 3;
     
     return cmp_tuples(\@tuples, \@r_tuples) == 1;
+}
+
+sub has_clang {
+    my $self = shift;
+
+    my $has_version = $self->perl_config('gccversion');
+
+    return 0 unless $has_version;
+
+    return $has_version =~ m/Clang/;
 }
 
 sub cmp_tuples {
