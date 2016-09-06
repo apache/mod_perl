@@ -889,19 +889,21 @@ rpm: dist
 EOF
     }
 
-    $string .= <<'EOF';
+    my $q = (WIN32 ? '"' : "'");
+
+    $string .= <<"EOF";
 mydist : Apache-Test/META.yml mod_perl.spec manifest tardist
 
 mod_perl.spec: build/make_rpm_spec
-	$(PERL) build/make_rpm_spec
+	\$(PERL) build/make_rpm_spec
 
 Apache-Test/META.yml:
 	cd Apache-Test && make metafile
 
 tag :
-	svn copy  https://svn.apache.org/repos/asf/perl/modperl/trunk  https://svn.apache.org/repos/asf/perl/modperl/branches/release/$(VERSION_SYM)
-	svn copy  https://svn.apache.org/repos/asf/perl/modperl/branches/release/$(VERSION_SYM)  https://svn.apache.org/repos/asf/perl/modperl/tags/$(VERSION_SYM)
-	svn copy  https://svn.apache.org/repos/asf/perl/modperl/docs/trunk https://svn.apache.org/repos/asf/perl/modperl/docs/tags/$(VERSION_SYM)
+	svn copy -m $q\$(VERSION_SYM) release branch$q https://svn.apache.org/repos/asf/perl/modperl/trunk  https://svn.apache.org/repos/asf/perl/modperl/branches/release/\$(VERSION_SYM)
+	svn copy -m $q\$(VERSION_SYM) tag$q https://svn.apache.org/repos/asf/perl/modperl/branches/release/\$(VERSION_SYM)  https://svn.apache.org/repos/asf/perl/modperl/tags/\$(VERSION_SYM)
+	svn copy -m $q\$(VERSION_SYM) tag$q https://svn.apache.org/repos/asf/perl/modperl/docs/trunk https://svn.apache.org/repos/asf/perl/modperl/docs/tags/\$(VERSION_SYM)
 EOF
 
     return $string;
