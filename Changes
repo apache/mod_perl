@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.10-dev
+=item 2.0.10-rc1
 
 Automatically select the appropriate c89 option when modperl is being
 built with either gcc 5 or clang. [Klaus S. Madsen <ksm@jobindex.dk>]
