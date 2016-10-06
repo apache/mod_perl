@@ -10,6 +10,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+Declare MP_vtbl_env and MP_vtbl_envelem as 'extern' to fix linker errors on
+OSX/Darwin. [Michael Schout <mschout@gkg.net>]
+
 =item 2.0.10-rc1
 
 Automatically select the appropriate c89 option when modperl is being
