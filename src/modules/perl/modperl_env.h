@@ -62,8 +62,8 @@ void modperl_env_init(pTHX);
 
 void modperl_env_unload(pTHX);
 
-MGVTBL MP_vtbl_env;
-MGVTBL MP_vtbl_envelem;
+extern MGVTBL MP_vtbl_env;
+extern MGVTBL MP_vtbl_envelem;
 
 #endif /* MODPERL_ENV_H */
 
