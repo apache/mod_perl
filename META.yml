@@ -1,5 +1,5 @@
 name:         mod_perl
-version: 2.0.10
+version: 2.0.11
 installdirs:  site
 distribution_type: module
 no_index:
