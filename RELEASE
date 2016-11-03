@@ -84,20 +84,22 @@ Instructions for mod_perl 2.0 Release Manager
   e. tag
      % make tag
 
-  XXXX: See BRANCHING for the steps to include the proper tagged externals
-  XXXX: This needs to be fixed, and updated, developer beware its outdated and possibly wrong
-  f. Update the svn:externals in the new tag
-     (you can't propedit remotely yet in svn)
+  f. Update the svn:externals in the new tag to refer to the new docs tag that
+     was created by the previous step:
      % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_11
      % svn propedit svn:externals 2_0_11
-     Update the Apache-Test line to current revision
-     % svn info https://svn.apache.org/repos/asf/perl/Apache-Test/trunk | grep "Last Changed Rev"
-     Update the docs line to the current tag.
-     It should look like:
+     Update the docs line from:
+       ^/perl/modperl/docs/trunk/src/docs/2.0
+     to:
+       ^/perl/modperl/docs/tags/2_0_11/src/docs/2.0
+     The complete svn:externals should now look like:
      % svn propget svn:externals 2_0_11
-       Apache-Test -r 608229 https://svn.apache.org/repos/asf/perl/Apache-Test/trunk
-       docs https://svn.apache.org/repos/asf/perl/modperl/docs/tags/2_0_11/src/docs/2.0
-
+       Apache-Test      ^/perl/Apache-Test/tags/<X>
+       Apache-Reload    ^/perl/Apache-Reload/tags/<Y>
+       Apache-SizeLimit ^/perl/Apache-SizeLimit/tags/<Z>
+       docs             ^/perl/modperl/docs/tags/2_0_11/src/docs/2.0
+     where <X>, <Y> and <Z> are the tags of the releases of Apache-Test,
+     Apache-Reload and Apache-SizeLimit included in this release of mod_perl.
      % svn ci -m "2.0.11 release"
 
   g. create the final package
@@ -105,46 +107,7 @@ Instructions for mod_perl 2.0 Release Manager
 
   h. test the final package again at least once
 
-4. Release the package and update links (e.g. mod_perl-2.0.11.tar.gz)
-
-  a. commit to https://dist.apache.org/repos/dist/release/perl - ask the PMC
-     chair to give you the needed permissions if you do not have them.
-
-  XXXX: Still needs updating from here...
-  b. ssh to people.apache.org, unpack the package, update symlinks to the
-     tar ball and unpacked distro:
-     % ssh people.apache.org
-     % cd /www/perl.apache.org/dist/
-     % ln -sf mod_perl-2.0.11.tar.gz mod_perl-2.0-current.tar.gz
-     % tar -xzvf mod_perl-2.0.11.tar.gz
-     % rm /www/perl.apache.org/dist/mod_perl-2.0-current
-     % ln -sf  mod_perl-2.0.11 mod_perl-2.0-current
-
-  c. archive older releases (keep current + one prior release)
-     % mv /www/perl.apache.org/dist/mod_perl-2.0.10.tar.gz \
-          /www/perl.apache.org/dist/old
-     % mv /www/perl.apache.org/dist/mod_perl-2.0.10.tar.gz.asc \
-          /www/perl.apache.org/dist/old
-     % rm -rf /www/perl.apache.org/dist/mod_perl-2.0.10
-
-  d. update the version and release date in the docs:
-     % vi modperl-docs/src/download/index_top.html 
-     % vi modperl-docs/doap_Perl.rdf
-     and commit.
-     % svn ci -m "2.0.11 release" \
-           modperl-docs/src/download/index_top.html \
-           modperl-docs/doap_Perl.rdf
-     
-     It'll be automatically updated within 6 hours. Alternatively
-     you can do a manual update by logging into www.apache.org and
-     running:
-     % /home/perlwww/apache.org/modperl-docs/bin/site_build
-
-     You may need to sudo -H -u perlwww to cleanup any svn locks.
-
-5. Upload the package to CPAN
-
-6. Tarball signing
+4. Tarball signing
 
    (depending on whether you use GPG or PGP, pick the first or the
    second set of the commands):
@@ -155,47 +118,59 @@ Instructions for mod_perl 2.0 Release Manager
 
      % pgps -b --armor mod_perl-2.0.11.tar.gz
 
-  b. upload the generated sig file to people.apache.org:
-     % scp mod_perl-2.0.11.tar.gz.asc people.apache.org:/www/perl.apache.org/dist/
-     % ssh people.apache.org
-     % cd /www/perl.apache.org/dist/
-     % chmod 0664 mod_perl-2.0.11.tar.gz.asc
-     % ln -sf mod_perl-2.0.11.tar.gz.asc mod_perl-2.0-current.tar.gz.asc
+  b. create MD5 and SHA1 checksums of the tarball:
+     % md5sum mod_perl-2.0.11.tar.gz >mod_perl-2.0.11.tar.gz.md5
+     % sha1sum mod_perl-2.0.11.tar.gz >mod_perl-2.0.11.tar.gz.sha1
 
-  c. ask one of the other developers to double check the signature file
+5. Release the package and update links
+
+  a. commit the tarball, the signature file and the checksum files to
+     https://dist.apache.org/repos/dist/release/perl - ask the PMC
+     chair to give you the needed permissions if you do not have them.
+
+  b. delete the previous release's files from the same location (they will
+     already have been archived at http://archive.apache.org/dist/perl/)
+
+  c. update the example command-lines in README.html in the same location
+
+  d. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
 
-     http://perl.apache.org/dist/mod_perl-2.0.11.tar.gz.asc
-     http://perl.apache.org/dist/mod_perl-2.0.11.tar.gz
+     http://www.apache.org/dist/perl/mod_perl-2.0.11.tar.gz.asc
+     http://www.apache.org/dist/perl/mod_perl-2.0.11.tar.gz
 
      % gpg --verify mod_perl-2.0.11.tar.gz.asc
 
      % pgpv mod_perl-2.0.11.tar.gz.asc
 
-  d. make sure that the files you just created are group rw so
-     all the dist admins can make changes:
-     % find /www/perl.apache.org/dist/ -user $USER -type f -print0 | xargs -0 chmod 0664 
-     % find /www/perl.apache.org/dist/ -user $USER -type d -print0 | xargs -0 chmod 0775 
+  e. respond to the automated email that will arrive requesting that release
+     data be filled in at https://reporter.apache.org/addrelease.html?perl
 
-7. Distribute to www.apache.org/dist/perl 
-   and archive the old package under /www/archive.apache.org/dist/perl/
+  f. update the version and release date in the docs:
+     % vi modperl-docs/src/download/index_top.html 
+     % vi modperl-docs/doap_Perl.rdf
+     and commit.
+     % svn ci -m "2.0.11 release" \
+           modperl-docs/src/download/index_top.html \
+           modperl-docs/doap_Perl.rdf
 
-  a. unpack the package, update symlinks to the tarball and unpacked distro:
-     % cd /www/www.apache.org/dist/perl/
-     % cp /www/perl.apache.org/dist/mod_perl-2.0.11.tar.gz* .
-     % tar -xzvf mod_perl-2.0.11.tar.gz
-     % mv mod_perl-2.0.10.tar.gz* /www/archive.apache.org/dist/perl/
-     % rm -rf mod_perl-2.0.10
+     Now run modperl-docs/bin/site_build to generate a local copy of the
+     website, and commit that to https://svn.apache.org/repos/asf/perl/site
 
-  b. make sure that the files you just created are group rw so
-     all the dist admins can make changes:
-     % find /www/www.apache.org/dist/perl/ -user $USER -type f -print0 | xargs -0 chmod 0664
-     % find /www/www.apache.org/dist/perl/ -user $USER -type d -print0 | xargs -0 chmod 0775 
+     (Alternatively, if running modperl-docs/bin/site_build is too difficult
+     on your local machine, you can just directly edit download/index.html
+     with the changes that were made to modperl-docs/download/index_top.html)
 
-8. Announce the package
+     The change to the website will appear at http://perl.apache.org/ sometime
+     later (but maybe not until the next day).
+     
+6. Upload the package to CPAN
+
+7. Announce the package
 
   a. post to the following lists:
 
+     o dev/perl.apache.org
      o modperl/perl.apache.org
      o announce/apache.org
 
@@ -210,7 +185,7 @@ Instructions for mod_perl 2.0 Release Manager
      - MD5 sig (as it comes from CPAN upload announce).
      - the latest Changes
 
-9. Prepare for the next cycle
+8. Prepare for the next cycle
 
   a. increment version in lib/mod_perl2.pm
 
@@ -231,7 +206,7 @@ Instructions for mod_perl 2.0 Release Manager
      % svn ci -m "start 2.0.11-dev cycle" Changes META.yml lib/mod_perl2.pm \
        STATUS RELEASE
 
-10. Old Versions
+9. Old Versions
  
-    Remind other Developers to delete versions older then the prior release
+    Remind other developers to delete versions older then the prior release
     from CPAN.  Old releases can always be found on BACKPAN. 
