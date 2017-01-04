@@ -24,7 +24,7 @@ close $fh;
 
 my $size = length $data;
 
-for my $string ("POST $location http/1.0",
+for my $string ("POST $location HTTP/1.0",
                 "Content-length: $size",
                 "") {
     my $line = "$string\r\n";
