@@ -670,7 +670,11 @@ void modperl_env_init(pTHX)
                mg->mg_ptr, mg->mg_obj, mg->mg_flags);
 
     /* Remove it */
+#if MP_PERL_VERSION_AT_LEAST(5, 13, 6)
     mg_free_type((SV*)ENVHV, PERL_MAGIC_env);
+#else
+    mg_free((SV*)ENVHV);
+#endif
 
     /* Add our version instead */
     mg = sv_magicext((SV*)ENVHV, (SV*)NULL, PERL_MAGIC_env, &MP_vtbl_env, (char*)NULL, 0);
@@ -699,7 +703,11 @@ void modperl_env_unload(pTHX)
                mg->mg_ptr, mg->mg_obj, mg->mg_flags);
 
     /* Remove it */
+#if MP_PERL_VERSION_AT_LEAST(5, 13, 6)
     mg_free_type((SV*)ENVHV, PERL_MAGIC_env);
+#else
+    mg_free((SV*)ENVHV);
+#endif
 
     /* Restore perl's original version */
     sv_magicext((SV*)ENVHV, (SV*)NULL, PERL_MAGIC_env, &PL_vtbl_env, (char*)NULL, 0);
