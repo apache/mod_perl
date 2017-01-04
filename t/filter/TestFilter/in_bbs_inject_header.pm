@@ -181,7 +181,7 @@ sub handler : FilterConnectionHandler {
 
         if ($data and $data =~ /^POST/) {
             # demonstrate how to add a header while processing other headers
-            my $header = "$header1_key: $header1_val\n";
+            my $header = "$header1_key: $header1_val\r\n";
             push @{ $ctx->{buckets} }, APR::Bucket->new($c->bucket_alloc, $header);
             debug "queued header [$header]";
         }
@@ -199,7 +199,7 @@ sub handler : FilterConnectionHandler {
             # we hit the headers and body separator, which is a good
             # time to add extra headers:
             for my $key (keys %headers) {
-                my $header = "$key: $headers{$key}\n";
+                my $header = "$key: $headers{$key}\r\n";
                 push @{ $ctx->{buckets} }, APR::Bucket->new($c->bucket_alloc, $header);
                 debug "queued header [$header]";
             }
