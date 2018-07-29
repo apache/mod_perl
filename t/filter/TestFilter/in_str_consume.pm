@@ -74,7 +74,7 @@ sub handler {
     my $ctx = $filter->ctx || { data => '', count => '1'};
     debug "FILTER INVOKED: $ctx->{count}";
 
-    # read untill READ_BYTES read, no matter how many filter
+    # read until READ_BYTES read, no matter how many filter
     # invocations it'll take
     my $wanted_total   = READ_BYTES_TOTAL - length $ctx->{data};
     my $wanted_current = READ_BYTES_FIRST;

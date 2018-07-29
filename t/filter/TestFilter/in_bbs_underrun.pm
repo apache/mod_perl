@@ -66,7 +66,7 @@ sub handler {
     my $data;
     debug_sub "filter called";
 
-    # fetch and consume bucket brigades untill we have at least SIZE
+    # fetch and consume bucket brigades until we have at least SIZE
     # bytes to work with
     do {
         my $tbb = APR::Brigade->new($filter->r->pool, $ba);
