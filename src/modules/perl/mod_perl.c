@@ -861,7 +861,7 @@ void modperl_register_hooks(apr_pool_t *p)
 
     /* for <IfDefine MODPERL2> and Apache2->define("MODPERL2") */
     *(char **)apr_array_push(ap_server_config_defines) =
-        apr_pstrdup(p, "MODPERL2");
+        apr_pstrdup(ap_server_config_defines->pool, "MODPERL2");
 
     ap_hook_pre_config(modperl_hook_pre_config,
                        NULL, NULL, APR_HOOK_MIDDLE);
