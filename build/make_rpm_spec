@@ -1,7 +1,7 @@
 #!perl
 use strict;
 
-require "lib/mod_perl2.pm";
+require "./lib/mod_perl2.pm";
 
 my $dev_build = is_dev_build();
 my $release   = $dev_build ? svn_release() : 1;
