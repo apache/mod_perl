@@ -12,6 +12,18 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.11-dev
 
+Fix use-after-free segfault in ap_server_config_defines seen on start-up on
+OpenBSD. [Found/fixed by Sam Vaughan/Joe Orton]
+
+Fix build with Perls earlier than 5.13.6. [Rainer Jung
+<rainer.jung@kippdata.de>]
+
+Fix filter/in_bbs_inject_header.t test failure with Apache 2.4.25+. [Stefan
+Fritsch <sf@sfritsch.de>]
+
+Fix apache/read.t test failure with Apache 2.4.25+. [Niko Tyni
+<ntyni@debian.org>]
+
 =item 2.0.10 October 27, 2016
 
 Declare MP_vtbl_env and MP_vtbl_envelem as 'extern' to fix linker errors on
