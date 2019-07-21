@@ -924,7 +924,7 @@ static authz_status perl_check_authorization(request_rec *r,
 {
     authz_status ret = AUTHZ_DENIED;
     int count;
-    AV *args = Nullav;
+    AV *args = (AV *)NULL;
     const char *key;
     auth_callback *ab;
     MP_dINTERPa(r, NULL, NULL);
@@ -1053,7 +1053,7 @@ static authn_status perl_check_password(request_rec *r, const char *user,
 {
     authn_status ret = AUTH_DENIED;
     int count;
-    AV *args = Nullav;
+    AV *args = (AV *)NULL;
     const char *key;
     auth_callback *ab;
     MP_dINTERPa(r, NULL, NULL);
