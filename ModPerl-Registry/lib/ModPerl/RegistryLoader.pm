@@ -24,7 +24,7 @@ use Apache2::ServerUtil ();
 use Apache2::Log ();
 use APR::Pool ();
 use APR::Finfo ();
-use APR::Const -compile=>qw(FINFO_NORM);
+use APR::Const -compile=>qw(FINFO_MIN);
 
 use Carp;
 use File::Spec ();
@@ -116,7 +116,7 @@ sub filename { shift->{filename} }
 sub status   { Apache2::Const::HTTP_OK }
 sub pool     { shift->{pool}||=APR::Pool->new() }
 sub finfo    { $_[0]->{finfo}||=APR::Finfo::stat($_[0]->{filename},
-                                                 APR::Const::FINFO_NORM,
+                                                 APR::Const::FINFO_MIN,
                                                  $_[0]->pool); }
 sub uri      { shift->{uri} }
 sub path_info {}

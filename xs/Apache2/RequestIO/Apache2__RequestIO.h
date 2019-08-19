@@ -359,7 +359,7 @@ apr_status_t mpxs_Apache2__RequestRec_sendfile(pTHX_ request_rec *r,
 
     if (!len) {
         apr_finfo_t finfo;
-        apr_file_info_get(&finfo, APR_FINFO_NORM, fp);
+        apr_file_info_get(&finfo, APR_FINFO_SIZE, fp);
         len = finfo.size;
         if (offset) {
             len -= offset;
