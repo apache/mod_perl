@@ -21,7 +21,7 @@ use constant OSX   => Apache::TestConfig::OSX;
 use constant APACHE_2_0_49_PLUS => have_min_apache_version('2.0.49');
 use constant APACHE_2_2_PLUS    => have_min_apache_version('2.2.0');
 
-use APR::Const -compile => qw(SUCCESS FINFO_NORM FILETYPE_REG
+use APR::Const -compile => qw(SUCCESS FINFO_NORM FINFO_PROT FILETYPE_REG
                               FPROT_WREAD FPROT_WWRITE
                               FPROT_WEXECUTE);
 
@@ -39,7 +39,11 @@ sub test {
 
     my $pool = APR::Pool->new();
     # populate the finfo struct first
-    my $finfo = APR::Finfo::stat($file, APR::Const::FINFO_NORM, $pool);
+    my $wanted = APR::Const::FINFO_NORM;
+    if (WIN32) {
+        $wanted &= ~APR::Const::FINFO_PROT;
+    }
+    my $finfo = APR::Finfo::stat($file, $wanted, $pool);
 
     ok $finfo->isa('APR::Finfo');
 
@@ -70,7 +74,7 @@ sub test {
 
     # stat() on out-of-scope pools
     {
-        my $finfo = APR::Finfo::stat($file, APR::Const::FINFO_NORM, APR::Pool->new);
+        my $finfo = APR::Finfo::stat($file, $wanted, APR::Pool->new);
 
         # try to overwrite the temp pool data
         require APR::Table;

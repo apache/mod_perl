@@ -15,7 +15,6 @@ use TestAPRlib::finfo;
 use APR::Finfo ();
 
 use Apache2::Const -compile => 'OK';
-use APR::Const    -compile => qw(FINFO_NORM);
 
 sub handler {
     my $r = shift;
