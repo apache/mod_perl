@@ -3,8 +3,8 @@ This is mod_perl version 2.0
 *** Prerequisites ***
 
 Apache:
-  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.4.39.
-  Static mod_perl:           Apache 2.0.51 - 2.4.39.
+  Dynamic mod_perl (DSO):    Apache 2.0.47 - 2.4.41.
+  Static mod_perl:           Apache 2.0.51 - 2.4.41.
 
   Newer Apache versions may work with this version of mod_perl.  If
   not, the svn version likely will, which can be obtained from:
@@ -31,13 +31,13 @@ with the PERL_IMPLICIT_SYS build option enabled (which it is by default):
 
   t/modperl/env.t (Fails many tests)
 
-Four other test scripts are also known to fail with Apache 2.4.x on
-Windows, with or without PERL_IMPLICIT_SYS:
+Various other tests are also known to fail in certain configurations,
+including but not limited to:
 
-  t/protocol/echo_block.t (Fails tests 2-3)
-  t/protocol/echo_nonblock.t (Fails test 2)
-  t/protocol/echo_timeout.t (Fails tests 2-5)
-  t/protocol/pseudo_http.t (Fails tests 3-8 and 11-13)
+  t/compat/request.t (Exits after test 12)
+  t/filter/in_bbs_inject_header.t (Fails tests 22, 26 and 30)
+  t/modperl/setupenv.t (Fails tests 8, 22, 29, 36, 50 and 57)
+  t/preconnection/note.t (Fails test 1)
 
 *** Documentation ***
 
