@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.11-dev
+=item 2.0.11-rc1
 
 Fix use-after-free segfault in ap_server_config_defines seen on start-up on
 OpenBSD. [Found/fixed by Sam Vaughan/Joe Orton]
