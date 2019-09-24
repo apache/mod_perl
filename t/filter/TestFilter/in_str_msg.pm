@@ -77,9 +77,9 @@ my $expected = "UPCASED";
 sub response {
     my $r = shift;
 
-    plan $r, tests => 1;
-
     my $received = TestCommon::Utils::read_post($r);
+
+    plan $r, tests => 1;
 
     ok t_cmp($received, $expected,
              "request filter must have upcased the data");

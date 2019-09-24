@@ -32,14 +32,19 @@ sub handler {
 sub response {
     my $r = shift;
 
+    my $err;
+    if ($r->method_number == Apache2::Const::M_POST) {
+        # this should fail, because of the failing filter
+        eval { TestCommon::Utils::read_post($r) };
+        $err = $@;
+    }
+
     plan $r, tests => 1;
 
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache2::Const::M_POST) {
-        # this should fail, because of the failing filter
-        eval { TestCommon::Utils::read_post($r) };
-        ok $@;
+        ok $err;
     }
 
     Apache2::Const::OK;

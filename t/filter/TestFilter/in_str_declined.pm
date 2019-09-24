@@ -36,13 +36,17 @@ sub handler {
 sub response {
     my $r = shift;
 
+    my $data;
+    if ($r->method_number == Apache2::Const::M_POST) {
+        # consume the data so the input filter is invoked
+        $data = TestCommon::Utils::read_post($r);
+    }
+
     plan $r, tests => 2;
 
     $r->content_type('text/plain');
 
     if ($r->method_number == Apache2::Const::M_POST) {
-        # consume the data so the input filter is invoked
-        my $data = TestCommon::Utils::read_post($r);
         ok t_cmp(length $data, 20000, "the request body received ok");
     }
 

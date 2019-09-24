@@ -30,13 +30,13 @@ sub handler {
 #    $r->content_type("text/plain; charset=utf-8");
 #    $r->print("expected: $expected_utf8\n");
 
+    my $received = TestCommon::Utils::read_post($r) || "";
+
     # utf encode/decode was added only in 5.8.0
     # XXX: currently binmode is only available with perlio (used on the
     # server side on the tied/perlio STDOUT)
     plan $r, tests => 2,
         need need_min_perl_version(5.008), need_perl('perlio');
-
-    my $received = TestCommon::Utils::read_post($r) || "";
 
     # workaround for perl-5.8.0, which doesn't decode correctly a
     # tainted variable
