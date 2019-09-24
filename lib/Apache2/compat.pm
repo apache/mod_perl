@@ -64,6 +64,8 @@ use File::Spec ();
 
 use APR::Const -compile => qw(FINFO_NORM FINFO_PROT);
 
+use constant WIN32 => ($^O eq "MSWin32");
+
 BEGIN {
     $INC{'Apache.pm'} = __FILE__;
 
@@ -256,6 +258,9 @@ sub override_mp2_api {
             next;
         }
         $overridden_mp2_api{$sub} = eval $overridable_mp2_api{$sub};
+        if ($@) {
+            die "error overriding $sub : $@";
+        }
         unless (exists $overridden_mp2_api{$sub} &&
                 ref($overridden_mp2_api{$sub}) eq 'CODE') {
             die "overriding $sub didn't return a CODE ref";
