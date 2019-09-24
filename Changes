@@ -12,6 +12,15 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.11-rc1
 
+Fix [CVE-2011-2767] Arbitrary Perl code execution in the context of the user
+account via a user-owned .htaccess. Patch from bugs.debian.org #644169. [Jan
+Ingvoldstad <jani+debian-2011+@ifi.uio.no>]
+
+Fix potential test suite hangs due to pipelined response deadlocks. Patch
+from rt.cpan.org #82409. [Zefram <zefram@fysh.org>]
+
+Fix t/compat/request.t failures [Steve Hay]
+
 Fix use-after-free segfault in ap_server_config_defines seen on start-up on
 OpenBSD. [Found/fixed by Sam Vaughan/Joe Orton]
 
