@@ -15,7 +15,7 @@ use APR::Finfo ();
 use APR::Pool ();
 
 use Apache2::Const -compile => qw(OK M_GET M_PUT);
-use APR::Const    -compile => qw(FINFO_NAME);
+use APR::Const    -compile => qw(FINFO_SIZE);
 
 #this test module is only for testing fields in the request_rec
 #listed in apache_structures.map
@@ -165,12 +165,13 @@ sub handler {
 
     # finfo
     {
-        my $finfo = APR::Finfo::stat(__FILE__, APR::Const::FINFO_NAME, $r->pool);
+        my $size = (stat __FILE__)[7];
+        my $finfo = APR::Finfo::stat(__FILE__, APR::Const::FINFO_SIZE, $r->pool);
         $r->finfo($finfo);
         # just one field test, all accessors are fully tested in
         # TestAPR::finfo
-        ok t_cmp($r->finfo->fname,
-                 __FILE__,
+        ok t_cmp($r->finfo->size,
+                 $size,
                  '$r->finfo');
     }
 
