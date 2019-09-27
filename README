@@ -26,16 +26,18 @@ Perl:
 
 mod_perl is currently considered stable.
 
+The following test failures are known (see CPAN RT #118919):
+
+  t/filter/in_bbs_inject_header.t (Fails tests 22, 26 and 30)
+
 There is currently a known test failure on Windows when using Perls built
 with the PERL_IMPLICIT_SYS build option enabled (which it is by default):
 
   t/modperl/env.t (Fails many tests)
 
-Various other tests are also known to fail in certain configurations,
-including but not limited to:
+Various other tests are also known to fail in certain configurations on
+Windows, including but not limited to:
 
-  t/compat/request.t (Exits after test 12)
-  t/filter/in_bbs_inject_header.t (Fails tests 22, 26 and 30)
   t/modperl/setupenv.t (Fails tests 8, 22, 29, 36, 50 and 57)
   t/preconnection/note.t (Fails test 1)
 
