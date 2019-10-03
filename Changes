@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.11-rc3
 
+Fix t/modules/apache_resource.t failures [Steve Hay]
+
 Fix [CVE-2011-2767] Arbitrary Perl code execution in the context of the user
 account via a user-owned .htaccess. Patch from bugs.debian.org #644169. [Jan
 Ingvoldstad <jani+debian-2011+@ifi.uio.no>]
