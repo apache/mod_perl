@@ -115,8 +115,7 @@ sub status_rlimit {
                   "</tr>");
 
     for my $res (keys %$lim) {
-        my $val = eval "&BSD::Resource::${res}()";
-        my ($soft, $hard) = getrlimit $val;
+        my ($soft, $hard) = getrlimit($lim->{$res});
         (my $limit = $res) =~ s/^RLIMIT_//;
         ($soft, $hard) = ("$soft " . BM($soft), "$hard ". BM($hard))
             if $is_mb{$limit};
