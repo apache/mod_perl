@@ -10,7 +10,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.11-rc3
+=item 2.0.11 October 5, 2019
 
 Fix t/modules/apache_resource.t failures [Steve Hay]
 
