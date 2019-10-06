@@ -11,7 +11,7 @@ Instructions for mod_perl 2.0 Release Manager
    need on how to add your key.  if you need further help on gpg
    (like how to create a key in the first place) you can look here
 
-      http://people.apache.org/~geoff/gpghowto.html
+      https://people.apache.org/~geoff/gpghowto.html
 
    Copy the KEYS file into place:
    % scp KEYS people.apache.org:/www/www.apache.org/dist/perl/KEYS
@@ -118,9 +118,9 @@ Instructions for mod_perl 2.0 Release Manager
 
      % pgps -b --armor mod_perl-2.0.12.tar.gz
 
-  b. create MD5 and SHA1 checksums of the tarball:
-     % md5sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.md5
-     % sha1sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha1
+  b. create SHA256 and SHA512 checksums of the tarball:
+     % sha256sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha256
+     % sha512sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha512
 
 5. Release the package and update links
 
@@ -129,15 +129,15 @@ Instructions for mod_perl 2.0 Release Manager
      chair to give you the needed permissions if you do not have them.
 
   b. delete the previous release's files from the same location (they will
-     already have been archived at http://archive.apache.org/dist/perl/)
+     already have been archived at https://archive.apache.org/dist/perl/)
 
   c. update the example command-lines in README.html in the same location
 
   d. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
 
-     http://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz.asc
-     http://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz
+     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz.asc
+     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz
 
      % gpg --verify mod_perl-2.0.12.tar.gz.asc
 
@@ -161,7 +161,7 @@ Instructions for mod_perl 2.0 Release Manager
      on your local machine, you can just directly edit download/index.html
      with the changes that were made to modperl-docs/download/index_top.html)
 
-     The change to the website will appear at http://perl.apache.org/ sometime
+     The change to the website will appear at https://perl.apache.org/ sometime
      later (but maybe not until the next day).
      
 6. Upload the package to CPAN
@@ -180,9 +180,8 @@ Instructions for mod_perl 2.0 Release Manager
 
      include:
      - link at perl.apache.org:
-       http://apache.org/dist/perl/mod_perl-2.0.12.tar.gz
-       http://apache.org/dist/perl/mod_perl-2.0.12.tar.gz.asc (pgp sig)
-     - MD5 sig (as it comes from CPAN upload announce).
+       https://perl.apache.org/download/index.html
+     - SHA256 and SHA512 sigs
      - the latest Changes
 
 8. Prepare for the next cycle
