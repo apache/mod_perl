@@ -541,7 +541,10 @@ static int modperl_env_magic_local_all(pTHX_ SV *nsv, MAGIC *mg)
     nmg = sv_magicext(nsv, mg->mg_obj, mg->mg_type, &MP_vtbl_env, (char*)NULL, 0);
     nmg->mg_ptr = mg->mg_ptr;
     nmg->mg_flags |= MGf_COPY;
+#if (PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION > 8) || \
+    MP_PERL_VERSION_AT_LEAST(5, 9, 3)
     nmg->mg_flags |= MGf_LOCAL;
+#endif
 
     return 1;
 }
@@ -679,7 +682,10 @@ void modperl_env_init(pTHX)
     /* Add our version instead */
     mg = sv_magicext((SV*)ENVHV, (SV*)NULL, PERL_MAGIC_env, &MP_vtbl_env, (char*)NULL, 0);
     mg->mg_flags |= MGf_COPY;
+#if (PERL_REVISION == 5 && PERL_VERSION == 8 && PERL_SUBVERSION > 8) || \
+    MP_PERL_VERSION_AT_LEAST(5, 9, 3)
     mg->mg_flags |= MGf_LOCAL;
+#endif
 }
 
 void modperl_env_unload(pTHX)
