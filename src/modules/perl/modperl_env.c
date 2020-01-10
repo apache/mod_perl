@@ -84,6 +84,18 @@ static modperl_env_ent_t MP_env_const_vars[] = {
     { NULL }
 };
 
+int MP_env_const_vars_exists(const char *key)
+{
+    modperl_env_ent_t *ent = MP_env_const_vars;
+    while (ent->key) {
+        if (strncmp(key, ent->key, strlen(key)) == 0) {
+            return 1;
+        }
+        ent++;
+    }
+    return 0;
+}
+
 void modperl_env_hash_keys(pTHX)
 {
     modperl_env_ent_t *ent = MP_env_const_vars;
@@ -550,8 +562,12 @@ static int modperl_env_magic_set(pTHX_ SV *sv, MAGIC *mg)
 {
     request_rec *r = (request_rec *)EnvMgObj;
 
+    MP_dENV_KEY;
+    if (MP_env_const_vars_exists(key)) {
+        return 0;
+    }
+
     if (r) {
-        MP_dENV_KEY;
         MP_dENV_VAL;
         apr_table_set(r->subprocess_env, key, val);
         MP_TRACE_e(MP_FUNC, "[0x%lx] r->subprocess_env set: %s => %s",
@@ -559,7 +575,6 @@ static int modperl_env_magic_set(pTHX_ SV *sv, MAGIC *mg)
     }
     else {
 #ifdef MP_TRACE
-        MP_dENV_KEY;
         MP_dENV_VAL;
         MP_TRACE_e(MP_FUNC,
                    "[0x%lx] $ENV{%s} = \"%s\";",
