@@ -84,7 +84,7 @@ static modperl_env_ent_t MP_env_const_vars[] = {
     { NULL }
 };
 
-int MP_env_const_vars_exists(const char *key)
+int is_env_const_var(const char *key)
 {
     modperl_env_ent_t *ent = MP_env_const_vars;
     while (ent->key) {
@@ -563,7 +563,7 @@ static int modperl_env_magic_set(pTHX_ SV *sv, MAGIC *mg)
     request_rec *r = (request_rec *)EnvMgObj;
 
     MP_dENV_KEY;
-    if (MP_env_const_vars_exists(key)) {
+    if (is_env_const_var(key)) {
         return 0;
     }
 
