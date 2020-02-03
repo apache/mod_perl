@@ -294,7 +294,7 @@ sub mpm_name {
     return $self->{mpm_name} if $self->{mpm_name};
 
     if ($self->httpd_version =~ /^(\d+)\.(\d+)\.(\d+)/) {
-	delete $threaded_mpms{dynamic} if $self->mp_nonthreaded_ok;
+	delete $threaded_mpms{dynamic} if $self->mp_nonthreaded_ok || $self->mp_no_threads;
 	return $self->{mpm_name} = 'dynamic' if ($1*1000+$2)*1000+$3>=2003000;
     }
 
