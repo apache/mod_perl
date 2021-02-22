@@ -163,7 +163,8 @@ modperl_config_srv_t *modperl_config_srv_new(apr_pool_t *p, server_rec *s)
     scfg->PerlPostConfigRequire =
         apr_array_make(p, 1, sizeof(modperl_require_file_t *));
 
-    scfg->argv = apr_array_make(p, 2, sizeof(char *));
+    /* 2 arguments + NULL terminator */
+    scfg->argv = apr_array_make(p, 3, sizeof(char *));
 
     scfg->setvars = apr_table_make(p, 2);
     scfg->configvars = apr_table_make(p, 2);
@@ -218,6 +219,9 @@ char **modperl_config_srv_argv_init(modperl_config_srv_t *scfg, int *argc)
     modperl_config_srv_argv_push("-e;0");
 
     *argc = scfg->argv->nelts;
+
+    /* perl_parse() expects a NULL terminated argv array */
+    modperl_config_srv_argv_push(NULL);
 
     MP_TRACE_g_do(dump_argv(scfg));
 
