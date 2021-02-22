@@ -12,6 +12,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.12-dev
 
+Fix SIGSEGV crash due to wrong use of perl_parse(). [Charles Pigott
+<cpigott@rapitasystems.com>]
+
 =item 2.0.11 October 5, 2019
 
 Fix t/modules/apache_resource.t failures [Steve Hay]
