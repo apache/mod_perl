@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.12-dev
 
+Fix build for perl >= 5.33.7. [Leon Timmermans <fawaka@gmail.com>]
+
 Fix SIGSEGV crash due to wrong use of perl_parse(). [Charles Pigott
 <cpigott@rapitasystems.com>]
 
