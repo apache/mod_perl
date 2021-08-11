@@ -17,6 +17,9 @@ Fix build for perl >= 5.33.7. [Leon Timmermans <fawaka@gmail.com>]
 Fix SIGSEGV crash due to wrong use of perl_parse(). [Charles Pigott
 <cpigott@rapitasystems.com>]
 
+Improve installation instructions for AIX. [Rainer Tammer
+<rainer.tammer@schulergroup.com>]
+
 =item 2.0.11 October 5, 2019
 
 Fix t/modules/apache_resource.t failures [Steve Hay]
