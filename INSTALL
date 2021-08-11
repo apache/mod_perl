@@ -4,6 +4,16 @@ Simple install:
   % make && make test
   % make install
 
+Simple install on AIX:
+
+  You will need GNU make to compile mod_perl. The AIX make does not work.
+  If you have installed GNU make from the AIX Toolbox:
+
+  % export MAKE="/opt/freeware/bin/gmake"
+  % perl Makefile.PL MP_APXS=/usr/local/apache2/bin/apxs
+  % gmake && gmake test
+  % gmake install
+
 Simple config:
 
   LoadModule perl_module modules/mod_perl.so
