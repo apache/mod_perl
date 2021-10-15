@@ -1,3 +1,5 @@
+=encoding utf8
+
 =head1 NAME
 
 Changes - Apache mod_perl changes logfile
@@ -11,6 +13,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 =over 3
 
 =item 2.0.12-dev
+
+Fix detection of APR's threading support on RHEL 8. [Petr PÃ­saÅ™
+<ppisar@redhat.com>]
 
 Fix build for perl >= 5.33.7. [Leon Timmermans <fawaka@gmail.com>]
 
@@ -736,7 +741,7 @@ improve the diagnostics when detecting mp2 < 1.999022, tell the user
 which files and/or dirs need to be removed [Stas]
 
 restore the DESTDIR support partially nuked by the apache2 rename
-branch [Torsten Förtsch <torsten.foertsch gmx.net>]
+branch [Torsten FÃ¶rtsch <torsten.foertsch gmx.net>]
 
 add APR::Status to provide functions corresponding to the
 APR_STATUS_IS_* macros of apr_errno.h, especially those composites
@@ -1148,7 +1153,7 @@ Fix Modperl::Util::unload_package() [Gozer]
   - Leave entries from other packages alone
 
 $filter->remove now works with native (non-modperl) filters + test
-[Torsten Förtsch <torsten.foertsch gmx.net>]
+[Torsten FÃ¶rtsch <torsten.foertsch gmx.net>]
 
 
 
@@ -2170,7 +2175,7 @@ Make sure that the static mod_perl library is built after the dynamic
 
 Apache::Status now generates HTML 4.01 Strict (and in many cases, also
 ISO-HTML) compliant output. Also add a simple CSS to make the reports
-look nicer. [Ville Skyttä <ville.skytta@iki.fi>]
+look nicer. [Ville SkyttÃ¤ <ville.skytta@iki.fi>]
 
 APR::Pool::DESTROY implemented and tweaked to only
 destroy pools created via APR::Pool->new() [Geoffrey Young]
