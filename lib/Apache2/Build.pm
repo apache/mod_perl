@@ -1493,11 +1493,21 @@ sub get_apr_config {
 
     return $self->{apr_config} if $self->{apr_config};
 
+    my $fh;
     my $header = catfile $self->apr_includedir, "apr.h";
-    open my $fh, $header or do {
-        error "Unable to open $header: $!";
-        return undef;
-    };
+    if (WIN32) {
+        open $fh, $header or do {
+            error "Unable to open $header: $!";
+            return undef;
+        };
+    }
+    else {
+        my @command = ($self->perl_config('cpp'), '-dM', $header);
+        open $fh, '-|', @command or do {
+            error "Unable to preprocess $header with @command: $!";
+            return undef;
+        };
+    }
 
     my %cfg;
     while (<$fh>) {
