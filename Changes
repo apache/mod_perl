@@ -12,7 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.12-dev
+=item 2.0.12-rc1
 
 Fix detection of APR's threading support on RHEL 8. [Petr Písař
 <ppisar@redhat.com>]
