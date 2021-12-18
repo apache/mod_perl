@@ -12,7 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.12-rc1
+=item 2.0.12-rc2
 
 Add bug tracker information to README, and add CONTRIBUTING.md. [Steve Hay]
 
