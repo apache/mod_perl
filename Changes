@@ -14,6 +14,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.12-rc1
 
+Add bug tracker information to README, and add CONTRIBUTING.md. [Steve Hay]
+
 Fix detection of APR's threading support on RHEL 8. [Petr Písař
 <ppisar@redhat.com>]
 
