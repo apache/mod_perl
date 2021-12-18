@@ -64,9 +64,8 @@ list by sending mail to modperl-subscribe@perl.apache.org.
 
 Bugs can also be reported at:
 https://rt.cpan.org/Dist/Display.html?Name=mod_perl
-which can be
-accessed from the "Issues" link in the left-hand menu at the
-metacpan.org page, https://metacpan.org/pod/mod_perl2
+which can be accessed from the "Issues" link in the left-hand menu on
+the metacpan.org page, https://metacpan.org/pod/mod_perl2 .
 (Note: You will need to log in to https://rt.cpan.org in order to get
 the "Report a new bug" button on the bug tracker page.)
 
