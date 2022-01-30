@@ -1,0 +1,211 @@
+Instructions for mod_perl 2.0 Release Manager
+
+0. make sure your public key is in the KEYS file in the mod_perl docs.
+   you should only need to do this if this is your first time playing
+   Release Manager
+
+     $ cd mod_perl-docs
+     $ grep $USER src/dist/KEYS
+
+   note that the KEYS file itself contains all the instructions you
+   need on how to add your key.  if you need further help on gpg
+   (like how to create a key in the first place) you can look here
+
+      https://people.apache.org/~geoff/gpghowto.html
+
+   Copy the KEYS file into place:
+   % scp KEYS people.apache.org:/www/www.apache.org/dist/perl/KEYS
+
+   If this is your first release, ask someone with APML karma on PAUSE 
+   to verify you have the appropriate permissions.  Likely someone on 
+   the PMC can do this.
+
+  a. login into https://pause.perl.org
+  b. menu click: Select Mailinglist/Action
+  c. choose APML and Change Permissions and click go
+  d. click 3.1 Make somebody else co-maintainer
+  e. choose the modules to give the perms to
+     type the username of the new co-maintainer
+  f. if you happen to know that packages were added this release,
+     make sure you give the correct permissions to them.
+
+1. 'make mydist' - to make sure nothing is missing from the manifest,
+   etc. Now test this generated package mod_perl-2.0.12.tar.gz (not
+   the current build) with as many
+   configurations as possible on as many platforms as possible,
+   unpacking the package each time afresh.  
+
+  a. edit ./Changes 
+     - change -dev to -rc\d+  starting with -rc1
+     - edit META.yml to the rc\d version above in the version key
+
+  b. commit Changes
+     % svn ci -m "2.0.12 rc1" Changes
+
+  c. nuke any preinstalled mod_perl libs and run 'make test'
+
+  d. test that you can 'make install' and then run 'make test' again
+
+  e. test whether we are still 100% OK on systems with no LWP:
+     % APACHE_TEST_PRETEND_NO_LWP=1 make test
+
+  f. build and test as root. double check that you have started from a
+     fresh source, without having any stale dirs from the previous
+     build laying around.
+
+2. once confident that the package is good, commit the release candidate
+   to https://dist.apache.org/repos/dist/dev/perl and post 24 hour-ish
+   candidate alert to the modperl/dev list (may be longer to give most
+   people a chance to catch up). no need to tag this package
+
+   Subject: [RELEASE CANDIDATE]: mod_perl-2.0.12 RC\d+
+
+2a. if problems are detected during stage 2, repeat stages 1 and 2.
+
+3. when the package has been reported to be good, prepare a new
+   package to be released
+
+  a. edit ./Changes:
+     - remove -rc\d+
+     - add release date
+     - edit META.yml to remove the -rc\d+ from the version key
+
+  b. check ./README and ./Makefile.PL
+     - make sure supported httpd versions (dso & static) are current
+
+  c. rerun:
+     % perl Makefile.PL
+     make sure tag looks right
+     % make -n tag
+
+  d. commit Changes README Makefile.PL
+     % svn ci -m "2.0.12 release" Changes README Makefile.PL
+
+  e. tag
+     % make tag
+
+  f. Update the svn:externals in the new tag to refer to the new docs tag that
+     was created by the previous step:
+     % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_12
+     % svn propedit svn:externals 2_0_12
+     Update the docs line from:
+       ^/perl/modperl/docs/trunk/src/docs/2.0
+     to:
+       ^/perl/modperl/docs/tags/2_0_12/src/docs/2.0
+     The complete svn:externals should now look like:
+     % svn propget svn:externals 2_0_12
+       Apache-Test      ^/perl/Apache-Test/tags/<X>
+       Apache-Reload    ^/perl/Apache-Reload/tags/<Y>
+       Apache-SizeLimit ^/perl/Apache-SizeLimit/tags/<Z>
+       docs             ^/perl/modperl/docs/tags/2_0_12/src/docs/2.0
+     where <X>, <Y> and <Z> are the tags of the releases of Apache-Test,
+     Apache-Reload and Apache-SizeLimit included in this release of mod_perl.
+     % svn ci -m "2.0.12 release"
+
+  g. create the final package
+     % make dist
+
+  h. test the final package again at least once
+
+4. Tarball signing
+
+   (depending on whether you use GPG or PGP, pick the first or the
+   second set of the commands):
+
+  a. sign your local copy of the tarball:
+
+     % gpg --detach-sign --armor mod_perl-2.0.12.tar.gz
+
+     % pgps -b --armor mod_perl-2.0.12.tar.gz
+
+  b. create SHA256 and SHA512 checksums of the tarball:
+     % sha256sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha256
+     % sha512sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha512
+
+5. Release the package and update links
+
+  a. commit the tarball, the signature file and the checksum files to
+     https://dist.apache.org/repos/dist/release/perl - ask the PMC
+     chair to give you the needed permissions if you do not have them.
+
+  b. delete the previous release's files from the same location (they will
+     already have been archived at https://archive.apache.org/dist/perl/)
+
+  c. update the example command-lines in README.html in the same location
+
+  d. ask one of the other developers to double check the signature file
+     and tarball: download both files and verify the signature:
+
+     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz.asc
+     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz
+
+     % gpg --verify mod_perl-2.0.12.tar.gz.asc
+
+     % pgpv mod_perl-2.0.12.tar.gz.asc
+
+  e. respond to the automated email that will arrive requesting that release
+     data be filled in at https://reporter.apache.org/addrelease.html?perl
+
+  f. update the version and release date in the docs:
+     % vi modperl-docs/src/download/index_top.html 
+     % vi modperl-docs/doap_Perl.rdf
+     and commit.
+     % svn ci -m "2.0.12 release" \
+           modperl-docs/src/download/index_top.html \
+           modperl-docs/doap_Perl.rdf
+
+     Now run modperl-docs/bin/site_build to generate a local copy of the
+     website, and commit that to https://svn.apache.org/repos/asf/perl/site
+
+     (Alternatively, if running modperl-docs/bin/site_build is too difficult
+     on your local machine, you can just directly edit download/index.html
+     with the changes that were made to modperl-docs/download/index_top.html)
+
+     The change to the website will appear at https://perl.apache.org/ sometime
+     later (but maybe not until the next day).
+     
+6. Upload the package to CPAN
+
+7. Announce the package
+
+  a. post to the following lists:
+
+     o dev/perl.apache.org
+     o modperl/perl.apache.org
+     o announce/apache.org
+
+   Note, to post to announce@, you must be sending from an apache.org address.
+
+   Subject: [ANNOUNCE] mod_perl 2.0.12 
+
+     include:
+     - link at perl.apache.org:
+       https://perl.apache.org/download/index.html
+     - SHA256 and SHA512 sigs
+     - the latest Changes
+
+8. Prepare for the next cycle
+
+  a. increment version in lib/mod_perl2.pm
+
+  b. increment version in META.yml
+
+  c. edit ./Changes:
+     - start a new item with incremented version + '-dev'
+
+     =item 2.0.13-dev
+
+  d. add a release entry in STATUS
+
+  e. update this file versions to make it easy to copy-n-paste things
+     on the next release:
+     % perl -pi.bak -e 's/(\d+)([._])(\d+)(\2)(\d+)/join($2, $1, $3, $5+1)/eg' RELEASE
+
+  f. commit the changed files
+     % svn ci -m "start 2.0.12-dev cycle" Changes META.yml lib/mod_perl2.pm \
+       STATUS RELEASE
+
+9. Old Versions
+ 
+    Remind other developers to delete versions older then the prior release
+    from CPAN.  Old releases can always be found on BACKPAN. 
