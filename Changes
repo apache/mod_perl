@@ -12,6 +12,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
+=item 2.0.13-dev
+
 =item 2.0.12 January 30, 2022
 
 Add bug tracker information to README, and add CONTRIBUTING.md. [Steve Hay]

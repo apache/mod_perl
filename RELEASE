@@ -30,7 +30,7 @@ Instructions for mod_perl 2.0 Release Manager
      make sure you give the correct permissions to them.
 
 1. 'make mydist' - to make sure nothing is missing from the manifest,
-   etc. Now test this generated package mod_perl-2.0.12.tar.gz (not
+   etc. Now test this generated package mod_perl-2.0.13.tar.gz (not
    the current build) with as many
    configurations as possible on as many platforms as possible,
    unpacking the package each time afresh.  
@@ -40,7 +40,7 @@ Instructions for mod_perl 2.0 Release Manager
      - edit META.yml to the rc\d version above in the version key
 
   b. commit Changes
-     % svn ci -m "2.0.12 rc1" Changes
+     % svn ci -m "2.0.13 rc1" Changes
 
   c. nuke any preinstalled mod_perl libs and run 'make test'
 
@@ -58,7 +58,7 @@ Instructions for mod_perl 2.0 Release Manager
    candidate alert to the modperl/dev list (may be longer to give most
    people a chance to catch up). no need to tag this package
 
-   Subject: [RELEASE CANDIDATE]: mod_perl-2.0.12 RC\d+
+   Subject: [RELEASE CANDIDATE]: mod_perl-2.0.13 RC\d+
 
 2a. if problems are detected during stage 2, repeat stages 1 and 2.
 
@@ -79,28 +79,28 @@ Instructions for mod_perl 2.0 Release Manager
      % make -n tag
 
   d. commit Changes README Makefile.PL
-     % svn ci -m "2.0.12 release" Changes README Makefile.PL
+     % svn ci -m "2.0.13 release" Changes README Makefile.PL
 
   e. tag
      % make tag
 
   f. Update the svn:externals in the new tag to refer to the new docs tag that
      was created by the previous step:
-     % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_12
-     % svn propedit svn:externals 2_0_12
+     % svn co https://svn.apache.org/repos/asf/perl/modperl/tags/2_0_13
+     % svn propedit svn:externals 2_0_13
      Update the docs line from:
        ^/perl/modperl/docs/trunk/src/docs/2.0
      to:
-       ^/perl/modperl/docs/tags/2_0_12/src/docs/2.0
+       ^/perl/modperl/docs/tags/2_0_13/src/docs/2.0
      The complete svn:externals should now look like:
-     % svn propget svn:externals 2_0_12
+     % svn propget svn:externals 2_0_13
        Apache-Test      ^/perl/Apache-Test/tags/<X>
        Apache-Reload    ^/perl/Apache-Reload/tags/<Y>
        Apache-SizeLimit ^/perl/Apache-SizeLimit/tags/<Z>
-       docs             ^/perl/modperl/docs/tags/2_0_12/src/docs/2.0
+       docs             ^/perl/modperl/docs/tags/2_0_13/src/docs/2.0
      where <X>, <Y> and <Z> are the tags of the releases of Apache-Test,
      Apache-Reload and Apache-SizeLimit included in this release of mod_perl.
-     % svn ci -m "2.0.12 release"
+     % svn ci -m "2.0.13 release"
 
   g. create the final package
      % make dist
@@ -114,13 +114,13 @@ Instructions for mod_perl 2.0 Release Manager
 
   a. sign your local copy of the tarball:
 
-     % gpg --detach-sign --armor mod_perl-2.0.12.tar.gz
+     % gpg --detach-sign --armor mod_perl-2.0.13.tar.gz
 
-     % pgps -b --armor mod_perl-2.0.12.tar.gz
+     % pgps -b --armor mod_perl-2.0.13.tar.gz
 
   b. create SHA256 and SHA512 checksums of the tarball:
-     % sha256sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha256
-     % sha512sum mod_perl-2.0.12.tar.gz >mod_perl-2.0.12.tar.gz.sha512
+     % sha256sum mod_perl-2.0.13.tar.gz >mod_perl-2.0.13.tar.gz.sha256
+     % sha512sum mod_perl-2.0.13.tar.gz >mod_perl-2.0.13.tar.gz.sha512
 
 5. Release the package and update links
 
@@ -136,12 +136,12 @@ Instructions for mod_perl 2.0 Release Manager
   d. ask one of the other developers to double check the signature file
      and tarball: download both files and verify the signature:
 
-     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz.asc
-     https://www.apache.org/dist/perl/mod_perl-2.0.12.tar.gz
+     https://www.apache.org/dist/perl/mod_perl-2.0.13.tar.gz.asc
+     https://www.apache.org/dist/perl/mod_perl-2.0.13.tar.gz
 
-     % gpg --verify mod_perl-2.0.12.tar.gz.asc
+     % gpg --verify mod_perl-2.0.13.tar.gz.asc
 
-     % pgpv mod_perl-2.0.12.tar.gz.asc
+     % pgpv mod_perl-2.0.13.tar.gz.asc
 
   e. respond to the automated email that will arrive requesting that release
      data be filled in at https://reporter.apache.org/addrelease.html?perl
@@ -150,7 +150,7 @@ Instructions for mod_perl 2.0 Release Manager
      % vi modperl-docs/src/download/index_top.html 
      % vi modperl-docs/doap_Perl.rdf
      and commit.
-     % svn ci -m "2.0.12 release" \
+     % svn ci -m "2.0.13 release" \
            modperl-docs/src/download/index_top.html \
            modperl-docs/doap_Perl.rdf
 
@@ -176,7 +176,7 @@ Instructions for mod_perl 2.0 Release Manager
 
    Note, to post to announce@, you must be sending from an apache.org address.
 
-   Subject: [ANNOUNCE] mod_perl 2.0.12 
+   Subject: [ANNOUNCE] mod_perl 2.0.13 
 
      include:
      - link at perl.apache.org:
@@ -193,7 +193,7 @@ Instructions for mod_perl 2.0 Release Manager
   c. edit ./Changes:
      - start a new item with incremented version + '-dev'
 
-     =item 2.0.13-dev
+     =item 2.0.14-dev
 
   d. add a release entry in STATUS
 
@@ -202,7 +202,7 @@ Instructions for mod_perl 2.0 Release Manager
      % perl -pi.bak -e 's/(\d+)([._])(\d+)(\2)(\d+)/join($2, $1, $3, $5+1)/eg' RELEASE
 
   f. commit the changed files
-     % svn ci -m "start 2.0.12-dev cycle" Changes META.yml lib/mod_perl2.pm \
+     % svn ci -m "start 2.0.13-dev cycle" Changes META.yml lib/mod_perl2.pm \
        STATUS RELEASE
 
 9. Old Versions
