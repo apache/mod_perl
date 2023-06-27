@@ -116,8 +116,8 @@ modperl_io_perlio_override_stdhandle(pTHX_ request_rec *r, int mode)
     save_gp(handle, 1);
 
     sv_setref_pv(sv, "Apache2::RequestRec", (void*)r);
-    status = do_open9(handle, mode == O_RDONLY ? "<:Apache2" : ">:Apache2",
-                      9, FALSE, mode, 0, (PerlIO *)NULL, sv, 1);
+    status = do_openn(handle, mode == O_RDONLY ? "<:Apache2" : ">:Apache2",
+                      9, FALSE, mode, 0, (PerlIO *)NULL, &sv, 1);
     if (status == 0) {
         Perl_croak(aTHX_ "Failed to open STD%s: %" SVf,
                    mode == O_RDONLY ? "IN" : "OUT", get_sv("!", TRUE));
