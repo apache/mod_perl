@@ -14,6 +14,8 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.13-dev
 
+Fix build for perl >= 5.37.1. [Jitka Plesnikova <jplesnik@redhat.com>]
+
 =item 2.0.12 January 30, 2022
 
 Add bug tracker information to README, and add CONTRIBUTING.md. [Steve Hay]
