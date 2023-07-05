@@ -14,6 +14,9 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.13-dev
 
+Use get_server_banner() instead of deprecated get_server_version() in
+Apache2::Status.  [Petr Písař <ppisar@redhat.com]
+
 Avoid generating APR precompiled headers. [Sam James <sam@gentoo.org>]
 
 Fix build for perl >= 5.37.1. [Jitka Plesnikova <jplesnik@redhat.com>]
