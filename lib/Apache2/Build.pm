@@ -1502,7 +1502,7 @@ sub get_apr_config {
         };
     }
     else {
-        my @command = ($self->perl_config('cpp'), '-dM', $header);
+        my @command = ($self->perl_config('cpp'), '-E', '-dM', $header);
         open $fh, '-|', @command or do {
             error "Unable to preprocess $header with @command: $!";
             return undef;
