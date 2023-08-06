@@ -1612,7 +1612,7 @@ sub mm_replace {
 }
 
 #help prevent warnings
-my @mm_init_vars = (BASEEXT => '');
+my @mm_init_vars = (BASEEXT => '', NAME => '');
 
 sub make_tools {
     my ($self, $fh) = @_;
@@ -1627,6 +1627,10 @@ sub make_tools {
     # Fake initialize MakeMaker
     foreach my $m (qw(init_main init_others init_tools)) {
         $mm->$m() if $mm->can($m);
+
+        # init_main() undefines the BASEEXT member which we initialized
+        # to a blank string to prevent warnings; reset it now
+        $mm->{BASEEXT} = '' if not defined $mm->{BASEEXT};
     }
 
     for (qw(rm_f mv ld ar cp test_f)) {
