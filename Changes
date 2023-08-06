@@ -12,7 +12,7 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =over 3
 
-=item 2.0.13-dev
+=item 2.0.13-rc1
 
 Use get_server_banner() instead of deprecated get_server_version() in
 Apache2::Status.  [Petr Písař <ppisar@redhat.com]
