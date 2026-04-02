@@ -390,7 +390,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 {
     MP_dSCFG((r ? s=r->server : c ? s=c->base_server : s));
     MP_dDCFG;
-    modperl_config_con_t *ccfg;
+    modperl_config_con_t *ccfg = NULL;
+    modperl_config_req_t *rcfg = NULL;
     const char *desc = NULL;
     modperl_interp_t *interp = NULL;
     apr_pool_t *p = NULL;
@@ -418,29 +419,48 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
         return interp;
     }
 
+
+    if (!ap_is_initial_req(r))
+        r = r->main;
     if(!c) c = r->connection;
     ccfg = modperl_config_con_get(c);
 
+    rcfg = modperl_config_req_get(r);
+    if (interp || (interp = modperl_interp_pool_get(r->pool))) {
+        ap_assert(interp->refcnt > 0);
+        ap_assert(MpInterpIN_USE(interp));
+        interp->refcnt++;
+        interp->num_requests++;
+        MP_TRACE_i(MP_FUNC,
+                   "found interp 0x%lx (perl=0x%pp) in r->pool config, refcnt=%d",
+                   (unsigned long)interp, interp->perl, interp->refcnt);
+        /* set context (THX) for this thread */
+        modperl_thx_interp_set(interp->perl, interp);
+        PERL_SET_CONTEXT(interp->perl);
+        return interp;
+    }
+    
+#if 0
     if (ccfg && ccfg->interp) {
         ccfg->interp->refcnt++;
-
         MP_TRACE_i(MP_FUNC,
                    "found interp 0x%lx in con config, refcnt incremented to %d",
                    (unsigned long)ccfg->interp, ccfg->interp->refcnt);
         /* set context (THX) for this thread */
+        //modperl_thx_interp_set(ccfg->interp->perl, interp);
         PERL_SET_CONTEXT(ccfg->interp->perl);
         /* modperl_thx_interp_set() is not called here because the interp
          * already belongs to the perl interpreter
          */
         return ccfg->interp;
     }
-
+#endif
     MP_TRACE_i(MP_FUNC,
                "fetching interp for %s:%d", s->server_hostname, s->port);
     interp = modperl_interp_get(s);
     MP_TRACE_i(MP_FUNC, "  --> got %pp (perl=%pp)", interp, interp->perl);
     ++interp->num_requests; /* should only get here once per request */
-    interp->refcnt = 1;
+    interp->refcnt = 2;
 
     /* set context (THX) for this thread */
     PERL_SET_CONTEXT(interp->perl);
@@ -449,12 +469,18 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
 
     /* make sure ccfg is initialized */
     modperl_config_con_init(c, ccfg);
-    ccfg->interp = interp;
-    interp->ccfg = ccfg;
+    modperl_config_req_init(r, rcfg);
+
+    if (ccfg->interp == NULL)
+        ccfg->interp = interp;
+    if (interp->ccfg == NULL)
+        interp->ccfg = ccfg;
 
     MP_TRACE_i(MP_FUNC,
                "pulled interp %pp (perl=%pp) from mip, num_requests is %d",
                interp, interp->perl, interp->num_requests);
+
+    set_interp(r->pool);
 
     return interp;
 }
