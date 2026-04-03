@@ -23,6 +23,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
+    PERL_SET_CONTEXT(aTHX);
 
     /* handler callbacks shouldn't affect each other's taintedness
      * state, so start every callback with a clear tainted status
@@ -147,10 +148,10 @@ int modperl_callback_run_handlers(int idx, int type,
                                   apr_pool_t *ptemp,
                                   modperl_hook_run_mode_e run_mode)
 {
-    MP_dINTERP;
     MP_dSCFG(s);
     MP_dDCFG;
     MP_dRCFG;
+    //PERL_SET_CONTEXT(aTHX);
     modperl_handler_t **handlers;
     apr_pool_t *p = NULL;
     MpAV *av, **avp;
@@ -171,16 +172,24 @@ int modperl_callback_run_handlers(int idx, int type,
         p = pconf;
     }
 
-    avp = modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
+    MP_dINTERPa(r,c,s);
+    avp = modperl_handler_lookup_handlers(aTHX_ dcfg, scfg, rcfg, p,
                                           type, idx, FALSE, &desc);
+#define MP_INTERP_KEY "MODPERL_INTERP"
+#define set_interp(p)                                           \
+     (void)apr_pool_userdata_set((void *)interp, MP_INTERP_KEY, \
+                                 modperl_interp_unselect, \
+                                 p)
+    set_interp(p);
+
+    //MP_INTERP_PUTBACK(interp, aTHX);
+
 
     if (!(avp && (av = *avp))) {
         MP_TRACE_h(MP_FUNC, "no %s handlers configured (%s)",
                    desc, r ? r->uri : "");
         return DECLINED;
     }
-
-    MP_INTERPa(r, c, s);
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:
@@ -322,7 +331,7 @@ int modperl_callback_run_handlers(int idx, int type,
          *
          * XXX: would be nice to somehow optimize that
          */
-        avp = modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
+        avp = modperl_handler_lookup_handlers(aTHX_ dcfg, scfg, rcfg, p,
                                               type, idx, FALSE, NULL);
         if (avp && (av = *avp)) {
             handlers = (modperl_handler_t **)av->elts;
@@ -330,8 +339,6 @@ int modperl_callback_run_handlers(int idx, int type,
     }
 
     SvREFCNT_dec((SV*)av_args);
-
-    MP_INTERP_PUTBACK(interp, aTHX);
 
     return status;
 }
