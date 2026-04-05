@@ -352,7 +352,8 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
  */
 #define check_modify(dtype)                                     \
     if ((action > MP_HANDLER_ACTION_GET) && rcfg) {             \
-        MP_ASSERT(aTHX+0);                                      \
+       dTHX;                                                    \
+       MP_ASSERT(aTHX+0);                                       \
         Perl_croak(aTHX_ "too late to modify %s handlers",      \
                    modperl_handler_desc_##dtype(idx));          \
     }
@@ -368,7 +369,7 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
  * r->request_config entries then override those in r->per_dir_config
  */
 
-MpAV **modperl_handler_lookup_handlers(pTHX_ modperl_config_dir_t *dcfg,
+MpAV **modperl_handler_lookup_handlers(modperl_config_dir_t *dcfg,
                                        modperl_config_srv_t *scfg,
                                        modperl_config_req_t *rcfg,
                                        apr_pool_t *p,
@@ -474,7 +475,6 @@ MpAV **modperl_handler_get_handlers(request_rec *r, conn_rec *c, server_rec *s,
                                     apr_pool_t *p, const char *name,
                                     modperl_handler_action_e action)
 {
-    dTHXa(PERL_GET_CONTEXT);
     MP_dSCFG(s);
     MP_dDCFG;
     MP_dRCFG;
@@ -490,7 +490,7 @@ MpAV **modperl_handler_get_handlers(request_rec *r, conn_rec *c, server_rec *s,
         return FALSE;
     }
 
-    return modperl_handler_lookup_handlers(aTHX_ dcfg, scfg, rcfg, p,
+    return modperl_handler_lookup_handlers(dcfg, scfg, rcfg, p,
                                            type, idx,
                                            action, NULL);
 }

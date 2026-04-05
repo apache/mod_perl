@@ -366,14 +366,12 @@ apr_status_t modperl_config_request_cleanup(pTHX_ request_rec *r)
 apr_status_t modperl_config_req_cleanup(void *data)
 {
     request_rec *r = (request_rec *)data;
-    apr_status_t rc;
-    MP_dINTERPa(r, NULL, NULL);
-
-    rc = modperl_config_request_cleanup(aTHX_ r);
-
-    MP_INTERP_PUTBACK(interp, aTHX);
-
-    return rc;
+    apr_pool_t *p = ap_is_initial_req(r) ? r->pool : r->main->pool;
+    modperl_interp_t *interp = modperl_interp_pool_get(p);    
+    if (interp && interp->perl)
+        return modperl_config_request_cleanup(interp->perl, r);
+    dTHX;
+    return modperl_config_request_cleanup(aTHX_ r);
 }
 
 void *modperl_get_perl_module_config(ap_conf_vector_t *cv)

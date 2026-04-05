@@ -640,7 +640,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
     command_rec *cmd;
     AV *module_cmds;
     I32 i, fill;
-    MP_dINTERPa(NULL, NULL, s);
+    MP_dINTERP_POOLa(p, s);
     module_cmds = (AV*)SvRV(mod_cmds);
 
     fill = AvFILL(module_cmds);
@@ -782,7 +782,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     const char *errmsg;
     module *modp;
     modperl_module_info_t *minfo;
-    MP_dINTERPa(NULL, NULL, s);
+    MP_dINTERP_POOLa(p, s);
     modp = (module *)apr_pcalloc(p, sizeof(*modp));
     minfo = (modperl_module_info_t *)apr_pcalloc(p, sizeof(*minfo));
 

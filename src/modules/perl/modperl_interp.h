@@ -46,8 +46,7 @@ void modperl_interp_pool_set(apr_pool_t *p,
 modperl_interp_t *modperl_interp_pool_select(apr_pool_t *p,
                                              server_rec *s);
 
-modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c,
-                                        server_rec *s);
+modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec *s);
 
 #define MP_dINTERP pTHX; modperl_interp_t *interp = NULL
 

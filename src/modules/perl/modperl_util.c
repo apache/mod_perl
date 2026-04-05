@@ -833,14 +833,15 @@ static MP_INLINE
 apr_status_t modperl_cleanup_pnotes(void *data) {
     modperl_pnotes_t *pnotes = data;
 
-    dTHXa(pnotes->interp->perl);
+    dTHXa(pnotes->perl);
     MP_ASSERT_CONTEXT(aTHX);
 
+    modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
+    interp->refcnt--;
     SvREFCNT_dec(pnotes->pnotes);
     pnotes->pnotes = NULL;
     pnotes->pool = NULL;
 
-    MP_INTERP_PUTBACK(pnotes->interp, aTHX);
     return APR_SUCCESS;
 }
 
@@ -859,16 +860,13 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
 
     if (!pnotes->pnotes) {
         pnotes->pool = pool;
-#ifdef USE_ITHREADS
-        pnotes->interp = modperl_thx_interp_get(aTHX);
-        pnotes->interp->refcnt++;
-        MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",
-                   pnotes->interp, pnotes->interp->refcnt);
-#endif
         pnotes->pnotes = newHV();
         apr_pool_cleanup_register(pool, pnotes,
                                   modperl_cleanup_pnotes,
                                   apr_pool_cleanup_null);
+        pnotes->perl = aTHX;
+        modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
+        interp->refcnt++;
     }
 
     if (key) {
@@ -1011,6 +1009,7 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
          */
         MP_dINTERP_POOLa(cmd->pool, cmd->server);
         if (!MP_HAS_INTERP(interp)) {
+            MP_INTERP_PUTBACK(interp, aTHX);
 	    return "Require handler is not currently supported in this context";
 	}
 

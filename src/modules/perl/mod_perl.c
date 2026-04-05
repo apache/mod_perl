@@ -1034,27 +1034,27 @@ int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
     apr_status_t retval, rc;
-    MP_dINTERP;
-
+ 
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
 
-    MP_INTERPa(r, r->connection, r->server);
-
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
+ 
+    MP_dINTERPa(r, NULL, NULL);
+
     if (MpDirSETUP_ENV(dcfg)) {
         modperl_env_request_populate(aTHX_ r);
     }
 
+    
     retval = modperl_response_handler_run(r);
     rc = modperl_response_finish(r);
     if (rc != APR_SUCCESS) {
         retval = rc;
     }
-
+    
     MP_INTERP_PUTBACK(interp, aTHX);
-
     return retval;
 }
 
@@ -1064,13 +1064,12 @@ int modperl_response_handler_cgi(request_rec *r)
     GV *h_stdin, *h_stdout;
     apr_status_t retval, rc;
     MP_dRCFG;
-    MP_dINTERP;
 
     if (!strEQ(r->handler, "perl-script")) {
         return DECLINED;
     }
 
-    MP_INTERPa(r, r->connection, r->server);
+    MP_dINTERPa(r, NULL, NULL);
 
     modperl_perl_global_request_save(aTHX_ r);
 
