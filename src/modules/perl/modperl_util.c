@@ -835,9 +835,10 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
 
     dTHXa(pnotes->perl);
     MP_ASSERT_CONTEXT(aTHX);
-
+#ifdef USE_ITHREADS
     modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
     interp->refcnt--;
+#endif
     SvREFCNT_dec(pnotes->pnotes);
     pnotes->pnotes = NULL;
     pnotes->pool = NULL;
@@ -864,9 +865,11 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
         apr_pool_cleanup_register(pool, pnotes,
                                   modperl_cleanup_pnotes,
                                   apr_pool_cleanup_null);
+#ifdef USE_ITHREADS
         pnotes->perl = aTHX;
         modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
         interp->refcnt++;
+#endif
     }
 
     if (key) {
@@ -886,10 +889,10 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
 }
 
 U16 *modperl_code_attrs(pTHX_ CV *cv) {
-    MAGIC *mg;    
+    MAGIC *mg;
 
     if (!(SvMAGICAL(cv) && (mg = mg_find((SV*)cv, PERL_MAGIC_ext)))) {
-       sv_magic((SV*)cv, (SV *)NULL, PERL_MAGIC_ext, NULL, -1); 
+       sv_magic((SV*)cv, (SV *)NULL, PERL_MAGIC_ext, NULL, -1);
     }
 
     mg = mg_find((SV*)cv, PERL_MAGIC_ext);
@@ -1009,7 +1012,6 @@ static const char *perl_parse_require_line(cmd_parms *cmd,
          */
         MP_dINTERP_POOLa(cmd->pool, cmd->server);
         if (!MP_HAS_INTERP(interp)) {
-            MP_INTERP_PUTBACK(interp, aTHX);
 	    return "Require handler is not currently supported in this context";
 	}
 

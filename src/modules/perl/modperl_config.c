@@ -367,7 +367,7 @@ apr_status_t modperl_config_req_cleanup(void *data)
 {
     request_rec *r = (request_rec *)data;
     apr_pool_t *p = ap_is_initial_req(r) ? r->pool : r->main->pool;
-    modperl_interp_t *interp = modperl_interp_pool_get(p);    
+    modperl_interp_t *interp = modperl_interp_pool_get(p);
     if (interp && interp->perl)
         return modperl_config_request_cleanup(interp->perl, r);
     dTHX;

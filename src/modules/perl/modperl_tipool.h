@@ -60,14 +60,14 @@ void modperl_tipool_putback(modperl_tipool_t *tipool,
 void modperl_tipool_putback_data(modperl_tipool_t *tipool, void *data,
                                  int num_requests);
 
-#define modperl_tipool_wait(tipool) \
+#define modperl_tipool_wait(tipool) do {        \
         MP_TRACE_i(MP_FUNC, \
                    "waiting for available tipool item in thread 0x%lx", \
                    MP_TIDF); \
         MP_TRACE_i(MP_FUNC, "(%d items in use, %d alive)", \
                    tipool->in_use, tipool->size); \
         COND_WAIT(&tipool->available, &tipool->tiplock); \
-
+    } while (0)
 #define modperl_tipool_signal(tipool) \
     MP_TRACE_i(MP_FUNC, "signal available tipool item"); \
     COND_SIGNAL(&tipool->available)

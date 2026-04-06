@@ -486,7 +486,7 @@ int modperl_run_filter(modperl_filter_t *filter)
     server_rec  *s = r ? r->server : c->base_server;
     apr_pool_t  *p = r ? r->pool : c->pool;
 
-    MP_dINTERPa(NULL, NULL, s); /* this needs to NOT be the interpreter in r->pool */
+    MP_dINTERPa(r, c, s);
 
     MP_FILTER_SAVE_ERRSV(errsv);
 

@@ -179,7 +179,7 @@ int modperl_callback_run_handlers(int idx, int type,
                    desc, r ? r->uri : "");
         return DECLINED;
     }
-  
+
     MP_dINTERPa(r, c, s);
 
     switch (type) {

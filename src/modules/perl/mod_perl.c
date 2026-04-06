@@ -1034,26 +1034,26 @@ int modperl_response_handler(request_rec *r)
 {
     MP_dDCFG;
     apr_status_t retval, rc;
- 
+
     if (!strEQ(r->handler, "modperl")) {
         return DECLINED;
     }
 
     /* default is -SetupEnv, add if PerlOption +SetupEnv */
- 
+
     MP_dINTERPa(r, NULL, NULL);
 
     if (MpDirSETUP_ENV(dcfg)) {
         modperl_env_request_populate(aTHX_ r);
     }
 
-    
+
     retval = modperl_response_handler_run(r);
     rc = modperl_response_finish(r);
     if (rc != APR_SUCCESS) {
         retval = rc;
     }
-    
+
     MP_INTERP_PUTBACK(interp, aTHX);
     return retval;
 }
