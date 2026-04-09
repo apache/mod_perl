@@ -62,11 +62,12 @@ struct modperl_interp_t {
     int num_requests;
     U8 flags;
     modperl_config_con_t *ccfg;
-    int refcnt;
+    volatile int refcnt;
     apr_pool_t *pool;
 #ifdef MP_TRACE
     unsigned long tid;
 #endif
+    perl_mutex lock;
 };
 
 typedef struct {

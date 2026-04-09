@@ -48,6 +48,7 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
 
     interp->mip = mip;
     interp->refcnt = 0;
+    MUTEX_INIT(&interp->lock);
 
     if (perl) {
 #ifdef MP_USE_GTOP
@@ -112,7 +113,7 @@ void modperl_interp_destroy(modperl_interp_t *interp)
     void **handles;
     dTHXa(interp->perl);
 
-    PERL_SET_CONTEXT(interp->perl);
+    PERL_SET_CONTEXT(aTHX);
 
     MP_TRACE_i(MP_FUNC, "interp == 0x%lx / perl: 0x%lx",
                (unsigned long)interp, (unsigned long)interp->perl);
@@ -124,11 +125,13 @@ void modperl_interp_destroy(modperl_interp_t *interp)
 
     handles = modperl_xs_dl_handles_get(aTHX);
 
-    modperl_perl_destruct(interp->perl);
+    modperl_perl_destruct(aTHX);
 
     modperl_xs_dl_handles_close(handles);
 
+    MUTEX_DESTROY(&interp->lock);
     free(interp);
+
 }
 
 apr_status_t modperl_interp_cleanup(void *data)
@@ -257,6 +260,7 @@ static apr_status_t modperl_interp_pool_unselect(void *data)
                interp, interp->refcnt);
         interp->refcnt = 1;
     }
+    interp->pool = NULL;
     return modperl_interp_unselect(data);
 }
 
@@ -265,7 +269,7 @@ apr_status_t modperl_interp_unselect(void *data)
     modperl_interp_t *interp = (modperl_interp_t *)data;
     modperl_interp_pool_t *mip = interp->mip;
     modperl_tipool_t *tipool = mip->tipool;
-
+    MUTEX_LOCK(&interp->lock);
     MP_ASSERT(interp && MpInterpIN_USE(interp) && interp->refcnt > 0);
     MP_TRACE_i(MP_FUNC, "unselect(interp=%pp): refcnt=%d",
                interp, interp->refcnt);
@@ -273,12 +277,14 @@ apr_status_t modperl_interp_unselect(void *data)
     if (--interp->refcnt > 0) {
         MP_TRACE_i(MP_FUNC, "interp=0x%lx, refcnt=%d -- interp still in use",
                    (unsigned long)interp, interp->refcnt);
+        MUTEX_UNLOCK(&interp->lock);
         return APR_SUCCESS;
     }
 
     if (!MpInterpIN_USE(interp)){
         MP_TRACE_i(MP_FUNC, "interp=0x%pp, refcnt=%d -- interp already not in use",
                    interp, interp->refcnt);
+        MUTEX_UNLOCK(&interp->lock);
         return APR_SUCCESS;
     }
 
@@ -301,6 +307,7 @@ apr_status_t modperl_interp_unselect(void *data)
         MP_TRACE_i(MP_FUNC, "interp=%pp freed, tipool(size=%ld, in_use=%ld)",
                    interp, tipool->size, tipool->in_use);
     }
+    MUTEX_UNLOCK(&interp->lock);
     return APR_SUCCESS;
 }
 
@@ -450,9 +457,14 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec 
     if (c)
         ccfg = modperl_config_con_get(c);
 
+    static perl_mutex lock = PTHREAD_MUTEX_INITIALIZER;
+    MUTEX_LOCK(&lock);
     if (p && (interp = modperl_interp_pool_get(p)) && MpInterpIN_USE(interp)) {
+        MUTEX_LOCK(&interp->lock);
+        MUTEX_UNLOCK(&lock);
         interp->refcnt++;
         interp->num_requests++;
+        MUTEX_UNLOCK(&interp->lock);
         MP_TRACE_i(MP_FUNC,
                    "found interp 0x%lx (perl=0x%pp) in r->pool config, refcnt=%d",
                    (unsigned long)interp, interp->perl, interp->refcnt);
@@ -463,6 +475,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec 
     MP_TRACE_i(MP_FUNC,
                "fetching interp for %s:%d", s->server_hostname, s->port);
     interp = modperl_interp_get(s);
+    MUTEX_LOCK(&interp->lock);
     MP_TRACE_i(MP_FUNC, "  --> got %pp (perl=%pp)", interp, interp->perl);
     ++interp->num_requests; /* should only get here once per request */
     interp->refcnt = 1;
@@ -499,6 +512,8 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec 
         */
         interp->refcnt++, set_interp(p), interp->pool = p;
 
+    MUTEX_UNLOCK(&interp->lock);
+    MUTEX_UNLOCK(&lock);
     return interp;
 }
 

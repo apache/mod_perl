@@ -19,7 +19,7 @@
 int modperl_require_module(pTHX_ const char *pv, int logfailure)
 {
     SV *sv;
-
+    PERL_SET_CONTEXT(aTHX);
     dSP;
     PUSHSTACKi(PERLSI_REQUIRE);
     ENTER;SAVETMPS;
@@ -835,14 +835,9 @@ apr_status_t modperl_cleanup_pnotes(void *data) {
 
     dTHXa(pnotes->perl);
     MP_ASSERT_CONTEXT(aTHX);
-#ifdef USE_ITHREADS
-    modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
-    interp->refcnt--;
-#endif
     SvREFCNT_dec(pnotes->pnotes);
     pnotes->pnotes = NULL;
     pnotes->pool = NULL;
-
     return APR_SUCCESS;
 }
 
@@ -867,8 +862,6 @@ SV *modperl_pnotes(pTHX_ modperl_pnotes_t *pnotes, SV *key, SV *val,
                                   apr_pool_cleanup_null);
 #ifdef USE_ITHREADS
         pnotes->perl = aTHX;
-        modperl_interp_t *interp = modperl_thx_interp_get(aTHX);
-        interp->refcnt++;
 #endif
     }
 

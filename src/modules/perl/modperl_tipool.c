@@ -248,6 +248,7 @@ void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp)
     MP_TRACE_i(MP_FUNC, "removed 0x%lx (size=%d)",
                (unsigned long)listp, tipool->size);
 
+    free(listp);
 }
 
 modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
@@ -297,7 +298,6 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
                                         int num_requests)
 {
     modperl_tipool_lock(tipool);
-
     /* remove from busy list, add back to idle */
     /* XXX: option to sort list, e.g. on num_requests */
 
@@ -335,18 +335,23 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
      */
  MANAGE_TIPOOL:
     if (tipool->func->tipool_destroy) {
-        if (tipool->size - tipool->in_use > tipool->cfg->max_spare) {
+        while (tipool->size - tipool->in_use > tipool->cfg->max_spare) {
             if (tipool->idle && tipool->idle->next) {
-            MP_TRACE_i(MP_FUNC,
-                       "shrinking pool: max_spare=%d, %d of %d in use",
-                       tipool->cfg->max_spare, tipool->in_use,
-                       tipool->size);
                 listp = modperl_list_last(tipool->idle->next);
                 if (listp) {
+                    MP_TRACE_i(MP_FUNC,
+                       "shrinking pool: destroying 0x%lx, max_spare=%d, %d of %d in use",
+                               (unsigned long)listp->data, tipool->cfg->max_spare, tipool->in_use,
+                               tipool->size);
+                    void *data = listp->data;
                     modperl_tipool_remove(tipool, listp);
-                    (*tipool->func->tipool_destroy)(tipool, tipool->data, listp->data);
+                    (*tipool->func->tipool_destroy)(tipool, tipool->data, data);
                 }
+                else
+                    break;
             }
+            else
+                break;
         }
     }
     if (tipool->func->tipool_rgrow) {
