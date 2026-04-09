@@ -101,10 +101,10 @@ APR_OPTIONAL_FN_TYPE(modperl_thx_interp_get) *modperl_opt_thx_interp_get;
      */                                                                 \
     if (modperl_opt_thx_interp_get) {                                   \
         if ((acct->interp = modperl_opt_thx_interp_get(aTHX))) {        \
-            acct->interp->refcnt++;                                     \
-            MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld",   \
-                       acct->interp, acct->interp->refcnt);                 \
-        }                                                               \
+            /* acct->interp->refcnt++;*/                                \
+            /* MP_TRACE_i(MP_FUNC, "TO: (0x%lx)->refcnt incremented to %ld", */  \
+            /* acct->interp, acct->interp->refcnt); */                   \
+            ;}                                                          \
     }                                                                   \
 } STMT_END
 
@@ -299,7 +299,7 @@ static apr_status_t mpxs_cleanup_run(void *data)
     }
 
     if (SvTRUE(ERRSV)) {
-        Perl_warn(aTHX_ "APR::Pool: cleanup died: %s", 
+        Perl_warn(aTHX_ "APR::Pool: cleanup died: %s",
                   SvPV_nolen(ERRSV));
     }
 
@@ -348,9 +348,10 @@ static MP_INLINE void mpxs_apr_pool_cleanup_register(pTHX_ apr_pool_t *p,
      */
     if (modperl_opt_thx_interp_get) {
         if ((data->interp = modperl_opt_thx_interp_get(data->perl))) {
-            data->interp->refcnt++;
-            MP_TRACE_i(MP_FUNC, "(0x%lx)->refcnt incremented to %ld",
-                       data->interp, data->interp->refcnt);
+            /* data->interp->refcnt++; */
+            /* MP_TRACE_i(MP_FUNC, "(0x%lx)->refcnt incremented to %ld",
+               data->interp, data->interp->refcnt); */
+            ;
         }
     }
 #endif

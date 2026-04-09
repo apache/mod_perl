@@ -128,7 +128,7 @@ static apr_status_t modperl_module_config_obj_cleanup(void *data)
     MP_TRACE_c(MP_FUNC, "deleting ptr %pp from table %pp",
                cleanup->ptr, cleanup->table);
 
-    MP_INTERP_PUTBACK(cleanup->interp, aTHX);
+//    MP_INTERP_PUTBACK(cleanup->interp, aTHX);
 
     return APR_SUCCESS;
 }
@@ -145,7 +145,7 @@ static void modperl_module_config_obj_cleanup_register(pTHX_
     cleanup->ptr = ptr;
 #ifdef USE_ITHREADS
     cleanup->interp = modperl_thx_interp_get(aTHX);
-    MP_INTERP_REFCNT_inc(cleanup->interp);
+//    MP_INTERP_REFCNT_inc(cleanup->interp);
 #endif
 
     apr_pool_cleanup_register(p, cleanup,
