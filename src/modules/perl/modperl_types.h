@@ -67,7 +67,6 @@ struct modperl_interp_t {
 #ifdef MP_TRACE
     unsigned long tid;
 #endif
-    perl_mutex lock;
 };
 
 typedef struct {
