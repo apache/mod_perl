@@ -486,21 +486,6 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec 
                "pulled interp %pp (perl=%pp) from mip, num_requests is %d",
                interp, interp->perl, interp->num_requests);
     if (r)
-        /* it is correct to bump the refcnt below, assuming mod_http2's h2_stream.c is patched:
-
-
-@@ -659,16 +659,16 @@ apr_status_t h2_stream_set_request_rec(h2_stream *stream,
-     if (stream->rst_error) {
-         return APR_ECONNRESET;
-     }
--    status = h2_request_rcreate(&req, stream->pool, r,
-+    status = h2_request_rcreate(&req, r->pool, r,
-                                 &stream->session->hd_scratch);
-     if (status == APR_SUCCESS) {
-
-
-
-        */
         interp->refcnt++, set_interp(p), interp->pool = p;
 
     return interp;
