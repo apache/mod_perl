@@ -463,7 +463,7 @@ modperl_interp_t *modperl_interp_select(request_rec *r, conn_rec *c, server_rec 
         PERL_SET_CONTEXT(interp->perl);
         return interp;
     }
-    assert(interp == NULL);
+
     MP_TRACE_i(MP_FUNC,
                "fetching interp for %s:%d", s->server_hostname, s->port);
     interp = modperl_interp_get(s);

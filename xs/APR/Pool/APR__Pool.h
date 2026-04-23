@@ -292,17 +292,6 @@ static apr_status_t mpxs_cleanup_run(void *data)
         SvREFCNT_dec(cdata->arg);
     }
 
-#ifdef USE_ITHREADS
-    if (cdata->interp && modperl_opt_interp_unselect) {
-        /* this will decrement the interp refcnt until
-         * there are no more references, in which case
-         * the interpreter will be putback into the mip
-         */
-//        MP_TRACE_i(MP_FUNC, "calling interp_unselect(0x%lx)", cdata->interp);
-//        (void)modperl_opt_interp_unselect(cdata->interp);
-    }
-#endif
-
     /* the return value is ignored by apr_pool_destroy anyway */
     return APR_SUCCESS;
 }
