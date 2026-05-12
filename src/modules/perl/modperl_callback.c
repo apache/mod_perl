@@ -23,6 +23,7 @@ int modperl_callback(pTHX_ modperl_handler_t *handler, apr_pool_t *p,
     I32 flags = G_EVAL|G_SCALAR;
     dSP;
     int count, status = OK;
+    PERL_SET_CONTEXT(aTHX);
 
     /* handler callbacks shouldn't affect each other's taintedness
      * state, so start every callback with a clear tainted status
@@ -147,7 +148,6 @@ int modperl_callback_run_handlers(int idx, int type,
                                   apr_pool_t *ptemp,
                                   modperl_hook_run_mode_e run_mode)
 {
-    MP_dINTERP;
     MP_dSCFG(s);
     MP_dDCFG;
     MP_dRCFG;
@@ -180,7 +180,7 @@ int modperl_callback_run_handlers(int idx, int type,
         return DECLINED;
     }
 
-    MP_INTERPa(r, c, s);
+    MP_dINTERPa(r, c, s);
 
     switch (type) {
       case MP_HANDLER_TYPE_PER_SRV:

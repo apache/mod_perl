@@ -47,7 +47,7 @@ typedef struct modperl_config_con_t modperl_config_con_t;
 typedef struct modperl_list_t modperl_list_t;
 
 struct modperl_list_t {
-    modperl_list_t *prev, *next;
+    volatile modperl_list_t *prev, *next;
     void *data;
 };
 
@@ -62,7 +62,8 @@ struct modperl_interp_t {
     int num_requests;
     U8 flags;
     modperl_config_con_t *ccfg;
-    int refcnt;
+    volatile int refcnt;
+    apr_pool_t *pool;
 #ifdef MP_TRACE
     unsigned long tid;
 #endif
@@ -79,7 +80,7 @@ typedef struct {
     void (*tipool_destroy)(modperl_tipool_t *tipool, void *data,
                            void *item);
     void (*tipool_dump)(modperl_tipool_t *tipool, void *data,
-                        modperl_list_t *listp);
+                        volatile modperl_list_t *listp);
 } modperl_tipool_vtbl_t;
 
 struct modperl_tipool_config_t {
@@ -93,9 +94,9 @@ struct modperl_tipool_config_t {
 struct modperl_tipool_t {
     perl_mutex tiplock;
     perl_cond available;
-    modperl_list_t *idle, *busy;
-    int in_use; /* number of items currrently in use */
-    int size; /* current number of items */
+    volatile modperl_list_t *idle, *busy;
+    volatile int in_use; /* number of items currrently in use */
+    volatile int size; /* current number of items */
     void *data; /* user data */
     modperl_tipool_config_t *cfg;
     modperl_tipool_vtbl_t *func;
@@ -240,7 +241,7 @@ typedef struct {
     HV *pnotes;
     apr_pool_t *pool;
 #ifdef USE_ITHREADS
-    modperl_interp_t *interp;
+    PerlInterpreter *perl;
 #endif
 } modperl_pnotes_t;
 

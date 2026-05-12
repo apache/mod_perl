@@ -128,8 +128,6 @@ static apr_status_t modperl_module_config_obj_cleanup(void *data)
     MP_TRACE_c(MP_FUNC, "deleting ptr %pp from table %pp",
                cleanup->ptr, cleanup->table);
 
-    MP_INTERP_PUTBACK(cleanup->interp, aTHX);
-
     return APR_SUCCESS;
 }
 
@@ -145,7 +143,6 @@ static void modperl_module_config_obj_cleanup_register(pTHX_
     cleanup->ptr = ptr;
 #ifdef USE_ITHREADS
     cleanup->interp = modperl_thx_interp_get(aTHX);
-    MP_INTERP_REFCNT_inc(cleanup->interp);
 #endif
 
     apr_pool_cleanup_register(p, cleanup,
@@ -640,7 +637,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
     command_rec *cmd;
     AV *module_cmds;
     I32 i, fill;
-    MP_dINTERPa(NULL, NULL, s);
+    MP_dINTERP_POOLa(p, s);
     module_cmds = (AV*)SvRV(mod_cmds);
 
     fill = AvFILL(module_cmds);
@@ -782,7 +779,7 @@ const char *modperl_module_add(apr_pool_t *p, server_rec *s,
     const char *errmsg;
     module *modp;
     modperl_module_info_t *minfo;
-    MP_dINTERPa(NULL, NULL, s);
+    MP_dINTERP_POOLa(p, s);
     modp = (module *)apr_pcalloc(p, sizeof(*modp));
     minfo = (modperl_module_info_t *)apr_pcalloc(p, sizeof(*minfo));
 

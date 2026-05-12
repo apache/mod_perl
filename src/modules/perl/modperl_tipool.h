@@ -21,17 +21,17 @@
 
 modperl_list_t *modperl_list_new(void);
 
-modperl_list_t *modperl_list_last(modperl_list_t *list);
+volatile modperl_list_t *modperl_list_last(volatile modperl_list_t *list);
 
-modperl_list_t *modperl_list_first(modperl_list_t *list);
+volatile modperl_list_t *modperl_list_first(volatile modperl_list_t *list);
 
-modperl_list_t *modperl_list_append(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_append(volatile modperl_list_t *list,
                                     modperl_list_t *new_list);
 
-modperl_list_t *modperl_list_prepend(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_prepend(volatile modperl_list_t *list,
                                      modperl_list_t *new_list);
 
-modperl_list_t *modperl_list_remove(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_remove(volatile modperl_list_t *list,
                                     modperl_list_t *rlist);
 
 modperl_tipool_t *modperl_tipool_new(apr_pool_t *p,
@@ -47,7 +47,7 @@ void modperl_tipool_add(modperl_tipool_t *tipool, void *data);
 
 void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp);
 
-modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_remove_data(volatile modperl_list_t *list,
                                          void *data,
                                          modperl_list_t **listp);
 
@@ -60,18 +60,16 @@ void modperl_tipool_putback(modperl_tipool_t *tipool,
 void modperl_tipool_putback_data(modperl_tipool_t *tipool, void *data,
                                  int num_requests);
 
-#define modperl_tipool_wait(tipool) \
-    while (tipool->size == tipool->in_use) { \
+#define modperl_tipool_wait(tipool) do {        \
         MP_TRACE_i(MP_FUNC, \
                    "waiting for available tipool item in thread 0x%lx", \
                    MP_TIDF); \
         MP_TRACE_i(MP_FUNC, "(%d items in use, %d alive)", \
                    tipool->in_use, tipool->size); \
         COND_WAIT(&tipool->available, &tipool->tiplock); \
-    }
-
-#define modperl_tipool_broadcast(tipool) \
-    MP_TRACE_i(MP_FUNC, "broadcast available tipool item"); \
+    } while (0)
+#define modperl_tipool_signal(tipool) \
+    MP_TRACE_i(MP_FUNC, "signal available tipool item"); \
     COND_SIGNAL(&tipool->available)
 
 #define modperl_tipool_lock(tipool) \

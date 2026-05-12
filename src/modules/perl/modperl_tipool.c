@@ -39,7 +39,7 @@ modperl_list_t *modperl_list_new()
     return listp;
 }
 
-modperl_list_t *modperl_list_last(modperl_list_t *list)
+volatile modperl_list_t *modperl_list_last(volatile modperl_list_t *list)
 {
     while (list->next) {
         list = list->next;
@@ -48,7 +48,7 @@ modperl_list_t *modperl_list_last(modperl_list_t *list)
     return list;
 }
 
-modperl_list_t *modperl_list_first(modperl_list_t *list)
+volatile modperl_list_t *modperl_list_first(volatile modperl_list_t *list)
 {
     while (list->prev) {
         list = list->prev;
@@ -57,49 +57,53 @@ modperl_list_t *modperl_list_first(modperl_list_t *list)
     return list;
 }
 
-modperl_list_t *modperl_list_append(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_append(volatile modperl_list_t *list,
                                     modperl_list_t *new_list)
 {
-    modperl_list_t *last;
+    volatile modperl_list_t *last;
 
-    new_list->prev = new_list->next = NULL;
+    if (new_list)
+        new_list->prev = new_list->next = NULL;
 
-    if (!list) {
-        return new_list;
-    }
+    if (!list)
+        return (volatile modperl_list_t *)new_list;
+
+    if (!new_list)
+        return list;
 
     last = modperl_list_last(list);
 
     last->next = new_list;
     new_list->prev = last;
-
+    new_list->next = NULL;
     return list;
 }
 
-modperl_list_t *modperl_list_prepend(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_prepend(volatile modperl_list_t *list,
                                      modperl_list_t *new_list)
 {
-    new_list->prev = new_list->next = NULL;
+    if (new_list)
+        new_list->prev = new_list->next = NULL;
+    else
+        return list;
 
-    if (!list) {
-        return new_list;
-    }
+    if (!list)
+        return (volatile modperl_list_t *)new_list;
 
-    if (list->prev) {
+    if (list->prev)
         list->prev->next = new_list;
-        new_list->prev = list->prev;
-    }
 
-    list->prev = new_list;
     new_list->next = list;
+    new_list->prev = list->prev;
+    list->prev = new_list;
 
-    return new_list;
+    return (volatile modperl_list_t *)new_list;
 }
 
-modperl_list_t *modperl_list_remove(modperl_list_t *list,
+volatile modperl_list_t *modperl_list_remove(volatile modperl_list_t *list,
                                     modperl_list_t *rlist)
 {
-    modperl_list_t *tmp = list;
+    volatile modperl_list_t *tmp = list;
 
     while (tmp) {
         if (tmp != rlist) {
@@ -115,7 +119,7 @@ modperl_list_t *modperl_list_remove(modperl_list_t *list,
             if (list == tmp) {
                 list = list->next;
             }
-
+            tmp->prev = tmp->next = NULL;
             break;
         }
     }
@@ -131,11 +135,11 @@ modperl_list_t *modperl_list_remove(modperl_list_t *list,
     return list;
 }
 
-modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
-                                         void *data,
-                                         modperl_list_t **listp)
+volatile modperl_list_t *modperl_list_remove_data(volatile modperl_list_t *list,
+                                                  void *data,
+                                                  modperl_list_t **listp)
 {
-    modperl_list_t *tmp = list;
+    volatile modperl_list_t *tmp = list;
 
     while (tmp) {
         if (tmp->data != data) {
@@ -152,7 +156,7 @@ modperl_list_t *modperl_list_remove_data(modperl_list_t *list,
             if (list == tmp) {
                 list = list->next;
             }
-
+            tmp->prev = tmp->next = NULL;
             break;
         }
     }
@@ -181,7 +185,6 @@ modperl_tipool_t *modperl_tipool_new(apr_pool_t *p,
 void modperl_tipool_init(modperl_tipool_t *tipool)
 {
     int i;
-
     for (i=0; i<tipool->cfg->start; i++) {
         void *item =
             (*tipool->func->tipool_sgrow)(tipool, tipool->data);
@@ -198,7 +201,7 @@ void modperl_tipool_init(modperl_tipool_t *tipool)
 void modperl_tipool_destroy(modperl_tipool_t *tipool)
 {
     while (tipool->idle) {
-        modperl_list_t *listp;
+        volatile modperl_list_t *listp;
 
         if (tipool->func->tipool_destroy) {
             (*tipool->func->tipool_destroy)(tipool, tipool->data,
@@ -244,47 +247,49 @@ void modperl_tipool_remove(modperl_tipool_t *tipool, modperl_list_t *listp)
     tipool->size--;
     MP_TRACE_i(MP_FUNC, "removed 0x%lx (size=%d)",
                (unsigned long)listp, tipool->size);
+
+    free(listp);
 }
 
 modperl_list_t *modperl_tipool_pop(modperl_tipool_t *tipool)
 {
-    modperl_list_t *head;
+
 
     modperl_tipool_lock(tipool);
+    volatile modperl_list_t *head = tipool->idle;
 
-    if (tipool->size == tipool->in_use) {
+    if (!head) {
+    START:
         if (tipool->size < tipool->cfg->max) {
-            MP_TRACE_i(MP_FUNC,
-                       "no idle items, size %d < %d max",
-                       tipool->size, tipool->cfg->max);
             if (tipool->func->tipool_rgrow) {
-                void * item =
-                    (*tipool->func->tipool_rgrow)(tipool, tipool->data);
-
+                MP_TRACE_i(MP_FUNC,
+                       "growing pool: min_spare=%d, %d of %d in use",
+                       tipool->cfg->min_spare, tipool->in_use,
+                       tipool->size);
+                void *item =
+                    (*tipool->func->tipool_rgrow)(tipool,
+                                              tipool->data);
                 modperl_tipool_add(tipool, item);
             }
         }
-        /* block until an item becomes available */
-        modperl_tipool_wait(tipool);
+        else
+            modperl_tipool_wait(tipool);
+
+        head = tipool->idle;
     }
-
-    head = tipool->idle;
-
-    tipool->idle = modperl_list_remove(tipool->idle, head);
-    tipool->busy = modperl_list_append(tipool->busy, head);
-
-    tipool->in_use++;
 
     /* XXX: this should never happen */
     if (!head) {
         MP_TRACE_i(MP_FUNC, "PANIC: no items available, %d of %d in use",
                    tipool->in_use, tipool->size);
-        abort();
+        goto START;
     }
+    tipool->idle = modperl_list_remove(tipool->idle, head);
+    tipool->busy = modperl_list_append(tipool->busy, head);
 
+    tipool->in_use++;
     modperl_tipool_unlock(tipool);
-
-    return head;
+    return (modperl_list_t *)head;
 }
 
 static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
@@ -292,10 +297,7 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
                                         void *data,
                                         int num_requests)
 {
-    int max_spare, max_requests;
-
     modperl_tipool_lock(tipool);
-
     /* remove from busy list, add back to idle */
     /* XXX: option to sort list, e.g. on num_requests */
 
@@ -306,15 +308,8 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
         tipool->busy = modperl_list_remove_data(tipool->busy, data, &listp);
     }
 
-    if (!listp) {
-        /* XXX: Attempt to putback something that was never there */
-        modperl_tipool_unlock(tipool);
-        return;
-    }
-
-    tipool->idle = modperl_list_prepend(tipool->idle, listp);
-
     tipool->in_use--;
+
 
 #ifdef MP_TRACE
     if (!tipool->busy && tipool->func->tipool_dump) {
@@ -325,67 +320,59 @@ static void modperl_tipool_putback_base(modperl_tipool_t *tipool,
     }
 #endif
 
+    if (!listp) {
+        MP_TRACE_i(MP_FUNC, "what happened to listp?");
+        goto MANAGE_TIPOOL;
+    }
+
     MP_TRACE_i(MP_FUNC, "0x%lx now available (%d in use, %d running)",
                (unsigned long)listp->data, tipool->in_use, tipool->size);
 
-    modperl_tipool_broadcast(tipool);
-    if (tipool->in_use == (tipool->cfg->max - 1)) {
-        /* hurry up, another thread may be blocking */
-        modperl_tipool_unlock(tipool);
-        return;
-    }
-
-    max_spare = ((tipool->size - tipool->in_use) > tipool->cfg->max_spare);
-    max_requests = ((num_requests > 0) &&
-                    (num_requests > tipool->cfg->max_requests));
-
-    if (max_spare) {
-        MP_TRACE_i(MP_FUNC,
-                   "shrinking pool: max_spare=%d, only %d of %d in use",
-                   tipool->cfg->max_spare, tipool->in_use, tipool->size);
-    }
-    else if (max_requests) {
-        MP_TRACE_i(MP_FUNC, "shrinking pool: max requests %d reached",
-                   tipool->cfg->max_requests);
-    }
-
+    tipool->idle = modperl_list_prepend(tipool->idle, listp);
+    modperl_tipool_signal(tipool);
     /* XXX: this management should probably be happening elsewhere
      * like in a thread spawned at startup
      */
-    if (max_spare || max_requests) {
-        modperl_tipool_remove(tipool, listp);
-
-        if (tipool->func->tipool_destroy) {
-            (*tipool->func->tipool_destroy)(tipool, tipool->data,
-                                            listp->data);
-        }
-
-        free(listp); /* gone for good */
-
-        if (max_requests && ((tipool->size - tipool->in_use) <
-                             tipool->cfg->min_spare)) {
-            if (tipool->func->tipool_rgrow) {
-                void *item =
-                    (*tipool->func->tipool_rgrow)(tipool,
-                                                  tipool->data);
-
-                MP_TRACE_i(MP_FUNC,
-                           "growing pool: min_spare=%d, %d of %d in use",
-                           tipool->cfg->min_spare, tipool->in_use,
-                           tipool->size);
-
-                modperl_tipool_add(tipool, item);
+ MANAGE_TIPOOL:
+    if (tipool->func->tipool_destroy) {
+        while (tipool->size - tipool->in_use > tipool->cfg->max_spare) {
+            if (tipool->idle && tipool->idle->next) {
+                listp = modperl_list_last(tipool->idle->next);
+                if (listp) {
+                    MP_TRACE_i(MP_FUNC,
+                       "shrinking pool: destroying 0x%lx, max_spare=%d, %d of %d in use",
+                               (unsigned long)listp->data, tipool->cfg->max_spare, tipool->in_use,
+                               tipool->size);
+                    void *data = listp->data;
+                    modperl_tipool_remove(tipool, listp);
+                    (*tipool->func->tipool_destroy)(tipool, tipool->data, data);
+                }
+                else
+                    break;
             }
+            else
+                break;
         }
     }
-
+    if (tipool->func->tipool_rgrow) {
+        if (tipool->size < tipool->cfg->max && tipool->size - tipool->in_use < tipool->cfg->min_spare) {
+            MP_TRACE_i(MP_FUNC,
+                       "growing pool: min_spare=%d, %d of %d in use",
+                       tipool->cfg->min_spare, tipool->in_use,
+                       tipool->size);
+             void *item =
+                (*tipool->func->tipool_rgrow)(tipool,
+                                              tipool->data);
+             modperl_tipool_add(tipool, item);
+             modperl_tipool_signal(tipool);
+        }
+    }
     modperl_tipool_unlock(tipool);
 }
 
 /* _data functions are so structures (e.g. modperl_interp_t) don't
  * need to maintain a pointer back to the modperl_list_t
  */
-
 void modperl_tipool_putback_data(modperl_tipool_t *tipool,
                                  void *data,
                                  int num_requests)
