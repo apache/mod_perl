@@ -153,11 +153,28 @@ apr_size_t mpxs_Apache2__RequestRec_write(pTHX_ request_rec *r,
 
     buf = (const char *)SvPV(buffer, avail);
 
-    if (len == -1) {
-        wlen = offset ? avail - offset : avail;
+    /* Validate offset first while it is still signed (apr_off_t), so a
+     * negative value is caught before any conversion to unsigned arithmetic.
+     * Compare against avail cast to apr_off_t (not the other way round) so
+     * that a large offset on a 32-bit LFS build (where apr_off_t is 64-bit
+     * but apr_size_t is 32-bit) cannot truncate and silently pass the check.
+     */
+    if (offset < 0 || offset > (apr_off_t)avail)
+        Perl_croak(aTHX_ "$r->write: offset out of range");
+
+    /* -1 (the typemap default) means "rest of buffer from offset" */
+    if (len == (apr_size_t)-1) {
+        wlen = avail - (apr_size_t)offset;
     }
     else {
+        /* Explicit length: reject if it runs past the end.
+         * Use subtraction (avail - offset) rather than addition (offset + len)
+         * to avoid a second unsigned overflow in the comparison.
+         * The cast to apr_size_t is safe: offset <= avail was verified above.
+         */
         wlen = len;
+        if (wlen > avail - (apr_size_t)offset)
+            Perl_croak(aTHX_ "$r->write: length exceeds available bytes");
     }
 
     MP_CHECK_WBUCKET_INIT("$r->write");
