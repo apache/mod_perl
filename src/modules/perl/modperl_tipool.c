@@ -35,6 +35,14 @@ modperl_list_t *modperl_list_new()
 {
     modperl_list_t *listp =
         (modperl_list_t *)malloc(sizeof(*listp));
+    if (!listp) {
+        /* allocation failure is unrecoverable: pool state cannot be
+         * maintained safely.  Mirror the existing abort() on pool
+         * exhaustion rather than propagating a NULL that callers do
+         * not check.
+         */
+        abort();
+    }
     memset(listp, '\0', sizeof(*listp));
     return listp;
 }

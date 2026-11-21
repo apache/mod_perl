@@ -44,6 +44,15 @@ modperl_interp_t *modperl_interp_new(modperl_interp_pool_t *mip,
     modperl_interp_t *interp =
         (modperl_interp_t *)malloc(sizeof(*interp));
 
+    if (!interp) {
+        /* allocation failure is unrecoverable: interpreter pool state
+         * cannot be maintained safely.  Mirror the existing abort() on
+         * pool exhaustion in modperl_tipool_new_item() rather than
+         * returning NULL that callers do not check.
+         */
+        abort();
+    }
+
     memset(interp, '\0', sizeof(*interp));
 
     interp->mip = mip;
