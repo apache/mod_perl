@@ -186,7 +186,7 @@ MP_CMD_SRV_DECLARE(modules)
 
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_module(aTHX_ arg, FALSE)) {
-            error = SvPVX(ERRSV);
+            error = apr_pstrdup(parms->pool, SvPV_nolen(ERRSV));
         }
         else {
             modperl_env_sync_srv_env_hash2table(aTHX_ parms->pool, scfg);
@@ -224,7 +224,7 @@ MP_CMD_SRV_DECLARE(requires)
 
         MP_PERL_CONTEXT_STORE_OVERRIDE(scfg->mip->parent->perl);
         if (!modperl_require_file(aTHX_ arg, FALSE)) {
-            error = SvPVX(ERRSV);
+            error = apr_pstrdup(parms->pool, SvPV_nolen(ERRSV));
         }
         else {
             modperl_env_sync_srv_env_hash2table(aTHX_ parms->pool, scfg);
@@ -610,7 +610,7 @@ MP_CMD_SRV_DECLARE(perldo)
 
     if (SvTRUE(ERRSV)) {
         MP_PERL_CONTEXT_RESTORE;
-        return SvPVX(ERRSV);
+        return apr_pstrdup(p, SvPV_nolen(ERRSV));
     }
 
     if (handler) {
@@ -632,7 +632,7 @@ MP_CMD_SRV_DECLARE(perldo)
         }
 
         if (status != OK) {
-            char *error = SvTRUE(ERRSV) ? SvPVX(ERRSV) :
+            char *error = SvTRUE(ERRSV) ? apr_pstrdup(p, SvPV_nolen(ERRSV)) :
                 apr_psprintf(p, "<Perl> handler %s failed with status=%d",
                              handler->name, status);
             MP_PERL_CONTEXT_RESTORE;

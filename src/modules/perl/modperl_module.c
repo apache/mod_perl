@@ -318,7 +318,7 @@ modperl_module_config_create_obj(pTHX_
         FREETMPS;LEAVE;
 
         if (SvTRUE(ERRSV)) {
-            return SvPVX(ERRSV);
+            return apr_pstrdup(p, SvPV_nolen(ERRSV));
         }
     }
     else {
@@ -468,7 +468,7 @@ static const char *modperl_module_cmd_take123(cmd_parms *parms,
     }
 
     if (SvTRUE(ERRSV)) {
-        retval = SvPVX(ERRSV);
+        retval = apr_pstrdup(p, SvPV_nolen(ERRSV));
     }
 
     MP_INTERP_PUTBACK(interp, aTHX);
@@ -611,7 +611,7 @@ static const char *modperl_module_cmd_fetch(pTHX_ SV *obj,
         FREETMPS;LEAVE;
 
         if (SvTRUE(ERRSV)) {
-            errmsg = SvPVX(ERRSV);
+            errmsg = SvPV_nolen(ERRSV);
         }
     }
     else if (SvROK(obj) && (SvTYPE(SvRV(obj)) == SVt_PVHV)) {
@@ -658,7 +658,7 @@ static const char *modperl_module_add_cmds(apr_pool_t *p, server_rec *s,
 
         if ((errmsg = modperl_module_cmd_fetch(aTHX_ obj, "name", &val))) {
             MP_INTERP_PUTBACK(interp, aTHX);
-            return errmsg;
+            return apr_pstrdup(p, errmsg);
         }
 
         cmd->name = apr_pstrdup(p, SvPV(val, len));
