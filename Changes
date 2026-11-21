@@ -14,6 +14,28 @@ Also refer to the Apache::Test changes log file, at Apache-Test/Changes
 
 =item 2.0.14-dev
 
+Check offset in mpxs_Apache2__RequestRec_write() [Satoru Yano
+<yano@satoru.net>]
+
+Use SvPV_nolen() with apr_pstrdup() for ERRSV handling where necessary [Satoru
+Yano <yano@satoru.net>]
+
+In modperl_perl_global_svpv_save()/modperl_perl_global_svpv_restore(), use a
+full copy of the SV so that undef ($/ = undef, slurp mode) and reference
+($/ = \4096, fixed-length records) values are preserved faithfully [Steve Hay,
+Satoru Yano <yano@satoru.net>]
+
+Check len in mpxs_Apache2__Module_loaded() [Satoru Yano <yano@satoru.net>]
+
+Use apr_palloc() in mpxs_Apache2__RequestRec_set_basic_credentials() [Satoru
+Yano <yano@satoru.net>]
+
+Abort when necessary in modperl_interp_new() and modperl_list_new [Steve Hay,
+Satoru Yano <yano@satoru.net>]
+
+Use I32 rather than int for 'namelen' argument, fixing an incompatible
+function pointer error/warning in a 32-bit build [Joe Orton]
+
 =item 2.0.13 October 21, 2023
 
 Use get_server_banner() instead of deprecated get_server_version() in
