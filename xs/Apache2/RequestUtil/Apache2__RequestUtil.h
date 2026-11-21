@@ -168,14 +168,13 @@ void mpxs_Apache2__RequestRec_set_basic_credentials(request_rec *r,
                                                    char *username,
                                                    char *password)
 {
-    char encoded[1024];
-    int elen;
+    char *encoded;
     char *auth_value, *auth_cat;
 
     auth_cat = apr_pstrcat(r->pool,
                            username, ":", password, NULL);
-    elen = apr_base64_encode(encoded, auth_cat, strlen(auth_cat));
-    encoded[elen] = '\0';
+    encoded = apr_palloc(r->pool, apr_base64_encode_len(strlen(auth_cat)));
+    apr_base64_encode(encoded, auth_cat, strlen(auth_cat));
 
     auth_value = apr_pstrcat(r->pool, "Basic ", encoded, NULL);
     apr_table_setn(r->headers_in, "Authorization", auth_value);
