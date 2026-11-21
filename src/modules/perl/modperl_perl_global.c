@@ -374,14 +374,26 @@ modperl_perl_global_gvio_restore(pTHX_ modperl_perl_global_gvio_t *gvio)
 static void
 modperl_perl_global_svpv_save(pTHX_ modperl_perl_global_svpv_t *svpv)
 {
-    svpv->cur = SvCUR(*svpv->sv);
-    strncpy(svpv->pv, SvPVX(*svpv->sv), sizeof(svpv->pv));
+    /* Take a full copy of the SV so that undef ($/ = undef, slurp mode)
+     * and reference ($/ = \4096, fixed-length records) values are
+     * preserved faithfully.  newSVsv() handles every scalar flavour and
+     * never dereferences a NULL string pointer.
+     *
+     * saved_sv starts NULL (struct is apr_pcalloc'd) and is freed by
+     * modperl_perl_global_svpv_restore() after each use, so it is
+     * always NULL here and we always allocate fresh. */
+    svpv->saved_sv = newSVsv(*svpv->sv);
 }
 
 static void
 modperl_perl_global_svpv_restore(pTHX_ modperl_perl_global_svpv_t *svpv)
 {
-    sv_setpvn(*svpv->sv, svpv->pv, svpv->cur);
+    /* Only restore if save() was ever called (saved_sv non-NULL). */
+    if (svpv->saved_sv) {
+        SvSetSV(*svpv->sv, svpv->saved_sv);
+        SvREFCNT_dec(svpv->saved_sv);
+        svpv->saved_sv = NULL;
+    }
 }
 
 typedef enum {

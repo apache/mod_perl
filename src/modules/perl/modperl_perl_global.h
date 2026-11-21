@@ -59,8 +59,7 @@ typedef struct {
 
 typedef struct {
     SV **sv;
-    char pv[256]; /* XXX: only need enough for $/ at the moment */
-    I32 cur;
+    SV  *saved_sv; /* full SV copy; NULL before first save */
 } modperl_perl_global_svpv_t;
 
 typedef struct {
