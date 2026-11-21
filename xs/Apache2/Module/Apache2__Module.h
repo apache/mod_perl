@@ -24,7 +24,12 @@ static MP_INLINE int mpxs_Apache2__Module_loaded(pTHX_ char *name)
 
     /* Does the module name have a '.' in it ? */
     if ((base = ap_strchr(name, '.'))) {
-        int len = base - name;
+        ptrdiff_t len = base - name;
+
+        /* need room for ".c\0" (3 bytes) */
+        if (len < 0 || len > (ptrdiff_t)sizeof(nameptr) - 3) {
+            return 0;
+        }
 
         memcpy(nameptr, name, len);
         memcpy(nameptr + len, ".c\0", 3);
