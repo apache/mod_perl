@@ -283,7 +283,7 @@ static apr_status_t modperl_filter_f_cleanup(void *data)
     if (ctx->data){
 #ifdef USE_ITHREADS
         dTHXa(ctx->interp->perl);
-//         MP_ASSERT_CONTEXT(aTHX);
+        MP_ASSERT_CONTEXT(aTHX);
 #endif
         if (SvOK(ctx->data) && SvREFCNT(ctx->data)) {
             SvREFCNT_dec(ctx->data);

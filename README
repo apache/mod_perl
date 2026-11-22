@@ -1,4 +1,14 @@
-This is mod_perl version 2.0
+This is joesuf4's fork of mod_perl version 2.0. You can use it with
+ithreads and mpm_event | mod_http2, provided you:
+
+1. Clone the interepeters (Parent will core):
+2. Avoid PerlSetupEnv (will core):
+3. Avoid reaping ithreads until graceful httpd restarts (may core):
+4. run with the joesuf4/apreq fork.
+
+Rest is the dead software product from Apache...
+
+
 
 *** Prerequisites ***
 

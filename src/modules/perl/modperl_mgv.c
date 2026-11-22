@@ -521,7 +521,7 @@ static int modperl_hash_handlers_srv(apr_pool_t *p, server_rec *s,
 
 void modperl_mgv_hash_handlers(apr_pool_t *p, server_rec *s)
 {
-    MP_dINTERPa(NULL, NULL, s);
+    MP_dINTERP_POOLa(p, s);
     ap_pcw_walk_config(p, s, &perl_module,
 #ifdef USE_ITHREADS
                        aTHX,

@@ -352,8 +352,8 @@ void modperl_handler_make_args(pTHX_ AV **avp, ...)
  */
 #define check_modify(dtype)                                     \
     if ((action > MP_HANDLER_ACTION_GET) && rcfg) {             \
-        dTHXa(PERL_GET_CONTEXT);                                \
-        MP_ASSERT(aTHX+0);                                      \
+       dTHX;                                                    \
+       MP_ASSERT(aTHX+0);                                       \
         Perl_croak(aTHX_ "too late to modify %s handlers",      \
                    modperl_handler_desc_##dtype(idx));          \
     }
