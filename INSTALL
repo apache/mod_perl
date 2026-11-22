@@ -1,6 +1,17 @@
+Key pre-requisites:
+
+  Perl modules:  CGI, and Compress::Zlib
+
 Simple install:
 
   % perl Makefile.PL MP_APXS=/usr/local/apache2/bin/apxs
+  % make && make test
+  % make install
+
+Simple install on Debian Linux (works with Debian 11.2):
+
+  % apt install libcgi-pm-perl libio-compress-perl libperl-dev
+  % perl Makefile.PL MP_APXS=/usr/bin/apxs
   % make && make test
   % make install
 
